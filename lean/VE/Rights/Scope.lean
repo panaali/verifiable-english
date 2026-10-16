@@ -473,4 +473,281 @@ theorem limitation_scope_sound (D : RightsDoc) (h : WellFormedRights D = true)
     | some c =>
       exact Or.inl (licensed_certified_sound D h N n c hcc B hB vs typed hcond)
 
+/-! ## The grounds of a licence
+
+What a licence without certificates rests on, named by the request items the relay binds: the
+citation `cited` finds (the citing rule and its key), the right line a collision is with, the strict
+rule that delivers the effect, or the mechanism itself (`limPack`, `bar`). `ground_isSome` ties it to
+`licensed` without certificates, so a mechanism has grounds exactly when the audit licenses it. -/
+
+inductive Ground
+  | limitation | bar | cited (rule key : String) | collision (line : String) | effect (rule : String)
+  deriving DecidableEq, Repr
+
+/-- The licence a ground gives, as the scope rows spell it. -/
+def Ground.text : Ground → String
+  | .limitation => "limitation"
+  | .bar => "bar"
+  | .cited _ _ => "cited"
+  | .collision _ => "collision"
+  | .effect M => s!"effect delivered by strict rule {M}"
+
+/-- The line's own citation under `k`, named by the line's rule. -/
+def ownCite (N : Line) (k : String) : Option (String × String) :=
+  if hasKey N.source.cites k then some (N.node.name, k) else none
+
+/-- The first `over:<k>` citation of rule `M` over `N`, for `k` in `lineKeys N`. -/
+def overCite (D : RightsDoc) (M : String) (N : Line) : Option (String × String) :=
+  ((lineKeys N).find? (fun k => hasKey (citesOf D M) s!"over:{k}")).map (fun k => (M, s!"over:{k}"))
+
+/-- The first `narrows:<k>` citation of rule `M` against `N`, for `k` in `lineKeys N`. -/
+def narrowsCite (D : RightsDoc) (M : String) (N : Line) : Option (String × String) :=
+  ((lineKeys N).find? (fun k => hasKey (citesOf D M) s!"narrows:{k}")).map (fun k => (M, s!"narrows:{k}"))
+
+/-- The citation `cited` finds for a mechanism, in `cited`'s order: the citing rule and the key. -/
+def citedBy (D : RightsDoc) (N : Line) : Narrowing → Option (String × String)
+  | .carveOut i => ownCite N s!"unless:{i + 1}"
+  | .exception M => (overCite D M N).or (narrowsCite D M N)
+  | .limPack => none
+  | .excepted => ownCite N "exception"
+  | .switch π => ownCite N s!"alterable:{π}"
+  | .blockedBy M => narrowsCite D M N
+  | .dominatedBy M => (ownCite N "rank").or (narrowsCite D M N)
+  | .bar => none
+
+/-- The citation's grounds, when `cited` holds. -/
+def citedGround (D : RightsDoc) (N : Line) (n : Narrowing) : Option Ground :=
+  (citedBy D N n).map (fun p => .cited p.1 p.2)
+
+/-- The grounds of a mechanism's licence without certificates, the first relation that holds
+(Run.lean `licence` is their text), or `none`. -/
+def ground (D : RightsDoc) (N : Line) : Narrowing → Option Ground
+  | .limPack => some .limitation
+  | .bar => some .bar
+  | .blockedBy M => (citedGround D N (.blockedBy M)).or
+      (if rightCollision D N (.blockedBy M) then some (.collision M)
+       else if sameEffectStrict D N M then some (.effect M) else none)
+  | .dominatedBy M => (citedGround D N (.dominatedBy M)).or
+      (if rightCollision D N (.dominatedBy M) then some (.collision M) else none)
+  | .carveOut i => citedGround D N (.carveOut i)
+  | .exception M => citedGround D N (.exception M)
+  | .excepted => citedGround D N .excepted
+  | .switch π => citedGround D N (.switch π)
+
+theorem find_map_isSome {l : List String} {p : String → Bool} {f : String → String × String} :
+    ((l.find? p).map f).isSome = l.any p := by
+  rw [Option.isSome_map]
+  exact Bool.eq_iff_iff.mpr (List.find?_isSome.trans List.any_eq_true.symm)
+
+theorem ownCite_isSome (N : Line) (k : String) : (ownCite N k).isSome = hasKey N.source.cites k := by
+  unfold ownCite; split <;> simp_all
+
+/-- `citedBy` finds a citation exactly when `cited` holds. -/
+theorem citedBy_isSome (D : RightsDoc) (N : Line) (n : Narrowing) (h1 : n ≠ .limPack) (h2 : n ≠ .bar) :
+    (citedBy D N n).isSome = cited D N n := by
+  cases n with
+  | limPack => exact absurd rfl h1
+  | bar => exact absurd rfl h2
+  | carveOut i => exact ownCite_isSome N _
+  | excepted => exact ownCite_isSome N _
+  | switch π => exact ownCite_isSome N _
+  | exception M =>
+    simp only [citedBy, cited, citesNarrows, Option.isSome_or, overCite, narrowsCite, find_map_isSome]
+  | blockedBy M => simp only [citedBy, cited, citesNarrows, narrowsCite, find_map_isSome]
+  | dominatedBy M =>
+    simp only [citedBy, cited, citesNarrows, Option.isSome_or, ownCite_isSome, narrowsCite, find_map_isSome]
+
+/-- A citation `citedBy` names is in the request: the line's own source citation, or the named
+rule's (`citesOf`), under that key. -/
+theorem citedBy_sound {D : RightsDoc} {N : Line} {n : Narrowing} {R K : String}
+    (h : citedBy D N n = some (R, K)) :
+    (R = N.node.name ∧ hasKey N.source.cites K = true) ∨ hasKey (citesOf D R) K = true := by
+  have own : ∀ k, ownCite N k = some (R, K) → R = N.node.name ∧ hasKey N.source.cites K = true := by
+    intro k hk
+    unfold ownCite at hk
+    split at hk
+    · cases hk; exact ⟨rfl, ‹_›⟩
+    · cases hk
+  have keyed : ∀ (M : String) (q : String → String),
+      ((lineKeys N).find? (fun k => hasKey (citesOf D M) (q k))).map (fun k => (M, q k)) = some (R, K) →
+      hasKey (citesOf D R) K = true := by
+    intro M q hk
+    obtain ⟨k, hf, he⟩ := Option.map_eq_some_iff.mp hk
+    cases he
+    have hp := List.find?_some hf
+    exact hp
+  have over : ∀ M, overCite D M N = some (R, K) → hasKey (citesOf D R) K = true :=
+    fun M hk => keyed M (fun k => s!"over:{k}") hk
+  have narrows : ∀ M, narrowsCite D M N = some (R, K) → hasKey (citesOf D R) K = true :=
+    fun M hk => keyed M (fun k => s!"narrows:{k}") hk
+  cases n with
+  | limPack => cases h
+  | bar => cases h
+  | carveOut i => exact Or.inl (own _ h)
+  | excepted => exact Or.inl (own _ h)
+  | switch π => exact Or.inl (own _ h)
+  | exception M =>
+    simp only [citedBy] at h
+    cases ho : overCite D M N with
+    | some p => rw [ho] at h; cases h; exact Or.inr (over M ho)
+    | none => rw [ho] at h; exact Or.inr (narrows M h)
+  | blockedBy M => exact Or.inr (narrows M h)
+  | dominatedBy M =>
+    simp only [citedBy] at h
+    cases ho : ownCite N "rank" with
+    | some p => rw [ho] at h; cases h; exact Or.inl (own _ ho)
+    | none => rw [ho] at h; exact Or.inr (narrows M h)
+
+theorem citedGround_isSome (D : RightsDoc) (N : Line) (n : Narrowing) (h1 : n ≠ .limPack) (h2 : n ≠ .bar) :
+    (citedGround D N n).isSome = cited D N n := by
+  rw [citedGround, Option.isSome_map]
+  exact citedBy_isSome D N n h1 h2
+
+theorem citedGround_eq {D : RightsDoc} {N : Line} {n : Narrowing} {g : Ground} (h : citedGround D N n = some g) :
+    ∃ R K, citedBy D N n = some (R, K) ∧ g = .cited R K := by
+  unfold citedGround at h
+  obtain ⟨⟨R, K⟩, hp, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact ⟨R, K, hp, rfl⟩
+
+/-- A mechanism has grounds exactly when the audit licenses it without certificates. -/
+theorem ground_isSome (D : RightsDoc) (N : Line) (n : Narrowing) : (ground D N n).isSome = licensed D [] N n := by
+  have hc : ∀ n, certified D [] N n = false := fun _ => rfl
+  cases n with
+  | limPack => rfl
+  | bar => rfl
+  | blockedBy M =>
+    simp only [ground, licensed, Option.isSome_or, citedGround_isSome D N (.blockedBy M) (by simp) (by simp), hc,
+      Bool.or_false]
+    cases rightCollision D N (.blockedBy M) <;> cases sameEffectStrict D N M <;> simp
+  | dominatedBy M =>
+    simp only [ground, licensed, Option.isSome_or, citedGround_isSome D N (.dominatedBy M) (by simp) (by simp), hc,
+      Bool.or_false]
+    cases rightCollision D N (.dominatedBy M) <;> simp
+  | carveOut i =>
+    simp [ground, licensed, citedGround_isSome D N (.carveOut i) (by simp) (by simp), hc, rightCollision]
+  | exception M =>
+    simp [ground, licensed, citedGround_isSome D N (.exception M) (by simp) (by simp), hc, rightCollision]
+  | excepted => simp [ground, licensed, citedGround_isSome D N .excepted (by simp) (by simp), hc, rightCollision]
+  | switch π => simp [ground, licensed, citedGround_isSome D N (.switch π) (by simp) (by simp), hc, rightCollision]
+
+/-- A collision's grounds name the mechanism's own rule, a line of `T″` (`rightCollision`). -/
+theorem ground_collision {D : RightsDoc} {N : Line} {n : Narrowing} {M : String}
+    (h : ground D N n = some (.collision M)) :
+    (n = .blockedBy M ∨ n = .dominatedBy M) ∧ rightCollision D N n = true := by
+  cases n with
+  | blockedBy M' =>
+    simp only [ground] at h
+    cases hg : citedGround D N (.blockedBy M') with
+    | some g =>
+      obtain ⟨_, _, _, rfl⟩ := citedGround_eq hg
+      rw [hg] at h; simp at h
+    | none =>
+      rw [hg, Option.none_or] at h
+      by_cases hr : rightCollision D N (.blockedBy M') = true
+      · rw [if_pos hr] at h; cases h; exact ⟨Or.inl rfl, hr⟩
+      · rw [if_neg hr] at h; split at h <;> cases h
+  | dominatedBy M' =>
+    simp only [ground] at h
+    cases hg : citedGround D N (.dominatedBy M') with
+    | some g =>
+      obtain ⟨_, _, _, rfl⟩ := citedGround_eq hg
+      rw [hg] at h; simp at h
+    | none =>
+      rw [hg, Option.none_or] at h
+      by_cases hr : rightCollision D N (.dominatedBy M') = true
+      · rw [if_pos hr] at h; cases h; exact ⟨Or.inr rfl, hr⟩
+      · rw [if_neg hr] at h; cases h
+  | limPack | bar => simp [ground] at h
+  | carveOut _ | exception _ | excepted | switch _ =>
+    simp only [ground] at h
+    obtain ⟨_, _, _, he⟩ := citedGround_eq h
+    cases he
+
+/-- An effect's grounds name the blocking rule itself, a same-effect strict rule. -/
+theorem ground_effect {D : RightsDoc} {N : Line} {n : Narrowing} {M : String}
+    (h : ground D N n = some (.effect M)) : n = .blockedBy M ∧ sameEffectStrict D N M = true := by
+  cases n with
+  | blockedBy M' =>
+    simp only [ground] at h
+    cases hg : citedGround D N (.blockedBy M') with
+    | some g =>
+      obtain ⟨_, _, _, rfl⟩ := citedGround_eq hg
+      rw [hg] at h; simp at h
+    | none =>
+      rw [hg, Option.none_or] at h
+      by_cases hr : rightCollision D N (.blockedBy M') = true
+      · rw [if_pos hr] at h; cases h
+      · rw [if_neg hr] at h
+        by_cases hs : sameEffectStrict D N M' = true
+        · rw [if_pos hs] at h; cases h; exact ⟨rfl, hs⟩
+        · rw [if_neg hs] at h; cases h
+  | dominatedBy M' =>
+    simp only [ground] at h
+    cases hg : citedGround D N (.dominatedBy M') with
+    | some g =>
+      obtain ⟨_, _, _, rfl⟩ := citedGround_eq hg
+      rw [hg] at h; simp at h
+    | none =>
+      rw [hg, Option.none_or] at h
+      split at h <;> cases h
+  | limPack | bar => simp [ground] at h
+  | carveOut _ | exception _ | excepted | switch _ =>
+    simp only [ground] at h
+    obtain ⟨_, _, _, he⟩ := citedGround_eq h
+    cases he
+
+/-- A citation's grounds are the citation `citedBy` finds. -/
+theorem ground_cited {D : RightsDoc} {N : Line} {n : Narrowing} {R K : String}
+    (h : ground D N n = some (.cited R K)) : citedBy D N n = some (R, K) := by
+  have of_cited : ∀ {g}, citedGround D N n = some g → g = .cited R K → citedBy D N n = some (R, K) := by
+    intro g hg he
+    obtain ⟨_, _, hp, rfl⟩ := citedGround_eq hg
+    cases he; exact hp
+  cases n with
+  | limPack | bar => simp [ground] at h
+  | blockedBy M =>
+    simp only [ground] at h
+    cases hg : citedGround D N (.blockedBy M) with
+    | some g => rw [hg] at h; simp only [Option.some_or, Option.some.injEq] at h; exact of_cited hg h
+    | none =>
+      rw [hg, Option.none_or] at h
+      split at h
+      · cases h
+      · split at h <;> cases h
+  | dominatedBy M =>
+    simp only [ground] at h
+    cases hg : citedGround D N (.dominatedBy M) with
+    | some g => rw [hg] at h; simp only [Option.some_or, Option.some.injEq] at h; exact of_cited hg h
+    | none =>
+      rw [hg, Option.none_or] at h
+      split at h <;> cases h
+  | carveOut _ | exception _ | excepted | switch _ =>
+    simp only [ground] at h
+    exact of_cited h rfl
+/-- The limitation mechanism is listed exactly when some limitation scopes the line. -/
+theorem limPack_mem_narrowings (D : RightsDoc) (N : Line) :
+    Narrowing.limPack ∈ narrowings D N ↔ scopeLimits D N ≠ [] := by
+  constructor
+  · intro h he
+    simp [narrowings, limPackList, he] at h
+  · intro h
+    exact mem_narrowings_limPack D N (by simp [limPackList, h])
+
+/-- The bar mechanism is listed exactly when the bar, under the rule reading, reaches the line. -/
+theorem bar_mem_narrowings (D : RightsDoc) (N : Line) :
+    Narrowing.bar ∈ narrowings D N ↔ (if ruleReading D then barReach D N else none).isSome := by
+  constructor
+  · intro h
+    by_cases hr : ruleReading D = true
+    · cases hb : barReach D N with
+      | none => simp [narrowings, hr, hb] at h
+      | some m => simp [hr]
+    · simp [narrowings, hr] at h
+  · intro h
+    by_cases hr : ruleReading D = true
+    · simp only [hr, if_true] at h
+      obtain ⟨m, hm⟩ := Option.isSome_iff_exists.mp h
+      exact mem_narrowings_bar D N hr hm
+    · simp [hr] at h
+
 end VE.Rights

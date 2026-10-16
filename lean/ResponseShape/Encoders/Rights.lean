@@ -72,17 +72,23 @@ theorem firstFailure_of_not_free (j : Json) (res : RightsConflictReplay) (h : re
   rw [List.find?_isSome]
   exact ⟨(t, c), hm, by cases c <;> simp_all⟩
 
+/-- A licence's grounds fit their shape. -/
+theorem groundJson_fits (g : Option Ground) : Fits req (skel% "rights.json#/$defs/grounds") (groundJson g) := by
+  unfold groundJson
+  split <;> fits
+
 theorem elaborate_fits (id : String) (D : RightsDoc) (env doc : Json) (openNames : List String) :
     Fits req (skel% "rights.json#/$defs/elaborate")
       (VE.Route.Wire.ok id (regenerated D env ++ [("unit_open", unitStatuses D openNames doc)])) := by
   unfold VE.Route.Wire.ok regenerated VE.SoftNorms.Wire.regeneratedCore VE.SoftNorms.Wire.bgEntry generatedKeys
-    lineJson nodeJson narrowingsJson distinctionJson
+    lineJson nodeJson elaboratedNarrowingsJson ruleNarrowingsJson distinctionJson
   simp only [List.filter_cons, List.filter_nil, String.reduceBNe, Bool.false_eq_true, ↓reduceIte]
   fits using SoftNorms.decisionKeyJson_fits
   all_goals try first
     | exact Fits.rightsEnvironment D env (generated_entries_fit D)
         (fun p _ => Common.decisionEntry_fits p.2) rfl
     | exact (labelled_contra (limLabels_nonempty D) ‹_› ‹_›).elim
+    | exact groundJson_fits _
     | exact (labelled_contra (SoftNorms.softLabelledIn_nonempty _ _ _) ‹_› ‹_›).elim
 
 theorem projections_fits (id : String) (src : RightsSource) (j : Json) :

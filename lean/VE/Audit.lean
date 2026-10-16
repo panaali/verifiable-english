@@ -4461,6 +4461,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.RightsValid.permNoDual
 #print axioms VE.Rights.RightsValid.selTyped
 #print axioms VE.Rights.RightsValid.wfSoft
+#print axioms VE.Rights.Run.licence_spec
 #print axioms VE.Rights.Run.rights_wire_acceptance
 #print axioms VE.Rights.Run.runAdmission_sound
 #print axioms VE.Rights.Wire.RightsSource.defs
@@ -4483,12 +4484,17 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.barNodes_nil
 #print axioms VE.Rights.bar_blocks
 #print axioms VE.Rights.bar_denote
+#print axioms VE.Rights.bar_mem_narrowings
 #print axioms VE.Rights.bar_mode
 #print axioms VE.Rights.bar_value
 #print axioms VE.Rights.baseAdmissibleR_of_valid
 #print axioms VE.Rights.blocked_eq
 #print axioms VE.Rights.catalaValue_false
 #print axioms VE.Rights.catalaValue_true
+#print axioms VE.Rights.citedBy_isSome
+#print axioms VE.Rights.citedBy_sound
+#print axioms VE.Rights.citedGround_eq
+#print axioms VE.Rights.citedGround_isSome
 #print axioms VE.Rights.coherent_expands
 #print axioms VE.Rights.condF_of_narrowsAt
 #print axioms VE.Rights.condKeys_nil
@@ -4508,7 +4514,12 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.eligible_eq
 #print axioms VE.Rights.envR_of_no_gen
 #print axioms VE.Rights.exists_child_split
+#print axioms VE.Rights.find_map_isSome
 #print axioms VE.Rights.genDecls_nil
+#print axioms VE.Rights.ground_cited
+#print axioms VE.Rights.ground_collision
+#print axioms VE.Rights.ground_effect
+#print axioms VE.Rights.ground_isSome
 #print axioms VE.Rights.holderConj_top
 #print axioms VE.Rights.independentReported_iff
 #print axioms VE.Rights.licensed_cases
@@ -4516,6 +4527,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.licensed_of_scope
 #print axioms VE.Rights.limKeys_nil
 #print axioms VE.Rights.limPackList_denote
+#print axioms VE.Rights.limPack_mem_narrowings
 #print axioms VE.Rights.limitation_scope_sound
 #print axioms VE.Rights.lineNode_correlate
 #print axioms VE.Rights.lineNode_direct
@@ -4546,6 +4558,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.nodeNamed_self
 #print axioms VE.Rights.not_mem_children_bar
 #print axioms VE.Rights.owes_outcome
+#print axioms VE.Rights.ownCite_isSome
 #print axioms VE.Rights.prefixAdmissibleR_zero
 #print axioms VE.Rights.projections_agree
 #print axioms VE.Rights.regOf_name

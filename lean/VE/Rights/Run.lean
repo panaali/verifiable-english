@@ -9,8 +9,10 @@ import VE.SoftNorms.Run
   predicate with its source keys), `lines` (per instance: right, source and instance kind,
   rule name, predicate, holder slot, bearer, node), `limitations` (the labelled `Lim_D`),
   `bars`, `derived`, `order`, `background` (with the `soft` and `rights` slots), `premises`,
-  `colliding_pairs`, `conflict_targets`, `narrowings` (per line: each mechanism and its
-  licence without certificates), `distinction` (per right-derived predicate), `fragment`,
+  `colliding_pairs`, `conflict_targets`, `narrowings` (per line: the limitations in scope, the
+  bar's reach, and each mechanism with its licence without certificates and the grounds it rests
+  on), `rule_narrowings` (per rule: the mechanisms naming it, and what each of its citations
+  licenses), `distinction` (per right-derived predicate), `fragment`,
   `warnings`; or the shared diagnostic.
 * `rights-projections`: `model` (a finite base model over `E″′_base` passing
   `Background_base″`) and optionally `holder` / `bearer` → `rights_of`, `duties_of`: the
@@ -113,15 +115,48 @@ def lineJson (D : RightsDoc) (RN : String × Line) : Json :=
      | some b, some n => [("bearer", .str b), ("source_line", .str n.name)]
      | _, _ => []))
 
-/-- The licence of a mechanism without certificates, or `none`. -/
-def licence (D : RightsDoc) (N : Line) (n : Narrowing) : Option String :=
-  match n with
-  | .limPack => some "limitation"
-  | .bar => some "bar"
-  | .blockedBy M =>
-    if cited D N n then some "cited" else if rightCollision D N n then some "collision"
-    else if sameEffectStrict D N M then some s!"effect delivered by strict rule {M}" else none
-  | _ => if cited D N n then some "cited" else if rightCollision D N n then some "collision" else none
+/-- The licence of a mechanism without certificates, or `none`: the text of its grounds. -/
+def licence (D : RightsDoc) (N : Line) (n : Narrowing) : Option String := (ground D N n).map Ground.text
+
+/-- The licence is the first relation of Scope.lean the request holds: a citation, a collision with
+another right's line, a same-effect strict rule; the limitation and the bar license themselves. -/
+theorem licence_spec (D : RightsDoc) (N : Line) (n : Narrowing) :
+    licence D N n = match n with
+      | .limPack => some "limitation"
+      | .bar => some "bar"
+      | .blockedBy M =>
+        if cited D N n then some "cited" else if rightCollision D N n then some "collision"
+        else if sameEffectStrict D N M then some s!"effect delivered by strict rule {M}" else none
+      | _ => if cited D N n then some "cited" else if rightCollision D N n then some "collision" else none := by
+  have text : ∀ {n : Narrowing}, n ≠ .limPack → n ≠ .bar →
+      (citedGround D N n).map Ground.text = if cited D N n then some "cited" else none := by
+    intro n h1 h2
+    have hk := citedGround_isSome D N n h1 h2
+    cases hg : citedGround D N n with
+    | some g =>
+      obtain ⟨_, _, _, rfl⟩ := citedGround_eq hg
+      rw [hg] at hk; simp [← hk, Ground.text]
+    | none => rw [hg] at hk; simp [← hk]
+  cases n with
+  | limPack => rfl
+  | bar => rfl
+  | blockedBy M =>
+    have ht := text (n := .blockedBy M) (by simp) (by simp)
+    simp only [licence, ground, Option.map_or]
+    rw [ht]
+    cases cited D N (.blockedBy M) <;> cases rightCollision D N (.blockedBy M) <;>
+      cases sameEffectStrict D N M <;> simp [Ground.text]
+  | dominatedBy M =>
+    have ht := text (n := .dominatedBy M) (by simp) (by simp)
+    simp only [licence, ground, Option.map_or]
+    rw [ht]
+    cases cited D N (.dominatedBy M) <;> cases rightCollision D N (.dominatedBy M) <;> simp [Ground.text]
+  | carveOut i =>
+    simp only [licence, ground, text (n := .carveOut i) (by simp) (by simp)]; simp [rightCollision]
+  | exception M =>
+    simp only [licence, ground, text (n := .exception M) (by simp) (by simp)]; simp [rightCollision]
+  | excepted => simp only [licence, ground, text (n := .excepted) (by simp) (by simp)]; simp [rightCollision]
+  | switch π => simp only [licence, ground, text (n := .switch π) (by simp) (by simp)]; simp [rightCollision]
 
 def narrowingsJson (D : RightsDoc) (certs : List (Option VE.Tableau.Certificate)) : Json :=
   Json.arr ((linesOf D).map (fun RN => Json.mkObj [("right", .str RN.1), ("rule", .str RN.2.node.name),
@@ -131,6 +166,46 @@ def narrowingsJson (D : RightsDoc) (certs : List (Option VE.Tableau.Certificate)
       match licence D RN.2 n with
       | some l => [("licence", .str l)]
       | none => if certified D certs RN.2 n then [("licence", .str "certified")] else [("licence", .null)]))).toArray)])).toArray
+
+/-- The rule a rule-named mechanism names: `exception M`, `blockedBy M`, `dominatedBy M`. -/
+def namedRule : Narrowing → Option String
+  | .exception M | .blockedBy M | .dominatedBy M => some M
+  | _ => none
+
+/-- A licence's grounds as the elaboration writes them: the citation, the colliding line or the
+strict rule; `null` for the limitation and the bar, which license themselves, and for none. -/
+def groundJson : Option Ground → Json
+  | some (.cited R K) => Json.mkObj [("citation", Json.mkObj [("rule", .str R), ("key", .str K)])]
+  | some (.collision M) => Json.mkObj [("line", .str M)]
+  | some (.effect M) => Json.mkObj [("rule", .str M)]
+  | _ => .null
+
+/-- The bar's reach of a line under the rule reading; the bar mechanism is listed exactly when it
+is some (`bar_mem_narrowings`). -/
+def barReachR (D : RightsDoc) (N : Line) : Option String := if ruleReading D then barReach D N else none
+
+/-- The elaboration's narrowings: per line, the limitations in scope (the limitation mechanism is
+listed exactly when there is one, `limPack_mem_narrowings`) and the bar's reach; per mechanism, its
+licence without certificates and the grounds it rests on (`licence` is their text). -/
+def elaboratedNarrowingsJson (D : RightsDoc) : Json :=
+  Json.arr ((linesOf D).map (fun RN => Json.mkObj [("right", .str RN.1), ("rule", .str RN.2.node.name),
+    ("in_scope", .bool !(scopeLimits D RN.2).isEmpty),
+    ("limitations", toJson ((scopeLimits D RN.2).map (·.name))),
+    ("bar", match barReachR D RN.2 with | some m => .str m | none => .null),
+    ("mechanisms", Json.arr ((narrowings D RN.2).map (fun n => Json.mkObj [("mechanism", .str (mechText n)),
+      ("target", .str (scopeTargetName RN.2 n)), ("conclusion", enc (certTarget D RN.2 n)),
+      ("licence", match licence D RN.2 n with | some l => .str l | none => .null),
+      ("grounds", groundJson (ground D RN.2 n))])).toArray)])).toArray
+
+/-- Per rule of `T″` without bars (`directNodes`, in order): the mechanisms that name it, and per
+citation of its source in key order (`citesOf`), the mechanisms whose licence rests on it. -/
+def ruleNarrowingsJson (D : RightsDoc) : Json :=
+  let mechs := (linesOf D).flatMap (fun RN => (narrowings D RN.2).map (fun n =>
+    (scopeTargetName RN.2 n, namedRule n, ground D RN.2 n)))
+  Json.arr ((directNodes D).map (fun X => Json.mkObj [("rule", .str X.name),
+    ("narrows", toJson ((mechs.filter (fun m => m.2.1 == some X.name)).map (·.1))),
+    ("citations", Json.arr ((citesOf D X.name).map (fun kv => Json.mkObj [("key", .str kv.1),
+      ("licenses", toJson ((mechs.filter (fun m => m.2.2 == some (Ground.cited X.name kv.1))).map (·.1)))])).toArray)])).toArray
 
 def distinctionJson (D : RightsDoc) : Json :=
   Json.arr ((VE.SoftNorms.dedup ((linesOf D).map (·.2.node.pred))).map (fun p => Json.mkObj
@@ -149,7 +224,8 @@ def regenerated (D : RightsDoc) (environment : Json) : List (String × Json) :=
    ("bars", Json.arr ((barNodes D).map nodeJson).toArray),
    ("rights_background", Json.arr ((limPremisesLabelled D).map (fun (l, a) =>
       VE.SoftNorms.Wire.bgEntry "rights" l a)).toArray),
-   ("narrowings", narrowingsJson D []),
+   ("narrowings", elaboratedNarrowingsJson D),
+   ("rule_narrowings", ruleNarrowingsJson D),
    ("distinction", distinctionJson D),
    ("findings", Json.arr ((noDistinction D).map (fun f => Json.str f.text)).toArray)] ++
   soft.filter (fun kv => kv.1 != "environment_prime")

@@ -8,7 +8,7 @@ from .backends.relay import decide, decide_once
 from .backends.service_schema import same_json
 from .ast import decimal_value
 from .errors import CheckerUnavailable
-from .softnorms import _act_key, _incompatible, _rank_above, bind_prime_environment, bind_soft_elaboration
+from .softnorms import _act_key, bind_prime_environment, bind_soft_elaboration
 from .rights import LINE_RULE_FIELDS
 
 def _wire(value):
@@ -20,79 +20,81 @@ def _wire(value):
     return value
 
 
-def _narrowings(own, rule, direct, predicates, soft, *, limited, barred, keys, cites_of, line_rules):
-    """The `(mechanism, licence)` pairs of one line instance: the mechanisms exactly as Correlate.lean
-    `narrowings` lists them, each with the licence Run.lean `licence` gives it without certificates.
-
-    Every slot is a function of the request: `direct` is `directNodes`, each line instance then
-    each norm unit as `(name, rule)`; a rule-named slot is filtered by the rule structure alone
-    (`childrenIn`, `blocksOn`, `Incompatible`, `dominable`), never by a proof. A licence names the
-    first relation of Scope.lean the request holds: a citation (`cited`, over `citesOf` and the
-    `lineKeys` in `keys`), a right line of the opposite effect (`rightCollision`; `line_rules` names
-    the line instances), a same-effect strict rule (`sameEffectStrict`), else none.
-
-    This mirrors Lean's derivation: a D1 exception the DRI GRANTED on 2026-10-15, time-boxed to 2026-10-22. It
-    expires when the infra item rights-licence-relay merges (Lean returns the licences, Python relays them).
-    """
-    default = rule.get('mode', 'strict') == 'default'
-    predicate, sign = rule['predicate'], rule['sign']
-    dual_permission = _act_key(predicate, predicates)
-    dual_obligation = next((name for name, declaration in sorted(predicates.items())
-                            if declaration.get('regulated', {}).get('role') == 'obligation' and
-                            declaration['regulated'].get('permission') == predicate), None)
-    above = _rank_above(soft)
-    holistic = soft.get('outranking', {}).get('mode') == 'holistic'
-    own_cites = cites_of(own)
-
-    def higher(first, second):
-        return (first.get('rank') is not None and second.get('rank') is not None and
-                first['rank'] in above.get(second['rank'], ()))
-
-    def blocks(other):
-        return (other['predicate'] == predicate or
-                (sign and dual_permission == other['predicate'] and not other['sign']) or
-                (not sign and dual_obligation == other['predicate'] and other['sign']))
-
-    def narrows(name):
-        return any(cites_of(name).get(f'narrows:{key}') for key in keys)
-
-    def collides(name, other):
-        return name in line_rules and _incompatible(other, rule, predicates)
-
-    def licence(cited, collision=False, effect=None):
-        return 'cited' if cited else 'collision' if collision else effect
-
-    children = sorted(name for name, other in direct if other['predicate'] == predicate
-                      for over in other.get('over') or [] if over == own)
-    return [
-        *((f'carve-out {index}', licence(own_cites.get(f'unless:{index}')))
-          for index in range(1, len(rule.get('unless') or []) + 1)),
-        *((f'exception {name}', licence(narrows(name) or
-                                        any(cites_of(name).get(f'over:{key}') for key in keys)))
-          for name in children),
-        *([('limitation', 'limitation')] if limited else []),
-        *([('exception', licence(own_cites.get('exception')))] if default else []),
-        *((f'switch {party}', licence(own_cites.get(f'alterable:{party}'))) for party in rule.get('alterable') or []),
-        *((f'blockedBy {name}', licence(
-            narrows(name), collides(name, other),
-            f'effect delivered by strict rule {name}' if (other['predicate'] == predicate and
-                                                         other['sign'] == sign) else None))
-          for name, other in direct
-          if default and other.get('mode', 'strict') == 'strict' and blocks(other)),
-        *((f'dominatedBy {name}', licence(
-            own_cites.get('rank') or narrows(name),
-            collides(name, other) and (own_cites.get('rank') or cites_of(name).get('rank'))))
-          for name, other in direct
-          if default and other.get('mode', 'strict') == 'default' and _incompatible(other, rule, predicates) and
-          (higher(other, rule) or (holistic and higher(rule, other)))),
-        *([('bar', 'bar')] if barred else []),
-    ]
+# Scope.lean `mechText`, in the order Correlate.lean `narrowings` lists the slots: a slot that names a
+# request item (a carve-out's number, a rule, a party) names it after the first space.
+_NAMED_SLOTS = ('carve-out', 'exception', None, None, 'switch', 'blockedBy', 'dominatedBy', None)
+_FIXED_SLOTS = {'limitation': 2, 'exception': 3, 'bar': 7}
+_RULE_SLOTS = ('exception', 'blockedBy', 'dominatedBy')
 
 
-def _in_scope(limits, right, kind):
-    """Tree.lean `inScope` over the authored limitations: a limitation covers the right and the source kind."""
-    return any((limit['scope'] == 'all' or right in limit['scope']) and
-               (limit['kinds'] == 'all' or kind in limit['kinds']) for limit in limits)
+def _slot(text):
+    """A mechanism's slot `(order, kind, name)` read off its wire text, or ValueError."""
+    if text in _FIXED_SLOTS:
+        return _FIXED_SLOTS[text], text if text != 'exception' else 'excepted', None
+    kind, space, name = text.partition(' ')
+    if not space or not name or kind not in _NAMED_SLOTS:
+        raise ValueError('unknown narrowing mechanism')
+    if kind == 'carve-out' and not (name.isascii() and name.isdecimal() and name[0] != '0'):
+        raise ValueError('non-canonical carve-out number')
+    return _NAMED_SLOTS.index(kind), kind, name
+
+
+def _bind_line_narrowings(entry, rule, *, limits, direct, line_rules, cites, aimed):
+    """Bind one line's elaborated narrowings to the request (R8(b)); Lean chose them (Correlate.lean
+    `narrowings`) and their licences (Run.lean `licence`, `licence_spec`).
+
+    Each mechanism names a slot the request holds: an authored carve-out, a declared rule other than
+    the line's own, a party the rule lets switch, the rule's own exception when it is a default rule,
+    the limitations Lean lists in scope, the bar Lean finds reaching the line (`bar_mem_narrowings`,
+    `limPack_mem_narrowings`). Every slot the request fixes is listed once, in Lean's order; a
+    rule-named slot is listed where Lean's `rule_narrowings` row of that rule lists it. A licence names
+    its grounds: the citation, which the request holds (`citedBy_sound`), the colliding right line or
+    the strict rule, each the mechanism's own rule (`ground_collision`, `ground_effect`)."""
+    own, default = entry['rule'], rule.get('mode', 'strict') == 'default'
+    names = entry['limitations']
+    if (len(names) != len(set(names)) or names != [name for name in limits if name in names] or
+            entry['in_scope'] is not bool(names) or
+            (entry['bar'] is not None and entry['bar'] not in aimed)):
+        raise ValueError('unbound narrowing scope or bar')
+    slots, seen = [], set()
+    for mechanism in entry['mechanisms']:
+        order, kind, name = _slot(mechanism['mechanism'])
+        if mechanism['target'] != f"{own}:{mechanism['mechanism']}":
+            raise ValueError('unbound narrowing target')
+        position = (decimal_value(name) if kind == 'carve-out' else
+                    name if kind == 'exception' else
+                    (rule.get('alterable') or []).index(name) if kind == 'switch' and
+                    name in (rule.get('alterable') or []) else
+                    direct.index(name) if kind in _RULE_SLOTS and name in direct else 0)
+        if ((kind == 'carve-out' and not 1 <= position <= len(rule.get('unless') or [])) or
+                (kind in _RULE_SLOTS and (name not in direct or name == own)) or
+                (kind == 'switch' and name not in (rule.get('alterable') or [])) or
+                (kind in ('excepted', 'blockedBy', 'dominatedBy') and not default) or
+                (kind == 'limitation' and not entry['in_scope']) or (kind == 'bar' and entry['bar'] is None)):
+            raise ValueError('unbound narrowing mechanism')
+        slots.append((order, position))
+        seen.add(kind)
+        licence, grounds = mechanism['licence'], mechanism['grounds']
+        if kind in ('limitation', 'bar'):
+            bound = licence == kind and grounds is None
+        elif licence is None:
+            bound = grounds is None
+        elif licence == 'cited':
+            citation = (grounds or {}).get('citation') or {}
+            bound = set(grounds or {}) == {'citation'} and citation.get('key') in cites.get(citation.get('rule'), {})
+        elif licence == 'collision':
+            bound = kind in ('blockedBy', 'dominatedBy') and grounds == {'line': name} and name in line_rules
+        else:
+            bound = (kind == 'blockedBy' and grounds == {'rule': name} and
+                     licence == f'effect delivered by strict rule {name}')
+        if not bound:
+            raise ValueError('unbound mechanism licence or grounds')
+    if (slots != sorted(set(slots)) or
+            [p for o, p in slots if o == 0] != list(range(1, len(rule.get('unless') or []) + 1)) or
+            [p for o, p in slots if o == 4] != list(range(len(rule.get('alterable') or []))) or
+            ('excepted' in seen) is not default or ('limitation' in seen) is not entry['in_scope'] or
+            ('bar' in seen) is not (entry['bar'] is not None)):
+        raise ValueError('missing, repeated or reordered narrowing mechanism')
 
 
 # Correlate.lean `barNode`: every bar rule is strict, hard and negative, with no carve-out.
@@ -155,13 +157,17 @@ def _bind_elaboration(row, units, environment):
             raise ValueError('rights line count')
         if len(row['lines']) != len(source_lines):
             raise ValueError('rights source line count')
+        # Run.lean `elaboratedNarrowingsJson`: one row per line instance, in the lines' order.
+        if [(entry['right'], entry['rule']) for entry in row['narrowings']] != [
+                (line['right'], line['rule']) for line in row['lines']]:
+            raise ValueError('unbound narrowing line')
         holders = {unit['right']['name']: unit['right']['holder'] for unit in units if 'right' in unit}
         # Scope.lean `citesOf`: a line instance's source citations, else an outside norm unit's.
         cites = {unit['norm']['name']: unit.get('cites') or {} for unit in norms}
-        line_keys = {}
+        line_rules = set()
         predicates = environment['vocabulary']['predicates']
-        for entry, (right, kind, name, bearer, predicate, rule, source_line, rule_id) in zip(
-                row['lines'], source_lines):
+        for entry, scoped, (right, kind, name, bearer, predicate, rule, source_line, rule_id) in zip(
+                row['lines'], row['narrowings'], source_lines):
             instance = (('powerLiberty' if source_line['kind'] == 'power' and
                          rule is source_line.get('liberty') else
                          'powerRecognition' if source_line['kind'] == 'power' else kind))
@@ -174,8 +180,7 @@ def _bind_elaboration(row, units, environment):
                            (objects.index(holders[right]) if holders[right] in objects else len(objects)) + 1)
             node = entry['node']
             cites[rule_id] = source_line.get('cites') or {}
-            # Scope.lean `lineKeys`: the instance's rule and its source norm.
-            line_keys[rule_id] = [rule_id, *([source_line['norm']['name']] if source_line.get('norm') else [])]
+            line_rules.add(rule_id)
             if (entry['right'] != right or entry['kind'] != kind or
                     entry['instance'] != instance or
                     type(entry['holder_slot']) is not int or entry['holder_slot'] != holder_slot or
@@ -185,8 +190,9 @@ def _bind_elaboration(row, units, environment):
                     entry['predicate'] != predicate or node['predicate'] != predicate or
                     any(node[field] != rule.get(field, default) for field, default in
                         (('sign', None), ('hard', False), ('mode', 'strict'), ('over', []))) or
-                    # Correlate.lean `nodeOf`: the authored carve-outs, then the limitation pack when in scope.
-                    len(node['unless']) != len(rule.get('unless') or []) + _in_scope(limit_units, right, kind) or
+                    # Correlate.lean `nodeOf`: the authored carve-outs, then the limitation pack when Lean
+                    # finds a limitation in scope (the line's narrowing row).
+                    len(node['unless']) != len(rule.get('unless') or []) + (scoped['in_scope'] is True) or
                     not same_json(node['unless'][:len(rule.get('unless') or [])], rule.get('unless') or [])):
                 raise ValueError('unbound rights source line')
         for bar in row['bars']:
@@ -209,14 +215,11 @@ def _bind_elaboration(row, units, environment):
                             for condition in limits[parts[2]]['conditions'])):
                 raise ValueError('unbound limitation premise')
             limitation_labels.append(label)
-        expected_acts = {}
-        for limit in limit_units:
-            acts = set()
-            for right, kind, _, _, predicate, _, _, _ in source_lines:
-                if ((limit['scope'] == 'all' or right in limit['scope']) and
-                        (limit['kinds'] == 'all' or kind in limit['kinds'])):
-                    acts.add(_act_key(predicate, predicates))
-            expected_acts[limit['name']] = acts
+        # Tree.lean `limActs`: the act keys of the lines each limitation scopes, as Lean lists them.
+        expected_acts = {limit['name']: set() for limit in limit_units}
+        for scoped, line in zip(row['narrowings'], row['lines']):
+            for name in scoped['limitations']:
+                expected_acts[name].add(_act_key(line['predicate'], predicates))
         expected_limit_labels = {
             f"rights:limitation:{limit['name']}:{act}:{condition['role']}:{condition['name']}"
             for limit in limit_units for act in expected_acts[limit['name']]
@@ -289,33 +292,29 @@ def _bind_elaboration(row, units, environment):
                for entry in row['bars']):
             raise ValueError('unbound bar over rule')
         line_pairs = Counter((line['right'], line['rule']) for line in row['lines'])
-        narrowing_pairs = Counter((entry['right'], entry['rule']) for entry in row['narrowings'])
-        if narrowing_pairs != line_pairs:
-            raise ValueError('unbound narrowing line')
-        # `directNodes` (Correlate.lean): the line instances and the norm units, without bars.
-        direct = ([(line['rule'], correlated[line['rule']]) for line in row['lines']] +
-                  [(unit['norm']['name'], unit['norm']) for unit in norms])
-        for entry in row['narrowings']:
-            targets = [mechanism['target'] for mechanism in entry['mechanisms']]
-            line = next(line for line in row['lines'] if line['rule'] == entry['rule'])
-            rule = correlated[entry['rule']]
-            limited = _in_scope(limit_units, entry['right'], line['kind'])
-            # Correlate.lean `barReach`: the line's own permission, or the permission dual
-            # of a default obligation line, when that permission is right-derived.
-            default = rule.get('mode', 'strict') == 'default'
-            reach = (line['predicate'] in permission_lines or
-                     (default and line['node']['sign'] and
-                      _act_key(line['predicate'], predicates) != line['predicate'] and
-                      _act_key(line['predicate'], predicates) in permission_lines))
-            if (len(targets) != len(set(targets)) or entry['in_scope'] is not limited or
-                    any(mechanism['target'] != f"{entry['rule']}:{mechanism['mechanism']}"
-                        for mechanism in entry['mechanisms']) or
-                    [(mechanism['mechanism'], mechanism['licence'])
-                     for mechanism in entry['mechanisms']] != _narrowings(
-                        entry['rule'], rule, direct, predicates, environment['vocabulary'].get('soft', {}),
-                        limited=limited, barred=rule_bar and reach, keys=line_keys[entry['rule']],
-                        cites_of=lambda name: cites.get(name, {}), line_rules=line_keys)):
-                raise ValueError('unbound narrowing target or mechanism')
+        # `directNodes` (Correlate.lean): the line instances, then the norm units, without bars; per rule,
+        # Lean's `rule_narrowings` row lists its source's citations in key order (`citesOf`).
+        direct = [line['rule'] for line in row['lines']] + [unit['norm']['name'] for unit in norms]
+        rows = row['rule_narrowings']
+        if ([entry['rule'] for entry in rows] != direct or
+                any([citation['key'] for citation in entry['citations']] != sorted(cites.get(entry['rule'], {}))
+                    for entry in rows)):
+            raise ValueError('unbound rule narrowing row')
+        for entry, line in zip(row['narrowings'], row['lines']):
+            _bind_line_narrowings(entry, correlated[entry['rule']], limits=list(limits), direct=direct,
+                                  line_rules=line_rules, cites=cites,
+                                  aimed=set(aimed_index) if rule_bar else set())
+        mechanisms = [mechanism for entry in row['narrowings'] for mechanism in entry['mechanisms']]
+        named = [(slot[2], mechanism['target']) for mechanism in mechanisms
+                 for slot in [_slot(mechanism['mechanism'])] if slot[1] in _RULE_SLOTS]
+        grounded = [(mechanism['grounds']['citation']['rule'], mechanism['grounds']['citation']['key'],
+                     mechanism['target']) for mechanism in mechanisms if mechanism['licence'] == 'cited']
+        # Each rule-named mechanism is listed under its rule, and each citation licenses exactly the
+        # mechanisms whose grounds name it (Run.lean `ruleNarrowingsJson`).
+        if (Counter(named) != Counter((entry['rule'], target) for entry in rows for target in entry['narrows']) or
+                Counter(grounded) != Counter((entry['rule'], citation['key'], target) for entry in rows
+                                             for citation in entry['citations'] for target in citation['licenses'])):
+            raise ValueError('unbound rule narrowing or citation licence')
         distinction_predicates = {line['predicate'] for line in row['lines']}
         reported_predicates = [entry['predicate'] for entry in row['distinction']]
         if (len(reported_predicates) != len(set(reported_predicates)) or
