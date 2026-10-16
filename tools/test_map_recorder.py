@@ -39,6 +39,8 @@ import subprocess
 import sys
 
 _state: dict = {}
+# The site hook tools/test_map.py installs: a module of this name, imported by a `.pth` file.
+HOOK = "_ve_testmap"
 
 
 def _relative(path) -> str | None:
@@ -194,14 +196,17 @@ def _which(program: str) -> str | None:
 
 def _records_here(program: str, argv: list, env) -> bool:
     """Whether a Python child started as `program` with `env` (None: this process's) writes its records
-    to this recording: an interpreter of this environment (its site-packages hold the hook), the site
-    hook not skipped, and this recording's variables. Its record file then exists from before any code
-    under the root runs, so a missing one means it ran none."""
+    to this recording: this process started through the site hook, the child is an interpreter of the
+    same environment (whose site-packages hold that hook), the hook is not skipped, and the child has
+    this recording's variables. Its record file then exists from before any code under the root runs,
+    so a missing one means it ran none."""
     env = os.environ if env is None else env
     located = program if os.sep in program else (_which(program) or program)
-    return (os.path.isabs(located) and os.path.basename(located).startswith("python")
+    return (HOOK in sys.modules and os.path.isabs(located) and os.path.basename(located).startswith("python")
             and os.path.dirname(os.path.normpath(located)) == os.path.dirname(os.path.abspath(sys.executable))
-            and "-S" not in [os.fsdecode(a) for a in argv[1:4] if isinstance(a, (str, bytes))]
+            # `-S`, also inside a cluster (`-IS`); an option with an S in its value counts too (fail closed).
+            and not any(a.startswith("-") and not a.startswith("--") and "S" in a
+                        for a in (os.fsdecode(a) for a in argv[1:4] if isinstance(a, (str, bytes))))
             and env.get("VE_TESTMAP_OUT") == _state["out"]
             and env.get("VE_TESTMAP_ROOT") == os.environ.get("VE_TESTMAP_ROOT"))
 
