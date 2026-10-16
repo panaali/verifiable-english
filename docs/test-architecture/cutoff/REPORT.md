@@ -294,6 +294,7 @@ rules, not code of this batch.
 | M18 | tools/answer_cutoff.py | today's rules read the recording's map, not the one R1 reads | `test_answers_read_todays_map_and_count_the_recordings_staleness` |
 | M19 | tools/answer_cutoff.py | a unit that ran code changed since the recording keeps its recorded requests | `test_answers_read_todays_map_and_count_the_recordings_staleness` |
 | M20 | tools/select_tests.py | a plan print, which verify.sh's legacy fast gate reads, takes R1's rule | `test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does` |
+| M21 | tools/answer_cutoff.py | R1 takes the answers rule before the DRI has read its measurement | `test_r1_never_takes_the_answers_rule` |
 | M14 | tools/select_tests.py | the hook ignores the rule it was given | `test_the_hook_passes_its_rule_and_is_off_by_default` |
 <!-- /table:mutants -->
 
