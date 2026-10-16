@@ -270,7 +270,7 @@ def answers_selection(tmp_path: Path, path: str, *, pinned: bool = True) -> set[
         (tmp_path / unit).write_text("def test():\n    pass\n")
     unknown = answer_cutoff.unknown_units(index, plain, graph, {"drifted"}, root=tmp_path)
     client_only = {unit for unit, row in index["units"].items() if row["pins"] == ["client"]}
-    coverage = answer_cutoff.CutoffCoverage(data, None, client_only if pinned else set())
+    coverage = answer_cutoff.CutoffCoverage(select_tests.Coverage(data), client_only if pinned else set())
     rule, _ = answer_cutoff.answers_rule({"changed": ["k0"]}, index, set(unknown))
     selected: set[str] = set()
     with answer_cutoff.service_rule(rule):
@@ -442,3 +442,33 @@ def test_a_case_named_by_handle_is_replayed_inline_as_the_client_resends_it(tmp_
                    for entries in (handled.run_bound("evaluate", [case]),
                                    answer_replay.send(plain, "evaluate", [text])["results"])]
     assert answers[0] == answers[1] and answers[0]
+
+
+def test_answers_read_todays_map_and_count_the_recordings_staleness(tmp_path, monkeypatch):
+    """Today's rules read the map R1 reads; only the requests come from the recording. A unit that ran code
+    changed since the recording, and a service user the recording lacks, are unknown; with no map at all
+    the plan is today's."""
+    fresh, stale, unrecorded = "tests/test_time_w6a.py", "tests/test_wire_contract_lean.py", "tests/test_risk_integration.py"
+    directory = recording(tmp_path, {fresh: {"x": [SERVICE]}, stale: {"x": [SERVICE]}},
+                          {fresh: entry(0), stale: entry(1)}, ["k0", "k1"])
+    path = tmp_path / "diff.json"
+    answer_replay.write_json({"version": answer_replay.VERSION, "recording_dir": str(directory),
+                              "recording": answer_replay.digest_file(directory / "requests.json.gz"),
+                              "base": "a" * 64, "head": "b" * 64, "cases": 2, "changed": []}, path)
+    today = select_tests.Coverage(make_map({unit: {"x": [SERVICE]} for unit in (fresh, stale, unrecorded)}))
+    monkeypatch.setattr(select_tests, "uncertain_since", lambda coverage, *args: (
+        {stale} if coverage is not today else set(), 1))
+    seen = []
+
+    def plan(paths, *, coverage, **options):
+        seen.append(coverage)
+        return {"selected": sorted(select_tests.service_impact(coverage, None, "lean/VE/Rights/Run.lean"))}
+
+    monkeypatch.setattr(select_tests, "select", plan)
+    selected = answer_cutoff.select_answers(path, ["lean/VE/Rights/Run.lean"], base="HEAD", after=None,
+                                            coverage=today, build="b" * 64)
+    assert selected["selected"] == sorted([stale, unrecorded])
+    assert set(seen[0].tests) == {fresh, stale, unrecorded}
+    monkeypatch.setattr(select_tests, "select", lambda paths, **options: {"selected": ["everything"]})
+    assert answer_cutoff.select_answers(path, [], base="HEAD", after=None, coverage=None,
+                                        build="b" * 64)["selected"] == ["everything"]
