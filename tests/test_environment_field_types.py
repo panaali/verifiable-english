@@ -580,6 +580,7 @@ def _answer(binary, batch):
     return done.returncode, json.loads(done.stdout), done.stderr.decode(errors="replace")
 
 
+@pytest.mark.live_service
 @pytest.mark.parametrize("binary", sorted(LEAN_ROUTES))
 def test_every_lean_route_rejects_every_wrong_type_without_panicking(binary):
     """Each Lean route decodes the environment of a case with `Except`: every
@@ -613,6 +614,7 @@ def test_rust_rejects_every_wrong_type_without_crashing(rust_executable):
         assert done.returncode == 2 and "null" in done.stderr.lower(), (case["id"], done.stderr)
 
 
+@pytest.mark.live_service
 @pytest.mark.parametrize("binary", sorted(LEAN_ROUTES))
 def test_every_lean_route_reads_every_nested_value_without_panicking(binary):
     """The nested matrix above on each Lean route: one row per case, each a

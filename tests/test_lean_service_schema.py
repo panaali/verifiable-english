@@ -296,6 +296,7 @@ def test_genuine_responses_satisfy_the_lean_invariants(genuine, executables):
     assert set(verdicts) == {"accept"}, [v for v in verdicts if v != "accept"][:5]
 
 
+@pytest.mark.live_service
 def test_genuine_request_errors_are_bound_and_accepted(genuine_errors, executables):
     """mig1d recheck: every request error echoes the request's mode and its case digests
     (`null` for a cases text that does not split), and the schemas and the Lean decoders
@@ -309,6 +310,7 @@ def test_genuine_request_errors_are_bound_and_accepted(genuine_errors, executabl
     assert set(lean_verdicts(executables[1], items, "invariants")) == {"accept"}
 
 
+@pytest.mark.live_service
 def test_request_errors_without_their_binding_are_rejected(genuine_errors, executables):
     """Dropping or altering the mode or the digests of a request error, or checking it
     against another request's digests, is rejected by the schemas and by Lean alike."""
@@ -1289,6 +1291,7 @@ def _depth(formula):
     return deepest
 
 
+@pytest.mark.live_service
 def test_generated_formulas_follow_each_routes_limits(executables):
     """The W6 route rejects generated definition premises beyond its AST limit.
     English and norms still return their deeper generated formulas; the service

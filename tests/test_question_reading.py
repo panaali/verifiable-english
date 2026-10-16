@@ -522,6 +522,7 @@ def test_text_variants_get_well_formed_answers(name):
 
 # ------------------------------------------------------------------ the whole operation's deadline
 
+@pytest.mark.live_service  # its deadline is enforced on the process (tests/answer_store.py INVENTORY row 8)
 def test_the_whole_question_is_bounded_by_the_modes_deadline(monkeypatch):
     """A crossed CPU deadline bounds the whole service operation, including on hosts without /proc.
     On /proc hosts the injected clock advances only after the whole request has been sent."""

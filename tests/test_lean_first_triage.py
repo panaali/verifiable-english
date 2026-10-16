@@ -72,6 +72,7 @@ def test_df8_dependency_order_accepts_a_misspelt_vocabulary_field(monkeypatch):
     assert row["status"] == "ok" and row["order"] == []
 
 
+@pytest.mark.live_service
 @needs_service
 def test_df12_risk_route_rejects_an_nbsp_act_phrase(monkeypatch):
     monkeypatch.setenv("VE_AUTHORITY", "python")
