@@ -18,9 +18,11 @@ from `dae12d5ff`.
    ruling covers it, because it is not a user-visible delta.
 3. **External items (orchestrator, not this branch):**
    - R1's runner sets `VE_ANSWER_STORE` if the DRI turns the store on.
-   - The nightlies run `tools/answer_replay.py store-replay` after `tools/gate.py --no-quarantine`.
-   - tarch-cutoff also creates `tools/answer_replay.py`. This branch's part is one function (`store_replay`) and one
-     `COMMANDS` entry, so the merge only joins the two dispatch tables.
+   - The nightlies run `tools/answer_store_replay.py --store DIR` after `tools/gate.py --no-quarantine`.
+   - tarch-cutoff also creates `tools/answer_replay.py`. At the merge with ve-integration the store's byte replay
+     moved to its own tool, `tools/answer_store_replay.py`: tools/select_tests.py imports the cutoff's
+     `answer_replay` (through `answer_cutoff`), and a `tests/answer_store.py` import there put the seam's sampler
+     (`os.urandom`) in the closure of 60 units, which the cutoff's `randomised` then counted as unknown.
 
 ## 0. Hard conditions, and where each is enforced
 
@@ -37,7 +39,7 @@ from `dae12d5ff`.
 | Off for every test in the inventory's live column (`live_service`) | The mark is registered by the plugin and set on every inventory test; `pytest_runtest_protocol` reads it for each test | `test_a_live_service_test_is_never_served_and_is_counted`, `test_every_inventory_test_exists_and_runs_live`; the plugin itself, in a nested pytest on one and two workers: `test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run` (review F2) |
 | A hit skips nothing a test observes (review F1) | An answer is stored only when its request wrote nothing to the process's standard error and was answered on its first attempt; the retry after any failed attempt is live and unstored. The store is off for a request when any client binding, table (a lowered `DEADLINES` entry, as `lean_routes.completed_within` sets) or `VE_LEAN_SERVICE*` setting differs from those it was installed with, read from the client itself (`SEAM`, `SEAM_GLOBALS`, `SEAM_ENV`) | `test_an_answer_whose_request_wrote_to_standard_error_is_never_served`, `test_an_answer_that_needed_a_retry_is_never_stored`, `test_a_changed_client_setting_turns_the_store_off` |
 | Inventory rows 1–13 with a live test each; add RLIMIT_AS (6) and RSS recycle (9); row 14 (standard error) from the review | Section 2; `test_the_service_runs_under_its_address_space_limit`, `test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request` | both new tests, live |
-| Nightly byte replay of the whole store against its build; any difference fails | `answer_store.replay`, `tools/answer_replay.py store-replay` (exit 1) | `test_a_planted_wrong_entry_fails_the_byte_replay`, `test_a_planted_nondeterministic_answer_fails_the_byte_replay`, `test_an_empty_or_unreadable_store_is_reported` |
+| Nightly byte replay of the whole store against its build; any difference fails | `answer_store.replay`, `tools/answer_store_replay.py` (exit 1) | `test_a_planted_wrong_entry_fails_the_byte_replay`, `test_a_planted_nondeterministic_answer_fails_the_byte_replay`, `test_an_empty_or_unreadable_store_is_reported` |
 | R1 re-asks a random 1% of hits live, as a drift alarm only | `SAMPLE = 0.01`. A difference (or standard error written) is an alarm, the entry goes, the caller gets the process's answer, and the run fails | `test_a_sampled_hit_that_drifted_is_an_alarm_and_the_caller_gets_the_process_answer`; the run fails on an alarm: `test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run` |
 | Seeded: a planted wrong entry and a planted nondeterministic answer fail the replay; a planted positional mismatch is refused, not served; an R2 hit is impossible | the four tests named above | section 4 (M1, M7, M8, M12) |
 

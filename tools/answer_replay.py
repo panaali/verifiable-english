@@ -20,12 +20,6 @@ A batch is exact for each case's answer: given the request's budget and decoding
 recorded batches' budgets, one case failing a whole request and the service's request loop,
 lives in lean/VE/Service/Protocol.lean, lean/Serve.lean and lean/VE/Json.lean; the cutoff selects
 every service user when one of those changes.
-
-* `store-replay --store DIR [--executable PATH]` (the answer store's nightly check, tests/answer_store.py):
-  every entry the store holds for the build at PATH (default: the lake build), its exact request line sent
-  to that build and the answer compared with the stored response byte for byte. Exit 1 on any difference or
-  unreadable entry; the JSON result goes to stdout (or `--output`). It runs after the nightly's
-  `tools/gate.py --no-quarantine`, never in place of it: the gate never reads the store.
 """
 from __future__ import annotations
 
@@ -232,24 +226,7 @@ def read_json(path: Path) -> dict:
         return json.load(handle)
 
 
-# The answer store's byte replay
-
-def store_replay(args: argparse.Namespace) -> int:
-    from tests import answer_store
-    result = answer_store.replay(args.store, args.executable,
-                                 allow_unlisted_build=args.allow_unlisted_build, jobs=args.jobs)
-    text = json.dumps(result, indent=1, sort_keys=True) + "\n"
-    if args.output:
-        args.output.write_text(text)
-    else:
-        sys.stdout.write(text)
-    print(f"store-replay: build {result['build'][:12]}: {result['same']} of {result['entries']} entries the same, "
-          f"{len(result['different'])} different, {len(result['unreadable'])} unreadable; "
-          f"{len(result['other_builds'])} other builds not replayed", file=sys.stderr)
-    return 0 if result["ok"] else 1
-
-
-def main(argv: list[str] | None = None) -> int:
+def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
     one = sub.add_parser("replay", help="replay a recording against one ve_service build")
@@ -261,17 +238,7 @@ def main(argv: list[str] | None = None) -> int:
     two.add_argument("base", type=Path)
     two.add_argument("head", type=Path)
     two.add_argument("--output", type=Path, required=True)
-    store = sub.add_parser("store-replay", help="replay the answer store against its build, byte for byte")
-    store.add_argument("--store", required=True, type=Path, help="the store's directory")
-    store.add_argument("--executable", type=Path, default=lean_service.DEFAULT_EXECUTABLE,
-                       help="the build to replay against")
-    store.add_argument("--allow-unlisted-build", action="store_true",
-                       help="replay a build lean/checkers.lock does not pin (tests)")
-    store.add_argument("--jobs", type=int, default=4, help="service processes in parallel")
-    store.add_argument("--output", type=Path, help="write the JSON result here")
-    args = parser.parse_args(argv)
-    if args.command == "store-replay":
-        return store_replay(args)
+    args = parser.parse_args()
     if args.command == "replay":
         data = replay(args.recording, args.service, args.jobs)
         write_json(data, args.output)
