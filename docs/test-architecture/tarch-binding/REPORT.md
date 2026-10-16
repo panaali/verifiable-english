@@ -71,6 +71,11 @@ On the 537 recorded answers, the shapes generate 14,184 mutants:
 - the other 729 are "either": the shapes alone do not decide them. Examples are another member of a closed
   domain, or a reordered list whose positions `x-zip` binds element by element.
 
+After the sync with main `d7ea7228b` (pre-review round 2), there are 536 answers and 14,403 mutants. 4,427 are
+predicted refused and 9,243 accepted, and all 13,670 get the predicted verdict; 733 are "either". The one answer
+dropped is a readings-route case that main's build now answers with an error. The table below is from the
+earlier build (`evidence.json` `mutation_test`; the new totals are in `sync_d7ea7228b`).
+
 | mode | answers | mutants | predicted refuse | predicted accept | either |
 |---|---:|---:|---:|---:|---:|
 | route | 37 | 331 | 268 | 31 | 32 |
@@ -242,7 +247,9 @@ No standing ruling applies.
   `present: false`), never a re-probe.
 - **Probes before the merge.** The probes were recorded before the sync with main. Paths of the recursive
   `kind` and `q_term` shapes, and main's new `search-budget` mode, have no probe yet (`--record` refreshes them).
-  The answers were refreshed on the merged build (`--answers`).
+  The answers were refreshed on the merged build (`--answers`), again after the sync with `d7ea7228b`. rd-9's
+  edits to `ve/rights.py` changed three cited lines (`rights line binding`, `rights line count`, `rights wording
+  keys`), which the census now marks `present: false`; `--record` re-probes them.
 
 ## 9. Seeded bugs (Python is the only product language changed)
 
@@ -292,6 +299,25 @@ Two seeds needed a second run:
     fix edits `lean/ResponseShape/Schemas/NormDefaults.lean`, which this batch must not edit, and
     `tools/relay-gate-allow.json`, which that item owns. This branch does not copy it: the pre-review `[relay]`
     line clears when that item merges and this branch syncs.
+  - **Pre-review round 2** (after the sync with main `d7ea7228b`, which merged rd-9): 43 routes, 118,538 mutants,
+    25 failures. They are the 14 stale allow-list paths and the `norm-defaults` mutant above, plus 10 accepted
+    `readings-route` mutants (`decisions/*/key/excepted`, `pair/gaps`, `soft_premises`, `decided_units`) that
+    came with rd-9's readings-route shape. A detached checkout of main `d7ea7228b`, using the same `ve_service`
+    (no Lean file differs), gives the same 25 lines, word for word, and exits 1. The lines are saved in
+    `relay-gate-main-d7ea7228b.txt`, and the numbers in `evidence.json` `sync_d7ea7228b`.
+  - Main's own gate passes because `tests/test_relay_mutation_gate.py` runs only sample routes. The pre-review
+    check runs the tool on every route, and it does so on this branch only because `ve/backends/shape_binding.py`
+    is under `ve/`.
+  - `fix-relay-mutation-gate` failed its merge-train candidate twice (14:32Z and 15:16Z on `d7ea7228b`), both
+    times on `test_the_gate_passes_on_every_route[service:readings-route]`, the rd-9 lines above. It is in
+    verify-fix, not on main.
+  - This branch still does not repair them. Each available repair either edits a file the task forbids
+    (`lean/ResponseShape/Schemas/NormDefaults.lean`), or edits `tools/relay-gate-allow.json`, which
+    `fix-relay-mutation-gate` owns. Pruning its stale paths here would conflict with that branch. Allow-listing the
+    11 accepted mutants would also weaken the gate: the 10 `readings-route` lines are binding gaps that rd-9's
+    route has today. So the `[relay]` line needs that item on main, or a DRI waiver for this item
+    (`review-ready-allow.txt`, which a worker does not edit). The relay gate's inputs are untouched here:
+    `git diff main...HEAD` changes no route module, schema, allow-list, fixture, Lean file or gate code.
 - **The full gate** is not run here: the chain runs it on the final HEAD.
 - **Pre-review round 1** (chain's selected run at `532305f3`): one failure, the one this branch caused:
   `tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry`. The new `binding-census`
