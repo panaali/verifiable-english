@@ -169,15 +169,16 @@ def coreEnv (environment : Json) (checked : Standalone.Validated) : Except Strin
   let profile := (← profilePremises environment).map (·, "profile")
   -- Base Background and the model decoder: literals over the core decoder, or,
   -- with definitions@0 or data@0 layer fields, the FOL projection's flags,
-  -- definitions and literals, and each model's defined tables computed there
-  -- (`Core.Layers.completeModel`).
+  -- definitions and literals with the n-ary definitions, and each model's
+  -- defined tables (`Core.Layers.background`, `Core.Layers.completeModel`).
   let (base, model) ← match checked.layers with
-    | none => pure (VE.Route.Background.background (VE.Core.Wire.literals v), coreModel v)
+    | none => pure ((VE.Route.Background.background (VE.Core.Wire.literals v)).map
+        (fun (a, g) => (VE.Core.embed a, g)), coreModel v)
     | some layered => do
-      let rv ← VE.Core.Layers.decodeLayers e.profiles layered
-      pure (VE.Route.Wire.fullBackground rv, fun (j : Json) => do
-        coreModel v (← VE.Core.Layers.completeModel rv layered j))
-  let bg := base ++ profile
+      let L ← VE.Core.Layers.decodeLayered e.profiles layered
+      pure (VE.Core.Layers.background L, fun (j : Json) => do
+        coreModel v (← VE.Core.Layers.completeModel L layered j))
+  let bg := base ++ profile.map (fun (a, g) => (VE.Core.embed a, g))
   let decodeF := fun (j : Json) => do
     VE.Route.AstLimit.check [j]
     let a ← VE.Core.Bridge.decodeFormula 64 j
@@ -192,9 +193,9 @@ def coreEnv (environment : Json) (checked : Standalone.Validated) : Except Strin
     meaningId := VE.Route.Wire.meaningId e.profiles envId
     certificate := VE.Core.Wire.decodeCertificate
     bound := fun premises conclusion c => VE.Route.Wire.bindingOk e.profiles environment
-      (bg.map (VE.Route.Wire.encodeFormula ·.1) ++ premises) conclusion
+      (bg.map (VE.Core.Wire.encodeFormula ·.1) ++ premises) conclusion
       c.environment_id c.premise_meaning_ids c.conclusion_meaning_id
-    background := withAst bg VE.Core.embed
+    background := bg.map fun (a, g) => (a, VE.Core.Wire.encodeFormula a, g)
     model := model }⟩
 
 /-! ## Order family -/

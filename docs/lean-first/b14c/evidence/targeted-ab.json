@@ -1,0 +1,46 @@
+{
+  "cases": {
+    "supplied_table": {
+      "base": {
+        "code": "InvalidModel",
+        "path": "",
+        "status": "error",
+        "text": "InvalidModel: supplied table for a defined predicate"
+      },
+      "head": {
+        "code": "InvalidModel",
+        "path": "",
+        "status": "error",
+        "text": "InvalidModel(definitions): supplied table for defined predicate"
+      }
+    },
+    "valid": {
+      "base": {
+        "defined_rows": [
+          [
+            "a",
+            "a",
+            "b"
+          ]
+        ],
+        "environment_id": "f62ce3e58a37d62677e05b36203d5d89190f83e9806239dc72ecff6de1fda65e",
+        "model_id": "ab9a5e65308195f21d86a9634e352db46818dcf8816dd61190839656dce08c73",
+        "status": "ok"
+      },
+      "head": {
+        "defined_rows": [
+          [
+            "a",
+            "a",
+            "b"
+          ]
+        ],
+        "environment_id": "f62ce3e58a37d62677e05b36203d5d89190f83e9806239dc72ecff6de1fda65e",
+        "model_id": "ab9a5e65308195f21d86a9634e352db46818dcf8816dd61190839656dce08c73",
+        "status": "ok"
+      }
+    }
+  },
+  "pass": true,
+  "supplied_table_r1": true
+}

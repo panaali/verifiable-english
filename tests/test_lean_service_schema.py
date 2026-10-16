@@ -52,6 +52,15 @@ def _text(value):
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
 
 
+def test_unique_string_lists_refuse_duplicate_rule_names():
+    check = Compiler().compile({"type": "array", "x-unique-strings": True}, "common.json")
+    for names in ([], ["first"], ["first", "second"]):
+        check(names, Context(None), {})
+    for names in (["first", "first"], ["first", 1], "first"):
+        with pytest.raises(Invalid):
+            check(names, Context(None), {})
+
+
 def rebind(request, response):
     """The request's digests of its (possibly altered) cases, and the response's results
     bound to them: an altered request/response pair as the client and service would see it."""
@@ -537,6 +546,33 @@ def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
     assert 0 < sum(v == "accept" for v in verdicts) < len(verdicts)
 
 
+def test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over(executables):
+    from tools import relay_mutation_gate as gate
+    cases = [row[2] for row in gate.load_cases() if row[:2] == ["service", "readings-route"]]
+    texts = [_text(case) for case in cases]
+    answers = gate._service_answers(executables[0], "readings-route", texts)
+    probes = {}
+    for line, answer in zip(texts, answers):
+        if answer.get("status") != "ok":
+            continue
+        row = answer["results"][0].get("result", {})
+        if row.get("fill") and "label" not in probes:
+            probes["label"] = (line, answer, ("results", 0, "result", "fill", 0, "label"), "")
+        if row.get("targets") and "target" not in probes:
+            probes["target"] = (line, answer, ("results", 0, "result", "targets", 0), "")
+        for i, unit in enumerate(row.get("units", [])):
+            over = (unit.get("content", {}).get("norm") or {}).get("over")
+            if over and "over" not in probes:
+                probes["over"] = (line, answer, ("results", 0, "result", "units", i, "content", "norm", "over"),
+                                  over + over[:1])
+    assert set(probes) == {"label", "target", "over"}
+    items = []
+    for line, answer, path, replacement in probes.values():
+        request = request_context(answer["id"], "readings-route", "[" + line + "]", 1)
+        items.append(("readings-route", request, [_replace(answer, path, replacement)]))
+    assert all(verdict.startswith("reject:") for verdict in assert_agreement(executables[1], items))
+
+
 @pytest.mark.parametrize("weaken", [
     "digest", "index", "modality", "act", "relation", "token", "kind-fuel", "formula-fuel",
     "values-count", "kinds-link", "lemmas-link", "checked-count", "label", "valid-false",
@@ -943,10 +979,8 @@ def test_norm_pair_certificate_check_is_valid(arity):
 
 
 def test_genuine_certificates_over_nary_families_are_accepted(genuine, executables):
-    """lf-13b looprecheck1: Lean's genuine certificate and Background answers over a
-    three-argument definition, functional or total flag (`fol_projection_cases`) are `ok`
-    (certificates valid), have no premise for that declaration, and both decoders accept
-    them; `test_genuine_responses_satisfy_the_lean_invariants` checks their invariants."""
+    """Genuine n-ary definitions contribute Background premises; functional and total
+    flags do not. Both response decoders accept the matching certificates."""
     seen = set()
     for mode, request, response in genuine:
         if mode not in ("route", "norms"):
@@ -957,12 +991,13 @@ def test_genuine_certificates_over_nary_families_are_accepted(genuine, executabl
             row = result(response, i)
             arity = int(case["id"].removesuffix("-bg").rsplit("-", 1)[1])
             pair = case["id"].startswith("fol-norms-")
+            expected = int(arity <= 2 or "defined" in case["id"]) + pair
             if case["kind"] == "background":
                 assert row.get("status") == "ok", (mode, case["id"], row)
-                assert len(row["premises"]) == int(arity <= 2) + pair, (mode, case["id"], row)
+                assert len(row["premises"]) == expected, (mode, case["id"], row)
                 continue
             assert row.get("status") == "ok" and row["valid"] is True, (mode, case["id"], row)
-            assert row["background"] == int(arity <= 2) + pair, (mode, case["id"], row)
+            assert row["background"] == expected, (mode, case["id"], row)
             assert schema_verdict(mode, request, response) == "accept"
             seen.add((mode, case["id"]))
     assert {(mode, f"fol-{p}{family}-3") for mode, p in [("route", ""), ("norms", ""), ("norms", "norms-")]
@@ -1176,9 +1211,15 @@ def content(genuine, executables):
 
 @pytest.mark.parametrize("name", list(CONTENT))
 def test_binding_preserving_content_is_left_to_the_service(content, name):
-    """The client (its schemas, and the Lean decoding of them) accepts the corruption, and
-    a Lean invariant, which every genuine response satisfies, rejects it."""
+    """Most content corruptions need a Lean invariant. Background's equal-fields
+    contract now rejects premise divergence in both decoders as well."""
     mode, request, response, decoded, checked = content[name]
+    if name.endswith("background-premises-differ"):
+        # The Background response contract now binds these two views directly.
+        assert schema_verdict(mode, request, response).startswith("reject")
+        assert decoded.startswith("reject"), decoded
+        assert checked.startswith("reject"), checked
+        return
     assert schema_verdict(mode, request, response) == "accept"
     assert decoded == "accept"
     assert checked.startswith("reject"), checked

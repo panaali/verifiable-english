@@ -1,0 +1,44 @@
+# git log --reverse --format='%h %s' main..HEAD --no-merges at the pre-review fix commit (that commit itself excluded); main = 4ce477e18. Commits before ae074090f are infra/oom-rootcause's (merged into this branch first); this batch's are 'premise-scale:', 'relay gate:' and 'graph relay:'.
+b0ac5ba1d rust: enumerate search domain sizes lazily
+17e868d77 Memory budgets: Rust counting allocator, RLIMIT_AS on checker children
+62c5f674d OOM batch: incident regression case, A/B evidence and seeded-fault script
+85f8a30b4 OOM batch: seeded-fault evidence (9 faults, each caught)
+5f5959ffb Regenerate the gate collection for the memory-budget tests
+746369f62 Memory-budget tests: inject the one-shot deadline instead of a short wait
+ace3c50c2 OOM batch: report and DELTA
+cbbacf5c2 process_limits: narrow run_limited's handler; list it among the process starters
+30507fc00 Senses route tests tamper with and guard the one-shot transport where it runs (run_limited)
+5a33c7767 process_limits: bound byte settings to 19 digits; list run_limited in the runner and int inventories
+ab00e274b OOM batch: selected-test results, final seeded-fault evidence, commit list
+13d66531a test_gate_integrity: fake Lake's trace check in the interrupted-gate test
+ef36aecef OOM batch: gate evidence for ab00e274 and the gate-integrity fix
+be948d2bd OOM batch: final gate passed on ef36aece
+baf95df43 OOM batch: relay mutation gate evidence (identical 92 findings on main)
+c88e4012c Readings relay: reject malformed labels, targets, and repeated over names
+4a0aa41de OOM batch: relay mutation evidence and final report
+73f238d4c Seeded fault runner: use shared nested pytest builder
+ea193baf2 OOM batch: record failed gate and harness fix
+1f2d56c33 Bind early Rust OOM refusals and preserve inherited process limits
+0ba3d2822 Rebuild and pin checker for every OOM mutant run
+3ee8636d3 Preserve inherited soft address-space limits for checker children
+949a69bff Record F6 regression and inherited limit contract
+ae074090f premise-scale: Lean search budget, per-sort domain bounds, ground-fact route
+6b9323ab7 premise-scale: classify the search-budget declarations; R6 allowance for the mode's +5 lines
+24fbd0973 premise-scale: bind the search budget by position; scale the Rust timeout by measured search time (ME1)
+42db8229e premise-scale: tests, Lean fixtures, relay-gate fixtures; name the sort in raised entries
+84d27cb65 premise-scale: the scaled-limit test starts no real child
+a55f3f9b2 premise-scale: the readings routes' BUDGET is Lean's; the scaled search keeps the route's budget
+037c00531 premise-scale: scale the Rust limit by the case line's bytes and constants (ME1 measurement)
+61310210a premise-scale: seeded faults in Rust, Python and Lean, each caught (evidence/mutants.json)
+f46cf80c5 premise-scale: only a model search's Rust limit scales; the companion seed fails closed; trust baseline rewritten
+fbe264acd premise-scale: register the batch's measurement scripts as recorded-once writers; base/head document A/B script
+f1b322ac2 premise-scale: the fuzzer compares the premise-scale seeds as they are, unmutated
+a8d92f06b relay gate: prune 42 allow-list paths that match no mutant on the merged tree
+524110047 premise-scale: measurement evidence (pilots before/after, CPU and memory; base/head document A/B; relay mutation gate)
+c56c059b8 premise-scale: report, DELTA, commit list; the Lean-budget test starts with no override set
+296b5566f premise-scale: report after the syncs with main; relay gate failures compared with main's
+8808fb359 graph relay: type generated background formulas and labels
+7ef664924 premise-scale: report graph relay pre-review repair
+b961596b5 premise-scale: close pre-review relay mutation findings
+# review fixes (premise-scale-review.final.md F1, F2); the report commit that adds these lines is excluded
+2287cc9ab premise-scale: the scaled search and the timeout rule serve the readings premise check only (review F1, F2)
