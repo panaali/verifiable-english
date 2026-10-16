@@ -109,12 +109,19 @@ def prepare(runs: Path, recording: Path) -> None:
     sys.path.insert(0, str(ROOT / "tools"))
     import answer_replay
     index = answer_replay.read_json(recording / "requests.json.gz")
-    own = next(path for commit in {c[k] for c in json.loads(CHANGES.read_text()) for k in ("base", "head")}
-               if (path := answers_of(runs, commit)) and answer_replay.read_json(path)["service"] == index["service"])
-    own_answers = answer_replay.read_json(own)
     changes = json.loads(CHANGES.read_text())
+    replays = {}
+    for commit in {change[k] for change in changes for k in ("base", "head")}:
+        try:
+            replays[commit] = answers_of(runs, commit)
+        except FileNotFoundError:
+            continue
+    own = next(path for path in replays.values() if answer_replay.read_json(path)["service"] == index["service"])
+    own_answers = answer_replay.read_json(own)
     for change in changes:
-        base, head = (answer_replay.read_json(answers_of(runs, change[k])) for k in ("base", "head"))
+        if change["base"] not in replays or change["head"] not in replays:
+            continue  # its replays are not in yet
+        base, head = (answer_replay.read_json(replays[change[k]]) for k in ("base", "head"))
         diff = answer_replay.diff(base, head)
         diff.update(recording_dir=str(recording), recording_build=own_answers["service"],
                     stale=answer_replay.diff(own_answers, base)["changed"])
