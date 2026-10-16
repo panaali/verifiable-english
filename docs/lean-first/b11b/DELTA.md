@@ -4,7 +4,7 @@ Base `7345e3ed`; branch `lean-first/b11b`. `ve speech-acts` and `ve.speech_docum
 
 ## Measured result
 
-The numbers in this block are generated and checked by `report.py` from the committed evidence files and the base-to-head source diff.
+The numbers in this block are generated and checked by `report.py` from the committed evidence files, including the saved source line counts.
 
 <!-- BEGIN GENERATED B11B METRICS -->
 
