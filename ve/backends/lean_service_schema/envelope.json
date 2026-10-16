@@ -76,6 +76,7 @@
           {"contains": {"const": "diagnose"}},
           {"contains": {"const": "document"}},
           {"contains": {"const": "english.question"}},
+          {"contains": {"const": "search-budget"}},
           {"contains": {"const": "ask"}},
           {"contains": {"const": "words"}}
         ]
