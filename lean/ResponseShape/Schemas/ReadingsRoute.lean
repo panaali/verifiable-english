@@ -157,7 +157,7 @@ def softNode : Shape := n [obj,
   .required ["name", "predicate", "sign", "mode", "guard", "unless", "over", "rank", "alterable", "exception", "hard"],
   closed [("name", str), ("predicate", str), ("sign", .type ["boolean"]),
     ("mode", enumS ["strict", "default"]), ("guard", ref "common.json#/$defs/generated_formula"),
-    ("unless", ref "common.json#/$defs/generated_formulas"), ("over", ref "common.json#/$defs/strings"),
+    ("unless", ref "common.json#/$defs/generated_formulas"), ("over", n [ref "common.json#/$defs/strings", .uniqueStrings]),
     ("rank", .type ["string", "null"]), ("alterable", ref "common.json#/$defs/strings"),
     ("exception", .anyOf [.type ["null"], softException]), ("hard", .type ["boolean"])]]
 

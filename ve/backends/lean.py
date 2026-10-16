@@ -39,11 +39,15 @@ from ..assurance import require_lean_binding, require_lean_call_site
 from ..errors import CheckerUnavailable, VEError
 from ..wire import canonical_json, loads_json
 from .lean_service import _decode_json, configured_seconds
+from .process_limits import run_limited
 # JSON equality with types kept apart: `false` is not `0`, `1.0` is not `1`.
 from .service_schema import same_json as _same
 
 SOFT_TIMEOUT = 120.0
 ROUTE_TIMEOUT = 120.0
+# A one-shot runner's address-space limit (`process_limits`): a runaway runner fails its own
+# allocation and gives no answer (CheckerUnavailable) instead of exhausting the machine.
+ADDRESS_SPACE = 8 << 30
 
 
 def configured_timeout(default: float) -> float:
@@ -215,8 +219,8 @@ def run(operation: str, executable, cases: list[dict], *, runner: str, mode: str
     if timeout is None:
         raise TypeError(f"a one-shot {runner} call needs a timeout")
     try:
-        proc = subprocess.run([str(executable), *([mode] if mode else [])], input=canonical_json(cases),
-                              capture_output=True, timeout=timeout)
+        proc = run_limited([str(executable), *([mode] if mode else [])], input=canonical_json(cases),
+                           timeout=timeout, address_space=ADDRESS_SPACE)
     except subprocess.TimeoutExpired:
         raise unavailable(f"no answer within {timeout} s") from None
     except OSError as exc:
@@ -242,8 +246,8 @@ def run_route_cases(executable, mode: str, cases: list[dict], *, coded: bool = F
     if timeout is None:
         timeout = configured_timeout(ROUTE_TIMEOUT)
     try:
-        proc = subprocess.run([str(executable), mode], input=canonical_json(cases), capture_output=True,
-                              timeout=timeout, check=False)
+        proc = run_limited([str(executable), mode], input=canonical_json(cases), timeout=timeout,
+                           address_space=ADDRESS_SPACE)
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: {route_name} {mode} is unavailable") from exc
     try:
