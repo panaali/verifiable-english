@@ -92,6 +92,8 @@ element of an array (every element must resolve).
 | `x-equals: p` | equals the context value at `p`, which must exist |
 | `x-length: p` | an array as long as the context array at `p` |
 | `x-count: p` | the integer length of the context array at `p` |
+| `x-same-length: [f, ...]` | sibling response fields are arrays with equal lengths (the generated Background, premises and generator rows) |
+| `x-equal-fields: [a, b]` | two sibling response fields have the same JSON value (the two copies of generated Background) |
 | `x-references: {array: a, field: f, in: p}` | every object in the response array at `a` has a string field `f` equal to one member of the context array at `p` |
 | `x-claim-nodes: [p, ...]` | every claim at each response pointer (one claim or an array) matches a request graph node by name, AST and presence and value of the optional label |
 | `x-max-steps: {default, cap}` | a certificate step count is at most the request's `max_steps`, or the generated default, capped at the generated maximum |
