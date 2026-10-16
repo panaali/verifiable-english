@@ -24,6 +24,14 @@ theorem runBackground_fits (id : String) (bg : List (VE.Formula × String))
   fits
   exact Fits.strIn (hg _ ‹_›)
 
+/-- A core-family Background answer (`Core.Layers.runBackground`), on the same terms. -/
+theorem coreRunBackground_fits (id : String) (bg : List (VE.Core.Formula × String))
+    (hK : req.getObjValD "kind" = .str "background") (hg : ∀ p ∈ bg, p.2 ∈ Background.generators) :
+    Fits req routeOk (VE.Core.Layers.runBackground id bg) := by
+  unfold VE.Core.Layers.runBackground Wire.ok
+  fits
+  exact Fits.strIn (hg _ ‹_›)
+
 /-- The premises of one generator, each tagged with its name. -/
 theorem tagged_generators {fs : List VE.Formula} {g : String} (hg : g ∈ Background.generators) :
     ∀ p ∈ fs.map (·, g), p.2 ∈ Background.generators := by
@@ -100,7 +108,7 @@ theorem coreLayers_fits (profiles : List String) (environment : Json) (id kind :
   all_goals rcases hK with hK | ⟨hK, rfl⟩
   all_goals kind_subst
   all_goals first
-    | with_reducible exact runBackground_fits _ _ ‹_› (by generators_ok)
+    | with_reducible exact coreRunBackground_fits _ _ ‹_› (VE.Core.Layers.background_generators _)
     | (unfold VE.Core.Layers.coreCertificate; okfits; all_goals (try simp only [Wire.ok]); all_goals fits)
 
 theorem runBundle_fits (profiles : List String) (environment : Json) (rv : Wire.RouteVocabulary) (id : String)

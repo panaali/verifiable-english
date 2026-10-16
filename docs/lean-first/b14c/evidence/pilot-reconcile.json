@@ -1,0 +1,124 @@
+{
+  "cases": 486,
+  "pilot_trees": {
+    "pilot/cc-20261001T1800Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261001T1800Z",
+      "tree": "c396ec3fb2d5fefe8128a14a4afc32018974f5f1"
+    },
+    "pilot/cc-20261002T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261002T0600Z",
+      "tree": "f27f89e17f48bcdc418e07b45ee0d6ad1d3d926b"
+    },
+    "pilot/cc-20261002T0620Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261002T0620Z",
+      "tree": "d989f8504e5857824ec80f9fcb882872797bb86d"
+    },
+    "pilot/cc-20261002T1800Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261002T1800Z",
+      "tree": "50d345fa2fb8c6b62d28fc3ea9993628b8beeb12"
+    },
+    "pilot/cc-20261003T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261003T0600Z",
+      "tree": "23e75c33581b43ef86302723860d41e15bcf6e2c"
+    },
+    "pilot/cc-20261004T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261004T0600Z",
+      "tree": "0d073be050935b7bc449fc864df35fa09f3307c0"
+    },
+    "pilot/cc-20261004T1800Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261004T1800Z",
+      "tree": "9950e791ddf8c79d552905ea7ea7b568dd8b55c9"
+    },
+    "pilot/cc-20261005T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261005T0600Z",
+      "tree": "689820ccfdf1e24111b5ea815b30205fad5a25c7"
+    },
+    "pilot/cc-20261008T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261008T0600Z",
+      "tree": "0efb82bbdc8839b82248e689c1a1ddc28554e9a3"
+    },
+    "pilot/cc-20261008T1800Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261008T1800Z",
+      "tree": "d7d29c8acb3be6db0f1ba2f79e0bb0f92e371560"
+    },
+    "pilot/cc-20261009T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261009T0600Z",
+      "tree": "3a3892971eed04a7c632ee51d074360cc7c7d229"
+    },
+    "pilot/cc-20261009T1800Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261009T1800Z",
+      "tree": "3ed9f288a586d08784766693b7d1d6f7a385c4de"
+    },
+    "pilot/cc-20261010T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261010T0600Z",
+      "tree": "96c48347e53ccd5423a63195b816c21367db4de4"
+    },
+    "pilot/cc-20261010T1800Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_cc-20261010T1800Z",
+      "tree": "918db1984645525d2b089a4e0e2595e63485b33d"
+    },
+    "pilot/udhr-20261003T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_udhr-20261003T0600Z",
+      "tree": "552d26ae6ad273ab39fed48ae64404a8995c9e15"
+    },
+    "pilot/udhr-20261009T0600Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_udhr-20261009T0600Z",
+      "tree": "e501e1ed829a8b384745d423809eefae39ca1685"
+    },
+    "pilot/udhr-20261009T1800Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_udhr-20261009T1800Z",
+      "tree": "18a08ab76fc73367867e6f875438a80a44fe09c5"
+    },
+    "pilot/udhr-20261010T1800Z": {
+      "root": "/tmp/b14c-pilot-stage/pilot_udhr-20261010T1800Z",
+      "tree": "3fddbe41544d1dbb2b414336dd5d68fc6fb2a5f4"
+    }
+  },
+  "reconciliation": "Prefer identical available outcomes; otherwise identical unavailable; any nonidentical pair remains a listed difference.",
+  "recordings": {
+    "base": {
+      "/tmp/b14c-base-pilots-60.json": {
+        "rows": 23,
+        "sha256": "2686ac179c6973b6ee8166ceee24097a626ed9d77af66890abc47e294e1ca986"
+      },
+      "/tmp/b14c-base-pilots-long.json": {
+        "rows": 1,
+        "sha256": "2ee909c6bd03c73a2b93d74cc7493cc3ef2f2f5466601ee50dfbf8e8611acc11"
+      },
+      "/tmp/b14c-base-pilots-raw.json": {
+        "rows": 972,
+        "sha256": "4c690b36283f37bd0c3136a6416527a0d00482fca3f0c6ad3b8302faf934830f"
+      },
+      "/tmp/b14c-base-pilots-senses.json": {
+        "rows": 7,
+        "sha256": "0805033446507de468aa0d6b2454df087005a5745188fae3ec061df8dd0fa2e5"
+      }
+    },
+    "head": {
+      "/tmp/b14c-head-pilots-60.json": {
+        "rows": 23,
+        "sha256": "5cc9502130c775be0b0b299cfedc93b45d91d34e32382f11a6db7dfd6a32faa3"
+      },
+      "/tmp/b14c-head-pilots-raw.json": {
+        "rows": 972,
+        "sha256": "84790f91122134d2b1bd61c582a701ef259216d545054ebf21cc01b1c1e0d1d8"
+      },
+      "/tmp/b14c-head-pilots-staged.json": {
+        "rows": 31,
+        "sha256": "7d284eef499ea70a8b3e98b7343f1e1d5068cee0261d6d977a6e142cc81cfeb8"
+      }
+    }
+  },
+  "rerun_guards": {
+    "default_document_seconds": 600,
+    "default_rust_seconds": 5,
+    "long_base_case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/readings/s1.ve.md",
+    "long_base_document_seconds": 1800,
+    "staged_document_seconds": 600,
+    "staged_rust_seconds": 60
+  },
+  "selection": {
+    "same_available": 480,
+    "same_unavailable": 6
+  }
+}

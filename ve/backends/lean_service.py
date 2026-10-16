@@ -44,11 +44,12 @@ handle never changes an answer, it only saves sending and decoding the environme
 checks read each case with its environment, as sent before.
 
 Deadlines (docs/LEAN-FIRST-PLAN.md, F4). A request's deadline is its operation's
-(`DEADLINES`): CPU seconds of the service process, a base per case plus a share per MiB of cases,
-measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
-wall-clock seconds. Load on the host therefore does not stop a request; a request that needs
-more CPU than its deadline is `CheckerUnavailable` naming its mode, and is not retried, since
-the same request needs the same work. A request that is given a `timeout` has that wall-clock
+(`DEADLINES`): user CPU seconds of the service process, a base per case plus a share per MiB of
+cases, measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
+wall-clock seconds. The kernel's time in the process is not counted: under memory pressure it is
+the host's compaction and reclaim, not the request's work (`_user_seconds`). Load on the host
+therefore does not stop a request; a request that needs more CPU than its deadline is
+`CheckerUnavailable` naming its mode, and is not retried, since the same request needs the same work. A request that is given a `timeout` has that wall-clock
 limit instead, as before. Every request also has a wall-clock cap, `WALL_FACTOR` times its CPU
 deadline, for a process that stops being scheduled.
 
@@ -118,15 +119,15 @@ UNHANDLED_MODES = frozenset({"english", "risk-eval"})
 _CORE = (5.0, 30.0)
 DEADLINES: dict[str, tuple[float, float]] = {
     **{mode: _CORE for mode in ("evaluate", "check-certificate", "order", "route", "norms", "english",
-                                "english.read", "english.grammar", "english.check", "english.question",
+                                "english.read", "english.grammar", "english.check", "english.question", "words",
                                 "environment", "model", "check", "identity", "parse", "graph", "readings",
                                 "readings-choices",
-                                "bundle", "family-norms")},
+                                "bundle", "family-norms", "search-budget")},
     "soft-norms": (120.0, 120.0), "rights": (120.0, 1000.0), "speech-acts": (120.0, 120.0),
     "reports": (60.0, 60.0), "alternatives": (180.0, 180.0), "risk": (180.0, 180.0),
     "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
     "discourse": (300.0, 300.0), "readings-route": (120.0, 240.0), "diagnose": (120.0, 120.0),
-    "document": (120.0, 120.0),
+    "document": (120.0, 120.0), "ask": (120.0, 240.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20
@@ -139,14 +140,28 @@ def deadline(mode: str, size: int, cases: int = 1) -> float:
 
 
 def _cpu_seconds(pid: int) -> float | None:
-    """CPU time (user and system) of process `pid`, or None where /proc does not report it."""
+    """User CPU time of process `pid`, or None where /proc does not report it."""
     try:
         with open(f"/proc/{pid}/stat", "rb") as f:
-            fields = f.read().rsplit(b")", 1)[1].split()
-    except (OSError, IndexError):
+            return _user_seconds(f.read())
+    except OSError:
         return None
-    # Fields 14 and 15 (utime, stime) are the 12th and 13th after the command name.
-    return (int(fields[11]) + int(fields[12])) / os.sysconf("SC_CLK_TCK")
+
+
+def _user_seconds(stat: bytes) -> float | None:
+    """The user CPU time a `/proc/<pid>/stat` line reports (field 14, utime), or None if it has none.
+
+    Only user time is the request's work. The system time (field 15) is the kernel's work in the
+    process, and on a host short of memory most of it is the host's: a huge page the allocator
+    faults in can wait in direct memory compaction, which the kernel charges to the faulting
+    process. On the loaded x86 runner that charged requests needing at most 0.1 s of user CPU more
+    system CPU than their deadlines of 5 to 6.3 s (docs/fix-x86-cpu-deadline/REPORT.md)."""
+    try:
+        fields = stat.rsplit(b")", 1)[1].split()
+        # Field 14 (utime) is the 12th after the command name.
+        return int(fields[11]) / os.sysconf("SC_CLK_TCK")
+    except (IndexError, ValueError):
+        return None
 
 
 class _Failure(Exception):
@@ -520,7 +535,7 @@ class LeanService:
             self._buffer.clear()
 
     def cpu_seconds(self) -> float | None:
-        """CPU time the current process has used, where the platform reports it."""
+        """User CPU time the current process has used, where the platform reports it."""
         return None if self._proc is None else _cpu_seconds(self._proc.pid)
 
     def stderr(self, start: int = 0) -> tuple[int, str]:
@@ -552,7 +567,7 @@ class LeanService:
     def _wait(self, deadline: _Deadline, what: str) -> float:
         """Seconds to wait before `deadline` is checked again; raises once it has passed. A CPU
         deadline is checked at least as often as the process could have used up what is left of
-        it (it runs one thread)."""
+        it (it computes on one thread)."""
         remaining = deadline.wall - time.monotonic()
         if remaining <= 0:
             raise _Failure(f"timeout {what}" + (f" (mode {deadline.mode})" if deadline.mode else ""))

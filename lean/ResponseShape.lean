@@ -130,6 +130,7 @@ inductive Shape where
   | pattern (r : Re)
   | minLength (n : Nat)
   | maxLength (n : Nat)
+  | uniqueStrings
   | minimum (n : Int)
   | required (keys : List String)
   /-- `properties`, and `additionalProperties` when `extra` is given. -/
@@ -152,6 +153,10 @@ inductive Shape where
   | equals (pointer : String)
   | length (pointer : String)
   | count (pointer : String)
+  /-- Sibling response arrays have the same number of entries. -/
+  | sameLength (fields : List String)
+  /-- Two sibling response fields carry the same generated value. -/
+  | equalFields (left right : String)
   /-- Every object's `field` in the response array is a request ID selected by `target`. -/
   | references (array field target : String)
   /-- Every selected claim has the name, AST and optional label of a request graph node. -/
@@ -160,6 +165,8 @@ inductive Shape where
   | maxSteps
   /-- A certificate's Background count is at most what the request could generate (`backgroundBound`). -/
   | backgroundBound
+  /-- A diagnostic's offsets and line/column locate its start in the request source. -/
+  | sourceSpan (pointer : String)
   /-- A readings plan's indices, names and budget are bounded by its request. -/
   | readingPlan
   | index
@@ -247,6 +254,7 @@ def render (file : String) : Nat → Shape → Except String Json
     | .pattern r => pure (Json.mkObj [("pattern", .str (r.render 0))])
     | .minLength k => pure (Json.mkObj [("minLength", toJson k)])
     | .maxLength k => pure (Json.mkObj [("maxLength", toJson k)])
+    | .uniqueStrings => pure (Json.mkObj [("x-unique-strings", .bool true)])
     | .minimum k => pure (Json.mkObj [("minimum", toJson k)])
     | .required ks => pure (Json.mkObj [("required", toJson ks)])
     | .object ps extra => do
@@ -280,12 +288,15 @@ def render (file : String) : Nat → Shape → Except String Json
     | .equals p => pure (Json.mkObj [("x-equals", .str p)])
     | .length p => pure (Json.mkObj [("x-length", .str p)])
     | .count p => pure (Json.mkObj [("x-count", .str p)])
+    | .sameLength fs => pure (Json.mkObj [("x-same-length", toJson fs)])
+    | .equalFields a b => pure (Json.mkObj [("x-equal-fields", toJson [a, b])])
     | .references a f p => pure (Json.mkObj [("x-references", Json.mkObj [
         ("array", .str a), ("field", .str f), ("in", .str p)])])
     | .claimNodes ps => pure (Json.mkObj [("x-claim-nodes", toJson ps)])
     | .maxSteps => pure (Json.mkObj [("x-max-steps", Json.mkObj [
         ("default", toJson VE.CertificateWire.maxSteps), ("cap", toJson VE.CertificateWire.caseCap)])])
     | .backgroundBound => pure (Json.mkObj [("x-background-bound", .bool true)])
+    | .sourceSpan p => pure (Json.mkObj [("x-source-span", .str p)])
     | .readingPlan => pure (Json.mkObj [("x-reading-plan", .bool true)])
     | .index => pure (Json.mkObj [("x-index", .bool true)])
     | .digest => pure (Json.mkObj [("x-digest", .bool true)])
@@ -528,8 +539,7 @@ def passed (r : Result) : Except Fault Bool :=
   | .error (.invalid _) => pure false
   | .error (.broken m) => throw (.broken m)
 
-def within (k : String) (r : Result) : Result :=
-  match r with
+def within (k : String) (r : Result) : Result := match r with
   | .error (.invalid m) => throw (.invalid s!"{k}: {m}")
   | other => other
 
@@ -553,12 +563,11 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
     | .pattern r => match value with
       | .str x => if r.matches x then pure () else fail s!"{short value} does not match {r.render 0}"
       | _ => pure ()
-    | .minLength k => match value with
-      | .str x => if x.length < k then fail s!"string shorter than {k}" else pure ()
-      | _ => pure ()
+    | .minLength k => match value with | .str x => if x.length < k then fail s!"string shorter than {k}" else pure () | _ => pure ()
     | .maxLength k => match value with
       | .str x => if x.length > k then fail s!"string longer than {k}" else pure ()
       | _ => pure ()
+    | .uniqueStrings => match value with | .arr xs => do let names ← xs.toList.mapM (fun x => match x with | .str s => pure s | _ => throw (.invalid "expected an array of strings")); if names.Nodup then pure () else fail "strings are not distinct" | _ => fail "expected an array of strings"
     | .minimum k => match value with
       | .num x => if numLe ⟨k, 0⟩ x then pure () else fail s!"{short value} is below {k}"
       | _ => pure ()
@@ -633,6 +642,16 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
       | some (.arr ys), .num x => if kind value == "integer" && numEq x ⟨(ys.size : Int), 0⟩ then pure ()
           else fail s!"is not the number of the request's {p}"
       | _, _ => fail s!"is not the number of the request's {p}"
+    | .sameLength fs =>
+      let lengths := fs.map fun f => (value.getObjVal? f).toOption.bind fun j => j.getArr?.toOption.map (·.size)
+      match lengths with
+      | some n :: rest =>
+        if rest.all (· == some n) then pure () else fail "generated response arrays have different lengths"
+      | _ => fail "generated response arrays have different lengths"
+    | .equalFields a b =>
+      match value.getObjVal? a, value.getObjVal? b with
+      | .ok x, .ok y => if sameJson x y then pure () else fail "generated response fields differ"
+      | _, _ => fail "generated response fields differ"
     | .references a f p => match resolve value a, resolve ctx.value p with
       | some (.arr xs), some (.arr ys) =>
         if xs.all (fun x => match x.getObjVal? f with
@@ -663,6 +682,21 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
         if kind value == "integer" && numLe n ⟨(limit : Int), 0⟩ then pure ()
         else fail "background exceeds what the request vocabulary generates"
       | _, _ => fail "background exceeds what the request vocabulary generates"
+    | .sourceSpan p => match resolve ctx.value p with
+      | some (.str source) =>
+        let start := (value.getObjVal? "start" >>= Json.getNat?).toOption
+        let stop := (value.getObjVal? "end" >>= Json.getNat?).toOption
+        let line := (value.getObjVal? "line" >>= Json.getNat?).toOption
+        let column := (value.getObjVal? "column" >>= Json.getNat?).toOption
+        match start, stop, line, column with
+        | some a, some b, some l, some c =>
+          let before := source.toList.take a
+          let expectedLine := 1 + (before.filter (· == '\n')).length
+          let expectedColumn := 1 + (before.reverse.takeWhile (· != '\n')).length
+          if a ≤ b && b ≤ source.length && l == expectedLine && c == expectedColumn then pure ()
+          else fail "span is outside the request source or has the wrong line and column"
+        | _, _, _, _ => fail "span is outside the request source or has the wrong line and column"
+      | _ => fail "span is outside the request source or has the wrong line and column"
     | .readingPlan =>
       if readingPlanBound ctx.value value then pure ()
       else fail "readings plan names choices outside the request"

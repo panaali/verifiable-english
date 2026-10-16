@@ -68,6 +68,14 @@ def levels : VE.Formula → Nat
 def premiseWithin (d : Def) : Bool :=
   decide (VE.Bridge.formulaNodes d.premise ≤ 10000) && decide (levels d.premise ≤ 64)
 
+/-- The diagnostic of a definition whose generated biconditional exceeds the AST limits. -/
+def premiseTooLarge (name : String) : String :=
+  s!"ResourceLimit: Definition {name}: the generated biconditional exceeds the AST node or depth limit"
+
+/-- The diagnostic of a definition whose body does not type over the symbols below it. -/
+def bodyNotTyped (name : String) : String :=
+  s!"Definition {name}: the body is not a typed formula over the symbols below it"
+
 /-- The first definition (in dependency order) whose step fails, or whose
 generated biconditional exceeds the AST limits, with the diagnostic. -/
 def firstBad (E : VE.Environment) : List Def → Option (Def × String)
@@ -75,8 +83,8 @@ def firstBad (E : VE.Environment) : List Def → Option (Def × String)
   | d :: ds =>
     if stepOk E (names ds) d then
       if premiseWithin d then firstBad E ds
-      else some (d, s!"ResourceLimit: Definition {d.name}: the generated biconditional exceeds the AST node or depth limit")
-    else some (d, s!"Definition {d.name}: the body is not a typed formula over the symbols below it")
+      else some (d, premiseTooLarge d.name)
+    else some (d, bodyNotTyped d.name)
 
 /-- The checked result, or the diagnostic naming the first failing definition. -/
 def finish (E : VE.Environment) (ds : List Def) : Except String (List Def) :=

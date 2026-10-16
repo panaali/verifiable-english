@@ -419,7 +419,7 @@ def vocabularyFault (environment : Json) : Option String := walked do
       let payload := entry.getObjValD "defined"
       exactly payload ["arguments", "body"]
       unless payload.getObjValD "arguments" == .arr arguments.toArray do
-        fault s!"Definition {pyR name} arguments differ from its declaration"
+        fault (VE.Route.Wire.argumentsDiffer name)
     describedBy (entry.getObjValD "description")
   for (_, entry) in constants do
     let literal := entry.getObjValD "sort" == .str VE.Route.Background.stringSort

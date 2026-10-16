@@ -17,15 +17,6 @@ _LIMIT = 1 << 14
 _LAYERED = STATEMENT_LAYERS
 
 
-def nary_core_definitions(profiles, predicates) -> bool:
-    """A core-family vocabulary with an n-ary defined predicate: Lean's core
-    layer glue projects unary and binary predicates only (a recorded gap)."""
-    if not {"closure@0", "nary@0"} <= set(profiles):
-        return False
-    return any(type(entry) is dict and "defined" in entry and type(entry.get("arguments")) is list
-               and len(entry["arguments"]) > 2 for entry in predicates)
-
-
 # The frozen pre-route envelopes, which Lean's standalone modes decode with
 # their frozen decoders (Standalone.decodeLegacy).
 LEGACY_LANGUAGES = frozenset({"ve.core@0", "ve.core@0.1"})
@@ -43,21 +34,15 @@ def model_in_scope(env) -> bool:
     if env.language in LEGACY_LANGUAGES:
         return True
     return (env.language == "ve.core@0.2" and env.unit_schema is None and env.alternatives is None
-            and not _LAYERED & set(env.profiles)
-            and not ({"closure@0", "nary@0"} <= set(env.profiles) and any(
-                decl.defined is not None and len(decl.arguments) > 2 for decl in env.predicates.values())))
+            and not _LAYERED & set(env.profiles))
 
 
 def family_in_scope(env) -> bool:
     """Whether Lean's `graph` and `readings` modes take a ve.core@0.2 envelope of
-    any family: no statement layer and no n-ary definition on the core family
-    (deferred in Lean)."""
+    any family without a statement layer."""
     if env.language != "ve.core@0.2" or env.unit_schema is not None or env.alternatives is not None:
         return False
     if STATEMENT_LAYERS & set(env.profiles):
-        return False
-    if nary_core_definitions(env.profiles, [{"defined": True, "arguments": list(decl.arguments)}
-                                            for decl in env.predicates.values() if decl.defined is not None]):
         return False
     return True
 
