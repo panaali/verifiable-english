@@ -36,6 +36,7 @@ import time
 import lake_outputs
 from layer_policy import ROOT, lean_default_targets, lean_executables
 import nested_pytest
+import test_map_recorder
 
 # 2: directory listings by the import system and pytest are not recorded.
 # 3: a test's own reads and listings count even though pytest runs it (version 2
@@ -96,7 +97,7 @@ def environment(out: Path | None = None) -> dict[str, str]:
     return env
 
 
-HOOK = "_ve_testmap"
+HOOK = test_map_recorder.HOOK
 
 
 def site_packages() -> Path:
