@@ -90,3 +90,23 @@ def test_a_bound_leaf_and_a_free_leaf_of_one_answer():
     assert binding_mutants.verdict(mode, case, {**row, "report_id": flipped}, index) == ACCEPT
     error = next(a for a in ANSWERS if "case_index" in a[2])
     assert binding_mutants.verdict(error[0], error[1], {**error[2], "case_index": error[3] + 1}, error[3]) == REFUSE
+
+
+def test_a_name_renamed_everywhere_is_refused_where_one_occurrence_is_bound():
+    """A coordinated rename keeps every internal agreement, so only a binding to the request can refuse it: one
+    occurrence bound by `x-equals` or `x-references` among free ones is enough (a `target` equal to a request
+    layer, renamed with the `targets` entry that repeats it)."""
+    mixed = 0
+    for mode, case, row, index in ANSWERS:
+        placed, _ = shape_binding.classify(mode, case, row, index)
+        for mutant in binding_mutants.mutants(mode, case, row, index):
+            if mutant.kind != "rename":
+                continue
+            leaves = [leaf for _, _, leaf in placed if leaf.path in mutant.path.split(",")]
+            bound = any(leaf.binding.cls == "bound" and leaf.binding.at is None and
+                        leaf.binding.relation in binding_mutants.EXACT | {"references"} for leaf in leaves)
+            if bound and any(leaf.binding.cls == "none" for leaf in leaves):
+                mixed += 1
+                assert mutant.expect == REFUSE, (mode, mutant.path, mutant.why)
+                assert binding_mutants.verdict(mode, case, mutant.row, index) == REFUSE, (mode, mutant.path)
+    assert mixed, "no recorded answer repeats a bound request name in a free leaf"
