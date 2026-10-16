@@ -1,0 +1,106 @@
+{
+  "base_reproduced": 306,
+  "changed": [],
+  "new_signatures": 306,
+  "pass": true,
+  "seeds": [
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 21,
+      "sampled": 26422,
+      "seed": 20260921
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 24,
+      "sampled": 26422,
+      "seed": 20260922
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 20,
+      "sampled": 26422,
+      "seed": 20260923
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 28,
+      "sampled": 26422,
+      "seed": 20260924
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 24,
+      "sampled": 26422,
+      "seed": 20260925
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 23,
+      "sampled": 26422,
+      "seed": 20260926
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 27,
+      "sampled": 26422,
+      "seed": 20260927
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 18,
+      "sampled": 26422,
+      "seed": 20260928
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 30,
+      "sampled": 26422,
+      "seed": 20260929
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 24,
+      "sampled": 26422,
+      "seed": 20260930
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 22,
+      "sampled": 26422,
+      "seed": 20261001
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 20,
+      "sampled": 26422,
+      "seed": 20261002
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 25,
+      "sampled": 26422,
+      "seed": 20261003
+    },
+    {
+      "baseline_entries": 250,
+      "baseline_not_reproduced": 0,
+      "new": 0,
+      "sampled": 26422,
+      "seed": 20261004
+    }
+  ]
+}

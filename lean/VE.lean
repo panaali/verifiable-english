@@ -91,6 +91,7 @@ import VE.Discourse.Access
 import VE.Discourse.Resolve
 import VE.Discourse.WellFormed
 import VE.Discourse.Run
+import VE.SearchBudget.Examples
 import VE.Discourse.Theorems
 import VE.Discourse.English
 import VE.SpeechActs.Run

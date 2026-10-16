@@ -5,6 +5,7 @@ use ve_kernel::{
         compatible, error,
     },
 };
+use ve_kernel::Error;
 use serde::Serialize;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
@@ -95,6 +96,10 @@ impl CountermodelProblem {
         })
     }
 }
+/// The ground-fact route's NotFound: no candidate within the bounds, or one the premises reject.
+pub const GROUND_NOT_FOUND: &str = "the ground-fact candidate is not a model of the premises within the domain bounds";
+/// Per-sort (least, most) domain sizes that override a search's shared bounds.
+pub type SortBounds = BTreeMap<String, (usize, usize)>;
 #[derive(Clone, Copy, Debug)]
 pub struct SearchBounds {
     pub max_domain_size: usize,
@@ -150,31 +155,64 @@ pub(crate) fn next_combination(indices: &mut [usize], n: usize) -> bool {
     false
 }
 /// Python `search._domain_sizes`: bounded vectors by total entities, then lexicographically.
-pub(crate) fn domain_sizes(minima: &[usize], maximum: usize) -> Vec<Vec<usize>> {
-    fn walk(minima: &[usize], suffix: &[usize], maximum: usize, index: usize, remaining: usize,
-            prefix: &mut Vec<usize>, out: &mut Vec<Vec<usize>>) {
-        if index == minima.len() {
-            if remaining == 0 { out.push(prefix.clone()); }
-            return;
+/// Lazy: there are up to (maximum + 1)^sorts vectors (3^22 for the whole UDHR's 22 sorts at
+/// domain bound 2), so the list is never built; one vector is held at a time.
+/// Each sort has its own maximum (premise-scale: Lean's per-sort domain budget raises it only
+/// for the sorts that need more entities); `new` is the one shared bound.
+pub(crate) struct DomainSizes {
+    minima: Vec<usize>,
+    maxima: Vec<usize>,
+    total: usize,
+    next: Option<Vec<usize>>,
+}
+impl DomainSizes {
+    #[cfg(test)]
+    pub(crate) fn new(minima: &[usize], maximum: usize) -> Self {
+        Self::bounded(minima, &vec![maximum; minima.len()])
+    }
+    pub(crate) fn bounded(minima: &[usize], maxima: &[usize]) -> Self {
+        debug_assert_eq!(minima.len(), maxima.len());
+        // The fewest entities is every minimum; a minimum above its bound admits no vector.
+        let next = minima.iter().zip(maxima).all(|(m, x)| m <= x).then(|| minima.to_vec());
+        Self { minima: minima.to_vec(), maxima: maxima.to_vec(), total: minima.iter().sum(), next }
+    }
+    /// The least vector from `start` on whose entries sum to `remaining`.
+    fn fill(&self, sizes: &mut [usize], start: usize, mut remaining: usize) {
+        for index in start..sizes.len() {
+            let rest: usize = self.maxima[index + 1..].iter().sum();
+            sizes[index] = self.minima[index].max(remaining.saturating_sub(rest));
+            remaining -= sizes[index];
         }
-        let rest = maximum * (minima.len() - index - 1);
-        let low = minima[index].max(remaining.saturating_sub(rest));
-        let Some(high) = remaining.checked_sub(suffix[index + 1]) else { return };
-        for size in low..=high.min(maximum) {
-            prefix.push(size);
-            walk(minima, suffix, maximum, index + 1, remaining - size, prefix, out);
-            prefix.pop();
+    }
+    fn successor(&mut self, sizes: &[usize]) -> Option<Vec<usize>> {
+        // Same total: raise the last entry that can grow while its suffix can shrink.
+        let (mut suffix, mut suffix_minima) = (0, 0);
+        for index in (0..sizes.len()).rev() {
+            if index + 1 < sizes.len() && sizes[index] < self.maxima[index] && suffix > suffix_minima {
+                let mut next = sizes.to_vec();
+                next[index] += 1;
+                self.fill(&mut next, index + 1, suffix - 1);
+                return Some(next);
+            }
+            suffix += sizes[index];
+            suffix_minima += self.minima[index];
         }
+        self.total += 1;
+        if self.total > self.maxima.iter().sum::<usize>() {
+            return None;
+        }
+        let mut next = vec![0; sizes.len()];
+        self.fill(&mut next, 0, self.total);
+        Some(next)
     }
-    let mut suffix = vec![0; minima.len() + 1];
-    for index in (0..minima.len()).rev() {
-        suffix[index] = minima[index] + suffix[index + 1];
+}
+impl Iterator for DomainSizes {
+    type Item = Vec<usize>;
+    fn next(&mut self) -> Option<Vec<usize>> {
+        let sizes = self.next.take()?;
+        self.next = self.successor(&sizes);
+        Some(sizes)
     }
-    let mut out = Vec::new();
-    for total in suffix[0]..=minima.len() * maximum {
-        walk(minima, &suffix, maximum, 0, total, &mut Vec::new(), &mut out);
-    }
-    out
 }
 /// Python `search._models` for the relational families, in its exact order:
 /// domain sizes by total entities, used-relation subsets by tuple count (a
@@ -186,8 +224,10 @@ struct Models<'a> {
     sorts: Vec<String>,
     names: Vec<String>,
     used: BTreeSet<String>,
-    sizes: Vec<Vec<usize>>,
-    size_index: usize,
+    minima: Vec<usize>,
+    maxima: Vec<usize>,
+    sizes: DomainSizes,
+    size: Vec<usize>,
     domains: BTreeMap<String, Vec<String>>,
     atoms: Vec<(String, Vec<String>)>,
     subset: Vec<usize>,
@@ -220,6 +260,12 @@ impl<'a> CandidateIterator<'a> {
 impl<'a> Models<'a> {
     fn new(env: &'a Environment, document: &Document, maximum: usize,
            minimum: usize, guard: Option<&Formula>) -> Self {
+        Self::bounded(env, document, maximum, minimum, guard, &SortBounds::new())
+    }
+    /// `sort_bounds` overrides the shared bounds of the sorts it names (premise-scale: Lean's
+    /// per-sort domain budget). A sort's least size is never below what its constants need.
+    fn bounded(env: &'a Environment, document: &Document, maximum: usize,
+               minimum: usize, guard: Option<&Formula>, sort_bounds: &SortBounds) -> Self {
         let sorts: Vec<_> = env.model_sorts().into_iter().collect();
         let minima: Vec<_> = sorts
             .iter()
@@ -228,8 +274,11 @@ impl<'a> Models<'a> {
                     env.constants().values().filter(|t| *t == s).count()
                 } else {
                     usize::from(env.constants().values().any(|t| t == s))
-                }.max(minimum)
+                }.max(sort_bounds.get(s).map_or(minimum, |(least, _)| *least))
             })
+            .collect();
+        let maxima: Vec<_> = sorts.iter()
+            .map(|s| sort_bounds.get(s).map_or(maximum, |(_, most)| *most))
             .collect();
         let mut used = BTreeSet::new();
         for f in document.formulas() {
@@ -250,15 +299,18 @@ impl<'a> Models<'a> {
             }
         }
         used.retain(|p| !env.is_defined(p));
-        let sizes = domain_sizes(&minima, maximum);
+        let mut sizes = DomainSizes::bounded(&minima, &maxima);
+        let size = sizes.next();
         Self {
             env,
             sorts,
             names: env.constants().keys().cloned().collect(),
             used,
-            done: sizes.is_empty(),
+            minima,
+            maxima,
+            done: size.is_none(),
             sizes,
-            size_index: 0,
+            size: size.unwrap_or_default(),
             domains: BTreeMap::new(),
             atoms: Vec::new(),
             subset: Vec::new(),
@@ -267,8 +319,15 @@ impl<'a> Models<'a> {
             ready: false,
         }
     }
+    /// The ground-fact candidate of `premises` within this search's per-sort bounds
+    /// (`ground::candidate`), when it is a model of the environment's flags and literals.
+    fn ground_candidate(&self, premises: &[Formula]) -> Option<FiniteModel> {
+        let premises: Vec<Value> = premises.iter().map(Formula::to_value).collect();
+        let raw = crate::ground::candidate(self.env, &premises, &self.sorts, &self.minima, &self.maxima)?;
+        FiniteModel::from_value(self.env, &raw).ok()
+    }
     fn prepare(&mut self) -> Result<()> {
-        self.domains = self.sorts.iter().zip(&self.sizes[self.size_index])
+        self.domains = self.sorts.iter().zip(&self.size)
             .map(|(s, n)| (s.clone(), (0..*n).map(|i| format!("e{i}")).collect()))
             .collect();
         let count: usize = self.used.iter()
@@ -375,8 +434,10 @@ impl<'a> Models<'a> {
     }
     fn next_sizes(&mut self) {
         self.ready = false;
-        self.size_index += 1;
-        self.done = self.size_index >= self.sizes.len();
+        match self.sizes.next() {
+            Some(size) => self.size = size,
+            None => self.done = true,
+        }
     }
 }
 
@@ -487,24 +548,81 @@ pub fn find_countermodel_with_nonvacuity(
     env: &Environment, problem: &CountermodelProblem, bounds: SearchBounds,
     minimum: usize, guard: Option<&Formula>, semantic: bool,
 ) -> Result<SearchResult> {
+    find_countermodel_bounded(env, problem, bounds, minimum, guard, semantic, &SortBounds::new(), false)
+}
+
+/// A case's `sort_bounds` (`{sort: [least, most]}`, premise-scale's per-sort domain budget,
+/// Lean's): empty when absent.
+pub fn sort_bounds(v: &Value) -> Result<SortBounds> {
+    let Some(raw) = v.get("sort_bounds") else { return Ok(SortBounds::new()) };
+    let invalid = || Error::new("InvalidInput", "sort_bounds must map sorts to [least, most]");
+    let mut bounds = SortBounds::new();
+    for (sort, pair) in raw.as_object().ok_or_else(invalid)? {
+        let [least, most] = pair.as_array().map(Vec::as_slice).ok_or_else(invalid)? else {
+            return Err(invalid());
+        };
+        let size = |n: &Value| n.as_u64().and_then(|n| usize::try_from(n).ok()).ok_or_else(invalid);
+        bounds.insert(sort.clone(), (size(least)?, size(most)?));
+    }
+    Ok(bounds)
+}
+
+/// A case's `ground_only` flag (premise-scale's ground-fact route): false when absent.
+pub fn ground_only(v: &Value) -> Result<bool> {
+    match v.get("ground_only") {
+        None => Ok(false),
+        Some(flag) => flag.as_bool().ok_or_else(|| Error::new("InvalidInput", "ground_only must be Boolean")),
+    }
+}
+
+/// Every sort a per-sort bound names is a model sort of `env`, and its bounds are ordered and
+/// within the v0 envelope.
+pub(crate) fn check_sort_bounds(env: &Environment, sort_bounds: &SortBounds) -> Result<()> {
+    let sorts = env.model_sorts();
+    for (sort, (least, most)) in sort_bounds {
+        if !sorts.contains(sort) {
+            return error("InvalidInput", format!("sort_bounds names an undeclared sort {sort}"));
+        }
+        if least > most || *most > 1000 {
+            return error("ResourceLimit", "search bounds exceed v0 envelope");
+        }
+    }
+    Ok(())
+}
+
+/// `find_countermodel_with_nonvacuity` with per-sort domain bounds (premise-scale). With
+/// `ground_only` the one candidate is the ground-fact model of the premises (`ground::candidate`)
+/// within the same bounds, and nothing is enumerated: the premise check's ground-fact route.
+pub fn find_countermodel_bounded(
+    env: &Environment, problem: &CountermodelProblem, bounds: SearchBounds,
+    minimum: usize, guard: Option<&Formula>, semantic: bool, sort_bounds: &SortBounds,
+    ground_only: bool,
+) -> Result<SearchResult> {
     problem.document.belongs_to(env)?;
     if bounds.max_domain_size > 1000 || bounds.max_evaluations > MAX_EVALUATIONS
         || minimum > bounds.max_domain_size {
         return error("ResourceLimit", "search bounds exceed v0 envelope");
     }
-    let mut models = Models::new(env, &problem.document, bounds.max_domain_size, minimum, guard);
+    check_sort_bounds(env, sort_bounds)?;
+    let mut models = Models::bounded(env, &problem.document, bounds.max_domain_size, minimum, guard,
+                                     sort_bounds);
+    let formulas = problem.document.formulas();
+    let mut ground = if ground_only { models.ground_candidate(&formulas[..formulas.len() - 1]) } else { None };
     let mut result = SearchResult {
         status: "NotFound",
         model: None,
         models_checked: 0,
         evaluations: 0,
         bounds,
-        detail: if guard.is_some() {
+        detail: if ground_only {
+            GROUND_NOT_FOUND
+        } else if guard.is_some() {
             "all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
         } else { "all finite models within the domain bound were exhausted" },
     };
     loop {
-        let model = match models.next() {
+        let next = if ground_only { Ok(ground.take()) } else { models.next() };
+        let model = match next {
             Ok(None) => return Ok(result),
             Ok(Some(model)) => model,
             Err(e) if e.code == "ResourceLimit" => {
@@ -639,5 +757,82 @@ pub fn find_distinguishing_model_with_nonvacuity(
                 return Ok(result);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod domain_size_tests {
+    use super::DomainSizes;
+
+    /// The eager enumeration `DomainSizes` replaced (it built every vector up front, which
+    /// exhausted memory on the 22-sort whole UDHR), kept as the order oracle, with a bound per sort.
+    fn eager(minima: &[usize], maxima: &[usize]) -> Vec<Vec<usize>> {
+        fn walk(minima: &[usize], maxima: &[usize], suffix: &[usize], index: usize, remaining: usize,
+                prefix: &mut Vec<usize>, out: &mut Vec<Vec<usize>>) {
+            if index == minima.len() {
+                if remaining == 0 { out.push(prefix.clone()); }
+                return;
+            }
+            let rest: usize = maxima[index + 1..].iter().sum();
+            let low = minima[index].max(remaining.saturating_sub(rest));
+            let Some(high) = remaining.checked_sub(suffix[index + 1]) else { return };
+            for size in low..=high.min(maxima[index]) {
+                prefix.push(size);
+                walk(minima, maxima, suffix, index + 1, remaining - size, prefix, out);
+                prefix.pop();
+            }
+        }
+        if minima.iter().zip(maxima).any(|(m, x)| m > x) {
+            return Vec::new();
+        }
+        let mut suffix = vec![0; minima.len() + 1];
+        for index in (0..minima.len()).rev() {
+            suffix[index] = minima[index] + suffix[index + 1];
+        }
+        let mut out = Vec::new();
+        for total in suffix[0]..=maxima.iter().sum() {
+            walk(minima, maxima, &suffix, 0, total, &mut Vec::new(), &mut out);
+        }
+        out
+    }
+
+    #[test]
+    fn lazy_sizes_are_the_eager_order() {
+        // Every minima vector over 0..=4 sorts with entries 0..=3, at every bound 0..=3,
+        // including minima above the bound (a `$string` sort with more constants).
+        for sorts in 0..=4usize {
+            for code in 0..4usize.pow(sorts as u32) {
+                let minima: Vec<usize> = (0..sorts).map(|i| code / 4usize.pow(i as u32) % 4).collect();
+                for maximum in 0..=3 {
+                    let lazy: Vec<_> = DomainSizes::new(&minima, maximum).collect();
+                    assert_eq!(lazy, eager(&minima, &vec![maximum; sorts]), "minima {minima:?} maximum {maximum}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn per_sort_maxima_are_the_eager_order() {
+        // Every minima and maxima vector over 0..=3 sorts with entries 0..=3 (premise-scale's
+        // per-sort budget), a minimum above its own bound included.
+        for sorts in 0..=3usize {
+            for code in 0..16usize.pow(sorts as u32) {
+                let minima: Vec<usize> = (0..sorts).map(|i| code / 16usize.pow(i as u32) % 4).collect();
+                let maxima: Vec<usize> = (0..sorts).map(|i| code / 16usize.pow(i as u32) / 4 % 4).collect();
+                let lazy: Vec<_> = DomainSizes::bounded(&minima, &maxima).collect();
+                assert_eq!(lazy, eager(&minima, &maxima), "minima {minima:?} maxima {maxima:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn many_sorts_hold_one_vector() {
+        // 3^22 vectors: the eager list needed hundreds of GB before the first model.
+        let mut sizes = DomainSizes::new(&[0; 22], 2);
+        assert_eq!(sizes.next(), Some(vec![0; 22]));
+        let mut one = vec![0; 22];
+        one[21] = 1;
+        assert_eq!(sizes.next(), Some(one));
+        assert_eq!(sizes.nth(10_000).map(|v| v.len()), Some(22));
     }
 }

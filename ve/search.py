@@ -6,7 +6,8 @@ reported witness, its non-vacuity included, before it is reported.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Sequence
+from functools import cache
+from typing import Any, Mapping, Sequence
 
 from .assurance import semantic_entry
 from .ast import (Reach, Named, Body, And, Atom, Binary, Exists, Forall, Implies, Not, Or, Unary,
@@ -285,8 +286,14 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
                       min_domain_size: int = 0, nonempty_domains: bool = False,
                       nonvacuous_for: Any | None = None, semantic_nonvacuity: bool = False,
                       max_models: int = 10_000,
-                      max_evaluations: int = 1_000_000) -> CountermodelResult:
-    """Search with a bounded Rust enumerator and Lean-checked witnesses."""
+                      max_evaluations: int = 1_000_000,
+                      sort_bounds: Mapping[str, tuple[int, int]] | None = None,
+                      ground_only: bool = False) -> CountermodelResult:
+    """Search with a bounded Rust enumerator and Lean-checked witnesses.
+
+    `sort_bounds` (`{sort: (least, most)}`, Lean's `premise_budget`) replaces the shared bounds
+    of the sorts it names. With `ground_only` the one candidate is the premises' ground-fact model
+    within those bounds, and nothing is enumerated (premise-scale's ground-fact route)."""
     from .ast import _to_data
     from .backends.dispatch import owned
     from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
@@ -294,6 +301,9 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
     premises = _premises(premises)
     _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
                       nonempty_domains, nonvacuous_for, semantic_nonvacuity)
+    bounds = _validate_sort_bounds(env, sort_bounds)
+    if type(ground_only) is not bool:
+        raise ValueError("ground_only must be a boolean")
     _check_aggregate_ast(premises, conclusion)
     for formula in premises:
         check_formula(env, formula)
@@ -305,6 +315,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
             "max_domain_size": max_domain_size, "min_domain_size": min_domain_size,
             "nonempty_domains": nonempty_domains, "max_models": max_models,
             "max_evaluations": max_evaluations,
+            **({} if not bounds else {"sort_bounds": {k: list(v) for k, v in bounds.items()}}),
+            **({} if not ground_only else {"ground_only": True}),
             **({} if nonvacuous_for is None else
                {"nonvacuous_for": _to_data(nonvacuous_for),
                 "semantic_nonvacuity": semantic_nonvacuity})}
@@ -315,7 +327,7 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         if (type(status) is not str or status not in {"Found", "NotFound", "ResourceLimit"}
                 or type(row.get("models_checked")) is not int
                 or type(row.get("evaluations")) is not int
-                or not 0 <= row["models_checked"] <= max_models
+                or not 0 <= row["models_checked"] <= (min(max_models, 1) if ground_only else max_models)
                 or not 0 <= row["evaluations"] <= max_evaluations):
             raise CheckerUnavailable("CheckerUnavailable: malformed Rust search result")
         model = None
@@ -340,7 +352,8 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
         elif status == "NotFound":
             if row.get("model") is not None:
                 raise CheckerUnavailable("CheckerUnavailable: unexpected Rust search witness")
-            detail = ("all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
+            detail = (GROUND_NOT_FOUND if ground_only else
+                      "all used-relation interpretations satisfying the non-vacuity constraints within the domain bound were exhausted"
                       if nonvacuous_for is not None else
                       "all used-relation interpretations within the domain bound were exhausted (unused predicates fixed empty)")
         elif row.get("detail") in _RUST_DETAILS:
@@ -359,6 +372,103 @@ def find_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, *, max
 
     # Python has no search of its own: every authority runs Rust's, with checked witnesses.
     return owned("countermodel_search", rust)
+
+
+GROUND_NOT_FOUND = "the ground-fact candidate is not a model of the premises within the domain bounds"
+
+
+def _validate_sort_bounds(env: Any, sort_bounds) -> dict[str, tuple[int, int]]:
+    """A search's per-sort bounds: each a declared sort of `env` with nonnegative integer bounds,
+    the least at most the most, within the entity limit."""
+    if sort_bounds is None:
+        return {}
+    if not isinstance(sort_bounds, Mapping):
+        raise ValueError("sort_bounds must map sorts to (least, most)")
+    bounds = {}
+    for sort, pair in sort_bounds.items():
+        if sort not in env.sorts:
+            raise ValueError(f"sort_bounds names an undeclared sort {sort!r}")
+        if (not isinstance(pair, (tuple, list)) or len(pair) != 2
+                or any(type(x) is not int or x < 0 for x in pair) or pair[0] > pair[1]):
+            raise ValueError("sort_bounds must map sorts to (least, most) with 0 <= least <= most")
+        if pair[1] > MAX_ENTITIES:
+            raise ResourceLimit(f"max_domain_size cannot exceed {MAX_ENTITIES}")
+        bounds[sort] = (pair[0], pair[1])
+    return bounds
+
+
+@dataclass(frozen=True, slots=True)
+class PremiseBudget:
+    """Lean's budget of the premise check over one premise set (`VE.SearchBudget`): the four
+    budgets and the sorts raised above the shared domain bound, each `(least, most)`."""
+    max_proof_steps: int
+    max_domain_size: int
+    max_models: int
+    max_evaluations: int
+    sort_bounds: dict[str, tuple[int, int]]
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"max_proof_steps": self.max_proof_steps, "max_domain_size": self.max_domain_size,
+                "max_models": self.max_models, "max_evaluations": self.max_evaluations,
+                **({"sort_bounds": {k: list(v) for k, v in self.sort_bounds.items()}} if self.sort_bounds else {})}
+
+
+_BUDGET_FIELDS = ("max_proof_steps", "max_domain_size", "max_models", "max_evaluations")
+
+
+def premise_budget(env: Any, premises: Sequence[Any]) -> PremiseBudget:
+    """Lean's premise-check budget for `premises` over `env` (service mode `search-budget`), for
+    every declared sort of the environment the search reads.
+
+    The service checks the row against `search-budget.json` (one entry per requested sort, in the
+    request's order); this binds it to the request by position and reads nothing else from it.
+    Anything else is `CheckerUnavailable`; Python computes no budget of its own."""
+    from .ast import _to_data
+    from .backends.lean_runner import metered_environment
+    from .backends.relay import decide
+    environment = metered_environment(env)
+    case = {"id": "search-budget", "environment": environment,
+            "premises": [_to_data(p) for p in _premises(premises)],
+            "sorts": list(environment.get("vocabulary", {}).get("sorts", {}))}
+    [row] = decide("search-budget", [case])
+    return _bind_budget(row, case)
+
+
+@cache
+def lean_budget() -> PremiseBudget:
+    """Lean's premise-check budget with no sort raised: the answer to a case with no sorts, constants
+    or premises, read once per process (a refused answer is not kept). The readings routes' searches
+    (`ve.readings_verdicts.BUDGET`) and the premise-status witness search take it."""
+    from .backends.relay import decide
+    case = {"id": "search-budget", "environment": {"vocabulary": {}}, "premises": [], "sorts": []}
+    [row] = decide("search-budget", [case])
+    return _bind_budget(row, case)
+
+
+def _bind_budget(row: Any, case: dict) -> PremiseBudget:
+    """A `search-budget` row bound to its case (R8: schema and binding only): its own fields, typed,
+    and one entry per requested sort, which names and raises that sort or is null."""
+    def unavailable(why):
+        return CheckerUnavailable(f"CheckerUnavailable: the Lean search budget is not an answer to the case ({why})")
+    if type(row) is not dict or row.get("id") != case["id"] or row.get("status") != "ok":
+        raise unavailable("id or status")
+    if set(row) != {"id", "status", *_BUDGET_FIELDS, "sorts"}:
+        raise unavailable("fields")
+    if any(type(row[k]) is not int or row[k] < 0 for k in _BUDGET_FIELDS):
+        raise unavailable("budget")
+    entries = row["sorts"]
+    if type(entries) is not list or len(entries) != len(case["sorts"]):
+        raise unavailable("not one entry per requested sort")
+    bounds: dict[str, tuple[int, int]] = {}
+    for sort, entry in zip(case["sorts"], entries):
+        if entry is None:
+            continue
+        if (type(entry) is not dict or set(entry) != {"sort", "least", "most"} or entry["sort"] != sort
+                or any(type(entry[k]) is not int or entry[k] < 0 for k in ("least", "most"))):
+            raise unavailable(f"sort {sort!r}")
+        bounds[sort] = (entry["least"], entry["most"])
+    return PremiseBudget(row["max_proof_steps"], row["max_domain_size"], row["max_models"],
+                         row["max_evaluations"], bounds)
 
 
 @semantic_entry("countermodel.search")
