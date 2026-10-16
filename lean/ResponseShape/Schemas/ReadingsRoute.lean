@@ -18,7 +18,7 @@ def kind : Def :=
 
 def pair : Shape :=
   c
-    "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key."
+    "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key; gaps on the unspecified completion."
     [
       obj,
       .required ["situation", "witness", "separated", "witness_admissible", "witness_value", "other_admissible"],
@@ -29,7 +29,8 @@ def pair : Shape :=
         ("witness_admissible", .type ["boolean"]),
         ("witness_value", .type ["boolean", "null"]),
         ("other_admissible", .type ["boolean"]),
-        ("other_value", .type ["boolean", "null"])]]
+        ("other_value", .type ["boolean", "null"]),
+        ("gaps", ref "#/$defs/gaps")]]
 
 def key : Shape :=
   c "Readings.Wire key JSON: one generated key." [
@@ -69,7 +70,7 @@ def candidate : Shape :=
             ("findings", ref "common.json#/$defs/nonempty_strings")]]]]
 
 def validate : Shape :=
-  c "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set; under the unspecified completion (Readings.Run.runValidateND) also fill_premises and filled." [
+  c "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set; under the unspecified completion (Readings.Run.runValidateND) also fill_premises and filled, and on the soft chain (Readings.Run.runValidateSD) soft_premises." [
     .anyOf [
       n [
         obj,
@@ -79,6 +80,7 @@ def validate : Shape :=
           ("status", constS "ok"),
           ("content_bearing", .const (.bool false)),
           ("fill_premises", ref "#/$defs/fill_premises"),
+          ("soft_premises", ref "#/$defs/soft_premises"),
           ("filled", ref "#/$defs/filled")]],
       n [
         obj,
@@ -108,6 +110,7 @@ def validate : Shape :=
                         str,
                         .pattern (Re.prefixes ["SeparatedByDecisionOnly: ", "SeparatedByActOnly: "])])])]])]),
           ("fill_premises", ref "#/$defs/fill_premises"),
+          ("soft_premises", ref "#/$defs/soft_premises"),
           ("filled", ref "#/$defs/filled")]]]]
 
 def fill_premises : Shape :=
@@ -125,6 +128,24 @@ def fill_premises : Shape :=
             obj,
             .required ["label", "ast"],
             closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])])]])]
+
+def soft_premises : Shape :=
+  c "Readings.Run.softPremisesJson: under the soft completion, per reading with content soft's premises regenerated on its filled tree (SoftDefaults.softXL), each labelled soft:exception:… or soft:coherence:…." [
+    arr,
+    .items (n [
+      obj,
+      .required ["set", "index", "premises"],
+      closed [
+        ("set", str),
+        ("index", ref "common.json#/$defs/nat"),
+        ("premises", n [
+          arr,
+          .items (n [
+            obj,
+            .required ["label", "ast"],
+            closed [
+              ("label", str),
+              ("ast", ref "common.json#/$defs/generated_formula")]])])]])]
 
 def softException : Shape := n [obj, .required ["decided_by", "sufficient", "necessary", "factors"],
   closed [("decided_by", .type ["string", "null"]),
@@ -203,10 +224,11 @@ def filledEnvironment : Shape :=
             ("predicates", n [obj, .object [] (some (ref "#/$defs/filled_predicate"))])]])]]
 
 def filled : Shape :=
-  c "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last." [
+  c "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the chain the completion took (Readings.Chain.text; the client reads it and derives no chain), the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last." [
     obj,
-    .required ["environment", "units"],
+    .required ["chain", "environment", "units"],
     closed [
+      ("chain", enumS ["norms", "soft", "rights"]),
       ("environment", ref "#/$defs/filled_environment"),
       ("units", units)]]
 
@@ -298,6 +320,11 @@ def fillField : List (String × Shape) := [("fill", labelledFormulas)]
 def filledFields : List (String × Shape) :=
   [("fill_premises", ref "#/$defs/fill_premises"), ("filled", ref "#/$defs/filled")]
 
+/-- On the soft chain (Readings.Run.runElaborateSD): `fill_premises`, `soft_premises` and `filled`. -/
+def filledFieldsS : List (String × Shape) :=
+  [("fill_premises", ref "#/$defs/fill_premises"), ("soft_premises", ref "#/$defs/soft_premises"),
+   ("filled", ref "#/$defs/filled")]
+
 /-- An answer of exactly `fields` beside `id`, `status` and the route. -/
 def elaborateRoute (routes : List String) (fields : List (String × Shape)) : Shape :=
   n [
@@ -310,7 +337,7 @@ def elaborateRoute (routes : List String) (fields : List (String × Shape)) : Sh
 
 def elaborate : Shape :=
   c
-    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled, and on the superposed route fill, the Fill_T the superposed kinds append to the slot (Wire.elaborateFieldsND)."
+    "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled, and on the superposed route fill, the Fill_T the superposed kinds append to the slot (Wire.elaborateFieldsND); under the soft completion (Readings.Run.runElaborateSD) the enumerated row also carries soft_premises."
     [
       .anyOf [
         elaborateRoute ["w2", "pending", "abstention"] [("generated_predicates", generatedPredicates)],
@@ -321,7 +348,9 @@ def elaborate : Shape :=
         elaborateRoute ["w2", "pending", "abstention"] (("generated_predicates", generatedPredicates) :: filledFields),
         elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: (elaborateChoices ++ filledFields)),
         elaborateRoute ["superposed"] (("generated_predicates", generatedPredicates) ::
-          (elaborateChoices ++ elaborateSuperposed ++ fillField ++ filledFields))]]
+          (elaborateChoices ++ elaborateSuperposed ++ fillField ++ filledFields)),
+        -- Under the soft completion (Readings.Run.runElaborateSD): the enumerated row with soft's premises too.
+        elaborateRoute ["enumerated"] (("generated_predicates", generatedPredicates) :: (elaborateChoices ++ filledFieldsS))]]
 
 def gaps : Shape :=
   c "Readings.Wire.gapsJson: the filled gaps a shown result depends on (readings-defaults 2.2), each the regulated predicate, the tuple's ids and the filling's answer." [
@@ -608,6 +637,7 @@ def verdictsFor (question result : String) : Shape :=
               ("finding", n [str, .pattern (Re.prefixes ["DeadReading: "])])]])]]),
         ("untaken", ref "#/$defs/choice"),
         ("dead", n [arr, .items (ref "#/$defs/verdicts_dead")]),
+        ("decided_units", ref "common.json#/$defs/strings"),
         ("english", n [arr, .items (ref "#/$defs/verdicts_line")])]]
 
 def verdicts : Shape :=
@@ -790,6 +820,7 @@ def file : File where
     ("candidate", .schema candidate),
     ("validate", .schema validate),
     ("fill_premises", .schema fill_premises),
+    ("soft_premises", .schema soft_premises),
     ("soft_exception", .schema softException),
     ("soft_node", .schema softNode),
     ("content", .schema content),
