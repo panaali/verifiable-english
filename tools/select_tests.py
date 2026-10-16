@@ -819,7 +819,8 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     if cov is not None:
         unmapped = (set(all_units) - cov.recorded) | uncertain
     sel = Selection(graph, cov, unmapped, all_units)
-    cutoff = lean_cutoff(base, after) if any(kind_of(change.path) == LEAN for change in changes) else None
+    lean_changes = [change for change in changes if kind_of(change.path) == LEAN]
+    cutoff = lean_cutoff(base, after, all(change.known for change in lean_changes)) if lean_changes else None
     if cutoff is not None:
         sel.rebuilt = None if cutoff["rebuilt"] is None else set(cutoff["rebuilt"])
     if missing_map:
@@ -870,17 +871,22 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     return plan
 
 
-def lean_cutoff(base: str, after: str | None) -> dict:
+def lean_cutoff(base: str, after: str | None, known: bool = True) -> dict:
     """The binary-level cutoff for a change to Lean inputs: which executables the change rebuilt into a
     different program, from the digests this machine recorded for the `lean/` trees of `base` and of
     `after` (a revision; None, the working tree) (tools/test_map.py `record_build`). A test runs a
     Lean executable built the same way the same, so it is selected through that executable only when
     the digest differs. Tests that read Lean sources or run `lake`/`lean`, and the checker pins, still
     select by file. Without both records, `rebuilt` is None: every executable whose imports hold a
-    changed module counts, as before."""
+    changed module counts, as before. So it is when the trees cannot show the change: a Lean change
+    whose contents are unknown (`known` False, a path named without an edit), or equal trees."""
     trees = {"base": test_map.lean_tree(base), "head": test_map.lean_tree(after)}
-    builds = {side: test_map.load_build(tree) for side, tree in trees.items()}
     found = {"base_tree": trees["base"], "head_tree": trees["head"], "rebuilt": None, "same": None}
+    if not known:
+        return {**found, "state": "a Lean change of unknown contents"}
+    if trees["base"] == trees["head"]:
+        return {**found, "state": "the change is not in the lean/ trees"}
+    builds = {side: test_map.load_build(tree) for side, tree in trees.items()}
     missing = [side for side, build in builds.items() if build is None]
     if missing:
         return {**found, "state": f"no record of the {' and '.join(missing)} build"}
