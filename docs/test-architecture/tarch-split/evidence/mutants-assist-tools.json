@@ -60,19 +60,19 @@
   {
    "id": "S9",
    "file": "tools/bench/suite_tail.py",
-   "claim": "durations --previous: a profiled test takes its new time over the earlier file's",
-   "source_sha256": "299955d37f752d6aeff3d883ac2a490ac6fe26ee3b8edfbb6f20893eb3afa94f",
+   "claim": "durations --previous counts the earlier file as one more run: a test keeps its longest time, not this run's warm one",
+   "source_sha256": "a3ba9be3f34cd0673680d31d486b8296f08023afd04edf8d38bcfeab6048df59",
    "tests": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ],
    "baseline_exit": 0,
    "killed_by": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 3.4,
-   "output_tail": "source=\"earlier\"))\n        collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::shorter\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n>       assert test_schedule.read_estimates(output) == ({\"t::split[0]\": 40.0, \"t::shorter\": 5.0, \"t::kept\": 12.0}, 0.2)\nE       AssertionError: assert ({'t::kept': ...': 40.0}, 0.2) == ({'t::split[0...': 12.0}, 0.2)\nE         \nE         At index 0 diff: {'t::kept': 12.0, 't::shorter': 90.0, 't::split[0]': 40.0} != {'t::split[0]': 40.0, 't::shorter': 5.0, 't::kept': 12.0}\nE         Use -v to get more diff\n\ntests/test_suite_tail.py:141: AssertionError\n----------------------------- Captured stdout call -----------------------------\nwrote 3 of 4 tests to /tmp/pytest-of-seyran/pytest-9181/test_durations_command_keeps_a0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time\n1 failed in 0.29s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-m1hqgvp3)\n"
+   "seconds": 3.0,
+   "output_tail": "lection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::warm\", \"t::longer\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n>       assert test_schedule.read_estimates(output) == (\n            {\"t::split[0]\": 40.0, \"t::warm\": 90.0, \"t::longer\": 8.0, \"t::kept\": 12.0}, 0.2)\nE       AssertionError: assert ({'t::kept': ...m': 5.0}, 0.2) == ({'t::split[0...': 12.0}, 0.2)\nE         \nE         At index 0 diff: {'t::kept': 12.0, 't::longer': 8.0, 't::split[0]': 40.0, 't::warm': 5.0} != {'t::split[0]': 40.0, 't::warm': 90.0, 't::longer': 8.0, 't::kept': 12.0}\nE         Use -v to get more diff\n\ntests/test_suite_tail.py:143: AssertionError\n----------------------------- Captured stdout call -----------------------------\nwrote 4 of 5 tests to /tmp/pytest-of-seyran/pytest-9303/test_durations_command_counts_0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run\n1 failed in 0.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jia_dm2h)\n"
   },
   {
    "id": "S10",
@@ -80,33 +80,33 @@
    "claim": "durations --previous keeps the earlier file's estimate of an unrecorded test",
    "source_sha256": "7a2a7b0bb44510314f9e43033032cb5953766e1b9037eefc803a014770c7e468",
    "tests": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ],
    "baseline_exit": 0,
    "killed_by": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 3.2,
-   "output_tail": "text(\n            {\"t::split\": 300.0, \"t::shorter\": 90.0, \"t::kept\": 12.0, \"t::gone\": 7.0, \"t::short\": 0.2}, source=\"earlier\"))\n        collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::shorter\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n>       assert test_schedule.read_estimates(output) == ({\"t::split[0]\": 40.0, \"t::shorter\": 5.0, \"t::kept\": 12.0}, 0.2)\nE       AssertionError: assert ({'t::kept': ...': 40.0}, 0.5) == ({'t::split[0...': 12.0}, 0.2)\nE         \nE         At index 1 diff: 0.5 != 0.2\nE         Use -v to get more diff\n\ntests/test_suite_tail.py:141: AssertionError\n----------------------------- Captured stdout call -----------------------------\nwrote 3 of 4 tests to /tmp/pytest-of-seyran/pytest-9183/test_durations_command_keeps_a0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time\n1 failed in 0.26s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ozktmw2x)\n"
+   "seconds": 2.9,
+   "output_tail": "0, \"t::longer\": 3.0, \"t::kept\": 12.0, \"t::gone\": 7.0, \"t::short\": 0.2},\n            source=\"earlier\"))\n        collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::warm\", \"t::longer\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n>       assert test_schedule.read_estimates(output) == (\n            {\"t::split[0]\": 40.0, \"t::warm\": 90.0, \"t::longer\": 8.0, \"t::kept\": 12.0}, 0.2)\nE       AssertionError: assert ({'t::kept': ...': 90.0}, 0.5) == ({'t::split[0...': 12.0}, 0.2)\nE         \nE         At index 1 diff: 0.5 != 0.2\nE         Use -v to get more diff\n\ntests/test_suite_tail.py:143: AssertionError\n----------------------------- Captured stdout call -----------------------------\nwrote 4 of 5 tests to /tmp/pytest-of-seyran/pytest-9305/test_durations_command_counts_0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run\n1 failed in 0.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-bokkpegx)\n"
   },
   {
    "id": "S11",
    "file": "tools/bench/suite_tail.py",
    "claim": "durations --previous refuses a file that is not a durations file",
-   "source_sha256": "299955d37f752d6aeff3d883ac2a490ac6fe26ee3b8edfbb6f20893eb3afa94f",
+   "source_sha256": "a3ba9be3f34cd0673680d31d486b8296f08023afd04edf8d38bcfeab6048df59",
    "tests": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ],
    "baseline_exit": 0,
    "killed_by": [
-    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 3.1,
-   "output_tail": "      collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::shorter\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n        assert test_schedule.read_estimates(output) == ({\"t::split[0]\": 40.0, \"t::shorter\": 5.0, \"t::kept\": 12.0}, 0.2)\n        previous.write_text(\"{}\")\n>       with pytest.raises(SystemExit, match=\"not a durations file\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE SystemExit\n\ntests/test_suite_tail.py:143: Failed\n----------------------------- Captured stdout call -----------------------------\nwrote 3 of 4 tests to /tmp/pytest-of-seyran/pytest-9185/test_durations_command_keeps_a0/durations.json\nwrote 2 of 3 tests to /tmp/pytest-of-seyran/pytest-9185/test_durations_command_keeps_a0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time\n1 failed in 0.22s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-xyy0z_vn)\n"
+   "seconds": 2.8,
+   "output_tail": "th / \"collection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::warm\", \"t::longer\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n        assert test_schedule.read_estimates(output) == (\n            {\"t::split[0]\": 40.0, \"t::warm\": 90.0, \"t::longer\": 8.0, \"t::kept\": 12.0}, 0.2)\n        previous.write_text(\"{}\")\n>       with pytest.raises(SystemExit, match=\"not a durations file\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE SystemExit\n\ntests/test_suite_tail.py:146: Failed\n----------------------------- Captured stdout call -----------------------------\nwrote 4 of 5 tests to /tmp/pytest-of-seyran/pytest-9307/test_durations_command_counts_0/durations.json\nwrote 3 of 4 tests to /tmp/pytest-of-seyran/pytest-9307/test_durations_command_counts_0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run\n1 failed in 0.20s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pyb8dw5a)\n"
   }
  ]
 }
