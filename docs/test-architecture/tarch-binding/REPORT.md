@@ -4,7 +4,9 @@
 was to add new files only. It edits one existing hand-written file, `tools/regen_generated.py` (one `GENERATED`
 entry, 3 lines), and the generated `.gitattributes` follows it. The repository requires this:
 `tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason`
-fails for an unregistered writer, and CLAUDE.md names that file as the one inventory of generated files.
+fails for an unregistered writer, and CLAUDE.md names that file as the one inventory of generated files. The
+entry also needs its row in the table of `docs/merge-tooling.md` (one line, pre-review round 1):
+`tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry` fails without it.
 Nothing else outside new files changed: no route module, `ve/backends/service_schema.py`, `lean/ResponseShape/` or
 `tools/relay_mutation_gate.py`.
 
@@ -22,7 +24,7 @@ re-check (point 11 resolved; nothing there overrides 3.9) and ADR 0001. Base `da
 | 3.9 "one generic checker per mode"; directive (2) | `ve/backends/shape_binding.py`: `check(mode, case, row)` is the shape check (`service_schema.check_row`, the one validator) plus the classification of every leaf of the answer. `leaves(mode)` is the static census. Nothing is re-validated or re-derived. | `829a0c293` | the mutation test below |
 | 3.9 "one generic mutation test per mode on recorded genuine answers"; directive (2): each leaf mutated, coordinated multi-field mutants included | `tests/data/binding-answers.jsonl.gz` (537 genuine answers, all 36 modes). `tests/binding_mutants.py` mutates each leaf, array and map, and coordinated pairs. `tests/test_shape_binding_mutants.py` runs one test per mode. | `829a0c293`, `fc4a36bb5`, `2ee24ed6d`, `f32633959` | `test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[<mode>]` (36), `test_coordinated_mutants_are_generated_and_decided`, `test_a_name_renamed_everywhere_is_refused_where_one_occurrence_is_bound`, `test_every_leaf_of_an_answer_is_a_leaf_of_the_census[<mode>]`, `test_the_walker_classifies_every_dialect_keyword` |
 | 3.9 "a hand fuzz path is retired only after a seeded fault at that boundary is caught by the generic test"; directive (3): per hand binder, whether a seeded fault is caught (render, readings, document check, coordinated mutants); list both | The probe (`tests/binding_probe.py`) delivers every shape-generated mutant to the real consumer code in a fork of each consumer test. It records the hand check that refused it and the generic verdict: 51 hand binders, 12 covered, 39 not. `seeded_faults.py` disables five binders and judges them end to end on the wire. | `2c3c219eb`, `f54ba98d9` | `test_the_probe_finds_the_hand_check_of_a_consumer_test` (live), `test_a_refusal_is_attributed_to_the_check_that_made_it`, `test_a_hand_check_is_retirable_only_if_the_generic_checker_refuses_all_it_refuses`; `seeded-faults.json` |
-| "Retire NOTHING" | Nothing is retired. Every hand binder, every consumer test (`tests/test_discourse_answer.py:139` included) and the relay mutation gate are unchanged. No test was removed. | – | `git diff main...HEAD` touches no test or product file except new ones and the inventory entry |
+| "Retire NOTHING" | Nothing is retired. Every hand binder, every consumer test (`tests/test_discourse_answer.py:139` included) and the relay mutation gate are unchanged. No test was removed. | – | `git diff main...HEAD` touches no test or product file except new ones, the inventory entry and its `docs/merge-tooling.md` row |
 | "Measure the effect (before/after on the Mac)" | Below. | – | `evidence.json` `measurements` |
 
 ## 1. The census
@@ -282,7 +284,20 @@ Two seeds needed a second run:
     (`git diff main...HEAD` is empty for all three), and no Lean file changed, so its result is main's.
   - Those files belong to their own items (the batch must not edit `tools/relay_mutation_gate.py`), so they are
     reported here, not edited.
+  - Pre-review round 1 reproduced it on main itself: a detached worktree of main `1cf82542d` with the same
+    `ve_service` (no Lean source differs between this HEAD and main), `relay_mutation_gate.py --route service:parse
+    --route service:route --route service:norm-defaults`, gives the same 15 failures, word for word.
+  - Main's item `fix-relay-mutation-gate` (branch `fix/relay-mutation-gate`, commit `5f0089e29` "relay gate: pass
+    on main again (norm-defaults description, stale allow-list paths)") repairs it and is in the merge train. Its
+    fix edits `lean/ResponseShape/Schemas/NormDefaults.lean`, which this batch must not edit, and
+    `tools/relay-gate-allow.json`, which that item owns. This branch does not copy it: the pre-review `[relay]`
+    line clears when that item merges and this branch syncs.
 - **The full gate** is not run here: the chain runs it on the final HEAD.
+- **Pre-review round 1** (chain's selected run at `532305f3`): one failure, the one this branch caused:
+  `tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry`. The new `binding-census`
+  entry had no row in `docs/merge-tooling.md`. Row added after `response-schemas`, in inventory order. After the
+  fix, `test_merge_tooling_evidence`, `test_regen_generated`, `test_binding_census` and `test_architecture_docs`
+  pass: 84 passed.
 
 ## Sibling lessons (tarch-b8 review)
 
