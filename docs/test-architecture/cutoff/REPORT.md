@@ -270,7 +270,10 @@ Replay of all recorded cases on one build (format 4, 6 service processes, ve-mac
 
 Each was planted in a changed file, the named test failed, and the file was restored (`mutants.py`,
 `evidence/mutants.json`). No Lean or Rust product code changed; the behavioural Lean seeds above test the
-rules, not code of this batch.
+rules, not code of this batch. M22 to M38 answer the review's F1 (ten planted bugs no test caught: the pin
+exemption, `pinned`, the diff's stale answers, the `everyone &` limit, hypothesis in helpers, a refused batch,
+`R1_RULE`) and the untested branches next to them; `check_evidence.py` requires the saved run to hold
+exactly the bugs `mutants.py` lists.
 
 <!-- table:mutants -->
 | Bug | File | Seeded fault | Failing test |
@@ -296,11 +299,28 @@ rules, not code of this batch.
 | M20 | tools/select_tests.py | a plan print, which verify.sh's legacy fast gate reads, takes R1's rule | `test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does` |
 | M21 | tools/answer_cutoff.py | R1 takes the answers rule before the DRI has read its measurement | `test_r1_never_takes_the_answers_rule` |
 | M14 | tools/select_tests.py | the hook ignores the rule it was given | `test_the_hook_passes_its_rule_and_is_off_by_default` |
+| M22 | tools/answer_cutoff.py | the pin exemption drops a client-only pin reader from the readers of every file | `test_the_pin_exemption_is_for_the_pins_only` |
+| M23 | tools/answer_cutoff.py | every build counts as pinned | `test_pinned_reads_the_pins_of_the_tree_or_of_a_commit` |
+| M24 | tools/answer_cutoff.py | a pin change exempts client-only pin readers when the new build is not pinned | `test_the_pin_exemption_and_the_stale_answers_reach_the_plan` |
+| M25 | tools/answer_cutoff.py | a unit that ran code changed since the recording keeps its recorded pin exemption | `test_the_pin_exemption_and_the_stale_answers_reach_the_plan` |
+| M26 | tools/answer_cutoff.py | the diff's stale answers do not make their readers unknown | `test_the_pin_exemption_and_the_stale_answers_reach_the_plan` |
+| M27 | tools/answer_cutoff.py | a recorded user that starts no ve_service today is selected | `test_answers_rule_selects_changed_and_unknown_users_only` |
+| M28 | tools/answer_cutoff.py | hypothesis in a helper module the unit imports is not counted | `test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file` |
+| M29 | tools/answer_cutoff.py | another test file's property tests count in the unit that imports it | `test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file` |
+| M30 | tools/answer_replay.py | a refused batch gives every case the first case's answer | `test_a_refused_batch_is_asked_again_case_by_case` |
+| M31 | tools/answer_cutoff.py | R1 loses ts-B2's per-mode rule the report activates | `test_a_feedback_run_takes_the_modes_rule` |
+| M32 | tools/answer_replay.py | a refusal's answer holds its nonce, which differs per request | `test_a_refused_batch_is_asked_again_case_by_case` |
+| M33 | tools/answer_replay.py | a case the client cannot send counts as replayed | `test_a_refused_batch_is_asked_again_case_by_case` |
+| M34 | tools/answer_cutoff.py | a request index and a map of different commits are read as one recording | `test_select_answers_refuses_a_diff_it_cannot_trust` |
+| M35 | tools/answer_cutoff.py | a unit whose test code does not parse is not unknown | `test_a_unit_that_does_not_parse_is_unknown` |
+| M36 | tools/answer_cutoff.py | importing the seedable random.Random makes a unit unknown | `test_seeded_randomness_is_not_unknown` |
+| M37 | tools/answer_replay.py | a replay of some modes only is diffed as a whole one | `test_diff_finds_changed_missing_and_unreplayable_answers` |
+| M38 | tools/answer_replay.py | a case whose environment the recording lacks is sent as it is | `test_replay_answers_each_case_as_recorded_and_again_alike` |
 <!-- /table:mutants -->
 
 ## Tests and runs
 
-- New: `tests/test_answer_cutoff.py`, 33 tests (recorder capture with the real service, fail-closed `u`
+- New: `tests/test_answer_cutoff.py`, 41 tests (recorder capture with the real service, fail-closed `u`
   records, nested attribution, fold and store, replay and diff, the rules, the hook and its R1 default, the
   gate never importing the cutoff). Locally they pass with `tests/test_select_tests.py`,
   `tests/test_nested_pytest.py` and `tests/test_regen_generated.py` (272 passed on the merged tree).
@@ -308,8 +328,8 @@ rules, not code of this batch.
   units, 0 failed, on 4555583f before the sync with main; after it, on `18245d07` (the evidence and code as
   final; later commits change this report only): 64 of 404 units against main's map `1cf82542d`, 0 failed,
   917 s, with R1's new rule in force.
-- `tools/gate_collection.py --check --prebuilt` on the merged tree: 33 tests added, 0 removed, 0 refused,
-  stale or malformed trailers. `tools/regen_generated.py --check`: 27 entries fresh after the sync.
+- `tools/gate_collection.py --check --prebuilt` against the merge base: 41 tests added, 0 removed, 0
+  refused, stale or malformed trailers. `tools/regen_generated.py --check`: 27 entries fresh after the sync.
 - The measurement runs (all on ve-mac-1 through `mac-pytest.sh`, except the seeds, which ran on the VM in
   scratch worktrees): one recording (`J1`), 14 replays in format 4, 10 full runs of the gate's collection,
   3 timing runs, the dropped-test runs above, 46 seeds and their verification.
@@ -328,7 +348,7 @@ rules, not code of this batch.
    report test (evidence is checked by `check_evidence.py` at the batch gate, D4), no authority switch;
    in-flight files: `tools/select_tests.py` (tarch-select) gets one hook, `tools/regen_generated.py` one
    `NOT_REGENERATED` line, merged with main's (`test_the_hook_passes_its_rule_and_is_off_by_default`).
-3. PASS - 20 seeded Python bugs, each failing its named test (`evidence/mutants.json`); the answer diff
+3. PASS - 38 seeded Python bugs, each failing its named test (`evidence/mutants.json`); the answer diff
    catches a changed value, `true` against `1`, `1` against `1.0`, a missing case and an unreplayable one,
    and refuses an empty replay and two recordings (`test_diff_finds_changed_missing_and_unreplayable_answers`).
 4. N.A. - no checker or parser changed; the replay's answers agree across machines and clients (format 4).
@@ -345,7 +365,7 @@ rules, not code of this batch.
 11. N.A. - no public budget or deadline changed; the replay's explicit wall timeout keeps a loaded machine
     from turning an answer into `CheckerUnavailable` (`answer_replay.REPLAY_TIMEOUT`).
 12. N.A. - no check or render path changed; the recorder does extra work only with `VE_TESTMAP_REQUESTS`.
-13. PASS - no test removed or renamed: `tools/gate_collection.py --check --prebuilt` reports 33 added and 0
+13. PASS - no test removed or renamed: `tools/gate_collection.py --check --prebuilt` reports 41 added and 0
     removed, refused, stale or malformed.
 
 Sibling lessons (tarch-b8 review): F1, a conflict with main, was resolved by the sync above

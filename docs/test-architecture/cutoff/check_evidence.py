@@ -28,11 +28,15 @@ def main() -> int:
     mutants = json.loads((EVIDENCE / "mutants.json").read_text())["mutants"]
     assert len(mutants) >= 3 and all(row["result"] == "failed" and row["test"] and row["file"] for row in mutants)
     assert {row["language"] for row in mutants} == {"python"}
+    # Every planted bug in mutants.py was run and caught, as saved: none added to the table but not run.
+    sys.path.insert(0, str(HERE))
+    import mutants as planted
+    assert [(row["id"], row["file"], row["fault"], row["test"]) for row in mutants] == [
+        (ident, name, fault, test) for ident, name, _, _, fault, test in planted.CASES], "mutants.json is not mutants.py's run"
     for script in ("seeds.py", "shadow.py", "tables.py"):
         subprocess.run([sys.executable, str(HERE / script), "--check" if script == "tables.py" else "check"],
                        check=True)
     # The seeds no test caught: every test the modes rule drops for them passed with the seed planted.
-    sys.path.insert(0, str(HERE))
     import seeds
     rows = json.loads((EVIDENCE / "seeds.json").read_text())["seeds"]
     missed = sorted(row["id"] for row in rows if seeds.outcome(row) == seeds.MISSED)
