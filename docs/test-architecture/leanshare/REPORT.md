@@ -16,7 +16,7 @@ sign-off): splitting `VE.Audit`, the audit evidence contract, collection without
 |---|---|---|
 | 3.8: shared builds "keyed by the `lean/` tree hash, the toolchain, the architecture and the lake manifest" | `lean_share.key`: `lean_tree` (SHA-256 of `git ls-tree -r HEAD` under `lean/`, without `lean/checkers.lock`, which no build reads; `lean/` must equal HEAD), `toolchain` (`lean --version`, `lake --version`, and the 10 variables Lake 4.24 reads to choose its compiler, archiver and toolchain), `platform` (OS and `uname -m`), `lake_manifest` (SHA-256), `pins` | `test_a_build_of_another_tree_is_never_offered`, `test_a_build_of_another_architecture_is_never_offered`, `test_a_build_of_another_toolchain_is_never_offered[lean,lake,env]`, `test_a_build_lake_finds_out_of_date_or_a_dirty_tree_is_never_stored_or_restored` |
 | 3.8: "immutable once their pins are written" | `publish` fills a scratch directory, writes the pins (for a runner-local authority, the runner's pins file), then the seal `pins.json` (key, SHA-256, size and mode of every file, checker digests), makes the entry read-only and renames it into place; a sealed entry is never rewritten, a second publish keeps the first | `test_runner_local_pins_are_their_runners_alone`, `test_a_tampered_entry_is_refused_and_withdrawn` |
-| 3.8: "checked by `tools/lake_outputs.py` and the pins before use" | `restore`: (1) the seal's key is the worktree's; (2) the entry holds exactly the sealed files with their SHA-256 (a failing entry moves to `refused/`); (3) every pinned checker (`ve_service`) is pinned by the key's authority; (4) in the worktree, `lake_outputs.stale` and `lake_outputs.obsolete` are empty and `lake build --no-build` passes; otherwise the previous `lean/.lake` is put back | `test_a_tampered_entry_is_refused_and_withdrawn[5 victims]`, `test_a_checker_the_authority_does_not_pin_is_refused`, `test_a_forged_seal_for_another_tree_is_refused_by_lake_and_the_worktree_restored` |
+| 3.8: "checked by `tools/lake_outputs.py` and the pins before use" | `restore`: (1) the seal's key is the worktree's; (2) the entry holds exactly the sealed files with their SHA-256 (a failing entry moves to `refused/`); (3) every pinned checker (`ve_service`) is pinned by the key's authority; (4) in the worktree, `lake_outputs.stale` and `lake_outputs.obsolete` are empty and `lake build --no-build` passes; otherwise the previous `lean/.lake` is put back. The copy is staged under `lean/.cache/` (ignored by git), so a restore killed midway never leaves the worktree dirty for the gate's clean-tree check | `test_a_tampered_entry_is_refused_and_withdrawn[5 victims]`, `test_a_checker_the_authority_does_not_pin_is_refused`, `test_a_forged_seal_for_another_tree_is_refused_by_lake_and_the_worktree_restored`, `test_a_restore_killed_while_it_copies_leaves_nothing_git_sees`, `test_a_restore_that_died_midway_leaves_the_worktree_clean_and_is_cleared` |
 | Task: x86 pins are `lean/checkers.lock`; Mac pins are runner-local; "the key and the check must say which runner's pins"; aarch64 never offered to x86 or the reverse (Astra 7; Astra 8: key on actual digests, not "pinned" ones) | `pins` is `lean/checkers.lock` (default on x86_64) or `runner-local:<runner>` (default elsewhere: the host name; pins in `<store>/pins/<runner>.json`). The checker digests are the files' actual SHA-256, re-hashed at every restore. Platform and toolchain (whose version line names the target triple) are both in the key | `test_the_default_authority_is_the_lock_on_x86_and_the_runners_own_pins_elsewhere`, `test_runner_local_pins_are_their_runners_alone`, the architecture test (both directions) |
 | Task: "A build whose key or check does not match is never used (fall back to building)" | Any refusal is exit 3 and leaves the worktree as it was; the caller's `lake build` then builds as before | every refusal test asserts the worktree is unchanged; `test_the_command_line_off_switch_and_prune` |
 | Task: "Provide the restore command" | see Wiring | `test_the_command_line_off_switch_and_prune` |
@@ -107,13 +107,14 @@ restored byte for byte (`git status` clean afterwards). Committed as `mutants.js
 | S8 | `tools/lake_outputs.py` | a file that starts with a live target's name counts as live | `test_a_removed_targets_binary_is_obsolete_and_a_live_ones_files_are_kept` |
 | S9 | `tools/lake_outputs.py` | a live executable's `.hash` counts as obsolete | `test_a_removed_targets_binary_is_obsolete_and_a_live_ones_files_are_kept` |
 | S10 | `tools/lean_share.py` | traces and `.ilean` shared as links | `test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites` |
+| S11 | `tools/lean_share.py` | a restore stages its copy beside `lean/.lake`, where git sees it | `test_a_restore_killed_while_it_copies_leaves_nothing_git_sees` |
 
 A first S2/S3 variant mutated `machine()` and `toolchain()` themselves. The tests replace those functions, so it only
 broke the test's setup. Both were re-seeded where those values enter the key, and both fail at the refusal assertion.
 
 ## Tests and runs
 
-- New and changed files: `tests/test_lean_share.py` 18 tests and `tests/test_lake_outputs.py` 19 tests, all passing on
+- New and changed files: `tests/test_lean_share.py` 20 tests and `tests/test_lake_outputs.py` 19 tests, all passing on
   the VM. `test_lean_share.py` builds a real one-module Lake project with the pinned toolchain in a private git
   repository under `tmp_path`, so it needs no network and no cache.
 - `mac-pytest.sh --select` on `1c0fbe57e` (54/395 units) had 2 failures, both caused by this branch and fixed in
@@ -146,7 +147,7 @@ broke the test's setup. Both were re-seeded where those values enter the key, an
 2. PASS: every plan row and directive line is in the Delivery table with its test. No permanent report test was added
    (D4): the evidence is saved in `evidence/measurements.json` and checked by no test. The diff decides nothing Lean
    owns. No other `infra/tarch-*` branch changes any of this branch's files (checked against each branch's merge base).
-3. PASS: S1–S10 (`mutants.json`), each failing at its assertion. The refusal tests cover a changed value (tree,
+3. PASS: S1–S11 (`mutants.json`), each failing at its assertion. The refusal tests cover a changed value (tree,
    platform, toolchain, pins), a missing record (missing file, no stored build) and an extra one (planted file).
 4. N.A.: no checker semantics changed. A valid build still restores and stays up to date
    (`test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites`; the real tree on the VM and the Mac).

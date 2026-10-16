@@ -53,7 +53,7 @@ def built(tmp_path_factory):
     repository = tmp_path_factory.mktemp("lean-share") / "source"
     lean = repository / "lean"
     lean.mkdir(parents=True)
-    (repository / ".gitignore").write_text(".lake/\n")
+    (repository / ".gitignore").write_text(".lake/\n.cache/\n")  # as the repository's own .gitignore files
     (lean / "lakefile.toml").write_text(LAKEFILE)
     (lean / "lean-toolchain").write_text((ROOT / "lean/lean-toolchain").read_text())
     (lean / "lake-manifest.json").write_text(json.dumps(MANIFEST))
@@ -142,7 +142,40 @@ def test_a_forged_seal_for_another_tree_is_refused_by_lake_and_the_worktree_rest
     entry.rename(entry.with_name(lean_share.entry_id(value)))
     refused(lean, store, "Lake finds targets that need a build")
     assert own.read_text() == "the worktree's own build"
-    assert sorted(path.name for path in lean.iterdir() if path.name.startswith(".lake")) == [".lake"]
+    assert not (lean / ".cache").exists() and git(lean.parent, "status", "--porcelain") == ""
+
+
+def test_a_restore_killed_while_it_copies_leaves_nothing_git_sees(built, tmp_path, monkeypatch):
+    """A kill skips every cleanup: the half-copied build sits where git ignores it, so the gate's clean-tree check
+    and the next key still pass, and the next restore in this worktree clears it."""
+    store, entry = published(built, tmp_path)
+    lean = clone(built, tmp_path)
+    placed, place = [], lean_share._place
+
+    def killed_after_three(source, target, link):
+        if len(placed) == 3:
+            raise KeyboardInterrupt
+        placed.append(target)
+        return place(source, target, link)
+    with monkeypatch.context() as patch:
+        patch.setattr(lean_share, "_place", killed_after_three)
+        patch.setattr(lean_share, "_remove", lambda path: None)
+        with pytest.raises(KeyboardInterrupt):
+            lean_share.restore(lean, store)
+    assert len(placed) == 3 and all(path.exists() for path in placed) and not (lean / ".lake").exists()
+    assert git(lean.parent, "status", "--porcelain", "--untracked-files=all", "--ignored=no") == ""
+    assert lean_share.restore(lean, store) == entry and not (lean / ".cache").exists()
+
+
+def test_a_restore_that_died_midway_leaves_the_worktree_clean_and_is_cleared(built, tmp_path):
+    store, entry = published(built, tmp_path)
+    lean = clone(built, tmp_path)
+    dead = lean / ".cache/lean-share-999999999/lake/build"
+    dead.mkdir(parents=True)
+    (dead / "half").write_text("a restore killed while it copied")
+    assert git(lean.parent, "status", "--porcelain", "--untracked-files=all") == ""
+    assert lean_share.restore(lean, store) == entry
+    assert not (lean / ".cache").exists()
 
 
 def test_a_build_of_another_architecture_is_never_offered(built, tmp_path, monkeypatch):
