@@ -272,6 +272,8 @@ import VE.Route.Run
 import VE.Route.RunSound
 import VE.Route.Wire
 import VE.Route.WireSound
+import VE.SearchBudget.Budget
+import VE.SearchBudget.Demand
 import VE.Semantics
 import VE.Senses.Dictionary
 import VE.Senses.Document
@@ -5024,6 +5026,20 @@ import VE.WireContract.Engine
 #print axioms VE.Route.sat_checked
 #print axioms VE.Route.tableauValid_certificateSound
 #print axioms VE.Route.verifyOrder_sound
+#print axioms VE.SearchBudget.chain_denote
+#print axioms VE.SearchBudget.conjuncts_denote
+#print axioms VE.SearchBudget.demand_sound
+#print axioms VE.SearchBudget.distinctTerms_spec
+#print axioms VE.SearchBudget.distinct_values
+#print axioms VE.SearchBudget.facts_denote
+#print axioms VE.SearchBudget.foldl_keep
+#print axioms VE.SearchBudget.foldl_max_of
+#print axioms VE.SearchBudget.keep_pairwise
+#print axioms VE.SearchBudget.keep_subset
+#print axioms VE.SearchBudget.sortBounds_nodup
+#print axioms VE.SearchBudget.sortBounds_sound
+#print axioms VE.SearchBudget.sortBounds_spec
+#print axioms VE.SearchBudget.statesDistinct_comm
 #print axioms VE.Senses.badDefault_none
 #print axioms VE.Senses.candidatesOf_complete
 #print axioms VE.Senses.candidatesOf_sound
@@ -5193,6 +5209,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_risk
 #print axioms VE.Service.runMode_riskEval
 #print axioms VE.Service.runMode_route
+#print axioms VE.Service.runMode_searchBudget
 #print axioms VE.Service.runMode_softNorms
 #print axioms VE.Service.runMode_speechActs
 #print axioms VE.Service.runMode_words
