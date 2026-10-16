@@ -206,12 +206,26 @@ The selector works at the level of functions, not layers:
   Serve, a missing or stale mode table, an unknown mode, and a service test
   with no recorded mode retain the service-wide selection. Tests that check
   `lean/checkers.lock` still select when the pin file changes.
+  **Binary cutoff:** when this machine recorded the Lean build of both the
+  base's and the head's `lean/` tree (`tools/test_map.py build-record`; every
+  map `record` or `update` and every `--run` build records one, under
+  `~/.cache/ve-lean-builds`, `$VE_LEAN_BUILDS`), a test is selected through a
+  Lean executable only if that executable's SHA-256 differs between the two
+  builds: an identical program given identical inputs behaves identically.
+  Tests that read the changed Lean files or run `lake` or `lean`, and the pin
+  readers, still select by file. Without both records every executable whose
+  imports hold the module counts, as before. `--run` builds the head first when
+  only its record is missing.
 * **Assurance manifest.** The recorder records each operation read through
   `ve.assurance`, its import-time presence checks, and a whole-manifest read
   separately. Editing an existing operation selects its entry readers and
   `test_assurance_manifest`; adding or removing one also selects its presence
-  readers. Editing shared metadata
-  selects the complete suite. A missing map also selects the complete suite.
+  readers. Editing an operation's `authority` (read at import, by
+  the authority guard) also selects the registrations of its entries.
+  Editing shared metadata selects the tests that read the whole manifest
+  (the file itself, or `ve.assurance.manifest()` and the renders); editing
+  its `version`, which every importer checks, selects the complete suite. A
+  missing map also selects the complete suite.
 * **Rust.** The tests that ran a Rust binary, `cargo test`, and the release
   and debug builds.
 * **Any file.** Whatever its kind (Python, Lean, Rust, data), the tests that
@@ -225,6 +239,12 @@ The selector works at the level of functions, not layers:
 * **Data and documents.** Nothing beyond that rule, except that a fixture a
   Rust test embeds with `include_bytes!` also runs `cargo test`.
   Documentation selects only its readers and listers.
+* **`.gitattributes`.** Any directory's: data, whose readers are also the
+  tests that run git. An edit to a line that sets a checkout attribute
+  (`text`, `eol`, `crlf`, `filter`, `ident`, `working-tree-encoding`,
+  `binary`, or a macro either version defines), defines a macro, quotes its
+  pattern or holds a token that is not an attribute changes what a checkout
+  writes, and selects the complete suite.
 * **Everything.** `tests/conftest.py`, `pyproject.toml`, `uv.lock`,
   `.gitignore` and files outside the known top-level directories select the
   complete suite.
@@ -252,17 +272,37 @@ or listing is for is decided by the
 innermost frame that is either code under the repository (the test and the
 project: recorded) or infrastructure (import system, site, pytest: not
 recorded); the standard library and third-party packages in between act for
-their caller, and pytest frames further out do not matter. Maps of an
-earlier recorder version are not used. The map for commit C goes to
+their caller, and pytest frames further out do not matter. A map of an
+earlier format version is used only through a converter
+(`CONVERTERS` in `tools/test_map.py`; version 6 converts to 7 with no
+service modes recorded, so every service user stays selected); others are
+skipped with a line on stderr. A new format version must name in
+`FORMAT_CHANGES` either its converter or the main commit whose map was
+recorded with it and published with the change (a test fails otherwise). The map for commit C goes to
 `~/.cache/ve-testmap/C.json.gz` (`$VE_TESTMAP_CACHE`); the selector uses the
 recorded map nearest below the base, or one saved by `--run` for exactly the
-base's tree. The full recording takes about an hour with 7 parallel files on
-the loaded VM.
+base's tree. `find_map` considers the 30 newest maps recorded at commits;
+the maps `--run` saves per tree never count among them. The full recording
+takes about an hour with 7 parallel files on the loaded VM; each file may run
+4 hours (a hang guard) and the longest recorded ones start first. A Python
+child that leaves no record makes its file opaque, unless it is this
+environment's interpreter started with this recording's variables while the
+site hook ran here: its record file exists before any code under the
+repository runs, so it ran none (a child the test killed at once). A
+recording made inside a recorded test (the selector's own tests) hands its
+records to the outer one.
 
 * Nightly: `python3 tools/test_map.py record` on main.
-* After each merge to main: `python3 tools/test_map.py update` re-records only
-  the test files whose coverage may have changed since the nearest map and
-  carries the others over (`--dry-run` lists them).
+* After each merge to main, on the published commit in a clean checkout of
+  it: `uv run --frozen python tools/test_map.py update` re-records only the
+  test files whose coverage may have changed since the nearest map, and the
+  ones that were not recorded there, and carries the others over
+  (`--dry-run` lists them).
+* Scripts that choose between a selected and a full run ask
+  `uv run --frozen python tools/test_map.py fresh --base <rev>
+  [--max-age-hours 24] [--max-behind N]`: it prints the map selection would use
+  for that base and exits 0, or says why there is none on stderr and exits 1.
+  A file's age in the cache says nothing of whether selection can use it.
 
 **Drift.** Between the map's commit and the base, other changes may have
 altered which code a test reaches. A test that ran none of the code changed
@@ -275,7 +315,8 @@ is selected by the static graph (`tools/source_graph.py`: import closure,
 string-literal mentions of files, directories and programs; a `.` or `./`
 names the root unless it is text, such as `".".join(parts)` or
 `name.split(".")`, or sits in a `ve/` or `ve_experiments/` module, where it is
-the English full stop) instead. Test files that failed or were opaque when recorded (a Python child
+the English full stop; in those modules a bare name such as `"evidence"` stands
+only for the product's own directories of that name) instead. Test files that failed or were opaque when recorded (a Python child
 the recorder could not follow) are treated the same way, and without a map
 the static graph is the whole answer (`--static` forces it).
 

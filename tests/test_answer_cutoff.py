@@ -931,7 +931,7 @@ def test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does(monkeypatch, cap
     run that names its rule (`--cutoff off` included) do not."""
     calls = []
     plan = {"selected": [], "selected_count": 0, "full_count": 0, "full": False, "full_reasons": [], "map": None,
-            "seconds": 0, "commands": [], "reasons": {}, "changed": [], "lean_build": False}
+            "seconds": 0, "commands": [], "reasons": {}, "changed": [], "lean_build": False, "lean_cutoff": None}
     monkeypatch.setattr(answer_cutoff, "R1_RULE", rule)
     monkeypatch.setattr(select_tests, "select", lambda paths, **options: calls.append("plain") or plan)
     monkeypatch.setattr(answer_cutoff, "select", lambda chosen, paths, **options: calls.append(chosen) or plan)

@@ -82,27 +82,27 @@ class S2Wording:
         return slot
 
     def _decision_names(self):
-        """Every decision predicate a rule of the document or of a candidate generates, with what it decides:
-        (kind, rule name, party or ranks, owner (set, index) or None)."""
+        """Every exception and switch decision of Lean's elaboration (`generated_predicates`, keyed by `genKeys`),
+        with what it decides: (kind, rule, party or None, owner (set, index) or None). The key names the rule as the
+        elaborated document does: a fixed unit's rule by its name, a candidate's by its name or, on the superposed
+        route, its qualified name."""
+        from .readings_s1 import decode_key
         from .readings_sup import position, qualify
-        out = {}
-
-        def add(rule, owner, name):
-            root = name.replace("-", "_")
-            if rule.get("mode", "strict") == "default":
-                out[f"soft__excepted__{root}"] = ("excepted", rule, None, owner)
-            for party in rule.get("alterable", []):
-                out[f"soft__off__{root}__{party}"] = ("off", rule, party, owner)
-
-        source = self.route.source
-        for _, content in source.fixed_units():
+        rules = {}
+        for _, content in self.route.source.fixed_units():
             for rule in content.rules():
-                add(rule, None, rule["name"])
+                rules[rule["name"]] = (rule, None)
         for R in self.sets:
             for i, a in enumerate(R.candidates):
                 for rule in (a.content.rules() if a.content is not None else []):
-                    add(rule, (R.id, i), rule["name"])
-                    add(rule, (R.id, i), qualify(position(self.sets, R.id, i), rule["name"]))
+                    rules[rule["name"]] = (rule, (R.id, i))
+                    rules[qualify(position(self.sets, R.id, i), rule["name"])] = (rule, (R.id, i))
+        out = {}
+        for name, entry in self.generated.items():
+            key = decode_key(entry["key"]) if entry["key"] is not None else None
+            if key is not None and key[0] in ("excepted", "off") and key[1] in rules:
+                rule, owner = rules[key[1]]
+                out[name] = (key[0], rule, key[3] if key[0] == "off" else None, owner)
         return out
 
     def shown_situation(self, data, choice):

@@ -86,6 +86,10 @@ AUDIT = ("python3", "lean/audit.py")
 CARGO = ["python3", "tools/rust_build.py"]
 DOCUMENT_SUFFIXES = (".md", ".rst", ".pdf", ".png", ".svg", ".tex", ".bib")
 EVERYTHING = {"tests/conftest.py", "pyproject.toml", "uv.lock", ".gitignore"}
+# Git reads .gitattributes (any directory's) for the programs a test runs; an edit to a line that sets a
+# checkout attribute, or defines a macro, may change the bytes of every file a checkout writes.
+GIT_ATTRIBUTES = ".gitattributes"
+CHECKOUT_ATTRIBUTES = frozenset({"text", "eol", "crlf", "filter", "ident", "working-tree-encoding", "binary"})
 LEAN_PROJECT = {"lean/lakefile.toml", "lean/lean-toolchain", "lean/lake-manifest.json"}
 RUST_PROJECT = {"rust/Cargo.toml", "rust/Cargo.lock", "rust-toolchain.toml"}
 PYTHON_LAYER_INPUTS = {".importlinter", "tools/layer-exceptions.json", "tools/check_python_layers.py",
@@ -213,6 +217,10 @@ class Coverage:
     def presence_readers(self, op_id: str) -> set[str]:
         return self._names(self.presence.get(op_id, ()))
 
+    def whole_manifest_readers(self) -> set[str]:
+        """Tests that took the whole manifest from `ve.assurance` (`ve.manifest.all`)."""
+        return self._names(self.operations.get("*", ()))
+
     def listers(self, path: str) -> set[str]:
         """Tests that listed any directory above `path`, the root "." included.
 
@@ -249,6 +257,7 @@ class Selection:
         self.lean = self.audit = self.rust = False
         self.checks: set[tuple[str, ...]] = set()
         self.notes: list[str] = []
+        self.rebuilt: set[str] | None = None   # Lean executables whose build changed; None: unknown
         self._closures: dict[str, tuple[set[str], set[str]]] = {}
 
     def add(self, tests, reason: str) -> None:
@@ -319,7 +328,7 @@ def python_change(sel: Selection, change: Change, old: Summary | None, new: Summ
 def mapped(sel: Selection, change: Change, python=None, called=None) -> None:
     if sel.coverage is not None:
         file_impact(sel.coverage, sel.graph, set(sel.all_units), sel.add, change.path,
-                    change.presence_changed, python, called)
+                    change.presence_changed, python, called, sel.rebuilt)
 
 
 EVERYTHING_KIND, PYTHON, LEAN, RUST, DATA = KINDS = ("everything", "python", "lean", "rust", "data")
@@ -329,7 +338,7 @@ def kind_of(path: str) -> str:
     """Which rule a changed path falls under, for the plan and the drift check alike."""
     top = path.split("/", 1)[0]
     if path in EVERYTHING or ("/" not in path and not path.endswith(DOCUMENT_SUFFIXES)
-                              and path not in RUST_PROJECT and path != ".importlinter") \
+                              and path not in RUST_PROJECT and path not in (".importlinter", GIT_ATTRIBUTES)) \
             or ("/" in path and top not in KNOWN_AREAS):
         return EVERYTHING_KIND
     if path.endswith(".py"):
@@ -341,15 +350,51 @@ def kind_of(path: str) -> str:
     return DATA
 
 
+ATTRIBUTE = re.compile(r"[-!]?([A-Za-z0-9_.-]+)(=\S*)?")
+
+
+def macros(text: str | None) -> set[str]:
+    """The attribute macros a .gitattributes text defines (`[attr]name ...`)."""
+    return {line.split()[0][len("[attr]"):] for line in (text or "").splitlines()
+            if line.strip().startswith("[attr]") and line.split()[0] != "[attr]"}
+
+
+def checkout_lines(text: str | None, checkout: frozenset[str] = CHECKOUT_ATTRIBUTES) -> list[str]:
+    """The lines of a .gitattributes text that can change what a checkout writes, in order: each line
+    that sets one of the `checkout` attributes, defines a macro (`[attr]`), quotes its pattern, or holds
+    a token that is not an attribute (unknown syntax counts, failing closed). Comments and blank lines
+    do not."""
+    found = []
+    for line in (text or "").splitlines():
+        tokens = line.split()
+        if not tokens or tokens[0].startswith("#"):
+            continue
+        attributes = [ATTRIBUTE.fullmatch(token) for token in tokens[1:]]
+        if tokens[0].startswith(("[attr]", '"')) or not all(attributes) \
+                or any(match.group(1) in checkout for match in attributes):
+            found.append(" ".join(tokens))
+    return found
+
+
+def checkout_attributes_changed(old: str | None, new: str | None) -> bool:
+    """Whether a .gitattributes edit may change checked-out bytes; else only git commands see it (merge
+    drivers, diff drivers, export rules), and the tests that run git are its readers. A macro either
+    version defines may stand for a checkout attribute, so its uses count as one."""
+    checkout = CHECKOUT_ATTRIBUTES | macros(old) | macros(new)
+    return checkout_lines(old, checkout) != checkout_lines(new, checkout)
+
+
 def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[str], add, path: str,
-                presence_changed: bool, python=None, called=None) -> None:
+                presence_changed: bool, python=None, called=None, rebuilt: set[str] | None = None) -> None:
     """Report through `add(tests, reason)` the mapped tests a change to one file can affect.
 
     The one rule for every kind of file, used by the plan and by the drift
     check: the tests that read the file; for a file that appeared or vanished,
     the tests that listed its directory; then what its kind adds. `python` is
     (old summary, new summary, delta) for a Python file, the delta None when
-    the contents are unknown or not valid Python.
+    the contents are unknown or not valid Python. `rebuilt` (the plan only)
+    holds the Lean executables whose build changed (`lean_cutoff`); None when
+    that is unknown, and every executable whose imports hold a changed module counts.
     """
     kind = kind_of(path)
     if kind == EVERYTHING_KIND:
@@ -358,6 +403,8 @@ def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[st
     add(coverage.readers(path), f"reads {path}")
     if presence_changed:
         add(coverage.listers(path), f"lists the directory of {path}")
+    if posixpath.basename(path) == GIT_ATTRIBUTES:
+        add(coverage.runners(lambda name: name == "git"), f"runs git, which reads {path}")
     if kind == PYTHON:
         old, new, d = python if python is not None else (None, None, None)
         # Presence counts whatever the module binds: deleting an empty one breaks its importers.
@@ -365,6 +412,8 @@ def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[st
             python_impact(coverage, graph, all_units, add, path, old, new, d, called or {})
     elif kind == LEAN:
         executables = lean_programs(graph, path)
+        if rebuilt is not None:
+            executables &= rebuilt  # an executable built the same runs the same
         runs = runs_lean(executables)
         add(coverage.runners(lambda name: name != "lean/.lake/build/bin/ve_service"
                              and runs(name)), f"runs Lean via {path}")
@@ -493,6 +542,8 @@ def lean_change(sel: Selection, change: Change) -> None:
     if path.endswith(".lean"):
         sel.checks.add(CHECK_LEAN)
     executables = lean_programs(sel.graph, path)
+    if sel.rebuilt is not None:
+        executables &= sel.rebuilt
     mapped(sel, change)
     tokens = {f"lean-exe:{name}" for name in executables} | {"lean-tool"}
     sel.static(lambda _, mentions: bool(tokens & mentions), f"runs Lean via {path}")
@@ -514,6 +565,8 @@ def data_change(sel: Selection, change: Change, rust_sources: dict[str, str]) ->
     mapped(sel, change)
     sel.static(mentions_path(path), f"names {path}")
     name = posixpath.basename(path)
+    if name == GIT_ATTRIBUTES:
+        sel.static(lambda _, mentions: "git-tool" in mentions, f"runs git, which reads {path}")
     if any(name in text for text in rust_sources.values()):
         sel.rust = True  # Rust tests embed fixtures with include_bytes!
 
@@ -522,14 +575,27 @@ MANIFEST = "ve/assurance-manifest.json"
 MANIFEST_TEST = "tests/test_assurance_manifest.py"
 
 
-def changed_manifest_operations(old: str | None, new: str | None) -> set[str] | None:
-    """Changed operation ids, or None when a shared field or shape changed."""
+# Shared manifest fields every importer of `ve.assurance` reads at import (`_load` checks the version).
+IMPORT_FIELDS = frozenset({"version"})
+
+
+@dataclass
+class ManifestDelta:
+    operations: set[str]   # ids whose entry changed, appeared or vanished
+    presence: set[str]     # ids that appeared or vanished
+    authority: set[str]    # ids whose `authority` changed: `ve.assurance` reads it at import (`_migrated`)
+    shared: set[str]       # shared (non-operation) fields that changed
+
+
+def manifest_delta(old: str | None, new: str | None) -> ManifestDelta | None:
+    """What a manifest change changed, or None when it has no safe map: either side is not an object
+    with a list of operations with unique string ids, or a field every importer reads changed."""
     try:
         before, after = json.loads(old), json.loads(new)
         if not isinstance(before, dict) or not isinstance(after, dict):
             return None
         old_rows, new_rows = before.pop("operations"), after.pop("operations")
-        if before != after or not isinstance(old_rows, list) or not isinstance(new_rows, list):
+        if not isinstance(old_rows, list) or not isinstance(new_rows, list):
             return None
         def indexed(rows):
             result = {row["id"]: row for row in rows}
@@ -537,30 +603,53 @@ def changed_manifest_operations(old: str | None, new: str | None) -> set[str] | 
                 raise ValueError("duplicate or malformed operation id")
             return result
         old_by_id, new_by_id = indexed(old_rows), indexed(new_rows)
-        return {op_id for op_id in old_by_id.keys() | new_by_id.keys()
-                if old_by_id.get(op_id) != new_by_id.get(op_id)}
+        missing = object()
+        shared = {key for key in before.keys() | after.keys() if before.get(key, missing) != after.get(key, missing)}
+        if shared & IMPORT_FIELDS:
+            return None
+        operations = {op_id for op_id in old_by_id.keys() | new_by_id.keys()
+                      if old_by_id.get(op_id) != new_by_id.get(op_id)}
+        authority = {op_id for op_id in old_by_id.keys() & new_by_id.keys()
+                     if old_by_id[op_id].get("authority", missing) != new_by_id[op_id].get("authority", missing)}
+        return ManifestDelta(operations, set(old_by_id) ^ set(new_by_id), authority, shared)
     except (TypeError, ValueError, KeyError, AttributeError):
         return None
 
 
-def manifest_presence_changes(old: str, new: str) -> set[str]:
-    before = {row["id"] for row in json.loads(old)["operations"]}
-    after = {row["id"] for row in json.loads(new)["operations"]}
-    return before ^ after
+def changed_manifest_operations(old: str | None, new: str | None) -> set[str] | None:
+    """Changed operation ids, or None when the change has no safe map or changed a shared field."""
+    found = manifest_delta(old, new)
+    return None if found is None or found.shared else found.operations
+
+
+def manifest_impact(coverage: Coverage, old: str | None, new: str | None, add) -> bool:
+    """Report through `add(tests, reason)` the mapped tests a manifest edit can affect, for the plan and
+    the drift check alike; False when the edit has no safe map (every test, then)."""
+    found = manifest_delta(old, new)
+    if found is None:
+        return False
+    add([MANIFEST_TEST], "manifest contract")
+    add(coverage.readers(MANIFEST), "reads the whole manifest")
+    for op_id in found.operations:
+        add(coverage.operation_readers(op_id), f"reads manifest operation {op_id}")
+    for op_id in found.presence:
+        add(coverage.presence_readers(op_id), f"registers manifest operation {op_id}")
+    for op_id in found.authority:
+        # Nothing records a call of a guarded entry while nothing is migrated; whoever calls one
+        # imported the module that registered it, a presence read.
+        add(coverage.presence_readers(op_id), f"registers an entry of {op_id}, whose authority changed")
+    for field in sorted(found.shared):
+        # `ve.assurance` hands shared fields out only with the whole manifest (`manifest()`, the renders).
+        add(coverage.whole_manifest_readers(), f"reads the whole manifest, shared field {field}")
+    return True
 
 
 def manifest_change(sel: Selection, change: Change) -> None:
     sel.code = True
-    changed = changed_manifest_operations(change.old, change.new)
-    if changed is None or sel.coverage is None or change.presence_changed:
+    if sel.coverage is None or change.presence_changed or not manifest_impact(
+            sel.coverage, change.old, change.new, sel.add):
         sel.full.append(f"{MANIFEST}: no safe operation map")
         return
-    sel.add([MANIFEST_TEST], "manifest contract")
-    sel.add(sel.coverage.readers(MANIFEST), "reads the whole manifest")
-    for op_id in changed:
-        sel.add(sel.coverage.operation_readers(op_id), f"reads manifest operation {op_id}")
-    for op_id in manifest_presence_changes(change.old, change.new):
-        sel.add(sel.coverage.presence_readers(op_id), f"registers manifest operation {op_id}")
     # A unit not covered by the map might read any entry. Include it and all
     # tests it may affect; mapped direct file reads are included above.
     sel.add(sel.unmapped, "unmapped manifest reader")
@@ -579,6 +668,11 @@ def is_rust_input(path: str) -> bool:
     return path in RUST_PROJECT or (path.startswith("rust/") and path.endswith((".rs", "Cargo.toml")))
 
 
+def versioned_path(path: str) -> bool:
+    """A path whose drift is judged by its contents, not only by its name."""
+    return path.endswith(".py") or path == MANIFEST or posixpath.basename(path) == GIT_ATTRIBUTES
+
+
 def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: set[str],
                     base: str) -> tuple[set[str], int]:
     """Units whose coverage at `base` may differ from the map's, and how many files differ.
@@ -595,7 +689,7 @@ def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: se
         pass
     status = dict(line.split("\t", 1)[::-1] for line in git_lines(
         "diff", "--no-renames", "--name-status", coverage.commit, base_commit))
-    versioned = [p for p in status if p.endswith(".py") or p == MANIFEST]
+    versioned = [p for p in status if versioned_path(p)]
     contents = blobs([f"{rev}:{p}" for p in versioned for rev in (coverage.commit, base_commit)])
     versions = {p: (contents[f"{coverage.commit}:{p}"], contents[f"{base_commit}:{p}"])
                 for p in versioned}
@@ -643,16 +737,12 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
         add([path])  # a changed test's own record is stale
         if path == MANIFEST:
             before, after = versions.get(path, (None, None))
-            changed = changed_manifest_operations(before, after)
-            if changed is None:
+            if not manifest_impact(coverage, before, after, add):
                 add(all_units)
-            else:
-                add(coverage.readers(MANIFEST))
-                add([MANIFEST_TEST])
-                for op_id in changed:
-                    add(coverage.operation_readers(op_id))
-                for op_id in manifest_presence_changes(before, after):
-                    add(coverage.presence_readers(op_id))
+            continue
+        if posixpath.basename(path) == GIT_ATTRIBUTES and (
+                path not in versions or checkout_attributes_changed(*versions[path])):
+            add(all_units)
             continue
         python = None
         if path in parsed:
@@ -729,6 +819,10 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     if cov is not None:
         unmapped = (set(all_units) - cov.recorded) | uncertain
     sel = Selection(graph, cov, unmapped, all_units)
+    lean_changes = [change for change in changes if kind_of(change.path) == LEAN]
+    cutoff = lean_cutoff(base, after, all(change.known for change in lean_changes)) if lean_changes else None
+    if cutoff is not None:
+        sel.rebuilt = None if cutoff["rebuilt"] is None else set(cutoff["rebuilt"])
     if missing_map:
         sel.full.append("missing coverage map")
     if full or not changes:
@@ -745,6 +839,10 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
         kind = kind_of(path)
         if kind == EVERYTHING_KIND:
             sel.full.append(path)
+            continue
+        if posixpath.basename(path) == GIT_ATTRIBUTES and (
+                not change.known or checkout_attributes_changed(change.old, change.new)):
+            sel.full.append(f"{path}: checkout attributes changed")
             continue
         if path in PYTHON_LAYER_INPUTS or path == ".importlinter":
             sel.checks.add(CHECK_PYTHON)
@@ -768,7 +866,34 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
                 rust_sources = rust_texts()
             data_change(sel, change, rust_sources)
     source_graph.save_summaries()
-    return finish(sel, changes, paths, started, drift_files)
+    plan = finish(sel, changes, paths, started, drift_files)
+    plan["lean_cutoff"] = cutoff
+    return plan
+
+
+def lean_cutoff(base: str, after: str | None, known: bool = True) -> dict:
+    """The binary-level cutoff for a change to Lean inputs: which executables the change rebuilt into a
+    different program, from the digests this machine recorded for the `lean/` trees of `base` and of
+    `after` (a revision; None, the working tree) (tools/test_map.py `record_build`). A test runs a
+    Lean executable built the same way the same, so it is selected through that executable only when
+    the digest differs. Tests that read Lean sources or run `lake`/`lean`, and the checker pins, still
+    select by file. Without both records, `rebuilt` is None: every executable whose imports hold a
+    changed module counts, as before. So it is when the trees cannot show the change: a Lean change
+    whose contents are unknown (`known` False, a path named without an edit), or equal trees."""
+    trees = {"base": test_map.lean_tree(base), "head": test_map.lean_tree(after)}
+    found = {"base_tree": trees["base"], "head_tree": trees["head"], "rebuilt": None, "same": None}
+    if not known:
+        return {**found, "state": "a Lean change of unknown contents"}
+    if trees["base"] == trees["head"]:
+        return {**found, "state": "the change is not in the lean/ trees"}
+    builds = {side: test_map.load_build(tree) for side, tree in trees.items()}
+    missing = [side for side, build in builds.items() if build is None]
+    if missing:
+        return {**found, "state": f"no record of the {' and '.join(missing)} build"}
+    names = set(lean_executables()) | set(builds["base"]) | set(builds["head"])
+    rebuilt = {name for name in names if builds["base"].get(name) is None
+               or builds["base"].get(name) != builds["head"].get(name)}
+    return {**found, "state": "applied", "rebuilt": sorted(rebuilt), "same": sorted(names - rebuilt)}
 
 
 def finish(sel: Selection, changes: list[Change], paths: list[str], started: float,
@@ -1120,7 +1245,7 @@ def working_changes(commit: str) -> tuple[dict[str, str], dict[str, tuple[str | 
     status = dict(line.split("\t", 1)[::-1] for line in git_lines(
         "diff", "--no-renames", "--name-status", commit))
     status.update({path: "A" for path in git_lines("ls-files", "--others", "--exclude-standard")})
-    versioned = [p for p in status if p.endswith(".py") or p == MANIFEST]
+    versioned = [p for p in status if versioned_path(p)]
     old = blobs([f"{commit}:{p}" for p in versioned])
     versions = {p: (old[f"{commit}:{p}"],
                     (ROOT / p).read_text(encoding="utf-8", errors="replace") if (ROOT / p).is_file() else None)
@@ -1369,12 +1494,21 @@ def main() -> int:
     if rule is not None or (args.run and not args.full):  # tarch-cutoff hook (see --cutoff); R1 takes R1_RULE
         import answer_cutoff
         rule = answer_cutoff.R1_RULE if rule is None else rule
-    if rule:
-        plan = answer_cutoff.select(rule, paths, full=args.full, base=base, after=after,
-                                    coverage=coverage, assume_fresh=args.assume_fresh)
-    else:
-        plan = select(paths, full=args.full, base=base, after=after, coverage=coverage,
+
+    def plan_now() -> dict:
+        if rule:
+            return answer_cutoff.select(rule, paths, full=args.full, base=base, after=after,
+                                        coverage=coverage, assume_fresh=args.assume_fresh)
+        return select(paths, full=args.full, base=base, after=after, coverage=coverage,
                       assume_fresh=args.assume_fresh)
+
+    plan = plan_now()
+    if args.run and not plan["full"] and (plan["lean_cutoff"] or {}).get("state") == "no record of the head build":
+        # The base build is on record: build this tree's executables now, which the run needs anyway,
+        # so the plan can leave out the runners of executables the change did not alter.
+        print("building the Lean executables for the binary cutoff", flush=True)
+        test_map.build_lean()
+        plan = plan_now()
     if args.tier == "light":
         plan = light_tier(plan, jobs=args.jobs)
     if args.json:
@@ -1388,6 +1522,10 @@ def main() -> int:
                   f"{plan['tier']['selected_heavy_count']}/{plan['tier']['heavy_count']} heavy selected "
                   f"(measured in {plan['tier']['source_run']})")
         print("changed:", ", ".join(paths) or "(none; full fallback)")
+        if plan["lean_cutoff"]:
+            cutoff = plan["lean_cutoff"]
+            print(f"lean cutoff: {cutoff['state']}" + (
+                f"; built the same: {', '.join(cutoff['same']) or 'none'}" if cutoff["same"] is not None else ""))
         if args.explain:
             for test, reasons in plan["reasons"].items():
                 print(f"  {test}: {'; '.join(reasons[:3])}{' ...' if len(reasons) > 3 else ''}")

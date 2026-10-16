@@ -749,6 +749,39 @@ class _Rows(Mapping):
 ROWS = _Rows()
 
 
+class _LazyRef:
+    """Expose a schema cell without reading its file during module import."""
+
+    def __init__(self, file: str, pointer: str):
+        self.file = file
+        self.pointer = pointer
+
+    def __getitem__(self, index):
+        return _compiler.ref(self.file, self.pointer)[index]
+
+
+RIGHTS_BLOCK = _LazyRef("document.json", "#/$defs/rights_block")
+
+
+def validate_copied_rights_source(units, wire):
+    """Keep the Lean-owned copied-content shape closed before nullable wire conversion."""
+    from ..errors import VEError
+
+    rights_block = RIGHTS_BLOCK[0]
+    for unit in units:
+        if type(unit) is dict and set(unit) & {"right", "right_lines", "limitation", "bar"}:
+            try:
+                rights_block(unit, Context({}), {})
+            except Invalid as exc:
+                # Preserve the route's diagnostic when the fault remains after
+                # wire conversion. Reject only a null member it would erase.
+                try:
+                    rights_block(wire(unit), Context({}), {})
+                except Invalid:
+                    continue
+                raise VEError(f"InvalidInput: invalid rights block: {exc}") from exc
+
+
 def check_handshake(handshake: object) -> None:
     """Raise `Invalid` unless `handshake` is a first line this client can use."""
     _compiler.ref("envelope.json", "#/handshake")[0](handshake, Context(None), {})

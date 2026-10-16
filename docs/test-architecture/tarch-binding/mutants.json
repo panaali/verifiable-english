@@ -1,0 +1,133 @@
+{
+ "comment": "Seeded bugs of tarch-binding: each planted in the file named, the test named run, the file restored (run by a throwaway script; B4's test was added after its first run let it survive, B7 was first run against the coverage test, which reads the committed census, and is caught by --check). Python is the only product language changed (ve/backends/shape_binding.py).",
+ "mutants": [
+  {
+   "id": "B1",
+   "file": "ve/backends/shape_binding.py",
+   "behaviour": "the generic checker places a leaf an ancestor's x-claim-nodes binds (bound, references)",
+   "seed": {
+    "from": "for pointer in schema.get(\"x-claim-nodes\", ()):",
+    "to": "for pointer in ():"
+   },
+   "test": "tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[route]",
+   "exit": 2,
+   "failed": [
+    "tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[route]"
+   ],
+   "summary": "1 failed in 4.18s",
+   "caught": true
+  },
+  {
+   "id": "B2",
+   "file": "ve/backends/shape_binding.py",
+   "behaviour": "a relation keyword binds every leaf below an array it stands on (x-equals of a whole list)",
+   "seed": {
+    "from": "pending = pending.add((\"**\",), Binding(\"bound\", keyword, relation))",
+    "to": "pass"
+   },
+   "test": "tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[environment]",
+   "exit": 2,
+   "failed": [
+    "tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[environment]"
+   ],
+   "summary": "1 failed in 4.14s",
+   "caught": true
+  },
+  {
+   "id": "B3",
+   "file": "ve/backends/shape_binding.py",
+   "behaviour": "a recursive shape entered again takes its first entry's pattern (the census holds every placed leaf)",
+   "seed": {
+    "from": "self.walk(target, name, target_pointer, entered[2], entered[3], branch, out, value, ctx,",
+    "to": "self.walk(target, name, target_pointer, path, pending, branch, out, value, ctx,"
+   },
+   "test": "tests/test_shape_binding_mutants.py::test_every_leaf_of_an_answer_is_a_leaf_of_the_census[norms]",
+   "exit": 2,
+   "failed": [
+    "tests/test_shape_binding_mutants.py::test_every_leaf_of_an_answer_is_a_leaf_of_the_census[norms]"
+   ],
+   "summary": "1 failed in 4.02s",
+   "caught": true
+  },
+  {
+   "id": "B4",
+   "file": "tests/binding_mutants.py",
+   "behaviour": "a coordinated rename is refused when any occurrence is bound (prediction)",
+   "seed": {
+    "from": "if any(v == REFUSE for v, _ in verdicts):",
+    "to": "if all(v == REFUSE for v, _ in verdicts):"
+   },
+   "test": "tests/test_shape_binding_mutants.py::test_a_name_renamed_everywhere_is_refused_where_one_occurrence_is_bound",
+   "exit": 2,
+   "failed": [
+    "tests/test_shape_binding_mutants.py::test_a_name_renamed_everywhere_is_refused_where_one_occurrence_is_bound"
+   ],
+   "summary": "1 failed in 8.37s",
+   "caught": true
+  },
+  {
+   "id": "B5",
+   "file": "tools/binding_census.py",
+   "behaviour": "a later Lean request's rejection converted by a hand path is the transport's, not a hand binder's",
+   "seed": {
+    "from": "if refusal and (refusal.get(\"cause\") or {}).get(\"transport\"):",
+    "to": "if False:"
+   },
+   "test": "tests/test_binding_census.py::test_a_refusal_is_attributed_to_the_check_that_made_it",
+   "exit": 2,
+   "failed": [
+    "tests/test_binding_census.py::test_a_refusal_is_attributed_to_the_check_that_made_it"
+   ],
+   "summary": "1 failed in 3.40s",
+   "caught": true
+  },
+  {
+   "id": "B6",
+   "file": "tools/binding_census.py",
+   "behaviour": "a hand check is retirable only if the generic checker refuses every mutant it refuses",
+   "seed": {
+    "from": "\"retirable_later\": not only,",
+    "to": "\"retirable_later\": True,"
+   },
+   "test": "tests/test_binding_census.py::test_a_hand_check_is_retirable_only_if_the_generic_checker_refuses_all_it_refuses",
+   "exit": 2,
+   "failed": [
+    "tests/test_binding_census.py::test_a_hand_check_is_retirable_only_if_the_generic_checker_refuses_all_it_refuses"
+   ],
+   "summary": "1 failed in 3.57s",
+   "caught": true
+  },
+  {
+   "id": "B7",
+   "file": "tools/binding_census.py",
+   "behaviour": "the census lists every leaf of every mode (integer leaves included)",
+   "seed": {
+    "from": "split = _split(leaf.path)\n            if split is None:",
+    "to": "split = _split(leaf.path)\n            if leaf.kind == \"integer\":\n                continue\n            if split is None:"
+   },
+   "test": "tests/test_binding_census.py::test_the_census_is_current",
+   "exit": 2,
+   "failed": [
+    "tests/test_binding_census.py::test_the_census_is_current"
+   ],
+   "summary": "1 failed in 9.91s",
+   "caught": true
+  },
+  {
+   "id": "B8",
+   "file": "tests/binding_probe.py",
+   "behaviour": "the probe records the hand check that refused a mutant (the CheckerUnavailable created in the child)",
+   "seed": {
+    "from": "if _state[\"child\"] is not None:\n            handled = sys.exc_info()[1]",
+    "to": "if False:\n            handled = sys.exc_info()[1]"
+   },
+   "test": "tests/test_binding_census.py::test_the_probe_finds_the_hand_check_of_a_consumer_test",
+   "exit": 2,
+   "failed": [
+    "tests/test_binding_census.py::test_the_probe_finds_the_hand_check_of_a_consumer_test"
+   ],
+   "summary": "1 failed in 8.70s",
+   "caught": true
+  }
+ ]
+}

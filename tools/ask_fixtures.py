@@ -86,9 +86,9 @@ def focused_packages(path: str) -> dict:
     gen = _zero_generator(load_document(ROOT / path))
     packages = gen._packages()
     row = gen.elaboration
-    literals = gen._base_literals()
-    premises = [formula for _, formula in literals] + gen._base_fill()
-    lit_data = [json.dumps(ast, sort_keys=True) for ast, _ in literals]
+    listed = gen._base_background()
+    premises = gen._base_fill()
+    lit_data = [json.dumps(ast, sort_keys=True) for ast in gen._base_literals()]
 
     def meaning(ast):
         return digest(f"ve-meaning-{gen.base.identity_version}\n",
@@ -103,7 +103,8 @@ def focused_packages(path: str) -> dict:
             continue
         validated = _validate_inputs(gen.base, premises, conclusion)
         background = len(validated) - len(premises)
-        # The focused prover lists VE's Background first; Lean's package premises are the literals and `Fill_T`.
+        # The focused prover lists VE's Background first; Lean's package premises are the layered base
+        # background (the literals, `X`, then `Fill_T`).
         # A Background literal is the same premise as the row's literal; a flag premise has no place in Lean's list.
         own = {}
         for position in range(background):
@@ -120,8 +121,7 @@ def focused_packages(path: str) -> dict:
                             "target": target,
                             "certificate": {**{k: v for k, v in certificate.items() if k != "trace"}, "trace": trace,
                                             "environment_id": gen.base.environment_id,
-                                            "premise_meaning_ids": [meaning(ast) for ast, _ in literals] +
-                                            [meaning(item["ast"]) for item in row["fill"]],
+                                            "premise_meaning_ids": [meaning(ast) for ast in listed],
                                             "conclusion_meaning_id": meaning(
                                                 formula_to_data(gen.base, conclusion, _generated=True))}}
     return packages

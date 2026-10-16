@@ -111,6 +111,9 @@ GENERATED = (
               note="both sides' pins, plus the merged ve_service build and Rust release binary"),
     Generated("response-schemas", ("ve/backends/lean_service_schema/*.json",),
               ((PY, "tools/response_schemas.py", "--write"),), ((PY, "tools/response_schemas.py", "--check"),)),
+    Generated("binding-census", ("docs/test-architecture/binding-census.json", "docs/test-architecture/binding-census.md"),
+              ((PY, "tools/binding_census.py", "--write"),), ((PY, "tools/binding_census.py", "--check"),),
+              note="from the response schemas and the recorded answers and probes (--record re-records those)"),
     Generated("english-codes", ("ve/english_grammar/codes.json",),
               ((PY, "tools/english_codes.py", "--write"),), ((PY, "tools/english_codes.py", "--check"),)),
     Generated("question-codes", ("ve/question/codes.json",),
@@ -179,6 +182,8 @@ NOT_REGENERATED = {
     "conformance/english_lean_e2_readability_report.py": "batch report",
     "docs/lean-first/*/*.py": "batch evidence pinned at a commit",
     "docs/test-speed-b2/shadow.py": "fixed-merge shadow evidence, recorded once and checked at the batch gate",
+    "docs/test-architecture/select/replay.py": "17-merge selection replay, recorded once at a pinned commit and "
+                                               "checked at the batch gate",
     "docs/test-speed-b3/estimate.py": "fixed fix-round estimate, recorded once and checked at the batch gate",
     "docs/test-architecture/cutoff/tables.py": "tarch-cutoff report tables from saved evidence, checked at the batch gate",
     "docs/merge-tooling/*.py": "this tooling's evidence, recorded once (git merge-tree --write-tree is no writer)",

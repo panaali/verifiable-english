@@ -335,8 +335,7 @@
    "route": "service:parse",
    "mutation": "duplicate",
    "path": [
-    "results/*/result/ast",
-    "results/*/result/ast/*"
+    "results/*/result/ast"
    ],
    "kind": "by-design",
    "id": "B0",
@@ -380,6 +379,7 @@
     "results/*/result/names/*/candidates",
     "results/*/result/names/*/candidates/*/names",
     "results/*/result/order",
+    "results/*/result/pair/gaps",
     "results/*/result/premises",
     "results/*/result/reading_premises",
     "results/*/result/result/candidates",
@@ -388,6 +388,7 @@
     "results/*/result/sets/*/candidates",
     "results/*/result/sets/*/pairs",
     "results/*/result/slot",
+    "results/*/result/soft_premises",
     "results/*/result/targets",
     "results/*/result/vocabulary/predicates"
    ],
@@ -415,6 +416,7 @@
     "results/*/result/names/*/candidates",
     "results/*/result/names/*/candidates/*/names",
     "results/*/result/order",
+    "results/*/result/pair/gaps",
     "results/*/result/per_choice/*/evidence",
     "results/*/result/premises",
     "results/*/result/reading_premises",
@@ -425,6 +427,7 @@
     "results/*/result/sets/*/candidates",
     "results/*/result/sets/*/pairs",
     "results/*/result/slot",
+    "results/*/result/soft_premises",
     "results/*/result/targets",
     "results/*/result/vocabulary/constants",
     "results/*/result/vocabulary/predicates"
@@ -606,10 +609,7 @@
    "route": "service:route",
    "mutation": "duplicate",
    "path": [
-    "results/*/result/background",
-    "results/*/result/generators",
     "results/*/result/order",
-    "results/*/result/premises",
     "results/*/result/report/assumptions"
    ],
    "kind": "by-design",
@@ -620,10 +620,7 @@
    "route": "service:route",
    "mutation": "empty",
    "path": [
-    "results/*/result/background",
-    "results/*/result/generators",
     "results/*/result/order",
-    "results/*/result/premises",
     "results/*/result/report/assumptions"
    ],
    "kind": "by-design",
@@ -1031,18 +1028,6 @@
    "reason": "Retype accepted: the field is a union, has no type, or is an array whose items have no type (a 10,000-deep array is accepted) in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
   },
   {
-   "route": "service:parse",
-   "mutation": "retype",
-   "path": [
-    "results/*/result/ast",
-    "results/*/result/ast/*",
-    "results/*/result/ast/*/*"
-   ],
-   "kind": "follow-up",
-   "id": "F3",
-   "reason": "Retype accepted: the field is a union, has no type, or is an array whose items have no type (a 10,000-deep array is accepted) in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
-  },
-  {
    "route": "service:readings-route",
    "mutation": "retype",
    "path": [
@@ -1245,6 +1230,7 @@
     "results/*/result/conflict_targets/*/sorts/*",
     "results/*/result/conflict_targets/*/target",
     "results/*/result/decisions/*/arguments/*",
+    "results/*/result/decisions/*/key/excepted",
     "results/*/result/derived/*/rule",
     "results/*/result/english/*/readings/*/*",
     "results/*/result/environment_prime/profiles/*",
@@ -1254,6 +1240,7 @@
     "results/*/result/names/*/candidates/*/id",
     "results/*/result/names/*/set",
     "results/*/result/order/*",
+    "results/*/result/pair/gaps/*/*",
     "results/*/result/pair/witness",
     "results/*/result/per_choice/*/choice/*/*",
     "results/*/result/result/candidates/*/set",
@@ -1262,6 +1249,7 @@
     "results/*/result/sets/*/pairs/*/other",
     "results/*/result/sets/*/pairs/*/reading",
     "results/*/result/sets/*/set",
+    "results/*/result/soft_premises/*/set",
     "results/*/result/targets/*",
     "results/*/result/units/*/content/norm/predicate",
     "results/*/result/units/*/set",
@@ -1370,10 +1358,8 @@
    "mutation": "rebind",
    "path": [
     "results/*/generator",
-    "results/*/result/background/*/*/*/*",
     "results/*/result/generator",
-    "results/*/result/order/*",
-    "results/*/result/premises/*/*/*/*"
+    "results/*/result/order/*"
    ],
    "kind": "follow-up",
    "id": "F4",
@@ -1466,10 +1452,13 @@
    "path": [
     "results/*/result/accepted",
     "results/*/result/conflict_free",
+    "results/*/result/decided_units",
     "results/*/result/fill_premises",
+    "results/*/result/pair/gaps",
     "results/*/result/pair/other_value",
     "results/*/result/per_choice/*/evidence/conflict",
     "results/*/result/per_choice/*/premises",
+    "results/*/result/soft_premises",
     "results/*/result/units/*/index",
     "results/*/result/units/*/position",
     "results/*/result/units/*/set",
@@ -1602,16 +1591,6 @@
    "mutation": "untyped",
    "path": [
     "results/*/result/core/*"
-   ],
-   "kind": "follow-up",
-   "id": "F7",
-   "reason": "Untyped: every retype of the field is accepted (no type in its schema). Type it in lean/ResponseShape/Schemas."
-  },
-  {
-   "route": "service:parse",
-   "mutation": "untyped",
-   "path": [
-    "results/*/result/ast/*/*"
    ],
    "kind": "follow-up",
    "id": "F7",
@@ -2096,16 +2075,6 @@
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
   },
   {
-   "route": "service:parse",
-   "mutation": "empty",
-   "path": [
-    "results/*/result/ast/*/*"
-   ],
-   "kind": "follow-up",
-   "id": "F11",
-   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
-  },
-  {
    "route": "service:readings-route",
    "mutation": "empty",
    "path": [
@@ -2211,6 +2180,17 @@
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
   },
   {
+   "route": "service:document",
+   "mutation": "*",
+   "path": [
+    "results/*/result/units/*/content/right/*",
+    "results/*/result/units/*/content/norm/over"
+   ],
+   "kind": "by-design",
+   "id": "B7",
+   "reason": "A rights document's copied unit content (document.json `rights_block` and `soft_content`, Shape.copied): each member is the request's own authored value, the holder guard optional and every line and `over` name as written, so a dropped optional guard or a repeated line or name is still a valid shape. The client binds the content to the unit's authored content (`ve/document.py` `_bind_document_answer`, `_soft_bound`), which refuses each such mutant (tests/test_b16e_rights_document.py::test_every_rights_and_soft_field_is_typed_and_every_row_bound)."
+   },
+   {
    "route": "service:ask",
    "mutation": "empty",
    "path": [
