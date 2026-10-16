@@ -214,6 +214,16 @@ def test_a_rerun_that_passed_is_a_pass_and_a_failed_gate_is_not(repo, tmp_path):
     assert passes == [rerun] and len(malformed) == 1 and "not a pass" in malformed[0]
 
 
+def test_a_merge_train_row_with_a_gate_key_is_another_writers_row(repo, tmp_path):
+    # merge-train.sh writes {"train": ..., "gate": "R2", ...}: neither a pass nor a malformed gate row.
+    repo.branch("b")
+    passed = a_pass(repo, repo.commit())
+    train = {"train": "t1", "branch": "b", "candidate": passed.commit, "integration": passed.commit,
+             "verify": "PASS", "gate": "R2", "legs": "a,b"}
+    passes, malformed = since_pass.read_passes(records(tmp_path, passed, extra=[json.dumps(train)]))
+    assert passes == [passed] and malformed == []
+
+
 @pytest.mark.parametrize("key, value", [
     ("gate", 7), ("gate", ""), ("branch", True), ("commit", "f" * 39), ("commit", "F" * 40), ("tree", None),
     ("status", "passed "), ("mode", []), ("t", "2026-10-14 12:00:00"), ("t", 1760000000),
