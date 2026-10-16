@@ -57,15 +57,25 @@ def plant(seam, build, entry, recorded, line, response):
     seam.memory_bytes = 0
 
 
-def test_a_stored_answer_is_served_after_the_process_starts(seam):
+def test_a_stored_answer_is_served_after_the_process_starts(seam, tmp_path, monkeypatch):
     with LeanService() as service:
         live = service.run_bound("evaluate", CASES)
     assert seam.counts["recorded"] == 1 and seam.counts["hits"] == 0
-    with LeanService() as service:
+    service = LeanService()  # not started: the request itself starts it
+    try:
         served = service.run_bound("evaluate", CASES)
         # The store answered after _ensure: the process was started, pinned and handshaken.
         assert service.pid is not None and service.handshake is not None and service.stats["starts"] == 1
+    finally:
+        service.close()
     assert served == live and seam.counts["hits"] == 1 and seam.alarms == []
+    # A build the pins do not list is refused before the store is asked, though it holds the answer.
+    lock = tmp_path / "checkers.lock"
+    lock.write_text(json.dumps({"ve_service": ["0" * 64]}))
+    monkeypatch.setattr(lean_service, "BUILD_LOCK", lock)
+    with pytest.raises(CheckerUnavailable, match="unlisted build"):
+        LeanService().run_bound("evaluate", CASES)
+    assert seam.counts["hits"] == 1
 
 
 def test_a_store_mode_line_stands_alone(seam):

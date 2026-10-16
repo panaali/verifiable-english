@@ -1,0 +1,139 @@
+{
+ "batch": "tarch-store",
+ "note": "Each bug was planted in a changed file on the Mac runner (ve-mac-1, snapshot bb2c9e32 = 0da9e30e plus the M4 test fix, committed after), the named tests ran in a nested pytest and failed (exit 1), and the file was restored byte for byte. Unmutated, the same 19 tests passed. Driver: seeded_bugs.py (copy it into tests/ to run it). Only Python product code changed (ve/backends/lean_service.py); no Lean or Rust.",
+ "baseline": {
+  "tests": 19,
+  "returncode": 0,
+  "tail": [
+   "19 passed in 2.15s"
+  ]
+ },
+ "mutants": [
+  {
+   "id": "M1",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "stored line skips the client's checks",
+   "test": "tests/test_answer_store.py::test_a_planted_positional_mismatch_is_refused_not_served",
+   "result": "failed",
+   "pytest": "1 failed in 0.24s"
+  },
+  {
+   "id": "M2",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "store-mode nonce random, not derived from the line",
+   "test": "tests/test_answer_store.py::test_a_store_mode_line_stands_alone ; tests/test_answer_store.py::test_a_stored_answer_is_served_after_the_process_starts",
+   "result": "failed",
+   "pytest": "2 failed in 0.29s"
+  },
+  {
+   "id": "M3",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "store mode registers only the environments the process lacks",
+   "test": "tests/test_answer_store.py::test_a_store_mode_line_stands_alone",
+   "result": "failed",
+   "pytest": "1 failed in 0.22s"
+  },
+  {
+   "id": "M4",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "the store answers before _ensure (no spawn, pin check or handshake on a hit)",
+   "test": "tests/test_answer_store.py::test_a_stored_answer_is_served_after_the_process_starts",
+   "result": "failed",
+   "pytest": "1 failed in 0.25s"
+  },
+  {
+   "id": "M5",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "RLIMIT_AS not applied to the process",
+   "test": "tests/test_lean_service.py::test_the_service_runs_under_its_address_space_limit",
+   "result": "failed",
+   "pytest": "1 failed in 0.22s"
+  },
+  {
+   "id": "M6",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "RSS recycle disabled",
+   "test": "tests/test_lean_service.py::test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request",
+   "result": "failed",
+   "pytest": "1 failed in 0.39s"
+  },
+  {
+   "id": "M7",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "no gate check in the seam",
+   "test": "tests/test_answer_store.py::test_a_store_hit_in_an_r2_flagged_run_is_impossible",
+   "result": "failed",
+   "pytest": "1 failed in 0.38s"
+  },
+  {
+   "id": "M8",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the plugin accepts the store under the gate",
+   "test": "tests/test_answer_store.py::test_a_store_hit_in_an_r2_flagged_run_is_impossible",
+   "result": "failed",
+   "pytest": "1 failed in 0.43s"
+  },
+  {
+   "id": "M9",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "live_service tests served",
+   "test": "tests/test_answer_store.py::test_a_live_service_test_is_never_served_and_is_counted ; tests/test_answer_store.py::test_serving_is_off_for_every_request_the_plan_excludes",
+   "result": "failed",
+   "pytest": "2 failed in 0.25s"
+  },
+  {
+   "id": "M10",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "client replaced by a test still served",
+   "test": "tests/test_answer_store.py::test_serving_is_off_for_every_request_the_plan_excludes",
+   "result": "failed",
+   "pytest": "1 failed in 0.18s"
+  },
+  {
+   "id": "M11",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "ve/backends/ not guarded",
+   "test": "tests/test_answer_store.py::test_serving_is_off_for_a_branch_that_changes_a_guarded_path",
+   "result": "failed",
+   "pytest": "1 failed, 5 passed in 0.20s"
+  },
+  {
+   "id": "M12",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the byte replay compares decoded values, not bytes",
+   "test": "tests/test_answer_store.py::test_a_planted_wrong_entry_fails_the_byte_replay ; tests/test_answer_store.py::test_a_planted_nondeterministic_answer_fails_the_byte_replay",
+   "result": "failed",
+   "pytest": "2 failed, 1 passed in 0.47s"
+  },
+  {
+   "id": "M13",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "a CheckerUnavailable request error is recorded",
+   "test": "tests/test_answer_store.py::test_a_checker_unavailable_request_error_is_never_recorded",
+   "result": "failed",
+   "pytest": "1 failed in 0.19s"
+  },
+  {
+   "id": "M14",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "a sampled hit is served without the live comparison",
+   "test": "tests/test_answer_store.py::test_a_sampled_hit_that_drifted_is_an_alarm_and_the_caller_gets_the_process_answer",
+   "result": "failed",
+   "pytest": "1 failed in 0.22s"
+  }
+ ]
+}
