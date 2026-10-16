@@ -14,7 +14,8 @@ run by the selector of a given checkout (`--selector`, default this one) in a pr
   `lean/` tree of the window, built and hashed on the VM, linux-x86_64), so the binary cutoff applies.
 
 A plan's share is the recorded seconds of the units it selects over the recorded seconds of every unit of
-the complete map (the same weights for every column).
+the complete map (the same weights for every column); `mac_share` is the same over the Mac test seconds of
+each test file in run A of the plan (`evidence/mac-durations.json`; files run A did not have count 0).
 
     python3 docs/test-architecture/select/replay.py --write fresh fresh_complete fresh_cutoff
     python3 docs/test-architecture/select/replay.py --selector /tmp/main --label main --write as_it_was fresh
@@ -46,6 +47,7 @@ REPLAY = EVIDENCE / "replay.json"
 RECORDED = EVIDENCE / "map-recorded.json.gz"
 NINE = EVIDENCE / "nine-units.json.gz"
 BUILDS = EVIDENCE / "lean-builds"
+MAC = EVIDENCE / "mac-durations.json"
 BUILD_PLATFORM = "linux-x86_64"
 # The 17 first-parent merges of Oct 11 00:00Z - Oct 14 18:00Z, oldest first (draft 2, 2.3).
 MERGES = ("cd546c0d9", "8cec935af", "f1b719c7a", "c9b8cba63", "615e89d7f", "49de179e7", "11676c2c0",
@@ -89,9 +91,11 @@ def plan(selector: Path, merge: str, column: str, work: Path, complete: Path) ->
 def row(data: dict, weights: dict[str, float], total: float) -> dict:
     selected = sorted(data["selected"])
     cutoff = data.get("lean_cutoff") or {}
+    mac = json.loads(MAC.read_text())
     return {"selected": selected, "units": len(selected), "full_count": data["full_count"],
             "share": round(100 * sum(weights.get(unit, 0.0) for unit in selected) / total, 1),
-            "full": data["full"], "full_reasons": data["full_reasons"],
+            "mac_share": round(100 * sum(mac["files"].get(unit, 0.0) for unit in selected) / mac["total"], 1),
+            "full": data["full"], "full_reasons": data["full_reasons"], "plan_seconds": data["seconds"],
             "map": (data["map"] or {}).get("commit"), "lean_cutoff": cutoff.get("state"),
             "rebuilt": cutoff.get("rebuilt"), "same": cutoff.get("same")}
 
@@ -117,6 +121,7 @@ def replay(selector: Path, columns: list[str]) -> dict[str, dict[str, dict]]:
 def summary(rows: dict[str, dict]) -> dict:
     shares = [entry["share"] for entry in rows.values()]
     return {"average_share": round(sum(shares) / len(shares), 1),
+            "average_mac_share": round(sum(entry["mac_share"] for entry in rows.values()) / len(rows), 1),
             "average_units": round(sum(entry["units"] for entry in rows.values()) / len(rows), 1),
             "full_plans": sum(entry["full"] for entry in rows.values())}
 

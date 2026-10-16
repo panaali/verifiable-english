@@ -894,17 +894,18 @@ def test_recording_starts_the_longest_units_first():
     assert test_map.by_length(["b", "a"], None) == ["a", "b"]
 
 
+# Each program runs under the recorder (`recorder_run`) as if the site hook had started it, then starts
+# a Python child that may or may not record. Whether the hook is installed in this environment's
+# site-packages (it is while tools/test_map.py records this very file) changes nothing below.
+HOOKED = "sys.modules['_ve_testmap'] = types.ModuleType('_ve_testmap')\n"
 CHILDREN = {
-    # A child of this environment's interpreter that the hook would start recording: a missing record
-    # file means it died before running any code under the root (here, it ran none).
-    "records here": ("sys.modules['_ve_testmap'] = types.ModuleType('_ve_testmap')\n"
-                     "subprocess.run([sys.executable, '-c', 'pass'], check=True)\n", False),
-    # Without the hook in this process the same child is unknown.
-    "no hook": ("subprocess.run([sys.executable, '-c', 'pass'], check=True)\n", True),
-    "site skipped": ("sys.modules['_ve_testmap'] = types.ModuleType('_ve_testmap')\n"
-                     "subprocess.run([sys.executable, '-IS', '-c', 'pass'], check=True)\n", True),
-    "another recording": ("sys.modules['_ve_testmap'] = types.ModuleType('_ve_testmap')\n"
-                          "subprocess.run([sys.executable, '-c', 'pass'], check=True,\n"
+    # This environment's interpreter with this recording's variables: if its record file is missing,
+    # it died before any code under the root ran (here, it ran none, and the hook is not installed).
+    "records here": (HOOKED + "subprocess.run([sys.executable, '-c', 'pass'], check=True)\n", False),
+    # Another interpreter: the base one, outside this environment, never has the hook.
+    "another interpreter": (HOOKED + "subprocess.run([sys._base_executable, '-c', 'pass'], check=True)\n", True),
+    "site skipped": (HOOKED + "subprocess.run([sys.executable, '-IS', '-c', 'pass'], check=True)\n", True),
+    "another recording": (HOOKED + "subprocess.run([sys.executable, '-c', 'pass'], check=True,\n"
                           "               env={**os.environ, 'VE_TESTMAP_OUT': os.getcwd()})\n", True),
 }
 
@@ -913,6 +914,21 @@ CHILDREN = {
 def test_a_child_that_records_here_and_left_no_file_ran_nothing(tmp_path, program, opaque):
     result = recorder_run(tmp_path, "import os, subprocess, sys, types\n" + program)
     assert bool(result["opaque"]) is opaque, result["opaque"]
+
+
+def test_a_child_records_here_only_if_the_hook_started_this_process(tmp_path, monkeypatch):
+    """A process whose recorder was started by hand (as `recorder_run` does) has no hook in its
+    interpreter's site-packages to vouch for: its children's missing records stay opaque."""
+    monkeypatch.setitem(test_map_recorder._state, "out", str(tmp_path))
+    monkeypatch.setenv("VE_TESTMAP_OUT", str(tmp_path))
+    monkeypatch.setenv("VE_TESTMAP_ROOT", str(ROOT))
+    child = [sys.executable, "-c", "pass"]
+    monkeypatch.setitem(sys.modules, test_map_recorder.HOOK, types.ModuleType(test_map_recorder.HOOK))
+    assert test_map_recorder._records_here(sys.executable, child, None)
+    assert not test_map_recorder._records_here(sys.executable, child, {"VE_TESTMAP_OUT": "/elsewhere",
+                                                                        "VE_TESTMAP_ROOT": str(ROOT)})
+    monkeypatch.delitem(sys.modules, test_map_recorder.HOOK)
+    assert not test_map_recorder._records_here(sys.executable, child, None)
 
 
 def test_the_hook_test_map_installs_is_the_one_the_recorder_checks():
@@ -2006,7 +2022,7 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
             result["opaque"] = [reason for reason in result["opaque"] if not reason.endswith("left no record")]
             return result
         monkeypatch.setattr(test_map, "read_unit", missing_children_ran_nothing)
-        arguments = (tmp_path, *CHILDREN["no hook"])
+        arguments = (tmp_path, *CHILDREN["another interpreter"])
     elif name == "a nested recording keeps its records":
         monkeypatch.setattr(test_map, "share_with_outer", lambda out, env: None)
         arguments = (tmp_path, monkeypatch)
