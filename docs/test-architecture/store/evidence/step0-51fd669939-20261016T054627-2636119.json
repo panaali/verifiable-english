@@ -1,0 +1,30 @@
+{
+ "run": "51fd669939/20261016T054627-2636119",
+ "headline": {
+  "previous": "20261016T053515-2359001",
+  "records": 627124,
+  "failed_roundtrips": 24715,
+  "eligible": 626870,
+  "exact_line": {
+   "requests": 626870,
+   "hits": 623669,
+   "hit_rate": 0.9949,
+   "seconds": 321.6,
+   "hit_seconds": 315.9,
+   "hit_seconds_share": 0.9824,
+   "same_response": 623197
+  },
+  "self_contained_line": {
+   "requests": 626870,
+   "hits": 624092,
+   "hit_rate": 0.9956,
+   "seconds": 321.6,
+   "hit_seconds": 316.7,
+   "hit_seconds_share": 0.9849,
+   "same_response": 623623
+  },
+  "lines_self_contained": 55190,
+  "lines_with_handles": 617408,
+  "lines_without_reset": 625931
+ }
+}
