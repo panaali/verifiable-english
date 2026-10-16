@@ -215,9 +215,12 @@ def load_recording(directory: Path) -> tuple[dict, dict]:
 def randomised(unit: str, graph: source_graph.Graph, root: Path = ROOT) -> str | None:
     """Why `unit`'s inputs may differ between runs (property tests, unseeded randomness), or None.
 
-    Read from the unit's own file and the test helpers it imports, with Python's own parser."""
+    Read with Python's own parser from the unit's own file and the test code it imports. Another test
+    file's property tests do not run in the unit that imports a helper from it, so hypothesis counts
+    in the unit's file and in helper modules; unseeded randomness counts in any of them."""
     files = {unit} | {path for path in graph.closure(unit)[0] if path.startswith("tests/")}
     for path in sorted(files):
+        property_tests = path == unit or not Path(path).name.startswith("test_")
         try:
             tree = ast.parse((root / path).read_text(encoding="utf-8"))
         except (OSError, SyntaxError, ValueError):
@@ -226,8 +229,8 @@ def randomised(unit: str, graph: source_graph.Graph, root: Path = ROOT) -> str |
             if isinstance(node, ast.Import | ast.ImportFrom):
                 names = [alias.name for alias in node.names]
                 module = node.module if isinstance(node, ast.ImportFrom) else None
-                if module == "hypothesis" or (module or "").startswith("hypothesis.") or any(
-                        name == "hypothesis" or name.startswith("hypothesis.") for name in names):
+                if property_tests and (module == "hypothesis" or (module or "").startswith("hypothesis.") or any(
+                        name == "hypothesis" or name.startswith("hypothesis.") for name in names)):
                     return f"{path} uses hypothesis"
                 if module in UNSEEDED and any(UNSEEDED[module] is None and name != "Random"
                                               or name in (UNSEEDED[module] or ()) for name in names):
