@@ -76,7 +76,7 @@ CASES = [
      "                if module == \"random\":\n", "unseeded calls of the random module are not unknown",
      TESTS + "test_randomised_inputs_make_a_unit_unknown"),
     ("M15", "tools/answer_cutoff.py",
-     "        elif stale and any(keys[i] in stale for i in entry[\"keys\"]):\n",
+     "        elif any(keys[i] in stale for i in entry[\"keys\"]):\n",
      "        elif False:\n", "a unit that read an answer the base build changed is not unknown",
      TESTS + "test_a_unit_that_read_an_answer_the_base_build_changed_is_unknown"),
     ("M16", "tools/answer_cutoff.py",
@@ -170,6 +170,19 @@ CASES = [
     ("M38", "tools/answer_replay.py", "        lost = [key for key in keys\n", "        lost = [key for key in keys if False\n",
      "a case whose environment the recording lacks is sent as it is",
      TESTS + "test_replay_answers_each_case_as_recorded_and_again_alike"),
+    # The review's F8 (tarch-cutoff-looprecheck1.final.md): four more survivors. sweep.py plants the rest of
+    # their kind; these four are named here as the review planted them.
+    ("M39", "tools/answer_cutoff.py", 'if entry["pins"] == ["client"]} - since',
+     'if "client" in entry["pins"]} - since', "a unit that reads the pins as data too is exempt from a pin change",
+     TESTS + "test_the_pin_exemption_and_the_stale_answers_reach_the_plan"),
+    ("M40", "tools/answer_cutoff.py", 'stale=answer_replay.diff(own, read_json(args.base))["changed"]', "stale=[]",
+     "`diff --recording-answers` drops the stale answers it finds", TESTS + "test_the_cutoff_command_line"),
+    ("M41", "tools/answer_cutoff.py", 'entry["timed"] |= bool(record[3])', 'entry["timed"] = bool(record[3])',
+     "a later untimed request hides an earlier timed one",
+     TESTS + "test_folding_keeps_a_timed_request_and_reads_every_line_it_can"),
+    ("M42", "tools/test_map_recorder.py",
+     'timed = local["timeout"] is not None or service.timeout is not None', "timed = service.timeout is not None",
+     "a timeout passed on one call is not recorded", TESTS + "test_timeouts_and_data_reads_of_the_pins_are_recorded"),
 ]
 
 

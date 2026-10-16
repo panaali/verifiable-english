@@ -8,7 +8,7 @@
    "fault": "requests with an explicit timeout are recorded as untimed",
    "test": "tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded",
    "result": "failed",
-   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded"
+   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[client]"
   },
   {
    "id": "M2",
@@ -17,7 +17,7 @@
    "fault": "every read of the pins counts as the client's pin check",
    "test": "tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded",
    "result": "failed",
-   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded"
+   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[client]"
   },
   {
    "id": "M3",
@@ -342,6 +342,42 @@
    "test": "tests/test_answer_cutoff.py::test_replay_answers_each_case_as_recorded_and_again_alike",
    "result": "failed",
    "failure": "FAILED tests/test_answer_cutoff.py::test_replay_answers_each_case_as_recorded_and_again_alike"
+  },
+  {
+   "id": "M39",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit that reads the pins as data too is exempt from a pin change",
+   "test": "tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan"
+  },
+  {
+   "id": "M40",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "`diff --recording-answers` drops the stale answers it finds",
+   "test": "tests/test_answer_cutoff.py::test_the_cutoff_command_line",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_cutoff_command_line - AssertionE..."
+  },
+  {
+   "id": "M41",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a later untimed request hides an earlier timed one",
+   "test": "tests/test_answer_cutoff.py::test_folding_keeps_a_timed_request_and_reads_every_line_it_can",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_folding_keeps_a_timed_request_and_reads_every_line_it_can"
+  },
+  {
+   "id": "M42",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "a timeout passed on one call is not recorded",
+   "test": "tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[call]"
   }
  ]
 }

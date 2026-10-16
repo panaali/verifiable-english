@@ -33,7 +33,7 @@ def main() -> int:
     import mutants as planted
     assert [(row["id"], row["file"], row["fault"], row["test"]) for row in mutants] == [
         (ident, name, fault, test) for ident, name, _, _, fault, test in planted.CASES], "mutants.json is not mutants.py's run"
-    for script in ("seeds.py", "shadow.py", "tables.py"):
+    for script in ("seeds.py", "shadow.py", "tables.py", "sweep.py"):
         subprocess.run([sys.executable, str(HERE / script), "--check" if script == "tables.py" else "check"],
                        check=True)
     # The seeds no test caught: every test the modes rule drops for them passed with the seed planted.
