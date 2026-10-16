@@ -29,6 +29,7 @@ import VE.Discourse.Run
 import VE.Readings.Run
 import VE.Service.Diagnose
 import VE.Service.Document
+import VE.SearchBudget.Run
 import Std.Data.HashMap
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
@@ -75,7 +76,7 @@ inductive Mode where
   | environment | model | check | identity
   | parse | graph | readings | readingsChoices | bundle | familyNorms
   | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
-  | discourse | readingsRoute | diagnose | document | englishQuestion | ask | words
+  | discourse | readingsRoute | diagnose | document | englishQuestion | searchBudget | ask | words
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -112,6 +113,7 @@ def Mode.name : Mode → String
   | .diagnose => "diagnose"
   | .document => "document"
   | .englishQuestion => "english.question"
+  | .searchBudget => "search-budget"
   | .ask => "ask"
   | .words => "words"
 
@@ -119,7 +121,7 @@ def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, 
   .englishRead, .englishGrammar, .englishCheck,
   .environment, .model, .check, .identity, .parse, .graph, .readings, .readingsChoices, .bundle, .familyNorms,
   .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
-  .discourse, .readingsRoute, .diagnose, .document, .englishQuestion, .ask, .words]
+  .discourse, .readingsRoute, .diagnose, .document, .englishQuestion, .searchBudget, .ask, .words]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -171,6 +173,7 @@ def runMode : Mode → Json → Json
   | .diagnose, j => Diagnose.diagnoseCase j
   | .document, j => Document.runCaseReported j
   | .englishQuestion, j => VE.Question.Run.caseReported j
+  | .searchBudget, j => VE.SearchBudget.Run.runCaseReported j
   | .ask, j => VE.Ask.Run.caseReported j
   | .words, j => VE.Words.Run.caseReported j
 
@@ -735,6 +738,8 @@ theorem runMode_readingsRoute (j : Json) :
 theorem runMode_diagnose (j : Json) : runMode .diagnose j = Diagnose.diagnoseCase j := rfl
 theorem runMode_englishQuestion (j : Json) :
     runMode .englishQuestion j = VE.Question.Run.caseReported j := rfl
+theorem runMode_searchBudget (j : Json) :
+    runMode .searchBudget j = VE.SearchBudget.Run.runCaseReported j := rfl
 
 theorem runMode_ask (j : Json) :
     runMode .ask j = VE.Ask.Run.caseReported j := rfl
