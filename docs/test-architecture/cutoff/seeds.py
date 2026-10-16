@@ -155,7 +155,6 @@ def verify(row: dict, worktree: Path, unseeded: Path, work: Path) -> dict:
     log = work / f"{row['id']}-verify.log"
     path, binary, lock_path = worktree / row["file"], worktree / SERVICE, worktree / LOCK
     original, lock = path.read_text(), lock_path.read_text()
-    tests = sorted(set(row["caught_by"]))
     outcome = {}
     try:
         path.write_text(original.replace(row["old"], row["new"]))
@@ -166,12 +165,17 @@ def verify(row: dict, worktree: Path, unseeded: Path, work: Path) -> dict:
         pins = json.loads(lock)
         pins["ve_service"] = sorted({*pins["ve_service"], seeded})
         lock_path.write_text(json.dumps(pins, indent=2) + "\n")
-        for name, source in (("seeded", None), ("unseeded", unseeded)):
+        # Every candidate file with the seeded build, then only what failed with the unseeded one.
+        for name, source, tests in (("seeded", None, row["tried"]), ("unseeded", unseeded, None)):
             if source is not None:
                 binary.write_bytes(source.read_bytes())
+            tests = tests if tests is not None else outcome["seeded"]
+            if not tests:
+                outcome[name] = []
+                continue
             junit = work / f"{row['id']}-verify-{name}.xml"
-            run(nested_pytest.command(["-q", "-p", "no:cacheprovider", f"--junitxml={junit}", *tests]),
-                worktree, log, nested_pytest.environment(env))
+            run(nested_pytest.command(["-q", "-p", "no:cacheprovider", f"--junitxml={junit}", *tests],
+                                      workers=8 if source is None else 1), worktree, log, nested_pytest.environment(env))
             outcome[name] = failures(junit)
     finally:
         path.write_text(original)
@@ -226,7 +230,7 @@ def main() -> int:
         unseeded.write_bytes((worktree / SERVICE).read_bytes())
         data = json.loads(args.evidence.read_text())
         for row in data["seeds"]:
-            if row["status"] == "caught" and "verified" not in row:
+            if row["status"] in ("caught", "not caught") and row.get("tried") and "verified" not in row:
                 row["verified"] = verify(row, worktree, unseeded, work)
                 print(row["id"], row["verified"].get("through_service"), flush=True)
                 args.evidence.write_text(json.dumps(data, indent=1) + "\n")
