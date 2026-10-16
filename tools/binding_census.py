@@ -226,33 +226,48 @@ def _line(path: str, number: int) -> str:
 _FUNCTIONS: dict = {}
 
 
-def _function(path: str, name: str):
-    """The function or method `name` (last part of a qualified name) defined in `path`."""
+def _functions(path: str, name: str) -> list:
+    """The (first line, last line) of every function or method named `name` in `path`; the whole file for a frame
+    that is no definition (`<genexpr>`, `<lambda>`, `<module>`)."""
     key = (path, name)
     if key not in _FUNCTIONS:
-        found = None
         try:
-            tree = ast.parse((ROOT / path).read_text())
+            source = (ROOT / path).read_text()
+            tree = ast.parse(source)
         except (OSError, SyntaxError):
-            tree = None
-        for node in ast.walk(tree) if tree else ():
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == name.split(".")[-1]:
-                found = node
-                break
-        _FUNCTIONS[key] = found
+            _FUNCTIONS[key] = []
+            return []
+        if name.startswith("<"):
+            _FUNCTIONS[key] = [(1, len(source.splitlines()))]
+        else:
+            _FUNCTIONS[key] = [(node.lineno, node.end_lineno or node.lineno) for node in ast.walk(tree)
+                               if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == name]
     return _FUNCTIONS[key]
 
 
-def current_line(site: dict) -> int | None:
-    """The line of `site`'s text inside its function in the current tree, or None if it is not there."""
-    node = _function(site["file"], site["function"])
-    if node is None or not site["text"]:
+def _function(path: str, name: str):
+    """The definition of `name` in `path` (the first, for the helper test)."""
+    try:
+        tree = ast.parse((ROOT / path).read_text())
+    except (OSError, SyntaxError):
         return None
-    lines = (ROOT / site["file"]).read_text().splitlines()
-    for number in range(node.lineno, (node.end_lineno or node.lineno) + 1):
-        if lines[number - 1].strip() == site["text"]:
-            return number
-    return None
+    return next((node for node in ast.walk(tree)
+                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == name), None)
+
+
+def current_line(site: dict) -> int | None:
+    """The line of `site`'s text inside a function of its name in the current tree (the one nearest the line at
+    the probe), or None if it is in none of them."""
+    if not site["text"]:
+        return None
+    try:
+        lines = (ROOT / site["file"]).read_text().splitlines()
+    except OSError:
+        return None
+    found = [number for first, last in _functions(site["file"], site["function"])
+             for number in range(first, last + 1) if lines[number - 1].strip() == site["text"]]
+    near = site.get("line_at_probe") or 0
+    return min(found, key=lambda number: abs(number - near)) if found else None
 
 
 # The census
@@ -415,8 +430,9 @@ def hand_binders(probes: list) -> list[dict]:
             "binder": key,
             # `present`: the line is still in its function in this tree (False: the binder changed; re-probe).
             "lines": [{"text": text, "line_at_probe": line,
-                       "present": current_line({"file": group["file"], "function": group["function"], "text": text})
-                       is not None} for text, line in sorted(group["lines"].items())],
+                       "present": current_line({"file": group["file"], "function": group["function"], "text": text,
+                                                "line_at_probe": line}) is not None}
+                      for text, line in sorted(group["lines"].items())],
             "modes": sorted(group["modes"]),
             "refused_only_by_hand": only,
             "refused_by_generic_too": sorted(group["also_generic"]),
@@ -506,7 +522,8 @@ def render(census: dict, lines_now: bool = False) -> str:
 def _cite(binder: str, line: dict, lines_now: bool) -> str:
     path, function = binder.split(":", 1)
     if lines_now:
-        now = current_line({"file": path, "function": function, "text": line["text"]})
+        now = current_line({"file": path, "function": function, "text": line["text"],
+                            "line_at_probe": line["line_at_probe"]})
         return f"{path}:{now if now else 'changed since the probe'}"
     return f"{path}:{line['line_at_probe']}" + ("" if line["present"] else " (changed since the probe)")
 
@@ -517,7 +534,8 @@ def missing_anchors(census: dict) -> list[str]:
     for binder in census["hand_binders"]:
         path, function = binder["binder"].split(":", 1)
         for line in binder["lines"]:
-            if current_line({"file": path, "function": function, "text": line["text"]}) is None:
+            if current_line({"file": path, "function": function, "text": line["text"],
+                             "line_at_probe": line["line_at_probe"]}) is None:
                 missing.append(f"{binder['binder']}: {line['text']!r}")
     return missing
 
@@ -591,7 +609,8 @@ def main(argv=None) -> int:
         VIEW.write_text(view)
         print(f"binding_census: wrote {CENSUS.relative_to(ROOT)} and {VIEW.relative_to(ROOT)}")
         return 0
-    problems = [f"{path.relative_to(ROOT)} is stale; run tools/binding_census.py --write"
+    problems = [f"{path.relative_to(ROOT) if path.is_relative_to(ROOT) else path} is stale; run "
+                "tools/binding_census.py --write"
                 for path, want in ((CENSUS, text), (VIEW, view)) if not path.exists() or path.read_text() != want]
     for problem in problems:
         print(f"binding_census: {problem}", file=sys.stderr)

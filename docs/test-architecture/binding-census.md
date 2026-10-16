@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 183 |
+| leaves:bound | 235 |
 | leaves:closed domain | 230 |
 | leaves:none | 1148 |
 | modes | 35 |
 | today:hand | 202 |
 | today:later Lean request | 59 |
 | today:not probed | 750 |
-| today:shape | 413 |
+| today:shape | 465 |
 | today:unbound | 137 |
 | answers | 562 |
 | probes | 10204 |
@@ -38,7 +38,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `ve/backends/soft_relay.py:check_rules` | ve/backends/soft_relay.py:97 | soft-norms | 2 | 0 | no |
 | `ve/backends/speech_source.py:decide_source` | ve/backends/speech_source.py:313 | environment | 0 | 9 | yes |
 | `ve/backends/validation.py:construct_after_lean` | ve/backends/validation.py:87 | bundle, environment, route | 1 | 16 | no |
-| `ve/background.py:lean` | ve/background.py:182; ve/background.py:267 (changed since the probe) | norms, route | 13 | 0 | no |
+| `ve/background.py:lean` | ve/background.py:182; ve/background.py:267 | norms, route | 13 | 0 | no |
 | `ve/bundle.py:_check_bundle_python` | ve/bundle.py:236 | route | 5 | 0 | no |
 | `ve/bundle.py:_leaf_choices` | ve/bundle.py:50 | route | 0 | 1 | yes |
 | `ve/definitions.py:_compile_lean` | ve/definitions.py:163 | norms, route | 8 | 0 | no |
@@ -51,8 +51,8 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `ve/document.py:_lean_document` | ve/document.py:470 | document | 12 | 4 | no |
 | `ve/document.py:require` | ve/document.py:531 | document | 74 | 20 | no |
 | `ve/environment.py:_decode` | ve/environment.py:236; ve/environment.py:216; ve/environment.py:228 | reports | 8 | 0 | no |
-| `ve/norm_defaults.py:<genexpr>` | ve/norm_defaults.py:99 (changed since the probe) | norm-defaults | 4 | 0 | no |
-| `ve/norm_defaults.py:__init__` | ve/norm_defaults.py:62; ve/norm_defaults.py:104 (changed since the probe) | environment, norm-defaults, route | 43 | 21 | no |
+| `ve/norm_defaults.py:<genexpr>` | ve/norm_defaults.py:99 | norm-defaults | 4 | 0 | no |
+| `ve/norm_defaults.py:__init__` | ve/norm_defaults.py:62; ve/norm_defaults.py:104 | environment, norm-defaults, route | 43 | 21 | no |
 | `ve/norm_defaults_english.py:_latent` | ve/norm_defaults_english.py:262 | norm-defaults | 1 | 0 | no |
 | `ve/norms.py:_bound_targets` | ve/norms.py:691 | family-norms, norms | 10 | 2 | no |
 | `ve/norms.py:_check_conflict_lean` | ve/norms.py:741; ve/norms.py:718; ve/norms.py:737 | family-norms, norms | 2 | 4 | no |
@@ -68,11 +68,11 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `ve/readings_s2_english.py:named_result` | ve/readings_s2_english.py:415 | readings-route | 2 | 0 | no |
 | `ve/readings_s2_wording.py:name` | ve/readings_s2_wording.py:71 | readings-route | 1 | 0 | no |
 | `ve/readings_sup.py:slot_label` | ve/readings_sup.py:403 | readings-route | 1 | 0 | no |
-| `ve/readings_verdicts.py:conflict` | ve/readings_verdicts.py:341 (changed since the probe) | readings-route | 0 | 1 | yes |
+| `ve/readings_verdicts.py:conflict` | ve/readings_verdicts.py:341 | readings-route | 0 | 1 | yes |
 | `ve/reports.py:__init__` | ve/reports.py:45; ve/reports.py:39 | reports | 33 | 0 | no |
 | `ve/reports.py:_load_statuses` | ve/reports.py:52 | reports | 0 | 3 | yes |
-| `ve/rights.py:__init__` | ve/rights.py:199 (changed since the probe); ve/rights.py:190 (changed since the probe); ve/rights.py:192 (changed since the probe); ve/rights.py:166 (changed since the probe) | rights | 19 | 4 | no |
-| `ve/softnorms.py:_init_soft` | ve/softnorms.py:306 (changed since the probe) | soft-norms | 3 | 0 | no |
+| `ve/rights.py:__init__` | ve/rights.py:199; ve/rights.py:190; ve/rights.py:192; ve/rights.py:166 | rights | 19 | 4 | no |
+| `ve/softnorms.py:_init_soft` | ve/softnorms.py:306 | soft-norms | 3 | 0 | no |
 | `ve/units.py:_checked_quantity` | ve/units.py:324 | check | 1 | 0 | no |
 | `ve/wire.py:validate_json` | ve/wire.py:32 | document | 0 | 1 | yes |
 | `ve/words.py:read_answer` | ve/words.py:75 | words | 4 | 0 | no |
@@ -138,6 +138,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `/canonical` | string | none |  |  | 3 | unbound |
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 5 | not probed |
+| `/id` | any | bound | x-echo |  | 7 | shape |
 | `/id` | string | bound | x-equals |  | 7 | shape |
 | `/path` | string | none |  |  | 0 | not probed |
 | `/status` | string | closed domain | const |  | 11 | shape |
@@ -154,6 +155,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 4 | not probed |
+| `/id` | any | bound | x-echo |  | 3 | shape |
 | `/id` | string | bound | x-equals |  | 3 | shape |
 | `/status` | string | closed domain | const |  | 7 | shape |
 | `/steps` | integer | bound | x-max-steps | minimum | 3 | shape |
@@ -166,6 +168,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 5 | not probed |
+| `/id` | any | bound | x-echo |  | 11 | shape |
 | `/id` | string | bound | x-equals |  | 11 | shape |
 | `/status` | string | closed domain | const |  | 15 | shape |
 | `/steps` | integer | bound | x-max-steps | minimum | 3 | shape |
@@ -191,9 +194,12 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `/error` | string | none |  | minLength | 18 | not probed |
 | `/generator` | string | none |  |  | 2 | not probed |
 | `/generators/*` | string | closed domain | enum |  | 0 | shape: `ve/argument.py:_check_argument_lean`, `ve/definitions.py:_lean_definition` |
+| `/id` | any | bound | x-echo |  | 37 | shape |
 | `/id` | string | bound | x-equals |  | 37 | shape |
+| `/kinds` | any | bound | x-equals |  | 0 | shape |
 | `/kinds/*` | string | bound | x-equals |  | 2 | shape |
 | `/label` | string | bound | x-equals | pattern | 3 | shape |
+| `/lemmas` | any | bound | x-equals |  | 0 | shape |
 | `/lemmas/*` | string | bound | x-equals | pattern | 5 | shape |
 | `/order/*` | string | none |  |  | 0 | hand: `ve/background.py:lean` |
 | `/report/assumptions/*/label` | string | bound | x-claim-nodes |  | 1 | shape |
@@ -238,8 +244,10 @@ Delegates: `/` to route.
 | `/detail` | string | none |  |  | 3 | hand: `ve/norms.py:_check_conflict_lean` |
 | `/error` | string | none |  | minLength | 4 | not probed |
 | `/generators/*` | string | closed domain | enum |  | 0 | shape: `ve/definitions.py:_lean_definition` |
+| `/id` | any | bound | x-echo |  | 28 | shape |
 | `/id` | string | bound | x-equals |  | 28 | shape |
-| `/kinds/*` | string | bound | x-equals |  | 4 | shape |
+| `/kinds` | any | bound | x-equals |  | 0 | shape |
+| `/kinds/*` | string | bound | x-equals |  | 5 | shape |
 | `/layers` | integer | none |  | minimum | 3 | hand: `ve/norms.py:_norm_certificate_lean` |
 | `/order/*` | string | none |  |  | 3 | hand: `ve/norms.py:_lean_regenerated` |
 | `/path` | string | none |  |  | 0 | not probed |
@@ -347,9 +355,11 @@ Delegates: `/` to route.
 | `/error` | string | none |  | minLength | 6 | not probed |
 | `/family` | string | closed domain | const |  | 6 | shape |
 | `/family` | string | closed domain | enum |  | 6 | shape |
+| `/id` | any | bound | x-echo |  | 8 | shape |
 | `/id` | string | bound | x-equals |  | 8 | shape |
 | `/path` | string | none |  |  | 2 | not probed |
 | `/profile` | string | bound | x-equals |  | 3 | shape |
+| `/profiles` | any | bound | x-equals |  | 0 | shape |
 | `/profiles/*` | string | bound | x-equals |  | 5 | shape |
 | `/status` | string | closed domain | const |  | 12 | shape |
 
@@ -365,6 +375,7 @@ Delegates: `/` to route.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 6 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
 | `/model_id` | string | none |  | pattern | 3 | later Lean request |
 | `/path` | string | none |  |  | 2 | not probed |
@@ -379,6 +390,7 @@ Delegates: `/` to route.
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/environment_id` | string | none |  | pattern | 3 | hand: `ve/units.py:_checked_quantity` |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 8 | shape |
 | `/id` | string | bound | x-equals |  | 8 | shape |
 | `/meaning_id` | string | none |  | pattern | 6 | hand: `ve/discourse.py:lean_admission` |
 | `/path` | string | none |  |  | 0 | not probed |
@@ -397,6 +409,7 @@ Delegates: `/` to route.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 5 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
 | `/identity_id` | string | none |  | pattern | 4 | not probed |
 | `/kind` | string | bound | x-equals |  | 4 | shape |
@@ -412,6 +425,7 @@ Delegates: `/` to route.
 | `/canonical` | string | none |  |  | 3 | hand: `ve/parser.py:_parse_lean` |
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
 | `/path` | string | none |  |  | 0 | not probed |
 | `/span/column` | integer | bound | x-source-span | minimum | 2 | shape |
@@ -438,6 +452,7 @@ Delegates: `/` to route.
 | `/background/*/label` | string | none |  | pattern | 4 | unbound |
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
 | `/path` | string | none |  |  | 0 | not probed |
 | `/report/assumptions/*` | string | none |  |  | 3 | later Lean request |
@@ -464,6 +479,7 @@ Delegates: `/` to route.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
 | `/path` | string | none |  |  | 0 | not probed |
 | `/status` | string | closed domain | const |  | 5 | shape |
@@ -481,6 +497,7 @@ Delegates: `/` to route.
 | `/choices/*/*` | integer | bound | x-reading-plan | minimum | 12 | shape |
 | `/conditional_on/*` | string | bound | x-reading-plan |  | 3 | shape |
 | `/error` | string | none |  | minLength | 4 | not probed |
+| `/id` | any | bound | x-echo |  | 13 | shape |
 | `/id` | string | bound | x-equals |  | 13 | shape |
 | `/path` | string | none |  |  | 0 | not probed |
 | `/route` | string | closed domain | const |  | 6 | shape |
@@ -504,7 +521,9 @@ Delegates: `/` to route.
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/checked` | integer | bound | x-count | minimum | 3 | shape |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
+| `/lemmas` | any | bound | x-equals |  | 0 | shape |
 | `/lemmas/*` | string | bound | x-equals | pattern | 6 | shape |
 | `/path` | string | none |  |  | 0 | not probed |
 | `/status` | string | closed domain | const |  | 5 | shape |
@@ -526,6 +545,7 @@ Delegates: `/` to route.
 | `/conflict_targets/*/target` | string | none |  |  | 9 | hand: `ve/norms.py:_lean_regenerated` |
 | `/detail` | string | none |  |  | 3 | hand: `ve/norms.py:_check_conflict_lean` |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 17 | shape |
 | `/id` | string | bound | x-equals |  | 17 | shape |
 | `/layers` | integer | none |  | minimum | 3 | hand: `ve/norms.py:_norm_certificate_lean` |
 | `/order/*` | string | none |  |  | 6 | hand: `ve/norms.py:_lean_regenerated` |
@@ -584,12 +604,18 @@ Delegates: `/` to norms.
 | `/environment_prime/language` | string | bound | x-equals |  | 3 | shape |
 | `/environment_prime/profiles/*` | string | none |  |  | 9 | later Lean request |
 | `/environment_prime/spec_revision` | string | bound | x-equals |  | 3 | shape |
+| `/environment_prime/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
 | `/environment_prime/vocabulary/predicates/@key` | key | none |  |  | 7 | later Lean request |
 | `/environment_prime/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 9 | later Lean request |
+| `/environment_prime/vocabulary/rights` | any | bound | x-equals |  | 0 | shape |
+| `/environment_prime/vocabulary/soft` | any | bound | x-equals |  | 0 | shape |
+| `/environment_prime/vocabulary/sorts` | any | bound | x-equals |  | 0 | shape |
 | `/error` | string | none |  | minLength | 4 | not probed |
+| `/id` | any | bound | x-echo |  | 25 | shape |
 | `/id` | string | bound | x-equals |  | 25 | shape |
 | `/incompatible_pairs/*/0` | string | none |  |  | 0 | not probed |
 | `/incompatible_pairs/*/1` | string | none |  |  | 0 | not probed |
+| `/kinds` | any | bound | x-equals |  | 0 | shape |
 | `/kinds/*` | string | bound | x-equals |  | 4 | shape |
 | `/layers` | integer | none |  | minimum | 2 | not probed |
 | `/order/*` | string | none |  |  | 5 | later Lean request |
@@ -738,8 +764,12 @@ Delegates: `/` to soft-norms.
 | `/environment_prime/language` | string | bound | x-equals |  | 3 | shape |
 | `/environment_prime/profiles/*` | string | none |  |  | 12 | later Lean request |
 | `/environment_prime/spec_revision` | string | bound | x-equals |  | 3 | shape |
+| `/environment_prime/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
 | `/environment_prime/vocabulary/predicates/@key` | key | none |  |  | 9 | later Lean request |
 | `/environment_prime/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 17 | later Lean request |
+| `/environment_prime/vocabulary/rights` | any | bound | x-equals |  | 0 | shape |
+| `/environment_prime/vocabulary/soft` | any | bound | x-equals |  | 0 | shape |
+| `/environment_prime/vocabulary/sorts` | any | bound | x-equals |  | 0 | shape |
 | `/error` | string | none |  | minLength | 6 | not probed |
 | `/findings/*` | string | none |  | minLength | 0 | unbound |
 | `/generated/*/act` | string | none |  |  | 2 | later Lean request |
@@ -750,7 +780,9 @@ Delegates: `/` to soft-norms.
 | `/generated/*/name` | string | none |  | pattern | 2 | hand: `ve/rights.py:__init__` |
 | `/generated/*/name` | string | none |  | pattern | 2 | hand: `ve/rights.py:__init__` |
 | `/generated/*/predicate` | string | none |  |  | 0 | unbound |
+| `/id` | any | bound | x-echo |  | 25 | shape |
 | `/id` | string | bound | x-equals |  | 25 | shape |
+| `/kinds` | any | bound | x-equals |  | 0 | shape |
 | `/layers` | integer | none |  | minimum | 1 | not probed |
 | `/limitations/*/label` | string | none |  | pattern | 1 | later Lean request |
 | `/lines/*/bearer` | string | none |  |  | 0 | unbound |
@@ -875,6 +907,7 @@ Delegates: `/` to norms.
 | `/environment_id` | string | closed domain | const |  | 2 | shape |
 | `/environment_id` | string | none |  | pattern | 2 | not probed |
 | `/error` | string | none |  | minLength | 7 | not probed |
+| `/id` | any | bound | x-echo |  | 17 | shape |
 | `/id` | string | bound | x-equals |  | 17 | shape |
 | `/judgment` | string | none |  | pattern | 2 | not probed |
 | `/legend/*` | string | none |  | minLength | 4 | not probed |
@@ -983,6 +1016,7 @@ Delegates: `/` to route.
 | `/environment_reports_id` | string | closed domain | const |  | 5 | shape: `ve/reports.py:__init__` |
 | `/environment_reports_id` | string | none |  | pattern | 5 | hand: `ve/reports.py:__init__` |
 | `/error` | string | none |  | minLength | 8 | not probed |
+| `/id` | any | bound | x-echo |  | 23 | shape |
 | `/id` | string | bound | x-equals |  | 23 | shape |
 | `/keys/*/arguments/*` | string | none |  |  | 1 | unbound |
 | `/keys/*/key/act` | string | closed domain | enum |  | 1 | shape |
@@ -995,7 +1029,7 @@ Delegates: `/` to route.
 | `/keys/*/key/holder_sort` | string | none |  |  | 1 | unbound |
 | `/keys/*/key/judgment` | string | closed domain | enum |  | 0 | shape |
 | `/keys/*/name` | string | none |  | pattern | 1 | unbound |
-| `/kinds/*` | string | closed domain | enum |  | 0 | shape |
+| `/kinds/*` | string | closed domain | enum |  | 2 | shape |
 | `/meaning_id` | string | closed domain | const |  | 1 | shape |
 | `/meaning_id` | string | none |  | pattern | 1 | not probed |
 | `/meaning_ids/*/meaning_id` | string | closed domain | const |  | 1 | shape |
@@ -1154,6 +1188,7 @@ Delegates: `/` to norms.
 | `/coverage/alternatives/counterfactual_leaves/*/harm` | string | none |  |  | 0 | unbound |
 | `/coverage/alternatives/counterfactual_leaves/*/support` | string | none |  |  | 0 | unbound |
 | `/coverage/alternatives/counterfactual_leaves/*/unit` | string | bound | x-references |  | 0 | shape |
+| `/coverage/alternatives/narrowings` | any | bound | x-equals |  | 0 | shape |
 | `/coverage/alternatives/proximate_judgments/*/action` | string | none |  |  | 0 | unbound |
 | `/coverage/alternatives/proximate_judgments/*/decider` | string | none |  |  | 0 | unbound |
 | `/coverage/alternatives/proximate_judgments/*/harm` | string | none |  |  | 0 | unbound |
@@ -1175,10 +1210,12 @@ Delegates: `/` to norms.
 | `/document_hash` | string | none |  | pattern | 4 | not probed |
 | `/environment_id` | string | none |  | pattern | 4 | not probed |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 24 | shape |
 | `/id` | string | bound | x-equals |  | 24 | shape |
 | `/inlined/*/norm/name` | string | none |  |  | 0 | not probed |
 | `/inlined/*/norm/over/*` | string | none |  |  | 0 | not probed |
 | `/inlined/*/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/kinds` | any | bound | x-equals |  | 0 | shape |
 | `/kinds/*` | string | bound | x-equals |  | 3 | shape |
 | `/layers` | integer | none |  | minimum | 1 | not probed |
 | `/legend/*` | string | none |  | minLength | 38 | later Lean request |
@@ -1297,6 +1334,7 @@ Delegates: `/` to alternatives.
 | `/coverage/alternatives/counterfactual_leaves/*/harm` | string | none |  |  | 3 | unbound |
 | `/coverage/alternatives/counterfactual_leaves/*/support` | string | none |  |  | 3 | unbound |
 | `/coverage/alternatives/counterfactual_leaves/*/unit` | string | bound | x-references |  | 3 | shape |
+| `/coverage/alternatives/narrowings` | any | bound | x-equals |  | 0 | shape |
 | `/coverage/alternatives/proximate_judgments/*/action` | string | none |  |  | 0 | not probed |
 | `/coverage/alternatives/proximate_judgments/*/decider` | string | none |  |  | 0 | not probed |
 | `/coverage/alternatives/proximate_judgments/*/harm` | string | none |  |  | 0 | not probed |
@@ -1327,10 +1365,12 @@ Delegates: `/` to alternatives.
 | `/e_risk/words/risk__or_worse/1` | string | none |  |  | 5 | unbound |
 | `/environment_id` | string | none |  | pattern | 7 | unbound |
 | `/error` | string | none |  | minLength | 4 | not probed |
+| `/id` | any | bound | x-echo |  | 24 | shape |
 | `/id` | string | bound | x-equals |  | 24 | shape |
 | `/inlined/*/norm/name` | string | none |  |  | 0 | not probed |
 | `/inlined/*/norm/over/*` | string | none |  |  | 0 | not probed |
 | `/inlined/*/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/kinds` | any | bound | x-equals |  | 0 | shape |
 | `/kinds/*` | string | bound | x-equals |  | 0 | shape |
 | `/legend/*` | string | none |  | minLength | 61 | unbound |
 | `/lines/assumed_ruled_out/cells/*` | string | none |  |  | 0 | not probed |
@@ -1495,8 +1535,10 @@ Delegates: `/` to alternatives.
 | `/environment_id` | string | none |  | pattern | 11 | later Lean request |
 | `/error` | string | none |  | minLength | 11 | not probed |
 | `/evaluations` | integer | none |  | minimum | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 32 | shape |
 | `/id` | string | bound | x-equals |  | 32 | shape |
-| `/kinds/*` | string | bound | x-equals |  | 17 | shape |
+| `/kinds` | any | bound | x-equals |  | 0 | shape |
+| `/kinds/*` | string | bound | x-equals |  | 25 | shape |
 | `/meaning_id` | string | none |  | pattern | 4 | not probed |
 | `/premise_meaning_ids/*` | string | none |  | pattern | 6 | unbound |
 | `/report/assumptions/*/label` | string | none |  |  | 10 | later Lean request |
@@ -1518,7 +1560,7 @@ Delegates: `/` to alternatives.
 | `/expansion` | core_formula |  | 10 |
 | `/kinds/*` | kind.anyOf.1 |  | 30 |
 | `/report/assumptions/*/quantity/formula` | q_formula |  | 178 |
-| `/report/root/quantity/formula` | q_formula |  | 90 |
+| `/report/root/quantity/formula` | q_formula |  | 117 |
 
 | array | length bound by | positions bound by | probed (generic/hand) |
 |---|---|---|---|
@@ -1540,8 +1582,10 @@ Delegates: `/` to norms.
 | `/base_environment/language` | string | bound | x-equals |  | 2 | shape |
 | `/base_environment/profiles/*` | string | none |  |  | 2 | not probed |
 | `/base_environment/spec_revision` | string | bound | x-equals |  | 2 | shape |
+| `/base_environment/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
 | `/base_environment/vocabulary/predicates/@key` | key | none |  |  | 6 | not probed |
 | `/base_environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 10 | not probed |
+| `/base_environment/vocabulary/sorts` | any | bound | x-equals |  | 0 | shape |
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/conflict_targets/*/sorts/*` | string | none |  |  | 8 | hand: `ve/norm_defaults.py:__init__` |
 | `/conflict_targets/*/target` | string | none |  | minLength | 7 | hand: `ve/norm_defaults.py:__init__` |
@@ -1557,8 +1601,10 @@ Delegates: `/` to norms.
 | `/filled_environment_id` | string | none |  |  | 3 | hand: `ve/norm_defaults.py:__init__` |
 | `/findings/*` | string | none |  |  | 0 | unbound |
 | `/gaps` | string | closed domain | enum |  | 3 | shape |
+| `/id` | any | bound | x-echo |  | 33 | shape |
 | `/id` | string | bound | x-equals |  | 33 | shape |
 | `/kind` | string | closed domain | enum |  | 3 | shape |
+| `/kinds` | any | bound | x-equals |  | 0 | shape |
 | `/kinds/*` | string | bound | x-equals |  | 3 | shape |
 | `/order/*` | string | none |  |  | 6 | hand: `ve/norm_defaults.py:__init__` |
 | `/point_status` | string | closed domain | enum |  | 3 | shape |
@@ -1668,6 +1714,7 @@ Delegates: `/` to route.
 | `/environment_id` | string | closed domain | const |  | 8 | shape: `ve/discourse.py:lean_admission` |
 | `/environment_id` | string | none |  | pattern | 8 | hand: `ve/discourse.py:lean_admission` |
 | `/error` | string | none |  | minLength | 3 | not probed |
+| `/id` | any | bound | x-echo |  | 16 | shape |
 | `/id` | string | bound | x-equals |  | 16 | shape |
 | `/inner_report_id` | string | closed domain | const |  | 6 | shape: `ve/discourse.py:lean_admission` |
 | `/inner_report_id` | string | none |  | pattern | 6 | hand: `ve/discourse.py:lean_admission` |
@@ -2125,6 +2172,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/generated_predicates/*/key/party` | string | none |  |  | 0 | not probed |
 | `/generated_predicates/*/layer` | string | closed domain | enum |  | 22 | shape |
 | `/generated_predicates/*/name` | string | none |  |  | 22 | hand: `ve/readings_route.py:_need` |
+| `/id` | any | bound | x-echo |  | 51 | shape |
 | `/id` | string | bound | x-equals |  | 51 | shape |
 | `/labels/*` | string | none |  |  | 1 | not probed |
 | `/names/*/candidates/*/id` | string | none |  |  | 24 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
@@ -2583,6 +2631,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/diagnostic/revision` | integer | none |  | minimum | 5 | unbound |
 | `/diagnostic/text` | string | none |  |  | 5 | unbound |
 | `/error` | string | none |  | minLength | 3 | not probed |
+| `/id` | any | bound | x-echo |  | 10 | shape |
 | `/outcome` | string | closed domain | enum |  | 7 | shape |
 | `/status` | string | closed domain | const |  | 10 | shape |
 
@@ -2634,6 +2683,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/coverage/unformalised_reasons/{}` | integer | none |  | minimum | 1 | hand: `ve/document.py:require` |
 | `/document_id` | string | none |  | pattern | 3 | hand: `ve/document.py:_lean_document` |
 | `/error` | string | none |  | minLength | 3 | not probed |
+| `/id` | any | bound | x-echo |  | 3 | shape |
 | `/id` | string | bound | x-equals |  | 3 | shape |
 | `/path` | string | none |  |  | 0 | not probed |
 | `/source` | string | none |  |  | 3 | hand: `ve/document.py:require` |
@@ -2698,6 +2748,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
 | `/result/class` | string | none |  |  | 0 | not probed |
 | `/result/code` | string | none |  |  | 0 | not probed |
@@ -2783,6 +2834,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/error` | string | none |  | minLength | 0 | not probed |
+| `/id` | any | bound | x-echo |  | 3 | shape |
 | `/id` | string | bound | x-equals |  | 3 | shape |
 | `/result/environment_id` | string | none |  |  | 3 | hand: `ve/words.py:read_answer` |
 | `/result/lexicon_id` | string | none |  |  | 3 | hand: `ve/words.py:read_answer` |

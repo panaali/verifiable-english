@@ -204,9 +204,17 @@ class _Walker:
             name, target_pointer, target = self.target(base, schema["$ref"])
             if target_pointer == "/row" and name != base and name.removesuffix(".json") in MODES:
                 out.delegations.append(Delegation(render(path), name.removesuffix(".json"), site))
-            elif target is not _MISSING and (not static or (name, target_pointer) not in stack):
-                self.walk(target, name, target_pointer, path, pending, branch, out, value, ctx, concrete,
-                          stack + ((name, target_pointer),), grammars, found)
+            elif target is not _MISSING:
+                # A `$ref` entered again below itself (a recursive shape: a kind inside a kind) is the same shape
+                # at a deeper place: the static walk lists it once, and an answer's nested instance takes the
+                # pattern of its first entry, as a tagged grammar's nested nodes do.
+                entered = next((entry for entry in stack if entry[:2] == (name, target_pointer)), None)
+                if entered is None:
+                    self.walk(target, name, target_pointer, path, pending, branch, out, value, ctx, concrete,
+                              stack + ((name, target_pointer, path, pending),), grammars, found)
+                elif not static:
+                    self.walk(target, name, target_pointer, entered[2], entered[3], branch, out, value, ctx,
+                              concrete, stack, grammars, found)
         here = pending.here()
         domain = None
         if "const" in schema or "enum" in schema:
@@ -422,7 +430,7 @@ def census(mode: str, directory: Path | None = None) -> Census:
     name, pointer = f"{mode}.json", "/row"
     out = Census()
     walker.walk(_resolve(compiler.document(name), pointer), name, pointer, (), _Pending(), (), out,
-                stack=((name, pointer),))
+                stack=((name, pointer, (), _Pending()),))
     return out
 
 
@@ -431,12 +439,18 @@ def leaves(mode: str) -> list[Leaf]:
     merged: dict = {}
     found = census(mode).leaves
     overlays = [leaf for leaf in found if leaf.kind == "overlay"]
+    folded, real = set(), []
     for leaf in found:
         if leaf.kind == "overlay":
             continue
         for overlay in overlays:
             if overlay.path == leaf.path and overlay.branch == leaf.branch:
                 leaf = replace(leaf, binding=leaf.binding.stronger(overlay.binding))
+                folded.add(id(overlay))
+        real.append(leaf)
+    # A binding keyword on an untyped node (`{"x-echo": "/id"}`) is a leaf of whatever type the request's value has.
+    real += [replace(overlay, kind="any") for overlay in overlays if id(overlay) not in folded]
+    for leaf in real:
         key = (leaf.path, leaf.kind, leaf.branch)
         merged[key] = replace(leaf, binding=merged[key].binding.stronger(leaf.binding)) if key in merged else leaf
     out: dict = {}
@@ -458,7 +472,7 @@ def classify(mode: str, case: object, row: object, index: int = 0) -> tuple[list
     walker = _Walker(_compiler)
     out, found = Census(), []
     walker.walk(schema, name, pointer, (), _Pending(), (), out, row, Context(case, index), (),
-                ((name, pointer),), None, found)
+                ((name, pointer, (), _Pending()),), None, found)
     by_path: dict = {}
     for concrete, value, leaf in found:
         key = (concrete, type(concrete[-1]) if concrete else None)
