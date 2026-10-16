@@ -328,6 +328,7 @@ exactly the bugs `mutants.py` lists.
   units, 0 failed, on 4555583f before the sync with main; after it, on `18245d07` (the evidence and code as
   final; later commits change this report only): 64 of 404 units against main's map `1cf82542d`, 0 failed,
   917 s, with R1's new rule in force.
+  After the review's F1 fix, on `27778897`: 64 units, 0 failed, 299 s; `lake build` and `lean/audit.py` pass.
 - `tools/gate_collection.py --check --prebuilt` against the merge base: 41 tests added, 0 removed, 0
   refused, stale or malformed trailers. `tools/regen_generated.py --check`: 27 entries fresh after the sync.
 - The measurement runs (all on ve-mac-1 through `mac-pytest.sh`, except the seeds, which ran on the VM in
