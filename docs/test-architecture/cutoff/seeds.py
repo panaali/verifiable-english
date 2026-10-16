@@ -145,6 +145,44 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         sys.path.pop(0)
 
 
+def verify(row: dict, worktree: Path, unseeded: Path, work: Path) -> dict:
+    """Whether the catch is the service's: with the source restored and the same pins, the catching tests
+    fail with the seeded ve_service and pass with the unseeded one. A test that fails only because it reads
+    the Lean source (a trust count, a source hash) is no catch through the service."""
+    sys.path.insert(0, str(worktree / "tools"))
+    import nested_pytest
+    env = env_for(worktree)
+    log = work / f"{row['id']}-verify.log"
+    path, binary, lock_path = worktree / row["file"], worktree / SERVICE, worktree / LOCK
+    original, lock = path.read_text(), lock_path.read_text()
+    tests = sorted(set(row["caught_by"]))
+    outcome = {}
+    try:
+        path.write_text(original.replace(row["old"], row["new"]))
+        if run(["lake", "build", "ve_service"], worktree / "lean", log, env):
+            return {"status": "build failed"}
+        seeded = sha256(binary)
+        path.write_text(original)
+        pins = json.loads(lock)
+        pins["ve_service"] = sorted({*pins["ve_service"], seeded})
+        lock_path.write_text(json.dumps(pins, indent=2) + "\n")
+        for name, source in (("seeded", None), ("unseeded", unseeded)):
+            if source is not None:
+                binary.write_bytes(source.read_bytes())
+            junit = work / f"{row['id']}-verify-{name}.xml"
+            run(nested_pytest.command(["-q", "-p", "no:cacheprovider", f"--junitxml={junit}", *tests]),
+                worktree, log, nested_pytest.environment(env))
+            outcome[name] = failures(junit)
+    finally:
+        path.write_text(original)
+        lock_path.write_text(lock)
+        binary.write_bytes(unseeded.read_bytes())
+        sys.path.pop(0)
+    through = sorted(set(outcome["seeded"]) - set(outcome["unseeded"]))
+    return {"build": seeded, "seeded_failures": outcome["seeded"], "unseeded_failures": outcome["unseeded"],
+            "through_service": through}
+
+
 def check(rows: list[dict]) -> int:
     """The saved rows are the seeds of seeds.json and agree with themselves; the number caught."""
     seeds = json.loads(SEEDS.read_text())
@@ -173,8 +211,26 @@ def main() -> int:
     go.add_argument("--base-answers", type=Path, required=True, help="the recording replayed on W's unseeded build")
     go.add_argument("--only", nargs="*")
     go.add_argument("--output", type=Path, default=EVIDENCE, help="where the rows go (merge them into the evidence)")
+    again = sub.add_parser("verify", help="re-run each caught seed's catching tests with the source restored")
+    again.add_argument("--worktree", type=Path, required=True)
+    again.add_argument("--evidence", type=Path, default=EVIDENCE)
     sub.add_parser("check")
     args = parser.parse_args()
+    if args.command == "verify":
+        worktree = args.worktree.resolve()
+        work = Path(tempfile.mkdtemp(prefix="cutoff-verify-"))
+        env = env_for(worktree)
+        if run(["lake", "build", "ve_service"], worktree / "lean", work / "unseeded.log", env):
+            raise SystemExit("the unseeded build failed")
+        unseeded = work / "ve_service.unseeded"
+        unseeded.write_bytes((worktree / SERVICE).read_bytes())
+        data = json.loads(args.evidence.read_text())
+        for row in data["seeds"]:
+            if row["status"] == "caught" and "verified" not in row:
+                row["verified"] = verify(row, worktree, unseeded, work)
+                print(row["id"], row["verified"].get("through_service"), flush=True)
+                args.evidence.write_text(json.dumps(data, indent=1) + "\n")
+        return 0
     if args.command == "check":
         caught = check(json.loads(EVIDENCE.read_text())["seeds"])
         print(f"{caught} seeds caught (activation needs {REQUIRED}), each by a test today's, the modes and the "
