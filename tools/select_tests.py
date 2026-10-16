@@ -1444,6 +1444,10 @@ def main() -> int:
     parser.add_argument("--no-record", action="store_true",
                         help="with --run: one plain pytest process, nothing recorded")
     parser.add_argument("--jobs", type=int, default=8, help="parallel test files for --run")
+    # tarch-cutoff hook (opt-in; feedback runs only, never the gate): tools/answer_cutoff.py.
+    parser.add_argument("--cutoff", metavar="RULE",
+                        help="narrow the ve_service users a Lean change selects: 'modes', 'answers=DIFF' or 'off' "
+                             "(tools/answer_cutoff.py; a --run without it takes answer_cutoff.R1_RULE)")
     parser.add_argument("--maxfail", type=int, default=None, metavar="N",
                         help=f"with --run: stop after N failed tests outside the quarantine (default {MAXFAIL}; "
                              "0 runs everything). The test files that failed last time and the changed ones run "
@@ -1486,15 +1490,25 @@ def main() -> int:
     else:
         base, after = "HEAD", None
     coverage = None if args.static else (args.map or "auto")
-    plan = select(paths, full=args.full, base=base, after=after, coverage=coverage,
-                  assume_fresh=args.assume_fresh)
+    rule = args.cutoff
+    if rule is not None or (args.run and not args.full):  # tarch-cutoff hook (see --cutoff); R1 takes R1_RULE
+        import answer_cutoff
+        rule = answer_cutoff.R1_RULE if rule is None else rule
+
+    def plan_now() -> dict:
+        if rule:
+            return answer_cutoff.select(rule, paths, full=args.full, base=base, after=after,
+                                        coverage=coverage, assume_fresh=args.assume_fresh)
+        return select(paths, full=args.full, base=base, after=after, coverage=coverage,
+                      assume_fresh=args.assume_fresh)
+
+    plan = plan_now()
     if args.run and not plan["full"] and (plan["lean_cutoff"] or {}).get("state") == "no record of the head build":
         # The base build is on record: build this tree's executables now, which the run needs anyway,
         # so the plan can leave out the runners of executables the change did not alter.
         print("building the Lean executables for the binary cutoff", flush=True)
         test_map.build_lean()
-        plan = select(paths, full=args.full, base=base, after=after, coverage=coverage,
-                      assume_fresh=args.assume_fresh)
+        plan = plan_now()
     if args.tier == "light":
         plan = light_tier(plan, jobs=args.jobs)
     if args.json:

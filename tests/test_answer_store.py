@@ -21,13 +21,16 @@ from answer_store import (ENV, GATE_FLAG, INVENTORY, LIVE_MARK, SEAM_GLOBALS, Se
 from subprocesses import HANG_TIMEOUT
 from tests import lean_routes
 from tests.lean_build import lean_build
-from tools import answer_replay, gate, nested_pytest
+from tools import gate, nested_pytest
 from ve.backends import lean_service
 from ve.backends.lean_service import CheckerUnavailable, LeanService
 
 pytestmark = pytest.mark.live_service
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools"))
+
+import answer_replay  # noqa: E402
 EVALUATION = json.loads((ROOT / "conformance/evaluation.json").read_text())
 CASES = EVALUATION[:3]
 

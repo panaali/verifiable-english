@@ -31,6 +31,7 @@ its merge strategy:
 | trust-tables | `tools/trust-classes.json`, `docs/trust-baseline.json` | json (check only) |
 | checker-pins | `lean/checkers.lock` (pins the built `ve_service` and the Rust release binary) | json |
 | response-schemas | `ve/backends/lean_service_schema/*.json` | regenerate |
+| binding-census | `docs/test-architecture/binding-census.{json,md}` (from the schemas and the recorded answers) | regenerate |
 | english-codes | `ve/english_grammar/codes.json` | regenerate |
 | question-codes | `ve/question/codes.json` | regenerate |
 | question-lock | `ve/question/LOCK.json` | regenerate |
