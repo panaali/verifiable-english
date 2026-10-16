@@ -102,7 +102,7 @@ Each was planted in a mutant worktree of the branch (S1–S6 on 5269b750, S7 on 
 - `tools/select_tests.py --base $(git merge-base HEAD main)`: 310 of 395 units, because `tests/subprocesses.py`
   is the helper most tests import; the selection holds `tests/test_progress_watch.py`, `tests/test_difffuzz.py`
   and `tests/test_hang_guards.py`.
-- __SELECTED__
+- The selected tests on df623945 (after the merge with main), `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the Mac runner (aarch64, 6 jobs), 2026-10-16 05:43–06:21Z: 396 units recorded, 0 failed, exit 0. The commit after it changes only this report.
 - Not run: the full release gate (fast lane).
 
 Pre-existing failures (`main-known-red.txt`), not touched: none of the three tests listed there failed in the loaded full run.
