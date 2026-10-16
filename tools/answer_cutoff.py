@@ -56,7 +56,10 @@ PIN_FILE = "lean/checkers.lock"
 REQUEST_HANDLING = ("lean/VE/Service/Protocol.lean", "lean/Serve.lean", "lean/VE/Json.lean")
 # Calls that make a test's inputs differ from run to run.
 UNSEEDED = {"random": None, "secrets": None, "uuid": {"uuid1", "uuid4"}, "os": {"urandom"}}
-RULES = ("modes", "answers=DIFF")
+RULES = ("modes", "answers=DIFF", "off")
+# The rule of a feedback run (`select_tests.py --run`, R1) that names none; None: today's selection.
+# Never the answers rule, which stays opt-in until the DRI reads its measurement (REPORT.md).
+R1_RULE: str | None = None
 
 
 @contextlib.contextmanager
@@ -347,6 +350,8 @@ def select_answers(diff_path: Path, paths: list[str], *, base: str, after: str |
 
 def select(rule: str, paths: list[str], **options) -> dict:
     """`select_tests.select` under a cutoff rule (`RULES`); the hook of `select_tests.py --cutoff`."""
+    if rule == "off":
+        return select_tests.select(paths, **options)
     if rule == "modes":
         with service_rule(select_tests.proposed_service_impact):
             plan = select_tests.select(paths, **options)

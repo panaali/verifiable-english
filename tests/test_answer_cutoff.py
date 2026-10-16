@@ -397,6 +397,24 @@ def test_the_hook_passes_its_rule_and_is_off_by_default(monkeypatch, capsys):
     capsys.readouterr()
 
 
+@pytest.mark.parametrize("rule", [None, "modes"])
+def test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does(monkeypatch, capsys, rule):
+    """R1 is `select_tests.py --run`: a run that names no rule takes R1_RULE; a plan print, a --full run and a
+    run that names its rule (`--cutoff off` included) do not."""
+    calls = []
+    plan = {"selected": [], "selected_count": 0, "full_count": 0, "full": False, "full_reasons": [], "map": None,
+            "seconds": 0, "commands": [], "reasons": {}, "changed": [], "lean_build": False}
+    monkeypatch.setattr(answer_cutoff, "R1_RULE", rule)
+    monkeypatch.setattr(select_tests, "select", lambda paths, **options: calls.append("plain") or plan)
+    monkeypatch.setattr(answer_cutoff, "select", lambda chosen, paths, **options: calls.append(chosen) or plan)
+    monkeypatch.setattr(select_tests, "run", lambda *args, **options: 0)
+    for argv in (["--run"], [], ["--run", "--full"], ["--run", "--cutoff", "off"]):
+        monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "README.md", "--json", *argv])
+        assert select_tests.main() == 0
+    assert calls == [rule or "plain", "plain", "plain", "off"]
+    capsys.readouterr()
+
+
 def test_the_gate_and_the_maps_never_reach_the_cutoff():
     """R2 and R3 (tools/gate.py) and the map tools import neither cutoff module, so no gate, merge or
     nightly can depend on it; select_tests.py names it only in its opt-in --cutoff hook."""

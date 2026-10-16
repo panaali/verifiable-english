@@ -572,7 +572,33 @@
     "modes": true,
     "answers": true
    },
-   "seconds": 771
+   "seconds": 771,
+   "verified": {
+    "tests": [
+     "tests/test_alternatives_three_way.py",
+     "tests/test_asimov_extended.py",
+     "tests/test_asimov_laws.py",
+     "tests/test_difffuzz.py",
+     "tests/test_lean_handles.py",
+     "tests/test_risk_fixtures.py",
+     "tests/test_risk_lean_route.py",
+     "tests/test_route_row_schemas.py"
+    ],
+    "build": "bc4928c3a2f8801a73c78bc1a46b30e2ec78183a736a123e25007971b5cc390a",
+    "seeded_failures": [
+     "tests/test_risk_fixtures.py::test_k20_rules_1_2_conflict_free_and_the_record_is_a_dilemma_witness",
+     "tests/test_risk_fixtures.py::test_k20_rules_1_2x_3_conflict_free_not_followable_and_the_record",
+     "tests/test_risk_lean_route.py::test_no_clear_action_names_the_diagnosis_and_the_status[nothing-forbidden by rules 1, 2]",
+     "tests/test_risk_lean_route.py::test_no_clear_action_names_the_diagnosis_and_the_status[push-forbidden by rule 1]"
+    ],
+    "unseeded_failures": [],
+    "through_service": [
+     "tests/test_risk_fixtures.py::test_k20_rules_1_2_conflict_free_and_the_record_is_a_dilemma_witness",
+     "tests/test_risk_fixtures.py::test_k20_rules_1_2x_3_conflict_free_not_followable_and_the_record",
+     "tests/test_risk_lean_route.py::test_no_clear_action_names_the_diagnosis_and_the_status[nothing-forbidden by rules 1, 2]",
+     "tests/test_risk_lean_route.py::test_no_clear_action_names_the_diagnosis_and_the_status[push-forbidden by rule 1]"
+    ]
+   }
   },
   {
    "id": "S02",
