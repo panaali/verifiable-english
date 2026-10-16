@@ -1,0 +1,447 @@
+{
+ "label": "tarch-split-files",
+ "commit": "cc004352d421169c9149ac73cbf4516a20923187",
+ "cpus": 32,
+ "workers": 8,
+ "returncode": 0,
+ "wall_seconds": 1802.9,
+ "tests": 277,
+ "outcomes": {
+  "passed": 276,
+  "skipped": 1
+ },
+ "workers_collected_alike": true,
+ "test_seconds_sum": 9517.3,
+ "setup_seconds_sum": 566.0,
+ "worker_finished_seconds": {
+  "gw0": 641.8,
+  "gw1": 1279.7,
+  "gw2": 779.3,
+  "gw3": 1433.6,
+  "gw4": 1430.4,
+  "gw5": 1800.2,
+  "gw6": 1638.9,
+  "gw7": 569.1
+ },
+ "machine_busy_percent_per_minute": [
+  99.7,
+  99.8,
+  99.7,
+  99.7,
+  99.7,
+  99.5,
+  99.6,
+  99.8,
+  99.9,
+  99.7,
+  99.4,
+  99.3,
+  99.3,
+  99.8,
+  99.7,
+  99.8,
+  99.8,
+  99.3,
+  97.7,
+  99.3,
+  98.4,
+  99.6,
+  98.3,
+  96.1,
+  91.1,
+  99.2,
+  91.9,
+  92.5,
+  97.7,
+  96.4,
+  97.1
+ ],
+ "load_per_minute": [
+  54.3,
+  73.0,
+  73.8,
+  71.1,
+  72.4,
+  71.8,
+  74.5,
+  75.9,
+  82.8,
+  81.8,
+  68.2,
+  58.6,
+  54.4,
+  57.1,
+  59.1,
+  63.3,
+  71.3,
+  65.2,
+  55.5,
+  56.4,
+  50.1,
+  52.9,
+  48.4,
+  43.6,
+  41.1,
+  46.2,
+  44.6,
+  39.0,
+  43.4,
+  40.8,
+  37.7
+ ],
+ "worker_occupancy_percent_per_minute": [
+  88.6,
+  100.0,
+  100.0,
+  100.0,
+  100.0,
+  100.0,
+  100.0,
+  100.0,
+  100.0,
+  93.5,
+  83.7,
+  75.0,
+  74.8,
+  62.5,
+  62.5,
+  62.5,
+  62.5,
+  62.5,
+  62.5,
+  62.5,
+  62.5,
+  54.1,
+  50.0,
+  46.7,
+  25.0,
+  25.0,
+  25.0,
+  16.4,
+  12.5,
+  12.5,
+  0.7
+ ],
+ "slowest": [
+  {
+   "nodeid": "tests/test_p1.py::test_actual_offline_known_answer_gate",
+   "seconds": 565.6,
+   "setup": 565.6,
+   "call": 0.0,
+   "worker": "gw2",
+   "started_at": 6.8
+  },
+  {
+   "nodeid": "tests/test_p1_preflight.py::test_full_inventory_joint_replay_and_pushback",
+   "seconds": 553.9,
+   "setup": 0.0,
+   "call": 553.9,
+   "worker": "gw7",
+   "started_at": 6.8
+  },
+  {
+   "nodeid": "tests/test_p1_amendment12.py::test_qwen_native_replay_is_preserved_for_gemini_attacker",
+   "seconds": 549.9,
+   "setup": 0.0,
+   "call": 549.9,
+   "worker": "gw0",
+   "started_at": 6.8
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[2]",
+   "seconds": 249.4,
+   "setup": 0.0,
+   "call": 249.4,
+   "worker": "gw6",
+   "started_at": 371.9
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-3]",
+   "seconds": 215.9,
+   "setup": 0.0,
+   "call": 215.9,
+   "worker": "gw1",
+   "started_at": 340.5
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[5]",
+   "seconds": 201.8,
+   "setup": 0.0,
+   "call": 201.8,
+   "worker": "gw4",
+   "started_at": 192.5
+  },
+  {
+   "nodeid": "tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed",
+   "seconds": 201.1,
+   "setup": 0.0,
+   "call": 201.1,
+   "worker": "gw2",
+   "started_at": 575.0
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[1]",
+   "seconds": 194.6,
+   "setup": 0.0,
+   "call": 194.6,
+   "worker": "gw6",
+   "started_at": 177.3
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]",
+   "seconds": 185.7,
+   "setup": 0.0,
+   "call": 185.7,
+   "worker": "gw4",
+   "started_at": 6.8
+  },
+  {
+   "nodeid": "tests/test_p1_preflight.py::test_amended_bounds_and_inventory_agree",
+   "seconds": 182.5,
+   "setup": 0.0,
+   "call": 182.5,
+   "worker": "gw5",
+   "started_at": 1617.1
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[competing_bad-no_search]",
+   "seconds": 174.7,
+   "setup": 0.0,
+   "call": 174.7,
+   "worker": "gw6",
+   "started_at": 724.9
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_rr2_property_any_inconclusive_fidelity_search_is_non_success[legit_chain]",
+   "seconds": 173.3,
+   "setup": 0.0,
+   "call": 173.3,
+   "worker": "gw5",
+   "started_at": 803.1
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]",
+   "seconds": 169.8,
+   "setup": 0.0,
+   "call": 169.8,
+   "worker": "gw6",
+   "started_at": 7.5
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-1]",
+   "seconds": 167.5,
+   "setup": 0.0,
+   "call": 167.5,
+   "worker": "gw1",
+   "started_at": 6.8
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-2]",
+   "seconds": 166.1,
+   "setup": 0.0,
+   "call": 166.1,
+   "worker": "gw1",
+   "started_at": 174.3
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_rr2_property_success_is_monotone_in_the_proof_budget[carrier_chain]",
+   "seconds": 160.5,
+   "setup": 0.0,
+   "call": 160.5,
+   "worker": "gw5",
+   "started_at": 337.9
+  },
+  {
+   "nodeid": "tests/test_p1_amendment14.py::test_recover_and_reconstruct_every_retained_scored_call_without_dispatch",
+   "seconds": 130.1,
+   "setup": 0.0,
+   "call": 130.1,
+   "worker": "gw4",
+   "started_at": 1296.8
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-0]",
+   "seconds": 128.8,
+   "setup": 0.0,
+   "call": 128.8,
+   "worker": "gw3",
+   "started_at": 376.9
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[8]",
+   "seconds": 127.0,
+   "setup": 0.0,
+   "call": 127.0,
+   "worker": "gw4",
+   "started_at": 615.2
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[9]",
+   "seconds": 122.1,
+   "setup": 0.0,
+   "call": 122.1,
+   "worker": "gw4",
+   "started_at": 742.1
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_rr2_property_success_is_monotone_in_the_proof_budget[legit_chain]",
+   "seconds": 121.5,
+   "setup": 0.0,
+   "call": 121.5,
+   "worker": "gw5",
+   "started_at": 498.4
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[6]",
+   "seconds": 115.7,
+   "setup": 0.0,
+   "call": 115.7,
+   "worker": "gw4",
+   "started_at": 394.3
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[10]",
+   "seconds": 115.4,
+   "setup": 0.0,
+   "call": 115.4,
+   "worker": "gw4",
+   "started_at": 864.3
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-4]",
+   "seconds": 115.3,
+   "setup": 0.0,
+   "call": 115.3,
+   "worker": "gw1",
+   "started_at": 556.4
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_differential_merge_smoke",
+   "seconds": 114.5,
+   "setup": 0.0,
+   "call": 114.5,
+   "worker": "gw3",
+   "started_at": 11.8
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[competing_good-search]",
+   "seconds": 113.6,
+   "setup": 0.0,
+   "call": 113.6,
+   "worker": "gw6",
+   "started_at": 899.7
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-6]",
+   "seconds": 113.3,
+   "setup": 0.0,
+   "call": 113.3,
+   "worker": "gw1",
+   "started_at": 781.2
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[competing_bad-search]",
+   "seconds": 111.4,
+   "setup": 0.0,
+   "call": 111.4,
+   "worker": "gw5",
+   "started_at": 1505.7
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[12]",
+   "seconds": 110.7,
+   "setup": 0.0,
+   "call": 110.7,
+   "worker": "gw4",
+   "started_at": 1047.7
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-5]",
+   "seconds": 109.5,
+   "setup": 0.0,
+   "call": 109.5,
+   "worker": "gw1",
+   "started_at": 671.7
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[7]",
+   "seconds": 105.2,
+   "setup": 0.0,
+   "call": 105.2,
+   "worker": "gw4",
+   "started_at": 510.0
+  },
+  {
+   "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[3]",
+   "seconds": 103.5,
+   "setup": 0.0,
+   "call": 103.5,
+   "worker": "gw6",
+   "started_at": 621.4
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain_universal-search]",
+   "seconds": 101.8,
+   "setup": 0.0,
+   "call": 101.8,
+   "worker": "gw5",
+   "started_at": 1214.1
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-7]",
+   "seconds": 99.8,
+   "setup": 0.0,
+   "call": 99.8,
+   "worker": "gw1",
+   "started_at": 894.5
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-1]",
+   "seconds": 98.4,
+   "setup": 0.0,
+   "call": 98.4,
+   "worker": "gw3",
+   "started_at": 505.7
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[restated_and_real-search]",
+   "seconds": 98.2,
+   "setup": 0.0,
+   "call": 98.2,
+   "worker": "gw6",
+   "started_at": 1095.7
+  },
+  {
+   "nodeid": "tests/test_p1_amendment12.py::test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring[replication_3turn]",
+   "seconds": 97.3,
+   "setup": 0.0,
+   "call": 97.3,
+   "worker": "gw1",
+   "started_at": 1117.4
+  },
+  {
+   "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-2]",
+   "seconds": 86.7,
+   "setup": 0.0,
+   "call": 86.7,
+   "worker": "gw3",
+   "started_at": 764.0
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[restated_only-search]",
+   "seconds": 85.8,
+   "setup": 0.0,
+   "call": 85.8,
+   "worker": "gw6",
+   "started_at": 1278.7
+  },
+  {
+   "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[restated_and_real-no_search]",
+   "seconds": 84.8,
+   "setup": 0.0,
+   "call": 84.8,
+   "worker": "gw6",
+   "started_at": 1193.9
+  }
+ ]
+}

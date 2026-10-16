@@ -23,7 +23,9 @@ from tests.test_readings_nd_lean import environment, regulated
 from tests.test_readings_s1_lean import entry, norm, reading, reading_set, situation_id
 
 DOCUMENTS = 200
-CHUNKS = 10
+# The documents are independent; each test checks every 15th one. 15 is the largest chunk count up to 25 at which
+# every chunk still meets both conflict statuses and two verdicts (the guard at the end of the test).
+CHUNKS = 15
 ACTS = {1: "{0} be done", 2: "{0} be tried"}
 TEMPLATES = ("U", "C1", "C2", "P")
 FIXED = ("none", "no-unless-c1", "may", "must-if-c1-c2")

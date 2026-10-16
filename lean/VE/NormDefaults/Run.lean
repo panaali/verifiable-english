@@ -1,4 +1,5 @@
 import VE.NormDefaults.Layered
+import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Explain
 import VE.Norms.Run
@@ -51,6 +52,78 @@ delegates every other case to it.
   premise or `Fill_T` premise (`unsaid:pair:<r>,<m>`).
 * A case with the profile or an `unspecified` default but another kind is
   `UnsupportedProfile`; every other case goes to `VE.Norms.Run.runCase`. -/
+/-! ## The soft branch's admission answer and its dispatch (rd-9-soft-chain.md 4.5 and 6.10; SC-6)
+
+Beside the runner: the answer encodes Norms' report (`Norms.Run.reportJson`) and binds its id as `runAdmission` does. -/
+namespace VE.NormDefaults.Admission
+open Lean
+open VE.Norms
+open VE.Order.ProfileGate (bind_ok)
+universe u
+
+/-- The open coherence labels the report uses, as the soft route's admission answer lists them. -/
+def conditionalOnX (res : AdmittedX) : List String :=
+  (VE.SoftNorms.Wire.openCoherence res.L.D).filter (fun l => res.report.assumptions.any (fun c => c.label == l))
+def encodeAdmittedX (id reportId : String) (res : AdmittedX) : Json :=
+  VE.Route.Wire.ok id [("admitted", .bool true), ("report", VE.Norms.Run.reportJson res.report),
+    ("report_id", .str reportId), ("kinds", Json.arr res.kinds.toArray),
+    ("conditional_on", toJson (conditionalOnX res))]
+def AdmissionAnswerX (id : String) (environment document answer : Json) : Prop :=
+  ∃ res : AdmittedX, ∃ reportId : String,
+    admitDocumentX environment document = .ok res ∧
+    answer = encodeAdmittedX id reportId res ∧
+    SourceDecodedX environment document res ∧
+    CertificatesBoundX environment res ∧
+    ReportAdmittedX res ∧
+    (∃ canonical envId, Wire.canonicalEnvironmentJsonU environment = .ok canonical ∧
+      VE.Route.Wire.environmentId (Wire.profilesOf environment) canonical = .ok envId ∧
+      VE.CertificateWire.digest (VE.Norms.Run.reportDomain (Wire.profilesOf environment))
+        (VE.Norms.Run.reportPayload envId document res.report) = .ok reportId) ∧
+    (∀ S : VE.Structure.{0}, S.Admissible (fill res.L.U).E →
+      Sat S (VE.Data.Background.generate res.doc.flags) →
+      Sat S (background (fill res.L.U) ++ res.L.X ++ fillPremises res.L.U ++ elaborate (fill res.L.U).T) →
+      Sat S ((otherAssumptionsX res).map (·.formula)) →
+      res.report.root.formula.denote S [])
+
+/-- The admission answer: the report id bound to the source environment under its own profiles, as `runAdmission`
+    binds it. -/
+def runAdmissionX (id : String) (environment document : Json) : Except String Json := do
+  let res ← admitDocumentX environment document
+  let canonical ← Wire.canonicalEnvironmentJsonU environment
+  let envId ← VE.Route.Wire.environmentId (Wire.profilesOf environment) canonical
+  let reportId ← VE.CertificateWire.digest (VE.Norms.Run.reportDomain (Wire.profilesOf environment))
+    (VE.Norms.Run.reportPayload envId document res.report)
+  return encodeAdmittedX id reportId res
+
+theorem runAdmissionX_sound (id : String) (environment document answer : Json)
+    (h : runAdmissionX id environment document = .ok answer) :
+    AdmissionAnswerX id environment document answer := by
+  unfold runAdmissionX at h
+  obtain ⟨res, hres, h⟩ := bind_ok h
+  obtain ⟨canonical, hc, h⟩ := bind_ok h
+  obtain ⟨envId, he, h⟩ := bind_ok h
+  obtain ⟨reportId, hd, h⟩ := bind_ok h
+  cases h
+  obtain ⟨hsrc, hbound, hsound, hnodes, hleaves, hcit, hch⟩ :=
+    admitDocumentX_spec.{0} environment document res hres
+  exact ⟨res, reportId, hres, rfl, hsrc, hbound, ⟨hsound, hnodes, hleaves, hcit, hch⟩,
+    ⟨canonical, envId, hc, he, hd⟩,
+    fun S hS hf hg ho => wire_report_consequenceX environment document res hres S hS hf hg ho⟩
+
+/-- The soft branch's two kinds `layeredCase` lacks: `admission` and `norm-defaults-certificate`; `none` otherwise. -/
+def softCase (id kind : String) (j : Json) : Except String (Option Json) := do
+  if kind == "admission" then
+    let environment ← j.getObjVal? "environment"
+    let document ← j.getObjVal? "document"
+    return some (← runAdmissionX id environment document)
+  if kind == "norm-defaults-certificate" then
+    let r ← Wire.replayLayeredEntailment j
+    return some (VE.Route.Wire.ok id [("valid", .bool r.valid),
+      ("premises", toJson (Wire.premisesX r.L.U r.L.X []).length)])
+  return none
+
+end VE.NormDefaults.Admission
+
 namespace VE.NormDefaults.Run
 open Lean
 
@@ -198,10 +271,15 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
     throw s!"UnsupportedProfile: case kind {kind} is not available on the norm-defaults route"
   VE.Norms.Run.runCase j
 
+/-- The soft branch's `admission` and `norm-defaults-certificate` (`Admission.softCase`) first, for a soft source
+under the profile; then a profiled admission on the norms branch; then every other case. -/
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
-  if kind == "admission" && Wire.hasProfile (j.getObjValD "environment") then
+  let env := j.getObjValD "environment"
+  if Wire.hasProfile env && Wire.layeredRoute env == some "soft-norms@0" then
+    if let some a ← Admission.softCase id kind j then return a
+  if kind == "admission" && Wire.hasProfile env then
     let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
     return ← runAdmission id environment document
@@ -209,10 +287,12 @@ def runCase (j : Json) : Except String Json := do
 
 /-- The public admission branch: from raw JSON under the profile, a successful answer
 satisfies the full admission obligation on `fill U` for the case's own id, environment
-and document; no profiled admission falls through to the norms route. -/
+and document; no profiled admission falls through to the norms route. The soft branch
+(`layeredRoute = some "soft-norms@0"`) is `normDefaults_wire_admissionX`'s. -/
 theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answer)
     (hk : VE.Route.Run.caseKind j = .ok "admission")
-    (hp : Wire.hasProfile (j.getObjValD "environment") = true) :
+    (hp : Wire.hasProfile (j.getObjValD "environment") = true)
+    (hs : Wire.layeredRoute (j.getObjValD "environment") ≠ some "soft-norms@0") :
     ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
       AdmissionAnswerU id (j.getObjValD "environment") (j.getObjValD "document") answer := by
   unfold runCase at h
@@ -220,7 +300,10 @@ theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answe
   obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
   have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
   subst kind
-  simp only [beq_self_eq_true, Bool.true_and, hp, ↓reduceIte] at h
+  have hs' : (Wire.layeredRoute (j.getObjValD "environment") == some "soft-norms@0") = false := by
+    simpa using hs
+  simp only [beq_self_eq_true, Bool.true_and, hp, hs', Bool.and_false, Bool.false_eq_true, ↓reduceIte,
+    pure_bind] at h
   obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h
   obtain ⟨document, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
   have he' : j.getObjValD "environment" = environment := by
@@ -230,6 +313,36 @@ theorem normDefaults_wire_admission (j answer : Json) (h : runCase j = .ok answe
   rw [he', hd']
   exact ⟨id, hid, runAdmission_sound id environment document answer (by simpa using h)⟩
 
+/-- The soft branch's admission: from raw JSON under the profile with a soft source, a successful answer satisfies
+the full admission obligation on the filled soft tree (`Admission.AdmissionAnswerX`) for the case's own id,
+environment and document. With `normDefaults_wire_admission` it covers every profiled admission. -/
+theorem normDefaults_wire_admissionX (j answer : Json) (h : runCase j = .ok answer)
+    (hk : VE.Route.Run.caseKind j = .ok "admission")
+    (hp : Wire.hasProfile (j.getObjValD "environment") = true)
+    (hs : Wire.layeredRoute (j.getObjValD "environment") = some "soft-norms@0") :
+    ∃ id, VE.Bridge.stringField j "id" = .ok id ∧
+      Admission.AdmissionAnswerX id (j.getObjValD "environment") (j.getObjValD "document") answer := by
+  unfold runCase at h
+  obtain ⟨id, hid, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨kind, hkind, h⟩ := VE.Order.ProfileGate.bind_ok h
+  have heq : kind = "admission" := by rw [hkind] at hk; cases hk; rfl
+  subst kind
+  simp only [hp, hs, beq_self_eq_true, Bool.and_self, ↓reduceIte] at h
+  obtain ⟨o, ho, h⟩ := VE.Order.ProfileGate.bind_ok h
+  unfold Admission.softCase at ho
+  simp only [beq_self_eq_true, ↓reduceIte] at ho
+  obtain ⟨environment, he, ho⟩ := VE.Order.ProfileGate.bind_ok ho
+  obtain ⟨document, hd, ho⟩ := VE.Order.ProfileGate.bind_ok ho
+  obtain ⟨a, ha, ho⟩ := VE.Order.ProfileGate.bind_ok ho
+  cases ho
+  cases h
+  have he' : j.getObjValD "environment" = environment := by
+    simp only [Json.getObjValD, he]; rfl
+  have hd' : j.getObjValD "document" = document := by
+    simp only [Json.getObjValD, hd]; rfl
+  rw [he', hd']
+  exact ⟨id, hid, Admission.runAdmissionX_sound id environment document answer ha⟩
+
 def runCaseReported (j : Json) : Json :=
   if usesNormDefaultsPath j then
     match runCase j with
@@ -237,5 +350,19 @@ def runCaseReported (j : Json) : Json :=
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
         ("error", .str message)]
   else VE.Norms.Run.runCaseReported j
+
+section SoftAdmissionWitness
+
+/-! ## B3: the soft admission needs the complementary wire theorem -/
+
+private def softAdmissionWitness : Lean.Json :=
+  (Lean.Json.parse "{\"id\":\"a\",\"kind\":\"admission\",\"environment\":{\"language\":\"ve.core@0.2\",\"profiles\":[\"norm-defaults@0\",\"norms@0\",\"relational-fol@0\",\"soft-norms@0\"],\"spec_revision\":\"ve-v0.2-expand2-2026-09-25\",\"vocabulary\":{\"sorts\":{\"assistant\":{\"description\":\"assistant\"}},\"predicates\":{\"x_required\":{\"arguments\":[\"assistant\"],\"description\":\"obligation\",\"regulated\":{\"role\":\"obligation\",\"default\":\"deny\",\"act\":\"{0} do x\",\"permission\":\"x_permitted\"}},\"x_permitted\":{\"arguments\":[\"assistant\"],\"description\":\"permission\",\"regulated\":{\"role\":\"permission\",\"default\":\"deny\",\"act\":\"{0} do x\"}},\"y_permitted\":{\"arguments\":[\"assistant\"],\"description\":\"permission\",\"regulated\":{\"role\":\"permission\",\"default\":\"unspecified\",\"act\":\"{0} do y\"}},\"c\":{\"arguments\":[\"assistant\"],\"description\":\"c\"}},\"constants\":{}}},\"document\":{\"units\":[{\"id\":\"u0\",\"span\":[0,5],\"kind\":\"norm\",\"content\":{\"norm\":{\"name\":\"must-x\",\"predicate\":\"x_required\",\"sign\":true,\"guard\":[\"unary\",\"y_permitted\",[\"var\",0]],\"unless\":[],\"over\":[],\"mode\":\"default\",\"exception\":{\"decided_by\":\"unstated\",\"sufficient\":[[\"unary\",\"c\",[\"var\",0]]],\"necessary\":[],\"factors\":[]}}}},{\"id\":\"u1\",\"span\":[10,15],\"kind\":\"norm\",\"content\":{\"norm\":{\"name\":\"need-not-x\",\"predicate\":\"x_required\",\"sign\":false,\"guard\":[\"top\"],\"unless\":[],\"over\":[],\"mode\":\"default\",\"exception\":{\"decided_by\":\"unstated\",\"sufficient\":[],\"necessary\":[],\"factors\":[]}}}}],\"graph\":{\"root\":\"leaf\",\"nodes\":[{\"name\":\"leaf\",\"ast\":[\"forall\",\"assistant\",[\"not\",[\"and\",[\"and\",[\"and\",[\"or\",[\"bottom\"],[\"and\",[\"and\",[\"unary\",\"unsaid__y_permitted\",[\"var\",0]],[\"not\",[\"bottom\"]]],[\"not\",[\"bottom\"]]]],[\"not\",[\"or\",[\"bottom\"],[\"or\",[\"or\",[\"or\",[\"unary\",\"soft__excepted__must_x\",[\"var\",0]],[\"bottom\"]],[\"or\",[\"or\",[\"or\",[\"or\",[\"bottom\"],[\"bottom\"]],[\"or\",[\"bottom\"],[\"bottom\"]]],[\"bottom\"]],[\"bottom\"]]],[\"bottom\"]]]]],[\"not\",[\"bottom\"]]],[\"and\",[\"and\",[\"top\"],[\"not\",[\"or\",[\"bottom\"],[\"or\",[\"or\",[\"or\",[\"unary\",\"soft__excepted__need_not_x\",[\"var\",0]],[\"bottom\"]],[\"or\",[\"or\",[\"or\",[\"or\",[\"bottom\"],[\"bottom\"]],[\"or\",[\"bottom\"],[\"bottom\"]]],[\"bottom\"]],[\"bottom\"]]],[\"bottom\"]]]]],[\"not\",[\"bottom\"]]]]]],\"label\":\"soft:coherence:must-x,need-not-x\"}]}}}").toOption.getD .null
+
+#guard VE.NormDefaults.Wire.layeredRoute
+  (softAdmissionWitness.getObjValD "environment") == some "soft-norms@0"
+#guard (VE.NormDefaults.Run.runCase softAdmissionWitness).toOption.isSome
+#guard (VE.NormDefaults.Admission.softCase "a" "admission" softAdmissionWitness).toOption.getD none |>.isSome
+
+end SoftAdmissionWitness
 
 end VE.NormDefaults.Run
