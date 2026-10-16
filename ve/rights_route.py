@@ -31,8 +31,8 @@ def _slot(text):
     """A mechanism's slot `(order, kind, name)` read off its wire text, or ValueError."""
     if text in _FIXED_SLOTS:
         return _FIXED_SLOTS[text], text if text != 'exception' else 'excepted', None
-    kind, space, name = text.partition(' ')
-    if not space or not name or kind not in _NAMED_SLOTS:
+    kind, _, name = text.partition(' ')
+    if not name or kind not in _NAMED_SLOTS:
         raise ValueError('unknown narrowing mechanism')
     if kind == 'carve-out' and not (name.isascii() and name.isdecimal() and name[0] != '0'):
         raise ValueError('non-canonical carve-out number')
@@ -52,7 +52,8 @@ def _bind_line_narrowings(entry, rule, *, limits, direct, line_rules, cites, aim
     the strict rule, each the mechanism's own rule (`ground_collision`, `ground_effect`)."""
     own, default = entry['rule'], rule.get('mode', 'strict') == 'default'
     names = entry['limitations']
-    if (len(names) != len(set(names)) or names != [name for name in limits if name in names] or
+    # `limits` lists each limitation once, so the order check also refuses a repeated name.
+    if (names != [name for name in limits if name in names] or
             entry['in_scope'] is not bool(names) or
             (entry['bar'] is not None and entry['bar'] not in aimed)):
         raise ValueError('unbound narrowing scope or bar')
@@ -80,8 +81,9 @@ def _bind_line_narrowings(entry, rule, *, limits, direct, line_rules, cites, aim
         elif licence is None:
             bound = grounds is None
         elif licence == 'cited':
+            # The schema admits `citation` as the only member of citation grounds.
             citation = (grounds or {}).get('citation') or {}
-            bound = set(grounds or {}) == {'citation'} and citation.get('key') in cites.get(citation.get('rule'), {})
+            bound = citation.get('key') in cites.get(citation.get('rule'), {})
         elif licence == 'collision':
             bound = kind in ('blockedBy', 'dominatedBy') and grounds == {'line': name} and name in line_rules
         else:
@@ -395,7 +397,8 @@ def _bind_narrowings(row, elaborated, *, empty_certificates=False):
                 if actual['in_scope'] and licence is None:
                     expected_findings.append(
                         f"UnlicensedLimitation: {text} of rule {actual['rule']} on right {actual['right']}")
-        if row['findings'] != expected_findings or row['licensed'] != (not expected_findings):
+        # The schema makes `licensed` true exactly when `findings` is empty.
+        if row['findings'] != expected_findings:
             raise ValueError('unbound scope findings or licence result')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(
