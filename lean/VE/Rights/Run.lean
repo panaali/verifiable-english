@@ -180,18 +180,15 @@ def groundJson : Option Ground → Json
   | some (.effect M) => Json.mkObj [("rule", .str M)]
   | _ => .null
 
-/-- The bar's reach of a line under the rule reading; the bar mechanism is listed exactly when it
-is some (`bar_mem_narrowings`). -/
-def barReachR (D : RightsDoc) (N : Line) : Option String := if ruleReading D then barReach D N else none
-
 /-- The elaboration's narrowings: per line, the limitations in scope (the limitation mechanism is
-listed exactly when there is one, `limPack_mem_narrowings`) and the bar's reach; per mechanism, its
-licence without certificates and the grounds it rests on (`licence` is their text). -/
+listed exactly when there is one, `limPack_mem_narrowings`) and the bar's reach (the bar mechanism is
+listed exactly when there is one, `bar_mem_narrowings`); per mechanism, its licence without
+certificates and the grounds it rests on (`licence` is their text). -/
 def elaboratedNarrowingsJson (D : RightsDoc) : Json :=
   Json.arr ((linesOf D).map (fun RN => Json.mkObj [("right", .str RN.1), ("rule", .str RN.2.node.name),
     ("in_scope", .bool !(scopeLimits D RN.2).isEmpty),
     ("limitations", toJson ((scopeLimits D RN.2).map (·.name))),
-    ("bar", match barReachR D RN.2 with | some m => .str m | none => .null),
+    ("bar", match ruleBarReach D RN.2 with | some m => .str m | none => .null),
     ("mechanisms", Json.arr ((narrowings D RN.2).map (fun n => Json.mkObj [("mechanism", .str (mechText n)),
       ("target", .str (scopeTargetName RN.2 n)), ("conclusion", enc (certTarget D RN.2 n)),
       ("licence", match licence D RN.2 n with | some l => .str l | none => .null),
