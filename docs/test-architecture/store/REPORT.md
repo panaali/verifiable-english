@@ -212,9 +212,13 @@ and 5.6 KB on average; environments were 38% of the line bytes.
 | M20 | tests/answer_store.py | the plugin never reads the `live_service` mark (PROBE F2) | test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run |
 | M21 | tests/answer_store.py | an alarm never fails the run | test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run |
 | M22 | tests/answer_store.py | the workers' reports are dropped (`pytest_testnodedown`) | test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run |
+| M23 | ve/backends/lean_service.py | the attempt's line is unbound when the process fails to start before a line with environments is built | test_a_failed_attempt_with_the_store_on_ends_as_it_does_without |
+| M24 | ve/backends/lean_service.py | the retry after any failed attempt still asks and records in the store | test_a_failed_attempt_with_the_store_on_ends_as_it_does_without |
 
 M15 to M22 come from the review fix round (section 6). The same driver ran all 22 mutants again on the VM, and each
 named test failed (`mutants.json`, `review_fix`); unmutated, the 23 named tests passed.
+M23 and M24 come from the recheck (section 7). The driver ran all 24 mutants again, and each named test failed
+(`mutants.json`, `recheck_fix`); unmutated, the 31 named tests passed.
 
 M4 first survived: both phases of its test started the service with `with`. The test now asks an unstarted service
 and also checks that the pins refuse an unlisted build before the store is asked (commit `6fc0a918e`); M4 then
@@ -278,6 +282,25 @@ failed it.
 - **F3, F4, F5 (C):** not changed in this round. F5 is still open for the DRI.
 - **DELTA:** none user-visible. Only the test-only store changes what it stores and when it answers.
 
+## 7. Recheck fix round (tarch-store-looprecheck1.final.md)
+
+- **F6 (B): a failed start crashed the client with the store on.** With environments, the request line is built only
+  after the process has started, but the failure path handed that line to the store. A process that failed to start
+  therefore raised `UnboundLocalError`, where the client without a store retries and then answers or raises
+  `CheckerUnavailable`. Fixed as a class: every name the failure path reads (`needed`, `stored`, `line`) is bound at
+  the top of each attempt, before anything can fail. `Seam.failed` takes `line=None` for an attempt that never asked
+  the store; it then only clears the attempt's pending entry.
+  - The regression test is differential: test_a_failed_attempt_with_the_store_on_ends_as_it_does_without. It fails
+    the first attempt at each step: the process does not start, dies on the request, answers garbage, or never starts.
+    Each case runs with environments and inline, store on and store off. Both clients must end the same way (the
+    same answer, or `CheckerUnavailable`), with the same retries and restarts, and nothing is stored. The clients
+    are not started by `with`, because `start` retries a failed start before any request is made. That is how
+    M17's guard hid the case.
+  - PROBE F6 exited 1 (`UnboundLocalError`) before the fix and exits 0 after it. M23 (the old unbound line) fails the
+    two start-failure cases with environments, and M24 (the retry still uses the store) fails six cases.
+- **DRI rulings:** none applies. **DELTA:** none user-visible. The store is test-only, and without it `exchange` is
+  unchanged.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. **Lean answers typed and contained: PASS.** No new route or answer field. A stored answer goes through the same
@@ -285,7 +308,7 @@ failed it.
    that fails binding is refused.
 2. **Required deliverables: PASS.** Section 0 maps each plan row and DRI condition to its delivery and test. No
    permanent report test was added (D4): the evidence is saved files.
-3. **Tests can fail: PASS.** 22 seeded bugs (section 4, mutants.json; M15 to M22 from the review). The replay comparator was run
+3. **Tests can fail: PASS.** 24 seeded bugs (section 4, mutants.json; M15 to M22 from the review, M23 and M24 from the recheck). The replay comparator was run
    head-against-head (passes) and against an empty store (0 entries). It fails on a value-equal byte change (M12).
 4. **Python, Lean and Rust agree: N.A.** No Lean or Rust change. Live answers are unchanged (DELTA none), and
    53,500 sampled hits were byte-identical to the process.

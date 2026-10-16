@@ -103,6 +103,15 @@ MUTANTS = [
      "        reports.append(report)",
      "        pass",
      [f"{T}::test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run"]),
+    # The recheck (tarch-store-looprecheck1.final.md F6)
+    ("M23", LS, "the attempt's line is unbound when the process fails to start before a line with environments",
+     "                stored = None\n                line: bytes | None = None\n",
+     "                stored = None\n",
+     [f"{T}::test_a_failed_attempt_with_the_store_on_ends_as_it_does_without"]),
+    ("M24", LS, "the retry after any failed attempt still asks and records in the store",
+     "served=stored is not None)\n                        store = None\n",
+     "served=stored is not None)\n",
+     [f"{T}::test_a_failed_attempt_with_the_store_on_ends_as_it_does_without"]),
 ]
 
 
