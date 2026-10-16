@@ -218,6 +218,11 @@ failed it.
   - the full release gate, which the chain runs on the final HEAD;
   - the store in a real R1 run, since no runner sets the variable yet;
   - `tools/gate_collection.py --check`, because no test was removed or renamed (20 added).
+- **Relay mutation gate: 13 failures, all on main already.** `tools/relay_mutation_gate.py` (42 routes, 116,583
+  mutants) reports 13 failures on this branch, and the identical 13 on its merge base `dae12d5ff` (run in a scratch
+  worktree with the same Lean build). They are 12 allow-list entries of the `parse` and `readings-route` routes that
+  match nothing, and one accepted `norm-defaults` mutant (`results/*/result/unsaid/*/description` emptied). This
+  branch changes no relay, schema or allow list, so they belong to their own item.
 - Acceptance items: all AGENT except the external items listed at the top (orchestrator).
 
 ## Self-review against BUILDER-CHECKLIST
