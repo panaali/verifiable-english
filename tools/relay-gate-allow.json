@@ -369,6 +369,7 @@
     "results/*/result/decisions",
     "results/*/result/derived",
     "results/*/result/english",
+    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -403,6 +404,7 @@
     "results/*/result/derived",
     "results/*/result/english",
     "results/*/result/environment_prime/vocabulary/predicates",
+    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -603,10 +605,7 @@
    "route": "service:route",
    "mutation": "duplicate",
    "path": [
-    "results/*/result/background",
-    "results/*/result/generators",
     "results/*/result/order",
-    "results/*/result/premises",
     "results/*/result/report/assumptions"
    ],
    "kind": "by-design",
@@ -617,10 +616,7 @@
    "route": "service:route",
    "mutation": "empty",
    "path": [
-    "results/*/result/background",
-    "results/*/result/generators",
     "results/*/result/order",
-    "results/*/result/premises",
     "results/*/result/report/assumptions"
    ],
    "kind": "by-design",
@@ -1355,10 +1351,8 @@
    "mutation": "rebind",
    "path": [
     "results/*/generator",
-    "results/*/result/background/*/*/*/*",
     "results/*/result/generator",
-    "results/*/result/order/*",
-    "results/*/result/premises/*/*/*/*"
+    "results/*/result/order/*"
    ],
    "kind": "follow-up",
    "id": "F4",
