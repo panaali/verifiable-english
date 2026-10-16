@@ -120,7 +120,12 @@
   "head_lean_tree": "740f16d7346d198621395f7700d5ef61ad1b4f74",
   "r1_map": "2a4fbf7080e0a949552f09985cf1e62fc2f671d7.json.gz",
   "r1_map_sha256": "e831a47d7427a5cd4debbbb46a7c714442e99ad16349176a7150ac12cfb74daf",
-  "r1_map_distance": 0
+  "r1_map_distance": 0,
+  "head_build": "026c1c488a8f56cf80dc79c25bcf857b6caf0a823b61fcfe5c201120703cee72",
+  "base_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "changed_answers": 1032,
+  "stale_answers": 0,
+  "head_pinned": true
  },
  {
   "label": "jt-crossplan",
