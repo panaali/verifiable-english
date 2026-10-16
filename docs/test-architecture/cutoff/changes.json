@@ -30,7 +30,12 @@
   "head_lean_tree": "4d70dacbb651464fe9a814daf531cbfeaa640ec3",
   "r1_map": "b98d879473bacbaa860106055efb8f483f70c44f.json.gz",
   "r1_map_sha256": "63fe25fb90149e99193b4c088e73cbadead69aa99ed19b3df82773d739fdb2a5",
-  "r1_map_distance": 12
+  "r1_map_distance": 12,
+  "head_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "base_build": "bd9c5bdfe1b8ba2dd334fb96e83b1e5f7dee9718d395adbee38625ff6af74399",
+  "changed_answers": 1424,
+  "stale_answers": 1424,
+  "head_pinned": true
  },
  {
   "label": "qa-q2",
