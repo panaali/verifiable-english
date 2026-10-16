@@ -81,3 +81,64 @@ def test_every_build_entry_point_drops_stale_traces_first():
     recorder = (ROOT / "tools/test_map.py").read_text()
     assert recorder.index("lake_outputs.drop_stale()") < recorder.index('(["lake", "build"]')
     assert "lake_outputs.stale() == []" in (ROOT / "tests/test_difffuzz.py").read_text()
+
+
+def lakefile(lean, *targets):
+    """A lakefile.toml with these `lean_exe` tables (each a dict of its keys)."""
+    lean.mkdir(parents=True, exist_ok=True)
+    tables = "".join("\n[[lean_exe]]\n" + "".join(f'{key} = "{value}"\n' for key, value in target.items())
+                     for target in targets)
+    (lean / "lakefile.toml").write_text(f'name = "p"\n\n[[lean_lib]]\nname = "P"\n{tables}')
+
+
+def test_a_removed_targets_binary_is_obsolete_and_a_live_ones_files_are_kept(tmp_path):
+    """Plan 3.8 "Obsolete executables": Lake never touches the binary of a target the lakefile dropped."""
+    lakefile(tmp_path, {"name": "ve_service", "root": "Serve"}, {"name": "ve_bench", "root": "Bench"},
+             {"name": "ve_named", "root": "Named", "exeName": "ve_file"})
+    directory = tmp_path / ".lake/build/bin"
+    directory.mkdir(parents=True)
+    live = ["ve_service", "ve_service.trace", "ve_service.hash", "ve_service.sha256-cache", "ve_bench", "ve_file",
+            "ve_file.trace"]
+    gone = ["ve_diagnose", "ve_diagnose.trace", "ve_diagnose.hash", "ve_named", "ve_service.tmp1e62a1a",
+            "ve_service.sha256-cachexyz", "ve_servicex"]
+    for name in live + gone:
+        (directory / name).write_bytes(b"x")
+    (directory / "ve_rights_route.dSYM").mkdir()
+    (directory / "ve_rights_route.dSYM/ve_rights_route").write_bytes(b"x")
+    expected = sorted(directory / name for name in [*gone, "ve_rights_route.dSYM"])
+    assert lake_outputs.obsolete(tmp_path) == expected
+    assert lake_outputs.main(["--obsolete", "--lean", str(tmp_path)]) == 1
+    assert lake_outputs.main(["--drop-obsolete", "--lean", str(tmp_path)]) == 0
+    assert sorted(path.name for path in directory.iterdir()) == sorted(live)
+    assert lake_outputs.obsolete(tmp_path) == [] and lake_outputs.main(["--obsolete", "--lean", str(tmp_path)]) == 0
+
+
+def test_the_repositorys_executables_are_its_lakefiles():
+    """Known answer: the file names of every lean_exe of lean/lakefile.toml, default target or not."""
+    assert lake_outputs.executables() == [
+        "ve_conformance", "ve_metered", "ve_service", "ve_english_run", "ve_response_decode", "ve_english_lean_bench",
+        "ve_english_route", "ve_speech_acts_route", "ve_senses_route"]
+
+
+@pytest.mark.parametrize("text", ['name = "p"\n[[lean_exe]]\nroot = "Main"\n',
+                                  'name = "p"\n[[lean_exe]]\nname = "Ve.Service"\n',
+                                  'name = "p"\n[[lean_exe]]\nname = "../ve"\n',
+                                  'name = "p"\nlean_exe = "ve"\n',
+                                  'name = "p"\n[[lean_exe\n'])
+def test_targets_it_cannot_name_remove_nothing(tmp_path, text):
+    (tmp_path / "lakefile.toml").write_text(text)
+    (tmp_path / ".lake/build/bin").mkdir(parents=True)
+    (tmp_path / ".lake/build/bin/ve").write_bytes(b"x")
+    with pytest.raises(RuntimeError):
+        lake_outputs.drop_obsolete(tmp_path)
+    assert (tmp_path / ".lake/build/bin/ve").exists()
+
+
+def test_a_lakefile_only_lake_can_evaluate_removes_nothing(tmp_path):
+    lakefile(tmp_path, {"name": "ve_service", "root": "Serve"})
+    (tmp_path / "lakefile.lean").write_text("import Lake\n")
+    (tmp_path / ".lake/build/bin").mkdir(parents=True)
+    (tmp_path / ".lake/build/bin/ve_old").write_bytes(b"x")
+    with pytest.raises(RuntimeError, match="only Lake can read its targets"):
+        lake_outputs.drop_obsolete(tmp_path)
+    assert (tmp_path / ".lake/build/bin/ve_old").exists()
