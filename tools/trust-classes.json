@@ -479,11 +479,19 @@
       "G[V]": [
         "ResponseShape.Schemas.Document.blockCoverage",
         "ResponseShape.Schemas.Document.cells",
+        "ResponseShape.Schemas.Document.cites",
         "ResponseShape.Schemas.Document.coverage",
         "ResponseShape.Schemas.Document.file",
         "ResponseShape.Schemas.Document.meaning",
         "ResponseShape.Schemas.Document.narrowing",
+        "ResponseShape.Schemas.Document.nullable",
+        "ResponseShape.Schemas.Document.rights_block",
+        "ResponseShape.Schemas.Document.rights_condition",
+        "ResponseShape.Schemas.Document.rights_line",
         "ResponseShape.Schemas.Document.row",
+        "ResponseShape.Schemas.Document.soft_content",
+        "ResponseShape.Schemas.Document.soft_exception",
+        "ResponseShape.Schemas.Document.soft_norm",
         "ResponseShape.Schemas.Document.unit"
       ]
     },
@@ -4793,6 +4801,9 @@
       ],
       "G[V]": [
         "VE.Norms.Admission.envelopeGate"
+      ],
+      "D[R]": [
+        "VE.Norms.Admission.normKindText"
       ]
     },
     "VE/Norms/Basic.lean": {
@@ -8914,6 +8925,12 @@
         "VE.Service.Document.BlockCoverage.residual",
         "VE.Service.Document.Env",
         "VE.Service.Document.Env.data",
+        "VE.Service.Document.Env.lower",
+        "VE.Service.Document.Env.rights",
+        "VE.Service.Document.RightsDoc",
+        "VE.Service.Document.RightsDoc.checkRule",
+        "VE.Service.Document.RightsKind",
+        "VE.Service.Document.RowKind",
         "VE.Service.Document.SourceUnit",
         "VE.Service.Document.admitGraph",
         "VE.Service.Document.blockCoverage",
@@ -8921,6 +8938,7 @@
         "VE.Service.Document.check",
         "VE.Service.Document.contentOf",
         "VE.Service.Document.coverageUnits",
+        "VE.Service.Document.decodeRowKind",
         "VE.Service.Document.decodedEnvironment",
         "VE.Service.Document.envelopeKeys",
         "VE.Service.Document.environmentOf",
@@ -8929,16 +8947,23 @@
         "VE.Service.Document.frontJson",
         "VE.Service.Document.graphLabels",
         "VE.Service.Document.listedProfiles",
+        "VE.Service.Document.ownedBeneath",
         "VE.Service.Document.ownedProfiles",
         "VE.Service.Document.parsedLabels",
         "VE.Service.Document.pythonMayRead",
         "VE.Service.Document.residual",
+        "VE.Service.Document.rightsContentOf",
+        "VE.Service.Document.rightsDoc",
+        "VE.Service.Document.rightsSourceUnit",
+        "VE.Service.Document.softCanonical",
         "VE.Service.Document.sourceUnit",
         "VE.Service.Document.split",
-        "VE.Service.Document.unitsOf"
+        "VE.Service.Document.unitsOf",
+        "VE.Service.Document.wireJson"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
+        "VE.Service.Document.RightsDoc.unowned",
         "VE.Service.Document.Walk",
         "VE.Service.Document.describedBy",
         "VE.Service.Document.emptySource",
@@ -8956,10 +8981,13 @@
         "VE.Service.Document.loneSurrogate",
         "VE.Service.Document.maxNumber",
         "VE.Service.Document.noLoneSurrogate",
+        "VE.Service.Document.nullInside",
         "VE.Service.Document.nullableUnitKeys",
         "VE.Service.Document.numberChar",
         "VE.Service.Document.partHasStrayNull",
         "VE.Service.Document.pyR",
+        "VE.Service.Document.rightsChildContext",
+        "VE.Service.Document.rightsWireJson",
         "VE.Service.Document.stop",
         "VE.Service.Document.strayNull",
         "VE.Service.Document.unavailable",
@@ -8973,6 +9001,11 @@
         "VE.Service.Document.Meaning",
         "VE.Service.Document.Meaning.json",
         "VE.Service.Document.Meaning.ofJson?",
+        "VE.Service.Document.RightsKind.all",
+        "VE.Service.Document.RightsKind.name",
+        "VE.Service.Document.RightsKind.names",
+        "VE.Service.Document.RightsKind.ofName?",
+        "VE.Service.Document.RowKind.json",
         "VE.Service.Document.RowUnit",
         "VE.Service.Document.Support",
         "VE.Service.Document.Support.all",
@@ -9001,7 +9034,8 @@
         "VE.Service.Document.unitJson"
       ],
       "D[I]": [
-        "VE.Service.Document.documentId"
+        "VE.Service.Document.documentId",
+        "VE.Service.Document.nullableMeaningId"
       ],
       "G[R]": [
         "VE.Service.Document.checkNormDefaults"
