@@ -1,0 +1,117 @@
+{
+ "mutants": [
+  {
+   "id": "S1",
+   "file": "ve/assist/session_views.py",
+   "claim": "the split fix3 property cases still check order invariance across all five orders: an order-dependent success fails them",
+   "find": "        return {\"success\": not failures, \"failures\": failures, \"targets\": targets,",
+   "replace": "        return {\"success\": not failures and next(iter(self.nodes), None) != \"fact\", \"failures\": failures, \"targets\": targets,",
+   "tests": [
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]",
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain_universal-no_search]"
+   ]
+  },
+  {
+   "id": "S2",
+   "file": "ve/assist/session_views.py",
+   "claim": "the split fix3 and rr2 cases still check monotonicity across all their budgets: a success that turns false at a larger budget (6) fails them",
+   "find": "        return {\"success\": not failures, \"failures\": failures, \"targets\": targets,",
+   "replace": "        return {\"success\": not failures and self.options[\"max_proof_steps\"] != 6, \"failures\": failures, \"targets\": targets,",
+   "tests": [
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]",
+    "tests/test_assist.py::test_astra_rr2_property_success_is_monotone_in_the_proof_budget[plain]"
+   ]
+  },
+  {
+   "id": "S3",
+   "file": "ve/assist/session.py",
+   "claim": "the split fix4 cases still compare all three parent orders at their budget: proving in the author's parent order fails them",
+   "find": "        return tuple(sorted(node.parents, key=lambda p: (self._premise_key(self.nodes[p].formula), p)))",
+   "replace": "        return tuple(node.parents)",
+   "tests": [
+    "tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success[3]",
+    "tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success[4]"
+   ]
+  },
+  {
+   "id": "S4",
+   "file": "experiments/p1.py",
+   "claim": "the per-item reference replay still runs and fails the known-answer gate when it runs concurrently in tests/p1_findings.py",
+   "find": "    expected = \"follows\" if item[\"label\"] == \"good\" or not e4 else \"gap\"",
+   "replace": "    expected = \"gap\" if item[\"label\"] == \"good\" or not e4 else \"follows\"",
+   "tests": [
+    "tests/test_p1.py::test_actual_offline_known_answer_gate"
+   ]
+  },
+  {
+   "id": "S5",
+   "file": "tests/p1_findings.py",
+   "claim": "the known-answer gate reads no finding the concurrent warm-up did not check: warming one split only fails it",
+   "find": "    return [item for split in splits or (\"dev\", \"scored\") for item in p1.materials(split)]",
+   "replace": "    return [item for split in splits or (\"dev\",) for item in p1.materials(split)]",
+   "tests": [
+    "tests/test_p1.py::test_actual_offline_known_answer_gate"
+   ]
+  },
+  {
+   "id": "S6",
+   "file": "ve/readings_verdicts.py",
+   "claim": "each rd6b chunk still compares its documents whole on both routes: a superposed SOME answered as NONE fails the chunk",
+   "find": "            return {\"verdict\": \"SOME\", \"route\": \"superposed\", \"proof\": proofs[0], \"countermodel\": counters[0]}",
+   "replace": "            return {\"verdict\": \"NONE\", \"route\": \"superposed\", \"proof\": proofs[0], \"countermodel\": counters[0]}",
+   "tests": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[6]"
+   ]
+  },
+  {
+   "id": "S7",
+   "file": "tests/test_readings_rd6b_differential.py",
+   "claim": "each rd6b chunk keeps its non-degeneracy guard: at 16 chunks a chunk without a CONFLICT document fails it (why 15 is the most)",
+   "find": "CHUNKS = 15\n",
+   "replace": "CHUNKS = 16\n",
+   "tests": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]"
+   ]
+  },
+  {
+   "id": "S8",
+   "file": "conformance/english_mixed.py",
+   "claim": "each mixed-smoke part still checks every document of its share: a part that checks one fewer fails",
+   "find": "        documents = documents[part::parts]",
+   "replace": "        documents = documents[part::parts][:-1] if check else documents[part::parts]",
+   "tests": [
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-1]"
+   ]
+  },
+  {
+   "id": "S9",
+   "file": "tools/bench/suite_tail.py",
+   "claim": "durations --previous: a profiled test takes its new time over the earlier file's",
+   "find": "        timed = {**{nodeid: value for nodeid, value in previous.items() if nodeid in current}, **timed}",
+   "replace": "        timed = {**timed, **{nodeid: value for nodeid, value in previous.items() if nodeid in current}}",
+   "tests": [
+    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+   ]
+  },
+  {
+   "id": "S10",
+   "file": "tools/test_schedule.py",
+   "claim": "durations --previous keeps the earlier file's estimate of an unrecorded test",
+   "find": "    if unrecorded is None:\n        unrecorded = round(sum(short) / len(short), 3) if short else UNRECORDED_SECONDS",
+   "replace": "    if True:\n        unrecorded = round(sum(short) / len(short), 3) if short else UNRECORDED_SECONDS",
+   "tests": [
+    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+   ]
+  },
+  {
+   "id": "S11",
+   "file": "tools/bench/suite_tail.py",
+   "claim": "durations --previous refuses a file that is not a durations file",
+   "find": "        if not previous:\n            raise SystemExit(f\"{args.previous}: not a durations file\")\n",
+   "replace": "",
+   "tests": [
+    "tests/test_suite_tail.py::test_durations_command_keeps_an_earlier_file_for_the_tests_it_does_not_time"
+   ]
+  }
+ ]
+}
