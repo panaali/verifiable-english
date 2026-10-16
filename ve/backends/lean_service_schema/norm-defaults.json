@@ -136,7 +136,7 @@
           "items": {
             "additionalProperties": false,
             "properties": {
-              "description": {"type": "string"},
+              "description": {"minLength": 1, "type": "string"},
               "name": {"pattern": "unsaid__.*", "type": "string"},
               "sorts": {"$ref": "common.json#/$defs/strings"}
             },
@@ -244,7 +244,7 @@
           "items": {
             "additionalProperties": false,
             "properties": {
-              "description": {"type": "string"},
+              "description": {"minLength": 1, "type": "string"},
               "name": {"pattern": "unsaid__.*", "type": "string"},
               "sorts": {"$ref": "common.json#/$defs/strings"}
             },

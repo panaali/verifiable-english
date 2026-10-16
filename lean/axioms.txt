@@ -4881,6 +4881,7 @@
 'VE.Senses.tryChoice_some' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Senses.wf_iff_no_failure' depends on axioms: [propext, Quot.sound]
 'VE.Service.Diagnose.diagnoseCase_registered' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.Document.decodeRowKind_json' depends on axioms: [propext]
 'VE.Service.Family.Checked.accepted' does not depend on any axioms
 'VE.Service.Family.closureRefutes_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.Family.closure_graph_entails' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -5761,6 +5762,7 @@
 'ResponseShape.Encoders.Document.coverage_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.document_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.meaning_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.rowKind_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.unit_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.English.diagnose_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
