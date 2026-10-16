@@ -427,6 +427,12 @@
    ]
   },
   {
+   "selector": "tests/test_rust_memory_budget.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
    "selector": "tests/test_rust_reproducible.py",
    "causes": [
     "pins"
