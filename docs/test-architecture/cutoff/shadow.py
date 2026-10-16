@@ -94,6 +94,39 @@ print(json.dumps({{"r1_map": r1 and r1.name, "paths": paths,
     return row
 
 
+def answers_of(runs: Path, commit: str) -> Path:
+    found = sorted((runs / f"replay-{commit[:10]}").glob("answers-*.json.gz"))
+    if len(found) != 1:
+        raise FileNotFoundError(f"no single replay of {commit[:10]} in {runs}")
+    return found[0]
+
+
+def prepare(runs: Path, recording: Path) -> None:
+    """Each change's replay diff (`answer_cutoff.py diff`, the recording build's answers giving the stale
+    cases of another base build), its head's build, and whether the head's pins admit it: for a merge, the
+    merge gate checked them; for a branch, the head pins a ve_service build the base does not, or its
+    Lean tree is the base's."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import answer_replay
+    index = answer_replay.read_json(recording / "requests.json.gz")
+    own = next(path for commit in {c[k] for c in json.loads(CHANGES.read_text()) for k in ("base", "head")}
+               if (path := answers_of(runs, commit)) and answer_replay.read_json(path)["service"] == index["service"])
+    own_answers = answer_replay.read_json(own)
+    changes = json.loads(CHANGES.read_text())
+    for change in changes:
+        base, head = (answer_replay.read_json(answers_of(runs, change[k])) for k in ("base", "head"))
+        diff = answer_replay.diff(base, head)
+        diff.update(recording_dir=str(recording), recording_build=own_answers["service"],
+                    stale=answer_replay.diff(own_answers, base)["changed"])
+        answer_replay.write_json(diff, runs / f"diff-{change['label']}.json")
+        pins = [json.loads(git(ROOT, "show", f"{change[k]}:lean/checkers.lock"))["ve_service"] for k in ("base", "head")]
+        change.update(head_build=head["service"], base_build=base["service"], changed_answers=len(diff["changed"]),
+                      stale_answers=len(diff["stale"]),
+                      head_pinned=change["kind"] == "merge" or bool(set(pins[1]) - set(pins[0]))
+                      or change["base_lean_tree"] == change["head_lean_tree"])
+    CHANGES.write_text(json.dumps(changes, indent=1) + "\n")
+
+
 def check(data: dict) -> None:
     changes = json.loads(CHANGES.read_text())
     rows = data["rows"]
@@ -118,8 +151,14 @@ def main() -> int:
     go.add_argument("--worktree", type=Path, required=True)
     go.add_argument("--runs", type=Path, required=True)
     go.add_argument("--only", nargs="*")
+    ready = sub.add_parser("prepare")
+    ready.add_argument("--runs", type=Path, required=True)
+    ready.add_argument("--recording", type=Path, required=True)
     sub.add_parser("check")
     args = parser.parse_args()
+    if args.command == "prepare":
+        prepare(args.runs.resolve(), args.recording.resolve())
+        return 0
     if args.command == "check":
         check(json.loads(EVIDENCE.read_text()))
         return 0
