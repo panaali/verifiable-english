@@ -13,6 +13,7 @@ from types import SimpleNamespace
 import pytest
 
 from subprocesses import HANG_TIMEOUT
+from ve.backends import lean as lean_backend  # its one-shot runners start through run_limited
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable, VEError
 from ve.senses import bundled_pack
@@ -363,14 +364,14 @@ def test_malformed_pack_is_rejected_by_lean(joke, mutant):
 @pytest.mark.parametrize("field, message", [("dictionary_id", "dictionary identity"),
                                            ("request_id", "request identity")])
 def test_response_identity_and_type_mutations_fail_closed(joke, monkeypatch, field, message):
-    real = subprocess.run
+    real = lean_backend.run_limited
     def changed(*args, **kwargs):
         answer = real(*args, **kwargs)
         rows = json.loads(answer.stdout)
         rows[0]["result"][field] = "wrong"
         answer.stdout = json.dumps(rows).encode()
         return answer
-    monkeypatch.setattr(subprocess, "run", changed)
+    monkeypatch.setattr(lean_backend, "run_limited", changed)
     with pytest.raises(CheckerUnavailable, match=message):
         admit(joke, "Alice tells the riddle.")
 
@@ -430,7 +431,7 @@ def test_deadline_covers_pack_preparation(joke, monkeypatch):
     monkeypatch.setattr(route, "_text", delayed)
     def must_not_run(*_args, **_kwargs):
         pytest.fail("the runner started after the deadline")
-    monkeypatch.setattr(subprocess, "run", must_not_run)
+    monkeypatch.setattr(lean_backend, "run_limited", must_not_run)
     with pytest.raises(CheckerUnavailable, match="deadline"):
         admit(joke, "Alice tells the riddle.")
 

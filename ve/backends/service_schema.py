@@ -25,7 +25,8 @@ MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
          "english.read", "english.grammar", "english.check",
          "environment", "model", "check", "identity", "parse", "graph", "readings", "readings-choices", "bundle", "family-norms",
          "soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval", "quantity",
-         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question", "ask", "words")
+         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question",
+         "search-budget", "ask", "words")
 
 
 class Invalid(Exception):
@@ -411,6 +412,13 @@ class Compiler:
                 _fail(f"length differs from the request's {pointer}")
         return check
 
+    def _x_unique_strings(self, flag, schema, base):
+        def check(value, ctx, fuel):
+            if not isinstance(value, list) or any(type(item) is not str for item in value) or \
+                    len(value) != len(set(value)):
+                _fail("strings are not distinct")
+        return check
+
     def _x_count(self, pointer, schema, base):
         def check(value, ctx, fuel):
             expected = _resolve(ctx.value, pointer)
@@ -643,7 +651,7 @@ _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", 
           "x-count", "x-same-length", "x-equal-fields", "x-references", "x-claim-nodes", "x-max-steps",
           "x-background-bound", "x-source-span",
           "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
-          "x-select", "x-count-where", "x-count-presence", "x-reading-plan", "x-rows",
+          "x-select", "x-count-where", "x-count-presence", "x-unique-strings", "x-reading-plan", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 
