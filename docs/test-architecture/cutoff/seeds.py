@@ -222,8 +222,40 @@ def main() -> int:
     again.add_argument("--evidence", type=Path, default=EVIDENCE)
     again.add_argument("--recording", type=Path, required=True)
     again.add_argument("--diffs", type=Path, nargs="+", required=True, help="directories of the seeds' diffs")
+    again2 = sub.add_parser("stale", help="add to each answers selection the units that read a stale case")
+    again2.add_argument("--evidence", type=Path, default=EVIDENCE)
+    again2.add_argument("--recording", type=Path, required=True)
+    again2.add_argument("--base-answers", type=Path, required=True, help="the seeds' base replay")
+    again2.add_argument("--recording-answers", type=Path, required=True,
+                        help="the recording replayed on its own build, in the seeds' answer format")
     sub.add_parser("check")
     args = parser.parse_args()
+    if args.command == "stale":
+        # The seeds' base build is this machine's; the recording's is the runner's. A case whose answer
+        # differs between the two makes its readers unknown (answer_cutoff.unknown_units); they are
+        # service users, so today's selection holds them, and the answers selection gains them.
+        with gzip.open(args.base_answers, "rt") as handle:
+            base = json.load(handle)
+        with gzip.open(args.recording_answers, "rt") as handle:
+            own = json.load(handle)
+        assert base["version"] == own["version"] and base["recording"] == own["recording"]
+        stale = {key for key, answer in own["answers"].items() if base["answers"].get(key) != answer}
+        with gzip.open(args.recording / "requests.json.gz", "rt") as handle:
+            index = json.load(handle)
+        readers = {unit for unit, entry in index["units"].items() if any(index["keys"][i] in stale for i in entry["keys"])}
+        data = json.loads(args.evidence.read_text())
+        data["stale"] = {"cases": len(stale), "units": sorted(readers), "base_build": base["service"],
+                         "recording_build": own["service"], "answer_format": base["version"]}
+        for row in data["seeds"]:
+            if row["status"] in ("caught", "not caught"):
+                row["answers_selected"] = sorted(set(row["answers_selected"]) | (readers & set(row["today"])))
+                row["unknown"] = sorted(set(row["unknown"]) | (readers & set(row["today"])))
+                if row["status"] == "caught":
+                    row["caught_in"]["answers"] = all(test.split("::")[0] in row["answers_selected"]
+                                                      for test in row["caught_by"])
+        args.evidence.write_text(json.dumps(data, indent=1) + "\n")
+        print(f"{len(stale)} stale cases, read by {sorted(readers)}")
+        return 0
     if args.command == "verify":
         worktree = args.worktree.resolve()
         work = Path(tempfile.mkdtemp(prefix="cutoff-verify-"))
