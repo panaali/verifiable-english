@@ -4,8 +4,9 @@ Part of the answer-level cutoff (tools/answer_cutoff.py), an R1 experiment: tool
 train and the nightlies never use it.
 
 * `replay RECORDING --service PATH --output ANSWERS` sends every case the recording holds
-  (`answer_cutoff.py record`) to the build at PATH, as recorded: the case text the client sent and,
-  for a case that names its environment by handle, that environment registered with it. Cases go
+  (`answer_cutoff.py record`) to the build at PATH: the case text the client sent, a case that names
+  its environment by handle with that environment in its place (`inline`, the client's resend form),
+  so that no answer depends on which handles a process holds, which varies from run to run. Cases go
   in batches of one mode (`batches`, the same for every build); a case's answer is its bound entry
   but its positions in the batch (`unplaced`), kept as the SHA-256 of its compact JSON with Lean's
   key order, so `1` and `1.0`, or `true` and `1`, differ. A batch the service refuses or fails as a whole is
@@ -38,7 +39,8 @@ from ve.backends import lean_service  # noqa: E402
 
 # 2: cases are replayed in batches, and a case's answer is its bound entry but its position.
 # 3: and but the position an error result carries (`case_index`).
-VERSION = 3
+# 4: every case goes inline (`inline`), so no answer depends on the handles a process holds.
+VERSION = 4
 BATCH_CASES = 64
 BATCH_BYTES = 1 << 20
 # Wall-clock seconds per replayed request: an explicit timeout replaces the mode's CPU deadline, so
@@ -81,18 +83,21 @@ def handle_of(text: str) -> str | None:
     return handle if isinstance(handle, str) else None
 
 
-def send(service: lean_service.LeanService, mode: str, texts: list[str], environments: dict[str, str]) -> dict:
-    """The service's response to `texts` in one request, sent as the client sends cases with handles."""
-    handles = [handle_of(text) for text in texts]
-    named = {handle: environments[handle] for handle in handles if handle is not None}
-    cases_text = "[" + ",".join(texts) + "]"
-    if not named:
-        return service.exchange(mode, cases_text, len(texts), timeout=REPLAY_TIMEOUT, texts=texts)[1]
-    decoded = {handle: json.loads(text, parse_int=lean_service._json_integer) for handle, text in named.items()}
-    expanded = [lean_service._Sent(None, text, handle, named.get(handle)).expanded(decoded)
-                for text, handle in zip(texts, handles)]
-    return service.exchange(mode, cases_text, len(texts), timeout=REPLAY_TIMEOUT, texts=texts,
-                            environments=named, expanded=expanded)[1]
+def inline(text: str, environments: dict[str, str]) -> str:
+    """The case text with the environment it names by handle in place of the handle: what the client
+    sends when the service lacks the handle (`_Sent.inline`), which it answers as the handle (VE.Service.Handles)."""
+    handle = handle_of(text)
+    if handle is None:
+        return text
+    case = json.loads(text, parse_int=lean_service._json_integer)
+    del case[lean_service.HANDLE_KEY]
+    case["environment"] = json.loads(environments[handle], parse_int=lean_service._json_integer)
+    return lean_service._dumps(case)
+
+
+def send(service: lean_service.LeanService, mode: str, texts: list[str]) -> dict:
+    """The service's response to the inline case texts `texts` in one request."""
+    return service.exchange(mode, "[" + ",".join(texts) + "]", len(texts), timeout=REPLAY_TIMEOUT, texts=texts)[1]
 
 
 def unplaced(entry: dict) -> dict:
@@ -104,12 +109,16 @@ def unplaced(entry: dict) -> dict:
     return {key: value for key, value in entry.items() if key != "index"}
 
 
-def ask(service: lean_service.LeanService, mode: str, texts: list[str], environments: dict[str, str]) -> list[str]:
+def ask(service: lean_service.LeanService, mode: str, texts: list[str]) -> list[str]:
     """The answer to each case of `texts`: its bound entry but its positions, from one request; when the
     request is refused or fails as a whole, each case is asked alone, and a refusal (the response but its
     nonce) or the class of what was raised is that case's answer."""
     try:
-        response = send(service, mode, texts, environments)
+        response = send(service, mode, texts)
+    except lean_service.ResourceLimit:
+        if len(texts) == 1:  # the client's own line limit: the service never saw the case
+            return [f"{UNREPLAYABLE}: the case does not fit one request line inline"]
+        response = None
     except Exception as exc:  # noqa: BLE001  the class is the answer, compared like any other
         if len(texts) == 1:
             return [f"raised: {type(exc).__name__}"]
@@ -118,29 +127,26 @@ def ask(service: lean_service.LeanService, mode: str, texts: list[str], environm
         return [answer_digest(unplaced(entry)) for entry in response["results"]]
     if len(texts) == 1:
         return [answer_digest({key: value for key, value in response.items() if key != "id"})]
-    return [ask(service, mode, [text], environments)[0] for text in texts]
+    return [ask(service, mode, [text])[0] for text in texts]
 
 
 def batches(cases: dict[str, tuple[str, str]], environments: dict[str, str]) -> list[tuple[str, list[str]]]:
     """The requests a replay sends: per mode, in key order, at most BATCH_CASES cases and about
-    BATCH_BYTES of case and environment text; the same for every build replayed."""
+    BATCH_BYTES of inline case text; the same for every build replayed."""
     by_mode: dict[str, list[str]] = {}
     for key in sorted(cases):
         by_mode.setdefault(cases[key][0], []).append(key)
     found: list[tuple[str, list[str]]] = []
     for mode, ordered in sorted(by_mode.items()):
-        keys, size, named = [], 0, set()
+        keys, size = [], 0
         for key in ordered:
             text = cases[key][1]
-            handle = handle_of(text)
-            extra = len(text) + (len(environments.get(handle, "")) if handle not in named else 0)
+            extra = len(text) + len(environments.get(handle_of(text) or "", ""))
             if keys and (len(keys) >= BATCH_CASES or size + extra > BATCH_BYTES):
                 found.append((mode, keys))
-                keys, size, named = [], 0, set()
-                extra = len(text) + len(environments.get(handle, ""))
+                keys, size = [], 0
             keys.append(key)
             size += extra
-            named.add(handle)
         found.append((mode, keys))
     return found
 
@@ -166,14 +172,14 @@ def replay(recording: Path, executable: Path, jobs: int = 4, *, progress=print,
     lock = threading.Lock()
 
     def work():
-        with lean_service.LeanService(executable, expected_sha256=build,
-                                      startup_timeout=REPLAY_TIMEOUT) as service:
+        with lean_service.LeanService(executable, expected_sha256=build, startup_timeout=REPLAY_TIMEOUT,
+                                      handles=False) as service:
             while True:
                 try:
                     mode, keys = pending.get_nowait()
                 except queue.Empty:
                     return
-                found = ask(service, mode, [cases[key][1] for key in keys], environments)
+                found = ask(service, mode, [inline(cases[key][1], environments) for key in keys])
                 with lock:
                     before = len(answers) // 50000
                     answers.update(zip(keys, found, strict=True))
