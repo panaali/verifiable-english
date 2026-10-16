@@ -245,9 +245,13 @@ def pinned(build: str, after: str | None) -> bool:
 
 
 def unknown_units(index: dict, coverage: select_tests.Coverage, graph: source_graph.Graph,
-                  uncertain: set[str], root: Path = ROOT) -> dict[str, str]:
-    """The service users whose recorded requests do not decide what a Lean change does to them, with why."""
+                  uncertain: set[str], root: Path = ROOT, stale: frozenset[str] = frozenset()) -> dict[str, str]:
+    """The service users whose recorded requests do not decide what a Lean change does to them, with why.
+
+    `stale` are the cases whose answers differ between the recording's build and the base's: a test
+    that reads such an answer may send, on the base, a request the recording does not hold."""
     found = {}
+    keys = index["keys"]
     for unit in sorted(coverage.service_users()):
         entry = index["units"].get(unit)
         status = coverage.status.get(unit, {})
@@ -261,6 +265,8 @@ def unknown_units(index: dict, coverage: select_tests.Coverage, graph: source_gr
             found[unit] = "a request with an explicit timeout"
         elif unit in uncertain:
             found[unit] = "ran code that changed since the recording"
+        elif stale and any(keys[i] in stale for i in entry["keys"]):
+            found[unit] = "an answer it read changed between the recording's build and the base's"
         elif (reason := randomised(unit, graph, root)) is not None:
             found[unit] = reason
     return found
@@ -307,12 +313,15 @@ def select_answers(diff_path: Path, paths: list[str], *, base: str, after: str |
     build = build or hashlib.sha256((ROOT / SERVICE).read_bytes()).hexdigest()
     if diff["head"] != build:
         raise ValueError(f"{diff_path} replayed build {diff['head'][:16]}, but the tests run {build[:16]}")
+    if diff["base"] != index["service"] and diff.get("recording_build") != index["service"]:
+        raise ValueError(f"{diff_path}: the base build {diff['base'][:16]} is not the recording's; the diff needs "
+                         "the recording build's answers (answer_cutoff.py diff --recording-answers)")
     plain = select_tests.Coverage(data, recording / "map.json.gz")
     changes = select_tests.read_changes(sorted(set(paths)), base=base, after=after)
     graph = source_graph.load(ROOT).overlay({change.path: change.old for change in changes})
     uncertain = set() if assume_fresh else select_tests.uncertain_since(
         plain, graph, set(select_tests.units()), base)[0]
-    unknown = unknown_units(index, plain, graph, uncertain)
+    unknown = unknown_units(index, plain, graph, uncertain, stale=frozenset(diff.get("stale", ())))
     client_only = {unit for unit, entry in index["units"].items() if entry["pins"] == ["client"]}
     head_pinned = pinned(build, after) if head_pinned is None else head_pinned
     coverage = CutoffCoverage(data, recording / "map.json.gz", client_only if head_pinned else set())
@@ -355,6 +364,8 @@ def main() -> int:
     diff.add_argument("recording", type=Path)
     diff.add_argument("base", type=Path)
     diff.add_argument("head", type=Path)
+    diff.add_argument("--recording-answers", type=Path,
+                      help="the recording replayed on its own build: needed when the base build is another")
     diff.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "record":
@@ -363,6 +374,9 @@ def main() -> int:
     if data["recording"] != digest_file(args.recording / "requests.json.gz"):
         raise SystemExit(f"the replays are not of {args.recording}")
     data["recording_dir"] = str(args.recording.resolve())
+    if args.recording_answers:
+        own = read_json(args.recording_answers)
+        data.update(recording_build=own["service"], stale=answer_replay.diff(own, read_json(args.base))["changed"])
     write_json(data, args.output)
     print(f"{len(data['changed'])} of {data['cases']} answers changed: {args.output}")
     return 0
