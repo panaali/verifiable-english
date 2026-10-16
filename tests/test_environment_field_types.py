@@ -544,11 +544,13 @@ def test_reports_block_diagnostics_are_leans(monkeypatch):
 def test_definition_body_with_a_non_string_name_is_rejected_by_both(monkeypatch, value):
     """A definition body whose predicate name is not a string raised
     `TypeError` while its dependencies were collected; Python and Lean both
-    reject it now."""
+    reject it now, with Python's elaborator's text (lf-14c review F2: Python's
+    decoder keeps the name and its typing check rejects the body)."""
     monkeypatch.setenv("VE_AUTHORITY", "python")
     data = pm.raw_environment(("definitions@0",))
     data["vocabulary"]["predicates"]["derived"]["defined"]["body"][1] = value
-    assert pair(outcome(lambda: Environment(data))) == ("InvalidInput", "invalid indexed formula")
+    assert pair(outcome(lambda: Environment(data))) == (
+        "InvalidInput", "Definition derived: the body is not a typed formula over the symbols below it")
     if (BIN / "ve_service").exists():
         lean_environment_mode(data)  # fails the test unless Lean rejects too
 

@@ -189,6 +189,27 @@
       "$comment": "Bridge.decodeTerm.",
       "x-tagged": {"const": [{"type": "string"}], "var": [{"$ref": "#/$defs/nat"}]}
     },
+    "generated_core_formula": {
+      "$comment": "Core.Wire.encodeFormula of a core-family Background premise (Core.Layers.background): generated_formula's grammar and the n-ary atom of an n-ary definition's biconditional (three to six terms).",
+      "x-tagged": {
+        "and": [{"$ref": "#/$defs/generated_core_formula"}, {"$ref": "#/$defs/generated_core_formula"}],
+        "atom": [
+          {"type": "string"},
+          {"items": {"$ref": "#/$defs/fol_term"}, "maxItems": 6, "minItems": 3, "type": "array"}
+        ],
+        "binary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+        "bottom": [],
+        "eq": [{"$ref": "#/$defs/fol_term"}, {"$ref": "#/$defs/fol_term"}],
+        "exists": [{"type": "string"}, {"$ref": "#/$defs/generated_core_formula"}],
+        "forall": [{"type": "string"}, {"$ref": "#/$defs/generated_core_formula"}],
+        "implies": [{"$ref": "#/$defs/generated_core_formula"}, {"$ref": "#/$defs/generated_core_formula"}],
+        "not": [{"$ref": "#/$defs/generated_core_formula"}],
+        "or": [{"$ref": "#/$defs/generated_core_formula"}, {"$ref": "#/$defs/generated_core_formula"}],
+        "top": [],
+        "unary": [{"type": "string"}, {"$ref": "#/$defs/fol_term"}]
+      }
+    },
+    "generated_core_formulas": {"items": {"$ref": "#/$defs/generated_core_formula"}, "type": "array"},
     "generated_formula": {
       "$comment": "Route.Wire.encodeFormula of a formula the runner generated (Background, norms premises and conflict targets, English parses): Bridge.decodeFormula's grammar at any depth. The decoder's 64 bounds the inputs, not these: a definition premise wraps a body of depth 64 in two binders and a biconditional (68), an English parse nests one negation per 'it is not the case that', and a norms elaboration nests every rule, carve-out and lower layer.",
       "x-tagged": {
