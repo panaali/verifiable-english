@@ -1,0 +1,415 @@
+{
+ "rust_timeout": "900",
+ "rows": [
+  {
+   "document": "qt0p-companion.ve.md",
+   "sha256": "b3849e831f415e27a2d295448d8de566c0916b7e3bd5cf2bfdcfecca63d557c1",
+   "base_premises": "UNKNOWN",
+   "head_premises": "model",
+   "identical": false,
+   "differences": [
+    {
+     "path": "/answer/premises/budget",
+     "base": "{\"max_domain_size\": 2, \"max_evaluations\": 100000, \"max_models\": 10000, \"max_proof_steps\": 10000}",
+     "head": "null"
+    },
+    {
+     "path": "/answer/premises/model_id",
+     "base": "null",
+     "head": "\"0326265efbdb4fbc4b3a04ef0111fd5ac0d6413af941bef64df1f472eb8cdafc\""
+    },
+    {
+     "path": "/answer/premises/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    }
+   ],
+   "differing_paths": 3
+  },
+  {
+   "document": "constitution-nd-readings.ve.md",
+   "sha256": "8c532db7d0163629719c653c31beacf0ae0a999640217f221e796c900763c37d",
+   "base_premises": "UNKNOWN",
+   "head_premises": "UNKNOWN",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "causal.ve.md",
+   "sha256": "e9dbd3bc211f3e554e3274349b447e9facafb7aa8c482f00a7f2ad66a9ffeb5f",
+   "base_premises": "UNKNOWN",
+   "head_premises": "UNKNOWN",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "document.ve.md",
+   "sha256": "4ec8652552c84fb44c78ec9b6c756bec67d8ed4faed628d8ed9b2efff1a80173",
+   "base_premises": "UNKNOWN",
+   "head_premises": "UNKNOWN",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "news-w6a.ve.md",
+   "sha256": "6a9564230958516c9b362e0e5fac7e5cf2cd5723e83c3af6f1941df8590aebf1",
+   "base_premises": "UNKNOWN",
+   "head_premises": "UNKNOWN",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "a-conflict.ve.md",
+   "sha256": "bb5f30befeffb5a898eccc50a6d012f4e9ebf0cbbd8185f92209c7dc9979275d",
+   "base_premises": "UNKNOWN",
+   "head_premises": "UNKNOWN",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "a-deny.ve.md",
+   "sha256": "66c292665e726cef270be8bc36dee5902fb2eb7c7b61012e5f8a4a8bf035f02f",
+   "base_premises": "UNKNOWN",
+   "head_premises": "UNKNOWN",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "a-rules.ve.md",
+   "sha256": "35acce66b2cf48fdf37e48ebd3fedaefc55d7d5a090ec4be2061a77119883ce5",
+   "base_premises": "UNKNOWN",
+   "head_premises": "UNKNOWN",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "a-unspecified.ve.md",
+   "sha256": "707d01184176ff01d100a2845a18e0dd62f31df081be6b090d37332f646aa018",
+   "base_premises": "UNKNOWN",
+   "head_premises": "UNKNOWN",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "group.ve.md",
+   "sha256": "bdb0667dac2a491a87bb9d46f50f66d77304c4cd3311a1c2bb8d89209480adc8",
+   "base_premises": "model",
+   "head_premises": "model",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "udhr-part07.ve.md",
+   "sha256": "4f4e8c19c66c8232e8e34e03b53897974e5d8679b0adeef78a2fc5f1e2b825dd",
+   "base_premises": "model",
+   "head_premises": "model",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "translation.ve.md",
+   "sha256": "5151b58b970a434bac39a0173f5126ee6b1a0fca09ca6d40d7f6a12e867d0a44",
+   "base_premises": "model",
+   "head_premises": "model",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "c-qt0p-companion.ve.md",
+   "sha256": "b3849e831f415e27a2d295448d8de566c0916b7e3bd5cf2bfdcfecca63d557c1",
+   "base_premises": "UNKNOWN",
+   "head_premises": "model",
+   "identical": false,
+   "differences": [
+    {
+     "path": "/answer/premises/budget",
+     "base": "{\"max_domain_size\": 2, \"max_evaluations\": 100000, \"max_models\": 10000, \"max_proof_steps\": 10000}",
+     "head": "null"
+    },
+    {
+     "path": "/answer/premises/model_id",
+     "base": "null",
+     "head": "\"0326265efbdb4fbc4b3a04ef0111fd5ac0d6413af941bef64df1f472eb8cdafc\""
+    },
+    {
+     "path": "/answer/premises/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    }
+   ],
+   "differing_paths": 3
+  },
+  {
+   "document": "me-M.ve.md",
+   "sha256": "038048d21869f79690f1550ea5d7d2d930b1a3563f35d23e9533d29a66390fe1",
+   "base_premises": "model",
+   "head_premises": "model",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "me-V.ve.md",
+   "sha256": "fe788edfa96fe54dad24752db9081776736ce63410441e236236d2458ef4105c",
+   "base_premises": "UNKNOWN",
+   "head_premises": "model",
+   "identical": false,
+   "differences": [
+    {
+     "path": "/answer/admission/vacuous",
+     "base": "null",
+     "head": "false"
+    },
+    {
+     "path": "/answer/premises/budget",
+     "base": "{\"max_domain_size\": 2, \"max_evaluations\": 100000, \"max_models\": 10000, \"max_proof_steps\": 10000}",
+     "head": "null"
+    },
+    {
+     "path": "/answer/premises/model_id",
+     "base": "null",
+     "head": "\"2f1e8332ac6969b5807f8e0e5243524d9c799144809422ca2c54ec9718ed68de\""
+    },
+    {
+     "path": "/answer/premises/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    }
+   ],
+   "differing_paths": 4
+  },
+  {
+   "document": "me-V-appendix.ve.md",
+   "sha256": "6b4576e495b53cc24d4951b96dc070c890c0cf99eba1f4ae065f8bbf5b7589b6",
+   "base_premises": "UNKNOWN",
+   "head_premises": "model",
+   "identical": false,
+   "differences": [
+    {
+     "path": "/answer/premises/budget",
+     "base": "{\"max_domain_size\": 2, \"max_evaluations\": 100000, \"max_models\": 10000, \"max_proof_steps\": 10000}",
+     "head": "null"
+    },
+    {
+     "path": "/answer/premises/model_id",
+     "base": "null",
+     "head": "\"f7da745319a19274396eb3631b318c062d9e6f3483bca5270786674d9ad9a76c\""
+    },
+    {
+     "path": "/answer/premises/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    }
+   ],
+   "differing_paths": 3
+  },
+  {
+   "document": "me-DL.ve.md",
+   "sha256": "69e18ea769e263acca05d1a4c64a9095db9353c736cf6367e8fb38bbd4d79ee9",
+   "base_premises": "UNKNOWN",
+   "head_premises": "model",
+   "identical": false,
+   "differences": [
+    {
+     "path": "/answer/admission/vacuous",
+     "base": "null",
+     "head": "false"
+    },
+    {
+     "path": "/answer/premises/budget",
+     "base": "{\"max_domain_size\": 2, \"max_evaluations\": 100000, \"max_models\": 10000, \"max_proof_steps\": 10000}",
+     "head": "null"
+    },
+    {
+     "path": "/answer/premises/model_id",
+     "base": "null",
+     "head": "\"4521779bdc6060a5bdcc9f1efe1e42615cca7fc38954006f9d874b6c87a4d73a\""
+    },
+    {
+     "path": "/answer/premises/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    }
+   ],
+   "differing_paths": 4
+  },
+  {
+   "document": "me-H.ve.md",
+   "sha256": "20c8f5d732c88b42d767d9707e7cb2ebced8d7ed23e74baae7bcb4a8b275a1e3",
+   "base_premises": "UNKNOWN",
+   "head_premises": "model",
+   "identical": false,
+   "differences": [
+    {
+     "path": "/answer/admission/vacuous",
+     "base": "null",
+     "head": "false"
+    },
+    {
+     "path": "/answer/premises/budget",
+     "base": "{\"max_domain_size\": 2, \"max_evaluations\": 100000, \"max_models\": 10000, \"max_proof_steps\": 10000}",
+     "head": "null"
+    },
+    {
+     "path": "/answer/premises/model_id",
+     "base": "null",
+     "head": "\"b1a5446beb6174b451aef75f85c8d101add9b117c6c09032e1ed0692da7f8633\""
+    },
+    {
+     "path": "/answer/premises/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    }
+   ],
+   "differing_paths": 4
+  },
+  {
+   "document": "udhr-part01-plus3.ve.md",
+   "sha256": "74cfca5f09077758711e37e6f412bd163622c0fc97587f5e77f2492d4b08e39a",
+   "base_premises": "model",
+   "head_premises": "model",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "udhr-part01-plus6.ve.md",
+   "sha256": "1386d6ab635ca0743648cb604676f757df8bc692fd8d5f017bf40c595ccbe115",
+   "base_premises": "model",
+   "head_premises": "model",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  },
+  {
+   "document": "c-qt0p-repaired.ve.md",
+   "sha256": "07233af2403e5d1e75b72cd616e66867e6596235e6225eccce3ddbf2e8e25bd0",
+   "base_premises": "UNKNOWN",
+   "head_premises": "model",
+   "identical": false,
+   "differences": [
+    {
+     "path": "/answer/admission/vacuous",
+     "base": "null",
+     "head": "false"
+    },
+    {
+     "path": "/answer/premises/budget",
+     "base": "{\"max_domain_size\": 2, \"max_evaluations\": 100000, \"max_models\": 10000, \"max_steps\": 10000}",
+     "head": "null"
+    },
+    {
+     "path": "/answer/premises/candidates/0/choice",
+     "base": "null",
+     "head": "[[\"force-u0036-s05\", 0], [\"force-u0156-s03\", 0], [\"force-u0263-s04-p2\", 0]]"
+    },
+    {
+     "path": "/answer/premises/candidates/0/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    },
+    {
+     "path": "/answer/premises/candidates/1/choice",
+     "base": "null",
+     "head": "[[\"force-u0036-s05\", 1], [\"force-u0156-s03\", 0], [\"force-u0263-s04-p2\", 0]]"
+    },
+    {
+     "path": "/answer/premises/candidates/1/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    },
+    {
+     "path": "/answer/premises/candidates/2/choice",
+     "base": "null",
+     "head": "[[\"force-u0036-s05\", 0], [\"force-u0156-s03\", 0], [\"force-u0263-s04-p2\", 0]]"
+    },
+    {
+     "path": "/answer/premises/candidates/2/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    },
+    {
+     "path": "/answer/premises/candidates/3/choice",
+     "base": "null",
+     "head": "[[\"force-u0036-s05\", 0], [\"force-u0156-s03\", 1], [\"force-u0263-s04-p2\", 0]]"
+    },
+    {
+     "path": "/answer/premises/candidates/3/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    },
+    {
+     "path": "/answer/premises/candidates/4/choice",
+     "base": "null",
+     "head": "[[\"force-u0036-s05\", 0], [\"force-u0156-s03\", 0], [\"force-u0263-s04-p2\", 0]]"
+    },
+    {
+     "path": "/answer/premises/candidates/4/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    },
+    {
+     "path": "/answer/premises/candidates/5/choice",
+     "base": "null",
+     "head": "[[\"force-u0036-s05\", 0], [\"force-u0156-s03\", 0], [\"force-u0263-s04-p2\", 1]]"
+    },
+    {
+     "path": "/answer/premises/candidates/5/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    },
+    {
+     "path": "/answer/premises/choice",
+     "base": "null",
+     "head": "[[\"force-u0036-s05\", 0], [\"force-u0156-s03\", 0], [\"force-u0263-s04-p2\", 0]]"
+    },
+    {
+     "path": "/answer/premises/evidence",
+     "base": "null",
+     "head": "\"model\""
+    },
+    {
+     "path": "/answer/premises/gaps",
+     "base": "null",
+     "head": "[]"
+    },
+    {
+     "path": "/answer/premises/model",
+     "base": "null",
+     "head": "{\"complete\": true, \"constants\": {\"anthropic\": \"e0\", \"claude\": \"e0\", \"operators\": \"e1\", \"users\": \"e2\", \"ve__here\": \"e0\"}, \"domains\": {\"claude_instance\": [], \"entity\": [\"e0\"], \"hard_constraint\": [], \"operator\": [], \"operator_input\": [], \"principal_type\": [\"e0\", \"e1\", \"e2\"], \"situation\": [], \"user\": []"
+    },
+    {
+     "path": "/answer/premises/status",
+     "base": "\"UNKNOWN\"",
+     "head": "\"model\""
+    },
+    {
+     "path": "/answer/readings/english",
+     "base": "[\"Under every reading of the 3 open sentences, no two rules on the same act contradict each other.\", \"This does not depend on how sentence 132 is read.\", \"This does not depend on how sentence 590 is read.\", \"This does not depend on how sentence 1001 is read.\"]",
+     "head": "[\"Under every reading of the 3 open sentences, no two rules on the same act contradict each other.\", \"This does not depend on how sentence 132 is read.\", \"This does not depend on how sentence 590 is read.\", \"This does not depend on how sentence 1001 is read.\", \"Read sentence 132 as *Every instance o"
+    }
+   ],
+   "differing_paths": 20
+  },
+  {
+   "document": "c-baseline.ve.md",
+   "sha256": "eebcfd39064233ebfff972767973795bc8611f0d3793ba65b0a0dd84795243ba",
+   "base_premises": "model",
+   "head_premises": "model",
+   "identical": true,
+   "differences": [],
+   "differing_paths": 0
+  }
+ ]
+}

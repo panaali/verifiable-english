@@ -30,6 +30,7 @@ module ResponseShape.Encoders.Rights
 module ResponseShape.Encoders.Risk
 module ResponseShape.Encoders.RiskEval
 module ResponseShape.Encoders.Route
+module ResponseShape.Encoders.SearchBudget
 module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
 module ResponseShape.Encoders.Standalone
@@ -69,6 +70,7 @@ module ResponseShape.Schemas.Rights
 module ResponseShape.Schemas.Risk
 module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
+module ResponseShape.Schemas.SearchBudget
 module ResponseShape.Schemas.SoftNorms
 module ResponseShape.Schemas.SpeechActs
 module ResponseShape.Schemas.Words
@@ -431,6 +433,10 @@ module VE.Route.Steps
 module VE.Route.Typed
 module VE.Route.Wire
 module VE.Route.WireSound
+module VE.SearchBudget.Budget
+module VE.SearchBudget.Demand
+module VE.SearchBudget.Examples
+module VE.SearchBudget.Run
 module VE.Semantics
 module VE.Senses.Assignment
 module VE.Senses.Decode

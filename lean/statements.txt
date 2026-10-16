@@ -35535,6 +35535,108 @@ theorem VE.Route.verifyOrder_sound
             n ∈ ns → ∀ (m : String), m ∈ VE.Route.deps ns n → List.idxOf m order < List.idxOf n.name order
   -- uses VE.Route.DepNode.name@VE.Route.Route VE.Route.DepNode@VE.Route.Route VE.Route.deps@VE.Route.Route VE.Route.nodeNames@VE.Route.Route VE.Route.verifyOrder@VE.Route.Route
   -- expr 2970290661
+theorem VE.SearchBudget.chain_denote
+  ∀ {S : VE.Structure} {s : String} (a : VE.Formula) (σ : VE.Valuation S),
+    VE.Formula.denote S σ a →
+      ∃ ρ,
+        ρ.length = (VE.SearchBudget.chain s a).fst ∧
+          (∀ (v : S.Carrier), v ∈ ρ → S.domain s v) ∧ VE.Formula.denote S (ρ ++ σ) (VE.SearchBudget.chain s a).snd
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.chain@VE.SearchBudget.Demand VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 581339005
+theorem VE.SearchBudget.conjuncts_denote
+  ∀ {S : VE.Structure} {ρ : VE.Valuation S} {a : VE.Formula},
+    VE.Formula.denote S ρ a → ∀ (c : VE.Formula), c ∈ VE.SearchBudget.conjuncts a → VE.Formula.denote S ρ c
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.conjuncts@VE.SearchBudget.Demand VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3852155322
+theorem VE.SearchBudget.demand_sound
+  ∀ {E : VE.Environment} {S : VE.Structure},
+    S.Admissible E →
+      ∀ {cs : List (String × String)},
+        (∀ (c : String × String), c ∈ cs → E.constants c.fst = Option.some c.snd) →
+          ∀ {premises : List VE.Formula},
+            (∀ (a : VE.Formula), a ∈ premises → VE.Formula.denote S [] a) →
+              ∀ (s : String),
+                ∃ vs,
+                  vs.length = VE.SearchBudget.demand cs premises s ∧ vs.Nodup ∧ ∀ (v : S.Carrier), v ∈ vs → S.domain s v
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.demand@VE.SearchBudget.Demand VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2910154187
+theorem VE.SearchBudget.distinctTerms_spec
+  ∀ (fs : List VE.Formula) (ts : List VE.Term),
+    List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) (VE.SearchBudget.distinctTerms fs ts) ∧
+      ∀ (x : VE.Term), x ∈ VE.SearchBudget.distinctTerms fs ts → x ∈ ts
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.distinctTerms@VE.SearchBudget.Demand VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 1157841702
+theorem VE.SearchBudget.distinct_values
+  ∀ {S : VE.Structure} {ρ : VE.Valuation S} {fs : List VE.Formula} {s : String},
+    (∀ (c : VE.Formula), c ∈ fs → VE.Formula.denote S ρ c) →
+      ∀ (ts : List VE.Term),
+        List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) ts →
+          (∀ (t : VE.Term), t ∈ ts → ∃ v, VE.Term.denote S ρ t = Option.some v ∧ S.domain s v) →
+            ∃ vs,
+              vs.length = ts.length ∧
+                vs.Nodup ∧
+                  (∀ (v : S.Carrier), v ∈ vs → S.domain s v) ∧
+                    ∀ (v : S.Carrier), v ∈ vs → ∃ t, t ∈ ts ∧ VE.Term.denote S ρ t = Option.some v
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 316152903
+theorem VE.SearchBudget.facts_denote
+  ∀ {S : VE.Structure} {ρ : VE.Valuation S} {premises : List VE.Formula},
+    (∀ (a : VE.Formula), a ∈ premises → VE.Formula.denote S ρ a) →
+      ∀ (c : VE.Formula), c ∈ VE.SearchBudget.facts premises → VE.Formula.denote S ρ c
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.facts@VE.SearchBudget.Demand VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 4122682982
+theorem VE.SearchBudget.foldl_keep
+  ∀ {fs : List VE.Formula} (ts kept : List VE.Term),
+    List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) kept →
+      List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true)
+          (List.foldl (VE.SearchBudget.keep fs) kept ts) ∧
+        ∀ (x : VE.Term), x ∈ List.foldl (VE.SearchBudget.keep fs) kept ts → x ∈ kept ∨ x ∈ ts
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.keep@VE.SearchBudget.Demand VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 795584863
+theorem VE.SearchBudget.foldl_max_of
+  ∀ {P : Nat → Prop} (ns : List Nat) (n : Nat), P n → (∀ (m : Nat), m ∈ ns → P m) → P (List.foldl Max.max n ns)
+  -- uses
+  -- expr 2825706736
+theorem VE.SearchBudget.keep_pairwise
+  ∀ {fs : List VE.Formula} {kept : List VE.Term} (t : VE.Term),
+    List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) kept →
+      List.Pairwise (fun a b => VE.SearchBudget.statesDistinct fs a b = Bool.true) (VE.SearchBudget.keep fs kept t)
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.keep@VE.SearchBudget.Demand VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 3040720910
+theorem VE.SearchBudget.keep_subset
+  ∀ {fs : List VE.Formula} {kept : List VE.Term} {t : VE.Term} (x : VE.Term),
+    x ∈ VE.SearchBudget.keep fs kept t → x ∈ kept ∨ x = t
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.keep@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 3649230421
+theorem VE.SearchBudget.sortBounds_nodup
+  ∀ {b : VE.SearchBudget.Budget} {cs : List (String × String)} {premises : List VE.Formula} {sorts : List String},
+    sorts.Nodup → (List.map Prod.fst (VE.SearchBudget.sortBounds b cs premises sorts)).Nodup
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.Budget@VE.SearchBudget.Budget VE.SearchBudget.sortBounds@VE.SearchBudget.Budget
+  -- expr 2414054383
+theorem VE.SearchBudget.sortBounds_sound
+  ∀ {E : VE.Environment} {S : VE.Structure},
+    S.Admissible E →
+      ∀ {cs : List (String × String)},
+        (∀ (c : String × String), c ∈ cs → E.constants c.fst = Option.some c.snd) →
+          ∀ {premises : List VE.Formula},
+            (∀ (a : VE.Formula), a ∈ premises → VE.Formula.denote S [] a) →
+              ∀ {b : VE.SearchBudget.Budget} {sorts : List String} {s : String} {least most : Nat},
+                (s, least, most) ∈ VE.SearchBudget.sortBounds b cs premises sorts →
+                  ∃ vs, vs.length = least ∧ vs.Nodup ∧ ∀ (v : S.Carrier), v ∈ vs → S.domain s v
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SearchBudget.Budget@VE.SearchBudget.Budget VE.SearchBudget.sortBounds@VE.SearchBudget.Budget VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2737329321
+theorem VE.SearchBudget.sortBounds_spec
+  ∀ {b : VE.SearchBudget.Budget} {cs : List (String × String)} {premises : List VE.Formula} {sorts : List String}
+    {s : String} {least most : Nat},
+    (s, least, most) ∈ VE.SearchBudget.sortBounds b cs premises sorts →
+      s ∈ sorts ∧
+        least = VE.SearchBudget.demand cs premises s ∧ most = least ∧ b.domainSize < most ∧ most ≤ VE.SearchBudget.sortCap
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.Budget.domainSize@VE.SearchBudget.Budget VE.SearchBudget.Budget@VE.SearchBudget.Budget VE.SearchBudget.demand@VE.SearchBudget.Demand VE.SearchBudget.sortBounds@VE.SearchBudget.Budget VE.SearchBudget.sortCap@VE.SearchBudget.Budget
+  -- expr 335065142
+theorem VE.SearchBudget.statesDistinct_comm
+  ∀ (fs : List VE.Formula) (t u : VE.Term), VE.SearchBudget.statesDistinct fs t u = VE.SearchBudget.statesDistinct fs u t
+  -- uses VE.Formula@VE.Syntax VE.SearchBudget.statesDistinct@VE.SearchBudget.Demand VE.Term@VE.Syntax
+  -- expr 1743284098
 theorem VE.Senses.badDefault_none
   ∀ (D : VE.Senses.Dictionary) (A : VE.Senses.Assignment),
     VE.Senses.badDefault D A = Option.none ↔
@@ -36994,6 +37096,10 @@ theorem VE.Service.runMode_route
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.route j = VE.Route.Run.runCaseReported j
   -- uses VE.Route.Run.runCaseReported@VE.Route.Run VE.Service.Mode.route@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 4097467530
+theorem VE.Service.runMode_searchBudget
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.searchBudget j = VE.SearchBudget.Run.runCaseReported j
+  -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 2782331337
 theorem VE.Service.runMode_softNorms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.softNorms j = VE.SoftNorms.Run.runCaseReported j
   -- uses VE.Service.Mode.softNorms@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SoftNorms.Run.runCaseReported@VE.SoftNorms.Run

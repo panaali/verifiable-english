@@ -819,6 +819,13 @@
         "ResponseShape.Schemas.Route.error"
       ]
     },
+    "ResponseShape/Schemas/SearchBudget.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.SearchBudget.bound",
+        "ResponseShape.Schemas.SearchBudget.file",
+        "ResponseShape.Schemas.SearchBudget.row"
+      ]
+    },
     "ResponseShape/Schemas/SoftNorms.lean": {
       "G[V]": [
         "ResponseShape.Schemas.SoftNorms.admission",
@@ -933,6 +940,7 @@
         "ResponseShape.Skeletons.riskEval",
         "ResponseShape.Skeletons.route",
         "ResponseShape.Skeletons.row",
+        "ResponseShape.Skeletons.searchBudget",
         "ResponseShape.Skeletons.skelTerm",
         "ResponseShape.Skeletons.softNorms",
         "ResponseShape.Skeletons.speechActs"
@@ -8454,6 +8462,53 @@
         "VE.Route.WireSound.closureRunner",
         "VE.Route.WireSound.folRunner",
         "VE.Route.WireSound.orderRunner"
+      ]
+    },
+    "VE/SearchBudget/Budget.lean": {
+      "C": [
+        "VE.SearchBudget.sortBound",
+        "VE.SearchBudget.sortBounds"
+      ],
+      "G[R]": [
+        "VE.SearchBudget.Budget",
+        "VE.SearchBudget.premiseBudget",
+        "VE.SearchBudget.sortCap"
+      ]
+    },
+    "VE/SearchBudget/Demand.lean": {
+      "C": [
+        "VE.SearchBudget.chain",
+        "VE.SearchBudget.chainDemand",
+        "VE.SearchBudget.conjuncts",
+        "VE.SearchBudget.constantTerms",
+        "VE.SearchBudget.demand",
+        "VE.SearchBudget.distinctTerms",
+        "VE.SearchBudget.facts",
+        "VE.SearchBudget.keep",
+        "VE.SearchBudget.statesDistinct"
+      ]
+    },
+    "VE/SearchBudget/Examples.lean": {
+      "T": [
+        "VE.SearchBudget.Examples.allDistinct",
+        "VE.SearchBudget.Examples.ne",
+        "VE.SearchBudget.Examples.nine",
+        "VE.SearchBudget.Examples.threeChain",
+        "VE.SearchBudget.Examples.threeConstants",
+        "VE.SearchBudget.Examples.types"
+      ]
+    },
+    "VE/SearchBudget/Run.lean": {
+      "D[R]": [
+        "VE.SearchBudget.Run.boundJson",
+        "VE.SearchBudget.Run.decodeConstants",
+        "VE.SearchBudget.Run.decodeFacts",
+        "VE.SearchBudget.Run.jsonConjuncts",
+        "VE.SearchBudget.Run.maxConjunctNodes"
+      ],
+      "G[R]": [
+        "VE.SearchBudget.Run.runCase",
+        "VE.SearchBudget.Run.runCaseReported"
       ]
     },
     "VE/Semantics.lean": {
