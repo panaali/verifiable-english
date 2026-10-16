@@ -1,0 +1,51 @@
+{
+  "base": "8cec935af5170b58494e649657ce4d58109483e0",
+  "head": "6f739fb07aa5e54879b25d9be5d9e79ed5e9f353",
+  "command": "git log --no-merges $(git merge-base HEAD main)..HEAD",
+  "commits": [
+    {
+      "hash": "6f739fb07aa5e54879b25d9be5d9e79ed5e9f353",
+      "subject": "b16e: keep only the final ve_service pin; record the trust growth (needs a DRI signature)"
+    },
+    {
+      "hash": "33877325d92593b89936711b7183af1eac034ec7",
+      "subject": "b16e: seeded faults, 15 of 15 caught (6 Lean, 9 Python)"
+    },
+    {
+      "hash": "18f6cd8ea5c913fbc3e3fc861faa0f29be46eab7",
+      "subject": "b16e: nine-corpus A/B with no unlisted difference, relay gate fixture"
+    },
+    {
+      "hash": "9122d41f05cc165febf2d66823750f8bccd6e0a4",
+      "subject": "b16e: own readings@1 documents and remove the rights path's crash class"
+    },
+    {
+      "hash": "79630dc168f6d316e270ec9cf96d01dfa79aa2c4",
+      "subject": "b16e: compare every measured rights case with the prior path (review F2)"
+    },
+    {
+      "hash": "64b6d4981dfcffcaf6464f5a32fd3d6f12f6a658",
+      "subject": "b16e: decide rights@0 documents in Lean's document mode"
+    },
+    {
+      "hash": "98ddb1c0c0d52a178e9c17e442b1c026c611be22",
+      "subject": "b16e: save release gate and same-commit retry evidence"
+    },
+    {
+      "hash": "9801fe700986b3853f1cbbabcffc5fede97d7fc8",
+      "subject": "b16e: isolate gate interruption test from shared Lean artifacts"
+    },
+    {
+      "hash": "ac1d96549cc4c3657df82c7339ff40621eccb419",
+      "subject": "b16e: refuse unavailable prior answers in residue evidence"
+    },
+    {
+      "hash": "d1db74ee5551e296fa68961a08efe0f575e322d5",
+      "subject": "b16e: record incomplete rights document baseline"
+    },
+    {
+      "hash": "b3dfb9ff7636cf6d72a1cd57558cc9fffa00777b",
+      "subject": "b16e: pin rights residue measurement to 16c ledger"
+    }
+  ]
+}
