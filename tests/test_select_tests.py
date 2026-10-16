@@ -38,6 +38,7 @@ import select_tests_seeds  # noqa: E402
 def private_cache(tmp_path_factory, monkeypatch):
     monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path_factory.getbasetemp() / "cache"))
     monkeypatch.setenv("VE_TESTMAP_CACHE", str(tmp_path_factory.getbasetemp() / "maps"))
+    monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path_factory.getbasetemp() / "lean-builds"))
     monkeypatch.delenv("VE_TESTMAP", raising=False)
     # The synthetic library lives in `pkg/`; outside the known areas any file would change everything.
     monkeypatch.setattr(select_tests, "KNOWN_AREAS", select_tests.KNOWN_AREAS | {"pkg"})
@@ -1534,6 +1535,22 @@ def test_without_both_build_records_every_runner_is_selected(head, tmp_path, mon
     assert set(LEAN_UNITS.values()) <= mapped_reasons(plan)
 
 
+def test_no_cutoff_when_the_trees_cannot_show_the_change(head, tmp_path, monkeypatch):
+    """A Lean change named without an edit (`--paths`), or one the working tree does not hold (the
+    plan's base is its head), says nothing a build record could confirm: every runner stays."""
+    monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path / "builds"))
+    write_build(test_map.lean_tree("HEAD"), every_executable())
+    path = "lean/VE/Json.lean"
+    edges = {test: {} for test in select_tests.units()}
+    edges[LEAN_UNITS["service"]] = {"x": ["lean/.lake/build/bin/ve_service"]}
+    data = make_map(edges, commit=head)
+    for change in (select_tests.Change(path, real(path), real(path) + "\n-- c\n"),
+                   select_tests.Change(path, real(path), real(path), known=False)):
+        plan = plan_for([change], data)
+        assert plan["lean_cutoff"]["rebuilt"] is None, plan["lean_cutoff"]
+        assert LEAN_UNITS["service"] in mapped_reasons(plan)
+
+
 def test_a_build_record_needs_a_current_build_of_one_tree(tmp_path, monkeypatch):
     monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path / "builds"))
     trees = iter([BASE_TREE, BASE_TREE, BASE_TREE, BASE_TREE, HEAD_TREE])
@@ -1904,6 +1921,7 @@ SAFETY_CASES = (
     ("an authority change selects only entry readers", test_an_authority_change_selects_the_registrations_of_its_entries),
     ("the cutoff ignores the digests", test_a_changed_binary_selects_all_its_runners),
     ("a missing build record counts as identical", test_without_both_build_records_every_runner_is_selected),
+    ("equal trees are an identical build", test_no_cutoff_when_the_trees_cannot_show_the_change),
 )
 
 
@@ -2052,8 +2070,13 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
         arguments = (tmp_path,)
     elif name == "the cutoff ignores the digests":
         real_cutoff = select_tests.lean_cutoff
-        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after: {
-            **real_cutoff(base, after), "state": "applied", "rebuilt": []})
+        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after, known=True: {
+            **real_cutoff(base, after, known), "state": "applied", "rebuilt": []})
+        arguments = (head_commit(), tmp_path, monkeypatch)
+    elif name == "equal trees are an identical build":
+        real_tree = test_map.lean_tree
+        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after, known=True: {
+            "state": "applied", "rebuilt": [], "same": [], "base_tree": real_tree(base), "head_tree": real_tree(after)})
         arguments = (head_commit(), tmp_path, monkeypatch)
     elif name == "a missing build record counts as identical":
         real_load = test_map.load_build
