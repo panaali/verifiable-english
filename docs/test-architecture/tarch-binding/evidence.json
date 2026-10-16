@@ -500,5 +500,40 @@
   },
   "seeded_faults_run_minutes": 42.0,
   "census_write_or_check_seconds": "2-3 (VM)"
+ },
+ "sync_d7ea7228b": {
+  "comment": "pre-review round 2: merged main d7ea7228b (rd-9 changed the norm-defaults, readings-route and soft-norms shapes); --answers re-asked the recorded cases on the merged build, --write regenerated the census; probes kept",
+  "census_totals": {
+   "answers": 536,
+   "hand_binders": 51,
+   "leaves:bound": 243,
+   "leaves:closed domain": 233,
+   "leaves:none": 1182,
+   "modes": 36,
+   "probes": 10204,
+   "today:hand": 202,
+   "today:later Lean request": 59,
+   "today:not probed": 784,
+   "today:shape": 476,
+   "today:unbound": 137
+  },
+  "mutation_test": {
+   "answers": 536,
+   "mutants": 14403,
+   "predicted_refuse": 4427,
+   "predicted_accept": 9243,
+   "either": 733,
+   "decided_and_matching": 13670,
+   "refused_by_the_checker": 4949
+  },
+  "dropped_answer": "one readings-route case (reading set rs_1, choice [[rs_1, 1]]) that main's build now answers with an error",
+  "selected_tests_mac": {"commit": "bd6cea639", "units": 134, "exit": 0, "failed": 0, "wall_seconds": 2157},
+  "relay_mutation_gate": {
+   "evidence": "docs/test-architecture/tarch-binding/relay-gate-main-d7ea7228b.txt",
+   "routes": 43,
+   "mutants": 118538,
+   "failures": 25,
+   "identical_on_main": "d7ea7228b"
+  }
  }
 }
