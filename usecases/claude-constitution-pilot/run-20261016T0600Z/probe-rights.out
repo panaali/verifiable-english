@@ -1,0 +1,30 @@
+{
+ "unit": "u0156.s03",
+ "rights_block": {
+  "holders": [
+   "user"
+  ],
+  "bearers": [
+   "claude_instance"
+  ],
+  "protected": [],
+  "alters": {}
+ },
+ "candidates": {
+  "strict": {
+   "base_predicates_in_its_situation": []
+  },
+  "default": {
+   "base_predicates_in_its_situation": [
+    "soft__excepted__no_system_prompt_deception"
+   ]
+  }
+ },
+ "situation_of_candidate_x_candidate_checked": {
+  "situation built for strict, checked on strict": "accepted (model af35e7a957f3…)",
+  "situation built for strict, checked on default": "crash (KeyError, not a refusal): 'soft__excepted__no_system_prompt_deception'",
+  "situation built for default, checked on strict": "rejected: InvalidModel: fields do not match: expected ['compliance_against_guidelines', 'compliance_unethical', 'compliance_unsafe', 'explicit_instruction_against_exploits', 'genuine_ambiguity', 'human', 'operator_prompt_addresses_case', 'seemingly_compelling_argument_to_cross_line'], got ['compliance_against_guidelines', 'compliance_unethical', 'compliance_unsafe', 'explicit_instruction_against_exploits', 'genuine_ambiguity', 'human', 'operator_prompt_addresses_case', 'seemingly_compelling_argument_to_cross_line', 'soft__excepted__no_system_prompt_deception']",
+  "situation built for default, checked on default": "accepted (model 03f19ea7d56f…)"
+ },
+ "conclusion": "A situation is accepted only for the candidate it was built for; the strict and the defeasible candidate never share one, so VE cannot check that they differ. Force readings therefore cannot be rights-reading candidates that carry checked content."
+}
