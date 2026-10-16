@@ -1319,6 +1319,10 @@ def main() -> int:
     parser.add_argument("--no-record", action="store_true",
                         help="with --run: one plain pytest process, nothing recorded")
     parser.add_argument("--jobs", type=int, default=8, help="parallel test files for --run")
+    # tarch-cutoff hook (opt-in, default off; feedback runs only, never the gate): tools/answer_cutoff.py.
+    parser.add_argument("--cutoff", metavar="RULE",
+                        help="narrow the ve_service users a Lean change selects: 'modes' or 'answers=DIFF' "
+                             "(tools/answer_cutoff.py; an R1 experiment, off by default)")
     parser.add_argument("--maxfail", type=int, default=None, metavar="N",
                         help=f"with --run: stop after N failed tests outside the quarantine (default {MAXFAIL}; "
                              "0 runs everything). The test files that failed last time and the changed ones run "
@@ -1361,8 +1365,13 @@ def main() -> int:
     else:
         base, after = "HEAD", None
     coverage = None if args.static else (args.map or "auto")
-    plan = select(paths, full=args.full, base=base, after=after, coverage=coverage,
-                  assume_fresh=args.assume_fresh)
+    if args.cutoff:  # tarch-cutoff hook (see --cutoff)
+        import answer_cutoff
+        plan = answer_cutoff.select(args.cutoff, paths, full=args.full, base=base, after=after,
+                                    coverage=coverage, assume_fresh=args.assume_fresh)
+    else:
+        plan = select(paths, full=args.full, base=base, after=after, coverage=coverage,
+                      assume_fresh=args.assume_fresh)
     if args.tier == "light":
         plan = light_tier(plan, jobs=args.jobs)
     if args.json:
