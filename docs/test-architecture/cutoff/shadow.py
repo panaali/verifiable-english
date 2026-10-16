@@ -153,7 +153,7 @@ def check(data: dict) -> None:
     for row, change in zip(rows, changes, strict=True):
         assert (row["base"], row["head"]) == (change["base"], change["head"])
         assert row["full_run"] and " in " in row["full_run"], row["label"]
-        assert set(row["modes"]) <= set(row["today"]), row["label"]
+        assert set(row["modes"]) <= set(row["today"]) and set(row["answers"]) <= set(row["today"]), row["label"]
         for name in ("today", "modes", "answers"):
             assert row[f"{name}_count"] == len(row[name])
             assert row[f"{name}_misses"] == sorted(

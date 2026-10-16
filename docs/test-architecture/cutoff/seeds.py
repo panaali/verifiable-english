@@ -222,6 +222,7 @@ def main() -> int:
     again.add_argument("--evidence", type=Path, default=EVIDENCE)
     again.add_argument("--recording", type=Path, required=True)
     again.add_argument("--diffs", type=Path, nargs="+", required=True, help="directories of the seeds' diffs")
+    again.add_argument("--only", nargs="*")
     again2 = sub.add_parser("stale", help="add to each answers selection the units that read a stale case")
     again2.add_argument("--evidence", type=Path, default=EVIDENCE)
     again2.add_argument("--recording", type=Path, required=True)
@@ -271,7 +272,9 @@ def main() -> int:
         with gzip.open(args.recording / "map.json.gz", "rt") as handle:
             seconds = {unit: status["seconds"] for unit, status in json.load(handle)["status"].items()}
         for row in data["seeds"]:
-            if row["status"] in ("caught", "not caught") and "verified" not in row:
+            # A seed that changed no recorded answer cannot be seen through the service: nothing to verify.
+            if (row["status"] == "caught" or row["status"] == "not caught" and row["changed_cases"]) \
+                    and "verified" not in row and (not args.only or row["id"] in args.only):
                 diff = next(json.loads(path.read_text()) for directory in args.diffs
                             if (path := directory / f"{row['id']}-diff.json").exists())
                 tests = sorted(set(row.get("tried", ())) | set(candidates(
