@@ -1,0 +1,33 @@
+{
+ "failures": [],
+ "findings": [],
+ "inputs": {
+  "tests/data/relay-gate-cases.jsonl": "6536a95009711e7a8c5b246adde6141cb113952b7e47dab3bf108c643682aead",
+  "tools/relay-gate-allow.json": "d5853cc1296b2790f3e7f186788e30b7ae8c5502613bba2db060ee7a37eb6d9c"
+ },
+ "routes": {
+  "service:route": {
+   "accepted": 26,
+   "allowed": 26,
+   "allowed:B0": 6,
+   "allowed:B5": 4,
+   "allowed:F4": 16,
+   "fixtures": 34,
+   "mutants": 5503,
+   "ok_fixtures": 17,
+   "refused": 5477,
+   "seconds": 86.6
+  }
+ },
+ "totals": {
+  "accepted": 26,
+  "allowed": 26,
+  "allowed:B0": 6,
+  "allowed:B5": 4,
+  "allowed:F4": 16,
+  "fixtures": 34,
+  "mutants": 5503,
+  "ok_fixtures": 17,
+  "refused": 5477
+ }
+}

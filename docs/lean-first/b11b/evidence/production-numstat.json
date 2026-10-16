@@ -1,0 +1,18 @@
+{
+  "ve/speech_acts.py": {
+    "added": 8,
+    "deleted": 921
+  },
+  "ve/speech_document.py": {
+    "added": 168,
+    "deleted": 447
+  },
+  "lean/VE/SpeechActs/Source/Run.lean": {
+    "added": 56,
+    "deleted": 12
+  },
+  "lean/VE/SpeechActs/Source/Admission/Run.lean": {
+    "added": 3,
+    "deleted": 1
+  }
+}
