@@ -88,6 +88,7 @@ def sent_pairs(sent):
 # -- Lean: one soft source, its layers computed once
 
 
+@pytest.mark.live_service  # its CPU deadline is enforced on the process (tests/answer_store.py INVENTORY row 8)
 def test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline(service, monkeypatch):
     """Each kind on 64 regulated predicates, through the production relay on a fresh service: the old checks
     spent about 1.5 s of CPU per case on a 62-predicate UDHR source; with the layers computed once a case needs a
