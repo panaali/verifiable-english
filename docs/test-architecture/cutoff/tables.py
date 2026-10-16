@@ -117,7 +117,15 @@ def mutants_table(timing: dict[str, float]) -> str:
     return "\n".join(lines)
 
 
-TABLES = {"seeds": seeds_table, "shadow": shadow_table, "recording": recording_table, "costs": costs_table,
+def dropped_table(timing: dict[str, float]) -> str:
+    data = json.loads((EVIDENCE / "dropped.json").read_text())["seeds"]
+    lines = ["| Seed | Dropped test files | Run with the seed planted | Failures |", "|---|---:|---|---:|"]
+    for seed, row in data.items():
+        lines.append(f"| {seed} | {row['files']} | {row['summary']} | {len(row['failed'])} |")
+    return "\n".join(lines)
+
+
+TABLES = {"dropped": dropped_table, "seeds": seeds_table, "shadow": shadow_table, "recording": recording_table, "costs": costs_table,
           "mutants": mutants_table}
 
 

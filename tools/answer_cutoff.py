@@ -64,8 +64,10 @@ REQUEST_HANDLING = ("lean/VE/Service/Protocol.lean", "lean/Serve.lean", "lean/VE
 UNSEEDED = {"random": None, "secrets": None, "uuid": {"uuid1", "uuid4"}, "os": {"urandom"}}
 RULES = ("modes", "answers=DIFF", "off")
 # The rule of a feedback run (`select_tests.py --run`, R1) that names none; None: today's selection.
-# Never the answers rule, which stays opt-in until the DRI reads its measurement (REPORT.md).
-R1_RULE: str | None = None
+# ts-B2's per-mode rule, activated by its gate's evidence (docs/test-architecture/cutoff/REPORT.md: 30
+# behavioural Lean seeds caught by tests it keeps, ten shadow comparisons without a miss). Never the
+# answers rule, which stays opt-in until the DRI reads its measurement.
+R1_RULE: str | None = "modes"
 
 
 @contextlib.contextmanager

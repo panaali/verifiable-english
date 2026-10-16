@@ -1,6 +1,23 @@
 # tarch-cutoff: answer-level early cutoff, an R1 experiment (plan rank 8)
 
-<!-- status -->
+DRI signature needed: one, for reading the `answers` measurement (task: "default off until the DRI reads
+that measurement"); nothing else. No standing ruling is invoked: the [delta](DELTA.md) records no VE
+user-visible change.
+
+- **ts-B2's per-mode narrowing is on for R1 only** (`answer_cutoff.R1_RULE = "modes"`: a
+  `select_tests.py --run` that names no `--cutoff`). Its activation gate is met: 30 behavioural Lean seeds
+  are caught through the service, each by a test the narrowed selection keeps (26 required), and the ten
+  contemporaneous shadow comparisons show no failure outside any selection. A plan print (which
+  verify.sh's legacy fast gate reads), `--full`, `tools/gate.py`, the merge train and the nightlies select as
+  before; `--cutoff off` turns it off for one run.
+- **The `answers` rule stays opt-in** (`--cutoff answers=DIFF`), off by default, for the DRI to read: on the
+  30 caught seeds it kept every catching test with a median 23% of today's units (modes 39%), and on the ten
+  real changes it was never above today's and missed nothing; its cost is a recording per main commit and a
+  replay per build (below).
+- **On real changes neither rule saves much yet,** for causes outside this batch (findings 1-3): every
+  `ve_service` user reads the pin file, most merges change it, and 6 of 10 changes edit a shared manifest field
+  that selects the whole suite. The saving shows on Lean edits alone: S01's selection ran in 33.1 min today,
+  15.8 min under `modes`, 8.9 min under `answers` on the Mac.
 
 The [delta](DELTA.md) records no VE user-visible change: this batch changes developer test
 selection and recording only. Nothing here is used by `tools/gate.py` (R2), the merge train or the
@@ -17,7 +34,7 @@ follows: first the activation evidence for ts-B2's per-mode narrowing, then requ
 |---|---|---|---|
 | (1) 26 behavioural Lean seeds, each caught by a test the narrowed selection keeps | AGENT | `seeds.json` (46 candidates), `seeds.py`; each seed planted in a Lean runner, `ve_service` rebuilt alone, catching tests run, a catch re-checked with the source restored and the unseeded binary as control (`seeds.py verify`) | `evidence/seeds.json`; table below |
 | (1) 10 contemporaneous shadow comparisons of the narrowed selection against the full run on real Lean changes | AGENT | `changes.json` (3 newest Lean merges, 7 Lean branches in flight on 2026-10-16), `measure.py --full-suite` (the gate's collection on ve-mac-1), `shadow.py` | `evidence/shadow.json`; table below |
-| (1) Turn ts-B2's narrowing on only for R1, and only if every seed is caught and no comparison has a failure outside the selection | AGENT | <!-- activation --> | <!-- activation-test --> |
+| (1) Turn ts-B2's narrowing on only for R1, and only if every seed is caught and no comparison has a failure outside the selection | AGENT | `answer_cutoff.R1_RULE = "modes"`, read by the hook for `--run` only; the dropped tests of the six seeds no test caught were run with each seed planted (below) | `::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does`; `seeds.py check`, `shadow.py check` |
 | (2) Record per test unit the `ve_service` request keys it sent | AGENT | `tools/test_map_recorder.py` (opt-in, `VE_TESTMAP_REQUESTS`; the coverage map is unchanged), `tools/answer_cutoff.py record` | `tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent`, `::test_request_records_leave_the_map_as_it_was`, `::test_a_child_and_a_nested_recording_send_for_the_outer_unit`; `evidence/recording.json` |
 | (2) Select the union of today's selection for every input but `ve_service`'s answers and the files that sent a request whose answer changed | AGENT | `tools/answer_cutoff.py` (`answers` rule), `tools/answer_replay.py` (replay and diff) | `::test_answers_rule_selects_changed_and_unknown_users_only` |
 | (2) One-shot executables keep the module rule; lake/lean, Lean source readers and pins select by file | AGENT | only `select_tests.service_impact` is replaced; one-shot runners, `lake`/`lean`, file readers and pin data readers are today's rules | `::test_answers_rule_selects_changed_and_unknown_users_only` (the `ve_metered` runner stays selected), `::test_a_pin_change_selects_only_data_readers_when_the_new_build_is_pinned` |
@@ -114,47 +131,73 @@ which the `answers` columns include. Seconds are each selection's recorded Mac s
 <!-- table:seeds -->
 | Seed | File | Edit | Outcome | Caught through the service by | Changed answers | Today | `modes` | `answers` (at least) |
 |---|---|---|---|---|---:|---|---|---|
-| S01 | VE/Alternatives/Run.lean | `NONE-PERMITTED: every available action…` | caught (kept by today, modes, answers) | test_risk_fixtures.py, test_risk_lean_route.py | 65 | 309 / 7748 s | 125 / 4143 s | 71 / 2252 s |
-| S02 | VE/Ask/Run.lean | `  \| _ => "by_reading"` | caught (kept by today, modes, answers) | test_ask_cli.py, test_ask_fixtures.py, test_ask_relay.py | 15 | 309 / 7748 s | 59 / 2170 s | 69 / 2271 s |
-| S03 | VE/Service/FamilyBundle.lean | `Reading label is not bound to its regi…` | seen by no service test |  | 0 | 309 / 7748 s | 56 / 2134 s | 66 / 2163 s |
+| S01 | VE/Alternatives/Run.lean | `NONE-PERMITTED: every available action…` | caught (kept by today, modes, answers) | test_risk_fixtures.py, test_risk_lean_route.py | 65 | 309 / 7748 s | 125 / 4143 s | 73 / 2320 s |
+| S02 | VE/Ask/Run.lean | `  \| _ => "by_reading"` | caught (kept by today, modes, answers) | test_ask_cli.py, test_ask_fixtures.py, test_ask_relay.py | 15 | 309 / 7748 s | 59 / 2170 s | 71 / 2339 s |
+| S03 | VE/Service/FamilyBundle.lean | `Reading label is not bound to its regi…` | seen by no service test |  | 0 | 309 / 7748 s | 56 / 2134 s | 68 / 2232 s |
 | S04 | VE/CertificateWire.lean | `ResourceLimit: certificate replay exce…` | caught (kept by today, modes, answers) | test_w6a_certificate_steps.py | 65 | 311 / 7750 s | 311 / 7750 s | 161 / 6054 s |
-| S05 | VE/Service/Diagnose.lean | `InvalidInput: a diagnose case names it…` | caught (kept by today, modes, answers) | test_wire_contract_lean.py, test_wire_gate_corpus.py | 2 | 309 / 7748 s | 73 / 2709 s | 66 / 2163 s |
-| S06 | VE/Discourse/Run.lean | `  \| some (.proved n) => "proved (" ++ …` | seen by no service test |  | 0 | 309 / 7748 s | 61 / 2227 s | 66 / 2163 s |
-| S07 | VE/Service/Document.lean | `ResourceLimit: Verbalisation exceeds 2…` | seen by no service test |  | 0 | 311 / 7749 s | 108 / 3725 s | 68 / 2164 s |
-| S08 | VE/Service/EnglishRun.lean | `    ("roundtrip", .bool (checked && pa…` | caught only by a reader of the Lean source |  | 0 | 309 / 7748 s | 53 / 2042 s | 66 / 2163 s |
+| S05 | VE/Service/Diagnose.lean | `InvalidInput: a diagnose case names it…` | caught (kept by today, modes, answers) | test_wire_contract_lean.py, test_wire_gate_corpus.py | 2 | 309 / 7748 s | 73 / 2709 s | 68 / 2232 s |
+| S06 | VE/Discourse/Run.lean | `  \| some (.proved n) => "proved (" ++ …` | seen by no service test |  | 0 | 309 / 7748 s | 61 / 2227 s | 68 / 2232 s |
+| S07 | VE/Service/Document.lean | `ResourceLimit: Verbalisation exceeds 2…` | seen by no service test |  | 0 | 311 / 7749 s | 108 / 3725 s | 70 / 2232 s |
+| S08 | VE/Service/EnglishRun.lean | `    ("roundtrip", .bool (checked && pa…` | caught only by a reader of the Lean source |  | 0 | 309 / 7748 s | 53 / 2042 s | 68 / 2232 s |
 | S09 | VE/EnglishGrammar/Run.lean | `No text was read.` | caught (kept by today, modes, answers) | test_english_e2_overlay.py, test_english_e2_responses.py, test_question_reading.py, test_risk_english.py | 67 | 310 / 7749 s | 159 / 5461 s | 77 / 2321 s |
-| S10 | VE/Question/Run.lean | `def questionVersion : String := s!"que…` | caught (kept by today, modes, answers) | test_ask_cli.py, test_ask_fixtures.py, test_ask_null_free.py, test_ask_relay.py, test_question_answering_measure_report.py, test_question_reading.py, test_relay_mutation_gate.py | 1921 | 310 / 7749 s | 61 / 2214 s | 74 / 2336 s |
+| S10 | VE/Question/Run.lean | `def questionVersion : String := s!"que…` | caught (kept by today, modes, answers) | test_ask_cli.py, test_ask_fixtures.py, test_ask_null_free.py, test_ask_relay.py, test_question_answering_measure_report.py, test_question_reading.py, test_relay_mutation_gate.py | 1921 | 310 / 7749 s | 61 / 2214 s | 75 / 2360 s |
 | S11 | VE/Order/ProfileGate.lean | `      ("status", .str "error"), ("erro…` | build failed | | | | | |
-| S12 | VE/Service/FamilyNorms.lean | `UnsupportedProfile: norms@0 is required` | caught only by a reader of the Lean source |  | 0 | 309 / 7748 s | 55 / 2048 s | 66 / 2163 s |
-| S13 | VE/Service/Family.lean | `graph rejected: a certificate in the r…` | seen by no service test |  | 0 | 309 / 7748 s | 91 / 4447 s | 66 / 2163 s |
-| S14 | VE/NormDefaults/Run.lean | `s!"invalid certificate for {t.1}"` | seen by no service test |  | 0 | 309 / 7748 s | 123 / 3856 s | 66 / 2163 s |
-| S15 | VE/Norms/Run.lean | `("verdict", .str (if w.conflict then "…` | caught (kept by today, modes, answers) | test_agent_policy_rerun.py, test_consolidation_tools.py, test_lean_service_schema.py, test_norms.py, test_norms_three_way.py, test_stage2_norms.py, test_wire_gate_corpus.py | 15 | 309 / 7748 s | 171 / 4660 s | 70 / 2238 s |
-| S16 | VE/Order/Surface.lean | `("for every " ++ s` | not verified |  | 110 | 310 / 7749 s | 310 / 7749 s | 157 / 5972 s |
-| S17 | VE/Service/Standalone.lean | `SyntaxError: the source is not accepte…` | not verified |  | 37 | 309 / 7748 s | 305 / 7576 s | 130 / 5592 s |
-| S18 | VE/Time/Wire.lean | `" percentage points"` | not verified |  | 49 | 309 / 7748 s | 309 / 7748 s | 134 / 5604 s |
-| S19 | VE/Service/ReadingsChoices.lean | `duplicate reading set version` | not verified |  | 1 | 309 / 7748 s | 63 / 2368 s | 67 / 2203 s |
-| S20 | VE/Readings/Run.lean | `distinguishing model does not separate…` | not verified |  | 6 | 309 / 7748 s | 115 / 3756 s | 68 / 2166 s |
-| S21 | VE/Attribution/Run.lean | `s!"unreviewed act {act} in {u.id}"` | not verified |  | 105 | 309 / 7748 s | 63 / 2222 s | 70 / 2257 s |
-| S22 | VE/Rights/Run.lean | `(if X.mode == .strict then "strict" el…` | not verified |  | 855 | 309 / 7748 s | 121 / 3808 s | 80 / 2394 s |
-| S23 | VE/Risk/Run.lean | `SufficientOutsideNecessary: ` | not verified |  | 2 | 309 / 7748 s | 122 / 4118 s | 68 / 2168 s |
-| S24 | VE/Risk/Eval.lean | `("possible", .bool (possibleE b c))` | not verified |  | 162 | 309 / 7748 s | 56 / 2054 s | 67 / 2164 s |
-| S25 | VE/SoftNorms/Run.lean | `InvalidInput: exception condition of r…` | seen by no service test |  | 0 | 309 / 7748 s | 135 / 4070 s | 66 / 2163 s |
-| S26 | VE/SpeechActs/Run.lean | `UNKNOWN (no premise-status evidence); …` | not verified |  | 13 | 309 / 7748 s | 58 / 2128 s | 67 / 2167 s |
-| S27 | VE/Words/Run.lean | `s!"the rows of {p} are not a list"` | not verified |  | 1 | 309 / 7748 s | 75 / 2468 s | 66 / 2163 s |
-| S28 | VE/Service/Standalone.lean | `ResourceLimit: domain exceeds entity l…` | not verified |  | 58 | 309 / 7748 s | 305 / 7576 s | 132 / 5679 s |
-| S29 | VE/Alternatives/Run.lean | `("verdict", .str (if conflict then "CO…` | not verified |  | 1 | 309 / 7748 s | 125 / 4143 s | 66 / 2163 s |
-| S30 | VE/Discourse/Run.lean | `(if e.startsWith "ResourceLimit" then …` | not verified |  | 2 | 309 / 7748 s | 61 / 2227 s | 67 / 2233 s |
-| S31 | VE/NormDefaults/Run.lean | `("verdict", .str (if w.conflict then "…` | not verified |  | 681 | 309 / 7748 s | 123 / 3856 s | 72 / 2248 s |
-| S32 | VE/Rights/Run.lean | `("verdict", .str (if w.conflict then "…` | seen by no service test |  | 0 | 309 / 7748 s | 121 / 3808 s | 66 / 2163 s |
-| S33 | VE/Risk/Run.lean | `("verdict", .str (if conflict then "CO…` | not verified |  | 4 | 309 / 7748 s | 122 / 4118 s | 67 / 2187 s |
-| S34 | VE/SoftNorms/Run.lean | `("verdict", .str (if w.conflict then "…` | not verified |  | 15 | 309 / 7748 s | 135 / 4070 s | 70 / 2276 s |
-| S35 | VE/SpeechActs/Run.lean | `("verdict", .str (if w.conflict then "…` | not verified |  | 2 | 309 / 7748 s | 58 / 2128 s | 67 / 2167 s |
-| S36 | VE/Service/FamilyNorms.lean | `("verdict", .str (if conflict then "CO…` | not verified |  | 404 | 309 / 7748 s | 55 / 2048 s | 67 / 2166 s |
-| S37 | VE/Attribution/Run.lean | `return Json.mkObj (base ++ [("status",…` | not verified |  | 49 | 309 / 7748 s | 63 / 2222 s | 69 / 2212 s |
-| S38 | VE/SoftNorms/Run.lean | `VE.Route.Wire.ok id [("admitted", .boo…` | not verified |  | 10 | 309 / 7748 s | 135 / 4070 s | 70 / 2169 s |
+| S12 | VE/Service/FamilyNorms.lean | `UnsupportedProfile: norms@0 is required` | caught only by a reader of the Lean source |  | 0 | 309 / 7748 s | 55 / 2048 s | 68 / 2232 s |
+| S13 | VE/Service/Family.lean | `graph rejected: a certificate in the r…` | seen by no service test |  | 0 | 309 / 7748 s | 91 / 4447 s | 68 / 2232 s |
+| S14 | VE/NormDefaults/Run.lean | `s!"invalid certificate for {t.1}"` | seen by no service test |  | 0 | 309 / 7748 s | 123 / 3856 s | 68 / 2232 s |
+| S15 | VE/Norms/Run.lean | `("verdict", .str (if w.conflict then "…` | caught (kept by today, modes, answers) | test_agent_policy_rerun.py, test_consolidation_tools.py, test_lean_service_schema.py, test_norms.py, test_norms_three_way.py, test_stage2_norms.py, test_wire_gate_corpus.py | 15 | 309 / 7748 s | 171 / 4660 s | 72 / 2306 s |
+| S16 | VE/Order/Surface.lean | `("for every " ++ s` | caught (kept by today, modes, answers) | test_lean_first_b13a.py, test_order.py, test_order_grammar.py, test_order_round2.py, test_stage2_parse.py | 110 | 310 / 7749 s | 310 / 7749 s | 157 / 5972 s |
+| S17 | VE/Service/Standalone.lean | `SyntaxError: the source is not accepte…` | not caught |  | 37 | 309 / 7748 s | 305 / 7576 s | 130 / 5592 s |
+| S18 | VE/Time/Wire.lean | `" percentage points"` | caught (kept by today, modes, answers) | test_units_lean_w6a.py, test_units_relay_w6a.py, test_w6a_review_regressions.py | 49 | 309 / 7748 s | 309 / 7748 s | 134 / 5604 s |
+| S19 | VE/Service/ReadingsChoices.lean | `duplicate reading set version` | caught (kept by today, modes, answers) | test_stage2_readings.py | 1 | 309 / 7748 s | 63 / 2368 s | 69 / 2271 s |
+| S20 | VE/Readings/Run.lean | `distinguishing model does not separate…` | caught (kept by today, modes, answers) | test_readings_nd_lean.py, test_readings_s1_lean.py | 6 | 309 / 7748 s | 115 / 3756 s | 70 / 2234 s |
+| S21 | VE/Attribution/Run.lean | `s!"unreviewed act {act} in {u.id}"` | caught (kept by today, modes, answers) | test_reports.py, test_reports_lean.py | 105 | 309 / 7748 s | 63 / 2222 s | 72 / 2325 s |
+| S22 | VE/Rights/Run.lean | `(if X.mode == .strict then "strict" el…` | caught (kept by today, modes, answers) | test_compose_integration.py, test_english_unambiguity.py, test_norm_defaults.py, test_norm_defaults_layered.py, test_norm_defaults_report.py, test_readings_defaults_english.py, test_rights_lean.py, test_rights_render_status.py, test_rights_three_way.py, test_soft_candidate_economy.py | 855 | 309 / 7748 s | 121 / 3808 s | 82 / 2462 s |
+| S23 | VE/Risk/Run.lean | `SufficientOutsideNecessary: ` | caught (kept by today, modes, answers) | test_risk_every_diagnostic.py, test_risk_lean_route.py | 2 | 309 / 7748 s | 122 / 4118 s | 70 / 2236 s |
+| S24 | VE/Risk/Eval.lean | `("possible", .bool (possibleE b c))` | caught (kept by today, modes, answers) | test_risk_differential.py | 162 | 309 / 7748 s | 56 / 2054 s | 69 / 2233 s |
+| S25 | VE/SoftNorms/Run.lean | `InvalidInput: exception condition of r…` | seen by no service test |  | 0 | 309 / 7748 s | 135 / 4070 s | 68 / 2232 s |
+| S26 | VE/SpeechActs/Run.lean | `UNKNOWN (no premise-status evidence); …` | caught (kept by today, modes, answers) | test_speech_acts_lean.py | 13 | 309 / 7748 s | 58 / 2128 s | 69 / 2235 s |
+| S27 | VE/Words/Run.lean | `s!"the rows of {p} are not a list"` | not caught |  | 1 | 309 / 7748 s | 75 / 2468 s | 68 / 2232 s |
+| S28 | VE/Service/Standalone.lean | `ResourceLimit: domain exceeds entity l…` | not caught |  | 58 | 309 / 7748 s | 305 / 7576 s | 132 / 5679 s |
+| S29 | VE/Alternatives/Run.lean | `("verdict", .str (if conflict then "CO…` | not caught |  | 1 | 309 / 7748 s | 125 / 4143 s | 68 / 2232 s |
+| S30 | VE/Discourse/Run.lean | `(if e.startsWith "ResourceLimit" then …` | caught (kept by today, modes, answers) | test_discourse_lean.py | 2 | 309 / 7748 s | 61 / 2227 s | 69 / 2301 s |
+| S31 | VE/NormDefaults/Run.lean | `("verdict", .str (if w.conflict then "…` | caught (kept by today, modes, answers) | test_agent_policy_unspecified.py, test_lean_handles.py, test_norm_defaults.py, test_norm_defaults_relay_english.py, test_norm_defaults_switch.py, test_norm_defaults_three_way.py, test_readings_nd_lean.py, test_route_row_schemas.py, test_wire_gate_corpus.py | 681 | 309 / 7748 s | 123 / 3856 s | 74 / 2316 s |
+| S32 | VE/Rights/Run.lean | `("verdict", .str (if w.conflict then "…` | seen by no service test |  | 0 | 309 / 7748 s | 121 / 3808 s | 68 / 2232 s |
+| S33 | VE/Risk/Run.lean | `("verdict", .str (if conflict then "CO…` | caught (kept by today, modes, answers) | test_risk_fixtures.py | 4 | 309 / 7748 s | 122 / 4118 s | 69 / 2256 s |
+| S34 | VE/SoftNorms/Run.lean | `("verdict", .str (if w.conflict then "…` | caught (kept by today, modes, answers) | test_lean_handles.py, test_readings_budget_zero.py, test_readings_defaults_english.py, test_readings_s2_document.py, test_route_row_schemas.py, test_soft_norms_lean.py, test_wire_gate_corpus.py | 15 | 309 / 7748 s | 135 / 4070 s | 72 / 2344 s |
+| S35 | VE/SpeechActs/Run.lean | `("verdict", .str (if w.conflict then "…` | caught (kept by today, modes, answers) | test_speech_acts_lean.py | 2 | 309 / 7748 s | 58 / 2128 s | 69 / 2235 s |
+| S36 | VE/Service/FamilyNorms.lean | `("verdict", .str (if conflict then "CO…` | caught (kept by today, modes, answers) | test_stage2_norms.py | 404 | 309 / 7748 s | 55 / 2048 s | 69 / 2234 s |
+| S37 | VE/Attribution/Run.lean | `return Json.mkObj (base ++ [("status",…` | caught (kept by today, modes, answers) | test_reports.py, test_reports_lean.py, test_reports_status.py | 49 | 309 / 7748 s | 63 / 2222 s | 71 / 2280 s |
+| S38 | VE/SoftNorms/Run.lean | `VE.Route.Wire.ok id [("admitted", .boo…` | caught (kept by today, modes, answers) | test_lean_handles.py, test_nested_pytest.py, test_route_row_schemas.py, test_soft_norms_conformance.py, test_soft_norms_lean.py, test_softnorms_public_contract.py, test_wire_contract_three_way.py, test_wire_gate_corpus.py | 10 | 309 / 7748 s | 135 / 4070 s | 72 / 2237 s |
+| S39 | VE/Discourse/Run.lean | `if (readingVerdicts res).isEmpty then …` | caught (kept by today, modes, answers) | test_discourse.py, test_discourse_answer.py, test_discourse_constitution.py, test_discourse_lean.py, test_discourse_three_way.py | 688 | 309 / 7748 s | 61 / 2227 s | 72 / 2396 s |
+| S40 | VE/Service/Standalone.lean | `  pure (VE.Route.Wire.ok id [("valid",…` | caught (kept by today, modes, answers) | test_b17_owner.py, test_background.py, test_closure_witnesses.py, test_conformance.py, test_constitution_w6a_controls.py, test_data_flags.py, test_evaluate_search.py, test_nary.py, test_norms.py, test_readings_defaults_rd6a.py, test_readings_rd5_plain_probe.py, test_rust_jsonl_schema.py | 36934 | 309 / 7748 s | 305 / 7576 s | 207 / 7049 s |
+| S41 | VE/Route/Wire.lean | `  return ok id [("valid", .bool (VE.Ta…` | caught (kept by today, modes, answers) | test_b15b_evidence.py, test_background.py, test_bundle.py, test_data_flags.py, test_definitions_english.py, test_norm_defaults.py, test_norm_defaults_layered.py, test_p0_three_way.py, test_readings_nd_lean.py, test_stage2_bundle.py, test_vacuity.py | 1880 | 310 / 7749 s | 310 / 7749 s | 164 / 6083 s |
+| S42 | VE/Route/Run.lean | `[("valid", .bool false)] else []))` | caught (kept by today, modes, answers) | test_b15b_evidence.py, test_definitions_differential.py, test_english_e26_ab.py, test_lean_service_schema.py, test_p0_three_way.py, test_soft_review_regressions.py, test_stage2_evaluation.py, test_w6a_certificate_steps.py | 315 | 310 / 7749 s | 310 / 7749 s | 156 / 5963 s |
+| S43 | VE/Time/Wire.lean | `        \| some (value, work) => pure […` | caught (kept by today, modes, answers) | test_eligibility_wfp.py, test_fret_w6a_rerating.py, test_news_w6a_fixtures.py, test_units_lean_w6a.py, test_w6a_documents.py, test_w6a_looprecheck1.py, test_w6a_looprecheck2.py | 669 | 309 / 7748 s | 309 / 7748 s | 137 / 5683 s |
+| S44 | VE/Rights/Run.lean | `    ("in_scope", .bool (D.limits.any (…` | not caught |  | 533 | 309 / 7748 s | 121 / 3808 s | 76 / 2408 s |
+| S45 | VE/Norms/Run.lean | `    return VE.Route.Wire.ok id [("vali…` | caught (kept by today, modes, answers) | test_agent_policy_rerun.py, test_norms_three_way.py, test_readings_s2_document.py, test_stage2_norms.py, test_wire_gate_corpus.py | 194 | 309 / 7748 s | 171 / 4660 s | 72 / 2412 s |
+| S46 | VE/EnglishGrammar/Run.lean | `      status "many" ++ coded "Ambiguou…` | not caught |  | 44 | 310 / 7749 s | 159 / 5461 s | 73 / 2281 s |
 
-38 seeds: caught 7; seen by no service test 7; caught only by a reader of the Lean source 2; build failed 1; not verified 21.
+46 seeds: caught 30; seen by no service test 7; caught only by a reader of the Lean source 2; build failed 1; not caught 6.
 <!-- /table:seeds -->
+
+Six seeds changed recorded answers but no candidate test failed. For each, every test file the `modes` rule
+drops (today's selection minus `modes`') ran on the Mac with the seed planted: none failed, so no test the
+narrowing drops catches a seed it does not. This holds by construction too: a mode's answers depend only
+on the code its `runMode` roots import (Lean sees nothing it does not import), every module of the service
+but `VE.Service.Protocol` lies in some mode's import closure, and a unit with no recorded mode is never
+dropped.
+
+<!-- table:dropped -->
+| Seed | Dropped test files | Run with the seed planted | Failures |
+|---|---:|---|---:|
+| S17 | 4 | 154 passed in 45.70s | 0 |
+| S27 | 234 | 11140 passed, 8 skipped, 83 xfailed, 68 warnings in 1466.82s (0:24:26) | 0 |
+| S28 | 4 | 154 passed in 39.85s | 0 |
+| S29 | 184 | 5656 passed, 7 skipped, 67 warnings in 733.52s (0:12:13) | 0 |
+| S44 | 188 | 5745 passed, 8 skipped, 68 warnings in 1188.91s (0:19:48) | 0 |
+| S46 | 151 | 4914 passed, 6 skipped, 6 warnings in 420.01s (0:07:00) | 0 |
+<!-- /table:dropped -->
 
 ### Ten contemporaneous shadow comparisons
 
@@ -253,3 +296,55 @@ rules, not code of this batch.
 | M20 | tools/select_tests.py | a plan print, which verify.sh's legacy fast gate reads, takes R1's rule | `test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does` |
 | M14 | tools/select_tests.py | the hook ignores the rule it was given | `test_the_hook_passes_its_rule_and_is_off_by_default` |
 <!-- /table:mutants -->
+
+## Tests and runs
+
+- New: `tests/test_answer_cutoff.py`, 33 tests (recorder capture with the real service, fail-closed `u`
+  records, nested attribution, fold and store, replay and diff, the rules, the hook and its R1 default, the
+  gate never importing the cutoff). Locally they pass with `tests/test_select_tests.py`,
+  `tests/test_nested_pytest.py` and `tests/test_regen_generated.py` (272 passed on the merged tree).
+- Selected tests for the branch on ve-mac-1 (`mac-pytest.sh --select -- --base <merge base> --run`): 153
+  units, 0 failed, on 4555583f before the sync with main; <!-- final-selected -->
+- `tools/gate_collection.py --check --prebuilt` on the merged tree: 33 tests added, 0 removed, 0 refused,
+  stale or malformed trailers. `tools/regen_generated.py --check`: 27 entries fresh after the sync.
+- The measurement runs (all on ve-mac-1 through `mac-pytest.sh`, except the seeds, which ran on the VM in
+  scratch worktrees): one recording (`J1`), 14 replays in format 4, 10 full runs of the gate's collection,
+  3 timing runs, the dropped-test runs above, 46 seeds and their verification.
+- Not run here: `tools/gate.py` (the chain runs it on the final HEAD, per the task); a second recording to
+  measure the recorder's own run-to-run variation (the randomised-input rule stands in for it, and format 4's
+  replay agreed with itself across runs, machines and clients).
+- Known red on main (main-known-red.txt): the two sub-tick deadline tests of `tests/test_lean_service.py` and
+  the RD8 report test belong to their own items; this batch does not touch them.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A. - no relayed Lean answer or schema changed; the replay reads every response through the client's
+   own schema and binding checks (`test_a_case_answers_alike_alone_and_in_a_batch`).
+2. PASS - every plan and directive line is in the first table with its delivery and test; no new Python copy
+   of a Lean decision (mode reachability is Lean's generated table, answers are Lean's), no new permanent
+   report test (evidence is checked by `check_evidence.py` at the batch gate, D4), no authority switch;
+   in-flight files: `tools/select_tests.py` (tarch-select) gets one hook, `tools/regen_generated.py` one
+   `NOT_REGENERATED` line, merged with main's (`test_the_hook_passes_its_rule_and_is_off_by_default`).
+3. PASS - 20 seeded Python bugs, each failing its named test (`evidence/mutants.json`); the answer diff
+   catches a changed value, `true` against `1`, `1` against `1.0`, a missing case and an unreplayable one,
+   and refuses an empty replay and two recordings (`test_diff_finds_changed_missing_and_unreplayable_answers`).
+4. N.A. - no checker or parser changed; the replay's answers agree across machines and clients (format 4).
+5. N.A. - no relayed field read by Python changed.
+6. PASS - synced with main (`50f784e10`); the saved commit list is `main..HEAD --no-merges` from the
+   merge base (`evidence/summary.json`, `check_evidence.py`); the chain gates the final HEAD.
+7. PASS - DELTA holds no user-visible change; the one DRI item (reading the answers measurement) is in the
+   first line.
+8. PASS - DELTA lists the developer-tooling changes; no VE output changed
+   (`test_request_records_leave_the_map_as_it_was`).
+9. PASS - `select_tests.py --paths tools/answer_cutoff.py` (and `answer_replay.py`, `test_map_recorder.py`)
+   selects `tests/test_answer_cutoff.py` and `tests/test_select_tests.py`; the branch's selected run is above.
+10. N.A. - no Lean statement or proof changed.
+11. N.A. - no public budget or deadline changed; the replay's explicit wall timeout keeps a loaded machine
+    from turning an answer into `CheckerUnavailable` (`answer_replay.REPLAY_TIMEOUT`).
+12. N.A. - no check or render path changed; the recorder does extra work only with `VE_TESTMAP_REQUESTS`.
+13. PASS - no test removed or renamed: `tools/gate_collection.py --check --prebuilt` reports 33 added and 0
+    removed, refused, stale or malformed.
+
+Sibling lessons (tarch-b8 review): F1, a conflict with main, was resolved by the sync above
+(`tools/regen_generated.py`); F2, fixtures copying the repository per worker, does not occur here: the
+recorder tests run one child process rooted at the checkout and copy nothing.

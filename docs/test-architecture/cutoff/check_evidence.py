@@ -28,8 +28,20 @@ def main() -> int:
     mutants = json.loads((EVIDENCE / "mutants.json").read_text())["mutants"]
     assert len(mutants) >= 3 and all(row["result"] == "failed" and row["test"] and row["file"] for row in mutants)
     assert {row["language"] for row in mutants} == {"python"}
-    for script in ("seeds.py", "shadow.py"):
-        subprocess.run([sys.executable, str(HERE / script), "check"], check=True)
+    for script in ("seeds.py", "shadow.py", "tables.py"):
+        subprocess.run([sys.executable, str(HERE / script), "--check" if script == "tables.py" else "check"],
+                       check=True)
+    # The seeds no test caught: every test the modes rule drops for them passed with the seed planted.
+    sys.path.insert(0, str(HERE))
+    import seeds
+    rows = json.loads((EVIDENCE / "seeds.json").read_text())["seeds"]
+    missed = sorted(row["id"] for row in rows if seeds.outcome(row) == seeds.MISSED)
+    dropped = json.loads((EVIDENCE / "dropped.json").read_text())["seeds"]
+    assert sorted(dropped) == missed, (sorted(dropped), missed)
+    for seed, row in dropped.items():
+        expected = {unit for unit in set(next(r for r in rows if r["id"] == seed)["today"])
+                    - set(next(r for r in rows if r["id"] == seed)["modes_selected"]) if unit.startswith("tests/")}
+        assert row["files"] == len(expected) and row["exit"] == 0 and not row["failed"], seed
     print(f"{len(listed)} commits, {len(mutants)} seeded bugs, seeds and shadow rows check")
     return 0
 
