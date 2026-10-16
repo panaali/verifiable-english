@@ -1,0 +1,18 @@
+{
+  "batch": "tarch-b8",
+  "note": "Each bug was planted in a changed file, the named test failed, and the file was restored byte for byte. M1-M10 are described in REPORT.md; M3 was re-run on 3663dd1b4, L1 and L2 cover the Lean schema files of the relay fix.",
+  "mutants": [
+    {"id": "M1", "language": "python", "file": "docs/lean-first/b11b/report.py", "fault": "swapped added and deleted line-count columns", "test": "tests/test_b11b_report.py::test_batch_report_metrics_match_evidence", "result": "failed"},
+    {"id": "M2", "language": "data", "file": "docs/readings-defaults/rd8/evidence.json", "fault": "pinned report commit pointed at an earlier review commit", "test": "tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target", "result": "failed"},
+    {"id": "M3", "language": "python", "file": "ve/norm_defaults_contract.py", "fault": "eager top-level import of conformance.frozen_norm_defaults restored", "test": "tests/test_norm_defaults_contract.py::test_product_contract_import_does_not_load_git_oracle", "result": "failed"},
+    {"id": "M4", "language": "python", "file": "tests/test_precommit_hook.py", "fault": "staging switched back to the live worktree after the private index was set up", "test": "tests/test_precommit_hook.py::test_staging_history_is_private", "result": "failed"},
+    {"id": "M5", "language": "python", "file": "tests/test_b16d_document.py", "fault": "prior-path reading plan replaced with a planted value", "test": "tests/test_b16d_document.py::test_coupled_pilot_reading_plan_matches_prior_path", "result": "failed"},
+    {"id": "M6", "language": "python", "file": "tests/test_precommit_hook.py", "fault": "staging switched to the live worktree before the index was set up", "test": "tests/test_precommit_hook.py::test_staging_history_is_private", "result": "setup error"},
+    {"id": "M7", "language": "python", "file": "tests/test_b16d_document.py", "fault": "the other saved pilot blob selected", "test": "tests/test_b16d_document.py::test_coupled_pilot_reading_plan_matches_prior_path", "result": "failed"},
+    {"id": "M8", "language": "python", "file": "tests/test_norm_defaults_contract.py", "fault": "bare hang-guard import restored", "test": "tests/test_hang_guards.py::test_test_modules_other_code_imports_load_outside_pytest", "result": "failed"},
+    {"id": "M9", "language": "data", "file": "tests/data/tarch-b8/nd-op.ve.txt", "fault": ".ve.md extension restored, adding the pilot to the global seed scan", "test": "tests/test_b16d_document.py::test_saved_pilots_are_not_global_document_seeds", "result": "failed"},
+    {"id": "M10", "language": "python", "file": "tests/test_b16d_document.py", "fault": "one fixture branch put under other/nd so pilot_documents skipped it", "test": "tests/test_b16d_document.py::test_private_pilot_fixture_enumerates_saved_branches", "result": "failed"},
+    {"id": "L1", "language": "lean", "file": "lean/ResponseShape/Schemas/Parse.lean", "fault": "parse_error's error typed as a bare string again; ve_response_decode rebuilt and parse.json regenerated", "test": "tests/test_relay_mutation_gate.py::test_parse_diagnostic_text_cannot_be_empty", "result": "failed"},
+    {"id": "L2", "language": "lean", "file": "lean/ResponseShape/Schemas/Graph.lean", "fault": "Background label typed as a bare string again; ve_response_decode rebuilt and graph.json regenerated", "test": "tools/relay_mutation_gate.py --route service:graph", "result": "failed: accepted service:graph empty results/*/result/background/*/label"}
+  ]
+}

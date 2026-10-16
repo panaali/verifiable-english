@@ -1,0 +1,19 @@
+{
+ "profile": "/tmp/ve-tail-before",
+ "tests": 14981,
+ "test_seconds": 39063.7,
+ "runs": [
+  {
+   "workers": 8,
+   "ideal_seconds": 4883.0,
+   "load_seconds": 6629.3,
+   "longest_first_seconds": 4884.7
+  },
+  {
+   "workers": 16,
+   "ideal_seconds": 2441.5,
+   "load_seconds": 5730.6,
+   "longest_first_seconds": 2444.9
+  }
+ ]
+}

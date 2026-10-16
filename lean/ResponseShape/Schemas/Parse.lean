@@ -40,7 +40,7 @@ def formula : Shape :=
 def parse_error : Shape :=
   n [obj, .required ["id", "status", "error", "span"],
     closed [("id", n [str, .equals "/id"]), ("status", constS "error"),
-      ("error", str),
+      ("error", ref "common.json#/$defs/text"),
       ("span", n [obj, .required ["start", "end", "line", "column"],
         closed [("start", ref "common.json#/$defs/nat"),
           ("end", ref "common.json#/$defs/nat"),
