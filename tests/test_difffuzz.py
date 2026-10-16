@@ -44,14 +44,11 @@ def _summary(report):
 
 
 def work_done(line):
-    """The progress a line of the CI run's standard error reports (`df.read_progress`): the work counted so
-    far, or None. A count past its `df.WORK_LIMIT` stops the run there: a runaway, not a slow machine."""
+    """The progress a line of the CI run's standard error reports (`df.read_progress`): all the work counted
+    so far, or None. The run's work is held to `df.WORK_LIMIT` once it has ended (`work_problems`): a run with
+    a new finding minimises it, which is more work, and its report is what tells the finding."""
     work = df.read_progress(line)
-    if work is None:
-        return None
-    over = {kind: count for kind, count in work.items() if count > df.WORK_LIMIT.get(kind, count)}
-    assert not over, f"the run's work passed its limit: {over}"
-    return sum(work.values())
+    return None if work is None else sum(work.values())
 
 
 def test_ci_run(built, tmp_path, record_property):
@@ -122,8 +119,8 @@ def test_the_work_bound_sees_a_runaway(work, problem):
 
 def test_the_run_reports_its_work_as_it_is_counted(monkeypatch):
     """`--progress`: the first count is reported at once, then at most one line every PROGRESS_EVERY seconds of
-    the progress clock, each with the whole count; `work_done` reads a line's total and stops a count past its
-    limit; any other line of standard error is no progress."""
+    the progress clock, each with the whole count; `work_done` reads a line's total; any other line of
+    standard error is no progress."""
     import io
     now = [100.0]
     stream = io.StringIO()
@@ -140,9 +137,6 @@ def test_the_run_reports_its_work_as_it_is_counted(monkeypatch):
     assert [work_done(line) for line in lines] == [3, 6]
     assert df.read_progress("requests: 2458 seeds, 9958 inputs") is None
     assert work_done("Traceback (most recent call last):") is None
-    over = df.PROGRESS + json.dumps({"inputs": df.WORK_LIMIT["inputs"] + 1})
-    with pytest.raises(AssertionError, match="passed its limit"):
-        work_done(over)
     monkeypatch.setattr(df, "_PROGRESS", {"stream": None, "last": None, "clock": lambda: now[0]})
     df.spend("inputs")
     assert stream.getvalue().splitlines() == lines, "a run without --progress reports nothing"
