@@ -507,3 +507,76 @@ def test_a_changed_client_setting_turns_the_store_off(seam, monkeypatch):
             assert seam.reason(default, None) == "client replaced by the test", name
     assert seam.reason(default, None) is None
 
+
+NESTED = '''
+import json, pathlib
+import pytest
+from ve.backends.lean_service import LeanService
+CASES = json.loads(pathlib.Path({evaluation!r}).read_text())[:3]
+
+
+def ask():
+    with LeanService() as service:
+        return service.run_bound("evaluate", CASES)
+
+
+def test_unmarked():
+    ask()
+
+
+@pytest.mark.live_service
+def test_marked():
+    ask()
+'''
+
+
+def test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run(tmp_path, monkeypatch, executable):
+    """Review F2: the plugin itself, in a nested pytest with the store on, one and two workers: a test marked
+    `live_service` is never served (pytest_runtest_protocol reads the mark), the workers' reports are merged
+    (pytest_testnodedown, merged), and an alarm (a planted entry the client refuses) fails a run whose tests
+    all pass."""
+    monkeypatch.delenv("VE_LEAN_SERVICE", raising=False)
+    (tmp_path / "test_nested.py").write_text(NESTED.format(evaluation=str(ROOT / "conformance/evaluation.json")))
+    # This branch's checkout changes guarded paths, so the nested run is told it does not (the one stand-in).
+    (tmp_path / "unchanged_branch.py").write_text("import answer_store\n"
+                                                  "answer_store.changed_guarded_paths = lambda root=None: []\n")
+    directory = tmp_path / "store"
+    env = nested_pytest.environment(os.environ, PYTHONPATH=os.pathsep.join([str(tmp_path), str(ROOT / "tests"),
+                                                                             str(ROOT)]))
+
+    def run(workers):
+        before = set((directory / "runs").glob("*.json"))
+        done = subprocess.run(
+            nested_pytest.command(["-q", "-p", "no:cacheprovider", "-p", "unchanged_branch", "-p", "answer_store",
+                                   f"--answer-store={directory}", "test_nested.py"], workers=workers),
+            cwd=tmp_path, env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+        [summary] = set((directory / "runs").glob("*.json")) - before
+        return done, json.loads(summary.read_text())
+
+    first, recorded = run(2)
+    assert first.returncode == 0 and "2 passed" in first.stdout, first.stdout + first.stderr
+    assert recorded["off"] is None and recorded["alarms"] == []
+    assert recorded["counts"]["recorded"] == 1 and recorded["counts"]["hits"] == 0
+    assert recorded["live_tests"] == {"test_nested.py::test_marked": 1}
+    for workers in (2, 1):
+        done, served = run(workers)
+        assert done.returncode == 0 and "2 passed" in done.stdout, done.stdout + done.stderr
+        counts = served["counts"]
+        # Only the unmarked test is answered from the store (a sampled hit is asked live as well).
+        assert counts["hits"] + counts["sampled"] == 1 and counts["recorded"] == 0, (workers, counts)
+        assert served["off_requests"] == {"live_service test": 1} and served["alarms"] == []
+        assert served["live_tests"] == {"test_nested.py::test_marked": 1}
+        assert "answer store: 1 requests looked up" in done.stdout
+    # A planted entry the client refuses: the test still passes (retried live), the run fails on the alarm.
+    store = Store(directory)
+    [build] = [path.name for path in (directory / answer_store.FORMAT).iterdir()]
+    [(entry, path)] = store.entries(build)
+    limits_, line, response = decode(path.read_bytes())
+    swapped = response.replace(b'"index":0,', b'"index":9,').replace(b'"index":1,', b'"index":0,').replace(
+        b'"index":9,', b'"index":1,')
+    assert swapped != response
+    store.put(build, entry, limits_, line, swapped)
+    planted, alarmed = run(2)
+    assert "2 passed" in planted.stdout and planted.returncode == pytest.ExitCode.TESTS_FAILED, planted.stdout
+    assert {alarm["kind"] for alarm in alarmed["alarms"]} <= {"refused", "drift"} and alarmed["alarms"]
+    assert "ANSWER STORE ALARM" in planted.stdout
