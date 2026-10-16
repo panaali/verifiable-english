@@ -130,6 +130,12 @@ DROPS = {
     "shrunk literal list": ({"tests/test_mod.py": MODULE.replace(f"'case', {CASES}", "'case', ['a', 'b']")},
                             {"tests/test_mod.py::test_literal[c]": "the parametrisation of test_literal changed"},
                             ["tests/test_mod.py::test_literal[c]"]),
+    # A plain test split into cases: its trailer names the lost ID, and the new cases do not make it stale.
+    "parametrised plain function": (
+        {"tests/test_mod.py": MODULE.replace("def test_plain():\n", "@pytest.mark.parametrize('case', ['x', 'y'])\n"
+                                                                    "def test_plain(case):\n")},
+        {"tests/test_mod.py::test_plain": "the parametrisation of test_plain changed"},
+        ["tests/test_mod.py::test_plain"]),
     "shrunk module list": ({"tests/test_mod.py": MODULE.replace(f"CASES = {CASES}", "CASES = ['a', 'b']")},
                            {"tests/test_mod.py::test_named[c]": "the parametrisation of test_named changed"},
                            ["tests/test_mod.py::test_named[c]"]),
