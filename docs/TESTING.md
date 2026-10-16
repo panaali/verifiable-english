@@ -92,6 +92,42 @@ The gate never stops early: `tools/gate_pytest.py` refuses `--maxfail`, `-x` and
 
 An expired entry no longer applies, so the test blocks again. A malformed file fails the gate. `tests/test_gate_quarantine.py` checks the file and the gate's handling; `tests/test_run_order.py` checks the order and the early stop.
 
+## The x86 platform contract suite
+
+Every merge candidate runs the complete gate on the Mac. The VM runs the x86 platform contract suite beside it: the tests whose outcome can depend on the platform (test-architecture plan, section 3.3). The full x86 `tools/gate.py` still runs for native and runtime changes. This suite does not replace it, the Mac gate, or the nightly `tools/gate.py --no-quarantine`. Those still run every test.
+
+`tests/platform-contract.json` lists the suite. `tools/platform_contract.py contract --write` generates it from the tree, by cause, and `--check` fails when it is stale (`tools/regen_generated.py` runs both):
+
+- **pins**: pins and reproducible builds. `lean/checkers.lock` pins the x86 binaries, and the Mac's pins are local to the runner, so only x86 can check them. This includes `test_rust_reproducible.py` and `test_gate_integrity.py`.
+- **process**: process supervision, injected deadlines, signals, file locks and resource limits. This covers the service client and its handles, the hang guards, Stage-2 faults, the route transport, the native build lock, the assist deadline and the CPU bounds. It also takes every test file that imports `signal`, `resource` or `fcntl`, and the deadline tests of the answer-store inventory.
+- **agreement**: cross-implementation agreement on recorded fixtures. This covers the gate's required families (`REQUIRED_FAMILIES` in `tools/gate.py`), the three-way files and the difffuzz CI sample.
+- **divergence**: every test whose outcome differed between the Mac and the x86 VM on the same tree in the last 30 days, named by its test function.
+
+A `nightly` corpus-scale rerun in a listed file is left out and named under `left_out`; the complete gates run it. A named test the tree no longer defines fails generation. A divergence whose test is gone moves to `retired`.
+
+`tests/platform-divergences.json` is the divergence list, saved from the runners' records. Regenerate it with `python3 tools/platform_contract.py divergences --records <integ-runs> <nightly-runs> <nightly-vm-runs> <cand-runs> [<*-x86-verify.final.md>] --mac-known <mac-known-failures.txt> --write`.
+
+- It reads each `tools/gate.py` record (`*.mac.json`, `*.x86.json`) whose suite ran, and each summary (`*.md`) that names its runner and commit.
+- It pairs a Mac run with an x86 run of the same tree (or of the same commit, for a summary). It keeps a test that failed on one and not on the other; a test the quarantine retried counts as failed.
+- It adds the Mac runner's known failures and the divergences of plan section 2.8.
+- Each row has its cause, from the causes of plan 2.8: pinned artefact, toolchain, elapsed time, repository state, environment, product race or arch bug, unknown. The causes are kept by test function in `DIVERGENCE_CAUSES`. A new divergence is `unclassified` until the DRI classifies it.
+- Only `elapsed time` and `repository state` make the test a bug by this repository's rules. Every divergence is in the contract, whatever its cause.
+- `divergences --check` regenerates the list with its saved window and fails when it differs.
+
+`python3 tools/platform_contract.py run --checkout <dir> [--workers N] [--output FILE] [--no-quarantine]` runs exactly the suite. It starts the checkout's own `tools/gate.py --contract`, which uses the gate's environment, toolchain checks, Lean build, wire contract check, Rust build and pin check, native Rust tests, pytest options and quarantine.
+
+- It leaves out only the Lean audit and the collection check, which the complete gates run.
+- It passes the list's selectors to pytest in place of `tests`, and fails when a listed test collects nothing.
+- Its record (default `platform-contract-result.json`) has `"mode": "contract"` and the list's hash. Its status is `contract-passed` or `failed`, never `passed`. It writes no collection record for the commit, so no evidence check takes it for a full gate.
+
+`python3 tools/platform_contract.py misses <x86 gate record> [--mac <Mac record of the same tree>]` checks a failed x86 gate against the list. Run it on every full x86 failure.
+
+- It names each failed test (including any the quarantine retried) and the selectors and causes that cover it.
+- It also names each failure outside the tests, and whether the contract run runs that stage.
+- It exits 1 when a failed test that did not also fail on the Mac is outside the list, or when the failed stage is one the contract run leaves out. The DRI uses these misses before narrowing the full x86 rule; a miss adds its cause to the list.
+
+`python3 tools/platform_contract.py estimate` sums the measured Mac seconds of the listed tests from `tests/heavy-durations.json`. It is scheduling metadata: no test fails on a duration.
+
 ## Speed is not a correctness criterion
 
 Under load, any elapsed-time bound can fail a correct program. A merge-train suite at load 50 failed on a 5-second default and on a fake service's 0.5-second retry. The rules:
