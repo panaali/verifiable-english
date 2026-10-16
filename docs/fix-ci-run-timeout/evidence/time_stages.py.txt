@@ -1,0 +1,113 @@
+"""Time the stages of `python -m tools.difffuzz --ci`: wall and CPU per surface and per kind of call.
+
+Usage: python time_stages.py <checkout> <out.json>
+"""
+import json
+import os
+import resource
+import sys
+import time
+from collections import defaultdict
+
+ROOT = sys.argv[1]
+sys.path.insert(0, ROOT)
+os.chdir(ROOT)
+
+from tools import difffuzz as df  # noqa: E402
+from ve.backends import lean_service as ls  # noqa: E402
+
+STATS = defaultdict(lambda: {"n": 0, "wall": 0.0, "cpu": 0.0, "max_wall": 0.0})
+SURFACE = ["setup"]
+T0 = time.monotonic()
+
+
+def note(key, wall, cpu):
+    for k in (key, f"{SURFACE[0]}/{key}"):
+        s = STATS[k]
+        s["n"] += 1
+        s["wall"] += wall
+        s["cpu"] += cpu or 0.0
+        s["max_wall"] = max(s["max_wall"], wall)
+
+
+def children():
+    u = resource.getrusage(resource.RUSAGE_CHILDREN)
+    return u.ru_utime + u.ru_stime
+
+
+real_bounded = df.run_cpu_bounded
+
+
+def bounded(command, stdin, cpu_seconds, env=None):
+    w = time.monotonic()
+    completed, cpu = real_bounded(command, stdin, cpu_seconds, env=env)
+    note("runner:" + os.path.basename(command[0]), time.monotonic() - w, cpu)
+    return completed, cpu
+
+
+df.run_cpu_bounded = bounded
+
+real_run_bound = ls.LeanService.run_bound
+DEPTH = [0]
+
+
+def run_bound(self, mode, cases, *, timeout=None):
+    DEPTH[0] += 1
+    w = time.monotonic()
+    start = self.cpu_seconds() or 0.0
+    try:
+        return real_run_bound(self, mode, cases, timeout=timeout)
+    finally:
+        DEPTH[0] -= 1
+        end = self.cpu_seconds() or 0.0
+        note(f"service:{mode}" + (":nested" if DEPTH[0] else ""), time.monotonic() - w, max(end - start, 0.0))
+
+
+ls.LeanService.run_bound = run_bound
+
+real_call_python = df.call_python
+
+
+def call_python(function, harness):
+    w, c = time.monotonic(), time.process_time()
+    try:
+        return real_call_python(function, harness)
+    finally:
+        note("python_call", time.monotonic() - w, time.process_time() - c)
+
+
+df.call_python = call_python
+
+real_replay = df.replay
+
+
+def replay(entries, surfaces):
+    SURFACE[0] = "replay"
+    stamp("replay")
+    return real_replay(entries, surfaces)
+
+
+df.replay = replay
+MARKS = []
+
+
+def stamp(what):
+    MARKS.append({"at": round(time.monotonic() - T0, 1), "what": what, "self_cpu": round(time.process_time(), 1),
+                  "children_cpu": round(children(), 1), "load": os.getloadavg()[0]})
+    print(json.dumps(MARKS[-1]), file=sys.stderr, flush=True)
+
+
+def log(message):
+    if ": " in message and "seeds" in message:
+        SURFACE[0] = message.split(":")[0]
+    stamp(message)
+
+
+report = df.fuzz(log=log)
+stamp("end")
+out = {"marks": MARKS, "stats": {k: {**v, "wall": round(v["wall"], 1), "cpu": round(v["cpu"], 1),
+                                     "max_wall": round(v["max_wall"], 2)} for k, v in sorted(STATS.items())},
+       "work": report["work"], "cpu_seconds": report["cpu_seconds"], "passed": report["passed"],
+       "new": len(report["new"]), "not_reproduced": len(report["baseline"]["not_reproduced"])}
+open(sys.argv[2], "w").write(json.dumps(out, indent=1) + "\n")
+print(json.dumps(out, indent=1))
