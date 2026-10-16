@@ -505,9 +505,13 @@ def missing(expected: list[str], collected: list[str], diff: Changes | None) -> 
                 suggested.append(nodeid)
         else:
             removed[nodeid] = {"label": label, "reason": removal.reason, "commit": removal.commit}
+    lost = set(expected) - head
     stale = []
     for removal in removals:
-        still = next((nodeid for nodeid in collected if removal.covers(nodeid)), None)
+        # A trailer naming a lost ID records that ID alone: the cases of a function parametrised since the
+        # base (the ID followed by `[`) are new tests, not ones it covers.
+        still = next((nodeid for nodeid in collected if removal.covers(nodeid) and not (
+            removal.target in lost and nodeid.startswith(removal.target + "["))), None)
         if still is not None:
             stale.append({"target": removal.target, "commit": removal.commit, "collected": still})
     return Verdict(removed, refused, stale, list(diff.malformed) if diff else [], suggested)

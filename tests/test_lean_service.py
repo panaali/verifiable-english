@@ -501,6 +501,13 @@ for line in sys.stdin:
     if behaviour == "spin":
         while True:
             pass
+    if behaviour == "kernel":
+        # Kernel work in this process, as memory compaction is in the service's page faults: system
+        # CPU until 0.6 s more of it is used, and almost no user CPU (one copy of 4 MiB per call).
+        system, block = os.times().system, bytearray(4 << 20)
+        with open("/dev/zero", "rb", buffering=0) as zero:
+            while os.times().system - system < 0.6:
+                zero.readinto(block)
     if behaviour == "crash":
         sys.exit(3)
     if behaviour == "garbage":
@@ -755,6 +762,40 @@ def test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried(tmp_p
             service.run("evaluate", [{}])
         assert caught.value.operation == "evaluate" and not isinstance(caught.value, ResourceLimit)
         assert service.stats["starts"] == 1 and service.stats["retries"] == 0 and service.pid is None
+
+
+def _user_and_system_seconds(pid):
+    fields = Path(f"/proc/{pid}/stat").read_bytes().rsplit(b")", 1)[1].split()
+    return int(fields[11]) / os.sysconf("SC_CLK_TCK"), int(fields[12]) / os.sysconf("SC_CLK_TCK")
+
+
+@pytest.mark.skipif(not Path("/proc/self/stat").exists(), reason="process CPU time is read from /proc")
+def test_a_request_is_charged_its_user_cpu_not_the_kernels_time_in_the_service(tmp_path, monkeypatch):
+    """fix-x86-cpu-deadline: on the loaded x86 runner, requests needing at most 0.1 s of user CPU were
+    charged more than their deadline in system CPU, the kernel compacting memory in the service's page
+    faults. A service that spends 0.6 s of system CPU and almost no user CPU on a request is answered
+    under a 0.3 s deadline; counting its system time (the old measure) passes that deadline. The fake
+    measures its own system time, so no machine is too fast or too slow for it."""
+    from ve.backends import lean_service
+    monkeypatch.setitem(lean_service.DEADLINES, "evaluate", (0.3, 0.0))
+    with LeanService(fake(tmp_path, "kernel"), allow_unlisted_build=True) as service:
+        before = _user_and_system_seconds(service.pid)
+        assert len(service.run("evaluate", [{"id": "a", "ast": [["top"]]}])) == 1
+        user, system = (after - start for after, start in zip(_user_and_system_seconds(service.pid), before))
+        assert service.stats["starts"] == 1 and service.stats["retries"] == 0
+    assert user < 0.3 < 0.6 <= system
+
+
+def test_the_cpu_deadline_reads_the_user_time_of_a_proc_stat_line():
+    """`_user_seconds` reads field 14 (utime) of a `/proc/<pid>/stat` line, after a command name that
+    holds spaces and parentheses, and not field 15 (stime); a line without it reports no CPU time."""
+    from ve.backends.lean_service import _user_seconds
+    tick = os.sysconf("SC_CLK_TCK")
+    fields = ["S"] + ["0"] * 49
+    fields[11], fields[12] = str(3 * tick), str(500 * tick)
+    assert _user_seconds(b"4242 (ve ) (x) " + " ".join(fields).encode()) == 3.0
+    assert _user_seconds(b"4242 (ve_service) S 1 2") is None
+    assert _user_seconds(b"4242 (ve_service) " + " ".join(fields[:11] + ["x"] + fields[12:]).encode()) is None
 
 
 @pytest.mark.parametrize("phase", ["write", "response"])
