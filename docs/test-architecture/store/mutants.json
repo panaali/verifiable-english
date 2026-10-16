@@ -115,7 +115,7 @@
    "fault": "the byte replay compares decoded values, not bytes",
    "test": "tests/test_answer_store.py::test_a_planted_wrong_entry_fails_the_byte_replay ; tests/test_answer_store.py::test_a_planted_nondeterministic_answer_fails_the_byte_replay",
    "result": "failed",
-   "pytest": "2 failed, 1 passed in 0.47s"
+   "pytest": "2 failed, 1 passed in 1.85s"
   },
   {
    "id": "M13",
@@ -134,6 +134,111 @@
    "test": "tests/test_answer_store.py::test_a_sampled_hit_that_drifted_is_an_alarm_and_the_caller_gets_the_process_answer",
    "result": "failed",
    "pytest": "1 failed in 0.22s"
+  },
+  {
+   "id": "M15",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "an answer whose request wrote to standard error (a PANIC) is stored",
+   "test": "tests/test_answer_store.py::test_an_answer_whose_request_wrote_to_standard_error_is_never_served",
+   "result": "failed",
+   "pytest": "1 failed in 0.99s"
+  },
+  {
+   "id": "M16",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the byte replay ignores standard error",
+   "test": "tests/test_answer_store.py::test_an_answer_whose_request_wrote_to_standard_error_is_never_served",
+   "result": "failed",
+   "pytest": "1 failed in 1.22s"
+  },
+  {
+   "id": "M17",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "the retry after a failed live attempt still uses the store (and records)",
+   "test": "tests/test_answer_store.py::test_an_answer_that_needed_a_retry_is_never_stored",
+   "result": "failed",
+   "pytest": "1 failed in 1.07s"
+  },
+  {
+   "id": "M18",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "a client table changed in place (a lowered DEADLINES entry) is still served",
+   "test": "tests/test_answer_store.py::test_a_changed_client_setting_turns_the_store_off",
+   "result": "failed",
+   "pytest": "1 failed in 0.91s"
+  },
+  {
+   "id": "M19",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "a changed VE_LEAN_SERVICE* setting is still served",
+   "test": "tests/test_answer_store.py::test_a_changed_client_setting_turns_the_store_off",
+   "result": "failed",
+   "pytest": "1 failed in 0.85s"
+  },
+  {
+   "id": "M20",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the plugin never reads the live_service mark (PROBE F2)",
+   "test": "tests/test_answer_store.py::test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run",
+   "result": "failed",
+   "pytest": "1 failed in 2.64s"
+  },
+  {
+   "id": "M21",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "an alarm never fails the run",
+   "test": "tests/test_answer_store.py::test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run",
+   "result": "failed",
+   "pytest": "1 failed in 7.82s"
+  },
+  {
+   "id": "M22",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the workers' reports are dropped (pytest_testnodedown)",
+   "test": "tests/test_answer_store.py::test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run",
+   "result": "failed",
+   "pytest": "1 failed in 2.74s"
   }
- ]
+ ],
+ "review_fix": {
+  "note": "Review fix round (tarch-store-review.final.md F1, F2), on the VM in the worktree, uncommitted fix on 6d243001: all 22 mutants run again by the same driver; each named test failed (exit 1) and the file was restored byte for byte. M12 now names the replay's standard-error comparison too. Only Python product code changed (ve/backends/lean_service.py); no Lean or Rust.",
+  "baseline": {
+   "returncode": 0,
+   "tail": [
+    "23 passed in 13.64s"
+   ]
+  },
+  "rerun": {
+   "M1": "1 failed in 0.82s",
+   "M2": "2 failed in 1.10s",
+   "M3": "1 failed in 0.92s",
+   "M4": "1 failed in 0.89s",
+   "M5": "1 failed in 0.92s",
+   "M6": "1 failed in 0.93s",
+   "M7": "1 failed in 1.04s",
+   "M8": "1 failed in 1.00s",
+   "M9": "2 failed in 1.00s",
+   "M10": "1 failed in 0.75s",
+   "M11": "1 failed, 5 passed in 0.82s",
+   "M12": "2 failed, 1 passed in 1.85s",
+   "M13": "1 failed in 0.74s",
+   "M14": "1 failed in 1.00s",
+   "M15": "1 failed in 0.99s",
+   "M16": "1 failed in 1.22s",
+   "M17": "1 failed in 1.07s",
+   "M18": "1 failed in 0.91s",
+   "M19": "1 failed in 0.85s",
+   "M20": "1 failed in 2.64s",
+   "M21": "1 failed in 7.82s",
+   "M22": "1 failed in 2.74s"
+  }
+ }
 }
