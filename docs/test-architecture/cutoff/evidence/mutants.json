@@ -164,6 +164,15 @@
    "failure": "FAILED tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness"
   },
   {
+   "id": "M20",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "fault": "a plan print, which verify.sh's legacy fast gate reads, takes R1's rule",
+   "test": "tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does[modes]"
+  },
+  {
    "id": "M14",
    "language": "python",
    "file": "tools/select_tests.py",
