@@ -1,0 +1,539 @@
+{
+ "comment": "tarch-binding batch evidence, saved at the commit before the report (D4: checked at the batch gate and the merge train, not by permanent tests). The report commit follows these.",
+ "merge_base": "c53117326d6fdb839374363505e3d5a5ced1f9a5",
+ "commits_main_to_head_no_merges": [
+  "f32633959b02e11f798e58a96c6cf9784454ff47 Classify main's internal-agreement keywords; re-record the answers on the merged build",
+  "2ee24ed6d6ad602a7ceb1355f5035db09a9a6f3c A name renamed everywhere is refused where one occurrence is bound; seeded bugs",
+  "f54ba98d9a276bbce9f4cee049136e8d92fcbeac Seeded faults at five hand binders, judged end to end on the wire",
+  "fc4a36bb5251e06b58cca52fd37d418e23f37887 Generic mutation test per mode on the recorded answers, and the census tests",
+  "2c3c219eb3936aa4a819c622da5711ed72e0cba0 ADR 0001 census of every response-shape leaf, with the hand checks that bind it today",
+  "829a0c293865eed2197976351e3cee95c9ff3464 Generic binding checker from the Lean shapes, and shape-predicted mutants"
+ ],
+ "census_totals": {
+  "answers": 537,
+  "hand_binders": 51,
+  "leaves:bound": 239,
+  "leaves:closed domain": 231,
+  "leaves:none": 1156,
+  "modes": 36,
+  "probes": 10204,
+  "today:hand": 202,
+  "today:later Lean request": 59,
+  "today:not probed": 758,
+  "today:shape": 470,
+  "today:unbound": 137
+ },
+ "mutation_test": {
+  "answers": 537,
+  "mutants": 14184,
+  "predicted_refuse": 4401,
+  "predicted_accept": 9054,
+  "either": 729,
+  "decided_and_matching": 13455,
+  "refused_by_the_checker": 4923,
+  "per_mode": {
+   "evaluate": {
+    "answers": 11,
+    "checker_accept": 8,
+    "checker_refuse": 21,
+    "mutants": 29,
+    "predicted_accept": 8,
+    "predicted_refuse": 21
+   },
+   "check-certificate": {
+    "answers": 7,
+    "checker_accept": 10,
+    "checker_refuse": 16,
+    "mutants": 26,
+    "predicted_accept": 4,
+    "predicted_either": 6,
+    "predicted_refuse": 16
+   },
+   "order": {
+    "answers": 13,
+    "checker_accept": 18,
+    "checker_refuse": 43,
+    "mutants": 61,
+    "predicted_accept": 14,
+    "predicted_either": 10,
+    "predicted_refuse": 37
+   },
+   "route": {
+    "answers": 37,
+    "checker_accept": 41,
+    "checker_refuse": 290,
+    "mutants": 331,
+    "predicted_accept": 31,
+    "predicted_either": 32,
+    "predicted_refuse": 268
+   },
+   "norms": {
+    "answers": 49,
+    "checker_accept": 150,
+    "checker_refuse": 235,
+    "mutants": 385,
+    "predicted_accept": 128,
+    "predicted_either": 40,
+    "predicted_refuse": 217
+   },
+   "english": {
+    "answers": 4,
+    "checker_accept": 161,
+    "checker_refuse": 18,
+    "mutants": 179,
+    "predicted_accept": 157,
+    "predicted_either": 8,
+    "predicted_refuse": 14
+   },
+   "english.read": {
+    "answers": 6,
+    "checker_accept": 4,
+    "checker_refuse": 12,
+    "mutants": 16,
+    "predicted_accept": 4,
+    "predicted_refuse": 12
+   },
+   "english.grammar": {
+    "answers": 4,
+    "checker_accept": 2,
+    "checker_refuse": 4,
+    "mutants": 6,
+    "predicted_accept": 2,
+    "predicted_refuse": 4
+   },
+   "english.check": {
+    "answers": 2,
+    "checker_refuse": 2,
+    "mutants": 2,
+    "predicted_refuse": 2
+   },
+   "environment": {
+    "answers": 12,
+    "checker_accept": 14,
+    "checker_refuse": 51,
+    "mutants": 65,
+    "predicted_accept": 14,
+    "predicted_refuse": 51
+   },
+   "model": {
+    "answers": 9,
+    "checker_accept": 11,
+    "checker_refuse": 17,
+    "mutants": 28,
+    "predicted_accept": 11,
+    "predicted_refuse": 17
+   },
+   "check": {
+    "answers": 8,
+    "checker_accept": 14,
+    "checker_refuse": 19,
+    "mutants": 33,
+    "predicted_accept": 14,
+    "predicted_refuse": 19
+   },
+   "identity": {
+    "answers": 9,
+    "checker_accept": 9,
+    "checker_refuse": 24,
+    "mutants": 33,
+    "predicted_accept": 9,
+    "predicted_refuse": 24
+   },
+   "parse": {
+    "answers": 5,
+    "checker_accept": 8,
+    "checker_refuse": 34,
+    "mutants": 42,
+    "predicted_accept": 5,
+    "predicted_either": 7,
+    "predicted_refuse": 30
+   },
+   "graph": {
+    "answers": 5,
+    "checker_accept": 68,
+    "checker_refuse": 37,
+    "mutants": 105,
+    "predicted_accept": 68,
+    "predicted_either": 8,
+    "predicted_refuse": 29
+   },
+   "readings": {
+    "answers": 5,
+    "checker_accept": 2,
+    "checker_refuse": 13,
+    "mutants": 15,
+    "predicted_accept": 2,
+    "predicted_refuse": 13
+   },
+   "readings-choices": {
+    "answers": 10,
+    "checker_accept": 18,
+    "checker_refuse": 62,
+    "mutants": 80,
+    "predicted_accept": 4,
+    "predicted_either": 32,
+    "predicted_refuse": 44
+   },
+   "bundle": {
+    "answers": 5,
+    "checker_accept": 2,
+    "checker_refuse": 49,
+    "mutants": 51,
+    "predicted_accept": 2,
+    "predicted_refuse": 49
+   },
+   "family-norms": {
+    "answers": 13,
+    "checker_accept": 229,
+    "checker_refuse": 104,
+    "mutants": 333,
+    "predicted_accept": 219,
+    "predicted_either": 22,
+    "predicted_refuse": 92
+   },
+   "soft-norms": {
+    "answers": 27,
+    "checker_accept": 357,
+    "checker_refuse": 237,
+    "mutants": 594,
+    "predicted_accept": 353,
+    "predicted_either": 32,
+    "predicted_refuse": 209
+   },
+   "rights": {
+    "answers": 26,
+    "checker_accept": 559,
+    "checker_refuse": 335,
+    "mutants": 894,
+    "predicted_accept": 551,
+    "predicted_either": 48,
+    "predicted_refuse": 295
+   },
+   "speech-acts": {
+    "answers": 20,
+    "checker_accept": 353,
+    "checker_refuse": 116,
+    "mutants": 469,
+    "predicted_accept": 353,
+    "predicted_either": 16,
+    "predicted_refuse": 100
+   },
+   "reports": {
+    "answers": 26,
+    "checker_accept": 319,
+    "checker_refuse": 119,
+    "mutants": 438,
+    "predicted_accept": 315,
+    "predicted_either": 4,
+    "predicted_refuse": 119
+   },
+   "alternatives": {
+    "answers": 24,
+    "checker_accept": 1684,
+    "checker_refuse": 951,
+    "mutants": 2635,
+    "predicted_accept": 1666,
+    "predicted_either": 158,
+    "predicted_refuse": 811
+   },
+   "risk": {
+    "answers": 24,
+    "checker_accept": 1160,
+    "checker_refuse": 570,
+    "mutants": 1730,
+    "predicted_accept": 1124,
+    "predicted_either": 136,
+    "predicted_refuse": 470
+   },
+   "risk-eval": {
+    "answers": 5,
+    "checker_accept": 64,
+    "checker_refuse": 9,
+    "mutants": 73,
+    "predicted_accept": 64,
+    "predicted_refuse": 9
+   },
+   "quantity": {
+    "answers": 32,
+    "checker_accept": 281,
+    "checker_refuse": 250,
+    "mutants": 531,
+    "predicted_accept": 263,
+    "predicted_either": 32,
+    "predicted_refuse": 236
+   },
+   "norm-defaults": {
+    "answers": 33,
+    "checker_accept": 586,
+    "checker_refuse": 457,
+    "mutants": 1043,
+    "predicted_accept": 572,
+    "predicted_either": 58,
+    "predicted_refuse": 413
+   },
+   "discourse": {
+    "answers": 19,
+    "checker_accept": 212,
+    "checker_refuse": 121,
+    "mutants": 333,
+    "predicted_accept": 208,
+    "predicted_either": 4,
+    "predicted_refuse": 121
+   },
+   "readings-route": {
+    "answers": 52,
+    "checker_accept": 2544,
+    "checker_refuse": 549,
+    "mutants": 3093,
+    "predicted_accept": 2520,
+    "predicted_either": 66,
+    "predicted_refuse": 507
+   },
+   "diagnose": {
+    "answers": 9,
+    "checker_accept": 40,
+    "checker_refuse": 33,
+    "mutants": 73,
+    "predicted_accept": 40,
+    "predicted_refuse": 33
+   },
+   "document": {
+    "answers": 6,
+    "checker_accept": 158,
+    "checker_refuse": 50,
+    "mutants": 208,
+    "predicted_accept": 156,
+    "predicted_either": 2,
+    "predicted_refuse": 50
+   },
+   "english.question": {
+    "answers": 6,
+    "checker_accept": 3,
+    "checker_refuse": 9,
+    "mutants": 12,
+    "predicted_accept": 3,
+    "predicted_refuse": 9
+   },
+   "search-budget": {
+    "answers": 6,
+    "checker_accept": 28,
+    "checker_refuse": 11,
+    "mutants": 39,
+    "predicted_accept": 28,
+    "predicted_refuse": 11
+   },
+   "ask": {
+    "answers": 5,
+    "checker_accept": 124,
+    "checker_refuse": 49,
+    "mutants": 173,
+    "predicted_accept": 122,
+    "predicted_either": 8,
+    "predicted_refuse": 43
+   },
+   "words": {
+    "answers": 3,
+    "checker_accept": 20,
+    "checker_refuse": 6,
+    "mutants": 26,
+    "predicted_accept": 20,
+    "predicted_refuse": 6
+   }
+  }
+ },
+ "hand_binders": {
+  "found": 51,
+  "retirable_later": 12
+ },
+ "seeded_faults": [
+  {
+   "binder": "ve/discourse.py:_bind_joint",
+   "tests_failing": [
+    "tests/test_discourse_answer.py::test_duplicate_and_out_of_range_choices_are_no_answer",
+    "tests/test_discourse_answer.py::test_genuine_answer_mutants_never_pass_as_answers[free]",
+    "tests/test_discourse_answer.py::test_genuine_answer_mutants_never_pass_as_answers[some]",
+    "tests/test_discourse_answer.py::test_joint_status_and_unit_set_are_bound"
+   ],
+   "summary": {
+    "AssertionError": 4,
+    "IndexError": 1,
+    "hand ve/discourse.py:lean_admission": 1,
+    "transport": 4,
+    "wire": 2
+   },
+   "caught_by_the_generic_checker": false,
+   "reaches_the_consumer": 5,
+   "inconclusive": 0
+  },
+  {
+   "binder": "ve/rights.py:__init__",
+   "tests_failing": [],
+   "summary": {
+    "FileExistsError": 20,
+    "hand ve/rights.py:__init__": 7,
+    "passed": 6,
+    "transport": 12,
+    "wire": 4
+   },
+   "caught_by_the_generic_checker": false,
+   "reaches_the_consumer": 6,
+   "inconclusive": 0
+  },
+  {
+   "binder": "ve/admission.py:bound_admission",
+   "tests_failing": [],
+   "summary": {
+    "AssertionError": 3,
+    "not reached": 50,
+    "wire": 32
+   },
+   "caught_by_the_generic_checker": false,
+   "reaches_the_consumer": 3,
+   "inconclusive": 50
+  },
+  {
+   "binder": "ve/reports.py:_load_statuses",
+   "tests_failing": [],
+   "summary": {
+    "wire": 3
+   },
+   "caught_by_the_generic_checker": true,
+   "reaches_the_consumer": 0,
+   "inconclusive": 0
+  },
+  {
+   "binder": "ve/backends/english_lean.py:check",
+   "tests_failing": [],
+   "summary": {
+    "wire": 1
+   },
+   "caught_by_the_generic_checker": true,
+   "reaches_the_consumer": 0,
+   "inconclusive": 0
+  }
+ ],
+ "seeded_bugs": [
+  {
+   "id": "B1",
+   "file": "ve/backends/shape_binding.py",
+   "test": "tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[route]",
+   "caught": true
+  },
+  {
+   "id": "B2",
+   "file": "ve/backends/shape_binding.py",
+   "test": "tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[environment]",
+   "caught": true
+  },
+  {
+   "id": "B3",
+   "file": "ve/backends/shape_binding.py",
+   "test": "tests/test_shape_binding_mutants.py::test_every_leaf_of_an_answer_is_a_leaf_of_the_census[norms]",
+   "caught": true
+  },
+  {
+   "id": "B4",
+   "file": "tests/binding_mutants.py",
+   "test": "tests/test_shape_binding_mutants.py::test_a_name_renamed_everywhere_is_refused_where_one_occurrence_is_bound",
+   "caught": true
+  },
+  {
+   "id": "B5",
+   "file": "tools/binding_census.py",
+   "test": "tests/test_binding_census.py::test_a_refusal_is_attributed_to_the_check_that_made_it",
+   "caught": true
+  },
+  {
+   "id": "B6",
+   "file": "tools/binding_census.py",
+   "test": "tests/test_binding_census.py::test_a_hand_check_is_retirable_only_if_the_generic_checker_refuses_all_it_refuses",
+   "caught": true
+  },
+  {
+   "id": "B7",
+   "file": "tools/binding_census.py",
+   "test": "tests/test_binding_census.py::test_the_census_is_current",
+   "caught": true
+  },
+  {
+   "id": "B8",
+   "file": "tests/binding_probe.py",
+   "test": "tests/test_binding_census.py::test_the_probe_finds_the_hand_check_of_a_consumer_test",
+   "caught": true
+  }
+ ],
+ "measurements": {
+  "mac_new_tests": {
+   "where": "ve-mac-1 aarch64, mac-pytest -n 6, commit f32633959, 2026-10-16 10:49Z",
+   "files": {
+    "tests/test_shape_binding_mutants.py": {
+     "tests": 37,
+     "test_seconds": 23.3
+    },
+    "tests/test_binding_census.py": {
+     "tests": 9,
+     "test_seconds": 2.7
+    }
+   },
+   "with_tests/test_discourse_answer.py": {
+    "tests": 16,
+    "test_seconds": 99.6
+   },
+   "wall_seconds_three_files_6_workers": 52.8
+  },
+  "before": "the two new files do not exist on main: 0 tests, 0 s",
+  "vm_affected_set": {
+   "where": "VM (no Mac slot within 600 s), -n 6 default, commit f32633959",
+   "tests": 1000,
+   "passed": 1000,
+   "wall_seconds": 2206.7
+  },
+  "probe_record": {
+   "where": "VM, 12 workers, load 58-89 on 32 cores",
+   "groups_minutes": [
+    23.4,
+    44.3,
+    11.6
+   ],
+   "probes": 10204,
+   "answers_after_refresh": 537
+  },
+  "seeded_faults_run_minutes": 42.0,
+  "census_write_or_check_seconds": "2-3 (VM)"
+ },
+ "sync_d7ea7228b": {
+  "comment": "pre-review round 2: merged main d7ea7228b (rd-9 changed the norm-defaults, readings-route and soft-norms shapes); --answers re-asked the recorded cases on the merged build, --write regenerated the census; probes kept",
+  "census_totals": {
+   "answers": 536,
+   "hand_binders": 51,
+   "leaves:bound": 243,
+   "leaves:closed domain": 233,
+   "leaves:none": 1182,
+   "modes": 36,
+   "probes": 10204,
+   "today:hand": 202,
+   "today:later Lean request": 59,
+   "today:not probed": 784,
+   "today:shape": 476,
+   "today:unbound": 137
+  },
+  "mutation_test": {
+   "answers": 536,
+   "mutants": 14403,
+   "predicted_refuse": 4427,
+   "predicted_accept": 9243,
+   "either": 733,
+   "decided_and_matching": 13670,
+   "refused_by_the_checker": 4949
+  },
+  "dropped_answer": "one readings-route case (reading set rs_1, choice [[rs_1, 1]]) that main's build now answers with an error",
+  "selected_tests_mac": {"commit": "bd6cea639", "units": 134, "exit": 0, "failed": 0, "wall_seconds": 2157},
+  "relay_mutation_gate": {
+   "evidence": "docs/test-architecture/tarch-binding/relay-gate-main-d7ea7228b.txt",
+   "routes": 43,
+   "mutants": 118538,
+   "failures": 25,
+   "identical_on_main": "d7ea7228b"
+  }
+ }
+}

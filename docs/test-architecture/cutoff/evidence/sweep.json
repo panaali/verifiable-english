@@ -1,0 +1,259 @@
+{
+ "batch": "tarch-cutoff",
+ "test": "tests/test_answer_cutoff.py",
+ "python": [
+  3,
+  14
+ ],
+ "mutants": 950,
+ "files": {
+  "tools/answer_cutoff.py": {
+   "sha256": "8781dca5af710a00e08e8c7c296e0f7c84a5c5d44288f5515541a1b71061325f",
+   "digest": "c4b7a56096035dced2e0373ada004ecc9fe865df1fcf938e7bcbb35fcc6d80db"
+  },
+  "tools/answer_replay.py": {
+   "sha256": "33b1d972e12480d2e79b132e41c669dd5a8aa57ad0162b5cb4493c1c1a828810",
+   "digest": "c51b49dc8e293ee73a88bbe238cfd2f83276647018f201a5263111e4b21015c2"
+  },
+  "tools/test_map_recorder.py": {
+   "sha256": "d5418eb8fc0ac5adc3e330425b2275d883fdc9f20af1a80c19db3be0d9351e7b",
+   "digest": "f1d31af7132d46be1b76612ccc0d4e3b99abb197b478d61acd7dcf9e2aed56a1"
+  },
+  "tools/select_tests.py": {
+   "sha256": "c78cbe85fa540c906445870e19aaa76971031c59ebfee547c2684ca04f46284d",
+   "digest": "87a722b571c85209fd18a776f49116cbda3d6d4c6c65f56b018d5735a0d8a062"
+  }
+ },
+ "survivors": [
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 149,
+   "key": "tools/answer_cutoff.py:write_store: handle.write(json.dumps(rows[name], ensure_ascii=False) + \"\\n\") -> handle.write(json.dumps(rows[name]) + \"\\n\")"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 149,
+   "key": "tools/answer_cutoff.py:write_store: handle.write(json.dumps(rows[name], ensure_ascii=False) + \"\\n\") -> handle.write(json.dumps(rows[name], ensure_ascii=True) + \"\\n\")"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 175,
+   "key": "tools/answer_cutoff.py:record: output.mkdir(parents=True, exist_ok=True) -> pass"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 199,
+   "key": "tools/answer_cutoff.py:record: shutil.rmtree(work, ignore_errors=True) -> shutil.rmtree(work)"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 199,
+   "key": "tools/answer_cutoff.py:record: shutil.rmtree(work, ignore_errors=True) -> shutil.rmtree(work, ignore_errors=False)"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 244,
+   "key": "tools/answer_cutoff.py:randomised: if module == \"random\" and name == \"Random\" and (node.args or node.keywords): -> if name == 'Random' and (node.args or node.keywords):"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 248,
+   "key": "tools/answer_cutoff.py:randomised: return None -> pass"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 254,
+   "key": "tools/answer_cutoff.py:pinned: text = (ROOT / PIN_FILE).read_text() if after is None else subprocess.run( [\"git\", \"show\", f\"{after}:{PIN_FILE}\"], cwd=ROOT, check=True, capture_output=True, text=True).stdout -> text = (ROOT / PIN_FILE).read_text() if after is None else subprocess.run(['git', 'show', f'{after}:{PIN_FILE}'], cwd=ROOT, capture_output=True, text=True).stdout"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 254,
+   "key": "tools/answer_cutoff.py:pinned: text = (ROOT / PIN_FILE).read_text() if after is None else subprocess.run( [\"git\", \"show\", f\"{after}:{PIN_FILE}\"], cwd=ROOT, check=True, capture_output=True, text=True).stdout -> text = (ROOT / PIN_FILE).read_text() if after is None else subprocess.run(['git', 'show', f'{after}:{PIN_FILE}'], cwd=ROOT, check=True, capture_output=True).stdout"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 255,
+   "key": "tools/answer_cutoff.py:pinned: text = (ROOT / PIN_FILE).read_text() if after is None else subprocess.run( [\"git\", \"show\", f\"{after}:{PIN_FILE}\"], cwd=ROOT, check=True, capture_output=True, text=True).stdout -> text = (ROOT / PIN_FILE).read_text() if after is None else subprocess.run( [\"git\", \"show\", f\"{after}:{PIN_FILE}\"], cwd=ROOT, check=False, capture_output=True, text=True).stdout"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 255,
+   "key": "tools/answer_cutoff.py:pinned: text = (ROOT / PIN_FILE).read_text() if after is None else subprocess.run( [\"git\", \"show\", f\"{after}:{PIN_FILE}\"], cwd=ROOT, check=True, capture_output=True, text=True).stdout -> text = (ROOT / PIN_FILE).read_text() if after is None else subprocess.run( [\"git\", \"show\", f\"{after}:{PIN_FILE}\"], cwd=ROOT, check=True, capture_output=True, text=False).stdout"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 307,
+   "key": "tools/answer_cutoff.py:answers_rule.rule: del graph -> pass"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 390,
+   "key": "tools/answer_cutoff.py:main: diff.add_argument(\"base\", type=Path) -> diff.add_argument('base')"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 391,
+   "key": "tools/answer_cutoff.py:main: diff.add_argument(\"head\", type=Path) -> diff.add_argument('head')"
+  },
+  {
+   "file": "tools/answer_cutoff.py",
+   "line": 392,
+   "key": "tools/answer_cutoff.py:main: diff.add_argument(\"--recording-answers\", type=Path, help=\"the recording replayed on its own build: needed when the base build is another\") -> diff.add_argument('--recording-answers', help='the recording replayed on its own build: needed when the base build is another')"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 37,
+   "key": "tools/answer_replay.py:<module>: sys.path.insert(0, str(ROOT)) -> pass"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 91,
+   "key": "tools/answer_replay.py:inline: case = json.loads(text, parse_int=lean_service._json_integer) -> case = json.loads(text)"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 93,
+   "key": "tools/answer_replay.py:inline: case[\"environment\"] = json.loads(environments[handle], parse_int=lean_service._json_integer) -> case[\"environment\"] = json.loads(environments[handle])"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 106,
+   "key": "tools/answer_replay.py:unplaced: if isinstance(result, dict) and \"case_index\" in result: -> if isinstance(result, dict):"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 143,
+   "key": "tools/answer_replay.py:batches: extra = len(text) + len(environments.get(handle_of(text) or \"\", \"\")) -> extra = len(text) + len(environments.get(handle_of(text), \"\"))"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 169,
+   "key": "tools/answer_replay.py:replay: if len(lost) < len(keys): -> if True:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 174,
+   "key": "tools/answer_replay.py:replay.work: with lean_service.LeanService(executable, expected_sha256=build, startup_timeout=REPLAY_TIMEOUT, handles=False) as service: -> with lean_service.LeanService(executable, expected_sha256=build, handles=False) as service:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 174,
+   "key": "tools/answer_replay.py:replay.work: with lean_service.LeanService(executable, expected_sha256=build, startup_timeout=REPLAY_TIMEOUT, handles=False) as service: -> with lean_service.LeanService(executable, expected_sha256=build, startup_timeout=REPLAY_TIMEOUT) as service:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 175,
+   "key": "tools/answer_replay.py:replay.work: with lean_service.LeanService(executable, expected_sha256=build, startup_timeout=REPLAY_TIMEOUT, handles=False) as service: -> with lean_service.LeanService(executable, expected_sha256=build, startup_timeout=REPLAY_TIMEOUT, handles=True) as service:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 183,
+   "key": "tools/answer_replay.py:replay.work: before = len(answers) // 50000 -> pass"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 184,
+   "key": "tools/answer_replay.py:replay.work: answers.update(zip(keys, found, strict=True)) -> answers.update(zip(keys, found))"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 184,
+   "key": "tools/answer_replay.py:replay.work: answers.update(zip(keys, found, strict=True)) -> answers.update(zip(keys, found, strict=False))"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 185,
+   "key": "tools/answer_replay.py:replay.work: if len(answers) // 50000 > before: -> if False:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 185,
+   "key": "tools/answer_replay.py:replay.work: if len(answers) // 50000 > before: -> if True:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 185,
+   "key": "tools/answer_replay.py:replay.work: if len(answers) // 50000 > before: -> if len(answers) // 50000 <= before:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 186,
+   "key": "tools/answer_replay.py:replay.work: progress(f\"replayed {len(answers)} of {len(cases)} cases\") -> pass"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 188,
+   "key": "tools/answer_replay.py:replay: threads = [threading.Thread(target=work, daemon=True) for _ in range(max(1, jobs))] -> threads = [threading.Thread(target=work) for _ in range(max(1, jobs))]"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 188,
+   "key": "tools/answer_replay.py:replay: threads = [threading.Thread(target=work, daemon=True) for _ in range(max(1, jobs))] -> threads = [threading.Thread(target=work, daemon=False) for _ in range(max(1, jobs))]"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 219,
+   "key": "tools/answer_replay.py:write_json: with opener(path, \"wt\", encoding=\"utf-8\") as handle: -> with opener(path, 'wt') as handle:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 220,
+   "key": "tools/answer_replay.py:write_json: json.dump(data, handle, separators=(\",\", \":\")) -> json.dump(data, handle)"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 225,
+   "key": "tools/answer_replay.py:read_json: with opener(path, \"rt\", encoding=\"utf-8\") as handle: -> with opener(path, 'rt') as handle:"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 238,
+   "key": "tools/answer_replay.py:main: two.add_argument(\"base\", type=Path) -> two.add_argument('base')"
+  },
+  {
+   "file": "tools/answer_replay.py",
+   "line": 239,
+   "key": "tools/answer_replay.py:main: two.add_argument(\"head\", type=Path) -> two.add_argument('head')"
+  },
+  {
+   "file": "tools/test_map_recorder.py",
+   "line": 121,
+   "key": "tools/test_map_recorder.py:_audit: if \"requests\" in _state: -> if True:"
+  },
+  {
+   "file": "tools/test_map_recorder.py",
+   "line": 182,
+   "key": "tools/test_map_recorder.py:_caller: return None -> pass"
+  },
+  {
+   "file": "tools/test_map_recorder.py",
+   "line": 229,
+   "key": "tools/test_map_recorder.py:_store: if kind not in _state[\"stores\"]: -> if True:"
+  },
+  {
+   "file": "tools/test_map_recorder.py",
+   "line": 232,
+   "key": "tools/test_map_recorder.py:_store: _state[\"stores\"][kind].write(json.dumps(record, ensure_ascii=False) + \"\\n\") -> _state[\"stores\"][kind].write(json.dumps(record) + \"\\n\")"
+  },
+  {
+   "file": "tools/test_map_recorder.py",
+   "line": 232,
+   "key": "tools/test_map_recorder.py:_store: _state[\"stores\"][kind].write(json.dumps(record, ensure_ascii=False) + \"\\n\") -> _state[\"stores\"][kind].write(json.dumps(record, ensure_ascii=True) + \"\\n\")"
+  },
+  {
+   "file": "tools/test_map_recorder.py",
+   "line": 241,
+   "key": "tools/test_map_recorder.py:_open_requests: _state[\"requests\"] = open(os.path.join(root, \"units\", unit, f\"{os.getpid()}.jsonl\"), \"a\", encoding=\"utf-8\") -> _state[\"requests\"] = open(os.path.join(root, 'units', unit, f'{os.getpid()}.jsonl'), 'a')"
+  },
+  {
+   "file": "tools/test_map_recorder.py",
+   "line": 337,
+   "key": "tools/test_map_recorder.py:_after_fork: if \"requests\" in _state: -> if False:"
+  },
+  {
+   "file": "tools/test_map_recorder.py",
+   "line": 338,
+   "key": "tools/test_map_recorder.py:_after_fork: _open_requests() -> pass"
+  }
+ ]
+}
