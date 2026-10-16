@@ -283,7 +283,9 @@ def test_answers_rule_selects_changed_and_unknown_users_only(tmp_path, monkeypat
         "changed", "timed", "unreadable", "silent", "failed", "drifted", "metered"}
 
 
-@pytest.mark.parametrize("path", [*answer_cutoff.REQUEST_HANDLING, "lean/lakefile.toml"])
+# The service's request loop, batch budgets, handles and case splitting: one case per request cannot show them.
+@pytest.mark.parametrize("path", ["lean/VE/Service/Protocol.lean", "lean/Serve.lean", "lean/VE/Json.lean",
+                                  "lean/lakefile.toml"])
 def test_request_handling_and_project_changes_select_every_service_user(tmp_path, monkeypatch, path):
     monkeypatch.setattr(select_tests, "lean_programs", lambda graph, path: {"ve_service"})
     assert answers_selection(tmp_path, path) == set(USERS) - {"metered", "other"}
