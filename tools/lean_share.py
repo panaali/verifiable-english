@@ -253,7 +253,8 @@ def _place(source: Path, target: Path, link: bool) -> bool:
     target.parent.mkdir(parents=True, exist_ok=True)
     if link:
         mode = stat.S_IMODE(source.stat().st_mode)
-        os.chmod(source, mode & ~0o222)
+        if mode & 0o222:
+            os.chmod(source, mode & ~0o222)
         try:
             os.link(source, target)
             return True
@@ -318,8 +319,9 @@ def check_entry(entry: Path) -> dict:
     for name, path, digest in zip(found, paths, _hash_all(paths)):
         if files[name]["sha256"] != digest or files[name]["size"] != path.stat().st_size:
             raise Refused(f"{entry.name}: {name} is not the file the seal records")
+    checkers = seal.get("checkers")
     for name in PINNED:
-        if seal.get("checkers", {}).get(name) != files.get(f"build/bin/{name}", {}).get("sha256"):
+        if not isinstance(checkers, dict) or checkers.get(name) != files.get(f"build/bin/{name}", {}).get("sha256"):
             raise Refused(f"{entry.name}: the seal's {name} digest is not its file's")
     return seal
 
@@ -409,9 +411,13 @@ def restore(lean: Path, store: Path, pins: str | None = None, *, link: bool = Tr
         raise Refused(f"the stored build's key is not this worktree's: "
                       f"{', '.join(sorted(name for name in value if seal['key'].get(name) != value[name]))}")
     _check_pins(lean, store, pins, seal["checkers"])
-    staging = lean / f".lake.share-{os.getpid()}"
-    previous = lean / f".lake.previous-{os.getpid()}"
-    _remove(staging)
+    # Work under lean/.cache (git ignores every `.cache/`), so a restore that dies midway never leaves the worktree dirty.
+    for left in (lean / ".cache").glob("lean-share-*"):
+        if not _running(left.name.rsplit("-", 1)[-1]):
+            _remove(left)
+    work = lean / ".cache" / f"lean-share-{os.getpid()}"
+    staging, previous = work / "lake", work / "previous"
+    _remove(work)
     try:
         for name, record in seal["files"].items():
             target = staging / name
@@ -429,10 +435,22 @@ def restore(lean: Path, store: Path, pins: str | None = None, *, link: bool = Tr
                 os.rename(previous, dotlake)
             raise
     finally:
-        _remove(staging)
-        _remove(previous)
+        _remove(work)
+        with contextlib.suppress(OSError):
+            (lean / ".cache").rmdir()
     _used(store, entry.name)
     return entry
+
+
+def _running(pid: str) -> bool:
+    """Whether the process a work directory names still runs (then the directory is another restore's)."""
+    try:
+        os.kill(int(pid), 0)
+    except (ValueError, OverflowError, ProcessLookupError):
+        return False
+    except PermissionError:
+        return True
+    return True
 
 
 def verify(store: Path) -> list[str]:

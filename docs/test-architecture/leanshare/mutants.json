@@ -1,6 +1,6 @@
 {
  "batch": "tarch-leanshare",
- "note": "Each bug was planted in a changed file by /tmp/lsx-mut/run.py, the named tests ran on the VM, and the file was restored byte for byte (git status clean after). S2 and S3 are the key-level faults (re-run after a first variant only broke the test's own setup).",
+ "note": "Each bug was planted in a changed file by a scratch runner, the named tests ran on the VM, and the file was restored byte for byte (git status clean after). S2 and S3 are the key-level faults (a first variant that mutated machine() and toolchain() only broke the tests' own setup, since the tests replace those functions).",
  "mutants": [
   {
    "id": "S1",
@@ -63,7 +63,7 @@
    "fault": "a refused restore does not put the worktree's build back",
    "test": "tests/test_lean_share.py::test_a_forged_seal_for_another_tree_is_refused_by_lake_and_the_worktree_restored",
    "result": "failed",
-   "assertion": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-seyran/pytest-8715/test_a_forged_seal_for_another0/worktree/lean/.lake/own-build'"
+   "assertion": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-seyran/pytest-8774/test_a_forged_seal_for_another0/worktree/lean/.lake/own-build'"
   },
   {
    "id": "S8",
@@ -91,6 +91,15 @@
    "test": "tests/test_lean_share.py::test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites",
    "result": "failed",
    "assertion": "assert False"
+  },
+  {
+   "id": "S11",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "a restore stages its copy where git sees it",
+   "test": "tests/test_lean_share.py::test_a_restore_killed_while_it_copies_leaves_nothing_git_sees",
+   "result": "failed",
+   "assertion": "AssertionError: assert '?? lean/.lak...rvice.trace\\n' == ''"
   }
  ]
 }
