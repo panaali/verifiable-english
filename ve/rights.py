@@ -178,7 +178,10 @@ class RightsDocument:
                 body = unit[kind]
                 right = body["name"] if kind == "right" else body["right"]
                 if kind == "right":
-                    self.rights[right] = {**body, "guard_formula": _Decoder().decode(body["guard"])}
+                    # The rights route reads an absent (or null) holder guard as `top` (`decodeRight`).
+                    guard = body.get("guard")
+                    self.rights[right] = {**body, "guard_formula": _Decoder().decode(
+                        ["top"] if guard is None else guard)}
                 for line in body["lines"]:
                     fields = LINE_RULE_FIELDS[line["kind"]]
                     for field in fields:
@@ -186,18 +189,6 @@ class RightsDocument:
                         fan = line.get("fan_out") or {}
                         for bearer in (sorted(fan) if fan else (None,)):
                             refs.append((right, line, raw, bearer))
-            if len(refs) != len(row["lines"]):
-                raise ValueError("rights line count")
-            if set(row["wordings"]) != {g["name"] for g in row["generated"]}:
-                raise ValueError("rights wording keys")
-            for line_row, (right, line, raw, bearer) in zip(row["lines"], refs):
-                if (line_row["right"] != right or line_row["kind"] != line["kind"] or
-                    line_row.get("bearer") != bearer or
-                    line_row["rule"] != line_row["node"]["name"] or
-                    line_row["predicate"] != line_row["node"]["predicate"] or
-                    (bearer is None and line_row["rule"] != raw["name"])):
-                    raise ValueError("rights line binding")
-
             raw_env = env.to_dict()
             raw_env["profiles"].remove("rights@0")
             raw_env["vocabulary"].pop("rights")

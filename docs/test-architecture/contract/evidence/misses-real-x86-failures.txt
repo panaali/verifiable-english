@@ -1,0 +1,45 @@
+== cand-runs/00c844d9046c7569e3870a8f9dd049ec422a192e.x86.json (with 00c844d9046c7569e3870a8f9dd049ec422a192e.mac.json)
+tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-0]: in the contract (divergence)
+0 failed tests NOT in the contract list
+exit=0
+== cand-runs/4ac2a616a7bd5da3a7601ce2893495598c7b8374.x86.json (with 4ac2a616a7bd5da3a7601ce2893495598c7b8374.mac.json)
+tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-3]: in the contract (divergence)
+tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]: in the contract (divergence)
+0 failed tests NOT in the contract list
+exit=0
+== cand-runs/7ca69106b9d3cb606d6bf678ceb8cb31c44c6b45.x86.json (with 7ca69106b9d3cb606d6bf678ceb8cb31c44c6b45.mac.json)
+[coverage] 1 tests collected at the merge base a650eeb6367a57f2fde4d8a14f88ed3553dfd67c are not collected here, and no `Test-removed:` trailer since it names them:: the collection check: platform-independent, run by every full gate
+0 failed tests NOT in the contract list
+exit=0
+== cand-runs/8a0ca574057f9d9162daeaba0b8dd8ef53437d71.x86.json (with 8a0ca574057f9d9162daeaba0b8dd8ef53437d71.mac.json)
+[gate] Wire contract check: exit 1: a gate stage the contract run runs
+0 failed tests NOT in the contract list
+exit=0
+== cand-runs/a40a56dfc0f7bfc2a3a7df0692a722f8c168f4a8.x86.json (with a40a56dfc0f7bfc2a3a7df0692a722f8c168f4a8.mac.json)
+tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-0]: in the contract (divergence)
+tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]: in the contract (divergence)
+tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature: also failed on the Mac
+tests/test_stage2_norms.py::test_retained_python_route_keeps_the_base_nary_expansion: also failed on the Mac
+0 failed tests NOT in the contract list
+exit=0
+== cand-runs/bf956ab253aeeed6db563bcffd898bc725960026.x86.json (with bf956ab253aeeed6db563bcffd898bc725960026.mac.json)
+tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]: in the contract (divergence)
+0 failed tests NOT in the contract list
+exit=0
+== cand-runs/e465178a403a32e66c0fbb23cbb163df4f570c7b.x86.json (with e465178a403a32e66c0fbb23cbb163df4f570c7b.mac.json)
+tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M2]: in the contract (divergence)
+tests/test_definitions_differential.py::test_populated_defined_table_limit_boundary: in the contract (agreement, divergence)
+tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature: also failed on the Mac
+0 failed tests NOT in the contract list
+exit=0
+== cand-runs/f98d219f6ee86e311cae3149d81fd2ee148c58bd.x86.json (with f98d219f6ee86e311cae3149d81fd2ee148c58bd.mac.json)
+tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations: in the contract (divergence)
+tests/test_readings_verdicts_lean.py::test_fnd1_conflict_free_under_every_reading_conditional_on_the_pair_premise: in the contract (divergence)
+0 failed tests NOT in the contract list
+exit=0
+== nightly-runs/b96f04a5a1c8768c380daf155028773624d9bb9f.x86.json (with b96f04a5a1c8768c380daf155028773624d9bb9f.mac.json)
+tests/test_difffuzz.py::test_ci_run: in the contract (agreement, divergence)
+tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-0]: in the contract (divergence)
+[coverage] 1 tests collected at the merge base 4ce477e1889c9c446cf26ca1be8598fc88886b0b are not collected here, and no `Test-removed:` trailer since it names them:: the collection check: platform-independent, run by every full gate
+0 failed tests NOT in the contract list
+exit=0

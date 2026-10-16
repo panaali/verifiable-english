@@ -21,6 +21,11 @@ universe u
 
 inductive Chain | norms | soft | rights
   deriving DecidableEq, Repr
+/-- The chain's name on the wire (`filled.chain`, rd-9-soft-chain.md 3): the client reads which chain Lean took. -/
+def Chain.text : Chain → String
+  | .norms => "norms"
+  | .soft => "soft"
+  | .rights => "rights"
 def chainOf (ps : List String) : Chain :=
   if ps.contains "rights@0" then .rights else if ps.contains "soft-norms@0" then .soft else .norms
 
