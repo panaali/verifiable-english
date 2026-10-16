@@ -23,7 +23,7 @@ import pytest
 from tools import difffuzz as df
 from tools import lake_outputs
 from tools import difffuzz_corpus as corpus
-from subprocesses import HANG_TIMEOUT
+from subprocesses import run_while_progressing
 
 ROOT = Path(__file__).resolve().parents[1]
 # The one-shot routes and `ve_diagnose` are service modes since lean-first batch 1 (`df.SERVICE_MODES`).
@@ -43,15 +43,29 @@ def _summary(report):
                        "baseline": report["baseline"]}, indent=1, ensure_ascii=False)[:6000]
 
 
+def work_done(line):
+    """The progress a line of the CI run's standard error reports (`df.read_progress`): the work counted so
+    far, or None. A count past its `df.WORK_LIMIT` stops the run there: a runaway, not a slow machine."""
+    work = df.read_progress(line)
+    if work is None:
+        return None
+    over = {kind: count for kind, count in work.items() if count > df.WORK_LIMIT.get(kind, count)}
+    assert not over, f"the run's work passed its limit: {over}"
+    return sum(work.values())
+
+
 def test_ci_run(built, tmp_path, record_property):
-    """Run the bounded CI sample against executables whose Lake traces match their contents."""
+    """Run the bounded CI sample against executables whose Lake traces match their contents. The run is
+    stopped when its work stops (`run_while_progressing`): under load it is slow, but it keeps working."""
     assert lake_outputs.stale() == [], "rebuild: python3 tools/lake_outputs.py --drop && lake build"
     output = tmp_path / "difffuzz-ci.json"
-    completed = subprocess.run([sys.executable, "-m", "tools.difffuzz", "--ci", "--report", str(output)],
-                               cwd=ROOT, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    completed = run_while_progressing([sys.executable, "-m", "tools.difffuzz", "--ci", "--progress", "--report",
+                                       str(output)], work_done, cwd=ROOT)
     assert output.is_file(), completed.stderr[-2000:]
     report = json.loads(output.read_text())
     record_property("cpu_seconds", report["cpu_seconds"])
+    progress = [work for work in map(df.read_progress, completed.stderr.splitlines()) if work is not None]
+    assert progress and progress[-1] == report["work"], progress[-1:]
     assert completed.returncode == 0, _summary(report)
     assert report["new"] == [], _summary(report)
     assert report["baseline"]["not_reproduced"] == [], _summary(report)
@@ -104,6 +118,34 @@ def test_the_work_bound_sees_a_runaway(work, problem):
     report = _work_report()
     del report["work"]["python_calls"]
     assert work_problems(report) == ["python_calls not counted"]
+
+
+def test_the_run_reports_its_work_as_it_is_counted(monkeypatch):
+    """`--progress`: the first count is reported at once, then at most one line every PROGRESS_EVERY seconds of
+    the progress clock, each with the whole count; `work_done` reads a line's total and stops a count past its
+    limit; any other line of standard error is no progress."""
+    import io
+    now = [100.0]
+    stream = io.StringIO()
+    monkeypatch.setattr(df, "WORK", {})
+    monkeypatch.setattr(df, "_PROGRESS", {"stream": stream, "last": None, "clock": lambda: now[0]})
+    df.spend("inputs", 3)
+    now[0] += df.PROGRESS_EVERY - 0.1
+    df.spend("python_calls")
+    now[0] += 0.1
+    df.spend("python_calls", 2)
+    df.spend("inputs")
+    lines = stream.getvalue().splitlines()
+    assert [df.read_progress(line) for line in lines] == [{"inputs": 3}, {"inputs": 3, "python_calls": 3}]
+    assert [work_done(line) for line in lines] == [3, 6]
+    assert df.read_progress("requests: 2458 seeds, 9958 inputs") is None
+    assert work_done("Traceback (most recent call last):") is None
+    over = df.PROGRESS + json.dumps({"inputs": df.WORK_LIMIT["inputs"] + 1})
+    with pytest.raises(AssertionError, match="passed its limit"):
+        work_done(over)
+    monkeypatch.setattr(df, "_PROGRESS", {"stream": None, "last": None, "clock": lambda: now[0]})
+    df.spend("inputs")
+    assert stream.getvalue().splitlines() == lines, "a run without --progress reports nothing"
 
 
 def test_the_work_of_a_split_batch_and_a_python_call_is_counted(monkeypatch):
