@@ -5,7 +5,7 @@ may call `restore` (section "Wiring" below). The tool works either way; my recom
 
 Plan: `test-architecture-2026-10-14.md` draft 2, section 3.8 ("Shared builds", "Obsolete executables") and rank 9 of
 section 4, with Astra's re-check (ADOPT WITH CHANGES) points 7 and 8. Branch `infra/tarch-leanshare`, from `dae12d5ff`,
-synced with main `8cbb3049f`. Files: `tools/lean_share.py` (new), `tools/lake_outputs.py`, `tests/test_lean_share.py`
+synced with main `21029b86e`. Files: `tools/lean_share.py` (new), `tools/lake_outputs.py`, `tests/test_lean_share.py`
 (new), `tests/test_lake_outputs.py`, and this directory. It does not touch `tools/select_tests.py`, `tests/conftest.py`,
 the import-time modules, `lean/VE/Audit.lean`, `tools/gate.py` or manage-agents. Out of scope (DRI trust-boundary
 sign-off): splitting `VE.Audit`, the audit evidence contract, collection without Lean.
@@ -160,7 +160,7 @@ broke the test's setup. Both were re-seeded where those values enter the key, an
    (`test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites`; the real tree on the VM and the Mac).
 5. N.A.: no Lean answer fields. The analogous binding here is the seal to its entry name and to the worktree's key:
    `test_a_build_of_another_tree_is_never_offered` (an entry moved under another key is refused).
-6. PASS: synced with main `8cbb3049f` before the final commits. The gate runs on the final HEAD in the chain, and the
+6. PASS: synced with main `21029b86e` (ts-B3) last; after it the Lean build and `tools/regen_generated.py --check` (25 entries) passed, and my two test files passed again (39). The gate runs on the final HEAD in the chain, and the
    evidence is saved, never computed against a live diff.
 7. PASS: no unsigned DELTA row (`DELTA.md`: no user-visible change in VE's output). The one open item is the R2 wiring
    decision, named in this report's first line. The exit code on every refusal is tested
