@@ -223,6 +223,7 @@ def main() -> int:
     again.add_argument("--recording", type=Path, required=True)
     again.add_argument("--diffs", type=Path, nargs="+", required=True, help="directories of the seeds' diffs")
     again.add_argument("--only", nargs="*")
+    again.add_argument("--reverse", action="store_true", help="last seed first (a second worker meets the first)")
     again2 = sub.add_parser("stale", help="add to each answers selection the units that read a stale case")
     again2.add_argument("--evidence", type=Path, default=EVIDENCE)
     again2.add_argument("--recording", type=Path, required=True)
@@ -271,7 +272,7 @@ def main() -> int:
         index = answer_replay.read_json(args.recording / "requests.json.gz")
         with gzip.open(args.recording / "map.json.gz", "rt") as handle:
             seconds = {unit: status["seconds"] for unit, status in json.load(handle)["status"].items()}
-        for row in data["seeds"]:
+        for row in (reversed(data["seeds"]) if args.reverse else data["seeds"]):
             # A seed that changed no recorded answer cannot be seen through the service: nothing to verify.
             if (row["status"] == "caught" or row["status"] == "not caught" and row["changed_cases"]) \
                     and "verified" not in row and (not args.only or row["id"] in args.only):
