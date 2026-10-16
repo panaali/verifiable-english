@@ -1,0 +1,114 @@
+---
+{
+ "format": "ve-document@1",
+ "environment": {
+  "language": "ve.core@0.2",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+   "constants": {},
+   "predicates": {
+    "is_elementary": {
+     "arguments": [
+      "education_kind"
+     ],
+     "description": "The education is elementary",
+     "verbalisation": "{0} is elementary"
+    },
+    "education_free_required": {
+     "arguments": [
+      "education_kind"
+     ],
+     "description": "The education is required to be free",
+     "regulated": {
+      "act": "{0} be free",
+      "default": "unspecified",
+      "role": "obligation"
+     }
+    },
+    "is_fundamental": {
+     "arguments": [
+      "education_kind"
+     ],
+     "description": "The education is fundamental",
+     "verbalisation": "{0} is fundamental"
+    }
+   },
+   "sorts": {
+    "education_kind": {
+     "description": "one kind of education",
+     "verbalisation": {
+      "plural": "education kinds",
+      "singular": "education kind"
+     }
+    }
+   }
+  }
+ },
+ "open_terms": [
+  {
+   "arguments": [],
+   "decided_by": "unstated",
+   "factors": [
+    "what it is for education to be free"
+   ],
+   "jurisdiction": "universal",
+   "name": "free_education",
+   "necessary": [],
+   "precedents": [],
+   "sufficient": [],
+   "version": 1
+  }
+ ],
+ "units": [
+  {
+   "id": "u097",
+   "kind": "norm",
+   "meaning": {
+    "open": [
+     "free_education"
+    ]
+   },
+   "span": [
+    0,
+    76
+   ],
+   "support": "none",
+   "content": {
+    "norm": {
+     "guard": [
+      "or",
+      [
+       "unary",
+       "is_elementary",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "is_fundamental",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "name": "u097-free-at-least-elementary-and-fundamental",
+     "over": [],
+     "predicate": "education_free_required",
+     "sign": true,
+     "unless": []
+    }
+   }
+  }
+ ]
+}
+---
+Education shall be free, at least in the elementary and fundamental stages. 

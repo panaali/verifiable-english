@@ -1,0 +1,70 @@
+{
+ "check_seconds": 0.2,
+ "report": {
+  "format": "ve-document@1",
+  "source_id": "d5aec9555272e03e1949af3d5d4141c6e5c5c32d576dbac54c16cc5c06330dc6",
+  "document_id": "78f42e86faa553adad6b015d1baeac6a2f47ffd8c3b279743b4797772436193f",
+  "coverage": {
+   "source_bytes": 10916,
+   "accounted_bytes": 10916,
+   "coverage_percent": 100,
+   "bytes_by_kind": {
+    "meta": 535,
+    "unformalised": 4310,
+    "attributed": 801,
+    "norm": 5152,
+    "asserted": 118
+   },
+   "bytes_by_status": {
+    "LABELLED": 535,
+    "UNFORMALISED": 5591,
+    "OPEN": 4733,
+    "CHECKED": 57
+   },
+   "unformalised_reasons": {
+    "causation": 4,
+    "attribution": 4,
+    "modality_belief": 2,
+    "other_evaluative_open_claim": 2,
+    "norms": 7,
+    "time": 5,
+    "other_metaphorical_endowment": 1,
+    "defaults": 1,
+    "other_act_phrase_grammar": 8,
+    "other_right_lines_across_open_sets": 4,
+    "other_grounding_of_authority": 1,
+    "other_comparison": 2,
+    "other_priority_of_rights": 1
+   },
+   "residual": {
+    "open_terms": 57,
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "unresolved_reading_sets": 53
+   },
+   "residual_total": 110
+  },
+  "reading_plan": {
+   "route": "UNKNOWN",
+   "budget": {
+    "max_choices": 64
+   },
+   "choice_count": 128,
+   "units": [
+    "u025",
+    "u052",
+    "u055",
+    "u073",
+    "u105b",
+    "u105c",
+    "u110",
+    "u111",
+    "u114"
+   ]
+  },
+  "premises": {
+   "status": "UNKNOWN",
+   "reason": "non-assertion reading elaboration pending"
+  }
+ }
+}
