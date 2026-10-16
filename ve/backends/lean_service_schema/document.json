@@ -125,6 +125,11 @@
       ],
       "type": "object"
     },
+    "cites": {
+      "$comment": "Rights.Wire.decodeCites: each citation key with the unit ids it cites (a null one is absent).",
+      "additionalProperties": {"anyOf": [{"type": "null"}, {"items": {"type": "string"}, "minItems": 1, "type": "array"}]},
+      "type": "object"
+    },
     "coverage": {
       "additionalProperties": false,
       "properties": {
@@ -188,6 +193,172 @@
       "required": ["id", "set", "version", "keeps", "by", "reason_spans"],
       "type": "object"
     },
+    "rights_block": {
+      "$comment": "Rights.Wire.addUnit: a rights source unit's block as written.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "right": {
+              "additionalProperties": false,
+              "properties": {
+                "guard": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/generated_formula"}]},
+                "holder": {"type": "string"},
+                "lines": {"items": {"$ref": "#/$defs/rights_line"}, "type": "array"},
+                "name": {"type": "string"}
+              },
+              "required": ["name", "holder", "lines"],
+              "type": "object"
+            }
+          },
+          "required": ["right"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "right_lines": {
+              "additionalProperties": false,
+              "properties": {
+                "lines": {"items": {"$ref": "#/$defs/rights_line"}, "type": "array"},
+                "right": {"type": "string"}
+              },
+              "required": ["right", "lines"],
+              "type": "object"
+            }
+          },
+          "required": ["right_lines"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "limitation": {
+              "additionalProperties": false,
+              "properties": {
+                "conditions": {"items": {"$ref": "#/$defs/rights_condition"}, "type": "array"},
+                "decided_by": {"type": ["string", "null"]},
+                "factors": {"$ref": "common.json#/$defs/strings"},
+                "kinds": {
+                  "anyOf": [
+                    {"const": "all"},
+                    {"items": {"enum": ["claim", "liberty", "immunity", "power"]}, "type": "array"}
+                  ]
+                },
+                "name": {"type": "string"},
+                "scope": {"anyOf": [{"const": "all"}, {"$ref": "common.json#/$defs/strings"}]}
+              },
+              "required": ["name", "scope", "kinds", "conditions", "factors"],
+              "type": "object"
+            }
+          },
+          "required": ["limitation"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "bar": {
+              "additionalProperties": false,
+              "properties": {
+                "decided_by": {"type": ["string", "null"]},
+                "name": {"type": "string"},
+                "reading": {"enum": ["rule", "query"]}
+              },
+              "required": ["name", "reading"],
+              "type": "object"
+            }
+          },
+          "required": ["bar"],
+          "type": "object"
+        }
+      ]
+    },
+    "rights_condition": {
+      "$comment": "Rights.Wire.decodeCondition: a limitation's condition as written. The decoder ignores purposes; copied content binds its arbitrary JSON value to the request.",
+      "additionalProperties": false,
+      "properties": {
+        "decided_by": {"type": ["string", "null"]},
+        "name": {"type": "string"},
+        "purposes": {},
+        "role": {"enum": ["necessary", "sufficient"]},
+        "verbalisation": {"type": "string"}
+      },
+      "required": ["name", "role", "verbalisation"],
+      "type": "object"
+    },
+    "rights_line": {
+      "$comment": "Rights.Wire.decodeLine: a line of a right as written.",
+      "additionalProperties": false,
+      "properties": {
+        "cites": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/cites"}]},
+        "fan_out": {"anyOf": [{"type": "null"}, {"additionalProperties": {"type": ["string", "null"]}, "type": "object"}]},
+        "holder_slot": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/nat"}]},
+        "kind": {"enum": ["claim", "liberty", "immunity", "power"]},
+        "liberty": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/soft_norm"}]},
+        "norm": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/soft_norm"}]},
+        "recognition": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/soft_norm"}]}
+      },
+      "required": ["kind"],
+      "type": "object"
+    },
+    "soft_content": {
+      "additionalProperties": false,
+      "properties": {
+        "cites": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/cites"}]},
+        "norm": {
+          "additionalProperties": false,
+          "properties": {
+            "alterable": {"items": {"type": "string"}, "minItems": 1, "type": "array"},
+            "exception": {"$ref": "#/$defs/soft_exception"},
+            "guard": {"$ref": "common.json#/$defs/generated_formula"},
+            "hard": {"const": true},
+            "mode": {"const": "default"},
+            "name": {"type": "string"},
+            "over": {"$ref": "common.json#/$defs/strings"},
+            "predicate": {"type": "string"},
+            "rank": {"type": "string"},
+            "sign": {"type": "boolean"},
+            "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+          },
+          "required": ["name", "predicate", "sign", "guard", "unless", "over"],
+          "type": "object"
+        }
+      },
+      "required": ["norm"],
+      "type": "object"
+    },
+    "soft_exception": {
+      "$comment": "SoftNorms.Phases.exceptionFields: a default rule's exception as written.",
+      "additionalProperties": false,
+      "properties": {
+        "decided_by": {"type": ["string", "null"]},
+        "factors": {"$ref": "common.json#/$defs/strings"},
+        "necessary": {"$ref": "common.json#/$defs/generated_formulas"},
+        "sufficient": {"$ref": "common.json#/$defs/generated_formulas"}
+      },
+      "required": ["sufficient", "necessary", "factors"],
+      "type": "object"
+    },
+    "soft_norm": {
+      "$comment": "SoftNorms.Phases.ruleFields: a soft norm object as written.",
+      "additionalProperties": false,
+      "properties": {
+        "alterable": {"anyOf": [{"type": "null"}, {"$ref": "common.json#/$defs/strings"}]},
+        "exception": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/soft_exception"}]},
+        "guard": {"$ref": "common.json#/$defs/generated_formula"},
+        "hard": {"type": ["boolean", "null"]},
+        "mode": {"enum": [null, "strict", "default"]},
+        "name": {"type": "string"},
+        "over": {"$ref": "common.json#/$defs/strings"},
+        "predicate": {"type": ["string", "null"]},
+        "rank": {"type": ["string", "null"]},
+        "sign": {"type": "boolean"},
+        "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+      },
+      "required": ["name", "sign", "guard", "unless", "over"],
+      "type": "object"
+    },
     "unit": {
       "additionalProperties": false,
       "properties": {
@@ -199,11 +370,21 @@
               "properties": {"norm": {"$ref": "common.json#/$defs/norm_node"}},
               "required": ["norm"],
               "type": "object"
-            }
+            },
+            {"$ref": "#/$defs/rights_block"},
+            {"$ref": "#/$defs/soft_content"}
           ]
         },
         "id": {"$ref": "common.json#/$defs/token"},
-        "kind": {"$ref": "common.json#/$defs/kind"},
+        "kind": {
+          "anyOf": [
+            {"$ref": "common.json#/$defs/kind"},
+            {
+              "$comment": "Service.Document.RightsKind: a rights source unit's kind under rights@0.",
+              "enum": ["right", "right_lines", "limitation", "bar"]
+            }
+          ]
+        },
         "meaning": {"$ref": "#/$defs/meaning"},
         "meaning_id": {"$ref": "common.json#/$defs/hex64"},
         "parent_id": {"$ref": "common.json#/$defs/token"},

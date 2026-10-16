@@ -5,7 +5,7 @@ from collections import Counter
 from string import Formatter
 
 from .backends.relay import decide, decide_once
-from .backends.service_schema import same_json
+from .backends.service_schema import same_json, validate_copied_rights_source
 from .ast import decimal_value
 from .errors import CheckerUnavailable
 from .softnorms import _act_key, bind_prime_environment, bind_soft_elaboration
@@ -442,21 +442,23 @@ def _bind_bar(row, elaborated, units):
 
 
 def _run_rights_case(environment, units, kind, extra, elaborated=None):
+    validate_copied_rights_source(units, _wire)
     raw = environment.to_dict()
     # readings@1 is a head profile. Its lower rights chain is checked with
     # that profile removed, as the readings route does for each choice.
     raw["profiles"] = [p for p in raw["profiles"] if p != "readings@1"]
+    # The answer is bound to the request as sent: an optional null member is absent.
     case = {"id": kind, "kind": kind, "environment": _wire(raw),
             "document": _wire(units), **extra}
     row = decide_once("rights", case)
     if kind == 'rights-elaborate':
-        _bind_elaboration(row, units, raw)
+        _bind_elaboration(row, case["document"], case["environment"])
     elif kind in ('rights-scope', 'rights-bar'):
         elaborated = elaborated or run_rights_case(environment, units, 'rights-elaborate')
         if kind == 'rights-scope':
             _bind_narrowings(row, elaborated, empty_certificates=not extra.get('certificates'))
         else:
-            _bind_bar(row, elaborated, units)
+            _bind_bar(row, elaborated, case["document"])
     elif kind == 'rights-conflict':
         elaborated = run_rights_case(environment, units, 'rights-elaborate')
         _bind_conflict(row, elaborated, extra.get('witness'))
