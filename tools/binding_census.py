@@ -5,6 +5,7 @@
     uv run python tools/binding_census.py --show [MODE]    # the census view, each hand check at its current line
     uv run python tools/binding_census.py --record [TEST ...]   # re-record the answers and re-probe (slow, live)
     uv run python tools/binding_census.py --probe DIR [TEST ...] # the probe run alone, appending to DIR
+                                         [--wire]                # mutants delivered before the shape check
     uv run python tools/binding_census.py --collect DIR          # record from a probe run's DIR
 
 **The shapes' part** comes from the Lean-rendered schemas (`ve/backends/lean_service_schema/`), read by the
@@ -124,14 +125,16 @@ def _write_gzip(path: Path, lines: list[str]) -> None:
         handle.write("".join(line + "\n" for line in lines).encode())
 
 
-def probe(directory: Path, tests: list[str], workers: int) -> int:
-    """Run `tests` under the probe plugin, appending its lines to `directory`."""
+def probe(directory: Path, tests: list[str], workers: int, wire: bool = False) -> int:
+    """Run `tests` under the probe plugin, appending its lines to `directory`; with `wire`, each mutant passes the
+    shape check first (`tests/binding_probe.py`)."""
     sys.path.insert(0, str(ROOT / "tools"))
     import nested_pytest
     directory.mkdir(parents=True, exist_ok=True)
     done = subprocess.run(nested_pytest.command(["-q", "-p", "tests.binding_probe", *tests], workers=workers,
                                                 dist="loadfile"),
-                          cwd=ROOT, env=nested_pytest.environment(os.environ, VE_BINDING_PROBE=str(directory)))
+                          cwd=ROOT, env=nested_pytest.environment(os.environ, VE_BINDING_PROBE=str(directory),
+                                                                  VE_BINDING_PROBE_WIRE="1" if wire else "0"))
     if done.returncode not in (0, 1):
         print(f"binding_census: the probe run failed ({done.returncode})", file=sys.stderr)
         return 2
@@ -200,6 +203,8 @@ def _attributed(line: dict) -> dict:
     refusals = line.get("refusals") or []
     refusal = next((r for r in refusals if not r.get("transport")), None)
     out["refused"] = "hand" if refusal else ("transport" if refusals else None)
+    if line.get("outcome") == "wire":
+        out["refused"] = "wire"  # refused by the shape check before the hand path (`--wire`)
     frame = None
     if refusal and (refusal.get("cause") or {}).get("transport"):
         refusal, out["refused"] = None, "transport"  # a later request's rejection, converted by the hand path
@@ -590,11 +595,13 @@ def main(argv=None) -> int:
                        "into DIR, appending")
     group.add_argument("--collect", type=Path, metavar="DIR", help="record the answers and a probe run's lines")
     parser.add_argument("--workers", type=int, default=int(os.environ.get("BINDING_PROBE_WORKERS", "8")))
+    parser.add_argument("--wire", action="store_true", help="with --probe: deliver each mutant before the shape "
+                        "check, as the service would")
     args = parser.parse_args(argv)
     if args.record is not None:
         return record(args.record or list(PROBE_TESTS), args.workers)
     if args.probe is not None:
-        return probe(Path(args.probe[0]), args.probe[1:] or list(PROBE_TESTS), args.workers)
+        return probe(Path(args.probe[0]), args.probe[1:] or list(PROBE_TESTS), args.workers, args.wire)
     if args.collect is not None:
         return collect(args.collect)
     census, view = build()

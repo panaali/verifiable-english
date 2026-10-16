@@ -17,6 +17,10 @@ is skipped. One line per probed mutant goes to `<directory>/probe-<pid>.jsonl`, 
 generic checker's verdict on the same mutant beside it, and one `genuine` line per probed call: its case and
 Lean's answer.
 
+With `VE_BINDING_PROBE_WIRE=1` each mutant is delivered as the service would deliver it: one the shape check
+refuses is recorded as refused on the wire and never reaches the hand path. That is the end-to-end view a seeded
+fault in a hand binder is judged by (docs/test-architecture/tarch-binding/REPORT.md).
+
 Only answers received on the main thread are probed (a fork keeps only the calling thread).
 """
 from __future__ import annotations
@@ -34,6 +38,9 @@ import warnings
 import pytest
 
 OUT = os.environ.get("VE_BINDING_PROBE")
+WIRE = os.environ.get("VE_BINDING_PROBE_WIRE") == "1"
+# Only these modes are probed (VE_BINDING_PROBE_MODES, comma-separated), if given.
+MODES = frozenset(filter(None, os.environ.get("VE_BINDING_PROBE_MODES", "").split(",")))
 PER_CALLER = 2
 PER_MUTANT = 1
 # The genuine answer of each probed call is kept (a recorded answer of the generic test) up to this size.
@@ -116,7 +123,7 @@ def _install():
 
     def run_bound(self, mode, cases, *, timeout=None):
         entries = original(self, mode, cases, timeout=timeout)
-        if _state["child"] is not None or _state["item"] is None or not _main_thread():
+        if _state["child"] is not None or _state["item"] is None or not _main_thread() or MODES and mode not in MODES:
             return entries
         caller = _caller()
         key, shape = (mode, caller), (mode, caller, _shape(cases, entries))
@@ -165,11 +172,13 @@ def _probe(relay, mode, cases, entries, caller):
         _state["probed"][seen] = _state["probed"].get(seen, 0) + 1
         mutated = [dict(e) for e in entries]
         mutated[index] = {**entry, "result": mutant.row}
-        outcome = _fork(relay, mutated)
+        generic = binding_mutants.verdict(mode, case, mutant.row, index)
+        # On the wire (VE_BINDING_PROBE_WIRE): the shape check runs first, as in `exchange`, so a mutant it refuses
+        # never reaches the hand path.
+        outcome = {"outcome": "wire", "refusals": []} if WIRE and generic == "refuse" else _fork(relay, mutated)
         _write({"mode": mode, "caller": list(caller), "test": _state["item"], "phase": _state["phase"],
                 "kind": mutant.kind, "path": mutant.path, "where": [str(s) for s in mutant.where],
-                "expect": mutant.expect, "why": mutant.why,
-                "generic": binding_mutants.verdict(mode, case, mutant.row, index), **outcome})
+                "expect": mutant.expect, "why": mutant.why, "generic": generic, **outcome})
 
 
 def _fork(relay, mutated) -> dict:
