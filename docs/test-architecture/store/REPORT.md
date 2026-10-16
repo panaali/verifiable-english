@@ -223,11 +223,15 @@ failed it.
   - the full release gate, which the chain runs on the final HEAD;
   - the store in a real R1 run, since no runner sets the variable yet;
   - `tools/gate_collection.py --check`, because no test was removed or renamed (20 added).
-- **Relay mutation gate: 13 failures, all on main already.** `tools/relay_mutation_gate.py` (42 routes, 116,583
-  mutants) reports 13 failures on this branch, and the identical 13 on its merge base `dae12d5ff` (run in a scratch
-  worktree with the same Lean build). They are 12 allow-list entries of the `parse` and `readings-route` routes that
-  match nothing, and one accepted `norm-defaults` mutant (`results/*/result/unsaid/*/description` emptied). This
-  branch changes no relay, schema or allow list, so they belong to their own item.
+- **Relay mutation gate: passes after a second sync with main.** At `e67dae7dd`, `tools/relay_mutation_gate.py`
+  (42 routes, 116,583 mutants) reported 13 failures, and the same 13 on the merge base `dae12d5ff`. Twelve were
+  allow-list entries of the `parse` and `readings-route` routes that matched nothing. The thirteenth was an accepted
+  `norm-defaults` mutant (`results/*/result/unsaid/*/description` emptied). The pre-review gate counted them, so the
+  branch was merged with main again at `171faae80` (commit `1487d7add`). Main now has fix/relay-mutation-gate
+  (`f59dde41e`). There were no conflicts, and `tools/regen_generated.py --check` passes all 27 entries. On
+  `1487d7add` the gate reports 43 routes, 119,091 mutants and 0 failures. This branch's own diff changes no relay,
+  schema or allow list. The tests the merge touched pass on the Mac at `1487d7add`: the answer store, norm-defaults,
+  platform contract, relay mutation gate and route row schemas, 629 passed.
 - Acceptance items: all AGENT except the external items listed at the top (orchestrator).
 
 ## Self-review against BUILDER-CHECKLIST
