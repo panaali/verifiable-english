@@ -16,9 +16,10 @@ from types import SimpleNamespace
 import pytest
 
 import answer_store
-from answer_store import (ENV, GATE_FLAG, INVENTORY, LIVE_MARK, Seam, Store, changed_guarded_paths, decode, key,
-                          limits, replay, settings)
+from answer_store import (ENV, GATE_FLAG, INVENTORY, LIVE_MARK, SEAM_GLOBALS, Seam, Store, changed_guarded_paths,
+                          decode, key, limits, replay, settings)
 from subprocesses import HANG_TIMEOUT
+from tests import lean_routes
 from tests.lean_build import lean_build
 from tools import answer_replay, gate, nested_pytest
 from ve.backends import lean_service
@@ -154,33 +155,38 @@ def test_an_empty_or_unreadable_store_is_reported(tmp_path, executable):
 
 PROXY = r'''
 import json, os, subprocess, sys
-real, counter, perturb = sys.argv[1], sys.argv[2], sys.argv[3] == "1"
+real, counter, mode = sys.argv[1], sys.argv[2], sys.argv[3]
 generation = int(open(counter).read()) if os.path.exists(counter) else 0
 open(counter, "w").write(str(generation + 1))
 child = subprocess.Popen([real], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 sys.stdout.buffer.write(child.stdout.readline()); sys.stdout.flush()
 for line in sys.stdin.buffer:
+    if mode == "crash" and generation == 0:  # the first process dies on its first request
+        child.kill(); sys.exit(1)
     child.stdin.write(line); child.stdin.flush()
     out = child.stdout.readline()
-    if perturb and generation % 2:  # the same value, other bytes, in every second process
+    if mode == "perturb" and generation % 2:  # the same value, other bytes, in every second process
         out = (json.dumps(json.loads(out)) + "\n").encode()
+    if mode == "panic":  # what Lean prints for a panic, before the answer
+        sys.stderr.write("PANIC at planted: index out of bounds\n"); sys.stderr.flush()
     sys.stdout.buffer.write(out); sys.stdout.flush()
 '''
 
 
-def proxy(tmp_path, executable, name, perturb):
+def proxy(tmp_path, executable, name, mode):
+    """A wrapper around the real service: `same`, `perturb`, `panic` or `crash` (PROXY)."""
     script = tmp_path / "proxy.py"
     script.write_text(PROXY)
     wrapper = tmp_path / name
     wrapper.write_text(f"#!/bin/sh\nexec {sys.executable} {script} {executable} {tmp_path / (name + '.count')} "
-                       f"{int(perturb)}\n")
+                       f"{mode}\n")
     wrapper.chmod(0o755)
     return wrapper
 
 
 @pytest.mark.parametrize("perturb", [False, True], ids=["deterministic", "nondeterministic"])
 def test_a_planted_nondeterministic_answer_fails_the_byte_replay(tmp_path, executable, perturb):
-    service_path = proxy(tmp_path, executable, f"service-{int(perturb)}", perturb)
+    service_path = proxy(tmp_path, executable, f"service-{int(perturb)}", "perturb" if perturb else "same")
     store = Store(tmp_path / "store")
     with LeanService(service_path, allow_unlisted_build=True) as service:
         service._ensure()
@@ -194,12 +200,59 @@ def test_a_planted_nondeterministic_answer_fails_the_byte_replay(tmp_path, execu
     assert result["ok"] is (not perturb) and len(result["different"]) == int(perturb)
 
 
+def test_an_answer_whose_request_wrote_to_standard_error_is_never_served(seam, tmp_path, executable):
+    """Review F1: a hit writes nothing to the process's standard error, so a PANIC a live request prints must
+    reach the test on every run: such an answer is never stored, a sampled hit that prints one is an alarm,
+    and the byte replay fails on it."""
+    seam.reason = lambda service, timeout: None  # the proxy is an unlisted build
+    service_path = proxy(tmp_path, executable, "panic", "panic")
+    seen = []
+    record = seam.record
+    seam.record = lambda service, line, raw, response: seen.append((line, raw)) or record(service, line, raw, response)
+    for _ in range(2):
+        with LeanService(service_path, allow_unlisted_build=True) as service:
+            genuine = service.run_bound("evaluate", CASES)
+            assert "PANIC" in service.stderr()[1]
+            build, recorded = service.build, limits(service)
+    assert seam.counts["recorded"] == 0 and seam.counts["not_recorded"] == 2 and seam.counts["hits"] == 0
+    assert not seam.store.root.exists()
+    # An entry for that line, as a silent run would have left it: the replay sees the PANIC ...
+    (line, raw), _ = seen
+    entry = key(build, recorded, line)
+    plant(seam, build, entry, recorded, line, raw)
+    replayed = replay(seam.store.root, service_path, allow_unlisted_build=True, jobs=1)
+    assert not replayed["ok"] and [row["key"] for row in replayed["different"]] == [entry]
+    assert "PANIC" in replayed["different"][0]["stderr"]
+    # ... and so does a sampled hit: an alarm, the entry goes, the caller gets the process's answer.
+    seam.sample = 1.0
+    with LeanService(service_path, allow_unlisted_build=True) as service:
+        assert service.run_bound("evaluate", CASES) == genuine and "PANIC" in service.stderr()[1]
+    assert [alarm["kind"] for alarm in seam.alarms] == ["stderr"] and seam.store.get(build, entry) is None
+
+
+def test_an_answer_that_needed_a_retry_is_never_stored(seam, tmp_path, executable):
+    """Review F1 (row 9): a hit needs no retry, so `retries == 0` after a hit must mean the process answered at
+    once. The retry after a failed attempt asks the process and is not stored."""
+    seam.reason = lambda service, timeout: None  # the proxy is an unlisted build
+    service_path = proxy(tmp_path, executable, "crash", "crash")
+    with LeanService(service_path, allow_unlisted_build=True) as service:
+        genuine = service.run_bound("evaluate", CASES)
+        assert service.stats["retries"] == 1
+    assert seam.counts["recorded"] == 0 and seam.counts["not_recorded"] == 1 and not seam.store.root.exists()
+    with LeanService(service_path, allow_unlisted_build=True) as service:  # later processes answer at once
+        assert service.run_bound("evaluate", CASES) == genuine and service.stats["retries"] == 0
+    assert seam.counts["recorded"] == 1
+    with LeanService(service_path, allow_unlisted_build=True) as service:
+        assert service.run_bound("evaluate", CASES) == genuine
+    assert seam.counts["hits"] == 1
+
+
 def test_a_checker_unavailable_request_error_is_never_recorded(seam):
     service = LeanService()
     line = b'{"id":"store-x","mode":"evaluate","cases":[]}\n'
-    seam.local.pending = (line, "b" * 64, "k" * 64, None)
+    seam.local.pending = (line, "b" * 64, "k" * 64, None, 0)
     seam.record(service, line, b"{}", {"status": "error", "code": "CheckerUnavailable"})
-    seam.local.pending = (line, "b" * 64, "k" * 64, b"stored")
+    seam.local.pending = (line, "b" * 64, "k" * 64, b"stored", 0)
     seam.record(service, line, b"{}", {"status": "error", "code": "CheckerUnavailable"})
     assert seam.counts["not_recorded"] == 1 and seam.counts["sampled_inconclusive"] == 1
     assert seam.counts["recorded"] == 0 and seam.alarms == [] and not seam.store.root.exists()
@@ -401,7 +454,7 @@ def _live(path: Path, name: str) -> bool:
 
 
 def test_every_inventory_test_exists_and_runs_live():
-    assert [row[0] for row in INVENTORY] == list(range(1, 14))
+    assert [row[0] for row in INVENTORY] == list(range(1, 15))
     for row, behaviour, skipped, tests in INVENTORY:
         for test in tests:
             path, _, name = test.partition("::")
@@ -423,3 +476,34 @@ def test_a_repeated_batch_is_answered_from_memory_within_its_bound(seam, monkeyp
     with LeanService() as service:
         service.run_bound("evaluate", CASES[:1])
     assert seam.memory_bytes == 0 and not seam.memory
+
+
+def test_a_changed_client_setting_turns_the_store_off(seam, monkeypatch):
+    """Review F1 (row 8): `lean_routes.completed_within` lowers a mode's CPU deadline in place; a hit would skip
+    its enforcement. Every binding, table and `VE_LEAN_SERVICE*` setting of the client is compared with those the
+    store was installed with, read from the client itself, not listed by hand."""
+    lean_routes.completed("evaluate", CASES)
+    assert lean_routes.completed("evaluate", CASES).returncode == 0
+    assert seam.counts["recorded"] == 1 and seam.counts["hits"] == 1
+    assert lean_routes.completed_within("evaluate", CASES, cpu_seconds=HANG_TIMEOUT).returncode == 0
+    assert seam.counts["hits"] == 1 and seam.off == {"client setting changed by the test": 1}
+    default = LeanService()
+    assert seam.reason(default, None) is None
+    with monkeypatch.context() as patch:
+        patch.setenv("VE_LEAN_SERVICE_TIMEOUT", str(2 * HANG_TIMEOUT))  # any change, not only a lower one
+        assert seam.reason(default, None) == "client setting changed by the test"
+    with monkeypatch.context() as patch:
+        patch.setitem(lean_service.DEADLINES, "evaluate", (2 * HANG_TIMEOUT, 0.0))
+        assert seam.reason(default, None) == "client setting changed by the test"
+    assert {"DEADLINES", "MAX_RESPONSE_BYTES", "WALL_FACTOR", "time", "_cpu_seconds"} <= set(SEAM_GLOBALS)
+    assert {"exchange", "_roundtrip", "_wait", "stderr", "build"} <= set(answer_store.SEAM)
+    for name in SEAM_GLOBALS:
+        with monkeypatch.context() as patch:
+            patch.setattr(lean_service, name, object())
+            assert seam.reason(default, None) == "client replaced by the test", name
+    for name in answer_store.SEAM:
+        with monkeypatch.context() as patch:
+            patch.setattr(LeanService, name, object())
+            assert seam.reason(default, None) == "client replaced by the test", name
+    assert seam.reason(default, None) is None
+
