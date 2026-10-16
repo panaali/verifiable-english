@@ -14,7 +14,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(ROOT / "tests"))
+sys.path[:0] = [str(ROOT / "tests"), str(ROOT / "tools")]
+import nested_pytest  # noqa: E402
 from subprocesses import HANG_TIMEOUT  # noqa: E402
 
 TESTS = "tests/test_answer_cutoff.py::"
@@ -108,9 +109,10 @@ CASES = [
 
 
 def pytest(test: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run([str(ROOT / ".venv/bin/python"), "-m", "pytest", "-q", "-p", "no:cacheprovider", "-x",
-                           test], cwd=ROOT, text=True, capture_output=True, timeout=HANG_TIMEOUT,
-                          env={**os.environ, "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1"})
+    return subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", test],
+                                                python=[str(ROOT / ".venv/bin/python")]),
+                          cwd=ROOT, text=True, capture_output=True, timeout=HANG_TIMEOUT,
+                          env=nested_pytest.environment(os.environ, VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1"))
 
 
 def main() -> None:
