@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 239 |
-| leaves:closed domain | 231 |
-| leaves:none | 1156 |
+| leaves:bound | 243 |
+| leaves:closed domain | 233 |
+| leaves:none | 1182 |
 | modes | 36 |
 | today:hand | 202 |
 | today:later Lean request | 59 |
-| today:not probed | 758 |
-| today:shape | 470 |
+| today:not probed | 784 |
+| today:shape | 476 |
 | today:unbound | 137 |
-| answers | 537 |
+| answers | 536 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -71,7 +71,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `ve/readings_verdicts.py:conflict` | ve/readings_verdicts.py:341 | readings-route | 0 | 1 | yes |
 | `ve/reports.py:__init__` | ve/reports.py:45; ve/reports.py:39 | reports | 33 | 0 | no |
 | `ve/reports.py:_load_statuses` | ve/reports.py:52 | reports | 0 | 3 | yes |
-| `ve/rights.py:__init__` | ve/rights.py:199; ve/rights.py:190; ve/rights.py:192; ve/rights.py:166 | rights | 19 | 4 | no |
+| `ve/rights.py:__init__` | ve/rights.py:199 (changed since the probe); ve/rights.py:190 (changed since the probe); ve/rights.py:192 (changed since the probe); ve/rights.py:166 | rights | 19 | 4 | no |
 | `ve/softnorms.py:_init_soft` | ve/softnorms.py:306 | soft-norms | 3 | 0 | no |
 | `ve/units.py:_checked_quantity` | ve/units.py:324 | check | 1 | 0 | no |
 | `ve/wire.py:validate_json` | ve/wire.py:32 | document | 0 | 1 | yes |
@@ -594,6 +594,12 @@ Delegates: `/` to norms.
 | `/conflict_targets/*/sorts/*` | string | none |  |  | 8 | later Lean request |
 | `/conflict_targets/*/target` | string | none |  | minLength | 7 | later Lean request |
 | `/decisions/*/arguments/*` | string | none |  |  | 0 | unbound |
+| `/decisions/*/key/excepted` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/higher` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/lower` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/off` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/outweighs` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/party` | string | none |  |  | 0 | not probed |
 | `/decisions/*/name` | string | none |  | pattern | 0 | unbound |
 | `/default_exceptions_by_decider/@key` | key | none |  |  | 0 | unbound |
 | `/default_exceptions_by_decider/{}` | integer | none |  | minimum | 0 | unbound |
@@ -750,6 +756,12 @@ Delegates: `/` to soft-norms.
 | `/conflict_targets/*/sorts/*` | string | none |  |  | 10 | later Lean request |
 | `/conflict_targets/*/target` | string | none |  | minLength | 5 | later Lean request |
 | `/decisions/*/arguments/*` | string | none |  |  | 0 | unbound |
+| `/decisions/*/key/excepted` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/higher` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/lower` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/off` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/outweighs` | string | none |  |  | 0 | not probed |
+| `/decisions/*/key/party` | string | none |  |  | 0 | not probed |
 | `/decisions/*/name` | string | none |  | pattern | 0 | unbound |
 | `/derived/*/rule` | string | none |  |  | 3 | later Lean request |
 | `/detail` | string | none |  | minLength | 2 | later Lean request |
@@ -1587,6 +1599,7 @@ Delegates: `/` to norms.
 | `/base_environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 10 | not probed |
 | `/base_environment/vocabulary/sorts` | any | bound | x-equals |  | 0 | shape |
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/conditional_on/*` | string | none |  | pattern | 0 | not probed |
 | `/conflict_targets/*/sorts/*` | string | none |  |  | 8 | hand: `ve/norm_defaults.py:__init__` |
 | `/conflict_targets/*/target` | string | none |  | minLength | 7 | hand: `ve/norm_defaults.py:__init__` |
 | `/detail` | string | none |  | minLength | 2 | unbound |
@@ -1623,8 +1636,12 @@ Delegates: `/` to norms.
 | `/report/*/witness/filling/{}/*/*` | string | none |  |  | 0 | unbound |
 | `/report/*/witness/tuple/*` | string | none |  |  | 2 | unbound |
 | `/report/assumptions/*/label` | string | bound | x-claim-nodes |  | 3 | shape |
+| `/report/assumptions/*/label` | string | bound | x-claim-nodes |  | 3 | shape |
+| `/report/assumptions/*/name` | string | bound | x-claim-nodes |  | 3 | shape |
 | `/report/assumptions/*/name` | string | bound | x-claim-nodes |  | 3 | shape |
 | `/report/root/label` | string | bound | x-claim-nodes |  | 1 | shape |
+| `/report/root/label` | string | bound | x-claim-nodes |  | 1 | shape |
+| `/report/root/name` | string | bound | x-claim-nodes |  | 3 | shape |
 | `/report/root/name` | string | bound | x-claim-nodes |  | 3 | shape |
 | `/report_id` | string | none |  | pattern | 3 | unbound |
 | `/residual/gaps/*` | string | none |  |  | 1 | unbound |
@@ -1652,8 +1669,8 @@ Delegates: `/` to norms.
 | `/kinds/*` | kind.anyOf.1 |  | 0 |
 | `/premises/*/ast` | generated_formula |  | 467 |
 | `/reached/*/ast` | generated_formula |  | 107 |
-| `/report/assumptions/*/ast` | fol_formula | x-claim-nodes | 197 |
-| `/report/root/ast` | fol_formula | x-claim-nodes | 197 |
+| `/report/assumptions/*/ast` | fol_formula | x-claim-nodes | 234 |
+| `/report/root/ast` | fol_formula | x-claim-nodes | 234 |
 | `/rights/*/ast` | generated_formula |  | 17 |
 | `/soft/*/ast` | generated_formula |  | 0 |
 
@@ -1662,6 +1679,7 @@ Delegates: `/` to norms.
 | `/background` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
 | `/base_environment/profiles` |  |  |  |  |
 | `/base_environment/vocabulary/predicates/{}/arguments` |  |  |  |  |
+| `/conditional_on` |  |  |  |  |
 | `/conflict_targets` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults.py:__init__; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/accepted; reverse: accept/accepted |
 | `/conflict_targets/*/sorts` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults.py:__init__; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/accepted; reverse: accept/accepted |
 | `/differs` |  |  |  |  |
@@ -1817,7 +1835,7 @@ Delegates: `/` to route.
 
 ## readings-route
 
-52 recorded answers.
+51 recorded answers.
 Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | leaf | kind | class | keyword | format | observed | bound today |
@@ -1828,13 +1846,13 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/choice/*/0` | string | none |  |  | 10 | hand: `ve/readings_s2_english.py:named_result` |
 | `/choice/*/1` | integer | none |  | minimum | 10 | hand: `ve/readings_s2_wording.py:name` |
-| `/choice_count` | integer | none |  | minimum | 7 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
-| `/choice_count` | string | none |  | pattern | 7 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
+| `/choice_count` | integer | none |  | minimum | 8 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
+| `/choice_count` | string | none |  | pattern | 8 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
 | `/choices` | string | closed domain | const |  | 1 | shape |
-| `/choices/*/*/0` | string | none |  |  | 12 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
-| `/choices/*/*/1` | integer | none |  | minimum | 12 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
-| `/choices_checked` | integer | none |  | minimum | 7 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
-| `/choices_checked` | string | none |  | pattern | 7 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
+| `/choices/*/*/0` | string | none |  |  | 14 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
+| `/choices/*/*/1` | integer | none |  | minimum | 14 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
+| `/choices_checked` | integer | none |  | minimum | 8 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
+| `/choices_checked` | string | none |  | pattern | 8 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
 | `/component` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/choice_count` | integer | none |  | minimum | 0 | not probed |
 | `/components/*/answer/choice_count` | string | none |  | pattern | 0 | not probed |
@@ -1848,6 +1866,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/dead_readings/*/finding` | string | none |  | pattern | 0 | not probed |
 | `/components/*/answer/dead_readings/*/index` | integer | none |  | minimum | 0 | not probed |
 | `/components/*/answer/dead_readings/*/set` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/decided_units/*` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/english/*/frame` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/english/*/gaps/*/0` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/english/*/gaps/*/1/*` | string | none |  |  | 0 | not probed |
@@ -1860,6 +1879,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/fill_premises/*/index` | integer | none |  | minimum | 0 | not probed |
 | `/components/*/answer/fill_premises/*/premises/*/label` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/fill_premises/*/set` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/filled/chain` | string | closed domain | enum |  | 0 | shape |
 | `/components/*/answer/filled/environment/language` | string | bound | x-equals |  | 0 | shape |
 | `/components/*/answer/filled/environment/profiles/*` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/filled/environment/spec_revision` | string | bound | x-equals |  | 0 | shape |
@@ -2047,6 +2067,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/sets/*/candidates/*/shared/*/name` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/sets/*/findings/*` | string | none |  | pattern | 0 | not probed |
 | `/components/*/answer/sets/*/pairs/*/other` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/sets/*/pairs/*/pair/gaps/*/0` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/sets/*/pairs/*/pair/gaps/*/1/*` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/sets/*/pairs/*/pair/situation` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/sets/*/pairs/*/pair/witness` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/sets/*/pairs/*/reading` | string | none |  |  | 0 | not probed |
@@ -2059,6 +2081,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/sizes/predicates` | integer | none |  | minimum | 0 | not probed |
 | `/components/*/answer/sizes/sorts` | integer | none |  | minimum | 0 | not probed |
 | `/components/*/answer/slot/*/label` | string | none |  | minLength | 0 | not probed |
+| `/components/*/answer/soft_premises/*/index` | integer | none |  | minimum | 0 | not probed |
+| `/components/*/answer/soft_premises/*/premises/*/label` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/soft_premises/*/set` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/status` | string | closed domain | const |  | 0 | shape |
 | `/components/*/answer/units/*/content/kind` | string | closed domain | enum |  | 0 | shape |
 | `/components/*/answer/units/*/content/norm/alterable/*` | string | none |  |  | 0 | not probed |
@@ -2111,49 +2136,50 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/english/*/readings/*/0` | string | none |  |  | 2 | not probed |
 | `/english/*/readings/*/1` | integer | none |  | minimum | 2 | not probed |
 | `/english/*/result` | string | none |  |  | 1 | not probed |
-| `/error` | string | none |  | minLength | 13 | not probed |
+| `/error` | string | none |  | minLength | 11 | not probed |
 | `/fill/*/label` | string | none |  | minLength | 3 | hand: `ve/readings_route.py:_need` |
-| `/fill_premises/*/index` | integer | none |  | minimum | 23 | hand: `ve/readings_route.py:_need` |
+| `/fill_premises/*/index` | integer | none |  | minimum | 25 | hand: `ve/readings_route.py:_need` |
 | `/fill_premises/*/premises/*/label` | string | none |  |  | 21 | hand: `ve/readings_route.py:_need` |
-| `/fill_premises/*/set` | string | none |  |  | 23 | hand: `ve/readings_route.py:_need` |
-| `/filled/environment/language` | string | bound | x-equals |  | 6 | shape |
-| `/filled/environment/profiles/*` | string | none |  |  | 12 | later Lean request |
-| `/filled/environment/spec_revision` | string | bound | x-equals |  | 6 | shape |
+| `/fill_premises/*/set` | string | none |  |  | 25 | hand: `ve/readings_route.py:_need` |
+| `/filled/chain` | string | closed domain | enum |  | 7 | shape |
+| `/filled/environment/language` | string | bound | x-equals |  | 7 | shape |
+| `/filled/environment/profiles/*` | string | none |  |  | 15 | later Lean request |
+| `/filled/environment/spec_revision` | string | bound | x-equals |  | 7 | shape |
 | `/filled/environment/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
 | `/filled/environment/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
 | `/filled/environment/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
 | `/filled/environment/vocabulary/constants/{}/verbalisation` | string | none |  |  | 0 | not probed |
-| `/filled/environment/vocabulary/predicates/@key` | key | none |  |  | 28 | hand: `ve/readings_route.py:_need` |
-| `/filled/environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 56 | hand: `ve/readings_route.py:_need` |
+| `/filled/environment/vocabulary/predicates/@key` | key | none |  |  | 31 | hand: `ve/readings_route.py:_need` |
+| `/filled/environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 62 | hand: `ve/readings_route.py:_need` |
 | `/filled/environment/vocabulary/predicates/{}/defined/arguments/*` | string | none |  |  | 0 | not probed |
-| `/filled/environment/vocabulary/predicates/{}/description` | string | none |  |  | 28 | unbound |
+| `/filled/environment/vocabulary/predicates/{}/description` | string | none |  |  | 31 | unbound |
 | `/filled/environment/vocabulary/predicates/{}/negative_verbalisation` | string | none |  |  | 0 | not probed |
-| `/filled/environment/vocabulary/predicates/{}/regulated/act` | string | none |  |  | 12 | later Lean request |
-| `/filled/environment/vocabulary/predicates/{}/regulated/default` | string | closed domain | enum |  | 12 | shape |
+| `/filled/environment/vocabulary/predicates/{}/regulated/act` | string | none |  |  | 14 | later Lean request |
+| `/filled/environment/vocabulary/predicates/{}/regulated/default` | string | closed domain | enum |  | 14 | shape |
 | `/filled/environment/vocabulary/predicates/{}/regulated/permission` | string | none |  |  | 6 | later Lean request |
-| `/filled/environment/vocabulary/predicates/{}/regulated/role` | string | closed domain | enum |  | 12 | shape |
+| `/filled/environment/vocabulary/predicates/{}/regulated/role` | string | closed domain | enum |  | 14 | shape |
 | `/filled/environment/vocabulary/predicates/{}/verbalisation` | string | none |  |  | 0 | unbound |
-| `/filled/environment/vocabulary/sorts/@key` | key | none |  |  | 12 | later Lean request |
-| `/filled/environment/vocabulary/sorts/{}/description` | string | none |  |  | 12 | unbound |
+| `/filled/environment/vocabulary/sorts/@key` | key | none |  |  | 14 | later Lean request |
+| `/filled/environment/vocabulary/sorts/{}/description` | string | none |  |  | 14 | unbound |
 | `/filled/environment/vocabulary/sorts/{}/verbalisation/plural` | string | none |  |  | 0 | unbound |
 | `/filled/environment/vocabulary/sorts/{}/verbalisation/singular` | string | none |  |  | 0 | unbound |
 | `/filled/units/*/content/kind` | string | closed domain | enum |  | 0 | shape |
 | `/filled/units/*/content/norm/alterable/*` | string | none |  |  | 0 | not probed |
-| `/filled/units/*/content/norm/exception/decided_by` | string | none |  |  | 0 | not probed |
+| `/filled/units/*/content/norm/exception/decided_by` | string | none |  |  | 1 | not probed |
 | `/filled/units/*/content/norm/exception/factors/*` | string | none |  |  | 0 | not probed |
-| `/filled/units/*/content/norm/mode` | string | closed domain | enum |  | 33 | shape |
-| `/filled/units/*/content/norm/name` | string | none |  |  | 33 | unbound |
+| `/filled/units/*/content/norm/mode` | string | closed domain | enum |  | 35 | shape |
+| `/filled/units/*/content/norm/name` | string | none |  |  | 35 | unbound |
 | `/filled/units/*/content/norm/over/*` | string | none |  |  | 21 | unbound |
-| `/filled/units/*/content/norm/predicate` | string | none |  |  | 33 | unbound |
+| `/filled/units/*/content/norm/predicate` | string | none |  |  | 35 | unbound |
 | `/filled/units/*/content/norm/rank` | string | none |  |  | 0 | not probed |
-| `/filled/units/*/index` | integer | none |  | minimum | 23 | hand: `ve/readings_route.py:_need` |
+| `/filled/units/*/index` | integer | none |  | minimum | 25 | hand: `ve/readings_route.py:_need` |
 | `/filled/units/*/position` | integer | none |  | minimum | 0 | not probed |
-| `/filled/units/*/set` | string | none |  |  | 23 | hand: `ve/readings_route.py:_need` |
-| `/filled/units/*/unit` | string | none |  |  | 33 | hand: `ve/readings_route.py:_need` |
-| `/filled/units/*/version` | integer | none |  | minimum | 23 | hand: `ve/readings_route.py:_need` |
+| `/filled/units/*/set` | string | none |  |  | 25 | hand: `ve/readings_route.py:_need` |
+| `/filled/units/*/unit` | string | none |  |  | 35 | hand: `ve/readings_route.py:_need` |
+| `/filled/units/*/version` | integer | none |  | minimum | 25 | hand: `ve/readings_route.py:_need` |
 | `/finding` | string | none |  | pattern | 0 | not probed |
-| `/finding/cause` | string | none |  |  | 2 | hand: `ve/readings_route.py:elaborate` |
-| `/finding/text` | string | none |  | minLength | 2 | unbound |
+| `/finding/cause` | string | none |  |  | 3 | hand: `ve/readings_route.py:elaborate` |
+| `/finding/text` | string | none |  | minLength | 3 | unbound |
 | `/finding_sets/*` | string | none |  |  | 3 | not probed |
 | `/first_failing` | string | none |  |  | 1 | not probed |
 | `/gaps/*/0` | string | none |  |  | 0 | not probed |
@@ -2163,17 +2189,17 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/generated_predicates/*/key/bearer` | string | none |  |  | 0 | not probed |
 | `/generated_predicates/*/key/cond` | string | none |  |  | 0 | not probed |
 | `/generated_predicates/*/key/condition` | string | none |  |  | 0 | not probed |
-| `/generated_predicates/*/key/excepted` | string | none |  |  | 4 | later Lean request |
+| `/generated_predicates/*/key/excepted` | string | none |  |  | 5 | later Lean request |
 | `/generated_predicates/*/key/higher` | string | none |  |  | 0 | not probed |
 | `/generated_predicates/*/key/lim` | string | none |  |  | 0 | not probed |
 | `/generated_predicates/*/key/lower` | string | none |  |  | 0 | not probed |
 | `/generated_predicates/*/key/off` | string | none |  |  | 0 | not probed |
 | `/generated_predicates/*/key/outweighs` | string | none |  |  | 0 | not probed |
 | `/generated_predicates/*/key/party` | string | none |  |  | 0 | not probed |
-| `/generated_predicates/*/layer` | string | closed domain | enum |  | 18 | shape |
-| `/generated_predicates/*/name` | string | none |  |  | 18 | hand: `ve/readings_route.py:_need` |
-| `/id` | any | bound | x-echo |  | 49 | shape |
-| `/id` | string | bound | x-equals |  | 49 | shape |
+| `/generated_predicates/*/layer` | string | closed domain | enum |  | 20 | shape |
+| `/generated_predicates/*/name` | string | none |  |  | 20 | hand: `ve/readings_route.py:_need` |
+| `/id` | any | bound | x-echo |  | 48 | shape |
+| `/id` | string | bound | x-equals |  | 48 | shape |
 | `/labels/*` | string | none |  |  | 1 | not probed |
 | `/names/*/candidates/*/id` | string | none |  |  | 22 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
 | `/names/*/candidates/*/index` | integer | none |  | minimum | 22 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
@@ -2183,6 +2209,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/names/*/set` | string | none |  |  | 11 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
 | `/names/*/version` | integer | none |  | minimum | 11 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
 | `/narrowings_stale/*` | string | none |  |  | 0 | not probed |
+| `/pair/gaps/*/0` | string | none |  |  | 2 | not probed |
+| `/pair/gaps/*/1/*` | string | none |  |  | 4 | not probed |
 | `/pair/situation` | string | bound | x-equals |  | 2 | shape |
 | `/pair/witness` | string | none |  |  | 2 | not probed |
 | `/per_choice/*/choice/*/0` | string | none |  |  | 10 | not probed |
@@ -2284,8 +2312,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/witnesses/*/model/relations/@key` | key | none |  |  | 0 | not probed |
 | `/result/witnesses/*/model/relations/{}/*/*` | string | none |  |  | 0 | not probed |
 | `/result/witnesses/*/status_text` | string | none |  |  | 0 | not probed |
-| `/route` | string | closed domain | const |  | 10 | shape |
-| `/route` | string | closed domain | enum |  | 10 | shape |
+| `/route` | string | closed domain | const |  | 11 | shape |
+| `/route` | string | closed domain | enum |  | 11 | shape |
 | `/sentence` | string | none |  |  | 0 | not probed |
 | `/set` | string | bound | x-equals |  | 2 | shape |
 | `/sets/*/candidates/*/document_hash` | string | none |  | pattern | 9 | unbound |
@@ -2320,6 +2348,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/sets/*/candidates/*/shared/*/name` | string | none |  |  | 0 | not probed |
 | `/sets/*/findings/*` | string | none |  | pattern | 1 | hand: `ve/readings_route.py:_need` |
 | `/sets/*/pairs/*/other` | string | none |  |  | 6 | hand: `ve/readings_route.py:_need` |
+| `/sets/*/pairs/*/pair/gaps/*/0` | string | none |  |  | 2 | not probed |
+| `/sets/*/pairs/*/pair/gaps/*/1/*` | string | none |  |  | 4 | not probed |
 | `/sets/*/pairs/*/pair/situation` | string | none |  |  | 6 | hand: `ve/readings_route.py:_need` |
 | `/sets/*/pairs/*/pair/witness` | string | none |  |  | 6 | hand: `ve/readings_route.py:_need` |
 | `/sets/*/pairs/*/reading` | string | none |  |  | 6 | hand: `ve/readings_route.py:_need` |
@@ -2332,7 +2362,10 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/sizes/predicates` | integer | none |  | minimum | 5 | hand: `ve/readings_route.py:elaborate` |
 | `/sizes/sorts` | integer | none |  | minimum | 5 | hand: `ve/readings_route.py:elaborate` |
 | `/slot/*/label` | string | none |  | minLength | 2 | hand: `ve/readings_route.py:elaborate`, `ve/readings_sup.py:slot_label` |
-| `/status` | string | closed domain | const |  | 49 | shape |
+| `/soft_premises/*/index` | integer | none |  | minimum | 2 | not probed |
+| `/soft_premises/*/premises/*/label` | string | none |  |  | 0 | not probed |
+| `/soft_premises/*/set` | string | none |  |  | 2 | not probed |
+| `/status` | string | closed domain | const |  | 48 | shape |
 | `/target` | string | bound | x-equals |  | 2 | shape |
 | `/targets/*` | string | none |  | minLength | 7 | later Lean request |
 | `/units/*/content/kind` | string | closed domain | enum |  | 0 | shape |
@@ -2369,6 +2402,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/filled/units/*/content/norm/guard` | generated_formula |  | 0 |
 | `/components/*/answer/filled/units/*/content/norm/unless/*` | generated_formula |  | 0 |
 | `/components/*/answer/slot/*/ast` | generated_formula |  | 0 |
+| `/components/*/answer/soft_premises/*/premises/*/ast` | generated_formula |  | 0 |
 | `/components/*/answer/units/*/content/assertion` | generated_formula |  | 0 |
 | `/components/*/answer/units/*/content/norm/exception/necessary/*` | generated_formula |  | 0 |
 | `/components/*/answer/units/*/content/norm/exception/sufficient/*` | generated_formula |  | 0 |
@@ -2380,9 +2414,10 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/filled/units/*/content/assertion` | generated_formula |  | 0 |
 | `/filled/units/*/content/norm/exception/necessary/*` | generated_formula |  | 0 |
 | `/filled/units/*/content/norm/exception/sufficient/*` | generated_formula |  | 0 |
-| `/filled/units/*/content/norm/guard` | generated_formula |  | 193 |
+| `/filled/units/*/content/norm/guard` | generated_formula |  | 195 |
 | `/filled/units/*/content/norm/unless/*` | generated_formula |  | 0 |
 | `/slot/*/ast` | generated_formula |  | 30 |
+| `/soft_premises/*/premises/*/ast` | generated_formula |  | 0 |
 | `/units/*/content/assertion` | generated_formula |  | 0 |
 | `/units/*/content/norm/exception/necessary/*` | generated_formula |  | 0 |
 | `/units/*/content/norm/exception/sufficient/*` | generated_formula |  | 0 |
@@ -2404,6 +2439,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/choices/*/*` |  |  |  |  |
 | `/components/*/answer/dead` |  |  |  |  |
 | `/components/*/answer/dead_readings` |  |  |  |  |
+| `/components/*/answer/decided_units` |  |  |  |  |
 | `/components/*/answer/english` |  |  |  |  |
 | `/components/*/answer/english/*/gaps` |  |  |  |  |
 | `/components/*/answer/english/*/gaps/*` |  |  |  |  |
@@ -2487,7 +2523,12 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/sets/*/candidates/*/shared` |  |  |  |  |
 | `/components/*/answer/sets/*/findings` |  |  |  |  |
 | `/components/*/answer/sets/*/pairs` |  |  |  |  |
+| `/components/*/answer/sets/*/pairs/*/pair/gaps` |  |  |  |  |
+| `/components/*/answer/sets/*/pairs/*/pair/gaps/*` |  |  |  |  |
+| `/components/*/answer/sets/*/pairs/*/pair/gaps/*/1` |  |  |  |  |
 | `/components/*/answer/slot` |  |  |  |  |
+| `/components/*/answer/soft_premises` |  |  |  |  |
+| `/components/*/answer/soft_premises/*/premises` |  |  |  |  |
 | `/components/*/answer/units` |  |  |  |  |
 | `/components/*/answer/units/*/content/norm/alterable` |  |  |  |  |
 | `/components/*/answer/units/*/content/norm/exception/factors` |  |  |  |  |
@@ -2540,6 +2581,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/names/*/candidates/*/names` |  |  |  | drop: accept/accepted, accept/ve/readings_route.py:elaborate; drop+count: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; duplicate: accept/accepted, accept/ve/readings_route.py:elaborate; duplicate+count: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; replace: accept/ve/readings_route.py:elaborate; reverse: accept/ve/readings_route.py:elaborate |
 | `/names/*/candidates/*/names/*` |  |  |  |  |
 | `/narrowings_stale` |  |  |  |  |
+| `/pair/gaps` |  |  |  |  |
+| `/pair/gaps/*` |  |  |  |  |
+| `/pair/gaps/*/1` |  |  |  |  |
 | `/per_choice` |  |  |  |  |
 | `/per_choice/*/choice` |  |  |  |  |
 | `/per_choice/*/choice/*` |  |  |  |  |
@@ -2598,7 +2642,12 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/sets/*/candidates/*/shared` |  |  |  |  |
 | `/sets/*/findings` |  |  |  | drop: accept/accepted; drop+count: accept/ve/readings_route.py:_need; duplicate: accept/ve/readings_route.py:_need; duplicate+count: accept/ve/readings_route.py:_need |
 | `/sets/*/pairs` |  |  |  | drop: accept/ve/readings_route.py:_need; duplicate: accept/ve/readings_route.py:_need; replace: accept/ve/readings_route.py:_need; reverse: accept/ve/readings_route.py:_need |
+| `/sets/*/pairs/*/pair/gaps` |  |  |  |  |
+| `/sets/*/pairs/*/pair/gaps/*` |  |  |  |  |
+| `/sets/*/pairs/*/pair/gaps/*/1` |  |  |  |  |
 | `/slot` |  |  |  | drop: accept/accepted, accept/ve/readings_route.py:elaborate; duplicate: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate |
+| `/soft_premises` |  |  |  |  |
+| `/soft_premises/*/premises` |  |  |  |  |
 | `/targets` |  |  |  | drop: accept/transport; duplicate: accept/transport; replace: accept/transport; reverse: accept/transport |
 | `/units` |  |  |  | drop: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; drop+count: accept/ve/readings_route.py:elaborate; duplicate: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; duplicate+count: accept/ve/readings_route.py:elaborate; replace: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; reverse: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate |
 | `/units/*/content/norm/alterable` |  |  |  |  |
