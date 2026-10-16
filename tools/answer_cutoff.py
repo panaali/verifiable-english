@@ -13,13 +13,19 @@ pins as data, and every unit the map does not cover.
 * `modes`: ts-B2's per-mode rule (`select_tests.proposed_service_impact`): the recorded users of
   the modes whose `runMode` roots import the changed module.
 * `answers=DIFF`: the users of the cases whose answers changed between the base build and the
-  new one (`diff` below, of two `tools/answer_replay.py replay` runs), plus every unit that is unknown here: no complete
-  request recording, a request the recorder could not replay, an explicit timeout, randomised
-  inputs, or code that changed since the recording. A change to the service's request handling
-  (lean/VE/Service/Protocol.lean, lean/Serve.lean, lean/VE/Json.lean) or to the Lean project
-  selects every user, since one case per request cannot show it. A unit that read
+  new one (`diff` below, of two `tools/answer_replay.py replay` runs), plus every unit that is
+  unknown here: no complete request recording, a request the recorder could not replay, an
+  explicit timeout, randomised inputs, code that changed since the recording, or an answer that
+  differs between the recording's build and the base's (on the base, such a test may send
+  requests the recording lacks). Today's rules read the map R1 reads; the recording supplies the
+  requests only, so this selection is never above today's. A change to the service's request
+  handling (lean/VE/Service/Protocol.lean, lean/Serve.lean, lean/VE/Json.lean) or to the Lean
+  project selects every user, since a replayed batch cannot show it. A unit that read
   lean/checkers.lock only through the client's pin check (`LeanService._spawn`) is not selected
   by a pin change when the new build is pinned: its pin check then admits that build, as before.
+* `off`: today's selection.
+
+`R1_RULE` is the rule of a `select_tests.py --run` (R1) that names none.
 
 `record` runs every unit under the coverage recorder with request recording on
 (tools/test_map_recorder.py) and writes a directory that holds the coverage map of that run, the
@@ -54,7 +60,7 @@ PIN_FILE = "lean/checkers.lock"
 # Lean inputs whose effect one case per request cannot show: the request loop, batch budgets,
 # handles and case splitting.
 REQUEST_HANDLING = ("lean/VE/Service/Protocol.lean", "lean/Serve.lean", "lean/VE/Json.lean")
-# Calls that make a test's inputs differ from run to run.
+# Calls that make a test's inputs differ from run to run: by module, the functions (None: any of them).
 UNSEEDED = {"random": None, "secrets": None, "uuid": {"uuid1", "uuid4"}, "os": {"urandom"}}
 RULES = ("modes", "answers=DIFF", "off")
 # The rule of a feedback run (`select_tests.py --run`, R1) that names none; None: today's selection.
