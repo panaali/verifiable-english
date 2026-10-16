@@ -305,7 +305,9 @@ rules, not code of this batch.
   gate never importing the cutoff). Locally they pass with `tests/test_select_tests.py`,
   `tests/test_nested_pytest.py` and `tests/test_regen_generated.py` (272 passed on the merged tree).
 - Selected tests for the branch on ve-mac-1 (`mac-pytest.sh --select -- --base <merge base> --run`): 153
-  units, 0 failed, on 4555583f before the sync with main; <!-- final-selected -->
+  units, 0 failed, on 4555583f before the sync with main; after it, on `18245d07` (the evidence and code as
+  final; later commits change this report only): 64 of 404 units against main's map `1cf82542d`, 0 failed,
+  917 s, with R1's new rule in force.
 - `tools/gate_collection.py --check --prebuilt` on the merged tree: 33 tests added, 0 removed, 0 refused,
   stale or malformed trailers. `tools/regen_generated.py --check`: 27 entries fresh after the sync.
 - The measurement runs (all on ve-mac-1 through `mac-pytest.sh`, except the seeds, which ran on the VM in
