@@ -14,7 +14,7 @@ import time
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import rust_build
+from tools import rust_build, test_schedule
 from ve.surface import unambiguity
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -253,6 +253,13 @@ def worker_count(cpus=None, load=None):
 
 
 @pytest.hookimpl(optionalhook=True)  # the gate loads pytest without plugin autoload
+def pytest_xdist_make_scheduler(config, log):
+    """`--dist load` (xdist's default) starts the tests tools/test-durations.json records as slowest first,
+    so no long test starts last (tools/test_schedule.py); the order of collection is unchanged."""
+    return test_schedule.make_scheduler(config, log)
+
+
+@pytest.hookimpl(optionalhook=True)
 def pytest_xdist_auto_num_workers(config):
     count = worker_count()
     print(f"ve: -n auto: {count} workers (load {os.getloadavg()[0]:.1f}, "

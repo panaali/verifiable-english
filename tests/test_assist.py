@@ -1426,22 +1426,24 @@ def test_astra_fix3_every_witness_is_reported_and_restatements_never_count():
     assert not only["success"] and only["coverage"]["underived"] == ["p2.2"]
 
 
-def test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget():
+@pytest.mark.parametrize("extra", [{}, {"max_evaluations": 0}], ids=["search", "no_search"])
+@pytest.mark.parametrize("name", list(GRAPH_SPECS))
+def test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget(name, extra):
     """Success is a function of the graph: identical under every insertion/check/PARENT order, and monotone in
-    the proof budget (with and without countermodel search), including competing witnesses."""
+    the proof budget (with and without countermodel search), including competing witnesses. One case per
+    graph and search setting, so the cases run in parallel."""
     budgets = (0, 2, 3, 4, 5, 6, 10, 10_000)
-    for name, spec in GRAPH_SPECS.items():
-        for extra in ({}, {"max_evaluations": 0}):
-            row = []
-            for budget in budgets:
-                outcomes = {_graph_session(spec, budget, seed, **extra).apply("status")["success"]
-                            for seed in (None, 1, 2, 3, 4)}
-                assert len(outcomes) == 1, (name, extra, budget, "order-dependent")
-                row.append(outcomes.pop())
-            first = row.index(True) if True in row else len(row)
-            assert all(row[first:]), (name, extra, dict(zip(budgets, row)))
-            expected = name in ("plain", "plain_universal", "two_claims", "competing_good", "restated_and_real")
-            assert row[-1] is expected, (name, extra, row)
+    spec = GRAPH_SPECS[name]
+    row = []
+    for budget in budgets:
+        outcomes = {_graph_session(spec, budget, seed, **extra).apply("status")["success"]
+                    for seed in (None, 1, 2, 3, 4)}
+        assert len(outcomes) == 1, (name, extra, budget, "order-dependent")
+        row.append(outcomes.pop())
+    first = row.index(True) if True in row else len(row)
+    assert all(row[first:]), (name, extra, dict(zip(budgets, row)))
+    expected = name in ("plain", "plain_universal", "two_claims", "competing_good", "restated_and_real")
+    assert row[-1] is expected, (name, extra, row)
 
 
 # ---------------------------------------------------------------- Astra fix-review 3: usage, retries, credentials
