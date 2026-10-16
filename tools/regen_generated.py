@@ -133,6 +133,13 @@ GENERATED = (
     Generated("heavy-tests", ("tests/heavy.json",),
               ((PY, "tools/heavy_tests.py", "--write"),),
               ((PY, "tools/heavy_tests.py", "--check"),)),
+    Generated("platform-divergences", ("tests/platform-divergences.json",), None, None, merge="json",
+              note="saved from both runners' gate records by `tools/platform_contract.py divergences --write "
+                   "--records ...`; its shape is checked by platform-contract's check"),
+    Generated("platform-contract", ("tests/platform-contract.json",),
+              ((PY, "tools/platform_contract.py", "contract", "--write"),),
+              ((PY, "tools/platform_contract.py", "contract", "--check"),),
+              note="after platform-divergences, which it reads"),
 )
 
 
@@ -175,6 +182,8 @@ NOT_REGENERATED = {
     "conformance/english_lean_e2_readability_report.py": "batch report",
     "docs/lean-first/*/*.py": "batch evidence pinned at a commit",
     "docs/test-speed-b2/shadow.py": "fixed-merge shadow evidence, recorded once and checked at the batch gate",
+    "docs/test-architecture/select/replay.py": "17-merge selection replay, recorded once at a pinned commit and "
+                                               "checked at the batch gate",
     "docs/test-speed-b3/estimate.py": "fixed fix-round estimate, recorded once and checked at the batch gate",
     "docs/merge-tooling/*.py": "this tooling's evidence, recorded once (git merge-tree --write-tree is no writer)",
     "docs/premise-scale/*.py": "batch measurements and seeded faults, recorded once in docs/premise-scale/evidence",

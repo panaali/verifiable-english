@@ -1,0 +1,213 @@
+{
+ "mutants": [
+  {
+   "id": "C1",
+   "file": "tools/platform_contract.py",
+   "claim": "the pins cause lists the assertion on the pinned x86 digest (test_rust_reproducible)",
+   "source_sha256": "1191593407b8c808a21e5a5522ea3779eae6e266afec89b205408ead1d939e01",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_pinned_x86_digest_assertion_is_in_the_contract_for_its_pin",
+    "tests/test_platform_contract.py::test_the_contract_list_is_generated_from_the_tree"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_the_contract_list_is_generated_from_the_tree"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.6,
+   "output_tail": ".F                                                                       [100%]\n=================================== FAILURES ===================================\n______________ test_the_contract_list_is_generated_from_the_tree _______________\n\n    def test_the_contract_list_is_generated_from_the_tree():\n>       assert (ROOT / \"tests/platform-contract.json\").read_text() == pc.dumps(pc.generate())\nE       assert '{\\n \"format\"...red\": []\\n}\\n' == '{\\n \"format\"...red\": []\\n}\\n'\nE         \nE         Skipping 10061 identical leading characters in diff, use -v to show\nE         - ducible.py::test_release_binary_is_pinned\",\nE         + ducible.py\",\nE         +    \"causes\": [\nE         +     \"pins\"\nE         +    ]...\nE         \nE         ...Full output truncated (55 lines hidden), use '-vv' to show\n\ntests/test_platform_contract.py:36: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_the_contract_list_is_generated_from_the_tree\n1 failed, 1 passed in 4.57s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-b6gzgno0)\n"
+  },
+  {
+   "id": "C2",
+   "file": "tools/platform_contract.py",
+   "claim": "a test that failed on one runner and passed on the other, same tree, is a divergence",
+   "source_sha256": "1191593407b8c808a21e5a5522ea3779eae6e266afec89b205408ead1d939e01",
+   "tests": [
+    "tests/test_platform_contract.py::test_a_planted_divergence_in_a_fake_run_record_appears_in_the_regenerated_list"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_a_planted_divergence_in_a_fake_run_record_appears_in_the_regenerated_list"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.2,
+   "output_tail": "FAILURES ===================================\n_ test_a_planted_divergence_in_a_fake_run_record_appears_in_the_regenerated_list _\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-8458/test_a_planted_divergence_in_a0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x763eb335cc30>\n\n    def test_a_planted_divergence_in_a_fake_run_record_appears_in_the_regenerated_list(tmp_path, monkeypatch):\n        monkeypatch.setattr(pc, \"PLAN_OBSERVATIONS\", ())\n        records = write_records(tmp_path / \"cand-runs\", {\n            \"c1.mac.json\": gate_record(\"t1\", \"mac\"),\n            \"c1.x86.json\": gate_record(\"t1\", \"x86\", [PLANTED]),\n        })\n        code, saved = regenerate(tmp_path, records)\n        assert code == 0\n        pc.check_divergences(saved)\n>       assert {nodeid: row[\"cause\"] for nodeid, row in saved[\"divergences\"].items()} == {PLANTED: \"unclassified\"}\nE       AssertionError: assert {} == {'tests/test_...unclassified'}\nE         \nE         Right contains 1 more item:\nE         {'tests/test_planted.py::test_differs_on_x86[case-1]': 'unclassified'}\nE         Use -v to get more diff\n\ntests/test_platform_contract.py:251: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_a_planted_divergence_in_a_fake_run_record_appears_in_the_regenerated_list\n1 failed in 0.26s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-flb6pl2c)\n"
+  },
+  {
+   "id": "C3",
+   "file": "tools/platform_contract.py",
+   "claim": "only runs of the same tree are compared",
+   "source_sha256": "1191593407b8c808a21e5a5522ea3779eae6e266afec89b205408ead1d939e01",
+   "tests": [
+    "tests/test_platform_contract.py::test_a_divergence_needs_both_runners_suites_on_the_same_tree_in_the_window"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_a_divergence_needs_both_runners_suites_on_the_same_tree_in_the_window"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.1,
+   "output_tail": " \"c.mac.json\": gate_record(\"t4\", \"mac\", day=\"2026-09-01\"),\n            \"c.x86.json\": gate_record(\"t4\", \"x86\", [PLANTED], day=\"2026-09-01\"),  # outside the 30 days\n            \"d.mac.json\": gate_record(\"t5\", \"mac\", [PLANTED]),\n            \"d.x86.json\": gate_record(\"t5\", \"x86\", [PLANTED]),                   # failed on both: no divergence\n        })\n>       assert regenerate(tmp_path, records)[1][\"divergences\"] == {}\nE       AssertionError: assert {'tests/test_...0000', ...}]}} == {}\nE         \nE         Left contains 1 more item:\nE         {'tests/test_planted.py::test_differs_on_x86[case-1]': {'cause': 'unclassified',\nE                                                                 'note': 'not yet '\nE                                                                         'classified by '\nE                                                                         'the DRI',\nE                                                                 'observations': [{'commit': 'ct20000000000000000000000000000000000000',...\nE         \nE         ...Full output truncated (16 lines hidden), use '-vv' to show\n\ntests/test_platform_contract.py:275: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_a_divergence_needs_both_runners_suites_on_the_same_tree_in_the_window\n1 failed in 0.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dhtlhk_a)\n"
+  },
+  {
+   "id": "C4",
+   "file": "tools/platform_contract.py",
+   "claim": "a divergence outside the 30-day window is dropped",
+   "source_sha256": "1191593407b8c808a21e5a5522ea3779eae6e266afec89b205408ead1d939e01",
+   "tests": [
+    "tests/test_platform_contract.py::test_a_divergence_needs_both_runners_suites_on_the_same_tree_in_the_window"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_a_divergence_needs_both_runners_suites_on_the_same_tree_in_the_window"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.0,
+   "output_tail": "  \"c.mac.json\": gate_record(\"t4\", \"mac\", day=\"2026-09-01\"),\n            \"c.x86.json\": gate_record(\"t4\", \"x86\", [PLANTED], day=\"2026-09-01\"),  # outside the 30 days\n            \"d.mac.json\": gate_record(\"t5\", \"mac\", [PLANTED]),\n            \"d.x86.json\": gate_record(\"t5\", \"x86\", [PLANTED]),                   # failed on both: no divergence\n        })\n>       assert regenerate(tmp_path, records)[1][\"divergences\"] == {}\nE       AssertionError: assert {'tests/test_...0000', ...}]}} == {}\nE         \nE         Left contains 1 more item:\nE         {'tests/test_planted.py::test_differs_on_x86[case-1]': {'cause': 'unclassified',\nE                                                                 'note': 'not yet '\nE                                                                         'classified by '\nE                                                                         'the DRI',\nE                                                                 'observations': [{'commit': 'ct40000000000000000000000000000000000000',...\nE         \nE         ...Full output truncated (8 lines hidden), use '-vv' to show\n\ntests/test_platform_contract.py:275: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_a_divergence_needs_both_runners_suites_on_the_same_tree_in_the_window\n1 failed in 0.20s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-osu9onsh)\n"
+  },
+  {
+   "id": "C5",
+   "file": "tools/platform_contract.py",
+   "claim": "misses: a selector covers only its own file, class or function",
+   "source_sha256": "1191593407b8c808a21e5a5522ea3779eae6e266afec89b205408ead1d939e01",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_run_selectors_run_each_listed_test_once"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_the_run_selectors_run_each_listed_test_once"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.0,
+   "output_tail": "=================\n_______________ test_the_run_selectors_run_each_listed_test_once _______________\n\n    def test_the_run_selectors_run_each_listed_test_once():\n        contract = {\"tests\": [{\"selector\": \"tests/test_a.py\", \"causes\": [\"pins\"]},\n                              {\"selector\": \"tests/test_a.py::test_x\", \"causes\": [\"divergence\"]},\n                              {\"selector\": \"tests/test_ab.py::test_y\", \"causes\": [\"process\"]},\n                              {\"selector\": \"tests/test_b.py::test_z\", \"causes\": [\"process\"]},\n                              {\"selector\": \"tests/test_b.py::test_z\", \"causes\": [\"divergence\"]}]}\n        assert pc.run_selectors(contract) == [\"tests/test_a.py\", \"tests/test_ab.py::test_y\", \"tests/test_b.py::test_z\"]\n        assert pc.covers(\"tests/test_a.py::test_x\", \"tests/test_a.py::test_x[1]\")\n>       assert not pc.covers(\"tests/test_a.py::test_x\", \"tests/test_a.py::test_xy\")\nE       AssertionError: assert not True\nE        +  where True = <function covers at 0x702b73654a90>('tests/test_a.py::test_x', 'tests/test_a.py::test_xy')\nE        +    where <function covers at 0x702b73654a90> = pc.covers\n\ntests/test_platform_contract.py:189: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_the_run_selectors_run_each_listed_test_once\n1 failed in 0.20s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-_5o9krs1)\n"
+  },
+  {
+   "id": "C6",
+   "file": "tools/platform_contract.py",
+   "claim": "misses names an x86 failure the list does not cover (exit 1)",
+   "source_sha256": "1191593407b8c808a21e5a5522ea3779eae6e266afec89b205408ead1d939e01",
+   "tests": [
+    "tests/test_platform_contract.py::test_misses_names_the_x86_failures_outside_the_list",
+    "tests/test_platform_contract.py::test_misses_exit_status_and_output"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_misses_exit_status_and_output",
+    "tests/test_platform_contract.py::test_misses_names_the_x86_failures_outside_the_list"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.2,
+   "output_tail": "sting)]) == 0\n        assert \"tests/test_a.py::test_a: in the contract (pins)\" in capsys.readouterr().out\n        record.write_text(json.dumps(gate_record(\"t1\", \"x86\", [\"tests/test_b.py::test_b\"])))\n>       assert pc.main([\"misses\", str(record), \"--list\", str(listing), \"--json\"]) == 1\nE       AssertionError: assert 0 == 1\nE        +  where 0 = <function main at 0x77824b443ab0>(['misses', '/tmp/pytest-of-seyran/pytest-8464/test_misses_exit_status_and_ou0/x86.json', '--list', '/tmp/pytest-of-seyran/pytest-8464/test_misses_exit_status_and_ou0/contract.json', '--json'])\nE        +    where <function main at 0x77824b443ab0> = pc.main\n\ntests/test_platform_contract.py:383: AssertionError\n----------------------------- Captured stdout call -----------------------------\n{\n \"commit_sha\": \"ct10000000000000000000000000000000000000\",\n \"tree_sha\": \"t1\",\n \"status\": \"failed\",\n \"tests\": [\n  {\n   \"nodeid\": \"tests/test_b.py::test_b\",\n   \"how\": \"pytest\",\n   \"covered\": false,\n   \"selectors\": [],\n   \"causes\": [],\n   \"also_failed_on_mac\": false\n  }\n ],\n \"other_failures\": [],\n \"missed\": [],\n \"missed_stages\": []\n}\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_misses_names_the_x86_failures_outside_the_list\nFAILED tests/test_platform_contract.py::test_misses_exit_status_and_output - ...\n2 failed in 0.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-n39yuqfh)\n"
+  },
+  {
+   "id": "C7",
+   "file": "tools/platform_contract.py",
+   "claim": "a nightly corpus-scale rerun in a listed file is left out and named",
+   "source_sha256": "1191593407b8c808a21e5a5522ea3779eae6e266afec89b205408ead1d939e01",
+   "tests": [
+    "tests/test_platform_contract.py::test_generation_lists_each_cause_and_leaves_nightly_reruns_to_the_full_gates"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_generation_lists_each_cause_and_leaves_nightly_reruns_to_the_full_gates"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.2,
+   "output_tail": "_to_the_full_gates(tree):\n        contract = pc.generate(tree, divergence_list((\"tests/test_plain.py::test_plain\", \"environment\")), families=())\n        listed = {entry[\"selector\"]: entry[\"causes\"] for entry in contract[\"tests\"]}\n>       assert listed == {\n            \"tests/test_pins.py\": [\"pins\"],\n            \"tests/test_supervise.py::test_kill\": [\"process\"],\n            \"tests/test_locks.py\": [\"process\"],\n            \"tests/test_plain.py::test_plain\": [\"divergence\"],\n            \"tests/test_x_three_way.py::test_hundred\": [\"agreement\"],\n            \"tests/test_x_three_way.py::TestRoutes::test_route\": [\"agreement\"],\n        }\nE       AssertionError: assert {'tests/test_...rocess'], ...} == {'tests/test_...rgence'], ...}\nE         \nE         Omitting 4 identical items, use -vv to show\nE         Left contains 1 more item:\nE         {'tests/test_x_three_way.py': ['agreement']}\nE         Right contains 2 more items:\nE         {'tests/test_x_three_way.py::TestRoutes::test_route': ['agreement'],\nE          'tests/test_x_three_way.py::test_hundred': ['agreement']}\nE         Use -v to get more diff\n\ntests/test_platform_contract.py:134: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_generation_lists_each_cause_and_leaves_nightly_reruns_to_the_full_gates\n1 failed in 0.21s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fx3fntmr)\n"
+  },
+  {
+   "id": "C8",
+   "file": "tools/platform_contract.py",
+   "claim": "a file importing signal, resource or fcntl is in the process cause",
+   "source_sha256": "1191593407b8c808a21e5a5522ea3779eae6e266afec89b205408ead1d939e01",
+   "tests": [
+    "tests/test_platform_contract.py::test_only_imports_of_the_operating_systems_primitives_put_a_file_in_process"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_only_imports_of_the_operating_systems_primitives_put_a_file_in_process"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_ test_only_imports_of_the_operating_systems_primitives_put_a_file_in_process __\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-8468/test_only_imports_of_the_opera0')\n\n    def test_only_imports_of_the_operating_systems_primitives_put_a_file_in_process(tmp_path):\n        for text, expected in ((\"import signal\\n\", [\"signal\"]), (\"from resource import setrlimit\\n\", [\"resource\"]),\n                               (\"import os, fcntl\\n\", [\"fcntl\"]), (\"import json\\nsignal = 1\\n\", []),\n                               (\"from .signal import x\\n\", []), (\"import signals\\n\", [])):\n            path = tmp_path / \"test_x.py\"\n            path.write_text(text)\n>           assert pc.imports_os_primitives(path) == expected, text\nE           AssertionError: from resource import setrlimit\nE             \nE           assert [] == ['resource']\nE             \nE             Right contains one more item: 'resource'\nE             Use -v to get more diff\n\ntests/test_platform_contract.py:178: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_only_imports_of_the_operating_systems_primitives_put_a_file_in_process\n1 failed in 0.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fkb41bw_)\n"
+  },
+  {
+   "id": "G1",
+   "file": "tools/gate.py",
+   "claim": "the contract run runs exactly the listed tests",
+   "source_sha256": "91c1510a45c6065da0e6b77254f0cb55b8b10e7b7f6a1d88af7f80f05c52a74d",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.0,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__ test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages ___\n\ncontract_gate = <test_platform_contract.ContractGate object at 0x75fd15abd7f0>\n\n    def test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages(contract_gate):\n        code, record = contract_gate.run(\"--contract\")\n>       assert (code, record[\"status\"], record[\"mode\"]) == (0, \"contract-passed\", \"contract\")\nE       AssertionError: assert (1, 'failed', 'contract') == (0, 'contract...', 'contract')\nE         \nE         At index 0 diff: 1 != 0\nE         Use -v to get more diff\n\ntests/test_platform_contract.py:445: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[gate] failed: /tmp/pytest-of-seyran/pytest-8470/test_the_contract_run_runs_exa0/record.json; 0 passed, 0 skipped, 1 failures\n----------------------------- Captured stderr call -----------------------------\n[gate] FAILURE: gate:  worker gw0 collected 5 tests, not the collection run's 3\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages\n1 failed in 0.21s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-a3ka3v0p)\n"
+  },
+  {
+   "id": "G2",
+   "file": "tools/gate.py",
+   "claim": "a contract run is never a full gate's passed",
+   "source_sha256": "91c1510a45c6065da0e6b77254f0cb55b8b10e7b7f6a1d88af7f80f05c52a74d",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages",
+    "tests/test_platform_contract.py::test_a_contract_run_is_never_a_full_gates_evidence"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_a_contract_run_is_never_a_full_gates_evidence",
+    "tests/test_platform_contract.py::test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.1,
+   "output_tail": "ert (0, 'passed', 'contract') == (0, 'contract...', 'contract')\nE         \nE         At index 1 diff: 'passed' != 'contract-passed'\nE         Use -v to get more diff\n\ntests/test_platform_contract.py:445: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[gate] passed: /tmp/pytest-of-seyran/pytest-8472/test_the_contract_run_runs_exa0/record.json; 3 passed, 0 skipped, 0 failures\n______________ test_a_contract_run_is_never_a_full_gates_evidence ______________\n\ncontract_gate = <test_platform_contract.ContractGate object at 0x7a4f7255d090>\n\n    def test_a_contract_run_is_never_a_full_gates_evidence(contract_gate):\n        code, record = contract_gate.run(\"--contract\")\n>       assert record[\"status\"] != \"passed\"\nE       AssertionError: assert 'passed' != 'passed'\n\ntests/test_platform_contract.py:460: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[gate] passed: /tmp/pytest-of-seyran/pytest-8472/test_a_contract_run_is_never_a0/record.json; 3 passed, 0 skipped, 0 failures\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages\nFAILED tests/test_platform_contract.py::test_a_contract_run_is_never_a_full_gates_evidence\n2 failed in 0.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0fv2rf3c)\n"
+  },
+  {
+   "id": "G3",
+   "file": "tools/gate.py",
+   "claim": "a listed test that collects nothing fails the contract run",
+   "source_sha256": "91c1510a45c6065da0e6b77254f0cb55b8b10e7b7f6a1d88af7f80f05c52a74d",
+   "tests": [
+    "tests/test_platform_contract.py::test_a_listed_test_that_collects_nothing_fails_the_contract_run"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_a_listed_test_that_collects_nothing_fails_the_contract_run"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.7,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______ test_a_listed_test_that_collects_nothing_fails_the_contract_run ________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-8474/test_a_listed_test_that_collec0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70da84ac4e90>\n\n    def test_a_listed_test_that_collects_nothing_fails_the_contract_run(tmp_path, monkeypatch):\n        fake = ContractGate(tmp_path, monkeypatch, selectors=(\"tests/test_a.py\", \"tests/test_d.py::test_gone\"))\n        code, record = fake.run(\"--contract\")\n>       assert (code, record[\"status\"]) == (1, \"failed\")\nE       AssertionError: assert (0, 'contract-passed') == (1, 'failed')\nE         \nE         At index 0 diff: 0 != 1\nE         Use -v to get more diff\n\ntests/test_platform_contract.py:476: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[gate] contract-passed: /tmp/pytest-of-seyran/pytest-8474/test_a_listed_test_that_collec0/record.json; 2 passed, 0 skipped, 0 failures\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_a_listed_test_that_collects_nothing_fails_the_contract_run\n1 failed in 0.21s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-zm7um1ik)\n"
+  },
+  {
+   "id": "G4",
+   "file": "tools/gate.py",
+   "claim": "the contract run's default record is not gate-result.json",
+   "source_sha256": "91c1510a45c6065da0e6b77254f0cb55b8b10e7b7f6a1d88af7f80f05c52a74d",
+   "tests": [
+    "tests/test_platform_contract.py::test_the_contract_runs_default_record_is_not_the_full_gates"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_platform_contract.py::test_the_contract_runs_default_record_is_not_the_full_gates"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.2,
+   "output_tail": "self = PosixPath('/tmp/pytest-of-seyran/pytest-8476/test_the_contract_runs_default0/root/platform-contract-result.json')\nmode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None\n\n    def open(self, mode='r', buffering=-1, encoding=None,\n             errors=None, newline=None):\n        \"\"\"\n        Open the file pointed to by this path and return a file object, as\n        the built-in open() function does.\n        \"\"\"\n        if \"b\" not in mode:\n            encoding = io.text_encoding(encoding)\n>       return io.open(self, mode, buffering, encoding, errors, newline)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-seyran/pytest-8476/test_the_contract_runs_default0/root/platform-contract-result.json'\n\n../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py:771: FileNotFoundError\n----------------------------- Captured stdout call -----------------------------\n[gate] contract-passed: /tmp/pytest-of-seyran/pytest-8476/test_the_contract_runs_default0/root/gate-result.json; 3 passed, 0 skipped, 0 failures\n=========================== short test summary info ============================\nFAILED tests/test_platform_contract.py::test_the_contract_runs_default_record_is_not_the_full_gates\n1 failed in 0.28s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-zbxac_x8)\n"
+  }
+ ]
+}

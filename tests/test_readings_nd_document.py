@@ -155,9 +155,20 @@ def test_fnd1_render_shows_the_situation_with_its_filled_gaps(tmp_path):
                           'relation "asks" to that agent.']
     [pair] = [line for line in lines if line.startswith("These two readings differ here: ")]
     assert pair == (
-        "These two readings differ here: a is an agent; u is a user. Here the text does not say whether a may help "
-        "u; this situation answers 'yes'. Here the text does not say whether a must help u; this situation answers "
-        f"'no'. Under {EVERY}, a still must. Under {ASKS}, a is not required to.")
+        "These two readings differ here: a is an agent; u is a user. "
+        "Here the text does not say whether a must help u; this situation answers 'no'. "
+        f"Under {EVERY}, a still must. "
+        f"Under {ASKS}, a is not required to.")
+
+
+def test_fnd1_default_witness_renders_its_one_required_gap(tmp_path):
+    raw = env1()
+    document, _ = doc1(raw, entry(base1([["a", "u"]]), "asks", PROBE1, False))
+    path = as_document(tmp_path, raw, document, {"u1": "Every agent must help each user.\n"})
+    lines = shown(render_document(path).splitlines())
+    [pair] = [line for line in lines if line.startswith("These two readings differ here: ")]
+    assert len(GAP.findall(pair)) == 1
+    assert "Here the text does not say whether a must help u; this situation answers 'no'." in pair
 
 
 def query(tmp_path, capsys, path, *under):
@@ -234,7 +245,9 @@ def test_fnd2_query_is_gated_by_the_conflict(tmp_path, capsys):
 def test_fnd2_render(tmp_path):
     lines = shown(render_document(fnd2(tmp_path)).splitlines())
     [pair] = [line for line in lines if line.startswith("These two readings differ here: ")]
-    assert pair.startswith("These two readings differ here: a is an act.") and len(GAP.findall(pair)) == 3
+    assert pair.startswith("These two readings differ here: a is an act. "
+                           "Here the text does not say whether a may be tried; "
+                           "this situation answers 'no'.") and len(GAP.findall(pair)) == 1
     assert pair.endswith("Under *Every act may be tried*, a is permitted to. Under "
                          f"{MUST_X}, a is not permitted to.")
 

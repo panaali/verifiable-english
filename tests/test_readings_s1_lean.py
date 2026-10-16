@@ -299,11 +299,15 @@ def test_unit_kinds_decide_what_is_in_force(lean):
     assert validate(lean, raw, document)["error"] == "InvalidInput: unit kind is required"
 
 
-def test_k18_norm_defaults_abstention(lean):
+def test_k18_under_the_soft_completion(lean):
+    """K18 (K1 under `norm-defaults@0`) reached the abstention before RD-9; on the soft chain it is now under the soft
+    completion (rd-9-soft-chain.md 1.1, F-SD2): admitted on the enumerated row with K1's pairs. The rights chain keeps
+    the abstention (`tests/test_readings_sd_lean.py::test_fsd6_the_rights_chain_keeps_the_abstention`)."""
     raw = env_k(profiles=("norm-defaults@0", *SOFT_PROFILES))
     document, _ = k1_document(raw)
-    assert validate(lean, raw, document)["error"] == \
-        "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
+    row = validate(lean, raw, document)
+    assert row["status"] == "ok", row
+    assert [p["pair"]["separated"] for p in row["sets"][0]["pairs"]] == [True, True]
 
 
 def test_k19_rights_candidates_under_a_fixed_limitation(lean):

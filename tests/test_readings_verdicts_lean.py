@@ -394,6 +394,9 @@ def test_review_b1_findings_cases(tmp_path):
 
 
 MUTATIONS = {
+    "decided units dropped": lambda a: a.pop("decided_units"),
+    "decided unit outside request": lambda a: a.update(decided_units=["not-a-unit"]),
+    "decided unit duplicated": lambda a: a.update(decided_units=["u1", "u1"]),
     "drop route": lambda a: a.pop("route"),
     "another question": lambda a: a.update(question="conflict"),
     "another id": lambda a: a.update(id="readings-verdicts-2"),
@@ -456,6 +459,21 @@ def test_a_mutated_verdicts_answer_is_unavailable(tmp_path, mutation):
     assert json.dumps(mutated) != json.dumps(answer)
     with pytest.raises(CheckerUnavailable):
         route.check_answer(mutated, request)
+
+
+def test_completion_decided_units_come_from_leans_folds(tmp_path):
+    _, route = loaded(tmp_path)
+    assert route.conflict_answer()["decided_units"] == []
+    assert route.premises_answer()["decided_units"] == ["u1"]
+
+
+def test_explicit_empty_assumed_has_no_decided_units(tmp_path):
+    _, route = loaded(tmp_path)
+    route.premises()
+    assert route.premises_answer()["decided_units"] == ["u1"]
+    answer = route._verdicts("premises", assumed=[])
+    assert answer["status"] == "ok"
+    assert answer["decided_units"] == []
 
 
 def test_every_question_binds_its_rows_exactly(tmp_path):
