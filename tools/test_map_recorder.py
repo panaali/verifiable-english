@@ -12,7 +12,10 @@ every line, so a child that a test kills still leaves what it did up to then:
 code under the root or of infrastructure (import system, site, pytest).
   ["x", program, cwd]     a process was started; `program` is root-relative
                           when under the root, else its base name
-  ["c", pid, python]      a child process id, and whether it runs Python
+  ["c", pid, python, here]  a child process id, whether it runs Python, and whether
+                          it records here: this environment's interpreter with this
+                          recording's variables, so its site hook starts the recorder
+                          before any code under the root runs (`_records_here`)
   ["o", reason]           something the recorder could not see into
   ["m", operation]        an assurance manifest operation entry was read
   ["p", operation]        only its presence was checked during registration
@@ -23,8 +26,9 @@ hook in the project environment that calls `start()` whenever VE_TESTMAP_OUT
 is set, so a Python child of the project environment records too: an explicit
 `env=` gets the two recording variables added (unless it sets its own, as a
 nested recording does). A Python child that leaves no record (another
-interpreter, or `-S`, which skips the hook) marks its test as opaque. A forked
-child starts its own file and re-arms every code object.
+interpreter, or `-S`, which skips the hook) marks its test as opaque, unless it
+records here and so died before the recorder started (a child a test kills at
+once). A forked child starts its own file and re-arms every code object.
 """
 from __future__ import annotations
 
@@ -188,6 +192,20 @@ def _which(program: str) -> str | None:
     return which(program)
 
 
+def _records_here(program: str, argv: list, env) -> bool:
+    """Whether a Python child started as `program` with `env` (None: this process's) writes its records
+    to this recording: an interpreter of this environment (its site-packages hold the hook), the site
+    hook not skipped, and this recording's variables. Its record file then exists from before any code
+    under the root runs, so a missing one means it ran none."""
+    env = os.environ if env is None else env
+    located = program if os.sep in program else (_which(program) or program)
+    return (os.path.isabs(located) and os.path.basename(located).startswith("python")
+            and os.path.dirname(os.path.normpath(located)) == os.path.dirname(os.path.abspath(sys.executable))
+            and "-S" not in [os.fsdecode(a) for a in argv[1:4] if isinstance(a, (str, bytes))]
+            and env.get("VE_TESTMAP_OUT") == _state["out"]
+            and env.get("VE_TESTMAP_ROOT") == os.environ.get("VE_TESTMAP_ROOT"))
+
+
 def _wrap_popen() -> None:
     original = subprocess.Popen.__init__
 
@@ -202,7 +220,7 @@ def _wrap_popen() -> None:
                 env.setdefault(name, os.environ[name])  # a nested recording keeps its own
             kwargs["env"] = env
         original(self, args, *rest, **kwargs)
-        _emit(["c", self.pid, _python(program)])
+        _emit(["c", self.pid, _python(program), _python(program) and _records_here(program, argv, env)])
 
     subprocess.Popen.__init__ = init
 
