@@ -1,0 +1,365 @@
+{
+  "verdict": "ALL",
+  "route": "superposed",
+  "evidence": "certificates",
+  "proofs": [
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          0
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          0
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          0
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          0
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    },
+    {
+      "choice": [
+        [
+          "force-u0036-s05",
+          1
+        ],
+        [
+          "force-u0156-s03",
+          1
+        ],
+        [
+          "scope-u0165-s03",
+          1
+        ],
+        [
+          "force-u0263-s04-p2",
+          1
+        ]
+      ],
+      "conditional_on": [],
+      "reading_premises_used": []
+    }
+  ],
+  "conditional_on": [],
+  "restrictions": [],
+  "reading_premises_used": [],
+  "english": [
+    "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to and that instance of Claude has the recorded relation \"thinks_quite_likely_3_narrow\" to, it is not the case that that instance of Claude may do the creation in that situation.*"
+  ]
+}
