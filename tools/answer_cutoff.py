@@ -99,7 +99,7 @@ def fold(requests: Path, units: list[str]) -> dict:
     names = {unit_directory(unit): unit for unit in units}
     keys: dict[str, str] = {}
     folded: dict[str, dict] = {}
-    for directory in sorted((requests / "units").glob("*")) if (requests / "units").is_dir() else ():
+    for directory in sorted((requests / "units").glob("*")):  # a missing directory globs to nothing
         unit = names.get(directory.name)
         if unit is None:
             continue
@@ -111,14 +111,17 @@ def fold(requests: Path, units: list[str]) -> dict:
                 except json.JSONDecodeError:
                     entry["unknown"].add("a truncated request record")
                     continue
-                if record[0] == "q":
+                kind = record[0] if type(record) is list and record else None
+                if kind == "q":
                     keys[record[2]] = record[1]
                     entry["keys"].add(record[2])
-                    entry["timed"] |= bool(record[3])
-                elif record[0] == "k":
+                    entry["timed"] |= bool(record[3])  # one timed request makes the unit's requests timed
+                elif kind == "k":
                     entry["pins"].add(record[1])
-                elif record[0] == "u":
+                elif kind == "u":
                     entry["unknown"].add(record[1])
+                else:
+                    entry["unknown"].add("an unreadable request record")
     order = sorted(keys)
     position = {key: i for i, key in enumerate(order)}
     return {"keys": order, "modes": [keys[key] for key in order],
@@ -130,7 +133,7 @@ def fold(requests: Path, units: list[str]) -> dict:
 def read_store(requests: Path, kind: str, key: str) -> dict[str, dict]:
     """Each recorded text of `kind` (the recorder writes one per process), by its key."""
     rows: dict[str, dict] = {}
-    for path in sorted((requests / kind).glob("*.jsonl")) if (requests / kind).is_dir() else ():
+    for path in sorted((requests / kind).glob("*.jsonl")):
         for line in lines(path):
             try:
                 row = json.loads(line)
@@ -276,7 +279,7 @@ def unknown_units(index: dict, coverage: select_tests.Coverage, graph: source_gr
             found[unit] = "a request with an explicit timeout"
         elif unit in uncertain:
             found[unit] = "ran code that changed since the recording"
-        elif stale and any(keys[i] in stale for i in entry["keys"]):
+        elif any(keys[i] in stale for i in entry["keys"]):
             found[unit] = "an answer it read changed between the recording's build and the base's"
         elif (reason := randomised(unit, graph, root)) is not None:
             found[unit] = reason

@@ -72,9 +72,8 @@ def answer_digest(response: object) -> str:
 
 
 def handle_of(text: str) -> str | None:
-    """The environment handle a recorded case text names, if any."""
-    if f'"{lean_service.HANDLE_KEY}"' not in text:
-        return None
+    """The environment handle a recorded case text names, if any: read as the service reads it, so a key
+    written with escapes names one too."""
     try:
         case = lean_service._decode_json(text)
     except ValueError:
