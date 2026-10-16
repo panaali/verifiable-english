@@ -232,5 +232,47 @@
   "file": "lean/VE/Discourse/Run.lean",
   "old": "if (readingVerdicts res).isEmpty then .bool true else .str \"UNKNOWN\"",
   "new": "if (readingVerdicts res).isEmpty then .str \"UNKNOWN\" else .bool true"
+ },
+ {
+  "id": "S40",
+  "file": "lean/VE/Service/Standalone.lean",
+  "old": "  pure (VE.Route.Wire.ok id [(\"valid\", .bool true), (\"model_id\", .str modelId)])",
+  "new": "  pure (VE.Route.Wire.ok id [(\"valid\", .bool false), (\"model_id\", .str modelId)])"
+ },
+ {
+  "id": "S41",
+  "file": "lean/VE/Route/Wire.lean",
+  "old": "  return ok id [(\"valid\", .bool (VE.Tableau.checkCertificate E (background ++ ps) c certificate)),",
+  "new": "  return ok id [(\"valid\", .bool (!VE.Tableau.checkCertificate E (background ++ ps) c certificate)),"
+ },
+ {
+  "id": "S42",
+  "file": "lean/VE/Route/Run.lean",
+  "old": "[(\"valid\", .bool false)] else []))",
+  "new": "[(\"valid\", .bool true)] else []))"
+ },
+ {
+  "id": "S43",
+  "file": "lean/VE/Time/Wire.lean",
+  "old": "        | some (value, work) => pure [(\"value\", Json.bool value), (\"evaluations\", toJson work)]",
+  "new": "        | some (value, work) => pure [(\"value\", Json.bool !value), (\"evaluations\", toJson work)]"
+ },
+ {
+  "id": "S44",
+  "file": "lean/VE/Rights/Run.lean",
+  "old": "    (\"in_scope\", .bool (D.limits.any (fun L => inScope D L RN.1 RN.2))),",
+  "new": "    (\"in_scope\", .bool (D.limits.all (fun L => inScope D L RN.1 RN.2))),"
+ },
+ {
+  "id": "S45",
+  "file": "lean/VE/Norms/Run.lean",
+  "old": "    return VE.Route.Wire.ok id [(\"valid\", .bool (Flagged.valid r)),",
+  "new": "    return VE.Route.Wire.ok id [(\"valid\", .bool (!Flagged.valid r)),"
+ },
+ {
+  "id": "S46",
+  "file": "lean/VE/EnglishGrammar/Run.lean",
+  "old": "      status \"many\" ++ coded \"Ambiguous\" \"Sentence 1 can be read in more than one way.\" ++ found",
+  "new": "      status \"many\" ++ coded \"Ambiguous\" \"Sentence 1 can be read in more ways than one.\" ++ found"
  }
 ]
