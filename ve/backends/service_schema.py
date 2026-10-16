@@ -426,6 +426,20 @@ class Compiler:
                 _fail(f"is not the number of the request's {pointer}")
         return check
 
+    def _x_same_length(self, fields, schema, base):
+        def check(value, ctx, fuel):
+            lengths = [len(value[field]) if isinstance(value.get(field), list) else None for field in fields]
+            if not lengths or any(length is None or length != lengths[0] for length in lengths):
+                _fail("generated response arrays have different lengths")
+        return check
+
+    def _x_equal_fields(self, fields, schema, base):
+        def check(value, ctx, fuel):
+            left, right = fields
+            if left not in value or right not in value or not same_json(value[left], value[right]):
+                _fail("generated response fields differ")
+        return check
+
     def _x_references(self, rule, schema, base):
         def check(value, ctx, fuel):
             entries = _resolve(value, rule["array"])
@@ -634,7 +648,8 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound", "x-source-span",
+          "x-count", "x-same-length", "x-equal-fields", "x-references", "x-claim-nodes", "x-max-steps",
+          "x-background-bound", "x-source-span",
           "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
           "x-select", "x-count-where", "x-count-presence", "x-unique-strings", "x-reading-plan", "x-rows",
           "x-row")

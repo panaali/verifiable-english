@@ -605,7 +605,17 @@ def test_decoder_pin_detects_code_appended_after_a_range(tmp_path):
     assert _pin_problems(tmp_path, [entry])
 
 
-JSON_USE = re.compile(r"getObjVal\?|getObjValD|getObjValAs\?|setObjVal!|Json\.mkObj|getArr\?|getStr\?")
+# The accessors, or a definition over `Json` (a walk that pattern-matches `.arr`/`.str`
+# uses no accessor: lf-14c's `Route.PyDecoder`, and `Route.AstLimit` before it).
+JSON_USE = re.compile(r"getObjVal\?|getObjValD|getObjValAs\?|setObjVal!|Json\.mkObj|getArr\?|getStr\?"
+                      r"|^\s*(?:private |protected )?def [^\n]*\bJson\b", re.M)
+
+
+def test_json_use_sees_a_constructor_walk():
+    """A JSON walk without accessors is JSON handling too (lf-14c: PyDecoder was invisible)."""
+    assert JSON_USE.search("def decodeNode : Nat → Bool → Nat → Json → Walk Unit\n  | .arr a => pure ()")
+    assert JSON_USE.search("  private def var0 : Json := .arr #[]")
+    assert not JSON_USE.search("theorem t (j : Json) : True := trivial")
 
 
 def test_every_json_handling_lean_file_is_classified():

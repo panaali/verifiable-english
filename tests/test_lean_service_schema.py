@@ -979,10 +979,8 @@ def test_norm_pair_certificate_check_is_valid(arity):
 
 
 def test_genuine_certificates_over_nary_families_are_accepted(genuine, executables):
-    """lf-13b looprecheck1: Lean's genuine certificate and Background answers over a
-    three-argument definition, functional or total flag (`fol_projection_cases`) are `ok`
-    (certificates valid), have no premise for that declaration, and both decoders accept
-    them; `test_genuine_responses_satisfy_the_lean_invariants` checks their invariants."""
+    """Genuine n-ary definitions contribute Background premises; functional and total
+    flags do not. Both response decoders accept the matching certificates."""
     seen = set()
     for mode, request, response in genuine:
         if mode not in ("route", "norms"):
@@ -993,12 +991,13 @@ def test_genuine_certificates_over_nary_families_are_accepted(genuine, executabl
             row = result(response, i)
             arity = int(case["id"].removesuffix("-bg").rsplit("-", 1)[1])
             pair = case["id"].startswith("fol-norms-")
+            expected = int(arity <= 2 or "defined" in case["id"]) + pair
             if case["kind"] == "background":
                 assert row.get("status") == "ok", (mode, case["id"], row)
-                assert len(row["premises"]) == int(arity <= 2) + pair, (mode, case["id"], row)
+                assert len(row["premises"]) == expected, (mode, case["id"], row)
                 continue
             assert row.get("status") == "ok" and row["valid"] is True, (mode, case["id"], row)
-            assert row["background"] == int(arity <= 2) + pair, (mode, case["id"], row)
+            assert row["background"] == expected, (mode, case["id"], row)
             assert schema_verdict(mode, request, response) == "accept"
             seen.add((mode, case["id"]))
     assert {(mode, f"fol-{p}{family}-3") for mode, p in [("route", ""), ("norms", ""), ("norms", "norms-")]
@@ -1212,9 +1211,15 @@ def content(genuine, executables):
 
 @pytest.mark.parametrize("name", list(CONTENT))
 def test_binding_preserving_content_is_left_to_the_service(content, name):
-    """The client (its schemas, and the Lean decoding of them) accepts the corruption, and
-    a Lean invariant, which every genuine response satisfies, rejects it."""
+    """Most content corruptions need a Lean invariant. Background's equal-fields
+    contract now rejects premise divergence in both decoders as well."""
     mode, request, response, decoded, checked = content[name]
+    if name.endswith("background-premises-differ"):
+        # The Background response contract now binds these two views directly.
+        assert schema_verdict(mode, request, response).startswith("reject")
+        assert decoded.startswith("reject"), decoded
+        assert checked.startswith("reject"), checked
+        return
     assert schema_verdict(mode, request, response) == "accept"
     assert decoded == "accept"
     assert checked.startswith("reject"), checked

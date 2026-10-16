@@ -405,6 +405,8 @@
         "ResponseShape.Schemas.Common.file",
         "ResponseShape.Schemas.Common.fol_formula",
         "ResponseShape.Schemas.Common.fol_term",
+        "ResponseShape.Schemas.Common.generated_core_formula",
+        "ResponseShape.Schemas.Common.generated_core_formulas",
         "ResponseShape.Schemas.Common.generated_formula",
         "ResponseShape.Schemas.Common.generated_formulas",
         "ResponseShape.Schemas.Common.generator",
@@ -1486,22 +1488,16 @@
         "VE.Reports.Preflight.Scope",
         "VE.Reports.Preflight.Step",
         "VE.Reports.Preflight.Typing",
-        "VE.Reports.Preflight.Walk",
         "VE.Reports.Preflight.acts",
         "VE.Reports.Preflight.arr",
         "VE.Reports.Preflight.assessment",
-        "VE.Reports.Preflight.atomTerms",
         "VE.Reports.Preflight.bridgeRow",
         "VE.Reports.Preflight.check",
         "VE.Reports.Preflight.context",
-        "VE.Reports.Preflight.decimal",
-        "VE.Reports.Preflight.decodeNode",
         "VE.Reports.Preflight.decodeStep",
-        "VE.Reports.Preflight.decoderFault",
         "VE.Reports.Preflight.descend",
         "VE.Reports.Preflight.field",
         "VE.Reports.Preflight.firstRepeat",
-        "VE.Reports.Preflight.formulaArity",
         "VE.Reports.Preflight.formulaFault",
         "VE.Reports.Preflight.formulaOk",
         "VE.Reports.Preflight.hasKey",
@@ -1523,8 +1519,6 @@
         "VE.Reports.Preflight.pyList",
         "VE.Reports.Preflight.pyRepr",
         "VE.Reports.Preflight.pyStr",
-        "VE.Reports.Preflight.quote",
-        "VE.Reports.Preflight.reachEdge",
         "VE.Reports.Preflight.records",
         "VE.Reports.Preflight.reportKeys",
         "VE.Reports.Preflight.resolve",
@@ -1533,7 +1527,6 @@
         "VE.Reports.Preflight.scopeOf",
         "VE.Reports.Preflight.scopedRow",
         "VE.Reports.Preflight.setNull",
-        "VE.Reports.Preflight.termArity",
         "VE.Reports.Preflight.units"
       ]
     },
@@ -2071,22 +2064,41 @@
     },
     "VE/Core/Layers.lean": {
       "D[V]": [
+        "VE.Core.Layers.NaryDef.premise",
         "VE.Core.Layers.arity",
         "VE.Core.Layers.background",
+        "VE.Core.Layers.chainOk",
         "VE.Core.Layers.completeModel",
         "VE.Core.Layers.coreEnvironment",
         "VE.Core.Layers.decodeLayered",
         "VE.Core.Layers.decodeLayers",
+        "VE.Core.Layers.definitionPremises",
+        "VE.Core.Layers.definitionsProfile",
         "VE.Core.Layers.folEntry",
         "VE.Core.Layers.folPredicates",
+        "VE.Core.Layers.hasReach",
         "VE.Core.Layers.layerFields",
+        "VE.Core.Layers.mentions",
         "VE.Core.Layers.predicatesOf",
+        "VE.Core.Layers.runBackground",
         "VE.Core.Layers.tableJson"
       ],
       "G[V]": [
+        "VE.Core.Layers.Layered",
+        "VE.Core.Layers.NaryDef",
+        "VE.Core.Layers.NaryDef.head",
+        "VE.Core.Layers.bodyValue",
         "VE.Core.Layers.coreCertificate",
+        "VE.Core.Layers.definitionNodes",
+        "VE.Core.Layers.elaborateNary",
+        "VE.Core.Layers.firstBad",
         "VE.Core.Layers.folModel",
+        "VE.Core.Layers.naryCheck",
+        "VE.Core.Layers.naryEntries",
+        "VE.Core.Layers.premiseWithin",
         "VE.Core.Layers.run",
+        "VE.Core.Layers.stepOk",
+        "VE.Core.Layers.stepOkFrom",
         "VE.Core.Layers.usesLayers",
         "VE.Core.Layers.withPredicates"
       ]
@@ -2262,9 +2274,11 @@
         "VE.Core.Wire.decodeCertificate",
         "VE.Core.Wire.decodeModel",
         "VE.Core.Wire.decodeTrace",
+        "VE.Core.Wire.encodeFormula",
         "VE.Core.Wire.index"
       ],
       "G[V]": [
+        "VE.Core.Wire.encodeKind",
         "VE.Core.Wire.literals",
         "VE.Core.Wire.modelVocabulary",
         "VE.Core.Wire.run"
@@ -2327,6 +2341,7 @@
     },
     "VE/Definitions/Elaborate.lean": {
       "C": [
+        "VE.Definitions.bodyNotTyped",
         "VE.Definitions.elaborate",
         "VE.Definitions.finish",
         "VE.Definitions.firstBad",
@@ -2336,7 +2351,8 @@
       ],
       "G[V]": [
         "VE.Definitions.chainOk",
-        "VE.Definitions.levels"
+        "VE.Definitions.levels",
+        "VE.Definitions.premiseTooLarge"
       ]
     },
     "VE/Definitions/Layer.lean": {
@@ -7929,6 +7945,8 @@
         "VE.Route.Budget.Entity",
         "VE.Route.Budget.OrderRows",
         "VE.Route.Budget.computeDefinedB",
+        "VE.Route.Budget.computeDefinedS",
+        "VE.Route.Budget.computeDefinedWith",
         "VE.Route.Budget.evalC",
         "VE.Route.Budget.evalF",
         "VE.Route.Budget.evalN",
@@ -7942,10 +7960,11 @@
         "VE.Route.Budget.refutesF",
         "VE.Route.Budget.refutesN",
         "VE.Route.Budget.sortOrderData",
-        "VE.Route.Budget.tableB",
         "VE.Route.Budget.tableIndex",
         "VE.Route.Budget.tableMem",
+        "VE.Route.Budget.tableWith",
         "VE.Route.Budget.tickM",
+        "VE.Route.Budget.tupleCount",
         "VE.Route.Budget.valuesC",
         "VE.Route.Budget.valuesF",
         "VE.Route.Budget.valuesN"
@@ -8263,6 +8282,7 @@
     },
     "VE/Route/Wire.lean": {
       "S": [
+        "VE.Route.Wire.definedPayload",
         "VE.Route.Wire.environmentId",
         "VE.Route.Wire.meaningId"
       ],
@@ -8272,6 +8292,7 @@
         "VE.Route.Wire.identityVersion",
         "VE.Route.Wire.invalidModel",
         "VE.Route.Wire.modelIndex",
+        "VE.Route.Wire.noSuppliedTables",
         "VE.Route.Wire.runDependencyOrder"
       ],
       "D[V]": [
@@ -8337,9 +8358,12 @@
         }
       ],
       "G[R]": [
-        "VE.Route.Wire.nodeLimit"
+        "VE.Route.Wire.nodeLimit",
+        "VE.Route.Wire.reachBodyUnsupported"
       ],
       "D[R]": [
+        "VE.Route.Wire.argumentsDiffer",
+        "VE.Route.Wire.bodyFault",
         "VE.Route.Wire.constantDisplay"
       ]
     },
@@ -9296,8 +9320,6 @@
         "VE.Service.Standalone.decodeLegacy",
         "VE.Service.Standalone.decodeTyped",
         "VE.Service.Standalone.encodeClosure",
-        "VE.Service.Standalone.encodeCore",
-        "VE.Service.Standalone.encodeCoreKind",
         "VE.Service.Standalone.encodeKind",
         "VE.Service.Standalone.evaluable",
         "VE.Service.Standalone.legacyHeaderAccepted",
@@ -9326,7 +9348,6 @@
         "VE.Service.Standalone.alternativesReduced",
         "VE.Service.Standalone.checkCase",
         "VE.Service.Standalone.checkDataFlagFields",
-        "VE.Service.Standalone.checkNaryDefinitions",
         "VE.Service.Standalone.environmentCase",
         "VE.Service.Standalone.environmentIdOf",
         "VE.Service.Standalone.folBackground",
@@ -9336,17 +9357,14 @@
         "VE.Service.Standalone.longModelString",
         "VE.Service.Standalone.modelCase",
         "VE.Service.Standalone.modelEnvironment",
-        "VE.Service.Standalone.naryDefined",
         "VE.Service.Standalone.pythonReserved",
         "VE.Service.Standalone.reported",
         "VE.Service.Standalone.reportsReduced",
         "VE.Service.Standalone.typingReduced",
-        "VE.Service.Standalone.usedPredicates",
         "VE.Service.Standalone.validateFamily",
         "VE.Service.Standalone.validated",
         "VE.Service.Standalone.validatedComposedEnvironment",
-        "VE.Service.Standalone.validatedEnvironment",
-        "VE.Service.Standalone.visitDefinition"
+        "VE.Service.Standalone.validatedEnvironment"
       ],
       "G[R]": [
         "VE.Service.Standalone.maxSourceBytes",
@@ -11442,6 +11460,20 @@
         "VE.Norms.Family.targets",
         "VE.Norms.Family.usesInt",
         "VE.Norms.Family.yields"
+      ]
+    },
+    "VE/Route/PyDecoder.lean": {
+      "D[R]": [
+        "VE.Reports.Preflight.Walk",
+        "VE.Reports.Preflight.atomTerms",
+        "VE.Reports.Preflight.decimal",
+        "VE.Reports.Preflight.decodeNode",
+        "VE.Reports.Preflight.decoderFault",
+        "VE.Reports.Preflight.formulaArity",
+        "VE.Reports.Preflight.hasReach",
+        "VE.Reports.Preflight.quote",
+        "VE.Reports.Preflight.reachEdge",
+        "VE.Reports.Preflight.termArity"
       ]
     }
   }
