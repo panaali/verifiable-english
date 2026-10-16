@@ -44,6 +44,12 @@ Acceptance items are all AGENT. No HUMAN or EXTERNAL item is in scope.
 | Selected (`select_tests.py --base $(git merge-base HEAD main) --run`), before the sync | Mac | ba896d0f0 | 342 units; 2 failed: `test_trust_ratchet.py::test_committed_budget_passes_its_check` (this item's unsigned growth) and `test_consolidation_tools.py::test_committed_ledger_names_real_declarations` (step 5's figures; fixed in c9d3ba236) |
 | Selected, before the sync | Mac | c9d3ba236 | 343 units; 1 failed: `test_trust_ratchet.py::test_committed_budget_passes_its_check` |
 | Selected, final | Mac | 2334e0a8b (+ this report) | 344 units; 1 failed: `test_trust_ratchet.py::test_committed_budget_passes_its_check` |
+| Chain full gate | Mac runner | 572b5bfbb | 16,645 passed, 92 skipped; 1 failed: `test_trust_ratchet.py::test_committed_budget_passes_its_check` (no allowance recorded) |
+| The failed test plus `test_rights_licence_relay.py`, after recording the R6 allowance | Mac and VM | 9ffc8a6c4 | 175 passed on each |
+| Selected, after recording the R6 allowance | Mac | 9ffc8a6c4 | 344 units, 0 failed |
+
+`tools/gate.py --rerun-failed` refused to reuse the 572b5bfbb record, because the allowance commit changes the tree.
+It then started a full gate, which was stopped: the chain gates the final HEAD.
 
 The "before" selection would have selected nothing (no change against main). The before baseline is therefore the
 rd-9 rights and readings set, run on main itself. No test in `main-known-red.txt` failed in these runs. The full
