@@ -90,6 +90,8 @@ def ask(service: lean_service.LeanService, mode: str, text: str, environments: d
 
 def replay(recording: Path, executable: Path, jobs: int = 4, *, progress=print) -> dict:
     cases, environments = load_cases(recording)
+    if not cases:
+        raise ValueError(f"{recording} holds no case to replay")
     build = lean_service.executable_sha256(Path(executable))
     pending: queue.Queue = queue.Queue()
     for key in sorted(cases):
@@ -126,8 +128,8 @@ def replay(recording: Path, executable: Path, jobs: int = 4, *, progress=print) 
 def diff(base: dict, head: dict) -> dict:
     """The cases whose answers differ between two replays of one recording, or that one side lacks."""
     for side in (base, head):
-        if side.get("version") != VERSION or not isinstance(side.get("answers"), dict):
-            raise ValueError("not an answer replay")
+        if side.get("version") != VERSION or not isinstance(side.get("answers"), dict) or not side["answers"]:
+            raise ValueError("not an answer replay, or an empty one")
     if base["recording"] != head["recording"]:
         raise ValueError("the two replays are of different recordings")
     keys = base["answers"].keys() | head["answers"].keys()

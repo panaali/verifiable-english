@@ -212,14 +212,14 @@ def load_recording(directory: Path) -> tuple[dict, dict]:
     return index, data
 
 
-def randomised(unit: str, graph: source_graph.Graph) -> str | None:
+def randomised(unit: str, graph: source_graph.Graph, root: Path = ROOT) -> str | None:
     """Why `unit`'s inputs may differ between runs (property tests, unseeded randomness), or None.
 
     Read from the unit's own file and the test helpers it imports, with Python's own parser."""
     files = {unit} | {path for path in graph.closure(unit)[0] if path.startswith("tests/")}
     for path in sorted(files):
         try:
-            tree = ast.parse((ROOT / path).read_text(encoding="utf-8"))
+            tree = ast.parse((root / path).read_text(encoding="utf-8"))
         except (OSError, SyntaxError, ValueError):
             return f"{path} does not parse"
         for node in ast.walk(tree):
@@ -253,7 +253,7 @@ def pinned(build: str, after: str | None) -> bool:
 
 
 def unknown_units(index: dict, coverage: select_tests.Coverage, graph: source_graph.Graph,
-                  uncertain: set[str]) -> dict[str, str]:
+                  uncertain: set[str], root: Path = ROOT) -> dict[str, str]:
     """The service users whose recorded requests do not decide what a Lean change does to them, with why."""
     found = {}
     for unit in sorted(coverage.service_users()):
@@ -269,7 +269,7 @@ def unknown_units(index: dict, coverage: select_tests.Coverage, graph: source_gr
             found[unit] = "a request with an explicit timeout"
         elif unit in uncertain:
             found[unit] = "ran code that changed since the recording"
-        elif (reason := randomised(unit, graph)) is not None:
+        elif (reason := randomised(unit, graph, root)) is not None:
             found[unit] = reason
     return found
 
