@@ -554,6 +554,20 @@
   },
   {
    "class": "S",
+   "lines": 171,
+   "reason": "RD-9 soft chain (rd-9/integrate) final trust, re-measured with tools/trust_map.py on the rd-9 DRI-conditions round's final tree (after F25): K 997, S 9,959, V 37,526; against the signed baseline K +0, S +171, V +372 (V +363 at 67d0cb31 plus F25's V +9: Readings.Chain.text and filled.chain). S by file (SC-1's approved statements and SC-4 to SC-6, checked against the approved text by tools/check_rd9_sc1_statements.py): VE/NormDefaults/LayeredAdmission.lean +54, VE/Readings/Verdicts.lean +52, VE/NormDefaults/Run.lean +24, VE/Readings/SoftSeparate.lean +20, VE/NormDefaults/Admission.lean +17, VE/NormDefaults/LayeredEntail.lean +4. V (untied D[V] and G[V]) by file: VE/Readings/Run.lean +146, VE/Readings/VerdictsWire.lean +69, VE/Readings/SoftWire.lean +44, ResponseShape/Schemas/ReadingsRoute.lean +31, VE/NormDefaults/Run.lean +30, VE/Readings/SoftVerdicts.lean +24, ResponseShape/Schemas/NormDefaults.lean +14, VE/Readings/UnspecifiedWire.lean +14, VE/NormDefaults/LayeredEntail.lean +11, VE/Readings/SoftDefaults.lean +10, VE/Readings/Doc.lean +5, ResponseShape/Schemas/SoftNorms.lean +2, VE/NormDefaults/Layered.lean +1, VE/Readings/ComponentsWire.lean -29. None of it is a Lean copy of logic Python still holds: the soft_chain copy is removed (F25). FOLLOW-UP: a ties pass binding these G[V] and D[V] lines to the existing render, wire and encoder theorems.",
+   "signature": "SIGNED WITH CONDITION by DRI 2026-10-15 (rd-9 B8/B9, manage-agents/reviews/rd-9-dri-signatures-20261015.md item 1; conditions: itemised per file, re-measured on the final HEAD, FOLLOW-UP ties pass)",
+   "commit": "98f97159e1a773532c4035559ae29f04548a9da6"
+  },
+  {
+   "class": "V",
+   "lines": 372,
+   "reason": "RD-9 soft chain (rd-9/integrate) final trust, re-measured with tools/trust_map.py on the rd-9 DRI-conditions round's final tree (after F25): K 997, S 9,959, V 37,526; against the signed baseline K +0, S +171, V +372 (V +363 at 67d0cb31 plus F25's V +9: Readings.Chain.text and filled.chain). S by file (SC-1's approved statements and SC-4 to SC-6, checked against the approved text by tools/check_rd9_sc1_statements.py): VE/NormDefaults/LayeredAdmission.lean +54, VE/Readings/Verdicts.lean +52, VE/NormDefaults/Run.lean +24, VE/Readings/SoftSeparate.lean +20, VE/NormDefaults/Admission.lean +17, VE/NormDefaults/LayeredEntail.lean +4. V (untied D[V] and G[V]) by file: VE/Readings/Run.lean +146, VE/Readings/VerdictsWire.lean +69, VE/Readings/SoftWire.lean +44, ResponseShape/Schemas/ReadingsRoute.lean +31, VE/NormDefaults/Run.lean +30, VE/Readings/SoftVerdicts.lean +24, ResponseShape/Schemas/NormDefaults.lean +14, VE/Readings/UnspecifiedWire.lean +14, VE/NormDefaults/LayeredEntail.lean +11, VE/Readings/SoftDefaults.lean +10, VE/Readings/Doc.lean +5, ResponseShape/Schemas/SoftNorms.lean +2, VE/NormDefaults/Layered.lean +1, VE/Readings/ComponentsWire.lean -29. None of it is a Lean copy of logic Python still holds: the soft_chain copy is removed (F25). FOLLOW-UP: a ties pass binding these G[V] and D[V] lines to the existing render, wire and encoder theorems.",
+   "signature": "SIGNED WITH CONDITION by DRI 2026-10-15 (rd-9 B8/B9, manage-agents/reviews/rd-9-dri-signatures-20261015.md item 1; conditions: itemised per file, re-measured on the final HEAD, FOLLOW-UP ties pass)",
+   "commit": "98f97159e1a773532c4035559ae29f04548a9da6"
+  },
+  {
+   "class": "S",
    "lines": 9,
    "reason": "lf-14c: Lean n-ary definitions, model tables and bound Background replace the deleted Python n-ary fallback decision path; review fix F1/F2: one dependency order over every definition, FOL and n-ary, and the definition-body diagnostics through one Lean owner (Route.Wire.bodyFault). Carried over from the branch's pre-AR-4 budget (S 9967, V 39223) in the merge with ve-integration aaff77634.",
    "signature": "standing ruling R6 (DRI-RULINGS.md), lf-14c, 2026-10-15",

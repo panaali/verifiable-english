@@ -163,7 +163,9 @@ def test_reserved_names_and_kinds(lean_executable):
     assert rows[0]["error"] == str(caught.value) == "InvalidInput: reserved name unsaid--s"
     assert rows[1]["error"] == ("UnsupportedProfile: case kind norm-defaults-gaps is not available on the "
                                 "soft-norms@0 norm-defaults branch")
-    assert rows[2]["error"].startswith("UnsupportedProfile: case kind norm-defaults-certificate")
+    # RD-9 SC-6: the soft branch answers `norm-defaults-certificate` (`Admission.softCase`, spec 4.5); a case without
+    # premises is the replay's own refusal, no longer `UnsupportedProfile`
+    assert rows[2]["error"] == "property not found: premises"
     # without the profile the soft route's unspecified completion is refused, as on the norms route
     plain = deepcopy(env)
     plain["profiles"].remove("norm-defaults@0")

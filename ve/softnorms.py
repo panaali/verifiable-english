@@ -45,7 +45,11 @@ def check_soft_source(environment, norms=None, *, generated=False, layers=frozen
                "environment": _wire(source), "norms": _wire(list(norms or ()))}
     if not generated and "readings@1" in layers and not layers.intersection({"rights@0", "norm-defaults@0"}):
         payload["identity_environment"] = _wire(environment)
-    return _run(payload)
+    row = _run(payload)
+    bind_soft_elaboration(row, payload['norms'], source['vocabulary']['predicates'],
+                          soft=source['vocabulary'].get('soft', {}),
+                          environment=payload.get('identity_environment', source))
+    return row
 
 
 def load_soft_document(environment, norms):
@@ -140,8 +144,12 @@ class SoftRule:
 
 
 def _rule_source(env: SoftEnvironment):
-    """The lower soft source used for individual quoted rules."""
+    """The lower soft source used for individual quoted rules: under norm-defaults@0 its placeholder, each
+    unspecified completion read as deny (norm-defaults 2.3)."""
     source = env.to_dict()
+    if "norm-defaults@0" in source["profiles"]:
+        from .norms import _norm_defaults_placeholder
+        source = _norm_defaults_placeholder(source)
     source["profiles"] = [p for p in source["profiles"]
                           if p not in ("norm-defaults@0", "readings@1", "rights@0")]
     source["vocabulary"].pop("rights", None)
@@ -212,6 +220,250 @@ class SoftenedNormDocument(NormDocument):
         return SoftBaseEnvironment(data, getattr(self, 'soft_premises', ()))
 
 
+# A decision's key as Lean writes it (`SoftNorms.Wire.decisionKeyJson`): its fields in tuple order.
+DECISION_KEY_FIELDS = {"excepted": ("excepted",), "off": ("off", "party"), "outweighs": ("outweighs", "lower", "higher")}
+
+
+def _decision_key(raw):
+    """A decision's key from Lean's row as a tuple: `("excepted", rule)`, `("off", rule, party)` or
+    `("outweighs", act, lower, higher)`."""
+    for kind, fields in DECISION_KEY_FIELDS.items():
+        if type(raw) is dict and set(raw) == set(fields) and all(type(raw[f]) is str for f in fields):
+            return (kind, *(raw[f] for f in fields))
+    raise ValueError(f"undecodable decision key {raw!r}")
+
+
+def _act_key(predicate, predicates):
+    regulated = predicates[predicate].get('regulated', {})
+    return regulated.get('permission', predicate) if regulated.get('role') == 'obligation' else predicate
+
+
+def _rank_above(soft):
+    above = {rank: set() for rank in soft.get('ranks', ())}
+    for higher, lower in soft.get('outranks', ()):
+        above[lower].add(higher)
+    for _ in above:
+        for lower in above:
+            above[lower].update(ancestor for higher in tuple(above[lower])
+                                for ancestor in above[higher])
+    return above
+
+
+def _incompatible(first, second, predicates):
+    a, b = first['predicate'], second['predicate']
+    if a == b:
+        return first['sign'] != second['sign']
+    return ((first['sign'] and not second['sign'] and _act_key(a, predicates) == b) or
+            (second['sign'] and not first['sign'] and _act_key(b, predicates) == a))
+
+
+def bind_prime_environment(row, environment, generated=()):
+    """Bind `environment_prime` to the request, for every route that extends `E`.
+
+    The prime is the submitted environment with only predicates added: each decision of
+    `row['decisions']`, declared with its key's argument sorts, and the route's `generated`
+    names, whose sorts the route binds.  Every other field and every submitted declaration
+    is unchanged.  Callers raise CheckerUnavailable on ValueError, KeyError or TypeError.
+    """
+    prime = row['environment_prime']
+    original = environment['vocabulary']['predicates']
+    entries = prime['vocabulary']['predicates']
+    if ({key: value for key, value in prime.items() if key != 'vocabulary'} !=
+            {key: value for key, value in environment.items() if key != 'vocabulary'} or
+            {key: value for key, value in prime['vocabulary'].items() if key != 'predicates'} !=
+            {key: value for key, value in environment['vocabulary'].items() if key != 'predicates'}):
+        raise ValueError('unbound prime environment')
+    decisions = [decision['name'] for decision in row['decisions']]
+    added = [*decisions, *generated]
+    if (len(set(added)) != len(added) or set(added) & set(original) or
+            set(entries) != set(original) | set(added)):
+        raise ValueError('unbound prime predicate set')
+    if any(entries[name] != declaration for name, declaration in original.items()):
+        raise ValueError('changed source predicate')
+    for decision in row['decisions']:
+        if entries[decision['name']] != {'arguments': decision['arguments'],
+                                          'description': 'soft-norms decision'}:
+            raise ValueError('unbound decision declaration')
+
+
+def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None, environment=None):
+    """Bind the IDs in a Lean soft elaboration to its submitted rules and vocabulary.
+
+    Rights supplies its correlated rule names separately: their generated node names
+    are checked against the authored lines by the rights route.  The decisions and
+    collisions use this same binding for both public elaboration routes.
+    """
+    try:
+        rules = {unit['norm']['name']: unit['norm'] for unit in norms}
+        if len(rules) != len(norms):
+            raise ValueError('duplicate rule')
+        rules.update(rights_rules)
+        acts = set(predicates)
+        if environment is not None:
+            bind_prime_environment(row, environment)
+        # Run.lean answers `overlaps` and `override_cycles` only for submitted witnesses; no relay submits one.
+        if 'overlaps' in row or 'override_cycles' in row:
+            raise ValueError('unrequested witness rows')
+        rule_acts = row.get('rule_acts')
+        if rule_acts is not None and (set(rule_acts) != set(rules) or
+                                      any(act != _act_key(rule['predicate'], predicates)
+                                          for name, rule in rules.items()
+                                          for act in [rule_acts[name]])):
+            raise ValueError('unbound rule act')
+
+        expected = set()
+        for name, rule in rules.items():
+            if rule.get('mode', 'strict') == 'default':
+                expected.add(('excepted', name))
+            expected.update(('off', name, party) for party in rule.get('alterable', ()))
+
+        seen_pairs = set()
+        pair_labels = set()
+        expected_pairs = {(a, b) for a in rules for b in rules if a < b and
+                          rules[a].get('mode', 'strict') == 'default' and
+                          rules[b].get('mode', 'strict') == 'default' and
+                          _incompatible(rules[a], rules[b], predicates)}
+        for pair in row['colliding_pairs']:
+            names = pair['pair']
+            if (len(names) != 2 or names[0] >= names[1] or
+                any(name not in rules for name in names) or pair['act'] not in acts or
+                any(rules[name].get('mode', 'strict') != 'default' or
+                    _act_key(rules[name]['predicate'], predicates) != pair['act'] for name in names) or
+                (rule_acts is not None and any(rule_acts[name] != pair['act'] for name in names))):
+                raise ValueError('unbound colliding pair')
+            pair_names = frozenset(names)
+            if pair_names in seen_pairs:
+                raise ValueError('duplicate colliding pair')
+            seen_pairs.add(pair_names)
+            if pair['label'] != f'soft:coherence:{names[0]},{names[1]}' or pair['label'] in pair_labels:
+                raise ValueError('unbound or duplicate coherence label')
+            pair_labels.add(pair['label'])
+            if tuple(names) not in expected_pairs:
+                raise ValueError('noncolliding pair')
+            rank_a, rank_b = (rules[name].get('rank') for name in names)
+            above = _rank_above(soft or {})
+            comparable = (rank_a is not None and rank_b is not None and
+                          (rank_a in above.get(rank_b, ()) or rank_b in above.get(rank_a, ())))
+            if pair['comparable'] != comparable or bool(pair['outweighs']) != (
+                    comparable and (soft or {}).get('outranking', {}).get('mode') == 'holistic'):
+                raise ValueError('unbound pair comparison')
+            if pair['outweighs'] is not None:
+                ranks = {rules[name].get('rank') for name in names}
+                if (None in ranks or len(ranks) != 2 or soft is None or
+                        soft.get('outranking', {}).get('mode') != 'holistic' or not pair['comparable']):
+                    raise ValueError('unbound weighing ranks')
+                first, second = (rules[name]['rank'] for name in names)
+                above = _rank_above(soft)
+                if second in above[first]:
+                    triple = ('outweighs', pair['act'], first, second)
+                elif first in above[second]:
+                    triple = ('outweighs', pair['act'], second, first)
+                else:
+                    raise ValueError('unbound comparable pair')
+                expected.add(triple)
+                if pair['outweighs'] != f'soft__outweighs__{triple[2]}__{triple[3]}__{triple[1]}':
+                    raise ValueError('unbound pair outweighs name')
+        if seen_pairs != {frozenset(pair) for pair in expected_pairs}:
+            raise ValueError('missing colliding pair')
+
+        found = set()
+        names = set()
+        for decision in row['decisions']:
+            key = _decision_key(decision['key'])
+            if key not in expected or key in found or decision['name'] in names:
+                raise ValueError('unbound or duplicate decision')
+            if key[0] == 'excepted':
+                expected_name = 'soft__excepted__' + key[1].replace('-', '_')
+                predicate = rules[key[1]]['predicate']
+            elif key[0] == 'off':
+                expected_name = 'soft__off__' + key[1].replace('-', '_') + '__' + key[2]
+                predicate = rules[key[1]]['predicate']
+            else:
+                expected_name = 'soft__outweighs__' + key[2] + '__' + key[3] + '__' + key[1]
+                predicate = key[1]
+            if decision['name'] != expected_name or decision['arguments'] != predicates[predicate]['arguments']:
+                raise ValueError('unbound decision name or arguments')
+            found.add(key)
+            names.add(decision['name'])
+        if found != expected:
+            raise ValueError('missing decision')
+        # Labels are request identities. The formula beside a label is Lean's
+        # derived value, but a relay may not invent another premise.
+        expected_labels = set(pair_labels)
+        for name, rule in rules.items():
+            if rule.get('mode', 'strict') != 'default':
+                continue
+            exception = rule.get('exception') or {}
+            for role in ('sufficient', 'necessary'):
+                expected_labels.update(
+                    f'soft:exception:{name}:{role}:{i}'
+                    for i in range(len(exception.get(role, ())))
+                )
+        background_labels = [entry['label'] for entry in row['background']
+                             if entry['generator'] == 'soft']
+        if (len(background_labels) != len(set(background_labels)) or
+                set(background_labels) != expected_labels):
+            raise ValueError('unbound, missing or duplicate soft background label')
+        derived = [entry['rule'] for entry in row['derived']]
+        if len(derived) != len(rules) or set(derived) != set(rules):
+            raise ValueError('unbound, missing or duplicate derived rule')
+        premises = [entry['label'] for entry in row['premises']]
+        if (len(premises) != len(set(premises)) or
+                any(label != f'layer:norms:{name}' for label, name in zip(premises, row['order'])) or
+                len(premises) != len(row['order'])):
+            raise ValueError('unbound layer premise')
+        order = row['order']
+        regulated = {name for name, decl in predicates.items() if 'regulated' in decl}
+        if len(order) != len(set(order)) or set(order) != regulated:
+            raise ValueError('unbound layer order')
+        # Norms/Replay.lean `targets`: each layer with its sorts, then each declared
+        # `req->perm` pair with the obligation's sorts (Tree.lean `pairs`).
+        targets = [entry['target'] for entry in row['conflict_targets']]
+        allowed_targets = {name: predicates[name]['arguments'] for name in regulated} | {
+            f'{name}->{decl["regulated"]["permission"]}': decl['arguments']
+            for name, decl in predicates.items()
+            if type(decl) is dict and type(decl.get('regulated')) is dict
+            and decl['regulated'].get('role') == 'obligation'
+            and decl['regulated'].get('permission') in acts}
+        if (len(targets) != len(set(targets)) or set(targets) != set(allowed_targets) or
+                any(entry['sorts'] != allowed_targets[entry['target']] for entry in row['conflict_targets'])):
+            raise ValueError('unbound conflict target or sorts')
+        if 'incompatible_pairs' in row:
+            incompatible = [tuple(pair) for pair in row['incompatible_pairs']]
+            expected_incompatible = {(a, b) for a in rules for b in rules if a < b and
+                                     _incompatible(rules[a], rules[b], predicates)}
+            if len(incompatible) != len(set(incompatible)) or set(incompatible) != expected_incompatible:
+                raise ValueError('unbound incompatible pair')
+        if soft is not None and 'ranks_above' in row:
+            ranks = set(soft.get('ranks', ()))
+            above = row['ranks_above']
+            expected_above = _rank_above(soft)
+            if (set(above) != ranks or
+                    any(set(above[rank]) != expected_above[rank] or
+                        len(above[rank]) != len(expected_above[rank]) for rank in ranks)):
+                raise ValueError('unbound rank')
+            conditional = row['conditional_on']
+            open_labels = {entry['label'] for entry in row['colliding_pairs'] if not entry['comparable']}
+            if len(conditional) != len(set(conditional)) or set(conditional) != open_labels:
+                raise ValueError('unbound or duplicate conditional label')
+            defaults = [rule for rule in rules.values() if rule.get('mode', 'strict') == 'default']
+            switches = sum(len(rule.get('alterable', ())) for rule in rules.values())
+            overrides = sum(key[0] == 'outweighs' for key in found)
+            counts_expected = {'default_exceptions': len(defaults), 'instruction_switches': switches,
+                               'holistic_overrides': overrides, 'weighing_points': len(open_labels)}
+            if row['soft_residual'] != counts_expected:
+                raise ValueError('soft residual count differs from request')
+            decider_limits = {}
+            for rule in defaults:
+                decider = (rule.get('exception') or {}).get('decided_by') or soft.get('exception_decider') or 'unstated'
+                decider_limits[decider] = decider_limits.get(decider, 0) + 1
+            counts = row['default_exceptions_by_decider']
+            if counts != decider_limits:
+                raise ValueError('unbound default exception decider or count')
+    except (KeyError, TypeError, ValueError) as error:
+        raise CheckerUnavailable(f'CheckerUnavailable: Lean soft elaboration is not bound to the request: {error}') from error
+
+
 class SoftNormDocument:
     """Validated soft tree, its W1 elaboration, and regenerated base premises.
 
@@ -241,6 +493,11 @@ class SoftNormDocument:
             raise AttributeError(name)
         self._elaborate()
         return getattr(self, name)
+
+    def decision_name(self, key):
+        """The decision predicate Lean generates for `key` (`keyedDecisions`): `("excepted", rule)`,
+        `("off", rule, party)` or `("outweighs", act, lower, higher)`."""
+        return self.decision_by_key[key]
 
     def extend(self, **attributes):
         """Set `attributes` on `extended_env`, now or once Lean's answer builds it."""
@@ -275,8 +532,35 @@ class SoftNormDocument:
 
     def _init_soft(self, env: SoftEnvironment, units, row):
         self._init_rules(env, units)
+        vocabulary = env.to_dict()['vocabulary']
+        # The public relay has already bound E′ to its actual lower request.
+        # A layered container retains head profiles and author soft__ names
+        # that the lower request deliberately strips before asking Lean.
+        layered = getattr(env, '_generated_source', False) or any(
+            profile in env.to_dict()['profiles']
+            for profile in ('norm-defaults@0', 'readings@1', 'rights@0'))
+        bind_soft_elaboration(row, units, vocabulary['predicates'], soft=vocabulary.get('soft', {}),
+                              environment=None if layered else env.to_dict())
         by_name = {rule.core.name: rule for rule in self.rules}
         self.decisions = {item['name']: item['arguments'] for item in row['decisions']}
+        # What each decision decides, as Lean keys it (`keyedDecisions`); a reader finds a decision's name by its key
+        # and never spells one. Each key is bound to the request: a declared rule (default for an exception, with the
+        # party among its switches for a switch), or a colliding pair's `outweighs` decision on the pair's act and
+        # between the pair's two ranks.
+        outweighs = {(item['outweighs'], item['act'], frozenset(by_name[n].rank for n in item['pair']))
+                     for item in row['colliding_pairs'] if item['outweighs'] is not None}
+        self.decision_by_key = {}
+        for item in row['decisions']:
+            key = _decision_key(item['key'])
+            if key[0] == 'excepted':
+                bound = by_name[key[1]].mode == 'default'
+            elif key[0] == 'off':
+                bound = key[2] in by_name[key[1]].alterable
+            else:
+                bound = (item['name'], key[1], frozenset(key[2:])) in outweighs
+            if not bound or key in self.decision_by_key:
+                raise ValueError(f"decision {item['name']} is not bound to the request")
+            self.decision_by_key[key] = item['name']
         self.collisions = tuple((by_name[item['pair'][0]], by_name[item['pair'][1]])
                                 for item in row['colliding_pairs'])
         self.rule_acts = row['rule_acts']

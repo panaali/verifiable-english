@@ -84,13 +84,27 @@ theorem negRow_holds {N : NDoc} {c : Choice} (e : NDEvidence N c) (ψ : VE.Formu
     | none => rw [hc] at hk; cases hk
     | some k =>
       rw [hc] at hk
-      exact ⟨ndFree_sound e hf, ndCertOk_sound e [] (.not ψ) k hk⟩
+      exact holds_of_xSem_nil (r := .proved) ⟨xFree_sound e hf, xCertOk_sound e _ [] (.not ψ) k hk⟩
   · trivial
+
+/-- A certificate bound as RD-3 binds a choice's (`ndEvidenceOf`: `bindCertX` with no extra base premise, the
+    choice's assertions, then `own` as written, and the conclusion `conclusion`). -/
+def ndBoundCert (r : AdmittedND) (c : Choice) (own : List Json) (conclusion : Json) (j : Json) :
+    Except String VE.Tableau.Certificate :=
+  VE.NormDefaults.Wire.bindCertX r.b.a.re.lowerJson (choiceU r.N c) [] (choiceDoc r.N.D c).2 own conclusion j
+
+/-- `ndBoundCert` is `bindCertX` over the choice's filled document, no extra base premise and its assertions. -/
+theorem ndBoundCert_eq (r : AdmittedND) (c : Choice) (own : List Json) (conclusion j : Json) :
+    ndBoundCert r c own conclusion j =
+      VE.NormDefaults.Wire.bindCertX r.b.a.re.lowerJson (choiceU r.N c) [] (choiceDoc r.N.D c).2 own conclusion j :=
+  rfl
 
 /-- The negation certificate of a choice's evidence entry (`negation.certificate`), bound as RD-3 binds a choice's
     certificate (`ndBoundCert`), its conclusion `¬ψ`; absent or refused, none. -/
 def negCert (r : AdmittedND) (c : Choice) (ψ : VE.Formula) (entry : Json) : Option VE.Tableau.Certificate :=
   (pieceOf entry "negation").bind fun p => (ndBoundCert r c [] (encF (.not ψ)) (p.getObjValD "certificate")).toOption
+
+def castFM {U U' : UDoc} (h : U = U') (m : FilledModel U) : FilledModel U' := h ▸ m
 
 theorem castFM_M {U U' : UDoc} (h : U = U') (m : FilledModel U) : (castFM h m).M = m.M := by
   subst h
