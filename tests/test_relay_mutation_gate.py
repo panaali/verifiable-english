@@ -8,7 +8,7 @@
   fixtures, and a route without an `ok` fixture fails the gate.
 * Through the client's own reader (`LeanService.exchange` with the line replaced, then `ve.ask.read_answer` for
   `ask`): a genuine answer is accepted and a mutant of its binding is CheckerUnavailable.
-* On sample routes against the built Lean executables the gate passes with the committed allow-list, and fails
+* On every route against the built Lean executables the gate passes with the committed allow-list, and fails
   on an accepted mutant the allow-list does not list, on an allow-list entry that matches nothing, and on a
   route whose fixtures are gone.
 * The speech-source reader refuses a unit whose class or status is a list or an object (it raised TypeError).
