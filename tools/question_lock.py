@@ -1,13 +1,16 @@
-"""Generate or verify the Q1 Lean source lock list."""
+"""Generate or verify the Q1 lock: the question version the relay is built for.
+
+It hashes no Lean module (architecture decision D2, AR-2): each Question module's compiled source hash is in
+`lean/declarations.txt`, its statements are in `lean/statements.txt`, and a Question module holding a K declaration
+would be in the frozen list `lean/VE/Route/frozen-sources.sha256`.
+"""
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-QUESTION = ROOT / "lean/VE/Question"
 LOCK = ROOT / "ve/question/LOCK.json"
 CODES = ROOT / "ve/question/codes.json"
 
@@ -19,11 +22,7 @@ def expected() -> dict:
     prefix, _, number = version.partition("@")
     if prefix != "question" or not number.isdigit():
         raise SystemExit(f"{CODES.relative_to(ROOT)}: question_version {version!r} is not question@N")
-    files = {
-        str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in sorted(QUESTION.glob("*.lean"))
-    }
-    return {"format": "ve.question-lock@1", "question_version": int(number), "files": files}
+    return {"format": "ve.question-lock@2", "question_version": int(number)}
 
 
 def main() -> None:
@@ -38,7 +37,7 @@ def main() -> None:
     elif not LOCK.exists() or LOCK.read_text() != blob:
         raise SystemExit("ve/question/LOCK.json is stale; run tools/question_lock.py --write")
     else:
-        print(f"PASS: {LOCK.relative_to(ROOT)} covers every Question Lean file")
+        print(f"PASS: {LOCK.relative_to(ROOT)} records the service's question version")
 
 
 if __name__ == "__main__":
