@@ -1,0 +1,175 @@
+{
+ "mutants": [
+  {
+   "id": "pass_off_the_branch",
+   "behaviour": "a pass that is not an ancestor of HEAD is not a base",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_pass_outside_the_branchs_history_since_the_merge_base_is_not_a_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "pass_before_the_merge_base",
+   "behaviour": "a pass before the merge base (main's, or before a sync) is not a base",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_pass_of_main_before_the_merge_base_is_not_a_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "tree_unbound",
+   "behaviour": "a gate row is a base only when its tree is its commit's",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_row_whose_tree_is_not_its_commits_or_whose_commit_is_absent_is_not_a_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "farthest_pass",
+   "behaviour": "the pass closest to HEAD is the base",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_the_pass_closest_to_head_is_the_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "step_bound_off_by_one",
+   "behaviour": "a full run (today's base) is forced after 5 steps, not before",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_more_than_max_steps_since_the_pass_forces_todays_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "age_bound_doubled",
+   "behaviour": "a full run (today's base) is forced after 24 h",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_pass_older_than_a_day_or_in_the_future_forces_todays_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "future_pass",
+   "behaviour": "a pass recorded in the future is not trusted",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_pass_older_than_a_day_or_in_the_future_forces_todays_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "failed_gate_is_a_pass",
+   "behaviour": "only a passed full gate or a passed rerun is a pass (R13)",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_rerun_that_passed_is_a_pass_and_a_failed_gate_is_not",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "train_row_judged",
+   "behaviour": "another writer's row with a `gate` key (a merge train's) is not judged as a pass",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_merge_train_row_with_a_gate_key_is_another_writers_row",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "unbound_gate_record",
+   "behaviour": "after-gate refuses a record of another tree or of a dirty worktree",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_after_gate_refuses_a_record_not_of_this_clean_head",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "every_failure_covered",
+   "behaviour": "a failure outside the rule's selection is a miss",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_failure_is_outside_a_selection_unless_its_file_is_selected",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "saved_outside_trusted",
+   "behaviour": "check recomputes each row's misses and never trusts the saved lists",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_check_refuses_every_retyped_rebound_or_dropped_field",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "nine_items_activate",
+   "behaviour": "activation needs 10 items",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_fewer_items_or_a_miss_keeps_todays_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "a_miss_activates",
+   "behaviour": "a single miss keeps the rule inactive",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_fewer_items_or_a_miss_keeps_todays_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "full_rows_count",
+   "behaviour": "a row whose rule selected everything is not evidence",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_rows_whose_rule_selected_everything_do_not_count",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "labels_are_items",
+   "behaviour": "an item is its branch: one branch under many labels counts once",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_one_branch_under_ten_labels_is_one_item",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "detached_rows_count",
+   "behaviour": "a row of a detached HEAD is not evidence",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_a_detached_head_row_is_not_evidence",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "shadow_rule_used",
+   "behaviour": "base prints today's merge base while the rule is in shadow",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_fewer_items_or_a_miss_keeps_todays_base",
+   "exit": 1,
+   "caught": true
+  },
+  {
+   "id": "planner_not_the_base_plan",
+   "behaviour": "the shadow's plan is select_tests' plan for pass..HEAD",
+   "file": "tools/since_pass.py",
+   "test": "tests/test_since_pass.py::test_plan_between_is_the_select_tests_base_plan",
+   "exit": 1,
+   "caught": true
+  }
+ ],
+ "clean": {
+  "tests/test_since_pass.py::test_a_detached_head_row_is_not_evidence": 0,
+  "tests/test_since_pass.py::test_a_failure_is_outside_a_selection_unless_its_file_is_selected": 0,
+  "tests/test_since_pass.py::test_a_merge_train_row_with_a_gate_key_is_another_writers_row": 0,
+  "tests/test_since_pass.py::test_a_pass_of_main_before_the_merge_base_is_not_a_base": 0,
+  "tests/test_since_pass.py::test_a_pass_older_than_a_day_or_in_the_future_forces_todays_base": 0,
+  "tests/test_since_pass.py::test_a_pass_outside_the_branchs_history_since_the_merge_base_is_not_a_base": 0,
+  "tests/test_since_pass.py::test_a_rerun_that_passed_is_a_pass_and_a_failed_gate_is_not": 0,
+  "tests/test_since_pass.py::test_a_row_whose_tree_is_not_its_commits_or_whose_commit_is_absent_is_not_a_base": 0,
+  "tests/test_since_pass.py::test_after_gate_refuses_a_record_not_of_this_clean_head": 0,
+  "tests/test_since_pass.py::test_check_refuses_every_retyped_rebound_or_dropped_field": 0,
+  "tests/test_since_pass.py::test_fewer_items_or_a_miss_keeps_todays_base": 0,
+  "tests/test_since_pass.py::test_more_than_max_steps_since_the_pass_forces_todays_base": 0,
+  "tests/test_since_pass.py::test_one_branch_under_ten_labels_is_one_item": 0,
+  "tests/test_since_pass.py::test_plan_between_is_the_select_tests_base_plan": 0,
+  "tests/test_since_pass.py::test_rows_whose_rule_selected_everything_do_not_count": 0,
+  "tests/test_since_pass.py::test_the_pass_closest_to_head_is_the_base": 0
+ },
+ "language": "Python"
+}
