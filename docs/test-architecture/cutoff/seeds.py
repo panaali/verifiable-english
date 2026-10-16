@@ -189,23 +189,50 @@ def verify(row: dict, worktree: Path, unseeded: Path, work: Path, tests: list[st
             "through_service": through}
 
 
+CAUGHT, SOURCE_ONLY, MISSED, UNSEEN, UNBUILT, UNVERIFIED = (
+    "caught", "caught only by a reader of the Lean source", "not caught", "seen by no service test", "build failed",
+    "not verified")
+
+
+def outcome(row: dict) -> str:
+    """What a seed's row shows. A catch counts when a test fails on the seeded build with the source restored
+    and passes on the unseeded one (`verify`); a seed that changed no recorded answer no service test sees."""
+    if row["status"] == "build failed":
+        return UNBUILT
+    if "verified" in row:
+        if row["verified"].get("through_service"):
+            return CAUGHT
+        return SOURCE_ONLY if row["status"] == "caught" else MISSED
+    if row["status"] == "not caught" and not row["changed_cases"]:
+        return UNSEEN
+    return UNVERIFIED
+
+
+def kept_by(row: dict) -> dict[str, bool]:
+    """Whether today's, the modes and the answers selections hold every test that catches the seed."""
+    units = {test.split("::")[0] for test in row["verified"]["through_service"]}
+    return {name: units <= set(row[key]) for name, key in (("today", "today"), ("modes", "modes_selected"),
+                                                          ("answers", "answers_selected"))}
+
+
 def check(rows: list[dict]) -> int:
     """The saved rows are the seeds of seeds.json and agree with themselves; the number caught."""
     seeds = json.loads(SEEDS.read_text())
     assert [row["id"] for row in rows] == [seed["id"] for seed in seeds]
     for row, seed in zip(rows, seeds, strict=True):
         assert (row["file"], row["old"], row["new"]) == (seed["file"], seed["old"], seed["new"])
-        if row["status"] != "caught":
+        found = outcome(row)
+        assert found != UNVERIFIED, f"{row['id']} was not verified"
+        if found == UNBUILT:
             continue
-        assert row["caught_by"] and all(row["caught_in"].values()), row["id"]
-        for name, key in (("today", "today"), ("modes", "modes_selected"), ("answers", "answers_selected")):
-            assert row["caught_in"][name] == all(test.split("::")[0] in row[key] for test in row["caught_by"])
-        assert set(row["modes_selected"]) <= set(row["today"]), row["id"]
-    for row in rows:
-        if row["status"] == "not caught":
-            # Not observed by any service test: no recorded answer changed and no tried test failed.
-            assert not row["caught_by"], row["id"]
-    return sum(row["status"] == "caught" for row in rows)
+        assert set(row["modes_selected"]) <= set(row["today"]) and set(row["answers_selected"]) <= set(row["today"])
+        if found == CAUGHT:
+            verified = row["verified"]
+            assert set(verified["through_service"]) <= set(verified["seeded_failures"])
+            assert not set(verified["through_service"]) & set(verified["unseeded_failures"])
+        if found == UNSEEN:
+            assert not row["caught_by"] and not row["changed_cases"], row["id"]
+    return sum(outcome(row) == CAUGHT for row in rows)
 
 
 def main() -> int:
@@ -285,9 +312,12 @@ def main() -> int:
                 args.evidence.write_text(json.dumps(data, indent=1) + "\n")
         return 0
     if args.command == "check":
-        caught = check(json.loads(EVIDENCE.read_text())["seeds"])
-        print(f"{caught} seeds caught (activation needs {REQUIRED}), each by a test today's, the modes and the "
-              "answers selections keep")
+        rows = json.loads(EVIDENCE.read_text())["seeds"]
+        caught = check(rows)
+        kept = {name: sum(kept_by(row)[name] for row in rows if outcome(row) == CAUGHT)
+                for name in ("today", "modes", "answers")}
+        print(f"{caught} seeds caught through the service (activation needs {REQUIRED}); kept by today {kept['today']}, "
+              f"modes {kept['modes']}, answers {kept['answers']}")
         return 0
     work = Path(tempfile.mkdtemp(prefix="cutoff-seeds-"))
     rows = json.loads(args.output.read_text())["seeds"] if args.output.exists() else []
