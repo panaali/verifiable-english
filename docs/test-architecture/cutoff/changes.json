@@ -51,7 +51,12 @@
   "paths": 102,
   "lean": 16,
   "base_lean_tree": "536de9242843cee9209567c7a98b86863cddf706",
-  "head_lean_tree": "e9dccc824e6330516ee77a03bf4a4660e6787cfe"
+  "head_lean_tree": "e9dccc824e6330516ee77a03bf4a4660e6787cfe",
+  "head_build": "eb974eb8e5a735b8a417b11eb740f3cf1b98a69a9f50b706f142c41352962fff",
+  "base_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "changed_answers": 0,
+  "stale_answers": 0,
+  "head_pinned": true
  },
  {
   "label": "lf-16e",
@@ -62,7 +67,12 @@
   "paths": 42,
   "lean": 6,
   "base_lean_tree": "536de9242843cee9209567c7a98b86863cddf706",
-  "head_lean_tree": "4807ab52894fe09d41898c350cf727490c3b17f1"
+  "head_lean_tree": "4807ab52894fe09d41898c350cf727490c3b17f1",
+  "head_build": "09e5f3d89edc3cf815d21c262277e6959077fa97bc053bcbd58e47a4bb62f533",
+  "base_build": "e23e465337cf158a6cea284f65237a9aaa6f0340e320fd84fef2935fd0243541",
+  "changed_answers": 274,
+  "stale_answers": 0,
+  "head_pinned": true
  },
  {
   "label": "rd-9",

@@ -273,10 +273,10 @@ def unknown_units(index: dict, coverage: select_tests.Coverage, graph: source_gr
 
 
 class CutoffCoverage(select_tests.Coverage):
-    """The recording's map, but a pin change selects no unit whose only pin reads were the client's."""
+    """A coverage map as it is, but a pin change selects no unit whose only pin reads were the client's."""
 
-    def __init__(self, data: dict, path: Path, client_pin_readers: set[str]):
-        super().__init__(data, path)
+    def __init__(self, coverage: select_tests.Coverage, client_pin_readers: set[str]):
+        self.__dict__.update(coverage.__dict__)
         self.client_pin_readers = client_pin_readers
 
     def readers(self, path: str) -> set[str]:
@@ -300,10 +300,13 @@ def answers_rule(diff: dict, index: dict, unknown: set[str]):
 
 
 def select_answers(diff_path: Path, paths: list[str], *, base: str, after: str | None, full: bool = False,
-                   assume_fresh: bool = False, build: str | None = None, head_pinned: bool | None = None) -> dict:
-    """The `answers` plan. `build` is the ve_service build the tests will run (default: the one built
-    here); the diff's head must be it. Whether the pins of `after` admit it is read from them, unless
-    `head_pinned` says (a measurement whose build was made on another architecture than the pins')."""
+                   coverage="auto", assume_fresh: bool = False, build: str | None = None,
+                   head_pinned: bool | None = None) -> dict:
+    """The `answers` plan. Today's rules read `coverage` as `select_tests.select` does (by default the
+    nearest map of the base); only the requests come from the recording, and a unit that ran code changed
+    between the recording and the base is unknown. `build` is the ve_service build the tests will run
+    (default: the one built here); the diff's head must be it. Whether the pins of `after` admit it is read
+    from them, unless `head_pinned` says (a measurement whose build was made on another architecture)."""
     diff = read_json(diff_path)
     recording = Path(diff["recording_dir"])
     index, data = load_recording(recording)
@@ -316,20 +319,27 @@ def select_answers(diff_path: Path, paths: list[str], *, base: str, after: str |
     if diff["base"] != index["service"] and diff.get("recording_build") != index["service"]:
         raise ValueError(f"{diff_path}: the base build {diff['base'][:16]} is not the recording's; the diff needs "
                          "the recording build's answers (answer_cutoff.py diff --recording-answers)")
-    plain = select_tests.Coverage(data, recording / "map.json.gz")
+    recorded = select_tests.Coverage(data, recording / "map.json.gz")
     changes = select_tests.read_changes(sorted(set(paths)), base=base, after=after)
     graph = source_graph.load(ROOT).overlay({change.path: change.old for change in changes})
-    uncertain = set() if assume_fresh else select_tests.uncertain_since(
-        plain, graph, set(select_tests.units()), base)[0]
-    unknown = unknown_units(index, plain, graph, uncertain, stale=frozenset(diff.get("stale", ())))
-    client_only = {unit for unit, entry in index["units"].items() if entry["pins"] == ["client"]}
-    head_pinned = pinned(build, after) if head_pinned is None else head_pinned
-    coverage = CutoffCoverage(data, recording / "map.json.gz", client_only if head_pinned else set())
-    rule, users = answers_rule(diff, index, set(unknown))
-    with service_rule(rule):
+    # The recorded requests of a unit that ran code changed since the recording may be others now.
+    since = select_tests.uncertain_since(recorded, graph, set(select_tests.units()), base)[0]
+    today = select_tests.resolve_map(base, coverage)
+    if today is None:  # no map for today's rules: today's selection, which then is the whole suite
         plan = select_tests.select(paths, full=full, base=base, after=after, coverage=coverage,
                                    assume_fresh=assume_fresh)
-    plan["cutoff"] = {"rule": "answers", "diff": str(diff_path), "changed_cases": len(diff["changed"]),
+        plan["cutoff"] = {"rule": "answers", "diff": str(diff_path), "note": "no coverage map: today's selection"}
+        return plan
+    unknown = unknown_units(index, today, graph, since, stale=frozenset(diff.get("stale", ())))
+    client_only = {unit for unit, entry in index["units"].items() if entry["pins"] == ["client"]} - since
+    head_pinned = pinned(build, after) if head_pinned is None else head_pinned
+    rule, users = answers_rule(diff, index, set(unknown))
+    with service_rule(rule):
+        plan = select_tests.select(paths, full=full, base=base, after=after,
+                                   coverage=CutoffCoverage(today, client_only if head_pinned else set()),
+                                   assume_fresh=assume_fresh)
+    plan["cutoff"] = {"rule": "answers", "diff": str(diff_path), "recording_map": recorded.commit,
+                      "changed_cases": len(diff["changed"]),
                       "changed_users": sorted(users), "unknown": unknown, "head_pinned": head_pinned,
                       "request_handling": sorted(set(paths) & set(REQUEST_HANDLING))}
     return plan
@@ -343,7 +353,6 @@ def select(rule: str, paths: list[str], **options) -> dict:
         plan["cutoff"] = {"rule": "modes"}
         return plan
     if rule.startswith("answers="):
-        options.pop("coverage", None)  # the recording's own map: its requests are recorded against it
         return select_answers(Path(rule.removeprefix("answers=")), paths, **options)
     raise ValueError(f"unknown cutoff rule {rule!r}; expected one of {', '.join(RULES)}")
 

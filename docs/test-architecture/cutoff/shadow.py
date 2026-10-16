@@ -13,6 +13,8 @@ three selections for the change as `tools/select_tests.py` would on that head: t
 with the nearest version-7 map recorded at an ancestor of the base (what R1 reads), `answers` with
 the recording's own map. A failure of the full run outside a selection is a miss of that selection,
 unless the same test also fails on the base (`base_failures`, run on the runner the same way).
+`lean_only` is the same three selections for the change's Lean inputs alone (its .lean files, Lean
+project files and pins): what each rule does to the Lean part of a change, for information.
 `check` reads only the saved rows.
 """
 from __future__ import annotations
@@ -72,7 +74,17 @@ modes = answer_cutoff.select("modes", paths, base=change["base"], after=change["
 answers = answer_cutoff.select_answers(runs + "/diff-" + change["label"] + ".json", paths, base=change["base"],
                                        after=change["head"], build=change["head_build"],
                                        head_pinned=change.get("head_pinned"))
-print(json.dumps({{"r1_map": r1 and r1.name, "paths": paths,
+lean = [path for path in paths if select_tests.kind_of(path) == select_tests.LEAN or path == "lean/checkers.lock"]
+alone = {{}}
+if lean:
+    alone = {{"today": select_tests.select(lean, base=change["base"], after=change["head"], coverage=coverage())["selected"],
+             "modes": answer_cutoff.select("modes", lean, base=change["base"], after=change["head"],
+                                           coverage=coverage())["selected"],
+             "answers": answer_cutoff.select_answers(runs + "/diff-" + change["label"] + ".json", lean,
+                                                     base=change["base"], after=change["head"],
+                                                     build=change["head_build"],
+                                                     head_pinned=change.get("head_pinned"))["selected"]}}
+print(json.dumps({{"r1_map": r1 and r1.name, "paths": paths, "lean_paths": lean, "lean_only": alone,
                   "today": today["selected"], "today_full": today["full_reasons"],
                   "modes": modes["selected"], "answers": answers["selected"],
                   "answers_cutoff": answers["cutoff"], "units": today["full_count"],

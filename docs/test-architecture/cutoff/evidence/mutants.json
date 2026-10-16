@@ -146,6 +146,24 @@
    "failure": "FAILED tests/test_answer_cutoff.py::test_a_case_answers_alike_alone_and_in_a_batch"
   },
   {
+   "id": "M18",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "today's rules read the recording's map, not the one R1 reads",
+   "test": "tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness"
+  },
+  {
+   "id": "M19",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit that ran code changed since the recording keeps its recorded requests",
+   "test": "tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness"
+  },
+  {
    "id": "M14",
    "language": "python",
    "file": "tools/select_tests.py",
