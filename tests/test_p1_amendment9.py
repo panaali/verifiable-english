@@ -7,10 +7,12 @@ import json
 import pytest
 
 from experiments import p1, p1_preflight
+from tests import p1_findings
 from ve_experiments import paid
 
 
 def test_joint_bounds_contain_current_histories_and_preserve_judge_margin():
+    p1_findings.warm()  # every item it reads, checked several at a time first (tests/p1_findings.py)
     retained = json.loads((p1.HERE / 'checks/tokenizer.json').read_text())
     counts = {r['identity']: r for r in retained['counts']}
     maxima = defaultdict(int)
