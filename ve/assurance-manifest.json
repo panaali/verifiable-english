@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 34474,
+    "total_lines": 34671,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1381,6 +1381,21 @@
           "admitDocumentX"
         ],
         "reason": "rd-9 SC-6: the soft branch under norm-defaults@0, its certificate replay (the source by decodeSoftU, the formulas, bindCertX) and W2 admission on the filled soft tree (the soft source, the quoted norms, the units and graph nodes over E‴, certificates bound to the regenerated soft E‴); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/NormDefaults/LayeredEntail.lean",
+        "lines": 197,
+        "sha256": "252900e276faa4195a1186d5396db72f551547f7daf0e3d8b6867f09e024ef3c",
+        "ranges": [
+          [
+            1,
+            197
+          ]
+        ],
+        "declarations": [
+          "bindCertX"
+        ],
+        "reason": "rd-9: `bindCertX`, the one certificate binder of the layered route (the certificate decoded by decodeCertificate, bound to the source environment, the regenerated premises with the extra base premises X and the conclusion), used by LayeredAdmission, the readings verdicts and ask; the rest of the file is the X semantics and its acceptance proofs (no decoder); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/SoftWire.lean",
