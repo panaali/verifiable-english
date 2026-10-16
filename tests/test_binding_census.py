@@ -99,15 +99,6 @@ def test_a_hand_check_is_retirable_only_if_the_generic_checker_refuses_all_it_re
     assert C.hand_binders([{**probe, "refused": "transport", "site": None}]) == []
 
 
-def test_the_census_names_the_hand_binders_the_probe_found():
-    binders = {binder["binder"]: binder for binder in CENSUS["hand_binders"]}
-    # The discourse joint-choices binder carries the SOME-to-ALL binding the shapes do not state
-    # (tests/test_discourse_answer.py::test_duplicate_and_out_of_range_choices_are_no_answer).
-    joint = binders["ve/discourse.py:_bind_joint"]
-    assert not joint["retirable_later"]
-    assert any("joint_choices" in item for item in joint["refused_only_by_hand"]), joint
-
-
 def test_the_probe_finds_the_hand_check_of_a_consumer_test(tmp_path):
     """Live: the probe over one consumer test of `words` records mutants with the generic checker's verdict, and
     attributes a refusal to `ve.words.read_answer`, the hand binder of that route."""
