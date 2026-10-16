@@ -273,7 +273,22 @@ Each was planted in a changed file, the named test failed, and the file was rest
 rules, not code of this batch. M22 to M38 answer the review's F1 (ten planted bugs no test caught: the pin
 exemption, `pinned`, the diff's stale answers, the `everyone &` limit, hypothesis in helpers, a refused batch,
 `R1_RULE`) and the untested branches next to them; `check_evidence.py` requires the saved run to hold
-exactly the bugs `mutants.py` lists.
+exactly the bugs `mutants.py` lists. M39 to M42 are the four more the recheck's F8 planted (the pin
+exemption's `== ["client"]`, `diff --recording-answers`'s stale answers, a timed request folded with `|=`, a
+timeout passed on one call).
+
+F8 is of F1's kind, so hand-picked bugs cannot close it: `sweep.py` plants every mutant a fixed set of
+operators makes (a comparison negated or relaxed, `and`/`or` swapped or an operand dropped, a condition forced
+either way, an operand, keyword argument or statement dropped, `|=` made `=`, a boolean flipped) in
+`tools/answer_cutoff.py` and `tools/answer_replay.py`, and in the lines the batch added to
+`tools/test_map_recorder.py` and `tools/select_tests.py`, and runs `tests/test_answer_cutoff.py` on each
+(`evidence/sweep.json`). Of 950 mutants the first run left about 400 alive, most in the untested command
+lines and `record`; tests now catch all but 46, and those 46 change no behaviour: each is in `sweep.EXEMPT`
+with why (json escapes read back alike, an explicit `return None` at a function's end, progress output, the
+replay's startup allowance, and the like). `check_evidence.py` runs `sweep.py check`: the survivors must be
+exactly EXEMPT's. The sweep found two faults it fixed: `fold` crashed on, or skipped, a record of no known
+kind (now unknown), and `handle_of` missed a handle key written with JSON escapes, which the service reads
+as one (now read as the service reads it).
 
 <!-- table:mutants -->
 | Bug | File | Seeded fault | Failing test |
@@ -316,20 +331,26 @@ exactly the bugs `mutants.py` lists.
 | M36 | tools/answer_cutoff.py | importing the seedable random.Random makes a unit unknown | `test_seeded_randomness_is_not_unknown` |
 | M37 | tools/answer_replay.py | a replay of some modes only is diffed as a whole one | `test_diff_finds_changed_missing_and_unreplayable_answers` |
 | M38 | tools/answer_replay.py | a case whose environment the recording lacks is sent as it is | `test_replay_answers_each_case_as_recorded_and_again_alike` |
+| M39 | tools/answer_cutoff.py | a unit that reads the pins as data too is exempt from a pin change | `test_the_pin_exemption_and_the_stale_answers_reach_the_plan` |
+| M40 | tools/answer_cutoff.py | `diff --recording-answers` drops the stale answers it finds | `test_the_cutoff_command_line` |
+| M41 | tools/answer_cutoff.py | a later untimed request hides an earlier timed one | `test_folding_keeps_a_timed_request_and_reads_every_line_it_can` |
+| M42 | tools/test_map_recorder.py | a timeout passed on one call is not recorded | `test_timeouts_and_data_reads_of_the_pins_are_recorded` |
 <!-- /table:mutants -->
 
 ## Tests and runs
 
-- New: `tests/test_answer_cutoff.py`, 41 tests (recorder capture with the real service, fail-closed `u`
+- New: `tests/test_answer_cutoff.py`, 67 tests (recorder capture with the real service, fail-closed `u`
   records, nested attribution, fold and store, replay and diff, the rules, the hook and its R1 default, the
-  gate never importing the cutoff). Locally they pass with `tests/test_select_tests.py`,
+  gate never importing the cutoff; since F8 also the command lines, `record` end to end, batching, an ASCII
+  locale and a process ending by `os._exit`). Locally they pass with `tests/test_select_tests.py`,
   `tests/test_nested_pytest.py` and `tests/test_regen_generated.py` (272 passed on the merged tree).
 - Selected tests for the branch on ve-mac-1 (`mac-pytest.sh --select -- --base <merge base> --run`): 153
   units, 0 failed, on 4555583f before the sync with main; after it, on `18245d07` (the evidence and code as
   final; later commits change this report only): 64 of 404 units against main's map `1cf82542d`, 0 failed,
   917 s, with R1's new rule in force.
   After the review's F1 fix, on `27778897`: 64 units, 0 failed, 299 s; `lake build` and `lean/audit.py` pass.
-- `tools/gate_collection.py --check --prebuilt` against the merge base: 41 tests added, 0 removed, 0
+  After the recheck's F8 fix, on `3d0033ff`: 64 units, 0 failed, 209 s; `lake build` and `lean/audit.py` pass.
+- `tools/gate_collection.py --check --prebuilt` against the merge base: 67 tests added, 0 removed, 0
   refused, stale or malformed trailers. `tools/regen_generated.py --check`: 27 entries fresh after the sync.
 - The measurement runs (all on ve-mac-1 through `mac-pytest.sh`, except the seeds, which ran on the VM in
   scratch worktrees): one recording (`J1`), 14 replays in format 4, 10 full runs of the gate's collection,
@@ -349,7 +370,8 @@ exactly the bugs `mutants.py` lists.
    report test (evidence is checked by `check_evidence.py` at the batch gate, D4), no authority switch;
    in-flight files: `tools/select_tests.py` (tarch-select) gets one hook, `tools/regen_generated.py` one
    `NOT_REGENERATED` line, merged with main's (`test_the_hook_passes_its_rule_and_is_off_by_default`).
-3. PASS - 38 seeded Python bugs, each failing its named test (`evidence/mutants.json`); the answer diff
+3. PASS - 42 seeded Python bugs, each failing its named test (`evidence/mutants.json`), and a sweep of 950
+   mechanical mutants of which every survivor is a listed no-op (`evidence/sweep.json`); the answer diff
    catches a changed value, `true` against `1`, `1` against `1.0`, a missing case and an unreplayable one,
    and refuses an empty replay and two recordings (`test_diff_finds_changed_missing_and_unreplayable_answers`).
 4. N.A. - no checker or parser changed; the replay's answers agree across machines and clients (format 4).
