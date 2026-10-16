@@ -16,6 +16,8 @@ import subprocess
 
 import pytest
 
+from tests.subprocesses import HANG_TIMEOUT
+
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "tools/hooks/pre-commit"
@@ -26,22 +28,23 @@ ENGLISH_VERSION = "lean/VE/EnglishGrammar/Fixed/Version.lean"
 
 
 class Staging:
-    def __init__(self, tmp: Path) -> None:
+    def __init__(self, tmp: Path, repo: Path) -> None:
         objects = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-path", "objects"],
-                                 cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+                                 cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
         (tmp / "objects").mkdir()
         self.env = {**os.environ, "GIT_INDEX_FILE": str(tmp / "index"),
                     "GIT_OBJECT_DIRECTORY": str(tmp / "objects"),
                     "GIT_ALTERNATE_OBJECT_DIRECTORIES": objects}
         self.env.pop("VE_SKIP_HOOKS", None)
         self.tmp = tmp
+        self.repo = repo
         self.git("read-tree", "HEAD")
         # The merge updates the hook's staged audit API. Use that policy in the
         # private index so these probes exercise the current hook contract.
         self.stage("lean/audit.py", (ROOT / "lean/audit.py").read_bytes())
 
     def git(self, *args: str, data: bytes | None = None) -> bytes:
-        return subprocess.run(["git", *args], cwd=ROOT, env=self.env, input=data,
+        return subprocess.run(["git", *args], cwd=self.repo, env=self.env, input=data,
                               capture_output=True, check=True).stdout
 
     def head(self, path: str) -> bytes:
@@ -81,7 +84,7 @@ class Staging:
         self.stage(INVENTORY, header + "".join(f"{digest}  {name}\n" for name, digest in sorted(recorded.items())))
 
     def run(self, *args: str, **env: str) -> subprocess.CompletedProcess:
-        return subprocess.run([str(HOOK), *args], cwd=ROOT, env={**self.env, **env},
+        return subprocess.run([str(HOOK), *args], cwd=self.repo, env={**self.env, **env},
                               capture_output=True, text=True, check=False)
 
     def run_in(self, worktree: Path, *args: str) -> subprocess.CompletedProcess:
@@ -96,9 +99,37 @@ class Staging:
                               capture_output=True, text=True, check=False)
 
 
+@pytest.fixture(scope="module")
+def fixture_repo(tmp_path_factory) -> Path:
+    """Commit the current source into a private repo; no probe reads a moving HEAD."""
+    repo = tmp_path_factory.mktemp("precommit-repo")
+    subprocess.run(["git", "init", "-q", str(repo)], check=True, timeout=HANG_TIMEOUT)
+    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT, timeout=HANG_TIMEOUT).split(b"\0")
+    for encoded in tracked:
+        if not encoded:
+            continue
+        path = Path(os.fsdecode(encoded))
+        source, target = ROOT / path, repo / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if source.is_symlink():
+            target.symlink_to(os.readlink(source))
+        else:
+            shutil.copy2(source, target)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True, timeout=HANG_TIMEOUT)
+    subprocess.run(["git", "-c", "user.name=VE Test", "-c", "user.email=ve@example.invalid",
+                    "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture"],
+                   cwd=repo, check=True, timeout=HANG_TIMEOUT)
+    return repo
+
+
 @pytest.fixture
-def staging(tmp_path: Path) -> Staging:
-    return Staging(tmp_path)
+def staging(tmp_path: Path, fixture_repo: Path) -> Staging:
+    return Staging(tmp_path, fixture_repo)
+
+
+def test_staging_history_is_private(staging, fixture_repo):
+    assert Path(staging.git("rev-parse", "--absolute-git-dir").decode().strip()) == fixture_repo / ".git"
+    assert fixture_repo != ROOT
 
 
 def rejects(staging: Staging, *messages: str) -> str:
