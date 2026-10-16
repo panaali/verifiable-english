@@ -137,6 +137,15 @@
    "failure": "FAILED tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust"
   },
   {
+   "id": "M17",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "an error result's batch position counts in its answer",
+   "test": "tests/test_answer_cutoff.py::test_a_case_answers_alike_alone_and_in_a_batch",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_case_answers_alike_alone_and_in_a_batch"
+  },
+  {
    "id": "M14",
    "language": "python",
    "file": "tools/select_tests.py",

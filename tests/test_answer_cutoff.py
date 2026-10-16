@@ -408,3 +408,22 @@ def test_the_gate_and_the_maps_never_reach_the_cutoff():
     hook = [node for node in ast.walk(ast.parse((ROOT / "tools/select_tests.py").read_text()))
             if isinstance(node, ast.Import) and any(alias.name == "answer_cutoff" for alias in node.names)]
     assert len(hook) == 1
+
+
+def test_a_case_answers_alike_alone_and_in_a_batch(executable):
+    """An error result carries its position in the request (`case_index`); the answer leaves it out, as it
+    leaves out `index`, so a batch that one build answers and another refuses compares case by case."""
+    deep = {"id": "deep", "environment": EVALUATION[0]["environment"], "ast": [["not"] * 300]}
+    nested: object = [["top"]]
+    for _ in range(300):
+        nested = ["not", nested]
+    deep["ast"] = [nested]
+    texts = [lean_service._dumps(case) for case in (EVALUATION[1], deep)]
+    with lean_service.LeanService(executable) as service:
+        together = answer_replay.ask(service, "evaluate", texts, {})
+        alone = [answer_replay.ask(service, "evaluate", [text], {})[0] for text in texts]
+        response = answer_replay.send(service, "evaluate", texts, {})
+    assert response["status"] == "ok" and response["results"][1]["result"]["case_index"] == 1
+    assert together == alone
+    entry = {"digest": "d", "index": 3, "result": {"case_index": 3, "error": "x", "status": "error"}}
+    assert answer_replay.unplaced(entry) == {"digest": "d", "result": {"error": "x", "status": "error"}}

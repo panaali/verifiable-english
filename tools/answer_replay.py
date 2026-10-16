@@ -7,8 +7,8 @@ train and the nightlies never use it.
   (`answer_cutoff.py record`) to the build at PATH, as recorded: the case text the client sent and,
   for a case that names its environment by handle, that environment registered with it. Cases go
   in batches of one mode (`batches`, the same for every build); a case's answer is its bound entry
-  but its position in the batch, kept as the SHA-256 of its compact JSON with Lean's key order, so
-  `1` and `1.0`, or `true` and `1`, differ. A batch the service refuses or fails as a whole is
+  but its positions in the batch (`unplaced`), kept as the SHA-256 of its compact JSON with Lean's
+  key order, so `1` and `1.0`, or `true` and `1`, differ. A batch the service refuses or fails as a whole is
   asked again one case per request, where a refusal, or the class of what was raised, is the
   answer. The client's schema and binding checks run on every response.
 * `diff BASE HEAD --output DIFF` lists the cases whose answers differ, or that either side lacks.
@@ -37,7 +37,8 @@ sys.path.insert(0, str(ROOT))
 from ve.backends import lean_service  # noqa: E402
 
 # 2: cases are replayed in batches, and a case's answer is its bound entry but its position.
-VERSION = 2
+# 3: and but the position an error result carries (`case_index`).
+VERSION = 3
 BATCH_CASES = 64
 BATCH_BYTES = 1 << 20
 # Wall-clock seconds per replayed request: an explicit timeout replaces the mode's CPU deadline, so
@@ -94,8 +95,17 @@ def send(service: lean_service.LeanService, mode: str, texts: list[str], environ
                             environments=named, expanded=expanded)[1]
 
 
+def unplaced(entry: dict) -> dict:
+    """A bound entry without the positions its request gave it: `index` and an error result's `case_index`
+    (VE.Service.Protocol). The client's binding check, which runs on every replayed response, checks them."""
+    result = entry.get("result")
+    if isinstance(result, dict) and "case_index" in result:
+        entry = {**entry, "result": {key: value for key, value in result.items() if key != "case_index"}}
+    return {key: value for key, value in entry.items() if key != "index"}
+
+
 def ask(service: lean_service.LeanService, mode: str, texts: list[str], environments: dict[str, str]) -> list[str]:
-    """The answer to each case of `texts`: its bound entry but its position, from one request; when the
+    """The answer to each case of `texts`: its bound entry but its positions, from one request; when the
     request is refused or fails as a whole, each case is asked alone, and a refusal (the response but its
     nonce) or the class of what was raised is that case's answer."""
     try:
@@ -105,8 +115,7 @@ def ask(service: lean_service.LeanService, mode: str, texts: list[str], environm
             return [f"raised: {type(exc).__name__}"]
         response = None
     if response is not None and response.get("status") != "error":
-        return [answer_digest({key: value for key, value in entry.items() if key != "index"})
-                for entry in response["results"]]
+        return [answer_digest(unplaced(entry)) for entry in response["results"]]
     if len(texts) == 1:
         return [answer_digest({key: value for key, value in response.items() if key != "id"})]
     return [ask(service, mode, [text], environments)[0] for text in texts]
