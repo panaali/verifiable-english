@@ -14,6 +14,7 @@ one fails. Then it restores W. The rows go to evidence/seeds.json; `check` reads
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import os
@@ -58,18 +59,22 @@ def failures(junit: Path) -> list[str]:
 
 
 def candidates(seed: dict, worktree: Path, selected: list[str], index: dict, modes: set[str],
-               seconds: dict[str, float]) -> list[str]:
-    """The narrowed selection's files that name the seed's text; else its users of the seed's modes."""
-    words = re.findall(r"[A-Za-z][A-Za-z ,:-]{6,}", seed["old"])
-    named = [unit for unit in selected if unit.startswith("tests/") and any(
-        word.strip() in (worktree / unit).read_text(errors="replace") for word in words if len(word.strip()) > 8)]
-    if named:
-        return sorted(named, key=lambda unit: seconds.get(unit, 0))
+               seconds: dict[str, float], changed: set[str] = frozenset()) -> list[str]:
+    """Where in the narrowed selection a test may see the seed: the units that sent a case whose answer
+    changed, the files that name the seed's text, and else the users of the seed's modes (at most 12 of
+    each, the shortest first)."""
+    def shortest(units) -> list[str]:
+        return sorted((unit for unit in set(units) if unit in selected and unit.startswith("tests/")),
+                      key=lambda unit: (seconds.get(unit, 0), unit))[:12]
+
     keys = index["keys"]
-    users = {unit for unit, entry in index["units"].items()
-             if any(index["modes"][i] in modes for i in entry["keys"])}
-    return sorted((unit for unit in selected if unit in users and unit.startswith("tests/")),
-                  key=lambda unit: seconds.get(unit, 0))[:12] if keys else []
+    senders = shortest(unit for unit, entry in index["units"].items() if any(keys[i] in changed for i in entry["keys"]))
+    words = [word.strip() for word in re.findall(r"[A-Za-z][A-Za-z ,:-]{6,}", seed["old"]) if len(word.strip()) > 8]
+    named = shortest(unit for unit in selected if unit.startswith("tests/") and any(
+        word in (worktree / unit).read_text(errors="replace") for word in words))
+    users = [] if senders or named else shortest(
+        unit for unit, entry in index["units"].items() if any(index["modes"][i] in modes for i in entry["keys"]))
+    return sorted(set(senders) | set(named) | set(users))
 
 
 def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: Path) -> dict:
@@ -117,7 +122,7 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         answers_plan = answer_cutoff.select_answers(diff_path, [seed["file"]], base="HEAD", after=None, build=build)
         index = answer_replay.read_json(recording / "requests.json.gz")
         seconds = {unit: status["seconds"] for unit, status in data["status"].items()}
-        tried = candidates(seed, worktree, modes_plan["selected"], index, modes, seconds)
+        tried = candidates(seed, worktree, modes_plan["selected"], index, modes, seconds, set(diff["changed"]))
         junit = work / f"{seed['id']}-junit.xml"
         if tried:
             import run_order
@@ -141,7 +146,7 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         sys.path.pop(0)
 
 
-def verify(row: dict, worktree: Path, unseeded: Path, work: Path) -> dict:
+def verify(row: dict, worktree: Path, unseeded: Path, work: Path, tests: list[str]) -> dict:
     """Whether the catch is the service's: with the source restored and the same pins, the catching tests
     fail with the seeded ve_service and pass with the unseeded one. A test that fails only because it reads
     the Lean source (a trust count, a source hash) is no catch through the service."""
@@ -162,7 +167,7 @@ def verify(row: dict, worktree: Path, unseeded: Path, work: Path) -> dict:
         pins["ve_service"] = sorted({*pins["ve_service"], seeded})
         lock_path.write_text(json.dumps(pins, indent=2) + "\n")
         # Every candidate file with the seeded build, then only what failed with the unseeded one.
-        for name, source, tests in (("seeded", None, row["tried"]), ("unseeded", unseeded, None)):
+        for name, source, tests in (("seeded", None, tests), ("unseeded", unseeded, None)):
             if source is not None:
                 binary.write_bytes(source.read_bytes())
             tests = tests if tests is not None else outcome["seeded"]
@@ -215,6 +220,8 @@ def main() -> int:
     again = sub.add_parser("verify", help="re-run each caught seed's catching tests with the source restored")
     again.add_argument("--worktree", type=Path, required=True)
     again.add_argument("--evidence", type=Path, default=EVIDENCE)
+    again.add_argument("--recording", type=Path, required=True)
+    again.add_argument("--diffs", type=Path, nargs="+", required=True, help="directories of the seeds' diffs")
     sub.add_parser("check")
     args = parser.parse_args()
     if args.command == "verify":
@@ -226,9 +233,18 @@ def main() -> int:
         unseeded = work / "ve_service.unseeded"
         unseeded.write_bytes((worktree / SERVICE).read_bytes())
         data = json.loads(args.evidence.read_text())
+        sys.path.insert(0, str(worktree / "tools"))
+        import answer_replay
+        index = answer_replay.read_json(args.recording / "requests.json.gz")
+        with gzip.open(args.recording / "map.json.gz", "rt") as handle:
+            seconds = {unit: status["seconds"] for unit, status in json.load(handle)["status"].items()}
         for row in data["seeds"]:
-            if row["status"] in ("caught", "not caught") and row.get("tried") and "verified" not in row:
-                row["verified"] = verify(row, worktree, unseeded, work)
+            if row["status"] in ("caught", "not caught") and "verified" not in row:
+                diff = next(json.loads(path.read_text()) for directory in args.diffs
+                            if (path := directory / f"{row['id']}-diff.json").exists())
+                tests = sorted(set(row.get("tried", ())) | set(candidates(
+                    row, worktree, row["modes_selected"], index, set(row["modes"]), seconds, set(diff["changed"]))))
+                row["verified"] = {"tests": tests, **verify(row, worktree, unseeded, work, tests)}
                 print(row["id"], row["verified"].get("through_service"), flush=True)
                 args.evidence.write_text(json.dumps(data, indent=1) + "\n")
         return 0
