@@ -209,6 +209,8 @@ def owned(document) -> bool:
 # mutating them exceeded the bounded fuzzer's useful CPU budget on the question branch.
 UNMUTATED = {
     "usecases/question-answering/": "large question vocabulary fixtures; seed answers are compared separately",
+    "tests/data/premise-scale/": "readings@1 premise-check fixtures, which Lean's document mode refuses (fail-closed) "
+                                 "whatever the mutation; seed answers are compared separately",
 }
 
 

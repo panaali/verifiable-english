@@ -52,6 +52,15 @@ def _text(value):
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
 
 
+def test_unique_string_lists_refuse_duplicate_rule_names():
+    check = Compiler().compile({"type": "array", "x-unique-strings": True}, "common.json")
+    for names in ([], ["first"], ["first", "second"]):
+        check(names, Context(None), {})
+    for names in (["first", "first"], ["first", 1], "first"):
+        with pytest.raises(Invalid):
+            check(names, Context(None), {})
+
+
 def rebind(request, response):
     """The request's digests of its (possibly altered) cases, and the response's results
     bound to them: an altered request/response pair as the client and service would see it."""
@@ -535,6 +544,33 @@ def test_mutated_genuine_responses_agree_with_lean_decoders(fuzz, executables):
     items, lean = fuzz
     verdicts = assert_agreement(executables[1], items, lean)
     assert 0 < sum(v == "accept" for v in verdicts) < len(verdicts)
+
+
+def test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over(executables):
+    from tools import relay_mutation_gate as gate
+    cases = [row[2] for row in gate.load_cases() if row[:2] == ["service", "readings-route"]]
+    texts = [_text(case) for case in cases]
+    answers = gate._service_answers(executables[0], "readings-route", texts)
+    probes = {}
+    for line, answer in zip(texts, answers):
+        if answer.get("status") != "ok":
+            continue
+        row = answer["results"][0].get("result", {})
+        if row.get("fill") and "label" not in probes:
+            probes["label"] = (line, answer, ("results", 0, "result", "fill", 0, "label"), "")
+        if row.get("targets") and "target" not in probes:
+            probes["target"] = (line, answer, ("results", 0, "result", "targets", 0), "")
+        for i, unit in enumerate(row.get("units", [])):
+            over = (unit.get("content", {}).get("norm") or {}).get("over")
+            if over and "over" not in probes:
+                probes["over"] = (line, answer, ("results", 0, "result", "units", i, "content", "norm", "over"),
+                                  over + over[:1])
+    assert set(probes) == {"label", "target", "over"}
+    items = []
+    for line, answer, path, replacement in probes.values():
+        request = request_context(answer["id"], "readings-route", "[" + line + "]", 1)
+        items.append(("readings-route", request, [_replace(answer, path, replacement)]))
+    assert all(verdict.startswith("reject:") for verdict in assert_agreement(executables[1], items))
 
 
 @pytest.mark.parametrize("weaken", [

@@ -565,6 +565,13 @@
    "reason": "lf-14c: Lean n-ary definitions, model tables and bound Background replace the deleted Python n-ary fallback decision path; review fix F1/F2: one dependency order over every definition, FOL and n-ary, and the definition-body diagnostics through one Lean owner (Route.Wire.bodyFault). Carried over from the branch's pre-AR-4 budget (S 9967, V 39223) in the merge with ve-integration aaff77634.",
    "signature": "standing ruling R6 (DRI-RULINGS.md), lf-14c, 2026-10-15",
    "commit": "16a02693a37211bbc80de1579e7ee1af5a3b61a3"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "premise-scale: the search-budget service mode (VE.Service.Mode.searchBudget, its name and runMode case, ResponseShape.Skeletons.searchBudget and its row case, the schema list entry): untied [V] +5 in existing verdict-bearing declarations (VE/Service/Protocol.lean +2, ResponseShape/Skeletons.lean +2, ResponseShape/Schemas.lean +1). The mode replaces Python's own premise-check budget (ve/vacuity.py's hard-coded defaults, deleted): Lean owns the budget. The new modules' declarations are classified C (proved: demand_sound, sortBounds_spec, sortBounds_sound) or [R] (a wrong budget only bounds an untrusted search, whose models Lean checks).",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "aaff776345c5e58ebe10f131316ba1c42663d3b2"
   }
  ]
 }
