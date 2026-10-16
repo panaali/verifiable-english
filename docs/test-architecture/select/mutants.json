@@ -1,0 +1,219 @@
+{
+ "batch": "tarch-select",
+ "language": "Python (tools/; the batch changes no Lean or Rust product code)",
+ "how": "each fault planted by exact text replacement in a scratch worktree of the batch's HEAD, the named test run with pytest -x, the file restored; git status was clean after the run",
+ "seeds": [
+  {
+   "id": "S1",
+   "file": "tools/test_map.py",
+   "fault": "find_map counts tree maps in its 30-newest window again",
+   "test": "tests/test_select_tests.py::test_tree_maps_do_not_crowd_commit_maps_out_of_the_window",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_tree_maps_do_not_crowd_commit_maps_out_of_the_window"
+   ],
+   "note": "first run: pytest exit 3 (internal error, no test result); rerun failed the test"
+  },
+  {
+   "id": "S2",
+   "file": "tools/test_map.py",
+   "fault": "VERSION raised to 8 with no FORMAT_CHANGES entry",
+   "test": "tests/test_select_tests.py::test_each_map_format_version_ships_with_a_converter_or_a_recorded_map",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_each_map_format_version_ships_with_a_converter_or_a_recorded_map"
+   ]
+  },
+  {
+   "id": "S3",
+   "file": "tools/test_map.py",
+   "fault": "the 6-to-7 converter records a mode for every unit",
+   "test": "tests/test_select_tests.py::test_a_version_6_map_converts_and_keeps_every_service_user",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_version_6_map_converts_and_keeps_every_service_user"
+   ]
+  },
+  {
+   "id": "S4",
+   "file": "tools/test_map.py",
+   "fault": "every child that left no file counts as having run nothing",
+   "test": "tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[no"
+   ]
+  },
+  {
+   "id": "S5",
+   "file": "tools/test_map.py",
+   "fault": "a nested recording keeps its records to itself",
+   "test": "tests/test_select_tests.py::test_a_recording_inside_a_recorded_test_hands_over_its_records",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_recording_inside_a_recorded_test_hands_over_its_records"
+   ]
+  },
+  {
+   "id": "S6",
+   "file": "tools/test_map.py",
+   "fault": "units record shortest first",
+   "test": "tests/test_select_tests.py::test_recording_starts_the_longest_units_first",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_recording_starts_the_longest_units_first"
+   ]
+  },
+  {
+   "id": "S7",
+   "file": "tools/test_map.py",
+   "fault": "fresh accepts a map of any age",
+   "test": "tests/test_select_tests.py::test_freshness_is_the_map_selection_would_use",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_freshness_is_the_map_selection_would_use"
+   ]
+  },
+  {
+   "id": "S8",
+   "file": "tools/test_map.py",
+   "fault": "a build record of another platform is used",
+   "test": "tests/test_select_tests.py::test_a_build_record_needs_a_current_build_of_one_tree",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_build_record_needs_a_current_build_of_one_tree"
+   ]
+  },
+  {
+   "id": "S9",
+   "file": "tools/test_map.py",
+   "fault": "a build hashed while its tree changed is recorded",
+   "test": "tests/test_select_tests.py::test_a_build_record_needs_a_current_build_of_one_tree",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_build_record_needs_a_current_build_of_one_tree"
+   ]
+  },
+  {
+   "id": "S10",
+   "file": "tools/test_map_recorder.py",
+   "fault": "a child records here without the site hook in this process",
+   "test": "tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[no"
+   ]
+  },
+  {
+   "id": "S11",
+   "file": "tools/source_graph.py",
+   "fault": "a product word names every directory of the name again",
+   "test": "tests/test_select_tests.py::test_a_product_word_names_only_product_directories",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_product_word_names_only_product_directories"
+   ]
+  },
+  {
+   "id": "S12",
+   "file": "tools/select_tests.py",
+   "fault": ".gitattributes is a root file that changes everything again",
+   "test": "tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users"
+   ]
+  },
+  {
+   "id": "S13",
+   "file": "tools/select_tests.py",
+   "fault": "a macro use is not a checkout attribute",
+   "test": "tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[macro"
+   ]
+  },
+  {
+   "id": "S14",
+   "file": "tools/select_tests.py",
+   "fault": "the tests that run git are not readers of .gitattributes",
+   "test": "tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users"
+   ],
+   "note": "first run left an empty block (a syntax error, not counted); rerun with `pass` failed the test"
+  },
+  {
+   "id": "S15",
+   "file": "tools/select_tests.py",
+   "fault": "a shared manifest field selects no whole-manifest reader",
+   "test": "tests/test_select_tests.py::test_a_shared_manifest_field_selects_its_whole_manifest_readers",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_shared_manifest_field_selects_its_whole_manifest_readers"
+   ]
+  },
+  {
+   "id": "S16",
+   "file": "tools/select_tests.py",
+   "fault": "the manifest version is an ordinary shared field",
+   "test": "tests/test_select_tests.py::test_a_shared_manifest_field_selects_its_whole_manifest_readers",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_shared_manifest_field_selects_its_whole_manifest_readers"
+   ]
+  },
+  {
+   "id": "S17",
+   "file": "tools/select_tests.py",
+   "fault": "an authority change selects only the entry's readers",
+   "test": "tests/test_select_tests.py::test_an_authority_change_selects_the_registrations_of_its_entries",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_an_authority_change_selects_the_registrations_of_its_entries"
+   ]
+  },
+  {
+   "id": "S18",
+   "file": "tools/select_tests.py",
+   "fault": "the cutoff calls a changed binary unchanged",
+   "test": "tests/test_select_tests.py::test_a_changed_binary_selects_all_its_runners",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_changed_binary_selects_all_its_runners"
+   ]
+  },
+  {
+   "id": "S19",
+   "file": "tools/select_tests.py",
+   "fault": "a missing build record counts as an identical build",
+   "test": "tests/test_select_tests.py::test_without_both_build_records_every_runner_is_selected",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_without_both_build_records_every_runner_is_selected[base]"
+   ]
+  },
+  {
+   "id": "S20",
+   "file": "tools/select_tests.py",
+   "fault": "--run never builds the head for the cutoff",
+   "test": "tests/test_select_tests.py::test_a_run_builds_the_head_for_the_cutoff_when_the_base_build_is_recorded",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_run_builds_the_head_for_the_cutoff_when_the_base_build_is_recorded"
+   ]
+  },
+  {
+   "id": "S21",
+   "file": "tools/select_tests.py",
+   "fault": "the drift check reads .gitattributes as unchanged when its texts are missing",
+   "test": "tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users",
+   "exit": 1,
+   "failed": [
+    "tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users"
+   ]
+  }
+ ]
+}
