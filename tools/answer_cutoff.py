@@ -302,9 +302,10 @@ def answers_rule(diff: dict, index: dict, unknown: set[str]):
 
 
 def select_answers(diff_path: Path, paths: list[str], *, base: str, after: str | None, full: bool = False,
-                   assume_fresh: bool = False, build: str | None = None) -> dict:
+                   assume_fresh: bool = False, build: str | None = None, head_pinned: bool | None = None) -> dict:
     """The `answers` plan. `build` is the ve_service build the tests will run (default: the one built
-    here); the diff's head must be it, and the pins of `after` must admit it."""
+    here); the diff's head must be it. Whether the pins of `after` admit it is read from them, unless
+    `head_pinned` says (a measurement whose build was made on another architecture than the pins')."""
     diff = read_json(diff_path)
     recording = Path(diff["recording_dir"])
     index, data = load_recording(recording)
@@ -321,7 +322,7 @@ def select_answers(diff_path: Path, paths: list[str], *, base: str, after: str |
         plain, graph, set(select_tests.units()), base)[0]
     unknown = unknown_units(index, plain, graph, uncertain)
     client_only = {unit for unit, entry in index["units"].items() if entry["pins"] == ["client"]}
-    head_pinned = pinned(build, after)
+    head_pinned = pinned(build, after) if head_pinned is None else head_pinned
     coverage = CutoffCoverage(data, recording / "map.json.gz", client_only if head_pinned else set())
     rule, users = answers_rule(diff, index, set(unknown))
     with service_rule(rule):

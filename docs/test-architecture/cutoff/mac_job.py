@@ -33,8 +33,9 @@ def send(name: str, data: bytes) -> None:
     print("CUTOFF-END", flush=True)
 
 
-def run(command: list[str], cwd: Path = ROOT, **options) -> subprocess.CompletedProcess:
-    env = {**os.environ, "PATH": str(Path.home() / ".elan/bin") + os.pathsep + os.environ.get("PATH", "")}
+def run(command: list[str], cwd: Path = ROOT, env: dict | None = None, **options) -> subprocess.CompletedProcess:
+    env = dict(os.environ if env is None else env)
+    env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
     print("+", " ".join(command), flush=True)
     return subprocess.run(command, cwd=cwd, env=env, **options)
 
@@ -72,8 +73,11 @@ def test_job():
                 send("modes.json", result.stdout.encode())
         elif kind == "pytest":
             junit = ROOT.parent / "cutoff-junit.xml"
-            result = run([*PYTHON, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-rfE",
-                          f"--junitxml={junit}", *step["args"]], capture_output=True, text=True)
+            sys.path.insert(0, str(ROOT / "tools"))
+            import nested_pytest
+            result = run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-rfE", f"--junitxml={junit}",
+                                                *step["args"]], python=PYTHON), capture_output=True, text=True,
+                         env=nested_pytest.environment(os.environ))
             print(result.stdout[-20000:], flush=True)
             report["steps"].append({"kind": kind, "exit": result.returncode, "args": step["args"]})
             if junit.exists():

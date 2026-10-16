@@ -82,6 +82,7 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
     import answer_cutoff
     import answer_replay
     import lean_mode_deps
+    import nested_pytest
     import select_tests
     import source_graph
     import test_map
@@ -121,8 +122,8 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         tried = candidates(seed, worktree, modes_plan["selected"], index, modes, seconds)
         junit = work / f"{seed['id']}-junit.xml"
         if tried:
-            run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-x", "-n", "8",
-                 f"--junitxml={junit}", *tried], worktree, log, env)
+            run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", f"--junitxml={junit}", *tried],
+                                      workers=8), worktree, log, nested_pytest.environment(env))
         caught = failures(junit)
         return {**row, "status": "caught" if caught else "not caught", "build": build, "modes": sorted(modes),
                 "changed_cases": len(diff["changed"]), "cases": diff["cases"],
