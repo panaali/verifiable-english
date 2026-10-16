@@ -21,9 +21,12 @@ each test file in run A of the plan (`evidence/mac-durations.json`; files run A 
     python3 docs/test-architecture/select/replay.py --selector /tmp/main --label main --write as_it_was fresh
     python3 docs/test-architecture/select/replay.py --check   # this checkout's saved rows, recomputed
 
-`--check` recomputes this checkout's saved columns and fails on any difference in a selected set: the
-regression test of the plans that batch evidence gets at the batch gate and merge train (architecture
-decision D4). It reads the build records only on linux-x86_64, where they were measured.
+A plan depends on the tree the selector runs in (its test units, its static graph), so each label saves
+the commit it ran at (`commit`; `--write` needs a clean checkout), and `--check` recomputes that label's
+columns in a temporary worktree of exactly that commit and fails on any difference in a selected set: the
+check that batch evidence gets at the batch gate and merge train (architecture decision D4), unaffected
+by later commits. `--selector DIR --label L` without `--write` prints another checkout's plans to compare.
+The build records apply only on linux-x86_64, where they were measured.
 """
 from __future__ import annotations
 
@@ -138,20 +141,36 @@ def main() -> int:
         parser.error(f"unknown columns {sorted(set(args.columns) - set(COLUMNS))}")
     saved = json.loads(REPLAY.read_text()) if REPLAY.exists() else {}
     if args.check:
-        columns = [column for column in saved.get(args.label, {}) if column != "as_it_was"]
-        found = replay(args.selector, columns)
+        entry = saved[args.label]
+        columns = [column for column in entry["columns"] if column != "as_it_was"]
+        with tempfile.TemporaryDirectory(prefix="ve-select-check-") as directory:
+            tree = Path(directory) / "tree"
+            subprocess.run(["git", "worktree", "add", "--detach", str(tree), entry["commit"]], cwd=ROOT,
+                           check=True, capture_output=True)
+            try:
+                found = replay(tree, columns)
+            finally:
+                subprocess.run(["git", "worktree", "remove", "--force", str(tree)], cwd=ROOT, capture_output=True)
         differ = [f"{column} {merge}" for column in columns for merge in MERGES
-                  if found[column][merge]["selected"] != saved[args.label][column]["rows"][merge]["selected"]]
+                  if found[column][merge]["selected"] != entry["columns"][column]["rows"][merge]["selected"]]
         print(f"replayed {len(columns)} columns x {len(MERGES)} merges: "
               + (f"{len(differ)} plans differ from the saved ones: {differ}" if differ else "every plan as saved"))
         return 1 if differ else 0
-    found = replay(args.selector, args.columns or list(COLUMNS[1:]))
+    selector = args.selector.resolve()
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=selector, capture_output=True, text=True,
+                            check=True).stdout.strip()
+    if args.write and subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=selector,
+                                     capture_output=True, text=True, check=True).stdout:
+        parser.error(f"{selector} has uncommitted changes: the saved commit would not be the tree replayed")
+    found = replay(selector, args.columns or list(COLUMNS[1:]))
     for column, rows in found.items():
         print(f"{column}: {summary(rows)}")
     if args.write:
-        entry = saved.setdefault(args.label, {})
+        entry = saved.setdefault(args.label, {"commit": commit, "columns": {}})
+        if entry["commit"] != commit:
+            entry.update(commit=commit, columns={})
         for column, rows in found.items():
-            entry[column] = {"summary": summary(rows), "rows": rows}
+            entry["columns"][column] = {"summary": summary(rows), "rows": rows}
         REPLAY.write_text(json.dumps(saved, indent=1, sort_keys=True) + "\n")
     return 0
 
