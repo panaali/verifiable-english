@@ -220,18 +220,31 @@ def test_ask_is_read_as_ve_ask_reads_it(built):
     assert outcome == "refused" and "unused" in detail, detail
 
 
-SAMPLE = ("service:identity", "service:check", "ve_metered::countermodel.search")
+ROUTES = [f"service:{mode}" for mode in MODES] + list(G.ONE_SHOT)
 
 
-def test_the_gate_passes_on_sample_routes_with_the_committed_allow_list(built):
-    report = G.run_gate(set(SAMPLE))
+def test_every_allow_list_entry_and_untyped_manifest_field_names_a_gated_route():
+    """A one-route run checks only its own route's entries, so `test_the_gate_passes_on_every_route` covers
+    the whole allow-list only if every entry names one of its routes."""
+    entries = json.loads(G.ALLOW.read_text())["entries"]
+    assert {entry["route"] for entry in entries} <= set(ROUTES)
+    assert {item["route"] for item in G.manifest_untyped()} <= set(ROUTES)
+
+
+@pytest.mark.parametrize("route", ROUTES)
+def test_the_gate_passes_on_every_route(built, route):
+    """The gate on the committed schemas, fixtures and allow-list, one route at a time. Only review-ready's
+    [relay] check ran the whole gate, so lf-14a, lf-14b and qa-q2 merged with it failing on main (stale
+    allow-list paths and an empty norm-defaults `unsaid` description accepted); now the suite fails."""
+    lean_build(*{runner for runner, *_ in G.ONE_SHOT.values()})
+    report = G.run_gate({route})
     assert report["failures"] == []
-    assert set(report["routes"]) == set(SAMPLE)
-    for route in SAMPLE:
-        stats = report["routes"][route]
-        assert stats["ok_fixtures"] >= 1 and stats["mutants"] == stats["refused"] + stats.get("allowed", 0)
-    # service:check's untyped unsat core is listed as a follow-up, so some mutants were allowed.
-    assert report["routes"]["service:check"]["allowed"] > 0
+    assert set(report["routes"]) == {route}
+    stats = report["routes"][route]
+    assert stats["ok_fixtures"] >= 1 and stats["mutants"] == stats["refused"] + stats.get("allowed", 0)
+    if route == "service:check":
+        # Its untyped unsat core is listed as a follow-up, so some mutants were allowed.
+        assert stats["allowed"] > 0
 
 
 def test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry(built, tmp_path):
