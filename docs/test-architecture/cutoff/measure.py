@@ -4,8 +4,8 @@
       [--overlay PATH ...] [--full-suite]
 
 WORKTREE is a scratch git worktree, checked out at COMMIT (detached) and given this batch's job
-(mac_job.py as tests/test_zz_cutoff_job.py, the job file, and each --overlay path copied from this
-checkout) as uncommitted files; mac-pytest.sh runs it on the runner, which builds the Lean of that
+(mac_job.py as tests/test_zz_cutoff_job.py, the job file, and each --overlay path, all as committed at
+this checkout's HEAD) as uncommitted files; mac-pytest.sh runs it on the runner, which builds the Lean of that
 tree. `--full-suite` instead runs the gate's own collection there (`-m "not live"`, the nightly
 tests included) with nothing added. The log and every decoded block go to OUT.
 """
@@ -17,7 +17,6 @@ import gzip
 import json
 import os
 from pathlib import Path
-import shutil
 import subprocess
 
 HERE = Path(__file__).resolve().parent
@@ -38,11 +37,14 @@ def prepare(worktree: Path, commit: str, steps: list | None, overlays: list[str]
     git(worktree, "clean", "-fdq")
     if steps is None:
         return
-    shutil.copy(HERE / "mac_job.py", worktree / JOB)
+    (worktree / JOB).write_bytes(subprocess.run(["git", "-C", str(ROOT), "show",
+                                                 f"HEAD:{(HERE / 'mac_job.py').relative_to(ROOT)}"],
+                                                check=True, capture_output=True).stdout)
     (worktree / "cutoff-job.json").write_text(json.dumps({"steps": steps}))
-    for path in overlays:
+    for path in overlays:  # as committed here, never a file being edited
         (worktree / path).parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy(ROOT / path, worktree / path)
+        (worktree / path).write_bytes(subprocess.run(["git", "-C", str(ROOT), "show", f"HEAD:{path}"], check=True,
+                                                     capture_output=True).stdout)
 
 
 def decode(log: Path, out: Path) -> list[str]:
