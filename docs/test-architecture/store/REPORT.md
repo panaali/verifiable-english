@@ -214,6 +214,11 @@ failed it.
 - **Two forms of the option.** Write `--answer-store=DIR`. As two words, pytest's first pass reads an existing DIR as
   a test path before the conftest registers the option, and roots the run there (seen once on the Mac). The
   variable has no such problem.
+- **Synced with main** at `8bc65a907` (commit `8f9171ad`). The one conflict was docs/TESTING.md, where both
+  sections were kept. Main's client change (the `search-budget` mode's deadline) does not touch the seam.
+  `tools/regen_generated.py --check` passes all 27 entries after the Lean rebuild. On `8f9171ad` the whole default
+  collection passed on the Mac: 16,383 light and 166 heavy tests, 0 failures. The selector picks every unit
+  for this branch (checklist item 9), so this is the selected set.
 - **Not run here:**
   - the full release gate, which the chain runs on the final HEAD;
   - the store in a real R1 run, since no runner sets the variable yet;
