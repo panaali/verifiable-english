@@ -158,11 +158,15 @@ import json, os, subprocess, sys
 real, counter, mode = sys.argv[1], sys.argv[2], sys.argv[3]
 generation = int(open(counter).read()) if os.path.exists(counter) else 0
 open(counter, "w").write(str(generation + 1))
+if mode == "never" or (mode == "startup" and generation == 0):  # no handshake: always, or from the first
+    sys.exit(1)
 child = subprocess.Popen([real], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 sys.stdout.buffer.write(child.stdout.readline()); sys.stdout.flush()
 for line in sys.stdin.buffer:
     if mode == "crash" and generation == 0:  # the first process dies on its first request
         child.kill(); sys.exit(1)
+    if mode == "garbage" and generation == 0:  # the first process answers its first request with no JSON
+        sys.stdout.buffer.write(b"garbage\n"); sys.stdout.flush(); child.kill(); sys.exit(1)
     child.stdin.write(line); child.stdin.flush()
     out = child.stdout.readline()
     if mode == "perturb" and generation % 2:  # the same value, other bytes, in every second process
@@ -174,7 +178,8 @@ for line in sys.stdin.buffer:
 
 
 def proxy(tmp_path, executable, name, mode):
-    """A wrapper around the real service: `same`, `perturb`, `panic` or `crash` (PROXY)."""
+    """A wrapper around the real service: `same`, `perturb`, `panic`, `crash`, `garbage`, `startup` or `never`
+    (PROXY)."""
     script = tmp_path / "proxy.py"
     script.write_text(PROXY)
     wrapper = tmp_path / name
@@ -245,6 +250,42 @@ def test_an_answer_that_needed_a_retry_is_never_stored(seam, tmp_path, executabl
     with LeanService(service_path, allow_unlisted_build=True) as service:
         assert service.run_bound("evaluate", CASES) == genuine
     assert seam.counts["hits"] == 1
+
+
+FAILURES = ["startup", "crash", "garbage", "never"]
+
+
+def _outcome(service_path, handles):
+    """The answer (or CheckerUnavailable) and the retries and restarts of a client whose first request starts
+    the process (not `with`, whose `start` would retry a failed start before any request)."""
+    service = LeanService(service_path, allow_unlisted_build=True, handles=handles)
+    try:
+        try:
+            answer = service.run_bound("evaluate", CASES)
+        except CheckerUnavailable:
+            answer = CheckerUnavailable
+        return answer, service.stats["retries"], service.stats["restarts"]
+    finally:
+        service.close()
+
+
+@pytest.mark.parametrize("handles", [True, False], ids=["environments", "inline"])
+@pytest.mark.parametrize("failure", FAILURES)
+def test_a_failed_attempt_with_the_store_on_ends_as_it_does_without(seam, monkeypatch, tmp_path, executable,
+                                                                     failure, handles):
+    """Review F6: whatever step of the first attempt fails (the process does not start, so a line that carries
+    environments was never built; it dies on the request; it answers garbage; it never starts), the client with
+    the store on retries as the client without it does and ends the same way: the same answer, or
+    CheckerUnavailable, never a crash. Nothing is stored from an attempt that needed a retry."""
+    seam.reason = lambda service, timeout: None  # the proxy is an unlisted build
+    for side in ("on", "off"):  # each side's proxy counts its own process generations
+        (tmp_path / side).mkdir()
+    on = _outcome(proxy(tmp_path / "on", executable, failure, failure), handles)
+    monkeypatch.setattr(lean_service, "answer_store", None)
+    off = _outcome(proxy(tmp_path / "off", executable, failure, failure), handles)
+    assert on == off and on[1] == 1
+    assert (on[0] is CheckerUnavailable) is (failure == "never")
+    assert seam.counts["recorded"] == 0 and not seam.store.root.exists() and seam.alarms == []
 
 
 def test_a_checker_unavailable_request_error_is_never_recorded(seam):

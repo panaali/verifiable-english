@@ -390,8 +390,9 @@ class Seam:
         self._remember(entry, raw)
         self._count(self.counts, "recorded")
 
-    def failed(self, service: LeanService, line: bytes, failure: Exception, *, served: bool) -> None:
-        """An attempt at `line` failed: the client refused the stored answer (`served`), or the process failed.
+    def failed(self, service: LeanService, line: bytes | None, failure: Exception, *, served: bool) -> None:
+        """An attempt at `line` failed: the client refused the stored answer (`served`), or the process failed;
+        `line` is None when the process failed to start before the line was built (then the store was not asked).
         The client then asks the process without the store, so an answer that needed a retry is never stored.
         A refused entry is an alarm, and the entry goes; a sampled hit whose live attempt failed compares
         nothing (an operational failure of the process, which the client's retry answers as without a store)."""
