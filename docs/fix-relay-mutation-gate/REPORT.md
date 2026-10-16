@@ -70,7 +70,9 @@ this change is on top of both.
 - `docs/fix-relay-mutation-gate/relay-gate-report.json`: `tools/relay_mutation_gate.py --json` on e11d781a3 (the
   merged tree; the later commits only add docs): 43 routes, 502 fixtures, 117799 mutants, 110445 refused, 7354
   listed, **0 failures**; its `inputs` hashes are those of the committed fixtures and allow-list.
-- Selected tests: see the end of this report.
+- Selected tests (`mac-pytest.sh --select -- --base 21029b86e --run`, tree 463d6a82b of d5c9e5a02; no Mac slot
+  within 600 s, so it ran on the VM): 400/400 units, 0 failed, exit 0, 5534 s. It includes
+  `tests/test_relay_mutation_gate.py` (exit 0, all 43 route cases).
 
 ## Seeded bugs
 
@@ -96,3 +98,19 @@ Tests in `main-known-red.txt` (lf-14d's sub-tick deadline tests and the rd8 repo
 The full release gate (fast lane: the chain runs the selected tests, the merge train the full suite). The Rust
 release binary is not built in this worktree, so `regen_generated.py --check --only checker-pins` was run with
 `VE_REGEN_NO_RUST=1` (the ve_service pin holds).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Lean answers typed and contained: PASS. norm-defaults `description` typed non-empty; the whole gate (every field dropped, emptied, duplicated, retyped incl. 10k-deep, rebound) on all 43 routes: `relay-gate-report.json`, 0 failures; `test_the_gate_passes_on_every_route[*]`.
+2. Deliverables built, no rule broken: PASS. Reproduce on main (2a4fbf708, 39 failures), bisect (table above), cause fixed (shape + regenerated schema; stale paths removed, none added), suite test, seeded undo-the-fix (seeded bug 5). No Python copy of a Lean decision, no permanent report test (D4), no generated file hand-edited; `tools/relay-gate-allow.json` change kept minimal (14 removals) and made after premise-scale and tarch-b8 merged.
+3. Tests and gates can fail: PASS. Seeded bugs 1-5 (`seeded-bugs.json`), each a failing test; the allow-list names exact paths.
+4. Py/Lean/Rust agree, valid inputs pass: PASS. Every genuine fixture answer is accepted (`run_gate` fails on a refused genuine answer); `tests/test_route_row_schemas.py` and the norm-defaults tests in the selected run pass.
+5. R8 binding: PASS. No new field read; the empty-description mutant is refused (`[service:norm-defaults]`); binding mutants unchanged across the gate.
+6. Gate evidence matches final HEAD: PASS. Synced with main (21029b86e); `relay-gate-report.json` from e11d781a3, whose later commits add only docs; selected run on the tree of d5c9e5a02; scope base from `git merge-base`.
+7. No unsigned item: PASS. One DELTA row, signed R8 (DELTA.md); no trust-budget growth.
+8. Every user-visible change in DELTA: PASS. Only a tampered answer changes outcome (DELTA row 1); genuine answers unchanged (all fixtures accepted).
+9. Test selection finds the tests: PASS. `select_tests.py --base 21029b86e` selects `tests/test_relay_mutation_gate.py` for the schema and allow-list change (seeded bugs 1 and 5 fail there).
+10. Lean statements: N.A. for new theorems (none). The shape change leaves `runCaseReported_fits` unchanged (the skeleton erases `minLength`); `lake build` and `lean_statements.py --check` pass.
+11. Budgets and deadlines: N.A. No budget, limit or deadline code changed.
+12. CPU/memory regression: N.A. for product code (a schema `minLength`); the suite gains ~12 CPU-minutes of gate cases, spread per route over xdist.
+13. Test-removed trailer: PASS. f614070cc; `tools/gate_collection.py --check --prebuilt`: 1 removed by a trailer, 0 refused, 0 stale, 0 malformed.
