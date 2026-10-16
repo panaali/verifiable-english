@@ -69,11 +69,18 @@ def main() -> int:
     parser.add_argument("--steps", help="the job's steps, as JSON")
     parser.add_argument("--overlay", nargs="*", default=[], help="paths of this checkout to copy in")
     parser.add_argument("--full-suite", action="store_true")
+    parser.add_argument("--tests", type=Path, help="with --full-suite: only the test files this file lists")
+    parser.add_argument("--seed", help="plant this seed of seeds.json in the worktree (its build is the runner's)")
     parser.add_argument("--workers", default="6")
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     prepare(args.worktree, args.commit, None if args.full_suite else json.loads(args.steps), args.overlay)
-    pytest = (["-o", "addopts=-ra", "-m", "not live", "-q", "-rfE", "-n", args.workers, "tests"] if args.full_suite
+    if args.seed:
+        seed = next(seed for seed in json.loads((HERE / "seeds.json").read_text()) if seed["id"] == args.seed)
+        path = args.worktree / seed["file"]
+        path.write_text(path.read_text().replace(seed["old"], seed["new"]))
+    files = args.tests.read_text().split() if args.tests else ["tests"]
+    pytest = (["-o", "addopts=-ra", "-m", "not live", "-q", "-rfE", "-n", args.workers, *files] if args.full_suite
               else ["-p", "no:xdist", "-q", "-s", JOB])
     # Standard output and standard error apart: ssh writes them independently, so one file would
     # interleave them inside the job's base64 lines.
@@ -85,6 +92,7 @@ def main() -> int:
     names = decode(log, args.out)
     (args.out / "job.json").write_text(json.dumps({"commit": git(args.worktree, "rev-parse", "HEAD"),
                                                    "exit": code, "decoded": names, "full_suite": args.full_suite,
+                                                   "seed": args.seed, "tests": files if args.tests else None,
                                                    "steps": None if args.full_suite else json.loads(args.steps)},
                                                   indent=2) + "\n")
     print(f"exit {code}; decoded {names}; log {log}")
