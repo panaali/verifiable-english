@@ -1,0 +1,109 @@
+{
+ "note": "from the measurement job logs on ve-mac-1 (aarch64), 2026-10-16; seconds are scheduling metadata",
+ "recording": {
+  "job_seconds": 2433.92,
+  "steps": "record (6 jobs) + replay (format 1, 6 jobs) + emit"
+ },
+ "replays_format_4": {
+  "16a02693a3": {
+   "build": "e23e465337cf158a",
+   "job_seconds": 432.23,
+   "runner_setup_seconds": 417
+  },
+  "1cbd5ed1ea": {
+   "build": "bd9c5bdfe1b8ba2d",
+   "job_seconds": 452.92,
+   "runner_setup_seconds": 262
+  },
+  "2a4fbf7080": {
+   "build": "e23e465337cf158a",
+   "job_seconds": 317.05,
+   "runner_setup_seconds": null
+  },
+  "4a6f8dd596": {
+   "build": "eb974eb8e5a735b8",
+   "job_seconds": 436.63,
+   "runner_setup_seconds": 466
+  },
+  "5ff9fe610d": {
+   "build": "ef1af563abeb366e",
+   "job_seconds": 380.0,
+   "runner_setup_seconds": 378
+  },
+  "6192adfedf": {
+   "build": "188efdfa5425933a",
+   "job_seconds": 452.62,
+   "runner_setup_seconds": 321
+  },
+  "7b93539a4d": {
+   "build": "e23e465337cf158a",
+   "job_seconds": 396.51,
+   "runner_setup_seconds": 267
+  },
+  "9328bf3c00": {
+   "build": "026c1c488a8f56cf",
+   "job_seconds": 327.16,
+   "runner_setup_seconds": 360
+  },
+  "aaff776345": {
+   "build": "e23e465337cf158a",
+   "job_seconds": 417.9,
+   "runner_setup_seconds": 352
+  },
+  "b98d879473": {
+   "build": "bd9c5bdfe1b8ba2d",
+   "job_seconds": 416.79,
+   "runner_setup_seconds": 291
+  },
+  "c102c28563": {
+   "build": "e41cfdfc4a4c709b",
+   "job_seconds": 394.04,
+   "runner_setup_seconds": 292
+  },
+  "d07f012938": {
+   "build": "09e5f3d89edc3cf8",
+   "job_seconds": 284.96,
+   "runner_setup_seconds": 192
+  },
+  "dae12d5ffd": {
+   "build": "e23e465337cf158a",
+   "job_seconds": 488.95,
+   "runner_setup_seconds": 170
+  },
+  "f75082449c": {
+   "build": "ef1af563abeb366e",
+   "job_seconds": 296.21,
+   "runner_setup_seconds": 242
+  }
+ },
+ "timing_S01": {
+  "today": {
+   "files": 308,
+   "summary": "2 failed, 14349 passed, 8 skipped, 83 xfailed, 74 warnings in 1986.61s (0:33:06)",
+   "pytest_seconds": 1986.61,
+   "failed": [
+    "tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder",
+    "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+   ]
+  },
+  "modes": {
+   "files": 124,
+   "summary": "2 failed, 8697 passed, 1 skipped, 83 xfailed, 6 warnings in 948.28s (0:15:48)",
+   "pytest_seconds": 948.28,
+   "failed": [
+    "tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder",
+    "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+   ]
+  },
+  "answers": {
+   "files": 72,
+   "summary": "2 failed, 3654 passed, 6 warnings in 536.54s (0:08:56)",
+   "pytest_seconds": 536.54,
+   "failed": [
+    "tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder",
+    "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+   ]
+  }
+ },
+ "timing_note": "pytest -n 6 of each selection's test files at commit 13e2533d (this batch, before the fixes for the two failures below), via mac-pytest.sh"
+}

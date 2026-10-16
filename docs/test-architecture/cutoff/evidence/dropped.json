@@ -1,0 +1,47 @@
+{
+ "note": "the test files the modes rule drops (today's selection minus modes'), run on ve-mac-1 with the seed planted (the runner's build of the seeded tree, pinned there), pytest -n 6, via measure.py --full-suite --seed --tests",
+ "seeds": {
+  "S17": {
+   "commit": "7f69e639ebf002699990a3bb35884ede48822d30",
+   "files": 4,
+   "summary": "154 passed in 45.70s",
+   "failed": [],
+   "exit": 0
+  },
+  "S27": {
+   "commit": "7f69e639ebf002699990a3bb35884ede48822d30",
+   "files": 234,
+   "summary": "11140 passed, 8 skipped, 83 xfailed, 68 warnings in 1466.82s (0:24:26)",
+   "failed": [],
+   "exit": 0
+  },
+  "S28": {
+   "commit": "7f69e639ebf002699990a3bb35884ede48822d30",
+   "files": 4,
+   "summary": "154 passed in 39.85s",
+   "failed": [],
+   "exit": 0
+  },
+  "S29": {
+   "commit": "7f69e639ebf002699990a3bb35884ede48822d30",
+   "files": 184,
+   "summary": "5656 passed, 7 skipped, 67 warnings in 733.52s (0:12:13)",
+   "failed": [],
+   "exit": 0
+  },
+  "S44": {
+   "commit": "7f69e639ebf002699990a3bb35884ede48822d30",
+   "files": 188,
+   "summary": "5745 passed, 8 skipped, 68 warnings in 1188.91s (0:19:48)",
+   "failed": [],
+   "exit": 0
+  },
+  "S46": {
+   "commit": "7f69e639ebf002699990a3bb35884ede48822d30",
+   "files": 151,
+   "summary": "4914 passed, 6 skipped, 6 warnings in 420.01s (0:07:00)",
+   "failed": [],
+   "exit": 0
+  }
+ }
+}

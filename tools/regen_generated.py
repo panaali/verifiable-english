@@ -111,6 +111,9 @@ GENERATED = (
               note="both sides' pins, plus the merged ve_service build and Rust release binary"),
     Generated("response-schemas", ("ve/backends/lean_service_schema/*.json",),
               ((PY, "tools/response_schemas.py", "--write"),), ((PY, "tools/response_schemas.py", "--check"),)),
+    Generated("binding-census", ("docs/test-architecture/binding-census.json", "docs/test-architecture/binding-census.md"),
+              ((PY, "tools/binding_census.py", "--write"),), ((PY, "tools/binding_census.py", "--check"),),
+              note="from the response schemas and the recorded answers and probes (--record re-records those)"),
     Generated("english-codes", ("ve/english_grammar/codes.json",),
               ((PY, "tools/english_codes.py", "--write"),), ((PY, "tools/english_codes.py", "--check"),)),
     Generated("question-codes", ("ve/question/codes.json",),
@@ -182,6 +185,7 @@ NOT_REGENERATED = {
     "docs/test-architecture/select/replay.py": "17-merge selection replay, recorded once at a pinned commit and "
                                                "checked at the batch gate",
     "docs/test-speed-b3/estimate.py": "fixed fix-round estimate, recorded once and checked at the batch gate",
+    "docs/test-architecture/cutoff/tables.py": "tarch-cutoff report tables from saved evidence, checked at the batch gate",
     "docs/merge-tooling/*.py": "this tooling's evidence, recorded once (git merge-tree --write-tree is no writer)",
     "docs/premise-scale/*.py": "batch measurements and seeded faults, recorded once in docs/premise-scale/evidence",
     "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
