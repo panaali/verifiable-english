@@ -55,6 +55,8 @@ SHADOW_FORMAT = "ve-since-pass-shadow@1"
 MAIN = "main"
 # The (status, mode) pairs of a gate record that are a pass: a full gate, or its failed tests rerun (R13).
 PASSES = {("passed", "full"), ("rerun-passed", "rerun-failed")}
+# The keys that name the other writers' rows of the records file; a merge train row also has a `gate` key.
+OTHER_KINDS = frozenset({"train", "loop", "batch", "nightly", "nightly_vm"})
 # Failures of gate checks a selected run never makes (the collection against the base, the source identity):
 # no selection can catch them, so they are listed with a row but are not a miss of the rule.
 GATE_ONLY = frozenset({"coverage", "source identity"})
@@ -151,7 +153,7 @@ def pass_row(row) -> Pass:
 
 def read_passes(path: Path) -> tuple[list[Pass], list[str]]:
     """(the passes the `gate` rows of a records file name, a note for each `gate` row that is not one). Rows
-    of other kinds (train, loop, nightly) are skipped; a missing file has no pass."""
+    of other kinds (OTHER_KINDS) are skipped; a missing file has no pass."""
     passes, malformed = [], []
     try:
         lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -162,7 +164,7 @@ def read_passes(path: Path) -> tuple[list[Pass], list[str]]:
             row = json.loads(line)
         except ValueError:
             continue  # not ours to judge: another writer's line
-        if not isinstance(row, dict) or "gate" not in row:
+        if not isinstance(row, dict) or "gate" not in row or not OTHER_KINDS.isdisjoint(row):
             continue
         try:
             passes.append(pass_row(row))
