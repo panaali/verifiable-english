@@ -36,7 +36,7 @@ the default service already answered from the store; the merge (R2) and the nigh
   inventory's live column, `INVENTORY`).
 * **Checks.** A random 1% of hits (`SAMPLE`) is asked of the process as well and compared byte for byte: a
   drift alarm only. The nightly replays the whole store against its build (`replay`,
-  `tools/answer_replay.py store-replay`) and fails on any byte that differs, or on any standard error. The
+  `tools/answer_store_replay.py`) and fails on any byte that differs, or on any standard error. The
   store is not the safety
   argument: R2 is complete and live.
 """
@@ -562,7 +562,7 @@ def merged(reports: list[dict]) -> dict:
     return {"counts": counts, "off_requests": off, "live_tests": live, "alarms": alarms}
 
 
-# The nightly byte replay (tools/answer_replay.py store-replay)
+# The nightly byte replay (tools/answer_store_replay.py)
 
 def replay(root: Path, executable: Path, *, allow_unlisted_build: bool = False, jobs: int = 4) -> dict:
     """Every entry of the store for `executable`'s build, its request line sent to that build started under the
