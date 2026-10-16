@@ -40,6 +40,8 @@ its merge strategy:
 | import-contract | `.importlinter` | regenerate |
 | uv-lock | `uv.lock` | regenerate |
 | heavy-tests | `tests/heavy.json` (from the saved Mac duration report) | regenerate |
+| platform-divergences | `tests/platform-divergences.json` (saved from both runners' gate records) | json |
+| platform-contract | `tests/platform-contract.json` (the x86 contract suite, from the tree and the divergence list) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
