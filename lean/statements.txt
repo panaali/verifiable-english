@@ -30599,6 +30599,25 @@ theorem VE.Rights.RightsValid.wfSoft
   ∀ {D : VE.Rights.RightsDoc}, VE.Rights.RightsValid D → VE.SoftNorms.WellFormedSoft (VE.Rights.correlate D) = Bool.true
   -- uses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.RightsValid@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
   -- expr 2150997257
+theorem VE.Rights.Run.licence_spec
+  ∀ (D : VE.Rights.RightsDoc) (N : VE.Rights.Line) (n : VE.Rights.Narrowing),
+    VE.Rights.Run.licence D N n =
+      match n with
+      | VE.Rights.Narrowing.limPack => Option.some "limitation"
+      | VE.Rights.Narrowing.bar => Option.some "bar"
+      | VE.Rights.Narrowing.blockedBy M =>
+        if VE.Rights.cited D N n = Bool.true then Option.some "cited"
+        else
+          if VE.Rights.rightCollision D N n = Bool.true then Option.some "collision"
+          else
+            if VE.Rights.sameEffectStrict D N M = Bool.true then
+              Option.some (ToString.toString "effect delivered by strict rule " ++ ToString.toString M)
+            else Option.none
+      | x =>
+        if VE.Rights.cited D N n = Bool.true then Option.some "cited"
+        else if VE.Rights.rightCollision D N n = Bool.true then Option.some "collision" else Option.none
+  -- uses VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.Run.licence@VE.Rights.Run VE.Rights.Run.licence_spec.match_1@VE.Rights.Run VE.Rights.cited@VE.Rights.Scope VE.Rights.rightCollision@VE.Rights.Scope VE.Rights.sameEffectStrict@VE.Rights.Scope
+  -- expr 2437203483
 theorem VE.Rights.Run.rights_wire_acceptance
   ∀ (j answer : Lean.Json),
     VE.Rights.Run.runCase j = Except.ok answer →
@@ -30772,6 +30791,12 @@ theorem VE.Rights.bar_denote
                 VE.Formula.denote S ρ (VE.Rights.aimedF D m)
   -- uses VE.Formula.denote@VE.Semantics VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.aimedF@VE.Rights.Correlate VE.Rights.barNode@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.Rights.fuelR@VE.Rights.Semantics VE.Rights.rightPermission@VE.Rights.Tree VE.Rights.ruleReading@VE.Rights.Tree VE.SoftNorms.StrictSelectsD@VE.SoftNorms.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 1734760441
+theorem VE.Rights.bar_mem_narrowings
+  ∀ (D : VE.Rights.RightsDoc) (N : VE.Rights.Line),
+    VE.Rights.Narrowing.bar ∈ VE.Rights.narrowings D N ↔
+      (if VE.Rights.ruleReading D = Bool.true then VE.Rights.barReach D N else Option.none).isSome = Bool.true
+  -- uses VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.bar@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barReach@VE.Rights.Correlate VE.Rights.narrowings@VE.Rights.Correlate VE.Rights.ruleReading@VE.Rights.Tree
+  -- expr 1890578045
 theorem VE.Rights.bar_mode
   ∀ (D : VE.Rights.RightsDoc) {B : VE.SoftNorms.SoftNode}, B ∈ VE.Rights.barNodes D → B.mode = VE.SoftNorms.Mode.strict
   -- uses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.barNodes@VE.Rights.Correlate VE.SoftNorms.Mode.strict@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
@@ -30811,6 +30836,31 @@ theorem VE.Rights.catalaValue_true
   ∀ {P N : Prop} {d : Bool}, P → ¬N → VE.Norms.catalaValue P N d = Option.some Bool.true
   -- uses VE.Norms.catalaValue@VE.Norms.Elaborate
   -- expr 1627063140
+theorem VE.Rights.citedBy_isSome
+  ∀ (D : VE.Rights.RightsDoc) (N : VE.Rights.Line) (n : VE.Rights.Narrowing),
+    n ≠ VE.Rights.Narrowing.limPack →
+      n ≠ VE.Rights.Narrowing.bar → (VE.Rights.citedBy D N n).isSome = VE.Rights.cited D N n
+  -- uses VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.bar@VE.Rights.Correlate VE.Rights.Narrowing.limPack@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.cited@VE.Rights.Scope VE.Rights.citedBy@VE.Rights.Scope
+  -- expr 37369840
+theorem VE.Rights.citedBy_sound
+  ∀ {D : VE.Rights.RightsDoc} {N : VE.Rights.Line} {n : VE.Rights.Narrowing} {R K : String},
+    VE.Rights.citedBy D N n = Option.some (R, K) →
+      R = N.node.name ∧ VE.Rights.hasKey N.source.cites K = Bool.true ∨
+        VE.Rights.hasKey (VE.Rights.citesOf D R) K = Bool.true
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line.source@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SourceLine.cites@VE.Rights.Tree VE.Rights.citedBy@VE.Rights.Scope VE.Rights.citesOf@VE.Rights.Scope VE.Rights.hasKey@VE.Rights.Scope VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree
+  -- expr 3696323580
+theorem VE.Rights.citedGround_eq
+  ∀ {D : VE.Rights.RightsDoc} {N : VE.Rights.Line} {n : VE.Rights.Narrowing} {g : VE.Rights.Ground},
+    VE.Rights.citedGround D N n = Option.some g →
+      ∃ R K, VE.Rights.citedBy D N n = Option.some (R, K) ∧ g = VE.Rights.Ground.cited R K
+  -- uses VE.Rights.Ground.cited@VE.Rights.Scope VE.Rights.Ground@VE.Rights.Scope VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.citedBy@VE.Rights.Scope VE.Rights.citedGround@VE.Rights.Scope
+  -- expr 4120317904
+theorem VE.Rights.citedGround_isSome
+  ∀ (D : VE.Rights.RightsDoc) (N : VE.Rights.Line) (n : VE.Rights.Narrowing),
+    n ≠ VE.Rights.Narrowing.limPack →
+      n ≠ VE.Rights.Narrowing.bar → (VE.Rights.citedGround D N n).isSome = VE.Rights.cited D N n
+  -- uses VE.Rights.Ground@VE.Rights.Scope VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.bar@VE.Rights.Correlate VE.Rights.Narrowing.limPack@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.cited@VE.Rights.Scope VE.Rights.citedGround@VE.Rights.Scope
+  -- expr 234553044
 theorem VE.Rights.coherent_expands
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
@@ -30975,10 +31025,37 @@ theorem VE.Rights.exists_child_split
                 VE.Rights.BarredX D S ρ X ∨ ∃ C', C' ∈ VE.SoftNorms.childrenIn (VE.Rights.directNodes D) X ∧ Y C')
   -- uses VE.Formula.denote@VE.Semantics VE.Norms.Node.pred@VE.Norms.Tree VE.Rights.BarredX@VE.Rights.Semantics VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.RightsValid@VE.Rights.Correlate VE.Rights.aimedF@VE.Rights.Correlate VE.Rights.barNodes@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.Rights.directNodes@VE.Rights.Correlate VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.children@VE.SoftNorms.Tree VE.SoftNorms.childrenIn@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 3496463454
+theorem VE.Rights.find_map_isSome
+  ∀ {l : List String} {p : String → Bool} {f : String → String × String}, (Option.map f (List.find? p l)).isSome = l.any p
+  -- uses
+  -- expr 409460888
 theorem VE.Rights.genDecls_nil
   ∀ (D : VE.Rights.RightsDoc), D.limits = [] → D.bars = [] → VE.Rights.genDecls D = []
   -- uses VE.Rights.Bar@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.genDecls@VE.Rights.Tree
   -- expr 1145829200
+theorem VE.Rights.ground_cited
+  ∀ {D : VE.Rights.RightsDoc} {N : VE.Rights.Line} {n : VE.Rights.Narrowing} {R K : String},
+    VE.Rights.ground D N n = Option.some (VE.Rights.Ground.cited R K) → VE.Rights.citedBy D N n = Option.some (R, K)
+  -- uses VE.Rights.Ground.cited@VE.Rights.Scope VE.Rights.Ground@VE.Rights.Scope VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.citedBy@VE.Rights.Scope VE.Rights.ground@VE.Rights.Scope
+  -- expr 581290282
+theorem VE.Rights.ground_collision
+  ∀ {D : VE.Rights.RightsDoc} {N : VE.Rights.Line} {n : VE.Rights.Narrowing} {M : String},
+    VE.Rights.ground D N n = Option.some (VE.Rights.Ground.collision M) →
+      (n = VE.Rights.Narrowing.blockedBy M ∨ n = VE.Rights.Narrowing.dominatedBy M) ∧
+        VE.Rights.rightCollision D N n = Bool.true
+  -- uses VE.Rights.Ground.collision@VE.Rights.Scope VE.Rights.Ground@VE.Rights.Scope VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.blockedBy@VE.Rights.Correlate VE.Rights.Narrowing.dominatedBy@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.ground@VE.Rights.Scope VE.Rights.rightCollision@VE.Rights.Scope
+  -- expr 2571513379
+theorem VE.Rights.ground_effect
+  ∀ {D : VE.Rights.RightsDoc} {N : VE.Rights.Line} {n : VE.Rights.Narrowing} {M : String},
+    VE.Rights.ground D N n = Option.some (VE.Rights.Ground.effect M) →
+      n = VE.Rights.Narrowing.blockedBy M ∧ VE.Rights.sameEffectStrict D N M = Bool.true
+  -- uses VE.Rights.Ground.effect@VE.Rights.Scope VE.Rights.Ground@VE.Rights.Scope VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.blockedBy@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.ground@VE.Rights.Scope VE.Rights.sameEffectStrict@VE.Rights.Scope
+  -- expr 1643854048
+theorem VE.Rights.ground_isSome
+  ∀ (D : VE.Rights.RightsDoc) (N : VE.Rights.Line) (n : VE.Rights.Narrowing),
+    (VE.Rights.ground D N n).isSome = VE.Rights.licensed D [] N n
+  -- uses VE.Rights.Ground@VE.Rights.Scope VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.ground@VE.Rights.Scope VE.Rights.licensed@VE.Rights.Scope VE.Tableau.Certificate@VE.Tableau
+  -- expr 75665427
 theorem VE.Rights.holderConj_top
   ∀ (D : VE.Rights.RightsDoc),
     (∀ (R : VE.Rights.Right), R ∈ D.rs → R.guard = VE.Formula.top) →
@@ -31041,6 +31118,11 @@ theorem VE.Rights.limPackList_denote
     (∃ U, U ∈ VE.Rights.limPackList D N ∧ VE.Formula.denote S ρ U) ↔ VE.Formula.denote S ρ (VE.Rights.limPack D N)
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.limPack@VE.Rights.Correlate VE.Rights.limPackList@VE.Rights.Correlate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 4102827410
+theorem VE.Rights.limPack_mem_narrowings
+  ∀ (D : VE.Rights.RightsDoc) (N : VE.Rights.Line),
+    VE.Rights.Narrowing.limPack ∈ VE.Rights.narrowings D N ↔ VE.Rights.scopeLimits D N ≠ []
+  -- uses VE.Rights.Limitation@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.limPack@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.narrowings@VE.Rights.Correlate VE.Rights.scopeLimits@VE.Rights.Correlate
+  -- expr 611274591
 theorem VE.Rights.limitation_scope_sound
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
@@ -31274,6 +31356,10 @@ theorem VE.Rights.owes_outcome
                     Option.some N.node.sign
   -- uses VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SelectsRN@VE.Rights.Projections VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.Rights.linesOf@VE.Rights.Tree VE.Rights.regOf@VE.Rights.Projections VE.Rights.sortsOf@VE.Rights.Tree VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.ValueSoft@VE.SoftNorms.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2993652077
+theorem VE.Rights.ownCite_isSome
+  ∀ (N : VE.Rights.Line) (k : String), (VE.Rights.ownCite N k).isSome = VE.Rights.hasKey N.source.cites k
+  -- uses VE.Rights.Line.source@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.SourceLine.cites@VE.Rights.Tree VE.Rights.hasKey@VE.Rights.Scope VE.Rights.ownCite@VE.Rights.Scope
+  -- expr 585477052
 theorem VE.Rights.prefixAdmissibleR_zero
   ∀ (D : VE.Rights.RightsDoc) (B : VE.Structure), VE.Rights.PrefixAdmissibleR D 0 B ↔ VE.Rights.BaseAdmissibleR D B
   -- uses VE.Rights.BaseAdmissibleR@VE.Rights.Correlate VE.Rights.PrefixAdmissibleR@VE.Rights.Route VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure@VE.Semantics

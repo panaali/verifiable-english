@@ -676,7 +676,9 @@ def _extra_mechanism(mechanism, conclusion=('top',)):
         entry = row['narrowings'][0]
         entry['mechanisms'].append({'mechanism': mechanism, 'target': f"{entry['rule']}:{mechanism}",
                                     'licence': 'bar' if mechanism == 'bar' else None,
-                                    'conclusion': list(conclusion)})
+                                    'conclusion': list(conclusion),
+                                    # The elaboration's mechanisms carry their licence's grounds.
+                                    **({'grounds': None} if 'rule_narrowings' in row else {})})
         if 'licensed' in row and mechanism != 'bar':
             row['findings'].append(
                 f"UnlicensedLimitation: {mechanism} of rule {entry['rule']} on right {entry['right']}")
