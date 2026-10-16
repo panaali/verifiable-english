@@ -173,6 +173,15 @@
    "failure": "FAILED tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does[modes]"
   },
   {
+   "id": "M21",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "R1 takes the answers rule before the DRI has read its measurement",
+   "test": "tests/test_answer_cutoff.py::test_r1_never_takes_the_answers_rule",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_r1_never_takes_the_answers_rule - As..."
+  },
+  {
    "id": "M14",
    "language": "python",
    "file": "tools/select_tests.py",

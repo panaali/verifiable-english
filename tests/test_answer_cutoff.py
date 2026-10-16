@@ -491,3 +491,8 @@ def test_answers_read_todays_map_and_count_the_recordings_staleness(tmp_path, mo
     monkeypatch.setattr(select_tests, "select", lambda paths, **options: {"selected": ["everything"]})
     assert answer_cutoff.select_answers(path, [], base="HEAD", after=None, coverage=None,
                                         build="b" * 64)["selected"] == ["everything"]
+
+
+def test_r1_never_takes_the_answers_rule():
+    """R1's rule is ts-B2's per-mode rule or none: the answers rule is opt-in until the DRI reads its measurement."""
+    assert answer_cutoff.R1_RULE in (None, "modes")
