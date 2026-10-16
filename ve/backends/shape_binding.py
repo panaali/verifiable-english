@@ -10,7 +10,9 @@ puts it in:
   (`x-references`, `x-count-where`, `x-count-presence`, `x-claim-nodes`, `x-source-span`, `x-reading-plan`);
 * **closed domain**: `const`, `enum`, or the tag of an `x-tagged` grammar;
 * **none**: anything else. `pattern`, `minLength` and `maxLength` check a format and put a leaf in no class;
-  they are reported as `format`.
+  they are reported as `format`. An internal agreement (`x-equal-fields`, `x-same-length`, `x-unique-strings`:
+  fields of the answer agreeing with each other) binds nothing to the request either: its leaf stays of class
+  none, with the keyword and the relation `agrees` beside it.
 
 `leaves(mode)` is the static census of a mode's row: every leaf path of every branch. `classify(mode,
 case, row)` places each leaf of one answer, following only the branches the answer takes. `check(mode,
@@ -43,6 +45,20 @@ LENGTH_KEYWORDS = ("x-length", "x-zip", "x-zip-or-empty", "x-rows")
 # Keywords that bind its elements to the request element at the same position.
 POSITIONAL_KEYWORDS = ("x-zip", "x-zip-or-empty", "x-rows")
 FORMAT_KEYWORDS = ("pattern", "minLength", "maxLength", "minimum")
+# Agreements between fields of the answer itself: a mutant of one side is refused, a consistent one is not.
+INTERNAL_RELATIONS = ("agrees", "agrees in length")
+# Every dialect keyword (service_schema._KEYWORDS) this walker reads, or deliberately passes over: the checks of
+# value types and of the request case (`x-case`), the fuel of the Lean decoders, `contains` and `not` (they forbid
+# or require a form; they bind no leaf) and the annotations. A keyword outside this set fails
+# tests/test_shape_binding_mutants.py until it is classified here.
+KNOWN_KEYWORDS = frozenset({
+    "$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required", "properties",
+    "additionalProperties", "prefixItems", "items", "minItems", "maxItems", "contains", "anyOf", "allOf", "not",
+    "if", "then", "else", "$defs", "$comment", "$id", "x-tagged", "x-fuel", "x-echo", "x-equals", "x-length",
+    "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound", "x-source-span", "x-index",
+    "x-digest", "x-zip", "x-zip-or-empty", "x-case", "x-select", "x-count-where", "x-count-presence",
+    "x-reading-plan", "x-rows", "x-row", "x-same-length", "x-equal-fields", "x-unique-strings",
+})
 CLASSES = ("bound", "closed domain", "none")
 _STRENGTH = {"none": 0, "closed domain": 1, "bound": 2}
 
@@ -57,7 +73,13 @@ class Binding:
     of: str | None = None  # for a counter (`x-count-where`): the pattern of the array it counts, if all its elements
 
     def stronger(self, other: "Binding") -> "Binding":
-        return other if _STRENGTH[other.cls] > _STRENGTH[self.cls] else self
+        return other if _rank(other) > _rank(self) else self
+
+
+def _rank(binding: Binding) -> tuple:
+    """A class's strength, and within a class a binding a keyword states over none (an internal agreement on a
+    leaf of no class is kept)."""
+    return _STRENGTH[binding.cls], binding.keyword is not None
 
 
 @dataclass(frozen=True)
@@ -82,6 +104,8 @@ class ArrayNode:
     fixed: bool = False    # a tuple (`prefixItems`): its positions are its shape
     branch: tuple = ()
     items: tuple = (None, None)  # its minItems and maxItems
+    agrees: str | None = None  # an internal agreement on its length (`x-same-length`) or value (`x-equal-fields`)
+    unique: bool = False   # `x-unique-strings`: its strings are distinct
 
 
 @dataclass(frozen=True)
@@ -283,7 +307,7 @@ class _Walker:
                     found.append((concrete + (_Key(name),), name, key_leaf))
                     self.walk(extra, base, f"{pointer}/additionalProperties", path + ("{}",), pending.step("{}"),
                               branch, out, item, ctx, concrete + (name,), stack, grammars, found)
-        if {"items", "prefixItems", "minItems", "maxItems", *LENGTH_KEYWORDS} & set(schema):
+        if {"items", "prefixItems", "minItems", "maxItems", "x-unique-strings", *LENGTH_KEYWORDS} & set(schema):
             self.array(schema, base, pointer, path, pending, branch, out, value, ctx, concrete, stack, grammars, found)
 
     def array(self, schema, base, pointer, path, pending, branch, out, value, ctx, concrete, stack, grammars, found):
@@ -291,12 +315,14 @@ class _Walker:
         site = f"{base}#{pointer}"
         whole = pending.here()
         exact = whole.keyword if whole.cls == "bound" and whole.relation in ("echoes", "equals") else None
+        agrees = whole.keyword if whole.relation in INTERNAL_RELATIONS else None
         length = next((k for k in LENGTH_KEYWORDS if k in schema), None) or exact
         positional = next((k for k in POSITIONAL_KEYWORDS if k in schema), None) or exact
         prefix = schema.get("prefixItems", ())
         if static or isinstance(value, list):
             out.arrays.append(ArrayNode(render(path), site, length, positional, bool(prefix), branch,
-                                        (schema.get("minItems"), schema.get("maxItems"))))
+                                        (schema.get("minItems"), schema.get("maxItems")), agrees,
+                                        schema.get("x-unique-strings") is True))
         for i, sub in enumerate(prefix):
             if static or isinstance(value, list) and i < len(value):
                 self.walk(sub, base, f"{pointer}/prefixItems/{i}", path + (str(i),), pending.step(str(i)), branch, out,
@@ -341,6 +367,12 @@ class _Walker:
             for name, relation in (("start", "is bounded by"), ("end", "is bounded by"), ("line", "equals"),
                                    ("column", "equals")):
                 pending = pending.add((name,), Binding("bound", "x-source-span", relation, site))
+        # Internal agreements, not relations to the request (a leaf under them stays of class none): two fields
+        # with one value, and arrays of one length.
+        for name in schema.get("x-equal-fields", ()):
+            pending = pending.add((name, "**"), Binding("none", "x-equal-fields", "agrees", site))
+        for name in schema.get("x-same-length", ()):
+            pending = pending.add((name,), Binding("none", "x-same-length", "agrees in length", site))
         if schema.get("x-reading-plan"):
             for steps, relation in ((("choices", "*", "*"), "is bounded by"), (("conditional_on", "*"), "equals"),
                                     (("budget", "max_choices"), "equals"), (("choice_count",), "is bounded by"),
@@ -490,16 +522,15 @@ def classify(mode: str, case: object, row: object, index: int = 0) -> tuple[list
                 per_branch[alternative] = entry
                 continue
             # Conjuncts: the strongest binding, every format, and the closed domain if either has one.
-            strong, weak = (entry, best) if _STRENGTH[leaf.binding.cls] > _STRENGTH[best[2].binding.cls] else (best, entry)
+            strong, weak = (entry, best) if _rank(leaf.binding) > _rank(best[2].binding) else (best, entry)
             merged = replace(strong[2], format=tuple(dict.fromkeys(strong[2].format + weak[2].format)),
                              domain=strong[2].domain if strong[2].domain is not None else weak[2].domain)
             per_branch[alternative] = (strong[0], strong[1], merged)
         ambiguous = [entry for key, entry in per_branch.items() if key]
-        choice = min(ambiguous, key=lambda entry: _STRENGTH[entry[2].binding.cls]) if ambiguous else per_branch[()]
+        choice = min(ambiguous, key=lambda entry: _rank(entry[2].binding)) if ambiguous else per_branch[()]
         unconditional = per_branch.get(())
         if ambiguous and unconditional is not None:
-            choice = choice if _STRENGTH[choice[2].binding.cls] >= _STRENGTH[unconditional[2].binding.cls] \
-                else unconditional
+            choice = choice if _rank(choice[2].binding) >= _rank(unconditional[2].binding) else unconditional
         placed.append(choice)
     return placed, out
 

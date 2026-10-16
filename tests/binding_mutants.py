@@ -123,6 +123,9 @@ def leaf_expectation(leaf, old, new, kind: str = "flip") -> tuple[str, str]:
     binding = leaf.binding
     if binding.cls == "closed domain":
         return EITHER, "another member of its closed domain"
+    if binding.cls == "none" and binding.relation == "agrees":
+        # One side of `x-equal-fields` changed alone no longer agrees; a rename changes both sides.
+        return (ACCEPT, "both sides agree again") if kind == "rename" else (REFUSE, "its copy no longer agrees")
     if binding.cls == "none":
         return ACCEPT, "no class"
     relation = f"{binding.relation} ({binding.keyword})"
@@ -182,7 +185,8 @@ def _structure_mutants(row, placed, census):
             lows = [n for n in (old.items[0], node.items[0]) if n is not None]
             highs = [n for n in (old.items[1], node.items[1]) if n is not None]
             node = replace(node, length=old.length or node.length, positional=old.positional or node.positional,
-                           fixed=old.fixed or node.fixed,
+                           fixed=old.fixed or node.fixed, agrees=old.agrees or node.agrees,
+                           unique=old.unique or node.unique,
                            items=(max(lows) if lows else None, min(highs) if highs else None))
         arrays[node.path] = node
     # The pattern of each concrete container: the parent pattern of its leaves.
@@ -221,6 +225,10 @@ def _structure_mutants(row, placed, census):
                 length_changed = len(new) != len(node)
                 if low is not None and len(new) < low or high is not None and len(new) > high:
                     expect, why = REFUSE, "breaks its minItems or maxItems"
+                elif array.unique and kind in ("duplicate", "replace"):
+                    expect, why = REFUSE, "its strings are distinct (x-unique-strings)"
+                elif array.agrees and (length_changed or array.agrees == "x-equal-fields"):
+                    expect, why = REFUSE, f"no longer agrees with its sibling ({array.agrees})"
                 elif length_changed and array.length:
                     expect, why = REFUSE, f"length bound by {array.length}"
                 elif array.positional in ("x-equals", "x-echo"):
@@ -239,6 +247,10 @@ def _structure_mutants(row, placed, census):
                     mutated = _set(_set(row, at, new) if at else new, count_where, len(new))
                     if low is not None and len(new) < low or high is not None and len(new) > high:
                         expect, why = REFUSE, "breaks its minItems or maxItems"
+                    elif array.unique and kind == "duplicate":
+                        expect, why = REFUSE, "its strings are distinct (x-unique-strings)"
+                    elif array.agrees:
+                        expect, why = REFUSE, f"no longer agrees with its sibling ({array.agrees})"
                     elif array.length:
                         expect, why = REFUSE, f"length bound by {array.length}"
                     elif violates(count_leaf, len(new)):
@@ -301,7 +313,7 @@ def _rename_mutants(row, placed, named):
         mutated = row
         for where, leaf in sorted(places, key=lambda p: len(p[0]), reverse=True):
             mutated = _set(mutated, where, new)
-        verdicts = [leaf_expectation(leaf, value, new) for _, leaf in places]
+        verdicts = [leaf_expectation(leaf, value, new, "rename") for _, leaf in places]
         if any(v == REFUSE for v, _ in verdicts):
             expect, why = REFUSE, next(w for v, w in verdicts if v == REFUSE)
         elif all(v == ACCEPT for v, _ in verdicts):

@@ -21,7 +21,7 @@ import pytest
 from tests import binding_mutants
 from tests.binding_mutants import ACCEPT, EITHER, REFUSE
 from ve.backends import shape_binding
-from ve.backends.service_schema import MODES
+from ve.backends.service_schema import _KEYWORDS, MODES
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from binding_census import load_answers  # noqa: E402
@@ -110,3 +110,9 @@ def test_a_name_renamed_everywhere_is_refused_where_one_occurrence_is_bound():
                 assert mutant.expect == REFUSE, (mode, mutant.path, mutant.why)
                 assert binding_mutants.verdict(mode, case, mutant.row, index) == REFUSE, (mode, mutant.path)
     assert mixed, "no recorded answer repeats a bound request name in a free leaf"
+
+
+def test_the_walker_classifies_every_dialect_keyword():
+    """A keyword the shape checker reads and the walker does not know would be checked but never classified: the
+    census would call its leaves free and the predictions would be wrong. Every keyword is classified first."""
+    assert _KEYWORDS <= shape_binding.KNOWN_KEYWORDS, sorted(_KEYWORDS - shape_binding.KNOWN_KEYWORDS)

@@ -7,6 +7,7 @@
     uv run python tools/binding_census.py --probe DIR [TEST ...] # the probe run alone, appending to DIR
                                          [--wire]                # mutants delivered before the shape check
     uv run python tools/binding_census.py --collect DIR          # record from a probe run's DIR
+    uv run python tools/binding_census.py --answers              # re-ask every recorded case (a Lean change)
 
 **The shapes' part** comes from the Lean-rendered schemas (`ve/backends/lean_service_schema/`), read by the
 generic checker `ve.backends.shape_binding`: every leaf of every mode's row with ADR 0001's class (bound and
@@ -144,7 +145,6 @@ def probe(directory: Path, tests: list[str], workers: int, wire: bool = False) -
 def collect(directory: Path) -> int:
     """Write PROBES from a probe run's lines, and ANSWERS: the relay gate's service requests asked of the current
     build and the genuine answers the probe saw."""
-    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
     lines = [json.loads(line) for path in sorted(directory.glob("probe-*.jsonl"))
              for line in path.read_text().splitlines() if line.strip()]
     probes, genuine = [], []
@@ -155,23 +155,46 @@ def collect(directory: Path) -> int:
             probes.append(_attributed(line))
     probes.sort(key=lambda p: (p["mode"], p["caller"], p["path"], p["kind"], p["test"]))
     _write_gzip(PROBES, [json.dumps(p, sort_keys=True, separators=(",", ":")) for p in probes])
+    return record_answers(genuine, f"{len(probes)} probes, "
+                                   f"{sum(1 for p in probes if p['refused'] == 'hand')} hand refusals")
+
+
+def refresh_answers() -> int:
+    """Re-record ANSWERS without probing: every case it holds, and the relay gate's, asked of the current build."""
+    return record_answers([(mode, case, None, 0) for mode, case, _, _ in load_answers()], "probes kept")
+
+
+def record_answers(genuine: list, note: str) -> int:
+    """Write ANSWERS: the relay gate's service requests and the `genuine` (mode, case, row, index) answers, the
+    smallest PER_SHAPE of each answer shape. A case without its row (None) is asked of the current build, alone,
+    so its row is at index 0."""
+    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
     answers = []
     with LeanService(DEFAULT_EXECUTABLE) as service:
+        def ask(mode, case):
+            _, response = service.exchange(mode, "[" + json.dumps(case, separators=(",", ":")) + "]", 1)
+            return None if response.get("status") == "error" else response["results"][0]["result"]
         for row in (json.loads(line) for line in CASES.read_text().splitlines() if line.strip()):
-            if row[0] != "service":
-                continue
-            _, response = service.exchange(row[1], "[" + json.dumps(row[2], separators=(",", ":")) + "]", 1)
-            if response.get("status") != "error":
-                answers.append((row[1], row[2], response["results"][0]["result"], 0))
+            if row[0] == "service" and row[1] in MODES:
+                answers.append((row[1], row[2], ask(row[1], row[2]), 0))
+        for mode, case, row, index in genuine:
+            if row is None and mode in MODES:
+                answers.append((mode, case, ask(mode, case), 0))
+            elif row is not None:
+                answers.append((mode, case, row, index))
+    unique: dict = {}
+    for answer in answers:
+        if answer[2] is not None:
+            unique.setdefault(json.dumps(answer[:2], sort_keys=True), answer)
+    answers = list(unique.values())
     kept, shapes = [], Counter()
-    for mode, case, row, index in sorted(answers + genuine, key=lambda a: (len(json.dumps(a)), json.dumps(a))):
+    for mode, case, row, index in sorted(answers, key=lambda a: (len(json.dumps(a)), json.dumps(a))):
         key = _shape_key(mode, case, row)
         if shapes[key] < PER_SHAPE:
             shapes[key] += 1
             kept.append(json.dumps([mode, case, row, index], sort_keys=True, separators=(",", ":")))
     _write_gzip(ANSWERS, sorted(kept))
-    print(f"binding_census: {len(probes)} probes, {len(kept)} answers recorded "
-          f"({sum(1 for p in probes if p['refused'] == 'hand')} hand refusals)")
+    print(f"binding_census: {len(kept)} answers recorded ({note})")
     return 0
 
 
@@ -331,9 +354,11 @@ def build() -> tuple[dict, str]:
         for node in census.arrays:
             if "/~" in node.path:
                 continue
-            old = arrays.get(node.path, {"path": node.path, "length": None, "positional": None, "fixed": False})
+            old = arrays.get(node.path, {"path": node.path, "length": None, "positional": None, "fixed": False,
+                                         "agrees": None, "unique": False})
             arrays[node.path] = {"path": node.path, "length": old["length"] or node.length,
-                                 "positional": old["positional"] or node.positional, "fixed": old["fixed"] or node.fixed}
+                                 "positional": old["positional"] or node.positional, "fixed": old["fixed"] or node.fixed,
+                                 "agrees": old["agrees"] or node.agrees, "unique": old["unique"] or node.unique}
         for row in arrays.values():
             row["today"] = _today_structure(by_leaf.get((mode, row["path"]), []))
         modes[mode] = {
@@ -514,10 +539,12 @@ def render(census: dict, lines_now: bool = False) -> str:
             for o in data["grammar_occurrences"]:
                 out.append(f"| `{o['path']}` | {o['grammar']} | {o['bound'] or ''} | {o['observed']} |")
         if data["arrays"]:
-            out += ["", "| array | length bound by | positions bound by | probed (generic/hand) |", "|---|---|---|---|"]
+            out += ["", "| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |",
+                    "|---|---|---|---|---|"]
             for a in data["arrays"]:
                 probed = "; ".join(f"{k}: {', '.join(v)}" for k, v in a["today"].items())
-                out.append(f"| `{a['path']}` | {a['length'] or ''} | {a['positional'] or ''} | {probed} |")
+                internal = " ".join(filter(None, (a["agrees"], "x-unique-strings" if a["unique"] else None)))
+                out.append(f"| `{a['path']}` | {a['length'] or ''} | {a['positional'] or ''} | {internal} | {probed} |")
     out += ["", "## Grammars", ""]
     for name, rows in census["grammars"].items():
         out.append(f"- **{name}**: " + ", ".join(f"`{r['path']}` {r['class']}" for r in rows))
@@ -594,6 +621,8 @@ def main(argv=None) -> int:
     group.add_argument("--probe", nargs="+", metavar=("DIR", "TEST"), help="probe TESTs (default PROBE_TESTS) "
                        "into DIR, appending")
     group.add_argument("--collect", type=Path, metavar="DIR", help="record the answers and a probe run's lines")
+    group.add_argument("--answers", action="store_true", help="re-record the answers only, asking the current "
+                       "build again for every case recorded (after a Lean change)")
     parser.add_argument("--workers", type=int, default=int(os.environ.get("BINDING_PROBE_WORKERS", "8")))
     parser.add_argument("--wire", action="store_true", help="with --probe: deliver each mutant before the shape "
                         "check, as the service would")
@@ -604,6 +633,8 @@ def main(argv=None) -> int:
         return probe(Path(args.probe[0]), args.probe[1:] or list(PROBE_TESTS), args.workers, args.wire)
     if args.collect is not None:
         return collect(args.collect)
+    if args.answers:
+        return refresh_answers()
     census, view = build()
     if args.show is not None:
         if args.show:
