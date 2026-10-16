@@ -125,6 +125,13 @@ broke the test's setup. Both were re-seeded where those values enter the key, an
     test named `ve_english_lean_bench` literally. The selector's static graph read that as a use of the binary and
     added it to the plan's named build. The test now compares with `layer_policy.lean_executables()`. The same test
     passes on main in a clean clone, and it passed again here after the fix.
+- After the sync with main (lf-14c), `select_tests --base <merge base>` picks all 396 units: the coverage map is
+  92 files behind (the plan's cause B), not this change. That run outran my 58-minute limit (exit 124, no
+  result). Since the 54-unit run only this branch's own files changed, so I ran the units they can reach:
+  `test_lean_share`, `test_lake_outputs`, `test_hang_guards`, `test_select_tests`, `test_repo_map`,
+  `test_inventory_lint`, `test_nested_pytest`, `test_single_owner`, `test_regen_generated` and `test_gate`.
+  **488 passed** (mac-pytest fell back to the VM: no Mac slot within 30 min). `tools/test_layer_policy.py` passed
+  on the VM.
 - `tools/check_python_layers.py`, `tools/regen_generated.py --check` and `tools/gate_collection.py --check --prebuilt`
   all pass: 26 added, 0 removed, 0 refused, 0 stale, 0 malformed. No test was removed or renamed against main.
 - `main-known-red.txt`: none of its three tests is touched here.
