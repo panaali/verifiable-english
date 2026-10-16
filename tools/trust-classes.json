@@ -4677,7 +4677,12 @@
         "VE.NormDefaults.Run.runCase",
         "VE.NormDefaults.Run.runCaseReported",
         "VE.NormDefaults.Run.runOtherCase",
-        "VE.NormDefaults.Admission.runAdmissionX",
+        {
+          "name": "VE.NormDefaults.Admission.runAdmissionX",
+          "tied": [
+            "VE.NormDefaults.Admission.runAdmissionX_sound"
+          ]
+        },
         "VE.NormDefaults.Admission.softCase",
         "VE.NormDefaults.Run.softAdmissionWitness"
       ]
@@ -6665,7 +6670,12 @@
         "VE.Readings.Wire.normDefaultsProfile",
         "VE.Readings.Wire.underCompletion",
         "VE.Readings.Wire.decisionCount",
-        "VE.Readings.Wire.ndDocTextG",
+        {
+          "name": "VE.Readings.Wire.ndDocTextG",
+          "tied": [
+            "VE.Readings.Wire.wellFormedU_of_ndDocTextG"
+          ]
+        },
         "VE.Readings.Run.choiceCertificateX",
         "VE.Readings.Run.choiceModelX",
         "VE.Readings.Run.choiceInnerX"
@@ -6869,7 +6879,12 @@
         "VE.Readings.Run.partDecided",
         "VE.Readings.Run.readingPremise",
         "VE.Readings.Wire.pairGapsOn",
-        "VE.Readings.Wire.probeFormulaOn",
+        {
+          "name": "VE.Readings.Wire.probeFormulaOn",
+          "tied": [
+            "VE.Readings.Wire.probeFormulaOn_eval"
+          ]
+        },
         "VE.Readings.Run.rowInfoOf",
         "VE.Readings.Run.xInfos",
         "VE.Readings.Run.overInfos",
@@ -11047,7 +11062,13 @@
     },
     "VE/NormDefaults/LayeredEntail.lean": {
       "D[V]": [
-        "VE.NormDefaults.Wire.premisesX"
+        {
+          "name": "VE.NormDefaults.Wire.premisesX",
+          "tied": [
+            "VE.NormDefaults.acceptanceX",
+            "VE.NormDefaults.Wire.premisesX_nil"
+          ]
+        }
       ],
       "S": [
         "VE.NormDefaults.EntailsX"
@@ -11071,10 +11092,20 @@
       ],
       "G[V]": [
         "VE.Readings.choiceX",
-        "VE.Readings.filledAuthorEnv",
+        {
+          "name": "VE.Readings.filledAuthorEnv",
+          "tied": [
+            "VE.Readings.filledAuthorEnv_eq"
+          ]
+        },
         "VE.Readings.freeX",
         "VE.Readings.oneX",
-        "VE.Readings.softX"
+        {
+          "name": "VE.Readings.softX",
+          "tied": [
+            "VE.Readings.softPremisesIn_fill"
+          ]
+        }
       ]
     },
     "VE/Readings/SoftExamples.lean": {

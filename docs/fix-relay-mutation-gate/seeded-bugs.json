@@ -1,0 +1,39 @@
+{
+  "mutants": [
+    {
+      "file": "lean/ResponseShape/Schemas/NormDefaults.lean",
+      "language": "Lean",
+      "change": "unsaid `description` back to `str` (no minLength); lake build ve_response_decode; tools/response_schemas.py --write. Restored, rebuilt and regenerated (response_schemas.py --check passes)",
+      "test": "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:norm-defaults]",
+      "failure": "accepted service:norm-defaults empty results/*/result/unsaid/*/description: empty"
+    },
+    {
+      "file": "tools/relay-gate-allow.json",
+      "language": "data",
+      "change": "the lf-14a stale entry F3 service:parse retype results/*/result/ast put back. Restored",
+      "test": "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:parse]",
+      "failure": "allow-list path matches nothing: F3 service:parse retype results/*/result/ast"
+    },
+    {
+      "file": "tools/relay-gate-allow.json",
+      "language": "data",
+      "change": "readings-route `fill` listed twice (B0 and F10 empty), as english-run-root and lf-14b left it. Restored",
+      "test": "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:readings-route]",
+      "failure": "allow-list path matches nothing: F10 service:readings-route empty results/*/result/fill"
+    },
+    {
+      "file": "tools/relay-gate-allow.json",
+      "language": "data",
+      "change": "an entry for route service:no-such-mode added (one-route runs would never check it). Restored",
+      "test": "tests/test_relay_mutation_gate.py::test_every_allow_list_entry_and_untyped_manifest_field_names_a_gated_route",
+      "failure": "AssertionError: the entry routes are not a subset of ROUTES"
+    },
+    {
+      "file": "lean/ResponseShape/Schemas/NormDefaults.lean",
+      "language": "Lean",
+      "change": "the whole fix undone: NormDefaults.lean, declarations.txt, norm-defaults.json and relay-gate-allow.json checked out at 5f0089e29^ (main dae12d5ff), ve_response_decode rebuilt. Restored and rebuilt",
+      "test": "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_every_route[service:parse], [service:norm-defaults], [service:readings-route]",
+      "failure": "3 failed"
+    }
+  ]
+}
