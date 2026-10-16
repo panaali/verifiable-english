@@ -50,6 +50,13 @@ def entries(seam, build):
     return list(seam.store.entries(build))
 
 
+def plant(seam, build, entry, recorded, line, response):
+    """Replace an entry on disk, as a store another run left would hold it (this process forgets its copy)."""
+    seam.store.put(build, entry, recorded, line, response)
+    seam.memory.clear()
+    seam.memory_bytes = 0
+
+
 def test_a_stored_answer_is_served_after_the_process_starts(seam):
     with LeanService() as service:
         live = service.run_bound("evaluate", CASES)
@@ -96,13 +103,13 @@ def test_a_planted_positional_mismatch_is_refused_not_served(seam):
     swapped = response.replace(b'"index":0,', b'"index":9,').replace(b'"index":1,', b'"index":0,').replace(
         b'"index":9,', b'"index":1,')
     assert swapped != response
-    seam.store.put(build, entry, recorded, line, swapped)
+    plant(seam, build, entry, recorded, line, swapped)
     with LeanService() as service:
         assert service.run_bound("evaluate", CASES) == genuine  # asked again, of the process
         assert service.stats["retries"] == 1
     assert [alarm["kind"] for alarm in seam.alarms] == ["refused"] and seam.counts["hits"] == 1
     assert seam.store.get(build, entry) is None  # the refused entry goes; the retry asked the process live
-    seam.store.put(build, entry, recorded, line, swapped)
+    plant(seam, build, entry, recorded, line, swapped)
     with LeanService(retries=0) as service, pytest.raises(CheckerUnavailable, match="malformed response"):
         service.run_bound("evaluate", CASES)
 
@@ -194,13 +201,13 @@ def test_a_sampled_hit_that_drifted_is_an_alarm_and_the_caller_gets_the_process_
         build = service.build
     [(entry, path)] = entries(seam, build)
     recorded, line, response = decode(path.read_bytes())
-    seam.store.put(build, entry, recorded, line, response.replace(b'"status":"ok"', b'"status":"ok" ', 1))
+    plant(seam, build, entry, recorded, line, response.replace(b'"status":"ok"', b'"status":"ok" ', 1))
     seam.sample = 1.0
     with LeanService() as service:
         assert service.run_bound("evaluate", CASES) == genuine
     assert seam.counts["sampled"] == 1 and seam.counts["hits"] == 0
     assert [alarm["kind"] for alarm in seam.alarms] == ["drift"] and seam.store.get(build, entry) is None
-    seam.store.put(build, entry, recorded, line, response)
+    plant(seam, build, entry, recorded, line, response)
     seam.alarms.clear()
     with LeanService() as service:
         service.run_bound("evaluate", CASES)
@@ -391,3 +398,18 @@ def test_every_inventory_test_exists_and_runs_live():
             assert (ROOT / path).is_file(), test
             if row != 1:  # the relay sits above the seam: nothing of it is skipped
                 assert _live(ROOT / path, name), (row, test)
+
+
+def test_a_repeated_batch_is_answered_from_memory_within_its_bound(seam, monkeypatch):
+    with LeanService() as service:
+        genuine = service.run_bound("evaluate", CASES)
+        build = service.build
+    [(entry, path)] = entries(seam, build)
+    path.unlink()  # a repeat in the same process does not read the store again
+    with LeanService() as service:
+        assert service.run_bound("evaluate", CASES) == genuine
+    assert seam.counts["hits"] == 1 and seam.counts["misses"] == 1
+    monkeypatch.setattr(answer_store, "MEMORY_BYTES", 0)
+    with LeanService() as service:
+        service.run_bound("evaluate", CASES[:1])
+    assert seam.memory_bytes == 0 and not seam.memory

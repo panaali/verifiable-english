@@ -34,6 +34,7 @@ the default service already answered from the store; the merge (R2) and the nigh
 """
 from __future__ import annotations
 
+from collections import OrderedDict
 import hashlib
 import json
 import os
@@ -58,6 +59,8 @@ ENV = "VE_ANSWER_STORE"
 GATE_FLAG = "VE_GATE_PYTEST_RESULT"
 LIVE_MARK = "live_service"
 SAMPLE = 0.01
+# Response bytes each process keeps of the entries it read or recorded, so a repeated batch is not read again.
+MEMORY_BYTES = 64 << 20
 # A branch that changes one of these runs every request live.
 GUARDED = ("ve/backends/", "lean/VE/Service/", "lean/checkers.lock", "tests/subprocesses.py",
            "tests/conftest.py", "tests/answer_store.py")
@@ -122,8 +125,9 @@ INVENTORY = (
 
 def key(build: str, limits: tuple, line: bytes) -> str:
     """The entry's key: SHA-256 of the binary's actual digest, its start-up limits and the request bytes."""
-    head = json.dumps([FORMAT, build, list(limits)], separators=(",", ":")).encode()
-    return hashlib.sha256(head + b"\0" + line).hexdigest()
+    digest = hashlib.sha256(json.dumps([FORMAT, build, list(limits)], separators=(",", ":")).encode() + b"\0")
+    digest.update(line)
+    return digest.hexdigest()
 
 
 def limits(service: LeanService) -> tuple:
@@ -200,6 +204,10 @@ class Seam:
         self.methods = {name: LeanService.__dict__[name] for name in SEAM}
         self.globals = {name: vars(lean_service)[name] for name in SEAM_GLOBALS}
         self.default = Path(lean_service.DEFAULT_EXECUTABLE).resolve()
+        self.resolved: dict[Path, Path] = {}
+        # key -> response bytes of entries this process read or recorded, least recently used first.
+        self.memory: OrderedDict[str, bytes] = OrderedDict()
+        self.memory_bytes = 0
         self.test, self.live = "", False
         self.lock = threading.Lock()
         self.local = threading.local()
@@ -231,7 +239,10 @@ class Seam:
             return "expected hash"
         if service.allow_unlisted_build:
             return "unlisted build"
-        if service.executable.resolve() != self.default:
+        resolved = self.resolved.get(service.executable)
+        if resolved is None:
+            resolved = self.resolved[service.executable] = service.executable.resolve()
+        if resolved != self.default:
             return "non-default executable"
         if any(LeanService.__dict__.get(name) is not self.methods[name] or name in vars(service) for name in SEAM):
             return "client replaced by the test"
@@ -255,25 +266,47 @@ class Seam:
         entry = key(build, limits(service), line)
         self.local.pending = (line, build, entry, None)
         self._count(self.counts, "asked")
-        try:
-            stored = self.store.get(build, entry)
-        except (OSError, ValueError) as exc:
-            self._alarm("unreadable", build, entry, str(exc))
-            self.store.remove(build, entry)
-            stored = None
-        if stored is not None and (stored[1] != line or stored[0] != limits(service)):
-            self._alarm("unreadable", build, entry, "the entry's request is not this line")
-            self.store.remove(build, entry)
-            stored = None
-        if stored is None:
-            self._count(self.counts, "misses")
-            return None
+        with self.lock:
+            response = self.memory.get(entry)
+            if response is not None:
+                self.memory.move_to_end(entry)
+        if response is None:
+            try:
+                stored = self.store.get(build, entry)
+            except (OSError, ValueError) as exc:
+                self._alarm("unreadable", build, entry, str(exc))
+                self.store.remove(build, entry)
+                stored = None
+            if stored is not None and (stored[1] != line or stored[0] != limits(service)):
+                self._alarm("unreadable", build, entry, "the entry's request is not this line")
+                self.store.remove(build, entry)
+                stored = None
+            if stored is None:
+                self._count(self.counts, "misses")
+                return None
+            response = stored[2]
+            self._remember(entry, response)
         if self.rng.random() < self.sample:
             self._count(self.counts, "sampled")
-            self.local.pending = (line, build, entry, stored[2])
+            self.local.pending = (line, build, entry, response)
             return None
         self._count(self.counts, "hits")
-        return stored[2]
+        return response
+
+    def _remember(self, entry: str, response: bytes) -> None:
+        with self.lock:
+            if entry not in self.memory:
+                self.memory[entry] = response
+                self.memory_bytes += len(response)
+            while self.memory_bytes > MEMORY_BYTES and self.memory:
+                self.memory_bytes -= len(self.memory.popitem(last=False)[1])
+
+    def _forget(self, build: str, entry: str) -> None:
+        with self.lock:
+            response = self.memory.pop(entry, None)
+            if response is not None:
+                self.memory_bytes -= len(response)
+        self.store.remove(build, entry)
 
     def record(self, service: LeanService, line: bytes, raw: bytes, response: dict) -> None:
         """The process's checked answer to `line`: stored, or compared with the sampled entry."""
@@ -291,13 +324,14 @@ class Seam:
                 self._count(self.counts, "sampled_same")
             else:
                 self._alarm("drift", build, entry, "the process answered other bytes than the store")
-                self.store.remove(build, entry)
+                self._forget(build, entry)
             return
         try:
             self.store.put(build, entry, limits(service), line, raw)
         except (OSError, ValueError):
             self._count(self.counts, "not_recorded")
             return
+        self._remember(entry, raw)
         self._count(self.counts, "recorded")
 
     def refused(self, service: LeanService, line: bytes, failure: Exception) -> None:
@@ -307,7 +341,7 @@ class Seam:
         if pending is not None and pending[0] is line:
             _, build, entry, _ = pending
             self._alarm("refused", build, entry, str(failure))
-            self.store.remove(build, entry)
+            self._forget(build, entry)
 
     def report(self) -> dict:
         with self.lock:

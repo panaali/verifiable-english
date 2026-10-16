@@ -116,6 +116,7 @@ MAX_HANDLE_BYTES = _HANDLES["max_bytes"]["const"]
 UNHANDLED_MODES = frozenset({"english", "risk-eval"})
 # The test suite's answer store (module docstring): set by tests/answer_store.py in R1 runs only.
 answer_store = None
+_PLACEHOLDER = "store-" + "0" * 32  # a store-mode nonce's place while it is derived
 
 
 # CPU seconds by mode: (base per case, per MiB of cases); each case is one operation. The core modes
@@ -781,11 +782,14 @@ class LeanService:
 
     def _line(self, nonce: str, mode: str, cases_text: str, budget: dict, environments: dict[str, str] | None,
               store) -> tuple[str, bytes]:
-        """The request's nonce and line; in store mode the nonce is derived from the rest of the line."""
-        if store is not None:
-            nonce = "store-" + hashlib.sha256(
-                self._request_line("", mode, cases_text, budget, environments)).hexdigest()[:32]
-        return nonce, self._request_line(nonce, mode, cases_text, budget, environments)
+        """The request's nonce and line; in store mode the nonce is derived from the rest of the line (the line
+        with a fixed placeholder in its place)."""
+        if store is None:
+            return nonce, self._request_line(nonce, mode, cases_text, budget, environments)
+        line = self._request_line(_PLACEHOLDER, mode, cases_text, budget, environments)
+        nonce = "store-" + hashlib.sha256(line).hexdigest()[:32]
+        head = len('{"id":' + json.dumps(_PLACEHOLDER))
+        return nonce, ('{"id":' + json.dumps(nonce)).encode() + line[head:]
 
     def _failed_attempt(self, failure: _Failure, attempt: int) -> None:
         detail = self._stderr_tail()
