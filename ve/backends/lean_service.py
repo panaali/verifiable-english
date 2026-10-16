@@ -742,8 +742,11 @@ class LeanService:
             attempt = 0
             while True:
                 nonce = f"{self._nonce}-{next(self._counter)}"
+                # Everything the failure path reads is bound before anything can fail (review F6): with
+                # environments the line exists only once the process has started, and starting can fail.
                 needed: dict[str, str] = {}
                 stored = None
+                line: bytes | None = None
                 if not environments:
                     nonce, line = self._line(nonce, mode, cases_text, budget, None, store)
                     if len(line) > MAX_LINE_BYTES + 1:
