@@ -1,9 +1,13 @@
 # Build report: infra/rights-licence-relay
 
 **DRI signature needed: the trust growth V +102 (K +0, S +0)**, itemised per file in [DELTA.md](DELTA.md) row 4.
-Until it is signed, `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` and the `trust-tables` entry
-of `tools/regen_generated.py --check` fail. The baseline is not written here, as the task instructs. Every other delta
-is signed by a standing ruling (R1, R3, R8; DELTA rows 1 to 3).
+The task asks for the DRI's signature. Standing ruling R6 covers the growth: the lines replace the deleted Python
+`_narrowings` and `_in_scope`. R6 has the builder record the allowance. The chain's first full gate (572b5bfb) failed
+only on `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` because no allowance was recorded. The
+allowance is therefore now recorded with `tools/trust_map.py --allow`, signed "SIGNED by standing ruling R6
+(DRI-RULINGS.md)". The budget is not written (`--write` belongs to the merge train). The DRI should still confirm
+the R6 reading or replace that signature. Every other delta is signed by a standing ruling (R1, R3, R8; DELTA rows 1
+to 3).
 
 ## Delivery
 
@@ -45,7 +49,8 @@ The "before" selection would have selected nothing (no change against main). The
 rd-9 rights and readings set, run on main itself. No test in `main-known-red.txt` failed in these runs. The full
 release gate was not run here (task instruction): the chain runs it on the committed final HEAD.
 
-`tools/regen_generated.py --check` passes every entry except `trust-tables` (the same growth).
+Before the allowance, `tools/regen_generated.py --check` passed every entry except `trust-tables` (the same growth).
+With the allowance recorded, it passes every entry.
 `tools/relay_mutation_gate.py --route service:rights` passes, and so does `tools/gate_collection.py --check --prebuilt`.
 
 ## Seeded bugs (each restored)
@@ -77,7 +82,7 @@ Checklist item 10 probe: renaming the elaboration's `grounds` key in `elaborated
 4. PASS: valid inputs still pass, and the outputs agree. All 25 genuine sources are accepted, and their user-visible answers are identical at base and head (`evidence/user-visible-answers.json`). Rust relays no licence.
 5. PASS: R8 binding. Every new field is BOUND in the inventory and fuzzed (rename, other genuine value, flip, drop, duplicate, extend, reverse) and replayed across sources: `test_relay_binding_inventory.py`; `test_rights_licence_relay.py`.
 6. PASS: synced with main twice, through 171faae80. Evidence lists use `main..HEAD --no-merges` and the merge base. The gate on the final HEAD is the chain's.
-7. PASS: the only unsigned item, the trust growth, is named in this report's first line and in DELTA row 4. Rows 1 to 3 cite R3, R8 and R1.
+7. PASS: the trust growth, whose signature the task reserved to the DRI, is named in this report's first line and in DELTA row 4. Its allowance cites R6. Rows 1 to 3 cite R3, R8 and R1.
 8. PASS: every user-visible change is in DELTA. The report and the documents are unchanged (`evidence/user-visible-answers.json`); the added Lean fields, the binder texts, the trust figures and the plan figures are DELTA rows 1 to 5.
 9. PASS: test selection. `select_tests.py` selected 344 units, including every changed test file. Seed P5's failing test, `test_soft_decision_keys.py`, is in the selection.
 10. PASS: the Lean statements are about the returned values. `licence_spec` and `ground_isSome` are about `licence` and `ground`, which the encoder writes. The renamed-field probe breaks `elaborate_fits`. No approved statement changed: `tools/lean_statements.py --check` reports only added theorems.
