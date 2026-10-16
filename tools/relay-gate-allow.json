@@ -2224,6 +2224,17 @@
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
   },
   {
+   "route": "service:document",
+   "mutation": "*",
+   "path": [
+    "results/*/result/units/*/content/right/*",
+    "results/*/result/units/*/content/norm/over"
+   ],
+   "kind": "by-design",
+   "id": "B7",
+   "reason": "A rights document's copied unit content (document.json `rights_block` and `soft_content`, Shape.copied): each member is the request's own authored value, the holder guard optional and every line and `over` name as written, so a dropped optional guard or a repeated line or name is still a valid shape. The client binds the content to the unit's authored content (`ve/document.py` `_bind_document_answer`, `_soft_bound`), which refuses each such mutant (tests/test_b16e_rights_document.py::test_every_rights_and_soft_field_is_typed_and_every_row_bound)."
+   },
+   {
    "route": "service:ask",
    "mutation": "empty",
    "path": [
