@@ -414,6 +414,7 @@ module VE.Route.MeteredProofs
 module VE.Route.MeteredRun
 module VE.Route.MeteredTrace
 module VE.Route.NonVacuity
+module VE.Route.PyDecoder
 module VE.Route.Readings
 module VE.Route.Route
 module VE.Route.Run

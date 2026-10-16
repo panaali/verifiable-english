@@ -48,7 +48,7 @@
     "parse_error": {
       "additionalProperties": false,
       "properties": {
-        "error": {"type": "string"},
+        "error": {"$ref": "common.json#/$defs/text"},
         "id": {"type": "string", "x-equals": "/id"},
         "span": {
           "additionalProperties": false,
