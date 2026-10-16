@@ -1,0 +1,112 @@
+{
+ "mutants": [
+  {
+   "id": "S1",
+   "file": "ve/assist/session_views.py",
+   "claim": "the split fix3 property cases still check order invariance across all five orders: an order-dependent success fails them",
+   "source_sha256": "d00c381ab0aa283cccf1b61d482792fe779940ae521c1306d5de99c7628bfb1b",
+   "tests": [
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]",
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain_universal-no_search]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]",
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain_universal-no_search]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 301.1,
+   "output_tail": "RAPH_SPECS))\n    def test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget(name, extra):\n        \"\"\"Success is a function of the graph: identical under every insertion/check/PARENT order, and monotone in\n        the proof budget (with and without countermodel search), including competing witnesses. One case per\n        graph and search setting, so the cases run in parallel.\"\"\"\n        budgets = (0, 2, 3, 4, 5, 6, 10, 10_000)\n        spec = GRAPH_SPECS[name]\n        row = []\n        for budget in budgets:\n            outcomes = {_graph_session(spec, budget, seed, **extra).apply(\"status\")[\"success\"]\n                        for seed in (None, 1, 2, 3, 4)}\n>           assert len(outcomes) == 1, (name, extra, budget, \"order-dependent\")\nE           AssertionError: ('plain_universal', {'max_evaluations': 0}, 10, 'order-dependent')\nE           assert 2 == 1\nE            +  where 2 = len({False, True})\n\ntests/test_assist.py:1447: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]\nFAILED tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain_universal-no_search]\n2 failed in 101.84s (0:01:41)\n\nve: English comparator: {\"records\": 300, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 300}} (/tmp/ve-english-comparator-scrfr5bt)\n"
+  },
+  {
+   "id": "S2",
+   "file": "ve/assist/session_views.py",
+   "claim": "the split fix3 and rr2 cases still check monotonicity across all their budgets: a success that turns false at a larger budget (6) fails them",
+   "source_sha256": "d00c381ab0aa283cccf1b61d482792fe779940ae521c1306d5de99c7628bfb1b",
+   "tests": [
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]",
+    "tests/test_assist.py::test_astra_rr2_property_success_is_monotone_in_the_proof_budget[plain]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]",
+    "tests/test_assist.py::test_astra_rr2_property_success_is_monotone_in_the_proof_budget[plain]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 209.8,
+   "output_tail": "rtionError: ('plain', {}, {0: False, 2: False, 3: True, 4: True, ...})\nE       assert False\nE        +  where False = all([True, True, True, False, True, True])\n\ntests/test_assist.py:1450: AssertionError\n____ test_astra_rr2_property_success_is_monotone_in_the_proof_budget[plain] ____\n\nname = 'plain'\n\n    @pytest.mark.parametrize(\"name\", list(BUDGET_ITEMS))\n    def test_astra_rr2_property_success_is_monotone_in_the_proof_budget(name):\n        \"\"\"For every item, success at budget b implies success at every larger budget. One case per item, each over\n        every budget, so the cases run in parallel.\"\"\"\n        row = [BUDGET_ITEMS[name](b).apply(\"status\")[\"success\"] for b in BUDGETS]\n        first = row.index(True) if True in row else len(row)\n>       assert all(row[first:]), (name, dict(zip(BUDGETS, row)))\nE       AssertionError: ('plain', {0: False, 1: False, 2: False, 3: False, ...})\nE       assert False\nE        +  where False = all([True, False, True, True, True])\n\ntests/test_assist.py:1140: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget[plain-search]\nFAILED tests/test_assist.py::test_astra_rr2_property_success_is_monotone_in_the_proof_budget[plain]\n2 failed in 97.91s (0:01:37)\n\nve: English comparator: {\"records\": 294, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 294}} (/tmp/ve-english-comparator-dpcj1oy1)\n"
+  },
+  {
+   "id": "S3",
+   "file": "ve/assist/session.py",
+   "claim": "the split fix4 cases still compare all three parent orders at their budget: proving in the author's parent order fails them",
+   "source_sha256": "fcefef0f83393a6e09117139cf456fa8b56c3c20cd6acf1626c497fcf376b942",
+   "tests": [
+    "tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success[3]",
+    "tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success[4]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success[3]",
+    "tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success[4]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 116.5,
+   "output_tail": ".loads(json.dumps(s.to_ledger())))\n            assert replayed.apply(\"status\")[\"success\"] is status[\"success\"]\n            outcomes[tuple(order)] = (check, status[\"success\"])\n>       assert len(set(outcomes.values())) == 1, (budget, outcomes)\nE       AssertionError: (4, {('rule', 'fact', 'extra'): ('follows', True), ('extra', 'rule', 'fact'): ('unknown', False), ('fact', 'extra', 'rule'): ('unknown', False)})\nE       assert 2 == 1\nE        +  where 2 = len({('follows', True), ('unknown', False)})\nE        +    where {('follows', True), ('unknown', False)} = set(dict_values([('follows', True), ('unknown', False), ('unknown', False)]))\nE        +      where dict_values([('follows', True), ('unknown', False), ('unknown', False)]) = <built-in method values of dict object at 0x701a605db680>()\nE        +        where <built-in method values of dict object at 0x701a605db680> = {('rule', 'fact', 'extra'): ('follows', True), ('extra', 'rule', 'fact'): ('unknown', False), ('fact', 'extra', 'rule'): ('unknown', False)}.values\n\ntests/test_assist.py:1677: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success[3]\nFAILED tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success[4]\n2 failed in 53.53s\n\nve: English comparator: {\"records\": 90, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 90}} (/tmp/ve-english-comparator-irzonajv)\n"
+  },
+  {
+   "id": "S9",
+   "file": "tools/bench/suite_tail.py",
+   "claim": "durations --previous counts the earlier file as one more run: a test keeps its longest time, not this run's warm one",
+   "source_sha256": "a3ba9be3f34cd0673680d31d486b8296f08023afd04edf8d38bcfeab6048df59",
+   "tests": [
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.0,
+   "output_tail": "lection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::warm\", \"t::longer\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n>       assert test_schedule.read_estimates(output) == (\n            {\"t::split[0]\": 40.0, \"t::warm\": 90.0, \"t::longer\": 8.0, \"t::kept\": 12.0}, 0.2)\nE       AssertionError: assert ({'t::kept': ...m': 5.0}, 0.2) == ({'t::split[0...': 12.0}, 0.2)\nE         \nE         At index 0 diff: {'t::kept': 12.0, 't::longer': 8.0, 't::split[0]': 40.0, 't::warm': 5.0} != {'t::split[0]': 40.0, 't::warm': 90.0, 't::longer': 8.0, 't::kept': 12.0}\nE         Use -v to get more diff\n\ntests/test_suite_tail.py:143: AssertionError\n----------------------------- Captured stdout call -----------------------------\nwrote 4 of 5 tests to /tmp/pytest-of-seyran/pytest-9303/test_durations_command_counts_0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run\n1 failed in 0.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jia_dm2h)\n"
+  },
+  {
+   "id": "S10",
+   "file": "tools/test_schedule.py",
+   "claim": "durations --previous keeps the earlier file's estimate of an unrecorded test",
+   "source_sha256": "7a2a7b0bb44510314f9e43033032cb5953766e1b9037eefc803a014770c7e468",
+   "tests": [
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.9,
+   "output_tail": "0, \"t::longer\": 3.0, \"t::kept\": 12.0, \"t::gone\": 7.0, \"t::short\": 0.2},\n            source=\"earlier\"))\n        collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::warm\", \"t::longer\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n>       assert test_schedule.read_estimates(output) == (\n            {\"t::split[0]\": 40.0, \"t::warm\": 90.0, \"t::longer\": 8.0, \"t::kept\": 12.0}, 0.2)\nE       AssertionError: assert ({'t::kept': ...': 90.0}, 0.5) == ({'t::split[0...': 12.0}, 0.2)\nE         \nE         At index 1 diff: 0.5 != 0.2\nE         Use -v to get more diff\n\ntests/test_suite_tail.py:143: AssertionError\n----------------------------- Captured stdout call -----------------------------\nwrote 4 of 5 tests to /tmp/pytest-of-seyran/pytest-9305/test_durations_command_counts_0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run\n1 failed in 0.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-bokkpegx)\n"
+  },
+  {
+   "id": "S11",
+   "file": "tools/bench/suite_tail.py",
+   "claim": "durations --previous refuses a file that is not a durations file",
+   "source_sha256": "a3ba9be3f34cd0673680d31d486b8296f08023afd04edf8d38bcfeab6048df59",
+   "tests": [
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.8,
+   "output_tail": "th / \"collection.json\"\n        collection.write_text(json.dumps([\"t::split[0]\", \"t::warm\", \"t::longer\", \"t::quick\", \"t::kept\"]))\n        output = tmp_path / \"durations.json\"\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(profile), \"--output\", str(output),\n                                          \"--source\", \"remeasured\", \"--collection\", str(collection),\n                                          \"--previous\", str(previous)])\n        assert suite_tail.main() == 0\n        assert test_schedule.read_estimates(output) == (\n            {\"t::split[0]\": 40.0, \"t::warm\": 90.0, \"t::longer\": 8.0, \"t::kept\": 12.0}, 0.2)\n        previous.write_text(\"{}\")\n>       with pytest.raises(SystemExit, match=\"not a durations file\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE SystemExit\n\ntests/test_suite_tail.py:146: Failed\n----------------------------- Captured stdout call -----------------------------\nwrote 4 of 5 tests to /tmp/pytest-of-seyran/pytest-9307/test_durations_command_counts_0/durations.json\nwrote 3 of 4 tests to /tmp/pytest-of-seyran/pytest-9307/test_durations_command_counts_0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_counts_an_earlier_file_as_one_more_run\n1 failed in 0.20s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pyb8dw5a)\n"
+  }
+ ]
+}
