@@ -23,7 +23,6 @@ import subprocess
 import sys
 import tempfile
 import time
-import xml.etree.ElementTree as ElementTree
 
 HERE = Path(__file__).resolve().parent
 SEEDS = HERE / "seeds.json"
@@ -52,14 +51,10 @@ def run(command: list[str], cwd: Path, log: Path, env: dict[str, str]) -> int:
 
 
 def failures(junit: Path) -> list[str]:
-    if not junit.exists():
-        return []
-    found = []
-    for case in ElementTree.parse(junit).getroot().iter("testcase"):
-        if case.find("failure") is not None or case.find("error") is not None:
-            path = case.get("file") or case.get("classname", "").replace(".", "/") + ".py"
-            found.append(f"{path}::{case.get('name')}")
-    return found
+    """The failed node IDs of a JUnit report written with `run_order.junit_options` (tools/run_order.py)."""
+    import run_order
+    found = run_order.read_junit(junit)
+    return sorted(found[1]) if found else []
 
 
 def candidates(seed: dict, worktree: Path, selected: list[str], index: dict, modes: set[str],
@@ -125,7 +120,8 @@ def one(seed: dict, worktree: Path, recording: Path, base_answers: Path, work: P
         tried = candidates(seed, worktree, modes_plan["selected"], index, modes, seconds)
         junit = work / f"{seed['id']}-junit.xml"
         if tried:
-            run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", f"--junitxml={junit}", *tried],
+            import run_order
+            run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", *run_order.junit_options(junit), *tried],
                                       workers=8), worktree, log, nested_pytest.environment(env))
         caught = failures(junit)
         return {**row, "status": "caught" if caught else "not caught", "build": build, "modes": sorted(modes),
@@ -174,7 +170,8 @@ def verify(row: dict, worktree: Path, unseeded: Path, work: Path) -> dict:
                 outcome[name] = []
                 continue
             junit = work / f"{row['id']}-verify-{name}.xml"
-            run(nested_pytest.command(["-q", "-p", "no:cacheprovider", f"--junitxml={junit}", *tests],
+            import run_order
+            run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *run_order.junit_options(junit), *tests],
                                       workers=8 if source is None else 1), worktree, log, nested_pytest.environment(env))
             outcome[name] = failures(junit)
     finally:
