@@ -1,0 +1,96 @@
+{
+ "batch": "tarch-leanshare",
+ "note": "Each bug was planted in a changed file by /tmp/lsx-mut/run.py, the named tests ran on the VM, and the file was restored byte for byte (git status clean after). S2 and S3 are the key-level faults (re-run after a first variant only broke the test's own setup).",
+ "mutants": [
+  {
+   "id": "S1",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "the lean/ tree left out of the key",
+   "test": "tests/test_lean_share.py::test_a_build_of_another_tree_is_never_offered",
+   "result": "failed",
+   "assertion": "AssertionError: Regex pattern did not match."
+  },
+  {
+   "id": "S2",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "the platform left out of the key",
+   "test": "tests/test_lean_share.py::test_a_build_of_another_architecture_is_never_offered",
+   "result": "failed",
+   "assertion": "Failed: DID NOT RAISE Refused"
+  },
+  {
+   "id": "S3",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "the toolchain left out of the key",
+   "test": "tests/test_lean_share.py::test_a_build_of_another_toolchain_is_never_offered",
+   "result": "failed",
+   "assertion": "Failed: DID NOT RAISE Refused"
+  },
+  {
+   "id": "S4",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "restore checks sizes, not digests",
+   "test": "tests/test_lean_share.py::test_a_tampered_entry_is_refused_and_withdrawn",
+   "result": "failed",
+   "assertion": "AssertionError: assert [] != []"
+  },
+  {
+   "id": "S5",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "the pins are not checked",
+   "test": "tests/test_lean_share.py::test_a_checker_the_authority_does_not_pin_is_refused tests/test_lean_share.py::test_runner_local_pins_are_their_runners_alone",
+   "result": "failed",
+   "assertion": "Failed: DID NOT RAISE Refused"
+  },
+  {
+   "id": "S6",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "Lake's up-to-date check skipped",
+   "test": "tests/test_lean_share.py::test_a_forged_seal_for_another_tree_is_refused_by_lake_and_the_worktree_restored tests/test_lean_share.py::test_a_build_lake_finds_out_of_date_or_a_dirty_tree_is_never_stored_or_restored",
+   "result": "failed",
+   "assertion": "Failed: DID NOT RAISE Refused"
+  },
+  {
+   "id": "S7",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "a refused restore does not put the worktree's build back",
+   "test": "tests/test_lean_share.py::test_a_forged_seal_for_another_tree_is_refused_by_lake_and_the_worktree_restored",
+   "result": "failed",
+   "assertion": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-seyran/pytest-8715/test_a_forged_seal_for_another0/worktree/lean/.lake/own-build'"
+  },
+  {
+   "id": "S8",
+   "language": "python",
+   "file": "tools/lake_outputs.py",
+   "fault": "a file that starts with a live target's name counts as live",
+   "test": "tests/test_lake_outputs.py::test_a_removed_targets_binary_is_obsolete_and_a_live_ones_files_are_kept",
+   "result": "failed",
+   "assertion": "AssertionError: assert [PosixPath('/...ve_servicex')] == [PosixPath('/...chexyz'), ...]"
+  },
+  {
+   "id": "S9",
+   "language": "python",
+   "file": "tools/lake_outputs.py",
+   "fault": "a live executable's Lake hash counts as obsolete",
+   "test": "tests/test_lake_outputs.py::test_a_removed_targets_binary_is_obsolete_and_a_live_ones_files_are_kept",
+   "result": "failed",
+   "assertion": "AssertionError: assert [PosixPath('/...e.hash'), ...] == [PosixPath('/...chexyz'), ...]"
+  },
+  {
+   "id": "S10",
+   "language": "python",
+   "file": "tools/lean_share.py",
+   "fault": "files Lake rewrites in place shared as links",
+   "test": "tests/test_lean_share.py::test_a_stored_build_restores_up_to_date_and_never_shares_a_file_lake_rewrites",
+   "result": "failed",
+   "assertion": "assert False"
+  }
+ ]
+}
