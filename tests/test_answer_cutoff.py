@@ -7,6 +7,7 @@ use small maps, as tests/test_select_tests.py does.
 """
 from __future__ import annotations
 
+import ast
 import gzip
 import hashlib
 import json
@@ -380,3 +381,16 @@ def test_the_hook_passes_its_rule_and_is_off_by_default(monkeypatch, capsys):
         assert select_tests.main() == 0
     assert calls == [("plain", ["README.md"]), ("answers=d.json", ["README.md"])]
     capsys.readouterr()
+
+
+def test_the_gate_and_the_maps_never_reach_the_cutoff():
+    """R2 and R3 (tools/gate.py) and the map tools import neither cutoff module, so no gate, merge or
+    nightly can depend on it; select_tests.py names it only in its opt-in --cutoff hook."""
+    for path in ("tools/gate.py", "tools/gate_collection.py", "tools/test_map.py", "tools/test_map_recorder.py"):
+        imported = {alias.name for node in ast.walk(ast.parse((ROOT / path).read_text()))
+                    if isinstance(node, ast.Import | ast.ImportFrom)
+                    for alias in (node.names if isinstance(node, ast.Import) else [ast.alias(node.module or "")])}
+        assert not imported & {"answer_cutoff", "answer_replay"}, path
+    hook = [node for node in ast.walk(ast.parse((ROOT / "tools/select_tests.py").read_text()))
+            if isinstance(node, ast.Import) and any(alias.name == "answer_cutoff" for alias in node.names)]
+    assert len(hook) == 1
