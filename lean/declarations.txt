@@ -936,7 +936,7 @@ module ResponseShape.Schemas.Identity 5fdfa9b4d20290cf6c3bbfe639f6bd13d8705ff449
 module ResponseShape.Schemas.Model f7243d7cf2e9c2c8650379e980cbaa2859f9b179496ccf2fd978e9734d73ba5b
 7:0-18:55 def ResponseShape.Schemas.Model.row@ResponseShape.Schemas.Model
 20:0-24:12 def ResponseShape.Schemas.Model.file@ResponseShape.Schemas.Model
-module ResponseShape.Schemas.NormDefaults dfe21efb731d8a89584ab1a16bb7fb1d9233a0cfd613cba9dd2161401b52e7f1
+module ResponseShape.Schemas.NormDefaults 0fd9d6d7e484a4269f18d69fd493c9802a214f9583dd06e465726663b53cc0e2
 9:0-44:102 def ResponseShape.Schemas.NormDefaults.norm_defaults_path@ResponseShape.Schemas.NormDefaults
 46:0-54:60 def ResponseShape.Schemas.NormDefaults.kind@ResponseShape.Schemas.NormDefaults
 56:0-90:39 def ResponseShape.Schemas.NormDefaults.elaborateFields@ResponseShape.Schemas.NormDefaults
