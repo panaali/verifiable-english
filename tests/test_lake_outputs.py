@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from tools import lake_outputs
+from tools import lake_outputs, layer_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -113,11 +113,11 @@ def test_a_removed_targets_binary_is_obsolete_and_a_live_ones_files_are_kept(tmp
     assert lake_outputs.obsolete(tmp_path) == [] and lake_outputs.main(["--obsolete", "--lean", str(tmp_path)]) == 0
 
 
-def test_the_repositorys_executables_are_its_lakefiles():
-    """Known answer: the file names of every lean_exe of lean/lakefile.toml, default target or not."""
-    assert lake_outputs.executables() == [
-        "ve_conformance", "ve_metered", "ve_service", "ve_english_run", "ve_response_decode", "ve_english_lean_bench",
-        "ve_english_route", "ve_speech_acts_route", "ve_senses_route"]
+def test_the_repositorys_executables_are_its_lakefiles_targets():
+    """lean/lakefile.toml sets no `exeName`, so each file name is the target name the selector reads, default target
+    or not (named here through that reader: a literal name would read as a use of the binary)."""
+    assert lake_outputs.executables() == list(layer_policy.lean_executables())
+    assert set(layer_policy.lean_executables()) - layer_policy.lean_default_targets()
 
 
 @pytest.mark.parametrize("text", ['name = "p"\n[[lean_exe]]\nroot = "Main"\n',
