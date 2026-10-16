@@ -59,7 +59,7 @@ import tempfile
 import time
 
 from change_units import Summary, delta
-from layer_policy import ROOT, lean_default_targets, lean_executables, python_exports
+from layer_policy import APP_AREAS, ROOT, lean_default_targets, lean_executables, python_exports
 import lean_mode_deps
 import nested_pytest
 import quarantine
@@ -76,6 +76,8 @@ MAXFAIL = 5
 UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
 # Every pytest run the plan prints starts with this (tools/nested_pytest.py).
 PYTEST = nested_pytest.command([], python=UV_PYTHON)
+# pytest's exit status when it selected no test (pytest.ExitCode.NO_TESTS_COLLECTED).
+NO_TESTS_COLLECTED = 5
 CHECK_PYTHON = (*UV_PYTHON, "tools/check_python_layers.py")
 CHECK_LEAN = ("python3", "tools/check_lean_imports.py")
 CHECK_RUST = ("python3", "tools/check_rust_deps.py")
@@ -91,8 +93,8 @@ PYTHON_LAYER_INPUTS = {".importlinter", "tools/layer-exceptions.json", "tools/ch
 LEAN_LAYER_INPUTS = {"tools/lean-layer-exceptions.json", "tools/check_lean_imports.py",
                      "tools/lean_header_imports.lean", "tools/layer_policy.py"}
 RUST_LAYER_INPUTS = {"tools/check_rust_deps.py", "tools/layer_policy.py"}
-KNOWN_AREAS = {"ve", "ve_experiments", "experiments", "tests", "tools", "conformance", "lean", "rust",
-               "usecases", "docs", "paper", "examples", "data", "bench", "design"}
+KNOWN_AREAS = {"ve", "tests", "tools", "conformance", "lean", "rust", "docs", "examples", "data", "bench",
+               "design", *APP_AREAS}
 # Cached drift results depend on this file's rules as well as the graph's.
 SELECTOR_VERSION = hashlib.sha256(source_graph.CODE_VERSION.encode()
                                   + Path(__file__).read_bytes()).hexdigest()[:16]
@@ -679,7 +681,12 @@ def resolve_map(base: str, coverage) -> Coverage | None:
             return Coverage(data, tree)
         except (OSError, ValueError, EOFError):
             pass
-    path = Path(coverage) if coverage != "auto" else test_map.find_map(base)
+    other_versions: list[Path] = []
+    path = Path(coverage) if coverage != "auto" else test_map.find_map(base, other_versions=other_versions)
+    if path is None and other_versions:
+        print(f"select_tests: no map of format version {test_map.VERSION} for {base[:10]}; skipped "
+              f"{len(other_versions)} ancestor map(s) of other versions, so selection has no map "
+              "(record a new map: tools/test_map.py record)", file=sys.stderr)
     if path is None or not path.exists():
         return None
     return Coverage(test_map.load(path), path)
@@ -825,6 +832,33 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
             "unmapped": sorted(sel.unmapped) if cov is not None else "all (static graph only)",
             "commands": commands, "lean_build": lean, "rust_build": sel.rust,
             "seconds": round(time.monotonic() - started, 2)}
+
+
+def light_tier(plan: dict, inventory_path: Path = ROOT / "tests/heavy.json", jobs: int = 8) -> dict:
+    """Run every light node, then only heavy nodes in the ordinary selection.
+
+    The heavy stage names the selected files, never saved node IDs: the collection hook in
+    tests/conftest.py marks what is still collected, so a renamed, re-parametrised or split heavy
+    test runs as light instead of making pytest exit 4. A stage whose heavy tests are all gone
+    selects nothing; `run` accepts its exit 5 (`may_select_none`)."""
+    inventory = json.loads(inventory_path.read_text())
+    heavy = [row["nodeid"] for row in inventory["heavy"]]
+    selected_files = {unit for unit in plan["selected"] if unit.startswith("tests/")}
+    selected_heavy = [nodeid for nodeid in heavy if nodeid.split("::", 1)[0] in selected_files]
+    heavy_files = sorted({nodeid.split("::", 1)[0] for nodeid in selected_heavy})
+    commands = [command for command in plan["commands"] if command[:len(PYTEST)] != list(PYTEST)]
+    commands.append(nested_pytest.command(["-q", "-m", "not live and not nightly and not heavy", "tests"],
+                                          workers=jobs, python=UV_PYTHON))
+    may_select_none = []
+    if heavy_files:
+        may_select_none.append(nested_pytest.command(["-q", "-m", "not live and not nightly and heavy",
+                                                      *heavy_files], workers=jobs, python=UV_PYTHON))
+        commands.extend(may_select_none)
+    return {**plan, "commands": commands, "may_select_none": may_select_none,
+            "tier": {"name": "light", "light_count": inventory["collected_count"] - len(heavy),
+                     "heavy_count": len(heavy), "selected_heavy_count": len(selected_heavy),
+                     "selected_heavy": selected_heavy, "heavy_files": heavy_files,
+                     "source_run": inventory["run"]}}
 
 
 # --- Impacted mode: the fast path for local iteration (docs/TESTING.md) ---
@@ -1243,6 +1277,9 @@ def run(plan: dict, *, record: bool = True, jobs: int = 8, maxfail: int = 0, ful
             continue  # recorded below, one process per unit
         if command[:len(PYTEST)] == PYTEST:
             code = run_plain(command, plan, maxfail, env, held)
+            if code == NO_TESTS_COLLECTED and command in plan.get("may_select_none", ()):
+                print("no selected heavy test is still collected; heavy stage skipped", flush=True)
+                continue
             if code:
                 return code
             continue
@@ -1264,6 +1301,8 @@ def main() -> int:
     source.add_argument("--commit", help="one historical commit")
     source.add_argument("--paths", nargs="+", help="explicit changed paths")
     parser.add_argument("--full", action="store_true")
+    parser.add_argument("--tier", choices=["light"],
+                        help="run all light tests and only heavy tests selected by the change")
     parser.add_argument("--impacted", action="store_true",
                         help="the map-free fast path: only the tests whose static dependencies "
                              "changed, run in one plain pytest process")
@@ -1290,15 +1329,23 @@ def main() -> int:
         parser.error("--maxfail is 0 or a positive count")
     if args.full and args.maxfail:
         parser.error("--full runs every test and counts every failure; it takes no --maxfail")
+    if args.full and args.tier:
+        parser.error("--full runs every test; it takes no --tier")
     args.maxfail = 0 if args.full else MAXFAIL if args.maxfail is None else args.maxfail
     paths = args.paths if args.paths is not None else changed_paths(args.base, args.commit)
     if args.impacted:
         plan = impacted(paths, full=args.full)
+        if args.tier == "light":
+            plan = light_tier(plan, jobs=args.jobs)
         if args.json:
             print(json.dumps(plan, indent=2))
             return run(plan, record=False, maxfail=args.maxfail, full=args.full) if args.run else 0
         print(f"impacted{' (full fallback)' if plan['fallback'] else ''}: "
               f"{plan['selected_count']}/{plan['full_count']} Python test files")
+        if args.tier == "light":
+            print(f"light tier: {plan['tier']['light_count']} light; "
+                  f"{plan['tier']['selected_heavy_count']}/{plan['tier']['heavy_count']} heavy selected "
+                  f"(measured in {plan['tier']['source_run']})")
         for path in plan["unreached"]:
             print(f"no test reaches {path}: full suite")
         for path in plan["scripts_without_tests"]:
@@ -1316,12 +1363,18 @@ def main() -> int:
     coverage = None if args.static else (args.map or "auto")
     plan = select(paths, full=args.full, base=base, after=after, coverage=coverage,
                   assume_fresh=args.assume_fresh)
+    if args.tier == "light":
+        plan = light_tier(plan, jobs=args.jobs)
     if args.json:
         print(json.dumps(plan, indent=2))
     else:
         where = f"map {plan['map']['commit'][:10]}" if plan["map"] else "static graph only"
         print(f"{plan['selected_count']}/{plan['full_count']} test units ({where}, "
               f"{plan['seconds']} s){' FULL: ' + ', '.join(plan['full_reasons']) if plan['full'] else ''}")
+        if args.tier == "light":
+            print(f"light tier: {plan['tier']['light_count']} light; "
+                  f"{plan['tier']['selected_heavy_count']}/{plan['tier']['heavy_count']} heavy selected "
+                  f"(measured in {plan['tier']['source_run']})")
         print("changed:", ", ".join(paths) or "(none; full fallback)")
         if args.explain:
             for test, reasons in plan["reasons"].items():
@@ -1330,7 +1383,8 @@ def main() -> int:
             print("+", " ".join(command))
     if not args.run:
         return 0
-    return run(plan, record=not args.no_record, jobs=args.jobs, maxfail=args.maxfail, full=args.full)
+    return run(plan, record=not args.no_record and args.tier is None,
+               jobs=args.jobs, maxfail=args.maxfail, full=args.full)
 
 
 if __name__ == "__main__":

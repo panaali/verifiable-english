@@ -25,7 +25,8 @@ MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
          "english.read", "english.grammar", "english.check",
          "environment", "model", "check", "identity", "parse", "graph", "readings", "readings-choices", "bundle", "family-norms",
          "soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval", "quantity",
-         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question")
+         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question",
+         "search-budget", "ask", "words")
 
 
 class Invalid(Exception):
@@ -411,11 +412,32 @@ class Compiler:
                 _fail(f"length differs from the request's {pointer}")
         return check
 
+    def _x_unique_strings(self, flag, schema, base):
+        def check(value, ctx, fuel):
+            if not isinstance(value, list) or any(type(item) is not str for item in value) or \
+                    len(value) != len(set(value)):
+                _fail("strings are not distinct")
+        return check
+
     def _x_count(self, pointer, schema, base):
         def check(value, ctx, fuel):
             expected = _resolve(ctx.value, pointer)
             if not isinstance(expected, list) or _kind(value) != "integer" or value != len(expected):
                 _fail(f"is not the number of the request's {pointer}")
+        return check
+
+    def _x_same_length(self, fields, schema, base):
+        def check(value, ctx, fuel):
+            lengths = [len(value[field]) if isinstance(value.get(field), list) else None for field in fields]
+            if not lengths or any(length is None or length != lengths[0] for length in lengths):
+                _fail("generated response arrays have different lengths")
+        return check
+
+    def _x_equal_fields(self, fields, schema, base):
+        def check(value, ctx, fuel):
+            left, right = fields
+            if left not in value or right not in value or not same_json(value[left], value[right]):
+                _fail("generated response fields differ")
         return check
 
     def _x_references(self, rule, schema, base):
@@ -469,6 +491,21 @@ class Compiler:
                 len(soft) if isinstance(soft, list) else 0)
             if _kind(value) != "integer" or value > bound:
                 _fail("background exceeds what the request vocabulary generates")
+        return check
+
+    def _x_source_span(self, pointer, schema, base):
+        def check(value, ctx, fuel):
+            source = _resolve(ctx.value, pointer)
+            if type(source) is not str or type(value) is not dict:
+                _fail("span is outside the request source or has the wrong line and column")
+            start, end = value.get("start"), value.get("end")
+            line, column = value.get("line"), value.get("column")
+            if (type(start) is not int or type(end) is not int or
+                    type(line) is not int or type(column) is not int or
+                    not 0 <= start <= end <= len(source) or
+                    line != source.count("\n", 0, start) + 1 or
+                    column != start - source.rfind("\n", 0, start)):
+                _fail("span is outside the request source or has the wrong line and column")
         return check
 
     def _x_index(self, flag, schema, base):
@@ -611,9 +648,10 @@ class Compiler:
 _ORDER = ("$ref", "type", "enum", "const", "pattern", "minLength", "maxLength", "minimum", "required",
           "properties", "additionalProperties", "prefixItems", "items", "minItems", "maxItems",
           "contains", "anyOf", "allOf", "not", "if", "x-tagged", "x-echo", "x-equals", "x-length",
-          "x-count", "x-references", "x-claim-nodes", "x-max-steps", "x-background-bound",
+          "x-count", "x-same-length", "x-equal-fields", "x-references", "x-claim-nodes", "x-max-steps",
+          "x-background-bound", "x-source-span",
           "x-index", "x-digest", "x-zip", "x-zip-or-empty", "x-case",
-          "x-select", "x-count-where", "x-count-presence", "x-reading-plan", "x-rows",
+          "x-select", "x-count-where", "x-count-presence", "x-unique-strings", "x-reading-plan", "x-rows",
           "x-row")
 _KEYWORDS = frozenset(_ORDER) | {"then", "else", "$defs", "$comment", "$id", "x-fuel"}
 

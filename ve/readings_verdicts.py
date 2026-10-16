@@ -12,14 +12,82 @@ Nothing here is computed for W2's, the pending or the abstaining route (1.1).
 from __future__ import annotations
 
 import json
+from collections.abc import MutableMapping
 from contextlib import contextmanager
 from itertools import product
 
 from .errors import CheckerUnavailable, ResourceLimit, VEError
 
-BUDGET = {"max_steps": 10_000, "max_domain_size": 2, "max_models": 10_000, "max_evaluations": 100_000}
+
+class _LeanBudget(MutableMapping):
+    """The readings routes' search budget: Lean's premise-check budget (`ve.search.lean_budget`,
+    premise-scale), read on first use. A key set here (a test's zero budget) stands in for Lean's
+    until it is deleted; no other key exists."""
+    _FIELDS = {"max_steps": "max_proof_steps", "max_domain_size": "max_domain_size",
+               "max_models": "max_models", "max_evaluations": "max_evaluations"}
+
+    def __init__(self):
+        self._set = {}
+
+    def __getitem__(self, key):
+        if key in self._set:
+            return self._set[key]
+        from .search import lean_budget
+        return getattr(lean_budget(), self._FIELDS[key])
+
+    def __setitem__(self, key, value):
+        if key not in self._FIELDS:
+            raise KeyError(key)
+        self._set[key] = value
+
+    def __delitem__(self, key):
+        del self._set[key]
+
+    def __iter__(self):
+        return iter(self._FIELDS)
+
+    def __len__(self):
+        return len(self._FIELDS)
+
+
+BUDGET = _LeanBudget()
 PENDING = {"status": "UNKNOWN", "reason": "non-assertion reading elaboration pending"}
 _NOT_SUPERPOSABLE = "ReadingsNotSuperposable: "
+
+
+def _found(search, premise_check):
+    """A search's Found result, or None (NotFound or a spent budget). In the premise check (`premise_check`: no
+    Γ and no conclusion) a Rust call that timed out is no witness too, and the answer is then Lean's alone (DRI
+    decision ME1, DELTA row 4); in any other query (an entailment's countermodel) it is CheckerUnavailable, as
+    before premise-scale."""
+    from .backends.rust_jsonl import RustTimeout
+    try:
+        found = search()
+    except RustTimeout:
+        if not premise_check:
+            raise
+        return None
+    return found if found.status == "Found" else None
+
+
+def _scaled(env, premises, phi):
+    """premise-scale, in the premise check only (DELTA row 1), after the route's own searches found no model:
+    the search again over `sup D`
+    within the route's budget (`BUDGET`) with the sorts Lean raises (`ve.search.premise_budget`, only
+    at Lean's own domain bound), then the ground-fact route (the premises' stated facts as their own
+    model). Each runs only when every earlier search found nothing, so no model an earlier search
+    finds changes; Lean checks whatever is found."""
+    from .search import find_countermodel, premise_budget
+    lean = premise_budget(env, premises)
+    sort_bounds = lean.sort_bounds if BUDGET["max_domain_size"] == lean.max_domain_size else {}
+    options = {"max_domain_size": BUDGET["max_domain_size"], "max_models": BUDGET["max_models"],
+               "max_evaluations": BUDGET["max_evaluations"], "sort_bounds": sort_bounds}
+    found = None
+    if sort_bounds:
+        found = _found(lambda: find_countermodel(env, premises, phi, **options), True)
+    if found is None:
+        found = _found(lambda: find_countermodel(env, premises, phi, **options, ground_only=True), True)
+    return found
 
 
 def context(doc):
@@ -431,15 +499,21 @@ class Superposed(_Route):
         if key in self._models:
             return self._models[key]
         usable = self.checked and (not A or self.taken(A))
+        # The premise check (no Γ, no conclusion) is premise-scale's only scope: there alone a Rust timeout is no
+        # witness and the scaled search runs; an entailment's countermodel search is as before (review F1).
+        premise_check = conclusion is None and not gamma
         # Under the completion a choice's own document is Lean's `choiceU N c`, whose models carry a separate filling;
         # the search runs on `sup (fillDoc N)` itself, `Fill_T` in its slot (plan RD-6b).
-        result = self._lifted(A, gamma, conclusion) if usable and not self.completion else None
+        result = self._lifted(A, gamma, conclusion, premise_check) if usable and not self.completion else None
         if result is None and usable:
             phi = Bottom() if conclusion is None else formula_from_data(self.ext, conclusion, _generated=True)
-            found = find_countermodel(self.ext, self._full(A, gamma), phi,
-                                      max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
-                                      max_evaluations=BUDGET["max_evaluations"])
-            if found.status == "Found":
+            full = self._full(A, gamma)
+            found = _found(lambda: find_countermodel(
+                self.ext, full, phi, max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
+                max_evaluations=BUDGET["max_evaluations"]), premise_check)
+            if found is None and premise_check:
+                found = _scaled(self.ext, full, phi)
+            if found is not None:
                 data = self._lean_model(found.model)
                 row = self.lean("readings-model", assumed=[list(x) for x in A], premises=list(gamma),
                                 conclusion=conclusion, model=data)
@@ -510,7 +584,7 @@ class Superposed(_Route):
             raise CheckerUnavailable("ReadingsConformance: Rust's untrusted evaluation differs from Lean's on a "
                                      "model of the superposed document")
 
-    def _lifted(self, A, gamma, conclusion):
+    def _lifted(self, A, gamma, conclusion, premise_check):
         from .ast import Bottom, formula_from_data
         from .search import check_countermodel, find_countermodel
         pool = self.all_choices if self.all_choices is not None else self.choices
@@ -522,9 +596,10 @@ class Superposed(_Route):
             own = _ChoiceDocument(self, choice)
             premises = own._all(gamma) + own.searched
             phi = Bottom() if conclusion is None else formula_from_data(own.env, conclusion, _generated=True)
-            found = find_countermodel(own.env, premises, phi, max_domain_size=BUDGET["max_domain_size"],
-                                      max_models=BUDGET["max_models"], max_evaluations=BUDGET["max_evaluations"])
-            if found.status != "Found" or not check_countermodel(own.env, premises, phi, found.model,
+            found = _found(lambda: find_countermodel(
+                own.env, premises, phi, max_domain_size=BUDGET["max_domain_size"], max_models=BUDGET["max_models"],
+                max_evaluations=BUDGET["max_evaluations"]), premise_check)
+            if found is None or not check_countermodel(own.env, premises, phi, found.model,
                                                                  max_evaluations=BUDGET["max_evaluations"]).valid:
                 continue
             data = self._lift(choice, found.model.to_dict(), own)
@@ -1622,10 +1697,11 @@ class _FilledChoiceDocument:
         return {"kind": "norm-defaults-conflict", "packages": self._packages()}
 
     def _packages(self):
-        """A certificate of each target's closed negation from `Fill_T` over `E‴_base` (norm-defaults 3.1: on the norms
-        chain the base Background is `Fill_T`, Lean's `baseBackgroundU`), bound as Lean binds a package
-        (`decodePackageX`): to the choice's environment id and document hash (the row's), and its certificate to
-        `E‴_base` and the ASTs of `Fill_T`."""
+        """A certificate of each target's closed negation from `Background_base ++ Fill_T` over `E‴_base` (norm-defaults
+        3.1: on the norms chain the base Background is the literals' distinctness and `Fill_T`, Lean's
+        `baseBackgroundU` and `LayeredU.background`), bound as Lean binds a package (`decodePackageX`,
+        `decodePackageU`): to the choice's environment id and document hash (the row's), and its certificate to
+        `E‴_base` and the ASTs of the row's literal premises and `Fill_T`."""
         from .ast import Not, formula_to_data
         from .entailment import prove_entailment
         from .norms import _bind
@@ -1635,7 +1711,8 @@ class _FilledChoiceDocument:
         def meaning(ast):
             return digest(f"ve-meaning-{self.base.identity_version}\n",
                           {"environment_id": self.base.environment_id, "ast": ast})
-        fill = self._base_fill()
+        literals = self._base_literals()
+        fill = [formula for _, formula in literals] + self._base_fill()
         packages = {}
         for target, sorts, formula in self.targets:
             conclusion = _bind(Not(formula), sorts)
@@ -1643,7 +1720,8 @@ class _FilledChoiceDocument:
             if proof.status != "Found":
                 continue
             certificate = {**proof.certificate, "environment_id": self.base.environment_id,
-                           "premise_meaning_ids": [meaning(item["ast"]) for item in row["fill"]],
+                           "premise_meaning_ids": [meaning(ast) for ast, _ in literals] +
+                                                  [meaning(item["ast"]) for item in row["fill"]],
                            "conclusion_meaning_id": meaning(formula_to_data(self.base, conclusion, _generated=True))}
             packages[target] = {"environment_id": row["environment_id"], "document_hash": row["document_hash"],
                                 "target": target, "certificate": certificate}
@@ -1658,6 +1736,13 @@ class _FilledChoiceDocument:
         return {"kind": "norm-defaults-conflict", "witness": {"target": witness["target"], "model": model,
                                                               "filling": filling, "tuple": witness["tuple"]},
                 "shown": witness["model"]}
+
+    def _base_literals(self):
+        """`Background_base` of the filled document, as Lean's elaboration row lists it: the literals' distinctness
+        (their ASTs and formulas over `E‴_base`)."""
+        from .ast import formula_from_data
+        return [(item["ast"], formula_from_data(self.base, item["ast"], _generated=True))
+                for item in self.elaboration.get("background", []) if item.get("generator") == "literals"]
 
     def _base_fill(self):
         """`Fill_T` over `E‴_base`: it reads base predicates and the filled tables only."""

@@ -1,0 +1,32 @@
+{
+  "note": "Temporary seeded bugs, each restored and never committed. The REPORT.md 'Tests and seeded bugs' table lists the same bugs. Rows marked reconfirmed were planted again together at 601100d35 on 2026-10-14; that run failed the four tests named and passed again after the restore (7 passed).",
+  "command": "XDG_CACHE_HOME=/tmp/ve-tarch-xdg ./.venv/bin/python -m pytest --noconftest -q tests/test_heavy_tests.py tests/test_select_tests.py::test_light_tier_keeps_the_heavy_test_of_a_changed_function",
+  "mutants": [
+    {"file": "tools/heavy_tests.py", "bug": "THRESHOLD raised from 10 to 1,000 s",
+     "test": "tests/test_heavy_tests.py::test_heavy_inventory_is_generated_from_complete_measurement", "result": "failed", "reconfirmed": true},
+    {"file": "tools/heavy_tests.py", "bug": "setup and teardown duration rows ignored",
+     "test": "tests/test_heavy_tests.py::test_pytest_duration_report_includes_setup_call_and_teardown", "result": "failed", "reconfirmed": false},
+    {"file": "tools/heavy_tests.py", "bug": "node IDs truncated at a space in pytest's duration text",
+     "test": "tests/test_heavy_tests.py::test_pytest_duration_report_includes_setup_call_and_teardown", "result": "failed", "reconfirmed": false},
+    {"file": "tests/conftest.py", "bug": "every heavy mark skipped",
+     "test": "tests/test_heavy_tests.py::test_every_measured_node_is_exactly_light_or_heavy", "result": "failed", "reconfirmed": false},
+    {"file": "tests/conftest.py", "bug": "manual heavy mark absent from the inventory allowed",
+     "test": "tests/test_heavy_tests.py::test_an_unlisted_manual_heavy_mark_is_refused", "result": "failed", "reconfirmed": true},
+    {"file": "tools/select_tests.py", "bug": "no heavy IDs selected",
+     "test": "tests/test_select_tests.py::test_light_tier_keeps_the_heavy_test_of_a_changed_function", "result": "failed", "reconfirmed": true},
+    {"file": "tools/select_tests.py", "bug": "no heavy IDs selected",
+     "test": "tests/test_heavy_tests.py::test_light_tier_runs_every_light_node_and_selected_heavy_function", "result": "failed", "reconfirmed": true},
+    {"file": "tools/select_tests.py", "bug": "heavy stage names saved node IDs again (review fix round)",
+     "test": "tests/test_heavy_tests.py::test_a_renamed_heavy_test_does_not_break_the_heavy_stage", "result": "failed", "reconfirmed": false},
+    {"file": "tools/select_tests.py", "bug": "heavy stage names saved node IDs again (review fix round)",
+     "test": "tests/test_heavy_tests.py::test_no_light_tier_command_names_a_saved_node_id", "result": "failed", "reconfirmed": false},
+    {"file": "tools/select_tests.py", "bug": "exit 5 of an empty heavy stage not accepted (review fix round)",
+     "test": "tests/test_heavy_tests.py::test_a_heavy_stage_that_selects_nothing_is_skipped", "result": "failed", "reconfirmed": false},
+    {"file": "tools/heavy_tests.py", "bug": "drift against a nightly report fails the check (review fix round)",
+     "test": "tests/test_heavy_tests.py::test_no_test_fails_because_a_test_became_slow", "result": "failed", "reconfirmed": false},
+    {"file": "tools/heavy_tests.py", "bug": "drift omits tests entering the heavy list (review fix round)",
+     "test": "tests/test_heavy_tests.py::test_no_test_fails_because_a_test_became_slow", "result": "failed", "reconfirmed": false},
+    {"file": "tools/heavy_tests.py", "bug": "--check passes a stale inventory (review fix round)",
+     "test": "tests/test_heavy_tests.py::test_check_refuses_an_inventory_stale_against_the_committed_report", "result": "failed", "reconfirmed": false}
+  ]
+}

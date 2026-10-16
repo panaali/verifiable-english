@@ -1,0 +1,40 @@
+# Kernel stacks of ve_service (bpftrace profile:hz:997, kstack(9)); in each 10 s window the top 3 (process, stack)
+# pairs were printed. 2026-10-15 16:16-17:01 UTC, x86 VM, integration gates running.
+# Over all windows those top pairs hold 370030 kernel samples, 360290 (97.4%) of them in memory compaction.
+# Below: pid 2474703 (241.8 s of kernel CPU from 16:23 to 16:36, kernel-cpu-windows.json), windows 16:24-16:25.
+## window ending 16:24:12
+@ks[2474703, 
+    _raw_spin_unlock_irqrestore+33
+    balloon_page_isolate+112
+    isolate_movable_ops_page+427
+    isolate_migratepages_block+3378
+    isolate_migratepages+305
+    compact_zone+1263
+    compact_zone_order+164
+    try_to_compact_pages+222
+    __alloc_pages_direct_compact+144
+]: 223
+## window ending 16:24:12
+@ks[2474703, 
+    kernel_init_pages+66
+    post_alloc_hook+143
+    compaction_alloc_noprof+374
+    compaction_alloc+14
+    migrate_folio_unmap+52
+    migrate_pages_batch+351
+    migrate_pages_sync+131
+    migrate_pages+972
+    compact_zone+1095
+]: 234
+## window ending 16:24:12
+@ks[2474703, 
+    _raw_spin_unlock_irqrestore+33
+    balloon_page_putback+107
+    putback_movable_ops_page+92
+    putback_movable_pages+262
+    compact_zone+1135
+    compact_zone_order+164
+    try_to_compact_pages+222
+    __alloc_pages_direct_compact+144
+    __alloc_pages_slowpath.constprop.0+852
+]: 259

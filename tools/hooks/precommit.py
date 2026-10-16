@@ -13,10 +13,8 @@ layer imports have no later check (see the README's bypass section).
 """
 from __future__ import annotations
 
-import ast
 import contextlib
 import functools
-import hashlib
 import importlib
 import importlib.util
 import io
@@ -37,11 +35,13 @@ PYTHON_LEDGER = "tools/layer-exceptions.json"
 LEAN_LEDGER = "tools/lean-layer-exceptions.json"
 INVENTORY = "lean/VE/Route/frozen-sources.sha256"
 FROZEN_SCRIPT = "lean/VE/Route/frozen.py"
+TRUST_TABLE = "tools/trust-classes.json"
 MAIN = "lean/Main.lean"
 LEAN_TOOLCHAIN = "lean/lean-toolchain"
 POLICY = {"layer_policy": "tools/layer_policy.py", "check_lean_imports": "tools/check_lean_imports.py",
           "check_rust_deps": "tools/check_rust_deps.py", "audit": "lean/audit.py",
-          "english_grammar_gen": "tools/english_grammar_gen.py"}
+          "english_grammar_gen": "tools/english_grammar_gen.py", "frozen": FROZEN_SCRIPT}
+LEAN_POLICY = ("audit", "frozen")
 LAKEFILE = "lean/lakefile.toml"  # its executable roots are tool-layer entry modules
 # What `cargo metadata` reads: the manifests, the sources it finds targets in, and the pinned toolchain.
 RUST_WORKSPACE = re.compile(r"rust/(?:.+/)?(?:Cargo\.toml|[^/]+\.rs)")
@@ -198,10 +198,12 @@ class Index:
                 target.write_bytes(blobs.get(path) or b"")
             sys.dont_write_bytecode = True  # the snapshot is deleted on exit
             sys.path.insert(0, str(self.snapshot / "tools"))
-            modules = {name: importlib.import_module(name) for name in POLICY if name != "audit"}
-            spec = importlib.util.spec_from_file_location("ve_lean_audit", self.snapshot / POLICY["audit"])
-            modules["audit"] = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(modules["audit"])
+            # The policy files outside tools/ load by path, under names no other module has.
+            modules = {name: importlib.import_module(name) for name in POLICY if name not in LEAN_POLICY}
+            for name in LEAN_POLICY:
+                spec = importlib.util.spec_from_file_location(f"ve_lean_{name}", self.snapshot / POLICY[name])
+                modules[name] = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(modules[name])
             for name, module in modules.items():
                 if Path(module.__file__).resolve() != (self.snapshot / POLICY[name]).resolve():
                     raise RuntimeError(f"{name} did not load from the staged snapshot")
@@ -398,57 +400,25 @@ def check_lean_tokens(index: Index) -> list[str]:
     return errors
 
 
-def frozen_constants(source: str) -> tuple[str, tuple[str, ...]]:
-    values = {}
-    for node in ast.parse(source).body:
-        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
-            if node.targets[0].id in {"MAIN_BASE", "ROUTE_LINES"}:
-                values[node.targets[0].id] = ast.literal_eval(node.value)
-    return values["MAIN_BASE"], values["ROUTE_LINES"]
-
-
 def check_frozen(index: Index) -> list[str]:
+    """The narrow freeze's rules (`problems` of the staged lean/VE/Route/frozen.py) on staged blobs. A staged
+    inventory, frozen.py or trust-class table re-checks the whole list; otherwise only the staged listed files
+    are re-hashed."""
     staged = {p.removeprefix("lean/") for p in index.changed if p.startswith("lean/")}
-    whole = INVENTORY in index.changed or FROZEN_SCRIPT in index.changed
-    if not whole and not any(p.startswith("VE/") and p.endswith(".lean") for p in staged) \
-            and MAIN not in index.changed:
+    whole = any(path in index.changed for path in (INVENTORY, FROZEN_SCRIPT, TRUST_TABLE))
+    if not whole and not any(p.endswith(".lean") for p in staged) and MAIN not in index.changed:
         return []
-    errors = []
-    hint = f"rehash it in {INVENTORY} in the same commit (then python3 VE/Route/frozen.py from lean/)"
-    inventory_text = index.text(INVENTORY)
-    if inventory_text is None:
-        return [f"{INVENTORY}: frozen-source inventory missing from the index"]
-    recorded = {}
-    for line in inventory_text.splitlines():
-        if line.strip():
-            expected, name = line.split(maxsplit=1)
-            recorded[name] = expected
-    trusted = {p.removeprefix("lean/") for p in index.listing()
-               if p.startswith("lean/VE/") and p.endswith(".lean")}
-    names = sorted(recorded if whole else recorded.keys() & staged)
-    blobs = index.read([f"lean/{name}" for name in names])
-    for name in names:
-        blob = blobs[f"lean/{name}"]
-        if blob is None:
-            errors.append(f"lean/{name}: frozen file deleted but still listed; remove it from {INVENTORY}")
-        elif hashlib.sha256(blob).hexdigest() != recorded[name]:
-            errors.append(f"lean/{name}: frozen file changed without an inventory update; {hint}")
-    for name in sorted((trusted if whole else trusted & staged) - recorded.keys()):
-        errors.append(f"lean/{name}: unlisted trusted module; add its hash to {INVENTORY}")
-    if whole or MAIN in index.changed:
-        script = index.text(FROZEN_SCRIPT)
-        text = index.text(MAIN)
-        if script is None or text is None:
-            errors.append(f"{MAIN}: {FROZEN_SCRIPT} or {MAIN} missing from the index")
-        else:
-            base, route_lines = frozen_constants(script)
-            for route_line in route_lines:
-                if text.count(route_line) != 1:
-                    errors.append(f"{MAIN}: expected exactly one {route_line.strip()!r}")
-                text = text.replace(route_line, "")
-            if hashlib.sha256(text.encode()).hexdigest() != base:
-                errors.append(f"{MAIN}: existing subcommands changed (hash-frozen by MAIN_BASE in "
-                              f"{FROZEN_SCRIPT}; add a new lean_exe instead)")
+    inventory_text, table, main = index.text(INVENTORY), index.text(TRUST_TABLE), index.text(MAIN)
+    if inventory_text is None or table is None or main is None:
+        return [f"{INVENTORY}, {TRUST_TABLE} or {MAIN} missing from the index"]
+    frozen = index.policy().frozen
+    bad = frozen.problems(inventory_text, table, lambda name: index.read([f"lean/{name}"])[f"lean/{name}"],
+                          main if whole or MAIN in index.changed else None, only=None if whole else staged)
+    errors = [f"lean/{problem}" for problem in bad]
+    if any(": frozen file changed without an inventory update" in problem for problem in bad):
+        errors.append(f"rehash it in {INVENTORY} in the same commit (python3 VE/Route/frozen.py --write from lean/)")
+    if any(problem.startswith("Main.lean: existing subcommands changed") for problem in bad):
+        errors.append(f"{MAIN} is hash-frozen by MAIN_BASE in {FROZEN_SCRIPT}; add a new lean_exe instead")
     return errors
 
 
@@ -485,8 +455,7 @@ def check_wire_contract(index: Index) -> list[str]:
                "conformance/wire_contract_engine.py", "ve/softnorms.py",
                "ve/norms_contract.py", "ve/norms.py", "ve/norm_defaults_contract.py", "ve/norm_defaults.py",
                "ve/wire.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
-               "lean/VE/WireContract/",
-               "lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/contracts/")
+               "lean/VE/WireContract/", "conformance/wire-contract/contracts/")
     if not any(path.startswith(watched) or WIRE_UNIT_PATHS.match(path) for path in index.changed):
         return []
     # Every top-level `conformance` module, not a hand-kept subset: `softnorms_contract` imports its
@@ -496,7 +465,6 @@ def check_wire_contract(index: Index) -> list[str]:
                                  "lean/VE/WireContract/")) or WIRE_UNIT_PATHS.match(path)
              or (path.startswith("conformance/") and path.endswith(".py") and path.count("/") == 1) or path in {
                  "lean/audit.py", "tools/wire_contract.py", "tools/wire_contract_lean.py",
-                 "lean/VE/Route/frozen-sources.sha256",
                  "conformance/wire-contract/engine-golden.json"}]
     for path, blob in index.read(names).items():
         if blob is None:

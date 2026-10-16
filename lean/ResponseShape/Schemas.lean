@@ -7,6 +7,8 @@ import ResponseShape.Schemas.CheckCertificate
 import ResponseShape.Schemas.Diagnose
 import ResponseShape.Schemas.Document
 import ResponseShape.Schemas.Question
+import ResponseShape.Schemas.Ask
+import ResponseShape.Schemas.Words
 import ResponseShape.Schemas.Discourse
 import ResponseShape.Schemas.English
 import ResponseShape.Schemas.EnglishLean
@@ -31,6 +33,7 @@ import ResponseShape.Schemas.RiskEval
 import ResponseShape.Schemas.Route
 import ResponseShape.Schemas.SoftNorms
 import ResponseShape.Schemas.SpeechActs
+import ResponseShape.Schemas.SearchBudget
 
 /-! The client's response schemas (`ve/backends/lean_service_schema/`), one module per file. -/
 
@@ -53,6 +56,8 @@ def files : List File := [
   EnglishLean.grammarFile,
   EnglishLean.checkFile,
   Question.file,
+  Ask.file,
+  Words.file,
   Environment.file,
   Evaluate.file,
   FamilyNorms.file,
@@ -73,7 +78,8 @@ def files : List File := [
   RiskEval.file,
   Route.file,
   SoftNorms.file,
-  SpeechActs.file].map File.qualified
+  SpeechActs.file,
+  SearchBudget.file].map File.qualified
 
 /-- `{file name: document}`: what `tools/response_schemas.py` writes. -/
 def rendered : Except String Json := do

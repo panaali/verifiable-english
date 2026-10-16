@@ -80,7 +80,7 @@ def withUnsaid (U : UDoc) (base : Json) : Except String Json := do
   let vocab ← base.getObjVal? "vocabulary"
   let preds ← fields (← vocab.getObjVal? "predicates")
   let extra := U.unspec.map fun p => (unsaidName p, Json.mkObj [("arguments", toJson (sortsOf U.D p)),
-    ("description", .str s!"the text does not say whether {p}")])
+    ("description", .str (unsaidDescription p))])
   pure (base.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj (preds ++ extra))))
 
 /-- The unspecified predicates of the softened tree, in its regulated order. -/

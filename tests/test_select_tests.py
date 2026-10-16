@@ -381,6 +381,19 @@ def test_a_changed_function_selects_the_tests_that_ran_it(tmp_path):
     assert set(impact(tmp_path, "pkg/core.py", new)) == {"tests/test_bounded.py"}
 
 
+def test_light_tier_keeps_the_heavy_test_of_a_changed_function(tmp_path):
+    new = LIBRARY["pkg/core.py"].replace("min(x, LIMIT)", "max(x, LIMIT)")
+    selected = sorted(impact(tmp_path, "pkg/core.py", new))
+    inventory = tmp_path / "heavy.json"
+    inventory.write_text(json.dumps({"run": "fixture", "collected_count": 2,
+                                     "heavy": [{"nodeid": "tests/test_bounded.py::test_bounded",
+                                                "seconds": 30, "run": "fixture"},
+                                               {"nodeid": "tests/test_unrelated.py::test_unrelated",
+                                                "seconds": 30, "run": "fixture"}]}))
+    plan = select_tests.light_tier({"selected": selected, "commands": []}, inventory, jobs=2)
+    assert plan["tier"]["selected_heavy"] == ["tests/test_bounded.py::test_bounded"]
+
+
 def test_a_changed_constant_selects_its_readers_here_and_in_importers(tmp_path):
     new = LIBRARY["pkg/core.py"].replace("LIMIT = 3", "LIMIT = 4")
     # bounded reads LIMIT, doubled reads DERIVED (computed from LIMIT), user imports LIMIT,
@@ -730,6 +743,78 @@ def test_automatic_selection_without_a_map_runs_full_suite(monkeypatch):
                                coverage="auto")
     assert plan["full"] and plan["full_reasons"] == ["missing coverage map"]
     assert set(plan["selected"]) == set(select_tests.units())
+
+
+def git_line(rev: str) -> str:
+    return subprocess.run(["git", "rev-parse", rev], cwd=ROOT, capture_output=True, text=True,
+                          check=True).stdout.strip()
+
+
+def cached_map(directory: Path, commit: str, version: int | None = test_map.VERSION, mtime: int = 0) -> Path:
+    """A map recorded at `commit` in the cache `directory`, written by map format `version`
+    (None writes bytes that are not a gzip file)."""
+    import gzip
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f"{commit}.json.gz"
+    if version is None:
+        path.write_bytes(b"not a map")
+    else:
+        with gzip.open(path, "wt", encoding="utf-8") as handle:
+            json.dump({**make_map({"t1": {"x": ["lake"]}}, commit), "version": version}, handle)
+    os.utime(path, (mtime, mtime))
+    return path
+
+
+def test_find_map_names_each_nearer_map_it_skips(tmp_path, monkeypatch, capsys):
+    monkeypatch.setenv("VE_TESTMAP_CACHE", str(tmp_path / "maps"))
+    head, parent = (git_line(rev) for rev in ("HEAD", "HEAD~1"))
+    old = cached_map(tmp_path / "maps", head, test_map.VERSION - 1)
+    other_versions: list[Path] = []
+    assert test_map.find_map(head, other_versions=other_versions) is None
+    err = capsys.readouterr().err
+    assert err == (f"test_map: skipped map {old} for {head[:10]}: recorded by map format version "
+                   f"{test_map.VERSION - 1}, this checkout reads version {test_map.VERSION} "
+                   "(record a new map: tools/test_map.py record)\n")
+    assert other_versions == [old]
+    # A current map farther down is returned; the nearer old one is still named, the current one not.
+    current = cached_map(tmp_path / "maps", parent, mtime=1)
+    assert test_map.find_map(head) == current
+    captured = capsys.readouterr()
+    assert str(old) in captured.err and str(current) not in captured.err and captured.out == ""
+    # An old map farther than the chosen one would not have been used: nothing to say.
+    old.unlink()
+    farther = cached_map(tmp_path / "maps", parent, test_map.VERSION - 1)
+    current = cached_map(tmp_path / "maps", head, mtime=1)
+    assert test_map.find_map(head) == current and capsys.readouterr().err == ""
+    farther.unlink()
+    corrupt = cached_map(tmp_path / "maps", git_line("HEAD~2"), None, mtime=2)
+    current.unlink()
+    other_versions = []
+    assert test_map.find_map(head, other_versions=other_versions) is None and other_versions == []
+    err = capsys.readouterr().err
+    assert err.startswith(f"test_map: skipped map {corrupt}: unreadable (") and err.count("\n") == 1
+
+
+def test_select_tests_says_why_old_maps_left_it_without_one(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(select_tests, "time", types.SimpleNamespace(monotonic=lambda: 0.0))
+
+    def main_output(cache: Path) -> tuple[str, str]:
+        monkeypatch.setenv("VE_TESTMAP_CACHE", str(cache))
+        monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "docs/TESTING.md"])
+        assert select_tests.main() == 0
+        captured = capsys.readouterr()
+        return captured.out, captured.err
+
+    cached_map(tmp_path / "old", git_line("HEAD"), test_map.VERSION - 1)
+    cached_map(tmp_path / "old", git_line("HEAD~1"), test_map.VERSION - 1, mtime=1)
+    out_without, err_without = main_output(tmp_path / "none")
+    out_old, err_old = main_output(tmp_path / "old")
+    assert out_old == out_without and "missing coverage map" in out_old.splitlines()[0]
+    assert err_without == ""
+    summary = [line for line in err_old.splitlines() if line.startswith("select_tests:")]
+    assert summary == [f"select_tests: no map of format version {test_map.VERSION} for HEAD; skipped 2 "
+                       "ancestor map(s) of other versions, so selection has no map "
+                       "(record a new map: tools/test_map.py record)"]
 
 
 def test_added_and_removed_lean_modules_select_only_importing_executables(tmp_path):
