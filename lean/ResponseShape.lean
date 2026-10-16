@@ -152,6 +152,10 @@ inductive Shape where
   | equals (pointer : String)
   | length (pointer : String)
   | count (pointer : String)
+  /-- Sibling response arrays have the same number of entries. -/
+  | sameLength (fields : List String)
+  /-- Two sibling response fields carry the same generated value. -/
+  | equalFields (left right : String)
   /-- Every object's `field` in the response array is a request ID selected by `target`. -/
   | references (array field target : String)
   /-- Every selected claim has the name, AST and optional label of a request graph node. -/
@@ -282,6 +286,8 @@ def render (file : String) : Nat → Shape → Except String Json
     | .equals p => pure (Json.mkObj [("x-equals", .str p)])
     | .length p => pure (Json.mkObj [("x-length", .str p)])
     | .count p => pure (Json.mkObj [("x-count", .str p)])
+    | .sameLength fs => pure (Json.mkObj [("x-same-length", toJson fs)])
+    | .equalFields a b => pure (Json.mkObj [("x-equal-fields", toJson [a, b])])
     | .references a f p => pure (Json.mkObj [("x-references", Json.mkObj [
         ("array", .str a), ("field", .str f), ("in", .str p)])])
     | .claimNodes ps => pure (Json.mkObj [("x-claim-nodes", toJson ps)])
@@ -636,6 +642,16 @@ def check (files : List File) : Nat → Shape → Ctx → Counters → Json → 
       | some (.arr ys), .num x => if kind value == "integer" && numEq x ⟨(ys.size : Int), 0⟩ then pure ()
           else fail s!"is not the number of the request's {p}"
       | _, _ => fail s!"is not the number of the request's {p}"
+    | .sameLength fs =>
+      let lengths := fs.map fun f => (value.getObjVal? f).toOption.bind fun j => j.getArr?.toOption.map (·.size)
+      match lengths with
+      | some n :: rest =>
+        if rest.all (· == some n) then pure () else fail "generated response arrays have different lengths"
+      | _ => fail "generated response arrays have different lengths"
+    | .equalFields a b =>
+      match value.getObjVal? a, value.getObjVal? b with
+      | .ok x, .ok y => if sameJson x y then pure () else fail "generated response fields differ"
+      | _, _ => fail "generated response fields differ"
     | .references a f p => match resolve value a, resolve ctx.value p with
       | some (.arr xs), some (.arr ys) =>
         if xs.all (fun x => match x.getObjVal? f with
