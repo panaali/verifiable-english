@@ -1,0 +1,36 @@
+{
+ "what": "report_rights and RightsDocument(...).instances for the 25 sources of tests/test_relay_binding_inventory.py::_rights_sources, at main d7ea7228b (base) and on this branch (head), dumped by the same script",
+ "sources": 25,
+ "identical": true,
+ "sha256": {
+  "base": "20ed3812efc69690b4acb1cc9bbb0f7f69e073de1aae753aa45b595cc1b4712a",
+  "head": "20ed3812efc69690b4acb1cc9bbb0f7f69e073de1aae753aa45b595cc1b4712a"
+ },
+ "per_source_identical": {
+  "adopter exception": true,
+  "authored holder slot": true,
+  "bar": true,
+  "bar with outside rules": true,
+  "carve-out": true,
+  "cited adopter exception": true,
+  "cited carve-out": true,
+  "cited opposite effect": true,
+  "cited switch": true,
+  "default gamma": true,
+  "fan-out": true,
+  "fan-out instance cited by its source norm": true,
+  "gamma": true,
+  "immunity": true,
+  "null optional fields": true,
+  "open pair": true,
+  "opposite effect": true,
+  "over": true,
+  "power": true,
+  "rank cited on the dominated line": true,
+  "rank cited on the dominating line": true,
+  "same effect strict": true,
+  "strict liberty blocks": true,
+  "uncited rank": true,
+  "weighed and protected": true
+ }
+}

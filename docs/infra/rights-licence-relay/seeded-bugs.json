@@ -1,0 +1,65 @@
+{
+  "mutants": [
+    {
+      "id": "L1",
+      "language": "Lean",
+      "file": "lean/VE/Rights/Run.lean",
+      "change": "groundJson writes a collision's grounds under the strict-rule tag (`(\"rule\", .str M)` for `(\"line\", .str M)`); the build and every theorem still pass, ve_service rebuilt and pinned for the run, then restored, rebuilt and the pin restored",
+      "behaviour": "Lean's grounds are bound to the request: a wrong grounds tag from Lean is refused",
+      "test": "tests/test_rights_licence_relay.py::test_the_genuine_grounds_name_request_items",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[collision licence dropped-elaboration]",
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[collision grounds name another line-elaboration and scope]"
+      ]
+    },
+    {
+      "id": "P1",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "_bind_line_narrowings accepts any collision licence (`bound = True`)",
+      "behaviour": "a corrupted licence is refused (a licence names grounds of its own kind)",
+      "test": "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[effect relicensed as a collision-elaboration and scope]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[effect relicensed as a collision]"
+      ]
+    },
+    {
+      "id": "P2",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "_bind_elaboration no longer compares the rule-named mechanisms with Lean's rule_narrowings rows",
+      "behaviour": "a missing or extra rule-named mechanism is refused",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[a rule-named mechanism dropped]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[a rule's mechanisms dropped from its row-elaboration]"
+      ]
+    },
+    {
+      "id": "P3",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "every check of the scope flag dropped (against the limitations Lean lists, the limitation mechanism and the node's limitation pack, which now counts the listed limitations)",
+      "behaviour": "a corrupted scope flag is refused",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[scope flag flipped]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[scope flag flipped-elaboration and scope]"
+      ]
+    },
+    {
+      "id": "P4",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "_bind_line_narrowings no longer requires target == <rule>:<mechanism>",
+      "behaviour": "a corrupted target is refused",
+      "test": "tests/test_soft_decision_keys.py::test_rights_elaboration_premise_identities_are_bound[undeclared narrowing target]"
+    },
+    {
+      "id": "P5",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "the slot order check reduced to uniqueness",
+      "behaviour": "a reordered mechanism list is refused",
+      "test": "tests/test_soft_decision_keys.py::test_f20_mechanisms_are_exactly_the_request_implied_slots[mechanisms out of Lean order]"
+    }
+  ]
+}
