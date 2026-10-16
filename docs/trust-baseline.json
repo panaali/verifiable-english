@@ -547,10 +547,24 @@
   },
   {
    "class": "V",
-   "lines": 5,
-   "reason": "premise-scale: the search-budget service mode (VE.Service.Mode.searchBudget, its name and runMode case, ResponseShape.Skeletons.searchBudget and its row case, the schema list entry): untied [V] +5 in existing verdict-bearing declarations (VE/Service/Protocol.lean +2, ResponseShape/Skeletons.lean +2, ResponseShape/Schemas.lean +1). The mode replaces Python's own premise-check budget (ve/vacuity.py's hard-coded defaults, deleted): Lean owns the budget. The new modules' declarations are classified C (proved: demand_sound, sortBounds_spec, sortBounds_sound) or [R] (a wrong budget only bounds an untrusted search, whose models Lean checks).",
-   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
-   "commit": "aaff776345c5e58ebe10f131316ba1c42663d3b2"
+   "lines": 269,
+   "reason": "lean-first/b16e: Lean's document mode composes the rights route for rights@0 documents (rights source decode, statuses, soft single-rule check and canonical content, request-bound typed answer: VE/Service/Document.lean +185) and types the copied rights and soft content in the response schema (ResponseShape/Schemas/Document.lean +84); no K or S growth. Condition: remove the retained Python loader's rights and soft source parts once Lean owns reading sets, couplings, claim graphs and standalone soft-norms@0 documents (docs/lean-first/b16e/DELTA.md FOLLOW-UP).",
+   "signature": "SIGNED by the DRI 2026-10-14 (reviews/lf-16e-dri-note-1130.md), conditional on the final per-file counts",
+   "commit": "8cec935af5170b58494e649657ce4d58109483e0"
+  },
+  {
+   "class": "S",
+   "lines": 171,
+   "reason": "RD-9 soft chain (rd-9/integrate) final trust, re-measured with tools/trust_map.py on the rd-9 DRI-conditions round's final tree (after F25): K 997, S 9,959, V 37,526; against the signed baseline K +0, S +171, V +372 (V +363 at 67d0cb31 plus F25's V +9: Readings.Chain.text and filled.chain). S by file (SC-1's approved statements and SC-4 to SC-6, checked against the approved text by tools/check_rd9_sc1_statements.py): VE/NormDefaults/LayeredAdmission.lean +54, VE/Readings/Verdicts.lean +52, VE/NormDefaults/Run.lean +24, VE/Readings/SoftSeparate.lean +20, VE/NormDefaults/Admission.lean +17, VE/NormDefaults/LayeredEntail.lean +4. V (untied D[V] and G[V]) by file: VE/Readings/Run.lean +146, VE/Readings/VerdictsWire.lean +69, VE/Readings/SoftWire.lean +44, ResponseShape/Schemas/ReadingsRoute.lean +31, VE/NormDefaults/Run.lean +30, VE/Readings/SoftVerdicts.lean +24, ResponseShape/Schemas/NormDefaults.lean +14, VE/Readings/UnspecifiedWire.lean +14, VE/NormDefaults/LayeredEntail.lean +11, VE/Readings/SoftDefaults.lean +10, VE/Readings/Doc.lean +5, ResponseShape/Schemas/SoftNorms.lean +2, VE/NormDefaults/Layered.lean +1, VE/Readings/ComponentsWire.lean -29. None of it is a Lean copy of logic Python still holds: the soft_chain copy is removed (F25). FOLLOW-UP: a ties pass binding these G[V] and D[V] lines to the existing render, wire and encoder theorems.",
+   "signature": "SIGNED WITH CONDITION by DRI 2026-10-15 (rd-9 B8/B9, manage-agents/reviews/rd-9-dri-signatures-20261015.md item 1; conditions: itemised per file, re-measured on the final HEAD, FOLLOW-UP ties pass)",
+   "commit": "98f97159e1a773532c4035559ae29f04548a9da6"
+  },
+  {
+   "class": "V",
+   "lines": 372,
+   "reason": "RD-9 soft chain (rd-9/integrate) final trust, re-measured with tools/trust_map.py on the rd-9 DRI-conditions round's final tree (after F25): K 997, S 9,959, V 37,526; against the signed baseline K +0, S +171, V +372 (V +363 at 67d0cb31 plus F25's V +9: Readings.Chain.text and filled.chain). S by file (SC-1's approved statements and SC-4 to SC-6, checked against the approved text by tools/check_rd9_sc1_statements.py): VE/NormDefaults/LayeredAdmission.lean +54, VE/Readings/Verdicts.lean +52, VE/NormDefaults/Run.lean +24, VE/Readings/SoftSeparate.lean +20, VE/NormDefaults/Admission.lean +17, VE/NormDefaults/LayeredEntail.lean +4. V (untied D[V] and G[V]) by file: VE/Readings/Run.lean +146, VE/Readings/VerdictsWire.lean +69, VE/Readings/SoftWire.lean +44, ResponseShape/Schemas/ReadingsRoute.lean +31, VE/NormDefaults/Run.lean +30, VE/Readings/SoftVerdicts.lean +24, ResponseShape/Schemas/NormDefaults.lean +14, VE/Readings/UnspecifiedWire.lean +14, VE/NormDefaults/LayeredEntail.lean +11, VE/Readings/SoftDefaults.lean +10, VE/Readings/Doc.lean +5, ResponseShape/Schemas/SoftNorms.lean +2, VE/NormDefaults/Layered.lean +1, VE/Readings/ComponentsWire.lean -29. None of it is a Lean copy of logic Python still holds: the soft_chain copy is removed (F25). FOLLOW-UP: a ties pass binding these G[V] and D[V] lines to the existing render, wire and encoder theorems.",
+   "signature": "SIGNED WITH CONDITION by DRI 2026-10-15 (rd-9 B8/B9, manage-agents/reviews/rd-9-dri-signatures-20261015.md item 1; conditions: itemised per file, re-measured on the final HEAD, FOLLOW-UP ties pass)",
+   "commit": "98f97159e1a773532c4035559ae29f04548a9da6"
   },
   {
    "class": "S",
@@ -565,6 +579,13 @@
    "reason": "lf-14c: Lean n-ary definitions, model tables and bound Background replace the deleted Python n-ary fallback decision path; review fix F1/F2: one dependency order over every definition, FOL and n-ary, and the definition-body diagnostics through one Lean owner (Route.Wire.bodyFault). Carried over from the branch's pre-AR-4 budget (S 9967, V 39223) in the merge with ve-integration aaff77634.",
    "signature": "standing ruling R6 (DRI-RULINGS.md), lf-14c, 2026-10-15",
    "commit": "16a02693a37211bbc80de1579e7ee1af5a3b61a3"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "premise-scale: the search-budget service mode (VE.Service.Mode.searchBudget, its name and runMode case, ResponseShape.Skeletons.searchBudget and its row case, the schema list entry): untied [V] +5 in existing verdict-bearing declarations (VE/Service/Protocol.lean +2, ResponseShape/Skeletons.lean +2, ResponseShape/Schemas.lean +1). The mode replaces Python's own premise-check budget (ve/vacuity.py's hard-coded defaults, deleted): Lean owns the budget. The new modules' declarations are classified C (proved: demand_sound, sortBounds_spec, sortBounds_sound) or [R] (a wrong budget only bounds an untrusted search, whose models Lean checks).",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "aaff776345c5e58ebe10f131316ba1c42663d3b2"
   }
  ]
 }

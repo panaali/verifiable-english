@@ -12,6 +12,8 @@ import subprocess
 import sys
 import time
 
+import pytest
+
 from tests.subprocesses import HANG_TIMEOUT
 from tools import nested_pytest, test_schedule
 
@@ -113,6 +115,36 @@ def test_durations_command_writes_the_scheduler_s_file(tmp_path, monkeypatch):
     assert suite_tail.main() == 0
     assert test_schedule.read_durations(output) == {"t::a": 6.5, "t::b": 8.0, "t::c": 2.0}
     assert json.loads(output.read_text())["source"] == "a test"
+
+
+def test_durations_command_counts_an_earlier_file_as_one_more_run(tmp_path, monkeypatch):
+    """Profiling a few changed files adds their new and split tests' times without forgetting the rest: the
+    earlier file is one more run (each test keeps its longest time, also a cold one this run measured warm)
+    and keeps its estimate of an unrecorded test."""
+    profile = tmp_path / "profile"
+    profile.mkdir()
+    (profile / "gw0-1.jsonl").write_text("".join(json.dumps(row) + "\n" for row in (
+        {"kind": "test", "nodeid": "t::split[0]", "call": 40.0},
+        {"kind": "test", "nodeid": "t::warm", "call": 5.0},
+        {"kind": "test", "nodeid": "t::longer", "call": 8.0},
+        {"kind": "test", "nodeid": "t::quick", "call": 0.5},
+    )))
+    previous = tmp_path / "previous.json"
+    previous.write_text(test_schedule.durations_text(
+        {"t::split": 300.0, "t::warm": 90.0, "t::longer": 3.0, "t::kept": 12.0, "t::gone": 7.0, "t::short": 0.2},
+        source="earlier"))
+    collection = tmp_path / "collection.json"
+    collection.write_text(json.dumps(["t::split[0]", "t::warm", "t::longer", "t::quick", "t::kept"]))
+    output = tmp_path / "durations.json"
+    monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", str(profile), "--output", str(output),
+                                      "--source", "remeasured", "--collection", str(collection),
+                                      "--previous", str(previous)])
+    assert suite_tail.main() == 0
+    assert test_schedule.read_estimates(output) == (
+        {"t::split[0]": 40.0, "t::warm": 90.0, "t::longer": 8.0, "t::kept": 12.0}, 0.2)
+    previous.write_text("{}")
+    with pytest.raises(SystemExit, match="not a durations file"):
+        suite_tail.main()
 
 
 def test_durations_command_collects_current_gate_ids_by_default(tmp_path, monkeypatch):

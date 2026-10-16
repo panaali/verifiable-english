@@ -1131,58 +1131,64 @@ def test_astra_rr2_carrier_chain_is_flagged_or_undecided_never_success():
     assert not replayed.apply("status")["success"]
 
 
-def test_astra_rr2_property_success_is_monotone_in_the_proof_budget():
-    """For every item, success at budget b implies success at every larger budget."""
-    table = {name: [build(b).apply("status")["success"] for b in BUDGETS] for name, build in BUDGET_ITEMS.items()}
-    for name, row in table.items():
-        first = row.index(True) if True in row else len(row)
-        assert all(row[first:]), (name, dict(zip(BUDGETS, row)))
+@pytest.mark.parametrize("name", list(BUDGET_ITEMS))
+def test_astra_rr2_property_success_is_monotone_in_the_proof_budget(name):
+    """For every item, success at budget b implies success at every larger budget. One case per item, each over
+    every budget, so the cases run in parallel."""
+    row = [BUDGET_ITEMS[name](b).apply("status")["success"] for b in BUDGETS]
+    first = row.index(True) if True in row else len(row)
+    assert all(row[first:]), (name, dict(zip(BUDGETS, row)))
     # Non-trivial: the legitimate items succeed at the default budget; the probes never do.
-    assert table["legit_chain"][-1] and table["plain"][-1] and table["two_claims"][-1] and table["idle_loose_parent"][-1]
-    assert not any(table["deep_conjunction"]) and not any(table["carrier_chain"])
+    if name in ("legit_chain", "plain", "two_claims", "idle_loose_parent"):
+        assert row[-1], (name, dict(zip(BUDGETS, row)))
+    if name in ("deep_conjunction", "carrier_chain"):
+        assert not any(row), (name, dict(zip(BUDGETS, row)))
 
 
-def test_astra_rr2_property_any_inconclusive_fidelity_search_is_non_success(monkeypatch):
+@pytest.mark.parametrize("name", ["plain", "two_claims", "idle_loose_parent", "legit_chain"])
+def test_astra_rr2_property_any_inconclusive_fidelity_search_is_non_success(monkeypatch, name):
     """Every fidelity decision in status goes through _decide; forcing any ONE of them to 'unknown'
     (an exhausted search) makes a successful item fail, with a visible reason -- except the per-assumption
-    tautology classification, whose 'unknown' only widens the set a decided vacuity check then examines."""
+    tautology classification, whose 'unknown' only widens the set a decided vacuity check then examines.
+    One case per item, each forcing every one of its decisions, so the cases run in parallel."""
     import ve.assist.session as mod
-    for name in ("plain", "two_claims", "idle_loose_parent", "legit_chain"):
-        s = BUDGET_ITEMS[name](10_000)
-        assert s.apply("status")["success"], name
-        calls, original = [], mod.AssistSession._decide
-        in_validity = []
-        real_validity = mod.AssistSession._validity
+    s = BUDGET_ITEMS[name](10_000)
+    assert s.apply("status")["success"], name
+    calls, original = [], mod.AssistSession._decide
+    in_validity = []
+    real_validity = mod.AssistSession._validity
 
-        def validity(self, formula):
-            in_validity.append(True)
-            try:
-                return real_validity(self, formula)
-            finally:
-                in_validity.pop()
+    def validity(self, formula):
+        in_validity.append(True)
+        try:
+            return real_validity(self, formula)
+        finally:
+            in_validity.pop()
 
-        def record(self, premises, conclusion):
-            calls.append(bool(in_validity))
-            return original(self, premises, conclusion)
-        monkeypatch.setattr(mod.AssistSession, "_validity", validity)
-        monkeypatch.setattr(mod.AssistSession, "_decide", record)
-        s.apply("status")
-        classification = list(calls)
-        assert len(classification) > 0
-        for index, exempt in enumerate(classification):
-            counter = iter(range(10_000))
+    def record(self, premises, conclusion):
+        calls.append(bool(in_validity))
+        return original(self, premises, conclusion)
+    monkeypatch.setattr(mod.AssistSession, "_validity", validity)
+    monkeypatch.setattr(mod.AssistSession, "_decide", record)
+    s.apply("status")
+    classification = list(calls)
+    assert len(classification) > 0
+    for index, exempt in enumerate(classification):
+        counter = iter(range(10_000))
 
-            def forced(self, premises, conclusion, index=index):
-                return "unknown" if next(counter) == index else original(self, premises, conclusion)
-            monkeypatch.setattr(mod.AssistSession, "_decide", forced)
-            status = s.apply("status")
-            if not exempt:
-                assert not status["success"], (name, index)
-                assert any("undecided" in f or "unknown" in f or "fail closed" in f or "load-bearing" in f
-                           for f in status["failures"]), (name, index, status["failures"])
-        monkeypatch.setattr(mod.AssistSession, "_decide", original)
-        monkeypatch.setattr(mod.AssistSession, "_validity", real_validity)
-    # Every search exhausted at once (prover ResourceLimit, no countermodel within budget): never success.
+        def forced(self, premises, conclusion, index=index):
+            return "unknown" if next(counter) == index else original(self, premises, conclusion)
+        monkeypatch.setattr(mod.AssistSession, "_decide", forced)
+        status = s.apply("status")
+        if not exempt:
+            assert not status["success"], (name, index)
+            assert any("undecided" in f or "unknown" in f or "fail closed" in f or "load-bearing" in f
+                       for f in status["failures"]), (name, index, status["failures"])
+
+
+def test_astra_rr2_every_search_exhausted_at_once_is_non_success(monkeypatch):
+    """Every search exhausted at once (prover ResourceLimit, no countermodel within budget): never success."""
+    import ve.assist.session as mod
     s = BUDGET_ITEMS["plain"](10_000)
 
     class Exhausted:
@@ -1651,23 +1657,24 @@ def _needle_free(value, secret=FAKE_TOKEN):
     return not exposes_secret(value, secret)
 
 
-def test_astra_fix4_parent_order_never_changes_the_check_or_success():
+@pytest.mark.parametrize("budget", (0, 1, 2, 3, 4, 5, 6, 10, 10_000))
+def test_astra_fix4_parent_order_never_changes_the_check_or_success(budget):
     """Astra's probe: at budgets 3-4, deriving safe(api) succeeded with parents [rule, fact, extra] and failed
-    with [extra, rule, fact]. _check now proves against the canonical premise order."""
+    with [extra, rule, fact]. _check now proves against the canonical premise order. One case per budget, each
+    with every parent order, so the cases run in parallel."""
     nodes = [("fact", "@api is reviewed.", ["p1.2"], []),
              ("rule", "if (@api is reviewed), then (@api is safe).", ["p1.1"], []),
              ("extra", "if (@api is reviewed), then (@web is deployed).", ["p1.1"], [])]
-    for budget in (0, 1, 2, 3, 4, 5, 6, 10, 10_000):
-        outcomes = {}
-        for order in (["rule", "fact", "extra"], ["extra", "rule", "fact"], ["fact", "extra", "rule"]):
-            spec = {"text": TEXT, "nodes": nodes + [("goal", "@api is safe.", ["p2.1"], order)]}
-            s = _graph_session(spec, budget)
-            check = s.checks["goal"]["status"]
-            status = s.apply("status")
-            replayed = AssistSession.from_ledger(json.loads(json.dumps(s.to_ledger())))
-            assert replayed.apply("status")["success"] is status["success"]
-            outcomes[tuple(order)] = (check, status["success"])
-        assert len(set(outcomes.values())) == 1, (budget, outcomes)
+    outcomes = {}
+    for order in (["rule", "fact", "extra"], ["extra", "rule", "fact"], ["fact", "extra", "rule"]):
+        spec = {"text": TEXT, "nodes": nodes + [("goal", "@api is safe.", ["p2.1"], order)]}
+        s = _graph_session(spec, budget)
+        check = s.checks["goal"]["status"]
+        status = s.apply("status")
+        replayed = AssistSession.from_ledger(json.loads(json.dumps(s.to_ledger())))
+        assert replayed.apply("status")["success"] is status["success"]
+        outcomes[tuple(order)] = (check, status["success"])
+    assert len(set(outcomes.values())) == 1, (budget, outcomes)
 
 
 def test_astra_fix4_later_result_records_cannot_erase_usage(tmp_path, monkeypatch):

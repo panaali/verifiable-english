@@ -1,0 +1,28 @@
+# tools/relay_mutation_gate.py (all routes), 2026-10-16, VM, ve_service built from this branch's Lean (no Lean file differs from main).
+# Same 25 lines, word for word, on infra/tarch-binding bd6cea639 and on a detached checkout of main d7ea7228b; exit 1 on both.
+relay_mutation_gate: allow-list path matches nothing: B0 service:parse duplicate results/*/result/ast/*
+relay_mutation_gate: allow-list path matches nothing: B0 service:route duplicate results/*/result/background
+relay_mutation_gate: allow-list path matches nothing: B0 service:route duplicate results/*/result/generators
+relay_mutation_gate: allow-list path matches nothing: B0 service:route duplicate results/*/result/premises
+relay_mutation_gate: allow-list path matches nothing: B0 service:route empty results/*/result/background
+relay_mutation_gate: allow-list path matches nothing: B0 service:route empty results/*/result/generators
+relay_mutation_gate: allow-list path matches nothing: B0 service:route empty results/*/result/premises
+relay_mutation_gate: allow-list path matches nothing: F3 service:parse retype results/*/result/ast
+relay_mutation_gate: allow-list path matches nothing: F3 service:parse retype results/*/result/ast/*
+relay_mutation_gate: allow-list path matches nothing: F3 service:parse retype results/*/result/ast/*/*
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/background/*/*/*/*
+relay_mutation_gate: allow-list path matches nothing: F4 service:route rebind results/*/result/premises/*/*/*/*
+relay_mutation_gate: allow-list path matches nothing: F7 service:parse untyped results/*/result/ast/*/*
+relay_mutation_gate: allow-list path matches nothing: F11 service:parse empty results/*/result/ast/*/*
+relay_mutation_gate: accepted service:norm-defaults empty results/*/result/unsaid/*/description: empty
+relay_mutation_gate: accepted service:readings-route rebind results/*/result/decisions/*/key/excepted: rebind
+relay_mutation_gate: accepted service:readings-route drop results/*/result/pair/gaps: drop
+relay_mutation_gate: accepted service:readings-route empty results/*/result/pair/gaps: empty
+relay_mutation_gate: accepted service:readings-route duplicate results/*/result/pair/gaps: duplicate
+relay_mutation_gate: accepted service:readings-route rebind results/*/result/pair/gaps/*/*: rebind
+relay_mutation_gate: accepted service:readings-route drop results/*/result/soft_premises: drop
+relay_mutation_gate: accepted service:readings-route empty results/*/result/soft_premises: empty
+relay_mutation_gate: accepted service:readings-route duplicate results/*/result/soft_premises: duplicate
+relay_mutation_gate: accepted service:readings-route rebind results/*/result/soft_premises/*/set: rebind
+relay_mutation_gate: accepted service:readings-route drop results/*/result/decided_units: drop
+relay_mutation_gate: 43 routes, 118538 mutants, 25 failures

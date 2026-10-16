@@ -48,12 +48,14 @@ UNRECORDED_SECONDS = 0.1
 BULK_SHARE = 2
 
 
-def durations_text(timed: Mapping[str, float], *, source: str) -> str:
+def durations_text(timed: Mapping[str, float], *, source: str, unrecorded: float | None = None) -> str:
     """The durations file for the measured `timed` seconds per test ID: the tests of at least
-    RECORDED_SECONDS, rounded to a tenth of a second, sorted by ID, and the mean of the others."""
+    RECORDED_SECONDS, rounded to a tenth of a second, sorted by ID, and the mean of the others (or
+    `unrecorded`, an earlier file's, when `timed` holds only some files' short tests)."""
     kept = {nodeid: round(value, 1) for nodeid, value in sorted(timed.items()) if value >= RECORDED_SECONDS}
     short = [value for value in timed.values() if value < RECORDED_SECONDS]
-    unrecorded = round(sum(short) / len(short), 3) if short else UNRECORDED_SECONDS
+    if unrecorded is None:
+        unrecorded = round(sum(short) / len(short), 3) if short else UNRECORDED_SECONDS
     return json.dumps({"format": FORMAT, "source": source, "unrecorded_seconds": unrecorded, "seconds": kept},
                       indent=1) + "\n"
 
