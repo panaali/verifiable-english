@@ -34,10 +34,11 @@ from `dae12d5ff`.
 | Nonce derived from the rest of the line, in store mode only | `LeanService._line`: SHA-256 of the line with a fixed placeholder id; live mode keeps the random nonce | `test_a_store_mode_line_stands_alone` |
 | Serving off for changes to ve/backends/, lean/VE/Service/, lean/checkers.lock, tests/subprocesses.py, tests/conftest.py | `GUARDED` (also `tests/answer_store.py`), against the merge base with main, committed or not; off when git cannot say | `test_serving_is_off_for_a_branch_that_changes_a_guarded_path` (6 cases), `test_serving_is_off_when_git_cannot_say_what_changed` |
 | Off for explicit timeouts, non-default executables, expected hashes, unlisted builds | `Seam.reason`. Also off for a client subclass (the relay mutation gate's `_Replay` feeds mutated lines) and for a client whose internals a test replaced | `test_serving_is_off_for_every_request_the_plan_excludes`, `test_a_service_with_its_own_timeout_is_never_served` |
-| Off for every test in the inventory's live column (`live_service`) | The mark is registered by the plugin and set on every inventory test | `test_a_live_service_test_is_never_served_and_is_counted`, `test_every_inventory_test_exists_and_runs_live` |
-| Inventory rows 1–13 with a live test each; add RLIMIT_AS (6) and RSS recycle (9) | Section 2; `test_the_service_runs_under_its_address_space_limit`, `test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request` | both new tests, live |
+| Off for every test in the inventory's live column (`live_service`) | The mark is registered by the plugin and set on every inventory test; `pytest_runtest_protocol` reads it for each test | `test_a_live_service_test_is_never_served_and_is_counted`, `test_every_inventory_test_exists_and_runs_live`; the plugin itself, in a nested pytest on one and two workers: `test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run` (review F2) |
+| A hit skips nothing a test observes (review F1) | An answer is stored only when its request wrote nothing to the process's standard error and was answered on its first attempt; the retry after any failed attempt is live and unstored. The store is off for a request when any client binding, table (a lowered `DEADLINES` entry, as `lean_routes.completed_within` sets) or `VE_LEAN_SERVICE*` setting differs from those it was installed with, read from the client itself (`SEAM`, `SEAM_GLOBALS`, `SEAM_ENV`) | `test_an_answer_whose_request_wrote_to_standard_error_is_never_served`, `test_an_answer_that_needed_a_retry_is_never_stored`, `test_a_changed_client_setting_turns_the_store_off` |
+| Inventory rows 1–13 with a live test each; add RLIMIT_AS (6) and RSS recycle (9); row 14 (standard error) from the review | Section 2; `test_the_service_runs_under_its_address_space_limit`, `test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request` | both new tests, live |
 | Nightly byte replay of the whole store against its build; any difference fails | `answer_store.replay`, `tools/answer_replay.py store-replay` (exit 1) | `test_a_planted_wrong_entry_fails_the_byte_replay`, `test_a_planted_nondeterministic_answer_fails_the_byte_replay`, `test_an_empty_or_unreadable_store_is_reported` |
-| R1 re-asks a random 1% of hits live, as a drift alarm only | `SAMPLE = 0.01`. A difference is an alarm, the entry goes, the caller gets the process's answer, and the run fails | `test_a_sampled_hit_that_drifted_is_an_alarm_and_the_caller_gets_the_process_answer` |
+| R1 re-asks a random 1% of hits live, as a drift alarm only | `SAMPLE = 0.01`. A difference (or standard error written) is an alarm, the entry goes, the caller gets the process's answer, and the run fails | `test_a_sampled_hit_that_drifted_is_an_alarm_and_the_caller_gets_the_process_answer`; the run fails on an alarm: `test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run` |
 | Seeded: a planted wrong entry and a planted nondeterministic answer fail the replay; a planted positional mismatch is refused, not served; an R2 hit is impossible | the four tests named above | section 4 (M1, M7, M8, M12) |
 
 R2 and R3 are unchanged: `tools/gate.py`, the merge train and the nightlies are not touched, and every check that
@@ -83,7 +84,7 @@ existed still runs. No test asserts a duration.
 - So an R1 run whose selection or worker count differs from the runs that filled the store hits less. The first R1
   run after a Lean build hits nothing (a new namespace).
 
-## 2. The bypassed-behaviour inventory (plan 3.6, rows 1–13)
+## 2. The bypassed-behaviour inventory (plan 3.6, rows 1–13; row 14 from the review)
 
 The wire seam answers after `_ensure` and reads the stored line through `_read_line`. Every test named below carries
 `live_service`, so no store answers it. The data is in `INVENTORY` in tests/answer_store.py, and
@@ -106,12 +107,13 @@ The wire seam answers after `_ensure` and reads the stored line through `_read_l
 | 5 | budget member, envelope, 16 MiB line cap | the random nonce | TLS::test_bound_request_error_is_deterministic, ::test_oversized_exchange_is_resource_limit_without_start, ::test_operational_faults_fail_closed | 2/2, 1/1, 12/12 |
 | 6 | spawn, pin check, RLIMIT_AS, handshake | nothing (after `_ensure`) | TLS::test_unlisted_build_is_refused_by_default, ::test_bad_or_missing_handshake_is_unavailable, **::test_the_service_runs_under_its_address_space_limit (new)** | 1/0, 6/0 (fail at start, as tested), 1/2 |
 | 7 | deadline computation (`_deadline`) | nothing: it runs, nothing is enforced | TLS::test_the_injected_clock_records_a_miscomputed_deadline; tests/test_w6a_limit_generator.py::test_lean_authority_reports_resource_limit_on_every_generated_case | 4/4; 3/171 |
-| 8 | enforcement: CPU-deadline kill, wall cap, timeout | all of it | TLS::test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried, ::test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline, ::test_a_request_that_gets_no_cpu_meets_the_wall_cap; test_soft_request_economy::test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline; test_question_reading::test_the_whole_question_is_bounded_by_the_modes_deadline | 1/1, 6/6, 1/1; 1/2; 1/1 |
-| 9 | retry once, restart, RSS recycle | the process's failures and its RSS | TLS::test_operational_faults_fail_closed, ::test_one_retry_recovers_a_hung_batch, ::test_recycling_after_max_requests, **::test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request (new)** | 12/12, 1/1, 1/5, 1/9 |
+| 8 | enforcement: CPU-deadline kill, wall cap, timeout | all of it (a changed `DEADLINES` entry or `VE_LEAN_SERVICE_TIMEOUT` turns the store off) | TLS::test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried, ::test_each_phase_of_a_request_is_bounded_by_its_cpu_deadline, ::test_a_request_that_gets_no_cpu_meets_the_wall_cap; test_soft_request_economy::test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline; test_question_reading::test_the_whole_question_is_bounded_by_the_modes_deadline; review: the five `completed_within` tests (test_readings_lazy_pairs, test_lean_layers_once, test_readings_lean_sharing ×3) | 1/1, 6/6, 1/1; 1/2; 1/1; review additions not in that run |
+| 9 | retry once, restart, RSS recycle | the process's failures and its RSS (an answer that needed a retry is never stored) | TLS::test_operational_faults_fail_closed, ::test_one_retry_recovers_a_hung_batch, ::test_recycling_after_max_requests, **::test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request (new)**; review: the three `retries == 0` tests of tests/test_lean_service_schema.py | 12/12, 1/1, 1/5, 1/9; review additions not in that run |
 | 10 | framing and decoding: line reader, 1 GiB cap, strict JSON, nonce match | nothing (the stored line goes through `_read_line`) | TLS::test_complete_lean_response_obeys_size_cap, ::test_operational_faults_fail_closed | 1/1, 12/12 |
 | 11 | schema check (`check_response`) | nothing | TLS::test_random_malformed_responses_never_escape_schema; tests/test_lean_first_b13b.py (whole file) | 1/48; 45/81 |
 | 12 | binding: id, mode, one row per case, digest, index, case_index | nothing | TLS::test_results_not_bound_to_their_cases_fail_closed, ::test_request_errors_without_their_binding_fail_closed | 11/22, 14/14 |
 | 13 | stats counters | the process's own counts for a hit | TLS::test_pool_serves_concurrent_callers; tests/test_lean_handles.py | 1/12; 35/196 |
+| 14 | the process's standard error (Lean's `PANIC` messages) | the process's writes (an answer whose request wrote there is never stored) | test_environment_field_types::test_every_lean_route_rejects_every_wrong_type_without_panicking, ::test_every_lean_route_reads_every_nested_value_without_panicking; test_lean_first_triage::test_df12_risk_route_rejects_an_nbsp_act_phrase | review additions not in that run |
 
 TLS = tests/test_lean_service.py; the whole file is `live_service`. In that run 312 `live_service` tests ran, 242 of
 them with requests. Requests that were not eligible:
@@ -202,6 +204,17 @@ and 5.6 KB on average; environments were 38% of the line bytes.
 | M12 | tests/answer_store.py | the replay compares decoded values, not bytes | test_a_planted_wrong_entry_fails_the_byte_replay, test_a_planted_nondeterministic_answer_fails_the_byte_replay |
 | M13 | tests/answer_store.py | a `CheckerUnavailable` request error is recorded | test_a_checker_unavailable_request_error_is_never_recorded |
 | M14 | tests/answer_store.py | a sampled hit is served without the live comparison | test_a_sampled_hit_that_drifted_is_an_alarm_and_the_caller_gets_the_process_answer |
+| M15 | tests/answer_store.py | an answer whose request wrote to standard error (a PANIC) is stored | test_an_answer_whose_request_wrote_to_standard_error_is_never_served |
+| M16 | tests/answer_store.py | the byte replay ignores standard error | test_an_answer_whose_request_wrote_to_standard_error_is_never_served |
+| M17 | ve/backends/lean_service.py | the retry after a failed live attempt still uses the store, and records | test_an_answer_that_needed_a_retry_is_never_stored |
+| M18 | tests/answer_store.py | a client table changed in place (a lowered `DEADLINES` entry) is still served | test_a_changed_client_setting_turns_the_store_off |
+| M19 | tests/answer_store.py | a changed `VE_LEAN_SERVICE*` setting is still served | test_a_changed_client_setting_turns_the_store_off |
+| M20 | tests/answer_store.py | the plugin never reads the `live_service` mark (PROBE F2) | test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run |
+| M21 | tests/answer_store.py | an alarm never fails the run | test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run |
+| M22 | tests/answer_store.py | the workers' reports are dropped (`pytest_testnodedown`) | test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run |
+
+M15 to M22 come from the review fix round (section 6). The same driver ran all 22 mutants again on the VM, and each
+named test failed (`mutants.json`, `review_fix`); unmutated, the 23 named tests passed.
 
 M4 first survived: both phases of its test started the service with `with`. The test now asks an unstarted service
 and also checks that the pins refuse an unlisted build before the store is asked (commit `6fc0a918e`); M4 then
@@ -234,6 +247,37 @@ failed it.
   platform contract, relay mutation gate and route row schemas, 629 passed.
 - Acceptance items: all AGENT except the external items listed at the top (orchestrator).
 
+## 6. Review fix round (tarch-store-review.final.md)
+
+- **F1 (B): a hit skipped behaviours the inventory did not list.** Fixed as a class, in the seam, so that it holds for
+  every test and not only the ones the sweep found:
+  - *Standard error (Lean's PANIC).* A hit writes nothing there, so an answer is stored only when its request wrote
+    nothing to the process's standard error. A sampled hit whose live request writes there is an alarm, and the
+    byte replay fails on it. Inventory row 14.
+  - *Deadlines set through `completed_within`, and every other client setting.* The seam no longer lists the client
+    names it compares: `SEAM` is every method and property of `LeanService`, and `SEAM_GLOBALS` is every binding of
+    `ve/backends/lean_service.py` except the seam itself and the digest cache. Tables (`DEADLINES`) are also
+    compared by value, since `completed_within` changes an entry in place, and so are the `VE_LEAN_SERVICE*`
+    settings. The plugin's `pytest_configure` is `trylast`, so it sees the suite's settings.
+  - *`retries == 0` (row 9).* After any failed attempt, the client's retry asks the process without the store, and its
+    answer is not stored. A hit therefore stands for an answer the process gave on its first attempt.
+  - The swept tests carry `live_service` as well, and are listed in rows 8, 9 and 14: the two panicking tests and
+    test_df12_risk_route_rejects_an_nbsp_act_phrase (row 14; the third PANIC check in the sweep is the helper
+    `lean_route_rows`, which that test uses); the five `completed_within` tests (row 8); and the three tests behind
+    the `retries == 0` checks of tests/test_lean_service_schema.py (row 9; the check at line 108 is in the
+    `genuine_errors` fixture, so its two tests are marked).
+  - PROBE F1 collected nothing (exit 5) before the fix. After it, 22 tests are collected (exit 0).
+- **F2 (B): no test ran the plugin with a store on.** `test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run`
+  runs a nested pytest with `--answer-store=` over one marked and one unmarked test, on two workers and on one:
+  - Only the unmarked test is answered from the store. The marked test is counted as live.
+  - The workers' reports are merged (`pytest_testnodedown`, `merged`).
+  - A planted entry the client refuses fails a run whose two tests pass.
+  The nested run is told that the branch changes no guarded path, by a stand-in for `changed_guarded_paths` (this
+  branch changes guarded paths). PROBE F2 exited 1 before the fix and exits 0 after it. Mutants M20 to M22 also
+  fail that test.
+- **F3, F4, F5 (C):** not changed in this round. F5 is still open for the DRI.
+- **DELTA:** none user-visible. Only the test-only store changes what it stores and when it answers.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. **Lean answers typed and contained: PASS.** No new route or answer field. A stored answer goes through the same
@@ -241,7 +285,7 @@ failed it.
    that fails binding is refused.
 2. **Required deliverables: PASS.** Section 0 maps each plan row and DRI condition to its delivery and test. No
    permanent report test was added (D4): the evidence is saved files.
-3. **Tests can fail: PASS.** 14 seeded bugs (section 4, mutants.json). The replay comparator was run
+3. **Tests can fail: PASS.** 22 seeded bugs (section 4, mutants.json; M15 to M22 from the review). The replay comparator was run
    head-against-head (passes) and against an empty store (0 entries). It fails on a value-equal byte change (M12).
 4. **Python, Lean and Rust agree: N.A.** No Lean or Rust change. Live answers are unchanged (DELTA none), and
    53,500 sampled hits were byte-identical to the process.
