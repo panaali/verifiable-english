@@ -1,0 +1,494 @@
+{
+ "format": "ve-platform-contract@1",
+ "generated_by": "tools/platform_contract.py contract --write",
+ "causes": {
+  "pins": "pins and reproducible builds: lean/checkers.lock pins the x86 binaries, and the Mac's pins are runner-local, so only x86 can check them",
+  "process": "process supervision, injected deadlines, signals, file locks and resource limits",
+  "agreement": "cross-implementation agreement on recorded fixtures",
+  "divergence": "the outcome differed between the Mac and the x86 VM on the same tree in the last 30 days"
+ },
+ "divergence_window": {
+  "since": "2026-09-16",
+  "until": "2026-10-16"
+ },
+ "tests": [
+  {
+   "selector": "tests/test_agent_policy_rerun.py::test_counts_equal_the_committed_run",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "unknown"
+   ],
+   "nodeids": [
+    "tests/test_agent_policy_rerun.py::test_counts_equal_the_committed_run"
+   ]
+  },
+  {
+   "selector": "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "unknown"
+   ],
+   "nodeids": [
+    "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results"
+   ]
+  },
+  {
+   "selector": "tests/test_agent_policy_rerun.py::test_lean_replays_every_certificate_of_the_rerun",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "unknown"
+   ],
+   "nodeids": [
+    "tests/test_agent_policy_rerun.py::test_lean_replays_every_certificate_of_the_rerun"
+   ]
+  },
+  {
+   "selector": "tests/test_alternatives_three_way.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M2]"
+   ]
+  },
+  {
+   "selector": "tests/test_assist_deadline.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_closure_certificates.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_conformance.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_cpu_bounds.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_data_three_way.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_definitions_differential.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_definitions_differential.py::test_populated_defined_table_limit_boundary",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_definitions_differential.py::test_populated_defined_table_limit_boundary"
+   ]
+  },
+  {
+   "selector": "tests/test_difffuzz.py::test_ci_run",
+   "causes": [
+    "agreement",
+    "divergence"
+   ],
+   "divergence": [
+    "elapsed time"
+   ],
+   "nodeids": [
+    "tests/test_difffuzz.py::test_ci_run"
+   ]
+  },
+  {
+   "selector": "tests/test_discourse_three_way.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_english_evidence.py::test_english_mixed_merge_smoke",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-0]",
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-0]",
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]",
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-3]"
+   ]
+  },
+  {
+   "selector": "tests/test_english_unambiguity.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_gate_integrity.py",
+   "causes": [
+    "pins",
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_grammar_backends.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_hang_guards.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_lean_certificates.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_lean_conformance.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_lean_handles.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_lean_service.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "elapsed time"
+   ],
+   "nodeids": [
+    "tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check"
+   ]
+  },
+  {
+   "selector": "tests/test_nary_differential.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_native_build_lock.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_norm_defaults_three_way.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_norms_three_way.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_p0_three_way.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations"
+   ]
+  },
+  {
+   "selector": "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
+   "causes": [
+    "divergence",
+    "process"
+   ],
+   "divergence": [
+    "elapsed time"
+   ],
+   "nodeids": [
+    "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline"
+   ]
+  },
+  {
+   "selector": "tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "repository state"
+   ],
+   "nodeids": [
+    "tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target"
+   ]
+  },
+  {
+   "selector": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]"
+   ]
+  },
+  {
+   "selector": "tests/test_readings_verdicts_lean.py::test_fnd1_conflict_free_under_every_reading_conditional_on_the_pair_premise",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_readings_verdicts_lean.py::test_fnd1_conflict_free_under_every_reading_conditional_on_the_pair_premise"
+   ]
+  },
+  {
+   "selector": "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate"
+   ]
+  },
+  {
+   "selector": "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate"
+   ]
+  },
+  {
+   "selector": "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate"
+   ]
+  },
+  {
+   "selector": "tests/test_relay_mutation_gate.py::test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_relay_mutation_gate.py::test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one"
+   ]
+  },
+  {
+   "selector": "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry"
+   ]
+  },
+  {
+   "selector": "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list"
+   ]
+  },
+  {
+   "selector": "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case"
+   ]
+  },
+  {
+   "selector": "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "environment"
+   ],
+   "nodeids": [
+    "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class"
+   ]
+  },
+  {
+   "selector": "tests/test_rights_three_way.py::test_rights_differential_on_one_hundred_generated_documents",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_rights_three_way.py::test_rights_embedding_fixtures",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_route_transport.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_run_order.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_rust_conformance.py",
+   "causes": [
+    "agreement"
+   ]
+  },
+  {
+   "selector": "tests/test_rust_memory_budget.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_rust_reproducible.py",
+   "causes": [
+    "pins"
+   ]
+  },
+  {
+   "selector": "tests/test_rust_reproducible.py::test_release_binary_is_pinned",
+   "causes": [
+    "divergence"
+   ],
+   "divergence": [
+    "pinned artefact"
+   ],
+   "nodeids": [
+    "tests/test_rust_reproducible.py::test_release_binary_is_pinned"
+   ]
+  },
+  {
+   "selector": "tests/test_soft_request_economy.py::test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_stage2_faults.py",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_w6a_limit_generator.py::test_every_backend_reports_resource_limit_in_bounded_time",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_w6a_limit_generator.py::test_lean_authority_reports_resource_limit_on_every_generated_case",
+   "causes": [
+    "process"
+   ]
+  },
+  {
+   "selector": "tests/test_wire_contract_three_way.py",
+   "causes": [
+    "agreement"
+   ]
+  }
+ ],
+ "left_out": [
+  {
+   "selector": "tests/test_rights_three_way.py::test_rights_differential_on_one_thousand_generated_documents",
+   "causes": [
+    "agreement"
+   ],
+   "reason": "nightly: the complete gates (R2, the full x86 gate, R3) run it"
+  }
+ ],
+ "retired": []
+}
