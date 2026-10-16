@@ -3768,6 +3768,63 @@ theorem VE.Compose.today_speech
     VE.Compose.today ps = Except.ok VE.Compose.Route.speechActs → VE.SpeechActs.Wire.profileGate ps = Except.ok ()
   -- uses VE.Compose.Route.speechActs@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.today@VE.Compose.Dispatch VE.SpeechActs.Wire.profileGate@VE.SpeechActs.Wire
   -- expr 1577804317
+theorem VE.Core.Layers.Layered.chain
+  ∀ (self : VE.Core.Layers.Layered), VE.Core.Layers.chainOk self.v.environment self.nary = Bool.true
+  -- uses VE.Bridge.Vocabulary.environment@VE.Bridge VE.Core.Layers.Layered.nary@VE.Core.Layers VE.Core.Layers.Layered.v@VE.Core.Layers VE.Core.Layers.Layered@VE.Core.Layers VE.Core.Layers.chainOk@VE.Core.Layers
+  -- expr 1597675704
+theorem VE.Core.Layers.background_fol
+  ∀ (L : VE.Core.Layers.Layered),
+    L.nary = [] →
+      VE.Core.Layers.background L = List.map (fun p => (VE.Core.embed p.fst, p.snd)) (VE.Route.Wire.fullBackground L.rv)
+  -- uses VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.Layered.nary@VE.Core.Layers VE.Core.Layers.Layered.rv@VE.Core.Layers VE.Core.Layers.Layered@VE.Core.Layers VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.background@VE.Core.Layers VE.Core.embed@VE.Core.Syntax VE.Formula@VE.Syntax VE.Route.Wire.fullBackground@VE.Route.Wire
+  -- expr 1708723636
+theorem VE.Core.Layers.background_generators
+  ∀ (L : VE.Core.Layers.Layered) (p : VE.Core.Formula × String),
+    p ∈ VE.Core.Layers.background L → p.snd ∈ VE.Route.Background.generators
+  -- uses VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.Layered@VE.Core.Layers VE.Core.Layers.background@VE.Core.Layers VE.Route.Background.generators@VE.Route.Background
+  -- expr 2848989012
+theorem VE.Core.Layers.elaborateNary_chain
+  ∀ (E : VE.Environment) (fol : List VE.Definitions.Def) (entries : List VE.Core.Layers.NaryDef) (order : List String)
+    (ds : List VE.Core.Layers.NaryDef),
+    VE.Core.Layers.elaborateNary E fol entries = Except.ok (order, ds) →
+      VE.Core.Layers.chainOk E ds = Bool.true ∧
+        VE.Route.dependencyOrder (VE.Core.Layers.definitionNodes fol entries) = Except.ok order
+  -- uses VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.chainOk@VE.Core.Layers VE.Core.Layers.definitionNodes@VE.Core.Layers VE.Core.Layers.elaborateNary@VE.Core.Layers VE.Definitions.Def@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Route.dependencyOrder@VE.Route.Route
+  -- expr 880999423
+theorem VE.Core.Layers.firstBad_none
+  ∀ (E : VE.Environment) (ds : List VE.Core.Layers.NaryDef),
+    VE.Core.Layers.firstBad E ds = Option.none → VE.Core.Layers.chainOk E ds = Bool.true
+  -- uses VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.chainOk@VE.Core.Layers VE.Core.Layers.firstBad@VE.Core.Layers VE.Environment@VE.Syntax
+  -- expr 3141972202
+theorem VE.Core.Layers.naryCheck_ok
+  ∀ (mem : String → List VE.Bridge.Entity → Bool) (M : VE.FiniteModel VE.Bridge.Entity),
+    (∀ (p : String) (row : List VE.Bridge.Entity), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (as : List VE.Core.Formula),
+        VE.Core.Layers.naryCheck mem M as = Except.ok () → (as.all fun a => VE.Core.Formula.eval M [] a) = Bool.true
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.naryCheck@VE.Core.Layers VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite
+  -- expr 3543125521
+theorem VE.Core.Layers.stepOkFrom_sound
+  ∀ (minArity : Nat) (E : VE.Environment) (later : List String) (d : VE.Core.Layers.NaryDef),
+    VE.Core.Layers.stepOkFrom minArity E later d = Bool.true →
+      ¬d.name ∈ later ∧
+        E.predicates d.name = Option.some d.args ∧
+          minArity ≤ d.args.length ∧
+            d.args.length ≤ 6 ∧
+              (∀ (s : String), s ∈ d.args → s ∈ E.sorts) ∧
+                VE.Core.Formula.WellFormed (VE.Definitions.hide E (d.name :: later)) d.args.reverse d.body
+  -- uses VE.Core.Formula.WellFormed@VE.Core.Syntax VE.Core.Layers.NaryDef.args@VE.Core.Layers VE.Core.Layers.NaryDef.body@VE.Core.Layers VE.Core.Layers.NaryDef.name@VE.Core.Layers VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.stepOkFrom@VE.Core.Layers VE.Definitions.hide@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 1263086525
+theorem VE.Core.Layers.stepOk_sound
+  ∀ (E : VE.Environment) (later : List String) (d : VE.Core.Layers.NaryDef),
+    VE.Core.Layers.stepOk E later d = Bool.true →
+      ¬d.name ∈ later ∧
+        E.predicates d.name = Option.some d.args ∧
+          3 ≤ d.args.length ∧
+            d.args.length ≤ 6 ∧
+              (∀ (s : String), s ∈ d.args → s ∈ E.sorts) ∧
+                VE.Core.Formula.WellFormed (VE.Definitions.hide E (d.name :: later)) d.args.reverse d.body
+  -- uses VE.Core.Formula.WellFormed@VE.Core.Syntax VE.Core.Layers.NaryDef.args@VE.Core.Layers VE.Core.Layers.NaryDef.body@VE.Core.Layers VE.Core.Layers.NaryDef.name@VE.Core.Layers VE.Core.Layers.NaryDef@VE.Core.Layers VE.Core.Layers.stepOk@VE.Core.Layers VE.Definitions.hide@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax
+  -- expr 4053115128
 theorem VE.Core.Path.first
   ∀ {α : Type u} {R : α → α → Prop} {x y : α}, VE.Core.Path R x y → ∃ z, R x z
   -- uses VE.Core.Path@VE.Core.Paths
@@ -4190,6 +4247,10 @@ theorem VE.Core.Tableau.unfoldAt_sound
                     VE.Core.Formula.denote S (VE.Core.Tableau.bindingsValue S ρ bs) (VE.Core.Formula.reach k e t r))
   -- uses VE.Core.Edge@VE.Core.Syntax VE.Core.Formula.denote@VE.Core.Syntax VE.Core.Formula.reach@VE.Core.Syntax VE.Core.Formula@VE.Core.Syntax VE.Core.Kind@VE.Core.Paths VE.Core.Tableau.Assignment.Typed@VE.Core.TableauExtended VE.Core.Tableau.Assignment@VE.Core.TableauExtended VE.Core.Tableau.Branch@VE.Core.TableauExtended VE.Core.Tableau.Token.denote@VE.Core.TableauExtended VE.Core.Tableau.Token@VE.Core.TableauExtended VE.Core.Tableau.bindingsValue@VE.Core.TableauExtended VE.Core.Tableau.unfoldAt@VE.Core.TableauExtendedRules VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Term@VE.Syntax
   -- expr 2380617290
+theorem VE.Core.Wire.encodeFormula_embed
+  ∀ (a : VE.Formula), VE.Core.Wire.encodeFormula (VE.Core.embed a) = VE.Route.Wire.encodeFormula a
+  -- uses VE.Core.Wire.encodeFormula@VE.Core.Wire VE.Core.embed@VE.Core.Syntax VE.Formula@VE.Syntax VE.Route.Wire.encodeFormula@VE.Route.Wire
+  -- expr 1572501717
 theorem VE.Core.Wire.run_certificate_acceptance
   ∀ (profiles : List String) (environment : Lean.Json) (id : String)
     (j result premisesJson conclusionJson certificateJson : Lean.Json) (premiseArray : Array Lean.Json)

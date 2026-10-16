@@ -536,6 +536,14 @@
 'VE.Compose.today_soft' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.today_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.today_speech' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Core.Layers.Layered.chain' depends on axioms: [propext]
+'VE.Core.Layers.background_fol' depends on axioms: [propext, Quot.sound]
+'VE.Core.Layers.background_generators' depends on axioms: [propext, Quot.sound]
+'VE.Core.Layers.elaborateNary_chain' depends on axioms: [propext, Quot.sound]
+'VE.Core.Layers.firstBad_none' depends on axioms: [propext]
+'VE.Core.Layers.naryCheck_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Core.Layers.stepOkFrom_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Core.Layers.stepOk_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.Path.first' does not depend on any axioms
 'VE.Core.Path.last' does not depend on any axioms
 'VE.Core.Path.least' does not depend on any axioms
@@ -586,6 +594,7 @@
 'VE.Core.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]
 'VE.Core.Tableau.unfoldAt_sound' depends on axioms: [propext, Quot.sound]
+'VE.Core.Wire.encodeFormula_embed' depends on axioms: [propext]
 'VE.Core.Wire.run_certificate_acceptance' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.Wire.validField' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.check_iff_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1846,7 +1855,7 @@
 'VE.Norms.FlaggedSpec.conflictFreeCheck_definition_base' depends on axioms: [propext, Quot.sound]
 'VE.Norms.FlaggedSpec.conflictFree_of_base' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.FlaggedSpec.conflictPy_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Norms.FlaggedSpec.decodeDefined_name' does not depend on any axioms
+'VE.Norms.FlaggedSpec.decodeDefined_name' depends on axioms: [propext]
 'VE.Norms.FlaggedSpec.decodeSource_flag_not_defined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.FlaggedSpec.decodeVocabulary_flag_not_defined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.FlaggedSpec.definition_body_wellFormed' depends on axioms: [propext]
@@ -5994,6 +6003,7 @@
 'ResponseShape.Encoders.Route.background_generators_fit' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Route.caseKind_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Route.coreLayers_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Route.coreRunBackground_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Route.coreWire_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Route.dispatch_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Route.fullBackground_generators' depends on axioms: [propext, Quot.sound]
