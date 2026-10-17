@@ -103,6 +103,9 @@ def test_norm_faults_are_the_norms_route_s(service, fault):
         units[0]["content"]["norm"]["over"] = ["absent"]
     else:
         units[1]["content"]["norm"]["predicate"] = "consents"
+        # Without a claim graph only the load's own check (`checkQuoted`) sees the quoted norm; the norms route's
+        # admission checks it again.
+        document["front"].pop("graph")
     python, answer = _both(service, document)
     assert answer["outcome"] == "error" and answer["text"] == python["text"], (python, answer)
     assert answer["code"] in (python["code"], answer["text"].split(":")[0]), (python, answer)
@@ -294,13 +297,19 @@ def test_an_environment_fault_is_the_environment_mode_s(service, change):
     assert dw.verdict(python, answer) == "agree" and dw.environment_error(_text(document)) == answer["text"]
 
 
-def test_a_soft_or_rights_environment_keeps_its_route_s_order(service):
+@pytest.mark.parametrize("change", ["stray key", "unknown profile"])
+def test_a_soft_or_rights_environment_keeps_its_route_s_order(service, change):
     """Python's loader checks a soft source (`check_soft_source`) or a rights environment before `Environment`:
-    the environment mode's fault is not the document's there, so the mode answers `CheckerUnavailable`."""
+    the environment mode's fault is not the document's there, so the mode answers `CheckerUnavailable` (here the
+    environment mode would name the unknown profile, where Python's soft relay answers first)."""
     document = _seed("soft-norms")
-    document["front"]["environment"]["PROFILES"] = document["front"]["environment"]["profiles"]
-    _, answer = _both(service, document)
-    assert answer["code"] == "CheckerUnavailable", answer
+    environment = document["front"]["environment"]
+    if change == "stray key":
+        environment["PROFILES"] = environment["profiles"]
+    else:
+        environment["profiles"] = sorted([*environment["profiles"], "x@0"])
+    python, answer = _both(service, document)
+    assert python["outcome"] == "error" and answer["code"] == "CheckerUnavailable", (python, answer)
 
 
 # ------------------------------------------------------------------------------- located diagnostics
