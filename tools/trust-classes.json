@@ -2763,6 +2763,7 @@
         "VE.Discourse.Loader.compileSets",
         "VE.Discourse.Loader.compileUnit",
         "VE.Discourse.Loader.compileUnits",
+        "VE.Discourse.Loader.cutsBytes",
         "VE.Discourse.Loader.cutsCharacter",
         "VE.Discourse.Loader.discourseKey",
         "VE.Discourse.Loader.documentMetadata",
@@ -9030,6 +9031,7 @@
         "VE.Service.Document.softSourceNorms",
         "VE.Service.Document.sourceUnit",
         "VE.Service.Document.split",
+        "VE.Service.Document.typedFormula",
         "VE.Service.Document.unitsOf",
         "VE.Service.Document.usesNorms",
         "VE.Service.Document.wireJson"

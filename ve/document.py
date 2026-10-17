@@ -394,10 +394,11 @@ def _load(path: Path, *, admit: bool):
     raw = path.read_bytes()
     from .discourse import is_discourse_text, lean_admission, rejection, unavailable_report
     if not is_discourse_text(raw):
-        row = _lean_answer(raw, admit, path.parent)
+        prepared = {}
+        row = _lean_answer(raw, admit, path.parent, prepared)
         if row is None:
             return _load_document(raw, path, None)
-        return _lean_document(raw, path, row, admitted=admit)
+        return _lean_document(raw, path, row, admitted=admit, prepared=prepared)
     lean = lean_admission(raw, Path(path).parent)
     if lean["status"] == "error":
         raise rejection(lean)
@@ -409,11 +410,12 @@ def _load(path: Path, *, admit: bool):
         raise unavailable_report(exc) from exc
 
 
-def _document_case(raw: bytes, admit: bool, directory: Path | None = None):
+def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
     """The `document` mode's case for a text, or None when Python's own path decides it: the text is not UTF-8, which
     the mode cannot be sent, or pending content-bearing readings under norm defaults still need the original Python
     coverage path. A text with English fences carries the lexicon proposal; a senses document's pack files are read
-    beside it (`directory`) and sent as texts, with the proposal its senses route reads (batch 16f)."""
+    beside it (`directory`) and sent as texts, with the proposal its senses route reads (batch 16f). A soft document
+    built for the proposal is kept in `prepared` for the document built from the answer (`_lean_document`)."""
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
@@ -448,8 +450,10 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None):
                 # Batch 16f: a soft-norms document's fences are read in the soft route's `E″`, which the
                 # proposal names (Lean `Service.Document.softLayer`).
                 from .softnorms import SoftNormDocument
-                words = SoftNormDocument(_environment(meta["environment"]),
-                                         _soft_contents(meta["units"])).extended_env
+                soft_document = SoftNormDocument(_environment(meta["environment"]), _soft_contents(meta["units"]))
+                if prepared is not None:
+                    prepared["soft_document"] = soft_document
+                words = soft_document.extended_env
             else:
                 # A senses document's route reads the same proposal (`read_fences`, batch 16f).
                 words = Environment(meta["environment"])
@@ -459,12 +463,12 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None):
     return case
 
 
-def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None):
+def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
     """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
     answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the case cannot be sent
     (`_document_case`). Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service itself is
     raised, never answered by Python."""
-    case = _document_case(raw, admit, directory)
+    case = _document_case(raw, admit, directory, prepared)
     if case is None:
         return None
     from .backends.relay import answer
@@ -537,7 +541,7 @@ def _names_a_model_member(raw: bytes, path) -> bool:
     return False
 
 
-def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
+def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepared: dict | None = None):
     """The document Lean's `document` mode accepted, built from its answer (docs/LEAN-FIRST-PLAN.md rule 2: Lean
     validates, Python constructs). The row is bound to the request first: its source is the text's body and its
     units are the front matter's, in order, with content exactly where the front matter has some. A row that
@@ -576,7 +580,8 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             # Batch 16f: the soft document Lean's `document` mode composed from the soft route
             # (`Service.Document.softLayer`); its units' contents and statuses are the answer's.
             from .softnorms import SoftNormDocument
-            soft_document = SoftNormDocument(env, _soft_contents(meta["units"]))
+            soft_document = ((prepared or {}).get("soft_document") or
+                             SoftNormDocument(env, _soft_contents(meta["units"])))
             formula_env = soft_document.extended_env
         if "rights@0" in env.profiles:
             # Batch 16e: the containers of the rights source Lean's `document` mode decoded with the rights route
