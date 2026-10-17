@@ -11834,14 +11834,34 @@
         "VE.Norms.Family.encodeOrder",
         "VE.Norms.Family.encodeOrderTerm",
         "VE.Norms.Family.encodeTerm",
-        "VE.Norms.Family.firstOrder",
-        "VE.Norms.Family.firstOrderDefinition",
-        "VE.Norms.Family.firstOrderFormula",
+        {
+          "name": "VE.Norms.Family.firstOrder",
+          "tied": [
+            "VE.Norms.Family.firstOrder_fol"
+          ]
+        },
+        {
+          "name": "VE.Norms.Family.firstOrderDefinition",
+          "tied": [
+            "VE.Norms.Family.firstOrderDefinition_fol"
+          ]
+        },
+        {
+          "name": "VE.Norms.Family.firstOrderFormula",
+          "tied": [
+            "VE.Norms.Family.firstOrderFormula_fol"
+          ]
+        },
         "VE.Norms.Family.height",
         "VE.Norms.Family.layers",
         "VE.Norms.Family.neg",
         "VE.Norms.Family.orderArgSub",
-        "VE.Norms.Family.orderFol",
+        {
+          "name": "VE.Norms.Family.orderFol",
+          "tied": [
+            "VE.Norms.Family.orderFol_embed"
+          ]
+        },
         "VE.Norms.Family.orderLift",
         "VE.Norms.Family.orderLiftSub",
         "VE.Norms.Family.orderPreds",
@@ -11850,7 +11870,12 @@
         "VE.Norms.Family.orderSubstTerm",
         "VE.Norms.Family.orderSubstWith",
         "VE.Norms.Family.orderSyntax",
-        "VE.Norms.Family.orderTermFol",
+        {
+          "name": "VE.Norms.Family.orderTermFol",
+          "tied": [
+            "VE.Norms.Family.orderTermFol_embed"
+          ]
+        },
         "VE.Norms.Family.outcome",
         "VE.Norms.Family.outcomeBase",
         "VE.Norms.Family.pos",
