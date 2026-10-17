@@ -15,7 +15,7 @@ Branch `english-lean-e2/integrate`. The Python and Lean branches were merged loc
 
 The exact E2 statement diff finds 12 of 12 declarations. `decode_encode` is proved in `lean/VE/EnglishGrammar/Encode.lean` with the standard axioms only: the encoder writes integers with `intText`, whose text is `toString`'s (checked on the compiled code in `E2Examples.lean`), because `toString` of a negative integer joins its sign with a runtime primitive the logic cannot unfold.
 
-The clean gate on `2aad9b8f` passed: **11,850 Python tests passed, 7 allowed skips, 0 failures; 37 Rust tests passed**. Its complete result is [e2-gate-result.json](../../conformance/english-lean/e2-gate-result.json), and `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the numbers above against that file. The S3 comparison records **200 cases, 198 agreements, 2 disposed differences, 0 unexplained differences**; the same test derives these figures from the case records.
+The clean gate on `2aad9b8f` passed: **11,850 Python tests passed, 7 allowed skips, 0 failures; 37 Rust tests passed**. Its complete result is [e2-gate-result.json](../../conformance/english-lean/e2-gate-result.json), and `tests/test_english_e2_report.py::test_report_counts_follow_gate_json` checks the numbers above against that file. The refreshed S3 comparison records **170 cases, 168 agreements, 2 disposed differences, 0 unexplained differences**; the same test derives these figures from the case records.
 
 Three temporary mutations were introduced into `ve/backends/english_lean.py`, each made `tests/test_english_e2_relay.py` fail, and each was removed:
 
