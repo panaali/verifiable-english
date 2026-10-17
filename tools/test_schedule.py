@@ -48,8 +48,10 @@ import zlib
 ROOT = Path(__file__).resolve().parents[1]
 DURATIONS = ROOT / "tools/test-durations.json"
 FORMAT = "ve-test-durations@1"
-# The environment variable naming the durations file of a run, when it is not the committed one.
-SOURCE_VARIABLE = "VE_TEST_DURATIONS"
+# The environment variable naming the durations file of a run, when it is not the committed one: the gate's suite
+# setting, under the prefix a nested run never inherits, so no nested run (nor the key of the run cache that
+# stores one) depends on a gate's scratch path.
+SOURCE_VARIABLE = "VE_GATE_PYTEST_DURATIONS"
 # The most bytes a record's compressed durations may expand to.
 MAX_RECORD_BYTES = 4 * 1024 * 1024
 # Tests at least this long (setup + call + teardown, seconds) are recorded in the durations file.
