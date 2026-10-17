@@ -1,0 +1,478 @@
+{
+ "base_commit": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+ "corpora": "all",
+ "differences": [
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/a_front_matter_default.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/b_no_choice_made.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/c_written_definition_line.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/d_parenthetical_switch.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/e_the_rejected_sense_negated.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/f_two_words_one_default.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/base.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/g_bad_default.ve.md",
+   "class": "wording",
+   "corpus": "pilots",
+   "head": {
+    "exit": 1,
+    "stderr": [
+     "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/head.pilots/pack.json'"
+    ],
+    "stdout": ""
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/tmp/rd7-base/rust/target/release/ve', 'jsonl', '-']' timed out after 4.998885320033878 seconds"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/tmp/rd7-base/rust/target/release/ve', 'jsonl', '-']' timed out after 4.9989749600645155 seconds"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-rd-7/rust/target/release/ve', 'jsonl', '-']' timed out after 4.99900554982014 seconds"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
+   "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
+   "case": "pilot/udhr-20261017T1800Z:usecases/udhr-pilot/run-20261017T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  }
+ ],
+ "head_commit": "074f96d3fca99843b6c0208bcb9c0aedb8410b25",
+ "recordings": {
+  "base": "602fdbcf69f8a933e41944091141a04e58397736e78877b12e2383a5e71e7374",
+  "head": "797159ee341568638537bf03c25603851dce4e40f08b574f1ff95219a28d1543"
+ },
+ "records": {
+  "conformance/lean": 19806,
+  "conformance/python": 19806,
+  "discourse/default": 6350,
+  "document/default": 3632,
+  "norm_defaults/default": 2020,
+  "pilots/default": 554,
+  "probe/lean": 9435,
+  "probe/python": 9435,
+  "quantity/lean": 12863,
+  "quantity/python": 12863,
+  "readings/default": 1137,
+  "rights/default": 2500
+ },
+ "totals": {
+  "same": 100383,
+  "unavailable": 11,
+  "wording": 7
+ },
+ "unavailable_both": {
+  "pilots/default": 11
+ },
+ "unlisted": 0
+}
