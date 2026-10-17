@@ -557,24 +557,28 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
     try:
-        _bind_document_answer(body, meta, declared, row, fences)
+        env = _environment(meta["environment"])
+        senses = None
+        if "senses" in meta:
+            # Batch 16f: the senses route's reading of the English fences, which Lean's `document` mode composed
+            # (`Service.Document.sensesLayer`). The answer is bound to it: each fence's content is the formula
+            # this reading holds, and is absent exactly where it holds none (a preamble line or an open unit).
+            from .senses_document import read_senses
+            senses = read_senses(env, meta["senses"], _english_fences(meta["units"], fences), path.parent,
+                                 meta.get("reading_sets", []))
+    except Exception as exc:  # noqa: BLE001 - a document Lean accepted that Python cannot build is a bug
+        raise unavailable(f"could not be built: {type(exc).__name__}: {exc}"[:300]) from exc
+    try:
+        _bind_document_answer(body, meta, declared, row, senses)
         source, units = row["source"].encode("utf-8"), row["units"]
     except Exception as exc:  # noqa: BLE001 - an accepted but malformed service row is unavailable
         raise unavailable("is not bound to the document sent") from exc
     try:
-        env = _environment(meta["environment"])
         if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, fences):
             raise unavailable("is not bound to the document sent")
-        rights_document = soft_document = senses = None
-        formula_env = env
-        if "senses" in meta:
-            # Batch 16f: the senses route's reading of the English fences, which Lean's `document` mode composed
-            # (`Service.Document.sensesLayer`); its units' contents and statuses are the answer's, read in the
-            # projected environment.
-            from .senses_document import read_senses
-            senses = read_senses(env, meta["senses"], _english_fences(meta["units"], fences), path.parent,
-                                 meta.get("reading_sets", []))
-            formula_env = senses.environment
+        rights_document = soft_document = None
+        # A senses document's units are read in the senses route's projected environment.
+        formula_env = env if senses is None else senses.environment
         soft = "soft-norms@0" in env.profiles and "rights@0" not in env.profiles
         if soft:
             # Batch 16f: the soft document Lean's `document` mode composed from the soft route
@@ -654,12 +658,14 @@ _BLOCK_LINES = ("alternatives_declared", "assumed_harm_free", "counterfactual_le
                 "proximate_judgments", "unmapped_obligations")
 
 
-def _bind_document_answer(body, meta, declared, row, fences=None):
+def _bind_document_answer(body, meta, declared, row, senses=None):
     """Check the request-shaped fields and arithmetic of a successful Lean document row.
 
     The response schema checks types. This binding additionally checks values the schema
     cannot know: the authored unit fields, byte partition and every count derived from
-    them. Checked content, statuses and identities remain Lean's decisions.
+    them. Checked content, statuses and identities remain Lean's decisions. A senses
+    document's English fences are bound to the senses route's reading Python holds
+    (`senses`, `ve.senses_document.SensesReading`); without it no senses row is bound.
     """
     def same(a, b):
         return (json.dumps(a, sort_keys=True, ensure_ascii=False, allow_nan=False) ==
@@ -677,14 +683,21 @@ def _bind_document_answer(body, meta, declared, row, fences=None):
     require(type(units) is list and len(units) == len(declared))
     rights = "rights@0" in listed_profiles(meta.get("environment"))
     soft = "soft-norms@0" in listed_profiles(meta.get("environment"))
-    # A senses document's English fence has a formula, or none for a preamble line or an open unit: the senses
-    # route's reading (batch 16f), so its content may be absent.
-    read = {uid for uid, _ in _english_fences(meta["units"], fences or {})} if "senses" in meta else set()
+    # A senses document's English fence has the formula the senses route read (batch 16f), and no content where the
+    # route read none: a preamble line or an open unit. Every fence the route read is one of the three.
+    if "senses" in meta:
+        require(senses is not None)
+        formulas = senses.formulas
+        read = set(formulas) | set(senses.unresolved) | senses.lines
+    else:
+        formulas, read = {}, set()
     kinds, statuses, reasons = {}, {}, {}
     for unit, (authored, parent) in zip(units, declared, strict=True):
         require(type(unit) is dict and type(authored) is dict)
-        has_content = authored.get("content") is not None and not (
-            authored.get("id") in read and "content" not in unit)
+        has_content = (authored.get("id") in formulas if authored.get("id") in read
+                       else authored.get("content") is not None)
+        if has_content and authored.get("id") in read:
+            require("content" in unit and same(unit["content"], formulas[authored["id"]]))
         require(set(unit) == {"id", "span", "kind", "meaning", "support", "status"} |
                 ({"content", "meaning_id"} if has_content else set()) |
                 ({"parent_id"} if parent is not None else set()))
