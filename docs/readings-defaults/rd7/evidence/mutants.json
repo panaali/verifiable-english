@@ -103,7 +103,7 @@
     {
       "id": "L6",
       "file": "lean/VE/Readings/SupVerdictsWire.lean",
-      "find": "let over := (checkedChoices x.D).length > maxChoiceChecks",
+      "find": "let over := checked.length > maxChoiceChecks",
       "replace": "let over := (choices x.D).length > maxChoiceChecks",
       "command": [
         "bash",
@@ -145,8 +145,8 @@
     {
       "id": "P8",
       "file": "ve/readings_verdicts.py",
-      "find": "found = self.model(A)\n                if found is not None:\n                    self._pieces(A)[\"model\"] = {\"model\": found[\"model\"]}\n                else:\n                    proof = self._generate_certificate(A)\n                    if proof is not None:\n                        self._pieces(A)[\"unsat\"] = proof",
-      "replace": "proof = self._generate_certificate(A)\n                if proof is not None:\n                    self._pieces(A)[\"unsat\"] = proof\n                else:\n                    found = self.model(A)\n                    if found is not None:\n                        self._pieces(A)[\"model\"] = {\"model\": found[\"model\"]}",
+      "find": "found = self.model(A)\n                if found is not None:\n                    self._pieces(A)[\"model\"] = {\"model\": found[\"model\"]}",
+      "replace": "self._generate_certificate(A)\n                found = self.model(A)\n                if found is not None:\n                    self._pieces(A)[\"model\"] = {\"model\": found[\"model\"]}",
       "tests": [
         "tests/test_readings_sup_verdicts.py::test_premise_model_short_circuits_proof_search"
       ],
@@ -165,8 +165,8 @@
     {
       "id": "L7",
       "file": "lean/VE/Readings/SupVerdictsWire.lean",
-      "find": "(checked.filter (fun c => assumed.all (c.contains ·))).take maxSupModelProposals",
-      "replace": "((chosenOf x.D assumed).filter (fun c => assumed.all (c.contains ·))).take maxSupModelProposals",
+      "find": "let proposals := fun assumed => firstSupProposals assumed maxSupModelProposals checked",
+      "replace": "let proposals := fun assumed => firstSupProposals assumed maxSupModelProposals (chosenOf x.D assumed)",
       "command": [
         "bash",
         "-c",
