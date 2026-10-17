@@ -679,6 +679,10 @@ def formulaOf (E : Env) (ast : Json) : Except String (VE.Formula × String) := d
 (`locatedModel` decides it when it can). -/
 def modelRefused : String := unavailable "a distinguishing model the Lean model decoder refuses"
 
+/-- What `contentOf` answers for a strict fence the `check` mode's parser refuses (`locatedFence` decides it when it
+can). -/
+def strictRefused : String := unavailable "the strict fence needs a surface parser outside this document envelope"
+
 /-! ## Units -/
 
 inductive UnitContent
@@ -1024,7 +1028,7 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
     let source := ((fences.lookup id).getD "").trim
     let parsed ← (VE.Service.Standalone.parseCase (Json.mkObj
       [("id", .str id), ("environment", E.checked.decodable), ("source", .str source)])).mapError
-        (fun _ => unavailable "the strict fence needs a surface parser outside this document envelope")
+        (fun _ => strictRefused)
     let ast ← (← parsed.getObjVal? "ast").getArr?
     unless ast.size == 1 do throw "each VE fence must contain exactly one sentence"
     let (f, mid) ← formulaOf E (ast[0]!)
@@ -1562,28 +1566,74 @@ def locatedModel (E : Env) (sets : Json) : Option (String × Option String) := d
   | [f] => if f.1.isEmpty then none else some f
   | _ => none
 
-/-- `locatedModel` for a document case the mode refused with `modelRefused`: a plain document (no `soft-norms@0`,
-`rights@0` or `readings@1`, whose sets other routes read), re-read up to its environment. -/
-def locatedOf (j : Json) : Option (String × Option String) := do
+/-- Where a located diagnostic points: a JSON `path` into a distinguishing model, a span in a strict fence's text,
+or nowhere. -/
+inductive Located
+  | path (pointer : String)
+  | span (source : String) (diagnostic : ParseDiagnostic.Error)
+  | none
+
+/-- `_content`'s strict fence for a case the mode refused with `strictRefused`: the first strict fence, in unit order,
+the `check` mode's parser refuses (`contentOf` read every earlier unit), read as Python reads it
+(`parse(formula_env, fences[id])`: the `parse` mode, `Standalone.reportedParse`, over the environment and the fence as
+written), with its span in the fence's text when the mode gives one. Python's `parse` reads an environment with a
+statement layer, a block or units itself (`_lean_parse_scope`), so none is taken there. -/
+def locatedFence (E : Env) (doc : Loader.Split) : Option (String × Located) := do
+  if ["soft-norms@0", "reports@0", "speech-acts@0", "rights@0", "alternatives@0", "risk@0"].any E.profiles.contains ||
+      (E.json.getObjVal? "unit_schema").isOk || (E.json.getObjVal? "alternatives").isOk then none
+  let raw := match doc.front.getObjValD "units" with
+    | .arr us => us.toList.flatMap fun (u : Json) => match u.getObjVal? "parts" with
+      | .ok (.arr ps) => ps.toList
+      | _ => [u]
+    | _ => []
+  let refused := raw.find? fun (u : Json) =>
+    let id := (u.getObjValD "id").getStr?.toOption.getD ""
+    u.getObjValD "surface" == .str "strict" && u.getObjValD "content" == Json.mkObj [("fence", .str id)] &&
+      match doc.fences.lookup id with
+      | some text => (Standalone.parseCase (Json.mkObj [("id", .str id), ("environment", E.checked.decodable),
+          ("source", .str text.trim)])).toOption.isNone
+      | none => false
+  let u ← refused
+  let text ← doc.fences.lookup ((u.getObjValD "id").getStr?.toOption.getD "")
+  let request := Json.mkObj [("id", .str "parse"), ("environment", E.json), ("source", .str text)]
+  match Standalone.parseCase request with
+  | .ok _ => none
+  | .error message =>
+    match Standalone.parseRejection request message with
+    | some (shown, source, diagnostic) => some (shown, .span source diagnostic)
+    | none => some (message, .none)
+
+/-- The located diagnostic of a document case the mode refused with `modelRefused` or `strictRefused`: a plain
+document's (no `soft-norms@0`, `rights@0` or `readings@1`, whose sets and fences other routes read), re-read up to its
+environment. -/
+def locatedOf (j : Json) (message : String) : Option (String × Located) := do
   let text ← (j.getObjValD "document").getStr?.toOption
   let doc ← (split text).toOption
   let E ← (environmentOf (doc.front.getObjValD "environment") (doc.front.getObjValD "units")).toOption
   if E.soft || E.rights || E.profiles.contains "readings@1" then none
-  locatedModel E (Loader.optionalList doc.front "reading_sets")
+  if message == modelRefused then
+    let (shown, path) ← locatedModel E (Loader.optionalList doc.front "reading_sets")
+    pure (shown, match path with
+      | some p => .path p
+      | none => .none)
+  else if message == strictRefused then locatedFence E doc
+  else none
 
-/-- The error row of a located diagnostic: the case's id, the text, and the JSON `path` when it has one. -/
-def locatedRow (j : Json) (message : String) (path : Option String) : Json :=
-  match path with
-  | some p => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message),
+/-- The error row of a located diagnostic: the case's id, the text, and its JSON `path` or fence span. -/
+def locatedRow (j : Json) (message : String) (at_ : Located) : Json :=
+  match at_ with
+  | .path p => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message),
       ("path", .str p)]
-  | none => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
+  | .span source diagnostic => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
+      ("error", .str message), ("span", ParseDiagnostic.span source diagnostic)]
+  | .none => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
 
 def runCaseReported (j : Json) : Json :=
   match documentCase j with
   | .ok result => result
   | .error message =>
-    match (if message == modelRefused then locatedOf j else none) with
-    | some (text, path) => locatedRow j text path
+    match locatedOf j message with
+    | some (text, at_) => locatedRow j text at_
     | none => Standalone.reported (fun _ => .error message) j
 
 end VE.Service.Document

@@ -160,10 +160,23 @@ def coverage : Shape :=
       ("residual_total", ref "common.json#/$defs/nat"),
       ("alternatives", ref "#/$defs/cells")]]
 
+/-- A strict fence's located diagnostic (`Service.Document.locatedFence`, batch 16f): the `parse` mode's text and its
+span in the fence's text, which the receiver binds to a strict fence of the document sent. -/
+def fence_error : Shape :=
+  n [obj, .required ["id", "status", "error", "span"],
+    closed [("id", n [str, .equals "/id"]), ("status", constS "error"),
+      ("error", ref "common.json#/$defs/text"),
+      ("span", n [obj, .required ["start", "end", "line", "column"],
+        closed [("start", ref "common.json#/$defs/nat"),
+          ("end", ref "common.json#/$defs/nat"),
+          ("line", ref "common.json#/$defs/nat"),
+          ("column", ref "common.json#/$defs/nat")]])]]
+
 def «row» : Shape :=
   .anyOf [
     ref "common.json#/$defs/case_error",
     ref "common.json#/$defs/error",
+    ref "#/$defs/fence_error",
     n [obj,
       .required ["id", "status", "document_id", "source_id", "source", "units", "coverage"],
       closed [
@@ -179,7 +192,7 @@ def file : File where
   name := "document.json"
   comment := some "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage."
   top := [("row", «row»)]
-  defs := [("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("cells", .schema cells),
+  defs := [("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("cells", .schema cells),
     ("block_coverage", .schema blockCoverage), ("soft_exception", .schema soft_exception),
     ("soft_norm", .schema soft_norm), ("cites", .schema cites), ("soft_content", .schema soft_content),
     ("rights_line", .schema rights_line), ("rights_condition", .schema rights_condition),
