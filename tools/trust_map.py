@@ -766,26 +766,39 @@ def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]
     return base, None
 
 
-def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]], list[str], dict | None]:
-    """Measure the tree of commit `rev` with this tool's rules: its `lean/` and side table are read
-    from git into a scratch directory (no worktree, index or stash is touched). Also returns that
-    commit's baseline, or None when it has none. A git failure is a problem, never an empty tree."""
-    table = TABLE.relative_to(ROOT).as_posix()
-    archive = subprocess.run(["git", "-C", str(root), "archive", "--format=tar", rev, "--", "lean", table],
-                             capture_output=True)
+def extract_rev(rev: str, tree: Path, root: Path = ROOT) -> str | None:
+    """Write the `lean/` directory and side table of commit `rev` under `tree`, read from git (no
+    worktree, index or stash is touched); `walk(tree, *rev_paths(tree))` then reads that commit. The
+    problem when git cannot read them, never an empty tree."""
+    archive = subprocess.run(["git", "-C", str(root), "archive", "--format=tar", rev, "--", "lean",
+                              TABLE.relative_to(ROOT).as_posix()], capture_output=True)
     if archive.returncode:
-        return {}, [f"git archive {rev}: {archive.stderr.decode(errors='replace').strip()}"], None
-    shown = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{BASELINE.relative_to(ROOT).as_posix()}"],
-                           capture_output=True)
-    try:
-        parent_baseline = json.loads(shown.stdout) if shown.returncode == 0 else None
-    except ValueError as error:
-        return {}, [f"{rev}: {BASELINE.name} is not JSON: {error}"], None
+        return f"git archive {rev}: {archive.stderr.decode(errors='replace').strip()}"
+    with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
+        tar.extractall(tree, filter="data")
+    return None
+
+
+def rev_paths(tree: Path) -> tuple[Path, Path]:
+    """The side table and statement list of a tree `extract_rev` wrote."""
+    return tree / TABLE.relative_to(ROOT), tree / STATEMENTS.relative_to(ROOT)
+
+
+def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]], list[str], dict | None]:
+    """Measure the tree of commit `rev` with this tool's rules (`extract_rev`). Also returns that
+    commit's baseline, or None when it has none. A git failure is a problem, never an empty tree."""
     with tempfile.TemporaryDirectory() as scratch:
         tree = Path(scratch)
-        with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
-            tar.extractall(tree, filter="data")
-        files, problems = measure(tree, tree / table, tree / STATEMENTS.relative_to(ROOT))
+        problem = extract_rev(rev, tree, root)
+        if problem:
+            return {}, [problem], None
+        shown = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{BASELINE.relative_to(ROOT).as_posix()}"],
+                               capture_output=True)
+        try:
+            parent_baseline = json.loads(shown.stdout) if shown.returncode == 0 else None
+        except ValueError as error:
+            return {}, [f"{rev}: {BASELINE.name} is not JSON: {error}"], None
+        files, problems = measure(tree, *rev_paths(tree))
     return files, [f"{rev}: {p}" for p in problems], parent_baseline
 
 
