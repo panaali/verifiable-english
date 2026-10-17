@@ -5,6 +5,7 @@ import VE.Readings.SoftExamples
 import VE.Readings.SoftSeparate
 import VE.Readings.SoftSeparateExamples
 import VE.Audit
+import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
 import VE.Grammar.Reading

@@ -340,6 +340,30 @@ def _timing_out(monkeypatch):
     monkeypatch.setattr(ve.search, "find_countermodel", timed_out)
 
 
+def _lifted_timing_out(monkeypatch):
+    """Only the lifted choices' Rust searches time out: the search raises RustTimeout while `Superposed._lifted`
+    runs and is the real search everywhere else. Returns the searches it refused."""
+    import ve.search
+    from ve.readings_verdicts import Superposed
+    real_search, real_lifted, refused, inside = ve.search.find_countermodel, Superposed._lifted, [], []
+
+    def search(*args, **kwargs):
+        if not inside:
+            return real_search(*args, **kwargs)
+        refused.append(args)
+        raise rust_jsonl.RustTimeout("CheckerUnavailable: Rust checker failed: timed out")
+
+    def lifted(self, *args):
+        inside.append(True)
+        try:
+            return real_lifted(self, *args)
+        finally:
+            inside.pop()
+    monkeypatch.setattr(ve.search, "find_countermodel", search)
+    monkeypatch.setattr(Superposed, "_lifted", lifted)
+    return refused
+
+
 def test_readings_premise_check_searches_the_sort_lean_raises(three_agents, searches):
     """The raised branch: the shared bound finds no model, the search at Lean's raised bound does, and Lean
     checks it (`readings-model`)."""
@@ -376,8 +400,11 @@ def test_readings_premise_check_timeout_is_no_witness(three_agents, m4, monkeypa
 
 @pytest.mark.parametrize("assumed", [[("rs1", 1)], None])
 def test_readings_entailment_timeout_is_still_unavailable(m4, monkeypatch, assumed):
-    """Review F1: outside the premise check a Rust timeout is CheckerUnavailable, as before premise-scale, in the
-    lifted choices' searches and in the search on `sup D` alike (named readings, and the fold over the choices)."""
+    """Review F1: outside the premise check a Rust timeout is CheckerUnavailable, as before premise-scale (named
+    readings, and the fold over the choices). First every Rust search times out; then the lifted choices' searches
+    are skipped (`_lifted` finds nothing) and the search on `sup D` alone times out. Neither part isolates the
+    lifted choices' searches (were their timeout no witness, the search on `sup D` would still time out):
+    `test_readings_entailment_lifted_timeout_is_unavailable` covers them alone."""
     from tests.test_readings_s2_document import every
     from ve.readings_verdicts import Superposed
     _timing_out(monkeypatch)
@@ -386,6 +413,19 @@ def test_readings_entailment_timeout_is_still_unavailable(m4, monkeypatch, assum
     monkeypatch.setattr(Superposed, "_lifted", lambda *args: None)
     with pytest.raises(CheckerUnavailable):
         _route(m4).entailment(every("avoid_required"), assumed=assumed)
+
+
+@pytest.mark.parametrize("assumed", [[("rs1", 1)], None])
+def test_readings_entailment_lifted_timeout_is_unavailable(m4, monkeypatch, assumed):
+    """Review F9: only the lifted choices' Rust searches time out (inside `Superposed._lifted`); the search on
+    `sup D` is the real one, and without the timeout the entailment answers. With it the answer is
+    CheckerUnavailable, never a verdict: an entailment's lifted search treats a timeout as no witness nowhere."""
+    from tests.test_readings_s2_document import every
+    assert "verdict" in _route(m4).entailment(every("avoid_required"), assumed=assumed)
+    refused = _lifted_timing_out(monkeypatch)
+    with pytest.raises(CheckerUnavailable):
+        _route(m4).entailment(every("avoid_required"), assumed=assumed)
+    assert refused
 
 
 @pytest.mark.parametrize("assumed", [[("rs1", 1)], None])
