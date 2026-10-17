@@ -14,12 +14,14 @@ dependency order over all of them
 * `background`: the regenerated Background in Python's generator order: the
   FOL projection's flags, every definition's core biconditional in that one
   order (`definitionPremises`), then the FOL projection's literals;
-* `evaluate` and `countermodel`: the FOL projection of the model is decoded
-  with its flags checked and its defined tables computed (`decodeDataModel`,
-  `InvalidModel(flags|definitions|literals)`), the n-ary defined tables are
-  computed under the same budget and tuple count (`completeModel`), and the
-  core route answers the case over the environment without the layer fields
-  and the model with the computed defined tables added;
+* `evaluate` and `countermodel`: the FOL projection of the model (base unary
+  and binary predicates, no defined ones) is decoded with its flags checked
+  (`decodeDataModel`, `InvalidModel(flags|literals)`), every defined table is
+  computed in the one dependency order under one shared budget and tuple count
+  and each definition's biconditional checked (`completeModel`,
+  `InvalidModel(definitions)`), and the core route answers the case over the
+  environment without the layer fields and the model with the computed defined
+  tables added;
 * `certificate`: the core route's certificate branch over that Background,
   bound to the submitted environment (`coreCertificate`). -/
 namespace VE.Core.Layers
@@ -164,15 +166,17 @@ theorem firstBad_none (E : VE.Environment) : (ds : List NaryDef) → firstBad E 
       · cases h
     · cases h
 
-/-- The dependency graph of every definition: the FOL definitions `fol`, then the n-ary `entries`. -/
+/-- The dependency graph of the FOL projection's definitions `fol`, then the core `entries`.
+The layered route passes `L.rv.definitions` as `fol`, which is empty (`folPredicates` drops
+every defined declaration), so `entries` holds every definition. -/
 def definitionNodes (fol : List VE.Definitions.Def) (entries : List NaryDef) : List VE.Route.DepNode :=
   fol.map (fun d => ⟨d.name, VE.Definitions.mentions d.body⟩) ++
     entries.map fun d => ⟨d.name, mentions d.body⟩
 
 /-- The one dependency order over every definition (`dependencyOrder`, its cycle diagnostic,
-over the FOL definitions `fol` and the n-ary `entries`, as Python orders all of them at once),
-and the n-ary definitions in that order, each checked over the core environment `E`. The
-vocabulary's 256-predicate limit bounds the graph. -/
+over `fol` and `entries` as `definitionNodes` builds them, as Python orders all of them at
+once), and the `entries` in that order, each checked over the core environment `E` for one to
+six arguments (`stepOkFrom 1`). The vocabulary's 256-predicate limit bounds the graph. -/
 def elaborateNary (E : VE.Environment) (fol : List VE.Definitions.Def) (entries : List NaryDef) :
     Except String (List String × List NaryDef) := do
   let order ← VE.Route.dependencyOrder (definitionNodes fol entries)
@@ -214,7 +218,7 @@ def naryEntries (environment : Json) : Except String (List NaryDef) := do
 
 /-- A layered core environment: the FOL projection's layers, the checked core
 environment without the layer fields and its vocabulary, the one dependency order of
-every definition and the elaborated n-ary definitions. -/
+every definition and every definition elaborated in that order, of any arity (`nary`). -/
 structure Layered where
   rv : VE.Route.Wire.RouteVocabulary
   core : Json
@@ -254,7 +258,7 @@ def background (L : Layered) : List (Formula × String) :=
     (definitionPremises L).map (fun a => (a, "definitions")) ++
     (VE.Route.Background.background L.rv.literals).map (fun p => (embed p.1, p.2))
 
-/-- Without n-ary definitions the Background is the FOL route's, embedded. -/
+/-- Without definitions (`L.nary` holds every one) the Background is the FOL route's, embedded. -/
 theorem background_fol (L : Layered) (h : L.nary = []) :
     background L = (VE.Route.Wire.fullBackground L.rv).map (fun p => (embed p.1, p.2)) := by
   simp [background, definitionPremises, h, VE.Route.Wire.fullBackground, List.map_map,
@@ -290,7 +294,7 @@ def bodyValue (M : VE.FiniteModel VE.Bridge.Entity) (mem : String → List VE.Br
     (body : Formula) (acc : List VE.Bridge.Entity) (w : Nat) : Option (Bool × Nat) :=
   (VE.Route.Budget.evalN mem M VE.Time.maxEvaluations acc body ⟨w, {}⟩).map fun r => (r.1, r.2.work)
 
-/-- Each n-ary definition's biconditional under its own evaluation budget, as the FOL
+/-- Each definition's biconditional (every arity) under its own evaluation budget, as the FOL
 layer checks its definitions (`Wire.definitionsCheck`): UNKNOWN is `ResourceLimit`. -/
 def naryCheck (mem : String → List VE.Bridge.Entity → Bool)
     (M : VE.FiniteModel VE.Bridge.Entity) : List Formula → Except String Unit

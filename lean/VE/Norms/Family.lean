@@ -466,7 +466,8 @@ def usesInt (environment : Json) : Bool :=
     | .error _ => false
   predicates || constants
 
-/-- Whether a guard or carve-out is first-order in its family. A formula the
+/-- Whether a guard, a carve-out or a definition body is first-order in its family
+(`firstOrder`, `firstOrderDefinition`). A formula the
 family decoder refuses counts as first-order: the FOL view's decoder reports it. -/
 def firstOrderFormula (order : Bool) (j : Json) : Bool :=
   if order then match VE.Order.Wire.decodeFormula 64 j with
