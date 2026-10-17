@@ -1,0 +1,26 @@
+{
+  "purpose": "Review fix F1-F4 changed ve/ and lean/ after the seven-corpus A/B (head 074f96d3); the corpora that reach the readings routes are recorded again on the fixed code and compared with the saved base recording.",
+  "base_commit": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+  "base_recording_sha256": "602fdbcf69f8a933e41944091141a04e58397736e78877b12e2383a5e71e7374",
+  "head_code_commit": "cd4f21c4c6e7a06342eff1c706b62884fc37c8a0",
+  "head_recorded_at": "f4d0b4c017d73fb8af90e81c70e92c87b3edeafe",
+  "head_recording_sha256": "16a1abae3734d0af618bc2651ad55919b5873f7ae648a6dcad724ca6a51e35fb",
+  "corpora": [
+    "document",
+    "norm_defaults",
+    "readings"
+  ],
+  "head_records": {
+    "readings": 1137,
+    "norm_defaults": 2020,
+    "document": 3632
+  },
+  "same": 6789,
+  "differences_in_recorded_corpora": [],
+  "unavailable_both": {},
+  "commands": [
+    "uv run python tools/lean_first_diff.py record --root . --out head.jsonl --corpus readings norm_defaults document --workers 4",
+    "uv run python tools/lean_first_diff.py compare base2.jsonl head.jsonl --corpus readings norm_defaults document --json compare.json"
+  ],
+  "note": "compare counts the corpora not recorded on the head (conformance, quantity, probe, discourse, rights, pilots) as head-missing rows; those are not differences of the fixed code and are excluded here."
+}
