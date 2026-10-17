@@ -280,24 +280,23 @@ def sortNouns (E : Env) (O : Overlay) (s : SortDecl) : List String :=
   | none => []
 
 /-- A declared predicate and what the policy reads of it, computed once: its declared wording and negative, the
-keys `duplicateWording` compares, the heads `lintCodes` and `acceptsDeclared` read, its content words and the key
-of its wording. -/
+keys `duplicateWording` compares, its template head and the head it claims (`PolicyCtx.ofHeads`), its content words
+and the key of its wording. -/
 structure PredFacts where
   decl : PredDecl
   wording : Option String
   negative : Option String
   ownKeys : List String
-  lintHead : Option String
   head : Option String
   content : List String
   key : Option String
+  claimed : Option String := none
 
 def PredFacts.of (E : Env) (O : Overlay) (d : PredDecl) : PredFacts :=
   let w := E.declaredWording O d.name
   let n := E.declaredNegative O d.name
   { decl := d, wording := w, negative := n,
     ownKeys := ([w.getD (strictWording d.name d.arity)] ++ n.toList).map wordingKey,
-    lintHead := templateHead (w.getD (strictWording d.name d.arity)) d.arity,
     head := templateHead (w.getD "") d.arity, content := contentWords (w.getD ""), key := w.map wordingKey }
 
 /-- The tables of an environment and an overlay that the policy reads for every symbol. -/
@@ -315,17 +314,18 @@ structure PolicyCtx where
   isHeadNegations : List String
   adjBlocked : List String
   suggestedNegHeads : List String
+  settled : List (String × List String) := []
 
-def PolicyCtx.of (E : Env) (O : Overlay) : PolicyCtx :=
-  let preds := E.declaredPreds.map (PredFacts.of E O)
+def PolicyCtx.ofHeads (E : Env) (O : Overlay) (lintHeads : List (String × String)) : PolicyCtx :=
+  let preds := E.declaredPreds.map fun d => let f := PredFacts.of E O d
+    { f with claimed := if lintHeads.any (·.2 == d.name) then f.head else none }
   let predNames := E.declaredPreds.map (·.name)
   let sortNames := E.declaredSorts.map (·.name)
   let constNames := E.declaredConsts.map (·.name)
-  let lintHeads := preds.filterMap fun f => f.lintHead.map (·, f.decl.name)
   let isHeads := preds.filterMap fun f => match f.wording with
-    | some v => if v.startsWith "{0} is " then (splitWs v)[2]? else none
+    | some v => if v.startsWith "{0} is " && f.claimed.isSome then (splitWs v)[2]? else none
     | none => none
-  let sHeads := predNames ++ preds.filterMap (·.head)
+  let sHeads := predNames ++ lintHeads.map (·.1)
   { E, O, preds, predNames, constNames, names := sortNames ++ predNames ++ constNames, lintHeads,
     nounLasts := E.declaredSorts.flatMap fun s => (sortNouns E O s).map fun n => ((tokens n).getLast?, s.name),
     nounTokens := (sortNames ++ E.declaredSorts.flatMap (sortNouns E O)).map tokens,
@@ -341,8 +341,6 @@ def templateCodesIn (c : PolicyCtx) (value : String) : List String :=
   (if value.length > 80 || (splitWs value).length > 8 then ["TEMPLATE_LENGTH"] else []) ++
   (if c.nounTokens.any (fun ts => !ts.isEmpty &&
       (List.range (tw.length + 1)).any fun i => (tw.drop i).take ts.length == ts) then ["SORT_NOUN"] else [])
-
-def templateCodes (E : Env) (O : Overlay) (value : String) : List String := templateCodesIn (PolicyCtx.of E O) value
 
 /-- The lint codes of a declared wording `value` of predicate `name` (`_NaturalVocabulary`). -/
 def lintCodesIn (c : PolicyCtx) (name value : String) (k : Nat) : List String :=
@@ -384,16 +382,11 @@ def lintCodesIn (c : PolicyCtx) (name value : String) (k : Nat) : List String :=
           | _, _ => [])
     (templateCodesIn c value ++ dup ++ shape).eraseDups
 
-def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List String :=
-  lintCodesIn (PolicyCtx.of E O) name value k
-
 /-- Step 4 of `acceptsDeclared` (english.py:368–372): the key of `p`'s declared wording or negative is the key of
 another declared predicate's wording (its strict wording when it declares none) or declared negative. -/
 def duplicateWordingIn (c : PolicyCtx) (p : String) : Bool :=
   let mine := ((c.E.declaredWording c.O p).toList ++ (c.E.declaredNegative c.O p).toList).map wordingKey
   (c.preds.filter (·.decl.name != p)).any fun f => f.ownKeys.any fun x => mine.any (x == ·)
-
-def duplicateWording (E : Env) (O : Overlay) (p : String) : Bool := duplicateWordingIn (PolicyCtx.of E O) p
 
 /-- Whether Python accepts the declared wording of `name` (english.py:264–372). -/
 def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
@@ -401,7 +394,7 @@ def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
   match E.predicate? name, E.declaredWording c.O name with
   | some d, some t =>
     let k := d.arity
-    let codes := lintCodesIn c name t k
+    let codes := (c.settled.lookup name).getD (lintCodesIn c name t k)
     if k > 2 then codes.isEmpty else
     let idiom := (idioms k).contains t
     let p0 := if t.startsWith "{0} " then t.drop 4 else t
@@ -412,7 +405,7 @@ def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
     let occurs := wordOccursIn phraseRuns phrase
     let collision :=
       ((c.predNames ++ c.constNames).filter (· != name)).any occurs ||
-      others.any fun f => match f.head with
+      others.any fun f => match f.claimed with
         | some h => !["is", "was", "a", "an"].contains h && occurs h
         | none => false
     let negated := (splitWs phrase).any c.isHeadNegations.contains
@@ -427,7 +420,7 @@ def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
     let idiomCollision := c.constNames.any occurs ||
       others.any fun f =>
         let d2 := f.decl
-        let head := f.head
+        let head := f.claimed
         [some d2.name, head].any fun tok? => match tok? with
           | none => false
           | some tok =>
@@ -454,6 +447,28 @@ def acceptsDeclaredIn (c : PolicyCtx) (name : String) : Bool :=
       (runs isLower (pyLower t)).any comparisonWords.contains)
     accepted4 && !duplicateWordingIn c name
   | _, _ => false
+
+/-- Python's head fixed point (printer.py:190–213): the wordings the lint passes without heads claim theirs; those it
+then rejects give theirs up and keep that round's codes (`settled`). Fewer heads only remove codes, so one round
+reaches it. No table reads a constant entry, and dropping them keeps `overlayCheck_constants` a `rfl`. -/
+def PolicyCtx.of (E : Env) (O : Overlay) : PolicyCtx :=
+  let O := { O with constants := [] }
+  let codes (c : PolicyCtx) (f : PredFacts) := (f.wording.map (lintCodesIn c f.decl.name · f.decl.arity)).getD []
+  let heads (fs : List PredFacts) := fs.filterMap fun f => f.head.map (·, f.decl.name)
+  let c := PolicyCtx.ofHeads E O []
+  let kept := c.preds.filter fun f => f.wording.isSome && (codes c f).isEmpty
+  let c := PolicyCtx.ofHeads E O (heads kept)
+  let checked := kept.map fun f => (f, codes c f)
+  let ok := (checked.filter (·.2.isEmpty)).map (·.1)
+  let settled := checked.map fun (f, cs) => (f.decl.name, cs)
+  if ok.length == kept.length then { c with settled } else { PolicyCtx.ofHeads E O (heads ok) with settled }
+
+def templateCodes (E : Env) (O : Overlay) (value : String) : List String := templateCodesIn (PolicyCtx.of E O) value
+
+def lintCodes (E : Env) (O : Overlay) (name value : String) (k : Nat) : List String :=
+  lintCodesIn (PolicyCtx.of E O) name value k
+
+def duplicateWording (E : Env) (O : Overlay) (p : String) : Bool := duplicateWordingIn (PolicyCtx.of E O) p
 
 def acceptsDeclared (E : Env) (O : Overlay) (name : String) : Bool := acceptsDeclaredIn (PolicyCtx.of E O) name
 
