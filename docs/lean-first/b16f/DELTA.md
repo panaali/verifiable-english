@@ -7,13 +7,13 @@ distinguishing models, and the malformed-profile and environment-key groups. `re
 a moving HEAD).
 
 <!-- BEGIN GENERATED B16F METRICS -->
-- Saved scope: `85b20fcb..378fabde --no-merges`, 19 commit(s).
+- Saved scope: `85b20fcb..f343e11e --no-merges`, 23 commit(s).
 - Batch 16f's groups (16c ledger, 118 cases): Lean decided 116/118 (47 accepted with the prior path's report, 69 rejected, 0 with an error differing from the prior path's); 2 retained invalid inputs.
 - By group: distinguishing models 26 error; environment key 25 error; fenced content 9 error, 3 ok; malformed profile 8 error; norm content 18 ok; senses 1 error, 4 ok, 2 retained; soft norms 22 ok.
 - Outside the batch's groups: 12 cases, 12 of them valid documents still on the retained path.
 - Nine-corpus A/B: 100394 records per side; 100386 the same; 0 unlisted differences (8 unavailable listed in delta.json).
-- Seeded faults caught: 18/18 (10 Lean, 8 Python), in lean/VE/Service/Document.lean, tools/lean_first_diff.py, ve/document.py.
-- Relay mutation gate (document route): 3199 mutants, 3091 refused, 108 allowed, 0 failures. Differential fuzz (CI sample): 0 new differences, passed True.
+- Seeded faults caught: 22/22 (10 Lean, 12 Python), in lean/VE/Service/Document.lean, tools/lean_first_diff.py, tools/relay_mutation_gate.py, ve/document.py.
+- Relay mutation gate (document route): 3661 mutants, 3659 refused, 2 allowed, 0 failures. Differential fuzz (CI sample): 0 new differences, passed True.
 - CPU, head over base, on 4 pilots: check and render ratios 0.97 to 1.27; the Lean document request at most 0.253 s.
 <!-- END GENERATED B16F METRICS -->
 
@@ -103,8 +103,10 @@ new branch. A soft-norms unit uses 16e's typed `soft_content`.
 The receiver binds each new field to the request (R8):
 
 - a senses document's units are read in the senses route's projected environment, so their `meaning_id` is bound
-  there (`_lean_document` reads the route's reading for its checking environment); an English fence the route read
-  as a preamble line or an open unit may have no content, and every other unit's content is required as before;
+  there; and each English fence's content is bound to the senses route's reading Python holds (`_lean_document`
+  reads it before the binding, `_bind_document_answer`'s `senses`): a fence the route read to a formula has exactly
+  that formula, a fence it read as a preamble line or an open unit has no content, and every other unit's content
+  is required as before (looprecheck1 F7: a dropped fence content with its `meaning_id` was accepted);
 
 - a `path` must name a member of a distinguishing model the document supplies, every token an object key or an
   in-range decimal index (`_names_a_model_member`);
@@ -117,9 +119,13 @@ The receiver binds each new field to the request (R8):
 
 `tests/test_b16f_document.py` retypes every leaf of every unit of a genuine soft and norms answer (the schema or the
 binding refuses each), refuses empty, extra, duplicated and missing unit rows, forges each soft member and rebinds
-each meaning id, and refuses shifted, absent and out-of-range paths and spans. The relay mutation gate has soft,
-norms, model-error and fence-error document fixtures; its by-design entries B8 and B9 name what the transport accepts
-and the document binding refuses, each with its test.
+each meaning id, and refuses shifted, absent and out-of-range paths and spans. `tests/test_b16f_senses_document.py`
+puts every relay-gate mutant of two genuine senses answers, and every pair of a unit's members dropped together,
+through `_lean_document`: each is refused or shows what the genuine answer shows. The relay mutation gate has soft,
+norms, senses, model-error and fence-error document fixtures and reads a `document` answer as `ve document` does
+(`SERVICE_READERS["document"]`: the transport, then `_lean_document` with the pack files beside the document), so the
+document entries the binding already refused (B0, B7, B8 and the F5, F6, F10 and F11 paths) are gone from the
+allow-list; only B9 remains, a located row without its location.
 
 ## Deltas and their rulings
 

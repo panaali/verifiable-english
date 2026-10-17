@@ -1,8 +1,24 @@
 {
   "base": "85b20fcba4b1b0473de9e41888059e7e1be22b3a",
-  "head": "378fabde8c03ea0b7eef1a2c3b39a5da440a88e4",
+  "head": "f343e11e2cf05692ef8fcdd8e1e5fe5d1b64d883",
   "command": "git log --no-merges $(git merge-base HEAD main)..HEAD",
   "commits": [
+    {
+      "hash": "f343e11e2cf05692ef8fcdd8e1e5fe5d1b64d883",
+      "subject": "lf-16f looprecheck1 F7: seeded faults for the senses binding and the gate's document reader"
+    },
+    {
+      "hash": "62bc59a2398ee2a9740c13e4ad3e06c24f8374d1",
+      "subject": "lf-16f looprecheck1 F7: the relay gate reads a document answer as ve document does, with a senses fixture"
+    },
+    {
+      "hash": "8805943f4719882d4df16d0a69a5050509e8257b",
+      "subject": "lf-16f looprecheck1 F7: a senses fence's content is bound to the senses route's reading Python holds"
+    },
+    {
+      "hash": "97f10d6a7f7aa2ae9a0c52cafe13c1c5da9671f1",
+      "subject": "lf-16f review fixes: scope at the final code commit, report"
+    },
     {
       "hash": "378fabde8c03ea0b7eef1a2c3b39a5da440a88e4",
       "subject": "lf-16f review fixes: keep the senses route's `_text` for the tests that patch it; b16b's senses fault follows the guard"
