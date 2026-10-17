@@ -621,6 +621,20 @@
    "reason": "QS-1: VE.Closure.Order meaning definitions (Order, Caps, admit, above, atLeast), approved spec section 5; #guard-tested in OrderChecks.lean; ties pass in manage-agents FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
    "commit": "85b20fcba4b1b0473de9e41888059e7e1be22b3a"
+  },
+  {
+   "class": "S",
+   "lines": 76,
+   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
+  },
+  {
+   "class": "V",
+   "lines": 27,
+   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
   }
  ]
 }
