@@ -9036,6 +9036,7 @@
         "VE.Service.Document.Nullable.of",
         "VE.Service.Document.RightsDoc.unowned",
         "VE.Service.Document.Walk",
+        "VE.Service.Document.companions",
         "VE.Service.Document.describedBy",
         "VE.Service.Document.emptySource",
         "VE.Service.Document.exactly",

@@ -445,17 +445,17 @@ def _lean_answer(raw: bytes, admit: bool):
     row, error = answer("document", case)
     if isinstance(error, (CheckerUnavailable, ResourceLimit)):
         return None
+    if error is not None and getattr(error, "path", None) and not _names_a_model_member(raw, error.path):
+        # Batch 16f: a located diagnostic (a distinguishing model's, `Service.Document.locatedModel`) names a member
+        # of a model the document supplies, or it is not bound to the document sent.
+        raise CheckerUnavailable("CheckerUnavailable: the Lean document answer's path names no member of a "
+                                 "distinguishing model of the document sent")
+    if error is not None and getattr(error, "span", None) is not None and not _spans_a_strict_fence(raw, error.span):
+        # Batch 16f: a strict fence's located diagnostic (`Service.Document.locatedFence`) is a span in the text of a
+        # strict fence the document has, with its line and column.
+        raise CheckerUnavailable("CheckerUnavailable: the Lean document answer's span is in no strict fence of the "
+                                 "document sent")
     if error is not None:
-        if getattr(error, "path", None) and not _names_a_model_member(raw, error.path):
-            # Batch 16f: a located diagnostic (a distinguishing model's, `Service.Document.locatedModel`) names a
-            # member of a model the document supplies, or it is not bound to the document sent.
-            raise CheckerUnavailable("CheckerUnavailable: the Lean document answer's path names no member of a "
-                                     "distinguishing model of the document sent")
-        if getattr(error, "span", None) is not None and not _spans_a_strict_fence(raw, error.span):
-            # Batch 16f: a strict fence's located diagnostic (`Service.Document.locatedFence`) is a span in the text
-            # of a strict fence the document has, with its line and column.
-            raise CheckerUnavailable("CheckerUnavailable: the Lean document answer's span is in no strict fence of "
-                                     "the document sent")
         raise error
     return row
 
@@ -502,8 +502,8 @@ def _names_a_model_member(raw: bytes, path) -> bool:
                 if type(node) is dict and token in node:
                     node = node[token]
                 elif (type(node) is list and token.isascii() and token.isdigit()
-                      and (token == "0" or not token.startswith("0")) and int(token) < len(node)):
-                    node = node[int(token)]
+                      and (token == "0" or not token.startswith("0")) and decimal_value(token) < len(node)):
+                    node = node[decimal_value(token)]
                 else:
                     break
             else:
