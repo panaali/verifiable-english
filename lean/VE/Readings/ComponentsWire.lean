@@ -1,6 +1,7 @@
 import VE.Readings.Components
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
+import VE.Readings.SoftWire
 
 /-! `readings-verdicts` over a document's components (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 3, 4.5, 5 rows
 16 to 18; plan RD-4b).
@@ -319,8 +320,14 @@ structure ProductPart where
   route : Route
   unchecked : List (String × String)
 
+/-- rd-9-soft-chain.md 5 row 7 (RD-4a): the soft completion is read only by a document without companions, so a case
+    of the split under it is refused with RD-4a's text by every admission of the split (`admitComponent`,
+    `requireCompletion`), as the abstention refused it before rd-9 narrowed it to the rights chain. Else `x`. -/
+def splitAdmissible {α : Type} (re : VE.Readings.Wire.ReadingsEnvironment) (D : Doc) (x : α) : Except String α :=
+  if VE.Readings.Wire.underSoftCompletion re D then throw VE.Readings.Wire.unsupportedCompanion else pure x
+
 def requireCompletion (b : VE.Readings.Wire.Admitted2) : Except String Unit :=
-  if b.a.re.lower.contains "norm-defaults@0" && b.a.re.chain == .norms then pure () else throw productProfileText
+  if b.a.re.lower.contains "norm-defaults@0" && b.a.re.chain == .norms then pure () else splitAdmissible b.a.re b.D () *> throw productProfileText
 
 /-- A case's admission for the product (4.1 on the case, then the completion's): on its checked part. -/
 def admitPart (name : String) (environment document : Json) : Except String ProductPart := do
@@ -406,7 +413,9 @@ structure PartRun where
 def PartRun.infos (r : PartRun) : List RowInfo := ndInfos r.x
 def PartRun.rows (r : PartRun) : ComponentRows := ⟨r.x.conflictRows, r.x.premiseRows⟩
 def PartRun.answer (r : PartRun) : Json :=
-  verdictsAnswer r.id r.question true r.part.f.r.N.D r.x.A r.named (some r.infos) [] r.dead
+  let units := r.part.f.r.b.a.doc.units.map (fun u => Json.mkObj [("id", .str u)])
+  let document := Json.mkObj [("units", Json.arr units.toArray)]
+  ndVerdictsAnswer r.id r.question document r.part.f.r.N.D r.x.A r.named (some r.infos) [] r.dead
 def PartRun.lines (r : PartRun) : List Line :=
   verdictsPlan r.question true r.part.f.r.N.D r.x.A r.named (some r.infos) [] r.dead
 
@@ -422,32 +431,6 @@ def runPart (id : String) (p : ProductPart) (question : String) (A : Choice) (na
   else throw s!"InvalidInput: unknown readings-verdicts question {question}"
 
 /-! ## The answer -/
-
-/-- A reading's premise status (1.10): narrowed, dead, or the fold of the premise rows of the choices taking it. -/
-def readingPremise (D : Doc) (infos : List RowInfo) (dead : List (String × Nat)) (R : ReadingSet) (i : Nat) : Premise :=
-  if (droppedBy D R i).isSome then .narrowed
-  else if dead.contains (R.id, i) then .dead
-  else
-    let taking := infos.filter (·.choice.contains (R.id, i))
-    if taking.isEmpty then .unknown
-    else match foldPremises (taking.map (fun t => (t.choice, t.premise))) with
-      | .model => .model
-      | .inconsistent => .inconsistent
-      | _ => .unknown
-
-/-- The case's Lean-decided units (1.10): each fixed unit with content by `fixedDecided` on the case's folds, each
-    content-bearing set's unit by `setDecided` on its conflict rows per compatible choice and its readings' premise
-    statuses. -/
-def partDecided (D : Doc) (infos : List RowInfo) (dead : List (String × Nat)) : List String :=
-  let cs := infos.map (fun i => (i.choice, i.conflict))
-  let ps := infos.map (fun i => (i.choice, i.premise))
-  D.items.filterMap (fun it => match it with
-    | .fixed u _ _ => if fixedDecided (foldConflict cs) (foldPremises ps) then some u else none
-    | .set R =>
-      if VE.Readings.Wire.contentBearing R &&
-          setDecided cs ((List.range R.candidates.length).map (readingPremise D infos dead R)) then some R.unit
-      else none
-    | .bar _ _ => none)
 
 /-- A line of the product's plan with the case it is read in (`null`: the document). -/
 def entryJson (component : Option String) (l : Line) : Json :=
@@ -541,15 +524,10 @@ def productPlan (question : String) (runs : List PartRun) (k : Nat) : List (Opti
     | none => []
   else (none, e32Line) :: runs.flatMap partEntries
 
-/-- The units of `us` in the document's order (its `units`, by id): the order every list of the document's units
-    takes on the wire. -/
-def documentOrder (document : Json) (us : List String) : List String :=
-  ((VE.Readings.Wire.arr document "units").map (fun x => VE.Readings.Wire.strOf (x.getObjValD "id"))).filter us.contains
-
 /-- The decided units of every case asked over all of its compatible choices. -/
 def productDecided (runs : List PartRun) : List String :=
   runs.flatMap (fun r =>
-    if r.x.A.isEmpty then
+    if r.named.isNone then
       let dead := (deadOf r.part.f.r.N.D r.infos r.dead).1
       partDecided r.part.f.r.N.D r.infos (dead.getD [])
     else [])

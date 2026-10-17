@@ -1,0 +1,41 @@
+{
+  "mutants": [
+    {
+      "bug": "Lean drops the n-ary body case again: firstOrderDefinition ignores the definition body, so a definition over an n-ary atom goes back to the FOL view",
+      "file": "lean/VE/Norms/Family.lean",
+      "test": "tests/test_stage2_norms.py::test_a_definition_over_a_ternary_predicate_has_its_premises",
+      "also_failed": [
+        "tests/test_stage2_norms.py::test_nary_definitions_on_the_core_family_match_python[3-body]",
+        "tests/test_stage2_norms.py::test_nary_definitions_on_the_core_family_match_python[4-body]"
+      ],
+      "observed": "VEError: invalid indexed formula (3 failed, 6 passed)",
+      "caught": true,
+      "restored": true
+    },
+    {
+      "bug": "Lean drops the n-ary head case: firstOrderDefinition no longer requires a head of at most two arguments, so an n-ary definition the view drops stays on the FOL view",
+      "file": "lean/VE/Norms/Family.lean",
+      "test": "tests/test_stage2_norms.py::test_nary_definitions_on_the_core_family_match_python[3-unused]",
+      "also_failed": [
+        "tests/test_stage2_norms.py::test_nary_definitions_on_the_core_family_match_python[4-unused]"
+      ],
+      "observed": "outcomes differ from the Python reference: certificate invalid, conflict UNKNOWN (2 failed, 7 passed)",
+      "caught": true,
+      "restored": true
+    },
+    {
+      "bug": "Lean shape types the family-norms Background rows with the FOL grammar again (generated_formula), schema regenerated",
+      "file": "lean/ResponseShape/Schemas/Norms.lean",
+      "test": "tests/test_stage2_norms.py::test_the_family_background_carries_every_nary_definition[3]",
+      "also_failed": [
+        "tests/test_stage2_norms.py::test_a_definition_over_a_ternary_predicate_has_its_premises",
+        "tests/test_stage2_norms.py::test_nary_definitions_on_the_core_family_match_python (all 6)",
+        "tests/test_stage2_norms.py::test_the_family_background_carries_every_nary_definition[4]",
+        "tests/test_stage2_norms.py::test_the_family_background_refuses_retyped_nary_rows (run separately)"
+      ],
+      "observed": "CheckerUnavailable: malformed response (background: [1]: ast: unknown tag 'atom') (9 failed)",
+      "caught": true,
+      "restored": true
+    }
+  ]
+}

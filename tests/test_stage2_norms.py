@@ -232,6 +232,134 @@ def test_non_first_order_norms_are_dispatched_and_match_python(monkeypatch, fami
     assert {"norms_elaborate", "norms_certificate", "norms_conflict"} <= {op for op, _ in ops}
 
 
+def nary_defined(arity, shape):
+    """A core-family norms environment whose definitions reach an `arity`-argument
+    predicate `tri`: `pressing`'s body is an atom of `tri` (`body`), `tri` is itself
+    defined (`head`, with `pressing` over it), or `tri` is defined and unused (`unused`)."""
+    raw = flagged(definitions=True, family=("closure@0", "nary@0")).to_dict()
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["tri"] = {"arguments": ["act"] * arity, "description": "tri"}
+    if shape in ("head", "unused"):
+        predicates["tri"]["defined"] = {"arguments": ["act"] * arity,
+                                        "body": ["unary", "urgent", ["var", arity - 1]]}
+    if shape in ("body", "head"):
+        predicates["pressing"]["defined"]["body"] = ["atom", "tri", [["var", 0]] * arity]
+    return Environment(raw)
+
+
+def test_a_definition_over_a_ternary_predicate_has_its_premises(monkeypatch):
+    """lf-14c review F4: the FOL view drops n-ary predicates, so a definition whose
+    body mentions one failed `premises()` with `invalid indexed formula`; the
+    family's reader now elaborates it."""
+    doc = document(nary_defined(3, "body"))
+    expected = [(label, _to_data(f)) for label, f in doc._premises_python()]
+    ops = routed(monkeypatch, "lean")
+    assert [(label, _to_data(f)) for label, f in doc.premises()] == expected
+    assert ("norms_elaborate", "lean") in ops
+
+
+@pytest.mark.parametrize("shape", ["body", "head", "unused"])
+@pytest.mark.parametrize("arity", [3, 4])
+def test_nary_definitions_on_the_core_family_match_python(monkeypatch, arity, shape):
+    """Definitions the FOL view cannot carry (an n-ary head, or a body over an n-ary
+    atom) send the document to the family's reader: elaboration, certificates and
+    conflicts answer as the Python reference does."""
+    env = nary_defined(arity, shape)
+    routed(monkeypatch, "python")
+    expected = outcomes(document(env))
+    assert expected["certificate"].valid and expected["conflict"].status == "CONFLICT-FREE"
+    ops = routed(monkeypatch, "lean")
+    modes = []
+    real = relay.decide
+
+    def spy(mode, cases, **kw):
+        modes.append(mode)
+        return real(mode, cases, **kw)
+
+    monkeypatch.setattr(relay, "decide", spy)
+    assert outcomes(document(env)) == expected
+    assert {"norms_elaborate", "norms_certificate", "norms_conflict"} <= {op for op, _ in ops}
+    assert "family-norms" in modes
+
+
+@pytest.mark.parametrize("arity", [3, 4])
+def test_the_family_background_carries_every_nary_definition(arity):
+    """The family reader's Background has one `definitions` row per definition, n-ary
+    ones included, typed by the family formula grammar of the response schema."""
+    env = nary_defined(arity, "head")
+    doc = document(env)
+    case = {"id": "e", "kind": "norms-elaborate", "environment": env.to_dict(),
+            "norms": [r.to_dict() for r in doc.rules]}
+    row = relay.decide("family-norms", [case])[0]
+    definitions = [b["ast"] for b in row["background"] if b["generator"] == "definitions"]
+    assert len(definitions) == 2 and row["fragment"] is False
+    assert any(json_mentions(ast, ["atom", "tri"]) for ast in definitions)
+
+
+def json_mentions(ast, head):
+    return ast[:len(head)] == head or any(isinstance(a, list) and json_mentions(a, head) for a in ast)
+
+
+def atom_paths(ast, path=()):
+    """The paths of every `atom` node of a wire formula."""
+    if isinstance(ast, list) and ast[:1] == ["atom"]:
+        yield path
+    for i, a in enumerate(ast if isinstance(ast, list) else ()):
+        if isinstance(a, list):
+            yield from atom_paths(a, (*path, i))
+
+
+@pytest.mark.parametrize("arity", [3, 4])
+def test_nary_definitions_with_no_budget_are_unknown(monkeypatch, arity):
+    """With no proof or evaluation budget the family reader's answers are UNKNOWN, never
+    CONFLICT-FREE or a proof."""
+    doc = document(nary_defined(arity, "head"))
+    ops = routed(monkeypatch, "lean")
+    assert check_conflict(doc, prove=True, tableau_steps=0).status == "UNKNOWN"
+    assert check_conflict(doc, prove=True, tableau_steps=500).status == "CONFLICT-FREE"
+    exhausted = prove_norm_entailment(doc, (), Top(), max_steps=0)
+    assert exhausted.status == "ResourceLimit" and exhausted.certificate is None
+    assert ("norms_conflict", "lean") in ops
+
+
+def test_the_family_background_refuses_retyped_nary_rows():
+    """Each n-ary Background row is typed to its leaves: an atom whose name, argument
+    list or argument term is retyped, and a row without its generator, are refused."""
+    from ve.backends.service_schema import Invalid, check_row
+    env = nary_defined(3, "head")
+    doc = document(env)
+    case = {"id": "e", "kind": "norms-elaborate", "environment": env.to_dict(),
+            "norms": [r.to_dict() for r in doc.rules]}
+    row = relay.decide("family-norms", [case])[0]
+    check_row("family-norms", row, case, 0)
+    index = next(i for i, b in enumerate(row["background"]) if json_mentions(b["ast"], ["atom", "tri"]))
+    path = next(atom_paths(row["background"][index]["ast"]))
+
+    def at(mutant):
+        node = mutant["background"][index]["ast"]
+        for i in path:
+            node = node[i]
+        return node
+
+    edits = [lambda a: a.__setitem__(1, 7), lambda a: a.__setitem__(2, {}),
+             lambda a: a.__setitem__(2, [7]), lambda a: a.__setitem__(2, [["var", "0"]]),
+             lambda a: a.__setitem__(0, "atoms"), lambda a: a.pop()]
+    for edit in edits:
+        mutant = deepcopy(row)
+        edit(at(mutant))
+        with pytest.raises(Invalid):
+            check_row("family-norms", mutant, case, 0)
+    for value in (None, 7, "atom", {}):
+        mutant = deepcopy(row)
+        mutant["background"][index]["ast"] = value
+        with pytest.raises(Invalid):
+            check_row("family-norms", mutant, case, 0)
+    mutant = deepcopy(row)
+    del mutant["background"][index]["generator"]
+    with pytest.raises(Invalid):
+        check_row("family-norms", mutant, case, 0)
+
+
 @pytest.mark.parametrize("field", ["order", "label", "target", "sorts"])
 def test_non_first_order_elaboration_refuses_unbound_rows(monkeypatch, field):
     env = flagged(family=("closure@0",), relation=True)
@@ -319,8 +447,8 @@ def test_non_first_order_conflict_witness_is_checked_by_lean(monkeypatch):
 
 def nary_lower_outcome(*, unused_nary_definition):
     """A core-family document whose lower regulated outcome holds an n-ary atom
-    under a binder (corpus document 13's shape). An unused n-ary core definition
-    keeps it on the retained Python route (`family_in_scope`, batch 14c)."""
+    under a binder (corpus document 13's shape), optionally with an unused n-ary
+    core definition, which batch 14c brings into the Lean family scope."""
     raw = flagged(family=("closure@0", "nary@0"), relation=True).to_dict()
     raw["vocabulary"]["predicates"]["tri"] = {
         "arguments": ["act", "act", "party"], "description": "tri"}
@@ -401,19 +529,25 @@ def test_lean_family_route_answers_as_the_retained_python_route(monkeypatch, nam
 def test_retained_python_route_keeps_the_base_nary_expansion(monkeypatch):
     """lf-14b review F2/F3: the n-ary lower outcome answers as the base did
     (`TypeMismatch` from the unsubstituted atom) on the retained route and on
-    the Lean family route alike."""
-    from ve.norms import _lean_route, check_witness
+    the Lean family route alike. Batch 14c brings an n-ary core definition into
+    the Lean family scope, so both documents take the Lean route."""
+    import ve.norms
+    from ve.norms import check_witness
     mismatch = "TypeMismatch: Predicate 'tri'"
     for unused_nary_definition in (True, False):
+        monkeypatch.undo()
         doc, model = nary_lower_outcome(unused_nary_definition=unused_nary_definition)
-        assert _lean_route(doc) is not unused_nary_definition
+        assert ve.norms._lean_route(doc)
         routed(monkeypatch, "lean")
-        with pytest.raises(VEError, match=mismatch):
-            check_conflict(doc, model=model)
-        with pytest.raises(VEError, match=mismatch):
-            check_conflict(doc, prove=True, tableau_steps=300)
-        with pytest.raises(VEError, match=mismatch):
-            check_witness(doc, "required->permitted", model, ["a"])
+        for retained in (False, True):
+            if retained:
+                monkeypatch.setattr(ve.norms, "_lean_route", lambda document: False)
+            with pytest.raises(VEError, match=mismatch):
+                check_conflict(doc, model=model)
+            with pytest.raises(VEError, match=mismatch):
+                check_conflict(doc, prove=True, tableau_steps=300)
+            with pytest.raises(VEError, match=mismatch):
+                check_witness(doc, "required->permitted", model, ["a"])
 
 
 def capture_environment(third):

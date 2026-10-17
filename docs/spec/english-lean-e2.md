@@ -1,5 +1,9 @@
 # English in Lean, E2: Lean decides English admission (statement specification)
 
+> **Later amendment (2026-10-14, DRI X2):** only templates accepted by the author lint contribute a head word.
+> The computed fixture rows below record the earlier E2 draft; current selections and counts are in
+> [the JT cross-plan DELTA](../jt-crossplan-fixes/DELTA.md) and the regenerated S3 reports.
+
 > Status: statement specification, draft 2 with py1 run (2026-10-06), branch `design/english-lean-e2`. This is
 > the item-1 statement spec of [english-lean-E2-PLAN.md](english-lean-E2-PLAN.md) draft 3 (the **plan**). It writes
 > out stages E2.0 to E2.5 on top of `english-lean-s3.md` draft 2 (the **S3 spec**) as built on

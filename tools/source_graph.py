@@ -191,10 +191,11 @@ class Graph:
     def _mentions(self, path: str, summary: Summary) -> set[str]:
         found = set()
         constants = summary.constants
+        product = path.startswith(PRODUCT)
         for constant in constants:
             text = constant.strip()
             text = "." if text in ROOT_SPELLINGS else text.removeprefix("./").rstrip("/")
-            if not text or "\n" in text or (text == "." and path.startswith(PRODUCT)):
+            if not text or "\n" in text or (text == "." and product):
                 continue
             if text in self._file_set:
                 found.add(text)
@@ -203,11 +204,18 @@ class Graph:
             if "/" not in text:
                 found.update(self._basenames.get(text, ()))
                 if text not in GENERIC_DIRECTORIES:
-                    found.update(f"dir:{d}" for d in self._directory_names.get(text, ()))
+                    # A product module finds its own data beside it (`Path(__file__).parent / "packs"`);
+                    # a bare word such as "evidence" or "reports" there is a key or a name under a path
+                    # its caller gives, and the test side names that path. So in a product module a
+                    # bare name stands only for directories of that name inside the product.
+                    found.update(f"dir:{d}" for d in self._directory_names.get(text, ())
+                                 if not product or d.startswith(PRODUCT))
             if text in self._executables:
                 found.add(f"lean-exe:{text}")
             if text in ("lake", "lean"):
                 found.add("lean-tool")
+            if text == "git":
+                found.add("git-tool")
             if "rust/target" in text or text in ("VE_W5_RUST_BIN", "cargo"):
                 found.add("rust")
         if "-m" in constants and "ve" in constants:

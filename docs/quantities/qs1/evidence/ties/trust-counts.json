@@ -1,0 +1,43 @@
+{
+ "base": "a747a9cf70b2",
+ "before": "4e2c73dec (main with qs-1 merged)",
+ "after": "10cb941f7 (the ties commit)",
+ "totals": {
+  "before": {
+   "K": 997,
+   "S": 10155,
+   "G[V]": 27169,
+   "tied": 260,
+   "trusted": 51104,
+   "lines": 170352
+  },
+  "after": {
+   "K": 997,
+   "S": 10152,
+   "G[V]": 27172,
+   "tied": 263,
+   "trusted": 51101,
+   "lines": 170352
+  }
+ },
+ "files": {
+  "VE/Closure/Order.lean": {
+   "before": {
+    "K": 0,
+    "S": 17,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 17,
+    "lines": 205
+   },
+   "after": {
+    "K": 0,
+    "S": 14,
+    "G[V]": 3,
+    "tied": 3,
+    "trusted": 14,
+    "lines": 205
+   }
+  }
+ }
+}

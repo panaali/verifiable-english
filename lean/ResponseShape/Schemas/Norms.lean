@@ -73,7 +73,7 @@ def elaborateWith (formula : Shape) : Shape :=
               .required ["generator", "ast"],
               closed [
                 ("generator", enumS ["flags", "definitions", "literals", "profile"]),
-                ("ast", ref "common.json#/$defs/generated_formula")]])]),
+                ("ast", formula)]])]),
         ("premises", n [
           arr,
           .items (n [

@@ -1,0 +1,1286 @@
+[
+ {
+  "pilot": "c-qt0p-companion.ve.md",
+  "sha256": "b3849e831f415e27a2d295448d8de566c0916b7e3bd5cf2bfdcfecca63d557c1",
+  "bytes": 7590,
+  "exit": 0,
+  "wall_seconds": 1.64,
+  "cpu_seconds": 0.59,
+  "children_peak_mb": 85,
+  "premises": {
+   "status": "model",
+   "model_id": "0326265efbdb4fbc4b3a04ef0111fd5ac0d6413af941bef64df1f472eb8cdafc"
+  },
+  "error": null,
+  "check_seconds": 1.12,
+  "python_peak_mb": 25,
+  "live_children_peak_mb": 85,
+  "live_children_peak_sum_mb": 88,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "c-qt0p-companion.ve.md",
+  "sha256": "b3849e831f415e27a2d295448d8de566c0916b7e3bd5cf2bfdcfecca63d557c1",
+  "bytes": 7590,
+  "exit": 0,
+  "wall_seconds": 2.17,
+  "cpu_seconds": 0.68,
+  "children_peak_mb": 86,
+  "premises": {
+   "status": "model",
+   "model_id": "0326265efbdb4fbc4b3a04ef0111fd5ac0d6413af941bef64df1f472eb8cdafc"
+  },
+  "error": null,
+  "check_seconds": 0.77,
+  "python_peak_mb": 25,
+  "live_children_peak_mb": 86,
+  "live_children_peak_sum_mb": 89,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "c-qt0p-companion.ve.md",
+  "sha256": "b3849e831f415e27a2d295448d8de566c0916b7e3bd5cf2bfdcfecca63d557c1",
+  "bytes": 7590,
+  "exit": 0,
+  "wall_seconds": 3.94,
+  "cpu_seconds": 0.72,
+  "children_peak_mb": 86,
+  "premises": {
+   "status": "model",
+   "model_id": "0326265efbdb4fbc4b3a04ef0111fd5ac0d6413af941bef64df1f472eb8cdafc"
+  },
+  "error": null,
+  "check_seconds": 1.52,
+  "python_peak_mb": 24,
+  "live_children_peak_mb": 86,
+  "live_children_peak_sum_mb": 89,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-M.ve.md",
+  "sha256": "038048d21869f79690f1550ea5d7d2d930b1a3563f35d23e9533d29a66390fe1",
+  "bytes": 12631,
+  "exit": 0,
+  "wall_seconds": 3.39,
+  "cpu_seconds": 0.78,
+  "children_peak_mb": 87,
+  "premises": {
+   "status": "model",
+   "model_id": "3fa3afd49cafcfde9d590e63b9f812ab8c7bb16e798ced19a659a89d926ec3e1"
+  },
+  "error": null,
+  "check_seconds": 1.49,
+  "python_peak_mb": 24,
+  "live_children_peak_mb": 88,
+  "live_children_peak_sum_mb": 91,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-M.ve.md",
+  "sha256": "038048d21869f79690f1550ea5d7d2d930b1a3563f35d23e9533d29a66390fe1",
+  "bytes": 12631,
+  "exit": 0,
+  "wall_seconds": 2.88,
+  "cpu_seconds": 0.76,
+  "children_peak_mb": 87,
+  "premises": {
+   "status": "model",
+   "model_id": "3fa3afd49cafcfde9d590e63b9f812ab8c7bb16e798ced19a659a89d926ec3e1"
+  },
+  "error": null,
+  "check_seconds": 1.79,
+  "python_peak_mb": 25,
+  "live_children_peak_mb": 87,
+  "live_children_peak_sum_mb": 90,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-M.ve.md",
+  "sha256": "038048d21869f79690f1550ea5d7d2d930b1a3563f35d23e9533d29a66390fe1",
+  "bytes": 12631,
+  "exit": 0,
+  "wall_seconds": 3.27,
+  "cpu_seconds": 0.81,
+  "children_peak_mb": 92,
+  "premises": {
+   "status": "model",
+   "model_id": "3fa3afd49cafcfde9d590e63b9f812ab8c7bb16e798ced19a659a89d926ec3e1"
+  },
+  "error": null,
+  "check_seconds": 1.27,
+  "python_peak_mb": 24,
+  "live_children_peak_mb": 92,
+  "live_children_peak_sum_mb": 95,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-V.ve.md",
+  "sha256": "fe788edfa96fe54dad24752db9081776736ce63410441e236236d2458ef4105c",
+  "bytes": 57763,
+  "exit": 0,
+  "wall_seconds": 15.73,
+  "cpu_seconds": 5.31,
+  "children_peak_mb": 88,
+  "premises": {
+   "status": "model",
+   "model_id": "2f1e8332ac6969b5807f8e0e5243524d9c799144809422ca2c54ec9718ed68de"
+  },
+  "error": null,
+  "check_seconds": 13.96,
+  "python_peak_mb": 25,
+  "live_children_peak_mb": 88,
+  "live_children_peak_sum_mb": 92,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-V.ve.md",
+  "sha256": "fe788edfa96fe54dad24752db9081776736ce63410441e236236d2458ef4105c",
+  "bytes": 57763,
+  "exit": 0,
+  "wall_seconds": 18.1,
+  "cpu_seconds": 5.26,
+  "children_peak_mb": 88,
+  "premises": {
+   "status": "model",
+   "model_id": "2f1e8332ac6969b5807f8e0e5243524d9c799144809422ca2c54ec9718ed68de"
+  },
+  "error": null,
+  "check_seconds": 16.08,
+  "python_peak_mb": 25,
+  "live_children_peak_mb": 88,
+  "live_children_peak_sum_mb": 92,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-V.ve.md",
+  "sha256": "fe788edfa96fe54dad24752db9081776736ce63410441e236236d2458ef4105c",
+  "bytes": 57763,
+  "exit": 0,
+  "wall_seconds": 22.8,
+  "cpu_seconds": 5.44,
+  "children_peak_mb": 94,
+  "premises": {
+   "status": "model",
+   "model_id": "2f1e8332ac6969b5807f8e0e5243524d9c799144809422ca2c54ec9718ed68de"
+  },
+  "error": null,
+  "check_seconds": 21.26,
+  "python_peak_mb": 26,
+  "live_children_peak_mb": 94,
+  "live_children_peak_sum_mb": 98,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-V-appendix.ve.md",
+  "sha256": "6b4576e495b53cc24d4951b96dc070c890c0cf99eba1f4ae065f8bbf5b7589b6",
+  "bytes": 34181,
+  "exit": 0,
+  "wall_seconds": 12.54,
+  "cpu_seconds": 4.17,
+  "children_peak_mb": 95,
+  "premises": {
+   "status": "model",
+   "model_id": "f7da745319a19274396eb3631b318c062d9e6f3483bca5270786674d9ad9a76c"
+  },
+  "error": null,
+  "check_seconds": 11.18,
+  "python_peak_mb": 27,
+  "live_children_peak_mb": 95,
+  "live_children_peak_sum_mb": 99,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-V-appendix.ve.md",
+  "sha256": "6b4576e495b53cc24d4951b96dc070c890c0cf99eba1f4ae065f8bbf5b7589b6",
+  "bytes": 34181,
+  "exit": 0,
+  "wall_seconds": 14.24,
+  "cpu_seconds": 3.95,
+  "children_peak_mb": 88,
+  "premises": {
+   "status": "model",
+   "model_id": "f7da745319a19274396eb3631b318c062d9e6f3483bca5270786674d9ad9a76c"
+  },
+  "error": null,
+  "check_seconds": 13.27,
+  "python_peak_mb": 26,
+  "live_children_peak_mb": 88,
+  "live_children_peak_sum_mb": 92,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-V-appendix.ve.md",
+  "sha256": "6b4576e495b53cc24d4951b96dc070c890c0cf99eba1f4ae065f8bbf5b7589b6",
+  "bytes": 34181,
+  "exit": 0,
+  "wall_seconds": 16.07,
+  "cpu_seconds": 3.97,
+  "children_peak_mb": 87,
+  "premises": {
+   "status": "model",
+   "model_id": "f7da745319a19274396eb3631b318c062d9e6f3483bca5270786674d9ad9a76c"
+  },
+  "error": null,
+  "check_seconds": 14.43,
+  "python_peak_mb": 27,
+  "live_children_peak_mb": 87,
+  "live_children_peak_sum_mb": 91,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-DL.ve.md",
+  "sha256": "69e18ea769e263acca05d1a4c64a9095db9353c736cf6367e8fb38bbd4d79ee9",
+  "bytes": 268666,
+  "exit": 0,
+  "wall_seconds": 126.01,
+  "cpu_seconds": 25.05,
+  "children_peak_mb": 96,
+  "premises": {
+   "status": "model",
+   "model_id": "4521779bdc6060a5bdcc9f1efe1e42615cca7fc38954006f9d874b6c87a4d73a"
+  },
+  "error": null,
+  "check_seconds": 124.72,
+  "python_peak_mb": 44,
+  "live_children_peak_mb": 96,
+  "live_children_peak_sum_mb": 99,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-DL.ve.md",
+  "sha256": "69e18ea769e263acca05d1a4c64a9095db9353c736cf6367e8fb38bbd4d79ee9",
+  "bytes": 268666,
+  "exit": 0,
+  "wall_seconds": 82.75,
+  "cpu_seconds": 16.34,
+  "children_peak_mb": 95,
+  "premises": {
+   "status": "model",
+   "model_id": "4521779bdc6060a5bdcc9f1efe1e42615cca7fc38954006f9d874b6c87a4d73a"
+  },
+  "error": null,
+  "check_seconds": 80.04,
+  "python_peak_mb": 44,
+  "live_children_peak_mb": 95,
+  "live_children_peak_sum_mb": 99,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-DL.ve.md",
+  "sha256": "69e18ea769e263acca05d1a4c64a9095db9353c736cf6367e8fb38bbd4d79ee9",
+  "bytes": 268666,
+  "exit": 0,
+  "wall_seconds": 78.36,
+  "cpu_seconds": 15.59,
+  "children_peak_mb": 91,
+  "premises": {
+   "status": "model",
+   "model_id": "4521779bdc6060a5bdcc9f1efe1e42615cca7fc38954006f9d874b6c87a4d73a"
+  },
+  "error": null,
+  "check_seconds": 76.31,
+  "python_peak_mb": 44,
+  "live_children_peak_mb": 91,
+  "live_children_peak_sum_mb": 95,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-H.ve.md",
+  "sha256": "20c8f5d732c88b42d767d9707e7cb2ebced8d7ed23e74baae7bcb4a8b275a1e3",
+  "bytes": 1219270,
+  "exit": 0,
+  "wall_seconds": 110.08,
+  "cpu_seconds": 21.49,
+  "children_peak_mb": 145,
+  "premises": {
+   "status": "model",
+   "model_id": "b1a5446beb6174b451aef75f85c8d101add9b117c6c09032e1ed0692da7f8633"
+  },
+  "error": null,
+  "check_seconds": 108.06,
+  "python_peak_mb": 44,
+  "live_children_peak_mb": 145,
+  "live_children_peak_sum_mb": 150,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-H.ve.md",
+  "sha256": "20c8f5d732c88b42d767d9707e7cb2ebced8d7ed23e74baae7bcb4a8b275a1e3",
+  "bytes": 1219270,
+  "exit": 0,
+  "wall_seconds": 107.33,
+  "cpu_seconds": 22.58,
+  "children_peak_mb": 144,
+  "premises": {
+   "status": "model",
+   "model_id": "b1a5446beb6174b451aef75f85c8d101add9b117c6c09032e1ed0692da7f8633"
+  },
+  "error": null,
+  "check_seconds": 105.25,
+  "python_peak_mb": 44,
+  "live_children_peak_mb": 144,
+  "live_children_peak_sum_mb": 149,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "me-H.ve.md",
+  "sha256": "20c8f5d732c88b42d767d9707e7cb2ebced8d7ed23e74baae7bcb4a8b275a1e3",
+  "bytes": 1219270,
+  "exit": 0,
+  "wall_seconds": 87.45,
+  "cpu_seconds": 21.62,
+  "children_peak_mb": 144,
+  "premises": {
+   "status": "model",
+   "model_id": "b1a5446beb6174b451aef75f85c8d101add9b117c6c09032e1ed0692da7f8633"
+  },
+  "error": null,
+  "check_seconds": 85.66,
+  "python_peak_mb": 44,
+  "live_children_peak_mb": 144,
+  "live_children_peak_sum_mb": 148,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "udhr-part01-plus3.ve.md",
+  "sha256": "74cfca5f09077758711e37e6f412bd163622c0fc97587f5e77f2492d4b08e39a",
+  "bytes": 47500,
+  "exit": 0,
+  "wall_seconds": 24.14,
+  "cpu_seconds": 6.48,
+  "children_peak_mb": 83,
+  "premises": {
+   "status": "model",
+   "route": "superposed",
+   "evidence": "model",
+   "choice": [
+    [
+     "rs_u025",
+     0
+    ]
+   ],
+   "model": {
+    "complete": true,
+    "domains": {
+     "act": [],
+     "actor": [],
+     "attack": [],
+     "bearer": [],
+     "community": [],
+     "day": [],
+     "distinction": [],
+     "finding": [],
+     "holding": [],
+     "interference": [],
+     "intrusion": [],
+     "measure": [],
+     "person": [],
+     "practice": [],
+     "prosecution": [],
+     "subjection": [],
+     "ve__reading": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "ve__here": "e0"
+    },
+    "relations": {
+     "arises_from_acts_contrary_to_un": [],
+     "arises_from_non_political_crime": [],
+     "asylum_right_covers_case": [],
+     "based_on_international_status": [],
+     "based_on_jurisdictional_status": [],
+     "based_on_political_status": [],
+     "committed_on": [],
+     "concerns_correspondence": [],
+     "concerns_correspondence_u046": [],
+     "concerns_family": [],
+     "concerns_family_u046": [],
+     "concerns_home": [],
+     "concerns_home_u046": [],
+     "concerns_honour": [],
+     "concerns_privacy": [],
+     "concerns_privacy_u046": [],
+     "concerns_reputation": [],
+     "constitutes_penal_offence_on": [],
+     "declaration_implies_destructive_right": [],
+     "full_development_possible_in": [],
+     "has_the_right_to_an_effective_remedy": [],
+     "has_the_right_to_liberty": [],
+     "has_the_right_to_life": [],
+     "has_the_right_to_protection_of_the_law_against": [],
+     "has_the_right_to_recognition_as_a_person": [],
+     "has_the_right_to_security_of_person": [],
+     "is_arbitrary": [],
+     "is_arbitrary_u045a": [],
+     "is_arbitrary_u046": [],
+     "is_arrest": [],
+     "is_attack_upon_honour": [],
+     "is_attack_upon_reputation": [],
+     "is_cruel": [],
+     "is_degrading": [],
+     "is_detention": [],
+     "is_entitled_to_equal_protection_of_the_law": [],
+     "is_entitled_to_protection_against_discrimination": [],
+     "is_entitled_to_protection_against_incitement": [],
+     "is_exile": [],
+     "is_inhuman": [],
+     "is_punishment": [],
+     "is_servitude": [],
+     "is_slave_trade": [],
+     "is_slavery": [],
+     "is_slavery_u025": [],
+     "is_torture": [],
+     "is_treatment": [],
+     "on_account_of": [],
+     "owes_duties_to": [],
+     "unsaid__arrest_detention_or_exile_permitted": [],
+     "unsaid__attack_upon_honour_or_reputation_permitted": [],
+     "unsaid__compel_association_membership_permitted": [],
+     "unsaid__distinction_by_country_status_permitted": [],
+     "unsaid__finding_of_guilt_permitted": [],
+     "unsaid__holding_in_slavery_or_servitude_permitted": [],
+     "unsaid__interference_with_private_domains_permitted": [],
+     "unsaid__prohibition_of_slavery_and_slave_trade_required": [],
+     "unsaid__slavery_or_slave_trade_practice_permitted": [],
+     "unsaid__subjection_to_ill_treatment_permitted": [],
+     "ve__bit__1__0": []
+    }
+   },
+   "gaps": [],
+   "candidates": [
+    {
+     "set": "rs_u025",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "rs_u025",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 22.27,
+  "python_peak_mb": 33,
+  "live_children_peak_mb": 83,
+  "live_children_peak_sum_mb": 87,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "udhr-part01-plus3.ve.md",
+  "sha256": "74cfca5f09077758711e37e6f412bd163622c0fc97587f5e77f2492d4b08e39a",
+  "bytes": 47500,
+  "exit": 0,
+  "wall_seconds": 24.01,
+  "cpu_seconds": 6.5,
+  "children_peak_mb": 91,
+  "premises": {
+   "status": "model",
+   "route": "superposed",
+   "evidence": "model",
+   "choice": [
+    [
+     "rs_u025",
+     0
+    ]
+   ],
+   "model": {
+    "complete": true,
+    "domains": {
+     "act": [],
+     "actor": [],
+     "attack": [],
+     "bearer": [],
+     "community": [],
+     "day": [],
+     "distinction": [],
+     "finding": [],
+     "holding": [],
+     "interference": [],
+     "intrusion": [],
+     "measure": [],
+     "person": [],
+     "practice": [],
+     "prosecution": [],
+     "subjection": [],
+     "ve__reading": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "ve__here": "e0"
+    },
+    "relations": {
+     "arises_from_acts_contrary_to_un": [],
+     "arises_from_non_political_crime": [],
+     "asylum_right_covers_case": [],
+     "based_on_international_status": [],
+     "based_on_jurisdictional_status": [],
+     "based_on_political_status": [],
+     "committed_on": [],
+     "concerns_correspondence": [],
+     "concerns_correspondence_u046": [],
+     "concerns_family": [],
+     "concerns_family_u046": [],
+     "concerns_home": [],
+     "concerns_home_u046": [],
+     "concerns_honour": [],
+     "concerns_privacy": [],
+     "concerns_privacy_u046": [],
+     "concerns_reputation": [],
+     "constitutes_penal_offence_on": [],
+     "declaration_implies_destructive_right": [],
+     "full_development_possible_in": [],
+     "has_the_right_to_an_effective_remedy": [],
+     "has_the_right_to_liberty": [],
+     "has_the_right_to_life": [],
+     "has_the_right_to_protection_of_the_law_against": [],
+     "has_the_right_to_recognition_as_a_person": [],
+     "has_the_right_to_security_of_person": [],
+     "is_arbitrary": [],
+     "is_arbitrary_u045a": [],
+     "is_arbitrary_u046": [],
+     "is_arrest": [],
+     "is_attack_upon_honour": [],
+     "is_attack_upon_reputation": [],
+     "is_cruel": [],
+     "is_degrading": [],
+     "is_detention": [],
+     "is_entitled_to_equal_protection_of_the_law": [],
+     "is_entitled_to_protection_against_discrimination": [],
+     "is_entitled_to_protection_against_incitement": [],
+     "is_exile": [],
+     "is_inhuman": [],
+     "is_punishment": [],
+     "is_servitude": [],
+     "is_slave_trade": [],
+     "is_slavery": [],
+     "is_slavery_u025": [],
+     "is_torture": [],
+     "is_treatment": [],
+     "on_account_of": [],
+     "owes_duties_to": [],
+     "unsaid__arrest_detention_or_exile_permitted": [],
+     "unsaid__attack_upon_honour_or_reputation_permitted": [],
+     "unsaid__compel_association_membership_permitted": [],
+     "unsaid__distinction_by_country_status_permitted": [],
+     "unsaid__finding_of_guilt_permitted": [],
+     "unsaid__holding_in_slavery_or_servitude_permitted": [],
+     "unsaid__interference_with_private_domains_permitted": [],
+     "unsaid__prohibition_of_slavery_and_slave_trade_required": [],
+     "unsaid__slavery_or_slave_trade_practice_permitted": [],
+     "unsaid__subjection_to_ill_treatment_permitted": [],
+     "ve__bit__1__0": []
+    }
+   },
+   "gaps": [],
+   "candidates": [
+    {
+     "set": "rs_u025",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "rs_u025",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 22.78,
+  "python_peak_mb": 33,
+  "live_children_peak_mb": 91,
+  "live_children_peak_sum_mb": 95,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "udhr-part01-plus3.ve.md",
+  "sha256": "74cfca5f09077758711e37e6f412bd163622c0fc97587f5e77f2492d4b08e39a",
+  "bytes": 47500,
+  "exit": 0,
+  "wall_seconds": 27.79,
+  "cpu_seconds": 6.48,
+  "children_peak_mb": 89,
+  "premises": {
+   "status": "model",
+   "route": "superposed",
+   "evidence": "model",
+   "choice": [
+    [
+     "rs_u025",
+     0
+    ]
+   ],
+   "model": {
+    "complete": true,
+    "domains": {
+     "act": [],
+     "actor": [],
+     "attack": [],
+     "bearer": [],
+     "community": [],
+     "day": [],
+     "distinction": [],
+     "finding": [],
+     "holding": [],
+     "interference": [],
+     "intrusion": [],
+     "measure": [],
+     "person": [],
+     "practice": [],
+     "prosecution": [],
+     "subjection": [],
+     "ve__reading": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "ve__here": "e0"
+    },
+    "relations": {
+     "arises_from_acts_contrary_to_un": [],
+     "arises_from_non_political_crime": [],
+     "asylum_right_covers_case": [],
+     "based_on_international_status": [],
+     "based_on_jurisdictional_status": [],
+     "based_on_political_status": [],
+     "committed_on": [],
+     "concerns_correspondence": [],
+     "concerns_correspondence_u046": [],
+     "concerns_family": [],
+     "concerns_family_u046": [],
+     "concerns_home": [],
+     "concerns_home_u046": [],
+     "concerns_honour": [],
+     "concerns_privacy": [],
+     "concerns_privacy_u046": [],
+     "concerns_reputation": [],
+     "constitutes_penal_offence_on": [],
+     "declaration_implies_destructive_right": [],
+     "full_development_possible_in": [],
+     "has_the_right_to_an_effective_remedy": [],
+     "has_the_right_to_liberty": [],
+     "has_the_right_to_life": [],
+     "has_the_right_to_protection_of_the_law_against": [],
+     "has_the_right_to_recognition_as_a_person": [],
+     "has_the_right_to_security_of_person": [],
+     "is_arbitrary": [],
+     "is_arbitrary_u045a": [],
+     "is_arbitrary_u046": [],
+     "is_arrest": [],
+     "is_attack_upon_honour": [],
+     "is_attack_upon_reputation": [],
+     "is_cruel": [],
+     "is_degrading": [],
+     "is_detention": [],
+     "is_entitled_to_equal_protection_of_the_law": [],
+     "is_entitled_to_protection_against_discrimination": [],
+     "is_entitled_to_protection_against_incitement": [],
+     "is_exile": [],
+     "is_inhuman": [],
+     "is_punishment": [],
+     "is_servitude": [],
+     "is_slave_trade": [],
+     "is_slavery": [],
+     "is_slavery_u025": [],
+     "is_torture": [],
+     "is_treatment": [],
+     "on_account_of": [],
+     "owes_duties_to": [],
+     "unsaid__arrest_detention_or_exile_permitted": [],
+     "unsaid__attack_upon_honour_or_reputation_permitted": [],
+     "unsaid__compel_association_membership_permitted": [],
+     "unsaid__distinction_by_country_status_permitted": [],
+     "unsaid__finding_of_guilt_permitted": [],
+     "unsaid__holding_in_slavery_or_servitude_permitted": [],
+     "unsaid__interference_with_private_domains_permitted": [],
+     "unsaid__prohibition_of_slavery_and_slave_trade_required": [],
+     "unsaid__slavery_or_slave_trade_practice_permitted": [],
+     "unsaid__subjection_to_ill_treatment_permitted": [],
+     "ve__bit__1__0": []
+    }
+   },
+   "gaps": [],
+   "candidates": [
+    {
+     "set": "rs_u025",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "rs_u025",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 25.47,
+  "python_peak_mb": 33,
+  "live_children_peak_mb": 89,
+  "live_children_peak_sum_mb": 93,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "udhr-part01-plus6.ve.md",
+  "sha256": "1386d6ab635ca0743648cb604676f757df8bc692fd8d5f017bf40c595ccbe115",
+  "bytes": 50400,
+  "exit": 0,
+  "wall_seconds": 43.09,
+  "cpu_seconds": 8.28,
+  "children_peak_mb": 87,
+  "premises": {
+   "status": "model",
+   "route": "superposed",
+   "evidence": "model",
+   "choice": [
+    [
+     "rs_u025",
+     0
+    ]
+   ],
+   "model": {
+    "complete": true,
+    "domains": {
+     "act": [],
+     "actor": [],
+     "applicability": [],
+     "attack": [],
+     "bearer": [],
+     "community": [],
+     "day": [],
+     "distinction": [],
+     "finding": [],
+     "holding": [],
+     "imposition": [],
+     "interference": [],
+     "intrusion": [],
+     "measure": [],
+     "penalty": [],
+     "person": [],
+     "practice": [],
+     "prosecution": [],
+     "subjection": [],
+     "ve__reading": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "ve__here": "e0"
+    },
+    "relations": {
+     "applicability_of": [],
+     "applicability_to": [],
+     "applicable_on": [],
+     "arises_from_acts_contrary_to_un": [],
+     "arises_from_non_political_crime": [],
+     "asylum_right_covers_case": [],
+     "based_on_international_status": [],
+     "based_on_jurisdictional_status": [],
+     "based_on_political_status": [],
+     "committed_on": [],
+     "concerns_correspondence": [],
+     "concerns_correspondence_u046": [],
+     "concerns_family": [],
+     "concerns_family_u046": [],
+     "concerns_home": [],
+     "concerns_home_u046": [],
+     "concerns_honour": [],
+     "concerns_privacy": [],
+     "concerns_privacy_u046": [],
+     "concerns_reputation": [],
+     "constitutes_penal_offence_on": [],
+     "declaration_implies_destructive_right": [],
+     "full_development_possible_in": [],
+     "has_the_right_to_an_effective_remedy": [],
+     "has_the_right_to_liberty": [],
+     "has_the_right_to_life": [],
+     "has_the_right_to_protection_of_the_law_against": [],
+     "has_the_right_to_recognition_as_a_person": [],
+     "has_the_right_to_security_of_person": [],
+     "heavier_than": [],
+     "imposed_for": [],
+     "imposes": [],
+     "is_arbitrary": [],
+     "is_arbitrary_u045a": [],
+     "is_arbitrary_u046": [],
+     "is_arrest": [],
+     "is_attack_upon_honour": [],
+     "is_attack_upon_reputation": [],
+     "is_cruel": [],
+     "is_degrading": [],
+     "is_detention": [],
+     "is_entitled_to_equal_protection_of_the_law": [],
+     "is_entitled_to_protection_against_discrimination": [],
+     "is_entitled_to_protection_against_incitement": [],
+     "is_exile": [],
+     "is_inhuman": [],
+     "is_punishment": [],
+     "is_servitude": [],
+     "is_slave_trade": [],
+     "is_slavery": [],
+     "is_slavery_u025": [],
+     "is_torture": [],
+     "is_treatment": [],
+     "on_account_of": [],
+     "owes_duties_to": [],
+     "unsaid__arrest_detention_or_exile_permitted": [],
+     "unsaid__attack_upon_honour_or_reputation_permitted": [],
+     "unsaid__compel_association_membership_permitted": [],
+     "unsaid__distinction_by_country_status_permitted": [],
+     "unsaid__finding_of_guilt_permitted": [],
+     "unsaid__holding_in_slavery_or_servitude_permitted": [],
+     "unsaid__imposition_permitted": [],
+     "unsaid__interference_with_private_domains_permitted": [],
+     "unsaid__prohibition_of_slavery_and_slave_trade_required": [],
+     "unsaid__slavery_or_slave_trade_practice_permitted": [],
+     "unsaid__subjection_to_ill_treatment_permitted": [],
+     "ve__bit__1__0": []
+    }
+   },
+   "gaps": [],
+   "candidates": [
+    {
+     "set": "rs_u025",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "rs_u025",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 41.1,
+  "python_peak_mb": 33,
+  "live_children_peak_mb": 87,
+  "live_children_peak_sum_mb": 91,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "udhr-part01-plus6.ve.md",
+  "sha256": "1386d6ab635ca0743648cb604676f757df8bc692fd8d5f017bf40c595ccbe115",
+  "bytes": 50400,
+  "exit": 0,
+  "wall_seconds": 36.85,
+  "cpu_seconds": 7.93,
+  "children_peak_mb": 83,
+  "premises": {
+   "status": "model",
+   "route": "superposed",
+   "evidence": "model",
+   "choice": [
+    [
+     "rs_u025",
+     0
+    ]
+   ],
+   "model": {
+    "complete": true,
+    "domains": {
+     "act": [],
+     "actor": [],
+     "applicability": [],
+     "attack": [],
+     "bearer": [],
+     "community": [],
+     "day": [],
+     "distinction": [],
+     "finding": [],
+     "holding": [],
+     "imposition": [],
+     "interference": [],
+     "intrusion": [],
+     "measure": [],
+     "penalty": [],
+     "person": [],
+     "practice": [],
+     "prosecution": [],
+     "subjection": [],
+     "ve__reading": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "ve__here": "e0"
+    },
+    "relations": {
+     "applicability_of": [],
+     "applicability_to": [],
+     "applicable_on": [],
+     "arises_from_acts_contrary_to_un": [],
+     "arises_from_non_political_crime": [],
+     "asylum_right_covers_case": [],
+     "based_on_international_status": [],
+     "based_on_jurisdictional_status": [],
+     "based_on_political_status": [],
+     "committed_on": [],
+     "concerns_correspondence": [],
+     "concerns_correspondence_u046": [],
+     "concerns_family": [],
+     "concerns_family_u046": [],
+     "concerns_home": [],
+     "concerns_home_u046": [],
+     "concerns_honour": [],
+     "concerns_privacy": [],
+     "concerns_privacy_u046": [],
+     "concerns_reputation": [],
+     "constitutes_penal_offence_on": [],
+     "declaration_implies_destructive_right": [],
+     "full_development_possible_in": [],
+     "has_the_right_to_an_effective_remedy": [],
+     "has_the_right_to_liberty": [],
+     "has_the_right_to_life": [],
+     "has_the_right_to_protection_of_the_law_against": [],
+     "has_the_right_to_recognition_as_a_person": [],
+     "has_the_right_to_security_of_person": [],
+     "heavier_than": [],
+     "imposed_for": [],
+     "imposes": [],
+     "is_arbitrary": [],
+     "is_arbitrary_u045a": [],
+     "is_arbitrary_u046": [],
+     "is_arrest": [],
+     "is_attack_upon_honour": [],
+     "is_attack_upon_reputation": [],
+     "is_cruel": [],
+     "is_degrading": [],
+     "is_detention": [],
+     "is_entitled_to_equal_protection_of_the_law": [],
+     "is_entitled_to_protection_against_discrimination": [],
+     "is_entitled_to_protection_against_incitement": [],
+     "is_exile": [],
+     "is_inhuman": [],
+     "is_punishment": [],
+     "is_servitude": [],
+     "is_slave_trade": [],
+     "is_slavery": [],
+     "is_slavery_u025": [],
+     "is_torture": [],
+     "is_treatment": [],
+     "on_account_of": [],
+     "owes_duties_to": [],
+     "unsaid__arrest_detention_or_exile_permitted": [],
+     "unsaid__attack_upon_honour_or_reputation_permitted": [],
+     "unsaid__compel_association_membership_permitted": [],
+     "unsaid__distinction_by_country_status_permitted": [],
+     "unsaid__finding_of_guilt_permitted": [],
+     "unsaid__holding_in_slavery_or_servitude_permitted": [],
+     "unsaid__imposition_permitted": [],
+     "unsaid__interference_with_private_domains_permitted": [],
+     "unsaid__prohibition_of_slavery_and_slave_trade_required": [],
+     "unsaid__slavery_or_slave_trade_practice_permitted": [],
+     "unsaid__subjection_to_ill_treatment_permitted": [],
+     "ve__bit__1__0": []
+    }
+   },
+   "gaps": [],
+   "candidates": [
+    {
+     "set": "rs_u025",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "rs_u025",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 34.7,
+  "python_peak_mb": 33,
+  "live_children_peak_mb": 83,
+  "live_children_peak_sum_mb": 87,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ },
+ {
+  "pilot": "udhr-part01-plus6.ve.md",
+  "sha256": "1386d6ab635ca0743648cb604676f757df8bc692fd8d5f017bf40c595ccbe115",
+  "bytes": 50400,
+  "exit": 0,
+  "wall_seconds": 62.9,
+  "cpu_seconds": 9.45,
+  "children_peak_mb": 91,
+  "premises": {
+   "status": "model",
+   "route": "superposed",
+   "evidence": "model",
+   "choice": [
+    [
+     "rs_u025",
+     0
+    ]
+   ],
+   "model": {
+    "complete": true,
+    "domains": {
+     "act": [],
+     "actor": [],
+     "applicability": [],
+     "attack": [],
+     "bearer": [],
+     "community": [],
+     "day": [],
+     "distinction": [],
+     "finding": [],
+     "holding": [],
+     "imposition": [],
+     "interference": [],
+     "intrusion": [],
+     "measure": [],
+     "penalty": [],
+     "person": [],
+     "practice": [],
+     "prosecution": [],
+     "subjection": [],
+     "ve__reading": [
+      "e0"
+     ]
+    },
+    "constants": {
+     "ve__here": "e0"
+    },
+    "relations": {
+     "applicability_of": [],
+     "applicability_to": [],
+     "applicable_on": [],
+     "arises_from_acts_contrary_to_un": [],
+     "arises_from_non_political_crime": [],
+     "asylum_right_covers_case": [],
+     "based_on_international_status": [],
+     "based_on_jurisdictional_status": [],
+     "based_on_political_status": [],
+     "committed_on": [],
+     "concerns_correspondence": [],
+     "concerns_correspondence_u046": [],
+     "concerns_family": [],
+     "concerns_family_u046": [],
+     "concerns_home": [],
+     "concerns_home_u046": [],
+     "concerns_honour": [],
+     "concerns_privacy": [],
+     "concerns_privacy_u046": [],
+     "concerns_reputation": [],
+     "constitutes_penal_offence_on": [],
+     "declaration_implies_destructive_right": [],
+     "full_development_possible_in": [],
+     "has_the_right_to_an_effective_remedy": [],
+     "has_the_right_to_liberty": [],
+     "has_the_right_to_life": [],
+     "has_the_right_to_protection_of_the_law_against": [],
+     "has_the_right_to_recognition_as_a_person": [],
+     "has_the_right_to_security_of_person": [],
+     "heavier_than": [],
+     "imposed_for": [],
+     "imposes": [],
+     "is_arbitrary": [],
+     "is_arbitrary_u045a": [],
+     "is_arbitrary_u046": [],
+     "is_arrest": [],
+     "is_attack_upon_honour": [],
+     "is_attack_upon_reputation": [],
+     "is_cruel": [],
+     "is_degrading": [],
+     "is_detention": [],
+     "is_entitled_to_equal_protection_of_the_law": [],
+     "is_entitled_to_protection_against_discrimination": [],
+     "is_entitled_to_protection_against_incitement": [],
+     "is_exile": [],
+     "is_inhuman": [],
+     "is_punishment": [],
+     "is_servitude": [],
+     "is_slave_trade": [],
+     "is_slavery": [],
+     "is_slavery_u025": [],
+     "is_torture": [],
+     "is_treatment": [],
+     "on_account_of": [],
+     "owes_duties_to": [],
+     "unsaid__arrest_detention_or_exile_permitted": [],
+     "unsaid__attack_upon_honour_or_reputation_permitted": [],
+     "unsaid__compel_association_membership_permitted": [],
+     "unsaid__distinction_by_country_status_permitted": [],
+     "unsaid__finding_of_guilt_permitted": [],
+     "unsaid__holding_in_slavery_or_servitude_permitted": [],
+     "unsaid__imposition_permitted": [],
+     "unsaid__interference_with_private_domains_permitted": [],
+     "unsaid__prohibition_of_slavery_and_slave_trade_required": [],
+     "unsaid__slavery_or_slave_trade_practice_permitted": [],
+     "unsaid__subjection_to_ill_treatment_permitted": [],
+     "ve__bit__1__0": []
+    }
+   },
+   "gaps": [],
+   "candidates": [
+    {
+     "set": "rs_u025",
+     "index": 0,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       0
+      ]
+     ]
+    },
+    {
+     "set": "rs_u025",
+     "index": 1,
+     "status": "model",
+     "choice": [
+      [
+       "rs_u025",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  "error": null,
+  "check_seconds": 60.56,
+  "python_peak_mb": 33,
+  "live_children_peak_mb": 91,
+  "live_children_peak_sum_mb": 95,
+  "status": "model",
+  "label": "after",
+  "rust_timeout": "default",
+  "root": "/home/seyran/code/ve-premise-scale"
+ }
+]

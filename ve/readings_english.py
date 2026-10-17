@@ -33,7 +33,7 @@ def outcome_sentence(role, value, subject_name):
 
 
 def force_twin_sentence(source_word, strict_paraphrase, default_paraphrase,
-                        decider, tuple_values, role, strict_value, default_value):
+                        decider, tuple_values, role, strict_value, default_value, *, gaps=""):
     """E14, after its four semantic gates and the source-word gate pass."""
     if source_word not in SOURCE_WORDS:
         raise VEError("InvalidInput: E14 needs a source word")
@@ -43,7 +43,7 @@ def force_twin_sentence(source_word, strict_paraphrase, default_paraphrase,
     second = outcome_sentence(role, default_value, tuple_values[0])
     return (f"This sentence says *{source_word}*. (1) *{strict_paraphrase}* "
             f"(2) *{default_paraphrase}* They differ here: suppose {who} decides "
-            f"the exception applies to {names}. Under (1) {first}. Under (2) {second}.")
+            f"the exception applies to {names}.{gaps} Under (1) {first}. Under (2) {second}.")
 
 
 def decision_only_sentence(decider):

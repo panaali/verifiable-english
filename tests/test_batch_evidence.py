@@ -14,6 +14,7 @@ from tools.batch_evidence import REQUIRED_STAGES, outside_report, problems
 
 ROOT = Path(__file__).resolve().parents[1]
 from tools.readings_batch_latency import make_case
+from subprocesses import HANG_TIMEOUT
 
 
 HEAD = "a" * 40
@@ -29,6 +30,21 @@ LATENCY = {"head_commit": HEAD, "pass": True,
 def test_complete_head_evidence_passes():
     errors = problems(HEAD, GATE, AB, LATENCY)
     assert errors == []
+
+
+def test_only_identical_listed_unavailable_is_signed():
+    row = {"corpus": "pilots", "authority": "default", "case": "p", "op": "document_check",
+           "class": "unavailable", "base": {"timeout": HANG_TIMEOUT}, "head": {"timeout": HANG_TIMEOUT},
+           "listed": True}
+    ab = {**AB, "unavailable_both": {"pilots/default": 1}, "differences": [row]}
+    errors = problems(HEAD, GATE, ab, LATENCY)
+    assert errors == []
+    for changed in ({"listed": False}, {"head": {"timeout": HANG_TIMEOUT + 1}},
+                    {"base": {"exit": 0}}, {"case": "p2", "class": "verdict"}):
+        bad = deepcopy(ab)
+        bad["differences"][0].update(changed)
+        errors = problems(HEAD, GATE, bad, LATENCY)
+        assert errors
 
 
 def test_identical_listed_unavailability_is_signed_by_r7():
@@ -143,6 +159,25 @@ def test_f2_batch_evidence_checks_the_gate_note_when_present(tmp_path):
     gate_collection.write_record(gated, ids, result={**GATE, "commit_sha": gated, **gate_data}, cwd=repo)
     assert _main(repo, tmp_path, gated, gated, gate_data).returncode == 0
     result = _main(repo, tmp_path, gated, gated)
+    assert result.returncode == 1 and "gate evidence differs from its git note" in result.stdout
+
+
+def test_batch_evidence_takes_a_gate_note_with_durations(tmp_path):
+    """A gate record keeps its suite's per-test seconds (tools/test_schedule.py record_field); the evidence and
+    the note still compare whole, so a copy that dropped or altered them differs."""
+    from tools import test_schedule
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    gated = _commit(repo, {"code.py": "1"})
+    ids = ["tests/a.py::test_a"]
+    gate_data = {"tree_sha": _git(repo, "rev-parse", f"{gated}^{{tree}}"),
+                 "collection": {"collected_zlib": gate_collection.encode_ids(ids)},
+                 "durations": test_schedule.record_field({"tests/a.py::test_a": 3.5})}
+    gate_collection.write_record(gated, ids, result={**GATE, "commit_sha": gated, **gate_data}, cwd=repo)
+    assert _main(repo, tmp_path, gated, gated, gate_data).returncode == 0
+    altered = {**gate_data, "durations": test_schedule.record_field({"tests/a.py::test_a": 9.5})}
+    result = _main(repo, tmp_path, gated, gated, altered)
     assert result.returncode == 1 and "gate evidence differs from its git note" in result.stdout
 
 
