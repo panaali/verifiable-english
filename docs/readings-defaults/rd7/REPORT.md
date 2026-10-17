@@ -2,8 +2,25 @@
 
 The comparison base is `f98183bf5ff518c14e0cbdcf2950cdaf7736deeb`, the branch's merge base with main. The code head
 is `074f96d3fca99843b6c0208bcb9c0aedb8410b25`: the corpus A/B, the route latency and the selected tests ran on it
-(tree `441d892a`). The commits after it change only `docs/readings-defaults/rd7/` (evidence, DELTA and this report),
-and the pilot latency was measured at one of them, `70b3a2bb`. No model calls were made and nothing was pushed.
+(tree `441d892a`), and the pilot latency was measured at `70b3a2bb`. The review fix (next section) changes `ve/` and
+`lean/` again in `cd4f21c4`; the readings, norm-defaults and document corpora were recorded again on it, and its cost
+was measured. No model calls were made and nothing was pushed.
+
+## Review fix (rd-7-review-ov, verdict FIX on f90694b2)
+
+| Finding | Class | What changed | Regression test or evidence |
+|---|---|---|---|
+| F1: past 1024 choices a compatible reading was refused as untaken | A | `runSupVerdicts` checks `assumed` against the checked list only when it is not cut (`over`); past the budget every question is the budget's UNKNOWN, as on the base | `test_untaken_check_waits_for_the_checked_budget` (the review's probe, through the route), the 11-set named case added to `test_superposed_verdicts_keep_the_1024_choice_budget` (Lean); mutant L9 |
+| F2: CPU grew with the number of choices | B | Lean lists the complete choices only while the asked scope leaves the answer open (`supOpen`: the completion's conflict list when the global status is not CONFLICT-FREE, or a query the global certificate does not prove); premises list the global and candidate scopes only. Python generates the asked scope's evidence first and then only for scopes Lean lists (`_settle`). `ve document check` on 6 sets: 14 prover searches, 3.5 s user CPU (the review measured 910 and 58.0 s; base 14 and 4.5 s) | `test_check_prover_searches_do_not_grow_with_the_choices` (the probe), `test_superposed_scopes_follow_the_asked_scope_first`, `test_superposed_scopes_need_only_the_two_answer_roundtrips` (now also an open query); [f2-cost.json](evidence/f2-cost.json); mutants P12, L10 |
+| F3: three deleted tests still passed | B | Restored `test_each_case_is_answered_as_a_document_of_its_own` (beside the new conflict-status test) and both `[F-ND1 enumerated oracle]` cases of `test_readings_budget_zero.py`. Of the five test IDs the branch had removed, the other two assert behaviour RD-7 replaces and fail on it: `test_the_superposed_route_is_not_answered_here` (the route now answers; replaced by `test_the_superposed_route_is_answered_here_with_budget`) and `test_fix4_a1_wording_refuses_an_answer_without_its_dependencies` (Python no longer selects wording; replaced by `test_fix4_a1_native_plan_keeps_dependencies_without_result_metadata`) | the restored tests pass |
+| F4: `assumed` was bound to the request only for queries | B | `_check_sup_answer` binds `result.assumed` for conflict answers (asked with or without named readings), refuses it on premises answers, requires every choice an answer names (an UNKNOWN fold's `choice` included) to take the asked readings, and accepts only Lean's two scope lists (the asked scope with its candidates, or with every complete choice taking it) | `test_sup_answer_binds_assumed_for_every_question` (the probe and the UNKNOWN-choice case); mutants P10, P11 |
+| F5: JSON member order of the conflict and premises objects | C | Listed as row K1 of [DELTA.md](DELTA.md): not a product difference (members and values identical) | — |
+| F6: SOME/NONE theorems assume row soundness | C | FOLLOW-UP: the statement review the plan puts before RD-7's build was not held; it belongs to the DRI's statement-review step, not to this fix | — |
+
+The fix adds 12 trusted Lean lines (`supOpen`, the need-driven `supScopes`, the budget-aware untaken check), signed
+under R6 in docs/trust-baseline.json and DELTA row T1: they replace the deleted Python loops that generated evidence
+for every scope. On the fixed code, the readings (1,137), norm-defaults (2,020) and document (3,632) corpora are
+identical to the base recording ([ab-fix.json](evidence/ab-fix.json)).
 
 ## Plan and statement crosswalk
 
@@ -60,12 +77,15 @@ pending statements for the batches it holds. The trust increase is signed under 
 
 ### Seeded bugs
 
-[mutants.json](evidence/mutants.json) holds 17 mutants. [seeded-bugs.json](evidence/seeded-bugs.json) records every
+[mutants.json](evidence/mutants.json) holds 22 mutants. [seeded-bugs.json](evidence/seeded-bugs.json) records every
 one replayed with `python -m tools.evidence mutants` on the current sources (each `source_sha256` is the committed
 file's hash). In each case the baseline passed, the mutant failed and the file was restored. After the Lean mutants,
 `lake build` restored the pinned `ve_service`. P8, L6 and L7 were re-aimed at the current code: the scope loop now
 prepares conflict evidence, the budget counts `checked`, and the proposals use `firstSupProposals`. Their claims are
-unchanged.
+unchanged. The review fix replayed P1, L5, P7, P8 and P9 on its changed sources (P1 and L5 re-aimed at the new scope
+check and scope list) and added P10, P11, P12, L9 and L10; for a Lean mutant whose test goes through the pinned route,
+the mutant's `ve_service` build was pinned in `lean/checkers.lock` for that run, then the source, the lock and the
+build were restored.
 
 | Mutant | File | Failing check |
 |---|---|---|
@@ -83,6 +103,10 @@ unchanged.
 | L5, L8 | `lean/VE/Readings/SupVerdictsWire.lean` | `test_superposed_scope_count_stays_bounded_above_64_choices` (each separately) |
 | L6 | `lean/VE/Readings/SupVerdictsWire.lean` | `test_superposed_verdicts_keep_the_1024_choice_budget` |
 | L7 | `lean/VE/Readings/SupVerdictsWire.lean` | `test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix` |
+| P10, P11 | `ve/readings_verdicts.py` | `test_sup_answer_binds_assumed_for_every_question` (each separately) |
+| P12 | `ve/readings_verdicts.py` | `test_superposed_scopes_follow_the_asked_scope_first` |
+| L9 | `lean/VE/Readings/SupVerdictsWire.lean` | `test_superposed_verdicts_keep_the_1024_choice_budget`, `test_untaken_check_waits_for_the_checked_budget` |
+| L10 | `lean/VE/Readings/SupVerdictsWire.lean` | `test_superposed_scopes_follow_the_asked_scope_first` |
 
 The [comparator probes](evidence/comparator-probes.json) show the A/B comparator rejecting changed values,
 bool-for-int, missing records, the same file given twice and empty input.
@@ -103,7 +127,7 @@ bool-for-int, missing records, the same file given twice and empty input.
 | 10. Entry points | `test_readings_s2_document.py`, `test_readings_nd_document.py` and `test_readings_sup_verdicts.py` cover document check, render, readings and the direct route. |
 | 11. Compiler oracle | The new meaning is compiled Lean with audited proofs and computed guards. No syntax recognizer or regex is added. |
 | 12. State and ledger | N.A. No product state machine or ledger changed. |
-| 13. Failing tests | 17 seeded mutants, all killed on the current sources; comparator probes (above). |
+| 13. Failing tests | 22 seeded mutants, all killed on the current sources; comparator probes (above). |
 | 14. Hermeticity | New fixtures write under `tmp_path`, with no sleeps or elapsed-time asserts. The Lean and Rust binaries are pinned. |
 | 15. Identity | `test_sup_response_retypes_every_field_and_rebinds_references` and the relay mutation gate bind every new id, choice, span, label and model reference. |
 | 16. Inventories | `tools/regen_generated.py --check` (23 entries), `tools/repo_map.py --check` and `tools/rust_build.py --check` pass. |
@@ -112,21 +136,21 @@ bool-for-int, missing records, the same file given twice and empty input.
 | 19. Use-case formalisation | N.A. No source document was translated and no rule was added. |
 | 20. Report numbers | Every number here comes from the saved evidence files named beside it. Under D4, no new permanent report test reads a moving `git diff`. |
 | 21. Owners | Every plan direction is AGENT. The final full gate is EXTERNAL (the chain). |
-| 22. Tests and gate | The selected tests ran on the code head (above). The builder does not run `tools/gate.py`: the chain runs it on the final committed HEAD. |
-| 23. Signed deltas | `DELTA.md`: R6 (trust), R7 (unavailable on both sides), and RD-1's item ruling (retained wording). No row needs a new DRI signature. |
+| 22. Tests and gate | The selected tests ran on the code head (above). For the review fix, the 37 readings test files with the manifest, pin, audit, schema and relay tests ran on the Mac runner at `cd4f21c4` (2,118 tests): one failure, `tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline`, the chain gate's only failure at `f90694b2` too. It passes on Linux alone and with its file, the branch does not touch the question route, and it fails intermittently on the Mac runner on other branches (rd-9, arch-AR-2, lf-14a, lf-16e gate logs). The builder does not run `tools/gate.py`: the chain runs it on the final committed HEAD. |
+| 23. Signed deltas | `DELTA.md`: R6 (trust), R7 (unavailable on both sides), RD-1's item ruling (retained wording) and K1 (JSON member order, not a product difference). No row needs a new DRI signature. |
 
 ## Self-review against BUILDER-CHECKLIST
 
 1. **PASS** — `test_sup_response_retypes_every_field_and_rebinds_references`, `test_superposed_answer_retypes_each_field_and_rebinds_each_reference`, `evidence/relay-route.json`.
 2. **PASS** — the crosswalk above, `evidence/deletion-ledger.json`, `tools/regen_generated.py --check`, `lean/audit.py`.
-3. **PASS** — `evidence/seeded-bugs.json` (17 of 17 killed on current sources), `evidence/comparator-probes.json`.
+3. **PASS** — `evidence/seeded-bugs.json` (22 of 22 killed on current sources), `evidence/comparator-probes.json`.
 4. **PASS** — `evidence/ab-compare.json` (Lean and Python authorities identical), M1–M20 in `test_readings_s2_document.py`, `test_superposed_answer_is_stable_when_document_keys_are_reordered`.
 5. **PASS** — `test_sup_response_retypes_every_field_and_rebinds_references`, `test_superposed_answer_retypes_each_field_and_rebinds_each_reference`, `evidence/relay-route.json`.
-6. **PASS** — the A/B and route latency ran on the code head `074f96d3`, and later commits are docs only. The chain gates the final HEAD.
+6. **PASS** — the A/B and route latency ran on the code head `074f96d3`; the review fix's code `cd4f21c4` was recorded again on the readings, norm-defaults and document corpora (`evidence/ab-fix.json`) and measured (`evidence/f2-cost.json`). The chain gates the final HEAD.
 7. **PASS** — `DELTA.md` has no unsigned row (`review-ready.py --delta-dri-needed`: none).
 8. **PASS** — `DELTA.md` lists every A/B difference by class, with `evidence/ab-delta.json`.
 9. **PASS** — `select_tests.py --base $(git merge-base HEAD main) --run` selected 374 units, including every named mutant test.
 10. **PASS** — `lake build`, `lean/audit.py`, `SupVerdictsExamples.lean`, seeded L1, L2 and L4.
 11. **PASS** — `test_sup_zero_budget_is_unknown`, `test_superposed_verdicts_keep_the_1024_choice_budget` (L6), the selected hang-guard tests.
-12. **PASS** — `evidence/latency.json`, `evidence/pilot-render-latency.json`, `evidence/pilot-check-latency.json`, `test_superposed_scopes_need_only_the_two_answer_roundtrips`. Whole-UDHR peak memory shows no consistent change (base 21.9, 20.3 and 29.6 GB; head 22.1, 23.1 and 17.8 GB; `evidence/udhr-serial.json`).
-13. **PASS** — the three removed tests each carry a `Test-removed` trailer in the branch's commits.
+12. **PASS** — `test_check_prover_searches_do_not_grow_with_the_choices`, `evidence/f2-cost.json`, `evidence/latency.json`, `evidence/pilot-render-latency.json`, `evidence/pilot-check-latency.json`, `test_superposed_scopes_need_only_the_two_answer_roundtrips`. Whole-UDHR peak memory shows no consistent change (base 21.9, 20.3 and 29.6 GB; head 22.1, 23.1 and 17.8 GB; `evidence/udhr-serial.json`).
+13. **PASS** — the three removed tests that still held are restored (review F3); the two remaining removed IDs assert behaviour RD-7 replaces and have replacement tests (Review fix section).
