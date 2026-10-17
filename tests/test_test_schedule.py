@@ -270,6 +270,9 @@ def test_a_crashed_worker_s_tests_run_elsewhere():
     held = list(scheduler.node2pending[nodes[0]][1:])
     assert scheduler.remove_node(nodes[0]) == collection[crashed]
     assert set(held) <= set(scheduler.pending) | set(scheduler.node2pending[nodes[1]])
+    # The estimated seconds left count the tests that came back before the next hand-out is sized.
+    scheduler._send_next(nodes[1])
+    assert scheduler.remaining == pytest.approx(sum(scheduler.estimate[index] for index in scheduler.pending))
 
 
 def test_the_suite_conftest_installs_the_scheduler(tmp_path, monkeypatch):
@@ -392,6 +395,78 @@ def test_unmeasured_tests_start_right_after_the_long_ones_in_shares_by_count():
     assert sent[:4] == [("gw0", [0]), ("gw1", [301]), ("gw2", [302]), ("gw3", [303])]
 
 
+def recorded_sends(scheduler, collection, workers, seconds):
+    """Simulate the run (`simulate`), recording every hand-out with the scheduler's state just before it: (worker,
+    the number of tests sent, the tests the worker held, the tests pending, the unmeasured tests not yet handed
+    out, the head batches not yet handed out)."""
+    sent, before = [], []
+    send_next, send_tests = scheduler._send_next, scheduler._send_tests
+
+    def next_one(node):
+        before[:] = [len(scheduler.node2pending[node]), len(scheduler.pending), scheduler.unmeasured,
+                     len(scheduler.batches)]
+        send_next(node)
+
+    def tests(node, count):
+        sent.append((node.gateway.id, count, *before))
+        send_tests(node, count)
+    scheduler._send_next, scheduler._send_tests = next_one, tests
+    simulate(scheduler, collection, seconds, workers)
+    return sent
+
+
+def test_unmeasured_tests_go_out_a_share_of_those_left_at_a_time():
+    """100 unmeasured tests on 4 workers: each hand-out of them is a share of those left (BULK_SHARE * workers of
+    them), never more, and at least one; the first is 100 // 8 = 12, not half of them."""
+    collection = (["tests/test_long.py::t"] + [f"tests/test_new.py::t{i}" for i in range(100)]
+                  + [f"tests/test_a.py::t{i}" for i in range(300)])
+    recorded = {collection[0]: 60.0}
+    measured = frozenset(collection) - set(collection[1:101])
+    seconds = {nodeid: 0.1 for nodeid in collection} | recorded
+    workers = 4
+    share = test_schedule.BULK_SHARE * workers
+    sent = recorded_sends(test_schedule.make_scheduler(Config(workers), None, recorded, 0.1, measured),
+                          collection, workers, seconds)
+    unmeasured = [(count, left) for _, count, _, _, left, batches in sent if not batches and left]
+    assert sum(count for count, _ in unmeasured) == 100
+    assert all(count == max(1, left // share) for count, left in unmeasured), unmeasured
+    assert unmeasured[0] == (100 // share, 100) and max(count for count, _ in unmeasured) <= 100 // share
+
+
+def test_the_count_cap_counts_what_the_worker_already_holds():
+    """In the bulk phase a hand-out is at most `load`'s share of the tests pending less the tests the worker holds
+    (and never fewer than it needs to hold two). The second round of the start sends each worker, already
+    holding a run, just the one test it needs to go on to, though the estimated seconds would allow many more:
+    100 tests estimated cheap ahead of 20 recorded at 4 s."""
+    collection = [f"tests/test_a.py::t{i}" for i in range(100)] + [f"tests/test_z.py::t{i}" for i in range(20)]
+    recorded = {nodeid: 4.0 for nodeid in collection[100:]}
+    seconds = {nodeid: 0.1 for nodeid in collection} | recorded
+    workers = 2
+    share = test_schedule.BULK_SHARE * workers
+    sent = recorded_sends(test_schedule.make_scheduler(Config(workers), None, recorded, 0.1),
+                          collection, workers, seconds)
+    assert all(min(max(1, 2 - held), pending) <= count <= max(max(1, 2 - held), pending // share - held)
+               for _, count, held, pending, _, _ in sent), sent
+    assert [(worker, count) for worker, count, *_ in sent[:4]] == [("gw0", 30), ("gw1", 22), ("gw1", 1), ("gw0", 1)]
+    # A worker holding nothing gets two tests even when one already exceeds its share of the seconds.
+    collection = [f"tests/test_b.py::t{i}" for i in range(4)]
+    recorded = dict.fromkeys(collection, 4.0)
+    sent = recorded_sends(test_schedule.make_scheduler(Config(workers), None, recorded), collection, workers, recorded)
+    assert [(worker, count, held) for worker, count, held, *_ in sent] == [("gw0", 2, 0), ("gw1", 2, 0)]
+
+
+def test_an_unrecorded_test_is_estimated_at_the_sources_mean():
+    """The scheduler sizes runs with the source's estimate of a test it does not record, not the default: 20
+    unrecorded tests estimated at 2 s ahead of 20 recorded at 1 s, on 2 workers, so the first run is the 7 that
+    fit a quarter of the 60 s (at the default 0.1 s it would be the count cap's 10)."""
+    collection = [f"tests/test_a.py::t{i}" for i in range(20)] + [f"tests/test_z.py::t{i}" for i in range(20)]
+    recorded = dict.fromkeys(collection[20:], 1.0)
+    assert test_schedule.UNRECORDED_SECONDS != 2.0
+    seconds = dict.fromkeys(collection, 2.0) | recorded
+    sent = recorded_sends(test_schedule.make_scheduler(Config(2), None, recorded, 2.0), collection, 2, seconds)
+    assert sent[0][:2] == ("gw0", 7)
+
+
 def test_a_worker_added_mid_run_gets_two_tests_to_start():
     """xdist restarts a crashed worker as a new node and schedules again; a worker holding one test idles,
     so a batch of one test is topped up."""
@@ -474,6 +549,48 @@ def test_an_xdist_run_keeps_the_gates_collection_accounting(tmp_path):
     # The longest test is the first one some worker ran.
     assert long_ids[0] in {next(row["nodeid"] for row in ran if row["worker"] == worker)
                            for worker in {row["worker"] for row in ran}}
+
+
+TIMED_CONFTEST = '''
+import pytest
+
+PHASE_SECONDS = {PHASE_SECONDS!r}
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    outcome.get_result().duration = PHASE_SECONDS[call.when]
+'''
+
+TIMED_TESTS = '''
+import pytest
+
+
+@pytest.mark.parametrize("case", range(6))
+def test_case(case):
+    pass
+'''
+
+
+def test_the_event_plugin_times_each_test_as_its_setup_call_and_teardown_seconds(tmp_path):
+    """The gate's event plugin records each test's seconds as the sum of its three phases' report durations, as
+    the xdist controller receives them from the workers: with the phases timed 0.25, 0.5 and 1 s (a project
+    hook sets each report's duration), every test is recorded at exactly 1.75 s; keeping one phase alone
+    would give 0.25, 0.5 or 1."""
+    phases = {"setup": 0.25, "call": 0.5, "teardown": 1.0}
+    (tmp_path / "conftest.py").write_text(TIMED_CONFTEST.format(PHASE_SECONDS=phases))
+    (tmp_path / "test_project.py").write_text(TIMED_TESTS)
+    env = nested_pytest.environment(os.environ, PYTHONPATH=str(ROOT))
+    arguments = ["-q", "-p", "no:cacheprovider", "-p", "tools.gate_pytest", "-o", "addopts=", "test_project.py"]
+    for workers in (1, 2):
+        events = tmp_path / f"events-{workers}.json"
+        result = subprocess.run(nested_pytest.command(arguments, workers=workers), cwd=tmp_path,
+                                env={**env, "VE_GATE_PYTEST_RESULT": str(events)},
+                                capture_output=True, text=True, timeout=HANG_TIMEOUT)
+        assert result.returncode == 0, result.stdout[-4000:] + result.stderr[-4000:]
+        seconds = json.loads(events.read_text())["seconds"]
+        assert seconds == {f"test_project.py::test_case[{case}]": sum(phases.values()) for case in range(6)}, workers
 
 
 SOURCE_CONFTEST = '''
