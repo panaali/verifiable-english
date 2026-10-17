@@ -271,11 +271,13 @@ def unitHasStrayNull (n : Nullable) (u : Json) : Bool :=
   | v => hasNull 257 v
 
 /-- A readings candidate's absent content is written `null` by the @1 pilot loader. The readings route reads it
-as pending. Other nulls in a reading set still belong to Python's JSON path. -/
+as pending. A `null` inside a distinguishing model (a member of `models`) reaches the `model` mode as written on both
+paths (`validated_model`; `locatedModel`, batch 16f). Other nulls in a reading set still belong to Python's JSON path. -/
 def readingSetHasStrayNull (set : Json) : Bool :=
   match set with
   | .obj kvs => kvs.toList.any fun (k, v) =>
-    if k == "readings" then match v with
+    if k == "models" then !(v matches .obj _)
+    else if k == "readings" then match v with
       | .arr rs => rs.any fun r => match r with
         | .obj fields => fields.toList.any fun (key, value) =>
             if key == "content" && value == .null then false else hasNull 257 value
@@ -604,6 +606,24 @@ def softSource (environment : Json) (norms : List Json) : Except String VE.SoftN
     pure src
   decoded.mapError fun m => unavailable s!"a soft source the soft route rejects keeps its loader's diagnostic: {m}"
 
+/-- `Environment(data)` (`validated_environment`: the `environment` mode, `Standalone.reportedEnvironment`) on an
+environment the mode does not decode itself, for its first fault (batch 16f). Python's loader builds the environment
+right after `base_environment`, so the mode's rejection is the document's diagnostic; only a rejection without a JSON
+`path` is one this mode's error row can carry. Under `soft-norms@0` or `rights@0` Python's loader runs those routes
+first (`check_soft_source`, `RightsEnvironment`), so none is taken. -/
+def environmentFault (environment : Json) : Option String :=
+  let listed := listedProfiles environment
+  if ["soft-norms@0", "rights@0"].any listed.contains then none else
+  let row := Standalone.reportedEnvironment (Json.mkObj [("id", .str "environment"), ("environment", environment)])
+  if row.getObjValD "status" == .str "error" && (row.getObjVal? "path").toOption.isNone then
+    (row.getObjValD "error").getStr?.toOption
+  else none
+
+/-- A gate of the mode that composes no route for `environment`: the environment mode's first fault when it rejects
+the environment (`environmentFault`), else `CheckerUnavailable` naming what the mode lacks. -/
+def undecided (environment : Json) (what : String) : String :=
+  (environmentFault environment).getD (unavailable what)
+
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
 front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. -/
@@ -616,17 +636,17 @@ def environmentOf (environment : Json) (units : Json := .null) : Except String E
     throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
   let listed := listedProfiles environment
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
-    throw (unavailable s!"document checks under {p} need its Lean profile route")
+    throw (undecided environment s!"document checks under {p} need its Lean profile route")
   let block := blockOf listed
   if listed.contains "norm-defaults@0" && block != .none then
-    throw (unavailable "norm-defaults with alternatives or risk needs its composed Lean route")
+    throw (undecided environment "norm-defaults with alternatives or risk needs its composed Lean route")
   if listed.contains "rights@0" && (block != .none || listed.contains "norm-defaults@0") then
     throw (unavailable "rights with norm-defaults, alternatives or risk needs its composed Lean route")
   let soft := listed.contains "soft-norms@0" && !listed.contains "rights@0"
   if soft && (block != .none || listed.contains "norm-defaults@0" || listed.contains "readings@1") then
     throw (unavailable "soft-norms with norm-defaults, readings, alternatives or risk needs its composed Lean route")
   if let some key := ["unit_schema", "units"].find? (fun k => (environment.getObjVal? k).isOk) then
-    throw (unavailable s!"the environment block {key} needs its Lean route's decoder")
+    throw (undecided environment s!"the environment block {key} needs its Lean route's decoder")
   if soft then
     if let .arr _ := units then
       let _ ← softSource environment (softSourceNorms units)
@@ -637,7 +657,7 @@ def environmentOf (environment : Json) (units : Json := .null) : Except String E
         throw "UnsupportedProfile: Unsupported language, semantic profile, or specification revision"
   let keys := ((fields environment).toOption.getD []).map Prod.fst
   if let some k := keys.find? (!(envelopeKeys block).contains ·) then
-    throw (unavailable s!"the environment block {k} needs its Lean route's decoder")
+    throw (undecided environment s!"the environment block {k} needs its Lean route's decoder")
   match decodedEnvironment environment block with
   | .ok E => pure E
   | .error m => throw (if m.startsWith "CheckerUnavailable" then m else (vocabularyFault environment).getD m)
@@ -654,6 +674,10 @@ def formulaOf (E : Env) (ast : Json) : Except String (VE.Formula × String) := d
   formulaCheck E ast
   let f ← VE.Route.Wire.decodeClosed E.rv.environment ast E.data
   pure (f, ← VE.Route.Wire.meaningId E.profiles E.envId (VE.Route.Wire.encodeFormula f))
+
+/-- What `Loader.compileSets` answers for a distinguishing model the Lean model decoder refuses
+(`locatedModel` decides it when it can). -/
+def modelRefused : String := unavailable "a distinguishing model the Lean model decoder refuses"
 
 /-! ## Units -/
 
@@ -1352,7 +1376,7 @@ def readingsSets (E : Env) (front : Json) (units : List SourceUnit) :
       content == .null || ["norm", "right", "right_lines", "limitation"].all (fun k => content.getObjValD k == .null)
   let w2 ← Loader.compileSets E.rv E.profiles E.envId (units.map (·.id))
     (Json.arr w2Sets.toArray) (python := true) (formula := formulaCheck E)
-    (modelRefused := some (unavailable "a distinguishing model the Lean model decoder refuses"))
+    (modelRefused := some modelRefused)
   let unitJson := units.map fun u => Json.mkObj ([("id", .str u.id), ("kind", u.kind)] ++
     u.content.toList.map fun c => ("content", c.json))
   let document := Json.mkObj [("units", Json.arr unitJson.toArray),
@@ -1469,7 +1493,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     let F := (S.map (·.extended)).getD E
     let sets ← Loader.compileSets F.rv F.profiles F.envId unitIds (Loader.optionalList front "reading_sets")
       (python := true) (formula := formulaCheck F)
-      (modelRefused := some (unavailable "a distinguishing model the Lean model decoder refuses"))
+      (modelRefused := some modelRefused)
     pure (sets, [])
   let active := Loader.activeOf all
   let units := units.map fun u => { u with status := Loader.foldStatus active u.id u.status }
@@ -1513,6 +1537,53 @@ def documentCase (j : Json) : Except String Json := do
   let lexicon := (j.getObjVal? "lexicon").toOption
   pure (encode id (← check text withGraph lexicon))
 
-def runCaseReported (j : Json) : Json := Standalone.reported documentCase j
+/-! ## A distinguishing model's located diagnostic (batch 16f) -/
+
+/-- `validate_reading_sets`' model step in the set whose models `Loader.compileSets` refused (`modelRefused`): the
+first set in order with a model the route decoder (`Route.Wire.decodeModel`, `Loader.modelId`) refuses. Python decodes
+each model of that set in authored order with the `model` mode (`validated_model`: `Standalone.reportedModel`) and
+compares its identity before the next. A JSON object here has no authored order, so the step is decided only when
+exactly one model of the set is refused or misnamed, which is the first in every order: the `model` mode's
+diagnostic, with its JSON `path` into that model, or `distinguishing model id does not match model`. -/
+def locatedModel (E : Env) (sets : Json) : Option (String × Option String) := do
+  let items ← sets.getArr?.toOption
+  let set ← items.toList.find? fun s => match s.getObjValD "models" with
+    | .obj kvs => kvs.toList.any fun (_, data) =>
+        (VE.Route.Wire.decodeModel E.rv data).toOption.isNone || (Loader.modelId E.profiles E.envId data).toOption.isNone
+    | _ => false
+  let .obj kvs := set.getObjValD "models" | none
+  let faults := kvs.toList.filterMap fun (name, data) =>
+    let row := Standalone.reportedModel (Json.mkObj [("id", .str "model"), ("environment", E.json), ("model", data)])
+    if row.getObjValD "status" == .str "error" then
+      some ((row.getObjValD "error").getStr?.toOption.getD "", (row.getObjValD "path").getStr?.toOption)
+    else if row.getObjValD "model_id" != .str name then some ("distinguishing model id does not match model", none)
+    else none
+  match faults with
+  | [f] => if f.1.isEmpty then none else some f
+  | _ => none
+
+/-- `locatedModel` for a document case the mode refused with `modelRefused`: a plain document (no `soft-norms@0`,
+`rights@0` or `readings@1`, whose sets other routes read), re-read up to its environment. -/
+def locatedOf (j : Json) : Option (String × Option String) := do
+  let text ← (j.getObjValD "document").getStr?.toOption
+  let doc ← (split text).toOption
+  let E ← (environmentOf (doc.front.getObjValD "environment") (doc.front.getObjValD "units")).toOption
+  if E.soft || E.rights || E.profiles.contains "readings@1" then none
+  locatedModel E (Loader.optionalList doc.front "reading_sets")
+
+/-- The error row of a located diagnostic: the case's id, the text, and the JSON `path` when it has one. -/
+def locatedRow (j : Json) (message : String) (path : Option String) : Json :=
+  match path with
+  | some p => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message),
+      ("path", .str p)]
+  | none => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
+
+def runCaseReported (j : Json) : Json :=
+  match documentCase j with
+  | .ok result => result
+  | .error message =>
+    match (if message == modelRefused then locatedOf j else none) with
+    | some (text, path) => locatedRow j text path
+    | none => Standalone.reported (fun _ => .error message) j
 
 end VE.Service.Document

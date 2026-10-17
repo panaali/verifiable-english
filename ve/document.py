@@ -446,8 +446,41 @@ def _lean_answer(raw: bytes, admit: bool):
     if isinstance(error, (CheckerUnavailable, ResourceLimit)):
         return None
     if error is not None:
+        if getattr(error, "path", None) and not _names_a_model_member(raw, error.path):
+            # Batch 16f: a located diagnostic (a distinguishing model's, `Service.Document.locatedModel`) names a
+            # member of a model the document supplies, or it is not bound to the document sent.
+            raise CheckerUnavailable("CheckerUnavailable: the Lean document answer's path names no member of a "
+                                     "distinguishing model of the document sent")
         raise error
     return row
+
+
+def _names_a_model_member(raw: bytes, path) -> bool:
+    """Whether the JSON pointer `path` names a member of a distinguishing model the document supplies (a reading
+    set's `models`): every token an object key or an in-range decimal list index (RFC 6901)."""
+    try:
+        meta, _, _ = _split(raw)
+    except (VEError, KeyError, TypeError, ValueError):
+        return False
+    if type(path) is not str or not path.startswith("/"):
+        return False
+    tokens = [t.replace("~1", "/").replace("~0", "~") for t in path.split("/")[1:]]
+    sets = meta.get("reading_sets")
+    for reading_set in sets if type(sets) is list else ():
+        models = reading_set.get("models") if type(reading_set) is dict else None
+        for model in models.values() if type(models) is dict else ():
+            node = model
+            for token in tokens:
+                if type(node) is dict and token in node:
+                    node = node[token]
+                elif (type(node) is list and token.isascii() and token.isdigit()
+                      and (token == "0" or not token.startswith("0")) and int(token) < len(node)):
+                    node = node[int(token)]
+                else:
+                    break
+            else:
+                return True
+    return False
 
 
 def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
