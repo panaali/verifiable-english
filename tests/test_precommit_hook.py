@@ -16,6 +16,8 @@ import subprocess
 
 import pytest
 
+from tests.subprocesses import HANG_TIMEOUT
+
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "tools/hooks/pre-commit"
@@ -26,22 +28,23 @@ ENGLISH_VERSION = "lean/VE/EnglishGrammar/Fixed/Version.lean"
 
 
 class Staging:
-    def __init__(self, tmp: Path) -> None:
+    def __init__(self, tmp: Path, repo: Path) -> None:
         objects = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-path", "objects"],
-                                 cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+                                 cwd=repo, capture_output=True, text=True, check=True).stdout.strip()
         (tmp / "objects").mkdir()
         self.env = {**os.environ, "GIT_INDEX_FILE": str(tmp / "index"),
                     "GIT_OBJECT_DIRECTORY": str(tmp / "objects"),
                     "GIT_ALTERNATE_OBJECT_DIRECTORIES": objects}
         self.env.pop("VE_SKIP_HOOKS", None)
         self.tmp = tmp
+        self.repo = repo
         self.git("read-tree", "HEAD")
         # The merge updates the hook's staged audit API. Use that policy in the
         # private index so these probes exercise the current hook contract.
         self.stage("lean/audit.py", (ROOT / "lean/audit.py").read_bytes())
 
     def git(self, *args: str, data: bytes | None = None) -> bytes:
-        return subprocess.run(["git", *args], cwd=ROOT, env=self.env, input=data,
+        return subprocess.run(["git", *args], cwd=self.repo, env=self.env, input=data,
                               capture_output=True, check=True).stdout
 
     def head(self, path: str) -> bytes:
@@ -69,16 +72,19 @@ class Staging:
                  data="".join(f"100644 {blob}\t{path}\n" for blob, path in zip(blobs, files)).encode())
 
     def rehash(self, *paths: str) -> None:
-        """Update the frozen inventory in the index, as the repository's rules require."""
-        lines = self.git("cat-file", "blob", f":{INVENTORY}").decode().splitlines()
-        recorded = dict(reversed(line.split(maxsplit=1)) for line in lines)
+        """Update the frozen inventory in the index for those of `paths` it lists, as the repository's rules
+        require; a path it does not list (a module without K declarations) needs no line."""
+        lines = self.git("cat-file", "blob", f":{INVENTORY}").decode().splitlines(keepends=True)
+        header = "".join(line for line in lines if line.startswith("#"))
+        recorded = dict(reversed(line.split()) for line in lines if not line.startswith("#"))
         for path in paths:
-            recorded[path.removeprefix("lean/")] = hashlib.sha256(
-                self.git("cat-file", "blob", f":{path}")).hexdigest()
-        self.stage(INVENTORY, "".join(f"{digest}  {name}\n" for name, digest in sorted(recorded.items())))
+            if path.removeprefix("lean/") in recorded:
+                recorded[path.removeprefix("lean/")] = hashlib.sha256(
+                    self.git("cat-file", "blob", f":{path}")).hexdigest()
+        self.stage(INVENTORY, header + "".join(f"{digest}  {name}\n" for name, digest in sorted(recorded.items())))
 
     def run(self, *args: str, **env: str) -> subprocess.CompletedProcess:
-        return subprocess.run([str(HOOK), *args], cwd=ROOT, env={**self.env, **env},
+        return subprocess.run([str(HOOK), *args], cwd=self.repo, env={**self.env, **env},
                               capture_output=True, text=True, check=False)
 
     def run_in(self, worktree: Path, *args: str) -> subprocess.CompletedProcess:
@@ -93,9 +99,37 @@ class Staging:
                               capture_output=True, text=True, check=False)
 
 
+@pytest.fixture(scope="module")
+def fixture_repo(tmp_path_factory) -> Path:
+    """Commit the current source into a private repo; no probe reads a moving HEAD."""
+    repo = tmp_path_factory.mktemp("precommit-repo")
+    subprocess.run(["git", "init", "-q", str(repo)], check=True, timeout=HANG_TIMEOUT)
+    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT, timeout=HANG_TIMEOUT).split(b"\0")
+    for encoded in tracked:
+        if not encoded:
+            continue
+        path = Path(os.fsdecode(encoded))
+        source, target = ROOT / path, repo / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if source.is_symlink():
+            target.symlink_to(os.readlink(source))
+        else:
+            shutil.copy2(source, target)
+    subprocess.run(["git", "add", "-f", "-A"], cwd=repo, check=True, timeout=HANG_TIMEOUT)
+    subprocess.run(["git", "-c", "user.name=VE Test", "-c", "user.email=ve@example.invalid",
+                    "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture"],
+                   cwd=repo, check=True, timeout=HANG_TIMEOUT)
+    return repo
+
+
 @pytest.fixture
-def staging(tmp_path: Path) -> Staging:
-    return Staging(tmp_path)
+def staging(tmp_path: Path, fixture_repo: Path) -> Staging:
+    return Staging(tmp_path, fixture_repo)
+
+
+def test_staging_history_is_private(staging, fixture_repo):
+    assert Path(staging.git("rev-parse", "--absolute-git-dir").decode().strip()) == fixture_repo / ".git"
+    assert fixture_repo != ROOT
 
 
 def rejects(staging: Staging, *messages: str) -> str:
@@ -442,16 +476,37 @@ def test_frozen_file_change_requires_an_inventory_update(staging):
     rejects(staging, f"{path}: frozen file deleted but still listed")
 
 
-def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
+def test_frozen_guard_needs_no_line_for_a_module_without_k_declarations(staging):
+    """AR-2 (decision D2): only K files and the ve.core@0.1 decoders are hash-frozen."""
     staging.stage("lean/VE/Core/Planted.lean", "namespace VE\nend VE\n")
-    rejects(staging, "lean/VE/Core/Planted.lean: unlisted trusted module")
+    passes(staging)  # a new module is not required in the list
+    path = "lean/VE/Service/Document.lean"  # D[V] and G[V], no K declaration
+    staging.stage(path, staging.head(path) + b"\n-- Unreviewed edit.\n")
+    passes(staging)
+    assert path.removeprefix("lean/") not in staging.head(INVENTORY).decode()
+
+
+def test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main(staging):
+    table = json.loads(staging.head("tools/trust-classes.json"))
+    table["modules"]["VE/Core/Planted.lean"] = {"K": ["VE.Planted"]}
+    staging.stage("lean/VE/Core/Planted.lean", "namespace VE\nend VE\n")
+    staging.stage("tools/trust-classes.json", json.dumps(table, indent=1) + "\n")
+    rejects(staging, "lean/VE/Core/Planted.lean: frozen file (K declarations or a ve.core@0.1 decoder) is not listed")
+    staging.stage("tools/trust-classes.json", staging.head("tools/trust-classes.json"))
     staging.stage("lean/VE/Core/Planted.lean", None)
-    first, rest = staging.head(INVENTORY).split(b"\n", 1)
-    staging.stage(INVENTORY, b"0" * 64 + first[64:] + b"\n" + rest)  # a wrong rehash
-    rejects(staging, f"lean/{first[66:].decode()}: frozen file changed without an inventory update")
+    lines = staging.head(INVENTORY).decode().splitlines(keepends=True)
+    first = next(i for i, line in enumerate(lines) if not line.startswith("#"))
+    name = lines[first].split()[1]
+    staging.stage(INVENTORY, "".join(lines[:first]) + "0" * 64 + lines[first][64:] + "".join(lines[first + 1:]))
+    rejects(staging, f"lean/{name}: frozen file changed without an inventory update")  # a wrong rehash
+    staging.stage(INVENTORY, "".join(lines) + f"{'0' * 64}  VE/Service/Document.lean\n")
+    rejects(staging, "lean/VE/Service/Document.lean: listed but neither holds a K declaration nor is a ve.core@0.1 "
+                     "decoder")
     staging.stage(INVENTORY, staging.head(INVENTORY))
     staging.stage("lean/Main.lean", staging.head("lean/Main.lean") + b"\n-- edit\n")
     rejects(staging, "lean/Main.lean: existing subcommands changed")
+    staging.stage("lean/Main.lean", None)
+    rejects(staging, "lean/Main.lean missing from the index")
 
 
 def test_english_grammar_checks_the_staged_generated_table(staging):

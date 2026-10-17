@@ -149,7 +149,7 @@ def counterOf (a : Answer) (c : Choice) : Option (FilledModel (choiceU a.x.r.N c
     let hw : WellFormedU (choiceU a.x.r.N c) = true := h ▸ e.2.wfc
     let L ← (choiceLayered a.x.r c hw).toOption
     let p ← pieceOf (entryOf a c) "countermodel"
-    (ndFilled a.x.r c L p).toOption
+    (xFilled L.1 p).toOption.map (castFM L.2)
   else none
 
 /-- The checked split of a choice. -/

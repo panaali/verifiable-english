@@ -44,11 +44,12 @@ handle never changes an answer, it only saves sending and decoding the environme
 checks read each case with its environment, as sent before.
 
 Deadlines (docs/LEAN-FIRST-PLAN.md, F4). A request's deadline is its operation's
-(`DEADLINES`): CPU seconds of the service process, a base per case plus a share per MiB of cases,
-measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
-wall-clock seconds. Load on the host therefore does not stop a request; a request that needs
-more CPU than its deadline is `CheckerUnavailable` naming its mode, and is not retried, since
-the same request needs the same work. A request that is given a `timeout` has that wall-clock
+(`DEADLINES`): user CPU seconds of the service process, a base per case plus a share per MiB of
+cases, measured where the platform reports a process's CPU time (`/proc`) and otherwise read as
+wall-clock seconds. The kernel's time in the process is not counted: under memory pressure it is
+the host's compaction and reclaim, not the request's work (`_user_seconds`). Load on the host
+therefore does not stop a request; a request that needs more CPU than its deadline is
+`CheckerUnavailable` naming its mode, and is not retried, since the same request needs the same work. A request that is given a `timeout` has that wall-clock
 limit instead, as before. Every request also has a wall-clock cap, `WALL_FACTOR` times its CPU
 deadline, for a process that stops being scheduled.
 
@@ -56,6 +57,16 @@ The wall-clock guards are not work limits: `VE_LEAN_SERVICE_TIMEOUT` replaces th
 cap of a request without a `timeout` (and, where the CPU time is not reported, its deadline),
 and `VE_LEAN_SERVICE_STARTUP_TIMEOUT` the 30 s a process has to start; the test suite raises
 both to its hang guard, so machine load cannot fail a test.
+
+The test suite's answer store (`tests/answer_store.py`, R1 only; `answer_store` is None everywhere
+else, the gate's runs included) may stand in for the process's answer to one request line. The process
+is still started, pinned and checked (`_ensure`) and the request's deadline still computed; the stored
+line then takes the process's place in the framing (`_read_line`), and every check below it runs on it
+as on the process's line: one the client refuses is an operational failure, as from the process. After
+any failed attempt the retry asks the process and its answer is not stored. In
+that mode the request's nonce is derived from the rest of its line and every environment its cases
+name is registered in the line itself, so that the line, and Lean's answer to it, depend on the line
+alone, not on the handles one process happens to hold.
 """
 from __future__ import annotations
 
@@ -104,6 +115,9 @@ MAX_HANDLES = _HANDLES["max"]["const"]
 MAX_HANDLE_BYTES = _HANDLES["max_bytes"]["const"]
 # The modes whose cases the service never expands (`expandCases`).
 UNHANDLED_MODES = frozenset({"english", "risk-eval"})
+# The test suite's answer store (module docstring): set by tests/answer_store.py in R1 runs only.
+answer_store = None
+_PLACEHOLDER = "store-" + "0" * 32  # a store-mode nonce's place while it is derived
 
 
 # CPU seconds by mode: (base per case, per MiB of cases); each case is one operation. The core modes
@@ -121,7 +135,7 @@ DEADLINES: dict[str, tuple[float, float]] = {
                                 "english.read", "english.grammar", "english.check", "english.question", "words",
                                 "environment", "model", "check", "identity", "parse", "graph", "readings",
                                 "readings-choices",
-                                "bundle", "family-norms")},
+                                "bundle", "family-norms", "search-budget")},
     "soft-norms": (120.0, 120.0), "rights": (120.0, 1000.0), "speech-acts": (120.0, 120.0),
     "reports": (60.0, 60.0), "alternatives": (180.0, 180.0), "risk": (180.0, 180.0),
     "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
@@ -139,14 +153,28 @@ def deadline(mode: str, size: int, cases: int = 1) -> float:
 
 
 def _cpu_seconds(pid: int) -> float | None:
-    """CPU time (user and system) of process `pid`, or None where /proc does not report it."""
+    """User CPU time of process `pid`, or None where /proc does not report it."""
     try:
         with open(f"/proc/{pid}/stat", "rb") as f:
-            fields = f.read().rsplit(b")", 1)[1].split()
-    except (OSError, IndexError):
+            return _user_seconds(f.read())
+    except OSError:
         return None
-    # Fields 14 and 15 (utime, stime) are the 12th and 13th after the command name.
-    return (int(fields[11]) + int(fields[12])) / os.sysconf("SC_CLK_TCK")
+
+
+def _user_seconds(stat: bytes) -> float | None:
+    """The user CPU time a `/proc/<pid>/stat` line reports (field 14, utime), or None if it has none.
+
+    Only user time is the request's work. The system time (field 15) is the kernel's work in the
+    process, and on a host short of memory most of it is the host's: a huge page the allocator
+    faults in can wait in direct memory compaction, which the kernel charges to the faulting
+    process. On the loaded x86 runner that charged requests needing at most 0.1 s of user CPU more
+    system CPU than their deadlines of 5 to 6.3 s (docs/fix-x86-cpu-deadline/REPORT.md)."""
+    try:
+        fields = stat.rsplit(b")", 1)[1].split()
+        # Field 14 (utime) is the 12th after the command name.
+        return int(fields[11]) / os.sysconf("SC_CLK_TCK")
+    except (IndexError, ValueError):
+        return None
 
 
 class _Failure(Exception):
@@ -520,7 +548,7 @@ class LeanService:
             self._buffer.clear()
 
     def cpu_seconds(self) -> float | None:
-        """CPU time the current process has used, where the platform reports it."""
+        """User CPU time the current process has used, where the platform reports it."""
         return None if self._proc is None else _cpu_seconds(self._proc.pid)
 
     def stderr(self, start: int = 0) -> tuple[int, str]:
@@ -552,7 +580,7 @@ class LeanService:
     def _wait(self, deadline: _Deadline, what: str) -> float:
         """Seconds to wait before `deadline` is checked again; raises once it has passed. A CPU
         deadline is checked at least as often as the process could have used up what is left of
-        it (it runs one thread)."""
+        it (it computes on one thread)."""
         remaining = deadline.wall - time.monotonic()
         if remaining <= 0:
             raise _Failure(f"timeout {what}" + (f" (mode {deadline.mode})" if deadline.mode else ""))
@@ -649,9 +677,12 @@ class LeanService:
 
     def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float | None,
                    nonce: str, line: bytes, texts: list[str] | None,
-                   expanded: list | None = None) -> tuple[bytes, dict]:
+                   expanded: list | None = None, stored: bytes | None = None) -> tuple[bytes, dict]:
         deadline = self._deadline(mode, len(cases_text.encode()), count, timeout)
-        self._write_all(line, deadline)
+        if stored is None:
+            self._write_all(line, deadline)
+        else:  # the answer store's line in place of the process's, read through the same framing
+            self._buffer += stored + b"\n"
         raw = self._read_line(deadline)
         try:
             response = _decode_json(raw)
@@ -703,38 +734,66 @@ class LeanService:
             configured_seconds("VE_LEAN_SERVICE_TIMEOUT", WALL_FACTOR)
         if budget is None:
             budget = {"cases": max(count, 1), "bytes": len(cases_text.encode())}
+        store = answer_store if answer_store is not None and answer_store.applies(self, timeout) else None
+        if store is not None and len(cases_text.encode()) + ENVELOPE_BYTES + sum(
+                len(digest) + len(text.encode()) + 4 for digest, text in (environments or {}).items()) > MAX_LINE_BYTES:
+            store = None  # the line with every environment might not fit where the live one does
         with self._lock:
             attempt = 0
             while True:
                 nonce = f"{self._nonce}-{next(self._counter)}"
+                # Everything the failure path reads is bound before anything can fail (review F6): with
+                # environments the line exists only once the process has started, and starting can fail.
                 needed: dict[str, str] = {}
+                stored = None
+                line: bytes | None = None
                 if not environments:
-                    line = self._request_line(nonce, mode, cases_text, budget)
+                    nonce, line = self._line(nonce, mode, cases_text, budget, None, store)
                     if len(line) > MAX_LINE_BYTES + 1:
                         raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
                 try:
                     self._ensure()
                     if environments:
-                        # Which environments to register depends on the process, known only now.
-                        needed = {digest: text for digest, text in environments.items()
-                                  if digest not in self._registered}
-                        line = self._request_line(nonce, mode, cases_text, budget, needed)
+                        # Which environments to register depends on the process, known only now
+                        # (in store mode: all of them, so that the line stands alone).
+                        needed = (dict(environments) if store is not None else
+                                  {digest: text for digest, text in environments.items()
+                                   if digest not in self._registered})
+                        nonce, line = self._line(nonce, mode, cases_text, budget, needed, store)
                         if len(line) > MAX_LINE_BYTES + 1:
                             raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
+                    if store is not None:
+                        stored = store.answer(self, line)
                     raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line, texts,
-                                                    expanded)
+                                                    expanded, stored)
                 except _Failure as failure:
+                    if store is not None:  # a refused stored line or a failed process: the retry is live, unstored
+                        store.failed(self, line, failure, served=stored is not None)
+                        store = None
                     self._failed_attempt(failure, attempt)
                     attempt += 1
                     continue
+                if store is not None and stored is None:
+                    store.record(self, line, raw, response)
                 if response.get("status") == "error":
                     self._forget_handles()
-                else:
+                elif stored is None:  # a stored answer registered nothing in the process
                     for digest, text in needed.items():
                         self._note(digest, len(text.encode()))
                         self.stats["registered"] += 1
                 self._after_request()
                 return raw, response
+
+    def _line(self, nonce: str, mode: str, cases_text: str, budget: dict, environments: dict[str, str] | None,
+              store) -> tuple[str, bytes]:
+        """The request's nonce and line; in store mode the nonce is derived from the rest of the line (the line
+        with a fixed placeholder in its place)."""
+        if store is None:
+            return nonce, self._request_line(nonce, mode, cases_text, budget, environments)
+        line = self._request_line(_PLACEHOLDER, mode, cases_text, budget, environments)
+        nonce = "store-" + hashlib.sha256(line).hexdigest()[:32]
+        head = len('{"id":' + json.dumps(_PLACEHOLDER))
+        return nonce, ('{"id":' + json.dumps(nonce)).encode() + line[head:]
 
     def _failed_attempt(self, failure: _Failure, attempt: int) -> None:
         detail = self._stderr_tail()

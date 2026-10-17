@@ -22,6 +22,7 @@ import ResponseShape.Encoders.Rights
 import ResponseShape.Encoders.Risk
 import ResponseShape.Encoders.RiskEval
 import ResponseShape.Encoders.Route
+import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.SoftNorms
 import ResponseShape.Encoders.SpeechActs
 import ResponseShape.Encoders.Standalone
@@ -137,6 +138,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.coverage_fits
 #print axioms ResponseShape.Encoders.Document.document_fits
 #print axioms ResponseShape.Encoders.Document.meaning_fits
+#print axioms ResponseShape.Encoders.Document.rowKind_fits
 #print axioms ResponseShape.Encoders.Document.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Document.unit_fits
 #print axioms ResponseShape.Encoders.English.diagnose_fits
@@ -175,15 +177,19 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Family.readingsChoices_reported
 #print axioms ResponseShape.Encoders.Family.readings_fits
 #print axioms ResponseShape.Encoders.Family.readings_reported
+#print axioms ResponseShape.Encoders.NormDefaults.admitDocumentX_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.NormDefaults.layeredCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.line_fits
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
+#print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
+#print axioms ResponseShape.Encoders.NormDefaults.softAdmission_fits
+#print axioms ResponseShape.Encoders.NormDefaults.softCase_fits
 #print axioms ResponseShape.Encoders.Norms.admission_fits
 #print axioms ResponseShape.Encoders.Norms.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Norms.certificate_fits
@@ -210,7 +216,9 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.caseWF_lower
 #print axioms ResponseShape.Encoders.ReadingsRoute.certificateND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.certificate_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.chainText_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.choiceND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.choiceSD_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.choice_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.componentJson_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.componentRows
@@ -225,10 +233,13 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateNDFilled_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateOne_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.elaborateSD_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborate_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.entryJson_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.exceptionJson_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.fillPremises_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.filledFieldsS_ok
+#print axioms ResponseShape.Encoders.ReadingsRoute.filledS_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.filledUnits_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.filled_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.foldConflict_range
@@ -247,6 +258,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.modelND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.modelWord_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.model_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.ndVerdictsAnswer_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.nd_lower
 #print axioms ResponseShape.Encoders.ReadingsRoute.norms_lower
 #print axioms ResponseShape.Encoders.ReadingsRoute.of_lower_row
@@ -285,10 +297,15 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.runProduct_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runS2ND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.runS2_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.runSDKind_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.separateND_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.separateSD_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.setPairsBy_entries
+#print axioms ResponseShape.Encoders.ReadingsRoute.setPairsS_entries
 #print axioms ResponseShape.Encoders.ReadingsRoute.setPairsWith_entries
 #print axioms ResponseShape.Encoders.ReadingsRoute.setPairs_entries
 #print axioms ResponseShape.Encoders.ReadingsRoute.softNodeJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.softPremises_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.soft_lower
 #print axioms ResponseShape.Encoders.ReadingsRoute.statusRows_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.strings_arr
@@ -298,11 +315,15 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.supUnits_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.toJson_strings
 #print axioms ResponseShape.Encoders.ReadingsRoute.toList_of_mapM
+#print axioms ResponseShape.Encoders.ReadingsRoute.unitsJsonOf_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.validateBy_rows
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateOne_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.validateSD_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateWith_rows
 #print axioms ResponseShape.Encoders.ReadingsRoute.validate_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.verdictsAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.verdictsSD_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.verdicts_fits
 #print axioms ResponseShape.Encoders.Reports.admission_fits
 #print axioms ResponseShape.Encoders.Reports.certificate_fits
@@ -325,6 +346,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Rights.elaborate_fits
 #print axioms ResponseShape.Encoders.Rights.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.Rights.generated_entries_fit
+#print axioms ResponseShape.Encoders.Rights.groundJson_fits
 #print axioms ResponseShape.Encoders.Rights.labelled_contra
 #print axioms ResponseShape.Encoders.Rights.limLabels_nonempty
 #print axioms ResponseShape.Encoders.Rights.of_softNorms
@@ -355,6 +377,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Route.background_generators_fit
 #print axioms ResponseShape.Encoders.Route.caseKind_setObjVal
 #print axioms ResponseShape.Encoders.Route.coreLayers_fits
+#print axioms ResponseShape.Encoders.Route.coreRunBackground_fits
 #print axioms ResponseShape.Encoders.Route.coreWire_fits
 #print axioms ResponseShape.Encoders.Route.dispatch_fits
 #print axioms ResponseShape.Encoders.Route.fullBackground_generators
@@ -369,10 +392,13 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Route.runFol_fits
 #print axioms ResponseShape.Encoders.Route.runOrder_fits
 #print axioms ResponseShape.Encoders.Route.tagged_generators
+#print axioms ResponseShape.Encoders.SearchBudget.runCaseReported_fits
+#print axioms ResponseShape.Encoders.SearchBudget.runCase_fits
 #print axioms ResponseShape.Encoders.SoftNorms.admission_fits
 #print axioms ResponseShape.Encoders.SoftNorms.admitDocument_kinds
 #print axioms ResponseShape.Encoders.SoftNorms.checkSource_ok
 #print axioms ResponseShape.Encoders.SoftNorms.classify_ok
+#print axioms ResponseShape.Encoders.SoftNorms.decisionKeyJson_fits
 #print axioms ResponseShape.Encoders.SoftNorms.decision_entries_fit
 #print axioms ResponseShape.Encoders.SoftNorms.declarations_ok
 #print axioms ResponseShape.Encoders.SoftNorms.documentReferences_ok

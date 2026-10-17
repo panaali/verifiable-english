@@ -1,0 +1,9 @@
+{
+ "what": "seeded hang S6: tools/difffuzz.py evaluate() blocks forever on threading.Event().wait() once WORK['inputs'] > 12000 (no CPU); tests/test_difffuzz.py::test_ci_run on 5269b750 plus that seed, in a mutant worktree on the VM",
+ "start": "2026-10-16T02:48Z",
+ "end": "2026-10-16T03:20:23Z",
+ "outcome": "failed",
+ "pytest": "1 failed in 1924.18s (0:32:04)",
+ "error": "subprocesses.Stalled: Command ['.../python', '-m', 'tools.difffuzz', '--ci', '--progress', '--report', '.../difffuzz-ci.json'] made no progress for 1800 s",
+ "left_behind": "no process of the mutant worktree was running afterwards (pgrep)"
+}

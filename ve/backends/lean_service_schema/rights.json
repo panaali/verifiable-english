@@ -117,7 +117,7 @@
       "type": "array"
     },
     "elaborate": {
-      "$comment": "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime.",
+      "$comment": "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings with their grounds, the rule narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime.",
       "additionalProperties": false,
       "properties": {
         "background": {"$ref": "soft-norms.json#/$defs/background"},
@@ -223,7 +223,7 @@
           },
           "type": "array"
         },
-        "narrowings": {"$ref": "#/$defs/narrowings"},
+        "narrowings": {"$ref": "#/$defs/elaborated_narrowings"},
         "order": {"$ref": "common.json#/$defs/strings"},
         "premises": {"$ref": "common.json#/$defs/layer_premises"},
         "rights_background": {
@@ -239,6 +239,7 @@
           },
           "type": "array"
         },
+        "rule_narrowings": {"$ref": "#/$defs/rule_narrowings"},
         "status": {"const": "ok"},
         "unit_open": {"items": {"type": "boolean"}, "type": "array", "x-length": "/document"},
         "warnings": {"$ref": "common.json#/$defs/nonempty_strings"},
@@ -256,6 +257,7 @@
         "bars",
         "rights_background",
         "narrowings",
+        "rule_narrowings",
         "distinction",
         "findings",
         "decisions",
@@ -270,6 +272,37 @@
         "warnings"
       ],
       "type": "object"
+    },
+    "elaborated_narrowings": {
+      "$comment": "Rights.Run.elaboratedNarrowingsJson: per line, the limitations in scope, the bar's reach (null when none) and each narrowing mechanism with its licence without certificates (null when none) and its grounds.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "bar": {"anyOf": [{"const": null}, {"type": "string"}]},
+          "in_scope": {"type": "boolean"},
+          "limitations": {"$ref": "common.json#/$defs/strings"},
+          "mechanisms": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "conclusion": {"$ref": "common.json#/$defs/generated_formula"},
+                "grounds": {"$ref": "#/$defs/grounds"},
+                "licence": {"anyOf": [{"const": null}, {"$ref": "common.json#/$defs/text"}]},
+                "mechanism": {"$ref": "common.json#/$defs/text"},
+                "target": {"$ref": "common.json#/$defs/text"}
+              },
+              "required": ["mechanism", "target", "conclusion", "licence", "grounds"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "right": {"type": "string"},
+          "rule": {"type": "string"}
+        },
+        "required": ["right", "rule", "in_scope", "limitations", "bar", "mechanisms"],
+        "type": "object"
+      },
+      "type": "array"
     },
     "entries": {
       "items": {
@@ -286,6 +319,37 @@
       "type": "array"
     },
     "findings": {"items": {"$ref": "common.json#/$defs/text"}, "type": "array"},
+    "grounds": {
+      "$comment": "Rights.Run.groundJson: what a licence without certificates rests on: the citation (its rule and key), the colliding right line or the strict rule; null for the limitation, the bar and no licence.",
+      "anyOf": [
+        {"const": null},
+        {
+          "additionalProperties": false,
+          "properties": {
+            "citation": {
+              "additionalProperties": false,
+              "properties": {"key": {"type": "string"}, "rule": {"type": "string"}},
+              "required": ["rule", "key"],
+              "type": "object"
+            }
+          },
+          "required": ["citation"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"line": {"type": "string"}},
+          "required": ["line"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"rule": {"type": "string"}},
+          "required": ["rule"],
+          "type": "object"
+        }
+      ]
+    },
     "instance": {"enum": ["claim", "liberty", "immunity", "powerLiberty", "powerRecognition"]},
     "kind": {
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
@@ -428,6 +492,28 @@
         {"required": ["bar"]}
       ],
       "type": "object"
+    },
+    "rule_narrowings": {
+      "$comment": "Rights.Run.ruleNarrowingsJson: per rule of T'' without bars, the mechanism targets that name it and, per citation of its source in key order, the targets whose licence rests on it.",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "citations": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {"key": {"type": "string"}, "licenses": {"$ref": "common.json#/$defs/strings"}},
+              "required": ["key", "licenses"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "narrows": {"$ref": "common.json#/$defs/strings"},
+          "rule": {"type": "string"}
+        },
+        "required": ["rule", "narrows", "citations"],
+        "type": "object"
+      },
+      "type": "array"
     },
     "scope": {
       "$comment": "Rights.Run.runRightsKind rights-scope: the unlicensed-limitation findings, whether there are none, and the narrowings with certified licences.",
