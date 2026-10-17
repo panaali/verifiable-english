@@ -1,0 +1,66 @@
+[
+  {
+    "file": "lean/VE/Numbers/Round.lean",
+    "behaviour": "a rounding mode: rounded down and rounded up",
+    "mutation": "\"rounded down\" and \"rounded up\" swap meanings consistently: RoundsTo's .down and .up bodies, Rounding.round's floor and ceil, and the proofs of down_iff and up_iff are exchanged, so Round.lean still compiles with every proof checked",
+    "test": "lake build VE.Numbers.Examples (#guard fixtures at Examples.lean:60, 61, 63, 64)",
+    "result": "failed; restored",
+    "observed": "Round.lean built; error: VE/Numbers/Examples.lean:60:0, 61:0, 63:0, 64:0 (the exact-value guards at 62 and 65 still hold, as they must)"
+  },
+  {
+    "file": "lean/VE/Numbers/Round.lean",
+    "behaviour": "a rounding mode: half to even",
+    "mutation": "Rounding.round .halfEven sends an exact tie to the odd neighbour (f % 2 = 0 for f % 2 ≠ 0); the two proofs that pin it (halfEven_iff, rules_differ_iff) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Numbers.Examples (V-9, V-8 and negative-tie #guards)",
+    "result": "failed; restored",
+    "observed": "error: VE/Numbers/Examples.lean:40:0, 47:0, 53:0, 55:0, 69:0"
+  },
+  {
+    "file": "lean/VE/Numbers/Round.lean",
+    "behaviour": "the fixed explanation of an unknown",
+    "mutation": "UnknownReason.text (.limit .digits) says 4,069 digits instead of 4,096",
+    "test": "lake build VE.Numbers.Examples (#guard at Examples.lean:74)",
+    "result": "failed; restored",
+    "observed": "error: VE/Numbers/Examples.lean:74:0"
+  },
+  {
+    "file": "lean/VE/Numbers/Decimal.lean",
+    "behaviour": "a decimal normalisation: the exact value of a written decimal",
+    "mutation": "decValue normalises away the sign (d.significand.natAbs). As written, the proof decValue_lower fails first (Decimal.lean:20, rewrite failed); with decValue_lower, Printed.value_ofDec and Printed.value_sci replaced by sorry for the mutant, the fixture catches it",
+    "test": "lake build VE.Numbers.Examples (#guard at Examples.lean:12, -2.675 is -107/40)",
+    "result": "failed; restored",
+    "observed": "error: VE/Numbers/Examples.lean:12:0"
+  },
+  {
+    "file": "lean/VE/Numbers/Phrases.lean",
+    "behaviour": "a comparison-table row",
+    "mutation": "orderPhrases' row \"{0} is more than {1}\" loses its operand swap (<.lt, false> for <.lt, true>)",
+    "test": "lake build VE.Numbers.Examples (#guard at Examples.lean:94); tools/numbers_phrases.py --check; after --write: tests/test_numbers_phrases.py::test_comparison_rows_match_generated_table, tests/test_english_lean_s3.py::test_the_comparison_actions_swap_more_and_at_least, ::test_ev5_the_committed_report_is_regenerated, ::test_ev5_python_agrees_with_every_fixture_in_its_own_selections",
+    "result": "failed; restored",
+    "observed": "error: VE/Numbers/Examples.lean:94:0; ve/numbers_phrases.json is stale (exit 1); 4 failed, 54 passed"
+  },
+  {
+    "file": "lean/VE/Numbers/PhrasesMain.lean",
+    "behaviour": "the generated comparison table",
+    "mutation": "relName writes \"le\" for .lt",
+    "test": "tools/numbers_phrases.py --check; after --write: tests/test_numbers_phrases.py::test_comparison_rows_match_generated_table",
+    "result": "failed; restored",
+    "observed": "ve/numbers_phrases.json is stale (exit 1); 1 failed"
+  },
+  {
+    "file": "ve/english.py",
+    "behaviour": "Python reads the comparison rows from the generated table",
+    "mutation": "_comparison_rows maps \"lt\" to ast.Le",
+    "test": "tests/test_numbers_phrases.py::test_comparison_rows_match_generated_table; tests/test_english_lean_s3.py::test_the_comparison_actions_swap_more_and_at_least",
+    "result": "failed; restored",
+    "observed": "4 failed, 54 passed (the same four tests as the Phrases.lean row mutant)"
+  },
+  {
+    "file": "tools/numbers_phrases.py",
+    "behaviour": "--check refuses a table that differs from the Lean generator's output",
+    "mutation": "--check passes whenever the file exists",
+    "test": "tests/test_numbers_phrases.py::test_generator_writes_lean_output_and_check_refuses_any_other_file",
+    "result": "failed; restored",
+    "observed": "1 failed, 1 passed"
+  }
+]
