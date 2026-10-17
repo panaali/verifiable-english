@@ -1,6 +1,6 @@
 # tarch-slowtail: the suite's slow tail (speed program round 2, action #15; PIPELINE-LIMITS L41, L63)
 
-Branch `infra/tarch-slowtail`, merge base main 85b20fcb, synced with main bc1936dd. Python tooling only: no Lean,
+Branch `infra/tarch-slowtail`, measured against main 85b20fcb, synced with main 3c664615. Python tooling only: no Lean,
 `ve/` or Rust change, no trust growth. User-visible deltas: [DELTA.md](DELTA.md).
 
 ## Result
@@ -141,7 +141,7 @@ manage-agents script, `tools/select_tests.py`, the collection check or the quara
 ## Runs
 
 - Whole suite on the Mac at 9 workers, this branch d159baf4: 0 failed (the "after" run above). Main 85b20fcb: 0 failed.
-- The selected tests of the final branch: see the build report.
+- The selected tests (`mac-pytest.sh --select`, 33 units): 0 failed at 8215a8a7. The later sync with main 3c664615 brought only fu-ar2-decoders (trust tools and docs), which this branch does not touch.
 - Pre-existing failures on main (main-known-red.txt): none of them is in this branch's tests. The three listed
   (test_lean_service sub-tick deadline ×2, test_readings_defaults_rd8_report) passed in both Mac runs and were not
   touched.
