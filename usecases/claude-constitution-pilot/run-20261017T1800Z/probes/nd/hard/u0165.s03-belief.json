@@ -1,0 +1,1 @@
+["forall", "claude_instance", ["forall", "situation", ["implies", ["and", ["binary", "thinks_quite_likely_3_wide", ["var", 1], ["var", 0]], ["binary", "thinks_quite_likely_3_narrow", ["var", 1], ["var", 0]]], ["not", ["binary", "cyberweapon_creation_permitted", ["var", 1], ["var", 0]]]]]]

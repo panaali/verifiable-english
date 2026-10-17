@@ -1,0 +1,117 @@
+{
+ "language_tag": "ve-green-risk",
+ "cases": {
+  "u0087.s06 (obligation on Claude, no permission predicate)": {
+   "verdict": "accepted",
+   "raw_status": "ok",
+   "keys": [
+    "alternatives",
+    "background",
+    "base_premises",
+    "conflict_targets",
+    "document_hash",
+    "e_risk",
+    "environment_id",
+    "followable",
+    "fragment",
+    "id",
+    "inlined",
+    "legend",
+    "order",
+    "premises",
+    "risk_premises",
+    "status",
+    "unmapped_obligations",
+    "unranked_severities"
+   ]
+  },
+  "u0087.s06 (with the `performed` pair: permitted, allow by default)": {
+   "verdict": "accepted",
+   "raw_status": "ok",
+   "keys": [
+    "alternatives",
+    "background",
+    "base_premises",
+    "conflict_targets",
+    "document_hash",
+    "e_risk",
+    "environment_id",
+    "followable",
+    "fragment",
+    "id",
+    "inlined",
+    "legend",
+    "order",
+    "premises",
+    "risk_premises",
+    "status",
+    "unmapped_obligations",
+    "unranked_severities"
+   ]
+  },
+  "u0087.s06 as 'must not be performed' (permission predicate with default allow)": {
+   "verdict": "accepted",
+   "raw_status": "ok",
+   "keys": [
+    "alternatives",
+    "background",
+    "base_premises",
+    "conflict_targets",
+    "document_hash",
+    "e_risk",
+    "environment_id",
+    "followable",
+    "fragment",
+    "id",
+    "inlined",
+    "legend",
+    "order",
+    "premises",
+    "risk_premises",
+    "status",
+    "unmapped_obligations",
+    "unranked_severities"
+   ]
+  },
+  "u0218.s13 (severity order only; 'appropriate weight' has no place in stage A)": {
+   "verdict": "accepted",
+   "raw_status": "ok",
+   "keys": [
+    "alternatives",
+    "background",
+    "base_premises",
+    "conflict_targets",
+    "document_hash",
+    "e_risk",
+    "environment_id",
+    "followable",
+    "fragment",
+    "id",
+    "inlined",
+    "legend",
+    "order",
+    "premises",
+    "risk_premises",
+    "status",
+    "unmapped_obligations",
+    "unranked_severities"
+   ]
+  },
+  "u0218.s14 (expected outcome / variance: needs chances and costs)": {
+   "verdict": "InvalidInput: risk.chance_tag (stage B or C not enabled)",
+   "raw_status": "error",
+   "keys": [
+    "error",
+    "id",
+    "status"
+   ]
+  }
+ },
+ "profile_gate": {
+  "risk@0 with the translation's profiles (documents@1, norms@0, relational-fol@0, soft-norms@0)": "rejected: UnsupportedProfile: risk@0 requires alternatives@0",
+  "alternatives@0 + risk@0 + norms@0 with soft-norms@0": "rejected: UnsupportedProfile: alternatives@0 with soft-norms@0",
+  "alternatives@0 + risk@0 + norms@0 (no soft-norms@0)": "accepted (checker family fol)",
+  "alternatives@0 + risk@0 + norms@0 + rights@0": "rejected: UnsupportedProfile: rights@0 requires soft-norms@0",
+  "alternatives@0 + risk@0 + norms@0 + closure@0": "rejected: UnsupportedProfile: the risk norms route admits FOL documents only"
+ }
+}

@@ -1,0 +1,25 @@
+[
+ {
+  "candidate": "strict-in-frame",
+  "label": "Claude is asked to keep its system prompt confidential",
+  "predicate": "system_prompt_deception_permitted",
+  "true_atoms": [
+   "asked_to_keep_system_prompt_confidential"
+  ],
+  "status": "SETTLED no"
+ },
+ {
+  "candidate": "strict-in-frame",
+  "label": "Claude is not asked to keep its system prompt confidential",
+  "predicate": "system_prompt_deception_permitted",
+  "true_atoms": [],
+  "status": "UNDECIDED"
+ },
+ {
+  "candidate": "strict",
+  "label": "Claude is not asked to keep its system prompt confidential",
+  "predicate": "system_prompt_deception_permitted",
+  "true_atoms": [],
+  "status": "SETTLED no"
+ }
+]
