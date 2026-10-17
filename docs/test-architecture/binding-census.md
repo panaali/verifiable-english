@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 243 |
 | leaves:closed domain | 247 |
-| leaves:none | 1265 |
+| leaves:none | 1269 |
 | modes | 36 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 864 |
+| today:not probed | 868 |
 | today:shape | 490 |
 | today:unbound | 137 |
 | answers | 536 |
@@ -2752,9 +2752,13 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/error` | string | none |  | minLength | 3 | not probed |
 | `/id` | any | bound | x-echo |  | 3 | shape |
 | `/id` | string | bound | x-equals |  | 3 | shape |
-| `/path` | string | none |  |  | 0 | not probed |
+| `/path` | string | none |  | minLength | 0 | not probed |
 | `/source` | string | none |  |  | 3 | hand: `ve/document.py:require` |
 | `/source_id` | string | none |  | pattern | 3 | hand: `ve/document.py:_lean_document` |
+| `/span/column` | integer | none |  | minimum | 0 | not probed |
+| `/span/end` | integer | none |  | minimum | 0 | not probed |
+| `/span/line` | integer | none |  | minimum | 0 | not probed |
+| `/span/start` | integer | none |  | minimum | 0 | not probed |
 | `/status` | string | closed domain | const |  | 6 | shape |
 | `/units/*/content/bar/decided_by` | string | none |  |  | 0 | not probed |
 | `/units/*/content/bar/name` | string | none |  |  | 0 | not probed |

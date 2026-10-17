@@ -119,6 +119,7 @@ UNBUILT = {
     "docs/lean-first/b16c/seed_faults.py",
     "docs/lean-first/b16d/seed_faults.py",
     "docs/lean-first/b16e/seed_faults.py",
+    "docs/lean-first/b16f/seed_faults.py",
     # Frozen with the P1 preregistration (experiments/P1-deference/freeze.json); a serial outermost run
     # from a shell that passes no plugin option.
     "experiments/p1_preflight.py",
