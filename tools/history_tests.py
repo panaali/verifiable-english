@@ -414,7 +414,12 @@ def lint(root: Path = ROOT) -> Findings:
     errors = validate_extract(saved) + validate_list(listed)
     if errors:
         return Findings(errors, [])
-    expected = generate(saved, root)
+    return compare(listed, generate(saved, root), root)
+
+
+def compare(listed: dict, expected: dict, root: Path = ROOT) -> Findings:
+    """The lint's findings for the committed list `listed` against the generated `expected`."""
+    errors = []
     if listed["map"] != expected["map"]:
         errors.append(f"{LIST}: names map {listed['map']}, but {MAP_EXTRACT} was saved from {expected['map']}")
     have = {row["test"]: row for row in listed["tests"]}

@@ -42,3 +42,5 @@ uv.lock merge=ve-generated
 tests/heavy.json merge=ve-generated
 tests/platform-divergences.json merge=ve-generated
 tests/platform-contract.json merge=ve-generated
+tests/history-map.json merge=ve-generated
+tests/history-dependent.json merge=ve-generated

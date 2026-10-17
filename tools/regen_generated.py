@@ -140,6 +140,13 @@ GENERATED = (
               ((PY, "tools/platform_contract.py", "contract", "--write"),),
               ((PY, "tools/platform_contract.py", "contract", "--check"),),
               note="after platform-divergences, which it reads"),
+    Generated("history-map", ("tests/history-map.json",), None, None, merge="json",
+              note="saved from the coverage map by `tools/history_tests.py --save-map [--map ...]`; its shape is "
+                   "checked by history-tests' check"),
+    Generated("history-tests", ("tests/history-dependent.json",),
+              ((PY, "tools/history_tests.py", "--write"),),
+              ((PY, "tools/history_tests.py", "--check"),),
+              note="after history-map, which it reads with the test sources"),
 )
 
 
