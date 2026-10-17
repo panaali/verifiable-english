@@ -1,31 +1,34 @@
 {
-  "base_commit": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
-  "head_commit": "08d5a077f4ab04fac01044034fe33e08d4f5aaf8",
-  "method": "paired warm readings-route service calls; /proc service CPU time",
-  "allowance": 0.2,
-  "samples": {
-    "differential/c0": {
-      "pairs": 5,
-      "base_cpu_ms": 3.979852,
-      "head_cpu_ms": 3.999328,
-      "case_sha256": "2eb32776fce454e936243dfb9f5c90808c7d651cf36b7bc473bde1979f6aa2c5",
-      "calls_per_side": 500
-    },
-    "differential/c568": {
-      "pairs": 5,
-      "base_cpu_ms": 3.566053,
-      "head_cpu_ms": 3.739737,
-      "case_sha256": "7ce846a74a48e0090349368fa8d88220653dbba8d025bfa545be248043b43b3f",
-      "calls_per_side": 500
-    },
-    "nulls/rights/vocabulary.predicates.arrest_permitted.instruction_of": {
-      "pairs": 5,
-      "base_cpu_ms": 4.775707,
-      "head_cpu_ms": 4.770856,
-      "case_sha256": "c9efb3a9454eab711ac70600dc0d8f74e3b0b44cbde4857ea32d375a9136fa59",
-      "calls_per_side": 500
-    }
+ "allowance": 0.2,
+ "base_commit": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+ "corpus_sha256": "ae6fec8935de56045da432b20fda3120022c3d7a718b0781c4df0694a2a3274a",
+ "head_commit": "3d1c0312f6c008f0c7d238f8ec8dc1cf49857c63",
+ "method": "paired warm readings-route service calls; /proc service CPU time",
+ "pass": true,
+ "samples": {
+  "differential/c0": {
+   "base_cpu_ms": 1249.149451,
+   "calls_per_side": 500,
+   "case_sha256": "0182dd18cde232d7f9d6a888069056ffd79bfe50e208dd9edfaccbced8212dc7",
+   "head_cpu_ms": 1245.611041,
+   "pairs": 5,
+   "same_output": true
   },
-  "corpus_sha256": "ae6fec8935de56045da432b20fda3120022c3d7a718b0781c4df0694a2a3274a",
-  "pass": true
+  "differential/c568": {
+   "base_cpu_ms": 1183.366078,
+   "calls_per_side": 500,
+   "case_sha256": "7112cbb77bae44bf5b8d3c49434e43234013a59d8e41b5addf364d6f55f59a7d",
+   "head_cpu_ms": 1211.32264,
+   "pairs": 5,
+   "same_output": true
+  },
+  "nulls/rights/vocabulary.predicates.arrest_permitted.instruction_of": {
+   "base_cpu_ms": 1370.269639,
+   "calls_per_side": 500,
+   "case_sha256": "d5d5d8049414547d58249e0921f0300a148807de9e4ebc65c4f703ffa72beaab",
+   "head_cpu_ms": 1433.414088,
+   "pairs": 5,
+   "same_output": true
+  }
+ }
 }

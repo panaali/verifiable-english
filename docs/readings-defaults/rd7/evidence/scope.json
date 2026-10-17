@@ -7,129 +7,169 @@
    "path": "docs/readings-defaults/rd7/REPORT.md"
   },
   {
-   "added": 40,
+   "added": 22,
    "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/comparator-probes.json"
+  },
+  {
+   "added": 47,
+   "deleted": 7,
    "path": "docs/readings-defaults/rd7/evidence/deletion-ledger.json"
   },
   {
-   "added": 36,
+   "added": 31,
    "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/latency.json"
+  },
+  {
+   "added": 36,
+   "deleted": 36,
    "path": "docs/readings-defaults/rd7/evidence/lean-mutants-final-worktree.json"
   },
   {
    "added": 36,
-   "deleted": 0,
+   "deleted": 36,
    "path": "docs/readings-defaults/rd7/evidence/lean-mutants.json"
   },
   {
-   "added": 72,
-   "deleted": 0,
+   "added": 197,
+   "deleted": 7,
    "path": "docs/readings-defaults/rd7/evidence/mutants.json"
   },
   {
-   "added": 38,
+   "added": 21,
    "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/pilot-check-latency.json"
+  },
+  {
+   "added": 21,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/pilot-render-latency.json"
+  },
+  {
+   "added": 38,
+   "deleted": 38,
    "path": "docs/readings-defaults/rd7/evidence/python-mutants-final-worktree.json"
   },
   {
    "added": 38,
-   "deleted": 0,
+   "deleted": 38,
    "path": "docs/readings-defaults/rd7/evidence/python-mutants.json"
   },
   {
    "added": 1,
-   "deleted": 0,
+   "deleted": 1,
    "path": "docs/readings-defaults/rd7/evidence/rd7-collection-final-worktree2.log"
   },
   {
    "added": 10,
-   "deleted": 0,
+   "deleted": 10,
    "path": "docs/readings-defaults/rd7/evidence/rd7-collection.log"
   },
   {
    "added": 4,
-   "deleted": 0,
+   "deleted": 4,
    "path": "docs/readings-defaults/rd7/evidence/rd7-defaults-regressions.log"
   },
   {
    "added": 4,
-   "deleted": 0,
+   "deleted": 4,
    "path": "docs/readings-defaults/rd7/evidence/rd7-final-binding-tests.log"
   },
   {
    "added": 4,
-   "deleted": 0,
+   "deleted": 4,
    "path": "docs/readings-defaults/rd7/evidence/rd7-focused-final-worktree.log"
   },
   {
    "added": 1,
-   "deleted": 0,
+   "deleted": 1,
    "path": "docs/readings-defaults/rd7/evidence/rd7-git-stage.log"
   },
   {
    "added": 438,
-   "deleted": 0,
+   "deleted": 438,
    "path": "docs/readings-defaults/rd7/evidence/rd7-guards.log"
   },
   {
    "added": 4,
-   "deleted": 0,
+   "deleted": 4,
    "path": "docs/readings-defaults/rd7/evidence/rd7-last-regressions.log"
   },
   {
    "added": 3,
-   "deleted": 0,
+   "deleted": 3,
    "path": "docs/readings-defaults/rd7/evidence/rd7-lean-mutants-final.log"
   },
   {
    "added": 4,
-   "deleted": 0,
+   "deleted": 4,
    "path": "docs/readings-defaults/rd7/evidence/rd7-owner-regression.log"
   },
   {
    "added": 815,
-   "deleted": 0,
+   "deleted": 815,
    "path": "docs/readings-defaults/rd7/evidence/rd7-proposals-build.log"
   },
   {
    "added": 4,
-   "deleted": 0,
+   "deleted": 4,
    "path": "docs/readings-defaults/rd7/evidence/rd7-proposals-tests.log"
   },
   {
    "added": 3,
-   "deleted": 0,
+   "deleted": 3,
    "path": "docs/readings-defaults/rd7/evidence/rd7-python-mutants-final2.log"
   },
   {
    "added": 1,
-   "deleted": 0,
+   "deleted": 1,
    "path": "docs/readings-defaults/rd7/evidence/rd7-repo-map.log"
   },
   {
    "added": 439,
-   "deleted": 0,
+   "deleted": 439,
    "path": "docs/readings-defaults/rd7/evidence/rd7-restored-guards.log"
   },
   {
    "added": 14,
-   "deleted": 0,
+   "deleted": 14,
    "path": "docs/readings-defaults/rd7/evidence/rd7-s2-regressions.log"
   },
   {
    "added": 15,
-   "deleted": 0,
+   "deleted": 15,
    "path": "docs/readings-defaults/rd7/evidence/rd7-statements-check.log"
   },
   {
    "added": 5,
-   "deleted": 0,
+   "deleted": 5,
    "path": "docs/readings-defaults/rd7/evidence/rd7-sup-proof6.log"
   },
   {
    "added": 4,
-   "deleted": 0,
+   "deleted": 4,
    "path": "docs/readings-defaults/rd7/evidence/rd7-tests6.log"
+  },
+  {
+   "added": 528,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/relay-gate.json"
+  },
+  {
+   "added": 59,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/relay-route.json"
+  },
+  {
+   "added": 384,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/scope.json"
+  },
+  {
+   "added": 303,
+   "deleted": 50,
+   "path": "docs/readings-defaults/rd7/evidence/seeded-bugs.json"
   },
   {
    "added": 1,
@@ -137,8 +177,8 @@
    "path": "docs/readings-defaults/rd8/DELTA.md"
   },
   {
-   "added": 195,
-   "deleted": 55,
+   "added": 221,
+   "deleted": 68,
    "path": "docs/trust-baseline.json"
   },
   {
@@ -152,13 +192,13 @@
    "path": "lean/ResponseShape/Audit.lean"
   },
   {
-   "added": 65,
-   "deleted": 2,
+   "added": 67,
+   "deleted": 4,
    "path": "lean/ResponseShape/Encoders/ReadingsRoute.lean"
   },
   {
-   "added": 52,
-   "deleted": 1,
+   "added": 55,
+   "deleted": 3,
    "path": "lean/ResponseShape/Schemas/ReadingsRoute.lean"
   },
   {
@@ -197,8 +237,8 @@
    "path": "lean/VE/Readings/SupVerdictsSound.lean"
   },
   {
-   "added": 444,
-   "deleted": 11,
+   "added": 457,
+   "deleted": 22,
    "path": "lean/VE/Readings/SupVerdictsWire.lean"
   },
   {
@@ -207,8 +247,8 @@
    "path": "lean/VE/Rights/Run.lean"
   },
   {
-   "added": 13,
-   "deleted": 8,
+   "added": 14,
+   "deleted": 9,
    "path": "lean/VE/Route/frozen-sources.sha256"
   },
   {
@@ -222,13 +262,13 @@
    "path": "lean/axioms.txt"
   },
   {
-   "added": 8,
+   "added": 11,
    "deleted": 0,
    "path": "lean/checkers.lock"
   },
   {
-   "added": 344,
-   "deleted": 240,
+   "added": 375,
+   "deleted": 271,
    "path": "lean/declarations.txt"
   },
   {
@@ -240,6 +280,11 @@
    "added": 187,
    "deleted": 15,
    "path": "lean/statements.txt"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "tests/data/readings-rd7-128.json"
   },
   {
    "added": 14,
@@ -267,13 +312,13 @@
    "path": "tests/test_readings_nd_document.py"
   },
   {
-   "added": 27,
-   "deleted": 14,
+   "added": 29,
+   "deleted": 16,
    "path": "tests/test_readings_s2_document.py"
   },
   {
-   "added": 316,
-   "deleted": 3,
+   "added": 401,
+   "deleted": 21,
    "path": "tests/test_readings_sup_verdicts.py"
   },
   {
@@ -302,8 +347,8 @@
    "path": "ve/assurance-manifest.json"
   },
   {
-   "added": 246,
-   "deleted": 1,
+   "added": 248,
+   "deleted": 2,
    "path": "ve/backends/lean_service_schema/readings-route.json"
   },
   {
@@ -317,12 +362,40 @@
    "path": "ve/readings_s2_wording.py"
   },
   {
-   "added": 374,
-   "deleted": 398,
+   "added": 399,
+   "deleted": 408,
    "path": "ve/readings_verdicts.py"
   }
  ],
  "commits": [
+  {
+   "hash": "5db6ad3e59ec96281c1e8452dc1e80644f3082dd",
+   "subject": "rd-7: test null dead readings at the checked-choice limit"
+  },
+  {
+   "hash": "3d1c0312f6c008f0c7d238f8ec8dc1cf49857c63",
+   "subject": "rd-7: refresh final inventories and proof-test evidence"
+  },
+  {
+   "hash": "49749eea16ea8b919f52836a79d1f85b87960f7a",
+   "subject": "rd-7: report checked dead readings beyond 64 choices"
+  },
+  {
+   "hash": "9c7bcf6075acef236adde589ffd6e23aefa74cc1",
+   "subject": "rd-7: carry bounded model proposals with each Lean scope"
+  },
+  {
+   "hash": "93d5d3c609cff3107fd23e9375226541d4f539ff",
+   "subject": "rd-7: avoid needless premise proof search when a model exists"
+  },
+  {
+   "hash": "0408eca294acabc6b52c34c40cea4e5de91b7357",
+   "subject": "rd-7: propose models from the full checked choice set"
+  },
+  {
+   "hash": "fb9c012180e6a979b2683ffccb712d7d20d16b82",
+   "subject": "rd-7: save seeded, relay, latency, and scope evidence"
+  },
   {
    "hash": "08d5a077f4ab04fac01044034fe33e08d4f5aaf8",
    "subject": "rd-7: reuse Lean-confirmed scopes while preparing evidence"
@@ -380,5 +453,5 @@
    "subject": "rd-7: work left uncommitted (committed by chain)"
   }
  ],
- "head": "08d5a077f4ab04fac01044034fe33e08d4f5aaf8"
+ "head": "5db6ad3e59ec96281c1e8452dc1e80644f3082dd"
 }
