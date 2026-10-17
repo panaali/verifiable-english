@@ -34,7 +34,9 @@
   },
   "senses": {
     "cases": 7,
-    "retained": 7
+    "error": 1,
+    "ok": 4,
+    "retained": 2
   },
   "soft norms": {
     "cases": 22,

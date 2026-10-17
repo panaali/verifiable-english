@@ -220,10 +220,5 @@
       "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
     }
   ],
-  "wording": [
-    {
-      "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'",
-      "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
-    }
-  ]
+  "wording": []
 }

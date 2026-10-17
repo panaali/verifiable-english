@@ -1,7 +1,6 @@
 {
   "totals": {
-    "same": 100379,
-    "wording": 7,
+    "same": 100386,
     "unavailable": 8
   },
   "records": {
@@ -22,160 +21,6 @@
     "pilots/default": 8
   },
   "differences": [
-    {
-      "corpus": "pilots",
-      "authority": "default",
-      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/a_front_matter_default.ve.md",
-      "op": "document_check",
-      "class": "wording",
-      "base": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "head": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "listed": true
-    },
-    {
-      "corpus": "pilots",
-      "authority": "default",
-      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/b_no_choice_made.ve.md",
-      "op": "document_check",
-      "class": "wording",
-      "base": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "head": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "listed": true
-    },
-    {
-      "corpus": "pilots",
-      "authority": "default",
-      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/c_written_definition_line.ve.md",
-      "op": "document_check",
-      "class": "wording",
-      "base": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "head": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "listed": true
-    },
-    {
-      "corpus": "pilots",
-      "authority": "default",
-      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/d_parenthetical_switch.ve.md",
-      "op": "document_check",
-      "class": "wording",
-      "base": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "head": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "listed": true
-    },
-    {
-      "corpus": "pilots",
-      "authority": "default",
-      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/e_the_rejected_sense_negated.ve.md",
-      "op": "document_check",
-      "class": "wording",
-      "base": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "head": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "listed": true
-    },
-    {
-      "corpus": "pilots",
-      "authority": "default",
-      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/f_two_words_one_default.ve.md",
-      "op": "document_check",
-      "class": "wording",
-      "base": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "head": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "listed": true
-    },
-    {
-      "corpus": "pilots",
-      "authority": "default",
-      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/g_bad_default.ve.md",
-      "op": "document_check",
-      "class": "wording",
-      "base": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "head": {
-        "exit": 1,
-        "stderr": [
-          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
-        ],
-        "stdout": ""
-      },
-      "listed": true
-    },
     {
       "corpus": "pilots",
       "authority": "default",
@@ -402,6 +247,6 @@
     }
   ],
   "unlisted": 0,
-  "base_sha256": "966ee537066aae480634cecfd3dd37994cb3b0c0165d70f4ffd55629925987fe",
-  "head_sha256": "6907b70110060078f2d8a465b8b94f3dff4a5950d82d48fce87f96bccdd8cd09"
+  "base_sha256": "90bf42e49402772ef56e8aa189a98b49bbbfc5410643558b77d12e4496dc31fb",
+  "head_sha256": "7449f3b5feac04d4bc0065b1a1d37e49aa2ed3b71cc711f5809c681135979151"
 }

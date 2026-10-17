@@ -181,7 +181,7 @@
   "service_requests": 33
  },
  "cpu_seconds": {
-  "python": 134.3,
-  "children": 61.3
+  "python": 129.7,
+  "children": 59.1
  }
 }

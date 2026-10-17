@@ -2,12 +2,15 @@
 
     python docs/lean-first/b16f/make_ab.py BASE HEAD
 
-Every difference must be one of the two listed kinds; any other (an accepted output that changed, a verdict, an
-order or an availability change) stops the script:
+Every difference must be the one listed kind; any other (an accepted output that changed, a verdict, a wording,
+an order or an availability change) stops the script:
 
-* pilot wording: the same missing sense pack named under each recorder's own temporary directory;
 * unavailable on both sides with identical outputs (SIGNED by standing ruling R7): a pilot both sides answer
   `CheckerUnavailable`, or both stop at the recorder's 600 s limit.
+
+The recorder writes each pilot with the files it names beside it (`lean_first_diff.write_pilot`), so a senses pilot
+no longer reads as a missing pack under each recorder's own temporary directory (review F2): that wording class is
+gone, not listed.
 """
 from __future__ import annotations
 
@@ -20,7 +23,6 @@ from tools import lean_first_diff as diff
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
-TEMPORARY = "the same missing sense pack names each recorder's temporary directory"
 SIGNED = "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
 
 
@@ -34,13 +36,7 @@ def main() -> None:
     delta: dict[str, list] = {k: [] for k in ("order", "verdict", "availability", "unavailable", "wording")}
     for row in first["differences"]:
         klass = row["class"]
-        if row["corpus"] == "pilots" and klass == "wording" and all(
-                "Cannot read sense pack" in str(row[side]) for side in ("base", "head")):
-            for base, head in diff.text_pairs(row["base"], row["head"]):
-                pair = {"base": base, "head": head}
-                if pair not in delta[klass]:
-                    delta[klass].append(pair)
-        elif klass == "unavailable" and row["base"] == row["head"]:
+        if klass == "unavailable" and row["base"] == row["head"]:
             delta[klass].append({key: row[key] for key in ("corpus", "authority", "case", "op", "base", "head")} |
                                 {"reason": SIGNED})
         else:
