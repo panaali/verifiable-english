@@ -148,18 +148,6 @@
    "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
   },
   {
-   "route": "service:document",
-   "mutation": "empty",
-   "path": [
-    "results/*/result/coverage/bytes_by_kind",
-    "results/*/result/coverage/bytes_by_status",
-    "results/*/result/coverage/residual"
-   ],
-   "kind": "by-design",
-   "id": "B0",
-   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
-  },
-  {
    "route": "service:english",
    "mutation": "duplicate",
    "path": [
@@ -1434,21 +1422,6 @@
    "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
   },
   {
-   "route": "service:document",
-   "mutation": "drop",
-   "path": [
-    "results/*/result/coverage/residual/assumptions",
-    "results/*/result/coverage/residual/bridge_leaves",
-    "results/*/result/coverage/residual/open_terms",
-    "results/*/result/coverage/residual/unresolved_reading_sets",
-    "results/*/result/units/*/content",
-    "results/*/result/units/*/meaning_id"
-   ],
-   "kind": "follow-up",
-   "id": "F5",
-   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
-  },
-  {
    "route": "service:parse",
    "mutation": "drop",
    "path": [
@@ -1520,17 +1493,6 @@
     "results/*/result/mentions/*",
     "results/*/result/statuses/*",
     "results/*/result/units/*"
-   ],
-   "kind": "follow-up",
-   "id": "F6",
-   "reason": "Map keyed by request names: dropping an entry is accepted (no check that every request name has its entry)."
-  },
-  {
-   "route": "service:document",
-   "mutation": "drop",
-   "path": [
-    "results/*/result/coverage/bytes_by_kind/*",
-    "results/*/result/coverage/bytes_by_status/*"
    ],
    "kind": "follow-up",
    "id": "F6",
@@ -1701,26 +1663,6 @@
    "mutation": "empty",
    "path": [
     "results/*/result/choices/*",
-    "results/*/result/units"
-   ],
-   "kind": "follow-up",
-   "id": "F10",
-   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
-  },
-  {
-   "route": "service:document",
-   "mutation": "duplicate",
-   "path": [
-    "results/*/result/units"
-   ],
-   "kind": "follow-up",
-   "id": "F10",
-   "reason": "Request-bound lists the schema does not bind to the request: a choice or reading names one reading per open set of the request, a tuple or argument list has its predicate's arity, a sort list its target's arity, and profiles and units echo the request's. An emptied or repeated element is no well-formed answer. Bind each (x-length, x-zip or x-equals) in lean/ResponseShape/Schemas."
-  },
-  {
-   "route": "service:document",
-   "mutation": "empty",
-   "path": [
     "results/*/result/units"
    ],
    "kind": "follow-up",
@@ -2018,17 +1960,6 @@
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
   },
   {
-   "route": "service:document",
-   "mutation": "empty",
-   "path": [
-    "results/*/result/source",
-    "results/*/result/units/*/content/*/*"
-   ],
-   "kind": "follow-up",
-   "id": "F11",
-   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
-  },
-  {
    "route": "service:environment",
    "mutation": "empty",
    "path": [
@@ -2193,17 +2124,6 @@
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
   },
   {
-   "route": "service:document",
-   "mutation": "*",
-   "path": [
-    "results/*/result/units/*/content/right/*",
-    "results/*/result/units/*/content/norm/over"
-   ],
-   "kind": "by-design",
-   "id": "B7",
-   "reason": "A rights document's copied unit content (document.json `rights_block` and `soft_content`, Shape.copied): each member is the request's own authored value, the holder guard optional and every line and `over` name as written, so a dropped optional guard or a repeated line or name is still a valid shape. The client binds the content to the unit's authored content (`ve/document.py` `_bind_document_answer`, `_soft_bound`), which refuses each such mutant (tests/test_b16e_rights_document.py::test_every_rights_and_soft_field_is_typed_and_every_row_bound)."
-   },
-   {
    "route": "service:ask",
    "mutation": "empty",
    "path": [
@@ -2237,19 +2157,6 @@
    "kind": "by-design",
    "id": "B3",
    "reason": "A field whose domain is a union across JSON types: a line's `source`, `quote` and `witness` are null or a value (ask.json `line`), so the retype to null is a valid answer, and so is a witness retyped to `[]`, the one choice of a one-choice route; a value that is not null is bound to the request by `ve.ask.read_answer`."
-  },
-  {
-   "route": "service:document",
-   "mutation": "*",
-   "path": [
-    "results/*/result/units/*/content/norm/exception",
-    "results/*/result/units/*/content/norm/mode",
-    "results/*/result/units/*/meaning/open",
-    "results/*/result/units/*/meaning/open/*"
-   ],
-   "kind": "by-design",
-   "id": "B8",
-   "reason": "A soft-norms document's copied unit content and meaning (batch 16f; document.json `soft_content`, Shape.copied, and the unit's meaning): an optional soft member dropped, or an open list repeated or emptied, is still a valid shape. The client binds each to the authored unit (`ve/document.py` `_bind_document_answer`: the meaning as written, `_soft_bound` the rule as the soft rule container holds it), which refuses each such mutant (tests/test_b16f_document.py::test_the_copied_soft_content_mutants_the_transport_accepts_are_refused_by_the_binding)."
   },
   {
    "route": "service:document",

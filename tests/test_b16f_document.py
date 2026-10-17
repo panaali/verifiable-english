@@ -503,9 +503,10 @@ def test_the_located_error_rows_are_typed(service):
 @pytest.mark.parametrize("mutant", ["drop mode", "drop exception", "duplicate open", "empty open name",
                                     "empty open"])
 def test_the_copied_soft_content_mutants_the_transport_accepts_are_refused_by_the_binding(mutant):
-    """Allow entry B8 (tools/relay-gate-allow.json): the transport schema accepts these valid shapes of a soft-norms
-    unit (an optional soft member dropped, a meaning's open list repeated or emptied); the document binding refuses
-    each, as it differs from the authored unit (`_soft_bound`, the meaning compared as written)."""
+    """Former allow entry B8 (the gate's `document` reader now binds them): the transport schema accepts these valid
+    shapes of a soft-norms unit (an optional soft member dropped, a meaning's open list repeated or emptied); the
+    document binding refuses each, as it differs from the authored unit (`_soft_bound`, the meaning compared as
+    written)."""
     text, raw, row, meta, source, declared = _row("soft-norms")
     changed = deepcopy(row)
     unit = changed["units"][0]
