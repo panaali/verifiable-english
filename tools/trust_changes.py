@@ -15,12 +15,14 @@ under the classes recorded for it at BASE.
 
 Line counts cannot see trusted code written onto fewer, longer lines: three lines added and three collapsed into
 one 290-character line measure +0 (AR-2 review F3). So each changed file also carries the width of its widest
-trusted line (K, S or untied [V], as `tools/trust_map.py` decides) and of its widest line at BASE, and `widened`
-lists the changed files whose widest trusted line is wider than every line the file had at BASE. A new file has
-no base width and is not listed there; all its lines are new in its row.
+trusted line (K, S or untied [V], as `tools/trust_map.py` decides) now and at BASE (BASE's tree classified as
+BASE's side table classifies it), and `widened` lists the changed files whose widest trusted line is wider than
+every trusted line the file had at BASE. A long untrusted line at BASE, such as a comment, hides nothing (review
+F8). A new file has no base width and is not listed there; all its lines are new in its row.
 
-It reports and never fails on a change. It exits 1 when git cannot read BASE or the measurement fails (a stale
-`lean/declarations.txt` included), so a report is never made from a classification that did not validate.
+It reports and never fails on a change. It exits 1 when git cannot read BASE or the measurement of the tree or of
+BASE fails (a stale `lean/declarations.txt` included), so a report is never made from a classification that did
+not validate.
 """
 from __future__ import annotations
 
@@ -30,6 +32,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
@@ -69,23 +72,23 @@ def changed(rev: str, root: Path = ROOT) -> tuple[list[str], list[str], dict[str
             sorted(before.keys() - now.keys()), before)
 
 
-def width(text: str) -> int:
-    """The length of the longest line of `text`, split as `tools/trust_map.py` counts lines (at newlines)."""
-    return max(map(len, text.split("\n")), default=0)
-
-
-def base_widths(edited: list[str], blobs: dict[str, str], root: Path = ROOT) -> dict[str, int | None]:
-    """The widest line of each edited file at the base, None for a file the base lacks."""
-    out: dict[str, int | None] = {}
-    for key in edited:
-        if key not in blobs:
-            out[key] = None
-            continue
-        done = subprocess.run(["git", "-C", str(root), "cat-file", "blob", blobs[key]], capture_output=True)
-        if done.returncode:
-            raise RuntimeError(f"git cat-file blob {blobs[key]}: {done.stderr.decode(errors='replace').strip()}")
-        out[key] = width(done.stdout.decode(errors="replace"))
-    return out
+def base_widths(rev: str, edited: list[str], blobs: dict[str, str], root: Path = ROOT) -> dict[str, int | None]:
+    """The widest trusted line of each edited file at the base `rev` (`trusted_widths` over that commit's tree,
+    classified there as `tools/trust_map.py` classifies it), None for a file the base lacks. A long untrusted
+    line at the base, such as a comment, does not widen the base (AR-2 review F8)."""
+    kept = [key for key in edited if key in blobs]
+    widths: dict[str, int] = {}
+    if kept:
+        with tempfile.TemporaryDirectory() as scratch:
+            tree = Path(scratch)
+            problem = trust_map.extract_rev(rev, tree, root)
+            if problem:
+                raise RuntimeError(problem)
+            decls, _, problems = trust_map.walk(tree, *trust_map.rev_paths(tree))
+            if problems:
+                raise RuntimeError(f"the trust classification of {rev} fails:\n" + "\n".join(problems))
+            widths = trusted_widths(decls, kept, tree)
+    return {key: widths.get(key) for key in edited}
 
 
 def trusted_widths(decls: list, edited: list[str], root: Path = ROOT) -> dict[str, int]:
@@ -114,7 +117,7 @@ def base_classes(rev: str, root: Path = ROOT) -> dict[str, dict]:
 def report(files: dict[str, dict[str, int]], edited: list[str], deleted: list[str],
            old_classes: dict[str, dict], widths: dict[str, int], old_widths: dict[str, int | None]) -> dict:
     """The changed files with their lines per trusted class and their widths, the changed files holding D[V]
-    or G[V] lines, by class, and the changed files whose trusted lines grew wider than the file was."""
+    or G[V] lines, by class, and the changed files whose trusted lines grew wider than they were at the base."""
     rows = {key: {**{cls: files[key][cls] for cls in CLASSES},
                   "trusted_width": widths[key], "base_width": old_widths[key]} for key in edited}
     return {"changed": rows, "deleted": deleted,
@@ -134,7 +137,7 @@ def main(argv: list[str]) -> int:
     try:
         edited, deleted, blobs = changed(args.since, root)
         old_classes = base_classes(args.since, root)
-        old_widths = base_widths(edited, blobs, root)
+        old_widths = base_widths(args.since, edited, blobs, root)
     except RuntimeError as error:
         print(f"FAIL: {error}", file=sys.stderr)
         return 1
@@ -161,7 +164,8 @@ def main(argv: list[str]) -> int:
                 print(f"  {key}: deleted ({cls} in base)")
     for key in deleted:
         print(f"deleted: {key}")
-    print(f"widened: {len(out['widened'])} changed files hold a trusted line wider than any line they had at base")
+    print(f"widened: {len(out['widened'])} changed files hold a trusted line wider than any trusted line they had "
+          "at base")
     for key in out["widened"]:
         row = out["changed"][key]
         print(f"  {key}: trusted line of {row['trusted_width']} characters, base at most {row['base_width']}")
