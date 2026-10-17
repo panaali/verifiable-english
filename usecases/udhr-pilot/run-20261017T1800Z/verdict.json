@@ -3,7 +3,7 @@
  "report": {
   "format": "ve-document@1",
   "source_id": "d5aec9555272e03e1949af3d5d4141c6e5c5c32d576dbac54c16cc5c06330dc6",
-  "document_id": "78f42e86faa553adad6b015d1baeac6a2f47ffd8c3b279743b4797772436193f",
+  "document_id": "5ccea465d5dbb0ed7050c91f7b293d5fb57d98c9fe312170f5e6432dc8be8045",
   "coverage": {
    "source_bytes": 10916,
    "accounted_bytes": 10916,
@@ -52,6 +52,8 @@
    "choice_count": 128,
    "units": [
     "u025",
+    "u027",
+    "u037",
     "u052",
     "u055",
     "u073",

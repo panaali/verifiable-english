@@ -77,6 +77,7 @@ No one shall be subjected to torture or to cruel, inhuman or degrading treatment
 Recorded meaning: The passage is recorded as a rule.
 This sentence could mean:
 One reading is: The passage is recorded as a rule.
+Another reading is: The passage is recorded as a rule.
 ## Article 6
 Recorded meaning: The passage is recorded as a comment about the text.
 Everyone has the right to recognition everywhere as a person before the law.
@@ -111,6 +112,7 @@ No one shall be subjected to arbitrary arrest, detention or exile.
 Recorded meaning: The passage is recorded as a rule.
 This sentence could mean:
 One reading is: The passage is recorded as a rule.
+Another reading is: The passage is recorded as a rule.
 ## Article 10
 Recorded meaning: The passage is recorded as a comment about the text.
 Everyone is entitled in full equality to a fair and public hearing by an independent and impartial tribunal, in the determination of his rights and obligations and of any criminal charge against him.

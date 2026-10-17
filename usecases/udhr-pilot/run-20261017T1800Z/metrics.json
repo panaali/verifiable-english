@@ -213,21 +213,76 @@
   "sampled": 20,
   "unfaithful": []
  },
- "audit_newly_verified_units": [
-  "u049",
-  "u077",
-  "u085",
-  "u091",
-  "u097",
-  "u106"
+ "audit_20261017T0600Z": {
+  "changed_units_checked": 2,
+  "changed_units_faithful": [
+   "u052",
+   "u114"
+  ],
+  "faithful": 19,
+  "file": "AUDIT.md (the 20261017T0600Z audit, carried as written; its preface says the auditor could not write the file)",
+  "note": "audit text read from previous-20261017T0600Z/AUDIT.md; the covered status of u037 is not claimed as verified until a fresh audit",
+  "sampled": 20,
+  "u027": "not sampled; the audit says it has u037's structure ('cruel, inhuman or degrading' over 'treatment or punishment'); given the same repair (adjectives_over_both, adjectives_treatment_only)",
+  "u037": "a reading is missing: 'arbitrary' can cover arrest, detention and exile, or 'arrest' alone; the run gave only the wide one. Repaired this run (repair15.py): two candidates arbitrary_over_all and arbitrary_arrest_only",
+  "unfaithful": [
+   "u037"
+  ]
+ },
+ "audit_20261017T0600Z_top_missing_features": [
+  "the checker finds the scope of a modifier over a list itself ('arbitrary', 'peaceful', 'freely', 'within the borders of each state'); the translator decides today",
+  "checked references and scoped limitations ('this right', the ellipses, 'rights and freedoms set forth herein'; 9 of 10 substantive units audited are limited by u019, u108, u111, u112, u114 and none of those links is checked)",
+  "plain-English rendering of norms (9 of 10 substantive units audited render only as 'The passage is recorded as a rule')"
  ],
- "audit_newly_verified_units_note": "verified by the 2026-10-14T1800Z audit (all 26 sampled units FAITHFUL, 6/6 changed units among them) and unchanged since; u035 was also judged FAITHFUL but is marked claimed:false (X5), so its 168 bytes are neither claimed nor verified",
- "audit_pending_bytes": 160,
- "audit_pending_units": [
+ "audit_20261017T0600Z_units_faithful": [
+  "u002",
+  "u011",
+  "u021",
+  "u022c",
+  "u028",
+  "u038",
+  "u048",
+  "u050",
+  "u072",
+  "u074",
+  "u075",
+  "u083",
+  "u085",
+  "u088",
+  "u090",
   "u098",
-  "u110"
+  "u099a",
+  "u105c",
+  "u113",
+  "u052",
+  "u114"
+ ],
+ "audit_20261017T0600Z_units_unfaithful": [
+  "u037"
+ ],
+ "audit_newly_verified_units": [
+  "u098"
+ ],
+ "audit_newly_verified_units_note": "u098 was judged FAITHFUL by the 20261017T0600Z audit and is unchanged since",
+ "audit_pending_bytes": 283,
+ "audit_pending_units": [
+  "u110",
+  "u027",
+  "u037"
  ],
  "audit_repairs": [
+  {
+   "audit": "20261017T0600Z",
+   "reason": "named by the 20261017T0600Z audit as having u037's structure: the scope of 'cruel, inhuman or degrading' over 'treatment or punishment' is a reading of the word order; a second candidate keeps the adjectives on 'treatment' alone",
+   "unit": "u027"
+  },
+  {
+   "audit": "20261017T0600Z",
+   "reason": "the 20261017T0600Z audit: the scope of 'arbitrary' over 'arrest, detention or exile' is a reading of the word order and u037 had only the wide one; a second candidate keeps 'arbitrary' on 'arrest' alone",
+   "unit": "u037"
+  }
+ ],
+ "audit_repairs_previous_run": [
   {
    "audit": "20261016T1800Z",
    "reason": "ledger only (the 20261016T1800Z audit's open gap): units.json listed readings/u052.case_excluded.ve.md as a companion; the asserted candidate has no status point and the file never existed. Companion lists and formal_depth corrected; translation, readings and meanings unchanged.",
@@ -239,22 +294,10 @@
    "unit": "u114"
   }
  ],
- "audit_repairs_previous_run": [
-  {
-   "audit": "20261013T0600Z",
-   "reason": "audit 20261013T0600Z (UNFAITHFUL): the two-candidate set (nationality, residence) claimed to exhaust 'his country'; replaced by one entitlement with the open term own_country",
-   "unit": "u049"
-  },
-  {
-   "audit": "20261013T0600Z",
-   "reason": "audit 20261013T0600Z (UNFAITHFUL): the two-candidate set (nationality, residence) claimed to exhaust 'his country'; replaced by one entitlement with the open term own_country",
-   "unit": "u077"
-  }
- ],
- "audit_verified_covered_bytes": 4660,
+ "audit_verified_covered_bytes": 4537,
  "audit_verified_covered_bytes_before_x5": 4828,
- "audit_verified_covered_percent": 42.69,
- "audit_verified_note": "verified = judged FAITHFUL by an audit and not changed since, and not marked claimed:false. No unit changed this run, so the verified set is the previous run's plus the units of the 2026-10-14T1800Z audit (including the six units that had been changed and waited for it: u049, u077, u085, u091, u097, u106). Under X5, u035 and u111 never count.",
+ "audit_verified_covered_percent": 41.56,
+ "audit_verified_note": "verified = judged FAITHFUL by an audit and not changed since, and not marked claimed:false. The 20261017T0600Z audit judged u098 FAITHFUL (first audit since its repair), so it joins the verified set (+42 B); u037 (rejected, 68 B) and u027 (97 B, re-expressed) leave it, so the net is -123 B (4,660 -> 4,537 B). Under X5, u035 and u111 never count.",
  "audit_verified_units": [
   "u001",
   "u002",
@@ -271,7 +314,6 @@
   "u024",
   "u025",
   "u026",
-  "u027",
   "u028",
   "u029",
   "u030",
@@ -280,7 +322,6 @@
   "u033b",
   "u034",
   "u036",
-  "u037",
   "u038",
   "u040",
   "u044",
@@ -326,6 +367,7 @@
   "u095",
   "u096",
   "u097",
+  "u098",
   "u099a",
   "u099b",
   "u100a",
@@ -357,7 +399,6 @@
   "u024",
   "u025",
   "u026",
-  "u027",
   "u028",
   "u029",
   "u030",
@@ -366,7 +407,6 @@
   "u033b",
   "u034",
   "u036",
-  "u037",
   "u038",
   "u040",
   "u044",
@@ -412,6 +452,7 @@
   "u095",
   "u096",
   "u097",
+  "u098",
   "u099a",
   "u099b",
   "u100a",
@@ -428,22 +469,26 @@
   "u114"
  ],
  "audit_verified_units_reexpressed_this_run": [],
- "baseline": "ve-green-rights-licence-relay",
+ "audit_verified_units_withdrawn_this_run": {
+  "u027": "judged FAITHFUL before, but re-expressed this run (two readings), so it is not verified until re-audited",
+  "u037": "rejected by the 20261017T0600Z audit; repaired this run, waits for a fresh audit"
+ },
+ "baseline": "ve-green-fu-ar2-decoders",
  "bytes_accounted": 10916,
  "bytes_accounted_percent": 100.0,
  "bytes_by_status": {
   "CHECKED": 1019,
   "LABELLED": 535,
-  "OPEN": 2578,
-  "READINGS": 1193,
+  "OPEN": 2413,
+  "READINGS": 1358,
   "UNFORMALISED": 5591
  },
  "changed_units": [
-  "u052",
-  "u114"
+  "u027",
+  "u037"
  ],
  "checks": {
-  "companions": "PASS: 59 companions check (premises model) and 118 Lean status rows as expected (re-run at ve-green-rights-licence-relay)",
+  "companions": "PASS: 61 companions check (premises model) and 135 Lean status rows as expected (re-run at ve-green-fu-ar2-decoders)",
   "legacy_document": {
    "check_seconds": 0.2,
    "coverage": "PASS (100%)",
@@ -454,19 +499,58 @@
   },
   "limits_met": [
    "Rust checker: default VE_RUST_TIMEOUT kept (a model search's default limit scales with the case, premise-scale ME1; other calls keep 5 s); no prlimit run, so no raised limit and no peak resident-set record; (measured in an earlier run, not re-run) a part with 19 regulated predicates (u001-u108, 16 choices) was refused at the old 5 s limit, so the four parts were the largest that checked then",
-   "the whole declaration as ONE document (experiment-whole/): four two-reading sets with their own vocabulary as RD-4b components (u025, u055, u073, u111) and the rest in the main component, built by whole.py; at ve-green-rights-licence-relay load_document succeeds after 668.1 s (coverage 100%) and check_document answers CONFLICT-FREE, premises 'model' after 732.0 s (experiment-whole/whole-check.json)",
+   "the whole declaration as ONE document (experiment-whole/): six two-reading sets with their own vocabulary as RD-4b components (u025, u027, u037, u055, u073, u111) and the rest in the main component, built by whole.py; at ve-green-fu-ar2-decoders load_document succeeds after 762.8 s (coverage 100%) and check_document answers CONFLICT-FREE, premises 'model' after 1163.2 s (experiment-whole/whole-check.json)",
    "the whole declaration with every candidate in the main document (integrate.py u001 u114; measured earlier, not re-run): Lean elaborates it on the superposed route, but Python's one-element search finds no separating situation for u111's pair both_aims / listed_aims in 6 min 58 s (experiment-whole/integrate-whole.log), so no document is produced"
   ],
-  "parts": "PASS: ve document check on all 4 parts at ve-green-rights-licence-relay: premises 'model' for every choice, CONFLICT-FREE under every reading; document ids and unit statuses equal the previous run's",
+  "parts": "PASS: ve document check on all 4 parts at ve-green-fu-ar2-decoders: premises 'model' for every choice, CONFLICT-FREE under every reading; parts 02-04 are byte-identical to the previous run's, part 01 differs only in the two new reading sets (u027, u037)",
   "parts_cover_source_exactly": "PASS (4 slices concatenate to the pinned 10,916 bytes)",
-  "unchanged_units": "PASS: 130 of 130 units have the same status and the same row in the part files; nothing changed this run",
+  "repaired_units": {
+   "companions_written": {
+    "u027.adjectives_over_both": [
+     "SETTLED no",
+     "SETTLED no",
+     "SETTLED no",
+     "UNDECIDED",
+     "UNDECIDED",
+     "UNDECIDED",
+     "UNDECIDED"
+    ],
+    "u027.adjectives_treatment_only": [
+     "SETTLED no",
+     "SETTLED no",
+     "SETTLED no",
+     "UNDECIDED",
+     "SETTLED no",
+     "SETTLED no",
+     "UNDECIDED"
+    ],
+    "u037.arbitrary_arrest_only": [
+     "SETTLED no",
+     "SETTLED no",
+     "SETTLED no",
+     "UNDECIDED",
+     "UNDECIDED",
+     "SETTLED no"
+    ],
+    "u037.arbitrary_over_all": [
+     "SETTLED no",
+     "SETTLED no",
+     "UNDECIDED",
+     "UNDECIDED",
+     "UNDECIDED",
+     "UNDECIDED"
+    ]
+   },
+   "separating_situations": "found by integrate.py's search over Lean's filled document and admitted by Lean at load (part01: no missing, no limit)"
+  },
+  "unchanged_units": "PASS: 128 of 130 units have the same status and the same row in the part files; the two that differ are exactly the repaired units u027 and u037 (loader status OPEN before and after: a unit with a reading set shows OPEN; the ledger status is READINGS)",
   "whole_document": {
-   "check_seconds": 732.0,
+   "check_seconds": 1163.2,
    "coverage_percent": 100,
-   "load_seconds": 668.1,
+   "load_seconds": 762.8,
    "premises": "model",
    "readings_status": "CONFLICT-FREE",
-   "tag": "ve-green-rights-licence-relay"
+   "tag": "ve-green-fu-ar2-decoders"
   },
   "wrong_separating_situation": {
    "result": "refused: distinguishing model does not separate readings",
@@ -476,12 +560,12 @@
  "claimed_change_vs_previous_run_bytes": 0,
  "claimed_change_vs_previous_run_bytes_under_x5": 0,
  "claimed_covered_bytes": 4820,
- "claimed_covered_bytes_previous_run": 5325,
+ "claimed_covered_bytes_previous_run": 4820,
  "claimed_covered_bytes_previous_run_under_x5": 4820,
  "claimed_covered_bytes_without_x5_marks": 5325,
  "claimed_covered_percent": 44.16,
  "claimed_covered_percent_without_x5_marks": 48.78,
- "companion_documents": 59,
+ "companion_documents": 61,
  "couplings": [
   {
    "axis": "freely_scope",
@@ -500,7 +584,7 @@
  ],
  "distinct_regulated_predicates_across_parts": 23,
  "document_ids": {
-  "translation-part01.ve.md": "5e049f9e0c4612d812c9adaf0dd9c087287a7befc3999cdaaafb70a888788013",
+  "translation-part01.ve.md": "a7e36e7f6719101c1c61eb8479a0bd25fa6352c71ef6eccc7102486f48dd8f34",
   "translation-part02.ve.md": "08526d23257ef066590abac363604fd210b33b0450a74989f5a4e1416cfbe2bd",
   "translation-part03.ve.md": "f129615e3897a89c1bf8ed56fceb05606c75a9049d6d51e7cc807a4195093f72",
   "translation-part04.ve.md": "f1d2ab3584b86ac3ca71493c729ad7ef580a6f7590e645b344cfc0bddc1f2071"
@@ -508,19 +592,20 @@
  "feature_upgrades": {
   "bytes": 0,
   "count": 0,
-  "note": "no newly merged feature lets any UNFORMALISED unit move; no translation unit was changed this run",
+  "note": "no newly merged feature lets any UNFORMALISED unit move",
   "units": []
  },
  "features_merged_since_previous_baseline": [
-  "none a translator can write. The merges since ve-green-trust-ties-rd9: tarch-binding, tarch-cutoff and tarch-store (test-architecture tooling: binding census, answer cutoff, answer store), and rights-licence-relay (the rights route returns each licence with its grounds, and Python binds them: lean/VE/Rights/Scope.lean `Ground`/`citedBy`, ve/rights_route.py). The UDHR parts declare documents@1, norm-defaults@0, norms@0, readings@1 and relational-fol@0: not rights@0, so the licence grounds are not reached. No new construct, profile or sentence form for these units."
+  "none a translator can write. The merges since ve-green-rights-licence-relay are fu-premise-f9 (a test: a timeout in the lifted choices' searches alone is CheckerUnavailable) and fu-ar2-decoders (a DECODERS completeness test and the widest-trusted-line rule of tools/trust_changes.py). `git diff ve-green-rights-licence-relay HEAD -- ve lean rust` is empty: no product file changed, so no construct, profile or sentence form is new."
  ],
- "language_change_for_udhr": "none for what a translator can write: no construct was added and no translation unit changed (the four translation parts are the previous run's, byte for byte; all 130 units load with the same status and the same row, unit-compare.json). The load of a whole-declaration document still works.",
+ "language_change_for_udhr": "none for what a translator can write: no construct was added (no ve/, lean/ or rust/ file changed). The two repaired units use constructs the language already had (a reading set of two norm candidates over one regulated act, as u055's). The other 128 units load with the same status and row.",
  "language_findings": [
-  "NO NEW TRANSLATION CAPABILITY for the UDHR at ve-green-rights-licence-relay: the merges since the last run are test-architecture tooling and the rights route's licence grounds, which the translation does not use. The 42 UNFORMALISED units keep the blockers they had.",
-  "the four parts load and check at the new tag exactly as before (premises 'model', CONFLICT-FREE under every reading; same document ids, same unit rows, same 118 Lean status rows; part checks 2.9 to 6.0 s, was 2.7 to 6.9 s)",
-  "the whole declaration as ONE document (experiment-whole/translation-whole.ve.md, rebuilt by whole.py, byte-identical to the previous run's) LOADS in 668.1 s at 100% coverage and CHECKS in 732.0 s with readings CONFLICT-FREE and premises 'model' (previous run: 807.4 s and 796.8 s). Default Rust limit kept; no prlimit run, so no raised limit and no peak resident-set record.",
+  "NO NEW TRANSLATION CAPABILITY for the UDHR at ve-green-fu-ar2-decoders: the merges since the last run are two tests and a trust-tool rule. The 42 UNFORMALISED units keep the blockers they had.",
+  "audit repair: the scope of a modifier over a list is a reading the English admits, and VE can state it only because the translator writes both candidates; the audit's top missing feature (the checker finds the scope readings itself) is why u037 and u027 were uneven in earlier runs. The separating situation of u037 is a detention that is not arbitrary (the wide reading leaves it UNDECIDED, the narrow one forbids it); of u027 a punishment that is not cruel, inhuman or degrading (same). Lean admitted both situations at load time.",
+  "the four parts load and check at the new tag (premises 'model', CONFLICT-FREE under every reading; part01 now has 8 choices and checks in 13.0 s, was 6 s with 2 choices; parts 02-04 are byte-identical to the previous run's)",
+  "the whole declaration as ONE document (experiment-whole/translation-whole.ve.md; u027 and u037 join u025, u055, u073, u111 as RD-4b components, six components) LOADS in 762.8 s at 100% coverage and CHECKS in 1163.2 s with readings CONFLICT-FREE and premises 'model' (previous run: 668.1 s and 732.0 s; two more components cost 95 s to load and 431 s to check). Default Rust limit kept; no prlimit run, so no raised limit and no peak resident-set record.",
   "the whole declaration with every candidate in the main document (integrate.py u001 u114) was not re-run this run (earlier result: Python's one-element search finds no separating situation for u111's pair)",
-  "the natural view still shows entitlements only as 'classified as <name>'; the rendered parts are byte-identical to the previous run's"
+  "the natural view still shows a norm as 'The passage is recorded as a rule' (the legacy rendered.md gains one 'Another reading is: ...' line for each of the two new reading sets)"
  ],
  "limits_unchanged_note": "limits unchanged and still blocking the 42 UNFORMALISED units: act-phrase grammar (8), time (5), causation (4), attribution (4), rules (7), comparison (2), modality/belief (2), and singletons",
  "missing_feature_tally": {
@@ -556,7 +641,7 @@
  "no_invented_permissions": {
   "regulated_predicates": "every regulated predicate of every part and companion declares the completion 'unspecified' (u074's permission included: it was 'allow' under a guard-top rule that never consulted it); a case outside a rule is UNDECIDED",
   "scope": "no candidate names a bearer the words do not name; liberties are permissions stated only where the right names something one does",
-  "status_rows": "110 Lean status rows over 57 companions, all as expected"
+  "status_rows": "135 Lean status rows over 61 companions, all as expected"
  },
  "not_done_this_run": [
   "no blind audit of this run (the orchestrator audits); no seeded bug in product code (no product file under ve/, lean/ or rust/ was changed; see seeded-bugs.md)"
@@ -565,8 +650,8 @@
   "CHECKED": 10,
   "LABELLED": 34,
   "MIXED": 4,
-  "OPEN": 22,
-  "READINGS": 7,
+  "OPEN": 20,
+  "READINGS": 9,
   "UNFORMALISED": 39
  },
  "old_to_new_units": {
@@ -1493,11 +1578,19 @@
     "OPEN": 1132,
     "UNFORMALISED": 3135
    },
-   "document_id": "5e049f9e0c4612d812c9adaf0dd9c087287a7befc3999cdaaafb70a888788013",
+   "document_id": "a7e36e7f6719101c1c61eb8479a0bd25fa6352c71ef6eccc7102486f48dd8f34",
    "premises": {
     "choice": [
      [
       "rs_u025",
+      0
+     ],
+     [
+      "rs_u027",
+      0
+     ],
+     [
+      "rs_u037",
       0
      ]
     ],
@@ -1506,7 +1599,6 @@
     "route": "superposed",
     "status": "model"
    },
-   "premises_status": "model",
    "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
    "residual": {
     "assumptions": 0,
@@ -1516,11 +1608,11 @@
     "open_terms": 57,
     "pending_candidates": 0,
     "readings_findings": 1,
-    "separations": 1,
+    "separations": 3,
     "ungrounded_defaults": 0,
-    "unresolved_reading_sets": 1
+    "unresolved_reading_sets": 3
    },
-   "seconds": 6.0
+   "seconds": 13.0
   },
   "translation-part02.ve.md": {
    "conflict": "CONFLICT-FREE",
@@ -1547,7 +1639,6 @@
     "route": "superposed",
     "status": "model"
    },
-   "premises_status": "model",
    "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
    "residual": {
     "assumptions": 0,
@@ -1561,7 +1652,7 @@
     "ungrounded_defaults": 0,
     "unresolved_reading_sets": 2
    },
-   "seconds": 2.9
+   "seconds": 4.0
   },
   "translation-part03.ve.md": {
    "conflict": null,
@@ -1576,7 +1667,6 @@
     "model_id": "1a8334a2de76ab9ab31419911d005342d267027facd4c9be2c1a76c80b70bc24",
     "status": "model"
    },
-   "premises_status": "model",
    "readings_status": null,
    "residual": {
     "assumptions": 0,
@@ -1586,7 +1676,7 @@
     "ungrounded_defaults": 0,
     "unresolved_reading_sets": 1
    },
-   "seconds": 3.8
+   "seconds": 5.2
   },
   "translation-part04.ve.md": {
    "conflict": "CONFLICT-FREE",
@@ -1625,7 +1715,6 @@
     "route": "superposed",
     "status": "model"
    },
-   "premises_status": "model",
    "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
    "residual": {
     "assumptions": 0,
@@ -1639,7 +1728,7 @@
     "ungrounded_defaults": 0,
     "unresolved_reading_sets": 5
    },
-   "seconds": 4.7
+   "seconds": 6.2
   }
  },
  "part_regulated_predicates": {
@@ -1650,7 +1739,7 @@
  },
  "parts": [
   {
-   "choices": 2,
+   "choices": 8,
    "first": "u001",
    "label": "part01",
    "last": "u046",
@@ -1730,12 +1819,12 @@
   ],
   "note": "landed by the previous run (run-20261014T1800Z) and carried here unchanged; re-verified this run (companions, Lean status rows, qt0p isolated measurement); not changed this run, so not in changed_units"
  },
- "plan_repairs_note": "none this run; the earlier plan repairs (u097, u085, u091, u106; u039 not landed) are carried in the parts (plan_repairs_in_carried_state)",
+ "plan_repairs_note": "none this run; the earlier plan repairs (u097 QT-0p, u085, u091, u106 AP-0 item 1; u039 not landed) are carried in the parts, unchanged (plan_repairs_in_carried_state); QT-0p's preconditions hold (u097's span is 8857-8933, part03 is byte-identical to the previous run's)",
  "predicates_dropped": [],
- "presupposition_check": "No heading or speaker marker presupposes a substantive claim; no unit changed this run, so the labelled units are the audited previous run's. u060 stays UNFORMALISED as an evaluative claim. u045b, u099b and u100b begin with a conjunction: each carries the subject of the previous unit (noted in its elided field), not a presupposed claim.",
- "previous_baseline": "ve-green-trust-ties-rd9",
- "previous_run": "run-20261016T1800Z (ve-green-trust-ties-rd9); its parts, units and metrics are in /home/seyran/code/manage-agents/pilots/udhr/run-20261016T1800Z (earlier runs' copies stay in previous-*/)",
- "previous_run_audit_verified_covered_bytes": 3952,
+ "presupposition_check": "No heading or speaker marker presupposes a substantive claim; no heading or label changed this run (the two changed units, u027 and u037, are norms), so the labelled units are the audited previous run's. u060 stays UNFORMALISED as an evaluative claim. u045b, u099b and u100b begin with a conjunction: each carries the subject of the previous unit (noted in its elided field), not a presupposed claim.",
+ "previous_baseline": "ve-green-rights-licence-relay",
+ "previous_run": "run-20261017T0600Z (ve-green-rights-licence-relay); its parts, units, readings and metrics are in previous-20261017T0600Z/ (earlier runs' copies: previous-20261013T0600Z/)",
+ "previous_run_audit_verified_covered_bytes": 4660,
  "previous_run_old_boundary_aggregation": {
   "CHECKED": 10,
   "LABELLED": 34,
@@ -1755,7 +1844,7 @@
  },
  "qt0p_u097": {
   "in_this_run": {
-   "note": "carried unchanged; the isolated measurement (qt0p_isolated.py) and the probe rows were re-run at ve-green-rights-licence-relay and give the same result (unit-compare, qt0p-isolated, refusal-test and witnesses are byte-identical to the previous run's)",
+   "note": "carried unchanged; the isolated measurement (qt0p_isolated.py) and the probe rows were re-run at ve-green-fu-ar2-decoders and give the same result (part03 OPEN +76 B, premises `model`); part03 is byte-identical to the previous run's",
    "u097_status": "OPEN"
   },
   "isolated_measurement": {
@@ -1850,11 +1939,32 @@
    }
   ]
  },
- "reading_set_candidates": 18,
- "reading_set_count": 9,
- "reading_sets_changed_this_run": {},
+ "reading_set_candidates": 22,
+ "reading_set_count": 11,
+ "reading_sets_changed_this_run": {
+  "u027": {
+   "after": [
+    "adjectives_over_both",
+    "adjectives_treatment_only"
+   ],
+   "before": [
+    "prohibited"
+   ]
+  },
+  "u037": {
+   "after": [
+    "arbitrary_over_all",
+    "arbitrary_arrest_only"
+   ],
+   "before": [
+    "prohibited"
+   ]
+  }
+ },
  "reading_sets_multi_candidate": [
   "u025",
+  "u027",
+  "u037",
   "u052",
   "u055",
   "u073",
@@ -1865,18 +1975,18 @@
   "u114"
  ],
  "rendering_change": {
-  "verdict": "no change",
-  "what": "none this run: the rendered parts, readings-rendered.md and witnesses.json are byte-identical to the previous run's"
+  "verdict": "no change in how norms are worded",
+  "what": "the legacy rendered.md gains one 'Another reading is: The passage is recorded as a rule.' line for each of the two new sets; rendered-parts/ for parts 02-04 are unchanged; readings-rendered.md and witnesses.json have the new companions"
  },
  "repaired_unit_reasons": {
-  "u052": "ledger only (the 20261016T1800Z audit's open gap): units.json listed readings/u052.case_excluded.ve.md as a companion; the asserted candidate has no status point and the file never existed. Companion lists and formal_depth corrected; translation, readings and meanings unchanged.",
-  "u114": "ledger only (the 20261016T1800Z audit's open gap): units.json listed readings/u114.no_implied_right.ve.md as a companion; the asserted candidate has no status point and the file never existed. Companion lists and formal_depth corrected; translation, readings and meanings unchanged."
+  "u027": "named by the 20261017T0600Z audit as having u037's structure: the scope of 'cruel, inhuman or degrading' over 'treatment or punishment' is a reading of the word order; a second candidate keeps the adjectives on 'treatment' alone",
+  "u037": "the 20261017T0600Z audit: the scope of 'arbitrary' over 'arrest, detention or exile' is a reading of the word order and u037 had only the wide one; a second candidate keeps 'arbitrary' on 'arrest' alone"
  },
  "repaired_units": [
-  "u052",
-  "u114"
+  "u027",
+  "u037"
  ],
- "run": "run-20261017T0600Z",
+ "run": "run-20261017T1800Z",
  "scope_tally": {
   "file": "scope-tally.json",
   "governors": [
@@ -1951,20 +2061,18 @@
    "units_total": 130
   }
  },
- "single_reading_unit_count": 44,
+ "single_reading_unit_count": 42,
  "single_reading_units": [
   "u020",
   "u022a",
   "u022b",
   "u022c",
   "u024",
-  "u027",
   "u029",
   "u032",
   "u033a",
   "u033b",
   "u035",
-  "u037",
   "u045a",
   "u045b",
   "u046",
@@ -2004,7 +2112,7 @@
   "path": "source/udhr.md",
   "sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a"
  },
- "status_witness_rows": 118,
+ "status_witness_rows": 135,
  "status_witnesses": {
   "u020.prohibited": [
    {
@@ -2284,7 +2392,7 @@
     "value": null
    }
   ],
-  "u027.prohibited": [
+  "u027.adjectives_over_both": [
    {
     "as_expected": true,
     "expected": [
@@ -2297,7 +2405,7 @@
      "c0"
     ],
     "rules": [
-     "u027-prohibited"
+     "u027-adjectives-over-both"
     ],
     "status": "SETTLED",
     "value": false
@@ -2314,7 +2422,7 @@
      "c1"
     ],
     "rules": [
-     "u027-prohibited"
+     "u027-adjectives-over-both"
     ],
     "status": "SETTLED",
     "value": false
@@ -2331,7 +2439,7 @@
      "c2"
     ],
     "rules": [
-     "u027-prohibited"
+     "u027-adjectives-over-both"
     ],
     "status": "SETTLED",
     "value": false
@@ -2361,6 +2469,153 @@
     "predicate": "subjection_to_ill_treatment_permitted",
     "row": [
      "c4"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c5"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c6"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   }
+  ],
+  "u027.adjectives_treatment_only": [
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c0"
+    ],
+    "rules": [
+     "u027-adjectives-treatment-only"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c1"
+    ],
+    "rules": [
+     "u027-adjectives-treatment-only"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c2"
+    ],
+    "rules": [
+     "u027-adjectives-treatment-only"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c3"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c4"
+    ],
+    "rules": [
+     "u027-adjectives-treatment-only"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c5"
+    ],
+    "rules": [
+     "u027-adjectives-treatment-only"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "subjection_to_ill_treatment_permitted",
+    "row": [
+     "c6"
     ],
     "rules": [],
     "status": "UNDECIDED",
@@ -2462,7 +2717,7 @@
     "value": true
    }
   ],
-  "u037.prohibited": [
+  "u037.arbitrary_arrest_only": [
    {
     "as_expected": true,
     "expected": [
@@ -2475,7 +2730,7 @@
      "c0"
     ],
     "rules": [
-     "u037-prohibited"
+     "u037-arbitrary-arrest-only"
     ],
     "status": "SETTLED",
     "value": false
@@ -2492,7 +2747,107 @@
      "c1"
     ],
     "rules": [
-     "u037-prohibited"
+     "u037-arbitrary-arrest-only"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "row": [
+     "c2"
+    ],
+    "rules": [
+     "u037-arbitrary-arrest-only"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "row": [
+     "c3"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "row": [
+     "c4"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "row": [
+     "c5"
+    ],
+    "rules": [
+     "u037-arbitrary-arrest-only"
+    ],
+    "status": "SETTLED",
+    "value": false
+   }
+  ],
+  "u037.arbitrary_over_all": [
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "row": [
+     "c0"
+    ],
+    "rules": [
+     "u037-arbitrary-over-all"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "row": [
+     "c1"
+    ],
+    "rules": [
+     "u037-arbitrary-over-all"
     ],
     "status": "SETTLED",
     "value": false
@@ -2522,6 +2877,36 @@
     "predicate": "arrest_detention_or_exile_permitted",
     "row": [
      "c3"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "row": [
+     "c4"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "arrest_detention_or_exile_permitted",
+    "row": [
+     "c5"
     ],
     "rules": [],
     "status": "UNDECIDED",
@@ -4080,14 +4465,15 @@
  "unit_counts_by_status": {
   "CHECKED": 18,
   "LABELLED": 34,
-  "OPEN": 27,
-  "READINGS": 9,
+  "OPEN": 25,
+  "READINGS": 11,
   "UNFORMALISED": 42
  },
  "unit_counts_by_status_change": {
   "audit_repairs": {
-   "bytes": 0,
-   "units": 0
+   "bytes": 165,
+   "moves": "u027 and u037: OPEN -> READINGS (one reading -> two)",
+   "units": 2
   },
   "feature_upgrades": {
    "bytes": 0,
@@ -4100,18 +4486,39 @@
  },
  "unit_scale": "sentence or clause; unchanged (130 units; no re-segmentation needed)",
  "units_changed_this_run": [
-  "u052",
-  "u114"
+  "u027",
+  "u037"
  ],
- "units_rejected_by_audit_and_repaired": [],
- "units_repaired_same_defect_not_rejected": [],
+ "units_rejected_by_audit_and_repaired": [
+  "u037"
+ ],
+ "units_repaired_same_defect_not_rejected": [
+  "u027"
+ ],
  "units_with_only_open_term_factors_rewritten": [],
  "vocabulary_change_check": {
   "entity_sort": "no sort named `entity` is declared; the new sort `production` (u106) is not reserved",
   "result": {
-   "differences": [],
+   "differences": [
+    {
+     "after": "OPEN",
+     "before": "OPEN",
+     "expected": true,
+     "part": "translation-part01.ve.md",
+     "row_changed": true,
+     "unit": "u027"
+    },
+    {
+     "after": "OPEN",
+     "before": "OPEN",
+     "expected": true,
+     "part": "translation-part01.ve.md",
+     "row_changed": true,
+     "unit": "u037"
+    }
+   ],
    "environment_changed_in": [],
-   "note": "no vocabulary change this run; the situation step and the unit comparison were nevertheless re-run at the new tag and every unit parses unchanged",
+   "note": "no vocabulary change: the two new candidates per unit reuse the existing sorts, predicates and open terms (only the guard differs); the situation step (integrate.py all), witnesses_all.py and compare_units.py were re-run, parts 02-04 are byte-identical, and every unit of part 01 other than u027 and u037 parses unchanged",
    "unexpected": [],
    "units": 130
   },
@@ -4122,6 +4529,8 @@
  "whole_document_experiment": {
   "component_sets": [
    "u025",
+   "u027",
+   "u037",
    "u055",
    "u073",
    "u111"
@@ -4130,11 +4539,11 @@
    "check": {
     "premises": "model",
     "readings_status": "CONFLICT-FREE",
-    "seconds": 732.0
+    "seconds": 1163.2
    },
    "load": {
     "coverage_percent": 100,
-    "seconds": 668.1
+    "seconds": 762.8
    }
   },
   "files": [
@@ -4145,7 +4554,7 @@
    "experiment-whole/integrate-whole.log",
    "experiment-whole/translation-whole.ve.md"
   ],
-  "result": "loads and checks at ve-green-rights-licence-relay"
+  "result": "loads and checks at ve-green-fu-ar2-decoders"
  },
  "whole_document_legacy": {
   "coverage": {
@@ -4197,11 +4606,27 @@
   "why_not_content": "the legacy form keeps candidates as companion documents (no content in the main document), so its premises stay UNKNOWN; it cannot hold the couplings (readings@1 absent), which the parts carry"
  },
  "words_only": {
-  "note": "no reading was added, changed or removed this run; the carried readings are the previous run's (own_country is one open term, not a two-candidate set)",
+  "note": "both new readings per unit are readings of the word order only: the modifier ('arbitrary'; 'cruel, inhuman or degrading') stands before all the listed nouns or before the first noun alone. No reading comes from outside knowledge (no treaty practice, no legal convention); the explicitly listed items (arrest, detention, exile; treatment, punishment) stay as checked structure; the open terms `arbitrary` and `ill_treatment` are the ones the units already had. In the narrow readings a detention, an exile or a punishment is barred whether or not the modifier applies, which is what the words, read that way, say",
   "open_questions_listed_that_the_text_does_not_raise": 0,
-  "readings_added_this_run": {},
+  "readings_added_this_run": {
+   "u027": [
+    "adjectives_over_both",
+    "adjectives_treatment_only"
+   ],
+   "u037": [
+    "arbitrary_over_all",
+    "arbitrary_arrest_only"
+   ]
+  },
   "readings_changed_this_run": {},
-  "readings_removed_this_run": {},
+  "readings_removed_this_run": {
+   "u027": [
+    "prohibited"
+   ],
+   "u037": [
+    "prohibited"
+   ]
+  },
   "rule": "lead, 2026-10-08/09: readings come from the words only; rights are not duties to provide; no duty readings for rights, either way"
  },
  "x5_claimed_false": {

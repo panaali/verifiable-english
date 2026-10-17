@@ -1,10 +1,10 @@
 {
  "load": {
-  "seconds": 668.1,
+  "seconds": 762.8,
   "coverage_percent": 100
  },
  "check": {
-  "seconds": 732.0,
+  "seconds": 1163.2,
   "readings_status": "CONFLICT-FREE",
   "premises": "model"
  }

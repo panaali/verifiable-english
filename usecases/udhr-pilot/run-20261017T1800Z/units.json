@@ -955,19 +955,20 @@
     2998,
     3095
    ],
-   "status": "OPEN",
+   "status": "READINGS",
    "source": "No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment.",
    "old_unit": "u027",
    "previous_unit": "u027",
    "previous_missing_feature": "other:force_variants_in_one_reading_set",
    "status_in_previous_run": "OPEN",
    "candidates": [
-    "prohibited"
+    "adjectives_over_both",
+    "adjectives_treatment_only"
    ],
    "open_terms": [
     "ill_treatment"
    ],
-   "formal_depth": "1 candidate (prohibited), each stated in the part document translation-part01.ve.md as content (norm-defaults@0, completion 'unspecified'; a rule over a plain property is stated as the assertion that the property holds of every case its guard picks out), as an ordinary unit because the words support one reading; each candidate also stands as a one-unit companion document with Lean status witnesses (a case inside the rule is SETTLED, a case outside it UNDECIDED, never 'not required' and never permitted). No candidate names a bearer the words do not name.",
+   "formal_depth": "2 candidates (adjectives_over_both, adjectives_treatment_only), each stated in the part document translation-part01.ve.md as content (norm-defaults@0, completion 'unspecified'; a rule over a plain property is stated as the assertion that the property holds of every case its guard picks out), in one reading set whose separating situations Lean admitted; each candidate also stands as a one-unit companion document with Lean status witnesses (a case inside the rule is SETTLED, a case outside it UNDECIDED, never 'not required' and never permitted). No candidate names a bearer the words do not name.",
    "residual_missing_features": [
     "other:cross_set_verdicts (premise verdict UNKNOWN: reading elaboration pending)",
     "other:english_wording (unary base predicates render as 'classified as ...' unless the wording is one word after 'is')",
@@ -975,17 +976,18 @@
    ],
    "note": "Article 5: No one shall be subjected to torture or to cruel, inhuman or degrading treatment or punishment",
    "companions": [
-    "readings/u027.prohibited.ve.md"
+    "readings/u027.adjectives_over_both.ve.md",
+    "readings/u027.adjectives_treatment_only.ve.md"
    ],
    "norm_defaults_companions": [
-    "readings/u027.prohibited.ve.md"
+    "readings/u027.adjectives_over_both.ve.md",
+    "readings/u027.adjectives_treatment_only.ve.md"
    ],
    "audit_repair": "Repaired 2026-10-08T1800Z under the lead's words-only and rights rules.",
-   "words_only_single_reading": true,
+   "words_only_single_reading": false,
    "unchecked_note": "Not part of any reading: the words do not say who must act, so no candidate names a bearer. A reader who knows how the Declaration is used in later treaties may expect States to be the bearers.",
    "audit_20261007T1800Z": "FAITHFUL",
    "part_document": "translation-part01.ve.md",
-   "single_reading": true,
    "in_document_content": true,
    "audit_20261008T0600Z": "UNFAITHFUL (repaired in a later run)",
    "audit_20261009T1800Z": "FAITHFUL",
@@ -1000,7 +1002,12 @@
     "u112",
     "u114"
    ],
-   "status_in_run_20261013T0600Z": "OPEN"
+   "status_in_run_20261013T0600Z": "OPEN",
+   "reading_set": "rs_u027",
+   "previous_status_in_run_20261017T0600Z": "OPEN",
+   "ledger_repair_20261017T1800Z": "named by the 20261017T0600Z audit as having u037's structure: the scope of 'cruel, inhuman or degrading' over 'treatment or punishment' is a reading of the word order; a second candidate keeps the adjectives on 'treatment' alone",
+   "audit_repair_20261017T1800Z": "repaired 2026-10-17T1800Z (repair15.py): named by the 20261017T0600Z audit as having u037's structure: the scope of 'cruel, inhuman or degrading' over 'treatment or punishment' is a reading of the word order; a second candidate keeps the adjectives on 'treatment' alone; the old single candidate `prohibited` is replaced by the two candidates, no trace of it is left; pending a fresh independent audit",
+   "audit_20261017T0600Z": "not sampled; named by the audit as having u037's structure; re-expressed in this run, waits for an audit"
   },
   {
    "id": "u028",
@@ -1390,7 +1397,7 @@
     3651,
     3719
    ],
-   "status": "OPEN",
+   "status": "READINGS",
    "source": "No one shall be subjected to arbitrary arrest, detention or exile.",
    "open_terms": [
     "arbitrary"
@@ -1400,26 +1407,28 @@
    "previous_missing_feature": "other:force_variants_in_one_reading_set",
    "status_in_previous_run": "OPEN",
    "candidates": [
-    "prohibited"
+    "arbitrary_over_all",
+    "arbitrary_arrest_only"
    ],
-   "formal_depth": "1 candidate (prohibited), each stated in the part document translation-part01.ve.md as content (norm-defaults@0, completion 'unspecified'; a rule over a plain property is stated as the assertion that the property holds of every case its guard picks out), as an ordinary unit because the words support one reading; each candidate also stands as a one-unit companion document with Lean status witnesses (a case inside the rule is SETTLED, a case outside it UNDECIDED, never 'not required' and never permitted). No candidate names a bearer the words do not name.",
+   "formal_depth": "2 candidates (arbitrary_over_all, arbitrary_arrest_only), each stated in the part document translation-part01.ve.md as content (norm-defaults@0, completion 'unspecified'; a rule over a plain property is stated as the assertion that the property holds of every case its guard picks out), in one reading set whose separating situations Lean admitted; each candidate also stands as a one-unit companion document with Lean status witnesses (a case inside the rule is SETTLED, a case outside it UNDECIDED, never 'not required' and never permitted). No candidate names a bearer the words do not name.",
    "residual_missing_features": [
     "other:cross_set_verdicts (premise verdict UNKNOWN: reading elaboration pending)",
     "other:english_wording (unary base predicates render as 'classified as ...' unless the wording is one word after 'is')"
    ],
    "note": "Article 9: No one shall be subjected to arbitrary arrest, detention or exile",
    "companions": [
-    "readings/u037.prohibited.ve.md"
+    "readings/u037.arbitrary_over_all.ve.md",
+    "readings/u037.arbitrary_arrest_only.ve.md"
    ],
    "norm_defaults_companions": [
-    "readings/u037.prohibited.ve.md"
+    "readings/u037.arbitrary_over_all.ve.md",
+    "readings/u037.arbitrary_arrest_only.ve.md"
    ],
    "audit_repair": "Rejected by the 2026-10-09T0600Z audit of run-20261009T0600Z; repaired 2026-10-09T1800Z: the regulated act is again 'take place' (it had been renamed 'be ordered' only to keep act phrases distinct; prohibiting orders is not prohibiting arrest, detention or exile carried out without an order). Verified FAITHFUL by a later audit.",
    "audit_20261004T1800Z": "FAITHFUL",
-   "words_only_single_reading": true,
+   "words_only_single_reading": false,
    "unchecked_note": "Not part of any reading: the words do not say who must act, so no candidate names a bearer. A reader who knows how the Declaration is used in later treaties may expect States to be the bearers.",
    "part_document": "translation-part01.ve.md",
-   "single_reading": true,
    "in_document_content": true,
    "audit_20261008T0600Z": "FAITHFUL",
    "audit_20261009T0600Z": "UNFAITHFUL (repaired in a later run)",
@@ -1435,7 +1444,12 @@
     "u112",
     "u114"
    ],
-   "status_in_run_20261013T0600Z": "OPEN"
+   "status_in_run_20261013T0600Z": "OPEN",
+   "reading_set": "rs_u037",
+   "previous_status_in_run_20261017T0600Z": "OPEN",
+   "ledger_repair_20261017T1800Z": "the 20261017T0600Z audit: the scope of 'arbitrary' over 'arrest, detention or exile' is a reading of the word order and u037 had only the wide one; a second candidate keeps 'arbitrary' on 'arrest' alone",
+   "audit_repair_20261017T1800Z": "repaired 2026-10-17T1800Z (repair15.py): the 20261017T0600Z audit: the scope of 'arbitrary' over 'arrest, detention or exile' is a reading of the word order and u037 had only the wide one; a second candidate keeps 'arbitrary' on 'arrest' alone; the old single candidate `prohibited` is replaced by the two candidates, no trace of it is left; pending a fresh independent audit",
+   "audit_20261017T0600Z": "UNFAITHFUL (repaired in this run)"
   },
   {
    "id": "u038",
@@ -4758,5 +4772,6 @@
   }
  ],
  "note": "READINGS units hold an open reading set of two or more candidates in a part document (translation-partNN.ve.md): every candidate carries its content there (readings@1 beside norm-defaults@0, completion 'unspecified'; Lean admitted each separating situation). A unit the words give ONE reading is an ordinary unit with that content (CHECKED, or OPEN where it names open terms), not a set. translation.ve.md keeps the whole source as one document with the previous form (candidates as companion documents under readings/), which cannot hold the content: 91 regulated predicates against a limit of 64 per environment, and a product of choices far above 64.",
- "audit_note_20261015T0600Z": "this run changes no unit; audit_20261014T1800Z is the previous run's audit (26 units sampled, all FAITHFUL, no unfaithful unit)"
+ "audit_note_20261015T0600Z": "this run changes no unit; audit_20261014T1800Z is the previous run's audit (26 units sampled, all FAITHFUL, no unfaithful unit)",
+ "audit_note_20261017T1800Z": "this run repairs u037 (rejected by the 20261017T0600Z audit: the scope of 'arbitrary' over 'arrest, detention or exile' had one reading) and u027 (named by the same audit: the scope of 'cruel, inhuman or degrading' over 'treatment or punishment'); both are now reading sets of two norm candidates and wait for a fresh audit"
 }
