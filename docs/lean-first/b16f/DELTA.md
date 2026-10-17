@@ -7,7 +7,7 @@ distinguishing models, and the malformed-profile and environment-key groups. `re
 a moving HEAD).
 
 <!-- BEGIN GENERATED B16F METRICS -->
-- Saved scope: `85b20fcb..1d658e62 --no-merges`, 17 commit(s).
+- Saved scope: `85b20fcb..378fabde --no-merges`, 19 commit(s).
 - Batch 16f's groups (16c ledger, 118 cases): Lean decided 116/118 (47 accepted with the prior path's report, 69 rejected, 0 with an error differing from the prior path's); 2 retained invalid inputs.
 - By group: distinguishing models 26 error; environment key 25 error; fenced content 9 error, 3 ok; malformed profile 8 error; norm content 18 ok; senses 1 error, 4 ok, 2 retained; soft norms 22 ok.
 - Outside the batch's groups: 12 cases, 12 of them valid documents still on the retained path.
