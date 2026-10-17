@@ -348,17 +348,6 @@ def test_the_unowned_parts_of_a_rights_document_keep_the_retained_path(key):
     assert isinstance(reason, CheckerUnavailable) and f"a rights document with {key}" in str(reason)
 
 
-def test_soft_norms_is_owned_only_beneath_rights():
-    from conformance import document_wrapper as dw
-
-    meta, body = _split(_text(0))
-    assert D._lean_answer(_join(meta, body).encode(), True) is not None
-    meta["environment"]["profiles"].remove("rights@0")
-    _, reason = relay.answer("document", {"id": "document", "document": _join(meta, body), "admit": True})
-    assert "document checks under soft-norms@0 need its Lean profile route" in str(reason)
-    assert dw.OWNED_BENEATH == {"soft-norms@0": "rights@0"}
-
-
 # ------------------------------------------------------------------- the answer's new fields: typed and bound
 
 def _row(seed: int = 2):

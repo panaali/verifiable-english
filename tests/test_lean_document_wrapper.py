@@ -106,13 +106,16 @@ DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/caus
            "usecases/question-answering/agent-policy/a-rules.ve.md",
            "usecases/question-answering/agent-policy/a-conflict.ve.md",
            # A readings@1 document without norm-defaults@0, which the mode owns since batch 16e.
-           "tests/data/premise-scale/qt0p-companion.ve.md"}
+           "tests/data/premise-scale/qt0p-companion.ve.md",
+           # Batch 16f: plain norms@0 content (with data@0 flags in a-deny), a soft-norms@0 document, and a strict
+           # fence's syntax error with its span.
+           "usecases/question-answering/agent-policy/a-deny.ve.md", "norms-content", "soft-norms", "fence"}
+# The decided seeds whose answer is a rejection.
+DECIDED_ERRORS = {"fence"}
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "fenced English or strict content",
-               "usecases/question-answering/group.ve.md": "surface parser",
-               "usecases/question-answering/agent-policy/a-deny.ve.md": "Lean norms route",
-               "fence": "surface parser"}
+               "usecases/question-answering/group.ve.md": "surface parser"}
 PYTHON_FALLBACK = {"usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"}
 
 
@@ -137,9 +140,9 @@ def test_every_seed_document_agrees_with_python_or_fails_closed(seed_answers):
             continue
         if name in DECIDED:
             assert dw.verdict(python, answer) == "agree", (name, python, answer)
-            assert python["outcome"] == "ok", (name, python)
+            assert python["outcome"] == ("error" if name in DECIDED_ERRORS else "ok"), (name, python)
         else:
-            assert python["outcome"] == "ok" or name == "fence", (name, python)
+            assert python["outcome"] == "ok", (name, python)
             assert answer["code"] == "CheckerUnavailable" and FAIL_CLOSED[name] in answer["text"], (name, answer)
 
 
@@ -157,7 +160,7 @@ def test_pilot_readings_decoder_rejection_keeps_its_owner(service):
 def test_residual_counts_are_nonzero_and_python_s(seed_answers):
     """Each residual line the wrapper counts is nonzero on some seed, in Lean's answer and Python's alike, so a
     Lean that dropped a line (or counted it as 0) fails here."""
-    residual = {name: seed_answers[name][2]["value"]["coverage"]["residual"] for name in DECIDED}
+    residual = {name: seed_answers[name][2]["value"]["coverage"]["residual"] for name in DECIDED - DECIDED_ERRORS}
     assert residual["graph-bridge"]["bridge_leaves"] == 1
     assert residual["open-terms"]["open_terms"] == 2
     assert residual["reading-sets"]["unresolved_reading_sets"] == 2
@@ -194,15 +197,22 @@ def test_reading_set_status_fold_follows_the_active_version(seed_answers):
 
 def test_owned_profiles_are_the_lean_modes(service):
     """`document_wrapper.OWNED` is the set of profiles the Lean mode reads (`ownedProfiles`): every other
-    profile of Python's registry is refused, by name, before its environment is decoded."""
+    profile of Python's registry is refused, by name, before its environment is decoded, unless the environment
+    mode (Python's `Environment`) rejects the environment, whose fault is then the answer, as Python's (batch
+    16f, `environmentFault`)."""
     from ve.profiles import BY_NAME
-    unowned = set()
+    unowned, faulted = set(), set()
     for profile in BY_NAME:
         env = envelope(VOCAB, sorted({profile, "relational-fol@0"}))
-        answer = lean(service, document("A", [unit("a", [0, 1])], environment_json=env))
+        text = document("A", [unit("a", [0, 1])], environment_json=env)
+        answer = lean(service, text)
         if answer["outcome"] == "error" and f"document checks under {profile} need" in answer["text"]:
             unowned.add(profile)
-    assert set(BY_NAME) - unowned == dw.OWNED
+        elif profile not in dw.OWNED and answer["outcome"] == "error" and answer["code"] != "CheckerUnavailable":
+            assert dw.verdict(dw.python_answer(text), answer) == "agree", (profile, answer)
+            assert dw.environment_error(text) == answer["text"], (profile, answer)
+            faulted.add(profile)
+    assert unowned and set(BY_NAME) - unowned - faulted == dw.OWNED
 
 
 # ---------------------------------------------------------------- B2: the checks the mode lacked
@@ -266,15 +276,26 @@ def test_profile_gate_runs_before_the_environment_decoder(service):
     env = envelope(VOCAB, ["norms@0", "relational-fol@0", "soft-norms@0"])
     env["soft_norms"] = {"anything": True}
     answer = lean(service, document("AB", [unit("a", [0, 2])], environment_json=env))
-    assert answer["code"] == "CheckerUnavailable" and "soft-norms@0" in answer["text"], answer
+    # Batch 16f: a soft-norms document's soft source is the soft route's to check first, whose rejection keeps
+    # Python's loader (which adds the `diagnose` mode's diagnostic).
+    assert answer["code"] == "CheckerUnavailable" and "soft source the soft route rejects" in answer["text"], answer
     alternatives = envelope(VOCAB, ["alternatives@0", "norms@0", "relational-fol@0"])
     alternatives["alternatives"] = {"anything": True}
     python, answer = both(service, document("AB", [unit("a", [0, 2])], environment_json=alternatives))
     assert python["outcome"] == answer["outcome"] == "error" and dw.verdict(python, answer) != "differ", answer
     block = envelope(VOCAB, ["relational-fol@0", "time@0"])
     block["unit_schema"] = {}
-    answer = lean(service, document("AB", [unit("a", [0, 2])], environment_json=block))
-    assert answer["code"] == "CheckerUnavailable" and "unit_schema" in answer["text"], answer
+    # Batch 16f: the environment mode (Python's `Environment`) rejects these blocks, and its fault is Python's
+    # answer too; a block it accepts keeps its own route (`CheckerUnavailable`).
+    for units in (None, {}):
+        if units is not None:
+            block["units"] = units
+        python, answer = both(service, document("AB", [unit("a", [0, 2])], environment_json=block))
+        assert answer["code"] != "CheckerUnavailable" and dw.verdict(python, answer) == "agree", (python, answer)
+    w6 = envelope(VOCAB, ["order@0", "relational-fol@0", "time@0"])
+    w6.update(unit_schema={}, units={})
+    python, answer = both(service, document("AB", [unit("a", [0, 2])], environment_json=w6))
+    assert dw.verdict(python, answer) in ("agree", "fail-closed"), (python, answer)
     legacy = {"language": "ve.core@0", "profile": "relational-fol@0", "spec_revision": "x", "vocabulary": {}}
     assert lean(service, document("AB", [unit("a", [0, 2])], environment_json=legacy))["code"] == \
         "CheckerUnavailable"
