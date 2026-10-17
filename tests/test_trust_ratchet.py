@@ -291,6 +291,37 @@ def test_an_uncommitted_merge_on_main_is_checked_against_head(repo, capsys):
     assert run(repo, "--check") == 0  # committed, main's tip is checked against its first parent
 
 
+def test_an_uncommitted_sync_of_main_into_a_branch_is_checked_as_committed(repo, capsys):
+    """qs-1 sync (review qs-1-r16-sync F1): `regen_generated.py --resolve` checks a branch's sync with main
+    before its commit. The base was the branch's old merge base, so allowances main gained since then
+    (here an inherited unsigned one, as the rebaselines before AR-4) counted as the branch's and failed;
+    the base is main's merge base with the merge to be committed, as after the commit."""
+    old = git(repo, "rev-parse", "HEAD")
+    git(repo, "checkout", "-qb", "feature")
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")]})
+    commit(repo, "decoder")
+    assert run(repo, "--allow", *SIGNED) == 0
+    commit(repo, "the feature's allowance")
+    git(repo, "checkout", "-q", "main")
+    data = baseline(repo)
+    entry = {"class": "V", "lines": 5, "reason": "old growth", "signature": trust_map.UNSIGNED, "commit": old}
+    (repo / "docs/trust-baseline.json").write_text(json.dumps({**data, "allowances": [entry]}))
+    write(repo, {"VE/Demo.lean": [("base", 3, "C")], "VE/Main.lean": [("m", 5, "D[V]")]})
+    tip = commit(repo, "growth on main, recorded before AR-4")
+    git(repo, "checkout", "-q", "feature")
+    git(repo, "merge", "-q", "--no-commit", "main", check=False)
+    write(repo, {"VE/Demo.lean": [("base", 3, "C"), ("decoder", 10, "D[V]")], "VE/Main.lean": [("m", 5, "D[V]")]})
+    merged = json.loads(git(repo, "show", "HEAD:docs/trust-baseline.json"))
+    merged["allowances"] = [entry, *merged["allowances"]]
+    (repo / "docs/trust-baseline.json").write_text(json.dumps(merged))
+    capsys.readouterr()
+    assert run(repo, "--check") == 0, capsys.readouterr().err
+    assert f"against {tip[:12]}" in capsys.readouterr().out
+    git(repo, "add", "-A")
+    git(repo, "commit", "-qm", "sync main")
+    assert run(repo, "--check") == 0  # the same answer once committed
+
+
 def test_two_branches_each_adding_an_allowance_merge_without_a_conflict(repo):
     """Each branch adds a module and an allowance. The budget file merges by the repository's
     `ve-generated` driver (tools/regen_generated.py, json strategy): both allowances, one budget,
