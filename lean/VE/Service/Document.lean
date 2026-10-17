@@ -5,6 +5,7 @@ import VE.Risk.Run
 import VE.NormDefaults.Run
 import VE.Readings.Run
 import VE.EnglishGrammar.Run
+import VE.Senses.Run
 import VE.Attribution.Preflight
 import VE.Rights.Run
 
@@ -342,14 +343,14 @@ def noLoneSurrogate (front : String) : Except String Unit :=
   | none => pure ()
 
 /-- `_split` with `is_discourse_text` first: the metadata keys, the couplings and completions gates, then the
-body. -/
-def split (t : String) : Except String Loader.Split := do
+body. A document with `senses` (RD-8: a key `_split` allows) is the senses route's: only the document mode composes
+it (`senses`, batch 16f, `sensesLayer`); every other reader of the split refuses it here. -/
+def split (t : String) (senses : Bool := false) : Except String Loader.Split := do
   let (front, body) ← Loader.frontText t
   let fm ← frontJson front
   if fm.getObjValD "format" == .str "ve-document@2" then
     throw (unavailable "a ve-document@2 document is admitted by the discourse route")
-  -- RD-8: `senses` is a key `_split` allows; the senses route reads those documents' English fences.
-  if (fm.getObjVal? "senses").isOk then
+  if !senses && (fm.getObjVal? "senses").isOk then
     throw (unavailable "a document with senses is read by the Lean senses route")
   let _ ← Loader.checkMetadata Loader.documentMetadata fm
   let listed := listedProfiles (fm.getObjValD "environment")
@@ -387,8 +388,14 @@ structure Env where
   envId : String
   block : Block
   /-- A soft route's generated frame (`E″`, Python's `SoftEnvironment(..., generated=True)`), whose `soft__`
-  decision predicates every route reads as the soft route generated them (the English case's `generated`). -/
+  decision predicates every route reads as the soft route generated them (the English case's `generated`), or the
+  senses route's projected environment. -/
   generated : Bool := false
+  /-- A frozen `ve.core@0` envelope (batch 16f, a senses document's), with its frozen identities. -/
+  legacy : Option Standalone.Legacy := none
+
+/-- Python's `Environment.identity_version`: a frozen envelope's, else its profiles'. -/
+def Env.version (E : Env) : String := (E.legacy.map (·.version)).getD (VE.Route.Wire.identityVersion E.profiles)
 
 def Env.data (E : Env) : Bool := E.profiles.contains "data@0"
 
@@ -580,7 +587,7 @@ def decodedEnvironment (environment : Json) (block : Block) : Except String Env 
     throw (unavailable s!"document checks on the {e.family.name} family need its Lean route")
   let rv ← VE.Route.Run.decodeRouteVocabulary e
   let profiles ← VE.Route.Gate.profilesOf environment
-  pure ⟨environment, checked, rv, profiles, ← Standalone.environmentIdOf profiles environment, block, false⟩
+  pure ⟨environment, checked, rv, profiles, ← Standalone.environmentIdOf profiles environment, block, false, none⟩
 
 /-- `_soft_contents`: the soft source's norm objects, the content of each top-level unit of kind `norm` whose
 object content holds `norm` (a `MIXED` unit's parts are not in it). -/
@@ -624,16 +631,32 @@ the environment (`environmentFault`), else `CheckerUnavailable` naming what the 
 def undecided (environment : Json) (what : String) : String :=
   (environmentFault environment).getD (unavailable what)
 
+/-- The environment of this mode over a frozen `ve.core@0` envelope (batch 16f: a senses document's, and the senses
+route's projection of it): the frozen decoder (`Standalone.decodeLegacy`), read as the route envelope of its family
+(`Standalone.evaluable`), with the frozen identities (`Standalone.legacyEnvironmentId`). Only the first-order
+envelope is read; a refusal keeps the retained path (`CheckerUnavailable`), whose decoder words it. -/
+def frozenEnv (json : Json) : Except String Env :=
+  let built : Except String Env := do
+    let l ← Standalone.decodeLegacy json
+    unless l matches .v0 _ do throw "a ve.core@0.1 envelope"
+    let checked ← Standalone.evaluable json
+    pure { json, checked, rv := ← VE.Route.Run.decodeRouteVocabulary checked.envelope, profiles := l.profiles,
+           envId := ← Standalone.legacyEnvironmentId l json, block := .none, legacy := some l }
+  built.mapError fun m => unavailable s!"a frozen envelope outside this mode keeps its loader's diagnostic: {m}"
+
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
-front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. -/
-def environmentOf (environment : Json) (units : Json := .null) : Except String Env := do
+front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. A frozen
+envelope is read only under `senses` (`frozenEnv`, batch 16f). -/
+def environmentOf (environment : Json) (units : Json := .null) (senses : Bool := false) : Except String Env := do
   match environment.getObjValD "profiles" with
   | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
       throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
   | _ => pure ()
   if Standalone.isLegacy environment then
-    throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
+    unless senses do
+      throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
+    return ← frozenEnv environment
   let listed := listedProfiles environment
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
@@ -665,15 +688,28 @@ def environmentOf (environment : Json) (units : Json := .null) : Except String E
 /-- `formula_from_data` over the document's environment: the `check` mode's typed decoder, its rejection named as
 Python names it (`formulaFault`: its AST decoder, then its type checker). -/
 def formulaCheck (E : Env) (ast : Json) : Except String Unit :=
-  match Standalone.decodeTyped E.checked ast true with
+  if E.legacy.isSome then
+    -- A frozen envelope's frozen typing (`Standalone.legacyTyped`, the `check` mode's); a refusal keeps the retained
+    -- path, whose decoder words it.
+    match Standalone.legacyTyped E.json ast true with
+    | .ok _ => .ok ()
+    | .error message => .error (unavailable s!"a formula a frozen envelope refuses keeps its loader's diagnostic: {message}")
+  else match Standalone.decodeTyped E.checked ast true with
   | .ok () => (VE.Reports.Preflight.decoderFault ast).elim (.ok ()) .error
   | .error message => .error ((formulaFault E.checked.envelope.profiles E.checked.envelope.vocabulary ast).getD message)
+
+/-- `meaning_id` under the environment's identity version: a frozen envelope's (`Standalone.legacyMeaningId`) or its
+profiles' (`Route.Wire.meaningId`). -/
+def Env.meaningId (E : Env) (ast : Json) : Except String String :=
+  match E.legacy with
+  | some l => Standalone.legacyMeaningId l E.envId ast
+  | none => VE.Route.Wire.meaningId E.profiles E.envId ast
 
 /-- A checked formula and its `meaning_id`. -/
 def formulaOf (E : Env) (ast : Json) : Except String (VE.Formula × String) := do
   formulaCheck E ast
   let f ← VE.Route.Wire.decodeClosed E.rv.environment ast E.data
-  pure (f, ← VE.Route.Wire.meaningId E.profiles E.envId (VE.Route.Wire.encodeFormula f))
+  pure (f, ← E.meaningId (VE.Route.Wire.encodeFormula f))
 
 /-- What `Loader.compileSets` answers for a distinguishing model the Lean model decoder refuses
 (`locatedModel` decides it when it can). -/
@@ -1105,8 +1141,98 @@ def softContentOf (L : SoftLayer) (fences : List (String × String)) (lexicon : 
   | _ => pure ()
   contentOf L.extended fences lexicon u id content
 
+/-! ## A senses document (batch 16f)
+
+Python's `load_document` reads a document with `senses` (RD-8) through `read_senses`, after its open terms and units:
+the senses route (`senses.read`, `Senses.Run.readCase`) reads the document's English fences, in unit order, with the
+front matter's packs, own senses and defaults, and answers each fence's formula, or a preamble line or an open unit
+(no formula), under its projected environment, in which every unit is read (`formula_env`). The pack files are
+Python's to read: the request carries their texts (`packs`), one per `senses.packs` entry. -/
+
+/-- A senses document's reading. -/
+structure SensesLayer where
+  /-- The senses route's projected environment, as an environment of this mode. -/
+  projected : Env
+  /-- Per English fence, in unit order: its unit id and the formula the route read, or none. -/
+  formulas : List (String × Option Json)
+
+/-- `read_senses` on the document's English fences (`_parts` order, `surface: english`, content naming its own
+fence), after `load_document`'s profile gate. A senses refusal carries the route's diagnostic object, which this
+mode's error row cannot hold, and a document beside norms, a block, reading sets over a frozen envelope or a claim
+graph is not composed: each keeps the retained path. -/
+def sensesLayer (E : Env) (front : Json) (raw : List Json) (fences : List (String × String))
+    (lexicon packs : Option Json) : Except String SensesLayer := do
+  if ["soft-norms@0", "rights@0", "reports@0", "norm-defaults@0", "readings@1"].any E.profiles.contains then
+    throw ("UnsupportedProfile: senses are read in ve-document@1 documents without the soft-norms@0, " ++
+      "rights@0, reports@0, norm-defaults@0, readings@1 and quantity routes")
+  -- The English fences are listed (`_parts`, whose faults come here) before `read_senses` reads `senses`.
+  let flat ← raw.foldlM (fun acc u => do pure (acc ++ (← Loader.partsOf u))) []
+  let senses := front.getObjValD "senses"
+  let shape := "InvalidInput: senses has packs, own and defaults only"
+  let keys ← (fields senses).mapError fun _ => shape
+  unless keys.all (["packs", "own", "defaults"].contains ·.1) do throw shape
+  let entries ← match senses.getObjVal? "packs" with
+    | .ok (.arr xs) => pure xs
+    | .error _ => pure #[]
+    | .ok _ => throw shape
+  let some (.arr texts) := packs | throw (unavailable "a senses document's pack files are read by its loader")
+  let some lexicon := lexicon | throw (unavailable "a senses document's lexicon proposal is its loader's")
+  unless texts.size == entries.size && texts.all (·.getStr?.toOption.isSome) do
+    throw (unavailable "a senses document's pack files are read by its loader")
+  if E.profiles.contains "norms@0" || E.block != .none || (front.getObjVal? "graph").isOk ||
+      (E.legacy.isSome && (front.getObjVal? "reading_sets").isOk) then
+    throw (unavailable "a senses document with norms, a block, a claim graph or frozen reading sets needs its composed route")
+  let english := flat.filterMap fun u =>
+    let id := (u.getObjValD "id").getStr?.toOption
+    match id, u.getObjValD "content" with
+    | some id, .obj _ =>
+      if u.getObjValD "surface" == .str "english" && (u.getObjValD "content").getObjValD "fence" == .str id then
+        (fences.lookup id).map (id, ·)
+      else none
+    | _, _ => none
+  let own ← match senses.getObjVal? "own" with
+    | .ok (.arr xs) => pure (Json.arr xs)
+    | .ok .null | .error _ => pure (Json.arr #[])
+    | .ok _ => throw "Invalid senses request"
+  let ids := english.map (·.1)
+  let covered := match front.getObjValD "reading_sets" with
+    | .arr rs => rs.toList.filterMap fun (r : Json) => (r.getObjValD "unit").getStr?.toOption.filter ids.contains
+    | _ => []
+  let defaults := match senses.getObjVal? "defaults" with
+    | .ok .null | .error _ => []
+    | .ok d => [("defaults", d)]
+  let row ← VE.Senses.Run.readCase (Json.mkObj ([("id", .str "senses.read"),
+    ("environment", (← if E.legacy.isSome then pure E.json else VE.Norms.Wire.canonicalEnvironmentJson E.json)),
+    ("lexicon", lexicon), ("packs", .arr texts), ("own", own), ("budget", toJson VE.EnglishGrammar.workBudget),
+    ("fences", toJson (english.map (·.2))), ("fence_ids", toJson ids),
+    ("reading_set_units", toJson (covered.eraseDups.toArray.qsort (fun a b => decide (a < b))).toList)] ++ defaults))
+  let reading := (row.getObjValD "result").getObjValD "reading"
+  unless reading.getObjValD "status" == .str "one" || reading.getObjValD "status" == .str "open" do
+    throw (unavailable "a senses refusal carries the senses route's diagnostic, which this mode's row cannot hold")
+  let projected := reading.getObjValD "environment"
+  let F ← if E.legacy.isSome then frozenEnv projected else extendedEnv projected
+  let units := match reading.getObjValD "units" with
+    | .arr us => us
+    | _ => #[]
+  let mapped := match reading.getObjValD "fences" with
+    | .arr fs => fs.toList
+    | _ => []
+  pure ⟨{ F with generated := true }, (ids.zip mapped).map fun (id, entry) =>
+    (id, entry.getNat?.toOption.bind fun k => (units[k]?.bind fun u => (u.getObjVal? "formula").toOption))⟩
+
+/-- `_content` in a senses document, over its projected environment: an English fence's formula as the senses route
+read it, or none for a preamble line or an open unit; any other content is the plain `_content`. -/
+def sensesContentOf (N : SensesLayer) (fences : List (String × String)) (u : Json) (id : String) (content : Json) :
+    Except String (Option (UnitContent × String)) := do
+  if u.getObjValD "surface" == .str "english" && content == Json.mkObj [("fence", .str id)] &&
+      (fences.lookup id).isSome then
+    match (N.formulas.lookup id).join with
+    | some ast => let (f, mid) ← formulaOf N.projected ast; return some (.formula f, mid)
+    | none => return none
+  some <$> contentOf N.projected fences none u id content
+
 /-- `load_document`'s checks of one unit at byte `cursor`, in Python's order. -/
-def sourceUnit (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (source : String)
+def sourceUnit (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (N : Option SensesLayer) (source : String)
     (fences : List (String × String))
     (lexicon : Option Json) (openNames : List String)
     (cursor : Nat) (seen parents : List String) (parent : Option String) (u : Json) : Except String SourceUnit := do
@@ -1134,7 +1260,9 @@ def sourceUnit (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (source :
     | .ok .null, _, _ => pure none
     | .ok content, some R, _ => some <$> rightsContentOf E R decoded content
     | .ok content, none, some S => some <$> softContentOf S fences lexicon u id decoded content
-    | .ok content, none, none => some <$> contentOf E fences lexicon u id content
+    | .ok content, none, none => match N with
+      | some N => sensesContentOf N fences u id content
+      | none => some <$> contentOf E fences lexicon u id content
     | .error _, _, _ => pure none
   let norm ← match compiled.map Prod.fst, decoded with
     | some (.norm n), .route k => some <$> VE.Norms.Admission.normRole k (VE.Alternatives.Wire.encodeNode n)
@@ -1158,7 +1286,7 @@ def sourceUnit (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (source :
 
 /-- `_parts` interleaved with the unit loop, as Python's generator runs: a `MIXED` part is checked against its
 parent's cursor, then compiled, before the next part is read; the parent's end is checked after its last part. -/
-def unitsOf (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (source : String)
+def unitsOf (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (N : Option SensesLayer) (source : String)
     (fences : List (String × String))
     (lexicon : Option Json) (openNames : List String)
     (raw : List Json) : Except String (List SourceUnit) := do
@@ -1168,7 +1296,7 @@ def unitsOf (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (source : St
   for u in raw do
     match ← Loader.mixedOf u with
     | none =>
-      let unit ← sourceUnit E R S source fences lexicon openNames cursor (units.toList.map (·.id)) parents none u
+      let unit ← sourceUnit E R S N source fences lexicon openNames cursor (units.toList.map (·.id)) parents none u
       units := units.push unit
       cursor := unit.span.2
     | some ((a, b), parts) =>
@@ -1176,7 +1304,7 @@ def unitsOf (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (source : St
       let mut inner := a
       for p in parts do
         Loader.partOk inner p
-        let unit ← sourceUnit E R S source fences lexicon openNames cursor (units.toList.map (·.id)) parents parent p
+        let unit ← sourceUnit E R S N source fences lexicon openNames cursor (units.toList.map (·.id)) parents parent p
         units := units.push unit
         cursor := unit.span.2
         inner := unit.span.2
@@ -1517,13 +1645,15 @@ structure Checked where
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
-def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) : Except String Checked := do
-  let doc ← split text
+def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) (packs : Option Json := none) :
+    Except String Checked := do
+  let doc ← split text (senses := true)
   let front := doc.front
   if doc.source.isEmpty then throw "document source is empty"
   let environment := front.getObjValD "environment"
   unless environment matches .obj _ do throw "document needs an embedded environment"
-  let E ← environmentOf environment (front.getObjValD "units")
+  let senses := (front.getObjVal? "senses").isOk
+  let E ← environmentOf environment (front.getObjValD "units") senses
   if ["contexts", "assessments", "bridges", "scoped"].any (front.getObjVal? · |>.isOk) then
     throw "unknown document metadata"
   let openNames ← Loader.openTermNames E.rv (Loader.optionalList front "open_terms") (python := true)
@@ -1535,8 +1665,10 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   let R ← if E.rights then some <$> rightsDoc E front openNames raw else pure none
   -- A soft-norms document's extended environment `E″` and decision predicates come first too (batch 16f).
   let S ← if E.soft then some <$> softLayer E openNames raw else pure none
+  -- A senses document's reading and projected environment come next (batch 16f).
+  let N ← if senses then some <$> sensesLayer E front raw doc.fences lexicon packs else pure none
   let names := (R.map (·.openNames)).getD ((S.map (·.openNames)).getD openNames)
-  let units ← unitsOf E R S doc.source doc.fences lexicon names raw
+  let units ← unitsOf E R S N doc.source doc.fences lexicon names raw
   let authored := raw.flatMap fun u => match u.getObjVal? "parts" with
     | .ok (.arr ps) => ps.toList
     | _ => [u]
@@ -1550,8 +1682,9 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   if E.profiles.contains "readings@1" && !E.rights && !E.profiles.contains "norm-defaults@0" && companions front then
     throw (unavailable "a document whose readings carry their own vocabulary needs the components route")
   let (all, attached) ← if E.profiles.contains "readings@1" && !E.rights then readingsSets E front units else do
-    -- A soft-norms document's reading sets are read in `E″` (`validate_reading_sets(formula_env, ...)`).
-    let F := (S.map (·.extended)).getD E
+    -- A soft-norms document's reading sets are read in `E″`, a senses document's in its projected environment
+    -- (`validate_reading_sets(formula_env, ...)`).
+    let F := (S.map (·.extended)).getD ((N.map (·.projected)).getD E)
     let sets ← Loader.compileSets F.rv F.profiles F.envId unitIds (Loader.optionalList front "reading_sets")
       (python := true) (formula := formulaCheck F)
       (modelRefused := some modelRefused)
@@ -1579,7 +1712,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   let block ← blockCoverage E front units
   if let .ok graph := front.getObjVal? "graph" then
     if withGraph then admitGraph E front graph units all active openNames narrowings
-  pure ⟨← documentId doc, Loader.sourceId E.profiles doc.source,
+  pure ⟨← documentId doc, Loader.sourceIdOf E.version doc.source,
     doc.source, units, ← units.mapM rowOf, front, block⟩
 
 def encode (id : String) (c : Checked) : Json :=
@@ -1596,7 +1729,7 @@ def documentCase (j : Json) : Except String Json := do
     | .ok _ => throw "InvalidInput: admit must be a boolean"
     | .error _ => pure true
   let lexicon := (j.getObjVal? "lexicon").toOption
-  pure (encode id (← check text withGraph lexicon))
+  pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption))
 
 /-! ## A distinguishing model's located diagnostic (batch 16f) -/
 

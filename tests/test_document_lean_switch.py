@@ -358,7 +358,9 @@ RETAINED = {
             {**GENERATED["plain"], "front": {**GENERATED["plain"]["front"],
                                              "weights": [{"set": "s", "by": "a", "values": {"x": 1.5}}]}})
             .replace('"x": 1.5', '"x": NaN')),
-    "a document with senses is read by the Lean senses route": (
+    # Batch 16f: the mode composes the senses route; a request without the pack texts Python reads keeps the
+    # retained path, which 16b's row names.
+    "a senses document's pack files are read by its loader": (
         "a document with senses is read by the Lean senses route", lambda: dw.text_of(
             {**GENERATED["plain"], "front": {**GENERATED["plain"]["front"], "senses": {}}})),
 }

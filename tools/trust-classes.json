@@ -2811,7 +2811,8 @@
         "VE.Discourse.Loader.documentId",
         "VE.Discourse.Loader.identityMetadata",
         "VE.Discourse.Loader.modelId",
-        "VE.Discourse.Loader.sourceId"
+        "VE.Discourse.Loader.sourceId",
+        "VE.Discourse.Loader.sourceIdOf"
       ],
       "G[V]": [
         "VE.Discourse.Loader.splitTextWith"
@@ -8996,6 +8997,7 @@
         "VE.Service.Document.RightsDoc.checkRule",
         "VE.Service.Document.RightsKind",
         "VE.Service.Document.RowKind",
+        "VE.Service.Document.SensesLayer",
         "VE.Service.Document.SoftLayer",
         "VE.Service.Document.SourceUnit",
         "VE.Service.Document.admitGraph",
@@ -9012,6 +9014,7 @@
         "VE.Service.Document.formulaCheck",
         "VE.Service.Document.formulaOf",
         "VE.Service.Document.frontJson",
+        "VE.Service.Document.frozenEnv",
         "VE.Service.Document.graphLabels",
         "VE.Service.Document.listedProfiles",
         "VE.Service.Document.ownedProfiles",
@@ -9021,6 +9024,7 @@
         "VE.Service.Document.rightsContentOf",
         "VE.Service.Document.rightsDoc",
         "VE.Service.Document.rightsSourceUnit",
+        "VE.Service.Document.sensesContentOf",
         "VE.Service.Document.softCanonical",
         "VE.Service.Document.softContentOf",
         "VE.Service.Document.softSourceNorms",
@@ -9105,12 +9109,15 @@
         "VE.Service.Document.reasons",
         "VE.Service.Document.rowOf",
         "VE.Service.Document.runCaseReported",
+        "VE.Service.Document.sensesLayer",
         "VE.Service.Document.softLayer",
         "VE.Service.Document.softRules",
         "VE.Service.Document.softSource",
         "VE.Service.Document.unitJson"
       ],
       "D[I]": [
+        "VE.Service.Document.Env.meaningId",
+        "VE.Service.Document.Env.version",
         "VE.Service.Document.documentId",
         "VE.Service.Document.nullableMeaningId"
       ],

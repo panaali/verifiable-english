@@ -66,7 +66,8 @@ FAULT_DETAILS = {
 }
 
 
-def _text(raw: bytes) -> str:
+def pack_text(raw: bytes) -> str:
+    """A pack's text, sent unchanged: its bytes as UTF-8."""
     if type(raw) is not bytes:
         raise VEError("A sense pack must be bytes")
     try:
@@ -304,7 +305,7 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
             type(budget) is not int or budget < 0 or type(own) not in (list, type(None)):
         raise VEError("Invalid senses request")
     own = [] if own is None else own
-    texts = [_text(pack) for pack in packs]
+    texts = [pack_text(pack) for pack in packs]
     # The expected identity is over canonical decoded content. The producer remains Lean:
     # malformed packs still go to its restricted decoder, which owns their diagnostic.
     try:
