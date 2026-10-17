@@ -1,9 +1,11 @@
 """Temporarily plant each batch 16f fault, run the test meant to catch it, and save every result, caught or not.
 
 The review fixes add faults for F1 (a soft document's parts pre-scan) and F2 (the senses route's composition, its
-transport, binding and the recorders that write a pilot with its files).
+transport, binding and the recorders that write a pilot with its files); looprecheck1's F7 adds the binding of a
+senses fence's content to the senses route's reading, and the relay gate's document reader.
 
-    python docs/lean-first/b16f/seed_faults.py
+    python docs/lean-first/b16f/seed_faults.py                    # every fault
+    python docs/lean-first/b16f/seed_faults.py ve/document.py ...  # the faults in these files; the others' records kept
 
 A Lean fault is built into `ve_service` and pinned for the run; the source, the lock and the build are restored
 after each fault. `evidence/mutants.json` keeps the file, the test, its exit code and a failure excerpt.
@@ -92,13 +94,36 @@ CASES = [
      '            pass',
      f"{SENSES}::test_a_valid_senses_document_is_decided_by_lean[d_parenthetical_switch-modern]"),
     ("a senses unit's meaning id bound to the document's environment", "ve/document.py",
-     "            formula_env = senses.environment\n        soft =",
-     "            formula_env = env\n        soft =",
+     "        formula_env = env if senses is None else senses.environment\n",
+     "        formula_env = env\n",
      f"{SENSES}::test_a_senses_unit_s_meaning_id_is_bound_to_the_projected_environment"),
     ("a fence's content optional outside a senses document", "ve/document.py",
-     '    read = {uid for uid, _ in _english_fences(meta["units"], fences or {})} if "senses" in meta else set()',
-     '    read = {uid for uid, _ in _english_fences(meta["units"], fences or {})}',
+     '    if "senses" in meta:\n        require(senses is not None)',
+     '    if senses is not None:\n        require(senses is not None)',
      f"{SENSES}::test_a_fence_without_a_formula_may_have_no_content_but_others_must"),
+    # Python, looprecheck1 F7: a senses fence's content bound to the reading Python holds, and the gate reads it so.
+    ("a fence the senses route read may drop its content", "ve/document.py",
+     '        has_content = (authored.get("id") in formulas if authored.get("id") in read\n'
+     '                       else authored.get("content") is not None)',
+     '        has_content = authored.get("content") is not None and not (\n'
+     '            authored.get("id") in read and "content" not in unit)',
+     f"{SENSES}::test_a_fence_the_route_read_keeps_its_formula[1-frozen]"),
+    ("a fence's formula not compared with the senses route's reading", "ve/document.py",
+     '            require("content" in unit and same(unit["content"], formulas[authored["id"]]))',
+     '            require("content" in unit)',
+     f"{SENSES}::test_a_fence_the_route_read_keeps_its_formula[0-modern]"),
+    ("a preamble line's content not refused", "ve/document.py",
+     '        has_content = (authored.get("id") in formulas if authored.get("id") in read\n'
+     '                       else authored.get("content") is not None)\n'
+     '        if has_content and authored.get("id") in read:',
+     '        has_content = (("content" in unit or authored.get("id") in formulas) if authored.get("id") in read\n'
+     '                       else authored.get("content") is not None)\n'
+     '        if has_content and authored.get("id") in formulas:',
+     f"{SENSES}::test_a_fence_the_route_read_to_no_formula_has_no_content"),
+    ("the relay gate reads a document answer by its transport only", "tools/relay_mutation_gate.py",
+     '        document._lean_document(raw, path, row, admitted=case.get("admit", False))',
+     '        del row',
+     "tests/test_relay_mutation_gate.py::test_document_is_read_as_ve_document_reads_it[content and identity]"),
     ("a pilot written without the files it names", "tools/lean_first_diff.py",
      "    companions = pilot_companions(root, name, text)\n",
      "    companions = {}\n",
@@ -114,9 +139,14 @@ def build() -> None:
         raise RuntimeError((built.stdout + built.stderr)[-1500:])
 
 
-def main() -> None:
+def main(files: list[str]) -> None:
+    path = Path(__file__).resolve().parent / "evidence/mutants.json"
+    kept = {r["bug"]: r for r in json.loads(path.read_text())} if files and path.exists() else {}
     records = []
     for bug, relative, before, after, test in CASES:
+        if files and relative not in files:
+            records.append(kept[bug])
+            continue
         target = test if "::" in test else f"{TESTS}::{test}"
         source = ROOT / relative
         original = source.read_text()
@@ -145,10 +175,9 @@ def main() -> None:
         records.append({"bug": bug, "file": relative, "test": target, "exit_code": done.returncode,
                         "caught": caught, "failure_excerpt": output[-1500:]})
         print(f"{bug}: {test} {'failed as expected' if caught else 'PASSED: the fault survived'}", flush=True)
-    path = Path(__file__).resolve().parent / "evidence/mutants.json"
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(records, indent=2) + "\n")
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
