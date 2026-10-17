@@ -430,8 +430,17 @@ def _lean_answer(raw: bytes, admit: bool):
                    for u, _ in _parts(meta["units"])):
                 from .english import EnglishVocabulary
                 from .english_grammar import export
-                case["lexicon"] = export(EnglishVocabulary(Environment(meta["environment"])))
-        except (KeyError, TypeError, VEError):
+                profiles = listed_profiles(meta["environment"])
+                if "soft-norms@0" in profiles and "rights@0" not in profiles:
+                    # Batch 16f: a soft-norms document's fences are read in the soft route's `E″`, which the
+                    # proposal names (Lean `Service.Document.softLayer`).
+                    from .softnorms import SoftNormDocument
+                    words = SoftNormDocument(_environment(meta["environment"]),
+                                             _soft_contents(meta["units"])).extended_env
+                else:
+                    words = Environment(meta["environment"])
+                case["lexicon"] = export(EnglishVocabulary(words))
+        except (KeyError, TypeError, VEError, CheckerUnavailable):
             pass  # Lean checks the document before a fence needs the proposal.
     row, error = answer("document", case)
     if isinstance(error, (CheckerUnavailable, ResourceLimit)):
@@ -467,6 +476,13 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             raise unavailable("is not bound to the document sent")
         rights_document = soft_document = None
         formula_env = env
+        soft = "soft-norms@0" in env.profiles and "rights@0" not in env.profiles
+        if soft:
+            # Batch 16f: the soft document Lean's `document` mode composed from the soft route
+            # (`Service.Document.softLayer`); its units' contents and statuses are the answer's.
+            from .softnorms import SoftNormDocument
+            soft_document = SoftNormDocument(env, _soft_contents(meta["units"]))
+            formula_env = soft_document.extended_env
         if "rights@0" in env.profiles:
             # Batch 16e: the containers of the rights source Lean's `document` mode decoded with the rights route
             # (`Service.Document.rightsDoc`); Lean's unit statuses and contents are the answer's, not theirs.
@@ -480,7 +496,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             # `_content` keeps (`rights_meaning_id`, Lean's `nullableMeaningId`).
             if "content" in unit and unit["meaning_id"] != (
                     rights_meaning_id(_content_environment(env, formula_env, unit["kind"]), unit["content"])
-                    if rights_document is not None else
+                    if soft_document is not None else
                     digest(f"ve-meaning-{env.identity_version}\n",
                            {"environment_id": env.environment_id, "ast": unit["content"]})):
                 raise unavailable("is not bound to the document sent")
@@ -562,6 +578,7 @@ def _bind_document_answer(body, meta, declared, row):
     units = row.get("units")
     require(type(units) is list and len(units) == len(declared))
     rights = "rights@0" in listed_profiles(meta.get("environment"))
+    soft = "soft-norms@0" in listed_profiles(meta.get("environment"))
     kinds, statuses, reasons = {}, {}, {}
     for unit, (authored, parent) in zip(units, declared, strict=True):
         require(type(unit) is dict and type(authored) is dict)
@@ -579,7 +596,7 @@ def _bind_document_answer(body, meta, declared, row):
         if has_content and type(authored["content"]) is dict and "ast" in authored["content"]:
             require(same(unit["content"], authored["content"]["ast"]))
         if has_content and type(authored["content"]) is dict and "norm" in authored["content"]:
-            require(_soft_bound(unit["content"], authored["content"], same) if rights else
+            require(_soft_bound(unit["content"], authored["content"], same) if rights or soft else
                     same(unit["content"], authored["content"]))
         if has_content and type(authored["content"]) is dict and set(authored["content"]) & set(_RIGHTS_KINDS):
             require(rights and same(unit["content"], authored["content"]))

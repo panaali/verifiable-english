@@ -48,11 +48,7 @@ def unavailable (what : String) : String := "CheckerUnavailable: " ++ what
 `CheckerUnavailable` before its environment is decoded (its own loader would add checks this mode lacks). -/
 def ownedProfiles : List String :=
   ["alternatives@0", "data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0",
-   "readings@1", "relational-fol@0", "rights@0", "risk@0", "time@0"]
-
-/-- A profile the mode owns only beneath another: `soft-norms@0` beneath `rights@0`, whose route composes it (a
-soft-norms document on its own is batch 16f's). -/
-def ownedBeneath (listed : List String) (p : String) : Bool := p == "soft-norms@0" && listed.contains "rights@0"
+   "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
 
 /-- The kinds of a rights source unit (`right`, `right_lines`, `limitation`, `bar`): under `rights@0` each is a unit
 kind of its own (Python's `load_document` skips `_check_kind` for them) and the key of the rights block the unit
@@ -241,27 +237,37 @@ def hasNull : Nat → Json → Bool
   | fuel + 1, .obj kvs => kvs.toList.any fun (_, v) => hasNull fuel v
   | _, _ => false
 
-/-- Whether a `null` inside a unit's member `k` is the mode's to read: under `rights@0` (`rights`), the content of a
-unit, whose nulls Python's rights and soft relays send absent (`wireJson`) and whose identity keeps them
-(`nullableMeaningId`). -/
-def nullInside (rights : Bool) (k : String) (v : Json) : Bool :=
-  !(rights && k == "content") && hasNull 257 v
+/-- Which unit content's nulls the mode reads as Python's relays read them, absent (`wireJson`), while the identity
+keeps them (`nullableMeaningId`): none (`plain`); under `rights@0` every unit's content; in a soft-norms document
+(batch 16f) the norm object of a unit's content, which only the soft route reads. -/
+inductive Nullable | plain | rights | soft
+  deriving DecidableEq
+
+def Nullable.of (listed : List String) : Nullable :=
+  if listed.contains "rights@0" then .rights else if listed.contains "soft-norms@0" then .soft else .plain
+
+/-- Whether a `null` inside a unit's member `k` is outside what the mode reads (`Nullable`). -/
+def nullInside (n : Nullable) (k : String) (v : Json) : Bool :=
+  match n, k, v with
+  | .rights, "content", _ => false
+  | .soft, "content", .obj kvs => kvs.toList.any fun (key, x) => key != "norm" && hasNull 257 x
+  | _, _, _ => hasNull 257 v
 
 /-- A `MIXED` part holds a `null` outside `nullableUnitKeys true`. -/
-def partHasStrayNull (rights : Bool) (p : Json) : Bool :=
+def partHasStrayNull (n : Nullable) (p : Json) : Bool :=
   match p with
   | .obj kvs => kvs.toList.any fun (k, v) =>
-    if v == .null then !(nullableUnitKeys true).contains k else nullInside rights k v
+    if v == .null then !(nullableUnitKeys true).contains k else nullInside n k v
   | v => hasNull 257 v
 
 /-- A unit holds a `null` outside `nullableUnitKeys false`, or one of its `MIXED` parts does. -/
-def unitHasStrayNull (rights : Bool) (u : Json) : Bool :=
+def unitHasStrayNull (n : Nullable) (u : Json) : Bool :=
   match u with
   | .obj kvs => kvs.toList.any fun (k, v) =>
     if v == .null then !(nullableUnitKeys false).contains k
     else match k, v with
-      | "parts", .arr ps => ps.any (partHasStrayNull rights)
-      | _, _ => nullInside rights k v
+      | "parts", .arr ps => ps.any (partHasStrayNull n)
+      | _, _ => nullInside n k v
   | v => hasNull 257 v
 
 /-- A readings candidate's absent content is written `null` by the @1 pilot loader. The readings route reads it
@@ -279,11 +285,11 @@ def readingSetHasStrayNull (set : Json) : Bool :=
   | v => hasNull 257 v
 
 def strayNull (front : Json) : Option String :=
-  let rights := (listedProfiles (front.getObjValD "environment")).contains "rights@0"
+  let nullable := Nullable.of (listedProfiles (front.getObjValD "environment"))
   match front with
   | .obj kvs => kvs.toList.findSome? fun (k, v) =>
     let stray := match k, v with
-      | "units", .arr us => us.any (unitHasStrayNull rights)
+      | "units", .arr us => us.any (unitHasStrayNull nullable)
       | "reading_sets", .arr sets => sets.any readingSetHasStrayNull
       | _, _ => hasNull 257 v
     if stray then some k else none
@@ -378,11 +384,17 @@ structure Env where
   profiles : List String
   envId : String
   block : Block
+  /-- A soft route's generated frame (`E″`, Python's `SoftEnvironment(..., generated=True)`), whose `soft__`
+  decision predicates every route reads as the soft route generated them (the English case's `generated`). -/
+  generated : Bool := false
 
 def Env.data (E : Env) : Bool := E.profiles.contains "data@0"
 
 /-- A `rights@0` document (with `soft-norms@0`, which the rights route requires). -/
 def Env.rights (E : Env) : Bool := E.profiles.contains "rights@0"
+
+/-- A `soft-norms@0` document without `rights@0` (batch 16f): the soft route composes it (`SoftLayer`). -/
+def Env.soft (E : Env) : Bool := E.profiles.contains "soft-norms@0" && !E.rights
 
 /-- The environment the rights and soft routes read: without the head profile `readings@1`, as Python's relays
 send it (`run_rights_case`). -/
@@ -560,17 +572,42 @@ def decodedEnvironment (environment : Json) (block : Block) : Except String Env 
   let typing ← if block == .risk then Standalone.riskReduced environment
     else if defaults then VE.NormDefaults.Wire.placeholderJson lower
     else pure lower
-  let checked ← Standalone.validated typing (typing := block != .none || rights)
+  let checked ← Standalone.validated typing (typing := block != .none || rights || profiles.contains "soft-norms@0")
   let e := checked.envelope
   unless e.family == .fol do
     throw (unavailable s!"document checks on the {e.family.name} family need its Lean route")
   let rv ← VE.Route.Run.decodeRouteVocabulary e
   let profiles ← VE.Route.Gate.profilesOf environment
-  pure ⟨environment, checked, rv, profiles, ← Standalone.environmentIdOf profiles environment, block⟩
+  pure ⟨environment, checked, rv, profiles, ← Standalone.environmentIdOf profiles environment, block, false⟩
+
+/-- `_soft_contents`: the soft source's norm objects, the content of each top-level unit of kind `norm` whose
+object content holds `norm` (a `MIXED` unit's parts are not in it). -/
+def softSourceNorms (units : Json) : List Json :=
+  match units with
+  | .arr us => us.toList.filterMap fun u =>
+      if u.getObjValD "kind" == .str "norm" && ((u.getObjValD "content").getObjVal? "norm").isOk then
+        some (u.getObjValD "content")
+      else none
+  | _ => []
+
+/-- `check_soft_source`, which Python's loader runs on a `soft-norms@0` document before its environment: the soft
+route's `soft-elaborate` (`SoftNorms.Run.runSoftKind`) over the environment and the soft source's norm objects, sent
+as the soft relay sends them (`wireJson`). Its rejections are the route's decoding and the soft document hash. The
+soft relay adds the `diagnose` mode's diagnostic to a rejection, which this mode's error row cannot hold, so a
+rejection keeps the retained path (`CheckerUnavailable`). -/
+def softSource (environment : Json) (norms : List Json) : Except String VE.SoftNorms.Wire.SoftSource :=
+  let env := wireJson 257 environment
+  let ns := Json.arr (norms.map (wireJson 257)).toArray
+  let decoded : Except String VE.SoftNorms.Wire.SoftSource := do
+    let src ← VE.SoftNorms.Wire.decodeSoftSource env ns
+    let _ ← VE.SoftNorms.Wire.softDocumentHash (← VE.Bridge.strings (← env.getObjVal? "profiles")) env ns
+    pure src
+  decoded.mapError fun m => unavailable s!"a soft source the soft route rejects keeps its loader's diagnostic: {m}"
 
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
-decoder that does not read it), then the envelope decoder. -/
-def environmentOf (environment : Json) : Except String Env := do
+decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
+front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. -/
+def environmentOf (environment : Json) (units : Json := .null) : Except String Env := do
   match environment.getObjValD "profiles" with
   | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
       throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
@@ -578,15 +615,21 @@ def environmentOf (environment : Json) : Except String Env := do
   if Standalone.isLegacy environment then
     throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
   let listed := listedProfiles environment
-  if let some p := listed.find? fun p => !ownedProfiles.contains p && !ownedBeneath listed p then
+  if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (unavailable s!"document checks under {p} need its Lean profile route")
   let block := blockOf listed
   if listed.contains "norm-defaults@0" && block != .none then
     throw (unavailable "norm-defaults with alternatives or risk needs its composed Lean route")
   if listed.contains "rights@0" && (block != .none || listed.contains "norm-defaults@0") then
     throw (unavailable "rights with norm-defaults, alternatives or risk needs its composed Lean route")
+  let soft := listed.contains "soft-norms@0" && !listed.contains "rights@0"
+  if soft && (block != .none || listed.contains "norm-defaults@0" || listed.contains "readings@1") then
+    throw (unavailable "soft-norms with norm-defaults, readings, alternatives or risk needs its composed Lean route")
   if let some key := ["unit_schema", "units"].find? (fun k => (environment.getObjVal? k).isOk) then
     throw (unavailable s!"the environment block {key} needs its Lean route's decoder")
+  if soft then
+    if let .arr _ := units then
+      let _ ← softSource environment (softSourceNorms units)
   if block == .none then
     if let .str language := environment.getObjValD "language" then
       if language != VE.Route.Gate.language then
@@ -783,6 +826,16 @@ structure RightsDoc where
   decision predicates), when some unit holds norm content. -/
   rules : Option VE.SoftNorms.Wire.SoftEnvironment
 
+/-- `_rule_source` of an extended environment (`E″` or `E″′` without the rights layer: its predicates without the
+soft decision predicates), decoded by the soft route, when some unit of `flat` holds norm content
+(`check_rule_batch` is called only then). -/
+def softRules (extended : Json) (flat : List Json) : Except String (Option VE.SoftNorms.Wire.SoftEnvironment) := do
+  if !flat.any (fun u => ((u.getObjValD "content").getObjVal? "norm").isOk) then return none
+  let vocabulary ← extended.getObjVal? "vocabulary"
+  let predicates := (← fields (← vocabulary.getObjVal? "predicates")).filter (!·.1.startsWith "soft__")
+  let ruleSource := extended.setObjVal! "vocabulary" (vocabulary.setObjVal! "predicates" (Json.mkObj predicates))
+  pure (some (← VE.SoftNorms.Wire.decodeSoftSource ruleSource (Json.arr #[])).se)
+
 /-- A unit of the rights source (`_rights_units`): object content under a rights kind or `norm`. -/
 def rightsSourceUnit (u : Json) : Bool :=
   (u.getObjValD "content" matches .obj _) &&
@@ -809,11 +862,7 @@ def rightsDoc (E : Env) (front : Json) (declared : List String) (raw : List Json
     ((u.getObjValD "id").getStr?.toOption.getD "", VE.Rights.Run.unitOpen src.D (declared ++ generated) c)
   let extended ← VE.Rights.Wire.stripRights (← VE.Rights.Wire.primeJsonR src.D lower)
   let extendedProfiles ← VE.Bridge.strings (← extended.getObjVal? "profiles")
-  let rules ← if !flat.any (fun u => ((u.getObjValD "content").getObjVal? "norm").isOk) then pure none else do
-    let vocabulary ← extended.getObjVal? "vocabulary"
-    let predicates := (← fields (← vocabulary.getObjVal? "predicates")).filter (!·.1.startsWith "soft__")
-    let ruleSource := extended.setObjVal! "vocabulary" (vocabulary.setObjVal! "predicates" (Json.mkObj predicates))
-    pure (some (← VE.SoftNorms.Wire.decodeSoftSource ruleSource (Json.arr #[])).se)
+  let rules ← softRules extended flat
   pure ⟨src, declared ++ generated, opens, extendedProfiles,
     ← VE.Route.Wire.environmentId extendedProfiles extended, rules⟩
 
@@ -875,6 +924,45 @@ def rightsContentOf (E : Env) (R : RightsDoc) (kind : RowKind) (content : Json) 
     throw (unavailable "formula content in a rights document is typed in its extended environment")
   throw "unit fence must match its id"
 
+/-! ## A soft-norms document (batch 16f)
+
+Python's `load_document` reads a `soft-norms@0` document without `rights@0` through `SoftNormDocument`: after its soft
+source passed `check_soft_source` (`softSource`, before the environment), the soft route's `E′` over the same source is
+the document's extended environment `E″` (`soft_document.extended_env`), in which every formula, fence and reading set
+is read, and whose decision predicates an `open` meaning may cite. Every norm object is checked alone under
+`_rule_source(E″)` (`check_rule_batch`, the soft route's `soft-rules`) and answered in its canonical form. -/
+
+/-- A soft-norms document's composed routes. -/
+structure SoftLayer where
+  /-- The names an `open` meaning may cite: the declared open terms and the soft decision predicates. -/
+  openNames : List String
+  /-- `E″`, the soft route's `E′` (`SoftNorms.Wire.primeJson`), as an environment of this mode. -/
+  extended : Env
+  /-- `_rule_source(E″)`, decoded by the soft route, when some unit holds norm content. -/
+  rules : Option VE.SoftNorms.Wire.SoftEnvironment
+
+/-- The environment of this mode over the extended environment JSON the soft route generated: its typing envelope
+and route vocabulary, profiles and identity. The route generated it from a source it accepted, so a refusal here is
+`CheckerUnavailable`, never a verdict. -/
+def extendedEnv (json : Json) : Except String Env :=
+  let built : Except String Env := do
+    let checked ← Standalone.validated json (typing := true)
+    unless checked.envelope.family == .fol do throw "not the FOL family"
+    let rv ← VE.Route.Run.decodeRouteVocabulary checked.envelope
+    let profiles ← VE.Route.Gate.profilesOf json
+    pure { json, checked, rv, profiles, envId := ← Standalone.environmentIdOf profiles json, block := .none,
+           generated := true }
+  built.mapError fun m => unavailable s!"the soft route's extended environment is outside this mode: {m}"
+
+/-- `SoftNormDocument(env, _soft_contents(units))` and `check_rule_batch`'s source, after the open terms and before
+the units: the soft route's decoding of the soft source, its `E′` and decision predicates, and `_rule_source(E″)`. -/
+def softLayer (E : Env) (declared : List String) (raw : List Json) : Except String SoftLayer := do
+  let lower := wireJson 257 E.lower
+  let src ← softSource E.lower (softSourceNorms (Json.arr raw.toArray))
+  let prime ← VE.SoftNorms.Wire.primeJson src.D lower
+  let flat ← raw.foldlM (fun acc u => do pure (acc ++ (← Loader.partsOf u))) []
+  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← extendedEnv prime, ← softRules prime flat⟩
+
 /-- `_content` for the owned profiles: the unit's checked formula and `meaning_id`, or the reason it has none
 here. -/
 def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Json)
@@ -919,8 +1007,9 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
     return (.formula f, mid)
   if let some lexicon := lexicon then
     let parsed ← VE.EnglishGrammar.Run.readCase (Json.mkObj
-      [("id", .str id), ("environment", E.json), ("lexicon", lexicon),
-       ("source", .str ((fences.lookup id).getD "")), ("mode", .str "authoring"), ("cap", toJson (2 : Nat))])
+      ([("id", .str id), ("environment", E.json), ("lexicon", lexicon),
+        ("source", .str ((fences.lookup id).getD "")), ("mode", .str "authoring"), ("cap", toJson (2 : Nat))] ++
+       (if E.generated then [("generated", Json.bool true)] else [])))
     let result ← parsed.getObjVal? "result"
     unless result.getObjValD "status" == .str "one" do
       throw ((result.getObjValD "class").getStr?.toOption.getD "VEError" ++ ": " ++
@@ -931,8 +1020,28 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
     return (.formula f, mid)
   throw (unavailable "fenced English or strict content needs the Lean surface parser")
 
+/-- `_content` in a soft-norms document, over `E″`: a norm object after its single-rule check under `_rule_source(E″)`
+(`batch_rule`; the soft route's `decodeSoftNorm`, the rule sent as the soft relay sends it), in canonical form
+(`softCanonical`) and bound to `E″` with its nullable decider slots (`soft_digest`), then the kind check of
+`normRole`; any other content is the plain `_content` over `E″`. -/
+def softContentOf (L : SoftLayer) (fences : List (String × String)) (lexicon : Option Json) (u : Json) (id : String)
+    (kind : RowKind) (content : Json) : Except String (UnitContent × String) := do
+  match content with
+  | .obj kvs =>
+    if let [("norm", value)] := kvs.toList then
+      let some se := L.rules | throw (unavailable "a norm object outside the soft rule source")
+      let c := softCanonical (← VE.SoftNorms.Wire.decodeSoftNorm se (wireJson 257 content)) value
+      let mid ← nullableMeaningId L.extended.profiles L.extended.envId c
+      match kind with
+      | .route k => let _ ← VE.Norms.Admission.normRole k c
+      | .rights _ => throw VE.Norms.Admission.normKindText
+      return (.soft c, mid)
+  | _ => pure ()
+  contentOf L.extended fences lexicon u id content
+
 /-- `load_document`'s checks of one unit at byte `cursor`, in Python's order. -/
-def sourceUnit (E : Env) (R : Option RightsDoc) (source : String) (fences : List (String × String))
+def sourceUnit (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (source : String)
+    (fences : List (String × String))
     (lexicon : Option Json) (openNames : List String)
     (cursor : Nat) (seen parents : List String) (parent : Option String) (u : Json) : Except String SourceUnit := do
   let keys ← (fields u).mapError (fun _ => "invalid unit schema")
@@ -955,11 +1064,12 @@ def sourceUnit (E : Env) (R : Option RightsDoc) (source : String) (fences : List
   let meaningStatus ← Loader.meaningStatus openNames meaning (python := true)
   let support := (u.getObjValD "support").getStr?.toOption.getD ""
   unless Loader.supports.contains support do throw "invalid support"
-  let compiled ← match u.getObjVal? "content", R with
-    | .ok .null, _ => pure none
-    | .ok content, some R => some <$> rightsContentOf E R decoded content
-    | .ok content, none => some <$> contentOf E fences lexicon u id content
-    | .error _, _ => pure none
+  let compiled ← match u.getObjVal? "content", R, S with
+    | .ok .null, _, _ => pure none
+    | .ok content, some R, _ => some <$> rightsContentOf E R decoded content
+    | .ok content, none, some S => some <$> softContentOf S fences lexicon u id decoded content
+    | .ok content, none, none => some <$> contentOf E fences lexicon u id content
+    | .error _, _, _ => pure none
   let norm ← match compiled.map Prod.fst, decoded with
     | some (.norm n), .route k => some <$> VE.Norms.Admission.normRole k (VE.Alternatives.Wire.encodeNode n)
     | some (.norm _), .rights _ => throw VE.Norms.Admission.normKindText
@@ -982,7 +1092,8 @@ def sourceUnit (E : Env) (R : Option RightsDoc) (source : String) (fences : List
 
 /-- `_parts` interleaved with the unit loop, as Python's generator runs: a `MIXED` part is checked against its
 parent's cursor, then compiled, before the next part is read; the parent's end is checked after its last part. -/
-def unitsOf (E : Env) (R : Option RightsDoc) (source : String) (fences : List (String × String))
+def unitsOf (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (source : String)
+    (fences : List (String × String))
     (lexicon : Option Json) (openNames : List String)
     (raw : List Json) : Except String (List SourceUnit) := do
   let parents ← Loader.mixedParents raw
@@ -991,7 +1102,7 @@ def unitsOf (E : Env) (R : Option RightsDoc) (source : String) (fences : List (S
   for u in raw do
     match ← Loader.mixedOf u with
     | none =>
-      let unit ← sourceUnit E R source fences lexicon openNames cursor (units.toList.map (·.id)) parents none u
+      let unit ← sourceUnit E R S source fences lexicon openNames cursor (units.toList.map (·.id)) parents none u
       units := units.push unit
       cursor := unit.span.2
     | some ((a, b), parts) =>
@@ -999,7 +1110,7 @@ def unitsOf (E : Env) (R : Option RightsDoc) (source : String) (fences : List (S
       let mut inner := a
       for p in parts do
         Loader.partOk inner p
-        let unit ← sourceUnit E R source fences lexicon openNames cursor (units.toList.map (·.id)) parents parent p
+        let unit ← sourceUnit E R S source fences lexicon openNames cursor (units.toList.map (·.id)) parents parent p
         units := units.push unit
         cursor := unit.span.2
         inner := unit.span.2
@@ -1175,13 +1286,14 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
   let document := Loader.admissionObject (units.map fun u =>
       (u.id, u.span, u.kind, u.content.bind fun c => match c with
         | .formula f => some f | _ => none)) active graph front openNames narrowings
-  let norms := !E.profiles.contains "norm-defaults@0" && usesNorms E units
-  let document := if E.profiles.contains "norm-defaults@0" || norms then
+  let norms := !E.profiles.contains "norm-defaults@0" && !E.soft && usesNorms E units
+  let document := if E.profiles.contains "norm-defaults@0" || norms || E.soft then
     let activeIds := active.map (·.1.unit)
     let rows := ((document.getObjValD "units").getArr?.toOption.getD #[]).toList.zip units |>.map fun (j, u) =>
       match u.content with
       | some (.norm n) => if activeIds.contains u.id then j else
           j.setObjVal! "content" (VE.Alternatives.Wire.encodeNode n)
+      | some (.soft c) => if activeIds.contains u.id then j else j.setObjVal! "content" c
       | _ => j
     document.setObjVal! "units" (Json.arr rows.toArray)
     else document
@@ -1191,7 +1303,9 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
     | .none => if E.profiles.contains "norm-defaults@0" then
         VE.NormDefaults.Run.runAdmission "admission"
           (if E.profiles.contains "readings@1" then lowerReadings E.json else E.json) document
-      -- A norm construct takes the norms route (`_uses_norms`; batch 16f).
+      -- A soft-norms document takes the soft route (`admit_soft_document`, the soft relay's wire form), a norm
+      -- construct the norms route (`_uses_norms`; batch 16f).
+      else if E.soft then VE.SoftNorms.Run.runAdmission "admission" (wireJson 257 E.lower) (wireJson 257 document)
       else if norms then VE.Norms.Run.runAdmission "admission"
           (if E.profiles.contains "readings@1" then lowerReadings E.json else E.json) document
       else VE.Route.Run.dispatch "admission" E.json E.checked.envelope
@@ -1202,7 +1316,7 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
     | .ok a => pure a
     | .error e =>
       if e.startsWith "UnsupportedProfile" then throw (unavailable ("claim graph: " ++ e))
-      else if E.block == .none && formulaDecoderTexts.contains e then throw ((graphFault E nodes).getD e)
+      else if E.block == .none && !E.soft && formulaDecoderTexts.contains e then throw ((graphFault E nodes).getD e)
       else throw e
   let labels := (((answer.getObjValD "report").getObjValD "assumptions").getArr?.toOption.getD #[]).toList.filterMap
     fun a => (a.getObjValD "label").getStr?.toOption
@@ -1328,7 +1442,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   if doc.source.isEmpty then throw "document source is empty"
   let environment := front.getObjValD "environment"
   unless environment matches .obj _ do throw "document needs an embedded environment"
-  let E ← environmentOf environment
+  let E ← environmentOf environment (front.getObjValD "units")
   if ["contexts", "assessments", "bridges", "scoped"].any (front.getObjVal? · |>.isOk) then
     throw "unknown document metadata"
   let openNames ← Loader.openTermNames E.rv (Loader.optionalList front "open_terms") (python := true)
@@ -1338,7 +1452,10 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     | _ => throw "document needs units"
   -- A rights document's source is decoded before any unit, and its generated names are open terms of its units.
   let R ← if E.rights then some <$> rightsDoc E front openNames raw else pure none
-  let units ← unitsOf E R doc.source doc.fences lexicon ((R.map (·.openNames)).getD openNames) raw
+  -- A soft-norms document's extended environment `E″` and decision predicates come first too (batch 16f).
+  let S ← if E.soft then some <$> softLayer E openNames raw else pure none
+  let names := (R.map (·.openNames)).getD ((S.map (·.openNames)).getD openNames)
+  let units ← unitsOf E R S doc.source doc.fences lexicon names raw
   let authored := raw.flatMap fun u => match u.getObjVal? "parts" with
     | .ok (.arr ps) => ps.toList
     | _ => [u]
@@ -1348,8 +1465,10 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   unless (doc.fences.map Prod.fst).all used.contains do throw "unbound VE fence"
   let unitIds := units.map (·.id)
   let (all, attached) ← if E.profiles.contains "readings@1" && !E.rights then readingsSets E front units else do
-    let sets ← Loader.compileSets E.rv E.profiles E.envId unitIds (Loader.optionalList front "reading_sets")
-      (python := true) (formula := formulaCheck E)
+    -- A soft-norms document's reading sets are read in `E″` (`validate_reading_sets(formula_env, ...)`).
+    let F := (S.map (·.extended)).getD E
+    let sets ← Loader.compileSets F.rv F.profiles F.envId unitIds (Loader.optionalList front "reading_sets")
+      (python := true) (formula := formulaCheck F)
       (modelRefused := some (unavailable "a distinguishing model the Lean model decoder refuses"))
     pure (sets, [])
   let active := Loader.activeOf all
@@ -1362,7 +1481,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     throw "unit status contradicts content, meaning, or active reading set"
   if E.profiles.contains "norm-defaults@0" then
     checkNormDefaults E front units (active.map (·.1.unit)) attached
-  else if E.profiles.contains "norms@0" && !E.rights then
+  else if E.profiles.contains "norms@0" && !E.rights && !E.soft then
     checkNorms E units (active.map (·.1.unit)) attached
   Loader.checkLemmas front
   for u in units do
