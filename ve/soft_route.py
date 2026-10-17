@@ -91,10 +91,10 @@ def admit_soft_document(environment, document, *, soft_document=None):
     else:
         env = environment if isinstance(environment, SoftEnvironment) else SoftEnvironment(environment)
     elaborated = elaborate_soft_document(soft_document)
-    row = _run({"id": "admission", "kind": "admission", "environment": env.to_dict(),
-                "document": _wire(document)})
+    sent = _wire(document)
+    row = _run({"id": "admission", "kind": "admission", "environment": env.to_dict(), "document": sent})
     try:
-        from .admission import bind_report
+        from .admission import bind_report, report_identity
         bind_report(document, row['report'])
         open_labels = {entry['label'] for entry in elaborated['colliding_pairs']
                        if not entry['comparable']}
@@ -102,6 +102,8 @@ def admit_soft_document(environment, document, *, soft_document=None):
         expected = [label for label in elaborated['conditional_on'] if label in reported]
         if row['conditional_on'] != expected or not set(row['conditional_on']) <= open_labels:
             raise ValueError('unbound soft admission conditional labels')
+        if row['report_id'] != report_identity(env, sent, row['report']):
+            raise ValueError('unbound soft admission report id')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(f'CheckerUnavailable: Lean soft admission is not bound to the request: {error}') from error
     return {key: value for key, value in row.items() if key not in ("id", "status")}

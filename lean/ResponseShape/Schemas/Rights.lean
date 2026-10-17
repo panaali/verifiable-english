@@ -353,7 +353,7 @@ def bar : Shape :=
                 ("entailed", .type ["boolean"])]]])])]]
 
 def packages : Shape :=
-  c "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN." [
+  c "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN, which names the first failing certificate in its status line and is conditional on nothing; a CONFLICT-FREE status line counts its premises." [
     obj,
     .required ["id", "status", "verdict", "status_text", "targets", "conditional_on"],
     closed [
@@ -364,7 +364,13 @@ def packages : Shape :=
       ("targets", ref "common.json#/$defs/strings"),
       ("conditional_on", ref "#/$defs/conditional_labels"),
       ("detail", ref "common.json#/$defs/text")],
-    .ite (props [("verdict", constS "UNKNOWN")]) (.required ["detail"]) (.not (.required ["detail"]))]
+    .ite (props [("verdict", constS "UNKNOWN")])
+      (n [.required ["detail"], props [
+        ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])),
+        ("detail", .pattern (Re.prefixes ["missing certificate for ", "invalid certificate for "])),
+        ("conditional_on", .maxItems 0)]])
+      (n [.not (.required ["detail"]), props [
+        ("status_text", .pattern (Re.prefixes ["CONFLICT-FREE among rules on the same act, conditional on "]))]])]
 
 def «row» : Shape :=
   .select [
