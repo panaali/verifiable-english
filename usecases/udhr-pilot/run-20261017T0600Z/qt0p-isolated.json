@@ -1,0 +1,21 @@
+{
+ "part03_bytes_by_status_before": {
+  "CHECKED": 379,
+  "LABELLED": 105,
+  "OPEN": 534,
+  "UNFORMALISED": 1986
+ },
+ "part03_bytes_by_status_after": {
+  "CHECKED": 379,
+  "LABELLED": 105,
+  "OPEN": 610,
+  "UNFORMALISED": 1910
+ },
+ "premises_after": "model",
+ "premises_before": "model",
+ "u097_status": "OPEN",
+ "gaps": 3,
+ "expected": "part03 OPEN +76 B, premise check stays `model`",
+ "open_delta": 76,
+ "as_expected": true
+}
