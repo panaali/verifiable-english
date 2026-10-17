@@ -106,6 +106,8 @@ import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
 import VE.Time.Wire
 import VE.Time.Document
+import VE.Numbers.Examples
+import VE.Numbers.Phrases
 import VE.Risk.Cond
 import VE.Risk.Derive
 import VE.Risk.Background
