@@ -226,11 +226,119 @@ def test_a_fence_without_a_formula_may_have_no_content_but_others_must(tmp_path)
     assert "content" not in row["units"][0] and "content" in row["units"][1]
     meta, source, fences = D._split(raw)
     declared = list(D._parts(meta["units"]))
-    D._bind_document_answer(source, meta, declared, row, fences)
+    senses = _reading(raw, path)
+    D._bind_document_answer(source, meta, declared, row, senses)
     without = deepcopy(meta)
     without.pop("senses")
     with pytest.raises(ValueError):
-        D._bind_document_answer(source, without, declared, row, fences)
+        D._bind_document_answer(source, without, declared, row, senses)
+    with pytest.raises(ValueError):  # a senses row is bound only to the reading Python holds
+        D._bind_document_answer(source, meta, declared, row)
+
+
+def _reading(raw: bytes, path: Path):
+    """The senses route's reading of a document's English fences, as `_lean_document` holds it."""
+    from ve.senses_document import read_senses
+    meta, _, fences = D._split(raw)
+    return read_senses(D._environment(meta["environment"]), meta["senses"], D._english_fences(meta["units"], fences),
+                       path.parent, meta.get("reading_sets", []))
+
+
+def _two_fences(tmp_path: Path, modern: bool = False) -> tuple[bytes, Path, dict]:
+    """A senses document with two English fences, each read to a formula, and Lean's answer for it (review F7)."""
+    front, body = _parts("a_front_matter_default")
+    front["units"].append({"id": "u2", "span": [12, 24], "kind": "asserted", "meaning": "specified",
+                           "support": "assumption", "surface": "english", "content": {"fence": "u2"}})
+    path = _write(tmp_path, _modern(front) if modern else front,
+                  body + "Sentence 2.\n```ve u2\nClaude is not corrigible.\n```\n")
+    raw = path.read_bytes()
+    row = D._lean_answer(raw, True, path.parent)
+    assert row is not None and all("content" in unit for unit in row["units"]), row
+    return raw, path, row
+
+
+@pytest.mark.parametrize("modern", [False, True], ids=["frozen", "modern"])
+@pytest.mark.parametrize("unit", [0, 1])
+def test_a_fence_the_route_read_keeps_its_formula(tmp_path, modern, unit):
+    """lf-16f looprecheck1 F7: a fence the senses route read to a formula has that formula as its content. Dropped
+    (with its `meaning_id`, so the unit is still well formed), or replaced by another fence's formula with that
+    formula's identity, the answer is not bound to the document sent; the premises no longer flip to `model`."""
+    raw, path, row = _two_fences(tmp_path, modern)
+    D._lean_document(raw, path, row, admitted=True)
+    dropped = deepcopy(row)
+    for key in ("content", "meaning_id"):
+        dropped["units"][unit].pop(key)
+    with pytest.raises(CheckerUnavailable, match="not bound"):
+        D._lean_document(raw, path, dropped, admitted=True)
+    swapped = deepcopy(row)
+    other = row["units"][1 - unit]
+    assert other["content"] != row["units"][unit]["content"]
+    swapped["units"][unit].update(content=other["content"], meaning_id=other["meaning_id"])
+    with pytest.raises(CheckerUnavailable, match="not bound"):
+        D._lean_document(raw, path, swapped, admitted=True)
+
+
+def test_a_fence_the_route_read_to_no_formula_has_no_content(tmp_path):
+    """A preamble line (or an open unit) has no formula: a content given it, even a formula the route read for
+    another fence with that formula's identity, is not bound (review F7, the converse)."""
+    front, body = _parts("c_written_definition_line")
+    path = _write(tmp_path, front, body)
+    raw = path.read_bytes()
+    row = D._lean_answer(raw, True, path.parent)
+    assert "content" not in row["units"][0] and "content" in row["units"][1]
+    forged = deepcopy(row)
+    forged["units"][0].update(content=row["units"][1]["content"], meaning_id=row["units"][1]["meaning_id"])
+    with pytest.raises(CheckerUnavailable, match="not bound"):
+        D._lean_document(raw, path, forged, admitted=True)
+
+
+def _shown(document) -> str:
+    """What the relay shows of a document built from Lean's answer: its report and every unit as built."""
+    return json.dumps({"report": D._report(document), "units": document["units"]}, sort_keys=True, default=repr)
+
+
+@pytest.mark.parametrize("name", ["two fences", "c_written_definition_line"])
+def test_every_mutant_of_a_senses_answer_is_refused_or_changes_nothing(tmp_path, name):
+    """Review F7's class: the relay mutation gate's mutants (`tools/relay_mutation_gate.mutants`: every field dropped,
+    emptied, duplicated, retyped and rebound), one at a time and every pair of a unit's members dropped together,
+    of genuine senses answers. Each mutant the response schema types is `CheckerUnavailable` from `_lean_document`,
+    or the document it builds shows exactly what the genuine one does."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+    import relay_mutation_gate as G
+    from ve.backends.service_schema import ROWS, Context, Invalid
+    if name == "two fences":
+        raw, path, row = _two_fences(tmp_path / "doc")
+    else:
+        front, body = _parts(name)
+        path = _write(tmp_path / "doc", front, body)
+        raw = path.read_bytes()
+        row = D._lean_answer(raw, True, path.parent)
+    genuine = _shown(D._lean_document(raw, path, row, admitted=True))
+    request = D._document_case(raw, True, path.parent)
+    case, schema, named = Context(request), ROWS["document"][0], G._strings(request)
+    found = [answer for _, answer in G.mutants(row, named, {})]
+    for index, unit in enumerate(row["units"]):
+        keys = sorted(unit)
+        for i, first in enumerate(keys):
+            for second in keys[i + 1:]:
+                pair = deepcopy(row)
+                pair["units"][index].pop(first)
+                pair["units"][index].pop(second)
+                found.append(pair)
+    typed = 0
+    for mutant in found:
+        try:
+            schema(mutant, case, {})
+        except Invalid:
+            continue
+        typed += 1
+        try:
+            shown = _shown(D._lean_document(raw, path, mutant, admitted=True))
+        except CheckerUnavailable:
+            continue
+        assert shown == genuine, json.dumps(mutant)[:400]
+    assert typed >= 20, typed
 
 
 def test_a_pilot_is_written_with_the_files_it_names_beside_it(tmp_path):
