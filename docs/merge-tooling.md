@@ -31,6 +31,7 @@ its merge strategy:
 | trust-tables | `tools/trust-classes.json`, `docs/trust-baseline.json` | json (check only) |
 | checker-pins | `lean/checkers.lock` (pins the built `ve_service` and the Rust release binary) | json |
 | response-schemas | `ve/backends/lean_service_schema/*.json` | regenerate |
+| binding-census | `docs/test-architecture/binding-census.{json,md}` (from the schemas and the recorded answers) | regenerate |
 | english-codes | `ve/english_grammar/codes.json` | regenerate |
 | question-codes | `ve/question/codes.json` | regenerate |
 | question-lock | `ve/question/LOCK.json` | regenerate |
@@ -40,6 +41,8 @@ its merge strategy:
 | import-contract | `.importlinter` | regenerate |
 | uv-lock | `uv.lock` | regenerate |
 | heavy-tests | `tests/heavy.json` (from the saved Mac duration report) | regenerate |
+| platform-divergences | `tests/platform-divergences.json` (saved from both runners' gate records) | json |
+| platform-contract | `tests/platform-contract.json` (the x86 contract suite, from the tree and the divergence list) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
@@ -52,8 +55,8 @@ of both sides (the build that follows, `lake build`, catches a wrong one); *json
 structural three-way merge (`merge_json`): objects per key, records per key field (`id`, `file`, `name`,
 `path`), other lists keep both sides' additions and drop either side's removals, a value derived from the
 rest (the decoder `total_lines`) is recomputed, and a value both sides changed differently is a conflict left
-to a person or the sync agent. Ledgers are never rewritten: growth beyond the signed trust budget still needs
-`trust_map.py --write --reason`, and decoder pins are still reviewed by hand.
+to a person or the sync agent. Ledgers are never rewritten: growth over the trust budget needs a signed
+allowance (`trust_map.py --allow --reason ... --signed ...`), and decoder pins are still reviewed by hand.
 
 Not regenerated (`NOT_REGENERATED`, each with its reason; `tests/test_regen_generated.py` fails on a script
 with a writing mode that is in neither list): reviewed ledgers (`conformance/difffuzz-baseline.json`), batch

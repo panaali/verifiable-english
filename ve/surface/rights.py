@@ -106,7 +106,7 @@ def citation_notes(cites):
     """One sentence per `cites` entry: the units cited and what they license."""
     return [("It cites unit " if len(targets) == 1 else "It cites units ") +
             _series(targets) + f" for {_citation(key)}."
-            for key, targets in (cites or {}).items()]
+            for key, targets in (cites or {}).items() if targets is not None]
 
 
 def rule_notes(rule, env, *, switches=True):
@@ -207,17 +207,19 @@ def render_unit(document, content):
             sentences.append(f"Limitation {number} holds {qualifier} {condition['verbalisation']}.")
         if body["factors"]:
             sentences.append(f"Limitation {number} takes account of " + _series(body["factors"]) + ".")
-        sentences.append(f"Limitation {number} is decided by {body['decided_by']}."
-                         if body["decided_by"] != "unstated" else
+        decider = body.get("decided_by") or "unstated"
+        sentences.append(f"Limitation {number} is decided by {decider}."
+                         if decider != "unstated" else
                          f"The source names no decider of limitation {number}.")
         for condition in body["conditions"]:
-            if condition["decided_by"] not in (None, body["decided_by"]):
+            if condition.get("decided_by") not in (None, decider):
                 sentences.append(f"Whether {condition['verbalisation']} is decided by "
                                  f"{condition['decided_by']}.")
         return " ".join(sentences)
     if kind == "bar":
-        decider = (f" Whether an act is so aimed is decided by {body['decided_by']}."
-                   if body["decided_by"] != "unstated" else
+        source_decider = body.get("decided_by") or "unstated"
+        decider = (f" Whether an act is so aimed is decided by {source_decider}."
+                   if source_decider != "unstated" else
                    " The source names no decider of whether an act is so aimed.")
         if body["reading"] == "rule":
             return ("Nothing in this document gives any bearer a right to perform any act aimed at the "

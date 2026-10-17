@@ -1,0 +1,171 @@
+[
+ {
+  "id": "F1",
+  "language": "Python",
+  "file": "lean/VE/Route/frozen.py",
+  "behaviour": "the frozen list holds the files with K declarations",
+  "mutation": {
+   "from": "kernel = {module for module, classes in json.loads(table)[\"modules\"].items() if classes.get(\"K\")}",
+   "to": "kernel = set()"
+  },
+  "test": "tests/test_frozen_sources.py::test_the_list_is_the_k_files_and_the_core_decoders",
+  "killed": true,
+  "pytest_summary": "1 failed in 1.09s"
+ },
+ {
+  "id": "F2",
+  "language": "Python",
+  "file": "lean/VE/Route/frozen.py",
+  "behaviour": "an unhashed edit of a frozen file fails frozen.py",
+  "mutation": {
+   "from": "elif hashlib.sha256(blob).hexdigest() != listed[name]:",
+   "to": "elif False:"
+  },
+  "test": "tests/test_frozen_sources.py::test_an_unhashed_edit_of_a_k_file_fails",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.63s"
+ },
+ {
+  "id": "F3",
+  "language": "Python",
+  "file": "lean/VE/Route/frozen.py",
+  "behaviour": "a listed file that is neither K nor a decoder is refused",
+  "mutation": {
+   "from": "for name in sorted(listed.keys() - wanted):",
+   "to": "for name in []:"
+  },
+  "test": "tests/test_frozen_sources.py::test_a_new_k_module_must_be_listed_and_a_listed_file_must_be_frozen",
+  "killed": true,
+  "pytest_summary": "1 failed in 2.81s"
+ },
+ {
+  "id": "H1",
+  "language": "Python",
+  "file": "tools/hooks/precommit.py",
+  "behaviour": "the hook re-checks the whole list when the trust-class table is staged",
+  "mutation": {
+   "from": "whole = any(path in index.changed for path in (INVENTORY, FROZEN_SCRIPT, TRUST_TABLE))",
+   "to": "whole = any(path in index.changed for path in (INVENTORY, FROZEN_SCRIPT))"
+  },
+  "test": "tests/test_precommit_hook.py::test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main",
+  "killed": true,
+  "pytest_summary": "1 failed in 6.92s"
+ },
+ {
+  "id": "H2",
+  "language": "Python",
+  "file": "tools/hooks/precommit.py",
+  "behaviour": "the hook refuses an unhashed edit of a frozen file",
+  "mutation": {
+   "from": "only=None if whole else staged)",
+   "to": "only=set())"
+  },
+  "test": "tests/test_precommit_hook.py::test_frozen_file_change_requires_an_inventory_update",
+  "killed": true,
+  "pytest_summary": "1 failed in 6.80s"
+ },
+ {
+  "id": "H3",
+  "language": "Python",
+  "file": "tools/hooks/precommit.py",
+  "behaviour": "a staged deletion of Main.lean is refused",
+  "mutation": {
+   "from": "if inventory_text is None or table is None or main is None:",
+   "to": "if inventory_text is None or table is None:"
+  },
+  "test": "tests/test_precommit_hook.py::test_frozen_guard_rejects_unlisted_modules_bad_inventory_and_main",
+  "killed": true,
+  "pytest_summary": "1 failed in 43.41s"
+ },
+ {
+  "id": "T1",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "a body-only edit of a D[V] file is in the changed-files report",
+  "mutation": {
+   "from": "return (sorted(key for key, blob in now.items() if before.get(key) != blob),",
+   "to": "return (sorted(key for key, blob in now.items() if key not in before),"
+  },
+  "test": "tests/test_frozen_sources.py::test_a_body_only_edit_of_a_dv_file_is_reported",
+  "killed": true,
+  "pytest_summary": "1 failed in 2.73s"
+ },
+ {
+  "id": "T2",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "no report from a classification that does not validate",
+  "mutation": {
+   "from": "    if problems:\n        print(\"FAIL: the changed files",
+   "to": "    if False:\n        print(\"FAIL: the changed files"
+  },
+  "test": "tests/test_frozen_sources.py::test_the_report_fails_closed",
+  "killed": true,
+  "pytest_summary": "1 failed in 1.35s"
+ },
+ {
+  "id": "Q1",
+  "language": "Python",
+  "file": "tools/question_lock.py",
+  "behaviour": "an edit of a Question module needs no lock update",
+  "mutation": {
+   "from": "return {\"format\": \"ve.question-lock@2\", \"question_version\": int(number)}",
+   "to": "return {\"format\": \"ve.question-lock@2\", \"question_version\": int(number), \"files\": {str(p.relative_to(ROOT)): __import__(\"hashlib\").sha256(p.read_bytes()).hexdigest() for p in sorted((ROOT / \"lean/VE/Question\").glob(\"*.lean\"))}}"
+  },
+  "test": "tests/test_frozen_sources.py::test_an_edit_of_a_question_module_needs_no_lock_update",
+  "killed": true,
+  "pytest_summary": "1 failed in 0.80s"
+ },
+ {
+  "id": "W1",
+  "language": "Python",
+  "file": "tools/wire_contract.py",
+  "behaviour": "wire_contract --write touches no frozen-inventory line",
+  "mutation": {
+   "from": "                target.write_text(source)\n",
+   "to": "                target.write_text(source)\n                (ROOT / \"lean/VE/Route/frozen-sources.sha256\").write_text(\"\")\n"
+  },
+  "test": "tests/test_wire_contract_lint.py::test_l13_write_after_a_revision_changes_only_generated_files",
+  "killed": true,
+  "pytest_summary": "1 failed in 3.78s"
+ },
+ {
+  "id": "T3",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "a deleted G[V] file remains listed under its base class",
+  "mutation": {
+   "from": "[key for key in deleted if old_classes.get(key, {}).get(cls)]",
+   "to": "[key for key in deleted if {}.get(cls)]"
+  },
+  "test": "tests/test_frozen_sources.py::test_a_body_only_edit_of_a_dv_file_is_reported",
+  "killed": true,
+  "pytest_summary": "1 failed in 5.11s"
+ },
+ {
+  "id": "T4",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "the report measures the width of trusted lines (AR-2 review F3)",
+  "mutation": {
+   "from": "if d.module in lines and d.trusted:",
+   "to": "if d.module in lines and not d.trusted:"
+  },
+  "test": "tests/test_frozen_sources.py::test_trusted_code_collapsed_onto_a_wider_line_is_reported",
+  "killed": true,
+  "pytest_summary": "2 failed, 9 passed in 0.75s (also test_a_body_only_edit_of_a_dv_file_is_reported)"
+ },
+ {
+  "id": "T5",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "a changed file whose trusted lines grew wider than its base is listed as widened (AR-2 review F3)",
+  "mutation": {
+   "from": "widths[key] > old_widths[key]]",
+   "to": "widths[key] > old_widths[key] + 999]"
+  },
+  "test": "tests/test_frozen_sources.py::test_trusted_code_collapsed_onto_a_wider_line_is_reported",
+  "killed": true,
+  "pytest_summary": "1 failed, 10 passed in 0.75s"
+ }
+]

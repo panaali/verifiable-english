@@ -20,7 +20,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import lake_outputs, nested_pytest, quarantine, rust_build  # noqa: E402
+from tools import lake_outputs, nested_pytest, quarantine, rust_build, test_schedule  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -59,7 +59,8 @@ STAGE_ENVIRONMENT = {
     "cargo": ("CARGO_NET_OFFLINE", "CARGO_ENCODED_RUSTFLAGS"),
     "source identity": ("GIT_INDEX_FILE",),  # a fresh index in scratch, read from the commit
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
-               "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
+               "VE_RUST_PREBUILT", "VE_RUST_BINARY",
+               test_schedule.SOURCE_VARIABLE),  # the order the suite's tests start in, never which run
 }
 # The gate's pytest invocation, shared by its collection run, its suite run and the
 # collection of the merge base (tools/gate_collection.py), so both sides are collected
@@ -71,6 +72,27 @@ PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not 
 REUSED_STAGES = ("lean_audit", "cargo_test")
 # The failures of a gate whose failed tests can be rerun alone: tests that failed or have no result.
 RERUNNABLE = frozenset({"pytest", "pytest command"})
+# How many of the suite's slowest tests the gate's log names.
+SLOWEST = 20
+# The x86 platform contract run (`--contract`, tools/platform_contract.py): the gate's stages but the Lean audit
+# and the collection check, which the complete gates on both runners run, over the listed tests only.
+CONTRACT_STAGES = ("toolchains", "lean_build", "rust_build", "cargo_test", "pytest")
+
+
+TRUST_STAGE = "Trust counts"
+
+
+def read_trust(path: Path) -> dict:
+    """The per-file trust counts `tools/trust_map.py --files` wrote, checked by their writer's own
+    schema (`trust_map.files_problems`); missing or malformed counts fail the gate."""
+    from tools import trust_map  # its tree-reading imports are only needed here
+    if not path.is_file():
+        raise RuntimeError(f"{TRUST_STAGE}: tools/trust_map.py --files wrote no {path.name}")
+    data = json.loads(path.read_text())
+    problems = trust_map.files_problems(data)
+    if problems:
+        raise RuntimeError(f"{TRUST_STAGE}: " + "; ".join(problems))
+    return data
 
 
 def pytest_args(files: list[str] | None = None) -> tuple[str, ...]:
@@ -89,7 +111,7 @@ def suite_command(python: list[str], workers: str, files: list[str] | None = Non
 
 
 def merge_pytest_events(collection: dict, suite: dict) -> dict:
-    """The collection run's IDs with the suite run's results. Every xdist worker of the
+    """The collection run's IDs with the suite run's results and seconds. Every xdist worker of the
     suite run must have collected exactly the collection run's selection."""
     workers = suite.get("workers")
     if not isinstance(workers, dict) or not workers:
@@ -98,7 +120,7 @@ def merge_pytest_events(collection: dict, suite: dict) -> dict:
         if ids != collection["selected"]:
             raise RuntimeError(f"worker {worker} collected {len(ids)} tests, not the collection run's "
                                f"{len(collection['selected'])}")
-    return {**collection, "tests": suite["tests"], "workers": workers}
+    return {**collection, "tests": suite["tests"], "seconds": suite.get("seconds", {}), "workers": workers}
 
 
 def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None,
@@ -263,7 +285,8 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                             selected=len(selected),
                             passed=sum(row["outcome"] == "passed" for row in tests.values()),
                             skipped=sum(row["outcome"] == "skipped" for row in tests.values()),
-                            failed=sum(row["outcome"] == "failed" for row in tests.values()),
+                            failed=(sum(row["outcome"] == "failed" for row in tests.values())
+                                    + sum(node not in tests for node in selected)),
                             deselected=len(deselected))
     if len(collected) != len(set(collected)) or len(selected) != len(set(selected)):
         result["failures"].append({"stage": "coverage", "reason": "duplicate test ID in collection"})
@@ -551,6 +574,55 @@ def base_collection(result: dict, base: str | None, env: dict[str, str], pytest_
     return ids, gate_collection.changes(base, "HEAD", env=env)
 
 
+def base_durations(result: dict, env: dict[str, str], cwd: Path = ROOT) -> tuple[str, test_schedule.Estimates] | None:
+    """(the commit, its durations): the test durations the gate record of the merge base (`base_collection`'s, or
+    its same-tree parent's) holds, with the IDs that gate measured when its suite timed every test it selected;
+    None when there is no such record or it holds no durations. Scheduling data only: a missing or malformed
+    record leaves the committed durations."""
+    from tools import gate_collection
+    base = result.get("collection", {}).get("base")
+    if not base:
+        return None
+    try:
+        found = gate_collection.recorded(base, cwd=cwd, env=env)
+        record = None if found is None else gate_collection.read_gate_result(found[0], cwd=cwd, env=env)
+    except (OSError, RuntimeError):
+        return None
+    estimates = None if record is None else test_schedule.read_record_field(record.get("durations"))
+    if estimates is None:
+        return None
+    counts = record.get("counts") if isinstance(record.get("counts"), dict) else {}
+    timed = record["durations"].get("tests")
+    complete = type(timed) is int and timed == counts.get("selected")
+    return found[0], estimates._replace(measured=frozenset(found[1]) if complete else None)
+
+
+def suite_durations(result: dict, env: dict[str, str], path: Path) -> None:
+    """Write the durations the suite's scheduler reads (SOURCE_VARIABLE names `path`): the committed file
+    overlaid with the merge base's recorded durations (`base_durations`); `result["durations_source"]` says
+    which. They change the order the tests start in, never which tests run (tools/test_schedule.py)."""
+    committed = test_schedule.read_source(test_schedule.DURATIONS)
+    found = base_durations(result, env)
+    base = None if found is None else found[1]
+    path.write_text(test_schedule.overlay_text(committed, base, source=(
+        "the committed durations" if found is None else f"the committed durations with the gate record of {found[0]}")))
+    result["durations_source"] = {"committed": len(committed.durations), "base": None if found is None else found[0],
+                                  "base_recorded": None if base is None else len(base.durations),
+                                  "measured": None if base is None or base.measured is None else len(base.measured)}
+
+
+def record_durations(result: dict, events: dict) -> None:
+    """Keep the suite's per-test seconds in the record (`test_schedule.record_field`: the scheduler of a later gate
+    whose merge base this commit is reads them, `base_durations`) and print the SLOWEST in the log."""
+    seconds = events.get("seconds")
+    if not isinstance(seconds, dict):
+        return
+    seconds = {nodeid: value for nodeid, value in seconds.items() if test_schedule.seconds_value(value)}
+    result["durations"] = test_schedule.record_field(seconds)
+    for nodeid, value in sorted(seconds.items(), key=lambda row: (-row[1], row[0]))[:SLOWEST]:
+        print(f"[gate] slowest: {value:8.1f} s {nodeid}", flush=True)
+
+
 def record_collection(commit: str, ids: list[str], env: dict[str, str], result: dict | None = None) -> str:
     """Attach the gate result and its IDs to `commit`; a record is a later gate's shortcut, so a failure to
     write it is reported, not a gate failure."""
@@ -569,7 +641,7 @@ def gate_scratch_root() -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
+    parser.add_argument("--output", type=Path, help="the record (default gate-result.json in the checkout)")
     parser.add_argument("--workers", default="auto",
                         help="xdist workers for the suite (default auto: the CPUs the load leaves, "
                              "tests/conftest.py)")
@@ -582,10 +654,18 @@ def main() -> int:
     parser.add_argument("--no-quarantine", action="store_true",
                         help="the nightly: no quarantined test (tools/test-quarantine.json) is retried alone, so "
                              "every failure blocks")
+    parser.add_argument("--contract", nargs="?", const="tests/platform-contract.json", metavar="LIST",
+                        help="the x86 platform contract run: only the tests of LIST (default "
+                             "tests/platform-contract.json), without the Lean audit and the collection check (status "
+                             "contract-passed or failed; default --output platform-contract-result.json). It is "
+                             "never a full gate's evidence")
     args = parser.parse_args()
     if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
         parser.error("--workers is a positive count or auto")
-    output = args.output.resolve()
+    if args.contract is not None and (args.rerun_failed is not None or args.base):
+        parser.error("--contract runs no collection check and reruns nothing: no --rerun-failed or --base")
+    output = (args.output or ROOT / ("gate-result.json" if args.contract is None
+                                     else "platform-contract-result.json")).resolve()
     # Read before the record is reset: it is the failed gate a rerun repeats.
     previous = None if args.rerun_failed is None else read_previous(
         Path(args.rerun_failed).resolve() if args.rerun_failed else output)
@@ -593,6 +673,8 @@ def main() -> int:
               "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
               "failures": [], "status": "failed"}
     rerun = None  # the failed tests' files, when this gate reruns them alone
+    contract = None  # the contract's pytest selectors, when this is the platform contract run
+    selection = None  # what the suite runs instead of tests/: the rerun's files or the contract's selectors
     head_ids = None  # the head's full collection, recorded for its commit at the end
     # A killed process must never leave the previous run's passing record intact.
     write_result(output, result)
@@ -624,6 +706,16 @@ def main() -> int:
                 else:
                     result["rerun_failed"] = {"refused": refusal}
                     print(f"[gate] --rerun-failed: {refusal}; running the full gate", flush=True)
+            if args.contract is not None:
+                from tools import platform_contract
+                listing = (ROOT / args.contract).resolve()
+                contract = platform_contract.run_selectors(platform_contract.read_contract(listing))
+                result["mode"] = "contract"
+                result["contract"] = {"list": str(listing.relative_to(ROOT)) if listing.is_relative_to(ROOT)
+                                      else str(listing),
+                                      "sha256": hashlib.sha256(listing.read_bytes()).hexdigest(),
+                                      "selectors": contract}
+            selection = rerun if contract is None else contract
             result["stages"].append("toolchains")
 
             # Lake trusts an executable's trace; a trace that does not record the binary beside it (copied from
@@ -643,7 +735,13 @@ def main() -> int:
                      "tools/wire_contract.py", "--check"], env=env,
                     stage="Wire contract check")
 
-            if rerun is None:
+            # The per-file trust counts live in the gate record, not the tree (AR-4, D3).
+            trust_file = scratch / "trust-files.json"
+            command(["uv", "run", "--frozen", "--no-sync", "python", "tools/trust_map.py", "--files",
+                     str(trust_file)], env=env, stage=TRUST_STAGE)
+            result["trust"] = read_trust(trust_file)
+
+            if selection is None:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
                         env=env, stage="Lean audit")
                 result["stages"].append("lean_audit")
@@ -683,34 +781,45 @@ def main() -> int:
 
             python = ["uv", "run", "--frozen", "--no-sync", "python"]
             collection_file, events_file = scratch / "pytest-collection.json", scratch / "pytest.json"
+            durations_file = scratch / "test-durations.json"
             pytest_env = record_environment(result, "pytest", nested_pytest.environment(
                 env, VE_GATE_PYTEST_RESULT=str(collection_file),
                 VE_GATE_PYTEST_PROGRESS=str(scratch / "current-test.txt"),
                 VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1", VE_RUST_PREBUILT="1",
-                VE_RUST_BINARY=str(rust_binary)))
+                VE_RUST_BINARY=str(rust_binary), **{test_schedule.SOURCE_VARIABLE: str(durations_file)}))
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
-            collection = collect(pytest_env, collection_file, python=python, files=rerun)
-            if rerun is None and not collection["collection_reports"] and \
+            collection = collect(pytest_env, collection_file, python=python, files=selection)
+            if selection is None and not collection["collection_reports"] and \
                     len(collection["collected"]) == len(set(collection["collected"])):
                 head_ids = collection["collected"]
-            expected, diff = base_collection(result, args.base, env, pytest_env, scratch)
+            if contract is None:
+                expected, diff = base_collection(result, args.base, env, pytest_env, scratch)
+            suite_durations(result, env, durations_file)
             try:
-                command(suite_command(python, args.workers, rerun),
+                command(suite_command(python, args.workers, selection),
                         env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
             events = merge_pytest_events(collection, json.loads(events_file.read_text()))
-            base = result["collection"]["base"]
-            if rerun is None:
-                interpret_pytest(result, events, policy, expected, diff=diff, base=base)
+            record_durations(result, events)
+            if contract is not None:
+                # No collection check (the complete gates check the whole collection); each listed selector must
+                # still collect a test, so a listed test that went away cannot pass unseen.
+                interpret_pytest(result, events, policy, events["collected"], families=())
+                for selector in contract:
+                    if not any(platform_contract.covers(selector, nodeid) for nodeid in events["selected"]):
+                        result["failures"].append({"stage": "coverage",
+                                                   "reason": f"contract test collected nothing: {selector}"})
+            elif rerun is None:
+                interpret_pytest(result, events, policy, expected, diff=diff, base=result["collection"]["base"])
             else:
                 # The base's tests of the rerun files, each of the failed tests among them.
                 interpret_pytest(result, events, policy,
                                  [nodeid for nodeid in expected if nodeid.split("::", 1)[0] in rerun], families=(),
-                                 diff=diff, base=base)
+                                 diff=diff, base=result["collection"]["base"])
                 outcomes = {nodeid: events["tests"].get(nodeid, {}).get("outcome", "no result")
                             for nodeid in result["rerun_failed"]["tests"]}
                 result["rerun_failed"]["outcomes"] = outcomes
@@ -736,12 +845,17 @@ def main() -> int:
             if record_head:
                 from tools import gate_collection
                 result.setdefault("collection", {})["collected_zlib"] = gate_collection.encode_ids(head_ids)
-            if completed and result["stages"] == list(REQUIRED_STAGES) and not result["failures"]:
+            if completed and selection is None and result["stages"] == list(REQUIRED_STAGES) \
+                    and not result["failures"]:
                 result["status"] = "passed"
             # A rerun of failed tests is never a full gate: its own status, which no evidence check accepts.
             elif completed and rerun is not None and not result["failures"] and result["stages"] == [
                     stage for stage in REQUIRED_STAGES if stage not in REUSED_STAGES]:
                 result["status"] = "rerun-passed"
+            # Nor is the contract run: it runs a list of tests, without the audit and the collection check.
+            elif completed and contract is not None and not result["failures"] and \
+                    result["stages"] == list(CONTRACT_STAGES):
+                result["status"] = "contract-passed"
             if record_head:
                 result["collection"]["head_record"] = "written"
                 result["collection"]["head_record"] = record_collection(
@@ -763,7 +877,7 @@ def main() -> int:
             if result["status"] == "rerun-passed":
                 print("[gate] the failed tests passed on rerun; this is not a full gate: run the full gate "
                       "for the final evidence", flush=True)
-    return 0 if result["status"] in ("passed", "rerun-passed") else 1
+    return 0 if result["status"] in ("passed", "rerun-passed", "contract-passed") else 1
 
 
 if __name__ == "__main__":

@@ -288,13 +288,13 @@ def test_a_gated_environment_never_returns_a_reading():
     assert env.unit_schema is not None
     words = EnglishVocabulary(env, _defer_overlay_refusals=True)
     with pytest.raises(UnsupportedProfile) as raised:
-        english_lean.read_question(env, 'Is wait classified as "safe"?', words, {})
+        english_lean.read_question(env, 'Is wait safe?', words, {})
     assert not hasattr(raised.value, "lean_question")
     with pytest.raises(UnsupportedProfile):
-        english_lean.read(env, 'Wait is classified as "safe".', words, {}).document()
+        english_lean.read(env, 'Wait is safe.', words, {}).document()
     # Lean read the question: only the gate stands between it and the caller.
-    case = english_lean.request(env, 'Is wait classified as "safe"?', words, {})
-    case.update(id=MODE, question='Is wait classified as "safe"?')
+    case = english_lean.request(env, 'Is wait safe?', words, {})
+    case.update(id=MODE, question='Is wait safe?')
     assert relay.decide_once(MODE, case)["result"]["status"] == "one"
 
 
@@ -522,6 +522,7 @@ def test_text_variants_get_well_formed_answers(name):
 
 # ------------------------------------------------------------------ the whole operation's deadline
 
+@pytest.mark.live_service  # its deadline is enforced on the process (tests/answer_store.py INVENTORY row 8)
 def test_the_whole_question_is_bounded_by_the_modes_deadline(monkeypatch):
     """A crossed CPU deadline bounds the whole service operation, including on hosts without /proc.
     On /proc hosts the injected clock advances only after the whole request has been sent."""

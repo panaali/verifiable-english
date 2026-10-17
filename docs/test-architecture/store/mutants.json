@@ -1,0 +1,307 @@
+{
+ "batch": "tarch-store",
+ "note": "Each bug was planted in a changed file on the Mac runner (ve-mac-1, snapshot bb2c9e32 = 0da9e30e plus the M4 test fix, committed after), the named tests ran in a nested pytest and failed (exit 1), and the file was restored byte for byte. Unmutated, the same 19 tests passed. Driver: seeded_bugs.py (copy it into tests/ to run it). Only Python product code changed (ve/backends/lean_service.py); no Lean or Rust.",
+ "baseline": {
+  "tests": 19,
+  "returncode": 0,
+  "tail": [
+   "19 passed in 2.15s"
+  ]
+ },
+ "mutants": [
+  {
+   "id": "M1",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "stored line skips the client's checks",
+   "test": "tests/test_answer_store.py::test_a_planted_positional_mismatch_is_refused_not_served",
+   "result": "failed",
+   "pytest": "1 failed in 0.24s"
+  },
+  {
+   "id": "M2",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "store-mode nonce random, not derived from the line",
+   "test": "tests/test_answer_store.py::test_a_store_mode_line_stands_alone ; tests/test_answer_store.py::test_a_stored_answer_is_served_after_the_process_starts",
+   "result": "failed",
+   "pytest": "2 failed in 0.29s"
+  },
+  {
+   "id": "M3",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "store mode registers only the environments the process lacks",
+   "test": "tests/test_answer_store.py::test_a_store_mode_line_stands_alone",
+   "result": "failed",
+   "pytest": "1 failed in 0.22s"
+  },
+  {
+   "id": "M4",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "the store answers before _ensure (no spawn, pin check or handshake on a hit)",
+   "test": "tests/test_answer_store.py::test_a_stored_answer_is_served_after_the_process_starts",
+   "result": "failed",
+   "pytest": "1 failed in 0.25s"
+  },
+  {
+   "id": "M5",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "RLIMIT_AS not applied to the process",
+   "test": "tests/test_lean_service.py::test_the_service_runs_under_its_address_space_limit",
+   "result": "failed",
+   "pytest": "1 failed in 0.22s"
+  },
+  {
+   "id": "M6",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "RSS recycle disabled",
+   "test": "tests/test_lean_service.py::test_a_process_above_its_rss_threshold_is_recycled_before_the_next_request",
+   "result": "failed",
+   "pytest": "1 failed in 0.39s"
+  },
+  {
+   "id": "M7",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "no gate check in the seam",
+   "test": "tests/test_answer_store.py::test_a_store_hit_in_an_r2_flagged_run_is_impossible",
+   "result": "failed",
+   "pytest": "1 failed in 0.38s"
+  },
+  {
+   "id": "M8",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the plugin accepts the store under the gate",
+   "test": "tests/test_answer_store.py::test_a_store_hit_in_an_r2_flagged_run_is_impossible",
+   "result": "failed",
+   "pytest": "1 failed in 0.43s"
+  },
+  {
+   "id": "M9",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "live_service tests served",
+   "test": "tests/test_answer_store.py::test_a_live_service_test_is_never_served_and_is_counted ; tests/test_answer_store.py::test_serving_is_off_for_every_request_the_plan_excludes",
+   "result": "failed",
+   "pytest": "2 failed in 0.25s"
+  },
+  {
+   "id": "M10",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "client replaced by a test still served",
+   "test": "tests/test_answer_store.py::test_serving_is_off_for_every_request_the_plan_excludes",
+   "result": "failed",
+   "pytest": "1 failed in 0.18s"
+  },
+  {
+   "id": "M11",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "ve/backends/ not guarded",
+   "test": "tests/test_answer_store.py::test_serving_is_off_for_a_branch_that_changes_a_guarded_path",
+   "result": "failed",
+   "pytest": "1 failed, 5 passed in 0.20s"
+  },
+  {
+   "id": "M12",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the byte replay compares decoded values, not bytes",
+   "test": "tests/test_answer_store.py::test_a_planted_wrong_entry_fails_the_byte_replay ; tests/test_answer_store.py::test_a_planted_nondeterministic_answer_fails_the_byte_replay",
+   "result": "failed",
+   "pytest": "2 failed, 1 passed in 1.85s"
+  },
+  {
+   "id": "M13",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "a CheckerUnavailable request error is recorded",
+   "test": "tests/test_answer_store.py::test_a_checker_unavailable_request_error_is_never_recorded",
+   "result": "failed",
+   "pytest": "1 failed in 0.19s"
+  },
+  {
+   "id": "M14",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "a sampled hit is served without the live comparison",
+   "test": "tests/test_answer_store.py::test_a_sampled_hit_that_drifted_is_an_alarm_and_the_caller_gets_the_process_answer",
+   "result": "failed",
+   "pytest": "1 failed in 0.22s"
+  },
+  {
+   "id": "M15",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "an answer whose request wrote to standard error (a PANIC) is stored",
+   "test": "tests/test_answer_store.py::test_an_answer_whose_request_wrote_to_standard_error_is_never_served",
+   "result": "failed",
+   "pytest": "1 failed in 0.99s"
+  },
+  {
+   "id": "M16",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the byte replay ignores standard error",
+   "test": "tests/test_answer_store.py::test_an_answer_whose_request_wrote_to_standard_error_is_never_served",
+   "result": "failed",
+   "pytest": "1 failed in 1.22s"
+  },
+  {
+   "id": "M17",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "fault": "the retry after a failed live attempt still uses the store (and records)",
+   "test": "tests/test_answer_store.py::test_an_answer_that_needed_a_retry_is_never_stored",
+   "result": "failed",
+   "pytest": "1 failed in 1.07s"
+  },
+  {
+   "id": "M18",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "a client table changed in place (a lowered DEADLINES entry) is still served",
+   "test": "tests/test_answer_store.py::test_a_changed_client_setting_turns_the_store_off",
+   "result": "failed",
+   "pytest": "1 failed in 0.91s"
+  },
+  {
+   "id": "M19",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "a changed VE_LEAN_SERVICE* setting is still served",
+   "test": "tests/test_answer_store.py::test_a_changed_client_setting_turns_the_store_off",
+   "result": "failed",
+   "pytest": "1 failed in 0.85s"
+  },
+  {
+   "id": "M20",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the plugin never reads the live_service mark (PROBE F2)",
+   "test": "tests/test_answer_store.py::test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run",
+   "result": "failed",
+   "pytest": "1 failed in 2.64s"
+  },
+  {
+   "id": "M21",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "an alarm never fails the run",
+   "test": "tests/test_answer_store.py::test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run",
+   "result": "failed",
+   "pytest": "1 failed in 7.82s"
+  },
+  {
+   "id": "M22",
+   "language": "python",
+   "file": "tests/answer_store.py",
+   "fault": "the workers' reports are dropped (pytest_testnodedown)",
+   "test": "tests/test_answer_store.py::test_the_plugin_serves_only_unmarked_tests_and_an_alarm_fails_the_run",
+   "result": "failed",
+   "pytest": "1 failed in 2.74s"
+  }
+ ],
+ "review_fix": {
+  "note": "Review fix round (tarch-store-review.final.md F1, F2), on the VM in the worktree, uncommitted fix on 6d243001: all 22 mutants run again by the same driver; each named test failed (exit 1) and the file was restored byte for byte. M12 now names the replay's standard-error comparison too. Only Python product code changed (ve/backends/lean_service.py); no Lean or Rust.",
+  "baseline": {
+   "returncode": 0,
+   "tail": [
+    "23 passed in 13.64s"
+   ]
+  },
+  "rerun": {
+   "M1": "1 failed in 0.82s",
+   "M2": "2 failed in 1.10s",
+   "M3": "1 failed in 0.92s",
+   "M4": "1 failed in 0.89s",
+   "M5": "1 failed in 0.92s",
+   "M6": "1 failed in 0.93s",
+   "M7": "1 failed in 1.04s",
+   "M8": "1 failed in 1.00s",
+   "M9": "2 failed in 1.00s",
+   "M10": "1 failed in 0.75s",
+   "M11": "1 failed, 5 passed in 0.82s",
+   "M12": "2 failed, 1 passed in 1.85s",
+   "M13": "1 failed in 0.74s",
+   "M14": "1 failed in 1.00s",
+   "M15": "1 failed in 0.99s",
+   "M16": "1 failed in 1.22s",
+   "M17": "1 failed in 1.07s",
+   "M18": "1 failed in 0.91s",
+   "M19": "1 failed in 0.85s",
+   "M20": "1 failed in 2.64s",
+   "M21": "1 failed in 7.82s",
+   "M22": "1 failed in 2.74s"
+  }
+ },
+ "recheck_fix": {
+  "note": "Recheck fix round (tarch-store-looprecheck1.final.md F6), on the VM in the worktree, uncommitted fix on 069a43a7c: all 24 mutants run by the same driver; each named test failed (exit 1) and the file was restored byte for byte. M23 and M24 are new. Only Python product code changed (ve/backends/lean_service.py); no Lean or Rust.",
+  "baseline": {
+   "returncode": 0,
+   "tail": [
+    "31 passed in 11.34s"
+   ]
+  },
+  "rerun": {
+   "M1": "1 failed in 0.55s",
+   "M2": "2 failed in 0.68s",
+   "M3": "1 failed in 0.53s",
+   "M4": "1 failed in 0.57s",
+   "M5": "1 failed in 0.51s",
+   "M6": "1 failed in 0.51s",
+   "M7": "1 failed in 0.55s",
+   "M8": "1 failed in 0.55s",
+   "M9": "2 failed in 0.56s",
+   "M10": "1 failed in 0.41s",
+   "M11": "1 failed, 5 passed in 0.46s",
+   "M12": "2 failed, 1 passed in 1.07s",
+   "M13": "1 failed in 0.41s",
+   "M14": "1 failed in 0.56s",
+   "M15": "1 failed in 0.60s",
+   "M16": "1 failed in 0.67s",
+   "M17": "1 failed in 0.62s",
+   "M18": "1 failed in 0.50s",
+   "M19": "1 failed in 0.47s",
+   "M20": "1 failed in 1.65s",
+   "M21": "1 failed in 5.15s",
+   "M22": "1 failed in 1.65s",
+   "M23": "2 failed, 6 passed in 2.55s",
+   "M24": "6 failed, 2 passed in 2.76s"
+  },
+  "mutants": [
+   {
+    "id": "M23",
+    "file": "ve/backends/lean_service.py",
+    "fault": "the attempt's line is unbound when the process fails to start before a line with environments",
+    "tests": [
+     "tests/test_answer_store.py::test_a_failed_attempt_with_the_store_on_ends_as_it_does_without"
+    ],
+    "returncode": 1,
+    "tail": [
+     "2 failed, 6 passed in 2.55s"
+    ],
+    "result": "failed"
+   },
+   {
+    "id": "M24",
+    "file": "ve/backends/lean_service.py",
+    "fault": "the retry after any failed attempt still asks and records in the store",
+    "tests": [
+     "tests/test_answer_store.py::test_a_failed_attempt_with_the_store_on_ends_as_it_does_without"
+    ],
+    "returncode": 1,
+    "tail": [
+     "6 failed, 2 passed in 2.76s"
+    ],
+    "result": "failed"
+   }
+  ]
+ }
+}

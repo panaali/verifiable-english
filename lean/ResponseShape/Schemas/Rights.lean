@@ -113,15 +113,73 @@ def narrowings : Shape :=
                     ("conclusion", ref "common.json#/$defs/generated_formula"),
                     ("licence", .anyOf [.const .null, ref "common.json#/$defs/text"])]])])]])]
 
+def grounds : Shape :=
+  c
+    "Rights.Run.groundJson: what a licence without certificates rests on: the citation (its rule and key), the colliding right line or the strict rule; null for the limitation, the bar and no licence."
+    [
+      .anyOf [
+        .const .null,
+        n [
+          obj,
+          .required ["citation"],
+          closed [
+            ("citation", n [obj, .required ["rule", "key"], closed [("rule", str), ("key", str)]])]],
+        n [obj, .required ["line"], closed [("line", str)]],
+        n [obj, .required ["rule"], closed [("rule", str)]]]]
+
+def elaborated_narrowings : Shape :=
+  c
+    "Rights.Run.elaboratedNarrowingsJson: per line, the limitations in scope, the bar's reach (null when none) and each narrowing mechanism with its licence without certificates (null when none) and its grounds."
+    [
+      arr,
+      .items (n [
+          obj,
+          .required ["right", "rule", "in_scope", "limitations", "bar", "mechanisms"],
+          closed [
+            ("right", str),
+            ("rule", str),
+            ("in_scope", .type ["boolean"]),
+            ("limitations", ref "common.json#/$defs/strings"),
+            ("bar", .anyOf [.const .null, str]),
+            ("mechanisms", n [
+              arr,
+              .items (n [
+                  obj,
+                  .required ["mechanism", "target", "conclusion", "licence", "grounds"],
+                  closed [
+                    ("mechanism", ref "common.json#/$defs/text"),
+                    ("target", ref "common.json#/$defs/text"),
+                    ("conclusion", ref "common.json#/$defs/generated_formula"),
+                    ("licence", .anyOf [.const .null, ref "common.json#/$defs/text"]),
+                    ("grounds", ref "#/$defs/grounds")]])])]])]
+
+def rule_narrowings : Shape :=
+  c
+    "Rights.Run.ruleNarrowingsJson: per rule of T'' without bars, the mechanism targets that name it and, per citation of its source in key order, the targets whose licence rests on it."
+    [
+      arr,
+      .items (n [
+          obj,
+          .required ["rule", "narrows", "citations"],
+          closed [
+            ("rule", str),
+            ("narrows", ref "common.json#/$defs/strings"),
+            ("citations", n [
+              arr,
+              .items (n [
+                  obj,
+                  .required ["key", "licenses"],
+                  closed [("key", str), ("licenses", ref "common.json#/$defs/strings")]])])]])]
+
 def findings : Shape :=
   n [arr, .items (ref "common.json#/$defs/text")]
 
 def elaborate : Shape :=
   c
-    "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime."
+    "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings with their grounds, the rule narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime."
     [
       obj,
-      .required ["id", "status", "environment_prime", "generated", "wordings", "unit_open", "lines", "limitations", "bars", "rights_background", "narrowings", "distinction", "findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
+      .required ["id", "status", "environment_prime", "generated", "wordings", "unit_open", "lines", "limitations", "bars", "rights_background", "narrowings", "rule_narrowings", "distinction", "findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
@@ -186,7 +244,8 @@ def elaborate : Shape :=
                 ("generator", constS "rights"),
                 ("ast", ref "common.json#/$defs/generated_formula"),
                 ("label", n [str, .pattern (Re.prefixes ["rights:limitation:"])])]])]),
-        ("narrowings", ref "#/$defs/narrowings"),
+        ("narrowings", ref "#/$defs/elaborated_narrowings"),
+        ("rule_narrowings", ref "#/$defs/rule_narrowings"),
         ("distinction", n [
           arr,
           .items (n [
@@ -294,7 +353,7 @@ def bar : Shape :=
                 ("entailed", .type ["boolean"])]]])])]]
 
 def packages : Shape :=
-  c "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN." [
+  c "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN, which names the first failing certificate in its status line and is conditional on nothing; a CONFLICT-FREE status line counts its premises." [
     obj,
     .required ["id", "status", "verdict", "status_text", "targets", "conditional_on"],
     closed [
@@ -305,7 +364,13 @@ def packages : Shape :=
       ("targets", ref "common.json#/$defs/strings"),
       ("conditional_on", ref "#/$defs/conditional_labels"),
       ("detail", ref "common.json#/$defs/text")],
-    .ite (props [("verdict", constS "UNKNOWN")]) (.required ["detail"]) (.not (.required ["detail"]))]
+    .ite (props [("verdict", constS "UNKNOWN")])
+      (n [.required ["detail"], props [
+        ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])),
+        ("detail", .pattern (Re.prefixes ["missing certificate for ", "invalid certificate for "])),
+        ("conditional_on", .maxItems 0)]])
+      (n [.not (.required ["detail"]), props [
+        ("status_text", .pattern (Re.prefixes ["CONFLICT-FREE among rules on the same act, conditional on "]))]])]
 
 def «row» : Shape :=
   .select [
@@ -336,6 +401,9 @@ def file : File where
     ("node", .schema node),
     ("instance", .schema «instance»),
     ("narrowings", .schema narrowings),
+    ("grounds", .schema grounds),
+    ("elaborated_narrowings", .schema elaborated_narrowings),
+    ("rule_narrowings", .schema rule_narrowings),
     ("findings", .schema findings),
     ("elaborate", .schema elaborate),
     ("projections", .schema projections),

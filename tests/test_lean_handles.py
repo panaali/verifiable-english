@@ -25,6 +25,9 @@ from ve.backends.lean_service import HANDLE_KEY, MAX_HANDLES, LeanService, LeanS
 from ve.backends.service_schema import same_json
 from ve.errors import CheckerUnavailable
 
+# Handle reuse between requests is what the answer store's lines leave out (tests/answer_store.py).
+pytestmark = pytest.mark.live_service
+
 ROOT = Path(__file__).resolve().parents[1]
 EVALUATION = json.loads((ROOT / "conformance/evaluation.json").read_text())
 POLICY = json.loads((ROOT / "usecases/agent-policy/environment.lean.json").read_text())

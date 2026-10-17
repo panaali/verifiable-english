@@ -1,0 +1,278 @@
+[
+ {
+  "id": "S01",
+  "file": "lean/VE/Alternatives/Run.lean",
+  "old": "NONE-PERMITTED: every available action is forbidden",
+  "new": "NONE-PERMITTED: each available action is forbidden"
+ },
+ {
+  "id": "S02",
+  "file": "lean/VE/Ask/Run.lean",
+  "old": "  | _ => \"by_reading\"",
+  "new": "  | _ => \"by_readings\""
+ },
+ {
+  "id": "S03",
+  "file": "lean/VE/Service/FamilyBundle.lean",
+  "old": "Reading label is not bound to its registered reading formula or citation is unresolved",
+  "new": "Reading label is not bound to its registered reading formula, or citation is unresolved"
+ },
+ {
+  "id": "S04",
+  "file": "lean/VE/CertificateWire.lean",
+  "old": "ResourceLimit: certificate replay exceeds 10,000 steps",
+  "new": "ResourceLimit: certificate replay exceeds 10000 steps"
+ },
+ {
+  "id": "S05",
+  "file": "lean/VE/Service/Diagnose.lean",
+  "old": "InvalidInput: a diagnose case names its unit",
+  "new": "InvalidInput: a diagnose case names its units"
+ },
+ {
+  "id": "S06",
+  "file": "lean/VE/Discourse/Run.lean",
+  "old": "  | some (.proved n) => \"proved (\" ++ n ++ \")\"",
+  "new": "  | some (.proved n) => \"proven (\" ++ n ++ \")\""
+ },
+ {
+  "id": "S07",
+  "file": "lean/VE/Service/Document.lean",
+  "old": "ResourceLimit: Verbalisation exceeds 256 characters",
+  "new": "ResourceLimit: Verbalisation exceeds 256 chars"
+ },
+ {
+  "id": "S08",
+  "file": "lean/VE/Service/EnglishRun.lean",
+  "old": "    (\"roundtrip\", .bool (checked && parse E L rendered == some formulas))]",
+  "new": "    (\"roundtrip\", .bool (parse E L rendered == some formulas))]"
+ },
+ {
+  "id": "S09",
+  "file": "lean/VE/EnglishGrammar/Run.lean",
+  "old": "No text was read.",
+  "new": "No text was read"
+ },
+ {
+  "id": "S10",
+  "file": "lean/VE/Question/Run.lean",
+  "old": "def questionVersion : String := s!\"question@{question_version}\"",
+  "new": "def questionVersion : String := s!\"question@{question_version + 1}\""
+ },
+ {
+  "id": "S11",
+  "file": "lean/VE/Order/ProfileGate.lean",
+  "old": "      (\"status\", .str \"error\"), (\"error\", .str message)]",
+  "new": "      (\"status\", .str \"error\"), (\"error\", .str (message ++ \".\"))]"
+ },
+ {
+  "id": "S12",
+  "file": "lean/VE/Service/FamilyNorms.lean",
+  "old": "UnsupportedProfile: norms@0 is required",
+  "new": "UnsupportedProfile: norms@0 is needed"
+ },
+ {
+  "id": "S13",
+  "file": "lean/VE/Service/Family.lean",
+  "old": "graph rejected: a certificate in the root's cone does not check",
+  "new": "graph rejected: a certificate in the root's cone fails"
+ },
+ {
+  "id": "S14",
+  "file": "lean/VE/NormDefaults/Run.lean",
+  "old": "s!\"invalid certificate for {t.1}\"",
+  "new": "s!\"bad certificate for {t.1}\""
+ },
+ {
+  "id": "S15",
+  "file": "lean/VE/Norms/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S16",
+  "file": "lean/VE/Order/Surface.lean",
+  "old": "(\"for every \" ++ s",
+  "new": "(\"for all \" ++ s"
+ },
+ {
+  "id": "S17",
+  "file": "lean/VE/Service/Standalone.lean",
+  "old": "SyntaxError: the source is not accepted by the Lean surface parser",
+  "new": "SyntaxError: the source is not accepted by the surface parser"
+ },
+ {
+  "id": "S18",
+  "file": "lean/VE/Time/Wire.lean",
+  "old": "\" percentage points\"",
+  "new": "\" percent points\""
+ },
+ {
+  "id": "S19",
+  "file": "lean/VE/Service/ReadingsChoices.lean",
+  "old": "duplicate reading set version",
+  "new": "repeated reading set version"
+ },
+ {
+  "id": "S20",
+  "file": "lean/VE/Readings/Run.lean",
+  "old": "distinguishing model does not separate readings",
+  "new": "distinguishing model does not separate the readings"
+ },
+ {
+  "id": "S21",
+  "file": "lean/VE/Attribution/Run.lean",
+  "old": "s!\"unreviewed act {act} in {u.id}\"",
+  "new": "s!\"unreviewed act {act} of {u.id}\""
+ },
+ {
+  "id": "S22",
+  "file": "lean/VE/Rights/Run.lean",
+  "old": "(if X.mode == .strict then \"strict\" else \"default\")",
+  "new": "(if X.mode == .strict then \"default\" else \"strict\")"
+ },
+ {
+  "id": "S23",
+  "file": "lean/VE/Risk/Run.lean",
+  "old": "SufficientOutsideNecessary: ",
+  "new": "SufficientBeyondNecessary: "
+ },
+ {
+  "id": "S24",
+  "file": "lean/VE/Risk/Eval.lean",
+  "old": "(\"possible\", .bool (possibleE b c))",
+  "new": "(\"possible\", .bool (certainE b c))"
+ },
+ {
+  "id": "S25",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "old": "InvalidInput: exception condition of rule",
+  "new": "InvalidInput: exception conditions of rule"
+ },
+ {
+  "id": "S26",
+  "file": "lean/VE/SpeechActs/Run.lean",
+  "old": "UNKNOWN (no premise-status evidence); vacuous: unknown",
+  "new": "UNKNOWN (no premise-status evidence); vacuous: no"
+ },
+ {
+  "id": "S27",
+  "file": "lean/VE/Words/Run.lean",
+  "old": "s!\"the rows of {p} are not a list\"",
+  "new": "s!\"the rows of {p} are not an array\""
+ },
+ {
+  "id": "S28",
+  "file": "lean/VE/Service/Standalone.lean",
+  "old": "ResourceLimit: domain exceeds entity limit",
+  "new": "ResourceLimit: domain exceeds the entity limit"
+ },
+ {
+  "id": "S29",
+  "file": "lean/VE/Alternatives/Run.lean",
+  "old": "(\"verdict\", .str (if conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S30",
+  "file": "lean/VE/Discourse/Run.lean",
+  "old": "(if e.startsWith \"ResourceLimit\" then \"UNKNOWN\" else \"INVALID\")",
+  "new": "(if e.startsWith \"ResourceLimit\" then \"INVALID\" else \"UNKNOWN\")"
+ },
+ {
+  "id": "S31",
+  "file": "lean/VE/NormDefaults/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S32",
+  "file": "lean/VE/Rights/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S33",
+  "file": "lean/VE/Risk/Run.lean",
+  "old": "(\"verdict\", .str (if conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S34",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S35",
+  "file": "lean/VE/SpeechActs/Run.lean",
+  "old": "(\"verdict\", .str (if w.conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if w.conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S36",
+  "file": "lean/VE/Service/FamilyNorms.lean",
+  "old": "(\"verdict\", .str (if conflict then \"CONFLICT\" else \"UNKNOWN\"))",
+  "new": "(\"verdict\", .str (if conflict then \"UNKNOWN\" else \"CONFLICT\"))"
+ },
+ {
+  "id": "S37",
+  "file": "lean/VE/Attribution/Run.lean",
+  "old": "return Json.mkObj (base ++ [(\"status\", .str \"FOLLOWS\")])",
+  "new": "return Json.mkObj (base ++ [(\"status\", .str \"DOES NOT FOLLOW\")])"
+ },
+ {
+  "id": "S38",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "old": "VE.Route.Wire.ok id [(\"admitted\", .bool true), (\"report\", Norms.Run.reportJson res.report),",
+  "new": "VE.Route.Wire.ok id [(\"admitted\", .bool false), (\"report\", Norms.Run.reportJson res.report),"
+ },
+ {
+  "id": "S39",
+  "file": "lean/VE/Discourse/Run.lean",
+  "old": "if (readingVerdicts res).isEmpty then .bool true else .str \"UNKNOWN\"",
+  "new": "if (readingVerdicts res).isEmpty then .str \"UNKNOWN\" else .bool true"
+ },
+ {
+  "id": "S40",
+  "file": "lean/VE/Service/Standalone.lean",
+  "old": "  pure (VE.Route.Wire.ok id [(\"valid\", .bool true), (\"model_id\", .str modelId)])",
+  "new": "  pure (VE.Route.Wire.ok id [(\"valid\", .bool false), (\"model_id\", .str modelId)])"
+ },
+ {
+  "id": "S41",
+  "file": "lean/VE/Route/Wire.lean",
+  "old": "  return ok id [(\"valid\", .bool (VE.Tableau.checkCertificate E (background ++ ps) c certificate)),",
+  "new": "  return ok id [(\"valid\", .bool (!VE.Tableau.checkCertificate E (background ++ ps) c certificate)),"
+ },
+ {
+  "id": "S42",
+  "file": "lean/VE/Route/Run.lean",
+  "old": "[(\"valid\", .bool false)] else []))",
+  "new": "[(\"valid\", .bool true)] else []))"
+ },
+ {
+  "id": "S43",
+  "file": "lean/VE/Time/Wire.lean",
+  "old": "        | some (value, work) => pure [(\"value\", Json.bool value), (\"evaluations\", toJson work)]",
+  "new": "        | some (value, work) => pure [(\"value\", Json.bool !value), (\"evaluations\", toJson work)]"
+ },
+ {
+  "id": "S44",
+  "file": "lean/VE/Rights/Run.lean",
+  "old": "    (\"in_scope\", .bool (D.limits.any (fun L => inScope D L RN.1 RN.2))),",
+  "new": "    (\"in_scope\", .bool (D.limits.all (fun L => inScope D L RN.1 RN.2))),"
+ },
+ {
+  "id": "S45",
+  "file": "lean/VE/Norms/Run.lean",
+  "old": "    return VE.Route.Wire.ok id [(\"valid\", .bool (Flagged.valid r)),",
+  "new": "    return VE.Route.Wire.ok id [(\"valid\", .bool (!Flagged.valid r)),"
+ },
+ {
+  "id": "S46",
+  "file": "lean/VE/EnglishGrammar/Run.lean",
+  "old": "      status \"many\" ++ coded \"Ambiguous\" \"Sentence 1 can be read in more than one way.\" ++ found",
+  "new": "      status \"many\" ++ coded \"Ambiguous\" \"Sentence 1 can be read in more ways than one.\" ++ found"
+ }
+]

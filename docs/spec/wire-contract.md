@@ -506,7 +506,7 @@ failure.
 ### 4.3 Tool diagnostics
 
 `tools/wire_contract.py --check` validates, lints, regenerates in memory and compares; `--write` writes the
-generated files, the lock and the inventory lines of generated modules. It exits 0 or 1 and prints one line per
+generated files and the lock (the frozen inventory lists no generated module since AR-2, decision D2). It exits 0 or 1 and prints one line per
 finding, `<file>: <code>: <detail>`.
 
 | Code | Refuses |
@@ -1113,8 +1113,8 @@ Nat := n` and of `NameClass` values, in the same grammar.
 
 ### 7.2 Inventory, layers, manifest
 
-- Every new `lean/VE/Contract/**/*.lean` module is added to `VE/Route/frozen-sources.sha256`. `--write` rewrites
-  the lines of generated modules; no other tool line changes.
+- No `lean/VE/Contract/**/*.lean` or generated module is listed in `VE/Route/frozen-sources.sha256`: since AR-2
+  (decision D2) it lists only modules with K declarations and the `ve.core@0.1` decoders. `--write` touches no tool line.
 - `tools/layer_policy.py`: the Lean modules fall in layer 2 by the existing rule and `DiagnoseMain` in layer 4;
   `ve.wire_contract` is added to Python layer 1 and `ve.softnorms_contract` to layer 2. `engine.py` imports
   `ve.wire`, `ve.errors` and `ve.limits` only. The pilot's Python hooks, classifiers and adapter live in the new
@@ -1330,7 +1330,7 @@ the first table of 2.4. The lemma-free evidence for claim (A) is this corpus; it
 | L10 | a changed text with the lock and revision unchanged | `WC10` |
 | L11 | a hand edit of `Tables/Corpus.lean`; the mutation of 7.4 | `WC11` |
 | L12 | a clean tree | `--check` exits 0 and prints nothing |
-| L13 | `--write` after raising a revision | exactly the generated files, the lock and the generated modules' inventory lines change |
+| L13 | `--write` after raising a revision | exactly the generated files and the lock change |
 | L14 | a module `VE.SoftNorms.Run` importing `VE.Contract.Engine` | `tools/check_lean_imports.py` fails (7.3) |
 | L15 | `demo@0` with check 1.8's `const` given the value `null` | `WC01`: `ve.wire.loads_json` refuses the file (2.2) |
 

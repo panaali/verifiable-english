@@ -1,4 +1,11 @@
+import VE.Readings.SoftDefaults
+import VE.Readings.SoftWire
+import VE.Readings.SoftVerdicts
+import VE.Readings.SoftExamples
+import VE.Readings.SoftSeparate
+import VE.Readings.SoftSeparateExamples
 import VE.Audit
+import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
 import VE.Grammar.Reading
@@ -91,6 +98,7 @@ import VE.Discourse.Access
 import VE.Discourse.Resolve
 import VE.Discourse.WellFormed
 import VE.Discourse.Run
+import VE.SearchBudget.Examples
 import VE.Discourse.Theorems
 import VE.Discourse.English
 import VE.SpeechActs.Run

@@ -22,7 +22,7 @@ OUT = ROOT / "docs/spec/question-answering-q2/evidence/d9-readings-ab.json"
 
 def _before_packages(self):
     """The exact pre-D9 Fill_T-only method from 37136ab20^:ve/readings_verdicts.py."""
-    from ve.ast import Not, formula_to_data
+    from ve.ast import Not, formula_from_data, formula_to_data
     from ve.entailment import prove_entailment
     from ve.norms import _bind
     from ve.readings_verdicts import BUDGET
@@ -34,7 +34,7 @@ def _before_packages(self):
         return digest(f"ve-meaning-{self.base.identity_version}\n",
                       {"environment_id": self.base.environment_id, "ast": ast})
 
-    fill = self._base_fill()
+    fill = [formula_from_data(self.base, item["ast"], _generated=True) for item in row["fill"]]
     packages = {}
     for target, sorts, formula in self.targets:
         conclusion = _bind(Not(formula), sorts)

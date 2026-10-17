@@ -1,0 +1,36 @@
+{
+  "mutants": [
+    {
+      "bug": "Python excludes n-ary core families from Lean routing",
+      "file": "ve/backends/validation.py",
+      "test": "tests/test_b14c.py::test_python_routes_nary_definitions_to_lean",
+      "observed": "assert (True and False); family_in_scope returned False",
+      "caught": true,
+      "restored": true
+    },
+    {
+      "bug": "Lean replaces the n-ary definition biconditional with top",
+      "file": "lean/VE/Core/Layers.lean",
+      "test": "tests/test_b14c.py::test_nary_background_is_lean_regenerated_and_ordered",
+      "observed": "assert ['top'] == ['forall', 's']",
+      "caught": true,
+      "restored": true
+    },
+    {
+      "bug": "Lean computes every n-ary derived tuple as false",
+      "file": "lean/VE/Core/Layers.lean",
+      "test": "tests/test_b14c.py::test_nary_derived_table_is_checked_by_lean",
+      "observed": "assert [None, [False]] == [[True], [False]]",
+      "caught": true,
+      "restored": true
+    },
+    {
+      "bug": "Python skips the generated Background array length relation",
+      "file": "ve/backends/service_schema.py",
+      "test": "tests/test_b14c.py::test_nary_background_relay_refuses_missing_or_extra_generated_rows",
+      "observed": "Failed: DID NOT RAISE Invalid for a missing generated row",
+      "caught": true,
+      "restored": true
+    }
+  ]
+}

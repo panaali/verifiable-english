@@ -7,6 +7,7 @@ import shutil
 import pytest
 
 from experiments import p1, p1_preflight
+from tests import p1_findings
 from ve_experiments import paid
 
 
@@ -67,6 +68,7 @@ def test_qwen_pushback_uses_gemini_attacker_and_separate_analysis(tmp_path):
 
 
 def test_qwen_native_replay_is_preserved_for_gemini_attacker():
+    p1_findings.warm()  # every item it reads, checked several at a time first (tests/p1_findings.py)
     req = next(r for r, _ in p1_preflight.token_requests('pro')
                if r.metadata.get('target_judge') == 'replication' and r.metadata['arm'] == 'R')
     backend = object.__new__(paid.VertexBackend)  # wire conversion needs no credentials/network
@@ -79,6 +81,7 @@ def test_qwen_native_replay_is_preserved_for_gemini_attacker():
 
 @pytest.mark.parametrize('schedule', ['replication_3turn', 'replication_gemini_e5_2turn'])
 def test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring(tmp_path, monkeypatch, schedule):
+    p1_findings.warm('dev')  # every item it reads, checked several at a time first (tests/p1_findings.py)
     original = p1.HERE
     source_items = p1.materials('dev')
     items = [i for i in source_items if i['assignment']['pushback']]
