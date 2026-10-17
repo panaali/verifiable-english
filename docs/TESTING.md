@@ -9,7 +9,19 @@ PATH="$HOME/.elan/bin:$PATH" UV_CACHE_DIR=/tmp/ve-xdist-uv-cache \
     uv run --frozen python tools/select_tests.py --impacted --run
 ```
 
-This takes the changed files from the working tree (tracked changes and new files). Use `--base origin/main` for a branch, `--commit REV` for one commit, or `--paths FILE...` to name the files yourself. Leave out `--run` to see the plan, or add `--json` for the full selection. `--run` runs the checks, the native builds the selection needs, and pytest on the selected files, one after another and in the foreground.
+This takes the changed files from the working tree (tracked changes and new files). Use `--base origin/main` for a branch (it compares `base...HEAD`, so it sees committed changes only), `--commit REV` for one commit, or `--paths FILE...` to name the files yourself. Leave out `--run` to see the plan, or add `--json` for the full selection. `--run` runs the checks, the native builds the selection needs, and pytest on the selected files, one after another and in the foreground.
+
+### The light tier
+
+`--tier light` is not a narrower selection: it runs every test outside the measured heavy list, then the heavy tests in the selected files. It prints both counts.
+
+```sh
+uv run --frozen python tools/select_tests.py --tier light --base "$(git merge-base HEAD main)" --run
+```
+
+The heavy stage names the selected files with `-m heavy`, never saved node IDs, so a renamed or split heavy test runs as light; a stage whose heavy tests are all gone is skipped. The builds and checks chosen by ordinary selection still run. Without `--tier`, selection works as before. A plain pytest run still runs every default test.
+
+`tests/heavy-durations.json` holds the full measured Mac duration report; `tools/heavy_tests.py --write` generates `tests/heavy.json` from it, and `--check` refuses an inventory that is stale against that report. A test measured at 10 seconds or more enters the heavy list. After a nightly `pytest --durations=0 --durations-min=0` run (without `--durations-min=0` pytest leaves out tests under 0.005 s), `tools/heavy_tests.py --check --report /path/to/pytest-output.txt` lists the tests that would enter, leave or drop out of the heavy list and exits 0: no test fails because a test became slow. The DRI decides whether to update both files with `--write --report /path/to/pytest-output.txt`. The nightly full, live, no-reuse run and branch verify still run all tests.
 
 A test file is selected when one of these changed:
 
@@ -50,6 +62,8 @@ Every pytest command that a test, the gate or a tool starts is built by `tools/n
 
 `-n auto` adapts to the machine's load (`tests/conftest.py`: `worker_count`). It uses the CPUs this process may run on, minus the 1-minute load average, capped at `VE_TEST_WORKERS` (default: every usable CPU), and never fewer than one. A busy machine therefore gets fewer workers, not an oversubscribed run: with 32 CPUs at load 31 it gets one. More parallelism is opt-in: `VE_TEST_MIN_WORKERS=N` (default 1, at most `VE_TEST_WORKERS`) is a floor, for a shared VM whose load never drops below its CPU count and which would otherwise run a suite of about 20,000 CPU seconds on one worker. No test's outcome depends on load either way (see below). Use `-n N` to fix the count. On the 32-CPU VM shared with other sessions, `-n 16` was the best fixed count measured, and `-n 24` was the slowest at load 90 (docs/testing-profile.md).
 
+Under xdist (`-n`, the gate's suite and every nested `-n` run), the slowest tests start first (`tools/test_schedule.py`, installed by `tests/conftest.py`). xdist's default `load` scheduler hands each worker runs of consecutive tests in collection order, sized by count, so a test of several minutes that came late in the collection started when the other workers were nearly done, and a run of hundreds of tests that happened to be slow went to one worker; the others idled until it ended (docs/test-tail/report.md measures it). The scheduler hands out first the test files that hold a test `tools/test-durations.json` records as taking at least 5 seconds, longest batch first, each batch to the next free worker; a batch is a run of one file's tests in collection order, together no longer than the longest test. A file goes whole because what its tests share in one process (a module fixture, a module-level cache) is paid by the first of them a worker runs: sent apart, its tests would pay it again, and a cheap one left for later could pay it last, alone. The rest follow in collection order, as runs of consecutive tests sized by their recorded (or, below 1 second, average) seconds: a free worker gets a share of the estimated work left, less what it still holds. It changes only which worker runs a test and when: every worker still collects the whole selection in collection order (the gate checks this), and every test runs once. Without the file the run is `load`'s; a run with another `--dist` mode keeps that mode. The file is measured data, written by `tools/bench/suite_tail.py durations` from profiled runs (`tools/bench/suite_tail.py run`); refresh it when the slow tests change. A stale file only makes the order less good.
+
 The session hook in `tests/conftest.py` prepares Lean and Rust once per pytest invocation, under a checkout-wide file lock in `rust/target/`. Every pytest process holds a shared lock while tests read the binaries and Lean object files, so another invocation waits before rebuilding them. Builders inherit the exclusive lock, and a build that times out stops its whole process group before the lock is released. Rust's release and debug targets share this lock, and individual tests start no further builds. Each test's `tmp_path` is unique across workers. Tests that change environment variables or module globals use pytest's `monkeypatch`, which is local to their worker and restored after the test.
 
 How the native builds are reused is set by `VE_NATIVE_PREBUILT`:
@@ -62,9 +76,11 @@ How the native builds are reused is set by `VE_NATIVE_PREBUILT`:
 
 ## Order, early stop and the quarantine
 
-`tools/select_tests.py --run` starts the test files that failed last time first, then the test files the change edits, then the rest in name order (`tools/run_order.py`; the run prints its order). The order never changes which files run. The last failures are this worktree's: the failed tests of its last selected run, kept in the worktree's git directory (`ve-last-failed.json`), and those of `gate-result.json` when the gate ran after that run. A file leaves the list when it runs to the end without a failure.
+`tools/select_tests.py --run` starts the test files that failed last time first, then the test files the change edits, then the rest (`tools/run_order.py`; the run prints its order). Within each of the three groups the files whose tests `tools/test-durations.json` records as slowest start first, then name order, so a long file does not start last while the other jobs idle. The order never changes which files run. The last failures are this worktree's: the failed tests of its last selected run, kept in the worktree's git directory (`ve-last-failed.json`), and those of `gate-result.json` when the gate ran after that run. A file leaves the list when it runs to the end without a failure.
 
 `--run` stops after `--maxfail` failed tests (default 5; `--maxfail 0` runs everything). A recorded run then starts no more files and kills the running ones; it says `STOPPED EARLY`, lists the files that did not run, exits 1, and leaves those files to the static graph in the map it saves. The count is one rule, `tools/maxfail_pytest.py`: failed tests outside the quarantine, the ones the exit status counts. Each file's pytest (and the one-process `--no-record` and `--impacted` runs) gets it from `select_tests.stop_options`, never pytest's own `--maxfail`, which would count a quarantined failure and skip the tests after it. `--full --run` is the whole suite before a green tag: it never stops early (it refuses `--maxfail`) and counts quarantined failures.
+
+A `--run` that names no `--cutoff` (R1) selects the `ve_service` users of a Lean change by ts-B2's per-mode rule (`answer_cutoff.R1_RULE`): the recorded users of the modes whose `runMode` roots import the changed module, plus every user with no recorded mode; one-shot executables, `lake`/`lean`, Lean source and pin readers select as before. `--cutoff off` selects as before for one run; `--cutoff answers=DIFF` is the answer-level experiment (`tools/answer_cutoff.py`), opt-in until the DRI reads its measurement. A plan print, `--full`, `tools/gate.py`, the merge train and the nightlies never narrow (docs/test-architecture/cutoff/REPORT.md).
 
 Each file of a recorded run runs in its own session, so a signal to the run's process group does not reach it. The run kills every running file itself when it is interrupted (Ctrl-C), terminated or hung up, or when it fails (`Stop.on_exit` in `tools/test_map.py`); that covers `select_tests.py --run` and the map's `record` and `update`. A `SIGKILL` of the run cannot be caught: its files then run on until their own timeout.
 
@@ -78,11 +94,58 @@ The gate never stops early: `tools/gate_pytest.py` refuses `--maxfail`, `-x` and
 
 An expired entry no longer applies, so the test blocks again. A malformed file fails the gate. `tests/test_gate_quarantine.py` checks the file and the gate's handling; `tests/test_run_order.py` checks the order and the early stop.
 
+## The Lean answer store (R1 only)
+
+An R1 run (a commit, a fix round, a recheck) may answer `ve_service` requests from a store of the service's earlier answers: `VE_ANSWER_STORE=DIR`, or `--answer-store=DIR` (write it with `=`: as two words, pytest reads an existing DIR as a test path before the option exists). `tools/select_tests.py --run` passes the variable to every file it runs. It is off unless asked, and `tools/gate.py` never uses it: its stages start from a listed environment without the variable, and asking for the store under the gate (`VE_GATE_PYTEST_RESULT` set) stops the run. R2 and R3 stay complete and live.
+
+- **What it stores.** Exact batches: the request line the client writes and the response line it reads, keyed by the SHA-256 of the service binary's actual digest, its start-up limits and the request bytes. In store mode the client derives the request's nonce from the rest of the line and registers every environment the cases name in the line itself, so the line does not depend on the handles a process holds. Only what a hit cannot skip is stored: an answer whose request wrote to the process's standard error (a `PANIC`), or that needed a retry, is never stored.
+- **What a hit still runs.** The process is started, pinned and handshaken, the deadline computed, and the stored line goes through the client's framing, decoding, nonce, schema and binding checks; a line the client refuses is retried on the process and reported as an alarm, which fails the run.
+- **When it is off.** For a branch that changes `ve/backends/`, `lean/VE/Service/`, `lean/checkers.lock`, `tests/subprocesses.py`, `tests/conftest.py` or `tests/answer_store.py`; for a request with an explicit timeout, another executable, an expected hash or an unlisted build; for a subclass of the client, or a client whose methods, module bindings, tables (a lowered `DEADLINES` entry, as `lean_routes.completed_within` sets) or `VE_LEAN_SERVICE*` settings a test changed; and for every test marked `live_service`. `INVENTORY` in `tests/answer_store.py` lists each client behaviour a hit could skip and the live tests that keep it covered.
+- **Checks.** A random 1% of hits is also asked of the process and compared byte for byte (a drift alarm). The nightly, after `tools/gate.py --no-quarantine`, replays the store against its build: `uv run python tools/answer_store_replay.py --store DIR` exits 1 on any byte that differs, or on any standard error.
+- **What it saves.** It removes the service's CPU (about 93% of it in a full default run on the Mac), about a tenth of the run's CPU. Wall time on the shared runner did not change measurably (docs/test-architecture/store/REPORT.md).
+
+## The x86 platform contract suite
+
+Every merge candidate runs the complete gate on the Mac. The VM runs the x86 platform contract suite beside it: the tests whose outcome can depend on the platform (test-architecture plan, section 3.3). The full x86 `tools/gate.py` still runs for native and runtime changes. This suite does not replace it, the Mac gate, or the nightly `tools/gate.py --no-quarantine`. Those still run every test.
+
+`tests/platform-contract.json` lists the suite. `tools/platform_contract.py contract --write` generates it from the tree, by cause, and `--check` fails when it is stale (`tools/regen_generated.py` runs both):
+
+- **pins**: pins and reproducible builds. `lean/checkers.lock` pins the x86 binaries, and the Mac's pins are local to the runner, so only x86 can check them. This includes `test_rust_reproducible.py` and `test_gate_integrity.py`.
+- **process**: process supervision, injected deadlines, signals, file locks and resource limits. This covers the service client and its handles, the hang guards, Stage-2 faults, the route transport, the native build lock, the assist deadline and the CPU bounds. It also takes every test file that imports `signal`, `resource` or `fcntl`, and the deadline tests of the answer-store inventory.
+- **agreement**: cross-implementation agreement on recorded fixtures. This covers the gate's required families (`REQUIRED_FAMILIES` in `tools/gate.py`), the three-way files and the difffuzz CI sample.
+- **divergence**: every test whose outcome differed between the Mac and the x86 VM on the same tree in the last 30 days, named by its test function.
+
+A `nightly` corpus-scale rerun in a listed file is left out and named under `left_out`; the complete gates run it. A named test the tree no longer defines fails generation. A divergence whose test is gone moves to `retired`.
+
+`tests/platform-divergences.json` is the divergence list, saved from the runners' records. Regenerate it with `python3 tools/platform_contract.py divergences --records <integ-runs> <nightly-runs> <nightly-vm-runs> <cand-runs> [<*-x86-verify.final.md>] --mac-known <mac-known-failures.txt> --write`.
+
+- It reads each `tools/gate.py` record (`*.mac.json`, `*.x86.json`) whose suite ran, and each summary (`*.md`) that names its runner and commit.
+- It pairs a Mac run with an x86 run of the same tree (or of the same commit, for a summary). It keeps a test that failed on one and not on the other; a test the quarantine retried counts as failed.
+- It adds the Mac runner's known failures and the divergences of plan section 2.8.
+- Each row has its cause, from the causes of plan 2.8: pinned artefact, toolchain, elapsed time, repository state, environment, product race or arch bug, unknown. The causes are kept by test function in `DIVERGENCE_CAUSES`. A new divergence is `unclassified` until the DRI classifies it.
+- Only `elapsed time` and `repository state` make the test a bug by this repository's rules. Every divergence is in the contract, whatever its cause.
+- `divergences --check` regenerates the list with its saved window and fails when it differs.
+
+`python3 tools/platform_contract.py run --checkout <dir> [--workers N] [--output FILE] [--no-quarantine]` runs exactly the suite. It starts the checkout's own `tools/gate.py --contract`, which uses the gate's environment, toolchain checks, Lean build, wire contract check, Rust build and pin check, native Rust tests, pytest options and quarantine.
+
+- It leaves out only the Lean audit and the collection check, which the complete gates run.
+- It passes the list's selectors to pytest in place of `tests`, and fails when a listed test collects nothing.
+- Its record (default `platform-contract-result.json`) has `"mode": "contract"` and the list's hash. Its status is `contract-passed` or `failed`, never `passed`. It writes no collection record for the commit, so no evidence check takes it for a full gate.
+
+`python3 tools/platform_contract.py misses <x86 gate record> [--mac <Mac record of the same tree>]` checks a failed x86 gate against the list. Run it on every full x86 failure.
+
+- It names each failed test (including any the quarantine retried) and the selectors and causes that cover it.
+- It also names each failure outside the tests, and whether the contract run runs that stage.
+- It exits 1 when a failed test that did not also fail on the Mac is outside the list, or when the failed stage is one the contract run leaves out. The DRI uses these misses before narrowing the full x86 rule; a miss adds its cause to the list.
+
+`python3 tools/platform_contract.py estimate` sums the measured Mac seconds of the listed tests from `tests/heavy-durations.json`. It is scheduling metadata: no test fails on a duration.
+
 ## Speed is not a correctness criterion
 
 Under load, any elapsed-time bound can fail a correct program. A merge-train suite at load 50 failed on a 5-second default and on a fake service's 0.5-second retry. The rules:
 
 - **Waits are hang guards.** Every wait on a child process is `HANG_TIMEOUT` (`tests/subprocesses.py`, 1800 s). The checker clients' settings (`VE_RUST_TIMEOUT`, `VE_LEAN_SERVICE_TIMEOUT`, `VE_LEAN_SERVICE_STARTUP_TIMEOUT`, `VE_LEAN_TIMEOUT`, `VE_CONFORMANCE_HANG_TIMEOUT`, `VE_PRECOMMIT_TIMEOUT`) are raised to it for every test and every process a test starts.
+- **A long run that reports its progress waits on its progress.** `run_while_progressing` (`tests/subprocesses.py`) stops a child when its progress stops for `HANG_TIMEOUT`, or when it runs past `PROGRESS_WALL_CAP` (4 × `HANG_TIMEOUT`) in all, and kills the child's session. Machine load slows a working child; a hang stops its progress. `test_ci_run` runs `tools/difffuzz.py --ci --progress` this way: the run reports its work counters on stderr as it counts them, and the test still holds the ended run's work to `WORK_LIMIT`. The x86 nightly of 2026-10-15 had stopped it at a fixed 1800 s wall wait while it was still working (`docs/fix-ci-run-timeout/REPORT.md`).
 - **Deadlines are tested by injection.** A deadline test starts a fake that never answers and injects the deadline as already expired: `expired_waits` in `tests/subprocesses.py` covers `subprocess.run` and `Popen.communicate`, and `expire_service_waits` in `tests/test_lean_service.py` covers the Lean service client. It then asserts that the configured value was the one asked for. No test waits out a real deadline, and a recovery after an injected timeout waits `HANG_TIMEOUT`.
 - **Guards.** `tests/test_hang_guards.py` fails on four things outside its reviewed allowlist `INJECTED`, where each entry is an injected-clock, instrumented, event-poll or reaping function: a wait shorter than `HANG_TIMEOUT`, a sleep, a short deadline setting, or an assertion on a clock, a duration or a CPU cost. Stale entries fail too. At run time, `tests/conftest.py` refuses a child started without a checker setting, and a real Lean or Rust checker started with a setting below `HANG_TIMEOUT`.
 - **Work bounds.** Tests bound work with the backends' own budgets, with a count of the work done (the difffuzz CI run counts its inputs, Python calls and runner requests and cases, and `tests/test_difffuzz.py` holds them to `WORK_LIMIT`; its CPU seconds are recorded as a test property only), or with a kernel CPU limit (`run_cpu_bounded`) that stops a runaway child and fails the test through its exit status. The guard also sees a CPU cost read by its key (`report["cpu_seconds"] <= 300`), the form that limit had when it failed seven loaded gates.
@@ -153,12 +216,26 @@ The selector works at the level of functions, not layers:
   Serve, a missing or stale mode table, an unknown mode, and a service test
   with no recorded mode retain the service-wide selection. Tests that check
   `lean/checkers.lock` still select when the pin file changes.
+  **Binary cutoff:** when this machine recorded the Lean build of both the
+  base's and the head's `lean/` tree (`tools/test_map.py build-record`; every
+  map `record` or `update` and every `--run` build records one, under
+  `~/.cache/ve-lean-builds`, `$VE_LEAN_BUILDS`), a test is selected through a
+  Lean executable only if that executable's SHA-256 differs between the two
+  builds: an identical program given identical inputs behaves identically.
+  Tests that read the changed Lean files or run `lake` or `lean`, and the pin
+  readers, still select by file. Without both records every executable whose
+  imports hold the module counts, as before. `--run` builds the head first when
+  only its record is missing.
 * **Assurance manifest.** The recorder records each operation read through
   `ve.assurance`, its import-time presence checks, and a whole-manifest read
   separately. Editing an existing operation selects its entry readers and
   `test_assurance_manifest`; adding or removing one also selects its presence
-  readers. Editing shared metadata
-  selects the complete suite. A missing map also selects the complete suite.
+  readers. Editing an operation's `authority` (read at import, by
+  the authority guard) also selects the registrations of its entries.
+  Editing shared metadata selects the tests that read the whole manifest
+  (the file itself, or `ve.assurance.manifest()` and the renders); editing
+  its `version`, which every importer checks, selects the complete suite. A
+  missing map also selects the complete suite.
 * **Rust.** The tests that ran a Rust binary, `cargo test`, and the release
   and debug builds.
 * **Any file.** Whatever its kind (Python, Lean, Rust, data), the tests that
@@ -172,6 +249,12 @@ The selector works at the level of functions, not layers:
 * **Data and documents.** Nothing beyond that rule, except that a fixture a
   Rust test embeds with `include_bytes!` also runs `cargo test`.
   Documentation selects only its readers and listers.
+* **`.gitattributes`.** Any directory's: data, whose readers are also the
+  tests that run git. An edit to a line that sets a checkout attribute
+  (`text`, `eol`, `crlf`, `filter`, `ident`, `working-tree-encoding`,
+  `binary`, or a macro either version defines), defines a macro, quotes its
+  pattern or holds a token that is not an attribute changes what a checkout
+  writes, and selects the complete suite.
 * **Everything.** `tests/conftest.py`, `pyproject.toml`, `uv.lock`,
   `.gitignore` and files outside the known top-level directories select the
   complete suite.
@@ -199,17 +282,37 @@ or listing is for is decided by the
 innermost frame that is either code under the repository (the test and the
 project: recorded) or infrastructure (import system, site, pytest: not
 recorded); the standard library and third-party packages in between act for
-their caller, and pytest frames further out do not matter. Maps of an
-earlier recorder version are not used. The map for commit C goes to
+their caller, and pytest frames further out do not matter. A map of an
+earlier format version is used only through a converter
+(`CONVERTERS` in `tools/test_map.py`; version 6 converts to 7 with no
+service modes recorded, so every service user stays selected); others are
+skipped with a line on stderr. A new format version must name in
+`FORMAT_CHANGES` either its converter or the main commit whose map was
+recorded with it and published with the change (a test fails otherwise). The map for commit C goes to
 `~/.cache/ve-testmap/C.json.gz` (`$VE_TESTMAP_CACHE`); the selector uses the
 recorded map nearest below the base, or one saved by `--run` for exactly the
-base's tree. The full recording takes about an hour with 7 parallel files on
-the loaded VM.
+base's tree. `find_map` considers the 30 newest maps recorded at commits;
+the maps `--run` saves per tree never count among them. The full recording
+takes about an hour with 7 parallel files on the loaded VM; each file may run
+4 hours (a hang guard) and the longest recorded ones start first. A Python
+child that leaves no record makes its file opaque, unless it is this
+environment's interpreter started with this recording's variables while the
+site hook ran here: its record file exists before any code under the
+repository runs, so it ran none (a child the test killed at once). A
+recording made inside a recorded test (the selector's own tests) hands its
+records to the outer one.
 
 * Nightly: `python3 tools/test_map.py record` on main.
-* After each merge to main: `python3 tools/test_map.py update` re-records only
-  the test files whose coverage may have changed since the nearest map and
-  carries the others over (`--dry-run` lists them).
+* After each merge to main, on the published commit in a clean checkout of
+  it: `uv run --frozen python tools/test_map.py update` re-records only the
+  test files whose coverage may have changed since the nearest map, and the
+  ones that were not recorded there, and carries the others over
+  (`--dry-run` lists them).
+* Scripts that choose between a selected and a full run ask
+  `uv run --frozen python tools/test_map.py fresh --base <rev>
+  [--max-age-hours 24] [--max-behind N]`: it prints the map selection would use
+  for that base and exits 0, or says why there is none on stderr and exits 1.
+  A file's age in the cache says nothing of whether selection can use it.
 
 **Drift.** Between the map's commit and the base, other changes may have
 altered which code a test reaches. A test that ran none of the code changed
@@ -222,7 +325,8 @@ is selected by the static graph (`tools/source_graph.py`: import closure,
 string-literal mentions of files, directories and programs; a `.` or `./`
 names the root unless it is text, such as `".".join(parts)` or
 `name.split(".")`, or sits in a `ve/` or `ve_experiments/` module, where it is
-the English full stop) instead. Test files that failed or were opaque when recorded (a Python child
+the English full stop; in those modules a bare name such as `"evidence"` stands
+only for the product's own directories of that name) instead. Test files that failed or were opaque when recorded (a Python child
 the recorder could not follow) are treated the same way, and without a map
 the static graph is the whole answer (`--static` forces it).
 

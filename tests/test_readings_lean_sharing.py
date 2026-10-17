@@ -131,19 +131,21 @@ def test_the_route_builds_a_candidates_document_only_in_the_request_table(walks)
     assert {caller for caller in callers(edges, BUILD) if not named_under(caller, BUILD)} == {CHOICE}
     # The table is built by admission alone, once per admitted document, and read through `oneOf`: `admitDecoded`
     # is S1's admission after decoding, which `admitReadings` runs on the decoded document and, under the unspecified
-    # completion, `admitNDFull` on the filled document (readings-defaults.md 4.1 step 4), each with its own table.
+    # completion, `admitNDFull` on the filled document (readings-defaults.md 4.1 step 4) and, under the soft
+    # completion, `admitUnsaid` on the document's items over the filled author vocabulary (rd-9-soft-chain.md 4.2),
+    # each with its own table.
     assert callers(edges, TABLE[0]) == {"VE.Readings.Wire.admitDecoded"}
     assert {caller for caller in callers(edges, "VE.Readings.Wire.admitDecoded")
             if not named_under(caller, "VE.Readings.Wire.admitDecoded")} == \
-        {"VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitNDFull"}
+        {"VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitNDFull", "VE.Readings.Wire.admitUnsaid"}
     assert "VE.Readings.Wire.onesOf" not in edges  # the table as specified
     assert "VE.Readings.Wire.oneOf" in edges
     assert {caller for caller in callers(edges, TABLE[1]) if not named_under(caller, TABLE[1])} == \
         {"VE.Readings.Wire.Admitted.side"}
     # `free D` once more under the unspecified completion: norm-defaults' author checks read it as a UDoc
-    # (`freeU`, readings-defaults.md 4.1 step 3), one document per request, a gap recorded in
+    # (`ndTextWith`, readings-defaults.md 4.1 step 3), one document per request, a gap recorded in
     # docs/readings-defaults/rd2a/DELTA.md beside `sharedEnv`'s.
-    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED, "VE.Readings.freeU"}
+    assert callers(edges, FREE) == {"VE.Readings.Wire.frontText", SHARED, "VE.Readings.Wire.ndTextWith"}
 
 
 ADMIT = ("VE.Readings.Wire.admitReadings", "VE.Readings.Wire.admitS2")
@@ -193,6 +195,7 @@ def review_case(raw):
             "set": "rs1", "situation": sid, "other": "default"}, sid
 
 
+@pytest.mark.live_service
 def test_the_other_side_is_scanned_lazily_on_the_review_reproducer(lean):  # noqa: F811
     raw = env_k()
     case, sid = review_case(raw)
@@ -223,6 +226,7 @@ def first_error_document(raw, sets=60, fixed=10):
     return {"units": units, "reading_sets": reading_sets}
 
 
+@pytest.mark.live_service
 def test_admission_stops_at_the_first_ill_formed_candidate(lean):  # noqa: F811
     raw = env_k()
     case = {"id": "first", "kind": "readings-validate", "environment": raw, "document": first_error_document(raw)}
@@ -258,6 +262,7 @@ def assert_one_active_row(row, per_set):
     assert [entry["name"] for entry in candidates[0]["shared"]] == [f"soft__excepted__f{k}" for k in range(10)]
 
 
+@pytest.mark.live_service
 @pytest.mark.parametrize("sets, per_set", [(60, 2), (120, 2), (1, 60)], ids=["many-sets", "more-sets", "one-set"])
 def test_no_pending_candidates_document_is_built(lean, sets, per_set):  # noqa: F811
     """Batch 3b looprecheck B: admission built the 119 pending candidates' documents of `many-sets` (the review's

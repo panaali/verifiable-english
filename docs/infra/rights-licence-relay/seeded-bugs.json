@@ -1,0 +1,157 @@
+{
+  "mutants": [
+    {
+      "id": "L1",
+      "language": "Lean",
+      "file": "lean/VE/Rights/Run.lean",
+      "change": "groundJson writes a collision's grounds under the strict-rule tag (`(\"rule\", .str M)` for `(\"line\", .str M)`); the build and every theorem still pass, ve_service rebuilt and pinned for the run, then restored, rebuilt and the pin restored",
+      "behaviour": "Lean's grounds are bound to the request: a wrong grounds tag from Lean is refused",
+      "test": "tests/test_rights_licence_relay.py::test_the_genuine_grounds_name_request_items",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[collision licence dropped-elaboration]",
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[collision grounds name another line-elaboration and scope]"
+      ]
+    },
+    {
+      "id": "P1",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "_bind_line_narrowings accepts any collision licence (`bound = True`)",
+      "behaviour": "a corrupted licence is refused (a licence names grounds of its own kind)",
+      "test": "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[effect relicensed as a collision-elaboration and scope]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[effect relicensed as a collision]"
+      ]
+    },
+    {
+      "id": "P2",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "_bind_elaboration no longer compares the rule-named mechanisms with Lean's rule_narrowings rows",
+      "behaviour": "a missing or extra rule-named mechanism is refused",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[a rule-named mechanism dropped]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[a rule's mechanisms dropped from its row-elaboration]"
+      ]
+    },
+    {
+      "id": "P3",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "every check of the scope flag dropped (against the limitations Lean lists, the limitation mechanism and the node's limitation pack, which now counts the listed limitations)",
+      "behaviour": "a corrupted scope flag is refused",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[scope flag flipped]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[scope flag flipped-elaboration and scope]"
+      ]
+    },
+    {
+      "id": "P4",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "_bind_line_narrowings no longer requires target == <rule>:<mechanism>",
+      "behaviour": "a corrupted target is refused",
+      "test": "tests/test_soft_decision_keys.py::test_rights_elaboration_premise_identities_are_bound[undeclared narrowing target]"
+    },
+    {
+      "id": "P5",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "the slot order check reduced to uniqueness",
+      "behaviour": "a reordered mechanism list is refused",
+      "test": "tests/test_soft_decision_keys.py::test_f20_mechanisms_are_exactly_the_request_implied_slots[mechanisms out of Lean order]"
+    },
+    {
+      "id": "P6",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "the order check of the limitations in scope removed (`names != [name for name in limits if name in names]` -> False)",
+      "behaviour": "limitations in scope out of the request's order are refused",
+      "review": "rights-licence-relay review F1",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[limitations in scope out of the request's order]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[limitations in scope out of the request's order-elaboration and scope]",
+        "tests/test_rights_licence_relay.py::test_review_f1_every_narrowing_binder_check_is_needed_by_a_forgery"
+      ]
+    },
+    {
+      "id": "P7",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "a rule-named slot may name the line's own rule (` or name == own` removed)",
+      "behaviour": "a line excepted, blocked or dominated by itself is refused",
+      "review": "rights-licence-relay review F1",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[a strict line excepted by itself]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[a strict line excepted by itself-elaboration and scope]",
+        "tests/test_soft_decision_keys.py::test_f20_mechanisms_are_exactly_the_request_implied_slots[line excepted by itself]",
+        "tests/test_rights_licence_relay.py::test_review_f1_every_narrowing_binder_check_is_needed_by_a_forgery"
+      ]
+    },
+    {
+      "id": "P8",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "`blockedBy`/`dominatedBy` (and the default exception) allowed on a strict line",
+      "behaviour": "a strict line shown with blockedBy or dominatedBy is refused",
+      "review": "rights-licence-relay review F1",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[a strict line shown with blockedBy]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[a strict line shown with blockedBy-elaboration and scope]",
+        "tests/test_rights_licence_relay.py::test_review_f1_every_narrowing_binder_check_is_needed_by_a_forgery"
+      ]
+    },
+    {
+      "id": "P9",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "grounds no longer required null on the limitation and the bar (`licence == kind and grounds is None` -> `licence == kind`)",
+      "behaviour": "grounds on the limitation or the bar are refused",
+      "review": "rights-licence-relay review F1",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[grounds on the limitation]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[grounds on the limitation-elaboration and scope]",
+        "tests/test_rights_licence_relay.py::test_review_f1_every_narrowing_binder_check_is_needed_by_a_forgery"
+      ]
+    },
+    {
+      "id": "P10",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "a collision's grounds need not name a right line (` and name in line_rules` removed)",
+      "behaviour": "an outside norm shown as a collision is refused",
+      "review": "rights-licence-relay review F1",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[the outside norm rule-4 shown blocking as a collision]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[the outside norm rule-4 shown blocking as a collision-elaboration and scope]",
+        "tests/test_rights_licence_relay.py::test_review_f1_every_narrowing_binder_check_is_needed_by_a_forgery"
+      ]
+    },
+    {
+      "id": "P11",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "the collision's kind guard removed (`bound = kind in ('blockedBy', 'dominatedBy') and grounds` -> `bound = grounds`)",
+      "behaviour": "a collision licensing a mechanism other than blockedBy/dominatedBy is refused",
+      "review": "rights-licence-relay review F1",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[a collision licensing an exception]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[a collision licensing an exception-elaboration and scope]",
+        "tests/test_rights_licence_relay.py::test_review_f1_every_narrowing_binder_check_is_needed_by_a_forgery"
+      ]
+    },
+    {
+      "id": "P12",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "the every-carve-out-listed check removed",
+      "behaviour": "a carve-out missing from a line is refused",
+      "review": "rights-licence-relay review F1",
+      "test": "tests/test_rights_licence_relay.py::test_the_elaboration_binder_alone_refuses_it[a carve-out dropped]",
+      "also": [
+        "tests/test_rights_licence_relay.py::test_a_corrupted_lean_answer_is_still_refused[a carve-out dropped-elaboration and scope]",
+        "tests/test_rights_licence_relay.py::test_review_f1_every_narrowing_binder_check_is_needed_by_a_forgery"
+      ]
+    }
+  ]
+}

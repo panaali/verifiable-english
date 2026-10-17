@@ -1,7 +1,7 @@
 """The RD-8 report states the saved evidence (docs/readings-defaults/rd8/evidence.json) and nothing else.
 
 Every number and list of the report is rebuilt here from the evidence file, which was written at the commit the
-gate ran on. No test reads live git state, so the checks hold after syncs with main and after the merge.
+gate ran on. The chain check reads pinned Git objects, never moving refs, so it holds after syncs and merges.
 """
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / "docs/readings-defaults/rd8"
 EVIDENCE = json.loads((FOLDER / "evidence.json").read_text())
 REPORT = (FOLDER / "DELTA.md").read_text()
+ABBREV = 8  # the evidence saves every hash cut to this many hex digits
 
 
 def section(title: str) -> str:
@@ -23,9 +24,10 @@ def section(title: str) -> str:
 
 
 def test_the_evidence_is_complete():
-    assert EVIDENCE["batch"] == "RD-8" and re.fullmatch(r"[0-9a-f]{8}", EVIDENCE["base"])
-    assert EVIDENCE["commits"] and all(re.fullmatch(r"[0-9a-f]{8}", c["hash"]) and c["subject"]
-                                       for c in EVIDENCE["commits"])
+    short = re.compile(f"[0-9a-f]{{{ABBREV}}}")
+    assert EVIDENCE["batch"] == "RD-8" and short.fullmatch(EVIDENCE["base"])
+    assert EVIDENCE["commits"] and all(short.fullmatch(c["hash"]) and c["subject"]
+                                       for c in EVIDENCE["commits"] + EVIDENCE["review_fix_commits"])
     assert EVIDENCE["gate"]["head"] == EVIDENCE["commits"][-2]["hash"]
     assert EVIDENCE["gate"]["failed"] == 0
     assert all(m["caught_by"] for m in EVIDENCE["mutants"])
@@ -37,24 +39,22 @@ def test_the_report_names_the_base_and_the_gate_head():
 
 
 def test_review_fix_commit_chain_and_final_gate_target():
-    """The report commit is a self entry because its own hash cannot occur in committed JSON. It is the latest
-    commit of that subject in HEAD's own history: each review round's report commit reuses the subject, and
-    another branch's commits (`--all`) are not this tree's."""
+    """Check pinned historical Git objects, never a moving HEAD or other ref."""
     final = EVIDENCE["final_gate"]
     assert final["target"] == "self" and final["checks"] == ["lake build", "python3 lean/audit.py", "full pytest"]
     assert final["results"] == {check: "PASS" for check in final["checks"]}
-    [report_commit] = subprocess.check_output(
-        ["git", "log", "HEAD", "--format=%H", "-n", "1", "--grep=^docs: RD-8 review fixes and final gate evidence$"],
-        cwd=ROOT, text=True).splitlines()
-    rows = subprocess.check_output(
+    saved = EVIDENCE["commits"] + EVIDENCE["review_fix_commits"]
+    assert len({entry["hash"] for entry in saved}) == len(saved)
+    assert EVIDENCE["gate"]["head"] == EVIDENCE["commits"][-2]["hash"]
+    report_commit = EVIDENCE["report_commit"]
+    assert re.fullmatch(r"[0-9a-f]{40}", report_commit)
+    # Full hashes cut to the evidence's fixed length: git's own %h length grows with the repository.
+    lines = subprocess.check_output(
         ["git", "log", "--reverse", "--format=%H%x09%s", f"{EVIDENCE['base']}..{report_commit}"],
         cwd=ROOT, text=True).splitlines()
-    saved = EVIDENCE["commits"] + EVIDENCE["review_fix_commits"]
-    assert len(rows) == len(saved) + 1
-    for row, entry in zip(rows[:-1], saved, strict=True):
-        full_hash, subject = row.split("\t", 1)
-        assert full_hash.startswith(entry["hash"]) and subject == entry["subject"]
-    assert rows[-1].endswith("\tdocs: RD-8 review fixes and final gate evidence")
+    assert lines[-1] == report_commit + "\tdocs: RD-8 review fixes and final gate evidence"
+    rows = [f"{sha[:ABBREV]}\t{subject}" for sha, subject in (line.split("\t", 1) for line in lines)]
+    assert rows[:-1] == [f"{entry['hash']}\t{entry['subject']}" for entry in saved]
 
 
 def test_the_theorem_table_is_the_saved_list():

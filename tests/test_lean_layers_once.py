@@ -139,6 +139,7 @@ def wide_rights_environment(count):
     return raw
 
 
+@pytest.mark.live_service
 def test_a_rights_request_over_a_wide_environment_is_cheap(lean):
     from ve.backends.relay import decide
     from ve.rights_route import _wire
