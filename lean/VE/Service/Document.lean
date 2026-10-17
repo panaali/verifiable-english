@@ -1026,6 +1026,9 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
   unless u.getObjValD "surface" == .str "english" || u.getObjValD "surface" == .str "strict" do
     throw "fenced content needs english or strict surface"
   if u.getObjValD "surface" == .str "strict" then
+    -- Python's `parse` reads a statement layer's environment (here a soft route's `E″`) with its own reader
+    -- (`_lean_parse_scope`), so such a fence keeps the retained path.
+    if E.generated then throw (unavailable "a strict fence over a statement layer is read by its retained reader")
     let source := ((fences.lookup id).getD "").trim
     let parsed ← (VE.Service.Standalone.parseCase (Json.mkObj
       [("id", .str id), ("environment", E.checked.decodable), ("source", .str source)])).mapError
