@@ -685,8 +685,15 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   | .ok E => pure E
   | .error m => throw (if m.startsWith "CheckerUnavailable" then m else (vocabularyFault environment).getD m)
 
-/-- `formula_from_data` over the document's environment: the `check` mode's typed decoder, its rejection named as
-Python names it (`formulaFault`: its AST decoder, then its type checker). -/
+/-- The `check` mode's typed decoder of one formula (`Standalone.decodeTyped`: `Route.Typed.check` on the first-order
+family, the only one this mode reads), over the route vocabulary the environment decoded once (`E.rv`, the same
+`Route.Typed.routeVocabulary` of its envelope, which `Typed.check` decodes again for every formula). -/
+def typedFormula (E : Env) (ast : Json) : Except String VE.Formula := do
+  VE.Route.AstLimit.check [ast]
+  VE.Route.Wire.decodeClosed E.rv.environment ast (E.checked.envelope.profiles.contains "data@0")
+
+/-- `formula_from_data` over the document's environment: the `check` mode's typed decoder (`typedFormula`), its
+rejection named as Python names it (`formulaFault`: its AST decoder, then its type checker). -/
 def formulaCheck (E : Env) (ast : Json) : Except String Unit :=
   if E.legacy.isSome then
     -- A frozen envelope's frozen typing (`Standalone.legacyTyped`, the `check` mode's); a refusal keeps the retained
@@ -694,8 +701,8 @@ def formulaCheck (E : Env) (ast : Json) : Except String Unit :=
     match Standalone.legacyTyped E.json ast true with
     | .ok _ => .ok ()
     | .error message => .error (unavailable s!"a formula a frozen envelope refuses keeps its loader's diagnostic: {message}")
-  else match Standalone.decodeTyped E.checked ast true with
-  | .ok () => (VE.Reports.Preflight.decoderFault ast).elim (.ok ()) .error
+  else match typedFormula E ast with
+  | .ok _ => (VE.Reports.Preflight.decoderFault ast).elim (.ok ()) .error
   | .error message => .error ((formulaFault E.checked.envelope.profiles E.checked.envelope.vocabulary ast).getD message)
 
 /-- `meaning_id` under the environment's identity version: a frozen envelope's (`Standalone.legacyMeaningId`) or its
@@ -1233,7 +1240,7 @@ def sensesContentOf (N : SensesLayer) (fences : List (String × String)) (u : Js
 
 /-- `load_document`'s checks of one unit at byte `cursor`, in Python's order. -/
 def sourceUnit (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (N : Option SensesLayer) (source : String)
-    (fences : List (String × String))
+    (bytes : ByteArray) (fences : List (String × String))
     (lexicon : Option Json) (openNames : List String)
     (cursor : Nat) (seen parents : List String) (parent : Option String) (u : Json) : Except String SourceUnit := do
   let keys ← (fields u).mapError (fun _ => "invalid unit schema")
@@ -1249,7 +1256,7 @@ def sourceUnit (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (N : Opti
     (fun _ => "unit spans must partition every source byte in order")
   unless a == cursor && cursor < b && b ≤ source.utf8ByteSize do
     throw "unit spans must partition every source byte in order"
-  if Loader.cutsCharacter source a b then throw "unit span cuts a UTF-8 character"
+  if Loader.cutsBytes bytes a b then throw "unit span cuts a UTF-8 character"
   let kind := u.getObjValD "kind"
   let decoded ← decodeRowKind E.rights kind
   let meaning := u.getObjValD "meaning"
@@ -1285,27 +1292,32 @@ def sourceUnit (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (N : Opti
          status := Loader.w2Status compiled.isSome meaningStatus }
 
 /-- `_parts` interleaved with the unit loop, as Python's generator runs: a `MIXED` part is checked against its
-parent's cursor, then compiled, before the next part is read; the parent's end is checked after its last part. -/
+parent's cursor, then compiled, before the next part is read; the parent's end is checked after its last part. The
+source's bytes and the ids seen so far are built once, not per unit. -/
 def unitsOf (E : Env) (R : Option RightsDoc) (S : Option SoftLayer) (N : Option SensesLayer) (source : String)
     (fences : List (String × String))
     (lexicon : Option Json) (openNames : List String)
     (raw : List Json) : Except String (List SourceUnit) := do
   let parents ← Loader.mixedParents raw
+  let bytes := source.toUTF8
   let mut units : Array SourceUnit := #[]
+  let mut seen : List String := []
   let mut cursor := 0
   for u in raw do
     match ← Loader.mixedOf u with
     | none =>
-      let unit ← sourceUnit E R S N source fences lexicon openNames cursor (units.toList.map (·.id)) parents none u
+      let unit ← sourceUnit E R S N source bytes fences lexicon openNames cursor seen parents none u
       units := units.push unit
+      seen := unit.id :: seen
       cursor := unit.span.2
     | some ((a, b), parts) =>
       let parent := (u.getObjValD "id").getStr?.toOption
       let mut inner := a
       for p in parts do
         Loader.partOk inner p
-        let unit ← sourceUnit E R S N source fences lexicon openNames cursor (units.toList.map (·.id)) parents parent p
+        let unit ← sourceUnit E R S N source bytes fences lexicon openNames cursor seen parents parent p
         units := units.push unit
+        seen := unit.id :: seen
         cursor := unit.span.2
         inner := unit.span.2
       unless inner == b do throw Loader.partitionText

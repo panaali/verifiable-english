@@ -1,6 +1,7 @@
 """Batch 16f: a document with `senses` is decided by Lean's `document` mode, which composes the senses route.
 
-The seven senses documents of the 16c residue ledger (`tests/data/b16f-senses/`, copied from
+The seven senses documents of the 16c residue ledger (`tests/data/b16f-senses/*.senses.md`, named so that the
+wrapper's seed corpus, which reads every `*.ve.md`, does not take them; copied from
 `pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/` with the pack
 beside them) are over a frozen `ve.core@0` envelope. Python reads the pack files beside a document and sends their
 texts (`packs`); Lean reads the English fences with the senses route (`Service.Document.sensesLayer`) and every unit
@@ -31,7 +32,7 @@ MODERN = {"language": "ve.core@0.2", "profiles": ["relational-fol@0"], "spec_rev
 
 
 def _parts(name: str) -> tuple[dict, str]:
-    text = (DATA / f"{name}.ve.md").read_text()
+    text = (DATA / f"{name}.senses.md").read_text()
     end = text.index("\n---\n", 4)
     return json.loads(text[4:end]), text[end + 5:]
 
@@ -241,7 +242,7 @@ def test_a_pilot_is_written_with_the_files_it_names_beside_it(tmp_path):
     from tools.lean_first_diff import write_pilot
     repo = tmp_path / "repo"
     (repo / "usecases" / "p").mkdir(parents=True)
-    document = (DATA / "a_front_matter_default.ve.md").read_bytes()
+    document = (DATA / "a_front_matter_default.senses.md").read_bytes()
     (repo / "usecases" / "p" / "a.ve.md").write_bytes(document)
     (repo / "usecases" / "p" / "pack.json").write_bytes((DATA / "pack.json").read_bytes())
     (repo / "usecases" / "p" / "other.json").write_text("{}")

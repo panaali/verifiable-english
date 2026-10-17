@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 35400,
+    "total_lines": 35412,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1082,12 +1082,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 1829,
-        "sha256": "ee13bc275870d0b603eef16b8bddf8ae2423c31680eaff1a2c8ddc0f5bb6228a",
+        "lines": 1841,
+        "sha256": "3b798020979c98fe8198067a2f12adf8676795e2aaee0605e12da390dae00de8",
         "ranges": [
           [
             1,
-            1829
+            1841
           ]
         ],
         "declarations": [
@@ -1128,7 +1128,8 @@
           "sensesLayer",
           "sensesContentOf",
           "partsPrefix",
-          "yieldedParts"
+          "yieldedParts",
+          "typedFormula"
         ],
         "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; full file pinned conservatively"
       },

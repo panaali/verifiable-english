@@ -237,9 +237,13 @@ def spanOf (j : Json) : Except String (Nat × Nat) := do
   | [a, b] => pure (← a.getNat?, ← b.getNat?)
   | _ => throw "unit spans must partition every source byte in order"
 
-/-- The byte range `[a, b)` of the source is whole UTF-8 characters. -/
+/-- The byte range `[a, b)` of the source's bytes is not whole UTF-8 characters. -/
+def cutsBytes (bytes : ByteArray) (a b : Nat) : Bool :=
+  (String.fromUTF8? (bytes.extract a b)).isNone
+
+/-- The byte range `[a, b)` of the source is not whole UTF-8 characters. -/
 def cutsCharacter (source : String) (a b : Nat) : Bool :=
-  (String.fromUTF8? (source.toUTF8.extract a b)).isNone
+  cutsBytes source.toUTF8 a b
 
 /-- `load_document`'s unit checks, in order, for one unit at byte `cursor`. -/
 def compileUnit (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
