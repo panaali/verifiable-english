@@ -1,0 +1,282 @@
+{
+ "mutants": [
+  {
+   "id": "H1",
+   "file": "tests/test_heavy_tests.py",
+   "claim": "a new test that runs `git log` in a file that is not listed fails the lint",
+   "source_sha256": "c91d8204b96e79d66811c9fffd98e56fa8c7d737b912d857b7e41ac9f44dbc07",
+   "tests": [
+    "tests/test_history_tests.py::test_the_tree_passes"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_history_tests.py::test_the_tree_passes"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.5,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________________________ test_the_tree_passes _____________________________\n\n    def test_the_tree_passes():\n        \"\"\"The lint on this checkout: every unit that starts git or reads .git is listed, as generated.\"\"\"\n        findings = history_tests.lint()\n>       assert findings.errors == []\nE       AssertionError: assert ['missing: te...pendent.json'] == []\nE         \nE         Left contains 2 more items, first extra item: 'missing: tests/test_heavy_tests.py reads history and is not listed (starts git (git log) in tests/test_heavy_tests.py)'\nE         Use -v to get more diff\n\ntests/test_history_tests.py:71: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_history_tests.py::test_the_tree_passes - AssertionError: as...\n1 failed in 6.44s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-tk1ybfse)\n"
+  },
+  {
+   "id": "H2",
+   "file": "tests/history-dependent.json",
+   "claim": "deleting one entry (tests/test_ar8_evidence.py) fails the lint",
+   "source_sha256": "ba5c2a709515922769436cb6060f8adfc3a148796114bacdd27bceba7a12ec43",
+   "tests": [
+    "tests/test_history_tests.py::test_the_tree_passes",
+    "tests/test_history_tests.py::test_deleting_any_entry_of_the_committed_list_fails"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_history_tests.py::test_deleting_any_entry_of_the_committed_list_fails",
+    "tests/test_history_tests.py::test_the_tree_passes"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 29.6,
+   "output_tail": "any_entry_of_the_committed_list_fails ______________\n\n    def test_deleting_any_entry_of_the_committed_list_fails():\n        listed = json.loads((ROOT / history_tests.LIST).read_text())\n        expected = history_tests.generate(json.loads((ROOT / history_tests.MAP_EXTRACT).read_text()))\n>       assert listed == expected and listed[\"tests\"]\nE       AssertionError: assert ({'format': 'v...show']}, ...]} == {'format': 'v...show']}, ...]}\nE         \nE         Omitting 2 identical items, use -vv to show\nE         Differing items:\nE         {'tests': [{'test': 'tests/test_agent_policy_unspecified.py', 'why': 'starts git (git show) in conformance/frozen_norm...m_defaults.py', 'recorded': ['coverage map'], 'via': ['conformance/frozen_norm_defaults.py:<module>: git show']}, ...]} != {'tests': [{'test': 'tests/test_agent_policy_unspecified.py', 'why': 'starts git (git show) in conformance/frozen_norm...m_defaults.py', 'recorded': ['coverage map'], 'via': ['conformance/frozen_norm_defaults.py:<module>: git show']}, ...]}\nE         Use -v to get more diff)\n\ntests/test_history_tests.py:94: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_history_tests.py::test_the_tree_passes - AssertionError: as...\nFAILED tests/test_history_tests.py::test_deleting_any_entry_of_the_committed_list_fails\n2 failed in 13.51s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-227witmm)\n"
+  },
+  {
+   "id": "H3",
+   "file": "tools/history_tests.py",
+   "claim": "a listed unit that no longer reads history is reported stale, not failed",
+   "source_sha256": "cc1e776223986b62236169b0096ea48f1446752ec53813637192b113a3418b53",
+   "tests": [
+    "tests/test_history_tests.py::test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_history_tests.py::test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.1,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_ test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing _\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-21004/test_an_entry_whose_unit_no_lo0')\n\n    def test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing(tmp_path):\n        root = _root(tmp_path, {\"tests/test_plain.py\": HERMETIC, \"tests/test_old.py\": GIT_LOG})\n        assert [row[\"test\"] for row in json.loads((root / history_tests.LIST).read_text())[\"tests\"]] == \\\n            [\"tests/test_old.py\"]\n        (root / \"tests/test_old.py\").write_text(textwrap.dedent(HERMETIC))\n        findings = history_tests.lint(root)\n>       assert findings.errors == []\nE       AssertionError: assert ['stale: test...eads history'] == []\nE         \nE         Left contains one more item: 'stale: tests/test_old.py is listed but no longer reads history'\nE         Use -v to get more diff\n\ntests/test_history_tests.py:116: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_history_tests.py::test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing\n1 failed in 0.28s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-wg7xk_lh)\n"
+  },
+  {
+   "id": "H4",
+   "file": "tools/history_tests.py",
+   "claim": "a stale entry is reported at all",
+   "source_sha256": "cc1e776223986b62236169b0096ea48f1446752ec53813637192b113a3418b53",
+   "tests": [
+    "tests/test_history_tests.py::test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing",
+    "tests/test_history_tests.py::test_a_unit_found_only_through_the_map_is_stale_once_its_function_stops_starting_git"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_history_tests.py::test_a_unit_found_only_through_the_map_is_stale_once_its_function_stops_starting_git",
+    "tests/test_history_tests.py::test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.2,
+   "output_tail": "\", \"why\": \"starts git (git log) in tools/helper.py\",\n                           \"recorded\": [\"coverage map\"], \"via\": [\"tools/helper.py:log_is_ordered: git log\"]}]\n        assert history_tests.lint(root) == history_tests.Findings([], [])\n        (root / \"tools/helper.py\").write_text(\"def log_is_ordered():\\n    return []\\n\")\n>       assert history_tests.lint(root) == history_tests.Findings(\n            [], [\"stale: tests/test_user.py is listed but no longer reads history\"])\nE       AssertionError: assert Findings(errors=[], stale=[]) == Findings(erro...ads history'])\nE         \nE         Omitting 1 identical items, use -vv to show\nE         Differing attributes:\nE         ['stale']\nE         \nE         Drill down into differing attribute stale:\nE           stale: [] != ['stale: tests/test_user.py is listed but no longer reads history']\nE           Right contains one more item: 'stale: tests/test_user.py is listed but no longer reads history'\nE           Use -v to get more diff\n\ntests/test_history_tests.py:131: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_history_tests.py::test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing\nFAILED tests/test_history_tests.py::test_a_unit_found_only_through_the_map_is_stale_once_its_function_stops_starting_git\n2 failed in 0.26s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-kgthczxe)\n"
+  },
+  {
+   "id": "H5",
+   "file": "tools/history_tests.py",
+   "claim": "a named argument vector (`GIT = (\"git\", ...)`) is a site of the code that uses it",
+   "source_sha256": "cc1e776223986b62236169b0096ea48f1446752ec53813637192b113a3418b53",
+   "tests": [
+    "tests/test_history_tests.py::test_argument_vectors_shell_strings_and_named_vectors_are_sites_of_the_code_that_runs_them",
+    "tests/test_history_tests.py::test_the_tree_passes"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_history_tests.py::test_argument_vectors_shell_strings_and_named_vectors_are_sites_of_the_code_that_runs_them",
+    "tests/test_history_tests.py::test_the_tree_passes"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.8,
+   "output_tail": "START, \"fetch\")}\nE       AssertionError: assert {('anything',...t', 'status')} == {('Repo.head'...status'), ...}\nE         \nE         Extra items in the right set:\nE         ('Repo.head', 'starts git', '')\nE         ('show', 'starts git', 'show')\nE         Use -v to get more diff\n\ntests/test_history_tests.py:191: AssertionError\n_____________________________ test_the_tree_passes _____________________________\n\n    def test_the_tree_passes():\n        \"\"\"The lint on this checkout: every unit that starts git or reads .git is listed, as generated.\"\"\"\n        findings = history_tests.lint()\n>       assert findings.errors == []\nE       assert [\"changed: te...arse']}\", ...] == []\nE         \nE         Left contains 12 more items, first extra item: \"changed: tests/test_batch_evidence.py is listed as {'test': 'tests/test_batch_evidence.py', 'why': 'starts git in tes...rage map', 'source'], 'via': ['tests/test_batch_evidence.py:_git: git', 'tools/batch_evidence.py:changed_since: git']}\"\nE         Use -v to get more diff\n\ntests/test_history_tests.py:71: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_history_tests.py::test_argument_vectors_shell_strings_and_named_vectors_are_sites_of_the_code_that_runs_them\nFAILED tests/test_history_tests.py::test_the_tree_passes - assert [\"changed: ...\n2 failed in 6.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-018o9kcn)\n"
+  },
+  {
+   "id": "H6",
+   "file": "tools/history_tests.py",
+   "claim": "a compared \".git\" name is not a read",
+   "source_sha256": "cc1e776223986b62236169b0096ea48f1446752ec53813637192b113a3418b53",
+   "tests": [
+    "tests/test_history_tests.py::test_a_git_path_is_a_read_but_a_compared_or_listed_name_is_not"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_history_tests.py::test_a_git_path_is_a_read_but_a_compared_or_listed_name_is_not"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.1,
+   "output_tail": "it_path_is_a_read_but_a_compared_or_listed_name_is_not(tmp_path):\n        source = \"\"\"\n            import os\n            from pathlib import Path\n            SKIPPED = (\".git\", \".venv\")\n            GIT_DIR = \".git\"\n    \n            def head(root):\n                return (Path(root) / \".git/HEAD\").read_text()\n    \n            def joined(root):\n                return open(os.path.join(root, \".git\"))\n    \n            def config(root):\n                return root / \".git\" / \"config\"\n    \n            def skipped(name, path):\n                return name == \".git\" or name in {\".git\", \".venv\"} or path.endswith(\"/.git\") or \".git\" in path\n    \n            def attributes(root):\n                return root / \".gitattributes\"\n        \"\"\"\n>       assert _sites(tmp_path, source) == {(\"<module>\", READ, \"\"), (\"head\", READ, \"\"), (\"joined\", READ, \"\"),\n                                            (\"config\", READ, \"\")}\nE       AssertionError: assert {('<module>',...ds .git', '')} == {('<module>',...ds .git', '')}\nE         \nE         Extra items in the left set:\nE         ('skipped', 'reads .git', '')\nE         Use -v to get more diff\n\ntests/test_history_tests.py:240: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_history_tests.py::test_a_git_path_is_a_read_but_a_compared_or_listed_name_is_not\n1 failed in 0.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fafba_dq)\n"
+  },
+  {
+   "id": "H7",
+   "file": "tools/history_tests.py",
+   "claim": "the extract counts a function that starts git only for a unit the map saw start git",
+   "source_sha256": "cc1e776223986b62236169b0096ea48f1446752ec53813637192b113a3418b53",
+   "tests": [
+    "tests/test_history_tests.py::test_the_extract_counts_a_start_only_where_the_map_saw_git_and_a_read_wherever_it_ran"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_history_tests.py::test_the_extract_counts_a_start_only_where_the_map_saw_git_and_a_read_wherever_it_ran"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.3,
+   "output_tail": "saved == {\"format\": history_tests.MAP_FORMAT,\n                         \"map\": {\"commit\": \"c\" * 40, \"version\": 7, \"created\": \"now\", \"tests\": 4},\n                         \"units\": {\"tests/test_a.py\": {\"git\": True, \"sites\": [\"tools/helper.py:log\"]},\n                                   \"tests/test_c.py\": {\"git\": False, \"sites\": [\"tools/helper.py:head\"]},\n                                   \"tests/test_d.py\": {\"git\": True, \"sites\": []}}}\nE       AssertionError: assert {'format': 'v...'sites': []}}} == {'format': 'v...'sites': []}}}\nE         \nE         Omitting 2 identical items, use -vv to show\nE         Differing items:\nE         {'units': {'tests/test_a.py': {'git': True, 'sites': ['tools/helper.py:log']}, 'tests/test_b.py': {'git': False, 'site..., 'tests/test_c.py': {'git': False, 'sites': ['tools/helper.py:head']}, 'tests/test_d.py': {'git': True, 'sites': []}}} != {'units': {'tests/test_a.py': {'git': True, 'sites': ['tools/helper.py:log']}, 'tests/test_c.py': {'git': False, 'sites': ['tools/helper.py:head']}, 'tests/test_d.py': {'git': True, 'sites': []}}}\nE         Use -v to get more diff\n\ntests/test_history_tests.py:264: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_history_tests.py::test_the_extract_counts_a_start_only_where_the_map_saw_git_and_a_read_wherever_it_ran\n1 failed in 0.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3xw7o66k)\n"
+  },
+  {
+   "id": "H8",
+   "file": "tools/gate.py",
+   "claim": "--rerun-failed refuses a previous gate of another commit with the same tree",
+   "source_sha256": "dad720b42ccbd4a633b57171d59087419d69d2a07a55a35b4fee72ff4d49602b",
+   "tests": [
+    "tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.5,
+   "output_tail": "  (tests/history-dependent.json) can change with the commit alone, the tree the same (R13: the same commit).\"\"\"\n        fake.run()\n        change(fake)\n        fake.failing = set()\n        code, record = fake.run(\"--rerun-failed\")\n>       assert record[\"tree_sha\"] == \"tree-1\" and refusal in record[\"rerun_failed\"][\"refused\"], record[\"rerun_failed\"]\n                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       KeyError: 'refused'\n\ntests/test_gate_rerun.py:200: KeyError\n----------------------------- Captured stdout call -----------------------------\n[gate] failed: /tmp/pytest-of-seyran/pytest-21017/test_the_same_tree_on_another_0/record.json; 3 passed, 0 skipped, 2 failures\n[gate] rerun-passed: /tmp/pytest-of-seyran/pytest-21017/test_the_same_tree_on_another_0/record.json; 2 passed, 0 skipped, 0 failures\n[gate] the failed tests passed on rerun; this is not a full gate: run the full gate for the final evidence\n----------------------------- Captured stderr call -----------------------------\n[gate] FAILURE: pytest command:  Python suite: exit 1\n[gate] FAILURE: pytest: tests/a.py::test_a AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate[another-commit]\n1 failed, 2 passed in 0.47s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-j73ndi3n)\n"
+  },
+  {
+   "id": "H9",
+   "file": "tools/gate.py",
+   "claim": "--rerun-failed refuses a previous gate of another runner",
+   "source_sha256": "dad720b42ccbd4a633b57171d59087419d69d2a07a55a35b4fee72ff4d49602b",
+   "tests": [
+    "tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.6,
+   "output_tail": "\"\n        fake.run()\n        change(fake)\n        fake.failing = set()\n        code, record = fake.run(\"--rerun-failed\")\n>       assert record[\"tree_sha\"] == \"tree-1\" and refusal in record[\"rerun_failed\"][\"refused\"], record[\"rerun_failed\"]\n                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       KeyError: 'refused'\n\ntests/test_gate_rerun.py:200: KeyError\n----------------------------- Captured stdout call -----------------------------\n[gate] failed: /tmp/pytest-of-seyran/pytest-21019/test_the_same_tree_on_another_2/record.json; 3 passed, 0 skipped, 2 failures\n[gate] rerun-passed: /tmp/pytest-of-seyran/pytest-21019/test_the_same_tree_on_another_2/record.json; 2 passed, 0 skipped, 0 failures\n[gate] the failed tests passed on rerun; this is not a full gate: run the full gate for the final evidence\n----------------------------- Captured stderr call -----------------------------\n[gate] FAILURE: pytest command:  Python suite: exit 1\n[gate] FAILURE: pytest: tests/a.py::test_a AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate[another-runner]\nFAILED tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate[no-runner]\n2 failed, 1 passed in 0.43s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ztsc4oia)\n"
+  },
+  {
+   "id": "H10",
+   "file": "tools/gate.py",
+   "claim": "the gate records the git version among its toolchains",
+   "source_sha256": "dad720b42ccbd4a633b57171d59087419d69d2a07a55a35b4fee72ff4d49602b",
+   "tests": [
+    "tests/test_gate_integrity.py::test_poisoned_toolchain_variables_do_not_reach_real_tools"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_gate_integrity.py::test_poisoned_toolchain_variables_do_not_reach_real_tools"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.9,
+   "output_tail": "y-dependent tests read the repository with is a recorded toolchain too.\n>       assert result[\"toolchains\"][\"git\"].startswith(\"git version \")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       KeyError: 'git'\n\ntests/test_gate_integrity.py:194: KeyError\n----------------------------- Captured stdout call -----------------------------\n[gate] uv version: /tmp/pytest-of-seyran/pytest-21023/test_poisoned_toolchain_variab0/scratch/bin/uv --version\nuv 0.12.19 (x86_64-unknown-linux-gnu)\n[gate] lake version: /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lake --version\nLake version 5.0.0-src+797c613 (Lean version 4.24.0)\n[gate] lean version: /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean --version\nLean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)\n[gate] rustc version: /home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/rustc --version\nrustc 1.98.1 (48a229cea 2026-09-01)\n[gate] cargo version: /home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/cargo --version\ncargo 1.98.1 (797e8a9bc 2026-08-05)\n[gate] git version: /usr/bin/git --version\ngit version 2.43.0\n=========================== short test summary info ============================\nFAILED tests/test_gate_integrity.py::test_poisoned_toolchain_variables_do_not_reach_real_tools\n1 failed in 0.66s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-34f0hvjd)\n"
+  },
+  {
+   "id": "H11",
+   "file": "tools/gate.py",
+   "claim": "the gate record names its runner",
+   "source_sha256": "dad720b42ccbd4a633b57171d59087419d69d2a07a55a35b4fee72ff4d49602b",
+   "tests": [
+    "tests/test_gate_rerun.py::test_a_full_gate_records_its_tree_and_mode"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_gate_rerun.py::test_a_full_gate_records_its_tree_and_mode"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.3,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________ test_a_full_gate_records_its_tree_and_mode __________________\n\nfake = <test_gate_rerun.FakeGate object at 0x75ada25ea7b0>\n\n    def test_a_full_gate_records_its_tree_and_mode(fake):\n        fake.failing = set()\n        code, record = fake.run()\n        assert (code, record[\"status\"], record[\"mode\"], record[\"tree_sha\"]) == (0, \"passed\", \"full\", \"tree-1\")\n>       assert record[\"runner\"] == gate.runner_identity() == {\n            \"system\": platform.system(), \"machine\": platform.machine(), \"node\": platform.node()}\nE       AssertionError: assert {} == {'system': 'L...ti-agent-lab'}\nE         \nE         Right contains 3 more items:\nE         {'machine': 'x86_64', 'node': 'multi-agent-lab', 'system': 'Linux'}\nE         Use -v to get more diff\n\ntests/test_gate_rerun.py:209: AssertionError\n----------------------------- Captured stdout call -----------------------------\n[gate] passed: /tmp/pytest-of-seyran/pytest-21025/test_a_full_gate_records_its_t0/record.json; 4 passed, 0 skipped, 0 failures\n=========================== short test summary info ============================\nFAILED tests/test_gate_rerun.py::test_a_full_gate_records_its_tree_and_mode\n1 failed in 0.34s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-h0d0m9br)\n"
+  },
+  {
+   "id": "H12",
+   "file": "tools/run_cache.py",
+   "claim": "an entry of a run that read history binds its commit, runner and git",
+   "source_sha256": "e22ed63cf302bb673de26de8dca151cbd43e96eb5bf4f23116ecda09da22d72f",
+   "tests": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 34.1,
+   "output_tail": "ionError\n=========================== short test summary info ============================\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-commit-same-files-starts-git]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-commit-same-files-starts-git-through-a-shell]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-commit-same-files-opens-a-git-path]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-runner-starts-git]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-runner-starts-git-through-a-shell]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-runner-opens-a-git-path]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-git-starts-git]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-git-starts-git-through-a-shell]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-git-opens-a-git-path]\n9 failed in 11.13s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-w_0sasu1)\n"
+  },
+  {
+   "id": "H13",
+   "file": "tools/run_cache.py",
+   "claim": "a bound entry is used only while its commit, runner and git are unchanged",
+   "source_sha256": "e22ed63cf302bb673de26de8dca151cbd43e96eb5bf4f23116ecda09da22d72f",
+   "tests": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 34.7,
+   "output_tail": "ionError\n=========================== short test summary info ============================\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-commit-same-files-starts-git]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-commit-same-files-starts-git-through-a-shell]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-commit-same-files-opens-a-git-path]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-runner-starts-git]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-runner-starts-git-through-a-shell]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-runner-opens-a-git-path]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-git-starts-git]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-git-starts-git-through-a-shell]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-git-opens-a-git-path]\n9 failed in 11.49s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-gcmp93i3)\n"
+  },
+  {
+   "id": "H14",
+   "file": "tools/run_cache.py",
+   "claim": "an entry stored before the binding (format 1) is not used",
+   "source_sha256": "e22ed63cf302bb673de26de8dca151cbd43e96eb5bf4f23116ecda09da22d72f",
+   "tests": [
+    "tests/test_run_cache.py::test_an_entry_of_the_format_before_history_binding_is_not_used"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_run_cache.py::test_an_entry_of_the_format_before_history_binding_is_not_used"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.7,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________ test_an_entry_of_the_format_before_history_binding_is_not_used ________\n\nrepository = <test_run_cache.Repository object at 0x7a0a49b9e7b0>\n\n    def test_an_entry_of_the_format_before_history_binding_is_not_used(repository):\n        _commit(repository.root)\n        repository.call()\n        [path] = Path(os.environ[\"VE_RUN_CACHE\"]).glob(\"*.json.gz\")\n        entry = _entry()\n        with gzip.open(path, \"wt\") as handle:\n            json.dump({**entry, \"format\": \"ve-run-cache@1\"}, handle)\n>       assert repository.call()[0] == \"miss\" and repository.runs == 2\nE       AssertionError: assert ('hit' == 'miss'\nE         \nE         - miss\nE         + hit)\n\ntests/test_run_cache.py:264: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_run_cache.py::test_an_entry_of_the_format_before_history_binding_is_not_used\n1 failed in 1.45s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s4jpoou6)\n"
+  },
+  {
+   "id": "H15",
+   "file": "tests/read_recorder.py",
+   "claim": "the read recorder sees git started through a shell",
+   "source_sha256": "20968eff49bb0d80e5ff3d286c37267a7c705c03f3e92882d5095caceb7fcf41",
+   "tests": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 39.2,
+   "output_tail": "mic\"].items() if name.startswith(\"history:\")}\n>       assert history == {\"history:commit\": head, \"history:runner\": json.dumps(gate.runner_identity(), sort_keys=True),\n                           \"history:git\": subprocess.run([\"git\", \"--version\"], capture_output=True, text=True,\n                                                         check=True, timeout=HANG_TIMEOUT).stdout.strip()}\nE       assert {} == {'history:com...rsion 2.43.0'}\nE         \nE         Right contains 3 more items:\nE         {'history:commit': '0842165aaa09bd9f48ec4f60edd9a7941185f75d',\nE          'history:git': 'git version 2.43.0',\nE          'history:runner': '{\"machine\": \"x86_64\", \"node\": \"multi-agent-lab\", \"system\": '\nE                            '\"Linux\"}'}\nE         Use -v to get more diff\n\ntests/test_run_cache.py:235: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-commit-same-files-starts-git-through-a-shell]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-runner-starts-git-through-a-shell]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-git-starts-git-through-a-shell]\n3 failed, 6 passed in 16.64s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-297z4z8q)\n"
+  },
+  {
+   "id": "H16",
+   "file": "tests/read_recorder.py",
+   "claim": "the read recorder sees a `.git` path opened",
+   "source_sha256": "20968eff49bb0d80e5ff3d286c37267a7c705c03f3e92882d5095caceb7fcf41",
+   "tests": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 39.5,
+   "output_tail": " name, value in _entry()[\"dynamic\"].items() if name.startswith(\"history:\")}\n>       assert history == {\"history:commit\": head, \"history:runner\": json.dumps(gate.runner_identity(), sort_keys=True),\n                           \"history:git\": subprocess.run([\"git\", \"--version\"], capture_output=True, text=True,\n                                                         check=True, timeout=HANG_TIMEOUT).stdout.strip()}\nE       assert {} == {'history:com...rsion 2.43.0'}\nE         \nE         Right contains 3 more items:\nE         {'history:commit': 'e7dc41c9f515b246586bfdcecd64d04aca9f6c25',\nE          'history:git': 'git version 2.43.0',\nE          'history:runner': '{\"machine\": \"x86_64\", \"node\": \"multi-agent-lab\", \"system\": '\nE                            '\"Linux\"}'}\nE         Use -v to get more diff\n\ntests/test_run_cache.py:235: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-commit-same-files-opens-a-git-path]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-runner-opens-a-git-path]\nFAILED tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git[another-git-opens-a-git-path]\n3 failed, 6 passed in 16.49s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s9lclfcc)\n"
+  }
+ ]
+}
