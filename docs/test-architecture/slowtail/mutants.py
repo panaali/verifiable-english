@@ -11,6 +11,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
+from tests.subprocesses import HANG_TIMEOUT  # noqa: E402
+from tools import nested_pytest  # noqa: E402
 MUTANTS = [
  ("M1", "tools/test_schedule.py", "the scheduler drops an unmeasured test",
   "return [*order[:heads], *unknown, *(index for index in rest if index not in chosen)], len(unknown)",
@@ -75,9 +78,9 @@ for name, file, what, old, new, tests in MUTANTS:
     assert text.count(old) == 1, (name, old)
     path.write_text(text.replace(old, new))
     try:
-        run = subprocess.run(["uv", "run", "--frozen", "pytest", "-q", "-p", "no:cacheprovider", *tests],
-                             cwd=ROOT, env={**os.environ, "VE_NATIVE_PREBUILT": "1"},
-                             capture_output=True, text=True, timeout=1800)
+        run = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *tests]), cwd=ROOT,
+                             env=nested_pytest.environment(os.environ, VE_NATIVE_PREBUILT="1"),
+                             capture_output=True, text=True, timeout=HANG_TIMEOUT)
     finally:
         path.write_text(text)
     summary = [line for line in run.stdout.splitlines() if " passed" in line or " failed" in line or "error" in line][-1:]
