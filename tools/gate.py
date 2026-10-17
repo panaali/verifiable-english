@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import platform
 import pwd
 import re
 import shutil
@@ -225,6 +226,12 @@ def check_toolchains(result: dict, env: dict[str, str]) -> None:
         raise RuntimeError(f"rustc version differs from rust-toolchain.toml ({rust_pin})")
     if not result["toolchains"]["cargo"].startswith(f"cargo {rust_pin} "):
         raise RuntimeError(f"Cargo version differs from rust-toolchain.toml ({rust_pin})")
+    # The tests that read history (tests/history-dependent.json) read it through this git.
+    git = shutil.which("git", path=env["PATH"])
+    if git is None:
+        raise RuntimeError("required backend missing: git")
+    result["toolchains"]["paths"]["git"] = git
+    result["toolchains"]["git"] = command([git, "--version"], env=env, stage="git version").splitlines()[0]
 
 
 def uv_workspace_ancestors(root: Path) -> list[Path]:
@@ -397,6 +404,11 @@ def tree_identity(env: dict[str, str]) -> str:
     return command(["git", "--no-optional-locks", "rev-parse", "HEAD^{tree}"], cwd=ROOT, env=env, stage="tree")
 
 
+def runner_identity() -> dict[str, str]:
+    """The machine a gate ran on: a result, and above all one of a test that reads history, holds there."""
+    return {"system": platform.system(), "machine": platform.machine(), "node": platform.node()}
+
+
 def read_previous(path: Path) -> dict | None:
     """The gate record at `path`, read before this gate replaces it, or None."""
     try:
@@ -406,16 +418,22 @@ def read_previous(path: Path) -> dict | None:
     return record if isinstance(record, dict) else None
 
 
-def rerun_refusal(previous: dict | None, tree: str, toolchains: dict) -> str | None:
-    """Why the failed tests of `previous` cannot be rerun alone on this gate, or None. Only a gate of this tree,
-    clean, on these toolchains, whose suite ran and whose every failure is a test that failed or has no result
-    (`RERUNNABLE`) can be: anything else needs the full gate."""
+def rerun_refusal(previous: dict | None, commit: str, tree: str, runner: dict, toolchains: dict) -> str | None:
+    """Why the failed tests of `previous` cannot be rerun alone on this gate, or None. Only a gate of this commit
+    and tree, clean, on this runner and these toolchains, whose suite ran and whose every failure is a test that
+    failed or has no result (`RERUNNABLE`) can be: anything else needs the full gate. The rerun keeps the other
+    tests' results, and a test that reads history (tests/history-dependent.json) can change with the commit
+    alone, so no result is carried to another commit (R13: a rerun of the same commit) or runner."""
     if previous is None:
         return "no previous gate record"
     if previous.get("status") != "failed":
         return f"the previous gate's status is {previous.get('status')!r}, not 'failed'"
     if not tree or previous.get("tree_sha") != tree:
         return f"the previous gate ran on tree {previous.get('tree_sha')!r}, not {tree!r}"
+    if not commit or previous.get("commit_sha") != commit:
+        return f"the previous gate ran on commit {previous.get('commit_sha')!r}, not {commit!r}"
+    if previous.get("runner") != runner:
+        return f"the previous gate ran on runner {previous.get('runner')!r}, not {runner!r}"
     if previous.get("dirty") is not False:
         return "the previous gate did not run on a clean worktree"
     if not isinstance(previous.get("toolchains"), dict) or \
@@ -654,7 +672,7 @@ def main() -> int:
     previous = None if args.rerun_failed is None else read_previous(
         Path(args.rerun_failed).resolve() if args.rerun_failed else output)
     result = {"schema_version": 1, "commit_sha": "", "tree_sha": "", "dirty": False, "mode": "full",
-              "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
+              "runner": runner_identity(), "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
               "failures": [], "status": "failed"}
     rerun = None  # the failed tests' files, when this gate reruns them alone
     contract = None  # the contract's pytest selectors, when this is the platform contract run
@@ -679,7 +697,8 @@ def main() -> int:
             check_toolchains(result, env)
             check_python_project(result, env)
             if args.rerun_failed is not None:
-                refusal = rerun_refusal(previous, result["tree_sha"], result["toolchains"])
+                refusal = rerun_refusal(previous, result["commit_sha"], result["tree_sha"], result["runner"],
+                                        result["toolchains"])
                 if refusal is None:
                     tests = failed_tests(previous)
                     rerun = sorted({nodeid.split("::", 1)[0] for nodeid in tests})
