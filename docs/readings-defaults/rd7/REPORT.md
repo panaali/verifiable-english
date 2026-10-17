@@ -1,6 +1,7 @@
 # RD-7 build report
 
-The comparison base is `f98183bf5ff518c14e0cbdcf2950cdaf7736deeb`, the branch's merge base with main. The code head
+The comparison base is `f98183bf5ff518c14e0cbdcf2950cdaf7736deeb`, the branch's merge base with main until the gate
+fix below merged main's next commit `dccd9cf5a` (runner-portability: tests and runner timing only). The code head
 is `074f96d3fca99843b6c0208bcb9c0aedb8410b25`: the corpus A/B, the route latency and the selected tests ran on it
 (tree `441d892a`), and the pilot latency was measured at `70b3a2bb`. The review fix (next section) changes `ve/` and
 `lean/` again in `cd4f21c4`; the readings, norm-defaults and document corpora were recorded again on it, and its cost
@@ -21,6 +22,18 @@ The fix adds 12 trusted Lean lines (`supOpen`, the need-driven `supScopes`, the 
 under R6 in docs/trust-baseline.json and DELTA row T1: they replace the deleted Python loops that generated evidence
 for every scope. On the fixed code, the readings (1,137), norm-defaults (2,020) and document (3,632) corpora are
 identical to the base recording ([ab-fix.json](evidence/ab-fix.json)).
+
+## Gate fix (chain gate of 50f86877: failed)
+
+The chain's full gate of `50f86877` failed on three things. No product code changed in this round.
+
+| Gate failure | Cause | What changed | Check |
+|---|---|---|---|
+| Collection: 3 stale `Test-removed:` trailers | `22e91f69` recorded removing three tests that the review fix restored (F3); a trailer cannot be withdrawn | Rebuilt `22e91f69..50f86877` with `git commit-tree`. Only `22e91f69`'s message changed: the three trailers became a note. Every tree is unchanged, and the old head is kept as `refs/backup/rd-7/before-trailer-rewrite`. The old-to-new commit map is in [commit-rewrite.json](evidence/commit-rewrite.json). Evidence saved before the rebuild keeps the old hashes, each on the same tree as its new commit | `gate_collection.py --check --prebuilt`: 2 removed by a trailer, 0 refused, 0 stale, 0 malformed |
+| `test_committed_trust_table_covers_every_declaration`: 8 unclassified lines | The review fix's `VE.Readings.Run.supOpen` was missing from the trust table | Classed `supOpen` as G[V] beside `supScopes` in `tools/trust-classes.json`. `trust_map.py --write` changed only the counts in `docs/trust-baseline.json` (G +8, unclassified −8, trusted +0; budget and signed entries unchanged) | that test, `test_trust_growth_is_rd6b_entry_and_listed_for_signature`, `trust_map.py --check` |
+| `test_the_whole_question_is_bounded_by_the_modes_deadline` (Mac runner) | Main fixed this test for the Mac runner in `dccd9cf5a`, after the branch's merge base | Merged `dccd9cf5a`, main's first commit after `f98183bf`. It changes no Lean or readings file, and `regen_generated.py --check` is clean | `test_question_reading.py`, `test_hang_guards.py`, `test_lean_service.py`, `test_lean_handles.py`, `test_lean_document_wrapper.py` on the Mac: 678 passed |
+
+The review's probes F1–F4 pass on the new head.
 
 ## Plan and statement crosswalk
 
@@ -63,7 +76,10 @@ pending statements for the batches it holds. The trust increase is signed under 
 - **Selected tests.** `select_tests.py --base $(git merge-base HEAD main) --run` ran 374 units on tree `441d892a`
   (the code head). The one failure is
   `tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target`. It is listed in
-  main-known-red.txt and pre-existing on main. The branch leaves that file as it is at the merge base.
+  main-known-red.txt and pre-existing on main. The branch leaves that file as it is at the merge base. After the
+  gate fix, the selected run against the new merge base `dccd9cf5a` (374 units, tree `0261d9fa`, Mac runner) had one
+  failure: `test_trust_growth_is_rd6b_entry_and_listed_for_signature`. It passes since the baseline counts were
+  rewritten (`f50680a7`), together with every test that reads the trust baseline (369 passed).
 - **Latency** (20% allowance, all pass).
   - [Route latency](evidence/latency.json) (`tools/readings_batch_latency.py`, 5 pairs × 100 warm calls per case,
     load average 21): Lean CPU per call changed by +11.9%, −2.7% and −3.1%.
@@ -153,4 +169,5 @@ bool-for-int, missing records, the same file given twice and empty input.
 10. **PASS** — `lake build`, `lean/audit.py`, `SupVerdictsExamples.lean`, seeded L1, L2 and L4.
 11. **PASS** — `test_sup_zero_budget_is_unknown`, `test_superposed_verdicts_keep_the_1024_choice_budget` (L6), the selected hang-guard tests.
 12. **PASS** — `test_check_prover_searches_do_not_grow_with_the_choices`, `evidence/f2-cost.json`, `evidence/latency.json`, `evidence/pilot-render-latency.json`, `evidence/pilot-check-latency.json`, `test_superposed_scopes_need_only_the_two_answer_roundtrips`. Whole-UDHR peak memory shows no consistent change (base 21.9, 20.3 and 29.6 GB; head 22.1, 23.1 and 17.8 GB; `evidence/udhr-serial.json`).
-13. **PASS** — the three removed tests that still held are restored (review F3); the two remaining removed IDs assert behaviour RD-7 replaces and have replacement tests (Review fix section).
+13. **PASS** — the three removed tests that still held are restored (review F3); the two remaining removed IDs assert behaviour RD-7 replaces and have replacement tests (Review fix section). Their stale trailers were dropped in a tree-preserving rebuild
+    (Gate fix section): `gate_collection.py --check --prebuilt` reports 0 refused, 0 stale, 0 malformed.
