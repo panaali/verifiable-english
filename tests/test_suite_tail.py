@@ -180,15 +180,19 @@ STAMPED_LOG = """\
 """
 
 
-def test_tail_reads_when_each_worker_reported_its_last_test():
-    """The tail starts when fewer than `busy` workers still have tests: here gw3 ends at 200 s, gw0 at 250 s, gw1 at
-    300 s and gw2 at 600 s, so with 4 workers and busy 4 the tail is 600 - 200, and gw2 ran alone for 300 s."""
+def test_tail_reads_when_each_worker_finished_its_last_test():
+    """The tail starts when fewer than `busy` workers still have tests: here gw3's last report arrives at 200 s, gw0's
+    at 250 s, gw1's at 300 s and gw2's at 600 s, so with 4 workers and busy 4 the tail is 600 - 200, and gw2 ran
+    alone for 300 s. Summed from the --durations table, gw2's tests took 290 s and gw1's 1.75 s."""
     summary = suite_tail.tail_summary(STAMPED_LOG)
     assert summary["wall_seconds"] == 500.0 and summary["workers"] == 4
-    assert summary["worker_finished_seconds"] == {"gw0": 150.0, "gw1": 200.0, "gw2": 500.0, "gw3": 100.0}
-    assert (summary["tail_seconds"], summary["alone_seconds"]) == (400.0, 300.0)
-    assert suite_tail.tail_summary(STAMPED_LOG, busy=2)["tail_seconds"] == 300.0
-    assert suite_tail.tail_summary(STAMPED_LOG, busy=5)["tail_seconds"] is None
+    assert summary["reported"] == {"worker_finished_seconds": {"gw0": 150.0, "gw1": 200.0, "gw2": 500.0, "gw3": 100.0},
+                                   "tail_seconds": 400.0, "alone_seconds": 300.0}
+    assert summary["summed"] == {"worker_finished_seconds": {"gw0": 0.0, "gw1": 1.8, "gw2": 290.0, "gw3": 0.0},
+                                 "tail_seconds": 290.0, "alone_seconds": 288.2, "even_share_seconds": 72.9,
+                                 "untimed_tests": 4}
+    assert suite_tail.tail_summary(STAMPED_LOG, busy=2)["reported"]["tail_seconds"] == 300.0
+    assert suite_tail.tail_summary(STAMPED_LOG, busy=5)["reported"]["tail_seconds"] is None
     with pytest.raises(ValueError):
         suite_tail.tail_summary("[gw0] [ 10%] PASSED tests/test_a.py::test_one\n")
 
