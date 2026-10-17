@@ -1,8 +1,28 @@
 {
   "base": "85b20fcba4b1b0473de9e41888059e7e1be22b3a",
-  "head": "38b93aaa2743ff168fcf4d9f13212dd3ad3979f6",
+  "head": "1d658e6213e23077e119fa1aa13b1b8c4a03b0d9",
   "command": "git log --no-merges $(git merge-base HEAD main)..HEAD",
   "commits": [
+    {
+      "hash": "1d658e6213e23077e119fa1aa13b1b8c4a03b0d9",
+      "subject": "lf-16f fix F3 (part): per-unit costs that grew with the whole document; the soft document built once"
+    },
+    {
+      "hash": "e415011e207600872e7c894939d3f7536c13609e",
+      "subject": "lf-16f fix F2: the document mode composes the senses route; pilots are recorded with the pack beside them"
+    },
+    {
+      "hash": "ed2e5c984e6eb4a77a137541e83506d95a394532",
+      "subject": "lf-16f fix F1: a soft document's parts pre-scan stops at the first fault, as Python's swallowed generator does"
+    },
+    {
+      "hash": "29949afef5624e008e0f6fbccaaf4b9c68285951",
+      "subject": "lf-16f: build report"
+    },
+    {
+      "hash": "9cbbc833c48c54b06a2a812edb2a210a0d735a80",
+      "subject": "lf-16f: saved evidence (measurement, nine-corpus A/B, seeded faults, CPU, relay gate, difffuzz) and DELTA"
+    },
     {
       "hash": "38b93aaa2743ff168fcf4d9f13212dd3ad3979f6",
       "subject": "lf-16f: keep 16b's rejection anchor; bounded index conversion; re-pin Document.lean; R16 allowance re-measured"
