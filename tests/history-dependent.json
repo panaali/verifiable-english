@@ -856,15 +856,19 @@
   },
   {
    "test": "tests/test_run_cache.py",
-   "why": "starts git (git init, git ls-files, git rev-parse) in tests/test_run_cache.py, tools/run_cache.py, tools/source_graph.py; reads .git in tests/test_run_cache.py",
+   "why": "starts git (git commit, git init, git log, git ls-files, git rev-parse) in tests/test_run_cache.py, tools/run_cache.py, tools/source_graph.py; reads .git in tests/test_run_cache.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
     "tests/test_run_cache.py:Repository.__init__: git init",
+    "tests/test_run_cache.py:_commit: git commit, git rev-parse",
+    "tests/test_run_cache.py:_fake_git: git",
+    "tests/test_run_cache.py:test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git: git",
     "tests/test_run_cache.py:test_entries_live_in_the_git_common_directory: git rev-parse",
     "tests/test_run_cache.py:test_the_read_recorder_keeps_checkout_paths_only: .git",
+    "tests/test_run_cache.py:test_the_read_recorder_sees_git_started_or_a_git_path_opened: .git, git log",
     "tools/run_cache.py:cache_directory: git rev-parse",
     "tools/source_graph.py:tracked: git ls-files"
    ]
