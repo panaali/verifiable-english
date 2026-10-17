@@ -77,15 +77,21 @@ def problems(comparison: dict, head: str, corpora=REQUIRED_CORPORA, base: str | 
         if not isinstance(rows, list):
             errors.append("corpus comparison omitted signed unavailable rows")
         else:
+            seen = set()
             for row in rows:
                 if not isinstance(row, dict) or row.get("class") != "unavailable":
                     continue
                 key = f"{row.get('corpus')}/{row.get('authority')}"
                 counted[key] += 1
-                if (row.get("listed") is not True or
-                        json.dumps(row.get("base"), sort_keys=True) !=
-                        json.dumps(row.get("head"), sort_keys=True)):
+                record = (key, row.get("case"), row.get("op"))
+                outcome = row.get("base")
+                if (row.get("listed") is not True or record in seen or
+                        json.dumps(outcome, sort_keys=True) !=
+                        json.dumps(row.get("head"), sort_keys=True) or
+                        not isinstance(outcome, dict) or
+                        ("timeout" not in outcome and '"CheckerUnavailable' not in json.dumps(outcome))):
                     errors.append("unavailable result lacks an identical, listed R7 pair")
+                seen.add(record)
             if dict(counted) != unavailable:
                 errors.append("signed unavailable rows do not match corpus counts")
     records = comparison.get("records")

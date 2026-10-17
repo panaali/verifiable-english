@@ -40,11 +40,18 @@ def elaborate(document):
 
 # Entailment over `fill U` (Lean `Wire.replayEntailmentU`).
 
+def _regenerated(document):
+    """`X ++ Fill_T ++ T‴`: the extra base premises `X` of a layered source (a readings choice on the soft chain,
+    rd-9-soft-chain 4.3; none otherwise), then `Fill_T` and the filled layers, as Lean's `premisesX` lists them."""
+    return ([f for _, f in getattr(document, "base_premises", ())] + [f for _, f in document.fill_premises] +
+            [f for _, f in document.filled.premises()])
+
+
 def _filled_premises(document, premises):
-    """`Background(E‴) ++ Fill_T ++ T‴ ++ Γ`, with the generated flag of each."""
+    """`Background(E‴) ++ X ++ Fill_T ++ T‴ ++ Γ`, with the generated flag of each."""
     env = document.filled.env
     generated = [p.formula for p in background(env)]
-    regenerated = [f for _, f in document.fill_premises] + [f for _, f in document.filled.premises()]
+    regenerated = _regenerated(document)
     return ([(f, True) for f in generated] + [(f, True) for f in regenerated]
             + [(f, False) for f in premises])
 
@@ -68,9 +75,8 @@ def _filled_proof(document, premises, conclusion, **kwargs):
     environment), `fill_premises` and `filled` (`env`, `premises()`): an `UnspecifiedDocument`, or a view of a Lean
     row that carries them (a readings choice's filled document, `ve/readings_verdicts.py`)."""
     from .entailment import prove_entailment
-    # The prover lists Background(E‴) first; the rest is Fill_T ++ T‴ ++ Γ.
-    regenerated = [f for _, f in document.fill_premises] + [f for _, f in document.filled.premises()]
-    return prove_entailment(document.filled.env, (*regenerated, *premises), conclusion, **kwargs)
+    # The prover lists Background(E‴) first; the rest is X ++ Fill_T ++ T‴ ++ Γ.
+    return prove_entailment(document.filled.env, (*_regenerated(document), *premises), conclusion, **kwargs)
 
 
 def filled_certificate(document, premises, conclusion, **kwargs):

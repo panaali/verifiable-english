@@ -1,0 +1,109 @@
+{
+  "method": "cold check_document (readings and pilot) or generator report (norm-defaults); GNU time wall and user+system CPU, including reaped Lean service children; 2 runs per case",
+  "before": "4edf751ef^",
+  "after": "qa-q2 final candidate",
+  "rust_sha256": "3ec83dee23e692b412f7a79b4af70066fc09c3298d82838bea7f4e5fb0e8eac8",
+  "rows": [
+    {
+      "document": "qa-q2-readings-bench.ve.md",
+      "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
+      "revision": "before",
+      "run": 1,
+      "wall_s": 1.86,
+      "cpu_s": 0.83
+    },
+    {
+      "document": "qa-q2-readings-bench.ve.md",
+      "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
+      "revision": "before",
+      "run": 2,
+      "wall_s": 1.23,
+      "cpu_s": 0.76
+    },
+    {
+      "document": "qa-q2-readings-bench.ve.md",
+      "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
+      "revision": "after",
+      "run": 1,
+      "wall_s": 1.26,
+      "cpu_s": 0.72
+    },
+    {
+      "document": "qa-q2-readings-bench.ve.md",
+      "sha256": "397b035574ab5d86101e3902d847b946a8c697754220de959a1ea70ffa0cce45",
+      "revision": "after",
+      "run": 2,
+      "wall_s": 1.21,
+      "cpu_s": 0.75
+    },
+    {
+      "document": "qa-q2-pilot-readings.ve.md",
+      "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
+      "revision": "before",
+      "run": 1,
+      "wall_s": 2.44,
+      "cpu_s": 1.55
+    },
+    {
+      "document": "qa-q2-pilot-readings.ve.md",
+      "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
+      "revision": "before",
+      "run": 2,
+      "wall_s": 2.19,
+      "cpu_s": 1.53
+    },
+    {
+      "document": "qa-q2-pilot-readings.ve.md",
+      "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
+      "revision": "after",
+      "run": 1,
+      "wall_s": 2.43,
+      "cpu_s": 1.57
+    },
+    {
+      "document": "qa-q2-pilot-readings.ve.md",
+      "sha256": "4f427dc858ad5a1328325f9b8fe018f74374792b582908492d97896da0ad525f",
+      "revision": "after",
+      "run": 2,
+      "wall_s": 1.94,
+      "cpu_s": 1.58
+    },
+    {
+      "document": "norm-defaults-seed-0",
+      "sha256": null,
+      "revision": "before",
+      "run": 1,
+      "wall_s": 1.02,
+      "cpu_s": 0.59
+    },
+    {
+      "document": "norm-defaults-seed-0",
+      "sha256": null,
+      "revision": "before",
+      "run": 2,
+      "wall_s": 0.71,
+      "cpu_s": 0.53
+    },
+    {
+      "document": "norm-defaults-seed-0",
+      "sha256": null,
+      "revision": "after",
+      "run": 1,
+      "wall_s": 0.79,
+      "cpu_s": 0.59
+    },
+    {
+      "document": "norm-defaults-seed-0",
+      "sha256": null,
+      "revision": "after",
+      "run": 2,
+      "wall_s": 0.89,
+      "cpu_s": 0.62
+    }
+  ],
+  "sources": {
+    "readings": "captured readings-suite query document (sha256 on each row)",
+    "norm-defaults": "conformance/norm_defaults_differential.py seed 0",
+    "pilot": "pilot/udhr-20261009T0600Z:usecases/udhr-pilot/run-20261009T0600Z/translation-part04.ve.md (sha256 on each row)"
+  }
+}

@@ -70,6 +70,25 @@ PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not 
 REUSED_STAGES = ("lean_audit", "cargo_test")
 # The failures of a gate whose failed tests can be rerun alone: tests that failed or have no result.
 RERUNNABLE = frozenset({"pytest", "pytest command"})
+# The x86 platform contract run (`--contract`, tools/platform_contract.py): the gate's stages but the Lean audit
+# and the collection check, which the complete gates on both runners run, over the listed tests only.
+CONTRACT_STAGES = ("toolchains", "lean_build", "rust_build", "cargo_test", "pytest")
+
+
+TRUST_STAGE = "Trust counts"
+
+
+def read_trust(path: Path) -> dict:
+    """The per-file trust counts `tools/trust_map.py --files` wrote, checked by their writer's own
+    schema (`trust_map.files_problems`); missing or malformed counts fail the gate."""
+    from tools import trust_map  # its tree-reading imports are only needed here
+    if not path.is_file():
+        raise RuntimeError(f"{TRUST_STAGE}: tools/trust_map.py --files wrote no {path.name}")
+    data = json.loads(path.read_text())
+    problems = trust_map.files_problems(data)
+    if problems:
+        raise RuntimeError(f"{TRUST_STAGE}: " + "; ".join(problems))
+    return data
 
 
 def pytest_args(files: list[str] | None = None) -> tuple[str, ...]:
@@ -262,7 +281,8 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
                             selected=len(selected),
                             passed=sum(row["outcome"] == "passed" for row in tests.values()),
                             skipped=sum(row["outcome"] == "skipped" for row in tests.values()),
-                            failed=sum(row["outcome"] == "failed" for row in tests.values()),
+                            failed=(sum(row["outcome"] == "failed" for row in tests.values())
+                                    + sum(node not in tests for node in selected)),
                             deselected=len(deselected))
     if len(collected) != len(set(collected)) or len(selected) != len(set(selected)):
         result["failures"].append({"stage": "coverage", "reason": "duplicate test ID in collection"})
@@ -553,7 +573,7 @@ def gate_scratch_root() -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "gate-result.json")
+    parser.add_argument("--output", type=Path, help="the record (default gate-result.json in the checkout)")
     parser.add_argument("--workers", default="auto",
                         help="xdist workers for the suite (default auto: the CPUs the load leaves, "
                              "tests/conftest.py)")
@@ -566,10 +586,18 @@ def main() -> int:
     parser.add_argument("--no-quarantine", action="store_true",
                         help="the nightly: no quarantined test (tools/test-quarantine.json) is retried alone, so "
                              "every failure blocks")
+    parser.add_argument("--contract", nargs="?", const="tests/platform-contract.json", metavar="LIST",
+                        help="the x86 platform contract run: only the tests of LIST (default "
+                             "tests/platform-contract.json), without the Lean audit and the collection check (status "
+                             "contract-passed or failed; default --output platform-contract-result.json). It is "
+                             "never a full gate's evidence")
     args = parser.parse_args()
     if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
         parser.error("--workers is a positive count or auto")
-    output = args.output.resolve()
+    if args.contract is not None and (args.rerun_failed is not None or args.base):
+        parser.error("--contract runs no collection check and reruns nothing: no --rerun-failed or --base")
+    output = (args.output or ROOT / ("gate-result.json" if args.contract is None
+                                     else "platform-contract-result.json")).resolve()
     # Read before the record is reset: it is the failed gate a rerun repeats.
     previous = None if args.rerun_failed is None else read_previous(
         Path(args.rerun_failed).resolve() if args.rerun_failed else output)
@@ -577,6 +605,8 @@ def main() -> int:
               "toolchains": {}, "environment": {}, "stages": [], "counts": {}, "skips": [],
               "failures": [], "status": "failed"}
     rerun = None  # the failed tests' files, when this gate reruns them alone
+    contract = None  # the contract's pytest selectors, when this is the platform contract run
+    selection = None  # what the suite runs instead of tests/: the rerun's files or the contract's selectors
     head_ids = None  # the head's full collection, recorded for its commit at the end
     # A killed process must never leave the previous run's passing record intact.
     write_result(output, result)
@@ -608,9 +638,16 @@ def main() -> int:
                 else:
                     result["rerun_failed"] = {"refused": refusal}
                     print(f"[gate] --rerun-failed: {refusal}; running the full gate", flush=True)
-            command(["uv", "run", "--frozen", "--no-sync", "python",
-                     "tools/wire_contract.py", "--check"], env=env,
-                    stage="Wire contract check")
+            if args.contract is not None:
+                from tools import platform_contract
+                listing = (ROOT / args.contract).resolve()
+                contract = platform_contract.run_selectors(platform_contract.read_contract(listing))
+                result["mode"] = "contract"
+                result["contract"] = {"list": str(listing.relative_to(ROOT)) if listing.is_relative_to(ROOT)
+                                      else str(listing),
+                                      "sha256": hashlib.sha256(listing.read_bytes()).hexdigest(),
+                                      "selectors": contract}
+            selection = rerun if contract is None else contract
             result["stages"].append("toolchains")
 
             # Lake trusts an executable's trace; a trace that does not record the binary beside it (copied from
@@ -624,8 +661,19 @@ def main() -> int:
                 if not binary.is_file() or not os.access(binary, os.X_OK):
                     raise RuntimeError(f"Lean build did not produce {binary}")
             result["stages"].append("lean_build")
+            # The examples are admitted by this commit's ve_service, so the check follows the build: before it, a
+            # binary left by an earlier build would answer with another commit's modes.
+            command(["uv", "run", "--frozen", "--no-sync", "python",
+                     "tools/wire_contract.py", "--check"], env=env,
+                    stage="Wire contract check")
 
-            if rerun is None:
+            # The per-file trust counts live in the gate record, not the tree (AR-4, D3).
+            trust_file = scratch / "trust-files.json"
+            command(["uv", "run", "--frozen", "--no-sync", "python", "tools/trust_map.py", "--files",
+                     str(trust_file)], env=env, stage=TRUST_STAGE)
+            result["trust"] = read_trust(trust_file)
+
+            if selection is None:
                 command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
                         env=env, stage="Lean audit")
                 result["stages"].append("lean_audit")
@@ -672,27 +720,35 @@ def main() -> int:
                 VE_RUST_BINARY=str(rust_binary)))
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
-            collection = collect(pytest_env, collection_file, python=python, files=rerun)
-            if rerun is None and not collection["collection_reports"] and \
+            collection = collect(pytest_env, collection_file, python=python, files=selection)
+            if selection is None and not collection["collection_reports"] and \
                     len(collection["collected"]) == len(set(collection["collected"])):
                 head_ids = collection["collected"]
-            expected, diff = base_collection(result, args.base, env, pytest_env, scratch)
+            if contract is None:
+                expected, diff = base_collection(result, args.base, env, pytest_env, scratch)
             try:
-                command(suite_command(python, args.workers, rerun),
+                command(suite_command(python, args.workers, selection),
                         env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
             events = merge_pytest_events(collection, json.loads(events_file.read_text()))
-            base = result["collection"]["base"]
-            if rerun is None:
-                interpret_pytest(result, events, policy, expected, diff=diff, base=base)
+            if contract is not None:
+                # No collection check (the complete gates check the whole collection); each listed selector must
+                # still collect a test, so a listed test that went away cannot pass unseen.
+                interpret_pytest(result, events, policy, events["collected"], families=())
+                for selector in contract:
+                    if not any(platform_contract.covers(selector, nodeid) for nodeid in events["selected"]):
+                        result["failures"].append({"stage": "coverage",
+                                                   "reason": f"contract test collected nothing: {selector}"})
+            elif rerun is None:
+                interpret_pytest(result, events, policy, expected, diff=diff, base=result["collection"]["base"])
             else:
                 # The base's tests of the rerun files, each of the failed tests among them.
                 interpret_pytest(result, events, policy,
                                  [nodeid for nodeid in expected if nodeid.split("::", 1)[0] in rerun], families=(),
-                                 diff=diff, base=base)
+                                 diff=diff, base=result["collection"]["base"])
                 outcomes = {nodeid: events["tests"].get(nodeid, {}).get("outcome", "no result")
                             for nodeid in result["rerun_failed"]["tests"]}
                 result["rerun_failed"]["outcomes"] = outcomes
@@ -718,12 +774,17 @@ def main() -> int:
             if record_head:
                 from tools import gate_collection
                 result.setdefault("collection", {})["collected_zlib"] = gate_collection.encode_ids(head_ids)
-            if completed and result["stages"] == list(REQUIRED_STAGES) and not result["failures"]:
+            if completed and selection is None and result["stages"] == list(REQUIRED_STAGES) \
+                    and not result["failures"]:
                 result["status"] = "passed"
             # A rerun of failed tests is never a full gate: its own status, which no evidence check accepts.
             elif completed and rerun is not None and not result["failures"] and result["stages"] == [
                     stage for stage in REQUIRED_STAGES if stage not in REUSED_STAGES]:
                 result["status"] = "rerun-passed"
+            # Nor is the contract run: it runs a list of tests, without the audit and the collection check.
+            elif completed and contract is not None and not result["failures"] and \
+                    result["stages"] == list(CONTRACT_STAGES):
+                result["status"] = "contract-passed"
             if record_head:
                 result["collection"]["head_record"] = "written"
                 result["collection"]["head_record"] = record_collection(
@@ -745,7 +806,7 @@ def main() -> int:
             if result["status"] == "rerun-passed":
                 print("[gate] the failed tests passed on rerun; this is not a full gate: run the full gate "
                       "for the final evidence", flush=True)
-    return 0 if result["status"] in ("passed", "rerun-passed") else 1
+    return 0 if result["status"] in ("passed", "rerun-passed", "contract-passed") else 1
 
 
 if __name__ == "__main__":

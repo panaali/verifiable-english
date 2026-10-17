@@ -365,28 +365,47 @@ def tupleLimit : String := "ResourceLimit: tuple count"
 
 /-- The candidate rows of one definition, one at a time in Python `product`
 order (the first argument varies slowest; `acc` is the reversed prefix, which
-is the body's valuation), each charged to the shared budget; a true row counts
+is the body's valuation), each charged to the shared budget by `body` (the
+budgeted value of the body at a valuation, from a work count); a true row counts
 toward the 100,000-tuple limit at once. The state is (work, tuples, rows in
 reverse candidate order). -/
-def tableB (mem : String → List Entity → Bool) (M : VE.FiniteModel Entity) (body : VE.Formula) :
+def tableWith (M : VE.FiniteModel Entity) (body : List Entity → Nat → Option (Bool × Nat)) :
     List String → List Entity → Nat × Nat × List (List Entity) →
       Except String (Nat × Nat × List (List Entity))
-  | [], acc, (w, n, rows) => match evalF mem M maxEvaluations acc body w with
+  | [], acc, (w, n, rows) => match body acc w with
     | none => .error definitionBudget
     | some (true, w) => if n + 1 > 100000 then .error tupleLimit else .ok (w, n + 1, acc.reverse :: rows)
     | some (false, w) => .ok (w, n, rows)
-  | s :: ss, acc, st => (M.domains s).foldlM (fun st v => tableB mem M body ss (v :: acc) st) st
+  | s :: ss, acc, st => (M.domains s).foldlM (fun st v => tableWith M body ss (v :: acc) st) st
+
+/-- The tuples of a model's tables. -/
+def tupleCount (d : VE.Bridge.ModelData) : Nat := (d.relations.map (fun p => p.2.length)).foldl (· + ·) 0
+
+/-- Defined tables `(name, arguments, definition)` in dependency order under one
+budget and one tuple count, from the state `(work, tuples)`; `body` evaluates a
+definition's body on a model. Each table is added to the model the next body
+reads. The result is the model and the final state. -/
+def computeDefinedWith {D : Type} (d : VE.Bridge.ModelData) (ds : List (String × List String × D))
+    (body : VE.FiniteModel Entity → (String → List Entity → Bool) → D → List Entity → Nat → Option (Bool × Nat))
+    (st : Nat × Nat) : Except String (VE.Bridge.ModelData × Nat × Nat) :=
+  ds.foldlM (fun (d, w, n) (x : String × List String × D) => do
+      let M := d.toModel
+      let idx := tableIndex (d.relations.map Prod.fst) M
+      let (w, n, rows) ← tableWith M (body M (tableMem M idx) x.2.2) x.2.1 [] (w, n, [])
+      pure ({ d with relations := d.relations ++ [(x.1, rows.reverse)] }, w, n)) (d, st)
+
+/-- Every FOL defined table, starting from the supplied tuples, and the final
+(work, tuples) state (Python `FiniteModel.from_dict`, Rust `FiniteModel::from_value`). -/
+def computeDefinedS (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) :
+    Except String (VE.Bridge.ModelData × Nat × Nat) :=
+  computeDefinedWith d (ds.map fun x => (x.name, x.args, x.body))
+    (fun M mem body acc w => evalF mem M maxEvaluations acc body w) (0, tupleCount d)
 
 /-- Every defined table in dependency order under one budget, starting from
 the supplied tuples (Python `FiniteModel.from_dict`, Rust `FiniteModel::from_value`). -/
 def computeDefinedB (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) :
     Except String VE.Bridge.ModelData := do
-  let base := (d.relations.map (fun p => p.2.length)).foldl (· + ·) 0
-  let (d, _, _) ← ds.foldlM (fun (d, w, n) (x : VE.Definitions.Def) => do
-      let M := d.toModel
-      let idx := tableIndex (d.relations.map Prod.fst) M
-      let (w, n, rows) ← tableB (tableMem M idx) M x.body x.args [] (w, n, [])
-      pure ({ d with relations := d.relations ++ [(x.name, rows.reverse)] }, w, n)) (d, 0, base)
+  let (d, _, _) ← computeDefinedS d ds
   pure d
 
 /-! ## Closure charges -/

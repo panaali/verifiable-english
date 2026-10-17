@@ -6,7 +6,10 @@
 A *route* is one way `ve` reads a Lean answer:
 
 * each mode of the persistent service (`ve.backends.service_schema.MODES`, checked against the modes the
-  built service lists in its handshake), read by `LeanService.exchange` (the transport of `relay`);
+  built service lists in its handshake), read by `LeanService.exchange` (the transport of `relay`) and, for a
+  mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
+  `words`, read by `ve.words.read_answer`), by that caller's reader too, on every fixture whose genuine answer
+  is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
   (`run_route_cases`, `run_english_cases`, `read_rows`) outside `ve/backends/lean.py`, read by the call
@@ -84,7 +87,8 @@ RECORD_TESTS = (
     "tests/test_speech_acts_lean.py", "tests/test_readings_nd_lean.py", "tests/test_metered_lean.py",
     "tests/test_evaluate_search.py", "tests/test_closure_certificates.py", "tests/test_p0_three_way.py",
     "tests/test_stage2_dispatch.py", "tests/test_stage2_faults.py", "tests/test_stage2_readings.py",
-    "tests/test_question_reading.py", "tests/test_question_differential.py",
+    "tests/test_question_reading.py", "tests/test_question_differential.py", "tests/test_ask_relay.py",
+    "tests/test_ask_fixtures.py", "tests/test_ask_cli.py",
 )
 # Calls that read a one-shot runner's rows; a `ve` call site of one is a route of its own.
 ONE_SHOT_READERS = ("run_route_cases", "run_english_cases", "read_rows")
@@ -323,9 +327,39 @@ class _Replay(LeanService):
         return (_text(self.mutant, answer) if self.mutant is not None else dumps(answer)).encode()
 
 
-def _exchange_outcome(replay: _Replay, mode: str, text: str) -> tuple[str, str]:
+def _ask_reader(case):
+    """How `ve ask` reads the service's response to `case`: `relay.decided`, then `ve.ask.read_answer` against
+    what `ve.ask.binding` binds the answer to (the case's document written to a file and loaded from it)."""
+    from ve import ask
+    from ve.backends import relay
+    with tempfile.TemporaryDirectory(prefix="relay-gate-ask-") as directory:
+        raw = case["document"].encode("utf-8")
+        path = Path(directory) / "document.ve.md"
+        path.write_bytes(raw)
+        bound, expected = ask.binding(path, raw, case)
+    return lambda response: ask.read_answer(relay.decided(response["results"])[0], case, bound, expected)
+
+
+def _words_reader(case):
+    """How `ve.words` reads the service's response to `case`: `relay.decided`, then `ve.words.read_answer` (the
+    identities of the case's environment and lexicon, one non-empty line per item)."""
+    from ve import words
+    from ve.backends import relay
+    from ve.environment import Environment
+    env = Environment(case["environment"])
+    return lambda response: words.read_answer(relay.decided(response["results"])[0], case, env)
+
+
+# Service modes whose one caller reads the transport's answer further: the mode's reader for a case, a function of
+# the decoded response that raises as the caller does.
+SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader}
+
+
+def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:
     try:
-        replay.exchange(mode, text, 1)
+        _, response = replay.exchange(mode, text, 1)
+        if read is not None:
+            read(response)
     except CheckerUnavailable as exc:
         return "refused", exc.message[:160]
     except VEError as exc:
@@ -725,22 +759,24 @@ def _gate_service(route, cases, entries, report):
     accepted_retypes: dict[str, set] = defaultdict(set)
     for case, text, answer in zip(cases, texts, answers):
         stats["fixtures"] += 1
+        bound = answer["results"][0] if answer.get("status") != "error" else None
+        rejection = bound is None or "code" in bound or bound["result"].get("status") == "error"
+        read = SERVICE_READERS[mode](case) if mode in SERVICE_READERS and not rejection else None
         replay.answer, replay.mutant = answer, None
-        outcome, detail = _exchange_outcome(replay, mode, "[" + text + "]")
+        outcome, detail = _exchange_outcome(replay, mode, "[" + text + "]", read)
         if outcome != "accepted":
             report["failures"].append(f"genuine answer refused on {route}: {outcome} {detail}")
             continue
         if answer.get("status") == "error":
             continue
-        bound = answer["results"][0]
-        if "code" not in bound and bound["result"].get("status") != "error":  # not a rejection
+        if not rejection:
             stats["ok_fixtures"] += 1
         named = _strings(case) | {mode}
         found = mutants(answer, named, _service_rebind_ints(answer), deep_depth=5) + _digest_rebind(answer)
         found.append((Mutant("rebind", ("id",)), {**answer, "id": FRESH}))
         for mutant, mutated in found:
             replay.answer, replay.mutant = mutated, mutant
-            outcome, detail = _exchange_outcome(replay, mode, "[" + text + "]")
+            outcome, detail = _exchange_outcome(replay, mode, "[" + text + "]", read)
             pattern = mutant.pattern()
             if mutant.kind == "retype" and outcome == "accepted":
                 accepted_retypes[pattern].add(mutant.value)

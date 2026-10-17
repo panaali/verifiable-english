@@ -27,10 +27,20 @@ from .readings_s1 import KEY_FIELDS, KEY_OPTIONAL, Decoded, Document, content_be
     wire
 from .readings_s2_english import s1_gated as _s1_gated
 
-# readings-defaults.md 1.1 (Lean's `routeOf` and `completionFinding`): under `norm-defaults@0` the norms chain takes the
-# enumerated route with this cause; the soft and rights chains keep the abstention.
+# readings-defaults.md 1.1 and rd-9-soft-chain.md 1.1 (Lean's `routeOf` and `completionFinding`): under
+# `norm-defaults@0` the norms and soft chains take the enumerated route with this cause; the rights chain keeps the
+# abstention.
 COMPLETION_CAUSE = "the unspecified completion"
 NORM_DEFAULTS = "norm-defaults@0"
+
+
+# The chain a completion took, as Lean relays it (`filled.chain`, `Readings.Chain.text`), and the profile the request
+# must declare for it. Python reads the chain and derives none (review F25 of rd-9): which completion fields a row
+# carries follows the chain Lean names.
+CHAIN_PROFILES = {"norms": "norms@0", "soft": "soft-norms@0", "rights": "rights@0"}
+# The completion's fields per chain, besides each pair's `gaps`.
+COMPLETION_FIELDS = {"norms": frozenset({"fill_premises", "filled"}),
+                     "soft": frozenset({"fill_premises", "soft_premises", "filled"})}
 
 def document_wire(units, reading_sets, *, couplings=(), narrowings=()):
     """The document as the readings route reads it: every unit with its kind (1.2), content when it has one."""
@@ -55,7 +65,8 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
     """
     from .readings_s1 import Document, S1Environment
     from .readings_sup import (choices, choice_vocabulary, choices_checked, first_nonuniform, name_map,
-                               route_refusal, sup_ready, superposed_elaboration, superposed_units)
+                               route_refusal, sup_ready, superposed_document, superposed_elaboration,
+                               superposed_units)
 
     environment = wire(environment)
     document = wire(document_wire(units, reading_sets, couplings=couplings, narrowings=narrowings))
@@ -92,7 +103,8 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
             expected_text = f"ReadingsNotSuperposable: {first[0]}"
         else:
             try:
-                regenerated = superposed_elaboration(source, couplings, narrowings)
+                superposed = superposed_document(source)
+                regenerated = superposed_elaboration(source, couplings, narrowings, superposed)
             except (VEError, SyntaxError) as exc:
                 expected_route, cause = "enumerated", _message(exc)
             else:
@@ -136,7 +148,7 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 vocabulary")
             if row.get("units") != superposed_units(source):
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 units")
-            if row.get("names") != name_map(source):
+            if row.get("names") != name_map(source, superposed[2]):
                 raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 names")
             python_slot, python_sizes = regenerated
             if row.get("slot") != [{"label": label, "ast": formula} for label, formula in python_slot]:
@@ -167,7 +179,9 @@ def _completion_elaborate(row, case, *, checked_part=False):
             _need(not sets and row["route"] == "w2")
             _bind_completion(row, case, checked_part=True)
         elif not bearing:
-            _need(row["route"] == "w2" and not {"fill_premises", "filled"} & set(row))
+            # No completion: `_bind_completion` refuses every completion field and every pair's `gaps`.
+            _need(row["route"] == "w2")
+            _bind_completion(row, case)
         else:
             _need(row["route"] in (("pending",) if pending else ("enumerated", "superposed")))
             _bind_completion(row, case)
@@ -381,9 +395,11 @@ _CANDIDATE = _either(
           "owned": _arr(_KEY_ENTRY), "shared": _arr(_KEY_ENTRY), "findings": _arr(_name)}))
 # Lean answers a pair only after `unless f.witnessValid` and `unless f.separated` (setPairs), so both are true and
 # the witness's value is the recorded one, never null.
+_GAPS = _arr(lambda x: type(x) is list and len(x) == 3 and _name(x[0])
+             and _arr(_str)(x[1]) and _bool(x[2]))
 _PAIR_FACTS = _obj({"situation": _digest, "witness": _str, "separated": _lit(True),
                     "witness_admissible": _lit(True), "witness_value": _bool, "other_admissible": _bool},
-                   {"other_value": lambda v: v is None or type(v) is bool})
+                   {"other_value": lambda v: v is None or type(v) is bool, "gaps": _GAPS})
 _SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonempty=True),
              "pairs": _arr(_obj({"reading": _str, "other": _str, "pair": _PAIR_FACTS})), "findings": _arr(_name)})
 # Under the unspecified completion (readings-defaults.md 3) Lean adds, per reading, its `Fill_T` and, once, the filled
@@ -391,10 +407,15 @@ _SET = _obj({"set": _str, "version": _nat, "candidates": _arr(_CANDIDATE, nonemp
 # the English read them (`readings_s1.Decoded`).
 FILL_PREMISES = _arr(_obj({"set": _str, "index": _nat,
                            "premises": _arr(_obj({"label": _str, "ast": lambda v: v is not None}))}))
-FILLED = _obj({"environment": lambda v: type(v) is dict,
+FILLED = _obj({"chain": lambda v: type(v) is str and v in COMPLETION_FIELDS, "environment": lambda v: type(v) is dict,
                "units": _arr(_obj({"unit": _name, "content": lambda v: type(v) is dict},
                                   {"set": _str, "version": _nat, "index": _nat}))})
-_COMPLETION = {"fill_premises": FILL_PREMISES, "filled": FILLED}
+# Under the soft completion (rd-9-soft-chain.md 3) Lean also adds, per reading, soft's premises regenerated on its
+# filled tree; their binding is `_bind_soft_premises`.
+SOFT_PREMISES = FILL_PREMISES
+_COMPLETION = {"fill_premises": FILL_PREMISES, "soft_premises": SOFT_PREMISES, "filled": FILLED}
+# A soft premise's label (soft-norms 6.1): an exception condition of a rule, or a colliding pair of rules.
+SOFT_EXCEPTION_LABEL, SOFT_COHERENCE_LABEL = "soft:exception:", "soft:coherence:"
 # A `Fill_T` premise's label (norm-defaults 2.4): `unsaid:pair:<obligation>,<permission>`.
 FILL_LABEL = "unsaid:pair:"
 ROW = _either(_obj({"id": _str, "status": _lit("ok"), "content_bearing": _lit(False)}, _COMPLETION),
@@ -484,15 +505,42 @@ def _bind_completion(row, case, *, checked_part=False):
     from .environment import Environment
     document = Document(None, case["document"])
     sets = document.sets
-    # A component's checked part (readings-defaults RD-4b: the main case without a content-bearing set, its fixed
-    # units) is under the completion with its environment alone.
-    completion = (NORM_DEFAULTS in case["environment"].get("profiles", ())
-                  and (checked_part or any(content_bearing(R) for R in sets)))
-    _need(("fill_premises" in row) is completion and ("filled" in row) is completion)
+    profiles = case["environment"].get("profiles", ())
+    # Whether the completion applies is the request's: `norm-defaults@0` beside a content-bearing set, or a
+    # component's checked part (readings-defaults RD-4b: the main case without a content-bearing set, its fixed
+    # units), asked under the completion. The row carries it exactly then, so a row that drops it whole is refused
+    # (review F29 of rd-9). Which chain it took is Lean's (`filled.chain`); Python checks only that the fields
+    # present are that chain's, and that the request declares the profile the chain names.
+    completion = "filled" in row
+    _need(completion is (NORM_DEFAULTS in profiles and (checked_part or any(content_bearing(R) for R in sets))))
+    chain = row["filled"]["chain"] if completion else None
+    _need(not completion or (FILLED(row["filled"]) and CHAIN_PROFILES[chain] in profiles))
+    _need(set(_COMPLETION) & set(row) == COMPLETION_FIELDS.get(chain, frozenset()))
+    soft = chain == "soft"
+    for entry in row.get("sets", ()):
+        for pair in entry["pairs"]:
+            _need(("gaps" in pair["pair"]) is completion)
     if not completion:
         return
-    _need(FILL_PREMISES(row["fill_premises"]) and FILLED(row["filled"]))
+    _need(FILL_PREMISES(row["fill_premises"]))
+    if soft:
+        _bind_soft_premises(row["soft_premises"], document)
     request = Environment(case["environment"])
+    for entry in row.get("sets", ()):
+        R = next((R for R in sets if R.id == entry["set"]), None)
+        _need(R is not None)
+        for pair in entry["pairs"]:
+            facts = pair["pair"]
+            base = R.situations[facts["situation"]]["base"]
+            _need(len(facts["gaps"]) == len({(predicate, tuple(values))
+                                              for predicate, values, _ in facts["gaps"]}))
+            for predicate, values, _answer in facts["gaps"]:
+                decl = request.predicates.get(predicate)
+                _need(decl is not None and decl.regulated is not None
+                      and decl.regulated.default == "unspecified"
+                      and len(values) == len(decl.arguments)
+                      and all(value in base["domains"].get(sort, ())
+                              for value, sort in zip(values, decl.arguments)))
     pairs = {(name, decl.regulated.permission) for name, decl in request.predicates.items()
              if decl.regulated is not None and decl.regulated.role == "obligation"}
     readings = [(R.id, i) for R in sets for i, a in enumerate(R.candidates) if a.content is not None]
@@ -527,6 +575,8 @@ def _bind_completion(row, case, *, checked_part=False):
         content = _typed_filled_content(unit["content"])
         _need({k: v for k, v in unit.items() if k != "content"} == where and getattr(content, "kind", None) == kind)
     generated = units[len(expected):]
+    # On the soft chain `F_p` is a rule of each reading's filled tree, never a unit (rd-9-soft-chain.md 3).
+    _need(not (soft and generated))
     names = [unit["unit"] for unit in generated]
     _need(len(set(names)) == len(names) and not set(names) & set(document.unit_ids))
     for unit in generated:
@@ -536,6 +586,64 @@ def _bind_completion(row, case, *, checked_part=False):
         guard = rule["guard"]
         _need(rule["name"] == unit["unit"] and request.predicates[rule["predicate"]].regulated is not None
               and guard[0] in ("unary", "binary") and guard[1] in added)
+
+
+def _bind_soft_premises(entries, document):
+    """`soft_premises` (rd-9-soft-chain.md 3) bound to the request: one entry per reading with content, in admission
+    order, as `fill_premises`; each label an exception condition of a rule that reading's document declares, or a
+    pair of two such rules, each premise once. The formulas are Lean's alone."""
+    sets = document.sets
+    readings = [(R.id, i) for R in sets for i, a in enumerate(R.candidates) if a.content is not None]
+    _need([(e["set"], e["index"]) for e in entries] == readings)
+    fixed = [body for item in document.items if item[0] == "fixed" for body in item[2].rules()]
+    for e in entries:
+        R = next(R for R in sets if R.id == e["set"])
+        rules = soft_rules(fixed + R.candidates[e["index"]].content.rules())
+        labels = [premise["label"] for premise in e["premises"]]
+        _need(len(set(labels)) == len(labels))
+        for label in labels:
+            _need(soft_label(label, rules))
+
+
+def soft_rules(bodies):
+    """The rules a request declares, as a soft label names them (soft-norms 6.1, `excLabels` and `collidingPairs`):
+    each rule's name with the shapes it has as Lean decodes it (`node_value`), a default rule's numbers of
+    sufficient and necessary exception conditions, `None` for a strict rule. A name two readings declare has both
+    shapes; a body that does not decode has none (Lean refuses its document)."""
+    from .readings_s1 import _UNDECODED, node_value
+    rules = {}
+    for body in bodies:
+        try:
+            _core, mode, _rank, _alterable, exception, _hard = node_value(body)
+            name = body["name"]
+        except _UNDECODED:
+            continue
+        shape = (len(exception[1]), len(exception[2])) if mode == "default" else None
+        rules.setdefault(name, set()).add(shape)
+    return rules
+
+
+def soft_label(label, rules):
+    """A soft premise's label (rd-9-soft-chain.md 3) bound to the rules `rules` (`soft_rules`) a request declares: an
+    exception condition a default rule has (`soft:exception:<rule>:<role>:<i>`, `i` below that rule's number of
+    conditions in the role), or the pair of two default rules in Lean's order, the names ascending
+    (`soft:coherence:<a>,<b>`, `collidingPairs`)."""
+    if type(label) is not str:
+        return False
+    if label.startswith(SOFT_EXCEPTION_LABEL):
+        parts = label[len(SOFT_EXCEPTION_LABEL):].rsplit(":", 2)
+        # The index as Lean prints a natural number: ASCII digits, no leading zero.
+        index = parts[2] if len(parts) == 3 else ""
+        if not (parts[1:2] in (["sufficient"], ["necessary"]) and index.isascii() and index.isdigit()
+                and (index == "0" or not index.startswith("0"))):
+            return False
+        role = 0 if parts[1] == "sufficient" else 1
+        return any(shape is not None and decimal_value(index) < shape[role] for shape in rules.get(parts[0], ()))
+    if label.startswith(SOFT_COHERENCE_LABEL):
+        pair = label[len(SOFT_COHERENCE_LABEL):].split(",")
+        return (len(pair) == 2 and pair[0] < pair[1]
+                and all(any(shape is not None for shape in rules.get(name, ())) for name in pair))
+    return False
 
 
 def _typed_filled_content(raw):
@@ -695,7 +803,8 @@ class Wording:
             self.document = document_wire(doc["units"], doc["meta"].get("reading_sets", []))
             # Under the completion the documents are Lean's filled ones (readings-defaults 3, `validate`'s row).
             row = doc.get("readings_s1") or {}
-            self.admission = Decoded(self.environment, self.document, row.get("filled"), row.get("fill_premises"))
+            self.admission = Decoded(self.environment, self.document, row.get("filled"), row.get("fill_premises"),
+                                     row.get("soft_premises"))
             self.words = EnglishVocabulary(self.admission.senv.frame)
             # One case of a split document is numbered as the whole document (readings-defaults RD-4b).
             self.numbers = numbers or {unit["id"]: n for n, unit in enumerate(doc["units"], 1)}
@@ -794,29 +903,24 @@ class Wording:
         """`<situation>`: elements by sort then name, true base tuples, then each decision supposed. Under the
         completion a filled table is no fact of the situation: it is shown by `gap_text`."""
         from .ast import formula_from_data  # noqa: F401  (vocabulary is the frame's)
+        from . import words as lean_words
         base = entry["base"]
-        facts = []
-        for sort in sorted(base["domains"]):
-            noun = self.words.sorts[sort]
-            for name in sorted(base["domains"][sort]):
-                facts.append(f"{name} is {_article(noun)} {noun}")
-        for predicate in sorted(base["relations"]):
-            if predicate in self.admission.doc.filled_tables:
-                continue
-            for row in sorted(base["relations"][predicate]):
-                facts.append(self.words.predicates[predicate].format(*row))
-        for table, own in [(t, False) for t in entry["fixed"]] + [(t, True) for t in entry["decisions"]]:
-            for row in table["tuples"]:
-                facts.append("suppose " + self.decision(set_id, witness, table["key"], row, own))
-        return "; ".join(facts) if facts else "nothing exists"
+        facts = [p for p in base["relations"] if p not in self.admission.doc.filled_tables]
+        suppose = ["suppose " + self.decision(set_id, witness, table["key"], row, own)
+                   for table, own in [(t, False) for t in entry["fixed"]] + [(t, True) for t in entry["decisions"]]
+                   for row in table["tuples"]]
+        return lean_words.situation(self.admission.senv.frame, base, facts, suppose)
 
-    def gap_text(self, base):
-        """norm-defaults 3.2's filled-gap sentences after a shown situation (readings-defaults 2.2), each led by a
-        space: under the completion, every point of every filled table over the situation's elements, with the
-        situation's answer (Lean's plan selects the ones a result depends on from RD-3 on)."""
-        from .readings_s2_english import gap_sentences
-        from .readings_s2_wording import filled_gaps
-        return gap_sentences(filled_gaps(self.admission.senv.frame, self.admission.doc.filled_tables, base))
+    def gap_text(self, gaps, base):
+        """Render the gap atoms Lean selected for the pair's shown value: Lean's filled-gap sentences
+        (`VE.Words.fillingSentence`, norm-defaults 3.2) at the situation's constants."""
+        from .readings_s2_english import shown_gaps
+        from . import words as lean_words
+        frame = self.admission.senv.frame
+        constants = {name: value for name, value in lean_words.constants_of(base).items()
+                     if name in frame.constants}
+        return shown_gaps(lean_words.fillings(frame, constants, [(predicate, values, answer)
+                                                                 for predicate, values, answer in gaps]))
 
     def decision(self, set_id, witness, key_json_value, row, own):
         """`<decision>` of 2.1."""
@@ -897,7 +1001,8 @@ class Wording:
                 who = ((rule.get("exception") or {}).get("decided_by")
                        or self.admission.side(set_id, default).soft.env.soft.get("exception_decider") or "unstated")
                 lines.append(E.force_twin_sentence(source_word, *paraphrases, who, tuple(row), role,
-                                                   strict_value, default_value))
+                                                   strict_value, default_value,
+                                                   gaps=self.gap_text(facts.get("gaps", ()), situation["base"])))
                 lines += self.e22_e23(set_id, strict, default)
                 if (strict, default) in _finding_pairs(entry, "SeparatedByDecisionOnly"):
                     lines.append(E.decision_only_sentence(who))
@@ -905,13 +1010,13 @@ class Wording:
             text = E.outcome_pair_sentence(self.situation_text(set_id, i, situation), names[i], names[j], role,
                                            row[0], value, other_admissible=facts["other_admissible"],
                                            other_value=facts.get("other_value"),
-                                           gaps=self.gap_text(situation["base"]))
+                                           gaps=self.gap_text(facts.get("gaps", ()), situation["base"]))
             return "E19", _s1_gated("E19", text)
         if probe == "holds" and all(R.candidates[k].content.kind == "assertion" for k in (i, j)):
             true, false = (names[i], names[j]) if value else (names[j], names[i])
             return "E21", _s1_gated("E19", E.assertion_pair_sentence(self.situation_text(set_id, i, situation),
                                                                      true, false,
-                                                                     gaps=self.gap_text(situation["base"])))
+                                                                     gaps=self.gap_text(facts.get("gaps", ()), situation["base"])))
         return "E24", _s1_gated("E24", E.E24)
 
     def twins(self, set_id, i, j):
@@ -1002,16 +1107,6 @@ def _finding_pairs(entry, code):
     """The candidate indices of each of Lean's findings with this code, in Lean's order (`parse_finding`, the
     reader `validate` checked them with)."""
     return [(i, j) for found, _, i, j in map(parse_finding, entry["findings"]) if found == code]
-
-
-def _article(noun):
-    """`a` or `an` by the sound of the noun's first letters (`a user`, `an agent`, `an hour`)."""
-    word = noun.lower()
-    if word.startswith(("uni", "use", "usu", "uti", "eu", "one", "once")):
-        return "a"
-    if word.startswith(("hour", "honest", "honour", "heir")):
-        return "an"
-    return "an" if word[:1] in "aeiou" else "a"
 
 
 def rule_sentence(env, body, *, rule=None):

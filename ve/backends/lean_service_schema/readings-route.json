@@ -200,7 +200,7 @@
             "id": {"$ref": "common.json#/$defs/id_ok"},
             "reading_premises": {"$ref": "common.json#/$defs/strings"},
             "status": {"const": "ok"},
-            "targets": {"$ref": "common.json#/$defs/strings"},
+            "targets": {"items": {"minLength": 1, "type": "string"}, "type": "array"},
             "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
           },
           "required": ["id", "status", "verdict", "assumed", "targets", "reading_premises"],
@@ -243,7 +243,7 @@
                 "hard": {"type": "boolean"},
                 "mode": {"enum": ["strict", "default"]},
                 "name": {"type": "string"},
-                "over": {"$ref": "common.json#/$defs/strings"},
+                "over": {"$ref": "common.json#/$defs/strings", "x-unique-strings": true},
                 "predicate": {"type": "string"},
                 "rank": {"type": ["string", "null"]},
                 "sign": {"type": "boolean"},
@@ -291,7 +291,7 @@
       "type": "object"
     },
     "elaborate": {
-      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled, and on the superposed route fill, the Fill_T the superposed kinds append to the slot (Wire.elaborateFieldsND).",
+      "$comment": "Readings.Run.runElaborate (Route.elaborateFields): the route of 1.1; past its first three rows the finding of 1.8, the stale narrowings, the compatible choices (or over the limit) and the number checked; on the superposed route also the choice vocabulary, the units of sup D, the labelled slot, the name map and the sizes. The units and the name map are compared whole with Python's regeneration (ve/readings_route.py elaborate). Under the unspecified completion (Readings.Run.runElaborateNDFilled) the row also carries fill_premises and filled, and on the superposed route fill, the Fill_T the superposed kinds append to the slot (Wire.elaborateFieldsND); under the soft completion (Readings.Run.runElaborateSD) the enumerated row also carries soft_premises.",
       "anyOf": [
         {
           "additionalProperties": false,
@@ -446,7 +446,10 @@
             "slot": {
               "items": {
                 "additionalProperties": false,
-                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "properties": {
+                  "ast": {"$ref": "common.json#/$defs/generated_formula"},
+                  "label": {"minLength": 1, "type": "string"}
+                },
                 "required": ["label", "ast"],
                 "type": "object"
               },
@@ -492,7 +495,7 @@
                               "hard": {"type": "boolean"},
                               "mode": {"enum": ["strict", "default"]},
                               "name": {"type": "string"},
-                              "over": {"$ref": "common.json#/$defs/strings"},
+                              "over": {"$ref": "common.json#/$defs/strings", "x-unique-strings": true},
                               "predicate": {"type": "string"},
                               "rank": {"type": ["string", "null"]},
                               "sign": {"type": "boolean"},
@@ -659,7 +662,10 @@
             "fill": {
               "items": {
                 "additionalProperties": false,
-                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "properties": {
+                  "ast": {"$ref": "common.json#/$defs/generated_formula"},
+                  "label": {"minLength": 1, "type": "string"}
+                },
                 "required": ["label", "ast"],
                 "type": "object"
               },
@@ -743,7 +749,10 @@
             "slot": {
               "items": {
                 "additionalProperties": false,
-                "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+                "properties": {
+                  "ast": {"$ref": "common.json#/$defs/generated_formula"},
+                  "label": {"minLength": 1, "type": "string"}
+                },
                 "required": ["label", "ast"],
                 "type": "object"
               },
@@ -789,7 +798,7 @@
                               "hard": {"type": "boolean"},
                               "mode": {"enum": ["strict", "default"]},
                               "name": {"type": "string"},
-                              "over": {"$ref": "common.json#/$defs/strings"},
+                              "over": {"$ref": "common.json#/$defs/strings", "x-unique-strings": true},
                               "predicate": {"type": "string"},
                               "rank": {"type": ["string", "null"]},
                               "sign": {"type": "boolean"},
@@ -872,6 +881,60 @@
             "filled"
           ],
           "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "choice_count": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over 64", "type": "string"}]},
+            "choices": {"anyOf": [{"items": {"$ref": "#/$defs/choice"}, "type": "array"}, {"const": "over"}]},
+            "choices_checked": {"anyOf": [{"$ref": "common.json#/$defs/nat"}, {"pattern": "over .*", "type": "string"}]},
+            "fill_premises": {"$ref": "#/$defs/fill_premises"},
+            "filled": {"$ref": "#/$defs/filled"},
+            "finding": {
+              "anyOf": [
+                {"type": "null"},
+                {
+                  "additionalProperties": false,
+                  "properties": {"cause": {"type": "string"}, "text": {"$ref": "common.json#/$defs/text"}},
+                  "required": ["text", "cause"],
+                  "type": "object"
+                }
+              ]
+            },
+            "generated_predicates": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "key": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/key"}]},
+                  "layer": {"enum": ["readings", "soft", "rights"]},
+                  "name": {"type": "string"}
+                },
+                "required": ["name", "layer", "key"],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "id": {"$ref": "common.json#/$defs/id_ok"},
+            "narrowings_stale": {"$ref": "common.json#/$defs/strings"},
+            "route": {"enum": ["enumerated"]},
+            "soft_premises": {"$ref": "#/$defs/soft_premises"},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "id",
+            "status",
+            "route",
+            "generated_predicates",
+            "finding",
+            "narrowings_stale",
+            "choice_count",
+            "choices",
+            "choices_checked",
+            "fill_premises",
+            "soft_premises",
+            "filled"
+          ],
+          "type": "object"
         }
       ]
     },
@@ -932,9 +995,10 @@
       "type": "array"
     },
     "filled": {
-      "$comment": "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last.",
+      "$comment": "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the chain the completion took (Readings.Chain.text; the client reads it and derives no chain), the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last.",
       "additionalProperties": false,
       "properties": {
+        "chain": {"enum": ["norms", "soft", "rights"]},
         "environment": {"$ref": "#/$defs/filled_environment"},
         "units": {
           "items": {
@@ -975,7 +1039,7 @@
                           "hard": {"type": "boolean"},
                           "mode": {"enum": ["strict", "default"]},
                           "name": {"type": "string"},
-                          "over": {"$ref": "common.json#/$defs/strings"},
+                          "over": {"$ref": "common.json#/$defs/strings", "x-unique-strings": true},
                           "predicate": {"type": "string"},
                           "rank": {"type": ["string", "null"]},
                           "sign": {"type": "boolean"},
@@ -1020,7 +1084,7 @@
           "type": "array"
         }
       },
-      "required": ["environment", "units"],
+      "required": ["chain", "environment", "units"],
       "type": "object"
     },
     "filled_environment": {
@@ -1217,9 +1281,10 @@
       "type": "array"
     },
     "pair": {
-      "$comment": "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key.",
+      "$comment": "Readings.Run.pairJson: a separating situation's facts; other_value exactly when the other reading owns no generated key; gaps on the unspecified completion.",
       "additionalProperties": false,
       "properties": {
+        "gaps": {"$ref": "#/$defs/gaps"},
         "other_admissible": {"type": "boolean"},
         "other_value": {"type": ["boolean", "null"]},
         "separated": {"type": "boolean"},
@@ -1388,7 +1453,7 @@
         "hard": {"type": "boolean"},
         "mode": {"enum": ["strict", "default"]},
         "name": {"type": "string"},
-        "over": {"$ref": "common.json#/$defs/strings"},
+        "over": {"$ref": "common.json#/$defs/strings", "x-unique-strings": true},
         "predicate": {"type": "string"},
         "rank": {"type": ["string", "null"]},
         "sign": {"type": "boolean"},
@@ -1396,6 +1461,28 @@
       },
       "required": ["name", "predicate", "sign", "mode", "guard", "unless", "over", "rank", "alterable", "exception", "hard"],
       "type": "object"
+    },
+    "soft_premises": {
+      "$comment": "Readings.Run.softPremisesJson: under the soft completion, per reading with content soft's premises regenerated on its filled tree (SoftDefaults.softXL), each labelled soft:exception:… or soft:coherence:….",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "index": {"$ref": "common.json#/$defs/nat"},
+          "premises": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+              "required": ["label", "ast"],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "set": {"type": "string"}
+        },
+        "required": ["set", "index", "premises"],
+        "type": "object"
+      },
+      "type": "array"
     },
     "unit": {
       "additionalProperties": false,
@@ -1435,7 +1522,7 @@
                     "hard": {"type": "boolean"},
                     "mode": {"enum": ["strict", "default"]},
                     "name": {"type": "string"},
-                    "over": {"$ref": "common.json#/$defs/strings"},
+                    "over": {"$ref": "common.json#/$defs/strings", "x-unique-strings": true},
                     "predicate": {"type": "string"},
                     "rank": {"type": ["string", "null"]},
                     "sign": {"type": "boolean"},
@@ -1516,7 +1603,7 @@
                       "hard": {"type": "boolean"},
                       "mode": {"enum": ["strict", "default"]},
                       "name": {"type": "string"},
-                      "over": {"$ref": "common.json#/$defs/strings"},
+                      "over": {"$ref": "common.json#/$defs/strings", "x-unique-strings": true},
                       "predicate": {"type": "string"},
                       "rank": {"type": ["string", "null"]},
                       "sign": {"type": "boolean"},
@@ -1561,7 +1648,7 @@
       "type": "array"
     },
     "validate": {
-      "$comment": "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set; under the unspecified completion (Readings.Run.runValidateND) also fill_premises and filled.",
+      "$comment": "Readings.Run.validateResult: no content-bearing set, or one entry per content-bearing open set; under the unspecified completion (Readings.Run.runValidateND) also fill_premises and filled, and on the soft chain (Readings.Run.runValidateSD) soft_premises.",
       "anyOf": [
         {
           "additionalProperties": false,
@@ -1570,6 +1657,7 @@
             "fill_premises": {"$ref": "#/$defs/fill_premises"},
             "filled": {"$ref": "#/$defs/filled"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
+            "soft_premises": {"$ref": "#/$defs/soft_premises"},
             "status": {"const": "ok"}
           },
           "required": ["id", "status", "content_bearing"],
@@ -1612,6 +1700,7 @@
               },
               "type": "array"
             },
+            "soft_premises": {"$ref": "#/$defs/soft_premises"},
             "status": {"const": "ok"}
           },
           "required": ["id", "status", "content_bearing", "sets"],
@@ -1663,6 +1752,7 @@
                 }
               ]
             },
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
             "english": {"items": {"$ref": "#/$defs/verdicts_line"}, "type": "array"},
             "finding_sets": {"$ref": "common.json#/$defs/strings"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
@@ -1714,6 +1804,7 @@
                 }
               ]
             },
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
             "english": {"items": {"$ref": "#/$defs/verdicts_line"}, "type": "array"},
             "finding_sets": {"$ref": "common.json#/$defs/strings"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
@@ -1765,6 +1856,7 @@
                 }
               ]
             },
+            "decided_units": {"$ref": "common.json#/$defs/strings"},
             "english": {"items": {"$ref": "#/$defs/verdicts_line"}, "type": "array"},
             "finding_sets": {"$ref": "common.json#/$defs/strings"},
             "id": {"$ref": "common.json#/$defs/id_ok"},

@@ -27,7 +27,7 @@ from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, UnsupportedProfile, VEError
 from .identity import meaning_id, source_id
 from .openterms import validate_open_terms
-from .readings import (active_reading_sets, check_readings, plan_choices, s1_content_kind,
+from .readings import (active_reading_sets, check_readings, plan_choices, rights_meaning_id, s1_content_kind,
                        validate_couplings, validate_narrowings, validate_reading_sets)
 from .wire import LONE_SURROGATE, digest
 from .vacuity import premise_status
@@ -36,6 +36,8 @@ MAX_DOCUMENT_BYTES = 4_000_000
 SUPPORTS = {"assumption", "certificate", "observation", "calculation", "statistical",
             "testimony", "adapter", "none"}
 STATUSES = {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
+# The rights source kinds under `rights@0` (Lean `Service.Document.RightsKind`): a unit kind and its block's key.
+_RIGHTS_KINDS = ("right", "right_lines", "limitation", "bar")
 
 
 def _body(body: bytes):
@@ -186,7 +188,7 @@ def _content(env, unit, fences, *, formula_env=None, rights=False, senses=None, 
             raise UnsupportedProfile("UnsupportedProfile: norms@0 is required")
         rule = NormDocument._decode(content)
         return rule.to_dict(), None
-    if next(iter(content)) in {"right", "right_lines", "limitation", "bar"}:
+    if next(iter(content)) in _RIGHTS_KINDS:
         if "rights@0" not in env.profiles:
             raise UnsupportedProfile("UnsupportedProfile: rights@0 is required")
         from .readings import rights_meaning_id
@@ -460,18 +462,36 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
     except Exception as exc:  # noqa: BLE001 - an accepted but malformed service row is unavailable
         raise unavailable("is not bound to the document sent") from exc
     try:
-        env = Environment(meta["environment"])
+        env = _environment(meta["environment"])
         if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, fences):
             raise unavailable("is not bound to the document sent")
+        rights_document = soft_document = None
+        formula_env = env
+        if "rights@0" in env.profiles:
+            # Batch 16e: the containers of the rights source Lean's `document` mode decoded with the rights route
+            # (`Service.Document.rightsDoc`); Lean's unit statuses and contents are the answer's, not theirs.
+            from .rights import RightsDocument
+            rights_document = RightsDocument(env, _rights_units(meta["units"]),
+                                             open_predicates=validate_open_terms(env, meta.get("open_terms", [])))
+            soft_document = rights_document.soft_document
+            formula_env = soft_document.extended_env
         for unit in units:
-            if "content" in unit and unit["meaning_id"] != digest(
-                    f"ve-meaning-{env.identity_version}\n",
-                    {"environment_id": env.environment_id, "ast": unit["content"]}):
+            # A rights document's content is bound to its content environment, with the nullable decider slots
+            # `_content` keeps (`rights_meaning_id`, Lean's `nullableMeaningId`).
+            if "content" in unit and unit["meaning_id"] != (
+                    rights_meaning_id(_content_environment(env, formula_env, unit["kind"]), unit["content"])
+                    if rights_document is not None else
+                    digest(f"ve-meaning-{env.identity_version}\n",
+                           {"environment_id": env.environment_id, "ast": unit["content"]})):
                 raise unavailable("is not bound to the document sent")
+        # A rights block the binding found equal to the authored one is built as the authored object itself: the
+        # rights containers hold the source's lines by identity (`ve.surface.rights._line`), as on Python's path.
         compiled = [{"id": u["id"], "span": u["span"], "kind": u["kind"], "meaning": u["meaning"],
                      "support": u["support"], "source": source[u["span"][0]:u["span"][1]].decode("utf-8"),
-                     "content": u.get("content"), "meaning_id": u.get("meaning_id"), "status": u["status"],
-                     **({"parent_id": u["parent_id"]} if "parent_id" in u else {})} for u in units]
+                     "content": (authored["content"] if _rights_block(u.get("content")) else u.get("content")),
+                     "meaning_id": u.get("meaning_id"), "status": u["status"],
+                     **({"parent_id": u["parent_id"]} if "parent_id" in u else {})}
+                    for u, (authored, _) in zip(units, declared, strict=True)]
         active = active_reading_sets(meta.get("reading_sets", []))
         if "norm-defaults@0" in env.profiles:
             from .norm_defaults import UnspecifiedDocument
@@ -479,6 +499,8 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             norm_defaults = UnspecifiedDocument(_defaults_environment(env),
                                                 _free_norms(compiled, active, attached))
             norms = None
+        elif soft_document is not None:
+            norm_defaults = norms = None
         else:
             norm_defaults = None
             norms = (NormDocument(env, []) if any(d.regulated is not None for d in env.predicates.values())
@@ -504,8 +526,8 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         raise unavailable(f"could not be built: {type(exc).__name__}: {exc}"[:300]) from exc
     return {"meta": meta, "environment": env, "source": source, "source_id": row["source_id"],
             "document_id": row["document_id"], "directory": path.parent, "units": compiled, "norms": norms,
-            "soft_document": None, "norm_defaults": norm_defaults, "senses": None, "reports": None,
-            "rights_document": None, "readings_s1": readings_s1, "readings_s2": readings_s2,
+            "soft_document": soft_document, "norm_defaults": norm_defaults, "senses": None, "reports": None,
+            "rights_document": rights_document, "readings_s1": readings_s1, "readings_s2": readings_s2,
             "readings_components": readings_components, "reading_plan": reading_plan,
             "lean": {"coverage": row["coverage"], "admitted": admitted}}
 
@@ -536,6 +558,7 @@ def _bind_document_answer(body, meta, declared, row):
     require(source == body)
     units = row.get("units")
     require(type(units) is list and len(units) == len(declared))
+    rights = "rights@0" in listed_profiles(meta.get("environment"))
     kinds, statuses, reasons = {}, {}, {}
     for unit, (authored, parent) in zip(units, declared, strict=True):
         require(type(unit) is dict and type(authored) is dict)
@@ -553,7 +576,10 @@ def _bind_document_answer(body, meta, declared, row):
         if has_content and type(authored["content"]) is dict and "ast" in authored["content"]:
             require(same(unit["content"], authored["content"]["ast"]))
         if has_content and type(authored["content"]) is dict and "norm" in authored["content"]:
-            require(same(unit["content"], authored["content"]))
+            require(_soft_bound(unit["content"], authored["content"], same) if rights else
+                    same(unit["content"], authored["content"]))
+        if has_content and type(authored["content"]) is dict and set(authored["content"]) & set(_RIGHTS_KINDS):
+            require(rights and same(unit["content"], authored["content"]))
         span = unit["span"]
         require(type(span) is list and len(span) == 2 and
                 all(type(n) is int for n in span) and 0 <= span[0] < span[1] <= len(source))
@@ -602,6 +628,30 @@ def _bind_document_answer(body, meta, declared, row):
     require(same(coverage, expected))
 
 
+def _soft_bound(answer, authored, same) -> bool:
+    """A rights document's soft norm unit in Lean's answer (`Service.Document.softCanonical`) bound to the authored
+    content: the same members (`norm`, and `cites` as written), the rule's name, predicate, sign and `over` as
+    written, and every soft member Lean kept as written (an exception's members a subset of the authored ones).
+    Its formulas are Lean's re-encoding of the decoded rule (rule 2: Lean owns checked content)."""
+    if type(answer) is not dict or type(authored) is not dict or set(answer) != set(authored):
+        return False
+    if "cites" in authored and not same(answer["cites"], authored["cites"]):
+        return False
+    rule, written = answer.get("norm"), authored.get("norm")
+    if type(rule) is not dict or type(written) is not dict or not set(rule) <= set(written):
+        return False
+    for key, value in rule.items():
+        if key in ("guard", "unless"):
+            continue
+        if key == "exception":
+            if type(value) is not dict or type(written[key]) is not dict or not all(
+                    member in written[key] and same(item, written[key][member]) for member, item in value.items()):
+                return False
+        elif not same(value, written[key]):
+            return False
+    return all(key in rule for key in ("name", "predicate", "sign", "guard", "unless", "over"))
+
+
 def _no_lone_surrogate(meta) -> None:
     """A lone surrogate escape reads as a string no UTF-8 text holds (the document identity encodes the metadata):
     the JSON boundary's diagnostic, which the Lean `document` mode gives at the same point (`split`). A
@@ -627,18 +677,18 @@ def _load_document(raw: bytes, path: str | Path, lean):
     rights_enabled = "rights@0" in profiles
     soft_enabled = "soft-norms@0" in profiles
     defaults_enabled = "norm-defaults@0" in profiles
-    if defaults_enabled and soft_enabled:
-        # The soft and rights document routes are checked by Lean, whose
-        # norm-defaults route has no admission kind for them yet.
-        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 documents on the soft and rights "
-                      "routes await the Lean route")
+    if defaults_enabled and rights_enabled:
+        # The rights document route is checked by Lean, whose norm-defaults
+        # route has no admission kind for it yet (rd-9-soft-chain 3.11 row 7).
+        raise UnsupportedProfile("UnsupportedProfile: norm-defaults@0 documents on the rights route await the "
+                                 "Lean route")
     attached = _s1_attached(environment_data, meta)
     if soft_enabled and not rights_enabled:
         from .softnorms import check_soft_source
         if type(meta.get("units")) is list:
             # The environment and the norm units are one soft source (8).
             check_soft_source(environment_data, _soft_contents(meta["units"], attached),
-                              layers=frozenset({"readings@1"} if "readings@1" in profiles else ()))
+                              layers=frozenset(p for p in ("readings@1", "norm-defaults@0") if p in profiles))
     env = _environment(environment_data)
     if "reports@0" not in env.profiles and set(meta) & {"contexts", "assessments", "bridges", "scoped"}:
         raise VEError("unknown document metadata")
@@ -724,14 +774,12 @@ def _load_document(raw: bytes, path: str | Path, lean):
         except UnicodeDecodeError as exc:
             raise VEError("unit span cuts a UTF-8 character") from exc
         cursor = span[1]
-        kind = (unit["kind"] if rights_enabled and unit["kind"] in
-                ("right", "right_lines", "limitation", "bar") else
+        kind = (unit["kind"] if rights_enabled and unit["kind"] in _RIGHTS_KINDS else
                 _check_kind(unit["kind"], reports="reports@0" in env.profiles))
         status = _meaning(unit["meaning"], open_names, reports="reports@0" in env.profiles)
         if type(unit["support"]) is not str or unit["support"] not in SUPPORTS:
             raise VEError("invalid support")
-        content_env = (env if rights_enabled and kind in ("right", "right_lines", "limitation", "bar")
-                       else formula_env)
+        content_env = _content_environment(env, formula_env, kind)
         content, mid = (_content(content_env, unit, fences, formula_env=formula_env,
                                  rights=rights_enabled, senses=senses, rule_result=rule_results.get(id(unit)))
                         if unit.get("content") is not None else (None, None))
@@ -820,9 +868,7 @@ def _load_document(raw: bytes, path: str | Path, lean):
     if rights_document is not None:
         rights = rights_document
         statuses = rights.elaborated["unit_open"]
-        source_ids = [u["id"] for u, _ in _parts(units)
-                      if type(u.get("content")) is dict and u.get("id") not in attached and
-                      u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")]
+        source_ids = [u["id"] for u, _ in _parts(units) if _in_rights_source(u, attached)]
         source_status = dict(zip(source_ids, statuses[1:], strict=True))
         for unit in compiled:
             if unit["status"] == "CHECKED" and source_status.get(unit["id"], False):
@@ -846,8 +892,9 @@ def _load_document(raw: bytes, path: str | Path, lean):
              if not soft_enabled and (selected_norms or any(d.regulated is not None for d in env.predicates.values()))
              else None)
     norm_defaults = None
-    if defaults_enabled:
-        # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T.
+    if defaults_enabled and not soft_enabled:
+        # norm-defaults 2.3: the layers are those of `fill U`, over E‴ with Fill_T. On the soft chain Lean's
+        # layered route owns them (rd-9-soft-chain 3.8): no W1 container is built over soft units.
         from .norm_defaults import UnspecifiedDocument, validate_completions
         norm_defaults = UnspecifiedDocument(_defaults_environment(env), selected_norms)
         validate_completions(norm_defaults, meta.get("completions", {}), unit_ids)
@@ -967,8 +1014,6 @@ def _assertion_disjunctions(env, sets):
     return result
 
 
-_RIGHTS_KINDS = ("right", "right_lines", "limitation", "bar")
-
 
 def _rights_block(content):
     """The rights block a checked content holds (`right`, `right_lines`,
@@ -980,8 +1025,7 @@ def _rights_block(content):
 
 def _rights_source_units(doc):
     return [{"source_units": [u["id"] for u in doc["units"]]}] + [
-        u["content"] for u in doc["units"]
-        if u["kind"] in (*_RIGHTS_KINDS, "norm") and type(u["content"]) is dict]
+        u["content"] for u in doc["units"] if _in_rights_source(u)]
 
 
 def _content_bearing(doc):
@@ -1018,6 +1062,11 @@ def _lower_soft_document(doc):
         return soft
     data = doc["environment"].to_dict()
     data["profiles"] = [p for p in data["profiles"] if p != "readings@1"]
+    if "norm-defaults@0" in data["profiles"]:
+        # Under the soft completion the soft route reads the source's placeholder (each unspecified completion read
+        # as deny); `fill`, `Soft_T` on the filled tree and every verdict are Lean's readings route's (rd-9 3.8).
+        from .norms import _norm_defaults_placeholder
+        data = _norm_defaults_placeholder(data)
     lower = _environment(data)
     attached = _s1_attached(doc["environment"].to_dict(), doc["meta"])
     if doc["rights_document"] is not None:
@@ -1027,13 +1076,25 @@ def _lower_soft_document(doc):
     return SoftNormDocument(lower, _soft_contents(doc["meta"]["units"], attached))
 
 
+def _content_environment(env, formula_env, kind):
+    """`content_env` of a unit of either path: under `rights@0` a rights block's own environment for a rights kind,
+    else the environment its formulas and norms are read in (the rights route's `E″′`)."""
+    return env if "rights@0" in env.profiles and type(kind) is str and kind in _RIGHTS_KINDS else formula_env
+
+
 def _rights_units(units, exclude=frozenset()):
     """The rights source of a document's units: the unit ids, then every rights or norm content."""
     ids = [u.get("id") for u, _ in _parts(units) if type(u) is dict and type(u.get("id")) is str]
-    return [{"source_units": ids}] + [
-        u["content"] for u, _ in _parts(units)
-        if type(u.get("content")) is dict and u.get("id") not in exclude and
-        u.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")]
+    return [{"source_units": ids}] + [u["content"] for u, _ in _parts(units) if _in_rights_source(u, exclude)]
+
+
+def _in_rights_source(unit, exclude=frozenset()):
+    """A unit of the rights source (Lean `Service.Document.rightsSourceUnit`): object content under a rights kind or
+    `norm`, outside `exclude` (unit ids; an id that is not a string names no unit, and its unit's own check refuses
+    it)."""
+    uid = unit.get("id")
+    return (type(unit.get("content")) is dict and not (type(uid) is str and uid in exclude) and
+            unit.get("kind") in (*_RIGHTS_KINDS, "norm"))
 
 
 def _rights_report(doc):
@@ -1070,23 +1131,12 @@ def coverage(doc, scoped=None, rights_report=None):
     """`scoped`: the reports layer's checked scoped verdicts (`check_document`);
     without them a scoped check is reported as not replayed. `rights_report`: the
     replayed rights report when the caller already has it. A document Lean's `document` mode accepted has
-    Lean's coverage (batch 16b)."""
+    Lean's tables and wrapper counts (batch 16b); the lines of its composed profiles are `_profile_lines`, as on
+    Python's own path."""
     if "lean" in doc:
         answer = deepcopy(doc["lean"]["coverage"])
-        if _content_bearing(doc):
-            from .readings_route import report as readings_report
-            readings = readings_report(doc)
-            answer["residual"].update({"separations": sum(readings["separations"].values()),
-                                       "readings_findings": sum(readings["findings"].values()),
-                                       "pending_candidates": readings["pending_candidates"],
-                                       "couplings": readings["couplings"]})
-        if doc.get("norm_defaults") is not None:
-            lines = coverage_defaults(doc)
-            gaps = lines["residual"]
-            answer["residual"]["gaps"] = len(gaps["gaps"])
-            answer["residual"]["ungrounded_defaults"] = gaps["ungrounded_defaults"]
-            answer["residual_total"] = sum(answer["residual"].values())
-            answer["norm_defaults"] = {"gaps": gaps["gaps"], "findings": lines["findings"]}
+        answer.update(_profile_lines(doc, answer["residual"], rights_report))
+        answer["residual_total"] = sum(answer["residual"].values())
         return answer
     units = doc["units"]
     source = doc["source"]
@@ -1146,6 +1196,21 @@ def coverage(doc, scoped=None, rights_report=None):
         row = decide("risk" if risk else "alternatives", [case])[0]
         alternatives = row["coverage"]["alternatives"]
         residual.update(row["coverage"]["residual"])
+    profile = _profile_lines(doc, residual, rights_report)
+    return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
+            "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
+            "unformalised_reasons": reasons,
+            "residual": residual, "residual_total": sum(residual.values()),
+            **({"residual_lines": lines} if lines else {}),
+            **({"alternatives": alternatives} if alternatives is not None else {}),
+            **profile}
+
+
+def _profile_lines(doc, residual, rights_report=None):
+    """The coverage lines of a document's composed profiles, for both of `coverage`'s paths: the soft and rights
+    residual counts, labels and report, a content-bearing reading set's lines and the norm-defaults gaps. Each
+    count is added to `residual`; the returned members join the coverage object."""
+    meta = doc["meta"]
     soft = doc.get("soft_document")
     if soft is not None:
         from .soft_route import elaborate_soft_document
@@ -1193,13 +1258,7 @@ def coverage(doc, scoped=None, rights_report=None):
         residual["gaps"] = len(gaps["gaps"])
         residual["ungrounded_defaults"] = gaps["ungrounded_defaults"]
     rights_open = ("limitation_terms", "bar_terms")
-    return {"source_bytes": len(source), "accounted_bytes": sum(kinds.values()),
-            "coverage_percent": 100, "bytes_by_kind": kinds, "bytes_by_status": statuses,
-            "unformalised_reasons": reasons,
-            "residual": residual, "residual_total": sum(residual.values()),
-            **({"residual_lines": lines} if lines else {}),
-            **({"alternatives": alternatives} if alternatives is not None else {}),
-            **({"norm_defaults": {
+    return {**({"norm_defaults": {
                 "gaps": gaps["gaps"],
                 "findings": defaults_lines["findings"]}}
                if defaults_lines is not None else {}),
@@ -1383,8 +1442,10 @@ def _report(doc):
                           "soft_document_hash": soft.document_hash,
                           "decision_predicates": sorted(soft.extended_env.decision_names),
                           "background_labels": [label for label, _ in soft.extended_env.soft_premises]}
-        assertions.extend(formula for _, formula in soft.elaborated.premises())
-        assertions.extend(formula for _, formula in soft.extended_env.soft_premises)
+        if "norm-defaults@0" not in doc["environment"].profiles:
+            # Under the soft completion no Python layer or soft premise enters a premise set (rd-9 3.8).
+            assertions.extend(formula for _, formula in soft.elaborated.premises())
+            assertions.extend(formula for _, formula in soft.extended_env.soft_premises)
     rights = doc["rights_document"]
     if rights is not None:
         result["rights"] = {

@@ -237,6 +237,56 @@ def _admit_lean(environment, document) -> dict:
     return bound_admission(env, document, decide("norms" if _uses_norms(env, document) else "route", [case])[0])
 
 
+def bind_report(document, report) -> None:
+    """Bind an admission report to the request graph: its root is the graph's root claim and its
+    assumptions are exactly the ordered unfolding of the root (ClaimGraph.lean `Unfolds`): a leaf
+    gives itself, a deduction the unfoldings of its premises in order, so a shared or repeated
+    premise is listed once per use. A claim is a node's name, AST and label as the node states
+    them. Every admission relay calls this one binder; anything else raises ValueError."""
+    from .backends.service_schema import same_json
+    fields = ("name", "ast", "label")
+    graph = document["graph"]
+    nodes = {}
+    for node in graph["nodes"]:
+        if type(node) is not dict or type(node["name"]) is not str or node["name"] in nodes:
+            raise ValueError("graph node")
+        nodes[node["name"]] = node
+
+    def same_claim(claim, node):
+        return type(claim) is dict and set(claim) == {key for key in fields if key in node} and all(
+            same_json(claim[key], node[key]) for key in claim)
+
+    # Leaf counts first, so an unfolding of another size is refused before it is walked.
+    counts, expanding, stack = {}, set(), [(graph["root"], False)]
+    while stack:
+        name, expanded = stack.pop()
+        premises = nodes[name].get("premises")
+        if expanded:
+            counts[name] = sum(counts[premise] for premise in premises)
+            expanding.discard(name)
+        elif name in expanding:
+            raise ValueError("cyclic graph")
+        elif name not in counts and premises is None:
+            counts[name] = 1
+        elif name not in counts:
+            expanding.add(name)
+            stack.append((name, True))
+            stack.extend((premise, False) for premise in reversed(premises))
+    assumptions = report["assumptions"]
+    if (not same_claim(report["root"], nodes[graph["root"]]) or type(assumptions) is not list or
+            len(assumptions) != counts[graph["root"]]):
+        raise ValueError("report root or assumption count")
+    position, stack = 0, [graph["root"]]
+    while stack:
+        name = stack.pop()
+        if "premises" in nodes[name]:
+            stack.extend(premise for premise in reversed(nodes[name]["premises"]) if counts[premise])
+        elif not same_claim(assumptions[position], nodes[name]):
+            raise ValueError("report assumption")
+        else:
+            position += 1
+
+
 def bound_admission(env, document, row) -> dict:
     """Lean's admission row, bound to the request: the units' kinds rendered back are the request's,
     each reported claim is a graph node with the same name, AST and label, the report's root is
@@ -249,29 +299,19 @@ def bound_admission(env, document, row) -> dict:
     if set(row) != {"id", "status", "admitted", "report", "report_id", "kinds"} or row["admitted"] is not True:
         raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
     units = document.get("units") if type(document) is dict else None
-    graph = document.get("graph") if type(document) is dict else None
     report = row["report"]
-    nodes = graph.get("nodes") if type(graph) is dict else None
-    def request_claim(claim):
-        if type(claim) is not dict or type(nodes) is not list:
-            return False
-        fields = ("name", "ast", "label")
-        return any(type(node) is dict and all(
-            (key in claim) == (key in node) and
-            (key not in claim or same_json(claim[key], node[key])) for key in fields)
-            for node in nodes)
+    try:
+        bind_report(document, report)
+        bound = True
+    except (KeyError, TypeError, ValueError, IndexError):
+        bound = False
     try:
         expected = digest(f"ve-report-{env.identity_version}\n",
                           {"environment_id": env.environment_id, "document": document, "report": report})
     except (VEError, TypeError, ValueError):
         expected = None
     if (type(units) is not list or row["kinds"] != [u.get("kind") if type(u) is dict else None for u in units]
-            or type(graph) is not dict or type(report) is not dict or type(report.get("root")) is not dict
-            or report["root"].get("name") != graph.get("root")
-            or not request_claim(report["root"])
-            or type(report.get("assumptions")) is not list
-            or not all(request_claim(claim) for claim in report["assumptions"])
-            or row["report_id"] != expected):
+            or not bound or row["report_id"] != expected):
         raise CheckerUnavailable("CheckerUnavailable: the Lean admission answer is not bound to the request")
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 

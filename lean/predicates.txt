@@ -11,6 +11,7 @@ module ResponseDecode
 module ResponseShape.Audit
 module ResponseShape.CaseDeciders
 module ResponseShape.Encoders.Alternatives
+module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
@@ -29,13 +30,16 @@ module ResponseShape.Encoders.Rights
 module ResponseShape.Encoders.Risk
 module ResponseShape.Encoders.RiskEval
 module ResponseShape.Encoders.Route
+module ResponseShape.Encoders.SearchBudget
 module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
 module ResponseShape.Encoders.Standalone
+module ResponseShape.Encoders.Words
 module ResponseShape.Encoders
 module ResponseShape.EnumSites
 module ResponseShape.FitsTactic
 module ResponseShape.Schemas.Alternatives
+module ResponseShape.Schemas.Ask
 module ResponseShape.Schemas.Bundle
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
@@ -66,8 +70,10 @@ module ResponseShape.Schemas.Rights
 module ResponseShape.Schemas.Risk
 module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
+module ResponseShape.Schemas.SearchBudget
 module ResponseShape.Schemas.SoftNorms
 module ResponseShape.Schemas.SpeechActs
+module ResponseShape.Schemas.Words
 module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
@@ -86,6 +92,21 @@ module VE.Alternatives.Route
 module VE.Alternatives.Run
 module VE.Alternatives.Validate
 module VE.Alternatives.Wire
+module VE.Ask.Basic
+module VE.Ask.Binding
+module VE.Ask.Examples
+module VE.Ask.Groups
+module VE.Ask.Lines
+module VE.Ask.Plain
+module VE.Ask.PlainAnswer
+module VE.Ask.PlainWire
+module VE.Ask.Render
+module VE.Ask.Run
+module VE.Ask.Sound
+module VE.Ask.Sources
+module VE.Ask.Wire
+module VE.Ask.ZeroAnswer
+module VE.Ask.ZeroWire
 module VE.Attribution.Admission
 module VE.Attribution.Assess
 module VE.Attribution.Bridge
@@ -236,6 +257,8 @@ module VE.NormDefaults.Explain
 module VE.NormDefaults.Fill
 module VE.NormDefaults.FillCheck
 module VE.NormDefaults.Layered
+module VE.NormDefaults.LayeredAdmission
+module VE.NormDefaults.LayeredEntail
 module VE.NormDefaults.Premises
 module VE.NormDefaults.Replay
 module VE.NormDefaults.Report
@@ -328,7 +351,13 @@ module VE.Readings.Separate
 module VE.Readings.Shape
 module VE.Readings.Simulate
 module VE.Readings.Situation
+module VE.Readings.SoftDefaults
+module VE.Readings.SoftExamples
 module VE.Readings.SoftFacts
+module VE.Readings.SoftSeparate
+module VE.Readings.SoftSeparateExamples
+module VE.Readings.SoftVerdicts
+module VE.Readings.SoftWire
 module VE.Readings.Strings
 module VE.Readings.SupAll
 module VE.Readings.SupConflict
@@ -397,6 +426,7 @@ module VE.Route.MeteredProofs
 module VE.Route.MeteredRun
 module VE.Route.MeteredTrace
 module VE.Route.NonVacuity
+module VE.Route.PyDecoder
 module VE.Route.Readings
 module VE.Route.Route
 module VE.Route.Run
@@ -405,6 +435,10 @@ module VE.Route.Steps
 module VE.Route.Typed
 module VE.Route.Wire
 module VE.Route.WireSound
+module VE.SearchBudget.Budget
+module VE.SearchBudget.Demand
+module VE.SearchBudget.Examples
+module VE.SearchBudget.Run
 module VE.Semantics
 module VE.Senses.Assignment
 module VE.Senses.Decode
@@ -487,6 +521,8 @@ module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms
 module VE.WireContract.Tables.SoftNorms
+module VE.Words.Run
+module VE.Words.Situation
 module VE
 Iceberg.Within@Iceberg
 ResponseShape.CaseWF@ResponseShape.Skeleton
@@ -518,6 +554,28 @@ VE.Alternatives.PrefixAdmissibleAlt@VE.Alternatives.Background
 VE.Alternatives.RowsConsistent@VE.Alternatives.Validate
 VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
+VE.Ask.BlockLine@VE.Ask.Lines
+VE.Ask.CaseBinding@VE.Ask.Binding
+VE.Ask.Consistent@VE.Ask.Plain
+VE.Ask.HoldsU@VE.Ask.ZeroWire
+VE.Ask.Inv@VE.Ask.Groups
+VE.Ask.LeadHolds@VE.Ask.Basic
+VE.Ask.LeadHoldsPlain@VE.Ask.Plain
+VE.Ask.LeadHoldsU@VE.Ask.ZeroWire
+VE.Ask.NameReadsBack@VE.Ask.Wire
+VE.Ask.NameReadsBackSame@VE.Ask.Wire
+VE.Ask.PlainCaseBinding@VE.Ask.PlainWire
+VE.Ask.PlainRowOk@VE.Ask.Plain
+VE.Ask.ReasonHolds@VE.Ask.Basic
+VE.Ask.ReasonHoldsU@VE.Ask.ZeroWire
+VE.Ask.RenderInputBound@VE.Ask.Render
+VE.Ask.RowOk@VE.Ask.Basic
+VE.Ask.RowOkU@VE.Ask.ZeroWire
+VE.Ask.Same@VE.Ask.Binding
+VE.Ask.SplitU@VE.Ask.Basic
+VE.Ask.UnitBound@VE.Ask.Binding
+VE.Ask.checkedWitness@VE.Ask.Render
+VE.Ask.checkedWitnessRow@VE.Ask.Lines
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Closure.ClosedAt@VE.Closure.Paths
 VE.Closure.Edge.Typed@VE.Closure.Substitution
@@ -658,19 +716,29 @@ VE.Graph.Unfolds.below@VE.ClaimGraph
 VE.Graph.Unfolds@VE.ClaimGraph
 VE.Graph.tableauValid@VE.ClaimGraph
 VE.GraphChecks.valid@VE.GraphChecks
+VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run
 VE.NormDefaults.Admission.CertificatesBound@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.CertificatesBoundX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.FillLeaf@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.FillLeafU@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.LayerLeaf@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.LayerLeafU@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.NodeAdmitted@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.NodeAdmittedX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.ProfileLeaf@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.ProfileLeafU@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.ReportAdmitted@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.ReportAdmittedX@VE.NormDefaults.LayeredAdmission
+VE.NormDefaults.Admission.SoftLeafX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.Admission.SourceDecoded@VE.NormDefaults.Admission
+VE.NormDefaults.Admission.SourceDecodedX@VE.NormDefaults.LayeredAdmission
 VE.NormDefaults.BaseAdmissibleAltU@VE.NormDefaults.Routes
 VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises
 VE.NormDefaults.CheckOK@VE.NormDefaults.Check
 VE.NormDefaults.ConflictFreeU@VE.NormDefaults.Premises
 VE.NormDefaults.DefOK@VE.NormDefaults.Check
 VE.NormDefaults.EntailsU@VE.NormDefaults.Wire
+VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail
 VE.NormDefaults.Expansion3@VE.NormDefaults.Semantics
 VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics
 VE.NormDefaults.NodeOK@VE.NormDefaults.Check
@@ -755,12 +823,19 @@ VE.Question.NoDerivation@VE.Question.Properties
 VE.Question.QuestionOneReading@VE.Question.Properties
 VE.Readings.Achieves@VE.Readings.Separate
 VE.Readings.AchievesQuiet@VE.Readings.Separate
+VE.Readings.AchievesS@VE.Readings.SoftSeparate
 VE.Readings.AchievesU@VE.Readings.Unspecified
 VE.Readings.AsciiL@VE.Readings.Strings
 VE.Readings.Attached.below@VE.Readings.Doc
 VE.Readings.Attached@VE.Readings.Doc
 VE.Readings.AuthorLite@VE.Readings.SupFill
 VE.Readings.ChoiceExtension@VE.Readings.Choice
+VE.Readings.ChoiceSem.compat@VE.Readings.Verdicts
+VE.Readings.ChoiceSem.consistent@VE.Readings.Verdicts
+VE.Readings.ChoiceSem.counter@VE.Readings.Verdicts
+VE.Readings.ChoiceSem.entails@VE.Readings.Verdicts
+VE.Readings.ChoiceSem.free@VE.Readings.Verdicts
+VE.Readings.ChoiceSem.notFree@VE.Readings.Verdicts
 VE.Readings.ChosenAt@VE.Readings.UpSlot
 VE.Readings.ChosenNorm@VE.Readings.ChoiceFacts
 VE.Readings.Compatible@VE.Readings.Choice
@@ -768,8 +843,11 @@ VE.Readings.CompatibleK@VE.Readings.Components
 VE.Readings.ConflictFreeK@VE.Readings.Components
 VE.Readings.ConsistentK@VE.Readings.Components
 VE.Readings.ConsistentU@VE.Readings.Verdicts
+VE.Readings.ConsistentX@VE.Readings.Verdicts
 VE.Readings.CounterU@VE.Readings.Verdicts
+VE.Readings.CounterX@VE.Readings.Verdicts
 VE.Readings.Covers@VE.Readings.Verdicts
+VE.Readings.CoversG@VE.Readings.Verdicts
 VE.Readings.DecidesByD@VE.Readings.SupFill
 VE.Readings.DecidesBySoftD@VE.Readings.SupFill
 VE.Readings.Encodes@VE.Readings.Choice
@@ -777,20 +855,24 @@ VE.Readings.Fits@VE.Readings.Choice
 VE.Readings.FixedNorm@VE.Readings.ChoiceFacts
 VE.Readings.Grows@VE.Readings.Shape
 VE.Readings.Holds@VE.Readings.Verdicts
+VE.Readings.HoldsG@VE.Readings.Verdicts
 VE.Readings.Hyps@VE.Readings.ChoiceFacts
 VE.Readings.IsBit@VE.Readings.BaseUp
 VE.Readings.KeepsFrame@VE.Readings.Separate
 VE.Readings.NamesFree@VE.Readings.Unspecified
 VE.Readings.NoSep@VE.Readings.Labels
 VE.Readings.Observes@VE.Readings.Separate
+VE.Readings.ObservesF@VE.Readings.SoftSeparate
 VE.Readings.OnBit@VE.Readings.BaseUp
 VE.Readings.OthersSettled@VE.Readings.Components
 VE.Readings.PathTo@VE.Readings.Doc
 VE.Readings.RightsNames@VE.Readings.Lines
 VE.Readings.RowsHold@VE.Readings.Verdicts
+VE.Readings.RowsHoldG@VE.Readings.Verdicts
 VE.Readings.RowsSound@VE.Readings.Components
 VE.Readings.RowsSoundBut@VE.Readings.Components
 VE.Readings.Separated@VE.Readings.Separate
+VE.Readings.SeparatedS@VE.Readings.SoftSeparate
 VE.Readings.SeparatedU@VE.Readings.Unspecified
 VE.Readings.Shaped@VE.Readings.Unspecified
 VE.Readings.Sim@VE.Readings.Simulate
