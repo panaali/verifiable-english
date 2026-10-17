@@ -596,6 +596,13 @@
   },
   {
    "class": "V",
+   "lines": 13,
+   "reason": "fu-lf14c-f4 (lf-14c review F4): family norms documents whose definitions the FOL view cannot carry (an n-ary head, or a body over an n-ary atom) are elaborated by the family reader. Untied V by file against 85b20fcba: VE/Norms/Family.lean +12 (firstOrderDefinition, new, 9 lines, G[V]; firstOrder +3, G[V]), VE/Core/Layers.lean +1 (the completeModel docstring, rewritten to say what the code does, is one line longer, D[V]). K +0, S +0. Itemised in docs/infra/fu-lf14c-f4/DELTA.md row 1.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), fu-lf14c-f4, 2026-10-17",
+   "commit": "85b20fcba4b1b0473de9e41888059e7e1be22b3a"
+  },
+  {
+   "class": "V",
    "lines": 6,
    "reason": "fu-rd9-checks: the rights.json packages shape binds, per verdict, an UNKNOWN status line, its certificate detail and its empty conditional_on, and a CONFLICT-FREE status line. Untied V by file: ResponseShape/Schemas/Rights.lean +6 (packages, G[V]). K +0, S +0. Itemised in docs/infra/fu-rd9-checks/DELTA.md.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), fu-rd9-checks, 2026-10-17",

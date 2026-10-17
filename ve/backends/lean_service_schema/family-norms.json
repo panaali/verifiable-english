@@ -34,7 +34,7 @@
           "items": {
             "additionalProperties": false,
             "properties": {
-              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "ast": {"$ref": "#/$defs/familyFormula"},
               "generator": {"enum": ["flags", "definitions", "literals", "profile"]}
             },
             "required": ["generator", "ast"],
