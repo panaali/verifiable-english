@@ -1,0 +1,68 @@
+[
+ {
+  "id": "S1",
+  "language": "Python",
+  "file": "lean/VE/Route/frozen.py",
+  "behaviour": "F4: a frozen identity whose decoder is not listed in DECODERS fails",
+  "mutation": {"from": "DECODERS = (\"VE/CertificateWire.lean\", \"VE/Json.lean\", \"VE/Order/Wire.lean\")",
+               "to": "DECODERS = (\"VE/CertificateWire.lean\", \"VE/Json.lean\")"},
+  "test": "tests/test_frozen_sources.py::test_every_frozen_identity_has_a_decoder_and_every_decoder_defines_one",
+  "killed": true,
+  "failure": "assert ['ve-environment-v0.1-order\\n', 've-meaning-v0.1-order\\n'] == []"
+ },
+ {
+  "id": "S2",
+  "language": "Python",
+  "file": "lean/VE/Route/frozen.py",
+  "behaviour": "F4: a listed decoder that defines no frozen identity fails",
+  "mutation": {"from": "DECODERS = (\"VE/CertificateWire.lean\", ",
+               "to": "DECODERS = (\"VE/Bridge.lean\", \"VE/CertificateWire.lean\", "},
+  "test": "tests/test_frozen_sources.py::test_every_frozen_identity_has_a_decoder_and_every_decoder_defines_one",
+  "killed": true,
+  "failure": "set(defines) == set(frozen.DECODERS): extra item VE/Bridge.lean"
+ },
+ {
+  "id": "S3",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "F8: the base width is the widest trusted line at base, not the widest line of any kind (the reverted comparison)",
+  "mutation": {"from": "widths = trusted_widths(decls, kept, tree)",
+               "to": "widths = {key: max(map(len, (tree / \"lean\" / key).read_text().split(\"\\n\"))) for key in kept}"},
+  "test": "tests/test_frozen_sources.py::test_a_long_comment_at_base_hides_no_collapsed_trusted_code",
+  "killed": true,
+  "failure": "{'base_width': 261} != {'base_width': 37}"
+ },
+ {
+  "id": "S4",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "F8: the base is classified by the base's own side table, not HEAD's",
+  "mutation": {"from": "trust_map.walk(tree, *trust_map.rev_paths(tree))",
+               "to": "trust_map.walk(tree, root / \"tools/trust-classes.json\", trust_map.rev_paths(tree)[1])"},
+  "test": "tests/test_frozen_sources.py::test_a_long_comment_at_base_hides_no_collapsed_trusted_code",
+  "killed": true,
+  "failure": "assert (37, ['VE/Demo.lean']) == (0, ['VE/Demo.lean'])"
+ },
+ {
+  "id": "S5",
+  "language": "Python",
+  "file": "tools/trust_changes.py",
+  "behaviour": "F8: a base whose trust classification fails gives no report",
+  "mutation": {"from": "            if problems:\n                raise RuntimeError(f\"the trust classification of",
+               "to": "            if False:\n                raise RuntimeError(f\"the trust classification of"},
+  "test": "tests/test_frozen_sources.py::test_a_base_whose_classification_fails_gives_no_report",
+  "killed": true,
+  "failure": "assert 0 == 1 (trust_changes.main exit code)"
+ },
+ {
+  "id": "S6",
+  "language": "Python",
+  "file": "tools/trust_map.py",
+  "behaviour": "extract_rev (now shared by measure_rev and trust_changes) reports a git failure, never an empty tree",
+  "mutation": {"from": "        return f\"git archive {rev}",
+               "to": "        return None and f\"git archive {rev}"},
+  "test": "tests/test_consolidation_tools.py::test_since_gates_a_change_on_its_own_growth",
+  "killed": true,
+  "failure": "FileNotFoundError: .../tools/trust-classes.json"
+ }
+]

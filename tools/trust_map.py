@@ -740,8 +740,9 @@ def run_git(root: Path, *args: str) -> subprocess.CompletedProcess:
 def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]:
     """The base commit of the check and a problem. `since` names it; otherwise it is the merge base
     of HEAD and `main`, or HEAD's first parent when HEAD is main's tip, unless a merge is in progress
-    (`MERGE_HEAD`: the merge train before its commit, `regen_generated.py --resolve`), whose first
-    parent will be HEAD itself. Outside a git work tree whose top is `root` there is none (None,
+    (`MERGE_HEAD`: the merge train before its commit, or a branch syncing main, under
+    `regen_generated.py --resolve`): then it is the merge base of `main` and the merge to be
+    committed, HEAD itself on main. Outside a git work tree whose top is `root` there is none (None,
     None); a work tree without `main` or a merge base is a problem."""
     if since is not None:
         named = run_git(root, "rev-parse", "--verify", "-q", f"{since}^{{commit}}")
@@ -750,11 +751,14 @@ def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]
     if top.returncode or Path(top.stdout.strip()).resolve() != root.resolve():
         return None, None
     head = run_git(root, "rev-parse", "HEAD").stdout.strip()
-    merged = run_git(root, "merge-base", "HEAD", "main")
+    merging = run_git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD")
+    # During a merge the base is main's merge base with the commit the merge will make (HEAD and
+    # MERGE_HEAD as parents): a sync of main into a branch is checked as it will be once committed.
+    merged = run_git(root, "merge-base", "main", "HEAD", *(["MERGE_HEAD"] if merging.returncode == 0 else []))
     if merged.returncode:
         return None, "no merge base of HEAD and `main`; name the base with --since REV"
     base = merged.stdout.strip()
-    if base == head and run_git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD").returncode:
+    if base == head and merging.returncode:
         parent = run_git(root, "rev-parse", "--verify", "-q", "HEAD^1")
         if parent.returncode:
             return None, "HEAD is main's tip and has no parent; name the base with --since REV"
@@ -762,26 +766,39 @@ def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]
     return base, None
 
 
-def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]], list[str], dict | None]:
-    """Measure the tree of commit `rev` with this tool's rules: its `lean/` and side table are read
-    from git into a scratch directory (no worktree, index or stash is touched). Also returns that
-    commit's baseline, or None when it has none. A git failure is a problem, never an empty tree."""
-    table = TABLE.relative_to(ROOT).as_posix()
-    archive = subprocess.run(["git", "-C", str(root), "archive", "--format=tar", rev, "--", "lean", table],
-                             capture_output=True)
+def extract_rev(rev: str, tree: Path, root: Path = ROOT) -> str | None:
+    """Write the `lean/` directory and side table of commit `rev` under `tree`, read from git (no
+    worktree, index or stash is touched); `walk(tree, *rev_paths(tree))` then reads that commit. The
+    problem when git cannot read them, never an empty tree."""
+    archive = subprocess.run(["git", "-C", str(root), "archive", "--format=tar", rev, "--", "lean",
+                              TABLE.relative_to(ROOT).as_posix()], capture_output=True)
     if archive.returncode:
-        return {}, [f"git archive {rev}: {archive.stderr.decode(errors='replace').strip()}"], None
-    shown = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{BASELINE.relative_to(ROOT).as_posix()}"],
-                           capture_output=True)
-    try:
-        parent_baseline = json.loads(shown.stdout) if shown.returncode == 0 else None
-    except ValueError as error:
-        return {}, [f"{rev}: {BASELINE.name} is not JSON: {error}"], None
+        return f"git archive {rev}: {archive.stderr.decode(errors='replace').strip()}"
+    with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
+        tar.extractall(tree, filter="data")
+    return None
+
+
+def rev_paths(tree: Path) -> tuple[Path, Path]:
+    """The side table and statement list of a tree `extract_rev` wrote."""
+    return tree / TABLE.relative_to(ROOT), tree / STATEMENTS.relative_to(ROOT)
+
+
+def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]], list[str], dict | None]:
+    """Measure the tree of commit `rev` with this tool's rules (`extract_rev`). Also returns that
+    commit's baseline, or None when it has none. A git failure is a problem, never an empty tree."""
     with tempfile.TemporaryDirectory() as scratch:
         tree = Path(scratch)
-        with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
-            tar.extractall(tree, filter="data")
-        files, problems = measure(tree, tree / table, tree / STATEMENTS.relative_to(ROOT))
+        problem = extract_rev(rev, tree, root)
+        if problem:
+            return {}, [problem], None
+        shown = subprocess.run(["git", "-C", str(root), "show", f"{rev}:{BASELINE.relative_to(ROOT).as_posix()}"],
+                               capture_output=True)
+        try:
+            parent_baseline = json.loads(shown.stdout) if shown.returncode == 0 else None
+        except ValueError as error:
+            return {}, [f"{rev}: {BASELINE.name} is not JSON: {error}"], None
+        files, problems = measure(tree, *rev_paths(tree))
     return files, [f"{rev}: {p}" for p in problems], parent_baseline
 
 

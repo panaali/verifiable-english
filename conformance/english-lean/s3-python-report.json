@@ -1,23 +1,12 @@
 {
  "format": "ve.english-lean-s3-python@1",
  "fixtures": 163,
- "agree": 147,
- "differ": 16,
+ "agree": 158,
+ "differ": 5,
  "differences": [
-  "al1",
-  "al2",
-  "al3",
   "al5",
   "al6",
   "al7",
-  "al12",
-  "al13",
-  "al14",
-  "al15",
-  "al18",
-  "al23",
-  "al33",
-  "al34",
   "al36",
   "al37"
  ],
@@ -27,7 +16,6 @@
   "or38b"
  ],
  "findings": {
-  "safe-fallback": "Under `FA` and `FR` Python selects `{0} is classified as \"safe\"` for `safe`: the declared `{0} is safe` carries SYMBOL_COLLISION, because `is` is the head of the fixed role wording `{0} is available to {1}` (`printer.py:201-205`, `:245-246`). The spec's `LA` and `LR` select `{0} is safe`, which V6 (E2.1) would refuse.",
   "action-letter": "Under `FA` Python's letter for the action sort is `C`, not the spec's `A` (al5 to al7)."
  },
  "selected": {
@@ -47,7 +35,7 @@
    "risk__more_severe": null
   },
   "FA": {
-   "safe": "{0} is classified as \"safe\"",
+   "safe": "{0} is safe",
    "action_letter": "C",
    "risk__more_severe": null
   },
@@ -57,7 +45,7 @@
    "risk__more_severe": null
   },
   "FR": {
-   "safe": "{0} is classified as \"safe\"",
+   "safe": "{0} is safe",
    "action_letter": "C",
    "risk__more_severe": "{0} is more severe than {1}"
   },
@@ -1551,12 +1539,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "Every action available to robot is classified as \"safe\".",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
@@ -1565,7 +1547,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al2",
@@ -1579,12 +1561,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "For every action, every other action available to robot is classified as \"safe\".",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
@@ -1593,7 +1569,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al3",
@@ -1607,12 +1583,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "For every action, another action available to robot is classified as \"safe\".",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
@@ -1621,7 +1591,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al4a",
@@ -1636,13 +1606,7 @@
     "class": "SyntaxError",
     "message": "Another action needs a rule on an action as its reference."
    },
-   "agrees": true,
-   "python_text": "Every other action available to robot is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Another action needs a rule on an action as its reference."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al4b",
@@ -1657,13 +1621,7 @@
     "class": "SyntaxError",
     "message": "Another action needs a rule on an action as its reference."
    },
-   "agrees": true,
-   "python_text": "Another action available to robot is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Another action needs a rule on an action as its reference."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al5",
@@ -1681,7 +1639,7 @@
     "message": "Expected ', ' here. Use the English paraphrase as a writing example."
    },
    "agrees": false,
-   "python_text": "For every action named C1, for every action named C2, every other action available to robot is classified as \"safe\".",
+   "python_text": "For every action named C1, for every action named C2, every other action available to robot is safe.",
    "python_on_python_text": {
     "class": "accepted",
     "formulas": [
@@ -1709,7 +1667,7 @@
     "message": "Expected ', ' here. Use the English paraphrase as a writing example."
    },
    "agrees": false,
-   "python_text": "For every action named C1, for every action named C2, every other action available to robot excluding C1 is classified as \"safe\".",
+   "python_text": "For every action named C1, for every action named C2, every other action available to robot excluding C1 is safe.",
    "python_on_python_text": {
     "class": "accepted",
     "formulas": [
@@ -1737,7 +1695,7 @@
     "message": "Expected ', ' here. Use the English paraphrase as a writing example."
    },
    "agrees": false,
-   "python_text": "For every action named C1, for every action named C2, another action available to robot excluding C1 is classified as \"safe\".",
+   "python_text": "For every action named C1, for every action named C2, another action available to robot excluding C1 is safe.",
    "python_on_python_text": {
     "class": "accepted",
     "formulas": [
@@ -1762,13 +1720,7 @@
     "class": "SyntaxError",
     "message": "The excluded action must be an action in scope."
    },
-   "agrees": true,
-   "python_text": "For every action, every other action available to robot excluding robot is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "The excluded action must be an action in scope."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al9",
@@ -1783,13 +1735,7 @@
     "class": "SyntaxError",
     "message": "The excluded action must be an action in scope."
    },
-   "agrees": true,
-   "python_text": "For every agent, for every action, every other action available to robot excluding that agent is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "The excluded action must be an action in scope."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al10",
@@ -1803,13 +1749,7 @@
     "class": "SyntaxError",
     "message": "Unknown English phrase 'excluding robot'. Nearest declared wordings: 'robot'; 'action'; 'injury'."
    },
-   "agrees": true,
-   "python_text": "Every action available to robot excluding robot is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'excluding robot'. Nearest declared wordings: 'robot'; 'action'; 'injury'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al11",
@@ -1845,12 +1785,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "For every action, another action available to robot either is classified as \"safe\" or leads to injury.",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
@@ -1859,7 +1793,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al13",
@@ -1873,12 +1807,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "For every action, another action available to robot either is classified as \"safe\" or leads to injury, or both.",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
@@ -1887,7 +1815,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al14",
@@ -1901,12 +1829,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "For every action, another action available to robot both is classified as \"safe\" and leads to injury.",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (and (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
@@ -1915,7 +1837,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al15",
@@ -1929,12 +1851,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "For every action, every other action available to robot either that other action is classified as \"safe\" or leads to injury.",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
@@ -1943,7 +1859,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al16",
@@ -1977,7 +1893,7 @@
    "expected_class": "SyntaxError",
    "python": {
     "class": "SyntaxError",
-    "message": "Unknown English phrase 'is the same as wait'. Nearest declared wordings: 'is classified as \"safe\"'; 'wait'; 'leads to {1}'."
+    "message": "Unknown English phrase 'is the same as wait'. Nearest declared wordings: 'wait'; 'leads to {1}'; 'agent'."
    },
    "agrees": true
   },
@@ -1993,12 +1909,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "Every action available to robot that action is classified as \"safe\".",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
@@ -2007,7 +1917,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al19",
@@ -2022,13 +1932,7 @@
     "class": "SyntaxError",
     "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
    },
-   "agrees": true,
-   "python_text": "Every action available to robot that other action is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al20",
@@ -2043,13 +1947,7 @@
     "class": "SyntaxError",
     "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
    },
-   "agrees": true,
-   "python_text": "For every action, every other action available to robot that action is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al21",
@@ -2064,13 +1962,7 @@
     "class": "SyntaxError",
     "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
    },
-   "agrees": true,
-   "python_text": "For every action, that other action is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al22a",
@@ -2085,13 +1977,7 @@
     "class": "SyntaxError",
     "message": "Expected a constant name or a definite reference to an entity already introduced."
    },
-   "agrees": true,
-   "python_text": "Every action available to it is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Expected a constant name or a definite reference to an entity already introduced."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al22b",
@@ -2106,13 +1992,7 @@
     "class": "SyntaxError",
     "message": "The chooser has no antecedent; write there is a agent such that that action is available to that agent and …"
    },
-   "agrees": true,
-   "python_text": "Every action available to that agent is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "The chooser has no antecedent; write there is a agent such that that action is available to that agent and …"
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al23",
@@ -2126,12 +2006,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "For every agent, every action available to that agent is classified as \"safe\".",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all agent (all action (implies (pred available [var 0, var 1]) (pred safe [var 0])))"
@@ -2140,7 +2014,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al24",
@@ -2154,13 +2028,7 @@
     "class": "SyntaxError",
     "message": "Unknown English phrase 'T'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
    },
-   "agrees": true,
-   "python_text": "For every action, every other action available to robot That other action is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'T'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al25",
@@ -2174,13 +2042,7 @@
     "class": "SyntaxError",
     "message": "Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
    },
-   "agrees": true,
-   "python_text": "Every Action available to robot is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al26",
@@ -2194,13 +2056,7 @@
     "class": "SyntaxError",
     "message": "Unknown English phrase 'Available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
    },
-   "agrees": true,
-   "python_text": "Every action Available to robot is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'Available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al27",
@@ -2212,15 +2068,9 @@
    "expected_class": "SyntaxError",
    "python": {
     "class": "SyntaxError",
-    "message": "Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is classified as \"safe\"'."
+    "message": "Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is safe'."
    },
-   "agrees": true,
-   "python_text": "Every action available to robot wait is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is classified as \"safe\"'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al28",
@@ -2232,7 +2082,7 @@
    "expected_class": "SyntaxError",
    "python": {
     "class": "SyntaxError",
-    "message": "Unknown English phrase 'this holds in all cases'. Nearest declared wordings: 'is classified as \"safe\"'; 'allows {1} to happen'; 'is avoidable by {1}'."
+    "message": "Unknown English phrase 'this holds in all cases'. Nearest declared wordings: 'allows {1} to happen'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
    },
    "agrees": true
   },
@@ -2247,7 +2097,7 @@
    "expected_class": "SyntaxError",
    "python": {
     "class": "SyntaxError",
-    "message": "Unknown English phrase 'is the same as'. Nearest declared wordings: 'leads to {1}'; 'prevents {1}'; 'is classified as \"safe\"'."
+    "message": "Unknown English phrase 'is the same as'. Nearest declared wordings: 'leads to {1}'; 'prevents {1}'; 'is safe'."
    },
    "agrees": true
   },
@@ -2400,12 +2250,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "Wait is classified as \"safe\". Therefore every action available to robot is classified as \"safe\".",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "pred safe [const wait]",
@@ -2416,7 +2260,7 @@
      true
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al34",
@@ -2430,12 +2274,6 @@
    },
    "expected_class": "accepted",
    "python": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": false,
-   "python_text": "For every action, every action available to robot is classified as \"safe\".",
-   "python_on_python_text": {
     "class": "accepted",
     "formulas": [
      "all action (all action (implies (pred available [var 0, const robot]) (pred safe [var 0])))"
@@ -2444,7 +2282,7 @@
      false
     ]
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "al35",
@@ -2802,15 +2640,9 @@
    "expected_class": "SyntaxError",
    "python": {
     "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": true,
-   "python_text": "Every action available to robot either is classified as \"safe\" or cannot lead to injury.",
-   "python_on_python_text": {
-    "class": "SyntaxError",
     "message": "Choose whether no available action might lead to the harm: 'it is not the case that there is an action such that both that action is available to robot and that action might lead to injury'; or some available action cannot lead to it: 'there is an action such that both that action is available to robot and that action cannot lead to injury'."
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "ri11b",
@@ -2823,15 +2655,9 @@
    "expected_class": "SyntaxError",
    "python": {
     "class": "SyntaxError",
-    "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-   },
-   "agrees": true,
-   "python_text": "Every action available to robot both cannot lead to injury and is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
     "message": "Choose whether no available action might lead to the harm: 'it is not the case that there is an action such that both that action is available to robot and that action might lead to injury'; or some available action cannot lead to it: 'there is an action such that both that action is available to robot and that action cannot lead to injury'."
    },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "ri12",
@@ -3045,13 +2871,7 @@
     "class": "SyntaxError",
     "message": "Use 'has a less severe worst case than'."
    },
-   "agrees": true,
-   "python_text": "Wait is classified as \"safe\"r than wait.",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "Unknown English phrase 'is classified as \"safe\"r than wait'. Nearest declared wordings: 'is classified as \"safe\"'; 'is more severe than {1}'; 'catastrophic'."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "ri17.10",
@@ -3065,13 +2885,7 @@
     "class": "SyntaxError",
     "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
    },
-   "agrees": true,
-   "python_text": "Wait leads to injury unless wait is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "ri17.11",
@@ -3085,13 +2899,7 @@
     "class": "SyntaxError",
     "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
    },
-   "agrees": true,
-   "python_text": "Wait cannot lead to injury exactly when wait is classified as \"safe\".",
-   "python_on_python_text": {
-    "class": "SyntaxError",
-    "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
-   },
-   "agrees_on_python_text": true
+   "agrees": true
   },
   {
    "id": "ri17.12",

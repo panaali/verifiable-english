@@ -1845,6 +1845,37 @@
         "VE.Closure.invariantAt"
       ]
     },
+    "VE/Closure/Order.lean": {
+      "S": [
+        "VE.Closure.Order",
+        "VE.Closure.Caps",
+        "VE.Closure.Order.admit",
+        "VE.Closure.Order.above",
+        "VE.Closure.Order.atLeast"
+      ]
+    },
+    "VE/Closure/OrderChecks.lean": {
+      "T": [
+        "VE.Closure.OrderChecks.names",
+        "VE.Closure.OrderChecks.links",
+        "VE.Closure.OrderChecks.order",
+        "VE.Closure.OrderChecks.standardCaps",
+        "VE.Closure.OrderChecks.edgeCap",
+        "VE.Closure.OrderChecks.emptyCaps",
+        "VE.Closure.OrderChecks.tooMany",
+        "VE.Closure.OrderChecks.undeclared",
+        "VE.Closure.OrderChecks.result",
+        "VE.Closure.OrderChecks.pairs",
+        "VE.Closure.OrderChecks.softEnv",
+        "VE.Closure.OrderChecks.softAgrees",
+        "VE.Closure.OrderChecks.softTrue",
+        "VE.Closure.OrderChecks.riskLinks",
+        "VE.Closure.OrderChecks.riskOrder",
+        "VE.Closure.OrderChecks.riskDoc",
+        "VE.Closure.OrderChecks.riskAgrees",
+        "VE.Closure.OrderChecks.riskTrue"
+      ]
+    },
     "VE/Closure/PathRules.lean": {
       "C": [
         "VE.Closure.composeKind",
@@ -3337,6 +3368,7 @@
         "VE.EnglishGrammar.E2Examples.Fhence",
         "VE.EnglishGrammar.E2Examples.Fitem",
         "VE.EnglishGrammar.E2Examples.Fp",
+        "VE.EnglishGrammar.E2Examples.Fpermits",
         "VE.EnglishGrammar.E2Examples.LA",
         "VE.EnglishGrammar.E2Examples.LF",
         "VE.EnglishGrammar.E2Examples.LR",
@@ -3683,6 +3715,7 @@
         "VE.EnglishGrammar.PatWord",
         "VE.EnglishGrammar.PolicyCtx",
         "VE.EnglishGrammar.PolicyCtx.of",
+        "VE.EnglishGrammar.PolicyCtx.ofHeads",
         "VE.EnglishGrammar.PredFacts",
         "VE.EnglishGrammar.PredFacts.of",
         "VE.EnglishGrammar.acceptsDeclared",
@@ -3762,11 +3795,13 @@
     "VE/EnglishGrammar/PolicyReference.lean": {
       "T": [
         "VE.EnglishGrammar.PolicyReference.acceptsDeclared",
+        "VE.EnglishGrammar.PolicyReference.acceptedHeads",
         "VE.EnglishGrammar.PolicyReference.bareOk",
         "VE.EnglishGrammar.PolicyReference.duplicateWording",
         "VE.EnglishGrammar.PolicyReference.fallbackNoun",
         "VE.EnglishGrammar.PolicyReference.letterWords",
         "VE.EnglishGrammar.PolicyReference.lintCodes",
+        "VE.EnglishGrammar.PolicyReference.lintCodesWithHeads",
         "VE.EnglishGrammar.PolicyReference.mainSelection",
         "VE.EnglishGrammar.PolicyReference.negativeLeft",
         "VE.EnglishGrammar.PolicyReference.overlayCheck",
@@ -7234,7 +7269,14 @@
         "VE.Rights.sameEffectStrict"
       ],
       "D[V]": [
-        "VE.Rights.Ground",
+        {
+          "name": "VE.Rights.Ground",
+          "tied": [
+            "VE.Rights.ground_cited",
+            "VE.Rights.ground_collision",
+            "VE.Rights.ground_effect"
+          ]
+        },
         "VE.Rights.Ground.text",
         "VE.Rights.mechText"
       ],
