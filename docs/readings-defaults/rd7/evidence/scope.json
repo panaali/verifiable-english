@@ -2,13 +2,13 @@
  "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
  "changes": [
   {
-   "added": 53,
-   "deleted": 12,
+   "added": 62,
+   "deleted": 17,
    "path": "docs/readings-defaults/rd7/DELTA.md"
   },
   {
-   "added": 289,
-   "deleted": 157,
+   "added": 326,
+   "deleted": 170,
    "path": "docs/readings-defaults/rd7/REPORT.md"
   },
   {
@@ -22,6 +22,11 @@
    "path": "docs/readings-defaults/rd7/evidence/ab-delta.json"
   },
   {
+   "added": 26,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/ab-fix.json"
+  },
+  {
    "added": 22,
    "deleted": 0,
    "path": "docs/readings-defaults/rd7/evidence/comparator-probes.json"
@@ -30,6 +35,11 @@
    "added": 47,
    "deleted": 7,
    "path": "docs/readings-defaults/rd7/evidence/deletion-ledger.json"
+  },
+  {
+   "added": 14,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/f2-cost.json"
   },
   {
    "added": 90,
@@ -47,8 +57,8 @@
    "path": "docs/readings-defaults/rd7/evidence/lean-mutants.json"
   },
   {
-   "added": 202,
-   "deleted": 12,
+   "added": 256,
+   "deleted": 14,
    "path": "docs/readings-defaults/rd7/evidence/mutants.json"
   },
   {
@@ -167,23 +177,23 @@
    "path": "docs/readings-defaults/rd7/evidence/rd7-tests6.log"
   },
   {
-   "added": 567,
-   "deleted": 39,
+   "added": 606,
+   "deleted": 78,
    "path": "docs/readings-defaults/rd7/evidence/relay-gate.json"
   },
   {
-   "added": 60,
-   "deleted": 1,
+   "added": 61,
+   "deleted": 2,
    "path": "docs/readings-defaults/rd7/evidence/relay-route.json"
   },
   {
-   "added": 505,
-   "deleted": 48,
+   "added": 619,
+   "deleted": 91,
    "path": "docs/readings-defaults/rd7/evidence/scope.json"
   },
   {
-   "added": 365,
-   "deleted": 80,
+   "added": 483,
+   "deleted": 99,
    "path": "docs/readings-defaults/rd7/evidence/seeded-bugs.json"
   },
   {
@@ -202,8 +212,8 @@
    "path": "docs/spec/assurance-manifest.md"
   },
   {
-   "added": 270,
-   "deleted": 104,
+   "added": 294,
+   "deleted": 115,
    "path": "docs/trust-baseline.json"
   },
   {
@@ -267,8 +277,8 @@
    "path": "lean/VE/Readings/SupVerdictsSound.lean"
   },
   {
-   "added": 533,
-   "deleted": 55,
+   "added": 553,
+   "deleted": 63,
    "path": "lean/VE/Readings/SupVerdictsWire.lean"
   },
   {
@@ -282,8 +292,8 @@
    "path": "lean/VE/Rights/Run.lean"
   },
   {
-   "added": 18,
-   "deleted": 13,
+   "added": 19,
+   "deleted": 14,
    "path": "lean/VE/Route/frozen-sources.sha256"
   },
   {
@@ -297,13 +307,13 @@
    "path": "lean/axioms.txt"
   },
   {
-   "added": 20,
+   "added": 21,
    "deleted": 0,
    "path": "lean/checkers.lock"
   },
   {
-   "added": 592,
-   "deleted": 479,
+   "added": 610,
+   "deleted": 496,
    "path": "lean/declarations.txt"
   },
   {
@@ -322,13 +332,13 @@
    "path": "tests/data/readings-rd7-128.json"
   },
   {
-   "added": 14,
-   "deleted": 10,
+   "added": 23,
+   "deleted": 13,
    "path": "tests/test_readings_budget_zero.py"
   },
   {
-   "added": 9,
-   "deleted": 13,
+   "added": 30,
+   "deleted": 15,
    "path": "tests/test_readings_components_document.py"
   },
   {
@@ -352,8 +362,8 @@
    "path": "tests/test_readings_s2_document.py"
   },
   {
-   "added": 444,
-   "deleted": 23,
+   "added": 562,
+   "deleted": 24,
    "path": "tests/test_readings_sup_verdicts.py"
   },
   {
@@ -397,12 +407,32 @@
    "path": "ve/readings_s2_wording.py"
   },
   {
-   "added": 422,
-   "deleted": 418,
+   "added": 465,
+   "deleted": 439,
    "path": "ve/readings_verdicts.py"
   }
  ],
  "commits": [
+  {
+   "hash": "9ff8cda195ef6579c231de36472b4bca1dfc1ecb",
+   "subject": "rd-7 review fix: relay mutation gate evidence on the fixed code (0 findings)"
+  },
+  {
+   "hash": "8f432ef339e7dbcb835f5884952c23a25770c4ab",
+   "subject": "rd-7 review fix: DELTA (T1 +12 under R6, K1 member order), A/B of the readings corpora and F2 cost on the fixed code, report"
+  },
+  {
+   "hash": "f4d0b4c017d73fb8af90e81c70e92c87b3edeafe",
+   "subject": "rd-7 review fix: seeded mutants for F1, F2 and F4 replayed (P10-P12, L9, L10) with P1, L5, P7-P9 on the changed sources"
+  },
+  {
+   "hash": "cd4f21c4c6e7a06342eff1c706b62884fc37c8a0",
+   "subject": "rd-7 review fix: untaken check waits for the checked budget (F1), evidence only for scopes Lean lists (F2), restored tests (F3), assumed bound for every question (F4)"
+  },
+  {
+   "hash": "f90694b26cbb2352692d0e517560955aa2ca1525",
+   "subject": "rd-7: saved scope through the final report"
+  },
   {
    "hash": "340604ba89dca3cb818b280c7a947bb523d8d278",
    "subject": "rd-7: final build report from the saved evidence"
@@ -524,5 +554,5 @@
    "subject": "rd-7: work left uncommitted (committed by chain)"
   }
  ],
- "head": "340604ba89dca3cb818b280c7a947bb523d8d278"
+ "head": "9ff8cda195ef6579c231de36472b4bca1dfc1ecb"
 }
