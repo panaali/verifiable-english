@@ -137,6 +137,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.cells_fits
 #print axioms ResponseShape.Encoders.Document.coverage_fits
 #print axioms ResponseShape.Encoders.Document.document_fits
+#print axioms ResponseShape.Encoders.Document.locatedRow_fits
 #print axioms ResponseShape.Encoders.Document.meaning_fits
 #print axioms ResponseShape.Encoders.Document.rowKind_fits
 #print axioms ResponseShape.Encoders.Document.runCaseReported_fits
