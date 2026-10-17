@@ -2,9 +2,24 @@
  "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
  "changes": [
   {
-   "added": 120,
-   "deleted": 0,
+   "added": 53,
+   "deleted": 12,
+   "path": "docs/readings-defaults/rd7/DELTA.md"
+  },
+  {
+   "added": 289,
+   "deleted": 157,
    "path": "docs/readings-defaults/rd7/REPORT.md"
+  },
+  {
+   "added": 478,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/ab-compare.json"
+  },
+  {
+   "added": 90,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/ab-delta.json"
   },
   {
    "added": 22,
@@ -17,8 +32,8 @@
    "path": "docs/readings-defaults/rd7/evidence/deletion-ledger.json"
   },
   {
-   "added": 31,
-   "deleted": 0,
+   "added": 90,
+   "deleted": 59,
    "path": "docs/readings-defaults/rd7/evidence/latency.json"
   },
   {
@@ -32,18 +47,18 @@
    "path": "docs/readings-defaults/rd7/evidence/lean-mutants.json"
   },
   {
-   "added": 197,
-   "deleted": 7,
+   "added": 202,
+   "deleted": 12,
    "path": "docs/readings-defaults/rd7/evidence/mutants.json"
   },
   {
-   "added": 21,
-   "deleted": 0,
+   "added": 32,
+   "deleted": 11,
    "path": "docs/readings-defaults/rd7/evidence/pilot-check-latency.json"
   },
   {
-   "added": 21,
-   "deleted": 0,
+   "added": 32,
+   "deleted": 11,
    "path": "docs/readings-defaults/rd7/evidence/pilot-render-latency.json"
   },
   {
@@ -152,24 +167,29 @@
    "path": "docs/readings-defaults/rd7/evidence/rd7-tests6.log"
   },
   {
-   "added": 528,
-   "deleted": 0,
+   "added": 567,
+   "deleted": 39,
    "path": "docs/readings-defaults/rd7/evidence/relay-gate.json"
   },
   {
-   "added": 59,
-   "deleted": 0,
+   "added": 60,
+   "deleted": 1,
    "path": "docs/readings-defaults/rd7/evidence/relay-route.json"
   },
   {
-   "added": 384,
-   "deleted": 0,
+   "added": 505,
+   "deleted": 48,
    "path": "docs/readings-defaults/rd7/evidence/scope.json"
   },
   {
-   "added": 303,
-   "deleted": 50,
+   "added": 365,
+   "deleted": 80,
    "path": "docs/readings-defaults/rd7/evidence/seeded-bugs.json"
+  },
+  {
+   "added": 106,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/udhr-serial.json"
   },
   {
    "added": 1,
@@ -177,8 +197,13 @@
    "path": "docs/readings-defaults/rd8/DELTA.md"
   },
   {
-   "added": 221,
-   "deleted": 68,
+   "added": 2,
+   "deleted": 2,
+   "path": "docs/spec/assurance-manifest.md"
+  },
+  {
+   "added": 270,
+   "deleted": 104,
    "path": "docs/trust-baseline.json"
   },
   {
@@ -192,8 +217,8 @@
    "path": "lean/ResponseShape/Audit.lean"
   },
   {
-   "added": 67,
-   "deleted": 4,
+   "added": 78,
+   "deleted": 10,
    "path": "lean/ResponseShape/Encoders/ReadingsRoute.lean"
   },
   {
@@ -227,8 +252,13 @@
    "path": "lean/VE/Readings/SupDependencies.lean"
   },
   {
-   "added": 37,
-   "deleted": 0,
+   "added": 24,
+   "deleted": 6,
+   "path": "lean/VE/Readings/SupRun.lean"
+  },
+  {
+   "added": 39,
+   "deleted": 2,
    "path": "lean/VE/Readings/SupVerdictsExamples.lean"
   },
   {
@@ -237,9 +267,14 @@
    "path": "lean/VE/Readings/SupVerdictsSound.lean"
   },
   {
-   "added": 457,
-   "deleted": 22,
+   "added": 533,
+   "deleted": 55,
    "path": "lean/VE/Readings/SupVerdictsWire.lean"
+  },
+  {
+   "added": 18,
+   "deleted": 8,
+   "path": "lean/VE/Readings/SupWire.lean"
   },
   {
    "added": 0,
@@ -247,8 +282,8 @@
    "path": "lean/VE/Rights/Run.lean"
   },
   {
-   "added": 14,
-   "deleted": 9,
+   "added": 18,
+   "deleted": 13,
    "path": "lean/VE/Route/frozen-sources.sha256"
   },
   {
@@ -262,13 +297,13 @@
    "path": "lean/axioms.txt"
   },
   {
-   "added": 11,
+   "added": 20,
    "deleted": 0,
    "path": "lean/checkers.lock"
   },
   {
-   "added": 375,
-   "deleted": 271,
+   "added": 592,
+   "deleted": 479,
    "path": "lean/declarations.txt"
   },
   {
@@ -302,8 +337,8 @@
    "path": "tests/test_readings_defaults_english.py"
   },
   {
-   "added": 5,
-   "deleted": 13,
+   "added": 18,
+   "deleted": 18,
    "path": "tests/test_readings_defaults_rd8_report.py"
   },
   {
@@ -317,8 +352,8 @@
    "path": "tests/test_readings_s2_document.py"
   },
   {
-   "added": 401,
-   "deleted": 21,
+   "added": 444,
+   "deleted": 23,
    "path": "tests/test_readings_sup_verdicts.py"
   },
   {
@@ -337,13 +372,13 @@
    "path": "tools/relay-gate-allow.json"
   },
   {
-   "added": 78,
+   "added": 85,
    "deleted": 4,
    "path": "tools/trust-classes.json"
   },
   {
-   "added": 2,
-   "deleted": 0,
+   "added": 9,
+   "deleted": 5,
    "path": "ve/assurance-manifest.json"
   },
   {
@@ -362,18 +397,54 @@
    "path": "ve/readings_s2_wording.py"
   },
   {
-   "added": 399,
-   "deleted": 408,
+   "added": 422,
+   "deleted": 418,
    "path": "ve/readings_verdicts.py"
   }
  ],
  "commits": [
   {
-   "hash": "5db6ad3e59ec96281c1e8452dc1e80644f3082dd",
+   "hash": "340604ba89dca3cb818b280c7a947bb523d8d278",
+   "subject": "rd-7: final build report from the saved evidence"
+  },
+  {
+   "hash": "3210b4065e78711e7c8772e009735f9ec2f50f8f",
+   "subject": "rd-7: final DELTA ledger from the saved A/B (R7 for unavailable-on-both rows, R6 trust +603)"
+  },
+  {
+   "hash": "76ea1d9f7d8302f3b976fbe4d5dc3ce5ef02201a",
+   "subject": "rd-7: pilot latency and all 17 seeded mutants replayed on the current sources"
+  },
+  {
+   "hash": "70b3a2bb038121ba67ffcf9e5ae50925bacd4015",
+   "subject": "rd-7: saved seven-corpus A/B on HEAD, serial whole-UDHR reruns and route latency"
+  },
+  {
+   "hash": "074f96d3fca99843b6c0208bcb9c0aedb8410b25",
+   "subject": "rd-7: classify the seven scope-reuse declarations as verdict glue"
+  },
+  {
+   "hash": "e53d6ee19571a6dd338b90092096ed4e132339de",
+   "subject": "rd-7: leave main's known-red RD-8 report test to its own fix item"
+  },
+  {
+   "hash": "e79f9b13528589e308284a1ca86a1806f77f21ff",
+   "subject": "rd-7: work-in-progress report and evidence before the final re-recording"
+  },
+  {
+   "hash": "d51d23f5d732d8c8acb99b9014226eb548003781",
+   "subject": "rd-7: pin the reviewed SupWire decoder after the prepared model replay"
+  },
+  {
+   "hash": "371ffd682f289fead13bd5b5cb2679944b77ca3e",
+   "subject": "rd-7: reuse checked scopes and replay evidence for superposed verdicts"
+  },
+  {
+   "hash": "f7ea87a6f88f19f8872f5b83781027c8fec552ba",
    "subject": "rd-7: test null dead readings at the checked-choice limit"
   },
   {
-   "hash": "3d1c0312f6c008f0c7d238f8ec8dc1cf49857c63",
+   "hash": "22e91f6944bfdb949d28d0412d1211b6e24f67ff",
    "subject": "rd-7: refresh final inventories and proof-test evidence"
   },
   {
@@ -453,5 +524,5 @@
    "subject": "rd-7: work left uncommitted (committed by chain)"
   }
  ],
- "head": "5db6ad3e59ec96281c1e8452dc1e80644f3082dd"
+ "head": "340604ba89dca3cb818b280c7a947bb523d8d278"
 }
