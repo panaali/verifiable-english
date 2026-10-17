@@ -57,6 +57,7 @@ ALLOWED_ENVIRONMENT = (
 # Added only for the stage that needs them.
 STAGE_ENVIRONMENT = {
     "cargo": ("CARGO_NET_OFFLINE", "CARGO_ENCODED_RUSTFLAGS"),
+    "source identity": ("GIT_INDEX_FILE",),  # a fresh index in scratch, read from the commit
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
                "VE_RUST_PREBUILT", "VE_RUST_BINARY",
                test_schedule.SOURCE_VARIABLE),  # the order the suite's tests start in, never which run
@@ -384,11 +385,26 @@ def write_result(path: Path, result: dict) -> None:
 def source_identity(env: dict[str, str]) -> tuple[str, bool]:
     # Repository config can make status trust cached filesystem state instead
     # of the worktree: an fsmonitor hook or a stale untracked cache hides edits.
+    # So can the repository's index: an entry rewritten in the second of an edit
+    # keeps its stat data and is no longer racy, and assume-unchanged or
+    # skip-worktree bits skip the file. A change status finds there (a staged
+    # one too) is dirty; a clean tree is then checked again against a fresh
+    # index read from the commit, which has no stat data, so every tracked
+    # file's content is compared. The repository's own index is never written.
     git = ["git", "--no-optional-locks", "-c", "core.fsmonitor=false",
            "-c", "core.untrackedCache=false"]
+    status = [*git, "status", "--porcelain", "--untracked-files=all"]
     sha = command([*git, "rev-parse", "HEAD"], cwd=ROOT, env=env, stage="commit")
-    dirty = bool(command([*git, "status", "--porcelain", "--untracked-files=all"], cwd=ROOT,
-                         env=env, stage="worktree status"))
+    if command(status, cwd=ROOT, env=env, stage="worktree status"):
+        return sha, True
+    index = scratch_of(env) / "source-index"
+    fresh = {**env, "GIT_INDEX_FILE": str(index)}
+    index.unlink(missing_ok=True)
+    try:
+        command([*git, "read-tree", sha], cwd=ROOT, env=fresh, stage="worktree index")
+        dirty = bool(command(status, cwd=ROOT, env=fresh, stage="worktree content"))
+    finally:
+        index.unlink(missing_ok=True)
     return sha, dirty
 
 
