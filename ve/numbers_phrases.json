@@ -1,0 +1,1 @@
+[{"rel":"lt","swap":false,"text":"{0} is less than {1}"},{"rel":"le","swap":false,"text":"{0} is at most {1}"},{"rel":"lt","swap":true,"text":"{0} is more than {1}"},{"rel":"le","swap":true,"text":"{0} is at least {1}"}]

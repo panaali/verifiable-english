@@ -161,6 +161,8 @@ import VE.Norms.Subst
 import VE.Norms.Tree
 import VE.Norms.Valid
 import VE.Norms.Wire
+import VE.Numbers.Decimal
+import VE.Numbers.Round
 import VE.Order.Consequence
 import VE.Order.Conservativity
 import VE.Order.Finite
@@ -2515,6 +2517,28 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.wf_mono
 #print axioms VE.Norms.yields_denote
 #print axioms VE.Norms.yields_wellFormed
+#print axioms VE.Numbers.Printed.value_ofDec
+#print axioms VE.Numbers.Printed.value_sci
+#print axioms VE.Numbers.decValue_lower
+#print axioms VE.Numbers.down_iff
+#print axioms VE.Numbers.floor_eq_iff
+#print axioms VE.Numbers.halfEven_iff
+#print axioms VE.Numbers.halfEven_interval
+#print axioms VE.Numbers.interval_off_tie
+#print axioms VE.Numbers.interval_on_tie
+#print axioms VE.Numbers.roundsTo_close
+#print axioms VE.Numbers.roundsTo_iff_round
+#print axioms VE.Numbers.roundsTo_round
+#print axioms VE.Numbers.roundsTo_unique
+#print axioms VE.Numbers.rules_agree_off_tie
+#print axioms VE.Numbers.rules_differ_iff
+#print axioms VE.Numbers.tenPow_add
+#print axioms VE.Numbers.tenPow_eq_zpow
+#print axioms VE.Numbers.tenPow_pos
+#print axioms VE.Numbers.tieAt_iff
+#print axioms VE.Numbers.tieAt_iff_floor_tie
+#print axioms VE.Numbers.tiesUp_iff
+#print axioms VE.Numbers.up_iff
 #print axioms VE.Order.Document.nonempty
 #print axioms VE.Order.Document.wellFormed
 #print axioms VE.Order.Lin.eval_add
