@@ -493,6 +493,7 @@
     "results/*/result/premises",
     "results/*/result/report/assumptions",
     "results/*/result/rights_of",
+    "results/*/result/rule_narrowings",
     "results/*/result/targets"
    ],
    "kind": "by-design",
@@ -518,6 +519,7 @@
     "results/*/result/report/assumptions",
     "results/*/result/rights_of",
     "results/*/result/rule_acts",
+    "results/*/result/rule_narrowings",
     "results/*/result/targets"
    ],
    "kind": "by-design",
@@ -810,6 +812,16 @@
    "kind": "by-design",
    "id": "B3",
    "reason": "A field whose domain is a union across JSON types (tests/test_route_row_schemas.py UNIONS: joint, admitted, finding, first_failing, dead_readings): the retype to the other member is a valid answer."
+  },
+  {
+   "route": "service:rights",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/narrowings/*/bar"
+   ],
+   "kind": "by-design",
+   "id": "B3",
+   "reason": "A field whose domain is a union across JSON types: a line's `bar` is null or the bar's reach, the predicate of a generated aimed predicate (rights.json `elaborated_narrowings`), so the retype of null to a string is a valid answer; the elaboration binder binds a string to the request's aimed predicates and to the line's bar mechanism (ve/rights_route.py `_bind_line_narrowings`)."
   },
   {
    "route": "service:evaluate",
@@ -1308,6 +1320,7 @@
     "results/*/result/rights_of/*/rule",
     "results/*/result/rights_of/*/tuple/*",
     "results/*/result/rule_acts/*",
+    "results/*/result/rule_narrowings/*/rule",
     "results/*/result/targets/*"
    ],
    "kind": "follow-up",

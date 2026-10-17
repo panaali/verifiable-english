@@ -172,6 +172,19 @@ _NARROWINGS = {
     "narrowings[].mechanisms[].mechanism": BOUND, "narrowings[].mechanisms[].target": BOUND,
 }
 
+# The elaboration's narrowings name what the relay binds instead of deriving it: the limitations in scope, the
+# bar's reach, each licence's grounds, and per rule the mechanisms naming it and what its citations license.
+_ELABORATED_NARROWINGS = {
+    **_NARROWINGS, "narrowings[].limitations": BOUND, "narrowings[].limitations[]": BOUND, "narrowings[].bar": BOUND,
+    "narrowings[].mechanisms[].grounds": BOUND, "narrowings[].mechanisms[].grounds.citation.key": BOUND,
+    "narrowings[].mechanisms[].grounds.citation.rule": BOUND, "narrowings[].mechanisms[].grounds.line": BOUND,
+    "narrowings[].mechanisms[].grounds.rule": BOUND,
+    "rule_narrowings": BOUND, "rule_narrowings[].rule": BOUND, "rule_narrowings[].narrows": UNORDERED,
+    "rule_narrowings[].narrows[]": BOUND, "rule_narrowings[].citations": BOUND,
+    "rule_narrowings[].citations[].key": BOUND, "rule_narrowings[].citations[].licenses": UNORDERED,
+    "rule_narrowings[].citations[].licenses[]": BOUND,
+}
+
 _ADMISSION = {
     "id": BOUND, "status": BOUND, "admitted": BOUND, "conditional_on": BOUND, "conditional_on[]": BOUND,
     "report.assumptions": BOUND, "report.assumptions[].ast": FORMULA,
@@ -193,7 +206,7 @@ INVENTORY = {
         "soft_status": lean("the soft status Lean decides"),
     },
     "rights-elaborate": {
-        **_SOFT_CORE, **_NARROWINGS,
+        **_SOFT_CORE, **_ELABORATED_NARROWINGS,
         "bars": UNORDERED, "bars[].guard": FORMULA, "bars[].hard": BOUND, "bars[].mode": BOUND,
         "bars[].name": BOUND, "bars[].over": BOUND, "bars[].over[]": BOUND, "bars[].predicate": BOUND,
         "bars[].sign": BOUND, "bars[].unless": BOUND, "bars[].unless[]": FORMULA,

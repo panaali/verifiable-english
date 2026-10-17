@@ -672,15 +672,14 @@ def test_f19_soft_prime_environment_is_the_request_plus_bound_declarations(monke
 
 
 def _extra_mechanism(mechanism, conclusion=('top',)):
+    """Append `mechanism` to the first line, listed under the rule it names, with the scope findings to match
+    (`tests.test_rights_licence_relay._add`), so only the line's own binding can refuse it (review F1)."""
+    from tests.test_rights_licence_relay import _add, _resync
+    add = _add(None, mechanism, licence='bar' if mechanism == 'bar' else None, conclusion=conclusion)
+
     def mutation(row):
-        entry = row['narrowings'][0]
-        entry['mechanisms'].append({'mechanism': mechanism, 'target': f"{entry['rule']}:{mechanism}",
-                                    'licence': 'bar' if mechanism == 'bar' else None,
-                                    'conclusion': list(conclusion)})
-        if 'licensed' in row and mechanism != 'bar':
-            row['findings'].append(
-                f"UnlicensedLimitation: {mechanism} of rule {entry['rule']} on right {entry['right']}")
-            row['licensed'] = False
+        add(row)
+        _resync(row)
     return mutation
 
 
@@ -690,26 +689,26 @@ def _reverse_mechanisms(row):
         row['findings'].reverse()
 
 
-@pytest.mark.parametrize('units,mutation', [
-    pytest.param('strict', _extra_mechanism('bar'), id='F20 bar with no bar requested'),
-    pytest.param('strict', _extra_mechanism('exception'), id='F20 exception of a strict line'),
-    pytest.param('carve-out', _extra_mechanism('carve-out 01'), id='F20 duplicate carve-out 01'),
-    pytest.param('carve-out', _extra_mechanism('carve-out +1'), id='signed carve-out index'),
-    pytest.param('carve-out', _extra_mechanism('carve-out 1'), id='repeated carve-out 1'),
-    pytest.param('strict', _extra_mechanism('exception no-arbitrary-arrest'), id='line excepted by itself'),
-    pytest.param('strict', _extra_mechanism('limitation'), id='repeated limitation'),
-    pytest.param('default', _extra_mechanism('blockedBy no-arbitrary-arrest'), id='line blocked by itself'),
-    pytest.param('default', _reverse_mechanisms, id='mechanisms out of Lean order'),
-])
+# Each forgery of a line's mechanisms, on a source of `tests.test_relay_binding_inventory._rights_sources`; the
+# mutation test of `tests/test_rights_licence_relay.py` reads this list too.
+F20_FORGERIES = [
+    ('gamma', _extra_mechanism('bar'), 'F20 bar with no bar requested'),
+    ('gamma', _extra_mechanism('exception'), 'F20 exception of a strict line'),
+    ('carve-out', _extra_mechanism('carve-out 01'), 'F20 duplicate carve-out 01'),
+    ('carve-out', _extra_mechanism('carve-out +1'), 'signed carve-out index'),
+    ('carve-out', _extra_mechanism('carve-out 1'), 'repeated carve-out 1'),
+    ('gamma', _extra_mechanism('exception no-arbitrary-arrest'), 'line excepted by itself'),
+    ('gamma', _extra_mechanism('limitation'), 'repeated limitation'),
+    ('default gamma', _extra_mechanism('blockedBy no-arbitrary-arrest'), 'line blocked by itself'),
+    ('default gamma', _reverse_mechanisms, 'mechanisms out of Lean order'),
+]
+
+
+@pytest.mark.parametrize('units,mutation', [pytest.param(s, m, id=i) for s, m, i in F20_FORGERIES])
 def test_f20_mechanisms_are_exactly_the_request_implied_slots(monkeypatch, units, mutation):
-    from tests.test_rights_lean import ARREST, GAMMA, env as rights_env
-    from ve.rights import RightsEnvironment
+    from tests.test_rights_licence_relay import _source
     from ve import rights_route
-    environment = RightsEnvironment(rights_env(ARREST))
-    kind, units = units, {'strict': copy.deepcopy(GAMMA), 'default': _default_gamma(),
-                          'carve-out': copy.deepcopy(GAMMA)}[units]
-    if kind == 'carve-out':
-        units[0]['right']['lines'][0]['norm']['unless'] = [['top']]
+    environment, units = _source(units)
     rights_route.report_rights(environment, units)
     _rights_relay(monkeypatch, mutation)
     with pytest.raises(CheckerUnavailable):

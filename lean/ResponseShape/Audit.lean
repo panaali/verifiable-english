@@ -346,6 +346,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Rights.elaborate_fits
 #print axioms ResponseShape.Encoders.Rights.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.Rights.generated_entries_fit
+#print axioms ResponseShape.Encoders.Rights.groundJson_fits
 #print axioms ResponseShape.Encoders.Rights.labelled_contra
 #print axioms ResponseShape.Encoders.Rights.limLabels_nonempty
 #print axioms ResponseShape.Encoders.Rights.of_softNorms
