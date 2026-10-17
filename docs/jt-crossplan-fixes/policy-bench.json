@@ -1,0 +1,15 @@
+{
+  "measure": "GE2 item 9: compiled ve_english_lean_bench --policy CASE 5 (least of five), policy_micros",
+  "budget_micros": 100000,
+  "base": "4667e8de69a4ab33bca3904ee86a1472fff5598c",
+  "head_source": "b26f68a69 (Lean sources unchanged after it)",
+  "cases": {
+    "wide": "conformance/english_lean_e2_evidence.py part_latency's 256-predicate environment",
+    "mixed": "256 predicates: unary `{0} is ready<tag k>` (k even), binary `{0} <tag k>audits {1}` (k odd), and for k % 16 == 3 `{0} <tag k-2>audits visits {1}`, so 16 pairs pass the head-free lint and reject each other through a shared head"
+  },
+  "runs": {
+    "wide": {"base": [61997, 62996], "head": [45997, 44981]},
+    "mixed": {"base": [60001, 60997], "head": [68999, 69001]}
+  },
+  "note": "Paired runs on the VM, base and head alternated. mixed is +15% (Lean now lints the wordings twice to find the fixed point); wide is -27% (the per-pair head-table search was replaced by each predicate's claimed head)."
+}
