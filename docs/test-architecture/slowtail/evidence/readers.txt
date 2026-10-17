@@ -1,0 +1,18 @@
+# manage-agents gate-record readers on records with durations and durations_source (2026-10-17; inputs made by tools/test_schedule.record_field)
+$ gaterec.py final rec-failed.json probe
+FAIL probe (lake=0 audit=0 pytest=1)
+gate.py: 2 passed, 0 skipped, 1 failed; rust 0 passed
+FAILED tests/a.py::test_x - AssertionError: assert 1 == 2
+[gate] failed (gate.py record rec-failed.json)
+exit 0
+$ gaterec.py final rec-passed.json probe
+PASS probe
+gate.py: 2 passed, 0 skipped, 1 failed; rust 0 passed
+[gate] passed (gate.py record rec-passed.json)
+exit 0
+$ gaterec.py sigs rec-failed.json
+tests/a.py::test_x	AssertionError	assert 1 == 2
+exit 0
+$ mac-gate-post.py rec-failed.json out.json known.txt '{"host":"ve-mac-1"}'
+FAIL
+exit 0; out.json keeps durations: True
