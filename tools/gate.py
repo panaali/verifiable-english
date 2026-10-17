@@ -20,7 +20,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import lake_outputs, nested_pytest, quarantine, rust_build  # noqa: E402
+from tools import lake_outputs, nested_pytest, quarantine, rust_build, test_schedule  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -58,7 +58,8 @@ ALLOWED_ENVIRONMENT = (
 STAGE_ENVIRONMENT = {
     "cargo": ("CARGO_NET_OFFLINE", "CARGO_ENCODED_RUSTFLAGS"),
     "pytest": ("VE_GATE_PYTEST_RESULT", "VE_GATE_PYTEST_PROGRESS", "VE_NATIVE_PREBUILT", "VE_LEAN_PREBUILT",
-               "VE_RUST_PREBUILT", "VE_RUST_BINARY"),
+               "VE_RUST_PREBUILT", "VE_RUST_BINARY",
+               test_schedule.SOURCE_VARIABLE),  # the order the suite's tests start in, never which run
 }
 # The gate's pytest invocation, shared by its collection run, its suite run and the
 # collection of the merge base (tools/gate_collection.py), so both sides are collected
@@ -70,6 +71,8 @@ PYTEST_ARGS = ("-q", "-p", "tools.gate_pytest", "-o", "addopts=-ra", "-m", "not 
 REUSED_STAGES = ("lean_audit", "cargo_test")
 # The failures of a gate whose failed tests can be rerun alone: tests that failed or have no result.
 RERUNNABLE = frozenset({"pytest", "pytest command"})
+# How many of the suite's slowest tests the gate's log names.
+SLOWEST = 20
 # The x86 platform contract run (`--contract`, tools/platform_contract.py): the gate's stages but the Lean audit
 # and the collection check, which the complete gates on both runners run, over the listed tests only.
 CONTRACT_STAGES = ("toolchains", "lean_build", "rust_build", "cargo_test", "pytest")
@@ -107,7 +110,7 @@ def suite_command(python: list[str], workers: str, files: list[str] | None = Non
 
 
 def merge_pytest_events(collection: dict, suite: dict) -> dict:
-    """The collection run's IDs with the suite run's results. Every xdist worker of the
+    """The collection run's IDs with the suite run's results and seconds. Every xdist worker of the
     suite run must have collected exactly the collection run's selection."""
     workers = suite.get("workers")
     if not isinstance(workers, dict) or not workers:
@@ -116,7 +119,7 @@ def merge_pytest_events(collection: dict, suite: dict) -> dict:
         if ids != collection["selected"]:
             raise RuntimeError(f"worker {worker} collected {len(ids)} tests, not the collection run's "
                                f"{len(collection['selected'])}")
-    return {**collection, "tests": suite["tests"], "workers": workers}
+    return {**collection, "tests": suite["tests"], "seconds": suite.get("seconds", {}), "workers": workers}
 
 
 def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None = None,
@@ -555,6 +558,55 @@ def base_collection(result: dict, base: str | None, env: dict[str, str], pytest_
     return ids, gate_collection.changes(base, "HEAD", env=env)
 
 
+def base_durations(result: dict, env: dict[str, str], cwd: Path = ROOT) -> tuple[str, test_schedule.Estimates] | None:
+    """(the commit, its durations): the test durations the gate record of the merge base (`base_collection`'s, or
+    its same-tree parent's) holds, with the IDs that gate measured when its suite timed every test it selected;
+    None when there is no such record or it holds no durations. Scheduling data only: a missing or malformed
+    record leaves the committed durations."""
+    from tools import gate_collection
+    base = result.get("collection", {}).get("base")
+    if not base:
+        return None
+    try:
+        found = gate_collection.recorded(base, cwd=cwd, env=env)
+        record = None if found is None else gate_collection.read_gate_result(found[0], cwd=cwd, env=env)
+    except (OSError, RuntimeError):
+        return None
+    estimates = None if record is None else test_schedule.read_record_field(record.get("durations"))
+    if estimates is None:
+        return None
+    counts = record.get("counts") if isinstance(record.get("counts"), dict) else {}
+    timed = record["durations"].get("tests")
+    complete = type(timed) is int and timed == counts.get("selected")
+    return found[0], estimates._replace(measured=frozenset(found[1]) if complete else None)
+
+
+def suite_durations(result: dict, env: dict[str, str], path: Path) -> None:
+    """Write the durations the suite's scheduler reads (SOURCE_VARIABLE names `path`): the committed file
+    overlaid with the merge base's recorded durations (`base_durations`); `result["durations_source"]` says
+    which. They change the order the tests start in, never which tests run (tools/test_schedule.py)."""
+    committed = test_schedule.read_source(test_schedule.DURATIONS)
+    found = base_durations(result, env)
+    base = None if found is None else found[1]
+    path.write_text(test_schedule.overlay_text(committed, base, source=(
+        "the committed durations" if found is None else f"the committed durations with the gate record of {found[0]}")))
+    result["durations_source"] = {"committed": len(committed.durations), "base": None if found is None else found[0],
+                                  "base_recorded": None if base is None else len(base.durations),
+                                  "measured": None if base is None or base.measured is None else len(base.measured)}
+
+
+def record_durations(result: dict, events: dict) -> None:
+    """Keep the suite's per-test seconds in the record (`test_schedule.record_field`: the scheduler of a later gate
+    whose merge base this commit is reads them, `base_durations`) and print the SLOWEST in the log."""
+    seconds = events.get("seconds")
+    if not isinstance(seconds, dict):
+        return
+    seconds = {nodeid: value for nodeid, value in seconds.items() if test_schedule.seconds_value(value)}
+    result["durations"] = test_schedule.record_field(seconds)
+    for nodeid, value in sorted(seconds.items(), key=lambda row: (-row[1], row[0]))[:SLOWEST]:
+        print(f"[gate] slowest: {value:8.1f} s {nodeid}", flush=True)
+
+
 def record_collection(commit: str, ids: list[str], env: dict[str, str], result: dict | None = None) -> str:
     """Attach the gate result and its IDs to `commit`; a record is a later gate's shortcut, so a failure to
     write it is reported, not a gate failure."""
@@ -713,11 +765,12 @@ def main() -> int:
 
             python = ["uv", "run", "--frozen", "--no-sync", "python"]
             collection_file, events_file = scratch / "pytest-collection.json", scratch / "pytest.json"
+            durations_file = scratch / "test-durations.json"
             pytest_env = record_environment(result, "pytest", nested_pytest.environment(
                 env, VE_GATE_PYTEST_RESULT=str(collection_file),
                 VE_GATE_PYTEST_PROGRESS=str(scratch / "current-test.txt"),
                 VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1", VE_RUST_PREBUILT="1",
-                VE_RUST_BINARY=str(rust_binary)))
+                VE_RUST_BINARY=str(rust_binary), **{test_schedule.SOURCE_VARIABLE: str(durations_file)}))
             # The collection, serially (xdist workers report no deselection), then the
             # suite on `--workers` xdist workers; a worker must collect that selection.
             collection = collect(pytest_env, collection_file, python=python, files=selection)
@@ -726,6 +779,7 @@ def main() -> int:
                 head_ids = collection["collected"]
             if contract is None:
                 expected, diff = base_collection(result, args.base, env, pytest_env, scratch)
+            suite_durations(result, env, durations_file)
             try:
                 command(suite_command(python, args.workers, selection),
                         env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
@@ -734,6 +788,7 @@ def main() -> int:
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
             events = merge_pytest_events(collection, json.loads(events_file.read_text()))
+            record_durations(result, events)
             if contract is not None:
                 # No collection check (the complete gates check the whole collection); each listed selector must
                 # still collect a test, so a listed test that went away cannot pass unseen.
