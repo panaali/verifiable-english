@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 243 |
 | leaves:closed domain | 247 |
-| leaves:none | 1252 |
+| leaves:none | 1262 |
 | modes | 36 |
 | today:hand | 202 |
 | today:later Lean request | 59 |
-| today:not probed | 854 |
+| today:not probed | 864 |
 | today:shape | 490 |
 | today:unbound | 137 |
 | answers | 536 |
@@ -809,6 +809,12 @@ Delegates: `/` to soft-norms.
 | `/lines/*/right` | string | none |  |  | 3 | hand: `ve/rights.py:__init__` |
 | `/lines/*/rule` | string | none |  |  | 3 | hand: `ve/rights.py:__init__` |
 | `/lines/*/source_line` | string | none |  |  | 0 | unbound |
+| `/narrowings/*/bar` | string | none |  |  | 0 | not probed |
+| `/narrowings/*/limitations/*` | string | none |  |  | 1 | not probed |
+| `/narrowings/*/mechanisms/*/grounds/citation/key` | string | none |  |  | 0 | not probed |
+| `/narrowings/*/mechanisms/*/grounds/citation/rule` | string | none |  |  | 0 | not probed |
+| `/narrowings/*/mechanisms/*/grounds/line` | string | none |  |  | 0 | not probed |
+| `/narrowings/*/mechanisms/*/grounds/rule` | string | none |  |  | 0 | not probed |
 | `/narrowings/*/mechanisms/*/licence` | string | none |  | minLength | 1 | later Lean request |
 | `/narrowings/*/mechanisms/*/mechanism` | string | none |  | minLength | 1 | later Lean request |
 | `/narrowings/*/mechanisms/*/target` | string | none |  | minLength | 1 | later Lean request |
@@ -827,6 +833,10 @@ Delegates: `/` to soft-norms.
 | `/rights_of/*/right` | string | none |  |  | 2 | not probed |
 | `/rights_of/*/rule` | string | none |  |  | 2 | not probed |
 | `/rights_of/*/tuple/*` | string | none |  |  | 4 | not probed |
+| `/rule_narrowings/*/citations/*/key` | string | none |  |  | 0 | not probed |
+| `/rule_narrowings/*/citations/*/licenses/*` | string | none |  |  | 0 | not probed |
+| `/rule_narrowings/*/narrows/*` | string | none |  |  | 0 | not probed |
+| `/rule_narrowings/*/rule` | string | none |  |  | 3 | not probed |
 | `/status` | string | closed domain | const |  | 23 | shape |
 | `/status_text` | string | none |  | minLength | 3 | later Lean request |
 | `/target` | string | bound | x-equals |  | 0 | shape |
@@ -886,6 +896,7 @@ Delegates: `/` to soft-norms.
 | `/lines/*/node/over` |  |  |  |  |
 | `/lines/*/node/unless` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport |
 | `/narrowings` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted, accept/transport; reverse: accept/accepted, accept/transport |
+| `/narrowings/*/limitations` |  |  |  |  |
 | `/narrowings/*/mechanisms` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted; reverse: accept/accepted |
 | `/order` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted, accept/transport; reverse: accept/accepted, accept/transport |
 | `/premises` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted, accept/transport; reverse: accept/accepted, accept/transport |
@@ -893,6 +904,10 @@ Delegates: `/` to soft-norms.
 | `/rights_background` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted; reverse: accept/accepted |
 | `/rights_of` |  |  |  |  |
 | `/rights_of/*/tuple` |  |  |  |  |
+| `/rule_narrowings` |  |  |  |  |
+| `/rule_narrowings/*/citations` |  |  |  |  |
+| `/rule_narrowings/*/citations/*/licenses` |  |  |  |  |
+| `/rule_narrowings/*/narrows` |  |  |  |  |
 | `/targets` |  |  |  | drop: accept/transport; duplicate: accept/transport; replace: accept/transport; reverse: accept/transport |
 | `/unit_open` | x-length |  |  |  |
 | `/warnings` |  |  |  |  |

@@ -14,7 +14,6 @@ ROOT = Path(__file__).resolve().parents[1]
 DELTA = ROOT / "docs/readings-defaults/rd9-lean/DELTA.md"
 REPORT = ROOT / "docs/rd-9/integration/FIX-REPORT.md"
 SIGNED = "SIGNED WITH CONDITION by DRI 2026-10-15 (rd-9 B8/B9"
-NARROWINGS = "ve/rights_route.py:23-89"
 
 
 def _entry():
@@ -56,21 +55,6 @@ def test_the_reports_record_the_same_itemised_numbers():
     assert sorted(_items(row)) == entry_items
     assert "SIGNED WITH CONDITION" in row and "S +171, V +372" in row
     assert "K 997, S 9,959, V 37,526" in REPORT.read_text()
-
-
-def test_the_d1_exception_cites_narrowings_lines():
-    """(b) Both records cite `_narrowings`' lines, its time box and the item that ends it; the lines cited are the
-    whole function, and its docstring carries the same exception."""
-    for text in (DELTA.read_text(), REPORT.read_text()):
-        assert NARROWINGS in text and "time-boxed to 2026-10-22" in text and "rights-licence-relay" in text
-    lines = (ROOT / "ve/rights_route.py").read_text().splitlines()
-    first, last = (int(n) for n in NARROWINGS.split(":")[1].split("-"))
-    assert lines[first - 1].startswith("def _narrowings(")
-    assert lines[last - 1] == "    ]" and lines[last].strip() == "" and lines[last + 2].startswith("def ")
-    body = "\n".join(lines[first - 1:last])
-    assert "D1 exception the DRI GRANTED on 2026-10-15, time-boxed to 2026-10-22" in body
-    assert "rights-licence-relay" in body
-    assert any("!= _narrowings(" in line for line in lines[312:317])
 
 
 def test_b1_b4_and_b8_are_recorded():

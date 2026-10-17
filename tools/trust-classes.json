@@ -768,9 +768,11 @@
         "ResponseShape.Schemas.Rights.certificate",
         "ResponseShape.Schemas.Rights.conditional_labels",
         "ResponseShape.Schemas.Rights.elaborate",
+        "ResponseShape.Schemas.Rights.elaborated_narrowings",
         "ResponseShape.Schemas.Rights.entries",
         "ResponseShape.Schemas.Rights.file",
         "ResponseShape.Schemas.Rights.findings",
+        "ResponseShape.Schemas.Rights.grounds",
         "ResponseShape.Schemas.Rights.instance",
         "ResponseShape.Schemas.Rights.kind",
         "ResponseShape.Schemas.Rights.narrowings",
@@ -780,6 +782,7 @@
         "ResponseShape.Schemas.Rights.rights_path",
         "ResponseShape.Schemas.Rights.rights_unit",
         "ResponseShape.Schemas.Rights.row",
+        "ResponseShape.Schemas.Rights.rule_narrowings",
         "ResponseShape.Schemas.Rights.scope"
       ]
     },
@@ -7167,18 +7170,27 @@
         "VE.Rights.Run.baseWithout",
         "VE.Rights.Run.conjugatedAct",
         "VE.Rights.Run.distinctionJson",
+        "VE.Rights.Run.elaboratedNarrowingsJson",
         "VE.Rights.Run.encodeAdmitted",
         "VE.Rights.Run.entailmentUses",
         "VE.Rights.Run.entryJson",
         "VE.Rights.Run.generatedWordings",
+        "VE.Rights.Run.groundJson",
         "VE.Rights.Run.ikindText",
         "VE.Rights.Run.kindText",
-        "VE.Rights.Run.licence",
+        {
+          "name": "VE.Rights.Run.licence",
+          "tied": [
+            "VE.Rights.Run.licence_spec"
+          ]
+        },
         "VE.Rights.Run.lineJson",
         "VE.Rights.Run.lineSourceName",
+        "VE.Rights.Run.namedRule",
         "VE.Rights.Run.narrowingsJson",
         "VE.Rights.Run.nodeJson",
         "VE.Rights.Run.regenerated",
+        "VE.Rights.Run.ruleNarrowingsJson",
         "VE.Rights.Run.sourceRuleNames",
         "VE.Rights.Run.unitRuleNames"
       ],
@@ -7216,13 +7228,44 @@
         "VE.Rights.citesNarrows",
         "VE.Rights.citesOf",
         "VE.Rights.hasKey",
+        "VE.Rights.narrowsCite",
+        "VE.Rights.overCite",
+        "VE.Rights.ownCite",
         "VE.Rights.sameEffectStrict"
       ],
       "D[V]": [
+        "VE.Rights.Ground",
+        "VE.Rights.Ground.text",
         "VE.Rights.mechText"
       ],
       "G[R]": [
         "VE.Rights.limitationScope"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Rights.citedBy",
+          "tied": [
+            "VE.Rights.citedBy_isSome"
+          ]
+        },
+        {
+          "name": "VE.Rights.citedGround",
+          "tied": [
+            "VE.Rights.citedGround_isSome"
+          ]
+        },
+        {
+          "name": "VE.Rights.ground",
+          "tied": [
+            "VE.Rights.ground_isSome"
+          ]
+        },
+        {
+          "name": "VE.Rights.ruleBarReach",
+          "tied": [
+            "VE.Rights.bar_mem_narrowings"
+          ]
+        }
       ]
     },
     "VE/Rights/Semantics.lean": {
