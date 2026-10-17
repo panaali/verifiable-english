@@ -90,25 +90,34 @@ def test_a_formula_over_a_decision_predicate_is_read_in_the_extended_environment
     assert "soft__excepted__share_rule" in answer["text"], answer
 
 
-@pytest.mark.parametrize("fault", ["unregulated", "unknown parent", "quoted unregulated"])
-def test_norm_faults_are_the_norms_route_s(service, fault):
-    """A plain norm object's faults are the norms route's diagnostics (`checkNorms`: `checkQuoted` on a quoted norm,
-    then the free norm document), with Python's text. Python's own `NormDocument` raised them as `InvalidInput`;
-    Lean's code is its diagnostic class (DELTA.md, row 3)."""
+@pytest.mark.parametrize("fault", ["unregulated", "unknown parent", "quoted unregulated", "bad name", "empty guard",
+                                   "missing guard"])
+def test_a_norm_fault_keeps_the_retained_loader_s_diagnostic(service, fault):
+    """The norms route (`checkNorms`: `checkQuoted` on a quoted norm, then the free norm document; `decodeNorm`)
+    words, and classes, a plain norm object's faults otherwise than the retained loader's `NormDocument`
+    (`InvalidInput` for an `UnknownSymbol:` text, `repr` of a name, `Incorrect fields`, the AST decoder's text), so
+    the mode answers `CheckerUnavailable` naming the route's text and Python's loader decides, as before."""
     document = _seed("norms-content")
     units = document["front"]["units"]
+    norm = units[0]["content"]["norm"]
     if fault == "unregulated":
-        units[0]["content"]["norm"]["predicate"] = "consents"
+        norm["predicate"] = "consents"
     elif fault == "unknown parent":
-        units[0]["content"]["norm"]["over"] = ["absent"]
-    else:
+        norm["over"] = ["absent"]
+    elif fault == "quoted unregulated":
         units[1]["content"]["norm"]["predicate"] = "consents"
         # Without a claim graph only the load's own check (`checkQuoted`) sees the quoted norm; the norms route's
         # admission checks it again.
         document["front"].pop("graph")
+    elif fault == "bad name":
+        norm["name"] = "share\xa0rule"
+    elif fault == "empty guard":
+        norm["guard"] = []
+    else:
+        norm.pop("guard")
     python, answer = _both(service, document)
-    assert answer["outcome"] == "error" and answer["text"] == python["text"], (python, answer)
-    assert answer["code"] in (python["code"], answer["text"].split(":")[0]), (python, answer)
+    assert python["outcome"] == "error" and answer["code"] == "CheckerUnavailable", (python, answer)
+    assert "the norms route refuses keeps its loader's diagnostic" in answer["text"], answer
 
 
 def test_a_quoted_soft_norm_s_fault_keeps_the_retained_path(service):

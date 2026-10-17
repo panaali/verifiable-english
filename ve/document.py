@@ -570,11 +570,10 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
                      **({"parent_id": u["parent_id"]} if "parent_id" in u else {})}
                     for u, (authored, _) in zip(units, declared, strict=True)]
         active = active_reading_sets(meta.get("reading_sets", []))
+        selected = _free_norms(compiled, active, _s1_attached(base_environment(meta), meta))
         if "norm-defaults@0" in env.profiles:
             from .norm_defaults import UnspecifiedDocument
-            attached = _s1_attached(base_environment(meta), meta)
-            norm_defaults = UnspecifiedDocument(_defaults_environment(env),
-                                                _free_norms(compiled, active, attached))
+            norm_defaults = UnspecifiedDocument(_defaults_environment(env), selected)
             norms = None
         elif soft_document is not None:
             norm_defaults = norms = None
@@ -582,7 +581,6 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
             # Batch 16f: the free norm document of a plain `norms@0` document, whose rules Lean's norms route
             # checked (`Service.Document.checkNorms`), built as Python's own path builds it.
             norm_defaults = None
-            selected = _free_norms(compiled, active, _s1_attached(base_environment(meta), meta))
             norms = (NormDocument(env, selected)
                      if selected or any(d.regulated is not None for d in env.predicates.values()) else None)
         reading_sets = meta.get("reading_sets", [])
