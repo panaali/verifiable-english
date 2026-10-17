@@ -67,6 +67,11 @@ def test_superposed_scopes_need_only_the_two_answer_roundtrips(tmp_path, monkeyp
     # The global certificate settles the conflict status: Lean lists no complete choice (review F2 of rd-7).
     assert answer["result"]["status"] == "CONFLICT-FREE" and len(answer["scopes"]) == 1
     assert questions == ["conflict", "conflict"]
+    # An open query: its listing, the asked scope's evidence, then every choice's; the scopes Lean listed are
+    # known taken, so no choice is asked about again.
+    from tests.test_readings_s2_document import every
+    assert len(route.query_answer(every("avoid_required"))["scopes"]) == 3
+    assert questions == ["conflict", "conflict", "query", "query", "query"]
 
 
 def test_superposed_scopes_follow_the_asked_scope_first(tmp_path, monkeypatch):
@@ -82,6 +87,9 @@ def test_superposed_scopes_follow_the_asked_scope_first(tmp_path, monkeypatch):
         return original(A, gamma, conclusion)
 
     monkeypatch.setattr(route, "_generate_certificate", proof)
+    # The global conflict evidence is already sent, so Lean's first listing is open: only the asked scope is generated.
+    assert route.conflict_answer()["result"]["status"] == "CONFLICT-FREE"
+    generated.clear()
     proved = route.query_answer(every("help_required"))
     assert proved["result"]["verdict"] == "ALL" and len(proved["scopes"]) == 1
     assert generated == [[]]
@@ -163,6 +171,12 @@ def test_sup_answer_binds_assumed_for_every_question(tmp_path):
     for path in named:
         with pytest.raises(CheckerUnavailable):
             _check_sup_answer(changed(answer, ("result",) + path, [["rs1", 0]]), request, route)
+    # An UNKNOWN fold names its first open choice with no model behind it: only the asked readings bind it.
+    unknown = {"route": "superposed", "assumed": [["rs1", 1]], "verdict": "UNKNOWN", "budget": dict(BUDGET),
+               "choice": [["rs1", 1]]}
+    _check_sup_answer(changed(answer, ("result",), unknown), request, route)
+    with pytest.raises(CheckerUnavailable):
+        _check_sup_answer(changed(answer, ("result",), {**unknown, "choice": [["rs1", 0]]}), request, route)
 
 
 def test_premise_model_short_circuits_proof_search(tmp_path, monkeypatch):
@@ -464,6 +478,12 @@ def test_superposed_verdicts_keep_the_1024_choice_budget():
             assert row["status"] == "ok" and row["route"] == "superposed"
             if n == 11:
                 assert row["result"]["reason"] == "ResourceLimit: more than 1024 readings to check"
+                # Review F1 of rd-7: the cut list of checked choices cannot show a named reading untaken.
+                [named] = run("ve_readings_route", [case("readings-verdicts", raw, document, question=question,
+                                                         evidence=[], budget=dict(BUDGET),
+                                                         assumed=[["rs_1", 1], ["rs_2", 1]], **extra)])
+                assert named["status"] == "ok", named
+                assert named["result"]["reason"] == "ResourceLimit: more than 1024 readings to check"
                 if question == "conflict":
                     assert _public_sup_conflict(row["result"]) == {
                         "status": "UNKNOWN", "reason": "ResourceLimit: more than 1024 readings to check"}

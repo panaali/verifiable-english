@@ -4,7 +4,7 @@
       "id": "P1",
       "file": "ve/readings_verdicts.py",
       "claim": "A constant-reject scope guard cannot hide behind a forged-answer test: genuine complete rows must remain available.",
-      "source_sha256": "b13d9d850ffefd1d5669f2f4469a4f62cab80261a17cd24b194a2e43907ff62e",
+      "source_sha256": "be771180109207ccc68e66e760e924559c3cfddb4d8cf41158538ea6b15ec22f",
       "tests": [
         "tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model"
       ],
@@ -14,8 +14,9 @@
       ],
       "killed": true,
       "mutant_exit": 1,
-      "seconds": 4.9,
-      "output_tail": "in _check_sup_answer\n    with relayed():\n         ^^^^^^^^^\n../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/contextlib.py:162: in __exit__\n    self.gen.throw(value)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    @contextmanager\n    def relayed():\n        \"\"\"Checking an answer Lean sent (build checklist 4 and 5): every failure inside is `CheckerUnavailable`, never a\n        crash and never a verdict, whatever the answer holds (a type its schema did not fix, a missing or duplicated\n        row, a decoder's refusal of a value Lean sent). A resource limit stays a resource limit (checklist 6). The one\n        guard of every check of a `readings-verdicts` answer and of the split's answers at load.\"\"\"\n        try:\n            yield\n        except (CheckerUnavailable, ResourceLimit):\n            raise\n        except Exception as exc:  # noqa: BLE001 - any failure of the check is an invalid answer\n>           raise CheckerUnavailable(INVALID_ANSWER) from exc\nE           ve.errors.CheckerUnavailable: the Lean readings route returned an invalid answer\n\nve/readings_verdicts.py:963: CheckerUnavailable\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model\n1 failed in 0.83s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-srg3nrkw)\n"
+      "seconds": 2.2,
+      "output_tail": "in _check_sup_answer\n    with relayed():\n         ^^^^^^^^^\n../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/contextlib.py:162: in __exit__\n    self.gen.throw(value)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    @contextmanager\n    def relayed():\n        \"\"\"Checking an answer Lean sent (build checklist 4 and 5): every failure inside is `CheckerUnavailable`, never a\n        crash and never a verdict, whatever the answer holds (a type its schema did not fix, a missing or duplicated\n        row, a decoder's refusal of a value Lean sent). A resource limit stays a resource limit (checklist 6). The one\n        guard of every check of a `readings-verdicts` answer and of the split's answers at load.\"\"\"\n        try:\n            yield\n        except (CheckerUnavailable, ResourceLimit):\n            raise\n        except Exception as exc:  # noqa: BLE001 - any failure of the check is an invalid answer\n>           raise CheckerUnavailable(INVALID_ANSWER) from exc\nE           ve.errors.CheckerUnavailable: the Lean readings route returned an invalid answer\n\nve/readings_verdicts.py:976: CheckerUnavailable\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model\n1 failed in 1.05s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fg5zjelu)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
     },
     {
       "id": "P2",
@@ -102,17 +103,19 @@
       "id": "L5",
       "file": "lean/VE/Readings/SupVerdictsWire.lean",
       "claim": "Above 64 compatible choices the superposed request keeps one scope and sixteen bounded model proposals.",
-      "source_sha256": "59f4fc4d2f119ae892f3766724fdae3b8f56a4770f177f26a6ad4e039f136adf",
-      "command": [
-        "bash",
-        "-c",
-        "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l5-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices"
+      "source_sha256": "046d44368044082fe41a906645cbd8202dcbb0c3d2ee51263e6b202139b3d4e9",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices"
       ],
       "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices"
+      ],
       "killed": true,
       "mutant_exit": 1,
-      "seconds": 41.2,
-      "output_tail": "================\n__________ test_superposed_scope_count_stays_bounded_above_64_choices __________\n\n    def test_superposed_scope_count_stays_bounded_above_64_choices():\n        from ve.backends.lean_service import LeanService\n    \n        with LeanService(allow_unlisted_build=True) as lean:\n            [row] = lean.run(\"readings-route\", [_large_choice_case(\n                \"query\", premises=[], conclusion=[\"forall\", \"agent\", [\"forall\", \"user\",\n                    [\"binary\", \"help_required\", [\"var\", 1], [\"var\", 0]]]])])\n            [premises] = lean.run(\"readings-route\", [_large_choice_case(\"premises\")])\n        assert row[\"status\"] == \"ok\" and row[\"route\"] == \"superposed\"\n        # The 128 compatible choices do not become 128 evidence scopes or model proposals.\n>       assert len(row[\"scopes\"]) == 1\nE       AssertionError: assert 66 == 1\nE        +  where 66 = len([{'encoded': {}, 'mentions': {}, 'model_proposals': [[['rs_1', 0], ['rs_2', 0], ['rs_3', 0], ['rs_4', 0], ['rs_5', 0],... 0], ['rs_4', 0], ['rs_5', 1], ['rs_6', 0], ...], 'conflict': 'UNKNOWN', 'errors': {}, 'evidence': {}, ...}, ...}, ...])\n\ntests/test_readings_sup_verdicts.py:327: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices\n1 failed in 0.99s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fx4vb2n7)\n"
+      "seconds": 316.7,
+      "output_tail": "================\n__________ test_superposed_scope_count_stays_bounded_above_64_choices __________\n\n    def test_superposed_scope_count_stays_bounded_above_64_choices():\n        from ve.backends.lean_service import LeanService\n    \n        with LeanService(allow_unlisted_build=True) as lean:\n            [row] = lean.run(\"readings-route\", [_large_choice_case(\n                \"query\", premises=[], conclusion=[\"forall\", \"agent\", [\"forall\", \"user\",\n                    [\"binary\", \"help_required\", [\"var\", 1], [\"var\", 0]]]])])\n            [premises] = lean.run(\"readings-route\", [_large_choice_case(\"premises\")])\n        assert row[\"status\"] == \"ok\" and row[\"route\"] == \"superposed\"\n        # The 128 compatible choices do not become 128 evidence scopes or model proposals.\n>       assert len(row[\"scopes\"]) == 1\nE       AssertionError: assert 66 == 1\nE        +  where 66 = len([{'encoded': {}, 'mentions': {}, 'model_proposals': [[['rs_1', 0], ['rs_2', 0], ['rs_3', 0], ['rs_4', 0], ['rs_5', 0],... 0], ['rs_4', 0], ['rs_5', 1], ['rs_6', 0], ...], 'conflict': 'UNKNOWN', 'errors': {}, 'evidence': {}, ...}, ...}, ...])\n\ntests/test_readings_sup_verdicts.py:438: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices\n1 failed in 0.63s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-tahu8ctj)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
     },
     {
       "id": "P3",
@@ -202,7 +205,7 @@
       "id": "P7",
       "file": "ve/readings_verdicts.py",
       "claim": "Lean-confirmed scopes are reused during evidence preparation; the conflict report needs two answer roundtrips, not one extra per scope.",
-      "source_sha256": "b13d9d850ffefd1d5669f2f4469a4f62cab80261a17cd24b194a2e43907ff62e",
+      "source_sha256": "be771180109207ccc68e66e760e924559c3cfddb4d8cf41158538ea6b15ec22f",
       "tests": [
         "tests/test_readings_sup_verdicts.py::test_superposed_scopes_need_only_the_two_answer_roundtrips"
       ],
@@ -212,14 +215,15 @@
       ],
       "killed": true,
       "mutant_exit": 1,
-      "seconds": 3.0,
-      "output_tail": "= FAILURES ===================================\n__________ test_superposed_scopes_need_only_the_two_answer_roundtrips __________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-20497/test_superposed_scopes_need_on0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x786439f13820>\n\n    def test_superposed_scopes_need_only_the_two_answer_roundtrips(tmp_path, monkeypatch):\n        from ve import readings_route\n    \n        _, route, _ = example(tmp_path)\n        original = readings_route.run_lean\n        questions = []\n    \n        def counted(cases):\n            if cases[0][\"kind\"] == \"readings-verdicts\":\n                questions.append(cases[0][\"question\"])\n            return original(cases)\n    \n        monkeypatch.setattr(readings_route, \"run_lean\", counted)\n        answer = route.conflict_answer()\n        assert len(answer[\"scopes\"]) > 1\n>       assert questions == [\"conflict\", \"conflict\"]\nE       AssertionError: assert ['conflict', ...', 'conflict'] == ['conflict', 'conflict']\nE         \nE         Left contains 2 more items, first extra item: 'conflict'\nE         Use -v to get more diff\n\ntests/test_readings_sup_verdicts.py:68: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scopes_need_only_the_two_answer_roundtrips\n1 failed in 0.64s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ball2sve)\n"
+      "seconds": 3.3,
+      "output_tail": "ngs-verdicts\":\n                questions.append(cases[0][\"question\"])\n            return original(cases)\n    \n        monkeypatch.setattr(readings_route, \"run_lean\", counted)\n        answer = route.conflict_answer()\n        # The global certificate settles the conflict status: Lean lists no complete choice (review F2 of rd-7).\n        assert answer[\"result\"][\"status\"] == \"CONFLICT-FREE\" and len(answer[\"scopes\"]) == 1\n        assert questions == [\"conflict\", \"conflict\"]\n        # An open query: its listing, the asked scope's evidence, then every choice's; the scopes Lean listed are\n        # known taken, so no choice is asked about again.\n        from tests.test_readings_s2_document import every\n        assert len(route.query_answer(every(\"avoid_required\"))[\"scopes\"]) == 3\n>       assert questions == [\"conflict\", \"conflict\", \"query\", \"query\", \"query\"]\nE       AssertionError: assert ['conflict', ...onflict', ...] == ['conflict', ...ery', 'query']\nE         \nE         At index 4 diff: 'conflict' != 'query'\nE         Left contains 2 more items, first extra item: 'conflict'\nE         Use -v to get more diff\n\ntests/test_readings_sup_verdicts.py:74: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scopes_need_only_the_two_answer_roundtrips\n1 failed in 1.43s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-5cvw8dt3)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
     },
     {
       "id": "P8",
       "file": "ve/readings_verdicts.py",
       "claim": "A premise model avoids an unnecessary certificate search.",
-      "source_sha256": "b13d9d850ffefd1d5669f2f4469a4f62cab80261a17cd24b194a2e43907ff62e",
+      "source_sha256": "be771180109207ccc68e66e760e924559c3cfddb4d8cf41158538ea6b15ec22f",
       "tests": [
         "tests/test_readings_sup_verdicts.py::test_premise_model_short_circuits_proof_search"
       ],
@@ -229,14 +233,15 @@
       ],
       "killed": true,
       "mutant_exit": 1,
-      "seconds": 3.0,
-      "output_tail": " modelled, proved, conflicted = set(), set(), set()\n        original_model, original_proof = route.model, route._generate_certificate\n        original_conflict = route._prepare_conflict\n    \n        def model(A=(), gamma=(), conclusion=None):\n            result = original_model(A, gamma, conclusion)\n            if result is not None:\n                modelled.add(tuple(tuple(x) for x in A))\n            return result\n    \n        def proof(A=(), gamma=(), conclusion=None):\n            proved.add(tuple(tuple(x) for x in A))\n            return original_proof(A, gamma, conclusion)\n    \n        def conflict(A=()):\n            conflicted.add(tuple(tuple(x) for x in A))\n            return original_conflict(A)\n    \n        monkeypatch.setattr(route, \"model\", model)\n        monkeypatch.setattr(route, \"_generate_certificate\", proof)\n        monkeypatch.setattr(route, \"_prepare_conflict\", conflict)\n        route.premises_answer()\n>       assert modelled and not modelled & proved\nE       AssertionError: assert ({(), (('rs1', 0),), (('rs1', 1),)} and not ({(), (('rs1', 0),), (('rs1', 1),)} & {(), (('rs1', 0),), (('rs1', 1),)}))\n\ntests/test_readings_sup_verdicts.py:95: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_premise_model_short_circuits_proof_search\n1 failed in 0.67s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-u6xz59gh)\n"
+      "seconds": 2.8,
+      "output_tail": "modelled, proved, conflicted = set(), set(), set()\n        original_model, original_proof = route.model, route._generate_certificate\n        original_conflict = route._prepare_conflict\n    \n        def model(A=(), gamma=(), conclusion=None):\n            result = original_model(A, gamma, conclusion)\n            if result is not None:\n                modelled.add(tuple(tuple(x) for x in A))\n            return result\n    \n        def proof(A=(), gamma=(), conclusion=None):\n            proved.add(tuple(tuple(x) for x in A))\n            return original_proof(A, gamma, conclusion)\n    \n        def conflict(A=()):\n            conflicted.add(tuple(tuple(x) for x in A))\n            return original_conflict(A)\n    \n        monkeypatch.setattr(route, \"model\", model)\n        monkeypatch.setattr(route, \"_generate_certificate\", proof)\n        monkeypatch.setattr(route, \"_prepare_conflict\", conflict)\n        route.premises_answer()\n>       assert modelled and not modelled & proved\nE       AssertionError: assert ({(), (('rs1', 0),), (('rs1', 1),)} and not ({(), (('rs1', 0),), (('rs1', 1),)} & {(), (('rs1', 0),), (('rs1', 1),)}))\n\ntests/test_readings_sup_verdicts.py:206: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_premise_model_short_circuits_proof_search\n1 failed in 1.46s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ugr4886b)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
     },
     {
       "id": "P9",
       "file": "ve/readings_verdicts.py",
       "claim": "Each Lean scope carries bounded model proposals so premise evidence does not query each scope again.",
-      "source_sha256": "b13d9d850ffefd1d5669f2f4469a4f62cab80261a17cd24b194a2e43907ff62e",
+      "source_sha256": "be771180109207ccc68e66e760e924559c3cfddb4d8cf41158538ea6b15ec22f",
       "tests": [
         "tests/test_readings_sup_verdicts.py::test_premise_scopes_reuse_lean_proposals_without_extra_verdicts"
       ],
@@ -246,8 +251,9 @@
       ],
       "killed": true,
       "mutant_exit": 1,
-      "seconds": 2.8,
-      "output_tail": "e.premises_answer()\n                 ^^^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_readings_sup_verdicts.py:112: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/readings_verdicts.py:600: in premises_answer\n    found = self.model(A)\n            ^^^^^^^^^^^^^\nve/readings_verdicts.py:333: in model\n    result = self._lifted(A, gamma, conclusion) if usable and not self.completion else None\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ve.readings_verdicts.Superposed object at 0x7673a0b85010>, A = []\ngamma = (), conclusion = None\n\n    def _lifted(self, A, gamma, conclusion):\n        from .ast import Bottom, formula_from_data\n        from .search import check_countermodel, find_countermodel\n        key = tuple(tuple(x) for x in A)\n        if key not in self._proposals:\n            self._ask(\"premises\" if conclusion is None else \"query\", A,\n                      gamma=gamma, conclusion=conclusion)\n>       for reading in self._proposals[key]:\n                       ^^^^^^^^^^^^^^^^^^^^\nE       KeyError: ()\n\nve/readings_verdicts.py:415: KeyError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_premise_scopes_reuse_lean_proposals_without_extra_verdicts\n1 failed in 0.52s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-q85bz770)\n"
+      "seconds": 2.2,
+      "output_tail": " self._settle(\"premises\", None, generate, asked_first=False)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/readings_verdicts.py:572: in _settle\n    generate(choice)\nve/readings_verdicts.py:613: in generate\n    found = self.model(A)\n            ^^^^^^^^^^^^^\nve/readings_verdicts.py:333: in model\n    result = self._lifted(A, gamma, conclusion) if usable and not self.completion else None\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <ve.readings_verdicts.Superposed object at 0x7ec7092a27b0>, A = []\ngamma = (), conclusion = None\n\n    def _lifted(self, A, gamma, conclusion):\n        from .ast import Bottom, formula_from_data\n        from .search import check_countermodel, find_countermodel\n        key = tuple(tuple(x) for x in A)\n        if key not in self._proposals:\n            self._ask(\"premises\" if conclusion is None else \"query\", A,\n                      gamma=gamma, conclusion=conclusion)\n>       for reading in self._proposals[key]:\n                       ^^^^^^^^^^^^^^^^^^^^\nE       KeyError: ()\n\nve/readings_verdicts.py:415: KeyError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_premise_scopes_reuse_lean_proposals_without_extra_verdicts\n1 failed in 1.00s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-zz__14j6)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
     },
     {
       "id": "L7",
@@ -280,6 +286,99 @@
       "mutant_exit": 1,
       "seconds": 77.8,
       "output_tail": "S ===================================\n__________ test_superposed_scope_count_stays_bounded_above_64_choices __________\n\n    def test_superposed_scope_count_stays_bounded_above_64_choices():\n        from ve.backends.lean_service import LeanService\n    \n        with LeanService(allow_unlisted_build=True) as lean:\n            [row] = lean.run(\"readings-route\", [_large_choice_case(\n                \"query\", premises=[], conclusion=[\"forall\", \"agent\", [\"forall\", \"user\",\n                    [\"binary\", \"help_required\", [\"var\", 1], [\"var\", 0]]]])])\n            [premises] = lean.run(\"readings-route\", [_large_choice_case(\"premises\")])\n        assert row[\"status\"] == \"ok\" and row[\"route\"] == \"superposed\"\n        # The 128 compatible choices do not become 128 evidence scopes or model proposals.\n        assert len(row[\"scopes\"]) == 1\n        assert len(row[\"model_proposals\"]) == 16\n        assert row[\"result\"][\"verdict\"] == \"UNKNOWN\"\n        assert premises[\"status\"] == \"ok\" and premises[\"route\"] == \"superposed\"\n>       assert premises[\"dead_readings\"] == [] and premises[\"untaken\"] == []\nE       assert (None == [])\n\ntests/test_readings_sup_verdicts.py:331: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices\n1 failed in 0.70s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ew8c1wxm)\n"
+    },
+    {
+      "id": "P10",
+      "file": "ve/readings_verdicts.py",
+      "claim": "Review F4: a conflict answer's assumed readings are bound to the request; a premises answer names none.",
+      "source_sha256": "be771180109207ccc68e66e760e924559c3cfddb4d8cf41158538ea6b15ec22f",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_sup_answer_binds_assumed_for_every_question"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_sup_answer_binds_assumed_for_every_question"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 1.8,
+      "output_tail": "               [100%]\n=================================== FAILURES ===================================\n_______________ test_sup_answer_binds_assumed_for_every_question _______________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-20687/test_sup_answer_binds_assumed_0')\n\n    def test_sup_answer_binds_assumed_for_every_question(tmp_path):\n        \"\"\"Review F4 of rd-7: a conflict answer names the readings it was asked under, a premises answer names none, and\n        every choice an answer names takes the asked readings.\"\"\"\n        from tests.test_readings_s2_document import every\n        _, route, _ = example(tmp_path)\n        for answer in (route.conflict_answer(), route._prepare(\"conflict\", [(\"rs1\", 0)])):\n            request = route.requests[id(answer)]\n            _check_sup_answer(answer, request, route)\n            for forged in ([[\"rs1\", 1]], [[\"rs1\", 0], [\"rs1\", 1]], []):\n                if forged != (request.get(\"assumed\") or []):\n>                   with pytest.raises(CheckerUnavailable):\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE                   Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_readings_sup_verdicts.py:155: Failed\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_sup_answer_binds_assumed_for_every_question\n1 failed in 0.78s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-163x7hbi)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
+    },
+    {
+      "id": "P11",
+      "file": "ve/readings_verdicts.py",
+      "claim": "Review F4: every choice an answer names takes the readings it was asked under.",
+      "source_sha256": "be771180109207ccc68e66e760e924559c3cfddb4d8cf41158538ea6b15ec22f",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_sup_answer_binds_assumed_for_every_question"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_sup_answer_binds_assumed_for_every_question"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 1.5,
+      "output_tail": "sup_answer(changed(premises, (\"result\", \"assumed\"), []), route.requests[id(premises)], route)\n        route.entailment(every(\"avoid_required\"), assumed=[[\"rs1\", 1]])\n        answer = route.query_answer(every(\"avoid_required\"), assumed=[[\"rs1\", 1]])\n        request = route.requests[id(answer)]\n        _check_sup_answer(answer, request, route)\n        named = [path for path, value in paths(answer[\"result\"]) if path and path[-1] == \"choice\"]\n        assert named\n        for path in named:\n            with pytest.raises(CheckerUnavailable):\n                _check_sup_answer(changed(answer, (\"result\",) + path, [[\"rs1\", 0]]), request, route)\n        # An UNKNOWN fold names its first open choice with no model behind it: only the asked readings bind it.\n        unknown = {\"route\": \"superposed\", \"assumed\": [[\"rs1\", 1]], \"verdict\": \"UNKNOWN\", \"budget\": dict(BUDGET),\n                   \"choice\": [[\"rs1\", 1]]}\n        _check_sup_answer(changed(answer, (\"result\",), unknown), request, route)\n>       with pytest.raises(CheckerUnavailable):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_readings_sup_verdicts.py:173: Failed\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_sup_answer_binds_assumed_for_every_question\n1 failed in 0.78s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-89imntqn)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
+    },
+    {
+      "id": "P12",
+      "file": "ve/readings_verdicts.py",
+      "claim": "Review F2: the asked scope's evidence is generated alone first.",
+      "source_sha256": "be771180109207ccc68e66e760e924559c3cfddb4d8cf41158538ea6b15ec22f",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_follow_the_asked_scope_first"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_follow_the_asked_scope_first"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 2.1,
+      "output_tail": "omplete choices only while\n        Lean's answer is open. A query the global certificate proves lists one scope; SOME lists every choice.\"\"\"\n        from tests.test_readings_s2_document import every\n        _, route, _ = example(tmp_path)\n        generated = []\n        original = route._generate_certificate\n    \n        def proof(A=(), gamma=(), conclusion=None):\n            generated.append([list(x) for x in A])\n            return original(A, gamma, conclusion)\n    \n        monkeypatch.setattr(route, \"_generate_certificate\", proof)\n        # The global conflict evidence is already sent, so Lean's first listing is open: only the asked scope is generated.\n        assert route.conflict_answer()[\"result\"][\"status\"] == \"CONFLICT-FREE\"\n        generated.clear()\n        proved = route.query_answer(every(\"help_required\"))\n        assert proved[\"result\"][\"verdict\"] == \"ALL\" and len(proved[\"scopes\"]) == 1\n>       assert generated == [[]]\nE       AssertionError: assert [[], [['rs1',... [['rs1', 1]]] == [[]]\nE         \nE         Left contains 2 more items, first extra item: [['rs1', 0]]\nE         Use -v to get more diff\n\ntests/test_readings_sup_verdicts.py:90: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scopes_follow_the_asked_scope_first\n1 failed in 1.08s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-mhqwue3h)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
+    },
+    {
+      "id": "L9",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "claim": "Review F1: past the checked budget a named reading is UNKNOWN, never refused untaken from the cut list.",
+      "source_sha256": "046d44368044082fe41a906645cbd8202dcbb0c3d2ee51263e6b202139b3d4e9",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget",
+        "tests/test_readings_sup_verdicts.py::test_untaken_check_waits_for_the_checked_budget"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget",
+        "tests/test_readings_sup_verdicts.py::test_untaken_check_waits_for_the_checked_budget"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 475.7,
+      "output_tail": "                            {\"certificate\", \"countermodel\"} if question == \"query\" else set())\n        case = {\"id\": \"readings-verdicts\", \"kind\": \"readings-verdicts\", \"environment\": self.environment,\n                \"document\": self.document, \"question\": question,\n                \"evidence\": [{\"choice\": [list(x) for x in key], **{k: v for k, v in pieces.items() if k in allowed}}\n                             for key, pieces in self._evidence.items()],\n                \"premises\": list(gamma), \"conclusion\": conclusion, \"budget\": dict(BUDGET)}\n        if A is not None:\n            case[\"assumed\"] = [list(x) for x in A]\n        if question == \"premises\" and getattr(self, \"_dead\", None) is not None:\n            case[\"dead\"] = self._dead\n        [row] = run_lean([case])\n        if row.get(\"status\") != \"ok\":\n            error = row.get(\"error\", \"\")\n            if error.startswith(\"ReadingsUnsatisfiable:\"):\n>               raise VEError(error)\nE               ve.errors.VEError: ReadingsUnsatisfiable: no compatible reading takes rs0@1:1, rs1@1:1\n\nve/readings_verdicts.py:529: VEError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget\nFAILED tests/test_readings_sup_verdicts.py::test_untaken_check_waits_for_the_checked_budget\n2 failed in 5.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-r_tvydnj)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
+    },
+    {
+      "id": "L10",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "claim": "Review F2: Lean lists the complete choices only while the asked scope leaves a query open.",
+      "source_sha256": "046d44368044082fe41a906645cbd8202dcbb0c3d2ee51263e6b202139b3d4e9",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_follow_the_asked_scope_first",
+        "tests/test_readings_sup_verdicts.py::test_check_prover_searches_do_not_grow_with_the_choices"
+      ],
+      "baseline_exit": 0,
+      "killed_by": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_follow_the_asked_scope_first"
+      ],
+      "killed": true,
+      "mutant_exit": 1,
+      "seconds": 411.0,
+      "output_tail": "  from tests.test_readings_s2_document import every\n        _, route, _ = example(tmp_path)\n        generated = []\n        original = route._generate_certificate\n    \n        def proof(A=(), gamma=(), conclusion=None):\n            generated.append([list(x) for x in A])\n            return original(A, gamma, conclusion)\n    \n        monkeypatch.setattr(route, \"_generate_certificate\", proof)\n        # The global conflict evidence is already sent, so Lean's first listing is open: only the asked scope is generated.\n        assert route.conflict_answer()[\"result\"][\"status\"] == \"CONFLICT-FREE\"\n        generated.clear()\n        proved = route.query_answer(every(\"help_required\"))\n>       assert proved[\"result\"][\"verdict\"] == \"ALL\" and len(proved[\"scopes\"]) == 1\nE       AssertionError: assert ('ALL' == 'ALL'\nE         \nE           ALL and 3 == 1)\nE        +  where 3 = len([{'encoded': {}, 'mentions': {'certificate': [], 'conflict': []}, 'model_proposals': [[['rs1', 0]], [['rs1', 1]]], 'ro...'rs1', 1]], 'conflict': 'CONFLICT-FREE', 'errors': {}, 'evidence': {'certificate': True, 'conflict': True}, ...}, ...}])\n\ntests/test_readings_sup_verdicts.py:89: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_superposed_scopes_follow_the_asked_scope_first\n1 failed, 1 passed in 6.47s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-n6l9ny5b)\n",
+      "note": "replayed after review fix (F1-F4); a Lean mutant's ve_service build is pinned in lean/checkers.lock for its run, then restored"
     }
   ]
 }
