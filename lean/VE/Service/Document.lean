@@ -1008,7 +1008,11 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
     -- plain `norms@0` document without a block; its checks over the environment are `checkNorms`'s).
     if E.profiles.contains "norm-defaults@0" || (E.profiles.contains "norms@0" && E.block == .none) then
       let node ← (VE.Norms.Wire.decodeNorm content).mapError fun e =>
-        if e == "Natural number expected" then
+        if !E.profiles.contains "norm-defaults@0" then
+          -- The norms route words a malformed norm object's faults otherwise than the retained loader
+          -- (`NormDocument._decode`), so a plain `norms@0` document keeps that loader's diagnostic.
+          unavailable s!"a norm object the norms route refuses keeps its loader's diagnostic: {e}"
+        else if e == "Natural number expected" then
           unavailable "a malformed norm formula is outside this document decoder"
         else if e == "object expected" then
           "Expected a JSON object"
@@ -1419,6 +1423,14 @@ def readingsSets (E : Env) (front : Json) (units : List SourceUnit) :
     pure (⟨set.id, set.unit, set.version, set.status, readings⟩, kinds)
   pure (sets, attached)
 
+/-- `has_companions`: some reading of a reading set carries its own vocabulary (the member is present). -/
+def companions (front : Json) : Bool :=
+  match front.getObjValD "reading_sets" with
+  | .arr sets => sets.any fun s => match s.getObjValD "readings" with
+    | .arr rs => rs.any fun r => (r.getObjVal? "companion").isOk
+    | _ => false
+  | _ => false
+
 /-- `_free_norms` (`ve/document.py`): the rules of the free norm-defaults document are the norm units whose role
 (`Norms.Admission.normRole`) is in force, under no active reading set (`setUnits`) and attached to no open set. The
 rest are checked alone, as `_check_quoted` checks them: the quoted units in source order, then the in-force units
@@ -1451,16 +1463,20 @@ def checkNormDefaults (E : Env) (front : Json) (units : List SourceUnit) (setUni
 
 /-- `load_document`'s W1 steps for a plain `norms@0` document (batch 16f): each quoted norm, and each norm under an
 active set, checked alone (`_check_quoted`, the norms route's `Norms.Admission.checkQuoted`), then the free norm
-document (`NormDocument(env, selected_norms)`, the norms route's `Norms.Wire.decodeSource`), which Python builds
-when it has rules or the environment regulates a predicate. -/
-def checkNorms (E : Env) (units : List SourceUnit) (setUnits attached : List String) : Except String Unit := do
+document (`NormDocument(env, selected_norms)`, the norms route's `Norms.Wire.decodeSource`, data flags admitted as
+`NormDocument` reads none), which Python builds when it has rules or the environment regulates a predicate. -/
+def checkNorms (E : Env) (units : List SourceUnit) (setUnits attached : List String) : Except String Unit :=
   let environment := if E.profiles.contains "readings@1" then lowerReadings E.json else E.json
   let (free, single) := freeNorms units setUnits attached
-  unless single.isEmpty do
-    let base ← VE.Norms.Wire.decodeSource environment (Json.arr #[]) (flags := true)
-    single.forM (VE.Norms.Admission.checkQuoted base)
-  if !free.isEmpty || E.regulates then
-    let _ ← VE.Norms.Wire.decodeSource environment (Json.arr free.toArray) (flags := true)
+  let checked : Except String Unit := do
+    unless single.isEmpty do
+      let base ← VE.Norms.Wire.decodeSource environment (Json.arr #[]) (flags := true)
+      single.forM (VE.Norms.Admission.checkQuoted base)
+    if !free.isEmpty || E.regulates then
+      let _ ← VE.Norms.Wire.decodeSource environment (Json.arr free.toArray) (flags := true)
+  -- The norms route words these faults, and classes some, otherwise than the retained loader's `NormDocument`
+  -- (`InvalidInput` for an `UnknownSymbol:` text, Python's `repr` of a name), so a rejection keeps that loader's.
+  checked.mapError fun e => unavailable s!"a norm document the norms route refuses keeps its loader's diagnostic: {e}"
 
 /-! ## The case -/
 
@@ -1504,6 +1520,10 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     if (u.getObjValD "content").getObjValD "fence" == .str (id.getD "") then id else none
   unless (doc.fences.map Prod.fst).all used.contains do throw "unbound VE fence"
   let unitIds := units.map (·.id)
+  -- A reading that carries its own vocabulary splits the document into the readings route's components
+  -- (`has_companions`, `load_components`), which this mode composes only under norm-defaults@0 (batch 16d).
+  if E.profiles.contains "readings@1" && !E.rights && !E.profiles.contains "norm-defaults@0" && companions front then
+    throw (unavailable "a document whose readings carry their own vocabulary needs the components route")
   let (all, attached) ← if E.profiles.contains "readings@1" && !E.rights then readingsSets E front units else do
     -- A soft-norms document's reading sets are read in `E″` (`validate_reading_sets(formula_env, ...)`).
     let F := (S.map (·.extended)).getD E

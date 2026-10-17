@@ -29,7 +29,7 @@ CASES = [
     ("quoted norms not checked by the norms route", LEAN,
      "    single.forM (VE.Norms.Admission.checkQuoted base)",
      "    let _ := single.length",
-     "test_norm_faults_are_the_norms_route_s[quoted unregulated]"),
+     "test_a_norm_fault_keeps_the_retained_loader_s_diagnostic[quoted unregulated]"),
     ("a soft document's formulas read in its own environment instead of E''", LEAN,
      "  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← extendedEnv prime, ← softRules prime flat⟩",
      "  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, E, ← softRules prime flat⟩",

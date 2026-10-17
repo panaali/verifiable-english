@@ -338,10 +338,19 @@ def _order_document():
     return next(doc for name, doc in dw.seeds() if "order@0" in json.dumps(doc["front"].get("environment")))
 
 
+def _readings_fence():
+    """The strict fence seed under the readings@1 head, whose fence the mode does not locate (batch 16f)."""
+    doc = deepcopy(GENERATED["fence"])
+    env = doc["front"]["environment"]
+    env["profiles"] = sorted([*env["profiles"], "norms@0", "readings@1"])
+    return doc
+
+
 # {the mode's reason: (its row in DELTA.md, a document it answers so)}
 RETAINED = {
+    # Batch 16f decides a plain document's strict fence (`locatedFence`); under readings@1 it is still retained.
     "fenced English or strict content needs the Lean surface parser": (
-        "fenced English or strict content needs the Lean surface parser", lambda: dw.text_of(GENERATED["fence"])),
+        "fenced English or strict content needs the Lean surface parser", lambda: dw.text_of(_readings_fence())),
     "document checks under order@0 need its Lean profile route": (
         "document checks under {profile} need its Lean profile route", lambda: dw.text_of(_order_document())),
     "front matter outside the restricted JSON reader": (
