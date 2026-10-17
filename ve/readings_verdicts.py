@@ -553,12 +553,27 @@ class Superposed(_Route):
                                               "tuple": result["tuple"]}}
         return result
 
-    def _prepare(self, question, A=(), gamma=(), conclusion=None):
+    def _settle(self, question, A, generate, gamma=(), conclusion=None, asked_first=True):
+        """Lean's answer once every scope it lists has evidence. Lean lists the scopes its answer can use (the
+        complete choices only while the asked scope leaves the answer open); Python generates evidence for each
+        listed scope once, the asked scope alone first when `asked_first`, and asks again until none is new."""
+        def key(choice):
+            return tuple(tuple(x) for x in choice)
         row = self._ask(question, A, gamma=gamma, conclusion=conclusion)
-        for scope in row["scopes"]:
-            own = scope["row"]["choice"]
-            self._prepare_conflict(own)
-        return self._ask(question, A, gamma=gamma, conclusion=conclusion)
+        done = set()
+        while True:
+            todo = [scope["row"]["choice"] for scope in row["scopes"] if key(scope["row"]["choice"]) not in done]
+            if asked_first and not done:
+                todo = todo[:1]
+            if not todo:
+                return row
+            for choice in todo:
+                done.add(key(choice))
+                generate(choice)
+            row = self._ask(question, A, gamma=gamma, conclusion=conclusion)
+
+    def _prepare(self, question, A=(), gamma=(), conclusion=None):
+        return self._settle(question, A, self._prepare_conflict, gamma, conclusion)
 
     def conflict_answer(self):
         if "conflict" not in self._answers:
@@ -592,9 +607,7 @@ class Superposed(_Route):
 
     def premises_answer(self):
         if "premises" not in self._answers:
-            row = self._ask("premises", None)
-            for scope in row["scopes"]:
-                A = scope["row"]["choice"]
+            def generate(A):
                 # A model settles this evidence slot without conflict certificates or a tableau
                 # proof search. Lean checks the model and decides the premise status from the row.
                 found = self.model(A)
@@ -605,7 +618,8 @@ class Superposed(_Route):
                     proof = self._generate_certificate(A)
                     if proof is not None:
                         self._pieces(A)["unsat"] = proof
-            row = self._ask("premises", None)
+            # Every scope a premises answer lists is a candidate's or the global one: generated in one round.
+            row = self._settle("premises", None, generate, asked_first=False)
             if row["untaken"]:
                 self._dead = _dead_certificates(self, row["untaken"])
                 if self._dead is not None:
@@ -627,9 +641,8 @@ class Superposed(_Route):
         for pieces in self._evidence.values():
             pieces.pop("certificate", None)
             pieces.pop("countermodel", None)
-        row = self._prepare("query", assumed, premises, conclusion_ast)
-        for scope in row["scopes"]:
-            A = scope["row"]["choice"]
+        def generate(A):
+            self._prepare_conflict(A)
             proof = self._generate_certificate(A, premises, conclusion_ast)
             if proof is not None:
                 self._pieces(A)["certificate"] = proof
@@ -637,7 +650,7 @@ class Superposed(_Route):
                 found = self.model(A, premises, conclusion_ast)
                 if found is not None:
                     self._pieces(A)["countermodel"] = {"model": found["model"]}
-        row = self._ask("query", assumed, gamma=premises, conclusion=conclusion_ast)
+        row = self._settle("query", assumed, generate, premises, conclusion_ast)
         self._answers[("query", _request_key(conclusion_ast, premises, assumed))] = row
         return row["result"]
 
@@ -1219,14 +1232,18 @@ def _check_sup_answer(row, case, route):
         _need(len({json.dumps(x) for x in scope_choices}) == len(scope_choices))
         if route.choices is not None:
             full = [route.choice_json(c) for c in route.choices]
-            required = [c for c in full if all(x in c for x in A)]
-            if case["question"] == "premises":
-                required += [[c] for c in candidates if any(c in x for x in full)]
-            expected = [A]
-            for c in required:
-                if c not in expected:
-                    expected.append(c)
-            _need(scope_choices == expected)
+            taking = [c for c in full if all(x in c for x in A)]
+            live = [[c] for c in candidates if any(c in x for x in full)] if case["question"] == "premises" else []
+
+            def listed(required):
+                out = [A]
+                for c in required:
+                    if c not in out:
+                        out.append(c)
+                return out
+            # Lean lists the asked scope and the live candidates, and the complete choices taking it only while its
+            # answer is open (`supOpen`; never for premises): one of these two lists, in this order.
+            _need(scope_choices == listed(live) or case["question"] != "premises" and scope_choices == listed(taking))
         else:
             _need(all(c == A or case["question"] == "premises" and len(c) == 1 for c in scope_choices))
         for scope in scopes:
@@ -1266,6 +1283,9 @@ def _check_sup_answer(row, case, route):
         _need("verdict" in result if case["question"] == "query" else "status" in result)
         if case["question"] == "query":
             _need(result.get("assumed", []) == A)
+        else:
+            # A conflict answer names the readings it was asked under (review F4 of rd-7); premises name none.
+            _need(result.get("assumed", A) == A and (case["question"] == "conflict" or "assumed" not in result))
         references = [result]
         references += [result[name] for name in ("proof", "countermodel") if name in result]
         references += [obj for name in ("proofs", "countermodels", "choices", "candidates")
@@ -1276,6 +1296,8 @@ def _check_sup_answer(row, case, route):
             _need(all(name in rules for name, _ in obj.get("selected") or []))
             if "choice" in obj:
                 choice(obj["choice"], complete=True)
+                # Every choice an answer names takes the readings it was asked under (a candidate's its own).
+                _need(any(obj is c for c in result.get("candidates", [])) or all(x in obj["choice"] for x in A))
             for key in ("conditional_on", "reading_premises_used", "restrictions"):
                 for l in obj.get(key, []):
                     label(l)

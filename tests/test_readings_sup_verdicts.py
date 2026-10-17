@@ -64,8 +64,105 @@ def test_superposed_scopes_need_only_the_two_answer_roundtrips(tmp_path, monkeyp
 
     monkeypatch.setattr(readings_route, "run_lean", counted)
     answer = route.conflict_answer()
-    assert len(answer["scopes"]) > 1
+    # The global certificate settles the conflict status: Lean lists no complete choice (review F2 of rd-7).
+    assert answer["result"]["status"] == "CONFLICT-FREE" and len(answer["scopes"]) == 1
     assert questions == ["conflict", "conflict"]
+
+
+def test_superposed_scopes_follow_the_asked_scope_first(tmp_path, monkeypatch):
+    """Review F2 of rd-7: evidence is generated for the asked scope first, and for the complete choices only while
+    Lean's answer is open. A query the global certificate proves lists one scope; SOME lists every choice."""
+    from tests.test_readings_s2_document import every
+    _, route, _ = example(tmp_path)
+    generated = []
+    original = route._generate_certificate
+
+    def proof(A=(), gamma=(), conclusion=None):
+        generated.append([list(x) for x in A])
+        return original(A, gamma, conclusion)
+
+    monkeypatch.setattr(route, "_generate_certificate", proof)
+    proved = route.query_answer(every("help_required"))
+    assert proved["result"]["verdict"] == "ALL" and len(proved["scopes"]) == 1
+    assert generated == [[]]
+    generated.clear()
+    some = route.query_answer(every("avoid_required"))
+    assert some["result"]["verdict"] == "SOME"
+    assert [s["row"]["choice"] for s in some["scopes"]] == [[], [["rs1", 0]], [["rs1", 1]]]
+    assert generated[0] == [] and sorted(generated[1:]) == [[["rs1", 0]], [["rs1", 1]]]
+
+
+def test_check_prover_searches_do_not_grow_with_the_choices(tmp_path, monkeypatch):
+    """Review F2 of rd-7 (its probe): `ve document check` on six two-reading sets (64 choices) ran 910 prover
+    searches when every scope got conflict and proof evidence; the base ran 14."""
+    from collections import Counter
+    from tests.test_readings_s2_document import norm, s2_document
+    from ve import entailment
+    from ve.document import check_document
+    path = s2_document(tmp_path, [("set", f"rs{i}", f"u{i}", [
+        ("strict", norm(f"r{i}", "avoid_required", True), "norm", None),
+        ("default", norm(f"r{i}", "avoid_required", True, "default"), "norm", None)]) for i in range(6)])
+    count = Counter()
+    original = entailment.prove_entailment
+
+    def counted(*args, **kwargs):
+        count["prove"] += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(entailment, "prove_entailment", counted)
+    check_document(path)
+    assert 0 < count["prove"] <= 64, count
+
+
+def _eleven_sets(tmp_path):
+    from tests.test_readings_s2_document import norm, s2_document
+    from ve.document import load_document
+    from ve.readings_verdicts import context
+    return context(load_document(s2_document(tmp_path, [("set", f"rs{i}", f"u{i}", [
+        ("strict", norm(f"r{i}", "avoid_required", True), "norm", None),
+        ("default", norm(f"r{i}", "avoid_required", True, "default"), "norm", None)]) for i in range(11)])))
+
+
+def test_untaken_check_waits_for_the_checked_budget(tmp_path):
+    """Review F1 of rd-7: with 2048 compatible choices the list Lean checks is cut after 1025, so a reading outside
+    it is not shown untaken: every question under it is UNKNOWN (the budget), never ReadingsUnsatisfiable."""
+    from tests.test_readings_s2_document import every
+    route = _eleven_sets(tmp_path)
+    assumed = [["rs0", 1], ["rs1", 1]]
+    query = route.entailment(every("avoid_required"), assumed=assumed)
+    assert query["verdict"] == "UNKNOWN" and query["reason"] == "ResourceLimit: more than 1024 readings to check"
+    assert route.conflict([tuple(x) for x in assumed])["status"] == "UNKNOWN"
+    for question in ("conflict", "query"):
+        answer = route._ask(question, assumed, conclusion=every("avoid_required") if question == "query" else None)
+        result = answer["result"]
+        assert result["verdict" if question == "query" else "status"] == "UNKNOWN"
+        assert result["reason"] == "ResourceLimit: more than 1024 readings to check"
+
+
+def test_sup_answer_binds_assumed_for_every_question(tmp_path):
+    """Review F4 of rd-7: a conflict answer names the readings it was asked under, a premises answer names none, and
+    every choice an answer names takes the asked readings."""
+    from tests.test_readings_s2_document import every
+    _, route, _ = example(tmp_path)
+    for answer in (route.conflict_answer(), route._prepare("conflict", [("rs1", 0)])):
+        request = route.requests[id(answer)]
+        _check_sup_answer(answer, request, route)
+        for forged in ([["rs1", 1]], [["rs1", 0], ["rs1", 1]], []):
+            if forged != (request.get("assumed") or []):
+                with pytest.raises(CheckerUnavailable):
+                    _check_sup_answer(changed(answer, ("result", "assumed"), forged), request, route)
+    premises = route.premises_answer()
+    with pytest.raises(CheckerUnavailable):
+        _check_sup_answer(changed(premises, ("result", "assumed"), []), route.requests[id(premises)], route)
+    route.entailment(every("avoid_required"), assumed=[["rs1", 1]])
+    answer = route.query_answer(every("avoid_required"), assumed=[["rs1", 1]])
+    request = route.requests[id(answer)]
+    _check_sup_answer(answer, request, route)
+    named = [path for path, value in paths(answer["result"]) if path and path[-1] == "choice"]
+    assert named
+    for path in named:
+        with pytest.raises(CheckerUnavailable):
+            _check_sup_answer(changed(answer, ("result",) + path, [["rs1", 0]]), request, route)
 
 
 def test_premise_model_short_circuits_proof_search(tmp_path, monkeypatch):

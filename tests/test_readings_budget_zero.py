@@ -3,7 +3,7 @@
 With the prover, the model search and the evaluator all at budget 0 nothing can be certified or found, so every
 answer that rests on evidence is UNKNOWN: never CONFLICT-FREE, CONFLICT, model, INCONSISTENT, ALL, SOME, NONE or NOT
 ALL, and never a certificate or a model. The sweep runs on both routes and on every enumerated kind of choice
-document: the completion's filled documents (F-ND1), the norms chain (M9) and the soft chain (M8), and the
+document: the completion's filled documents (F-ND1, F-ND2), the norms chain (M9) and the soft chain (M8), and the
 superposed route (M6); and through `ve document check` and `readings --conclusion` on the completion. Which ops are
 swept is checked against the classes themselves: a new public op must be listed here as swept or as not budgeted.
 """
@@ -41,14 +41,20 @@ NOT_BUDGETED = {
     "frame": "the request's document decoded for that check, no search",
 }
 X_REQUIRED = ["forall", "act", ["unary", "x_required", ["var", 0]]]  # F-ND2's query (the gated one)
-FIXTURES = {"F-ND1": (fnd1, QUERY), "F-ND2": (fnd2, X_REQUIRED), "M9": (_m9, None), "M8": (_m8, None),
+FIXTURES = {"F-ND1": (fnd1, QUERY), "F-ND1 enumerated oracle": (fnd1, QUERY),
+            "F-ND2": (fnd2, X_REQUIRED), "M9": (_m9, None), "M8": (_m8, None),
             "M6": (_m6, None)}
 
 
 def fixture_route(name, tmp_path):
-    """Use Lean's route on each fixture; F-ND1's filled choice document is swept directly."""
+    """Keep RD-3's filled choice checker covered after RD-6b makes F-ND1's public route superposed; F-ND1's filled
+    choice document is also swept directly on the superposed route."""
     make, _ = FIXTURES[name]
     doc = load_document(make(tmp_path))
+    if name == "F-ND1 enumerated oracle":
+        row = doc["readings_s2"]
+        row["route"] = "enumerated"
+        row["finding"] = {"text": "ReadingsNotSuperposable: rs_1", "cause": "the unspecified completion"}
     return context(doc)
 
 
