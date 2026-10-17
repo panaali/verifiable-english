@@ -57,6 +57,16 @@ The wall-clock guards are not work limits: `VE_LEAN_SERVICE_TIMEOUT` replaces th
 cap of a request without a `timeout` (and, where the CPU time is not reported, its deadline),
 and `VE_LEAN_SERVICE_STARTUP_TIMEOUT` the 30 s a process has to start; the test suite raises
 both to its hang guard, so machine load cannot fail a test.
+
+The test suite's answer store (`tests/answer_store.py`, R1 only; `answer_store` is None everywhere
+else, the gate's runs included) may stand in for the process's answer to one request line. The process
+is still started, pinned and checked (`_ensure`) and the request's deadline still computed; the stored
+line then takes the process's place in the framing (`_read_line`), and every check below it runs on it
+as on the process's line: one the client refuses is an operational failure, as from the process. After
+any failed attempt the retry asks the process and its answer is not stored. In
+that mode the request's nonce is derived from the rest of its line and every environment its cases
+name is registered in the line itself, so that the line, and Lean's answer to it, depend on the line
+alone, not on the handles one process happens to hold.
 """
 from __future__ import annotations
 
@@ -105,6 +115,9 @@ MAX_HANDLES = _HANDLES["max"]["const"]
 MAX_HANDLE_BYTES = _HANDLES["max_bytes"]["const"]
 # The modes whose cases the service never expands (`expandCases`).
 UNHANDLED_MODES = frozenset({"english", "risk-eval"})
+# The test suite's answer store (module docstring): set by tests/answer_store.py in R1 runs only.
+answer_store = None
+_PLACEHOLDER = "store-" + "0" * 32  # a store-mode nonce's place while it is derived
 
 
 # CPU seconds by mode: (base per case, per MiB of cases); each case is one operation. The core modes
@@ -664,9 +677,12 @@ class LeanService:
 
     def _roundtrip(self, mode: str, cases_text: str, count: int, timeout: float | None,
                    nonce: str, line: bytes, texts: list[str] | None,
-                   expanded: list | None = None) -> tuple[bytes, dict]:
+                   expanded: list | None = None, stored: bytes | None = None) -> tuple[bytes, dict]:
         deadline = self._deadline(mode, len(cases_text.encode()), count, timeout)
-        self._write_all(line, deadline)
+        if stored is None:
+            self._write_all(line, deadline)
+        else:  # the answer store's line in place of the process's, read through the same framing
+            self._buffer += stored + b"\n"
         raw = self._read_line(deadline)
         try:
             response = _decode_json(raw)
@@ -718,38 +734,66 @@ class LeanService:
             configured_seconds("VE_LEAN_SERVICE_TIMEOUT", WALL_FACTOR)
         if budget is None:
             budget = {"cases": max(count, 1), "bytes": len(cases_text.encode())}
+        store = answer_store if answer_store is not None and answer_store.applies(self, timeout) else None
+        if store is not None and len(cases_text.encode()) + ENVELOPE_BYTES + sum(
+                len(digest) + len(text.encode()) + 4 for digest, text in (environments or {}).items()) > MAX_LINE_BYTES:
+            store = None  # the line with every environment might not fit where the live one does
         with self._lock:
             attempt = 0
             while True:
                 nonce = f"{self._nonce}-{next(self._counter)}"
+                # Everything the failure path reads is bound before anything can fail (review F6): with
+                # environments the line exists only once the process has started, and starting can fail.
                 needed: dict[str, str] = {}
+                stored = None
+                line: bytes | None = None
                 if not environments:
-                    line = self._request_line(nonce, mode, cases_text, budget)
+                    nonce, line = self._line(nonce, mode, cases_text, budget, None, store)
                     if len(line) > MAX_LINE_BYTES + 1:
                         raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
                 try:
                     self._ensure()
                     if environments:
-                        # Which environments to register depends on the process, known only now.
-                        needed = {digest: text for digest, text in environments.items()
-                                  if digest not in self._registered}
-                        line = self._request_line(nonce, mode, cases_text, budget, needed)
+                        # Which environments to register depends on the process, known only now
+                        # (in store mode: all of them, so that the line stands alone).
+                        needed = (dict(environments) if store is not None else
+                                  {digest: text for digest, text in environments.items()
+                                   if digest not in self._registered})
+                        nonce, line = self._line(nonce, mode, cases_text, budget, needed, store)
                         if len(line) > MAX_LINE_BYTES + 1:
                             raise ResourceLimit(f"ResourceLimit: request line exceeds {MAX_LINE_BYTES} bytes")
+                    if store is not None:
+                        stored = store.answer(self, line)
                     raw, response = self._roundtrip(mode, cases_text, count, timeout, nonce, line, texts,
-                                                    expanded)
+                                                    expanded, stored)
                 except _Failure as failure:
+                    if store is not None:  # a refused stored line or a failed process: the retry is live, unstored
+                        store.failed(self, line, failure, served=stored is not None)
+                        store = None
                     self._failed_attempt(failure, attempt)
                     attempt += 1
                     continue
+                if store is not None and stored is None:
+                    store.record(self, line, raw, response)
                 if response.get("status") == "error":
                     self._forget_handles()
-                else:
+                elif stored is None:  # a stored answer registered nothing in the process
                     for digest, text in needed.items():
                         self._note(digest, len(text.encode()))
                         self.stats["registered"] += 1
                 self._after_request()
                 return raw, response
+
+    def _line(self, nonce: str, mode: str, cases_text: str, budget: dict, environments: dict[str, str] | None,
+              store) -> tuple[str, bytes]:
+        """The request's nonce and line; in store mode the nonce is derived from the rest of the line (the line
+        with a fixed placeholder in its place)."""
+        if store is None:
+            return nonce, self._request_line(nonce, mode, cases_text, budget, environments)
+        line = self._request_line(_PLACEHOLDER, mode, cases_text, budget, environments)
+        nonce = "store-" + hashlib.sha256(line).hexdigest()[:32]
+        head = len('{"id":' + json.dumps(_PLACEHOLDER))
+        return nonce, ('{"id":' + json.dumps(nonce)).encode() + line[head:]
 
     def _failed_attempt(self, failure: _Failure, attempt: int) -> None:
         detail = self._stderr_tail()

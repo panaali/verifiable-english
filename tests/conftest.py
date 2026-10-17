@@ -17,6 +17,9 @@ from subprocesses import HANG_TIMEOUT
 from tools import rust_build, test_schedule
 from ve.surface import unambiguity
 
+# R1's Lean answer store (`--answer-store`; off unless asked, refused under tools/gate.py).
+pytest_plugins = ["answer_store"]
+
 ROOT = Path(__file__).resolve().parents[1]
 HEAVY_IDS = frozenset(row["nodeid"] for row in json.loads((ROOT / "tests/heavy.json").read_text())["heavy"])
 

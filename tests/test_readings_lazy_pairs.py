@@ -124,6 +124,7 @@ def review_case(raw):
             "set": "rs1", "situation": sid, "other": "default"}, sid
 
 
+@pytest.mark.live_service
 def test_the_review_reproducer_gives_the_specified_answer(lean):  # noqa: F811
     raw = env_k()
     case, sid = review_case(raw)

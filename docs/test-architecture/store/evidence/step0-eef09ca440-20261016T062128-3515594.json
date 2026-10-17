@@ -1,0 +1,14 @@
+{
+ "run": "eef09ca440/20261016T062128-3515594",
+ "headline": {
+  "previous": null,
+  "records": 695562,
+  "failed_roundtrips": 0,
+  "eligible": 695477,
+  "exact_line": null,
+  "self_contained_line": null,
+  "lines_self_contained": 14735,
+  "lines_with_handles": 691116,
+  "lines_without_reset": 695318
+ }
+}
