@@ -7,7 +7,54 @@
 | X4 | Pilots have one command to rebuild reading-set identities after an environment edit. Sets owned by a companion environment keep those identities. | SIGNED by DRI decision X4 (DRI-DECISIONS-PHASE2.md). `tests/test_readings_s1_pilot_rebuild.py`. |
 | Relay: graph | A malformed Lean graph response whose Background leaf has an empty or unknown label, or an AST outside the generated formula shape, is refused before the caller reads it (`CheckerUnavailable`; previously any string and any non-empty array). Genuine answers are unchanged. Commit `a88897564`, the same hunks as premise-scale `8808fb359` and tarch-b8 `0ba241d9a`. | SIGNED by standing ruling R8 (DRI-RULINGS.md): the field is fully typed by the Lean-authored schema and the relay refuses the malformed answer. `tests/test_relay_mutation_gate.py::test_graph_background_labels_and_formulas_are_typed`; relay mutation gate `service:graph` (786 mutants, 0 failures). |
 | Relay: parse | A malformed Lean parse response with an empty diagnostic string is refused (`CheckerUnavailable`). Commit `00449ff9a`, the relay part of premise-scale `b961596b5` as in tarch-b8 `3663dd1b4`. | SIGNED by standing ruling R8 (DRI-RULINGS.md). `tests/test_relay_mutation_gate.py::test_parse_diagnostic_text_cannot_be_empty`; relay mutation gate `service:parse`. |
-| Trust budget | Classified Lean V lines rise by 15 against the merge base, all in the English policy (`VE/EnglishGrammar/Policy.lean`: the head fixed point `PolicyCtx.of` and the claimed-head table `PolicyCtx.ofHeads`); K and S do not rise, and the readings decoder is back to +0 (review F3). | SIGNED by standing ruling R16 (2026-10-17) (DRI-RULINGS.md): V +15 <= 150, K +0, new Lean-owned behaviour (R6 does not apply: no Python or Rust decision path was deleted). Itemised per file and re-measured on this HEAD with `python3 tools/trust_map.py --check` (against aaff776345c5: `VE/EnglishGrammar/Policy.lean` +15); recorded with `tools/trust_map.py --allow` (one V allowance of 15). Tests that can fail: the `#guard`s on `PolicyCtx.of` (lint heads, settled codes) in `lean/VE/EnglishGrammar/E2Examples.lean` and the X2 tests above. Ties pass binding the lines to existing render/wire/encoder theorems: manage-agents FOLLOW-UPS.md (jt-crossplan-fixes R16 ties pass). |
+| Trust budget | Classified Lean V lines rise by 15 against the merge base, all in the English policy (`VE/EnglishGrammar/Policy.lean`: the head fixed point `PolicyCtx.of` and the claimed-head table `PolicyCtx.ofHeads`); K and S do not rise, and the readings decoder is back to +0 (review F3). | SIGNED by standing ruling R16 (2026-10-17) (DRI-RULINGS.md): V +15 <= 150, K +0, new Lean-owned behaviour (R6 does not apply: no Python or Rust decision path was deleted). Itemised per file and re-measured on this HEAD with `python3 tools/trust_map.py --check` (against aaff776345c5: `VE/EnglishGrammar/Policy.lean` +15); recorded with `tools/trust_map.py --allow` (one V allowance of 15). Tests that can fail: the `#guard`s on `PolicyCtx.of` (lint heads, settled codes) in `lean/VE/EnglishGrammar/E2Examples.lean` and the X2 tests above. Ties pass binding the lines to existing render/wire/encoder theorems: manage-agents FOLLOW-UPS.md (jt-crossplan-fixes R16 ties pass); its result is the "Trust ties pass" row below. |
+| Trust ties pass | The R16 ties pass for the "Trust budget" row (infra item ties-jt-crossplan, 2026-10-17). No existing theorem ties a declaration the row's V +15 added or grew, so no tie is added and the counts do not change: untied V stays 39,952 on main (the row's +15 stands). The only dumped theorem that names one of them, `VE.EnglishGrammar.policyPredicate_tables`, is accepted by the tool for `PolicyCtx.of` but is rejected here as vacuous. Each declaration is listed below with the theorem that would tie it ("Trust ties pass") | No ruling needed: nothing is tied, no allowance is raised or added, and no trusted line or signature is written | `python3 tools/trust_map.py --check` PASS before and after on main `4e2c73dec` (V 39,952, tied 260, trusted 51,104; `VE/EnglishGrammar/Policy.lean` trusted 607); against `3c6646151` "VE/EnglishGrammar/Policy.lean: trusted +15". Seeded ties below |
 | Lean CPU | Compiled V6 at 256 predicates (GE2 item 9, budget 100 ms): 45 ms against base 62 ms on the evidence's environment; 69 ms against 60 ms (+15%) on one with 16 mutually rejecting pairs. | Within the plan's +20% relative rule and the absolute budget; no ruling needed. Saved runs: [policy-bench.json](policy-bench.json). |
 
 The S3 evidence records 158/163 agreement on exact spec texts (previously 147/163) and 168/170 agreement in the integrated comparison (previously 198/200); the two existing dispositioned differences remain. The changed case count is the removal of selected-wording variants made redundant by the new `safe` selection. The conformance scripts regenerated both saved reports, and `tests/test_english_lean_s3_compare.py` checks their counts against their rows.
+
+## Trust ties pass (infra item ties-jt-crossplan, 2026-10-17)
+
+Method. `tools/trust_map.py` was run on main with the item merged (`4e2c73dec`) and against the item's base, main's
+first parent before its merge (`3c6646151`). The growth is all in `VE/EnglishGrammar/Policy.lean` (+15); every other
+file the item touched is +0. Each declaration of that file was compared one by one between the two trees (the
+classified declarations `walk` returns). For each untied G[V] declaration that the item added or grew, `lean/statements.txt` was
+searched for a theorem whose `-- uses` line names it. The search also looked at the theorems that name what it feeds:
+`Lexicon.policyOk`, `Lexicon.policyFailures`, `policyPredicate`, `acceptsDeclared`, `lintCodes`, `overlayCheck`.
+A tie would be added only where the statement fixes what the declaration means. None qualifies, so `tools/trust-classes.json` is unchanged.
+
+### Declarations of the +15 (untied G[V], `VE/EnglishGrammar/Policy.lean`)
+
+| Declaration | Lines base -> now | Why no existing theorem ties it | The theorem that would tie it |
+| --- | --- | --- | --- |
+| `VE.EnglishGrammar.PolicyCtx.ofHeads` | 0 -> 19 (new) | No theorem of `lean/statements.txt` names it, and no theorem anywhere in `lean/` does. Its only consumers are `PolicyCtx.of` and the `#guard`s, which are T. | A claimed-head theorem. For every `f ∈ (PolicyCtx.ofHeads E O hs).preds`, it would state that `f.claimed = if hs.any (·.2 == f.decl.name) then templateHead ((E.declaredWording O f.decl.name).getD "") f.decl.arity else none`. It would also state `(PolicyCtx.ofHeads E O hs).lintHeads = hs`. This fixes the table that the collision and idiom checks of `acceptsDeclaredIn` read. Anchors: `templateHead`, `Env.declaredWording` |
+| `VE.EnglishGrammar.PolicyCtx.of` | 19 -> 15 (rewritten as the fixed point) | Only `policyPredicate_tables` names it, and that tie is vacuous (see below). The render and request theorems (`policy_selection`, `admitRequest_policy`, `translateRequest_policy`, `sensesRequest_policy`, `documentRequest_policy`, `grammarFault_none`, `checkRequest_some`, ...) name `Lexicon.policyOk` and `policyPredicate`, not `PolicyCtx.of`, so the tool rejects them. Those constants are also defined through `PolicyCtx.of`, so those theorems pass on its answer without constraining it. No `ResponseShape` encoder theorem names it, and the dump holds none. | The printer's fixed point (printer.py:190–213), stated about `c := PolicyCtx.of E O`. For each declared predicate `d` with wording `w`: `c.lintHeads.any (·.2 == d.name)` holds iff `w` passes the head-free lint (`lintCodesIn (PolicyCtx.ofHeads E O []) d.name w d.arity = []`) and passes the lint under `c`'s own heads (`lintCodesIn c d.name w d.arity = []`). Also, `c.settled.lookup d.name = some cs` with `cs ≠ []` would imply that `d`'s head is not in `c.lintHeads`. Its proof needs the lemma behind the docstring's "one round reaches it": `lintCodesIn` only loses codes when heads are removed. Anchors: `lintCodesIn`, `templateHead` |
+| `VE.EnglishGrammar.PolicyCtx` | 16 -> 17 (field `settled`) | No dumped theorem names the type. | The fixed-point theorem above, which names `settled` and `lintHeads`. The other fields were untied at the base too |
+| `VE.EnglishGrammar.PredFacts.of` | 8 -> 7 (`lintHead` removed) | It shrank, so the item adds no lines here; it is untied at the base and now. | None needed for this item |
+
+Rejected candidate (the tool accepts it; the statement does not constrain the declaration). Tying `PolicyCtx.of` to
+`VE.EnglishGrammar.policyPredicate_tables` passes `trust_map.py --check`, with "tied +15, VE/EnglishGrammar/Policy.lean:
+trusted -15", which would exactly cancel the +15. But its statement,
+`policyPredicateIn (PolicyCtx.of E O) E p = policyPredicate E O p`, is `rfl`: `policyPredicate` is defined as its left
+side. It holds for every possible `PolicyCtx.of`, and its anchors `policyPredicate` and `policyPredicateIn` read
+`PolicyCtx.of` themselves. So it is not added.
+
+### Per-file counts (untied V lines, `trust_map.py`; base = `3c6646151`, before = `4e2c73dec` (main with the item merged), after = the same tree, since nothing is tied)
+
+| File | V base | V before | The item's V | V after | Ties | The item's V after the ties |
+| --- | --- | --- | --- | --- | --- | --- |
+| `VE/EnglishGrammar/Policy.lean` | 592 | 607 | +15 | 607 | 0 | +15 |
+| **All files** | **39,941** | **39,952** | **+11** | **39,952** | **0** | **+11** |
+
+All files: +11 = this item's +15 and the -4 of the rights `Ground` tie (ties-rights-licence-relay), which merged
+between the two trees. K (997) is unchanged. S is 10,138 at the base and 10,155 on main; the +17 is `VE/Closure/Order.lean`,
+which qs-1 added, not this item. Tied lines stay at 260 and the trusted total at 51,104. `trust_map.py --check` passes on main before and
+after. The allowance of the "Trust budget" row is not touched, and the consolidation ledger is unchanged.
+
+### Seeded ties (each restored after the run)
+
+| Seeded bug | File | `python3 tools/trust_map.py --check` |
+| --- | --- | --- |
+| A tied theorem's `-- uses` line broken: `VE.Rights.Ground@VE.Rights.Scope` removed from `VE.Rights.ground_cited` (the only ties on main near this item are the rights pass's) | `lean/statements.txt` | exit 1: "VE.Rights.Ground: the statement of VE.Rights.ground_cited does not mention VE.Rights.Ground of VE.Rights.Scope" |
+| `PolicyCtx.of` tied to the unrelated `Iceberg.Process.melting` | `tools/trust-classes.json` | exit 1: "VE.EnglishGrammar.PolicyCtx.of: the statement of Iceberg.Process.melting does not mention VE.EnglishGrammar.PolicyCtx.of of VE.EnglishGrammar.Policy" |
+| `PolicyCtx.ofHeads` tied to `policyPredicate_tables`, which does not name it | `tools/trust-classes.json` | exit 1: "VE.EnglishGrammar.PolicyCtx.ofHeads: the statement of VE.EnglishGrammar.policyPredicate_tables does not mention VE.EnglishGrammar.PolicyCtx.ofHeads of VE.EnglishGrammar.Policy" |
