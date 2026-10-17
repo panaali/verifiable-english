@@ -29,15 +29,41 @@ class SensesReading:
     reading: dict
 
 
+def names_file(entry) -> bool:
+    """Whether a `senses.packs` entry names a pack file by a path relative to the document (one with a `/` or ending
+    in `.json`), not a bundled pack. Every reader that moves a document reads its files by this rule."""
+    return type(entry) is str and ("/" in entry or entry.endswith(".json"))
+
+
+def pack_files(meta) -> list[str]:
+    """The pack files a front matter's `senses` names, relative to the document, in order."""
+    senses = meta.get("senses") if type(meta) is dict else None
+    packs = senses.get("packs") if type(senses) is dict else None
+    return [entry for entry in packs if names_file(entry)] if type(packs) is list else []
+
+
 def _pack(entry, directory: Path) -> bytes:
-    """A bundled pack by name, or a pack file by a path relative to the document (one with a `/` or ending
-    in `.json`)."""
+    """A bundled pack by name, or a pack file by a path relative to the document (`names_file`)."""
     from .senses import bundled_pack, load_pack
     if type(entry) is not str:
         raise VEError("InvalidInput: a sense pack is named by a string")
-    if "/" in entry or entry.endswith(".json"):
+    if names_file(entry):
         return load_pack(directory / entry)
     return bundled_pack(entry)
+
+
+def pack_texts(senses, directory: Path) -> list[str] | None:
+    """The texts of a document's packs, one per `senses.packs` entry, which Lean's `document` mode hands the senses
+    route (`Service.Document.sensesLayer`, batch 16f): reading the files is Python's. None when `senses` or its
+    packs are malformed or a pack cannot be read: the mode then answers `CheckerUnavailable`, and the loader reports
+    that fault in its own order."""
+    from .backends.senses import pack_text
+    if type(senses) is not dict or type(senses.get("packs", [])) is not list:
+        return None
+    try:
+        return [pack_text(_pack(entry, directory)) for entry in senses.get("packs", [])]
+    except VEError:
+        return None
 
 
 def covered_units(reading_sets) -> set[str]:

@@ -350,9 +350,35 @@ def _words_reader(case):
     return lambda response: words.read_answer(relay.decided(response["results"])[0], case, env)
 
 
+def _document_reader(case):
+    """How `ve document` reads the service's response to `case`: `relay.decided`, then `ve.document._lean_document`,
+    which binds the row to the case's document written to a file, with the pack files its `senses` names written
+    beside it from the case's pack texts (the files Python read them from, `ve.senses_document.pack_texts`)."""
+    from ve import document
+    from ve.backends import relay
+    from ve.senses_document import names_file
+    holder = tempfile.TemporaryDirectory(prefix="relay-gate-document-")
+    directory = Path(holder.name)
+    raw = case["document"].encode("utf-8")
+    meta, _, _ = document._split(raw)
+    senses = meta.get("senses")
+    for entry, text in zip(senses.get("packs", []) if type(senses) is dict else [], case.get("packs", [])):
+        target = (directory / entry).resolve() if names_file(entry) else None
+        if target is not None and target.is_relative_to(directory.resolve()):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(text.encode("utf-8"))
+    path = directory / "document.ve.md"
+    path.write_bytes(raw)
+
+    def read(response, holder=holder):  # the directory lives as long as the reader
+        row = relay.decided(response["results"])[0]
+        document._lean_document(raw, path, row, admitted=case.get("admit", False))
+    return read
+
+
 # Service modes whose one caller reads the transport's answer further: the mode's reader for a case, a function of
 # the decoded response that raises as the caller does.
-SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader}
+SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader, "document": _document_reader}
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:

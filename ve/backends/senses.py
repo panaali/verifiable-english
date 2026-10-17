@@ -67,12 +67,17 @@ FAULT_DETAILS = {
 
 
 def _text(raw: bytes) -> str:
+    """A pack's text, sent unchanged: its bytes as UTF-8."""
     if type(raw) is not bytes:
         raise VEError("A sense pack must be bytes")
     try:
         return raw.decode("utf-8")
     except UnicodeError as exc:
         raise VEError("A sense pack is not UTF-8") from exc
+
+
+# The same reading for the `document` mode's request (`ve.senses_document.pack_texts`).
+pack_text = _text
 
 
 def _refusal_problem(reading: dict, source: str | None, fence_ids: list[str] | None = None,
