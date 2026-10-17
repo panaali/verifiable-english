@@ -300,6 +300,66 @@ def json_mentions(ast, head):
     return ast[:len(head)] == head or any(isinstance(a, list) and json_mentions(a, head) for a in ast)
 
 
+def atom_paths(ast, path=()):
+    """The paths of every `atom` node of a wire formula."""
+    if isinstance(ast, list) and ast[:1] == ["atom"]:
+        yield path
+    for i, a in enumerate(ast if isinstance(ast, list) else ()):
+        if isinstance(a, list):
+            yield from atom_paths(a, (*path, i))
+
+
+@pytest.mark.parametrize("arity", [3, 4])
+def test_nary_definitions_with_no_budget_are_unknown(monkeypatch, arity):
+    """With no proof or evaluation budget the family reader's answers are UNKNOWN, never
+    CONFLICT-FREE or a proof."""
+    doc = document(nary_defined(arity, "head"))
+    ops = routed(monkeypatch, "lean")
+    assert check_conflict(doc, prove=True, tableau_steps=0).status == "UNKNOWN"
+    assert check_conflict(doc, prove=True, tableau_steps=500).status == "CONFLICT-FREE"
+    exhausted = prove_norm_entailment(doc, (), Top(), max_steps=0)
+    assert exhausted.status == "ResourceLimit" and exhausted.certificate is None
+    assert ("norms_conflict", "lean") in ops
+
+
+def test_the_family_background_refuses_retyped_nary_rows():
+    """Each n-ary Background row is typed to its leaves: an atom whose name, argument
+    list or argument term is retyped, and a row without its generator, are refused."""
+    from ve.backends.service_schema import Invalid, check_row
+    env = nary_defined(3, "head")
+    doc = document(env)
+    case = {"id": "e", "kind": "norms-elaborate", "environment": env.to_dict(),
+            "norms": [r.to_dict() for r in doc.rules]}
+    row = relay.decide("family-norms", [case])[0]
+    check_row("family-norms", row, case, 0)
+    index = next(i for i, b in enumerate(row["background"]) if json_mentions(b["ast"], ["atom", "tri"]))
+    path = next(atom_paths(row["background"][index]["ast"]))
+
+    def at(mutant):
+        node = mutant["background"][index]["ast"]
+        for i in path:
+            node = node[i]
+        return node
+
+    edits = [lambda a: a.__setitem__(1, 7), lambda a: a.__setitem__(2, {}),
+             lambda a: a.__setitem__(2, [7]), lambda a: a.__setitem__(2, [["var", "0"]]),
+             lambda a: a.__setitem__(0, "atoms"), lambda a: a.pop()]
+    for edit in edits:
+        mutant = deepcopy(row)
+        edit(at(mutant))
+        with pytest.raises(Invalid):
+            check_row("family-norms", mutant, case, 0)
+    for value in (None, 7, "atom", {}):
+        mutant = deepcopy(row)
+        mutant["background"][index]["ast"] = value
+        with pytest.raises(Invalid):
+            check_row("family-norms", mutant, case, 0)
+    mutant = deepcopy(row)
+    del mutant["background"][index]["generator"]
+    with pytest.raises(Invalid):
+        check_row("family-norms", mutant, case, 0)
+
+
 @pytest.mark.parametrize("field", ["order", "label", "target", "sorts"])
 def test_non_first_order_elaboration_refuses_unbound_rows(monkeypatch, field):
     env = flagged(family=("closure@0",), relation=True)
