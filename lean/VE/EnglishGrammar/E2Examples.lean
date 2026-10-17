@@ -191,6 +191,44 @@ def Fpermits : Env :=
   row Fpermits "allow" "{0} permits {1}" false [] (V6 "allow")
 #guard !(PolicyCtx.of Fpermits {}).lintHeads.any (·.1 == "permits") &&
   ["allow", "consent"].all fun p => ((PolicyCtx.of Fpermits {}).settled.lookup p).any (·.contains "SYMBOL_COLLISION")
+
+/-- The statement that would tie `PolicyCtx.of` (ties-jt-crossplan DELTA), checked on `E` and `O`. With
+`c := PolicyCtx.of E O` and `h := PolicyCtx.ofHeads E O []` (the overlay's constants dropped, as `PolicyCtx.of`
+drops them): (a) every claimed head's predicate passes both the lint under `h` and the lint under `c`; (b)
+`c.lintHeads` is exactly the heads of the predicates whose wording passes the lint under `h` and the lint under the
+heads of that whole set; (c) a predicate settled with codes claims no head. -/
+def fixedPointTieOf (of : Env → Overlay → PolicyCtx) (E : Env) (O : Overlay := {}) : Bool :=
+  let O := { O with constants := [] }
+  let c := of E O
+  let h := PolicyCtx.ofHeads E O []
+  let passes (c : PolicyCtx) (f : PredFacts) := f.wording.map (lintCodesIn c f.decl.name · f.decl.arity) == some []
+  let heads (fs : List PredFacts) := fs.filterMap fun f => f.head.map (·, f.decl.name)
+  let free := h.preds.filter (passes h)
+  let both := free.filter (passes (PolicyCtx.ofHeads E O (heads free)))
+  (c.preds.all fun f => f.claimed.isNone || (passes h f && passes c f)) &&
+    c.lintHeads == heads both &&
+    c.settled.all fun (p, cs) => cs.isEmpty || !c.lintHeads.any (·.2 == p) &&
+      c.preds.all fun f => f.decl.name != p || f.claimed.isNone
+
+def fixedPointTie (E : Env) (O : Overlay := {}) : Bool := fixedPointTieOf PolicyCtx.of E O
+
+/-- `PolicyCtx.of` stopped one round early, as before DRI X2: every wording the head-free lint passes claims its head. -/
+def oneRoundOf (E : Env) (O : Overlay) : PolicyCtx :=
+  let h := PolicyCtx.ofHeads E O []
+  PolicyCtx.ofHeads E O ((h.preds.filter fun f => f.wording.map (lintCodesIn h f.decl.name · f.decl.arity) == some
+    []).filterMap fun f => f.head.map (·, f.decl.name))
+
+-- The "if" of "a head is claimed iff its wording passes the head-free lint and the lint under `c`'s heads" is
+-- false (ties-jt-crossplan review F1): `allow` passes both and claims no head, since the fixed point only removes
+-- heads.
+#guard let c := PolicyCtx.of Fpermits {}
+  lintCodesIn (PolicyCtx.ofHeads Fpermits { constants := [] } []) "allow" "{0} permits {1}" 2 == [] &&
+  lintCodesIn c "allow" "{0} permits {1}" 2 == [] && !c.lintHeads.any (·.2 == "allow") &&
+  (c.preds.find? (·.decl.name == "allow")).any (·.claimed.isNone)
+-- The check (`fixedPointTie` holds on every environment of `policyEnvs`, below) tells the fixed point from a context that keeps too many heads or claims none.
+#guard !fixedPointTieOf oneRoundOf Fpermits &&
+  !fixedPointTieOf (fun E O => PolicyCtx.ofHeads E O [])
+    (Fp [bin "undermines" "{0} undermines {1}", bin "erodes" "{0} undermines the oversight role of {1}"])
 #guard row (Fp [(("undocumented_parent", ["person"], wording "{0} has an undocumented noncitizen parent")),
     (("documented", ["person"], wording "{0} is documented"))]) "undocumented_parent"
   "{0} has an undocumented noncitizen parent" false [] (V6 "undocumented_parent")
@@ -604,6 +642,7 @@ def agreesWithReference (E : Env) (O : Overlay) : Bool :=
     wordOccursIn (runs isW phrase) phrase tok == wordOccurs tok phrase)
 #guard policyEnvs.length == 35
 #guard policyEnvs.all fun (E, O) => agreesWithReference E O
+#guard policyEnvs.all fun (E, O) => fixedPointTie E O
 #guard crowded.predicates.length == 43 &&
   (crowded.predicates.map fun d => (policyPredicate crowded {} d.name).isSome).all id
 
