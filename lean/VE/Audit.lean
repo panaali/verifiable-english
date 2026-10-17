@@ -147,6 +147,7 @@ import VE.Norms.Cedar
 import VE.Norms.Conflict
 import VE.Norms.Elaborate
 import VE.Norms.Examples
+import VE.Norms.FamilySpec
 import VE.Norms.Flagged
 import VE.Norms.FlaggedSpec
 import VE.Norms.Layer
@@ -2197,6 +2198,11 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.Examples.required_mem_c
 #print axioms VE.Norms.Examples.route_o_premises
 #print axioms VE.Norms.Examples.route_o_size
+#print axioms VE.Norms.Family.firstOrderDefinition_fol
+#print axioms VE.Norms.Family.firstOrderFormula_fol
+#print axioms VE.Norms.Family.firstOrder_fol
+#print axioms VE.Norms.Family.orderFol_embed
+#print axioms VE.Norms.Family.orderTermFol_embed
 #print axioms VE.Norms.Flagged.Witness.flags
 #print axioms VE.Norms.Flagged.conflictFreeCheck_sound
 #print axioms VE.Norms.Flagged.conflictFreeCheck_target

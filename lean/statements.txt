@@ -13341,6 +13341,74 @@ theorem VE.Norms.Examples.route_o_size
   VE.Norms.size VE.Norms.Checks.doc_o = 3
   -- uses VE.Norms.Checks.doc_o@VE.Norms.Checks VE.Norms.size@VE.Norms.Tree
   -- expr 2131579929
+theorem VE.Norms.Family.firstOrderDefinition_fol
+  ∀ {order : Bool} {entry payload : Lean.Json},
+    VE.Norms.Family.firstOrderDefinition order entry = Bool.true →
+      entry.getObjVal? "defined" = Except.ok payload →
+        VE.Core.Layers.folEntry entry = Bool.true ∧
+          (order = Bool.false →
+              ∀ (a : VE.Core.Formula),
+                VE.Core.Bridge.decodeFormula 64 (payload.getObjValD "body") = Except.ok a → ∃ φ, VE.Core.embed φ = a) ∧
+            (order = Bool.true →
+              ∀ (a : VE.Order.Formula),
+                VE.Order.Wire.decodeFormula 64 (payload.getObjValD "body") = Except.ok a → ∃ φ, VE.Order.embed φ = a)
+  -- uses VE.Core.Bridge.decodeFormula@VE.Core.Bridge VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.folEntry@VE.Core.Layers VE.Core.embed@VE.Core.Syntax VE.Formula@VE.Syntax VE.Norms.Family.firstOrderDefinition@VE.Norms.Family VE.Order.Formula@VE.Order.Syntax VE.Order.Wire.decodeFormula@VE.Order.Wire VE.Order.embed@VE.Order.Conservativity
+  -- expr 3788324933
+theorem VE.Norms.Family.firstOrderFormula_fol
+  ∀ {order : Bool} {j : Lean.Json},
+    VE.Norms.Family.firstOrderFormula order j = Bool.true →
+      (order = Bool.false →
+          ∀ (a : VE.Core.Formula), VE.Core.Bridge.decodeFormula 64 j = Except.ok a → ∃ φ, VE.Core.embed φ = a) ∧
+        (order = Bool.true →
+          ∀ (a : VE.Order.Formula), VE.Order.Wire.decodeFormula 64 j = Except.ok a → ∃ φ, VE.Order.embed φ = a)
+  -- uses VE.Core.Bridge.decodeFormula@VE.Core.Bridge VE.Core.Formula@VE.Core.Syntax VE.Core.embed@VE.Core.Syntax VE.Formula@VE.Syntax VE.Norms.Family.firstOrderFormula@VE.Norms.Family VE.Order.Formula@VE.Order.Syntax VE.Order.Wire.decodeFormula@VE.Order.Wire VE.Order.embed@VE.Order.Conservativity
+  -- expr 3075016364
+theorem VE.Norms.Family.firstOrder_fol
+  ∀ {environment norms : Lean.Json} {order : Bool},
+    (match VE.Route.Gate.profilesOf environment with
+        | Except.ok ps => ps.contains "order@0"
+        | Except.error a => Bool.false) =
+        order →
+      VE.Norms.Family.firstOrder environment norms = Bool.true →
+        VE.Norms.Family.usesInt environment = Bool.false ∧
+          (∀ (p : String) (entry payload : Lean.Json),
+              (p, entry) ∈ VE.Core.Layers.predicatesOf environment →
+                entry.getObjVal? "defined" = Except.ok payload →
+                  VE.Core.Layers.folEntry entry = Bool.true ∧
+                    (order = Bool.false →
+                        ∀ (a : VE.Core.Formula),
+                          VE.Core.Bridge.decodeFormula 64 (payload.getObjValD "body") = Except.ok a →
+                            ∃ φ, VE.Core.embed φ = a) ∧
+                      (order = Bool.true →
+                        ∀ (a : VE.Order.Formula),
+                          VE.Order.Wire.decodeFormula 64 (payload.getObjValD "body") = Except.ok a →
+                            ∃ φ, VE.Order.embed φ = a)) ∧
+            ∀ (xs : Array Lean.Json),
+              norms = Lean.Json.arr xs →
+                ∀ (u : Lean.Json),
+                  u ∈ xs.toList →
+                    ∀ (g : Lean.Json),
+                      g ∈
+                          (match (u.getObjValD "norm").getObjValD "unless" with
+                            | Lean.Json.arr ys => ys.toList
+                            | x => []) ++
+                            [(u.getObjValD "norm").getObjValD "guard"] →
+                        (order = Bool.false →
+                            ∀ (a : VE.Core.Formula),
+                              VE.Core.Bridge.decodeFormula 64 g = Except.ok a → ∃ φ, VE.Core.embed φ = a) ∧
+                          (order = Bool.true →
+                            ∀ (a : VE.Order.Formula),
+                              VE.Order.Wire.decodeFormula 64 g = Except.ok a → ∃ φ, VE.Order.embed φ = a)
+  -- uses VE.Core.Bridge.decodeFormula@VE.Core.Bridge VE.Core.Formula@VE.Core.Syntax VE.Core.Layers.folEntry@VE.Core.Layers VE.Core.Layers.predicatesOf@VE.Core.Layers VE.Core.embed@VE.Core.Syntax VE.Formula@VE.Syntax VE.Norms.Family.firstOrder@VE.Norms.Family VE.Norms.Family.firstOrder_fol.match_1@VE.Norms.FamilySpec VE.Norms.Family.firstOrder_fol.match_3@VE.Norms.FamilySpec VE.Norms.Family.usesInt@VE.Norms.Family VE.Order.Formula@VE.Order.Syntax VE.Order.Wire.decodeFormula@VE.Order.Wire VE.Order.embed@VE.Order.Conservativity VE.Route.Gate.profilesOf@VE.Route.Gate
+  -- expr 1529712686
+theorem VE.Norms.Family.orderFol_embed
+  ∀ (a : VE.Order.Formula), VE.Norms.Family.orderFol a = Bool.true → ∃ φ, VE.Order.embed φ = a
+  -- uses VE.Formula@VE.Syntax VE.Norms.Family.orderFol@VE.Norms.Family VE.Order.Formula@VE.Order.Syntax VE.Order.embed@VE.Order.Conservativity
+  -- expr 136841413
+theorem VE.Norms.Family.orderTermFol_embed
+  ∀ (t : VE.Order.Term), VE.Norms.Family.orderTermFol t = Bool.true → ∃ s, VE.Order.embedTerm s = t
+  -- uses VE.Norms.Family.orderTermFol@VE.Norms.Family VE.Order.Term@VE.Order.Syntax VE.Order.embedTerm@VE.Order.Conservativity VE.Term@VE.Syntax
+  -- expr 451328855
 theorem VE.Norms.Flagged.Witness.flags
   ∀ {src : VE.Norms.Wire.Source} (self : VE.Norms.Flagged.Witness src),
     VE.Route.Flags.fastFlags self.M src.ne.rv.flags = Bool.true
