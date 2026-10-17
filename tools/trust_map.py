@@ -740,8 +740,9 @@ def run_git(root: Path, *args: str) -> subprocess.CompletedProcess:
 def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]:
     """The base commit of the check and a problem. `since` names it; otherwise it is the merge base
     of HEAD and `main`, or HEAD's first parent when HEAD is main's tip, unless a merge is in progress
-    (`MERGE_HEAD`: the merge train before its commit, `regen_generated.py --resolve`), whose first
-    parent will be HEAD itself. Outside a git work tree whose top is `root` there is none (None,
+    (`MERGE_HEAD`: the merge train before its commit, or a branch syncing main, under
+    `regen_generated.py --resolve`): then it is the merge base of `main` and the merge to be
+    committed, HEAD itself on main. Outside a git work tree whose top is `root` there is none (None,
     None); a work tree without `main` or a merge base is a problem."""
     if since is not None:
         named = run_git(root, "rev-parse", "--verify", "-q", f"{since}^{{commit}}")
@@ -750,11 +751,14 @@ def resolve_base(root: Path, since: str | None) -> tuple[str | None, str | None]
     if top.returncode or Path(top.stdout.strip()).resolve() != root.resolve():
         return None, None
     head = run_git(root, "rev-parse", "HEAD").stdout.strip()
-    merged = run_git(root, "merge-base", "HEAD", "main")
+    merging = run_git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD")
+    # During a merge the base is main's merge base with the commit the merge will make (HEAD and
+    # MERGE_HEAD as parents): a sync of main into a branch is checked as it will be once committed.
+    merged = run_git(root, "merge-base", "main", "HEAD", *(["MERGE_HEAD"] if merging.returncode == 0 else []))
     if merged.returncode:
         return None, "no merge base of HEAD and `main`; name the base with --since REV"
     base = merged.stdout.strip()
-    if base == head and run_git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD").returncode:
+    if base == head and merging.returncode:
         parent = run_git(root, "rev-parse", "--verify", "-q", "HEAD^1")
         if parent.returncode:
             return None, "HEAD is main's tip and has no parent; name the base with --since REV"

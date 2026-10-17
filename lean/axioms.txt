@@ -399,6 +399,10 @@
 'VE.Closure.Tableau.two_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.Tableau.typed_extend' depends on axioms: [propext, Quot.sound]
 'VE.Closure.Tableau.unfoldAt_sound' depends on axioms: [propext, Quot.sound]
+'VE.Closure.above_iff' depends on axioms: [propext, Quot.sound]
+'VE.Closure.atLeast_iff' depends on axioms: [propext, Quot.sound]
+'VE.Closure.atLeast_refl' depends on axioms: [propext, Quot.sound]
+'VE.Closure.atLeast_trans' depends on axioms: [propext, Quot.sound]
 'VE.Closure.check_iff_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.closure_induction' depends on axioms: [propext, Quot.sound]
 'VE.Closure.conservativity' depends on axioms: [propext, Quot.sound]
@@ -425,7 +429,9 @@
 'VE.Closure.mem_namedEdges' depends on axioms: [propext, Quot.sound]
 'VE.Closure.mem_pivot' depends on axioms: [propext, Quot.sound]
 'VE.Closure.named_body_denote' depends on axioms: [propext, Quot.sound]
+'VE.Closure.outranksPlus_eq_above' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.pair_values' does not depend on any axioms
+'VE.Closure.path_iff_transGen' does not depend on any axioms
 'VE.Closure.pivot_closed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.pivot_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.reachEval_iff' depends on axioms: [propext, Quot.sound]
@@ -433,7 +439,19 @@
 'VE.Closure.reach_denote' does not depend on any axioms
 'VE.Closure.reachable_congr' depends on axioms: [propext, Quot.sound]
 'VE.Closure.reachable_induction' does not depend on any axioms
+'VE.Closure.reachable_star_iff' depends on axioms: [propext]
 'VE.Closure.reachable_trans' does not depend on any axioms
+'VE.Closure.risk_closure_eq' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_iter_in' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_iter_mono' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_iter_sound' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_iter_succ' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_pivot_in' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_step_extends' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_step_iff' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_step_in' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_step_mono' depends on axioms: [propext, Quot.sound]
+'VE.Closure.risk_warshall_in' depends on axioms: [propext, Quot.sound]
 'VE.Closure.star_least' does not depend on any axioms
 'VE.Closure.substTerm_denote' does not depend on any axioms
 'VE.Closure.subst_denote' depends on axioms: [propext, Quot.sound]
