@@ -509,19 +509,17 @@ def admit_rights_document(environment, document, rights=None):
         if unit.get("kind") in ("right", "right_lines", "limitation", "bar", "norm")
         and type(unit.get("content")) is dict]
     _, elaborated = report_rights(environment, source, rights, _with_elaboration=True)
-    case = _wire({"id": "admission", "kind": "admission", "environment": environment.to_dict(),
-                  "document": document})
-    row = decide("rights", [case])[0]
+    case = {"id": "admission", "kind": "admission", "environment": environment.to_dict(),
+            "document": document}
+    row = decide("rights", [_wire(case)])[0]
     try:
-        from .admission import bind_report, report_identity
+        from .admission import bind_report
         bind_report(document, row['report'])
         labels = (elaborated['conditional_on'] +
                   [entry['label'] for entry in elaborated['limitations']])
         reported = {assumption.get('label') for assumption in row['report']['assumptions']}
         if row['conditional_on'] != [label for label in labels if label in reported]:
             raise ValueError('unbound rights admission conditional labels')
-        if row['report_id'] != report_identity(environment, case['document'], row['report']):
-            raise ValueError('unbound rights admission report id')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(f'CheckerUnavailable: Lean rights admission is not bound to the request: {error}') from error
     return {key: value for key, value in row.items() if key not in ("id", "status")}

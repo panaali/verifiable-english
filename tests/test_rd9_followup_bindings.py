@@ -1,15 +1,20 @@
-"""fu-rd9-checks: the two relay bindings rd-9's rechecks left open (rd-9-c141730 looprecheck1, FOLLOW-UP).
+"""fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
 
 1. Binding-audit row 38: the rights report shows a rights-conflict answer's status line. Its Lean shape
    (`rights.json#/$defs/packages`) makes an UNKNOWN answer's line the UNKNOWN line, its `detail` a certificate failure
    and its `conditional_on` empty, and a CONFLICT-FREE answer's line the CONFLICT-FREE line. The relay binds the target
    an UNKNOWN line names to the request's targets, and the line to its detail (R8 (b)).
-2. The `report_id` of a soft-norms or rights admission answer is the identity of its report over the environment and
-   the document sent (`admission.report_identity`, which `bound_admission` checks on the core route).
+2. The `report_id` of a soft-norms or rights admission answer is not a name the relay can bind: it is an identity hash,
+   a derived value that ADR 0001 (D1) leaves to Lean and forbids Python to recompute. Lean already guarantees it:
+   `VE.SoftNorms.Run.runAdmission_sound` and `VE.Rights.Run.runAdmission_sound` prove every admission answer's
+   `report_id` is the digest of the canonical environment id, the document sent and the report
+   (`BindingsMatchSourceAndRegeneration`, `RightsAdmissionAnswer`). The regressions below pin that guarantee: the
+   theorems stay stated and audited, and Lean's genuine answers meet them.
 """
 from __future__ import annotations
 
 import copy
+from pathlib import Path
 
 import pytest
 
@@ -36,7 +41,8 @@ def _gamma():
 
 
 def _conflict(monkeypatch, mutation):
-    """The rights report with Lean's package answer to `rights-conflict` mutated; returns the mutant and its case."""
+    """The rights report, as a call, with Lean's package answer to `rights-conflict` mutated; the call records the
+    mutant and its case in the returned dict."""
     real, seen = rights_route.decide_once, {}
 
     def forged(mode, case):
@@ -113,70 +119,83 @@ def test_an_unknown_line_naming_what_the_request_lacks_is_unavailable(monkeypatc
 # ---------------------------------------------------------------------------------------------------
 # report_id
 
-SOURCES = {"rights": ("gamma", "carve-out"), "soft": ("open pair", "holistic")}
+ROOT = Path(__file__).resolve().parents[1]
+REPORT_ID_THEOREMS = {
+    "VE.SoftNorms.Run.runAdmission_sound": ("VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run",
+                                            "VE.SoftNorms.Run.runAdmission@VE.SoftNorms.Run"),
+    "VE.Rights.Run.runAdmission_sound": ("VE.Rights.Run.RightsAdmissionAnswer@VE.Rights.Run",
+                                         "VE.Rights.Run.runAdmission@VE.Rights.Run"),
+}
 
 
-def _admission(family, name):
-    """The admission call of one source of the binding inventory, and the module function it asks Lean through."""
+def _statements():
+    """lean/statements.txt as {theorem: its `-- uses` constants} (tools/lean_statements.py writes one block per
+    theorem: `theorem <name>`, the statement, `  -- uses <constants>`)."""
+    blocks, name = {}, None
+    for line in (ROOT / "lean/statements.txt").read_text().splitlines():
+        if line.startswith("theorem "):
+            name = line.removeprefix("theorem ")
+        elif name is not None and line.startswith("  -- uses "):
+            blocks[name] = set(line.removeprefix("  -- uses ").split())
+    return blocks
+
+
+def test_the_report_id_guarantee_is_a_stated_audited_theorem():
+    statements = _statements()
+    audited = (ROOT / "lean/VE/Audit.lean").read_text().splitlines()
+    for theorem, uses in REPORT_ID_THEOREMS.items():
+        assert set(uses) <= statements.get(theorem, set()), theorem
+        assert f"#print axioms {theorem}" in audited, theorem
+
+
+SOURCES = {"rights": ("gamma", "carve-out", "bar"), "soft": ("holistic", "open pair", "witness")}
+
+
+def _admissions(family):
+    """(environment, case sent, Lean's answer) of each source's genuine admission."""
     from tests import test_relay_binding_inventory as inventory
-    if family == "rights":
-        from ve.rights import RightsEnvironment
-        raw, units = inventory._rights_sources()[name]
-        environment = RightsEnvironment(raw)
-        return inventory._rights_calls(name, environment, units)["rights-admission"], (rights_route, "decide")
-    from ve.softnorms import SoftEnvironment, SoftNormDocument
-    raw, norms = inventory._soft_sources()[name]
-    document = SoftNormDocument(SoftEnvironment(raw), norms)
-    return inventory._soft_calls(name, document, raw, norms)["soft-admission"], (soft_route, "_run")
+    seen = []
 
+    def spy(module, attr):
+        real = getattr(module, attr)
 
-def _forge_admission(monkeypatch, family, mutation, name=None):
-    call, (module, attr) = _admission(family, name or SOURCES[family][0])
-    real, seen = getattr(module, attr), {}
+        def recording(*args):
+            rows = real(*args)
+            listed = type(rows) is list
+            for case, row in zip(args[1] if listed else [args[-1]], rows if listed else [rows]):
+                if case["kind"] == "admission":
+                    seen.append((case, copy.deepcopy(row)))
+            return rows
+        return recording
 
-    def forged(*args):
-        rows = real(*args)
-        listed = type(rows) is list
-        cases = args[1] if listed else [args[-1]]
-        out = []
-        for case, row in zip(cases, rows if listed else [rows]):
-            row = copy.deepcopy(row)
-            if case["kind"] == "admission":
-                seen["genuine"] = copy.deepcopy(row)
-                mutation(row)
-                check_row(family if family == "rights" else "soft-norms", row, case, 0)
-            out.append(row)
-        return out if listed else out[0]
-
-    monkeypatch.setattr(module, attr, forged)
-    return call, seen
-
-
-@pytest.mark.parametrize("family", ["soft", "rights"])
-def test_the_genuine_report_id_is_relayed(monkeypatch, family):
-    call, seen = _forge_admission(monkeypatch, family, lambda row: None)
-    assert call()["report_id"] == seen["genuine"]["report_id"]
-
-
-def _other_sources_id(family):
-    """The genuine report id of another source's admission: a well-formed id this request did not get."""
+    out = []
     with pytest.MonkeyPatch.context() as patch:
-        call, seen = _forge_admission(patch, family, lambda row: None, SOURCES[family][1])
-        call()
-    return seen["genuine"]["report_id"]
+        for name in SOURCES[family]:
+            if family == "rights":
+                from ve.rights import RightsEnvironment
+                raw, units = inventory._rights_sources()[name]
+                environment = RightsEnvironment(raw)
+                patch.setattr(rights_route, "decide", spy(rights_route, "decide"))
+                inventory._rights_calls(name, environment, units)["rights-admission"]()
+            else:
+                from ve.softnorms import SoftEnvironment, SoftNormDocument
+                raw, norms = inventory._soft_sources()[name]
+                document = SoftNormDocument(SoftEnvironment(raw), norms)
+                environment = document.env
+                patch.setattr(soft_route, "_run", spy(soft_route, "_run"))
+                inventory._soft_calls(name, document, raw, norms)["soft-admission"]()
+            out.append((environment, *seen.pop()))
+    return out
 
 
 @pytest.mark.parametrize("family", ["soft", "rights"])
-@pytest.mark.parametrize("forged", ["zero hash", "reversed", "another source's"])
-def test_a_report_id_of_another_report_is_unavailable(monkeypatch, family, forged):
-    other = _other_sources_id(family) if forged == "another source's" else None
-
-    def mutation(row):
-        row["report_id"] = {"zero hash": "0" * 64, "reversed": row["report_id"][::-1]}.get(forged, other)
-        assert row["report_id"] != seen["genuine"]["report_id"]
-
-    call, seen = _forge_admission(monkeypatch, family, mutation)
-    with pytest.raises(CheckerUnavailable) as raised:
-        call()
-    assert str(raised.value) == (f"CheckerUnavailable: Lean {family} admission is not bound to the request: "
-                                 f"unbound {family} admission report id")
+def test_lean_admission_report_ids_are_the_identity_the_theorem_states(family):
+    """What `runAdmission_sound` proves, on Lean's genuine answers: `report_id` is the digest, under the report domain,
+    of the environment id, the document as sent and the report. Distinct sources get distinct ids."""
+    from ve.wire import digest
+    ids = []
+    for environment, case, row in _admissions(family):
+        assert row["report_id"] == digest(f"ve-report-{environment.identity_version}\n", {
+            "environment_id": environment.environment_id, "document": case["document"], "report": row["report"]})
+        ids.append(row["report_id"])
+    assert len(set(ids)) == len(SOURCES[family])

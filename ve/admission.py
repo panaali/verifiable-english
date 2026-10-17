@@ -17,7 +17,7 @@ from .background import HOOKS, _DEPENDENCY_ENVIRONMENT
 from .environment import Environment, listed_profiles
 from .errors import ResourceLimit, VEError
 from .profiles import LANGUAGE
-from .wire import digest, require_fields
+from .wire import require_fields
 
 _TOKEN = re.compile(r"[A-Za-z0-9_.\-]+\Z", re.ASCII)
 _NAT = re.compile(r"(0|[1-9][0-9]*)\Z", re.ASCII)
@@ -287,16 +287,6 @@ def bind_report(document, report) -> None:
             position += 1
 
 
-def report_identity(env, document, report):
-    """The identity of `report` over the environment and the document sent (the wire digest, rule 5),
-    which every admission route's `report_id` must be; None when it has none."""
-    try:
-        return digest(f"ve-report-{env.identity_version}\n",
-                      {"environment_id": env.environment_id, "document": document, "report": report})
-    except (VEError, TypeError, ValueError):
-        return None
-
-
 def bound_admission(env, document, row) -> dict:
     """Lean's admission row, bound to the request: the units' kinds rendered back are the request's,
     each reported claim is a graph node with the same name, AST and label, the report's root is
@@ -304,6 +294,8 @@ def bound_admission(env, document, row) -> dict:
     and document sent (the wire digest, rule 5), so no field of the report can change unseen.
     Anything else is CheckerUnavailable: Lean's answer is relayed, never repaired."""
     from .backends.lean_service import CheckerUnavailable
+    from .backends.service_schema import same_json
+    from .wire import digest
     if set(row) != {"id", "status", "admitted", "report", "report_id", "kinds"} or row["admitted"] is not True:
         raise CheckerUnavailable("CheckerUnavailable: malformed Lean admission result")
     units = document.get("units") if type(document) is dict else None
@@ -313,8 +305,13 @@ def bound_admission(env, document, row) -> dict:
         bound = True
     except (KeyError, TypeError, ValueError, IndexError):
         bound = False
+    try:
+        expected = digest(f"ve-report-{env.identity_version}\n",
+                          {"environment_id": env.environment_id, "document": document, "report": report})
+    except (VEError, TypeError, ValueError):
+        expected = None
     if (type(units) is not list or row["kinds"] != [u.get("kind") if type(u) is dict else None for u in units]
-            or not bound or row["report_id"] != report_identity(env, document, report)):
+            or not bound or row["report_id"] != expected):
         raise CheckerUnavailable("CheckerUnavailable: the Lean admission answer is not bound to the request")
     return {key: row[key] for key in ("admitted", "report", "report_id", "kinds")}
 
