@@ -3,7 +3,7 @@
     {
       "id": "P1",
       "file": "ve/readings_verdicts.py",
-      "find": "_need(scope_choices == expected)",
+      "find": "_need(scope_choices == listed(live) or case[\"question\"] != \"premises\" and scope_choices == listed(taking))",
       "replace": "_need(False)",
       "tests": [
         "tests/test_readings_sup_verdicts.py::test_missing_proof_scope_cannot_hide_behind_a_reindexed_model"
@@ -71,7 +71,7 @@
     {
       "id": "L5",
       "file": "lean/VE/Readings/SupVerdictsWire.lean",
-      "find": "(if (choices D).length ≤ maxChoices then cs else [])",
+      "find": "(if more && (choices D).length ≤ maxChoices then cs else [])",
       "replace": "cs",
       "command": [
         "bash",
@@ -185,6 +185,58 @@
         "cd lean && PATH=\"$HOME/.elan/bin:$PATH\" lake build ve_service > /tmp/rd7-mutant-l8-build.log 2>&1 && cd .. && VE_NATIVE_PREBUILT=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 .venv/bin/python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_readings_sup_verdicts.py::test_superposed_scope_count_stays_bounded_above_64_choices"
       ],
       "claim": "Dead-reading fields remain a checked empty list for 65–1024 choices."
+    },
+    {
+      "id": "P10",
+      "file": "ve/readings_verdicts.py",
+      "find": "_need(result.get(\"assumed\", A) == A and (case[\"question\"] == \"conflict\" or \"assumed\" not in result))",
+      "replace": "pass",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_sup_answer_binds_assumed_for_every_question"
+      ],
+      "claim": "Review F4: a conflict answer's assumed readings are bound to the request; a premises answer names none."
+    },
+    {
+      "id": "P11",
+      "file": "ve/readings_verdicts.py",
+      "find": "_need(any(obj is c for c in result.get(\"candidates\", [])) or all(x in obj[\"choice\"] for x in A))",
+      "replace": "pass",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_sup_answer_binds_assumed_for_every_question"
+      ],
+      "claim": "Review F4: every choice an answer names takes the readings it was asked under."
+    },
+    {
+      "id": "P12",
+      "file": "ve/readings_verdicts.py",
+      "find": "            if asked_first and not done:\n                todo = todo[:1]\n",
+      "replace": "",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_follow_the_asked_scope_first"
+      ],
+      "claim": "Review F2: the asked scope's evidence is generated alone first."
+    },
+    {
+      "id": "L9",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "find": "unless over || checked.any",
+      "replace": "unless checked.any",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_verdicts_keep_the_1024_choice_budget",
+        "tests/test_readings_sup_verdicts.py::test_untaken_check_waits_for_the_checked_budget"
+      ],
+      "claim": "Review F1: past the checked budget a named reading is UNKNOWN, never refused untaken from the cut list."
+    },
+    {
+      "id": "L10",
+      "file": "lean/VE/Readings/SupVerdictsWire.lean",
+      "find": "else if q == \"query\" then s.conflict == .free && s.query != .proved && (named.isNone || nd)",
+      "replace": "else if q == \"query\" then true",
+      "tests": [
+        "tests/test_readings_sup_verdicts.py::test_superposed_scopes_follow_the_asked_scope_first",
+        "tests/test_readings_sup_verdicts.py::test_check_prover_searches_do_not_grow_with_the_choices"
+      ],
+      "claim": "Review F2: Lean lists the complete choices only while the asked scope leaves a query open."
     }
   ]
 }
