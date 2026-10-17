@@ -1,0 +1,1096 @@
+{
+ "format": "ve-history-tests@1",
+ "map": {
+  "commit": "de309d61cef97ac8c6b0d205275880efa8ea0fe7",
+  "version": 7,
+  "created": "2026-10-17T21:05:37+00:00",
+  "tests": 428
+ },
+ "tests": [
+  {
+   "test": "tests/test_agent_policy_unspecified.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_answer_cutoff.py",
+   "why": "starts git (git cat-file, git ls-files, git show) in tests/test_answer_cutoff.py, tools/answer_cutoff.py, tools/select_tests.py, tools/source_graph.py, tools/test_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_answer_cutoff.py:test_pinned_reads_the_pins_of_the_tree_or_of_a_commit: git show",
+    "tools/answer_cutoff.py:pinned: git show",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_map.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_answer_store.py",
+   "why": "starts git in tests/answer_store.py, tests/test_answer_store.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/answer_store.py:changed_guarded_paths.<locals>.git: git",
+    "tests/test_answer_store.py:_repository: git"
+   ]
+  },
+  {
+   "test": "tests/test_ar8_evidence.py",
+   "why": "starts git in tests/test_ar8_evidence.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_ar8_evidence.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_ask_cli.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_ask_null_free.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_assurance_manifest.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_b16d_document.py",
+   "why": "starts git in tests/test_b16d_document.py, tools/lean_first_diff.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_b16d_document.py:pilot_rows.<locals>.git: git",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git: git"
+   ]
+  },
+  {
+   "test": "tests/test_b16d_norm_roles.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_batch_evidence.py",
+   "why": "starts git in tests/test_batch_evidence.py, tools/batch_evidence.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_batch_evidence.py:_git: git",
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_batch_scope.py",
+   "why": "starts git in tests/test_batch_scope.py, tools/batch_evidence.py, tools/batch_scope.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_batch_scope.py:_git: git",
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/batch_scope.py:_git_out: git"
+   ]
+  },
+  {
+   "test": "tests/test_binding_census.py",
+   "why": "starts git (git show) in conformance/frozen_words.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_words.py:_source: git show"
+   ]
+  },
+  {
+   "test": "tests/test_closure_witnesses.py",
+   "why": "starts git (git show) in experiments/E0/closure_witnesses/validate.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "experiments/E0/closure_witnesses/validate.py:validate: git show"
+   ]
+  },
+  {
+   "test": "tests/test_colab.py",
+   "why": "starts git (git show) in tests/test_runner.py, ve_experiments/runner.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tests/test_runner.py:git: git",
+    "ve_experiments/runner.py:_git: git",
+    "ve_experiments/runner.py:require_committed: git show"
+   ]
+  },
+  {
+   "test": "tests/test_consolidation_tools.py",
+   "why": "starts git (git archive, git show) in conformance/frozen_norm_defaults.py, tests/test_consolidation_tools.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_consolidation_tools.py:git: git",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_difffuzz.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_english_unambiguity.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_evidence_toolkit.py",
+   "why": "starts git (git cat-file, git merge-base) in tests/test_evidence_toolkit.py, tools/batch_evidence.py, tools/evidence/__init__.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_evidence_toolkit.py:_git: git",
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/batch_evidence.py:committed_problems: git cat-file",
+    "tools/batch_evidence.py:mutant_source_problems: git cat-file",
+    "tools/evidence/__init__.py:git: git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_frozen_sources.py",
+   "why": "starts git (git archive, git ls-tree, git show) in tests/test_frozen_sources.py, tools/trust_changes.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_frozen_sources.py:git: git",
+    "tools/trust_changes.py:base_blobs: git ls-tree",
+    "tools/trust_changes.py:base_classes: git show",
+    "tools/trust_map.py:extract_rev: git archive"
+   ]
+  },
+  {
+   "test": "tests/test_gate.py",
+   "why": "starts git (git ls-files, git show) in conformance/frozen_norm_defaults.py, tests/test_regen_generated.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_regen_generated.py:<module>: git ls-files"
+   ]
+  },
+  {
+   "test": "tests/test_gate_collection.py",
+   "why": "starts git (git notes) in tests/test_gate_collection.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_gate_collection.py:git: git",
+    "tests/test_gate_collection.py:test_a_record_round_trips_and_binds_its_commit_and_tree: git notes",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_durations.py",
+   "why": "starts git (git rev-parse) in tests/test_gate_durations.py, tools/gate.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_gate_durations.py:git: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_integrity.py",
+   "why": "starts git (git add, git config, git rev-parse, git status) in tests/test_gate_integrity.py, tools/gate.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_gate_integrity.py:test_fsmonitor_hook_cannot_hide_edited_source: git, git add, git config, git status",
+    "tests/test_gate_integrity.py:test_gate_environment_uses_real_repository_and_recorder: git rev-parse",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_quarantine.py",
+   "why": "starts git (git ls-files, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tests/test_gate_quarantine.py, tests/test_regen_generated.py, tools/gate.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_gate_quarantine.py:test_the_tracked_quarantine_is_valid_and_names_collected_tests: git ls-files",
+    "tests/test_regen_generated.py:<module>: git ls-files",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_rerun.py",
+   "why": "starts git (git rev-parse) in tools/gate.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_trust.py",
+   "why": "starts git (git cat-file, git rev-parse) in tools/batch_evidence.py, tools/batch_scope.py, tools/gate.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/batch_evidence.py:mutant_source_problems: git cat-file",
+    "tools/batch_scope.py:_git_out: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_identity_lint.py",
+   "why": "starts git (git cat-file, git merge-base, git rev-parse, git show) in tests/test_identity_lint.py, tools/identity_lint.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_identity_lint.py:test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist: git show",
+    "tests/test_identity_lint.py:test_the_tree_passes_and_has_not_grown_since_the_merge_base: git merge-base",
+    "tools/identity_lint.py:base_entries: git cat-file, git rev-parse, git show"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_b12_report.py",
+   "why": "starts git (git archive, git diff, git show) in docs/lean-first/b12/report.py, tests/test_lean_first_b12_report.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "docs/lean-first/b12/report.py:line_changes: git diff",
+    "docs/lean-first/b12/report.py:render: git show",
+    "tests/test_lean_first_b12_report.py:test_branch_trust_allowance_counts_only_batch_12_changes: git show",
+    "tests/test_lean_first_b12_report.py:test_delta_numbers_are_regenerated_from_evidence: git show",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_diff.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_oracle.py",
+   "why": "starts git in tools/lean_first_oracle.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tools/lean_first_oracle.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_lean_service_schema.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_lean_share.py",
+   "why": "starts git (git clone) in tests/test_lean_share.py, tools/lean_share.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_lean_share.py:clone: git clone",
+    "tests/test_lean_share.py:git: git",
+    "tools/lean_share.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_native_build_lock.py",
+   "why": "starts git (git add, git init, git ls-files) in tests/conftest.py, tests/test_native_build_lock.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/conftest.py:native_fingerprint: git ls-files",
+    "tests/test_native_build_lock.py:_native_checkout: git add, git init"
+   ]
+  },
+  {
+   "test": "tests/test_nested_pytest.py",
+   "why": "starts git (git ls-files) in tests/test_nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_nested_pytest.py:tracked_python: git ls-files"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_contract.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_differential.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_layered.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_relay_english.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_report.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_soft_kinds.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_switch.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_three_way.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norms_contract.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_platform_contract.py",
+   "why": "starts git (git rev-parse) in tools/gate.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_precommit_hook.py",
+   "why": "starts git (git add, git commit, git init, git ls-files, git rev-parse) in tests/test_precommit_hook.py, tools/hooks/precommit.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_precommit_hook.py:Staging.__init__: git rev-parse",
+    "tests/test_precommit_hook.py:Staging.git: git",
+    "tests/test_precommit_hook.py:fixture_repo: git add, git commit, git init, git ls-files",
+    "tools/hooks/precommit.py:Index.__init__: git rev-parse",
+    "tools/hooks/precommit.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_question_answering_measure_report.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_chain_relay.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_dri_signatures.py",
+   "why": "starts git (git show) in tests/test_rd9_dri_signatures.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_rd9_dri_signatures.py:_entry: git show"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_gap_relay.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_soft_split.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_budget_zero.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_companions_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_component_names.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_components_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_components_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_components_load.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_defaults_rd6b_report.py",
+   "why": "starts git (git archive, git show) in tests/test_readings_defaults_rd6b_report.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_readings_defaults_rd6b_report.py:test_trust_growth_is_rd6b_entry_and_listed_for_signature: git show",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_defaults_rd8_report.py",
+   "why": "starts git (git log) in tests/test_readings_defaults_rd8_report.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_readings_defaults_rd8_report.py:test_review_fix_commit_chain_and_final_gate_target: git log"
+   ]
+  },
+  {
+   "test": "tests/test_readings_nd_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_nd_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_rd5_plain_probe.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_rd5_udhr.py",
+   "why": "starts git (git ls-tree, git show) in usecases/udhr-pilot/run-20261010T1400Z/migrate.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_ls: git ls-tree",
+    "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_show: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_rd6b_differential.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_s2_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_ce4.py",
+   "why": "starts git (git cat-file, git show) in conformance/frozen_norm_defaults.py, tests/test_readings_sd_ce4.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_readings_sd_ce4.py:test_ce4_is_the_pilots_pinned_translation: git cat-file"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_differential.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_relay.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_verdicts_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_regen_generated.py",
+   "why": "starts git (git check-attr, git ls-files, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, tools/regen_generated.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_regen_generated.py:<module>: git ls-files",
+    "tests/test_regen_generated.py:_git: git",
+    "tests/test_regen_generated.py:test_gitattributes_is_generated_from_the_registry: git check-attr",
+    "tests/test_regen_generated.py:test_owner_agrees_with_git_on_every_tracked_file: git check-attr",
+    "tools/regen_generated.py:_git: git",
+    "tools/regen_generated.py:_stage: git show",
+    "tools/regen_generated.py:merge_text: git merge-file",
+    "tools/regen_generated.py:resolve: git rev-parse"
+   ]
+  },
+  {
+   "test": "tests/test_relay_english_scale.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_repo_map.py",
+   "why": "starts git (git cat-file, git init, git log, git ls-files, git merge-base, git rev-list, git rev-parse, git status) in tests/test_repo_map.py, tools/repo_map.py, tools/select_tests.py, tools/source_graph.py, tools/test_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_repo_map.py:head: git rev-parse",
+    "tests/test_repo_map.py:rights_map: git status",
+    "tests/test_repo_map.py:test_a_map_from_before_the_relay_changed_gives_the_static_answer: git log, git rev-parse",
+    "tests/test_repo_map.py:test_map_expectations_with_an_untracked_file: git init, git ls-files",
+    "tools/repo_map.py:tests_from: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_map.py:find_map: git merge-base, git rev-list"
+   ]
+  },
+  {
+   "test": "tests/test_run_cache.py",
+   "why": "starts git (git init, git ls-files, git rev-parse) in tests/test_run_cache.py, tools/run_cache.py, tools/source_graph.py; reads .git in tests/test_run_cache.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_run_cache.py:Repository.__init__: git init",
+    "tests/test_run_cache.py:test_entries_live_in_the_git_common_directory: git rev-parse",
+    "tests/test_run_cache.py:test_the_read_recorder_keeps_checkout_paths_only: .git",
+    "tools/run_cache.py:cache_directory: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files"
+   ]
+  },
+  {
+   "test": "tests/test_run_order.py",
+   "why": "starts git (git rev-parse) in tests/test_run_order.py, tools/run_order.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_run_order.py:test_the_state_is_in_this_worktrees_own_git_directory: git rev-parse",
+    "tools/run_order.py:git_dir: git rev-parse"
+   ]
+  },
+  {
+   "test": "tests/test_runner.py",
+   "why": "starts git (git show) in tests/test_runner.py, ve_experiments/runner.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_runner.py:git: git",
+    "ve_experiments/runner.py:_git: git",
+    "ve_experiments/runner.py:require_committed: git show"
+   ]
+  },
+  {
+   "test": "tests/test_select_tests.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git ls-tree, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tests/test_select_tests.py, tools/select_tests.py, tools/source_graph.py, tools/test_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_select_tests.py:git_line: git rev-parse",
+    "tests/test_select_tests.py:head_commit: git rev-parse",
+    "tests/test_select_tests.py:real: git show",
+    "tests/test_select_tests.py:test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users: git",
+    "tests/test_select_tests.py:test_freshness_is_the_map_selection_would_use: git rev-list",
+    "tests/test_select_tests.py:test_no_module_reads_assurance_state_around_the_audited_api: git ls-files",
+    "tests/test_select_tests.py:test_smoke_files_and_top_level_areas_match_the_tree: git ls-tree",
+    "tests/test_select_tests.py:tracked: git ls-files",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_since_pass.py",
+   "why": "starts git in tests/test_since_pass.py, tools/select_tests.py, tools/since_pass.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_since_pass.py:git: git",
+    "tools/select_tests.py:git_lines: git",
+    "tools/since_pass.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_softnorms_contract.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_stage0_probe_matrix.py",
+   "why": "starts git (git ls-tree, git show) in tests/probe_matrix.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tests/probe_matrix.py:pinned_runtime_sha256: git ls-tree, git show"
+   ]
+  },
+  {
+   "test": "tests/test_stage2_standalone.py",
+   "why": "starts git in tools/lean_first_oracle.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tools/lean_first_oracle.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_stage2_validation.py",
+   "why": "starts git in tools/lean_first_oracle.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tools/lean_first_oracle.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_suite_tail.py",
+   "why": "starts git (git rev-parse) in tools/bench/suite_tail.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tools/bench/suite_tail.py:summarise: git rev-parse"
+   ]
+  },
+  {
+   "test": "tests/test_trust_budget.py",
+   "why": "starts git (git archive, git show) in tools/trust_map.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_trust_ratchet.py",
+   "why": "starts git (git archive, git merge-file, git show) in tests/test_trust_ratchet.py, tools/regen_generated.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_trust_ratchet.py:git: git",
+    "tools/regen_generated.py:merge_text: git merge-file",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_lint.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_s4_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_s5_admission.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_s5_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_gate_corpus.py",
+   "why": "starts git (git ls-files, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/gate.py, tools/gate_collection.py, tools/run_cache.py, tools/source_graph.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:git: git",
+    "tools/run_cache.py:cache_directory: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files"
+   ]
+  },
+  {
+   "test": "tests/test_words.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, conformance/frozen_words.py",
+   "recorded": [
+    "coverage map"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "conformance/frozen_words.py:_source: git show"
+   ]
+  },
+  {
+   "test": "tools/test_layer_policy.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git rev-parse, git write-tree) in tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  }
+ ]
+}

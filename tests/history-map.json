@@ -1,0 +1,692 @@
+{
+ "format": "ve-history-map@1",
+ "map": {
+  "commit": "de309d61cef97ac8c6b0d205275880efa8ea0fe7",
+  "version": 7,
+  "created": "2026-10-17T21:05:37+00:00",
+  "tests": 428
+ },
+ "units": {
+  "tests/test_agent_policy_unspecified.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_answer_cutoff.py": {
+   "git": true,
+   "sites": [
+    "tests/test_answer_cutoff.py:test_pinned_reads_the_pins_of_the_tree_or_of_a_commit",
+    "tools/answer_cutoff.py:pinned",
+    "tools/select_tests.py:blobs",
+    "tools/source_graph.py:tracked",
+    "tools/test_map.py:git"
+   ]
+  },
+  "tests/test_answer_store.py": {
+   "git": true,
+   "sites": [
+    "tests/answer_store.py:changed_guarded_paths.<locals>.git",
+    "tests/test_answer_store.py:_repository"
+   ]
+  },
+  "tests/test_ar8_evidence.py": {
+   "git": true,
+   "sites": [
+    "tests/test_ar8_evidence.py:git"
+   ]
+  },
+  "tests/test_ask_cli.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_ask_null_free.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_assurance_manifest.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_b16d_document.py": {
+   "git": true,
+   "sites": [
+    "tests/test_b16d_document.py:pilot_rows.<locals>.git",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git"
+   ]
+  },
+  "tests/test_b16d_norm_roles.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_batch_evidence.py": {
+   "git": true,
+   "sites": [
+    "tests/test_batch_evidence.py:_git",
+    "tools/batch_evidence.py:changed_since",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_batch_scope.py": {
+   "git": true,
+   "sites": [
+    "tests/test_batch_scope.py:_git",
+    "tools/batch_evidence.py:changed_since",
+    "tools/batch_scope.py:_git_out"
+   ]
+  },
+  "tests/test_binding_census.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_words.py:_source"
+   ]
+  },
+  "tests/test_closure_witnesses.py": {
+   "git": true,
+   "sites": [
+    "experiments/E0/closure_witnesses/validate.py:validate"
+   ]
+  },
+  "tests/test_colab.py": {
+   "git": true,
+   "sites": [
+    "tests/test_runner.py:git",
+    "ve_experiments/runner.py:_git",
+    "ve_experiments/runner.py:require_committed"
+   ]
+  },
+  "tests/test_consolidation_tools.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>",
+    "tests/test_consolidation_tools.py:git",
+    "tools/trust_map.py:extract_rev",
+    "tools/trust_map.py:measure_rev",
+    "tools/trust_map.py:run_git"
+   ]
+  },
+  "tests/test_difffuzz.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_english_unambiguity.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_evidence_toolkit.py": {
+   "git": true,
+   "sites": [
+    "tests/test_evidence_toolkit.py:_git",
+    "tools/batch_evidence.py:changed_since",
+    "tools/batch_evidence.py:committed_problems",
+    "tools/batch_evidence.py:mutant_source_problems",
+    "tools/evidence/__init__.py:git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_frozen_sources.py": {
+   "git": true,
+   "sites": [
+    "tests/test_frozen_sources.py:git",
+    "tools/trust_changes.py:base_blobs",
+    "tools/trust_changes.py:base_classes",
+    "tools/trust_map.py:extract_rev"
+   ]
+  },
+  "tests/test_gate.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>",
+    "tests/test_regen_generated.py:<module>"
+   ]
+  },
+  "tests/test_gate_collection.py": {
+   "git": true,
+   "sites": [
+    "tests/test_gate_collection.py:git",
+    "tests/test_gate_collection.py:test_a_record_round_trips_and_binds_its_commit_and_tree",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_gate_durations.py": {
+   "git": true,
+   "sites": [
+    "tests/test_gate_durations.py:git",
+    "tools/gate.py:source_identity",
+    "tools/gate.py:tree_identity",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_gate_integrity.py": {
+   "git": true,
+   "sites": [
+    "tests/test_gate_integrity.py:test_fsmonitor_hook_cannot_hide_edited_source",
+    "tests/test_gate_integrity.py:test_gate_environment_uses_real_repository_and_recorder",
+    "tools/gate.py:source_identity",
+    "tools/gate.py:tree_identity",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_gate_quarantine.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>",
+    "tests/test_gate_quarantine.py:test_the_tracked_quarantine_is_valid_and_names_collected_tests",
+    "tests/test_regen_generated.py:<module>",
+    "tools/gate.py:source_identity",
+    "tools/gate.py:tree_identity",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_gate_rerun.py": {
+   "git": true,
+   "sites": [
+    "tools/gate.py:source_identity",
+    "tools/gate.py:tree_identity",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_gate_trust.py": {
+   "git": true,
+   "sites": [
+    "tools/batch_evidence.py:changed_since",
+    "tools/batch_evidence.py:mutant_source_problems",
+    "tools/batch_scope.py:_git_out",
+    "tools/gate.py:source_identity",
+    "tools/gate.py:tree_identity",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_identity_lint.py": {
+   "git": true,
+   "sites": [
+    "tests/test_identity_lint.py:test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist",
+    "tests/test_identity_lint.py:test_the_tree_passes_and_has_not_grown_since_the_merge_base",
+    "tools/identity_lint.py:base_entries"
+   ]
+  },
+  "tests/test_lean_first_b12_report.py": {
+   "git": true,
+   "sites": [
+    "docs/lean-first/b12/report.py:line_changes",
+    "docs/lean-first/b12/report.py:render",
+    "tests/test_lean_first_b12_report.py:test_branch_trust_allowance_counts_only_batch_12_changes",
+    "tests/test_lean_first_b12_report.py:test_delta_numbers_are_regenerated_from_evidence",
+    "tools/trust_map.py:extract_rev",
+    "tools/trust_map.py:measure_rev"
+   ]
+  },
+  "tests/test_lean_first_diff.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_lean_first_oracle.py": {
+   "git": true,
+   "sites": [
+    "tools/lean_first_oracle.py:git"
+   ]
+  },
+  "tests/test_lean_service_schema.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_lean_share.py": {
+   "git": true,
+   "sites": [
+    "tests/test_lean_share.py:clone",
+    "tests/test_lean_share.py:git",
+    "tools/lean_share.py:_git"
+   ]
+  },
+  "tests/test_native_build_lock.py": {
+   "git": true,
+   "sites": [
+    "tests/conftest.py:native_fingerprint",
+    "tests/test_native_build_lock.py:_native_checkout"
+   ]
+  },
+  "tests/test_nested_pytest.py": {
+   "git": true,
+   "sites": [
+    "tests/test_nested_pytest.py:tracked_python"
+   ]
+  },
+  "tests/test_norm_defaults.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norm_defaults_contract.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norm_defaults_differential.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norm_defaults_layered.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norm_defaults_relay_english.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norm_defaults_report.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norm_defaults_soft_kinds.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norm_defaults_switch.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norm_defaults_three_way.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_norms_contract.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_platform_contract.py": {
+   "git": true,
+   "sites": [
+    "tools/gate.py:source_identity",
+    "tools/gate.py:tree_identity",
+    "tools/gate_collection.py:git"
+   ]
+  },
+  "tests/test_precommit_hook.py": {
+   "git": true,
+   "sites": [
+    "tests/test_precommit_hook.py:Staging.__init__",
+    "tests/test_precommit_hook.py:Staging.git",
+    "tests/test_precommit_hook.py:fixture_repo",
+    "tools/hooks/precommit.py:Index.__init__",
+    "tools/hooks/precommit.py:git"
+   ]
+  },
+  "tests/test_question_answering_measure_report.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_rd9_chain_relay.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_rd9_dri_signatures.py": {
+   "git": true,
+   "sites": [
+    "tests/test_rd9_dri_signatures.py:_entry"
+   ]
+  },
+  "tests/test_rd9_gap_relay.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_rd9_soft_split.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_budget_zero.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_companions_lean.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_component_names.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_components_document.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_components_lean.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_components_load.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_defaults_rd6b_report.py": {
+   "git": true,
+   "sites": [
+    "tests/test_readings_defaults_rd6b_report.py:test_trust_growth_is_rd6b_entry_and_listed_for_signature",
+    "tools/trust_map.py:extract_rev",
+    "tools/trust_map.py:measure_rev"
+   ]
+  },
+  "tests/test_readings_defaults_rd8_report.py": {
+   "git": true,
+   "sites": [
+    "tests/test_readings_defaults_rd8_report.py:test_review_fix_commit_chain_and_final_gate_target"
+   ]
+  },
+  "tests/test_readings_nd_document.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_nd_lean.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_rd5_plain_probe.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_rd5_udhr.py": {
+   "git": true,
+   "sites": [
+    "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_ls",
+    "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_show"
+   ]
+  },
+  "tests/test_readings_rd6b_differential.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_s2_document.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_sd_ce4.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>",
+    "tests/test_readings_sd_ce4.py:test_ce4_is_the_pilots_pinned_translation"
+   ]
+  },
+  "tests/test_readings_sd_differential.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_sd_document.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_sd_lean.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_sd_relay.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_readings_verdicts_lean.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_regen_generated.py": {
+   "git": true,
+   "sites": [
+    "tests/test_regen_generated.py:<module>",
+    "tests/test_regen_generated.py:_git",
+    "tests/test_regen_generated.py:test_gitattributes_is_generated_from_the_registry",
+    "tests/test_regen_generated.py:test_owner_agrees_with_git_on_every_tracked_file",
+    "tools/regen_generated.py:_git",
+    "tools/regen_generated.py:_stage",
+    "tools/regen_generated.py:merge_text",
+    "tools/regen_generated.py:resolve"
+   ]
+  },
+  "tests/test_relay_english_scale.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_repo_map.py": {
+   "git": true,
+   "sites": [
+    "tests/test_repo_map.py:head",
+    "tests/test_repo_map.py:rights_map",
+    "tests/test_repo_map.py:test_a_map_from_before_the_relay_changed_gives_the_static_answer",
+    "tests/test_repo_map.py:test_map_expectations_with_an_untracked_file",
+    "tools/repo_map.py:tests_from",
+    "tools/select_tests.py:blobs",
+    "tools/select_tests.py:git_lines",
+    "tools/source_graph.py:tracked",
+    "tools/test_map.py:find_map"
+   ]
+  },
+  "tests/test_run_cache.py": {
+   "git": true,
+   "sites": [
+    "tests/test_run_cache.py:Repository.__init__",
+    "tests/test_run_cache.py:test_entries_live_in_the_git_common_directory",
+    "tests/test_run_cache.py:test_the_read_recorder_keeps_checkout_paths_only",
+    "tools/run_cache.py:cache_directory",
+    "tools/source_graph.py:tracked"
+   ]
+  },
+  "tests/test_run_order.py": {
+   "git": true,
+   "sites": [
+    "tests/test_run_order.py:test_the_state_is_in_this_worktrees_own_git_directory",
+    "tools/run_order.py:git_dir"
+   ]
+  },
+  "tests/test_runner.py": {
+   "git": true,
+   "sites": [
+    "tests/test_runner.py:git",
+    "ve_experiments/runner.py:_git",
+    "ve_experiments/runner.py:require_committed"
+   ]
+  },
+  "tests/test_select_tests.py": {
+   "git": true,
+   "sites": [
+    "tests/test_select_tests.py:git_line",
+    "tests/test_select_tests.py:head_commit",
+    "tests/test_select_tests.py:real",
+    "tests/test_select_tests.py:test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users",
+    "tests/test_select_tests.py:test_freshness_is_the_map_selection_would_use",
+    "tests/test_select_tests.py:test_no_module_reads_assurance_state_around_the_audited_api",
+    "tests/test_select_tests.py:test_smoke_files_and_top_level_areas_match_the_tree",
+    "tests/test_select_tests.py:tracked",
+    "tools/select_tests.py:blobs",
+    "tools/select_tests.py:git_lines",
+    "tools/source_graph.py:tracked",
+    "tools/test_map.py:find_map",
+    "tools/test_map.py:git",
+    "tools/test_map.py:lean_tree",
+    "tools/test_map.py:working_tree_id"
+   ]
+  },
+  "tests/test_since_pass.py": {
+   "git": true,
+   "sites": [
+    "tests/test_since_pass.py:git",
+    "tools/select_tests.py:git_lines",
+    "tools/since_pass.py:git"
+   ]
+  },
+  "tests/test_softnorms_contract.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_stage0_probe_matrix.py": {
+   "git": true,
+   "sites": [
+    "tests/probe_matrix.py:pinned_runtime_sha256"
+   ]
+  },
+  "tests/test_stage2_standalone.py": {
+   "git": true,
+   "sites": [
+    "tools/lean_first_oracle.py:git"
+   ]
+  },
+  "tests/test_stage2_validation.py": {
+   "git": true,
+   "sites": [
+    "tools/lean_first_oracle.py:git"
+   ]
+  },
+  "tests/test_suite_tail.py": {
+   "git": true,
+   "sites": [
+    "tools/bench/suite_tail.py:summarise"
+   ]
+  },
+  "tests/test_trust_budget.py": {
+   "git": true,
+   "sites": [
+    "tools/trust_map.py:extract_rev",
+    "tools/trust_map.py:measure_rev",
+    "tools/trust_map.py:run_git"
+   ]
+  },
+  "tests/test_trust_ratchet.py": {
+   "git": true,
+   "sites": [
+    "tests/test_trust_ratchet.py:git",
+    "tools/regen_generated.py:merge_text",
+    "tools/trust_map.py:extract_rev",
+    "tools/trust_map.py:measure_rev",
+    "tools/trust_map.py:run_git"
+   ]
+  },
+  "tests/test_wire_contract_lint.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_wire_contract_s4_lean.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_wire_contract_s5_admission.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_wire_contract_s5_lean.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>"
+   ]
+  },
+  "tests/test_wire_gate_corpus.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>",
+    "tools/gate.py:source_identity",
+    "tools/gate.py:tree_identity",
+    "tools/gate_collection.py:git",
+    "tools/run_cache.py:cache_directory",
+    "tools/source_graph.py:tracked"
+   ]
+  },
+  "tests/test_words.py": {
+   "git": true,
+   "sites": [
+    "conformance/frozen_norm_defaults.py:<module>",
+    "conformance/frozen_words.py:_source"
+   ]
+  },
+  "tools/test_layer_policy.py": {
+   "git": true,
+   "sites": [
+    "tools/select_tests.py:blobs",
+    "tools/select_tests.py:git_lines",
+    "tools/source_graph.py:tracked",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git",
+    "tools/test_map.py:git",
+    "tools/test_map.py:lean_tree",
+    "tools/test_map.py:working_tree_id"
+   ]
+  }
+ }
+}
