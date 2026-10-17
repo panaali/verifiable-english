@@ -1,5 +1,5 @@
 {
- "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+ "base": "dccd9cf5ad70ef285fa28f8e208ecee6e103a2d9",
  "changes": [
   {
    "added": 62,
@@ -7,8 +7,8 @@
    "path": "docs/readings-defaults/rd7/DELTA.md"
   },
   {
-   "added": 326,
-   "deleted": 170,
+   "added": 346,
+   "deleted": 173,
    "path": "docs/readings-defaults/rd7/REPORT.md"
   },
   {
@@ -25,6 +25,11 @@
    "added": 26,
    "deleted": 0,
    "path": "docs/readings-defaults/rd7/evidence/ab-fix.json"
+  },
+  {
+   "added": 30,
+   "deleted": 0,
+   "path": "docs/readings-defaults/rd7/evidence/commit-rewrite.json"
   },
   {
    "added": 22,
@@ -187,8 +192,8 @@
    "path": "docs/readings-defaults/rd7/evidence/relay-route.json"
   },
   {
-   "added": 619,
-   "deleted": 91,
+   "added": 681,
+   "deleted": 123,
    "path": "docs/readings-defaults/rd7/evidence/scope.json"
   },
   {
@@ -212,8 +217,8 @@
    "path": "docs/spec/assurance-manifest.md"
   },
   {
-   "added": 294,
-   "deleted": 115,
+   "added": 300,
+   "deleted": 121,
    "path": "docs/trust-baseline.json"
   },
   {
@@ -382,7 +387,7 @@
    "path": "tools/relay-gate-allow.json"
   },
   {
-   "added": 85,
+   "added": 86,
    "deleted": 4,
    "path": "tools/trust-classes.json"
   },
@@ -414,67 +419,83 @@
  ],
  "commits": [
   {
-   "hash": "9ff8cda195ef6579c231de36472b4bca1dfc1ecb",
+   "hash": "e43e8c33ee35fff5028cfcddaeb769461c981531",
+   "subject": "rd-7 gate fix: report and commit map (stale trailers, supOpen class, runner-portability merge)"
+  },
+  {
+   "hash": "f50680a77bd0b5288e27b35392ca0bec21edca7a",
+   "subject": "rd-7: trust baseline counts after classifying supOpen (G +8, unclassified -8, trusted +0)"
+  },
+  {
+   "hash": "55a1ee37fbc216138a4bad556c23b02429dbbbd0",
+   "subject": "rd-7: classify supOpen as verdict glue (the gate's unclassified-declaration check)"
+  },
+  {
+   "hash": "0aa43d458f6800123074cdac1d4f43fb107f33bf",
+   "subject": "rd-7: saved scope through the review fix"
+  },
+  {
+   "hash": "823c8bc60ce79fe3a90a3aca6e60c836923fcbcd",
    "subject": "rd-7 review fix: relay mutation gate evidence on the fixed code (0 findings)"
   },
   {
-   "hash": "8f432ef339e7dbcb835f5884952c23a25770c4ab",
+   "hash": "c979831439dabe427b5085544d77318902983393",
    "subject": "rd-7 review fix: DELTA (T1 +12 under R6, K1 member order), A/B of the readings corpora and F2 cost on the fixed code, report"
   },
   {
-   "hash": "f4d0b4c017d73fb8af90e81c70e92c87b3edeafe",
+   "hash": "d6e78c02ddc1550c22802052e5d9cfd27dcdebeb",
    "subject": "rd-7 review fix: seeded mutants for F1, F2 and F4 replayed (P10-P12, L9, L10) with P1, L5, P7-P9 on the changed sources"
   },
   {
-   "hash": "cd4f21c4c6e7a06342eff1c706b62884fc37c8a0",
+   "hash": "177bdb2483ec9ffe417532dbe7418f35550d7de4",
    "subject": "rd-7 review fix: untaken check waits for the checked budget (F1), evidence only for scopes Lean lists (F2), restored tests (F3), assumed bound for every question (F4)"
   },
   {
-   "hash": "f90694b26cbb2352692d0e517560955aa2ca1525",
+   "hash": "295cefd70e57e3bcfdd5751321a1eab62ae6366c",
    "subject": "rd-7: saved scope through the final report"
   },
   {
-   "hash": "340604ba89dca3cb818b280c7a947bb523d8d278",
+   "hash": "785454be11c526e8cefb5ca28ef62c76204e0695",
    "subject": "rd-7: final build report from the saved evidence"
   },
   {
-   "hash": "3210b4065e78711e7c8772e009735f9ec2f50f8f",
+   "hash": "ec254616d4d7ba9da04471e0e54805451e45778e",
    "subject": "rd-7: final DELTA ledger from the saved A/B (R7 for unavailable-on-both rows, R6 trust +603)"
   },
   {
-   "hash": "76ea1d9f7d8302f3b976fbe4d5dc3ce5ef02201a",
+   "hash": "6e135b614fce8c1ce6a7051fb9558ed430d7c5cd",
    "subject": "rd-7: pilot latency and all 17 seeded mutants replayed on the current sources"
   },
   {
-   "hash": "70b3a2bb038121ba67ffcf9e5ae50925bacd4015",
+   "hash": "eb0e958331eef2a505fd9831bb2db03829e7e859",
    "subject": "rd-7: saved seven-corpus A/B on HEAD, serial whole-UDHR reruns and route latency"
   },
   {
-   "hash": "074f96d3fca99843b6c0208bcb9c0aedb8410b25",
+   "hash": "5890d6dbb426b9a0deff7a59a3fdb1b9f364bcfb",
    "subject": "rd-7: classify the seven scope-reuse declarations as verdict glue"
   },
   {
-   "hash": "e53d6ee19571a6dd338b90092096ed4e132339de",
+   "hash": "e8ad091e3f617352355518271cf0ea0eaa17c8ef",
    "subject": "rd-7: leave main's known-red RD-8 report test to its own fix item"
   },
   {
-   "hash": "e79f9b13528589e308284a1ca86a1806f77f21ff",
+   "hash": "aae84c20830ce3d090f7889b49de9de7585b626b",
    "subject": "rd-7: work-in-progress report and evidence before the final re-recording"
   },
   {
-   "hash": "d51d23f5d732d8c8acb99b9014226eb548003781",
+   "hash": "879a8e86024cd9b7ca845b127b7becbdc0627e59",
    "subject": "rd-7: pin the reviewed SupWire decoder after the prepared model replay"
   },
   {
-   "hash": "371ffd682f289fead13bd5b5cb2679944b77ca3e",
+   "hash": "a4f465cb51a3c346009340bcc633ad1987cb59ae",
    "subject": "rd-7: reuse checked scopes and replay evidence for superposed verdicts"
   },
   {
-   "hash": "f7ea87a6f88f19f8872f5b83781027c8fec552ba",
+   "hash": "de1ff20f08a544bb574cc25494f353c13cf4e339",
    "subject": "rd-7: test null dead readings at the checked-choice limit"
   },
   {
-   "hash": "22e91f6944bfdb949d28d0412d1211b6e24f67ff",
+   "hash": "b3412992afe76c0cbc217033ebad564908462ba7",
    "subject": "rd-7: refresh final inventories and proof-test evidence"
   },
   {
@@ -554,5 +575,5 @@
    "subject": "rd-7: work left uncommitted (committed by chain)"
   }
  ],
- "head": "9ff8cda195ef6579c231de36472b4bca1dfc1ecb"
+ "head": "e43e8c33ee35fff5028cfcddaeb769461c981531"
 }
