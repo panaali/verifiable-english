@@ -231,7 +231,8 @@ def check_toolchains(result: dict, env: dict[str, str]) -> None:
     if git is None:
         raise RuntimeError("required backend missing: git")
     result["toolchains"]["paths"]["git"] = git
-    result["toolchains"]["git"] = command([git, "--version"], env=env, stage="git version").splitlines()[0]
+    result["toolchains"]["git"] = next(iter(command([git, "--version"], env=env, stage="git version").splitlines()),
+                                       "")
 
 
 def uv_workspace_ancestors(root: Path) -> list[Path]:
