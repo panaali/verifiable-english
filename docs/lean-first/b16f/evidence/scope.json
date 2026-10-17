@@ -1,8 +1,16 @@
 {
   "base": "85b20fcba4b1b0473de9e41888059e7e1be22b3a",
-  "head": "1d658e6213e23077e119fa1aa13b1b8c4a03b0d9",
+  "head": "378fabde8c03ea0b7eef1a2c3b39a5da440a88e4",
   "command": "git log --no-merges $(git merge-base HEAD main)..HEAD",
   "commits": [
+    {
+      "hash": "378fabde8c03ea0b7eef1a2c3b39a5da440a88e4",
+      "subject": "lf-16f review fixes: keep the senses route's `_text` for the tests that patch it; b16b's senses fault follows the guard"
+    },
+    {
+      "hash": "769fc7c3fbc12f7dcad9c3b2e0ec50d54d56e94a",
+      "subject": "lf-16f review fixes: re-measured evidence and DELTA"
+    },
     {
       "hash": "1d658e6213e23077e119fa1aa13b1b8c4a03b0d9",
       "subject": "lf-16f fix F3 (part): per-unit costs that grew with the whole document; the soft document built once"

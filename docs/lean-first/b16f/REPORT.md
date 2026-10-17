@@ -35,14 +35,23 @@ the seeded faults and what was not run.
 
 ## Tests and runs
 
-- Selected tests (`mac-pytest.sh --select`, Mac runner): 350 units, 0 failures, on 38b93aaa (the final product code).
-- New tests: `tests/test_b16f_document.py` (25 test functions, 60 collected cases). Changed tests: `tests/test_lean_document_wrapper.py`
-  (seeds and the owned-profile and gate tests), `tests/test_document_lean_switch.py` (its retained fence now under
-  `readings@1`), `tests/test_nested_pytest.py` (the seed harness is an outermost runner), and 16e's
-  `test_soft_norms_is_owned_only_beneath_rights` removed (Test-removed trailer).
-- `lake build` (957 jobs) and `python3 lean/audit.py` passed; `tools/regen_generated.py --check` checks 28 entries;
-  `tools/trust_map.py --check` passes with the R16 allowance; `tools/gate_collection.py --check --prebuilt` passes
-  after this commit's trailer.
+- Review fixes, selected tests (`mac-pytest.sh --select`, Mac runner) on 378fabde (the final code commit): 358 units,
+  1 failure, `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check`: the trust growth over R16 (DELTA
+  row 6), which passes once the DRI records the allowance. An earlier selected run on 769fc7c3 found four more,
+  fixed in 378fabde (b16b's seeded senses fault, a pilot recorder test, two tests that patch the senses route's
+  `_text`).
+- New tests: `tests/test_b16f_senses_document.py` (59 collected: the seven senses documents on both envelopes, every
+  senses fault, the request's pack texts, the projected-environment binding, the recorder writing a pilot with its
+  files) and `tests/test_b16f_document.py::test_a_later_unit_s_structural_fault_comes_after_an_earlier_unit_s_fault`
+  (F1, five seeds by 30 fault pairs). Changed: `tests/test_document_lean_switch.py` (the senses retained reason,
+  Test-removed trailer in e415011e). Build: `tests/test_b16f_document.py` (25 test functions), the wrapper tests, and
+  16e's `test_soft_norms_is_owned_only_beneath_rights` removed (Test-removed trailer).
+- `lake build` (957 jobs) and `python3 lean/audit.py` passed on 378fabde; `tools/regen_generated.py --check` passes
+  every entry but `trust-tables` (row 6, the DRI's signature).
+- Probes: PROBE F1 failed before the fix ("MIXED unit needs partitioned parts" against "invalid support") and passes
+  after. PROBE F2 as written calls `_lean_answer(raw, True)` without the document's directory, so the pack beside it
+  cannot be read and it still fails; with the directory (`_lean_answer(raw, True, p.parent)`, as `load_document`
+  calls it) it passes; `test_a_valid_senses_document_is_decided_by_lean` is its regression test.
 - Main known-red tests (`main-known-red.txt`): not touched.
 - The full release gate is the chain's, on the final HEAD.
 
