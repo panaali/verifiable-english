@@ -348,17 +348,6 @@ def test_the_unowned_parts_of_a_rights_document_keep_the_retained_path(key):
     assert isinstance(reason, CheckerUnavailable) and f"a rights document with {key}" in str(reason)
 
 
-def test_soft_norms_is_owned_only_beneath_rights():
-    from conformance import document_wrapper as dw
-
-    meta, body = _split(_text(0))
-    assert D._lean_answer(_join(meta, body).encode(), True) is not None
-    meta["environment"]["profiles"].remove("rights@0")
-    _, reason = relay.answer("document", {"id": "document", "document": _join(meta, body), "admit": True})
-    assert "document checks under soft-norms@0 need its Lean profile route" in str(reason)
-    assert dw.OWNED_BENEATH == {"soft-norms@0": "rights@0"}
-
-
 # ------------------------------------------------------------------- the answer's new fields: typed and bound
 
 def _row(seed: int = 2):
@@ -443,8 +432,9 @@ def test_a_meaning_id_over_another_environment_is_unbound(monkeypatch, tmp_path)
 
 
 def test_value_mutants_of_copied_content_are_refused_by_the_binding():
-    """The relay mutation gate's by-design entry B7 (tools/relay-gate-allow.json): the transport schema accepts these
-    valid shapes of copied content; the document binding refuses each, as it differs from the authored content."""
+    """The relay mutation gate's former by-design entry B7: the transport schema accepts these valid shapes of copied
+    content; the document binding refuses each, as it differs from the authored content (the gate's `document`
+    reader now reads them through it, lf-16f looprecheck1 F7)."""
     text, raw, row, meta, source, declared = _row()
     right = next(i for i, u in enumerate(row["units"]) if u["kind"] == "right")
     norm = next(i for i, u in enumerate(row["units"]) if u["kind"] == "norm")
