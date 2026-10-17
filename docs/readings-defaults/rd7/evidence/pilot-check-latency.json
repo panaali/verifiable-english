@@ -1,19 +1,19 @@
 {
  "allowance": 0.2,
  "base_commit": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
- "head_commit": "3d1c0312f6c008f0c7d238f8ec8dc1cf49857c63",
+ "head_commit": "70b3a2bb038121ba67ffcf9e5ae50925bacd4015",
  "method": "paired runs of /home/seyran/code/ve-rd-7/.venv/bin/python -m ve document check {input}; RUSAGE_CHILDREN CPU",
  "pass": true,
  "samples": {
   "/home/seyran/code/ve-rd-7/usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md": {
-   "base_cpu_ms": 33358.0965,
-   "head_cpu_ms": 20485.8865,
+   "base_cpu_ms": 16973.413,
+   "head_cpu_ms": 16515.4505,
    "pairs": 2,
    "same_output": true
   },
-  "/tmp/rd7-ab/head-final-pilots.pilots/66e4b2d5d15add0e3f43230a1a0b68821d84cb3c.ve.md": {
-   "base_cpu_ms": 1208.879,
-   "head_cpu_ms": 1234.6,
+  "/tmp/rd7-lat/66e4b2d5d15add0e3f43230a1a0b68821d84cb3c.ve.md": {
+   "base_cpu_ms": 870.564,
+   "head_cpu_ms": 821.1125,
    "pairs": 2,
    "same_output": true
   }
