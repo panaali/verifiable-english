@@ -10,7 +10,10 @@ a key of everything the run can read:
   and manifest (tests run `lake env lean` on scripts that read the built modules); the interpreter's
   version, `uv.lock`, the run's settings, and its `VE_` environment and `PYTHONPATH` but its output paths;
 * dynamic, recorded by `tests/read_recorder.py` in every process of the run that made the entry: each file
-  it opened or imported, each directory it listed (by its entries' names) and each program it started.
+  it opened or imported, each directory it listed (by its entries' names) and each program it started;
+* history, when the run started git or opened a path in a `.git` directory: the commit checked out, the
+  runner and the git version (`history_inputs`). Such a run's result can change with the commit alone (the
+  tests of tests/history-dependent.json), so its entry is never used on another commit, runner or git.
 
 An entry is named by the static key and holds the dynamic inputs' digests; it is used only when every one
 of them is unchanged, so a stale key or a changed read re-runs. Only a run that `ok` accepts is stored, and
@@ -31,7 +34,9 @@ import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-FORMAT = "ve-run-cache@1"
+# 2: an entry of a run that read history binds its commit, runner and git (`history_inputs`); an entry of
+# format 1 does not, so none is used.
+FORMAT = "ve-run-cache@2"
 # Entries kept per cache directory, newest first (the wire gate corpus's is about 10 MB compressed).
 KEEP = 4
 # The settings that name the run's own output (a fresh temporary path each run), not an input: the record,
@@ -117,29 +122,54 @@ def key_of(inputs: dict[str, str]) -> str:
     return hashlib.sha256(json.dumps([FORMAT, sorted(inputs.items())]).encode()).hexdigest()
 
 
-def dynamic_inputs(root: Path, reads: dict[str, set]) -> dict[str, str]:
-    """{input: digest} of what the run read (`tests/read_recorder.py`)."""
+def history_inputs(root: Path) -> dict[str, str] | None:
+    """{input: value} binding a run that read history to what it read it on: the commit checked out at `root`,
+    the runner (`tools/gate.py` `runner_identity`) and the git version; None when git cannot say."""
+    from tests.subprocesses import HANG_TIMEOUT
+    from tools.gate import runner_identity
+    answers = [subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+               for args in (["rev-parse", "--verify", "HEAD"], ["--version"])]
+    if any(answer.returncode or not answer.stdout.strip() for answer in answers):
+        return None
+    return {"history:commit": answers[0].stdout.strip(), "history:git": answers[1].stdout.strip(),
+            "history:runner": json.dumps(runner_identity(), sort_keys=True)}
+
+
+def dynamic_inputs(root: Path, reads: dict[str, set]) -> dict[str, str] | None:
+    """{input: digest} of what the run read (`tests/read_recorder.py`), with the history it read on when it read
+    any (`history_inputs`); None when that history cannot be named, so the run is not stored."""
     inputs = {f"file:{name}": file_digest(root / name) for name in reads["files"]}
     inputs.update((f"directory:{name}", listing_digest(root / name)) for name in reads["directories"])
     inputs.update((f"program:{name}", file_digest(root / name)) for name in reads["programs"])
+    if reads.get("history"):
+        history = history_inputs(root)
+        if history is None:
+            return None
+        inputs.update(history)
     return dict(sorted(inputs.items()))
 
 
 def current(root: Path, inputs: dict[str, str]) -> bool:
-    """Whether every recorded dynamic input still has its digest."""
+    """Whether every recorded dynamic input still has its digest, and a run that read history is on the same
+    commit, runner and git."""
+    history = None
     for name, digest in inputs.items():
         kind, _, path = name.partition(":")
-        now = listing_digest(root / path) if kind == "directory" else file_digest(root / path)
+        if kind == "history":
+            history = history_inputs(root) if history is None else history
+            now = None if history is None else history.get(name)
+        else:
+            now = listing_digest(root / path) if kind == "directory" else file_digest(root / path)
         if now != digest:
             return False
     return True
 
 
 def _reads(prefix: Path) -> dict[str, set]:
-    found = {"files": set(), "directories": set(), "programs": set()}
+    found = {"files": set(), "directories": set(), "programs": set(), "history": set()}
     for path in prefix.parent.glob(f"{prefix.name}.*.json"):
         for kind, names in json.loads(path.read_text()).items():
-            found[kind].update(names)
+            found.setdefault(kind, set()).update(names)
     return found
 
 
@@ -186,8 +216,10 @@ def cached_run(output: Path, *, starts: list[str], settings: dict, environment: 
         result = run({**environment, "VE_RECORD_READS": str(prefix), "VE_READS_ROOT": str(root)})
         reads = _reads(prefix)
     # Nothing recorded means the plugin did not run: no entry could be checked later.
-    if ok(result) and reads["files"] and key_of(static_inputs(root, starts, settings, environment)) == key:
-        _write(entry_path, {"format": FORMAT, "key": key, "static": inputs, "dynamic": dynamic_inputs(root, reads),
+    dynamic = dynamic_inputs(root, reads)
+    if ok(result) and reads["files"] and dynamic is not None \
+            and key_of(static_inputs(root, starts, settings, environment)) == key:
+        _write(entry_path, {"format": FORMAT, "key": key, "static": inputs, "dynamic": dynamic,
                             "output": output.read_text(), "args": [str(a) for a in result.args],
                             "returncode": result.returncode, "stdout": result.stdout, "stderr": result.stderr})
     return result, "miss"

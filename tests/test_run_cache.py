@@ -18,7 +18,7 @@ import sys
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import nested_pytest, run_cache
+from tools import gate, nested_pytest, run_cache
 from tools.gate import LEAN_BINARIES
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -180,3 +180,103 @@ def test_entries_live_in_the_git_common_directory(monkeypatch):
     assert run_cache.cache_directory(ROOT) == Path("/somewhere")
     monkeypatch.setenv("VE_RUN_CACHE", "off")
     assert run_cache.cache_directory(ROOT) is None
+
+
+HISTORY_CHECKS = {
+    "starts git": 'subprocess.run(["git", "rev-parse", "--git-dir"], cwd=ROOT, check=True, capture_output=True)',
+    "starts git through a shell": 'subprocess.run("git rev-parse --git-dir", shell=True, cwd=ROOT, check=True, '
+                                  'capture_output=True)',
+    "opens a .git path": '(ROOT / ".git/HEAD").read_text()',
+}
+
+
+def _commit(root: Path) -> str:
+    subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "commit", "-q", "--allow-empty",
+                    "-m", "a commit"], cwd=root, check=True, timeout=HANG_TIMEOUT)
+    return subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True, check=True,
+                          timeout=HANG_TIMEOUT).stdout.strip()
+
+
+def _entry() -> dict:
+    [path] = Path(os.environ["VE_RUN_CACHE"]).glob("*.json.gz")
+    with gzip.open(path, "rt") as handle:
+        return json.load(handle)
+
+
+def _fake_git(tmp_path: Path, monkeypatch, version: str) -> None:
+    """A `git` first on PATH that answers `--version` with `version` and runs the real git otherwise."""
+    real = subprocess.run(["git", "--exec-path"], capture_output=True, text=True, check=True,
+                          timeout=HANG_TIMEOUT).stdout.strip() + "/git"
+    directory = tmp_path / "fake-git"
+    directory.mkdir()
+    (directory / "git").write_text(f'#!/bin/sh\n[ "$1" = --version ] && {{ echo "{version}"; exit 0; }}\n'
+                                   f'exec {real} "$@"\n')
+    (directory / "git").chmod(0o755)
+    monkeypatch.setenv("PATH", f"{directory}{os.pathsep}{os.environ['PATH']}")
+
+
+HISTORY_CHANGES = {
+    "another commit with the same files": lambda r, tmp_path, monkeypatch: _commit(r.root),
+    "another runner": lambda r, tmp_path, monkeypatch: monkeypatch.setattr(
+        gate, "runner_identity", lambda: {"system": "Other", "machine": "other", "node": "elsewhere"}),
+    "another git": lambda r, tmp_path, monkeypatch: _fake_git(tmp_path, monkeypatch, "git version 0.0.1"),
+}
+
+
+@pytest.mark.parametrize("check", HISTORY_CHECKS)
+@pytest.mark.parametrize("change", HISTORY_CHANGES)
+def test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git(repository, tmp_path, monkeypatch,
+                                                                             check, change):
+    """A history-dependent result is never carried from one commit (or runner, or git) to another."""
+    repository.edit("checks/test_tiny.py", CHECK + f"    {HISTORY_CHECKS[check]}\n")
+    head = _commit(repository.root)
+    assert repository.call()[0] == "miss" and repository.call()[0] == "hit" and repository.runs == 1
+    history = {name: value for name, value in _entry()["dynamic"].items() if name.startswith("history:")}
+    assert history == {"history:commit": head, "history:runner": json.dumps(gate.runner_identity(), sort_keys=True),
+                       "history:git": subprocess.run(["git", "--version"], capture_output=True, text=True,
+                                                     check=True, timeout=HANG_TIMEOUT).stdout.strip()}
+    HISTORY_CHANGES[change](repository, tmp_path, monkeypatch)
+    assert repository.call()[0] == "miss" and repository.runs == 2, change
+    assert repository.call()[0] == "hit" and repository.runs == 2
+
+
+def test_a_run_that_reads_no_history_is_used_on_another_commit_with_the_same_files(repository):
+    _commit(repository.root)
+    assert repository.call()[0] == "miss"
+    assert not any(name.startswith("history:") for name in _entry()["dynamic"])
+    _commit(repository.root)
+    assert repository.call()[0] == "hit" and repository.runs == 1
+
+
+def test_a_run_that_reads_history_where_no_commit_can_be_named_is_not_stored(repository):
+    """The scratch repository has no commit yet: nothing binds the run, so nothing is stored."""
+    repository.edit("checks/test_tiny.py", CHECK + f"    {HISTORY_CHECKS['starts git']}\n")
+    assert [repository.call()[0] for _ in range(2)] == ["miss", "miss"] and repository.runs == 2
+
+
+def test_an_entry_of_the_format_before_history_binding_is_not_used(repository):
+    _commit(repository.root)
+    repository.call()
+    [path] = Path(os.environ["VE_RUN_CACHE"]).glob("*.json.gz")
+    entry = _entry()
+    with gzip.open(path, "wt") as handle:
+        json.dump({**entry, "format": "ve-run-cache@1"}, handle)
+    assert repository.call()[0] == "miss" and repository.runs == 2
+
+
+def test_the_read_recorder_sees_git_started_or_a_git_path_opened(monkeypatch, tmp_path):
+    sys.path.insert(0, str(ROOT))
+    from tests import read_recorder
+    starts = (["git", "log"], ["/usr/bin/git"], [b"/usr/local/bin/git", b"status"], ["/bin/sh", "-c", "git log -1"],
+              "git status")
+    for argv in starts:
+        assert read_recorder._starts_git(argv), argv
+    for argv in (["gitk"], ["/usr/bin/python3", "-c", "print('git')"], ["legit", "git-like"], [], None, [3]):
+        assert not read_recorder._starts_git(argv), argv
+    for path in (tmp_path / ".git", tmp_path / ".git/HEAD", os.fsencode(tmp_path / "a/.git/objects/x"),
+                 "/elsewhere/repo.git/.git/config"):
+        assert read_recorder._git_path(path), path
+    for path in (tmp_path / ".gitattributes", tmp_path / ".gitignore", tmp_path / "repo.git/HEAD", "", None, 3):
+        assert not read_recorder._git_path(path), path
+    monkeypatch.chdir(tmp_path)
+    assert read_recorder._git_path(".git/HEAD") and not read_recorder._git_path("git/HEAD")
