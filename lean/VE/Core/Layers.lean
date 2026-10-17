@@ -11,20 +11,17 @@ binary head can depend on an n-ary atom. Every definition is placed in one
 dependency order over all of them
 (`Layered.order`, Python `compile_definitions`'s). Then
 
-* `background`: the FOL route's regenerated Background (flags, definitions,
-  literals), in Python's generator order, with every definition's biconditional
-  in that one order (`definitionPremises`);
+* `background`: the regenerated Background in Python's generator order: the
+  FOL projection's flags, every definition's core biconditional in that one
+  order (`definitionPremises`), then the FOL projection's literals;
 * `evaluate` and `countermodel`: the FOL projection of the model is decoded
   with its flags checked and its defined tables computed (`decodeDataModel`,
   `InvalidModel(flags|definitions|literals)`), the n-ary defined tables are
   computed under the same budget and tuple count (`completeModel`), and the
   core route answers the case over the environment without the layer fields
-  and the model with the computed defined tables added.
-
+  and the model with the computed defined tables added;
 * `certificate`: the core route's certificate branch over that Background,
-  bound to the submitted environment (`coreCertificate`).
-
- -/
+  bound to the submitted environment (`coreCertificate`). -/
 namespace VE.Core.Layers
 open Lean
 open VE.Bridge (fields strings)
@@ -239,9 +236,9 @@ def decodeLayered (profiles : List String) (environment : Json) : Except String 
 
 /-! ## Background -/
 
-/-- Every definition's biconditional, FOL or n-ary, in the one dependency order
-(`Layered.order`). The FOL definitions are closed under dependencies (an FOL body cannot
-mention an n-ary predicate), so without n-ary definitions their own order is that order. -/
+/-- Every definition's biconditional in the one dependency order (`Layered.order`). The FOL
+projection drops every defined declaration (`folPredicates`), so `L.rv.definitions` is empty
+and every definition is a core one in `L.nary`, already in that order. -/
 def definitionPremises (L : Layered) : List Formula :=
   match L.nary with
   | [] => (VE.Definitions.expand L.rv.definitions).map embed
@@ -320,12 +317,13 @@ theorem naryCheck_ok (mem : String → List VE.Bridge.Entity → Bool)
 
 /-- The one owner of a layered environment's core model, called by the core
 route, the service's model and core-family modes and the metered route: the
-FOL projection of `model` is decoded with its flags checked and its defined
-tables computed (`decodeDataModel`), and those tables are added to `model`'s
-relations. The n-ary defined tables follow, each body evaluated on the model
-with every lower table, under the FOL tables' remaining budget and tuple count
-(Python shares one budget across all definitions, so exhaustion depends only on
-the total work), and each n-ary biconditional is then checked on the result. -/
+FOL projection of `model` (base unary and binary predicates) is decoded with its
+flags checked (`decodeDataModel`); the projection has no defined predicates, so
+it adds no tables. Every defined table follows, in the one dependency order,
+each body evaluated by the core evaluator on the model with every lower table
+under one shared budget and tuple count (Python shares one budget across all
+definitions, so exhaustion depends only on the total work), and each
+definition's biconditional is then checked on the result. -/
 def completeModel (L : Layered) (environment model : Json) : Except String Json := do
   let names := (← folPredicates environment).map Prod.fst
   let folJson ← folModel names model

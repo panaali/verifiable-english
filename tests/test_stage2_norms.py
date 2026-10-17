@@ -232,6 +232,74 @@ def test_non_first_order_norms_are_dispatched_and_match_python(monkeypatch, fami
     assert {"norms_elaborate", "norms_certificate", "norms_conflict"} <= {op for op, _ in ops}
 
 
+def nary_defined(arity, shape):
+    """A core-family norms environment whose definitions reach an `arity`-argument
+    predicate `tri`: `pressing`'s body is an atom of `tri` (`body`), `tri` is itself
+    defined (`head`, with `pressing` over it), or `tri` is defined and unused (`unused`)."""
+    raw = flagged(definitions=True, family=("closure@0", "nary@0")).to_dict()
+    predicates = raw["vocabulary"]["predicates"]
+    predicates["tri"] = {"arguments": ["act"] * arity, "description": "tri"}
+    if shape in ("head", "unused"):
+        predicates["tri"]["defined"] = {"arguments": ["act"] * arity,
+                                        "body": ["unary", "urgent", ["var", arity - 1]]}
+    if shape in ("body", "head"):
+        predicates["pressing"]["defined"]["body"] = ["atom", "tri", [["var", 0]] * arity]
+    return Environment(raw)
+
+
+def test_a_definition_over_a_ternary_predicate_has_its_premises(monkeypatch):
+    """lf-14c review F4: the FOL view drops n-ary predicates, so a definition whose
+    body mentions one failed `premises()` with `invalid indexed formula`; the
+    family's reader now elaborates it."""
+    doc = document(nary_defined(3, "body"))
+    expected = [(label, _to_data(f)) for label, f in doc._premises_python()]
+    ops = routed(monkeypatch, "lean")
+    assert [(label, _to_data(f)) for label, f in doc.premises()] == expected
+    assert ("norms_elaborate", "lean") in ops
+
+
+@pytest.mark.parametrize("shape", ["body", "head", "unused"])
+@pytest.mark.parametrize("arity", [3, 4])
+def test_nary_definitions_on_the_core_family_match_python(monkeypatch, arity, shape):
+    """Definitions the FOL view cannot carry (an n-ary head, or a body over an n-ary
+    atom) send the document to the family's reader: elaboration, certificates and
+    conflicts answer as the Python reference does."""
+    env = nary_defined(arity, shape)
+    routed(monkeypatch, "python")
+    expected = outcomes(document(env))
+    assert expected["certificate"].valid and expected["conflict"].status == "CONFLICT-FREE"
+    ops = routed(monkeypatch, "lean")
+    modes = []
+    real = relay.decide
+
+    def spy(mode, cases, **kw):
+        modes.append(mode)
+        return real(mode, cases, **kw)
+
+    monkeypatch.setattr(relay, "decide", spy)
+    assert outcomes(document(env)) == expected
+    assert {"norms_elaborate", "norms_certificate", "norms_conflict"} <= {op for op, _ in ops}
+    assert "family-norms" in modes
+
+
+@pytest.mark.parametrize("arity", [3, 4])
+def test_the_family_background_carries_every_nary_definition(arity):
+    """The family reader's Background has one `definitions` row per definition, n-ary
+    ones included, typed by the family formula grammar of the response schema."""
+    env = nary_defined(arity, "head")
+    doc = document(env)
+    case = {"id": "e", "kind": "norms-elaborate", "environment": env.to_dict(),
+            "norms": [r.to_dict() for r in doc.rules]}
+    row = relay.decide("family-norms", [case])[0]
+    definitions = [b["ast"] for b in row["background"] if b["generator"] == "definitions"]
+    assert len(definitions) == 2 and row["fragment"] is False
+    assert any(json_mentions(ast, ["atom", "tri"]) for ast in definitions)
+
+
+def json_mentions(ast, head):
+    return ast[:len(head)] == head or any(isinstance(a, list) and json_mentions(a, head) for a in ast)
+
+
 @pytest.mark.parametrize("field", ["order", "label", "target", "sorts"])
 def test_non_first_order_elaboration_refuses_unbound_rows(monkeypatch, field):
     env = flagged(family=("closure@0",), relation=True)
