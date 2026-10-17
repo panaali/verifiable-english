@@ -183,10 +183,10 @@ def test_entries_live_in_the_git_common_directory(monkeypatch):
 
 
 HISTORY_CHECKS = {
-    "starts git": 'subprocess.run(["git", "rev-parse", "--git-dir"], cwd=ROOT, check=True, capture_output=True)',
-    "starts git through a shell": 'subprocess.run("git rev-parse --git-dir", shell=True, cwd=ROOT, check=True, '
+    "starts-git": 'subprocess.run(["git", "rev-parse", "--git-dir"], cwd=ROOT, check=True, capture_output=True)',
+    "starts-git-through-a-shell": 'subprocess.run("git rev-parse --git-dir", shell=True, cwd=ROOT, check=True, '
                                   'capture_output=True)',
-    "opens a .git path": '(ROOT / ".git/HEAD").read_text()',
+    "opens-a-git-path": '(ROOT / ".git/HEAD").read_text()',
 }
 
 
@@ -216,10 +216,10 @@ def _fake_git(tmp_path: Path, monkeypatch, version: str) -> None:
 
 
 HISTORY_CHANGES = {
-    "another commit with the same files": lambda r, tmp_path, monkeypatch: _commit(r.root),
-    "another runner": lambda r, tmp_path, monkeypatch: monkeypatch.setattr(
+    "another-commit-same-files": lambda r, tmp_path, monkeypatch: _commit(r.root),
+    "another-runner": lambda r, tmp_path, monkeypatch: monkeypatch.setattr(
         gate, "runner_identity", lambda: {"system": "Other", "machine": "other", "node": "elsewhere"}),
-    "another git": lambda r, tmp_path, monkeypatch: _fake_git(tmp_path, monkeypatch, "git version 0.0.1"),
+    "another-git": lambda r, tmp_path, monkeypatch: _fake_git(tmp_path, monkeypatch, "git version 0.0.1"),
 }
 
 
@@ -250,7 +250,7 @@ def test_a_run_that_reads_no_history_is_used_on_another_commit_with_the_same_fil
 
 def test_a_run_that_reads_history_where_no_commit_can_be_named_is_not_stored(repository):
     """The scratch repository has no commit yet: nothing binds the run, so nothing is stored."""
-    repository.edit("checks/test_tiny.py", CHECK + f"    {HISTORY_CHECKS['starts git']}\n")
+    repository.edit("checks/test_tiny.py", CHECK + f"    {HISTORY_CHECKS['starts-git']}\n")
     assert [repository.call()[0] for _ in range(2)] == ["miss", "miss"] and repository.runs == 2
 
 
