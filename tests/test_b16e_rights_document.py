@@ -432,8 +432,9 @@ def test_a_meaning_id_over_another_environment_is_unbound(monkeypatch, tmp_path)
 
 
 def test_value_mutants_of_copied_content_are_refused_by_the_binding():
-    """The relay mutation gate's by-design entry B7 (tools/relay-gate-allow.json): the transport schema accepts these
-    valid shapes of copied content; the document binding refuses each, as it differs from the authored content."""
+    """The relay mutation gate's former by-design entry B7: the transport schema accepts these valid shapes of copied
+    content; the document binding refuses each, as it differs from the authored content (the gate's `document`
+    reader now reads them through it, lf-16f looprecheck1 F7)."""
     text, raw, row, meta, source, declared = _row()
     right = next(i for i, u in enumerate(row["units"]) if u["kind"] == "right")
     norm = next(i for i, u in enumerate(row["units"]) if u["kind"] == "norm")

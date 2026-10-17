@@ -243,6 +243,33 @@ def test_ask_is_read_as_ve_ask_reads_it(built):
     assert outcome == "refused" and "unused" in detail, detail
 
 
+@pytest.mark.parametrize("drop", [("content", "meaning_id"), ("content",), ("meaning_id",)],
+                         ids=["content and identity", "content", "identity"])
+def test_document_is_read_as_ve_document_reads_it(built, drop):
+    """`document`'s caller binds the row to the document sent (`ve.document._lean_document`, `SERVICE_READERS`), with
+    the pack files of a senses document written beside it: the genuine senses answer is accepted, and a fence the
+    senses route read to a formula, with its content dropped, is refused by the reader though the transport accepts
+    it (lf-16f looprecheck1 F7)."""
+    case = next(row[2] for row in G.load_cases()
+                if row[:2] == ["service", "document"] and type(row[2]) is dict and row[2].get("id") == "senses")
+    text = json.dumps(case, separators=(",", ":"))
+    [answer] = G._service_answers(G.DEFAULT_EXECUTABLE, "document", [text])
+    read = G.SERVICE_READERS["document"](case)
+    replay = G._Replay()
+    replay.answer, replay.mutant = answer, None
+    assert G._exchange_outcome(replay, "document", "[" + text + "]", read) == ("accepted", "")
+    units = answer["results"][0]["result"]["units"]
+    index = next(i for i, unit in enumerate(units) if "content" in unit)
+    changed = json.loads(json.dumps(answer))
+    for key in drop:
+        changed["results"][0]["result"]["units"][index].pop(key)
+    replay.answer, replay.mutant = changed, G.Mutant("drop", ("results", 0, "result", "units", index, drop[0]))
+    if len(drop) == 2:  # a well-formed unit without content: only the reader's binding refuses it
+        assert G._exchange_outcome(replay, "document", "[" + text + "]") == ("accepted", "")
+    outcome, detail = G._exchange_outcome(replay, "document", "[" + text + "]", read)
+    assert outcome == "refused" and "not bound" in detail, detail
+
+
 ROUTES = [f"service:{mode}" for mode in MODES] + list(G.ONE_SHOT)
 
 
