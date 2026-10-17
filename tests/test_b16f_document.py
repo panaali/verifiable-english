@@ -459,3 +459,14 @@ def test_a_located_row_without_its_location_is_a_plain_rejection(service):
     schema({"id": "d", "status": "error", "error": "InvalidModel: x"}, case, {})
     with pytest.raises(Invalid):
         schema({"id": "d", "status": "error", "error": "InvalidModel: x", "path": ""}, case, {})
+
+
+def test_a_strict_fence_in_a_soft_document_keeps_the_retained_path(service):
+    """Python's `parse` reads a statement layer's environment with its own reader (`_lean_parse_scope`), so a strict
+    fence over `E″` is `CheckerUnavailable`, never Lean's parser's verdict."""
+    document = _seed("soft-norms")
+    body = document["body"]
+    document["body"] = body + "```ve fact\nalice consents.\n```\n"
+    document["front"]["units"][1].update(content={"fence": "fact"}, surface="strict")
+    _, answer = _both(service, document)
+    assert answer["code"] == "CheckerUnavailable" and "strict fence over a statement layer" in answer["text"], answer
