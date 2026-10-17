@@ -1100,7 +1100,7 @@ module ResponseShape.Schemas.Reports baeb474eafc93ae7f9e3f19c673ccedcaa126f114e7
 283:0-310:54 def ResponseShape.Schemas.Reports.status@ResponseShape.Schemas.Reports
 312:0-325:42 def ResponseShape.Schemas.Reports.row@ResponseShape.Schemas.Reports
 327:0-348:31 def ResponseShape.Schemas.Reports.file@ResponseShape.Schemas.Reports
-module ResponseShape.Schemas.Rights e49a2a36a1eb3ff6186872f4e3e90ae1eeadaecc58bdbb89871163e8b0389923
+module ResponseShape.Schemas.Rights 74142feb555fe075fc03c75383017cce0f5bc6d22aa0bc7aa3c14d531781e0e6
 9:0-41:117 def ResponseShape.Schemas.Rights.rights_path@ResponseShape.Schemas.Rights
 43:0-44:111 def ResponseShape.Schemas.Rights.rights_unit@ResponseShape.Schemas.Rights
 46:0-54:50 def ResponseShape.Schemas.Rights.kind@ResponseShape.Schemas.Rights
@@ -1119,9 +1119,9 @@ module ResponseShape.Schemas.Rights e49a2a36a1eb3ff6186872f4e3e90ae1eeadaecc58bd
 297:0-310:47 def ResponseShape.Schemas.Rights.scope@ResponseShape.Schemas.Rights
 312:0-322:60 def ResponseShape.Schemas.Rights.certificate@ResponseShape.Schemas.Rights
 324:0-353:55 def ResponseShape.Schemas.Rights.bar@ResponseShape.Schemas.Rights
-355:0-367:102 def ResponseShape.Schemas.Rights.packages@ResponseShape.Schemas.Rights
-369:0-383:47 def ResponseShape.Schemas.Rights.row@ResponseShape.Schemas.Rights
-385:0-408:35 def ResponseShape.Schemas.Rights.file@ResponseShape.Schemas.Rights
+355:0-373:114 def ResponseShape.Schemas.Rights.packages@ResponseShape.Schemas.Rights
+375:0-389:47 def ResponseShape.Schemas.Rights.row@ResponseShape.Schemas.Rights
+391:0-414:35 def ResponseShape.Schemas.Rights.file@ResponseShape.Schemas.Rights
 module ResponseShape.Schemas.Risk 0230b8935aa681bc3a6b601524e5f8708c05e086558cb6a403fc6a2a579ad1fc
 9:0-22:91 def ResponseShape.Schemas.Risk.risk_path@ResponseShape.Schemas.Risk
 24:0-32:52 def ResponseShape.Schemas.Risk.kind@ResponseShape.Schemas.Risk

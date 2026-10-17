@@ -162,6 +162,25 @@ def test_f2_batch_evidence_checks_the_gate_note_when_present(tmp_path):
     assert result.returncode == 1 and "gate evidence differs from its git note" in result.stdout
 
 
+def test_batch_evidence_takes_a_gate_note_with_durations(tmp_path):
+    """A gate record keeps its suite's per-test seconds (tools/test_schedule.py record_field); the evidence and
+    the note still compare whole, so a copy that dropped or altered them differs."""
+    from tools import test_schedule
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    _git(repo, "init", "-q")
+    gated = _commit(repo, {"code.py": "1"})
+    ids = ["tests/a.py::test_a"]
+    gate_data = {"tree_sha": _git(repo, "rev-parse", f"{gated}^{{tree}}"),
+                 "collection": {"collected_zlib": gate_collection.encode_ids(ids)},
+                 "durations": test_schedule.record_field({"tests/a.py::test_a": 3.5})}
+    gate_collection.write_record(gated, ids, result={**GATE, "commit_sha": gated, **gate_data}, cwd=repo)
+    assert _main(repo, tmp_path, gated, gated, gate_data).returncode == 0
+    altered = {**gate_data, "durations": test_schedule.record_field({"tests/a.py::test_a": 9.5})}
+    result = _main(repo, tmp_path, gated, gated, altered)
+    assert result.returncode == 1 and "gate evidence differs from its git note" in result.stdout
+
+
 @pytest.mark.parametrize("note_kind", ["unparseable", "wrong commit", "wrong tree",
                                       "invalid collection", "base only"])
 def test_f3_present_invalid_gate_note_fails_closed(tmp_path, note_kind):
