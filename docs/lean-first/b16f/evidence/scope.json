@@ -1,0 +1,55 @@
+{
+  "base": "85b20fcba4b1b0473de9e41888059e7e1be22b3a",
+  "head": "38b93aaa2743ff168fcf4d9f13212dd3ad3979f6",
+  "command": "git log --no-merges $(git merge-base HEAD main)..HEAD",
+  "commits": [
+    {
+      "hash": "38b93aaa2743ff168fcf4d9f13212dd3ad3979f6",
+      "subject": "lf-16f: keep 16b's rejection anchor; bounded index conversion; re-pin Document.lean; R16 allowance re-measured"
+    },
+    {
+      "hash": "4ababc83894ad9f25590e6cc2235ce78bd4eff34",
+      "subject": "lf-16f: plain norm faults and companion documents keep the retained path"
+    },
+    {
+      "hash": "581cb00a91476bf950e0d801d0879fe8f21290fd",
+      "subject": "lf-16f: regenerate inventories; pin Document.lean in the assurance manifest; R16 allowance re-measured"
+    },
+    {
+      "hash": "88768fe72e337797d2b893224f57aa5c28918225",
+      "subject": "lf-16f: a strict fence over a soft document's E'' keeps the retained path"
+    },
+    {
+      "hash": "35248ff77aba4e682bb6b471bcd0fc6d8840474a",
+      "subject": "lf-16f: classify the new Lean declarations; R16 trust allowance; seeded-fault harness"
+    },
+    {
+      "hash": "37a1df422dfa14c940259a2c79c6478b5736596e",
+      "subject": "lf-16f: located rows get their own types; a soft rule is bound whole"
+    },
+    {
+      "hash": "002ffe3558475adb23c8065b7256ee19baab3f87",
+      "subject": "lf-16f: tests for the batch's groups; soft rejections keep the retained path"
+    },
+    {
+      "hash": "63746d37589240a5c9132bff0205560c356dc31d",
+      "subject": "lf-16f: regenerate the Lean inventories and binding census"
+    },
+    {
+      "hash": "faff201c102cfd40808cc0a20cb33f7ddc490592",
+      "subject": "lf-16f: a strict fence's syntax error is decided by Lean with its span"
+    },
+    {
+      "hash": "6cc60985d8743fa51c54a1396c3815d18d0b0487",
+      "subject": "lf-16f: environment faults and distinguishing models are decided by Lean"
+    },
+    {
+      "hash": "17935bc39b7bedd4e8a495765f3a3d8bf0b47583",
+      "subject": "lf-16f: the document mode composes a soft-norms@0 document from the soft route"
+    },
+    {
+      "hash": "1c79f17a0679aa5e122e6a906d45a8d2cd9c7c60",
+      "subject": "lf-16f: the document mode decides plain norms@0 norm content on the norms route"
+    }
+  ]
+}

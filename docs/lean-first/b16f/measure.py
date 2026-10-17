@@ -1,9 +1,11 @@
 """Measure batch 16f's residues: the rows of the committed 16c ledger that batches 16d and 16e did not take.
 
 16d took the norm-defaults rows (the `norm_defaults` corpus, the document corpus's exact norm-defaults cause and the
-pilots under it), 16e the `rights` corpus, and the eight `ve-document@2` pilots are the discourse route's. The rest
-are this batch's: soft norms, norm content, senses, fenced content, distinguishing models, the malformed-profile and
-environment-key groups, and the pilots under `order@0`, `readings@1` or `rights@0`.
+pilots under it), 16e the `rights` corpus, and the eight `ve-document@2` pilots are the discourse route's. Of the 130
+rows left, the batch's groups (`GROUPS`) are soft norms, norm content, senses, fenced content, distinguishing models,
+and the malformed-profile and environment-key groups. The other twelve rows (pilots under `order@0`, `readings@1` or
+`rights@0`) are named by no batch's groups: they are measured and saved with `"outside": true`, and a valid one that
+stays on the retained path is reported, not counted as this batch's failure.
 
 The corpus generators and the ledger must agree on case names and source bytes. Every case is decided twice, by
 Lean's `document` mode (the new path) and by Python's retained loader (the prior path), and compared as 16e's
@@ -43,6 +45,10 @@ def ours(row: dict) -> bool:
     if row["corpus"] == "document":
         return row["cause"] != NORM_DEFAULTS
     return not (row["corpus"] == "pilots" and "norm-defaults@0 need its Lean profile route" in row["cause"])
+
+
+GROUPS = ("soft norms", "norm content", "senses", "fenced content", "distinguishing models", "environment key",
+          "malformed profile")
 
 
 def group(cause: str) -> str:
@@ -105,7 +111,11 @@ def decision(item: tuple[str, str, str, str, bytes]) -> dict:
             problem = "a valid or undecidable residue is retained"
         else:
             row["prior_error"] = old["raised"]
-    if problem:
+    if row["group"] not in GROUPS:
+        row["outside"] = True
+        if problem:
+            row["outside_problem"] = problem
+    elif problem:
         row["problem"] = problem
     return row
 
@@ -151,6 +161,7 @@ def main() -> None:
         mine = [r for r in rows if r["group"] == name]
         share[name] = {"cases": len(mine), **dict(sorted(Counter(r["decision"] for r in mine).items()))}
     share["problems"] = len(problems)
+    share["outside_valid_retained"] = sum("outside_problem" in r for r in rows)
     (out / "share.json").write_text(json.dumps(share, indent=2) + "\n")
     print(json.dumps(share, indent=1), flush=True)
     for r in problems:

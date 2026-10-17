@@ -1,0 +1,45 @@
+{
+  "distinguishing models": {
+    "cases": 26,
+    "error": 26
+  },
+  "environment key": {
+    "cases": 25,
+    "error": 25
+  },
+  "fenced content": {
+    "cases": 12,
+    "error": 9,
+    "ok": 3
+  },
+  "malformed profile": {
+    "cases": 8,
+    "error": 8
+  },
+  "norm content": {
+    "cases": 18,
+    "ok": 18
+  },
+  "order@0": {
+    "cases": 2,
+    "retained": 2
+  },
+  "readings@1 pilots": {
+    "cases": 5,
+    "retained": 5
+  },
+  "rights@0 pilots": {
+    "cases": 5,
+    "retained": 5
+  },
+  "senses": {
+    "cases": 7,
+    "retained": 7
+  },
+  "soft norms": {
+    "cases": 22,
+    "ok": 22
+  },
+  "problems": 0,
+  "outside_valid_retained": 12
+}

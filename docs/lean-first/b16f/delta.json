@@ -1,0 +1,229 @@
+{
+  "order": [],
+  "verdict": [],
+  "availability": [],
+  "unavailable": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
+      "op": "document_check",
+      "base": {
+        "timeout": 600
+      },
+      "head": {
+        "timeout": 600
+      },
+      "reason": "unavailable on both sides with identical outputs: SIGNED by standing ruling R7 (DRI-RULINGS.md)"
+    }
+  ],
+  "wording": [
+    {
+      "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab/base.pilots.pilots/pack.json'",
+      "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16f-ab2/head.pilots.pilots/pack.json'"
+    }
+  ]
+}
