@@ -1,0 +1,35 @@
+{
+ "what": "125 report_rights calls (the 25 inventory sources, 5 rounds) with the relay's answer cache cleared before each source; service_cpu_s is utime+stime of the ve_service process (/proc), base = main d7ea7228b worktree, head = this branch; run in turn on the VM",
+ "runs": [
+  {
+   "wall_s": 1.707,
+   "service_cpu_s": 0.66,
+   "tree": "ve-cand-vm1"
+  },
+  {
+   "wall_s": 1.613,
+   "service_cpu_s": 0.66,
+   "tree": "ve-rights-licence-relay"
+  },
+  {
+   "wall_s": 1.544,
+   "service_cpu_s": 0.62,
+   "tree": "ve-cand-vm1"
+  },
+  {
+   "wall_s": 1.636,
+   "service_cpu_s": 0.66,
+   "tree": "ve-rights-licence-relay"
+  },
+  {
+   "wall_s": 1.578,
+   "service_cpu_s": 0.61,
+   "tree": "ve-cand-vm1"
+  },
+  {
+   "wall_s": 1.503,
+   "service_cpu_s": 0.6,
+   "tree": "ve-rights-licence-relay"
+  }
+ ]
+}

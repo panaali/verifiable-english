@@ -1,0 +1,383 @@
+{
+ "batch": "tarch-cutoff",
+ "mutants": [
+  {
+   "id": "M1",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "requests with an explicit timeout are recorded as untimed",
+   "test": "tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[client]"
+  },
+  {
+   "id": "M2",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "every read of the pins counts as the client's pin check",
+   "test": "tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[client]"
+  },
+  {
+   "id": "M3",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "a nested recording's requests count for its own output, not the outer unit",
+   "test": "tests/test_answer_cutoff.py::test_a_child_and_a_nested_recording_send_for_the_outer_unit",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_child_and_a_nested_recording_send_for_the_outer_unit"
+  },
+  {
+   "id": "M4",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "a mode event from outside the client is not marked unknown",
+   "test": "tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[import sys\\nsys.audit('ve.service.mode', 'evaluate')\\n-was not raised by the client's exchange]"
+  },
+  {
+   "id": "M5",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "record files split at U+2028 inside a case text",
+   "test": "tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent"
+  },
+  {
+   "id": "M6",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "unknown service users are not selected",
+   "test": "tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only"
+  },
+  {
+   "id": "M7",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a change to request decoding (lean/VE/Json.lean) narrows by answers",
+   "test": "tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/VE/Json.lean]"
+  },
+  {
+   "id": "M8",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a pin change selects no pin reader at all",
+   "test": "tests/test_answer_cutoff.py::test_a_pin_change_selects_only_data_readers_when_the_new_build_is_pinned",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_pin_change_selects_only_data_readers_when_the_new_build_is_pinned"
+  },
+  {
+   "id": "M9",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit with an explicitly timed request is not unknown",
+   "test": "tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only"
+  },
+  {
+   "id": "M10",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a diff of another build than the one the tests run is accepted",
+   "test": "tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust"
+  },
+  {
+   "id": "M11",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "a case neither side could replay counts as unchanged",
+   "test": "tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers"
+  },
+  {
+   "id": "M12",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "the answer digest equates true with 1",
+   "test": "tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers"
+  },
+  {
+   "id": "M13",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "unseeded calls of the random module are not unknown",
+   "test": "tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import random\\n\\ndef test():\\n    random.choice([1, 2])\\n-calls random.choice]"
+  },
+  {
+   "id": "M15",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit that read an answer the base build changed is not unknown",
+   "test": "tests/test_answer_cutoff.py::test_a_unit_that_read_an_answer_the_base_build_changed_is_unknown",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_unit_that_read_an_answer_the_base_build_changed_is_unknown"
+  },
+  {
+   "id": "M16",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a diff from another base build than the recording's is accepted without its stale answers",
+   "test": "tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust"
+  },
+  {
+   "id": "M17",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "an error result's batch position counts in its answer",
+   "test": "tests/test_answer_cutoff.py::test_a_case_answers_alike_alone_and_in_a_batch",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_case_answers_alike_alone_and_in_a_batch"
+  },
+  {
+   "id": "M18",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "today's rules read the recording's map, not the one R1 reads",
+   "test": "tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness"
+  },
+  {
+   "id": "M19",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit that ran code changed since the recording keeps its recorded requests",
+   "test": "tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness"
+  },
+  {
+   "id": "M20",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "fault": "a plan print, which verify.sh's legacy fast gate reads, takes R1's rule",
+   "test": "tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does[modes]"
+  },
+  {
+   "id": "M21",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "R1 takes the answers rule before the DRI has read its measurement",
+   "test": "tests/test_answer_cutoff.py::test_r1_never_takes_the_answers_rule",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_r1_never_takes_the_answers_rule - As..."
+  },
+  {
+   "id": "M14",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "fault": "the hook ignores the rule it was given",
+   "test": "tests/test_answer_cutoff.py::test_the_hook_passes_its_rule_and_is_off_by_default",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_hook_passes_its_rule_and_is_off_by_default"
+  },
+  {
+   "id": "M22",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "the pin exemption drops a client-only pin reader from the readers of every file",
+   "test": "tests/test_answer_cutoff.py::test_the_pin_exemption_is_for_the_pins_only",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_pin_exemption_is_for_the_pins_only"
+  },
+  {
+   "id": "M23",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "every build counts as pinned",
+   "test": "tests/test_answer_cutoff.py::test_pinned_reads_the_pins_of_the_tree_or_of_a_commit",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_pinned_reads_the_pins_of_the_tree_or_of_a_commit"
+  },
+  {
+   "id": "M24",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a pin change exempts client-only pin readers when the new build is not pinned",
+   "test": "tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan"
+  },
+  {
+   "id": "M25",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit that ran code changed since the recording keeps its recorded pin exemption",
+   "test": "tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan"
+  },
+  {
+   "id": "M26",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "the diff's stale answers do not make their readers unknown",
+   "test": "tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan"
+  },
+  {
+   "id": "M27",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a recorded user that starts no ve_service today is selected",
+   "test": "tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only"
+  },
+  {
+   "id": "M28",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "hypothesis in a helper module the unit imports is not counted",
+   "test": "tests/test_answer_cutoff.py::test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file"
+  },
+  {
+   "id": "M29",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "another test file's property tests count in the unit that imports it",
+   "test": "tests/test_answer_cutoff.py::test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file"
+  },
+  {
+   "id": "M30",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "a refused batch gives every case the first case's answer",
+   "test": "tests/test_answer_cutoff.py::test_a_refused_batch_is_asked_again_case_by_case",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_refused_batch_is_asked_again_case_by_case"
+  },
+  {
+   "id": "M31",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "R1 loses ts-B2's per-mode rule the report activates",
+   "test": "tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_modes_rule",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_modes_rule"
+  },
+  {
+   "id": "M32",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "a refusal's answer holds its nonce, which differs per request",
+   "test": "tests/test_answer_cutoff.py::test_a_refused_batch_is_asked_again_case_by_case",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_refused_batch_is_asked_again_case_by_case"
+  },
+  {
+   "id": "M33",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "a case the client cannot send counts as replayed",
+   "test": "tests/test_answer_cutoff.py::test_a_refused_batch_is_asked_again_case_by_case",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_refused_batch_is_asked_again_case_by_case"
+  },
+  {
+   "id": "M34",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a request index and a map of different commits are read as one recording",
+   "test": "tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust"
+  },
+  {
+   "id": "M35",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit whose test code does not parse is not unknown",
+   "test": "tests/test_answer_cutoff.py::test_a_unit_that_does_not_parse_is_unknown",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_a_unit_that_does_not_parse_is_unknown"
+  },
+  {
+   "id": "M36",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "importing the seedable random.Random makes a unit unknown",
+   "test": "tests/test_answer_cutoff.py::test_seeded_randomness_is_not_unknown",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_seeded_randomness_is_not_unknown - a..."
+  },
+  {
+   "id": "M37",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "a replay of some modes only is diffed as a whole one",
+   "test": "tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers"
+  },
+  {
+   "id": "M38",
+   "language": "python",
+   "file": "tools/answer_replay.py",
+   "fault": "a case whose environment the recording lacks is sent as it is",
+   "test": "tests/test_answer_cutoff.py::test_replay_answers_each_case_as_recorded_and_again_alike",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_replay_answers_each_case_as_recorded_and_again_alike"
+  },
+  {
+   "id": "M39",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a unit that reads the pins as data too is exempt from a pin change",
+   "test": "tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan"
+  },
+  {
+   "id": "M40",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "`diff --recording-answers` drops the stale answers it finds",
+   "test": "tests/test_answer_cutoff.py::test_the_cutoff_command_line",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_the_cutoff_command_line - AssertionE..."
+  },
+  {
+   "id": "M41",
+   "language": "python",
+   "file": "tools/answer_cutoff.py",
+   "fault": "a later untimed request hides an earlier timed one",
+   "test": "tests/test_answer_cutoff.py::test_folding_keeps_a_timed_request_and_reads_every_line_it_can",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_folding_keeps_a_timed_request_and_reads_every_line_it_can"
+  },
+  {
+   "id": "M42",
+   "language": "python",
+   "file": "tools/test_map_recorder.py",
+   "fault": "a timeout passed on one call is not recorded",
+   "test": "tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded",
+   "result": "failed",
+   "failure": "FAILED tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[call]"
+  }
+ ]
+}

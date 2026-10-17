@@ -8,7 +8,7 @@
   fixtures, and a route without an `ok` fixture fails the gate.
 * Through the client's own reader (`LeanService.exchange` with the line replaced, then `ve.ask.read_answer` for
   `ask`): a genuine answer is accepted and a mutant of its binding is CheckerUnavailable.
-* On sample routes against the built Lean executables the gate passes with the committed allow-list, and fails
+* On every route against the built Lean executables the gate passes with the committed allow-list, and fails
   on an accepted mutant the allow-list does not list, on an allow-list entry that matches nothing, and on a
   route whose fixtures are gone.
 * The speech-source reader refuses a unit whose class or status is a list or an object (it raised TypeError).
@@ -207,6 +207,29 @@ def test_graph_background_labels_and_formulas_are_typed(built):
         assert G._exchange_outcome(replay, "graph", "[" + text + "]")[0] == "refused", (kind, path)
 
 
+def test_readings_route_refuses_empty_labels_targets_and_repeated_over_names(built):
+    cases = [row[2] for row in G.load_cases() if row[:2] == ["service", "readings-route"]]
+    texts = [json.dumps(case, separators=(",", ":")) for case in cases]
+    answers = G._service_answers(G.DEFAULT_EXECUTABLE, "readings-route", texts)
+    wanted = {
+        ("empty", "results/*/result/fill/*/label"),
+        ("empty", "results/*/result/targets/*"),
+        ("duplicate", "results/*/result/units/*/content/norm/over"),
+    }
+    found = set()
+    replay = G._Replay()
+    for case, line, answer in zip(cases, texts, answers):
+        for mutant, changed in G.mutants(answer, G._strings(case), G._service_rebind_ints(answer)):
+            key = (mutant.kind, mutant.pattern())
+            if key not in wanted or key in found:
+                continue
+            replay.answer, replay.mutant = changed, mutant
+            outcome, detail = G._exchange_outcome(replay, "readings-route", "[" + line + "]")
+            assert outcome == "refused", (key, detail)
+            found.add(key)
+    assert found == wanted
+
+
 def test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one(built):
     text, answer = _genuine("identity")
     replay = G._Replay()
@@ -241,18 +264,31 @@ def test_ask_is_read_as_ve_ask_reads_it(built):
     assert outcome == "refused" and "unused" in detail, detail
 
 
-SAMPLE = ("service:identity", "service:check", "ve_metered::countermodel.search")
+ROUTES = [f"service:{mode}" for mode in MODES] + list(G.ONE_SHOT)
 
 
-def test_the_gate_passes_on_sample_routes_with_the_committed_allow_list(built):
-    report = G.run_gate(set(SAMPLE))
+def test_every_allow_list_entry_and_untyped_manifest_field_names_a_gated_route():
+    """A one-route run checks only its own route's entries, so `test_the_gate_passes_on_every_route` covers
+    the whole allow-list only if every entry names one of its routes."""
+    entries = json.loads(G.ALLOW.read_text())["entries"]
+    assert {entry["route"] for entry in entries} <= set(ROUTES)
+    assert {item["route"] for item in G.manifest_untyped()} <= set(ROUTES)
+
+
+@pytest.mark.parametrize("route", ROUTES)
+def test_the_gate_passes_on_every_route(built, route):
+    """The gate on the committed schemas, fixtures and allow-list, one route at a time. Only review-ready's
+    [relay] check ran the whole gate, so lf-14a, lf-14b and qa-q2 merged with it failing on main (stale
+    allow-list paths and an empty norm-defaults `unsaid` description accepted); now the suite fails."""
+    lean_build(*{runner for runner, *_ in G.ONE_SHOT.values()})
+    report = G.run_gate({route})
     assert report["failures"] == []
-    assert set(report["routes"]) == set(SAMPLE)
-    for route in SAMPLE:
-        stats = report["routes"][route]
-        assert stats["ok_fixtures"] >= 1 and stats["mutants"] == stats["refused"] + stats.get("allowed", 0)
-    # service:check's untyped unsat core is listed as a follow-up, so some mutants were allowed.
-    assert report["routes"]["service:check"]["allowed"] > 0
+    assert set(report["routes"]) == {route}
+    stats = report["routes"][route]
+    assert stats["ok_fixtures"] >= 1 and stats["mutants"] == stats["refused"] + stats.get("allowed", 0)
+    if route == "service:check":
+        # Its untyped unsat core is listed as a follow-up, so some mutants were allowed.
+        assert stats["allowed"] > 0
 
 
 def test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry(built, tmp_path):

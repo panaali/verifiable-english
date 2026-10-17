@@ -508,11 +508,11 @@ def contentBearing (R : ReadingSet) : Bool :=
 /-- The first answer of `f` along `l`; `f` is not evaluated past it. -/
 def firstSome {α β : Type} (l : List α) (f : α → Option β) : Option β := l.findSome? f
 
-/-- 1.1, 1.2: the named abstentions. Content beside `norm-defaults@0` is refused on the soft and rights chains;
-    on the norms chain it is under the unspecified completion (readings-defaults.md 1.1, `UnspecifiedWire.lean`),
-    whose admission follows this one. -/
+/-- 1.1, 1.2: the named abstentions. Content beside `norm-defaults@0` is refused on the rights chain; on the norms
+    and soft chains it is under the unspecified completion (readings-defaults.md 1.1, `UnspecifiedWire.lean`;
+    rd-9-soft-chain.md 1.1, `SoftWire.lean`), whose admission follows this one. -/
 def abstention (re : ReadingsEnvironment) (D : Doc) : Option String :=
-  if re.lower.contains "norm-defaults@0" && re.chain != .norms && D.sets.any contentBearing then
+  if re.lower.contains "norm-defaults@0" && re.chain == .rights && D.sets.any contentBearing then
     some "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
   else firstSome D.sets (fun R => firstSome R.candidates (fun a => match a.content with
     | some c => match c.needs with

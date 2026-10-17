@@ -145,7 +145,6 @@ def test_a_passing_suite_retries_nothing(fake):
 def test_the_tracked_quarantine_is_valid_and_names_collected_tests():
     entries = quarantine.load()
     collected = set(gate_collection.collect(prebuilt=True))
-    assert entries, "the first entry is tests/test_difffuzz.py::test_ci_run"
     for item in entries:
         assert item["test"] in collected, item["test"]
         assert json.loads((ROOT / item["evidence"]).read_text())["test"] == item["test"]

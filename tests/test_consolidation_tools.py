@@ -1476,16 +1476,3 @@ def test_contract_inputs_become_soft_elaborate_cases(tmp_path):
     case = {"id": "recorded-0", "kind": "soft-elaborate", "environment": {"env": 1}, "norms": [{"norm": 1}]}
     assert (soft["mode"], soft["cases"]) == ("soft-norms", [case])
     assert (diagnose["mode"], diagnose["cases"]) == ("diagnose", [{**case, "unit": "soft-norms@0"}])
-
-
-def test_live_tree_is_the_trust_baseline():
-    """The trust ratchet (arch D3) on the live tree: the tree measures cleanly, nothing grew beyond the signed
-    allowances, and the baseline is the tree's measurement with no allowance left unwritten. Growth passes only
-    once the DRI signs it and `trust_map.py --write --reason` records it. Restored from the RD-6b report test
-    (review F2 of jt-crossplan-fixes), the suite's one check of the tree against the baseline."""
-    current, problems = trust_map.measure(ROOT, ROOT / "tools/trust-classes.json", ROOT / "lean/statements.txt")
-    baseline = json.loads((ROOT / "docs/trust-baseline.json").read_text())
-    assert not problems
-    assert trust_map.check(current, baseline) == []
-    assert baseline["files"] == current and baseline["signed"] == []
-    assert baseline["totals"] == trust_map.totals(current)

@@ -5,7 +5,6 @@ names. The diagnostic engine observes a source only after the legacy validator r
 acceptance or identity.
 """
 
-from conformance import frozen_norm_defaults as nd
 from ve.ast import _Checker
 from ve.environment import Environment
 from ve.errors import ResourceLimit
@@ -15,10 +14,16 @@ from ve.norms_contract import CLASSIFIERS, HOOKS, heights, source
 from ve.wire_contract.registry import Registry
 
 
+def _legacy_oracle():
+    """Load the pinned differential oracle only for the legacy contract probe."""
+    from conformance import frozen_norm_defaults
+    return frozen_norm_defaults
+
+
 def legacy_validation(environment, norms):
     """The route's own statements in the route's order (2.2): the environment, each unit decoded, then the
     document with its `unspecified` completion."""
-    return nd.UnspecifiedDocument(Environment(environment), [NormDocument._decode(c) for c in norms])
+    return _legacy_oracle().UnspecifiedDocument(Environment(environment), [NormDocument._decode(c) for c in norms])
 
 
 def norm_defaults_source(case):
@@ -29,7 +34,7 @@ def _prepared(root):
     """`UnspecifiedDocument` up to its limits: the environment, the author document (W1's checks hold, as the
     engine may assume of every earlier instance) and the unspecified predicates."""
     env = Environment(root["environment"])
-    document = object.__new__(nd.UnspecifiedDocument)
+    document = object.__new__(_legacy_oracle().UnspecifiedDocument)
     document.env = env
     document.author = NormDocument(env, [NormDocument._decode(unit) for unit in root["norms"]])
     document.unspec = tuple(sorted(p for p, d in env.predicates.items()
@@ -51,7 +56,7 @@ def filled_rules_fit(root, items):
 
 def unspecified_names_fit(root, items):
     """5.3: every unspecified predicate's name is at most `MAX_NAME_BYTES` long in UTF-8."""
-    return any(len(p.encode("utf-8")) > nd.MAX_NAME_BYTES for p in _prepared(root).unspec)
+    return any(len(p.encode("utf-8")) > _legacy_oracle().MAX_NAME_BYTES for p in _prepared(root).unspec)
 
 
 def filled_ast_fits(root, items):

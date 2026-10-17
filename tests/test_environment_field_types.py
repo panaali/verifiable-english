@@ -544,11 +544,13 @@ def test_reports_block_diagnostics_are_leans(monkeypatch):
 def test_definition_body_with_a_non_string_name_is_rejected_by_both(monkeypatch, value):
     """A definition body whose predicate name is not a string raised
     `TypeError` while its dependencies were collected; Python and Lean both
-    reject it now."""
+    reject it now, with Python's elaborator's text (lf-14c review F2: Python's
+    decoder keeps the name and its typing check rejects the body)."""
     monkeypatch.setenv("VE_AUTHORITY", "python")
     data = pm.raw_environment(("definitions@0",))
     data["vocabulary"]["predicates"]["derived"]["defined"]["body"][1] = value
-    assert pair(outcome(lambda: Environment(data))) == ("InvalidInput", "invalid indexed formula")
+    assert pair(outcome(lambda: Environment(data))) == (
+        "InvalidInput", "Definition derived: the body is not a typed formula over the symbols below it")
     if (BIN / "ve_service").exists():
         lean_environment_mode(data)  # fails the test unless Lean rejects too
 
@@ -578,6 +580,7 @@ def _answer(binary, batch):
     return done.returncode, json.loads(done.stdout), done.stderr.decode(errors="replace")
 
 
+@pytest.mark.live_service
 @pytest.mark.parametrize("binary", sorted(LEAN_ROUTES))
 def test_every_lean_route_rejects_every_wrong_type_without_panicking(binary):
     """Each Lean route decodes the environment of a case with `Except`: every
@@ -611,6 +614,7 @@ def test_rust_rejects_every_wrong_type_without_crashing(rust_executable):
         assert done.returncode == 2 and "null" in done.stderr.lower(), (case["id"], done.stderr)
 
 
+@pytest.mark.live_service
 @pytest.mark.parametrize("binary", sorted(LEAN_ROUTES))
 def test_every_lean_route_reads_every_nested_value_without_panicking(binary):
     """The nested matrix above on each Lean route: one row per case, each a

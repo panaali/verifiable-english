@@ -31,6 +31,7 @@ its merge strategy:
 | trust-tables | `tools/trust-classes.json`, `docs/trust-baseline.json` | json (check only) |
 | checker-pins | `lean/checkers.lock` (pins the built `ve_service` and the Rust release binary) | json |
 | response-schemas | `ve/backends/lean_service_schema/*.json` | regenerate |
+| binding-census | `docs/test-architecture/binding-census.{json,md}` (from the schemas and the recorded answers) | regenerate |
 | english-codes | `ve/english_grammar/codes.json` | regenerate |
 | question-codes | `ve/question/codes.json` | regenerate |
 | question-lock | `ve/question/LOCK.json` | regenerate |
@@ -40,6 +41,8 @@ its merge strategy:
 | import-contract | `.importlinter` | regenerate |
 | uv-lock | `uv.lock` | regenerate |
 | heavy-tests | `tests/heavy.json` (from the saved Mac duration report) | regenerate |
+| platform-divergences | `tests/platform-divergences.json` (saved from both runners' gate records) | json |
+| platform-contract | `tests/platform-contract.json` (the x86 contract suite, from the tree and the divergence list) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);

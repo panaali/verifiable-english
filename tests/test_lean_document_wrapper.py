@@ -104,7 +104,9 @@ DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/caus
            "usecases/question-answering/udhr-part07.ve.md",
            "usecases/question-answering/agent-policy/a-unspecified.ve.md",
            "usecases/question-answering/agent-policy/a-rules.ve.md",
-           "usecases/question-answering/agent-policy/a-conflict.ve.md"}
+           "usecases/question-answering/agent-policy/a-conflict.ve.md",
+           # A readings@1 document without norm-defaults@0, which the mode owns since batch 16e.
+           "tests/data/premise-scale/qt0p-companion.ve.md"}
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "fenced English or strict content",
