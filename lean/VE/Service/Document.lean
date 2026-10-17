@@ -564,13 +564,6 @@ def decodedEnvironment (environment : Json) (block : Block) : Except String Env 
   let e := checked.envelope
   unless e.family == .fol do
     throw (unavailable s!"document checks on the {e.family.name} family need its Lean route")
-  let predicates ← fields (← e.vocabulary.getObjVal? "predicates")
-  -- Without a block, Python admits a graph over regulated predicates on the norms route; a block route admits
-  -- its own graph, and both build the (empty) norm document of the declarations alone. A rights document's norms
-  -- are the soft route's (`RightsDoc`).
-  if block == .none && !defaults && !rights && e.profiles.contains "norms@0" &&
-      predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
-    throw (unavailable "regulated predicates need the Lean norms route")
   let rv ← VE.Route.Run.decodeRouteVocabulary e
   let profiles ← VE.Route.Gate.profilesOf environment
   pure ⟨environment, checked, rv, profiles, ← Standalone.environmentIdOf profiles environment, block⟩
@@ -895,7 +888,9 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
     | _ => throw one
   if key == "quantity" then throw "UnsupportedProfile: quantity content requires ve-units@1"
   if key == "norm" then
-    if E.profiles.contains "norm-defaults@0" then
+    -- `NormDocument._decode` and `norm_meaning_id`: the norms route's decoder of one norm object (batch 16f for a
+    -- plain `norms@0` document; its checks over the environment are `checkNorms`'s).
+    if E.profiles.contains "norm-defaults@0" || E.profiles.contains "norms@0" then
       let node ← (VE.Norms.Wire.decodeNorm content).mapError fun e =>
         if e == "Natural number expected" then
           unavailable "a malformed norm formula is outside this document decoder"
@@ -904,7 +899,6 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
         else e
       let encoded := VE.Alternatives.Wire.encodeNode node
       return (.norm node, ← VE.Route.Wire.meaningId E.profiles E.envId encoded)
-    if E.profiles.contains "norms@0" then throw (unavailable "norm content needs the Lean norms route")
     throw "UnsupportedProfile: norms@0 is required"
   if RightsKind.names.contains key then throw "UnsupportedProfile: rights@0 is required"
   if key == "ast" then
@@ -1122,6 +1116,16 @@ def coverageJson (front : Json) (units : List SourceUnit) (sourceBytes : Nat) (b
   | none => Json.mkObj tables
   | some b => Json.mkObj (tables ++ [("alternatives", b.line.getObjValD "alternatives")])
 
+/-- Whether a document is the norms route's (Python `_uses_norms`, Lean `Norms.Run.usesNormsPath`): `norms@0` with a
+regulated declaration or norm content. -/
+def Env.regulates (E : Env) : Bool :=
+  match (E.json.getObjValD "vocabulary").getObjValD "predicates" with
+  | .obj kvs => kvs.toList.any fun (_, e) => (e.getObjVal? "regulated").isOk
+  | _ => false
+
+def usesNorms (E : Env) (units : List SourceUnit) : Bool :=
+  E.profiles.contains "norms@0" && (E.regulates || units.any fun u => u.content matches some (.norm _))
+
 /-! ## The claim graph -/
 
 /-- The graph's node labels as `_report` parses them: `parse_label` of an object node's label. -/
@@ -1171,7 +1175,8 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
   let document := Loader.admissionObject (units.map fun u =>
       (u.id, u.span, u.kind, u.content.bind fun c => match c with
         | .formula f => some f | _ => none)) active graph front openNames narrowings
-  let document := if E.profiles.contains "norm-defaults@0" then
+  let norms := !E.profiles.contains "norm-defaults@0" && usesNorms E units
+  let document := if E.profiles.contains "norm-defaults@0" || norms then
     let activeIds := active.map (·.1.unit)
     let rows := ((document.getObjValD "units").getArr?.toOption.getD #[]).toList.zip units |>.map fun (j, u) =>
       match u.content with
@@ -1185,6 +1190,9 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
     -- Python's `admit_document` asks it.
     | .none => if E.profiles.contains "norm-defaults@0" then
         VE.NormDefaults.Run.runAdmission "admission"
+          (if E.profiles.contains "readings@1" then lowerReadings E.json else E.json) document
+      -- A norm construct takes the norms route (`_uses_norms`; batch 16f).
+      else if norms then VE.Norms.Run.runAdmission "admission"
           (if E.profiles.contains "readings@1" then lowerReadings E.json else E.json) document
       else VE.Route.Run.dispatch "admission" E.json E.checked.envelope
         (Json.mkObj [("kind", .str "admission"), ("document", document)])
@@ -1287,6 +1295,19 @@ def checkNormDefaults (E : Env) (front : Json) (units : List SourceUnit) (setUni
   let block := (front.getObjVal? "completions").toOption.getD (Json.mkObj [])
   let _ ← VE.NormDefaults.Wire.validateCompletions source.U block (units.map (·.id))
 
+/-- `load_document`'s W1 steps for a plain `norms@0` document (batch 16f): each quoted norm, and each norm under an
+active set, checked alone (`_check_quoted`, the norms route's `Norms.Admission.checkQuoted`), then the free norm
+document (`NormDocument(env, selected_norms)`, the norms route's `Norms.Wire.decodeSource`), which Python builds
+when it has rules or the environment regulates a predicate. -/
+def checkNorms (E : Env) (units : List SourceUnit) (setUnits attached : List String) : Except String Unit := do
+  let environment := if E.profiles.contains "readings@1" then lowerReadings E.json else E.json
+  let (free, single) := freeNorms units setUnits attached
+  unless single.isEmpty do
+    let base ← VE.Norms.Wire.decodeSource environment (Json.arr #[])
+    single.forM (VE.Norms.Admission.checkQuoted base)
+  if !free.isEmpty || E.regulates then
+    let _ ← VE.Norms.Wire.decodeSource environment (Json.arr free.toArray)
+
 /-! ## The case -/
 
 /-- The checked document: its identities, its source and units, and what its coverage reads. -/
@@ -1341,6 +1362,8 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     throw "unit status contradicts content, meaning, or active reading set"
   if E.profiles.contains "norm-defaults@0" then
     checkNormDefaults E front units (active.map (·.1.unit)) attached
+  else if E.profiles.contains "norms@0" && !E.rights then
+    checkNorms E units (active.map (·.1.unit)) attached
   Loader.checkLemmas front
   for u in units do
     if u.kind == .str "asserted" && u.content.isNone && !(all.any (·.1.unit == u.id)) then
