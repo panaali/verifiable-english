@@ -1,5 +1,8 @@
 """Temporarily plant each batch 16f fault, run the test meant to catch it, and save every result, caught or not.
 
+The review fixes add faults for F1 (a soft document's parts pre-scan) and F2 (the senses route's composition, its
+transport, binding and the recorders that write a pilot with its files).
+
     python docs/lean-first/b16f/seed_faults.py
 
 A Lean fault is built into `ve_service` and pinned for the run; the source, the lock and the build are restored
@@ -18,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[3]
 LOCK = ROOT / "lean/checkers.lock"
 SERVICE = ROOT / "lean/.lake/build/bin/ve_service"
 TESTS = "tests/test_b16f_document.py"
+SENSES = "tests/test_b16f_senses_document.py"
 LEAN = "lean/VE/Service/Document.lean"
 CASES = [
     # Lean: the document mode's composition of the soft and norms routes, and its located diagnostics.
@@ -31,8 +35,8 @@ CASES = [
      "    let _ := single.length",
      "test_a_norm_fault_keeps_the_retained_loader_s_diagnostic[quoted unregulated]"),
     ("a soft document's formulas read in its own environment instead of E''", LEAN,
-     "  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← extendedEnv prime, ← softRules prime flat⟩",
-     "  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, E, ← softRules prime flat⟩",
+     "  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← extendedEnv prime, ← softRules prime (partsPrefix raw)⟩",
+     "  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, E, ← softRules prime (partsPrefix raw)⟩",
      "test_a_formula_over_a_decision_predicate_is_read_in_the_extended_environment"),
     ("a refused model decided when the set has two", LEAN,
      "  | [f] => if f.1.isEmpty then none else some f",
@@ -46,6 +50,25 @@ CASES = [
      "  else if message == strictRefused then locatedFence E doc",
      "  else if message == strictRefused then none",
      "test_a_strict_fence_s_syntax_error_has_the_parse_mode_s_span"),
+    # Lean, review F1: a soft document's parts pre-scan stops at the first fault, as Python's swallowed generator.
+    ("a soft document's parts pre-scan raises its fault before the unit loop", LEAN,
+     "  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← extendedEnv prime, ← softRules prime (partsPrefix raw)⟩",
+     "  pure ⟨declared ++ VE.SoftNorms.decisionNames src.D, ← extendedEnv prime,\n"
+     "    ← softRules prime (← raw.foldlM (fun acc u => do pure (acc ++ (← Loader.partsOf u))) [])⟩",
+     "test_a_later_unit_s_structural_fault_comes_after_an_earlier_unit_s_fault[soft-norms]"),
+    # Lean, review F2: the senses route's composition.
+    ("a frozen envelope's meaning id under the profiles' identity version", LEAN,
+     "  | some l => Standalone.legacyMeaningId l E.envId ast",
+     "  | some _ => VE.Route.Wire.meaningId E.profiles E.envId ast",
+     f"{SENSES}::test_a_valid_senses_document_is_decided_by_lean[a_front_matter_default-frozen]"),
+    ("a senses refusal decided without its diagnostic", LEAN,
+     '  unless reading.getObjValD "status" == .str "one" || reading.getObjValD "status" == .str "open" do',
+     '  unless true do',
+     f"{SENSES}::test_a_senses_refusal_with_its_diagnostic_keeps_the_retained_path[b_no_choice_made]"),
+    ("pack texts of another count read", LEAN,
+     "  unless texts.size == entries.size && texts.all (·.getStr?.toOption.isSome) do",
+     "  unless texts.all (·.getStr?.toOption.isSome) do",
+     f"{SENSES}::test_a_request_without_the_pack_texts_keeps_the_retained_path[two]"),
     # Python: the binding of the answer's new fields.
     ("a model path not bound to a model member", "ve/document.py",
      "                else:\n                    break\n            else:\n                return True\n    return False",
@@ -63,6 +86,23 @@ CASES = [
      "            formula_env = soft_document.extended_env\n        if \"rights@0\" in env.profiles:",
      "            formula_env = env\n        if \"rights@0\" in env.profiles:",
      "test_the_layer_seeds_are_decided_by_lean_with_the_retained_public_outcome[soft-norms]"),
+    # Python, review F2: the senses transport, binding and recorders.
+    ("a senses document's pack texts not sent", "ve/document.py",
+     '            case["packs"] = texts',
+     '            pass',
+     f"{SENSES}::test_a_valid_senses_document_is_decided_by_lean[d_parenthetical_switch-modern]"),
+    ("a senses unit's meaning id bound to the document's environment", "ve/document.py",
+     "            formula_env = senses.environment\n        soft =",
+     "            formula_env = env\n        soft =",
+     f"{SENSES}::test_a_senses_unit_s_meaning_id_is_bound_to_the_projected_environment"),
+    ("a fence's content optional outside a senses document", "ve/document.py",
+     '    read = {uid for uid, _ in _english_fences(meta["units"], fences or {})} if "senses" in meta else set()',
+     '    read = {uid for uid, _ in _english_fences(meta["units"], fences or {})}',
+     f"{SENSES}::test_a_fence_without_a_formula_may_have_no_content_but_others_must"),
+    ("a pilot written without the files it names", "tools/lean_first_diff.py",
+     "    companions = pilot_companions(root, name, text)\n",
+     "    companions = {}\n",
+     f"{SENSES}::test_a_pilot_is_written_with_the_files_it_names_beside_it"),
 ]
 
 
@@ -77,6 +117,7 @@ def build() -> None:
 def main() -> None:
     records = []
     for bug, relative, before, after, test in CASES:
+        target = test if "::" in test else f"{TESTS}::{test}"
         source = ROOT / relative
         original = source.read_text()
         lock = LOCK.read_text()
@@ -92,7 +133,7 @@ def main() -> None:
                 LOCK.write_text(json.dumps(pinned, indent=2) + "\n")
             env = {**os.environ, "VE_NATIVE_PREBUILT": "1"}
             done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:xdist", "-p", "no:cacheprovider",
-                                   f"{TESTS}::{test}"], cwd=ROOT, env=env, capture_output=True, text=True,
+                                   target], cwd=ROOT, env=env, capture_output=True, text=True,
                                   check=False)
         finally:
             source.write_text(original)
@@ -101,7 +142,7 @@ def main() -> None:
                 build()
         output = done.stdout + done.stderr
         caught = done.returncode == 1 and " failed" in output
-        records.append({"bug": bug, "file": relative, "test": f"{TESTS}::{test}", "exit_code": done.returncode,
+        records.append({"bug": bug, "file": relative, "test": target, "exit_code": done.returncode,
                         "caught": caught, "failure_excerpt": output[-1500:]})
         print(f"{bug}: {test} {'failed as expected' if caught else 'PASSED: the fault survived'}", flush=True)
     path = Path(__file__).resolve().parent / "evidence/mutants.json"

@@ -311,6 +311,50 @@ def pilot_documents(root: Path) -> list[tuple[str, str, bytes]]:
     return out
 
 
+def pilot_companions(root: Path, name: str, text: bytes) -> dict[str, bytes]:
+    """The files of a pilot document's branch that its front matter names beside it: each string of `senses.packs`
+    (the only member a loader reads a file by) resolved against the document's directory, where the branch holds a
+    file there. A bundled pack's name names none. The checker decides which of them it reads (lf-16f review F2:
+    a document written alone lost the pack beside it)."""
+    import posixpath
+    branch, path = name.split(":", 1)
+    try:
+        meta = json.loads(text[4:text.index(b"\n---\n", 4)])
+        packs = meta["senses"]["packs"]
+    except (ValueError, TypeError, KeyError):
+        return {}
+    out = {}
+    for entry in packs if type(packs) is list else ():
+        if type(entry) is not str:
+            continue
+        target = posixpath.normpath(posixpath.join(posixpath.dirname(path), entry))
+        if target.startswith("../") or target == ".." or posixpath.isabs(target):
+            continue
+        done = subprocess.run(["git", "cat-file", "blob", f"{branch}:{target}"], cwd=root, capture_output=True)
+        if done.returncode == 0:
+            out[target] = done.stdout
+    return out
+
+
+def write_pilot(root: Path, directory: Path, name: str, blob: str, text: bytes) -> Path:
+    """Write a pilot document where a checker reads it: `<blob>.ve.md`, or, when it names files beside it
+    (`pilot_companions`), at its branch path under `<blob>/` with those files where the branch holds them, so it is
+    checked as it is loaded in place."""
+    companions = pilot_companions(root, name, text)
+    if not companions:
+        path = directory / f"{blob}.ve.md"
+        path.write_bytes(text)
+        return path
+    base = directory / blob
+    for target, data in companions.items():
+        (base / target).parent.mkdir(parents=True, exist_ok=True)
+        (base / target).write_bytes(data)
+    path = base / name.split(":", 1)[1]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(text)
+    return path
+
+
 def pilot_records(root: Path, scratch: Path, workers: int):
     """`ve document check` of each pilot document, one process each, in the recorded checkout."""
     documents = pilot_documents(ROOT)
@@ -323,8 +367,7 @@ def pilot_records(root: Path, scratch: Path, workers: int):
 
     def check(item):
         name, blob, text = item
-        path = scratch / f"{blob}.ve.md"
-        path.write_bytes(text)
+        path = write_pilot(ROOT, scratch, name, blob, text)
         return {"case": name, "op": "document_check", "source_sha256": blob, "authority": "default",
                 "outcome": pilot_check(root, path, env)}
 

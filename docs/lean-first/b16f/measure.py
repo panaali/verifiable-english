@@ -7,7 +7,9 @@ and the malformed-profile and environment-key groups. The other twelve rows (pil
 `rights@0`) are named by no batch's groups: they are measured and saved with `"outside": true`, and a valid one that
 stays on the retained path is reported, not counted as this batch's failure.
 
-The corpus generators and the ledger must agree on case names and source bytes. Every case is decided twice, by
+A pilot is written as it is loaded in place, with the files its front matter names beside it as its branch holds
+them (`lean_first_diff.write_pilot`: a senses document's pack; review F2). The corpus generators and the ledger must
+agree on case names and source bytes. Every case is decided twice, by
 Lean's `document` mode (the new path) and by Python's retained loader (the prior path), and compared as 16e's
 `measure.py` compares them:
 
@@ -27,7 +29,7 @@ from pathlib import Path
 import sys
 import tempfile
 
-from tools.lean_first_diff import document_corpus, error_record, outcome, pilot_documents, public
+from tools.lean_first_diff import document_corpus, error_record, outcome, pilot_documents, public, write_pilot
 from ve import document as D
 from ve.errors import CheckerUnavailable, ResourceLimit, VEError
 
@@ -75,15 +77,20 @@ def unavailable(record: dict) -> bool:
 def decision(item: tuple[str, str, str, str, bytes]) -> dict:
     corpus, case, source_hash, old_cause, raw = item
     with tempfile.TemporaryDirectory(prefix="b16f-case-") as directory:
-        path = Path(directory) / "document.ve.md"
-        path.write_bytes(raw)
+        if corpus == "pilots":
+            # A pilot is checked as it is loaded in place, with the files it names beside it (review F2).
+            name, blob = case.rsplit("/", 1)
+            path = write_pilot(ROOT, Path(directory), name, blob, raw)
+        else:
+            path = Path(directory) / "document.ve.md"
+            path.write_bytes(raw)
         old = prior(raw, path)
         try:
-            answer = D._lean_answer(raw, True)
+            answer = D._lean_answer(raw, True, path.parent)
             if answer is None:
                 from ve.backends.relay import answer as relay_answer
-                _, reason = relay_answer("document", {"id": "document", "document": raw.decode("utf-8"),
-                                                      "admit": True})
+                _, reason = relay_answer("document", D._document_case(raw, True, path.parent) or
+                                         {"id": "document", "document": raw.decode("utf-8"), "admit": True})
                 name, cause, new = "retained", str(reason), None
             else:
                 report = D._report(D._lean_document(raw, path, answer, admitted=True))
