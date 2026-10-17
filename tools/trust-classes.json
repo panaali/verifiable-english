@@ -7234,7 +7234,14 @@
         "VE.Rights.sameEffectStrict"
       ],
       "D[V]": [
-        "VE.Rights.Ground",
+        {
+          "name": "VE.Rights.Ground",
+          "tied": [
+            "VE.Rights.ground_cited",
+            "VE.Rights.ground_collision",
+            "VE.Rights.ground_effect"
+          ]
+        },
         "VE.Rights.Ground.text",
         "VE.Rights.mechText"
       ],
