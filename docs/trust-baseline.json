@@ -544,6 +544,13 @@
    "reason": "Merge lean-first/b14a with ve-integration: classify the three parse schema shapes as verdict-bearing glue and account for 49 reviewed trusted lines in the source-span response shape and parse schema; no new axioms.",
    "signature": "unsigned: rebaselined with a reason (trust_map.py --write --reason) before AR-4",
    "commit": "13406cf8d888fafec4544eae1f4d7f06a848b130"
+  },
+  {
+   "class": "V",
+   "lines": 15,
+   "reason": "jt-crossplan-fixes: the X2 head fixed point in the Lean English policy (PolicyCtx.of, PolicyCtx.ofHeads, VE/EnglishGrammar/Policy.lean +15); K +0, S +0; new Lean-owned behaviour, #guard-tested in E2Examples.lean; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "aaff776345c5e58ebe10f131316ba1c42663d3b2"
   }
  ]
 }
