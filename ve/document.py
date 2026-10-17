@@ -502,9 +502,12 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool):
         elif soft_document is not None:
             norm_defaults = norms = None
         else:
+            # Batch 16f: the free norm document of a plain `norms@0` document, whose rules Lean's norms route
+            # checked (`Service.Document.checkNorms`), built as Python's own path builds it.
             norm_defaults = None
-            norms = (NormDocument(env, []) if any(d.regulated is not None for d in env.predicates.values())
-                     else None)
+            selected = _free_norms(compiled, active, _s1_attached(base_environment(meta), meta))
+            norms = (NormDocument(env, selected)
+                     if selected or any(d.regulated is not None for d in env.predicates.values()) else None)
         reading_sets = meta.get("reading_sets", [])
         companions, s1_content = _readings_routes(env, reading_sets)
         readings_s1 = readings_s2 = readings_components = None
