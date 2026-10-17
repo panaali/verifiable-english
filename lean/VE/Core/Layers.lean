@@ -166,9 +166,7 @@ theorem firstBad_none (E : VE.Environment) : (ds : List NaryDef) → firstBad E 
       · cases h
     · cases h
 
-/-- The dependency graph of the FOL projection's definitions `fol`, then the core `entries`.
-The layered route passes `L.rv.definitions` as `fol`, which is empty (`folPredicates` drops
-every defined declaration), so `entries` holds every definition. -/
+/-- The dependency graph of `fol` (always empty: `folPredicates` drops defined ones), then `entries`. -/
 def definitionNodes (fol : List VE.Definitions.Def) (entries : List NaryDef) : List VE.Route.DepNode :=
   fol.map (fun d => ⟨d.name, VE.Definitions.mentions d.body⟩) ++
     entries.map fun d => ⟨d.name, mentions d.body⟩
