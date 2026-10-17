@@ -405,9 +405,12 @@
       "type": "object"
     },
     "packages": {
-      "$comment": "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN.",
+      "$comment": "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN, which names the first failing certificate in its status line and is conditional on nothing; a CONFLICT-FREE status line counts its premises.",
       "additionalProperties": false,
-      "else": {"not": {"required": ["detail"]}},
+      "else": {
+        "not": {"required": ["detail"]},
+        "properties": {"status_text": {"pattern": "CONFLICT-FREE among rules on the same act, conditional on .*"}}
+      },
       "if": {"properties": {"verdict": {"const": "UNKNOWN"}}},
       "properties": {
         "conditional_on": {"$ref": "#/$defs/conditional_labels"},
@@ -419,7 +422,14 @@
         "verdict": {"enum": ["CONFLICT-FREE", "UNKNOWN"]}
       },
       "required": ["id", "status", "verdict", "status_text", "targets", "conditional_on"],
-      "then": {"required": ["detail"]},
+      "then": {
+        "properties": {
+          "conditional_on": {"maxItems": 0},
+          "detail": {"pattern": "(missing certificate for |invalid certificate for ).*"},
+          "status_text": {"pattern": "UNKNOWN: .*"}
+        },
+        "required": ["detail"]
+      },
       "type": "object"
     },
     "projections": {
