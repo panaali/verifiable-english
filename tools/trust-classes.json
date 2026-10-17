@@ -9123,7 +9123,9 @@
         "VE.Service.Document.locatedModel",
         "VE.Service.Document.locatedOf",
         "VE.Service.Document.locatedRow",
-        "VE.Service.Document.undecided"
+        "VE.Service.Document.partsPrefix",
+        "VE.Service.Document.undecided",
+        "VE.Service.Document.yieldedParts"
       ]
     },
     "VE/Service/EnglishRun.lean": {

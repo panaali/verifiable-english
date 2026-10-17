@@ -163,6 +163,70 @@ def test_a_soft_source_fault_keeps_the_retained_path(service, fault):
     assert "soft source the soft route rejects" in answer["text"] and python["text"] in answer["text"]
 
 
+def _early(units, fault):
+    if fault == "support":
+        units[0]["support"] = "bogus"
+    elif fault == "span":
+        units[0]["span"] = [0, 0]
+    elif fault == "kind":
+        units[0]["kind"] = "bogus"
+    elif fault == "meaning":
+        units[0]["meaning"] = "bogus"
+
+
+def _late(units, fault):
+    """A structural fault of `_parts` (the generator `load_document` scans for `check_rule_batch` before its unit loop)
+    at the second unit."""
+    unit = units[1]
+    a, b = unit["span"]
+    if fault == "one part":
+        units[1] = {"id": "whole", "span": [a, b], "status": "MIXED", "parts": [{**unit, "id": "f1"}]}
+    elif fault == "gap":
+        units[1] = {"id": "whole", "span": [a, b], "status": "MIXED",
+                    "parts": [{**unit, "id": "f1", "span": [a, a + 1]}, {**unit, "id": "f2", "span": [a + 2, b]}]}
+    elif fault == "short":
+        units[1] = {"id": "whole", "span": [a, b], "status": "MIXED",
+                    "parts": [{**unit, "id": "f1", "span": [a, a + 1]}, {**unit, "id": "f2", "span": [a + 1, b - 1]}]}
+    elif fault == "mixed id":
+        units[1] = {"id": "not a token", "span": [a, b], "status": "MIXED",
+                    "parts": [{**unit, "id": "f1", "span": [a, a + 1]}, {**unit, "id": "f2", "span": [a + 1, b]}]}
+    elif fault == "parts without MIXED":
+        unit["parts"] = []
+    else:
+        units[1] = 7
+
+
+_EARLY = ["none", "support", "span", "kind", "meaning"]
+_LATE = ["one part", "gap", "short", "mixed id", "parts without MIXED", "not an object"]
+
+
+@pytest.mark.parametrize("name", ["soft-norms", "norms-content", "plain", "reading-sets", "alternatives-cells"])
+def test_a_later_unit_s_structural_fault_comes_after_an_earlier_unit_s_fault(service, name):
+    """Python's loader reads `_parts` for `check_rule_batch` before its unit loop and swallows the generator's
+    structural fault, which the unit loop reports in source order, after any earlier unit's fault, and checks the
+    `MIXED` ids before the first unit. A Lean pre-scan of the parts that raised it (lf-16f review F1: `softLayer`)
+    answered a later unit's structural fault, or `invalid MIXED unit schema` for an invalid `MIXED` id, first. Every
+    earlier fault times every structural fault, under every layer seed: Lean's answer is the retained path's, and a
+    soft-norms document's is decided."""
+    documents = []
+    for early in _EARLY:
+        for late in _LATE:
+            document = _seed(name)
+            units = document["front"]["units"]
+            _early(units, early)
+            _late(units, late)
+            documents.append(((early, late), document))
+    texts = [_text(document) for _, document in documents]
+    answers = dw.lean_answers(service, texts)
+    for ((early, late), _), text, answer in zip(documents, texts, answers, strict=True):
+        python = dw.python_answer(text)
+        assert python["outcome"] == "error", (early, late, python)
+        verdict = dw.verdict(python, answer)
+        assert verdict in ("agree", "fail-closed"), (early, late, python, answer)
+        if name == "soft-norms":
+            assert verdict == "agree", (early, late, python, answer)
+
+
 def test_norm_content_beside_a_block_keeps_the_retained_path(service):
     """The norms route reads no alternatives or risk block: norm content beside one is `CheckerUnavailable`."""
     document = _seed("alternatives-cells")
