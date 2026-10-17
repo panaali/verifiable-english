@@ -1,0 +1,216 @@
+{
+  "u049.entitlement": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_right_to_leave_and_return_to_own_country",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u049-entitlement"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u077.entitlement": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_right_to_equal_public_service_in_own_country",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u077-entitlement"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u085.entitlement": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_to_equal_pay_for_equal_work",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u085-entitlement"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u091.entitlement": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_to_an_adequate_standard_of_living",
+      "row": [
+        "p0"
+      ],
+      "rules": [
+        "u091-entitlement"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ],
+  "u097.free_required": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "education_free_required",
+      "row": [
+        "elem"
+      ],
+      "rules": [
+        "u097-free-at-least-elementary-and-fundamental"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "education_free_required",
+      "row": [
+        "fund"
+      ],
+      "rules": [
+        "u097-free-at-least-elementary-and-fundamental"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "education_free_required",
+      "row": [
+        "both"
+      ],
+      "rules": [
+        "u097-free-at-least-elementary-and-fundamental"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "education_free_required",
+      "row": [
+        "higher"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u106.entitlement": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_to_protection_of_interests_in",
+      "row": [
+        "p0",
+        "w0"
+      ],
+      "rules": [
+        "u106-entitlement"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "has_the_right_to_protection_of_interests_in",
+      "row": [
+        "p0",
+        "w1"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "has_the_right_to_protection_of_interests_in",
+      "row": [
+        "p1",
+        "w0"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "has_the_right_to_protection_of_interests_in",
+      "row": [
+        "p1",
+        "w2"
+      ],
+      "rules": [
+        "u106-entitlement"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ]
+}

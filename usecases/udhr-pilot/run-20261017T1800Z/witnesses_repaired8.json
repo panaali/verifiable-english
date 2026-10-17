@@ -1,0 +1,104 @@
+{
+  "u020.prohibited": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "distinction_by_country_status_permitted",
+      "row": [
+        "c0"
+      ],
+      "rules": [
+        "u020-prohibited"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "distinction_by_country_status_permitted",
+      "row": [
+        "c1"
+      ],
+      "rules": [
+        "u020-prohibited"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "distinction_by_country_status_permitted",
+      "row": [
+        "c2"
+      ],
+      "rules": [
+        "u020-prohibited"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "distinction_by_country_status_permitted",
+      "row": [
+        "c3"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u098.unassigned": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "elementary_education_compulsory_required",
+      "row": [
+        "c0"
+      ],
+      "rules": [
+        "u098-unassigned"
+      ],
+      "status": "SETTLED",
+      "value": true
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "elementary_education_compulsory_required",
+      "row": [
+        "c1"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ]
+}

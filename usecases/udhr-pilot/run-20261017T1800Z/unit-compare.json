@@ -1,0 +1,34 @@
+{
+ "changed_expected": {
+  "u037": [
+   "arbitrary_over_all",
+   "arbitrary_arrest_only"
+  ],
+  "u027": [
+   "adjectives_over_both",
+   "adjectives_treatment_only"
+  ]
+ },
+ "units": 130,
+ "differences": [
+  {
+   "unit": "u027",
+   "part": "translation-part01.ve.md",
+   "before": "OPEN",
+   "after": "OPEN",
+   "row_changed": true,
+   "expected": true
+  },
+  {
+   "unit": "u037",
+   "part": "translation-part01.ve.md",
+   "before": "OPEN",
+   "after": "OPEN",
+   "row_changed": true,
+   "expected": true
+  }
+ ],
+ "environment_changed_in": [],
+ "note": "a unit's meaning id includes its environment's id, so every unit of a part whose vocabulary changed gets a new meaning id; what is compared is the status and the unit's own row (kind, meaning, content, span) in the part file",
+ "unexpected": []
+}
