@@ -11776,6 +11776,7 @@
         "VE.Norms.Family.encodeOrderTerm",
         "VE.Norms.Family.encodeTerm",
         "VE.Norms.Family.firstOrder",
+        "VE.Norms.Family.firstOrderDefinition",
         "VE.Norms.Family.firstOrderFormula",
         "VE.Norms.Family.height",
         "VE.Norms.Family.layers",
