@@ -15,8 +15,10 @@ printed instead of a profile).
 
 A run elsewhere (the Mac test runner, whose output streams back) is measured from its `-v` output:
 `... pytest -v -n 9 --durations=0 --durations-min=0 | suite_tail.py stamp --output LOG` writes each line with
-the time it arrived, and `tail LOG` reads when each xdist worker reported its last test: the suite's wall, and
-its tail, the seconds from the moment fewer than `--busy` workers (default 4) still had tests to the end.
+the time it arrived, and `tail LOG` reads when each xdist worker finished its last test: the suite's wall, and
+its tail, the seconds from the moment fewer than `--busy` workers (default 4) still had tests to the end. The
+output arrives in blocks, so the times a line arrived are coarse; each worker's finish is also read as the sum of
+the seconds of the tests it ran (`--durations`), as a worker runs its tests back to back.
 A measurement, never a test criterion: the numbers depend on the machine and its load, which the file records.
 """
 from __future__ import annotations
@@ -228,10 +230,11 @@ def stamp(args) -> int:
 
 
 def tail_summary(text: str, busy: int = 4) -> dict:
-    """From a stamped `-v` xdist log: the wall seconds (first line to the last test's report), each worker's last
-    report, the tail (the seconds after fewer than `busy` workers still had tests) and the seconds the last worker
-    ran alone."""
-    start, finished, end = None, {}, None
+    """From a stamped `-v` xdist log: the wall seconds (first line to the last test's report), and, from the time
+    each worker's last report arrived and from the summed seconds of its tests (`logged_seconds`), each worker's
+    finish, the tail (the seconds after fewer than `busy` workers still had tests) and the seconds the last worker
+    ran alone; with the sum of all tests' seconds over the workers (the even share)."""
+    start, finished, end, ran = None, {}, None, defaultdict(list)
     for line in text.splitlines():
         at, body = unstamped(line)
         if at is None:
@@ -240,13 +243,21 @@ def tail_summary(text: str, busy: int = 4) -> dict:
         found = RESULT_LINE.match(body)
         if found:
             finished[found.group(1)] = end = at
+            ran[found.group(1)].append(found.group(3).rstrip())
     if start is None or not finished:
         raise ValueError("no stamped xdist results")
-    last = sorted(finished.values(), reverse=True)
-    return {"wall_seconds": round(end - start, 1), "workers": len(finished),
-            "worker_finished_seconds": {worker: round(at - start, 1) for worker, at in sorted(finished.items())},
-            "tail_seconds": round(end - last[busy - 1], 1) if len(last) >= busy else None,
-            "busy_below": busy, "alone_seconds": round(end - last[1], 1) if len(last) > 1 else None}
+    timed = logged_seconds(text)
+    summed = {worker: sum(timed.get(nodeid, 0.0) for nodeid in ids) for worker, ids in ran.items()}
+
+    def shape(finish: dict[str, float]) -> dict:
+        last = sorted(finish.values(), reverse=True)
+        return {"worker_finished_seconds": {worker: round(at, 1) for worker, at in sorted(finish.items())},
+                "tail_seconds": round(last[0] - last[busy - 1], 1) if len(last) >= busy else None,
+                "alone_seconds": round(last[0] - last[1], 1) if len(last) > 1 else None}
+    return {"wall_seconds": round(end - start, 1), "workers": len(finished), "busy_below": busy,
+            "reported": shape({worker: at - start for worker, at in finished.items()}),
+            "summed": {**shape(summed), "even_share_seconds": round(sum(timed.values()) / len(finished), 1),
+                       "untimed_tests": sum(nodeid not in timed for ids in ran.values() for nodeid in ids)}}
 
 
 def tail(args) -> int:
