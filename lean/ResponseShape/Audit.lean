@@ -345,6 +345,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Rights.bar_fits
 #print axioms ResponseShape.Encoders.Rights.elaborate_fits
 #print axioms ResponseShape.Encoders.Rights.firstFailure_of_not_free
+#print axioms ResponseShape.Encoders.Rights.firstFailure_text
 #print axioms ResponseShape.Encoders.Rights.generated_entries_fit
 #print axioms ResponseShape.Encoders.Rights.groundJson_fits
 #print axioms ResponseShape.Encoders.Rights.labelled_contra
@@ -355,6 +356,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Rights.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Rights.runCase_fits
 #print axioms ResponseShape.Encoders.Rights.runRightsKind_fits
+#print axioms ResponseShape.Encoders.Rights.runRightsKind_packages
 #print axioms ResponseShape.Encoders.Risk.admission_fits
 #print axioms ResponseShape.Encoders.Risk.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Risk.audit_fits

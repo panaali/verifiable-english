@@ -276,6 +276,7 @@ module VE.Norms.Conflict
 module VE.Norms.Elaborate
 module VE.Norms.Examples
 module VE.Norms.Family
+module VE.Norms.FamilySpec
 module VE.Norms.Flagged
 module VE.Norms.FlaggedSpec
 module VE.Norms.Layer
