@@ -190,7 +190,10 @@ _ADMISSION = {
     "report.assumptions": BOUND, "report.assumptions[].ast": FORMULA,
     "report.assumptions[].label": BOUND, "report.assumptions[].name": BOUND,
     "report.root.ast": FORMULA, "report.root.label": BOUND, "report.root.name": BOUND,
-    "report_id": BOUND,
+    # ADR 0001 (D1): an identity hash is a derived value, never recomputed in Python. `runAdmission_sound` of
+    # VE.SoftNorms.Run and VE.Rights.Run proves it is the digest of the environment id, the document sent and
+    # the report (`tests/test_rd9_followup_bindings.py`).
+    "report_id": lean("the report's identity hash, by runAdmission_sound"),
 }
 
 INVENTORY = {
