@@ -51,8 +51,8 @@ pending statements for the batches it holds. The trust increase is signed under 
   `lean/checkers.lock`.
 - **Relay.** The full relay mutation gate ([relay-gate.json](evidence/relay-gate.json)) found zero findings over 39
   routes and 109,195 mutants. The focused `readings-route` run ([relay-route.json](evidence/relay-route.json)) found
-  zero over 46 fixtures and 15,768 mutants. Both were recorded after the last product commit (`d51d23f5`), and their
-  input hashes match the current files.
+  zero over 46 fixtures and 15,768 mutants. Both were recorded again after the review fix's product commit
+  (`cd4f21c4`), and their input hashes match the current files.
 - **Corpus A/B** ([ab-compare.json](evidence/ab-compare.json), [DELTA.md](DELTA.md)). It covered 100,401 records:
   100,383 identical, 7 wording rows that differ only in the recorder's scratch path, and 11 unavailable on both
   sides (R7), with 0 unlisted. No verdict, order or availability changed. The four whole-UDHR documents in the
