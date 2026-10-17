@@ -367,6 +367,12 @@ def _bind_conflict(row, elaborated, witness=None):
                         f'coherence premises and {limitation} limitation premises')
             if row['status_text'] != expected:
                 raise ValueError('unbound conflict status text')
+        else:
+            # The schema makes an UNKNOWN line name the certificate that failed for a target (Run.lean
+            # `firstFailure`); the target is one this request has.
+            if (row['detail'].partition(' certificate for ')[2] not in targets or
+                    row['status_text'] != f"UNKNOWN: {row['detail']}, budget 10000"):
+                raise ValueError('unbound conflict status text')
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(
             f'CheckerUnavailable: Lean rights conflict is not bound to the request: {error}') from error

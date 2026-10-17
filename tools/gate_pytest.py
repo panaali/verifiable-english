@@ -2,10 +2,10 @@
 
 The gate runs pytest twice: once serially with --collect-only, where this plugin records
 the collection (every collected, selected and deselected ID and every collection report),
-and once under xdist, where the controller records each test's result (xdist forwards the
-workers' reports) and the IDs each worker collected. Workers write nothing. A quarantined test
-that failed runs once more, serially, recorded the same way. No run stops early: the plugin
-refuses --maxfail, -x and --stepwise."""
+and once under xdist, where the controller records each test's result and its seconds (setup +
+call + teardown; xdist forwards the workers' reports) and the IDs each worker collected. Workers
+write nothing. A quarantined test that failed runs once more, serially, recorded the same way.
+No run stops early: the plugin refuses --maxfail, -x and --stepwise."""
 from __future__ import annotations
 
 import json
@@ -23,7 +23,7 @@ def pytest_configure(config):
     if early:
         raise pytest.UsageError(f"the gate runs every test; it refuses {', '.join(early)}")
     config._ve_gate_events = {"collected": [], "selected": [], "deselected": [],
-                              "collection_reports": [], "tests": {}, "workers": {}}
+                              "collection_reports": [], "tests": {}, "seconds": {}, "workers": {}}
 
 
 def pytest_itemcollected(item):
@@ -59,6 +59,8 @@ def pytest_runtest_logreport(report):
     if report.when not in ("setup", "call", "teardown"):
         return
     row = _EVENTS["tests"].setdefault(report.nodeid, {"outcome": "passed"})
+    # Scheduling data only (tools/test_schedule.py): no outcome depends on it.
+    _EVENTS["seconds"][report.nodeid] = _EVENTS["seconds"].get(report.nodeid, 0.0) + report.duration
     if report.failed:
         row.update(outcome="failed", reason=str(report.longrepr))
     elif report.skipped:

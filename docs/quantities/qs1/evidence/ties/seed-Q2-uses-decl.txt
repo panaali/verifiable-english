@@ -1,0 +1,5 @@
+VE/Closure/Order.lean: VE.Closure.Order.above: the statement of VE.Closure.outranksPlus_eq_above does not mention VE.Closure.Order.above of VE.Closure.Order
+class lines: K 997, S 10152, D 14717, G 29749, C 9862, P 76017, T 15568, o 13290
+D/G groups: D[V] 13024, D[R] 1154, D[I] 539, G[V] 27172, G[R] 2304, G[I] 273
+tied 262, unclassified 0, trusted 51102 (K + S + untied [V] + unclassified), 170352 lines in 523 files
+exit 1
