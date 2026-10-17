@@ -710,10 +710,11 @@ def _bind_document_answer(body, meta, declared, row):
 
 
 def _soft_bound(answer, authored, same) -> bool:
-    """A rights document's soft norm unit in Lean's answer (`Service.Document.softCanonical`) bound to the authored
-    content: the same members (`norm`, and `cites` as written), the rule's name, predicate, sign and `over` as
-    written, and every soft member Lean kept as written (an exception's members a subset of the authored ones).
-    Its formulas are Lean's re-encoding of the decoded rule (rule 2: Lean owns checked content)."""
+    """A rights or soft-norms document's soft norm unit in Lean's answer (`Service.Document.softCanonical`) bound to
+    the authored content: the same members (`norm`, and `cites` as written), the rule's name, predicate, sign, guard,
+    carve-outs and `over` as written (Lean's re-encoding of a rule it accepted is the rule as written, as for a
+    plain norm), and every soft member Lean kept as written (an exception's members a subset of the authored
+    ones)."""
     if type(answer) is not dict or type(authored) is not dict or set(answer) != set(authored):
         return False
     if "cites" in authored and not same(answer["cites"], authored["cites"]):
@@ -722,8 +723,6 @@ def _soft_bound(answer, authored, same) -> bool:
     if type(rule) is not dict or type(written) is not dict or not set(rule) <= set(written):
         return False
     for key, value in rule.items():
-        if key in ("guard", "unless"):
-            continue
         if key == "exception":
             if type(value) is not dict or type(written[key]) is not dict or not all(
                     member in written[key] and same(item, written[key][member]) for member, item in value.items()):

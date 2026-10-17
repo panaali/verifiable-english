@@ -1005,8 +1005,8 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
   if key == "quantity" then throw "UnsupportedProfile: quantity content requires ve-units@1"
   if key == "norm" then
     -- `NormDocument._decode` and `norm_meaning_id`: the norms route's decoder of one norm object (batch 16f for a
-    -- plain `norms@0` document; its checks over the environment are `checkNorms`'s).
-    if E.profiles.contains "norm-defaults@0" || E.profiles.contains "norms@0" then
+    -- plain `norms@0` document without a block; its checks over the environment are `checkNorms`'s).
+    if E.profiles.contains "norm-defaults@0" || (E.profiles.contains "norms@0" && E.block == .none) then
       let node ← (VE.Norms.Wire.decodeNorm content).mapError fun e =>
         if e == "Natural number expected" then
           unavailable "a malformed norm formula is outside this document decoder"
@@ -1015,6 +1015,7 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
         else e
       let encoded := VE.Alternatives.Wire.encodeNode node
       return (.norm node, ← VE.Route.Wire.meaningId E.profiles E.envId encoded)
+    if E.profiles.contains "norms@0" then throw (unavailable "norm content beside a block needs its composed Lean route")
     throw "UnsupportedProfile: norms@0 is required"
   if RightsKind.names.contains key then throw "UnsupportedProfile: rights@0 is required"
   if key == "ast" then
@@ -1049,7 +1050,8 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
   throw (unavailable "fenced English or strict content needs the Lean surface parser")
 
 /-- `_content` in a soft-norms document, over `E″`: a norm object after its single-rule check under `_rule_source(E″)`
-(`batch_rule`; the soft route's `decodeSoftNorm`, the rule sent as the soft relay sends it), in canonical form
+(`batch_rule`; the soft route's `decodeSoftNorm`, the rule sent as the soft relay sends it; a rejection keeps the
+retained path, whose relay adds the route's contract code), in canonical form
 (`softCanonical`) and bound to `E″` with its nullable decider slots (`soft_digest`), then the kind check of
 `normRole`; any other content is the plain `_content` over `E″`. -/
 def softContentOf (L : SoftLayer) (fences : List (String × String)) (lexicon : Option Json) (u : Json) (id : String)
@@ -1058,7 +1060,11 @@ def softContentOf (L : SoftLayer) (fences : List (String × String)) (lexicon : 
   | .obj kvs =>
     if let [("norm", value)] := kvs.toList then
       let some se := L.rules | throw (unavailable "a norm object outside the soft rule source")
-      let c := softCanonical (← VE.SoftNorms.Wire.decodeSoftNorm se (wireJson 257 content)) value
+      -- Python's relay raises a rejected rule with the soft route's contract code (`decode_rule`), which this mode's
+      -- error row cannot hold.
+      let N ← (VE.SoftNorms.Wire.decodeSoftNorm se (wireJson 257 content)).mapError fun m =>
+        unavailable s!"a norm object the soft route rejects keeps its loader's code: {m}"
+      let c := softCanonical N value
       let mid ← nullableMeaningId L.extended.profiles L.extended.envId c
       match kind with
       | .route k => let _ ← VE.Norms.Admission.normRole k c
@@ -1332,8 +1338,11 @@ def admitGraph (E : Env) (front graph : Json) (units : List SourceUnit) (all act
         VE.NormDefaults.Run.runAdmission "admission"
           (if E.profiles.contains "readings@1" then lowerReadings E.json else E.json) document
       -- A soft-norms document takes the soft route (`admit_soft_document`, the soft relay's wire form), a norm
-      -- construct the norms route (`_uses_norms`; batch 16f).
-      else if E.soft then VE.SoftNorms.Run.runAdmission "admission" (wireJson 257 E.lower) (wireJson 257 document)
+      -- construct the norms route (`_uses_norms`; batch 16f). Python's relay raises a soft rejection with the soft
+      -- route's contract code (`SoftNorms.Run.reportedCode`), which this mode's error row cannot hold.
+      else if E.soft then
+        (VE.SoftNorms.Run.runAdmission "admission" (wireJson 257 E.lower) (wireJson 257 document)).mapError
+          fun e => unavailable s!"a claim graph the soft route rejects keeps its loader's code: {e}"
       else if norms then VE.Norms.Run.runAdmission "admission"
           (if E.profiles.contains "readings@1" then lowerReadings E.json else E.json) document
       else VE.Route.Run.dispatch "admission" E.json E.checked.envelope
@@ -1445,10 +1454,10 @@ def checkNorms (E : Env) (units : List SourceUnit) (setUnits attached : List Str
   let environment := if E.profiles.contains "readings@1" then lowerReadings E.json else E.json
   let (free, single) := freeNorms units setUnits attached
   unless single.isEmpty do
-    let base ← VE.Norms.Wire.decodeSource environment (Json.arr #[])
+    let base ← VE.Norms.Wire.decodeSource environment (Json.arr #[]) (flags := true)
     single.forM (VE.Norms.Admission.checkQuoted base)
   if !free.isEmpty || E.regulates then
-    let _ ← VE.Norms.Wire.decodeSource environment (Json.arr free.toArray)
+    let _ ← VE.Norms.Wire.decodeSource environment (Json.arr free.toArray) (flags := true)
 
 /-! ## The case -/
 
@@ -1509,7 +1518,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     throw "unit status contradicts content, meaning, or active reading set"
   if E.profiles.contains "norm-defaults@0" then
     checkNormDefaults E front units (active.map (·.1.unit)) attached
-  else if E.profiles.contains "norms@0" && !E.rights && !E.soft then
+  else if E.profiles.contains "norms@0" && !E.rights && !E.soft && E.block == .none then
     checkNorms E units (active.map (·.1.unit)) attached
   Loader.checkLemmas front
   for u in units do
