@@ -600,6 +600,20 @@
    "reason": "fu-rd9-checks: the rights.json packages shape binds, per verdict, an UNKNOWN status line, its certificate detail and its empty conditional_on, and a CONFLICT-FREE status line. Untied V by file: ResponseShape/Schemas/Rights.lean +6 (packages, G[V]). K +0, S +0. Itemised in docs/infra/fu-rd9-checks/DELTA.md.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), fu-rd9-checks, 2026-10-17",
    "commit": "f3046f7dcf610a33a89b21f48961fb2a4010a2d3"
+  },
+  {
+   "class": "V",
+   "lines": 15,
+   "reason": "jt-crossplan-fixes: the X2 head fixed point in the Lean English policy (PolicyCtx.of, PolicyCtx.ofHeads, VE/EnglishGrammar/Policy.lean +15); K +0, S +0; new Lean-owned behaviour, #guard-tested in E2Examples.lean; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "aaff776345c5e58ebe10f131316ba1c42663d3b2"
+  },
+  {
+   "class": "S",
+   "lines": 17,
+   "reason": "QS-1: VE.Closure.Order meaning definitions (Order, Caps, admit, above, atLeast), approved spec section 5; #guard-tested in OrderChecks.lean; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "85b20fcba4b1b0473de9e41888059e7e1be22b3a"
   }
  ]
 }

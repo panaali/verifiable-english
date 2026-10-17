@@ -35,7 +35,7 @@ What is measured:
 
 ## 1. Sources
 
-### 1.1 Asimov (pinned, unchanged from v2)
+### 1.1 Asimov (v2 formulas and precedence)
 
 The laws are the ones the v2 case translates, pinned by v2's [`source.md`](../asimov-laws/source.md):
 
@@ -44,16 +44,19 @@ The laws are the ones the v2 case translates, pinned by v2's [`source.md`](../as
 - the Zeroth Law, *Robots and Empire* (1985), as quoted at
   <https://en.wikiquote.org/wiki/Isaac_Asimov#The_Three_Laws_of_Robotics_(1942)>.
 
-The v2 translation is pinned at commit `2205be3943217f5e5a09e1c7cc035615a6438574` (main, 2026-10-01) by SHA-256:
+The v2 translation began at commit `2205be3943217f5e5a09e1c7cc035615a6438574` (main, 2026-10-01).
+X2 refreshed the English for `protects_robot` and `ordered` after their templates became accepted;
+the formulas and precedence are unchanged. The current files are pinned by SHA-256:
 
 | File | SHA-256 |
 |---|---|
-| `usecases/asimov-laws/rules.ve` | `6517be81f0133438cac436ee713445fcd7aeb1e685604d866b9eb324dbc2a828` |
-| `usecases/asimov-laws/rules.manifest.json` | `acfed21b63f063b9d3e1061de8d209ac221ed58d619dbd6009ee68540756d163` |
+| `usecases/asimov-laws/rules.ve` | `9d00b09cc9f7fc26aa481244df57e6b96a23abc337c84fd42beb1ec920bde4a5` |
+| `usecases/asimov-laws/rules.manifest.json` | `67ea9542f9358a1cd3f0844f34fc95d7ecd87eeefd1b4545ba727d7edd881385` |
 | `usecases/asimov-laws/environment.json` | `9deb0549202d105142cbf3da0b28dd6583bfab144f0a1e344842c1ec7220eeb3` |
 | `usecases/asimov-laws/source.md` | `751f2c331eff6cdade0a3f9cd2feb22f032c6be7d1d61df3783b9b67e8510330` |
 
-No file under `usecases/asimov-laws/` is changed by this use case. A test fails if any of these hashes changes.
+The X2 wording refresh changed `rules.ve` and its manifest in the v2 case. A test fails if any
+current hash changes unexpectedly.
 
 ### 1.2 The additions (authored; pinned by this file)
 
