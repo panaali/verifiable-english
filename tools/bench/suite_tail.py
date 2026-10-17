@@ -10,8 +10,16 @@ CPU and 1-minute load per minute, the workers' occupancy per minute (the share o
 inside a test), when each worker finished its last test, and the slowest tests (setup + call +
 teardown). `durations PROFILE [PROFILE ...] --output tools/test-durations.json` writes the durations file
 that `tools/test_schedule.py` orders the suite by (each test's longest time among the runs; `--previous FILE`
-counts an earlier file as one more run). A measurement, never a test criterion: the numbers depend
-on the machine and its load, which the file records.
+counts an earlier file as one more run; `--log` reads the times a `--durations=0 --durations-min=0` run
+printed instead of a profile).
+
+A run elsewhere (the Mac test runner, whose output streams back) is measured from its `-v` output:
+`... pytest -v -n 9 --durations=0 --durations-min=0 | suite_tail.py stamp --output LOG` writes each line with
+the time it arrived, and `tail LOG` reads when each xdist worker finished its last test: the suite's wall, and
+its tail, the seconds from the moment fewer than `--busy` workers (default 4) still had tests to the end. The
+output arrives in blocks, so the times a line arrived are coarse; each worker's finish is also read as the sum of
+the seconds of the tests it ran (`--durations`), as a worker runs its tests back to back.
+A measurement, never a test criterion: the numbers depend on the machine and its load, which the file records.
 """
 from __future__ import annotations
 
@@ -21,6 +29,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import threading
@@ -162,10 +171,14 @@ def durations(args) -> int:
     current = set(json.loads(args.collection.read_text()) if args.collection is not None
                   else gate_collection.collect(ROOT))
     timed: dict[str, float] = {}
-    for profile in args.profile:
-        for row in records(profile):
-            if row["nodeid"] in current:
-                timed[row["nodeid"]] = max(timed.get(row["nodeid"], 0.0), seconds(row))
+    runs = [[(row["nodeid"], seconds(row)) for row in records(profile)] for profile in args.profile]
+    runs += [list(logged_seconds(log.read_text()).items()) for log in args.log]
+    if not runs:
+        raise SystemExit("no profile directory and no --log")
+    for run_seconds in runs:
+        for nodeid, value in run_seconds:
+            if nodeid in current:
+                timed[nodeid] = max(timed.get(nodeid, 0.0), value)
     unrecorded = None
     if args.previous is not None:
         previous, unrecorded = test_schedule.read_estimates(args.previous)
@@ -180,6 +193,78 @@ def durations(args) -> int:
     return 0
 
 
+# A line of pytest's `--durations` table, and of `-v` output under xdist, after `stamp`'s time.
+DURATION_LINE = re.compile(r"(\d+\.\d+)s (setup|call|teardown) +(\S.*)")
+RESULT_LINE = re.compile(r"\[(gw\d+)\] \[ *\d+%\] (PASSED|FAILED|SKIPPED|ERROR|XFAIL|XPASS) (\S.*)")
+
+
+def logged_seconds(text: str) -> dict[str, float]:
+    """Setup + call + teardown seconds per test ID from the `--durations=0 --durations-min=0` table of a run's
+    output (with or without `stamp`'s times)."""
+    timed: dict[str, float] = defaultdict(float)
+    for line in text.splitlines():
+        found = DURATION_LINE.fullmatch(unstamped(line)[1])
+        if found:
+            timed[found.group(3)] += float(found.group(1))
+    return dict(timed)
+
+
+def unstamped(line: str) -> tuple[float | None, str]:
+    """(the time `stamp` wrote before the line, or None; the line as pytest printed it)."""
+    head, _, rest = line.partition(" ")
+    try:
+        return float(head), rest
+    except ValueError:
+        return None, line
+
+
+def stamp(args) -> int:
+    """Copy standard input to standard output and to `--output`, each line after the time it arrived."""
+    with open(args.output, "w") as log:
+        for line in sys.stdin:
+            log.write(f"{time.time():.3f} {line}")
+            log.flush()
+            sys.stdout.write(line)
+            sys.stdout.flush()
+    return 0
+
+
+def tail_summary(text: str, busy: int = 4) -> dict:
+    """From a stamped `-v` xdist log: the wall seconds (first line to the last test's report), and, from the time
+    each worker's last report arrived and from the summed seconds of its tests (`logged_seconds`), each worker's
+    finish, the tail (the seconds after fewer than `busy` workers still had tests) and the seconds the last worker
+    ran alone; with the sum of all tests' seconds over the workers (the even share)."""
+    start, finished, end, ran = None, {}, None, defaultdict(list)
+    for line in text.splitlines():
+        at, body = unstamped(line)
+        if at is None:
+            continue
+        start = at if start is None else start
+        found = RESULT_LINE.match(body)
+        if found:
+            finished[found.group(1)] = end = at
+            ran[found.group(1)].append(found.group(3).rstrip())
+    if start is None or not finished:
+        raise ValueError("no stamped xdist results")
+    timed = logged_seconds(text)
+    summed = {worker: sum(timed.get(nodeid, 0.0) for nodeid in ids) for worker, ids in ran.items()}
+
+    def shape(finish: dict[str, float]) -> dict:
+        last = sorted(finish.values(), reverse=True)
+        return {"worker_finished_seconds": {worker: round(at, 1) for worker, at in sorted(finish.items())},
+                "tail_seconds": round(last[0] - last[busy - 1], 1) if len(last) >= busy else None,
+                "alone_seconds": round(last[0] - last[1], 1) if len(last) > 1 else None}
+    return {"wall_seconds": round(end - start, 1), "workers": len(finished), "busy_below": busy,
+            "reported": shape({worker: at - start for worker, at in finished.items()}),
+            "summed": {**shape(summed), "even_share_seconds": round(sum(timed.values()) / len(finished), 1),
+                       "untimed_tests": sum(nodeid not in timed for ids in ran.values() for nodeid in ids)}}
+
+
+def tail(args) -> int:
+    print(json.dumps(tail_summary(args.log.read_text(), args.busy), indent=1))
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -190,14 +275,21 @@ def main() -> int:
     measure.add_argument("--profile", type=Path, required=True, help="a new directory for the raw records")
     measure.add_argument("files", nargs="*", help="test files instead of the whole suite")
     record = commands.add_parser("durations", help="write the durations file from a profiled run")
-    record.add_argument("profile", type=Path, nargs="+", help="profile directories")
+    record.add_argument("profile", type=Path, nargs="*", help="profile directories")
+    record.add_argument("--log", type=Path, action="append", default=[],
+                        help="the output of a --durations=0 --durations-min=0 run, as one more run")
     record.add_argument("--output", type=Path, default=test_schedule.DURATIONS)
     record.add_argument("--source", required=True, help="the commit and machine the run measured")
     record.add_argument("--collection", type=Path, help="test IDs to keep (default: collect the current gate suite)")
     record.add_argument("--previous", type=Path,
                         help="an earlier durations file, counted as one more run")
+    stamped = commands.add_parser("stamp", help="copy standard input, each line after the time it arrived")
+    stamped.add_argument("--output", type=Path, required=True)
+    tailed = commands.add_parser("tail", help="the wall and tail of a stamped -v xdist log")
+    tailed.add_argument("log", type=Path)
+    tailed.add_argument("--busy", type=int, default=4, help="the tail starts when fewer workers than this are busy")
     args = parser.parse_args()
-    return run(args) if args.command == "run" else durations(args)
+    return {"run": run, "durations": durations, "stamp": stamp, "tail": tail}[args.command](args)
 
 
 if __name__ == "__main__":

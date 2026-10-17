@@ -140,7 +140,6 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Attribution/Admission.lean` | 343 | 343 | 1–343 | `de9ae29eed4d…` |
 | `lean/VE/Attribution/Content.lean` | 726 | 726 | 1–726 | `42d7518d9a79…` |
 | `lean/VE/Attribution/Preflight.lean` | 457 | 457 | 1–457 | `fa6956756459…` |
-| `lean/VE/Route/PyDecoder.lean` | 124 | 124 | 1–124 | `1a90eaf1a90c…` |
 | `lean/VE/Attribution/Wire.lean` | 514 | 514 | 1–514 | `4eadc30b6ea7…` |
 | `lean/VE/Bridge.lean` | 335 | 288 | 14–301 | `4f7b5313509e…` |
 | `lean/VE/CertificateWire.lean` | 312 | 186 | 46–221, 236–245 | `bf814b58737f…` |
@@ -167,7 +166,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Readings/SupWire.lean` | 397 | 397 | 1–397 | `5d8393aeea86…` |
 | `lean/VE/Readings/UnspecifiedWire.lean` | 800 | 800 | 1–800 | `d0d0e1b96bcf…` |
 | `lean/VE/Readings/VerdictsWire.lean` | 1847 | 1847 | 1–1847 | `69e2aeff2ef9…` |
-| `lean/VE/Readings/Wire.lean` | 1006 | 1006 | 1–1006 | `f8ab116400a3…` |
+| `lean/VE/Readings/Wire.lean` | 1006 | 1006 | 1–1006 | `df232e5bc845…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
 | `lean/VE/Rights/Wire.lean` | 696 | 696 | 1–696 | `753feb56dae0…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
@@ -188,6 +187,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Service/FamilyNorms.lean` | 389 | 389 | 1–389 | `1472d5235efd…` |
 | `lean/VE/Service/Graph.lean` | 255 | 255 | 1–255 | `cd0523e5ad4d…` |
 | `lean/VE/Service/Readings.lean` | 215 | 215 | 1–215 | `357a25dda81b…` |
+| `lean/VE/Service/ReadingsChoices.lean` | 257 | 257 | 1–257 | `9881463bf760…` |
 | `lean/VE/SoftNorms/Admission.lean` | 332 | 332 | 1–332 | `5f867e8a26a7…` |
 | `lean/VE/SoftNorms/Phases.lean` | 370 | 370 | 1–370 | `4b807f2925e0…` |
 | `lean/VE/SoftNorms/Wire.lean` | 524 | 524 | 1–524 | `89bfe1124ae1…` |
@@ -197,7 +197,6 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 843 | 843 | 1–843 | `43eff830ca8c…` |
 | `lean/VE/Readings/ComponentsWire.lean` | 614 | 614 | 1–614 | `db7769a98ff7…` |
-| `lean/VE/Service/ReadingsChoices.lean` | 257 | 257 | 1–257 | `9881463bf760…` |
 | `lean/VE/Norms/Family.lean` | 505 | 505 | 1–505 | `2d7c64757a0d…` |
 | `lean/VE/Ask/Wire.lean` | 367 | 367 | 1–367 | `bfa92dd20785…` |
 | `lean/VE/Ask/PlainWire.lean` | 320 | 320 | 1–320 | `f74464e3946f…` |
@@ -209,6 +208,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Ask/PlainAnswer.lean` | 118 | 118 | 1–118 | `2c2a2a253778…` |
 | `lean/VE/Ask/ZeroAnswer.lean` | 144 | 144 | 1–144 | `327fc754a2b9…` |
 | `lean/VE/Words/Run.lean` | 161 | 161 | 1–161 | `0678825160c8…` |
+| `lean/VE/Route/PyDecoder.lean` | 124 | 124 | 1–124 | `1a90eaf1a90c…` |
 | `lean/VE/NormDefaults/LayeredAdmission.lean` | 378 | 378 | 1–378 | `c68165ab906c…` |
 | `lean/VE/NormDefaults/LayeredEntail.lean` | 197 | 197 | 1–197 | `252900e276fa…` |
 | `lean/VE/Readings/SoftWire.lean` | 198 | 198 | 1–198 | `0a0c5f133b9d…` |

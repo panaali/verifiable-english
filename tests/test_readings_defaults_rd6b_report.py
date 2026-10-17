@@ -239,7 +239,7 @@ def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
     pinned merge base is exactly the baseline's RD-6b entry (since AR-4 an allowance of the budget file), as
     DELTA.md states it: S +0, V +142, of which +16 under R6 and +126 awaiting the DRI's signature. The entry is the reviewed
     measurement at the branch head before the merge of ve-integration f0547468; the merge's entry carries the
-    same growth over the merged base."""
+    same growth over the merged base. The history is read from saved revisions, independent of later batches."""
     from tools import trust_map
     summary, *_ = saved()
     reviewed = json.loads(subprocess.check_output(

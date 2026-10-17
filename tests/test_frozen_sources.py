@@ -4,6 +4,7 @@ declarations and the `ve.core@0.1` decoders, `ve/question/LOCK.json` hashes no m
 is in tests/test_precommit_hook.py."""
 from __future__ import annotations
 
+from collections import defaultdict
 import hashlib
 import importlib.util
 import json
@@ -11,9 +12,12 @@ from pathlib import Path
 import subprocess
 import sys
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean"
 sys.path.insert(0, str(ROOT / "tools"))
+import lake_outputs  # noqa: E402
 import trust_changes  # noqa: E402
 from tests.subprocesses import HANG_TIMEOUT  # noqa: E402
 
@@ -60,6 +64,121 @@ def test_each_decoder_defines_a_core_identity():
     assert "def canonical : Nat → Json → Except String String" in texts["VE/CertificateWire.lean"]
     assert "def parse (text : String)" in texts["VE/Json.lean"]
     assert '"ve-environment-v0.1-order\\n"' in texts["VE/Order/Wire.lean"]
+
+
+# What the frozen identities are made of, read from the compiled library (the compiler is the oracle, not a reading
+# of Lean source). The arguments: the module to import; the function naming each frozen envelope's identity version
+# (`Legacy.version`: `ve.core@0` and the `ve.core@0.1` closure and order envelopes); the module that decodes every
+# request, and the namespace of the JSON reader it decodes them with. Printed as JSON: the versions (the string
+# literals of the version function); each definition that writes an identity domain `ve-environment-<v>\n` or
+# `ve-meaning-<v>\n` as a literal argument, with its module and the function it is passed to; and the modules of
+# VE each such function, and each reader function the request module calls, reaches through definitions.
+IDENTITIES = r"""
+import Lean
+open Lean
+
+def moduleOf (env : Environment) (n : Name) : Option Name :=
+  (env.getModuleIdxFor? n).map fun i => env.header.moduleNames[i.toNat]!
+
+def reach (env : Environment) (roots : Array Name) : Array String := Id.run do
+  let mut seen : NameSet := {}
+  let mut todo := roots
+  let mut out : Array String := #[]
+  while h : todo.size > 0 do
+    let n := todo[todo.size - 1]
+    todo := todo.pop
+    if seen.contains n then continue
+    seen := seen.insert n
+    let some m := moduleOf env n | continue
+    unless (`VE).isPrefixOf m do continue
+    unless out.contains m.toString do out := out.push m.toString
+    if let some (.defnInfo d) := env.find? n then todo := todo ++ d.value.getUsedConstants
+  return out
+
+def main (args : List String) : IO UInt32 := do
+  let [root, version, requests, reader] := args | return 2
+  initSearchPath (← findSysroot)
+  let env ← importModules #[{ module := root.toName }] {}
+  let some (.defnInfo v) := env.find? version.toName | throw (IO.userError s!"{version}: no such definition")
+  let versions ← IO.mkRef (#[] : Array String)
+  v.value.forEach fun | .lit (.strVal s) => versions.modify (·.push s) | _ => pure ()
+  let domains := (← versions.get).toList.flatMap fun v => [s!"ve-environment-{v}\n", s!"ve-meaning-{v}\n"]
+  let writers ← IO.mkRef (#[] : Array Json)
+  let readers ← IO.mkRef (#[] : Array Name)
+  for (n, info) in env.constants.map₁.toList do
+    let some m := moduleOf env n | continue
+    let .defnInfo d := info | continue
+    if m == requests.toName then
+      for c in d.value.getUsedConstants do
+        if reader.toName.isPrefixOf c then readers.modify fun rs => if rs.contains c then rs else rs.push c
+    unless (`VE).isPrefixOf m do continue
+    d.value.forEach fun e => do
+      if let .app f (.lit (.strVal s)) := e then
+        if let .const c _ := f.getAppFn then
+          if domains.contains s then writers.modify (·.push (toJson [m.toString, s, c.toString]))
+  let digests := ((← writers.get).filterMap fun w => (w.getArrVal? 2 >>= Json.getStr?).toOption).toList.eraseDups
+  IO.println (Json.mkObj [("versions", toJson (← versions.get)), ("writers", toJson (← writers.get)),
+    ("reach", Json.mkObj (digests.map fun c => (c, toJson (reach env #[c.toName])))),
+    ("readers", toJson ((← readers.get).map (·.toString))),
+    ("reader_reach", toJson (reach env (← readers.get)))]).compress
+  return 0
+"""
+
+
+@pytest.fixture(scope="module")
+def identities(tmp_path_factory) -> dict:
+    script = tmp_path_factory.mktemp("identities") / "identities.lean"
+    script.write_text(IDENTITIES)
+    done = subprocess.run([lake_outputs.lean_executable(None, "lake"), "env", "lean", "--run", str(script),
+                           "VE.Service.Protocol", "VE.Service.Standalone.Legacy.version", "VE.Service.Protocol",
+                           "VE.JsonInput"], cwd=LEAN, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, done.stdout + done.stderr
+    return json.loads(done.stdout)
+
+
+def path_of(module: str) -> str:
+    return module.replace(".", "/") + ".lean"
+
+
+def frozen_identity_files(facts: dict, decoders=frozen.DECODERS) -> tuple[dict[str, set[str]], list[str]]:
+    """Each Lean file that defines part of a frozen identity, with what it defines, and the identity domains no file
+    of `decoders` writes. `facts` is what the compiled library says (`IDENTITIES`): every frozen envelope's
+    identity version has two domains; a decoder writes each one, and every module of VE the function it is passed to
+    (the digest) reaches defines part of it; and every module the service's request reader reaches defines the
+    values the digests hash. A file outside `decoders` that writes a domain uses the identity, it does not make
+    the domain defined."""
+    defines: dict[str, set[str]] = defaultdict(set)
+    missing = []
+    for domain in (f"ve-{kind}-{v}\n" for v in facts["versions"] for kind in ("environment", "meaning")):
+        written = [(module, digest) for module, text, digest in facts["writers"]
+                   if text == domain and path_of(module) in decoders]
+        if not written:
+            missing.append(domain)
+        for module, digest in written:
+            defines[path_of(module)].add(f"the domain {domain!r}")
+            for reached in facts["reach"][digest]:
+                defines[path_of(reached)].add(f"{digest}, which digests {domain!r}")
+    for reached in facts["reader_reach"]:
+        defines[path_of(reached)].add(f"the request reader ({', '.join(sorted(facts['readers']))})")
+    return dict(defines), missing
+
+
+def test_every_frozen_identity_has_a_decoder_and_every_decoder_defines_one(identities):
+    """AR-2 review F4: `DECODERS` is complete. Each frozen envelope's identity domains are written in a decoder,
+    and every module the digests and the request reader reach is one; each listed decoder defines part of them."""
+    assert len(identities["versions"]) >= 3 and identities["readers"], identities
+    defines, missing = frozen_identity_files(identities)
+    assert missing == []
+    assert set(defines) == set(frozen.DECODERS), defines
+    # A frozen envelope Lean adds (a new `Legacy.version` arm) without a decoder fails, and so does a decoder no
+    # longer listed, or one listed that defines no identity.
+    added = {**identities, "versions": [*identities["versions"], "v0.3"]}
+    assert frozen_identity_files(added)[1] == ["ve-environment-v0.3\n", "ve-meaning-v0.3\n"]
+    for name in frozen.DECODERS:
+        rest = [d for d in frozen.DECODERS if d != name]
+        defines, missing = frozen_identity_files(identities, rest)
+        assert missing or set(defines) != set(rest), name
+    assert "VE/Gone.lean" not in frozen_identity_files(identities, (*frozen.DECODERS, "VE/Gone.lean"))[0]
 
 
 def test_an_unhashed_edit_of_a_k_file_fails():
@@ -154,10 +273,10 @@ def git(root: Path, *args: str) -> str:
                           capture_output=True, text=True, check=True).stdout.strip()
 
 
-def fixture_repo(root: Path) -> str:
+def fixture_repo(root: Path, decoder: str = DECODER) -> str:
     (root / "lean/VE").mkdir(parents=True)
     (root / "tools").mkdir()
-    (root / "lean/VE/Demo.lean").write_text(DECODER)
+    (root / "lean/VE/Demo.lean").write_text(decoder)
     (root / "lean/VE/Glue.lean").write_text(GLUE)
     (root / "lean/statements.txt").write_text("")
     (root / "tools/trust-classes.json").write_text(json.dumps({"modules": {
@@ -213,12 +332,59 @@ def test_trusted_code_collapsed_onto_a_wider_line_is_reported(tmp_path, capsys):
                                               "base_width": 37}
     assert out["widened"] == ["VE/Demo.lean"]
     assert trust_changes.main(["--since", base, "--root", str(tmp_path)]) == 0
-    assert (f"widened: 1 changed files hold a trusted line wider than any line they had at base\n"
+    assert (f"widened: 1 changed files hold a trusted line wider than any trusted line they had at base\n"
             f"  VE/Demo.lean: trusted line of {width} characters, base at most 37\n") in capsys.readouterr().out
     # The same width in an untrusted (tied or test) declaration, or a new file, is not listed.
     table = json.loads((tmp_path / "tools/trust-classes.json").read_text())
     table["modules"]["VE/Demo.lean"] = {"T": ["VE.Demo.decodeThing"]}
     (tmp_path / "tools/trust-classes.json").write_text(json.dumps(table))
+    assert changes(tmp_path, base, capsys)["widened"] == []
+
+
+def test_a_long_comment_at_base_hides_no_collapsed_trusted_code(tmp_path, capsys):
+    """AR-2 review F8: the base's width is its widest trusted line, not its widest line. A file whose base already
+    holds a comment wider than the collapsed trusted line is still listed as widened."""
+    comment = "-- " + "A comment wider than any trusted line of the file, and wider than the collapsed line. " * 3
+    commented = DECODER.replace("namespace VE.Demo\n\n", f"namespace VE.Demo\n{comment}\n")
+    base = fixture_repo(tmp_path, commented)
+    collapsed = commented.replace("  s.length\n", "  if s.isEmpty then 0 else s.length + (s.toList.filter "
+                                                  "Char.isDigit).length * 2\n")
+    (tmp_path / "lean/VE/Demo.lean").write_text(collapsed)
+    width = len(collapsed.split("\n")[3])
+    assert 37 < width < len(comment)
+    declarations(tmp_path, {"VE.Demo": f"3:0-4:{width} def VE.Demo.decodeThing",
+                            "VE.Glue": "3:0-3:20 def VE.Glue.glue"})
+    out = changes(tmp_path, base, capsys)
+    assert out["changed"]["VE/Demo.lean"] == {"K": 0, "S": 0, "D[V]": 3, "G[V]": 0, "trusted_width": width,
+                                              "base_width": 37}
+    assert out["widened"] == ["VE/Demo.lean"]
+    assert trust_changes.main(["--since", base, "--root", str(tmp_path)]) == 0
+    assert f"  VE/Demo.lean: trusted line of {width} characters, base at most 37\n" in capsys.readouterr().out
+    # The base is classified by the base's own table: trusted code that was a test (T) at the base has no width.
+    table = (tmp_path / "tools/trust-classes.json").read_text()
+    (tmp_path / "tools/trust-classes.json").write_text(table.replace('"D[V]"', '"T"'))
+    (tmp_path / "lean/VE/Demo.lean").write_text(commented)
+    declarations(tmp_path, {"VE.Demo": "3:0-4:10 def VE.Demo.decodeThing", "VE.Glue": "3:0-3:20 def VE.Glue.glue"})
+    git(tmp_path, "commit", "-q", "-am", "the decoder is a test at the base")
+    tested = git(tmp_path, "rev-parse", "HEAD")
+    (tmp_path / "tools/trust-classes.json").write_text(table)
+    (tmp_path / "lean/VE/Demo.lean").write_text(collapsed)
+    declarations(tmp_path, {"VE.Demo": f"3:0-4:{width} def VE.Demo.decodeThing",
+                            "VE.Glue": "3:0-3:20 def VE.Glue.glue"})
+    out = changes(tmp_path, tested, capsys)
+    assert (out["changed"]["VE/Demo.lean"]["base_width"], out["widened"]) == (0, ["VE/Demo.lean"])
+
+
+def test_a_base_whose_classification_fails_gives_no_report(tmp_path, capsys):
+    """The base's widths come from the base's validated classification, never from an unvalidated one."""
+    base = fixture_repo(tmp_path)
+    (tmp_path / "lean/declarations.txt").write_text("-- header\n")
+    git(tmp_path, "commit", "-q", "-am", "a stale declaration list")
+    stale = git(tmp_path, "rev-parse", "HEAD")
+    (tmp_path / "lean/VE/Demo.lean").write_text(DECODER.replace("s.length", "s.length + 1"))
+    declarations(tmp_path, {"VE.Demo": "3:0-4:14 def VE.Demo.decodeThing", "VE.Glue": "3:0-3:20 def VE.Glue.glue"})
+    assert trust_changes.main(["--since", stale, "--root", str(tmp_path)]) == 1
+    assert f"FAIL: the trust classification of {stale} fails:\n" in capsys.readouterr().err
     assert changes(tmp_path, base, capsys)["widened"] == []
 
 

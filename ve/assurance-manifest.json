@@ -176,22 +176,6 @@
         "reason": "the reports document's public fault order and texts, read before the decoder; it only rejects; the full file is pinned conservatively"
       },
       {
-        "file": "lean/VE/Route/PyDecoder.lean",
-        "lines": 124,
-        "sha256": "1a90eaf1a90c2bb2086414f1d8410e8410acb85d78aea6ea15d0d04377cae52f",
-        "ranges": [
-          [
-            1,
-            124
-          ]
-        ],
-        "declarations": [
-          "decoderFault",
-          "hasReach"
-        ],
-        "reason": "Python's AST decoder walk (decoderFault) and its reachability gate on the raw JSON, which name a formula a Lean decoder already rejected (the reports preflight, the document walk, Route.Wire.bodyFault); it only names rejections; the full file is pinned conservatively"
-      },
-      {
         "file": "lean/VE/Attribution/Wire.lean",
         "lines": 514,
         "sha256": "4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100fc4271f0ee5",
@@ -777,7 +761,7 @@
       {
         "file": "lean/VE/Readings/Wire.lean",
         "lines": 1006,
-        "sha256": "f8ab116400a3c18b422e3dac26ae96a0f2d2964ac25ed5b99b92c09912b65dd9",
+        "sha256": "df232e5bc84502875ebbffb8f013cd12147470d980f4e1b7c9d26e765234b1c5",
         "ranges": [
           [
             1,
@@ -801,7 +785,7 @@
           "replayPair",
           "replaySeparate"
         ],
-        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs"
+        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs; jt-crossplan-fixes X3: on the norms chain the readings environment decodes its frame with the v0 constant fields (no `verbalisation` on a nonliteral constant)"
       },
       {
         "file": "lean/VE/Rights/Admission.lean",
@@ -1218,6 +1202,26 @@
         "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/Service/ReadingsChoices.lean",
+        "lines": 257,
+        "sha256": "9881463bf7607b77d6a448d01d81e24452dc5adfa467673a91a7b1a13c86b4a5",
+        "ranges": [
+          [
+            1,
+            257
+          ]
+        ],
+        "declarations": [
+          "metadata",
+          "validateCouplings",
+          "expected",
+          "plan",
+          "check",
+          "run"
+        ],
+        "reason": "coupled and joint readings choice decoder: set metadata, compatibility, bounded plan, complete evidence and checked verdict; the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/SoftNorms/Admission.lean",
         "lines": 332,
         "sha256": "5f867e8a26a78cf4b0a1aba6716354a32d9c609b0ed45d94311143e5a5e4d82b",
@@ -1386,26 +1390,6 @@
           "gateLines"
         ],
         "reason": "readings-defaults RD-4b: the document product decoder, per-component evidence replay on each regenerated case, conclusion typing, --under binding, product verdict, decided units and English plan; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Service/ReadingsChoices.lean",
-        "lines": 257,
-        "sha256": "9881463bf7607b77d6a448d01d81e24452dc5adfa467673a91a7b1a13c86b4a5",
-        "ranges": [
-          [
-            1,
-            257
-          ]
-        ],
-        "declarations": [
-          "metadata",
-          "validateCouplings",
-          "expected",
-          "plan",
-          "check",
-          "run"
-        ],
-        "reason": "coupled and joint readings choice decoder: set metadata, compatibility, bounded plan, complete evidence and checked verdict; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Norms/Family.lean",
@@ -1630,6 +1614,22 @@
           "wordsCase"
         ],
         "reason": "question answering Q2.4: the words mode decodes the environment, the lexicon (bound to the environment's id, policy-checked) and each item, and words its line"
+      },
+      {
+        "file": "lean/VE/Route/PyDecoder.lean",
+        "lines": 124,
+        "sha256": "1a90eaf1a90c2bb2086414f1d8410e8410acb85d78aea6ea15d0d04377cae52f",
+        "ranges": [
+          [
+            1,
+            124
+          ]
+        ],
+        "declarations": [
+          "decoderFault",
+          "hasReach"
+        ],
+        "reason": "Python's AST decoder walk (decoderFault) and its reachability gate on the raw JSON, which name a formula a Lean decoder already rejected (the reports preflight, the document walk, Route.Wire.bodyFault); it only names rejections; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/LayeredAdmission.lean",

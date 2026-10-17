@@ -147,13 +147,13 @@
   {
    "environment": "usecases/asimov-extended/environment.json",
    "failures": [],
-   "lexicon_id": "833cf8d5d499d31d9567cd6030037e568a90e38458fbe958985053f2b376b225",
+   "lexicon_id": "accf001f410fbfd796620ff2f734b140bcd411658b3d876eb61ed49610df5b94",
    "symbols": 55
   },
   {
    "environment": "usecases/asimov-laws/environment.json",
    "failures": [],
-   "lexicon_id": "d54fd68cbea459ae786ab2ffdf8be7b704cf1605898ad48eefa3d61bca4e3d21",
+   "lexicon_id": "b28b7c22ba44ac51eb77862e5b6ada922cd3fea74cd502b1276b26f489b02306",
    "symbols": 25
   },
   {
