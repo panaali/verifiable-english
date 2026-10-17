@@ -68,10 +68,14 @@ theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Docum
     obtain ⟨u, _, rfl⟩ := hx
     exact unit_fits j u
 
-theorem locatedRow_fits (j : Json) (message : String) (path : Option String) :
-    Fits j Skeletons.document (VE.Service.Document.locatedRow j message path) := by
+theorem locatedRow_fits (j : Json) (message : String) (at_ : VE.Service.Document.Located) :
+    Fits j Skeletons.document (VE.Service.Document.locatedRow j message at_) := by
   unfold VE.Service.Document.locatedRow
-  split <;> fits
+  split
+  · fits
+  · unfold VE.Service.ParseDiagnostic.span
+    fits
+  · fits
 
 theorem runCaseReported_fits (j : Json) :
     Fits j Skeletons.document (VE.Service.Document.runCaseReported j) := by

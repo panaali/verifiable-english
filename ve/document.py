@@ -451,8 +451,36 @@ def _lean_answer(raw: bytes, admit: bool):
             # member of a model the document supplies, or it is not bound to the document sent.
             raise CheckerUnavailable("CheckerUnavailable: the Lean document answer's path names no member of a "
                                      "distinguishing model of the document sent")
+        if getattr(error, "span", None) is not None and not _spans_a_strict_fence(raw, error.span):
+            # Batch 16f: a strict fence's located diagnostic (`Service.Document.locatedFence`) is a span in the text
+            # of a strict fence the document has, with its line and column.
+            raise CheckerUnavailable("CheckerUnavailable: the Lean document answer's span is in no strict fence of "
+                                     "the document sent")
         raise error
     return row
+
+
+def _spans_a_strict_fence(raw: bytes, span) -> bool:
+    """Whether `span` lies in the text of a strict-surface unit's fence, with that text's line and column (the
+    binding `x-source-span` gives a `parse` answer's span over its request source)."""
+    try:
+        meta, _, fences = _split(raw)
+        units = [u for u, _ in _parts(meta["units"])]
+    except (VEError, KeyError, TypeError, ValueError):
+        return False
+    start, end, line, column = (getattr(span, key, None) for key in ("start", "end", "line", "column"))
+    if not all(type(value) is int for value in (start, end, line, column)):
+        return False
+    for unit in units:
+        uid = unit.get("id") if type(unit) is dict else None
+        if (type(uid) is not str or unit.get("surface") != "strict" or unit.get("content") != {"fence": uid}
+                or uid not in fences):
+            continue
+        text = fences[uid]
+        if (0 <= start <= end <= len(text) and line == text.count("\n", 0, start) + 1
+                and column == start - text.rfind("\n", 0, start)):
+            return True
+    return False
 
 
 def _names_a_model_member(raw: bytes, path) -> bool:

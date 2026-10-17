@@ -5,6 +5,7 @@
     "anyOf": [
       {"$ref": "common.json#/$defs/case_error"},
       {"$ref": "common.json#/$defs/error"},
+      {"$ref": "#/$defs/fence_error"},
       {
         "additionalProperties": false,
         "properties": {
@@ -153,6 +154,27 @@
         "residual",
         "residual_total"
       ],
+      "type": "object"
+    },
+    "fence_error": {
+      "additionalProperties": false,
+      "properties": {
+        "error": {"$ref": "common.json#/$defs/text"},
+        "id": {"type": "string", "x-equals": "/id"},
+        "span": {
+          "additionalProperties": false,
+          "properties": {
+            "column": {"$ref": "common.json#/$defs/nat"},
+            "end": {"$ref": "common.json#/$defs/nat"},
+            "line": {"$ref": "common.json#/$defs/nat"},
+            "start": {"$ref": "common.json#/$defs/nat"}
+          },
+          "required": ["start", "end", "line", "column"],
+          "type": "object"
+        },
+        "status": {"const": "error"}
+      },
+      "required": ["id", "status", "error", "span"],
       "type": "object"
     },
     "meaning": {
