@@ -1,0 +1,33 @@
+{
+  "comment": "Seeded bugs of the qs-1 ties pass (infra item ties-qs-1). Each was planted alone on 10cb941f7, made `python3 tools/trust_map.py --check` exit 1 (output in seed-<id>.txt) and `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` fail, and was restored with git checkout. lean/statements.txt is generated (tools/lean_statements.py); it was edited only for the seed and restored.",
+  "seeds": [
+    {
+      "id": "Q1-uses-anchor",
+      "file": "lean/statements.txt",
+      "change": "atLeast_iff's `-- uses` line loses VE.Closure.Order@VE.Closure.Order, its one anchor",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Closure.Order.atLeast: the statement of VE.Closure.atLeast_iff mentions no K, S or untied [V] declaration of the tree, validly classified, to tie it to"
+    },
+    {
+      "id": "Q2-uses-decl",
+      "file": "lean/statements.txt",
+      "change": "outranksPlus_eq_above's `-- uses` line loses VE.Closure.Order.above@VE.Closure.Order",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Closure.Order.above: the statement of VE.Closure.outranksPlus_eq_above does not mention VE.Closure.Order.above of VE.Closure.Order"
+    },
+    {
+      "id": "Q3-unrelated",
+      "file": "tools/trust-classes.json",
+      "change": "Order.atLeast tied to the unrelated VE.Closure.Path.trans instead of atLeast_iff",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Closure.Order.atLeast: the statement of VE.Closure.Path.trans does not mention VE.Closure.Order.atLeast of VE.Closure.Order"
+    },
+    {
+      "id": "Q4-other-decl",
+      "file": "tools/trust-classes.json",
+      "change": "Order.above tied to VE.Closure.atLeast_refl (same file, about atLeast only) instead of risk_closure_eq",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Closure.Order.above: the statement of VE.Closure.atLeast_refl does not mention VE.Closure.Order.above of VE.Closure.Order"
+    }
+  ]
+}

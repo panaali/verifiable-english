@@ -1,0 +1,61 @@
+{
+  "mutants": [
+    {
+      "id": "L1",
+      "language": "Lean",
+      "file": "lean/ResponseShape/Schemas/Rights.lean",
+      "change": "packages: the UNKNOWN branch drops `(\"status_text\", .pattern (Re.prefixes [\"UNKNOWN: \"]))`; lake build passes, rights.json regenerated with tools/response_schemas.py --write for the run, then both restored and rebuilt",
+      "behaviour": "the Lean shape refuses a status line of the wrong verdict (audit row 38)",
+      "test": "tests/test_rd9_followup_bindings.py::test_a_status_line_of_the_wrong_verdict_does_not_fit_the_lean_shape[row 38]",
+      "also": [
+        "tests/test_rd9_followup_bindings.py::test_a_status_line_of_the_wrong_verdict_does_not_fit_the_lean_shape[UNKNOWN line renamed]"
+      ]
+    },
+    {
+      "id": "L2",
+      "language": "Lean",
+      "file": "lean/ResponseShape/Schemas/Rights.lean",
+      "change": "packages: the UNKNOWN branch drops `(\"conditional_on\", .maxItems 0)`; lake build passes, rights.json regenerated for the run, then both restored and rebuilt",
+      "behaviour": "an UNKNOWN answer is conditional on nothing",
+      "test": "tests/test_rd9_followup_bindings.py::test_a_status_line_of_the_wrong_verdict_does_not_fit_the_lean_shape[UNKNOWN conditional on a premise]",
+      "also": []
+    },
+    {
+      "id": "L3",
+      "language": "Lean",
+      "file": "lean/VE/Norms/Run.lean",
+      "change": "reportDomain writes `ve-reportX-` for `ve-report-` (soft and rights admission use it); the build and runAdmission_sound still pass, ve_service rebuilt and pinned (regen_generated --only checker-pins) for the run, then restored, rebuilt and the pin restored. Not a file this item changes: it shows the report_id regression can fail",
+      "behaviour": "Lean's admission report_id is the identity runAdmission_sound states",
+      "test": "tests/test_rd9_followup_bindings.py::test_lean_admission_report_ids_are_the_identity_the_theorem_states[soft]",
+      "also": [
+        "tests/test_rd9_followup_bindings.py::test_lean_admission_report_ids_are_the_identity_the_theorem_states[rights]"
+      ]
+    },
+    {
+      "id": "P1",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "_bind_conflict: the UNKNOWN branch's check is replaced by `pass`",
+      "behaviour": "an UNKNOWN line naming a target the request lacks, or another detail, is refused",
+      "test": "tests/test_rd9_followup_bindings.py::test_an_unknown_line_naming_what_the_request_lacks_is_unavailable[line names ghost]",
+      "also": [
+        "tests/test_rd9_followup_bindings.py::test_an_unknown_line_naming_what_the_request_lacks_is_unavailable[detail names ghost]",
+        "tests/test_rd9_followup_bindings.py::test_an_unknown_line_naming_what_the_request_lacks_is_unavailable[line and detail differ]",
+        "tests/test_rd9_followup_bindings.py::test_an_unknown_line_naming_what_the_request_lacks_is_unavailable[budget shifted]",
+        "tests/test_rd9_followup_bindings.py::test_an_unknown_line_naming_what_the_request_lacks_is_unavailable[no target]",
+        "tests/test_relay_binding_inventory.py::test_every_bound_field_mutant_is_unavailable[rights-conflict]"
+      ]
+    },
+    {
+      "id": "P2",
+      "language": "Python",
+      "file": "ve/rights_route.py",
+      "change": "_bind_conflict: the UNKNOWN branch drops the target binding (`False or` in place of the `not in targets` test)",
+      "behaviour": "the target an UNKNOWN line names is one of the request's targets",
+      "test": "tests/test_rd9_followup_bindings.py::test_an_unknown_line_naming_what_the_request_lacks_is_unavailable[detail names ghost]",
+      "also": [
+        "tests/test_rd9_followup_bindings.py::test_an_unknown_line_naming_what_the_request_lacks_is_unavailable[no target]"
+      ]
+    }
+  ]
+}

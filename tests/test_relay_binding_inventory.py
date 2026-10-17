@@ -190,7 +190,10 @@ _ADMISSION = {
     "report.assumptions": BOUND, "report.assumptions[].ast": FORMULA,
     "report.assumptions[].label": BOUND, "report.assumptions[].name": BOUND,
     "report.root.ast": FORMULA, "report.root.label": BOUND, "report.root.name": BOUND,
-    "report_id": lean("the report's identity hash"),
+    # ADR 0001 (D1): an identity hash is a derived value, never recomputed in Python. `runAdmission_sound` of
+    # VE.SoftNorms.Run and VE.Rights.Run proves it is the digest of the environment id, the document sent and
+    # the report (`tests/test_rd9_followup_bindings.py`).
+    "report_id": lean("the report's identity hash, by runAdmission_sound"),
 }
 
 INVENTORY = {
@@ -246,8 +249,7 @@ INVENTORY = {
     "rights-conflict": {
         "id": BOUND, "status": BOUND, "targets": BOUND, "targets[]": BOUND,
         "conditional_on": lean("which premises Lean's conflict check used; each label is bound"),
-        "conditional_on[]": BOUND, "detail": lean("Lean's detail line"), "verdict": lean("Lean's verdict"),
-        "status_text": lean("Lean's verdict line; its counts are bound for CONFLICT-FREE"),
+        "conditional_on[]": BOUND, "detail": BOUND, "verdict": lean("Lean's verdict"), "status_text": BOUND,
     },
     "soft-pairs": {
         "id": BOUND, "status": BOUND, "pairs": BOUND, "pairs[].pair": BOUND, "pairs[].pair[]": BOUND,

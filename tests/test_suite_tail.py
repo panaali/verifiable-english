@@ -160,3 +160,69 @@ def test_durations_command_collects_current_gate_ids_by_default(tmp_path, monkey
                                       "--source", "a test"])
     assert suite_tail.main() == 0
     assert test_schedule.read_durations(output) == {"t::current": 3.0}
+
+
+STAMPED_LOG = """\
+100.000 ============================= test session starts ==============================
+100.500 created: 4/4 workers
+110.000 [gw0] [ 10%] PASSED tests/test_a.py::test_one
+120.000 [gw1] [ 20%] FAILED tests/test_a.py::test_two[x y]
+130.000 [gw2] [ 30%] SKIPPED tests/test_b.py::test_three
+200.000 [gw3] [ 40%] PASSED tests/test_b.py::test_four
+250.000 [gw0] [ 60%] PASSED tests/test_c.py::test_five
+300.000 [gw1] [ 80%] ERROR tests/test_c.py::test_six
+600.000 [gw2] [100%] PASSED tests/test_d.py::test_long
+600.100 ============================= slowest durations ==============================
+600.200 290.00s call     tests/test_d.py::test_long
+600.300 1.50s setup    tests/test_a.py::test_two[x y]
+600.400 0.25s teardown tests/test_a.py::test_two[x y]
+600.500 0.00s call     tests/test_a.py::test_one
+"""
+
+
+def test_tail_reads_when_each_worker_finished_its_last_test():
+    """The tail starts when fewer than `busy` workers still have tests: here gw3's last report arrives at 200 s, gw0's
+    at 250 s, gw1's at 300 s and gw2's at 600 s, so with 4 workers and busy 4 the tail is 600 - 200, and gw2 ran
+    alone for 300 s. Summed from the --durations table, gw2's tests took 290 s and gw1's 1.75 s."""
+    summary = suite_tail.tail_summary(STAMPED_LOG)
+    assert summary["wall_seconds"] == 500.0 and summary["workers"] == 4
+    assert summary["reported"] == {"worker_finished_seconds": {"gw0": 150.0, "gw1": 200.0, "gw2": 500.0, "gw3": 100.0},
+                                   "tail_seconds": 400.0, "alone_seconds": 300.0}
+    assert summary["summed"] == {"worker_finished_seconds": {"gw0": 0.0, "gw1": 1.8, "gw2": 290.0, "gw3": 0.0},
+                                 "tail_seconds": 290.0, "alone_seconds": 288.2, "even_share_seconds": 72.9,
+                                 "untimed_tests": 4}
+    assert suite_tail.tail_summary(STAMPED_LOG, busy=2)["reported"]["tail_seconds"] == 300.0
+    assert suite_tail.tail_summary(STAMPED_LOG, busy=5)["reported"]["tail_seconds"] is None
+    with pytest.raises(ValueError):
+        suite_tail.tail_summary("[gw0] [ 10%] PASSED tests/test_a.py::test_one\n")
+
+
+def test_logged_seconds_sum_each_tests_phases(tmp_path, monkeypatch):
+    assert suite_tail.logged_seconds(STAMPED_LOG) == {"tests/test_d.py::test_long": 290.0,
+                                                      "tests/test_a.py::test_two[x y]": 1.75,
+                                                      "tests/test_a.py::test_one": 0.0}
+    # The durations command takes such a log as one more run.
+    log = tmp_path / "run.log"
+    log.write_text(STAMPED_LOG)
+    collection = tmp_path / "collection.json"
+    collection.write_text(json.dumps(["tests/test_d.py::test_long", "tests/test_a.py::test_two[x y]",
+                                      "tests/test_a.py::test_one"]))
+    output = tmp_path / "durations.json"
+    monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", "--log", str(log), "--output", str(output),
+                                      "--source", "a log", "--collection", str(collection)])
+    assert suite_tail.main() == 0
+    assert test_schedule.read_estimates(output) == ({"tests/test_d.py::test_long": 290.0,
+                                                     "tests/test_a.py::test_two[x y]": 1.8}, 0.0)
+    monkeypatch.setattr(sys, "argv", ["suite_tail.py", "durations", "--output", str(output), "--source", "none",
+                                      "--collection", str(collection)])
+    with pytest.raises(SystemExit, match="no profile"):
+        suite_tail.main()
+
+
+def test_stamp_copies_each_line_after_its_time(tmp_path):
+    log = tmp_path / "stamped.log"
+    done = subprocess.run([sys.executable, str(ROOT / "tools/bench/suite_tail.py"), "stamp", "--output", str(log)],
+                          input="one\ntwo words\n", capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 0 and done.stdout == "one\ntwo words\n"
+    rows = [suite_tail.unstamped(line) for line in log.read_text().splitlines()]
+    assert [body for _, body in rows] == ["one", "two words"] and all(type(at) is float for at, _ in rows)

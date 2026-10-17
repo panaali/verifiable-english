@@ -1,0 +1,6 @@
+17009 tests, 18350 test-seconds; even share on 9 workers 2039 s
+xdist's load                                            end   2336 s   tail (fewer than 4 busy)   173 s   one worker alone    80 s
+main's LongestFirst, main's (stale) durations           end   2468 s   tail (fewer than 4 busy)   495 s   one worker alone   279 s
+this branch, stale durations                            end   2480 s   tail (fewer than 4 busy)   516 s   one worker alone   291 s
+this branch, stale durations, b16e/b16f unmeasured      end   2189 s   tail (fewer than 4 busy)   163 s   one worker alone    74 s
+this branch, refreshed durations                        end   2040 s   tail (fewer than 4 busy)     2 s   one worker alone     1 s

@@ -1,0 +1,9 @@
+$ python3 tools/trust_map.py --check --since a747a9cf70b2
+class lines: K 997, S 10155, D 14717, G 29746, C 9862, P 76017, T 15568, o 13290
+D/G groups: D[V] 13024, D[R] 1154, D[I] 539, G[V] 27169, G[R] 2304, G[I] 273
+tied 260, unclassified 0, trusted 51104 (K + S + untied [V] + unclassified), 170352 lines in 523 files
+against a747a9cf70b2: K +0, S +17, D +0, G +0, tied +0, unclassified +0, trusted +17
+  VE/Closure/Order.lean: trusted +17
+note: a747a9cf70b2 records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 997, 'S': 10138, 'V': 39952} (the merge train's --write has not run since)
+PASS: K, S and untied [V] within a747a9cf70b2 and the allowances introduced since
+exit 0
