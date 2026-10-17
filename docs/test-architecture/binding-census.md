@@ -8,10 +8,10 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 243 |
 | leaves:closed domain | 247 |
-| leaves:none | 1262 |
+| leaves:none | 1265 |
 | modes | 36 |
 | today:hand | 202 |
-| today:later Lean request | 59 |
+| today:later Lean request | 62 |
 | today:not probed | 864 |
 | today:shape | 490 |
 | today:unbound | 137 |
@@ -764,6 +764,7 @@ Delegates: `/` to soft-norms.
 | `/decisions/*/key/party` | string | none |  |  | 0 | not probed |
 | `/decisions/*/name` | string | none |  | pattern | 0 | unbound |
 | `/derived/*/rule` | string | none |  |  | 3 | later Lean request |
+| `/detail` | string | none |  | pattern | 2 | later Lean request |
 | `/detail` | string | none |  | minLength | 2 | later Lean request |
 | `/distinction/*/hits/*/protected` | string | none |  |  | 0 | unbound |
 | `/distinction/*/hits/*/right` | string | none |  |  | 0 | unbound |
@@ -839,6 +840,8 @@ Delegates: `/` to soft-norms.
 | `/rule_narrowings/*/rule` | string | none |  |  | 3 | not probed |
 | `/status` | string | closed domain | const |  | 23 | shape |
 | `/status_text` | string | none |  | minLength | 3 | later Lean request |
+| `/status_text` | string | none |  | pattern | 3 | later Lean request |
+| `/status_text` | string | none |  | pattern | 3 | later Lean request |
 | `/target` | string | bound | x-equals |  | 0 | shape |
 | `/targets/*` | string | none |  |  | 9 | later Lean request |
 | `/verdict` | string | closed domain | enum |  | 3 | shape |

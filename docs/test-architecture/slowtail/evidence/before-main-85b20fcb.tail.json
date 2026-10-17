@@ -1,0 +1,37 @@
+{
+ "wall_seconds": 2526.3,
+ "workers": 9,
+ "busy_below": 4,
+ "reported": {
+  "worker_finished_seconds": {
+   "gw0": 1992.4,
+   "gw1": 2020.7,
+   "gw2": 1987.9,
+   "gw3": 1988.6,
+   "gw4": 2526.3,
+   "gw5": 1988.0,
+   "gw6": 2379.9,
+   "gw7": 2003.8,
+   "gw8": 2084.8
+  },
+  "tail_seconds": 505.6,
+  "alone_seconds": 146.4
+ },
+ "summed": {
+  "worker_finished_seconds": {
+   "gw0": 1937.1,
+   "gw1": 1955.8,
+   "gw2": 1937.6,
+   "gw3": 1931.5,
+   "gw4": 2472.8,
+   "gw5": 1937.5,
+   "gw6": 2195.0,
+   "gw7": 1954.6,
+   "gw8": 2027.9
+  },
+  "tail_seconds": 517.0,
+  "alone_seconds": 277.8,
+  "even_share_seconds": 2038.9,
+  "untimed_tests": 0
+ }
+}
