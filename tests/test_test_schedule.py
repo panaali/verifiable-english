@@ -300,6 +300,18 @@ def test_the_suite_conftest_installs_the_scheduler(tmp_path, monkeypatch):
             {}, test_schedule.UNRECORDED_SECONDS, None)
 
 
+def test_a_nested_run_and_the_run_cache_never_see_the_gates_durations_file():
+    """The gate names its scratch durations file to its own suite only: a nested run's environment drops it, as it
+    drops the gate's other suite settings, so a nested run orders by the committed file and the run cache's key
+    (its `VE_` settings) does not change with each gate's scratch path."""
+    from tools import run_cache
+    outer = {test_schedule.SOURCE_VARIABLE: "/tmp/ve-gate-x/test-durations.json", "VE_NATIVE_PREBUILT": "1"}
+    nested = nested_pytest.environment(outer)
+    assert test_schedule.SOURCE_VARIABLE not in nested and nested["VE_NATIVE_PREBUILT"] == "1"
+    assert test_schedule.SOURCE_VARIABLE not in run_cache.run_settings(ROOT, nested)
+    assert test_schedule.SOURCE_VARIABLE in gate.STAGE_ENVIRONMENT["pytest"]
+
+
 def test_a_measured_list_that_is_not_a_list_of_ids_is_ignored(tmp_path):
     path = tmp_path / "durations.json"
     for measured in ("tests/test_a.py::t", [7], {"tests/test_a.py::t": 1}, None, [None]):
