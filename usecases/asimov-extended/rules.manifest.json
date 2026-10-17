@@ -1,7 +1,7 @@
 {
   "environment_id": "0dbd6881de9baec3038cf353b06fe22e79e374048bfd6aa562e8fadcf7f790aa",
   "document_hash": "5082c15ddf28708057417f53389301da5a585eb746c3b22b73b360701b2f2078",
-  "text_digest": "6180eecd325c2ce9b9861f46223c7a1d30b2c82028d91e93454fc58c0f4a392a",
+  "text_digest": "521268b78186cc3f02c6d36140e42c8796333403fdcf0b9ec51049fa9a2d2c7a",
   "blocks": [
     {
       "handle": "handle-law-3-permission",
@@ -9,7 +9,7 @@
       "number": 1,
       "span": [
         0,
-        88
+        68
       ]
     },
     {
@@ -17,8 +17,8 @@
       "name": "law-2-permission",
       "number": 2,
       "span": [
-        89,
-        192
+        69,
+        156
       ]
     },
     {
@@ -26,8 +26,8 @@
       "name": "law-1-injury",
       "number": 3,
       "span": [
-        193,
-        299
+        157,
+        263
       ]
     },
     {
@@ -35,8 +35,8 @@
       "name": "law-1-inaction",
       "number": 4,
       "span": [
-        300,
-        476
+        264,
+        440
       ]
     },
     {
@@ -44,8 +44,8 @@
       "name": "law-0-injury",
       "number": 5,
       "span": [
-        477,
-        587
+        441,
+        551
       ]
     },
     {
@@ -53,8 +53,8 @@
       "name": "law-0-inaction",
       "number": 6,
       "span": [
-        588,
-        768
+        552,
+        732
       ]
     },
     {
@@ -62,8 +62,8 @@
       "name": "lawful-option",
       "number": 7,
       "span": [
-        769,
-        974
+        733,
+        938
       ]
     },
     {
@@ -71,8 +71,8 @@
       "name": "law-1-ban",
       "number": 8,
       "span": [
-        975,
-        1092
+        939,
+        1056
       ]
     },
     {
@@ -80,8 +80,8 @@
       "name": "law-0-prevention-exception",
       "number": 9,
       "span": [
-        1093,
-        1403
+        1057,
+        1367
       ]
     },
     {
@@ -89,8 +89,8 @@
       "name": "law-0-ban",
       "number": 10,
       "span": [
-        1404,
-        1527
+        1368,
+        1491
       ]
     },
     {
@@ -98,8 +98,8 @@
       "name": "law-2-obey",
       "number": 11,
       "span": [
-        1528,
-        1649
+        1492,
+        1597
       ]
     },
     {
@@ -107,8 +107,8 @@
       "name": "law-3-threat",
       "number": 12,
       "span": [
-        1650,
-        1895
+        1598,
+        1843
       ]
     },
     {
@@ -116,8 +116,8 @@
       "name": "law-3-preserve",
       "number": 13,
       "span": [
-        1896,
-        2397
+        1844,
+        2345
       ]
     },
     {
@@ -125,8 +125,8 @@
       "name": "tie-lawful-action",
       "number": 14,
       "span": [
-        2398,
-        2577
+        2346,
+        2525
       ]
     },
     {
@@ -134,8 +134,8 @@
       "name": "tie-candidate-lawful",
       "number": 15,
       "span": [
-        2578,
-        2685
+        2526,
+        2633
       ]
     },
     {
@@ -143,8 +143,8 @@
       "name": "tie-candidate-no-lawful-competitor",
       "number": 16,
       "span": [
-        2686,
-        2999
+        2634,
+        2947
       ]
     },
     {
@@ -152,8 +152,8 @@
       "name": "tie-possibly-harmful-human",
       "number": 17,
       "span": [
-        3000,
-        3174
+        2948,
+        3122
       ]
     },
     {
@@ -161,8 +161,8 @@
       "name": "tie-precaution",
       "number": 18,
       "span": [
-        3175,
-        3355
+        3123,
+        3303
       ]
     },
     {
@@ -170,8 +170,8 @@
       "name": "tie-least-severe-worst-case",
       "number": 19,
       "span": [
-        3356,
-        3598
+        3304,
+        3546
       ]
     },
     {
@@ -179,8 +179,8 @@
       "name": "tie-valid-order",
       "number": 20,
       "span": [
-        3599,
-        3867
+        3547,
+        3799
       ]
     },
     {
@@ -188,8 +188,8 @@
       "name": "tie-order-authority",
       "number": 21,
       "span": [
-        3868,
-        4128
+        3800,
+        4060
       ]
     },
     {
@@ -197,8 +197,8 @@
       "name": "tie-order-earlier",
       "number": 22,
       "span": [
-        4129,
-        4478
+        4061,
+        4410
       ]
     },
     {
@@ -206,8 +206,8 @@
       "name": "tie-overridden-order",
       "number": 23,
       "span": [
-        4479,
-        4709
+        4411,
+        4641
       ]
     },
     {
@@ -215,8 +215,8 @@
       "name": "tie-overridden-not-required",
       "number": 24,
       "span": [
-        4710,
-        4829
+        4642,
+        4761
       ]
     },
     {
@@ -224,8 +224,8 @@
       "name": "tie-possibly-harmful-robot",
       "number": 25,
       "span": [
-        4830,
-        5078
+        4762,
+        4994
       ]
     },
     {
@@ -233,8 +233,8 @@
       "name": "tie-def-own-robot-harm",
       "number": 26,
       "span": [
-        5079,
-        5296
+        4995,
+        5212
       ]
     },
     {
@@ -242,8 +242,8 @@
       "name": "tie-def-competes-with",
       "number": 27,
       "span": [
-        5297,
-        5518
+        5213,
+        5434
       ]
     },
     {
@@ -251,8 +251,8 @@
       "name": "tie-def-less-severe-competitor",
       "number": 28,
       "span": [
-        5519,
-        5782
+        5435,
+        5698
       ]
     },
     {
@@ -260,8 +260,8 @@
       "name": "tie-def-beaten-by-a-candidate",
       "number": 29,
       "span": [
-        5783,
-        6032
+        5699,
+        5948
       ]
     }
   ]

@@ -93,7 +93,7 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
     pure ⟨.soft, profiles, lower, ⟨checked.ne, checked.soft, checked.profiles, frameJson⟩, emptyRights,
       environment, lowerJson⟩
   | .norms =>
-    let ne ← VE.Norms.Wire.decodeNormsEnvironment frameJson
+    let ne ← VE.Norms.Wire.decodeNormsEnvironment frameJson (displayConstants := false)
     pure ⟨.norms, profiles, lower, ⟨ne, emptySoft, lower, lowerJson⟩, emptyRights, environment, lowerJson⟩
 
 /-- The frame (1.2): the environment and no unit. -/
