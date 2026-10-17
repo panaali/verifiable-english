@@ -4,7 +4,7 @@
   "K": 997,
   "S": 9788,
   "D": 13887,
-  "G": 27565,
+  "G": 27569,
   "C": 8486,
   "P": 71964,
   "T": 14750,
@@ -12,18 +12,18 @@
   "D[V]": 12357,
   "D[R]": 1003,
   "D[I]": 527,
-  "G[V]": 25559,
+  "G[V]": 25563,
   "G[R]": 1765,
   "G[I]": 241,
   "tied": 178,
-  "unclassified": 0,
-  "trusted": 48542,
-  "lines": 159800
+  "unclassified": 8,
+  "trusted": 48554,
+  "lines": 159812
  },
  "budget": {
   "K": 997,
   "S": 9788,
-  "V": 37757
+  "V": 37769
  },
  "signed": [],
  "history": [
@@ -738,6 +738,19 @@
     "K": 997,
     "S": 9788,
     "V": 37757
+   }
+  },
+  {
+   "change": "RD-7 review fix (F1, F2): V +12 in VE/Readings/SupVerdictsWire.lean. supOpen and the need-driven supScopes list the scopes whose evidence an answer can use, replacing the deleted Python loops that generated conflict, certificate and model evidence for every scope (_prepare, entailment, premises_answer); the untaken check is skipped past the 1024-choice budget (UNKNOWN). SIGNED by standing ruling R6 (DRI-RULINGS.md); tested by test_superposed_scopes_follow_the_asked_scope_first and test_untaken_check_waits_for_the_checked_budget.",
+   "rebaselined_from": {
+    "K": 997,
+    "S": 9788,
+    "V": 37757
+   },
+   "to": {
+    "K": 997,
+    "S": 9788,
+    "V": 37769
    }
   }
  ],
@@ -10671,7 +10684,7 @@
    "K": 0,
    "S": 0,
    "D": 0,
-   "G": 461,
+   "G": 465,
    "C": 0,
    "P": 0,
    "T": 0,
@@ -10679,13 +10692,13 @@
    "D[V]": 0,
    "D[R]": 0,
    "D[I]": 0,
-   "G[V]": 461,
+   "G[V]": 465,
    "G[R]": 0,
    "G[I]": 0,
    "tied": 0,
-   "unclassified": 0,
-   "trusted": 461,
-   "lines": 478
+   "unclassified": 8,
+   "trusted": 473,
+   "lines": 490
   },
   "VE/Readings/SupWire.lean": {
    "K": 0,

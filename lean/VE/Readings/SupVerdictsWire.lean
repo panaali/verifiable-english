@@ -212,11 +212,20 @@ def supScope (x : SupContext) (A : Choice) (Γ φ : Json) (e : Json)
 def supEvidence (j : Json) (A : Choice) : Json :=
   ((evidenceList j).find? (fun e => jchoice (e.getObjValD "choice") == A)).getD (Json.mkObj [])
 
-/-- Global scope first, then complete choices (at most 64), then live candidates for premise checks.
-Lean alone enumerates and applies the budget. -/
-def supScopes (D : Doc) (question : String) (A : Choice) (checked : List Choice) : List Choice :=
+/-- Whether the answer needs the complete choices' evidence once the asked scope's is in: under the completion each
+choice's conflict status when the global one is not CONFLICT-FREE, and the fold of a query whose asked scope is
+CONFLICT-FREE but not proved (named readings are folded only under the completion). -/
+def supOpen (nd : Bool) (q : String) (A : Choice) (named : Option Choice) (s : RowInfo) : Bool :=
+  if q == "conflict" then nd && A.isEmpty && s.conflict != .free
+  else if q == "query" then s.conflict == .free && s.query != .proved && (named.isNone || nd)
+  else false
+
+/-- Global scope first, then the complete choices taking it (at most 64) when the answer is still open (`supOpen`),
+then live candidates for premise checks. Lean alone enumerates and applies the budget; evidence is generated only
+for the scopes listed. -/
+def supScopes (D : Doc) (question : String) (A : Choice) (checked : List Choice) (more : Bool) : List Choice :=
   let cs := chosenOf D A
-  VE.Readings.Wire.dedupChoices ([A] ++ (if (choices D).length ≤ maxChoices then cs else []) ++
+  VE.Readings.Wire.dedupChoices ([A] ++ (if more && (choices D).length ≤ maxChoices then cs else []) ++
     (if question == "premises" then (candidatesOf D).filterMap (fun (R, i) =>
       if (droppedBy D R i).isNone && checked.any (fun c => c.contains (R.id, i)) then
         some [(R.id, i)] else none) else []))
@@ -446,7 +455,9 @@ def runSupVerdicts (id : String) (b : Admitted2) (j : Json) : Except String Json
     unless (choices x.D).length > maxChoiceChecks do throw e
   let ⟨A, _⟩ ← decodeAssumed x.D (j.getObjValD "assumed")
   let checked := checkedChoices x.D
-  unless checked.any (fun c => A.all (c.contains ·)) do throw (untakenText x.D A)
+  let over := checked.length > maxChoiceChecks
+  -- Past the checked budget the cut list cannot show that no compatible reading takes `A`: the answer is UNKNOWN.
+  unless over || checked.any (fun c => A.all (c.contains ·)) do throw (untakenText x.D A)
   let named := if (j.getObjVal? "assumed").toBool && !isNull (j.getObjValD "assumed") then some A else none
   let Γ := if q == "query" then j.getObjValD "premises" else .arr #[]
   let φ := if q == "query" then j.getObjValD "conclusion" else .null
@@ -457,13 +468,15 @@ def runSupVerdicts (id : String) (b : Admitted2) (j : Json) : Except String Json
   let preparedConflict := if nd.isNone && (evidenceList j).any (fun e =>
       (pieceOf e "conflict").isSome) then (supReplayOf b).toOption else none
   let x := { x with modelReplay := prepared, conflictReplay := preparedConflict }
-  let scopes := supScopes x.D q A checked
   let X := correlate (sup x.D).1
   let Y := soften X
   let ts := targets Y
+  let e0 := supEvidence j A
+  let s0 := supScope x A Γ φ e0 X Y ts checked
+  let scopes := supScopes x.D q A checked (e0 != Json.mkObj [] && supOpen x.nd.isSome q A named s0.info)
   let ss := scopes.map (fun c =>
     let e := supEvidence j c
-    if c != A && e == Json.mkObj [] then emptySupScope c else supScope x c Γ φ e X Y ts checked)
+    if c == A then s0 else if e == Json.mkObj [] then emptySupScope c else supScope x c Γ φ e X Y ts checked)
   let dead := match j.getObjValD "dead" with | .arr xs => xs.toList | _ => []
   let budget ← match j.getObjValD "budget" with
     | .null => pure (SupBudget.mk 10000 2 10000 100000)
@@ -472,7 +485,6 @@ def runSupVerdicts (id : String) (b : Admitted2) (j : Json) : Except String Json
         | .ok n => pure n | .error _ => throw s!"InvalidInput: invalid search budget {key}"
       pure (SupBudget.mk (← read "max_steps") (← read "max_domain_size")
         (← read "max_models") (← read "max_evaluations"))
-  let over := checked.length > maxChoiceChecks
   pure (supAnswer id q x A named ss dead budget over checked)
 
 end VE.Readings.Run

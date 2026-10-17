@@ -5,8 +5,9 @@ A document whose sets carry `companion` is split by Lean into its main case and 
 checked by itself and the document's meaning is their product. These tests drive the spec's fixtures F-C1 and F-C11
 to F-C17 through `ve document check` and `ve document readings --conclusion … --sentence …`, and the cases that need
 evidence withheld (F-C16, F-C17, SR4) through Lean's product answer on the request Python built. Every order of the
-sentences and sets gets the same answer (review B1 of rd-4b), and the document's UNKNOWN is worded (2.4 item 3). The
-standalone superposed route and the product's enumerated component agree on conflict status
+sentences and sets gets the same answer (review B1 of rd-4b), and the document's UNKNOWN is worded (2.4 item 3). Every
+expected value is the spec's or Lean's own answer on the case written as a document of its own (`test_each_case_is_
+answered_as_a_document_of_its_own`), and the standalone superposed route agrees on conflict status
 (`test_each_case_keeps_its_standalone_conflict_status`); Python decides nothing here.
 """
 from __future__ import annotations
@@ -125,6 +126,24 @@ def test_fc1_check_three_components_conflict_free_with_a_model(tmp_path):
         # E30 replaces E26 for a companion component (2.4 item 1)
         assert f"Under every reading of sentence {n}, no two rules on the same act contradict each other." in english
     assert not any(line.startswith("Under every reading of the open sentence") for line in english)
+
+
+def test_each_case_is_answered_as_a_document_of_its_own(tmp_path):
+    """Each component's own answer inside the product is Lean's answer on that case written as a document of its
+    own (F-C1, "per-component answers as F-ND1's")."""
+    from ve.readings_components import context
+    from tests.test_readings_nd_lean import one
+    doc = load_document(fc1(tmp_path))
+    route = context(doc)
+    row = route.conflict_answer()
+    case = route.requests[id(row)]
+    a, _, ca = set_a()
+    for name, s, companion, unit_id in (("rs_a", a, ca, "u_a"),):
+        evidence = [{k: v for k, v in e.items() if k != "component"} for e in case["evidence"]
+                    if e["component"] == name]
+        own = one("ve_readings_route", "readings-verdicts", merged(companion), alone(s, [{"id": unit_id}]),
+                  question="conflict", evidence=evidence)
+        assert route.sub(row, name) == own
 
 
 def test_each_case_keeps_its_standalone_conflict_status(tmp_path):
