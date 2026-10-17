@@ -596,8 +596,8 @@
   },
   {
    "class": "V",
-   "lines": 134,
-   "reason": "lf-16f (lean-first batch 16f): new Lean-owned document-mode behaviour composing existing routes: plain norms@0 content on the norms route, a soft-norms@0 document on the soft route (its E'' environment, soft source, rule source and canonical content), the environment mode's fault where no route is composed, and located distinguishing-model and strict-fence diagnostics. Untied V by file against 85b20fcba: VE/Service/Document.lean +131 (Env.soft, Env.regulates, usesNorms, softSourceNorms, SoftLayer, extendedEnv, softContentOf D[V]; softSource, softLayer, softRules G[V]; and the grown check, contentOf, sourceUnit, unitsOf, decodedEnvironment, environmentOf, admitGraph, strayNull, runCaseReported), ResponseShape/Schemas/Document.lean +3 (row). K +0, S +0. Itemised in docs/lean-first/b16f/DELTA.md row 6; the ties pass is a FOLLOW-UPS.md row.",
+   "lines": 142,
+   "reason": "lf-16f (lean-first batch 16f): new Lean-owned document-mode behaviour composing existing routes: plain norms@0 content on the norms route, a soft-norms@0 document on the soft route (its E'' environment, soft source, rule source and canonical content), the environment mode's fault where no route is composed, and located distinguishing-model and strict-fence diagnostics. Untied V by file against 85b20fcba: VE/Service/Document.lean +139 (Env.soft, Env.regulates, usesNorms, softSourceNorms, SoftLayer, extendedEnv, softContentOf D[V]; softSource, softLayer, softRules G[V]; and the grown check, contentOf, sourceUnit, unitsOf, decodedEnvironment, environmentOf, admitGraph, strayNull, runCaseReported), ResponseShape/Schemas/Document.lean +3 (row). K +0, S +0. Itemised in docs/lean-first/b16f/DELTA.md row 6; the ties pass is a FOLLOW-UPS.md row.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), lf-16f, 2026-10-17",
    "commit": "85b20fcba4b1b0473de9e41888059e7e1be22b3a"
   }
