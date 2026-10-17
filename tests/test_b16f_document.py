@@ -414,3 +414,39 @@ def test_the_located_error_rows_are_typed(service):
     with pytest.raises(Invalid):
         schema({"id": "d", "status": "error", "error": "", "path": "/a", "span": {"start": 0, "end": 1, "line": 1,
                                                                                  "column": 1}}, case, {})
+
+
+# ------------------------------------------------------------------- the relay mutation gate's by-design entries
+
+@pytest.mark.parametrize("mutant", ["drop mode", "drop exception", "duplicate open", "empty open name",
+                                    "empty open"])
+def test_the_copied_soft_content_mutants_the_transport_accepts_are_refused_by_the_binding(mutant):
+    """Allow entry B8 (tools/relay-gate-allow.json): the transport schema accepts these valid shapes of a soft-norms
+    unit (an optional soft member dropped, a meaning's open list repeated or emptied); the document binding refuses
+    each, as it differs from the authored unit (`_soft_bound`, the meaning compared as written)."""
+    text, raw, row, meta, source, declared = _row("soft-norms")
+    changed = deepcopy(row)
+    unit = changed["units"][0]
+    if mutant == "drop mode":
+        unit["content"]["norm"].pop("mode")
+    elif mutant == "drop exception":
+        unit["content"]["norm"].pop("exception")
+    elif mutant == "duplicate open":
+        unit["meaning"]["open"] *= 2
+    elif mutant == "empty open name":
+        unit["meaning"]["open"][0] = ""
+    else:
+        unit["meaning"]["open"] = []
+    with pytest.raises(ValueError, match="disagrees"):
+        D._bind_document_answer(source, meta, declared, changed)
+
+
+def test_a_located_row_without_its_location_is_a_plain_rejection(service):
+    """Allow entry B9: a model or fence row whose `path` or `span` is dropped is a plain error row, a valid shape the
+    owning modes also write (a location is information they add, R3); the location a row does carry is bound
+    (`test_a_model_path_is_bound_...`, `test_a_fence_span_is_bound_...`)."""
+    schema = ROWS["document"][0]
+    case = Context({"id": "d", "document": "x"})
+    schema({"id": "d", "status": "error", "error": "InvalidModel: x"}, case, {})
+    with pytest.raises(Invalid):
+        schema({"id": "d", "status": "error", "error": "InvalidModel: x", "path": ""}, case, {})

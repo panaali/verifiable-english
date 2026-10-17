@@ -2237,6 +2237,30 @@
    "kind": "by-design",
    "id": "B3",
    "reason": "A field whose domain is a union across JSON types: a line's `source`, `quote` and `witness` are null or a value (ask.json `line`), so the retype to null is a valid answer, and so is a witness retyped to `[]`, the one choice of a one-choice route; a value that is not null is bound to the request by `ve.ask.read_answer`."
+  },
+  {
+   "route": "service:document",
+   "mutation": "*",
+   "path": [
+    "results/*/result/units/*/content/norm/exception",
+    "results/*/result/units/*/content/norm/mode",
+    "results/*/result/units/*/meaning/open",
+    "results/*/result/units/*/meaning/open/*"
+   ],
+   "kind": "by-design",
+   "id": "B8",
+   "reason": "A soft-norms document's copied unit content and meaning (batch 16f; document.json `soft_content`, Shape.copied, and the unit's meaning): an optional soft member dropped, or an open list repeated or emptied, is still a valid shape. The client binds each to the authored unit (`ve/document.py` `_bind_document_answer`: the meaning as written, `_soft_bound` the rule as the soft rule container holds it), which refuses each such mutant (tests/test_b16f_document.py::test_the_copied_soft_content_mutants_the_transport_accepts_are_refused_by_the_binding)."
+  },
+  {
+   "route": "service:document",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/path",
+    "results/*/result/span"
+   ],
+   "kind": "by-design",
+   "id": "B9",
+   "reason": "A located rejection (batch 16f: a distinguishing model's `path`, `Service.Document.locatedModel`; a strict fence's `span`, `locatedFence`) without its location is a plain error row, a shape the owning modes also write; a location is information the owning mode adds (R3). A location the row carries is bound by the client (`ve/document.py` `_names_a_model_member`, `_spans_a_strict_fence`; tests/test_b16f_document.py::test_a_located_row_without_its_location_is_a_plain_rejection)."
   }
  ]
 }

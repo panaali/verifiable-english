@@ -4,7 +4,8 @@
   "row": {
     "anyOf": [
       {"$ref": "common.json#/$defs/case_error"},
-      {"$ref": "common.json#/$defs/error"},
+      {"$ref": "#/$defs/plain_error"},
+      {"$ref": "#/$defs/model_error"},
       {"$ref": "#/$defs/fence_error"},
       {
         "additionalProperties": false,
@@ -201,6 +202,17 @@
         }
       ]
     },
+    "model_error": {
+      "additionalProperties": false,
+      "properties": {
+        "error": {"$ref": "common.json#/$defs/text"},
+        "id": {"x-echo": "/id"},
+        "path": {"$ref": "common.json#/$defs/text"},
+        "status": {"const": "error"}
+      },
+      "required": ["id", "status", "error", "path"],
+      "type": "object"
+    },
     "narrowing": {
       "$comment": "Discourse.Loader.narrowingIds: a front-matter narrowing, relayed whole.",
       "additionalProperties": false,
@@ -213,6 +225,12 @@
         "version": {"minimum": 1, "type": "integer"}
       },
       "required": ["id", "set", "version", "keeps", "by", "reason_spans"],
+      "type": "object"
+    },
+    "plain_error": {
+      "additionalProperties": false,
+      "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+      "required": ["id", "status", "error"],
       "type": "object"
     },
     "rights_block": {

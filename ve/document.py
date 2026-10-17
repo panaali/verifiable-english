@@ -711,25 +711,20 @@ def _bind_document_answer(body, meta, declared, row):
 
 def _soft_bound(answer, authored, same) -> bool:
     """A rights or soft-norms document's soft norm unit in Lean's answer (`Service.Document.softCanonical`) bound to
-    the authored content: the same members (`norm`, and `cites` as written), the rule's name, predicate, sign, guard,
-    carve-outs and `over` as written (Lean's re-encoding of a rule it accepted is the rule as written, as for a
-    plain norm), and every soft member Lean kept as written (an exception's members a subset of the authored
-    ones)."""
+    the authored content: the same members (`norm`, and `cites` as written), and the rule exactly as the soft rule
+    container holds the authored one (`SoftRule.to_dict` of `_hydrate_rule`, the form Python's own path keeps): every
+    member as written, a soft member omitted only where the container omits it. Lean's canonical form of a rule it
+    accepted is that form; any other answer is not bound."""
     if type(answer) is not dict or type(authored) is not dict or set(answer) != set(authored):
         return False
     if "cites" in authored and not same(answer["cites"], authored["cites"]):
         return False
-    rule, written = answer.get("norm"), authored.get("norm")
-    if type(rule) is not dict or type(written) is not dict or not set(rule) <= set(written):
+    from .softnorms import _hydrate_rule
+    try:
+        written = _hydrate_rule({"norm": authored["norm"]}).to_dict()["norm"]
+    except Exception:  # noqa: BLE001 - an authored rule the container cannot hold binds no answer
         return False
-    for key, value in rule.items():
-        if key == "exception":
-            if type(value) is not dict or type(written[key]) is not dict or not all(
-                    member in written[key] and same(item, written[key][member]) for member, item in value.items()):
-                return False
-        elif not same(value, written[key]):
-            return False
-    return all(key in rule for key in ("name", "predicate", "sign", "guard", "unless", "over"))
+    return same(answer.get("norm"), written)
 
 
 def _no_lone_surrogate(meta) -> None:
