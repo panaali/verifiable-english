@@ -149,6 +149,8 @@ checked by value): each is a value the event plugin or the scheduler computes, n
 
 - Whole suite on the Mac at 9 workers, this branch d159baf4: 0 failed (the "after" run above). Main 85b20fcb: 0 failed.
 - The selected tests (`mac-pytest.sh --select`, 33 units): 0 failed at 8215a8a7. The later sync with main 3c664615 brought only fu-ar2-decoders (trust tools and docs), which this branch does not touch.
+- Review F1 fix: the selected tests (33 units) 0 failed at 9bd63836 on the Mac; `lake build` and `lean/audit.py`
+  pass (no Lean change); the 19 seeded bugs all caught (seeded-mutants.json).
 - Pre-existing failures on main (main-known-red.txt): none of them is in this branch's tests. The three listed
   (test_lean_service sub-tick deadline ×2, test_readings_defaults_rd8_report) passed in both Mac runs and were not
   touched.
