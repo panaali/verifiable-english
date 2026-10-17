@@ -157,9 +157,10 @@ def _pilot(item):
     scratch, name, sha, text = item
     from ve.document import check_document
     from ve.errors import CheckerUnavailable, VEError
+    from tools.lean_first_diff import write_pilot
     install()
-    path = Path(scratch) / f"{sha[:16]}.ve.md"
-    path.write_bytes(text)
+    # With the files it names beside it, as it is loaded in place (lf-16f review F2).
+    path = write_pilot(ROOT, Path(scratch), name, sha, text)
     try:
         check_document(path)
         return name, sha, None
