@@ -66,7 +66,7 @@ FAULT_DETAILS = {
 }
 
 
-def pack_text(raw: bytes) -> str:
+def _text(raw: bytes) -> str:
     """A pack's text, sent unchanged: its bytes as UTF-8."""
     if type(raw) is not bytes:
         raise VEError("A sense pack must be bytes")
@@ -74,6 +74,10 @@ def pack_text(raw: bytes) -> str:
         return raw.decode("utf-8")
     except UnicodeError as exc:
         raise VEError("A sense pack is not UTF-8") from exc
+
+
+# The same reading for the `document` mode's request (`ve.senses_document.pack_texts`).
+pack_text = _text
 
 
 def _refusal_problem(reading: dict, source: str | None, fence_ids: list[str] | None = None,
@@ -305,7 +309,7 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
             type(budget) is not int or budget < 0 or type(own) not in (list, type(None)):
         raise VEError("Invalid senses request")
     own = [] if own is None else own
-    texts = [pack_text(pack) for pack in packs]
+    texts = [_text(pack) for pack in packs]
     # The expected identity is over canonical decoded content. The producer remains Lean:
     # malformed packs still go to its restricted decoder, which owns their diagnostic.
     try:

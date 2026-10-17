@@ -317,7 +317,9 @@ def pilot_companions(root: Path, name: str, text: bytes) -> dict[str, bytes]:
     file there. A bundled pack's name names none. The checker decides which of them it reads (lf-16f review F2:
     a document written alone lost the pack beside it)."""
     import posixpath
-    branch, path = name.split(":", 1)
+    branch, colon, path = name.partition(":")
+    if not colon:
+        return {}
     try:
         meta = json.loads(text[4:text.index(b"\n---\n", 4)])
         packs = meta["senses"]["packs"]
