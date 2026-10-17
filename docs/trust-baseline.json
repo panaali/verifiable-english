@@ -593,6 +593,13 @@
    "reason": "rights-licence-relay (ends rd-9's D1 exception, manage-agents/reviews/rd-9-dri-signatures-20261015.md item 2): Lean returns every narrowing mechanism's licence with its grounds, replacing the Python decision paths ve/rights_route.py _narrowings and _in_scope, which this change deletes. Untied V by file against 171faae80: ResponseShape/Schemas/Rights.lean +62 (grounds, elaborated_narrowings, rule_narrowings shapes, G[V]), VE/Rights/Run.lean +28 (namedRule, groundJson, elaboratedNarrowingsJson, ruleNarrowingsJson, D[V]), VE/Rights/Scope.lean +12 (Ground, Ground.text, D[V]). K +0, S +0. Itemised in docs/infra/rights-licence-relay/DELTA.md row 4.",
    "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), rights-licence-relay, 2026-10-16",
    "commit": "171faae80fe836707262975d143156bc87f54937"
+  },
+  {
+   "class": "V",
+   "lines": 13,
+   "reason": "fu-lf14c-f4 (lf-14c review F4): family norms documents whose definitions the FOL view cannot carry (an n-ary head, or a body over an n-ary atom) are elaborated by the family reader. Untied V by file against 85b20fcba: VE/Norms/Family.lean +12 (firstOrderDefinition, new, 9 lines, G[V]; firstOrder +3, G[V]), VE/Core/Layers.lean +1 (the completeModel docstring, rewritten to say what the code does, is one line longer, D[V]). K +0, S +0. Itemised in docs/infra/fu-lf14c-f4/DELTA.md row 1.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), fu-lf14c-f4, 2026-10-17",
+   "commit": "85b20fcba4b1b0473de9e41888059e7e1be22b3a"
   }
  ]
 }
