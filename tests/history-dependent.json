@@ -108,6 +108,16 @@
    ]
   },
   {
+   "test": "tests/test_b16f_senses_document.py",
+   "why": "starts git in tests/test_b16f_senses_document.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_b16f_senses_document.py:test_a_pilot_is_written_with_the_files_it_names_beside_it.<locals>.git: git"
+   ]
+  },
+  {
    "test": "tests/test_batch_evidence.py",
    "why": "starts git in tests/test_batch_evidence.py, tools/batch_evidence.py, tools/gate_collection.py",
    "recorded": [
@@ -271,14 +281,18 @@
   },
   {
    "test": "tests/test_gate_integrity.py",
-   "why": "starts git (git add, git config, git rev-parse, git status) in tests/test_gate_integrity.py, tools/gate.py, tools/gate_collection.py",
+   "why": "starts git (git add, git config, git init, git rev-parse, git status, git update-index) in tests/test_gate_integrity.py, tools/gate.py, tools/gate_collection.py; reads .git in tests/test_gate_integrity.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
+    "tests/test_gate_integrity.py:committed_source: git, git add, git init",
     "tests/test_gate_integrity.py:test_fsmonitor_hook_cannot_hide_edited_source: git, git add, git config, git status",
     "tests/test_gate_integrity.py:test_gate_environment_uses_real_repository_and_recorder: git rev-parse",
+    "tests/test_gate_integrity.py:test_index_bits_cannot_hide_edited_source: git status, git update-index",
+    "tests/test_gate_integrity.py:test_source_identity_reports_clean_tree_and_leaves_index_alone: .git, git rev-parse",
+    "tests/test_gate_integrity.py:test_staged_change_stays_dirty_when_the_file_matches_the_commit: git add",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
     "tools/gate_collection.py:git: git"
