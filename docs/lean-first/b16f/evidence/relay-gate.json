@@ -2,42 +2,28 @@
  "failures": [],
  "findings": [],
  "inputs": {
-  "tests/data/relay-gate-cases.jsonl": "cc734f854a043674775047f62efc65399dff7015bf2283be4cfcb0a30efe425c",
-  "tools/relay-gate-allow.json": "2c4fdf609079434ce5ea27a55787d1b30a37b97893fa53514c7e95ae89dd0277"
+  "tests/data/relay-gate-cases.jsonl": "42341de07bb75723239dc85cd6398bd5ec211105ca84434c9bd4cbab9173b76f",
+  "tools/relay-gate-allow.json": "69e2d5456f292b328cc7298c2a02455a902c291d65780ee0c12810a6bc2fc59e"
  },
  "routes": {
   "service:document": {
-   "accepted": 108,
-   "allowed": 108,
-   "allowed:B0": 15,
-   "allowed:B7": 5,
-   "allowed:B8": 4,
+   "accepted": 2,
+   "allowed": 2,
    "allowed:B9": 2,
-   "allowed:F10": 10,
-   "allowed:F11": 18,
-   "allowed:F5": 36,
-   "allowed:F6": 18,
-   "fixtures": 10,
-   "mutants": 3199,
-   "ok_fixtures": 5,
-   "refused": 3091,
-   "seconds": 5.0
+   "fixtures": 11,
+   "mutants": 3661,
+   "ok_fixtures": 6,
+   "refused": 3659,
+   "seconds": 6.9
   }
  },
  "totals": {
-  "accepted": 108,
-  "allowed": 108,
-  "allowed:B0": 15,
-  "allowed:B7": 5,
-  "allowed:B8": 4,
+  "accepted": 2,
+  "allowed": 2,
   "allowed:B9": 2,
-  "allowed:F10": 10,
-  "allowed:F11": 18,
-  "allowed:F5": 36,
-  "allowed:F6": 18,
-  "fixtures": 10,
-  "mutants": 3199,
-  "ok_fixtures": 5,
-  "refused": 3091
+  "fixtures": 11,
+  "mutants": 3661,
+  "ok_fixtures": 6,
+  "refused": 3659
  }
 }
