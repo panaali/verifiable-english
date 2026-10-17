@@ -33,7 +33,14 @@
       "file": "tools/trust_map.py",
       "test": "tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[S]",
       "mutation": "check() loops over (\"K\", \"V\") only, so S growth is never compared",
-      "result": "pytest: test_one_unsigned_trusted_line_fails_the_live_check[S] and test_the_baseline_is_the_live_tree_with_every_signature_recorded failed; restored"
+      "result": "pytest: test_one_unsigned_trusted_line_fails_the_live_check[S] failed (re-seeded on the AR-4 check() after the main sync, review qs-1-r16-sync F1); restored"
+    },
+    {
+      "id": "trust-base-is-old-merge-base-during-sync",
+      "file": "tools/trust_map.py",
+      "test": "tests/test_trust_ratchet.py::test_an_uncommitted_sync_of_main_into_a_branch_is_checked_as_committed",
+      "mutation": "resolve_base takes `git merge-base HEAD main` during a merge in progress (the code before the fix)",
+      "result": "pytest: the test failed with main's inherited unsigned allowance 'introduced since' the old base; restored"
     }
   ]
 }
