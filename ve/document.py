@@ -722,8 +722,8 @@ def _soft_bound(answer, authored, same) -> bool:
     from .softnorms import _hydrate_rule
     try:
         written = _hydrate_rule({"norm": authored["norm"]}).to_dict()["norm"]
-    except Exception:  # noqa: BLE001 - an authored rule the container cannot hold binds no answer
-        return False
+    except (VEError, KeyError, TypeError, ValueError, AttributeError, IndexError):
+        return False  # an authored rule the container cannot hold binds no answer
     return same(answer.get("norm"), written)
 
 

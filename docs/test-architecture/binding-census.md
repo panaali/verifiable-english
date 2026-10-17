@@ -2749,7 +2749,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/error` | string | none |  | minLength | 3 | not probed |
 | `/id` | any | bound | x-echo |  | 3 | shape |
 | `/id` | string | bound | x-equals |  | 3 | shape |
-| `/path` | string | none |  |  | 0 | not probed |
+| `/path` | string | none |  | minLength | 0 | not probed |
 | `/source` | string | none |  |  | 3 | hand: `ve/document.py:require` |
 | `/source_id` | string | none |  | pattern | 3 | hand: `ve/document.py:_lean_document` |
 | `/span/column` | integer | none |  | minimum | 0 | not probed |
