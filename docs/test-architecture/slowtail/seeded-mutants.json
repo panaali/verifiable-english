@@ -1,0 +1,255 @@
+[
+ {
+  "name": "M1",
+  "file": "tools/test_schedule.py",
+  "bug": "the scheduler drops an unmeasured test",
+  "tests": [
+   "tests/test_test_schedule.py::test_unmeasured_tests_start_right_after_the_long_ones_in_shares_by_count",
+   "tests/test_test_schedule.py::test_the_durations_source_never_changes_which_tests_run"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_the_durations_source_never_changes_which_tests_run",
+   "tests/test_test_schedule.py::test_unmeasured_tests_start_right_after_the_long_ones_in_shares_by_count"
+  ],
+  "caught": true,
+  "summary": "2 failed in 3.69s"
+ },
+ {
+  "name": "M2",
+  "file": "tools/test_schedule.py",
+  "bug": "the scheduler hands one test out twice",
+  "tests": [
+   "tests/test_test_schedule.py::test_unmeasured_tests_start_right_after_the_long_ones_in_shares_by_count",
+   "tests/test_test_schedule.py::test_the_durations_source_never_changes_which_tests_run"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_the_durations_source_never_changes_which_tests_run",
+   "tests/test_test_schedule.py::test_unmeasured_tests_start_right_after_the_long_ones_in_shares_by_count"
+  ],
+  "caught": true,
+  "summary": "2 failed in 3.74s"
+ },
+ {
+  "name": "M3",
+  "file": "tools/test_schedule.py",
+  "bug": "the overlay changes the selection: unmeasured tests are left out",
+  "tests": [
+   "tests/test_test_schedule.py::test_the_durations_source_never_changes_which_tests_run"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_the_durations_source_never_changes_which_tests_run"
+  ],
+  "caught": true,
+  "summary": "1 failed in 3.48s"
+ },
+ {
+  "name": "M4",
+  "file": "tools/test_schedule.py",
+  "bug": "the count cap is ignored",
+  "tests": [
+   "tests/test_test_schedule.py::test_an_unrecorded_expensive_module_at_the_end_is_not_one_workers_run"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_an_unrecorded_expensive_module_at_the_end_is_not_one_workers_run[before dear tests]"
+  ],
+  "caught": true,
+  "summary": "1 failed, 1 passed in 0.14s"
+ },
+ {
+  "name": "M5",
+  "file": "tools/test_schedule.py",
+  "bug": "unmeasured tests are not moved first",
+  "tests": [
+   "tests/test_test_schedule.py::test_unmeasured_tests_start_right_after_the_long_ones_in_shares_by_count"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_unmeasured_tests_start_right_after_the_long_ones_in_shares_by_count"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.13s"
+ },
+ {
+  "name": "M6",
+  "file": "tools/test_schedule.py",
+  "bug": "the scheduler ignores the durations file the gate names",
+  "tests": [
+   "tests/test_test_schedule.py::test_the_suite_conftest_installs_the_scheduler"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_the_suite_conftest_installs_the_scheduler"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.14s"
+ },
+ {
+  "name": "M7",
+  "file": "tools/gate.py",
+  "bug": "a record without durations",
+  "tests": [
+   "tests/test_gate_durations.py::test_the_gate_names_the_overlay_to_its_suite_and_records_the_suites_seconds",
+   "tests/test_gate_durations.py::test_the_log_names_the_twenty_slowest_and_ignores_what_is_not_seconds"
+  ],
+  "failed": [
+   "tests/test_gate_durations.py::test_the_gate_names_the_overlay_to_its_suite_and_records_the_suites_seconds",
+   "tests/test_gate_durations.py::test_the_log_names_the_twenty_slowest_and_ignores_what_is_not_seconds"
+  ],
+  "caught": true,
+  "summary": "2 failed in 0.18s"
+ },
+ {
+  "name": "M8",
+  "file": "tools/gate.py",
+  "bug": "the gate gives the suite the committed durations only, never the base's",
+  "tests": [
+   "tests/test_gate_durations.py::test_the_gate_names_the_overlay_to_its_suite_and_records_the_suites_seconds"
+  ],
+  "failed": [
+   "tests/test_gate_durations.py::test_the_gate_names_the_overlay_to_its_suite_and_records_the_suites_seconds"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.17s"
+ },
+ {
+  "name": "M9",
+  "file": "tools/gate_pytest.py",
+  "bug": "the event plugin times no test",
+  "tests": [
+   "tests/test_test_schedule.py::test_the_durations_source_never_changes_which_tests_run"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_the_durations_source_never_changes_which_tests_run"
+  ],
+  "caught": true,
+  "summary": "1 failed in 1.79s"
+ },
+ {
+  "name": "M10",
+  "file": "tools/test_schedule.py",
+  "bug": "the record field keeps short tests' mean as zero",
+  "tests": [
+   "tests/test_gate_durations.py::test_the_record_field_keeps_the_recorded_tests_and_the_mean_of_the_others"
+  ],
+  "failed": [
+   "tests/test_gate_durations.py::test_the_record_field_keeps_the_recorded_tests_and_the_mean_of_the_others"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.13s"
+ },
+ {
+  "name": "M11",
+  "file": "tools/gate.py",
+  "bug": "a base suite that did not time every test still names its measured tests",
+  "tests": [
+   "tests/test_gate_durations.py::test_the_base_durations_come_from_the_base_gate_record"
+  ],
+  "failed": [
+   "tests/test_gate_durations.py::test_the_base_durations_come_from_the_base_gate_record"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.39s"
+ },
+ {
+  "name": "M12",
+  "file": "tools/bench/suite_tail.py",
+  "bug": "the tail starts at the last worker's finish, not the busy-th",
+  "tests": [
+   "tests/test_suite_tail.py::test_tail_reads_when_each_worker_finished_its_last_test"
+  ],
+  "failed": [
+   "tests/test_suite_tail.py::test_tail_reads_when_each_worker_finished_its_last_test"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.18s"
+ },
+ {
+  "name": "M13",
+  "file": "tools/test_schedule.py",
+  "bug": "the gate's durations file is named in a variable nested runs inherit",
+  "tests": [
+   "tests/test_test_schedule.py::test_a_nested_run_and_the_run_cache_never_see_the_gates_durations_file"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_a_nested_run_and_the_run_cache_never_see_the_gates_durations_file"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.19s"
+ },
+ {
+  "name": "M14",
+  "file": "tools/gate_pytest.py",
+  "bug": "a test's seconds are its last phase's, not the sum of its three",
+  "tests": [
+   "tests/test_test_schedule.py::test_the_event_plugin_times_each_test_as_its_setup_call_and_teardown_seconds"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_the_event_plugin_times_each_test_as_its_setup_call_and_teardown_seconds"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.60s"
+ },
+ {
+  "name": "M15",
+  "file": "tools/test_schedule.py",
+  "bug": "half of the unmeasured tests go out in one hand-out",
+  "tests": [
+   "tests/test_test_schedule.py::test_unmeasured_tests_go_out_a_share_of_those_left_at_a_time"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_unmeasured_tests_go_out_a_share_of_those_left_at_a_time"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.13s"
+ },
+ {
+  "name": "M16",
+  "file": "tools/test_schedule.py",
+  "bug": "the count cap ignores what the worker holds",
+  "tests": [
+   "tests/test_test_schedule.py::test_the_count_cap_counts_what_the_worker_already_holds"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_the_count_cap_counts_what_the_worker_already_holds"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.13s"
+ },
+ {
+  "name": "M17",
+  "file": "tools/test_schedule.py",
+  "bug": "a worker holding nothing may get a single test",
+  "tests": [
+   "tests/test_test_schedule.py::test_the_count_cap_counts_what_the_worker_already_holds"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_the_count_cap_counts_what_the_worker_already_holds"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.12s"
+ },
+ {
+  "name": "M18",
+  "file": "tools/test_schedule.py",
+  "bug": "the seconds left are not recounted when a crashed worker's tests come back",
+  "tests": [
+   "tests/test_test_schedule.py::test_a_crashed_worker_s_tests_run_elsewhere"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_a_crashed_worker_s_tests_run_elsewhere"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.14s"
+ },
+ {
+  "name": "M19",
+  "file": "tools/test_schedule.py",
+  "bug": "an unrecorded test is estimated at the default, not the source's mean",
+  "tests": [
+   "tests/test_test_schedule.py::test_an_unrecorded_test_is_estimated_at_the_sources_mean"
+  ],
+  "failed": [
+   "tests/test_test_schedule.py::test_an_unrecorded_test_is_estimated_at_the_sources_mean"
+  ],
+  "caught": true,
+  "summary": "1 failed in 0.13s"
+ }
+]
