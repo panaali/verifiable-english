@@ -159,18 +159,20 @@ FAULTS = ["missing pack", "pack not UTF-8", "pack not JSON", "pack entry not a s
 DECIDED = {"pack not JSON", "senses not an object", "unknown senses key", "packs not a list", "own not a list",
            "own entry malformed", "defaults not an object", "one-part MIXED", "unknown kind"}
 DECIDED_MODERN = {"reading set"}
+# A frozen envelope names one profile, so the profile faults are written over the modern envelope only.
+MODERN_ONLY = {"norms profile", "soft-norms profile"}
 
 
-@pytest.mark.parametrize("envelope", ["frozen", "modern"])
-@pytest.mark.parametrize("fault", FAULTS)
+@pytest.mark.parametrize("fault,envelope", [
+    pytest.param(fault, envelope, id=f"{fault}-{envelope}")
+    for envelope in ("frozen", "modern") for fault in FAULTS
+    if not (envelope == "frozen" and fault in MODERN_ONLY)])
 def test_every_senses_fault_has_the_retained_path_s_public_outcome(tmp_path, fault, envelope):
-    """Each fault of a senses document, on both envelopes: the public check and render equal the retained path's, in
-    Python's order (`_parts`' faults, then `read_senses`: the shape of `senses`, the packs, `own`, the route), and
-    the mode decides the faults its rows can carry."""
+    """Each fault of a senses document, on both envelopes (the profile faults on the modern one): the public check
+    and render equal the retained path's, in Python's order (`_parts`' faults, then `read_senses`: the shape of
+    `senses`, the packs, `own`, the route), and the mode decides the faults its rows can carry."""
     front, body = _parts("a_front_matter_default")
     front = front if envelope == "frozen" else _modern(front)
-    if fault in ("norms profile", "soft-norms profile") and envelope == "frozen":
-        pytest.skip("a frozen envelope names one profile")
     front, pack = _fault(deepcopy(front), fault)
     path = _write(tmp_path, front, body, pack)
     decided, new, old = _public(path)
