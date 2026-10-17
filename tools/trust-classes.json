@@ -1846,12 +1846,26 @@
       ]
     },
     "VE/Closure/Order.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Closure.Order.above",
+          "tied": [
+            "VE.Closure.above_iff",
+            "VE.Closure.outranksPlus_eq_above",
+            "VE.Closure.risk_closure_eq"
+          ]
+        },
+        {
+          "name": "VE.Closure.Order.atLeast",
+          "tied": [
+            "VE.Closure.atLeast_iff"
+          ]
+        }
+      ],
       "S": [
         "VE.Closure.Order",
         "VE.Closure.Caps",
-        "VE.Closure.Order.admit",
-        "VE.Closure.Order.above",
-        "VE.Closure.Order.atLeast"
+        "VE.Closure.Order.admit"
       ]
     },
     "VE/Closure/OrderChecks.lean": {
