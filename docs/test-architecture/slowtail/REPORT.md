@@ -120,7 +120,8 @@ manage-agents script, `tools/select_tests.py`, the collection check or the quara
 ## Seeded bugs (Python: the only changed language)
 
 [mutants.py](mutants.py) plants each one, runs the tests named, and restores the file. Results:
-[seeded-mutants.json](seeded-mutants.json). All 13 were caught.
+[seeded-mutants.json](seeded-mutants.json). All 19 were caught. M14–M19 answer review F1 (a computed value never
+checked by value): each is a value the event plugin or the scheduler computes, now asserted exactly.
 
 | # | file | seeded bug | failing test |
 |---|---|---|---|
@@ -137,6 +138,12 @@ manage-agents script, `tools/select_tests.py`, the collection check or the quara
 | M11 | tools/gate.py | an incompletely timed base still names its measured tests | test_the_base_durations_come_from_the_base_gate_record |
 | M12 | tools/bench/suite_tail.py | the tail starts at the last worker's finish | test_tail_reads_when_each_worker_finished_its_last_test |
 | M13 | tools/test_schedule.py | the gate's file is named in a variable nested runs inherit | test_a_nested_run_and_the_run_cache_never_see_the_gates_durations_file |
+| M14 | tools/gate_pytest.py | a test's seconds are its last phase's, not the sum of its three | test_the_event_plugin_times_each_test_as_its_setup_call_and_teardown_seconds |
+| M15 | tools/test_schedule.py | half of the unmeasured tests go out in one hand-out | test_unmeasured_tests_go_out_a_share_of_those_left_at_a_time |
+| M16 | tools/test_schedule.py | the count cap ignores what the worker holds | test_the_count_cap_counts_what_the_worker_already_holds |
+| M17 | tools/test_schedule.py | a worker holding nothing may get a single test | test_the_count_cap_counts_what_the_worker_already_holds |
+| M18 | tools/test_schedule.py | the seconds left are not recounted when a crashed worker's tests come back | test_a_crashed_worker_s_tests_run_elsewhere |
+| M19 | tools/test_schedule.py | an unrecorded test is estimated at the default, not the source's mean | test_an_unrecorded_test_is_estimated_at_the_sources_mean |
 
 ## Runs
 
