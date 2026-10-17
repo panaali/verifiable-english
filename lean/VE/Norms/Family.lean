@@ -476,13 +476,25 @@ def firstOrderFormula (order : Bool) (j : Json) : Bool :=
     | .ok a => (VE.Core.erase a).isSome
     | .error _ => true
 
+/-- Whether the FOL view carries a declaration's definition: a head of at most
+two arguments and a first-order body. The view keeps only unary and binary
+predicates, so an n-ary head is dropped and a body mentioning an n-ary atom
+does not decode there; such a definition is elaborated by the family's reader. -/
+def firstOrderDefinition (order : Bool) (entry : Json) : Bool :=
+  match entry.getObjVal? "defined" with
+  | .error _ => true
+  | .ok payload => VE.Core.Layers.folEntry entry && firstOrderFormula order (payload.getObjValD "body")
+
 /-- Whether the FOL view regenerates a family document: no declaration uses
-`$int` and every guard and carve-out is first-order. -/
+`$int`, the view carries every definition and every guard and carve-out is
+first-order. -/
 def firstOrder (environment norms : Json) : Bool :=
   let order := match VE.Route.Gate.profilesOf environment with
     | .ok ps => ps.contains "order@0"
     | .error _ => false
-  !usesInt environment && match norms with
+  !usesInt environment &&
+  (VE.Core.Layers.predicatesOf environment).all (fun (_, e) => firstOrderDefinition order e) &&
+  match norms with
     | .arr xs => xs.all fun u =>
       let raw := u.getObjValD "norm"
       firstOrderFormula order (raw.getObjValD "guard") && match raw.getObjValD "unless" with

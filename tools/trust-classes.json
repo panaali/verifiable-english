@@ -1851,12 +1851,26 @@
       ]
     },
     "VE/Closure/Order.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Closure.Order.above",
+          "tied": [
+            "VE.Closure.above_iff",
+            "VE.Closure.outranksPlus_eq_above",
+            "VE.Closure.risk_closure_eq"
+          ]
+        },
+        {
+          "name": "VE.Closure.Order.atLeast",
+          "tied": [
+            "VE.Closure.atLeast_iff"
+          ]
+        }
+      ],
       "S": [
         "VE.Closure.Order",
         "VE.Closure.Caps",
-        "VE.Closure.Order.admit",
-        "VE.Closure.Order.above",
-        "VE.Closure.Order.atLeast"
+        "VE.Closure.Order.admit"
       ]
     },
     "VE/Closure/OrderChecks.lean": {
@@ -3398,6 +3412,8 @@
         "VE.EnglishGrammar.E2Examples.envOf",
         "VE.EnglishGrammar.E2Examples.fJson",
         "VE.EnglishGrammar.E2Examples.fallback",
+        "VE.EnglishGrammar.E2Examples.fixedPointTie",
+        "VE.EnglishGrammar.E2Examples.fixedPointTieOf",
         "VE.EnglishGrammar.E2Examples.hazardFallback",
         "VE.EnglishGrammar.E2Examples.jChecked",
         "VE.EnglishGrammar.E2Examples.jFApre",
@@ -3422,6 +3438,7 @@
         "VE.EnglishGrammar.E2Examples.lrSafe",
         "VE.EnglishGrammar.E2Examples.lx24",
         "VE.EnglishGrammar.E2Examples.noOverlay",
+        "VE.EnglishGrammar.E2Examples.oneRoundOf",
         "VE.EnglishGrammar.E2Examples.nounOf",
         "VE.EnglishGrammar.E2Examples.overlayOf",
         "VE.EnglishGrammar.E2Examples.policyEnvs",
@@ -11856,6 +11873,7 @@
         "VE.Norms.Family.encodeOrderTerm",
         "VE.Norms.Family.encodeTerm",
         "VE.Norms.Family.firstOrder",
+        "VE.Norms.Family.firstOrderDefinition",
         "VE.Norms.Family.firstOrderFormula",
         "VE.Norms.Family.height",
         "VE.Norms.Family.layers",
