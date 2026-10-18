@@ -61,11 +61,23 @@ SIGNED = {
 }
 
 
+# Declarations that a later approved statement spec rewrites by one exact edit, quoted from that spec. PK-1
+# (docs/spec/premise-packs.md 5, `NormDefaults/LayeredAdmission.lean` row) replaces `LayeredU.labelled` and
+# `rightsCount` by the premise packs, and `SoftLeafX` reads the soft pack's premises; on today's soft source the two
+# lists are equal (`Packs.legacy_take`, `Packs.packPremises_legacy`). Applied like `SIGNED`: the edited approved text
+# must equal the Lean text exactly.
+PK1 = "APPROVED by a later statement spec: docs/spec/premise-packs.md 5 (pk-1s statement review, merge 49a926ee7)"
+SUPERSEDED = {
+    "SoftLeafX": (PK1, ("(L.labelled.take (L.labelled.length - L.rightsCount)).any",
+                        "(Packs.packPremises L.packs \"soft\").any")),
+}
+
+
 def signed_edits(approved: dict) -> tuple[list[str], list[str]]:
     """Apply each signed edit to its approved declaration in place. Returns the report lines and the errors: an edit
     that does not apply (its text is not in the approved declaration) is an error, so the list can only shrink."""
     lines, errors = [], []
-    for name, (ruling, (before, after)) in SIGNED.items():
+    for name, (ruling, (before, after)) in {**SIGNED, **SUPERSEDED}.items():
         for key in [key for key in approved if key[1] == name]:
             texts = approved[key]
             edited = [text.replace(before, after, 1) for text in texts]
@@ -73,7 +85,8 @@ def signed_edits(approved: dict) -> tuple[list[str], list[str]]:
                 errors.append(f"{name}: the signed edit does not apply to the approved text")
                 continue
             approved[key] = edited
-            lines.append(f"{name}: {ruling}: approved text with its one signed edit")
+            kind = "approved" if name in SUPERSEDED else "signed"
+            lines.append(f"{name}: {ruling}: approved text with its one {kind} edit")
     return lines, errors
 
 

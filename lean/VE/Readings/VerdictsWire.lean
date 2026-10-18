@@ -510,7 +510,7 @@ def xEvidenceOf (lowerJson : Json) (L : VE.NormDefaults.Wire.LayeredU)
   let packages := (e.getObjValD "conflict").getObjValD "packages"
   let certs := (targets (fill U)).map (VE.NormDefaults.Wire.decodePackageX L packages)
   let free := VE.NormDefaults.Wire.conflictFreeCheckX U L.X certs
-  let labelled := L.labelled ++ VE.NormDefaults.Admission.fillLabelled U
+  let labelled := VE.NormDefaults.Packs.labelledX L.packs ++ VE.NormDefaults.Admission.fillLabelled U
   let pkOk : List VE.Formula → Bool := fun fs => (targets (fill U)).length == certs.length &&
     ((targets (fill U)).zip certs).all (fun (t, k) => match k with
       | some k => VE.Tableau.checkCertificate (envAt (fill U) 0) (VE.Norms.backgroundBase (fill U) ++ fs)
