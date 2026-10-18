@@ -40,7 +40,9 @@ test oracle only.
 ## Lines
 
 `evidence/scope.json` holds the commit list and per-file numbers of `main..HEAD --no-merges` at code head
-`cd400d7a`; base `ffb3155a5`. Changes since then are this report, DELTA, the evidence and the trust allowance.
+`cd400d7a`; base `ffb3155a5`. Changes since then are this report, DELTA, the evidence, the trust allowance, the
+manifest's `other_json` entry for `ResponseShape/Schemas/Metered.lean` and the mutant runner's pytest builder
+(`570725fb`; their tests pass: `test_assurance_manifest.py`, `test_nested_pytest.py`).
 
 - `ve/` Python: +369 −483 (net −114; `dispatch.py` −265).
 - Lean written by hand (generated `Audit.lean` excluded): +335 −54. New files: `VE/Limits.lean` 51,
