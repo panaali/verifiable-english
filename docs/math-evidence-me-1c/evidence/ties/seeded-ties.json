@@ -1,0 +1,30 @@
+[
+ {
+  "id": "S1-unrelated",
+  "seed": "VE.Calc.English.renderClaim tied to the unrelated VE.Calc.Claim.decide_holds",
+  "file": "tools/trust-classes.json",
+  "test": "python3 tools/trust_map.py --check",
+  "also_fails": "tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+  "exit": 1,
+  "problem": "VE/Calc/Render.lean: VE.Calc.English.renderClaim: the statement of VE.Calc.Claim.decide_holds does not mention VE.Calc.English.renderClaim of VE.Calc.Render",
+  "output": "seed-S1-unrelated.txt"
+ },
+ {
+  "id": "S2-uses-decl",
+  "seed": "an existing tie's -- uses line broken: VE.Calc.values_stated loses VE.Calc.values@VE.Calc.Decls",
+  "file": "lean/statements.txt",
+  "test": "python3 tools/trust_map.py --check",
+  "exit": 1,
+  "problem": "VE/Calc/Decls.lean: VE.Calc.values: the statement of VE.Calc.values_stated does not mention VE.Calc.values of VE.Calc.Decls",
+  "output": "seed-S2-uses-decl.txt"
+ },
+ {
+  "id": "S3-not-dumped",
+  "seed": "VE.Calc.English.renderClaim tied to spec 9's VE.Calc.English.read_render, which no Lean file states yet",
+  "file": "tools/trust-classes.json",
+  "test": "python3 tools/trust_map.py --check",
+  "exit": 1,
+  "problem": "VE/Calc/Render.lean: VE.Calc.English.renderClaim: tying theorem VE.Calc.English.read_render is not in statements.txt",
+  "output": "seed-S3-not-dumped.txt"
+ }
+]
