@@ -12452,32 +12452,18 @@
         "VE.Layout.Unit"
       ]
     },
-    "VE/Scope/Effects.lean": {
-      "G[V]": [
-        "VE.Scope.lookups"
-      ],
-      "S": [
-        "VE.Scope.mergeParts"
-      ]
-    },
     "VE/Scope/Examples.lean": {
       "T": [
         "VE.Scope.Examples.blankLinesRef",
         "VE.Scope.Examples.hcPieces",
-        "VE.Scope.Examples.item1",
-        "VE.Scope.Examples.item3sign",
-        "VE.Scope.Examples.j",
         "VE.Scope.Examples.layoutOf",
-        "VE.Scope.Examples.leadPart",
-        "VE.Scope.Examples.mergePartsText",
         "VE.Scope.Examples.mk",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.powerPieces",
         "VE.Scope.Examples.prosePieces",
         "VE.Scope.Examples.seven",
         "VE.Scope.Examples.shortPieces",
-        "VE.Scope.Examples.situationsPieces",
-        "VE.Scope.Examples.unordered"
+        "VE.Scope.Examples.situationsPieces"
       ]
     }
   }

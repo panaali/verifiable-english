@@ -2,12 +2,12 @@
 
 `scope@0` lets one unit change other units. The first case is a list: a lead-in such as "Claude should never:"
 completes each item of the list after it. The design is [docs/spec/scope-PLAN.md](../docs/spec/scope-PLAN.md); the
-exact definitions and statements are [docs/spec/scope.md](../docs/spec/scope.md) (sections 1.2, 1.4, 1.5.2, 4 and
-5.1).
+exact definitions and statements are [docs/spec/scope.md](../docs/spec/scope.md) (sections 1.2, 4.1 and 5.1).
 
-This file covers what is built so far, item sc-1a: the layout's list runs and the join of a lead-in's part with an
-item's part. No route or service mode calls them yet. Conditions and `own`, the order table, `govern`, the block's
-admission and the run path `governFast` come next (sc-1ab), and the document mode after that (SC-1b).
+This file covers what is built so far, item sc-1a: the layout's list runs, that is, which units a lead-in governs.
+No route or service mode calls them yet. The effects on a rule's JSON object (joining the lead-in's part to each
+item's part, conditions and `own`, the order table) come next (sc-1ab), then `govern`, the block's admission and
+the run path `governFast` (sc-1ac), and the document mode after that (SC-1b).
 
 ## `VE/Layout/List.lean`: what the source bytes say
 
@@ -35,30 +35,12 @@ Theorems:
 - Helpers: `continues_iff`, `mem_runFrom` (a unit is in a run exactly when it is an item of the depth and every unit
   before it continues), `indexOf_iff` (with distinct ids, the index is exactly the unit's position), `listRun_ok`.
 
-## `VE/Scope/Effects.lean`: joining parts
-
-- `lookups`: an object's members as lookup reads them, each key once.
-- `mergeParts u lead item`: the lead-in's part joined with an item's part. Both must be objects (else
-  `InvalidInput: scope@0 parts of <u> must be objects`); a key on both sides is `ScopeConflict: <u>: <key>`, never
-  an override; otherwise the union. Scope keeps no list of rule keys: the chain's own decoder reads the result.
-
-`mergeParts` reads members through `lookups`, where the spec's text reads `VE.Bridge.fields`. On every well-formed
-JSON object the two agree. A hand-built object whose tree is out of order can list a key that lookup cannot find;
-the spec's text would copy that key into the joined object, and `mergeParts_keys` would be false of it. The
-counterfixture `unordered_join` in `Examples.lean` shows both.
-
-Theorems (`VE/Scope/Theorems.lean`):
-- `mergeParts_keys`: every key of the joined object comes from exactly one side, with that side's value.
-- `mergeParts_conflict`: a key both sides have makes the join fail.
-- Helpers: `firstKeys_mem`, `lookups_spec` (what `lookups` lists is exactly what lookup finds, each key once),
-  `lookups_absent`, `mkObj_getObjVal`.
-
 ## `VE/Scope/Examples.lean`: the fixtures
 
-The spec's 7.1 fixtures for this part, over the pilot's own bytes (shortened inside sentences only): L1 (the layout
+The spec's 7.1 layout fixtures, over the pilot's own bytes (shortened inside sentences only): L1 (the layout
 of the hard constraints), L1-p (`paraCounts` against draft 1's per-unit count at every byte), F1 and F1‴ (the run of
 "Claude should never:" is its seven bullets, and the sentence after it is not an item), F2 (mid-line continuations
-belong to the run but are not items), F2′ (sub-bullets are depth 1), F2″ (`NotALeadIn`), F1-m and F1′ (joining
-parts, and the conflict on `sign`), and the counterfixture `unordered_join`. The pilot excerpts are `#guard`s; the
-same contracts are kernel theorems (`decide`) on short layouts (`short_layout`, `short_run`, `of_source`,
-`markers`, `bold_labels`, `byte_tests`, `para_counts`), so each layout definition is stated about by a theorem.
+belong to the run but are not items), F2′ (sub-bullets are depth 1), F2″ (`NotALeadIn`, including a unit without
+":" that an item follows). The pilot excerpts are `#guard`s; the same contracts are kernel theorems (`decide`) on
+short layouts (`short_layout`, `short_run`, `of_source`, `markers`, `bold_labels`, `byte_tests`, `para_counts`), so
+each layout definition is stated about by a theorem.
