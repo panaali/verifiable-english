@@ -1,0 +1,2 @@
+usecases/news-article/news-w6a.ve.md | RETAINED | CheckerUnavailable: document checks under order@0 need its Lean profile route | prior: accepted
+usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md | RETAINED | None | prior: accepted

@@ -59,8 +59,10 @@ never removed, and one introduced on a branch is merged with the others by the `
 driver (tools/regen_generated.py), so two branches that each add one merge without a conflict.
 
 `--check` measures the tree against a base commit: `--since REV`, else `git merge-base HEAD main`, or
-the first parent when HEAD is main's tip (the merge train after a merge; HEAD itself while the merge
-is uncommitted, as in `tools/regen_generated.py --resolve`). The cap of each class is
+the first parent when HEAD is main's tip (the merge train after a merge). While a merge is
+uncommitted (`MERGE_HEAD`, as under `tools/regen_generated.py --resolve`) the base is the merge base
+of `main` and the merge to be committed: HEAD itself for the merge train on main, and for a branch
+syncing main the base the branch will have once the sync is committed. The cap of each class is
 the base's lines, measured now from the base's committed `lean/` and side table (`measure_rev`),
 plus the allowances the tree's file adds to the base's (`introduced`). So the budget falls with
 every merge that deletes trusted lines, whether or not the recorded number has caught up, and rises

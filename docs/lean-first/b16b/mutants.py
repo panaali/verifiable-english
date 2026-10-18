@@ -48,8 +48,11 @@ MUTANTS = [
      "            except VEError as exc:\n                raise CheckerUnavailable(",
      "            except KeyError as exc:\n                raise CheckerUnavailable(",
      "test_the_admission_route_rejecting_what_lean_admitted_is_unavailable"),
+    # Since 16f the mode composes the senses route; a senses document whose request carries no pack texts keeps the
+    # retained path (`sensesLayer`), and `split`'s guard holds for every other reader.
     ("lean_senses_guard_removed", "a senses document takes the retained path (Lean)", "lean/VE/Service/Document.lean",
-     '  if (fm.getObjVal? "senses").isOk then\n', '  if false && (fm.getObjVal? "senses").isOk then\n',
+     '  let some (.arr texts) := packs | throw (unavailable "a senses document\'s pack files are read by its loader")\n',
+     '  let texts := match packs with | some (.arr t) => t | _ => #[]\n',
      "test_undecided_answers_take_the_retained_path"),
     ("lean_admission_bypasses_route", "the graph is admitted through the route's own case (Lean)",
      "lean/VE/Service/Document.lean",

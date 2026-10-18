@@ -135,12 +135,11 @@ def _lean_route(document) -> bool:
 
     The norms route takes plain norm documents over FOL-family ve.core@0.2
     environments, with definitions and data flags; the family-norms mode takes
-    every document on the closure, core and order families, first-order or not
-    (VE/Service/FamilyNorms.lean, VE/Norms/Family.lean), except the n-ary core
-    definitions `family_in_scope` leaves out (lean-first batch 14c).
-    Statement-layer environments (soft norms, reports, alternatives,
-    quantities) are not on either: their operations are not dispatched and keep
-    the retained Python.
+    every document on the closure, core and order families, first-order or not,
+    with definitions of any arity (VE/Service/FamilyNorms.lean,
+    VE/Norms/Family.lean; `family_in_scope`). Statement-layer environments (soft
+    norms, reports, alternatives, quantities) are not on either:
+    their operations are not dispatched and keep the retained Python.
     """
     env = document.env
     from .profiles import STATEMENT_LAYERS
