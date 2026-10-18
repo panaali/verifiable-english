@@ -11999,6 +11999,59 @@
         "VE.Reports.Preflight.reachEdge",
         "VE.Reports.Preflight.termArity"
       ]
+    },
+    "VE/Numbers/Decimal.lean": {
+      "S": [
+        "VE.Numbers.decValue",
+        "VE.Numbers.tenPow"
+      ]
+    },
+    "VE/Numbers/Round.lean": {
+      "S": [
+        "VE.Numbers.Limit",
+        "VE.Numbers.Outcome",
+        "VE.Numbers.Printed",
+        "VE.Numbers.Printed.value",
+        "VE.Numbers.Rounding",
+        "VE.Numbers.RoundsTo",
+        "VE.Numbers.UnknownReason",
+        "VE.Numbers.Verdict",
+        "VE.Numbers.tieAt"
+      ],
+      "G[V]": [
+        "VE.Numbers.Printed.ofDec",
+        "VE.Numbers.Printed.sci"
+      ],
+      "G[R]": [
+        "VE.Numbers.UnknownReason.text"
+      ],
+      "C": [
+        "VE.Numbers.Rounding.round",
+        "VE.Numbers.instDecidableRoundsTo"
+      ]
+    },
+    "VE/Numbers/Phrases.lean": {
+      "S": [
+        "VE.Numbers.Comparison",
+        "VE.Numbers.Comparison.Holds",
+        "VE.Numbers.Rel",
+        "VE.Numbers.Rel.Holds"
+      ],
+      "G[V]": [
+        "VE.Numbers.equalsPhrase",
+        "VE.Numbers.orderPhrases",
+        "VE.Numbers.withinPhrase"
+      ],
+      "C": [
+        "VE.Numbers.instDecidableHolds"
+      ]
+    },
+    "VE/Numbers/PhrasesMain.lean": {
+      "G[V]": [
+        "main",
+        "phraseJson",
+        "relName"
+      ]
     }
   }
 }
