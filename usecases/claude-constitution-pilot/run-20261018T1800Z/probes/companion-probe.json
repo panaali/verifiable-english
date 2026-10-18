@@ -7,7 +7,7 @@
   ],
   "attempts": {
     "with_source_word": {
-      "document": "usecases/claude-constitution-pilot/run-20261018T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "document": "usecases/claude-constitution-pilot/run-20261018T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
       "check": {
         "returncode": 5,
         "stdout_error": {
@@ -26,33 +26,33 @@
       }
     },
     "without_source_word": {
-      "document": "usecases/claude-constitution-pilot/run-20261018T0600Z/probes/companion/translation-companions-without_source_word.ve.md",
+      "document": "usecases/claude-constitution-pilot/run-20261018T1800Z/probes/companion/translation-companions-without_source_word.ve.md",
       "check": {
         "returncode": 0,
         "json": {
           "format": "ve-document@1",
           "source_id": "f940c1bf3e406fc946167af8b8ba7c7364ebdfb0dc6ec15abd3cf25e7d6ad804",
-          "document_id": "107bb3f9a07ecb2c2fde196a03d716faebcadd1b2fa78d806dabe55a9f22d2b8",
+          "document_id": "ab37a042efed90825ae01f0ffe8527f3d75a3883f9544b1c52e8578ac97da251",
           "coverage": {
             "accounted_bytes": 184893,
             "bytes_by_kind": {
-              "asserted": 22,
+              "asserted": 161,
               "attributed": 634,
-              "meta": 349,
+              "meta": 364,
               "norm": 2580,
-              "unformalised": 181308
+              "unformalised": 181154
             },
             "bytes_by_status": {
-              "CHECKED": 73,
-              "LABELLED": 349,
-              "OPEN": 2529,
-              "UNFORMALISED": 181942
+              "CHECKED": 186,
+              "LABELLED": 364,
+              "OPEN": 2555,
+              "UNFORMALISED": 181788
             },
             "coverage_percent": 100,
             "residual": {
-              "assumptions": 19,
+              "assumptions": 22,
               "bridge_leaves": 0,
-              "open_terms": 51,
+              "open_terms": 52,
               "unresolved_reading_sets": 4,
               "separations": 9,
               "readings_findings": 0,
@@ -61,16 +61,16 @@
               "gaps": 12,
               "ungrounded_defaults": 0
             },
-            "residual_total": 95,
+            "residual_total": 99,
             "source_bytes": 184893,
             "unformalised_reasons": {
               "attribution": 12,
               "causation": 76,
-              "counting": 31,
+              "counting": 29,
               "defaults": 50,
               "modality_belief": 25,
               "norms": 669,
-              "other.discourse": 81,
+              "other.discourse": 80,
               "other.graded-force": 1,
               "other.open-list": 1,
               "quantities": 119,
@@ -292,9 +292,9 @@
             ]
           },
           "norm_defaults": {
-            "environment_id": "dec959f2f8331c68844ab22dedf4eca264155f07679d74a9d66d21d161787b14",
-            "filled_environment_id": "6a034d279b9df4a96a0fc75256773c52b6c5f8cd0ef8073737c9300f782ec667",
-            "fill_hash": "38c3816476cb84a0ad503436ae59ca8e8f96286cb9ef681686b8668a119d23ff",
+            "environment_id": "a5cbcbef3d385733cbfdb2b437561502a6da0237f1975f4a080a1e9ba97ed59f",
+            "filled_environment_id": "2ae5a25270265e3a263e7904ad97bb04af9c135f6b66363aded4adb9023313d8",
+            "fill_hash": "e3697f7e72c1beee1168eb294a87371ad82d8ad08bb0ca5b05ec5e74fd31004e",
             "unsaid_predicates": [
               "unsaid__clarification_required",
               "unsaid__csam_generation_permitted_for_claude",
@@ -955,18 +955,13 @@
                 "norms"
               ],
               "meta",
+              "asserted",
               [
                 "unformalised",
                 "counting"
               ],
-              [
-                "unformalised",
-                "counting"
-              ],
-              [
-                "unformalised",
-                "counting"
-              ],
+              "meta",
+              "asserted",
               [
                 "unformalised",
                 "norms"
@@ -4036,10 +4031,7 @@
                 "norms"
               ],
               "meta",
-              [
-                "unformalised",
-                "other.discourse"
-              ],
+              "asserted",
               [
                 "unformalised",
                 "quantities"
@@ -4786,16 +4778,16 @@
                 "name": "claim"
               }
             },
-            "report_id": "09dde9e604a00b1733c55e5e53e6f635ed0e582103a224edf777ca1a830a8128",
-            "core_report_id": "1609908b296c7da321c77231f4a516b65d6e4ce7d189156e86f5fabd056d53b5",
-            "vacuous": false
+            "report_id": "11cea5bcd78fe04221cbda866da09b9a41ee7781da4eaf98154252c859f23e3d",
+            "core_report_id": "82ce0b0a21fb7fb4fb574812ecbf9edffa0283a0b6e4cd84c4ae2871cf4d4611",
+            "vacuous": null
           },
           "stale_reading_labels": [],
           "premises": {
             "components": [
               {
                 "component": "main",
-                "status": "model"
+                "status": "UNKNOWN"
               },
               {
                 "component": "force-u0036-s05",
@@ -4815,7 +4807,7 @@
               }
             ],
             "route": "components",
-            "status": "model"
+            "status": "UNKNOWN"
           },
           "readings": {
             "checked_by": {
@@ -4828,6 +4820,8 @@
                 "component": "main",
                 "route": "w2",
                 "units": [
+                  "u0042.presupposition",
+                  "u0043.s02.p2",
                   "u0052.s01",
                   "u0062.s01",
                   "u0073.s05",
@@ -4842,6 +4836,7 @@
                   "u0165.s06",
                   "u0165.s07",
                   "u0168.s01",
+                  "u0245.presupposition",
                   "u0248"
                 ],
                 "unchecked": [],
@@ -4862,118 +4857,15 @@
                 },
                 "premises": {
                   "candidates": [],
-                  "choice": [],
                   "choices": [
                     {
                       "choice": [],
-                      "status": "model"
+                      "status": "UNKNOWN"
                     }
                   ],
                   "evidence": "per choice",
-                  "model": {
-                    "complete": true,
-                    "constants": {
-                      "claude": "e0"
-                    },
-                    "domains": {
-                      "claude_instance": [],
-                      "entity": [
-                        "e0"
-                      ],
-                      "hard_constraint": [],
-                      "operator": [],
-                      "operator_input": [],
-                      "situation": [],
-                      "user": []
-                    },
-                    "relations": {
-                      "asked_to_keep_system_prompt_confidential": [],
-                      "attempt_to_kill_or_disempower_most_of_humanity": [],
-                      "child_sexual_abuse_material": [],
-                      "clarification_required": [],
-                      "clear_and_substantial_undermining_of_oversight": [],
-                      "compliance_against_guidelines": [],
-                      "compliance_unethical": [],
-                      "compliance_unsafe": [],
-                      "could_cause_significant_damage_if_deployed": [],
-                      "creating_a_cyberweapon": [],
-                      "creating_malicious_code": [],
-                      "critical_infrastructure_uplift": [],
-                      "csam_generation_permitted_for_claude": [],
-                      "cyberweapon_creation_permitted": [],
-                      "denial_of_being_claude_permitted": [],
-                      "exception_to_asking_for_clarification": [],
-                      "exception_to_complying_with_exploit_instruction": [],
-                      "exception_to_not_deceiving_about_system_prompt": [],
-                      "explicit_instruction_against_exploits": [],
-                      "exploit_instruction_compliance_required": [],
-                      "firmness_required": [],
-                      "general_exception_to_complying": [],
-                      "genuine_ambiguity": [],
-                      "human": [],
-                      "humanity_attack_participation_permitted": [],
-                      "illegitimate_absolute_control": [],
-                      "illegitimate_control_involvement_permitted": [],
-                      "infrastructure_uplift_permitted": [],
-                      "input_is_information": [],
-                      "input_is_persona": [],
-                      "input_is_specific_instructions": [],
-                      "instruction_abandon_identity_in_persona": [],
-                      "instruction_act_against_guidelines": [],
-                      "instruction_claim_human_when_asked": [],
-                      "instruction_deceptive_tactics_harming_users": [],
-                      "instruction_decline_or_withhold": [],
-                      "instruction_dishonest_looking_within_honesty": [],
-                      "instruction_endanger_health_or_safety": [],
-                      "instruction_false_information_deceiving_user": [],
-                      "instruction_focus_on_tasks": [],
-                      "instruction_promote_own_products": [],
-                      "instruction_respond_differently": [],
-                      "instruction_role_play_custom_persona": [],
-                      "judgment_use_required": [],
-                      "knowingly_engages_1": [],
-                      "knowingly_engages_2": [],
-                      "knowingly_engages_3_narrow": [],
-                      "knowingly_engages_3_wide": [],
-                      "knowingly_engages_4": [],
-                      "knowingly_engages_5": [],
-                      "knowingly_engages_6": [],
-                      "knowingly_engages_7": [],
-                      "mass_casualty_weapon_uplift": [],
-                      "operator_input_permitted": [],
-                      "operator_prompt_addresses_case": [],
-                      "oversight_undermining_permitted": [],
-                      "seemingly_compelling_argument_to_cross_line": [],
-                      "system_prompt_compliance_required": [],
-                      "system_prompt_deception_permitted": [],
-                      "thinks_quite_likely_1": [],
-                      "thinks_quite_likely_2": [],
-                      "thinks_quite_likely_3_narrow": [],
-                      "thinks_quite_likely_3_wide": [],
-                      "thinks_quite_likely_4": [],
-                      "thinks_quite_likely_5": [],
-                      "thinks_quite_likely_6": [],
-                      "thinks_quite_likely_7": [],
-                      "unsaid__clarification_required": [],
-                      "unsaid__csam_generation_permitted_for_claude": [],
-                      "unsaid__cyberweapon_creation_permitted": [],
-                      "unsaid__denial_of_being_claude_permitted": [],
-                      "unsaid__exploit_instruction_compliance_required": [],
-                      "unsaid__firmness_required": [],
-                      "unsaid__humanity_attack_participation_permitted": [],
-                      "unsaid__illegitimate_control_involvement_permitted": [],
-                      "unsaid__infrastructure_uplift_permitted": [],
-                      "unsaid__judgment_use_required": [],
-                      "unsaid__operator_input_permitted": [],
-                      "unsaid__oversight_undermining_permitted": [],
-                      "unsaid__system_prompt_compliance_required": [],
-                      "unsaid__system_prompt_deception_permitted": [],
-                      "unsaid__weapons_uplift_permitted": [],
-                      "weapons_uplift_permitted": []
-                    }
-                  },
                   "route": "enumerated",
-                  "status": "model"
+                  "status": "UNKNOWN"
                 },
                 "dead_readings": []
               },
@@ -5009,10 +4901,10 @@
                           "strict",
                           "default"
                         ],
-                        "situation": "015448900f9144299094bcab3e413bbcad9ba6a23e964098c6b487d759e72404",
+                        "situation": "b1f4001df2f6ced5296a2dfefde16dc472f9410d4c13630bf2425f318e416978",
                         "probe": "outcome",
                         "wording": "E19",
-                        "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
+                        "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; p is a type of principal; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
                       }
                     ],
                     "findings": [],
@@ -5090,7 +4982,10 @@
                   "model": {
                     "complete": true,
                     "constants": {
-                      "claude": "e0"
+                      "anthropic": "e0",
+                      "claude": "e0",
+                      "operators": "e0",
+                      "users": "e0"
                     },
                     "domains": {
                       "claude_instance": [],
@@ -5100,6 +4995,9 @@
                       "hard_constraint": [],
                       "operator": [],
                       "operator_input": [],
+                      "principal_type": [
+                        "e0"
+                      ],
                       "situation": [],
                       "user": []
                     },
@@ -5108,6 +5006,7 @@
                       "attempt_to_kill_or_disempower_most_of_humanity": [],
                       "child_sexual_abuse_material": [],
                       "clarification_required": [],
+                      "claude_principal_type": [],
                       "clear_and_substantial_undermining_of_oversight": [],
                       "compliance_against_guidelines": [],
                       "compliance_unethical": [],
@@ -5157,6 +5056,7 @@
                       "knowingly_engages_6": [],
                       "knowingly_engages_7": [],
                       "mass_casualty_weapon_uplift": [],
+                      "novel_entity": [],
                       "operator_input_permitted": [],
                       "operator_prompt_addresses_case": [],
                       "oversight_undermining_permitted": [],
@@ -5238,7 +5138,7 @@
                           "strict",
                           "default"
                         ],
-                        "situation": "de71c4dab9e8b3b6ac3000cb4ec20e2a508b6cad5ba37a908e75c623b7d505eb",
+                        "situation": "47dc31abc64fa1dd83040053b02fb254e9c2cdef98720c3e61abd7d67be59d36",
                         "probe": "selects",
                         "wording": "E24",
                         "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -5248,7 +5148,7 @@
                           "strict",
                           "strict-in-frame"
                         ],
-                        "situation": "b3ae3d2a09cdab7aa88801a86fce28b5b47171e02d8aabe56247bf401f76d593",
+                        "situation": "5f3b257bb22938d71a2c0b8e2c5550ed7873156622c1f7738c20c43cf05ab2a4",
                         "probe": "selects",
                         "wording": "E24",
                         "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -5258,7 +5158,7 @@
                           "strict",
                           "default-in-frame"
                         ],
-                        "situation": "b3ae3d2a09cdab7aa88801a86fce28b5b47171e02d8aabe56247bf401f76d593",
+                        "situation": "5f3b257bb22938d71a2c0b8e2c5550ed7873156622c1f7738c20c43cf05ab2a4",
                         "probe": "selects",
                         "wording": "E24",
                         "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -5268,7 +5168,7 @@
                           "default",
                           "strict-in-frame"
                         ],
-                        "situation": "f5541dbd85680231f018a1bf3bd23e70c7dc57bd07323605f04396fe5479975c",
+                        "situation": "997dd105d07217395f678e60cf156310bfc48fff0529507b8edada92418f9cd3",
                         "probe": "selects",
                         "wording": "E24",
                         "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -5278,7 +5178,7 @@
                           "default",
                           "default-in-frame"
                         ],
-                        "situation": "f5541dbd85680231f018a1bf3bd23e70c7dc57bd07323605f04396fe5479975c",
+                        "situation": "997dd105d07217395f678e60cf156310bfc48fff0529507b8edada92418f9cd3",
                         "probe": "selects",
                         "wording": "E24",
                         "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -5288,7 +5188,7 @@
                           "strict-in-frame",
                           "default-in-frame"
                         ],
-                        "situation": "f191ac59551963c1d6526398b22b0f0c0770a724c558ac9adf6fbf8bd6279df7",
+                        "situation": "6e3fbdee501ce5993241b92dda69d53f14a5800b27e1bea2531ba8959f5b8550",
                         "probe": "selects",
                         "wording": "E24",
                         "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -5415,7 +5315,10 @@
                   "model": {
                     "complete": true,
                     "constants": {
-                      "claude": "e0"
+                      "anthropic": "e0",
+                      "claude": "e0",
+                      "operators": "e0",
+                      "users": "e0"
                     },
                     "domains": {
                       "claude_instance": [],
@@ -5425,6 +5328,9 @@
                       "hard_constraint": [],
                       "operator": [],
                       "operator_input": [],
+                      "principal_type": [
+                        "e0"
+                      ],
                       "situation": [],
                       "user": []
                     },
@@ -5433,6 +5339,7 @@
                       "attempt_to_kill_or_disempower_most_of_humanity": [],
                       "child_sexual_abuse_material": [],
                       "clarification_required": [],
+                      "claude_principal_type": [],
                       "clear_and_substantial_undermining_of_oversight": [],
                       "compliance_against_guidelines": [],
                       "compliance_unethical": [],
@@ -5482,6 +5389,7 @@
                       "knowingly_engages_6": [],
                       "knowingly_engages_7": [],
                       "mass_casualty_weapon_uplift": [],
+                      "novel_entity": [],
                       "operator_input_permitted": [],
                       "operator_prompt_addresses_case": [],
                       "oversight_undermining_permitted": [],
@@ -5551,10 +5459,10 @@
                           "strict",
                           "default"
                         ],
-                        "situation": "c66c42e042a1421bf36678bcd447e5aaa720e9d4dcdc2a9161afc983e35873d2",
+                        "situation": "6f0c3913c18c94747dc81735fa20801c29d9299642d5ef8b9758b583e89eb8b3",
                         "probe": "outcome",
                         "wording": "E19",
-                        "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
+                        "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; p is a type of principal; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
                       }
                     ],
                     "findings": [],
@@ -5632,7 +5540,10 @@
                   "model": {
                     "complete": true,
                     "constants": {
-                      "claude": "e0"
+                      "anthropic": "e0",
+                      "claude": "e0",
+                      "operators": "e0",
+                      "users": "e0"
                     },
                     "domains": {
                       "claude_instance": [],
@@ -5642,6 +5553,9 @@
                       "hard_constraint": [],
                       "operator": [],
                       "operator_input": [],
+                      "principal_type": [
+                        "e0"
+                      ],
                       "situation": [],
                       "user": []
                     },
@@ -5650,6 +5564,7 @@
                       "attempt_to_kill_or_disempower_most_of_humanity": [],
                       "child_sexual_abuse_material": [],
                       "clarification_required": [],
+                      "claude_principal_type": [],
                       "clear_and_substantial_undermining_of_oversight": [],
                       "compliance_against_guidelines": [],
                       "compliance_unethical": [],
@@ -5699,6 +5614,7 @@
                       "knowingly_engages_6": [],
                       "knowingly_engages_7": [],
                       "mass_casualty_weapon_uplift": [],
+                      "novel_entity": [],
                       "operator_input_permitted": [],
                       "operator_prompt_addresses_case": [],
                       "oversight_undermining_permitted": [],
@@ -5768,7 +5684,7 @@
                           "wide",
                           "narrow"
                         ],
-                        "situation": "e771e754a078b64cf6a8c3ca664f0442d5f4aeccc53edcb150d2ed88797bf1c2",
+                        "situation": "a985f2530aa04ad4bb547d94a9f00a233253ff72dc63be667b41d4d540925034",
                         "probe": "selects",
                         "wording": "E24",
                         "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -5849,7 +5765,10 @@
                   "model": {
                     "complete": true,
                     "constants": {
-                      "claude": "e0"
+                      "anthropic": "e0",
+                      "claude": "e0",
+                      "operators": "e0",
+                      "users": "e0"
                     },
                     "domains": {
                       "claude_instance": [],
@@ -5859,6 +5778,9 @@
                       "hard_constraint": [],
                       "operator": [],
                       "operator_input": [],
+                      "principal_type": [
+                        "e0"
+                      ],
                       "situation": [],
                       "user": []
                     },
@@ -5867,6 +5789,7 @@
                       "attempt_to_kill_or_disempower_most_of_humanity": [],
                       "child_sexual_abuse_material": [],
                       "clarification_required": [],
+                      "claude_principal_type": [],
                       "clear_and_substantial_undermining_of_oversight": [],
                       "compliance_against_guidelines": [],
                       "compliance_unethical": [],
@@ -5916,6 +5839,7 @@
                       "knowingly_engages_6": [],
                       "knowingly_engages_7": [],
                       "mass_casualty_weapon_uplift": [],
+                      "novel_entity": [],
                       "operator_input_permitted": [],
                       "operator_prompt_addresses_case": [],
                       "oversight_undermining_permitted": [],
@@ -5979,10 +5903,10 @@
                       "strict",
                       "default"
                     ],
-                    "situation": "015448900f9144299094bcab3e413bbcad9ba6a23e964098c6b487d759e72404",
+                    "situation": "b1f4001df2f6ced5296a2dfefde16dc472f9410d4c13630bf2425f318e416978",
                     "probe": "outcome",
                     "wording": "E19",
-                    "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
+                    "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; p is a type of principal; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
                   }
                 ],
                 "findings": [],
@@ -6024,7 +5948,7 @@
                       "strict",
                       "default"
                     ],
-                    "situation": "de71c4dab9e8b3b6ac3000cb4ec20e2a508b6cad5ba37a908e75c623b7d505eb",
+                    "situation": "47dc31abc64fa1dd83040053b02fb254e9c2cdef98720c3e61abd7d67be59d36",
                     "probe": "selects",
                     "wording": "E24",
                     "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -6034,7 +5958,7 @@
                       "strict",
                       "strict-in-frame"
                     ],
-                    "situation": "b3ae3d2a09cdab7aa88801a86fce28b5b47171e02d8aabe56247bf401f76d593",
+                    "situation": "5f3b257bb22938d71a2c0b8e2c5550ed7873156622c1f7738c20c43cf05ab2a4",
                     "probe": "selects",
                     "wording": "E24",
                     "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -6044,7 +5968,7 @@
                       "strict",
                       "default-in-frame"
                     ],
-                    "situation": "b3ae3d2a09cdab7aa88801a86fce28b5b47171e02d8aabe56247bf401f76d593",
+                    "situation": "5f3b257bb22938d71a2c0b8e2c5550ed7873156622c1f7738c20c43cf05ab2a4",
                     "probe": "selects",
                     "wording": "E24",
                     "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -6054,7 +5978,7 @@
                       "default",
                       "strict-in-frame"
                     ],
-                    "situation": "f5541dbd85680231f018a1bf3bd23e70c7dc57bd07323605f04396fe5479975c",
+                    "situation": "997dd105d07217395f678e60cf156310bfc48fff0529507b8edada92418f9cd3",
                     "probe": "selects",
                     "wording": "E24",
                     "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -6064,7 +5988,7 @@
                       "default",
                       "default-in-frame"
                     ],
-                    "situation": "f5541dbd85680231f018a1bf3bd23e70c7dc57bd07323605f04396fe5479975c",
+                    "situation": "997dd105d07217395f678e60cf156310bfc48fff0529507b8edada92418f9cd3",
                     "probe": "selects",
                     "wording": "E24",
                     "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -6074,7 +5998,7 @@
                       "strict-in-frame",
                       "default-in-frame"
                     ],
-                    "situation": "f191ac59551963c1d6526398b22b0f0c0770a724c558ac9adf6fbf8bd6279df7",
+                    "situation": "6e3fbdee501ce5993241b92dda69d53f14a5800b27e1bea2531ba8959f5b8550",
                     "probe": "selects",
                     "wording": "E24",
                     "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -6107,10 +6031,10 @@
                       "strict",
                       "default"
                     ],
-                    "situation": "c66c42e042a1421bf36678bcd447e5aaa720e9d4dcdc2a9161afc983e35873d2",
+                    "situation": "6f0c3913c18c94747dc81735fa20801c29d9299642d5ef8b9758b583e89eb8b3",
                     "probe": "outcome",
                     "wording": "E19",
-                    "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
+                    "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; p is a type of principal; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
                   }
                 ],
                 "findings": [],
@@ -6140,7 +6064,7 @@
                       "wide",
                       "narrow"
                     ],
-                    "situation": "e771e754a078b64cf6a8c3ca664f0442d5f4aeccc53edcb150d2ed88797bf1c2",
+                    "situation": "a985f2530aa04ad4bb547d94a9f00a233253ff72dc63be667b41d4d540925034",
                     "probe": "selects",
                     "wording": "E24",
                     "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -6190,23 +6114,8 @@
             },
             "decided_units": [
               "u0036.s05",
-              "u0052.s01",
-              "u0062.s01",
-              "u0073.s05",
-              "u0123.s01.p1",
-              "u0123.s02.p1",
-              "u0123.s03",
-              "u0125.s04.p2",
               "u0156.s03",
-              "u0165.s01",
-              "u0165.s02",
               "u0165.s03",
-              "u0165.s04",
-              "u0165.s05",
-              "u0165.s06",
-              "u0165.s07",
-              "u0168.s01",
-              "u0248",
               "u0263.s04.p2"
             ],
             "english": [
@@ -6215,27 +6124,27 @@
               "The readings of sentence 132 were checked one way at a time, not together.",
               "Under every reading of sentence 132, no two rules on the same act contradict each other.",
               "This does not depend on how sentence 132 is read.",
-              "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-              "The readings of sentence 589 were checked one way at a time, not together.",
-              "Under every reading of sentence 589, no two rules on the same act contradict each other.",
-              "This does not depend on how sentence 589 is read.",
-              "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-              "The readings of sentence 1000 were checked one way at a time, not together.",
-              "Under every reading of sentence 1000, no two rules on the same act contradict each other.",
-              "This does not depend on how sentence 1000 is read.",
-              "Sentence 629 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-              "The readings of sentence 629 were checked one way at a time, not together.",
-              "Under every reading of sentence 629, no two rules on the same act contradict each other.",
-              "This does not depend on how sentence 629 is read.",
+              "Sentence 590 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "The readings of sentence 590 were checked one way at a time, not together.",
+              "Under every reading of sentence 590, no two rules on the same act contradict each other.",
+              "This does not depend on how sentence 590 is read.",
+              "Sentence 1001 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "The readings of sentence 1001 were checked one way at a time, not together.",
+              "Under every reading of sentence 1001, no two rules on the same act contradict each other.",
+              "This does not depend on how sentence 1001 is read.",
+              "Sentence 630 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "The readings of sentence 630 were checked one way at a time, not together.",
+              "Under every reading of sentence 630, no two rules on the same act contradict each other.",
+              "This does not depend on how sentence 630 is read.",
               "Each open sentence below was checked by itself, under each of its readings.",
               "Sentence 132 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-              "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is a thing.",
-              "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-              "Read sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is a thing.",
-              "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-              "Read sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing.",
-              "Sentence 629 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-              "Read sentence 629 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing."
+              "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal.",
+              "Sentence 590 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "Read sentence 590 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal.",
+              "Sentence 1001 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "Read sentence 1001 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal.",
+              "Sentence 630 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+              "Read sentence 630 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal."
             ]
           }
         }
@@ -6245,23 +6154,23 @@
         "json": {
           "accounted_bytes": 184893,
           "bytes_by_kind": {
-            "asserted": 22,
+            "asserted": 161,
             "attributed": 634,
-            "meta": 349,
+            "meta": 364,
             "norm": 2580,
-            "unformalised": 181308
+            "unformalised": 181154
           },
           "bytes_by_status": {
-            "CHECKED": 73,
-            "LABELLED": 349,
-            "OPEN": 2529,
-            "UNFORMALISED": 181942
+            "CHECKED": 186,
+            "LABELLED": 364,
+            "OPEN": 2555,
+            "UNFORMALISED": 181788
           },
           "coverage_percent": 100,
           "residual": {
-            "assumptions": 19,
+            "assumptions": 22,
             "bridge_leaves": 0,
-            "open_terms": 51,
+            "open_terms": 52,
             "unresolved_reading_sets": 4,
             "separations": 9,
             "readings_findings": 0,
@@ -6270,16 +6179,16 @@
             "gaps": 12,
             "ungrounded_defaults": 0
           },
-          "residual_total": 95,
+          "residual_total": 99,
           "source_bytes": 184893,
           "unformalised_reasons": {
             "attribution": 12,
             "causation": 76,
-            "counting": 31,
+            "counting": 29,
             "defaults": 50,
             "modality_belief": 25,
             "norms": 669,
-            "other.discourse": 81,
+            "other.discourse": 80,
             "other.graded-force": 1,
             "other.open-list": 1,
             "quantities": 119,
@@ -6311,6 +6220,8 @@
             "main",
             "w2",
             [
+              "u0042.presupposition",
+              "u0043.s02.p2",
               "u0052.s01",
               "u0062.s01",
               "u0073.s05",
@@ -6325,6 +6236,7 @@
               "u0165.s06",
               "u0165.s07",
               "u0168.s01",
+              "u0245.presupposition",
               "u0248"
             ]
           ],
@@ -6358,11 +6270,11 @@
           ]
         ],
         "conflict": "CONFLICT-FREE",
-        "premises": "model",
+        "premises": "UNKNOWN",
         "premises_components": [
           [
             "main",
-            "model"
+            "UNKNOWN"
           ],
           [
             "force-u0036-s05",
@@ -6388,23 +6300,8 @@
         },
         "decided_units": [
           "u0036.s05",
-          "u0052.s01",
-          "u0062.s01",
-          "u0073.s05",
-          "u0123.s01.p1",
-          "u0123.s02.p1",
-          "u0123.s03",
-          "u0125.s04.p2",
           "u0156.s03",
-          "u0165.s01",
-          "u0165.s02",
           "u0165.s03",
-          "u0165.s04",
-          "u0165.s05",
-          "u0165.s06",
-          "u0165.s07",
-          "u0168.s01",
-          "u0248",
           "u0263.s04.p2"
         ],
         "english": [
@@ -6413,53 +6310,38 @@
           "The readings of sentence 132 were checked one way at a time, not together.",
           "Under every reading of sentence 132, no two rules on the same act contradict each other.",
           "This does not depend on how sentence 132 is read.",
-          "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-          "The readings of sentence 589 were checked one way at a time, not together.",
-          "Under every reading of sentence 589, no two rules on the same act contradict each other.",
-          "This does not depend on how sentence 589 is read.",
-          "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-          "The readings of sentence 1000 were checked one way at a time, not together.",
-          "Under every reading of sentence 1000, no two rules on the same act contradict each other.",
-          "This does not depend on how sentence 1000 is read.",
-          "Sentence 629 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-          "The readings of sentence 629 were checked one way at a time, not together.",
-          "Under every reading of sentence 629, no two rules on the same act contradict each other.",
-          "This does not depend on how sentence 629 is read.",
+          "Sentence 590 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "The readings of sentence 590 were checked one way at a time, not together.",
+          "Under every reading of sentence 590, no two rules on the same act contradict each other.",
+          "This does not depend on how sentence 590 is read.",
+          "Sentence 1001 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "The readings of sentence 1001 were checked one way at a time, not together.",
+          "Under every reading of sentence 1001, no two rules on the same act contradict each other.",
+          "This does not depend on how sentence 1001 is read.",
+          "Sentence 630 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "The readings of sentence 630 were checked one way at a time, not together.",
+          "Under every reading of sentence 630, no two rules on the same act contradict each other.",
+          "This does not depend on how sentence 630 is read.",
           "Each open sentence below was checked by itself, under each of its readings.",
           "Sentence 132 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-          "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is a thing.",
-          "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-          "Read sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is a thing.",
-          "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-          "Read sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing.",
-          "Sentence 629 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-          "Read sentence 629 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing."
+          "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal.",
+          "Sentence 590 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "Read sentence 590 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal.",
+          "Sentence 1001 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "Read sentence 1001 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal.",
+          "Sentence 630 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+          "Read sentence 630 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal."
         ]
       },
       "lean_decided_share": {
         "basis": "readings-verdicts decided_units",
-        "decided_bytes": 2602,
+        "decided_bytes": 372,
         "decided_bytes_checked_outside": 0,
-        "decided_share_percent": "1.41",
+        "decided_share_percent": "0.20",
         "decided_units": [
           "u0036.s05",
-          "u0052.s01",
-          "u0062.s01",
-          "u0073.s05",
-          "u0123.s01.p1",
-          "u0123.s02.p1",
-          "u0123.s03",
-          "u0125.s04.p2",
           "u0156.s03",
-          "u0165.s01",
-          "u0165.s02",
           "u0165.s03",
-          "u0165.s04",
-          "u0165.s05",
-          "u0165.s06",
-          "u0165.s07",
-          "u0168.s01",
-          "u0248",
           "u0263.s04.p2"
         ],
         "max_choice_rules": null,

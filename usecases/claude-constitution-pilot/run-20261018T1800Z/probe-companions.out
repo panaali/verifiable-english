@@ -1,10 +1,10 @@
 with_source_word {'check': (5, {'code': 'CheckerUnavailable', 'message': 'ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError'}), 'coverage': (5, {'code': 'CheckerUnavailable', 'message': 'ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError'})}
 {
- "document": "usecases/claude-constitution-pilot/run-20261018T0600Z/probes/companion/translation-companions-with_source_word.ve.md"
+ "document": "usecases/claude-constitution-pilot/run-20261018T1800Z/probes/companion/translation-companions-with_source_word.ve.md"
 }
 without_source_word {'check': (0, None), 'coverage': (0, None)}
 {
- "document": "usecases/claude-constitution-pilot/run-20261018T0600Z/probes/companion/translation-companions-without_source_word.ve.md",
+ "document": "usecases/claude-constitution-pilot/run-20261018T1800Z/probes/companion/translation-companions-without_source_word.ve.md",
  "summary": {
   "route": "components",
   "components": [
@@ -12,6 +12,8 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
     "main",
     "w2",
     [
+     "u0042.presupposition",
+     "u0043.s02.p2",
      "u0052.s01",
      "u0062.s01",
      "u0073.s05",
@@ -26,6 +28,7 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
      "u0165.s06",
      "u0165.s07",
      "u0168.s01",
+     "u0245.presupposition",
      "u0248"
     ]
    ],
@@ -59,11 +62,11 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
    ]
   ],
   "conflict": "CONFLICT-FREE",
-  "premises": "model",
+  "premises": "UNKNOWN",
   "premises_components": [
    [
     "main",
-    "model"
+    "UNKNOWN"
    ],
    [
     "force-u0036-s05",
@@ -89,23 +92,8 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
   },
   "decided_units": [
    "u0036.s05",
-   "u0052.s01",
-   "u0062.s01",
-   "u0073.s05",
-   "u0123.s01.p1",
-   "u0123.s02.p1",
-   "u0123.s03",
-   "u0125.s04.p2",
    "u0156.s03",
-   "u0165.s01",
-   "u0165.s02",
    "u0165.s03",
-   "u0165.s04",
-   "u0165.s05",
-   "u0165.s06",
-   "u0165.s07",
-   "u0168.s01",
-   "u0248",
    "u0263.s04.p2"
   ],
   "english": [
@@ -114,21 +102,22 @@ without_source_word {'check': (0, None), 'coverage': (0, None)}
    "The readings of sentence 132 were checked one way at a time, not together.",
    "Under every reading of sentence 132, no two rules on the same act contradict each other.",
    "This does not depend on how sentence 132 is read.",
-   "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-   "The readings of sentence 589 were checked one way at a time, not together.",
-   "Under every reading of sentence 589, no two rules on the same act contradict each other.",
-   "This does not depend on how sentence 589 is read.",
-   "Sentence 1000 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-   "The readings of sentence 1000 were checked one way at a time, not together.",
-   "Under every reading of sentence 1000, no two rules on the same act contradict each other.",
-   "This does not depend on how sentence 1000 is read.",
-   "Sentence 629 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-   "The readings of sentence 629 were checked one way at a time, not together.",
-   "Under every reading of sentence 629, no two rules on the same act contradict each other.",
-   "This does not depend on how sentence 629 is read.",
+   "Sentence 590 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 590 were checked one way at a time, not together.",
+   "Under every reading of sentence 590, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 590 is read.",
+   "Sentence 1001 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 1001 were checked one way at a time, not together.",
+   "Under every reading of sentence 1001, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 1001 is read.",
+   "Sentence 630 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 630 were checked one way at a time, not together.",
+   "Under every reading of sentence 630, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 630 is read.",
    "Each open sentence below was checked by itself, under each of its readings.",
    "Sentence 132 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-   "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is a thing.",
-   "Sentence 589 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
-   "Read sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is a thing.",
-   "Sentence 1000 was checked by itself, with the terms its readings dec
+   "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal.",
+   "Sentence 590 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 590 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal.",
+   "Sentence 1001 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 1001 as *Every instance of 

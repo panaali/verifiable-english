@@ -6,10 +6,12 @@
       "kind": "knowing",
       "predicate": "weapons_uplift_permitted",
       "returncode": 0,
-      "verdict": "UNKNOWN",
+      "verdict": "ALL",
       "route": "superposed",
-      "evidence": null,
-      "english": []
+      "evidence": "certificates",
+      "english": [
+        "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"mass_casualty_weapon_uplift\" and that instance of Claude has the recorded relation \"knowingly_engages_1\" to, it is not the case that that instance of Claude may do the weapons uplift in that situation.*"
+      ]
     },
     {
       "unit": "u0165.s01",
@@ -42,9 +44,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"critical_infrastructure_uplift\" and that instance of Claude has the recorded relation \"knowingly_engages_2\" to, it is not the case that that instance of Claude may do the infrastructure uplift in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -58,9 +60,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_2\" to, it is not the case that that instance of Claude may do the infrastructure uplift in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -118,9 +120,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"clear_and_substantial_undermining_of_oversight\" and that instance of Claude has the recorded relation \"knowingly_engages_4\" to, it is not the case that that instance of Claude may do the undermining in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -134,9 +136,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_4\" to, it is not the case that that instance of Claude may do the undermining in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -160,9 +162,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"attempt_to_kill_or_disempower_most_of_humanity\" and that instance of Claude has the recorded relation \"knowingly_engages_5\" to, it is not the case that that instance of Claude may do the participation in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -176,9 +178,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_5\" to, it is not the case that that instance of Claude may do the participation in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -202,9 +204,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"illegitimate_absolute_control\" and that instance of Claude has the recorded relation \"knowingly_engages_6\" to, it is not the case that that instance of Claude may do the involvement in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -218,9 +220,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_6\" to, it is not the case that that instance of Claude may do the involvement in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -244,9 +246,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that is classified as \"child_sexual_abuse_material\" and that instance of Claude has the recorded relation \"knowingly_engages_7\" to, it is not the case that that instance of Claude may do the generation in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {
@@ -260,9 +262,9 @@
       "english": [
         "Under every reading of the 4 open sentences, the conclusion follows: *For every instance of Claude, for every situation that that instance of Claude has the recorded relation \"thinks_quite_likely_7\" to, it is not the case that that instance of Claude may do the generation in that situation.*",
         "This does not depend on how sentence 132 is read.",
-        "This does not depend on how sentence 589 is read.",
-        "This does not depend on how sentence 629 is read.",
-        "This does not depend on how sentence 1000 is read."
+        "This does not depend on how sentence 590 is read.",
+        "This does not depend on how sentence 630 is read.",
+        "This does not depend on how sentence 1001 is read."
       ]
     },
     {

@@ -1,0 +1,73 @@
+{
+ "needed_for_product_code": false,
+ "why": "no product code (Lean, Python, Rust) was changed: this run adds and changes files under usecases/ only (lean/.lake and rust/target in the worktree are ignored build products). The claims below are the translator's; each was planted and caught.",
+ "translation_faults": [
+  {
+   "claim": "QT-0p's universal closure over Claude's types is what makes “no fourth type” follow (and the probe SETTLED no)",
+   "planted": "the closure conjunct removed from u0042.presupposition and u0043.s02.p2 in a scratch copy of translation-without-content.ve.md (nd.py all rebuilt it: admitted, premises model)",
+   "file": "scratch copy of usecases/claude-constitution-pilot/run-20261018T1800Z/translation-without-content.ve.md",
+   "failing_check": "ve document readings … --conclusion probes/qt/no-fourth.conclusion.json: verdict UNKNOWN instead of ALL (the fourth type is no longer excluded)",
+   "evidence": "evidence/seeded/sb1-closure-removed-no-fourth-result.json",
+   "restored": "the scratch directory was deleted; the run's translation was never touched"
+  },
+  {
+   "claim": "u0245 is a ground fact, so the whole-document premise check stays at `model` (PS-0p class B)",
+   "planted": "the same kind of claim written as an existential over the sort `entity` (u0032 and u0286 as offered)",
+   "file": "scratch copies of translation-without-content.ve.md (evidence/ps0p/premise-variants.json: variants A to D, F, G, H)",
+   "failing_check": "ve document check: premises UNKNOWN; checkpoint.py would stop at `assert check['premises']['status'] == 'model'`",
+   "evidence": "evidence/ps0p/premise-variants.json, premise-diag-*.txt",
+   "restored": "the scratch directories were deleted; u0286 and u0032 stay reverted in the run's translation"
+  }
+ ],
+ "pilot_script_faults": [
+  {
+   "claim": "the hedge “At the moment, ” is the 15 bytes 23587-23602 of the pinned source (QT-0p step 4)",
+   "planted": "p1 given as 14 bytes",
+   "file": "apply_plans.py QT_PARTS",
+   "failing_check": "apply_plans.qt0p's partition assertion",
+   "failure": "AssertionError: [[23587, 23602], [23602, 23677]]",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "the three units' spans and kinds are unchanged since the plan (QT-0p step 1)",
+   "planted": "u0043.s01 one byte short",
+   "file": "translation-without-content.ve.md",
+   "failing_check": "apply_plans.qt0p's step-1 assertion",
+   "failure": "AssertionError: ('u0043.s01', {'id': 'u0043.s01', 'span': [23486, 23586], 'support': 'none', 'kind': ['unformalised', 'counting'], 'meaning': {'unformalised': 'counting'}})",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "the census's false positives “discoveries” and “returned to the orchestrator” are dropped (PS-0p step 4)",
+   "planted": "the false-word set emptied",
+   "file": "ledger_1800.py FALSE_FULL_WORDS",
+   "failing_check": "finish_20261018T1800Z.py: assert dropped == EXPECTED_DROPPED",
+   "failure": "AssertionError: [{'unit': 'u0050.s04', 'words': 'returned to', 'full_word': 'returned to'}]",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "a title records no `presupposed_claim` (PS-0p step 1; REMOVE EVERY TRACE)",
+   "planted": "u0207's claim put back",
+   "file": "units.json (in memory)",
+   "failing_check": "finish_20261018T1800Z.py: assert_no_traces",
+   "failure": "AssertionError: u0207",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "an exception_to_… placeholder is class `exception` (JT-0p rule 2)",
+   "planted": "its class set to judgment",
+   "file": "finish_20261018T1800Z.py JT classes",
+   "failing_check": "finish_20261018T1800Z.py: check_rules",
+   "failure": "AssertionError: exception_to_asking_for_clarification",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "“knowingly engages” is class `attitude` (JT-0p rule 1)",
+   "planted": "knowingly_engages_4 set to classification",
+   "file": "finish_20261018T1800Z.py JT classes",
+   "failing_check": "finish_20261018T1800Z.py: check_rules",
+   "failure": "AssertionError: knowingly_engages_4",
+   "restored": "in-memory fault; the file was not touched"
+  }
+ ],
+ "not_planted": "the other assertions of finish_20261018T1800Z.py (the carried English, the 21 hard-constraint answers, the probe files) were not seeded: each needs a long run of the script"
+}

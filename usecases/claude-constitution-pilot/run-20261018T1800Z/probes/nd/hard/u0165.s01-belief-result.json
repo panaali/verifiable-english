@@ -8,19 +8,19 @@
   "choice": [
     [
       "force-u0036-s05",
-      0
+      1
     ],
     [
       "force-u0156-s03",
-      0
+      3
     ],
     [
       "scope-u0165-s03",
-      0
+      1
     ],
     [
       "force-u0263-s04-p2",
-      0
+      1
     ]
   ],
   "route": "superposed",

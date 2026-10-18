@@ -1,76 +1,253 @@
 {
-  "run": "20261018T0600Z",
-  "baseline_tag": "ve-green-tarch-histdep",
-  "previous_run": "20261017T1800Z",
-  "previous_baseline_tag": "ve-green-fu-ar2-decoders",
+  "run": "20261018T1800Z",
+  "baseline_tag": "ve-green-eff-20261018-1",
+  "previous_run": "20261018T0600Z",
+  "previous_baseline_tag": "ve-green-tarch-histdep",
   "source_sha256": "fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd",
   "source_bytes": 184893,
   "bytes_accounted": 184893,
   "bytes_accounted_percent": 100.0,
-  "history_note": "this file records this run; the earlier runs' records (audit-verification history, the earlier probes' narrative) are in prev/metrics.json",
-  "feature_upgrade_counts_separate_from_repairs": "units upgraded by new features 0; plan repairs 0 applied (AT-0p, SC-M0, AP-0 item 3, X5 and X2-X4 were already in the plan's form or are tags only); audit repairs 0 (the audit of 20261017T1800Z found 28 of 28 faithful); changed units 0",
-  "changed_units": [],
+  "history_note": "this file records this run; the earlier runs' records are in prev/metrics.json and the AUDIT-*-received.md files",
+  "feature_upgrade_counts_separate_from_repairs": "units upgraded by new features 0 (thirteen batches merged; none adds anything a document can say); plan repairs: QT-0p 3 units (+128 B), PS-0p 22 units (ledger steps 1 to 3 and 5; +26 B for u0245), AT-0p 7 units carried unchanged; audit repairs 0 (the audit of 20261018T0600Z found 25 of 25 faithful)",
+  "changed_units": [
+    "u0002.presupposition",
+    "u0013.presupposition",
+    "u0032.presupposition",
+    "u0040.presupposition",
+    "u0042.presupposition",
+    "u0043.s02.p1",
+    "u0043.s02.p2",
+    "u0055.presupposition",
+    "u0069.presupposition",
+    "u0075.presupposition",
+    "u0083.presupposition",
+    "u0095.presupposition",
+    "u0151.presupposition",
+    "u0162.presupposition",
+    "u0174.presupposition",
+    "u0195.presupposition",
+    "u0207.presupposition",
+    "u0212.presupposition",
+    "u0235.presupposition",
+    "u0245.presupposition",
+    "u0254.presupposition",
+    "u0257.presupposition",
+    "u0260.presupposition",
+    "u0268.presupposition",
+    "u0286.presupposition"
+  ],
   "plan_repairs": [
+    {
+      "unit": "u0042.presupposition",
+      "plan": "quantities",
+      "item": "QT-0p"
+    },
+    {
+      "unit": "u0043.s02.p1",
+      "plan": "quantities",
+      "item": "QT-0p"
+    },
+    {
+      "unit": "u0043.s02.p2",
+      "plan": "quantities",
+      "item": "QT-0p"
+    },
+    {
+      "unit": "u0040.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0075.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0151.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0162.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0174.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0195.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0207.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0212.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0257.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0260.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0055.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 1"
+    },
+    {
+      "unit": "u0254.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 2"
+    },
+    {
+      "unit": "u0268.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 2"
+    },
+    {
+      "unit": "u0013.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 3"
+    },
+    {
+      "unit": "u0095.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 3"
+    },
+    {
+      "unit": "u0002.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 3"
+    },
+    {
+      "unit": "u0235.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 3"
+    },
+    {
+      "unit": "u0286.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 3"
+    },
+    {
+      "unit": "u0032.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 5"
+    },
+    {
+      "unit": "u0069.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 5"
+    },
+    {
+      "unit": "u0083.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 5"
+    },
+    {
+      "unit": "u0245.presupposition",
+      "plan": "presupposition",
+      "item": "PS-0p step 5"
+    },
     {
       "unit": "u0165.s01",
       "plan": "attitudes",
       "item": "AT-0p",
-      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by the audits of 20261014T1800Z, 20261015T0600Z, 20261015T1800Z, 20261016T0600Z, 20261016T1800Z, 20261017T0600Z and 20261017T1800Z); the shape is asserted by repair_20261017T1800Z.py --check and measured again by the probes; not re-applied, no guard or act phrase changed in this run",
-      "applied_in_this_run": false
+      "applied_in_this_run": false,
+      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by every audit since, the last of 20261018T0600Z); the shape is asserted by repair_20261017T1800Z.py --check and update_ledger, and measured again by the four probe points; not re-applied, no guard or act phrase changed in this run"
     },
     {
       "unit": "u0165.s02",
       "plan": "attitudes",
       "item": "AT-0p",
-      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by the audits of 20261014T1800Z, 20261015T0600Z, 20261015T1800Z, 20261016T0600Z, 20261016T1800Z, 20261017T0600Z and 20261017T1800Z); the shape is asserted by repair_20261017T1800Z.py --check and measured again by the probes; not re-applied, no guard or act phrase changed in this run",
-      "applied_in_this_run": false
+      "applied_in_this_run": false,
+      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by every audit since, the last of 20261018T0600Z); the shape is asserted by repair_20261017T1800Z.py --check and update_ledger, and measured again by the four probe points; not re-applied, no guard or act phrase changed in this run"
     },
     {
       "unit": "u0165.s03",
       "plan": "attitudes",
       "item": "AT-0p",
-      "state": "already in the plan's form per candidate at the start of this run (u0165.s03 has one pair of attitude terms per candidate since 20261015T0600Z; accepted FAITHFUL by the audits of 20261015T0600Z, 20261015T1800Z, 20261016T0600Z, 20261016T1800Z, 20261017T0600Z and 20261017T1800Z); asserted and measured again; not re-applied",
-      "applied_in_this_run": false
+      "applied_in_this_run": false,
+      "state": "already in the plan's form per candidate at the start of this run (one pair of attitude terms per candidate since 20261015T0600Z; accepted FAITHFUL by every audit since); asserted and measured again; not re-applied"
     },
     {
       "unit": "u0165.s04",
       "plan": "attitudes",
       "item": "AT-0p",
-      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by the audits of 20261014T1800Z, 20261015T0600Z, 20261015T1800Z, 20261016T0600Z, 20261016T1800Z, 20261017T0600Z and 20261017T1800Z); the shape is asserted by repair_20261017T1800Z.py --check and measured again by the probes; not re-applied, no guard or act phrase changed in this run",
-      "applied_in_this_run": false
+      "applied_in_this_run": false,
+      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by every audit since, the last of 20261018T0600Z); the shape is asserted by repair_20261017T1800Z.py --check and update_ledger, and measured again by the four probe points; not re-applied, no guard or act phrase changed in this run"
     },
     {
       "unit": "u0165.s05",
       "plan": "attitudes",
       "item": "AT-0p",
-      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by the audits of 20261014T1800Z, 20261015T0600Z, 20261015T1800Z, 20261016T0600Z, 20261016T1800Z, 20261017T0600Z and 20261017T1800Z); the shape is asserted by repair_20261017T1800Z.py --check and measured again by the probes; not re-applied, no guard or act phrase changed in this run",
-      "applied_in_this_run": false
+      "applied_in_this_run": false,
+      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by every audit since, the last of 20261018T0600Z); the shape is asserted by repair_20261017T1800Z.py --check and update_ledger, and measured again by the four probe points; not re-applied, no guard or act phrase changed in this run"
     },
     {
       "unit": "u0165.s06",
       "plan": "attitudes",
       "item": "AT-0p",
-      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by the audits of 20261014T1800Z, 20261015T0600Z, 20261015T1800Z, 20261016T0600Z, 20261016T1800Z, 20261017T0600Z and 20261017T1800Z); the shape is asserted by repair_20261017T1800Z.py --check and measured again by the probes; not re-applied, no guard or act phrase changed in this run",
-      "applied_in_this_run": false
+      "applied_in_this_run": false,
+      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by every audit since, the last of 20261018T0600Z); the shape is asserted by repair_20261017T1800Z.py --check and update_ledger, and measured again by the four probe points; not re-applied, no guard or act phrase changed in this run"
     },
     {
       "unit": "u0165.s07",
       "plan": "attitudes",
       "item": "AT-0p",
-      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by the audits of 20261014T1800Z, 20261015T0600Z, 20261015T1800Z, 20261016T0600Z, 20261016T1800Z, 20261017T0600Z and 20261017T1800Z); the shape is asserted by repair_20261017T1800Z.py --check and measured again by the probes; not re-applied, no guard or act phrase changed in this run",
-      "applied_in_this_run": false
+      "applied_in_this_run": false,
+      "state": "already in the plan's form at the start of this run (applied in 20261014T1800Z; accepted FAITHFUL by every audit since, the last of 20261018T0600Z); the shape is asserted by repair_20261017T1800Z.py --check and update_ledger, and measured again by the four probe points; not re-applied, no guard or act phrase changed in this run"
     }
   ],
   "audit_repairs": [],
-  "changed_units_detail": {},
+  "changed_units_detail": {
+    "u0002.presupposition": "relational-noun wording not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused",
+    "u0013.presupposition": "relational-noun wording not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused",
+    "u0032.presupposition": "class B item, offered and reverted in this run: the wording the lint admits for “constitutes genuine helpfulness” is “{0} is helpful” (it drops “genuine” and “constitutes”), the claim is an existential (`∃x genuine_helpfulness(x)`), and the",
+    "u0040.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0042.presupposition": "QT-0p (quantities plan, DRI QT2; content docs/research/evidence/quantities/qt0p/constitution-u0042-u0043.ve.md on research/quantities-p1). The heading's presupposition is that Claude has exactly three types of principals and nothing more: t",
+    "u0043.s02.p1": "“At the moment,” is the document's present, with no date: the clause says the list that follows holds now and may change; VE records it as a comment about the text (a time adverbial with no date, so no time construct is needed).",
+    "u0043.s02.p2": "QT-0p. Anthropic, operators and users are each one of Claude's types of principals, they are pairwise different, and every one of Claude's types is one of them. The three constants are of the sort `principal_type`; `operators` and `users` a",
+    "u0055.presupposition": "wh-title: its presupposition is that there is a way to treat them; the recorded claim was not it",
+    "u0069.presupposition": "class B item, not offered: the noun “deployment context” has no admitted wording (“{0} is a deployment context” is refused, LOGICAL_WORD and UNARY_MODIFIER, evidence/ps0p/wording-lint.json); “{0} is deployed” is admitted but says something ",
+    "u0075.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0083.presupposition": "class B item, not offered: “values other than helpfulness” needs the noun “core value”, which waits for PS-6r (PS-0p step 5)",
+    "u0095.presupposition": "relational-noun wording not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused",
+    "u0151.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0162.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0174.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0195.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0207.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0212.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0235.presupposition": "relational-noun wording not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused",
+    "u0245.presupposition": "class B item, offered to the audit (PS-0p step 5): the heading presupposes that Claude is a novel entity. Predicate `novel_entity` worded “{0} is novel” (the lint admits it; “is a novel entity” is refused, UNARY_MODIFIER, so the English dro",
+    "u0254.presupposition": "the text withholds this (u0269.s02): not assumed",
+    "u0257.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0260.presupposition": "no trigger word: a title (scope SC-3a)",
+    "u0268.presupposition": "the text withholds this (u0269.s02): not assumed",
+    "u0286.presupposition": "offered in PS-0p's form (predicate `open_problem` worded “{0} is unsolved”, fence “Some thing is unsolved.”, `∃x open_problem(x)`; it loads, the check is admitted, CHECKED +29 B) and reverted in this run: with QT-0p's `principal_type` (size"
+  },
   "plan_repair_AT0p_state": {
-    "u0165.s01": "plan repair AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation); not a changed unit in this run",
-    "u0165.s02": "plan repair AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation); not a changed unit in this run",
-    "u0165.s04": "plan repair AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation); not a changed unit in this run",
-    "u0165.s05": "plan repair AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation); not a changed unit in this run",
-    "u0165.s06": "plan repair AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation); not a changed unit in this run",
-    "u0165.s07": "plan repair AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation); not a changed unit in this run",
-    "u0165.s03": "plan repair AT-0p per candidate: guard = ( C_w(s) and knowingly_engages_3_wide(c, s) ) or thinks_quite_likely_3_wide(c, s), and the same with narrow for the narrow candidate; carried unchanged, shape asserted again; not a changed unit in this run"
+    "u0165.s01": "AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation) (u0165.s03: one pair per candidate); not a changed unit in this run",
+    "u0165.s02": "AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation) (u0165.s03: one pair per candidate); not a changed unit in this run",
+    "u0165.s03": "AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation) (u0165.s03: one pair per candidate); not a changed unit in this run",
+    "u0165.s04": "AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation) (u0165.s03: one pair per candidate); not a changed unit in this run",
+    "u0165.s05": "AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation) (u0165.s03: one pair per candidate); not a changed unit in this run",
+    "u0165.s06": "AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation) (u0165.s03: one pair per candidate); not a changed unit in this run",
+    "u0165.s07": "AT-0p (attitudes plan, DRI AT2): carried unchanged, shape asserted again: guard = ( C(s) and knowingly_engages_N(c, s) ) or thinks_quite_likely_N(c, s), two binary open terms on (claude_instance, situation) (u0165.s03: one pair per candidate); not a changed unit in this run"
   },
   "plan_repair_note": "AT-0p (DRI AT2) is in the plan's form at the start of this run (applied in 20261014T1800Z, per candidate for u0165.s03 since 20261015T0600Z, audited FAITHFUL seven times); this run asserts the shape (repair_20261017T1800Z.py --check), rebuilds the content with nd.py all (cmp-identical), measures the four probe kinds again (as the plan states, byte-identical probe file) and does not re-apply it: the seven units are listed in plan_repairs with applied_in_this_run false and no guard or act phrase changed (u0165.s01 to s07 are not changed units). Plan expectation and measurement: claimed bytes unchanged at 2,951 (as stated); open terms: the plan expected 46 on the 1800Z copy and the measured document has 51 (46 at the AT-0p stage, plus the exception terms of the three force sets, the per-candidate terms of the scope set of u0165.s03 and the frame term of u0156.s03, which later runs added; a difference in the translation's other units, not in AT-0p); case false and thinks-quite-likely true SETTLED no; case true and knowingly true SETTLED no; neither UNDECIDED; case false and knowingly true UNDECIDED, for all seven rules; ve document check passes (premises model, all 32 choices CONFLICT-FREE)",
   "feature_upgrades": {
@@ -78,22 +255,22 @@
     "reading_sets_upgraded_by_new_features": 0,
     "note": "kept apart from the plan repairs and audit repairs, so that differences against the previous run measure the language, not the translator"
   },
-  "tags_only_not_changed_units": "scope tags (SC-M0), act_workaround (AP-0 item 3) and the `claimed` field are ledger annotations: 352 units carry other:scope; none of them is a changed unit by this alone",
+  "tags_only_not_changed_units": "scope tags (SC-M0), act_workaround (AP-0 item 3), presupposition_triggers and the blocker other:presupposition (PS-0p step 4), judgment_terms (JT-0p) and the `claimed` field are ledger annotations; none of them makes a unit a changed unit",
   "sentence_clause_units": {
-    "units_total": 1132,
+    "units_total": 1133,
     "unit_counts_by_status": {
-      "CHECKED": 2,
-      "LABELLED": 39,
-      "OPEN": 13,
+      "CHECKED": 4,
+      "LABELLED": 40,
+      "OPEN": 14,
       "READINGS": 4,
-      "UNFORMALISED": 1074
+      "UNFORMALISED": 1071
     },
     "bytes_by_status": {
-      "CHECKED": 73,
-      "LABELLED": 349,
-      "OPEN": 2157,
+      "CHECKED": 186,
+      "LABELLED": 364,
+      "OPEN": 2183,
       "READINGS": 372,
-      "UNFORMALISED": 181942
+      "UNFORMALISED": 181788
     },
     "previous_run": {
       "units_total": 1132,
@@ -117,16 +294,16 @@
     "units_total": 299,
     "unit_counts_by_status": {
       "LABELLED": 10,
-      "MIXED": 39,
-      "UNFORMALISED": 249,
+      "MIXED": 40,
+      "UNFORMALISED": 248,
       "CHECKED": 1
     },
     "bytes_by_substatus": {
-      "CHECKED": 73,
-      "LABELLED": 349,
-      "OPEN": 2157,
+      "CHECKED": 186,
+      "LABELLED": 364,
+      "OPEN": 2183,
       "READINGS": 372,
-      "UNFORMALISED": 181942
+      "UNFORMALISED": 181788
     },
     "previous_run": {
       "units_total": 299,
@@ -136,15 +313,16 @@
         "UNFORMALISED": 249,
         "CHECKED": 1
       }
-    }
+    },
+    "note": "aggregated by the unit's block (parent_unit), as in earlier runs; u0043 (QT-0p) becomes a MIXED block"
   },
-  "claimed_covered_bytes": 2951,
-  "claimed_covered_percent": 1.5961,
+  "claimed_covered_bytes": 3105,
+  "claimed_covered_percent": 1.6793,
   "claimed_covered_bytes_previous_run": 2951,
-  "claimed_covered_bytes_gained": 0,
+  "claimed_covered_bytes_gained": 154,
   "claimed_false_units": [],
   "claimed_rule": "DRI X5: a unit whose ledger entry says `claimed: false` (an OPEN unit with part of its meaning missing) is never counted as claimed or audit-verified bytes; every covered unit here is `claimed: true`, none is marked false (u0165.s03's missing scope alternative is now represented by the reading set)",
-  "substantive_covered_bytes": 2602,
+  "substantive_covered_bytes": 2741,
   "substantive_covered_bytes_previous_run": 2602,
   "audit_verified_covered_bytes": 2602,
   "audit_verified_covered_percent": 1.4073,
@@ -169,21 +347,22 @@
     "u0263.s04.p2",
     "u0036.s05"
   ],
-  "audit_verified_covered_bytes_previous_run": 2159,
+  "audit_verified_covered_bytes_previous_run": 2602,
   "audit_verified_dropped_because_changed": [],
-  "audit_verified_basis": "Audit-verified = accepted as faithful by an independent audit of this lineage AND unchanged in this run from the form that audit saw. The audit of run 20261017T1800Z (28 of 28 verdicts faithful: 20 sampled plus 8 changed; AUDIT-20261017T1800Z-received.md) is the latest and rejected nothing. It saw the repaired u0156.s03 (four candidates), u0165.s06, the notes of u0036.s05 and u0263.s04.p2 and the AT-0p units; all are byte-identical here (translation.ve.md is the previous run's, and no ledger text of them changed), so they count again. No unit changed in this run. This is a count of verdicts on unchanged text, not a fresh audit of this run.",
+  "audit_verified_basis": "Audit-verified = accepted as faithful by an independent audit of this lineage AND unchanged in this run from the form that audit saw. The audit of run 20261018T0600Z (25 of 25 verdicts faithful: 20 sampled plus the 5 AT-0p units it checked as changed; AUDIT-20261018T0600Z-received.md) is the latest and rejected nothing. None of the units this run changed (QT-0p, PS-0p) was audited in that form, so none counts. This is a count of verdicts on unchanged text, not a fresh audit of this run.",
   "audit_verified_metadata_bytes": 349,
   "audit_verified_metadata_percent": 0.1888,
   "audit_verified_metadata_bytes_previous_run": 349,
-  "claimed_but_not_audit_verified_bytes": 0,
+  "claimed_but_not_audit_verified_bytes": 154,
   "repaired_bytes_not_audit_verified": 0,
   "audit_rejected_units_and_repair_status": {
-    "rejected_by_20261017T1800Z_audit": [],
-    "repair_done_in_20261018T0600Z": {},
+    "rejected_by_20261018T0600Z_audit": [],
+    "repair_done_in_20261018T1800Z": {},
     "small_faults_repaired": {},
     "small_faults_not_repaired": {
       "u0156.s03 frame term": "the audit of 20261017T1800Z (small fault, no verdict change): the open term asked_to_keep_system_prompt_confidential takes only the instance of Claude, while the source words describe “a situation” and the rule ranges over (instance, user), so an instance that counts as asked is in the frame toward every user. Carried, not repaired: the term is the translator's hand-made frame; a frame over a situation is what the missing scope construct (other:scope) would give, and giving the term a user or a situation argument would add a quantity of words the source does not state. The unit, its readings and the open term are as the audit accepted them",
-      "headings": "“Being helpful” and “The existential frontier” are labelled whole while “Being broadly safe” and “Safe behaviors” have presupposition units; the labels are true, so nothing was rewritten",
+      "u0168.s01 guard": "the audit of 20261018T0600Z (small fault, no verdict change): the guard seemingly_compelling_argument_to_cross_line(s) takes only the situation, so when one instance faces the argument every instance in s is obliged to remain firm; in English the extra duty is empty. Carried, not repaired: no plan of this run directs it, and binding the term to an agent is the typed-attitude feature (attitudes plan beyond AT-0p)",
+      "headings": "unchanged from earlier runs, except where PS-0p steps 1 to 3 now change the heading units (listed in changed_units)",
       "u0173.s01 to s04": "the notes call the gap modality/belief while the ledger's missing feature is `norms` with `modality/belief` as a further blocker; the tally is kept as it was"
     },
     "kept_covered_status_without_repair": [],
@@ -814,6 +993,18 @@
       ]
     },
     {
+      "name": "novel_entity",
+      "arguments": [
+        "entity"
+      ],
+      "decided_by": "unresolved_decider",
+      "necessary": [],
+      "sufficient": [],
+      "factors": [
+        "what counts as novel, and novel compared with what (u0245 is a heading; the source's own discussion is in the sentences under it)"
+      ]
+    },
+    {
       "name": "exception_to_asking_for_clarification",
       "arguments": [
         "situation"
@@ -865,13 +1056,15 @@
       ]
     }
   ],
-  "open_terms_count": 51,
+  "open_terms_count": 52,
   "open_terms_count_previous_run": 51,
-  "open_terms_added": [],
+  "open_terms_added": [
+    "novel_entity"
+  ],
   "open_terms_removed_this_run": [],
   "open_terms_with_changed_factors": [],
   "open_terms_with_changed_arguments": {},
-  "open_terms_count_note": "51, as in the previous run (nothing added, removed or changed)",
+  "open_terms_count_note": "52: the previous 51 plus novel_entity (u0245, PS-0p class B); u0286's open_problem and u0032's genuine_helpfulness were declared in the offered builds and are not in the final document",
   "ledger_only_open_terms": {
     "what": "names that UNFORMALISED entries list as vague terms the unit would depend on, which are not open terms of the document (an earlier run removed their records because no covered unit used them); a ledger pointer, never counted as an open term and never claimed",
     "names": [
@@ -985,12 +1178,12 @@
     }
   },
   "missing_feature_tally": {
-    "other:discourse": 81,
+    "other:discourse": 80,
     "quantities": 119,
     "norms": 669,
     "causation": 76,
     "time": 9,
-    "counting": 31,
+    "counting": 29,
     "defaults": 50,
     "modality/belief": 25,
     "other:graded-force": 1,
@@ -1040,29 +1233,43 @@
             "sorts": 32
           },
           "nodes": 303,
-          "predicates": 88,
-          "sorts": 8
+          "predicates": 90,
+          "sorts": 9
         },
         "english": [
           "Under every reading of the 4 open sentences, no two rules on the same act contradict each other.",
           "This does not depend on how sentence 132 is read.",
-          "This does not depend on how sentence 589 is read.",
-          "This does not depend on how sentence 629 is read.",
-          "This does not depend on how sentence 1000 is read.",
-          "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 629 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation* and sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing."
+          "This does not depend on how sentence 590 is read.",
+          "This does not depend on how sentence 630 is read.",
+          "This does not depend on how sentence 1001 is read.",
+          "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 590 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 630 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation* and sentence 1001 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal; e1 is a type of principal; e2 is a type of principal; e0 is classified as \"claude_principal_type\"; e1 is classified as \"claude_principal_type\"; e2 is classified as \"claude_principal_type\"; e0 is novel."
         ]
+      },
+      "check_seconds_this_run": {
+        "document_check": 107.5,
+        "document_coverage": 131.9
       },
       "previous_run": {
         "premises_route": "superposed",
         "conflict_route": "superposed",
-        "conflict_status_text": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
-        "choices": 32,
-        "open_sentences": 3
+        "choices": 32
+      },
+      "bytes_by_status": {
+        "CHECKED": 186,
+        "LABELLED": 364,
+        "OPEN": 2555,
+        "UNFORMALISED": 181788
+      },
+      "bytes_by_status_previous_run": {
+        "CHECKED": 73,
+        "LABELLED": 349,
+        "OPEN": 2529,
+        "UNFORMALISED": 181942
       },
       "residual": {
-        "assumptions": 19,
+        "assumptions": 22,
         "bridge_leaves": 0,
-        "open_terms": 51,
+        "open_terms": 52,
         "unresolved_reading_sets": 4,
         "separations": 9,
         "readings_findings": 0,
@@ -1074,106 +1281,15 @@
       "residual_previous_run": {
         "assumptions": 19,
         "bridge_leaves": 0,
-        "open_terms": 50,
+        "open_terms": 51,
         "unresolved_reading_sets": 4,
-        "separations": 4,
+        "separations": 9,
         "readings_findings": 0,
         "pending_candidates": 0,
         "couplings": 0,
         "gaps": 12,
         "ungrounded_defaults": 0
-      },
-      "norm_defaults": {
-        "environment_id": "dec959f2f8331c68844ab22dedf4eca264155f07679d74a9d66d21d161787b14",
-        "filled_environment_id": "6a034d279b9df4a96a0fc75256773c52b6c5f8cd0ef8073737c9300f782ec667",
-        "fill_hash": "38c3816476cb84a0ad503436ae59ca8e8f96286cb9ef681686b8668a119d23ff",
-        "unsaid_predicates": [
-          "unsaid__clarification_required",
-          "unsaid__csam_generation_permitted_for_claude",
-          "unsaid__cyberweapon_creation_permitted",
-          "unsaid__denial_of_being_claude_permitted",
-          "unsaid__exploit_instruction_compliance_required",
-          "unsaid__firmness_required",
-          "unsaid__humanity_attack_participation_permitted",
-          "unsaid__illegitimate_control_involvement_permitted",
-          "unsaid__infrastructure_uplift_permitted",
-          "unsaid__judgment_use_required",
-          "unsaid__operator_input_permitted",
-          "unsaid__oversight_undermining_permitted",
-          "unsaid__system_prompt_compliance_required",
-          "unsaid__system_prompt_deception_permitted",
-          "unsaid__weapons_uplift_permitted"
-        ],
-        "background_labels": [],
-        "report": {
-          "clarification_required": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "csam_generation_permitted_for_claude": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "cyberweapon_creation_permitted": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "denial_of_being_claude_permitted": [
-            "completion: unspecified",
-            "gaps: none"
-          ],
-          "exploit_instruction_compliance_required": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "firmness_required": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "humanity_attack_participation_permitted": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "illegitimate_control_involvement_permitted": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "infrastructure_uplift_permitted": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "judgment_use_required": [
-            "completion: unspecified",
-            "gaps: none"
-          ],
-          "operator_input_permitted": [
-            "completion: unspecified",
-            "gaps: unknown"
-          ],
-          "oversight_undermining_permitted": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "system_prompt_compliance_required": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "system_prompt_deception_permitted": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ],
-          "weapons_uplift_permitted": [
-            "completion: unspecified",
-            "gaps: reachable"
-          ]
-        }
-      },
-      "check_seconds_this_run": {
-        "document_check": 93.6,
-        "document_coverage": 74.7
-      },
-      "check_json_identical_to_previous_run": true,
-      "coverage_json_identical_to_previous_run": true
+      }
     },
     "all_strict": {
       "document": "readings/all-strict.ve.md",
@@ -1198,26 +1314,25 @@
     }
   },
   "timing_single_runs": {
-    "note": "one run each on one machine at a load average of about 5 to 8 at the start of the run (not a controlled comparison; the previous figures come from the previous run's files)",
-    "document_check_seconds": 93.6,
-    "document_check_seconds_previous_run": 51.5,
-    "document_coverage_seconds": 74.7,
-    "document_coverage_seconds_previous_run": 64.7,
+    "note": "one run each on one machine at a load average of about 30 to 40 (32 cores; not a controlled comparison)",
+    "document_check_seconds": 107.5,
+    "document_check_seconds_previous_run": 93.6,
+    "document_coverage_seconds": 131.9,
+    "document_coverage_seconds_previous_run": 74.7,
     "nd_all_load_seconds": [
-      5.6,
-      7.4
+      12.5,
+      5.6
     ],
     "nd_all_check_seconds": [
-      56.2,
-      58.7
+      150.3,
+      56.2
     ],
     "nd_all_separation_search_seconds": [
-      47.7,
-      82.1
+      88.9,
+      47.7
     ],
-    "hard_constraint_queries_wall_clock": "54 minutes for the 21 queries (3 in parallel), the previous run's was about 60 minutes at a higher load",
-    "build_note": "this worktree's lean/.lake was copied from the ve-integration checkout at the identical commit (de9cfa84f); `lake build` still rebuilt all 973 jobs (18 minutes) and tools/rust_build.py rebuilt the Rust binary (25 s), which matches the pin in lean/checkers.lock (SHA-256 6422647f…0579); not a language measurement",
-    "order": "[this run, previous run]; both have four sets (32 choices)"
+    "build_note": "lean/.lake copied (cp -a) from the ve-integration checkout at the identical commit; `lake build` still rebuilt (997 jobs, 25 minutes) and tools/rust_build.py rebuilt the Rust binary (42 s), which matches the pin in lean/checkers.lock (SHA-256 6422647f…0579); not a language measurement",
+    "order": "[this run, previous run]"
   },
   "unspecified_probe": {
     "file": "probes/unspecified-probe.json",
@@ -1847,31 +1962,22 @@
     "meaning": "units whose every verdict is a Lean answer that is not UNKNOWN across readings. For the translation itself (no companion set) it is still 0.00% (`ve document check` reports no `decided_units`, basis 'no Lean answer across readings')",
     "with_companion_sets": {
       "document": "probes/companion/translation-companions-without_source_word.ve.md",
-      "decided_units": 19,
-      "decided_bytes": 2602,
-      "decided_share_percent": "1.41",
+      "decided_units": 4,
+      "decided_bytes": 372,
+      "decided_share_percent": "0.20",
       "units": [
         "u0036.s05",
-        "u0052.s01",
-        "u0062.s01",
-        "u0073.s05",
-        "u0123.s01.p1",
-        "u0123.s02.p1",
-        "u0123.s03",
-        "u0125.s04.p2",
         "u0156.s03",
-        "u0165.s01",
-        "u0165.s02",
         "u0165.s03",
-        "u0165.s04",
-        "u0165.s05",
-        "u0165.s06",
-        "u0165.s07",
-        "u0168.s01",
-        "u0248",
         "u0263.s04.p2"
       ],
-      "caveat": "a probe document, not the translation; each of the four sets is checked by itself as a component, and a rule checked by itself is CONFLICT-FREE by construction"
+      "caveat": "a probe document, not the translation; each of the four sets is checked by itself as a component, and a rule checked by itself is CONFLICT-FREE by construction",
+      "previous_run": {
+        "decided_units": 19,
+        "decided_bytes": 2602,
+        "decided_share_percent": "1.41"
+      },
+      "cause": "the main component's premise check is UNKNOWN on the components route once QT-0p's principal_type (size 3) is in the document (evidence/companion-attribution.json)"
     }
   },
   "companion_probe": {
@@ -1888,6 +1994,8 @@
         "main",
         "w2",
         [
+          "u0042.presupposition",
+          "u0043.s02.p2",
           "u0052.s01",
           "u0062.s01",
           "u0073.s05",
@@ -1902,6 +2010,7 @@
           "u0165.s06",
           "u0165.s07",
           "u0168.s01",
+          "u0245.presupposition",
           "u0248"
         ]
       ],
@@ -1935,11 +2044,11 @@
       ]
     ],
     "conflict": "CONFLICT-FREE",
-    "premises": "model",
+    "premises": "UNKNOWN",
     "premises_components": [
       [
         "main",
-        "model"
+        "UNKNOWN"
       ],
       [
         "force-u0036-s05",
@@ -1963,16 +2072,16 @@
       "selects": 7,
       "holds": 0
     },
-    "decided_units": 19,
-    "decided_bytes": 2602,
-    "decided_share_percent": "1.41",
+    "decided_units": 4,
+    "decided_bytes": 372,
+    "decided_share_percent": "0.20",
     "queries": {
       "no-denial": {
         "verdict": "ALL",
         "route": "components",
         "component": "main",
         "sentence": "u0125.s04.p2",
-        "decided_units": 19,
+        "decided_units": 4,
         "english": []
       },
       "claim-human": {
@@ -1980,21 +2089,104 @@
         "route": "components",
         "component": "main",
         "sentence": "u0123.s03",
-        "decided_units": 19,
+        "decided_units": 4,
         "english": []
       }
     },
-    "decided_units_same_as_previous_run": true,
-    "reading": "the companion denial query (--sentence u0125.s04.p2) and the claim-human query (--sentence u0123.s03) answer ALL as before"
+    "decided_units_same_as_previous_run": false,
+    "reading": "the companion denial query (--sentence u0125.s04.p2) and the claim-human query (--sentence u0123.s03) still answer ALL, but the main component's premise check is now UNKNOWN (was model), so only 4 units are Lean-decided (was 19: 2,602 B). Cause (evidence/companion-attribution.json): QT-0p alone; the translation's own premise check, on the superposed route, stays `model`. A measurement document, not the translation",
+    "premise_regression": {
+      "ctl": {
+        "document": "previous run translation (control)",
+        "premises_components": [
+          [
+            "main",
+            "model"
+          ],
+          [
+            "force-u0036-s05",
+            "model"
+          ],
+          [
+            "force-u0156-s03",
+            "model"
+          ],
+          [
+            "force-u0263-s04-p2",
+            "model"
+          ],
+          [
+            "scope-u0165-s03",
+            "model"
+          ]
+        ],
+        "decided_units": 19,
+        "decided_bytes": 2602
+      },
+      "qt": {
+        "document": "QT-0p only",
+        "premises_components": [
+          [
+            "main",
+            "UNKNOWN"
+          ],
+          [
+            "force-u0036-s05",
+            "model"
+          ],
+          [
+            "force-u0156-s03",
+            "model"
+          ],
+          [
+            "force-u0263-s04-p2",
+            "model"
+          ],
+          [
+            "scope-u0165-s03",
+            "model"
+          ]
+        ],
+        "decided_units": 4,
+        "decided_bytes": 372
+      },
+      "final": {
+        "document": "the final translation (QT-0p + u0245)",
+        "premises_components": [
+          [
+            "main",
+            "UNKNOWN"
+          ],
+          [
+            "force-u0036-s05",
+            "model"
+          ],
+          [
+            "force-u0156-s03",
+            "model"
+          ],
+          [
+            "force-u0263-s04-p2",
+            "model"
+          ],
+          [
+            "scope-u0165-s03",
+            "model"
+          ]
+        ],
+        "decided_units": 4,
+        "decided_bytes": 372
+      }
+    }
   },
   "checked_content_main_chain": {
     "documents": {
       "all": {
         "document": "translation.ve.md",
         "admitted": true,
-        "load_seconds": 5.6,
-        "check_seconds": 56.2,
-        "separation_search_seconds": 47.7,
+        "load_seconds": 12.5,
+        "check_seconds": 150.3,
+        "separation_search_seconds": 88.9,
         "sets": [
           {
             "set": "force-u0036-s05",
@@ -2071,8 +2263,8 @@
             "sorts": 32
           },
           "nodes": 303,
-          "predicates": 88,
-          "sorts": 8
+          "predicates": 90,
+          "sorts": 9
         },
         "couplings": 0,
         "conflict": "CONFLICT-FREE",
@@ -2112,10 +2304,10 @@
         "english": [
           "Under every reading of the 4 open sentences, no two rules on the same act contradict each other.",
           "This does not depend on how sentence 132 is read.",
-          "This does not depend on how sentence 589 is read.",
-          "This does not depend on how sentence 629 is read.",
-          "This does not depend on how sentence 1000 is read.",
-          "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 589 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 629 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation* and sentence 1000 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing."
+          "This does not depend on how sentence 590 is read.",
+          "This does not depend on how sentence 630 is read.",
+          "This does not depend on how sentence 1001 is read.",
+          "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 590 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 630 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation* and sentence 1001 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal; e1 is a type of principal; e2 is a type of principal; e0 is classified as \"claude_principal_type\"; e1 is classified as \"claude_principal_type\"; e2 is classified as \"claude_principal_type\"; e0 is novel."
         ],
         "residual": {
           "assumptions": 19,
@@ -2315,17 +2507,60 @@
   },
   "changes_against_previous_run": {
     "ledger_entries_previous": 1132,
-    "ledger_entries_now": 1132,
-    "changed_or_replaced_ids": [],
-    "added_ids": [],
-    "units_newly_covered": [],
-    "units_with_status_change": {},
+    "ledger_entries_now": 1133,
+    "changed_or_replaced_ids": [
+      "u0002.presupposition",
+      "u0013.presupposition",
+      "u0032.presupposition",
+      "u0040.presupposition",
+      "u0042.presupposition",
+      "u0043.s02.p1",
+      "u0043.s02.p2",
+      "u0055.presupposition",
+      "u0069.presupposition",
+      "u0075.presupposition",
+      "u0083.presupposition",
+      "u0095.presupposition",
+      "u0151.presupposition",
+      "u0162.presupposition",
+      "u0174.presupposition",
+      "u0195.presupposition",
+      "u0207.presupposition",
+      "u0212.presupposition",
+      "u0235.presupposition",
+      "u0245.presupposition",
+      "u0254.presupposition",
+      "u0257.presupposition",
+      "u0260.presupposition",
+      "u0268.presupposition",
+      "u0286.presupposition"
+    ],
+    "added_ids": [
+      "u0043.s02.p1",
+      "u0043.s02.p2"
+    ],
+    "removed_ids": [
+      "u0043.s02"
+    ],
+    "units_newly_covered": [
+      "u0042.presupposition",
+      "u0043.s02.p1",
+      "u0043.s02.p2",
+      "u0245.presupposition"
+    ],
+    "units_with_status_change": {
+      "u0042.presupposition": "UNFORMALISED -> CHECKED",
+      "u0043.s02": "UNFORMALISED -> MIXED (p1 LABELLED, p2 CHECKED)",
+      "u0245.presupposition": "UNFORMALISED -> OPEN"
+    },
     "units_changed_by_audit_repair": [],
-    "open_terms_added": [],
+    "open_terms_added": [
+      "novel_entity"
+    ],
     "open_terms_removed": [],
     "open_terms_count_before_after": [
       51,
-      51
+      52
     ],
     "reading_sets_before_after": [
       4,
@@ -2335,53 +2570,57 @@
       32,
       32
     ],
-    "predicates_added": [],
+    "predicates_added": [
+      "claude_principal_type",
+      "novel_entity"
+    ],
     "predicates_removed": [],
     "predicates_changed": [],
-    "translation_byte_identical_to_previous_run": true,
-    "translation_differs_only_in": "nothing",
-    "ledger_annotation_changes": "status_in_previous_run; the audit_verified flag of the units the 20261017T1800Z audit accepted; scope tags, act_workaround and claimed regenerated with identical values"
+    "sorts_added": [
+      "principal_type"
+    ],
+    "constants_added": [
+      "anthropic",
+      "operators",
+      "users"
+    ],
+    "translation_byte_identical_to_previous_run": false,
+    "translation_differs_only_in": "the vocabulary (sort principal_type, constants anthropic/operators/users, predicates claude_principal_type and novel_entity, open term novel_entity), the units u0042.presupposition, u0043.s02 (MIXED), u0245.presupposition, the fence of u0245, and the separating situations' identities (they are digests over the environment)",
+    "ledger_annotation_changes": "status_in_previous_run; scope tags, act_workaround, claimed regenerated; presupposition_triggers and judgment_terms on every unit; other:presupposition on units with an unresolved carrier; PS-0p notes"
   },
   "language_changes_since_previous_tag": {
-    "from": "ve-green-fu-ar2-decoders",
-    "to": "ve-green-tarch-histdep",
+    "from": "ve-green-tarch-histdep",
+    "to": "ve-green-eff-20261018-1",
     "merged": {
-      "readings-defaults/rd7 (rd-7)": "the superposed `readings-verdicts` route: Lean (not Python) assembles ALL, SOME and NONE answers over reading sets from the empty-assumption certificate, one complete choice and countermodels, with per-reading premise status, dead readings and dependencies; Python keeps evidence generation and binding. A conclusion query is answered the same way as before (verdict-preserving: the corpora are identical); it adds no construct a document can say",
-      "lean-first/b16f (lf-16f)": "the `document` mode now decides soft-norms, plain norm content, senses and fenced content in Lean (the retained Python loader keeps the rest); same documents, same answers",
-      "lean-first/b16g (lf-16g)": "stopped at its precondition: no product code",
-      "infra/me-1a (me-1a)": "VE.Numbers core (decimal, rounding, comparison phrases) and the generated ve/numbers_phrases.json that ve/english.py reads for order@0 comparison wording; `Public output: none` (no service mode, command or route); graded quantities are still not expressible in a document",
-      "foundation/qs-1 (qs-1)": "VE.Closure.Order (an order closure with caps and theorems); no service mode or Python relay was added",
-      "infra/fu-lf14c-f4": "n-ary defined predicates in the family view (definitions of any arity); the translation uses no definitions",
-      "infra/jt-crossplan-fixes (X2, X3)": "the English lint reaches a fixed point over predicate head words (only accepted templates claim a head) and a constant's `verbalisation` is refused with the v0 diagnostic; the constitution's rendering is unchanged",
-      "infra/fu-rd9-checks, ties-rights-licence-relay, ties-qs-1, ties-lf-16f, ties-fu-1017, ties-jt-crossplan, fu-docs-1017, dri-sign-1017b": "relay checks, theorems tying existing definitions, docstring and DELTA text; no new construct",
-      "infra/tarch-slowtail, tarch-histdep, fix/fsmonitor-gate": "test architecture, history-dependent tests and gate tooling; no language change"
+      "feature/jt-1 (jt-1)": "judgments@0: records and admission of judgment terms, the shared scan (lean/VE/Judgments); DELTA: no route, service mode, response field or diagnostic any caller sees until JT-2 switches the profile on in the document mode",
+      "feature/et-3 (et-3)": "lean/VE/Events/* (events, states, links, calendar premises); DELTA: not reachable from any service mode, route, decoder or relay",
+      "feature/et-7 (et-7)": "alternatives@0 with norm-defaults@0 is accepted (VE.Compose.todayGate and dispatch, ve.profiles.checker_family); the constitution uses no alternatives@0 profile, so it can say nothing new",
+      "infra/me-1b, me-1c": "VE.Calc meaning, checker and English lines; DELTA: Public output none (no service mode, command or route)",
+      "feature/pk-1s": "documents only (premise packs spec); no product file",
+      "feature/fsf-r1": "a use case (safety framework) and its documents; no product code",
+      "infra/ties-me-1a, ties-me-1b, ties-me-1c, tarch-manifest-ops, speed-abcache, eff-20261018-1": "ties passes, test architecture, speed and efficiency tooling; no language change"
     },
     "merge_commits_listed": [
-      "Merge infra/tarch-histdep (tarch-histdep): approved by review; synced and verified",
-      "Merge infra/ties-fu-1017 (ties-fu-1017): approved by review; synced and verified",
-      "Merge infra/me-1a (me-1a): approved by review; synced and verified",
-      "Merge readings-defaults/rd7 (rd-7): approved by review; synced and verified",
-      "Merge lean-first/b16g (lf-16g): approved by review; synced and verified",
-      "Merge infra/fu-docs-1017 (fu-docs-1017): approved by review; synced and verified",
-      "Merge infra/ties-lf-16f (ties-lf-16f): approved by review; synced and verified",
-      "Merge infra/dri-sign-1017b (dri-sign-1017b): approved by review; synced and verified",
-      "Merge lean-first/b16f (lf-16f): approved by review; synced and verified",
-      "Merge fix/fsmonitor-gate (fix-fsmonitor-gate): approved by review; synced and verified",
-      "Merge infra/fu-lf14c-f4 (fu-lf14c-f4): approved by review; synced and verified",
-      "Merge infra/ties-jt-crossplan (ties-jt-crossplan): approved by review; synced and verified",
-      "Merge infra/ties-qs-1 (ties-qs-1): approved by review; synced and verified",
-      "Merge infra/fu-rd9-checks (fu-rd9-checks): approved by review; synced and verified",
-      "Merge infra/tarch-slowtail (tarch-slowtail): approved by review; synced and verified",
-      "Merge foundation/qs-1 (qs-1): approved by review; synced and verified",
-      "Merge infra/ties-rights-licence-relay (ties-rights-licence-relay): approved by review; synced and verified",
-      "Merge fix/jt-crossplan (jt-crossplan-fixes): approved by review; synced and verified"
+      "967937ac8 Merge infra/eff-20261018-1 (eff-20261018-1): approved by review; synced and verified",
+      "ebd8ec285 Merge feature/et-7 (et-7): approved by review; synced and verified",
+      "9ff8b63f1 Merge feature/fsf-r1 (fsf-r1): approved by review; synced and verified",
+      "502bdf84e Merge infra/speed-abcache (speed-abcache): approved by review; synced and verified",
+      "7b15a978f Merge infra/ties-me-1c (ties-me-1c): approved by review; synced and verified",
+      "c7fc6acac Merge feature/jt-1 (jt-1): approved by review; synced and verified",
+      "22c4b9154 Merge infra/tarch-manifest-ops (tarch-manifest-ops): approved by review; synced and verified",
+      "fcec329b9 Merge infra/me-1c (me-1c): approved by review; synced and verified",
+      "93131f967 Merge infra/ties-me-1b (ties-me-1b): approved by review; synced and verified",
+      "7e14dce14 Merge feature/et-3 (et-3): approved by review; synced and verified",
+      "49a926ee7 Merge feature/pk-1s (pk-1s): approved by review; synced and verified",
+      "c2b1a7d44 Merge infra/me-1b (me-1b): approved by review; synced and verified",
+      "802b8ff9b Merge infra/ties-me-1a (ties-me-1a): approved by review; synced and verified"
     ],
-    "checked_by": "git diff ve-green-fu-ar2-decoders..HEAD --shortstat: 278 files changed, 33341 insertions(+), 3962 deletions(-); git diff ve-green-fu-ar2-decoders..HEAD --shortstat -- ve lean rust conformance: 67 files changed, 5882 insertions(+), 3401 deletions(-). Read: the Lean and Python files changed are the document service (Service/Document.lean, ve/document.py), the readings route (Readings/Sup*.lean, ve/readings_verdicts.py), the Numbers and Closure.Order modules, the English lint and printer, and generated tables and response shapes; no grammar production, profile, lexicon entry or checker that a norm, guard or reading set of the constitution could use was added (the new Numbers and Order modules are not reachable from a document)",
+    "checked_by": "git diff ve-green-tarch-histdep..ve-green-eff-20261018-1 --shortstat: 195 files changed, 33740 insertions(+), 916 deletions(-); git diff ve-green-tarch-histdep..ve-green-eff-20261018-1 --shortstat -- ve lean rust conformance: 48 files changed, 5900 insertions(+), 756 deletions(-). Read: the DELTA.md of jt-1, et-3, et-7, me-1b, me-1c and pk-1s; no grammar production, profile, lexicon entry or checker that a norm, guard or reading set of the constitution could use was added that a document reaches (judgments@0 and the Events and Calc modules are not reachable from a document; et-7's alternatives profile is not used here)",
     "newly_expressible_features": 0,
     "units_upgraded_by_new_features": 0,
     "reading_sets_upgraded_by_new_features": 0,
-    "newly_measurable": "nothing in what a document says: `ve document check`, the coverage, the render, the probes, the conclusion queries and the 21 hard-constraint queries give the same answers as at the previous tag (check.json, coverage.json and every probe JSON are byte-identical, the render is identical). Only the time moved: the hard-constraint queries took 54 minutes",
-    "what_made_the_difference": "nothing: no unit gained a status or a meaning from the language, and there is no repair to make (the previous audit rejected nothing)"
+    "newly_measurable": "nothing in what a document says: the probes, the conclusion queries and the 21 hard-constraint queries give the same answers as at the previous tag (the render differs from the previous run's only where this run's plans changed the translation: 1710 lines)",
+    "what_made_the_difference": "plan-directed repairs only (QT-0p, PS-0p, JT-0p ledger fields); no unit gained a status or a meaning from the language"
   },
   "question_probe": {
     "what": "`ve ask --reading --json` on the translation: five yes-or-no questions about the denial, clarification and claim-to-be-human units (probes/ask/q*.json); and `ve ask --json` without --reading (probes/ask/q*.answer.json)",
@@ -2409,7 +2648,7 @@
     ],
     "reading": "none of the five is read (the reader does not know 'must not', 'must seek clarification in each situation'); the results are byte-identical to the previous run's (with --reading and without it: `no_answer` for all five)",
     "re_run_at_this_tag": true,
-    "identical_to_previous_run": "in content: `no_answer` for all five with --reading and without it. The JSON files differ in one identity value only (result.identities.actions_version 30, was 28)"
+    "identical_to_previous_run": "in content: `no_answer` for all five with --reading and without it"
   },
   "reading_set_gaps": [
     {
@@ -2590,7 +2829,7 @@
     },
     "source": "research/act-phrases-p1: docs/research/evidence/act-phrases/m4-act-workaround.json (evidence/m4-act-workaround.json)"
   },
-  "heading_presuppositions_exposed": 29,
+  "heading_presuppositions_exposed": 14,
   "regulated_predicates": {
     "weapons_uplift_permitted": {
       "role": "permission",
@@ -2758,42 +2997,141 @@
   },
   "vocabulary_change_check": {
     "rule": "DRI 2026-10-14 15:30Z (2): after a vocabulary change rerun the situation step (nd.py all) and check every existing fenced unit still parses unchanged",
-    "vocabulary_changed_in_this_run": false,
-    "situation_step_rerun": "nd.py all was rerun at this tag anyway (readings/nd-all-result.json: admitted, 32 choices) and its document is cmp-identical to the carried translation",
+    "vocabulary_changed_in_this_run": true,
+    "situation_step_rerun": "nd.py all was rerun after QT-0p, after the PS-0p builds (all variants) and for the final document (readings/nd-all-result.json: admitted, 32 choices)",
+    "predicates_added": [
+      "claude_principal_type",
+      "novel_entity"
+    ],
+    "sorts_added": [
+      "principal_type"
+    ],
+    "constants_added": [
+      "anthropic",
+      "operators",
+      "users"
+    ],
+    "existing_predicate_wordings_changed": {},
+    "existing_sort_nouns_changed": {},
     "fenced_blocks": {
-      "now": 1,
+      "now": 2,
       "previous_run": 1
     },
-    "fenced_unit": "u0248 “Claude is not a human.” (the translation's only fenced block): the document is admitted and the unit's content and graph node are unchanged",
-    "translation_byte_identical_to_previous_run": true,
-    "front_matter_identical": true,
-    "body_text_identical": true,
-    "units_changed": [],
-    "predicates_added": [],
-    "predicates_removed": [],
-    "predicates_changed": [],
-    "sorts_changed": [],
-    "sort_entity": "DRI 2026-10-14 15:30Z (1): the carried sort `entity` has the noun “thing” (plural “things”), never the reserved word “entity” (asserted by repair_20261017T1800Z.py --check)"
+    "fenced_units": {
+      "u0248": {
+        "start": [
+          "not",
+          [
+            "unary",
+            "human",
+            [
+              "const",
+              "claude"
+            ]
+          ]
+        ],
+        "now": [
+          "not",
+          [
+            "unary",
+            "human",
+            [
+              "const",
+              "claude"
+            ]
+          ]
+        ],
+        "unchanged": true
+      }
+    },
+    "fenced_units_now": [
+      "u0248"
+    ],
+    "units_differing_from_start_document": [
+      "u0042.presupposition",
+      "u0043.s02",
+      "u0245.presupposition"
+    ],
+    "units_new_now": [],
+    "sort_entity": "the carried sort `entity` has the noun “thing” (plural “things”), never the reserved word “entity” (asserted by repair_20261017T1800Z.py --check)",
+    "checkpoints": {
+      "qt0p": "evidence/checkpoint-qt0p.json",
+      "final": "evidence/checkpoint-final.json"
+    }
   },
-  "carried_probes_note": "the six carried probes (risk, s1, senses, senses_document, discourse, rights), the unspecified, frame and hard-conclusions probes were re-run on the final document (the hard-conclusions probe after 54 minutes); byte-identical JSON: risk-probe same, s1-probe same, senses-probe same, senses-document-probe same, discourse-probe same, rights-reading-probe same, unspecified-probe same, frame-probe same, hard-conclusions-probe same. The companion probe differs only in the run directory inside its document paths. The denial and claim-to-be-human conclusion queries are ALL as before; the 21 hard-constraint queries give the same 12 ALL and 9 UNKNOWN, all on the first run at the default Rust limit (VE_RUST_TIMEOUT unset, no prlimit, no capped run)",
+  "carried_probes_note": "the carried probes were re-run on the final document: byte-identical JSON for risk-probe, s1-probe, senses-probe, senses-document-probe, rights-reading-probe, unspecified-probe, frame-probe; discourse byte-identical; companion: the probe differs (the main component's premise check is UNKNOWN: 4 units Lean-decided, was 19; the queries still ALL; cause QT-0p alone, evidence/companion-attribution.json); the 21 hard-constraint queries give 13 ALL and 8 UNKNOWN: the same as before except u0165.s01 “knowing”, now ALL with certificates (was UNKNOWN, a search-budget result on the changed document: [{\"unit\": \"u0165.s01\", \"kind\": \"knowing\", \"now\": [\"ALL\", \"certificates\"], \"before\": [\"UNKNOWN\", null]}]); the denial and claim-to-be-human conclusion queries are ALL; the five `ve ask` questions give no answer as before",
   "seeded_bugs": {
-    "needed": false,
-    "why": "no product code (Lean, Python, Rust) was changed: this run adds files under usecases/ only (a copied build in the worktree is ignored by git). The pilot scripts were checked as follows.",
-    "pilot_script_faults": [
+    "needed_for_product_code": false,
+    "why": "no product code (Lean, Python, Rust) was changed: this run adds and changes files under usecases/ only (lean/.lake and rust/target in the worktree are ignored build products). The claims below are the translator's; each was planted and caught.",
+    "translation_faults": [
       {
-        "claim": "the finished translation is the previous run's, byte for byte",
-        "planted": "one byte of the open-term name exception_to_not_deceiving_about_system_prompt changed in translation.ve.md",
-        "failing_check": "finish_20261018T0600Z.py stops at `assert all(same_files.values())` (AssertionError: {'translation.ve.md': False})",
-        "restored": "the translation put back; cmp-identical to prev/translation.ve.md"
+        "claim": "QT-0p's universal closure over Claude's types is what makes “no fourth type” follow (and the probe SETTLED no)",
+        "planted": "the closure conjunct removed from u0042.presupposition and u0043.s02.p2 in a scratch copy of translation-without-content.ve.md (nd.py all rebuilt it: admitted, premises model)",
+        "file": "scratch copy of usecases/claude-constitution-pilot/run-20261018T1800Z/translation-without-content.ve.md",
+        "failing_check": "ve document readings … --conclusion probes/qt/no-fourth.conclusion.json: verdict UNKNOWN instead of ALL (the fourth type is no longer excluded)",
+        "evidence": "evidence/seeded/sb1-closure-removed-no-fourth-result.json",
+        "restored": "the scratch directory was deleted; the run's translation was never touched"
       },
       {
-        "claim": "the in-frame candidates are guarded by the frame term on the Claude instance (variable 1)",
-        "planted": "the guard of the first in-frame candidate in translation.ve.md bound to variable 0 (the user)",
-        "failing_check": "repair_20261017T1800Z.py --check stops with AssertionError: strict-in-frame",
-        "restored": "the translation put back; cmp-identical to prev/translation.ve.md"
+        "claim": "u0245 is a ground fact, so the whole-document premise check stays at `model` (PS-0p class B)",
+        "planted": "the same kind of claim written as an existential over the sort `entity` (u0032 and u0286 as offered)",
+        "file": "scratch copies of translation-without-content.ve.md (evidence/ps0p/premise-variants.json: variants A to D, F, G, H)",
+        "failing_check": "ve document check: premises UNKNOWN; checkpoint.py would stop at `assert check['premises']['status'] == 'model'`",
+        "evidence": "evidence/ps0p/premise-variants.json, premise-diag-*.txt",
+        "restored": "the scratch directories were deleted; u0286 and u0032 stay reverted in the run's translation"
       }
     ],
-    "not_planted": "the other assertions of finish_20261018T0600Z.py (the carried English, the 21 hard-constraint answers, the probe files, the open terms) were not seeded: each needs a 4-minute run of the script"
+    "pilot_script_faults": [
+      {
+        "claim": "the hedge “At the moment, ” is the 15 bytes 23587-23602 of the pinned source (QT-0p step 4)",
+        "planted": "p1 given as 14 bytes",
+        "file": "apply_plans.py QT_PARTS",
+        "failing_check": "apply_plans.qt0p's partition assertion",
+        "failure": "AssertionError: [[23587, 23602], [23602, 23677]]",
+        "restored": "in-memory fault; the file was not touched"
+      },
+      {
+        "claim": "the three units' spans and kinds are unchanged since the plan (QT-0p step 1)",
+        "planted": "u0043.s01 one byte short",
+        "file": "translation-without-content.ve.md",
+        "failing_check": "apply_plans.qt0p's step-1 assertion",
+        "failure": "AssertionError: ('u0043.s01', {'id': 'u0043.s01', 'span': [23486, 23586], 'support': 'none', 'kind': ['unformalised', 'counting'], 'meaning': {'unformalised': 'counting'}})",
+        "restored": "in-memory fault; the file was not touched"
+      },
+      {
+        "claim": "the census's false positives “discoveries” and “returned to the orchestrator” are dropped (PS-0p step 4)",
+        "planted": "the false-word set emptied",
+        "file": "ledger_1800.py FALSE_FULL_WORDS",
+        "failing_check": "finish_20261018T1800Z.py: assert dropped == EXPECTED_DROPPED",
+        "failure": "AssertionError: [{'unit': 'u0050.s04', 'words': 'returned to', 'full_word': 'returned to'}]",
+        "restored": "in-memory fault; the file was not touched"
+      },
+      {
+        "claim": "a title records no `presupposed_claim` (PS-0p step 1; REMOVE EVERY TRACE)",
+        "planted": "u0207's claim put back",
+        "file": "units.json (in memory)",
+        "failing_check": "finish_20261018T1800Z.py: assert_no_traces",
+        "failure": "AssertionError: u0207",
+        "restored": "in-memory fault; the file was not touched"
+      },
+      {
+        "claim": "an exception_to_… placeholder is class `exception` (JT-0p rule 2)",
+        "planted": "its class set to judgment",
+        "file": "finish_20261018T1800Z.py JT classes",
+        "failing_check": "finish_20261018T1800Z.py: check_rules",
+        "failure": "AssertionError: exception_to_asking_for_clarification",
+        "restored": "in-memory fault; the file was not touched"
+      },
+      {
+        "claim": "“knowingly engages” is class `attitude` (JT-0p rule 1)",
+        "planted": "knowingly_engages_4 set to classification",
+        "file": "finish_20261018T1800Z.py JT classes",
+        "failing_check": "finish_20261018T1800Z.py: check_rules",
+        "failure": "AssertionError: knowingly_engages_4",
+        "restored": "in-memory fault; the file was not touched"
+      }
+    ],
+    "not_planted": "the other assertions of finish_20261018T1800Z.py (the carried English, the 21 hard-constraint answers, the probe files) were not seeded: each needs a long run of the script"
   },
   "conflicts": {
     "reported_by_VE": 0,
@@ -2884,14 +3222,14 @@
         "returncode": 0,
         "coverage_percent": 100,
         "bytes_by_status": {
-          "LABELLED": 349,
-          "UNFORMALISED": 181942,
-          "OPEN": 2529,
-          "CHECKED": 73
+          "LABELLED": 364,
+          "UNFORMALISED": 181788,
+          "OPEN": 2555,
+          "CHECKED": 186
         },
         "residual": {
-          "open_terms": 48,
-          "assumptions": 19,
+          "open_terms": 49,
+          "assumptions": 22,
           "bridge_leaves": 0,
           "unresolved_reading_sets": 4,
           "default_exceptions": 0,
@@ -2906,11 +3244,11 @@
       },
       "ve_document_render": {
         "returncode": 0,
-        "lines": 2327
+        "lines": 2357
       },
       "ve_document_readings_denial_query": {
         "returncode": 0,
-        "seconds": 70.4,
+        "seconds": 90.5,
         "verdict": "ALL",
         "route": "enumerated",
         "evidence": "certificates",
@@ -2918,7 +3256,7 @@
       },
       "ve_document_readings_claim_human_query": {
         "returncode": 0,
-        "seconds": 54.6,
+        "seconds": 69.9,
         "verdict": "ALL",
         "route": "enumerated",
         "evidence": "certificates",
@@ -2930,15 +3268,15 @@
         "cause_as_read_from_the_traceback": "the claim-graph admission is asked of the Lean soft route with the lower environment `_lower_route(doc)` returns, which still lists norm-defaults@0 (only readings@1 is stripped); the soft document beside it was rewritten with the unspecified placeholder. Not verified beyond the traceback",
         "stderr_last_lines": [
           "          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-          "  File \"/home/seyran/code/ve-pilot-20261018T0600Z/ve/backends/soft_relay.py\", line 43, in run",
+          "  File \"/home/seyran/code/ve-pilot-20261018T1800Z/ve/backends/soft_relay.py\", line 43, in run",
           "    return deepcopy(decide_once(\"soft-norms\", case))",
           "                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^",
-          "  File \"/home/seyran/code/ve-pilot-20261018T0600Z/ve/backends/relay.py\", line 166, in decide_once",
+          "  File \"/home/seyran/code/ve-pilot-20261018T1800Z/ve/backends/relay.py\", line 166, in decide_once",
           "    row = decide(mode, [case])[0]",
           "          ~~~~~~^^^^^^^^^^^^^^",
-          "  File \"/home/seyran/code/ve-pilot-20261018T0600Z/ve/backends/relay.py\", line 135, in decide",
+          "  File \"/home/seyran/code/ve-pilot-20261018T1800Z/ve/backends/relay.py\", line 135, in decide",
           "    return decided(_pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout))",
-          "  File \"/home/seyran/code/ve-pilot-20261018T0600Z/ve/backends/relay.py\", line 143, in decided",
+          "  File \"/home/seyran/code/ve-pilot-20261018T1800Z/ve/backends/relay.py\", line 143, in decided",
           "    raise _raised(entry)",
           "ve.errors.UnsupportedProfile: UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
         ]
@@ -2958,7 +3296,7 @@
       1,
       1
     ],
-    "reading": "unchanged: per_line_before and per_line_now are both [1, 1]; the rendering is byte-identical to the previous run's",
+    "reading": "unchanged: per_line_before and per_line_now are both [1, 1]",
     "source": "docs/spec/rd-9-soft-chain.md 2.2; docs/rd-9/integration/FIX-REPORT.md"
   },
   "audit_verified_newly_from_20261017T1800Z": [
@@ -2984,12 +3322,613 @@
     "u0282",
     "u0294"
   ],
-  "conclusion_queries_note": "the denial and claim-to-be-human queries (probes/nd/*-result.json) were re-run: ALL on the superposed route with a certificate, equal as JSON objects to the previous run's; only the order of the members differs (rd-7)",
+  "conclusion_queries_note": "the denial and claim-to-be-human queries (probes/nd/*-result.json) were re-run: ALL on the superposed route with a certificate, equal to the previous run's after the sentence numbers are normalised",
   "rust_time_limit": {
     "rule": "DRI 2026-10-14 15:30Z (3)",
     "VE_RUST_TIMEOUT": "unset (default)",
     "prlimit": "not used",
     "cap_raised": false,
-    "note": "no check needed a raised limit: all 21 hard-constraint queries answered on the first run at the default limit, so there is no cap or peak resident set to record"
+    "note": "no check needed a raised limit; the UNKNOWN premise checks of the PS-0p variants are an evaluation budget (Lean's), not a timeout, so a raised limit would not have changed them; no cap or peak resident set to record; hard-constraint queries answered on the first run: True"
+  },
+  "plan_repairs_by_plan": {
+    "quantities QT-0p": [
+      "u0042.presupposition",
+      "u0043.s02.p1",
+      "u0043.s02.p2"
+    ],
+    "presupposition PS-0p": [
+      "u0040.presupposition",
+      "u0075.presupposition",
+      "u0151.presupposition",
+      "u0162.presupposition",
+      "u0174.presupposition",
+      "u0195.presupposition",
+      "u0207.presupposition",
+      "u0212.presupposition",
+      "u0257.presupposition",
+      "u0260.presupposition",
+      "u0055.presupposition",
+      "u0254.presupposition",
+      "u0268.presupposition",
+      "u0013.presupposition",
+      "u0095.presupposition",
+      "u0002.presupposition",
+      "u0235.presupposition",
+      "u0286.presupposition",
+      "u0032.presupposition",
+      "u0069.presupposition",
+      "u0083.presupposition",
+      "u0245.presupposition"
+    ],
+    "attitudes AT-0p (carried, not re-applied)": [
+      "u0165.s01",
+      "u0165.s02",
+      "u0165.s03",
+      "u0165.s04",
+      "u0165.s05",
+      "u0165.s06",
+      "u0165.s07"
+    ]
+  },
+  "claimed_covered_bytes_gained_by_plan": {
+    "QT-0p": 128,
+    "PS-0p": 26
+  },
+  "audit_verified_newly_from_20261018T0600Z": [],
+  "audit_verified_newly_labelled_from_20261018T0600Z": [
+    "u0013.heading",
+    "u0023",
+    "u0042.heading",
+    "u0069.heading",
+    "u0083.heading",
+    "u0108",
+    "u0126",
+    "u0151.heading",
+    "u0162.heading",
+    "u0207.heading",
+    "u0265",
+    "u0277",
+    "u0286.heading"
+  ],
+  "claimed_but_not_audit_verified_units": [
+    "u0042.presupposition",
+    "u0043.s02.p1",
+    "u0043.s02.p2",
+    "u0245.presupposition"
+  ],
+  "heading_presuppositions_exposed_previous_run": 29,
+  "document_open_terms_class_note": "see open_term_class",
+  "open_term_class": {
+    "appropriate_oversight": "judgment",
+    "asked_to_keep_system_prompt_confidential": "classification",
+    "attempt_to_kill_or_disempower_most_of_humanity": "proportion",
+    "broad_safety": "judgment",
+    "child_sexual_abuse_material": "classification",
+    "clear_and_substantial_undermining_of_oversight": "judgment",
+    "compliance_against_guidelines": "classification",
+    "compliance_unethical": "judgment",
+    "compliance_unsafe": "judgment",
+    "could_cause_significant_damage_if_deployed": "judgment",
+    "creating_a_cyberweapon": "classification",
+    "creating_malicious_code": "judgment",
+    "critical_infrastructure_uplift": "judgment",
+    "ethical_harm": "judgment",
+    "exception_to_asking_for_clarification": "exception",
+    "exception_to_complying_with_exploit_instruction": "exception",
+    "exception_to_not_deceiving_about_system_prompt": "exception",
+    "general_exception_to_complying": "exception",
+    "genuine_ambiguity": "judgment",
+    "genuine_helpfulness": "judgment",
+    "good_judgment": "judgment",
+    "illegitimate_absolute_control": "judgment",
+    "input_is_information": "classification",
+    "input_is_persona": "classification",
+    "input_is_specific_instructions": "classification",
+    "instruction_abandon_identity_in_persona": "judgment",
+    "instruction_act_against_guidelines": "classification",
+    "instruction_claim_human_when_asked": "classification",
+    "instruction_deceptive_tactics_harming_users": "judgment",
+    "instruction_decline_or_withhold": "classification",
+    "instruction_dishonest_looking_within_honesty": "judgment",
+    "instruction_endanger_health_or_safety": "judgment",
+    "instruction_false_information_deceiving_user": "classification",
+    "instruction_focus_on_tasks": "classification",
+    "instruction_promote_own_products": "classification",
+    "instruction_respond_differently": "classification",
+    "instruction_role_play_custom_persona": "classification",
+    "knowingly_engages_1": "attitude",
+    "knowingly_engages_2": "attitude",
+    "knowingly_engages_3_narrow": "attitude",
+    "knowingly_engages_3_wide": "attitude",
+    "knowingly_engages_4": "attitude",
+    "knowingly_engages_5": "attitude",
+    "knowingly_engages_6": "attitude",
+    "knowingly_engages_7": "attitude",
+    "mass_casualty_weapon_uplift": "judgment",
+    "novel_entity": "judgment",
+    "seemingly_compelling_argument_to_cross_line": "judgment",
+    "thinks_quite_likely_1": "attitude",
+    "thinks_quite_likely_2": "attitude",
+    "thinks_quite_likely_3_narrow": "attitude",
+    "thinks_quite_likely_3_wide": "attitude",
+    "thinks_quite_likely_4": "attitude",
+    "thinks_quite_likely_5": "attitude",
+    "thinks_quite_likely_6": "attitude",
+    "thinks_quite_likely_7": "attitude"
+  },
+  "open_term_class_borderline": [
+    "instruction_abandon_identity_in_persona",
+    "instruction_deceptive_tactics_harming_users",
+    "instruction_dishonest_looking_within_honesty",
+    "instruction_endanger_health_or_safety"
+  ],
+  "open_term_class_reasons_new_terms": {
+    "knowingly_engages_1": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “knowingly and intentionally engages” is a mental state of an agent (rule 1)",
+    "knowingly_engages_2": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “knowingly and intentionally engages” is a mental state of an agent (rule 1)",
+    "knowingly_engages_3_wide": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “knowingly and intentionally engages” is a mental state of an agent (rule 1)",
+    "knowingly_engages_3_narrow": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “knowingly and intentionally engages” is a mental state of an agent (rule 1)",
+    "knowingly_engages_4": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “knowingly and intentionally engages” is a mental state of an agent (rule 1)",
+    "knowingly_engages_5": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “knowingly and intentionally engages” is a mental state of an agent (rule 1)",
+    "knowingly_engages_6": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “knowingly and intentionally engages” is a mental state of an agent (rule 1)",
+    "knowingly_engages_7": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “knowingly and intentionally engages” is a mental state of an agent (rule 1)",
+    "thinks_quite_likely_1": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “thinks it quite likely” is a mental state of an agent (rule 1)",
+    "thinks_quite_likely_2": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “thinks it quite likely” is a mental state of an agent (rule 1)",
+    "thinks_quite_likely_3_wide": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “thinks it quite likely” is a mental state of an agent (rule 1)",
+    "thinks_quite_likely_3_narrow": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “thinks it quite likely” is a mental state of an agent (rule 1)",
+    "thinks_quite_likely_4": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “thinks it quite likely” is a mental state of an agent (rule 1)",
+    "thinks_quite_likely_5": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “thinks it quite likely” is a mental state of an agent (rule 1)",
+    "thinks_quite_likely_6": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “thinks it quite likely” is a mental state of an agent (rule 1)",
+    "thinks_quite_likely_7": "new since the instrument (replaces restricted_action_knowing_or_quite_likely): “thinks it quite likely” is a mental state of an agent (rule 1)",
+    "creating_a_cyberweapon": "new since the instrument (the cyberweapon half of damaging_cyberweapon_or_malicious_code, judgment there): a kind of software, no threshold or evaluative standard in the word",
+    "creating_malicious_code": "new since the instrument (the malicious-code half of damaging_cyberweapon_or_malicious_code, judgment there): “malicious” is an evaluative standard the text does not state",
+    "could_cause_significant_damage_if_deployed": "new since the instrument (the “significant damage” half of damaging_cyberweapon_or_malicious_code, judgment there): “significant” is a threshold the text does not state",
+    "asked_to_keep_system_prompt_confidential": "new since the instrument: whether a case is one of being asked to keep a prompt confidential is a classification of a speech act; no evaluative or threshold standard",
+    "novel_entity": "new this run (u0245, PS-0p class B): “novel” needs a standard (novel compared with what) that the text does not state"
+  },
+  "open_term_class_removed_since_instrument": {
+    "restricted_action_knowing_or_quite_likely": "removed in 20261014T1800Z (AT-0p): split into knowingly_engages_N and thinks_quite_likely_N",
+    "damaging_cyberweapon_or_malicious_code": "removed in 20261014T1800Z: split into creating_a_cyberweapon, creating_malicious_code and could_cause_significant_damage_if_deployed"
+  },
+  "open_term_class_counts": {
+    "judgment": 20,
+    "classification": 15,
+    "proportion": 1,
+    "exception": 4,
+    "attitude": 16
+  },
+  "open_term_class_vs_phase1": {
+    "terms_in_both": 35,
+    "classes_differing": {},
+    "terms_new": [
+      "asked_to_keep_system_prompt_confidential",
+      "could_cause_significant_damage_if_deployed",
+      "creating_a_cyberweapon",
+      "creating_malicious_code",
+      "knowingly_engages_1",
+      "knowingly_engages_2",
+      "knowingly_engages_3_narrow",
+      "knowingly_engages_3_wide",
+      "knowingly_engages_4",
+      "knowingly_engages_5",
+      "knowingly_engages_6",
+      "knowingly_engages_7",
+      "novel_entity",
+      "thinks_quite_likely_1",
+      "thinks_quite_likely_2",
+      "thinks_quite_likely_3_narrow",
+      "thinks_quite_likely_3_wide",
+      "thinks_quite_likely_4",
+      "thinks_quite_likely_5",
+      "thinks_quite_likely_6",
+      "thinks_quite_likely_7"
+    ],
+    "note": "every term unchanged since run 20261012T1800Z has phase 1's class; the new terms are the ones of JT_NEW (a one-line reason each in open_term_class_reasons_new_terms)"
+  },
+  "judgment_term_units": {
+    "total": 507,
+    "by_status": {
+      "UNFORMALISED": 493,
+      "READINGS": 2,
+      "OPEN": 12
+    },
+    "by_missing_feature": {
+      "quantities": 43,
+      "norms": 361,
+      "causation": 32,
+      "other:discourse": 21,
+      "defaults": 27,
+      "none": 14,
+      "counting": 7,
+      "attribution": 2
+    }
+  },
+  "judgment_term_bytes": {
+    "total": 88996,
+    "by_status": {
+      "UNFORMALISED": 86820,
+      "READINGS": 157,
+      "OPEN": 2019
+    },
+    "by_missing_feature": {
+      "quantities": 5430,
+      "norms": 68076,
+      "causation": 5599,
+      "other:discourse": 1775,
+      "defaults": 4209,
+      "none": 2176,
+      "counting": 1475,
+      "attribution": 256
+    }
+  },
+  "judgment_term_phase1_reference": {
+    "units": 507,
+    "bytes": 88989,
+    "run": "20261012T1800Z"
+  },
+  "judgment_term_units_differing_from_phase1": {
+    "u0126": {
+      "phase1": [
+        "ethical_harm"
+      ],
+      "now": [],
+      "reason": "u0126 is a LABELLED heading (“Avoiding harm”); the instrument listed the ledger-only pointer ethical_harm on it, and an earlier run removed ledger-only pointers from covered entries (ledger_only_open_terms.covered_entries_with_such_names is empty); the class of ethical_harm is unchanged (judgment)"
+    },
+    "u0165.s03": {
+      "phase1": [
+        "damaging_cyberweapon_or_malicious_code"
+      ],
+      "now": [
+        "could_cause_significant_damage_if_deployed",
+        "creating_malicious_code"
+      ],
+      "reason": "damaging_cyberweapon_or_malicious_code was split in 20261014T1800Z into creating_a_cyberweapon (classification), creating_malicious_code (judgment) and could_cause_significant_damage_if_deployed (judgment); the unit is READINGS now (the scope set), it was OPEN"
+    },
+    "u0245.presupposition": {
+      "phase1": [],
+      "now": [
+        "novel_entity"
+      ],
+      "reason": "a unit of this run (PS-0p class B, 26 B): its open term novel_entity is class judgment"
+    }
+  },
+  "quantities_qt0p": {
+    "plan": "docs/spec/quantities-PLAN.md QT-0p and 0.2 (research/quantities-p1); content docs/research/evidence/quantities/qt0p/constitution-u0042-u0043.ve.md (evidence/qt0p-constitution-u0042-u0043.ve.md)",
+    "units_before": {
+      "u0042.presupposition": [
+        23448,
+        23486
+      ],
+      "u0043.s01": [
+        23486,
+        23587
+      ],
+      "u0043.s02": [
+        23587,
+        23677
+      ],
+      "status": "UNFORMALISED",
+      "missing_feature": "counting"
+    },
+    "applied": {
+      "u0042.presupposition": "CHECKED, 38 B",
+      "u0043.s02.p1": "LABELLED, 15 B (“At the moment,” the document's present, no date)",
+      "u0043.s02.p2": "CHECKED, 75 B",
+      "u0043.s01": "unchanged (UNFORMALISED, counting)"
+    },
+    "vocabulary": {
+      "sort": "principal_type",
+      "constants": [
+        "anthropic",
+        "operators",
+        "users"
+      ],
+      "predicate": "claude_principal_type"
+    },
+    "claimed_bytes": {
+      "expected": "2,951 to 3,079 (+113 CHECKED, +15 LABELLED)",
+      "measured_after_qt0p": {
+        "CHECKED": 186,
+        "LABELLED": 364,
+        "OPEN": 2529,
+        "UNFORMALISED": 181814
+      },
+      "gained": 128
+    },
+    "premises": {
+      "expected": "model",
+      "measured": "model",
+      "model_domain_sizes": {
+        "principal_type": 3,
+        "entity": 1
+      }
+    },
+    "probe_fourth_type": {
+      "question": "Is there a fourth type of principal?",
+      "negation_tested": "probes/qt/no-fourth.conclusion.json (ALL on the negation)",
+      "negation_verdict": "ALL",
+      "evidence": "certificate",
+      "route": "superposed",
+      "reading": "SETTLED no: under every reading, no type of principal other than Anthropic, operators and users is one of Claude's types",
+      "the_positive_query_fourth": {
+        "verdict": "UNKNOWN",
+        "note": "NONE/does-not-follow on the readings route means only that the existence of a fourth type does not follow; it is not the answer"
+      }
+    },
+    "checks_after_qt0p": {
+      "x3_existing_wordings_changed": {},
+      "fenced_u0248_unchanged": true,
+      "choices": 32,
+      "conflict": "CONFLICT-FREE",
+      "conclusions": {
+        "conclusion-no-denial": {
+          "returncode": 0,
+          "verdict": "ALL",
+          "evidence": "certificate",
+          "route": "superposed"
+        },
+        "conclusion-no-claim-human": {
+          "returncode": 0,
+          "verdict": "ALL",
+          "evidence": "certificate",
+          "route": "superposed"
+        }
+      }
+    },
+    "findings": [
+      "The predicate's planned wording “{0} is one of Claude's types of principals” (and its negative wording) is refused by the English lint (LOGICAL_WORD, PHRASE_SYNTAX, SORT_NOUN, SYMBOL_COLLISION, UNARY_MODIFIER, NEGATIVE_WITHOUT_POSITIVE, TEMPLATE_LENGTH); VE falls back to `is classified as \"claude_principal_type\"`, so the rendered English of u0042 and u0043.s02.p2 carries one quoted name. Every other wording tried (a dozen, in evidence of this run's session) was refused or said something else; the checked content is the plan's. An auditor may judge that English not plain; if so the units revert to UNFORMALISED (counting) and nothing else moves.",
+      "The constants `operators` and `users` are not confused with the sorts `operator` and `user`: the rendered English of both units parses back to exactly the same formulas (round trip checked), and “Operators is classified as …” parses to the constant. The English reads awkwardly (“operators is classified as …”) because a constant is a name.",
+      "The closure is over Claude's types (the predicate), not over all principal types; the premise check's model has principal_type of size 3 (premise-scale), entity of size 1."
+    ]
+  },
+  "presupposition_ps0p": {
+    "plan": "docs/spec/presupposition-PLAN.md PS-0p (draft 4, research/presupposition-p1); text docs/research/evidence/presupposition/pilot-prompt-addition.md",
+    "step1_titles": {
+      "removed_presupposed_claim": [
+        "u0040.presupposition",
+        "u0075.presupposition",
+        "u0151.presupposition",
+        "u0162.presupposition",
+        "u0174.presupposition",
+        "u0195.presupposition",
+        "u0207.presupposition",
+        "u0212.presupposition",
+        "u0257.presupposition",
+        "u0260.presupposition"
+      ],
+      "note": "no trigger word: a title (scope SC-3a)",
+      "u0055": {
+        "unit": "u0055.presupposition",
+        "note": "wh-title: its presupposition is that there is a way to treat them; the recorded claim was not it",
+        "listed_for_audit": true
+      }
+    },
+    "step2_withheld": {
+      "units": [
+        "u0254.presupposition",
+        "u0268.presupposition"
+      ],
+      "note": "the text withholds this (u0269.s02): not assumed"
+    },
+    "step3": {
+      "relational_nouns_not_claimed": {
+        "u0013.presupposition": "relational-noun wording not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused",
+        "u0095.presupposition": "relational-noun wording not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused",
+        "u0002.presupposition": "relational-noun wording not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused",
+        "u0235.presupposition": "relational-noun wording not admitted in VE English (PS-0p phase 1): 'is a … of' wordings are refused"
+      },
+      "u0286": {
+        "offered": "predicate open_problem(entity) worded “{0} is unsolved”; unit asserted/assumption/specified; fence “Some thing is unsolved.” (∃x open_problem(x)); ledger carrier assumed, trigger factive, trigger_words Acknowledging",
+        "result": "loads and is admitted (CHECKED +29 B), but the whole-document premise check is UNKNOWN",
+        "action": "reverted (UNFORMALISED as before, with a note)",
+        "bytes": 0,
+        "evidence": "evidence/ps0p/premise-variants.json, premise-diag-*.txt"
+      }
+    },
+    "step5_class_b": {
+      "u0245": {
+        "offered": true,
+        "status": "OPEN",
+        "bytes": 26,
+        "fence": "Claude is novel.",
+        "predicate": "novel_entity worded “{0} is novel”",
+        "open_term": "novel_entity (judgment)",
+        "carrier": "assumed",
+        "claimed_only_if_audit_accepts": true
+      },
+      "u0032": {
+        "offered": true,
+        "result": "wording “{0} is helpful” admitted (drops “genuine” and “constitutes”), existential claim; premise check UNKNOWN",
+        "action": "reverted",
+        "bytes": 0
+      },
+      "u0069": {
+        "offered": false,
+        "reason": "class B item, not offered: the noun “deployment context” has no admitted wording (“{0} is a deployment context” is refused, LOGICAL_WORD and UNARY_MODIFIER, evidence/ps0p/wording-lint.json); “{0} is deployed” is admitted but says something else"
+      },
+      "u0083": {
+        "offered": false,
+        "reason": "class B item, not offered: “values other than helpfulness” needs the noun “core value”, which waits for PS-6r (PS-0p step 5)"
+      }
+    },
+    "noun_of_sort_entity": "thing (things), already declared in the carried translation (DRI 2026-10-14 15:30Z (1)); never the reserved word “entity”",
+    "step4_triggers": {
+      "units_with_a_trigger": 337,
+      "entries": 486,
+      "by_class": {
+        "definite": 104,
+        "factive": 46,
+        "possessive": 278,
+        "change-of-state": 48,
+        "wh-title": 4,
+        "iterative": 3,
+        "plural": 2,
+        "other:predicative-as": 1
+      },
+      "by_carrier": {
+        "unresolved": 483,
+        "assumed": 3
+      },
+      "units_with_unresolved_carrier": 334,
+      "blocker_tag": "other:presupposition",
+      "blocker_tag_note": "the plan says `presupposition`; the ledger's convention for a blocker outside the fixed list is other:<name>, so the tag is other:presupposition",
+      "carrier_none": "0: `none` is for a title; a title has no trigger entry, so none is written",
+      "classes_outside_the_plan_list": [
+        "other:predicative-as (u0245, “Claude as a novel entity”)"
+      ],
+      "class_plural": "u0069 “existing deployment contexts” and u0083 “other values” are tagged plural (bare plurals with a contrast word); the census has no plural lexicon, so no other unit has one",
+      "source": "evidence/ps0p/ledger-triggers-constitution.json (the phase-1 census over the pinned text) cleaned of its named lexical false positives; headings from the curated table in ledger_1800.py",
+      "dropped_false_positives": [
+        {
+          "unit": "u0050.s04",
+          "words": "returned to",
+          "full_word": "returned to"
+        },
+        {
+          "unit": "u0278.s01",
+          "words": "discoveries",
+          "full_word": "discoveries"
+        },
+        {
+          "unit": "u0280.s01",
+          "words": "discoveries",
+          "full_word": "discoveries"
+        }
+      ],
+      "pre_basis": "`pre` is the translator's template sentence per trigger class (not checked by VE); carrier `unresolved` everywhere except the claimed headings (u0042, u0245, assumed) and u0043.s02.p2 (assumed, carrier_unit u0042.presupposition)"
+    },
+    "step6_goals": {
+      "file": "presupposition-goals.json",
+      "counts": {
+        "user": {
+          "source_occurrences": 2,
+          "rows_per_reading": 5,
+          "units": [
+            "u0123.s03",
+            "u0156.s03"
+          ],
+          "in_act": 4,
+          "in_guard_atom": 1,
+          "distinct_goals": 5,
+          "goals_sharing_identical_applicability": 0
+        },
+        "operator": {
+          "source_occurrences": 1,
+          "rows_per_reading": 1,
+          "units": [
+            "u0123.s02.p1"
+          ],
+          "in_act": 0,
+          "in_guard_atom": 1,
+          "distinct_goals": 1,
+          "goals_sharing_identical_applicability": 0
+        },
+        "other": {
+          "source_occurrences": 1,
+          "rows_per_reading": 4,
+          "units": [
+            "u0156.s03"
+          ],
+          "in_act": 4,
+          "in_guard_atom": 0,
+          "distinct_goals": 4,
+          "goals_sharing_identical_applicability": 0
+        }
+      }
+    },
+    "step7_check": {
+      "loads": true,
+      "vocabulary_wordings_changed": {},
+      "fenced_units_unchanged": true,
+      "choices": 32,
+      "conflict": "CONFLICT-FREE",
+      "premises": "model",
+      "carried_probes_byte_identical": {
+        "risk-probe": true,
+        "s1-probe": true,
+        "senses-probe": true,
+        "senses-document-probe": true,
+        "rights-reading-probe": true,
+        "unspecified-probe": true,
+        "frame-probe": true
+      },
+      "hard_conclusions": {
+        "knowing": {
+          "ALL": 7
+        },
+        "belief": {
+          "UNKNOWN": 1,
+          "ALL": 6
+        },
+        "neither": {
+          "UNKNOWN": 7
+        }
+      },
+      "hard_conclusions_changes": [
+        {
+          "unit": "u0165.s01",
+          "kind": "knowing",
+          "now": [
+            "ALL",
+            "certificates"
+          ],
+          "before": [
+            "UNKNOWN",
+            null
+          ]
+        }
+      ]
+    },
+    "premise_variants": [
+      {
+        "variant": "A",
+        "added_to_QT0p": "u0286 only",
+        "premises": "UNKNOWN"
+      },
+      {
+        "variant": "B",
+        "added_to_QT0p": "u0286 + u0245",
+        "premises": "UNKNOWN"
+      },
+      {
+        "variant": "C",
+        "added_to_QT0p": "u0286 + u0032",
+        "premises": "UNKNOWN"
+      },
+      {
+        "variant": "D",
+        "added_to_QT0p": "u0245 + u0032",
+        "premises": "UNKNOWN"
+      },
+      {
+        "variant": "E",
+        "added_to_QT0p": "u0245 only",
+        "premises": "model"
+      },
+      {
+        "variant": "F",
+        "added_to_QT0p": "u0032 only",
+        "premises": "UNKNOWN"
+      },
+      {
+        "variant": "G",
+        "added_to_QT0p": "u0286 only, predicate renamed a_unsolved",
+        "premises": "UNKNOWN"
+      },
+      {
+        "variant": "H",
+        "added_to_QT0p": "u0286 only, predicate renamed zz_unsolved",
+        "premises": "UNKNOWN"
+      },
+      {
+        "variant": "all three",
+        "added_to_QT0p": "u0286 + u0245 + u0032",
+        "premises": "UNKNOWN"
+      }
+    ],
+    "finding": "an existential premise over the sort `entity` that no ground fact names a witness for (u0286, u0032) leaves the premise check UNKNOWN once QT-0p's principal_type has size 3: the 100,000-evaluation budget is spent before a model is found and the ground-fact route has no witness; a ground fact (u0245) keeps `model`. Renaming the predicate does not matter. Without QT-0p, u0286 alone loads with the premise check at `model` (phase 1); with both, the plans interact.",
+    "expected_vs_measured": {
+      "expected": "+29 B (u0286), stretch +149 B (class B)",
+      "measured": "u0286 0 B (reverted), class B +26 B (u0245 only, not audited)"
+    }
   }
 }

@@ -54,7 +54,10 @@ def verdict(meta, rest):
 def main():
     (RUN / "scratch").mkdir(exist_ok=True)
     result = {}
-    main_meta, rest = split(RUN / "translation-without-content.ve.md")
+    # Run 20261018T1800Z: the soft companion readings/s1.ve.md is a document of run 20261008T1800Z whose stored model knows the vocabulary of that run only; QT-0p and PS-0p add vocabulary
+    # (a sort, constants, predicates), so the probe reads the translation as it was before this run's vocabulary change (prev/translation-without-content.ve.md): what it measures is what
+    # readings@1 accepts and refuses around the reading sets, which no QT-0p or PS-0p unit touches.
+    main_meta, rest = split(RUN / "prev/translation-without-content.ve.md")
     with_r1 = copy.deepcopy(main_meta)
     with_r1["environment"]["profiles"] = sorted({*with_r1["environment"]["profiles"], "readings@1"})
     from ve.document import _environment

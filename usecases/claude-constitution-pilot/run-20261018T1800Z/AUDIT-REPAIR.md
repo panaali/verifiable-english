@@ -1,22 +1,27 @@
-# Audit repair, run 20261018T0600Z
+# Audit repair, run 20261018T1800Z
 
-Input: `AUDIT-20261017T1800Z-received.md` (xhigh): **28 of 28 verdicts FAITHFUL** (20 sampled plus 8 changed), no UNFAITHFUL or INCOMPLETE unit. No audited unit is `claimed: false`. So no unit needs repair, none leaves the covered statuses, and `changed_units` and `audit_repairs` are empty.
+Input: `AUDIT-20261018T0600Z-received.md` (xhigh): **25 of 25 verdicts FAITHFUL** (20 sampled plus the 5 AT-0p units it checked as changed), no UNFAITHFUL or INCOMPLETE unit. No audited unit is `claimed: false`. So no unit needs repair, none leaves the covered statuses, and `audit_repairs` is empty.
 
-| Finding | Action |
+| Finding of that audit | Action |
 |---|---|
-| Small fault: u0156.s03's frame term `asked_to_keep_system_prompt_confidential` takes only the instance, while the words describe "a situation" and the rule ranges over (instance, user) | Carried, not repaired. The audit says no verdict changes. Giving the term a user or situation argument would add structure the sentence does not state; a frame over a situation is what the missing scope construct (`other:scope`, governor u0156.s01, reach `frontier`) would give. Recorded in `metrics.json` (`audit_rejected_units_and_repair_status.small_faults_not_repaired`) and here; the unit, its four readings and the open term are as the audit accepted them |
-| Earlier small faults (whole-labelled headings; modality/belief wording of u0173.s01 to s04) | Still not rewritten: the labels are true and the tally is kept so that differences measure the language |
+| Small fault (carried): u0156.s03's frame term takes only the instance of Claude, the words say "a situation" | Carried, not repaired (as before): a frame over a situation is what the missing scope construct (`other:scope`, governor u0156.s01, reach `frontier`) would give |
+| Small fault (new): u0168.s01's guard `seemingly_compelling_argument_to_cross_line(s)` takes only the situation, so when one instance faces the argument every instance in s is obliged to remain firm (the extra duty is empty in English) | Carried, not repaired: no plan of this run directs it; binding the term to an agent is the typed-attitude feature beyond AT-0p. Recorded in `metrics.json` (`audit_rejected_units_and_repair_status.small_faults_not_repaired`) |
 
-**Audit-verified covered bytes: 2,602 plus 349 label bytes** (previous run 2,159 plus 349). The four units repaired in the previous run and accepted by this audit (u0156.s03, u0165.s06, u0036.s05, u0263.s04.p2) count again because they are byte-identical here. Claimed bytes stay 2,951.
+**Audit-verified covered bytes: 2,602 plus 349 label bytes** (unchanged). None of the 25 changed units of this run (QT-0p, PS-0p) was audited in its present form, so the 154 new claimed bytes (u0042.presupposition 38, u0043.s02.p1 15, u0043.s02.p2 75, u0245.presupposition 26) are claimed but not audit-verified.
 
-**Seeded faults (pilot scripts; no product code changed).** (1) Claim: the finished translation is the previous run's. Planted: one byte of an open-term name changed. Failing check: `finish_20261018T0600Z.py` stops with `AssertionError: {'translation.ve.md': False}`. (2) Claim: the in-frame candidates are guarded on the Claude instance. Planted: the guard of the first in-frame candidate bound to variable 0. Failing check: `repair_20261017T1800Z.py --check` stops with `AssertionError: strict-in-frame`. Both restored (cmp-identical to `prev/translation.ve.md`).
-
-## Plan additions of this run (DRI SC2, AT2, AT3, ME1; X5; X2-X4)
+## Plan additions of this run (DRI SC2, AT2, AT3, ME1; the merge of 2026-10-18; X2-X5)
 
 | Plan item | State | What this run did |
 |---|---|---|
-| AT-0p (u0165.s01 to s07) | in the plan's form since 20261014T1800Z | shape asserted (`repair_20261017T1800Z.py --check`), content rebuilt by `nd.py all` (cmp-identical), four probe points per rule re-run: SETTLED no, SETTLED no, UNDECIDED, UNDECIDED for all seven (byte-identical `probes/unspecified-probe.json`); `plan_repairs` lists the seven units with `applied_in_this_run: false`; 51 open terms; claimed bytes 2,951 |
-| SC-M0 scope tally | in place | `scope-tally.json` regenerated: 150 governors, 352 units, 55,294 bytes, identical to the previous run's apart from the note |
-| AP-0 item 3 `act_workaround` | in place | tags copied from `evidence/m4-act-workaround.json`; every act phrase equals the evidence's; M4 = 17 units, 2,502 bytes (`act_workaround_m4`) |
-| X5 (`claimed: false`) | none marked | claimed bytes = covered bytes = 2,951 |
-| X2-X4 vocabulary | no vocabulary change | `nd.py all` rerun anyway; the one fenced unit (u0248) parses unchanged; the sort `entity` keeps the noun "thing"; Rust limit left at its default (no prlimit, no cap raised; all 21 queries answered on the first run) |
+| JT-0p (judgment terms, ledger only) | done | the class of every open term in `metrics.json` (`open_term_class`, 56 terms: judgment 20, classification 15, attitude 16, exception 4, proportion 1); phase 1's classes reproduced for every term unchanged since 20261012T1800Z; a one-line reason for each of the 13 new terms; `judgment_terms` on every unit; 507 units / 88,996 B (phase 1: 507 / 88,989 B; three units differ, with reasons) |
+| QT-0p (quantities; u0042.presupposition, u0043.s02) | applied; kept | content applied as written (sort `principal_type`, constants `anthropic`, `operators`, `users`, predicate `claude_principal_type`); CHECKED 38 B; u0043.s02 MIXED (15 B LABELLED, 75 B CHECKED); +128 B as expected; premises `model`; "Is there a fourth type of principal?" SETTLED no. Reported: the planned wording is refused by the lint (English shows a quoted name); the companion route's main premise check goes UNKNOWN (Lean-decided share 1.41% → 0.20%) |
+| PS-0p steps 1, 2, 3 | applied | 10 titles lose `presupposed_claim`; u0055 note and audit list; u0254, u0268 notes; u0013, u0095, u0002, u0235 notes; u0286 offered and reverted (premise check UNKNOWN) |
+| PS-0p step 4 | applied | `presupposition_triggers` on every unit (486 entries in 337 units); blocker `other:presupposition` on the 334 units whose carrier is unresolved |
+| PS-0p step 5 (class B) | partly | u0245 offered (OPEN, +26 B, claimed only if the audit accepts it); u0032 offered and reverted (premise check UNKNOWN); u0069 (no admitted noun wording) and u0083 (needs "core value", waits for PS-6r) not offered |
+| PS-0p step 6 | done | `presupposition-goals.json`: 2 "the user" and 1 "the operator" occurrences in the sentences of formalised rules (4 + 1 goals across readings); no goals share identical applicability across different rows |
+| PS-0p step 7 | done | loads; 32 choices CONFLICT-FREE; carried probes byte-identical except the companion probe and one hard-constraint query (see SUMMARY) |
+| AT-0p (u0165.s01-s07) | already in the plan's form since 20261014T1800Z | shape asserted (`repair_20261017T1800Z.py --check` and `update_ledger`); the four probe points per rule re-run and byte-identical (`probes/unspecified-probe.json`); 52 open terms (51 + novel_entity); claimed bytes were 2,951 before the plans above |
+| SC-M0 scope tally | in place | `scope-tally.json`: 150 governors, 352 units, 55,294 B, identical to the previous run's; u0043.s02 is counted once (90 B) and both parts carry the tags |
+| AP-0 item 3 `act_workaround` | in place | tags carried; every act phrase equals the evidence's; M4 = 17 units, 2,502 B |
+| X5 (`claimed: false`) | none marked | claimed bytes = covered bytes = 3,105 |
+| X2-X4 vocabulary | vocabulary changed | `nd.py all` rerun after QT-0p, for every PS-0p build and for the final document; `checkpoint.py` shows no existing predicate wording changed and u0248 parses to the same formula; the sort `entity` keeps the noun "thing"; Rust limit left at its default (no prlimit, no cap raised: the UNKNOWN premise checks are an evaluation budget, not a timeout) |

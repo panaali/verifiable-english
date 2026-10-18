@@ -1,27 +1,27 @@
-# Feature review: what `ve-green-tarch-histdep` adds over `ve-green-fu-ar2-decoders`
+# Feature review: what `ve-green-eff-20261018-1` adds over `ve-green-tarch-histdep`
 
-Source: the pinned 184,893-byte constitution, unchanged (`../source/SOURCE.md`, SHA-256 `fa10ed48…50dd`). Start: the translation of run `20261017T1800Z` (`prev/`), whose audit found 28 of 28 units faithful.
+Source: the pinned 184,893-byte constitution, unchanged (`../source/SOURCE.md`, SHA-256 `fa10ed48…50dd`). Start: the translation of run `20261018T0600Z` (`prev/`), whose audit found 25 of 25 verdicts faithful.
 
-| Merged (first-parent order, newest first) | What it is | Changes what a constitution unit can say? |
+| Merged (first-parent order, newest first) | What it is (from its DELTA.md) | Changes what a constitution unit can say? |
 |---|---|---|
-| infra/tarch-histdep, tarch-slowtail, fix/fsmonitor-gate, fu-docs-1017, dri-sign-1017b | test architecture, gate tooling, comments and DELTA text | No |
-| infra/ties-fu-1017, ties-lf-16f, ties-jt-crossplan, ties-rights-licence-relay, ties-qs-1 | theorems tying existing definitions; no behaviour | No |
-| readings-defaults/rd7 (rd-7) | the superposed `readings-verdicts` route: Lean assembles ALL/SOME/NONE over reading sets (certificate, one complete choice, countermodels); fewer prover searches | No: same verdicts, a different owner and cost. The 21 hard-constraint queries and both conclusion queries give identical answers |
-| lean-first/b16f (lf-16f), b16g (lf-16g) | the `document` mode decides soft-norms, plain norm content, senses and fenced content in Lean; 16g stopped at its precondition | No |
-| infra/me-1a | `VE.Numbers` core (decimal, rounding, comparison phrases) and the generated `ve/numbers_phrases.json`; DELTA says "Public output: none" | No: no service mode, command or profile reaches it. Graded quantities (119 UNFORMALISED units) stay blocked |
-| foundation/qs-1 | `VE.Closure.Order` (an order closure with caps and theorems) | No: no service mode or relay |
-| infra/fu-lf14c-f4, fu-rd9-checks, fix/jt-crossplan | n-ary defined predicates in the family view; relay checks; English head-word lint fixed point | No: the translation uses no definitions and its rendering is byte-identical |
+| infra/eff-20261018-1 | efficiency tooling and a write log | No |
+| feature/et-7 | `alternatives@0` accepted together with `norm-defaults@0` (`VE.Compose.todayGate`, `dispatch`, `ve.profiles.checker_family`); alternatives routes answer filled sources | No: the constitution uses no `alternatives@0` profile |
+| feature/fsf-r1 | a use case (safety framework): documents and reports | No: no product code |
+| infra/speed-abcache | speed tooling | No |
+| infra/ties-me-1c, ties-me-1b, ties-me-1a | theorems tying existing definitions; seeded ties | No |
+| feature/jt-1 | `judgments@0`: records and admission of judgment terms, the shared scan | No: "reached by no route until JT-2 switches the profile on in the document mode" |
+| infra/tarch-manifest-ops | test architecture | No |
+| infra/me-1c, me-1b | `VE.Calc` meaning, checker and English lines | No: "Public output: none" |
+| feature/et-3 | `lean/VE/Events/*` (events, states, links, calendar premises) | No: "not reachable from any service mode, route, decoder or relay" |
+| feature/pk-1s | premise-pack spec, documents only | No |
 
-Checked with `git diff ve-green-fu-ar2-decoders..HEAD --shortstat -- ve lean rust conformance` (see `metrics.json`, `language_changes_since_previous_tag`): the changed Lean and Python files are the document service, the readings route, the Numbers and Order modules, the English lint and generated tables and shapes. Result: **units upgraded by features: 0; reading sets upgraded by features: 0.**
+Checked with `git diff ve-green-tarch-histdep..ve-green-eff-20261018-1 --shortstat -- ve lean rust conformance` (in `metrics.json`, `language_changes_since_previous_tag`) and the DELTA.md files of jt-1, et-3, et-7, me-1b, me-1c and pk-1s. Result: **units upgraded by features: 0; reading sets upgraded by features: 0.**
 
 ## Measurements at this tag (all re-run)
-* **Build**: `lean/.lake` copied from `ve-integration` at the identical commit; `lake build` rebuilt all 973 jobs (18 minutes) and finished; the Rust binary rebuilt by `tools/rust_build.py` (25 s) and equal to the pin in `lean/checkers.lock`.
-* **Translation**: `nd.py all` rebuilds it, cmp-identical. `ve document check` passes (premises model, superposed route, 32 choices CONFLICT-FREE); `check.json`, `coverage.json` and `rendered-raw.md` are byte-identical to the previous run's; coverage 100% of bytes accounted, 51 open terms, 4 unresolved reading sets, 9 separations.
-* **Probes**: unspecified, risk, s1, senses, senses_document, discourse, rights, frame and hard-conclusions probes are byte-identical to the previous run's; the companion probe differs only in the run directory inside its paths; the denial and claim-to-be-human queries are ALL as JSON objects (member order differs); the five `ve ask` questions give no answer as before (only `actions_version` 30, was 28).
-* **Hard-constraint queries**: the same 12 ALL with certificates and 9 UNKNOWN, all answered on the first run at the default Rust limit, 54 minutes for the 21 (previous run about 60).
-* **Soft chain** (`probe_soft_chain.py`): unchanged. Admitted, every pair separated, both conclusion queries ALL, but `ve document check` still raises `UnsupportedProfile`, so the three "should" sets keep their `exception_to_*` workaround.
-* **Time** (one run each, load 5 to 8 at the start, not controlled): `ve document check` 63.5 s (was 51.5), coverage 72.9 s (64.7).
+* **Build**: `lean/.lake` copied with `cp -a` from `ve-integration` at the identical commit; `lake build` still rebuilt all 997 jobs (25 minutes); the Rust binary rebuilt by `tools/rust_build.py` (42 s) and equal to the pin in `lean/checkers.lock`. The carried translation was rebuilt first by `nd.py all`: cmp-identical to the 06:00Z translation (before any change).
+* **Translation**: changed only by the plans below (`apply_plans.py`); `nd.py all` rebuilt it after QT-0p, after the PS-0p builds and for the final document; `ve document check` (final): admitted, premises `model`, superposed route, 32 choices CONFLICT-FREE; coverage 100%, 52 open terms, 22 assumptions.
+* **Probes**: risk, s1 (see README), senses, senses_document, discourse, rights, unspecified (the four AT-0p points per rule) and frame are byte-identical to the previous run's; the denial and claim-to-be-human queries are ALL with certificates; the five `ve ask` questions give no answer as before; the companion probe differs (QT-0p, see SUMMARY); the 21 hard-constraint queries give 13 ALL / 8 UNKNOWN (u0165.s01 "knowing" changed from UNKNOWN to ALL).
+* **Soft chain** (`probe_soft_chain.py`): unchanged outcome (admitted, both conclusion queries ALL, `ve document check` still raises `UnsupportedProfile`).
 
 ## Missing features, ledger tally (`UNFORMALISED`)
-norms 669, quantities 119, `other:discourse` 81, causation 76, defaults 50, counting 31, modality/belief 25, attribution 12, time 9, `other:open-list` 1, `other:graded-force` 1 (unchanged). Gaps recorded in earlier runs stay: `other:english-nested-guard`, `other:scope`.
-Next, in order of unlock: a scope construct (352 units, 29.9% of the text; would also give u0156.s03's frame a situation argument); the soft chain through `ve document check`; typed modals and belief; graded quantities once the Numbers core is reachable from a document; an English round trip for nested guards.
+norms 669, quantities 119, `other:discourse` 80, causation 76, defaults 50, counting 29, modality/belief 25, attribution 12, time 9, `other:open-list` 1, `other:graded-force` 1 (counting −2 and `other:discourse` −1 against the previous run: the units QT-0p and PS-0p now cover).

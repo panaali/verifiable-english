@@ -299,7 +299,11 @@
       "words": "“At the moment, Claude’s three types of principals are Anthropic, operators, and users.”",
       "also": [],
       "bytes": 1503,
-      "governor_bytes": 90
+      "governor_bytes": 90,
+      "parts": [
+        "u0043.s02.p1",
+        "u0043.s02.p2"
+      ]
     },
     {
       "unit": "u0044.s01",
@@ -2466,5 +2470,5 @@
     ],
     "reason": "the bold part of u0080.s01-s06 is the item's own clause, not a label; u0176 and u0188 are bold sub-headings (titles); u0240.s01, u0243.s01 and u0244.s01 are bold topic sentences of paragraphs, not bullets"
   },
-  "note": "scope-tally for run 20261018T0600Z; the tags are ledger annotations only: other_blockers gains `other:scope`, governed units record governed_by (a frontier governor's candidates record governed_by_candidate, never governed_by), and no unit's status or content changes"
+  "note": "scope-tally for run 20261018T1800Z; the tags are ledger annotations only: other_blockers gains `other:scope`, governed units record governed_by (a frontier governor's candidates record governed_by_candidate, never governed_by), and no unit's status or content changes. u0043.s02 is MIXED since QT-0p; its parts both carry the tags and the tally counts the sentence once, with its 90 bytes"
 }

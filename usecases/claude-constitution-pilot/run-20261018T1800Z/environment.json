@@ -58,6 +58,13 @@
           "singular": "hard constraint",
           "plural": "hard constraints"
         }
+      },
+      "principal_type": {
+        "description": "A type of principal, in the source's sense (u0042, u0043): a kind of party whose instructions Claude gives weight to.",
+        "verbalisation": {
+          "singular": "type of principal",
+          "plural": "types of principals"
+        }
       }
     },
     "predicates": {
@@ -601,6 +608,21 @@
         "description": "u0173.s01: the hard constraints are “centrally meant to apply to cases where Claude would either be knowingly and intentionally engaging in an action of the relevant restricted category, or where Claude thinks it quite likely that a given action would fall into such a category”. Hard constraint u0165.s07: the instance of Claude thinks it quite likely that the action of the situation falls into the restricted category of generating child sexual abuse material (CSAM). It is that instance's belief, which need not be correct, so it does not need the case atom. Which pairs of an instance and a situation these are is the open term thinks_quite_likely_7; it is not typed.",
         "verbalisation": "{0} thinks it quite likely that {1} is a case of generating child sexual abuse material (CSAM)"
       },
+      "claude_principal_type": {
+        "arguments": [
+          "principal_type"
+        ],
+        "description": "The type of principal is one of Claude's types of principals.",
+        "verbalisation": "{0} is one of Claude's types of principals",
+        "negative_verbalisation": "{0} is not one of Claude's types of principals"
+      },
+      "novel_entity": {
+        "arguments": [
+          "entity"
+        ],
+        "description": "The thing is a novel entity, in the source's sense (u0245, “Claude as a novel entity”). The English lint admits “is novel” but not “is a novel entity” (an “is a ...” wording for a unary predicate is refused, UNARY_MODIFIER), so the English drops the noun: the sort already says the argument is a thing. The heading takes for granted that Claude is a novel entity, and nothing more.",
+        "verbalisation": "{0} is novel"
+      },
       "exception_to_asking_for_clarification": {
         "arguments": [
           "situation"
@@ -636,6 +658,18 @@
       "claude": {
         "sort": "entity",
         "description": "Claude in the source."
+      },
+      "anthropic": {
+        "sort": "principal_type",
+        "description": "Anthropic, as a type of principal (u0043.s02)."
+      },
+      "operators": {
+        "sort": "principal_type",
+        "description": "Operators, as a type of principal (u0043.s02)."
+      },
+      "users": {
+        "sort": "principal_type",
+        "description": "Users, as a type of principal (u0043.s02)."
       }
     }
   }

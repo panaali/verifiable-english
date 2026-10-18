@@ -1,5 +1,5 @@
 {
-  "document": "usecases/claude-constitution-pilot/run-20261018T0600Z/readings/soft-chain.ve.md",
+  "document": "usecases/claude-constitution-pilot/run-20261018T1800Z/readings/soft-chain.ve.md",
   "profiles": [
     "documents@1",
     "norm-defaults@0",
@@ -8,32 +8,32 @@
     "relational-fol@0",
     "soft-norms@0"
   ],
-  "open_terms_before": 51,
-  "open_terms_after": 48,
+  "open_terms_before": 52,
+  "open_terms_after": 49,
   "exception_terms_dropped": [
     "exception_to_asking_for_clarification",
     "exception_to_not_deceiving_about_system_prompt",
     "exception_to_complying_with_exploit_instruction"
   ],
-  "situation_search_seconds": 5.9,
+  "situation_search_seconds": 8.2,
   "pairs_without_situation": [],
   "search_limits": [],
   "load": "admitted",
   "check": {
     "returncode": 1,
-    "seconds": 63.9,
+    "seconds": 138.2,
     "stdout_head": "",
     "stderr_last_lines": [
       "          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-      "  File \"/home/seyran/code/ve-pilot-20261018T0600Z/ve/backends/soft_relay.py\", line 43, in run",
+      "  File \"/home/seyran/code/ve-pilot-20261018T1800Z/ve/backends/soft_relay.py\", line 43, in run",
       "    return deepcopy(decide_once(\"soft-norms\", case))",
       "                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^",
-      "  File \"/home/seyran/code/ve-pilot-20261018T0600Z/ve/backends/relay.py\", line 166, in decide_once",
+      "  File \"/home/seyran/code/ve-pilot-20261018T1800Z/ve/backends/relay.py\", line 166, in decide_once",
       "    row = decide(mode, [case])[0]",
       "          ~~~~~~^^^^^^^^^^^^^^",
-      "  File \"/home/seyran/code/ve-pilot-20261018T0600Z/ve/backends/relay.py\", line 135, in decide",
+      "  File \"/home/seyran/code/ve-pilot-20261018T1800Z/ve/backends/relay.py\", line 135, in decide",
       "    return decided(_pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout))",
-      "  File \"/home/seyran/code/ve-pilot-20261018T0600Z/ve/backends/relay.py\", line 143, in decided",
+      "  File \"/home/seyran/code/ve-pilot-20261018T1800Z/ve/backends/relay.py\", line 143, in decided",
       "    raise _raised(entry)",
       "ve.errors.UnsupportedProfile: UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
     ]
@@ -42,14 +42,14 @@
     "returncode": 0,
     "coverage_percent": 100,
     "bytes_by_status": {
-      "LABELLED": 349,
-      "UNFORMALISED": 181942,
-      "OPEN": 2529,
-      "CHECKED": 73
+      "LABELLED": 364,
+      "UNFORMALISED": 181788,
+      "OPEN": 2555,
+      "CHECKED": 186
     },
     "residual": {
-      "open_terms": 48,
-      "assumptions": 19,
+      "open_terms": 49,
+      "assumptions": 22,
       "bridge_leaves": 0,
       "unresolved_reading_sets": 4,
       "default_exceptions": 0,
@@ -64,12 +64,12 @@
   },
   "render": {
     "returncode": 0,
-    "lines": 2327
+    "lines": 2357
   },
   "conclusions": {
     "denial": {
       "returncode": 0,
-      "seconds": 70.4,
+      "seconds": 90.5,
       "verdict": "ALL",
       "route": "enumerated",
       "evidence": "certificates",
@@ -77,7 +77,7 @@
     },
     "claim_human": {
       "returncode": 0,
-      "seconds": 54.6,
+      "seconds": 69.9,
       "verdict": "ALL",
       "route": "enumerated",
       "evidence": "certificates",

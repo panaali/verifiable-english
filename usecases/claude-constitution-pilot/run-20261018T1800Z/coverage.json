@@ -1,23 +1,23 @@
 {
   "accounted_bytes": 184893,
   "bytes_by_kind": {
-    "asserted": 22,
+    "asserted": 161,
     "attributed": 634,
-    "meta": 349,
+    "meta": 364,
     "norm": 2580,
-    "unformalised": 181308
+    "unformalised": 181154
   },
   "bytes_by_status": {
-    "CHECKED": 73,
-    "LABELLED": 349,
-    "OPEN": 2529,
-    "UNFORMALISED": 181942
+    "CHECKED": 186,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181788
   },
   "coverage_percent": 100,
   "residual": {
-    "assumptions": 19,
+    "assumptions": 22,
     "bridge_leaves": 0,
-    "open_terms": 51,
+    "open_terms": 52,
     "unresolved_reading_sets": 4,
     "separations": 9,
     "readings_findings": 0,
@@ -26,16 +26,16 @@
     "gaps": 12,
     "ungrounded_defaults": 0
   },
-  "residual_total": 95,
+  "residual_total": 99,
   "source_bytes": 184893,
   "unformalised_reasons": {
     "attribution": 12,
     "causation": 76,
-    "counting": 31,
+    "counting": 29,
     "defaults": 50,
     "modality_belief": 25,
     "norms": 669,
-    "other.discourse": 81,
+    "other.discourse": 80,
     "other.graded-force": 1,
     "other.open-list": 1,
     "quantities": 119,
