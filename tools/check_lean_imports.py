@@ -292,7 +292,10 @@ def main() -> int:
             if importer_layer is not None and imported_layer is not None and importer_layer < imported_layer:
                 edges.add(f"{importer} -> {imported}")
     expected = json.loads(LEDGER.read_text())
-    unbuilt = unbuilt_modules(set(paths), read, tomllib.loads((ROOT / "lean/lakefile.toml").read_text()))
+    # A tree without a lakefile has no default build (the layer tests' trees); the repository's is read directly by
+    # tests/test_lean_default_build.py, so a lost lakefile still fails there and in `lake build`.
+    lakefile = ROOT / "lean/lakefile.toml"
+    unbuilt = unbuilt_modules(set(paths), read, tomllib.loads(lakefile.read_text())) if lakefile.is_file() else []
     for message in unbuilt:
         print(message, file=sys.stderr)
     for message in (f"unmapped Lean module: {x}" for x in unmapped):
