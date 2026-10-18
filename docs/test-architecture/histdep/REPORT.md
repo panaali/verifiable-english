@@ -127,7 +127,8 @@ spaces (`66983f6cc`).
 - **After the sync and the last test changes:**
   - Local runs pass: `test_history_tests` (14), `test_gate_rerun`, `test_gate_integrity`, `test_run_cache` and
     `test_merge_tooling_evidence`.
-  - The selected run on the final code is in the addendum below.
+  - The selected run on the final code (`e10ba73c`, base main `2d4b9320`): **377 units, all passed**, on ve-mac-1
+    (1,672 s, `mac-pytest.sh --select`; `tests/test_hang_guards.py` among them).
 - `tools/gate_collection.py --check --prebuilt`: 17,280 collected, 31 added, 0 removed, 0 refused, 0 stale, 0
   malformed (after `lake build`, 959 jobs).
 - `tools/regen_generated.py --check --only history-tests` and `--only gitattributes` pass.
