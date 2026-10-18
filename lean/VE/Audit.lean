@@ -5,6 +5,7 @@ import VE.Alternatives.Admission
 import VE.Alternatives.Background
 import VE.Alternatives.Decl
 import VE.Alternatives.Examples
+import VE.Alternatives.FillWire
 import VE.Alternatives.Followable
 import VE.Alternatives.Inline
 import VE.Alternatives.Replay
@@ -433,6 +434,7 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.altValid_of_wellFormed
 #print axioms VE.Alternatives.alt_conflictFree_prefix
 #print axioms VE.Alternatives.alt_conflict_free
+#print axioms VE.Alternatives.alt_conflict_freeU
 #print axioms VE.Alternatives.alt_conflict_witness_sound
 #print axioms VE.Alternatives.alt_layer_expands
 #print axioms VE.Alternatives.alt_prefix_satisfaction
@@ -443,6 +445,10 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.alt_route_countermodel
 #print axioms VE.Alternatives.alt_route_intended
 #print axioms VE.Alternatives.alternative_monotone
+#print axioms VE.Alternatives.alternativesU_dilemma_witness_sound
+#print axioms VE.Alternatives.alternativesU_wire_conflict_sound
+#print axioms VE.Alternatives.alternativesU_wire_dilemma_sound
+#print axioms VE.Alternatives.alternativesU_wire_followable_sound
 #print axioms VE.Alternatives.alternatives_conservative
 #print axioms VE.Alternatives.alternatives_wellFormed
 #print axioms VE.Alternatives.availF_denote
@@ -461,7 +467,9 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.body_wellFormed
 #print axioms VE.Alternatives.clear_denote
 #print axioms VE.Alternatives.clear_denote_of
+#print axioms VE.Alternatives.decodeAltSourceU_conservative
 #print axioms VE.Alternatives.denote_forget_preds
+#print axioms VE.Alternatives.denote_withFill_base
 #print axioms VE.Alternatives.dilemma_expansion
 #print axioms VE.Alternatives.dilemma_witness_sound
 #print axioms VE.Alternatives.e1B_sound
@@ -512,6 +520,7 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.sat_backgroundBaseAlt
 #print axioms VE.Alternatives.scenarioConflict_sound
 #print axioms VE.Alternatives.sortOf_extEnv
+#print axioms VE.Alternatives.sourceOfU_ok
 #print axioms VE.Alternatives.term_denote_withDefinitions
 #print axioms VE.Alternatives.tupleTyped_withDefinitions
 #print axioms VE.Alternatives.tuples_typed
@@ -522,6 +531,7 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.validate_sound
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
+#print axioms VE.Alternatives.zip_all_target
 #print axioms VE.Ask.Answer.groups_view
 #print axioms VE.Ask.Asked.hbind
 #print axioms VE.Ask.Asked.hnames
