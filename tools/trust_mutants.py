@@ -1,41 +1,37 @@
 #!/usr/bin/env python3
-"""Mechanical mutants of the trusted Lean definitions a branch adds or changes, and the survivors (standing ruling
-R16 signs trusted growth only when "every new trusted definition is exercised by a test that can fail").
+"""Mechanical mutants of the trusted Lean definitions a branch adds or changes, and the survivors (R16 signs trusted
+growth only when "every new trusted definition is exercised by a test that can fail").
 
-    uv run python tools/trust_mutants.py [--base REV] [--jobs N] [--max-mutants N] [--test FILE ...]
+    uv run python tools/trust_mutants.py [--base REV] [--jobs N] [--max-mutants N] [--test FILE ...] [--deep]
                                          [--allow FILE] [--json OUT] [--root DIR]
 
-Selection: the declarations tools/trust_map.py counts as trusted on the tree (K, S, untied [V], unclassified),
-not theorems or checks, whose lines hold a line the tree adds or changes over REV (default: the merge base of HEAD
-and main). Each is mutated inside its compiled range (lean/declarations.txt), comments and strings excluded, by
-the operators of `OPERATORS` (`mutants`). A mutant Lean does not elaborate is INVALID, never a kill or a survivor:
-the compiler, not this tool's reading of the text, decides what a mutant means.
+Selected: each declaration tools/trust_map.py counts as trusted (not a theorem or check) whose lines hold a line
+the tree adds or changes over REV (default: the merge base of HEAD and main). The `OPERATORS` mutate it inside its
+compiled range (lean/declarations.txt), comments and strings excluded, on its changed lines only (all of a new one).
 
-Checks: a `#guard` or `#guard_msgs` command, an `example`, and a theorem proved by `decide`, `native_decide` or
-`rfl` alone (`CHECK_PROOF`); and every Lean file named with --test (any error in it). Each mutant is built in a
-private scratch copy of lean/ (its build restored from tools/lean_share.py's stored build of this tree when there is
-one, else copied from lean/.lake; the checkout is only read): `lake build` of the mutated module and of every module
-that imports it and holds checks. The mutant is
-- KILLED when Lean reports an error inside a check (or a --test file fails);
-- INVALID when the error is inside the mutated declaration;
-- SURVIVOR when every check passes. A failing proof is no kill (BUILDER-CHECKLIST 3): a theorem whose proof fails
-  outside the checks has its proof replaced by `sorry` in the scratch copy, and the build runs again, so the
-  checks after it still run;
-- UNKNOWN when anything else fails (an error outside every check, proof and the mutated declaration, a statement
-  that fails even with its proof cut, a failed build with no located error);
-- NOT RUN past --max-mutants (the order gives every definition its first operators before any its later ones).
+Each mutant is built in a private scratch copy of lean/ (its build restored from tools/lean_share.py's checked build
+of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, its proofs cut to `sorry`
+(no proof there is a check), then each module that imports it and holds checks for it: a theorem whose compiled
+statement (lean/statements.txt) uses it, and every other check in a module of its directory (of the whole cone with
+--deep), and the --test files. A check is a `#guard`/`#guard_msgs`, an `example`, a theorem proved by `decide`,
+`native_decide` or `rfl`, or that theorem whose statement uses it. The mutant is
+- KILLED when Lean reports an error inside a check or a --test file;
+- INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means);
+- SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
+  `sorry` and the build repeated;
+- UNKNOWN when anything else fails;
+- NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
-Each SURVIVOR and UNKNOWN prints as `<STATUS> <file>:<line> <definition> <operator>: <before> -> <after>`, unless
---allow FILE lists its definition and operator with a reason: {"allow": [{"definition": "VE.X.f", "operator":
-"lt-le", "reason": "one line: why the mutant is equivalent"}]}. Exit 0: every mutant ran and none is left; 1: a
-survivor or UNKNOWN is left; 3: none is left but some did NOT RUN; 2: the tool cannot run (stale dumps, a check
-that fails without a mutant). --json OUT writes every mutant with its status as evidence. This is builder and
-reviewer evidence only: no gate, merge train or nightly reads it.
+SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> <operator>: <before> -> <after>` unless --allow
+FILE lists the definition and operator with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le",
+"reason": "one line"}]}). Exit 0: all ran, none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN;
+2: cannot run. Builder and reviewer evidence only: no gate, merge train or nightly reads it.
 """
 from __future__ import annotations
 
 import argparse
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass
 import difflib
 import json
@@ -50,9 +46,7 @@ import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "tools"))
-sys.path.insert(0, str(ROOT / "lean"))
+sys.path[:0] = [str(ROOT), str(ROOT / "tools"), str(ROOT / "lean")]
 from audit import code_only  # noqa: E402
 from check_lean_imports import imports  # noqa: E402
 from lean_statements import declaration_list, module_name, source_hash, sources  # noqa: E402
@@ -62,30 +56,26 @@ OPEN, CLOSE = "([{⟨", ")]}⟩"
 CHECK_COMMAND = re.compile(r"(?m)^\s*(?:@\[[^\]]*\]\s*)*(?:#guard_msgs|#guard|example)\b")
 CHECK_PROOF = re.compile(r":=\s*(?:by\s+)?(?:decide|native_decide|rfl)(?:\s+\+\w+)*\s*$")
 ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*)$", re.M)
-STOP_WORDS = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at",
-              "from", "where", "for", "unless", "mut", "have", "show"}
-LIST_METHODS = ("find?", "any", "all", "contains", "map", "filter", "flatMap", "filterMap", "length", "head?",
-                "isEmpty", "foldl", "foldr", "zip", "lookup", "elem", "isPrefixOf", "take", "drop", "reverse", "sum",
-                "count", "findSome?", "eraseDups", "dropLast", "tail", "getLast?", "mapM", "forM", "lookup", "join")
+STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
+        "for", "unless", "mut", "have", "show"}
+LIST_METHODS = ("find?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
+                "elem|isPrefixOf|take|drop|reverse|sum|count|findSome\\?|eraseDups|dropLast|tail|getLast\\?|mapM|forM")
 LIST_RESULTS = {"map", "filter", "flatMap", "filterMap", "take", "drop", "reverse", "eraseDups", "dropLast", "tail",
                 "zip"}
 CUTS = {"list-empty": None, "list-first": ".take 1", "list-drop-last": ".dropLast", "list-last": ".reverse.take 1",
         "list-drop-first": ".drop 1"}
-# Each operator with its tier: --max-mutants keeps the earlier tiers of every definition first.
-OPERATORS = {**dict.fromkeys(("arm-true", "arm-false", "arm-default", "body-true", "body-false", "not-drop",
-                              "and-or", "or-and", "lt-le", "le-lt", "lt-eq", "le-eq", "eq-le", "gt-ge", "ge-gt",
-                              "eq-ne", "ne-eq", "all-any", "any-all", "bool-flip", "lit-plus", "lit-minus",
-                              "list-empty", "append-left", "append-right"), 1),
-             "list-first": 2, "list-drop-last": 2, "list-last": 3, "list-drop-first": 3}
-TOKENS = [  # (operator, pattern on the blanked code, replacement)
-    ("not-drop", r"¬\s*|(?<![\w'!?)\]⟩])!(?=[\w(·])", ""), ("and-or", r"∧", "∨"),
-    ("and-or", r"(?<![&|])&&(?![&|])", "||"), ("or-and", r"∨", "∧"), ("or-and", r"(?<!\|)\|\|(?!\|)", "&&"),
-    ("lt-le", r"(?<![<-])<(?![-|$*;=<>])", "≤"), ("lt-eq", r"(?<![<-])<(?![-|$*;=<>])", "="),
-    ("le-lt", r"≤|(?<![<])<=(?![>])", "<"), ("le-eq", r"≤|(?<![<])<=(?![>])", "="),
-    ("gt-ge", r"(?<![=\-|>$*;])>(?![>=])", "≥"), ("ge-gt", r"≥|(?<![>])>=", ">"),
-    ("eq-le", r"(?<![:=!<>])=(?![=>])", "≤"), ("eq-ne", r"(?<![:=!<>])=(?![=>])", "≠"),
-    ("eq-ne", r"(?<![=])==(?![=])", "!="), ("ne-eq", r"≠", "="), ("ne-eq", r"!=", "=="),
-    ("all-any", r"(?<=\.)all\b", "any"), ("any-all", r"(?<=\.)any\b", "all")]
+# The operators and their tiers: --max-mutants runs every earlier tier first.
+OPERATORS = {**dict.fromkeys(("arm-true", "arm-false", "arm-default", "body-true", "body-false", "not-drop", "and-or",
+                              "or-and", "lt-le", "le-lt", "lt-eq", "le-eq", "eq-le", "eq-ne", "ne-eq", "all-any",
+                              "any-all", "bool-flip", "lit-plus", "lit-minus", "list-empty", "append-left",
+                              "append-right"), 1), "list-first": 2, "list-drop-last": 2, "list-last": 3,
+             "list-drop-first": 3}
+LT, LE, EQ = r"(?<![<-])<(?![-|$*;=<>])", r"≤|(?<!<)<=(?!>)", r"(?<![:=!<>])=(?![=>])"
+TOKENS = [("not-drop", r"¬\s*|(?<![\w'!?)\]⟩])!(?=[\w(·])", ""), ("and-or", "∧", "∨"),
+          ("and-or", r"(?<![&|])&&(?![&|])", "||"), ("or-and", "∨", "∧"), ("or-and", r"(?<!\|)\|\|(?!\|)", "&&"),
+          ("lt-le", LT, "≤"), ("lt-eq", LT, "="), ("le-lt", LE, "<"), ("le-eq", LE, "="), ("eq-le", EQ, "≤"),
+          ("eq-ne", EQ, "≠"), ("eq-ne", r"(?<!=)==(?!=)", "!="), ("ne-eq", "≠", "="), ("ne-eq", "!=", "=="),
+          ("all-any", r"(?<=\.)all\b", "any"), ("any-all", r"(?<=\.)any\b", "all")]
 BOOLS = {"true": "false", "false": "true", "True": "False", "False": "True"}
 
 
@@ -98,63 +88,22 @@ class Mutant:
     operator: str
     start: int  # offsets in the file's text
     end: int
-    lines: tuple[int, int]  # the mutated declaration's lines
+    lines: tuple[int, int]  # the mutated declaration's
     before: str
     after: str
     status: str = "NOT RUN"
     detail: str = ""
 
 
-def group_end(t: str, i: int) -> int:
-    """The index after the bracket group opening at t[i]."""
-    depth = 0
-    for j in range(i, len(t)):
+def group(t: str, i: int, step: int = 1) -> int:
+    """From the bracket at t[i], the index past its partner (step 1) or of its partner (step -1)."""
+    depth, j = 0, i
+    while 0 <= j < len(t):
         depth += (t[j] in OPEN) - (t[j] in CLOSE)
         if depth == 0:
-            return j + 1
-    return len(t)
-
-
-def group_start(t: str, j: int) -> int:
-    """The index of the bracket that opens the group closing at t[j - 1]."""
-    depth = 0
-    for i in range(j - 1, -1, -1):
-        depth += (t[i] in CLOSE) - (t[i] in OPEN)
-        if depth == 0:
-            return i
-    return 0
-
-
-def name_char(t: str, i: int) -> bool:
-    c = t[i]
-    return c.isalnum() or c in "_'?.·" or c == "!" and i > 0 and t[i - 1].isalnum()
-
-
-def atom_before(t: str, j: int, lo: int) -> int | None:
-    """The start of the atom (a dotted name, or a bracket group with any dotted names after it) that ends at j."""
-    i = j
-    while i > lo and name_char(t, i - 1):
-        i -= 1
-    if i > lo and t[i - 1] in CLOSE and (i == j or t[i] == "."):
-        i = group_start(t, i)
-    return i if i < j and t[i] != "." else None
-
-
-def atom_after(t: str, i: int, hi: int) -> int:
-    """The end of the atom starting at t[i] (i itself when there is none)."""
-    j = group_end(t, i) if t[i] in OPEN else i
-    while j < hi and name_char(t, j):
-        j += 1
-    word = t[i:j]
-    return i if word in STOP_WORDS or word.startswith(".") else min(j, hi)
-
-
-def application_after(t: str, i: int, hi: int) -> int:
-    """The end of an atom and the arguments applied to it on its line."""
-    j = atom_after(t, i, hi)
-    while j > i and j + 1 < hi and t[j] == " " and (k := atom_after(t, j + 1, hi)) > j + 1:
-        j = k
-    return j
+            return j + (step > 0)
+        j += step
+    return len(t) if step > 0 else 0
 
 
 def depth0(t: str, lo: int, hi: int, pattern: str) -> int | None:
@@ -167,97 +116,105 @@ def depth0(t: str, lo: int, hi: int, pattern: str) -> int | None:
     return None
 
 
+def name_char(t: str, i: int) -> bool:
+    return t[i].isalnum() or t[i] in "_'?.·" or t[i] == "!" and i > 0 and t[i - 1].isalnum()
+
+
+def atom_before(t: str, j: int, lo: int) -> int | None:
+    """The start of the dotted name, or bracket group with dotted names after it, that ends at j."""
+    i = j
+    while i > lo and name_char(t, i - 1):
+        i -= 1
+    if i > lo and t[i - 1] in CLOSE and (i == j or t[i] == "."):
+        i = group(t, i - 1, -1)
+    return i if i < j and t[i] != "." else None
+
+
+def atom_after(t: str, i: int, hi: int, args: bool = True) -> int:
+    """The end of the atom at t[i] and (with `args`) the arguments applied to it on its line; i when there is none."""
+    j = group(t, i) if t[i] in OPEN else i
+    while j < hi and name_char(t, j):
+        j += 1
+    if t[i:j] in STOP or t[i:j].startswith("."):
+        return i
+    while args and j + 1 < hi and t[j] == " " and (k := atom_after(t, j + 1, hi, False)) > j + 1:
+        j = k
+    return min(j, hi)
+
+
 def cut(atom: str, chain: str | None) -> str:
     if chain is None:
         return "[]"
-    single = re.fullmatch(r"[\w'?.!]+", atom) or atom[0] in OPEN and group_end(atom, 0) == len(atom)
+    single = re.fullmatch(r"[\w'?.!]+", atom) or atom[0] in OPEN and group(atom, 0) == len(atom)
     return f"({atom}{chain})" if single else f"(({atom}){chain})"
 
 
 def mutants(text: str, kind: str, lo: int, hi: int) -> list[tuple[str, int, int, str]]:
-    """(operator, start, end, replacement) for one declaration at text[lo:hi]."""
-    t = code_only(text)
-    out = [(op, lo + m.start(), lo + m.end(), new) for op, pattern, new in TOKENS
-           for m in re.finditer(pattern, t[lo:hi])]
+    """(operator, start, end, replacement) for the declaration at text[lo:hi]."""
+    t, code = code_only(text), code_only(text)[lo:hi]
+    out = [(op, lo + m.start(), lo + m.end(), new) for op, pattern, new in TOKENS for m in re.finditer(pattern, code)]
     out += [("bool-flip", lo + m.start(), lo + m.end(), BOOLS[m[0]])
-            for m in re.finditer(r"(?<![\w.'])(?:true|false|True|False)(?![\w'])", t[lo:hi])]
-    for m in re.finditer(r"(?<![\w.'])\d+(?![\w.])", t[lo:hi]):
-        out.append(("lit-plus", lo + m.start(), lo + m.end(), str(int(m[0]) + 1)))
-        if int(m[0]):
-            out.append(("lit-minus", lo + m.start(), lo + m.end(), str(int(m[0]) - 1)))
+            for m in re.finditer(r"(?<![\w.'])(?:true|false|True|False)(?![\w'])", code)]
+    for m in re.finditer(r"(?<![\w.'])\d+(?![\w.])", code):
+        out += [(op, lo + m.start(), lo + m.end(), str(int(m[0]) + d)) for op, d in (("lit-plus", 1), ("lit-minus", -1))
+                if int(m[0]) + d >= 0]
     lists: list[tuple[int, int]] = []
-    if kind in ("def", "instance", "opaque"):
-        assign = depth0(t, lo, hi, r":=")
-        arm = re.search(r"(?m)^\s*\|", t[lo:hi])
-        head_end = min(x for x in (assign, lo + arm.start() if arm else None, hi) if x is not None)
-        colon, depth = None, 0
-        for i in range(lo, head_end):
-            depth += (t[i] in OPEN) - (t[i] in CLOSE)
-            colon = i if depth == 0 and t[i] == ":" and t[i + 1] != "=" else colon
-        result = re.split(r"→|->", t[colon + 1:head_end])[-1].strip() if colon is not None else ""
-        consts = {"Prop": ("True", "False"), "Bool": ("true", "false")}.get(result)
-        if assign is not None and (arm is None or assign < lo + arm.start()):
-            stop = depth0(t, assign, hi, r"\b(?:where|termination_by|decreasing_by)\b") or hi
-            body = (assign + 2 + len(t[assign + 2:stop]) - len(t[assign + 2:stop].lstrip()), stop)
-            body = (body[0], body[0] + len(t[body[0]:stop].rstrip()))
+    assign, arm = depth0(t, lo, hi, ":="), re.search(r"(?m)^\s*\|", code)
+    head = min(x for x in (assign, lo + arm.start() if arm else None, hi) if x is not None)
+    colon, depth = None, 0
+    for i in range(lo, head):
+        depth += (t[i] in OPEN) - (t[i] in CLOSE)
+        colon = i if depth == 0 and t[i] == ":" and t[i + 1] != "=" else colon
+    result = re.split("→|->", t[colon + 1:head])[-1].strip() if kind == "def" and colon is not None else ""
+    consts = {"Prop": ("True", "False"), "Bool": ("true", "false")}.get(result)
+    if result and assign == head:  # a body: `:= ...`
+        end = depth0(t, assign, hi, r"\b(?:where|termination_by|decreasing_by)\b") or hi
+        rest = t[assign + 2:end]
+        body = (assign + 2 + len(rest) - len(rest.lstrip()), assign + 2 + len(rest.rstrip()))
+        out += [("body-true", *body, consts[0]), ("body-false", *body, consts[1])] if consts else []
+        lists += [body] if result.startswith("List") else []
+    elif result and arm:  # arms: `| pattern => result`
+        starts = [lo + a.start() for a in re.finditer(r"(?m)^[ \t]*\|", code)]
+        arms = []
+        for a, b in zip(starts, [*starts[1:], hi]):
+            if (arrow := depth0(t, a + t[a:b].index("|") + 1, b, "=>")) is not None:
+                rhs = t[arrow + 2:b]
+                arms.append((t[a:arrow], arrow + 2 + len(rhs) - len(rhs.lstrip()), arrow + 2 + len(rhs.rstrip())))
+        default = arms[-1] if arms and re.fullmatch(r"\s*\|[\s_,]*", arms[-1][0]) else None
+        for _, s, e in arms:
             if consts:
-                out += [("body-true", *body, consts[0]), ("body-false", *body, consts[1])]
-            if result.startswith("List") and body[0] < body[1]:
-                lists.append(body)
-        elif arm is not None:
-            arms = [lo + a.start() for a in re.finditer(r"(?m)^[ \t]*\|", t[lo:hi])]
-            spans = []
-            for a, b in zip(arms, [*arms[1:], hi]):
-                arrow = depth0(t, a + t[a:b].index("|") + 1, b, r"=>")
-                if arrow is not None:
-                    rhs = t[arrow + 2:b]
-                    spans.append((t[a:arrow], arrow + 2 + len(rhs) - len(rhs.lstrip()), arrow + 2 + len(rhs.rstrip())))
-            default = spans[-1] if spans and re.fullmatch(r"\s*\|[\s_,]*", spans[-1][0]) else None
-            for pattern, s, e in spans:
-                if consts:
-                    out += [("arm-true", s, e, consts[0]), ("arm-false", s, e, consts[1])]
-                elif default and (s, e) != default[1:]:
-                    out.append(("arm-default", s, e, text[default[1]:default[2]]))
-    for m in re.finditer(r"\.(" + "|".join(re.escape(x) for x in LIST_METHODS) + r")(?![\w?!'])", t[lo:hi]):
-        dot = lo + m.start()
-        start = atom_before(t, dot, lo)
-        if start is not None:
-            lists.append((start, dot))
-            if m[1] in LIST_RESULTS:
-                lists.append((start, application_after(t, start, hi)))
-    for m in re.finditer(r"\bfor \w+ in ", t[lo:hi]):
-        s = lo + m.end()
-        e = t.find(" do", s, hi)
-        if e > s:
-            lists.append((s, e))
-    for m in re.finditer(r" \+\+ ", t[lo:hi]):
+                out += [("arm-true", s, e, consts[0]), ("arm-false", s, e, consts[1])]
+            elif default and (s, e) != default[1:]:
+                out.append(("arm-default", s, e, text[default[1]:default[2]]))
+    for m in re.finditer(rf"\.({LIST_METHODS})(?![\w?!'])", code):  # a list method's receiver and list result
+        if (start := atom_before(t, lo + m.start(), lo)) is not None:
+            lists += [(start, lo + m.start())] + ([(start, atom_after(t, start, hi))] if m[1] in LIST_RESULTS else [])
+    lists += [(lo + m.end(), e) for m in re.finditer(r"\bfor \w+ in ", code)
+              if (e := t.find(" do", lo + m.end(), hi)) > 0]
+    for m in re.finditer(r" \+\+ ", code):
         op = lo + m.start()
-        left, right = atom_before(t, op, lo), application_after(t, op + 4, hi)
+        left, right = atom_before(t, op, lo), atom_after(t, op + 4, hi)
         if left is not None and right > op + 4:
             lists += [(left, op), (op + 4, right)]
             out += [("append-left", op, right, ""), ("append-right", left, op + 4, "")]
-    for m in re.finditer(r"(?<![\w'?!)\]@#])\[(?!\])", t[lo:hi]):
-        lists.append((lo + m.start(), group_end(t, lo + m.start())))
-    sites = set(lists)
+    lists += [(lo + m.start(), group(t, lo + m.start())) for m in re.finditer(r"(?<![\w'?!)\]@#])\[(?!\])", code)]
     for s, e in dict.fromkeys(lists):
         atom = text[s:e]
-        if t[s] == "(" and (s + 1, e - 1) in sites:  # `(xs)` is the list `xs`
+        if t[s] == "(" and (s + 1, e - 1) in lists or not atom.strip():  # `(xs)` is the list `xs`
             continue
-        if atom.startswith("·") and s > 0 and t[s - 1] == "(":  # `(·.head.contains a)`: name the argument first
-            for op, chain in CUTS.items():
-                out.append((op, s - 1, e, f"(fun x_tm => {cut('x_tm' + atom[1:], chain)}"))
-        elif not atom.startswith("·") and atom.strip():
-            one = t[s] == "[" and group_end(t, s) == e and depth0(t, s + 1, e - 1, ",") is None
-            out += [(op, s, e, cut(atom, chain)) for op, chain in CUTS.items()  # `[x].take 1` is `[x]`
-                    if not (one and op in ("list-first", "list-last"))]
-    seen, kept = set(), []
+        if atom.startswith("·"):  # `(·.head.contains a)`: the argument is named first
+            out += [(op, s - 1, e, f"(fun x_tm => {cut('x_tm' + atom[1:], chain)}") for op, chain in CUTS.items()
+                    if t[s - 1] == "("]
+            continue
+        one = t[s] == "[" and group(t, s) == e and depth0(t, s + 1, e - 1, ",") is None
+        out += [(op, s, e, cut(atom, chain)) for op, chain in CUTS.items()
+                if not (one and op in ("list-first", "list-last"))]  # `[x].take 1` is `[x]`
+    kept: dict[tuple[int, int, str], str] = {}
     for op, s, e, new in out:
-        old = text[s:e]
-        new += "\n" * (old.count("\n") - new.count("\n"))  # keep every line where it was
-        if new != old and (s, e, new) not in seen:
-            seen.add((s, e, new))
-            kept.append((op, s, e, new))
-    return kept
+        new += "\n" * (text.count("\n", s, e) - new.count("\n"))  # every line stays where it was
+        if new != text[s:e]:
+            kept.setdefault((s, e, new), op)
+    return [(op, s, e, new) for (s, e, new), op in kept.items()]
 
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess:
@@ -265,76 +222,69 @@ def git(root: Path, *args: str) -> subprocess.CompletedProcess:
 
 
 def changed_lines(root: Path, base: str) -> dict[str, set[int]]:
-    """For each Lean file under lean/ that differs from `base`, the lines of the tree's file that differ (a line
-    next to a deletion counts), as difflib finds them; keys are paths under lean/."""
+    """The lines of each file under lean/ that differ from `base` (difflib's; a line next to a deletion counts)."""
     names = git(root, "diff", "--name-only", "-z", base, "--", "lean").stdout.split("\0")
     names += git(root, "ls-files", "--others", "--exclude-standard", "-z", "--", "lean").stdout.split("\0")
     out: dict[str, set[int]] = {}
     for name in sorted({n for n in names if n.endswith(".lean") and (root / n).is_file()}):
         old = git(root, "show", f"{base}:{name}")
-        new_lines = (root / name).read_text().split("\n")
-        old_lines = old.stdout.split("\n") if old.returncode == 0 else []
-        lines = set()
-        for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old_lines, new_lines, autojunk=False).get_opcodes():
-            if tag != "equal":
-                lines |= set(range(j1 + 1, j2 + 1)) if j2 > j1 else {j1, j1 + 1}
-        out[name.removeprefix("lean/")] = lines
+        matcher = difflib.SequenceMatcher(None, old.stdout.split("\n") if old.returncode == 0 else [],
+                                          (root / name).read_text().split("\n"), autojunk=False)
+        out[name.removeprefix("lean/")] = {n for tag, _, _, j1, j2 in matcher.get_opcodes() if tag != "equal"
+                                           for n in (range(j1 + 1, j2 + 1) if j2 > j1 else (j1, j1 + 1))}
     return out
 
 
 @dataclass
 class Tree:
-    roles: dict[str, list[tuple[int, int, str, str | None]]]  # file -> (first line, last, check|theorem|other, name)
-    uses: dict[str, set[tuple[str, str]] | None]  # theorem -> the constants its statement uses (lean/statements.txt)
+    roles: dict[str, list[tuple[int, int, str, str | None]]]  # file -> (first, last line, check|theorem|other, name)
+    uses: dict[str, set[tuple[str, str]] | None]  # theorem -> the constants its statement uses
     files: dict[str, str]  # module -> file under lean/
-    importers: dict[str, set[str]]  # module -> the modules that import it
+    importers: dict[str, set[str]]
 
 
 def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
-    """The mutants of every selected definition (module docstring), the tree's checks and imports, and the fatal
-    problems."""
+    """The mutants in run order, the tree's checks and imports, and the problems that stop the run."""
     classified, _, problems = trust_map.walk(root, root / "tools/trust-classes.json", root / "lean/statements.txt")
     declared, hashes = declaration_list(root / "lean/declarations.txt")
     changed = changed_lines(root, base)
-    fatal = [f"lean/declarations.txt was not compiled from lean/{f}; rerun tools/lean_statements.py"
-             for f in changed if hashes.get(module_name(f)) != source_hash(root / "lean" / f)]
-    texts = {f: (root / "lean" / f).read_text() for f in {c.module for c in classified}}
+    fatal = [p for p in problems if "not compiled from this source" in p or "missing" in p]
+    fatal += [f"lean/declarations.txt was not compiled from lean/{f}; rerun tools/lean_statements.py"
+              for f in changed if hashes.get(module_name(f)) != source_hash(root / "lean" / f)]
+    texts = {c.module: (root / "lean" / c.module).read_text() for c in classified}
     masked = {f: code_only(text).split("\n") for f, text in texts.items()}
-    roles: dict[str, list[tuple[int, int, str, str | None]]] = {}
-    found: list[tuple[int, int, Mutant]] = []
+    roles: dict[str, list] = {}
+    found: list[Mutant] = []
     for c in classified:
-        d = c.decl
+        d, text = c.decl, texts[c.module]
         span = "\n".join(masked[c.module][d.start - 1:d.end])
         check = d.kind == "command" and CHECK_COMMAND.search(span) or d.kind == "theorem" and CHECK_PROOF.search(span)
-        roles.setdefault(c.module, []).append((d.start, d.end, "check" if check else
-                                               "theorem" if d.kind == "theorem" else "other", d.name))
+        roles.setdefault(c.module, []).append((d.start, d.end, "check" if check else "theorem" if d.kind == "theorem"
+                                               else "other", d.name))
+        lines = changed.get(c.module, set())
         if not (c.trusted and d.name and d.kind not in ("theorem", "command", "unrecorded")
-                and changed.get(c.module, set()) & set(range(d.start, d.end + 1))):
+                and lines & set(range(d.start, d.end + 1))):
             continue
         ranged = [x for x in declared.get(module_name(c.module), []) if x.name == d.name and x.start]
         if not ranged:
             fatal.append(f"lean/{c.module}: {d.name} has no compiled range; rerun tools/lean_statements.py")
             continue
-        text = texts[c.module]
         starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n")]
-        lo = starts[ranged[0].start[0] - 1] + ranged[0].start[1]
-        hi = starts[ranged[0].end[0] - 1] + ranged[0].end[1]
-        for op, s, e, new in sorted(mutants(text, d.kind, lo, hi), key=lambda x: x[1]):
-            first = text.count("\n", 0, s) + 1  # a definition the base has too is mutated on its changed lines only
-            if changed[c.module] & set(range(first, first + text.count("\n", s, e) + 1)):
-                    found.append(Mutant("", c.module, first, d.name, op, s, e, (ranged[0].start[0], ranged[0].end[0]),
-                                    text[s:e], new))
-    # Round robin: each tier in turn; in a tier, the k-th mutant of every (definition, operator) before any k+1-th.
-    seen: dict[tuple[str, str], int] = {}
-    keyed = []
+        r = ranged[0]
+        for op, s, e, new in sorted(mutants(text, d.kind, starts[r.start[0] - 1] + r.start[1],
+                                            starts[r.end[0] - 1] + r.end[1]), key=lambda x: x[1]):
+            first = text.count("\n", 0, s) + 1
+            if lines & set(range(first, first + text.count("\n", s, e) + 1)):
+                found.append(Mutant("", c.module, first, d.name, op, s, e, (r.start[0], r.end[0]), text[s:e], new))
+    seen: Counter = Counter()  # each tier in turn; in it, the k-th of every (definition, operator) first
+    keys = []
     for i, m in enumerate(found):
-        k = seen[(m.definition, m.operator)] = seen.get((m.definition, m.operator), -1) + 1
-        keyed.append(((OPERATORS[m.operator], k, list(OPERATORS).index(m.operator), i), m))
-    out = [m for _, m in sorted(keyed, key=lambda x: x[0])]
+        keys.append((OPERATORS[m.operator], seen[m.definition, m.operator], list(OPERATORS).index(m.operator), i))
+        seen[m.definition, m.operator] += 1
+    out = [m for _, m in sorted(zip(keys, found), key=lambda x: x[0])]
     for i, m in enumerate(out, 1):
         m.id = f"M{i:03d}"
-    importers: dict[str, set[str]] = {}
-    files = {}
+    files, importers = {}, {}
     for path in sources(root):
         key = path.relative_to(root / "lean").as_posix()
         files[module_name(key)] = key
@@ -343,20 +293,7 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
                 importers.setdefault(imported, set()).add(module_name(key))
         except ValueError as error:
             fatal.append(f"lean/{key}: {error}")
-    if any("not compiled from this source" in p or "missing" in p for p in problems):
-        fatal += [p for p in problems if "not compiled from this source" in p or "missing" in p]
     return out, Tree(roles, trust_map.statements(root / "lean/statements.txt"), files, importers), fatal
-
-
-def cone(tree: Tree, module: str) -> set[str]:
-    """`module` and every module that imports it, directly or not."""
-    out, todo = {module}, [module]
-    while todo:
-        for importer in tree.importers.get(todo.pop(), ()):
-            if importer not in out:
-                out.add(importer)
-                todo.append(importer)
-    return out
 
 
 def stated(tree: Tree, theorem: str | None, m: Mutant) -> bool:
@@ -364,63 +301,21 @@ def stated(tree: Tree, theorem: str | None, m: Mutant) -> bool:
 
 
 def targets(tree: Tree, m: Mutant, tests: list[str], deep: bool = False) -> list[str]:
-    """The mutated module, the --test modules, and the modules of its cone that hold checks for it: a theorem whose
-    statement uses it, and every other check in a module of its directory (with `deep`, of the whole cone)."""
+    """The mutated module, then the --test modules and the modules of its cone that hold checks for it."""
     module, home = module_name(m.file), m.file.rpartition("/")[0]
-    checks = {x for x in cone(tree, module) for s, e, r, n in tree.roles.get(tree.files[x], ())
+    cone, todo = {module}, [module]
+    while todo:
+        new = tree.importers.get(todo.pop(), set()) - cone
+        cone |= new
+        todo += new
+    checks = {x for x in cone for s, e, r, n in tree.roles.get(tree.files[x], ())
               if r == "check" and (deep or tree.files[x].rpartition("/")[0] == home)
               or r == "theorem" and stated(tree, n, m)}
-    return [module, *sorted((checks | {module_name(t) for t in tests if module_name(t) in tree.files}) - {module})]
-
-
-class Scratch:
-    """A private copy of lean/ (sources and build, never the checkout's files) that mutants are built in."""
-
-    def __init__(self, lean: Path, parent: Path, source: "Scratch | None" = None):
-        self.lean = Path(tempfile.mkdtemp(prefix="lean-", dir=parent))
-        self.lean.rmdir()
-        if source is not None:  # another scratch: its .olean files are linked (Lake replaces them by renaming)
-            shutil.copytree(source.lean, self.lean, symlinks=True, copy_function=lambda s, d: os.link(s, d)
-                            if s.endswith(".olean") else shutil.copy2(s, d))
-            self.seeded = "cloned"
-            return
-        shutil.copytree(lean, self.lean, symlinks=True, ignore=shutil.ignore_patterns(".lake", ".cache"))
-        self.seeded = self._restore(lean) or self._copy(lean)
-
-    def _restore(self, lean: Path) -> str | None:
-        """lean_share's checked build of this tree, without its executables; None when there is none."""
-        store = lean_share.default_store()
-        try:
-            entry = store / "v1" / lean_share.entry_id(lean_share.key(lean))
-            seal = lean_share.check_entry(entry)
-        except (lean_share.Refused, OSError, RuntimeError, TypeError, subprocess.SubprocessError):
-            return None
-        for name, record in seal["files"].items():
-            if not name.startswith("build/bin/"):
-                target = self.lean / ".lake" / name
-                if not lean_share._place(entry / "lake" / name, target, record["link"]):
-                    os.chmod(target, record["mode"] | 0o200)
-        return f"restored {entry.name[:16]}"
-
-    def _copy(self, lean: Path) -> str:
-        if (lean / ".lake").is_dir():
-            shutil.copytree(lean / ".lake", self.lean / ".lake", symlinks=True,
-                            ignore=lambda d, names: ["bin"] if Path(d).name == "build" else [])
-        return "copied lean/.lake"
-
-    def build(self, modules: list[str], env: dict) -> tuple[int, str]:
-        done = subprocess.run([lake_outputs.lean_executable(env, "lake"), "build", *(f"+{m}" for m in modules)],
-                              cwd=self.lean, env=env, capture_output=True, text=True, check=False)
-        return done.returncode, done.stdout + done.stderr
-
-    def elaborate(self, file: Path, env: dict) -> int:
-        return subprocess.run([lake_outputs.lean_executable(env, "lake"), "env", "lean", str(file)], cwd=self.lean,
-                              env=env, capture_output=True, check=False).returncode
+    return [module, *sorted((checks | {module_name(t) for t in tests}) - {module})]
 
 
 def role(tree: Tree, file: str, line: int, m: Mutant) -> str:
-    """check, proof or other: a theorem is a check when its statement uses the mutated definition and it is not in
-    the mutated module (a failing proof script there is no kill), else a proof, whose failure is cut."""
+    """check, proof or other; a theorem whose statement uses the definition is a check outside the mutated module."""
     for s, e, r, name in tree.roles.get(file, ()):
         if s <= line <= e:
             return r if r != "theorem" else "check" if file != m.file and stated(tree, name, m) else "proof"
@@ -428,90 +323,90 @@ def role(tree: Tree, file: str, line: int, m: Mutant) -> str:
 
 
 def cut_proof(path: Path, first: int, last: int) -> bool:
-    """Replace the proof of the theorem on lines first..last of `path` by `sorry`, keeping every line."""
+    """The theorem on lines first..last of `path` with its proof replaced by `sorry`, every line kept."""
     text = path.read_text()
     starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n"), len(text) + 1]
-    lo, hi = starts[first - 1], starts[min(last, len(starts) - 1)] - 1
-    t = code_only(text)
+    lo, hi, t = starts[first - 1], starts[min(last, len(starts) - 1)] - 1, code_only(text)
     arm = re.search(r"(?m)^\s*\|", t[lo:hi])
-    found = [x for x in (depth0(t, lo, hi, r":="), lo + arm.start() if arm else None) if x is not None]
-    if not found:
-        return False
-    at = min(found)
-    path.write_text(text[:at] + " := sorry" + "\n" * text.count("\n", at, hi) + text[hi:])
-    return True
+    found = [x for x in (depth0(t, lo, hi, ":="), lo + arm.start() if arm else None) if x is not None]
+    if found:
+        path.write_text(text[:min(found)] + " := sorry" + "\n" * text.count("\n", min(found), hi) + text[hi:])
+    return bool(found)
+
+
+class Scratch:
+    """A private copy of lean/, sources and build, that mutants are built in; the checkout is only read."""
+
+    def __init__(self, lean: Path, parent: Path, source: Scratch | None = None):
+        self.lean = Path(tempfile.mkdtemp(prefix="lean-", dir=parent)) / "lean"
+        if source:  # another scratch's .olean files are linked: Lake replaces them by renaming, never in place
+            shutil.copytree(source.lean, self.lean, symlinks=True,
+                            copy_function=lambda s, d: os.link(s, d) if s.endswith(".olean") else shutil.copy2(s, d))
+            return
+        shutil.copytree(lean, self.lean, symlinks=True, ignore=shutil.ignore_patterns(".lake", ".cache"))
+        try:  # lean_share's checked build of this tree, without its executables
+            entry = lean_share.default_store() / "v1" / lean_share.entry_id(lean_share.key(lean))
+            for name, record in lean_share.check_entry(entry)["files"].items():
+                if not name.startswith("build/bin/") and not lean_share._place(
+                        entry / "lake" / name, self.lean / ".lake" / name, record["link"]):
+                    os.chmod(self.lean / ".lake" / name, record["mode"] | 0o200)
+        except (lean_share.Refused, OSError, RuntimeError, TypeError, subprocess.SubprocessError):
+            shutil.rmtree(self.lean / ".lake", ignore_errors=True)
+            if (lean / ".lake").is_dir():
+                shutil.copytree(lean / ".lake", self.lean / ".lake", symlinks=True,
+                                ignore=lambda d, names: ["bin"] if Path(d).name == "build" else [])
+
+    def lake(self, env: dict, *args: str) -> tuple[int, str]:
+        done = subprocess.run([lake_outputs.lean_executable(env, "lake"), *args], cwd=self.lean, env=env,
+                              capture_output=True, text=True, check=False)
+        return done.returncode, done.stdout + done.stderr
 
 
 def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list[Path], env: dict,
         deep: bool = False) -> tuple[str, str]:
     """(status, detail) of one mutant, built in `scratch`, whose files are restored afterwards."""
     touched: dict[Path, bytes] = {}
-
-    def keep(path: Path) -> Path:
-        touched.setdefault(path, path.read_bytes())
-        return path
-
-    path = keep(scratch.lean / m.file)
-    text = path.read_text()
-    path.write_text(text[:m.start] + m.after + text[m.end:])
-    # No proof in the mutated module is a check (`role`), so none is elaborated (lines kept, so roles still hold).
-    for first, last, r, _ in sorted(tree.roles[m.file], reverse=True):
-        if r == "theorem" and not first <= m.line <= last:
-            cut_proof(path, first, last)
     cut: set[tuple[str, int]] = set()
     built = targets(tree, m, tests, deep)
     try:
+        path = scratch.lean / m.file
+        touched[path] = path.read_bytes()
+        text = path.read_text()
+        path.write_text(text[:m.start] + m.after + text[m.end:])
+        for first, last, r, _ in sorted(tree.roles[m.file], reverse=True):
+            if r == "theorem" and not first <= m.line <= last:
+                cut_proof(path, first, last)
         for stage in (built[:1], built[1:]):  # the mutated module alone first: most mutants end there
             for _ in range(8):
-                code, output = scratch.build(stage, env) if stage else (0, "")
+                code, output = scratch.lake(env, "build", *(f"+{x}" for x in stage)) if stage else (0, "")
                 if code == 0:
                     break
-                errors = [(f, int(n), message) for f, n, message in ERROR.findall(output)]
-                if not errors:
+                found = [(f, int(n), message, role(tree, f, int(n), m)) for f, n, message in ERROR.findall(output)]
+                if not found:
                     return "UNKNOWN", "the build failed with no located error: " + output[-300:]
-                found = [(f, n, message, role(tree, f, n, m)) for f, n, message in errors]
                 for f, n, message, r in found:
                     if f == m.file and m.lines[0] <= n <= m.lines[1]:
                         return "INVALID", message[:200]
                 for f, n, message, r in found:
-                    if r == "check" or module_name(f) in map(module_name, tests):
+                    if r == "check" or f in tests:
                         return "KILLED", f"lean/{f}:{n}: {message[:120]}"
                 proofs = {(f, s, e) for f, n, _, r in found if r == "proof"
                           for s, e, *_ in tree.roles[f] if s <= n <= e}
-                other = [(f, n, message) for f, n, message, r in found if r != "proof"]
-                if other or not proofs or {(f, s) for f, s, _ in proofs} <= cut:
-                    f, n, message = (other or errors)[0]
+                if (other := [x for x in found if x[3] != "proof"]) or not proofs or {p[:2] for p in proofs} <= cut:
+                    f, n, message, _ = (other or found)[0]
                     return "UNKNOWN", f"lean/{f}:{n}: {message[:200]}"
-                for f, s, e in proofs:
-                    if (f, s) not in cut and not cut_proof(keep(scratch.lean / f), s, e):
+                for f, s, e in proofs - {p for p in proofs if p[:2] in cut}:
+                    touched.setdefault(scratch.lean / f, (scratch.lean / f).read_bytes())
+                    if not cut_proof(scratch.lean / f, s, e):
                         return "UNKNOWN", f"lean/{f}:{s}: the failing proof cannot be cut"
                     cut.add((f, s))
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
-        for test in outside:
-            if scratch.elaborate(test, env):
-                return "KILLED", f"{test} fails"
-        return "SURVIVOR", ""
+        failing = [test for test in outside if scratch.lake(env, "env", "lean", str(test))[0]]
+        return ("KILLED", f"{failing[0]} fails") if failing else ("SURVIVOR", "")
     finally:
         for p, data in touched.items():
             p.write_bytes(data)
-
-
-def load_allow(path: Path | None) -> dict[tuple[str, str], str]:
-    if path is None:
-        return {}
-    entries = json.loads(path.read_text()).get("allow")
-    if not isinstance(entries, list):
-        raise SystemExit(f"{path}: expected {{\"allow\": [...]}}")
-    out = {}
-    for entry in entries:
-        if not isinstance(entry, dict) or set(entry) != {"definition", "operator", "reason"} \
-                or not all(isinstance(entry[k], str) and entry[k].strip() for k in entry) \
-                or "\n" in entry["reason"] or entry["operator"] not in OPERATORS:
-            raise SystemExit(f"{path}: each entry is {{definition, operator (one of OPERATORS), reason: one line}}: "
-                             f"{entry!r}")
-        out[(entry["definition"], entry["operator"])] = entry["reason"]
-    return out
 
 
 def show(text: str) -> str:
@@ -521,26 +416,29 @@ def show(text: str) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--base", help="the commit the tree is compared with (default: merge base of HEAD and main)")
+    parser.add_argument("--base", help="the commit compared with (default: the merge base of HEAD and main)")
     parser.add_argument("--root", type=Path, default=ROOT, help="the checkout (default: this one); only read")
     parser.add_argument("--jobs", type=int, help="mutants built at once (default: min(8, cores - 5-min load))")
     parser.add_argument("--max-mutants", type=int, default=60)
-    parser.add_argument("--test", action="append", default=[], help="a Lean file (path under lean/ or the "
-                        "checkout) that must fail for a kill too; repeatable")
-    parser.add_argument("--deep", action="store_true", help="build every check module that imports the mutated "
-                        "one, not only those of its directory")
+    parser.add_argument("--test", action="append", default=[], help="a Lean file that must fail for a kill too")
+    parser.add_argument("--deep", action="store_true", help="every check module of the cone, not only its directory's")
     parser.add_argument("--allow", type=Path)
     parser.add_argument("--json", type=Path)
     args = parser.parse_args(argv)
     root = args.root.resolve()
-    allow = load_allow(args.allow)
+    entries = json.loads(args.allow.read_text()).get("allow") if args.allow else []
+    if not isinstance(entries, list) or not all(
+            isinstance(e, dict) and set(e) == {"definition", "operator", "reason"} and e["operator"] in OPERATORS
+            and all(isinstance(v, str) and v.strip() and "\n" not in v for v in e.values()) for e in entries):
+        return print('--allow: {"allow": [{"definition", "operator", "reason": one line}, ...]}', file=sys.stderr) or 2
+    allow = {(e["definition"], e["operator"]): e["reason"] for e in entries}
     base = args.base or git(root, "merge-base", "HEAD", "main").stdout.strip()
     if not base or git(root, "rev-parse", "--verify", "-q", base + "^{commit}").returncode:
         return print(f"no base commit {base!r}", file=sys.stderr) or 2
     tests = [t.removeprefix("lean/") for t in args.test if (root / "lean" / t.removeprefix("lean/")).is_file()]
     outside = [(root / t).resolve() for t in args.test if t.removeprefix("lean/") not in tests]
-    if missing := [t for t in outside if not t.is_file() or t.suffix != ".lean"]:
-        return print(f"--test: no Lean file {missing}", file=sys.stderr) or 2
+    if bad := [t for t in [*outside, *(root / "lean" / t for t in tests)] if t.suffix != ".lean" or not t.is_file()]:
+        return print(f"--test: not a Lean file: {bad}", file=sys.stderr) or 2
     started = time.monotonic()
     found, tree, fatal = plan(root, base)
     if fatal:
@@ -549,55 +447,49 @@ def main(argv: list[str] | None = None) -> int:
     run_now, not_run = found[:max(0, args.max_mutants)], found[max(0, args.max_mutants):]
     env = {**os.environ, "PATH": f"{Path.home() / '.elan/bin'}{os.pathsep}{os.environ.get('PATH', '')}"}
     definitions = sorted({(m.file, m.definition) for m in found})
-    print(f"trust_mutants: {len(definitions)} definitions, {len(found)} mutants ({len(run_now)} to run), "
-          f"{jobs} jobs, base {base[:12]}", flush=True)
+    print(f"trust_mutants: {len(definitions)} definitions, {len(found)} mutants ({len(run_now)} to run), {jobs} jobs, "
+          f"base {base[:12]}", flush=True)
     with tempfile.TemporaryDirectory(prefix="trust-mutants-") as scratch_dir:
         pool: queue.Queue = queue.Queue()
         if run_now:
             first = Scratch(root / "lean", Path(scratch_dir))
-            modules = sorted({t for m in run_now for t in targets(tree, m, tests, args.deep)})
-            code, output = first.build(modules, env)
-            failing = [t for t in outside if first.elaborate(t, env)]
+            code, output = first.lake(env, "build", *sorted({f"+{x}" for m in run_now for x in targets(tree, m, tests,
+                                                                                                    args.deep)}))
+            failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
             if code or failing:
-                print(f"the checks fail without a mutant ({first.seeded}):\n{output[-3000:]}{failing}",
-                      file=sys.stderr)
-                return 2
+                return print(f"the checks fail without a mutant:\n{output[-3000:]}{failing}", file=sys.stderr) or 2
             pool.put(first)
             for _ in range(min(jobs, len(run_now)) - 1):
                 pool.put(Scratch(root / "lean", Path(scratch_dir), first))
 
-        def one(m: Mutant) -> Mutant:
+        def one(m: Mutant) -> None:
             scratch = pool.get()
             try:
                 m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep)
             finally:
                 pool.put(scratch)
-            return m
+            if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
+                m.status, m.detail = "ALLOWED", allow[(m.definition, m.operator)]
+            if m.status in ("SURVIVOR", "UNKNOWN"):
+                print(f"{m.status} lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> "
+                      f"{show(m.after)}{' (' + show(m.detail) + ')' if m.detail else ''}", flush=True)
 
         with ThreadPoolExecutor(max_workers=jobs) as executor:
-            for future in as_completed([executor.submit(one, m) for m in run_now]):
-                m = future.result()
-                if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
-                    m.status, m.detail = "ALLOWED", allow[(m.definition, m.operator)]
-                if m.status in ("SURVIVOR", "UNKNOWN"):
-                    print(f"{m.status} lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> "
-                          f"{show(m.after)}{' (' + show(m.detail) + ')' if m.detail else ''}", flush=True)
+            list(executor.map(one, run_now))
     for m in not_run:
         print(f"NOT RUN lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> {show(m.after)}")
-    counts = {s: sum(m.status == s for m in found) for s in
-              ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED", "NOT RUN")}
+    counts = {s: sum(m.status == s for m in found) for s in ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED",
+                                                            "NOT RUN")}
     seconds = round(time.monotonic() - started)
     print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s")
     if args.json:
         args.json.write_text(json.dumps({
             "base": git(root, "rev-parse", base).stdout.strip(), "head": git(root, "rev-parse", "HEAD").stdout.strip(),
-            "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds, "counts": counts,
-            "definitions": [f"lean/{f}: {d}" for f, d in definitions],
+            "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
+            "counts": counts, "definitions": [f"lean/{f}: {d}" for f, d in definitions],
             "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end")} for m in found]},
             indent=1, ensure_ascii=False) + "\n")
-    if counts["SURVIVOR"] or counts["UNKNOWN"]:
-        return 1
-    return 3 if not_run else 0
+    return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
 
 
 if __name__ == "__main__":
