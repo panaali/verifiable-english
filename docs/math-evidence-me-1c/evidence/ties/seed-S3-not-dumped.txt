@@ -1,0 +1,6 @@
+$ python3 tools/trust_map.py --check   # seed S3-not-dumped: renderClaim tied to spec 9's VE.Calc.English.read_render, which no Lean file states
+class lines: K 997, S 10463, D 14934, G 30866, C 10071, P 77790, T 16501, o 13578
+D/G groups: D[V] 13190, D[R] 1190, D[I] 554, G[V] 28064, G[R] 2527, G[I] 275
+tied 362, unclassified 0, trusted 52410 (K + S + untied [V] + unclassified), 175200 lines in 544 files
+VE/Calc/Render.lean: VE.Calc.English.renderClaim: tying theorem VE.Calc.English.read_render is not in statements.txt
+exit 1
