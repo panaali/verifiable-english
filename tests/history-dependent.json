@@ -137,13 +137,16 @@
   },
   {
    "test": "tests/test_b16d_document.py",
-   "why": "starts git in tests/test_b16d_document.py, tools/lean_first_diff.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_b16d_document.py, tools/lean_first_diff.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/probe_matrix.py:generate: git log",
     "tests/test_b16d_document.py:pilot_rows.<locals>.git: git",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git"
    ]
   },
@@ -710,6 +713,25 @@
     "tests/probe_matrix.py:generate: git log",
     "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_diff_cache.py",
+   "why": "starts git (git cat-file, git log, git show, git worktree) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_lean_first_diff_cache.py, tools/lean_first_cache.py, tools/lean_first_diff.py, tools/lean_share.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/probe_matrix.py:generate: git log",
+    "tests/test_lean_first_diff_cache.py:_commit.<locals>.<lambda>: git",
+    "tests/test_lean_first_diff_cache.py:test_a_base_recorded_with_an_old_pinned_build_is_not_reused.<locals>.<lambda>: git",
+    "tests/test_lean_first_diff_cache.py:test_prewarm_refuses_a_commit_without_the_cache.<locals>.<lambda>: git",
+    "tests/test_lean_first_diff_cache.py:world.<locals>.<lambda>: git",
+    "tools/lean_first_cache.py:prewarm: git worktree",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
+    "tools/lean_share.py:_git: git"
    ]
   },
   {
