@@ -104,6 +104,10 @@ removed from the definition, and M9 now targets the filter.
 
 ## Tests
 
+- Fix round 1, on `d9c4e594e` plus this report's uncommitted fix-round section: `zsh mac-pytest.sh --select --
+  --base $(git merge-base HEAD main) --run` ran 12 of 434 units on ve-mac-1: exit 0, 0 failed or error ids, 231 s.
+  `lake build` (973 jobs) and `python3 lean/audit.py` pass. The stub type-checks with 13 `sorry` warnings and no
+  errors, and `mutants.py` reports 17 of 17 mutants failing.
 - `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `92104f3e` (clean) ran on ve-mac-1:
   exit 0, 0 failed or error ids, 459 s.
 - `select_tests.py` picks 11 of 434 units for this diff (layer 5, docs), not the whole suite.
@@ -118,14 +122,16 @@ removed from the definition, and M9 now targets the filter.
   `docs/premise-packs/pk-1s/*`. No branch in `lean-first/*`, `feature/*`, `infra/*` or `foundation/*` touches them
   (`git diff --name-only main...<branch>`). No branch touches pk-1's target files either: `Layered.lean`,
   `LayeredAdmission.lean`, `UnspecifiedWire.lean`, `SoftWire.lean`, `SoftDefaults.lean`.
-- **Size.** 951 changed lines, all documents (`git diff --stat main...HEAD`):
-  - the type-checked stub, 468 lines: statements, real definitions and fixtures;
-  - the spec, 323 lines;
-  - mutants, 12 lines;
-  - this report and DELTA, 148 lines.
+- **Size.** About 1,320 changed lines after fix round 1, all documents (`git diff --stat` against the merge base
+  `802b8ff9b`):
+  - the type-checked stub, 621 lines: statements, real definitions, fixtures and the file check;
+  - the spec, 366 lines;
+  - the seeded bugs, 145 lines (`mutants.py` 126, `mutants.json` 19);
+  - this report and DELTA, about 185 lines.
 
-  This is over the ~600 guide. The stub is the deliverable the task requires. The spec cites it instead of copying
-  the Lean, which saves about 250 lines. A statement spec is not split mid-review, so no `pk-1sb` is named.
+  This is over the ~600 guide. The stub is the deliverable the task requires, and the fix round's checks (F1's
+  fixture, the file check) are in it. The spec cites it instead of copying the Lean. A statement spec is not split
+  mid-review, so no `pk-1sb` is named.
 
 ## Pilot bytes
 
