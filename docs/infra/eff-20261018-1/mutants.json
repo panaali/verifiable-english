@@ -20,7 +20,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the toolchain]"
    ],
-   "summary": "1 failed in 2.37s"
+   "summary": "1 failed in 2.33s"
   },
   {
    "mutation": "the installed toolchain not keyed",
@@ -36,7 +36,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the installed toolchain's library]"
    ],
-   "summary": "1 failed in 2.51s"
+   "summary": "1 failed in 2.37s"
   },
   {
    "mutation": "an imported module dropped from the code digest (direct imports only)",
@@ -52,7 +52,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a module imported through another]"
    ],
-   "summary": "1 failed in 3.18s"
+   "summary": "1 failed in 2.49s"
   },
   {
    "mutation": "lookup skips the re-verification of the recorded inputs",
@@ -68,7 +68,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[a Lean source's digest]"
    ],
-   "summary": "1 failed in 2.45s"
+   "summary": "1 failed in 2.33s"
   },
   {
    "mutation": "VE_RUN_CACHE=off ignored",
@@ -84,7 +84,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_off_never_reads_or_writes"
    ],
-   "summary": "1 failed in 2.31s"
+   "summary": "1 failed in 2.27s"
   },
   {
    "mutation": "temporary file named by the process alone (not unique)",
@@ -116,7 +116,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_the_store_keeps_the_newest_entries"
    ],
-   "summary": "1 failed in 0.26s"
+   "summary": "1 failed in 0.25s"
   },
   {
    "mutation": "an output's type not checked on lookup",
@@ -132,15 +132,15 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[an output not text]"
    ],
-   "summary": "1 failed in 2.33s"
+   "summary": "1 failed in 2.39s"
   },
   {
    "mutation": "a dump whose inputs changed while it ran is stored",
    "file": "tools/lean_dump_cache.py",
    "replace": [
     [
-     "if len(texts) == count and inputs(step, root, sources(), files, values, code_root) == current:",
-     "if len(texts) == count:"
+     "        unchanged = inputs(step, root, sources(), files, values, code_root) == current\n",
+     "        unchanged = True\n"
     ]
    ],
    "test": "tests/test_lean_dump_cache.py::test_a_dump_that_fails_or_whose_inputs_change_while_it_runs_is_not_stored",
@@ -148,7 +148,23 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_a_dump_that_fails_or_whose_inputs_change_while_it_runs_is_not_stored"
    ],
-   "summary": "1 failed in 2.24s"
+   "summary": "1 failed in 2.33s"
+  },
+  {
+   "mutation": "inputs that cannot be read crash the dump instead of running it",
+   "file": "tools/lean_dump_cache.py",
+   "replace": [
+    [
+     "    try:\n        current = inputs(step, root, listed, files, values, code_root)\n    except (OSError, subprocess.SubprocessError, ValueError) as error:  # no key: run as without a cache\n        print(f\"{step}: not cached: its inputs cannot be read ({error})\", file=sys.stderr)\n        return run()\n",
+     "    current = inputs(step, root, listed, files, values, code_root)\n"
+    ]
+   ],
+   "test": "tests/test_lean_dump_cache.py::test_a_tree_whose_inputs_cannot_be_read_runs_the_dump",
+   "exit": 1,
+   "failed": [
+    "FAILED tests/test_lean_dump_cache.py::test_a_tree_whose_inputs_cannot_be_read_runs_the_dump"
+   ],
+   "summary": "1 failed in 0.34s"
   },
   {
    "mutation": "a tree that runs code while it elaborates is cached",
@@ -164,7 +180,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[#eval (1 : Nat)\\n]"
    ],
-   "summary": "1 failed in 2.38s"
+   "summary": "1 failed in 2.42s"
   },
   {
    "mutation": "the plain audit run (the gate's) replays",
@@ -180,7 +196,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_only_the_explicit_audit_modes_are_cached"
    ],
-   "summary": "1 failed in 0.24s"
+   "summary": "1 failed in 0.25s"
   },
   {
    "mutation": "the audit's declaration list dropped from its key",
@@ -196,7 +212,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_the_audit_replays_lean_output_and_checks_it_as_fresh"
    ],
-   "summary": "1 failed in 18.35s"
+   "summary": "1 failed in 18.31s"
   },
   {
    "mutation": "lean_statements' command line never uses the cache",
@@ -212,7 +228,7 @@
    "failed": [
     "FAILED tests/test_lean_dump_cache.py::test_the_command_lines_use_the_cache"
    ],
-   "summary": "1 failed in 0.51s"
+   "summary": "1 failed in 0.36s"
   },
   {
    "mutation": "run_cache reads no stored entry through the shared store",
@@ -228,7 +244,8 @@
    "failed": [
     "FAILED tests/test_run_cache.py::test_changing_any_keyed_input_runs_again[recorded test file]"
    ],
-   "summary": "1 failed in 1.67s"
+   "summary": "1 failed in 1.19s"
   }
- ]
+ ],
+ "commit": "a1b4ba9ed"
 }
