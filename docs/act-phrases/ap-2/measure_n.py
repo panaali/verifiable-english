@@ -12,8 +12,10 @@ specification's stub at the pinned plan commit (draft 1; its 5.2 and 5.3 are byt
 `git show`, checked against its sha256 and elaborated once with `lake env lean` against this worktree's build.
 
 Corpus: the 22 registered phrases of `research/act-phrases/corpus.json` at the pinned commit, with their registered
-vocabularies, plus the M1 act phrases AP-0 left out (u039, u041, u082, u085, u086, u091, u106, u108). No vocabulary
-here is written by the person measuring:
+vocabularies, plus the M1 act phrases AP-0 left out (u039, u041, u082, u085, u086, u091, u106, u108). The phrases and
+fixed phrases are not written by the person measuring; the M1 frames are, by the rule below. So this is not the
+re-measurement PLAN 11's deferred item 5 asks for (vocabularies written by someone other than the person measuring),
+and the values it gives (`fixed` in the evidence: the value AP-0's rule gives) stay provisional:
 
 * phrases and fixed phrases: u039, u041, u085 and u106 are the specification's fixtures A1, A16, A2 and A3 (11.1),
   with the fixed phrases the specification declares; u082, u086, u091 and u108 are the pilot declaration of each

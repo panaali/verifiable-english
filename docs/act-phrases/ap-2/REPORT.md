@@ -29,15 +29,20 @@ this worktree, and writes [evidence/n-measurement.json](evidence/n-measurement.j
 `meaning`, so the rule table, the raw counts and the steps are draft 2's as written.
 
 - **Corpus:** the 22 registered phrases with their registered vocabularies, plus the eight M1 act phrases AP-0 left out
-  (u039, u041, u082, u085, u086, u091, u106, u108). No vocabulary was written by me. For u039, u041, u085 and u106 the
-  phrases and fixed phrases are the spec's fixtures A1, A16, A2 and A3. For u082, u086, u091 and u108 the phrase is
-  the pilot declaration of the entitlement (AP-0's re-try documents), with no fixed phrase. No pilot declares frames,
-  so each M1 row's frame comes from one rule fixed before the run (`rule_frames`): the head is the words up to the
-  first word of a closed preposition list, and every listed preposition after it is a marker. The rule has two
-  variants: as modifier markers (the most room for the edge rules) and as argument markers.
+  (u039, u041, u082, u085, u086, u091, u106, u108). I wrote no phrase or fixed phrase, but the M1 frames are mine
+  (below). For u039, u041, u085 and u106 the phrases and fixed phrases are the spec's fixtures A1, A16, A2 and A3.
+  For u082, u086, u091 and u108 the phrase is the pilot declaration of the entitlement (AP-0's re-try documents), with
+  no fixed phrase. No pilot declares frames, so each M1 row's frame comes from one rule I fixed before the run
+  (`rule_frames`): the head is the words up to the first word of a closed preposition list, and every listed
+  preposition after it is a marker. The rule has two variants: as modifier markers (the most room for the edge rules)
+  and as argument markers.
 - **Result:** 38 rows. **R = 2** (G5, G8, G9, G10, G12) ≤ 64, so **N = 256 stands**. **S = 19,184** (M082, the 265-byte
   u082 phrase), and 10 S = 191,840 ≤ 2,100,000, so **the step budget 2,100,000 stands**. Both verdicts PASS by AP-0's
-  rule. `rawCap` and `stepBudget` in `Read.lean` carry the measured values and are no longer provisional.
+  rule. **Both values stay provisional.** The plan (11, deferred item 5) drops "provisional" only after a
+  re-measurement with vocabularies written by someone other than the person measuring. Here R rests on AP-0's 22
+  registered rows alone (every M1 row has raw 0), and S on M082m, whose frame my rule wrote. `rawCap` and
+  `stepBudget` in `Read.lean` say so, and deferred item 5 stays open (review F2;
+  `tests/test_ap2_limits_provisional.py`).
 - **Finding:** under the rule-generated frames, none of the eight M1 phrases has a derivation (raw 0 in both
   variants). u039 and u085 get no frame at all: a preposition or a fixed phrase follows `{0}` or `{0} to`, so the rule
   finds no head. The other six get a frame, and the evidence records it per row, but no derivation; this item does not
@@ -63,7 +68,7 @@ this worktree, and writes [evidence/n-measurement.json](evidence/n-measurement.j
 | Tests: the review's counterexamples (FR1 to FR7) | FR1, FR2, FR6, FR7 **done** (`framesOk`); FR3-FR5 are about `normalOk` (ap-2b) | 102-132, 160 |
 | Tests: the round trips N1 to N5 | ap-2b | — |
 | Phase-1 corpus: the 13 `ap0` rows as `#guard`s on raw and meaning counts | **part**: their vocabularies pass `framesOk` (FR7); their raw and meaning counts need the rule table (ap-2b) | 160 |
-| N and the step budget fixed from the re-measurement after D9 | **done** (section 2) | `Read.lean` 16-19 |
+| N and the step budget fixed from the re-measurement after D9 | **part**: re-measured after D9; both values stand by AP-0's rule and stay provisional (deferred item 5 is open; section 2) | `Read.lean` 16-19 |
 | Every fixture of section 5 as a `#guard` on its derivation count and act tree | ap-2b (G5-L0 need the rule table and the meaning) | — |
 | Seeded bug (Lean): premodifier on a middle item, A8 reports 3 readings | ap-2b (it is a rule of the table); this item's own seeded bugs are in section 4 | — |
 | Moves: nothing (enabler) | nothing | — |
