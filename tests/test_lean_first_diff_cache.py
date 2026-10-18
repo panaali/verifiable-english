@@ -50,6 +50,7 @@ def world(tmp_path, monkeypatch):
     root = tmp_path / "root"
     (root / "lean").mkdir(parents=True)
     (root / "lean/Main.lean").write_text("-- a\n")
+    (root / ".gitignore").write_text(".lake/\ntarget/\n")
     git = lambda *args: subprocess.run(["git", *args], cwd=root, check=True, capture_output=True)  # noqa: E731
     git("init", "-q")
     git("add", ".")
@@ -59,7 +60,9 @@ def world(tmp_path, monkeypatch):
     state = {"digest": "d" * 64, "calls": [], "lean": {}}
     monkeypatch.setattr(lean_share, "key", lambda lean: {"lean_tree": lean_share.lean_tree(lean), **state["lean"]})
     monkeypatch.setattr(cache, "sources", lambda corpus, root, out: (state["digest"], SOURCES.get))
-    monkeypatch.setattr(cache, "pinned_checkers", lambda root: {"ve_service": "v", "rust_jsonl": "r"})
+    monkeypatch.setattr(cache, "pinned_checkers", lambda root, builds: None)
+    for name in ("VE_LEAN_SERVICE", "VE_RUST_JSONL"):
+        monkeypatch.delenv(name, raising=False)
     monkeypatch.setattr(cache, "RECORDER", (str(recorder),))
     monkeypatch.setattr(diff, "expected_cases", lambda root, corpora, authorities: {
         (c, a): {row["case"]: diff.only(row["op"]) for row in (pilots("") if c == "pilots" else QUANTITY)}
@@ -110,8 +113,8 @@ def test_store_layout_names_every_key_part(world):
     run(world, corpora=("quantity",), authorities=("python",))
     [entry] = entries(world)
     meta = json.loads((entry / "meta.json").read_text())
-    assert set(meta["key"]) == {"format", "commit", "lean_build", "recorder", "python", "env", "corpus", "authority",
-                                "corpus_sha256"}
+    assert set(meta["key"]) == {"format", "commit", "lean_build", "recorder", "python", "env", "checkers", "corpus",
+                                "authority", "corpus_sha256"}
     assert entry.name == cache._json_sha256(meta["key"])
     assert meta["records"] == 2 and meta["sha256"] == cache._sha256((entry / "segment.jsonl").read_bytes())
     assert {oct(path.stat().st_mode & 0o777) for path in entry.iterdir()} == {"0o644"}
@@ -143,9 +146,53 @@ def change_python(world, monkeypatch):
     monkeypatch.setattr(sys, "version", sys.version + " another")
 
 
+def _build(world, relative: str, data: bytes) -> None:
+    path = world["root"] / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+    path.chmod(0o755)
+
+
+def change_service_build(world, monkeypatch):
+    _build(world, "lean/.lake/build/bin/ve_service", b"rebuilt")
+
+
+def change_route_build(world, monkeypatch):
+    """A route executable the recording runs beside `ve_service` (ve/backends/english_lean.py, senses.py, ...)."""
+    _build(world, "lean/.lake/build/bin/ve_english_route", b"rebuilt")
+
+
+def change_rust_build(world, monkeypatch):
+    _build(world, "rust/target/release/ve", b"rebuilt")
+
+
+def change_service_override(world, monkeypatch):
+    """`VE_LEAN_SERVICE` names a build elsewhere (`OVERRIDES`): its contents are keyed, not only its path."""
+    world["override"].write_bytes(b"rebuilt")
+
+
+def change_rust_override(world, monkeypatch):
+    world["override"].write_bytes(b"rebuilt")
+
+
+OVERRIDES = {change_service_override: "VE_LEAN_SERVICE", change_rust_override: "VE_RUST_JSONL"}
+
+
+BUILD_CHANGES = [change_service_build, change_route_build, change_rust_build, change_service_override,
+                 change_rust_override]
+
+
 @pytest.mark.parametrize("change", [change_commit, change_lean, change_recorder, change_corpus, change_env,
-                                    change_python])
+                                    change_python, *BUILD_CHANGES])
 def test_each_key_part_changed_is_a_miss(world, monkeypatch, change):
+    for relative in ("lean/.lake/build/bin/ve_service", "lean/.lake/build/bin/ve_english_route",
+                     "rust/target/release/ve"):
+        _build(world, relative, b"built")
+    world["override"] = world["tmp"] / "elsewhere" / "checker"
+    world["override"].parent.mkdir()
+    world["override"].write_bytes(b"built")
+    if change in OVERRIDES:
+        monkeypatch.setenv(OVERRIDES[change], str(world["override"]))
     cold, _ = run(world)
     change(world, monkeypatch)
     again, calls = run(world)
@@ -211,7 +258,7 @@ def test_prune_keeps_what_was_stored_or_used_lately(world):
 
 
 def test_an_unpinned_build_is_not_stored(world, monkeypatch):
-    def unpinned(root):
+    def unpinned(root, builds):
         raise cache.Miss("not pinned")
     monkeypatch.setattr(cache, "pinned_checkers", unpinned)
     run(world)
@@ -227,14 +274,58 @@ def test_pinned_checkers_reads_the_root_lock(tmp_path, monkeypatch):
     (tmp_path / "rust/target/release/ve").write_bytes(b"rust")
     lock = {"ve_service": [cache._sha256(b"lean")], "rust_jsonl": [cache._sha256(b"rust")]}
     (tmp_path / "lean/checkers.lock").write_text(json.dumps(lock))
-    assert cache.pinned_checkers(tmp_path) == {"ve_service": cache._sha256(b"lean"),
-                                               "rust_jsonl": cache._sha256(b"rust")}
+    (tmp_path / "lean/.lake/build/bin/ve_service").chmod(0o755)
+    (tmp_path / "lean/.lake/build/bin/ve_service.trace").write_text("not a checker")
+    builds = cache.checker_builds(tmp_path)
+    assert builds == {"lean/ve_service": cache._sha256(b"lean"), "ve_service": cache._sha256(b"lean"),
+                      "rust_jsonl": cache._sha256(b"rust")}
+    cache.pinned_checkers(tmp_path, builds)
     (tmp_path / "rust/target/release/ve").write_bytes(b"rebuilt")
     with pytest.raises(cache.Miss):
-        cache.pinned_checkers(tmp_path)
+        cache.pinned_checkers(tmp_path, cache.checker_builds(tmp_path))
     (tmp_path / "rust/target/release/ve").unlink()
     with pytest.raises(cache.Miss):
-        cache.pinned_checkers(tmp_path)
+        cache.pinned_checkers(tmp_path, cache.checker_builds(tmp_path))
+
+
+def test_a_base_recorded_with_an_old_pinned_build_is_not_reused(tmp_path, monkeypatch):
+    """Review F1's probe: the lock pins old builds too, so a root checked out at a new commit but not rebuilt
+    passes the pin check. Its segment is keyed by the build it ran, so the rebuilt root records again."""
+    for name in ("VE_LEAN_SERVICE", "VE_RUST_JSONL"):
+        monkeypatch.delenv(name, raising=False)
+    root = tmp_path / "root"
+    (root / "lean/.lake/build/bin").mkdir(parents=True)
+    (root / "rust/target/release").mkdir(parents=True)
+    (root / "lean/lean-toolchain").write_text((diff.ROOT / "lean/lean-toolchain").read_text())
+    (root / ".gitignore").write_text(".lake/\ntarget/\n")
+    (root / "rust/target/release/ve").write_bytes(b"r")
+    lock = {"ve_service": [cache._sha256(b"old"), cache._sha256(b"new")], "rust_jsonl": [cache._sha256(b"r")]}
+    (root / "lean/checkers.lock").write_text(json.dumps(lock))
+    git = lambda *args: subprocess.run(["git", *args], cwd=root, check=True, capture_output=True)  # noqa: E731
+    git("init", "-q")
+    git("add", ".")
+    git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "c")
+    calls = []
+    monkeypatch.setattr(lean_share, "key", lambda lean: {"lean_tree": lean_share.lean_tree(lean)})
+    monkeypatch.setattr(cache, "sources", lambda *args: ("d" * 64, SOURCES.get))
+    monkeypatch.setattr(diff, "expected_cases", lambda root, corpora, authorities: {
+        (c, a): {row["case"]: diff.only(row["op"]) for row in QUANTITY}
+        for c in corpora for a in diff.authorities_of(c, authorities)})
+    monkeypatch.setattr(diff, "run_child", lambda root, out, corpora, authorities, workers, scratch=None: (
+        calls.append(1) or out.write_text(recorded(scratch or out, corpora, authorities)) and 0))
+
+    def record(build: bytes) -> bool:
+        service = root / "lean/.lake/build/bin/ve_service"
+        service.write_bytes(build)
+        service.chmod(0o755)
+        calls.clear()
+        assert diff.record(argparse.Namespace(root=str(root), out=str(tmp_path / "base.jsonl"), corpus=["quantity"],
+                                              authority=["lean"], workers=1, cache=str(tmp_path / "cache"))) == 0
+        return bool(calls)
+    assert record(b"old")  # recorded and stored: the old build is pinned
+    assert len(list((tmp_path / "cache/v1").iterdir())) == 1
+    assert record(b"new")  # rebuilt: another key, recorded again
+    assert not record(b"new")
 
 
 def _rewrite(entry: Path, transform) -> None:
