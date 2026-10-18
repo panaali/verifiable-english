@@ -268,10 +268,13 @@ def test_the_read_recorder_sees_git_started_or_a_git_path_opened(monkeypatch, tm
     sys.path.insert(0, str(ROOT))
     from tests import read_recorder
     starts = (["git", "log"], ["/usr/bin/git"], [b"/usr/local/bin/git", b"status"], ["/bin/sh", "-c", "git log -1"],
-              "git status")
+              "git status", ["env", "GIT_DIR=x", "git", "log"], ["/bin/sh", "-c", "cd repo && git log -1"],
+              ["sh", "-c", "echo $(git rev-parse HEAD)"],
+              # a child Python that starts git runs without this hook: naming git in its program binds the entry
+              ["/usr/bin/python3", "-c", "import subprocess; subprocess.run(['git', 'log'])"])
     for argv in starts:
         assert read_recorder._starts_git(argv), argv
-    for argv in (["gitk"], ["/usr/bin/python3", "-c", "print('git')"], ["legit", "git-like"], [], None, [3]):
+    for argv in (["gitk"], ["/usr/bin/python3", "-c", "print('legit')"], ["legit", "git-like"], [], None, [3]):
         assert not read_recorder._starts_git(argv), argv
     for path in (tmp_path / ".git", tmp_path / ".git/HEAD", os.fsencode(tmp_path / "a/.git/objects/x"),
                  "/elsewhere/repo.git/.git/config"):

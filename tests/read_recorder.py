@@ -22,6 +22,8 @@ import json
 import os
 import sys
 
+from tools.git_words import names_git
+
 ROOT = os.path.realpath(os.environ.get("VE_READS_ROOT") or os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUTPUT = os.environ.get("VE_RECORD_READS")
 SKIPPED = (".git", ".venv", "lean/.lake", "rust/target", ".cargo-home", ".pytest_cache", ".hypothesis", ".cache")
@@ -66,16 +68,13 @@ def _program(argv, base=None):
 
 
 def _starts_git(words) -> bool:
-    """Whether a command starts git: its program, or any argument whose first word is git (`sh -c "git log"`);
-    an argument that only names git binds the entry too, which is the safe side."""
+    """Whether a command starts git: its program, or any argument that names git (`sh -c "cd x && git log"`,
+    a `python -c` program that runs it, which this hook does not see: a child process runs without it). An
+    argument that only names git binds the entry too, which is the safe side. `tools/git_words.py` decides, the
+    same way as the source lint (tools/history_tests.py) does."""
     if isinstance(words, (str, bytes, os.PathLike)):
         words = [words]
-    for word in words or ():
-        if isinstance(word, (str, bytes, os.PathLike)):
-            first = os.fsdecode(os.fspath(word)).split(maxsplit=1)
-            if first and os.path.basename(first[0]) == "git":
-                return True
-    return False
+    return any(isinstance(word, (str, bytes, os.PathLike)) and names_git(word) for word in words or ())
 
 
 def _git_path(path) -> bool:
