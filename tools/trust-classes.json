@@ -12002,8 +12002,15 @@
     },
     "VE/Numbers/Decimal.lean": {
       "S": [
-        "VE.Numbers.decValue",
         "VE.Numbers.tenPow"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Numbers.decValue",
+          "tied": [
+            "VE.Numbers.Printed.value_ofDec"
+          ]
+        }
       ]
     },
     "VE/Numbers/Round.lean": {
