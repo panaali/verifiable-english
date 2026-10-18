@@ -190,6 +190,9 @@ def test_poisoned_toolchain_variables_do_not_reach_real_tools(tmp_path, monkeypa
     assert Path(result["toolchains"]["paths"]["lean"]).parent == lean_bin
     assert Path(result["toolchains"]["paths"]["lake"]).parent == lean_bin
     assert "version 4.24.0" in result["toolchains"]["lean"]
+    # The git the history-dependent tests read the repository with is a recorded toolchain too.
+    assert result["toolchains"]["git"].startswith("git version ")
+    assert str(Path(result["toolchains"]["paths"]["git"]).parent) in gate.SYSTEM_PATH
 
     # A Lean package whose executable must be compiled and linked by Lake.
     package = tmp_path / "leanpkg"
