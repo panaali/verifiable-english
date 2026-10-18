@@ -142,7 +142,7 @@ module ResponseDecode 6b49aff772a791f4f732b75946162d0f71a8a007211302e869e68099ff
 347:0-350:46 def ResponseDecode.contentCheck@ResponseDecode
 352:0-359:60 def ResponseDecode.line@ResponseDecode
 364:0-374:10 def main@ResponseDecode
-module ResponseShape.Audit d5894562f9c2d94f7240109e7b7eec51e813fcc09f4159dd08eb27e836a06fe7
+module ResponseShape.Audit 7f71dc99c07576d8c13b468db019de3f22b778621d07885d8e8a70e36279018e
 module ResponseShape.CaseDeciders fd60d1f22f9e4a7c6c8f6d2f82164b80d43bbc78b9f2a58c8dcf5645cf7ebc6f
 18:0-28:57 inductive ResponseShape.CaseDecider@ResponseShape.CaseDeciders
 28:11-28:20 def ResponseShape.instInhabitedCaseDecider.default@ResponseShape.CaseDeciders
@@ -494,7 +494,7 @@ module ResponseShape.Encoders.Reports 5fb27e7876ff15079194ae15311d398b7f22d84096
 101:0-108:64 theorem ResponseShape.Encoders.Reports.scoped_fits@ResponseShape.Encoders.Reports
 110:0-125:52 theorem ResponseShape.Encoders.Reports.runCase_fits@ResponseShape.Encoders.Reports
 127:0-133:77 theorem ResponseShape.Encoders.Reports.runCaseReported_fits@ResponseShape.Encoders.Reports
-module ResponseShape.Encoders.Rights 42cf522bbdf7931b61bb29ccd85174e2a0b6d2604774615619f4a43492713135
+module ResponseShape.Encoders.Rights 1100697bfbfbed7b69776ad957472f40f96df7ea89d669b3a1de75eb1783c48a
 12:0-32:44 theorem ResponseShape.Encoders.Rights.generated_entries_fit@ResponseShape.Encoders.Rights
 34:0-38:5 theorem ResponseShape.Encoders.Rights.regenerated_environment@ResponseShape.Encoders.Rights
 40:0-43:69 theorem ResponseShape.Encoders.Rights.of_softNorms@ResponseShape.Encoders.Rights
@@ -509,6 +509,8 @@ module ResponseShape.Encoders.Rights 42cf522bbdf7931b61bb29ccd85174e2a0b6d260477
 113:0-134:12 theorem ResponseShape.Encoders.Rights.runRightsKind_fits@ResponseShape.Encoders.Rights
 136:0-144:63 theorem ResponseShape.Encoders.Rights.runCase_fits@ResponseShape.Encoders.Rights
 146:0-152:88 theorem ResponseShape.Encoders.Rights.runCaseReported_fits@ResponseShape.Encoders.Rights
+154:0-162:39 theorem ResponseShape.Encoders.Rights.firstFailure_text@ResponseShape.Encoders.Rights
+164:0-197:50 theorem ResponseShape.Encoders.Rights.runRightsKind_packages@ResponseShape.Encoders.Rights
 module ResponseShape.Encoders.Risk 2289c4b376a65f72db981ddc1aa09834a2a9304ad7fa5476f569dcbb39cfd4af
 12:0-15:69 theorem ResponseShape.Encoders.Risk.of_alternatives@ResponseShape.Encoders.Risk
 17:0-23:16 theorem ResponseShape.Encoders.Risk.decision_fits@ResponseShape.Encoders.Risk
@@ -3193,7 +3195,7 @@ module VE.Attribution.Wire 4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100
 492:0-497:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 499:0-506:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 508:0-512:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit 40cd5ff805a7f3c1328c6ffadee82c16f4edcfe507553bb72514948d5489221a
+module VE.Audit b023ac34d1ed69274d83fabf8dcb361c66ada22452760584f511df43edbb9481
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -8500,6 +8502,12 @@ module VE.Norms.Family 16b0075b30db8bc437017cb9dfd3f47ae784b01a0321c5f02be4e65f9
 469:0-477:22 def VE.Norms.Family.firstOrderFormula@VE.Norms.Family
 479:0-486:103 def VE.Norms.Family.firstOrderDefinition@VE.Norms.Family
 488:0-503:15 def VE.Norms.Family.firstOrder@VE.Norms.Family
+module VE.Norms.FamilySpec cfb31baa64a04cd844ee2b6d76a6aa2a2ea3e84c442913d5b74cfdf4f109ae97
+16:0-23:33 theorem VE.Norms.Family.orderTermFol_embed@VE.Norms.FamilySpec
+25:0-71:29 theorem VE.Norms.Family.orderFol_embed@VE.Norms.FamilySpec
+73:0-87:28 theorem VE.Norms.Family.firstOrderFormula_fol@VE.Norms.FamilySpec
+89:0-101:40 theorem VE.Norms.Family.firstOrderDefinition_fol@VE.Norms.FamilySpec
+103:0-145:17 theorem VE.Norms.Family.firstOrder_fol@VE.Norms.FamilySpec
 module VE.Norms.Flagged 2921520480a4afc21083c3d2fd9d991cc289bcbe3587b1f8190e9d20d370d58c
 37:0-39:45 def VE.Norms.Flagged.flagPremises@VE.Norms.Flagged
 41:0-42:72 def VE.Norms.Flagged.hasTotal@VE.Norms.Flagged
@@ -19093,4 +19101,4 @@ module VE.Words.Situation 4052e7ca4f76c9f7742c08560fd083d76c33a7c1d050455fa9904b
 145:0-156:13 def VE.Words.bindings@VE.Words.Situation
 158:0-169:50 def VE.Words.pairSentence@VE.Words.Situation
 186:0-188:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 8d387cc6a3cfd753be8c769ffdc14758c975a40f996be6da2da4b708bdf354f3
+module VE a077cc58e0c3b3f68312f412b516ca3d3a2e569efbe6b435f39b2895f6355b42
