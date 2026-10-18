@@ -1,0 +1,89 @@
+{
+ "comment": "et-3 seeded bugs, run on the committed tree: each mutant applied alone, lake build VE.Events.Examples run, then the five events files elaborated as one scratch file so every #guard runs even when an upstream proof fails (the listed tests are the #guard lines of lean/VE/Events/Examples.lean that fail); restored after each run. Harness: seeded-bugs-harness.py.txt.",
+ "mutants": [
+  {
+   "mutant": "drop-linear",
+   "claim": "T2b needs the linear order premise (plan seeded bug 1)",
+   "file": "lean/VE/Events/Premises.lean",
+   "language": "Lean",
+   "replace": "def orderPremises (V : EventsEnv) : List VE.Formula := [irreflexiveF V, transitiveF V, linearF V]",
+   "with": "def orderPremises (V : EventsEnv) : List VE.Formula := [irreflexiveF V, transitiveF V]",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Premises.lean:210:30: unsolved goals",
+    "error: Lean exited with code 1"
+   ],
+   "test": [
+    "#guard orderPremises vT1 == [irreflexiveF vT1, transitiveF vT1, linearF vT1]",
+    "#guard !(orderPremises vT2b).all (·.eval mT2b [])"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Premises.lean"
+  },
+  {
+   "mutant": "reversed-date-facts",
+   "claim": "date facts are the consecutive pairs in calendar order (plan seeded bug 2)",
+   "file": "lean/VE/Events/Premises.lean",
+   "language": "Lean",
+   "replace": "(consecutive V).map (fun p => (\"events:date:\" ++ isoPair p.1 p.2, dateFactF V p.1 p.2))",
+   "with": "((V.dates.flatMap fun a => V.dates.filterMap fun b => if b.num < a.num then some (a, b) else none).map\n    (fun p => (\"events:date:\" ++ isoPair p.1 p.2, dateFactF V p.1 p.2)))",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Premises.lean:116:48: Application type mismatch: The argument",
+    "error: VE/Events/Premises.lean:195:46: Application type mismatch: The argument",
+    "error: Lean exited with code 1"
+   ],
+   "test": [
+    "#guard (calendarLabelled vT1).map (·.1) ==",
+    "#guard (calendarPremises vT1).all (·.eval mT1 [])",
+    "#guard (calendarLabelled vT2).map (·.1) ==",
+    "#guard firstFailing vEv (sit [(\"act\", [\"x\"])] [(\"committed_on\", [[\"x\", \"a\"], [\"x\", \"b\"]])]) ==",
+    "#guard firstFailing vEv (sit [(\"act\", [\"x\"])] [(\"committed_on\", [[\"x\", \"a\"]])]) == none",
+    "#guard firstFailing vEv (sit [(\"marriage\", [\"m\"])] [(\"marriage_begins\", [[\"m\", \"b\"]]), (\"marriage_ends\", [[\"m\"",
+    "#guard firstFailing vEv (sit [(\"marriage\", [\"m\"])] [(\"marriage_begins\", [[\"m\", \"b\"]]), (\"marriage_ends\", [[\"m\"",
+    "#guard firstFailing vEv (sit [(\"act\", [\"x\", \"y\"])]",
+    "#guard firstFailing vEv (sit [(\"act\", [\"x\"]), (\"marriage\", [\"m\"])]",
+    "#guard firstFailing vEv (sit [(\"act\", [\"x\"]), (\"marriage\", [\"m\"])]"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Premises.lean"
+  },
+  {
+   "mutant": "no-gap-count",
+   "claim": "calendarCheck counts the unnamed days in each gap (plan seeded bug 3)",
+   "file": "lean/VE/Events/Calendar.lean",
+   "language": "Lean",
+   "replace": "decide (r p.2 - r p.1 - 1 > p.2.num - p.1.num - 1)",
+   "with": "false",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Examples.lean:78:0: Expression",
+    "error: VE/Events/Examples.lean:80:0: Expression",
+    "error: Lean exited with code 1"
+   ],
+   "test": [
+    "#guard calendarCheck vT3 (chain [\"a\", \"x1\", \"x2\", \"x3\", \"b\"] [(c12, \"a\"), (c14, \"b\")]) ==",
+    "#guard calendarCheck vT3 (chain [\"a\", \"x1\", \"x2\", \"b\"] [(c12, \"a\"), (c14, \"b\")]) =="
+   ],
+   "restored": "git checkout -- lean/VE/Events/Calendar.lean"
+  },
+  {
+   "mutant": "before-as-guard",
+   "claim": "order atoms never guard a day quantifier in hits (plan seeded bug 4)",
+   "file": "lean/VE/Events/Completion.lean",
+   "language": "Lean",
+   "replace": "| .binary p t w => !ng.contains p && (t == .var k || w == .var k)",
+   "with": "| .binary p t w => (t == .var k || w == .var k)",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Completion.lean:112:11: Invalid projection: Expected a value whose type is a structure",
+    "error: VE/Events/Completion.lean:112:20: Tactic `rcases` failed: `x✝ : ?m.269` is not an inductive datatype",
+    "error: Lean exited with code 1"
+   ],
+   "test": [
+    "#guard down \"day\" [\"before\"] between == false",
+    "#guard down \"day\" [\"before\"] after12 == false",
+    "#guard up \"day\" [\"before\"] (.not between) == false"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Completion.lean"
+  }
+ ]
+}
