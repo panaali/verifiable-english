@@ -28,7 +28,9 @@ environment and `alternatives@0`, `norms@0` among its profiles.
   `VE.Norms.Run`.
 * With `norm-defaults@0` (ET-7, `FillWire`), `alt-elaborate`, `alt-environment`, `alt-conflict` with
   `packages` and `alt-followable` run on `fill (inlineTree A)`: the same answers, with `Fill_T` in the bases and a
-  witness `filling`; the untrusted diagnosis gains UNSETTLED. Admission keeps today's decoder. -/
+  witness `filling`; the untrusted diagnosis gains UNSETTLED. `alt-validate` answers each alternative's status
+  under the evidence contract (`scenarioRowsU`, et-7b), with an optional scenario `filling` and `max_unsaid_atoms`.
+  Admission keeps today's decoder. -/
 namespace VE.Alternatives.Run
 open Lean
 open VE.Norms
@@ -314,6 +316,85 @@ def runFollowableU (id : String) (j : Json) : Except String Json := do
   return ok id [("verdict", .str "UNKNOWN"),
     ("text", .str "UNKNOWN: no accepted followability certificate for this source")]
 
+def budgetText : String := "InvalidInput: max_unsaid_atoms must be a natural number"
+
+def statusLabel : AltStatus → String
+  | .clear => "clear"
+  | .notClear => "not clear"
+  | .undecided => "undecided"
+  | .unknown => "UNKNOWN"
+
+def evidenceLabel : AltEvidence → String
+  | .kleene => "kleene"
+  | .enumeration => "enumeration"
+  | .fillings => "fillings"
+  | .budget => "MAX_UNSAID_ATOMS"
+  | .search => "search"
+  | .noFilling => "no filling"
+
+/-- One alternative in a chooser's text (untrusted). -/
+def statusPhrase (budget : Nat) (a : VE.Bridge.Entity) : AltStatus × AltEvidence → String
+  | (.undecided, _) => s!"{a.2} undecided: the text does not say whether it may be performed"
+  | (.unknown, .budget) => s!"{a.2} UNKNOWN: more than {budget} unsaid atoms decide it"
+  | (.unknown, .noFilling) => s!"{a.2} UNKNOWN: no filling of what the text leaves unsaid is validated here"
+  | (st, _) => s!"{a.2} {statusLabel st}"
+
+/-- A chooser's statuses with the completion; UNSETTLED lists only alternatives with UNDECIDED evidence. -/
+def chooserReportU (A : AltDoc) (unspec : List String) (M : VE.FiniteModel VE.Bridge.Entity)
+    (F : Option (VE.NormDefaults.FiniteFill ⟨inlineTree A, unspec⟩ VE.Bridge.Entity)) (budget : Nat)
+    (r : VE.Bridge.Entity) (alts : List (VE.Bridge.Entity × AltStatus × AltEvidence)) : Json × String :=
+  let having (st : AltStatus) := (alts.filter (·.2.1 == st)).map (·.1)
+  let summary := if alts.isEmpty then s!"no alternatives at {r.2}"
+    else if !(having .clear).isEmpty then s!"{r.2} has a clear action: {joined (having .clear)}"
+    else if !(having .undecided).isEmpty then
+      s!"no action is known to be clear at {r.2}: {diagnosisText r (.unsettled (having .undecided))}"
+    else match F, alts.all (·.2.1 == .notClear) with
+      | some F, true => s!"no clear action at {r.2}: {diagnosisText r (diagnoseIn (fill ⟨inlineTree A, unspec⟩) A (M.withFill F) r)}"
+      | _, _ => s!"no action is known to be clear at {r.2}"
+  let text := if alts.isEmpty then summary
+    else s!"{summary} ({", ".intercalate (alts.map fun (a, st) => statusPhrase budget a st)})"
+  (Json.mkObj [("chooser", .str r.2), ("alternatives", ids (alts.map (·.1))),
+    ("statuses", toJson (alts.map (statusLabel ·.2.1))), ("evidence", toJson (alts.map (evidenceLabel ·.2.2))),
+    ("text", .str text)], text)
+
+/-- `max_unsaid_atoms`, at most `MAX_UNSAID_ATOMS` (the default). -/
+def budgetOf (j : Json) : Except String Nat :=
+  match j.getObjVal? "max_unsaid_atoms" with
+  | .error _ => pure VE.NormDefaults.MAX_UNSAID_ATOMS
+  | .ok v@(.num _) => (min · VE.NormDefaults.MAX_UNSAID_ATOMS) <$> v.getNat?.mapError fun _ => budgetText
+  | .ok _ => throw budgetText
+
+/-- A scenario with the completion: today's validation, then each alternative's status (`scenarioRowsU`). -/
+def runValidateU (id : String) (j : Json) : Except String Json := do
+  let s ← sourceOfU j
+  let environment ← j.getObjVal? "environment"
+  let w ← j.getObjVal? "scenario"
+  let sc ← decodeScenario s.src w
+  match validateAlternativesWith s.src.labels s.src.A sc.M sc.rows with
+  | .error e => throw e
+  | .ok () => pure ()
+  let budget ← budgetOf j
+  let supplied ← match w.getObjVal? "filling" with
+    | .ok f => some <$> VE.NormDefaults.Wire.decodeFilling s.U sc.M f
+    | .error _ => pure none
+  let ps := VE.NormDefaults.Wire.profilesOf environment
+  let mid := modelId { s.src with profiles := ps } environment ⟨sc.M, sc.valid, sc.rows, sc.json⟩
+  let eid ← environmentId ps environment
+  let dh ← documentHash ps environment (j.getObjValD "norms") (j.getObjValD "units")
+  let reports := match scenarioRowsU s sc supplied budget with
+    | some cs => cs.map fun (c : VE.Bridge.Entity × List (ScenarioRowU s.src.A s.unspec × AltEvidence)) =>
+        chooserReportU s.src.A s.unspec sc.M (c.2.head?.map fun (x : ScenarioRowU s.src.A s.unspec × AltEvidence) => x.1.F)
+          budget c.1 (c.2.map fun (x : ScenarioRowU s.src.A s.unspec × AltEvidence) => (x.1.action, x.1.status, x.2))
+    | none => (sc.M.domains s.src.A.alt.chooser).map fun r => chooserReportU s.src.A s.unspec sc.M none budget r
+        ((availOf sc.M s.src.A.alt.available r).map (·, .unknown, .noFilling))
+  return ok id [("model_id", .str mid), ("environment_id", .str eid), ("document_hash", .str dh),
+    ("choosers", Json.arr (reports.map Prod.fst).toArray),
+    ("assumed_harm_free", toJson (assumedHarmFree s.src.A sc.M sc.rows)),
+    ("unmapped_obligations", .str (unmappedText s.src.A)),
+    ("conditional_on", toJson (if s.src.A.alt.outcomes == .signed then [] else ["alternatives:table_complete"])),
+    ("text", .str (s!"scenario (model {mid}): " ++ "; ".intercalate (reports.map Prod.snd) ++
+      s!"; unmapped obligations: {unmappedText s.src.A}; clear and not clear hold under every admissible filling of what the text leaves unsaid (unspecified: {joinedNames s.unspec})"))]
+
 def runElaborateU (id : String) (j : Json) : Except String Json := do
   let s ← sourceOfU j
   let coverage := match j.getObjVal? "coverage_units" with
@@ -327,6 +408,7 @@ def runCaseU (id kind : String) (j : Json) : Except String Json := do
   if kind == "alt-environment" then
     let _ ← decodeAltSourceU (← j.getObjVal? "environment") (Json.arr #[]) .null .environment
     return ok id [("valid", .bool true)]
+  if kind == "alt-validate" then return ← runValidateU id j
   if kind == "alt-conflict" then return ← runConflictU id j
   if kind == "alt-followable" then return ← runFollowableU id j
   throw s!"UnsupportedProfile: case kind {kind} with norm-defaults@0 is not implemented on the alternatives route"

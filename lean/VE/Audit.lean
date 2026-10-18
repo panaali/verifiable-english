@@ -421,8 +421,18 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.Replay.validate_sound_decoded
 #print axioms VE.Alternatives.Run.alternatives_wire_acceptance
 #print axioms VE.Alternatives.Run.runAdmission_sound
+#print axioms VE.Alternatives.ScenarioRowU.action_typed
+#print axioms VE.Alternatives.ScenarioRowU.background
+#print axioms VE.Alternatives.ScenarioRowU.checked
+#print axioms VE.Alternatives.ScenarioRowU.chooser_typed
+#print axioms VE.Alternatives.ScenarioRowU.clear_sound
+#print axioms VE.Alternatives.ScenarioRowU.filled
+#print axioms VE.Alternatives.ScenarioRowU.notClear_sound
+#print axioms VE.Alternatives.ScenarioRowU.undecided_sound
+#print axioms VE.Alternatives.ScenarioRowU.valid
 #print axioms VE.Alternatives.Wire.AltSource.env
 #print axioms VE.Alternatives.Wire.AltSource.wf
+#print axioms VE.Alternatives.admissibleAltU_of_fillValid
 #print axioms VE.Alternatives.allowsF_denote
 #print axioms VE.Alternatives.allowsF_wellFormed
 #print axioms VE.Alternatives.altChain_hc
@@ -480,6 +490,7 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.expansion_relation_typed
 #print axioms VE.Alternatives.extEnv_predicates_none
 #print axioms VE.Alternatives.extEnv_predicates_some
+#print axioms VE.Alternatives.fillingFor_valid
 #print axioms VE.Alternatives.findReg_some
 #print axioms VE.Alternatives.followable_denote
 #print axioms VE.Alternatives.followable_denote_of
@@ -519,6 +530,7 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.sat_altPremises_restrict
 #print axioms VE.Alternatives.sat_backgroundBaseAlt
 #print axioms VE.Alternatives.scenarioConflict_sound
+#print axioms VE.Alternatives.settledF_of_agreed
 #print axioms VE.Alternatives.sortOf_extEnv
 #print axioms VE.Alternatives.sourceOfU_ok
 #print axioms VE.Alternatives.term_denote_withDefinitions
@@ -526,6 +538,7 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.tuples_typed
 #print axioms VE.Alternatives.unavoidableF_denote
 #print axioms VE.Alternatives.unavoidableF_wellFormed
+#print axioms VE.Alternatives.undecidedF_of_fillings
 #print axioms VE.Alternatives.validateAlternativesWith_ok
 #print axioms VE.Alternatives.validateAlternatives_labels
 #print axioms VE.Alternatives.validate_sound
@@ -1983,6 +1996,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.actChecks_dual
 #print axioms VE.NormDefaults.actChecks_eq
 #print axioms VE.NormDefaults.admissible_of_fillValid
+#print axioms VE.NormDefaults.agreed_all
 #print axioms VE.NormDefaults.appliesD_fillRoot
 #print axioms VE.NormDefaults.astBody_ok
 #print axioms VE.NormDefaults.astLoop_ok
@@ -2026,6 +2040,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.decides_switch
 #print axioms VE.NormDefaults.defBody_ok
 #print axioms VE.NormDefaults.denote_congr_preds
+#print axioms VE.NormDefaults.denote_of_coneValuesAt
 #print axioms VE.NormDefaults.denote_rel_iff
 #print axioms VE.NormDefaults.denote_withFill_finite
 #print axioms VE.NormDefaults.dependencyOrder_congr

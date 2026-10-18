@@ -390,6 +390,17 @@ inductive AltStatus
   | unknown
   deriving DecidableEq
 
+/-- The evidence a scenario status rests on (C): `budget` when the cone exceeds it, `search` when no two validated
+refillings were found, `noFilling` when no filling of the scenario is validated. -/
+inductive AltEvidence
+  | kleene
+  | enumeration
+  | fillings
+  | budget
+  | search
+  | noFilling
+  deriving DecidableEq
+
 /-- A scenario row: the scenario's validity, today's (its model, its background with the slot premises, its signed
 rows, the existence checks and Γ), a typed chooser and action, and one filling validated by `fillValid`, so that
 no status is vacuous (SR-A4); then the evidence its status needs (C). `unknown` needs no more. -/
@@ -461,38 +472,37 @@ variable (A : AltDoc) (unspec : List String) (hA : WellFormedAlt A = true)
   (filled : fillValid ⟨inlineTree A, unspec⟩ M F = true)
 
 /-- One alternative's row (C): a definite Kleene value, else enumeration of the cone of `clear°(r, a)` within
-`budget`, else two validated refillings of the cone; UNKNOWN otherwise. The label names the evidence
-(`MAX_UNSAID_ATOMS` when the cone exceeds the budget). -/
+`budget`, else two validated refillings of the cone; UNKNOWN otherwise. The label names the evidence. -/
 def settleU (budget : Nat) (r a : VE.Bridge.Entity) (hr : r ∈ M.domains A.alt.chooser)
-    (ha : a ∈ M.domains A.alt.action) : ScenarioRowU A unspec × String :=
+    (ha : a ∈ M.domains A.alt.action) : ScenarioRowU A unspec × AltEvidence :=
   let U : UDoc := ⟨inlineTree A, unspec⟩
   let ρ := tupleVal [r, a]
-  let unknown (label : String) : ScenarioRowU A unspec × String :=
+  let unknown (label : AltEvidence) : ScenarioRowU A unspec × AltEvidence :=
     (⟨M, rows, r, a, .unknown, valid, hb, checked, hr, ha, F, filled, nofun, nofun, nofun⟩, label)
-  let settled (b : Bool) (hs : SettledF.{0} A unspec M.asStructure (clearFU A unspec) [r, a] b) (label : String) :
-      ScenarioRowU A unspec × String := match b, hs with
+  let settled (b : Bool) (hs : SettledF.{0} A unspec M.asStructure (clearFU A unspec) [r, a] b) (label : AltEvidence) :
+      ScenarioRowU A unspec × AltEvidence := match b, hs with
     | true, hs => (⟨M, rows, r, a, .clear, valid, hb, checked, hr, ha, F, filled, fun _ => hs, nofun, nofun⟩, label)
     | false, hs => (⟨M, rows, r, a, .notClear, valid, hb, checked, hr, ha, F, filled, nofun, fun _ => hs, nofun⟩,
         label)
   match hk : agreed (coneValuesAt U M [] ρ (clearFU A unspec)) with
-  | some b => settled b (settledF_of_agreed A unspec M [] [r, a] b hk) "kleene"
+  | some b => settled b (settledF_of_agreed A unspec M [] [r, a] b hk) .kleene
   | none =>
     let C := coneOf U M ρ (clearFU A unspec)
-    if C.length > budget then unknown "MAX_UNSAID_ATOMS" else
+    if C.length > budget then unknown .budget else
     match he : agreed (coneValuesAt U M C ρ (clearFU A unspec)) with
-    | some b => settled b (settledF_of_agreed A unspec M C [r, a] b he) "enumeration"
+    | some b => settled b (settledF_of_agreed A unspec M C [r, a] b he) .enumeration
     | none => match fillingsAt U M F C ρ (clearFU A unspec) with
       | some (F₁, F₂) =>
         if hc : fillValid U M F₁ = true ∧ fillValid U M F₂ = true ∧
             (clearFU A unspec).eval (M.withFill F₁) ρ = true ∧ (clearFU A unspec).eval (M.withFill F₂) ρ = false then
           (⟨M, rows, r, a, .undecided, valid, hb, checked, hr, ha, F, filled, nofun, nofun,
-            fun _ => undecidedF_of_fillings A unspec hA h M valid hb F₁ F₂ [r, a] hc⟩, "fillings")
-        else unknown "search"
-      | none => unknown "search"
+            fun _ => undecidedF_of_fillings A unspec hA h M valid hb F₁ F₂ [r, a] hc⟩, .fillings)
+        else unknown .search
+      | none => unknown .search
 
 /-- The rows of chooser `r`: one per available alternative of the action sort, in `available` order. -/
 def chooserRowsU (budget : Nat) (r : VE.Bridge.Entity) (hr : r ∈ M.domains A.alt.chooser) :
-    List (ScenarioRowU A unspec × String) :=
+    List (ScenarioRowU A unspec × AltEvidence) :=
   (availOf M A.alt.available r).filterMap fun a =>
     if ha : a ∈ M.domains A.alt.action then some (settleU A unspec hA h M rows valid hb checked F filled budget r a hr ha)
     else none
@@ -508,7 +518,7 @@ theorem fillingFor_valid {U : UDoc} {M : VE.FiniteModel VE.Bridge.Entity} {suppl
 answers on failure), then a validated filling, then each chooser's rows; `none` when no filling is validated, and
 every alternative is UNKNOWN. -/
 def scenarioRowsU (s : AltSourceU) (sc : Replay.Scenario s.src) (supplied : Option (FiniteFill s.U VE.Bridge.Entity))
-    (budget : Nat) : Option (List (VE.Bridge.Entity × List (ScenarioRowU s.src.A s.unspec × String))) :=
+    (budget : Nat) : Option (List (VE.Bridge.Entity × List (ScenarioRowU s.src.A s.unspec × AltEvidence))) :=
   if hm : altModelChecks s.src.A sc.M sc.rows = true then
     if hU : WellFormedU s.U = true then
       match hf : fillingFor s.U sc.M supplied budget with

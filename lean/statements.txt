@@ -403,6 +403,57 @@ theorem VE.Alternatives.Run.runAdmission_sound
       VE.Alternatives.Run.AltAdmissionAnswer id environment document answer
   -- uses VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run VE.Alternatives.Run.runAdmission@VE.Alternatives.Run
   -- expr 2061172333
+theorem VE.Alternatives.ScenarioRowU.action_typed
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    self.action ∈ self.M.domains A.alt.action
+  -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.AltEnv.action@VE.Alternatives.Decl VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.action@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel.domains@VE.Finite
+  -- expr 3238819360
+theorem VE.Alternatives.ScenarioRowU.background
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    VE.Alternatives.backgroundValidAlt A self.M = Bool.true
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Alternatives.backgroundValidAlt@VE.Alternatives.Background VE.Bridge.Entity@VE.Bridge
+  -- expr 3108360803
+theorem VE.Alternatives.ScenarioRowU.checked
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    VE.Alternatives.validateAlternatives A self.M self.rows = Except.ok ()
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.rows@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Alternatives.instEntityNameEntity@VE.Alternatives.Validate VE.Alternatives.validateAlternatives@VE.Alternatives.Validate VE.Bridge.Entity@VE.Bridge
+  -- expr 526414371
+theorem VE.Alternatives.ScenarioRowU.chooser_typed
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    self.chooser ∈ self.M.domains A.alt.chooser
+  -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.AltEnv.chooser@VE.Alternatives.Decl VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.chooser@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel.domains@VE.Finite
+  -- expr 2809035384
+theorem VE.Alternatives.ScenarioRowU.clear_sound
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    self.status = VE.Alternatives.AltStatus.clear →
+      VE.Alternatives.SettledF A unspec self.M.asStructure (VE.NormDefaults.clearFU A unspec) [self.chooser, self.action]
+        Bool.true
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.AltStatus.clear@VE.Alternatives.FillWire VE.Alternatives.AltStatus@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.action@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.chooser@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.status@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Alternatives.SettledF@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.NormDefaults.clearFU@VE.NormDefaults.Routes VE.Structure.Carrier@VE.Semantics
+  -- expr 3661670397
+theorem VE.Alternatives.ScenarioRowU.filled
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    VE.NormDefaults.fillValid { D := VE.Alternatives.inlineTree A, unspec := unspec } self.M self.F = Bool.true
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.ScenarioRowU.F@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Bridge.Entity@VE.Bridge VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.fillValid@VE.NormDefaults.Evidence
+  -- expr 652363965
+theorem VE.Alternatives.ScenarioRowU.notClear_sound
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    self.status = VE.Alternatives.AltStatus.notClear →
+      VE.Alternatives.SettledF A unspec self.M.asStructure (VE.NormDefaults.clearFU A unspec) [self.chooser, self.action]
+        Bool.false
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.AltStatus.notClear@VE.Alternatives.FillWire VE.Alternatives.AltStatus@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.action@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.chooser@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.status@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Alternatives.SettledF@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.NormDefaults.clearFU@VE.NormDefaults.Routes VE.Structure.Carrier@VE.Semantics
+  -- expr 4065455082
+theorem VE.Alternatives.ScenarioRowU.undecided_sound
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    self.status = VE.Alternatives.AltStatus.undecided →
+      VE.Alternatives.UndecidedF A unspec self.M.asStructure (VE.NormDefaults.clearFU A unspec)
+        [self.chooser, self.action]
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.AltStatus.undecided@VE.Alternatives.FillWire VE.Alternatives.AltStatus@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.action@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.chooser@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU.status@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Alternatives.UndecidedF@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.NormDefaults.clearFU@VE.NormDefaults.Routes VE.Structure.Carrier@VE.Semantics
+  -- expr 3017351670
+theorem VE.Alternatives.ScenarioRowU.valid
+  ∀ {A : VE.Alternatives.AltDoc} {unspec : List String} (self : VE.Alternatives.ScenarioRowU A unspec),
+    self.M.Valid (VE.Norms.envAt (VE.Alternatives.inlineTree A) 0)
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.ScenarioRowU.M@VE.Alternatives.FillWire VE.Alternatives.ScenarioRowU@VE.Alternatives.FillWire VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.Norms.envAt@VE.Norms.Tree
+  -- expr 346882388
 theorem VE.Alternatives.Wire.AltSource.env
   ∀ (self : VE.Alternatives.Wire.AltSource), self.A.E = self.ne.rv.environment
   -- uses VE.Alternatives.AltDoc.E@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource.ne@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Environment@VE.Syntax VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire
@@ -411,6 +462,20 @@ theorem VE.Alternatives.Wire.AltSource.wf
   ∀ (self : VE.Alternatives.Wire.AltSource), VE.Alternatives.WellFormedAlt self.A = Bool.true
   -- uses VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire
   -- expr 2096716387
+theorem VE.Alternatives.admissibleAltU_of_fillValid
+  ∀ {α : Type u} [inst : DecidableEq α] (A : VE.Alternatives.AltDoc) (unspec : List String),
+    VE.Alternatives.WellFormedAlt A = Bool.true →
+      VE.NormDefaults.WellFormedU { D := VE.Alternatives.inlineTree A, unspec := unspec } = Bool.true →
+        ∀ (M : VE.FiniteModel α),
+          M.Valid (VE.Norms.envAt (VE.Alternatives.inlineTree A) 0) →
+            VE.Alternatives.backgroundValidAlt A M = Bool.true →
+              ∀ (F : VE.NormDefaults.FiniteFill { D := VE.Alternatives.inlineTree A, unspec := unspec } α),
+                VE.NormDefaults.fillValid { D := VE.Alternatives.inlineTree A, unspec := unspec } M F = Bool.true →
+                  VE.NormDefaults.BaseAdmissibleAltU A unspec
+                    (VE.NormDefaults.withFill { D := VE.Alternatives.inlineTree A, unspec := unspec } M.asStructure
+                      (VE.NormDefaults.finFill M F))
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.backgroundValidAlt@VE.Alternatives.Background VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.BaseAdmissibleAltU@VE.NormDefaults.Routes VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.envAt@VE.Norms.Tree
+  -- expr 2985606568
 theorem VE.Alternatives.allowsF_denote
   ∀ (A : VE.Alternatives.AltEnv) (S : VE.Structure) (a h : S.Carrier),
     VE.Formula.denote S (VE.Norms.tupleVal [a, h]) (VE.Alternatives.allowsF A) ↔
@@ -936,6 +1001,13 @@ theorem VE.Alternatives.extEnv_predicates_some
     VE.Alternatives.profileDef A.alt p = Option.some (ss, F) → (VE.Alternatives.extEnv A).predicates p = Option.some ss
   -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.extEnv@VE.Alternatives.Decl VE.Alternatives.profileDef@VE.Alternatives.Decl VE.Environment.predicates@VE.Syntax VE.Formula@VE.Syntax
   -- expr 437983594
+theorem VE.Alternatives.fillingFor_valid
+  ∀ {U : VE.NormDefaults.UDoc} {M : VE.FiniteModel VE.Bridge.Entity}
+    {supplied : Option (VE.NormDefaults.FiniteFill U VE.Bridge.Entity)} {budget : Nat}
+    {F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity},
+    VE.Alternatives.fillingFor U M supplied budget = Option.some F → VE.NormDefaults.fillValid U M F = Bool.true
+  -- uses VE.Alternatives.fillingFor@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fillValid@VE.NormDefaults.Evidence
+  -- expr 1885227119
 theorem VE.Alternatives.findReg_some
   ∀ {T : VE.Norms.Tree} {n : String} {r : VE.Norms.Regulated},
     VE.Alternatives.findReg T n = Option.some r → r ∈ T.regulated ∧ r.name = n
@@ -1263,6 +1335,16 @@ theorem VE.Alternatives.scenarioConflict_sound
                 ¬VE.Norms.ConflictFree (VE.Alternatives.inlineTree A) M.asStructure ∧ ¬VE.Alternatives.AltConflictFree A
   -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.backgroundValidAlt@VE.Alternatives.Background VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Alternatives.scenarioConflict@VE.Alternatives.Validate VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.envAt@VE.Norms.Tree
   -- expr 1760010538
+theorem VE.Alternatives.settledF_of_agreed
+  ∀ (A : VE.Alternatives.AltDoc) (unspec : List String) (M : VE.FiniteModel VE.Bridge.Entity)
+    (C : List (String × List VE.Bridge.Entity)) (vs : List VE.Bridge.Entity) (b : Bool),
+    VE.NormDefaults.agreed
+          (VE.NormDefaults.coneValuesAt { D := VE.Alternatives.inlineTree A, unspec := unspec } M C (VE.Norms.tupleVal vs)
+            (VE.NormDefaults.clearFU A unspec)) =
+        Option.some b →
+      VE.Alternatives.SettledF A unspec M.asStructure (VE.NormDefaults.clearFU A unspec) vs b
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.SettledF@VE.Alternatives.FillWire VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.agreed@VE.NormDefaults.Evidence VE.NormDefaults.clearFU@VE.NormDefaults.Routes VE.NormDefaults.coneValuesAt@VE.NormDefaults.Evidence VE.Norms.tupleVal@VE.Norms.Basic
+  -- expr 1296470108
 theorem VE.Alternatives.sortOf_extEnv
   ∀ (A : VE.Alternatives.AltDoc) (Γ : List String) (t : VE.Term),
     VE.Term.sortOf (VE.Alternatives.extEnv A) Γ t = VE.Term.sortOf A.E Γ t
@@ -1304,6 +1386,26 @@ theorem VE.Alternatives.unavoidableF_wellFormed
         A.action ∈ E.sorts → VE.Formula.WellFormed E [A.chooser, A.harm] (VE.Alternatives.unavoidableF A)
   -- uses VE.Alternatives.AltEnv.action@VE.Alternatives.Decl VE.Alternatives.AltEnv.available@VE.Alternatives.Decl VE.Alternatives.AltEnv.chooser@VE.Alternatives.Decl VE.Alternatives.AltEnv.harm@VE.Alternatives.Decl VE.Alternatives.AltEnv.leadsTo@VE.Alternatives.Decl VE.Alternatives.AltEnv@VE.Alternatives.Decl VE.Alternatives.unavoidableF@VE.Alternatives.Decl VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax
   -- expr 2538005318
+theorem VE.Alternatives.undecidedF_of_fillings
+  ∀ (A : VE.Alternatives.AltDoc) (unspec : List String),
+    VE.Alternatives.WellFormedAlt A = Bool.true →
+      VE.NormDefaults.WellFormedU { D := VE.Alternatives.inlineTree A, unspec := unspec } = Bool.true →
+        ∀ (M : VE.FiniteModel VE.Bridge.Entity),
+          M.Valid (VE.Norms.envAt (VE.Alternatives.inlineTree A) 0) →
+            VE.Alternatives.backgroundValidAlt A M = Bool.true →
+              ∀
+                (F₁ F₂ :
+                  VE.NormDefaults.FiniteFill { D := VE.Alternatives.inlineTree A, unspec := unspec } VE.Bridge.Entity)
+                (vs : List VE.Bridge.Entity),
+                VE.NormDefaults.fillValid { D := VE.Alternatives.inlineTree A, unspec := unspec } M F₁ = Bool.true ∧
+                    VE.NormDefaults.fillValid { D := VE.Alternatives.inlineTree A, unspec := unspec } M F₂ = Bool.true ∧
+                      VE.Formula.eval (M.withFill F₁) (VE.Norms.tupleVal vs) (VE.NormDefaults.clearFU A unspec) =
+                          Bool.true ∧
+                        VE.Formula.eval (M.withFill F₂) (VE.Norms.tupleVal vs) (VE.NormDefaults.clearFU A unspec) =
+                          Bool.false →
+                  VE.Alternatives.UndecidedF A unspec M.asStructure (VE.NormDefaults.clearFU A unspec) vs
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.UndecidedF@VE.Alternatives.FillWire VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.backgroundValidAlt@VE.Alternatives.Background VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.clearFU@VE.NormDefaults.Routes VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.Norms.envAt@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic
+  -- expr 1631863556
 theorem VE.Alternatives.validateAlternativesWith_ok
   ∀ {α : Type u} [inst : DecidableEq α] [inst_1 : VE.Alternatives.EntityName α] {labels : List String}
     {A : VE.Alternatives.AltDoc} {M : VE.FiniteModel α} {rows : List VE.Alternatives.Row},
@@ -11640,6 +11742,11 @@ theorem VE.NormDefaults.admissible_of_fillValid
                 VE.NormDefaults.BaseAdmissibleU U (VE.NormDefaults.withFill U M.asStructure (VE.NormDefaults.finFill M F))
   -- uses VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.BaseAdmissibleU@VE.NormDefaults.Premises VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.backgroundValid@VE.Norms.Conflict VE.Norms.envAt@VE.Norms.Tree
   -- expr 2913771158
+theorem VE.NormDefaults.agreed_all
+  ∀ {l : List (Option Bool)} {b : Bool},
+    VE.NormDefaults.agreed l = Option.some b → ∀ (x : Option Bool), x ∈ l → x = Option.some b
+  -- uses VE.NormDefaults.agreed@VE.NormDefaults.Evidence
+  -- expr 685299945
 theorem VE.NormDefaults.appliesD_fillRoot
   ∀ (U : VE.NormDefaults.UDoc) (S : VE.Structure) (ρ : VE.Valuation S) (N : VE.Norms.Node),
     VE.Norms.AppliesD S ρ (VE.NormDefaults.fillRoot U N) ↔ VE.Norms.AppliesD S ρ N
@@ -11971,6 +12078,15 @@ theorem VE.NormDefaults.denote_congr_preds
         VE.Formula.denote X ρ φ)
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 2376429831
+theorem VE.NormDefaults.denote_of_coneValuesAt
+  ∀ {α : Type u} [inst : DecidableEq α] (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel α) (C : List (String × List α))
+    (ρ : List α) (φ : VE.Formula) (b : Bool),
+    (∀ (x : Option Bool), x ∈ VE.NormDefaults.coneValuesAt U M C ρ φ → x = Option.some b) →
+      ∀ (F : VE.NormDefaults.FillTables U M.asStructure),
+        VE.Norms.Sat (VE.NormDefaults.withFill U M.asStructure F) (VE.NormDefaults.fillPremises U) →
+          (VE.Formula.denote (VE.NormDefaults.withFill U M.asStructure F) ρ φ ↔ b = Bool.true)
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.coneValuesAt@VE.NormDefaults.Evidence VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.Sat@VE.Norms.Prefix
+  -- expr 1406298269
 theorem VE.NormDefaults.denote_rel_iff
   ∀ (X : VE.Structure) (R₁ R₂ : String → List X.Carrier → Prop),
     (∀ (n : String) (vs : List X.Carrier), R₁ n vs ↔ R₂ n vs) →
