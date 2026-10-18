@@ -142,9 +142,6 @@ IDENTITY_KEYS = frozenset({"environment_id", "source_id", "meaning_id", "model_i
                            "graph_id", "report_id", "document_hash"})
 COUNT_KEYS = frozenset({"evaluations", "steps", "models_checked"})
 PILOT_TIMEOUT = 600
-# Pilot documents checked one at a time, in one worker, never beside each other: the whole-UDHR documents take
-# 18-30 GB each (PIPELINE-LIMITS L70).
-ONE_AT_A_TIME = ("/experiment-whole/",)
 READINGS_COUNT = 1000  # the readings differential's documents (composition-s1.md 9.3)
 RIGHTS_COUNT = 1000  # the rights differential's generator seeds (rights.md 10)
 RIGHTS_HEADED = 4  # every fourth rights source is recorded again under readings@1
@@ -381,12 +378,8 @@ def pilot_records(root: Path, scratch: Path, workers: int):
         return {"case": name, "op": "document_check", "source_sha256": blob, "authority": "default",
                 "outcome": pilot_check(root, path, env)}
 
-    serial = [item for item in documents if any(part in item[0] for part in ONE_AT_A_TIME)]
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        chain = pool.submit(lambda: {item[0]: check(item) for item in serial})  # first, in one worker
-        others = {item[0]: pool.submit(check, item) for item in documents if item not in serial}
-        for item in documents:
-            yield chain.result()[item[0]] if item in serial else others[item[0]].result()
+        yield from pool.map(check, documents)
 
 
 def readings_corpus(out: Path) -> None:

@@ -55,8 +55,14 @@ MUTANTS = [
     ("no cache: record runs as before", DIFF, 'cache = args.cache or os.environ.get("VE_AB_CACHE")',
      'cache = args.cache or os.environ.get("VE_AB_CACHE") or "/nonexistent"',
      "test_without_a_cache_record_runs_as_before"),
-    ("whole-UDHR pilot documents run one at a time", DIFF, 'ONE_AT_A_TIME = ("/experiment-whole/",)',
-     "ONE_AT_A_TIME = ()", "test_whole_documents_run_one_at_a_time_in_order"),
+    ("a child recording is split at newlines only", CACHE, 'for line in text.split("\\n")[:-1]:  # not',
+     "for line in text.splitlines():  # not", "test_hit_returns_the_records_a_recording_writes"),
+    ("the key is the same after recording before anything is stored", CACHE, "if root_key(root) != shared:",
+     "if False:", "test_a_key_that_changes_while_recording_stores_nothing"),
+    ("a failed recording writes and stores nothing", CACHE, "        if code:\n            return code\n", "",
+     "test_a_failed_recording_writes_and_stores_nothing"),
+    ("prune keeps the entries used lately", CACHE, "os.utime(entry)  # used now", "pass  # used now",
+     "test_prune_keeps_what_was_stored_or_used_lately"),
 ]
 
 

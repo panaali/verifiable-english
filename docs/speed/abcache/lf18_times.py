@@ -1,6 +1,10 @@
-"""lf-18's A/B (2026-10-18, /tmp/lf18/ab): minutes per corpus and records per (corpus, authority), per side.
+"""Minutes per corpus and records per (corpus, authority) of an A/B recording, per side.
 
     uv run python docs/speed/abcache/lf18_times.py /tmp/lf18/ab > docs/speed/abcache/evidence/lf18-ab-times.json
+    uv run python docs/speed/abcache/lf18_times.py DIR SIDE:STARTED:RECORDS ...  # this item's runs (REPORT.md 2)
+
+A side is `<side>` with the file whose birth is its start (default `<side>.log`) and its records (default
+`<side>.jsonl`, the child's output; under `--cache`, `<out>.part0`).
 
 The recorder writes the corpora in order (probe, conformance, pilots, readings, discourse, rights, quantity,
 norm_defaults, document) and creates a scratch directory when a corpus starts: `<side>.pilots`, `.discourse`,
@@ -22,8 +26,8 @@ def birth(path: Path) -> int:
                               text=True).stdout)
 
 
-def side(directory: Path, name: str) -> dict:
-    log, jsonl = directory / f"{name}.log", directory / f"{name}.jsonl"
+def side(directory: Path, name: str, started: str = "", records: str = "") -> dict:
+    log, jsonl = directory / (started or f"{name}.log"), directory / (records or f"{name}.jsonl")
     marks = [("corpus files", birth(log)), ("probe+conformance", birth(jsonl))]
     for corpus, label in (("pilots", "pilots+readings"), ("discourse", "discourse"), ("rights", "rights+quantity"),
                           ("norm_defaults", "norm_defaults"), ("document", "document")):
@@ -40,8 +44,8 @@ def side(directory: Path, name: str) -> dict:
 
 
 def main() -> None:
-    directory = Path(sys.argv[1])
-    print(json.dumps({name: side(directory, name) for name in ("base", "head")}, indent=1, sort_keys=True))
+    directory, sides = Path(sys.argv[1]), [arg.split(":") for arg in sys.argv[2:]] or [["base"], ["head"]]
+    print(json.dumps({parts[0]: side(directory, *parts) for parts in sides}, indent=1, sort_keys=True))
 
 
 if __name__ == "__main__":
