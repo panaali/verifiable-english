@@ -54,14 +54,19 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Alternatives.admission_fits
 #print axioms ResponseShape.Encoders.Alternatives.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Alternatives.chooser_fits
+#print axioms ResponseShape.Encoders.Alternatives.conflictU_fits
 #print axioms ResponseShape.Encoders.Alternatives.conflict_fits
 #print axioms ResponseShape.Encoders.Alternatives.decodeAltSource_taken
 #print axioms ResponseShape.Encoders.Alternatives.decodeBlock_taken
+#print axioms ResponseShape.Encoders.Alternatives.elaborateU_case_fits
+#print axioms ResponseShape.Encoders.Alternatives.elaborateU_coverage_fits
+#print axioms ResponseShape.Encoders.Alternatives.elaborateU_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_case_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_coverage_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_fits
 #print axioms ResponseShape.Encoders.Alternatives.fields_obj
 #print axioms ResponseShape.Encoders.Alternatives.firstFailure_of_not_free
+#print axioms ResponseShape.Encoders.Alternatives.followableU_fits
 #print axioms ResponseShape.Encoders.Alternatives.followable_fits
 #print axioms ResponseShape.Encoders.Alternatives.labelled_fits
 #print axioms ResponseShape.Encoders.Alternatives.of_norms
@@ -69,6 +74,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Alternatives.premiseLabels_fits
 #print axioms ResponseShape.Encoders.Alternatives.premiseLabels_mem
 #print axioms ResponseShape.Encoders.Alternatives.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Alternatives.runCaseU_fits
 #print axioms ResponseShape.Encoders.Alternatives.runCase_fits
 #print axioms ResponseShape.Encoders.Alternatives.sourceOf_taken
 #print axioms ResponseShape.Encoders.Alternatives.validate_fits
@@ -188,6 +194,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runGated_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softAdmission_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softCase_fits

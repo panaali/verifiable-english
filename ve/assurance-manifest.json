@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 35436,
+    "total_lines": 35822,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -87,16 +87,17 @@
       },
       {
         "file": "lean/VE/Alternatives/Replay.lean",
-        "lines": 328,
-        "sha256": "1b69bb125b3dffc0c53e6e97099a5fe72f1759d3c492757a37c8e61eb06b0f78",
+        "lines": 333,
+        "sha256": "dc387661ef1e31661700bcc43b471bcbef167e935facbf925a5eaac1397a56d9",
         "ranges": [
           [
             1,
-            328
+            333
           ]
         ],
         "declarations": [
           "documentHash",
+          "decodePackageAt",
           "decodePackage",
           "sourceOf",
           "decodeRows",
@@ -106,12 +107,12 @@
       },
       {
         "file": "lean/VE/Alternatives/Wire.lean",
-        "lines": 415,
-        "sha256": "2bca023f9fb77dd82ae6b2bd6b777ea277c533022c95bead6028a2421a728a22",
+        "lines": 422,
+        "sha256": "d3b9f3cbb3a2bb45991433b25a37b40114a2a4feec36397aa93a9c9096790789",
         "ranges": [
           [
             1,
-            415
+            422
           ]
         ],
         "declarations": [
@@ -405,12 +406,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 446,
-        "sha256": "86b4275dd14ba776d7f3a0190213c4c7cfd082a5ec5c87da0deab5b9dbd25e55",
+        "lines": 453,
+        "sha256": "897020d420570643b33cd03c2475c78ea4098955a0972010bec9a03808d396af",
         "ranges": [
           [
             1,
-            446
+            453
           ]
         ],
         "declarations": [
@@ -473,12 +474,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 441,
-        "sha256": "a065b15d37f737b136d72fa0bf502034335da238348711e45330e21eb2552b67",
+        "lines": 446,
+        "sha256": "73752e35a33c816df25aabc67d226f8d4d692f52f86ead336cf3da8973fbce9c",
         "ranges": [
           [
             1,
-            441
+            446
           ]
         ],
         "declarations": [
@@ -685,12 +686,12 @@
       },
       {
         "file": "lean/VE/Readings/UnspecifiedWire.lean",
-        "lines": 800,
-        "sha256": "d0d0e1b96bcf881c3222ac0c1a57380535155ab7c10ddacf641152ee92744267",
+        "lines": 798,
+        "sha256": "5584252f0a1553b676ac408fcb8e1903364b4c7c643662b16452d20030c6d0ea",
         "ranges": [
           [
             1,
-            800
+            798
           ]
         ],
         "declarations": [
@@ -714,7 +715,7 @@
       {
         "file": "lean/VE/Readings/VerdictsWire.lean",
         "lines": 1847,
-        "sha256": "69e2aeff2ef9388146f4c0d199fdbe472d4889a416712add3d5ec426d718bf86",
+        "sha256": "fedf217a0f311ab29c9bc68eac10b453fd73e512ca7e721cdb760d5a68fd9dff",
         "ranges": [
           [
             1,
@@ -1069,7 +1070,7 @@
       {
         "file": "lean/VE/Service/Document.lean",
         "lines": 1841,
-        "sha256": "3b798020979c98fe8198067a2f12adf8676795e2aaee0605e12da390dae00de8",
+        "sha256": "177cecc20fe8897b6f89ea3464af9b14e4aeb727833e76c8bd9790d512b7e362",
         "ranges": [
           [
             1,
@@ -1654,12 +1655,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/LayeredAdmission.lean",
-        "lines": 378,
-        "sha256": "c68165ab906c49ce0e605336187026598ea003826640e1d6dd35b18d2dc5fd18",
+        "lines": 381,
+        "sha256": "e536158827380bc68b9d57e0c44001c3d6524ea8865262997ebb892e7467bc49",
         "ranges": [
           [
             1,
-            378
+            381
           ]
         ],
         "declarations": [
@@ -1723,6 +1724,27 @@
           "runVerdictsSD"
         ],
         "reason": "rd-9 SC-5: readings-verdicts under the soft completion: each compatible choice taking assumed checked by sdChoiceText and its evidence decoded on its own choiceLayeredG source (xEvidenceOf) as XEvidence (choiceU N c) (choiceX N c); every row holds of sdSem (sd_rowsHold); beyond 64 only the evidence's own choices; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Alternatives/FillWire.lean",
+        "lines": 361,
+        "sha256": "a7a473ee539897b9b07861908b3c0f49406e898ad6326a1e057209329897fab2",
+        "ranges": [
+          [
+            1,
+            361
+          ]
+        ],
+        "declarations": [
+          "decodeAltSourceU",
+          "baseEnvironmentJsonAltU",
+          "decodePackageU",
+          "sourceOfU",
+          "replayAltConflictU",
+          "replayFollowableU",
+          "replayDilemmaU"
+        ],
+        "reason": "the alternatives source with the completion, its package bindings and witness filling from JSON (ET-7); the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1819,7 +1841,9 @@
       "lean/VE/WireContract/Hooks/NormDefaults.lean": "diagnostic only: no verdict depends on it. Hooks and the adapter of the contract norm-defaults@0 (docs/spec/wire-contract-s5.md 2.4, 2.5); they read the author document through Norms.Wire.decodeNormsEnvironment and Norms.Wire.decodeNorm read-only, never decodeSource",
       "lean/VE/Route/AstLimit.lean": "rejection only: the static AST node, depth and numeral limits walked over a case's raw formula JSON before any pinned decoder runs (Python _Decoder's budget order); it returns a ResourceLimit fault or nothing, never a decoded value, and every formula it passes is still decoded by a pinned decoder",
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
-      "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing"
+      "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing",
+      "lean/VE/NormDefaults/Packs.lean": "encoder only: premise packs (PK-1); `labelledJson` and `elaborateArrays` write the layered elaborate's `soft` and `rights` arrays from Lean values; it reads no request JSON (the packs come from the pinned Layered.lean decoders)",
+      "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d); no runtime decoding"
     }
   },
   "plan_operations": {
