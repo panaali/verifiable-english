@@ -122,6 +122,7 @@ import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 import VE.GraphChecks
 import VE.Judgments.Decl
+import VE.Judgments.Examples
 import VE.Judgments.Scan
 import VE.LexicalProofs
 import VE.ModelProofs
@@ -1773,6 +1774,7 @@ import VE.WireContract.Engine
 #print axioms VE.Graph.resolve_sound
 #print axioms VE.Graph.tableau_certificateSound
 #print axioms VE.GraphChecks.testCertificate_sound
+#print axioms VE.Judgments.Examples.names_omega
 #print axioms VE.Judgments.admit_first_fault
 #print axioms VE.Judgments.admit_ok_iff
 #print axioms VE.Judgments.faultOf_none_iff
