@@ -1,0 +1,5 @@
+start 2026-10-18T10:00:39Z load 6.38 14.35 17.35 cmd uv run python tools/lean_first_diff.py record --root /tmp/abcache-main --out /tmp/abcache-ab/fresh/base.jsonl --cache /tmp/abcache-ab/cache --workers 6
+load 2026-10-18T10:00:39Z 6.38 14.35 17.35
+load 2026-10-18T10:01:39Z 9.64 13.70 16.93
+load 2026-10-18T10:02:39Z 7.12 12.26 16.23
+end 2026-10-18T10:03:39Z load 10.57 12.05 15.90 rc 0 seconds 180
