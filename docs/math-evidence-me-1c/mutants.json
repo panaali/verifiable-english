@@ -133,5 +133,14 @@
     "test": "lake build VE.Calc.Examples (example at Examples.lean:304-314: a finished count is not exhausted; it fails at 312, unsolved goal. The positive example at 292-293 also fails, on the changed constructor shape)",
     "result": "failed; restored",
     "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:292, VE/Calc/Examples.lean:293, VE/Calc/Examples.lean:312"
+  },
+  {
+    "n": 16,
+    "file": "lean/VE/Calc/Eval.lean",
+    "behaviour": "the plan's ME-1 seeded bug: eval computes sub a b as b - a (V-2's third claim must fail); Eval.lean is not changed by this item, the mutant is run for the ME-1 ledger",
+    "mutation": "| .sub a b => do let x ← a.eval σ; let y ← b.eval σ; pure (x - y)  ->  ... pure (y - x); the proofs it breaks (Expr.eval_sound, Denotes.eval_complete in Eval.lean, Expr.evalL_agrees in Decls.lean) have their sub case replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:37: V-2's increase rounds to 8.6; 40: the reversed difference does not)",
+    "result": "failed; restored",
+    "observed": "the mutated files compiled; error: VE/Calc/Examples.lean:37, VE/Calc/Examples.lean:40"
   }
 ]
