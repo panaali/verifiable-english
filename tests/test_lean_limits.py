@@ -6,7 +6,8 @@
   approved with (the limits are reducible, so their proofs hold of the checks), and so do `#guard`s.
 * The modules that may not import `VE.Limits` (hash-frozen by architecture decision D2, hashed by the English
   grammar lock, or generated) are tied to it in `lean/VE/LimitTies.lean`: the frozen decoders' node and depth
-  literals at the limit and one past it, the JSON reader's caps, and the generated name classes.
+  literals at the limit and one past it, and the JSON reader's caps; the generated wire-contract name classes
+  in `lean/VE/WireContract/Hooks/Norms.lean`.
 * The lint can fail: each of its patterns finds the line it was written for.
 
 The scan reads Lean source as text (it is a measurement aid, not a parser): it drops comments and string
@@ -136,7 +137,9 @@ def test_the_lint_finds_each_limit_it_was_written_for():
 
 def test_the_frozen_generated_and_hashed_copies_are_tied_to_the_limits():
     """Each module that keeps a limit's literal and may not import `VE.Limits` has a guard in LimitTies."""
-    guards = re.findall(r"^#guard.*(?:\n  .*)*", (LEAN / "VE/LimitTies.lean").read_text(), re.M)
+    # The wire-contract name classes are diagnostic-only (spec 7.3): their tie is in a module that may import them.
+    guards = [guard for module in ("VE/LimitTies.lean", "VE/WireContract/Hooks/Norms.lean")
+              for guard in re.findall(r"^#guard.*(?:\n  .*)*", (LEAN / module).read_text(), re.M)]
     for module, limits in {
         "VE.JsonInput.parse": ("maxJsonDepth", "maxIndex", "maxPackageBytes"),
         "VE.JsonInput.parseCases": ("maxPackageBytes",),

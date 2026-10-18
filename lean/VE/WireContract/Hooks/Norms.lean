@@ -3,6 +3,7 @@ import VE.NormDefaults.Wire
 import VE.WireContract.Engine
 import VE.WireContract.Tables.Norms
 import VE.Limits
+import VE.WireContract.Names
 
 /-! The hand-written hooks, classifiers and adapter of the contract `norms@0`
 (docs/spec/wire-contract-s5.md 2.3 and 2.5).
@@ -481,5 +482,10 @@ def l8Samples : List Json :=
 #guard (synFormula 64 0 (.arr #[.str "eq", .arr #[.str "const", (num 5)], .arr #[.str "var", (num 0)]])).toBool
 #guard (synFormula 64 0 (.arr #[.str "forall", (num 5), .arr #[.str "top"]])).toBool
 #guard !(VE.Norms.Wire.budgetFormula 64 0 (.arr #[.str "forall", (num 5), .arr #[.str "top"]])).toBool
+
+-- The generated name classes (`ve/wire_contract/names.json`) bound an identifier as `VE.Limits` does
+-- (lf-18 review F2; `VE.LimitTies` may not import a diagnostic-only module, spec 7.3).
+#guard [VE.WireContract.Names.decider, VE.WireContract.Names.rule_name, VE.WireContract.Names.soft_name].all
+  (·.maxBytes == some VE.Limits.maxIdentifierBytes)
 
 end VE.WireContract.Hooks.Norms

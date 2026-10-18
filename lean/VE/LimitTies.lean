@@ -6,15 +6,15 @@ import VE.EnglishGrammar.Lexer
 import VE.Route.AstLimit
 import VE.Route.Budget
 import VE.Time.Wire
-import VE.WireContract.Names
 
 /-! The limits that frozen, hashed or generated modules keep as literals are `VE.Limits`' values:
 at the limit and one past it for the frozen decoders' inline literals, and by value for their named
 copies and for the diagnostics that state a limit. The frozen decoders are hash-frozen by
 architecture decision D2 (`VE/Route/frozen-sources.sha256`), the English lexer by the grammar lock
-(`ve/english_grammar/LOCK.json`), the wire-contract name classes are generated
-(`tools/wire_contract.py`); none may import `VE.Limits`. A changed limit fails one of these guards
-(lf-18 review F2: the frozen decoders' node and depth literals were not tied). -/
+(`ve/english_grammar/LOCK.json`); neither may import `VE.Limits`. The generated wire-contract name
+classes are tied in `VE.WireContract.Hooks.Norms`, which may import them (this module may not). A
+changed limit fails one of these guards (lf-18 review F2: the frozen decoders' node and depth
+literals were not tied). -/
 namespace VE.LimitTies
 open Lean VE.Limits
 
@@ -184,9 +184,5 @@ private def domainFault : String := "ResourceLimit: domain size"
 #guard VE.Time.Wire.budgetExhausted == VE.Route.Budget.budgetExhausted
 #guard VE.Time.Wire.aggregateLimit ==
   s!"ResourceLimit: premises and conclusion exceed aggregate {maxNodes}-node limit"
-
--- The generated wire-contract name classes bound an identifier.
-#guard [VE.WireContract.Names.decider, VE.WireContract.Names.rule_name, VE.WireContract.Names.soft_name].all
-  (·.maxBytes == some maxIdentifierBytes)
 
 end VE.LimitTies
