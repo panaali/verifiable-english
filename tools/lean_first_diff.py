@@ -3,8 +3,13 @@ section 5.1 item 2).
 
 Usage::
 
-    tools/lean_first_diff.py record --root DIR --out FILE [--corpus NAME ...] [--authority A ...]
+    tools/lean_first_diff.py record --root DIR --out FILE [--corpus NAME ...] [--authority A ...] [--cache DIR]
     tools/lean_first_diff.py compare BASE HEAD [--delta FILE] [--json OUT]
+    tools/lean_first_diff.py prewarm --commit SHA --cache DIR [--workers N]
+
+``--cache`` (default ``$VE_AB_CACHE``; unset: off) reuses a (corpus, authority) segment recorded before for the same
+clean commit, Lean build key, recorder, corpus inputs and environment, and stores the segments it records;
+``prewarm`` records a commit into the cache (`tools/lean_first_cache.py`). ``compare`` never reads the cache.
 
 ``record`` imports the `ve` package of the checkout at ``--root`` (its sources and its Lean and
 Rust builds) in a child process and writes one record per public result, so a base commit is
@@ -137,6 +142,9 @@ IDENTITY_KEYS = frozenset({"environment_id", "source_id", "meaning_id", "model_i
                            "graph_id", "report_id", "document_hash"})
 COUNT_KEYS = frozenset({"evaluations", "steps", "models_checked"})
 PILOT_TIMEOUT = 600
+# Pilot documents checked one at a time, in one worker, never beside each other: the whole-UDHR documents take
+# 18-30 GB each (PIPELINE-LIMITS L70).
+ONE_AT_A_TIME = ("/experiment-whole/",)
 READINGS_COUNT = 1000  # the readings differential's documents (composition-s1.md 9.3)
 RIGHTS_COUNT = 1000  # the rights differential's generator seeds (rights.md 10)
 RIGHTS_HEADED = 4  # every fourth rights source is recorded again under readings@1
@@ -373,8 +381,12 @@ def pilot_records(root: Path, scratch: Path, workers: int):
         return {"case": name, "op": "document_check", "source_sha256": blob, "authority": "default",
                 "outcome": pilot_check(root, path, env)}
 
+    serial = [item for item in documents if any(part in item[0] for part in ONE_AT_A_TIME)]
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        yield from pool.map(check, documents)
+        chain = pool.submit(lambda: {item[0]: check(item) for item in serial})  # first, in one worker
+        others = {item[0]: pool.submit(check, item) for item in documents if item not in serial}
+        for item in documents:
+            yield chain.result()[item[0]] if item in serial else others[item[0]].result()
 
 
 def readings_corpus(out: Path) -> None:
@@ -546,10 +558,19 @@ def _discourse_case(item):
             pass  # a name no file can have stays absent, as it was in the test that wrote it
     path = directory / "document.ve.md"
     path.write_bytes(base64.b64decode(entry["document"]))
-    source = hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
-    return [{"case": entry["id"], "op": op, "source_sha256": source, "authority": "default",
+    return [{"case": entry["id"], "op": op, "source_sha256": discourse_source(entry), "authority": "default",
              "outcome": outcome(lambda: call(path))}
             for op, call in zip(DOCUMENT_OPS, (check_document, render_document))]
+
+
+def discourse_source(entry: dict) -> str:
+    """The digest a discourse corpus entry's records carry."""
+    return hashlib.sha256(json.dumps(entry, sort_keys=True).encode()).hexdigest()
+
+
+def quantity_source(entry: dict) -> str:
+    """The digest a quantity corpus entry's record carries."""
+    return hashlib.sha256(json.dumps(entry, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
 def discourse_corpus(root: Path) -> list[dict]:
@@ -596,8 +617,7 @@ def _quantity_case(item):
     """One quantity corpus entry under one authority (in a pool worker)."""
     authority, entry = item
     os.environ["VE_AUTHORITY"] = authority
-    source = hashlib.sha256(json.dumps(entry, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
-    return {"case": entry["id"], "op": entry["op"], "source_sha256": source, "authority": authority,
+    return {"case": entry["id"], "op": entry["op"], "source_sha256": quantity_source(entry), "authority": authority,
             "outcome": outcome(lambda: _quantity_call(entry))}
 
 
@@ -634,37 +654,43 @@ def pilot_check(root: Path, path: Path, env: dict) -> dict:
             "stderr": done.stderr.decode("utf-8", "replace").strip().splitlines()[-1:]}
 
 
+def line(record: dict) -> str:
+    """A record as the recorder writes it: one line of canonical JSON."""
+    return json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n"
+
+
 def child(args) -> int:
     root = Path(args.root).resolve()
     import ve
     if not Path(ve.__file__).resolve().is_relative_to(root):
         print(f"ve imported from {ve.__file__}, not from {root}", file=sys.stderr)
         return 2
+    base = Path(args.scratch or args.out)  # the corpus files and scratch directories are named after it
     with open(args.out, "w") as out:
         def write(record):
-            out.write(json.dumps(record, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n")
+            out.write(line(record))
             out.flush()
         for corpus in args.corpus:
             if corpus == "readings":
-                for record in readings_records(Path(args.out).with_suffix(".readings.json")):
+                for record in readings_records(base.with_suffix(".readings.json")):
                     write({"corpus": corpus, "authority": "default", **record})
                 continue
             if corpus == "pilots":
-                for record in pilot_records(root, Path(args.out).with_suffix(".pilots"), args.workers):
+                for record in pilot_records(root, base.with_suffix(".pilots"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
             if corpus == "rights":
-                for record in rights_records(Path(args.out).with_suffix(".rights.json"),
-                                             Path(args.out).with_suffix(".rights"), args.workers):
+                for record in rights_records(base.with_suffix(".rights.json"), base.with_suffix(".rights"),
+                                             args.workers):
                     write({"corpus": corpus, **record})
                 continue
             if corpus in ("norm_defaults", "document"):
-                for record in norm_defaults_records(Path(args.out).with_suffix(f".{corpus}.json"),
-                                                    Path(args.out).with_suffix(f".{corpus}"), args.workers):
+                for record in norm_defaults_records(base.with_suffix(f".{corpus}.json"), base.with_suffix(f".{corpus}"),
+                                                    args.workers):
                     write({"corpus": corpus, **record})
                 continue
             if corpus == "discourse":
-                for record in discourse_records(Path(args.out).with_suffix(".discourse"), args.workers):
+                for record in discourse_records(base.with_suffix(".discourse"), args.workers):
                     write({"corpus": corpus, **record})
                 continue
             if corpus == "quantity":
@@ -680,8 +706,8 @@ def child(args) -> int:
     return 0
 
 
-def record(args) -> int:
-    root = Path(args.root).resolve()
+def generate_corpora(args) -> int:
+    """Write the corpus files this checkout generates and both sides read, beside `args.out`; 0, or 2 on failure."""
     for name in ("readings", "rights", "norm_defaults", "document"):
         if name not in args.corpus:
             continue
@@ -691,11 +717,32 @@ def record(args) -> int:
                                    "--out", str(corpus)], cwd=ROOT, env={**os.environ, "PYTHONPATH": str(ROOT)})
             if done.returncode != 0:
                 return 2
+    return 0
+
+
+def run_child(root: Path, out: Path, corpora, authorities, workers: int, scratch: Path | None = None) -> int:
+    """Record `corpora` under `authorities` in the checkout `root` (a child importing its `ve`) into `out`."""
     env = {**os.environ, "PYTHONPATH": str(root)}
-    command = [sys.executable, str(Path(__file__).resolve()), "_child", "--root", str(root),
-               "--out", str(Path(args.out).resolve()),
-               "--workers", str(args.workers), "--corpus", *args.corpus, "--authority", *args.authority]
+    command = [sys.executable, str(Path(__file__).resolve()), "_child", "--root", str(root), "--out", str(out),
+               *(["--scratch", str(scratch)] if scratch else []),
+               "--workers", str(workers), "--corpus", *corpora, "--authority", *authorities]
     return subprocess.run(command, cwd=root, env=env).returncode
+
+
+def _cache_module():
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    from tools import lean_first_cache
+    return lean_first_cache
+
+
+def record(args) -> int:
+    if generate_corpora(args):
+        return 2
+    cache = args.cache or os.environ.get("VE_AB_CACHE")
+    if cache:
+        return _cache_module().record(args, Path(cache))
+    return run_child(Path(args.root).resolve(), Path(args.out).resolve(), args.corpus, args.authority, args.workers)
 
 
 # --- comparison ------------------------------------------------------------------------
@@ -808,10 +855,15 @@ def load(path: str) -> dict[tuple, dict]:
     """The records of the recording at `path`, each checked (`record_problem`) before any is used: a
     line the recorder cannot write, a duplicate record, or two records of one corpus file with
     different digests (mixed identity) is `Unusable`."""
-    records, sources = {}, {}
     if not Path(path).is_file():
         raise Unusable(f"{path}: no recording")
-    for number, line in enumerate(Path(path).read_text().split("\n"), 1):
+    return load_text(Path(path).read_text(), path)
+
+
+def load_text(text: str, path: str) -> dict[tuple, dict]:
+    """The records of the recording `text` (named `path` in messages), checked as `load` checks them."""
+    records, sources = {}, {}
+    for number, line in enumerate(text.split("\n"), 1):
         if not line:
             continue
         try:
@@ -1051,6 +1103,12 @@ def main(argv=None) -> int:
         p.add_argument("--corpus", nargs="+", default=list(CORPORA), choices=CORPORA)
         p.add_argument("--authority", nargs="+", default=list(AUTHORITIES), choices=AUTHORITIES)
         p.add_argument("--workers", type=int, default=4)
+    sub.choices["record"].add_argument("--cache", help="the base-record cache (default: $VE_AB_CACHE, else off)")
+    sub.choices["_child"].add_argument("--scratch", help="name the corpus files and scratch directories after this")
+    p = sub.add_parser("prewarm")
+    p.add_argument("--commit", required=True)
+    p.add_argument("--cache", required=True)
+    p.add_argument("--workers", type=int, default=4)
     for name in ("_readings_corpus", "_rights_corpus", "_norm_defaults_corpus", "_document_corpus"):
         p = sub.add_parser(name)
         p.add_argument("--out", required=True)
@@ -1066,6 +1124,8 @@ def main(argv=None) -> int:
         return record(args)
     if args.command == "_child":
         return child(args)
+    if args.command == "prewarm":
+        return _cache_module().prewarm(args.commit, Path(args.cache), args.workers)
     if args.command == "_readings_corpus":
         readings_corpus(Path(args.out))
         return 0
