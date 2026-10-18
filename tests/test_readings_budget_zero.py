@@ -23,7 +23,7 @@ from ve.readings_verdicts import Enumerated, Superposed, _ChoiceDocument, _Fille
 # The ops whose answers rest on a certificate, a model or a witness (each swept below), and the rest with why not.
 SWEPT = {
     Superposed: {"conflict", "model", "certificate", "premises", "candidate_premises", "dead_readings", "entailment",
-                 "report_fields"},
+                 "report_fields", "conflict_answer", "premises_answer", "query_answer", "answer_for"},
     Enumerated: {"conflict", "premises", "dead_readings", "entailment", "report_fields", "conflict_answer",
                  "premises_answer", "query_answer"},
     # RD-3: a choice's document only generates evidence; Lean checks and folds it (`readings-verdicts`).
@@ -47,7 +47,8 @@ FIXTURES = {"F-ND1": (fnd1, QUERY), "F-ND1 enumerated oracle": (fnd1, QUERY),
 
 
 def fixture_route(name, tmp_path):
-    """Keep RD-3's filled choice checker covered after RD-6b makes F-ND1's public route superposed."""
+    """Keep RD-3's filled choice checker covered after RD-6b makes F-ND1's public route superposed; F-ND1's filled
+    choice document is also swept directly on the superposed route."""
     make, _ = FIXTURES[name]
     doc = load_document(make(tmp_path))
     if name == "F-ND1 enumerated oracle":
@@ -110,12 +111,17 @@ def sweep_enumerated(route, conclusion):
 
 def sweep_superposed(route, conclusion):
     unknown(route.conflict(), "status")
+    unknown(route.conflict_answer()["result"], "status")
     assert route.model() is None and route.model(conclusion=conclusion) is None
     assert route.certificate() is None and route.certificate(conclusion=conclusion) is None
     premises = unknown(route.premises(), "status")
+    unknown(route.premises_answer()["result"], "status")
     assert "model" not in premises
     assert {c["status"] for c in route.candidate_premises()} <= {"UNKNOWN", "narrowed"}
-    unknown(route.entailment(conclusion), "verdict")
+    result = unknown(route.entailment(conclusion), "verdict")
+    answer = route.query_answer(conclusion)
+    unknown(answer["result"], "verdict")
+    assert route.answer_for(result, conclusion) is answer
     for candidate in route.candidates():
         unknown(route.conflict([candidate]), "status")
         assert route.model([candidate]) is None and route.certificate([candidate]) is None
@@ -134,6 +140,8 @@ def test_budget_zero_every_verdict_op_is_unknown(name, tmp_path, zero):
     else:
         assert isinstance(route, Superposed)
         report = sweep_superposed(route, conclusion)
+        if name == "F-ND1":
+            sweep_choice(_FilledChoiceDocument(route, route.choices[0]), conclusion)
     assert report["status"].startswith("UNKNOWN") and report["conflict"]["status"] == "UNKNOWN"
     # Every candidate of these fixtures is taken by a compatible choice: none is dead whatever the budget.
     assert report["dead_readings"] in (None, []) and route.dead_readings() in (None, [])
@@ -179,6 +187,8 @@ def test_budget_zero_fixtures_cover_every_choice_document_kind(tmp_path):
         route = fixture_route(name, tmp_path / name)
         kinds.add(type(route) if not isinstance(route, Enumerated) else
                   _FilledChoiceDocument if route.completion else _ChoiceDocument)
+        if name == "F-ND1":
+            kinds.add(type(_FilledChoiceDocument(route, route.choices[0])))
     assert kinds == {Superposed, _ChoiceDocument, _FilledChoiceDocument}
 
 

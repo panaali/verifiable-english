@@ -357,7 +357,6 @@
     "results/*/result/decisions",
     "results/*/result/derived",
     "results/*/result/english",
-    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -394,7 +393,6 @@
     "results/*/result/derived",
     "results/*/result/english",
     "results/*/result/environment_prime/vocabulary/predicates",
-    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -2122,6 +2120,26 @@
    "kind": "follow-up",
    "id": "F11",
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/fill"
+   ],
+   "kind": "by-design",
+   "id": "RD7-fill",
+   "reason": "The service transport checks the generated shape. The public completion elaboration binder checks every fill label against the already request-bound Fill_T premises and refuses an empty or missing fill row (test_superposed_answer_retypes_each_field_and_rebinds_each_reference)."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/fill"
+   ],
+   "kind": "by-design",
+   "id": "RD7-fill",
+   "reason": "The public completion elaboration binder refuses a repeated fill label (test_superposed_answer_retypes_each_field_and_rebinds_each_reference)."
   },
   {
    "route": "service:ask",

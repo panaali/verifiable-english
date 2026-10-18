@@ -1,0 +1,106 @@
+{
+ "base_commit": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+ "head_commit": "074f96d3fca99843b6c0208bcb9c0aedb8410b25",
+ "method": "one at a time, foreground: PYTHONPATH=<checkout> VE_RUST_TIMEOUT=60 python -m ve document check <case>, under /usr/bin/time -v and timeout 2400; normalisation replaces the checkout path and the elapsed seconds",
+ "cases": [
+  {
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "source_sha256": "d95fe816730f136d6d2cd95fcd9d5c11d581b648",
+   "base": {
+    "stdout": {
+     "status": "CheckerUnavailable",
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/tmp/rd7-base/rust/target/release/ve', 'jsonl', '-']' timed out after 59.994927670108154 seconds"
+     }
+    },
+    "user_s": 771.61,
+    "system_s": 51.06,
+    "elapsed": "13:37.06",
+    "max_rss_kb": 21918116,
+    "exit": 5
+   },
+   "head": {
+    "stdout": {
+     "status": "CheckerUnavailable",
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-rd-7/rust/target/release/ve', 'jsonl', '-']' timed out after 59.9981621010229 seconds"
+     }
+    },
+    "user_s": 773.33,
+    "system_s": 54.53,
+    "elapsed": "13:35.31",
+    "max_rss_kb": 22144220,
+    "exit": 5
+   },
+   "same_after_normalising_root_and_seconds": true
+  },
+  {
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "source_sha256": "7fd6d251519d2ad3ccff1d7c4ff094eefbd72650",
+   "base": {
+    "stdout": {
+     "status": "CheckerUnavailable",
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/tmp/rd7-base/rust/target/release/ve', 'jsonl', '-']' timed out after 59.99769811006263 seconds"
+     }
+    },
+    "user_s": 619.56,
+    "system_s": 51.19,
+    "elapsed": "10:59.15",
+    "max_rss_kb": 20259408,
+    "exit": 5
+   },
+   "head": {
+    "stdout": {
+     "status": "CheckerUnavailable",
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-rd-7/rust/target/release/ve', 'jsonl', '-']' timed out after 59.99890161002986 seconds"
+     }
+    },
+    "user_s": 760.66,
+    "system_s": 59.24,
+    "elapsed": "13:22.49",
+    "max_rss_kb": 23090196,
+    "exit": 5
+   },
+   "same_after_normalising_root_and_seconds": true
+  },
+  {
+   "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
+   "source_sha256": "1aa5a3bab5abb4ea247beec022d93439744253c0",
+   "base": {
+    "stdout": {
+     "status": "CheckerUnavailable",
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/tmp/rd7-base/rust/target/release/ve', 'jsonl', '-']' timed out after 59.99912099004723 seconds"
+     }
+    },
+    "user_s": 778.9,
+    "system_s": 50.79,
+    "elapsed": "13:27.81",
+    "max_rss_kb": 29592868,
+    "exit": 5
+   },
+   "head": {
+    "stdout": {
+     "status": "CheckerUnavailable",
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "CheckerUnavailable: Rust checker failed: Command '['/home/seyran/code/ve-rd-7/rust/target/release/ve', 'jsonl', '-']' timed out after 59.998214510967955 seconds"
+     }
+    },
+    "user_s": 1038.48,
+    "system_s": 46.68,
+    "elapsed": "18:00.85",
+    "max_rss_kb": 17802828,
+    "exit": 5
+   },
+   "same_after_normalising_root_and_seconds": true
+  }
+ ]
+}

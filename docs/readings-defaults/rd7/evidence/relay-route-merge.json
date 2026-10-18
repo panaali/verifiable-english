@@ -1,0 +1,57 @@
+{
+ "failures": [],
+ "findings": [],
+ "inputs": {
+  "tests/data/relay-gate-cases.jsonl": "42341de07bb75723239dc85cd6398bd5ec211105ca84434c9bd4cbab9173b76f",
+  "tools/relay-gate-allow.json": "c69bc53199ab7d76ed048460ca8e55132a7224a8d3b39d97eef91d86d7954e5b"
+ },
+ "routes": {
+  "service:readings-route": {
+   "accepted": 2385,
+   "allowed": 2385,
+   "allowed:B0": 153,
+   "allowed:B1": 1539,
+   "allowed:B2": 57,
+   "allowed:B3": 7,
+   "allowed:F10": 120,
+   "allowed:F11": 59,
+   "allowed:F2": 135,
+   "allowed:F3": 32,
+   "allowed:F4": 233,
+   "allowed:F5": 40,
+   "allowed:F6": 6,
+   "allowed:RD7-fill": 4,
+   "fixtures": 46,
+   "mutants": 16495,
+   "ok_fixtures": 33,
+   "refused": 14110,
+   "seconds": 71.4,
+   "untyped": 70,
+   "untyped:B1": 64,
+   "untyped:B2": 6
+  }
+ },
+ "totals": {
+  "accepted": 2385,
+  "allowed": 2385,
+  "allowed:B0": 153,
+  "allowed:B1": 1539,
+  "allowed:B2": 57,
+  "allowed:B3": 7,
+  "allowed:F10": 120,
+  "allowed:F11": 59,
+  "allowed:F2": 135,
+  "allowed:F3": 32,
+  "allowed:F4": 233,
+  "allowed:F5": 40,
+  "allowed:F6": 6,
+  "allowed:RD7-fill": 4,
+  "fixtures": 46,
+  "mutants": 16495,
+  "ok_fixtures": 33,
+  "refused": 14110,
+  "untyped": 70,
+  "untyped:B1": 64,
+  "untyped:B2": 6
+ }
+}
