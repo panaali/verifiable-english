@@ -5,7 +5,7 @@
  "max_mutants": 100000,
  "deep": false,
  "tests": [],
- "seconds": 529,
+ "seconds": 426,
  "counts": {
   "KILLED": 359,
   "SURVIVOR": 33,
