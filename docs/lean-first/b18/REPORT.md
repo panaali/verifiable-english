@@ -114,8 +114,10 @@ Seeded bugs for the fixes (each restored; its test passed again):
 | Lean | `lean/VE/Closure/Bridge.lean` | the node total compared with the literal 10000 again | `tests/test_lean_limits.py::test_no_non_frozen_lean_check_hard_codes_a_limit` (the line is found) |
 | Lean | `lean/VE/LimitTies.lean` | every guard checked against `maxNodes + 1` and `maxDepth + 1` (a changed limit) | 20 `#guard`s fail to elaborate |
 
-Fix-round evidence: `evidence/relay-gate.json` was re-run on the fixed code (42 routes, 131,278 mutants, 0
-failures). The A/B, difffuzz and latency evidence are the build's: the fixes change no answer (the limits keep
+Fix-round evidence: `evidence/relay-gate.json` was re-run on the fixed code at `1a2e1dc2` (42 routes, 131,278
+mutants, 0 failures). The selected tests for the branch (`select_tests --base $(git merge-base HEAD main)`, 433
+units) passed on the Mac runner at `1a2e1dc2`; `lake build`, `lean/audit.py`, `trust_map.py --check` and
+`regen_generated.py --check` pass. The A/B, difffuzz and latency evidence are the build's: the fixes change no answer (the limits keep
 their values; the relay refuses only answers Lean never writes).
 
 ## Self-review against BUILDER-CHECKLIST
