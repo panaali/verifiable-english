@@ -3195,7 +3195,7 @@ module VE.Attribution.Wire 4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100
 492:0-497:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 499:0-506:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 508:0-512:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit 5a81bc805b5453e2530c2ecdc6e71bee6f0a492d8e55b13d43dab50fc061bdbb
+module VE.Audit ac7fda3e83ae338121578acab01da1d91b9f4ce28b0b5be7bb5c91bcc4489463
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -7160,7 +7160,7 @@ module VE.Judgments.Decl 6380e1cda31818feefcbd44795a1204e53679f7a628f0d61a6ba571
 146:0-167:18 theorem VE.Judgments.faultOf_none_iff@VE.Judgments.Decl
 169:0-182:26 theorem VE.Judgments.admit_ok_iff@VE.Judgments.Decl
 184:0-195:39 theorem VE.Judgments.admit_first_fault@VE.Judgments.Decl
-module VE.Judgments.Examples 42eb9d1fd07e573842351015fa464b552b99068b019162385eb1f1bf41311859
+module VE.Judgments.Examples 714fa63ed0958ada9450285281292249cb7754e8550b89b750c34bdb50ae7a31
 15:0-18:17 def VE.Judgments.Examples.errText@VE.Judgments.Examples
 20:0-23:20 def VE.Judgments.Examples.okVal@VE.Judgments.Examples
 27:0-32:106 def VE.Judgments.Examples.envText@VE.Judgments.Examples
@@ -7177,10 +7177,11 @@ module VE.Judgments.Examples 42eb9d1fd07e573842351015fa464b552b99068b019162385eb
 96:0-96:37 def VE.Judgments.Examples.J1@VE.Judgments.Examples
 97:0-97:60 def VE.Judgments.Examples.guardα@VE.Judgments.Examples
 98:0-98:102 def VE.Judgments.Examples.judgment@VE.Judgments.Examples
-133:0-133:96 def VE.Judgments.Examples.fγ@VE.Judgments.Examples
-142:0-145:84 def VE.Judgments.Examples.Pω@VE.Judgments.Examples
-146:0-147:104 def VE.Judgments.Examples.Eω@VE.Judgments.Examples
-148:0-148:83 def VE.Judgments.Examples.regulatedω@VE.Judgments.Examples
+141:0-141:96 def VE.Judgments.Examples.fγ@VE.Judgments.Examples
+150:0-153:84 def VE.Judgments.Examples.Pω@VE.Judgments.Examples
+154:0-155:104 def VE.Judgments.Examples.Eω@VE.Judgments.Examples
+156:0-156:83 def VE.Judgments.Examples.regulatedω@VE.Judgments.Examples
+164:0-167:8 theorem VE.Judgments.Examples.names_omega@VE.Judgments.Examples
 module VE.Judgments.Scan f2291c292462dd6c570ab1676fc13c1c83fbdc04f1e461aba6596b68b61315e6
 9:0-11:65 def VE.Judgments.opensIn@VE.Judgments.Scan
 13:0-14:51 theorem VE.Judgments.opensIn_iff@VE.Judgments.Scan

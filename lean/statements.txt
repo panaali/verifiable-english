@@ -10230,6 +10230,15 @@ theorem VE.GraphChecks.testCertificate_sound
   ∀ (E : VE.Environment), VE.Graph.CertificateSound E VE.GraphChecks.valid
   -- uses VE.Environment@VE.Syntax VE.Graph.CertificateSound@VE.ClaimGraph VE.GraphChecks.TestCertificate@VE.GraphChecks VE.GraphChecks.valid@VE.GraphChecks
   -- expr 3640407803
+theorem VE.Judgments.Examples.names_omega
+  Option.map VE.Judgments.names
+      (VE.Judgments.Examples.okVal
+        (VE.Judgments.admit VE.Judgments.Examples.Eω [] VE.Judgments.Examples.regulatedω
+          [VE.Judgments.Examples.jrec "arbitrary_measure" ["measure"],
+            VE.Judgments.Examples.jrec "arbitrary_interference" ["interference"]])) =
+    Option.some ["arbitrary_measure", "arbitrary_interference"]
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.Examples.Eω@VE.Judgments.Examples VE.Judgments.Examples.jrec@VE.Judgments.Examples VE.Judgments.Examples.okVal@VE.Judgments.Examples VE.Judgments.Examples.regulatedω@VE.Judgments.Examples VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.names@VE.Judgments.Decl
+  -- expr 319133479
 theorem VE.Judgments.admit_first_fault
   ∀ (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : List String) (rs : List VE.Judgments.Rec)
     (e : String),

@@ -93,7 +93,8 @@ Each `#guard` reproduces one row of spec 11 with the value the spec's stub compu
   refused without the flag, with W2's text, and admitted with it); J-α (`["act"]`, the same answer all three ways,
   with the factor kept by `records`).
 - 11.2: J-α, J-δ, J-π, J-ε, J-ρ, J-ζ, J-ζ′, J-η, J-ο, J-ν, J-θ, "order 1" (record order), "order 2" (check order),
-  J-ω and J-ω′.
+  J-ω and J-ω′. Three more pin each later check of order 2 under the next one's fault. J-ω's admitted records
+  also check `names`, by a `#guard` and the theorem `names_omega` (by `decide`).
 - 11.3, the direct scan: `opensIn` on `arrest ∧ arbitrary`, `arrest` and J-γ's formula, and the order of its answer.
 
 ## Deviations from the plan

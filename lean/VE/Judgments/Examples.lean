@@ -127,6 +127,14 @@ def judgment (name : String) (args : List String) : Judgment := ⟨name, args, "
   some "JudgmentUnbound: reasonable_limitation"
 #guard errText (admit E defs regulated [jrec "arbitrary" ["person"] "unstated" 1 0]) ==
   some "JudgmentArguments: arbitrary"
+-- each later check of order 2 under the next one's fault: arguments before regulated, regulated before the
+-- criteria, the criteria before the decider
+#guard errText (admit E defs regulated [jrec "subjects" ["act"]]) ==
+  some "JudgmentArguments: subjects"
+#guard errText (admit E defs regulated [jrec "subjects" ["person", "act"] "unstated" 1 0]) ==
+  some "JudgmentRegulated: subjects"
+#guard errText (admit E defs regulated [jrec "arbitrary" ["act"] "unstated" 1 0]) ==
+  some "JudgmentCriterionAsUnit: arbitrary"
 
 /-! ## 11.3 Dependence, directly (the one scan) -/
 
@@ -149,6 +157,14 @@ def regulatedω : List String := ["subjects_to_measure", "subjects_to_interferen
 #guard okVal (admit Eω [] regulatedω
   [jrec "arbitrary_measure" ["measure"], jrec "arbitrary_interference" ["interference"]]) ==
   some [judgment "arbitrary_measure" ["measure"], judgment "arbitrary_interference" ["interference"]]
+-- `names` reads the admitted judgments' names, in record order
+#guard (okVal (admit Eω [] regulatedω
+  [jrec "arbitrary_measure" ["measure"], jrec "arbitrary_interference" ["interference"]])).map names ==
+  some ["arbitrary_measure", "arbitrary_interference"]
+theorem names_omega : (okVal (admit Eω [] regulatedω
+    [jrec "arbitrary_measure" ["measure"], jrec "arbitrary_interference" ["interference"]])).map names =
+    some ["arbitrary_measure", "arbitrary_interference"] := by
+  decide
 #guard errText (admit Eω [] regulatedω [jrec "arbitrary_measure" ["interference"]]) ==                    -- J-ω′
   some "JudgmentArguments: arbitrary_measure"
 
