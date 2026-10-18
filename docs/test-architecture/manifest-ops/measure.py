@@ -53,8 +53,9 @@ BEGIN, END = "<!-- measure.py --table: begin -->", "<!-- measure.py --table: end
 RECORDED = HERE.parent / "cutoff/evidence/recording-map.json.gz"
 CHANGES = HERE.parent / "cutoff/changes.json"
 PINS = "lean/checkers.lock"
+MANIFEST = "ve/assurance-manifest.json"
 PIN_REASON = f"reads {PINS}"
-MANIFEST_REASON = "ve/assurance-manifest.json: no safe operation map"
+MANIFEST_REASON = f"{MANIFEST}: no safe operation map"
 # git log --first-parent main --since=2026-10-14T00:00:00Z, up to de9cfa84f, oldest first.
 MERGES = ("dccd9cf5a", "4667e8de6", "8594f1d05", "9f40783b8", "f187e4e9a", "4ce477e18", "b96f04a5a",
           "4ea2ac47c", "f75082449", "b98d87947", "1cbd5ed1e", "16a02693a", "a650eeb63", "aaff77634",
@@ -241,6 +242,28 @@ def table(saved: dict) -> str:
                 cells.append(f"{average(rows, column, 'units')} / {round(average(rows, column, 'seconds') / 60, 1)} / "
                              f"{sum(row[column]['full'] for row in rows.values())}")
             out.append(f"| {name} ({len(saved[labels[0]]['rows'][name])}) | {column} | " + " | ".join(cells) + " |")
+    out.append("")
+    out.append(f"The merges that edit `{MANIFEST}` or `{PINS}` (from the fixed merge commits), with the digests each "
+               "adds to (+) or drops from (-) each pinned checker:")
+    out.append("")
+    out.append("| Merge | Manifest | Pins |")
+    out.append("|---|---|---|")
+    edits = {MANIFEST: 0, PINS: 0}
+    for merge in MERGES:
+        changed = git("diff", "--no-renames", "--name-only", f"{merge}^", merge, "--", MANIFEST, PINS).split()
+        if not changed:
+            continue
+        edits.update({path: edits[path] + 1 for path in changed})
+        pins = ""
+        if PINS in changed:
+            old, new = (json.loads(git("show", f"{rev}:{PINS}")) for rev in (f"{merge}^", merge))
+            pins = ", ".join(f"{name} +{len(set(new.get(name, [])) - set(old.get(name, [])))}"
+                             f" -{len(set(old.get(name, [])) - set(new.get(name, [])))}"
+                             for name in sorted(old.keys() | new.keys())
+                             if set(old.get(name, [])) != set(new.get(name, [])))
+        out.append(f"| `{merge}` | {'edited' if MANIFEST in changed else ''} | {pins} |")
+    out.append("")
+    out.append(f"{edits[MANIFEST]} merges edit the manifest, {edits[PINS]} the pins.")
     out.append("")
     out.append("Upper bound of any narrowing of the manifest and pin rules: the units only their reasons select "
                "(plans without a full-suite reason), as if every one were dropped:")
