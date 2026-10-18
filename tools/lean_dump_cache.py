@@ -9,8 +9,9 @@ one. The key holds everything the output can depend on:
 
 * every Lean source the dump reads (`sources`: every `*.lean` under `lean/` outside `.lake`, the generated
   audit manifests included), by path and SHA-256, so an edited, added or removed file is another key;
-* the toolchain, lakefile and Lake manifest (`LEAN_INPUTS`), the `lake` program that runs, the Lean, Lake and
-  elan settings of the environment, the platform and the Python version;
+* the toolchain, lakefile and Lake manifest (`LEAN_INPUTS`), the installed toolchain's programs and libraries
+  (`toolchain`), the `lake` program that runs, the Lean, Lake and elan settings of the environment, the platform
+  and the Python version;
 * the code that runs Lean and reads its output: `CODE_STARTS` and every repository Python module their imports
   reach (`tools/source_graph.py`), the embedded Lean scripts included, this module and the store;
 * the caller's own inputs (the audit: `lean/declarations.txt` and the digest of the texts it elaborates);
@@ -101,6 +102,19 @@ def code_files(code_root: Path) -> list[str]:
     return sorted(found)
 
 
+def toolchain(root: Path) -> str:
+    """The installed toolchain that `lean/lean-toolchain` names, by the digests of its programs and shared libraries,
+    in elan's directory for it (`<ELAN_HOME or ~/.elan>/toolchains/<name, "/" as "--" and ":" as "---">`, found
+    without running elan, which could download one): a toolchain reinstalled under its name with other bytes is
+    another key, and one not installed is keyed as absent."""
+    name = (root / "lean/lean-toolchain").read_text().strip() if (root / "lean/lean-toolchain").is_file() else ""
+    home = Path(os.environ.get("ELAN_HOME") or Path.home() / ".elan") / "toolchains" / \
+        name.replace("/", "--").replace(":", "---")
+    files = [home / "bin/lean", home / "bin/lake", *sorted((home / "lib/lean").glob("*.so")),
+             *sorted((home / "lib/lean").glob("*.dylib"))]
+    return json.dumps([str(home), {str(path.relative_to(home)): cache_store.file_digest(path) for path in files}])
+
+
 def inputs(step: str, root: Path, sources: list[Path], files: tuple[str, ...] = (), values: dict | None = None,
            code_root: Path = ROOT) -> dict[str, str]:
     """{input: digest} of everything a dump of `step` over `sources` can depend on (the module docstring):
@@ -109,6 +123,7 @@ def inputs(step: str, root: Path, sources: list[Path], files: tuple[str, ...] = 
     found.update((f"lean:{path.relative_to(root).as_posix()}", cache_store.file_digest(path)) for path in sources)
     found.update((f"file:{name}", cache_store.file_digest(root / name)) for name in (*LEAN_INPUTS, *files))
     found.update((f"code:{name}", cache_store.file_digest(code_root / name)) for name in code_files(code_root))
+    found["program:toolchain"] = toolchain(root)
     lake = shutil.which("lake")
     found["program:lake"] = json.dumps([lake, cache_store.file_digest(Path(os.path.realpath(lake))) if lake else None])
     found["environment"] = json.dumps({name: value.replace(str(root), "<root>") for name, value in
