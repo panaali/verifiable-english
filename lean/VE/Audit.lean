@@ -115,6 +115,8 @@ import VE.EnglishGrammar.Run
 import VE.EnglishGrammar.SensesRequest
 import VE.EnvironmentProofs
 import VE.EvaluationCounts
+import VE.Events.Completion
+import VE.Events.Premises
 import VE.Finite
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -1650,6 +1652,19 @@ import VE.WireContract.Engine
 #print axioms VE.EvaluationCounts.mapM_length
 #print axioms VE.EvaluationCounts.order_decodeFormulas_length
 #print axioms VE.EvaluationCounts.route_decodeFormulas_length
+#print axioms VE.Events.calendar_sat
+#print axioms VE.Events.chain_head
+#print axioms VE.Events.chain_positions
+#print axioms VE.Events.datesOrder_calendar
+#print axioms VE.Events.datesOrder_iff
+#print axioms VE.Events.dayExtension_transfer
+#print axioms VE.Events.hits_vacuous
+#print axioms VE.Events.isConst_eq
+#print axioms VE.Events.isVar_beq
+#print axioms VE.Events.isVar_eq
+#print axioms VE.Events.mem_dates_of_consecutive
+#print axioms VE.Events.term_map
+#print axioms VE.Events.unorderedSame_of_order
 #print axioms VE.Grammar.BOk.addAll
 #print axioms VE.Grammar.BOk.complete
 #print axioms VE.Grammar.BOk.congr
