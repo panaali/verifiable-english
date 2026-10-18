@@ -391,14 +391,15 @@ def _unspecified_permission(data):
     return switched
 
 
-def test_permission_completion_is_available_on_the_alternatives_route():
+def test_permission_default_stays_allow_until_norm_defaults_combines_with_alternatives():
     """The source grants no permission by default, so `allow` is not stated by it. Since events-time-causation
-    ET-7 the alternatives route takes `norm-defaults@0`: the switched environment constructs and Lean elaborates
-    `fill (inlineTree A)` with `permitted` unspecified. Switching the case itself and re-running it is ET-8's
-    (README, "The completion defaults and `unspecified`")."""
+    ET-7 the combination exists: the alternatives route takes `norm-defaults@0`, the switched environment
+    constructs and Lean elaborates `fill (inlineTree A)` with `permitted` unspecified. The case keeps `allow`
+    until ET-8 switches it and re-runs it (README, "The completion defaults and `unspecified`")."""
     from tests import lean_routes
     data = load()[0]
     assert "alternatives@0" in data["profiles"]
+    assert data["vocabulary"]["predicates"]["permitted"]["regulated"]["default"] == "allow"
     switched = _unspecified_permission(data)
     assert Environment(switched).environment_id != Environment(data).environment_id
     (row,) = lean_routes.rows("alternatives", [{"id": "switched", "kind": "alt-elaborate", "environment": switched,
