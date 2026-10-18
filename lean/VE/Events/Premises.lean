@@ -48,12 +48,8 @@ def weakerPairs (V : EventsEnv) : List (Link × Link) :=
 
 def isoPair (D D' : Civil) : String := D.iso ++ ":" ++ D'.iso
 
-/-- The three order premises, labelled; `orderPremises` is their formulas. -/
-def orderLabelled (V : EventsEnv) : List (String × VE.Formula) :=
-  [("events:irreflexive", irreflexiveF V), ("events:transitive", transitiveF V), ("events:linear", linearF V)]
-
 def calendarLabelled (V : EventsEnv) : List (String × VE.Formula) :=
-  orderLabelled V ++
+  [("events:irreflexive", irreflexiveF V), ("events:transitive", transitiveF V), ("events:linear", linearF V)] ++
   (consecutive V).map (fun p => ("events:date:" ++ isoPair p.1 p.2, dateFactF V p.1 p.2)) ++
   ((consecutive V).filter (fun p => p.2.num == p.1.num + 1)).map
     (fun p => ("events:adjacent:" ++ isoPair p.1 p.2, adjacentF V p.1 p.2))
@@ -67,7 +63,7 @@ def conventionLabelled (V : EventsEnv) : List (String × VE.Formula) :=
   (weakerPairs V).map (fun p => ("events:link_weaker:" ++ p.1.predicate ++ ":" ++ p.2.predicate, linkWeakerF p.1 p.2))
 
 def eventsLabelled (V : EventsEnv) : List (String × VE.Formula) := calendarLabelled V ++ conventionLabelled V
-def orderPremises (V : EventsEnv) : List VE.Formula := (orderLabelled V).map (·.2)
+def orderPremises (V : EventsEnv) : List VE.Formula := [irreflexiveF V, transitiveF V, linearF V]
 def calendarPremises (V : EventsEnv) : List VE.Formula := (calendarLabelled V).map (·.2)
 def conventionPremises (V : EventsEnv) : List VE.Formula := (conventionLabelled V).map (·.2)
 def eventsX (V : EventsEnv) : List VE.Formula := (eventsLabelled V).map (·.2)
@@ -93,13 +89,14 @@ theorem mem_dates_of_consecutive {V : EventsEnv} {p : Civil × Civil} (h : p ∈
 
 /-- Every embedding (so every calendar reading) satisfies the calendar premises. -/
 theorem calendar_sat (E : VE.Environment) (V : EventsEnv) (hT : EventsTyped E V = true) (S : VE.Structure.{u})
-    (_hS : S.Admissible E) (num : S.Carrier → Nat) (hc : Embeds V S num) :
+    (hS : S.Admissible E) (num : S.Carrier → Nat) (hc : Embeds V S num) :
     Sat S (calendarPremises V) := by
+  have _ := hS
   obtain ⟨inj, -, ord, dates⟩ := hc
   have hlt : (consecutive V).all (fun p => decide (p.1.num < p.2.num)) = true := by
     simp only [EventsTyped, Bool.and_eq_true] at hT; exact hT.2
   intro a ha
-  simp only [calendarPremises, calendarLabelled, orderLabelled, List.map_append, List.map_map, List.mem_append,
+  simp only [calendarPremises, calendarLabelled, List.map_append, List.map_map, List.mem_append,
     List.map_cons, List.map_nil, List.mem_cons, List.mem_map, Function.comp, List.not_mem_nil, or_false,
     List.mem_filter] at ha
   rcases ha with ((rfl | rfl | rfl) | ⟨p, hp, rfl⟩) | ⟨p, ⟨hp, hadj⟩, rfl⟩
@@ -164,7 +161,7 @@ theorem datesOrder_iff (E : VE.Environment) (V : EventsEnv) (hT : EventsTyped E 
   have day : ∀ D ∈ V.dates, ∃ x, S.constant (dateName D) = some x ∧ S.domain V.day x := fun D hD =>
     hS.1 _ _ (by have := hdates D hD; simp at this; exact this.2)
   have mem : ∀ a ∈ calendarPremises V, a.denote S [] := hp
-  simp only [calendarPremises, calendarLabelled, orderLabelled, List.map_append, List.map_map, List.mem_append,
+  simp only [calendarPremises, calendarLabelled, List.map_append, List.map_map, List.mem_append,
     List.map_cons, List.mem_cons, List.mem_map, Function.comp] at mem
   have irr := mem _ (.inl (.inl (.inl rfl)))
   have tr := mem _ (.inl (.inl (.inr (.inl rfl))))
@@ -210,7 +207,7 @@ theorem datesOrder_calendar (D D' : Civil) (hD : D.Proper) (hD' : D'.Proper) :
 /-- T2b: the claim needs `linear` (with it dropped, `T2b` in `Examples.lean` finds a countermodel). -/
 theorem unorderedSame_of_order (V : EventsEnv) (S : VE.Structure.{u}) (hp : Sat S (orderPremises V)) :
     (unorderedSameF V).denote S [] := by
-  have lin := hp (linearF V) (by simp [orderPremises, orderLabelled])
+  have lin := hp (linearF V) (by simp [orderPremises])
   intro x hx y hy ⟨h1, h2⟩
   rcases lin x hx y hy with h | ⟨v, hv, hw⟩ | h
   · exact absurd h h1

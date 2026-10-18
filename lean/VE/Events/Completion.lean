@@ -13,7 +13,7 @@ def isConst : VE.Term → Bool
   | .const _ => true
   | .var _ => false
 
-/-- The term is variable `k` (the spec's `t == .var k`). -/
+/-- The term is variable `k`: the proofs' form of `t == .var k` (`isVar_beq`). -/
 def isVar (k : Nat) : VE.Term → Bool
   | .var i => i == k
   | .const _ => false
@@ -21,9 +21,9 @@ def isVar (k : Nat) : VE.Term → Bool
 mutual
 def hits (ng : List String) (k : Nat) : VE.Formula → Bool
   | .bottom => true
-  | .unary p t => !ng.contains p && isVar k t
-  | .binary p t w => !ng.contains p && (isVar k t || isVar k w)
-  | .eq t w => (isVar k t && isConst w) || (isVar k w && isConst t)
+  | .unary p t => !ng.contains p && t == .var k
+  | .binary p t w => !ng.contains p && (t == .var k || w == .var k)
+  | .eq t w => (t == .var k && isConst w) || (w == .var k && isConst t)
   | .not a => vacuous ng k a
   | .and a b => hits ng k a || hits ng k b
   | .or a b => hits ng k a && hits ng k b
@@ -81,7 +81,7 @@ def DayExtension (day : String) (ng : List String) (M : VE.Structure.{u}) (S : V
 theorem isVar_eq {k : Nat} {t : VE.Term} (h : isVar k t = true) : t = .var k := by
   cases t <;> simp_all [isVar]
 
-/-- `isVar k t` is the spec's `t == .var k`, so `hits` is the spec's function. -/
+/-- `isVar k t` is `t == .var k`, the test `hits` makes. -/
 theorem isVar_beq (k : Nat) (t : VE.Term) : isVar k t = (t == .var k) := by
   cases t <;> rfl
 
@@ -102,13 +102,13 @@ theorem hits_vacuous {day : String} {ng : List String} {M : VE.Structure.{u}} {S
   | unary p t =>
     intro k σ y hk hy
     refine ⟨fun h ⟨v, hv, hr⟩ => ?_, fun h => by simp [vacuous] at h⟩
-    simp only [hits, Bool.and_eq_true, Bool.not_eq_true'] at h
+    simp only [hits, Bool.and_eq_true, Bool.not_eq_true', ← isVar_beq] at h
     rw [isVar_eq h.2] at hv; simp [VE.Term.denote, hk] at hv; subst hv
     exact outside p _ _ hr (by simp) hy h.1
   | binary p t w =>
     intro k σ y hk hy
     refine ⟨fun h ⟨v, v', hv, hv', hr⟩ => ?_, fun h => by simp [vacuous] at h⟩
-    simp only [hits, Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true] at h
+    simp only [hits, Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true, ← isVar_beq] at h
     rcases h.2 with ht | ht
     · rw [isVar_eq ht] at hv; simp [VE.Term.denote, hk] at hv; subst hv
       exact outside p _ _ hr (by simp) hy h.1
@@ -117,7 +117,7 @@ theorem hits_vacuous {day : String} {ng : List String} {M : VE.Structure.{u}} {S
   | eq t w =>
     intro k σ y hk hy
     refine ⟨fun h ⟨v, hv, hv'⟩ => ?_, fun h => by simp [vacuous] at h⟩
-    simp only [hits, Bool.and_eq_true, Bool.or_eq_true] at h
+    simp only [hits, Bool.and_eq_true, Bool.or_eq_true, ← isVar_beq] at h
     rcases h with ⟨ht, hw⟩ | ⟨hw, ht⟩
     · obtain ⟨c, rfl⟩ := isConst_eq hw
       rw [isVar_eq ht] at hv; simp [VE.Term.denote, hk] at hv; subst hv

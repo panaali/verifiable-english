@@ -12218,7 +12218,6 @@
         "VE.Events.linkForwardF",
         "VE.Events.linkWeakerF",
         "VE.Events.weakerPairs",
-        "VE.Events.orderLabelled",
         "VE.Events.calendarLabelled",
         "VE.Events.conventionLabelled",
         "VE.Events.eventsLabelled",
