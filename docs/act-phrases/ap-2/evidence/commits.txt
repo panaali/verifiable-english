@@ -1,4 +1,9 @@
-# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at b468535c5 (this file's own commit follows)
+# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at d62384166 (this file's own commit follows)
+d6238416676e7fdea8818f5d7052f9f27b92be7d ap-2: REPORT: selected tests after the fifth recheck fix (F15, F16, F17)
+4f254e51681c68130cd6b4833bd1e96d96f24c42 ap-2: REPORT and DELTA after the fifth recheck fix (F15, F16, F17): the truth table, the tables, the sweep and its survivors with reasons, mutant counts, line numbers, size
+b863a0b92c01fc25d41a90f6d475c05b07dc0459 ap-2 F15: regenerate lean/declarations.txt, statements.txt, axioms.txt and Audit.lean for the new table and its two theorems (regen_generated.py --write); the fixtures classed T
+34c04fe7ecaa52d8c590224fd36fd4fde7ecb5de ap-2 F15, F16: Term.accepts's truth table (every terminal kind against every token kind, both kinds proved complete by ctorIdx), a table for firstDup, wordsOf, wordOk, firsts and valueOf, prefix words against every word test of 1.4; the sweep: every match arm and comparison of Syntax.lean and Read.lean changed in turn; errors with a code count as errors
+a3e7c25d8a6f5359a19938526867b163ef8ca772 ap-2: saved commit list after the fourth recheck fix (main..HEAD --no-merges)
 b468535c54109982d87fae8d930e1b1de455cfd4 ap-2: REPORT: selected tests after the fourth recheck fix (F13, F14)
 77b20b9b71c5c5f55af2913148f6243cf45abd3f ap-2: REPORT and DELTA after the fourth recheck fix (F13, F14): scope of every definition, case-fold cuts, mutant counts, guard lines, size
 edc9e94063cf7b1cc0136adeab7f4e73939ca291 ap-2 F13, F14: regenerate lean/declarations.txt for the new guards (tools/lean_statements.py)
