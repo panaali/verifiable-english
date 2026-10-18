@@ -219,6 +219,7 @@ import VE.Readings.SoftWire
 import VE.Readings.Strings
 import VE.Readings.SupAll
 import VE.Readings.SupConflict
+import VE.Readings.SupDependencies
 import VE.Readings.SupEnv
 import VE.Readings.SupExtra
 import VE.Readings.SupExtraExamples
@@ -227,6 +228,7 @@ import VE.Readings.SupFillWire
 import VE.Readings.SupFree
 import VE.Readings.SupRun
 import VE.Readings.SupSlot
+import VE.Readings.SupVerdictsSound
 import VE.Readings.SupWire
 import VE.Readings.SupWireSound
 import VE.Readings.SupWitness
@@ -3174,6 +3176,14 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.readings_wire_sd_verdicts_none
 #print axioms VE.Readings.Wire.readings_wire_sd_verdicts_some
 #print axioms VE.Readings.Wire.readings_wire_separate_sound
+#print axioms VE.Readings.Wire.readings_wire_sup_counter_row
+#print axioms VE.Readings.Wire.readings_wire_sup_dead
+#print axioms VE.Readings.Wire.readings_wire_sup_nd_all
+#print axioms VE.Readings.Wire.readings_wire_sup_nd_counter
+#print axioms VE.Readings.Wire.readings_wire_sup_premises_model
+#print axioms VE.Readings.Wire.readings_wire_sup_verdicts_all
+#print axioms VE.Readings.Wire.readings_wire_sup_verdicts_none
+#print axioms VE.Readings.Wire.readings_wire_sup_verdicts_some
 #print axioms VE.Readings.Wire.replayPair_D
 #print axioms VE.Readings.Wire.same_name
 #print axioms VE.Readings.Wire.sdSem_normsShaped
@@ -3670,6 +3680,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.generatedSuperposed_names
 #print axioms VE.Readings.get_end
 #print axioms VE.Readings.get_prefix
+#print axioms VE.Readings.greedy_replay_sound
 #print axioms VE.Readings.grows_bar
 #print axioms VE.Readings.grows_place
 #print axioms VE.Readings.head_ne
@@ -4104,6 +4115,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.sum_take_mono
 #print axioms VE.Readings.sum_take_succ
 #print axioms VE.Readings.supCertificateCheckExtra_nil
+#print axioms VE.Readings.supDependencies_replay
 #print axioms VE.Readings.supFrame_fillDoc
 #print axioms VE.Readings.supFrame_junk
 #print axioms VE.Readings.supFrame_no_sets
