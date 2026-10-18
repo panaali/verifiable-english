@@ -29,10 +29,18 @@ def small (n : Nat) : Bool := n < 3
 /-- Guarded over `[]` only. -/
 def evens (xs : List Nat) : List Nat := xs.filter (· % 2 == 0)
 
-/-- No guard reads it; two proofs do. -/
+/-- No guard reads it; three proofs do, one of them a theorem whose statement names it. -/
 def double (n : Nat) : Nat := n + n + 0
 
 theorem double_eq (n : Nat) : double n = 2 * n := by unfold double; omega
+
+/-- No guard reads it; two `example`s proved by tactics do. -/
+def triple (n : Nat) : Nat := n + n + n + 0
+
+example : triple 1 = 3 := by simp [triple]
+
+/-- Read only by a `decide` check outside this directory whose statement names it. -/
+def half (n : Nat) : Nat := n / 2
 
 end Demo
 """
@@ -41,6 +49,12 @@ PROOFS = """import Demo.Defs
 theorem Demo.four : (2 : Nat) + 2 = 4 := by
   have h : Demo.double 2 = 4 := by simp [Demo.double]
   omega
+
+theorem Demo.double_two : Demo.double 2 = 4 := by simp [Demo.double]
+"""
+FAR = """import Demo.Defs
+
+theorem Demo.Far.half_four : Demo.half 4 = 2 := by decide
 """
 EXAMPLES = """import Demo.Defs
 import Demo.Proofs
@@ -49,7 +63,10 @@ open Demo
 #guard small 2
 #guard !small 3
 #guard evens [] == []
+
+example : triple 2 = 6 := by simp [triple]
 """
+STATED = ["Demo.Far.half_four", "Demo.double_eq", "Demo.double_two", "Demo.four"]
 
 
 def git(root: Path, *args: str) -> None:
@@ -78,12 +95,16 @@ def dump(root: Path, folder: Path) -> None:
     (root / "lean/predicates.txt").write_text(
         lean_statements.PREDICATES_HEADER + "".join(f"module {m}\n" for m in modules)
         + "".join(line.removeprefix("predicate ") + "\n" for line in lines if line.startswith("predicate ")))
+    (folder / "names.txt").write_text("\n".join(STATED) + "\n")
+    script = lean_statements.SCRIPT.replace("import VE\n", "".join(f"import {m}\n" for m in modules))
+    (root / "lean/statements.txt").write_text(lean_statements.HEADER + lean_statements.run_lean(
+        root, folder, script, "Statements", {"VE_STATEMENT_NAMES": str(folder / "names.txt"), **PATH}))
 
 
 @pytest.fixture(scope="module")
 def package(tmp_path_factory) -> Path:
     root = tmp_path_factory.mktemp("package")
-    (root / "lean/Demo").mkdir(parents=True)
+    (root / "lean/Demo/Far").mkdir(parents=True)
     (root / "tools").mkdir()
     (root / "lean/lean-toolchain").write_text((ROOT / "lean/lean-toolchain").read_text())
     (root / "lean/lakefile.toml").write_text('name = "demo"\n\n[[lean_lib]]\nname = "Demo"\nglobs = ["Demo.*"]\n')
@@ -92,7 +113,7 @@ def package(tmp_path_factory) -> Path:
     git(root, "init", "-q")
     git(root, "add", ".")
     git(root, "commit", "-qm", "base")
-    for name, text in (("Defs", DEFS), ("Proofs", PROOFS), ("Examples", EXAMPLES)):
+    for name, text in (("Defs", DEFS), ("Proofs", PROOFS), ("Examples", EXAMPLES), ("Far/Check", FAR)):
         (root / f"lean/Demo/{name}.lean").write_text(text)
     dump(root, tmp_path_factory.mktemp("dump"))
     git(root, "add", ".")
@@ -146,10 +167,47 @@ def test_a_guard_over_the_empty_list_leaves_survivors(default_run):
 
 
 def test_a_failing_proof_is_no_kill(default_run):
-    """The mutant breaks `double_eq` in its own module and `four` in another; no check reads `double`."""
+    """The mutant breaks `double_eq` in its own module, and `four` and `double_two` in another (review F1:
+    `double_two`'s statement names `double`, and only its proof script fails); no check reads `double`."""
     _, mutants, _, _ = default_run
     (double,) = of(mutants, "double")
     assert (double["operator"], double["after"], double["status"]) == ("lit-plus", "1", "SURVIVOR")
+
+
+def test_an_example_proved_by_a_tactic_is_no_kill(default_run):
+    """Review F1: an `example` not proved by `decide`/`native_decide`/`rfl` is a proof, cut in the mutated module
+    and in the module of its checks alike."""
+    _, mutants, _, _ = default_run
+    (triple,) = of(mutants, "triple")
+    assert (triple["operator"], triple["after"], triple["status"]) == ("lit-plus", "1", "SURVIVOR")
+
+
+def test_a_decide_check_outside_the_directory_naming_the_definition_kills(default_run):
+    _, mutants, _, _ = default_run
+    half = of(mutants, "half")
+    assert {m["operator"] for m in half} == {"lit-plus", "lit-minus"}
+    assert all(m["status"] == "KILLED" and m["detail"].startswith("lean/Demo/Far/Check.lean:3:") for m in half), half
+
+
+@pytest.mark.parametrize(("kind", "text", "role"), [
+    ("command", "#guard f [] == []", "check"),
+    ("command", "#guard_msgs in\n#eval f 1", "check"),
+    ("command", "example : f 1 = 2 := by decide", "check"),
+    ("command", "@[simp] example : f 1 = 2 :=\n  by native_decide", "check"),
+    ("command", "example : f 1 = 2 := rfl", "check"),
+    ("theorem", "theorem t : f 1 = 2 := by decide +kernel", "check"),
+    ("command", "example (n : Nat) : f n = n := by\n  simp [f]", "proof"),
+    ("command", "example (h : p) : q :=\n  t h", "proof"),
+    ("command", "#guard_msgs in\nexample : f 1 = 2 := by simp [f]", "proof"),
+    ("theorem", "theorem t : f [] = [] := by\n  simp [f]\n  rfl", "proof"),
+    ("theorem", "theorem t : f [] = [] := by simp [f]; decide", "proof"),
+    ("def", "def f (n : Nat) : Nat := n", "other"),
+    ("command", "open Demo", "other")])
+def test_only_guards_and_decide_rfl_proofs_are_checks(kind, text, role):
+    """Review F1 (and SupExtra.lean's and Status.lean's `example`s): an `example` or theorem is a check only when
+    `decide`, `native_decide` or `rfl` proves it, whatever its statement names."""
+    import trust_mutants
+    assert trust_mutants.classify(kind, text) == role
 
 
 def test_mutants_are_built_in_a_scratch_copy(default_run):
