@@ -126,7 +126,8 @@ trusted definition carries a killed mutant (above); FOLLOW-UPS row "## qt-b1" in
   binary; no route changed). No test of `main-known-red.txt` is touched.
 
 Commits (`main..HEAD --no-merges` before this report): 1949a0452, f4bd46d72, 804e4fe54, b8da5c83b, 18b639851,
-44cd54883, and the commit that adds this report.
+44cd54883, c2d37e531 (DELTA and this report), 5a5e3485e (the trust history's order), and the commit that corrects
+this list.
 
 ## Pilot bytes
 
