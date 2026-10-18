@@ -65,7 +65,13 @@ pending statements for the batches it holds. The trust increase is signed under 
 - **Relay.** The full relay mutation gate ([relay-gate.json](evidence/relay-gate.json)) found zero findings over 39
   routes and 109,195 mutants. The focused `readings-route` run ([relay-route.json](evidence/relay-route.json)) found
   zero over 46 fixtures and 15,768 mutants. Both were recorded again after the review fix's product commit
-  (`cd4f21c4`), and their input hashes match the current files.
+  (`cd4f21c4`), and their input hashes match the files of that commit. After the merge of main `2d4b9320`
+  the candidate gate found the RD7 allow-list paths matching nothing: main's B0 readings-route entries also
+  listed `fill` (and, first in file order, took its mutants), and main's typed shapes now refuse an empty fill
+  label, a repeated `over` name and an empty `targets` member. `fill` stays under RD7-fill only (it is bound to
+  the request, which B0 never lists), the three refused paths and RD7-unused are removed, and the focused run
+  on the merged tree ([relay-route-merge.json](evidence/relay-route-merge.json)) found zero over 46 fixtures and
+  16,495 mutants.
 - **Corpus A/B** ([ab-compare.json](evidence/ab-compare.json), [DELTA.md](DELTA.md)). It covered 100,401 records:
   100,383 identical, 7 wording rows that differ only in the recorder's scratch path, and 11 unavailable on both
   sides (R7), with 0 unlisted. No verdict, order or availability changed. The four whole-UDHR documents in the

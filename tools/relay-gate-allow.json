@@ -357,7 +357,6 @@
     "results/*/result/decisions",
     "results/*/result/derived",
     "results/*/result/english",
-    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -394,7 +393,6 @@
     "results/*/result/derived",
     "results/*/result/english",
     "results/*/result/environment_prime/vocabulary/predicates",
-    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -2127,8 +2125,7 @@
    "route": "service:readings-route",
    "mutation": "empty",
    "path": [
-    "results/*/result/fill",
-    "results/*/result/fill/*/label"
+    "results/*/result/fill"
    ],
    "kind": "by-design",
    "id": "RD7-fill",
@@ -2138,22 +2135,11 @@
    "route": "service:readings-route",
    "mutation": "duplicate",
    "path": [
-    "results/*/result/fill",
-    "results/*/result/units/*/content/norm/over"
+    "results/*/result/fill"
    ],
    "kind": "by-design",
    "id": "RD7-fill",
-   "reason": "The public completion elaboration binder refuses a repeated fill label and checks a candidate unit’s precedence references against its request-bound filled unit (test_superposed_answer_retypes_each_field_and_rebinds_each_reference)."
-  },
-  {
-   "route": "service:readings-route",
-   "mutation": "empty",
-   "path": [
-    "results/*/result/targets/*"
-   ],
-   "kind": "by-design",
-   "id": "RD7-unused",
-   "reason": "The conflict evidence caller reads the verdict and never reads or displays the derived targets list; an empty list member is non-identity for every public result (Superposed._generate_conflict)."
+   "reason": "The public completion elaboration binder refuses a repeated fill label (test_superposed_answer_retypes_each_field_and_rebinds_each_reference)."
   },
   {
    "route": "service:ask",
