@@ -1,4 +1,9 @@
-# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at b5ab83add (this file's own commit follows)
+# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at b468535c5 (this file's own commit follows)
+b468535c54109982d87fae8d930e1b1de455cfd4 ap-2: REPORT: selected tests after the fourth recheck fix (F13, F14)
+77b20b9b71c5c5f55af2913148f6243cf45abd3f ap-2: REPORT and DELTA after the fourth recheck fix (F13, F14): scope of every definition, case-fold cuts, mutant counts, guard lines, size
+edc9e94063cf7b1cc0136adeab7f4e73939ca291 ap-2 F13, F14: regenerate lean/declarations.txt for the new guards (tools/lean_statements.py)
+0d45264aed8df7b9f07ce950865e2c2b7fc0e05c ap-2 F13, F14: mutants generated over every definition of Syntax.lean (Term.accepts's lists typed from the constructors) and every case fold cut four ways; the review's eight by name; the guards that kill them
+4655e658ec30a7837fa9626f2edc33906260b0e0 ap-2: saved commit list after the third recheck fix (main..HEAD --no-merges)
 b5ab83add8aef589c7a0528c54dd073acc64b0c4 ap-2: REPORT and DELTA after the third recheck fix (F11): the four cuts, mutant counts, guard lines, size, selected tests
 db14021349aa9e166b72e167ad8d7bb91b360547 ap-2 F11: regenerate lean/declarations.txt for the new guards (regen_generated.py --write)
 61f4be42e1101a074a8cdfc246fb53231a5ed9b2 ap-2 F11: every list of 1.4's check also read only at its other end (last element alone, without the first, without the last), generated; the review's four by name; the guards that kill them
