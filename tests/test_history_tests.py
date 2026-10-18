@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -103,9 +104,10 @@ def test_a_new_test_that_runs_git_log_and_is_not_listed_fails(tmp_path):
 
 
 def test_deleting_any_entry_of_the_committed_list_fails():
+    # The committed list is what --write gives (test_the_tree_passes), so it stands for the generated one here.
     listed = json.loads((ROOT / history_tests.LIST).read_text())
-    expected = history_tests.generate(json.loads((ROOT / history_tests.MAP_EXTRACT).read_text()))
-    assert listed == expected and listed["tests"]
+    expected = json.loads((ROOT / history_tests.LIST).read_text())
+    assert listed["tests"]
     for row in listed["tests"]:
         smaller = {**listed, "tests": [other for other in listed["tests"] if other is not row]}
         errors = history_tests.compare(smaller, expected).errors
@@ -204,7 +206,8 @@ def test_argument_vectors_shell_strings_and_named_vectors_are_sites_of_the_code_
     """
     assert _sites(tmp_path, source) == {
         ("show", START, "show"), ("anything", START, ""), ("at", START, "rev-parse"), ("shell", START, "status"),
-        ("Repo.head", START, ""), ("outer", START, "diff"), ("outer.<locals>.<lambda>", START, "fetch")}
+        ("which", START, ""), ("Repo.head", START, ""), ("outer", START, "diff"),
+        ("outer.<locals>.<lambda>", START, "fetch")}
     assert {qualname for qualname, _, _ in _sites(tmp_path, source)} <= _qualnames(source)
 
 
@@ -318,3 +321,179 @@ def test_only_the_lint_reads_the_list():
     readers = sorted(path.relative_to(ROOT).as_posix() for directory in ("tools", "tests", "ve", "conformance")
                      for path in (ROOT / directory).rglob("*.py") if _names_the_list(path))
     assert readers == ["tests/test_history_tests.py", "tools/history_tests.py", "tools/regen_generated.py"]
+
+
+def test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone():
+    """The coverage map is the run-time oracle: each unit it saw start git (in any Python process of the run,
+    children included) or run a function that reads `.git` is found by the source reach alone, as a new test
+    would be before any map records it. A pytest run on files the source does not name counts as a start."""
+    saved = json.loads((ROOT / history_tests.MAP_EXTRACT).read_text())
+    sources = history_tests._Sources(ROOT)
+    missed = []
+    for unit, record in saved["units"].items():
+        if not (ROOT / unit).is_file():
+            continue
+        kinds = {site.kind for site in sources.reach(unit)}
+        if record["git"] and not kinds & {START, history_tests.PYTEST} or not record["git"] and READ not in kinds:
+            missed.append(unit)
+    assert saved["units"] and missed == []
+
+
+def _new_test(tmp_path, units: dict[str, str]) -> list[str]:
+    """The lint's `missing` errors once `units` are added to a checkout whose list was generated without them."""
+    root = _root(tmp_path, {"tests/test_plain.py": HERMETIC})
+    assert history_tests.lint(root).errors == []
+    for name, source in units.items():
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_text(textwrap.dedent(source))
+    return [error for error in history_tests.lint(root).errors if error.startswith("missing: ")]
+
+
+HELPER = """
+    import subprocess
+
+    def head():
+        return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True).stdout
+
+    def plain():
+        return 1
+"""
+
+
+def test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails(tmp_path):
+    """F1: a test that is not in the saved extract was judged by the git calls of its own file only. Git started
+    at import (`conformance/frozen_norm_defaults.py`), in a helper called through any import form, or in a
+    namespace package's module is found through the code the test can run."""
+    errors = _new_test(tmp_path, {
+        "conformance/oracle.py": "import subprocess\nSOURCE = subprocess.check_output(['git', 'show', 'x:y'])\n",
+        "tools/helper.py": HELPER,
+        "tests/test_import.py": "from conformance import oracle\n\ndef test_x():\n    assert oracle\n",
+        "tests/test_from.py": "from helper import head\n\ndef test_x():\n    assert head()\n",
+        "tests/test_attribute.py": "import tools.helper\n\ndef test_x():\n    assert tools.helper.head()\n",
+        "tests/test_alias.py": "import sys\nsys.path.insert(0, 'tools')\nimport helper as h\n\n"
+                               "def test_x():\n    assert h.head()\n",
+        "tests/test_unused.py": "from helper import plain\n\ndef test_x():\n    assert plain() == 1\n"})
+    assert errors == [
+        "missing: tests/test_alias.py reads history and is not listed (starts git (git rev-parse) in tools/helper.py)",
+        "missing: tests/test_attribute.py reads history and is not listed (starts git (git rev-parse) in "
+        "tools/helper.py)",
+        "missing: tests/test_from.py reads history and is not listed (starts git (git rev-parse) in tools/helper.py)",
+        "missing: tests/test_import.py reads history and is not listed (starts git (git show) in "
+        "conformance/oracle.py)"]
+
+
+def test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails(tmp_path):
+    """F1: a child process that runs a repository tool (`[sys.executable, "tools/x.py"]`, `-m tools.x`, a path
+    built from `__file__`, a shell script) runs all of it."""
+    tool = textwrap.dedent(HELPER) + "\nif __name__ == '__main__':\n    head()\n"
+    errors = _new_test(tmp_path, {
+        "tools/tool.py": tool, "tools/run.sh": "#!/bin/sh\ncd \"$1\" && git log -1\n",
+        "tests/test_script.py": "import subprocess, sys\n\ndef test_x():\n"
+                                "    subprocess.run([sys.executable, 'tools/tool.py'])\n",
+        "tests/test_module.py": "import subprocess, sys\n\ndef test_x():\n"
+                                "    subprocess.run([sys.executable, '-m', 'tools.tool'])\n",
+        "tests/test_path.py": "import subprocess, sys\nfrom pathlib import Path\n"
+                              "ROOT = Path(__file__).resolve().parents[1]\nTOOL = ROOT / 'tools' / 'tool.py'\n\n"
+                              "def test_x():\n    subprocess.run([sys.executable, str(TOOL), '--check'])\n",
+        "tests/test_shell.py": "import subprocess\n\ndef test_x():\n    subprocess.run(['sh', 'tools/run.sh', '.'])\n",
+        "tests/test_loaded.py": "import importlib.util\nfrom pathlib import Path\n"
+                                "SPEC = importlib.util.spec_from_file_location('t', Path(__file__).parents[1] / "
+                                "'tools/tool.py')\nT = importlib.util.module_from_spec(SPEC)\n\n"
+                                "def test_x():\n    assert T.head()\n"})
+    assert [error.split(" reads history")[0] for error in errors] == [
+        "missing: tests/test_loaded.py", "missing: tests/test_module.py", "missing: tests/test_path.py",
+        "missing: tests/test_script.py", "missing: tests/test_shell.py"]
+    assert errors[-1].endswith("(starts git in tools/run.sh)")
+
+
+def test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts(tmp_path):
+    """F1: the program in a variable (`[git, "--version"]` after `git = shutil.which("git")`, tools/gate.py), a
+    path to git, a launcher (`env git`, `sh -c "git log"`), a shell command and a `python -c` program."""
+    source = """
+        import os, shutil, subprocess, sys
+
+        def variable():
+            git = shutil.which("git", path=os.environ["PATH"])
+            return subprocess.run([git, "--version"])
+
+        def named(git_bin):
+            return subprocess.run([git_bin, "log"])
+
+        def assigned():
+            program = os.environ.get("GIT", "git")
+            return subprocess.check_output([program, "status"])
+
+        def absolute():
+            return subprocess.run(["/usr/bin/git", "log"])
+
+        def launched():
+            return subprocess.run(["env", "GIT_DIR=x", "git", "log"]), subprocess.run(["sh", "-c", "git log"])
+
+        def shell():
+            return subprocess.run("cd repo && git log -1", shell=True)
+
+        def child():
+            return subprocess.run([sys.executable, "-c", "import subprocess; subprocess.run(['git', 'log'])"])
+
+        def not_git(git_dir, program):
+            return subprocess.run([git_dir, "x"]), subprocess.run([program]), ["sh", "-c", "legit"], \
+                subprocess.run([sys.executable, "-c", "print(1)"]), ("/usr/bin/gitk", "log")
+    """
+    found = _sites(tmp_path, source)
+    assert found == {("variable", START, ""), ("named", START, ""), ("assigned", START, ""),
+                     ("absolute", START, "log"), ("launched", START, ""), ("shell", START, ""),
+                     ("child", START, "log")}
+    assert {qualname for qualname, _, _ in found} <= _qualnames(source)
+
+
+def test_a_new_test_that_uses_a_conftest_fixture_or_a_data_named_module_that_starts_git_fails(tmp_path):
+    """F1: a fixture of a conftest or of its `pytest_plugins` (taken as an argument, autouse, or named in
+    `usefixtures`), and a module a test imports by a name in data (`importlib.import_module(name)`)."""
+    errors = _new_test(tmp_path, {
+        "tools/helper.py": HELPER,
+        "tests/conftest.py": "import pytest\nfrom helper import head, plain\npytest_plugins = ['plugin']\n\n"
+                             "@pytest.fixture\ndef repo_head():\n    return head()\n\n"
+                             "@pytest.fixture\ndef unused():\n    return head()\n\n"
+                             "def pytest_sessionstart(session):\n    head()\n",
+        "tests/plugin.py": "import pytest\nimport subprocess\n\n@pytest.fixture\n"
+                           "def logged():\n    return subprocess.run(['git', 'log'])\n",
+        "tests/test_argument.py": "def test_x(repo_head):\n    assert repo_head\n",
+        "tests/test_plugin.py": "import pytest\n\n@pytest.mark.usefixtures('logged')\ndef test_x():\n    pass\n",
+        "tests/test_data.py": "import importlib\nNAMES = {'h': 'tools.helper'}\n\ndef test_x():\n"
+                              "    assert importlib.import_module(NAMES['h']).head()\n",
+        "tests/test_hermetic.py": "def test_x(tmp_path):\n    assert tmp_path\n"})
+    assert [error.split(" reads history")[0] for error in errors] == [
+        "missing: tests/test_argument.py", "missing: tests/test_data.py", "missing: tests/test_plugin.py"]
+
+
+def test_a_new_test_that_runs_pytest_on_files_its_source_does_not_name_fails(tmp_path):
+    """A nested pytest run whose files come from data can run any test, so the unit is listed (the safe side)."""
+    errors = _new_test(tmp_path, {
+        "tools/runner.py": "import sys\n\ndef command(files):\n    return [sys.executable, '-m', 'pytest', *files]\n",
+        "tests/test_nested.py": "import subprocess\nfrom runner import command\n\ndef test_x(tmp_path):\n"
+                                "    subprocess.run(command([str(tmp_path)]))\n"})
+    assert errors == ["missing: tests/test_nested.py reads history and is not listed (runs pytest on test files "
+                      "the source does not name, in tools/runner.py)"]
+
+
+def test_a_new_test_in_the_tree_that_imports_the_frozen_oracle_fails(tmp_path):
+    """PROBE F1 on this checkout: a copy of the tree (by links) with one new test that only imports
+    `conformance.frozen_norm_defaults`, which runs `git show` at import."""
+    for name in os.listdir(ROOT):
+        if name != "tests":
+            os.symlink(ROOT / name, tmp_path / name)
+    (tmp_path / "tests").mkdir()
+    for name in os.listdir(ROOT / "tests"):
+        os.symlink(ROOT / "tests" / name, tmp_path / "tests" / name)
+    (tmp_path / "tests/test_zz_probe.py").write_text(
+        "from conformance import frozen_norm_defaults\n\ndef test_x():\n    assert frozen_norm_defaults\n")
+    assert "missing: tests/test_zz_probe.py reads history and is not listed (starts git (git show) in " \
+        "conformance/frozen_norm_defaults.py)" in history_tests.lint(tmp_path).errors
+
+
+def test_the_run_and_the_source_decide_what_names_git_with_one_definition():
+    """tests/read_recorder.py (at run time) and the lint (in the source) both call tools/git_words.py."""
+    sys.path.insert(0, str(ROOT))
+    from tests import read_recorder
+    assert Path(read_recorder.names_git.__code__.co_filename) == Path(history_tests.names_git.__code__.co_filename) \
+        == ROOT / "tools/git_words.py"
