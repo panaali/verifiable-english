@@ -4,7 +4,25 @@
 
 - Branch `feature/pk-1s`, based on `main` at `802b8ff9b`.
 - Commits: `9ffee5b7c` (the stub), `92104f3ef` (the spec, fixtures and seeded bugs), then this report.
-- Next item: **pk-1**, the build (spec section 5).
+  Fix round 1 (review `pk-1s-review.final.md`): `53a8a7464` (the stub), `d9c4e594e` (the spec), then this report.
+- Next items: **pk-1**, the build, then **pk-1b**, the kind table (spec section 5).
+
+## Fix round 1
+
+| Finding | Class removed | Fix | Regression |
+|---|---|---|---|
+| F1 (B) `legacy_labels_nodup` false | A spec statement whose hypothesis does not see the data its conclusion reads | The hypothesis is the rights source's own `wf`, `WellFormedRights R` (`Rights/Wire.lean:270`). Spec 2.6 gives the true reason: `checkRights` refuses repeated limitation and condition names, and `limActs` is deduplicated. Both nodup statements now name the well-formedness their decoder's source carries | Fixture F1 (stub:497–512): the reviewer's counterexample and a repeated-condition one, on which `WellFormedSoft (correlate R)` and `WellFormedU` hold and the labels repeat, and both statements evaluated on five well-formed documents. The file check refuses the old hypothesis (M11) |
+| F2a (B) import cycle and misplaced declarations | A build plan whose file placement contradicts the import graph | `planFiles` (stub:534) gives every stub declaration its pk-1 file. A `run_meta` check (stub:603) reads Lean's module graph and fails on a module outside a file's imports, a later file's declaration, an importer among a file's imports (a cycle), or a declaration with no file. Core `Packs.lean` sits below `Layered.lean` with `Layered.lean`'s own imports; `softPack`/`rightsPack` go into `Layered.lean`; the legacy theorems into `PacksLegacy.lean`; the transfers into `Readings/SupPacks.lean`. The per-file trust table is redone from the stub's measured lines | The check found one more misplacement while it was written (`packFault` needs `legacyIds`). M12–M16: the draft's cycle (`transfers_X` in the core), `legacyIds` and `softPack` misplaced, a cyclic import, an unplaced declaration |
+| F2b (B) further-pack keys outside the closed shape | An output keyed on data the closed response shape does not constrain | `elaborateArrays` writes only `soft` and `rights` for every pack list; `elaborateArrays_keys` proves it by `rfl`, the fact `layeredCase_fits` needs. Further entries (`packEntry`, `furtherEntries`) land with the first provider's shape row. Fixture A9′ reads `layered_elaborate`'s closed keys from the shape itself. Sweep: no other pk-1 output depends on the packs beyond today's shapes (spec 2.7) | A9′ (stub:484–495); M17 fails `elaborateArrays_keys` and A9/A9′ |
+
+The measured trust (spec 5) put pk-1 with the kind table at about +160, over R16's 150, so the cut the spec named is
+made now: the kind table is **pk-1b**. C findings F3–F6 are not in this round. F5's section numbers were aligned
+with the spec where the F2 edits touched them.
+
+Probes: `PROBE F1` failed before the fix (`AssertionError`) and passes after it. As a permanent test it would regex
+Lean text; its regression is the stub's own Lean check instead (M11). F2 has no probe. No pytest type-checks the
+stub: a docs stub pinned to `main` at `802b8ff9b` goes stale when pk-1 lands, and batch evidence is checked at the
+gate and merge, not by permanent tests (R11, D4). `mutants.py` is the rerunnable check.
 
 ## Statement gate
 
@@ -54,26 +72,33 @@ A provider-plan sweep (attitudes, weighing, events, quantities, defeasible, judg
 
 ## Seeded bugs
 
-All ten seeded bugs are in Lean, in the stub, the one file with Lean in this item. The product code is unchanged,
+All seventeen seeded bugs are in Lean, in the stub, the one file with Lean in this item. The product code is unchanged,
 so `review-ready.py`'s product-language rule does not apply.
 
-They were run by applying each one, type-checking the stub, recording the first error, and restoring the file. The
-record is `docs/spec/premise-packs/mutants.json`, with `file` and `test` keys. Every mutant fails:
+`docs/spec/premise-packs/mutants.py` applies each one, type-checks the stub, records the first error with its
+message, and restores the file. It writes `docs/spec/premise-packs/mutants.json`. Every mutant fails:
 
 | Id | Mutation | First failure (stub line) |
 |---|---|---|
-| M1 | `packOrder` puts rights before soft | A1 `#guard` (403) |
-| M2 | `firstRepeat` forgets seen keys | A3 `#guard` (413), 3 errors |
-| M3 | assembly skips the environment check | A4 `#guard` (421) |
-| M4 | `packFault` drops the legacy text | A7 `#guard` (447) |
-| M5 | vocabulary limit off by one (`≥`) | `assemble_nil` proof (141), and the A6 boundary `#guard` |
-| M6 | a repeated pack id is not refused | A2 `#guard` (410) |
-| M7 | `extendEnv` lets the base shadow a generated name | `extendEnv_nil` proof (118), 4 errors |
-| M8 | `xWithout` keeps dropped labels | `xWithout_nil` proof (280), and the A8 `#guard` |
-| M9 | `elaborateArrays` writes soft again as a further entry | A9 `#guard` (459) |
-| M10 | `packPremises` reads the first pack whatever its id | `packPremises_legacy` proof (194), 4 errors |
+| M1 | packOrder puts rights before soft | `417`, 1 error |
+| M2 | firstRepeat forgets the keys it has seen | `427`, 3 errors |
+| M3 | assembly skips the check against the environment | `435`, 2 errors |
+| M4 | packFault drops the legacy text | `461`, 2 errors |
+| M5 | the vocabulary limit is off by one | `142`, 2 errors |
+| M6 | a repeated pack id is not refused | `424`, 1 error |
+| M7 | extendEnv lets the base shadow a generated predicate | `119`, 4 errors |
+| M8 | xWithout keeps only the dropped labels | `290`, 2 errors |
+| M9 | furtherEntries writes the soft pack again as a further entry | `476`, 2 errors |
+| M10 | packPremises reads the first pack whatever its id | `197`, 4 errors |
+| M11 (F1) | legacy_labels_nodup assumes WellFormedSoft (correlate R) again | `603`, 1 error |
+| M12 (F2a) | legacyIds placed in Layered.lean, above packFault's file | `603`, 1 error |
+| M13 (F2a) | transfers_X placed in Packs.lean (the draft's import cycle) | `603`, 1 error |
+| M14 (F2a) | softPack placed in Packs.lean, below softLabelledU's file | `603`, 1 error |
+| M15 (F2a) | Packs.lean imports Layered.lean, which imports it | `603`, 1 error |
+| M16 (F2a) | a stub declaration with no file in planFiles | `603`, 1 error |
+| M17 (F2b) | elaborateArrays writes the further packs' entries in pk-1 | `232`, 5 errors |
 
-**A first M9 survived.** It removed `elaborateArrays`' legacy condition, and nothing failed. The condition turned
+**A first M9 survived** (first round). It removed `elaborateArrays`' legacy condition, and nothing failed. The condition turned
 out to be dead code: a legacy list holds only soft and rights, so the further-pack list is empty anyway. It was
 removed from the definition, and M9 now targets the filter.
 
