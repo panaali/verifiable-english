@@ -142,11 +142,18 @@ theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     have := firstFailure_of_not_free j _ ‹Wire.replayConflictU j = .ok _› (by simp_all)
     simp_all
 
+theorem runGated_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
+    OkFits j Skeletons.normDefaults (runGated j) := by
+  unfold runGated
+  split
+  · exact OkP.error
+  · exact runCase_fits j hp
+
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.normDefaults (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j ‹_› _ ‹_›
+    · exact runGated_fits j ‹_› _ ‹_›
     · fits
   · exact of_norms (Bool.eq_false_iff.mpr ‹_›) (Norms.runCaseReported_fits j hj)
 

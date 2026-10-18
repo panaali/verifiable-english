@@ -349,24 +349,31 @@ inductive Diagnosis (α : Type u)
   | undischargeable (duty : String × List α)
   | jointlyUndischargeable (duties : List (String × List α))
   | clear (actions : List α)
+  /-- Alternatives whose clearness two validated fillings answer both ways (the completion, ET-7). -/
+  | unsettled (actions : List α)
 
 section Diagnose
 variable {α : Type u} [DecidableEq α]
 
-def permittedAt (A : AltDoc) (M : VE.FiniteModel α) (a : α) : Bool :=
+/-- The outcomes read off the tree `D`: the inlined tree, or its filling under `norm-defaults@0`. -/
+def permittedIn (D : Doc) (A : AltDoc) (M : VE.FiniteModel α) (a : α) : Bool :=
   match A.alt.performed with
-  | some (m, _) => (oBase A m).eval M [a]
+  | some (m, _) => (outcomeBase D m).eval M [a]
   | none => true
 
-def requiredAt (A : AltDoc) (M : VE.FiniteModel α) (a : α) : Bool :=
+def requiredIn (D : Doc) (A : AltDoc) (M : VE.FiniteModel α) (a : α) : Bool :=
   match A.alt.performed with
-  | some (_, q) => (oBase A q).eval M [a]
+  | some (_, q) => (outcomeBase D q).eval M [a]
   | none => false
 
 /-- The mapped duties on `r`: `(o, x̄)` with `O_o°(r, x̄)`. -/
-def duties (A : AltDoc) (M : VE.FiniteModel α) (r : α) : List (Fulfilment × List α) :=
+def dutiesIn (D : Doc) (A : AltDoc) (M : VE.FiniteModel α) (r : α) : List (Fulfilment × List α) :=
   A.alt.fulfilments.flatMap fun f =>
-    ((tuples M (restSorts A f)).filter fun xs => (oBase A f.obligation).eval M (tupleVal (r :: xs))).map (f, ·)
+    ((tuples M (restSorts A f)).filter fun xs => (outcomeBase D f.obligation).eval M (tupleVal (r :: xs))).map (f, ·)
+
+def permittedAt (A : AltDoc) (M : VE.FiniteModel α) (a : α) : Bool := permittedIn (inlineTree A) A M a
+def requiredAt (A : AltDoc) (M : VE.FiniteModel α) (a : α) : Bool := requiredIn (inlineTree A) A M a
+def duties (A : AltDoc) (M : VE.FiniteModel α) (r : α) : List (Fulfilment × List α) := dutiesIn (inlineTree A) A M r
 
 def discharges (M : VE.FiniteModel α) (a : α) (d : Fulfilment × List α) : Bool :=
   d.1.body.eval M (tupleVal (a :: d.2))
@@ -378,24 +385,26 @@ def minimalJoint (M : VE.FiniteModel α) (P : List α) : List (Fulfilment × Lis
     let rest := minimalJoint M P ds
     if P.any (fun a => rest.all (discharges M a)) then d :: rest else rest
 
-/-- The 4.6 procedure at a chooser: the classification of a failed `followable°`, or the clear
-alternatives. -/
-def diagnose (A : AltDoc) (M : VE.FiniteModel α) (r : α) : Diagnosis α :=
+/-- The 4.6 procedure at a chooser over the outcomes of `D`: the classification of a failed
+`followable°`, or the clear alternatives. -/
+def diagnoseIn (D : Doc) (A : AltDoc) (M : VE.FiniteModel α) (r : α) : Diagnosis α :=
   let alts := availOf M A.alt.available r
-  let perm := alts.filter (permittedAt A M)
-  let req := alts.filter (requiredAt A M)
+  let perm := alts.filter (permittedIn D A M)
+  let req := alts.filter (requiredIn D A M)
   if alts.isEmpty then .noAlternatives
   else if perm.isEmpty then .nonePermitted
   else if req.length ≥ 2 then .overRequired req
   else
     let P := perm.filter (fun a => req.all (· == a))
-    let ds := duties A M r
+    let ds := dutiesIn D A M r
     let clear := P.filter (fun a => ds.all (discharges M a))
     match ds.find? (fun d => !P.any (fun a => discharges M a d)) with
     | some d => .undischargeable (d.1.obligation, d.2)
     | none => if clear.isEmpty then
         .jointlyUndischargeable ((minimalJoint M P ds).map (fun d => (d.1.obligation, d.2)))
       else .clear clear
+
+def diagnose (A : AltDoc) (M : VE.FiniteModel α) (r : α) : Diagnosis α := diagnoseIn (inlineTree A) A M r
 
 end Diagnose
 
