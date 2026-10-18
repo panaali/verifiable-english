@@ -66,6 +66,7 @@ def count : Listing (List Nat) → Option Nat
 #guard readIn toy μ1 rawCap stepBudget (phrase ["c", "d", "g"]) == .ok "a"                        -- N−1 raw
 #guard readIn toy μ1 rawCap stepBudget (phrase ["b", "b", "b", "b", "b", "b", "b", "b"]) == .limit -- N raw
 #guard readIn toy μ1 rawCap 0 (phrase ["b"]) == .limit                                            -- no steps
+#guard readIn toy μ1 0 stepBudget (phrase ["b"]) == .limit                                        -- N = 0
 #guard readIn toy μlast rawCap stepBudget (phrase ["g"]) == .many "a" "b"                        -- hidden "b"
 #guard readIn toy μ1 rawCap stepBudget (phrase ["a"]) == .none
 
