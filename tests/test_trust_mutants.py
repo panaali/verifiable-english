@@ -172,12 +172,14 @@ def test_allow_suppresses_exactly_its_operator(package, tmp_path):
     assert " list-empty: " not in "".join(line for line in done.stdout.splitlines() if line.startswith("SURVIVOR"))
 
 
-def test_max_mutants_lists_the_rest_as_not_run(package, tmp_path):
-    done, mutants = tool(package, tmp_path / "run", "--max-mutants", "3")
+@pytest.mark.parametrize("limit", [0, 3])
+def test_max_mutants_lists_the_rest_as_not_run(package, tmp_path, limit):
+    """A budget of 0 runs nothing and never exits 0 (3: incomplete)."""
+    done, mutants = tool(package, tmp_path / "run", "--max-mutants", str(limit))
     ran = [m for m in mutants if m["status"] != "NOT RUN"]
-    assert len(ran) == 3 and len(mutants) > 3
+    assert len(ran) == limit and len(mutants) > limit
     printed = [line for line in done.stdout.splitlines() if line.startswith("NOT RUN ")]
-    assert len(printed) == len(mutants) - 3
+    assert len(printed) == len(mutants) - limit
     assert done.returncode == (1 if any(m["status"] == "SURVIVOR" for m in ran) else 3)
 
 
