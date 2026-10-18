@@ -195,8 +195,12 @@ example (q : Rat) : ¬ Denotes empty (.val "absent") q := by
 
 example : (eq (.add (.lit 15) (.lit 2)) (.lit 17)).Holds empty :=
   ⟨15 + 2, 17, .add .lit .lit, .lit, by decide +kernel⟩
-example : (Claim.within (.lit 1) (.lit 0) (.lit 1)).Holds empty :=
-  ⟨1, 0, 1, .lit, .lit, .lit, by decide +kernel, by decide +kernel⟩
+example : (Claim.within (.lit 1) (.lit 1) (.lit 1)).Holds empty :=
+  ⟨1, 1, 1, .lit, .lit, .lit, by decide +kernel, by decide +kernel⟩
+example : ¬ (Claim.within (.lit 2) (.lit 0) (.lit 1)).Holds empty := by
+  rintro ⟨x, l, h, hx, hl, hh, _, hle⟩
+  cases hx; cases hh
+  revert hle; decide +kernel
 example : (round (.lit (27 / 200)) 14 2).Holds empty :=
   ⟨27 / 200, .lit, by decide +kernel⟩
 example : ¬ (lt (.lit 2) (.lit 1)).Holds empty := by
