@@ -719,6 +719,13 @@
    "reason": "et-3: events Lean core, S +139 (VE/Events/Decl.lean +64, VE/Events/Premises.lean +63, VE/Events/Completion.lean +12); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3, 2026-10-18",
    "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
+  },
+  {
+   "class": "V",
+   "lines": 113,
+   "reason": "me-1c Calc display lines: VE/Calc/Render.lean +113 (V, G[V]: reservedWords, phraseWords, valueWordsOk, natWords, placesPhrase, printedWords, exactWords, exprDepth, renderAtom, renderTerm, renderExpr, fill, renderClaim); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1c, 2026-10-17",
+   "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
   }
  ]
 }
