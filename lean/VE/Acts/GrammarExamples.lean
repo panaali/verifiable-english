@@ -249,6 +249,41 @@ words are each marker's words). -/
 #guard errOf (frames [fr "stand" ["in front"] [] [], fr "front desk" [] [] []]) ==
   "InvalidInput: frame 'front desk' begins with the marker word 'front'"                                    -- 31s
 
+/-! Each condition over a list with its fault at the other end: in the first element and not in the last (a first
+head word, marker, marker word, frame or adverb), and 31s on a one-word head (ap-2 review F11). -/
+
+#guard errOf (frames [fr "Seek asylum" [] [] []]) ==
+  "InvalidInput: frame 'Seek asylum' has the head word 'Seek', which is not a lower-case word of letters"  -- 31c
+#guard errOf (frames [fr "take part" [] [] [], fr "take" [] [] []]) ==
+  "InvalidInput: frame heads 'take' and 'take part' overlap: one begins the other"            -- 31f: the longer first
+#guard errOf (frames [fr "subjected" ["to"] ["by", "to"] []]) ==
+  "InvalidInput: frame 'subjected' splits 'by', which is not one of its markers"                            -- 31i
+#guard framesOk (frames [fr "subjected" ["to", "by"] ["to"] []])                    -- 31i: a split marker not last
+#guard errOf (frames [fr "join" [] [] ["", "in"]]) == "InvalidInput: frame 'join' has an empty modifier marker" -- 31j
+#guard errOf (frames [fr "keep" ["in"] [] ["in", "at"]]) ==
+  "InvalidInput: frame 'keep' lists 'in' both as a marker and as a modifier marker"                         -- 31k
+#guard errOf (frames [fr "keep" ["in", "at"] [] ["in"]]) ==
+  "InvalidInput: frame 'keep' lists 'in' both as a marker and as a modifier marker"                         -- 31k
+#guard errOf (frames [fr "stand" ["in  front", "at"] [] []]) ==
+  "InvalidInput: frame 'stand' has the marker 'in  front', which is not words separated by single spaces"   -- 31l
+#guard errOf (frames [fr "mark" ["In front", "at"] [] []]) ==
+  "InvalidInput: frame 'mark' has the marker word 'In', which is not a lower-case word of letters"          -- 31m
+#guard errOf (frames [fr "name" ["or else", "at"] [] []]) ==
+  "InvalidInput: frame 'name' has the reserved marker word 'or'"                                            -- 31n
+#guard errOf ⟨[fr "rest" [] [] []], ["rest", "gladly"]⟩ ==
+  "InvalidInput: the adverb 'rest' is also a marker or head word"                                           -- 31r
+#guard errOf ⟨[fr "rest" [] [] [], fr "sit" [] [] []], ["rest"]⟩ ==
+  "InvalidInput: the adverb 'rest' is also a marker or head word"                                           -- 31r
+#guard errOf ⟨[fr "take part" [] [] []], ["take"]⟩ == "InvalidInput: the adverb 'take' is also a marker or head word"
+#guard errOf ⟨[fr "rest" ["in front", "on"] [] []], ["in"]⟩ ==
+  "InvalidInput: the adverb 'in' is also a marker or head word"                                             -- 31r
+#guard errOf (frames [fr "on hold" [] [] [], fr "sit" ["on"] [] []]) ==
+  "InvalidInput: frame 'on hold' begins with the marker word 'on'"                                          -- 31s
+#guard errOf (frames [fr "sit" ["on"] [] [], fr "on hold" [] [] [], fr "wait" ["at"] [] []]) ==
+  "InvalidInput: frame 'on hold' begins with the marker word 'on'"                         -- 31s: a later marker word
+#guard errOf (frames [fr "sit" ["on"] [] [], fr "on" [] [] []]) ==
+  "InvalidInput: frame 'on' begins with the marker word 'on'"                                    -- 31s: one-word head
+
 /-! ### FR7: the vocabularies of 11.2, the 13 `ap0` rows of 11.2b and the ap-2 measurement's generated frames -/
 
 def V5 : Vocab := frames [fr "seek" [""] [] ["in"], fr "enjoy" [""] [] ["in"]]

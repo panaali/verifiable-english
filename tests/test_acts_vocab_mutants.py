@@ -6,6 +6,8 @@ head word, `wordOk` without `actWord`, 31q without `wordOk`, 31r without its hea
 and a step budget of 1,000,000. This test plants those seven, the other halves and limits of the same kind, and a
 mutant for every way a D-31 row or its place can be lost, generated from `checkVocab`'s own source: each condition
 dropped, and each two adjacent conditions swapped (a permutation that is not the identity swaps some adjacent pair).
+`_generated` adds a mutant for every list of 1.4's check read only in part (its first or last element alone, or
+without its first or last; reviews F7 and F11) and for every marker list swapped for another (F7, F10).
 
 Each mutant is elaborated with `lake env lean`, with the proofs of `Read.lean` cut out, so a fixture must catch it:
 it must fail, and only at `#guard`s (a mutant that does not elaborate proves nothing). The unmutated sources must
@@ -251,12 +253,17 @@ def _list_terms(syntax: str) -> list[tuple[int, int]]:
     return sorted((s, e) for s, e in terms if not ((s - 1, e + 1) in terms and text[s - 1] == "(" and text[e] == ")"))
 
 
-def _first_only(term: str) -> str:
-    """`term` cut to its first element. A `·` term stays the function's argument, so it is piped."""
+# The ways a condition reads only part of a list (ap-2 reviews F7 and F11): one element at either end, or all but one
+# end. Each is a Lean method chain applied to the list.
+CUTS = {"first-only": "take 1", "last-only": "reverse.take 1", "without-first": "drop 1", "without-last": "dropLast"}
+
+
+def _cut(term: str, cut: str) -> str:
+    """`term` cut by `cut`, one of `CUTS`. A `·` term stays the function's argument, so it is piped."""
     if term.startswith("·"):
-        return f"{term}.take 1 |>"
+        return f"{term}.{cut} |>"
     whole = term.startswith("(") and _term_after(term, 0) == len(term)
-    return f"({term if whole or ' ' not in term else f'({term})'}.take 1)"
+    return f"({term if whole or ' ' not in term else f'({term})'}.{cut})"
 
 
 def _slug(term: str) -> str:
@@ -272,8 +279,10 @@ def _at(start: int, end: int, new: str):
 def _generated() -> dict:
     """Two kinds of mutant for every list of 1.4's check, numbered in source order within a name:
 
-    - **first only** (ap-2 review F7: 31c and 31r read only a head's first word): each list cut to its first element,
-      so a condition must be pinned with its fault in a later element (a later word, marker, frame or adverb);
+    - **part of the list** (ap-2 review F7: 31c and 31r read only a head's first word; F11: 31f and 31s skip the first
+      or the last frame, 31s reads a head's first word only when it has two): each list cut in each way of `CUTS`, so
+      a condition must be pinned with its fault in a later element, in an earlier one, at the start and at the end
+      (a word, marker, frame or adverb);
     - **another marker list** (F7: 31o over markers only, 31i over modifiers too, 31g without `""`): each of a
       frame's marker lists replaced by each of the others, so a condition must be pinned on the list 1.4 names."""
     syntax = _sources()[0]
@@ -283,10 +292,11 @@ def _generated() -> dict:
         k = sum(1 for other in mutants if other.rsplit("-", 1)[0] == name)
         mutants[f"{name}-{k + 1}"] = mutate
 
-    for start, end in _list_terms(syntax):
-        add(f"first-only-{_slug(syntax[start:end])}", _at(start, end, _first_only(syntax[start:end])))
-    for start, end in _atoms(syntax)[1]:
-        add(f"first-only-each-{syntax[start:end]}", _at(start, end, f"(fun x => ({syntax[start:end]} x).take 1)"))
+    for kind, cut in CUTS.items():
+        for start, end in _list_terms(syntax):
+            add(f"{kind}-{_slug(syntax[start:end])}", _at(start, end, _cut(syntax[start:end], cut)))
+        for start, end in _atoms(syntax)[1]:
+            add(f"{kind}-each-{syntax[start:end]}", _at(start, end, f"(fun x => ({syntax[start:end]} x).{cut})"))
     for start, end in _siblings(syntax):
         own = "(ms f)" if syntax[start:end] == "ms f" else syntax[start:end]
         defines_ms = syntax.startswith("  let ms ", syntax.rindex("\n", 0, start) + 1)
@@ -319,6 +329,13 @@ EQUIVALENT: dict[str, str] = {
     "f.markers-as-f.markers-and-f.mods-1": "`ms f` is `f.markers ++ f.mods ++ f.mods`: the modifiers again",
     "f.markers-as-f.markers.filter-ne-1": "`ms f` filters `\"\"` out of the argument markers twice",
     "f.mods-as-f.markers-and-f.mods-1": "`ms f` is `f.markers ++ f.markers ++ f.mods`: the argument markers again",
+    # The other end of a list (F11).
+    "last-only-head-1": "31b: a head's last word is absent exactly when the head is empty",
+    "last-only-wordsOf-m-2": "31l: a marker's words cut to the last are empty exactly when its words are",
+    "without-last-g.head-2": "31f: a head other than `g.head` begins `g.head` exactly when it begins `g.head` without "
+                             "its last word, being shorter",
+    "without-last-wordsOf-n-1": "31o: 31l made each marker its words joined by single spaces, so two distinct markers "
+                                "have distinct words, and one's words begin the other's only if they are shorter",
 }
 
 MUTANTS = {
@@ -343,6 +360,13 @@ MUTANTS = {
     "mwords-first-word-of-a-marker": _replace("fs.flatMap (fun f => (ms f).flatMap wordsOf)",
                                               "fs.flatMap (fun f => (ms f).flatMap (fun m => (wordsOf m).take 1))"),
     "ms-first-modifier-only": _replace("(f.markers ++ f.mods).filter", "(f.markers ++ f.mods.take 1).filter"),
+    # The review's four at the other end of a list (ap-2 review F11), as it wrote them; `_generated` makes each of them
+    # again (`REVIEW_F11`).
+    "31f-g-not-first": _replace("if let some g := fs.find?", "if let some g := (fs.drop 1).find?"),
+    "31f-f-not-last": _replace("  for f in fs do\n    if let some g :=", "  for f in fs.dropLast do\n    if let some g :="),
+    "31s-f-not-first": _replace("  for f in fs do\n    if let some w := f.head.head?",
+                                "  for f in fs.drop 1 do\n    if let some w := f.head.head?"),
+    "31s-one-word-head": _replace("f.head.head?", "f.head.dropLast.head?"),
     # The same kinds elsewhere: the other halves and word lists, and each limit one off.
     "31a-129-accepted": _replace("128 < fs.length", "129 < fs.length"),
     "wordOk-without-lower-case": _replace("VE.Norms.Wire.actWord w && w == w.toLower", "VE.Norms.Wire.actWord w"),
@@ -364,6 +388,11 @@ MUTANTS = {
     # Every list of 1.4's check cut to its first element, and every marker list swapped for another (F7).
     **_generated(),
 }
+
+
+# The review's four (F11) and the generated mutant that makes each again.
+REVIEW_F11 = {"31f-g-not-first": "without-first-fs-8", "31f-f-not-last": "without-last-fs-7",
+              "31s-f-not-first": "without-first-fs-19", "31s-one-word-head": "without-last-f.head-6"}
 
 
 @pytest.fixture(scope="module")
@@ -416,9 +445,16 @@ def test_the_generated_mutants_cover_every_list_of_the_check():
     syntax = _sources()[0]
     generated = _generated()
     terms, (atoms, bare) = _list_terms(syntax), _atoms(syntax)
-    assert len([n for n in generated if n.startswith("first-only-") and not n.startswith("first-only-each-")]) == \
-        len(terms)
-    assert len([n for n in generated if n.startswith("first-only-each-")]) == len(bare) > 0
+    # F11: every list is cut in each way of `CUTS`, at both ends.
+    for kind in CUTS:
+        assert len([n for n in generated if n.startswith(f"{kind}-") and not n.startswith(f"{kind}-each-")]) == \
+            len(terms), kind
+        assert len([n for n in generated if n.startswith(f"{kind}-each-")]) == len(bare) > 0, kind
+    # The review's four are generated: each is the same source as its generated mutant, up to parentheses.
+    syntax_read = _sources()[:2]
+    for review, name in REVIEW_F11.items():
+        same = [re.sub(r"[()]", "", MUTANTS[m](*syntax_read)[0]) for m in (review, name)]
+        assert same[0] == same[1], (review, name)
     for term in ("f.head", "·.head", "f.markers", "f.split", "f.mods", "(ms f)", "ms f", "fs", "V.adverbs", "mwords",
                  "g.head", "wordsOf m", "V.frames", "Lexical.clauseWords", '["and", "or", "nor", "to", "be"]',
                  "(ms f).flatMap wordsOf"):
