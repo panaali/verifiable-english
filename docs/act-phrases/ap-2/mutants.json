@@ -105,7 +105,7 @@
     "exit": 1,
     "failed": true,
     "output": [
-     "error: VE/Acts/GrammarExamples.lean:69:0: Expression",
+     "error: VE/Acts/GrammarExamples.lean:70:0: Expression",
      "did not evaluate to `true`",
      "error: Lean exited with code 1",
      "error: build failed"
@@ -198,9 +198,9 @@
    "exit": 1,
    "failed": true,
    "output": [
-    "error: VE/Acts/GrammarExamples.lean:108:0: Expression",
+    "error: VE/Acts/GrammarExamples.lean:109:0: Expression",
     "did not evaluate to `true`",
-    "error: VE/Acts/GrammarExamples.lean:110:0: Expression",
+    "error: VE/Acts/GrammarExamples.lean:111:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
@@ -220,7 +220,7 @@
    "exit": 1,
    "failed": true,
    "output": [
-    "error: VE/Acts/GrammarExamples.lean:101:0: Expression",
+    "error: VE/Acts/GrammarExamples.lean:102:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
@@ -240,7 +240,7 @@
    "exit": 1,
    "failed": true,
    "output": [
-    "error: VE/Acts/GrammarExamples.lean:74:0: Expression",
+    "error: VE/Acts/GrammarExamples.lean:75:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
