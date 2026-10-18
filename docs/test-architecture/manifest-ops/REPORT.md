@@ -11,7 +11,8 @@ which the DRI's decision #5 (`reviews/dri-decisions-20261017b.md`) asked to re-m
 (cutoff REPORT finding 1; escalations 2026-10-17 14:33Z; L59) make real changes select all ~400 units.
 
 **R2 and R3 are unchanged.** Nothing here is on the merge train's full live `tools/gate.py` or on the
-nightlies. This batch adds one evidence script and its saved rows under `docs/test-architecture/manifest-ops/`.
+nightlies. This batch adds one evidence script and its saved rows under `docs/test-architecture/manifest-ops/`, and
+registers the script in `tools/regen_generated.py` `NOT_REGENERATED` (one entry, like `../select/replay.py`).
 
 ## 1. Measurement
 
@@ -208,8 +209,8 @@ by that).
 
 ## Seeded bugs
 
-Product code is unchanged: no Lean, Python product or Rust file is touched, so there is no product
-behaviour to seed. The evidence script's three claims are each seeded in `measure.py`, shown to fail
+No Lean, Rust or `ve/` file is touched. The one Python tooling change, the `NOT_REGENERATED` entry, is seeded
+as S4. The evidence script's three claims are each seeded in `measure.py`, shown to fail
 `measure.py --check`, and restored. Unseeded, `measure.py --check` prints "replayed 2 labels: every row as
 saved" (exit 0), and so does `--check --only a4676c0b7,e7f6968d4,109c7de1d`:
 
@@ -218,6 +219,7 @@ saved" (exit 0), and so does `--check --only a4676c0b7,e7f6968d4,109c7de1d`:
 | S1 | `docs/test-architecture/manifest-ops/measure.py` | `is_manifest` forgets "unmapped manifest reader" | `measure.py --check --only a4676c0b7,e7f6968d4` exits 1: "4 rows differ" (both labels; under drift `without_manifest` is 434, not 415/411) |
 | S2 | `docs/test-architecture/manifest-ops/measure.py` | `is_pin` forgets "reads lean/checkers.lock" (the recorded pin readers) | `measure.py --check --only 109c7de1d` exits 1: "1 rows differ" (the fresh row's `pins_only` loses `tests/test_lean_first_oracle.py`) |
 | S3 | `docs/test-architecture/manifest-ops/measure.py` | `because` counts a plan as caused when `without_manifest <= total` | `measure.py --check --only none` exits 1: "the tables between the markers are not what --table prints from the saved rows" |
+| S4 | `tools/regen_generated.py` | the `NOT_REGENERATED` entry for `measure.py` is missing | `tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason` fails: "register these writers in GENERATED or NOT_REGENERATED: ['docs/test-architecture/manifest-ops/measure.py']" |
 
 ## Self-review against BUILDER-CHECKLIST
 
