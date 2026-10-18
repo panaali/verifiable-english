@@ -1,0 +1,139 @@
+[
+ {
+  "name": "run-depth-at-least",
+  "language": "lean",
+  "file": "lean/VE/Layout/List.lean",
+  "claim": "the run governs only items of the first item's depth (sub-bullets are not governed: F2′)",
+  "mutation": {
+   "from": "(if x.item == some d then x.id :: runFrom d xs else runFrom d xs)",
+   "to": "(if x.item.any (d ≤ ·) then x.id :: runFrom d xs else runFrom d xs)"
+  },
+  "test": "theorem mem_runFrom (VE/Layout/List.lean:113)",
+  "also_fails": [],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ },
+ {
+  "name": "continues-ignores-midline",
+  "language": "lean",
+  "file": "lean/VE/Layout/List.lean",
+  "claim": "a mid-line continuation keeps the run going (F2)",
+  "mutation": {
+   "from": "def continues (d : Nat) (x : Unit) : Bool := x.item.any (d ≤ ·) || x.midLine",
+   "to": "def continues (d : Nat) (x : Unit) : Bool := x.item.any (d ≤ ·)"
+  },
+  "test": "theorem continues_iff (VE/Layout/List.lean:108)",
+  "also_fails": [],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ },
+ {
+  "name": "lead-not-required",
+  "language": "lean",
+  "file": "lean/VE/Layout/List.lean",
+  "claim": "a list reach needs a lead-in that ends with \":\" (F2″, NotALeadIn)",
+  "mutation": {
+   "from": "      if x.lead then\n",
+   "to": "      if true then\n"
+  },
+  "test": "theorem listRun_ok (VE/Layout/List.lean:184)",
+  "also_fails": [],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ },
+ {
+  "name": "odd-indent-item",
+  "language": "lean",
+  "file": "lean/VE/Layout/List.lean",
+  "claim": "an odd indentation is not an item (spec 1.2)",
+  "mutation": {
+   "from": "| some _ => if (f - ls) % 2 == 0 then some ((f - ls) / 2) else none",
+   "to": "| some _ => some ((f - ls) / 2)"
+  },
+  "test": "theorem short_layout (VE/Scope/Examples.lean:106)",
+  "also_fails": [
+   "theorem short_run (VE/Scope/Examples.lean:116)"
+  ],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ },
+ {
+  "name": "para-counts-every-newline",
+  "language": "lean",
+  "file": "lean/VE/Layout/List.lean",
+  "claim": "para counts blank lines only (L1, L1-p)",
+  "mutation": {
+   "from": "if c == nl then (arr, if blank then cnt + 1 else cnt, true)",
+   "to": "if c == nl then (arr, cnt + 1, true)"
+  },
+  "test": "#guard (layoutOf (VE/Scope/Examples.lean:65)",
+  "also_fails": [
+   "theorem short_layout (VE/Scope/Examples.lean:106)",
+   "theorem of_source (VE/Scope/Examples.lean:112)",
+   "theorem para_counts (VE/Scope/Examples.lean:154)",
+   "#guard paraAgrees (VE/Scope/Examples.lean:157)"
+  ],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ },
+ {
+  "name": "merge-overrides-conflict",
+  "language": "lean",
+  "file": "lean/VE/Scope/Effects.lean",
+  "claim": "a key both parts write is ScopeConflict, never an override (F1′, one owner per field)",
+  "mutation": {
+   "from": "  | some (k, _) => throw s!\"ScopeConflict: {u}: {k}\"\n  | none => pure (Json.mkObj (ls ++ is))",
+   "to": "  | some (_, _) => pure (Json.mkObj (ls ++ is))\n  | none => pure (Json.mkObj (ls ++ is))"
+  },
+  "test": "theorem mergeParts_keys (VE/Scope/Theorems.lean:183)",
+  "also_fails": [
+   "theorem mergeParts_conflict (VE/Scope/Theorems.lean:222)"
+  ],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ },
+ {
+  "name": "lookups-is-fields",
+  "language": "lean",
+  "file": "lean/VE/Scope/Effects.lean",
+  "claim": "the joined object holds only members lookup finds (mergeParts_keys for every JSON value)",
+  "mutation": {
+   "from": "  pure (VE.Readings.Wire.firstKeys (fs.filterMap fun kv => (j.getObjVal? kv.1).toOption.map (kv.1, ·)))",
+   "to": "  pure fs"
+  },
+  "test": "theorem lookups_spec (VE/Scope/Theorems.lean:115)",
+  "also_fails": [],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ },
+ {
+  "name": "substOwn-skips-objects",
+  "language": "lean",
+  "file": "lean/VE/Scope/Effects.lean",
+  "claim": "own is substituted at any depth, inside attitude nodes too (F-own)",
+  "mutation": {
+   "from": "    | .obj kvs => .obj (kvs.map fun _ v => substOwn g n v)\n",
+   "to": ""
+  },
+  "test": "theorem substOwn_no_own_le (VE/Scope/Theorems.lean:28)",
+  "also_fails": [
+   "theorem substOwn_id_le (VE/Scope/Theorems.lean:70)"
+  ],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ },
+ {
+  "name": "ownSafe-ignores-exists",
+  "language": "lean",
+  "file": "lean/VE/Scope/Effects.lean",
+  "claim": "own under an exists binder is not safe (F-own)",
+  "mutation": {
+   "from": "      | [.str \"exists\", _, a] => !hasOwn n a\n",
+   "to": ""
+  },
+  "test": "theorem own_binder (VE/Scope/Examples.lean:221)",
+  "also_fails": [],
+  "command": "cd lean && lake build VE.Scope.Examples",
+  "result": "build failed; source restored"
+ }
+]
