@@ -1,0 +1,326 @@
+[
+ {
+  "authority": "python",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "quantity",
+  "corpus_sha256": "888844807f3d9906c137f0d64eb2112db35a772931bba74b40162d95cc87228c",
+  "entry": "053164c06e909e175a8a2d3b25777e3878f0c482437f3d41e669ab71ef2d0d0b",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 12863,
+  "sha256": "c5481ee656af565b311e529c251c52add82fa040f94b28bc7df57917873cf120",
+  "stored": {
+   "at": "2026-10-18T09:58:52+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.72607421875,
+    17.591796875,
+    18.626953125
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "default",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "document",
+  "corpus_sha256": "6582e0cc1756b845a840b7b204b5d846ada51e00f5a64d2ce4c16e6448f33393",
+  "entry": "2d1d47dc549b7087ca2da6835d57e3cf570617d19c24b4c238501c0c1b9ab0cf",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 3632,
+  "sha256": "527651bfc89678720a97ae3d309dc86c0e2dc5f6e35f50e086e0d1b2fe0af87d",
+  "stored": {
+   "at": "2026-10-18T09:58:56+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.58740234375,
+    17.39892578125,
+    18.55908203125
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "default",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "pilots",
+  "corpus_sha256": "f3f3ec53cffc72c03352f595a55cf3c2eb364b844f011b1c64aad658ed993cbd",
+  "entry": "3074ae5f1151c6e572f7f7c445f349a0eb73a3faf326e7dba183cbc9f80f0690",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 563,
+  "sha256": "09a1f5d1c304e1cc1d353e627ebb5dd9e30fbf74a3b521662c6ef52b98249c3c",
+  "stored": {
+   "at": "2026-10-18T09:58:48+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.87646484375,
+    17.78759765625,
+    18.6953125
+   ]
+  },
+  "unavailable": 10
+ },
+ {
+  "authority": "default",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "rights",
+  "corpus_sha256": "9c4699a1815a6e504002702e0a43c460fe118c561133bec93afcbbf3a488b5a6",
+  "entry": "30a76c935e72fd6ec689fdf3efd0f9faa0743a09995e64839b2b99a20b21e7f9",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 2500,
+  "sha256": "abf58bac705a98e37d48dc5586c272838296edd9b74b83de19701f03cc40927e",
+  "stored": {
+   "at": "2026-10-18T09:58:49+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.87646484375,
+    17.78759765625,
+    18.6953125
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "default",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "readings",
+  "corpus_sha256": "47849341e92aebaac104d3cd070a361d0a1d397819e412bbaa12945913ae6b93",
+  "entry": "347f35a6bf19d9b2ea36042146bd168620ea224f5db41e1663c21f21d273d7ff",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 1137,
+  "sha256": "5257c287cde4e5dcdac5a0f5567d82988360e5fc6b6b7c2bc6dd3bc1c70be3ba",
+  "stored": {
+   "at": "2026-10-18T09:58:48+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.87646484375,
+    17.78759765625,
+    18.6953125
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "default",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "discourse",
+  "corpus_sha256": "5ca3e03c7974d858e676ef915e54f4abee460e2677f4cb3f9d1ec12218ae8f0a",
+  "entry": "472dfca95557ec855bce69b79961c7b891ccb92c169b73c43d6680029664869f",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 6350,
+  "sha256": "7e34faa133854005033b0f93e1c11e0c92a45b24bd01813287acac5c0ded2a5f",
+  "stored": {
+   "at": "2026-10-18T09:58:49+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.87646484375,
+    17.78759765625,
+    18.6953125
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "python",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "probe",
+  "corpus_sha256": "3f1d05049a92ccc6e920da6ca10c22d1c9a22636c51bc00bb4e263ebfd33fdb3",
+  "entry": "7558ea944e31e43b3363c865ccb00168a9d534ab4eb396958f960f9dfb17aff1",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 9435,
+  "sha256": "43c6853c0b126a83eab9d0ac17c57e3f1a4b19479dc99377990cb330b41eb189",
+  "stored": {
+   "at": "2026-10-18T09:58:34+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    8.2138671875,
+    18.36083984375,
+    18.89208984375
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "lean",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "conformance",
+  "corpus_sha256": "71164aa263bb987781514275a3b0f0bf9d9acab52ab3750342494a9fed035c35",
+  "entry": "7ba631e696f5c25b61324dc274cddc8da86eed862ccb8e4ec3dd2bd6cf3512d6",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 19806,
+  "sha256": "298fc1c8b35a34b01aef6ba416b8647e5e285a50d1af86e99eab51e8150c537e",
+  "stored": {
+   "at": "2026-10-18T09:58:44+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.953125,
+    17.9697265625,
+    18.7587890625
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "python",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "conformance",
+  "corpus_sha256": "71164aa263bb987781514275a3b0f0bf9d9acab52ab3750342494a9fed035c35",
+  "entry": "ab45f4486da91ecf285f027da264fc54d1e1dfea40e6c2d342d911e1eeb65874",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 19806,
+  "sha256": "42478f1bf0e9bcd44e6b05be8e31752711427f6b83a73d69877f83762ac565bf",
+  "stored": {
+   "at": "2026-10-18T09:58:40+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.953125,
+    17.9697265625,
+    18.7587890625
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "lean",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "quantity",
+  "corpus_sha256": "888844807f3d9906c137f0d64eb2112db35a772931bba74b40162d95cc87228c",
+  "entry": "cd2d94e80400765b05913d17dc9908800bf5bab1cf04c9f197cfab4a99d3af4e",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 12863,
+  "sha256": "988308d7c9b4026bd0c7caa98334949a1fc88cf68765b69df7fb234d5bcd774c",
+  "stored": {
+   "at": "2026-10-18T09:58:55+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.58740234375,
+    17.39892578125,
+    18.55908203125
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "default",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "norm_defaults",
+  "corpus_sha256": "99714284d0c0431efa2123cf8b04f6332be0bd322ae7e813c8542603931cf94b",
+  "entry": "e08ae501df16948ac10b4f21eb1aab8cad40c225faeec4732da6029f37111d1c",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 2020,
+  "sha256": "6a98cd6fd19e5fa4339f97d3511619bd8fed64a0e4c86b1fe46a44a559643893",
+  "stored": {
+   "at": "2026-10-18T09:58:55+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    7.58740234375,
+    17.39892578125,
+    18.55908203125
+   ]
+  },
+  "unavailable": 0
+ },
+ {
+  "authority": "lean",
+  "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92",
+  "corpus": "probe",
+  "corpus_sha256": "3f1d05049a92ccc6e920da6ca10c22d1c9a22636c51bc00bb4e263ebfd33fdb3",
+  "entry": "e375a72f1f9310b37e8eff65986ac509575680f64271f8c8e9da02e0f5446eba",
+  "env": {},
+  "lean_tree": "9ce1a293f8850c5f9029722996add42f6a985940c49311e82c2b8b0f3ee838aa",
+  "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+  "recorder": {
+   "tools/lean_first_cache.py": "259e1bcc2bd4ed6b73a5a69a8909cc43e201b3fcf7c03e98c14fd16bd7ef0c08",
+   "tools/lean_first_diff.py": "f3e16a6fb576452d22d2f50b083ff17c3a4976ec0c861343a87b818d3198a5eb",
+   "uv.lock": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "records": 9435,
+  "sha256": "bc37882438f5d8d1da02058c887f6aba622dca3d1847a2f7d59fcdea85c30ac6",
+  "stored": {
+   "at": "2026-10-18T09:58:35+00:00",
+   "host": "multi-agent-lab",
+   "load": [
+    8.0361328125,
+    18.1552734375,
+    18.82275390625
+   ]
+  },
+  "unavailable": 0
+ }
+]
