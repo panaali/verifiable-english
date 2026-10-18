@@ -8,7 +8,8 @@ A *route* is one way `ve` reads a Lean answer:
 * each mode of the persistent service (`ve.backends.service_schema.MODES`, checked against the modes the
   built service lists in its handshake), read by `LeanService.exchange` (the transport of `relay`) and, for a
   mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
-  `words`, read by `ve.words.read_answer`), by that caller's reader too, on every fixture whose genuine answer
+  `words`, read by `ve.words.read_answer`; `document`; `metered`, read by `ve.evaluate.read_evaluation` and
+  `ve.search.read_nonvacuity`), by that caller's reader too, on every fixture whose genuine answer
   is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
@@ -18,8 +19,9 @@ A *route* is one way `ve` reads a Lean answer:
 Fixtures are the committed genuine requests in `tests/data/relay-gate-cases.jsonl` (`--record` writes it
 from the requests a test run relays, `tests/route_case_recorder.py`, and the service corpus
 `tests/lean_service_corpus.py`, keeping the smallest few cases of each answer shape). The gate asks the built Lean executables for their answers to those requests, so the
-answers are always the current build's. The answer itself and each field of it (every key to `DEPTH` levels;
-lists through their first and last element) are mutated, so a one-shot answer's row array loses and gains rows:
+answers are always the current build's. The answer itself and each field of it (every key to `DEPTH` levels
+below the answer's row, `results/*/result` of a service answer and `*` of a one-shot row array; lists through
+their first and last element) are mutated, so a one-shot answer's row array loses and gains rows:
 
 * `drop`: the field removed;
 * `empty`: a non-empty string, array or object made empty;
@@ -71,7 +73,10 @@ CASES = ROOT / "tests/data/relay-gate-cases.jsonl"
 ALLOW = ROOT / "tools/relay-gate-allow.json"
 BIN = ROOT / "lean/.lake/build/bin"
 MANIFEST = ROOT / "ve/assurance-manifest.json"
-DEPTH = 8
+# Levels mutated below an answer's row, and the levels of each route kind's envelope above it (a service answer's
+# `results/<i>/result`, a one-shot answer's row array): a field is mutated at the same depth in its row on both.
+DEPTH = 7
+ENVELOPE = {"service": 3, "one-shot": 1}
 PER_SHAPE = 2
 FRESH = "zz-not-in-request"
 # The test files `--record` runs by default: together they relay every route.
@@ -98,18 +103,18 @@ DROP = object()
 # Mutations
 
 
-def _nodes(value, path=()):
-    """(path, value) for `value` and every field below it to DEPTH levels; lists through their first and last
+def _nodes(value, path=(), depth=DEPTH + ENVELOPE["one-shot"]):
+    """(path, value) for `value` and every field below it to `depth` levels; lists through their first and last
     element."""
     yield path, value
-    if len(path) >= DEPTH:
+    if len(path) >= depth:
         return
     if isinstance(value, dict):
         for key, item in value.items():
-            yield from _nodes(item, path + (key,))
+            yield from _nodes(item, path + (key,), depth)
     elif isinstance(value, list) and value:
         for index in sorted({0, len(value) - 1}):
-            yield from _nodes(value[index], path + (index,))
+            yield from _nodes(value[index], path + (index,), depth)
 
 
 def _replace(root, path, new):
@@ -180,14 +185,15 @@ class Mutant:
 
 
 def mutants(answer, named: set[str], rebind_ints: dict[tuple, int],
-            deep_depth: int = 0) -> list[tuple[Mutant, object]]:
+            deep_depth: int = 0, envelope: int = ENVELOPE["one-shot"]) -> list[tuple[Mutant, object]]:
     """[(mutant, mutated answer)] for every field of `answer`: drop, empty, duplicate, retype, rebind.
     `named` are the strings the request holds; `rebind_ints` maps the paths of integers bound to the request
     (positions, counts) to a value the request does not give them; fields at most `deep_depth` levels down are
-    also replaced by a DEEP_LEVELS-deep array."""
+    also replaced by a DEEP_LEVELS-deep array; fields are mutated to DEPTH levels below the `envelope` levels
+    above the row (lf-18 review F1: a service row's trace bindings, 6 levels down, were never mutated)."""
     out = []
     # The answer itself is a node too: a one-shot answer's row array is emptied, duplicated and retyped.
-    for path, value in _nodes(answer):
+    for path, value in _nodes(answer, depth=DEPTH + envelope):
         if path and isinstance(path[-1], str):
             out.append((Mutant("drop", path), _replace(answer, path, DROP)))
         if value not in ("", [], {}) and isinstance(value, (str, list, dict)):
@@ -376,9 +382,21 @@ def _document_reader(case):
     return read
 
 
-# Service modes whose one caller reads the transport's answer further: the mode's reader for a case, a function of
+def _metered_reader(case):
+    """How `ve` reads the service's `metered` response to `case`: `lean_runner.metered_row` (the row is of the
+    case's kind), then `ve.evaluate.read_evaluation` for an `evaluate-budgeted` case (count, trace and every
+    trace binding bound to the case's model) or `ve.search.read_nonvacuity` for a `non-vacuity` case."""
+    from ve.backends import lean_runner
+    from ve.evaluate import read_evaluation
+    from ve.search import read_nonvacuity
+    read = read_evaluation if case["kind"] == "evaluate-budgeted" else read_nonvacuity
+    return lambda response: read(lean_runner.metered_row(response["results"][0]["result"], case), case)
+
+
+# Service modes whose callers read the transport's answer further: the mode's reader for a case, a function of
 # the decoded response that raises as the caller does.
-SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader, "document": _document_reader}
+SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader, "document": _document_reader,
+                   "metered": _metered_reader}
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:
@@ -413,8 +431,13 @@ def _case_kind(case) -> str:
 
 
 def _shape(case, row) -> tuple:
+    """An answer's shape: the case's kind, the row's status and members, and the case's boolean choices, which
+    decide which parts of a row are filled (a `metered` case's `trace`: a trace's bindings are only read, and so
+    only gated, when the case asks for one)."""
     status = row.get("status") if isinstance(row, dict) else None
-    return (_case_kind(case), str(status), tuple(sorted(row)) if isinstance(row, dict) else ())
+    choices = tuple(sorted((key, value) for key, value in case.items() if type(value) is bool)) \
+        if isinstance(case, dict) else ()
+    return (_case_kind(case), str(status), tuple(sorted(row)) if isinstance(row, dict) else (), choices)
 
 
 # One-shot routes: how a call site reads its runner's answer to a recorded case.
@@ -789,7 +812,8 @@ def _gate_service(route, cases, entries, report):
         if not rejection:
             stats["ok_fixtures"] += 1
         named = _strings(case) | {mode}
-        found = mutants(answer, named, _service_rebind_ints(answer), deep_depth=5) + _digest_rebind(answer)
+        found = mutants(answer, named, _service_rebind_ints(answer), deep_depth=5,
+                        envelope=ENVELOPE["service"]) + _digest_rebind(answer)
         found.append((Mutant("rebind", ("id",)), {**answer, "id": FRESH}))
         for mutant, mutated in found:
             replay.answer, replay.mutant = mutated, mutant

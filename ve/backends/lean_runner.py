@@ -134,7 +134,12 @@ def _metered(case: dict) -> dict:
     `ResourceLimit`, and of the non-vacuity of a search witness. Its row, a rejection included; an
     answer of the other kind is no answer."""
     from .relay import rows
-    row = rows("metered", [case])[0]
+    return metered_row(rows("metered", [case])[0], case)
+
+
+def metered_row(row: dict, case: dict) -> dict:
+    """A `metered` row bound to the kind of the case it answers (how `_metered` reads it; the relay
+    mutation gate reads a mutated answer the same way)."""
     if row["status"] == "ok" and set(row) != METERED_FIELDS[case["kind"]]:
         raise CheckerUnavailable(f"CheckerUnavailable: the Lean metered answer to a {case['kind']} case "
                                  "is of another kind")
