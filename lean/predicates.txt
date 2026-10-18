@@ -127,6 +127,7 @@ module VE.Bridge
 module VE.Calc.Decls
 module VE.Calc.Eval
 module VE.Calc.Examples
+module VE.Calc.Render
 module VE.Calc.Syntax
 module VE.CertificateWire
 module VE.Checks
