@@ -125,11 +125,15 @@ measured runs above still ran one whole-UDHR document at a time.
 - Key: the root's HEAD commit, refused when `git status --porcelain` is non-empty; the root's Lean build key
   (`lean_share.key`); the recorder digest (`tools/lean_first_diff.py`, `tools/lean_first_cache.py`, `uv.lock`) and the
   Python version; the corpus input digest (the digests the records carry, plus the files a pilot document names beside
-  it); the authority; every `VE_*` variable except the cache and store locations and `VE_TEST_*`. Each part changed
-  is a miss (`test_each_key_part_changed_is_a_miss`, `test_the_authority_is_part_of_the_key`).
+  it); the authority; every `VE_*` variable except the cache and store locations and `VE_TEST_*`; and the SHA-256 of
+  every checker the recording can run (`checker_builds`: each executable in `lean/.lake/build/bin`, and the
+  `ve_service` and Rust binaries it runs, where `VE_LEAN_SERVICE` or `VE_RUST_JSONL` may put them; review F1). Each
+  part changed is a miss (`test_each_key_part_changed_is_a_miss`, `test_the_authority_is_part_of_the_key`).
 - Store, only when all of these hold: the root is clean; the child exited 0; the key is unchanged after the recording;
-  the root's lock pins both checkers the recording ran (`ve_service` and the Rust binary); and the segment passes the
-  hit checks. Each store goes to a temporary directory and is renamed into `<cache>/v1/<sha256 of key>/`
+  the root's lock pins the `ve_service` and Rust builds the key names; and the segment passes the hit checks. The
+  pins alone do not tell builds apart (the lock keeps old builds: 248 `ve_service` digests), so the builds themselves
+  are keyed: a root checked out at a new commit but not rebuilt stores under its old builds' key, which no rebuilt
+  root looks up (`test_a_base_recorded_with_an_old_pinned_build_is_not_reused`). Each store goes to a temporary directory and is renamed into `<cache>/v1/<sha256 of key>/`
   (`segment.jsonl`, `meta.json`, files 0644). An entry is never rewritten.
 - Hit, only when all of these hold: the meta names the key and the segment's SHA-256 and line count; every line
   passes `load_text` (the `record_problem` schema, duplicates, one digest per source); every line is in canonical
@@ -176,6 +180,12 @@ named test in `tests/test_lean_first_diff_cache.py` fail with exit 1, and was th
 | 20 | the key is unchanged after recording before anything is stored | `tools/lean_first_cache.py` | `test_a_key_that_changes_while_recording_stores_nothing` |
 | 21 | a failed recording writes and stores nothing | `tools/lean_first_cache.py` | `test_a_failed_recording_writes_and_stores_nothing` |
 | 22 | prune keeps the entries used lately | `tools/lean_first_cache.py` | `test_prune_keeps_what_was_stored_or_used_lately` |
+| 23 | the checker builds are keyed (review F1) | `tools/lean_first_cache.py` | `test_a_base_recorded_with_an_old_pinned_build_is_not_reused` |
+| 24 | every Lean executable is keyed (review F1) | `tools/lean_first_cache.py` | `test_each_key_part_changed_is_a_miss[change_route_build]` |
+| 25 | an overridden checker is keyed by its contents (review F1) | `tools/lean_first_cache.py` | `test_each_key_part_changed_is_a_miss[change_rust_override]` |
+| 26 | a pilot's companion files are keyed (review F2) | `tools/lean_first_cache.py` | `test_each_input_a_corpus_reads_changes_its_key[pilots]` |
+| 27 | the discourse corpus file is keyed (review F2) | `tools/lean_first_cache.py` | `...[discourse]` |
+| 28 | a conformance file is keyed (review F2) | `tools/lean_first_cache.py` | `...[conformance]` |
 
 ## 5. Follow-ups (exact orchestrator lines; nothing under manage-agents was edited)
 
@@ -233,7 +243,7 @@ named test in `tests/test_lean_first_diff_cache.py` fail with exit 1, and was th
    including retyped, extra field, duplicated, dropped).
 2. Every deliverable built: PASS, section 7. A grep of the diff finds no Python copy of a Lean decision and no new
    report test (the evidence is saved files, D4). `tests/test_lean_first_diff.py` is untouched.
-3. Tests can fail: PASS, 22 seeded bugs (section 4, `evidence/mutants.json`). Empty input gives no hit:
+3. Tests can fail: PASS, 28 seeded bugs (section 4, `evidence/mutants.json`). Empty input gives no hit:
    `...[no segment]`, `...[a whole record dropped]`.
 4. Base and head agree: PASS. The base side ran on main, the head on this branch, on all nine corpora:
    `evidence/runs/compare.log`, 100,398 the same; the 12 differences are pilot availability, as on lf-18.
@@ -253,3 +263,24 @@ named test in `tests/test_lean_first_diff_cache.py` fail with exit 1, and was th
     61-180 s instead of ~78 min (section 2). The pilot serialisation that cost ~20 min was removed (2.3).
 13. Test-removed trailers: N.A., no test was removed. `gate_collection.py --check --prebuilt` reports 0 refused,
     0 stale, 0 malformed.
+
+## 9. Review fixes (`speed-abcache-review.final.md`, at `927475b86`)
+
+- **F1 (B), a base recorded with an out-of-date build was stored and reused.** Class: a key part that names where a
+  checker is (the commit, a path in `VE_*`) and not the build that ran. Fix: `root_key` holds `checker_builds`, the
+  SHA-256 of every executable of the root's Lean build and of the `ve_service` and Rust binaries the recording runs,
+  wherever the environment puts them. The key is computed again after the recording, so a rebuild during it stores
+  nothing. `pinned_checkers` checks the keyed digests against the lock. Tests:
+  `test_a_base_recorded_with_an_old_pinned_build_is_not_reused` (the review's probe), and
+  `test_each_key_part_changed_is_a_miss[change_service_build, change_route_build, change_rust_build,
+  change_service_override, change_rust_override]`. The probe exits 0 after the fix (1 before).
+- **F2 (B), the corpus key part (`sources`) was never run by a test.** Class: a key part computed by a function the
+  fixture replaces. Fix: `test_each_input_a_corpus_reads_changes_its_key[<corpus>]` runs the real `sources` for every
+  corpus, and `test_every_corpus_has_its_source_inputs_tested` fails when `diff.CORPORA` gains a corpus the table does
+  not cover. Each input a corpus reads is edited in turn (each conformance file, each generated corpus file, a
+  discourse or quantity entry, a pilot document, the pack beside it, a new pilot branch), and each edit must change
+  the corpus digest and, where the records carry one, the case's source digest. The review's probe exits 0 after the
+  fix (the mutant that fixes the pilots key fails `...[pilots]`).
+- Seeded bugs 23-28 (section 4) are these rules; `evidence/mutants.json` was regenerated: 28 of 28 fail their test.
+- `tests/test_lean_first_diff_cache.py` now has 48 tests; `tools/lean_first_cache.py` is 361 lines.
+- C findings F3-F7 are left as follow-ups, as the review files them.
