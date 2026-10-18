@@ -213,7 +213,7 @@ def labelledJson (l : String) (a : VE.Formula) (origin : Option RequestPath) : J
   Json.mkObj ([("label", .str l), ("ast", VE.SoftNorms.Wire.enc a)] ++
     match origin with | some o => [("origin", toJson o)] | none => [])
 
-/-- pk-1b: one further pack's entry, its premises and its generated names, each with its origin. -/
+/-- The first provider (AT-2): one further pack's entry, its premises and its generated names, each with its origin. -/
 def packEntry (p : Pack) : String × Json :=
   (p.id, Json.mkObj [
     ("premises", Json.arr (p.labelled.map (fun (l, a) => labelledJson l a (p.origins.lookup l))).toArray),
@@ -231,7 +231,7 @@ def elaborateArrays (qs : List Pack) : List (String × Json) :=
 /-- 2.7: the keys pk-1's elaborate writes do not depend on the packs (the fact the encoder theorem needs). -/
 theorem elaborateArrays_keys (qs : List Pack) : (elaborateArrays qs).map (·.1) = ["soft", "rights"] := rfl
 
-/-- pk-1b: one entry per further pack, in `packOrder` (none on a legacy list, which holds only soft and rights).
+/-- The first provider (AT-2): one entry per further pack, in `packOrder` (none on a legacy list, which holds only soft and rights).
 It lands together with its keys in `layered_elaborate`, with the first provider's shape row. -/
 def furtherEntries (qs : List Pack) : List (String × Json) :=
   (qs.filter (fun p => p.id != "soft" && p.id != "rights")).map packEntry
@@ -469,7 +469,7 @@ def holds (a : VE.Formula) : Bool := a != .bottom
 #guard (packPremises [soft] "rights").isEmpty
 #guard xWithout [soft, weighing] ["soft:coherence:r1,r2"] = [φ, .bottom]
 
--- A9: elaborate entries: today's two arrays on every list (pk-1); one more entry per further pack (pk-1b).
+-- A9: elaborate entries: today's two arrays on every list (pk-1); one more entry per further pack (AT-2).
 #guard (elaborateArrays [soft, rights]).map (·.1) == ["soft", "rights"]
 #guard (elaborateArrays []).map (·.1) == ["soft", "rights"]
 #guard (elaborateArrays [soft, weighing, ev "date__d"]).map (·.1) == ["soft", "rights"]
@@ -483,7 +483,7 @@ def holds (a : VE.Formula) : Bool := a != .bottom
 
 -- A9′ (F2): the closed shape of `norm-defaults-elaborate` (`ResponseShape/Schemas/NormDefaults.lean:124`), read from
 -- the shape itself, has every key pk-1's elaborate writes (for every pack list, `elaborateArrays_keys`) and no key of a
--- further pack, so `furtherEntries` must land with a shape row (pk-1b).
+-- further pack, so `furtherEntries` must land with a shape row (AT-2).
 def closedKeys : ResponseShape.Shape → List String
   | .node _ kws => kws.flatMap fun
     | .object ps (some (.bool false)) => ps.map (·.1)
@@ -525,7 +525,7 @@ open Lean Meta
 
 structure PlanFile where
   file : String
-  /-- `none`: lands with a provider or pk-1b, above every file here. -/
+  /-- `none`: lands with the first provider, above every file here. -/
   imports : Option (List Name)
   importedBy : List Name
   decls : List Name
@@ -548,7 +548,7 @@ def planFiles : List PlanFile := [
     ``packPremises_legacy, ``packFault_legacy_rights, ``packFault_legacy_soft, ``filledX_whole, ``dispatch_legacy]⟩,
   ⟨"lean/VE/Readings/SupPacks.lean", some [`VE.Readings.SupExtra], [],
    [``VE.Readings.transfers_append, ``VE.Readings.transfers_X]⟩,
-  ⟨"pk-1b and AT-2", none, [], [``packEntry, ``furtherEntries, ``expandBy, ``ExpandsOn, ``OriginsExact]⟩]
+  ⟨"the first provider (AT-2)", none, [], [``packEntry, ``furtherEntries, ``expandBy, ``ExpandsOn, ``OriginsExact]⟩]
 
 /-- `ms` and every module they import, directly or not. -/
 partial def closure (env : Lean.Environment) (ms : List Name) : NameSet :=
