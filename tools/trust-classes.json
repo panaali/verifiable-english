@@ -12026,8 +12026,19 @@
         "VE.Calc.Small",
         "VE.Calc.Source",
         "VE.Calc.Val",
-        "VE.Calc.WellFormed",
-        "VE.Calc.values"
+        "VE.Calc.WellFormed"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Calc.values",
+          "tied": [
+            "VE.Calc.values_stated",
+            "VE.Calc.values_defined",
+            "VE.Calc.values_free",
+            "VE.Calc.values_counted",
+            "VE.Calc.values_missing"
+          ]
+        }
       ],
       "G[R]": [
         "VE.Calc.findingKind",
