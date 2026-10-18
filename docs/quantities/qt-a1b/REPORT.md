@@ -97,7 +97,8 @@ Touched by hand: `lean/VE/Cardinality/{Theorems,Examples}.lean`, `lean/CARDINALI
 
 - Selected tests on the Mac runner (`mac-pytest.sh --select -- --base 3cc70f557 --run`), HEAD 802bcc4a0: 120 units, 0
   failed, exit 0 (the `lake build`, `lean/audit.py`, `test_cardinality_exercised.py`, `test_trust_budget.py`,
-  `test_frozen_sources.py`, …). Rerun on the final HEAD: see the last commit's message.
+  `test_frozen_sources.py`, …). Rerun on d206bb6e9 (all code final; only this report changes after it): exit 0, 0
+  failed (62 units recorded for that tree).
 - `regen_generated.py --write --skip route-cases` (route-cases needs the Rust binary; no route case changed), then
   `--only lean-statements` and `--only lean-audit-manifests` after the last fixture. Frozen sources unchanged.
 - Main-known-red tests: none selected. The full gate is the chain's, on the final HEAD.
