@@ -6,12 +6,13 @@ the DRI. Neither is a signature. Both come from the independent fidelity check, 
 for its three force sets; (2) whether RS9 = same and RS6 = same are readings the words allow.
 
 - Item: fsf-r1, rank 8 of the feature feed (plan `manage-agents/reviews/feature-plan-20261018.md`, row 8 and
-  milestone M4). Normal lane. Branch `feature/fsf-r1`, based on main at 93131f96.
+  milestone M4). Normal lane. Branch `feature/fsf-r1`. The re-measure ran on main 93131f96. The branch was then synced with main
+  22c4b915 (me-1c and tarch-manifest-ops, neither touching this item's files) in bfe20a9e.
 - Plan row: "Safety framework re-measured on main (first since Oct 1), with units whose blocker has merged (soft
   'should'/'must' reading sets) re-expressed". Its spec column is "none", so no statement review applies. The
   statement gate has nothing to accept and was not blocking.
 - Commits (`git log --oneline main..HEAD --no-merges`, saved at the time of writing): 3ab864b4, 26816b88, 07fce3e3,
-  94804781, 984cdc4d, fdecc7db, and this report's commit.
+  94804781, 984cdc4d, fdecc7db, 59d06da8 (report), and this report's update after the sync.
 
 ## Deliverables
 
@@ -181,15 +182,16 @@ The 11 pending sets, and why each still has no content:
 
 ## Trust, DELTA, tests
 
-- **Trust:** `uv run python tools/trust_map.py --check` on this branch against 93131f96: K +0, S +0, D +0, G +0,
-  tied +0, trusted +0; PASS. No Lean file changed, so there is no R16 allowance and no FOLLOW-UPS row.
+- **Trust:** `uv run python tools/trust_map.py --check` against 93131f96 gives K +0, S +0, D +0, G +0, tied +0 and
+  trusted +0. After the sync it gives PASS against 22c4b915. No Lean file changed, so there is no R16 allowance and no FOLLOW-UPS row.
 - **DELTA:** [DELTA.md](DELTA.md) has no user-visible VE delta, because no product code changed.
 - **Collection:** `tools/gate_collection.py --check --prebuilt`: 4 added, 0 removed, 0 refused, 0 stale, 0
   malformed.
 - **Selected tests:** `mac-pytest.sh --select` on the Mac runner selected 40 units. The first run had one failure,
   `tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason`: the new `readings.json` was neither
   read nor excluded. It was fixed in fdecc7db by moving the file to `readings/results.json`, which the corpus already
-  excludes as a use case's recorded results. The rerun on the final HEAD is recorded below.
+  excludes as a use case's recorded results. After the sync, the run on bfe20a9e (60 of 434 units, Mac runner
+  ve-mac-1) passed: exit 0, 0 failed.
 - **Not run:** the full gate (the chain runs it on the final HEAD); no reader evaluation, since no new English.
 - **Main's known-red tests:** none is in this item's selection.
 
@@ -240,12 +242,13 @@ The 11 pending sets, and why each still has no content:
    byte statuses of `build_document.py` are identical (`test_rerun_equals_committed_results`,
    `test_span_accounting_is_complete`). The readings answers are new, not changed.
 5. **N.A.** No relayed answer is read by new code. The part documents go through VE's own bound relays.
-6. **PASS.** The branch is on main 93131f96, `merge-base` = main. The commit list is from `main..HEAD --no-merges`.
-   The gate runs on the final HEAD in the chain.
+6. **PASS.** The branch was synced with main 22c4b915 (bfe20a9e), so `merge-base` = main. The commit list is from
+   `main..HEAD --no-merges`. The gate runs on the final HEAD in the chain.
 7. **PASS.** DELTA has no rows, trust is +0, and no row is reserved (DELTA.md, `trust_map.py --check`).
 8. **PASS.** No VE output changed. The use case's own output changes (coverage.json residual +12, spans.json
    `reading_content` on 7 units, the README sections) are listed in this report.
-9. **PASS.** `select_tests.py --base $(git merge-base HEAD main)` selects 40 of 434 units, not all of them, and
+9. **PASS.** `select_tests.py --base $(git merge-base HEAD main)` selects 60 of 434 units (40 before the sync), not
+   all of them, and
    includes `tests/test_safety_framework.py`, where seeded bugs 1 to 5 fail.
 10. **N.A.** No Lean statement or proof changed.
 11. **N.A.** No budget, limit or deadline changed. The new tests use no sleep and no timeout.
