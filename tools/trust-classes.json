@@ -12406,6 +12406,87 @@
       "P": [
         "VE.Events.unorderedSameF"
       ]
+    },
+    "VE/Layout/List.lean": {
+      "D[V]": [
+        "VE.Layout.boldLabel",
+        "VE.Layout.isBlank",
+        "VE.Layout.isDigit",
+        "VE.Layout.lastNonBlank",
+        "VE.Layout.lineStart",
+        "VE.Layout.markerLen",
+        "VE.Layout.nl",
+        "VE.Layout.ofSource",
+        "VE.Layout.paraCounts",
+        "VE.Layout.skipSpaces",
+        "VE.Layout.sp",
+        "VE.Layout.spacesOnly",
+        {
+          "name": "VE.Layout.continues",
+          "tied": [
+            "VE.Layout.continues_iff"
+          ]
+        },
+        {
+          "name": "VE.Layout.indexOf",
+          "tied": [
+            "VE.Layout.indexOf_iff"
+          ]
+        },
+        {
+          "name": "VE.Layout.listRun",
+          "tied": [
+            "VE.Layout.listRun_iff",
+            "VE.Layout.listRun_ok_iff"
+          ]
+        },
+        {
+          "name": "VE.Layout.runFrom",
+          "tied": [
+            "VE.Layout.mem_runFrom"
+          ]
+        }
+      ],
+      "S": [
+        "VE.Layout.GovernedItem",
+        "VE.Layout.Unit"
+      ]
+    },
+    "VE/Scope/Effects.lean": {
+      "G[V]": [
+        "VE.Scope.lookups",
+        "VE.Scope.members"
+      ],
+      "S": [
+        "VE.Scope.depthLimit",
+        "VE.Scope.depthOk",
+        "VE.Scope.hasOwn",
+        "VE.Scope.mergeParts",
+        "VE.Scope.ownSafe",
+        "VE.Scope.substOwn"
+      ]
+    },
+    "VE/Scope/Examples.lean": {
+      "T": [
+        "VE.Scope.Examples.blankLinesRef",
+        "VE.Scope.Examples.guard1",
+        "VE.Scope.Examples.hcPieces",
+        "VE.Scope.Examples.item1",
+        "VE.Scope.Examples.item3sign",
+        "VE.Scope.Examples.j",
+        "VE.Scope.Examples.layoutOf",
+        "VE.Scope.Examples.leadPart",
+        "VE.Scope.Examples.mergePartsText",
+        "VE.Scope.Examples.mk",
+        "VE.Scope.Examples.paraAgrees",
+        "VE.Scope.Examples.powerPieces",
+        "VE.Scope.Examples.prosePieces",
+        "VE.Scope.Examples.seven",
+        "VE.Scope.Examples.shortPieces",
+        "VE.Scope.Examples.situationsPieces",
+        "VE.Scope.Examples.u0173",
+        "VE.Scope.Examples.unordered"
+      ]
     }
   }
 }

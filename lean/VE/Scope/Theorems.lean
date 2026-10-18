@@ -95,9 +95,6 @@ theorem substOwn_id_le (g : Json) : ∀ (n : Nat) (c : Json), hasOwn n c = false
 theorem substOwn_id (g c : Json) (hc : hasOwn depthLimit c = false) : substOwn g depthLimit c = c :=
   substOwn_id_le g depthLimit c hc
 
-theorem commutes_symm (e₁ e₂ : Effect) : Commutes e₁ e₂ = Commutes e₂ e₁ := by
-  cases e₁ <;> cases e₂ <;> simp [Commutes, Bool.and_comm]
-
 /-! Joining parts -/
 
 theorem firstKeys_mem (l : List (String × Json)) (hf : ∀ p ∈ l, ∀ q ∈ l, p.1 = q.1 → p = q) :

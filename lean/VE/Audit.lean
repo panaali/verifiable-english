@@ -128,6 +128,7 @@ import VE.GraphChecks
 import VE.Judgments.Decl
 import VE.Judgments.Examples
 import VE.Judgments.Scan
+import VE.Layout.List
 import VE.LexicalProofs
 import VE.ModelProofs
 import VE.NormDefaults.Admission
@@ -291,6 +292,8 @@ import VE.Route.Run
 import VE.Route.RunSound
 import VE.Route.Wire
 import VE.Route.WireSound
+import VE.Scope.Examples
+import VE.Scope.Theorems
 import VE.SearchBudget.Budget
 import VE.SearchBudget.Demand
 import VE.Semantics
@@ -1841,6 +1844,12 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.opensIn_isEmpty
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
+#print axioms VE.Layout.continues_iff
+#print axioms VE.Layout.indexOf_iff
+#print axioms VE.Layout.listRun_iff
+#print axioms VE.Layout.listRun_ok
+#print axioms VE.Layout.listRun_ok_iff
+#print axioms VE.Layout.mem_runFrom
 #print axioms VE.NormDefaults.Admission.admitDocumentX_spec
 #print axioms VE.NormDefaults.Admission.admitDocument_spec
 #print axioms VE.NormDefaults.Admission.admitNodesX_ok
@@ -5303,6 +5312,28 @@ import VE.WireContract.Engine
 #print axioms VE.Route.sat_checked
 #print axioms VE.Route.tableauValid_certificateSound
 #print axioms VE.Route.verifyOrder_sound
+#print axioms VE.Scope.Examples.bold_labels
+#print axioms VE.Scope.Examples.byte_tests
+#print axioms VE.Scope.Examples.depth_bound
+#print axioms VE.Scope.Examples.markers
+#print axioms VE.Scope.Examples.own_binder
+#print axioms VE.Scope.Examples.para_counts
+#print axioms VE.Scope.Examples.short_layout
+#print axioms VE.Scope.Examples.short_run
+#print axioms VE.Scope.Examples.unordered_join
+#print axioms VE.Scope.firstKeys_mem
+#print axioms VE.Scope.hasOwn_mono
+#print axioms VE.Scope.impl_map_eq
+#print axioms VE.Scope.lookups_absent
+#print axioms VE.Scope.lookups_spec
+#print axioms VE.Scope.members_obj
+#print axioms VE.Scope.mergeParts_conflict
+#print axioms VE.Scope.mergeParts_keys
+#print axioms VE.Scope.mkObj_getObjVal
+#print axioms VE.Scope.substOwn_id
+#print axioms VE.Scope.substOwn_id_le
+#print axioms VE.Scope.substOwn_no_own
+#print axioms VE.Scope.substOwn_no_own_le
 #print axioms VE.SearchBudget.chain_denote
 #print axioms VE.SearchBudget.conjuncts_denote
 #print axioms VE.SearchBudget.demand_sound

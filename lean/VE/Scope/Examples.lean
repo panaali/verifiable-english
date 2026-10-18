@@ -152,7 +152,7 @@ theorem para_counts : (paraCounts "a\n\n  \n\t\r\nb ".toUTF8).toList = [0, 0, 0,
 
 #guard paraAgrees hcPieces && paraAgrees powerPieces && paraAgrees situationsPieces
 
-/-! ### JSON fixtures: conditions, `own`, the order table, joining parts -/
+/-! ### JSON fixtures: conditions, `own`, joining parts -/
 
 def j (s : String) : Json := (Json.parse s).toOption.getD .null
 
@@ -178,6 +178,33 @@ def guard1 : Json := j "[\"unary\", \"mass_casualty_weapon_uplift\", [\"var\", 1
 #guard [leadPart, item1, item3sign].all fun o =>
   (lookups o).toOption.map (·.map (·.1)) == (VE.Bridge.fields o).toOption.map (·.map (·.1))
 
+/-- Counterfixture F-wf: the spec's text of `mergeParts` (4.2), which reads `VE.Bridge.fields`, kept only to show
+    why `mergeParts` reads members through `lookups`. -/
+def mergePartsText (u : String) (lead item : Json) : Except String Json := do
+  let bad := s!"InvalidInput: scope@0 parts of {u} must be objects"
+  let ls ← (VE.Bridge.fields lead).mapError (fun _ => bad)
+  let is ← (VE.Bridge.fields item).mapError (fun _ => bad)
+  match ls.find? (fun kv => is.any (·.1 == kv.1)) with
+  | some (k, _) => throw s!"ScopeConflict: {u}: {k}"
+  | none => pure (Json.mkObj (ls ++ is))
+
+/-- An object whose tree is out of order: it lists the key "0", which lookup does not find. -/
+def unordered : Json :=
+  .obj ⟨⟨Std.DTreeMap.Internal.Impl.inner 2 "a" (.bool true) .leaf (.inner 1 "0" (.bool false) .leaf .leaf)⟩⟩
+
+/-- On `unordered`, the spec's text writes "0" into the joined object although neither side's lookup finds it,
+    so `mergeParts_keys` would be false of it; `mergeParts` keeps only what lookup finds, and is the spec's text
+    on every well-formed object. -/
+theorem unordered_join :
+    (unordered.getObjVal? "0").isOk = false ∧ (unordered.getObjVal? "a").isOk = true ∧
+    ((mergePartsText "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "0").isOk)) = some true ∧
+    ((mergeParts "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "0").isOk)) = some false ∧
+    ((mergeParts "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "a").isOk)) = some true := by
+  decide +kernel
+
+#guard [leadPart, item1, item3sign].all fun o =>
+  ((mergePartsText "u" leadPart o).toOption.map (·.compress)) == ((mergeParts "u" leadPart o).toOption.map (·.compress))
+
 -- F-own: u0173.s01's condition: (true, false after substitution, true, true)
 #guard (hasOwn depthLimit u0173, hasOwn depthLimit (substOwn guard1 depthLimit u0173), ownSafe depthLimit u0173,
   depthOk depthLimit u0173) == (true, false, true, true)
@@ -195,20 +222,5 @@ theorem own_binder :
 /-- A condition one level deeper than its fuel is not `depthOk`. -/
 theorem depth_bound : depthOk 2 (.arr #[.arr #[.str "top"]]) = false ∧ depthOk 3 (.arr #[.arr #[.str "top"]]) = true := by
   decide
-
-/-- Plain narrowing is `["and", "own", C]` with `C` free of `own`. -/
-theorem narrowings : (narrowing (.arr #[.str "and", .str "own", .arr #[.str "top"]])).isSome = true ∧
-    (narrowing (.arr #[.str "and", .str "own", .str "own"])).isNone = true ∧
-    (narrowing (.arr #[.str "and", .arr #[.str "top"], .str "own"])).isNone = true := by decide
-#guard (narrowing (j "[\"and\", \"own\", [\"top\"]]")).map (·.compress) == some "[\"top\"]"
-
--- F7-t: the `Commutes` table
-def narrowK : Effect := .reguard (j "[\"and\", \"own\", [\"unary\", \"no_operator_prompt\", [\"var\", 1]]]")
-def carveT : Effect := .carveOut (j "[\"unary\", \"tested_by_anthropic\", [\"var\", 1]]")
-def ownCarve : Effect := .carveOut (j "[\"and\", \"own\", [\"unary\", \"tested_by_anthropic\", [\"var\", 1]]]")
-def reguard173 : Effect := .reguard u0173
-#guard (Commutes reguard173 reguard173, Commutes reguard173 narrowK, Commutes narrowK carveT, Commutes carveT narrowK,
-  Commutes carveT carveT, Commutes narrowK narrowK, Commutes ownCarve carveT, Commutes (.frame leadPart) narrowK) ==
-  (false, false, true, true, true, true, false, false)
 
 end VE.Scope.Examples

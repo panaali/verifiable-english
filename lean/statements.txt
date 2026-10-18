@@ -10643,6 +10643,54 @@ theorem VE.Judgments.records_refuse
       VE.Judgments.records rv j data formula = Except.error e
   -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.records@VE.Judgments.Decl VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 787098227
+theorem VE.Layout.continues_iff
+  ∀ (d : Nat) (x : VE.Layout.Unit),
+    VE.Layout.continues d x = Bool.true ↔ (∃ e, x.item = Option.some e ∧ d ≤ e) ∨ x.midLine = Bool.true
+  -- uses VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit.midLine@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.continues@VE.Layout.List
+  -- expr 2220005026
+theorem VE.Layout.indexOf_iff
+  ∀ (L : List VE.Layout.Unit),
+    (List.map (fun x => x.id) L).Nodup →
+      ∀ (u : String) (i : Nat), VE.Layout.indexOf L u = Option.some i ↔ Option.map (fun x => x.id) L[i]? = Option.some u
+  -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.indexOf@VE.Layout.List
+  -- expr 2272596416
+theorem VE.Layout.listRun_iff
+  ∀ (L : List VE.Layout.Unit),
+    (List.map (fun x => x.id) L).Nodup →
+      ∀ (lead : String) (us : List String),
+        VE.Layout.listRun L lead = Except.ok us → ∀ (u : String), u ∈ us ↔ VE.Layout.GovernedItem L lead u
+  -- uses VE.Layout.GovernedItem@VE.Layout.List VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.listRun@VE.Layout.List
+  -- expr 1124261229
+theorem VE.Layout.listRun_ok
+  ∀ (L : List VE.Layout.Unit) (lead : String) (us : List String),
+    VE.Layout.listRun L lead = Except.ok us →
+      ∃ i x y d,
+        VE.Layout.indexOf L lead = Option.some i ∧
+          L[i]? = Option.some x ∧
+            L[i + 1]? = Option.some y ∧
+              x.lead = Bool.true ∧ y.item = Option.some d ∧ us = VE.Layout.runFrom d (List.drop (i + 1) L)
+  -- uses VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit.lead@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.indexOf@VE.Layout.List VE.Layout.listRun@VE.Layout.List VE.Layout.runFrom@VE.Layout.List
+  -- expr 3716545648
+theorem VE.Layout.listRun_ok_iff
+  ∀ (L : List VE.Layout.Unit),
+    (List.map (fun x => x.id) L).Nodup →
+      ∀ (lead : String),
+        (VE.Layout.listRun L lead).isOk = Bool.true ↔
+          ∃ i d,
+            Option.map (fun x => x.id) L[i]? = Option.some lead ∧
+              Option.map (fun x => x.lead) L[i]? = Option.some Bool.true ∧
+                (L[i + 1]?.bind fun x => x.item) = Option.some d
+  -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit.lead@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.listRun@VE.Layout.List
+  -- expr 2804772307
+theorem VE.Layout.mem_runFrom
+  ∀ (d : Nat) (u : String) (M : List VE.Layout.Unit),
+    u ∈ VE.Layout.runFrom d M ↔
+      ∃ j x,
+        M[j]? = Option.some x ∧
+          x.id = u ∧
+            x.item = Option.some d ∧ ∀ (k : Nat), k < j → ∃ y, M[k]? = Option.some y ∧ VE.Layout.continues d y = Bool.true
+  -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.continues@VE.Layout.List VE.Layout.runFrom@VE.Layout.List
+  -- expr 2505211613
 theorem VE.NormDefaults.Admission.admitDocumentX_spec
   ∀ (environment document : Lean.Json) (res : VE.NormDefaults.Admission.AdmittedX),
     VE.NormDefaults.Admission.admitDocumentX environment document = Except.ok res →
@@ -36491,6 +36539,182 @@ theorem VE.Route.verifyOrder_sound
             n ∈ ns → ∀ (m : String), m ∈ VE.Route.deps ns n → List.idxOf m order < List.idxOf n.name order
   -- uses VE.Route.DepNode.name@VE.Route.Route VE.Route.DepNode@VE.Route.Route VE.Route.deps@VE.Route.Route VE.Route.nodeNames@VE.Route.Route VE.Route.verifyOrder@VE.Route.Route
   -- expr 2970290661
+theorem VE.Scope.Examples.bold_labels
+  VE.Layout.boldLabel "**Process**: x".toUTF8 0 14 = Bool.true ∧
+    VE.Layout.boldLabel "**No prompt:** x".toUTF8 0 16 = Bool.true ∧
+      VE.Layout.boldLabel "**Process** x".toUTF8 0 13 = Bool.false ∧
+        VE.Layout.boldLabel "**** x".toUTF8 0 6 = Bool.false ∧ VE.Layout.boldLabel "**a\nb:** x".toUTF8 0 10 = Bool.false
+  -- uses VE.Layout.boldLabel@VE.Layout.List
+  -- expr 201206826
+theorem VE.Scope.Examples.byte_tests
+  VE.Layout.isBlank VE.Layout.sp = Bool.true ∧
+    VE.Layout.isBlank VE.Layout.nl = Bool.true ∧
+      VE.Layout.isBlank 13 = Bool.true ∧
+        VE.Layout.isBlank 9 = Bool.true ∧
+          VE.Layout.isBlank 58 = Bool.false ∧
+            VE.Layout.isDigit 48 = Bool.true ∧
+              VE.Layout.isDigit 57 = Bool.true ∧
+                VE.Layout.isDigit 58 = Bool.false ∧
+                  VE.Layout.lineStart "ab\ncd".toUTF8 4 = 3 ∧
+                    VE.Layout.lineStart "ab\ncd".toUTF8 2 = 0 ∧
+                      VE.Layout.spacesOnly "  x".toUTF8 0 2 = Bool.true ∧
+                        VE.Layout.spacesOnly " x ".toUTF8 0 2 = Bool.false ∧
+                          VE.Layout.skipSpaces "  x".toUTF8 0 3 = 2 ∧
+                            VE.Layout.skipSpaces "   ".toUTF8 0 3 = 3 ∧
+                              VE.Layout.lastNonBlank "a: \x0d\n".toUTF8 0 5 = Option.some 58 ∧
+                                VE.Layout.lastNonBlank " \n".toUTF8 0 2 = Option.none
+  -- uses VE.Layout.isBlank@VE.Layout.List VE.Layout.isDigit@VE.Layout.List VE.Layout.lastNonBlank@VE.Layout.List VE.Layout.lineStart@VE.Layout.List VE.Layout.nl@VE.Layout.List VE.Layout.skipSpaces@VE.Layout.List VE.Layout.sp@VE.Layout.List VE.Layout.spacesOnly@VE.Layout.List
+  -- expr 1449821843
+theorem VE.Scope.Examples.depth_bound
+  VE.Scope.depthOk 2 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.false ∧
+    VE.Scope.depthOk 3 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.true
+  -- uses VE.Scope.depthOk@VE.Scope.Effects
+  -- expr 3351120605
+theorem VE.Scope.Examples.markers
+  VE.Layout.markerLen "* x".toUTF8 0 3 = Option.some 2 ∧
+    VE.Layout.markerLen "- x".toUTF8 0 3 = Option.some 2 ∧
+      VE.Layout.markerLen "+ x".toUTF8 0 3 = Option.some 2 ∧
+        VE.Layout.markerLen "12. x".toUTF8 0 5 = Option.some 4 ∧
+          VE.Layout.markerLen "*x".toUTF8 0 2 = Option.none ∧
+            VE.Layout.markerLen "12 x".toUTF8 0 4 = Option.none ∧ VE.Layout.markerLen ". x".toUTF8 0 3 = Option.none
+  -- uses VE.Layout.markerLen@VE.Layout.List
+  -- expr 26530222
+theorem VE.Scope.Examples.own_binder
+  VE.Scope.ownSafe VE.Scope.depthLimit
+        (Lean.Json.arr
+          #[Lean.Json.str "forall", Lean.Json.str "user",
+            Lean.Json.arr #[Lean.Json.str "and", Lean.Json.str "own", Lean.Json.arr #[Lean.Json.str "top"]]]) =
+      Bool.false ∧
+    VE.Scope.ownSafe VE.Scope.depthLimit
+          (Lean.Json.arr
+            #[Lean.Json.str "and", Lean.Json.str "own",
+              Lean.Json.arr #[Lean.Json.str "forall", Lean.Json.str "user", Lean.Json.arr #[Lean.Json.str "top"]]]) =
+        Bool.true ∧
+      VE.Scope.ownSafe VE.Scope.depthLimit
+          (Lean.Json.arr #[Lean.Json.str "exists", Lean.Json.str "user", Lean.Json.str "own"]) =
+        Bool.false
+  -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.ownSafe@VE.Scope.Effects
+  -- expr 1979751685
+theorem VE.Scope.Examples.para_counts
+  (VE.Layout.paraCounts "a\n\n  \n\t\x0d\nb ".toUTF8).toList = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3] ∧
+    VE.Scope.Examples.paraAgrees [("a", "x\n\n  \n\t\x0d\nb "), ("b", "c\n \n"), ("c", "\n\nd")] = Bool.true
+  -- uses VE.Layout.paraCounts@VE.Layout.List VE.Scope.Examples.paraAgrees@VE.Scope.Examples
+  -- expr 3512158593
+theorem VE.Scope.Examples.short_layout
+  List.map (fun x => (x.item, x.midLine, x.lead, x.label, x.para))
+      (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) =
+    [(Option.none, Bool.false, Bool.false, Bool.false, 0), (Option.none, Bool.true, Bool.true, Bool.false, 0),
+      (Option.some 0, Bool.false, Bool.false, Bool.true, 1), (Option.none, Bool.true, Bool.false, Bool.false, 1),
+      (Option.some 1, Bool.false, Bool.false, Bool.false, 1), (Option.some 0, Bool.false, Bool.false, Bool.true, 1),
+      (Option.none, Bool.false, Bool.false, Bool.false, 1), (Option.some 0, Bool.false, Bool.false, Bool.false, 1),
+      (Option.none, Bool.false, Bool.false, Bool.false, 2)]
+  -- uses VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit.label@VE.Layout.List VE.Layout.Unit.lead@VE.Layout.List VE.Layout.Unit.midLine@VE.Layout.List VE.Layout.Unit.para@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples
+  -- expr 4197767834
+theorem VE.Scope.Examples.short_run
+  (VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s02").toOption =
+      Option.some ["a.s03", "a.s06"] ∧
+    (match VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s01" with
+        | Except.error "NotALeadIn: a.s01" => Bool.true
+        | x => Bool.false) =
+        Bool.true ∧
+      (match VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.prosePieces) "x.s01" with
+          | Except.error "NotALeadIn: x.s01" => Bool.true
+          | x => Bool.false) =
+          Bool.true ∧
+        (match VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "z" with
+          | Except.error "ScopeUnknownUnit: z" => Bool.true
+          | x => Bool.false) =
+          Bool.true
+  -- uses VE.Layout.listRun@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.prosePieces@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples VE.Scope.Examples.short_run.match_1@VE.Scope.Examples VE.Scope.Examples.short_run.match_3@VE.Scope.Examples match_38@VE.Scope.Examples
+  -- expr 1196300068
+theorem VE.Scope.Examples.unordered_join
+  (VE.Scope.Examples.unordered.getObjVal? "0").isOk = Bool.false ∧
+    (VE.Scope.Examples.unordered.getObjVal? "a").isOk = Bool.true ∧
+      Option.map (fun o => (o.getObjVal? "0").isOk)
+            (VE.Scope.Examples.mergePartsText "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
+          Option.some Bool.true ∧
+        Option.map (fun o => (o.getObjVal? "0").isOk)
+              (VE.Scope.mergeParts "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
+            Option.some Bool.false ∧
+          Option.map (fun o => (o.getObjVal? "a").isOk)
+              (VE.Scope.mergeParts "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
+            Option.some Bool.true
+  -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
+  -- expr 1307899726
+theorem VE.Scope.firstKeys_mem
+  ∀ (l : List (String × Lean.Json)),
+    (∀ (p : String × Lean.Json), p ∈ l → ∀ (q : String × Lean.Json), q ∈ l → p.fst = q.fst → p = q) →
+      ∀ (p : String × Lean.Json), p ∈ l → p ∈ VE.Readings.Wire.firstKeys l
+  -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
+  -- expr 2628849165
+theorem VE.Scope.hasOwn_mono
+  ∀ (n m : Nat) (j : Lean.Json), n ≤ m → VE.Scope.hasOwn n j = Bool.true → VE.Scope.hasOwn m j = Bool.true
+  -- uses VE.Scope.hasOwn@VE.Scope.Effects
+  -- expr 2926161442
+theorem VE.Scope.impl_map_eq
+  ∀ (f : String → Lean.Json → Lean.Json) (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    (∀ (p : String × Lean.Json), p ∈ Std.DTreeMap.Internal.Impl.Const.toList t → f p.fst p.snd = p.snd) →
+      Std.DTreeMap.Internal.Impl.map f t = t
+  -- uses
+  -- expr 2894362387
+theorem VE.Scope.lookups_absent
+  ∀ (j : Lean.Json) (ls : List (String × Lean.Json)),
+    VE.Scope.lookups j = Except.ok ls →
+      ∀ (k : String), (j.getObjVal? k).toOption = Option.none ↔ ¬k ∈ List.map (fun x => x.fst) ls
+  -- uses VE.Scope.lookups@VE.Scope.Effects
+  -- expr 1096841098
+theorem VE.Scope.lookups_spec
+  ∀ (j : Lean.Json) (ls : List (String × Lean.Json)),
+    VE.Scope.lookups j = Except.ok ls →
+      (List.map (fun x => x.fst) ls).Nodup ∧ ∀ (k : String) (v : Lean.Json), (k, v) ∈ ls ↔ j.getObjVal? k = Except.ok v
+  -- uses VE.Scope.lookups@VE.Scope.Effects
+  -- expr 3638113382
+theorem VE.Scope.members_obj
+  ∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), VE.Scope.members (Lean.Json.obj kvs) = kvs.toList
+  -- uses VE.Scope.members@VE.Scope.Effects
+  -- expr 3799283134
+theorem VE.Scope.mergeParts_conflict
+  ∀ (u : String) (lead item : Lean.Json) (k : String),
+    (lead.getObjVal? k).toOption.isSome = Bool.true →
+      (item.getObjVal? k).toOption.isSome = Bool.true → (VE.Scope.mergeParts u lead item).isOk = Bool.false
+  -- uses VE.Scope.mergeParts@VE.Scope.Effects
+  -- expr 2393194960
+theorem VE.Scope.mergeParts_keys
+  ∀ (u : String) (lead item out : Lean.Json),
+    VE.Scope.mergeParts u lead item = Except.ok out →
+      ∀ (k : String) (v : Lean.Json),
+        out.getObjVal? k = Except.ok v ↔
+          lead.getObjVal? k = Except.ok v ∧ (item.getObjVal? k).toOption = Option.none ∨
+            item.getObjVal? k = Except.ok v ∧ (lead.getObjVal? k).toOption = Option.none
+  -- uses VE.Scope.mergeParts@VE.Scope.Effects
+  -- expr 90748884
+theorem VE.Scope.mkObj_getObjVal
+  ∀ (l : List (String × Lean.Json)),
+    (List.map (fun x => x.fst) l).Nodup →
+      ∀ (k : String) (v : Lean.Json), (Lean.Json.mkObj l).getObjVal? k = Except.ok v ↔ (k, v) ∈ l
+  -- uses
+  -- expr 4158588899
+theorem VE.Scope.substOwn_id
+  ∀ (g c : Lean.Json), VE.Scope.hasOwn VE.Scope.depthLimit c = Bool.false → VE.Scope.substOwn g VE.Scope.depthLimit c = c
+  -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
+  -- expr 97531739
+theorem VE.Scope.substOwn_id_le
+  ∀ (g : Lean.Json) (n : Nat) (c : Lean.Json), VE.Scope.hasOwn n c = Bool.false → VE.Scope.substOwn g n c = c
+  -- uses VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
+  -- expr 4072281703
+theorem VE.Scope.substOwn_no_own
+  ∀ (g c : Lean.Json),
+    VE.Scope.hasOwn VE.Scope.depthLimit g = Bool.false →
+      VE.Scope.depthOk VE.Scope.depthLimit c = Bool.true →
+        VE.Scope.hasOwn VE.Scope.depthLimit (VE.Scope.substOwn g VE.Scope.depthLimit c) = Bool.false
+  -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.depthOk@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
+  -- expr 1371360906
+theorem VE.Scope.substOwn_no_own_le
+  ∀ (g : Lean.Json),
+    VE.Scope.hasOwn VE.Scope.depthLimit g = Bool.false →
+      ∀ (n : Nat) (c : Lean.Json), n ≤ VE.Scope.depthLimit → VE.Scope.hasOwn n (VE.Scope.substOwn g n c) = Bool.false
+  -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
+  -- expr 1826027073
 theorem VE.SearchBudget.chain_denote
   ∀ {S : VE.Structure} {s : String} (a : VE.Formula) (σ : VE.Valuation S),
     VE.Formula.denote S σ a →

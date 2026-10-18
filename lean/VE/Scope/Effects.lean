@@ -1,20 +1,12 @@
 import VE.Readings.Companions
 
 /-! Scope's effects on a rule's JSON object (scope@0, docs/spec/scope.md 1.4, 1.5.2 and 4.2): conditions and
-    `own`, the order table, and the join of a lead-in's part with an item's part. Scope decodes no rule field. -/
+    `own`, and the join of a lead-in's part with an item's part. Scope decodes no rule field. -/
 
 namespace VE.Scope
 open Lean
 
 def depthLimit : Nat := 64
-
-inductive Effect
-  | frame (part : Json)
-  | reguard (c : Json)
-  | carveOut (c : Json)
-  | precedes
-  | yields
-  | title
 
 def members (j : Json) : List (String × Json) := (VE.Bridge.fields j).toOption.getD []
 
@@ -60,17 +52,6 @@ def substOwn (g : Json) : Nat → Json → Json
     | .arr xs => .arr (xs.map (substOwn g n))
     | .obj kvs => .obj (kvs.map fun _ v => substOwn g n v)
     | _ => j
-
-def narrowing (c : Json) : Option Json := match c with
-  | .arr #[.str "and", .str "own", C] => if hasOwn depthLimit C then none else some C
-  | _ => none
-
-def Commutes : Effect → Effect → Bool
-  | .reguard c₁, .reguard c₂ => (narrowing c₁).isSome && (narrowing c₂).isSome
-  | .reguard c, .carveOut d => (narrowing c).isSome && !hasOwn depthLimit d
-  | .carveOut d, .reguard c => (narrowing c).isSome && !hasOwn depthLimit d
-  | .carveOut d₁, .carveOut d₂ => !hasOwn depthLimit d₁ && !hasOwn depthLimit d₂
-  | _, _ => false
 
 /-! Joining parts -/
 
