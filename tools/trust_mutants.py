@@ -251,7 +251,7 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
     fatal = [p for p in problems if "not compiled from this source" in p or "missing" in p]
     fatal += [f"lean/declarations.txt was not compiled from lean/{f}; rerun tools/lean_statements.py"
               for f in changed if hashes.get(module_name(f)) != source_hash(root / "lean" / f)]
-    texts = {c.module: (root / "lean" / c.module).read_text() for c in classified}
+    texts = {f: (root / "lean" / f).read_text() for f in {c.module for c in classified}}
     masked = {f: code_only(text).split("\n") for f, text in texts.items()}
     roles: dict[str, list] = {}
     found: list[Mutant] = []
@@ -411,6 +411,13 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             p.write_bytes(data)
 
 
+def evidence(data: dict) -> str:
+    """The --json text: one mutant per line."""
+    rows = ",\n".join(json.dumps(m, ensure_ascii=False) for m in data["mutants"])
+    head = json.dumps({k: v for k, v in data.items() if k != "mutants"}, ensure_ascii=False)
+    return f'{head[:-1]}, "mutants": [\n{rows}\n]}}\n'
+
+
 def show(text: str) -> str:
     text = " ".join(text.split())
     return text if len(text) <= 100 else text[:97] + "..."
@@ -485,12 +492,11 @@ def main(argv: list[str] | None = None) -> int:
     seconds = round(time.monotonic() - started)
     print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s")
     if args.json:
-        args.json.write_text(json.dumps({
+        args.json.write_text(evidence({
             "base": git(root, "rev-parse", base).stdout.strip(), "head": git(root, "rev-parse", "HEAD").stdout.strip(),
             "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
             "counts": counts, "definitions": [f"lean/{f}: {d}" for f, d in definitions],
-            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end")} for m in found]},
-            indent=1, ensure_ascii=False) + "\n")
+            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end")} for m in found]}))
     return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
 
 
