@@ -1,7 +1,7 @@
 {
   "item": "jt-1",
   "date": "2026-10-18",
-  "note": "Each mutant was applied to the committed source, built with lake (PATH=~/.elan/bin), and the source restored; a #guard that evaluates to false or a proof that no longer checks fails the build of the named module.",
+  "note": "Each mutant was applied to the committed source, built with lake (PATH=~/.elan/bin), and the source restored; a #guard that evaluates to false or a proof that no longer checks fails the build of the named module. Mutants 7 to 10 were added in fix round 1 (review F1, F2); mutant 10 is Python, run with pytest.",
   "mutants": [
     {
       "name": "admit-reads-E",
@@ -102,6 +102,71 @@
         "lean/VE/Judgments/Examples.lean:61 (J-α on the wire, 11.1)"
       ],
       "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "names-reversed",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Decl.lean",
+      "mutation": {
+        "from": "def names (js : List Judgment) : List String := js.map (·.name)",
+        "to": "def names (js : List Judgment) : List String := (js.map (·.name)).reverse"
+      },
+      "claim": "names gives the admitted judgments' names in record order (review F1)",
+      "test": "lean/VE/Judgments/Examples.lean:161",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:161 (#guard on names, J-ω)",
+        "lean/VE/Judgments/Examples.lean:167 (decide in names_omega no longer proves)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "regulated-before-arguments",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Decl.lean",
+      "mutation": {
+        "from": "checks 2 (JudgmentArguments) then 3 (JudgmentRegulated) of faultOf",
+        "to": "check 3 (JudgmentRegulated) before check 2 (JudgmentArguments)"
+      },
+      "claim": "order 2: the arguments check comes before the regulated check (review F2)",
+      "test": "lean/VE/Judgments/Examples.lean:132",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:132 (subjects with [act] gives JudgmentRegulated), with the proof of faultOf_none_iff stubbed for the run (its statement is a conjunction and holds under the swap)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "decider-before-criteria",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Decl.lean",
+      "mutation": {
+        "from": "checks 4 (JudgmentCriterionAsUnit) then 5 (JudgmentDecider) of faultOf",
+        "to": "check 5 (JudgmentDecider) before check 4 (JudgmentCriterionAsUnit)"
+      },
+      "claim": "order 2: the criteria check comes before the decider check (review F2)",
+      "test": "lean/VE/Judgments/Examples.lean:136",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:136 (arbitrary, unstated, necessary 1 gives JudgmentDecider), with the proof of faultOf_none_iff stubbed for the run (its statement is a conjunction and holds under the swap)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "unexercised-reads-S-only",
+      "language": "Python",
+      "file": "tools/trust_map.py",
+      "mutation": {
+        "from": "if is_trusted(cls, tied, []) and ident(module, name) not in used:",
+        "to": "if cls == \"S\" and ident(module, name) not in used:"
+      },
+      "claim": "the R16 exercise check reads every trusted class through trust_map's one trust rule (K, S, untied [V])",
+      "test": "tests/test_judgments_exercised.py::test_a_definition_no_theorem_uses_is_reported",
+      "fails": [
+        "tests/test_judgments_exercised.py::test_a_definition_no_theorem_uses_is_reported"
+      ],
+      "command": "uv run pytest -q -p no:cacheprovider tests/test_judgments_exercised.py",
       "restored": true
     }
   ]
