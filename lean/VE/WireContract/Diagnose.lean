@@ -4,6 +4,8 @@ import VE.WireContract.Hooks.Corpus
 import VE.WireContract.Hooks.SoftNorms
 import VE.WireContract.Hooks.Norms
 import VE.WireContract.Hooks.NormDefaults
+import VE.WireContract.Limits
+import VE.WireContract.Names
 
 /-! The diagnose runner (docs/spec/wire-contract.md 4.2), the `ve_service` mode `diagnose`
 (`VE.Service.Diagnose`; formerly the one-shot `ve_diagnose`): the registry of contracts and the
