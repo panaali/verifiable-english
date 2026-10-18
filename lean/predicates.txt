@@ -239,6 +239,11 @@ module VE.EnglishGrammar.Syntax
 module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
 module VE.EvaluationCounts
+module VE.Events.Calendar
+module VE.Events.Completion
+module VE.Events.Decl
+module VE.Events.Examples
+module VE.Events.Premises
 module VE.Finite
 module VE.Grammar.Basic
 module VE.Grammar.Derives
@@ -716,6 +721,8 @@ VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
+VE.Events.DayExtension@VE.Events.Completion
+VE.Events.Embeds@VE.Events.Premises
 VE.FiniteModel.Valid@VE.Finite
 VE.FiniteModel.inDomain@VE.Alternatives.Followable
 VE.Formula.WellFormed@VE.Syntax

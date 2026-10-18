@@ -151,3 +151,8 @@ import VE.Ask.ZeroWire
 import VE.Ask.ZeroAnswer
 import VE.Ask.Examples
 import VE.Norms.FamilySpec
+import VE.Events.Decl
+import VE.Events.Premises
+import VE.Events.Calendar
+import VE.Events.Completion
+import VE.Events.Examples
