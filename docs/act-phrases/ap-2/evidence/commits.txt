@@ -1,4 +1,8 @@
-# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at 7dbd8d82d (this file's own commit follows)
+# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at e96fd5bfc (this file's own commit follows)
+e96fd5bfc7b836099d885a1c54d69e41fba222d4 ap-2: REPORT and DELTA after the recheck fix (F7, F8, F9): mutant classes, guard lines, size, tests
+7e457d654104a1d503ad2c7ca2ae6ab3a4735083 ap-2 F7: regenerate lean/declarations.txt for the new fixtures (regen_generated.py --write)
+430531bd37c174e02f457985d9aeb06894ac3ddb ap-2 F7: every list of 1.4's check cut to its first element and every marker list swapped, generated; the guards that kill them
+e13a4e413574b68e88446043e873661114182ab2 ap-2: saved commit list after the review fixes (main..HEAD --no-merges)
 7dbd8d82dc4c91e782d77ecd1ed775648ef40256 ap-2: REPORT section 9 no longer quotes the retracted phrase; selected tests after the review fixes
 21e9715acc898a01324ffd4d42fd318eb3b61a7b ap-2: REPORT and DELTA after the review fixes (F1, F2): line references, mutants, size, section 9
 3967dd405d23f2ea538b3ed31dae8593d711db47 ap-2 F2: rawCap and stepBudget stay provisional; deferred item 5 stays open
