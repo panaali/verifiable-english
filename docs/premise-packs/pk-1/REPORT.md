@@ -64,6 +64,9 @@ match the stub's statements token for token, after whitespace normalisation. The
 - **A1–A9, A9′, F1, F1′**: `#guard`s in `PacksExamples.lean`, which imports `Packs.lean` alone, and in
   `PacksLegacyExamples.lean`, which covers today's rights documents in both list orders, `envX`/`fullEnv` on a real
   tree, F1 and F1′. The A9′ guards read `layered_elaborate`'s closed keys and sit beside `layeredCase_fits`.
+  The real-tree guards read fixture μ with a sufficient condition (`muX`: soft exception and coherence labels,
+  decision names, layer symbols), and each first pins those lists exactly, so none can hold on an empty list
+  (review F1).
 - **Tests**:
   - Selected run on the Mac runner (`mac-pytest.sh --select`, HEAD 5cde0da3, 347 units, the whole suite because
     `checkers.lock` and `Audit.lean` changed): every unit passed except `test_trust_budget` and `test_trust_ratchet`,
@@ -106,6 +109,15 @@ match the stub's statements token for token, after whitespace normalisation. The
 
 All are in `mutants.json` (file, edit, test, the first errors). M1–M6 are also run against the guards with
 `Packs.lean`'s theorems stripped. An unmutated control passes every guard.
+
+Since fix round 1 (review F1), `tests/test_packs_guard_mutants.py` runs that guard-only check as a test. It has
+one or more mutants for every trusted definition `tools/trust-classes.json` lists for `Packs.lean` (the three types
+excepted), and also for `Layered.lean`'s `softPack` and `rightsPack`: 32 mutants in all. Each runs on a copy of
+`Packs.lean` with its theorems stripped and must fail at a `#guard` of the two fixture files and nowhere else. The
+unmutated copy must pass every guard. A trusted definition with no mutant fails
+`test_every_trusted_definition_has_a_mutant`. On the guards before the fix, 7 mutants survived: the review's
+`fullEnv := envAt (fill U) 0` and `coherenceLabels := []`, plus `assemble` ignoring `used`, `assemble` ignoring the
+prefix table, `X` reversed, `envX` over `fullEnv`, and `softPack` with no premises. All 32 fail now.
 
 | Bug | Language, file | Fails |
 | --- | --- | --- |
@@ -165,7 +177,8 @@ df50d5b7c, c7932eeac, 5cde0da38, 573e19f50, d21c1c3c7.
 2. **Every required deliverable built.** PASS: table in 1. The rows not built are moved by the spec (pk-1b, AT-2)
    or are the false statement. Rule grep: no Python copy of a Lean decision, and no permanent report test.
    Overlap: only `lean/VE.lean` (union-merged) and the generated trust ledger are shared with in-flight branches.
-3. **Tests and gates can fail.** PASS: M1–M9 in `mutants.json`, with the guard-only control.
+3. **Tests and gates can fail.** PASS: M1–M9 in `mutants.json`; the guard-only mutants of every trusted
+   `Packs.lean` definition in `tests/test_packs_guard_mutants.py`, with the unmutated control.
 4. **Python, Lean and Rust agree; valid inputs pass.** PASS: `evidence/ab_full.txt` and
    `evidence/ab_route_cases.txt` (0 differences). Rust is untouched (`rust/target/release/ve` repinned unchanged,
    `6422647f…`).
