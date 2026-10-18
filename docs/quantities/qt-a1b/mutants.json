@@ -109,6 +109,30 @@
     "-c",
     "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
    ]
+  },
+  {
+   "id": "fa1-premises",
+   "file": "lean/VE/Cardinality/Examples.lean",
+   "claim": "fa1_entails: the end-to-end fixture rests on the certificate actually replaying (without the exclusion premise it does not)",
+   "find": "theorem fa1_entails : CEntails.{0} fomc fa1 fa1Conclusion := by",
+   "replace": "theorem fa1_entails : CEntails.{0} fomc fa1.dropLast fa1Conclusion := by",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "partition-statement",
+   "file": "lean/VE/Cardinality/Theorems.lean",
+   "claim": "regionSize_sum: only the regions inside the body sum to its count (summing every region is false and fails)",
+   "find": "    (((regions ps.length).filter fun r => b.inRegion ps r).map",
+   "replace": "    ((regions ps.length).map",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
   }
  ]
 }
