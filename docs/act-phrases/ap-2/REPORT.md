@@ -59,13 +59,13 @@ this worktree, and writes [evidence/n-measurement.json](evidence/n-measurement.j
 | Goal: the render round trip | ap-2b (`Linearize.lean`) | — |
 | New files `Syntax`, `Grammar`, `Meaning`, `Read`, `Linearize`, `GrammarExamples` | `Syntax`, `Read`, `GrammarExamples` **done**; `Grammar`, `Meaning`, `Linearize` ap-2b | `lean/VE/Acts/` |
 | Shared files: none | **held**: the only hand-written shared file is `tools/layer_policy.py`, which the plan lists for every batch with new modules (`VE.Acts.` joins layer 3; section 7) | — |
-| Generated: roots, `Audit.lean`, axioms, statements, pins, gate collection | **done** with `regen_generated.py --write` and `--resolve`. Pins are unchanged (no checker changed). The review fixes add 192 tests (`tests/test_acts_vocab_mutants.py` 189, `tests/test_ap2_limits_provisional.py` 3): `gate_collection.py --check --prebuilt` reports 192 added, 0 removed | — |
+| Generated: roots, `Audit.lean`, axioms, statements, pins, gate collection | **done** with `regen_generated.py --write` and `--resolve`. Pins are unchanged (no checker changed). The review fixes add 226 tests (`tests/test_acts_vocab_mutants.py` 223, `tests/test_ap2_limits_provisional.py` 3): `gate_collection.py --check --prebuilt` reports 226 added, 0 removed | — |
 | Statement `grammar_wf` | ap-2b | — |
 | Statements `read_unique`, `readings_exact`, `readings_nodup` (and spec 5.6's `read_none`, `read_many`, `readings_limit`, `listing_ok`) | **proved generically**: `readIn_unique`, `readingsIn_exact`, `readingsIn_nodup`, `readIn_none`, `readIn_many`, `readingsIn_limit` for any grammar `G` with `G.wf` and any meaning; `listing_ok` exactly as spec 5.6 writes it, plus `listing_limit`. Spec 5.6's statements follow in ap-2b by instantiating `G := grammar V`, `μ := meaning V` and using `grammar_wf` | `Read.lean` |
 | Statement `read_normal` | ap-2b | — |
 | Tests: both boundaries of each limit (N−1 and N raw; 63, 64, 65 readings) | **done** twice: LG1-LG8 on synthetic trees (spec 11.2), and on a real parse of a small grammar with phrases of 63, 64, 65, 255 and 256 derivations | `GrammarExamples.lean` 26-72 |
 | Tests: duplicate derivations that would hide another meaning; raw-cap saturation; an exhausted step budget | **done**: LG6 and the toy's 256 derivations of one meaning are `limit`; 16 derivations meaning `"a"` and one meaning `"b"` read as `many`; a step budget of 0 and N = 0 are `limit` | 31, 68-71 |
-| Tests: the review's counterexamples (FR1 to FR7) | FR1, FR2, FR6, FR7 **done** (`framesOk`); FR3-FR5 are about `normalOk` (ap-2b) | 96-186, 214 |
+| Tests: the review's counterexamples (FR1 to FR7) | FR1, FR2, FR6, FR7 **done** (`framesOk`); FR3-FR5 are about `normalOk` (ap-2b) | 96-186, 252-278 |
 | Tests: the round trips N1 to N5 | ap-2b | — |
 | Phase-1 corpus: the 13 `ap0` rows as `#guard`s on raw and meaning counts | **part**: their vocabularies pass `framesOk` (FR7); their raw and meaning counts need the rule table (ap-2b) | 214 |
 | N and the step budget fixed from the re-measurement after D9 | **part**: re-measured after D9; both values stand by AP-0's rule and stay provisional (deferred item 5 is open; section 2) | `Read.lean` 16-19 |
@@ -119,16 +119,33 @@ adverb (`seek Asylum`, `take part` beside `take part in`, markers `in, on, in`, 
 list 1.4 names (`""` twice refused, `""` split accepted, a modifier marker not split, `in front` with modifier `in`).
 In all, 186 mutants: 179 fail at a `#guard` and nowhere else, and 7 are equivalent.
 
+The second recheck (F10) found two more of the same class in places the generator did not look: `ms f`'s modifier
+markers cut to the first (an operand of `++`), and the marker words cut to each marker's first word (the list that
+`flatMap wordsOf` builds inside its argument). The generator no longer finds lists by their position alone. It
+types the names of `Syntax.lean` from their declarations (`_list_names`: every structure field declared `List`,
+every definition whose result is a `List`, every let of `checkVocab` annotated `List` or bound to a list, and a test
+pins that table), and cuts every occurrence of a list-valued name wherever it stands, each operand of `++`, each
+list binding's value, each list a `flatMap`'s function builds, and each list function passed without its argument
+(`wordsOf` becomes `fun x => (wordsOf x).take 1`); a test checks that every occurrence of a list-valued name is cut.
+The marker-list swaps now include the operands of `(f.markers ++ f.mods)`, and the scope includes the word lists
+of 1.2 that the check reads (`joinWords`, `clauseWords`). This adds 31 generated mutants and the review's two as it
+wrote them. On the fixtures before the fix, 8 of the 33 survived: the review's two, their generated twins, and 4
+that change no answer (cutting `wordsOf m` before `== []`, and `ms f` with a marker list repeated or filtered twice),
+listed in `EQUIVALENT` with the reason. The guards of `GrammarExamples.lean` 232-250 kill the others: each
+condition that reads `ms f` (31l, 31m, 31n, 31o, 31r, 31s) with its fault in a later modifier marker after `at`,
+and 31r and 31s with their fault in a marker's later word (adverb `front`, head `front desk`, beside marker
+`in front`). In all, 219 mutants: 208 fail at a `#guard` and nowhere else, and 11 are equivalent.
+
 ## 5. Trust, size and tests
 
 - **Trust:** `trust_map.py --check` PASS: K +0, S +69, untied V +76, trusted +145, tied +15. Per file: Syntax.lean
   +109 (S 45, D[V] 53, G[V] 11) and Read.lean +36 (S 24, G[V] 12). `GrammarExamples.lean`'s definitions are T. The
   allowance is signed by standing ruling R16, and the FOLLOW-UPS "## ap-2" row asks for the ties pass.
-- **Size:** hand-written lines: Lean 581 (Syntax 128, Read 193, GrammarExamples 260), `tools/layer_policy.py` 1, the
-  two evidence scripts 341 (`measure_n.py` 236, `seed_bugs.py` 105) and the review fixes' two tests 384
-  (`test_acts_vocab_mutants.py` 327, `test_ap2_limits_provisional.py` 57), plus this report and DELTA. The plan and
+- **Size:** hand-written lines: Lean 601 (Syntax 128, Read 193, GrammarExamples 280), `tools/layer_policy.py` 1, the
+  two evidence scripts 341 (`measure_n.py` 236, `seed_bugs.py` 105) and the review fixes' two tests 510
+  (`test_acts_vocab_mutants.py` 453, `test_ap2_limits_provisional.py` 57), plus this report and DELTA. The plan and
   spec copies are 3,393 lines, verbatim and mandated. The evidence JSON is written by the scripts. Product code
-  (Syntax and Read, 321) is within the ~600 cap; with fixtures, scripts and tests the total is about 1,310 (review
+  (Syntax and Read, 321) is within the ~600 cap; with fixtures, scripts and tests the total is about 1,450 (review
   F6, a follow-up).
 - **Tests:** the selected tests (`mac-pytest.sh --select`, merge base `802b8ff9b`, on `3dbb2184`) ran 66 units, exit
   0, 0 failed. After the sync with main (`01f74cf4a`) they ran again on `04435990` (the code is final; only this
@@ -182,10 +199,10 @@ a further cut or a DRI signature for its growth. The DRI may prefer to sign AP-2
    `test_ap2_limits_provisional.py`, reads saved evidence. The overlap
    is in section 5.
 3. Tests and gates can fail: **PASS**. 10 seeded bugs in [mutants.json](mutants.json), each failing a proof, `#guard` or
-   check (none at a hash or build-only step); `seed_bugs.py`. After reviews F1 and F7, 179 mutants of `checkVocab`
-   and the limits each fail a `#guard`, and 7 generated ones are equivalent, each with its reason (`tests/test_acts_vocab_mutants.py`, section 4).
+   check (none at a hash or build-only step); `seed_bugs.py`. After reviews F1, F7 and F10, 208 mutants of `checkVocab`
+   and the limits each fail a `#guard`, and 11 generated ones are equivalent, each with its reason (`tests/test_acts_vocab_mutants.py`, section 4).
 4. Python, Lean and Rust agree: **N.A.** for the differential: the new modules are Lean only, and Python and Rust
-   read nothing of them. Valid inputs still pass: FR7 `#guard` (`GrammarExamples.lean` 258) over every vocabulary
+   read nothing of them. Valid inputs still pass: FR7 `#guard` (`GrammarExamples.lean` 278) over every vocabulary
    of spec 11.2 and 11.2b.
 5. R8 binding: **N.A.**, no relayed answer.
 6. Gate evidence matches the final HEAD: **PASS** for what a builder runs. Synced with main (`01f74cf4a`); the
@@ -205,7 +222,7 @@ a further cut or a DRI signature for its growth. The DRI may prefer to sign AP-2
 12. No CPU or memory regression: **N.A.**, no route or pilot path runs this code. The measurement's largest parse is
     19,184 steps (section 2).
 13. `Test-removed` trailers: **PASS**. No test was removed or renamed: `gate_collection.py --check --prebuilt` reports
-    192 added (the review fixes' tests), 0 removed, 0 refused, 0 stale, 0 malformed.
+    226 added (the review fixes' tests), 0 removed, 0 refused, 0 stale, 0 malformed.
 
 Build checklist (`prompts/build-checklist.txt`): 13 (seeded mutants) and 18 (fixture numbers computed by `#guard`; a
 boundary fixture for each direction of `listing_ok`'s iff: LG1/LG2, LG4/LG5) apply and hold. 6 holds (UNKNOWN as
@@ -232,3 +249,9 @@ Recheck (`ap-2-looprecheck1.final.md`): F1 and F2 confirmed fixed.
 | F7 (B): six `checkVocab` mutants survive (31c, 31r on a head's first word; 31o over one marker list; 31i splitting a modifier marker; 31g without `""`) | the class, generated from `Syntax.lean`: every list of 1.4's check cut to its first element, every marker list swapped for each other one (126 mutants, 7 equivalent with their reasons), the review's six as written; one guard per survivor in `GrammarExamples.lean` 189-230 (section 4) | `tests/test_acts_vocab_mutants.py` (186 mutants; the review's probe passes) |
 | F8 (C): 31c's `{h}` not pinned | fixed with F7: `seek Asylum` raises 31c's text with the head `seek Asylum` | `GrammarExamples.lean` 193 |
 | F9 (C): 31l's second half unreachable | the comment of `GrammarExamples.lean` 138-140 no longer counts 31l among the conditions whose halves are pinned, and says why its second half never decides; the code is unchanged (spec 1.4 states both halves) | — |
+
+Second recheck (`ap-2-looprecheck2.final.md`): F7, F8 and F9 confirmed fixed.
+
+| Finding | Fix | Regression test |
+|---|---|---|
+| F10 (B): two `checkVocab` mutants survive (`ms f` with its first modifier marker only, an operand of `++`; the marker words with each marker's first word only, a list built inside `flatMap`'s argument); DELTA called every condition pinned with its fault in a later element | the class: the generator types `Syntax.lean`'s names from their declarations and cuts every list-valued name where it stands, each `++` operand, each list binding's value, each list a `flatMap` builds and each list function passed bare; marker lists swapped inside `++` too (33 more mutants, 4 more equivalent with their reasons); guards in `GrammarExamples.lean` 232-250 (section 4); DELTA row 1 now states the coverage the generator checks | `tests/test_acts_vocab_mutants.py` (219 mutants, the review's two by name; `test_the_list_valued_names_are_read_from_the_declarations`, `test_the_generated_mutants_cover_every_list_of_the_check`); PROBE F10 fails before the fix and passes after |
