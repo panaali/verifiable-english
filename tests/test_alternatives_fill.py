@@ -299,8 +299,8 @@ ENTRY_POINTS = {"document check": lambda path: check_document(path), "document l
 
 @pytest.mark.parametrize("entry", sorted(ENTRY_POINTS))
 def test_completion_documents_are_refused_by_name_on_every_entry_point(tmp_path, entry):
-    """PROBE F1: on main the document path refused the pair by name; with the gate's refusal deleted it fell through
-    to the norm-defaults route's field check (`fields do not match: expected [language, ...]`)."""
+    """PROBE F1: on main the document path refused it by name (`Unsupported profile norm-defaults@0`); with the gate's
+    refusal deleted it fell through to the norm-defaults route's field check (`fields do not match: ...`)."""
     assert refusal(lambda: ENTRY_POINTS[entry](completion_document(tmp_path))) == PENDING
 
 
