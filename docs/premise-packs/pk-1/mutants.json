@@ -219,6 +219,20 @@
       ],
       "test": "tests/test_norm_defaults_layered.py::test_rights_limitation_premises_bind_fillings, ::test_soft_and_rights_fixtures_agree_with_python, ::test_packages_are_bound_to_the_source_and_the_layered_background",
       "run": "lake build ve_service with the mutant, its digest pinned for the run (regen_generated --only checker-pins), VE_NATIVE_PREBUILT=1 pytest tests/test_norm_defaults_layered.py: 3 failed, 8 passed; Layered.lean and lean/checkers.lock restored and ve_service rebuilt"
+    },
+    {
+      "id": "M9",
+      "language": "Python",
+      "file": "tools/check_rd9_sc1_statements.py",
+      "behaviour": "SoftLeafX matches its approved RD-9 text only with PK-1's one quoted edit (the soft pack's premises)",
+      "edits": [
+        {
+          "from": "\"(Packs.packPremises L.packs \\\"soft\\\").any\"",
+          "to": "\"(Packs.packPremises L.packs \\\"rights\\\").any\""
+        }
+      ],
+      "test": "tests/test_rd9_statements.py::test_soft_leaf_reads_the_soft_pack_as_the_premise_packs_spec_approves (and 3 more)",
+      "run": "uv run pytest -q tests/test_rd9_statements.py: 4 failed, 24 passed; restored: 28 passed"
     }
   ]
 }
