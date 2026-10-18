@@ -72,10 +72,11 @@ reordered `AltStatus`'s constructors and survived (order is unobservable); its r
 
 - Trust: K +0, S +42, V +93 (135 lines, R16's cap 150), per declaration in DELTA row 2; `trust_map.py --check`
   passes; ties row in manage-agents FOLLOW-UPS.md "## et-7b".
-- Size: about 680 hand-written lines (Lean 445, tests 96, side tables and pins 41, docs about 100), measured with
-  `git diff --numstat` against the merge base, generated files and recorded cases excluded. That is above ~600. The
-  scenario half could not be split further: its rows, runner, shape and fixtures go together, and the remaining
-  refusals are already cut to et-7c.
+- Size: 727 hand-written lines added (Lean 443, of which proofs and `#guard`s about 120; tests 96; side tables and
+  pins 41; this report, DELTA and mutants 147), measured with `git diff --numstat` against the merge base, generated
+  files, recorded cases and saved evidence excluded. That is above ~600 (the code alone is 580). The scenario half
+  could not be split further: its rows, runner, shape and fixtures go together, and the remaining refusals are
+  already cut to et-7c.
 - Pilot bytes: 0 expected (plan estimate 0). It gives et-8 a status for each Asimov alternative. Nothing is claimed
   before a pilot audit.
 
