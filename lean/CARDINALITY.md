@@ -6,9 +6,9 @@ theorems proved so far in plain words, the fixtures and every difference from th
 theorem: no unfinished proof, only `propext`, `Classical.choice` and `Quot.sound`. No existing Lean source changed;
 `VE.lean` gained one import and `VE/Audit.lean` its generated entries.
 
-QT-A1 is delivered in two parts. This item (qt-a1) holds the syntax, the meaning, admission, regions, erasure, the
-finite countermodel check and the theorems that do not need erasure's soundness. **qt-a1b** holds the soundness
-theorems (listed at the end).
+QT-A1 is delivered in three parts. qt-a1 holds the syntax, the meaning, admission, regions, erasure, the finite
+countermodel check and the theorems that do not need erasure's soundness. qt-a1b proves spec 3.6's soundness theorems.
+**qt-a1c** holds spec 3.7's and 3.9's (listed at the end).
 
 ## Files
 
@@ -18,7 +18,7 @@ theorems (listed at the end).
 | `Semantics.lean` | the meaning without erasure: `Body.holds`, `HasCount`, `Rel.holds`, `Cmp.holds`, `Counts`, `CountAtom.holds`, `Proportion.holds`, `CFormula.holds`, `Admissible`, `CEntails` |
 | `Regions.lean` | counted sorts and recognised universal statements (`bodyOfQ?`, `universalsOf`, `countedSorts`, `countedUniversals`), `predsOn`, `regions`, `Body.inRegion`, `regionConst`, `regionTable`, `CEnv.elab`, `regionBody`; the problem limits P1 and P2 (`problemLimits`) |
 | `Erase.lean` | `regionSum`, the erasure of counts and proportions (`CFormula.erase`), `nonnegPremises`, `bridgePremises`, `erasedProblem`; `withRegions` (region constants read as region sizes); the finite countermodel check: `Body.evalFin`, `countFin`, `withRegionsFinite`, `refutesC` |
-| `Theorems.lean` | `hasCount_exists_unique`, `hasCount_unique`, `nonneg_hold`, `proportion_holds_iff`; W6a's four counting forms as count atoms (`atLeastAtom`, `atMostAtom`, `exactlyAtom`, `nOfMFormula`) and `Body.toFormula` |
+| `Theorems.lean` | `hasCount_exists_unique`, `hasCount_unique`, `nonneg_hold`, `proportion_holds_iff`; spec 3.6's soundness theorems and their lemmas (qt-a1b, below); W6a's four counting forms as count atoms (`atLeastAtom`, `atMostAtom`, `exactlyAtom`, `nOfMFormula`) and `Body.toFormula` |
 | `Examples.lean` | the fixtures as `#guard` lines, and named theorems that state every case of the trusted meaning and admission (below) |
 
 ## Theorems in plain words
@@ -63,9 +63,19 @@ build (`docs/quantities/qt-a1/mutants.json`) and `tests/test_cardinality_exercis
 * Added helper theorems, not in the spec: `bodyCheck_iff`, `admits_iff`, `hasCount_unique`, `exists_nodup_filter`,
   `nodup_length_eq`.
 
-## qt-a1b: the soundness theorems
+## qt-a1b: soundness of erasure (spec 3.6)
 
-`withRegions_admissible`, `bridge_hold`, `erase_iff`, `cardinality_elab_sound`, `erasedProblem_admitted`,
-`count_atLeast_agree`, `count_atMost_agree`, `count_exactly_agree`, `count_nOfM_agree` and `refutesC_sound`, as spec
-3.6, 3.7 and 3.9 state them. Until they are proved, no route uses erasure or `refutesC`: an erased problem's W6a
-certificate says only that the erased problem is entailed, not yet the counting problem.
+Proved in `Theorems.lean`, statements unchanged: `withRegions_admissible`, `bridge_hold`, `erase_iff`,
+`cardinality_elab_sound` and `erasedProblem_admitted`. The argument: an object lies in exactly one region (its own
+truth values), so a body's count is the sum of the sizes of the regions inside it (`regionSize_sum`), and a region
+sum denotes that count under `withRegions` (`regionSum_denote`). A declared constant is never a region constant,
+because every region name begins with the region prefix (`regionConst_startsWith`, through `startsWith_of_data`,
+which unfolds `String.startsWith`'s private loop with `VE.Readings`' `unfold_substrEq_loop`); two (sort, region)
+pairs never share a name (`regionConst_inj`). A recognised universal statement reads only its bound variable
+(`bodyOfQ_spec`), so its bridge holds. FA1 end to end: `fa1_entails` proves `CEntails fomc fa1 fa1Conclusion` from
+the replayed certificate.
+
+## qt-a1c: agreement with W6a and finite countermodels
+
+`count_atLeast_agree`, `count_atMost_agree`, `count_exactly_agree`, `count_nOfM_agree` (spec 3.7) and
+`refutesC_sound` (spec 3.9), as the spec states them. Until `refutesC_sound` is proved no route uses `refutesC`.
