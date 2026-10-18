@@ -136,7 +136,6 @@ through the pinned `Gate.decodeEnvelope`.
 |---|---:|---:|---|---|
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
 | `lean/VE/Alternatives/Replay.lean` | 333 | 333 | 1–333 | `dc387661ef1e…` |
-| `lean/VE/Alternatives/FillWire.lean` | 534 | 534 | 1–534 | `9d4451b717b0…` |
 | `lean/VE/Alternatives/Wire.lean` | 422 | 422 | 1–422 | `d3b9f3cbb3a2…` |
 | `lean/VE/Attribution/Admission.lean` | 343 | 343 | 1–343 | `de9ae29eed4d…` |
 | `lean/VE/Attribution/Content.lean` | 726 | 726 | 1–726 | `42d7518d9a79…` |
@@ -214,6 +213,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/NormDefaults/LayeredEntail.lean` | 197 | 197 | 1–197 | `252900e276fa…` |
 | `lean/VE/Readings/SoftWire.lean` | 198 | 198 | 1–198 | `0a0c5f133b9d…` |
 | `lean/VE/Readings/SoftVerdicts.lean` | 190 | 190 | 1–190 | `091687de6752…` |
+| `lean/VE/Alternatives/FillWire.lean` | 534 | 534 | 1–534 | `9d4451b717b0…` |
 | **total** | | **35,995** | | |
 <!-- END GENERATED -->
 

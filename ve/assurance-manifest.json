@@ -106,27 +106,6 @@
         "reason": "package bindings and scenario replay from JSON; the full file is pinned conservatively"
       },
       {
-        "file": "lean/VE/Alternatives/FillWire.lean",
-        "lines": 534,
-        "sha256": "9d4451b717b00516f0bc5d56d6e9c61f0a519ff573b5d72f73d5ea7cede1220c",
-        "ranges": [
-          [
-            1,
-            534
-          ]
-        ],
-        "declarations": [
-          "decodeAltSourceU",
-          "baseEnvironmentJsonAltU",
-          "decodePackageU",
-          "sourceOfU",
-          "replayAltConflictU",
-          "replayFollowableU",
-          "replayDilemmaU"
-        ],
-        "reason": "the alternatives source with the completion, its package bindings and witness filling from JSON (ET-7; et-7b's scenario rows use the same decoded source); the full file is pinned conservatively"
-      },
-      {
         "file": "lean/VE/Alternatives/Wire.lean",
         "lines": 422,
         "sha256": "d3b9f3cbb3a2bb45991433b25a37b40114a2a4feec36397aa93a9c9096790789",
@@ -1745,6 +1724,27 @@
           "runVerdictsSD"
         ],
         "reason": "rd-9 SC-5: readings-verdicts under the soft completion: each compatible choice taking assumed checked by sdChoiceText and its evidence decoded on its own choiceLayeredG source (xEvidenceOf) as XEvidence (choiceU N c) (choiceX N c); every row holds of sdSem (sd_rowsHold); beyond 64 only the evidence's own choices; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Alternatives/FillWire.lean",
+        "lines": 534,
+        "sha256": "9d4451b717b00516f0bc5d56d6e9c61f0a519ff573b5d72f73d5ea7cede1220c",
+        "ranges": [
+          [
+            1,
+            534
+          ]
+        ],
+        "declarations": [
+          "decodeAltSourceU",
+          "baseEnvironmentJsonAltU",
+          "decodePackageU",
+          "sourceOfU",
+          "replayAltConflictU",
+          "replayFollowableU",
+          "replayDilemmaU"
+        ],
+        "reason": "the alternatives source with the completion, its package bindings and witness filling from JSON (ET-7; et-7b's scenario rows use the same decoded source); the full file is pinned conservatively"
       }
     ],
     "other_json": {
