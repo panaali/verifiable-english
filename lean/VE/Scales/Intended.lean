@@ -1,5 +1,4 @@
 import VE.Scales.Syntax
-import VE.Norms.Tree
 
 /-! The meaning of a dimension, stated directly over a structure, without the generated formulas
 (docs/spec/quantities.md 6.2). -/
@@ -27,8 +26,5 @@ structure Intended (S : VE.Structure.{u}) (d : Dimension) : Prop where
     (g.direction = .lower → S.relation d.more [y, x] → S.relation g.name [x]) ∧
     (∀ e, d.same = some e → S.relation e [x, y] → S.relation g.name [x])
   aboveImp : ∀ p ∈ d.above, ∀ x, S.relation p.1 [x] → S.relation p.2 [x]
-
-/-- No symbol of `D` occurs in `a`. -/
-def Fresh (D : ScaleDoc) (a : VE.Formula) : Prop := ∀ p ∈ VE.Norms.preds a, p ∉ D.symbols
 
 end VE.Scales

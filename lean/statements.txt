@@ -36645,6 +36645,226 @@ theorem VE.Route.verifyOrder_sound
             n ∈ ns → ∀ (m : String), m ∈ VE.Route.deps ns n → List.idxOf m order < List.idxOf n.name order
   -- uses VE.Route.DepNode.name@VE.Route.Route VE.Route.DepNode@VE.Route.Route VE.Route.deps@VE.Route.Route VE.Route.nodeNames@VE.Route.Route VE.Route.verifyOrder@VE.Route.Route
   -- expr 2970290661
+theorem VE.Scales.Examples.intended_of
+  ∀ {v : VE.Bridge.Vocabulary} {ots : List String} {D : VE.Scales.ScaleDoc} {M : VE.Bridge.ModelData},
+    VE.Scales.WellFormed v.environment ots D = Bool.true →
+      M.valid v = Bool.true →
+        (VE.Scales.Examples.holds M (List.map (fun x => x.snd) (VE.Scales.scalePremises D)) = Bool.true ↔
+          ∀ (d : VE.Scales.Dimension), d ∈ D.dims → VE.Scales.Intended M.toModel.asStructure d)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.ModelData.toModel@VE.Bridge VE.Bridge.ModelData.valid@VE.Bridge VE.Bridge.ModelData@VE.Bridge VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Formula@VE.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Examples.holds@VE.Scales.Examples VE.Scales.Intended@VE.Scales.Intended VE.Scales.ScaleDoc.dims@VE.Scales.Syntax VE.Scales.ScaleDoc@VE.Scales.Syntax VE.Scales.WellFormed@VE.Scales.Premises VE.Scales.scalePremises@VE.Scales.Premises
+  -- expr 1633213079
+theorem VE.Scales.Examples.order_cases
+  (VE.Route.dependencyOrder (VE.Scales.aboveNodes VE.Scales.Examples.cycle)).isOk = Bool.false ∧
+    (VE.Route.dependencyOrder (VE.Scales.aboveNodes VE.Scales.Examples.chain)).isOk = Bool.true ∧
+      (VE.Closure.Order.admit VE.Scales.gradeCaps (VE.Scales.gradeOrder (VE.Scales.Examples.manyGrades 16 64))).isOk =
+          Bool.true ∧
+        (VE.Closure.Order.admit VE.Scales.gradeCaps (VE.Scales.gradeOrder (VE.Scales.Examples.manyGrades 17 0))).isOk =
+            Bool.false ∧
+          (VE.Closure.Order.admit VE.Scales.gradeCaps (VE.Scales.gradeOrder (VE.Scales.Examples.manyGrades 16 65))).isOk =
+            Bool.false
+  -- uses VE.Closure.Order.admit@VE.Closure.Order VE.Route.dependencyOrder@VE.Route.Route VE.Scales.Examples.chain@VE.Scales.Examples VE.Scales.Examples.cycle@VE.Scales.Examples VE.Scales.Examples.manyGrades@VE.Scales.Examples VE.Scales.aboveNodes@VE.Scales.Premises VE.Scales.gradeCaps@VE.Scales.Premises VE.Scales.gradeOrder@VE.Scales.Premises
+  -- expr 3618368130
+theorem VE.Scales.Examples.symbols_cases
+  VE.Scales.Examples.uplift.symbols = ["gives_more_uplift", "gives_serious_uplift"] ∧
+    VE.Scales.Examples.shared.symbols = ["gives_more_uplift", "gives_more_uplift", "gives_serious_uplift"] ∧
+      Decidable.decide { dims := [VE.Scales.Examples.uplift, VE.Scales.Examples.harm] }.symbols.Nodup = Bool.true ∧
+        Decidable.decide { dims := [VE.Scales.Examples.shared] }.symbols.Nodup = Bool.false
+  -- uses VE.Scales.Dimension.symbols@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Examples.harm@VE.Scales.Examples VE.Scales.Examples.shared@VE.Scales.Examples VE.Scales.Examples.uplift@VE.Scales.Examples VE.Scales.ScaleDoc.mk@VE.Scales.Syntax VE.Scales.ScaleDoc.symbols@VE.Scales.Syntax
+  -- expr 724533652
+theorem VE.Scales.Examples.trust_intended
+  VE.Scales.Intended VE.Scales.Examples.twoLevels.toModel.asStructure VE.Scales.Examples.trust ∧
+    VE.Scales.Intended VE.Scales.Examples.threeLevels.toModel.asStructure VE.Scales.Examples.trust
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.ModelData.toModel@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Scales.Examples.threeLevels@VE.Scales.Examples VE.Scales.Examples.trust@VE.Scales.Examples VE.Scales.Examples.twoLevels@VE.Scales.Examples VE.Scales.Intended@VE.Scales.Intended
+  -- expr 1542785670
+theorem VE.Scales.Examples.trust_not_intended
+  ¬VE.Scales.Intended VE.Scales.Examples.reflexiveMore.toModel.asStructure VE.Scales.Examples.trust ∧
+    ¬VE.Scales.Intended VE.Scales.Examples.sameNotTrans.toModel.asStructure VE.Scales.Examples.trust
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.ModelData.toModel@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.Scales.Examples.reflexiveMore@VE.Scales.Examples VE.Scales.Examples.sameNotTrans@VE.Scales.Examples VE.Scales.Examples.trust@VE.Scales.Examples VE.Scales.Intended@VE.Scales.Intended
+  -- expr 3086437188
+theorem VE.Scales.Intended.aboveImp
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (p : String × String), p ∈ d.above → ∀ (x : S.Carrier), S.relation p.fst [x] → S.relation p.snd [x]
+  -- uses VE.Scales.Dimension.above@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3159568496
+theorem VE.Scales.Intended.closed
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (g : VE.Scales.Grade),
+        g ∈ d.grades →
+          ∀ (x y : S.Carrier),
+            S.relation g.name [y] →
+              (g.direction = VE.Scales.Direction.upper → S.relation d.more [x, y] → S.relation g.name [x]) ∧
+                (g.direction = VE.Scales.Direction.lower → S.relation d.more [y, x] → S.relation g.name [x]) ∧
+                  ∀ (e : String), d.same = Option.some e → S.relation e [x, y] → S.relation g.name [x]
+  -- uses VE.Scales.Dimension.grades@VE.Scales.Syntax VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Direction.lower@VE.Scales.Syntax VE.Scales.Direction.upper@VE.Scales.Syntax VE.Scales.Direction@VE.Scales.Syntax VE.Scales.Grade.direction@VE.Scales.Syntax VE.Scales.Grade.name@VE.Scales.Syntax VE.Scales.Grade@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 229978944
+theorem VE.Scales.Intended.irrefl
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d → ∀ (x : S.Carrier), S.domain d.sort x → ¬S.relation d.more [x, x]
+  -- uses VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.sort@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1539414397
+theorem VE.Scales.Intended.sameLeft
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (e : String),
+        d.same = Option.some e →
+          ∀ (x y z : S.Carrier), S.relation e [x, y] → S.relation d.more [y, z] → S.relation d.more [x, z]
+  -- uses VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4286573768
+theorem VE.Scales.Intended.sameNotMore
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (e : String), d.same = Option.some e → ∀ (x y : S.Carrier), S.relation e [x, y] → ¬S.relation d.more [x, y]
+  -- uses VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3578833661
+theorem VE.Scales.Intended.sameRefl
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (e : String), d.same = Option.some e → ∀ (x : S.Carrier), S.domain d.sort x → S.relation e [x, x]
+  -- uses VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension.sort@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4010012620
+theorem VE.Scales.Intended.sameRight
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (e : String),
+        d.same = Option.some e →
+          ∀ (x y z : S.Carrier), S.relation d.more [x, y] → S.relation e [y, z] → S.relation d.more [x, z]
+  -- uses VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2326043164
+theorem VE.Scales.Intended.sameSymm
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (e : String), d.same = Option.some e → ∀ (x y : S.Carrier), S.relation e [x, y] → S.relation e [y, x]
+  -- uses VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2656565474
+theorem VE.Scales.Intended.sameTrans
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (e : String),
+        d.same = Option.some e → ∀ (x y z : S.Carrier), S.relation e [x, y] → S.relation e [y, z] → S.relation e [x, z]
+  -- uses VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2441239721
+theorem VE.Scales.Intended.total
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      d.comparable = Bool.true →
+        ∀ (e : String),
+          d.same = Option.some e →
+            ∀ (x y : S.Carrier),
+              S.domain d.sort x →
+                S.domain d.sort y → S.relation d.more [x, y] ∨ S.relation d.more [y, x] ∨ S.relation e [x, y]
+  -- uses VE.Scales.Dimension.comparable@VE.Scales.Syntax VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension.sort@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3678441091
+theorem VE.Scales.Intended.trans
+  ∀ {S : VE.Structure} {d : VE.Scales.Dimension},
+    VE.Scales.Intended S d →
+      ∀ (x y z : S.Carrier),
+        S.domain d.sort x →
+          S.domain d.sort y →
+            S.domain d.sort z → S.relation d.more [x, y] → S.relation d.more [y, z] → S.relation d.more [x, z]
+  -- uses VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.sort@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2185189929
+theorem VE.Scales.dim_iff
+  ∀ (S : VE.Structure) (d : VE.Scales.Dimension),
+    (∀ (x y : S.Carrier), S.relation d.more [x, y] → S.domain d.sort x ∧ S.domain d.sort y) →
+      (∀ (e : String),
+          d.same = Option.some e → ∀ (x y : S.Carrier), S.relation e [x, y] → S.domain d.sort x ∧ S.domain d.sort y) →
+        (∀ (g : VE.Scales.Grade), g ∈ d.grades → ∀ (x : S.Carrier), S.relation g.name [x] → S.domain d.sort x) →
+          (∀ (p : String × String), p ∈ d.above → ∀ (x : S.Carrier), S.relation p.fst [x] → S.domain d.sort x) →
+            ((∀ (a : VE.Formula), a ∈ List.map (fun x => x.snd) (VE.Scales.premises d) → VE.Formula.denote S [] a) ↔
+              VE.Scales.Intended S d)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Scales.Dimension.above@VE.Scales.Syntax VE.Scales.Dimension.grades@VE.Scales.Syntax VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension.sort@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Grade.name@VE.Scales.Syntax VE.Scales.Grade@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Scales.premises@VE.Scales.Premises VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3480136793
+theorem VE.Scales.dim_ok
+  ∀ {E : VE.Environment} {ots : List String} {D : VE.Scales.ScaleDoc},
+    VE.Scales.WellFormed E ots D = Bool.true →
+      ∀ {d : VE.Scales.Dimension},
+        d ∈ D.dims →
+          d.sort ∈ E.sorts ∧
+            E.predicates d.more = Option.some [d.sort, d.sort] ∧
+              (∀ (e : String), d.same = Option.some e → E.predicates e = Option.some [d.sort, d.sort]) ∧
+                (∀ (g : VE.Scales.Grade), g ∈ d.grades → E.predicates g.name = Option.some [d.sort]) ∧
+                  ∀ (p : String × String),
+                    p ∈ d.above → (∃ g, g ∈ d.grades ∧ g.name = p.fst) ∧ ∃ h, h ∈ d.grades ∧ h.name = p.snd
+  -- uses VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Scales.Dimension.above@VE.Scales.Syntax VE.Scales.Dimension.grades@VE.Scales.Syntax VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension.sort@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Grade.name@VE.Scales.Syntax VE.Scales.Grade@VE.Scales.Syntax VE.Scales.ScaleDoc.dims@VE.Scales.Syntax VE.Scales.ScaleDoc@VE.Scales.Syntax VE.Scales.WellFormed@VE.Scales.Premises
+  -- expr 1449632745
+theorem VE.Scales.intended_iff_and
+  ∀ (S : VE.Structure) (d : VE.Scales.Dimension),
+    VE.Scales.Intended S d ↔
+      (∀ (x : S.Carrier), S.domain d.sort x → ¬S.relation d.more [x, x]) ∧
+        (∀ (x y z : S.Carrier),
+            S.domain d.sort x →
+              S.domain d.sort y →
+                S.domain d.sort z → S.relation d.more [x, y] → S.relation d.more [y, z] → S.relation d.more [x, z]) ∧
+          (∀ (e : String), d.same = Option.some e → ∀ (x : S.Carrier), S.domain d.sort x → S.relation e [x, x]) ∧
+            (∀ (e : String), d.same = Option.some e → ∀ (x y : S.Carrier), S.relation e [x, y] → S.relation e [y, x]) ∧
+              (∀ (e : String),
+                  d.same = Option.some e →
+                    ∀ (x y z : S.Carrier), S.relation e [x, y] → S.relation e [y, z] → S.relation e [x, z]) ∧
+                (∀ (e : String),
+                    d.same = Option.some e → ∀ (x y : S.Carrier), S.relation e [x, y] → ¬S.relation d.more [x, y]) ∧
+                  (∀ (e : String),
+                      d.same = Option.some e →
+                        ∀ (x y z : S.Carrier),
+                          S.relation e [x, y] → S.relation d.more [y, z] → S.relation d.more [x, z]) ∧
+                    (∀ (e : String),
+                        d.same = Option.some e →
+                          ∀ (x y z : S.Carrier),
+                            S.relation d.more [x, y] → S.relation e [y, z] → S.relation d.more [x, z]) ∧
+                      (d.comparable = Bool.true →
+                          ∀ (e : String),
+                            d.same = Option.some e →
+                              ∀ (x y : S.Carrier),
+                                S.domain d.sort x →
+                                  S.domain d.sort y →
+                                    S.relation d.more [x, y] ∨ S.relation d.more [y, x] ∨ S.relation e [x, y]) ∧
+                        (∀ (g : VE.Scales.Grade),
+                            g ∈ d.grades →
+                              ∀ (x y : S.Carrier),
+                                S.relation g.name [y] →
+                                  (g.direction = VE.Scales.Direction.upper →
+                                      S.relation d.more [x, y] → S.relation g.name [x]) ∧
+                                    (g.direction = VE.Scales.Direction.lower →
+                                        S.relation d.more [y, x] → S.relation g.name [x]) ∧
+                                      ∀ (e : String),
+                                        d.same = Option.some e → S.relation e [x, y] → S.relation g.name [x]) ∧
+                          ∀ (p : String × String),
+                            p ∈ d.above → ∀ (x : S.Carrier), S.relation p.fst [x] → S.relation p.snd [x]
+  -- uses VE.Scales.Dimension.above@VE.Scales.Syntax VE.Scales.Dimension.comparable@VE.Scales.Syntax VE.Scales.Dimension.grades@VE.Scales.Syntax VE.Scales.Dimension.more@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension.sort@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Direction.lower@VE.Scales.Syntax VE.Scales.Direction.upper@VE.Scales.Syntax VE.Scales.Direction@VE.Scales.Syntax VE.Scales.Grade.direction@VE.Scales.Syntax VE.Scales.Grade.name@VE.Scales.Syntax VE.Scales.Grade@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 544375924
+theorem VE.Scales.premises_iff_intended
+  ∀ (E : VE.Environment) (ots : List String) (D : VE.Scales.ScaleDoc),
+    VE.Scales.WellFormed E ots D = Bool.true →
+      ∀ (S : VE.Structure),
+        S.Admissible E →
+          ((∀ (a : VE.Formula), a ∈ List.map (fun x => x.snd) (VE.Scales.scalePremises D) → VE.Formula.denote S [] a) ↔
+            ∀ (d : VE.Scales.Dimension), d ∈ D.dims → VE.Scales.Intended S d)
+  -- uses VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Intended@VE.Scales.Intended VE.Scales.ScaleDoc.dims@VE.Scales.Syntax VE.Scales.ScaleDoc@VE.Scales.Syntax VE.Scales.WellFormed@VE.Scales.Premises VE.Scales.scalePremises@VE.Scales.Premises VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3412252746
+theorem VE.Scales.premises_wellTyped
+  ∀ (E : VE.Environment) (ots : List String) (D : VE.Scales.ScaleDoc),
+    VE.Scales.WellFormed E ots D = Bool.true →
+      ∀ (a : VE.Formula), a ∈ List.map (fun x => x.snd) (VE.Scales.scalePremises D) → VE.Formula.WellFormed E [] a
+  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Scales.ScaleDoc@VE.Scales.Syntax VE.Scales.WellFormed@VE.Scales.Premises VE.Scales.scalePremises@VE.Scales.Premises
+  -- expr 4060894591
+theorem VE.Scales.scalePremises_labels_nodup
+  ∀ (E : VE.Environment) (ots : List String) (D : VE.Scales.ScaleDoc),
+    VE.Scales.WellFormed E ots D = Bool.true → (List.map (fun x => x.fst) (VE.Scales.scalePremises D)).Nodup
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Scales.ScaleDoc@VE.Scales.Syntax VE.Scales.WellFormed@VE.Scales.Premises VE.Scales.scalePremises@VE.Scales.Premises
+  -- expr 2238394742
+theorem VE.Scales.typed1
+  ∀ {E : VE.Environment} {S : VE.Structure},
+    S.Admissible E → ∀ {p s : String} {x : S.Carrier}, E.predicates p = Option.some [s] → S.relation p [x] → S.domain s x
+  -- uses VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 633970073
+theorem VE.Scales.typed2
+  ∀ {E : VE.Environment} {S : VE.Structure},
+    S.Admissible E →
+      ∀ {p s : String} {x y : S.Carrier},
+        E.predicates p = Option.some [s, s] → S.relation p [x, y] → S.domain s x ∧ S.domain s y
+  -- uses VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 159750638
 theorem VE.Scope.Examples.bold_labels
   VE.Layout.boldLabel "**Process**: x".toUTF8 0 14 = Bool.true ∧
     VE.Layout.boldLabel "**No prompt:** x".toUTF8 0 16 = Bool.true ∧

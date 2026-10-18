@@ -462,6 +462,11 @@ module VE.Route.Steps
 module VE.Route.Typed
 module VE.Route.Wire
 module VE.Route.WireSound
+module VE.Scales.Examples
+module VE.Scales.Intended
+module VE.Scales.Premises
+module VE.Scales.Syntax
+module VE.Scales.Theorems
 module VE.Scope.Examples
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
@@ -1090,6 +1095,7 @@ VE.Route.closureValid@VE.Route.Checker
 VE.Route.coreValid@VE.Core.Route
 VE.Route.folValid@VE.Route.Checker
 VE.Route.orderValid@VE.Route.Checker
+VE.Scales.Intended@VE.Scales.Intended
 VE.Senses.CandidateGood@VE.Senses.Read
 VE.Senses.UnitGood@VE.Senses.Read
 VE.Senses.glossed_negative@VE.Senses.Dictionary
