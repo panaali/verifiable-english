@@ -149,3 +149,6 @@ import VE.Ask.ZeroWire
 import VE.Ask.ZeroAnswer
 import VE.Ask.Examples
 import VE.Norms.FamilySpec
+import VE.Acts.Syntax
+import VE.Acts.Read
+import VE.Acts.GrammarExamples

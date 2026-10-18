@@ -81,6 +81,9 @@ module ResponseShape
 module SensesMain
 module Serve
 module SpeechActsMain
+module VE.Acts.GrammarExamples
+module VE.Acts.Read
+module VE.Acts.Syntax
 module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
@@ -551,6 +554,7 @@ ResponseShape.Fits@ResponseShape.Skeleton
 ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
+VE.Acts.DerivedIn@VE.Acts.Read
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltValid@VE.Alternatives.Inline
 VE.Alternatives.Avail@VE.Alternatives.Followable
