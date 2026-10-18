@@ -7,6 +7,7 @@ import shutil
 import pytest
 
 from experiments import p1, p1_preflight
+from tests import p1_findings
 from ve_experiments import paid
 
 
@@ -71,6 +72,7 @@ def test_schedule_and_strict_ceiling():
 
 
 def test_refresh_dev_is_read_only_and_missing_cache_fails_closed(tmp_path, monkeypatch, capsys):
+    p1_findings.warm('dev')  # every item it reads, checked several at a time first (tests/p1_findings.py)
     source, plan, items = p1.HERE, p1.inventory(), p1.materials('dev')
     for name in ('checks', 'results', 'runs', 'prompts'):
         shutil.copytree(source / name, tmp_path / name)

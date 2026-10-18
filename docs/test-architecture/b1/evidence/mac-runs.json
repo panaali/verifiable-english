@@ -1,0 +1,61 @@
+{
+  "baseline": {
+    "commit": "9f40783b8fc403a99798d9951615d76aa2088d38",
+    "source": "test-architecture-2026-10-14.md run A / ~/.cache/tarch-20261014/runA.json",
+    "workers": 6,
+    "full_suite_wall_seconds": 1648.1
+  },
+  "selected_runs": [
+    {
+      "head": "4887896a7",
+      "snapshot": "01dbf988",
+      "where": "ve-mac-1",
+      "workers": 6,
+      "selected_units": 375,
+      "all_units": 375,
+      "measured_light": 15008,
+      "selected_heavy": 171,
+      "first_checkout_setup_seconds": 506,
+      "wrapper_wall_seconds": 1996,
+      "light_pytest_seconds": 995.62,
+      "light_result": {
+        "passed": 14922,
+        "skipped": 9,
+        "xfailed": 83,
+        "failed": 1
+      },
+      "failure": "tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry",
+      "heavy_stage": "not run after light failure",
+      "fix_commit": "204cb0314",
+      "exit": 1
+    },
+    {
+      "head": "204cb0314",
+      "snapshot": "539b47ae",
+      "where": "ve-mac-1",
+      "workers": 6,
+      "selected_units": 375,
+      "all_units": 375,
+      "measured_light": 15008,
+      "selected_heavy": 171,
+      "checkout_setup_seconds": 1,
+      "wrapper_wall_seconds": 2709,
+      "light_pytest_seconds": 718.7,
+      "light_result": {
+        "passed": 14923,
+        "skipped": 9,
+        "xfailed": 83,
+        "failed": 0
+      },
+      "heavy_pytest_seconds": 1834.68,
+      "heavy_result": {
+        "passed": 171,
+        "failed": 0
+      },
+      "combined_pytest_seconds": 2553.38,
+      "exit": 0,
+      "current_default_outcomes": 15186,
+      "light_outcomes": 15015
+    }
+  ]
+}

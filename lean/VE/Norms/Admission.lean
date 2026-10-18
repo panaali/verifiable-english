@@ -17,12 +17,15 @@ inductive NormContent where
   | active (content : Json)
   | quoted (content : Json)
 
+/-- Norm content under a kind that is neither `norm` nor quoted. -/
+def normKindText : String := "norm content requires a norm or quoted kind"
+
 /-- The one table of norm content roles by unit kind, read by every route that
 splits a document's norms (this admission and the document mode). -/
 def normRole (kind : Kind) (content : Json) : Except String NormContent :=
   if kind == .norm then pure (.active content)
   else if kind.quoted then pure (.quoted content)
-  else throw "norm content requires a norm or quoted kind"
+  else throw normKindText
 
 /-- Remove norm content only from the copy passed to the FOL unit decoder.
 The original source document remains intact for report identity. -/

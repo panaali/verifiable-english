@@ -7,11 +7,19 @@ theorem meaning_fits (j : Json) (m : VE.Service.Document.Meaning) :
     Fits j (skel% "document.json#/$defs/meaning") m.json := by
   cases m <;> simp only [VE.Service.Document.Meaning.json] <;> fits
 
+/-- A row's kind: W2's rendered kind, or the name of a rights source kind (`Service.Document.RightsKind.names`). -/
+theorem rowKind_fits (j : Json) (k : VE.Service.Document.RowKind) :
+    Fits j (.alt [.strIn ["asserted", "norm", "definition", "question", "instruction", "example", "exposition",
+      "analogy", "explanation", "meta"], .kindNot "string", .strIn VE.Service.Document.RightsKind.names]) k.json := by
+  cases k with
+  | route k => cases k <;> simp only [VE.Service.Document.RowKind.json, VE.Route.Admission.renderKind] <;> fits
+  | rights k => cases k <;> exact Fits.altTail (Fits.altTail (Fits.altHead (Fits.strIn_lit (by decide))))
+
 theorem unit_fits (j : Json) (u : VE.Service.Document.RowUnit) :
     Fits j (skel% "document.json#/$defs/unit") (VE.Service.Document.unitJson u) := by
   cases h : u.parent <;> cases hc : u.content <;> cases hm : u.meaningId <;>
     simp [VE.Service.Document.unitJson, h, hc, hm] <;> fits using meaning_fits
-  all_goals exact Common.renderKind_fits u.kind
+  all_goals exact rowKind_fits j u.kind
 
 /-- The alternatives route's coverage line fits the document schema's `block_coverage` (its cells as relayed,
 with the document's own narrowings). -/
@@ -60,11 +68,23 @@ theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Docum
     obtain ⟨u, _, rfl⟩ := hx
     exact unit_fits j u
 
+theorem locatedRow_fits (j : Json) (message : String) (at_ : VE.Service.Document.Located) :
+    Fits j Skeletons.document (VE.Service.Document.locatedRow j message at_) := by
+  unfold VE.Service.Document.locatedRow
+  split
+  · fits
+  · unfold VE.Service.ParseDiagnostic.span
+    fits
+  · fits
+
 theorem runCaseReported_fits (j : Json) :
     Fits j Skeletons.document (VE.Service.Document.runCaseReported j) := by
-  unfold VE.Service.Document.runCaseReported VE.Service.Standalone.reported
+  unfold VE.Service.Document.runCaseReported
   split
   · exact document_fits j _ ‹_›
-  · fits
+  · split
+    · exact locatedRow_fits j _ _
+    · unfold VE.Service.Standalone.reported
+      fits
 
 end ResponseShape.Encoders.Document

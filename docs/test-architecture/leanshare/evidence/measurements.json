@@ -1,0 +1,118 @@
+{
+ "note": "Saved measurements of tarch-leanshare (D4: read by the report, checked by no permanent test). Times are wall seconds of single runs; loads are /proc/loadavg 1/5/15-min.",
+ "mac": {
+  "runner": "ve-mac-1 (Linux aarch64, 18 cores), mac-pytest slot 2, 2026-10-16 04:32-04:40Z",
+  "commit": "755c3da88 (scratch: 0143f7e62 + tarch/test_leanshare_measure.py, never on the branch)",
+  "filesystem": "the test's tmp_path, tmpfs (/tmp); store and clones on the same file system",
+  "raw": {
+   "machine": {
+    "system": "Linux",
+    "machine": "aarch64"
+   },
+   "nproc": 18,
+   "head": "755c3da88f8ec2bc75a4d520ffc43d08f838de4c",
+   "load_before_cold": [
+    "42.08",
+    "44.10",
+    "42.53"
+   ],
+   "cold_build": [
+    492.2,
+    0
+   ],
+   "load_after_cold": [
+    "24.27",
+    "37.01",
+    "40.64"
+   ],
+   "publish": [
+    3.8,
+    0,
+    "[lean-share] published /tmp/pytest-of-verunner/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
+   ],
+   "load_before_restore": [
+    "24.00",
+    "36.75",
+    "40.53"
+   ],
+   "restore_link": [
+    2.0,
+    0,
+    "[lean-share] restored /tmp/pytest-of-verunner/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
+   ],
+   "build_after_restore_link": [
+    0.4,
+    0
+   ],
+   "restore_copy": [
+    3.1,
+    0,
+    "[lean-share] restored /tmp/pytest-of-verunner/pytest-10867/test_measure0/store/v1/5ad9b90d87feb8a3b10b1e2e7854c6557449af220801010c060c1b0ac932fc79\n"
+   ],
+   "build_after_restore_copy": [
+    0.4,
+    0
+   ],
+   "disk_kib": {
+    "a_alone": 2239608,
+    "b_alone": 2239608,
+    "c_alone": 2241244,
+    "store_alone": 2240568,
+    "a+store": 2425432,
+    "a+store+b": 2610296,
+    "a+store+b+c": 4851540
+   },
+   "df": "Filesystem     1K-blocks      Used Available Use% Mounted on\ntmpfs           32857552  11617580  21239972  36% /tmp\n/dev/vdb1      428081152 157334408 270746744  37% /\n",
+   "obsolete_on_runner": {}
+  }
+ },
+ "vm": {
+  "runner": "VM (Linux x86_64, 32 cores), 2026-10-16",
+  "cold_build_fresh_clone": {
+   "seconds": 1588.9,
+   "user_s": 5995.6,
+   "sys_s": 534.6,
+   "load": "68-79 (03:23-03:50Z)",
+   "tree": "main dae12d5ff",
+   "note": "lake build in a fresh clone with no .lake (/tmp/ls-clone1)"
+  },
+  "incremental_from_a_stale_neighbour": {
+   "seconds": 1834.4,
+   "targets_built": 458,
+   "load": "72-79 (02:47-03:18Z)",
+   "note": "ve-integration's lean/.lake copied; Lake found VE.Surface out of date for the same tree (its build predates its HEAD)"
+  },
+  "publish_seconds": 36.0,
+  "restore_link": {
+   "seconds": 7.26,
+   "then_lake_build_seconds": 0.51,
+   "load": "68 (03:49Z)"
+  },
+  "disk_kib_du": {
+   "publisher_lean_lake": "2.2G",
+   "store_beyond_publisher": "179M",
+   "restored_worktree_beyond_store": "178M",
+   "restored_worktree_alone": "2.2G"
+  },
+  "obsolete_executables": {
+   "worktrees_with_a_build": 23,
+   "with_obsolete": 9,
+   "executables_each": 12,
+   "gib_each": 2.0,
+   "gib_total": 18.0,
+   "command": "python3 tools/lake_outputs.py --obsolete --lean <worktree>/lean (read-only listing)"
+  },
+  "duplicate_live_builds": {
+   "lean_trees": 8,
+   "worktrees": 23,
+   "gib_held_more_than_once": 32.3,
+   "groups": {
+    "536de92428": 8,
+    "f47e70f6a2": 5,
+    "61890c43e2": 4,
+    "88542123c9": 2
+   }
+  },
+  "dev_store_after_publisher_rebuilt": "verify passed (exit 0, 12.6 s) after the publishing worktree rebuilt ve_service and other modules for lf-14c in place: the build replaced its links and never wrote into the store"
+ }
+}

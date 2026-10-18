@@ -14,7 +14,14 @@ import tomllib
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import gate, nested_pytest
+from tools import gate, nested_pytest, trust_map
+
+
+def test_gate_scratch_root_can_avoid_system_tmp(tmp_path, monkeypatch):
+    monkeypatch.setenv("VE_GATE_SCRATCH_ROOT", str(tmp_path))
+    assert gate.gate_scratch_root() == tmp_path
+    with gate.tempfile.TemporaryDirectory(prefix="ve-gate-", dir=gate.gate_scratch_root()) as scratch:
+        assert Path(scratch).parent == tmp_path
 
 
 def empty_result():
@@ -32,6 +39,19 @@ def events():
 
 # The gate's two pytest runs: the serial collection, then the suite under xdist.
 PYTEST_STAGES = ("Python collection", "Python suite")
+
+
+def trust_counts() -> dict:
+    """What `tools/trust_map.py --files` writes for a tree of one untrusted file."""
+    files = {"VE/Demo.lean": {**trust_map.empty_counts(), "C": 3, "o": 2, "lines": 5}}
+    now = trust_map.totals(files)
+    return {"budget": trust_map.budget(now), "totals": now, "files": files}
+
+
+def fake_trust(args, stage, counts=None) -> None:
+    """A fake gate's `tools/trust_map.py --files PATH`: writes `counts` (default `trust_counts`)."""
+    if stage == gate.TRUST_STAGE:
+        Path(args[args.index("--files") + 1]).write_text(json.dumps(trust_counts() if counts is None else counts))
 
 
 @pytest.mark.parametrize("change,reason", [
@@ -258,6 +278,7 @@ def test_poisoned_ambient_environment_leaves_gate_result_unchanged(tmp_path, mon
 
         def fake_command(args, *, env, stage, cwd=None):
             seen.append({"args": args, "cwd": str(cwd), "env": dict(env), "stage": stage})
+            fake_trust(args, stage)
             if stage in PYTEST_STAGES:
                 Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(events()))
             return versions.get(stage, "")
@@ -478,6 +499,70 @@ def test_fsmonitor_hook_cannot_hide_edited_source(tmp_path, monkeypatch):
     assert gate.source_identity(env)[1] is True
 
 
+def committed_source(tmp_path):
+    """A repository whose HEAD commits source.py, and the gate environment it is checked in."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    env = gate.gate_environment(tmp_path / "scratch")
+    identity = ["-c", "user.name=gate", "-c", "user.email=gate@example.invalid"]
+    subprocess.run(["git", "init", "-q"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("one\n")
+    subprocess.run(["git", "add", "source.py"], cwd=repo, env=env, check=True)
+    subprocess.run(["git", *identity, "commit", "-q", "-m", "source"], cwd=repo, env=env, check=True)
+    return repo, env
+
+
+@pytest.mark.parametrize("bit", ["--assume-unchanged", "--skip-worktree"])
+def test_index_bits_cannot_hide_edited_source(tmp_path, monkeypatch, bit):
+    repo, env = committed_source(tmp_path)
+    subprocess.run(["git", "update-index", bit, "source.py"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("a longer edit\n")
+    plain = subprocess.run(["git", "status", "--porcelain"], cwd=repo, env=env,
+                           capture_output=True, text=True, check=True)
+    assert plain.stdout == ""
+    monkeypatch.setattr(gate, "ROOT", repo)
+    assert gate.source_identity(env)[1] is True
+
+
+def test_source_identity_reports_clean_tree_and_leaves_index_alone(tmp_path, monkeypatch):
+    repo, env = committed_source(tmp_path)
+    index = repo / ".git/index"
+    before = index.read_bytes(), index.stat().st_mtime_ns
+    monkeypatch.setattr(gate, "ROOT", repo)
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, env=env, text=True).strip()
+    assert gate.source_identity(env) == (head, False)
+    (repo / "new.py").write_text("")
+    assert gate.source_identity(env) == (head, True)
+    assert (index.read_bytes(), index.stat().st_mtime_ns) == before
+    assert not (tmp_path / "scratch/source-index").exists()
+
+
+def test_staged_change_stays_dirty_when_the_file_matches_the_commit(tmp_path, monkeypatch):
+    repo, env = committed_source(tmp_path)
+    (repo / "source.py").write_text("two\n")
+    subprocess.run(["git", "add", "source.py"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("one\n")
+    monkeypatch.setattr(gate, "ROOT", repo)
+    assert gate.source_identity(env)[1] is True
+
+
+def test_clean_status_is_checked_again_on_a_fresh_index_of_the_commit(tmp_path, monkeypatch):
+    env = gate.gate_environment(tmp_path / "scratch")
+    seen = []
+
+    def fake_command(args, *, env, stage, cwd=None):
+        seen.append((stage, args, env.get("GIT_INDEX_FILE")))
+        return {"commit": "recorded", "worktree content": " M source.py"}.get(stage, "")
+
+    monkeypatch.setattr(gate, "command", fake_command)
+    assert gate.source_identity(env) == ("recorded", True)
+    index = str(tmp_path / "scratch/source-index")
+    assert [(stage, name) for stage, _, name in seen] == [
+        ("commit", None), ("worktree status", None), ("worktree index", index), ("worktree content", index)]
+    assert seen[2][1][-2:] == ["read-tree", "recorded"]
+    assert seen[3][1] == seen[1][1] and "--untracked-files=all" in seen[3][1]
+
+
 def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
     output = tmp_path / "record.json"
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
@@ -537,9 +622,11 @@ def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption
     monkeypatch.setattr(gate, "POLICY", policy)
     pin_base_collection(monkeypatch, ["tests/a.py::test_a"])
     monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
-    # This case skips toolchain setup and interrupts Lean build; the trace scan
-    # would otherwise seek Lean under the gate's isolated HOME.
+    # Reach the injected interruption without depending on the ambient Python
+    # environment, shared Lean artifacts or the checkout's current Lake traces.
+    monkeypatch.setattr(gate, "check_python_project", lambda result, env: None)
     monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda lean, env: [])
+    monkeypatch.setattr(gate.lake_outputs, "stale", lambda lean, env: [])
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])
 
     def fake_command(args, *, env, stage, cwd=None):
@@ -592,6 +679,7 @@ def test_gate_resets_record_uses_own_binary_and_checks_source_at_end(
     def fake_command(args, *, env, stage, cwd=None):
         nonlocal sha_calls
         seen.append((args, dict(env), stage))
+        fake_trust(args, stage)
         if stage == "commit":
             sha_calls += 1
             assert json.loads(output.read_text())["status"] == "failed"
@@ -649,6 +737,7 @@ def test_gate_refuses_a_rust_build_checkers_lock_does_not_pin(tmp_path, monkeypa
 
     def fake_command(args, *, env, stage, cwd=None):
         stages.append(stage)
+        fake_trust(args, stage)
         return str(tmp_path / ".venv") if stage == "Python environment" else ""
 
     monkeypatch.setattr(gate, "command", fake_command)

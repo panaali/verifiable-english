@@ -20,9 +20,11 @@ from concurrent.futures import ThreadPoolExecutor
 import contextlib
 import datetime
 import gzip
+import hashlib
 import json
 import os
 from pathlib import Path
+import platform
 import shutil
 import signal
 import subprocess
@@ -34,6 +36,7 @@ import time
 import lake_outputs
 from layer_policy import ROOT, lean_default_targets, lean_executables
 import nested_pytest
+import test_map_recorder
 
 # 2: directory listings by the import system and pytest are not recorded.
 # 3: a test's own reads and listings count even though pytest runs it (version 2
@@ -42,9 +45,18 @@ import nested_pytest
 # 4: listings of directories that hold no tracked file (or do not exist yet) are kept.
 # 5: the assurance-manifest operations each test reads are recorded (`operations`).
 # 6: an operation only checked for presence (`presence`) is recorded apart from an entry read.
-VERSION = 6
-EDGE_KEYS = ("f", "r", "d", "x", "m", "p")
-UNIT_TIMEOUT = 3600  # seconds one test file may run while recorded
+# 7: each request's Lean service mode is recorded separately from its executable.
+VERSION = 7
+# How maps of each format version became usable when it was introduced: ("converter", N - 1), a
+# converter in CONVERTERS from the version before; or ("recorded", commit), a map recorded with it at
+# that main commit and published with the change. A version with neither leaves selection without a
+# map until one is recorded (a test in tests/test_select_tests.py fails when VERSION has no entry).
+FORMAT_CHANGES = {7: ("converter", 6)}
+EDGE_KEYS = ("f", "r", "d", "x", "m", "p", "v")
+# Seconds one test file may run while recorded: a hang guard, not a budget. At one hour the
+# heaviest files (test_assist, test_assist_invariants, test_wire_gate_corpus) timed out on the
+# loaded VM and stayed unrecorded; they start first (`by_length`).
+UNIT_TIMEOUT = 4 * 3600
 # Test units outside pytest: the selector's own unittest suite.
 EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group", "dev", "python",
                                                "tools/test_layer_policy.py"]}
@@ -52,6 +64,12 @@ EXTRA_UNITS = {"tools/test_layer_policy.py": ["uv", "run", "--frozen", "--group"
 
 def cache_dir() -> Path:
     return Path(os.environ.get("VE_TESTMAP_CACHE") or Path.home() / ".cache/ve-testmap")
+
+
+def builds_dir() -> Path:
+    """Where this machine records the digests of its Lean builds (`record_build`). Kept apart from
+    the maps, which travel between machines: a digest is a fact about one platform's build."""
+    return Path(os.environ.get("VE_LEAN_BUILDS") or Path.home() / ".cache/ve-lean-builds")
 
 
 def git(*args: str, root: Path = ROOT, check: bool = True) -> str:
@@ -79,7 +97,7 @@ def environment(out: Path | None = None) -> dict[str, str]:
     return env
 
 
-HOOK = "_ve_testmap"
+HOOK = test_map_recorder.HOOK
 
 
 def site_packages() -> Path:
@@ -109,20 +127,108 @@ def remove_hook(site: Path) -> None:
         (site / f"{HOOK}{suffix}").unlink(missing_ok=True)
 
 
-def build_natives() -> None:
-    """Build every binary once, so the per-file processes only read them."""
+def build_lean() -> None:
+    """Build every Lean executable, then record the build's digests (`record_build`)."""
     env = environment()
     lake_outputs.drop_stale()  # a trace that does not record its binary would keep the stale one
     named = sorted(set(lean_executables()) - lean_default_targets())
-    for command, cwd in ((["lake", "build"], ROOT / "lean"),
-                         (["lake", "build", *named] if named else None, ROOT / "lean"),
-                         ([sys.executable, "tools/rust_build.py", "build", "--locked", "--release",
-                           "--manifest-path", "rust/Cargo.toml"], ROOT),
-                         ([sys.executable, "tools/rust_build.py", "build", "--locked",
-                           "--manifest-path", "rust/Cargo.toml", "-p", "ve"], ROOT)):
-        if command is None:
-            continue  # no executable outside the default targets
-        subprocess.run(command, cwd=cwd, env=env, check=True, stdout=subprocess.DEVNULL)
+    subprocess.run(["lake", "build"], cwd=ROOT / "lean", env=env, check=True, stdout=subprocess.DEVNULL)
+    if named:  # executables outside the default targets
+        subprocess.run(["lake", "build", *named], cwd=ROOT / "lean", env=env, check=True,
+                       stdout=subprocess.DEVNULL)
+    record_build()
+
+
+def build_natives() -> None:
+    """Build every binary once, so the per-file processes only read them."""
+    build_lean()
+    env = environment()
+    for command in ([sys.executable, "tools/rust_build.py", "build", "--locked", "--release",
+                     "--manifest-path", "rust/Cargo.toml"],
+                    [sys.executable, "tools/rust_build.py", "build", "--locked",
+                     "--manifest-path", "rust/Cargo.toml", "-p", "ve"]):
+        subprocess.run(command, cwd=ROOT, env=env, check=True, stdout=subprocess.DEVNULL)
+
+
+# --- Lean build digests: the binary-level cutoff of tools/select_tests.py ---
+#
+# A record names a `lean/` tree (git's tree id of the directory, untracked files included) and gives
+# the SHA-256 of each Lean executable built from exactly that tree on this platform. Two records
+# with equal digests for an executable mean the two trees built the same program: a test that only
+# runs it behaves the same on both. Records are written only for a build that is current: Lake has
+# nothing to rebuild for any executable, and every executable's trace records the file on disk.
+
+
+def platform_tag() -> str:
+    return f"{sys.platform}-{platform.machine()}"
+
+
+def lean_tree(rev: str | None = None, root: Path = ROOT) -> str | None:
+    """Git's tree id of `lean/` at `rev`, or in the working tree (None); None when there is none."""
+    tree = working_tree_id(root) if rev is None else rev
+    found = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"{tree}:lean"], cwd=root,
+                           capture_output=True, text=True)
+    return found.stdout.strip() if found.returncode == 0 else None
+
+
+def build_record_path(tree: str) -> Path:
+    return builds_dir() / f"{platform_tag()}-{tree}.json"
+
+
+def executable_digests(root: Path = ROOT) -> dict[str, str]:
+    """SHA-256 of every built Lean executable the lakefile names."""
+    found = {}
+    for name in lean_executables(root):
+        binary = root / "lean/.lake/build/bin" / name
+        if binary.is_file():
+            found[name] = hashlib.sha256(binary.read_bytes()).hexdigest()
+    return found
+
+
+def current_build(root: Path = ROOT) -> bool:
+    """Whether every Lean executable on disk is the build of the sources as they are now."""
+    names = sorted(lean_executables(root))
+    if not names or not all((root / "lean/.lake/build/bin" / name).is_file() for name in names):
+        return False
+    check = subprocess.run(["lake", "build", "--no-build", *names], cwd=root / "lean", env=environment(),
+                           capture_output=True)
+    return check.returncode == 0 and not lake_outputs.stale(root / "lean")
+
+
+def record_build(root: Path = ROOT) -> Path | None:
+    """Record the current Lean build's digests under its `lean/` tree; None (nothing written) when the
+    build is not current or the tree changed while it was hashed."""
+    tree = lean_tree(None, root)
+    if tree is None or not current_build(root):
+        return None
+    digests = executable_digests(root)
+    if lean_tree(None, root) != tree:
+        return None
+    path = build_record_path(tree)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+    temporary.write_text(json.dumps({"lean_tree": tree, "platform": platform_tag(), "digests": digests,
+                                     "recorded": datetime.datetime.now(datetime.timezone.utc).isoformat(
+                                         timespec="seconds")}, indent=1, sort_keys=True) + "\n")
+    temporary.replace(path)
+    return path
+
+
+def load_build(tree: str | None) -> dict[str, str] | None:
+    """The executable digests recorded for a `lean/` tree on this platform, or None."""
+    if tree is None:
+        return None
+    try:
+        data = json.loads(build_record_path(tree).read_text())
+    except (OSError, ValueError):
+        return None
+    if not isinstance(data, dict) or data.get("lean_tree") != tree or data.get("platform") != platform_tag():
+        return None
+    digests = data.get("digests")
+    if not isinstance(digests, dict) or not all(isinstance(k, str) and isinstance(v, str)
+                                                for k, v in digests.items()):
+        return None
+    return digests
 
 
 def tracked_paths(root: Path = ROOT) -> set[str]:
@@ -160,11 +266,14 @@ def read_unit(directory: Path, files: set[str]) -> dict:
                 seen["m"].add(record[1])
             elif kind == "p":
                 seen["p"].add(record[1])
+            elif kind == "v":
+                seen["v"].add(record[1])
             elif kind == "c" and record[2]:
-                children.append(record[1])
+                children.append((record[1], len(record) > 3 and record[3] is True))
             elif kind == "o":
                 opaque.append(record[1])
-    opaque += [f"python child {pid} left no record" for pid in children if pid not in written]
+    # A child that records here and left no file died before its recorder started: it ran no code.
+    opaque += [f"python child {pid} left no record" for pid, here in children if pid not in written and not here]
     return {**seen, "opaque": sorted(set(opaque))}
 
 
@@ -256,8 +365,9 @@ def run_unit(unit: str, work: Path, timeout: float, tracked: set[str], *, option
     out.mkdir(parents=True)
     start = time.monotonic()
     stop = stop or Stop()
+    env = environment(out)
     with log.open("w") as handle, stop.on_exit():
-        process = stop.start(unit_command(unit, options), cwd=ROOT, env=environment(out), stdout=handle,
+        process = stop.start(unit_command(unit, options), cwd=ROOT, env=env, stdout=handle,
                              stderr=subprocess.STDOUT)
         if process is None:
             shutil.rmtree(out)
@@ -269,14 +379,37 @@ def run_unit(unit: str, work: Path, timeout: float, tracked: set[str], *, option
             process.wait()
             code = "timeout"
         if stop.finished(process):
+            share_with_outer(out, env)
             shutil.rmtree(out)
             return {"exit": "stopped", "seconds": round(time.monotonic() - start, 1)}
     result = read_unit(out, tracked)
     result.update(exit=code, seconds=round(time.monotonic() - start, 1))
     done.write_text(json.dumps({key: sorted(value) if isinstance(value, set) else value
                                 for key, value in result.items()}))
+    share_with_outer(out, env)
     shutil.rmtree(out)
     return result
+
+
+def share_with_outer(out: Path, env: dict[str, str]) -> None:
+    """A recording made inside a recorded test (the selector's own tests run units this way) hands that
+    test's recording the records of the processes it started. They ran code under the same root for the
+    outer test too; without them the outer recorder sees Python children that wrote elsewhere, and the
+    outer unit is opaque. Records are appended, so a process id used twice keeps both."""
+    outer = os.environ.get("VE_TESTMAP_OUT")
+    if not outer or not Path(outer).is_dir() or Path(outer).resolve() == out.resolve() \
+            or os.path.realpath(os.environ.get("VE_TESTMAP_ROOT", "")) != os.path.realpath(env["VE_TESTMAP_ROOT"]):
+        return
+    for path in out.glob("*.jsonl"):
+        with (Path(outer) / path.name).open("ab") as handle:
+            handle.write(path.read_bytes())
+
+
+def by_length(selected: list[str], previous: dict | None) -> list[str]:
+    """The units in recording order: longest first by the seconds `previous` recorded (an unknown unit
+    counts as longest), so the slowest files do not start last. Order only: every unit runs."""
+    seconds = {test: status["seconds"] for test, status in (previous or {}).get("status", {}).items()}
+    return sorted(selected, key=lambda unit: (-seconds.get(unit, float("inf")), unit))
 
 
 def build_map(results: dict[str, dict], commit: str) -> dict:
@@ -288,6 +421,7 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
     programs: dict[str, set[int]] = {}
     operations: dict[str, set[int]] = {}
     presence: dict[str, set[int]] = {}
+    modes: dict[str, set[int]] = {}
     for test, result in results.items():
         i = index[test]
         for file, qualname in result["f"]:
@@ -299,6 +433,8 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
             operations.setdefault(op_id, set()).add(i)
         for op_id in result.get("p", ()):
             presence.setdefault(op_id, set()).add(i)
+        for mode in result.get("v", ()):
+            modes.setdefault(mode, set()).add(i)
     return {
         "version": VERSION, "commit": commit,
         "created": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -311,13 +447,14 @@ def build_map(results: dict[str, dict], commit: str) -> dict:
         "programs": {k: sorted(v) for k, v in sorted(programs.items())},
         "operations": {k: sorted(v) for k, v in sorted(operations.items())},
         "presence": {k: sorted(v) for k, v in sorted(presence.items())},
+        "modes": {k: sorted(v) for k, v in sorted(modes.items())},
     }
 
 
 def unit_edges(data: dict) -> dict[str, dict]:
     """Invert a map back to per-test sets (the form `merge` and tests use)."""
     tests = data["tests"]
-    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set()}
+    edges = {test: {"f": set(), "r": set(), "d": set(), "x": set(), "m": set(), "p": set(), "v": set()}
              for test in tests}
     for file, qualnames in data["functions"].items():
         for qualname, indices in qualnames.items():
@@ -333,6 +470,9 @@ def unit_edges(data: dict) -> dict[str, dict]:
     for item, indices in data["presence"].items():
         for i in indices:
             edges[tests[i]]["p"].add(item)
+    for item, indices in data["modes"].items():
+        for i in indices:
+            edges[tests[i]]["v"].add(item)
     return edges
 
 
@@ -363,16 +503,26 @@ def working_tree_id(root: Path = ROOT) -> str:
                               capture_output=True, text=True).stdout.strip()
 
 
-def find_map(base: str, root: Path = ROOT) -> Path | None:
-    """The cached map nearest below `base`: of the maps recorded at its ancestors,
-    the one with the fewest commits between it and `base`. $VE_TESTMAP overrides."""
+def commit_maps(directory: Path) -> list[Path]:
+    """The maps in a cache directory recorded at a commit (not `--run`'s maps of a tree)."""
+    return [path for path in directory.glob("*.json.gz") if not path.name.startswith("tree-")]
+
+
+def find_map(base: str, root: Path = ROOT, other_versions: list[Path] | None = None) -> Path | None:
+    """The cached map nearest below `base`: of the 30 newest maps recorded at commits, the one at an
+    ancestor of `base` with the fewest commits between it and `base`. $VE_TESTMAP overrides. Maps
+    `--run` saved for a tree (`tree-*`, `tree_map_path`) name no commit and never qualify, so they
+    are left out before the 30 are counted.
+
+    A nearer ancestor map that does not load is skipped with a line on stderr;
+    one recorded by another map format version is also appended to `other_versions`."""
     if os.environ.get("VE_TESTMAP"):
         return Path(os.environ["VE_TESTMAP"])
     directory = cache_dir()
     if not directory.is_dir():
         return None
     best = None
-    for path in sorted(directory.glob("*.json.gz"), key=lambda p: p.stat().st_mtime, reverse=True)[:30]:
+    for path in sorted(commit_maps(directory), key=lambda p: p.stat().st_mtime, reverse=True)[:30]:
         commit = path.name.split(".", 1)[0]
         distance = subprocess.run(("git", "rev-list", "--count", f"{commit}..{base}"), cwd=root,
                                   capture_output=True, text=True)
@@ -383,17 +533,57 @@ def find_map(base: str, root: Path = ROOT) -> Path | None:
         if best is None or int(distance.stdout) < best[0]:
             try:
                 load(path)
-            except (OSError, ValueError, EOFError):
-                continue  # unreadable, or recorded by another version of the recorder
+            except MapVersionError as error:
+                print(f"test_map: skipped map {path} for {base[:10]}: recorded by map format version "
+                      f"{error.found}, this checkout reads version {VERSION} "
+                      "(record a new map: tools/test_map.py record)", file=sys.stderr)
+                if other_versions is not None:
+                    other_versions.append(path)
+                continue
+            except (OSError, ValueError, EOFError) as error:
+                print(f"test_map: skipped map {path}: unreadable ({error})", file=sys.stderr)
+                continue
             best = (int(distance.stdout), path)
     return best[1] if best else None
 
 
 def load(path: Path) -> dict:
     with gzip.open(path, "rt", encoding="utf-8") as handle:
-        data = json.load(handle)
+        data = convert(json.load(handle))
     validate(data, str(path))
     return data
+
+
+def from_6(data: dict) -> dict:
+    """Version 7 records each unit's Lean service modes; a version 6 map recorded none. With no
+    mode recorded, every service user stays in every service selection (`Coverage.service_users`),
+    so the map selects at least what it did before."""
+    return {**data, "modes": {}}
+
+
+# Converters to each version from the one before it (FORMAT_CHANGES names which apply).
+CONVERTERS = {7: from_6}
+
+
+def convert(data):
+    """A map of an earlier format version, converted to VERSION in place, when each version after it
+    has a converter; anything else is returned as it is (validate then names the version)."""
+    if not isinstance(data, dict) or type(data.get("version")) is not int:
+        return data
+    found = data["version"]
+    if found >= VERSION or any(version not in CONVERTERS for version in range(found + 1, VERSION + 1)):
+        return data
+    for version in range(found + 1, VERSION + 1):
+        data.update(CONVERTERS[version](data), version=version)
+    data["converted_from"] = found
+    return data
+
+
+class MapVersionError(ValueError):
+    """A well-formed map header recorded by another map format version."""
+    def __init__(self, message: str, found: int):
+        super().__init__(message)
+        self.found = found
 
 
 def validate(data, where: str = "map") -> None:
@@ -410,6 +600,8 @@ def validate(data, where: str = "map") -> None:
                 type(i) is int and 0 <= i < len(tests) for i in value):
             fail(f"{what} is not a non-empty list of test indices")
 
+    if isinstance(data, dict) and type(data.get("version")) is int and data["version"] != VERSION:
+        raise MapVersionError(f"{where}: version {data['version']!r}, expected {VERSION}", data["version"])
     if not isinstance(data, dict) or data.get("version") != VERSION:
         fail(f"version {data.get('version') if isinstance(data, dict) else None!r}, expected {VERSION}")
     if not isinstance(data.get("commit"), str):
@@ -433,7 +625,7 @@ def validate(data, where: str = "map") -> None:
             fail(f"functions of {file} is not an object")
         for qualname, value in qualnames.items():
             indices(value, f"{file}:{qualname}")
-    for table in ("reads", "dirs", "programs", "operations", "presence"):
+    for table in ("reads", "dirs", "programs", "operations", "presence", "modes"):
         if not isinstance(data.get(table), dict):
             fail(f"{table} is not an object")
         for key, value in data[table].items():
@@ -527,10 +719,11 @@ def record(args: argparse.Namespace) -> int:
         build_natives()
     selected = args.units or units()
     work = Path(args.work) if args.work else Path(tempfile.gettempdir()) / f"ve-testmap-{commit}"
-    results = record_units(selected, work, args.jobs, args.timeout)
-    previous = find_map(commit)
+    previous_path = find_map(commit)
+    previous = load(previous_path) if previous_path is not None else None
+    results = record_units(by_length(selected, previous), work, args.jobs, args.timeout)
     if previous is not None and not args.no_merge:
-        merge(results, load(previous))
+        merge(results, previous)
     return finish(args, work, build_map(results, commit), selected)
 
 
@@ -558,7 +751,7 @@ def update(args: argparse.Namespace) -> int:
     if redo and not args.no_build:
         build_natives()
     work = Path(args.work) if args.work else Path(tempfile.gettempdir()) / f"ve-testmap-{commit}"
-    results = record_units(redo, work, args.jobs, args.timeout) if redo else {}
+    results = record_units(by_length(redo, previous), work, args.jobs, args.timeout) if redo else {}
     edges = unit_edges(previous)
     for unit in sorted(everything - set(redo)):
         # Runs the same as when recorded: none of what it executed or read has changed.
@@ -566,6 +759,36 @@ def update(args: argparse.Namespace) -> int:
     data = build_map(results, commit)
     data["updated_from"] = previous["commit"]
     return finish(args, work, data, redo)
+
+
+def fresh(base: str, max_age_hours: float, max_behind: int | None = None,
+          now: datetime.datetime | None = None) -> int:
+    """The freshness check for scripts that choose between selected and full runs: the map `find_map`
+    gives `base` (a commit map of this format version, at an ancestor), no older than `max_age_hours`
+    and at most `max_behind` commits below `base`. Prints its path and exits 0, or says why not on
+    stderr and exits 1, so `fresh=$(... 2>/dev/null)` is empty exactly when there is no fresh map.
+    A file's age in the cache says nothing of whether selection can use it."""
+    path = find_map(base)
+    if path is None:
+        print(f"no usable map for {base}: none of this format version (version {VERSION}) at an ancestor",
+              file=sys.stderr)
+        return 1
+    data = load(path)
+    behind = int(git("rev-list", "--count", f"{data['commit']}..{base}"))
+    try:
+        created = datetime.datetime.fromisoformat(data["created"])
+    except (KeyError, TypeError, ValueError):
+        print(f"map {path} for {base}: no creation time", file=sys.stderr)
+        return 1
+    age = ((now or datetime.datetime.now(datetime.timezone.utc)) - created).total_seconds() / 3600
+    if age > max_age_hours:
+        print(f"map {path} for {base}: {age:.1f} h old, more than {max_age_hours:g} h", file=sys.stderr)
+        return 1
+    if max_behind is not None and behind > max_behind:
+        print(f"map {path} for {base}: {behind} commits behind, more than {max_behind}", file=sys.stderr)
+        return 1
+    print(path)
+    return 0
 
 
 def main() -> int:
@@ -591,11 +814,26 @@ def main() -> int:
     upd.add_argument("--dry-run", action="store_true", help="list the units, record nothing")
     show = sub.add_parser("show", help="summarize the map used for HEAD")
     show.add_argument("--map")
+    fresh_parser = sub.add_parser("fresh", help="exit 0 and print the map selection would use for --base, "
+                                  "when there is one and it is recent enough; else exit 1 and say why")
+    fresh_parser.add_argument("--base", default="HEAD", help="the base selection compares with (default HEAD)")
+    fresh_parser.add_argument("--max-age-hours", type=float, default=24.0,
+                              help="the oldest map creation time accepted (default 24)")
+    fresh_parser.add_argument("--max-behind", type=int, default=None,
+                              help="the most commits accepted between the map and --base (default: any)")
+    sub.add_parser("build-record", help="record the digests of the current Lean build for its lean/ tree "
+                   "(the binary cutoff's input; exit 1 when the build is not current)")
     args = parser.parse_args()
     if args.command == "record":
         return record(args)
     if args.command == "update":
         return update(args)
+    if args.command == "fresh":
+        return fresh(args.base, args.max_age_hours, args.max_behind)
+    if args.command == "build-record":
+        path = record_build()
+        print(f"recorded {path}" if path else "the Lean build is not current for this tree: nothing recorded")
+        return 0 if path else 1
     path = Path(args.map) if args.map else find_map("HEAD")
     if path is None:
         print("no cached map is an ancestor of HEAD")

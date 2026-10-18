@@ -1,0 +1,31 @@
+{
+  "what": "The two rd-9 follow-up forgeries replayed against the public relays with Lean's genuine answer edited in flight (the relay's Lean call patched; each forged row is checked against the generated schema first, as the Lean service client does). Sources: tests/test_relay_binding_inventory.py, rights 'gamma' (report_rights) and admission; soft 'open pair' admission.",
+  "forgeries": {
+    "row 38": "rights-conflict answer with verdict UNKNOWN; status_text := 'CONFLICT-FREE among rules on the same act, conditional on 9 coherence premises and 0 limitation premises'; conditional_on := []",
+    "rights admission report_id": "report_id := '0' * 64",
+    "soft admission report_id": "report_id := '0' * 64"
+  },
+  "genuine_rights_conflict": {"verdict": "UNKNOWN", "status_text": "UNKNOWN: missing certificate for arrest_permitted, budget 10000", "detail": "missing certificate for arrest_permitted", "targets": ["arrest_permitted"], "conditional_on": []},
+  "runs": [
+    {
+      "commit": "85b20fcba4b1b0473de9e41888059e7e1be22b3a",
+      "note": "main after the rights-licence-relay merge (the task's first check)",
+      "row 38": "ACCEPTED",
+      "rights admission report_id": "ACCEPTED",
+      "soft admission report_id": "ACCEPTED"
+    },
+    {
+      "commit": "c9452489f",
+      "note": "this branch after its sync with main bc1936dd5",
+      "row 38": "refused: the generated schema (rights.json#/$defs/packages): status_text does not match UNKNOWN: .*",
+      "rights admission report_id": "ACCEPTED, by design: a derived identity Lean proves (runAdmission_sound); ADR 0001 D1 forbids a Python recomputation (DELTA row 3)",
+      "soft admission report_id": "ACCEPTED, by design: as above"
+    }
+  ],
+  "regressions": [
+    "tests/test_rd9_followup_bindings.py::test_a_status_line_of_the_wrong_verdict_does_not_fit_the_lean_shape[row 38]",
+    "tests/test_rd9_followup_bindings.py::test_the_report_id_guarantee_is_a_stated_audited_theorem",
+    "tests/test_rd9_followup_bindings.py::test_lean_admission_report_ids_are_the_identity_the_theorem_states[soft]",
+    "tests/test_rd9_followup_bindings.py::test_lean_admission_report_ids_are_the_identity_the_theorem_states[rights]"
+  ]
+}

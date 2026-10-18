@@ -75,3 +75,41 @@ def test_kernel_bounded_batches(record, tmp_path, target):
         totals[key] = totals.get(key, 0.0) + row["cpu"]
     for key, seconds in sorted(totals.items()):
         record(key, seconds)
+
+
+@pytest.mark.parametrize("ident", ["U3", "A1"])
+def test_ask_lean_cpu(record, ident):
+    """Question answering Q2.6's `ask` budget (plan: Lean CPU at most 2 s per request), measured on the recorded
+    U3 (the UDHR readings route, six choices) and A1 (an agent-policy document) on a warm service. The qa-q2 review
+    found 2.67 s on U3: every reader of a row's key replayed its certificate's citations; the answer now builds them
+    once (`VE.Ask.memoTable`)."""
+    import importlib.util
+    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
+    spec = importlib.util.spec_from_file_location("question_answering_measure",
+                                                  ROOT / "tools/question_answering_measure.py")
+    measure = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(measure)
+    _, _, ask = measure.service_case(ident)
+    with LeanService(DEFAULT_EXECUTABLE) as service:
+        found = measure.measure_service(service, "ask", ask)
+    if found["cpu_s"] is None:
+        pytest.skip("the platform does not report the service's CPU time")
+    record("lean", found["cpu_s"])
+    assert found["cpu_s"] <= 2.0, found  # the plan's registered budget, beside the stored baseline
+
+
+def test_gate_source_identity(record, tmp_path):
+    """The gate's worktree check, run at its start and at its end (tools/gate.py: source_identity), on a clean
+    checkout: its second status, against a fresh index read from HEAD, hashes every tracked file. `repository
+    index` is its first status alone, which trusts the repository index's stat data (fix-fsmonitor-gate)."""
+    from tools import gate
+    env = gate.gate_environment(tmp_path / "scratch")
+    with ChildCPU() as fresh:
+        _, dirty = gate.source_identity(env)
+    assert dirty is False, "a dirty checkout stops at the first status: measure on a clean one"
+    record("fresh index", fresh.seconds)
+    git = ["git", "--no-optional-locks", "-c", "core.fsmonitor=false", "-c", "core.untrackedCache=false"]
+    with ChildCPU() as stat:
+        subprocess.run([*git, "status", "--porcelain", "--untracked-files=all"], cwd=ROOT, env=env,
+                       capture_output=True, check=True, timeout=HANG_TIMEOUT)
+    record("repository index", stat.seconds)

@@ -103,8 +103,9 @@ def discourseKey (format : String) : List String := if format == "ve-document@2"
 def allowedMetadata (format : String) : List String :=
   (metadataKeys.filter (·.2)).map Prod.fst ++ discourseKey format
 
-/-- Every key Python's `_split` allows. -/
-def documentMetadata (format : String) : List String := metadataKeys.map Prod.fst ++ discourseKey format
+/-- Every key Python's `_split` allows: the metadata keys, `senses` (a `ve-document@1` document's, read by the senses
+route) and the discourse key. -/
+def documentMetadata (format : String) : List String := metadataKeys.map Prod.fst ++ ["senses"] ++ discourseKey format
 
 /-- `front_matter`'s first steps: the byte budget, the opening line and the closing boundary; the front-matter
 text and the body text. -/
@@ -171,9 +172,14 @@ def documentId (j : Json) : Except String String := do
   VE.CertificateWire.digest (format ++ "\n") (Json.mkObj [("metadata", identityMetadata (metaOf j)),
     ("source", .str (sourceOf j)), ("fences", j.getObjValD "fences")])
 
-/-- `source_id`: sha256("ve-source-<identity version>\n" + source) under the base profiles. -/
+/-- `source_id`: sha256("ve-source-<identity version>\n" + source), under an identity version (Python's
+`Environment.identity_version`). -/
+def sourceIdOf (version : String) (source : String) : String :=
+  VE.CertificateWire.sha256 (("ve-source-" ++ version ++ "\n" ++ source).toUTF8)
+
+/-- `source_id` under the base profiles. -/
 def sourceId (profiles : List String) (source : String) : String :=
-  VE.CertificateWire.sha256 (("ve-source-" ++ VE.Route.Wire.identityVersion profiles ++ "\n" ++ source).toUTF8)
+  sourceIdOf (VE.Route.Wire.identityVersion profiles) source
 
 /-! ## The front matter -/
 
@@ -231,9 +237,13 @@ def spanOf (j : Json) : Except String (Nat × Nat) := do
   | [a, b] => pure (← a.getNat?, ← b.getNat?)
   | _ => throw "unit spans must partition every source byte in order"
 
-/-- The byte range `[a, b)` of the source is whole UTF-8 characters. -/
+/-- The byte range `[a, b)` of the source's bytes is not whole UTF-8 characters. -/
+def cutsBytes (bytes : ByteArray) (a b : Nat) : Bool :=
+  (String.fromUTF8? (bytes.extract a b)).isNone
+
+/-- The byte range `[a, b)` of the source is not whole UTF-8 characters. -/
 def cutsCharacter (source : String) (a b : Nat) : Bool :=
-  (String.fromUTF8? (source.toUTF8.extract a b)).isNone
+  cutsBytes source.toUTF8 a b
 
 /-- `load_document`'s unit checks, in order, for one unit at byte `cursor`. -/
 def compileUnit (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (envId : String)
