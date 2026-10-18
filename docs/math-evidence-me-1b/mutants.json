@@ -1,0 +1,82 @@
+[
+  {
+    "file": "lean/VE/Calc/Syntax.lean",
+    "behaviour": "Denotes: division needs a nonzero divisor (the mutant asks it of the dividend)",
+    "mutation": "| div {a b x y} : Denotes σ a x → Denotes σ b y → y ≠ 0 → Denotes σ (.div a b) (x / y)  ->  | div {a b x y} : Denotes σ a x → Denotes σ b y → x ≠ 0 → Denotes σ (.div a b) (x / y); the proofs it breaks (Expr.eval_sound, Denotes.eval_complete, Expr.evalL_causes) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (example at Examples.lean:190 and the not-Defined example at 220 (a zero divisor has no meaning))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:190:40, 220:40 (exact hne rfl: hne is now 1 ≠ 0)"
+  },
+  {
+    "file": "lean/VE/Calc/Syntax.lean",
+    "behaviour": "Claim.Defined: every expression of the claim has a value",
+    "mutation": "∀ e ∈ c.exprs, ∃ q, Denotes σ e q  ->  ∀ e ∈ c.exprs.tail, ∃ q, Denotes σ e q; the proofs it breaks (Claim.decide_undefined, Claim.run_decided) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (examples at Examples.lean:210-221 (a claim is defined exactly when both sides have a value))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:213:17, 218:48"
+  },
+  {
+    "file": "lean/VE/Calc/Syntax.lean",
+    "behaviour": "Claim.Holds: within is inclusive at its lower end",
+    "mutation": "Denotes σ hi h ∧ l ≤ x ∧ x ≤ h  ->  Denotes σ hi h ∧ l < x ∧ x ≤ h; the proofs it breaks (Claim.decide_holds) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (example at Examples.lean:198-199 (within 1 from 1 through 1 holds))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:199:33 (decide proved 1 < 1 false)"
+  },
+  {
+    "file": "lean/VE/Calc/Eval.lean",
+    "behaviour": "Claim.tieSensitive: both tie rules are tie sensitive",
+    "mutation": "| .rounds .tiesUp e p | .rounds .halfEven e p => match e.eval σ with  ->  | .rounds .tiesUp e p => match e.eval σ with",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:57 (27/200 under half to even is tie sensitive))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:57:0"
+  },
+  {
+    "file": "lean/VE/Calc/Decls.lean",
+    "behaviour": "the digit limit is 4,096 digits",
+    "mutation": "def maxDigits : Nat := 4096  ->  def maxDigits : Nat := 4095",
+    "test": "lake build VE.Calc.Examples (#guards at Examples.lean:127-141 (the digit limit at limit - 1, limit and limit + 1))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:127:0, 129:0, 130:0, 132:0, 135:0, 137:0, 141:0"
+  },
+  {
+    "file": "lean/VE/Calc/Decls.lean",
+    "behaviour": "Decl.valueUnder: a counted value means its thunk's value",
+    "mutation": "| .counted q _ => q.get  ->  | .counted _ _ => none; the proofs it breaks (values_counted, Decl.valL_agrees) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (#guards at Examples.lean:158-167 (a counted value on both paths))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:158:0, 160:0, 162:0, 166:0, 167:0"
+  },
+  {
+    "file": "lean/VE/Calc/Decls.lean",
+    "behaviour": "Decl.valL: an exhausted count is an evaluation-budget unknown",
+    "mutation": "| .counted _ .exhausted => .exhausted  ->  | .counted _ .exhausted => .undefined; the proofs it breaks (Decl.valL_agrees) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (#guards at Examples.lean:171-174 (an exhausted count is unknown by the evaluation limit))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:171:0, 172:0, 174:0"
+  },
+  {
+    "file": "lean/VE/Calc/Decls.lean",
+    "behaviour": "Claim.run: the first faulty expression in claim order names the outcome",
+    "mutation": "match firstFault (c.exprs.map (Expr.evalL (valuesL ds))) with  ->  match firstFault (c.exprs.reverse.map (Expr.evalL (valuesL ds))) with; the proofs it breaks (Claim.run_decided, Claim.run_unknown) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (#guards at Examples.lean:121-122 and 173-174 (fault order))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:121:0, 122:0, 173:0, 174:0"
+  },
+  {
+    "file": "lean/VE/Calc/Decls.lean",
+    "behaviour": "Expr.Overflows: a read name whose definition overflows",
+    "mutation": "(∃ e' ∈ e.subexprs, ∃ q, Denotes (values ds) e' q ∧ ¬ Small q) ∨\n    ∃ m ∈ e.names, NameOverflows ds m  ->  (∃ e' ∈ e.subexprs, ∃ q, Denotes (values ds) e' q ∧ ¬ Small q); the proofs it breaks (Expr.overflow_lift, Expr.evalL_causes, causes_step) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (examples at Examples.lean:258-281 (Overflows through a read name, NameOverflows .here and .dep))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:259:40, 264:40, 271:4, 276:11, 273:51"
+  },
+  {
+    "file": "lean/VE/Calc/Decls.lean",
+    "behaviour": "findingKind: a source finding needs at least one check",
+    "mutation": "else if checks ≠ [] ∧ checks.all id then .source  ->  else if checks.all id then .source; the proofs it breaks (findingKind_source_iff) are replaced by sorry for the mutant, so only the fixtures can catch it",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:179 (V-13: no checks is transcriptionUnchecked))",
+    "result": "failed; restored",
+    "observed": "error: VE/Calc/Examples.lean:179:0"
+  }
+]
