@@ -705,6 +705,13 @@
    "reason": "me-1b Calc meaning and checker: VE/Calc/Decls.lean S +70, VE/Calc/Syntax.lean S +37, VE/Calc/Eval.lean +0 (K +0, V +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1b, 2026-10-17",
    "commit": "05b85b631f8071fafac690f57c5f23f810168657"
+  },
+  {
+   "class": "V",
+   "lines": 78,
+   "reason": "pk-1: VE/NormDefaults/Packs.lean +73, VE/NormDefaults/Layered.lean +5 (K +0, S +0, V +78)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1, 2026-10-18",
+   "commit": "93131f967bb3ad87674c214b19347986f33c79b2"
   }
  ]
 }
