@@ -8,7 +8,8 @@ Usage::
     tools/lean_first_diff.py prewarm --commit SHA --cache DIR [--workers N]
 
 ``--cache`` (default ``$VE_AB_CACHE``; unset: off) reuses a (corpus, authority) segment recorded before for the same
-clean commit, Lean build key, recorder, corpus inputs and environment, and stores the segments it records;
+clean commit, Lean build key, checker builds, recorder, corpus inputs and environment, and stores the segments it
+records;
 ``prewarm`` records a commit into the cache (`tools/lean_first_cache.py`). ``compare`` never reads the cache.
 
 ``record`` imports the `ve` package of the checkout at ``--root`` (its sources and its Lean and
