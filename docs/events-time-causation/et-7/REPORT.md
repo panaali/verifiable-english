@@ -223,3 +223,7 @@ restored; run before the comment-only trims of adaf64688, same code):
 
 Checks: `lake build` and `python3 lean/audit.py` pass (540 sources, 6,281 theorems); `tools/regen_generated.py
 --check` passes (31 entries); `tools/trust_map.py --check` passes; `review-ready.py --delta-dri-needed`: no row.
+Selected tests (`mac-pytest.sh --select`, ve-mac-1) on HEAD `de2fb145`: 365 units, 0 failed (an earlier run on
+`e764fb63` failed `tools/test_layer_policy.py` and `test_consolidation_tools.py::test_committed_ledger_names_real_declarations`,
+both from this fix, fixed in 7e55d4e42 and rerun). No test of main-known-red.txt was hit. The full gate is the
+chain's, on the final HEAD.
