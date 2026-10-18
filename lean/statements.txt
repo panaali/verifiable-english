@@ -2939,6 +2939,21 @@ theorem VE.Cardinality.Examples.entails_cases
           (VE.Cardinality.CFormula.count (VE.Cardinality.atMostAtom "user" VE.Cardinality.Body.any 1))
   -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.atLeastAtom@VE.Cardinality.Theorems VE.Cardinality.atMostAtom@VE.Cardinality.Theorems VE.Cardinality.exactlyAtom@VE.Cardinality.Theorems
   -- expr 3526381808
+theorem VE.Cardinality.Examples.erase_two
+  VE.Time.QFormula.tdenote
+      (VE.Cardinality.withRegions VE.Cardinality.Examples.users
+        [VE.Cardinality.Examples.oneIn1000, VE.Cardinality.Examples.moreThanHalf] VE.Cardinality.Examples.two)
+      []
+      (VE.Cardinality.CFormula.erase VE.Cardinality.Examples.users
+        [VE.Cardinality.Examples.oneIn1000, VE.Cardinality.Examples.moreThanHalf] VE.Cardinality.Examples.oneIn1000) ∧
+    ¬VE.Time.QFormula.tdenote
+        (VE.Cardinality.withRegions VE.Cardinality.Examples.users
+          [VE.Cardinality.Examples.oneIn1000, VE.Cardinality.Examples.moreThanHalf] VE.Cardinality.Examples.two)
+        []
+        (VE.Cardinality.CFormula.erase VE.Cardinality.Examples.users
+          [VE.Cardinality.Examples.oneIn1000, VE.Cardinality.Examples.moreThanHalf] VE.Cardinality.Examples.moreThanHalf)
+  -- uses VE.Cardinality.CFormula.erase@VE.Cardinality.Erase VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.moreThanHalf@VE.Cardinality.Examples VE.Cardinality.Examples.oneIn1000@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QFormula.tdenote@VE.Time.Semantics
+  -- expr 4155899061
 theorem VE.Cardinality.Examples.everyone_two
   ∀ (r : VE.Cardinality.Rel) (k : Int),
     VE.Cardinality.CountAtom.holds VE.Cardinality.Examples.two
