@@ -1488,6 +1488,12 @@
 'VE.Judgments.opensIn_isEmpty' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_names' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_refuse' depends on axioms: [propext]
+'VE.Layout.continues_iff' depends on axioms: [propext, Quot.sound]
+'VE.Layout.indexOf_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Layout.listRun_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Layout.listRun_ok' depends on axioms: [propext]
+'VE.Layout.listRun_ok_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Layout.mem_runFrom' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.Admission.admitDocumentX_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.Admission.admitDocument_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.Admission.admitNodesX_ok' depends on axioms: [propext, Quot.sound]
@@ -4950,6 +4956,28 @@
 'VE.Route.sat_checked' depends on axioms: [propext, Quot.sound]
 'VE.Route.tableauValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.verifyOrder_sound' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.bold_labels' does not depend on any axioms
+'VE.Scope.Examples.byte_tests' does not depend on any axioms
+'VE.Scope.Examples.depth_bound' does not depend on any axioms
+'VE.Scope.Examples.markers' does not depend on any axioms
+'VE.Scope.Examples.own_binder' does not depend on any axioms
+'VE.Scope.Examples.para_counts' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.short_layout' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.short_run' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.unordered_join' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.firstKeys_mem' depends on axioms: [propext, Quot.sound]
+'VE.Scope.hasOwn_mono' depends on axioms: [propext, Quot.sound]
+'VE.Scope.impl_map_eq' depends on axioms: [propext, Quot.sound]
+'VE.Scope.lookups_absent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.lookups_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.members_obj' does not depend on any axioms
+'VE.Scope.mergeParts_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.mergeParts_keys' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.mkObj_getObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.substOwn_id' depends on axioms: [propext, Quot.sound]
+'VE.Scope.substOwn_id_le' depends on axioms: [propext, Quot.sound]
+'VE.Scope.substOwn_no_own' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.substOwn_no_own_le' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SearchBudget.chain_denote' depends on axioms: [propext, Quot.sound]
 'VE.SearchBudget.conjuncts_denote' depends on axioms: [propext]
 'VE.SearchBudget.demand_sound' depends on axioms: [propext, Quot.sound]
