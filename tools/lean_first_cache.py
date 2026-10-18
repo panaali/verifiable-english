@@ -17,12 +17,16 @@ stores each segment it recorded. The key (`root_key` and `segment_key`) names wh
 - `corpus`, `authority` and `corpus_sha256`: the segment, and the digest of the inputs its records read (`sources`:
   the corpus files and pilot documents whose digests the records carry, and the files a pilot document names beside it).
 - `env`: every `VE_*` variable but the cache and build-store locations and the test runner's own (`UNKEYED`).
+- `checkers`: the SHA-256 of every checker a recording in the root can run (`checker_builds`): each executable of its
+  Lean build (`lean/.lake/build/bin`), and the `ve_service` and Rust binaries it runs (`CHECKERS`; the environment may
+  name them elsewhere). The builds, not their paths or the commit: a root checked out at a new commit but not rebuilt
+  records with its old checkers, so its segments are keyed by them and no rebuilt root reads them (review F1).
 
 An entry `<cache>/v1/<SHA-256 of the key>/` holds `segment.jsonl` and `meta.json` (the key, the segment's SHA-256 and
-line count, the checkers it was recorded with, when and where). The recording's scratch path (`<out>` without its
+line count, when and where). The recording's scratch path (`<out>` without its
 suffix, which a pilot diagnostic may quote) is stored as `SCRATCH` and given back as the reader's own. A segment is
-stored only when the root is clean, the recording exited 0, the key is the same after the recording as before, the
-checkers it ran are builds the root's lock pins, and it passes every check a hit must pass; it is written to a
+stored only when the root is clean, the recording exited 0, the key is the same after the recording as before (so the checkers
+are the builds it was keyed with), the `ve_service` and Rust builds are ones the root's lock pins, and it passes every check a hit must pass; it is written to a
 temporary directory (files 0644) and renamed into place, and an entry is never rewritten. `prewarm` first removes the
 entries not stored or used for `KEEP_DAYS` days.
 
@@ -58,7 +62,8 @@ RECORDER = ("tools/lean_first_diff.py", "tools/lean_first_cache.py", "uv.lock")
 UNKEYED = ("VE_AB_CACHE", "VE_LEAN_SHARE", "VE_TEST_")
 SCRATCH = "<ab-scratch>"
 KEEP_DAYS = 3  # `prewarm` removes the entries not stored or used for this long
-CHECKERS = (("ve_service", "VE_LEAN_SERVICE", "lean/.lake/build/bin/ve_service"),
+LEAN_BIN = "lean/.lake/build/bin"
+CHECKERS = (("ve_service", "VE_LEAN_SERVICE", f"{LEAN_BIN}/ve_service"),
             ("rust_jsonl", "VE_RUST_JSONL", "rust/target/release/ve"))
 
 
@@ -72,6 +77,13 @@ def _sha256(data: bytes) -> str:
 
 def _json_sha256(value) -> str:
     return _sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode())
+
+
+def _file_sha256(path: Path) -> str | None:
+    if not path.is_file():
+        return None
+    with path.open("rb") as handle:
+        return hashlib.file_digest(handle, "sha256").hexdigest()
 
 
 def say(text: str) -> None:
@@ -96,7 +108,20 @@ def root_key(root: Path) -> dict:
     env = {name: value for name, value in sorted(os.environ.items())
            if name.startswith("VE_") and not name.startswith(UNKEYED)}
     return {"format": FORMAT, "commit": git("rev-parse", "HEAD").strip(), "lean_build": lean,
-            "recorder": recorder, "python": sys.version, "env": env}
+            "recorder": recorder, "python": sys.version, "env": env, "checkers": checker_builds(root)}
+
+
+def checker_builds(root: Path) -> dict:
+    """{checker: SHA-256, None when absent} of every checker a recording in `root` can run: `lean/<name>` for each
+    executable file of its Lean build, and each of `CHECKERS` where the recording finds it."""
+    found = {}
+    directory = root / LEAN_BIN
+    for path in sorted(directory.iterdir()) if directory.is_dir() else ():
+        if path.is_file() and os.access(path, os.X_OK):
+            found[f"lean/{path.name}"] = _file_sha256(path)
+    for name, variable, default in CHECKERS:
+        found[name] = _file_sha256(Path(os.environ.get(variable) or root / default))
+    return found
 
 
 def segment_key(shared: dict, corpus: str, authority: str, corpus_sha256: str) -> dict:
@@ -192,22 +217,18 @@ def _read(entry: Path, key: dict, source_of, out: Path) -> str:
     return text
 
 
-def pinned_checkers(root: Path) -> dict:
-    """The digests of the checkers a recording in `root` runs; Miss unless `root`'s lock pins each."""
+def pinned_checkers(root: Path, builds: dict) -> None:
+    """Miss unless `root`'s lock pins each of `CHECKERS` in `builds` (`checker_builds`)."""
     try:
         lock = json.loads((root / "lean/checkers.lock").read_text())
     except (OSError, ValueError) as exc:
         raise Miss(f"no readable lock in {root}: {exc}") from None
-    found = {}
     for name, variable, default in CHECKERS:
-        path = Path(os.environ.get(variable) or root / default)
-        found[name] = _sha256(path.read_bytes()) if path.is_file() else None
-        if found[name] is None or found[name] not in lock.get(name, ()):
-            raise Miss(f"{path} is not a {name} build {root}'s lock pins")
-    return found
+        if builds.get(name) is None or builds[name] not in lock.get(name, ()):
+            raise Miss(f"{os.environ.get(variable) or root / default} is not a {name} build {root}'s lock pins")
 
 
-def store(cache: Path, key: dict, text: str, out: Path, checkers: dict) -> Path:
+def store(cache: Path, key: dict, text: str, out: Path) -> Path:
     """Store a checked segment under `key` (module docstring); the entry. An entry is never rewritten."""
     entry = cache / "v1" / _json_sha256(key)
     if entry.is_dir():
@@ -221,7 +242,7 @@ def store(cache: Path, key: dict, text: str, out: Path, checkers: dict) -> Path:
         (scratch / "segment.jsonl").write_bytes(data)
         meta = {"format": FORMAT, "key": key, "sha256": _sha256(data), "records": data.count(b"\n"),
                 "unavailable": sum(diff._unavailable(json.loads(line)["outcome"]) for line in text.split("\n")[:-1]),
-                "checkers": checkers, "stored": {"at": datetime.datetime.now(datetime.timezone.utc).isoformat(
+                "stored": {"at": datetime.datetime.now(datetime.timezone.utc).isoformat(
                     timespec="seconds"), "host": platform.node(), "load": list(os.getloadavg())}}
         (scratch / "meta.json").write_text(json.dumps(meta, indent=1, sort_keys=True) + "\n")
         for path in (scratch / "segment.jsonl", scratch / "meta.json"):
@@ -290,14 +311,14 @@ def record(args, cache: Path) -> int:
         try:
             if root_key(root) != shared:
                 raise Miss(f"{root}, its Lean build, the recorder or the environment changed while recording")
-            checkers = pinned_checkers(root)
+            pinned_checkers(root, shared["checkers"])
         except Miss as exc:
             say(f"nothing stored: {exc}")
             return 0
         for segment in missed:
             try:
                 check(texts.get(segment, ""), *segment, keys[segment][1])
-                say(f"stored {'/'.join(segment)} in {store(cache, keys[segment][0], texts[segment], out, checkers)}")
+                say(f"stored {'/'.join(segment)} in {store(cache, keys[segment][0], texts[segment], out)}")
             except Miss as exc:
                 say(f"not stored {'/'.join(segment)}: {exc}")
     return 0
