@@ -9058,6 +9058,86 @@ theorem VE.EvaluationCounts.route_decodeFormulas_length
     VE.Route.Wire.decodeFormulas E j data = Except.ok fs → ∃ arr, j.getArr? = Except.ok arr ∧ fs.length = arr.size
   -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
   -- expr 761532944
+theorem VE.Events.calendar_sat
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.EventsTyped E V = Bool.true →
+      ∀ (S : VE.Structure),
+        S.Admissible E →
+          ∀ (num : S.Carrier → Nat), VE.Events.Embeds V S num → VE.Norms.Sat S (VE.Events.calendarPremises V)
+  -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.calendarPremises@VE.Events.Premises VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3100720044
+theorem VE.Events.chain_head
+  ∀ {β : Type} (R : β → β → Prop),
+    (∀ (a b c : β), R a b → R b c → R a c) →
+      ∀ (rest : List β) (a : β), (∀ (p : β × β), p ∈ (a :: rest).zip rest → R p.fst p.snd) → ∀ (b : β), b ∈ rest → R a b
+  -- uses
+  -- expr 3935398892
+theorem VE.Events.chain_positions
+  ∀ {β : Type} (R : β → β → Prop),
+    (∀ (a b c : β), R a b → R b c → R a c) →
+      ∀ (l : List β),
+        (∀ (p : β × β), p ∈ l.zip l.tail → R p.fst p.snd) → ∀ (x : β), x ∈ l → ∀ (y : β), y ∈ l → x = y ∨ R x y ∨ R y x
+  -- uses
+  -- expr 3525567212
+theorem VE.Events.datesOrder_calendar
+  ∀ (D D' : VE.Time.Civil), D.Proper → D'.Proper → (D.num < D'.num ↔ D.Before D')
+  -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
+  -- expr 2318035738
+theorem VE.Events.datesOrder_iff
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.EventsTyped E V = Bool.true →
+      ∀ (S : VE.Structure),
+        S.Admissible E →
+          VE.Norms.Sat S (VE.Events.calendarPremises V) →
+            ∀ (D D' : VE.Time.Civil),
+              D ∈ V.dates →
+                D' ∈ V.dates →
+                  (VE.Formula.denote S [] (VE.Formula.binary V.before (VE.Events.dateConst D) (VE.Events.dateConst D')) ↔
+                    D.num < D'.num)
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.before@VE.Events.Decl VE.Events.EventsEnv.dates@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.calendarPremises@VE.Events.Premises VE.Events.dateConst@VE.Events.Decl VE.Formula.binary@VE.Syntax VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
+  -- expr 338511599
+theorem VE.Events.dayExtension_transfer
+  ∀ (day : String) (ng : List String) (M : VE.Structure) (S : VE.Structure) (ι : M.Carrier → S.Carrier),
+    VE.Events.DayExtension day ng M S ι →
+      ∀ (a : VE.Formula) (ρ : List M.Carrier),
+        (VE.Events.up day ng a = Bool.true → VE.Formula.denote M ρ a → VE.Formula.denote S (List.map ι ρ) a) ∧
+          (VE.Events.down day ng a = Bool.true → VE.Formula.denote S (List.map ι ρ) a → VE.Formula.denote M ρ a)
+  -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.down@VE.Events.Completion VE.Events.up@VE.Events.Completion VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3827354477
+theorem VE.Events.hits_vacuous
+  ∀ {day : String} {ng : List String} {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
+    VE.Events.DayExtension day ng M S ι →
+      ∀ (a : VE.Formula) (k : Nat) (σ : List S.Carrier) (y : S.Carrier),
+        σ[k]? = Option.some y →
+          (∀ (x : M.Carrier), ι x ≠ y) →
+            (VE.Events.hits ng k a = Bool.true → ¬VE.Formula.denote S σ a) ∧
+              (VE.Events.vacuous ng k a = Bool.true → VE.Formula.denote S σ a)
+  -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.hits@VE.Events.Completion VE.Events.vacuous@VE.Events.Completion VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2014742688
+theorem VE.Events.isConst_eq
+  ∀ {t : VE.Term}, VE.Events.isConst t = Bool.true → ∃ c, t = VE.Term.const c
+  -- uses VE.Events.isConst@VE.Events.Completion VE.Term.const@VE.Syntax VE.Term@VE.Syntax
+  -- expr 333779698
+theorem VE.Events.isVar_eq
+  ∀ {k : Nat} {t : VE.Term}, VE.Events.isVar k t = Bool.true → t = VE.Term.var k
+  -- uses VE.Events.isVar@VE.Events.Completion VE.Term.var@VE.Syntax VE.Term@VE.Syntax
+  -- expr 823907366
+theorem VE.Events.mem_dates_of_consecutive
+  ∀ {V : VE.Events.EventsEnv} {p : VE.Time.Civil × VE.Time.Civil},
+    p ∈ VE.Events.consecutive V → p.fst ∈ V.dates ∧ p.snd ∈ V.dates
+  -- uses VE.Events.EventsEnv.dates@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.consecutive@VE.Events.Decl VE.Time.Civil@VE.Time.Calendar
+  -- expr 2258503509
+theorem VE.Events.term_map
+  ∀ {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
+    (∀ (c : String), S.constant c = Option.map ι (M.constant c)) →
+      ∀ (t : VE.Term) (ρ : List M.Carrier), VE.Term.denote S (List.map ι ρ) t = Option.map ι (VE.Term.denote M ρ t)
+  -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax
+  -- expr 1627714130
+theorem VE.Events.unorderedSame_of_order
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
+    VE.Norms.Sat S (VE.Events.orderPremises V) → VE.Formula.denote S [] (VE.Events.unorderedSameF V)
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.orderPremises@VE.Events.Premises VE.Events.unorderedSameF@VE.Events.Premises VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 998155647
 theorem VE.Grammar.BOk.addAll
   ∀ {X : Type} {cap n : Nat} {Pold Pnew : Nat → X → Prop} {e : VE.Grammar.Bucket X} {cands : List (Nat × X)},
     VE.Grammar.BOk cap n Pold e →
