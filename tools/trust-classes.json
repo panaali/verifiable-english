@@ -12209,6 +12209,150 @@
         "phraseJson",
         "relName"
       ]
+    },
+    "VE/Events/Calendar.lean": {
+      "C": [
+        "VE.Events.beforeB",
+        "VE.Events.rank",
+        "VE.Events.dateDay",
+        "VE.Events.namedRank",
+        "VE.Events.strictLinearB",
+        "VE.Events.calendarCheck",
+        "VE.Events.embeddable",
+        "VE.Events.numbering"
+      ],
+      "G[R]": [
+        "VE.Events.daysText"
+      ]
+    },
+    "VE/Events/Completion.lean": {
+      "S": [
+        "VE.Events.DayExtension"
+      ],
+      "C": [
+        "VE.Events.isConst",
+        {
+          "name": "VE.Events.isVar",
+          "tied": [
+            "VE.Events.isVar_beq"
+          ]
+        },
+        {
+          "name": "VE.Events.hits",
+          "tied": [
+            "VE.Events.hits_vacuous"
+          ]
+        },
+        {
+          "name": "VE.Events.vacuous",
+          "tied": [
+            "VE.Events.hits_vacuous"
+          ]
+        },
+        {
+          "name": "VE.Events.up",
+          "tied": [
+            "VE.Events.dayExtension_transfer"
+          ]
+        },
+        {
+          "name": "VE.Events.down",
+          "tied": [
+            "VE.Events.dayExtension_transfer"
+          ]
+        }
+      ]
+    },
+    "VE/Events/Decl.lean": {
+      "S": [
+        "VE.Events.EventSort",
+        "VE.Events.StateSort",
+        "VE.Events.LinkForm",
+        "VE.Events.Link",
+        "VE.Events.EventsEnv",
+        "VE.Events.dateName",
+        "VE.Events.dateConst",
+        "VE.Events.startRole",
+        "VE.Events.boundRole",
+        "VE.Events.sig2",
+        "VE.Events.consecutive",
+        "VE.Events.EventsTyped",
+        "VE.Events.regenEnv"
+      ],
+      "G[R]": [
+        "VE.Events.maxDates",
+        "VE.Events.eventSorts",
+        "VE.Events.stateSorts",
+        "VE.Events.roleSorts",
+        "VE.Events.rolePreds",
+        "VE.Events.WellFormedEvents"
+      ],
+      "D[R]": [
+        "VE.Events.roleWordingOk",
+        "VE.Events.beforeWording",
+        "VE.Events.linkWording"
+      ]
+    },
+    "VE/Events/Examples.lean": {
+      "T": [
+        "VE.Events.Examples.d",
+        "VE.Events.Examples.base",
+        "VE.Events.Examples.envDay",
+        "VE.Events.Examples.chain",
+        "VE.Events.Examples.firstFailing",
+        "VE.Events.Examples.c12",
+        "VE.Events.Examples.c13",
+        "VE.Events.Examples.c14",
+        "VE.Events.Examples.vT1",
+        "VE.Events.Examples.mT1",
+        "VE.Events.Examples.vT2",
+        "VE.Events.Examples.vT2b",
+        "VE.Events.Examples.mT2b",
+        "VE.Events.Examples.vT3",
+        "VE.Events.Examples.between",
+        "VE.Events.Examples.after12",
+        "VE.Events.Examples.actAfter12",
+        "VE.Events.Examples.c21",
+        "VE.Events.Examples.c27",
+        "VE.Events.Examples.inProgress",
+        "VE.Events.Examples.throughout",
+        "VE.Events.Examples.vEv",
+        "VE.Events.Examples.envEv",
+        "VE.Events.Examples.sit",
+        "VE.Events.Examples.vT13",
+        "VE.Events.Examples.confirmedBefore",
+        "VE.Events.Examples.mT13",
+        "VE.Events.Examples.vR1"
+      ]
+    },
+    "VE/Events/Premises.lean": {
+      "S": [
+        "VE.Events.bin",
+        "VE.Events.irreflexiveF",
+        "VE.Events.transitiveF",
+        "VE.Events.linearF",
+        "VE.Events.dateFactF",
+        "VE.Events.adjacentF",
+        "VE.Events.oneRoleF",
+        "VE.Events.notBeforeBeginF",
+        "VE.Events.linkForwardF",
+        "VE.Events.linkWeakerF",
+        "VE.Events.weakerPairs",
+        "VE.Events.calendarLabelled",
+        "VE.Events.conventionLabelled",
+        "VE.Events.eventsLabelled",
+        "VE.Events.orderPremises",
+        "VE.Events.calendarPremises",
+        "VE.Events.conventionPremises",
+        "VE.Events.eventsX",
+        "VE.Events.Embeds"
+      ],
+      "G[I]": [
+        "VE.Events.isoPair"
+      ],
+      "P": [
+        "VE.Events.unorderedSameF"
+      ]
     }
   }
 }
