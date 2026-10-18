@@ -63,7 +63,7 @@ def fomc : CEnv where
          predicates := fun p => if p == inc || p == stay then some [.obj pm]
            else if p == "curious" then some [.obj "user"]
            else if p == "advises" then some [.obj pm, .obj pm] else none,
-         constants := fun c => if c == "cardinality__fomc_policymaker__0" then some (.qty dl) else none }
+         constants := fun _ => none }
   finite := [pm]
 
 def isInc : QFormula := .unary inc (.var 0)
@@ -182,17 +182,21 @@ def manyQ (k : Nat) : QFormula := .all pm ((List.range k).foldr (fun i b => .and
 
 /-! ## FA9a: a declared constant spelled like a region constant -/
 
--- `fomc` declares `cardinality__fomc_policymaker__0`, so it is not `WellFormed` and the decoder refuses it (QT-A3).
--- Without that check, "the constant is 5" holds on the model and fails on its erasure, which overwrites the
--- constant with its region's size 0: `erase_iff` needs `WellFormed`.
+/-- `fomc` with a declared constant spelled like a region constant: not `WellFormed`, so the decoder refuses it
+(QT-A3). Without that check, "the constant is 5" holds on the model and fails on its erasure, which overwrites the
+constant with its region's size 0: `erase_iff` needs `WellFormed`. -/
+def colliding : CEnv :=
+  { fomc with q := { fomc.q with
+      constants := fun c => if c == "cardinality__fomc_policymaker__0" then some (.qty dl) else none } }
 def collide : CFormula := .quantity (.eq (.const dl "cardinality__fomc_policymaker__0") (.num dl 5))
 def collideModel : VE.Order.FiniteModel Nat :=
   { rowsModel pm [([inc], 2)] with
     constants := fun c => if c == "cardinality__fomc_policymaker__0" then some (.inr 5) else none }
-#guard (regionTable fomc [collide, .count (exactlyAtom pm (.atom inc) 2)]).map (·.1) =
+#guard [collide, .count (exactlyAtom pm (.atom inc) 2)].all (·.admits colliding)
+#guard (regionTable colliding [collide, .count (exactlyAtom pm (.atom inc) 2)]).map (·.1) =
   ["cardinality__fomc_policymaker__0", "cardinality__fomc_policymaker__1"]
 #guard holdsFin collideModel collide
-#guard !erasedFin fomc [collide, .count (exactlyAtom pm (.atom inc) 2)] collideModel collide
+#guard !erasedFin colliding [collide, .count (exactlyAtom pm (.atom inc) 2)] collideModel collide
 
 /-! ## FA9c, FA10: an empty population -/
 
@@ -234,5 +238,30 @@ example : ¬ moreThanHalf.holds two := by
   simp [Cmp.holds] at h
 
 example : oneIn1000.holds two := ⟨2, 1, two_all, two_some, by omega, by simp [Cmp.holds]⟩
+
+-- The decoder's freshness test (`WellFormed.fresh`) fails on `colliding`'s constant.
+#guard "cardinality__fomc_policymaker__0".startsWith regionPrefix
+
+example : users.WellFormed :=
+  ⟨by simp [users, fomc], by intro c τ h; simp [users, fomc] at h⟩
+
+theorem two_admissible : Admissible users two := by
+  refine ⟨⟨by simp [users, fomc], ?_⟩, fun s _ => ⟨if s = "user" then [0, 1] else [], fun x => ?_⟩⟩
+  · rintro p vs ⟨rfl, rfl⟩
+    exact ⟨[.obj "user"], by simp [users, fomc, inc, stay], by simp [two, VE.Time.TTuple, VE.Time.TValue.Typed]⟩
+  · by_cases hs : s = "user" <;> simp [two, hs] <;> omega
+
+-- "At least 0 users" follows from no premises; "at most 1 user" fails on `two`.
+example : CEntails users [] (.count (atLeastAtom "user" .any 0)) := by
+  intro α T hT _
+  obtain ⟨n, hn, -⟩ := hasCount_exists_unique users T hT "user" (by simp [users]) .any
+  exact ⟨[n], ⟨hn, trivial⟩, by simp [atLeastAtom, Rel.holds]⟩
+
+example : ¬ (CFormula.count (atMostAtom "user" .any 1)).holds two := by
+  rintro ⟨ns, hc, h⟩
+  match ns, hc with
+  | [n], ⟨hn, _⟩ =>
+    rw [hasCount_unique hn two_all] at h
+    simp [atMostAtom, Rel.holds] at h
 
 end VE.Cardinality.Examples

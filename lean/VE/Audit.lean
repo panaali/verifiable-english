@@ -745,6 +745,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.values_stated
 #print axioms VE.Cardinality.CEnv.WellFormed.finiteDeclared
 #print axioms VE.Cardinality.CEnv.WellFormed.fresh
+#print axioms VE.Cardinality.Examples.two_admissible
 #print axioms VE.Cardinality.Examples.two_all
 #print axioms VE.Cardinality.Examples.two_some
 #print axioms VE.Cardinality.admits_complete

@@ -389,6 +389,7 @@
 'VE.Calc.values_stated' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.CEnv.WellFormed.finiteDeclared' depends on axioms: [propext]
 'VE.Cardinality.CEnv.WellFormed.fresh' depends on axioms: [propext]
+'VE.Cardinality.Examples.two_admissible' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Examples.two_all' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Examples.two_some' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.admits_complete' depends on axioms: [propext, Classical.choice, Quot.sound]
