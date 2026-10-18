@@ -5409,6 +5409,7 @@ import VE.WireContract.Engine
 #print axioms VE.Route.sat_checked
 #print axioms VE.Route.tableauValid_certificateSound
 #print axioms VE.Route.verifyOrder_sound
+#print axioms VE.Scales.Examples.fb2_refuted
 #print axioms VE.Scales.Examples.intended_of
 #print axioms VE.Scales.Examples.order_cases
 #print axioms VE.Scales.Examples.symbols_cases

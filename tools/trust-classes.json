@@ -8951,7 +8951,14 @@
         "VE.Scales.Examples.shared",
         "VE.Scales.Examples.manyGrades",
         "VE.Scales.Examples.graveOnly",
-        "VE.Scales.Examples.ghost"
+        "VE.Scales.Examples.ghost",
+        "VE.Scales.Examples.base",
+        "VE.Scales.Examples.setAt",
+        "VE.Scales.Examples.roleName",
+        "VE.Scales.Examples.roleUnaries",
+        "VE.Scales.Examples.roleVocab",
+        "VE.Scales.Examples.roleWf",
+        "VE.Scales.Examples.rolePairs"
       ]
     },
     "VE/SearchBudget/Budget.lean": {

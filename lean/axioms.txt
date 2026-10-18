@@ -5043,6 +5043,7 @@
 'VE.Route.sat_checked' depends on axioms: [propext, Quot.sound]
 'VE.Route.tableauValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.verifyOrder_sound' depends on axioms: [propext, Quot.sound]
+'VE.Scales.Examples.fb2_refuted' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scales.Examples.intended_of' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scales.Examples.order_cases' depends on axioms: [propext, Quot.sound]
 'VE.Scales.Examples.symbols_cases' does not depend on any axioms

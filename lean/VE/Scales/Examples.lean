@@ -55,11 +55,12 @@ def fb1Facts : List Formula :=
   [u "gives_serious_uplift" "r1", b "gives_more_uplift" "r2" "r1", .not (u "gives_serious_uplift" "r2")]
 def fb1Lower : List Formula := [u "minor_harm" "r1", b "more_harmful" "r1" "r2", .not (u "minor_harm" "r2")]
 
-/-- A premise's body at a valuation (`var 0` is `y`, `var 1` is `x`). -/
+/-- A premise's body at a valuation (`var 0` is `y`, `var 1` is `x`); `true` when the label or the shape
+misses, so a guard that needs the body false cannot pass vacuously. -/
 def bodyAt (d : Dimension) (label : String) (ρ : List Entity) (M : ModelData) : Bool :=
   match (premises d).find? (·.1 == label) with
   | some (_, .all _ (.all _ φ)) => φ.eval M.toModel ρ
-  | _ => false
+  | _ => true
 
 #guard WellFormed resp.environment ots ⟨[uplift]⟩ && WellFormed resp.environment ots ⟨[harm]⟩
 #guard (premises uplift).map (·.1) == ["uplift/irreflexive", "uplift/transitive", "uplift/gives_serious_uplift/closed"]
@@ -96,6 +97,35 @@ def ends : List String := ["fully_corrigible", "fully_autonomous"]
   count (dispModels (ends ++ ["d3"])) (aboveTop :: between :: prem autonomy)) == (1, 0)
 #guard [ends, ends ++ ["d3"]].all fun ns => (count (dispModels ns) (endpoint :: between :: prem autonomy),
   count (dispModels ns) (aboveTop :: endpoint :: between :: prem autonomy)) == (1, 0)
+
+/-- FB2's refutation, over every admissible structure rather than the counted models: with the endpoint
+premise, the "between" facts and the premises, no disposition is more autonomous than fully autonomous.
+Such a disposition is fully autonomous (irreflexive), fully corrigible (transitive through the endpoint
+premise) or another one, which lies below fully autonomous (transitive through "between"). -/
+theorem fb2_refuted :
+    Entails disp.environment (endpoint :: between :: (scalePremises ⟨[autonomy]⟩).map (·.2)) (.not aboveTop) := by
+  intro S hS hall ⟨x, hx, v, w, hv, hw, hr⟩
+  have hI : Intended S autonomy :=
+    (premises_iff_intended disp.environment [] ⟨[autonomy]⟩ (by decide) S hS).mp
+      (fun a ha => hall a (List.mem_cons_of_mem _ (List.mem_cons_of_mem _ ha))) autonomy (by simp)
+  obtain ⟨a, b, ha, hb, hab⟩ := hall endpoint (by simp)
+  have hbt := hall between (by simp)
+  obtain ⟨a', ha', hda⟩ := hS.1 "fully_autonomous" "disposition" (by decide)
+  obtain ⟨b', hb', hdb⟩ := hS.1 "fully_corrigible" "disposition" (by decide)
+  simp only [Term.denote, c, ha', hb', List.getElem?_cons_zero, Option.some.injEq] at hv hw ha hb
+  subst hv hw ha hb
+  have hmore : autonomy.more = "more_autonomous" := rfl
+  rw [← hmore] at hr hab
+  by_cases hxa : x = a'
+  · subst hxa; exact hI.irrefl _ hx hr
+  by_cases hxb : x = b'
+  · subst hxb; exact hI.irrefl _ hx (hI.trans _ _ _ hx hda hx hr hab)
+  obtain ⟨-, ⟨a₁, x₁, ha₁, hx₁, hax⟩⟩ := hbt x hx
+    ⟨fun ⟨_, h₁, h₂⟩ => hxb (by simp_all [Term.denote, c]), fun ⟨_, h₁, h₂⟩ => hxa (by simp_all [Term.denote, c])⟩
+  simp only [Term.denote, c, ha', List.getElem?_cons_zero, Option.some.injEq] at ha₁ hx₁
+  subst ha₁ hx₁
+  rw [← hmore] at hax
+  exact hI.irrefl _ hx (hI.trans _ _ _ hx hda hx hr hax)
 
 /-! FB3 (u0043.s01): "different levels of trust" is the reading set {not all the same; pairwise
 different}; a model with Anthropic and operators equally trusted, users less, distinguishes them. -/
@@ -230,5 +260,45 @@ def ghost : Vocabulary := ⟨["response"], resp.predicates ++ [("ghost_more", ["
 #guard !wf [uplift, { harm with more := "gives_more_uplift" }]
 #guard !WellFormed ghost.environment ((List.range 17).map toString) ⟨[manyGrades 17 0]⟩ &&
   WellFormed ghost.environment ((List.range 16).map toString) ⟨[manyGrades 16 0]⟩
+
+/-! One role per predicate, position by position of `Dimension.symbols` (comparative, equative, two graded
+words): each pair of positions of one arity, given one predicate across two dimensions or within one, is
+refused, and the same block with the second position renamed apart is accepted, so each refusal is the
+sharing's. A graded word is unary and the other two binary, so a pair of two arities is the signature
+conjuncts' to refuse. -/
+
+/-- Dimension `i`: comparative `more_i`, equative `same_i`, graded words `grade_i_a` and `grade_i_b`. -/
+def base (i : String) : Dimension := ⟨"dim_" ++ i, "response", "more_" ++ i, some ("same_" ++ i), false,
+  [⟨"grade_" ++ i ++ "_a", .upper⟩, ⟨"grade_" ++ i ++ "_b", .upper⟩], []⟩
+/-- `d` with position `k` of its symbols given to `p`. -/
+def setAt (d : Dimension) : Nat → String → Dimension
+  | 0, p => { d with more := p }
+  | 1, p => { d with same := some p }
+  | k + 2, p => { d with grades := d.grades.set k ⟨p, .upper⟩ }
+/-- The predicate a position shares (`true`) or is renamed apart to (`false`), of the position's arity. -/
+def roleName (k : Nat) (shared : Bool) : String :=
+  (if shared then "shared" else "apart") ++ (if 2 ≤ k then "_grade" else "")
+def roleUnaries : List String := ["grade_1_a", "grade_1_b", "grade_2_a", "grade_2_b", "shared_grade", "apart_grade"]
+def roleVocab : Vocabulary := ⟨["response"],
+  (["more_1", "more_2", "same_1", "same_2", "shared", "apart"].map fun p => (p, ["response", "response"])) ++
+    roleUnaries.map fun p => (p, ["response"]), []⟩
+def roleWf (ds : List Dimension) : Bool := WellFormed roleVocab.environment roleUnaries ⟨ds⟩
+def rolePairs : List (Nat × Nat) := (List.range 4).flatMap fun k =>
+  ((List.range 4).filter fun l => (2 ≤ k) == (2 ≤ l)).map (k, ·)
+
+-- The positions are exactly `Dimension.symbols`: `setAt` changes position k and nothing else.
+#guard (base "1").symbols.length == 4 &&
+  (List.range 4).all fun k => (setAt (base "1") k "x").symbols == (base "1").symbols.set k "x"
+#guard roleWf [base "1"] && roleWf [base "1", base "2"]
+#guard rolePairs.length == 8 && rolePairs.all fun (k, l) =>
+  !roleWf [setAt (base "1") k (roleName k true), setAt (base "2") l (roleName l true)] &&
+  roleWf [setAt (base "1") k (roleName k true), setAt (base "2") l (roleName l false)]
+#guard (rolePairs.filter fun (k, l) => k < l) == [(0, 1), (2, 3)] &&
+  (rolePairs.filter fun (k, l) => k < l).all fun (k, l) =>
+    !roleWf [setAt (setAt (base "1") k (roleName k true)) l (roleName l true)] &&
+    roleWf [setAt (setAt (base "1") k (roleName k true)) l (roleName l false)]
+-- Each dimension's own conjuncts are checked in every position of the block.
+#guard !roleWf [base "1", { base "2" with more := "undeclared" }] &&
+  !roleWf [{ base "1" with more := "undeclared" }, base "2"]
 
 end VE.Scales.Examples

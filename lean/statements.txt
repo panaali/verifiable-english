@@ -37321,6 +37321,14 @@ theorem VE.Route.verifyOrder_sound
             n ∈ ns → ∀ (m : String), m ∈ VE.Route.deps ns n → List.idxOf m order < List.idxOf n.name order
   -- uses VE.Route.DepNode.name@VE.Route.Route VE.Route.DepNode@VE.Route.Route VE.Route.deps@VE.Route.Route VE.Route.nodeNames@VE.Route.Route VE.Route.verifyOrder@VE.Route.Route
   -- expr 2970290661
+theorem VE.Scales.Examples.fb2_refuted
+  VE.Entails VE.Scales.Examples.disp.environment
+    (VE.Scales.Examples.endpoint ::
+      VE.Scales.Examples.between ::
+        List.map (fun x => x.snd) (VE.Scales.scalePremises { dims := [VE.Scales.Examples.autonomy] }))
+    VE.Scales.Examples.aboveTop.not
+  -- uses VE.Bridge.Vocabulary.environment@VE.Bridge VE.Entails@VE.Semantics VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Examples.aboveTop@VE.Scales.Examples VE.Scales.Examples.autonomy@VE.Scales.Examples VE.Scales.Examples.between@VE.Scales.Examples VE.Scales.Examples.disp@VE.Scales.Examples VE.Scales.Examples.endpoint@VE.Scales.Examples VE.Scales.ScaleDoc.mk@VE.Scales.Syntax VE.Scales.scalePremises@VE.Scales.Premises
+  -- expr 3880043343
 theorem VE.Scales.Examples.intended_of
   ∀ {v : VE.Bridge.Vocabulary} {ots : List String} {D : VE.Scales.ScaleDoc} {M : VE.Bridge.ModelData},
     VE.Scales.WellFormed v.environment ots D = Bool.true →
