@@ -1,6 +1,7 @@
 import VE.Discourse.Manifest
 import VE.Route.Run
 import VE.Norms.Tree
+import VE.Limits
 
 /-! # Loading a `ve-document` text (docs/spec/discourse.md 3.1 to 3.3, document.md)
 
@@ -402,7 +403,7 @@ def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (python : Bool
         match formula with
         | some check => check f
         | none =>
-          let φ ← VE.Bridge.decodeFormula 64 f
+          let φ ← VE.Bridge.decodeFormula VE.Limits.maxDepth f
           if python then
             VE.Norms.typeDiagnostic rv.environment [] φ
             let _ ← VE.Route.Wire.decodeClosed rv.environment f data

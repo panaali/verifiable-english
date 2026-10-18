@@ -2,42 +2,48 @@
 logical axioms. Every non-frozen Lean check reads them from here, and the service states them in
 its handshake (`VE.Service.handshake`, member `limits`), from which the response schema
 (`envelope.json`) pins them and Python reads them (`ve/limits.py`): Python keeps no copy.
+`tests/test_lean_limits.py` fails on a limit's literal in a non-frozen check (lf-18 review F2).
 
-The hash-frozen decoders (`VE.Json`, `VE.Bridge`, `VE.Order.Wire`; architecture decision D2) and the
-English lexer, hashed by the grammar lock (`tools/english_grammar_gen.py`), keep the literals they were
-frozen with; `VE.LimitTies` checks that they are these values. -/
+The limits are reducible, so an approved theorem statement that names a limit's value (a node
+total at most 10000, a decoder at depth 64) is unchanged and its proof still holds for the check
+that reads the limit; a changed limit no longer fits those statements, so the build fails.
+
+The hash-frozen decoders (`VE.Json`, `VE.Bridge`, `VE.Order.Wire`, `VE.CertificateWire`;
+architecture decision D2) and the English lexer, hashed by the grammar lock
+(`tools/english_grammar_gen.py`), keep the literals they were frozen with; `VE.LimitTies` checks
+that they are these values. -/
 namespace VE.Limits
 
 /-- Longest source text, in UTF-8 bytes. -/
-def maxSourceBytes : Nat := 65536
+abbrev maxSourceBytes : Nat := 65536
 /-- Longest JSON package (`VE.JsonInput.parse`'s frozen cap). -/
-def maxPackageBytes : Nat := 16777216
+abbrev maxPackageBytes : Nat := 16777216
 /-- Deepest formula or term nesting. -/
-def maxDepth : Nat := 64
+abbrev maxDepth : Nat := 64
 /-- Most AST nodes in one formula document. -/
-def maxNodes : Nat := 10000
+abbrev maxNodes : Nat := 10000
 /-- Most sorts of an environment. -/
-def maxSorts : Nat := 32
+abbrev maxSorts : Nat := 32
 /-- Most predicates of an environment. -/
-def maxPredicates : Nat := 256
+abbrev maxPredicates : Nat := 256
 /-- Most entities of one sort's domain. -/
-def maxEntities : Nat := 1000
+abbrev maxEntities : Nat := 1000
 /-- Most relation tuples of a model, in all. -/
-def maxTuples : Nat := 100000
+abbrev maxTuples : Nat := 100000
 /-- Longest identifier, in ASCII bytes. -/
-def maxIdentifierBytes : Nat := 64
+abbrev maxIdentifierBytes : Nat := 64
 /-- The largest evaluation budget a request may ask for. -/
-def maxEvaluations : Nat := 1000000
+abbrev maxEvaluations : Nat := 1000000
 /-- The largest de Bruijn index (the largest integer every JSON reader holds exactly). -/
-def maxIndex : Nat := 2 ^ 53 - 1
+abbrev maxIndex : Nat := 2 ^ 53 - 1
 /-- Deepest JSON nesting (`VE.JsonInput.parse`'s frozen default). -/
-def maxJsonDepth : Nat := 256
+abbrev maxJsonDepth : Nat := 256
 /-- Longest accepted service request line, as the one-shot runners' input cap. -/
-def maxLineBytes : Nat := 16777216
+abbrev maxLineBytes : Nat := 16777216
 /-- Most cases in one service request. -/
-def maxCases : Nat := 4096
+abbrev maxCases : Nat := 4096
 /-- Longest decimal numeral of the order and time wires. -/
-def maxNumeralChars : Nat := 40
+abbrev maxNumeralChars : Nat := 40
 
 /-- The limits the service states in its handshake, by their wire names: the response schema
 requires exactly these values, and Python reads them from there. -/

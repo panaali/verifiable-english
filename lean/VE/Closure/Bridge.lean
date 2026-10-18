@@ -1,6 +1,7 @@
 import VE.Closure.Consequence
 import VE.Closure.RoundTrip
 import VE.ModelProofs
+import VE.Limits
 
 namespace VE.Closure.Bridge
 open Lean
@@ -59,9 +60,9 @@ def formulaNodes : Formula → Nat
   | .reachBody _ _ a t u => 1 + formulaNodes a + termNodes t + termNodes u
 
 def decodeFormulas (E : Environment) (j : Json) : Except String (List Formula) := do
-  let fs ← (← j.getArr?).toList.mapM (decodeFormula 64)
+  let fs ← (← j.getArr?).toList.mapM (decodeFormula VE.Limits.maxDepth)
   unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
-  if (fs.map formulaNodes).foldl (· + ·) 0 > 10000 then throw "ResourceLimit: AST node count"
+  if (fs.map formulaNodes).foldl (· + ·) 0 > VE.Limits.maxNodes then throw "ResourceLimit: AST node count"
   pure fs
 
 def runCase (j : Json) : Except String Json := do
@@ -71,9 +72,9 @@ def runCase (j : Json) : Except String Json := do
   if let .ok kind := j.getObjVal? "kind" then
     unless kind.getStr?.toOption == some "countermodel" do throw "unknown case kind"
     let ps ← decodeFormulas v.environment (← j.getObjVal? "premises")
-    let c ← decodeFormula 64 (← j.getObjVal? "conclusion")
+    let c ← decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
     unless c.check v.environment [] do throw "ill-typed or unbound conclusion"
-    if ((c :: ps).map formulaNodes).foldl (· + ·) 0 > 10000 then
+    if ((c :: ps).map formulaNodes).foldl (· + ·) 0 > VE.Limits.maxNodes then
       throw "ResourceLimit: AST node count"
     return Json.mkObj [("id", .str id), ("status", .str "ok"),
       ("refutes", .bool (countermodelCheck m ps c))]

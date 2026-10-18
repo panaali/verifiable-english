@@ -39,7 +39,7 @@ def digitsOk : List Char → Bool
 /-- Python `decimal_from_wire`: at most 40 characters, then canonical decimal. -/
 def decimal : Json → Except Halt Unit
   | .str s =>
-    if s.length > 40 then throw (.limit numeralLimit)
+    if s.length > VE.Limits.maxNumeralChars then throw (.limit numeralLimit)
     else match s.toList with
       | '-' :: ds => if digitsOk ds && ds != ['0'] then pure () else throw .stop
       | ds => if digitsOk ds then pure () else throw .stop

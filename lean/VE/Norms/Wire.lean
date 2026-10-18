@@ -241,7 +241,7 @@ def budgetFormula : Nat → Nat → Json → Except String (VE.Formula × Nat)
     | _ => throw "invalid indexed formula"
 
 /-- One formula under a fresh decoder (Python `_Decoder().decode`). -/
-def decodeBudgeted (j : Json) : Except String VE.Formula := (·.1) <$> budgetFormula 64 0 j
+def decodeBudgeted (j : Json) : Except String VE.Formula := (·.1) <$> budgetFormula VE.Limits.maxDepth 0 j
 
 /-- The one decoder of a norm's JSON envelope and scalar fields. The FOL and
 family readers decode the returned guard and carve-outs in their own syntax. -/
@@ -269,11 +269,11 @@ one decoder (one node budget) reads the guard and then the carve-outs; with
 `shared := false` each formula has its own, as the soft route's `_fol`. -/
 def decodeNorm (j : Json) (shared : Bool := true) : Except String Node := do
   let (name, predicate, sign, guardJ, unlessJ, over) ← normFields j
-  let (guard, count) ← budgetFormula 64 0 guardJ
+  let (guard, count) ← budgetFormula VE.Limits.maxDepth 0 guardJ
   let mut count := count
   let mut carve := []
   for x in unlessJ do
-    let (φ, next) ← budgetFormula 64 (if shared then count else 0) x
+    let (φ, next) ← budgetFormula VE.Limits.maxDepth (if shared then count else 0) x
     count := next
     carve := carve ++ [φ]
   pure ⟨name, predicate, sign, guard, carve, over⟩

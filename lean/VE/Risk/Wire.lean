@@ -1,6 +1,7 @@
 import VE.Risk.Audit
 import VE.Alternatives.Replay
 import VE.Time.Wire
+import VE.Limits
 
 /-! The risk decoder (docs/spec/risk.md 1.1, 3 and 7.3): the profile gate, the
 strict `risk` block decoder, the W6 unit extension, the `excludes` fulfilment
@@ -204,7 +205,7 @@ def decodeRiskBlock (raw : Json) : Except String RiskEnv := do
   let edges ← pairList "severity" (sv.getObjValD "more_severe")
   let unranked ← pairList "severity" (sv.getObjValD "unranked")
   let decidedBy ← str "severity" (sv.getObjValD "decided_by")
-  if decidedBy.utf8ByteSize > 64 || decidedBy.isEmpty then throw (err "severity")
+  if decidedBy.utf8ByteSize > VE.Limits.maxIdentifierBytes || decidedBy.isEmpty then throw (err "severity")
   let harmClasses ← pairList "harm_classes" (raw.getObjValD "harm_classes")
   let unexamined ← match raw.getObjValD "unexamined" with
     | .str "possible" => pure Unexamined.possible
@@ -213,7 +214,7 @@ def decodeRiskBlock (raw : Json) : Except String RiskEnv := do
       unless (exactFields o ["ruled_out_by"]).isOk do throw (err "unexamined")
       match o.getObjValD "ruled_out_by" with
       | .str "chooser" => pure Unexamined.ruledOutByChooser
-      | .str d => if d.isEmpty || d.utf8ByteSize > 64 then throw (err "unexamined") else pure (Unexamined.ruledOutBy d)
+      | .str d => if d.isEmpty || d.utf8ByteSize > VE.Limits.maxIdentifierBytes then throw (err "unexamined") else pure (Unexamined.ruledOutBy d)
       | _ => throw (err "unexamined")
     | _ => throw (err "unexamined")
   let alwaysPossible ← match raw.getObjVal? "always_possible" with
@@ -230,7 +231,7 @@ def decodeRiskBlock (raw : Json) : Except String RiskEnv := do
     | .error _ => pure []
   for (k, v) in alternativeKinds do
     unless identifierOk k do throw (err "alternative_kinds")
-    if v.isEmpty || v.utf8ByteSize > 64 then throw (err "alternative_kinds")
+    if v.isEmpty || v.utf8ByteSize > VE.Limits.maxIdentifierBytes then throw (err "alternative_kinds")
   let requiredAlternatives ← match raw.getObjVal? "required_alternatives" with
     | .error _ => pure []
     | .ok (.arr xs) => xs.toList.mapM fun x => do

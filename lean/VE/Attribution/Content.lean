@@ -712,7 +712,7 @@ def WellFormedReports (D : ReportDoc) : Bool :=
   decide (D.assessments.map (·.id)).Nodup &&
   D.assessments.all (assessmentOk D) &&
   decide (∀ a ∈ digestTable D, ∀ b ∈ digestTable D, a.1 = b.1 → a.2 = b.2) &&
-  (names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ 64)) &&
+  (names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes)) &&
   decide (names D).Nodup &&
   D.lits.all (fun l => D.E.constants l == some VE.Route.Background.stringSort) &&
   D.«scoped».all (scopedOk D) &&
