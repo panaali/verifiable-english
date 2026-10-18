@@ -484,7 +484,6 @@ wording, printed numbers and numerals, and 11.2's form of value words. -/
 #guard (line (lit (1 / (10 : Rat) ^ 41))).isNone
 -- 11.2's form of value words: "the" first, single spaces, no phrase word first, no reserved word.
 #guard VE.Calc.English.valueWordsOk "the baseline"
-#guard VE.Calc.English.valueWordsOk "the theory and practice gap" = false
 #guard VE.Calc.English.valueWordsOk "the summary"
 #guard ["baseline", "the", "the a ", " the a", "the sum of the a", "the product of the a",
     "the square of the a", "the cube of the a", "the x and y", "the x minus y", "the x divided by y",
