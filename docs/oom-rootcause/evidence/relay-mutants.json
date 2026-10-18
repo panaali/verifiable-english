@@ -1,0 +1,30 @@
+[
+  {
+    "bug": "fill label can be empty",
+    "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+    "test": "tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over",
+    "exit_code": 1,
+    "failure_excerpt": "ed' is not one of ['w2', 'pending', 'abstention']; route: 'superposed' is not one of ['enumerated']; unexpected field fill; route: 'superposed' is not one of ['w2', 'pending', 'abstention']; route: 'superposed' is not one of ['enumerated']; fill: [0]: label: string shorter than 1); missing field components); missing field digests)\", 'accept')]\nE       assert not [('readings-route', '{\"counts\": {\"bytes\": 1842, \"cases\": 1, \"errors\": 0}, \"id\": \"bcfefd59fc36-11\", \"mode\": \"readings-r...'enumerated']; fill: [0]: label: string shorter than 1); missing field components); missing field digests)\", 'accept')]\n\ntests/test_lean_service_schema.py:154: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over\n1 failed in 1.63s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-7_w8m7zm)\n"
+  },
+  {
+    "bug": "conflict target can be empty",
+    "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+    "test": "tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over",
+    "exit_code": 1,
+    "failure_excerpt": "lp_required\", \"help_required->help_permitted\"], \"verdict\": \"UNKNOWN\"}}], \"status\": \"ok\"}', 'reject: no alternative is valid (results: result 0: result: no alternative is valid (missing field case_index; missing field error; no alternative is valid (missing field target; targets: [0]: string shorter than 1)); missing field digests)', 'accept')]\nE       assert not [('readings-route', '{\"counts\": {\"bytes\": 1853, \"cases\": 1, \"errors\": 0}, \"id\": \"a5c6bd30c5f7-13\", \"mode\": \"readings-r... alternative is valid (missing field target; targets: [0]: string shorter than 1)); missing field digests)', 'accept')]\n\ntests/test_lean_service_schema.py:154: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over\n1 failed in 1.66s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-1gy6qwf0)\n"
+  },
+  {
+    "bug": "a repeated over name is accepted by Lean",
+    "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+    "test": "tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over",
+    "exit_code": 1,
+    "failure_excerpt": "not distinct; missing field kind); route: 'superposed' is not one of ['w2', 'pending', 'abstention']; route: 'superposed' is not one of ['enumerated']; units: [0]: content: no alternative is valid (missing field assertion; norm: over: strings are not distinct; missing field kind)); missing field components); missing field digests)\", 'accept')]\nE       assert not [('readings-route', '{\"counts\": {\"bytes\": 1842, \"cases\": 1, \"errors\": 0}, \"id\": \"609037ffd205-11\", \"mode\": \"readings-r...m: over: strings are not distinct; missing field kind)); missing field components); missing field digests)', 'accept')]\n\ntests/test_lean_service_schema.py:154: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_lean_service_schema.py::test_readings_route_shape_agrees_with_lean_on_empty_names_and_repeated_over\n1 failed in 1.59s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-t69kw6z1)\n"
+  },
+  {
+    "bug": "a repeated over name is accepted by Python",
+    "file": "ve/backends/service_schema.py",
+    "test": "tests/test_lean_service_schema.py::test_unique_string_lists_refuse_duplicate_rule_names",
+    "exit_code": 1,
+    "failure_excerpt": "                 [100%]\n=================================== FAILURES ===================================\n_____________ test_unique_string_lists_refuse_duplicate_rule_names _____________\n\n    def test_unique_string_lists_refuse_duplicate_rule_names():\n        check = Compiler().compile({\"type\": \"array\", \"x-unique-strings\": True}, \"common.json\")\n        for names in ([], [\"first\"], [\"first\", \"second\"]):\n            check(names, Context(None), {})\n        for names in ([\"first\", \"first\"], [\"first\", 1], \"first\"):\n>           with pytest.raises(Invalid):\n                 ^^^^^^^^^^^^^^^^^^^^^^\nE           Failed: DID NOT RAISE Invalid\n\ntests/test_lean_service_schema.py:60: Failed\n=========================== short test summary info ============================\nFAILED tests/test_lean_service_schema.py::test_unique_string_lists_refuse_duplicate_rule_names\n1 failed in 0.79s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-el6v7ykh)\n"
+  }
+]

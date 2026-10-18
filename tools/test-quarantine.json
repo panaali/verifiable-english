@@ -1,13 +1,4 @@
 {
   "version": 1,
-  "entries": [
-    {
-      "test": "tests/test_difffuzz.py::test_ci_run",
-      "evidence": "docs/test-speed-b5/evidence/quarantine-test_ci_run.json",
-      "owner": "orchestrator",
-      "added": "2026-10-10",
-      "expires": "2026-10-17",
-      "reason": "fails in suites under machine load and passes alone on the same tree (the saved evidence); a failure in the gate is retried alone once"
-    }
-  ]
+  "entries": []
 }

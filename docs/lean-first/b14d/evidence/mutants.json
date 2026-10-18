@@ -1,0 +1,60 @@
+{
+  "mutants": [
+    {
+      "mutant": "ignore_coupling_labels",
+      "behaviour": "only label-compatible complete choices are enumerated",
+      "file": "lean/VE/Service/ReadingsChoices.lean",
+      "test": "tests/test_stage2_readings.py::test_coupled_plan_response_is_typed_and_bound[<lambda>0]",
+      "exit": 1,
+      "observed": "four choices instead of the two compatible choices",
+      "caught": true
+    },
+    {
+      "mutant": "mixed_evidence_is_all",
+      "behaviour": "a positive and a negative choice yield SOME",
+      "file": "lean/VE/Service/ReadingsChoices.lean",
+      "test": "tests/test_stage2_readings.py::test_complete_choice_verdict_is_lean_checked[False]",
+      "exit": 1,
+      "observed": "ALL instead of SOME",
+      "caught": true
+    },
+    {
+      "mutant": "couplings_bypass_lean",
+      "behaviour": "the coupled caller sends its choice evidence to Lean",
+      "file": "ve/readings.py",
+      "test": "tests/test_stage2_readings.py::test_complete_choice_verdict_is_lean_checked[False]",
+      "exit": 1,
+      "observed": "zero Lean choice-evidence requests instead of one",
+      "caught": true
+    },
+    {
+      "mutant": "expose_pilot_scratch_directory",
+      "behaviour": "pilot A/B compares diagnostics after stabilizing only the recorder scratch prefix",
+      "file": "tools/lean_first_diff.py",
+      "test": "tests/test_lean_first_diff.py::test_pilot_comparison_normalizes_only_its_own_scratch_directory",
+      "exit": 1,
+      "observed": "two same records and one wording difference instead of three same records",
+      "caught": true
+    },
+    {
+      "mutant": "accept_different_unavailable_outputs",
+      "behaviour": "R7 signs only identical unavailable A/B results",
+      "file": "tools/batch_evidence.py",
+      "test": "tests/test_batch_evidence.py::test_identical_listed_unavailability_is_signed_by_r7",
+      "exit": 1,
+      "observed": "the changed head timeout was accepted instead of rejected",
+      "caught": true
+    },
+    {
+      "mutant": "use_untyped_request_unit_as_binding",
+      "behaviour": "a non-text request unit falls back to its string set ID when binding Lean’s UNKNOWN unit list",
+      "file": "ve/backends/service_schema.py",
+      "test": "tests/test_stage2_readings.py::test_coupled_plan_binds_fallback_unit_when_request_unit_is_not_text",
+      "exit": 1,
+      "observed": "TypeError on an unhashable request unit instead of accepting Lean's bound fallback ID",
+      "caught": true
+    }
+  ],
+  "restored_test": "14 passed in tests/test_batch_evidence.py; focused choice and plan tests passed; malformed-unit fallback regression passed after restoration; genuine-response schema fuzz agreement passed",
+  "restored_service_sha256": "3eee1ce49cd51039c243ad36cea0ff2851122b5392cbec88cb11fb3c3f69da1c"
+}

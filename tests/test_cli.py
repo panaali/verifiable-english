@@ -221,13 +221,25 @@ def test_check_display_overflow_never_changes_acceptance(tmp_path):
     source = tmp_path / 'large.ve'
     source.write_text('for every person x0, (if (x0 is subject_to_us_jurisdiction), then (x0 is us_citizen)).\n' * 753)
     assert len(source.read_bytes()) == 65511
-    result = cli('check', '--env', path, source)
+    # The CLI's check and the in-process check below are independent: the second runs while the first's
+    # process does, so the test takes the longer of the two rather than their sum.
+    process = subprocess.Popen([sys.executable, "-m", "ve", 'check', '--env', str(path), str(source)], cwd=ROOT,
+                               text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        expected = check(Environment.from_json(path.read_bytes()), source.read_bytes())
+    finally:
+        try:
+            stdout, stderr = process.communicate(timeout=HANG_TIMEOUT)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.communicate()
+            raise
+    result = subprocess.CompletedProcess(process.args, process.returncode, stdout, stderr)
     assert result.returncode == 0
     record = json.loads(result.stdout)
     assert record['language'] == 'accepted'
     assert record['display_omitted'] == 'ResourceLimit'
     assert 'display_text' not in record
-    expected = check(Environment.from_json(path.read_bytes()), source.read_bytes())
     assert {k: record[k] for k in expected} == expected
 
 

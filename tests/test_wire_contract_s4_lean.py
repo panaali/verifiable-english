@@ -29,7 +29,6 @@ ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
 CONTRACT = "ve/wire_contract/soft-norms@0.json"
 MODULE = "lean/VE/WireContract/Tables/SoftNorms.lean"
-FROZEN = "lean/VE/Route/frozen-sources.sha256"
 LOCK = "ve/wire_contract/contracts.lock"
 
 
@@ -97,11 +96,10 @@ def test_t3_the_switch_edit_changes_only_the_generated_revision(shipped_copy):  
     assert process(wire_tool.DATA, write=True) == []
     after = snapshot()
     assert process(wire_tool.DATA) == []
-    # 2.6: the lock, the generated module and its frozen-sources line; the English table does not change.
+    # 2.6: the lock and the generated module; the English table does not change, and the frozen inventory lists
+    # no generated module (AR-2, decision D2).
     changed = {name for name in after if before.get(name) != after[name]}
-    assert changed == {CONTRACT, LOCK, MODULE, FROZEN}
-    assert [(a, b) for a, b in zip(before[FROZEN].decode().splitlines(), after[FROZEN].decode().splitlines())
-            if a != b and not a.endswith("VE/WireContract/Tables/SoftNorms.lean")] == []
+    assert changed == {CONTRACT, LOCK, MODULE}
     assert loads_json(after[LOCK])["soft-norms@0.json"]["revision"] == new["revision"]
     # T3: the header comment (revision and hash) and the numeral of the table's `revision`, nothing else.
     head_old, body_old = before[MODULE].decode().split(" -/\n", 1)

@@ -45,7 +45,7 @@ GENUINE = {
     "lexical": (fixtures.F, "Légacy is deployed. Alice owns legacy # x.", {}, "rejected", "BadCharacter"),
     "sentence": (fixtures.F, "Every deployed service is not reviewed.", {}, "rejected", "BlockedWording"),
     "premise": (fixtures.F, "Therefore legacy is deployed.", {}, "rejected", "ConclusionWithoutPremise"),
-    "lexicon": (fixtures.FA, "Wait is available to robot.", {"select": ("safe", "{0} is safe")}, "invalidGrammar",
+    "lexicon": (fixtures.FA, "Wait is available to robot.", {"select": ("safe", "{0} is safe already")}, "invalidGrammar",
                 "InvalidGrammar"),
     "overlay": (fixtures.F, "Legacy is deployed.", {"overlay": "O3"}, "invalidGrammar", "InvalidOverlay"),
 }
@@ -67,8 +67,8 @@ def genuine(label: str):
                                                             "suggested": False}}}}
     words = EN.EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
     if "select" in changes:
-        # A lexicon Python's producer never makes (spec lx29: `LA` selects `safe`'s declared wording), so V6
-        # refuses it: the genuine `invalidGrammar` answer.
+        # Supply a modified unary template the producer rejects, so V6 still
+        # gives a genuine `invalidGrammar` response for the mutation checks.
         name, wording = changes["select"]
         words.predicates[name] = wording
     case = L.request(env, source, words, options)

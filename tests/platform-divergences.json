@@ -1,0 +1,476 @@
+{
+ "format": "ve-platform-divergences@1",
+ "generated_by": "tools/platform_contract.py divergences --write",
+ "window": {
+  "since": "2026-09-16",
+  "until": "2026-10-16"
+ },
+ "runs": {
+  "in_window": 103,
+  "paired": 37
+ },
+ "divergences": {
+  "tests/test_agent_policy_rerun.py::test_counts_equal_the_committed_run": {
+   "cause": "unknown",
+   "note": "CheckerUnavailable under load: an availability bug or a test that assumes an answer (plan 2.8)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-14",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results": {
+   "cause": "unknown",
+   "note": "CheckerUnavailable under load: an availability bug or a test that assumes an answer (plan 2.8)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-14",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_agent_policy_rerun.py::test_lean_replays_every_certificate_of_the_rerun": {
+   "cause": "unknown",
+   "note": "CheckerUnavailable under load: an availability bug or a test that assumes an answer (plan 2.8)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-14",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results[M2]": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "c9ed9ae88596fc53edb6ed4ad0950d19d60b3bb2",
+     "commit": "e465178a403a32e66c0fbb23cbb163df4f570c7b",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/e465178a403a32e66c0fbb23cbb163df4f570c7b.mac.json",
+      "cand-runs/e465178a403a32e66c0fbb23cbb163df4f570c7b.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_definitions_differential.py::test_populated_defined_table_limit_boundary": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "c9ed9ae88596fc53edb6ed4ad0950d19d60b3bb2",
+     "commit": "e465178a403a32e66c0fbb23cbb163df4f570c7b",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/e465178a403a32e66c0fbb23cbb163df4f570c7b.mac.json",
+      "cand-runs/e465178a403a32e66c0fbb23cbb163df4f570c7b.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_difffuzz.py::test_ci_run": {
+   "cause": "elapsed time",
+   "note": "the CI run's hang guard timed out on the loaded VM (quarantined)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "dabe61747e527a29e1ed92c79364146aa2aa7c5a",
+     "commit": "b96f04a5a1c8768c380daf155028773624d9bb9f",
+     "day": "2026-10-15",
+     "records": [
+      "nightly-runs/b96f04a5a1c8768c380daf155028773624d9bb9f.mac.json",
+      "nightly-runs/b96f04a5a1c8768c380daf155028773624d9bb9f.x86.json"
+     ],
+     "reason": "../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:1268: TimeoutExpired"
+    }
+   ]
+  },
+  "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-0]": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "85763288bc825b5776ca86d658f5fc7e2701cbcd",
+     "commit": "00c844d9046c7569e3870a8f9dd049ec422a192e",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/00c844d9046c7569e3870a8f9dd049ec422a192e.mac.json",
+      "cand-runs/00c844d9046c7569e3870a8f9dd049ec422a192e.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-0]": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "22edef5b66be0a9a89a6f5aac9c94ff9ebce4b4e",
+     "commit": "a40a56dfc0f7bfc2a3a7df0692a722f8c168f4a8",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/a40a56dfc0f7bfc2a3a7df0692a722f8c168f4a8.mac.json",
+      "cand-runs/a40a56dfc0f7bfc2a3a7df0692a722f8c168f4a8.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    },
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "dabe61747e527a29e1ed92c79364146aa2aa7c5a",
+     "commit": "b96f04a5a1c8768c380daf155028773624d9bb9f",
+     "day": "2026-10-15",
+     "records": [
+      "nightly-runs/b96f04a5a1c8768c380daf155028773624d9bb9f.mac.json",
+      "nightly-runs/b96f04a5a1c8768c380daf155028773624d9bb9f.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "22edef5b66be0a9a89a6f5aac9c94ff9ebce4b4e",
+     "commit": "a40a56dfc0f7bfc2a3a7df0692a722f8c168f4a8",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/a40a56dfc0f7bfc2a3a7df0692a722f8c168f4a8.mac.json",
+      "cand-runs/a40a56dfc0f7bfc2a3a7df0692a722f8c168f4a8.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    },
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "b962875d9422075746f9027a1fe93587113aeea6",
+     "commit": "bf956ab253aeeed6db563bcffd898bc725960026",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/bf956ab253aeeed6db563bcffd898bc725960026.mac.json",
+      "cand-runs/bf956ab253aeeed6db563bcffd898bc725960026.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-3]": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "32565fea1c819d72c331a8a8c3637eeaade73676",
+     "commit": "4ac2a616a7bd5da3a7601ce2893495598c7b8374",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/4ac2a616a7bd5da3a7601ce2893495598c7b8374.mac.json",
+      "cand-runs/4ac2a616a7bd5da3a7601ce2893495598c7b8374.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    },
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "32565fea1c819d72c331a8a8c3637eeaade73676",
+     "commit": "4ac2a616a7bd5da3a7601ce2893495598c7b8374",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/4ac2a616a7bd5da3a7601ce2893495598c7b8374.x86.json",
+      "cand-runs/b7b151aea492fd4d1f5a443e0aa5e94a586f1769.mac.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_lean_service.py::test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check": {
+   "cause": "elapsed time",
+   "note": "elapsed time under load 70-160 (plan 2.8; quarantined, PIPELINE-LIMITS L36)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-14",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "4a1ad7fc1d814837ed120aaa74061f6b18ecb58c",
+     "commit": "f98d219f6ee86e311cae3149d81fd2ee148c58bd",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/f98d219f6ee86e311cae3149d81fd2ee148c58bd.mac.json",
+      "cand-runs/f98d219f6ee86e311cae3149d81fd2ee148c58bd.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline": {
+   "cause": "elapsed time",
+   "note": "a deadline measured on a fast machine (plan 2.8)",
+   "observations": [
+    {
+     "failed_on": "mac",
+     "passed_on": "x86",
+     "day": "2026-10-14",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target": {
+   "cause": "repository state",
+   "note": "the length of `%h` grows with the repository's object count (plan 2.8)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-14",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "32565fea1c819d72c331a8a8c3637eeaade73676",
+     "commit": "4ac2a616a7bd5da3a7601ce2893495598c7b8374",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/4ac2a616a7bd5da3a7601ce2893495598c7b8374.mac.json",
+      "cand-runs/4ac2a616a7bd5da3a7601ce2893495598c7b8374.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    },
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "32565fea1c819d72c331a8a8c3637eeaade73676",
+     "commit": "4ac2a616a7bd5da3a7601ce2893495598c7b8374",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/4ac2a616a7bd5da3a7601ce2893495598c7b8374.x86.json",
+      "cand-runs/b7b151aea492fd4d1f5a443e0aa5e94a586f1769.mac.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_readings_verdicts_lean.py::test_fnd1_conflict_free_under_every_reading_conditional_on_the_pair_premise": {
+   "cause": "environment",
+   "note": "an x86 CPU deadline exceeded by the kernel's memory compaction, charged to ve_service as system time on the loaded VM (docs/fix-x86-cpu-deadline/REPORT.md); fixed by counting user CPU",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "tree": "4a1ad7fc1d814837ed120aaa74061f6b18ecb58c",
+     "commit": "f98d219f6ee86e311cae3149d81fd2ee148c58bd",
+     "day": "2026-10-15",
+     "records": [
+      "cand-runs/f98d219f6ee86e311cae3149d81fd2ee148c58bd.mac.json",
+      "cand-runs/f98d219f6ee86e311cae3149d81fd2ee148c58bd.x86.json"
+     ],
+     "reason": "ve/backends/lean_service.py:564: CheckerUnavailable"
+    }
+   ]
+  },
+  "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate": {
+   "cause": "environment",
+   "note": "the branch verify ran on a dirty worktree (plan 2.8: a pipeline bug, verify.sh had no clean-tree check)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-13",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate": {
+   "cause": "environment",
+   "note": "the branch verify ran on a dirty worktree (plan 2.8: a pipeline bug, verify.sh had no clean-tree check)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-13",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate": {
+   "cause": "environment",
+   "note": "the branch verify ran on a dirty worktree (plan 2.8: a pipeline bug, verify.sh had no clean-tree check)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-13",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_relay_mutation_gate.py::test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one": {
+   "cause": "environment",
+   "note": "the branch verify ran on a dirty worktree (plan 2.8: a pipeline bug, verify.sh had no clean-tree check)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-13",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry": {
+   "cause": "environment",
+   "note": "the branch verify ran on a dirty worktree (plan 2.8: a pipeline bug, verify.sh had no clean-tree check)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-13",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list": {
+   "cause": "environment",
+   "note": "the branch verify ran on a dirty worktree (plan 2.8: a pipeline bug, verify.sh had no clean-tree check)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-13",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case": {
+   "cause": "environment",
+   "note": "the branch verify ran on a dirty worktree (plan 2.8: a pipeline bug, verify.sh had no clean-tree check)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-13",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class": {
+   "cause": "environment",
+   "note": "the branch verify ran on a dirty worktree (plan 2.8: a pipeline bug, verify.sh had no clean-tree check)",
+   "observations": [
+    {
+     "failed_on": "x86",
+     "passed_on": "mac",
+     "day": "2026-10-13",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    }
+   ]
+  },
+  "tests/test_rust_reproducible.py::test_release_binary_is_pinned": {
+   "cause": "pinned artefact",
+   "note": "lean/checkers.lock pins the x86 Rust binary; the Mac's pins are runner-local",
+   "observations": [
+    {
+     "failed_on": "mac",
+     "passed_on": "x86",
+     "day": "2026-10-14",
+     "records": [
+      "plan 2.8 (reviews/test-architecture-2026-10-14.md)"
+     ],
+     "reason": "plan section 2.8"
+    },
+    {
+     "failed_on": "mac",
+     "passed_on": "x86",
+     "day": "2026-10-16",
+     "records": [
+      "mac-known-failures.txt"
+     ],
+     "reason": "a known Mac-only failure: the runner's list of failures the x86 leg checks"
+    }
+   ]
+  }
+ }
+}

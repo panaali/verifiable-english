@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "base": "49de179e7ba73504e302739d3aab48e45704457d",
+  "code_evidence_head": "569648afd8dc61ea518bf45c9b657e02f2cca427",
+  "commits_no_merges": [
+    "34118114f1d14c88d97b6816d930e3ad8a287cb8",
+    "bc2fb06ec41ae2a979c4c8fe2b93f47a27daf5f2",
+    "9eed6cbfe5a64438ff1de4433e4b10d6311478d7",
+    "fb69d8f97ad4a9a0559b5321c3a8d552171f8c44",
+    "569648afd8dc61ea518bf45c9b657e02f2cca427"
+  ],
+  "mapped_units": 368,
+  "mode_mutants": 31,
+  "behavior_mutants": 4,
+  "shadow_selected_counts": {
+    "devtime-1": 25,
+    "eff-tests": 41,
+    "lf-17": 58,
+    "readings-defaults": 313,
+    "lf-6": 368,
+    "lf-7": 368,
+    "lf-11a": 368,
+    "lf-11b": 368,
+    "lf-12": 368,
+    "lf-13b": 368
+  },
+  "shadow_full_count": 368
+}

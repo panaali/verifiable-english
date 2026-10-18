@@ -1,4 +1,5 @@
 import VE.Readings.UnspecifiedWire
+import VE.NormDefaults.LayeredEntail
 
 /-! Verdicts across readings in Lean, on the enumerated route (docs/spec/readings-defaults.md 1.6 to 1.8, 2.3 to 2.5,
 4.4, 6.4 and 6.5; plan RD-3).
@@ -17,7 +18,7 @@ Each fold theorem follows from a row lemma that reads the fold alone (`foldEntai
 give the lower route's wire theorem, whose rows are the lower route's own checked answers. -/
 namespace VE.Readings
 open VE.Norms (Regulated Sat envAt size restrictAll DocumentExpansion)
-open VE.NormDefaults (EntailsU)
+open VE.NormDefaults (EntailsU UDoc fill)
 universe u
 
 /-! ## Per-choice results and the folds (1.6, 1.7) -/
@@ -197,32 +198,66 @@ theorem covers_mem {N : NDoc} {A : Choice} {rs : List (Choice × ChoiceResult)} 
     {x : Choice × ChoiceResult} (hx : x ∈ rs) : Compatible N.D x.1 ∧ ∀ y ∈ A, y ∈ x.1 :=
   (hc x.1).mpr (List.mem_map.mpr ⟨x, hx, rfl⟩)
 
-/-! ### The fold theorems (6.4) -/
+/-! ### One fold over a per-choice semantics -/
 
-theorem fold_all_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
-    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHold.{u} N A Γ φ cs rs) (h : foldEntailment cs rs = .all) :
-  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) →
-    VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧ EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ := by
+structure ChoiceSem where
+  compat : Choice → Prop
+  free : Choice → Prop
+  notFree : Choice → Prop
+  entails : Choice → List VE.Formula → VE.Formula → Prop
+  counter : Choice → List VE.Formula → VE.Formula → Prop
+  consistent : Choice → Prop
+
+def HoldsG (S : ChoiceSem) (Γ : List VE.Formula) (φ : VE.Formula) (c : Choice) : ChoiceResult → Prop
+  | .proved => S.free c ∧ S.entails c Γ φ
+  | .refuted => S.counter c Γ φ
+  | .free => S.free c
+  | .conflict => S.notFree c
+  | .model => S.consistent c
+  | .inconsistent => S.free c ∧ S.entails c [] .bottom
+  | .unknown => True
+
+def CoversG (S : ChoiceSem) (A : Choice) (rs : List (Choice × ChoiceResult)) : Prop :=
+  ∀ c, (S.compat c ∧ ∀ x ∈ A, x ∈ c) ↔ c ∈ rs.map (·.1)
+
+def RowsHoldG (S : ChoiceSem) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (Choice × ChoiceResult)) : Prop :=
+  CoversG S A cs ∧ CoversG S A rs ∧ (∀ x ∈ cs, HoldsG S [] .bottom x.1 x.2) ∧
+    ∀ x ∈ rs, HoldsG S Γ φ x.1 x.2
+
+theorem coversG_row {S : ChoiceSem} {A : Choice} {rs : List (Choice × ChoiceResult)} (hc : CoversG S A rs)
+    {c : Choice} (hcc : S.compat c) (hA : ∀ x ∈ A, x ∈ c) : ∃ r, (c, r) ∈ rs := by
+  obtain ⟨x, hx, he⟩ := List.mem_map.mp ((hc c).mp ⟨hcc, hA⟩)
+  exact ⟨x.2, by rw [← he]; exact hx⟩
+
+theorem coversG_mem {S : ChoiceSem} {A : Choice} {rs : List (Choice × ChoiceResult)} (hc : CoversG S A rs)
+    {x : Choice × ChoiceResult} (hx : x ∈ rs) : S.compat x.1 ∧ ∀ y ∈ A, y ∈ x.1 :=
+  (hc x.1).mpr (List.mem_map.mpr ⟨x, hx, rfl⟩)
+
+theorem foldG_all_sound (S : ChoiceSem) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHoldG S A Γ φ cs rs) (h : foldEntailment cs rs = .all) :
+  ∀ c, S.compat c → (∀ x ∈ A, x ∈ c) →
+    S.free c ∧ S.entails c Γ φ := by
   obtain ⟨_, _, hall⟩ := foldEntailment_all h
   obtain ⟨_, hq, _, hrs⟩ := hr
   intro c hc hA
-  obtain ⟨r, hm⟩ := covers_row hq hc hA
+  obtain ⟨r, hm⟩ := coversG_row hq hc hA
   have hp := hall _ hm
   have := hrs _ hm
   simp only at hp
   rw [hp] at this
   exact this
 
-theorem fold_none_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
-    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHold.{u} N A Γ φ cs rs) (h : foldEntailment cs rs = .none) :
-  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) →
-    VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧ CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ := by
+theorem foldG_none_sound (S : ChoiceSem) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHoldG S A Γ φ cs rs) (h : foldEntailment cs rs = .none) :
+  ∀ c, S.compat c → (∀ x ∈ A, x ∈ c) →
+    S.free c ∧ S.counter c Γ φ := by
   obtain ⟨hf, _, hall⟩ := foldEntailment_none h
   obtain ⟨_, hfree⟩ := foldConflict_free hf
   obtain ⟨hcc, hq, hcs, hrs⟩ := hr
   intro c hc hA
-  obtain ⟨r, hm⟩ := covers_row hq hc hA
-  obtain ⟨r', hm'⟩ := covers_row hcc hc hA
+  obtain ⟨r, hm⟩ := coversG_row hq hc hA
+  obtain ⟨r', hm'⟩ := coversG_row hcc hc hA
   have hp := hall _ hm
   have hp' := hfree _ hm'
   have h1 := hrs _ hm
@@ -232,72 +267,176 @@ theorem fold_none_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.
   rw [hp'] at h2
   exact ⟨h2, h1⟩
 
-theorem fold_some_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
-    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHold.{u} N A Γ φ cs rs) (h : foldEntailment cs rs = .some) :
-  (∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c)) ∧
-  (∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ) ∧
-  (∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ) := by
+theorem foldG_some_sound (S : ChoiceSem) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHoldG S A Γ φ cs rs) (h : foldEntailment cs rs = .some) :
+  (∀ c, S.compat c → (∀ x ∈ A, x ∈ c) → S.free c) ∧
+  (∃ c, S.compat c ∧ (∀ x ∈ A, x ∈ c) ∧ S.entails c Γ φ) ∧
+  (∃ c, S.compat c ∧ (∀ x ∈ A, x ∈ c) ∧ S.counter c Γ φ) := by
   obtain ⟨hf, ⟨xp, hxp, hp⟩, ⟨xn, hxn, hn⟩⟩ := foldEntailment_some h
   obtain ⟨_, hfree⟩ := foldConflict_free hf
   obtain ⟨hcc, hq, hcs, hrs⟩ := hr
   refine ⟨fun c hc hA => ?_, ?_, ?_⟩
-  · obtain ⟨r', hm'⟩ := covers_row hcc hc hA
+  · obtain ⟨r', hm'⟩ := coversG_row hcc hc hA
     have h2 := hcs _ hm'
     have hp' := hfree _ hm'
     simp only at hp'
     rw [hp'] at h2
     exact h2
-  · obtain ⟨hc, hA⟩ := covers_mem hq hxp
+  · obtain ⟨hc, hA⟩ := coversG_mem hq hxp
     have h1 := hrs _ hxp
     rw [hp] at h1
     exact ⟨xp.1, hc, hA, h1.2⟩
-  · obtain ⟨hc, hA⟩ := covers_mem hq hxn
+  · obtain ⟨hc, hA⟩ := coversG_mem hq hxn
     have h1 := hrs _ hxn
     rw [hn] at h1
     exact ⟨xn.1, hc, hA, h1⟩
 
-theorem fold_conflict_free_sound (N : NDoc) (A : Choice) (cs : List (Choice × ChoiceResult)) (hc : Covers N A cs)
-    (hr : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (h : foldConflict cs = .free) :
-  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) := by
+theorem foldG_conflict_free_sound (S : ChoiceSem) (A : Choice) (cs : List (Choice × ChoiceResult)) (hc : CoversG S A cs)
+    (hr : ∀ x ∈ cs, HoldsG S [] .bottom x.1 x.2) (h : foldConflict cs = .free) :
+  ∀ c, S.compat c → (∀ x ∈ A, x ∈ c) → S.free c := by
   obtain ⟨_, hfree⟩ := foldConflict_free h
   intro c hcc hA
-  obtain ⟨r, hm⟩ := covers_row hc hcc hA
+  obtain ⟨r, hm⟩ := coversG_row hc hcc hA
   have h2 := hr _ hm
   have hp := hfree _ hm
   simp only at hp
   rw [hp] at h2
   exact h2
 
-theorem fold_conflict_sound (N : NDoc) (A : Choice) (cs : List (Choice × ChoiceResult)) (hc : Covers N A cs)
-    (hr : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (h : foldConflict cs = .conflict) :
-  ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ ¬ VE.NormDefaults.ConflictFreeU.{0} (choiceU N c) := by
+theorem foldG_conflict_sound (S : ChoiceSem) (A : Choice) (cs : List (Choice × ChoiceResult)) (hc : CoversG S A cs)
+    (hr : ∀ x ∈ cs, HoldsG S [] .bottom x.1 x.2) (h : foldConflict cs = .conflict) :
+  ∃ c, S.compat c ∧ (∀ x ∈ A, x ∈ c) ∧ S.notFree c := by
   obtain ⟨x, hx, hp⟩ := foldConflict_conflict h
-  obtain ⟨hcc, hA⟩ := covers_mem hc hx
+  obtain ⟨hcc, hA⟩ := coversG_mem hc hx
   have h2 := hr _ hx
   rw [hp] at h2
   exact ⟨x.1, hcc, hA, h2⟩
 
-theorem fold_premises_model_sound (N : NDoc) (A : Choice) (ps : List (Choice × ChoiceResult)) (hc : Covers N A ps)
-    (hr : ∀ x ∈ ps, Holds.{u} N [] .bottom x.1 x.2) (h : foldPremises ps = .model) :
-  ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ ConsistentU (choiceU N c) (choiceDoc N.D c).2 := by
+theorem foldG_premises_model_sound (S : ChoiceSem) (A : Choice) (ps : List (Choice × ChoiceResult)) (hc : CoversG S A ps)
+    (hr : ∀ x ∈ ps, HoldsG S [] .bottom x.1 x.2) (h : foldPremises ps = .model) :
+  ∃ c, S.compat c ∧ (∀ x ∈ A, x ∈ c) ∧ S.consistent c := by
   obtain ⟨x, hx, hp⟩ := foldPremises_model h
-  obtain ⟨hcc, hA⟩ := covers_mem hc hx
+  obtain ⟨hcc, hA⟩ := coversG_mem hc hx
   have h2 := hr _ hx
   rw [hp] at h2
   exact ⟨x.1, hcc, hA, h2⟩
 
-theorem fold_premises_inconsistent_sound (N : NDoc) (A : Choice) (ps : List (Choice × ChoiceResult))
-    (hc : Covers N A ps) (hr : ∀ x ∈ ps, Holds.{u} N [] .bottom x.1 x.2) (h : foldPremises ps = .inconsistent) :
-  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) →
-    VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧ EntailsU.{u} (choiceU N c) (choiceDoc N.D c).2 .bottom := by
+theorem foldG_premises_inconsistent_sound (S : ChoiceSem) (A : Choice) (ps : List (Choice × ChoiceResult))
+    (hc : CoversG S A ps) (hr : ∀ x ∈ ps, HoldsG S [] .bottom x.1 x.2) (h : foldPremises ps = .inconsistent) :
+  ∀ c, S.compat c → (∀ x ∈ A, x ∈ c) →
+    S.free c ∧ S.entails c [] .bottom := by
   obtain ⟨_, hall⟩ := foldPremises_inconsistent h
   intro c hcc hA
-  obtain ⟨r, hm⟩ := covers_row hc hcc hA
+  obtain ⟨r, hm⟩ := coversG_row hc hcc hA
   have h2 := hr _ hm
   have hp := hall _ hm
   simp only at hp
   rw [hp] at h2
   exact h2
+
+def CounterX (U : UDoc) (X Γ : List VE.Formula) (φ : VE.Formula) : Prop :=
+  ∃ S : VE.Structure.{0}, VE.NormDefaults.Wire.BaseAdmissibleX U X
+      (restrictAll (fill U).T S) ∧
+    DocumentExpansion (fill U) (restrictAll (fill U).T S) S ∧
+    Sat S Γ ∧ ¬ φ.denote S []
+
+def ConsistentX (U : UDoc) (X Γ : List VE.Formula) : Prop :=
+  ∃ S : VE.Structure.{0}, VE.NormDefaults.Wire.BaseAdmissibleX U X
+      (restrictAll (fill U).T S) ∧
+    DocumentExpansion (fill U) (restrictAll (fill U).T S) S ∧ Sat S Γ
+
+theorem counterX_nil (U : UDoc) (Γ : List VE.Formula) (φ : VE.Formula) :
+    CounterX U [] Γ φ ↔ CounterU U Γ φ := by
+  simp [CounterX, CounterU, VE.NormDefaults.Wire.BaseAdmissibleX, Sat]
+
+theorem consistentX_nil (U : UDoc) (Γ : List VE.Formula) :
+    ConsistentX U [] Γ ↔ ConsistentU U Γ := by
+  simp [ConsistentX, ConsistentU, VE.NormDefaults.Wire.BaseAdmissibleX, Sat]
+
+def ndSem (N : NDoc) : ChoiceSem where
+  compat c := Compatible N.D c
+  free c := VE.NormDefaults.ConflictFreeU.{u} (choiceU N c)
+  notFree c := ¬ VE.NormDefaults.ConflictFreeU.{0} (choiceU N c)
+  entails c Γ φ := EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ
+  counter c Γ φ := CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ
+  consistent c := ConsistentU (choiceU N c) (choiceDoc N.D c).2
+
+theorem holds_iff_holdsG (N : NDoc) (Γ : List VE.Formula) (φ : VE.Formula) (c : Choice)
+    (r : ChoiceResult) : Holds.{u} N Γ φ c r ↔ HoldsG (ndSem.{u} N) Γ φ c r := by
+  cases r <;> simp [Holds, HoldsG, ndSem]
+
+theorem covers_iff_coversG (N : NDoc) (A : Choice) (rs : List (Choice × ChoiceResult)) :
+    Covers N A rs ↔ CoversG (ndSem.{u} N) A rs := Iff.rfl
+
+def xSem (N : NDoc) (Xf : Choice → List VE.Formula) : ChoiceSem where
+  compat c := Compatible N.D c
+  free c := VE.NormDefaults.Wire.ConflictFreeX.{u} (choiceU N c) (Xf c)
+  notFree c := ¬ VE.NormDefaults.Wire.ConflictFreeX.{0} (choiceU N c) (Xf c)
+  entails c Γ φ := VE.NormDefaults.EntailsX.{u} (choiceU N c) (Xf c) ((choiceDoc N.D c).2 ++ Γ) φ
+  counter c Γ φ := CounterX (choiceU N c) (Xf c) ((choiceDoc N.D c).2 ++ Γ) φ
+  consistent c := ConsistentX (choiceU N c) (Xf c) (choiceDoc N.D c).2
+
+theorem xSem_nil (N : NDoc) (Γ : List VE.Formula) (φ : VE.Formula) (c : Choice)
+    (r : ChoiceResult) : HoldsG (xSem.{u} N (fun _ => [])) Γ φ c r ↔
+      HoldsG (ndSem.{u} N) Γ φ c r := by
+  cases r
+  · exact and_congr (VE.NormDefaults.conflictFreeX_nil _) (VE.NormDefaults.entailsX_nil _ _ _)
+  · exact counterX_nil _ _ _
+  · exact VE.NormDefaults.conflictFreeX_nil _
+  · exact not_congr (VE.NormDefaults.conflictFreeX_nil _)
+  · exact consistentX_nil _ _
+  · exact and_congr (VE.NormDefaults.conflictFreeX_nil _) (VE.NormDefaults.entailsX_nil _ _ _)
+  · exact Iff.rfl
+
+theorem rowsHold_to_G (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHold.{u} N A Γ φ cs rs) :
+    RowsHoldG (ndSem.{u} N) A Γ φ cs rs := by
+  obtain ⟨hc, hq, hcs, hrs⟩ := hr
+  exact ⟨(covers_iff_coversG N A cs).mp hc, (covers_iff_coversG N A rs).mp hq,
+    fun x hx => (holds_iff_holdsG N [] .bottom x.1 x.2).mp (hcs x hx),
+    fun x hx => (holds_iff_holdsG N Γ φ x.1 x.2).mp (hrs x hx)⟩
+
+/-! ### The fold theorems (6.4) -/
+
+theorem fold_all_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHold.{u} N A Γ φ cs rs) (h : foldEntailment cs rs = .all) :
+  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) →
+    VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧ EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ := by
+  simpa only [ndSem, List.append_nil] using foldG_all_sound (ndSem N) A Γ φ cs rs (rowsHold_to_G N A Γ φ cs rs hr) h
+
+theorem fold_none_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHold.{u} N A Γ φ cs rs) (h : foldEntailment cs rs = .none) :
+  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) →
+    VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧ CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ := by
+  simpa only [ndSem, List.append_nil] using foldG_none_sound (ndSem N) A Γ φ cs rs (rowsHold_to_G N A Γ φ cs rs hr) h
+
+theorem fold_some_sound (N : NDoc) (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cs rs : List (Choice × ChoiceResult)) (hr : RowsHold.{u} N A Γ φ cs rs) (h : foldEntailment cs rs = .some) :
+  (∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c)) ∧
+  (∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ EntailsU.{u} (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ) ∧
+  (∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ CounterU (choiceU N c) ((choiceDoc N.D c).2 ++ Γ) φ) := by
+  simpa only [ndSem, List.append_nil] using foldG_some_sound (ndSem N) A Γ φ cs rs (rowsHold_to_G N A Γ φ cs rs hr) h
+
+theorem fold_conflict_free_sound (N : NDoc) (A : Choice) (cs : List (Choice × ChoiceResult)) (hc : Covers N A cs)
+    (hr : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (h : foldConflict cs = .free) :
+  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) := by
+  simpa only [ndSem, List.append_nil] using foldG_conflict_free_sound (ndSem N) A cs ((covers_iff_coversG N A cs).mp hc) (fun x hx => (holds_iff_holdsG N [] .bottom x.1 x.2).mp (hr x hx)) h
+
+theorem fold_conflict_sound (N : NDoc) (A : Choice) (cs : List (Choice × ChoiceResult)) (hc : Covers N A cs)
+    (hr : ∀ x ∈ cs, Holds.{u} N [] .bottom x.1 x.2) (h : foldConflict cs = .conflict) :
+  ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ ¬ VE.NormDefaults.ConflictFreeU.{0} (choiceU N c) := by
+  simpa only [ndSem, List.append_nil] using foldG_conflict_sound (ndSem N) A cs ((covers_iff_coversG N A cs).mp hc) (fun x hx => (holds_iff_holdsG N [] .bottom x.1 x.2).mp (hr x hx)) h
+
+theorem fold_premises_model_sound (N : NDoc) (A : Choice) (ps : List (Choice × ChoiceResult)) (hc : Covers N A ps)
+    (hr : ∀ x ∈ ps, Holds.{u} N [] .bottom x.1 x.2) (h : foldPremises ps = .model) :
+  ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ ConsistentU (choiceU N c) (choiceDoc N.D c).2 := by
+  simpa only [ndSem, List.append_nil] using foldG_premises_model_sound (ndSem N) A ps ((covers_iff_coversG N A ps).mp hc) (fun x hx => (holds_iff_holdsG N [] .bottom x.1 x.2).mp (hr x hx)) h
+
+theorem fold_premises_inconsistent_sound (N : NDoc) (A : Choice) (ps : List (Choice × ChoiceResult))
+    (hc : Covers N A ps) (hr : ∀ x ∈ ps, Holds.{u} N [] .bottom x.1 x.2) (h : foldPremises ps = .inconsistent) :
+  ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) →
+    VE.NormDefaults.ConflictFreeU.{u} (choiceU N c) ∧ EntailsU.{u} (choiceU N c) (choiceDoc N.D c).2 .bottom := by
+  simpa only [ndSem, List.append_nil] using foldG_premises_inconsistent_sound (ndSem N) A ps ((covers_iff_coversG N A ps).mp hc) (fun x hx => (holds_iff_holdsG N [] .bottom x.1 x.2).mp (hr x hx)) h
 
 /-! ## Conditions (1.8, 6.5) -/
 

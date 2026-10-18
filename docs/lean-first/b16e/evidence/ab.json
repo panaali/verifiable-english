@@ -1,0 +1,271 @@
+{
+  "totals": {
+    "same": 100337,
+    "wording": 7,
+    "unavailable": 4
+  },
+  "records": {
+    "conformance/lean": 19806,
+    "conformance/python": 19806,
+    "discourse/default": 6350,
+    "document/default": 3632,
+    "norm_defaults/default": 2020,
+    "pilots/default": 501,
+    "probe/lean": 9435,
+    "probe/python": 9435,
+    "quantity/lean": 12863,
+    "quantity/python": 12863,
+    "readings/default": 1137,
+    "rights/default": 2500
+  },
+  "unavailable_both": {
+    "pilots/default": 4
+  },
+  "differences": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/a_front_matter_default.ve.md",
+      "op": "document_check",
+      "class": "wording",
+      "base": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/base.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "head": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/head.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/b_no_choice_made.ve.md",
+      "op": "document_check",
+      "class": "wording",
+      "base": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/base.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "head": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/head.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/c_written_definition_line.ve.md",
+      "op": "document_check",
+      "class": "wording",
+      "base": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/base.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "head": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/head.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/d_parenthetical_switch.ve.md",
+      "op": "document_check",
+      "class": "wording",
+      "base": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/base.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "head": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/head.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/e_the_rejected_sense_negated.ve.md",
+      "op": "document_check",
+      "class": "wording",
+      "base": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/base.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "head": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/head.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/f_two_words_one_default.ve.md",
+      "op": "document_check",
+      "class": "wording",
+      "base": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/base.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "head": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/head.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/g_bad_default.ve.md",
+      "op": "document_check",
+      "class": "wording",
+      "base": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/base.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "head": {
+        "exit": 1,
+        "stderr": [
+          "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/b16e-ab/head.C.pilots/pack.json'"
+        ],
+        "stdout": ""
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "timeout": 600
+      },
+      "head": {
+        "timeout": 600
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "timeout": 600
+      },
+      "head": {
+        "timeout": 600
+      },
+      "listed": true
+    }
+  ],
+  "unlisted": 0,
+  "base_sha256": "9a9745378d9ef47f4d00174b2e3cfb7b8f16d9e766195009dc1c02826b82bac5",
+  "head_sha256": "1b8bebda1ca8c1a13a01fa343ea61d2e779e8bc8e57058bf7dbb066350cc474e"
+}

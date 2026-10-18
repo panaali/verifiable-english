@@ -183,8 +183,7 @@ def shipped_copy(tmp_path, monkeypatch):
     shipped = [str(path.relative_to(ROOT)) for pattern in ("docs/spec/*-wire-table.md",
                                                            "conformance/wire-contract/*-catalogue.json")
                for path in sorted(ROOT.glob(pattern))]
-    for relative in ("lean/VE/Route/frozen-sources.sha256", "conformance/wire-contract/engine-golden.json",
-                     *shipped):
+    for relative in ("conformance/wire-contract/engine-golden.json", *shipped):
         (tmp_path / relative).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / relative, tmp_path / relative)
     monkeypatch.setattr(wire_tool, "ROOT", tmp_path)
@@ -217,12 +216,8 @@ def test_l13_write_after_a_revision_changes_only_generated_files(shipped_copy):
     assert process(wire_tool.DATA, write=True) == []
     after = snapshot()
     changed = {name for name in after if before.get(name) != after[name]}
-    assert changed == {"ve/wire_contract/contracts.lock", "lean/VE/WireContract/Tables/SoftNorms.lean",
-                       "lean/VE/Route/frozen-sources.sha256"}
-    old = before["lean/VE/Route/frozen-sources.sha256"].decode().splitlines()
-    new = after["lean/VE/Route/frozen-sources.sha256"].decode().splitlines()
-    assert [(a, b) for a, b in zip(old, new) if a != b] == [
-        (a, b) for a, b in zip(old, new) if a.endswith("VE/WireContract/Tables/SoftNorms.lean") and a != b]
+    # The frozen inventory lists no generated module (AR-2, decision D2): nothing else changes.
+    assert changed == {"ve/wire_contract/contracts.lock", "lean/VE/WireContract/Tables/SoftNorms.lean"}
     lock = loads_json(after["ve/wire_contract/contracts.lock"])
     assert lock["soft-norms@0.json"]["revision"] == value["revision"]
     assert process(wire_tool.DATA) == []

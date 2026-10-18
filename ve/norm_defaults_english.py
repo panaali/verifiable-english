@@ -19,9 +19,9 @@ from __future__ import annotations
 
 import json
 
+from .words import clauses as _lean_clauses, constants_of, lines as _lean_lines, pair_item
 from .errors import CheckerUnavailable, SyntaxError, VEError
-from .norm_english import (UNSPECIFIED_KEYWORD, _bindings, _words, default_sentence, pair_sentence,
-                           unspecified_clause)
+from .norm_english import UNSPECIFIED_KEYWORD, _bindings, _words, default_sentence, unspecified_clause
 from .surface.unambiguity import require_unique_derivation
 
 COMPLETIONS = ("deny", "allow", "unspecified")
@@ -33,18 +33,24 @@ def legend(env):
     order, then the pair sentence of every declared pair with an unspecified
     member (render-only; the dual declaration is its source)."""
     sentences = [default_sentence(env, p) for p, d in env.predicates.items() if d.regulated is not None]
+    pairs = []
     for required, decl in env.predicates.items():
         reg = decl.regulated
         if reg is None or reg.permission is None:
             continue
         if "unspecified" in (reg.default, env.predicates[reg.permission].regulated.default):
-            sentences.append(pair_sentence(env, required))
-    return tuple(sentences)
+            pairs.append(required)
+    return tuple(sentences + _pair_sentences(env, pairs))
+
+
+def _pair_sentences(env, required):
+    """Lean's pair sentence (norm-defaults 4.1, `VE.Words.pairSentence`) of each obligation of `required`."""
+    return _lean_lines(env, [pair_item(r) for r in required])
 
 
 def _candidates(env):
     """Every legend sentence the environment's vocabulary can form, with its reading."""
-    result = []
+    result, pairs = [], []
     for name, decl in env.predicates.items():
         reg = decl.regulated
         if reg is None:
@@ -52,8 +58,10 @@ def _candidates(env):
         for completion in COMPLETIONS:
             result.append((default_sentence(env, name, completion), ("completion", name, completion)))
         if reg.permission is not None:
-            result.append((pair_sentence(env, name), ("pair", name, reg.permission)))
-    return result
+            pairs.append((name, reg.permission))
+    return result + [(text, ("pair", name, permission))
+                     for text, (name, permission) in zip(_pair_sentences(env, [n for n, _ in pairs]), pairs,
+                                                         strict=True)]
 
 
 def legend_grammar(env):
@@ -125,27 +133,21 @@ def soft_default_paraphrase(env, predicate, rule_number):
             "where it applies and no other rule decides, " + _completion_clause(env, predicate) + ".")
 
 
-def element_name(env, situation, value):
-    """A situation element: the verbalisation or description of a constant
-    naming it, or the element itself."""
-    for name, element in sorted(situation.constants.items()):
-        if element == value:
-            return constant_name(env, name)
-    return value
-
-
 def constant_name(env, name):
+    """A constant in the silence sentence's words (`silence_sentence`, which stays Python's with the legend): its
+    verbalisation, else its spelling."""
     return env.constants[name].verbalisation or _words(env).constants.get(name, name)
 
 
-def point_clause(env, situation, predicate, values, modal=None):
-    """`Sol may generate …` at a situation tuple."""
-    names = [element_name(env, situation, v) for v in values]
-    reg = env.predicates[predicate].regulated
-    if reg.role == "plain":
-        return _words(env).predicates[predicate].format(*names)
-    modal = modal or ("may" if reg.role == "permission" else "must")
-    return reg.act.replace("{0} ", "{0} " + modal + " ", 1).format(*names)
+def _clauses(env, situation, points):
+    """Lean's clause (`VE.Words.clauseAt`) of each `(predicate, values, value)` point of `situation`: the positive
+    clause where `value` holds, else its negation (`must not` for a permission, `need not` for an obligation); each
+    element named by the first of the situation's constants that denotes it."""
+    return _lean_clauses(env, constants_of(situation), points)
+
+
+def _clause(env, situation, predicate, values, value=True):
+    return _clauses(env, situation, [(predicate, values, value)])[0]
 
 
 def _rule_numbers(document):
@@ -179,7 +181,7 @@ def status_sentence(document, situation, row):
     if state.startswith("SETTLED "):
         value = state == "SETTLED yes"
         own = [r for r in rules if r.predicate == predicate]
-        clause = point_clause(env, situation, predicate, values, None if value else _negative_modal(env, predicate))
+        clause = _clause(env, situation, predicate, values, value)
         if own:
             cited = ", ".join(f"rule {numbers[r.name]}" for r in own)
             return f"The text says {clause} ({cited})."
@@ -188,17 +190,12 @@ def status_sentence(document, situation, row):
             return pair
         return f"The text says {clause} (by default)."
     if state == "UNDECIDED":
-        clause = point_clause(env, situation, predicate, values)
+        clause = _clause(env, situation, predicate, values)
         if predicate in document.unspec and not rules:
             return f"The text does not say whether {clause}: no rule decides this situation."
         return f"The text does not say whether {clause}: {_inherited_reason(document, situation, row)}."
-    return (f"The checker could not settle whether {point_clause(env, situation, predicate, values)} "
+    return (f"The checker could not settle whether {_clause(env, situation, predicate, values)} "
             "with the evidence it was given.")
-
-
-def _negative_modal(env, predicate):
-    reg = env.predicates[predicate].regulated
-    return "must not" if reg.role == "permission" else "need not"
 
 
 def _pair_reason(document, situation, predicate, values, value, rules):
@@ -211,10 +208,10 @@ def _pair_reason(document, situation, predicate, values, value, rules):
     for required, permission, _ in document.pairs():
         if (predicate, value) == (permission, True):
             other, verb, default = required, "requires", "it is required by default"
-            head = point_clause(env, situation, permission, values)
+            head = _clause(env, situation, permission, values)
         elif (predicate, value) == (required, False):
             other, verb, default = permission, "forbids", "it is not permitted by default"
-            head = point_clause(env, situation, required, values, "need not")
+            head = _clause(env, situation, required, values, False)
         else:
             continue
         deciding = [r for r in rules if r.predicate == other and r.sign == (verb == "requires")]
@@ -235,7 +232,7 @@ def _inherited_reason(document, situation, row):
     parts = []
     for atom in row.get("differs", []):
         q, atom_values = atom["predicate"], _row_tuple(atom)
-        clause = point_clause(env, situation, q, atom_values)
+        clause = _clause(env, situation, q, atom_values)
         rules = [r for r in document.author.rules if r.predicate == row["predicate"]
                  and q in _atoms(r.guard) | set().union(*(_atoms(u) for u in r.unless))]
         if rules:
@@ -272,9 +269,9 @@ def latent_conflict_sentence(document, situation, row):
     _, under = _latent(row)
     numbers = _rule_numbers(document)
     selected = _author_rules(document, row.get("rules"))
-    conditions = [point_clause(env, situation, q, values, None if value else _negative_modal(env, q))
-                  for q, values, value in under]
-    silent = [point_clause(env, situation, q, values) for q, values, _ in under]
+    found = _clauses(env, situation, [(q, values, value) for q, values, value in under]
+                     + [(q, values, True) for q, values, _ in under])
+    conditions, silent = found[:len(under)], found[len(under):]
     fix = ("make one rule an exception to the other" if len({r.predicate for r in selected}) == 1
            else "add a condition to one of the rules")
     named = " and ".join(str(n) for n in sorted({numbers[r.name] for r in selected}))
@@ -290,21 +287,14 @@ def gap_sentence(document, situation, line):
         raise VEError("InvalidInput: a reachable gap witness is required")
     values = _row_tuple(line["witness"])
     predicate, completion = line["predicate"], line["completion"]
-    clause = point_clause(env, situation, predicate, values)
     if completion == "unspecified":
+        clause = _clause(env, situation, predicate, values)
         return f"The text does not say whether {clause}: no rule decides this situation."
     value = line.get("value")
     if value not in ("yes", "no"):
         raise CheckerUnavailable("CheckerUnavailable: Lean's reached default has no completed value")
-    decided = point_clause(env, situation, predicate, values,
-                           None if value == "yes" else _negative_modal(env, predicate))
+    clause, decided = _clauses(env, situation, [(predicate, values, True), (predicate, values, value == "yes")])
     return f"No rule decides whether {clause}; the default decides that {decided}."
-
-
-def filling_sentence(env, situation, predicate, values, value):
-    """A filled gap in a countermodel: the situation's answer to a silence."""
-    clause = point_clause(env, situation, predicate, values)
-    return f"Here the text does not say whether {clause}; this situation answers '{'yes' if value else 'no'}'."
 
 
 def _simplify(formula):
@@ -389,5 +379,5 @@ def completion_question(document, predicate, found):
     situation = None
     if found is not None:
         model, values, _ = found
-        situation = "No rule decides whether " + point_clause(env, model, predicate, values) + "."
+        situation = "No rule decides whether " + _clause(env, model, predicate, values) + "."
     return {"predicate": predicate, "options": options, "selected": None, "situation": situation}

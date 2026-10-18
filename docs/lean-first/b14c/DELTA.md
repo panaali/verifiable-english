@@ -1,0 +1,62 @@
+# Batch 14c: n-ary core definitions
+
+## Scope and owner
+
+Lean now elaborates three to six argument `defined` predicates on the core family in dependency order. It regenerates their Background biconditionals, computes defined model tables under the route budget, checks the biconditionals, and uses the result for evaluate, countermodel, certificate, model validation and core family calls. Python's retained n-ary exclusion in `definitions._compile_lean`, `validation.model_in_scope` and `validation.family_in_scope` is gone. The old Python implementation remains for direct entries that cannot be embedded in an environment and for environments outside Lean's model scope; it is not selected for an identity-bound n-ary declaration within that scope.
+
+The Lean route reuses the FOL definition decoder and budget for unary and binary declarations and extends the core environment for n-ary ones. The schema of the regenerated Background is derived from the Lean `ResponseShape` declarations. The core formula encoder is shared by the service and route.
+
+## Acceptance items
+
+| Item | Type | Evidence or owner |
+|---|---|---|
+| Core n-ary Background, derived table and Python route | AGENT | `tests/test_b14c.py`, `tests/test_definitions.py` |
+| Fully typed and request-bound relayed responses | AGENT | Generated response schemas; relay mutation gate |
+| Theorem audit, statement diff and trust ratchet | AGENT | `lean/audit.py`, `tools/lean_statements.py`, `tools/trust_map.py` |
+| Seeded test faults in each changed product language | AGENT | `evidence/mutants.json` |
+| Full suite, Rust tests and Lean build on committed HEAD | AGENT | `evidence/gate.json` or `gate-result.json` |
+| Independent review and final DRI acceptance | HUMAN | DRI |
+| Three-day operational soak after batch 13b | EXTERNAL | DRI, per plan section 8 answer 1 |
+
+## DRI rulings
+
+- **SIGNED by standing ruling R1 (DRI-RULINGS.md):** a model that supplies its own n-ary defined table still raises `InvalidModel`, but Lean's `InvalidModel(definitions): supplied table for defined predicate` replaces the base's `InvalidModel: supplied table for a defined predicate`. No quoted name or JSON path is lost, and the new generator names the fault more specifically. `targeted_ab.py` checks the saved `evidence/targeted-ab.json` for the same code, path and quoted names and the retained error details.
+- **SIGNED by standing ruling R6 (DRI-RULINGS.md):** the added Lean validation, table computation and response checks replace the deleted Python n-ary fallback decision path. `tools/trust_map.py --since f1b719c7` reports **139 trusted lines** of growth relative to the merge base: K +0, S +8, untied V +131. That raw comparison exits 1 because it knows no new signed allowance; R6 signs this class. The generated `docs/trust-baseline.json` records the growth and owner-switch reason in its history; `tools/trust_map.py --check` passes with zero unclassified declarations. The changed source and deleted fallback are covered by `tests/test_b14c.py` and the 5,260-declaration Lean audit.
+- **SIGNED by standing ruling R8/R11 (DRI-RULINGS.md):** Python checks the Lean response's typed schema and its binding to the request. The generated Background remains a Lean decision. The schema generated from Lean also requires `background` and `premises` to be equal and their rows to align with `generators`; `test_nary_background_relay_refuses_missing_or_extra_generated_rows` checks this with missing, repeated and changed rows. The relay mutation gate retypes, rebinds, empties, drops and duplicates fields of genuine responses. Its route-specific run on the new n-ary fixture refused 5,477 of 5,503 mutations, with 26 pre-existing allowed classes and no failures (`evidence/route-mutations.json`).
+- The full relay mutation sweep ran 471 fixtures and 109,454 mutations, with zero new findings (`evidence/relay-mutation.json`). The changed service route refused 5,477 mutations; its 26 accepted mutations are classified in the standing allowlist, and it has no untyped result fields.
+- The two structural response relations, `x-same-length` and `x-equal-fields`, are classified in `test_lean_shapes_are_classified` and `test_adr_relation_keywords`. They compare response fields to each other and do not add a request-binding relation to the signed D1 list. Both architecture inventory tests pass.
+- **SIGNED by standing ruling R12 (DRI-RULINGS.md):** Lean audits, statements, checker pins, response schemas and gate collection were regenerated through `tools/regen_generated.py`.
+- **SIGNED by standing ruling R7 (DRI-RULINGS.md):** six historical pilot documents were unavailable on both base and HEAD with identical outcomes. All six are listed by exact case and outcome in `evidence/ab-delta.json`; the seven-corpus comparator reports zero unlisted rows. `test_only_identical_listed_unavailable_is_signed` checks that the batch evidence gate accepts only identical, listed unavailable rows and rejects one-sided or changed outcomes.
+- **D4:** batch scope, corpus, latency and gate evidence are saved and checked at the batch gate and merge. No permanent test reads this batch's report numbers.
+
+The statement inventory gained 43 declarations and changed or removed none. The Lean audit checked all 5,260 named theorem declarations with only the standard axiom allowlist. No approved theorem statement was altered.
+
+## Review fixes (lf-14c review F1, F2)
+
+- **F1, one definition order.** Lean placed every unary and binary definition before every n-ary one. `Core.Layers.elaborateNary` now orders all definitions in the one dependency order (`Layered.order`, `elaborateNary_chain` states it), and `definitionPremises` emits every biconditional in that order, so the route Background, `Family.coreEnv`, the norms certificate route and Python's Lean-owned `compile_definitions` (and the model tables and wordings that read it) agree with Python's elaborator. `test_definitions_share_one_dependency_order_across_arities` covers independent, interleaved and chained mixes.
+- **F2, Python's body and argument diagnostics.** `Route.Wire.bodyFault` is the one owner of a rejected body's text for unary, binary and n-ary bodies, in Python's order: a body that is not an array is only typed (`the body is not a typed formula`), an array gets Python `_Decoder`'s text (`Route.PyDecoder`, moved out of the reports preflight), then the reachability gate, then typing. `argumentsDiffer` quotes the name as Python's `repr` in Lean, the service document walk and Rust; Rust also types a non-array body instead of decoding it. Regression tests: `test_direct_definition_diagnostics_are_pythons`, `test_identity_bound_definition_diagnostics_are_pythons` (every body node replaced by every JSON kind, against the retained elaborator), `test_definition_arguments_mismatch_quotes_the_name_on_every_engine`, `test_a_body_that_is_not_an_array_is_untyped_on_every_engine`.
+- Effects on recorded evidence, all toward Python: the reports fault corpus (`docs/lean-first/b8`) has 1,207 identical answers instead of 1,169 (W8.1 312, W8.2 424); the differential fuzzer baseline drops 11 DF-9/DF-15 signatures (now 241 entries) and files two under DF-20, where Rust rejects a `defined` field without `definitions@0` by its field set before the body's `SyntaxError`. The JSON-file scan of `test_assurance_manifest.py` now also sees a walk over `Json` without accessors (`PyDecoder`, `AstLimit`).
+
+## Seeded bugs
+
+`evidence/mutants.json` records four planted and removed faults: a Python family scope exclusion, an erased Lean biconditional, a Lean evaluator that omits every derived tuple, and a Python schema checker that skips generated-row length alignment. Each caused its named test to fail; all focused tests passed after restoration. `test_nary_metered_zero_budget_is_unknown` checks that the changed metered caller returns `ResourceLimit` at zero budget and a true value with adequate budget.
+
+## Deletion ledger
+
+The branch's diff relative to `main` removes **24 production Python lines** and **178 Lean source lines**, and adds **439 Lean source lines** (excluding generated Audit manifests). The Python deletions remove the n-ary predicate scope detector and its `model_in_scope`/`family_in_scope` exclusions, and the `_compile_lean` n-ary fallback call. Lean deletes the separate n-ary validation walk and formula encoder in `Service/Standalone.lean`; the callers now use `Core.Layers.decodeLayered`, `completeModel` and `Core.Wire.encodeFormula`. The new Lean Background generator also replaces the FOL-only core branch. `tests/test_b14c.py` checks each changed path.
+
+## Behaviour and limits
+
+This batch changes the authority for identity-bound n-ary core definitions to Lean. The corpus comparison and differential fuzzer results below determine whether that changes any public answer. Search-internal candidate evaluation and the standalone direct-entry elaborator remain in their already recorded scopes. This batch does not change the document wrapper or norm-defaults logic addressed in the sibling 16d review.
+
+## Evidence
+
+The five-run same-host route measurement (`latency.py`, `evidence/latency.json`) found a 78.239 ms base versus 74.336 ms head median CPU on the unchanged core Background case. The n-ary evaluate case took 73.386 ms CPU and 721.813 ms wall at the median, within the plan's absolute document budget.
+
+The official seven-corpus A/B comparison (`evidence/ab.json`) covers **94,681** records: 94,675 identical available outcomes and six identical unavailable historical pilots signed under R7; **zero unlisted differences**. The six non-pilot corpora contain 94,195 identical outcomes. All 486 unique historical pilot documents were recorded: 480 identical available outcomes and six identical unavailable outcomes. Initial scratch-directory recordings could not resolve some relative imports, and host load caused Rust or document hang guards to expire; each affected case was rerun against the same staged pilot tree on base and HEAD. The largest one-sided timeout was retried with an 1,800-second document hang guard and returned the same report. `evidence/pilot-reconcile.json` saves the branch tree IDs, recording hashes and selection counts. The longer hang guards changed no product work limits. The full release gate result and exact `main..HEAD --no-merges` scope are saved in `gate-result.json` at the worktree root by `finalize_evidence.py` after the clean-HEAD gate.
+
+The first clean-HEAD gate on `a0805178` failed ten pytest cases from stale decoder pins, three consolidation ledger figures, the 14c Background schema expectations, a hang-guard false positive in a new test, and gate-interruption test setup. All ten failing node IDs passed when rerun directly after correction. `tools/gate.py --rerun-failed` refuses a changed tree and would start another full gate, so the failed nodes were run explicitly. The selector subsequently ran 364 test files: 363 returned exit 0, while the recorder timed out `test_assist_invariants.py` despite its pytest log reporting 32 passes. The selector then could not save its coverage map to the read-only home cache. The final clean-HEAD release gate is the authoritative suite result.
+
+`tools/difffuzz.py --ci` passed with no new findings. Its reviewed baseline remains 250 entries (222 seen in the CI sample); the report is saved as `evidence/difffuzz.json`.
+
+Fourteen dated differential fuzz samples covered 369,908 inputs. They found 306 signatures outside the fixed 250-entry CI baseline, and all 306 reproduced on the base revision; none is new to this batch. The saved `evidence/date-seeds-summary.json` and `evidence/date-seeds-base-replay.json` record each seed and the replay check. `tools/relay_lint.py` passed on 13 relayed modules and six relayed functions.

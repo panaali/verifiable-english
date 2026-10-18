@@ -70,6 +70,7 @@
     {"hash": "60914d2c", "subject": "senses: open-fence text counts the author's fences and fence-id refusals name their fault"},
     {"hash": "4fe6ceb5", "subject": "tests: the RD-8 report commit is looked up in HEAD's history only"}
   ],
+  "report_commit": "69a8dbdaf1eb330ff09214955715351816d7d4d9",
   "final_gate": {
     "target": "self",
     "checks": ["lake build", "python3 lean/audit.py", "full pytest"],

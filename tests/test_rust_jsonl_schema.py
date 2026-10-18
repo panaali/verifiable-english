@@ -275,6 +275,14 @@ def test_a_complete_rust_diagnostic_is_its_rejection(monkeypatch):
     assert caught.value.span.column == 1
 
 
+@pytest.mark.parametrize("message", ["memory budget exhausted: 1 bytes (VE_RUST_MEMORY_LIMIT)",
+                                     "memory budget exhausted: 8589934592 bytes (OTHER)"])
+def test_idless_memory_record_without_a_matching_live_producer_is_unavailable(monkeypatch, message):
+    record = {"status": "error", "error": {"code": "ResourceLimit", "message": message}}
+    with pytest.raises(CheckerUnavailable, match="malformed Rust response"):
+        _feed(monkeypatch, CASE, record, 1)
+
+
 def test_a_case_of_a_shape_no_adapter_sends_has_no_record(monkeypatch):
     """The selection follows `case` in main.rs for the shapes Python sends; any other case is unanswerable."""
     with pytest.raises(CheckerUnavailable, match="no result is possible"):

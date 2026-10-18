@@ -33,7 +33,7 @@ The previous checkpoint left 2,388 reachable cells without a backend decision. B
 |---|---:|---|
 | Rejections decided by a constituent adapter | 730 | measurement: they carry the Lean service's rejection mark (`same, backend rejection`) |
 | Stale model identity (evaluate, evaluate trace, countermodel check) | 345 | extension: Lean's `model` mode takes the model's claimed `environment_id` and `model_id` and rejects a mismatch itself (`FiniteModel.from_dict(_claimed=...)`) |
-| `definitions@0` parse and canonicalise | 192 | extension: Lean's `parse` mode reads `definitions@0` environments; a source Python reads through the definitions sugar keeps Python's reading (recorded gap below) |
+| `definitions@0` parse and canonicalise | 192 | extension: Lean's `parse` mode reads `definitions@0` environments, the definitions sugar included since lean-first batch 14a |
 | Argument graph and readings on the closure, core and order families | 400 | extension: `VE/Service/GenericGraph.lean`, `GenericReadings.lean`, `Family.lean` |
 | Bundles on the closure, core and order families and over norms environments | 96 | extension: `VE/Service/FamilyBundle.lean` (new `bundle` mode) |
 | Norms elaborate, certificate and conflict on the closure, core and order families | 240 | extension: `VE/Service/FamilyNorms.lean` (new `family-norms` mode) |
@@ -48,7 +48,6 @@ The counts overlap slightly between measurement and extension: some constituent 
 
 Each adapter routes these inputs to the retained Python statically. They are recorded scope gaps, not fallbacks after a failure. All of them are Stage 2c work: "every matrix S cell Lean lacks". The plan sets 2c's deadline at Gate 4, not Gate 2: section 2.3 gap table row 1 ("close in Lean before gate 4 (stage 2c …)"), section 5 risk row 1 ("stage 2c closes the gaps in Lean before gate 4") and section 6 ("2c … sets the critical path to gate 4"). None of them occurs in the Stage 0 probe matrix.
 
-- **`definitions@0` surface sugar** (`no`, `every … that is`, `iff`, `define`): no Lean surface parser has it. Python's parser records when it reads a sugar production, and such a source keeps Python's reading. Every other `definitions@0` source is Lean's to accept.
 - **Norm documents with non-first-order guards on the closure, core and order families** (reachability, n-ary atoms, arithmetic): the Lean norms theory is first-order. First-order documents are regenerated over the environment's FOL view.
 - **N-ary definitions on the core family**: Lean's core layer glue projects unary and binary predicates only. This affects environment, model, graph, readings and bundles over such environments.
 - **Coupled reading sets** (`couplings`, from main's rights work): every per-choice certificate and model is checked on the backend, but the coupled enumeration and its verdict are Python's (trusted, narrowed). This construct was added after the Stage 0 baseline.
@@ -69,7 +68,7 @@ Every class-A operation of the plan's section 2.3 dispatches its own adapter:
 | environment, model and Background validation (`environment_validation`, `model_validation`) | `environment` and `model` modes, legacy envelopes included; claimed model identities checked in Lean | statement layers; core-family n-ary definitions; search candidates without an identity |
 | definitions elaboration (`definitions_elaboration`) | route `background` | as model validation |
 | bundle (`bundle`) | FOL without norms: route `bundle` (`bundle_sound`); every other family, norms environments and legacy envelopes: the `bundle` mode (`VE/Service/FamilyBundle.lean`) | statement layers; core-family n-ary definitions |
-| parse and canonicalise (`parse`) | `parse` mode over the family surface parsers, legacy envelopes included, with the frozen runners' source limits | `definitions@0` sugar; statement layers |
+| parse and canonicalise (`parse`) | `parse` mode over the family surface parsers (the `definitions@0` sugar included, lean-first batch 14a), legacy envelopes included, with the frozen runners' source limits | statement layers |
 | argument graph (`graph`) | `graph` mode: `VE/Service/Graph.lean` (FOL, v0), `VE/Service/Family.lean` (closure, core, order, ve.core@0.1) | statement layers; core-family n-ary definitions |
 | readings (`readings`) | `readings` mode: `VE/Service/Readings.lean` (FOL), `VE/Service/Family.lean` (other families and legacy envelopes) | coupled reading sets; statement layers; core-family n-ary definitions |
 

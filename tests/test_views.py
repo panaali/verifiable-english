@@ -352,8 +352,17 @@ def test_template_head_and_identifier_collisions_across_all_categories():
     data['vocabulary']['sorts']['service']['verbalisation'] = {'singular': 'inspects', 'plural': 'services'}
     env = Environment(data)
     assert render(Binary('owns', Const('alice'), Const('api')), env, 've_explicit') == '@alice owns @api'
+    # Both templates collide with the noun, so neither claims `inspects` and the noun stays (DRI X2).
+    assert render(Forall('service', Top()), env, 've_explicit') == 'for every inspects x0: (true)'
+    assert {i.path for i in lint_vocabulary(env) if i.code == 'SYMBOL_COLLISION'} == {
+        '/vocabulary/predicates/audits/verbalisation', '/vocabulary/predicates/owns/verbalisation'}
+    # An accepted template's head still takes the word from the noun.
+    data['vocabulary']['predicates']['owns']['verbalisation'] = '{0} owns {1}'
+    data['vocabulary']['sorts']['service']['verbalisation'] = {'singular': 'inspects office',
+                                                                'plural': 'inspects offices'}
+    env = Environment(data)
+    assert render(Binary('audits', Const('alice'), Const('api')), env, 've_explicit') == '@alice inspects @api'
     assert render(Forall('service', Top()), env, 've_explicit') == 'for every service x0: (true)'
-    assert len([i for i in lint_vocabulary(env) if i.code == 'SYMBOL_COLLISION']) >= 2
     # Exact duplicate templates are explicitly diagnosed for both declarations.
     data['vocabulary']['predicates']['owns']['verbalisation'] = '{0} inspects {1}'
     assert len([i for i in lint_vocabulary(Environment(data)) if i.code == 'DUPLICATE_TEMPLATE']) == 2

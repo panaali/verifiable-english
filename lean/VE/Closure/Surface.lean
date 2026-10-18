@@ -95,35 +95,60 @@ def parseReach (E : Environment)
         let rest ← consume [')'] rest
         some (.reachBody k id a t u, rest)
 
-def parseRaw (E : Environment) : Nat → List String → List Char → Option (Formula × List Char)
+/-- The definition premise of this family (Python `definitions.premise`): unary and binary heads. -/
+def premiseOf (p : String) (sorts : List String) (body : Formula) : Option Formula :=
+  let head : Option Formula := match sorts with
+    | [_] => some (.unary p (.var 0))
+    | [_, _] => some (.binary p (.var 1) (.var 0))
+    | _ => none
+  head.map fun h => definitionPremise .all .and .implies sorts h body
+
+def parseRawWith (E : Environment) (sugar : Option (Sugar Formula)) :
+    Nat → List String → List Char → Option (Formula × List Char)
   | 0, _, _ => none
   | fuel + 1, names, input =>
     match input with
-    | 't' :: 'c' :: '[' :: rest => parseReach E (parseRaw E fuel) .plus names rest
-    | 'r' :: 't' :: 'c' :: '[' :: rest => parseReach E (parseRaw E fuel) .star names rest
+    | 't' :: 'c' :: '[' :: rest => parseReach E (parseRawWith E sugar fuel) .plus names rest
+    | 'r' :: 't' :: 'c' :: '[' :: rest => parseReach E (parseRawWith E sugar fuel) .star names rest
     | 't' :: 'r' :: 'u' :: 'e' :: rest =>
         if boundary rest then some (.top, rest) else parseAtom names input
     | 'f' :: 'a' :: 'l' :: 's' :: 'e' :: rest =>
         if boundary rest then some (.bottom, rest) else parseAtom names input
     | 'n' :: 'o' :: 't' :: ' ' :: '(' :: rest => do
-        let (a, rest) ← parseRaw E fuel names rest
+        let (a, rest) ← parseRawWith E sugar fuel names rest
         let rest ← consume [')'] rest
         some (.not a, rest)
+    | 'n' :: 'o' :: ' ' :: rest =>
+        match sugar with
+        | none => parseAtom names input
+        | some _ => readNo (fun s p => .all s (.not (.unary p (.var 0)))) rest
+    | 'e' :: 'v' :: 'e' :: 'r' :: 'y' :: ' ' :: rest =>
+        match sugar with
+        | none => parseAtom names input
+        | some _ => readEvery (binderAllowed E) (parseRawWith E sugar fuel)
+            (fun s p a => .all s (.implies (.unary p (.var 0)) a)) names rest
     | '(' :: rest => do
-        let (a, rest) ← parseRaw E fuel names rest
+        let (a, rest) ← parseRawWith E sugar fuel names rest
         if let some rest := consume ") and (".toList rest then
-          let (b, rest) ← parseRaw E fuel names rest
+          let (b, rest) ← parseRawWith E sugar fuel names rest
           let rest ← consume [')'] rest
           some (.and a b, rest)
         else
-          let rest ← consume ") or (".toList rest
-          let (b, rest) ← parseRaw E fuel names rest
-          let rest ← consume [')'] rest
-          some (.or a b, rest)
+          match consume ") or (".toList rest, sugar with
+          | some rest, _ => do
+            let (b, rest) ← parseRawWith E sugar fuel names rest
+            let rest ← consume [')'] rest
+            some (.or a b, rest)
+          | none, some _ => do
+            let rest ← consume ") iff (".toList rest
+            let (b, rest) ← parseRawWith E sugar fuel names rest
+            let rest ← consume [')'] rest
+            some (.and (.implies a b) (.implies b a), rest)
+          | none, none => none
     | 'i' :: 'f' :: ' ' :: '(' :: rest => do
-        let (a, rest) ← parseRaw E fuel names rest
+        let (a, rest) ← parseRawWith E sugar fuel names rest
         let rest ← consume "), then (".toList rest
-        let (b, rest) ← parseRaw E fuel names rest
+        let (b, rest) ← parseRawWith E sugar fuel names rest
         let rest ← consume [')'] rest
         some (.implies a b, rest)
     | 'f' :: 'o' :: 'r' :: ' ' :: 'e' :: 'v' :: 'e' :: 'r' :: 'y' :: ' ' :: rest => do
@@ -132,7 +157,7 @@ def parseRaw (E : Environment) : Nat → List String → List Char → Option (F
         let (name, rest) ← readIdent rest
         if !binderAllowed E names name then none else do
           let rest ← consume ", (".toList rest
-          let (a, rest) ← parseRaw E fuel (name :: names) rest
+          let (a, rest) ← parseRawWith E sugar fuel (name :: names) rest
           let rest ← consume [')'] rest
           some (.all s a, rest)
     | 't' :: 'h' :: 'e' :: 'r' :: 'e' :: ' ' :: 'e' :: 'x' :: 'i' :: 's' :: 't' :: 's' :: ' ' :: rest => do
@@ -141,23 +166,36 @@ def parseRaw (E : Environment) : Nat → List String → List Char → Option (F
         let (name, rest) ← readIdent rest
         if !binderAllowed E names name then none else do
           let rest ← consume ", (".toList rest
-          let (a, rest) ← parseRaw E fuel (name :: names) rest
+          let (a, rest) ← parseRawWith E sugar fuel (name :: names) rest
           let rest ← consume [')'] rest
           some (.ex s a, rest)
     | _ => parseAtom names input
 
-def parseStatements (E : Environment) : Nat → List Char → Option (List Formula)
+/-- The parser without sugar: every proved round trip is about this one. -/
+abbrev parseRaw (E : Environment) : Nat → List String → List Char → Option (Formula × List Char) :=
+  parseRawWith E none
+
+def parseStatementsWith (E : Environment) (sugar : Option (Sugar Formula)) :
+    Nat → List Char → Option (List Formula)
   | 0, _ => none
   | _ + 1, [] => some []
   | fuel + 1, input => do
-      let (a, rest) ← parseRaw E (input.length + 1) [] input
+      let (a, rest) ← readStatement sugar (parseRawWith E sugar (input.length + 1) [])
+        (fun s => readDefine (binderAllowed E) s (fun names => parseRawWith E sugar (input.length + 1) names)
+          premiseOf) input
       let rest ← consume ['.', '\n'] rest
-      let tail ← parseStatements E fuel rest
+      let tail ← parseStatementsWith E sugar fuel rest
       some (a :: tail)
 
-def parse (E : Environment) (text : String) : Option (List Formula) := do
-  let fs ← parseStatements E (text.toList.length + 1) text.toList
+abbrev parseStatements (E : Environment) : Nat → List Char → Option (List Formula) :=
+  parseStatementsWith E none
+
+def parseWith (E : Environment) (sugar : Option (Sugar Formula)) (text : String) : Option (List Formula) := do
+  let fs ← parseStatementsWith E sugar (text.toList.length + 1) text.toList
   if !fs.isEmpty && fs.all (fun a => a.check E []) then some fs else none
+
+def parse (E : Environment) (text : String) : Option (List Formula) :=
+  parseWith E none text
 
 def normalize (E : Environment) (text : String) : Option String :=
   (parse E text).map print

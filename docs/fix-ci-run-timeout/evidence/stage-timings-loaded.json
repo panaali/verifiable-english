@@ -1,0 +1,371 @@
+{
+ "what": "python -m tools.difffuzz --ci on main 2a4fbf70 (before this branch), instrumented by time_stages.py.txt: wall and CPU per surface and per kind of call",
+ "host": "VM multi-agent-lab, 32 vCPUs, x86_64; other agents' jobs running (load average sampled at each surface start)",
+ "date": "2026-10-16T02:28Z to 02:35Z",
+ "wall_seconds_total": 419.2,
+ "marks": [
+  {
+   "at": 8.2,
+   "what": "requests: 2458 seeds, 9958 inputs",
+   "self_cpu": 6.5,
+   "children_cpu": 0.0,
+   "load": 70.2919921875
+  },
+  {
+   "at": 101.8,
+   "what": "environment: 260 seeds, 7760 inputs",
+   "self_cpu": 57.2,
+   "children_cpu": 23.4,
+   "load": 92.7060546875
+  },
+  {
+   "at": 175.3,
+   "what": "wire: 588 seeds, 8088 inputs",
+   "self_cpu": 94.0,
+   "children_cpu": 23.8,
+   "load": 90.49365234375
+  },
+  {
+   "at": 292.7,
+   "what": "document: 17 seeds, 617 inputs",
+   "self_cpu": 164.9,
+   "children_cpu": 38.2,
+   "load": 97.34033203125
+  },
+  {
+   "at": 415.5,
+   "what": "replay",
+   "self_cpu": 203.7,
+   "children_cpu": 67.2,
+   "load": 93.34326171875
+  },
+  {
+   "at": 419.2,
+   "what": "end",
+   "self_cpu": 204.6,
+   "children_cpu": 92.2,
+   "load": 93.34326171875
+  }
+ ],
+ "stats_by_surface": {
+  "document/python_call": {
+   "n": 617,
+   "wall": 106.2,
+   "cpu": 35.3,
+   "max_wall": 23.47
+  },
+  "document/service:alternatives": {
+   "n": 38,
+   "wall": 0.1,
+   "cpu": 0.0,
+   "max_wall": 0.01
+  },
+  "document/service:check": {
+   "n": 988,
+   "wall": 3.1,
+   "cpu": 1.4,
+   "max_wall": 0.2
+  },
+  "document/service:document": {
+   "n": 1,
+   "wall": 13.3,
+   "cpu": 9.2,
+   "max_wall": 13.28
+  },
+  "document/service:english.check": {
+   "n": 4,
+   "wall": 0.1,
+   "cpu": 0.0,
+   "max_wall": 0.02
+  },
+  "document/service:english.read": {
+   "n": 5,
+   "wall": 0.3,
+   "cpu": 0.2,
+   "max_wall": 0.16
+  },
+  "document/service:environment": {
+   "n": 555,
+   "wall": 1.7,
+   "cpu": 0.6,
+   "max_wall": 0.11
+  },
+  "document/service:model": {
+   "n": 80,
+   "wall": 0.4,
+   "cpu": 0.3,
+   "max_wall": 0.03
+  },
+  "document/service:norm-defaults": {
+   "n": 66,
+   "wall": 1.6,
+   "cpu": 1.2,
+   "max_wall": 0.16
+  },
+  "document/service:norms": {
+   "n": 46,
+   "wall": 0.1,
+   "cpu": 0.0,
+   "max_wall": 0.0
+  },
+  "document/service:parse": {
+   "n": 6,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.0
+  },
+  "document/service:readings-route": {
+   "n": 150,
+   "wall": 38.5,
+   "cpu": 26.4,
+   "max_wall": 0.82
+  },
+  "document/service:risk": {
+   "n": 5,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.02
+  },
+  "document/service:route": {
+   "n": 986,
+   "wall": 1.9,
+   "cpu": 0.3,
+   "max_wall": 0.21
+  },
+  "document/service:soft-norms": {
+   "n": 66,
+   "wall": 0.3,
+   "cpu": 0.1,
+   "max_wall": 0.01
+  },
+  "document/service:words": {
+   "n": 76,
+   "wall": 0.4,
+   "cpu": 0.2,
+   "max_wall": 0.02
+  },
+  "environment/python_call": {
+   "n": 7760,
+   "wall": 40.1,
+   "cpu": 26.8,
+   "max_wall": 0.62
+  },
+  "environment/runner:ve": {
+   "n": 7,
+   "wall": 1.3,
+   "cpu": 0.4,
+   "max_wall": 0.52
+  },
+  "environment/service:environment": {
+   "n": 7106,
+   "wall": 42.7,
+   "cpu": 22.8,
+   "max_wall": 6.36
+  },
+  "environment/service:route": {
+   "n": 2,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.0
+  },
+  "replay/python_call": {
+   "n": 250,
+   "wall": 1.2,
+   "cpu": 0.6,
+   "max_wall": 0.24
+  },
+  "replay/runner:ve": {
+   "n": 2,
+   "wall": 0.4,
+   "cpu": 0.1,
+   "max_wall": 0.31
+  },
+  "replay/runner:ve_conformance": {
+   "n": 3,
+   "wall": 1.2,
+   "cpu": 0.4,
+   "max_wall": 0.64
+  },
+  "replay/service:check": {
+   "n": 37,
+   "wall": 0.1,
+   "cpu": 0.0,
+   "max_wall": 0.01
+  },
+  "replay/service:environment": {
+   "n": 159,
+   "wall": 0.4,
+   "cpu": 0.1,
+   "max_wall": 0.1
+  },
+  "replay/service:model": {
+   "n": 73,
+   "wall": 0.2,
+   "cpu": 0.1,
+   "max_wall": 0.01
+  },
+  "replay/service:route": {
+   "n": 10,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.0
+  },
+  "replay/service:soft-norms": {
+   "n": 2,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.01
+  },
+  "requests/python_call": {
+   "n": 9958,
+   "wall": 55.0,
+   "cpu": 39.4,
+   "max_wall": 0.88
+  },
+  "requests/runner:ve": {
+   "n": 21,
+   "wall": 8.2,
+   "cpu": 5.4,
+   "max_wall": 0.93
+  },
+  "requests/runner:ve_conformance": {
+   "n": 29,
+   "wall": 16.0,
+   "cpu": 8.9,
+   "max_wall": 1.63
+  },
+  "requests/service:check": {
+   "n": 4500,
+   "wall": 10.4,
+   "cpu": 3.9,
+   "max_wall": 0.88
+  },
+  "requests/service:check-certificate": {
+   "n": 158,
+   "wall": 0.6,
+   "cpu": 0.4,
+   "max_wall": 0.02
+  },
+  "requests/service:environment": {
+   "n": 3177,
+   "wall": 5.6,
+   "cpu": 1.8,
+   "max_wall": 0.34
+  },
+  "requests/service:model": {
+   "n": 3180,
+   "wall": 8.0,
+   "cpu": 3.6,
+   "max_wall": 0.16
+  },
+  "requests/service:route": {
+   "n": 669,
+   "wall": 1.1,
+   "cpu": 0.4,
+   "max_wall": 0.01
+  },
+  "setup/python_call": {
+   "n": 4,
+   "wall": 0.1,
+   "cpu": 0.1,
+   "max_wall": 0.04
+  },
+  "setup/service:check": {
+   "n": 163,
+   "wall": 0.3,
+   "cpu": 0.1,
+   "max_wall": 0.01
+  },
+  "setup/service:check-certificate": {
+   "n": 4,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.01
+  },
+  "setup/service:environment": {
+   "n": 21,
+   "wall": 0.5,
+   "cpu": 0.1,
+   "max_wall": 0.46
+  },
+  "setup/service:model": {
+   "n": 58,
+   "wall": 0.1,
+   "cpu": 0.1,
+   "max_wall": 0.01
+  },
+  "setup/service:parse": {
+   "n": 116,
+   "wall": 0.3,
+   "cpu": 0.1,
+   "max_wall": 0.06
+  },
+  "setup/service:route": {
+   "n": 1,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.01
+  },
+  "wire/python_call": {
+   "n": 8088,
+   "wall": 71.3,
+   "cpu": 53.7,
+   "max_wall": 3.44
+  },
+  "wire/service:alternatives": {
+   "n": 1,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.01
+  },
+  "wire/service:check": {
+   "n": 1,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.0
+  },
+  "wire/service:diagnose": {
+   "n": 38,
+   "wall": 30.1,
+   "cpu": 13.0,
+   "max_wall": 5.51
+  },
+  "wire/service:environment": {
+   "n": 2142,
+   "wall": 4.3,
+   "cpu": 1.6,
+   "max_wall": 0.1
+  },
+  "wire/service:model": {
+   "n": 2,
+   "wall": 0.0,
+   "cpu": 0.0,
+   "max_wall": 0.0
+  },
+  "wire/service:route": {
+   "n": 6578,
+   "wall": 13.6,
+   "cpu": 4.8,
+   "max_wall": 0.57
+  },
+  "wire/service:soft-norms": {
+   "n": 100,
+   "wall": 1.6,
+   "cpu": 1.1,
+   "max_wall": 0.18
+  }
+ },
+ "work": {
+  "inputs": 26673,
+  "python_calls": 26677,
+  "runner_cases": 18825,
+  "runner_requests": 62,
+  "service_cases": 15256,
+  "service_requests": 33
+ },
+ "cpu_seconds": {
+  "python": 204.1,
+  "children": 92.2
+ },
+ "passed": true
+}

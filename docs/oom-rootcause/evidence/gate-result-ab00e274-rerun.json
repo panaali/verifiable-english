@@ -1,0 +1,152 @@
+{
+  "commit_sha": "ab00e274bfdd206816ab91caeb2045b99c871c2d",
+  "counts": {
+    "collected": 37,
+    "deselected": 0,
+    "failed": 3,
+    "passed": 34,
+    "selected": 37,
+    "skipped": 0
+  },
+  "dirty": false,
+  "environment": {
+    "base": {
+      "CARGO_HOME": "/tmp/ve-gate-_vwuhyd0/cargo-home",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-_vwuhyd0/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-_vwuhyd0/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-_vwuhyd0/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-_vwuhyd0/pycache",
+      "TMPDIR": "/tmp/ve-gate-_vwuhyd0/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-_vwuhyd0/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-_vwuhyd0/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-_vwuhyd0/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-_vwuhyd0/home/.local/share"
+    },
+    "cargo": {
+      "CARGO_ENCODED_RUSTFLAGS": "--remap-path-prefix=/tmp/ve-gate-_vwuhyd0/cargo-home=/cargo-home\u001f--remap-path-prefix=/home/seyran/code/ve-oom-rootcause=/ve\u001f--remap-path-prefix=/home/seyran/code/ve-oom-rootcause/rust/target=/ve-target",
+      "CARGO_HOME": "/tmp/ve-gate-_vwuhyd0/cargo-home",
+      "CARGO_NET_OFFLINE": "true",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-_vwuhyd0/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-_vwuhyd0/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-_vwuhyd0/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-_vwuhyd0/pycache",
+      "TMPDIR": "/tmp/ve-gate-_vwuhyd0/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-_vwuhyd0/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-_vwuhyd0/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-_vwuhyd0/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-_vwuhyd0/home/.local/share"
+    },
+    "pytest": {
+      "CARGO_HOME": "/tmp/ve-gate-_vwuhyd0/cargo-home",
+      "GIT_CONFIG_NOSYSTEM": "1",
+      "HOME": "/tmp/ve-gate-_vwuhyd0/home",
+      "LAKE_CACHE_DIR": "/tmp/ve-gate-_vwuhyd0/lake-cache",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin:/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin:/tmp/ve-gate-_vwuhyd0/bin:/usr/bin:/bin",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+      "PYTHONNOUSERSITE": "1",
+      "PYTHONPYCACHEPREFIX": "/tmp/ve-gate-_vwuhyd0/pycache",
+      "TMPDIR": "/tmp/ve-gate-_vwuhyd0/tmp",
+      "UV_CACHE_DIR": "/tmp/ve-gate-_vwuhyd0/uv-cache",
+      "UV_NO_CONFIG": "1",
+      "VE_GATE_PYTEST_PROGRESS": "/tmp/ve-gate-_vwuhyd0/current-test.txt",
+      "VE_GATE_PYTEST_RESULT": "/tmp/ve-gate-_vwuhyd0/pytest-collection.json",
+      "VE_LEAN_PREBUILT": "1",
+      "VE_NATIVE_PREBUILT": "1",
+      "VE_RUST_BINARY": "/home/seyran/code/ve-oom-rootcause/rust/target/release/ve",
+      "VE_RUST_PREBUILT": "1",
+      "XDG_CACHE_HOME": "/tmp/ve-gate-_vwuhyd0/home/.cache",
+      "XDG_CONFIG_HOME": "/tmp/ve-gate-_vwuhyd0/home/.config",
+      "XDG_DATA_HOME": "/tmp/ve-gate-_vwuhyd0/home/.local/share"
+    }
+  },
+  "failures": [
+    {
+      "reason": "Python suite: exit 1",
+      "stage": "pytest command"
+    },
+    {
+      "nodeid": "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[AttributeError]",
+      "reason": "tmp_path = PosixPath('/tmp/ve-gate-_vwuhyd0/tmp/pytest-of-seyran/pytest-0/popen-gw0/test_interrupted_gate_cannot_r2')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x77b96ccdb770>\ninterruption = <class 'AttributeError'>\n\n    @pytest.mark.parametrize(\"interruption\", [KeyboardInterrupt, TypeError, AttributeError])\n    def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption):\n        output = tmp_path / \"record.json\"\n        output.write_text('{\"status\":\"passed\"}')\n        policy = tmp_path / \"policy.json\"\n        policy.write_text(json.dumps({\"version\": 1}))\n        collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"tests/a.py::test_a\"]))\n        monkeypatch.setattr(gate, \"POLICY\", policy)\n        monkeypatch.setattr(gate, \"COLLECTION\", collection)\n        monkeypatch.setattr(gate, \"check_toolchains\", lambda result, env: None)\n        monkeypatch.setattr(sys, \"argv\", [\"gate.py\", \"--output\", str(output)])\n    \n        def fake_command(args, *, env, stage, cwd=None):\n            if stage == \"commit\":\n                return \"unchanged\"\n            if stage == \"worktree status\":\n                return \"\"\n            if stage == \"Lean build\":\n                raise interruption(\"interrupted\")\n            if stage == \"Python environment\":\n                return str(gate.ROOT / \".venv\")\n            return \"\"\n    \n        monkeypatch.setattr(gate, \"command\", fake_command)\n>       with pytest.raises(interruption):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE AttributeError\n\ntests/test_gate_integrity.py:543: Failed",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt]",
+      "reason": "tmp_path = PosixPath('/tmp/ve-gate-_vwuhyd0/tmp/pytest-of-seyran/pytest-0/popen-gw0/test_interrupted_gate_cannot_r0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x77b96ccdbcb0>\ninterruption = <class 'KeyboardInterrupt'>\n\n    @pytest.mark.parametrize(\"interruption\", [KeyboardInterrupt, TypeError, AttributeError])\n    def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption):\n        output = tmp_path / \"record.json\"\n        output.write_text('{\"status\":\"passed\"}')\n        policy = tmp_path / \"policy.json\"\n        policy.write_text(json.dumps({\"version\": 1}))\n        collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"tests/a.py::test_a\"]))\n        monkeypatch.setattr(gate, \"POLICY\", policy)\n        monkeypatch.setattr(gate, \"COLLECTION\", collection)\n        monkeypatch.setattr(gate, \"check_toolchains\", lambda result, env: None)\n        monkeypatch.setattr(sys, \"argv\", [\"gate.py\", \"--output\", str(output)])\n    \n        def fake_command(args, *, env, stage, cwd=None):\n            if stage == \"commit\":\n                return \"unchanged\"\n            if stage == \"worktree status\":\n                return \"\"\n            if stage == \"Lean build\":\n                raise interruption(\"interrupted\")\n            if stage == \"Python environment\":\n                return str(gate.ROOT / \".venv\")\n            return \"\"\n    \n        monkeypatch.setattr(gate, \"command\", fake_command)\n>       with pytest.raises(interruption):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE KeyboardInterrupt\n\ntests/test_gate_integrity.py:543: Failed",
+      "stage": "pytest"
+    },
+    {
+      "nodeid": "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[TypeError]",
+      "reason": "tmp_path = PosixPath('/tmp/ve-gate-_vwuhyd0/tmp/pytest-of-seyran/pytest-0/popen-gw0/test_interrupted_gate_cannot_r1')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x77b96cb2ba10>\ninterruption = <class 'TypeError'>\n\n    @pytest.mark.parametrize(\"interruption\", [KeyboardInterrupt, TypeError, AttributeError])\n    def test_interrupted_gate_cannot_record_pass(tmp_path, monkeypatch, interruption):\n        output = tmp_path / \"record.json\"\n        output.write_text('{\"status\":\"passed\"}')\n        policy = tmp_path / \"policy.json\"\n        policy.write_text(json.dumps({\"version\": 1}))\n        collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"tests/a.py::test_a\"]))\n        monkeypatch.setattr(gate, \"POLICY\", policy)\n        monkeypatch.setattr(gate, \"COLLECTION\", collection)\n        monkeypatch.setattr(gate, \"check_toolchains\", lambda result, env: None)\n        monkeypatch.setattr(sys, \"argv\", [\"gate.py\", \"--output\", str(output)])\n    \n        def fake_command(args, *, env, stage, cwd=None):\n            if stage == \"commit\":\n                return \"unchanged\"\n            if stage == \"worktree status\":\n                return \"\"\n            if stage == \"Lean build\":\n                raise interruption(\"interrupted\")\n            if stage == \"Python environment\":\n                return str(gate.ROOT / \".venv\")\n            return \"\"\n    \n        monkeypatch.setattr(gate, \"command\", fake_command)\n>       with pytest.raises(interruption):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE TypeError\n\ntests/test_gate_integrity.py:543: Failed",
+      "stage": "pytest"
+    }
+  ],
+  "mode": "rerun-failed",
+  "rerun_failed": {
+    "files": [
+      "tests/test_gate_integrity.py"
+    ],
+    "outcomes": {
+      "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[AttributeError]": "failed",
+      "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt]": "failed",
+      "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[TypeError]": "failed"
+    },
+    "previous": {
+      "commit_sha": "ab00e274bfdd206816ab91caeb2045b99c871c2d",
+      "mode": "full",
+      "status": "failed",
+      "tree_sha": "5ab5179f52dcc2ed4aba751c478e4f98abc80652"
+    },
+    "reused_stages": [
+      "lean_audit",
+      "cargo_test"
+    ],
+    "tests": [
+      "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[AttributeError]",
+      "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt]",
+      "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[TypeError]"
+    ]
+  },
+  "schema_version": 1,
+  "skips": [],
+  "stages": [
+    "toolchains",
+    "lean_build",
+    "rust_build",
+    "pytest"
+  ],
+  "status": "failed",
+  "toolchains": {
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)",
+    "lean": "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+    "lean_pin": "4.24.0",
+    "paths": {
+      "cargo": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/cargo",
+      "lake": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lake",
+      "lean": "/home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean",
+      "rustc": "/home/seyran/.rustup/toolchains/1.98.1-x86_64-unknown-linux-gnu/bin/rustc",
+      "uv": "/tmp/ve-gate-_vwuhyd0/bin/uv"
+    },
+    "python": "Python 3.14.7",
+    "rust_pin": "1.98.1",
+    "rust_toolchain": "1.98.1-x86_64-unknown-linux-gnu",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "uv": "uv 0.12.19 (x86_64-unknown-linux-gnu)",
+    "uv_lock_sha256": "312825c8c53903f3dcacc5aa9fea5514183a99aa155f4df9ee056d163011b75b"
+  },
+  "tree_sha": "5ab5179f52dcc2ed4aba751c478e4f98abc80652"
+}

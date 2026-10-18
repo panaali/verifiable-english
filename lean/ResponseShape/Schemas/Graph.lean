@@ -1,4 +1,4 @@
-import ResponseShape
+import ResponseShape.Schemas.Common
 
 /-! The source of `ve/backends/lean_service_schema/graph.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Graph
@@ -22,7 +22,7 @@ def «row» : Shape :=
         ("supporting_edges", ref "common.json#/$defs/strings"),
         ("background", n [
           arr,
-          .items (n [obj, .required ["label", "ast"], closed [("label", str), ("ast", n [arr, .minItems 1])]])])]]]
+          .items (n [obj, .required ["label", "ast"], closed [("label", n [str, .pattern (.seq (.lit "background:") (Re.oneOf VE.Route.Background.generators))]), ("ast", ref "common.json#/$defs/generated_formula")]])])]]]
 
 def file : File where
   name := "graph.json"

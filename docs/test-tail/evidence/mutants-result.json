@@ -1,0 +1,262 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "tools/test_schedule.py",
+   "claim": "the long tests start longest batch first",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_head_first_is_a_permutation_led_by_the_recorded_long_tests_longest_first",
+    "tests/test_test_schedule.py::test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_head_first_is_a_permutation_led_by_the_recorded_long_tests_longest_first"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.8,
+   "output_tail": "F.                                                                       [100%]\n=================================== FAILURES ===================================\n_ test_head_first_is_a_permutation_led_by_the_recorded_long_tests_longest_first _\n\n    def test_head_first_is_a_permutation_led_by_the_recorded_long_tests_longest_first():\n        collection = [f\"tests/test_{i}.py::t\" for i in range(10)]\n        durations = {collection[2]: 7.0, collection[5]: 30.0, collection[7]: 7.0, collection[8]: test_schedule.HEAD_SECONDS,\n                     collection[9]: 4.9, collection[1]: 0.5}\n        order, sizes = test_schedule.head_first(collection, durations)\n        assert sorted(order) == list(range(10))\n        # 5 longest; 2 and 7 tie and keep collection order; 8 is at the threshold; 9 and 1 are not.\n>       assert order[:sum(sizes)] == [5, 2, 7, 8] and sizes == [1, 1, 1, 1]\nE       assert ([8, 2, 7, 5] == [5, 2, 7, 8]\nE         \nE         At index 0 diff: 8 != 5\nE         Use -v to get more diff)\n\ntests/test_test_schedule.py:34: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_head_first_is_a_permutation_led_by_the_recorded_long_tests_longest_first\n1 failed, 1 passed in 0.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-nhu41xei)\n"
+  },
+  {
+   "id": "M2",
+   "file": "tools/test_schedule.py",
+   "claim": "a module's tests go out in runs no longer than the longest test",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.9,
+   "output_tail": "_m.py::quick\", \"tests/test_m.py::b\", \"tests/test_other.py::long\",\n                      \"tests/test_m.py::c\", \"tests/test_m.py::d\", \"tests/test_m.py::e\", \"tests/test_n.py::f\",\n                      \"tests/test_q.py::quick\", \"tests/test_n.py::unrecorded\"]\n        durations = {\"tests/test_m.py::a\": 10.0, \"tests/test_m.py::b\": 10.0, \"tests/test_m.py::c\": 10.0,\n                     \"tests/test_m.py::d\": 10.0, \"tests/test_m.py::e\": 10.0, \"tests/test_other.py::long\": 40.0,\n                     \"tests/test_n.py::f\": 6.0, \"tests/test_m.py::quick\": 0.1, \"tests/test_q.py::quick\": 3.0}\n        # m: a + quick + b + c = 30.1, then d + e (adding d would pass the 40 s of the longest test); test_q.py\n        # holds no long test and stays with the rest; test_n.py's unrecorded test goes with f.\n>       assert test_schedule.head_batches(collection, durations) == [[3], [0, 1, 2, 4], [5, 6], [7, 9]]\nE       assert [[0, 1, 2, 4,..., [3], [7, 9]] == [[3], [0, 1, ...5, 6], [7, 9]]\nE         \nE         At index 0 diff: [0, 1, 2, 4, 5, 6] != [3]\nE         Right contains one more item: [7, 9]\nE         Use -v to get more diff\n\ntests/test_test_schedule.py:52: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test\n1 failed in 0.45s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-83awmv05)\n"
+  },
+  {
+   "id": "M2b",
+   "file": "tools/test_schedule.py",
+   "claim": "a module with a long test goes out whole, its quick tests with it",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.2,
+   "output_tail": "       collection = [\"tests/test_m.py::a\", \"tests/test_m.py::quick\", \"tests/test_m.py::b\", \"tests/test_other.py::long\",\n                      \"tests/test_m.py::c\", \"tests/test_m.py::d\", \"tests/test_m.py::e\", \"tests/test_n.py::f\",\n                      \"tests/test_q.py::quick\", \"tests/test_n.py::unrecorded\"]\n        durations = {\"tests/test_m.py::a\": 10.0, \"tests/test_m.py::b\": 10.0, \"tests/test_m.py::c\": 10.0,\n                     \"tests/test_m.py::d\": 10.0, \"tests/test_m.py::e\": 10.0, \"tests/test_other.py::long\": 40.0,\n                     \"tests/test_n.py::f\": 6.0, \"tests/test_m.py::quick\": 0.1, \"tests/test_q.py::quick\": 3.0}\n        # m: a + quick + b + c = 30.1, then d + e (adding d would pass the 40 s of the longest test); test_q.py\n        # holds no long test and stays with the rest; test_n.py's unrecorded test goes with f.\n>       assert test_schedule.head_batches(collection, durations) == [[3], [0, 1, 2, 4], [5, 6], [7, 9]]\nE       assert [[0, 2, 4, 5], [3], [6], [7]] == [[3], [0, 1, ...5, 6], [7, 9]]\nE         \nE         At index 0 diff: [0, 2, 4, 5] != [3]\nE         Use -v to get more diff\n\ntests/test_test_schedule.py:52: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_a_module_with_a_long_test_goes_out_whole_in_runs_up_to_the_longest_test\n1 failed in 0.54s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-vqwnadf7)\n"
+  },
+  {
+   "id": "M3",
+   "file": "tools/test_schedule.py",
+   "claim": "the scheduler hands the long tests out before the rest",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load",
+    "tests/test_test_schedule.py::test_an_xdist_run_keeps_the_gates_collection_accounting"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_an_xdist_run_keeps_the_gates_collection_accounting",
+    "tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 22.1,
+   "output_tail": "s(collection, suite)\n        assert merged[\"selected\"] == [*(f\"test_project.py::test_case[{case}]\" for case in range(cases)),\n                                      *(f\"test_slow.py::test_case[{case}]\" for case in range(4))]\n        assert len(merged[\"workers\"]) == 3\n        assert sorted(merged[\"tests\"]) == sorted(merged[\"selected\"])\n        assert {row[\"outcome\"] for row in merged[\"tests\"].values()} == {\"passed\"}\n        ran = [json.loads(line) for line in (tmp_path / \"ran.jsonl\").read_text().splitlines()]\n        assert sorted(row[\"nodeid\"] for row in ran) == sorted(merged[\"selected\"])\n        for worker in {row[\"worker\"] for row in ran}:\n            order = [row[\"nodeid\"] in long_ids for row in ran if row[\"worker\"] == worker]\n>           assert order == sorted(order, reverse=True), (worker, order)\nE           AssertionError: ('gw0', [False, True, True])\nE           assert [False, True, True] == [True, True, False]\nE             \nE             At index 0 diff: False != True\nE             Use -v to get more diff\n\ntests/test_test_schedule.py:358: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load\nFAILED tests/test_test_schedule.py::test_an_xdist_run_keeps_the_gates_collection_accounting\n2 failed in 8.88s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-amufa1vd)\n"
+  },
+  {
+   "id": "M4",
+   "file": "tools/test_schedule.py",
+   "claim": "the worker with the longest batch gets the shortest of the first two rounds",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.0,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_ test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds _\n\n    def test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds():\n        \"\"\"Each worker holds two batches from the start; pairing the longest with the shortest evens them out.\"\"\"\n        collection = [f\"tests/test_{i}.py::t\" for i in range(8)]\n        seconds = {nodeid: 10.0 * (8 - i) for i, nodeid in enumerate(collection)}  # 80, 70, ..., 10\n        _, end = simulate(test_schedule.make_scheduler(Config(4), None, seconds), collection, seconds, 4)\n>       assert end == 90.0  # 80 + 10, 70 + 20, 60 + 30, 50 + 40\n        ^^^^^^^^^^^^^^^^^^\nE       assert 120.0 == 90.0\n\ntests/test_test_schedule.py:212: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_the_worker_with_the_longest_test_gets_the_shortest_of_the_first_two_rounds\n1 failed in 0.31s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-rhoa6swj)\n"
+  },
+  {
+   "id": "M5",
+   "file": "tools/test_schedule.py",
+   "claim": "after the long tests, runs are sized by estimated seconds, not by count",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_quick_tests_go_out_by_estimated_seconds_not_by_count"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_quick_tests_go_out_by_estimated_seconds_not_by_count"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.7,
+   "output_tail": "dsched] num items waiting for node: 22\n[loadsched] num items waiting for node: 21\n[loadsched] num items waiting for node: 20\n[loadsched] num items waiting for node: 19\n[loadsched] num items waiting for node: 18\n[loadsched] num items waiting for node: 17\n[loadsched] num items waiting for node: 16\n[loadsched] num items waiting for node: 15\n[loadsched] num items waiting for node: 14\n[loadsched] num items waiting for node: 13\n[loadsched] num items waiting for node: 12\n[loadsched] num items waiting for node: 11\n[loadsched] num items waiting for node: 10\n[loadsched] num items waiting for node: 9\n[loadsched] num items waiting for node: 8\n[loadsched] num items waiting for node: 7\n[loadsched] num items waiting for node: 6\n[loadsched] num items waiting for node: 5\n[loadsched] num items waiting for node: 4\n[loadsched] num items waiting for node: 4\n[loadsched] num items waiting for node: 3\n[loadsched] num items waiting for node: 2\n[loadsched] num items waiting for node: 1\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_quick_tests_go_out_by_estimated_seconds_not_by_count\n1 failed in 0.71s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-22rb9gyo)\n"
+  },
+  {
+   "id": "M6",
+   "file": "tools/test_schedule.py",
+   "claim": "what a worker holds counts against its share of the rest",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.8,
+   "output_tail": "s waiting for node: 22\n[loadsched] num items waiting for node: 22\n[loadsched] num items waiting for node: 21\n[loadsched] num items waiting for node: 20\n[loadsched] num items waiting for node: 19\n[loadsched] num items waiting for node: 18\n[loadsched] num items waiting for node: 17\n[loadsched] num items waiting for node: 16\n[loadsched] num items waiting for node: 15\n[loadsched] num items waiting for node: 14\n[loadsched] num items waiting for node: 13\n[loadsched] num items waiting for node: 12\n[loadsched] num items waiting for node: 11\n[loadsched] num items waiting for node: 10\n[loadsched] num items waiting for node: 9\n[loadsched] num items waiting for node: 8\n[loadsched] num items waiting for node: 7\n[loadsched] num items waiting for node: 6\n[loadsched] num items waiting for node: 5\n[loadsched] num items waiting for node: 4\n[loadsched] num items waiting for node: 3\n[loadsched] num items waiting for node: 2\n[loadsched] num items waiting for node: 1\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_longest_first_starts_the_long_tests_first_and_ends_sooner_than_load\n1 failed in 0.56s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-_o59ec96)\n"
+  },
+  {
+   "id": "M7",
+   "file": "tools/test_schedule.py",
+   "claim": "a run that names another --dist mode keeps that mode",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_without_recorded_long_tests_or_under_another_mode_xdist_decides"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_without_recorded_long_tests_or_under_another_mode_xdist_decides"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.5,
+   "output_tail": "tems waiting for node: 21\n[loadsched] num items waiting for node: 21\n[loadsched] num items waiting for node: 19\n[loadsched] num items waiting for node: 19\n[loadsched] num items waiting for node: 17\n[loadsched] num items waiting for node: 17\n[loadsched] num items waiting for node: 17\n[loadsched] num items waiting for node: 17\n[loadsched] num items waiting for node: 16\n[loadsched] num items waiting for node: 15\n[loadsched] num items waiting for node: 14\n[loadsched] num items waiting for node: 13\n[loadsched] num items waiting for node: 12\n[loadsched] num items waiting for node: 11\n[loadsched] num items waiting for node: 10\n[loadsched] num items waiting for node: 9\n[loadsched] num items waiting for node: 8\n[loadsched] num items waiting for node: 7\n[loadsched] num items waiting for node: 6\n[loadsched] num items waiting for node: 5\n[loadsched] num items waiting for node: 4\n[loadsched] num items waiting for node: 3\n[loadsched] num items waiting for node: 2\n[loadsched] num items waiting for node: 1\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n[loadsched] num items waiting for node: 0\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_without_recorded_long_tests_or_under_another_mode_xdist_decides\n1 failed in 0.67s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-t_jco31w)\n"
+  },
+  {
+   "id": "M8",
+   "file": "tools/test_schedule.py",
+   "claim": "a durations entry that is not seconds is dropped, never coerced",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_durations_file_round_trips_and_a_bad_file_leaves_the_load_order"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_durations_file_round_trips_and_a_bad_file_leaves_the_load_order"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.6,
+   "output_tail": "urations_file_round_trip0')\n\n    def test_durations_file_round_trips_and_a_bad_file_leaves_the_load_order(tmp_path):\n        path = tmp_path / \"durations.json\"\n        path.write_text(test_schedule.durations_text({\"b\": 12.34, \"a\": 1.0, \"c\": 0.99, \"d\": 0.01}, source=\"here\"))\n        assert test_schedule.read_estimates(path) == ({\"a\": 1.0, \"b\": 12.3}, 0.5)  # the mean of c and d\n        assert list(json.loads(path.read_text())[\"seconds\"]) == [\"a\", \"b\"]\n        for text in (\"\", \"[]\", \"{}\", json.dumps({\"format\": \"other@1\", \"seconds\": {\"a\": 9}}),\n                     json.dumps({\"format\": test_schedule.FORMAT, \"seconds\": []})):\n            path.write_text(text)\n            assert test_schedule.read_estimates(path) == ({}, test_schedule.UNRECORDED_SECONDS)\n        for unrecorded in (True, -1, \"0.2\", None, 1e999):\n            path.write_text(json.dumps({\"format\": test_schedule.FORMAT, \"unrecorded_seconds\": unrecorded, \"seconds\": {}}))\n>           assert test_schedule.read_estimates(path)[1] == test_schedule.UNRECORDED_SECONDS\nE           assert 1.0 == 0.1\nE            +  where 0.1 = test_schedule.UNRECORDED_SECONDS\n\ntests/test_test_schedule.py:76: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_durations_file_round_trips_and_a_bad_file_leaves_the_load_order\n1 failed in 0.39s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-j1m6vknp)\n"
+  },
+  {
+   "id": "M9",
+   "file": "tools/run_order.py",
+   "claim": "selected runs start the slowest recorded test file first within each group",
+   "source_sha256": "4130f50cf6f6697c9b9efa51e8450dfcd333eb8b49c96ae822f3011614cadbb6",
+   "tests": [
+    "tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.2,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________ test_within_each_group_the_slowest_recorded_unit_starts_first _________\n\n    def test_within_each_group_the_slowest_recorded_unit_starts_first():\n        \"\"\"Eight jobs run the units: a long unit that started last would leave seven idle until it ended.\"\"\"\n        units = [\"tests/test_a.py\", \"tests/test_b.py\", \"tests/test_c.py\", \"tests/test_d.py\", \"tests/test_e.py\"]\n        seconds = {\"tests/test_e.py\": 300.0, \"tests/test_c.py\": 20.0, \"tests/test_b.py\": 20.0, \"tests/test_d.py\": 90.0}\n>       assert run_order.order(units, seconds=seconds) == [\n            \"tests/test_e.py\", \"tests/test_d.py\", \"tests/test_b.py\", \"tests/test_c.py\", \"tests/test_a.py\"]\nE       AssertionError: assert ['tests/test_...ts/test_e.py'] == ['tests/test_...ts/test_a.py']\nE         \nE         At index 0 diff: 'tests/test_a.py' != 'tests/test_e.py'\nE         Use -v to get more diff\n\ntests/test_run_order.py:61: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first\n1 failed in 0.49s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-iso2_577)\n"
+  },
+  {
+   "id": "M10",
+   "file": "tools/test_schedule.py",
+   "claim": "a test file's seconds are the sum of its tests'",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.0,
+   "output_tail": "tests/test_c.py\"], failed=[\"tests/test_b.py\"],\n                               seconds=seconds) == [\n            \"tests/test_b.py\",                                    # failed last time\n            \"tests/test_c.py\", \"tests/test_a.py\",                 # changed, slowest first\n            \"tests/test_e.py\", \"tests/test_d.py\"]                 # the rest, slowest first\n        # By default the seconds are the durations file's, summed per test file.\n        recorded = test_schedule.unit_seconds()\n        slowest = max(recorded, key=recorded.get)\n        assert run_order.order([\"tests/test_a_unrecorded.py\", slowest])[0] == slowest\n>       assert test_schedule.unit_seconds({\"tests/test_x.py::a\": 2.0, \"tests/test_x.py::b[1]\": 3.5,\n                                           \"tests/test_y.py::c\": 1.0}) == {\"tests/test_x.py\": 5.5, \"tests/test_y.py\": 1.0}\nE       AssertionError: assert {'tests/test_...st_y.py': 1.0} == {'tests/test_...st_y.py': 1.0}\nE         \nE         Omitting 1 identical items, use -vv to show\nE         Differing items:\nE         {'tests/test_x.py': 3.5} != {'tests/test_x.py': 5.5}\nE         Use -v to get more diff\n\ntests/test_run_order.py:72: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first\n1 failed in 0.44s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0kzlfs96)\n"
+  },
+  {
+   "id": "M11",
+   "file": "tools/pytest_profile.py",
+   "claim": "a test that patches the clocks cannot skew its profile record",
+   "source_sha256": "6606da4068297b34736c756b716f58be8e53b6d501ce64e254d0edec5705be73",
+   "tests": [
+    "tests/test_suite_tail.py::test_profile_records_keep_real_times_when_a_test_patches_the_clocks"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_suite_tail.py::test_profile_records_keep_real_times_when_a_test_patches_the_clocks"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.4,
+   "output_tail": "test_profile\",\n                                                       \"-o\", \"addopts=\", \"test_clocks.py\"]),\n                                cwd=tmp_path, env=nested_pytest.environment(os.environ, PYTHONPATH=str(ROOT),\n                                                                            VE_TEST_PROFILE_DIR=str(profile)),\n                                capture_output=True, text=True, timeout=HANG_TIMEOUT)\n        assert result.returncode == 0, result.stdout[-4000:]\n        after = time.time()\n        rows = suite_tail.records(profile)\n        assert sorted(row[\"nodeid\"] for row in rows) == [\"test_clocks.py::test_injects_a_clock\", \"test_clocks.py::test_plain\"]\n        for row in rows:\n>           assert all(row[phase] >= 0 for phase in (\"setup\", \"call\", \"teardown\")), row\nE           AssertionError: {'kind': 'test', 'nodeid': 'test_clocks.py::test_injects_a_clock', 'start': 1791901629.6910207, 'setup': 0.00033812096808105707, ...}\nE           assert False\nE            +  where False = all(<generator object test_profile_records_keep_real_times_when_a_test_patches_the_clocks.<locals>.<genexpr> at 0x706a9ff64900>)\n\ntests/test_suite_tail.py:52: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_profile_records_keep_real_times_when_a_test_patches_the_clocks\n1 failed in 1.70s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-72fv75op)\n"
+  },
+  {
+   "id": "M12",
+   "file": "tools/bench/suite_tail.py",
+   "claim": "the durations file keeps only tests the gate still collects",
+   "source_sha256": "818e88c7a02427e9c09fb4e3077abb27f738bc22222fc1e39decb13160ba1103",
+   "tests": [
+    "tests/test_suite_tail.py::test_durations_command_writes_the_scheduler_s_file"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_suite_tail.py::test_durations_command_writes_the_scheduler_s_file"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.5,
+   "output_tail": "ction no longer has it.\n        (profile / \"gw1-124.jsonl\").write_text(json.dumps({\"kind\": \"test\", \"nodeid\": \"t::gone\", \"setup\": 0.0,\n                                                           \"call\": 50.0, \"teardown\": 0.0}) + \"\\n\")\n        collection = tmp_path / \"collection.json\"\n        collection.write_text(json.dumps([\"t::a\", \"t::b\", \"t::c\"]))\n        monkeypatch.setattr(sys, \"argv\", [\"suite_tail.py\", \"durations\", str(early), str(profile), \"--output\", str(output),\n                                          \"--source\", \"a test\", \"--collection\", str(collection)])\n        assert suite_tail.main() == 0\n>       assert test_schedule.read_durations(output) == {\"t::a\": 6.5, \"t::b\": 8.0, \"t::c\": 2.0}\nE       AssertionError: assert {'t::a': 6.5,...::gone': 50.0} == {'t::a': 6.5,..., 't::c': 2.0}\nE         \nE         Omitting 3 identical items, use -vv to show\nE         Left contains 1 more item:\nE         {'t::gone': 50.0}\nE         Use -v to get more diff\n\ntests/test_suite_tail.py:114: AssertionError\n----------------------------- Captured stdout call -----------------------------\nwrote 4 of 4 tests to /tmp/pytest-of-seyran/pytest-9203/test_durations_command_writes_0/durations.json\n=========================== short test summary info ============================\nFAILED tests/test_suite_tail.py::test_durations_command_writes_the_scheduler_s_file\n1 failed in 0.57s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-40788gqk)\n"
+  },
+  {
+   "id": "M13",
+   "file": "tests/conftest.py",
+   "claim": "the suite's xdist runs use the longest-first scheduler",
+   "source_sha256": "37504877815c5fd5cdcb194e0823a4bd3e0cc480a779333ddf6e80829a73dd6b",
+   "tests": [
+    "tests/test_test_schedule.py::test_the_suite_conftest_installs_the_scheduler"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_the_suite_conftest_installs_the_scheduler"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.9,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________________ test_the_suite_conftest_installs_the_scheduler ________________\n\n    def test_the_suite_conftest_installs_the_scheduler():\n        \"\"\"tests/conftest.py hands every `load` run of the suite to LongestFirst with the committed durations.\"\"\"\n        import conftest\n        scheduler = conftest.pytest_xdist_make_scheduler(Config(2), None)\n>       assert type(scheduler).__name__ == \"LongestFirst\"\nE       AssertionError: assert 'NoneType' == 'LongestFirst'\nE         \nE         - LongestFirst\nE         + NoneType\n\ntests/test_test_schedule.py:275: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_the_suite_conftest_installs_the_scheduler\n1 failed in 0.61s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0oki7y2e)\n"
+  },
+  {
+   "id": "M14",
+   "file": "tools/test_schedule.py",
+   "claim": "a worker added mid-run is topped up to the two tests it needs to start",
+   "source_sha256": "1436d1a45c07e16d1eb9c55ff920fc69bad87f7daca72dcc9741d76b9df0a760",
+   "tests": [
+    "tests/test_test_schedule.py::test_a_worker_added_mid_run_gets_two_tests_to_start"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_test_schedule.py::test_a_worker_added_mid_run_gets_two_tests_to_start"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.0,
+   "output_tail": "AILURES ===================================\n_____________ test_a_worker_added_mid_run_gets_two_tests_to_start ______________\n\n    def test_a_worker_added_mid_run_gets_two_tests_to_start():\n        \"\"\"xdist restarts a crashed worker as a new node and schedules again; a worker holding one test idles,\n        so a batch of one test is topped up.\"\"\"\n        collection = [f\"tests/test_{i}.py::t\" for i in range(20)]\n        seconds = {nodeid: 100.0 - i for i, nodeid in enumerate(collection)}\n        scheduler = test_schedule.make_scheduler(Config(2), None, seconds)\n        nodes = [Node(\"gw0\"), Node(\"gw1\")]\n        for node in nodes:\n            scheduler.add_node(node)\n            scheduler.add_node_collection(node, collection)\n        scheduler.schedule()\n        assert [len(scheduler.node2pending[node]) for node in nodes] == [2, 2]\n        late = Node(\"gw2\")\n        scheduler.add_node(late)\n        scheduler.add_node_collection(late, collection)\n        scheduler.schedule()\n>       assert len(scheduler.node2pending[late]) == 2 and late.queue == scheduler.node2pending[late]\nE       assert (1 == 2)\nE        +  where 1 = len([4])\n\ntests/test_test_schedule.py:296: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_test_schedule.py::test_a_worker_added_mid_run_gets_two_tests_to_start\n1 failed in 0.59s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-rj6d_3ju)\n"
+  }
+ ]
+}

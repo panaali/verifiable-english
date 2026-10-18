@@ -326,6 +326,7 @@ BUDGET_OPERATIONS = {"evaluate", "countermodel_check", "definitions_elaboration"
 
 @pytest.mark.skipif(not SERVICE.exists(), reason="build the Lean service")
 @pytest.mark.parametrize("seed", SEEDS)
+@pytest.mark.live_service  # it records each request's deadline (tests/answer_store.py INVENTORY row 7)
 def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, monkeypatch):
     """The Lean-authority counterpart of the metered test above: the same
     generated cases, through the same public calls under VE_AUTHORITY=lean, each

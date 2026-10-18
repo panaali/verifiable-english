@@ -172,7 +172,8 @@ def regeneratedU (U : UDoc) : List (String × Json) :=
       Json.mkObj [("generator", .str "fill"), ("ast", enc a)])).toArray),
    ("unspecified", toJson U.unspec),
    ("unsaid", Json.arr (U.unspec.map (fun p =>
-      Json.mkObj [("name", .str (unsaidName p)), ("sorts", toJson (sortsOf U.D p))])).toArray),
+      Json.mkObj [("name", .str (unsaidName p)), ("sorts", toJson (sortsOf U.D p)),
+        ("description", .str (unsaidDescription p))])).toArray),
    ("reached", Json.arr (U.D.T.regulated.map (fun r =>
       Json.mkObj [("predicate", .str r.name), ("sorts", toJson r.sorts), ("ast", enc (reachedF U r.name))])).toArray),
    ("fragment_fill", .bool (InFragment (fill U)))]
@@ -227,7 +228,7 @@ def baseEnvironmentJsonU (environment : Json) (U : UDoc) : Except String Json :=
   let vocab ← base.getObjVal? "vocabulary"
   let preds ← fields (← vocab.getObjVal? "predicates")
   let extra := U.unspec.map fun p => (unsaidName p, Json.mkObj [("arguments", toJson (sortsOf U.D p)),
-    ("description", .str s!"the text does not say whether {p}")])
+    ("description", .str (unsaidDescription p))])
   pure (base.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj (preds ++ extra))))
 
 /-- One target's package bound to `E‴_base`, `Background_base(E‴) ++ Fill_T` and the

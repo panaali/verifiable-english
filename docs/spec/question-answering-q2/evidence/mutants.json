@@ -1,0 +1,261 @@
+{
+  "mutants": [
+    {
+      "id": "lean-lead-yes-without-model",
+      "language": "Lean",
+      "file": "lean/VE/Ask/Basic.lean",
+      "behaviour": "answer soundness: yes needs a model of the premises (lead_sound)",
+      "test": [
+        "lake",
+        "build",
+        "VE.Ask.Sound"
+      ],
+      "caught": true,
+      "evidence": [
+        "error: VE/Ask/Sound.lean:15:67: unsolved goals",
+        "error: Lean exited with code 1",
+        "error: build failed"
+      ]
+    },
+    {
+      "id": "lean-cited-reversed",
+      "language": "Lean",
+      "file": "lean/VE/Ask/Run.lean",
+      "behaviour": "citation exactness, in segment order: a row cites its sources in the certificate's order",
+      "test": [
+        "tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[G1]"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[G1]"
+      ]
+    },
+    {
+      "id": "lean-gaps-dropped",
+      "language": "Lean",
+      "file": "lean/VE/Ask/Run.lean",
+      "behaviour": "not settled: a refuted row names the gaps its countermodel turns on, for the split",
+      "test": [
+        "tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[U3]"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_fixtures.py::test_a_recorded_answer_replays_and_says_what_the_spec_says[U3]"
+      ]
+    },
+    {
+      "id": "lean-evidence-unbound",
+      "language": "Lean",
+      "file": "lean/VE/Ask/Wire.lean",
+      "behaviour": "request binding: every evidence entry names a compatible choice, once",
+      "test": [
+        "tests/test_ask_relay.py::test_lean_refuses_a_request_not_bound_to_its_document"
+      ],
+      "caught": true,
+      "evidence": [
+        "INTERNALERROR>     raise TimeoutError(f\"build timed out: {command}\") from exc",
+        "INTERNALERROR> TimeoutError: build timed out: ['/home/seyran/.elan/bin/lake', 'build']"
+      ]
+    },
+    {
+      "id": "lean-environment-unbound",
+      "language": "Lean",
+      "file": "lean/VE/Ask/PlainWire.lean",
+      "behaviour": "request binding: the plain case's environment is the document's",
+      "test": [
+        "tests/test_ask_fixtures.py::test_a_case_of_another_document_is_not_this_documents"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_fixtures.py::test_a_case_of_another_document_is_not_this_documents"
+      ]
+    },
+    {
+      "id": "python-choice-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a row's choice names the request's open sets, each once, in order",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[U3] - Assert..."
+      ]
+    },
+    {
+      "id": "python-text-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: the answer's text is its lines' text",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[G1] - Assert..."
+      ]
+    },
+    {
+      "id": "python-quote-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a line's quote is text of the unit it names",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[G1] - Assert..."
+      ]
+    },
+    {
+      "id": "python-gap-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a gap names elements of the models the request's evidence holds",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[U3] - Assert..."
+      ]
+    },
+    {
+      "id": "python-definition-unbound",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a cited definition belongs to the request's document",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[G1] - Assert..."
+      ]
+    },
+    {
+      "id": "python-row-omitted",
+      "language": "Python",
+      "file": "ve/ask.py",
+      "behaviour": "relay binding: a readings answer has one row for every compatible choice",
+      "test": [
+        "tests/test_ask_relay.py::test_every_id_rebound_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_every_id_rebound_is_refused[U3] - Assert..."
+      ]
+    },
+    {
+      "id": "python-gate-transport-only",
+      "language": "Python",
+      "file": "tools/relay_mutation_gate.py",
+      "behaviour": "relay gate: ask's mutants are read as ve ask reads them, not by the transport alone",
+      "test": [
+        "tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_relay_mutation_gate.py::test_ask_is_read_as_ve_ask_reads_it"
+      ]
+    },
+    {
+      "id": "lean-row-id-untyped",
+      "language": "Lean",
+      "file": "lean/ResponseShape/Schemas/Ask.lean",
+      "behaviour": "response schema: an answer row's id is the case's id",
+      "test": [
+        "tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_ask_relay.py::test_the_rows_id_is_typed_and_bound_to_the_case"
+      ]
+    },
+    {
+      "id": "python-statement-text-ignored",
+      "language": "Python",
+      "file": "tools/question_statements.py",
+      "behaviour": "statement check: a Q2 statement whose text differs from the approved text fails",
+      "test": [
+        "tests/test_question_statements.py::test_a_changed_statement_or_definition_fails"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_question_statements.py::test_a_changed_statement_or_definition_fails"
+      ]
+    },
+    {
+      "id": "lean-words-article-by-letter",
+      "language": "Lean",
+      "file": "lean/VE/Words/Situation.lean",
+      "behaviour": "one owner of situation wording (F2): an element line's article is chosen by sound, as before Q2.4",
+      "test": [
+        "lake",
+        "build",
+        "VE.Words.Situation"
+      ],
+      "caught": true,
+      "evidence": [
+        "error: VE/Words/Situation.lean:175:0: Expression",
+        "error: VE/Words/Situation.lean:178:0: Expression",
+        "error: Lean exited with code 1"
+      ]
+    },
+    {
+      "id": "lean-words-negation-must-not",
+      "language": "Lean",
+      "file": "lean/VE/Words/Situation.lean",
+      "behaviour": "one owner of point wording (F2): an obligation's negation is `need not`, a permission's `must not`",
+      "test": [
+        "tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]"
+      ]
+    },
+    {
+      "id": "python-words-count-unbound",
+      "language": "Python",
+      "file": "ve/words.py",
+      "behaviour": "words relay binding (F2): one line per requested item",
+      "test": [
+        "tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>4]"
+      ]
+    },
+    {
+      "id": "python-lint-element-line",
+      "language": "Python",
+      "file": "tools/relay_lint.py",
+      "behaviour": "relay lint (F2): an element line built from parts outside Lean is a finding",
+      "test": [
+        "tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def situation(name, noun):\\n    return f\"{name} is {noun}\"\\n]"
+      ]
+    },
+    {
+      "id": "python-point-search-own-fillings",
+      "language": "Python",
+      "file": "ve/filling_search.py",
+      "behaviour": "one flip search (F3): the point search's fillings are the shared split's",
+      "test": [
+        "tests/test_filling_search.py::test_point_search_sends_the_shared_split_to_lean"
+      ],
+      "caught": true,
+      "evidence": [
+        "FAILED tests/test_filling_search.py::test_point_search_sends_the_shared_split_to_lean"
+      ]
+    }
+  ],
+  "all_caught": true
+}

@@ -1,0 +1,862 @@
+{
+  "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8",
+  "threshold_seconds": 10.0,
+  "collected_count": 15179,
+  "heavy": [
+    {
+      "nodeid": "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results",
+      "seconds": 38.296,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_agent_policy_unspecified.py::test_unspecified_rerun_is_computed_from_lean_rows",
+      "seconds": 16.647,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_asimov_extended.py::test_rerun_records_equal_the_committed_results",
+      "seconds": 26.972,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist.py::test_astra_fix3_competing_witness_blocks_success_at_every_budget",
+      "seconds": 15.442,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist.py::test_astra_fix3_property_success_is_invariant_under_node_order_and_monotone_in_budget",
+      "seconds": 300.863,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist.py::test_astra_fix4_parent_order_never_changes_the_check_or_success",
+      "seconds": 62.156,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist.py::test_astra_rr2_property_any_inconclusive_fidelity_search_is_non_success",
+      "seconds": 33.912,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist.py::test_astra_rr2_property_success_is_monotone_in_the_proof_budget",
+      "seconds": 46.103,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[0]",
+      "seconds": 50.694,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[10]",
+      "seconds": 74.51,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[11]",
+      "seconds": 68.58,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[12]",
+      "seconds": 32.956,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[13]",
+      "seconds": 33.513,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[14]",
+      "seconds": 28.352,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[15]",
+      "seconds": 30.243,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[1]",
+      "seconds": 58.54,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[2]",
+      "seconds": 57.714,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[3]",
+      "seconds": 64.729,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[4]",
+      "seconds": 70.199,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[5]",
+      "seconds": 48.619,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[6]",
+      "seconds": 48.525,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[7]",
+      "seconds": 60.01,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[8]",
+      "seconds": 64.96,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_assist_invariants.py::test_success_is_a_function_of_the_graph_and_monotone_in_budget[9]",
+      "seconds": 51.562,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_b16d_document.py::test_coupled_pilot_reading_plan_matches_prior_path",
+      "seconds": 16.12,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_cli.py::test_check_display_overflow_never_changes_acceptance",
+      "seconds": 82.697,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_consolidation_tools.py::test_statement_dump_is_current",
+      "seconds": 50.703,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_data_surface.py::test_1000_attribute_english_round_trips",
+      "seconds": 30.101,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_difffuzz.py::test_a_wrong_document_mode_is_a_finding[always accepts]",
+      "seconds": 17.138,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_difffuzz.py::test_a_wrong_document_mode_is_a_finding[always rejects]",
+      "seconds": 12.761,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_difffuzz.py::test_ci_run",
+      "seconds": 88.799,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_discourse_answer.py::test_a_joint_set_deeper_than_pythons_call_depth_is_admitted",
+      "seconds": 54.71,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_discourse_answer.py::test_genuine_answer_mutants_never_pass_as_answers[free]",
+      "seconds": 14.76,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_discourse_answer.py::test_genuine_answer_mutants_never_pass_as_answers[some]",
+      "seconds": 16.041,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_discourse_lean.py::test_lean_and_python_agree_on_discourse_wording",
+      "seconds": 16.142,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_discourse_lean.py::test_lean_and_python_discover_the_same_slots",
+      "seconds": 12.186,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_discourse_lean.py::test_python_verdict_is_lean_verdict_on_wording_variants",
+      "seconds": 12.305,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_e1_prompts.py::test_candidates_are_valid_and_blind",
+      "seconds": 17.207,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_e1_prompts.py::test_cells_differ_only_in_the_rendered_statement",
+      "seconds": 14.308,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_e1_prompts.py::test_hidden_fields_never_reach_a_prompt",
+      "seconds": 15.401,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_eligibility_wfp.py::test_lean_admits_every_answer_and_replays_every_step",
+      "seconds": 14.725,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_eligibility_wfp.py::test_staged_answers_match_the_key_and_the_recorded_results",
+      "seconds": 22.982,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip",
+      "seconds": 42.777,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-0]",
+      "seconds": 23.464,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-1]",
+      "seconds": 23.054,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt-reviewed-2]",
+      "seconds": 22.794,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[claude-constitution-excerpt]",
+      "seconds": 19.164,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-0]",
+      "seconds": 22.084,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-1]",
+      "seconds": 18.403,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-0]",
+      "seconds": 29.232,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-1]",
+      "seconds": 44.27,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-2]",
+      "seconds": 33.154,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-3]",
+      "seconds": 31.604,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[us-constitution-14th-s1-reviewed]",
+      "seconds": 14.474,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_english_lean_route.py::test_pythons_renderings_read_back_in_lean_as_their_formulas",
+      "seconds": 11.209,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_enum_domains.py::test_every_field_keeps_its_domain[0]",
+      "seconds": 12.738,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_enum_domains.py::test_every_field_keeps_its_domain[1]",
+      "seconds": 18.876,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_enum_domains.py::test_every_field_keeps_its_domain[2]",
+      "seconds": 10.692,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_enum_domains.py::test_every_field_keeps_its_domain[3]",
+      "seconds": 19.802,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_enum_domains.py::test_every_field_keeps_its_domain[4]",
+      "seconds": 12.053,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_enum_domains.py::test_every_field_keeps_its_domain[5]",
+      "seconds": 15.063,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_enum_domains.py::test_every_field_keeps_its_domain[6]",
+      "seconds": 12.749,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_equivalence_properties.py::test_ground_oracle_and_attack_classification_equal_exhaustive_truth_tables",
+      "seconds": 20.482,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_equivalence_properties.py::test_quantified_findings_are_sound_against_brute_force",
+      "seconds": 12.565,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env0]",
+      "seconds": 19.19,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env1]",
+      "seconds": 23.174,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_gate_quarantine.py::test_the_tracked_quarantine_is_valid_and_names_collected_tests",
+      "seconds": 15.186,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_grammar.py::test_mixed_canonical_formulas_are_in_full_grammar",
+      "seconds": 15.058,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist",
+      "seconds": 56.994,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_document_wrapper.py::test_every_seed_document_agrees_with_python_or_fails_closed",
+      "seconds": 15.741,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[tests/data/readings_s2/constitution-nd-readings.ve.md]",
+      "seconds": 20.749,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/news-article/news-w6a.ve.md]",
+      "seconds": 21.531,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/agent-policy/a-conflict.ve.md]",
+      "seconds": 22.479,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/agent-policy/a-rules.ve.md]",
+      "seconds": 25.394,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/agent-policy/a-unspecified.ve.md]",
+      "seconds": 21.773,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_document_wrapper.py::test_null_and_number_forms_agree_with_python_or_fail_closed[usecases/question-answering/udhr-part07.ve.md]",
+      "seconds": 66.65,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_lean_service_schema.py::test_mutated_genuine_responses_agree_with_lean_decoders",
+      "seconds": 19.944,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_metered_differential.py::test_conformance_corpora_with_their_frozen_envelopes_match_python[evaluation]",
+      "seconds": 11.165,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_nary_differential.py::test_5000_finite_table_pairs_agree_with_rust",
+      "seconds": 11.557,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_natural.py::test_repository_corpus_accepts_no_wrong_reading",
+      "seconds": 21.969,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_norm_defaults_report.py::test_report_on_generated_trees",
+      "seconds": 10.659,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_norm_defaults_three_way.py::test_spec8_differentials",
+      "seconds": 27.08,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_order.py::test_lean_differential_corpus",
+      "seconds": 20.079,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_p1.py::test_actual_offline_known_answer_gate",
+      "seconds": 147.275,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_p1_amendment12.py::test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring[replication_3turn]",
+      "seconds": 26.08,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_p1_amendment12.py::test_selected_dev_rebuys_changed_qwen_requests_and_blocks_scoring[replication_gemini_e5_2turn]",
+      "seconds": 27.003,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed",
+      "seconds": 78.244,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_p1_amendment15.py::test_runner_preserves_finished_trajectories_initials_and_resumes_without_repurchase",
+      "seconds": 55.76,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_p1_amendment9.py::test_joint_bounds_contain_current_histories_and_preserve_judge_margin",
+      "seconds": 143.416,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_p1_preflight.py::test_full_inventory_joint_replay_and_pushback",
+      "seconds": 127.272,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_properties.py::test_ast_json_data_roundtrip_preserves_identity",
+      "seconds": 10.037,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_properties.py::test_evaluator_matches_independent_denotation",
+      "seconds": 15.629,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations",
+      "seconds": 11.948,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_question_differential.py::test_lean_and_the_reference_reader_agree",
+      "seconds": 38.509,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_question_differential.py::test_python_lean_and_rust_evaluate_each_reading_alike",
+      "seconds": 13.087,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_question_differential.py::test_the_comparison_can_fail",
+      "seconds": 28.179,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_components_lean.py::test_every_retyped_or_dropped_field_is_refused",
+      "seconds": 10.825,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_components_load.py::test_every_mutant_of_a_load_answer_is_refused[F-C1-product-]",
+      "seconds": 13.984,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_components_load.py::test_every_mutant_of_a_load_answer_is_refused[F-C17-elaborate-components-0]",
+      "seconds": 11.937,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]",
+      "seconds": 26.864,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[1]",
+      "seconds": 30.149,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[2]",
+      "seconds": 65.443,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[3]",
+      "seconds": 61.493,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[4]",
+      "seconds": 50.732,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[5]",
+      "seconds": 61.672,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[6]",
+      "seconds": 37.67,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[7]",
+      "seconds": 50.738,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[8]",
+      "seconds": 45.875,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[9]",
+      "seconds": 50.251,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_s1_differential.py::test_generated_sets_lean_answers",
+      "seconds": 15.318,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_readings_s2_document.py::test_looprecheck1_a_restriction_ids_that_are_label_words[m6-rs2:strict-one]",
+      "seconds": 11.447,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_reports_fault_order.py::test_every_difference_from_the_base_is_a_listed_group",
+      "seconds": 59.098,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_reports_lean.py::test_python_lean_differential_generated_chi",
+      "seconds": 32.365,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_rights.py::test_generated_populated_right_candidates_render_and_round_trip",
+      "seconds": 15.582,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_rights.py::test_head_profile_over_a_rights_document_without_reading_sets_reports_the_lower_chain",
+      "seconds": 23.37,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_rights_three_way.py::test_rights_differential_on_one_hundred_generated_documents",
+      "seconds": 18.333,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_fixtures.py::test_k36_margin_limit_on_the_original_record_only",
+      "seconds": 23.31,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[0]",
+      "seconds": 13.343,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[1]",
+      "seconds": 11.304,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[3]",
+      "seconds": 11.49,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[4]",
+      "seconds": 10.453,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[6]",
+      "seconds": 13.671,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[7]",
+      "seconds": 15.188,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[8]",
+      "seconds": 13.926,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_generated_policies.py::test_generated_policies_round_trip_and_replay[9]",
+      "seconds": 14.652,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_margins.py::test_margins_agree_with_brute_force[0]",
+      "seconds": 30.522,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_margins.py::test_margins_agree_with_brute_force[1]",
+      "seconds": 24.804,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_margins.py::test_margins_agree_with_brute_force[2]",
+      "seconds": 25.476,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_margins.py::test_margins_agree_with_brute_force[3]",
+      "seconds": 23.704,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_margins.py::test_margins_agree_with_brute_force[4]",
+      "seconds": 29.666,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_margins.py::test_margins_agree_with_brute_force[5]",
+      "seconds": 31.321,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_margins.py::test_margins_agree_with_brute_force[6]",
+      "seconds": 28.601,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_risk_margins.py::test_margins_agree_with_brute_force[7]",
+      "seconds": 28.236,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_route_row_schemas.py::test_route_answer_mutations_agree_with_lean",
+      "seconds": 26.314,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_rust_conformance.py::test_seeded_5000_case_fuzz",
+      "seconds": 14.461,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_rust_reproducible.py::test_a_copy_of_the_workspace_elsewhere_builds_the_same_binary",
+      "seconds": 22.768,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_safety_framework.py::test_rerun_equals_committed_results",
+      "seconds": 100.846,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_select_tests.py::test_automatic_selection_without_a_map_runs_full_suite",
+      "seconds": 18.214,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_select_tests.py::test_every_test_file_is_reachable_from_a_source_path",
+      "seconds": 18.98,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_senses_document.py::test_every_front_matter_node_confused_raises_only_veerror[open fence with a reading set]",
+      "seconds": 19.661,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_accepted_sources_elaborate_and_rejected_sources_share_codes[0]",
+      "seconds": 13.73,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_accepted_sources_elaborate_and_rejected_sources_share_codes[1]",
+      "seconds": 12.965,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_accepted_sources_elaborate_and_rejected_sources_share_codes[2]",
+      "seconds": 15.316,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_accepted_sources_elaborate_and_rejected_sources_share_codes[3]",
+      "seconds": 24.212,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_exponential_unfoldings_are_rejected_without_being_built[soft4-vocabulary-rank-tower-raw9-rules9-SOFT_RESOURCE_LIMIT]",
+      "seconds": 12.639,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_generated_soft_conformance_is_part_of_suite",
+      "seconds": 33.798,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_loop_recheck_diagnostic_precedence[soft4-vocabulary-rank-tower-raw99-rules99-SOFT_RESOURCE_LIMIT]",
+      "seconds": 10.367,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[0]",
+      "seconds": 20.929,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[1]",
+      "seconds": 20.743,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[2]",
+      "seconds": 24.134,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[3]",
+      "seconds": 17.49,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[4]",
+      "seconds": 19.351,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[5]",
+      "seconds": 23.489,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[6]",
+      "seconds": 22.004,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_soft_review_regressions.py::test_rejection_fixtures_and_generated_soft_inputs_share_codes[7]",
+      "seconds": 40.448,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_speech_source_lean.py::test_single_fault_mutants_agree_with_python",
+      "seconds": 99.372,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_stage0_probe_matrix.py::test_graph_projection_survives_python_build_string_change",
+      "seconds": 12.443,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_views.py::test_large_random_sample_all_views_injective_names_and_grouping_identical",
+      "seconds": 30.091,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_w6a_limit_generator.py::test_every_backend_reports_resource_limit_in_bounded_time[0]",
+      "seconds": 17.038,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_w6a_limit_generator.py::test_every_backend_reports_resource_limit_in_bounded_time[1]",
+      "seconds": 15.143,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_w6a_limit_generator.py::test_every_backend_reports_resource_limit_in_bounded_time[2]",
+      "seconds": 14.977,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_w6a_looprecheck1.py::test_render_then_parse_is_identity_or_rejected_never_another_reading",
+      "seconds": 16.007,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_w6a_looprecheck1.py::test_whole_grammar_reads_a_rendering_as_itself_or_rejects",
+      "seconds": 29.32,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_w6a_route_limits.py::test_largest_tables_reach_the_budget_quickly_three_ways",
+      "seconds": 20.838,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_wire_contract_s5_lean.py::test_l8_syntax_walk_is_budget_formula_on_the_corpus",
+      "seconds": 34.063,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_wire_contract_soft_lean.py::test_tier_a_pairs_and_triples",
+      "seconds": 40.706,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module",
+      "seconds": 108.265,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit",
+      "seconds": 334.688,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norm-defaults@0]",
+      "seconds": 36.907,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]",
+      "seconds": 32.131,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    },
+    {
+      "nodeid": "tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norms@0]",
+      "seconds": 11.354,
+      "run": "2026-10-14 run A on ve-mac-1, main 9f40783b8"
+    }
+  ]
+}

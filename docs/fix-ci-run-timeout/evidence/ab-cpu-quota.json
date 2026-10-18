@@ -1,0 +1,25 @@
+{
+ "what": "tests/test_difffuzz.py::test_ci_run alone, main's version (fixed 1800 s wall wait) and this branch's 65bad680 (progress watch), run at the same time, each in its own systemd scope with CPUQuota=15% (15% of one CPU: a slow machine), on the VM",
+ "start": "2026-10-16T04:24:04Z",
+ "load_average_1min": {
+  "start": 103.13,
+  "old_end": 82.02,
+  "new_end": 149.33
+ },
+ "old": {
+  "tree": "main 2a4fbf70's tests/test_difffuzz.py, tests/subprocesses.py, tools/difffuzz.py",
+  "outcome": "failed",
+  "error": "subprocess.TimeoutExpired: Command ['.../python', '-m', 'tools.difffuzz', '--ci', '--report', '.../difffuzz-ci.json'] timed out after 1800 seconds",
+  "wall_seconds": 1848.5,
+  "scope_cpu_seconds": 277.3,
+  "scope_throttled_seconds": 1555.4
+ },
+ "new": {
+  "tree": "65bad680",
+  "outcome": "passed",
+  "pytest": "1 passed in 2727.59s (0:45:27)",
+  "wall_seconds": 2748.6,
+  "scope_cpu_seconds": 412.3,
+  "scope_throttled_seconds": 2397.5
+ }
+}

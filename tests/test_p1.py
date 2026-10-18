@@ -6,13 +6,20 @@ import json
 import pytest
 
 from experiments import p1
+from tests import p1_findings
 from ve_experiments.paid import (BudgetExceeded, Ledger, OfflineBackend, PaidClient,
     PaidReply, PaidRequest, PreflightError, VertexBackend, OpenRouterBackend, cost)
 
 
 @pytest.fixture(scope="module")
 def known():
-    return p1.known_answer()
+    # The 200 items' checks, independent of one another, run several at a time first (tests/p1_findings.py);
+    # the gate then runs whole, on exactly those findings: it checks none that `warm` did not.
+    p1_findings.warm()
+    misses = p1._finding.cache_info().misses
+    report = p1.known_answer()
+    assert p1._finding.cache_info().misses == misses
+    return report
 
 
 def test_actual_offline_known_answer_gate(known):

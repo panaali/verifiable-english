@@ -1,0 +1,351 @@
+{
+ "run1_fresh_venv_stale_lean_seed": {
+  "commit_sha": "e9f8010ca23070917bf85732d22dbc65c1f03fc7",
+  "tree_sha": "5c8c1fe620c6e86cbb2dc8c2fa9e5e829ef82338",
+  "dirty": false,
+  "mode": "contract",
+  "status": "failed",
+  "stages": [
+   "toolchains",
+   "lean_build",
+   "rust_build",
+   "cargo_test",
+   "pytest"
+  ],
+  "counts": {
+   "collected": 1102,
+   "deselected": 0,
+   "failed": 8,
+   "passed": 1089,
+   "rust_ignored": 0,
+   "rust_passed": 36,
+   "selected": 1102,
+   "skipped": 5
+  },
+  "quarantine": {
+   "active": [
+    "tests/test_difffuzz.py::test_ci_run"
+   ],
+   "day": "2026-10-16",
+   "enabled": true,
+   "expired": [],
+   "retried": {}
+  },
+  "contract": {
+   "list": "tests/platform-contract.json",
+   "selectors": [
+    "tests/test_agent_policy_rerun.py::test_counts_equal_the_committed_run",
+    "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results",
+    "tests/test_agent_policy_rerun.py::test_lean_replays_every_certificate_of_the_rerun",
+    "tests/test_alternatives_three_way.py",
+    "tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results",
+    "tests/test_assist_deadline.py",
+    "tests/test_closure_certificates.py",
+    "tests/test_conformance.py",
+    "tests/test_cpu_bounds.py",
+    "tests/test_data_three_way.py",
+    "tests/test_definitions_differential.py",
+    "tests/test_difffuzz.py::test_ci_run",
+    "tests/test_discourse_three_way.py",
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke",
+    "tests/test_english_unambiguity.py",
+    "tests/test_gate_integrity.py",
+    "tests/test_grammar_backends.py",
+    "tests/test_hang_guards.py",
+    "tests/test_lean_certificates.py",
+    "tests/test_lean_conformance.py",
+    "tests/test_lean_handles.py",
+    "tests/test_lean_service.py",
+    "tests/test_nary_differential.py",
+    "tests/test_native_build_lock.py",
+    "tests/test_norm_defaults_three_way.py",
+    "tests/test_norms_three_way.py",
+    "tests/test_p0_three_way.py",
+    "tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations",
+    "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
+    "tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target",
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes",
+    "tests/test_readings_verdicts_lean.py::test_fnd1_conflict_free_under_every_reading_conditional_on_the_pair_premise",
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one",
+    "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry",
+    "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list",
+    "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case",
+    "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class",
+    "tests/test_rights_three_way.py::test_rights_differential_on_one_hundred_generated_documents",
+    "tests/test_rights_three_way.py::test_rights_embedding_fixtures",
+    "tests/test_route_transport.py",
+    "tests/test_run_order.py",
+    "tests/test_rust_conformance.py",
+    "tests/test_rust_reproducible.py",
+    "tests/test_soft_request_economy.py::test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline",
+    "tests/test_stage2_faults.py",
+    "tests/test_w6a_limit_generator.py::test_every_backend_reports_resource_limit_in_bounded_time",
+    "tests/test_w6a_limit_generator.py::test_lean_authority_reports_resource_limit_on_every_generated_case",
+    "tests/test_wire_contract_three_way.py"
+   ],
+   "sha256": "6ffa9c877d839fe06d6adb219cc8e492a86b69e8315ec4c6645f1396fea7c0eb"
+  },
+  "toolchains": {
+   "python": "Python 3.12.3",
+   "lean": "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+   "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+   "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+   "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)"
+  },
+  "failures": [
+   {
+    "reason": "Python suite: exit 1",
+    "stage": "pytest command"
+   },
+   {
+    "nodeid": "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate",
+    "reason": "/usr/lib/python3.12/json/decoder.py:353: RecursionError",
+    "stage": "pytest"
+   },
+   {
+    "nodeid": "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate",
+    "reason": "/usr/lib/python3.12/json/decoder.py:353: RecursionError",
+    "stage": "pytest"
+   },
+   {
+    "nodeid": "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate",
+    "reason": "/usr/lib/python3.12/json/decoder.py:353: RecursionError",
+    "stage": "pytest"
+   },
+   {
+    "nodeid": "tests/test_relay_mutation_gate.py::test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one",
+    "reason": "/usr/lib/python3.12/json/decoder.py:353: RecursionError",
+    "stage": "pytest"
+   },
+   {
+    "nodeid": "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry",
+    "reason": "/usr/lib/python3.12/json/decoder.py:353: RecursionError",
+    "stage": "pytest"
+   },
+   {
+    "nodeid": "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list",
+    "reason": "/usr/lib/python3.12/json/decoder.py:353: RecursionError",
+    "stage": "pytest"
+   },
+   {
+    "nodeid": "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case",
+    "reason": "/usr/lib/python3.12/json/decoder.py:353: RecursionError",
+    "stage": "pytest"
+   },
+   {
+    "nodeid": "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class",
+    "reason": "/usr/lib/python3.12/json/decoder.py:353: RecursionError",
+    "stage": "pytest"
+   }
+  ],
+  "runner": "VM multi-agent-lab x86_64, 32 CPUs, --workers 8",
+  "started": "2026-10-16T02:29:00Z",
+  "ended": "2026-10-16T03:30:47Z",
+  "wall_seconds": 3707.6,
+  "load_1min_start": 93.84,
+  "load_1min_end": 71.67,
+  "stage_marks": {
+   "setup_until_trust_counts_written": "03:07:39Z (uv sync with a fresh cache, a 458-module Lean rebuild: the seeded .lake was stale)",
+   "rust_build_done": "03:08:00Z",
+   "collection_written": "03:08:25Z",
+   "suite": "03:08:45Z-03:30:47Z"
+  },
+  "pytest_summary": "8 failed, 1089 passed, 5 skipped in 1338.24s (0:22:18)",
+  "note": "not the contract's cost: the gate made a fresh .venv on the system Python 3.12.3 (uv cannot see the managed 3.14 under the gate's scratch XDG_DATA_HOME), and the 8 test_relay_mutation_gate tests fail on 3.12 (RecursionError decoding the deep case of tests/data/relay-gate-cases.jsonl); the x86 gates record Python 3.14.7"
+ },
+ "run2_measured_cost": {
+  "commit_sha": "e9f8010ca23070917bf85732d22dbc65c1f03fc7",
+  "tree_sha": "5c8c1fe620c6e86cbb2dc8c2fa9e5e829ef82338",
+  "dirty": false,
+  "mode": "contract",
+  "status": "contract-passed",
+  "stages": [
+   "toolchains",
+   "lean_build",
+   "rust_build",
+   "cargo_test",
+   "pytest"
+  ],
+  "counts": {
+   "collected": 1102,
+   "deselected": 0,
+   "failed": 0,
+   "passed": 1097,
+   "rust_ignored": 0,
+   "rust_passed": 36,
+   "selected": 1102,
+   "skipped": 5
+  },
+  "quarantine": {
+   "active": [
+    "tests/test_difffuzz.py::test_ci_run"
+   ],
+   "day": "2026-10-16",
+   "enabled": true,
+   "expired": [],
+   "retried": {}
+  },
+  "contract": {
+   "list": "tests/platform-contract.json",
+   "selectors": [
+    "tests/test_agent_policy_rerun.py::test_counts_equal_the_committed_run",
+    "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results",
+    "tests/test_agent_policy_rerun.py::test_lean_replays_every_certificate_of_the_rerun",
+    "tests/test_alternatives_three_way.py",
+    "tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results",
+    "tests/test_assist_deadline.py",
+    "tests/test_closure_certificates.py",
+    "tests/test_conformance.py",
+    "tests/test_cpu_bounds.py",
+    "tests/test_data_three_way.py",
+    "tests/test_definitions_differential.py",
+    "tests/test_difffuzz.py::test_ci_run",
+    "tests/test_discourse_three_way.py",
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke",
+    "tests/test_english_unambiguity.py",
+    "tests/test_gate_integrity.py",
+    "tests/test_grammar_backends.py",
+    "tests/test_hang_guards.py",
+    "tests/test_lean_certificates.py",
+    "tests/test_lean_conformance.py",
+    "tests/test_lean_handles.py",
+    "tests/test_lean_service.py",
+    "tests/test_nary_differential.py",
+    "tests/test_native_build_lock.py",
+    "tests/test_norm_defaults_three_way.py",
+    "tests/test_norms_three_way.py",
+    "tests/test_p0_three_way.py",
+    "tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations",
+    "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
+    "tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target",
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes",
+    "tests/test_readings_verdicts_lean.py::test_fnd1_conflict_free_under_every_reading_conditional_on_the_pair_premise",
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one",
+    "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry",
+    "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list",
+    "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case",
+    "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class",
+    "tests/test_rights_three_way.py::test_rights_differential_on_one_hundred_generated_documents",
+    "tests/test_rights_three_way.py::test_rights_embedding_fixtures",
+    "tests/test_route_transport.py",
+    "tests/test_run_order.py",
+    "tests/test_rust_conformance.py",
+    "tests/test_rust_reproducible.py",
+    "tests/test_soft_request_economy.py::test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline",
+    "tests/test_stage2_faults.py",
+    "tests/test_w6a_limit_generator.py::test_every_backend_reports_resource_limit_in_bounded_time",
+    "tests/test_w6a_limit_generator.py::test_lean_authority_reports_resource_limit_on_every_generated_case",
+    "tests/test_wire_contract_three_way.py"
+   ],
+   "sha256": "6ffa9c877d839fe06d6adb219cc8e492a86b69e8315ec4c6645f1396fea7c0eb"
+  },
+  "toolchains": {
+   "python": "Python 3.14.7",
+   "lean": "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+   "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+   "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+   "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)"
+  },
+  "failures": [],
+  "runner": "VM multi-agent-lab x86_64, 32 CPUs, --workers 8; two full x86 candidate gates running beside it",
+  "started": "2026-10-16T03:31:36Z",
+  "ended": "2026-10-16T03:50:38Z",
+  "wall_seconds": 1142.5,
+  "load_1min_start": 65.92,
+  "load_1min_end": 62.82,
+  "pytest_summary": "1097 passed, 5 skipped in 1064.69s (0:17:44)",
+  "note": ".venv made by `uv sync --locked --group dev` before the run (as in the runners' checkouts), Lean build already current"
+ },
+ "seeded_wrong_x86_pin": {
+  "commit_sha": "1e2c794970cac1679fecfc3c0f2552e86cb1013f",
+  "tree_sha": "7bc771fa53053ee4fa709e8a42cf5393dcf20271",
+  "dirty": false,
+  "mode": "contract",
+  "status": "failed",
+  "stages": [
+   "toolchains",
+   "lean_build"
+  ],
+  "counts": {},
+  "contract": {
+   "list": "tests/platform-contract.json",
+   "selectors": [
+    "tests/test_agent_policy_rerun.py::test_counts_equal_the_committed_run",
+    "tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results",
+    "tests/test_agent_policy_rerun.py::test_lean_replays_every_certificate_of_the_rerun",
+    "tests/test_alternatives_three_way.py",
+    "tests/test_asimov_extended.py::test_rerun_mutant_equals_the_committed_results",
+    "tests/test_assist_deadline.py",
+    "tests/test_closure_certificates.py",
+    "tests/test_conformance.py",
+    "tests/test_cpu_bounds.py",
+    "tests/test_data_three_way.py",
+    "tests/test_definitions_differential.py",
+    "tests/test_difffuzz.py::test_ci_run",
+    "tests/test_discourse_three_way.py",
+    "tests/test_english_evidence.py::test_english_mixed_merge_smoke",
+    "tests/test_english_unambiguity.py",
+    "tests/test_gate_integrity.py",
+    "tests/test_grammar_backends.py",
+    "tests/test_hang_guards.py",
+    "tests/test_lean_certificates.py",
+    "tests/test_lean_conformance.py",
+    "tests/test_lean_handles.py",
+    "tests/test_lean_service.py",
+    "tests/test_nary_differential.py",
+    "tests/test_native_build_lock.py",
+    "tests/test_norm_defaults_three_way.py",
+    "tests/test_norms_three_way.py",
+    "tests/test_p0_three_way.py",
+    "tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations",
+    "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
+    "tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target",
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes",
+    "tests/test_readings_verdicts_lean.py::test_fnd1_conflict_free_under_every_reading_conditional_on_the_pair_premise",
+    "tests/test_relay_mutation_gate.py::test_a_client_without_its_length_check_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_a_reader_without_its_row_count_check_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_a_route_without_fixtures_fails_the_gate",
+    "tests/test_relay_mutation_gate.py::test_the_client_reader_accepts_a_genuine_answer_and_refuses_a_rebound_one",
+    "tests/test_relay_mutation_gate.py::test_the_gate_fails_on_an_unlisted_accepted_mutant_and_on_a_stale_entry",
+    "tests/test_relay_mutation_gate.py::test_the_gate_passes_on_sample_routes_with_the_committed_allow_list",
+    "tests/test_relay_mutation_gate.py::test_the_recorder_writes_every_relayed_case",
+    "tests/test_relay_mutation_gate.py::test_the_speech_source_reader_refuses_an_unhashable_unit_class",
+    "tests/test_rights_three_way.py::test_rights_differential_on_one_hundred_generated_documents",
+    "tests/test_rights_three_way.py::test_rights_embedding_fixtures",
+    "tests/test_route_transport.py",
+    "tests/test_run_order.py",
+    "tests/test_rust_conformance.py",
+    "tests/test_rust_reproducible.py",
+    "tests/test_soft_request_economy.py::test_soft_requests_on_the_widest_environment_stay_within_a_cpu_deadline",
+    "tests/test_stage2_faults.py",
+    "tests/test_w6a_limit_generator.py::test_every_backend_reports_resource_limit_in_bounded_time",
+    "tests/test_w6a_limit_generator.py::test_lean_authority_reports_resource_limit_on_every_generated_case",
+    "tests/test_wire_contract_three_way.py"
+   ],
+   "sha256": "6ffa9c877d839fe06d6adb219cc8e492a86b69e8315ec4c6645f1396fea7c0eb"
+  },
+  "toolchains": {
+   "python": "Python 3.14.7",
+   "lean": "Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)",
+   "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+   "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+   "lake": "Lake version 5.0.0-src+797c613 (Lean version 4.24.0)"
+  },
+  "failures": [
+   {
+    "reason": "Rust build /home/seyran/code/ve-tarch-contract-run/rust/target/release/ve is not pinned in lean/checkers.lock",
+    "stage": "gate"
+   }
+  ],
+  "started": "03:51:05Z",
+  "ended": "03:51:51Z",
+  "seed": "lean/checkers.lock: the x86 Rust digest 3ec83dee23e692b412f7a79b4af70066fc09c3298d82838bea7f4e5fb0e8eac8 replaced on a throwaway commit",
+  "listed_assertion_alone": "tests/test_rust_reproducible.py::test_release_binary_is_pinned: 1 failed (AssertionError: ... (3ec83dee...) is not in lean/checkers.lock); after the reset: 1 passed"
+ }
+}

@@ -1,0 +1,137 @@
+{
+ "method": "every call of each moved site against the pre-Q2.4 producer on the same inputs (conformance/frozen_words.py at its REVISION)",
+ "sites": {
+  "norm_defaults.completion_question": {
+   "calls": 1355,
+   "same": 1355
+  },
+  "norm_defaults.gap_sentence": {
+   "calls": 2919,
+   "same": 2919
+  },
+  "norm_defaults.latent_conflict_sentence": {
+   "calls": 53,
+   "same": 53
+  },
+  "norm_defaults.legend": {
+   "calls": 1005,
+   "same": 1005
+  },
+  "norm_defaults.status_sentence": {
+   "calls": 8013,
+   "same": 8013
+  },
+  "readings.gaps": {
+   "calls": 384,
+   "same": 384
+  },
+  "readings.pair": {
+   "calls": 98,
+   "same": 98
+  },
+  "readings.plan_gaps": {
+   "calls": 467,
+   "same": 467
+  },
+  "readings.s1_gaps": {
+   "calls": 1241,
+   "same": 1241
+  },
+  "readings.s1_situation": {
+   "calls": 1241,
+   "same": 1241
+  },
+  "readings.situation": {
+   "calls": 851,
+   "same": 851
+  }
+ },
+ "calls": 17627,
+ "differences": [],
+ "corpora": {
+  "readings and norm-defaults suites": {
+   "command": "VE_WORDS_AB=DIR pytest -n 8 -p tools.words_ab FILES",
+   "files": [
+    "tests/test_norm_defaults.py",
+    "tests/test_norm_defaults_contract.py",
+    "tests/test_norm_defaults_differential.py",
+    "tests/test_norm_defaults_layered.py",
+    "tests/test_norm_defaults_relay_english.py",
+    "tests/test_norm_defaults_report.py",
+    "tests/test_norm_defaults_switch.py",
+    "tests/test_norm_defaults_three_way.py",
+    "tests/test_readings_budget_zero.py",
+    "tests/test_readings_companions_lean.py",
+    "tests/test_readings_component_names.py",
+    "tests/test_readings_components_document.py",
+    "tests/test_readings_components_lean.py",
+    "tests/test_readings_components_load.py",
+    "tests/test_readings_defaults_english.py",
+    "tests/test_readings_defaults_names.py",
+    "tests/test_readings_defaults_rd2a_report.py",
+    "tests/test_readings_defaults_rd2b_report.py",
+    "tests/test_readings_defaults_rd3_report.py",
+    "tests/test_readings_defaults_rd4a_report.py",
+    "tests/test_readings_defaults_rd4b_report.py",
+    "tests/test_readings_defaults_rd6a.py",
+    "tests/test_readings_defaults_rd6a_report.py",
+    "tests/test_readings_defaults_rd8_report.py",
+    "tests/test_readings_defaults_statements.py",
+    "tests/test_readings_lazy_pairs.py",
+    "tests/test_readings_lean_sharing.py",
+    "tests/test_readings_nd_document.py",
+    "tests/test_readings_nd_lean.py",
+    "tests/test_readings_route_fuzz.py",
+    "tests/test_readings_route_relay.py",
+    "tests/test_readings_s1_differential.py",
+    "tests/test_readings_s1_document.py",
+    "tests/test_readings_s1_integration.py",
+    "tests/test_readings_s1_lean.py",
+    "tests/test_readings_s1_python.py",
+    "tests/test_readings_s2_document.py",
+    "tests/test_readings_s2_lean.py",
+    "tests/test_readings_s2_python.py",
+    "tests/test_readings_verdicts_lean.py",
+    "tests/test_stage2_readings.py"
+   ]
+  },
+  "norm-defaults generated corpus": {
+   "command": "tools/words_ab.py corpus --out DIR --trees 1000",
+   "trees": 1000,
+   "note": "the same run's sequential pilot pass stopped on a Rust checker timeout under load after 16 readings calls (kept); the pilots were rerun in parallel (below)"
+  },
+  "pilots": {
+   "command": "tools/words_ab.py corpus --out DIR --trees 0 --workers 8",
+   "pilots": 501,
+   "pilots_checked": 476,
+   "pilots_refused": [
+    "pilot/cc-20261001T1800Z:usecases/claude-constitution-pilot/run-20261001T1800Z/probes/discourse-in-translation-probe.ve.md (4f00d40ef7b5): VEError",
+    "pilot/cc-20261002T1800Z:usecases/claude-constitution-pilot/run-20261002T1800Z/probes/discourse-in-translation-probe.ve.md (bcd60c6ec5c3): VEError",
+    "pilot/cc-20261003T0600Z:usecases/claude-constitution-pilot/run-20261003T0600Z/probes/discourse-in-translation-probe.ve.md (ca5605bd1a0a): VEError",
+    "pilot/cc-20261004T0600Z:usecases/claude-constitution-pilot/run-20261004T0600Z/probes/discourse-in-translation-probe.ve.md (f4fb4d51baeb): VEError",
+    "pilot/cc-20261002T0600Z:usecases/bluedot-grant/document.ve.md (1a93f259b9b1): CheckerUnavailable",
+    "pilot/cc-20261004T1800Z:usecases/claude-constitution-pilot/run-20261004T1800Z/probes/discourse-in-translation-probe.ve.md (cd6a7707dd6d): VEError",
+    "pilot/cc-20261005T0600Z:usecases/claude-constitution-pilot/run-20261005T0600Z/probes/discourse-in-translation-probe.ve.md (0df887a85e54): VEError",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/discourse-in-translation-probe.ve.md (4ed87d644d2e): VEError",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/a_front_matter_default.ve.md (275b2ec5c768): VEError",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/b_no_choice_made.ve.md (aa5ac0540f90): VEError",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/c_written_definition_line.ve.md (41b8233db271): VEError",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/d_parenthetical_switch.ve.md (bf2f312b35f1): VEError",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/e_the_rejected_sense_negated.ve.md (212b9f572bb5): VEError",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/f_two_words_one_default.ve.md (8192d151b691): VEError",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/probes/senses-documents/g_bad_default.ve.md (b0b0bf3a4e08): VEError",
+    "pilot/cc-20261009T0600Z:usecases/claude-constitution-pilot/run-20261009T0600Z/probes/discourse-in-translation-probe.ve.md (8b43d2a03e2b): VEError",
+    "pilot/cc-20261009T1800Z:usecases/claude-constitution-pilot/run-20261009T1800Z/probes/discourse-in-translation-probe.ve.md (145055b3b570): VEError",
+    "pilot/cc-20261010T0600Z:usecases/claude-constitution-pilot/run-20261010T0600Z/probes/discourse-in-translation-probe.ve.md (4eab80d76c4e): UnsupportedProfile",
+    "pilot/cc-20261008T0600Z:usecases/claude-constitution-pilot/run-20261008T0600Z/readings/s1.ve.md (5c156c077666): CheckerUnavailable",
+    "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/discourse-in-translation-probe.ve.md (c320dc53748c): UnsupportedProfile",
+    "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md (f5e106ae9863): CheckerUnavailable",
+    "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md (0e0fce0d3b60): CheckerUnavailable",
+    "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/discourse-in-translation-probe.ve.md (55a17faecd55): UnsupportedProfile",
+    "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md (d95fe816730f): CheckerUnavailable",
+    "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md (7fd6d251519d): CheckerUnavailable"
+   ],
+   "refusals": "none from the words relay: probe documents VE refuses by design (VEError, UnsupportedProfile), a Rust checker timeout under load, and two companion documents whose readings English fails before any moved site (readings_route.Wording.source_word: KeyError 'source', unchanged by Q2.4)"
+  }
+ }
+}

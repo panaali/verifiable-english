@@ -81,6 +81,44 @@ theorem runLayered_fits (id kind : String) (j : Json)
     cases hv
     exact layeredCase_fits L id kind j hi hk hp _ ho _ rfl
 
+/-- Every soft-branch admission's kinds are its units' rendered kinds. -/
+theorem admitDocumentX_kinds (environment document : Json) :
+    OkP (fun res : Admission.AdmittedX => Common.KindsRendered res.kinds)
+      (Admission.admitDocumentX environment document) := by
+  unfold Admission.admitDocumentX
+  okfits
+  all_goals exact Common.kindsRendered_map _ _
+
+theorem softAdmission_fits (id reportId : String) (res : Admission.AdmittedX) (hk : Common.KindsRendered res.kinds) :
+    Fits req (skel% "norm-defaults.json#/$defs/soft_admission") (Admission.encodeAdmittedX id reportId res) := by
+  unfold Admission.encodeAdmittedX VE.Route.Wire.ok
+  fits using Common.kind_fits hk
+  all_goals exact Common.claimJson_fits _
+
+theorem runAdmissionX_fits (id : String) (j environment document : Json)
+    (hi : VE.Bridge.stringField j "id" = .ok id)
+    (hk : VE.Route.Run.caseKind j = .ok "admission") (hp : usesNormDefaultsPath j = true) :
+    OkFits j Skeletons.normDefaults (Admission.runAdmissionX id environment document) := by
+  unfold Admission.runAdmissionX
+  okfits
+  read_kind
+  fits_from softAdmission_fits _ _ _ (admitDocumentX_kinds _ _ _ ‹Admission.admitDocumentX _ _ = .ok _›)
+
+theorem softCase_fits (id kind : String) (j : Json)
+    (hi : VE.Bridge.stringField j "id" = .ok id)
+    (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesNormDefaultsPath j = true) :
+    OkP (fun o => ∀ a, o = some a → Fits j Skeletons.normDefaults a) (Admission.softCase id kind j) := by
+  unfold Admission.softCase
+  okfits
+  all_goals (try (intro a ha; cases ha))
+  all_goals (try (intro a ha; injection ha with ha; subst ha))
+  · have hka : kind = "admission" := by simpa using ‹(kind == "admission") = true›
+    subst hka
+    exact runAdmissionX_fits id j _ _ hi hk hp _ ‹_›
+  · read_kind
+    simp only [VE.Route.Wire.ok]
+    fits
+
 theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     OkFits j Skeletons.normDefaults (runCase j) := by
   unfold runCase runOtherCase runAdmission
@@ -89,6 +127,7 @@ theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
   all_goals first
     | with_reducible exact OkP.of (Norms.runCase_fits _) fun _ => of_norms
     | with_reducible exact runLayered_fits _ _ _ ‹_› ‹_› hp
+    | exact softCase_fits _ _ _ ‹_› ‹_› hp _ ‹_› _ rfl
     | skip
   all_goals read_kind
   all_goals (try contra)

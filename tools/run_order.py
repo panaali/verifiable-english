@@ -1,8 +1,10 @@
 """The order an agent's run takes its test units in, and what it remembers of the last run.
 
 `tools/select_tests.py --run` starts the units that failed last time first, then the test files the
-change edits, then the rest in name order (`order`), so the first failure shows minutes sooner. The
-order never changes which units run: it is a permutation of the selection. With `--maxfail N` the run
+change edits, then the rest (`order`), so the first failure shows minutes sooner; within each of the three
+groups the units whose tests tools/test-durations.json records as slowest start first, then name order, so
+no long unit starts last while the other jobs idle. The order never changes which units run: it is a
+permutation of the selection. With `--maxfail N` the run
 stops after N failed tests; a gate never stops early (tools/gate_pytest.py refuses `--maxfail`, `-x`
 and `--stepwise`).
 
@@ -20,6 +22,8 @@ from pathlib import Path
 import subprocess
 import xml.etree.ElementTree as ElementTree
 
+import test_schedule
+
 ROOT = Path(__file__).resolve().parents[1]
 STATE = "ve-last-failed.json"
 FORMAT = "ve-last-failed@1"
@@ -28,9 +32,12 @@ GATE_RECORD = "gate-result.json"
 JUNIT_OPTIONS = ("-o", "junit_family=xunit1")
 
 
-def order(units: Iterable[str], *, changed: Iterable[str] = (), failed: Iterable[str] = ()) -> list[str]:
-    """`units`: those in `failed` first, then those in `changed`, then the rest, each group in name order."""
-    units = sorted(set(units))
+def order(units: Iterable[str], *, changed: Iterable[str] = (), failed: Iterable[str] = (),
+          seconds: Mapping[str, float] | None = None) -> list[str]:
+    """`units`: those in `failed` first, then those in `changed`, then the rest; each group slowest first by
+    `seconds` per unit (default: the recorded durations, `test_schedule.unit_seconds`), then in name order."""
+    seconds = test_schedule.unit_seconds() if seconds is None else seconds
+    units = sorted(set(units), key=lambda unit: (-seconds.get(unit, 0.0), unit))
     failed, changed = set(failed), set(changed)
     return ([unit for unit in units if unit in failed]
             + [unit for unit in units if unit in changed and unit not in failed]

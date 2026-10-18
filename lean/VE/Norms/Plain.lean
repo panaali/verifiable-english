@@ -150,13 +150,13 @@ def certificate (profiles : List String) (environment stripped : Json) (T : Tree
       ((VE.Route.Wire.fullBackground rv).map Prod.fst ++ profile) id j
   | .closureNary =>
     if VE.Core.Layers.usesLayers stripped then
-      let base ← VE.Core.Layers.background e.profiles stripped
-      VE.Core.Layers.coreCertificate profiles environment (← VE.Core.Layers.coreEnvironment stripped)
-        (base ++ profile) id j
+      let L ← VE.Core.Layers.decodeLayered e.profiles stripped
+      VE.Core.Layers.coreCertificate profiles environment L.core
+        ((VE.Core.Layers.background L).map Prod.fst ++ profile.map VE.Core.embed) id j
     else
       let v ← VE.Core.Bridge.decodeEnvironment stripped
       VE.Core.Layers.coreCertificate profiles environment stripped
-        (VE.Route.Background.literals (VE.Core.Wire.literals v) ++ profile) id j
+        ((VE.Route.Background.literals (VE.Core.Wire.literals v) ++ profile).map VE.Core.embed) id j
   | .order =>
     let rv ← VE.Route.Wire.decodeOrderVocabulary e.vocabulary
     if profile.isEmpty then VE.Route.Wire.runOrder profiles environment rv id "certificate" j

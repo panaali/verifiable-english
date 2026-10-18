@@ -28,6 +28,7 @@ import nested_pytest  # noqa: E402
 import quarantine  # noqa: E402
 import run_order  # noqa: E402
 import select_tests  # noqa: E402
+import test_schedule  # noqa: E402
 import test_map  # noqa: E402
 
 
@@ -51,6 +52,25 @@ def test_the_last_failed_then_the_changed_then_the_rest():
         "tests/test_b.py", "tests/test_d.py",       # failed last time (one also changed)
         "tests/test_c.py",                          # changed
         "tests/test_a.py", "tools/test_x.py"]       # the rest, in name order
+
+
+def test_within_each_group_the_slowest_recorded_unit_starts_first():
+    """Eight jobs run the units: a long unit that started last would leave seven idle until it ended."""
+    units = ["tests/test_a.py", "tests/test_b.py", "tests/test_c.py", "tests/test_d.py", "tests/test_e.py"]
+    seconds = {"tests/test_e.py": 300.0, "tests/test_c.py": 20.0, "tests/test_b.py": 20.0, "tests/test_d.py": 90.0}
+    assert run_order.order(units, seconds=seconds) == [
+        "tests/test_e.py", "tests/test_d.py", "tests/test_b.py", "tests/test_c.py", "tests/test_a.py"]
+    assert run_order.order(units, changed=["tests/test_a.py", "tests/test_c.py"], failed=["tests/test_b.py"],
+                           seconds=seconds) == [
+        "tests/test_b.py",                                    # failed last time
+        "tests/test_c.py", "tests/test_a.py",                 # changed, slowest first
+        "tests/test_e.py", "tests/test_d.py"]                 # the rest, slowest first
+    # By default the seconds are the durations file's, summed per test file.
+    recorded = test_schedule.unit_seconds()
+    slowest = max(recorded, key=recorded.get)
+    assert run_order.order(["tests/test_a_unrecorded.py", slowest])[0] == slowest
+    assert test_schedule.unit_seconds({"tests/test_x.py::a": 2.0, "tests/test_x.py::b[1]": 3.5,
+                                       "tests/test_y.py::c": 1.0}) == {"tests/test_x.py": 5.5, "tests/test_y.py": 1.0}
 
 
 def test_the_order_is_a_permutation_of_the_selection():

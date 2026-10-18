@@ -7,6 +7,7 @@ import json
 import pytest
 
 from experiments import p1
+from tests import p1_findings
 from ve_experiments import paid
 
 
@@ -36,6 +37,7 @@ def test_visible_wire_and_billed_reserve_are_separate(tmp_path, billed, passes):
 
 
 def test_recover_and_reconstruct_every_retained_scored_call_without_dispatch(tmp_path, monkeypatch):
+    p1_findings.warm('scored')  # every item it reads, checked several at a time first (tests/p1_findings.py)
     # Replay the retained Amendment 14 population, before Amendment 15 added
     # restart calls, costs, and replacement trajectory rows to the final files.
     receipt = p1.amendment15_receipt()

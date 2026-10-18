@@ -173,16 +173,27 @@ def background : Shape :=
             ("label", n [str, .pattern (Re.prefixes ["soft:exception:", "soft:coherence:"])])],
           .ite (props [("generator", constS "soft")]) (.required ["label"]) (.not (.required ["label"]))])]
 
+def decision_key : Shape :=
+  c "SoftNorms.Wire.decisionKeyJson: what a decision decides." [
+    .anyOf [
+      n [obj, .required ["excepted"], closed [("excepted", str)]],
+      n [obj, .required ["off", "party"], closed [("off", str), ("party", str)]],
+      n [
+        obj,
+        .required ["outweighs", "lower", "higher"],
+        closed [("outweighs", str), ("lower", str), ("higher", str)]]]]
+
 def elaborated : Def :=
   .group (some "SoftNorms.Wire.regenerated without environment_prime: the fields rights-elaborate repeats.") [
     ("decisions", n [
       arr,
       .items (n [
           obj,
-          .required ["name", "arguments"],
+          .required ["name", "arguments", "key"],
           closed [
             ("name", n [str, .pattern (Re.prefixes ["soft__"])]),
-            ("arguments", ref "common.json#/$defs/strings")]])]),
+            ("arguments", ref "common.json#/$defs/strings"),
+            ("key", ref "#/$defs/decision_key")]])]),
     ("derived", n [
       arr,
       .items (n [
@@ -348,6 +359,7 @@ def file : File where
     ("rules", .schema rules),
     ("admission", .schema admission),
     ("background", .schema background),
+    ("decision_key", .schema decision_key),
     ("soft_residual", .schema (n [obj,
       .required ["default_exceptions", "instruction_switches", "holistic_overrides", "weighing_points"],
       closed [

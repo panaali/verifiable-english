@@ -108,6 +108,31 @@ def generated_formula : Shape :=
 def generated_formulas : Shape :=
   n [arr, .items (ref "#/$defs/generated_formula")]
 
+def generated_core_formula : Shape :=
+  decidedBy "Core.Bridge.decodeFormula without reachability" (fun j =>
+    match VE.Core.Bridge.decodeFormula j.compress.length j with
+    | .ok a => !VE.Core.Layers.hasReach a
+    | .error _ => false) <|
+  c
+    "Core.Wire.encodeFormula of a core-family Background premise (Core.Layers.background): generated_formula's grammar and the n-ary atom of an n-ary definition's biconditional (three to six terms)."
+    [
+      .tagged [
+        ("top", []),
+        ("bottom", []),
+        ("unary", [str, ref "#/$defs/fol_term"]),
+        ("binary", [str, ref "#/$defs/fol_term", ref "#/$defs/fol_term"]),
+        ("atom", [str, n [arr, .items (ref "#/$defs/fol_term"), .minItems 3, .maxItems 6]]),
+        ("eq", [ref "#/$defs/fol_term", ref "#/$defs/fol_term"]),
+        ("not", [ref "#/$defs/generated_core_formula"]),
+        ("and", [ref "#/$defs/generated_core_formula", ref "#/$defs/generated_core_formula"]),
+        ("or", [ref "#/$defs/generated_core_formula", ref "#/$defs/generated_core_formula"]),
+        ("implies", [ref "#/$defs/generated_core_formula", ref "#/$defs/generated_core_formula"]),
+        ("forall", [str, ref "#/$defs/generated_core_formula"]),
+        ("exists", [str, ref "#/$defs/generated_core_formula"])]]
+
+def generated_core_formulas : Shape :=
+  n [arr, .items (ref "#/$defs/generated_core_formula")]
+
 def order_term : Shape :=
   c "Order.Wire.decodeTerm 64." [
     .fuel "order_term" 64,
@@ -428,6 +453,8 @@ def file : File where
     ("fol_formula", .schema fol_formula),
     ("generated_formula", .schema generated_formula),
     ("generated_formulas", .schema generated_formulas),
+    ("generated_core_formula", .schema generated_core_formula),
+    ("generated_core_formulas", .schema generated_core_formulas),
     ("order_term", .schema order_term),
     ("order_formula", .schema order_formula),
     ("atomic_kind", .schema atomic_kind),

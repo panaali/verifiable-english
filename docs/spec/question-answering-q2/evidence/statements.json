@@ -1,0 +1,11 @@
+{
+ "command": "tools/question_statements.py --q2",
+ "exit": 0,
+ "output": [
+  "Q2 statements: 27 of 27 implemented; 0 missing; 0 differ in text",
+  "Q2 definitions: 46 approved, 32 with bodies, 32 equal to the approved text, 0 changed (0 listed with their reasons); 0 absent",
+  "Q2 structures and inductives: 13 approved, 12 equal to the approved text, 1 changed",
+  "  changed Asked: `hnames` uses `NameReadsBackSame` (canonical JSON text, the relation `UnitBound` uses) for the approved `NameReadsBack` (kept as approved): Lean's `Json` has no decidable equality, so `=` on the read-back formula cannot be decided",
+  "Q2 Lean check: 41 approved statements and signatures elaborated against the implementation; PASS"
+ ]
+}

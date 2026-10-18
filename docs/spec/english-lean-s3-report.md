@@ -33,17 +33,16 @@ The refreshed lexicon report derives validity over all 39 corpus environments, a
 `test_every_corpus_environment_has_a_valid_selected_lexicon` verifies the complete report. This surface
 change was signed in S3 D9; S0/S1's unchanged-behavior merge scope does not govern S3.
 
-The submitted-environment boundary repair changed `Run.lean`, so the English grammar lock requires
-`actions_version` 9 (formerly 8). The regenerated 200-case comparison records version 9 for
+The submitted-environment boundary repair raised `actions_version` from 8 to 9. Later changes brought it
+to 28; this accepted-head repair raises it to 29. The regenerated comparison records version 29 for
 every case; the version identifies the changed reader even where its verdict is unchanged.
 
-Python agrees with the spec's mapped class, formulas, and marks on 147 of the 163 exact texts. All 16 exact-text
-differences agree when written with Python's selected wording. Python selects the quoted fallback for `safe`
-under `FA` and `FR`, because its declared `{0} is safe` collides with the fixed role wording; it selects `C`
-instead of `A` as the action letter under `FA`. These are findings against the hand-written spec lexicons,
+Python agrees with the spec's mapped class, formulas, and marks on 158 of the 163 exact texts. All 5 exact-text
+differences agree when written with Python's selected wording. Python selects `C`
+instead of `A` as the action letter under `FA`. This is a finding against the hand-written spec lexicon,
 not hidden fixture passes.
 
-The integrated fixture comparison has 200 cases, including 37 selected-wording variants. It records 198 agreements
+The integrated fixture comparison has 170 cases, including 7 selected-wording variants. It records 168 agreements
 and 2 differences, both dispositioned, with zero unexplained differences. The hand parser and Lark
 were run independently for each case; their outcomes are saved beside the dispatched Python and
 Lean results in each case record. The two differences are `or38a` and `or38b`, the mixed-fault depth
@@ -54,9 +53,9 @@ precedence of spec 2.11/Q11: Python returns `ResourceLimit` and Lean returns `No
 | `FO` | 57 | 55 | 2 | `or38a`, `or38b` dispositioned |
 | `FO+cap` | 3 | 3 | 0 | Same outcomes |
 | `FD` | 24 | 24 | 0 | Same outcomes |
-| `FA` | 68 | 68 | 0 | Same outcomes |
+| `FA` | 43 | 43 | 0 | Same outcomes |
 | `FA2` | 8 | 8 | 0 | Same outcomes |
-| `FR` | 35 | 35 | 0 | Same outcomes |
+| `FR` | 30 | 30 | 0 | Same outcomes |
 | `FM` | 5 | 5 | 0 | Same outcomes |
 
 `tests/test_english_lean_s3_compare.py::test_committed_report_counts_are_derived_from_individual_records`

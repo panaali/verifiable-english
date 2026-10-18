@@ -711,26 +711,13 @@ def process(directory=DATA, *, write=False, catalogue=None, generated_only=False
                     generated_only=generated_only)
     if shipped and not findings:
         rendered = generated_lean(contracts, limits, names)
-        inventory = ROOT / "lean/VE/Route/frozen-sources.sha256"
-        inventory_lines = inventory.read_text().splitlines()
-        inventory_map = {line.split("  ", 1)[1]: line.split("  ", 1)[0]
-                         for line in inventory_lines if "  " in line}
         for relative, source in rendered.items():
             target = ROOT / relative
-            inventory_key = relative.removeprefix("lean/")
-            digest = hashlib.sha256(source.encode()).hexdigest()
             if write:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text(source)
-                inventory_map[inventory_key] = digest
-            else:
-                if not target.exists() or target.read_text() != source:
-                    issue(target, "WC11", "generated Lean module differs")
-                if inventory_map.get(inventory_key) != digest:
-                    issue(inventory, "WC11", f"generated module hash differs: {inventory_key}")
-        if write:
-            inventory.write_text("".join(f"{digest}  {path}\n"
-                                         for path, digest in sorted(inventory_map.items())))
+            elif not target.exists() or target.read_text() != source:
+                issue(target, "WC11", "generated Lean module differs")
     if write and not findings:
         lock_path.write_bytes(canonical_json(lock) + b"\n")
     return findings

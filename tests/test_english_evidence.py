@@ -215,7 +215,8 @@ def test_every_core_constructor_completes_its_round_trip(monkeypatch, dropped):
 # One test per configuration, or per part of a slow one, so that they render and parse
 # in parallel (the slowest took 511 s alone under load 40).
 MIXED = [name for name, _, _ in english_mixed.all_configurations()]
-MIXED_PARTS = {'news-article-reviewed': 4, 'claude-constitution-excerpt-reviewed': 3, 'news-article': 2}
+MIXED_PARTS = {'news-article-reviewed': 8, 'claude-constitution-excerpt-reviewed': 6, 'news-article': 4,
+               'claude-constitution-excerpt': 2}
 
 
 @pytest.mark.parametrize('offset, part, parts',

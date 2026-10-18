@@ -1,0 +1,579 @@
+{
+ "comment": "rd-9's 47 unbound or partly bound fields (manage-agents/reviews/rd-9-binding-audit.md, at 0a8432de5), transcribed by hand: each field, rd-9's verdict and the census paths (mode, path) that hold it today. tools/binding_census.py places them in the census.",
+ "rows": [
+  {
+   "row": 1,
+   "field": "soft-elaborate environment_prime.vocabulary.predicates",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/environment_prime/vocabulary/predicates/@key"
+    ],
+    [
+     "soft-norms",
+     "/environment_prime/vocabulary/predicates/{}/arguments/*"
+    ]
+   ]
+  },
+  {
+   "row": 2,
+   "field": "soft-elaborate environment_prime.profiles",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/environment_prime/profiles/*"
+    ]
+   ]
+  },
+  {
+   "row": 3,
+   "field": "decisions[].arguments",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/decisions/*/arguments/*"
+    ],
+    [
+     "rights",
+     "/decisions/*/arguments/*"
+    ]
+   ]
+  },
+  {
+   "row": 4,
+   "field": "decisions[].name",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/decisions/*/name"
+    ],
+    [
+     "rights",
+     "/decisions/*/name"
+    ]
+   ]
+  },
+  {
+   "row": 5,
+   "field": "decisions[].key outweighs lower/higher",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/decisions/*/key"
+    ]
+   ],
+   "note": "the shape has no decision `key` today (decisions are name and arguments)"
+  },
+  {
+   "row": 6,
+   "field": "colliding_pairs[].outweighs",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/colliding_pairs/*/outweighs"
+    ],
+    [
+     "rights",
+     "/colliding_pairs/*/outweighs"
+    ]
+   ]
+  },
+  {
+   "row": 7,
+   "field": "colliding_pairs[].pair",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/colliding_pairs/*/pair/0"
+    ],
+    [
+     "soft-norms",
+     "/colliding_pairs/*/pair/1"
+    ],
+    [
+     "rights",
+     "/colliding_pairs/*/pair/0"
+    ],
+    [
+     "rights",
+     "/colliding_pairs/*/pair/1"
+    ]
+   ]
+  },
+  {
+   "row": 8,
+   "field": "colliding_pairs[].act",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/colliding_pairs/*/act"
+    ],
+    [
+     "rights",
+     "/colliding_pairs/*/act"
+    ]
+   ]
+  },
+  {
+   "row": 9,
+   "field": "rule_acts values",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/rule_acts/{}"
+    ]
+   ]
+  },
+  {
+   "row": 10,
+   "field": "order",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/order/*"
+    ],
+    [
+     "rights",
+     "/order/*"
+    ]
+   ]
+  },
+  {
+   "row": 11,
+   "field": "conflict_targets[].target",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/conflict_targets/*/target"
+    ],
+    [
+     "rights",
+     "/conflict_targets/*/target"
+    ]
+   ]
+  },
+  {
+   "row": 12,
+   "field": "conditional_on",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/conditional_on/*"
+    ],
+    [
+     "rights",
+     "/conditional_on/*"
+    ]
+   ]
+  },
+  {
+   "row": 13,
+   "field": "soft_residual.default_exceptions",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/soft_residual/default_exceptions"
+    ]
+   ]
+  },
+  {
+   "row": 14,
+   "field": "soft_residual.instruction_switches",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/soft_residual/instruction_switches"
+    ]
+   ]
+  },
+  {
+   "row": 15,
+   "field": "soft_residual.holistic_overrides",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/soft_residual/holistic_overrides"
+    ]
+   ]
+  },
+  {
+   "row": 16,
+   "field": "soft_residual.weighing_points",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/soft_residual/weighing_points"
+    ]
+   ]
+  },
+  {
+   "row": 17,
+   "field": "default_exceptions_by_decider",
+   "rd9": "Partly",
+   "census": [
+    [
+     "soft-norms",
+     "/default_exceptions_by_decider/@key"
+    ],
+    [
+     "soft-norms",
+     "/default_exceptions_by_decider/{}"
+    ]
+   ]
+  },
+  {
+   "row": 18,
+   "field": "rights-elaborate environment_prime.vocabulary.predicates",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/environment_prime/vocabulary/predicates/@key"
+    ],
+    [
+     "rights",
+     "/environment_prime/vocabulary/predicates/{}/arguments/*"
+    ]
+   ]
+  },
+  {
+   "row": 19,
+   "field": "rights-elaborate environment_prime.profiles",
+   "rd9": "No",
+   "census": [
+    [
+     "rights",
+     "/environment_prime/profiles/*"
+    ]
+   ]
+  },
+  {
+   "row": 20,
+   "field": "lines[].instance",
+   "rd9": "No",
+   "census": [
+    [
+     "rights",
+     "/lines/*/instance"
+    ]
+   ]
+  },
+  {
+   "row": 21,
+   "field": "lines[].node.sign",
+   "rd9": "No",
+   "census": [],
+   "note": "a boolean leaf: the census holds string and integer leaves (ADR 0001)"
+  },
+  {
+   "row": 22,
+   "field": "lines[].node.hard",
+   "rd9": "No",
+   "census": [],
+   "note": "a boolean leaf: the census holds string and integer leaves (ADR 0001)"
+  },
+  {
+   "row": 23,
+   "field": "lines[].node.over",
+   "rd9": "No",
+   "census": [
+    [
+     "rights",
+     "/lines/*/node/over/*"
+    ]
+   ]
+  },
+  {
+   "row": 24,
+   "field": "bars[].over",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/bars/*/over/*"
+    ]
+   ]
+  },
+  {
+   "row": 25,
+   "field": "generated[] lim/cond rows (completeness and act)",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/generated"
+    ],
+    [
+     "rights",
+     "/generated/*/act"
+    ]
+   ]
+  },
+  {
+   "row": 26,
+   "field": "generated[].predicate (kind aimed)",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/generated/*/predicate"
+    ]
+   ]
+  },
+  {
+   "row": 27,
+   "field": "generated[].name",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/generated/*/name"
+    ]
+   ]
+  },
+  {
+   "row": 28,
+   "field": "limitations[].label set and rights_background",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/limitations/*/label"
+    ],
+    [
+     "rights",
+     "/rights_background/*/label"
+    ]
+   ]
+  },
+  {
+   "row": 29,
+   "field": "wordings values",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/wordings/{}"
+    ]
+   ]
+  },
+  {
+   "row": 30,
+   "field": "narrowings[].mechanisms[].mechanism",
+   "rd9": "No",
+   "census": [
+    [
+     "rights",
+     "/narrowings/*/mechanisms/*/mechanism"
+    ]
+   ]
+  },
+  {
+   "row": 31,
+   "field": "narrowings[].mechanisms[].target (F18)",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/narrowings/*/mechanisms/*/target"
+    ]
+   ]
+  },
+  {
+   "row": 32,
+   "field": "rights-elaborate findings (ProtectedInCone)",
+   "rd9": "No",
+   "census": [
+    [
+     "rights",
+     "/findings/*"
+    ]
+   ]
+  },
+  {
+   "row": 33,
+   "field": "rights-scope findings",
+   "rd9": "No",
+   "census": [
+    [
+     "rights",
+     "/findings/*"
+    ]
+   ]
+  },
+  {
+   "row": 34,
+   "field": "rights-scope narrowings[].mechanisms[].licence",
+   "rd9": "No",
+   "census": [
+    [
+     "rights",
+     "/narrowings/*/mechanisms/*/licence"
+    ]
+   ]
+  },
+  {
+   "row": 35,
+   "field": "rights-bar bars[].barred",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/bars/*/barred/*"
+    ]
+   ]
+  },
+  {
+   "row": 36,
+   "field": "rights-bar bars[].blocked_defaults",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/bars/*/blocked_defaults/*"
+    ]
+   ]
+  },
+  {
+   "row": 37,
+   "field": "rights-bar bars[].composition_candidates",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/bars/*/composition_candidates/*"
+    ]
+   ]
+  },
+  {
+   "row": 38,
+   "field": "rights-conflict status_text",
+   "rd9": "Partly",
+   "census": [
+    [
+     "rights",
+     "/status_text"
+    ]
+   ]
+  },
+  {
+   "row": 39,
+   "field": "soft admission.conditional_on",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/conditional_on/*"
+    ]
+   ]
+  },
+  {
+   "row": 40,
+   "field": "rights admission.conditional_on",
+   "rd9": "No",
+   "census": [
+    [
+     "rights",
+     "/conditional_on/*"
+    ]
+   ]
+  },
+  {
+   "row": 41,
+   "field": "soft-pairs pairs[].pair",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/pairs/*/pair/0"
+    ],
+    [
+     "soft-norms",
+     "/pairs/*/pair/1"
+    ]
+   ]
+  },
+  {
+   "row": 42,
+   "field": "soft-pairs pairs[].label",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/pairs/*/label"
+    ]
+   ]
+  },
+  {
+   "row": 43,
+   "field": "soft-pairs discharged",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/discharged/*"
+    ]
+   ]
+  },
+  {
+   "row": 44,
+   "field": "soft-pairs weighing_points",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/weighing_points/*"
+    ]
+   ]
+  },
+  {
+   "row": 45,
+   "field": "soft-conflict targets (packages)",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/targets/*"
+    ]
+   ]
+  },
+  {
+   "row": 46,
+   "field": "soft-conflict conditional_on (packages)",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/conditional_on/*"
+    ]
+   ]
+  },
+  {
+   "row": 47,
+   "field": "soft-conflict targets (witness)",
+   "rd9": "No",
+   "census": [
+    [
+     "soft-norms",
+     "/targets/*"
+    ]
+   ]
+  }
+ ]
+}

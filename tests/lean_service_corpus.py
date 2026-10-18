@@ -401,6 +401,7 @@ def english_cases(negations=(64, 200)):
 def corpus():
     """{mode: [case, ...]} with every result kind of every mode."""
     from tests.probe_matrix import raw_environment, model_wire
+    from tests.premise_scale_fixtures import search_budget_cases
     from ve import Environment, FiniteModel
     env = Environment(raw_environment(()))
     model = FiniteModel.from_dict(env, model_wire(env))
@@ -417,18 +418,90 @@ def corpus():
                   {"id": "model", "kind": "model", "environment": env.to_dict(),
                    "model": model.to_dict()},
                   {"id": "bad", "kind": "unknown"}, *ADVERSARIAL]
+    choice_sets = [{"id": name, "version": 1, "unit": name,
+                    "readings": [{"labels": {"force": value}}
+                                 for value in ("strict", "default")]}
+                   for name in ("a", "b")]
+    choice_couplings = [{"id": "same-force", "axis": "force", "sets": [
+        {"set": name, "version": 1} for name in ("a", "b")]}]
+    choice_plan = {"id": "choices", "kind": "plan", "set_meta": choice_sets,
+                   "couplings": choice_couplings}
+    choice_verdict = {"id": "choices", "environment": env.to_dict(), "fixed": [],
+                      "sets": [[["top"], ["top"]], [["top"], ["top"]]],
+                      "set_meta": choice_sets, "conclusion": ["top"],
+                      "route": "coupled-choices", "couplings": choice_couplings,
+                      "choice_evidence": [{"choice": [index, index], "status": "UNKNOWN"}
+                                          for index in (0, 1)]}
     return {"evaluate": evaluate_cases(), "check-certificate": certificate_cases(),
             "order": order_cases(), "route": route_cases(), "norms": norms_cases(),
+            "family-norms": family_norms_cases(),
             "english": english_cases(), "environment": standalone_env,
-            "model": standalone_model, "identity": identities, "document": document_cases()}
+            "model": standalone_model, "identity": identities, "document": document_cases(),
+            "words": words_cases(),
+            "readings-choices": [{**choice_plan, "limit": 64},
+                                 {**choice_plan, "limit": 1}, choice_verdict],
+            "search-budget": [*search_budget_cases(), *ADVERSARIAL]}
+
+
+def words_cases():
+    """The `words` mode's answers (plan Q2.4): a situation, a point's clause and its negation, a filled-gap
+    sentence and a pair sentence over a generated norm-defaults environment, an item Lean cannot word, and
+    malformed requests."""
+    from conformance import norm_defaults_differential as generator
+    from ve import words
+    env, _, situation = generator.case(0, profiled=True)
+    model = {"domains": situation["domains"], "relations": situation["relations"],
+             "constants": situation["constants"]}
+    items = [words.situation_item(model, list(situation["relations"])),
+             words.point_item(model["constants"], "x_required", ["a"], True),
+             words.point_item(model["constants"], "x_permitted", ["b"], False),
+             words.point_item(model["constants"], "a_permitted", ["a"], True, kind="filling"),
+             words.pair_item("x_required")]
+    return [{**words.request(env, items), "id": "all"},
+            {**words.request(env, [words.pair_item("x_permitted")]), "id": "not-a-pair"},
+            {**words.request(env, []), "id": "none"}, {"id": "bad"}, *ADVERSARIAL]
+
+
+def family_norms_cases():
+    """Genuine generated formulas for every non-first-order family. The schema
+    differential fuzz retypes and rebinds every field of these responses."""
+    from tests.test_stage2_norms import flagged
+    from tests.test_norms import rule
+    from ve.ast import Atom, Exists, Le, Named, Num, Reach, Var
+    from ve.environment import Environment
+    from ve.norms import NormDocument
+
+    cases = []
+    for family, guard in (
+            (("closure@0",), Reach("star", Named("before"), Var(0), Var(0))),
+            (("closure@0", "nary@0"), Exists("party", Atom("tri", (Var(1), Var(1), Var(0))))),
+            (("order@0",), Le(Num(1), Num(2)))):
+        env = flagged(family=family, relation="order@0" not in family,
+                      data="order@0" not in family)
+        if "nary@0" in family:
+            raw = env.to_dict()
+            raw["vocabulary"]["predicates"]["tri"] = {
+                "arguments": ["act", "act", "party"], "description": "tri"}
+            env = Environment(raw)
+        doc = NormDocument(env, [rule("may", "permitted", True, guard)])
+        stem = {"id": "family-" + family[-1], "environment": env.to_dict(),
+                "norms": [r.to_dict() for r in doc.rules]}
+        cases.extend(({**stem, "kind": "norms-elaborate"},
+                      {**stem, "kind": "norms-conflict", "packages": {}}))
+    return cases + ADVERSARIAL
 
 
 def document_cases():
     """The `document` mode's answers: the wrapper's generated seed documents (accepted, MIXED parts, reading
     sets, an admitted graph, a rejection and a refusal), the repository's accepted bluedot document, and
-    malformed requests."""
+    malformed requests; and a senses document (batch 16f), a preamble line and a fence read to a formula, with the
+    texts of the pack files beside it as `ve document` sends them (lf-16f looprecheck1 F7)."""
     from conformance import document_wrapper as dw
+    from ve import document as D
     chosen = {"plain", "mixed", "reading-sets", "graph-bridge", "open-terms", "fence",
               "usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/causal.ve.md"}
     cases = [{"id": name, "document": dw.text_of(doc)} for name, doc in dw.seeds() if name in chosen]
+    senses = Path(__file__).parent / "data" / "b16f-senses"
+    cases.append({**D._document_case((senses / "c_written_definition_line.senses.md").read_bytes(), True, senses),
+                  "id": "senses"})
     return cases + [{"id": "empty", "document": ""}, {"id": "not-text", "document": 7}, *ADVERSARIAL]

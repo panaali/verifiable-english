@@ -1,8 +1,8 @@
 {
  "format": "ve.english-lean-s3-fixture-comparison@1",
  "scope": "spec fixtures: independent hand, Lark and Lean readers; no sealed or reverse corpus",
- "cases": 200,
- "agreement": 198,
+ "cases": 170,
+ "agreement": 168,
  "differences": 2,
  "unexplained": 0,
  "by_environment": {
@@ -36,11 +36,11 @@
    }
   },
   "FA": {
-   "cases": 68,
-   "agreement": 68,
+   "cases": 43,
+   "agreement": 43,
    "differences": 0,
    "lean_statuses": {
-    "none": 37,
+    "none": 12,
     "one": 22,
     "rejected": 9
    }
@@ -55,13 +55,13 @@
    }
   },
   "FR": {
-   "cases": 35,
-   "agreement": 35,
+   "cases": 30,
+   "agreement": 30,
    "differences": 0,
    "lean_statuses": {
-    "none": 17,
+    "none": 13,
     "one": 14,
-    "rejected": 4
+    "rejected": 3
    }
   },
   "FM": {
@@ -88,7 +88,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -159,7 +159,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -230,7 +230,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -301,7 +301,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -386,7 +386,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -479,7 +479,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -558,7 +558,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -635,7 +635,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -674,7 +674,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -715,7 +715,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -794,7 +794,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -873,7 +873,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -960,7 +960,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1053,7 +1053,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1146,7 +1146,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1251,7 +1251,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1292,7 +1292,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1361,7 +1361,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1430,7 +1430,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1499,7 +1499,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1568,7 +1568,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1651,7 +1651,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1720,7 +1720,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1791,7 +1791,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1892,7 +1892,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1976,7 +1976,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -1984,7 +1984,7 @@
     },
     "python": {
      "class": "SyntaxError",
-     "message": "English all-derivations check failed: No terminal matches '5' in the current parser context, at line 1 col 16\n\nlegacy costs --5.\n               ^\nExpected one of: \n\t* LIMIT\n\t* MINUS\n\t* LSQB\n\t* BUDGET\n"
+     "message": "English all-derivations check failed: No terminal matches '5' in the current parser context, at line 1 col 16\n\nlegacy costs --5.\n               ^\nExpected one of: \n\t* MINUS\n\t* LSQB\n\t* LIMIT\n\t* BUDGET\n"
     },
     "lean": {
      "status": "none",
@@ -2014,7 +2014,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2022,7 +2022,7 @@
     },
     "python": {
      "class": "SyntaxError",
-     "message": "English all-derivations check failed: No terminal matches 't' in the current parser context, at line 1 col 15\n\nlegacy costs -twice the budget.\n              ^\nExpected one of: \n\t* LIMIT\n\t* MINUS\n\t* LSQB\n\t* BUDGET\n"
+     "message": "English all-derivations check failed: No terminal matches 't' in the current parser context, at line 1 col 15\n\nlegacy costs -twice the budget.\n              ^\nExpected one of: \n\t* MINUS\n\t* LSQB\n\t* LIMIT\n\t* BUDGET\n"
     },
     "lean": {
      "status": "none",
@@ -2052,7 +2052,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2090,7 +2090,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2128,7 +2128,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2166,7 +2166,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2204,7 +2204,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2243,7 +2243,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2281,7 +2281,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2320,7 +2320,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2359,7 +2359,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2398,7 +2398,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2441,7 +2441,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2526,7 +2526,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2565,7 +2565,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -2606,7 +2606,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3179,7 +3179,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3218,7 +3218,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3257,7 +3257,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3296,7 +3296,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3335,7 +3335,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3376,7 +3376,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3445,7 +3445,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3486,7 +3486,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3555,7 +3555,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3596,7 +3596,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3667,7 +3667,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3773,7 +3773,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3814,7 +3814,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -3858,7 +3858,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5c79b88829e2b2c1fb10b87d48b2283bfece97c4f7eb2dd13090364ccf2aa998",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "4e0b43ac2fbec7ff1025e35ff273af6b5711ff35e2f354b9f114bb072007c183",
@@ -3927,7 +3927,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5c79b88829e2b2c1fb10b87d48b2283bfece97c4f7eb2dd13090364ccf2aa998",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "4e0b43ac2fbec7ff1025e35ff273af6b5711ff35e2f354b9f114bb072007c183",
@@ -3995,7 +3995,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5c79b88829e2b2c1fb10b87d48b2283bfece97c4f7eb2dd13090364ccf2aa998",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "4e0b43ac2fbec7ff1025e35ff273af6b5711ff35e2f354b9f114bb072007c183",
@@ -4037,7 +4037,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4108,7 +4108,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4179,7 +4179,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4277,7 +4277,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4319,7 +4319,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4420,7 +4420,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4526,7 +4526,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4565,7 +4565,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4604,7 +4604,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4643,7 +4643,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4685,7 +4685,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4779,7 +4779,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4867,7 +4867,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -4955,7 +4955,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5071,7 +5071,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5111,7 +5111,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5152,7 +5152,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5250,7 +5250,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5289,7 +5289,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5328,7 +5328,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5370,7 +5370,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5471,7 +5471,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -5572,53 +5572,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "a3cbd41c3bbf7f6da7cbbf60322c21b66fbf17d0da3b0238cc88a45e5d81080e"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al1",
-   "environment": "FA",
-   "source": "Every action available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "ec87cd16c3d164bcd04ac9151eb8c8cdf34b5ae6c2d16e73ff326db710ac7aec"
     },
     "python": {
      "class": "accepted",
@@ -5715,53 +5673,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "0829d24be03e2712630809b276cfa7be3d0360dd1f6d2d91ff3945da1d5b784f"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al2",
-   "environment": "FA",
-   "source": "For every action, every other action available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "6f7fba3145b1977a29a6edde921e6046be0768616421c84431de0b082dbcad92"
     },
     "python": {
      "class": "accepted",
@@ -5900,53 +5816,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "df7430d8442772d7660eedfb36444f5a0d6a6f5c2426c48dc525057dbd7f4449"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al3",
-   "environment": "FA",
-   "source": "For every action, another action available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (pred safe [var 0])))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "31ddaca72dfd979d26d2be5c0c225b4aaf4ad0af758794195d89f811355c5bc1"
     },
     "python": {
      "class": "accepted",
@@ -6083,51 +5957,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "1cd0e8d4a6afa52caa543522af004c06835e1069d4695d1d7bbe289146b56b78"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Another action needs a rule on an action as its reference."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al4a",
-   "environment": "FA",
-   "source": "Every other action available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "unboundReference"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "72e1d8c95a4248bec92798c5981932ed3902622aa410d0db1ae29200e39d0ecb"
     },
     "python": {
      "class": "SyntaxError",
@@ -6162,51 +5996,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "9369167fa546d2f3b4beec0b2ae71b0d1fab49e0f190f7b312e1c4cd4248e220"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Another action needs a rule on an action as its reference."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al4b",
-   "environment": "FA",
-   "source": "Another action available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "unboundReference"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "3ffbd123e896546b61bf68db9a220996965e9b70682b48f2ba42f71c0159cd79"
     },
     "python": {
      "class": "SyntaxError",
@@ -6243,10 +6037,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "e484aea38c14203ca205ff6b2360605d6f444575425bebda5ea57021c604bbc3"
     },
     "python": {
@@ -6275,7 +6069,7 @@
   {
    "id": "al5",
    "environment": "FA",
-   "source": "For every action named C1, for every action named C2, every other action available to robot is classified as \"safe\".",
+   "source": "For every action named C1, for every action named C2, every other action available to robot is safe.",
    "variant": "python-selection",
    "expected": {
     "status": "one",
@@ -6285,11 +6079,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "819787e9f0a055f0573036f8346a3bbe2051ec43f6aa936fdedb641047916de9"
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
+     "source_sha256": "519671abd30e12ffcaa14759a34ccb87e8eca22dbb63ac1264ab12bb1df06894"
     },
     "python": {
      "class": "accepted",
@@ -6436,10 +6230,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "bf4728b74225ef04707faf5fe389686c9b56456f8fe309b96f7e17d41d4d6e8f"
     },
     "python": {
@@ -6468,7 +6262,7 @@
   {
    "id": "al6",
    "environment": "FA",
-   "source": "For every action named C1, for every action named C2, every other action available to robot excluding C1 is classified as \"safe\".",
+   "source": "For every action named C1, for every action named C2, every other action available to robot excluding C1 is safe.",
    "variant": "python-selection",
    "expected": {
     "status": "one",
@@ -6478,11 +6272,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "fa613a83c81d392a7657dfaac933c11c0dd59de960351ba2b13978e15b9bd005"
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
+     "source_sha256": "7a47bd2f3a00811196917813936649d03b94e87793fca7797034ab369a65f2fe"
     },
     "python": {
      "class": "accepted",
@@ -6629,10 +6423,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "45feaf4724728611fd23aef65d41cf9ddcfffb88e9b74c9214ee0cf18709a0c8"
     },
     "python": {
@@ -6661,7 +6455,7 @@
   {
    "id": "al7",
    "environment": "FA",
-   "source": "For every action named C1, for every action named C2, another action available to robot excluding C1 is classified as \"safe\".",
+   "source": "For every action named C1, for every action named C2, another action available to robot excluding C1 is safe.",
    "variant": "python-selection",
    "expected": {
     "status": "one",
@@ -6671,11 +6465,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "9fd854c9b171ab1bf0a1356207e7bd9f0b8866ea7b1902c8df4adebca40e579c"
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
+     "source_sha256": "84709a9b52fb302667a510395ac86f5baa200a0c272ee2480b4a0dd992dfa6c7"
     },
     "python": {
      "class": "accepted",
@@ -6820,51 +6614,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "6e33b245ca4e4128a385c5cba3fe5620710b6b85a73b579c8fef7407ffd00bf2"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "The excluded action must be an action in scope."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al8",
-   "environment": "FA",
-   "source": "For every action, every other action available to robot excluding robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "sortMismatch"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "8a01e08ef6891e664da689bbccb7ad5d3bca3a4392ccecb40e4d3ea8ec5e83d7"
     },
     "python": {
      "class": "SyntaxError",
@@ -6899,51 +6653,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "1f606fa35ac54cb9ba7558081522b1cfe16fb2d65877425d905b7a532fcc6431"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "The excluded action must be an action in scope."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al9",
-   "environment": "FA",
-   "source": "For every agent, for every action, every other action available to robot excluding that agent is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "sortMismatch"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "481d1260fb76bff6e2f54e2c1e2ba8f9bd1d6d314c1dc1e2cc2654b69f31fe8e"
     },
     "python": {
      "class": "SyntaxError",
@@ -6977,50 +6691,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "26290270e9f007450cc5c34d1fbcf0f19e549aadec9eff2c8b96d428122070ce"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'excluding robot'. Nearest declared wordings: 'robot'; 'action'; 'injury'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al10",
-   "environment": "FA",
-   "source": "Every action available to robot excluding robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "zero"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "14dbc2d586ef4dbc0f59a9b08a38ecd3f7f609301d21a2e481d073ea95bbae7d"
     },
     "python": {
      "class": "SyntaxError",
@@ -7058,10 +6733,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "d0f506addf4afd320c76a66fab7394340dfc6ec460c260abb826bbccb3f59c16"
     },
     "python": {
@@ -7209,53 +6884,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "d2b30cc07f8b72df395748aa960490be609d11f3c8f43c618bb318d39e9ce9ef"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al12",
-   "environment": "FA",
-   "source": "For every action, another action available to robot either is classified as \"safe\" or leads to injury.",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "718534edf910d3229928e8319770b79e0e4b81c1c774fcabb5178f4caae29669"
     },
     "python": {
      "class": "accepted",
@@ -7424,53 +7057,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "9da0c74a6473e11898ba25299f01d819766fd5fb03f50bd0a2de2b5ba71991cf"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al13",
-   "environment": "FA",
-   "source": "For every action, another action available to robot either is classified as \"safe\" or leads to injury, or both.",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "f3a4eb91e3919ed1634abad5061f566417f8a4c63222d43bf3c34604e949288d"
     },
     "python": {
      "class": "accepted",
@@ -7639,53 +7230,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "43e256296713751cb2cbcfe4fb9f2ddf22c688f10eb1bcb026feed092fc9e06f"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al14",
-   "environment": "FA",
-   "source": "For every action, another action available to robot both is classified as \"safe\" and leads to injury.",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (ex action (and (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (and (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "1307a658bcea16f7d89ded6852c641e826ab2f3946d25e3ee18b145376cca459"
     },
     "python": {
      "class": "accepted",
@@ -7854,53 +7403,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "54309e47041991b194cc2559fae71ad93b34818d38201cfc6d47bada49842896"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al15",
-   "environment": "FA",
-   "source": "For every action, every other action available to robot either that other action is classified as \"safe\" or leads to injury.",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (all action (implies (and (pred available [var 0, const robot]) (not (eq (var 0) (var 1)))) (or (pred safe [var 0]) (pred leads_to [var 0, const injury]))))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "17de2fc06d1a8856eafb86f84e3ec290b1e8f68a5d3d17f224b400829dc8c3c3"
     },
     "python": {
      "class": "accepted",
@@ -8069,10 +7576,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "03492c86e8eb7c3486646fcdd3e1e0181c42dfdc3e51b77caf071e9c8d29027b"
     },
     "python": {
@@ -8215,15 +7722,15 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "c0a9737ea551ecb3f5343de17090aa061bb0fbac75f42e6d911da50801630957"
     },
     "python": {
      "class": "SyntaxError",
-     "message": "Unknown English phrase 'is the same as wait'. Nearest declared wordings: 'is classified as \"safe\"'; 'wait'; 'leads to {1}'."
+     "message": "Unknown English phrase 'is the same as wait'. Nearest declared wordings: 'wait'; 'leads to {1}'; 'agent'."
     },
     "lean": {
      "status": "none",
@@ -8257,53 +7764,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "60cef633328af6c9ddce9904b978dfba80ca66cd0d4a73a965351dca576bfa28"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al18",
-   "environment": "FA",
-   "source": "Every action available to robot that action is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "7e3f2333d7c219481aae5e2b6cd4032bfbb089ac251dac28f288e8ef23b1ea03"
     },
     "python": {
      "class": "accepted",
@@ -8398,51 +7863,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "2c5a35da477322e5b42c6f7632f2bcd8a08797592a64a7a0b04a676c00a73f80"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al19",
-   "environment": "FA",
-   "source": "Every action available to robot that other action is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "unboundReference"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "1015f5005228d212793a476f80e20f32329fc17ff7f73223eee1ffc4c4aca76b"
     },
     "python": {
      "class": "SyntaxError",
@@ -8477,51 +7902,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "5276a5fa14e3a97a241cb4fdd7c1a67dd64387e6bd7d03ea84c36458abe470cf"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al20",
-   "environment": "FA",
-   "source": "For every action, every other action available to robot that action is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "unboundReference"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "d50cd73edc5eeb560a28c2b5e822ccfd93411a836bc96d84ddf2faa9d7902b44"
     },
     "python": {
      "class": "SyntaxError",
@@ -8556,51 +7941,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "12cf43c5281dd48ea99c487033b3f00fd3e83d1220f946002526af5d89d7939f"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 't'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al21",
-   "environment": "FA",
-   "source": "For every action, that other action is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "unboundReference"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "08dd5abe62544401b1061d8f728279bd39a13b156bcc2bb8d53a8ce2002e547a"
     },
     "python": {
      "class": "SyntaxError",
@@ -8635,51 +7980,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "98331f43db929dee86cbb8d42de41b71ae3da0572a0ea4df73e6c56af6cc718c"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Expected a constant name or a definite reference to an entity already introduced."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al22a",
-   "environment": "FA",
-   "source": "Every action available to it is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "pronounUnresolved"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "c5643680f420bf62094231b5be7494bd5f8c067924a00578a6bff326668c9bd5"
     },
     "python": {
      "class": "SyntaxError",
@@ -8714,51 +8019,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "d1cb90fdd9647fc8d7c71d4b5b87bb10cfe2ce3103fb9c5599f5ea9bf33f55e3"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "The chooser has no antecedent; write there is a agent such that that action is available to that agent and …"
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al22b",
-   "environment": "FA",
-   "source": "Every action available to that agent is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "unboundReference"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "00a0479cc1e62a0f4058f769fd91eef0a8acc0ccabe3d2f152e0d3eaa36fdc29"
     },
     "python": {
      "class": "SyntaxError",
@@ -8795,53 +8060,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "5d977c28b821e607940265f3410eb1fc3de3e951d9605f1246f241da5ac52aa3"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al23",
-   "environment": "FA",
-   "source": "For every agent, every action available to that agent is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all agent (all action (implies (pred available [var 0, var 1]) (pred safe [var 0])))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "047000041443493ed6ea64ea8c4a38f2467c2c7e8901a9cde6b949387b8b9ae5"
     },
     "python": {
      "class": "accepted",
@@ -8943,50 +8166,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "bf5b885e829a84cb58566cb819688f2087b64d874b0da46356f4953f112fafeb"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'T'. Nearest declared wordings: 'wait'; 'agent'; 'harm'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al24",
-   "environment": "FA",
-   "source": "For every action, every other action available to robot That other action is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "zero"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "560192285fad5e950d1e1cdb79c5627bdf7b57196de1fbd6196a86fe71748d20"
     },
     "python": {
      "class": "SyntaxError",
@@ -9020,50 +8204,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "254b6be1276bbf004f4fcb78c110e59e0631c242c6c4383935e280160c01e296"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al25",
-   "environment": "FA",
-   "source": "Every Action available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "zero"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "9b355dcc378008fafe630a8d528e2437e2ab0ac7480e5456e43834519fec6060"
     },
     "python": {
      "class": "SyntaxError",
@@ -9097,50 +8242,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "5844ca1a6367665384b1370a20f544d441447b2134fdde09d8d16fec53b1ce25"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'Available to robot'. Nearest declared wordings: 'is available to {1}'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al26",
-   "environment": "FA",
-   "source": "Every action Available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "zero"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "8ff5d288d7f314683a572caf47d444ea6008e394402fa0ff7e9d38b25f1aa994"
     },
     "python": {
      "class": "SyntaxError",
@@ -9175,54 +8281,15 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "9634dac00ab6b004707a478d659d79a204a4d9363eba8bf221031bb6d0ea76b7"
     },
     "python": {
      "class": "SyntaxError",
-     "message": "Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is classified as \"safe\"'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al27",
-   "environment": "FA",
-   "source": "Every action available to robot wait is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "zero"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "e60596aebd5440afa29f584033c975f7c5f7bed05d0ed4d6970b1a0666084185"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is classified as \"safe\"'."
+     "message": "Unknown English phrase 'wait'. Nearest declared wordings: 'wait'; 'harm'; 'is safe'."
     },
     "lean": {
      "status": "none",
@@ -9252,15 +8319,15 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "d22ba7a2c3f52cade48e69f4d77db07ef0c125aa3fd6a67fa740d13ab0108bc4"
     },
     "python": {
      "class": "SyntaxError",
-     "message": "Unknown English phrase 'this holds in all cases'. Nearest declared wordings: 'is classified as \"safe\"'; 'allows {1} to happen'; 'is avoidable by {1}'."
+     "message": "Unknown English phrase 'this holds in all cases'. Nearest declared wordings: 'allows {1} to happen'; 'is avoidable by {1}'; 'is unavoidable by {1}'."
     },
     "lean": {
      "status": "none",
@@ -9291,15 +8358,15 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "2ba917588ad2994305e9615abddfdba912c5ce3d38ef13ea39006958175ac167"
     },
     "python": {
      "class": "SyntaxError",
-     "message": "Unknown English phrase 'is the same as'. Nearest declared wordings: 'leads to {1}'; 'prevents {1}'; 'is classified as \"safe\"'."
+     "message": "Unknown English phrase 'is the same as'. Nearest declared wordings: 'leads to {1}'; 'prevents {1}'; 'is safe'."
     },
     "lean": {
      "status": "none",
@@ -9333,10 +8400,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "a66b1afb7cae86a709bfd41d0e813ce3115941b499e5f6da9c29f2e04099d899"
     },
     "python": {
@@ -9482,10 +8549,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "3398184b87900eea70c8161e85c8a8871884ac3379fa839a4ae6894e601b7c22"
     },
     "python": {
@@ -9553,10 +8620,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "a6b9cff85b530af4a2ae136f1724279865c32081d8a44d429812b7821ce47ad6"
     },
     "python": {
@@ -9624,10 +8691,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "30eebc5e48ad43a08c92851aa6a6c0fd3c7dd1373f664202df38e83a3dcb6e78"
     },
     "python": {
@@ -9695,10 +8762,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "8e32a41e43f9e765d64d163d71d3142042ee58069eb4feeee07ba230130da3a0"
     },
     "python": {
@@ -9772,10 +8839,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "5b9e23a9a4e412678a473365371067f82abf563250ed1802c70ffcc2b4d7544c"
     },
     "python": {
@@ -9848,58 +8915,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "6ffd25d1a865280143f2e76b0d8a22f56d6f879ee05e6e36e997234712974fba"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al33",
-   "environment": "FA",
-   "source": "Wait is classified as \"safe\". Therefore every action available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "ok",
-    "formulas": [
-     "pred safe [const wait]",
-     "all action (implies (pred available [var 0, const robot]) (pred safe [var 0]))"
-    ],
-    "marks": [
-     false,
-     true
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "b638f8f4ada5cca3e3b4d9ead90a71f57767f3e8faf174a2ae8c855eb36a1992"
     },
     "python": {
      "class": "accepted",
@@ -10016,53 +9036,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "a8c675c1ff54c4fba6b732cb7993bb3d18eb90e14278b1a37fd84355a46d122e"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "al34",
-   "environment": "FA",
-   "source": "For every action, every action available to robot is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "one",
-    "formulas": [
-     "all action (all action (implies (pred available [var 0, const robot]) (pred safe [var 0])))"
-    ]
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
-     "source_sha256": "19f0559ddde2b8fd126e3a5a1385077979700aeb8bb487dc24edbf0a659f5d62"
     },
     "python": {
      "class": "accepted",
@@ -10164,10 +9142,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "1889d8f7d44338b7c71ac00ae99f755fdf24705a1b3755778bfc18124180f268",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "c867c54692e4eca428148470e758d72c0364b0fdafda7aadd83aef9e33365303",
+     "lexicon_id": "b02a728a14ffb68df1f8116767ad3b89c50329a9c4ec7635f1cf2aa381f4b53f",
      "source_sha256": "2d289d136030f73520c2e0fdbac40d45b6d2debc187d10968edd0bc5b028ecbe"
     },
     "python": {
@@ -10206,7 +9184,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5b6cc2d1d136c13c75f6f83b3c5422df472c55b1178bfc8895bf9ba49eaf104e",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
      "lexicon_id": "008d6d053f3b32c9bb5edd8bae78c273eb795f353cd1a80cdc16cdf9e37ca423",
@@ -10248,7 +9226,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5b6cc2d1d136c13c75f6f83b3c5422df472c55b1178bfc8895bf9ba49eaf104e",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
      "lexicon_id": "008d6d053f3b32c9bb5edd8bae78c273eb795f353cd1a80cdc16cdf9e37ca423",
@@ -10349,7 +9327,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5b6cc2d1d136c13c75f6f83b3c5422df472c55b1178bfc8895bf9ba49eaf104e",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
      "lexicon_id": "008d6d053f3b32c9bb5edd8bae78c273eb795f353cd1a80cdc16cdf9e37ca423",
@@ -10391,7 +9369,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5b6cc2d1d136c13c75f6f83b3c5422df472c55b1178bfc8895bf9ba49eaf104e",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
      "lexicon_id": "008d6d053f3b32c9bb5edd8bae78c273eb795f353cd1a80cdc16cdf9e37ca423",
@@ -10531,7 +9509,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5b6cc2d1d136c13c75f6f83b3c5422df472c55b1178bfc8895bf9ba49eaf104e",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
      "lexicon_id": "008d6d053f3b32c9bb5edd8bae78c273eb795f353cd1a80cdc16cdf9e37ca423",
@@ -10570,7 +9548,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5b6cc2d1d136c13c75f6f83b3c5422df472c55b1178bfc8895bf9ba49eaf104e",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
      "lexicon_id": "008d6d053f3b32c9bb5edd8bae78c273eb795f353cd1a80cdc16cdf9e37ca423",
@@ -10609,7 +9587,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5b6cc2d1d136c13c75f6f83b3c5422df472c55b1178bfc8895bf9ba49eaf104e",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
      "lexicon_id": "008d6d053f3b32c9bb5edd8bae78c273eb795f353cd1a80cdc16cdf9e37ca423",
@@ -10648,7 +9626,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "5b6cc2d1d136c13c75f6f83b3c5422df472c55b1178bfc8895bf9ba49eaf104e",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
      "lexicon_id": "008d6d053f3b32c9bb5edd8bae78c273eb795f353cd1a80cdc16cdf9e37ca423",
@@ -10689,10 +9667,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "655b0eacb635d42bc231c04631ada062ae4aa65a2a237ca37c84efbc65edb317"
     },
     "python": {
@@ -10760,10 +9738,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "2d289d136030f73520c2e0fdbac40d45b6d2debc187d10968edd0bc5b028ecbe"
     },
     "python": {
@@ -10837,10 +9815,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "d5bde1300f6048fbf1d30e9c8def926bf6e4b14e2aa1298b2432e4243fbdc194"
     },
     "python": {
@@ -10914,10 +9892,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "c566f0b5926e85777331db95bddc6d42af63b92eebf1feaa6339702f7a7ec882"
     },
     "python": {
@@ -10985,10 +9963,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "3e9c56aeb8b3aca68b06f104a3fd69a6e2f1f972b52077bd4541798afc05d6b3"
     },
     "python": {
@@ -11056,10 +10034,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "63873916430eda0db3177413dd02b8841ed24caedbc6d5130e630525709695c5"
     },
     "python": {
@@ -11127,10 +10105,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "7b788cc5b43d776691e0ddd775f9ab86c3a5a0f94c004fddb644b5ef8f46775f"
     },
     "python": {
@@ -11198,10 +10176,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "ac2a61789238d44a77097d9e1749dbcedf8d7c40d5517353cecf99990c3c1a99"
     },
     "python": {
@@ -11269,10 +10247,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "3e923dc99d9fe563c1f7d26c3f1af9abd0f2b7f45c6ab8c4fbd4f25ccd76933a"
     },
     "python": {
@@ -11340,10 +10318,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "20354d769ebecf8dc8a47cc6975e5cc534d5c895ebabc1b5b30b2ce958d00e66"
     },
     "python": {
@@ -11453,10 +10431,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "dcbd00ea6f4a337067ce5b6bc180d0525381fcb0f924080999cd39e03d52e414"
     },
     "python": {
@@ -11492,51 +10470,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "a56b2449273ebcc20b79d351810cc270efe7af9be5ab1044d904046d3cf88edf"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "ri11a",
-   "environment": "FR",
-   "source": "Every action available to robot either is classified as \"safe\" or cannot lead to injury.",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "blockedWording"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
-     "source_sha256": "52ed71f1497baee9a6cbab436871bf862413e49e4eaae9be806cc643fe9f33c4"
     },
     "python": {
      "class": "SyntaxError",
@@ -11571,51 +10509,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "ecd0bab83baac76c868c93a1325008521b1874cccb0e0213d2a77d77c7e70649"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is safe'. Nearest declared wordings: 'is classified as \"safe\"'; 'harm'; 'wait'."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "ri11b",
-   "environment": "FR",
-   "source": "Every action available to robot both cannot lead to injury and is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "rejected",
-    "code": "blockedWording"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
-     "source_sha256": "038d2dce50838d9251f803505059bf27e0a2899886be63983f73d0399665da9f"
     },
     "python": {
      "class": "SyntaxError",
@@ -11652,10 +10550,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "d6d5083beb46ac21f7da1d08f3da53805145b09425d41a5b0fce7037ce290961"
     },
     "python": {
@@ -11809,10 +10707,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "6a2ea6eb2b23e62539c268dae12daa15449effd63e00fdc78ba57bcb171f4708"
     },
     "python": {
@@ -11966,10 +10864,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "cf3ee78f549cb23639ddf24e01437c1d7a5b1f978f2e418cbb866ff6eb6c78b9"
     },
     "python": {
@@ -12081,10 +10979,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "b2d020fc58714f655b2e716741e70ddc314bc4d4432d47f083aaae16123386b1"
     },
     "python": {
@@ -12187,10 +11085,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "82da5746cb19b2d58b019e736a98828df545c206cf49d70ac34552ff3728d2c2"
     },
     "python": {
@@ -12226,10 +11124,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "8e32a41e43f9e765d64d163d71d3142042ee58069eb4feeee07ba230130da3a0"
     },
     "python": {
@@ -12265,10 +11163,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "b184fe097e28a16207b8bcd13a31f818666e42cc41ac39434af163a6f13e9eb3"
     },
     "python": {
@@ -12304,10 +11202,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "2ebcf8c19939d4741e903a8a555d18c5708147ead2a562dd709a8da8225830c3"
     },
     "python": {
@@ -12343,10 +11241,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "f483f83746c6d0aae3a1c9759e146f7256146d36c9f401e6da2868e9c34d3ea0"
     },
     "python": {
@@ -12382,10 +11280,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "684987806a0f218edb14bcfdd9ca2cb57ea54f47709b79e5acfa09dec84bbfeb"
     },
     "python": {
@@ -12421,10 +11319,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "0dcd85f265b289e1a03f57abc8d0a28e353a8327c5aa58f58aaecf7ff86d98a4"
     },
     "python": {
@@ -12460,10 +11358,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "5b9e23a9a4e412678a473365371067f82abf563250ed1802c70ffcc2b4d7544c"
     },
     "python": {
@@ -12499,10 +11397,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "22276c53b843c3e99479cfeb2453b7f902869c3ba831f09b08619872861d52be"
     },
     "python": {
@@ -12529,44 +11427,6 @@
    }
   },
   {
-   "id": "ri17.9",
-   "environment": "FR",
-   "source": "Wait is classified as \"safe\"r than wait.",
-   "variant": "python-selection",
-   "expected": {
-    "status": "zero"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
-     "source_sha256": "65e9e4221b5ae94427f65c90af05c284f54ca02f58c18db71665def17b577489"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "Unknown English phrase 'is classified as \"safe\"r than wait'. Nearest declared wordings: 'is classified as \"safe\"'; 'is more severe than {1}'; 'catastrophic'."
-    },
-    "lean": {
-     "status": "rejected",
-     "code": "BadSpacing"
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
    "id": "ri17.10",
    "environment": "FR",
    "source": "Wait leads to injury unless wait is safe.",
@@ -12576,50 +11436,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "4f0bcd2e84d2bcd252926288308531ab6799a30f7956882f5106ead841a0ef18"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "ri17.10",
-   "environment": "FR",
-   "source": "Wait leads to injury unless wait is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "zero"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
-     "source_sha256": "4350671f13d29ce123f500a8f1002b0b418fc71f4be9ba88287bc101eb7f17e3"
     },
     "python": {
      "class": "SyntaxError",
@@ -12654,50 +11475,11 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "c6a5ba724a00b73f7897904cb809d264e182babe05d77bfad3d4ccc7c17f2304"
-    },
-    "python": {
-     "class": "SyntaxError",
-     "message": "A condition wording ('cannot lead to … unless …', 'leads to … exactly when …', 'If …, … leads to …') is a record statement. In a rule, 'unless' is the rule's carve-out: write ', unless …', or move the condition into the decision record."
-    },
-    "lean": {
-     "status": "none",
-     "code": "NoDerivation",
-     "sentence": 0
-    },
-    "classes": []
-   },
-   "disposition": null,
-   "independent": {
-    "hand": {
-     "status": "error",
-     "class": "SyntaxError"
-    },
-    "lark": {
-     "status": "error",
-     "class": "SyntaxError"
-    }
-   }
-  },
-  {
-   "id": "ri17.11",
-   "environment": "FR",
-   "source": "Wait cannot lead to injury exactly when wait is classified as \"safe\".",
-   "variant": "python-selection",
-   "expected": {
-    "status": "zero"
-   },
-   "record": {
-    "identities": {
-     "actions_version": "28",
-     "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
-     "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
-     "source_sha256": "21e8aea9cdcd4a6a3771cbd868ab3f0d79a3ba85bf97f5827f23742d5fe628f1"
     },
     "python": {
      "class": "SyntaxError",
@@ -12732,10 +11514,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "b7221829b492111cbace4ad59e37108ea99533080b9b490883359ccc34bf7f15"
     },
     "python": {
@@ -12771,10 +11553,10 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "449814d93f9a8ed131592ceb12f450f786fdfa74cece7e92178b6384ca949d83",
      "grammar_id": "3ec67bf7a8d7db29a8612a8575e24e3b268513d7a1f8c78b586f5ea9bd03cd41",
-     "lexicon_id": "5ea2e640de919103b674bb7dbab188638ea47591e8f4140d2577a64dc47de14c",
+     "lexicon_id": "95743862f3825862da9280874330e462d8ebcf039070ad3a40bfe2391a46c4eb",
      "source_sha256": "bd0c13693c51a7b1d9b80f9a52d0b61cf80fb6b2108a004044a9fcb1e0d31bc7"
     },
     "python": {
@@ -12813,7 +11595,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "2c20c4a2486ab786ee05a1d66167d5f57b5ffb054de9507bf5cd442803adf80a",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "34985f3b7fd62147b9dd708522d622b44f280a8b2e380963e777ac23a056c8b2",
@@ -12884,7 +11666,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "2c20c4a2486ab786ee05a1d66167d5f57b5ffb054de9507bf5cd442803adf80a",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "34985f3b7fd62147b9dd708522d622b44f280a8b2e380963e777ac23a056c8b2",
@@ -12955,7 +11737,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "2c20c4a2486ab786ee05a1d66167d5f57b5ffb054de9507bf5cd442803adf80a",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "34985f3b7fd62147b9dd708522d622b44f280a8b2e380963e777ac23a056c8b2",
@@ -13061,7 +11843,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "2c20c4a2486ab786ee05a1d66167d5f57b5ffb054de9507bf5cd442803adf80a",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "34985f3b7fd62147b9dd708522d622b44f280a8b2e380963e777ac23a056c8b2",
@@ -13100,7 +11882,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "2c20c4a2486ab786ee05a1d66167d5f57b5ffb054de9507bf5cd442803adf80a",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "34985f3b7fd62147b9dd708522d622b44f280a8b2e380963e777ac23a056c8b2",
@@ -13139,7 +11921,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -13178,7 +11960,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",
@@ -13217,7 +11999,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -13256,7 +12038,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "b61924370ac76a8a0e68d1ad562386e00dd5e59bad3ca67bd5e51049d501193a",
      "grammar_id": "dbe58941425c655251eb4fc700253548ecfb15f8c65791f5278621f179c04221",
      "lexicon_id": "363e4e16e07ba53aa427fba3f56363eeca12d0aa2cc6ed8d12e0bf72b6b66e0e",
@@ -13295,7 +12077,7 @@
    },
    "record": {
     "identities": {
-     "actions_version": "28",
+     "actions_version": "30",
      "environment_id": "fc9f330bda68c4d1aee0243487b1d8ca7f840ea8b3089fd3dab7f60b43e6247c",
      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
      "lexicon_id": "376cef58473cd13a58af7e4094dcfca1dc03e7b359e96dc65d433b1c4cba4ace",

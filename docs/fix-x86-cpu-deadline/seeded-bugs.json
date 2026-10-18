@@ -1,0 +1,16 @@
+[
+ {"id": "S1", "file": "ve/backends/lean_service.py", "behaviour": "a request is charged its user CPU only, not the kernel's time in the service",
+  "mutation": "_user_seconds returns (int(fields[11]) + int(fields[12])) / CLK_TCK (the old user + system measure)",
+  "test": ["tests/test_lean_service.py::test_a_request_is_charged_its_user_cpu_not_the_kernels_time_in_the_service",
+           "tests/test_lean_service.py::test_the_cpu_deadline_reads_the_user_time_of_a_proc_stat_line"],
+  "result": "both failed (CheckerUnavailable: mode evaluate used more than its deadline of 0.3 s of CPU; 503.0 != 3.0); restored"},
+ {"id": "S2", "file": "ve/backends/lean_service.py", "behaviour": "the user time is field 14 (utime), not field 15 (stime)",
+  "mutation": "_user_seconds returns int(fields[12]) / CLK_TCK",
+  "test": ["tests/test_lean_service.py::test_a_request_is_charged_its_user_cpu_not_the_kernels_time_in_the_service",
+           "tests/test_lean_service.py::test_the_cpu_deadline_reads_the_user_time_of_a_proc_stat_line"],
+  "result": "both failed; the user-CPU spin test still passed, after 674 s (the stime of a spinning process grows slowly), so the two new tests are the ones that catch it; restored"},
+ {"id": "S3", "file": "ve/backends/lean_service.py", "behaviour": "a stat line whose utime is not a number reports no CPU time (None) rather than raising",
+  "mutation": "except (IndexError, ValueError) narrowed to except IndexError",
+  "test": ["tests/test_lean_service.py::test_the_cpu_deadline_reads_the_user_time_of_a_proc_stat_line"],
+  "result": "failed (ValueError: invalid literal for int()); restored"}
+]

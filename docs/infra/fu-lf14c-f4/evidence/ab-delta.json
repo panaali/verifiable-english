@@ -1,0 +1,81 @@
+{
+  "unavailable": [
+    {
+      "authority": "default",
+      "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    },
+    {
+      "authority": "default",
+      "case": "pilot/udhr-20261017T1800Z:usecases/udhr-pilot/run-20261017T1800Z/experiment-whole/translation-whole.ve.md",
+      "corpus": "pilots",
+      "op": "document_check",
+      "reason": "SIGNED by standing ruling R7 (DRI-RULINGS.md): identical unavailable outcome on base and HEAD"
+    }
+  ]
+}

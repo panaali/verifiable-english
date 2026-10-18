@@ -92,6 +92,15 @@ def test_the_genuine_answers_cover_every_result_form(genuine):
         route.check_product(row, case)
 
 
+def test_component_completion_answers_include_decided_units_and_respect_empty_assumed(genuine):
+    from tests.test_readings_components_document import HELP_PERMITTED
+
+    route = next(route for name, route, _, _ in genuine if name == "ALL")
+    row = route.query_answer(HELP_PERMITTED, assumed=[])
+    assert all("decided_units" in entry["answer"] for entry in row["components"])
+    assert route.sub(row, row["component"])["decided_units"] == []
+
+
 def genuine_by(genuine, name):
     return next(row for n, _, row, _ in genuine if n == name)
 

@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "mutants": [
+    {
+      "file": "tools/lean_mode_deps.lean",
+      "test": "tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean",
+      "seeded_bug": "let rhs \u2190 if mode == .rights then pure (mkConst ``VE.Norms.Run.runCaseReported) else if mode == .document",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "AssertionError"
+    },
+    {
+      "file": "ve/backends/lean_service.py",
+      "test": "tests/test_select_tests.py::test_lean_service_emits_mode_before_dispatch",
+      "seeded_bug": "",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "AssertionError"
+    },
+    {
+      "file": "tools/test_map_recorder.py",
+      "test": "tests/test_select_tests.py::test_recorder_tracks_each_service_request_mode",
+      "seeded_bug": "",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "AssertionError"
+    },
+    {
+      "file": "tools/select_tests.py",
+      "test": "tests/test_select_tests.py::test_service_modes_narrow_only_known_recorded_users",
+      "seeded_bug": "return users - known",
+      "mutant_exit": 1,
+      "restored_exit": 0,
+      "failure_excerpt": "AssertionError"
+    }
+  ]
+}

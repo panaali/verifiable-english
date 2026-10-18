@@ -13,6 +13,34 @@ def literals (v : VE.Bridge.Vocabulary) : List String :=
 def modelVocabulary (v : VE.Bridge.Vocabulary) : VE.Bridge.Vocabulary :=
   { v with sorts := v.sorts ++ (if (literals v).isEmpty then [] else ["$string"]) }
 
+def encodeKind : Kind → Json
+  | .plus => .str "plus"
+  | .star => .str "star"
+
+/-- A core-family (closure + n-ary) formula on the wire (Python `_to_data`). -/
+def encodeFormula : Formula → Json
+  | .top => Json.arr #[.str "top"]
+  | .bottom => Json.arr #[.str "bottom"]
+  | .unary p t => Json.arr #[.str "unary", .str p, VE.Route.Wire.encodeTerm t]
+  | .binary p t u => Json.arr #[.str "binary", .str p, VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .atom p ts => Json.arr #[.str "atom", .str p, Json.arr (ts.map VE.Route.Wire.encodeTerm).toArray]
+  | .eq t u => Json.arr #[.str "eq", VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .not a => Json.arr #[.str "not", encodeFormula a]
+  | .and a b => Json.arr #[.str "and", encodeFormula a, encodeFormula b]
+  | .or a b => Json.arr #[.str "or", encodeFormula a, encodeFormula b]
+  | .implies a b => Json.arr #[.str "implies", encodeFormula a, encodeFormula b]
+  | .all s a => Json.arr #[.str "forall", .str s, encodeFormula a]
+  | .ex s a => Json.arr #[.str "exists", .str s, encodeFormula a]
+  | .reachNamed k p t u => Json.arr #[.str "reach", encodeKind k, Json.arr #[.str "named", .str p],
+      VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+  | .reachBody k s a t u => Json.arr #[.str "reach", encodeKind k,
+      Json.arr #[.str "body", .str s, encodeFormula a], VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
+
+/-- An embedded v0 formula has the v0 wire encoding. -/
+theorem encodeFormula_embed (a : VE.Formula) :
+    encodeFormula (embed a) = VE.Route.Wire.encodeFormula a := by
+  induction a <;> simp_all [embed, encodeFormula, VE.Route.Wire.encodeFormula]
+
 /-- Decoded tables with each domain in Python/Rust order (`sortModelData`): the
 budgeted evaluator stops quantifiers at the first decisive entity. -/
 def decodeModel (v : VE.Bridge.Vocabulary) (j : Json) :

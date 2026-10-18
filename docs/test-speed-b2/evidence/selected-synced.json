@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+  "selected_head": "974c9b6f72d84fdc8d71fe2639386f723ee768c0",
+  "commits_no_merges": [
+    "34118114f1d14c88d97b6816d930e3ad8a287cb8",
+    "bc2fb06ec41ae2a979c4c8fe2b93f47a27daf5f2",
+    "9eed6cbfe5a64438ff1de4433e4b10d6311478d7",
+    "fb69d8f97ad4a9a0559b5321c3a8d552171f8c44",
+    "569648afd8dc61ea518bf45c9b657e02f2cca427",
+    "0c7ad126a45bdf8a09345e34594a122724052251",
+    "8c946498d1d8b58f70709a1d66ca4f98bb666546",
+    "7895ac7af5ce90b10ca842be4c8e41ee08a095cc",
+    "f2f1f7be8ee68d1dacb07930a1e151dc9299b90d",
+    "d6e57875ac055581027a4b44197802fa81f7d9a9",
+    "eea89cc0d9beca669c42bd8d1587674c9eda62ea",
+    "974c9b6f72d84fdc8d71fe2639386f723ee768c0"
+  ],
+  "selected_units": 373,
+  "recorded_units": 371,
+  "counts": {
+    "0": 366,
+    "1": 1,
+    "timeout": 4
+  },
+  "failures": [
+    {
+      "unit": "tests/test_assist.py",
+      "exit": "timeout"
+    },
+    {
+      "unit": "tests/test_assist_invariants.py",
+      "exit": "timeout"
+    },
+    {
+      "unit": "tests/test_english_evidence.py",
+      "exit": "timeout"
+    },
+    {
+      "unit": "tests/test_readings_defaults_rd8_report.py",
+      "exit": 1
+    },
+    {
+      "unit": "tests/test_readings_rd6b_differential.py",
+      "exit": "timeout"
+    }
+  ],
+  "not_recorded": [
+    "tests/test_soft_review_regressions.py",
+    "tests/test_wire_gate_corpus.py"
+  ],
+  "reason": [
+    "missing coverage map",
+    ".gitattributes"
+  ],
+  "exit": 1,
+  "serial_reruns": {
+    "tests/test_assist.py": "96 passed, 1 skipped in 3580.85s",
+    "tests/test_readings_defaults_rd8_report.py": "9 passed after full-hash fix"
+  }
+}

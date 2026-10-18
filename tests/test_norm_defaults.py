@@ -576,7 +576,8 @@ def test_audit_cli_lists_the_changes_a_switch_makes(tmp_path, capsys):
 # u13: English.
 
 from ve import norm_defaults_english as english  # noqa: E402
-from ve.norm_english import default_sentence, pair_sentence, render_english  # noqa: E402
+from ve.norm_english import default_sentence, render_english  # noqa: E402
+from ve.words import pair as pair_sentence  # noqa: E402
 
 
 def test_u13_legend_sentences_render_and_parse_with_one_derivation_for_every_role():
@@ -678,9 +679,11 @@ def test_u13_carve_out_soft_and_status_paraphrases():
     assert english.gap_sentence(doc, situation, line) == (
         "The text does not say whether Sol may generate child sexual abuse material: "
         "no rule decides this situation.")
-    assert english.filling_sentence(env, situation, "csam_generation_permitted", ("sol0",), True) == (
+    from ve.words import constants_of, fillings
+    assert fillings(env, constants_of(situation), [("csam_generation_permitted", ("sol0",), True)]) == [(
+        "Sol may generate child sexual abuse material",
         "Here the text does not say whether Sol may generate child sexual abuse material; "
-        "this situation answers 'yes'.")
+        "this situation answers 'yes'.")]
 
 
 def _lean_status(doc, predicate, values, situation=ONE_ACT):

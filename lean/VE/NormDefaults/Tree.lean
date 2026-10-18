@@ -35,6 +35,10 @@ def completionOf (U : UDoc) (r : Regulated) : Completion :=
 /-- The fresh base predicate filling the gap of `p`. -/
 def unsaidName (p : String) : String := "unsaid__" ++ p
 
+/-- The description of `unsaid__p` in `E‴` (its one source: the regenerated environments and the elaboration row's
+`unsaid` entries, which Python reads to build the same environment). -/
+def unsaidDescription (p : String) : String := s!"the text does not say whether {p}"
+
 /-- The name of the synthetic rule on `p` (`_` becomes `-`, as rule names require). -/
 def fillName (p : String) : String := "unsaid--" ++ p.map (fun c => if c = '_' then '-' else c)
 

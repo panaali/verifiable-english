@@ -1,6 +1,7 @@
 //! Independent order@0 AST and finite-model route. Proof certificates remain on
 //! the Lean route; this evaluator cannot certify entailment.
-use crate::search::{domain_sizes, increment as odometer, next_combination};
+use crate::search::{DomainSizes, GROUND_NOT_FOUND, SortBounds, check_sort_bounds, ground_only, increment as odometer,
+                    next_combination, sort_bounds};
 use num_bigint::BigInt;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
@@ -828,8 +829,28 @@ fn used_predicates(f: &Value, used: &mut BTreeSet<String>) {
 /// constant assignments over the search values, used-relation subsets by
 /// size, then object constant denotations. `visit` returns true to stop.
 /// A model Python rejects with a Background generator is skipped.
+/// The model sorts of an order search with each one's least and most size: a sort with an
+/// object constant has at least one entity, `$string` one per literal; `sort_bounds` overrides
+/// the shared bounds of the sorts it names (premise-scale).
+fn order_bounds(env: &Environment, minimum: usize, maximum: usize, sort_bounds: &SortBounds)
+        -> (Vec<String>, Vec<usize>, Vec<usize>) {
+    let sorts: Vec<String> = env.model_sorts().into_iter().collect();
+    let minima = sorts.iter().map(|sort| {
+        let mut least = sort_bounds.get(sort).map_or(minimum, |(least, _)| *least);
+        if env.constants().values().any(|s| s == sort && s != "$int") {
+            least = least.max(1);
+        }
+        if sort == "$string" {
+            least = least.max(env.constants().values().filter(|s| *s == "$string").count());
+        }
+        least
+    }).collect();
+    let maxima = sorts.iter().map(|sort| sort_bounds.get(sort).map_or(maximum, |(_, most)| *most)).collect();
+    (sorts, minima, maxima)
+}
+
 fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum: usize,
-                used: &BTreeSet<String>,
+                sort_bounds: &SortBounds, used: &BTreeSet<String>,
                 visit: &mut dyn FnMut(Model) -> Result<bool>) -> Result<()> {
     let sorts: Vec<String> = env.model_sorts().into_iter().collect();
     let int_constants: Vec<&String> = env.constants().iter()
@@ -850,18 +871,9 @@ fn order_models(env: &Environment, formulas: &[&Value], minimum: usize, maximum:
         values.insert(k + 1);
     }
     let values = by_magnitude(values);
-    let minima: Vec<usize> = sorts.iter().map(|sort| {
-        let mut least = minimum;
-        if object_constants.iter().any(|c| &env.constants()[*c] == sort) {
-            least = least.max(1);
-        }
-        if sort == "$string" {
-            least = least.max(env.constants().values().filter(|s| *s == "$string").count());
-        }
-        least
-    }).collect();
+    let (_, minima, maxima) = order_bounds(env, minimum, maximum, sort_bounds);
     let relation_names: Vec<&String> = env.predicates().keys().filter(|p| !env.is_defined(p)).collect();
-    for sizes in domain_sizes(&minima, maximum) {
+    for sizes in DomainSizes::bounded(&minima, &maxima) {
         let domains: BTreeMap<&String, Vec<String>> = sorts.iter().zip(&sizes)
             .map(|(sort, n)| (sort, (0..*n).map(|i| format!("e{i}")).collect())).collect();
         let mut assignment = vec![0; int_constants.len()];
@@ -1082,6 +1094,8 @@ fn order_search(env: &Environment, v: &Value, pair: Option<(&Value, &Value)>) ->
     if maximum_size > 1000 || max_evaluations > ve_kernel::MAX_EVALUATIONS || minimum > maximum_size {
         return error("ResourceLimit", "search bounds exceed v0 envelope");
     }
+    let bounds = sort_bounds(v)?;
+    check_sort_bounds(env, &bounds)?;
     let mut formulas: Vec<&Value> = match pair {
         Some((a, b)) => vec![a, b],
         None => premises.iter().chain(conclusion).collect(),
@@ -1102,7 +1116,18 @@ fn order_search(env: &Environment, v: &Value, pair: Option<(&Value, &Value)>) ->
     let conclusion = conclusion.cloned();
     let (mut checked, mut work) = (0u64, 0u64);
     let mut outcome: Option<(&'static str, Option<Value>, &'static str)> = None;
-    let search = order_models(env, &formulas, minimum, maximum_size, &used, &mut |model| {
+    // The premise check's ground-fact route (premise-scale): the one candidate is the premises'
+    // ground-fact model within the same per-sort bounds, and nothing is enumerated.
+    let ground_only = ground_only(v)?;
+    let ground = match pair {
+        None if ground_only => {
+            let (sorts, minima, maxima) = order_bounds(env, minimum, maximum_size, &bounds);
+            crate::ground::candidate(env, &premises, &sorts, &minima, &maxima)
+                .and_then(|raw| Model::decode(env, &raw).ok())
+        }
+        _ => None,
+    };
+    let mut visit = |model: Model| -> Result<bool> {
         if checked >= max_models {
             outcome = Some(("ResourceLimit", None, "model-attempt budget exhausted"));
             return Ok(true);
@@ -1167,9 +1192,14 @@ fn order_search(env: &Environment, v: &Value, pair: Option<(&Value, &Value)>) ->
             return Ok(true);
         }
         Ok(false)
-    });
+    };
+    let search = if ground_only {
+        ground.map(&mut visit).transpose().map(|_| ())
+    } else {
+        order_models(env, &formulas, minimum, maximum_size, &bounds, &used, &mut visit)
+    };
     let (status, model, detail) = match search {
-        Ok(()) => outcome.unwrap_or(("NotFound", None, "")),
+        Ok(()) => outcome.unwrap_or(("NotFound", None, if ground_only { GROUND_NOT_FOUND } else { "" })),
         Err(e) if e.code == "ResourceLimit" && e.message == SEARCH_SPACE => ("ResourceLimit", None, SEARCH_SPACE),
         Err(e) => return Err(e),
     };
@@ -1218,5 +1248,5 @@ pub fn order_candidates(v: &Value, visit: &mut dyn FnMut(Value) -> Result<bool>)
     for f in &formulas {
         used_predicates(f, &mut used);
     }
-    order_models(&env, &formulas, minimum, maximum, &used, &mut |model| visit(model.canonical))
+    order_models(&env, &formulas, minimum, maximum, &sort_bounds(v)?, &used, &mut |model| visit(model.canonical))
 }

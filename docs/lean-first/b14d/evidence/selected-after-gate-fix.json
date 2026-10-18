@@ -1,0 +1,10 @@
+{
+  "completed_units": 364,
+  "exit_counts": {
+    "0": 364
+  },
+  "runner_error": "Read-only file system writing default ~/.cache/ve-testmap after all selected units passed",
+  "runner_exit": 1,
+  "selected_units": 364,
+  "selection_tree": "93bc02b0cd927f018a49d5f6b5df04d17a4e121c"
+}

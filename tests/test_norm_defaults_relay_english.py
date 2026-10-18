@@ -230,7 +230,9 @@ SOURCE = Path(english.__file__)
 ALLOWED_IMPORTS = {
     "json", "ve.errors.CheckerUnavailable", "ve.errors.SyntaxError", "ve.errors.VEError",
     "ve.norm_english.UNSPECIFIED_KEYWORD", "ve.norm_english._bindings", "ve.norm_english._words",
-    "ve.norm_english.default_sentence", "ve.norm_english.pair_sentence", "ve.norm_english.unspecified_clause",
+    "ve.norm_english.default_sentence", "ve.norm_english.unspecified_clause",
+    # Lean's clauses and pair sentences (plan Q2.4): the `words` relay, which words nothing itself.
+    "ve.words.clauses", "ve.words.constants_of", "ve.words.lines", "ve.words.pair_item",
     "ve.norm_english._guard_text", "ve.surface.unambiguity.require_unique_derivation",
     "ve.english.english_lark_grammar", "ve.search._used_predicates",
     *(f"ve.ast.{name}" for name in ("And", "Binary", "Bottom", "Const", "Eq", "Not", "Or", "Top", "Unary", "Var")),

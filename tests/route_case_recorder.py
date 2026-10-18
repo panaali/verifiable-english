@@ -49,29 +49,23 @@ def _install():
 
     if not os.environ.get("VE_RELAY_CASES"):
         return
-    real = lean.subprocess
+    real = lean.run_limited
 
-    class Recording:
-        """`subprocess` as `ve.backends.lean` sees it; `run` records the cases a Lean runner answered."""
+    def run_limited(argv, **kwargs):
+        """`run_limited` as `ve.backends.lean` sees it, recording the cases a Lean runner answered."""
+        done = real(argv, **kwargs)
+        runner = Path(str(argv[0])).name
+        try:
+            cases = json.loads(kwargs.get("input") or b"")
+        except ValueError:
+            cases = None
+        if runner.startswith("ve_") and done.returncode == 0 and isinstance(cases, list):
+            mode = str(argv[1]) if len(argv) > 1 else ""
+            for case in cases:
+                _RELAYED.setdefault(("one-shot", runner, mode, json.dumps(case, separators=(",", ":"))), None)
+        return done
 
-        def __getattr__(self, name):
-            return getattr(real, name)
-
-        @staticmethod
-        def run(argv, *args, **kwargs):
-            done = real.run(argv, *args, **kwargs)
-            runner = Path(str(argv[0])).name
-            try:
-                cases = json.loads(kwargs.get("input") or b"")
-            except ValueError:
-                cases = None
-            if runner.startswith("ve_") and done.returncode == 0 and isinstance(cases, list):
-                mode = str(argv[1]) if len(argv) > 1 else ""
-                for case in cases:
-                    _RELAYED.setdefault(("one-shot", runner, mode, json.dumps(case, separators=(",", ":"))), None)
-            return done
-
-    lean.subprocess = Recording()
+    lean.run_limited = run_limited
 
 
 def pytest_sessionfinish(session):

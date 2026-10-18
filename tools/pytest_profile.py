@@ -4,8 +4,8 @@ Load with ``-p tools.pytest_profile`` and set ``VE_TEST_PROFILE_DIR``; each
 pytest process (every xdist worker) writes one JSON-lines file there:
 
 * ``{"kind": "test", ...}`` per test: wall seconds of setup, call and
-  teardown, the worker's own CPU seconds (Python work) and the CPU seconds of
-  the child processes reaped during the test.
+  teardown, its start and end (epoch seconds), the worker's own CPU seconds
+  (Python work) and the CPU seconds of the child processes reaped during the test.
 * ``{"kind": "proc", ...}`` per child process started through ``subprocess``:
   the executable's base name, the test that started it, its lifetime and its
   own CPU seconds (from ``wait4``).
@@ -29,6 +29,8 @@ _current = {"test": None, "phase": None}
 _out = None
 _out_lock = threading.Lock()
 _rusage: dict[int, resource.struct_rusage] = {}
+# The clocks as imported: a test that patches `time.monotonic` (to inject a deadline) cannot skew the record.
+_monotonic, _now = time.monotonic, time.time
 
 
 def _emit(record: dict) -> None:
@@ -56,7 +58,7 @@ def _install() -> None:
         original_init(self, args, *rest, **kwargs)
         first = args if isinstance(args, (str, bytes, os.PathLike)) else (args[0] if args else "")
         name = os.path.basename(os.fsdecode(first).split()[0]) if first else ""
-        self._ve_profile = (name, time.monotonic(), _current["test"], _current["phase"])
+        self._ve_profile = (name, _monotonic(), _current["test"], _current["phase"])
 
     def handle(self, sts, *rest, **kwargs):
         original_handle(self, sts, *rest, **kwargs)
@@ -67,7 +69,7 @@ def _install() -> None:
         name, start, test, phase = info
         usage = _rusage.pop(self.pid, None)
         _emit({"kind": "proc", "exe": name, "test": test, "phase": phase,
-               "end_test": _current["test"], "wall": time.monotonic() - start,
+               "end_test": _current["test"], "wall": _monotonic() - start,
                "cpu": None if usage is None else usage.ru_utime + usage.ru_stime,
                "rc": self.returncode})
 
@@ -103,10 +105,13 @@ def _cpu(who):
 def _phase(item, phase):
     _current["test"], _current["phase"] = item.nodeid, phase
     record = item.__dict__.setdefault("_ve_profile", {"kind": "test", "nodeid": item.nodeid})
-    start, self0, child0 = time.monotonic(), _cpu(resource.RUSAGE_SELF), _cpu(resource.RUSAGE_CHILDREN)
+    # Epoch seconds of the test's start and end: when, across workers, each test ran.
+    record.setdefault("start", _now())
+    start, self0, child0 = _monotonic(), _cpu(resource.RUSAGE_SELF), _cpu(resource.RUSAGE_CHILDREN)
 
     def done():
-        record[phase] = time.monotonic() - start
+        record[phase] = _monotonic() - start
+        record["end"] = _now()
         record["self_cpu"] = record.get("self_cpu", 0.0) + _cpu(resource.RUSAGE_SELF) - self0
         record["child_cpu"] = record.get("child_cpu", 0.0) + _cpu(resource.RUSAGE_CHILDREN) - child0
     return done

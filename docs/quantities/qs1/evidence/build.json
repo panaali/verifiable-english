@@ -1,0 +1,61 @@
+{
+  "merge_base": "f98183bf5ff518c14e0cbdcf2950cdaf7736deeb",
+  "lean_build": "passed: lake build, 885 jobs",
+  "audit": "passed: 483 source files; 5798 named theorem declarations; standard axiom allowlist",
+  "statement_inventory": "passed: 5348 statements; 18 added, 0 existing changed",
+  "selected_pytest_on_mac": {
+    "passed": 2906,
+    "failed": 2,
+    "skipped": 4,
+    "failures": [
+      "tests/test_question_reading.py::test_the_whole_question_is_bounded_by_the_modes_deadline",
+      "tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature"
+    ]
+  },
+  "targeted_reruns": {
+    "deadline_serial": "passed",
+    "rd6b_saved_evidence": "passed"
+  },
+  "trust_budget": {
+    "base": {
+      "K": 997,
+      "S": 9788,
+      "V": 37154
+    },
+    "head_before_allowance": {
+      "K": 997,
+      "S": 9805,
+      "V": 37154
+    },
+    "required_signature": "S +17"
+  },
+  "full_gate": "run on committed final HEAD in pre-review continuation; see gate-result.json",
+  "code_head": "cd14f7ce2dc14767a15e30f4ba1da5b33717aece",
+  "commits_through_code_head": [
+    {
+      "sha": "cd14f7ce2dc14767a15e30f4ba1da5b33717aece",
+      "subject": "test: exercise legacy soft and risk closures directly"
+    },
+    {
+      "sha": "da95b67126654eb0ecf840ea90619c3749bd6d74",
+      "subject": "test: check exact order caps and Except variant"
+    },
+    {
+      "sha": "b8d52c95a6fbd093c31a80719313a355ee5a6cfb",
+      "subject": "docs: record QS-1 evidence and self-review"
+    },
+    {
+      "sha": "fa6d243f2f7f01fc000afe27546910ebc8b476cd",
+      "subject": "test: bind RD-6b trust report to its reviewed tree"
+    },
+    {
+      "sha": "0bfb938924a8948c89477c13c4ad5c08bd201feb",
+      "subject": "feat: add proved order closure adapters over VE.Closure"
+    },
+    {
+      "sha": "cf73592b4acd720a35ce1ae05fce027dc9d99d1d",
+      "subject": "docs: carry reviewed quantities plan and statements for QS-1"
+    }
+  ],
+  "fixture_extension": "OrderChecks now probes exact 16/17 and 64/65 boundaries, Except variants, outranksPlus, and Risk.closure; lake build VE.Closure.OrderChecks and axiom audit passed"
+}

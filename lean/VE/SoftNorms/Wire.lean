@@ -211,11 +211,17 @@ def deciderCounts (D : SoftDoc) : Json :=
 def bgEntry (g l : String) (a : VE.Formula) : Json :=
   Json.mkObj ([("generator", .str g), ("ast", enc a)] ++ (if l.isEmpty then [] else [("label", .str l)]))
 
+/-- A decision's key as the readings route writes one (`Readings.Wire.keyJson`, without a bearer). -/
+def decisionKeyJson : DecisionKey → Json
+  | .excepted r => Json.mkObj [("excepted", .str r)]
+  | .off r π => Json.mkObj [("off", .str r), ("party", .str π)]
+  | .outweighs a L H => Json.mkObj [("outweighs", .str a), ("lower", .str L), ("higher", .str H)]
+
 def regeneratedCore (D : SoftDoc) (environment : Json) : List (String × Json) :=
   let S := soften D; let L := layersOf S; let T' := S.T
   [("environment_prime", (primeJson D environment).toOption.getD .null),
-   ("decisions", Json.arr ((decisions D).map (fun (n, ss) =>
-      Json.mkObj [("name", .str n), ("arguments", toJson ss)])).toArray),
+   ("decisions", Json.arr ((keyedDecisions D).map (fun (k, n, ss) =>
+      Json.mkObj [("name", .str n), ("arguments", toJson ss), ("key", decisionKeyJson k)])).toArray),
    ("derived", Json.arr (D.T.nodes.map (fun N => Json.mkObj [("rule", .str N.name),
       ("ast", match derivedList D N with
         | [φ] => enc φ

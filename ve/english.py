@@ -21,7 +21,7 @@ from .errors import CheckerUnavailable, ResourceLimit, Span, SyntaxError, VEErro
 from .limits import MAX_DEPTH, MAX_NODES, MAX_SOURCE_BYTES
 from .english_phrases import nearest, phrase_end, unary_phrase, wording_key, BOUNDARIES
 from .printer import (_NaturalVocabulary, _LOGICAL_WORDS, render_int_term,
-                      _fluent_variable_letters, _template_head, _AUXILIARIES, VocabularyLint)
+                      _fluent_variable_letters, _AUXILIARIES, VocabularyLint)
 from .english_vocabulary import IDIOMS, negative_template, display_environment, overlay_provenance
 from .surface import registry as surface_registry
 
@@ -291,12 +291,11 @@ class EnglishVocabulary:
                 eligible = codes <= eligible_codes
                 collision = any(re.search(r'\b' + re.escape(other) + r'\b', phrase)
                                 for other in (*env.predicates, *env.constants) if other != name)
-                # Auxiliary/article heads from rejected templates are not lexical heads.
+                # Only templates the lint accepts own heads; auxiliary and article heads are not lexical heads.
                 collision |= any(head and head not in {'is', 'was', 'a', 'an'} and re.search(r'\b' + re.escape(head) + r'\b', phrase)
-                                 for other, decl2 in env.predicates.items() if other != name
-                                 for head in [_template_head(decl2.verbalisation or '', len(decl2.arguments))])
-                heads = [p.verbalisation.split()[2] for p in env.predicates.values()
-                         if p.verbalisation and p.verbalisation.startswith('{0} is ')
+                                 for other, head in old._heads.items() if other != name)
+                heads = [p.verbalisation.split()[2] for other, p in env.predicates.items()
+                         if old._heads.get(other) and p.verbalisation.startswith('{0} is ')
                          and len(p.verbalisation.split()) > 2]
                 negated = any(word in {'un' + h, 'non' + h} for h in (*env.predicates, *heads)
                               for word in phrase.split())
@@ -323,7 +322,7 @@ class EnglishVocabulary:
                     for other, other_decl in env.predicates.items():
                         if other == name:
                             continue
-                        head = _template_head(other_decl.verbalisation or '', len(other_decl.arguments))
+                        head = old._heads.get(other)
                         for token in (other, head):
                             if not token or token in {'is', 'was', 'a', 'an', 'has'}:
                                 continue
@@ -357,8 +356,7 @@ class EnglishVocabulary:
                                 for n in env.constants)
                 duplicate = any(n != name and d.verbalisation and wording_key(d.verbalisation) == wording_key(template)
                                 for n, d in env.predicates.items())
-                heads = set(env.predicates) | {_template_head(d.verbalisation or '', len(d.arguments))
-                                                for d in env.predicates.values()}
+                heads = set(env.predicates) | set(old._heads.values())
                 negated_heads = {prefix + h.lower() for h in heads if h
                                  for prefix in ('un', 'non', 'un-', 'non-')}
                 negated = bool(negated_heads & set(re.findall(r'[a-z][a-z0-9_-]*', phrase.lower())))

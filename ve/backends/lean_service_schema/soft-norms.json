@@ -78,6 +78,29 @@
       "type": "object"
     },
     "coherence_labels": {"items": {"pattern": "soft:coherence:.*", "type": "string"}, "type": "array"},
+    "decision_key": {
+      "$comment": "SoftNorms.Wire.decisionKeyJson: what a decision decides.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {"excepted": {"type": "string"}},
+          "required": ["excepted"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"off": {"type": "string"}, "party": {"type": "string"}},
+          "required": ["off", "party"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"higher": {"type": "string"}, "lower": {"type": "string"}, "outweighs": {"type": "string"}},
+          "required": ["outweighs", "lower", "higher"],
+          "type": "object"
+        }
+      ]
+    },
     "elaborate": {
       "$comment": "SoftNorms.Wire.regenerated: E' (primeJson), the decision predicates, each rule's derived carve-out (null for a strict rule without alterable), the layers, Background', the colliding pairs with their coherence premises, the conflict targets, the open coherence labels, the fragment flag and the warnings.",
       "additionalProperties": false,
@@ -178,9 +201,10 @@
           "additionalProperties": false,
           "properties": {
             "arguments": {"$ref": "common.json#/$defs/strings"},
+            "key": {"$ref": "#/$defs/decision_key"},
             "name": {"pattern": "soft__.*", "type": "string"}
           },
-          "required": ["name", "arguments"],
+          "required": ["name", "arguments", "key"],
           "type": "object"
         },
         "type": "array"

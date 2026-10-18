@@ -20,6 +20,9 @@ from ve.errors import CheckerUnavailable, VEError
 
 from tests.probe_matrix import raw_environment
 
+# The service's schema check on genuine rows: never answered from the answer store (tests/answer_store.py).
+pytestmark = pytest.mark.live_service
+
 RETYPES = (7, True, None, [], {}, "x")
 
 

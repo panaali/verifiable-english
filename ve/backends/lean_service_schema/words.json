@@ -1,0 +1,38 @@
+{
+  "$id": "words.json",
+  "$comment": "Lean's situation lines, point clauses, filled-gap and pair sentences, one per requested item.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "result": {"$ref": "#/$defs/result"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "result"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "result": {
+      "$comment": "VE.Words.Run.wordsCase: the identities and one line per item.",
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {"type": "string"},
+        "lexicon_id": {"type": "string"},
+        "lines": {"items": {"type": "string"}, "type": "array"}
+      },
+      "required": ["environment_id", "lexicon_id", "lines"],
+      "type": "object"
+    }
+  }
+}

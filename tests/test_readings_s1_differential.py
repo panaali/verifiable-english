@@ -243,7 +243,10 @@ def faulty(rng):
             if r["content"]["norm"].get("mode") == "default":
                 r["content"]["norm"]["over"] = ["hard"]
     elif fault == "norm-defaults":
-        raw = env_k(("norm-defaults@0", *SOFT_PROFILES))
+        # RD-9: the soft chain is under the soft completion beside `norm-defaults@0` (rd-9-soft-chain.md 1.1); the
+        # rights chain keeps the abstention.
+        raw, document, _ = rights(random.Random(rng.random()))
+        raw = {**raw, "profiles": sorted({*raw["profiles"], "norm-defaults@0"})}
     elif fault == "line-order":
         raw, document, _ = rights(random.Random(rng.random()))
         # The repeated line as written may differ from the first; Lean compares them decoded.

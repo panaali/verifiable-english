@@ -1,0 +1,246 @@
+{
+ "comment": "AR-4 seeded bugs, run by `uv run python tools/mutants.py docs/arch/AR-4/mutants.json --evidence docs/arch/AR-4/evidence/mutants.json`: each must make a named test fail on the unmutated-passing tree.",
+ "mutants": [
+  {
+   "id": "AR4-M1",
+   "claim": "growth over the base needs a signed allowance (ten untied V lines fail without one)",
+   "file": "tools/trust_map.py",
+   "find": "        if now[key] > cap[key] + allowed[key]:\n",
+   "replace": "        if now[key] > cap[key] + allowed[key] + 10:\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"
+   ]
+  },
+  {
+   "id": "AR4-M2",
+   "claim": "an allowance the base already has is inherited, not this change's",
+   "file": "tools/trust_map.py",
+   "find": "        if inherited[allowance_key(entry)]:\n",
+   "replace": "        if False:\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"
+   ]
+  },
+  {
+   "id": "AR4-M3",
+   "claim": "the cap is the base measured now, so deleted trusted lines lower the budget before the merge train writes it",
+   "file": "tools/trust_map.py",
+   "find": "        cap, label = budget(totals(measured_base)), base[:12]\n",
+   "replace": "        cap, label = base_baseline.get(\"budget\") or budget(totals(measured_base)), base[:12]\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_deleting_trusted_lines_lowers_the_budget_at_the_merge"
+   ]
+  },
+  {
+   "id": "AR4-M4",
+   "claim": "an uncommitted merge on main is checked against HEAD, the merge's first parent",
+   "file": "tools/trust_map.py",
+   "find": "    if base == head and run_git(root, \"rev-parse\", \"-q\", \"--verify\", \"MERGE_HEAD\").returncode:\n",
+   "replace": "    if base == head:\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_uncommitted_merge_on_main_is_checked_against_head"
+   ]
+  },
+  {
+   "id": "AR4-M5",
+   "claim": "an allowance of the base is never removed (the allowances are the history)",
+   "file": "tools/trust_map.py",
+   "find": "        gone = introduced(base_baseline[\"allowances\"], allowances)  # the history only grows\n",
+   "replace": "        gone = []\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_is_never_removed"
+   ]
+  },
+  {
+   "id": "AR4-M6",
+   "claim": "only the merge train on main writes the budget; a branch records growth with --allow",
+   "file": "tools/trust_map.py",
+   "find": "        if base is not None and branch.stdout.strip() != \"main\":\n",
+   "replace": "        if False:\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_ten_untied_lines_need_a_signed_allowance"
+   ]
+  },
+  {
+   "id": "AR4-M7",
+   "claim": "a blank or non-string signature is refused",
+   "file": "tools/trust_map.py",
+   "find": "    if not isinstance(signature, str) or not signature.strip():\n        return [f\"signature {signature!r} is blank\"]\n",
+   "replace": "    if not isinstance(signature, str) or not signature.strip():\n        return []\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_every_allowance_field_is_typed",
+    "tests/test_consolidation_tools.py::test_budget_check_needs_a_signed_allowance"
+   ]
+  },
+  {
+   "id": "AR4-M8",
+   "claim": "a copy of an allowance is refused (each signed growth is recorded once)",
+   "file": "tools/trust_map.py",
+   "find": "for key, n in seen.items() if n > 1]",
+   "replace": "for key, n in seen.items() if n > 2]",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_an_allowance_the_base_has_is_not_this_changes"
+   ]
+  },
+  {
+   "id": "AR4-M9",
+   "claim": "the file holds only the budget and the allowances (no per-file tables, section11 or history)",
+   "file": "tools/trust_map.py",
+   "find": "<= set(data) <= {\"comment\", \"budget\", \"allowances\"}:",
+   "replace": "<= set(data):",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_the_file_holds_only_the_budget_and_allowances[data3]"
+   ]
+  },
+  {
+   "id": "AR4-M10",
+   "claim": "the history's duplicated entry becomes one allowance",
+   "file": "tools/trust_map.py",
+   "find": "            if item[\"lines\"] > 0 and item not in out:\n",
+   "replace": "            if item[\"lines\"] > 0:\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_history_becomes_allowances"
+   ]
+  },
+  {
+   "id": "AR4-M11",
+   "claim": "an allowance a change introduces needs the DRI's signature, not the migration's UNSIGNED marker (review F4)",
+   "file": "tools/trust_map.py",
+   "find": "                    for entry in new for problem in signature_problems(entry[\"signature\"])]\n",
+   "replace": "                    for entry in new for problem in signature_problems(entry[\"signature\"], inherited=True)]\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_review_f4_probe"
+   ]
+  },
+  {
+   "id": "AR4-M12",
+   "claim": "a signature names the DRI and is not marked unsigned or pending (review F4)",
+   "file": "tools/trust_map.py",
+   "find": "    if not SIGNER.search(signature) or PLACEHOLDER.search(signature):\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_trust_ratchet.py::test_a_new_allowance_without_the_dris_signature_grants_nothing"
+   ]
+  },
+  {
+   "id": "AR4-M13",
+   "claim": "the gate record's per-file trust counts add up to their totals and budget (review F2)",
+   "file": "tools/trust_map.py",
+   "find": "    if data[\"totals\"] != totals(files) or data[\"budget\"] != budget(totals(files)):\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_a_gate_without_valid_trust_counts_fails"
+   ]
+  },
+  {
+   "id": "AR4-M14",
+   "claim": "every gate records the per-file trust counts (review F2)",
+   "file": "tools/gate.py",
+   "find": "            result[\"trust\"] = read_trust(trust_file)\n",
+   "replace": "            read_trust(trust_file)\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_every_gate_records_the_per_file_trust_counts"
+   ]
+  },
+  {
+   "id": "AR4-M15",
+   "claim": "a gate whose trust_map.py --files wrote nothing fails (review F2)",
+   "file": "tools/gate.py",
+   "find": "    if not path.is_file():\n        raise RuntimeError(f\"{TRUST_STAGE}: tools/trust_map.py --files wrote no {path.name}\")\n",
+   "replace": "    if not path.is_file():\n        return {}\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_a_gate_without_valid_trust_counts_fails"
+   ]
+  },
+  {
+   "id": "AR4-M16",
+   "claim": "a saved scope's commits are git's base..head, every one (review F3)",
+   "file": "tools/batch_scope.py",
+   "find": "            for field in (\"commits\", \"files\") if scope[field] != actual[field]]\n",
+   "replace": "            for field in (\"files\",) if scope[field] != actual[field]]\n",
+   "tests": [
+    "tests/test_batch_scope.py::test_every_change_to_a_scope_is_a_problem_never_a_crash"
+   ]
+  },
+  {
+   "id": "AR4-M17",
+   "claim": "a saved scope's base is the merge base of its head and main (review F3)",
+   "file": "tools/batch_scope.py",
+   "find": "        if merged.returncode or merged.stdout.strip() != base:\n",
+   "replace": "        if merged.returncode:\n",
+   "tests": [
+    "tests/test_batch_scope.py::test_a_scope_collected_against_another_base_is_a_problem"
+   ]
+  },
+  {
+   "id": "AR4-M18",
+   "claim": "a gate record's per-file trust counts are those of the evidence head (recheck F7)",
+   "file": "tools/batch_evidence.py",
+   "find": "    if measured is not None and trust[\"budget\"] != measured:\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_genuine_gate_records_pass_the_shared_checks"
+   ]
+  },
+  {
+   "id": "AR4-M19",
+   "claim": "an R13 rerun is of the full gate's own commit and tree (recheck F7)",
+   "file": "tools/batch_evidence.py",
+   "find": "            or any(rerun.get(k) != full.get(k) for k in same) or not isinstance(previous, dict)\n",
+   "replace": "            or not isinstance(previous, dict)\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_every_retyped_node_of_a_gate_record_is_a_problem_never_a_crash"
+   ]
+  },
+  {
+  "id": "AR4-M20",
+  "claim": "a boolean failure count is not an integer (recheck F7 type confusion)",
+  "file": "tools/batch_evidence.py",
+   "find": "            and all(type(counts.get(k)) is int and counts[k] >= 0 for k in keys)\n",
+   "replace": "            and all(isinstance(counts.get(k), int) and counts[k] >= 0 for k in keys)\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts"
+   ]
+  },
+  {
+   "id": "AR4-M23",
+   "claim": "an R13 rerun must execute at least one test (recheck F9)",
+   "file": "tools/batch_evidence.py",
+   "find": "            or rerun_counts[\"selected\"] == 0 or rerun_counts[\"selected\"] < len(tests)\n",
+   "replace": "",
+   "tests": [
+    "tests/test_gate_trust.py::test_review_f9_r13_requires_complete_full_and_nonempty_rerun_counts"
+   ]
+  },
+  {
+   "id": "AR4-M24",
+   "claim": "a validated bare mutant array can render the report (recheck F8)",
+   "file": "docs/arch/AR-4/report.py",
+   "find": "    mutants = batch_evidence.mutant_rows(found[\"mutants\"])\n    head, base = budget[\"measured_head\"], budget[\"measured_base\"]\n",
+   "replace": "    mutants = found[\"mutants\"][\"mutants\"]\n    head, base = budget[\"measured_head\"], budget[\"measured_base\"]\n",
+   "tests": [
+    "tests/test_gate_trust.py::test_review_f8_bare_mutants_array_reaches_report_check"
+   ]
+  },
+  {
+   "id": "AR4-M21",
+   "claim": "the merge driver merges AR-4's budget file (no per-file counts) without recomputing it",
+   "file": "tools/regen_generated.py",
+   "find": "    if path not in DERIVED or not isinstance(value, dict) or (source is not None and source not in value):\n",
+   "replace": "    if path not in DERIVED or not isinstance(value, dict):\n",
+   "tests": [
+    "tests/test_regen_generated.py::test_trust_merge_of_the_ar4_budget_file_keeps_main_budget_and_both_allowances"
+   ]
+  },
+  {
+   "id": "AR4-M22",
+   "claim": "the architecture map's trust classes are the commit's measurement, not the budget file's",
+   "file": "tools/architecture_numbers.py",
+   "find": "        \"trust\": {\"totals\": {k: trust_totals[k] for k in TRUST_TOTALS}, \"budget\": trust[\"budget\"]},\n",
+   "replace": "        \"trust\": {\"totals\": {k: trust.get(\"totals\", {}).get(k, 0) for k in TRUST_TOTALS}, \"budget\": trust[\"budget\"]},\n",
+   "tests": [
+    "tests/test_architecture_docs.py::test_measure_on_a_small_tree"
+   ]
+  }
+ ]
+}

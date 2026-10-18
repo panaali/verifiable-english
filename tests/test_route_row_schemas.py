@@ -171,7 +171,11 @@ def test_dropped_retyped_or_emptied_fields_are_rejected(genuine):
                 accepted.append((mode, request["cases"][0].get("kind"), label))
             except Invalid:
                 pass
-    assert not accepted, accepted[:10]
+    # The field is present only under the completion. Its presence is bound to
+    # the admitted request by readings_verdicts._check_answer (and mutated in
+    # test_a_mutated_verdicts_answer_is_unavailable); a JSON shape alone cannot
+    # distinguish that request from an ordinary enumerated readings answer.
+    assert set(accepted) == {("readings-route", "readings-verdicts", "drop decided_units")}, accepted[:10]
     assert set(checked) >= set(ROUTE_MODES) and min(checked.values()) > 0
 
 

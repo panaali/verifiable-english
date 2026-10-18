@@ -7,9 +7,11 @@ import pytest
 
 from experiments import p1
 from experiments import p1_preflight as gates
+from tests import p1_findings
 
 
 def test_full_inventory_joint_replay_and_pushback():
+    p1_findings.warm()  # every item it reads, checked several at a time first (tests/p1_findings.py)
     rows = list(gates.token_requests())
     initial = [(r, n) for r, n in rows if r.metadata['role'] == 'initial']
     assert len(initial) == 1336
@@ -25,6 +27,7 @@ def test_full_inventory_joint_replay_and_pushback():
 
 
 def test_amended_bounds_and_inventory_agree():
+    p1_findings.warm()  # every item it reads, checked several at a time first (tests/p1_findings.py)
     from experiments.prereg_inventory import P1_PUSHBACK_INPUT_BOUNDS
     for request, _ in gates.token_requests():
         arm, phase = request.metadata['arm'], request.metadata['role']

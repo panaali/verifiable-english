@@ -195,9 +195,9 @@ AB = {"base_commit": BASE, "head_commit": HEAD, "unlisted": 0, "unavailable_both
     ({}, None),
     ({"records": {}}, "omitted a required corpus"),
     ({"records": {**AB["records"], "probe/python": 0}}, "omitted a required corpus"),
-    ({"unavailable_both": {"readings/lean": 2}}, "unlisted or unavailable"),
-    ({"unlisted": 1}, "unlisted or unavailable"),
-    ({"unlisted": None}, "unlisted or unavailable"),
+    ({"unavailable_both": {"readings/lean": 2}}, "omitted signed unavailable rows"),
+    ({"unlisted": 1}, "unlisted result"),
+    ({"unlisted": None}, "unlisted result"),
     ({"head_commit": BASE}, "did not run on HEAD"),
 ], ids=ids)
 def test_saved_ab_known_answers(change, message):
@@ -503,7 +503,7 @@ def test_a_batch_changing_ve_or_lean_needs_its_corpus_ab(batch):
     _write(batch, "ab", AB)
     assert batch_evidence.check(batch)[1] == []
     _write(batch, "ab", {**AB, "unavailable_both": {"readings/lean": 1}})
-    assert batch_evidence.check(batch)[1] == ["corpus comparison has an unlisted or unavailable result"]
+    assert "corpus comparison omitted signed unavailable rows" in batch_evidence.check(batch)[1]
 
 
 def test_named_latency_and_fuzz_ab_are_checked(batch):

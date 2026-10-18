@@ -7,7 +7,11 @@ CPU per call in the agent-policy harness, plus a SHA-256 of the binary per call)
 independent, so a process is reused across calls; one that times out, ends its output or
 writes anything but one record is killed and never reused, and the call is
 `CheckerUnavailable`, as a failed one-shot process was. A process is reused only while its
-executable keeps the file identity it was started from.
+executable keeps the file identity it was started from and its memory budget is the configured one.
+
+Each process gets the memory budget `memory_limit()` (`VE_RUST_MEMORY_LIMIT`, passed to the
+child), and runs under an address-space limit `ADDRESS_SPACE_HEADROOM` above it. A case that
+exhausts the budget is answered with ResourceLimit and ends its process (`process_limits`).
 """
 from __future__ import annotations
 
@@ -22,9 +26,11 @@ import threading
 import time
 
 from ..errors import ResourceLimit
+from ..limits import MAX_RUST_MEMORY_BYTES
 from .diagnostics import require_ok
 from ..environment_wire import EncodedEnvironment, encoded_environment, wire_checked
 from .lean_service import CheckerUnavailable, _decode_json, configured_seconds, executable_sha256
+from .process_limits import configured_bytes, limit_address_space
 from .service_schema import Compiler, Context, Invalid
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -33,6 +39,24 @@ DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
 MAX_LINE_BYTES = 16 * 1024 * 1024
 DEFAULT_TIMEOUT = 5.0
+# The default wall-clock limit of a model search grows with the case (DRI decision ME1): a search spends its 10,000
+# candidate models in about SEARCH_SECONDS[0] + per byte of the case line + per constant squared
+# seconds, the least-squares fit over the searches the premise-scale pilots sent and a synthetic
+# series of ground-fact cases (docs/premise-scale/evidence/rust-timeout.json, measured at load
+# average about 110 on 32 cores; the worst case measured 1.74 times its fit). The limit is
+# TIMEOUT_FACTOR times that, and never under DEFAULT_TIMEOUT. It guards against a hung process
+# only: Rust's work limits are its budgets, and Lean's answer stands without Rust's.
+SEARCH_SECONDS = (2.4734, 7.4237e-05, 2.1123e-04)
+TIMEOUT_FACTOR = 4.0
+# Room above the budget for the binary itself and allocator slack. The budget's clean
+# ResourceLimit comes first; the address-space limit is only the backstop.
+ADDRESS_SPACE_HEADROOM = 1 << 30
+
+
+class RustTimeout(CheckerUnavailable):
+    """A Rust call that gave no record within its wall-clock limit. Rust is an untrusted
+    accelerator: a caller whose answer Lean decides without it (the premise check's search,
+    DRI decision ME1) reads this as "no witness", never as a verdict."""
 
 
 def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
@@ -41,6 +65,27 @@ def configured_timeout(default: float = DEFAULT_TIMEOUT) -> float:
     machine load cannot fail a test), else `default`. A guard against a hung
     checker only; Rust's work limits are its evaluation budgets."""
     return configured_seconds("VE_RUST_TIMEOUT", default)
+
+
+def scaled_timeout(case, size: int) -> float:
+    """The default wall-clock limit of `case`, whose line is `size` bytes. A model search (a case with a
+    `max_models` budget) waits `TIMEOUT_FACTOR` times the measured search time of a case of that size
+    with its number of constants (`SEARCH_SECONDS`), at least `DEFAULT_TIMEOUT`; any other case waits
+    `DEFAULT_TIMEOUT`, which the measurement does not cover."""
+    if type(case) is not dict or "max_models" not in case:
+        return DEFAULT_TIMEOUT
+    environment = case.get("environment")
+    vocabulary = environment.get("vocabulary") if isinstance(environment, dict) else None
+    constants = vocabulary.get("constants") if isinstance(vocabulary, dict) else None
+    n = len(constants) if isinstance(constants, dict) else 0
+    base, per_byte, square = SEARCH_SECONDS
+    return max(DEFAULT_TIMEOUT, TIMEOUT_FACTOR * (base + per_byte * size + square * n * n))
+
+
+def memory_limit() -> int:
+    """The memory budget in bytes of a Rust process: `VE_RUST_MEMORY_LIMIT` when set, else
+    `MAX_RUST_MEMORY_BYTES`. A value that is not a positive number of bytes is CheckerUnavailable."""
+    return configured_bytes("VE_RUST_MEMORY_LIMIT", MAX_RUST_MEMORY_BYTES)
 
 
 def _identity(path: str):
@@ -61,9 +106,16 @@ class _Checker:
     def __init__(self, argv):
         self.argv = list(argv)
         self.identity = _identity(self.argv[0])
+        self.memory = memory_limit()
         self.stderr = tempfile.TemporaryFile()
         self.process = subprocess.Popen(self.argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                        stderr=self.stderr, bufsize=0, close_fds=True)
+                                        stderr=self.stderr, bufsize=0, close_fds=True,
+                                        env={**os.environ, "VE_RUST_MEMORY_LIMIT": str(self.memory)})
+        try:
+            limit_address_space(self.process.pid, self.memory + ADDRESS_SPACE_HEADROOM)
+        except OSError:
+            self.close()
+            raise
         os.set_blocking(self.process.stdin.fileno(), False)
         os.set_blocking(self.process.stdout.fileno(), False)
         self.buffer = bytearray()
@@ -73,7 +125,8 @@ class _Checker:
         has written nothing since its last record (output that answers no case is never read as the
         next case's answer)."""
         try:
-            if self.process.poll() is not None or _identity(self.argv[0]) != self.identity:
+            if (self.process.poll() is not None or _identity(self.argv[0]) != self.identity
+                    or self.memory != memory_limit()):
                 return False
             os.read(self.process.stdout.fileno(), 1)
         except BlockingIOError:
@@ -109,7 +162,10 @@ class _Checker:
                 except BlockingIOError:
                     continue
                 except OSError:
-                    raise self._failure("the Rust checker stopped reading") from None
+                    # The allocator can refuse a line while Rust is still reading or
+                    # parsing it. It then writes a terminal ResourceLimit record before
+                    # closing stdin. Read that record even when the write got EPIPE.
+                    break
         with selectors.DefaultSelector() as selector:
             selector.register(self.process.stdout.fileno(), selectors.EVENT_READ)
             while (end := self.buffer.find(b"\n")) < 0:
@@ -284,11 +340,12 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
 
     The case goes to a persistent checker process (`_run_checker`); a process that gives no
     record is killed. A selected Rust backend never falls back to Python. Without a
-    `timeout`, the call waits `configured_timeout()` seconds.
+    `timeout`, the call waits `configured_timeout(scaled_timeout(case, size))` seconds, `size`
+    the bytes of the case line.
     """
     [case] = wire_checked([case])
     if timeout is None:
-        timeout = configured_timeout()
+        configured_timeout()  # an invalid VE_RUST_TIMEOUT is refused first; the limit needs the line's size
     binary = Path(executable or os.environ.get("VE_RUST_JSONL") or DEFAULT_EXECUTABLE)
     if not binary.is_file():
         raise CheckerUnavailable(f"CheckerUnavailable: missing Rust executable {binary}")
@@ -312,9 +369,14 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
     data = encoded.encode() + b"\n"
     if len(data) > MAX_LINE_BYTES:
         raise ResourceLimit(f"Rust case exceeds {MAX_LINE_BYTES} bytes")
+    if timeout is None:
+        timeout = configured_timeout(scaled_timeout(case, len(data)))
+    memory_limit()  # an invalid budget setting is refused before any process starts
     try:
         completed = _run_checker([str(binary), "jsonl", "-"], input=data, timeout=timeout)
-    except (OSError, subprocess.TimeoutExpired) as exc:
+    except subprocess.TimeoutExpired as exc:
+        raise RustTimeout(f"CheckerUnavailable: Rust checker failed: {exc}") from None
+    except OSError as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Rust checker failed: {exc}") from None
     valid = False
     try:
@@ -329,13 +391,38 @@ def run(case: dict, *, executable: str | os.PathLike | None = None,
             record = _decode_json(lines[0])
         except (ValueError, RecursionError):
             raise CheckerUnavailable("CheckerUnavailable: malformed Rust JSONL response") from None
+        early_oom = _bind_early_memory_error(case, record, completed, timeout)
         problem = record_problem(case, record)
         if problem:
             raise CheckerUnavailable(f"CheckerUnavailable: malformed Rust response ({problem})")
-        valid = True
+        valid = not early_oom  # the early memory error terminates its process
     finally:
         _release(completed, valid=valid)
     return require_ok(record)
+
+
+def _bind_early_memory_error(case: dict, record, completed, timeout: float) -> bool:
+    """Bind Rust's terminal, idless OOM record to the sole outstanding case.
+
+    Rust cannot know the id until the JSON line has been parsed. This special record
+    is admitted only with the exact configured budget, exit 1 and Rust's pre-id
+    signal on stderr; all other idless records still fail the normal response schema.
+    """
+    checker = getattr(completed, "_checker", None)
+    if checker is None or record != {"status": "error", "error": {
+            "code": "ResourceLimit", "message":
+            f"memory budget exhausted: {checker.memory} bytes (VE_RUST_MEMORY_LIMIT)"}}:
+        return False
+    try:
+        if checker.process.wait(timeout=timeout) != 1:
+            return False
+    except subprocess.TimeoutExpired:
+        return False
+    checker.stderr.seek(0)
+    if checker.stderr.read() != b"VE_JSONL_OOM_BEFORE_CASE_ID\n":
+        return False
+    record["id"] = case.get("id", "")
+    return True
 
 
 def record_problem(case: dict, record) -> str | None:

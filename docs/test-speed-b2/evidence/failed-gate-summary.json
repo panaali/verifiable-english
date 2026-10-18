@@ -1,0 +1,26 @@
+{
+  "commit_sha": "0c7ad126a45bdf8a09345e34594a122724052251",
+  "counts": {
+    "collected": 14787,
+    "deselected": 1,
+    "failed": 1986,
+    "passed": 12709,
+    "rust_ignored": 0,
+    "rust_passed": 36,
+    "selected": 14786,
+    "skipped": 91
+  },
+  "failure_classes": {
+    "missing_gate_scratch": 1980,
+    "other_test_failures": 5,
+    "pytest_command_failure": 1,
+    "service_cpu_deadline": 1
+  },
+  "focused_rerun": [
+    "tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass (3 variants)",
+    "tests/test_english.py::test_identity_fixtures_are_unchanged_after_english_roundtrip"
+  ],
+  "observation": "The gate scratch directory and wrapper log disappeared before the suite ended. Four pre-deletion test failures passed in a focused rerun on the same HEAD.",
+  "scratch": "/tmp/ve-gate-jvvrmyvk",
+  "status": "failed"
+}

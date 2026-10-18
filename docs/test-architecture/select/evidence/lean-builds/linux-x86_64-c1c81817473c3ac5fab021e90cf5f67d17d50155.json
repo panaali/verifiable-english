@@ -1,0 +1,18 @@
+{
+ "build_seconds": 1476,
+ "commit": "4667e8de6",
+ "digests": {
+  "ve_conformance": "a3172a5bdf4dac1f2f0db27c616e309c4a0b7cdbbad1852b153ec0177cd9cd62",
+  "ve_english_lean_bench": "830e7a81200795338dc08fd618092459ba66f530037e8a820940d85d99b13489",
+  "ve_english_route": "5edb6b53b21dff7b488bfa673d5f468b46d278bbe337b3e40ab517f5c88803ec",
+  "ve_english_run": "fa9ac26e1fd1e60a10f97d6b53676a38a18d2c0d689a1c46cf7b9cb233b2c030",
+  "ve_metered": "0217ac4c89823a3591cfc66a448065758fea0dc2e56276f8cbf5d847128c2992",
+  "ve_response_decode": "2a87774b1874b226336c7f013ef1e435311f9286828899d532e544882aac7850",
+  "ve_senses_route": "6e327681906281ddd10b632dc5b040c1fc1d856b540203a04ca2421bb777177e",
+  "ve_service": "3eee1ce49cd51039c243ad36cea0ff2851122b5392cbec88cb11fb3c3f69da1c",
+  "ve_speech_acts_route": "189648b80287910dc7d7d1c42e163eb407f3a848d1d4686a03c4d66e0c709c50"
+ },
+ "lean_tree": "c1c81817473c3ac5fab021e90cf5f67d17d50155",
+ "note": "built on the VM in a scratch worktree (lake build, then every lean_exe), oldest first",
+ "platform": "linux-x86_64"
+}

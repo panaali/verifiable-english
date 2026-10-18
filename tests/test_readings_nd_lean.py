@@ -103,7 +103,8 @@ def test_fnd1_validate_separates_on_the_filled_document(lean):
     [rs1] = row["sets"]
     assert rs1["pairs"][0] == {"reading": "every", "other": "asks", "pair": {
         "situation": sid, "witness": "every", "separated": True, "witness_admissible": True, "witness_value": True,
-        "other_admissible": True, "other_value": False}}
+        "other_admissible": True, "other_value": False,
+        "gaps": [["help_required", ["a", "u"], False]]}}
     assert [c["owned"] for c in rs1["candidates"]] == [[], []]
     # per reading its `Fill_T`, labelled by the pair
     assert [(e["set"], e["index"], [p["label"] for p in e["premises"]]) for e in row["fill_premises"]] == [
@@ -464,17 +465,21 @@ def test_fnd3_over_64_choices(lean):
 
 # Conservativity (4.6, SR5): outside the completion nothing changes.
 
-def test_fnd6_soft_chain_keeps_the_abstention(lean):
+def test_fnd6_soft_chain_is_under_the_soft_completion(lean):
+    """RD-9 lifted the soft chain's abstention (rd-9-soft-chain.md 1.1, F-SD2; `tests/test_readings_sd_lean.py`):
+    K18 is admitted on the enumerated row, and a choice's inner kind is the norm-defaults route's, so a soft route
+    kind is that route's refusal."""
     raw = env_k(profiles=("norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"))
     document, _ = k1_document(raw)
-    for kind in ("readings-validate", "readings-elaborate", "readings-choice"):
-        row = one(lean, kind, raw, document, choice=[["rs1", 0]], inner={"kind": "soft-conflict"})
-        assert row["error"] == "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
+    assert one(lean, "readings-validate", raw, document)["status"] == "ok"
+    assert one(lean, "readings-elaborate", raw, document)["route"] == "enumerated"
+    row = one(lean, "readings-choice", raw, document, choice=[["rs1", 0]], inner={"kind": "soft-conflict"})
+    assert row["inner"]["error"] == "UnsupportedProfile: case kind soft-conflict is not available on the norm-defaults route"
 
 
 def test_fnd6_rights_chain_keeps_the_abstention(lean):
-    """The completion is the norms chain's alone (1.1, `routeOf`): a rights-chain set of right readings beside
-    `norm-defaults@0` keeps the abstention on every readings kind, as the soft chain does (K18 above)."""
+    """The rights chain keeps the abstention (1.1, `routeOf`): a rights-chain set of right readings beside
+    `norm-defaults@0` is refused on every readings kind (the norms and soft chains are under their completions)."""
     raw = env_rights()
     raw["profiles"] = sorted({*raw["profiles"], "norm-defaults@0"})
 
@@ -520,6 +525,6 @@ def test_without_unspecified_predicates_the_answer_is_s1s(lean):
     plain = env1(PLAIN, "deny")
     document_plain, _ = doc1(plain, sigma)
     plain_row = one(lean, "readings-validate", plain, document_plain)
-    strip = lambda r: [{**p, "pair": {k: v for k, v in p["pair"].items() if k != "situation"}}
+    strip = lambda r: [{**p, "pair": {k: v for k, v in p["pair"].items() if k not in ("situation", "gaps")}}
                        for p in r["sets"][0]["pairs"]]
     assert strip(row) == strip(plain_row)

@@ -501,10 +501,13 @@ refused candidate beside a candidate that reads does not refuse the question (R3
 
 ### 4.2 Q2 (`ask`)
 
-In order: (1) the question is read by `readQuestion`; any outcome but `one` is the response, with row 1 to 15's
-fields. (2) The binding (5.2, `CaseBinding`); on failure, `CheckerUnavailable: the case is not this document's`. (3)
+In order: (1) the CLI reads the question through `english.question`; any outcome but `one` is shown with its full
+Q1 response, including span, advice and rephrasings where present. The `ask` mode independently reads it and
+returns status, code, class and text with the request identities; the relay binds these to Q1's outcome. (2) The
+binding (5.2, `CaseBinding`); on failure, `CheckerUnavailable: the case is not this document's`. (3)
 The case's conclusion must be the question's formula and `assumed` empty; otherwise `InvalidInput: the case does
-not ask this question`. (4) RD-3's replay; more than 64 compatible choices gives lead *unknown* with X5, and RD-3's
+not ask this question`. (4) RD-3's replay; more than 64 compatible choices gives `ResourceLimit` with X5's text,
+and RD-3's
 own refusals are relayed. (5) Every reading name of an asserted candidate is read back; a failure gives
 `CheckerUnavailable: VE could not check the wording of a reading of sentence <n>` (R8). (6) The rows give the
 leads; an *unknown* lead gives its reason by `Row.reason` (X1 to X4, X6). Routes outside plan D18 give *unknown*
@@ -1019,6 +1022,13 @@ def NameReadsBack (case : Json) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGramm
     VE.EnglishGrammar.read E {} L VE.EnglishGrammar.workBudget (n.text ++ ".") = .ok [(φn, false)] ∧
     candidateContent case n.set n.index = some φn.encode
 
+/-- The decidable read-back check compares canonical JSON text, as UnitBound does. Json has no decidable
+    equality, so NameReadsBack's equality cannot be checked for a submitted request. -/
+def NameReadsBackSame (case : Json) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (n : Name) : Prop :=
+  ∃ φn : VE.EnglishGrammar.EFormula,
+    VE.EnglishGrammar.read E {} L VE.EnglishGrammar.workBudget (n.text ++ ".") = .ok [(φn, false)] ∧
+    ∃ j, candidateContent case n.set n.index = some j ∧ Same j φn.encode
+
 structure Asked where
   request : Json
   text : String
@@ -1043,7 +1053,7 @@ structure Asked where
   hx : x.Γ = [] ∧ x.A = []
   hrows : rows.map (·.choice) = x.evs.map (·.1)
   hok : ∀ r ∈ rows, RowOk.{0} x.r.N x.φ r
-  hnames : ∀ n ∈ names, n.checked = true → NameReadsBack case E L n
+  hnames : ∀ n ∈ names, n.checked = true → NameReadsBackSame case E L n
 
 def replayAsk : Json → Except String Asked   -- Q2.2
 def answerFor : Asked → Except String (Context × Answer)  -- Q2.3; the `ask` route renders only this result
@@ -1140,6 +1150,80 @@ theorem plain_ask_wire_sound : ∀ (j : Json) (a : PlainAsked), replayPlainAsk j
   replayPlain a.case = .ok a.x ∧ PlainCaseBinding a.text a.case a.E a.L a.x.V ∧
   VE.Question.QuestionOneReading VE.Question.auxiliaries a.E {} a.L a.q a.c a.φ ∧
   LeadHoldsPlain.{0} a.x.V a.x.Γ a.x.ψ a.x.row
+
+/-! ## Zero-set norm-defaults adapter (DELTA D5)
+
+A document with no reading set has one choice, `[]`. Its norm-defaults row uses the
+same per-choice claims as the readings adapter; `leadHolds_eq` states that relation.
+RD-3's admission currently takes about 73 s to replay this case, so the adapter
+uses the norm-defaults route's checkers. The wire theorem binds the request,
+document, question, replayed row and its lead and reason. -/
+
+def HoldsU (U : UDoc) (Γ : List VE.Formula) (φ : VE.Formula) : ChoiceResult → Prop
+  | .proved => ConflictFreeU.{u} U ∧ EntailsU.{u} U Γ φ
+  | .refuted => CounterU U Γ φ
+  | .free => ConflictFreeU.{u} U
+  | .conflict => ¬ ConflictFreeU.{0} U
+  | .model => ConsistentU U Γ
+  | .inconsistent => ConflictFreeU.{u} U ∧ EntailsU.{u} U Γ .bottom
+  | .unknown => True
+
+theorem holds_iff (N : NDoc) (φ : VE.Formula) (c : Choice) (x : ChoiceResult) :
+    Holds.{u} N [] φ c x ↔ HoldsU.{u} (choiceU N c) (choiceDoc N.D c).2 φ x
+
+def LeadHoldsU (U : UDoc) (Γ : List VE.Formula) (ψ : VE.Formula) (r : Row) : Prop :=
+  match r.lead with
+  | .yes => ConflictFreeU.{u} U ∧ ConsistentU U Γ ∧ EntailsU.{u} U Γ ψ
+  | .no => ConflictFreeU.{u} U ∧ ConsistentU U Γ ∧ EntailsU.{u} U Γ (.not ψ)
+  | .notSettled => ConflictFreeU.{u} U ∧ SplitU U Γ ψ
+  | .notNecessarily => ConflictFreeU.{u} U ∧ CounterU U Γ ψ
+  | .unknown => True
+
+theorem leadHolds_eq (N : NDoc) (ψ : VE.Formula) (r : Row) :
+    LeadHolds.{u} N ψ r = LeadHoldsU.{u} (choiceU N r.choice) (choiceDoc N.D r.choice).2 ψ r
+
+def ReasonHoldsU (U : UDoc) (Γ : List VE.Formula) (ψ : VE.Formula) : Reason → Prop
+  | .conflict => ¬ ConflictFreeU.{0} U
+  | .inconsistent => ConflictFreeU.{u} U ∧ EntailsU.{u} U Γ .bottom
+  | .unchecked => ConflictFreeU.{u} U ∧ (EntailsU.{u} U Γ ψ ∨ EntailsU.{u} U Γ (.not ψ))
+  | _ => True
+
+def RowOkU (U : UDoc) (Γ : List VE.Formula) (ψ : VE.Formula) (r : Row) : Prop :=
+  HoldsU.{u} U Γ .bottom r.conflict ∧ HoldsU.{u} U Γ .bottom r.premise ∧
+  HoldsU.{u} U Γ ψ r.query ∧ HoldsU.{u} U Γ (.not ψ) r.negation ∧
+  (r.split = true → SplitU U Γ ψ)
+
+theorem leadU_sound (U : UDoc) (Γ : List VE.Formula) (ψ : VE.Formula) (r : Row) (h : RowOkU.{u} U Γ ψ r) :
+    LeadHoldsU.{u} U Γ ψ r
+
+theorem reasonU_sound (U : UDoc) (Γ : List VE.Formula) (ψ : VE.Formula) (r : Row) (x : Reason)
+    (h : RowOkU.{u} U Γ ψ r) (hx : r.reason = some x) : ReasonHoldsU.{u} U Γ ψ x
+
+structure ZeroAsked where
+  request : Json
+  text : String
+  q : String
+  case : Json
+  E : VE.EnglishGrammar.Env
+  L : VE.EnglishGrammar.Lexicon
+  c : VE.Question.Candidate
+  φ : VE.EnglishGrammar.EFormula
+  x : ZeroVerdict
+  hrequest : request.getObjValD "document" = .str text ∧
+    request.getObjValD "question" = .str q ∧ request.getObjValD "case" = case
+  hbind : PlainCaseBinding text case E L x.E
+  hreplay : replayZero case = .ok x
+  hread : VE.Question.QuestionOneReading VE.Question.auxiliaries E {} L q c φ
+  hψ : Same (case.getObjValD "conclusion") φ.encode
+
+theorem zero_ask_wire_sound (j : Json) (a : ZeroAsked) (h : replayZeroAsk j = .ok a) :
+    a.request = j ∧ a.text = (j.getObjValD "document").getStr?.toOption.getD "" ∧
+    a.q = (j.getObjValD "question").getStr?.toOption.getD "" ∧ a.case = j.getObjValD "case" ∧
+    replayZero a.case = .ok a.x ∧ PlainCaseBinding a.text a.case a.E a.L a.x.E ∧
+    VE.Question.QuestionOneReading VE.Question.auxiliaries a.E {} a.L a.q a.c a.φ ∧
+    LeadHoldsU.{0} a.x.U a.x.Γ a.x.ψ a.x.row ∧
+    (∀ x, a.x.row.reason = some x → ReasonHoldsU.{0} a.x.U a.x.Γ a.x.ψ x)
+
 end VE.Ask
 ```
 

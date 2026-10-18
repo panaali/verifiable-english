@@ -8,11 +8,18 @@ machine.
 """
 import json
 import os
+import queue
 import resource
+import signal
 import subprocess
+import threading
+import time
 from types import SimpleNamespace
 
 HANG_TIMEOUT = 1800
+# The whole wall time a child that reports its progress may take (`run_while_progressing`): load
+# stretches a run that keeps progressing, so its cap is far above HANG_TIMEOUT.
+PROGRESS_WALL_CAP = 4 * HANG_TIMEOUT
 
 
 def _children_cpu():
@@ -52,6 +59,107 @@ def run_cpu_bounded(command, stdin, cpu_seconds, env=None):
             stream.write(json.dumps({"test": os.environ.get("PYTEST_CURRENT_TEST", "").rsplit(" ", 1)[0],
                                      "command": os.path.basename(command[0]), "cpu": cpu.seconds}) + "\n")
     return completed, cpu.seconds
+
+
+class Stalled(subprocess.TimeoutExpired):
+    """A child `run_while_progressing` stopped: its progress stopped, or it ran past its wall cap."""
+
+    def __init__(self, cmd, timeout, why, output=None, stderr=None):
+        super().__init__(cmd, timeout, output, stderr)
+        self.why = why
+
+    def __str__(self):
+        return f"Command {self.cmd!r} {self.why}"
+
+
+class Progress:
+    """When a watched child must next have progressed: `stall` seconds after it last did (reported a
+    value above every earlier one), and never later than `cap` seconds after it started."""
+
+    def __init__(self, start, stall, cap):
+        self.start, self.stall, self.cap = start, stall, cap
+        self.last = start
+        self.mark = None
+
+    def seen(self, value, now):
+        if value is not None and (self.mark is None or value > self.mark):
+            self.mark, self.last = value, now
+
+    def deadline(self):
+        return min(self.last + self.stall, self.start + self.cap)
+
+    def why(self):
+        """What the child did not do by `deadline`."""
+        if self.start + self.cap <= self.last + self.stall:
+            return f"ran past its wall cap of {self.cap:g} s"
+        return f"made no progress for {self.stall:g} s"
+
+
+def run_while_progressing(command, progress, *, cwd=None, env=None, stall=HANG_TIMEOUT,
+                          cap=PROGRESS_WALL_CAP, clock=time.monotonic):
+    """Run `command` to its end, as `subprocess.run(..., capture_output=True, text=True)` does, while it
+    makes progress.
+
+    `progress(line)` reads each line of the child's standard error as it comes: None for a line that
+    reports none, else the child's progress so far, a value that grows while the child works. The child
+    and every process of its session are killed and `Stalled` is raised when it reports no progress for
+    `stall` seconds (`Progress`), or when it is still running `cap` seconds after it started. Machine load
+    slows a working child without stopping its progress; a hang stops it. An exception `progress` raises
+    (a work bound passed, say) kills them too and is raised. `clock` is the watch's clock: a test injects
+    one that has already passed the deadline, so no wait is waited out."""
+    proc = subprocess.Popen(command, cwd=cwd, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, text=True, start_new_session=True)
+    lines, out, err = queue.Queue(), [], []
+
+    def read_output():
+        out.append(proc.stdout.read())
+
+    def read_errors():
+        for line in proc.stderr:
+            lines.put(line)
+        lines.put(None)
+    readers = [threading.Thread(target=read_output, daemon=True), threading.Thread(target=read_errors, daemon=True)]
+    for reader in readers:
+        reader.start()
+    watch = Progress(clock(), stall, cap)
+    stalled, ended = None, False
+    try:
+        while True:
+            now = clock()
+            if now >= watch.start + cap:  # however fast it still reports
+                stalled = watch.why()
+                break
+            try:
+                line = lines.get(timeout=max(watch.deadline() - now, 0))
+            except queue.Empty:
+                stalled = watch.why()
+                break
+            if line is None:
+                break
+            err.append(line)
+            watch.seen(progress(line), clock())
+        if stalled is None:  # its standard error is closed: the child is ending
+            try:
+                proc.wait(timeout=max(watch.deadline() - clock(), 0))
+            except subprocess.TimeoutExpired:
+                stalled = watch.why()
+        ended = stalled is None
+    finally:
+        if not ended:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except ProcessLookupError:  # the session has no process left
+                pass
+        proc.wait()
+        for reader in readers:
+            reader.join(HANG_TIMEOUT)
+    while not lines.empty():
+        line = lines.get_nowait()
+        if line is not None:
+            err.append(line)
+    if stalled is not None:
+        raise Stalled(command, cap if "cap" in stalled else stall, stalled, "".join(out), "".join(err))
+    return subprocess.CompletedProcess(command, proc.returncode, "".join(out), "".join(err))
 
 
 def expired_waits(monkeypatch, module, *, expire=lambda argv: True):

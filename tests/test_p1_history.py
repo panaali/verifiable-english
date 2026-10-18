@@ -4,6 +4,7 @@ from copy import deepcopy
 import pytest
 
 from experiments import p1, p1_history
+from tests import p1_findings
 from ve.argument import _checker_build
 from ve_experiments.paid import PreflightError
 
@@ -26,6 +27,8 @@ def test_historical_finding_is_reused_only_after_exact_semantic_replay():
 
 def test_p1_historical_output_does_not_change_current_checker_fingerprint():
     before = _checker_build()
+    # The findings are computed after `before` is read, several at a time (tests/p1_findings.py).
+    p1_findings.warm('dev')
     for item in p1.materials('dev'):
         assert p1.finding(item) == p1_history.retained_findings()[item['id']]
     assert _checker_build() == before

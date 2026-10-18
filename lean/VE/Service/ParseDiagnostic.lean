@@ -13,6 +13,14 @@ structure Error where
   start : Nat
   stop : Nat
 
+/-- The `definitions@0` sugar of the scanned environment (lean-first batch 14a):
+the defined predicates, and whether a `define` statement's body text is not the
+predicate's identity-bound body when read under the argument names (declared
+order). The family parser that accepts sources makes the same comparison. -/
+structure Definitions where
+  defined : String → Bool
+  differs : String → List String → String → Bool
+
 structure Cursor where
   source : Array Char
   offset : Nat := 0
@@ -22,6 +30,7 @@ structure Cursor where
   closure : Bool
   nary : Bool
   nodes : Nat := 0
+  definitions : Option Definitions := none
 
 abbrev Scan := StateT Cursor (Except Error)
 
@@ -175,6 +184,39 @@ def formula (depth : Nat) : Nat → Scan Unit
       literal ")"
       complete c.offset
       return
+    if c.definitions.isSome && (← hasPrefix "no ") then
+      advance 3
+      let (sort, pos) ← ident "sort identifier"
+      unless c.signature.sorts.contains sort do
+        fails "UnknownSymbol" ("unknown sort " ++ pyQuote sort) (some pos)
+      literal " is "
+      let (name, pos) ← ident "unary predicate"
+      unless (c.signature.predicates.find? fun p => p.1 == name && p.2 == [sort]).isSome do
+        fails "UnknownSymbol" ("unknown unary predicate " ++ pyQuote name) (some pos)
+      complete c.offset
+      return
+    if c.definitions.isSome && (← hasPrefix "every ") then
+      advance 6
+      let (sort, pos) ← ident "sort identifier"
+      unless c.signature.sorts.contains sort do
+        fails "UnknownSymbol" ("unknown sort " ++ pyQuote sort) (some pos)
+      literal " "
+      let (name, pos) ← ident "binder name"
+      if reserved.contains name || c.signature.sorts.contains name ||
+          (c.signature.predicates.map Prod.fst).contains name ||
+          (c.signature.constants.map Prod.fst).contains name || (← get).binders.contains name then
+        fails "SyntaxError" ("invalid binder name " ++ pyQuote name) (some pos)
+      literal " that is "
+      let (predicate, pos) ← ident "unary predicate"
+      unless (c.signature.predicates.find? fun p => p.1 == predicate && p.2 == [sort]).isSome do
+        fails "UnknownSymbol" ("unknown unary predicate " ++ pyQuote predicate) (some pos)
+      literal ", ("
+      modify fun state => { state with binders := name :: state.binders }
+      formula (depth + 1) fuel
+      modify fun state => { state with binders := state.binders.drop 1 }
+      literal ")"
+      complete c.offset
+      return
     if (← hasPrefix "for every ") || (← hasPrefix "there exists ") then
       let universal ← hasPrefix "for every "
       advance (if universal then 10 else 13)
@@ -222,6 +264,7 @@ def formula (depth : Nat) : Nat → Scan Unit
       formula (depth + 1) fuel
       if ← hasPrefix ") and (" then advance 7
       else if ← hasPrefix ") or (" then advance 6
+      else if c.definitions.isSome && (← hasPrefix ") iff (") then advance 7
       else fails "SyntaxError" "expected ') and (' or ') or ('"
       formula (depth + 1) fuel
       literal ")"
@@ -275,14 +318,44 @@ def formula (depth : Nat) : Nat → Scan Unit
     if (← get).offset == start then fails "SyntaxError" "expected formula"
     complete c.offset
 
+/-- `define p(x, …) as (A)`, after `define ` (Python `_Parser.document`). -/
+def define (d : Definitions) : Scan Unit := do
+  advance 7
+  let (predicate, pos) ← ident "defined predicate"
+  unless d.defined predicate do
+    fails "UnknownSymbol" ("unknown defined predicate " ++ pyQuote predicate) (some pos)
+  let c ← get
+  let sorts := ((c.signature.predicates.find? (·.1 == predicate)).map Prod.snd).getD []
+  literal "("
+  let mut names : List String := []
+  for _ in sorts do
+    unless names.isEmpty do literal ", "
+    let (name, pos) ← ident "definition argument"
+    if reserved.contains name || c.signature.sorts.contains name ||
+        (c.signature.predicates.map Prod.fst).contains name ||
+        (c.signature.constants.map Prod.fst).contains name || names.contains name then
+      fails "SyntaxError" ("repeated definition argument " ++ pyQuote name) (some pos)
+    names := names ++ [name]
+    modify fun state => { state with binders := name :: state.binders }
+  literal ") as ("
+  let start := (← get).offset
+  formula 1 (c.source.size + 1)
+  let stop := (← get).offset
+  literal ")"
+  modify fun state => { state with binders := state.binders.drop sorts.length }
+  if d.differs predicate names (String.mk ((c.source.toList.drop start).take (stop - start))) then
+    fails "SyntaxError" "definition body differs from identity-bound declaration"
+
 def scan (signature : VE.Service.TypingDiagnostic.Signature) (source : String)
-    (order closure nary : Bool) : Option Error :=
+    (order closure nary : Bool) (definitions : Option Definitions := none) : Option Error :=
   let chars := source.toList.toArray
-  let c : Cursor := ⟨chars, 0, [], signature, order, closure, nary, 0⟩
+  let c : Cursor := { source := chars, signature, order, closure, nary, definitions }
   let program : Scan Unit := do
     if chars.isEmpty then fails "SyntaxError" "document must contain at least one statement" (some 0)
     while (← get).offset < chars.size do
-      formula 1 (chars.size + 1)
+      match definitions with
+      | some d => if ← hasPrefix "define " then define d else formula 1 (chars.size + 1)
+      | none => formula 1 (chars.size + 1)
       literal ".\n"
   match program.run c with
   | .error e => some e

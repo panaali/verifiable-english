@@ -72,13 +72,17 @@ class S1Environment:
         self.profiles = list(self.env.profiles)
         self.lower_profiles = [p for p in self.profiles if p != READINGS]
         self.lower_data = {**data, "profiles": self.lower_profiles}
-        self.chain = ("rights" if "rights@0" in self.profiles else
-                      "soft" if "soft-norms@0" in self.profiles else "norms")
         self.completion = NORM_DEFAULTS in self.lower_profiles
+        if self.completion and filled is None:
+            raise CheckerUnavailable("ReadingsConstruction: under norm-defaults@0 the frame is the filled "
+                                     "document Lean's readings route answers, and none was given")
+        # The chain: under the completion Lean's (`filled.chain`, bound to the request by the relay), so every reader
+        # of the frame, the choice documents of each route included, takes Lean's (review F31 of rd-9); otherwise
+        # the profiles'.
+        self.chain = (filled["chain"] if self.completion else
+                      "rights" if "rights@0" in self.profiles else
+                      "soft" if "soft-norms@0" in self.profiles else "norms")
         if self.completion:
-            if filled is None:
-                raise CheckerUnavailable("ReadingsConstruction: under norm-defaults@0 the frame is the filled "
-                                         "document Lean's readings route answers, and none was given")
             self.frame_data = wire(filled["environment"])
         else:
             self.frame_data = {**data, "profiles": self.lower_profiles}
@@ -95,7 +99,7 @@ class S1Environment:
         data["vocabulary"]["soft"] = {"parties": [], "ranks": [], "outranks": [], "ties": [],
                                       "outranking": {"mode": "strict"}}
         # This is an internal soft view of a norms-only source. The source has no soft
-        # layer, so an author's ordinary soft__ predicate remains legal here.
+        # layer, so an author's ordinary predicate with the soft layer's prefix remains legal here.
         return SoftEnvironment(data, generated=True)
 
     def author_environment(self):
@@ -111,8 +115,12 @@ class S1Environment:
         return Environment(data)
 
     def situation_id(self, entry):
-        return digest(f"ve-situation-{self.env.identity_version}\n",
-                      {"environment_id": self.env.environment_id, "situation": entry})
+        return self.situation_id_for(self.env, entry)
+
+    @staticmethod
+    def situation_id_for(env, entry):
+        return digest(f"ve-situation-{env.identity_version}\n",
+                      {"environment_id": env.environment_id, "situation": entry})
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -341,7 +349,8 @@ class Document:
 
     With `filled` (Lean's filled document under the completion, readings-defaults 3) every content is Lean's filled
     one, matched by unit and by set and index, and Lean's generated units (each `F_p`, after every item) are fixed
-    items; `filled_tables` maps each table such a unit reads to its predicate. Python builds no `fill` (D12)."""
+    items; `filled_tables` maps each table Lean's filled environment adds to the predicate it fills. Python builds
+    no `fill` (D12)."""
 
     def __init__(self, senv, document, filled=None):
         self.senv = senv
@@ -371,6 +380,14 @@ class Document:
                 self.items.append(("bar", uid, content["bar"]))
         if filled is not None:
             self._fill(filled["units"])
+            # Each table Lean's filled environment adds (E‴, bound to the request by the route's
+            # `_bind_completion`), with the regulated predicate it fills. On the norms chain an `F_p` unit reads it,
+            # on the soft chain a rule of each reading's filled tree (rd-9-soft-chain.md 3): neither is how a table
+            # is found.
+            from .norm_defaults import unsaid_name
+            request = wire(senv.data)["vocabulary"]["predicates"]
+            added = set(wire(filled["environment"])["vocabulary"]["predicates"]) - set(request)
+            self.filled_tables = {unsaid_name(p): p for p in request if unsaid_name(p) in added}
 
     def _fill(self, units):
         """Lean's filled contents in place of the author's, and Lean's generated units after every item. A filled
@@ -398,8 +415,6 @@ class Document:
                 items.append(item)
         for uid, content in generated:
             items.append(("fixed", uid, content))
-            guard = content.body["guard"]
-            self.filled_tables[guard[1]] = content.body["predicate"]
         self.items = items
 
     @staticmethod
@@ -606,29 +621,19 @@ class Side:
         if hasattr(self, "_keys"):
             return self._keys
         sd = self.soft
-        env = sd.env
         keyed = self.keyed_rules()
         keys = []
+        # Each decision's name and sorts are Lean's, found by what it decides (`SoftNormDocument.decision_name`).
         for rule, name, bearer in keyed:
             if rule.mode == "default":
-                keys.append((("excepted", name, bearer), "soft__excepted__" + rule.core.name.replace("-", "_"),
-                             list(env.predicates[rule.core.predicate].arguments)))
+                generated = sd.decision_name(("excepted", rule.core.name))
+                keys.append((("excepted", name, bearer), generated, list(sd.decisions[generated])))
         for rule, name, bearer in keyed:
             for party in rule.alterable:
-                keys.append((("off", name, bearer, party),
-                             f"soft__off__{rule.core.name.replace('-', '_')}__{party}",
-                             list(env.predicates[rule.core.predicate].arguments)))
-        if env.soft["outranking"]["mode"] == "holistic":
-            seen = []
-            for left, right in sd.collisions:
-                generated = sd.override_for_pair.get(frozenset((left.core.name, right.core.name)))
-                if generated is None:
-                    continue
-                _, _, low, high, act = generated.split("__", 4)
-                key = ("outweighs", act, low, high)
-                if key not in seen:
-                    seen.append(key)
-                    keys.append((key, generated, list(env.predicates[left.core.predicate].arguments)))
+                generated = sd.decision_name(("off", rule.core.name, party))
+                keys.append((("off", name, bearer, party), generated, list(sd.decisions[generated])))
+        keys.extend((key, generated, list(sd.decisions[generated]))
+                    for key, generated in sd.decision_by_key.items() if key[0] == "outweighs")
         if self.rights is not None:
             rd = self.rights
             frame = self.senv.frame
@@ -800,15 +805,18 @@ class Decoded:
     Nothing is checked (Lean's `admitReadings` is the check).
 
     Under the completion `filled` and `fill_premises` are Lean's (a readings route's answer, readings-defaults 3):
-    the sides are the readings' filled documents, and each reading's `Fill_T` is Lean's list of formulas."""
+    the sides are the readings' filled documents, and each reading's `Fill_T` is Lean's list of formulas; under the
+    soft completion so are each reading's `Soft_T` on the filled tree (`soft_premises`, rd-9-soft-chain 4.2)."""
 
-    def __init__(self, environment, document, filled=None, fill_premises=None):
+    def __init__(self, environment, document, filled=None, fill_premises=None, soft_premises=None):
         self.senv = S1Environment(environment, filled)
         self.doc = Document(self.senv, document, filled)
         self.attached = self.doc.attached()
         self.sides = {}
-        self.fill_premises = {(e["set"], e["index"]): [p["ast"] for p in e["premises"]]
-                              for e in (fill_premises or ())}
+        # The witness's generated premises Lean lists for each reading: `Soft_T` (soft chain), then `Fill_T`.
+        self.fill_premises = {}
+        for e in (*(soft_premises or ()), *(fill_premises or ())):
+            self.fill_premises.setdefault((e["set"], e["index"]), []).extend(p["ast"] for p in e["premises"])
         self._fill_formulas = {}
         self._rules_warm = self.senv.chain != "rights"
 
@@ -884,8 +892,9 @@ class Decoded:
         return side.observe(side.model(model, tables), probe)
 
     def fill_holds(self, s, i, model, tables):
-        """The reading's `Fill_T` (Lean's formulas, readings-defaults 4.2) on the base: what the witness's filling
-        must satisfy. With no `Fill_T` listed (outside the completion) it holds."""
+        """The reading's `Fill_T`, after its `Soft_T` on the soft chain (Lean's formulas, readings-defaults 4.2,
+        rd-9-soft-chain 4.2) on the base: what the witness's filling and decisions must satisfy. With none listed
+        (outside the completion) it holds."""
         from .ast import formula_from_data
         from .evaluate import _Evaluator
         asts = self.fill_premises.get((s, i), ())
@@ -1041,7 +1050,8 @@ def search(environment, document, set_id, *, max_size=2, hints=(), decoded=None,
     a witness's base must satisfy its `Fill_T` (4.2)."""
     from .model import FiniteModel
     decoded = decoded or Decoded(environment, document, *(() if filled is None else
-                                                          (filled["filled"], filled["fill_premises"])))
+                                                          (filled["filled"], filled["fill_premises"],
+                                                           filled.get("soft_premises"))))
     R = decoded.doc.set_by_id(set_id)
     found = {}
     author = decoded.senv.author_environment()

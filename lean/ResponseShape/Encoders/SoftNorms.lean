@@ -16,6 +16,11 @@ theorem decision_entries_fit (D : SoftDoc) :
   intro p _
   exact Common.decisionEntry_fits _
 
+/-- A decision's key fits its shape. -/
+theorem decisionKeyJson_fits (k : DecisionKey) :
+    Fits req (skel% "soft-norms.json#/$defs/decision_key") (decisionKeyJson k) := by
+  cases k <;> (unfold decisionKeyJson; fits)
+
 /-- The environment field of elaboration is the prime environment encoded from its source. -/
 theorem regenerated_environment (D : SoftDoc) (env : Json) :
     (regenerated D env).lookup "environment_prime" =
@@ -54,7 +59,7 @@ theorem elaborate_fits (id : String) (D : SoftDoc) (env : Json) (documentHash : 
         cycles.toList.map (fun value => ("override_cycles", toJson value)))) := by
   cases overlaps <;> cases cycles <;>
     simp only [Option.toList, List.map_cons, List.map_nil, List.append_nil] <;>
-    unfold VE.Route.Wire.ok regenerated regeneratedCore bgEntry <;> fits
+    unfold VE.Route.Wire.ok regenerated regeneratedCore bgEntry <;> fits using decisionKeyJson_fits
   all_goals first
     | exact Fits.softEnvironment D env (decision_entries_fit D) rfl
     | (unfold residualStatus; split <;> (apply Fits.strIn_lit; decide))

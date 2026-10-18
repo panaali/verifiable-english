@@ -19,15 +19,25 @@ into a module of its own.
 An explicitly owned surface parser remains outside the relay even when only a
 relayed file adapter imports it.
 
-A second rule keeps the unspecified completion's `fill` in Lean (readings-defaults plan, RD-2b and D12): no
-readings module (`ve/readings*.py`) holds a string literal containing a reserved completion name prefix
-(`RESERVED`), so none builds a filled name. A literal that only keeps such names out of the English (a non-wording
-guard) carries the marker `# relay-lint: non-wording` on its line; marked literals are counted in the report.
+A second rule keeps the unspecified completion's `fill` in Lean (readings-defaults plan, RD-2b and D12) and the soft
+decisions' names too (rd-9 soft-chain plan SC-8): no readings module (`ve/readings*.py`) holds a string literal or a
+comment containing a reserved completion name prefix (`RESERVED`) or the soft layer's decision prefix
+(`READINGS_RESERVED`), so none builds a filled name or a decision's name. A literal that only keeps such names out
+of the English (a non-wording guard) carries the marker `# relay-lint: non-wording` on its line; marked literals are
+counted in the report.
 
 A third rule keeps the senses path's English in Lean (readings-defaults plan, RD-8): no module of the senses path
 (`PARSE_FREE`) names `parse_english`, and in `ve/document.py` no `if` statement whose test reads `senses` names it
 in its body, so a fence of a senses document is never read by Python's English reader. Names are read with
 Python's own parser (a call, an attribute, an import).
+
+A fourth rule keeps situation and point wording in Lean (question answering Q2.4, plan 4.5 and 5): no readings or
+norm-defaults module (`WORDING_GLOBS`) words an element line, a filled gap or a point's silence itself. A string
+literal (docstrings aside) containing one of `WORDING` (`is a `, `is an `, `does not say whether`), an f-string
+that interpolates after a literal ending in ` is ` (an element line built from parts), or a definition named
+`_article` is a finding, unless the literal is in a function `WORDING_FRAMES` lists: the frames around Lean's
+clause that stay Python's until their own move, and the gates' grammars that read Lean's lines back, each with its
+reason. Lean's lines reach these modules through `ve/words.py` (`VE.Words`, the `words` service mode).
 
 Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`, the readings modules for the second rule
 and the senses path for the third; given paths, every rule reads each path). Exit 1 on a finding.
@@ -36,8 +46,10 @@ from __future__ import annotations
 
 import ast
 import importlib
+import io
 import pkgutil
 import sys
+import tokenize
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,12 +57,13 @@ sys.path.insert(0, str(ROOT))
 
 # The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
 # batch 4: discourse; batch 7: rights; batch 8: reports; batch 10b: norm defaults;
-# batch 11b: speech source; batch 13b: norms admission; question answering Q1.2: `ve ask`).
+# batch 11b: speech source; batch 13b: norms admission; question answering Q1.2: `ve ask`;
+# Q2.4: situation and point wording).
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
            "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
            "ve/norm_defaults.py", "ve/norm_defaults_route.py",
            "ve/backends/speech_source.py", "ve/speech_document.py", "ve/backends/english_lean.py",
-           "ve/norm_admission.py", "ve/ask.py")
+           "ve/norm_admission.py", "ve/ask.py", "ve/words.py")
 # Relayed functions of a module that also holds Python's own code (English E2, spec 2.9: the admission path of
 # `ve/english.py`; the producer, the renderer, the statement reader and the comparator in the same module write
 # their own diagnostics and are outside it).
@@ -64,12 +77,33 @@ FILE_IO = "# relay-lint: file I/O"
 # The modules that may not build the completion's names, and the reserved prefixes (norm-defaults 2.1).
 READINGS_GLOB = "ve/readings*.py"
 from ve.environment import RESERVED_PREFIXES as RESERVED  # noqa: E402  (one table with the checker's)
+from ve.environment import WORDING_LAYER_PREFIXES  # noqa: E402
+# The readings modules also never spell a soft decision's name (rd-9 soft-chain plan SC-8): they find it by its key in
+# Lean's row (`SoftNormDocument.decision_name`, `generated_predicates`). The prefix is the wording table's own.
+READINGS_RESERVED = (*RESERVED, *WORDING_LAYER_PREFIXES["soft-norms@0"])
 NON_WORDING = "# relay-lint: non-wording"
 # The senses path (RD-8): the modules that may not name Python's English reader, and the loader whose senses
 # branches may not.
 PARSE_FREE = ("ve/senses_document.py", "ve/backends/senses.py", "ve/senses/__init__.py")
 SENSES_LOADER = "ve/document.py"
 ENGLISH_READER = "parse_english"
+# The situation-wording rule (Q2.4): the modules, the phrases only Lean words, and the listed frames.
+WORDING_GLOBS = ("ve/readings*.py", "ve/norm_defaults*.py")
+WORDING = ("is a ", "is an ", "does not say whether")
+_FRAME = "a frame around Lean's clause; stays Python's until its own move (plan 5)"
+_LEGEND = "the legend's sentences (norm-defaults 4.1), outside Q2.4's list; the clause is Python's legend wording"
+_READER = "a gate's grammar, which reads Lean's line back and words nothing"
+WORDING_FRAMES = {
+    ("ve/norm_defaults_english.py", "status_sentence"): _FRAME,
+    ("ve/norm_defaults_english.py", "_inherited_reason"): _FRAME,
+    ("ve/norm_defaults_english.py", "latent_conflict_sentence"): _FRAME,
+    ("ve/norm_defaults_english.py", "gap_sentence"): _FRAME,
+    ("ve/norm_defaults_english.py", "_completion_clause"): _LEGEND,
+    ("ve/norm_defaults_english.py", "silence_sentence"): _LEGEND,
+    ("ve/norm_defaults_english.py", "legend_grammar"): _READER,
+    ("ve/readings_s2_english.py", "<module>"): _READER + " (`_GAPS` and the R7 production of `PRODUCTIONS`)",
+    ("ve/readings_s2_english.py", "result_sentence"): _FRAME + " (R7)",
+}
 
 
 def content_classes() -> frozenset[str]:
@@ -196,22 +230,80 @@ def helpers(relayed: list[Path]) -> list[Path]:
     return found
 
 def reserved_literals(path: Path, marked: list | None = None) -> list[str]:
-    """Every string literal of the module (f-string parts and docstrings included) that contains a reserved
-    completion prefix, read with Python's own parser; a literal whose line carries `NON_WORDING` is counted in
-    `marked` instead."""
-    lines = path.read_text().splitlines()
+    """Every string literal of the module (f-string parts and docstrings included) and every comment that contains a
+    reserved prefix (`READINGS_RESERVED`: the completion's and the soft decisions'), read with Python's own parser
+    and tokenizer; a literal whose line carries `NON_WORDING` is counted in `marked` instead."""
+    text = path.read_text()
+    lines = text.splitlines()
     tree = ast.parse("\n".join(lines), filename=str(path))
+    where = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
     out = []
     for node in ast.walk(tree):
         if not (isinstance(node, ast.Constant) and isinstance(node.value, str)
-                and any(prefix in node.value for prefix in RESERVED)):
+                and any(prefix in node.value for prefix in READINGS_RESERVED)):
             continue
         if any(line.rstrip().endswith(NON_WORDING) for line in lines[node.lineno - 1:node.end_lineno]):
             if marked is not None:
                 marked.append(f"{path.name}:{node.lineno}")
             continue
-        out.append(f"{path.relative_to(ROOT) if path.is_relative_to(ROOT) else path}:{node.lineno}: "
-                   "a readings module holds a reserved completion name")
+        out.append(f"{where}:{node.lineno}: a readings module holds a reserved completion name")
+    for token in tokenize.generate_tokens(io.StringIO(text).readline):
+        if token.type == tokenize.COMMENT and any(prefix in token.string for prefix in READINGS_RESERVED):
+            out.append(f"{where}:{token.start[0]}: a readings module's comment spells a reserved name")
+    return out
+
+
+def _docstrings(tree: ast.AST) -> set[int]:
+    out = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
+            first = node.body[0]
+            if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) and isinstance(first.value.value,
+                                                                                                    str):
+                out.add(id(first.value))
+    return out
+
+
+def _enclosing(tree: ast.AST) -> dict[int, str]:
+    """Each node's enclosing function name (`<module>` outside every function)."""
+    out = {}
+
+    def walk(node, name):
+        for child in ast.iter_child_nodes(node):
+            inner = child.name if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)) else name
+            out[id(child)] = inner
+            walk(child, inner)
+    walk(tree, "<module>")
+    return out
+
+
+def wording_sites(path: Path) -> list[tuple[int, str, str]]:
+    """(line, enclosing function, what) for every place `path` words situation or point English itself."""
+    tree = ast.parse(path.read_text(), filename=str(path))
+    docs, where, out = _docstrings(tree), _enclosing(tree), []
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in docs
+                and any(phrase in node.value.lower() for phrase in WORDING)):
+            out.append((node.lineno, where[id(node)], f"the literal {node.value[:40]!r}"))
+        elif isinstance(node, ast.JoinedStr) and any(
+                isinstance(a, ast.Constant) and isinstance(a.value, str) and a.value.endswith(" is ")
+                and isinstance(b, ast.FormattedValue) for a, b in zip(node.values, node.values[1:])):
+            out.append((node.lineno, where[id(node)], "an element line built from parts"))
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "_article":
+            out.append((node.lineno, where[id(node)], "an article for element lines"))
+    return out
+
+
+def wording_findings(path: Path, used: set | None = None) -> list[str]:
+    """`wording_sites` outside `WORDING_FRAMES`; `used` collects the listed frames that still hold a literal."""
+    rel = str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path)
+    out = []
+    for line, function, what in wording_sites(path):
+        if (rel, function) in WORDING_FRAMES and not what.startswith(("an element line", "an article")):
+            if used is not None:
+                used.add((rel, function))
+            continue
+        out.append(f"{rel}:{line}: {what} words situation or point English outside Lean (VE.Words, ve/words.py)")
     return out
 
 
@@ -262,12 +354,19 @@ def main(argv: list[str] | None = None) -> int:
     found += [f for p in senses for f in english_reads(p)]
     if not argv and (ROOT / SENSES_LOADER).is_file():
         found += english_reads(ROOT / SENSES_LOADER, branches_only=True)
+    wording = paths if argv else sorted(p for pattern in WORDING_GLOBS for p in ROOT.glob(pattern))
+    frames: set = set()
+    found += [f for p in wording for f in wording_findings(p, frames)]
+    if not argv:
+        found += [f"{name}: {function} is listed in WORDING_FRAMES but holds no such literal (a stale entry)"
+                  for name, function in sorted(set(WORDING_FRAMES) - frames)]
     io = f"; {len(marked)} file I/O diagnostic(s): {', '.join(marked)}" if marked else ""
     io += f"; {len(guards)} non-wording guard(s): {', '.join(guards)}" if guards else ""
     print("\n".join(found) if found else
           f"PASS: {len(paths)} relayed module(s) and {sum(len(f) for f in scoped.values())} relayed function(s), "
           f"no own content diagnostic; {len(readings)} readings module(s), no reserved completion name; "
-          f"{len(senses)} senses module(s), no English reader{io}")
+          f"{len(senses)} senses module(s), no English reader; {len(wording)} readings and norm-defaults "
+          f"module(s), no situation or point wording outside {len(frames)} listed frame(s){io}")
     return 1 if found else 0
 
 

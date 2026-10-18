@@ -4,20 +4,20 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-import subprocess
 
-ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
-BASE = "7345e3ed"
 BEGIN = "<!-- BEGIN GENERATED B11B METRICS -->"
 END = "<!-- END GENERATED B11B METRICS -->"
 
 
 def totals(paths):
-    command = ["git", "diff", "--numstat", BASE, "--", *paths]
-    done = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=True)
-    return tuple(sum(int(row.split("\t")[column]) for row in done.stdout.splitlines())
-                 for column in (0, 1))
+    """Read the line counts saved with the batch, independent of later merges."""
+    rows = json.loads((HERE / "evidence/production-numstat.json").read_text())
+    assert set(rows) == {
+        "ve/speech_acts.py", "ve/speech_document.py",
+        "lean/VE/SpeechActs/Source/Run.lean", "lean/VE/SpeechActs/Source/Admission/Run.lean",
+    }
+    return tuple(sum(rows[path][column] for path in paths) for column in ("added", "deleted"))
 
 
 def render():

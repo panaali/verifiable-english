@@ -27,13 +27,13 @@ def Route.text : Route → String
   | .superposed => "superposed"
   | .enumerated => "enumerated"
 
-/-- 1.1, in its row order: the first row that applies. Under `norm-defaults@0` the norms chain takes the enumerated
-    route (the unspecified completion, readings-defaults.md 1.1, until RD-6); the soft and rights chains keep the
-    abstention. -/
+/-- 1.1, in its row order: the first row that applies. Under `norm-defaults@0` the norms and soft chains take the
+    enumerated route (the unspecified completion, readings-defaults.md 1.1 and rd-9-soft-chain.md 1.1; the norms
+    chain's superposed row is RD-6b's `routeND`); the rights chain keeps the abstention. -/
 def routeOf (normDefaults : Bool) (D : Doc) : Route :=
   if !(D.sets.any Wire.contentBearing) then .w2
   else if D.sets.any (fun R => R.candidates.any (·.content.isNone)) then .pending
-  else if normDefaults then (if D.chain == .norms then .enumerated else .abstention)
+  else if normDefaults then (if D.chain != .rights then .enumerated else .abstention)
   else if D.chain != .rights && superposable D then .superposed
   else .enumerated
 

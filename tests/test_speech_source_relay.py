@@ -8,6 +8,7 @@ import subprocess
 import pytest
 
 from test_speech_source_lean import base_env, done_document, judged, nominated, templates
+from ve.backends import lean as lean_backend
 from ve.backends.speech_source import decide_source
 from ve.errors import CheckerUnavailable, VEError
 
@@ -41,7 +42,7 @@ def test_source_transport_fails_closed_on_tampered_report(monkeypatch, mutation)
         result["document_id"] = False
     else:
         result["coverage"]["bytes_by_class"]["C"] = False
-    monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, **k:
+    monkeypatch.setattr("ve.backends.lean.run_limited", lambda *a, **k:
                         subprocess.CompletedProcess([], 0, json.dumps([result]).encode(), b""))
     with pytest.raises(CheckerUnavailable):
         decide_source(metadata, source)
@@ -50,7 +51,7 @@ def test_source_transport_fails_closed_on_tampered_report(monkeypatch, mutation)
 def test_every_producer_field_is_required_and_typed(monkeypatch):
     metadata, source = sample()
     result = decide_source(metadata, source)
-    original = subprocess.run
+    original = lean_backend.run_limited
     try:
         for field in result.keys() - {"id", "status"}:
             for kind in ("drop", "retype"):
@@ -60,12 +61,12 @@ def test_every_producer_field_is_required_and_typed(monkeypatch):
                 else:
                     value = tampered[field]
                     tampered[field] = [] if type(value) is dict else {} if type(value) is list else False
-                monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, row=tampered, **k:
+                monkeypatch.setattr("ve.backends.lean.run_limited", lambda *a, row=tampered, **k:
                                     subprocess.CompletedProcess([], 0, json.dumps([row]).encode(), b""))
                 with pytest.raises(CheckerUnavailable):
                     decide_source(metadata, source)
     finally:
-        monkeypatch.setattr("ve.backends.lean.subprocess.run", original)
+        monkeypatch.setattr("ve.backends.lean.run_limited", original)
 
 
 @pytest.mark.parametrize("case,mutation", [
@@ -149,7 +150,7 @@ def test_report_records_are_typed_and_bound_to_the_request(monkeypatch, case, mu
         result["nominations"][0]["question"] = "absent"
     elif mutation == "boolean_gap_status":
         result["answers"][0]["status"] = True
-    monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, **k:
+    monkeypatch.setattr("ve.backends.lean.run_limited", lambda *a, **k:
                         subprocess.CompletedProcess([], 0, json.dumps([result]).encode(), b""))
     with pytest.raises(CheckerUnavailable):
         decide_source(metadata, source)
@@ -159,7 +160,7 @@ def test_every_report_record_field_rejects_type_confusion(monkeypatch):
     cases = [next((meta, source) for name, meta, source in templates() if name == "certified"),
              judged(base_env()), done_document(base_env()),
              nominated([{"question": "r", "by": "alice", "support": "testimony", "nominate": 1}])]
-    original = subprocess.run
+    original = lean_backend.run_limited
     try:
         for metadata, source in cases:
             report = decide_source(metadata, source)
@@ -168,13 +169,13 @@ def test_every_report_record_field_rejects_type_confusion(monkeypatch):
                     for key in record:
                         tampered = copy.deepcopy(report)
                         tampered[field][index][key] = False
-                        monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, row=tampered, **k:
+                        monkeypatch.setattr("ve.backends.lean.run_limited", lambda *a, row=tampered, **k:
                                             subprocess.CompletedProcess([], 0, json.dumps([row]).encode(), b""))
                         with pytest.raises(CheckerUnavailable):
                             decide_source(metadata, source)
-                        monkeypatch.setattr("ve.backends.lean.subprocess.run", original)
+                        monkeypatch.setattr("ve.backends.lean.run_limited", original)
     finally:
-        monkeypatch.setattr("ve.backends.lean.subprocess.run", original)
+        monkeypatch.setattr("ve.backends.lean.run_limited", original)
 
 
 @pytest.mark.parametrize("name,metadata,source", templates(), ids=lambda case: case if isinstance(case, str) else None)
@@ -190,7 +191,7 @@ def test_every_coverage_class_is_bound_to_the_source(monkeypatch, name, metadata
             for item in tampered["units"]:
                 counts[item[key]] = counts.get(item[key], 0) + item["bytes"]
             tampered["coverage"][field] = counts
-        monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, row=tampered, **k:
+        monkeypatch.setattr("ve.backends.lean.run_limited", lambda *a, row=tampered, **k:
                             subprocess.CompletedProcess([], 0, json.dumps([row]).encode(), b""))
         with pytest.raises(CheckerUnavailable):
             decide_source(metadata, source)
@@ -201,7 +202,7 @@ def test_residual_coverage_is_bound_to_open_terms_and_active_sets(monkeypatch):
     metadata, source = sample()
     report = copy.deepcopy(decide_source(metadata, source))
     report["coverage"]["residual"]["open_terms"] += 1
-    monkeypatch.setattr("ve.backends.lean.subprocess.run", lambda *a, **k:
+    monkeypatch.setattr("ve.backends.lean.run_limited", lambda *a, **k:
                         subprocess.CompletedProcess([], 0, json.dumps([report]).encode(), b""))
     with pytest.raises(CheckerUnavailable):
         decide_source(metadata, source)

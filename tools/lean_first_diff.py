@@ -311,6 +311,52 @@ def pilot_documents(root: Path) -> list[tuple[str, str, bytes]]:
     return out
 
 
+def pilot_companions(root: Path, name: str, text: bytes) -> dict[str, bytes]:
+    """The files of a pilot document's branch that its front matter names beside it: each string of `senses.packs`
+    (the only member a loader reads a file by) resolved against the document's directory, where the branch holds a
+    file there. A bundled pack's name names none. The checker decides which of them it reads (lf-16f review F2:
+    a document written alone lost the pack beside it)."""
+    import posixpath
+    branch, colon, path = name.partition(":")
+    if not colon:
+        return {}
+    try:
+        meta = json.loads(text[4:text.index(b"\n---\n", 4)])
+        packs = meta["senses"]["packs"]
+    except (ValueError, TypeError, KeyError):
+        return {}
+    out = {}
+    for entry in packs if type(packs) is list else ():
+        if type(entry) is not str:
+            continue
+        target = posixpath.normpath(posixpath.join(posixpath.dirname(path), entry))
+        if target.startswith("../") or target == ".." or posixpath.isabs(target):
+            continue
+        done = subprocess.run(["git", "cat-file", "blob", f"{branch}:{target}"], cwd=root, capture_output=True)
+        if done.returncode == 0:
+            out[target] = done.stdout
+    return out
+
+
+def write_pilot(root: Path, directory: Path, name: str, blob: str, text: bytes) -> Path:
+    """Write a pilot document where a checker reads it: `<blob>.ve.md`, or, when it names files beside it
+    (`pilot_companions`), at its branch path under `<blob>/` with those files where the branch holds them, so it is
+    checked as it is loaded in place."""
+    companions = pilot_companions(root, name, text)
+    if not companions:
+        path = directory / f"{blob}.ve.md"
+        path.write_bytes(text)
+        return path
+    base = directory / blob
+    for target, data in companions.items():
+        (base / target).parent.mkdir(parents=True, exist_ok=True)
+        (base / target).write_bytes(data)
+    path = base / name.split(":", 1)[1]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(text)
+    return path
+
+
 def pilot_records(root: Path, scratch: Path, workers: int):
     """`ve document check` of each pilot document, one process each, in the recorded checkout."""
     documents = pilot_documents(ROOT)
@@ -323,8 +369,7 @@ def pilot_records(root: Path, scratch: Path, workers: int):
 
     def check(item):
         name, blob, text = item
-        path = scratch / f"{blob}.ve.md"
-        path.write_bytes(text)
+        path = write_pilot(ROOT, scratch, name, blob, text)
         return {"case": name, "op": "document_check", "source_sha256": blob, "authority": "default",
                 "outcome": pilot_check(root, path, env)}
 
@@ -427,11 +472,17 @@ def norm_defaults_cases() -> list[str]:
     return [f"s{seed}" for seed in range(1000)] + [f"invalid/{seed}" for seed in range(10)]
 
 
-def norm_defaults_corpus(out: Path) -> None:
-    """Freeze the profile generator's documents once for both revisions."""
+def norm_defaults_corpus(out: Path, *, trees: int = 1000, include_invalid: bool = True) -> None:
+    """Freeze the profile generator's documents once for both revisions.
+
+    A caller measuring a bounded prefix may request only that prefix; the
+    default remains the full conformance corpus and its invalid cases.
+    """
+    if not 0 <= trees <= 1000:
+        raise ValueError("norm-defaults trees must be between 0 and 1000")
     from conformance import norm_defaults_differential as generator
     rows, invalid = [], []
-    for seed in range(1000):
+    for seed in range(trees):
         env, rules, _ = generator.case(seed, profiled=True)
         phrases = [f"Rule {index}.\n" for index in range(len(rules))] or ["No rule.\n"]
         cursor, units = 0, []
@@ -447,11 +498,12 @@ def norm_defaults_corpus(out: Path) -> None:
         def encode(metadata):
             return "---\n" + json.dumps(metadata, ensure_ascii=False) + "\n---\n" + "".join(phrases)
         rows.append({"case": f"s{seed}", "text": encode(front)})
-        if rules and len(invalid) < 10:
+        if include_invalid and rules and len(invalid) < 10:
             damaged = json.loads(json.dumps(front))
             damaged["units"][0]["content"]["norm"]["predicate"] = "not_declared"
             invalid.append({"case": f"invalid/{len(invalid)}", "text": encode(damaged)})
-    assert [row["case"] for row in rows + invalid] == norm_defaults_cases()
+    assert [row["case"] for row in rows + invalid] == (
+        [f"s{seed}" for seed in range(trees)] + [f"invalid/{seed}" for seed in range(len(invalid))])
     out.write_text(json.dumps(rows + invalid, ensure_ascii=False))
 
 
@@ -787,6 +839,27 @@ def same(a, b) -> bool:
     return same_json(a, b)
 
 
+def stable_pilot_outcome(outcome, recording: str):
+    """Erase only the recorder's own temporary pilot directory from a result.
+
+    The two checkouts write the same historical source bytes beside different
+    recording files. A file-open diagnostic may quote that scratch directory;
+    its suffix and every other part of the diagnostic remain compared.
+    """
+    scratch = str(Path(recording).resolve().with_suffix(".pilots")) + "/"
+
+    def visit(value):
+        if isinstance(value, str):
+            return value.replace(scratch, "<pilot-scratch>/")
+        if isinstance(value, list):
+            return [visit(item) for item in value]
+        if isinstance(value, dict):
+            return {key: visit(item) for key, item in value.items()}
+        return value
+
+    return visit(outcome)
+
+
 def json_text(value) -> str:
     """A leaf's identity in the wording pairs: its JSON text, so the pairs are type-strict too."""
     return json.dumps(value, sort_keys=True, ensure_ascii=False)
@@ -933,6 +1006,9 @@ def compare(base_path: str, head_path: str, delta: dict | None, *, expected: dic
     for key in sorted(base.keys() | head.keys()):
         old = base.get(key, {}).get("outcome")
         new = head.get(key, {}).get("outcome")
+        if key[0] == "pilots":
+            old = stable_pilot_outcome(old, base_path)
+            new = stable_pilot_outcome(new, head_path)
         klass = change_class(old, new)
         if klass != "availability" and old is not None and new is not None and _unavailable(old):
             klass = "unavailable"   # on both sides: no evidence of preservation

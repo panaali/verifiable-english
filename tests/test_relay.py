@@ -217,9 +217,10 @@ def test_every_runner_transport_is_listed():
         if isinstance(node, ast_module.FunctionDef):
             calls = {(c.func.attr if isinstance(c.func, ast_module.Attribute) else getattr(c.func, "id", None))
                      for c in ast_module.walk(node) if isinstance(c, ast_module.Call)}
-            if "run" in calls and any(isinstance(c, ast_module.Attribute) and c.attr == "run"
-                                      and getattr(c.value, "id", None) == "subprocess"
-                                      for c in ast_module.walk(node)):
+            # A runner starts through `run_limited` (its address-space limit) or `subprocess.run`.
+            if "run_limited" in calls or "run" in calls and any(
+                    isinstance(c, ast_module.Attribute) and c.attr == "run"
+                    and getattr(c.value, "id", None) == "subprocess" for c in ast_module.walk(node)):
                 starts.add(node.name)
                 assert calls & {"read_rows", "_route_rows"}, node.name
             if calls & {"loads", "loads_json", "_decode_json"}:

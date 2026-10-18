@@ -1,0 +1,14 @@
+{
+ "run": "51fd669939/20261016T053515-2359001",
+ "headline": {
+  "previous": null,
+  "records": 625252,
+  "failed_roundtrips": 24715,
+  "eligible": 624998,
+  "exact_line": null,
+  "self_contained_line": null,
+  "lines_self_contained": 55412,
+  "lines_with_handles": 615531,
+  "lines_without_reset": 624059
+ }
+}

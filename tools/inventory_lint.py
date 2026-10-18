@@ -45,7 +45,7 @@ BODIES: dict[str, set[str]] = {
                  "_check_conflict_python", "_norm_certificate_python"},
     "ve.norm_defaults_route": {"admit_norm_defaults_document"},
     "ve.bundle": {"_check_bundle_python"},
-    "ve.parser": {"_parse_python", "_parse_python_marked"},
+    "ve.parser": {"_parse_python"},
     "ve.vacuity": {"_premise_status"},
     "ve.equivalence": {"_compare"},
     "ve.argument": {"_check_argument_python", "_check_edge", "_lean_deductions"},

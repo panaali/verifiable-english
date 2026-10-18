@@ -73,13 +73,13 @@ lists the relations that count as binding and makes this rule the contract.
 |---|---|
 | `lean/Serve.lean` | executable root: handshake, then one flushed response line per request line until end of input |
 | `lean/VE/Service/Protocol.lean` | request decoding, mode dispatch, budgets and counts, pin theorems; pure (`respond : String → Json`) |
-| `lean/VE/Service/EnglishRun.lean` | generated copy of `VE/English/Run.lean` without its root `main` (see below) |
+| `lean/VE/Service/EnglishRun.lean` | generated copy of `VE/English/Run.lean` in the service namespace (see below) |
 | `lean/VE/Service/english_copy.py` | generates the copy; `--check` fails on any drift (run by `tests/test_lean_service.py`) |
 | `ve/backends/lean_service.py` | Python supervisor and client: `LeanService`, `LeanServicePool`, `CheckerUnavailable` |
 | `tests/test_lean_service.py` | protocol, byte identity, protocol and supervisor faults |
 | `tools/lean_service_{parity,soak,latency}.py` | gate-1 harnesses; results in `experiments/lean-service/` |
 
-`lake build` now also builds `ve_service` and `ve_english_run` (root `VE.English.Run`, the one-shot English
+`lake build` now also builds `ve_service` and `ve_english_run` (root `EnglishRunMain`, the one-shot English
 reference the ve-bench harness already used).
 
 ## Protocol
@@ -102,7 +102,7 @@ Unknown or duplicate fields are rejected.
 | `order` | `VE.Order.Surface.runCaseReported` | `ve_conformance order` |
 | `route` | `VE.Route.Run.runCaseReported` (definitions, bundles, background, admission, labels …) | `ve_conformance route` |
 | `norms` | `VE.Norms.Run.runCaseReported` | `ve_norms_route` |
-| `english` | `VE.English.ServiceRun.run` on each case object | `ve_english_run` / `lake env lean --run VE/English/Run.lean` |
+| `english` | `VE.English.ServiceRun.run` on each case object | `ve_english_run` / `lake env lean --run EnglishRunMain.lean` |
 
 Response: `{"counts":{"bytes","cases","errors"},"id","mode","results":[…],"status":"ok"}` (keys in Lean's
 sorted order). `results[i]` is `{"digest","index":i,"result"}`: `result` is exactly the one-shot runner's output
@@ -150,11 +150,11 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
    equivalence for runner-accepted English payloads.
 2. An English failure is the record `{"error": <message>, "status": "error"}` instead of the message on
    stderr with exit 2.
-3. `VE/English/Run.lean` declares a root `main`, so an executable with its own `main` cannot import it, and
-   the file may not be edited. The service uses `VE/Service/EnglishRun.lean`, the original text with the
-   namespace renamed `VE.English.ServiceRun` (still inside `VE.English`, so every identifier resolves as in
-   the original) and the `main` omitted; `english_copy.py --check` pins it byte for byte. The English
-   runner is a harness entry point on which no theorem depends; the copy is listed for statement review.
+3. `EnglishRunMain.lean` owns the one-shot executable's `main` and imports `VE.English.Run`, which the `VE`
+   library also builds. The service keeps its established `VE.English.ServiceRun` namespace through
+   `VE/Service/EnglishRun.lean`, a generated copy of the runner text with its namespace renamed.
+   `english_copy.py --check` pins that copy to the source. No theorem depends on the one-shot entry point;
+   the service copy is listed for statement review.
 
 ## Supervisor (`ve/backends/lean_service.py`)
 

@@ -1,0 +1,5 @@
+# main..HEAD --no-merges at the report commit (merge base dae12d5ff); the commit adding this file follows
+0bf283bf6 tarch-contract: report and delta
+f82390542 tarch-contract: docs/TESTING.md section, seeded mutants and the VM contract runs' evidence
+e9f8010ca tarch-contract: name the two lists in the merge-tooling table; no pytest word in a fixture
+e5f223af7 tarch-contract: the x86 platform contract list, its divergence list and gate.py --contract

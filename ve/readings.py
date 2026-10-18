@@ -5,7 +5,6 @@ Every other kind requires complete choice enumeration or stays UNKNOWN.
 """
 from __future__ import annotations
 
-from collections import Counter
 from itertools import product
 
 from .assurance import semantic_entry
@@ -356,48 +355,10 @@ def validate_couplings(env, couplings, sets, unit_ids):
                     reference["set"] in seen):
                 raise VEError("invalid coupling set")
             seen.add(reference["set"])
-            target = active[(reference["set"], reference["version"])]
-            if any(item["axis"] not in reading.get("labels", {}) for reading in target["readings"]):
-                raise VEError(f"CouplingLabelMissing: {item['id']}, {reference['set']}")
-        values = [set(reading["labels"][item["axis"]] for reading in
-                      active[(ref["set"], ref["version"])]["readings"])
-                  for ref in item["sets"]]
-        if not set.intersection(*values):
-            raise VEError(f"CouplingLabelMissing: {item['id']}, {item['sets'][0]['set']}")
-    if couplings and not coupled_choices(active_reading_sets(sets), couplings, limit=1)[0]:
-        raise VEError("CouplingUnsatisfiable: " + ", ".join(sorted(ids)))
+    if couplings:
+        plan_choices(active_reading_sets(sets), couplings=couplings, limit=1,
+                     document_validation=True)
     return ids
-
-
-def coupled_choices(sets, couplings, *, limit=64):
-    """Enumerate only compatible complete choices, stopping past the budget."""
-    constraints = []
-    for item in couplings:
-        constraints.append((item["axis"], tuple(ref["set"] for ref in item["sets"])))
-    choices = []
-    selected = {}
-    def visit(index):
-        if len(choices) > limit:
-            return
-        if index == len(sets):
-            choices.append(dict(selected))
-            return
-        current = sets[index]
-        for number, reading in enumerate(current["readings"]):
-            label_map = reading.get("labels", {})
-            if any(current["id"] in members and any(
-                    selected[other][1].get("labels", {}).get(axis) != label_map.get(axis)
-                    for other in members if other in selected)
-                   for axis, members in constraints):
-                continue
-            selected[current["id"]] = (number, reading)
-            visit(index + 1)
-            selected.pop(current["id"])
-            if len(choices) > limit:
-                return
-    visit(0)
-    return ([{name: pair[0] for name, pair in choice.items()} for choice in choices],
-            len(choices) > limit)
 
 
 def validate_narrowings(values, reading_sets, unit_ids):
@@ -428,38 +389,31 @@ def validate_narrowings(values, reading_sets, unit_ids):
     return ids
 
 
-def undetermined_units(sets, couplings=()):
-    """The units whose sets still hold more than one candidate consistent with
-    one value per coupled component (6.2): candidates agreeing on every coupled
-    axis of their set are chosen independently, so they stay open."""
-    axes = {}
-    for item in couplings:
-        for reference in item["sets"]:
-            axes.setdefault(reference["set"], set()).add(item["axis"])
-    units = []
-    for reading_set in sets:
-        keys = sorted(axes.get(reading_set["id"], ()))
-        groups = Counter(tuple(reading.get("labels", {}).get(axis) for axis in keys)
-                         for reading in reading_set["readings"])
-        if max(groups.values(), default=0) > 1:
-            units.append(reading_set.get("unit", reading_set["id"]))
-    return units
+def undetermined_units(sets):
+    """The units of independent sets that still have several readings."""
+    return [s.get("unit", s["id"]) for s in sets if len(s["readings"]) > 1]
 
 
-def plan_choices(sets, *, limit=64, couplings=()):
+def plan_choices(sets, *, limit=64, couplings=(), document_validation=False):
     """Return a sound checking route; no verdict is inferred by this planner."""
     if not sets:
         return {"route": "single", "choices": [{}]}
     if couplings:
-        choices, over = coupled_choices(sets, couplings, limit=limit)
-        if not choices:
-            # 6.2: a family of couplings (after any narrowing) that admits no
-            # complete choice is an error, never a vacuous verdict over zero choices.
-            raise VEError("CouplingUnsatisfiable: " + ", ".join(sorted(item["id"] for item in couplings)))
-        return ({"route": "UNKNOWN", "budget": {"max_choices": limit},
-                 "choice_count": len(choices), "units": undetermined_units(sets, couplings)} if over else
-                {"route": "enumerate", "choices": choices,
-                 "conditional_on": [f"coupling:{item['id']}" for item in couplings]})
+        from .backends.relay import decide
+        case = {"id": "readings-plan", "kind": "plan", "limit": limit,
+                "document_validation": document_validation,
+                "set_meta": [{"id": s["id"], "version": s["version"],
+                              "unit": s.get("unit", s["id"]),
+                              "readings": [{"labels": r.get("labels", {})} for r in s["readings"]]}
+                             for s in sets],
+                "couplings": list(couplings)}
+        row = decide("readings-choices", [case])[0]
+        if row["route"] == "UNKNOWN":
+            return {key: row[key] for key in ("route", "budget", "choice_count", "units")}
+        names = [s["id"] for s in sets]
+        return {"route": "enumerate",
+                "choices": [dict(zip(names, choice, strict=True)) for choice in row["choices"]],
+                "conditional_on": row["conditional_on"]}
     if all(all(r["kind"] == "asserted" and r["content"] is not None for r in s["readings"])
            for s in sets):
         return {"route": "assertion-disjunction", "choices": None,
@@ -494,11 +448,10 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
     Every positive proof is replayed by the certificate checker, and every
     negative claim has an independently checked finite model. Failure of
     bounded search means UNKNOWN. We never infer NONE from proof failure.
-    Lean owns the operation under every authority (lean-first batch 13b): the
-    replays and model checks run on Lean and its `readings` mode must confirm
-    an ALL, NONE or SOME verdict from its evidence
-    (`lean/VE/Service/Readings.lean`). Environments outside that mode's scope
-    keep the retained Python, a recorded scope gap.
+    Lean owns the operation under every authority: its `readings` mode checks
+    independent choices, and `readings-choices` checks complete coupled or
+    joint choices. Environments outside those modes' scope retain the Python
+    path as a recorded scope gap.
     """
     from .backends.dispatch import owned
     options = {"max_steps": max_steps, "max_domain_size": max_domain_size, "max_models": max_models,
@@ -510,12 +463,6 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
 
     if not _lean_readings_scope(env):
         return python()
-    if couplings or joint_choices is not None:
-        # Coupled choices (docs/spec/rights-PLAN.md) and discourse joint choices
-        # (docs/spec/discourse.md) have no Lean interface yet: every per-choice
-        # certificate and model is checked on Lean, and the enumeration and its
-        # verdict stay Python's (the stage-2c fallback retained until batch 14d).
-        return owned("readings", python)
     return owned("readings", lambda: _check_readings_lean(env, sets, conclusion_ast, options))
 
 
@@ -525,7 +472,10 @@ def _check_readings_lean(env, sets, conclusion_ast, options):
     from .errors import CheckerUnavailable
     evidence = {}
     with pinned("lean"):
-        result = _check_readings_python(env, sets, conclusion_ast, evidence=evidence, **options)
+        result = _check_readings_python(env, sets, conclusion_ast, evidence=evidence,
+                                        verify_choices=True, **options)
+    if options["couplings"] or options["joint_choices"] is not None:
+        return result
     verdict = result["verdict"]
     if verdict not in ("ALL", "NONE", "SOME"):
         return result  # UNKNOWN asserts nothing
@@ -544,9 +494,27 @@ def _check_readings_lean(env, sets, conclusion_ast, options):
     return result
 
 
+def _choice_verdict(env, sets, conclusion_ast, fixed, route, rows, *, couplings=(), joint=()):
+    """A search proposal; Lean checks every row, completeness, and the fold."""
+    from .backends.relay import decide
+    from .errors import CheckerUnavailable
+    case = {"id": "readings-choices", "environment": env.to_dict(), "fixed": list(fixed),
+            "sets": [[r["content"] for r in s["readings"]] for s in sets],
+            "set_meta": [{"id": s["id"], "version": s["version"],
+                          "readings": [{"labels": r.get("labels", {})} for r in s["readings"]]}
+                         for s in sets],
+            "conclusion": conclusion_ast, "route": route, "couplings": list(couplings),
+            "joint_choices": list(joint), "choice_evidence": rows}
+    try:
+        return decide("readings-choices", [case])[0]["verdict"]
+    except VEError as exc:
+        raise CheckerUnavailable("CheckerUnavailable: Lean refused generated reading choices: "
+                                 + exc.message) from None
+
+
 def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_size=2,
                            max_models=10_000, max_evaluations=100_000, fixed=(), joint_choices=None,
-                           couplings=(), evidence=None):
+                           couplings=(), evidence=None, verify_choices=False):
     """`evidence`, when given, receives the verdict's evidence on the wire."""
     from .ast import Or
     from .entailment import check_entailment_certificate, prove_entailment
@@ -557,18 +525,32 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
         if joint_choices.get("status") == "UNKNOWN":
             return {"verdict": "UNKNOWN", "route": "joint-choices",
                     "budget": {"max_choices": joint_choices["budget"]}}
+        # Joint choices name active open sets. An authored singleton assertion
+        # is fixed in every choice, while a non-assertion authored reading
+        # contributes no formula. Use the same premises for search and Lean.
+        choice_sets = [s for s in sets if s.get("status") != "authored"]
+        fixed = [*fixed, *(s["readings"][0]["content"] for s in sets
+                           if s.get("status") == "authored"
+                           and s["readings"][0]["kind"] == "asserted"
+                           and s["readings"][0]["content"] is not None)]
         if not all(all(r["kind"] == "asserted" and r["content"] is not None
-                       for r in s["readings"]) for s in sets):
+                       for r in s["readings"]) for s in choice_sets):
             return {"verdict": "UNKNOWN", "route": "joint-choices",
                     "reason": "non-assertion elaborator is not yet available"}
         conclusion = formula_from_data(env, conclusion_ast)
         fixed_formulas = [formula_from_data(env, ast) for ast in fixed]
-        formulas = {f"{s['id']}@{s['version']}": [formula_from_data(env, r["content"])
-                                                   for r in s["readings"]] for s in sets}
-        positive, negative = [], []
-        unknown = False
+        # Keep source order for both proof premises and Lean wire vectors: a
+        # mapping's insertion order is not part of the choice semantics.
+        choice_keys = [f"{s['id']}@{s['version']}" for s in choice_sets]
+        formulas = [[formula_from_data(env, r["content"]) for r in s["readings"]]
+                    for s in choice_sets]
+        positive, negative, choice_evidence = [], [], []
         for choice in joint_choices["choices"]:
-            premises = [*fixed_formulas, *(formulas[key][index] for key, index in choice.items())]
+            if set(choice) != set(choice_keys):
+                raise VEError("InvalidCompatibility: joint choice does not name the open reading sets")
+            selection = [choice[key] for key in choice_keys]
+            premises = [*fixed_formulas, *(formulas[i][index]
+                                           for i, index in enumerate(selection))]
             proof = prove_entailment(env, premises, conclusion, max_steps=max_steps)
             if proof.status == "Found" and check_entailment_certificate(
                     env, premises, conclusion, proof.certificate, max_steps=max_steps).valid:
@@ -577,6 +559,8 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
                                      env, premises, max_proof_steps=max_steps,
                                      max_domain_size=max_domain_size, max_models=max_models,
                                      max_evaluations=max_evaluations)})
+                choice_evidence.append({"choice": selection,
+                                        "certificate": proof.certificate})
                 continue
             model = find_countermodel(env, premises, conclusion,
                                       max_domain_size=max_domain_size, max_models=max_models,
@@ -585,19 +569,27 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
                     env, premises, conclusion, model.model,
                     max_evaluations=max_evaluations).valid:
                 negative.append({"choice": choice, "model_id": model.model.model_id})
+                choice_evidence.append({"choice": selection,
+                                        "model": model.model.to_dict()})
             else:
-                unknown = True
-        if unknown:
+                choice_evidence.append({"choice": selection,
+                                        "status": "UNKNOWN"})
+        verdict = (_choice_verdict(env, choice_sets, conclusion_ast, fixed, "joint-choices", choice_evidence,
+                                   joint=[row["choice"] for row in choice_evidence]) if verify_choices else
+                   "UNKNOWN" if len(positive) + len(negative) != len(choice_evidence) else
+                   "SOME" if positive and negative else
+                   "ALL" if positive and len(positive) == len(choice_evidence) else
+                   "NONE" if negative and len(negative) == len(choice_evidence) else "UNKNOWN")
+        if verdict == "UNKNOWN":
             return {"verdict": "UNKNOWN", "route": "joint-choices",
                     "reason": "a compatible choice could not be classified"}
-        if positive and negative:
+        if verdict == "SOME":
             return {"verdict": "SOME", "route": "joint-choices", "proof": positive[0],
                     "countermodel": negative[0]}
-        if positive:
+        if verdict == "ALL":
             return {"verdict": "ALL", "route": "joint-choices", "proofs": positive}
         return {"verdict": "NONE", "route": "joint-choices", "countermodels": negative}
 
-    plan = plan_choices(sets)
     plan = plan_choices(sets, couplings=couplings)
     if plan["route"] == "UNKNOWN":
         return {"verdict": "UNKNOWN", "route": plan["route"], "budget": plan["budget"],
@@ -640,6 +632,7 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
 
     if couplings:
         outcomes = []
+        choice_evidence = []
         for choice in plan["choices"]:
             premises = [*fixed_formulas, *(formulas[i][choice[s["id"]]]
                                             for i, s in enumerate(sets))]
@@ -660,11 +653,16 @@ def _check_readings_python(env, sets, conclusion_ast, *, max_steps=10_000, max_d
                 row["vacuous"] = (True if row["premises"]["status"] == "INCONSISTENT" else
                                   False if row["premises"]["status"] == "model" else None)
             outcomes.append(row)
+            selection = [choice[s["id"]] for s in sets]
+            choice_evidence.append({"choice": selection,
+                                    **({"certificate": certificate} if certificate is not None else
+                                       {"model": models[model_id]} if model_id is not None else
+                                       {"status": "UNKNOWN"})})
         positive = [row for row in outcomes if "certificate" in row]
         negative = [row for row in outcomes if "model_id" in row]
-        if not outcomes:
-            raise VEError("CouplingUnsatisfiable: " + ", ".join(sorted(item["id"] for item in couplings)))
-        verdict = ("SOME" if positive and negative else
+        verdict = (_choice_verdict(env, sets, conclusion_ast, fixed, "coupled-choices",
+                                   choice_evidence, couplings=couplings) if verify_choices else
+                   "SOME" if positive and negative else
                    "ALL" if len(positive) == len(outcomes) else
                    "NONE" if len(negative) == len(outcomes) else "UNKNOWN")
         vacuous = [row["vacuous"] for row in positive]
