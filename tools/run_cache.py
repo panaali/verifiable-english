@@ -18,20 +18,21 @@ a key of everything the run can read:
 An entry is named by the static key and holds the dynamic inputs' digests; it is used only when every one
 of them is unchanged, so a stale key or a changed read re-runs. Only a run that `ok` accepts is stored, and
 only when the static inputs did not change while it ran. `VE_RUN_CACHE=off` turns the cache off; a path
-puts it there. By default it is in the git common directory, shared by the checkout's worktrees.
-`tests/test_run_cache.py` changes each kind of keyed input and checks that the entry is not used.
+puts it there. By default it is in the git common directory, shared by the checkout's worktrees; the store
+(directory, entry names, atomic writes, pruning) is `tools/cache_store.py`'s. `tests/test_run_cache.py` changes each kind of keyed input and checks that the
+entry is not used.
 """
 from __future__ import annotations
 
 from collections.abc import Callable
-import gzip
-import hashlib
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
+
+from tools import cache_store
+from tools.cache_store import file_digest, listing_digest
 
 ROOT = Path(__file__).resolve().parents[1]
 # 2: an entry of a run that read history binds its commit, runner and git (`history_inputs`); an entry of
@@ -51,33 +52,7 @@ PLUGIN = "tests.read_recorder"
 def cache_directory(root: Path = ROOT) -> Path | None:
     """Where entries are kept (`VE_RUN_CACHE`, else the git common directory's `ve-run-cache`), or None
     when the cache is off."""
-    setting = os.environ.get("VE_RUN_CACHE")
-    if setting == "off":
-        return None
-    if setting:
-        return Path(setting)
-    from tests.subprocesses import HANG_TIMEOUT
-    found = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd=root,
-                           capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    return Path(found.stdout.strip()) / "ve-run-cache" if found.returncode == 0 and found.stdout.strip() else None
-
-
-def file_digest(path: Path) -> str:
-    if not path.is_file():
-        return "absent"
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def listing_digest(path: Path) -> str:
-    try:
-        names = sorted(os.listdir(path))
-    except OSError:
-        return "absent"
-    return hashlib.sha256("\n".join(names).encode("utf-8", "surrogateescape")).hexdigest()
+    return cache_store.directory(root)
 
 
 def rust_binary(root: Path, environment: dict) -> Path:
@@ -119,7 +94,7 @@ def run_settings(root: Path, environment: dict) -> dict[str, str]:
 
 
 def key_of(inputs: dict[str, str]) -> str:
-    return hashlib.sha256(json.dumps([FORMAT, sorted(inputs.items())]).encode()).hexdigest()
+    return cache_store.key_of(FORMAT, inputs)
 
 
 def history_inputs(root: Path) -> dict[str, str] | None:
@@ -173,22 +148,6 @@ def _reads(prefix: Path) -> dict[str, set]:
     return found
 
 
-def _write(path: Path, entry: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(f"{path.name}.{os.getpid()}.tmp")
-    with gzip.open(temporary, "wt") as handle:
-        json.dump(entry, handle)
-    temporary.replace(path)
-    entries = []
-    for found in path.parent.glob("*.json.gz"):
-        try:
-            entries.append((found.stat().st_mtime, found))
-        except OSError:  # removed by another run meanwhile
-            pass
-    for _, stale in sorted(entries, reverse=True)[KEEP:]:
-        stale.unlink(missing_ok=True)
-
-
 def cached_run(output: Path, *, starts: list[str], settings: dict, environment: dict,
                run: Callable[[dict], subprocess.CompletedProcess], ok: Callable[[subprocess.CompletedProcess], bool],
                root: Path = ROOT) -> tuple[subprocess.CompletedProcess, str]:
@@ -200,16 +159,12 @@ def cached_run(output: Path, *, starts: list[str], settings: dict, environment: 
         return run(dict(environment)), "off"
     inputs = static_inputs(root, starts, settings, environment)
     key = key_of(inputs)
-    entry_path = directory / f"{key}.json.gz"
-    try:
-        with gzip.open(entry_path, "rt") as handle:
-            entry = json.load(handle)
-    except (OSError, ValueError, EOFError):
-        entry = None
-    if isinstance(entry, dict) and entry.get("format") == FORMAT and entry.get("key") == key \
+    entry_path = cache_store.entry_path(directory, key)
+    entry = cache_store.load(entry_path)
+    if entry is not None and entry.get("format") == FORMAT and entry.get("key") == key \
             and isinstance(entry.get("dynamic"), dict) and current(root, entry["dynamic"]):
         output.write_text(entry["output"])
-        entry_path.touch()
+        cache_store.touch(entry_path)
         return subprocess.CompletedProcess(entry["args"], entry["returncode"], entry["stdout"], entry["stderr"]), "hit"
     with tempfile.TemporaryDirectory(prefix="ve-reads-") as scratch:
         prefix = Path(scratch) / "reads"
@@ -219,7 +174,8 @@ def cached_run(output: Path, *, starts: list[str], settings: dict, environment: 
     dynamic = dynamic_inputs(root, reads)
     if ok(result) and reads["files"] and dynamic is not None \
             and key_of(static_inputs(root, starts, settings, environment)) == key:
-        _write(entry_path, {"format": FORMAT, "key": key, "static": inputs, "dynamic": dynamic,
-                            "output": output.read_text(), "args": [str(a) for a in result.args],
-                            "returncode": result.returncode, "stdout": result.stdout, "stderr": result.stderr})
+        cache_store.store(entry_path, {"format": FORMAT, "key": key, "static": inputs, "dynamic": dynamic,
+                                       "output": output.read_text(), "args": [str(a) for a in result.args],
+                                       "returncode": result.returncode, "stdout": result.stdout,
+                                       "stderr": result.stderr}, KEEP)
     return result, "miss"

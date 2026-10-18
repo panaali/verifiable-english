@@ -132,6 +132,7 @@ def diagText (A : AltDoc) (M : VE.FiniteModel String) (r : String) : String :=
   | .undischargeable d => s!"UNDISCHARGEABLE {d}"
   | .jointlyUndischargeable ds => s!"JOINTLY-UNDISCHARGEABLE {ds}"
   | .clear as => s!"clear {as}"
+  | .unsettled as => s!"UNSETTLED {as}"
 
 /-! ## Well-formedness -/
 
