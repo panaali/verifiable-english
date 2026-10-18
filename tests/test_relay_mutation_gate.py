@@ -20,6 +20,7 @@
 """
 from __future__ import annotations
 
+import importlib
 import inspect
 import json
 from pathlib import Path
@@ -438,3 +439,36 @@ def test_a_reader_without_its_row_count_check_fails_the_gate(built, without_row_
     for route in FAST_ONE_SHOT:
         assert any(f["route"] == route and f["path"] == "." and f["mutation"] in ("empty", "duplicate")
                    for f in report["findings"]), (route, report["failures"])
+
+
+@pytest.fixture
+def without_trace_binding(monkeypatch):
+    """`ve.evaluate` with its trace bindings' request binding removed (lf-18 review F1's in-memory mutant): a
+    binding names any sort and entity."""
+    module = importlib.import_module("ve.evaluate")  # the module: `ve.evaluate` is also the function
+    monkeypatch.setattr(module, "_bound_binding", lambda item, index, entities: (
+        isinstance(item, dict) and set(item) == {"debruijn_index", "sort", "local_id"}
+        and item["debruijn_index"] == index))
+
+
+def test_the_metered_fixtures_ask_for_a_trace_and_the_gate_reaches_its_bindings(built):
+    """lf-18 review F1: no metered fixture asked for a trace, and the gate stopped 5 levels below a service row,
+    so the trace bindings were never mutated. Now a fixture asks for one and its bindings are rebound."""
+    cases = [row[2] for row in G.load_cases() if row[:2] == ["service", "metered"]]
+    assert any(case.get("trace") is True and case["kind"] == "evaluate-budgeted" for case in cases)
+    case = next(case for case in cases if case.get("trace") is True)
+    [answer] = G._service_answers(G.DEFAULT_EXECUTABLE, "metered", [json.dumps(case, separators=(",", ":"))])
+    found = G.mutants(answer, G._strings(case), {}, envelope=G.ENVELOPE["service"])
+    paths = {m.pattern() for m, _ in found if m.kind == "rebind"}
+    binding = "results/*/result/evaluation/explanation/*/bindings/*/"
+    assert {binding + "sort", binding + "local_id"} <= paths
+
+
+def test_a_metered_reader_without_its_trace_binding_fails_the_gate(built, without_trace_binding):
+    """lf-18 review F1: with the binding check removed, a trace naming a sort and an entity the request's model
+    does not hold is accepted, and the gate fails on both fields."""
+    report = G.run_gate({"service:metered"})
+    failures = "\n".join(report["failures"])
+    for field in ("sort", "local_id"):
+        assert re.search(rf"^accepted service:metered rebind results/\*/result/evaluation/explanation/\*/bindings/\*/"
+                         rf"{field}\b", failures, re.M), failures

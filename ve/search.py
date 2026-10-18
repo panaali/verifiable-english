@@ -224,13 +224,19 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
     """
     from .ast import _to_data
     from .backends.lean_runner import metered_environment, metered_nonvacuity
-    row = metered_nonvacuity({"id": "non-vacuity", "kind": "non-vacuity", "environment": metered_environment(env),
-                              "model": model.to_dict(), "formula": _to_data(formula), "max_evaluations": maximum,
-                              "semantic_nonvacuity": semantic})
+    case = {"id": "non-vacuity", "kind": "non-vacuity", "environment": metered_environment(env),
+            "model": model.to_dict(), "formula": _to_data(formula), "max_evaluations": maximum,
+            "semantic_nonvacuity": semantic}
+    return read_nonvacuity(metered_nonvacuity(case), case)
+
+
+def read_nonvacuity(row: dict, case: dict) -> bool:
+    """A `non-vacuity` row of the `metered` mode bound to its case: its count within the case's budget
+    (how `_nonvacuous` reads it; the relay mutation gate reads a mutated answer the same way)."""
     if row["status"] != "ok":
         raise CheckerUnavailable(f"CheckerUnavailable: Lean refused a search witness's non-vacuity check: "
                                  f"{row['error']}")
-    if not 0 <= row["evaluations"] <= maximum or row["suitable"] and row["exhausted"]:
+    if not 0 <= row["evaluations"] <= case["max_evaluations"] or row["suitable"] and row["exhausted"]:
         raise CheckerUnavailable("CheckerUnavailable: malformed Lean non-vacuity result")
     return row["suitable"] and not row["exhausted"]
 

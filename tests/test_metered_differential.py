@@ -50,15 +50,16 @@ def run(cases):
     return rows
 
 
-def public(row, kind):
+def public(row, case):
     """The public part of a Lean row; an error is compared as an error."""
+    kind = case["kind"]
     if row.get("status") != "ok":
         return "error"
     if kind == "evaluate-budgeted":
         # The explanation is preorder rows since lean-first batch 18; the public tree is rebuilt from them.
         evaluation = row["evaluation"]
         rows = evaluation["explanation"]
-        return {**evaluation, "explanation": None if rows is None else _explanation(rows).to_dict()}
+        return {**evaluation, "explanation": None if rows is None else _explanation(rows, case["model"]["domains"]).to_dict()}
     return [row["suitable"], row["evaluations"], row["exhausted"]]
 
 
@@ -109,9 +110,9 @@ class Collector:
 
     def mismatches(self):
         rows = run(self.cases)
-        return [(case, public(row, case["kind"]), answer)
+        return [(case, public(row, case), answer)
                 for case, row, answer in zip(self.cases, rows, self.expected, strict=True)
-                if public(row, case["kind"]) != answer]
+                if public(row, case) != answer]
 
 
 def boundaries(full):
