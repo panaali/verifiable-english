@@ -456,7 +456,7 @@ wording, printed numbers and numerals, and 11.2's form of value words. -/
   some "The a is more than the b."
 #guard VE.Calc.English.renderClaim letters (.compare ⟨.le, true⟩ (.val "a") (.val "b")) =
   some "The a is at least the b."
--- A comparison with no phrase has no line.
+-- A comparison with no phrase (equality with `swap` set) has no line.
 #guard (VE.Calc.English.renderClaim letters (.compare ⟨.eq, true⟩ (.val "a") (.val "b"))).isNone
 #guard VE.Calc.English.renderClaim letters (.rounds .down (.val "a") ⟨29, 2⟩) =
   some "The a is 0.29 when rounded down to two decimal places."
