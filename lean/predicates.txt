@@ -85,6 +85,8 @@ module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
 module VE.Alternatives.Examples
+module VE.Alternatives.FillExamples
+module VE.Alternatives.FillWire
 module VE.Alternatives.Followable
 module VE.Alternatives.Inline
 module VE.Alternatives.Replay
@@ -570,6 +572,7 @@ ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
+VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline
 VE.Alternatives.Avail@VE.Alternatives.Followable
 VE.Alternatives.BaseAdmissibleAlt@VE.Alternatives.Background
