@@ -1,0 +1,233 @@
+[
+ {
+  "predicate": "open_problem",
+  "wording": "{0} is unsolved",
+  "selected": "{0} is unsolved",
+  "accepted": true,
+  "lint": [],
+  "existing_wordings_changed": {},
+  "parses_to": [
+   [
+    "exists",
+    "entity",
+    [
+     "unary",
+     "open_problem",
+     [
+      "var",
+      0
+     ]
+    ]
+   ]
+  ],
+  "rendered": "There is a thing that is unsolved"
+ },
+ {
+  "predicate": "deployment_context",
+  "wording": "{0} is a deployment context",
+  "selected": "{0} is classified as \"deployment_context\"",
+  "accepted": false,
+  "lint": [
+   "LOGICAL_WORD",
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a deployment context'. Nearest declared wordings: 'is classified as \"deployment_context\"'; 'is information'; 'thing'."
+ },
+ {
+  "predicate": "existing_deployment_context",
+  "wording": "{0} is an existing deployment context",
+  "selected": "{0} is classified as \"existing_deployment_context\"",
+  "accepted": false,
+  "lint": [
+   "LOGICAL_WORD",
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is an existing deployment context'. Nearest declared wordings: 'is classified as \"existing_deployment_context\"'; 'is classified as \"creating_malicious_code\"'; 'is classified as \"creating_a_cyberweapon\"'."
+ },
+ {
+  "predicate": "in_use_deployment_context",
+  "wording": "{0} is a deployment context in use",
+  "selected": "{0} is classified as \"in_use_deployment_context\"",
+  "accepted": false,
+  "lint": [
+   "LOGICAL_WORD",
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a deployment context in use'. Nearest declared wordings: 'is classified as \"in_use_deployment_context\"'; 'instance of Claude'; 'is classified as \"compliance_unsafe\"'."
+ },
+ {
+  "predicate": "deployment_context_in_use",
+  "wording": "{0} is deployed",
+  "selected": "{0} is deployed",
+  "accepted": true,
+  "lint": [],
+  "existing_wordings_changed": {},
+  "parses_to": [
+   [
+    "exists",
+    "entity",
+    [
+     "unary",
+     "deployment_context_in_use",
+     [
+      "var",
+      0
+     ]
+    ]
+   ]
+  ],
+  "rendered": "There is a thing that is deployed"
+ },
+ {
+  "predicate": "novel_kind",
+  "wording": "{0} is a novel kind of thing",
+  "selected": "{0} is classified as \"novel_kind\"",
+  "accepted": false,
+  "lint": [
+   "LOGICAL_WORD",
+   "SORT_NOUN",
+   "SYMBOL_COLLISION",
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a novel kind of thing'. Nearest declared wordings: 'is classified as \"novel_kind\"'; 'thing'; 'is classified as \"compliance_unethical\"'."
+ },
+ {
+  "predicate": "novel_entity",
+  "wording": "{0} is novel",
+  "selected": "{0} is novel",
+  "accepted": true,
+  "lint": [],
+  "existing_wordings_changed": {},
+  "parses_to": [
+   [
+    "exists",
+    "entity",
+    [
+     "unary",
+     "novel_entity",
+     [
+      "var",
+      0
+     ]
+    ]
+   ]
+  ],
+  "rendered": "There is a thing that is novel"
+ },
+ {
+  "predicate": "genuine_helpfulness",
+  "wording": "{0} constitutes genuine helpfulness",
+  "selected": "{0} is classified as \"genuine_helpfulness\"",
+  "accepted": false,
+  "lint": [
+   "TEMPLATE_SHAPE"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'constitutes genuine helpfulness'. Nearest declared wordings: 'is classified as \"genuine_helpfulness\"'; 'is classified as \"genuine_ambiguity\"'; 'is classified as \"compliance_against_guidelines\"'."
+ },
+ {
+  "predicate": "is_genuinely_helpful",
+  "wording": "{0} is genuinely helpful",
+  "selected": "{0} is classified as \"is_genuinely_helpful\"",
+  "accepted": false,
+  "lint": [
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is genuinely helpful'. Nearest declared wordings: 'is classified as \"is_genuinely_helpful\"'; 'is classified as \"genuine_ambiguity\"'; 'has the recorded relation \"knowingly_engages_1\" to {1}'."
+ },
+ {
+  "predicate": "genuine_helpfulness_b",
+  "wording": "{0} is helpful",
+  "selected": "{0} is helpful",
+  "accepted": true,
+  "lint": [],
+  "existing_wordings_changed": {},
+  "parses_to": [
+   [
+    "exists",
+    "entity",
+    [
+     "unary",
+     "genuine_helpfulness_b",
+     [
+      "var",
+      0
+     ]
+    ]
+   ]
+  ],
+  "rendered": "There is a thing that is helpful"
+ },
+ {
+  "predicate": "genuine_helpfulness_c",
+  "wording": "{0} counts as genuine helpfulness",
+  "selected": "{0} is classified as \"genuine_helpfulness_c\"",
+  "accepted": false,
+  "lint": [
+   "TEMPLATE_SHAPE"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'counts as genuine helpfulness'. Nearest declared wordings: 'is classified as \"genuine_helpfulness_c\"'; 'is classified as \"genuine_ambiguity\"'; 'is classified as \"compliance_unethical\"'."
+ },
+ {
+  "predicate": "genuine_helpfulness_d",
+  "wording": "{0} is part of genuine helpfulness",
+  "selected": "{0} is classified as \"genuine_helpfulness_d\"",
+  "accepted": false,
+  "lint": [
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is part of genuine helpfulness'. Nearest declared wordings: 'is classified as \"genuine_helpfulness_d\"'; 'is classified as \"genuine_ambiguity\"'; 'may give Claude {1}'."
+ },
+ {
+  "predicate": "genuine_helpfulness_e",
+  "wording": "{0} makes up genuine helpfulness",
+  "selected": "{0} is classified as \"genuine_helpfulness_e\"",
+  "accepted": false,
+  "lint": [
+   "TEMPLATE_SHAPE"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'makes up genuine helpfulness'. Nearest declared wordings: 'is classified as \"genuine_helpfulness_e\"'; 'may give Claude {1}'; 'is classified as \"genuine_ambiguity\"'."
+ },
+ {
+  "predicate": "genuine_helpfulness_f",
+  "wording": "{0} is truly helpful",
+  "selected": "{0} is classified as \"genuine_helpfulness_f\"",
+  "accepted": false,
+  "lint": [
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is truly helpful'. Nearest declared wordings: 'claude'; 'thing'; 'is classified as \"input_is_persona\"'."
+ },
+ {
+  "predicate": "genuine_helpfulness_g",
+  "wording": "{0} is genuine help",
+  "selected": "{0} is classified as \"genuine_helpfulness_g\"",
+  "accepted": false,
+  "lint": [
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is genuine help'. Nearest declared wordings: 'thing'; 'is classified as \"genuine_ambiguity\"'; 'is classified as \"genuine_helpfulness_g\"'."
+ },
+ {
+  "predicate": "value_other_than_helpfulness",
+  "wording": "{0} is a value other than helpfulness",
+  "selected": "{0} is classified as \"value_other_than_helpfulness\"",
+  "accepted": false,
+  "lint": [
+   "LOGICAL_WORD",
+   "UNARY_MODIFIER"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a value other than helpfulness'. Nearest declared wordings: 'is classified as \"value_other_than_helpfulness\"'; 'may do the generation in {1}'; 'must seek clarification in {1}'."
+ }
+]
