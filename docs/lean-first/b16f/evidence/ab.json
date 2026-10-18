@@ -1,0 +1,252 @@
+{
+  "totals": {
+    "same": 100386,
+    "unavailable": 8
+  },
+  "records": {
+    "conformance/lean": 19806,
+    "conformance/python": 19806,
+    "discourse/default": 6350,
+    "document/default": 3632,
+    "norm_defaults/default": 2020,
+    "pilots/default": 547,
+    "probe/lean": 9435,
+    "probe/python": 9435,
+    "quantity/lean": 12863,
+    "quantity/python": 12863,
+    "readings/default": 1137,
+    "rights/default": 2500
+  },
+  "unavailable_both": {
+    "pilots/default": 8
+  },
+  "differences": [
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "head": {
+        "exit": 5,
+        "stderr": [],
+        "stdout": {
+          "error": {
+            "code": "CheckerUnavailable",
+            "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+          },
+          "status": "CheckerUnavailable"
+        }
+      },
+      "listed": true
+    },
+    {
+      "corpus": "pilots",
+      "authority": "default",
+      "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
+      "op": "document_check",
+      "class": "unavailable",
+      "base": {
+        "timeout": 600
+      },
+      "head": {
+        "timeout": 600
+      },
+      "listed": true
+    }
+  ],
+  "unlisted": 0,
+  "base_sha256": "90bf42e49402772ef56e8aa189a98b49bbbfc5410643558b77d12e4496dc31fb",
+  "head_sha256": "7449f3b5feac04d4bc0065b1a1d37e49aa2ed3b71cc711f5809c681135979151"
+}
