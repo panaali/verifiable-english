@@ -7,13 +7,13 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | | count |
 |---|---:|
 | leaves:bound | 243 |
-| leaves:closed domain | 247 |
-| leaves:none | 1269 |
+| leaves:closed domain | 252 |
+| leaves:none | 1321 |
 | modes | 36 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 868 |
-| today:shape | 490 |
+| today:not probed | 920 |
+| today:shape | 495 |
 | today:unbound | 137 |
 | answers | 536 |
 | probes | 10204 |
@@ -68,7 +68,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `ve/readings_s2_english.py:named_result` | ve/readings_s2_english.py:415 | readings-route | 2 | 0 | no |
 | `ve/readings_s2_wording.py:name` | ve/readings_s2_wording.py:71 | readings-route | 1 | 0 | no |
 | `ve/readings_sup.py:slot_label` | ve/readings_sup.py:403 | readings-route | 1 | 0 | no |
-| `ve/readings_verdicts.py:conflict` | ve/readings_verdicts.py:341 | readings-route | 0 | 1 | yes |
+| `ve/readings_verdicts.py:conflict` | ve/readings_verdicts.py:341 (changed since the probe) | readings-route | 0 | 1 | yes |
 | `ve/reports.py:__init__` | ve/reports.py:45; ve/reports.py:39 | reports | 33 | 0 | no |
 | `ve/reports.py:_load_statuses` | ve/reports.py:52 | reports | 0 | 3 | yes |
 | `ve/rights.py:__init__` | ve/rights.py:199 (changed since the probe); ve/rights.py:190 (changed since the probe); ve/rights.py:192 (changed since the probe); ve/rights.py:166 | rights | 19 | 4 | no |
@@ -2133,6 +2133,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/dead/*/index` | integer | none |  | minimum | 0 | not probed |
 | `/dead/*/set` | string | none |  |  | 0 | not probed |
 | `/dead_readings/*/finding` | string | none |  | pattern | 0 | not probed |
+| `/dead_readings/*/finding` | string | none |  |  | 0 | not probed |
 | `/dead_readings/*/index` | integer | none |  | minimum | 0 | not probed |
 | `/dead_readings/*/set` | string | none |  |  | 0 | not probed |
 | `/decided_units/*` | string | none |  |  | 0 | not probed |
@@ -2219,6 +2220,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/id` | any | bound | x-echo |  | 48 | shape |
 | `/id` | string | bound | x-equals |  | 48 | shape |
 | `/labels/*` | string | none |  |  | 1 | not probed |
+| `/model_proposals/*/*/0` | string | none |  |  | 0 | not probed |
+| `/model_proposals/*/*/1` | integer | none |  | minimum | 0 | not probed |
 | `/names/*/candidates/*/id` | string | none |  |  | 22 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
 | `/names/*/candidates/*/index` | integer | none |  | minimum | 22 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
 | `/names/*/candidates/*/names/*/0` | string | none |  |  | 24 | hand: `ve/readings_route.py:_need`, `ve/readings_route.py:elaborate` |
@@ -2251,11 +2254,18 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/per_choice/*/shown/{}/relations/{}/*/*` | string | none |  |  | 0 | not probed |
 | `/per_choice/*/status_text` | string | none |  |  | 0 | not probed |
 | `/question` | string | closed domain | const |  | 2 | shape |
+| `/question` | string | closed domain | enum |  | 2 | shape |
 | `/reading_premises/*` | string | none |  |  | 5 | later Lean request |
 | `/restrictions/*` | string | none |  |  | 0 | not probed |
 | `/result/assumed/*/0` | string | none |  |  | 0 | not probed |
 | `/result/assumed/*/1` | integer | none |  | minimum | 0 | not probed |
 | `/result/budget/max_choices` | integer | none |  | minimum | 0 | not probed |
+| `/result/budget/max_domain_size` | integer | none |  | minimum | 0 | not probed |
+| `/result/budget/max_evaluations` | integer | none |  | minimum | 0 | not probed |
+| `/result/budget/max_models` | integer | none |  | minimum | 0 | not probed |
+| `/result/budget/max_steps` | integer | none |  | minimum | 0 | not probed |
+| `/result/candidates/*/choice/*/0` | string | none |  |  | 0 | not probed |
+| `/result/candidates/*/choice/*/1` | integer | none |  | minimum | 0 | not probed |
 | `/result/candidates/*/index` | integer | none |  | minimum | 4 | not probed |
 | `/result/candidates/*/narrowing` | string | none |  |  | 0 | not probed |
 | `/result/candidates/*/reason` | string | none |  |  | 0 | not probed |
@@ -2276,6 +2286,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/conflict_status` | string | closed domain | enum |  | 0 | shape |
 | `/result/countermodel/choice/*/0` | string | none |  |  | 0 | not probed |
 | `/result/countermodel/choice/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/result/countermodel/gaps/*/0` | string | none |  |  | 0 | not probed |
+| `/result/countermodel/gaps/*/1/*` | string | none |  |  | 0 | not probed |
 | `/result/countermodel/model/constants/@key` | key | none |  |  | 0 | not probed |
 | `/result/countermodel/model/constants/{}` | string | none |  |  | 0 | not probed |
 | `/result/countermodel/model/domains/@key` | key | none |  |  | 0 | not probed |
@@ -2285,6 +2297,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/countermodel/outcome` | string | closed domain | const |  | 0 | shape |
 | `/result/countermodels/*/choice/*/0` | string | none |  |  | 0 | not probed |
 | `/result/countermodels/*/choice/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/result/countermodels/*/gaps/*/0` | string | none |  |  | 0 | not probed |
+| `/result/countermodels/*/gaps/*/1/*` | string | none |  |  | 0 | not probed |
 | `/result/countermodels/*/model/constants/@key` | key | none |  |  | 0 | not probed |
 | `/result/countermodels/*/model/constants/{}` | string | none |  |  | 0 | not probed |
 | `/result/countermodels/*/model/domains/@key` | key | none |  |  | 0 | not probed |
@@ -2292,7 +2306,12 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/countermodels/*/model/relations/@key` | key | none |  |  | 0 | not probed |
 | `/result/countermodels/*/model/relations/{}/*/*` | string | none |  |  | 0 | not probed |
 | `/result/countermodels/*/outcome` | string | closed domain | const |  | 0 | shape |
+| `/result/detail` | string | none |  |  | 0 | not probed |
 | `/result/evidence` | string | closed domain | const |  | 1 | shape |
+| `/result/evidence` | string | closed domain | enum |  | 1 | shape |
+| `/result/gaps/*/0` | string | none |  |  | 0 | not probed |
+| `/result/gaps/*/1/*` | string | none |  |  | 0 | not probed |
+| `/result/mentions/*` | string | none |  |  | 0 | not probed |
 | `/result/model/constants/@key` | key | none |  |  | 0 | not probed |
 | `/result/model/constants/{}` | string | none |  |  | 0 | not probed |
 | `/result/model/domains/@key` | key | none |  |  | 0 | not probed |
@@ -2303,21 +2322,31 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/proof/choice/*/1` | integer | none |  | minimum | 0 | not probed |
 | `/result/proof/conditional_on/*` | string | none |  |  | 0 | not probed |
 | `/result/proof/outcome` | string | closed domain | const |  | 0 | shape |
+| `/result/proof/reading_premises_used/*` | string | none |  |  | 0 | not probed |
 | `/result/proofs/*/choice/*/0` | string | none |  |  | 0 | not probed |
 | `/result/proofs/*/choice/*/1` | integer | none |  | minimum | 0 | not probed |
 | `/result/proofs/*/conditional_on/*` | string | none |  |  | 0 | not probed |
 | `/result/proofs/*/outcome` | string | closed domain | const |  | 0 | shape |
+| `/result/proofs/*/reading_premises_used/*` | string | none |  |  | 0 | not probed |
 | `/result/reading_premises_used/*` | string | none |  |  | 0 | not probed |
 | `/result/reason` | string | closed domain | const |  | 0 | shape |
+| `/result/reason` | string | none |  |  | 0 | not probed |
 | `/result/restrictions/*` | string | none |  |  | 0 | not probed |
 | `/result/route` | string | closed domain | const |  | 2 | shape |
+| `/result/selected/*/0` | string | none |  |  | 0 | not probed |
+| `/result/selected/*/1` | string | none |  |  | 0 | not probed |
+| `/result/sorts/*` | string | none |  |  | 0 | not probed |
 | `/result/status` | string | closed domain | const |  | 2 | shape |
 | `/result/status` | string | closed domain | enum |  | 2 | shape |
+| `/result/status` | string | none |  | pattern | 2 | not probed |
 | `/result/status` | string | none |  | pattern | 2 | not probed |
 | `/result/status` | string | none |  | pattern | 2 | not probed |
 | `/result/status_text` | string | closed domain | const |  | 1 | shape |
 | `/result/status_text` | string | none |  | pattern | 1 | not probed |
 | `/result/status_text` | string | none |  | pattern | 1 | not probed |
+| `/result/status_text` | string | none |  |  | 1 | not probed |
+| `/result/target` | string | none |  |  | 0 | not probed |
+| `/result/tuple/*` | string | none |  |  | 0 | not probed |
 | `/result/units/*` | string | none |  |  | 0 | not probed |
 | `/result/verdict` | string | closed domain | const |  | 0 | shape |
 | `/result/verdict` | string | closed domain | enum |  | 0 | shape |
@@ -2332,6 +2361,34 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/witnesses/*/status_text` | string | none |  |  | 0 | not probed |
 | `/route` | string | closed domain | const |  | 11 | shape |
 | `/route` | string | closed domain | enum |  | 11 | shape |
+| `/scopes/*/encoded/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/encoded/{}/*/0` | string | none |  |  | 0 | not probed |
+| `/scopes/*/encoded/{}/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/scopes/*/mentions/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/mentions/{}/*` | string | none |  |  | 0 | not probed |
+| `/scopes/*/model_proposals/*/*/0` | string | none |  |  | 0 | not probed |
+| `/scopes/*/model_proposals/*/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/scopes/*/row/choice/*/0` | string | none |  |  | 0 | not probed |
+| `/scopes/*/row/choice/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/scopes/*/row/conflict` | string | closed domain | enum |  | 0 | shape |
+| `/scopes/*/row/errors/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/row/errors/{}` | string | none |  |  | 0 | not probed |
+| `/scopes/*/row/evidence/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/row/gaps/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/row/gaps/{}/*/0` | string | none |  |  | 0 | not probed |
+| `/scopes/*/row/gaps/{}/*/1/*` | string | none |  |  | 0 | not probed |
+| `/scopes/*/row/premises` | string | closed domain | enum |  | 0 | shape |
+| `/scopes/*/row/query` | string | closed domain | enum |  | 0 | shape |
+| `/scopes/*/row/shown/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/row/shown/{}/constants/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/row/shown/{}/constants/{}` | string | none |  |  | 0 | not probed |
+| `/scopes/*/row/shown/{}/domains/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/row/shown/{}/domains/{}/*` | string | none |  |  | 0 | not probed |
+| `/scopes/*/row/shown/{}/relations/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/row/shown/{}/relations/{}/*/*` | string | none |  |  | 0 | not probed |
+| `/scopes/*/row/status_text` | string | none |  |  | 0 | not probed |
+| `/scopes/*/used/@key` | key | none |  |  | 0 | not probed |
+| `/scopes/*/used/{}/*` | string | none |  |  | 0 | not probed |
 | `/sentence` | string | none |  |  | 0 | not probed |
 | `/set` | string | bound | x-equals |  | 2 | shape |
 | `/sets/*/candidates/*/document_hash` | string | none |  | pattern | 9 | unbound |
@@ -2594,6 +2651,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/gaps/*/1` |  |  |  |  |
 | `/generated_predicates` |  |  |  | drop: accept/accepted, accept/transport, accept/ve/readings_route.py:_need; drop+count: accept/ve/readings_route.py:elaborate; duplicate: accept/accepted, accept/transport, accept/ve/readings_route.py:_need; duplicate+count: accept/ve/readings_route.py:elaborate; replace: accept/accepted, accept/transport, accept/ve/readings_route.py:_need; reverse: accept/accepted, accept/transport, accept/ve/readings_route.py:_need |
 | `/labels` |  |  |  |  |
+| `/model_proposals` |  |  |  |  |
+| `/model_proposals/*` |  |  |  |  |
+| `/model_proposals/*/*` |  |  |  |  |
 | `/names` |  |  |  | drop: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; duplicate: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; replace: accept/ve/readings_route.py:_need; reverse: accept/ve/readings_route.py:_need |
 | `/names/*/candidates` |  |  |  | drop: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; duplicate: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; replace: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; reverse: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate |
 | `/names/*/candidates/*/names` |  |  |  | drop: accept/accepted, accept/ve/readings_route.py:elaborate; drop+count: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; duplicate: accept/accepted, accept/ve/readings_route.py:elaborate; duplicate+count: accept/ve/readings_route.py:_need, accept/ve/readings_route.py:elaborate; replace: accept/ve/readings_route.py:elaborate; reverse: accept/ve/readings_route.py:elaborate |
@@ -2616,6 +2676,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/assumed` |  |  |  |  |
 | `/result/assumed/*` |  |  |  |  |
 | `/result/candidates` |  |  |  |  |
+| `/result/candidates/*/choice` |  |  |  |  |
+| `/result/candidates/*/choice/*` |  |  |  |  |
 | `/result/choice` |  |  |  |  |
 | `/result/choice/*` |  |  |  |  |
 | `/result/choices` |  |  |  |  |
@@ -2625,27 +2687,43 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/conditional_on` |  |  |  |  |
 | `/result/countermodel/choice` |  |  |  |  |
 | `/result/countermodel/choice/*` |  |  |  |  |
+| `/result/countermodel/gaps` |  |  |  |  |
+| `/result/countermodel/gaps/*` |  |  |  |  |
+| `/result/countermodel/gaps/*/1` |  |  |  |  |
 | `/result/countermodel/model/domains/{}` |  |  |  |  |
 | `/result/countermodel/model/relations/{}` |  |  |  |  |
 | `/result/countermodel/model/relations/{}/*` |  |  |  |  |
 | `/result/countermodels` |  |  |  |  |
 | `/result/countermodels/*/choice` |  |  |  |  |
 | `/result/countermodels/*/choice/*` |  |  |  |  |
+| `/result/countermodels/*/gaps` |  |  |  |  |
+| `/result/countermodels/*/gaps/*` |  |  |  |  |
+| `/result/countermodels/*/gaps/*/1` |  |  |  |  |
 | `/result/countermodels/*/model/domains/{}` |  |  |  |  |
 | `/result/countermodels/*/model/relations/{}` |  |  |  |  |
 | `/result/countermodels/*/model/relations/{}/*` |  |  |  |  |
+| `/result/gaps` |  |  |  |  |
+| `/result/gaps/*` |  |  |  |  |
+| `/result/gaps/*/1` |  |  |  |  |
+| `/result/mentions` |  |  |  |  |
 | `/result/model/domains/{}` |  |  |  |  |
 | `/result/model/relations/{}` |  |  |  |  |
 | `/result/model/relations/{}/*` |  |  |  |  |
 | `/result/proof/choice` |  |  |  |  |
 | `/result/proof/choice/*` |  |  |  |  |
 | `/result/proof/conditional_on` |  |  |  |  |
+| `/result/proof/reading_premises_used` |  |  |  |  |
 | `/result/proofs` |  |  |  |  |
 | `/result/proofs/*/choice` |  |  |  |  |
 | `/result/proofs/*/choice/*` |  |  |  |  |
 | `/result/proofs/*/conditional_on` |  |  |  |  |
+| `/result/proofs/*/reading_premises_used` |  |  |  |  |
 | `/result/reading_premises_used` |  |  |  |  |
 | `/result/restrictions` |  |  |  |  |
+| `/result/selected` |  |  |  |  |
+| `/result/selected/*` |  |  |  |  |
+| `/result/sorts` |  |  |  |  |
+| `/result/tuple` |  |  |  |  |
 | `/result/units` |  |  |  |  |
 | `/result/witnesses` |  |  |  |  |
 | `/result/witnesses/*/choice` |  |  |  |  |
@@ -2653,6 +2731,22 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/witnesses/*/model/domains/{}` |  |  |  |  |
 | `/result/witnesses/*/model/relations/{}` |  |  |  |  |
 | `/result/witnesses/*/model/relations/{}/*` |  |  |  |  |
+| `/scopes` |  |  |  |  |
+| `/scopes/*/encoded/{}` |  |  |  |  |
+| `/scopes/*/encoded/{}/*` |  |  |  |  |
+| `/scopes/*/mentions/{}` |  |  |  |  |
+| `/scopes/*/model_proposals` |  |  |  |  |
+| `/scopes/*/model_proposals/*` |  |  |  |  |
+| `/scopes/*/model_proposals/*/*` |  |  |  |  |
+| `/scopes/*/row/choice` |  |  |  |  |
+| `/scopes/*/row/choice/*` |  |  |  |  |
+| `/scopes/*/row/gaps/{}` |  |  |  |  |
+| `/scopes/*/row/gaps/{}/*` |  |  |  |  |
+| `/scopes/*/row/gaps/{}/*/1` |  |  |  |  |
+| `/scopes/*/row/shown/{}/domains/{}` |  |  |  |  |
+| `/scopes/*/row/shown/{}/relations/{}` |  |  |  |  |
+| `/scopes/*/row/shown/{}/relations/{}/*` |  |  |  |  |
+| `/scopes/*/used/{}` |  |  |  |  |
 | `/sets` |  |  |  | drop: accept/ve/readings_route.py:_need; duplicate: accept/ve/readings_route.py:_need; replace: accept/ve/readings_route.py:_need; reverse: accept/ve/readings_route.py:_need |
 | `/sets/*/candidates` |  |  |  | drop: accept/ve/readings_route.py:_need; duplicate: accept/ve/readings_route.py:_need; replace: accept/ve/readings_route.py:_need; reverse: accept/ve/readings_route.py:_need |
 | `/sets/*/candidates/*/findings` |  |  |  |  |
