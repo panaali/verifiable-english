@@ -5316,6 +5316,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.byte_tests
 #print axioms VE.Scope.Examples.depth_bound
 #print axioms VE.Scope.Examples.markers
+#print axioms VE.Scope.Examples.of_source
 #print axioms VE.Scope.Examples.own_binder
 #print axioms VE.Scope.Examples.para_counts
 #print axioms VE.Scope.Examples.short_layout
