@@ -36,6 +36,9 @@ def ndProfiles : String := r#"["alternatives@0", "norm-defaults@0", "norms@0", "
 #guard (match Wire.decodeAltSource (env "[]" "allow") (.arr #[]) .null with
   | .error e => e | .ok _ => "ok") == "UnsupportedProfile: alternatives@0 is required"
 #guard errorOf (env r#"["alternatives@0", "norms@0", "relational-fol@0"]"# "allow") == "ok []"
+-- Review F1: today's decoder reads the completion only through `decodeAltSourceU`; given it, it names the pair.
+#guard (match Wire.decodeAltSource (env ndProfiles) (.arr #[]) .null with
+  | .error e => e | .ok _ => "ok") == "UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented"
 -- `unspecified` without the profile.
 #guard errorOf (env r#"["alternatives@0", "norms@0", "relational-fol@0"]"#) ==
   "UnsupportedProfile: unspecified completion requires norm-defaults@0"
