@@ -15,7 +15,7 @@ the completion's fragment with its transfer theorem. **et-3b** holds the rest of
 | File | Contents |
 |---|---|
 | `Decl.lean` | `EventSort`, `StateSort`, `LinkForm`, `Link`, `EventsEnv`; `maxDates`, `dateName`, `dateConst`; role sorts and predicates, `startRole`, `boundRole`; `roleWordingOk`, `beforeWording`, `linkWording`; `consecutive`; `WellFormedEvents` (the block against the author's environment), `regenEnv`, `EventsTyped` |
-| `Premises.lean` | the formulas of 1.4 (`irreflexiveF`, `transitiveF`, `linearF`, `dateFactF`, `adjacentF`, `oneRoleF`, `notBeforeBeginF`, `linkForwardF`, `linkWeakerF`), the labelled lists (`orderLabelled`, `calendarLabelled`, `conventionLabelled`, `eventsLabelled`), `orderPremises`, `calendarPremises`, `conventionPremises`, `eventsX`, `Embeds`; `calendar_sat`, `datesOrder_iff`, `datesOrder_calendar`, `unorderedSame_of_order` |
+| `Premises.lean` | the formulas of 1.4 (`irreflexiveF`, `transitiveF`, `linearF`, `dateFactF`, `adjacentF`, `oneRoleF`, `notBeforeBeginF`, `linkForwardF`, `linkWeakerF`), the labelled lists (`calendarLabelled`, `conventionLabelled`, `eventsLabelled`), `orderPremises`, `calendarPremises`, `conventionPremises`, `eventsX`, `Embeds`; `calendar_sat`, `datesOrder_iff`, `datesOrder_calendar`, `unorderedSame_of_order` |
 | `Calendar.lean` | the check of 1.6 on finite situations: `beforeB`, `rank`, `dateDay`, `namedRank`, `strictLinearB`, `calendarCheck` (its diagnostic texts), `embeddable`, `numbering` |
 | `Completion.lean` | the fragment of 1.7: `isConst`, `isVar`, `hits`, `vacuous`, `up`, `down`, `DayExtension`; `hits_vacuous`, `dayExtension_transfer` |
 | `Examples.lean` | the fixtures as `#guard` lines (below) |
@@ -51,9 +51,9 @@ on 12 October is before an action on 13 October; on the same day it is not). T7 
 
 ## Differences from 6.1
 
-* `calendarLabelled` starts with `orderLabelled V`, the three order premises with their labels, and `orderPremises`
-  is `(orderLabelled V).map (·.2)`: the same lists as 6.1 (`#guard orderPremises vT1 == [irreflexiveF vT1, …]`).
-* `hits` tests a variable with `isVar k t` in place of `t == .var k`; `isVar_beq` proves them equal.
+* None in the delivered declarations: every definition and theorem statement of 6.1 and 6.2 built here is the
+  approved text, whitespace aside (`docs/events-time-causation/et-3/evidence/statements.json`). `isVar` and `isVar_beq` are proof helpers that read
+  `hits`'s test `t == .var k` as a function on the term; `unorderedSame_of_order` is fixture T2b's theorem.
 * `CalendarReading` (with `onto`) moves to et-3b with `completion_reading`, its first use.
 
 ## et-3b: the rest of ET-3
