@@ -400,7 +400,7 @@
           "admitNodes",
           "admitDocument"
         ],
-        "reason": "norm-defaults@0 W2 admission decoder over E\u2034; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
@@ -1665,7 +1665,7 @@
           "filledJsonX",
           "admitDocumentX"
         ],
-        "reason": "rd-9 SC-6: the soft branch under norm-defaults@0, its certificate replay (the source by decodeSoftU, the formulas, bindCertX) and W2 admission on the filled soft tree (the soft source, the quoted norms, the units and graph nodes over E\u2034, certificates bound to the regenerated soft E\u2034); the full file is pinned conservatively"
+        "reason": "rd-9 SC-6: the soft branch under norm-defaults@0, its certificate replay (the source by decodeSoftU, the formulas, bindCertX) and W2 admission on the filled soft tree (the soft source, the quoted norms, the units and graph nodes over E‴, certificates bound to the regenerated soft E‴); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/LayeredEntail.lean",
