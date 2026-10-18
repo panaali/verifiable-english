@@ -210,12 +210,13 @@ by that).
 
 Product code is unchanged: no Lean, Python product or Rust file is touched, so there is no product
 behaviour to seed. The evidence script's three claims are each seeded in `measure.py`, shown to fail
-`measure.py --check`, and restored:
+`measure.py --check`, and restored. Unseeded, `measure.py --check` prints "replayed 2 labels: every row as
+saved" (exit 0), and so does `--check --only a4676c0b7,e7f6968d4,109c7de1d`:
 
 | # | File | Seeded bug | Failing check |
 |---|---|---|---|
 | S1 | `docs/test-architecture/manifest-ops/measure.py` | `is_manifest` forgets "unmapped manifest reader" | `measure.py --check --only a4676c0b7,e7f6968d4` exits 1: "4 rows differ" (both labels; under drift `without_manifest` is 434, not 415/411) |
-| S2 | `docs/test-architecture/manifest-ops/measure.py` | `is_pin` forgets "reads lean/checkers.lock" (the recorded pin readers) | `measure.py --check --only 109c7de1d` exits 1: "2 rows differ" (the fresh row's `pins_only` loses `tests/test_lean_first_oracle.py`) |
+| S2 | `docs/test-architecture/manifest-ops/measure.py` | `is_pin` forgets "reads lean/checkers.lock" (the recorded pin readers) | `measure.py --check --only 109c7de1d` exits 1: "1 rows differ" (the fresh row's `pins_only` loses `tests/test_lean_first_oracle.py`) |
 | S3 | `docs/test-architecture/manifest-ops/measure.py` | `because` counts a plan as caused when `without_manifest <= total` | `measure.py --check --only none` exits 1: "the tables between the markers are not what --table prints from the saved rows" |
 
 ## Self-review against BUILDER-CHECKLIST
