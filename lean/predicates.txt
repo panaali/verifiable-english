@@ -249,7 +249,6 @@ module VE.Json
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
-module VE.Judgments.Status
 module VE.LexicalProofs
 module VE.ModelProofs
 module VE.NormDefaults.Admission
