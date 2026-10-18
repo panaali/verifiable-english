@@ -719,6 +719,34 @@
    "reason": "et-7 review fix (F1): V +7 for the named refusal of alternatives@0 with norm-defaults@0 outside the alternatives route: VE/NormDefaults/Run.lean +6 (runGated, the norm-defaults mode's gate; G[V]), VE/Alternatives/Wire.lean +1 (decodeAltSource refuses the completion it does not read); VE.Compose.pendingWithDefaults, the one text, is G[R]. et-7 now K +0, S +18, V +128 (146 lines; R16 cap 150), re-measured on the fix tree against main c2b1a7d4. Exercised by tests/test_alternatives_fill.py (test_the_norm_defaults_route_refuses_a_composed_block_by_name, test_cases_outside_this_item_are_refused_with_the_profile, test_completion_documents_are_refused_by_name_on_every_entry_point) and lean/VE/Alternatives/FillExamples.lean. FOLLOW-UP: the ties pass of et-7 (manage-agents FOLLOW-UPS.md, et-7) covers these lines too.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7 review fix, 2026-10-18",
    "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
+  },
+  {
+   "class": "S",
+   "lines": 40,
+   "reason": "jt-1: VE/Judgments/Decl.lean +52 (S +36, D[V] +16), VE/Judgments/Scan.lean +4 (S), VE/Rights/Run.lean -2 (nodeOpen shortened to the shared scan); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1, 2026-10-18",
+   "commit": "de9cfa84f0145d69c8474faeb76d59ddf35b3cbf"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "jt-1: VE/Judgments/Decl.lean +52 (S +36, D[V] +16), VE/Judgments/Scan.lean +4 (S), VE/Rights/Run.lean -2 (nodeOpen shortened to the shared scan); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1, 2026-10-18",
+   "commit": "de9cfa84f0145d69c8474faeb76d59ddf35b3cbf"
+  },
+  {
+   "class": "S",
+   "lines": 139,
+   "reason": "et-3: events Lean core, S +139 (VE/Events/Decl.lean +64, VE/Events/Premises.lean +63, VE/Events/Completion.lean +12); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
+  },
+  {
+   "class": "V",
+   "lines": 113,
+   "reason": "me-1c Calc display lines: VE/Calc/Render.lean +113 (V, G[V]: reservedWords, phraseWords, valueWordsOk, natWords, placesPhrase, printedWords, exactWords, exprDepth, renderAtom, renderTerm, renderExpr, fill, renderClaim); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1c, 2026-10-17",
+   "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
   }
  ]
 }

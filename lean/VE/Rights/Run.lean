@@ -1,5 +1,6 @@
 import VE.Rights.Admission
 import VE.SoftNorms.Run
+import VE.Judgments.Scan
 
 /-! The `ve_service` mode `rights` (docs/spec/rights.md 9.4), formerly the one-shot `ve_rights_route`. Each case is
 `{"id", "environment", "kind", "document", ...}`; a `rights@0` environment must also enable
@@ -230,9 +231,15 @@ def regenerated (D : RightsDoc) (environment : Json) : List (String × Json) :=
 /-! ## Status of rights source units -/
 
 def nodeOpen (openNames : List String) (N : SoftNode) : Bool :=
-  N.mode == .default || !N.alterable.isEmpty ||
-    (VE.Norms.preds N.guard).any openNames.contains ||
-    N.carveOuts.any (fun f => (VE.Norms.preds f).any openNames.contains)
+  N.mode == .default || !N.alterable.isEmpty || !(VE.Judgments.opensIn openNames (N.guard :: N.carveOuts)).isEmpty
+
+/-- The switch to the shared scan is byte-neutral: `nodeOpen` is the body it had before (judgment-terms spec 3). -/
+theorem nodeOpen_eq (openNames : List String) (N : SoftNode) :
+    nodeOpen openNames N =
+      (N.mode == .default || !N.alterable.isEmpty ||
+        (VE.Norms.preds N.guard).any openNames.contains ||
+        N.carveOuts.any (fun f => (VE.Norms.preds f).any openNames.contains)) := by
+  simp only [nodeOpen, VE.Judgments.opensIn_isEmpty, List.any_cons, Bool.or_assoc]
 
 def sourceRuleNames (line : Json) : List String :=
   ["norm", "liberty", "recognition"].filterMap (fun field =>
