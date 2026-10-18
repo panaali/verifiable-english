@@ -238,13 +238,18 @@ def mutants(text: str, kind: str, lo: int, hi: int) -> list[tuple[str, int, int,
             out += [("append-left", op, right, ""), ("append-right", left, op + 4, "")]
     for m in re.finditer(r"(?<![\w'?!)\]@#])\[(?!\])", t[lo:hi]):
         lists.append((lo + m.start(), group_end(t, lo + m.start())))
+    sites = set(lists)
     for s, e in dict.fromkeys(lists):
         atom = text[s:e]
+        if t[s] == "(" and (s + 1, e - 1) in sites:  # `(xs)` is the list `xs`
+            continue
         if atom.startswith("·") and s > 0 and t[s - 1] == "(":  # `(·.head.contains a)`: name the argument first
             for op, chain in CUTS.items():
                 out.append((op, s - 1, e, f"(fun x_tm => {cut('x_tm' + atom[1:], chain)}"))
         elif not atom.startswith("·") and atom.strip():
-            out += [(op, s, e, cut(atom, chain)) for op, chain in CUTS.items()]
+            one = t[s] == "[" and group_end(t, s) == e and depth0(t, s + 1, e - 1, ",") is None
+            out += [(op, s, e, cut(atom, chain)) for op, chain in CUTS.items()  # `[x].take 1` is `[x]`
+                    if not (one and op in ("list-first", "list-last"))]
     seen, kept = set(), []
     for op, s, e, new in out:
         old = text[s:e]
@@ -315,8 +320,10 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
         lo = starts[ranged[0].start[0] - 1] + ranged[0].start[1]
         hi = starts[ranged[0].end[0] - 1] + ranged[0].end[1]
         for op, s, e, new in sorted(mutants(text, d.kind, lo, hi), key=lambda x: x[1]):
-            found.append(Mutant("", c.module, text.count("\n", 0, s) + 1, d.name, op, s, e,
-                                (ranged[0].start[0], ranged[0].end[0]), text[s:e], new))
+            first = text.count("\n", 0, s) + 1  # a definition the base has too is mutated on its changed lines only
+            if changed[c.module] & set(range(first, first + text.count("\n", s, e) + 1)):
+                    found.append(Mutant("", c.module, first, d.name, op, s, e, (ranged[0].start[0], ranged[0].end[0]),
+                                    text[s:e], new))
     # Round robin: each tier in turn; in a tier, the k-th mutant of every (definition, operator) before any k+1-th.
     seen: dict[tuple[str, str], int] = {}
     keyed = []
@@ -356,11 +363,13 @@ def stated(tree: Tree, theorem: str | None, m: Mutant) -> bool:
     return (module_name(m.file), m.definition) in (tree.uses.get(theorem) or ())
 
 
-def targets(tree: Tree, m: Mutant, tests: list[str]) -> list[str]:
-    """The mutated module, the modules of its cone that hold checks for it, and the --test modules."""
-    module = module_name(m.file)
-    checks = {x for x in cone(tree, module) if any(r == "check" or r == "theorem" and stated(tree, name, m)
-                                                   for *_, r, name in tree.roles.get(tree.files[x], ()))}
+def targets(tree: Tree, m: Mutant, tests: list[str], deep: bool = False) -> list[str]:
+    """The mutated module, the --test modules, and the modules of its cone that hold checks for it: a theorem whose
+    statement uses it, and every other check in a module of its directory (with `deep`, of the whole cone)."""
+    module, home = module_name(m.file), m.file.rpartition("/")[0]
+    checks = {x for x in cone(tree, module) for s, e, r, n in tree.roles.get(tree.files[x], ())
+              if r == "check" and (deep or tree.files[x].rpartition("/")[0] == home)
+              or r == "theorem" and stated(tree, n, m)}
     return [module, *sorted((checks | {module_name(t) for t in tests if module_name(t) in tree.files}) - {module})]
 
 
@@ -424,17 +433,17 @@ def cut_proof(path: Path, first: int, last: int) -> bool:
     starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n"), len(text) + 1]
     lo, hi = starts[first - 1], starts[min(last, len(starts) - 1)] - 1
     t = code_only(text)
-    at = depth0(t, lo, hi, r":=")
-    if at is None:
-        arm = re.search(r"(?m)^\s*\|", t[lo:hi])
-        at = lo + arm.start() if arm else None
-    if at is None:
+    arm = re.search(r"(?m)^\s*\|", t[lo:hi])
+    found = [x for x in (depth0(t, lo, hi, r":="), lo + arm.start() if arm else None) if x is not None]
+    if not found:
         return False
+    at = min(found)
     path.write_text(text[:at] + " := sorry" + "\n" * text.count("\n", at, hi) + text[hi:])
     return True
 
 
-def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list[Path], env: dict) -> tuple[str, str]:
+def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list[Path], env: dict,
+        deep: bool = False) -> tuple[str, str]:
     """(status, detail) of one mutant, built in `scratch`, whose files are restored afterwards."""
     touched: dict[Path, bytes] = {}
 
@@ -446,35 +455,39 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
     text = path.read_text()
     path.write_text(text[:m.start] + m.after + text[m.end:])
     cut: set[tuple[str, int]] = set()
+    built = targets(tree, m, tests, deep)
     try:
-        for _ in range(8):
-            code, output = scratch.build(targets(tree, m, tests), env)
-            if code == 0:
-                for test in outside:
-                    if scratch.elaborate(test, env):
-                        return "KILLED", f"{test} fails"
-                return "SURVIVOR", ""
-            errors = [(f, int(n), message) for f, n, message in ERROR.findall(output)]
-            if not errors:
-                return "UNKNOWN", "the build failed with no located error: " + output[-300:]
-            found = [(f, n, message, role(tree, f, n, m)) for f, n, message in errors]
-            for f, n, message, r in found:
-                if r == "check" or module_name(f) in map(module_name, tests):
-                    return "KILLED", f"lean/{f}:{n}: {message[:120]}"
-            for f, n, message, r in found:
-                if f == m.file and m.lines[0] <= n <= m.lines[1]:
-                    return "INVALID", message[:200]
-            proofs = {(f, s, e) for f, n, _, r in found if r == "proof"
-                      for s, e, *_ in tree.roles[f] if s <= n <= e}
-            other = [(f, n, message) for f, n, message, r in found if r != "proof"]
-            if other or not proofs or {(f, s) for f, s, _ in proofs} <= cut:
-                f, n, message = (other or errors)[0]
-                return "UNKNOWN", f"lean/{f}:{n}: {message[:200]}"
-            for f, s, e in proofs:
-                if (f, s) not in cut and not cut_proof(keep(scratch.lean / f), s, e):
-                    return "UNKNOWN", f"lean/{f}:{s}: the failing proof cannot be cut"
-                cut.add((f, s))
-        return "UNKNOWN", "the proof cuts did not settle"
+        for stage in (built[:1], built[1:]):  # the mutated module alone first: most mutants end there
+            for _ in range(8):
+                code, output = scratch.build(stage, env) if stage else (0, "")
+                if code == 0:
+                    break
+                errors = [(f, int(n), message) for f, n, message in ERROR.findall(output)]
+                if not errors:
+                    return "UNKNOWN", "the build failed with no located error: " + output[-300:]
+                found = [(f, n, message, role(tree, f, n, m)) for f, n, message in errors]
+                for f, n, message, r in found:
+                    if f == m.file and m.lines[0] <= n <= m.lines[1]:
+                        return "INVALID", message[:200]
+                for f, n, message, r in found:
+                    if r == "check" or module_name(f) in map(module_name, tests):
+                        return "KILLED", f"lean/{f}:{n}: {message[:120]}"
+                proofs = {(f, s, e) for f, n, _, r in found if r == "proof"
+                          for s, e, *_ in tree.roles[f] if s <= n <= e}
+                other = [(f, n, message) for f, n, message, r in found if r != "proof"]
+                if other or not proofs or {(f, s) for f, s, _ in proofs} <= cut:
+                    f, n, message = (other or errors)[0]
+                    return "UNKNOWN", f"lean/{f}:{n}: {message[:200]}"
+                for f, s, e in proofs:
+                    if (f, s) not in cut and not cut_proof(keep(scratch.lean / f), s, e):
+                        return "UNKNOWN", f"lean/{f}:{s}: the failing proof cannot be cut"
+                    cut.add((f, s))
+            else:
+                return "UNKNOWN", "the proof cuts did not settle"
+        for test in outside:
+            if scratch.elaborate(test, env):
+                return "KILLED", f"{test} fails"
+        return "SURVIVOR", ""
     finally:
         for p, data in touched.items():
             p.write_bytes(data)
@@ -510,6 +523,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-mutants", type=int, default=60)
     parser.add_argument("--test", action="append", default=[], help="a Lean file (path under lean/ or the "
                         "checkout) that must fail for a kill too; repeatable")
+    parser.add_argument("--deep", action="store_true", help="build every check module that imports the mutated "
+                        "one, not only those of its directory")
     parser.add_argument("--allow", type=Path)
     parser.add_argument("--json", type=Path)
     args = parser.parse_args(argv)
@@ -536,7 +551,7 @@ def main(argv: list[str] | None = None) -> int:
         pool: queue.Queue = queue.Queue()
         if run_now:
             first = Scratch(root / "lean", Path(scratch_dir))
-            modules = sorted({t for m in run_now for t in targets(tree, m, tests)})
+            modules = sorted({t for m in run_now for t in targets(tree, m, tests, args.deep)})
             code, output = first.build(modules, env)
             failing = [t for t in outside if first.elaborate(t, env)]
             if code or failing:
@@ -550,7 +565,7 @@ def main(argv: list[str] | None = None) -> int:
         def one(m: Mutant) -> Mutant:
             scratch = pool.get()
             try:
-                m.status, m.detail = run(m, scratch, tree, tests, outside, env)
+                m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep)
             finally:
                 pool.put(scratch)
             return m
@@ -572,7 +587,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.json:
         args.json.write_text(json.dumps({
             "base": git(root, "rev-parse", base).stdout.strip(), "head": git(root, "rev-parse", "HEAD").stdout.strip(),
-            "jobs": jobs, "max_mutants": args.max_mutants, "tests": args.test, "seconds": seconds, "counts": counts,
+            "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds, "counts": counts,
             "definitions": [f"lean/{f}: {d}" for f, d in definitions],
             "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end")} for m in found]},
             indent=1, ensure_ascii=False) + "\n")
