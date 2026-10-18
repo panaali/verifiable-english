@@ -259,8 +259,11 @@ are equivalent and 7 are refused by Lean. PROBE F15 printed all five as survivin
   jobs); `lake build` and `lean/audit.py` pass; `trust_map.py --check` passes unchanged (trusted +145, K +0). No test
   in `main-known-red.txt` was hit. After the fourth recheck fix (F13, F14), on `77b20b9b`: 74 units, exit 0, 0 failed
   (`test_acts_vocab_mutants.py` 714 s of them, on the Mac runner with 6 jobs); `lake build` and `lean/audit.py`
-  pass; `trust_map.py --check` passes unchanged (trusted +145, K +0). No test in `main-known-red.txt` was hit. The
-  full gate is the chain's.
+  pass; `trust_map.py --check` passes unchanged (trusted +145, K +0). No test in `main-known-red.txt` was hit. After
+  the fifth recheck fix (F15, F16, F17), on `4f254e51`: 74 units, exit 0, 0 failed (`test_acts_vocab_mutants.py`
+  1,314 s of them, on the Mac runner with 6 jobs; the whole file alone: 643 passed); `lake build`, `lean/audit.py`
+  and `regen_generated.py --check` pass; `trust_map.py --check` passes unchanged (trusted +145, K +0; the new
+  fixtures are T). No test in `main-known-red.txt` was hit. The full gate is the chain's.
 - **Overlap:** `tools/layer_policy.py` is also edited by `lean-first/b18`, in a different hunk (lines 116 and 141;
   mine is 135). `git merge-tree HEAD lean-first/b18` merges it cleanly; that branch's other conflicts with this one
   are generated inventories (R12). No other in-flight branch touches `lean/VE/Acts/` or the plan and spec files.
