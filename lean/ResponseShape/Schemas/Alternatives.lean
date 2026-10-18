@@ -1,6 +1,7 @@
 import VE.Service.Protocol
 import ResponseShape
 import ResponseShape.CaseDeciders
+import ResponseShape.Schemas.NormDefaults
 
 /-! The source of `ve/backends/lean_service_schema/alternatives.json` (`file`; `tools/response_schemas.py` writes it). -/
 namespace ResponseShape.Schemas.Alternatives
@@ -22,6 +23,20 @@ def alt_path : Shape :=
               props [("profiles", n [arr, .contains (constS "alternatives@0")])]])]],
         n [.required ["environment"], props [("environment", n [obj, .required ["alternatives"]])]],
         n [.required ["kind"], props [("kind", n [str, .pattern (Re.prefixes ["alt-"])])]]]]
+
+def fill_path : Shape :=
+  decidedCase .altFillPath <|
+  c "NormDefaults.Wire.hasProfile of the case's environment: norm-defaults@0 is among its profiles (ET-7)." [
+    obj,
+    .required ["environment"],
+    props [
+      ("environment", n [
+        obj,
+        .required ["profiles"],
+        props [("profiles", n [arr, .items str, .contains (constS "norm-defaults@0")])]])]]
+
+/-- The fields `NormDefaults.Wire.regeneratedU` adds after the norms fields of `fill (inlineTree A)`. -/
+def fillNames : List String := ["fill", "unspecified", "unsaid", "reached", "fragment_fill"]
 
 def kind : Def :=
   .group none [
@@ -87,7 +102,7 @@ def elaborate : Shape :=
     [
       obj,
       .required ["id", "status", "legend", "inlined", "alternatives", "base_premises", "followable", "profile_exists", "unmapped_obligations", "order", "background", "premises", "conflict_targets", "fragment"],
-      closed [
+      closed ([
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("legend", ref "common.json#/$defs/nonempty_strings"),
@@ -109,10 +124,15 @@ def elaborate : Shape :=
         ("premises", ref "common.json#/$defs/layer_premises"),
         ("conflict_targets", ref "common.json#/$defs/conflict_targets"),
         ("fragment", .type ["boolean"]),
-        ("coverage", ref "#/$defs/coverage")],
-      .ite (.onCase (.required ["coverage_units"]))
-        (.required ["coverage"])
-        (.bool true)]
+        ("coverage", ref "#/$defs/coverage")] ++
+        Schemas.NormDefaults.elaborateFields.filter (fillNames.contains ·.1)),
+      .allOf [
+        .ite (.onCase (.required ["coverage_units"]))
+          (.required ["coverage"])
+          (.bool true),
+        .ite (.onCase (ref "#/$defs/fill_path"))
+          (.required fillNames)
+          (.not (.anyOf (fillNames.map fun k => .required [k])))]]
 
 def declaredCell : Shape :=
   c "Alternatives.Wire.coverage: an asserted available(action, chooser) leaf." [
@@ -347,6 +367,7 @@ def file : File where
   top := [("row", «row»)]
   defs := [
     ("alt_path", .schema alt_path),
+    ("fill_path", .schema fill_path),
     ("kind", kind),
     ("alt_labels", .schema alt_labels),
     ("admission", .schema admission),

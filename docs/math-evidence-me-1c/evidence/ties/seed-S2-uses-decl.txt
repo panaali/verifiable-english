@@ -1,0 +1,6 @@
+$ python3 tools/trust_map.py --check   # seed S2-uses-decl: values_stated's -- uses line loses VE.Calc.values@VE.Calc.Decls
+class lines: K 997, S 10463, D 14934, G 30866, C 10071, P 77790, T 16501, o 13578
+D/G groups: D[V] 13190, D[R] 1190, D[I] 554, G[V] 28064, G[R] 2527, G[I] 275
+tied 359, unclassified 0, trusted 52413 (K + S + untied [V] + unclassified), 175200 lines in 544 files
+VE/Calc/Decls.lean: VE.Calc.values: the statement of VE.Calc.values_stated does not mention VE.Calc.values of VE.Calc.Decls
+exit 1
