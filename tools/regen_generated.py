@@ -57,6 +57,10 @@ class Generated:
     merge: str = "regenerate"         # regenerate | union | json
     cwd: str = "."
     note: str = ""
+    # The automatic run of the check, without a mock: a test node `tests/<file>.py::<function>` or a gate stage
+    # `gate:<stage>`. Required for every entry owning a file under `ve/`, which the product reads at run time:
+    # a check that only runs by hand lets its two owners drift (tests/test_regen_generated.py).
+    fresh: str = ""
 
 
 # In dependency order: generated Lean before the build; the build before the statement dumps, the checker pins
@@ -76,10 +80,12 @@ GENERATED = (
                 "conformance/wire-contract/contracts")),
               ((PY, "-m", "tools.wire_contract", "--check"),
                (PY, "-m", "tools.wire_contract", "--check", "--directory", "conformance/wire-contract/contracts")),
-              note="a changed contract needs a higher `revision` in its source (WC10)"),
+              note="a changed contract needs a higher `revision` in its source (WC10)",
+              fresh="gate:Wire contract check"),
     Generated("english-grammar", ("lean/VE/EnglishGrammar/Fixed/*.lean", "ve/english_grammar/LOCK.json"),
               ((PY, "tools/english_grammar_gen.py", "--write"),), ((PY, "tools/english_grammar_gen.py", "--check"),),
-              note="refuses when a hashed Lean file changed without a new --actions-version (a person decides)"),
+              note="refuses when a hashed Lean file changed without a new --actions-version (a person decides)",
+              fresh="tests/test_english_grammar_gen.py::test_the_repository_is_in_sync"),
     Generated("english-lexicon-fixtures", ("lean/VE/EnglishGrammar/LexiconFixtures.lean",),
               ((PY, "-m", "conformance.english_lean_lexicon", "--lean-fixtures"),), None),
     Generated("question-fixtures", ("lean/VE/Question/Fixtures.lean",),
@@ -92,6 +98,11 @@ GENERATED = (
               note="import lists; `lake build` checks the union"),
     Generated("lake-build", (), (("lake", "build"),), (("lake", "build"),), cwd="lean",
               note="no file of its own: the build every later entry reads"),
+    Generated("numbers-phrases", ("ve/numbers_phrases.json",),
+              ((PY, "tools/numbers_phrases.py", "--write"),),
+              ((PY, "tools/numbers_phrases.py", "--check"),),
+              note="the comparison phrase rows come from VE.Numbers.Phrases",
+              fresh="tests/test_numbers_phrases.py::test_the_committed_table_is_the_lean_generators_output"),
     Generated("lean-mode-deps", ("tools/lean-mode-deps.json",),
               ((PY, "tools/lean_mode_deps.py", "--write"),),
               ((PY, "tools/lean_mode_deps.py", "--check"),),
@@ -110,19 +121,24 @@ GENERATED = (
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
               note="both sides' pins, plus the merged ve_service build and Rust release binary"),
     Generated("response-schemas", ("ve/backends/lean_service_schema/*.json",),
-              ((PY, "tools/response_schemas.py", "--write"),), ((PY, "tools/response_schemas.py", "--check"),)),
+              ((PY, "tools/response_schemas.py", "--write"),), ((PY, "tools/response_schemas.py", "--check"),),
+              fresh="tests/test_response_schemas.py::test_every_schema_file_is_the_lean_rendering"),
     Generated("binding-census", ("docs/test-architecture/binding-census.json", "docs/test-architecture/binding-census.md"),
               ((PY, "tools/binding_census.py", "--write"),), ((PY, "tools/binding_census.py", "--check"),),
               note="from the response schemas and the recorded answers and probes (--record re-records those)"),
     Generated("english-codes", ("ve/english_grammar/codes.json",),
-              ((PY, "tools/english_codes.py", "--write"),), ((PY, "tools/english_codes.py", "--check"),)),
+              ((PY, "tools/english_codes.py", "--write"),), ((PY, "tools/english_codes.py", "--check"),),
+              fresh="tests/test_english_e2_responses.py::test_the_code_table_is_the_english_grammar_export"),
     Generated("question-codes", ("ve/question/codes.json",),
-              ((PY, "tools/question_codes.py", "--write"),), ((PY, "tools/question_codes.py", "--check"),)),
+              ((PY, "tools/question_codes.py", "--write"),), ((PY, "tools/question_codes.py", "--check"),),
+              fresh="tests/test_question_reading.py::test_the_contract_files_are_the_services"),
     Generated("question-lock", ("ve/question/LOCK.json",),
               ((PY, "tools/question_lock.py", "--write"),), ((PY, "tools/question_lock.py"),),
-              note="hashes lean/VE/Question/*.lean (after question-fixtures) with question-codes' version"),
+              note="hashes lean/VE/Question/*.lean (after question-fixtures) with question-codes' version",
+              fresh="tests/test_question_reading.py::test_the_contract_files_are_the_services"),
     Generated("assurance-manifest", ("ve/assurance-manifest.json",), None, ("check_assurance_pins",),
-              merge="json", note="decoder pins are reviewed by hand; a merge keeps each side's pins"),
+              merge="json", note="decoder pins are reviewed by hand; a merge keeps each side's pins",
+              fresh="tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole"),
     Generated("assurance-doc", ("docs/spec/assurance-manifest.md",),
               ((PY, "tools/assurance_manifest.py", "--write"),), ((PY, "tools/assurance_manifest.py", "--check"),)),
     Generated("layer-ledgers", ("tools/layer-exceptions.json", "tools/lean-layer-exceptions.json"), None,
@@ -632,6 +648,7 @@ def listing() -> str:
         rows.append(f"{entry.name} [{entry.merge}] {', '.join(entry.paths) or '(no files)'}\n"
                     f"    write: {show(entry.write)}{'  (cwd ' + entry.cwd + ')' if entry.cwd != '.' else ''}\n"
                     f"    check: {show(entry.check) if entry.check else 'rewrite and compare' if entry.write else '-'}"
+                    + (f"\n    fresh: {entry.fresh}" if entry.fresh else "")
                     + (f"\n    note: {entry.note}" if entry.note else ""))
     return "\n".join(rows)
 

@@ -293,6 +293,11 @@ module VE.Norms.Tree
 module VE.Norms.Valid
 module VE.Norms.Wire
 module VE.Norms.WitnessKind
+module VE.Numbers.Decimal
+module VE.Numbers.Examples
+module VE.Numbers.Phrases
+module VE.Numbers.PhrasesMain
+module VE.Numbers.Round
 module VE.Order.Checks
 module VE.Order.Consequence
 module VE.Order.Conservativity
@@ -805,6 +810,9 @@ VE.Norms.YieldsD@VE.Norms.Elaborate
 VE.Norms.definitionsHold@VE.Norms.Layer
 VE.Norms.holdsCatala@VE.Norms.Elaborate
 VE.Norms.profileHold@VE.Norms.Layer
+VE.Numbers.Comparison.Holds@VE.Numbers.Phrases
+VE.Numbers.Rel.Holds@VE.Numbers.Phrases
+VE.Numbers.RoundsTo@VE.Numbers.Round
 VE.Order.Compare@VE.Order.Semantics
 VE.Order.Entails@VE.Order.Consequence
 VE.Order.FiniteModel.Valid@VE.Order.Finite
