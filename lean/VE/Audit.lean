@@ -39,6 +39,8 @@ import VE.Attribution.Status
 import VE.Attribution.Structure
 import VE.Attribution.Wire
 import VE.Bridge
+import VE.Calc.Decls
+import VE.Calc.Eval
 import VE.CertificateWire
 import VE.ClaimGraph
 import VE.Closure.Congruence
@@ -697,6 +699,44 @@ import VE.WireContract.Engine
 #print axioms VE.Bridge.modelData_valid
 #print axioms VE.Bridge.tupleCheck_iff
 #print axioms VE.Bridge.vocabulary_namesValid
+#print axioms VE.Calc.Claim.decide_fails
+#print axioms VE.Calc.Claim.decide_holds
+#print axioms VE.Calc.Claim.decide_undefined
+#print axioms VE.Calc.Claim.run_complete
+#print axioms VE.Calc.Claim.run_decided
+#print axioms VE.Calc.Claim.run_unknown
+#print axioms VE.Calc.Decl.valL_agrees
+#print axioms VE.Calc.Denotes.eval_complete
+#print axioms VE.Calc.Denotes.unique
+#print axioms VE.Calc.Expr.evalL_agrees
+#print axioms VE.Calc.Expr.evalL_causes
+#print axioms VE.Calc.Expr.evalL_causes_on_names
+#print axioms VE.Calc.Expr.evalL_congr_on
+#print axioms VE.Calc.Expr.eval_congr_on
+#print axioms VE.Calc.Expr.eval_iff
+#print axioms VE.Calc.Expr.eval_sound
+#print axioms VE.Calc.Expr.exhausted_lift
+#print axioms VE.Calc.Expr.overflow_lift
+#print axioms VE.Calc.Val.bin_exhausted
+#print axioms VE.Calc.Val.bin_tooLarge
+#print axioms VE.Calc.Val.div_agrees
+#print axioms VE.Calc.Val.guard_agrees
+#print axioms VE.Calc.causes_accumulate
+#print axioms VE.Calc.causes_step
+#print axioms VE.Calc.findingKind_source_iff
+#print axioms VE.Calc.firstFault_mem
+#print axioms VE.Calc.firstFault_not_ok
+#print axioms VE.Calc.fold_valuesL_agrees
+#print axioms VE.Calc.fold_values_other
+#print axioms VE.Calc.valuesL_agrees
+#print axioms VE.Calc.valuesL_causes
+#print axioms VE.Calc.values_append_prefix
+#print axioms VE.Calc.values_at
+#print axioms VE.Calc.values_counted
+#print axioms VE.Calc.values_defined
+#print axioms VE.Calc.values_free
+#print axioms VE.Calc.values_missing
+#print axioms VE.Calc.values_stated
 #print axioms VE.CertificateWire.ClosureQuery.accepts_sound
 #print axioms VE.CertificateWire.Query.accepts_sound
 #print axioms VE.Closure.Path.first
