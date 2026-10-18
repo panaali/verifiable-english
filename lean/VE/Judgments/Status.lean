@@ -324,7 +324,7 @@ theorem dependsOnC_remove (defs J cs j) (h : j ∉ dependsOnC defs J cs) :
   unfold dependsOnC dependsOn opensIn at *
   exact filter_remove _ _ _ h
 
-theorem find?_congr' {l : List String} {p q : String → Bool} (h : ∀ x ∈ l, p x = q x) : l.find? p = l.find? q := by
+theorem find_congr_mem {l : List String} {p q : String → Bool} (h : ∀ x ∈ l, p x = q x) : l.find? p = l.find? q := by
   induction l with
   | nil => rfl
   | cons a l ih => simp only [List.find?_cons, h a (by simp), ih (fun x hx => h x (by simp [hx]))]
@@ -335,7 +335,7 @@ theorem status_remove_unused (defs J u j) (hd : j ∉ dependsOnC defs J u.reads)
     status defs (J.filter (· != j)) u = status defs J u := by
   have hfind : u.listed.find? (fun x => (J.filter (· != j)).contains x && !(dependsOnC defs J u.reads).contains x) =
       u.listed.find? (fun x => J.contains x && !(dependsOnC defs J u.reads).contains x) := by
-    apply find?_congr'
+    apply find_congr_mem
     intro x hx
     have hxj : x ≠ j := fun e => hl (e ▸ hx)
     simp [List.mem_filter, hxj]

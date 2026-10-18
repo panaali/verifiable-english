@@ -4361,6 +4361,100 @@
         "VE.JsonInput.values"
       ]
     },
+    "VE/Judgments/Decl.lean": {
+      "D[V]": [
+        "VE.Judgments.records"
+      ],
+      "S": [
+        "VE.Judgments.Judgment",
+        "VE.Judgments.Rec",
+        "VE.Judgments.admit",
+        "VE.Judgments.baseEnv",
+        "VE.Judgments.faultOf",
+        "VE.Judgments.names"
+      ]
+    },
+    "VE/Judgments/Examples.lean": {
+      "T": [
+        "VE.Judgments.Examples.E",
+        "VE.Judgments.Examples.Eω",
+        "VE.Judgments.Examples.J1",
+        "VE.Judgments.Examples.J2",
+        "VE.Judgments.Examples.Jω",
+        "VE.Judgments.Examples.P",
+        "VE.Judgments.Examples.Pω",
+        "VE.Judgments.Examples.and3",
+        "VE.Judgments.Examples.cα",
+        "VE.Judgments.Examples.defs",
+        "VE.Judgments.Examples.doc11",
+        "VE.Judgments.Examples.docω",
+        "VE.Judgments.Examples.envText",
+        "VE.Judgments.Examples.errText",
+        "VE.Judgments.Examples.factor",
+        "VE.Judgments.Examples.fγ",
+        "VE.Judgments.Examples.fγ''",
+        "VE.Judgments.Examples.fξ",
+        "VE.Judgments.Examples.fξn",
+        "VE.Judgments.Examples.fξw",
+        "VE.Judgments.Examples.guardα",
+        "VE.Judgments.Examples.jrec",
+        "VE.Judgments.Examples.judgment",
+        "VE.Judgments.Examples.mξ",
+        "VE.Judgments.Examples.okVal",
+        "VE.Judgments.Examples.regulated",
+        "VE.Judgments.Examples.regulatedω",
+        "VE.Judgments.Examples.rule",
+        "VE.Judgments.Examples.rulesOf",
+        "VE.Judgments.Examples.ruleγ'",
+        "VE.Judgments.Examples.ruleσ",
+        "VE.Judgments.Examples.table",
+        "VE.Judgments.Examples.termText",
+        "VE.Judgments.Examples.u",
+        "VE.Judgments.Examples.u037ω",
+        "VE.Judgments.Examples.u045aω",
+        "VE.Judgments.Examples.uα",
+        "VE.Judgments.Examples.uθ",
+        "VE.Judgments.Examples.uι",
+        "VE.Judgments.Examples.uμ",
+        "VE.Judgments.Examples.uξ",
+        "VE.Judgments.Examples.uξ'",
+        "VE.Judgments.Examples.uτ",
+        "VE.Judgments.Examples.uυ",
+        "VE.Judgments.Examples.uχ",
+        "VE.Judgments.Examples.view",
+        "VE.Judgments.Examples.w2Probe",
+        "VE.Judgments.Examples.τ'a",
+        "VE.Judgments.Examples.τ'b",
+        "VE.Judgments.Examples.τ'c",
+        "VE.Judgments.Examples.τ'd",
+        "VE.Judgments.Examples.τ'e"
+      ]
+    },
+    "VE/Judgments/Scan.lean": {
+      "S": [
+        "VE.Judgments.opensIn"
+      ]
+    },
+    "VE/Judgments/Status.lean": {
+      "G[V]": [
+        "VE.Judgments.viewOf"
+      ],
+      "S": [
+        "VE.Judgments.ActiveSet",
+        "VE.Judgments.Content",
+        "VE.Judgments.Content.formulas",
+        "VE.Judgments.UnitView",
+        "VE.Judgments.UnitView.complete",
+        "VE.Judgments.UnitView.legacy",
+        "VE.Judgments.UnitView.reads",
+        "VE.Judgments.defEdges",
+        "VE.Judgments.dependsOn",
+        "VE.Judgments.dependsOnC",
+        "VE.Judgments.reachedBodies",
+        "VE.Judgments.status",
+        "VE.Judgments.usageMap"
+      ]
+    },
     "VE/LexicalProofs.lean": {
       "P": [
         "VE.Surface.canonicalName",
