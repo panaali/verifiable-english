@@ -3332,7 +3332,7 @@ module VE.Calc.Eval 0ff9293940a52844d3f8e616bf547ca32a0d25493947d873faf6c84d00dc
 112:0-123:61 theorem VE.Calc.Claim.decide_holds@VE.Calc.Eval
 125:0-139:26 theorem VE.Calc.Claim.decide_undefined@VE.Calc.Eval
 141:0-145:35 theorem VE.Calc.Claim.decide_fails@VE.Calc.Eval
-module VE.Calc.Examples 174c0dbd267900938d3b55782ff7c934d9d3d6d64f7f6c2bf900ef2f7a1d41bd
+module VE.Calc.Examples 13b8be03fd0ff51703d15cf98f35c128637bb996e0ee79e147e32cc10420ecda
 12:0-12:43 def VE.Calc.Examples.empty@VE.Calc.Examples
 13:0-13:42 def VE.Calc.Examples.lit@VE.Calc.Examples
 14:0-14:64 def VE.Calc.Examples.eq@VE.Calc.Examples
@@ -3351,9 +3351,9 @@ module VE.Calc.Examples 174c0dbd267900938d3b55782ff7c934d9d3d6d64f7f6c2bf900ef2f
 146:0-146:61 def VE.Calc.Examples.seven@VE.Calc.Examples
 147:0-147:57 def VE.Calc.Examples.none'@VE.Calc.Examples
 148:0-155:63 def VE.Calc.Examples.sources@VE.Calc.Examples
-251:0-251:85 def VE.Calc.Examples.bigDecl@VE.Calc.Examples
-252:0-252:91 def VE.Calc.Examples.readsBig@VE.Calc.Examples
-253:0-253:50 def VE.Calc.Examples.big@VE.Calc.Examples
+255:0-255:85 def VE.Calc.Examples.bigDecl@VE.Calc.Examples
+256:0-256:91 def VE.Calc.Examples.readsBig@VE.Calc.Examples
+257:0-257:50 def VE.Calc.Examples.big@VE.Calc.Examples
 module VE.Calc.Syntax 5fb0fd5b3ab4a969a25f642f8a98ba44cb4fa5b1e114b83623d4c19b0b4153d7
 6:0-14:28 inductive VE.Calc.Expr@VE.Calc.Syntax
 14:11-14:15 def VE.Calc.instReprExpr.repr@VE.Calc.Syntax
