@@ -36579,6 +36579,16 @@ theorem VE.Scope.Examples.markers
             VE.Layout.markerLen "12 x".toUTF8 0 4 = Option.none ∧ VE.Layout.markerLen ". x".toUTF8 0 3 = Option.none
   -- uses VE.Layout.markerLen@VE.Layout.List
   -- expr 26530222
+theorem VE.Scope.Examples.of_source
+  VE.Layout.ofSource "Rules:\n* a\n  b\n" [("u1", 0, 7), ("u2", 7, 11), ("u3", 11, 15)] =
+    [{ id := "u1", span := (0, 7), item := Option.none, midLine := Bool.false, lead := Bool.true, label := Bool.false,
+        para := 0 },
+      { id := "u2", span := (7, 11), item := Option.some 0, midLine := Bool.false, lead := Bool.false,
+        label := Bool.false, para := 0 },
+      { id := "u3", span := (11, 15), item := Option.none, midLine := Bool.false, lead := Bool.false, label := Bool.false,
+        para := 0 }]
+  -- uses VE.Layout.Unit.mk@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.ofSource@VE.Layout.List
+  -- expr 908525811
 theorem VE.Scope.Examples.own_binder
   VE.Scope.ownSafe VE.Scope.depthLimit
         (Lean.Json.arr

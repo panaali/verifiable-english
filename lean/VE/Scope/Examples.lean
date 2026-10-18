@@ -109,6 +109,10 @@ theorem short_layout : (layoutOf shortPieces).map (fun x => (x.item, x.midLine, 
      (none, false, false, false, 1), (some 0, false, false, false, 1), (none, false, false, false, 2)] := by
   decide +kernel
 
+theorem of_source : ofSource "Rules:\n* a\n  b\n" [("u1", 0, 7), ("u2", 7, 11), ("u3", 11, 15)] =
+    [⟨"u1", (0, 7), none, false, true, false, 0⟩, ⟨"u2", (7, 11), some 0, false, false, false, 0⟩,
+     ⟨"u3", (11, 15), none, false, false, false, 0⟩] := by decide
+
 theorem short_run : (listRun (layoutOf shortPieces) "a.s02").toOption = some ["a.s03", "a.s06"] ∧
     (listRun (layoutOf shortPieces) "a.s01" matches .error "NotALeadIn: a.s01") ∧
     (listRun (layoutOf prosePieces) "x.s01" matches .error "NotALeadIn: x.s01") ∧

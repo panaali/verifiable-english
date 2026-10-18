@@ -4960,6 +4960,7 @@
 'VE.Scope.Examples.byte_tests' does not depend on any axioms
 'VE.Scope.Examples.depth_bound' does not depend on any axioms
 'VE.Scope.Examples.markers' does not depend on any axioms
+'VE.Scope.Examples.of_source' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.own_binder' does not depend on any axioms
 'VE.Scope.Examples.para_counts' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_layout' depends on axioms: [propext, Quot.sound]
