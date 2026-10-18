@@ -47,8 +47,8 @@ check into `Intended` through `modelData_valid` and `premises_iff_intended`.
 
 ## Differences from the spec's text
 
-* `WellFormed` checks duplicate symbols and labels with `decide (… ).Nodup` instead of comparing lengths with
-  `VE.Cardinality.firstUse`, which is not on `main` (qt-a1); the two accept the same lists. It uses the core
-  `Except.isOk` for the spec's `okB`, which would repeat it.
+* `WellFormed` checks duplicate symbols and labels with core's decidable `List.Nodup` instead of comparing lengths
+  with `VE.Cardinality.firstUse`; the two accept the same lists, and `scalePremises_labels_nodup` then needs no
+  length lemma. It uses core's `Except.isOk` for the spec's `okB`, which would repeat it.
 * The `above` conjuncts `p.1 != p.2` and "both ends are grades" are kept as written; kahn (a self-loop is a cycle)
   and `Order.admit` (pairs within the grades) refuse the same blocks, so no fixture separates them.
