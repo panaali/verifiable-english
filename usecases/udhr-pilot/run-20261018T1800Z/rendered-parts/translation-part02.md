@@ -37,7 +37,7 @@ Recorded meaning: The passage is recorded as a rule.
 2. Marriage shall be entered into only with the free and full consent of the intending spouses.
 Open reading: Every marriage entry must not be concluded, if it is not the case that both that marriage entry is classified as "has_free_consent_of_each_spouse" and that marriage entry is classified as "has_full_consent_of_each_spouse".
 3. The family is the natural and fundamental group unit of society
-Recorded meaning: The passage is recorded as a passage without a formal reading yet, for this reason: other evaluative open claim.
+Open reading: "the_family" is classified as "natural_and_fundamental_group_unit_of_society".
 and is entitled to protection by society and the State.
 Open reading: Every family is classified as "is_entitled_to_protection_by_society_and_the_state".
 ## Article 17

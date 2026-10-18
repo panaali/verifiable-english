@@ -19,7 +19,7 @@ Recorded meaning: The passage is recorded as a rule attributed to peoples_of_un 
 Whereas Member States have pledged themselves to achieve, in co-operation with the United Nations, the promotion of universal respect for and observance of human rights and fundamental freedoms,
 Recorded meaning: The passage is recorded as a rule attributed to member_states as something member_states promised.
 Whereas a common understanding of these rights and freedoms is of the greatest importance for the full realization of this pledge,
-Recorded meaning: The passage is recorded as a passage without a formal reading yet, for this reason: other evaluative open claim.
+Open reading: "common_understanding_of_these_rights_and_freedoms" has the recorded relation "of_greatest_importance_for" to "full_realization_of_this_pledge".
 Now, therefore,
 Recorded meaning: The passage is recorded as a comment about the text.
 The General Assembly,
@@ -63,7 +63,7 @@ Recorded meaning: The passage is recorded as a rule.
 This sentence could mean:
 One reading is: Every practice must be prohibited, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both.
 Another reading is: Every practice must not be carried out, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both.
-These two readings differ here: actor is an actor; attack is an attack; b is a bearer; c is a community; d is a distinction; h is a holding; interference is an interference; intrusion is an intrusion; m is a measure; person is a person; practice is a practice; prosecution is a prosecution; s is a subjection; practice is classified as "is_slave_trade". Here the text does not say whether practice must be prohibited; this situation answers 'no'. Under *Every practice must be prohibited, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both*, practice still must. Under *Every practice must not be carried out, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both*, practice is not required to.
+These two readings differ here: actor is an actor; attack is an attack; b is a bearer; c is a community; d is a distinction; h is a holding; interference is an interference; intrusion is an intrusion; m is a measure; person is a person; practice is a practice; prosecution is a prosecution; s is a subjection; thing is a thing; practice is classified as "is_slave_trade". Here the text does not say whether practice must be prohibited; this situation answers 'no'. Under *Every practice must be prohibited, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both*, practice still must. Under *Every practice must not be carried out, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both*, practice is not required to.
 These two readings are about different acts: *be prohibited* / *be carried out*. No situation separates them on a shared act.
 ## Article 5
 Recorded meaning: The passage is recorded as a comment about the text.

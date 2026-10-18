@@ -1,20 +1,20 @@
 {
  "translation-part01.ve.md": {
-  "seconds": 20.6,
+  "seconds": 23.4,
   "coverage": {
    "accounted_bytes": 4724,
    "bytes_by_kind": {
-    "asserted": 628,
+    "asserted": 760,
     "attributed": 801,
     "meta": 265,
     "norm": 947,
-    "unformalised": 2083
+    "unformalised": 1951
    },
    "bytes_by_status": {
     "CHECKED": 192,
     "LABELLED": 265,
-    "OPEN": 1132,
-    "UNFORMALISED": 3135
+    "OPEN": 1264,
+    "UNFORMALISED": 3003
    },
    "coverage_percent": 100,
    "residual": {
@@ -38,7 +38,6 @@
     "modality_belief": 2,
     "norms": 5,
     "other_act_phrase_grammar": 2,
-    "other_evaluative_open_claim": 1,
     "other_metaphorical_endowment": 1,
     "time": 3
    },
@@ -90,7 +89,7 @@
    "u008a": "UNFORMALISED",
    "u008b": "UNFORMALISED",
    "u009": "UNFORMALISED",
-   "u010": "UNFORMALISED",
+   "u010": "OPEN",
    "u011": "LABELLED",
    "u012": "LABELLED",
    "u013a": "UNFORMALISED",
@@ -134,24 +133,24 @@
    "u045b": "CHECKED",
    "u046": "OPEN"
   },
-  "document_id": "a7e36e7f6719101c1c61eb8479a0bd25fa6352c71ef6eccc7102486f48dd8f34",
+  "document_id": "b0846ef28f5ca7186c2ce0b2c2a2780c129eb2fb2593fa350a1d775767a0217f",
   "source_id": "21e79137e9b2a73deed618c2ea187ddf0370fe9daa0ba8199f6f575d59677017"
  },
  "translation-part02.ve.md": {
-  "seconds": 5.8,
+  "seconds": 6.4,
   "coverage": {
    "accounted_bytes": 1849,
    "bytes_by_kind": {
-    "asserted": 611,
+    "asserted": 677,
     "meta": 105,
     "norm": 674,
-    "unformalised": 459
+    "unformalised": 393
    },
    "bytes_by_status": {
     "CHECKED": 363,
     "LABELLED": 105,
-    "OPEN": 693,
-    "UNFORMALISED": 688
+    "OPEN": 759,
+    "UNFORMALISED": 622
    },
    "coverage_percent": 100,
    "residual": {
@@ -170,7 +169,6 @@
    "source_bytes": 1849,
    "unformalised_reasons": {
     "norms": 2,
-    "other_evaluative_open_claim": 1,
     "other_right_lines_across_open_sets": 4
    },
    "norm_defaults": {
@@ -216,7 +214,7 @@
    "u057": "UNFORMALISED",
    "u058": "UNFORMALISED",
    "u059": "OPEN",
-   "u060": "UNFORMALISED",
+   "u060": "OPEN",
    "u061": "OPEN",
    "u062": "LABELLED",
    "u063": "CHECKED",
@@ -230,11 +228,11 @@
    "u071a": "UNFORMALISED",
    "u071b": "UNFORMALISED"
   },
-  "document_id": "08526d23257ef066590abac363604fd210b33b0450a74989f5a4e1416cfbe2bd",
+  "document_id": "fed5d63a407d6f175b4817154b87a827cbf3ff13be4e6d25e124170d9784374f",
   "source_id": "30c55dadeebc806a044087a9d96f8f6d9c42d8413ef6370c497720eb840bfd3a"
  },
  "translation-part03.ve.md": {
-  "seconds": 6.4,
+  "seconds": 6.8,
   "coverage": {
    "accounted_bytes": 3004,
    "bytes_by_kind": {
@@ -323,11 +321,11 @@
    "u102": "UNFORMALISED",
    "u103": "UNFORMALISED"
   },
-  "document_id": "f129615e3897a89c1bf8ed56fceb05606c75a9049d6d51e7cc807a4195093f72",
+  "document_id": "802b2025e55aede8acad7284b3d9e662c0021ed35ed8403b338bae6053af0061",
   "source_id": "6b7e27dc922576da04415b58d838185d7986dbc99de87339a4bd6016e5ffc339"
  },
  "translation-part04.ve.md": {
-  "seconds": 8.6,
+  "seconds": 8.7,
   "coverage": {
    "accounted_bytes": 1339,
    "bytes_by_kind": {
@@ -416,7 +414,7 @@
    "u113": "LABELLED",
    "u114": "OPEN"
   },
-  "document_id": "f1d2ab3584b86ac3ca71493c729ad7ef580a6f7590e645b344cfc0bddc1f2071",
+  "document_id": "0d1e84a99480f4ee58532eee8141e36e372f22b146fdc79a9271d380ce8833f5",
   "source_id": "adfe31f7f727320cbdfaf9c2b3d23370d94791f558fa0e18312f86eb7ebfd1be"
  }
 }

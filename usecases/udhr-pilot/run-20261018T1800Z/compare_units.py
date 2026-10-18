@@ -7,7 +7,7 @@ import json, sys
 from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE)); sys.path.insert(0, str(HERE.parents[2]))
-import repair15_specs as R
+EXPECTED = ['u010', 'u060', 'u042', 'u043']      # this run's changed units (JT-0p, ET-0)
 from ve.document import load_document
 
 old_dir = Path(sys.argv[1])
@@ -15,7 +15,7 @@ def front(path):
     return json.loads(Path(path).read_bytes().split(b"---\n", 2)[1])
 
 
-out = {"changed_expected": R.ORDER, "units": 0, "differences": [], "environment_changed_in": [],
+out = {"changed_expected": EXPECTED, "units": 0, "differences": [], "environment_changed_in": [],
        "note": "a unit's meaning id includes its environment's id, so every unit of a part whose vocabulary changed gets a new meaning id; "
                "what is compared is the status and the unit's own row (kind, meaning, content, span) in the part file"}
 for n in range(1, 5):
@@ -33,7 +33,7 @@ for n in range(1, 5):
         out["units"] += 1
         if o[uid][0] != w[uid][0] or ro[uid] != rn[uid]:
             out["differences"].append({"unit": uid, "part": name, "before": o[uid][0], "after": w[uid][0], "row_changed": ro[uid] != rn[uid],
-                                       "expected": uid in R.ORDER})
+                                       "expected": uid in EXPECTED})
 unexpected = [d for d in out["differences"] if not d["expected"]]
 out["unexpected"] = unexpected
 (HERE / "unit-compare.json").write_text(json.dumps(out, indent=1))
