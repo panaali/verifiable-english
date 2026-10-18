@@ -314,14 +314,16 @@ def runFollowableU (id : String) (j : Json) : Except String Json := do
   return ok id [("verdict", .str "UNKNOWN"),
     ("text", .str "UNKNOWN: no accepted followability certificate for this source")]
 
+def runElaborateU (id : String) (j : Json) : Except String Json := do
+  let s ← sourceOfU j
+  let coverage := match j.getObjVal? "coverage_units" with
+    | .ok units => [("coverage", Wire.coverage s.src.A (j.getObjValD "environment") units
+        (j.getObjValD "narrowings"))]
+    | .error _ => []
+  return ok id (regeneratedU s ++ coverage)
+
 def runCaseU (id kind : String) (j : Json) : Except String Json := do
-  if kind == "alt-elaborate" then
-    let s ← sourceOfU j
-    let coverage := match j.getObjVal? "coverage_units" with
-      | .ok units => [("coverage", Wire.coverage s.src.A (j.getObjValD "environment") units
-          (j.getObjValD "narrowings"))]
-      | .error _ => []
-    return ok id (regeneratedU s ++ coverage)
+  if kind == "alt-elaborate" then return ← runElaborateU id j
   if kind == "alt-environment" then
     let _ ← decodeAltSourceU (← j.getObjVal? "environment") (Json.arr #[]) .null .environment
     return ok id [("valid", .bool true)]
