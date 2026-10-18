@@ -26,11 +26,13 @@ def python(formulas, model, **options):
     return _evaluate_validated(tuple(formulas), model, **options).to_dict()
 
 
-def lean(row):
-    """A metered row's evaluation, its explanation rows rebuilt into the public tree (`_explanation`)."""
+def lean(row, case):
+    """A metered row's evaluation, its explanation rows rebuilt into the public tree (`_explanation`), every
+    binding bound to the case's model."""
     evaluation = row["evaluation"]
     rows = evaluation["explanation"]
-    return {**evaluation, "explanation": None if rows is None else _explanation(rows).to_dict()}
+    return {**evaluation, "explanation": None if rows is None
+            else _explanation(rows, case["model"]["domains"]).to_dict()}
 
 
 def run(cases):
@@ -87,7 +89,7 @@ def test_budgeted_values_counts_and_traces_match_python(profiles):
     assert len(rows) == len(cases)
     for case, row, answer in zip(cases, rows, expected, strict=True):
         assert row["status"] == "ok", (case, row)
-        assert lean(row) == answer, (case, row["evaluation"], answer)
+        assert lean(row, case) == answer, (case, row["evaluation"], answer)
 
 
 @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
@@ -103,8 +105,8 @@ def test_document_budget_is_shared_and_stops_at_first_violation(profiles):
                           "ast": [formula_to_data(env, f) for f in document.formulas],
                           "max_evaluations": budget, "trace": True})
             expected.append(python(document.formulas, model, max_evaluations=budget, trace=True))
-    for row, answer in zip(run(cases), expected, strict=True):
-        assert lean(row) == answer
+    for case, row, answer in zip(cases, run(cases), expected, strict=True):
+        assert lean(row, case) == answer
 
 
 @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
@@ -162,8 +164,8 @@ def test_empty_quantifier_domains_match_python(profiles):
              for i, (f, budget) in enumerate((f, b) for f in formulas_ for b in (0, 1, 2))]
     expected = [python((f,), model, trace=True, max_evaluations=budget)
                 for f in formulas_ for budget in (0, 1, 2)]
-    for row, answer in zip(run(cases), expected, strict=True):
-        assert lean(row) == answer
+    for case, row, answer in zip(cases, run(cases), expected, strict=True):
+        assert lean(row, case) == answer
     nv = [{"id": str(i), "kind": "non-vacuity", "environment": raw,
            "model": model.to_dict(), "formula": formula_to_data(env, f)}
           for i, f in enumerate(formulas_)]
@@ -171,6 +173,7 @@ def test_empty_quantifier_domains_match_python(profiles):
 
 
 ROW = {"kind": "top", "value": True, "bindings": [], "detail": "", "children": 0}
+DOMAINS = {"s": ["x"]}  # the model the rows answer: the shifted index below binds an entity it holds
 
 
 @pytest.mark.parametrize("rows", [
@@ -189,13 +192,13 @@ def test_explanation_rows_must_be_exactly_one_tree(rows):
     that are not exactly one tree in preorder are no answer."""
     from ve.errors import CheckerUnavailable
     with pytest.raises(CheckerUnavailable):
-        _explanation(rows)
+        _explanation(rows, DOMAINS)
 
 
 def test_explanation_rows_rebuild_the_tree():
     rows = [{**ROW, "kind": "document", "detail": "all statements satisfied", "children": 2},
             {**ROW, "kind": "and", "children": 1}, ROW, ROW]
-    tree = _explanation(rows).to_dict()
+    tree = _explanation(rows, DOMAINS).to_dict()
     assert [child["kind"] for child in tree["children"]] == ["and", "top"]
     assert [child["kind"] for child in tree["children"][0]["children"]] == ["top"]
 

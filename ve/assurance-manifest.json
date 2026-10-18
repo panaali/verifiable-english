@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 35426,
+    "total_lines": 35450,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -105,12 +105,12 @@
       },
       {
         "file": "lean/VE/Alternatives/Wire.lean",
-        "lines": 415,
-        "sha256": "2bca023f9fb77dd82ae6b2bd6b777ea277c533022c95bead6028a2421a728a22",
+        "lines": 416,
+        "sha256": "207a5df0a613b7cec6ebab81dfe9daf2ec37149eff02428c1deb26269c112754",
         "ranges": [
           [
             1,
-            415
+            416
           ]
         ],
         "declarations": [
@@ -143,7 +143,7 @@
       {
         "file": "lean/VE/Attribution/Content.lean",
         "lines": 727,
-        "sha256": "7b9ef5092ab3f218a11f4a9800dc2d1c8eb056b43cb374e9dbed38b2d2096eb7",
+        "sha256": "8a645b0f526900be6dc1d775458e3bf457c379462930c57387ed12d6858424c7",
         "ranges": [
           [
             1,
@@ -176,12 +176,12 @@
       },
       {
         "file": "lean/VE/Attribution/Wire.lean",
-        "lines": 514,
-        "sha256": "4eadc30b6ea7aa48059794724edc301213b9fca4ef7e8c3bd2100fc4271f0ee5",
+        "lines": 515,
+        "sha256": "5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bcee707ca2cc29",
         "ranges": [
           [
             1,
-            514
+            515
           ]
         ],
         "declarations": [
@@ -241,12 +241,12 @@
       },
       {
         "file": "lean/VE/Closure/Bridge.lean",
-        "lines": 99,
-        "sha256": "b9c7a15be6bbfd183b22452774e118d0e95e617f52437fc1e3a928a6590b46f3",
+        "lines": 100,
+        "sha256": "215839deaae17064ae496e922307256483744a8a539e3ce2305c6060a7f32ac8",
         "ranges": [
           [
-            9,
-            66
+            10,
+            67
           ]
         ],
         "declarations": [
@@ -258,12 +258,12 @@
       },
       {
         "file": "lean/VE/Core/Bridge.lean",
-        "lines": 155,
-        "sha256": "058d08ef96b968f344cbbe40dac8e0de5b2d43bf1dd5fe7ad479064b9601df1d",
+        "lines": 156,
+        "sha256": "778e45637441b4fe9ffb727c0b73385c443531ac4dbca4403f5395bc5e1bfd12",
         "ranges": [
           [
-            10,
-            121
+            11,
+            122
           ]
         ],
         "declarations": [
@@ -275,12 +275,12 @@
       },
       {
         "file": "lean/VE/Core/Wire.lean",
-        "lines": 208,
-        "sha256": "92311bef77c8961db7f6c7dead49113f6fea940c238fd2a40fb117f90bf9af78",
+        "lines": 209,
+        "sha256": "1d5198a59d4c4416e93535da9325fbf7ff18e6c0bafb8cd083c92c7f30d55e87",
         "ranges": [
           [
             1,
-            208
+            209
           ]
         ],
         "declarations": [
@@ -472,12 +472,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 441,
-        "sha256": "a065b15d37f737b136d72fa0bf502034335da238348711e45330e21eb2552b67",
+        "lines": 442,
+        "sha256": "404602f5f12d16dededdea27923704a21b322c91e7cb3758ea4c89562bc99f8d",
         "ranges": [
           [
             1,
-            441
+            442
           ]
         ],
         "declarations": [
@@ -553,7 +553,7 @@
       {
         "file": "lean/VE/Norms/Wire.lean",
         "lines": 339,
-        "sha256": "e684d566146e6413feca76556a448a7af2e33001a4cbf4afb3cf75e2f931cb4f",
+        "sha256": "8a0cb97b3ed8b1094458ffc5cea7379f964904a62401eae7162c5131c4d39d22",
         "ranges": [
           [
             26,
@@ -595,12 +595,12 @@
       },
       {
         "file": "lean/VE/Readings/Companions.lean",
-        "lines": 923,
-        "sha256": "dc0e7274664915cab3c524fcd827e0b4e46b182aa0a00b31f545b9727df84bb0",
+        "lines": 924,
+        "sha256": "00b32a8d7627ad9afdda9fb7775793793af85aa7de7f30efd40ae719cfd0d240",
         "ranges": [
           [
             1,
-            923
+            924
           ]
         ],
         "declarations": [
@@ -759,12 +759,12 @@
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
-        "lines": 1006,
-        "sha256": "df232e5bc84502875ebbffb8f013cd12147470d980f4e1b7c9d26e765234b1c5",
+        "lines": 1007,
+        "sha256": "a6f669fc0428bf4898f7422046081a0ac74781d4f4097cd0e7cf239d1faff91f",
         "ranges": [
           [
             1,
-            1006
+            1007
           ]
         ],
         "declarations": [
@@ -807,12 +807,12 @@
       },
       {
         "file": "lean/VE/Rights/Wire.lean",
-        "lines": 696,
-        "sha256": "753feb56dae0d875a63d8059e8a9fc7947a7fc0ab24793067fd4503ab7d89d40",
+        "lines": 697,
+        "sha256": "5be42b913732dd33878d081227c8bb25c6927558f6718457a77f7ec475501fad",
         "ranges": [
           [
             1,
-            696
+            697
           ]
         ],
         "declarations": [
@@ -859,12 +859,12 @@
       },
       {
         "file": "lean/VE/Risk/Record.lean",
-        "lines": 1266,
-        "sha256": "9b9aa82f9a8dd88d66bccae8d8294683f4d25f8f209a52459e47468411313d7e",
+        "lines": 1267,
+        "sha256": "c11e28299c40818e4c15223a0edd5281c3d15c210f75622f09d73fc9eeff1528",
         "ranges": [
           [
             1,
-            1266
+            1267
           ]
         ],
         "declarations": [
@@ -898,12 +898,12 @@
       },
       {
         "file": "lean/VE/Risk/Wire.lean",
-        "lines": 491,
-        "sha256": "c0b8be77ca2bc85007939d5e7151a3ca769726e0159426a29eec8a6a0fcd4ff6",
+        "lines": 492,
+        "sha256": "2ec792a1681039c48a6f76ca7106230122d6aabcf0c84be43c62d5671bd94acc",
         "ranges": [
           [
             1,
-            491
+            492
           ]
         ],
         "declarations": [
@@ -923,12 +923,12 @@
       },
       {
         "file": "lean/VE/Route/Admission.lean",
-        "lines": 697,
-        "sha256": "230006c26a0730425a818788e034ac564178dc1c9e309cf5d3a45d0a287e8c74",
+        "lines": 698,
+        "sha256": "73e6f8fbe693647c8eca886acd910f8034063d0106e4782f39c33e337860c780",
         "ranges": [
           [
             1,
-            697
+            698
           ]
         ],
         "declarations": [
@@ -946,12 +946,12 @@
       },
       {
         "file": "lean/VE/Route/Decode.lean",
-        "lines": 282,
-        "sha256": "7cd23701ca9597d409c929dc679826da8ee2e5c5f2d5330a17a219255f69a8d7",
+        "lines": 283,
+        "sha256": "5ecebb9350433ef5965dd4897e461bec2ae0f41a5b39bf386859c89668bc41b4",
         "ranges": [
           [
             1,
-            282
+            283
           ]
         ],
         "declarations": [
@@ -977,12 +977,12 @@
       },
       {
         "file": "lean/VE/Route/Typed.lean",
-        "lines": 95,
-        "sha256": "51f9ceb0f783f68f0f81def0cb86449778610d76441cb2848b8a3d7e632a4693",
+        "lines": 96,
+        "sha256": "8e0e19fcb271ee68506f0691c6f4db666cef901bc5aa4c8368085c57a9026528",
         "ranges": [
           [
             1,
-            95
+            96
           ]
         ],
         "declarations": [
@@ -996,12 +996,12 @@
       },
       {
         "file": "lean/VE/Route/Wire.lean",
-        "lines": 726,
-        "sha256": "885df84eea8b1ce8c40e05fd19089eca48d6fcb335c20e908154e81cf6a8852a",
+        "lines": 727,
+        "sha256": "4829a9c7b8eefe682b6be937f462640a17ca350919eb4e2c419c37d077e33c45",
         "ranges": [
           [
             1,
-            726
+            727
           ]
         ],
         "declarations": [
@@ -1065,12 +1065,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 1841,
-        "sha256": "3b798020979c98fe8198067a2f12adf8676795e2aaee0605e12da390dae00de8",
+        "lines": 1842,
+        "sha256": "a1ad4524945278fe8561b41701d9e4afc38f97900dc5c3726fa4485791856862",
         "ranges": [
           [
             1,
-            1841
+            1842
           ]
         ],
         "declarations": [
@@ -1118,12 +1118,12 @@
       },
       {
         "file": "lean/VE/Service/Family.lean",
-        "lines": 813,
-        "sha256": "9d45b0d2b1b95ece00fe13ed18c972062f5e4f8781a5d5569e68a34d4545afdd",
+        "lines": 814,
+        "sha256": "6c3ab030f93404cb391a9fea68397f1bfec48c2c64b9c8e4ff5c79694b0a9c0a",
         "ranges": [
           [
             1,
-            813
+            814
           ]
         ],
         "declarations": [
@@ -1161,12 +1161,12 @@
       },
       {
         "file": "lean/VE/Service/FamilyNorms.lean",
-        "lines": 389,
-        "sha256": "1472d5235efdd3aa8fa24a807f1ccdccd47d69c4115adae7d61fe662be954069",
+        "lines": 390,
+        "sha256": "f7ba731cdfa5ab7ff6d36b6f6a352f8a7eee36795231f769d81940f149bbba3d",
         "ranges": [
           [
             1,
-            389
+            390
           ]
         ],
         "declarations": [
@@ -1185,12 +1185,12 @@
       },
       {
         "file": "lean/VE/Service/Graph.lean",
-        "lines": 255,
-        "sha256": "cd0523e5ad4d580bc7de3076996974e060eb106eda981fd84aa4dc0f0b6fc212",
+        "lines": 256,
+        "sha256": "e27c762fff7a13689df799082ee369d1f93ed8597f0e307202202b2accccbc7c",
         "ranges": [
           [
             1,
-            255
+            256
           ]
         ],
         "declarations": [
@@ -1257,12 +1257,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Phases.lean",
-        "lines": 370,
-        "sha256": "4b807f2925e06279acf4d0d393b1f672e9b16b3994b8bb18aaf4e60e3b230e34",
+        "lines": 371,
+        "sha256": "66cff3a49c9dde13cb270d7b11c1bffce7f791a07ba4acc1aae70e54332b191d",
         "ranges": [
           [
             1,
-            370
+            371
           ]
         ],
         "declarations": [
@@ -1275,12 +1275,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Wire.lean",
-        "lines": 524,
-        "sha256": "89bfe1124ae1caa316f5d142e8f5c2f21d0b7c495ba9c5859b9c62b2e48e788e",
+        "lines": 525,
+        "sha256": "308401c5e256c6faec2687f317082dda66ec8ee00dd1892b5d753c14637a6af5",
         "ranges": [
           [
             1,
-            524
+            525
           ]
         ],
         "declarations": [
@@ -1313,12 +1313,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 933,
-        "sha256": "6d39ec0b8b5b21c0a4b10ff2acdbe15cf352dfd7ce39863219c13d940d163b1a",
+        "lines": 934,
+        "sha256": "95fb8af85dedc9771b9f43c8026214fcdc16e2beeaadd528c395ca03ed451bfe",
         "ranges": [
           [
             1,
-            933
+            934
           ]
         ],
         "declarations": [
@@ -1337,12 +1337,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 1007,
-        "sha256": "c5d1a01b214c4242d91358210c6770edf62ee4f890d47922266f2f0b55616f95",
+        "lines": 1008,
+        "sha256": "3908d8db4079460afc3fc4ffbb2c74aa379bcf526de7774ee110fb75a12f040f",
         "ranges": [
           [
             1,
-            1007
+            1008
           ]
         ],
         "declarations": [
@@ -1371,12 +1371,12 @@
       },
       {
         "file": "lean/VE/Time/Wire.lean",
-        "lines": 843,
-        "sha256": "43eff830ca8c106715f61eb50f957eb8103ab40336f251947f956dd3464aebd4",
+        "lines": 844,
+        "sha256": "92e7b2be4458d645096ac7745cd2400c6ec2cc96b071a77751046b6520d02c9e",
         "ranges": [
           [
             1,
-            843
+            844
           ]
         ],
         "declarations": [
@@ -1411,12 +1411,12 @@
       },
       {
         "file": "lean/VE/Norms/Family.lean",
-        "lines": 505,
-        "sha256": "16b0075b30db8bc437017cb9dfd3f47ae784b01a0321c5f02be4e65f99a00130",
+        "lines": 506,
+        "sha256": "9c2429084058117785a41567b32b59a7fa06fb108f9a7cafd3d881840a271a04",
         "ranges": [
           [
             1,
-            505
+            506
           ]
         ],
         "declarations": [
@@ -1635,12 +1635,12 @@
       },
       {
         "file": "lean/VE/Route/PyDecoder.lean",
-        "lines": 124,
-        "sha256": "1a90eaf1a90c2bb2086414f1d8410e8410acb85d78aea6ea15d0d04377cae52f",
+        "lines": 125,
+        "sha256": "eef0132245369af1fc8606ed59c720d5866de146d6d6d43c5ffeb0625c621a9e",
         "ranges": [
           [
             1,
-            124
+            125
           ]
         ],
         "declarations": [
@@ -1812,7 +1812,8 @@
       "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path",
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Schemas/Metered.lean": "the metered mode's response shape (metered.json) and the JSON constants of its three results; test tooling beside lean/ResponseShape.lean, not on any runner path",
-      "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing"
+      "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing",
+      "lean/VE/LimitTies.lean": "build-time checks only: its #guards build JSON inputs to check the frozen decoders' limits against VE.Limits at the limit and one past it (lf-18 review F2); no executable, service mode or record reads it"
     }
   },
   "plan_operations": {
