@@ -712,6 +712,27 @@
    "reason": "pk-1: VE/NormDefaults/Packs.lean +73, VE/NormDefaults/Layered.lean +5 (K +0, S +0, V +78)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1, 2026-10-18",
    "commit": "93131f967bb3ad87674c214b19347986f33c79b2"
+  },
+  {
+   "class": "S",
+   "lines": 40,
+   "reason": "jt-1: VE/Judgments/Decl.lean +52 (S +36, D[V] +16), VE/Judgments/Scan.lean +4 (S), VE/Rights/Run.lean -2 (nodeOpen shortened to the shared scan); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1, 2026-10-18",
+   "commit": "de9cfa84f0145d69c8474faeb76d59ddf35b3cbf"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "jt-1: VE/Judgments/Decl.lean +52 (S +36, D[V] +16), VE/Judgments/Scan.lean +4 (S), VE/Rights/Run.lean -2 (nodeOpen shortened to the shared scan); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1, 2026-10-18",
+   "commit": "de9cfa84f0145d69c8474faeb76d59ddf35b3cbf"
+  },
+  {
+   "class": "V",
+   "lines": 113,
+   "reason": "me-1c Calc display lines: VE/Calc/Render.lean +113 (V, G[V]: reservedWords, phraseWords, valueWordsOk, natWords, placesPhrase, printedWords, exactWords, exprDepth, renderAtom, renderTerm, renderExpr, fill, renderClaim); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1c, 2026-10-17",
+   "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
   }
  ]
 }

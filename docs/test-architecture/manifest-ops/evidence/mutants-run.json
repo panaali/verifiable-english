@@ -1,0 +1,113 @@
+{
+ "mutants": [
+  {
+   "id": "S1",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "is_manifest counts \"unmapped manifest reader\" (the drift rows' manifest share)",
+   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "command": [
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "a4676c0b7,e7f6968d4"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 173.3,
+   "output_tail": "merges a4676c0b7: 352 units\nmerges e7f6968d4: 95 units\nmerges a4676c0b7: 434 units\nmerges e7f6968d4: 434 units\nreplayed 2 labels: 4 rows differ: ['before merges a4676c0b7', 'before merges e7f6968d4', 'before-drift merges a4676c0b7', 'before-drift merges e7f6968d4']\n"
+  },
+  {
+   "id": "S2",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "is_pin counts \"reads lean/checkers.lock\" (the recorded pin readers)",
+   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "command": [
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "109c7de1d"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 133.1,
+   "output_tail": "merges 109c7de1d: 371 units\nmerges 109c7de1d: 434 units\nreplayed 2 labels: 1 rows differ: ['before merges 109c7de1d']\n"
+  },
+  {
+   "id": "S3",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "because counts a plan only when the manifest's reasons decide it (strictly fewer units without them)",
+   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "command": [
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "none"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.9,
+   "output_tail": "REPORT.md: the tables between the markers are not what --table prints from the saved rows\n"
+  },
+  {
+   "id": "S4",
+   "file": "tools/regen_generated.py",
+   "claim": "measure.py, a script with a --write mode, is registered in NOT_REGENERATED",
+   "source_sha256": "29a24ac2c2507dc8771721060bd953ae4af45d4f7098de1f44988db02dea6ba9",
+   "tests": [
+    "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.1,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_ test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason _\n\n    def test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason():\n        registered = set().union(*(_referenced(entry) for entry in R.GENERATED)) | {\"tools/regen_generated.py\"}\n        unlisted = sorted(name for name in _write_mode_scripts() - registered\n                          if not any(fnmatch.fnmatchcase(name, pattern) for pattern in R.NOT_REGENERATED))\n>       assert not unlisted, f\"register these writers in GENERATED or NOT_REGENERATED: {unlisted}\"\nE       AssertionError: register these writers in GENERATED or NOT_REGENERATED: ['docs/test-architecture/manifest-ops/measure.py']\nE       assert not ['docs/test-architecture/manifest-ops/measure.py']\n\ntests/test_regen_generated.py:77: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason\n1 failed in 2.62s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ig3fn0m5)\n"
+  },
+  {
+   "id": "S5",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "the upper-bound table reads the --run plan (r1) in its r1 rows (F1)",
+   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "command": [
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "none"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.4,
+   "output_tail": "REPORT.md: the tables between the markers are not what --table prints from the saved rows\n"
+  },
+  {
+   "id": "S6",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "--only needs the pinned shadow maps of the rows it names only (F3)",
+   "source_sha256": "00ec49a821fa1543ce5c058afcce023138d2d1b25b88bf2c727e01991a596123",
+   "command": [
+    "env",
+    "VE_SHADOW_MAPS=/nonexistent/ve-shadow-maps",
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "none"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.2,
+   "output_tail": "/nonexistent/ve-shadow-maps/2a4fbf7080e0a949552f09985cf1e62fc2f671d7.json.gz: missing; the shadow rows need the maps the shadow table pinned (set VE_SHADOW_MAPS, or --only merge rows)\n"
+  }
+ ]
+}
