@@ -138,7 +138,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Alternatives/Replay.lean` | 328 | 328 | 1–328 | `1b69bb125b3d…` |
 | `lean/VE/Alternatives/Wire.lean` | 415 | 415 | 1–415 | `2bca023f9fb7…` |
 | `lean/VE/Attribution/Admission.lean` | 343 | 343 | 1–343 | `de9ae29eed4d…` |
-| `lean/VE/Attribution/Content.lean` | 726 | 726 | 1–726 | `42d7518d9a79…` |
+| `lean/VE/Attribution/Content.lean` | 727 | 727 | 1–727 | `7b9ef5092ab3…` |
 | `lean/VE/Attribution/Preflight.lean` | 457 | 457 | 1–457 | `fa6956756459…` |
 | `lean/VE/Attribution/Wire.lean` | 514 | 514 | 1–514 | `4eadc30b6ea7…` |
 | `lean/VE/Bridge.lean` | 335 | 288 | 14–301 | `4f7b5313509e…` |
@@ -159,7 +159,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Norms/Admission.lean` | 472 | 32 | 21–52 | `33bcac01b062…` |
 | `lean/VE/Norms/Flagged.lean` | 389 | 389 | 1–389 | `2921520480a4…` |
 | `lean/VE/Norms/Replay.lean` | 404 | 69 | 103–151, 283–302 | `741968e0457a…` |
-| `lean/VE/Norms/Wire.lean` | 339 | 313 | 25–337 | `819ee135aea8…` |
+| `lean/VE/Norms/Wire.lean` | 339 | 312 | 26–337 | `e684d566146e…` |
 | `lean/VE/Order/Wire.lean` | 301 | 220 | 25–238, 253–258 | `0f2b4ab4442d…` |
 | `lean/VE/Readings/Companions.lean` | 923 | 923 | 1–923 | `dc0e72746649…` |
 | `lean/VE/Readings/SupFillWire.lean` | 302 | 302 | 1–302 | `e8d7e1dc2262…` |

@@ -17,6 +17,7 @@ import VE.SoftNorms.Phases
 import VE.Rights.Wire
 import VE.Readings.Wire
 import VE.NormDefaults.Wire
+import VE.Limits
 
 /-! Standalone service validation and identity endpoints. These wrap the same
 decoders used by the route; successful model answers require a checked model. -/
@@ -682,8 +683,7 @@ def encodeClosure : VE.Closure.Formula → Json
   | .reachBody k s a t u => Json.arr #[.str "reach", encodeKind k,
       Json.arr #[.str "body", .str s, encodeClosure a], VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
 
-/-- Python's source cap (`MAX_SOURCE_BYTES`). -/
-def maxSourceBytes : Nat := 65536
+export VE.Limits (maxSourceBytes)
 
 /-- The `definitions@0` sugar over `environment` (none without the profile): a
 defined predicate's declared argument sorts, and whether a parsed body is its

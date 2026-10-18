@@ -1,6 +1,7 @@
 import VE.Norms.LayersOnce
 import VE.Route.Gate
 import VE.Route.Wire
+import VE.Limits
 
 /-! The norms-route decoder (docs/spec/norms.md 3.1, 3.2 and 11.4 steps 1-3),
 for the regeneration cases of the `ve_norms_route` executable.
@@ -188,8 +189,7 @@ the node budget (`MAX_NODES`) and `MAX_INDEX`. One decoder counts every formula
 and term node in pre-order and checks the budget on entering a node, before its
 shape; `count` is the number of nodes the same decoder has already read. -/
 
-def maxNodes : Nat := 10000
-def maxIndex : Nat := 2 ^ 53 - 1
+export VE.Limits (maxNodes maxIndex)
 
 def budgetTerm (count : Nat) (j : Json) : Except String (VE.Term × Nat) := do
   if count + 1 > maxNodes then throw "ResourceLimit: AST exceeds depth or node budget"

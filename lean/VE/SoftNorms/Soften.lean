@@ -1,4 +1,5 @@
 import VE.SoftNorms.Tree
+import VE.Limits
 
 /-! The elaboration `soften(T) = T′` over `E′` (docs/spec/soft-norms.md 4.2, 5 and
 6.1) and the executable well-formedness check `WellFormedSoft` (4.1, 8).
@@ -158,8 +159,7 @@ def softPremises (D : SoftDoc) : List VE.Formula := excPremises D ++ cohPremises
 
 /-! ## The executable check (4.1, 8) -/
 
-def maxNodes : Nat := 10000
-def maxDepth : Nat := 64
+export VE.Limits (maxNodes maxDepth)
 
 /-- Python's `_Checker` budgets (`MAX_NODES`, term nodes included, and `MAX_DEPTH`)
 on one generated formula, with `n` nodes already spent and the formula at depth

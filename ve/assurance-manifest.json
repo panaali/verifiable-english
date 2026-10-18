@@ -143,12 +143,12 @@
       },
       {
         "file": "lean/VE/Attribution/Content.lean",
-        "lines": 726,
-        "sha256": "42d7518d9a79a9c180ed9b463cad04d23c6ddc15cfdc8815e97dd9fe5791b26c",
+        "lines": 727,
+        "sha256": "7b9ef5092ab3f218a11f4a9800dc2d1c8eb056b43cb374e9dbed38b2d2096eb7",
         "ranges": [
           [
             1,
-            726
+            727
           ]
         ],
         "declarations": [
@@ -401,7 +401,7 @@
           "admitNodes",
           "admitDocument"
         ],
-        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 W2 admission decoder over E\u2034; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
@@ -554,10 +554,10 @@
       {
         "file": "lean/VE/Norms/Wire.lean",
         "lines": 339,
-        "sha256": "819ee135aea8e1d0b4cb4a5b36111fe95a2464bb0a2a4a1a07508e6536535ba4",
+        "sha256": "e684d566146e6413feca76556a448a7af2e33001a4cbf4afb3cf75e2f931cb4f",
         "ranges": [
           [
-            25,
+            26,
             337
           ]
         ],
@@ -1666,7 +1666,7 @@
           "filledJsonX",
           "admitDocumentX"
         ],
-        "reason": "rd-9 SC-6: the soft branch under norm-defaults@0, its certificate replay (the source by decodeSoftU, the formulas, bindCertX) and W2 admission on the filled soft tree (the soft source, the quoted norms, the units and graph nodes over E‴, certificates bound to the regenerated soft E‴); the full file is pinned conservatively"
+        "reason": "rd-9 SC-6: the soft branch under norm-defaults@0, its certificate replay (the source by decodeSoftU, the formulas, bindCertX) and W2 admission on the filled soft tree (the soft source, the quoted norms, the units and graph nodes over E\u2034, certificates bound to the regenerated soft E\u2034); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/LayeredEntail.lean",

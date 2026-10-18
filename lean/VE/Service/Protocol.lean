@@ -31,6 +31,7 @@ import VE.Service.Diagnose
 import VE.Service.Document
 import VE.SearchBudget.Run
 import Std.Data.HashMap
+import VE.Limits
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -66,10 +67,7 @@ restricted decoder `VE.JsonInput`, which have no refinement theorem. -/
 namespace VE.Service
 open Lean
 
-/-- Longest accepted request line, as the one-shot runners' input cap. -/
-def maxLineBytes : Nat := 16777216
-/-- Most cases in one request. -/
-def maxCases : Nat := 4096
+export VE.Limits (maxLineBytes maxCases)
 
 inductive Mode where
   | evaluate | checkCertificate | order | route | norms | english | englishRead | englishGrammar | englishCheck
@@ -676,8 +674,8 @@ which the client mirrors (`Handles.insert`). -/
 def handshake : Json :=
   Json.mkObj [("service", .str "ve-lean@1"), ("protocol", toJson (2 : Nat)),
     ("lean", .str Lean.versionString), ("modes", toJson (modes.map Mode.name)),
-    ("codes", toJson rejectionCodes), ("limits", Json.mkObj [("max_line_bytes", toJson maxLineBytes),
-      ("max_cases", toJson maxCases), ("json_depth", toJson (256 : Nat))]),
+    ("codes", toJson rejectionCodes),
+    ("limits", Json.mkObj (VE.Limits.stated.map fun (name, limit) => (name, toJson limit))),
     ("handles", Json.mkObj [("member", .str handleKey), ("max", toJson maxHandles),
       ("max_bytes", toJson maxHandleBytes)])]
 
