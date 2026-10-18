@@ -164,3 +164,5 @@ import VE.Events.Premises
 import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Examples
+import VE.Layout.List
+import VE.Scope.Examples
