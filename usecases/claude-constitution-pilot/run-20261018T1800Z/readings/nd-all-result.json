@@ -1,7 +1,7 @@
 {
   "document": "usecases/claude-constitution-pilot/run-20261018T1800Z/readings/nd-all.ve.md",
   "group": "all",
-  "search_seconds": 137.3,
+  "search_seconds": 88.9,
   "sets": [
     {
       "set": "force-u0036-s05",
@@ -70,9 +70,9 @@
   ],
   "pairs_without_situation": [],
   "search_limits": [],
-  "load_seconds": 14.9,
+  "load_seconds": 12.5,
   "admitted": true,
-  "check_seconds": 163.0,
+  "check_seconds": 150.3,
   "readings": {
     "checked_by": {
       "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
@@ -104,7 +104,7 @@
               "strict",
               "default"
             ],
-            "situation": "4afebeff77f3703f57ef1fed0fbc0640e26dec793a8331d236f3590087a75653",
+            "situation": "b1f4001df2f6ced5296a2dfefde16dc472f9410d4c13630bf2425f318e416978",
             "probe": "outcome",
             "wording": "E19",
             "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; p is a type of principal; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
@@ -149,7 +149,7 @@
               "strict",
               "default"
             ],
-            "situation": "0546abca896a511ab4adbc1be6c132ab071d352393274ceedd47bce4e776087f",
+            "situation": "47dc31abc64fa1dd83040053b02fb254e9c2cdef98720c3e61abd7d67be59d36",
             "probe": "selects",
             "wording": "E24",
             "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -159,7 +159,7 @@
               "strict",
               "strict-in-frame"
             ],
-            "situation": "050d3c4dbf81ef386e04b958b0ad4b08ee0e5dda4ef6ee93bf697c59baad7fe8",
+            "situation": "5f3b257bb22938d71a2c0b8e2c5550ed7873156622c1f7738c20c43cf05ab2a4",
             "probe": "selects",
             "wording": "E24",
             "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -169,7 +169,7 @@
               "strict",
               "default-in-frame"
             ],
-            "situation": "050d3c4dbf81ef386e04b958b0ad4b08ee0e5dda4ef6ee93bf697c59baad7fe8",
+            "situation": "5f3b257bb22938d71a2c0b8e2c5550ed7873156622c1f7738c20c43cf05ab2a4",
             "probe": "selects",
             "wording": "E24",
             "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -179,7 +179,7 @@
               "default",
               "strict-in-frame"
             ],
-            "situation": "6c10b99e44d66d7f2ba4569f8122941a1d81eb69452154f4385be45307c7cc03",
+            "situation": "997dd105d07217395f678e60cf156310bfc48fff0529507b8edada92418f9cd3",
             "probe": "selects",
             "wording": "E24",
             "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -189,7 +189,7 @@
               "default",
               "default-in-frame"
             ],
-            "situation": "6c10b99e44d66d7f2ba4569f8122941a1d81eb69452154f4385be45307c7cc03",
+            "situation": "997dd105d07217395f678e60cf156310bfc48fff0529507b8edada92418f9cd3",
             "probe": "selects",
             "wording": "E24",
             "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -199,7 +199,7 @@
               "strict-in-frame",
               "default-in-frame"
             ],
-            "situation": "6fdebd25bd2c17d8cca2902e5a9e101329afe11ef7e5abede110794b8e8c3d42",
+            "situation": "6e3fbdee501ce5993241b92dda69d53f14a5800b27e1bea2531ba8959f5b8550",
             "probe": "selects",
             "wording": "E24",
             "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -232,7 +232,7 @@
               "wide",
               "narrow"
             ],
-            "situation": "f2fa83648338fcf75d7afc0a4907140df53adaf53f2d02dacadf3a1942fe4557",
+            "situation": "a985f2530aa04ad4bb547d94a9f00a233253ff72dc63be667b41d4d540925034",
             "probe": "selects",
             "wording": "E24",
             "text": "These two readings differ in a checked situation that VE cannot yet show in words."
@@ -265,7 +265,7 @@
               "strict",
               "default"
             ],
-            "situation": "1520d7078ffb8a6297a72b75edb14c09ede2eef1a3142c5ceee9c8ad329bfa4e",
+            "situation": "6f0c3913c18c94747dc81735fa20801c29d9299642d5ef8b9758b583e89eb8b3",
             "probe": "outcome",
             "wording": "E19",
             "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; p is a type of principal; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
@@ -299,7 +299,7 @@
         "sorts": 32
       },
       "nodes": 303,
-      "predicates": 89,
+      "predicates": 90,
       "sorts": 9
     },
     "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
@@ -992,7 +992,7 @@
       "This does not depend on how sentence 590 is read.",
       "This does not depend on how sentence 630 is read.",
       "This does not depend on how sentence 1001 is read.",
-      "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 590 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 630 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation* and sentence 1001 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal; e1 is a type of principal; e2 is a type of principal; e0 is classified as \"claude_principal_type\"; e1 is classified as \"claude_principal_type\"; e2 is classified as \"claude_principal_type\"."
+      "Read sentence 132 as *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"* and sentence 590 as *Every instance of Claude must not actively deceive each user about system prompt existence-or-content* and sentence 630 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation* and sentence 1001 as *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a type of principal; e1 is a type of principal; e2 is a type of principal; e0 is classified as \"claude_principal_type\"; e1 is classified as \"claude_principal_type\"; e2 is classified as \"claude_principal_type\"; e0 is novel."
     ]
   },
   "premises": {
@@ -1331,6 +1331,11 @@
         "knowingly_engages_6": [],
         "knowingly_engages_7": [],
         "mass_casualty_weapon_uplift": [],
+        "novel_entity": [
+          [
+            "e0"
+          ]
+        ],
         "operator_prompt_addresses_case": [],
         "seemingly_compelling_argument_to_cross_line": [],
         "thinks_quite_likely_1": [],
@@ -1369,7 +1374,7 @@
   "bytes_by_status": {
     "CHECKED": 186,
     "LABELLED": 364,
-    "OPEN": 2529,
-    "UNFORMALISED": 181814
+    "OPEN": 2555,
+    "UNFORMALISED": 181788
   }
 }

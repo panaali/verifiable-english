@@ -84,12 +84,79 @@ def qt0p(meta):
     return meta
 
 
+# ---------------------------------------------------------------------------------------------------------------- PS-0p
+# step 3 (u0286) and step 5 (class B). The wordings are the ones the English vocabulary lint admits without changing an existing wording (ps0p_wordings.py,
+# evidence/ps0p/wording-lint.json). u0069 ("Understanding existing deployment contexts": "is a deployment context" is refused, UNARY_MODIFIER) and u0083 ("values other
+# than helpfulness" needs the noun “core value”, which waits for PS-6r) are not offered.
+PS_UNITS = {
+    "u0286.presupposition": {
+        "predicate": "open_problem", "wording": "{0} is unsolved", "fence": "Some thing is unsolved.", "open": None,
+        "description": "The thing is an open problem, in the source's sense (u0286, “Acknowledging open problems”): a problem that has not been solved. Declared for the heading's presupposition "
+                       "(PS-0p): the heading takes for granted that there are open problems, and nothing more.",
+        "ast": ["exists", "entity", ["unary", "open_problem", ["var", 0]]]},
+    "u0245.presupposition": {
+        "predicate": "novel_entity", "wording": "{0} is novel", "fence": "Claude is novel.", "open": "novel_entity",
+        "description": "The thing is a novel entity, in the source's sense (u0245, “Claude as a novel entity”). The English lint admits “is novel” but not “is a novel entity” (an \u201cis a ...\u201d "
+                       "wording for a unary predicate is refused, UNARY_MODIFIER), so the English drops the noun: the sort already says the argument is a thing. The heading takes for granted that "
+                       "Claude is a novel entity, and nothing more.",
+        "factors": ["what counts as novel, and novel compared with what (u0245 is a heading; the source's own discussion is in the sentences under it)"],
+        "ast": ["unary", "novel_entity", ["const", "claude"]]},
+    "u0032.presupposition": {
+        "predicate": "genuine_helpfulness", "wording": "{0} is helpful", "fence": "Some thing is helpful.", "open": "genuine_helpfulness",
+        "description": "The thing constitutes genuine helpfulness, in the source's sense (u0032, “What constitutes genuine helpfulness”). The English lint admits “is helpful” but refuses “constitutes genuine "
+                       "helpfulness” (TEMPLATE_SHAPE) and “is genuinely helpful” (UNARY_MODIFIER), so the English drops “genuine” and “constitutes”; this open term keeps them. The heading takes for granted "
+                       "that something constitutes genuine helpfulness, and nothing more.",
+        "factors": ["what counts as genuine helpfulness (the source's own discussion is in the sentences under u0032)"],
+        "ast": ["exists", "entity", ["unary", "genuine_helpfulness", ["var", 0]]]},
+}
+
+
+PS_NOTE = (
+    "Measured in this run (evidence/ps0p/premise-diag-*.txt, premise-variants.json): with QT-0p's `principal_type` (size 3), any existential premise over the sort `entity` that no ground fact names a "
+    "witness for makes the whole-document premise check UNKNOWN (u0286 alone; u0032 alone; u0286 with either), because the budget (100,000 evaluations) is spent before the search finds a model and the "
+    "ground-fact route has no witness. u0245 (the ground fact `novel_entity(claude)`) keeps the check at `model`. The DRI has not accepted UNKNOWN for the constitution's premise check, so u0286 and "
+    "u0032 are reverted (a failing item is reverted alone) and u0245 is kept.")
+
+
+def ps0p(meta, body, only=None):
+    voc = meta["environment"]["vocabulary"]
+    fences = b""
+    for uid, spec in PS_UNITS.items():
+        if only is not None and uid not in only:
+            continue
+        i = unit_index(meta, uid)
+        u = meta["units"][i]
+        assert u["kind"] == ["unformalised", "other.discourse"] or u["kind"][0] == "unformalised", (uid, u)
+        assert spec["predicate"] not in voc["predicates"], spec["predicate"]
+        voc["predicates"][spec["predicate"]] = {"arguments": ["entity"], "description": spec["description"], "verbalisation": spec["wording"]}
+        unit = {"id": uid, "span": u["span"], "support": "assumption", "kind": "asserted",
+                "meaning": "specified" if spec["open"] is None else {"open": [spec["open"]]},
+                "content": {"fence": uid}, "surface": "english"}
+        meta["units"][i] = unit
+        if spec["open"] is not None:
+            meta["open_terms"].append({"name": spec["open"], "arguments": ["entity"], "decided_by": "unresolved_decider", "necessary": [], "sufficient": [],
+                                       "factors": spec["factors"], "precedents": [], "jurisdiction": "claude_constitution", "version": 1})
+        fences += f"```ve {uid}\n{spec['fence']}\n```\n".encode()
+    assert body.endswith(b"```\n")
+    return meta, body + fences
+
+
 def main(argv):
     step = argv[1]
+    global TARGET
+    only = ["u0245.presupposition"]   # u0286 and u0032 break the premise check (see PS_NOTE), so the default offers u0245 only
+    for a in argv[2:]:
+        if a.startswith("--only="):
+            only = a[len("--only="):].split(",")
+        elif a.startswith("--target="):
+            TARGET = Path(a[len("--target="):])
     meta, body = read(TARGET)
     if step == "qt0p":
         assert "principal_type" not in meta["environment"]["vocabulary"]["sorts"], "QT-0p already applied"
         meta = qt0p(meta)
+    elif step == "ps0p":
+        assert "open_problem" not in meta["environment"]["vocabulary"]["predicates"], "PS-0p already applied"
+        meta, body = ps0p(meta, body, only)
     else:
         raise SystemExit("usage: apply_plans.py qt0p|ps0p")
     write(TARGET, meta, body)
