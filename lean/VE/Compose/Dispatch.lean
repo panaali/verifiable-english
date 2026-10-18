@@ -68,6 +68,18 @@ def todayGate (ps : List String) : Except String Unit :=
     .error (unsupported "norm-defaults@0 requires norms@0")
   else .ok ()
 
+/-- The composed blocks with `norm-defaults@0` that no route but the block's own reads yet. The gate refuses
+`risk@0` with the completion (check 5, the same text); ET-7 answers `alternatives@0` sources with it on the
+alternatives route only, and et-7b admits their documents (docs/spec/events-time-causation.md 5). Until then the
+`document` mode, the norm-defaults route and the alternatives decoder without the completion (which the English
+reader's boundary and the route's `admission` call) refuse such a list by name, before any decoder that does not
+read it (`Service.Document.environmentOf`, `NormDefaults.Run.runGated`, `Alternatives.Wire.decodeAltSource`). -/
+def pendingWithDefaults (ps : List String) : Option String :=
+  if ps.contains "norm-defaults@0" then
+    (["risk@0", "alternatives@0"].find? ps.contains).map
+      fun block => unsupported s!"{block} with norm-defaults@0 is not implemented"
+  else none
+
 def todayHead (ps : List String) : Route :=
   if ps.contains "risk@0" then .risk else if ps.contains "alternatives@0" then .alternatives
   else if ps.contains "speech-acts@0" then .speechActs else if ps.contains "reports@0" then .reports

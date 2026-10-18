@@ -14,9 +14,11 @@ import pytest
 
 from conformance.alternatives import base_environment
 from ve.alternatives import run_case
+from ve.document import check_document, load_document
 from ve.ast import Not, _Decoder, formula_from_data
 from ve.entailment import prove_alternatives_entailment, prove_entailment
 from ve.environment import Environment
+from ve.errors import UnsupportedProfile
 from ve.norms import _bind
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.wire import digest
@@ -250,6 +252,98 @@ def test_cases_outside_this_item_are_refused_with_the_profile():
     row = run_case(src | {"kind": "alt-validate", "scenario": witness()})
     assert row["error"] == ("UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented "
                             "on the alternatives route")
+    # Review F1: an admission goes through the decoder without the completion, which refuses the pair by name.
+    admission = run_case({"id": "a", "kind": "admission", "environment": environment(),
+                          "document": {"units": [], "graph": {"root": "x", "nodes": []}}})
+    assert (admission["status"], admission["error"]) == ("error", PENDING)
+
+
+# Review F1: until et-7b admits them, every route and entry point that does not read the completion beside a
+# composed block refuses the pair by name, with the gate's text before ET-7 (Lean `Compose.pendingWithDefaults`),
+# never with a decoder's field check or a profile name alone.
+PENDING = "UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented"
+RISK_PENDING = "UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented"
+QUESTION = "Is pull forbidden?"
+
+
+def completion_document(directory, env=None):
+    """The review's probe document: one norm unit under the completion with the alternatives block."""
+    text = "Pull is forbidden.\n"
+    path = directory / "d.ve.md"
+    meta = {"format": "ve-document@1", "environment": environment() if env is None else env,
+            "units": [{"id": "n", "span": [0, len(text)], "kind": "norm", "meaning": "specified",
+                       "support": "assumption", "content": PULL_FORBIDDEN}]}
+    path.write_text("---\n" + json.dumps(meta) + "\n---\n" + text)
+    return path
+
+
+def refusal(call):
+    with pytest.raises(UnsupportedProfile) as caught:
+        call()
+    return str(caught.value)
+
+
+def _ask_read(path):
+    from ve.ask import read
+    return read(path.read_bytes(), QUESTION)
+
+
+def _coverage(path):
+    from ve.document import main
+    return main(["coverage", str(path)])
+
+
+ENTRY_POINTS = {"document check": lambda path: check_document(path), "document load": load_document,
+                "document coverage": _coverage, "ask (the English reading)": _ask_read}
+
+
+@pytest.mark.parametrize("entry", sorted(ENTRY_POINTS))
+def test_completion_documents_are_refused_by_name_on_every_entry_point(tmp_path, entry):
+    """PROBE F1: on main the document path refused the pair by name; with the gate's refusal deleted it fell through
+    to the norm-defaults route's field check (`fields do not match: expected [language, ...]`)."""
+    assert refusal(lambda: ENTRY_POINTS[entry](completion_document(tmp_path))) == PENDING
+
+
+def test_completion_cli_commands_print_the_named_refusal(tmp_path, capsys):
+    from ve.__main__ import main
+    from ve.ask import main as ask_main
+    path = completion_document(tmp_path)
+    audit = tmp_path / "audit.json"
+    audit.write_text(json.dumps({"environment": environment(), "norms": [PULL_FORBIDDEN]}))
+    for source in (path, audit):
+        assert main(["norms", "completions", "--audit", str(source)]) == 2
+        assert json.loads(capsys.readouterr().out)["error"] == {"code": "UnsupportedProfile", "message": PENDING}
+    assert ask_main([str(path), QUESTION, "--json"]) == 2
+    assert json.loads(capsys.readouterr().out)["error"] == {"class": "UnsupportedProfile", "message": PENDING}
+
+
+def test_the_document_mode_refuses_the_pair_after_the_environment_modes_faults(tmp_path):
+    """Lean's `document` mode answers the refusal itself (never `CheckerUnavailable`, which hands the document to
+    Python's path); a fault the environment mode finds comes first (DELTA row 6, R2)."""
+    from ve.backends.relay import answer
+
+    def document_error(env):
+        _, error = answer("document", {"id": "document", "admit": False,
+                                       "document": completion_document(tmp_path, env).read_text()})
+        return type(error).__name__, str(error)
+    assert document_error(environment()) == ("UnsupportedProfile", PENDING)
+    assert document_error(environment(profiles=PROFILES[::-1])) == (
+        "UnsupportedProfile", "UnsupportedProfile: profiles must be sorted and unique")
+
+
+NORM_DEFAULTS_KINDS = ("norm-defaults-elaborate", "norm-defaults-status", "norm-defaults-report",
+                       "norm-defaults-conflict", "norm-defaults-certificate", "admission")
+
+
+@pytest.mark.parametrize("kind", NORM_DEFAULTS_KINDS)
+@pytest.mark.parametrize("block, text", [("alternatives@0", PENDING), ("risk@0", RISK_PENDING)])
+def test_the_norm_defaults_route_refuses_a_composed_block_by_name(kind, block, text):
+    """Every kind of the norm-defaults route, whose decoder does not read the block, refuses it by name before
+    any field check (`NormDefaults.Run.runGated`; DELTA row 6)."""
+    from ve.norm_defaults_route import run_case as norm_defaults_case
+    case = {"id": "x", "kind": kind, "environment": environment(profiles=sorted({*PROFILES, block})),
+            "norms": [PULL_FORBIDDEN]}
+    assert refusal(lambda: norm_defaults_case(case)) == text
 
 
 ET1 = json.loads((ROOT / "tests/data/et7/et1-component.json").read_text())

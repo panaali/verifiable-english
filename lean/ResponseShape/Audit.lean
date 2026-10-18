@@ -194,6 +194,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runGated_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softAdmission_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softCase_fits

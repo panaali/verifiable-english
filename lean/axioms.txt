@@ -34,7 +34,7 @@
 'Iceberg.stage_within_capacity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Iceberg.water_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Alternatives.Admission.Admitted.sound' depends on axioms: [propext, Quot.sound]
-'VE.Alternatives.Admission.report_consequence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Alternatives.Admission.report_consequence' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.AltChain.A_in' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Alternatives.AltChain.A_out' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Alternatives.AltChain.E_in' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -4360,7 +4360,7 @@
 'VE.Rights.yields_bar' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.yields_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Risk.Admission.Admitted.sound' depends on axioms: [propext, Quot.sound]
-'VE.Risk.Admission.report_consequence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Risk.Admission.report_consequence' depends on axioms: [propext, Quot.sound]
 'VE.Risk.BoxAgree.atoms' does not depend on any axioms
 'VE.Risk.BoxAgree.mem' does not depend on any axioms
 'VE.Risk.BoxAgree.nnf' depends on axioms: [propext, Quot.sound]
@@ -5939,6 +5939,7 @@
 'ResponseShape.Encoders.NormDefaults.runAdmissionX_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.NormDefaults.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.NormDefaults.runCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.NormDefaults.runGated_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.NormDefaults.runLayered_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.NormDefaults.softAdmission_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.NormDefaults.softCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
