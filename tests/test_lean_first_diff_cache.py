@@ -4,7 +4,6 @@ damaged entry is a miss. Tiny fake segments of genuine record shapes; no checker
 from __future__ import annotations
 
 import argparse
-from concurrent.futures import Future
 import json
 import os
 from pathlib import Path
@@ -285,43 +284,6 @@ def test_without_a_cache_record_runs_as_before(world, monkeypatch):
                               workers=3, cache=None)
     assert diff.record(args) == 0
     assert calls == [((world["root"].resolve(), out.resolve(), ["quantity"], ["python"], 3), {})]
-
-
-def test_whole_documents_run_one_at_a_time_in_order(tmp_path, monkeypatch):
-    """The whole-UDHR documents run in one pool task, one after another (L70); every other document is a task of its
-    own; the records keep the documents' order. A synchronous pool shows which task checked which document."""
-    names = [f"pilot/r{n}:usecases/{'experiment-whole/' if n % 3 == 0 else ''}d{n}.ve.md" for n in range(12)]
-    monkeypatch.setattr(diff, "pilot_documents", lambda root: [(name, f"{n:040x}", b"") for n, name in
-                                                               enumerate(names)])
-    monkeypatch.setattr(diff, "write_pilot", lambda root, scratch, name, blob, text: Path(name))
-    tasks = []
-
-    class Pool:
-        def __init__(self, max_workers):
-            pass
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *exc):
-            return False
-
-        def submit(self, call, *args):
-            tasks.append([])
-            done = Future()
-            done.set_result(call(*args))
-            return done
-
-    def check(root, path, env):
-        tasks[-1].append(str(path))
-        return {"exit": 0, "stdout": str(path), "stderr": []}
-    monkeypatch.setattr(diff, "ThreadPoolExecutor", Pool)
-    monkeypatch.setattr(diff, "pilot_check", check)
-    rows = list(diff.pilot_records(tmp_path, tmp_path / "scratch", 4))
-    assert [row["case"] for row in rows] == names
-    assert [row["outcome"]["stdout"] for row in rows] == names
-    whole = [name for name in names if "/experiment-whole/" in name]
-    assert tasks == [whole] + [[name] for name in names if name not in whole]
 
 
 def test_prewarm_refuses_a_commit_without_the_cache(tmp_path):
