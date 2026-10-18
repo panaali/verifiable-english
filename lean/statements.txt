@@ -2656,6 +2656,260 @@ theorem VE.Cardinality.CEnv.WellFormed.fresh
         E.q.constants c = Option.some τ → c.startsWith VE.Cardinality.regionPrefix = Bool.false
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.regionPrefix@VE.Cardinality.Syntax VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
   -- expr 2783318274
+theorem VE.Cardinality.Examples.admissible_cases
+  VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.two ∧
+    ¬VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.everyNat ∧
+      ¬VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.wild
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Examples.everyNat@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.Examples.wild@VE.Cardinality.Examples
+  -- expr 4201433885
+theorem VE.Cardinality.Examples.admitted_cases
+  VE.Cardinality.Admitted VE.Cardinality.Examples.fomc VE.Cardinality.Examples.good ∧
+    ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc VE.Cardinality.Examples.badQ ∧
+      ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc VE.Cardinality.Examples.badP ∧
+        VE.Cardinality.Admitted VE.Cardinality.Examples.users VE.Cardinality.Examples.badP ∧
+          ¬VE.Cardinality.Admitted VE.Cardinality.Examples.users
+                (VE.Cardinality.CFormula.proportion
+                  { sort := "user", whole := VE.Cardinality.Body.atom VE.Cardinality.Examples.inc,
+                    part := VE.Cardinality.Examples.harm, cmp := VE.Cardinality.Cmp.ge, num := 1, den := 2 }) ∧
+            ¬VE.Cardinality.Admitted VE.Cardinality.Examples.users
+                  (VE.Cardinality.CFormula.proportion
+                    { sort := "user", whole := VE.Cardinality.Body.any,
+                      part := VE.Cardinality.Body.atom VE.Cardinality.Examples.inc, cmp := VE.Cardinality.Cmp.ge,
+                      num := 1, den := 2 }) ∧
+              ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                    (VE.Cardinality.CFormula.count
+                      { sort := VE.Cardinality.Examples.pm,
+                        terms :=
+                          [(1, VE.Cardinality.Body.atom VE.Cardinality.Examples.inc),
+                            (1, VE.Cardinality.Body.atom "curious")],
+                        rel := VE.Cardinality.Rel.le, bound := 3 }) ∧
+                ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                      (VE.Cardinality.CFormula.count
+                        (VE.Cardinality.exactlyAtom VE.Cardinality.Examples.pm (VE.Cardinality.Body.atom "advises").not
+                          1)) ∧
+                  ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                        (VE.Cardinality.CFormula.count
+                          (VE.Cardinality.exactlyAtom VE.Cardinality.Examples.pm
+                            ((VE.Cardinality.Body.atom VE.Cardinality.Examples.inc).and
+                              (VE.Cardinality.Body.atom "advises"))
+                            1)) ∧
+                    ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                          (VE.Cardinality.CFormula.count
+                            (VE.Cardinality.exactlyAtom VE.Cardinality.Examples.pm
+                              ((VE.Cardinality.Body.atom "advises").or
+                                (VE.Cardinality.Body.atom VE.Cardinality.Examples.inc))
+                              1)) ∧
+                      VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                          (VE.Cardinality.CFormula.count
+                            (VE.Cardinality.exactlyAtom VE.Cardinality.Examples.pm
+                              ((VE.Cardinality.Body.atom VE.Cardinality.Examples.stay).not.or
+                                (VE.Cardinality.Body.any.and (VE.Cardinality.Body.atom VE.Cardinality.Examples.inc)))
+                              1)) ∧
+                        VE.Cardinality.Admitted VE.Cardinality.Examples.users
+                            (VE.Cardinality.CFormula.proportion
+                              { sort := "user", whole := VE.Cardinality.Body.any, part := VE.Cardinality.Examples.harm,
+                                cmp := VE.Cardinality.Cmp.le, num := 2, den := 2 }) ∧
+                          ¬VE.Cardinality.Admitted VE.Cardinality.Examples.users
+                                (VE.Cardinality.CFormula.proportion
+                                  { sort := "user", whole := VE.Cardinality.Body.any,
+                                    part := VE.Cardinality.Examples.harm, cmp := VE.Cardinality.Cmp.le, num := 3,
+                                    den := 2 }) ∧
+                            ¬VE.Cardinality.Admitted VE.Cardinality.Examples.users
+                                  (VE.Cardinality.CFormula.proportion
+                                    { sort := "user", whole := VE.Cardinality.Body.any,
+                                      part := VE.Cardinality.Examples.harm, cmp := VE.Cardinality.Cmp.le, num := 0,
+                                      den := 0 }) ∧
+                              VE.Cardinality.Admitted VE.Cardinality.Examples.fomc VE.Cardinality.Examples.good.not ∧
+                                ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc VE.Cardinality.Examples.badQ.not ∧
+                                  VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                      (VE.Cardinality.Examples.good.and VE.Cardinality.Examples.good) ∧
+                                    ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                          (VE.Cardinality.Examples.good.and VE.Cardinality.Examples.badQ) ∧
+                                      ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                            (VE.Cardinality.Examples.badQ.and VE.Cardinality.Examples.good) ∧
+                                        VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                            (VE.Cardinality.Examples.good.or VE.Cardinality.Examples.good) ∧
+                                          ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                                (VE.Cardinality.Examples.good.or VE.Cardinality.Examples.badQ) ∧
+                                            ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                                  (VE.Cardinality.Examples.badQ.or VE.Cardinality.Examples.good) ∧
+                                              VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                                  (VE.Cardinality.Examples.good.implies VE.Cardinality.Examples.good) ∧
+                                                ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                                      (VE.Cardinality.Examples.good.implies
+                                                        VE.Cardinality.Examples.badQ) ∧
+                                                  ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc
+                                                      (VE.Cardinality.Examples.badQ.implies VE.Cardinality.Examples.good)
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Body.or@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CFormula.and@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.implies@VE.Cardinality.Syntax VE.Cardinality.CFormula.not@VE.Cardinality.Syntax VE.Cardinality.CFormula.or@VE.Cardinality.Syntax VE.Cardinality.CFormula.proportion@VE.Cardinality.Syntax VE.Cardinality.Cmp.ge@VE.Cardinality.Syntax VE.Cardinality.Cmp.le@VE.Cardinality.Syntax VE.Cardinality.CountAtom.mk@VE.Cardinality.Syntax VE.Cardinality.Examples.badP@VE.Cardinality.Examples VE.Cardinality.Examples.badQ@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Cardinality.Examples.good@VE.Cardinality.Examples VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.inc@VE.Cardinality.Examples VE.Cardinality.Examples.pm@VE.Cardinality.Examples VE.Cardinality.Examples.stay@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.Proportion.mk@VE.Cardinality.Syntax VE.Cardinality.Rel.le@VE.Cardinality.Syntax VE.Cardinality.exactlyAtom@VE.Cardinality.Theorems
+  -- expr 2989638611
+theorem VE.Cardinality.Examples.body_cases
+  VE.Cardinality.Body.holds VE.Cardinality.Examples.two 0 VE.Cardinality.Examples.harm ∧
+    ¬VE.Cardinality.Body.holds VE.Cardinality.Examples.two 1 VE.Cardinality.Examples.harm ∧
+      VE.Cardinality.Body.holds VE.Cardinality.Examples.two 1 VE.Cardinality.Examples.harm.not ∧
+        ¬VE.Cardinality.Body.holds VE.Cardinality.Examples.two 0 VE.Cardinality.Examples.harm.not ∧
+          VE.Cardinality.Body.holds VE.Cardinality.Examples.two 1 VE.Cardinality.Body.any ∧
+            VE.Cardinality.Body.holds VE.Cardinality.Examples.two 1
+                (VE.Cardinality.Examples.harm.or VE.Cardinality.Examples.harm.not) ∧
+              ¬VE.Cardinality.Body.holds VE.Cardinality.Examples.two 1
+                    (VE.Cardinality.Examples.harm.or VE.Cardinality.Examples.harm) ∧
+                VE.Cardinality.Body.holds VE.Cardinality.Examples.two 0
+                    (VE.Cardinality.Body.any.and VE.Cardinality.Examples.harm) ∧
+                  ¬VE.Cardinality.Body.holds VE.Cardinality.Examples.two 1
+                      (VE.Cardinality.Body.any.and VE.Cardinality.Examples.harm)
+  -- uses VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Body.or@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples
+  -- expr 1160263267
+theorem VE.Cardinality.Examples.cmp_cases_two
+  ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two (VE.Cardinality.Examples.share VE.Cardinality.Cmp.gt 1 2) ∧
+    VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two (VE.Cardinality.Examples.share VE.Cardinality.Cmp.gt 1 3) ∧
+      VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+          (VE.Cardinality.Examples.share VE.Cardinality.Cmp.ge 1 2) ∧
+        ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+              (VE.Cardinality.Examples.share VE.Cardinality.Cmp.ge 2 3) ∧
+          ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                (VE.Cardinality.Examples.share VE.Cardinality.Cmp.lt 1 2) ∧
+            VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                (VE.Cardinality.Examples.share VE.Cardinality.Cmp.lt 2 3) ∧
+              VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                  (VE.Cardinality.Examples.share VE.Cardinality.Cmp.le 1 2) ∧
+                ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                      (VE.Cardinality.Examples.share VE.Cardinality.Cmp.le 1 3) ∧
+                  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                      (VE.Cardinality.Examples.share VE.Cardinality.Cmp.eq 1 2) ∧
+                    ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                          (VE.Cardinality.Examples.share VE.Cardinality.Cmp.eq 1 3) ∧
+                      ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                          (VE.Cardinality.Examples.share VE.Cardinality.Cmp.eq 2 3)
+  -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.Cmp.eq@VE.Cardinality.Syntax VE.Cardinality.Cmp.ge@VE.Cardinality.Syntax VE.Cardinality.Cmp.gt@VE.Cardinality.Syntax VE.Cardinality.Cmp.le@VE.Cardinality.Syntax VE.Cardinality.Cmp.lt@VE.Cardinality.Syntax VE.Cardinality.Examples.share@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples
+  -- expr 1378939093
+theorem VE.Cardinality.Examples.colliding_prefix
+  "cardinality__fomc_policymaker__0".startsWith VE.Cardinality.regionPrefix = Bool.true
+  -- uses VE.Cardinality.regionPrefix@VE.Cardinality.Syntax
+  -- expr 2198564680
+theorem VE.Cardinality.Examples.connective_cases
+  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two VE.Cardinality.Examples.no.not ∧
+    ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two VE.Cardinality.Examples.yes.not ∧
+      VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+          (VE.Cardinality.Examples.yes.and VE.Cardinality.Examples.yes) ∧
+        ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+              (VE.Cardinality.Examples.yes.and VE.Cardinality.Examples.no) ∧
+          ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                (VE.Cardinality.Examples.no.and VE.Cardinality.Examples.yes) ∧
+            VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                (VE.Cardinality.Examples.yes.or VE.Cardinality.Examples.no) ∧
+              VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                  (VE.Cardinality.Examples.no.or VE.Cardinality.Examples.yes) ∧
+                ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                      (VE.Cardinality.Examples.no.or VE.Cardinality.Examples.no) ∧
+                  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                      (VE.Cardinality.Examples.no.implies VE.Cardinality.Examples.no) ∧
+                    VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                        (VE.Cardinality.Examples.no.implies VE.Cardinality.Examples.yes) ∧
+                      VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                          (VE.Cardinality.Examples.yes.implies VE.Cardinality.Examples.yes) ∧
+                        ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                            (VE.Cardinality.Examples.yes.implies VE.Cardinality.Examples.no)
+  -- uses VE.Cardinality.CFormula.and@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.implies@VE.Cardinality.Syntax VE.Cardinality.CFormula.not@VE.Cardinality.Syntax VE.Cardinality.CFormula.or@VE.Cardinality.Syntax VE.Cardinality.Examples.no@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.yes@VE.Cardinality.Examples
+  -- expr 3022675144
+theorem VE.Cardinality.Examples.counts_two
+  VE.Cardinality.Counts VE.Cardinality.Examples.two "user"
+      [(1, VE.Cardinality.Body.any), (-1, VE.Cardinality.Examples.harm)] [2, 1] ∧
+    ¬VE.Cardinality.Counts VE.Cardinality.Examples.two "user" [(1, VE.Cardinality.Body.any)] [] ∧
+      ¬VE.Cardinality.Counts VE.Cardinality.Examples.two "user" [] [2] ∧
+        ¬VE.Cardinality.Counts VE.Cardinality.Examples.two "user" [(1, VE.Cardinality.Body.any)] [2, 1]
+  -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.Counts@VE.Cardinality.Semantics VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples
+  -- expr 337995318
+theorem VE.Cardinality.Examples.counts_unique
+  ∀ {α : Type} {T : VE.Time.TStructure α} (c : VE.Cardinality.CountAtom) {ns ms : List Nat},
+    VE.Cardinality.Counts T c.sort c.terms ns → VE.Cardinality.Counts T c.sort c.terms ms → ns = ms
+  -- uses VE.Cardinality.CountAtom.sort@VE.Cardinality.Syntax VE.Cardinality.CountAtom.terms@VE.Cardinality.Syntax VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Counts@VE.Cardinality.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 1974341167
+theorem VE.Cardinality.Examples.entails_cases
+  VE.Cardinality.CEntails VE.Cardinality.Examples.users []
+      (VE.Cardinality.CFormula.count (VE.Cardinality.atLeastAtom "user" VE.Cardinality.Body.any 0)) ∧
+    VE.Cardinality.CEntails VE.Cardinality.Examples.users
+        [VE.Cardinality.CFormula.count (VE.Cardinality.exactlyAtom "user" VE.Cardinality.Body.any 2)]
+        (VE.Cardinality.CFormula.count (VE.Cardinality.atLeastAtom "user" VE.Cardinality.Body.any 1)) ∧
+      ¬VE.Cardinality.CEntails VE.Cardinality.Examples.users []
+          (VE.Cardinality.CFormula.count (VE.Cardinality.atMostAtom "user" VE.Cardinality.Body.any 1))
+  -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.atLeastAtom@VE.Cardinality.Theorems VE.Cardinality.atMostAtom@VE.Cardinality.Theorems VE.Cardinality.exactlyAtom@VE.Cardinality.Theorems
+  -- expr 3526381808
+theorem VE.Cardinality.Examples.everyone_two
+  ∀ (r : VE.Cardinality.Rel) (k : Int),
+    VE.Cardinality.CountAtom.holds VE.Cardinality.Examples.two
+        { sort := "user", terms := [(1, VE.Cardinality.Body.any)], rel := r, bound := k } ↔
+      r.holds 2 k
+  -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CountAtom.holds@VE.Cardinality.Semantics VE.Cardinality.CountAtom.mk@VE.Cardinality.Syntax VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Rel.holds@VE.Cardinality.Semantics VE.Cardinality.Rel@VE.Cardinality.Syntax
+  -- expr 3180295910
+theorem VE.Cardinality.Examples.fa10_two
+  ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two VE.Cardinality.Examples.moreThanHalf ∧
+    VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two VE.Cardinality.Examples.oneIn1000
+  -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.Examples.moreThanHalf@VE.Cardinality.Examples VE.Cardinality.Examples.oneIn1000@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples
+  -- expr 502617882
+theorem VE.Cardinality.Examples.harm_or_not_two
+  VE.Cardinality.HasCount VE.Cardinality.Examples.two "user"
+    (VE.Cardinality.Examples.harm.or VE.Cardinality.Examples.harm.not) 2
+  -- uses VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Body.or@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.HasCount@VE.Cardinality.Semantics
+  -- expr 3681166566
+theorem VE.Cardinality.Examples.harm_two
+  VE.Cardinality.HasCount VE.Cardinality.Examples.two "user" VE.Cardinality.Examples.harm 1
+  -- uses VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.HasCount@VE.Cardinality.Semantics
+  -- expr 1091950876
+theorem VE.Cardinality.Examples.mem_le_sum
+  ∀ {xs : List Nat} {x : Nat}, x ∈ xs → x ≤ xs.sum
+  -- uses
+  -- expr 1056480271
+theorem VE.Cardinality.Examples.neither_two
+  VE.Cardinality.HasCount VE.Cardinality.Examples.two "user"
+    (VE.Cardinality.Examples.harm.not.and VE.Cardinality.Examples.harm) 0
+  -- uses VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.HasCount@VE.Cardinality.Semantics
+  -- expr 581835062
+theorem VE.Cardinality.Examples.not_harm_two
+  VE.Cardinality.HasCount VE.Cardinality.Examples.two "user" VE.Cardinality.Examples.harm.not 1
+  -- uses VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.HasCount@VE.Cardinality.Semantics
+  -- expr 3052828093
+theorem VE.Cardinality.Examples.population_cases
+  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two (VE.Cardinality.Examples.share VE.Cardinality.Cmp.ge 0 1) ∧
+    ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.nobody
+          (VE.Cardinality.Examples.share VE.Cardinality.Cmp.ge 0 1) ∧
+      ¬VE.Cardinality.Proportion.holds VE.Cardinality.Examples.two
+          { sort := "user", whole := VE.Cardinality.Examples.harm.not, part := VE.Cardinality.Examples.harm,
+            cmp := VE.Cardinality.Cmp.gt, num := 0, den := 1 }
+  -- uses VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.Cmp.ge@VE.Cardinality.Syntax VE.Cardinality.Cmp.gt@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.nobody@VE.Cardinality.Examples VE.Cardinality.Examples.share@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Proportion.holds@VE.Cardinality.Semantics VE.Cardinality.Proportion.mk@VE.Cardinality.Syntax
+  -- expr 2205543909
+theorem VE.Cardinality.Examples.quantity_cases
+  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two (VE.Cardinality.CFormula.quantity VE.Time.QFormula.top) ∧
+    ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+          (VE.Cardinality.CFormula.quantity VE.Time.QFormula.bottom) ∧
+      VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+          (VE.Cardinality.CFormula.quantity VE.Cardinality.Examples.somebodyCurious) ∧
+        ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+            (VE.Cardinality.CFormula.quantity VE.Cardinality.Examples.everybodyCurious)
+  -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.quantity@VE.Cardinality.Syntax VE.Cardinality.Examples.everybodyCurious@VE.Cardinality.Examples VE.Cardinality.Examples.somebodyCurious@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Time.QFormula.bottom@VE.Time.Syntax VE.Time.QFormula.top@VE.Time.Syntax
+  -- expr 3146073850
+theorem VE.Cardinality.Examples.rel_cases_two
+  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.lt 3) ∧
+    ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+          (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.lt 2) ∧
+      VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+          (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.le 2) ∧
+        ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+              (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.le 1) ∧
+          VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+              (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.eq 2) ∧
+            ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                  (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.eq 1) ∧
+              ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                  (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.eq 3)
+  -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.Examples.everyone@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Rel.eq@VE.Cardinality.Syntax VE.Cardinality.Rel.le@VE.Cardinality.Syntax VE.Cardinality.Rel.lt@VE.Cardinality.Syntax
+  -- expr 699934501
+theorem VE.Cardinality.Examples.share_two
+  ∀ (c : VE.Cardinality.Cmp) (num den : Nat),
+    VE.Cardinality.Proportion.holds VE.Cardinality.Examples.two
+        { sort := "user", whole := VE.Cardinality.Body.any, part := VE.Cardinality.Examples.harm, cmp := c, num := num,
+          den := den } ↔
+      c.holds (↑den) (↑num * 2)
+  -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Cmp.holds@VE.Cardinality.Semantics VE.Cardinality.Cmp@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Proportion.holds@VE.Cardinality.Semantics VE.Cardinality.Proportion.mk@VE.Cardinality.Syntax
+  -- expr 487882034
 theorem VE.Cardinality.Examples.two_admissible
   VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.two
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
@@ -2668,6 +2922,23 @@ theorem VE.Cardinality.Examples.two_some
   VE.Cardinality.HasCount VE.Cardinality.Examples.two "user" (VE.Cardinality.Body.any.and VE.Cardinality.Examples.harm) 1
   -- uses VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.HasCount@VE.Cardinality.Semantics
   -- expr 2895958237
+theorem VE.Cardinality.Examples.weighted_two
+  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+      (VE.Cardinality.CFormula.count
+        { sort := "user", terms := [(1, VE.Cardinality.Body.any), (-1, VE.Cardinality.Examples.harm)],
+          rel := VE.Cardinality.Rel.eq, bound := 1 }) ∧
+    ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+        (VE.Cardinality.CFormula.count
+          { sort := "user", terms := [(1, VE.Cardinality.Body.any), (-1, VE.Cardinality.Examples.harm)],
+            rel := VE.Cardinality.Rel.eq, bound := 3 })
+  -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CountAtom.mk@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Rel.eq@VE.Cardinality.Syntax
+  -- expr 3158173277
+theorem VE.Cardinality.Examples.wellFormed_cases
+  VE.Cardinality.Examples.users.WellFormed ∧
+    VE.Cardinality.Examples.named.WellFormed ∧
+      ¬VE.Cardinality.Examples.colliding.WellFormed ∧ ¬VE.Cardinality.Examples.ghost.WellFormed
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.colliding@VE.Cardinality.Examples VE.Cardinality.Examples.ghost@VE.Cardinality.Examples VE.Cardinality.Examples.named@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
+  -- expr 2834057780
 theorem VE.Cardinality.admits_complete
   ∀ (E : VE.Cardinality.CEnv) (a : VE.Cardinality.CFormula),
     VE.Cardinality.Admitted E a → VE.Cardinality.CFormula.admits E a = Bool.true

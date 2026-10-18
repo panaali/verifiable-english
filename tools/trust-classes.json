@@ -12545,7 +12545,21 @@
         "VE.Cardinality.Examples.two",
         "VE.Cardinality.Examples.colliding",
         "VE.Cardinality.Examples.dupModel",
-        "VE.Cardinality.Examples.fa1Model"
+        "VE.Cardinality.Examples.fa1Model",
+        "VE.Cardinality.Examples.everyone",
+        "VE.Cardinality.Examples.share",
+        "VE.Cardinality.Examples.nobody",
+        "VE.Cardinality.Examples.somebodyCurious",
+        "VE.Cardinality.Examples.everybodyCurious",
+        "VE.Cardinality.Examples.yes",
+        "VE.Cardinality.Examples.no",
+        "VE.Cardinality.Examples.everyNat",
+        "VE.Cardinality.Examples.wild",
+        "VE.Cardinality.Examples.named",
+        "VE.Cardinality.Examples.ghost",
+        "VE.Cardinality.Examples.good",
+        "VE.Cardinality.Examples.badQ",
+        "VE.Cardinality.Examples.badP"
       ]
     }
   }
