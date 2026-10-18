@@ -5,7 +5,7 @@ changes, to find what still selects every unit (tarch-manifest-ops, test-archite
 Each row is the plan `tools/select_tests.py` makes for one change, run by the selector of a checkout
 (`--selector`, default this one) in private caches (no shared map, no Lean build record, so no binary cutoff):
 
-* `merges`: the 54 first-parent merges of main from 2026-10-14 00:00Z to `de9cfa84f` (this branch's base),
+* `merges`: the 54 first-parent merges of main from 2026-10-14 00:00Z to `de9cfa84f` (this branch's base when measured),
   each against its first parent, with the cutoff batch's recorded map (`../cutoff/evidence/recording-map.json.gz`,
   main `dae12d5ff`'s units recorded on ve-mac-1) taken as recorded at the parent (`--assume-fresh`): the
   "map after every merge" of rank 4, the same for every row. With `--drift` (label `before-drift`) the same
