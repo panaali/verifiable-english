@@ -159,3 +159,7 @@ import VE.Events.Premises
 import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Examples
+import VE.Layout.List
+import VE.Scope.Effects
+import VE.Scope.Theorems
+import VE.Scope.Examples
