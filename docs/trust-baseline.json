@@ -754,6 +754,20 @@
    "reason": "et-7 review fix (F1): V +7 for the named refusal of alternatives@0 with norm-defaults@0 outside the alternatives route: VE/NormDefaults/Run.lean +6 (runGated, the norm-defaults mode's gate; G[V]), VE/Alternatives/Wire.lean +1 (decodeAltSource refuses the completion it does not read); VE.Compose.pendingWithDefaults, the one text, is G[R]. et-7 now K +0, S +18, V +128 (146 lines; R16 cap 150), re-measured on the fix tree against main c2b1a7d4. Exercised by tests/test_alternatives_fill.py (test_the_norm_defaults_route_refuses_a_composed_block_by_name, test_cases_outside_this_item_are_refused_with_the_profile, test_completion_documents_are_refused_by_name_on_every_entry_point) and lean/VE/Alternatives/FillExamples.lean. FOLLOW-UP: the ties pass of et-7 (manage-agents FOLLOW-UPS.md, et-7) covers these lines too.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7 review fix, 2026-10-18",
    "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
+  },
+  {
+   "class": "S",
+   "lines": 17,
+   "reason": "sc-1a: new Lean-owned behaviour of scope@0 (the layout's list runs): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource, paraCounts, lineStart, spacesOnly, skipSpaces, markerLen, lastNonBlank, boldLabel, isBlank, isDigit, sp, nl; continues, indexOf, runFrom, listRun tied); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1a, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
+  },
+  {
+   "class": "V",
+   "lines": 62,
+   "reason": "sc-1a: new Lean-owned behaviour of scope@0 (the layout's list runs): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource, paraCounts, lineStart, spacesOnly, skipSpaces, markerLen, lastNonBlank, boldLabel, isBlank, isDigit, sp, nl; continues, indexOf, runFrom, listRun tied); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1a, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
   }
  ]
 }
