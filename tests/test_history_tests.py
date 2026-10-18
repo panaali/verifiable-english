@@ -1,6 +1,7 @@
 """The inventory of tests that read git history (tests/history-dependent.json) and its lint."""
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 import subprocess
@@ -66,9 +67,22 @@ HERMETIC = """
 
 
 def test_the_tree_passes():
-    """The lint on this checkout: every unit that starts git or reads .git is listed, as generated."""
-    findings = history_tests.lint()
+    """The lint on this checkout: every unit that starts git or reads .git is listed, as generated. The lint
+    itself reads the saved extract and Python sources only: it starts no git and reads no .git."""
+    events, active = [], [True]
+
+    def hook(event, args):  # an audit hook stays for the process: it records only while the lint runs
+        if active[0] and (event in ("subprocess.Popen", "os.posix_spawn", "os.exec", "os.system") or event == "open"
+                          and isinstance(args[0], (str, Path)) and "/.git" in str(args[0])):
+            events.append((event, args[:2]))
+
+    sys.addaudithook(hook)
+    try:
+        findings = history_tests.lint()
+    finally:
+        active[0] = False
     assert findings.errors == []
+    assert events == []
 
 
 def test_the_command_line_lint_passes_on_the_tree():
@@ -278,17 +292,29 @@ def test_the_extract_counts_a_start_only_where_the_map_saw_git_and_a_read_wherev
         "why": "the coverage map records it starting git from code with no site in the tree's Python"}
 
 
-def test_the_lint_starts_no_git_and_reads_no_git_directory():
-    events, active = [], [True]
+def _names_the_list(path: Path) -> bool:
+    """Whether code (not a docstring or comment) in `path` names the list or imports or runs its lint."""
+    text = path.read_text(encoding="utf-8")
+    if "history-dependent" not in text and "history_tests" not in text:
+        return False
+    tree = ast.parse(text)
+    docstrings = {id(node.body[0].value) for node in ast.walk(tree)
+                  if isinstance(node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                  and node.body and isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant)}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in docstrings \
+                and ("history-dependent" in node.value or "history_tests" in node.value):
+            return True
+        if isinstance(node, ast.Import) and any(alias.name.split(".")[-1] == "history_tests" for alias in node.names) \
+                or isinstance(node, ast.ImportFrom) and (node.module or "").split(".")[-1] == "history_tests":
+            return True
+    return False
 
-    def hook(event, args):  # an audit hook stays for the process: it records only while the lint runs
-        if active[0] and (event in ("subprocess.Popen", "os.posix_spawn", "os.exec", "os.system") or event == "open"
-                          and isinstance(args[0], (str, Path)) and "/.git" in str(args[0])):
-            events.append((event, args[:2]))
 
-    sys.addaudithook(hook)
-    try:
-        history_tests.lint()
-    finally:
-        active[0] = False
-    assert events == []
+def test_only_the_lint_reads_the_list():
+    """The list is an inventory and a lint only: no gate, merge, selection or cache code reads it, so no run
+    skips or reuses a test because of it. Only its lint, the lint's test and the generated-file registry, which
+    runs the lint as the list's writer and checker, name it."""
+    readers = sorted(path.relative_to(ROOT).as_posix() for directory in ("tools", "tests", "ve", "conformance")
+                     for path in (ROOT / directory).rglob("*.py") if _names_the_list(path))
+    assert readers == ["tests/test_history_tests.py", "tools/history_tests.py", "tools/regen_generated.py"]

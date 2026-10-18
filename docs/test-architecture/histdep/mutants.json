@@ -162,6 +162,16 @@
    "tests": [
     "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
    ]
+  },
+  {
+   "id": "H17",
+   "file": "tools/gate.py",
+   "claim": "the list is an inventory and a lint only: no gate code reads it",
+   "find": "    # The tests that read history (tests/history-dependent.json) read it through this git.\n",
+   "replace": "    # The tests that read history (tests/history-dependent.json) read it through this git.\n    result[\"history\"] = json.loads((ROOT / \"tests/history-dependent.json\").read_text())\n",
+   "tests": [
+    "tests/test_history_tests.py::test_only_the_lint_reads_the_list"
+   ]
   }
  ]
 }
