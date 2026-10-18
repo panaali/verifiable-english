@@ -150,3 +150,7 @@ import VE.Ask.ZeroWire
 import VE.Ask.ZeroAnswer
 import VE.Ask.Examples
 import VE.Norms.FamilySpec
+import VE.Alternatives.FillExamples
+import VE.NormDefaults.Examples
+import VE.Core.Checks
+import VE.TableauChecks
