@@ -1,7 +1,8 @@
-import VE.Alternatives.FillWire
+import VE.Alternatives.Run
 
 /-! Build-time checks of `decodeAltSourceU` (docs/spec/events-time-causation.md 8, T12c and T12d): each
-branch and each failure with its own text (`#guard`: the build fails if one is false). The document is T12's
+branch and each failure with its own text (`#guard`: the build fails if one is false); and of the scenario values
+(T12's scenario half and T12b, et-7b). The document is T12's
 (nd fixture u10): chooser `agent`, actions `act`, `permitted` the permission member of the `required` pair. -/
 namespace VE.Alternatives.FillExamples
 open Lean
@@ -56,5 +57,49 @@ def ndProfiles : String := r#"["alternatives@0", "norm-defaults@0", "norms@0", "
 #guard errorOf (env ndProfiles) (Json.arr #[Json.mkObj [("label", "g"),
   ("ast", Json.arr #["forall", "act", Json.arr #["unary", "unsaid__permitted", Json.arr #["var", (0 : Nat)]]])]]) ==
   "InvalidInput: ill-typed premise g"
+
+/-! ## Scenario values (the evidence contract C): T12 and T12b -/
+
+/-- T12's environment with `pushing`, `pulling` and T12b's `y_permitted` (unspecified). -/
+def envS : Json := env ndProfiles (extra := r#""pushing": {"arguments": ["act"], "description": "pushing"},
+  "pulling": {"arguments": ["act"], "description": "pulling"}, "y_permitted": {"arguments": ["act"],
+  "description": "permission", "regulated": {"role": "permission", "default": "unspecified", "act": "{0} be tried"}},"#)
+
+def pullForbidden : String :=
+  r#"{"norm": {"name": "pull-forbidden", "predicate": "permitted", "sign": false, "unless": [], "over": [],
+  "guard": ["unary", "pulling", ["var", 0]]}}"#
+
+/-- T12b: push may be performed if that agent may Y or it is not the case that it may Y (nd u12's guard). -/
+def pushMayGuarded : String :=
+  r#"{"norm": {"name": "push-may", "predicate": "permitted", "sign": true, "unless": [], "over": [],
+  "guard": ["and", ["unary", "pushing", ["var", 0]], ["or", ["unary", "y_permitted", ["var", 0]],
+  ["not", ["unary", "y_permitted", ["var", 0]]]]]}}"#
+
+/-- `alt-validate` on one chooser `r` with push and pull available: each alternative's status and evidence. -/
+def scenario (norms : String) (budget : String := "") : List (String × String × String) :=
+  let case := (Json.parse (r#"{"environment": null, "units": [], "norms": ["# ++ norms ++ r#"], "scenario": {"model":
+    {"complete": true, "domains": {"agent": ["r"], "act": ["push", "pull"], "harm": ["h"]}, "constants": {},
+    "relations": {"available": [["push", "r"], ["pull", "r"]], "leads_to": [], "pushing": [["push"]],
+    "pulling": [["pull"]]}}, "outcomes": [{"action": "push", "harm": "h", "leads_to": false, "support": "testimony"},
+    {"action": "pull", "harm": "h", "leads_to": false, "support": "testimony"}]}"# ++ budget ++ "}")).toOption.getD .null
+  match Run.runValidateU "s" (case.setObjVal! "environment" envS) with
+  | .ok row => match (row.getObjValD "choosers").getArrVal? 0 with
+    | .ok c => match c.getObjValD "alternatives", c.getObjValD "statuses", c.getObjValD "evidence" with
+      | .arr as, .arr ss, .arr es => ((as.zip (ss.zip es)).map fun (a, s, e) =>
+          (a.getStr?.toOption.getD "", s.getStr?.toOption.getD "", e.getStr?.toOption.getD "")).toList
+      | _, _, _ => []
+    | .error e => [("", "", e)]
+  | .error e => [("", "", e)]
+
+-- T12: push has no rule and `permitted` is unspecified: UNDECIDED from two validated fillings; pull not clear.
+#guard scenario pullForbidden == [("push", "undecided", "fillings"), ("pull", "not clear", "kleene")]
+-- T12b: Kleene leaves push unknown; enumeration of its cone settles it clear; never UNDECIDED.
+#guard scenario (pullForbidden ++ ", " ++ pushMayGuarded) ==
+  [("push", "clear", "enumeration"), ("pull", "not clear", "kleene")]
+-- T12b with no budget: UNKNOWN naming it.
+#guard scenario (pullForbidden ++ ", " ++ pushMayGuarded) r#", "max_unsaid_atoms": 0"# ==
+  [("push", "UNKNOWN", "MAX_UNSAID_ATOMS"), ("pull", "not clear", "kleene")]
+#guard scenario pullForbidden r#", "max_unsaid_atoms": "0""# ==
+  [("", "", "InvalidInput: max_unsaid_atoms must be a natural number")]
 
 end VE.Alternatives.FillExamples
