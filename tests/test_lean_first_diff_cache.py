@@ -29,7 +29,8 @@ SOURCES = {row["case"]: row["source_sha256"] for row in QUANTITY} | {"pilot/a:x.
 
 def pilots(stem: str) -> list[dict]:
     return [{"case": "pilot/a:x.ve.md", "op": "document_check", "source_sha256": BLOB, "authority": "default",
-             "outcome": {"exit": 0, "stdout": "checked", "stderr": []}},
+             # genuine reports hold line breaks JSON leaves raw, which `str.splitlines` splits at
+             "outcome": {"exit": 0, "stdout": "checked\u2028line\u0085next\u2029end", "stderr": []}},
             {"case": "pilot/b:y.ve.md", "op": "document_check", "source_sha256": BLOB, "authority": "default",
              "outcome": {"exit": 1, "stdout": f"cannot read {stem}.pilots/{BLOB}.ve.md", "stderr": ["error"]}}]
 
@@ -68,7 +69,8 @@ def world(tmp_path, monkeypatch):
     def child(root, out, corpora, authorities, workers, scratch=None):
         state["calls"].append((list(corpora), list(authorities)))
         out.write_text(recorded(scratch or out, corpora, authorities))
-        return 0
+        state.get("during", lambda: None)()
+        return state.get("code", 0)
     monkeypatch.setattr(diff, "run_child", child)
     monkeypatch.delenv("VE_AB_CACHE", raising=False)
     state.update(root=root, git=git, recorder=recorder, cache=tmp_path / "cache", tmp=tmp_path)
@@ -176,6 +178,37 @@ def test_a_dirty_root_is_neither_read_nor_stored(world):
     (world["root"] / "lean/Main.lean").write_text("-- changed\n")
     run(world)
     assert not (world["cache"] / "v1").exists()
+
+
+def test_a_key_that_changes_while_recording_stores_nothing(world):
+    world["during"] = lambda: world["recorder"].write_text("edited while recording\n")
+    cold, _ = run(world)
+    assert cold == recorded(world["tmp"] / "ab/base.jsonl", ["quantity", "pilots"], ["python", "lean"])
+    assert not (world["cache"] / "v1").exists()
+
+
+def test_a_failed_recording_writes_and_stores_nothing(world):
+    world["code"] = 3
+    out = world["tmp"] / "failed.jsonl"
+    args = argparse.Namespace(root=str(world["root"]), out=str(out), corpus=["quantity"], authority=["python"],
+                              workers=1, cache=str(world["cache"]))
+    assert diff.record(args) == 3
+    assert out.read_text() == "" and not (world["cache"] / "v1").exists()
+
+
+def test_prune_keeps_what_was_stored_or_used_lately(world):
+    run(world)
+    old, used, fresh = entries(world)
+    for path in (old, used):
+        os.utime(path, (1, 1))
+    (world["cache"] / "refused").mkdir()
+    (world["cache"] / "refused/x").mkdir()
+    lookups = {}
+    for entry in (old, used, fresh):
+        lookups[entry.name] = json.loads((entry / "meta.json").read_text())["key"]
+    assert cache.lookup(world["cache"], lookups[used.name], SOURCES.get, world["tmp"] / "ab/base.jsonl")
+    cache.prune(world["cache"])
+    assert entries(world) == sorted([used, fresh]) and not list((world["cache"] / "refused").iterdir())
 
 
 def test_an_unpinned_build_is_not_stored(world, monkeypatch):
