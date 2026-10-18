@@ -36,8 +36,6 @@ def todayGate (ps : List String) : Except String Unit :=
     .error (unsupported "risk@0 requires alternatives@0")
   else if ps.contains "risk@0" && ps.contains "norm-defaults@0" then
     .error (unsupported "risk@0 with norm-defaults@0 is not implemented")
-  else if ps.contains "alternatives@0" && ps.contains "norm-defaults@0" then
-    .error (unsupported "alternatives@0 with norm-defaults@0 is not implemented")
   else match ps.find? (fun p => !registered.contains p) with
   | some p => .error (unsupported s!"Unsupported profile {p}")
   | none =>
@@ -87,7 +85,7 @@ def TodayList (ps : List String) : Prop :=
   ("reports@0" ∈ ps → ∀ p ∈ ["norms@0", "definitions@0", "data@0", "closure@0", "nary@0", "order@0"], p ∉ ps) ∧
   ("order@0" ∈ ps → "closure@0" ∉ ps ∧ "nary@0" ∉ ps) ∧ ("nary@0" ∈ ps → "closure@0" ∈ ps) ∧
   ("rights@0" ∈ ps → "soft-norms@0" ∈ ps) ∧ ("soft-norms@0" ∈ ps → "norms@0" ∈ ps) ∧
-  ("norm-defaults@0" ∈ ps → "norms@0" ∈ ps ∧ "alternatives@0" ∉ ps ∧ "risk@0" ∉ ps)
+  ("norm-defaults@0" ∈ ps → "norms@0" ∈ ps ∧ "risk@0" ∉ ps)
 
 /-! ## `today` against its specifications -/
 
@@ -108,7 +106,6 @@ theorem todayGate_sound (ps : List String) (h : todayGate ps = .ok ()) : TodayLi
   obtain ⟨h2, h⟩ := ite_error_ok h
   obtain ⟨h3, h⟩ := ite_error_ok h
   obtain ⟨hd1, h⟩ := ite_error_ok h
-  obtain ⟨hd2, h⟩ := ite_error_ok h
   split at h
   · cases h
   rename_i hreg
@@ -134,7 +131,7 @@ theorem todayGate_sound (ps : List String) (h : todayGate ps = .ok ()) : TodayLi
     List.contains_iff_mem.mp (by simpa using h)
   have nmem : ∀ {x : String}, ¬ ps.contains x = true → x ∉ ps := fun h hx => h (List.contains_iff_mem.mpr hx)
   simp only [contains_eq, Bool.not_eq_true', decide_eq_false_iff_not, Bool.and_eq_true, Bool.or_eq_true,
-    decide_eq_true_eq, not_and, not_or, Classical.not_not] at hs h1 h2 h3 hd1 hd2 h4 hrf h5 h6 h7 h8 h9 h10 h11
+    decide_eq_true_eq, not_and, not_or, Classical.not_not] at hs h1 h2 h3 hd1 h4 hrf h5 h6 h7 h8 h9 h10 h11
   refine ⟨hs, fun p hp => mem (List.find?_eq_none.mp hreg p hp), hrf, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro ha; exact ⟨h1 ha, h2 ha⟩
   · intro hr
@@ -159,7 +156,7 @@ theorem todayGate_sound (ps : List String) (h : todayGate ps = .ok ()) : TodayLi
   · intro hn; exact h7 hn
   · intro hr; exact h9 hr
   · intro hsn; exact h10 hsn
-  · intro hnd; exact ⟨h11 hnd, fun ha => hd2 ha hnd, fun hr => hd1 hr hnd⟩
+  · intro hnd; exact ⟨h11 hnd, fun hr => hd1 hr hnd⟩
 
 theorem ite_ok_of {α : Type} {c : Prop} [Decidable c] {e : String} {r : Except String α} {x : α}
     (hc : ¬ c) (h : r = .ok x) : (if c then .error e else r) = .ok x := by
@@ -189,11 +186,7 @@ theorem todayGate_complete (ps : List String) (h : TodayList ps) : todayGate ps 
   refine ite_ok_of ?_ ?_
   · intro hc
     simp only [Bool.and_eq_true] at hc
-    exact (hnd (List.contains_iff_mem.mp hc.2)).2.2 (List.contains_iff_mem.mp hc.1)
-  refine ite_ok_of ?_ ?_
-  · intro hc
-    simp only [Bool.and_eq_true] at hc
-    exact (hnd (List.contains_iff_mem.mp hc.2)).2.1 (List.contains_iff_mem.mp hc.1)
+    exact (hnd (List.contains_iff_mem.mp hc.2)).2 (List.contains_iff_mem.mp hc.1)
   split
   · rename_i p hp
     exfalso
@@ -442,14 +435,13 @@ theorem today_rights (ps : List String) (h : today ps = .ok .rights) :
   exact ⟨a5, hs, hl.2.2.2.2.2.2.2.2.2.2.1 hs⟩
 
 theorem today_alternatives (ps : List String) (h : today ps = .ok .alternatives) :
-    "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "risk@0" ∉ ps ∧ "norm-defaults@0" ∉ ps := by
+    "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "risk@0" ∉ ps := by
   have he := (today_ok h).2
   have hl := todayGate_sound ps (today_ok h).1
   rcases todayHead_cases ps with ⟨e, _⟩ | ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   obtain ⟨a1, a2⟩ := h
-  exact ⟨a2, (hl.2.2.2.1 a2).1, (hl.2.2.2.1 a2).2, a1,
-    fun hd => (hl.2.2.2.2.2.2.2.2.2.2.2 hd).2.1 a2⟩
+  exact ⟨a2, (hl.2.2.2.1 a2).1, (hl.2.2.2.1 a2).2, a1⟩
 
 theorem today_risk (ps : List String) (h : today ps = .ok .risk) :
     "risk@0" ∈ ps ∧ "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ "soft-norms@0" ∉ ps ∧ "norm-defaults@0" ∉ ps := by
@@ -458,7 +450,7 @@ theorem today_risk (ps : List String) (h : today ps = .ok .risk) :
   rcases todayHead_cases ps with ⟨e, h⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ | ⟨e, _⟩ <;>
     rw [e] at he <;> try cases he
   have ha := (hl.2.2.2.2.1 h).1
-  exact ⟨h, ha, (hl.2.2.2.1 ha).1, (hl.2.2.2.1 ha).2, fun hd => (hl.2.2.2.2.2.2.2.2.2.2.2 hd).2.2 h⟩
+  exact ⟨h, ha, (hl.2.2.2.1 ha).1, (hl.2.2.2.1 ha).2, fun hd => (hl.2.2.2.2.2.2.2.2.2.2.2 hd).2 h⟩
 
 theorem forIn_yield_ok (l : List String) {f : String → PUnit → Except String (ForInStep PUnit)}
     (hf : ∀ p ∈ l, f p PUnit.unit = .ok (.yield PUnit.unit)) : forIn l PUnit.unit f = .ok PUnit.unit := by

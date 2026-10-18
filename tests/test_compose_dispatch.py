@@ -52,8 +52,6 @@ def _specified_error(ps):
         return "risk@0 requires alternatives@0"
     if has("risk@0") and has("norm-defaults@0"):
         return "risk@0 with norm-defaults@0 is not implemented"
-    if has("alternatives@0") and has("norm-defaults@0"):
-        return "alternatives@0 with norm-defaults@0 is not implemented"
     if unknown := next((p for p in ps if p not in REGISTERED), None):
         return f"Unsupported profile {unknown}"
     if has("speech-acts@0") and not has("norms@0"):
@@ -102,8 +100,7 @@ def _today_list(ps):
         and ("nary@0" not in p or "closure@0" in p)
         and ("rights@0" not in p or "soft-norms@0" in p)
         and ("soft-norms@0" not in p or "norms@0" in p)
-        and ("norm-defaults@0" not in p or "norms@0" in p and
-             p.isdisjoint({"alternatives@0", "risk@0"}))
+        and ("norm-defaults@0" not in p or "norms@0" in p and "risk@0" not in p)
     )
 
 
