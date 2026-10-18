@@ -51,6 +51,7 @@ Before these, lf-14b (`b96f04a5a`) and lf-14d (`4667e8de6`) recorded at `f1b719c
 lf-16f 121, rd-7 ~89 (+3.2 h of whole-UDHR runs, L70), lf-18 91+.
 
 **Stop rule: not met.** 6 of the 8 batches recorded an A/B, and all 6 bases are first-parent main commits (the
-build-start merge). Bases repeat: `85b20fcba` served 2 batches and `f1b719c7a` 4 (lf-14a to lf-14d), so even without
-a prewarm 4 of those 6 base recordings were a second recording of a commit already recorded, and a cache hit wherever
-the head's recorder (`tools/lean_first_diff.py`), corpus inputs and environment were the same.
+build-start merge). Bases repeat: the 8 A/B recordings from lf-14a to rd-7 (the 6 above, lf-14b and lf-14d) have
+4 distinct bases (`85b20fcba` served 2 batches, `f1b719c7a` 4), so even without a prewarm 4 of the 8 base recordings
+recorded a commit already recorded: a cache hit wherever the head's recorder (`tools/lean_first_diff.py`), corpus
+inputs and environment were the same as the first's.
