@@ -1,0 +1,73 @@
+{
+  "$id": "metered.json",
+  "$comment": "Mode metered: Route.MeteredRun.runCaseReported (evaluate-budgeted and non-vacuity cases).",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "common.json#/$defs/error"},
+      {"$ref": "#/$defs/evaluated"},
+      {"$ref": "#/$defs/non_vacuity"}
+    ]
+  },
+  "$defs": {
+    "binding": {
+      "$comment": "MeteredTrace.bindingJson: a local bound around a node, innermost first (its position is its de Bruijn index).",
+      "additionalProperties": false,
+      "properties": {
+        "debruijn_index": {"$ref": "common.json#/$defs/nat"},
+        "local_id": {"type": "string"},
+        "sort": {"type": "string"}
+      },
+      "required": ["debruijn_index", "sort", "local_id"],
+      "type": "object"
+    },
+    "evaluated": {
+      "additionalProperties": false,
+      "properties": {
+        "evaluation": {"$ref": "#/$defs/evaluation"},
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "evaluation"],
+      "type": "object"
+    },
+    "evaluation": {
+      "$comment": "Metered.resultFields and the explanation: null unless the case asks for a trace.",
+      "additionalProperties": false,
+      "properties": {
+        "evaluations": {"$ref": "common.json#/$defs/nat"},
+        "explanation": {"anyOf": [{"type": "null"}, {"items": {"$ref": "#/$defs/node"}, "minItems": 1, "type": "array"}]},
+        "status": {"enum": ["Satisfied", "Violated", "ResourceLimit"]},
+        "value": {"type": ["boolean", "null"]}
+      },
+      "required": ["status", "value", "evaluations", "explanation"],
+      "type": "object"
+    },
+    "node": {
+      "$comment": "MeteredTrace.Row.json: one explanation node in preorder and the number of its children, whose subtrees follow it in order.",
+      "additionalProperties": false,
+      "properties": {
+        "bindings": {"items": {"$ref": "#/$defs/binding"}, "type": "array"},
+        "children": {"$ref": "common.json#/$defs/nat"},
+        "detail": {"type": "string"},
+        "kind": {"type": "string"},
+        "value": {"type": ["boolean", "null"]}
+      },
+      "required": ["kind", "value", "bindings", "detail", "children"],
+      "type": "object"
+    },
+    "non_vacuity": {
+      "$comment": "MeteredRun.nonVacuityResult.",
+      "additionalProperties": false,
+      "properties": {
+        "evaluations": {"$ref": "common.json#/$defs/nat"},
+        "exhausted": {"type": "boolean"},
+        "id": {"type": "string", "x-equals": "/id"},
+        "status": {"const": "ok"},
+        "suitable": {"type": "boolean"}
+      },
+      "required": ["id", "status", "suitable", "evaluations", "exhausted"],
+      "type": "object"
+    }
+  }
+}

@@ -13,12 +13,24 @@ from ve import Environment, FiniteModel
 from ve.ast import (And, Atom, Binary, Body, Bottom, Const, Document, Eq, Exists,
                     Forall, Implies, Le, Lt, Named, Not, Num, Or, Reach, Top,
                     Unary, Var, formula_to_data)
-from ve.evaluate import evaluate
+from ve.evaluate import _evaluate_validated, _explanation
 from tests import nonvacuity_oracle
 
 
 EXE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_metered"
 FAMILIES = ((), ("closure@0",), ("closure@0", "nary@0"), ("order@0",))
+
+
+def python(formulas, model, **options):
+    """The retained Python evaluator's answer (`evaluate` itself is Lean's since lean-first batch 18)."""
+    return _evaluate_validated(tuple(formulas), model, **options).to_dict()
+
+
+def lean(row):
+    """A metered row's evaluation, its explanation rows rebuilt into the public tree (`_explanation`)."""
+    evaluation = row["evaluation"]
+    rows = evaluation["explanation"]
+    return {**evaluation, "explanation": None if rows is None else _explanation(rows).to_dict()}
 
 
 def run(cases):
@@ -69,13 +81,13 @@ def test_budgeted_values_counts_and_traces_match_python(profiles):
                           "ast": [formula_to_data(env, formula)],
                           "max_evaluations": budget, "max_trace_nodes": trace_budget,
                           "trace": trace})
-            expected.append(evaluate(env, formula, model, max_evaluations=budget,
-                                     max_trace_nodes=trace_budget, trace=trace).to_dict())
+            expected.append(python((formula,), model, max_evaluations=budget,
+                                   max_trace_nodes=trace_budget, trace=trace))
     rows = run(cases)
     assert len(rows) == len(cases)
     for case, row, answer in zip(cases, rows, expected, strict=True):
         assert row["status"] == "ok", (case, row)
-        assert row["evaluation"] == answer, (case, row["evaluation"], answer)
+        assert lean(row) == answer, (case, row["evaluation"], answer)
 
 
 @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
@@ -90,10 +102,9 @@ def test_document_budget_is_shared_and_stops_at_first_violation(profiles):
                           "environment": raw, "model": model.to_dict(),
                           "ast": [formula_to_data(env, f) for f in document.formulas],
                           "max_evaluations": budget, "trace": True})
-            expected.append(evaluate(env, document, model, max_evaluations=budget,
-                                     trace=True).to_dict())
+            expected.append(python(document.formulas, model, max_evaluations=budget, trace=True))
     for row, answer in zip(run(cases), expected, strict=True):
-        assert row["evaluation"] == answer
+        assert lean(row) == answer
 
 
 @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
@@ -149,10 +160,10 @@ def test_empty_quantifier_domains_match_python(profiles):
               "model": model.to_dict(), "ast": [formula_to_data(env, f)], "trace": True,
               "max_evaluations": budget}
              for i, (f, budget) in enumerate((f, b) for f in formulas_ for b in (0, 1, 2))]
-    expected = [evaluate(env, f, model, trace=True, max_evaluations=budget).to_dict()
+    expected = [python((f,), model, trace=True, max_evaluations=budget)
                 for f in formulas_ for budget in (0, 1, 2)]
     for row, answer in zip(run(cases), expected, strict=True):
-        assert row["evaluation"] == answer
+        assert lean(row) == answer
     nv = [{"id": str(i), "kind": "non-vacuity", "environment": raw,
            "model": model.to_dict(), "formula": formula_to_data(env, f)}
           for i, f in enumerate(formulas_)]

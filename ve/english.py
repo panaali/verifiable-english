@@ -1758,11 +1758,7 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, _wit
     if not isinstance(source, str): raise TypeError('source must be str or bytes')
     words = EnglishVocabulary(env, _defer_overlay_refusals=True, **options)
     from .backends import dispatch
-    from .backends.english_lean import shadow_record
-    selected = dispatch._overrides().get('english.admission')
-    if selected is not None and selected != 'lean':
-        raise CheckerUnavailable(f'CheckerUnavailable: english.admission is Lean-authoritative; '
-                                 f'{selected!r} cannot decide it')
+    from .backends.english_lean import append_record, shadow_record
     for observer in dispatch.observers:
         observer('english.admission', 'lean')
     try:
@@ -1771,13 +1767,13 @@ def _parse_english_document_uncached(env, source, *, _with_structure=False, _wit
         if os.environ.get('VE_ENGLISH_COMPARATOR') == '1':
             try: python = _python_reading(env, source, words, options)
             except Exception as exc: python = exc
-            try: dispatch._append(shadow_record(env, source, words, python, lean_error))
+            try: append_record(shadow_record(env, source, words, python, lean_error))
             except Exception: pass
         raise
     if os.environ.get('VE_ENGLISH_COMPARATOR') == '1':
         try: python = _python_reading(env, source, words, options)
         except Exception as exc: python = exc
-        try: dispatch._append(shadow_record(env, source, words, python, reading))
+        try: append_record(shadow_record(env, source, words, python, reading))
         except Exception: pass
     if _check:
         reading.check_conclusions()

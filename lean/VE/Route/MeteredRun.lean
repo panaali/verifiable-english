@@ -97,8 +97,8 @@ def answer {α ρ σ entity : Type} (q : Query) (s : Session α ρ σ entity) :
   | .evaluate fs =>
     let result := s.document fs
     let step := fun f state => s.ops.eval f s.closed state
-    let explanation := if q.trace then MeteredTrace.document s.trace step s.initial s.closed fs
-        result q.maxEvaluations q.maxTraceNodes else Json.null
+    let explanation := if q.trace then (MeteredTrace.document s.trace step s.initial s.closed fs
+        result q.maxEvaluations q.maxTraceNodes).json else Json.null
     Wire.ok q.id [("evaluation", Json.mkObj (Metered.resultFields result ++
       [("explanation", explanation)]))]
 

@@ -1,9 +1,9 @@
 """A differential never compares an engine with itself (lean-first batch 15b, review B2).
 
-Python has no search since batch 15b: `find_countermodel` runs Rust's under every authority. Shadow records
-and three-way tests that compared "Python" with Rust there compared Rust with Rust and could not fail. One
-table names the single-owner operations (`dispatch.SINGLE_OWNER`); `execute` refuses them and any pair of
-identical implementations, `owned` runs them, and the differential harnesses read the same table.
+Python has no search since batch 15b: `find_countermodel` runs Rust's. Shadow records and three-way tests
+that compared "Python" with Rust there compared Rust with Rust and could not fail. One table names the
+owner of every dispatched operation (`dispatch.SINGLE_OWNER`); `owned` runs it, and the differential
+harnesses read the same table. Since batch 18 no setting selects another authority.
 """
 from __future__ import annotations
 
@@ -15,29 +15,24 @@ from tools import difffuzz_corpus as corpus
 from ve.backends import dispatch
 
 
-def test_execute_refuses_a_comparison_of_one_implementation_with_itself():
-    def run():
-        return 1
-    for op in dispatch.SINGLE_OWNER:
-        with pytest.raises(ValueError, match="one implementation"):
-            dispatch.execute(op, {}, lambda: 1, lean=lambda: 2)
-    with pytest.raises(ValueError, match="one implementation"):
-        dispatch.execute("evaluate", {}, run, lean=run)
-    with pytest.raises(ValueError, match="one implementation"):
-        dispatch.execute("evaluate", {}, run, rust=run)
-    with pytest.raises(ValueError, match="not a single-owner"):
-        dispatch.owned("evaluate", run)
+def test_owned_refuses_an_operation_the_table_does_not_name():
+    with pytest.raises(ValueError, match="not a dispatched operation"):
+        dispatch.owned("no such operation", lambda: 1)
+    assert not hasattr(dispatch, "execute") and not hasattr(dispatch, "pinned")
 
 
 RUST_OWNED = sorted(op for op, engine in dispatch.SINGLE_OWNER.items() if engine == "rust")
+# Settings that selected an authority before lean-first batch 18; each is now ignored.
 SELECTIONS = ["python", "lean", "rust-experimental", "shadow"]
 
 
 def test_the_lean_owned_operations_are_the_single_owner_table_s_lean_rows():
-    """Lean-first batch 13b: the core operations are Lean's, and the table names no other engine."""
+    """Lean-first batches 13b and 18: the core operations, evaluation, the countermodel check and model
+    validation are Lean's, and the table names no other engine."""
     assert {op for op, engine in dispatch.SINGLE_OWNER.items() if engine == "lean"} == dispatch.LEAN_OWNED
     assert set(dispatch.SINGLE_OWNER.values()) == {"lean", "rust"}
     assert RUST_OWNED == ["countermodel_search", "distinguishing_model"]
+    assert {"evaluate", "countermodel_check", "model_validation"} <= dispatch.LEAN_OWNED
 
 
 @pytest.mark.parametrize("op", sorted(dispatch.SINGLE_OWNER))
@@ -48,8 +43,7 @@ def test_single_owner_operations_write_no_shadow_record(op, monkeypatch, tmp_pat
     seen = []
     monkeypatch.setattr(dispatch, "observers", [lambda name, authority: seen.append((name, authority))])
     assert dispatch.owned(op, lambda: "answer") == "answer"
-    expected = "lean" if op in dispatch.LEAN_OWNED else "shadow"
-    assert seen == [(op, expected)] and not log.exists()
+    assert seen == [(op, dispatch.SINGLE_OWNER[op])] and not log.exists()
 
 
 @pytest.mark.parametrize("op", sorted(dispatch.LEAN_OWNED))
@@ -58,36 +52,11 @@ def test_a_lean_owned_operation_is_lean_s_under_every_selection(op, selected, mo
     monkeypatch.setenv("VE_AUTHORITY", selected)
     monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"{op}={selected},countermodel_check=python")
     seen = []
-    monkeypatch.setattr(dispatch, "observers", [lambda name, authority: seen.append((name, authority))])
-
-    def run():
-        # Its constituents run on Lean: a composing rule reads Lean-checked parts only.
-        assert dispatch.authority_for("countermodel_check") == "lean"
-        return 7
-
-    assert dispatch.owned(op, run) == 7
+    monkeypatch.setattr(dispatch, "observers", [lambda name, owner: seen.append((name, owner))])
+    assert dispatch.owned(op, lambda: 7) == 7
     assert seen == [(op, "lean")]
-    assert dispatch.authority_for("countermodel_check") == "python"
-    with pytest.raises(ValueError, match="one implementation"):
-        dispatch.execute(op, {}, lambda: 1, lean=lambda: 2)
-
-
-@pytest.mark.parametrize("op", RUST_OWNED)
-@pytest.mark.parametrize("selected", SELECTIONS)
-def test_single_owner_pins_constituents_and_restores_selection(op, selected, monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"{op}={selected},countermodel_check=rust-experimental")
-    expected = "python" if selected == "shadow" else selected
-
-    def run():
-        assert dispatch.authority_for("countermodel_check") == expected
-        return 7
-
-    assert dispatch.owned(op, run) == 7
-    assert dispatch.authority_for("countermodel_check") == "rust-experimental"
     with pytest.raises(RuntimeError, match="owner failed"):
         dispatch.owned(op, lambda: (_ for _ in ()).throw(RuntimeError("owner failed")))
-    assert dispatch.authority_for("countermodel_check") == "rust-experimental"
 
 
 def _reached(case):
