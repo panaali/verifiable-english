@@ -2939,6 +2939,21 @@ theorem VE.Cardinality.Examples.entails_cases
           (VE.Cardinality.CFormula.count (VE.Cardinality.atMostAtom "user" VE.Cardinality.Body.any 1))
   -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.atLeastAtom@VE.Cardinality.Theorems VE.Cardinality.atMostAtom@VE.Cardinality.Theorems VE.Cardinality.exactlyAtom@VE.Cardinality.Theorems
   -- expr 3526381808
+theorem VE.Cardinality.Examples.erase_two
+  VE.Time.QFormula.tdenote
+      (VE.Cardinality.withRegions VE.Cardinality.Examples.users
+        [VE.Cardinality.Examples.oneIn1000, VE.Cardinality.Examples.moreThanHalf] VE.Cardinality.Examples.two)
+      []
+      (VE.Cardinality.CFormula.erase VE.Cardinality.Examples.users
+        [VE.Cardinality.Examples.oneIn1000, VE.Cardinality.Examples.moreThanHalf] VE.Cardinality.Examples.oneIn1000) ∧
+    ¬VE.Time.QFormula.tdenote
+        (VE.Cardinality.withRegions VE.Cardinality.Examples.users
+          [VE.Cardinality.Examples.oneIn1000, VE.Cardinality.Examples.moreThanHalf] VE.Cardinality.Examples.two)
+        []
+        (VE.Cardinality.CFormula.erase VE.Cardinality.Examples.users
+          [VE.Cardinality.Examples.oneIn1000, VE.Cardinality.Examples.moreThanHalf] VE.Cardinality.Examples.moreThanHalf)
+  -- uses VE.Cardinality.CFormula.erase@VE.Cardinality.Erase VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.moreThanHalf@VE.Cardinality.Examples VE.Cardinality.Examples.oneIn1000@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QFormula.tdenote@VE.Time.Semantics
+  -- expr 4155899061
 theorem VE.Cardinality.Examples.everyone_two
   ∀ (r : VE.Cardinality.Rel) (k : Int),
     VE.Cardinality.CountAtom.holds VE.Cardinality.Examples.two
@@ -2951,6 +2966,14 @@ theorem VE.Cardinality.Examples.fa10_two
     VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two VE.Cardinality.Examples.oneIn1000
   -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.Examples.moreThanHalf@VE.Cardinality.Examples VE.Cardinality.Examples.oneIn1000@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples
   -- expr 502617882
+theorem VE.Cardinality.Examples.fa1_entails
+  VE.Cardinality.CEntails VE.Cardinality.Examples.fomc VE.Cardinality.Examples.fa1 VE.Cardinality.Examples.fa1Conclusion
+  -- uses VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.Examples.fa1@VE.Cardinality.Examples VE.Cardinality.Examples.fa1Conclusion@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples
+  -- expr 1769235206
+theorem VE.Cardinality.Examples.fomc_wellFormed
+  VE.Cardinality.Examples.fomc.WellFormed
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.fomc@VE.Cardinality.Examples
+  -- expr 1113658872
 theorem VE.Cardinality.Examples.harm_or_not_two
   VE.Cardinality.HasCount VE.Cardinality.Examples.two "user"
     (VE.Cardinality.Examples.harm.or VE.Cardinality.Examples.harm.not) 2
@@ -3060,15 +3083,161 @@ theorem VE.Cardinality.admits_sound
     VE.Cardinality.CFormula.admits E a = Bool.true → VE.Cardinality.Admitted E a
   -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.admits@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax
   -- expr 3580892083
+theorem VE.Cardinality.admitted_elab
+  ∀ {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) {Γ : List String} {a : VE.Time.QFormula},
+        VE.Time.Admitted E.q Γ a → VE.Time.Admitted (E.elab fs) Γ a
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
+  -- expr 2580797077
+theorem VE.Cardinality.atom_inRegion
+  ∀ (g : String → Bool) (p : String) (ps : List String),
+    p ∈ ps → VE.Cardinality.Body.inRegion ps (List.map g ps) (VE.Cardinality.Body.atom p) = g p
+  -- uses VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.inRegion@VE.Cardinality.Regions
+  -- expr 3540727265
 theorem VE.Cardinality.bodyCheck_iff
   ∀ (E : VE.Cardinality.CEnv) (s : String) (b : VE.Cardinality.Body),
     VE.Cardinality.bodyCheck E s b = Bool.true ↔ VE.Cardinality.BodyTyped E s b
   -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.bodyCheck@VE.Cardinality.Syntax
   -- expr 4260019375
+theorem VE.Cardinality.bodyOfQ_spec
+  ∀ {E : VE.Time.QEnv} {s : String} (a : VE.Time.QFormula) (b : VE.Cardinality.Body),
+    VE.Cardinality.bodyOfQ? a = Option.some b →
+      (∀ {α : Type u} (T : VE.Time.TStructure α) (x : α) (ρ : List α),
+          VE.Time.QFormula.tdenote T (x :: ρ) a ↔ VE.Cardinality.Body.holds T x b) ∧
+        ∀ (Γ : List String), VE.Time.Admitted E (s :: Γ) a → VE.Time.Admitted E [s] a
+  -- uses VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.bodyOfQ?@VE.Cardinality.Regions VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.QFormula.tdenote@VE.Time.Semantics VE.Time.QFormula@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics
+  -- expr 232729454
+theorem VE.Cardinality.bridge_hold
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv),
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α),
+        VE.Cardinality.Admissible E T →
+          (∀ (a : VE.Cardinality.CFormula), a ∈ fs → VE.Cardinality.Admitted E a) →
+            ∀ (a : VE.Time.QFormula),
+              a ∈ VE.Cardinality.bridgePremises E fs → VE.Time.QFormula.tdenote (VE.Cardinality.withRegions E fs T) [] a
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.bridgePremises@VE.Cardinality.Erase VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QFormula.tdenote@VE.Time.Semantics VE.Time.QFormula@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2371991506
+theorem VE.Cardinality.cardinality_elab_sound
+  ∀ (E : VE.Cardinality.CEnv),
+    E.WellFormed →
+      ∀ (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
+        (∀ (a : VE.Cardinality.CFormula), a ∈ ps → VE.Cardinality.Admitted E a) →
+          VE.Cardinality.Admitted E c →
+            VE.Time.TEntails (E.elab (c :: ps)) (VE.Cardinality.erasedProblem E ps c).fst
+                (VE.Cardinality.erasedProblem E ps c).snd →
+              VE.Cardinality.CEntails E ps c
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula@VE.Time.Syntax VE.Time.TEntails@VE.Time.Semantics
+  -- expr 2153097470
+theorem VE.Cardinality.countAtom_holds_iff
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
+    VE.Cardinality.Admissible E T →
+      ∀ (c : VE.Cardinality.CountAtom),
+        c.sort ∈ E.finite →
+          (VE.Cardinality.CountAtom.holds T c ↔
+            c.rel.holds (List.map (fun kb => kb.fst * ↑(VE.Cardinality.regionSize T c.sort kb.snd)) c.terms).sum c.bound)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CountAtom.bound@VE.Cardinality.Syntax VE.Cardinality.CountAtom.holds@VE.Cardinality.Semantics VE.Cardinality.CountAtom.rel@VE.Cardinality.Syntax VE.Cardinality.CountAtom.sort@VE.Cardinality.Syntax VE.Cardinality.CountAtom.terms@VE.Cardinality.Syntax VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Rel.holds@VE.Cardinality.Semantics VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Time.TStructure@VE.Time.Semantics
+  -- expr 462763406
+theorem VE.Cardinality.countedUniversals_spec
+  ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula},
+    (∀ (a : VE.Cardinality.CFormula), a ∈ fs → VE.Cardinality.Admitted E a) →
+      ∀ {x : String × VE.Cardinality.Body × VE.Time.QFormula},
+        x ∈ VE.Cardinality.countedUniversals E fs →
+          x.fst ∈ VE.Cardinality.countedSorts fs ∧
+            (∀ (p : String), p ∈ x.snd.fst.atoms → p ∈ VE.Cardinality.predsOn E fs x.fst) ∧
+              x.fst ∈ E.finite ∧
+                VE.Time.Admitted E.q [] x.snd.snd ∧
+                  ∃ a', x.snd.snd = VE.Time.QFormula.all x.fst a' ∧ VE.Cardinality.bodyOfQ? a' = Option.some x.snd.fst
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body.atoms@VE.Cardinality.Regions VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.bodyOfQ?@VE.Cardinality.Regions VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.countedUniversals@VE.Cardinality.Regions VE.Cardinality.predsOn@VE.Cardinality.Regions VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula.all@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
+  -- expr 743948899
+theorem VE.Cardinality.counted_of_mem
+  ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula} {s : String} {b : VE.Cardinality.Body},
+    (s, b) ∈ List.flatMap (fun x => x.countBodies) fs →
+      s ∈ VE.Cardinality.countedSorts fs ∧ ∀ (p : String), p ∈ b.atoms → p ∈ VE.Cardinality.predsOn E fs s
+  -- uses VE.Cardinality.Body.atoms@VE.Cardinality.Regions VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.countBodies@VE.Cardinality.Regions VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.predsOn@VE.Cardinality.Regions
+  -- expr 2714576557
+theorem VE.Cardinality.counts_iff
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
+    VE.Cardinality.Admissible E T →
+      ∀ {s : String},
+        s ∈ E.finite →
+          ∀ (terms : List (Int × VE.Cardinality.Body)) (ns : List Nat),
+            VE.Cardinality.Counts T s terms ns ↔ ns = List.map (fun kb => VE.Cardinality.regionSize T s kb.snd) terms
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.Counts@VE.Cardinality.Semantics VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Time.TStructure@VE.Time.Semantics
+  -- expr 3814873919
+theorem VE.Cardinality.denote_congr
+  ∀ {E : VE.Order.Environment} (S : VE.Order.Structure) (k : String → Option (VE.Order.Value S.Carrier)),
+    (∀ (c : String) (σ : VE.Order.SortName), E.constants c = Option.some σ → k c = S.constant c) →
+      ∀ (rel : String → List (VE.Order.Value S.Carrier) → Prop),
+        (∀ (p : String) (ws : List (VE.Order.Value S.Carrier)), rel p ws ↔ S.relation p ws) →
+          ∀ (a : VE.Order.Formula) (Γ : List VE.Order.SortName) (ρ : VE.Order.Valuation S),
+            VE.Order.Formula.WellFormed E Γ a →
+              (VE.Order.Formula.denote { Carrier := S.Carrier, objects := S.objects, constant := k, relation := rel } ρ
+                  a ↔
+                VE.Order.Formula.denote S ρ a)
+  -- uses VE.Order.Environment.constants@VE.Order.Syntax VE.Order.Environment@VE.Order.Syntax VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Formula@VE.Order.Syntax VE.Order.SortName@VE.Order.Syntax VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Structure.constant@VE.Order.Semantics VE.Order.Structure.mk@VE.Order.Semantics VE.Order.Structure.objects@VE.Order.Semantics VE.Order.Structure.relation@VE.Order.Semantics VE.Order.Structure@VE.Order.Semantics VE.Order.Valuation@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics
+  -- expr 2820906985
+theorem VE.Cardinality.elab_declared
+  ∀ {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) {c : String} {τ : VE.Time.QType},
+        E.q.constants c = Option.some τ → (E.elab fs).constants c = Option.some τ
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
+  -- expr 3490531622
+theorem VE.Cardinality.erase_admitted
+  ∀ {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) {a : VE.Cardinality.CFormula},
+        VE.Cardinality.Admitted E a →
+          (∀ (sb : String × VE.Cardinality.Body), sb ∈ a.countBodies → sb ∈ List.flatMap (fun x => x.countBodies) fs) →
+            VE.Time.Admitted (E.elab fs) [] (VE.Cardinality.CFormula.erase E fs a)
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.countBodies@VE.Cardinality.Regions VE.Cardinality.CFormula.erase@VE.Cardinality.Erase VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Time.Admitted@VE.Time.Syntax
+  -- expr 2229339616
+theorem VE.Cardinality.erase_iff
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv),
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α),
+        VE.Cardinality.Admissible E T →
+          ∀ (a : VE.Cardinality.CFormula),
+            VE.Cardinality.Admitted E a →
+              a ∈ fs →
+                (VE.Cardinality.CFormula.holds T a ↔
+                  VE.Time.QFormula.tdenote (VE.Cardinality.withRegions E fs T) [] (VE.Cardinality.CFormula.erase E fs a))
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.erase@VE.Cardinality.Erase VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QFormula.tdenote@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 1147109488
+theorem VE.Cardinality.erase_iff_of
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv),
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α),
+        VE.Cardinality.Admissible E T →
+          ∀ {a : VE.Cardinality.CFormula},
+            VE.Cardinality.Admitted E a →
+              (∀ (sb : String × VE.Cardinality.Body),
+                  sb ∈ a.countBodies → sb ∈ List.flatMap (fun x => x.countBodies) fs) →
+                (VE.Cardinality.CFormula.holds T a ↔
+                  VE.Time.QFormula.tdenote (VE.Cardinality.withRegions E fs T) [] (VE.Cardinality.CFormula.erase E fs a))
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.countBodies@VE.Cardinality.Regions VE.Cardinality.CFormula.erase@VE.Cardinality.Erase VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QFormula.tdenote@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2762272725
+theorem VE.Cardinality.erasedProblem_admitted
+  ∀ (E : VE.Cardinality.CEnv),
+    E.WellFormed →
+      ∀ (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
+        (∀ (a : VE.Cardinality.CFormula), a ∈ ps → VE.Cardinality.Admitted E a) →
+          VE.Cardinality.Admitted E c →
+            ∀ (a : VE.Time.QFormula),
+              a ∈ (VE.Cardinality.erasedProblem E ps c).fst ++ [(VE.Cardinality.erasedProblem E ps c).snd] →
+                VE.Time.Admitted (E.elab (c :: ps)) [] a
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
+  -- expr 1243922253
 theorem VE.Cardinality.exists_nodup_filter
   ∀ {α : Type u} (P : α → Prop) (xs : List α), ∃ ys, ys.Nodup ∧ ∀ (x : α), x ∈ ys ↔ x ∈ xs ∧ P x
   -- uses
   -- expr 3200230773
+theorem VE.Cardinality.get_of_data
+  ∀ {s : String} {A rest : List Char} {c : Char},
+    s.data = A ++ c :: rest → s.get { byteIdx := String.utf8ByteSize.go A } = c
+  -- uses
+  -- expr 3190545727
 theorem VE.Cardinality.hasCount_exists_unique
   ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
     VE.Cardinality.Admissible E T →
@@ -3078,11 +3247,73 @@ theorem VE.Cardinality.hasCount_exists_unique
             ∃ n, VE.Cardinality.HasCount T s b n ∧ ∀ (m : Nat), VE.Cardinality.HasCount T s b m → m = n
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Time.TStructure@VE.Time.Semantics
   -- expr 980603039
+theorem VE.Cardinality.hasCount_regionSize
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
+    VE.Cardinality.Admissible E T →
+      ∀ {s : String},
+        s ∈ E.finite → ∀ (b : VE.Cardinality.Body), VE.Cardinality.HasCount T s b (VE.Cardinality.regionSize T s b)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Time.TStructure@VE.Time.Semantics
+  -- expr 116074874
 theorem VE.Cardinality.hasCount_unique
   ∀ {α : Type u} {T : VE.Time.TStructure α} {s : String} {b : VE.Cardinality.Body} {n m : Nat},
     VE.Cardinality.HasCount T s b n → VE.Cardinality.HasCount T s b m → n = m
   -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Time.TStructure@VE.Time.Semantics
   -- expr 2589477521
+theorem VE.Cardinality.hasCount_zero
+  ∀ {α : Type u} {T : VE.Time.TStructure α} {s : String} {b : VE.Cardinality.Body} {n : Nat},
+    VE.Cardinality.HasCount T s b n → (n = 0 ↔ ∀ (x : α), T.objects s x → ¬VE.Cardinality.Body.holds T x b)
+  -- uses VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Time.TStructure.objects@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 618527546
+theorem VE.Cardinality.holds_withRegions
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α) (x : α)
+    (b : VE.Cardinality.Body),
+    VE.Cardinality.Body.holds (VE.Cardinality.withRegions E fs T) x b ↔ VE.Cardinality.Body.holds T x b
+  -- uses VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2297595723
+theorem VE.Cardinality.inRegion_iff
+  ∀ {α : Type u} (T : VE.Time.TStructure α) (x : α) (ps : List String) (b : VE.Cardinality.Body),
+    (∀ (p : String), p ∈ b.atoms → p ∈ ps) →
+      (VE.Cardinality.Body.inRegion ps (List.map (fun p => Decidable.decide (T.relation p [VE.Time.TValue.obj x])) ps) b =
+          Bool.true ↔
+        VE.Cardinality.Body.holds T x b)
+  -- uses VE.Cardinality.Body.atoms@VE.Cardinality.Regions VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body.inRegion@VE.Cardinality.Regions VE.Cardinality.Body@VE.Cardinality.Syntax VE.Time.TStructure.relation@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.obj@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 1599611240
+theorem VE.Cardinality.length_filter_or
+  ∀ {β : Type u} (p q : β → Bool),
+    (∀ (x : β), ¬(p x = Bool.true ∧ q x = Bool.true)) →
+      ∀ (xs : List β),
+        (List.filter (fun x => p x || q x) xs).length = (List.filter p xs).length + (List.filter q xs).length
+  -- uses
+  -- expr 3377248532
+theorem VE.Cardinality.mem_firstUse
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] {x : β} {xs : List β}, x ∈ VE.Cardinality.firstUse xs ↔ x ∈ xs
+  -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions
+  -- expr 1798068247
+theorem VE.Cardinality.mem_firstUse_foldl
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] (x : β) (xs acc : List β),
+    x ∈ List.foldl (fun acc y => if acc.contains y = Bool.true then acc else acc ++ [y]) acc xs ↔ x ∈ acc ∨ x ∈ xs
+  -- uses
+  -- expr 1954876882
+theorem VE.Cardinality.mem_regionTable
+  ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula} {s : String} {r : VE.Cardinality.Region},
+    s ∈ VE.Cardinality.countedSorts fs →
+      r ∈ VE.Cardinality.regions (VE.Cardinality.predsOn E fs s).length →
+        (VE.Cardinality.regionConst s r, s, r) ∈ VE.Cardinality.regionTable E fs
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.predsOn@VE.Cardinality.Regions VE.Cardinality.regionConst@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions VE.Cardinality.regions@VE.Cardinality.Regions
+  -- expr 3427994890
+theorem VE.Cardinality.mem_regions
+  ∀ (n : Nat) (r : VE.Cardinality.Region), r ∈ VE.Cardinality.regions n ↔ List.length r = n
+  -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regions@VE.Cardinality.Regions
+  -- expr 690816850
+theorem VE.Cardinality.nextn_prefix
+  ∀ (s p : String) (r : List Char),
+    s.data = p.data ++ r →
+      ∀ (B A : List Char),
+        p.data = A ++ B →
+          s.toSubstring.nextn B.length { byteIdx := String.utf8ByteSize.go A } =
+            { byteIdx := String.utf8ByteSize.go A + String.utf8ByteSize.go B }
+  -- uses
+  -- expr 3611217367
 theorem VE.Cardinality.nodup_length_eq
   ∀ {α : Type u} {xs ys : List α}, xs.Nodup → ys.Nodup → (∀ (x : α), x ∈ xs ↔ x ∈ ys) → xs.length = ys.length
   -- uses
@@ -3093,6 +3324,14 @@ theorem VE.Cardinality.nonneg_hold
     a ∈ VE.Cardinality.nonnegPremises E fs → VE.Time.QFormula.tdenote (VE.Cardinality.withRegions E fs T) [] a
   -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.nonnegPremises@VE.Cardinality.Erase VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QFormula.tdenote@VE.Time.Semantics VE.Time.QFormula@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics
   -- expr 1862298806
+theorem VE.Cardinality.not_regionName
+  ∀ {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) {c : String} {τ : VE.Time.QType},
+        E.q.constants c = Option.some τ →
+          ∀ (e : String × String × VE.Cardinality.Region), e ∈ VE.Cardinality.regionTable E fs → (e.fst == c) = Bool.false
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
+  -- expr 870826058
 theorem VE.Cardinality.proportion_holds_iff
   ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
     VE.Cardinality.Admissible E T →
@@ -3104,6 +3343,160 @@ theorem VE.Cardinality.proportion_holds_iff
                 VE.Cardinality.HasCount T p.sort (p.whole.and p.part) m ∧ 0 < n ∧ p.cmp.holds (↑m * ↑p.den) (↑n * ↑p.num))
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.proportion@VE.Cardinality.Syntax VE.Cardinality.Cmp.holds@VE.Cardinality.Semantics VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Cardinality.Proportion.cmp@VE.Cardinality.Syntax VE.Cardinality.Proportion.den@VE.Cardinality.Syntax VE.Cardinality.Proportion.num@VE.Cardinality.Syntax VE.Cardinality.Proportion.part@VE.Cardinality.Syntax VE.Cardinality.Proportion.sort@VE.Cardinality.Syntax VE.Cardinality.Proportion.whole@VE.Cardinality.Syntax VE.Cardinality.Proportion@VE.Cardinality.Syntax VE.Time.TStructure@VE.Time.Semantics
   -- expr 984423562
+theorem VE.Cardinality.regionBody_holds
+  ∀ {α : Type u} (T : VE.Time.TStructure α) (x : α) (ps : List String) (r : VE.Cardinality.Region),
+    List.length r = ps.length →
+      (VE.Cardinality.Body.holds T x (VE.Cardinality.regionBody ps r) ↔
+        List.map (fun p => Decidable.decide (T.relation p [VE.Time.TValue.obj x])) ps = r)
+  -- uses VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regionBody@VE.Cardinality.Regions VE.Time.TStructure.relation@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.obj@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 3327233026
+theorem VE.Cardinality.regionConst_inj
+  ∀ {s s' : String} {r r' : VE.Cardinality.Region},
+    VE.Cardinality.regionConst s r = VE.Cardinality.regionConst s' r' → s = s' ∧ r = r'
+  -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regionConst@VE.Cardinality.Regions
+  -- expr 4263275736
+theorem VE.Cardinality.regionConst_startsWith
+  ∀ (s : String) (r : VE.Cardinality.Region),
+    (VE.Cardinality.regionConst s r).startsWith VE.Cardinality.regionPrefix = Bool.true
+  -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regionConst@VE.Cardinality.Regions VE.Cardinality.regionPrefix@VE.Cardinality.Syntax
+  -- expr 627247050
+theorem VE.Cardinality.regionSize_eq
+  ∀ {α : Type u} {T : VE.Time.TStructure α} {s : String} {b : VE.Cardinality.Body} {n : Nat},
+    VE.Cardinality.HasCount T s b n → VE.Cardinality.regionSize T s b = n
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2842096085
+theorem VE.Cardinality.regionSize_filter
+  ∀ {α : Type u} {T : VE.Time.TStructure α} {s : String} {ys : List α},
+    ys.Nodup →
+      (∀ (x : α), x ∈ ys ↔ T.objects s x) →
+        ∀ (b : VE.Cardinality.Body) (P : α → Bool),
+          (∀ (x : α), T.objects s x → (P x = Bool.true ↔ VE.Cardinality.Body.holds T x b)) →
+            VE.Cardinality.regionSize T s b = (List.filter P ys).length
+  -- uses VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Time.TStructure.objects@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2146834917
+theorem VE.Cardinality.regionSize_sum
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
+    VE.Cardinality.Admissible E T →
+      ∀ {s : String},
+        s ∈ E.finite →
+          ∀ (ps : List String) (b : VE.Cardinality.Body),
+            (∀ (p : String), p ∈ b.atoms → p ∈ ps) →
+              (List.map (fun r => ↑(VE.Cardinality.regionSize T s (VE.Cardinality.regionBody ps r)))
+                    (List.filter (fun r => VE.Cardinality.Body.inRegion ps r b) (VE.Cardinality.regions ps.length))).sum =
+                ↑(VE.Cardinality.regionSize T s b)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.atoms@VE.Cardinality.Regions VE.Cardinality.Body.inRegion@VE.Cardinality.Regions VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regionBody@VE.Cardinality.Regions VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Cardinality.regions@VE.Cardinality.Regions VE.Time.TStructure@VE.Time.Semantics
+  -- expr 1976871886
+theorem VE.Cardinality.regionSum_denote
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
+    VE.Cardinality.Admissible E T →
+      ∀ (fs : List VE.Cardinality.CFormula) {s : String},
+        s ∈ E.finite →
+          s ∈ VE.Cardinality.countedSorts fs →
+            ∀ (b : VE.Cardinality.Body),
+              (∀ (p : String), p ∈ b.atoms → p ∈ VE.Cardinality.predsOn E fs s) →
+                ∀ (ρ : List α),
+                  VE.Time.QTerm.tdenote (VE.Cardinality.withRegions E fs T) ρ (VE.Cardinality.regionSum E fs s b) =
+                    Option.some (VE.Time.TValue.qty VE.Cardinality.dl ↑(VE.Cardinality.regionSize T s b))
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.atoms@VE.Cardinality.Regions VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.dl@VE.Cardinality.Regions VE.Cardinality.predsOn@VE.Cardinality.Regions VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Cardinality.regionSum@VE.Cardinality.Erase VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QTerm.tdenote@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.qty@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 368126768
+theorem VE.Cardinality.regionSum_typed
+  ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula} {Γ : List String} {s : String},
+    s ∈ VE.Cardinality.countedSorts fs →
+      ∀ (b : VE.Cardinality.Body),
+        VE.Time.HasType (E.elab fs) Γ (VE.Cardinality.regionSum E fs s b) (VE.Time.QType.qty VE.Cardinality.dl)
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.dl@VE.Cardinality.Regions VE.Cardinality.regionSum@VE.Cardinality.Erase VE.Time.HasType@VE.Time.Syntax VE.Time.QType.qty@VE.Time.Syntax
+  -- expr 80629932
+theorem VE.Cardinality.regions_nodup
+  ∀ (n : Nat), (VE.Cardinality.regions n).Nodup
+  -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regions@VE.Cardinality.Regions
+  -- expr 2204394794
+theorem VE.Cardinality.split_underscore
+  ∀ (u v x y : List Char), ¬'_' ∈ u → ¬'_' ∈ v → u ++ '_' :: x = v ++ '_' :: y → u = v ∧ x = y
+  -- uses
+  -- expr 1274570016
+theorem VE.Cardinality.startsWith_of_data
+  ∀ (s p : String) (r : List Char), s.data = p.data ++ r → s.startsWith p = Bool.true
+  -- uses
+  -- expr 3588905589
+theorem VE.Cardinality.substrEq_prefix
+  ∀ (s p : String) (r : List Char),
+    s.data = p.data ++ r →
+      ∀ (B A : List Char),
+        p.data = A ++ B →
+          s.substrEq { byteIdx := String.utf8ByteSize.go A } p { byteIdx := String.utf8ByteSize.go A }
+              (String.utf8ByteSize.go B) =
+            Bool.true
+  -- uses
+  -- expr 3202605679
+theorem VE.Cardinality.sumTerms_denote
+  ∀ {α : Type u} {β : Type} (W : VE.Time.TStructure α) (ρ : List α) (f : β → VE.Time.QTerm) (g : β → Int) (l : List β),
+    (∀ (x : β), x ∈ l → VE.Time.QTerm.tdenote W ρ (f x) = Option.some (VE.Time.TValue.qty VE.Cardinality.dl (g x))) →
+      VE.Time.QTerm.tdenote W ρ (VE.Cardinality.sumTerms (List.map f l)) =
+        Option.some (VE.Time.TValue.qty VE.Cardinality.dl (List.map g l).sum)
+  -- uses VE.Cardinality.dl@VE.Cardinality.Regions VE.Cardinality.sumTerms@VE.Cardinality.Erase VE.Time.QTerm.tdenote@VE.Time.Semantics VE.Time.QTerm@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.qty@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 3170375662
+theorem VE.Cardinality.sumTerms_typed
+  ∀ {E : VE.Time.QEnv} {Γ : List String} (ts : List VE.Time.QTerm),
+    (∀ (t : VE.Time.QTerm), t ∈ ts → VE.Time.HasType E Γ t (VE.Time.QType.qty VE.Cardinality.dl)) →
+      VE.Time.HasType E Γ (VE.Cardinality.sumTerms ts) (VE.Time.QType.qty VE.Cardinality.dl)
+  -- uses VE.Cardinality.dl@VE.Cardinality.Regions VE.Cardinality.sumTerms@VE.Cardinality.Erase VE.Time.HasType@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.QTerm@VE.Time.Syntax VE.Time.QType.qty@VE.Time.Syntax
+  -- expr 1154189049
+theorem VE.Cardinality.sum_classes
+  ∀ {β : Type u} {γ : Type} [inst : DecidableEq γ] (f : β → γ) (xs : List β) (R : List γ),
+    R.Nodup →
+      (List.map (fun r => ↑(List.filter (fun x => Decidable.decide (f x = r)) xs).length) R).sum =
+        ↑(List.filter (fun x => Decidable.decide (f x ∈ R)) xs).length
+  -- uses
+  -- expr 161836773
+theorem VE.Cardinality.tcompare_qty
+  ∀ {α : Type u} (R : Int → Int → Prop) (g : String) (a b : Int),
+    VE.Time.TCompare R (Option.some (VE.Time.TValue.qty g a)) (Option.some (VE.Time.TValue.qty g b)) ↔ R a b
+  -- uses VE.Time.TCompare@VE.Time.Semantics VE.Time.TValue.qty@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 3365289319
+theorem VE.Cardinality.universalsC_admitted
+  ∀ {E : VE.Cardinality.CEnv} {f : VE.Cardinality.CFormula},
+    VE.Cardinality.Admitted E f →
+      ∀ (x : String × VE.Cardinality.Body × VE.Time.QFormula),
+        x ∈ VE.Cardinality.CFormula.universalsC E f →
+          x.fst ∈ E.finite ∧
+            VE.Time.Admitted E.q [] x.snd.snd ∧
+              ∃ a', x.snd.snd = VE.Time.QFormula.all x.fst a' ∧ VE.Cardinality.bodyOfQ? a' = Option.some x.snd.fst
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.universalsC@VE.Cardinality.Regions VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.bodyOfQ?@VE.Cardinality.Regions VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula.all@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
+  -- expr 3397083584
+theorem VE.Cardinality.universalsOf_admitted
+  ∀ {E : VE.Time.QEnv} {Γ : List String} {a : VE.Time.QFormula},
+    VE.Time.Admitted E Γ a →
+      ∀ (x : String × VE.Cardinality.Body × VE.Time.QFormula),
+        x ∈ VE.Cardinality.universalsOf a →
+          VE.Time.Admitted E [] x.snd.snd ∧
+            ∃ a', x.snd.snd = VE.Time.QFormula.all x.fst a' ∧ VE.Cardinality.bodyOfQ? a' = Option.some x.snd.fst
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.bodyOfQ?@VE.Cardinality.Regions VE.Cardinality.universalsOf@VE.Cardinality.Regions VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.QFormula.all@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
+  -- expr 2445087641
+theorem VE.Cardinality.withRegions_admissible
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv),
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α),
+        VE.Cardinality.Admissible E T → (VE.Cardinality.withRegions E fs T).Admissible (E.elab fs)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.TStructure.Admissible@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 4027370679
+theorem VE.Cardinality.withRegions_const
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α) {s : String}
+    {r : VE.Cardinality.Region},
+    s ∈ VE.Cardinality.countedSorts fs →
+      r ∈ VE.Cardinality.regions (VE.Cardinality.predsOn E fs s).length →
+        (VE.Cardinality.withRegions E fs T).constant (VE.Cardinality.regionConst s r) =
+          Option.some
+            (VE.Time.TValue.qty VE.Cardinality.dl
+              ↑(VE.Cardinality.regionSize T s (VE.Cardinality.regionBody (VE.Cardinality.predsOn E fs s) r)))
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.dl@VE.Cardinality.Regions VE.Cardinality.predsOn@VE.Cardinality.Regions VE.Cardinality.regionBody@VE.Cardinality.Regions VE.Cardinality.regionConst@VE.Cardinality.Regions VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Cardinality.regions@VE.Cardinality.Regions VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.TStructure.constant@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.qty@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 2030950396
+theorem VE.Cardinality.withRegions_declared
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α) {c : String} {τ : VE.Time.QType},
+        E.q.constants c = Option.some τ → (VE.Cardinality.withRegions E fs T).constant c = T.constant c
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.TStructure.constant@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 1707514129
 theorem VE.CertificateWire.ClosureQuery.accepts_sound
   ∀ {E : VE.Environment} (q : VE.CertificateWire.ClosureQuery E),
     q.accepts = Bool.true → VE.Closure.Entails E q.premises q.conclusion
