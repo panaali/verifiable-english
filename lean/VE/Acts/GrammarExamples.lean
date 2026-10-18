@@ -229,6 +229,26 @@ where 1.4 counts it (ap-2 review F7). -/
 #guard errOf (frames [fr "sit" ["on", "at"] [] [], fr "at rest" [] [] []]) ==
   "InvalidInput: frame 'at rest' begins with the marker word 'at'"                                          -- 31s
 
+/-! Each condition that reads the marker lists or the marker words of `ms f` with its fault in a later modifier
+marker, and with its fault in a marker's later word (ap-2 review F10: `ms f` is `f.markers ++ f.mods`, and the marker
+words are each marker's words). -/
+
+#guard errOf (frames [fr "stand" [] [] ["at", "in  front"]]) ==
+  "InvalidInput: frame 'stand' has the marker 'in  front', which is not words separated by single spaces"   -- 31l
+#guard errOf (frames [fr "mark" [] [] ["at", "In"]]) ==
+  "InvalidInput: frame 'mark' has the marker word 'In', which is not a lower-case word of letters"          -- 31m
+#guard errOf (frames [fr "name" [] [] ["at", "or"]]) == "InvalidInput: frame 'name' has the reserved marker word 'or'"
+#guard errOf (frames [fr "open" [] [] ["at", "in", "in front"]]) ==
+  "InvalidInput: frame 'open' has the markers 'in' and 'in front', and one begins the other"                -- 31o
+#guard errOf ⟨[fr "rest" [] [] ["at", "gladly"]], ["gladly"]⟩ ==
+  "InvalidInput: the adverb 'gladly' is also a marker or head word"                                         -- 31r
+#guard errOf (frames [fr "sit" [] [] ["at", "on"], fr "on hold" [] [] []]) ==
+  "InvalidInput: frame 'on hold' begins with the marker word 'on'"                                          -- 31s
+#guard errOf ⟨[fr "stand" ["in front"] [] []], ["front"]⟩ ==
+  "InvalidInput: the adverb 'front' is also a marker or head word"                                          -- 31r
+#guard errOf (frames [fr "stand" ["in front"] [] [], fr "front desk" [] [] []]) ==
+  "InvalidInput: frame 'front desk' begins with the marker word 'front'"                                    -- 31s
+
 /-! ### FR7: the vocabularies of 11.2, the 13 `ap0` rows of 11.2b and the ap-2 measurement's generated frames -/
 
 def V5 : Vocab := frames [fr "seek" [""] [] ["in"], fr "enjoy" [""] [] ["in"]]
