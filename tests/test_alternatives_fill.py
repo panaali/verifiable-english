@@ -267,7 +267,7 @@ def test_alt_certificate_producer_on_the_et1_component():
     assert certificate is not None
     row = run_case(case | {"kind": "alt-certificate", "premises": [], "conclusion": U0171_S03,
                            "certificate": certificate})
-    assert (row["status"], row["valid"]) == ("ok", True), row
+    assert (row["status"], row.get("valid")) == ("ok", True), row
     assert row["conditional_on"] == ["alternatives:own", "alternatives:one_taken", "alternatives:one_inaction"]
     changed = ["forall", "response", ["implies", ["unary", "inaction", v(0)], ["not", ["unary", "permitted", v(0)]]]]
     stale = run_case(case | {"kind": "alt-certificate", "premises": [], "conclusion": changed,
