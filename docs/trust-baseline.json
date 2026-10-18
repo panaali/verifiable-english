@@ -726,6 +726,13 @@
    "reason": "me-1c Calc display lines: VE/Calc/Render.lean +113 (V, G[V]: reservedWords, phraseWords, valueWordsOk, natWords, placesPhrase, printedWords, exactWords, exprDepth, renderAtom, renderTerm, renderExpr, fill, renderClaim); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1c, 2026-10-17",
    "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
+  },
+  {
+   "class": "S",
+   "lines": 137,
+   "reason": "qt-a1: S +137 (VE/Cardinality/Syntax.lean +81, VE/Cardinality/Semantics.lean +56); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a1, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
   }
  ]
 }
