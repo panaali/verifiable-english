@@ -189,3 +189,37 @@ name here).
     completion witnesses and is bounded by 2^12 refillings per alternative.
 13. Test-removed trailers: PASS. `tools/gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed
     (no test removed: the renamed test's name was restored).
+
+## Review fix (manage-agents et-7-review.final.md, 2026-10-18)
+
+Both B findings are fixed as classes; no A finding was raised; C findings F3 to F9 are not addressed here
+(F7: the new DELTA rows' records are in [evidence/delta.json](evidence/delta.json); no permanent test reads it,
+D4). No DRI signature is reserved: rows 4 to 6 cite R1, R2 and R16.
+
+| Finding | Class removed | Fix | Regression tests | Commits |
+|---|---|---|---|---|
+| F1 (B) document path fell through to the norm-defaults route's field check | every reader that does not read the completion beside a composed block now refuses the pair by name with one Lean text, `VE.Compose.pendingWithDefaults` (DELTA row 6): the `document` mode (after the environment mode's own fault, never `CheckerUnavailable`), the norm-defaults mode (`NormDefaults.Run.runGated`, every kind, `runGated_fits`), and the alternatives decoder without the completion (`Alternatives.Wire.decodeAltSource`), which the English reader's boundary (`ve ask`, which had also lost `alternatives@0`) and the route's `admission` call | Lean only; Python relays as before | `tests/test_alternatives_fill.py`: `test_completion_documents_are_refused_by_name_on_every_entry_point` (PROBE F1 and its twins), `test_completion_cli_commands_print_the_named_refusal`, `test_the_document_mode_refuses_the_pair_after_the_environment_modes_faults`, `test_the_norm_defaults_route_refuses_a_composed_block_by_name`, `test_cases_outside_this_item_are_refused_with_the_profile`; `#guard`s in `Compose/Examples.lean`, `Alternatives/FillExamples.lean` | 4c9f941bc, 2e80a1300, adaf64688 |
+| F2 (B) `FillExamples.lean` never compiled | a Lean module outside the default build: `tools/check_lean_imports.py` (the layer gate) reports any module outside the import closure of the lakefile's default targets, read with the reader checked against Lean's header parser; exceptions are only non-default executables' roots and `RUN_ONLY` scripts named with their runner. The six it found are built now: `VE.Alternatives.FillExamples`, `VE.NormDefaults.Examples` (the review's follow-up), `VE.Core.Checks`, `VE.TableauChecks` (from `VE.lean`), `VE.WireContract.Limits` and `.Names` (from `VE.WireContract.Diagnose`, as spec 7.3 keeps them internal) | | `tests/test_lean_default_build.py` (PROBE F2, the real tree, synthetic orphans, Lake globs, stale `RUN_ONLY`) | 85c4355b2, 7e55d4e42 |
+
+Row 6's base texts were probed on main `c7fc6acac`'s built service (every entry point answered
+`UnsupportedProfile: Unsupported profile norm-defaults@0`; the norm-defaults mode its field check). The probes:
+PROBE F1 failed before the fix (`fields do not match: ...`) and passes after (`UnsupportedProfile: alternatives@0
+with norm-defaults@0 is not implemented`); PROBE F2 failed before and passes after.
+
+Trust: K +0, S +18, V +128 (146 lines, R16's cap 150): the fix adds V 7 (`runGated` 6, `decodeAltSource` 1), recorded
+as its own allowance; `pendingWithDefaults` is G[R]. FOLLOW-UPS.md "## et-7" has the ties row for these lines.
+
+Seeded bugs ([mutants.json](mutants.json); each Lean one on a rebuilt, temporarily pinned `ve_service`, file and pin
+restored; run before the comment-only trims of adaf64688, same code):
+
+| Id | Language | File | Behaviour | Killed by |
+|---|---|---|---|---|
+| M6 | Lean | `lean/VE/Service/Document.lean` | the document mode answers `CheckerUnavailable` again | `test_the_document_mode_refuses_the_pair_after_the_environment_modes_faults` |
+| M7 | Lean | `lean/VE/NormDefaults/Run.lean` | the gate bypassed | the build: `runGated_fits` no longer proves |
+| M7b | Lean | `lean/VE/NormDefaults/Run.lean` | the gate reads another field (proofs still hold) | `test_the_norm_defaults_route_refuses_a_composed_block_by_name`, `test_completion_cli_commands_print_the_named_refusal` |
+| M8 | Lean | `lean/VE/Alternatives/Wire.lean` | the decoder's refusal deleted | `test_cases_outside_this_item_are_refused_with_the_profile`, `test_completion_documents_are_refused_by_name_on_every_entry_point[ask (the English reading)]` |
+| M9 | Lean | `lean/VE/Alternatives/FillExamples.lean` | a wrong `#guard` | `lake build` (FillExamples is now in the default build) |
+| P3 | Python | `tools/check_lean_imports.py` | imports not followed | `test_every_lean_source_is_built_by_the_default_build` |
+
+Checks: `lake build` and `python3 lean/audit.py` pass (540 sources, 6,281 theorems); `tools/regen_generated.py
+--check` passes (31 entries); `tools/trust_map.py --check` passes; `review-ready.py --delta-dri-needed`: no row.
