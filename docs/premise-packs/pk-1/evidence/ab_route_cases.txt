@@ -1,0 +1,6 @@
+INVALID differential: no invocation of the rebuilt executables ve_speech_acts_route, so their output was not compared
+33 norm-defaults cases of tests/data/route-cases.jsonl, one session each
+baseline 22c4b9154284; executables rebuilt with a different digest: ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_senses_route, ve_service, ve_speech_acts_route
+ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 1, ve_response_decode 2, ve_senses_route 1, ve_service 35
+48 invocations, 42 run on both builds, 6 skipped as their executable is byte-identical to the baseline; 0 differences, 0 timed out
+exit 1

@@ -1,0 +1,4 @@
+baseline 22c4b9154284; executables rebuilt with a different digest: ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_senses_route, ve_service, ve_speech_acts_route
+ve_conformance 68, ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 9, ve_response_decode 2, ve_senses_route 1, ve_service 346, ve_speech_acts_route 17
+452 invocations, 378 run on both builds, 74 skipped as their executable is byte-identical to the baseline; 0 differences, 0 timed out
+exit 0
