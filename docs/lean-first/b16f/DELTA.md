@@ -184,7 +184,8 @@ All files: +303 between the two trees = this batch's +273 and +30 from items mer
 (`VE/EnglishGrammar/Policy.lean` +15, `VE/Norms/Family.lean` +12, `ResponseShape/Schemas/Rights.lean` +6,
 `VE/Core/Layers.lean` +1, `VE/Rights/Scope.lean` -4). K stays 997. S is 10,138 at the base and 10,152 on main; the +14 is
 `VE/Closure/Order.lean`, not this batch. Tied lines stay 263 and the trusted total 51,393. `trust_map.py --check` passes
-before and after, against `109c7de1d` (the merge base) and the allowances introduced since. Of the +131 that the DRI
+before (against `109c7de1d`, main's first parent, since the branch was main's tip) and after (against the merge base
+`2d4b93206`), each with the allowances introduced since: trusted +0. Of the +131 that the DRI
 signed on condition of this pass (dri-decisions-20261017b.md #1), the ties remove 0, and 0 of the whole +273.
 
 ### Declarations no existing theorem ties
