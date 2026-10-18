@@ -121,6 +121,9 @@ import VE.Grammar.Reading
 import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 import VE.GraphChecks
+import VE.Judgments.Decl
+import VE.Judgments.Scan
+import VE.Judgments.Status
 import VE.LexicalProofs
 import VE.ModelProofs
 import VE.NormDefaults.Admission
@@ -1771,6 +1774,36 @@ import VE.WireContract.Engine
 #print axioms VE.Graph.resolve_sound
 #print axioms VE.Graph.tableau_certificateSound
 #print axioms VE.GraphChecks.testCertificate_sound
+#print axioms VE.Judgments.admit_first_fault
+#print axioms VE.Judgments.admit_ok_iff
+#print axioms VE.Judgments.dependsOnC_remove
+#print axioms VE.Judgments.dependsOnC_sub
+#print axioms VE.Judgments.dependsOn_iff
+#print axioms VE.Judgments.dependsOn_no_defs
+#print axioms VE.Judgments.faultOf_none_iff
+#print axioms VE.Judgments.filter_remove
+#print axioms VE.Judgments.find_congr_mem
+#print axioms VE.Judgments.foldlM_ok_length
+#print axioms VE.Judgments.foldlM_ok_mono
+#print axioms VE.Judgments.mem_defEdges
+#print axioms VE.Judgments.openTermNames_length
+#print axioms VE.Judgments.openTermNames_sorts
+#print axioms VE.Judgments.opensIn_iff
+#print axioms VE.Judgments.opensIn_isEmpty
+#print axioms VE.Judgments.path_last
+#print axioms VE.Judgments.records_names
+#print axioms VE.Judgments.records_refuse
+#print axioms VE.Judgments.status_checked
+#print axioms VE.Judgments.status_eq
+#print axioms VE.Judgments.status_legacy
+#print axioms VE.Judgments.status_never_checked
+#print axioms VE.Judgments.status_ok_iff
+#print axioms VE.Judgments.status_remove_unused
+#print axioms VE.Judgments.usageMap_complete
+#print axioms VE.Judgments.usageMap_rows
+#print axioms VE.Judgments.usageMap_sound
+#print axioms VE.Judgments.usageMap_unused
+#print axioms VE.Judgments.viewOf_legacy
 #print axioms VE.NormDefaults.Admission.admitDocumentX_spec
 #print axioms VE.NormDefaults.Admission.admitDocument_spec
 #print axioms VE.NormDefaults.Admission.admitNodesX_ok
@@ -4524,6 +4557,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.RightsValid.selTyped
 #print axioms VE.Rights.RightsValid.wfSoft
 #print axioms VE.Rights.Run.licence_spec
+#print axioms VE.Rights.Run.nodeOpen_eq
 #print axioms VE.Rights.Run.rights_wire_acceptance
 #print axioms VE.Rights.Run.runAdmission_sound
 #print axioms VE.Rights.Wire.RightsSource.defs

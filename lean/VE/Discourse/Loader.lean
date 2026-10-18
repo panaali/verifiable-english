@@ -371,8 +371,7 @@ def compileUnits (rv : VE.Route.Wire.RouteVocabulary) (profiles : List String) (
 /-- `validate_open_terms`: the declared open-term names. With `python`, every malformed field has Python's text and
 every necessary and sufficient condition is a closed formula over the environment (document.md), typed as Python's
 `formula_from_data` types it, with its first diagnostic; the discourse route (`python = false`) reads only their
-structure, as it did before batch 11a. With `sorts` (`judgments@0` only, `VE.Judgments.records`) the arguments are
-the predicate's sorts and may repeat; every other caller passes nothing. -/
+structure, as it did before batch 11a. -/
 def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (python : Bool := false) (data : Bool := false)
     (formula : Option (Json → Except String Unit) := none) (sorts : Bool := false) : Except String (List String) := do
   let items ← match j with
