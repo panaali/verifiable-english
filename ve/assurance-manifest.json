@@ -1735,7 +1735,7 @@
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/VE/Route/Run.lean": "lean:runner-glue: route case dispatch and error rows (route_gate pins the envelope check)",
       "lean/VE/Route/Metered.lean": "lean:runner-glue: opt-in metered case budget fields and evaluation result rows; existing family decoders validate formulas and models",
-      "lean/VE/Route/MeteredRun.lean": "lean:runner-glue: opt-in ve_metered case dispatch and result rows; the environment is validated by the service's Standalone.evaluable (frozen envelopes by their frozen decoders) and formulas and models by the existing family decoders",
+      "lean/VE/Route/MeteredRun.lean": "lean:runner-glue: the metered case dispatch and result rows (ve_service mode metered, and the ve_metered test oracle); the environment is validated by the service's Standalone.evaluable (frozen envelopes by their frozen decoders) and formulas and models by the existing family decoders",
       "lean/VE/Route/MeteredTrace.lean": "lean:runner-glue: explanation JSON display after the proved metered value; reads no untrusted input",
       "lean/VE/SoftNorms/Run.lean": "lean:runner-glue: ve_soft_norms_route case dispatch and response rows",
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
@@ -1811,6 +1811,7 @@
       "lean/VE/Readings/ComponentsExamples.lean": "readings-defaults RD-4b: #guard fixtures of 1.10's rule and of the document order of decided units, building a JSON document of unit ids; no decoder",
       "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path",
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Schemas/Metered.lean": "the metered mode's response shape (metered.json) and the JSON constants of its three results; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing"
     }
   },
