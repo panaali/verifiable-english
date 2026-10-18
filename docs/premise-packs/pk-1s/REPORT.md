@@ -93,11 +93,11 @@ removed from the definition, and M9 now targets the filter.
   `docs/premise-packs/pk-1s/*`. No branch in `lean-first/*`, `feature/*`, `infra/*` or `foundation/*` touches them
   (`git diff --name-only main...<branch>`). No branch touches pk-1's target files either: `Layered.lean`,
   `LayeredAdmission.lean`, `UnspecifiedWire.lean`, `SoftWire.lean`, `SoftDefaults.lean`.
-- **Size.** About 860 changed lines, all documents:
+- **Size.** 951 changed lines, all documents (`git diff --stat main...HEAD`):
   - the type-checked stub, 468 lines: statements, real definitions and fixtures;
   - the spec, 323 lines;
   - mutants, 12 lines;
-  - this report and DELTA, about 110 lines.
+  - this report and DELTA, 148 lines.
 
   This is over the ~600 guide. The stub is the deliverable the task requires. The spec cites it instead of copying
   the Lean, which saves about 250 lines. A statement spec is not split mid-review, so no `pk-1sb` is named.
