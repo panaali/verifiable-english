@@ -137,16 +137,16 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
 
 
 def _check_countermodel_lean(env, premises, conclusion, model, max_evaluations):
-    from .ast import _to_data
-    from .backends.lean_runner import background_environment, lean_mode
+    from .backends.lean_runner import background_environment, encoded_formula, encoded_model, lean_mode
     from .backends.relay import decide
     from .backends.rust_jsonl import soft_case
     from .evaluate import _evaluate_lean
+    wire = encoded_model(model)
 
     def evaluate(formula, budget):
         return _evaluate_lean(env, {
-            "id": "countermodel", "kind": "evaluate-budgeted", "model": model.to_dict(),
-            "ast": [_to_data(formula)], "max_evaluations": budget, "max_trace_nodes": min(budget, 10_000),
+            "id": "countermodel", "kind": "evaluate-budgeted", "model": wire,
+            "ast": [encoded_formula(formula)], "max_evaluations": budget, "max_trace_nodes": min(budget, 10_000),
             "trace": False})
 
     valid, values, conclusion_value, work, status = _check_countermodel_values(
@@ -158,8 +158,8 @@ def _check_countermodel_lean(env, premises, conclusion, model, max_evaluations):
     # The model environment (`profiles.model_environment`, display text dropped): the check reads the
     # model only, and the route refuses the blocks no model reads (an `alternatives` block, say).
     request = {"id": "countermodel", "environment": background_environment(env), **soft_case(env),
-               "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
-               "model": model.to_dict(), "max_evaluations": max_evaluations, "kind": "countermodel"}
+               "premises": [encoded_formula(f) for f in premises], "conclusion": encoded_formula(conclusion),
+               "model": wire, "max_evaluations": max_evaluations, "kind": "countermodel"}
     row = decide(lean_mode(env), [request])[0]
     if row["refutes"] != result.valid:
         raise CheckerUnavailable("CheckerUnavailable: Lean's countermodel route and its metered "

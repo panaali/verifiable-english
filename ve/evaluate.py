@@ -170,8 +170,10 @@ def _validate_model(env: Any, model: FiniteModel) -> FiniteModel:
         raise InvalidModel("expected a validated FiniteModel")
     try:
         # Lean decides the model's validity, Background included, and whether
-        # its claimed identities are the recomputed ones.
-        return FiniteModel.from_dict(env, model.to_dict(), _claimed={
+        # its claimed identities are the recomputed ones. The model's encoding is
+        # the one its evaluation cases send (`encoded_model`: written once per model).
+        from .backends.lean_runner import encoded_model
+        return FiniteModel.from_dict(env, encoded_model(model), _claimed={
             "environment_id": model.environment_id, "model_id": model.model_id})
     except VEError:
         raise
@@ -224,13 +226,13 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
         check_formula(env, value)
         formulas = (value,)
     model = _validate_model(env, model)
-    from .ast import _to_data
     from .backends.dispatch import owned
+    from .backends.lean_runner import encoded_formula, encoded_model
 
     # The value, the count, the trace and `ResourceLimit` of a reported evaluation are Lean's metered
     # evaluator's (lean-first batches 15b and 18: Rust keeps search only, and Lean is the one authority).
-    case = {"id": "evaluate", "kind": "evaluate-budgeted", "model": model.to_dict(),
-            "ast": [_to_data(f) for f in formulas], "max_evaluations": max_evaluations,
+    case = {"id": "evaluate", "kind": "evaluate-budgeted", "model": encoded_model(model),
+            "ast": [encoded_formula(f) for f in formulas], "max_evaluations": max_evaluations,
             "max_trace_nodes": min(max_evaluations, max_trace_nodes), "trace": trace}
     return owned("evaluate", lambda: _evaluate_lean(env, case))
 

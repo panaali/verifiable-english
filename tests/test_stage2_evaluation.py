@@ -248,3 +248,22 @@ def test_certificate_replay(profiles):
         check_entailment_certificate(env, (formula,), formula, certificate, max_steps=budget)
         for certificate, budget in ((proof.certificate, 1000), (proof.certificate, 0), (stale, 1000)))]
     assert outcomes == [(True, "Valid"), (False, "ResourceLimit"), (False, "InvalidCertificate")]
+
+
+@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
+def test_a_cached_model_encoding_never_stands_for_another_model(fixture):
+    """Lean-first batch 18: a model's case encoding is written once per model object. A second object that
+    claims the first one's identities with other contents is encoded from its own contents, so Lean refuses
+    the claim, however warm the cache is."""
+    from dataclasses import replace
+    from ve.errors import InvalidModel
+    from ve.backends.lean_runner import encoded_model
+    env, model = fixture
+    assert evaluate(env, Unary("ready", Const("alpha")), model, trace=False).value is True
+    other = FiniteModel.from_dict(env, {**model.to_dict(), "relations": {"ready": [], "knows": [["a", "b"]]}})
+    forged = replace(other, model_id=model.model_id)
+    assert encoded_model(forged) is not encoded_model(model) and dict(encoded_model(forged)) == other.to_dict()
+    with pytest.raises(InvalidModel, match="does not match its contents"):
+        evaluate(env, Unary("ready", Const("alpha")), forged, trace=False)
+    with pytest.raises(InvalidModel, match="does not match its contents"):
+        check_countermodel(env, (), Unary("ready", Const("alpha")), forged)
