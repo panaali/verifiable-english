@@ -113,6 +113,18 @@ def fa1AtLeastTrace : VE.Order.Tableau.Trace :=
 -- The trace does not close the problem without the exclusion premise.
 #guard !replays fa1.dropLast fa1Conclusion fa1Trace
 
+theorem fomc_wellFormed : fomc.WellFormed := ⟨by decide, fun _ _ h => nomatch h⟩
+
+/-- FA1 end to end (spec 3.6): the replayed certificate proves the counting claim itself, through
+`erasedProblem_admitted`, the frozen checker's soundness and `cardinality_elab_sound`. -/
+theorem fa1_entails : CEntails.{0} fomc fa1 fa1Conclusion := by
+  have hps : ∀ a ∈ fa1, Admitted fomc a := fun a ha => admits_sound _ _ (by revert a ha; decide +kernel)
+  have hc : Admitted fomc fa1Conclusion := admits_sound _ _ (by decide +kernel)
+  have hadm := erasedProblem_admitted fomc fomc_wellFormed fa1 fa1Conclusion hps hc
+  exact cardinality_elab_sound fomc fomc_wellFormed fa1 fa1Conclusion hps hc
+    (VE.Time.tentails_of_entails (fun a ha => hadm a (List.mem_append_left _ ha)) (hadm _ (by simp))
+      (VE.Order.Tableau.checkCertificate_sound _ _ _ _ (by decide +kernel : replays fa1 fa1Conclusion fa1Trace)))
+
 /-- A model of FA1 (2 stay only, 16 increase only): every premise, bridge and the conclusion hold, so it refutes
 nothing. -/
 def fa1Model : VE.Order.FiniteModel Nat := rowsModel pm [([stay], 2), ([inc], 16)]
