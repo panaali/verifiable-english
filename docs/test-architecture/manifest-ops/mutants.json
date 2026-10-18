@@ -1,0 +1,86 @@
+{
+ "mutants": [
+  {
+   "id": "S1",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "is_manifest counts \"unmapped manifest reader\" (the drift rows' manifest share)",
+   "find": "\"reads the whole manifest\", \"unmapped manifest reader\")",
+   "replace": "\"reads the whole manifest\")",
+   "command": [
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "a4676c0b7,e7f6968d4"
+   ]
+  },
+  {
+   "id": "S2",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "is_pin counts \"reads lean/checkers.lock\" (the recorded pin readers)",
+   "find": "in (PIN_REASON, f\"names {PINS}\"",
+   "replace": "in (f\"names {PINS}\"",
+   "command": [
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "109c7de1d"
+   ]
+  },
+  {
+   "id": "S3",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "because counts a plan only when the manifest's reasons decide it (strictly fewer units without them)",
+   "find": "if row[\"without_manifest\"] < total:",
+   "replace": "if row[\"without_manifest\"] <= total:",
+   "command": [
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "none"
+   ]
+  },
+  {
+   "id": "S4",
+   "file": "tools/regen_generated.py",
+   "claim": "measure.py, a script with a --write mode, is registered in NOT_REGENERATED",
+   "find": "    \"docs/test-architecture/manifest-ops/measure.py\": \"54-merge selection replay, recorded once at a pinned commit and \"\n                                                      \"checked at the batch gate\",\n",
+   "replace": "",
+   "tests": [
+    "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+   ]
+  },
+  {
+   "id": "S5",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "the upper-bound table reads the --run plan (r1) in its r1 rows (F1)",
+   "find": "plans = [row[column] for row in rows.values() if not row[column][\"full\"]]",
+   "replace": "plans = [row[\"plan\"] for row in rows.values() if not row[\"plan\"][\"full\"]]",
+   "command": [
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "none"
+   ]
+  },
+  {
+   "id": "S6",
+   "file": "docs/test-architecture/manifest-ops/measure.py",
+   "claim": "--only needs the pinned shadow maps of the rows it names only (F3)",
+   "find": "        if only is not None and change[\"label\"] not in only:\n            continue\n        path = cache",
+   "replace": "        path = cache",
+   "command": [
+    "env",
+    "VE_SHADOW_MAPS=/nonexistent/ve-shadow-maps",
+    "python3",
+    "docs/test-architecture/manifest-ops/measure.py",
+    "--check",
+    "--only",
+    "none"
+   ]
+  }
+ ]
+}

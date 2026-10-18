@@ -12026,8 +12026,19 @@
         "VE.Calc.Small",
         "VE.Calc.Source",
         "VE.Calc.Val",
-        "VE.Calc.WellFormed",
-        "VE.Calc.values"
+        "VE.Calc.WellFormed"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Calc.values",
+          "tied": [
+            "VE.Calc.values_stated",
+            "VE.Calc.values_defined",
+            "VE.Calc.values_free",
+            "VE.Calc.values_counted",
+            "VE.Calc.values_missing"
+          ]
+        }
       ],
       "G[R]": [
         "VE.Calc.findingKind",
@@ -12059,27 +12070,61 @@
     },
     "VE/Calc/Examples.lean": {
       "T": [
+        "VE.Calc.Examples.atoms",
         "VE.Calc.Examples.baseline",
         "VE.Calc.Examples.baselineDecls",
         "VE.Calc.Examples.big",
         "VE.Calc.Examples.bigDecl",
+        "VE.Calc.Examples.depth",
+        "VE.Calc.Examples.depth3",
         "VE.Calc.Examples.empty",
         "VE.Calc.Examples.eq",
+        "VE.Calc.Examples.grow",
         "VE.Calc.Examples.increase",
         "VE.Calc.Examples.largeDecls",
+        "VE.Calc.Examples.letters",
+        "VE.Calc.Examples.line",
         "VE.Calc.Examples.lit",
         "VE.Calc.Examples.lt",
         "VE.Calc.Examples.none'",
         "VE.Calc.Examples.noonMean",
+        "VE.Calc.Examples.numerals",
+        "VE.Calc.Examples.okAtom",
+        "VE.Calc.Examples.okExpr",
+        "VE.Calc.Examples.okTerm",
         "VE.Calc.Examples.physicsDecls",
         "VE.Calc.Examples.physicsDisplacement",
+        "VE.Calc.Examples.readAtom",
+        "VE.Calc.Examples.readExpr",
+        "VE.Calc.Examples.readLine",
+        "VE.Calc.Examples.readTerm",
+        "VE.Calc.Examples.readsBack",
         "VE.Calc.Examples.readsBig",
         "VE.Calc.Examples.round",
         "VE.Calc.Examples.seven",
         "VE.Calc.Examples.sources",
         "VE.Calc.Examples.sq",
         "VE.Calc.Examples.strictRate",
-        "VE.Calc.Examples.symbolsRate"
+        "VE.Calc.Examples.symbolsRate",
+        "VE.Calc.Examples.upTo2",
+        "VE.Calc.Examples.words"
+      ]
+    },
+    "VE/Calc/Render.lean": {
+      "G[V]": [
+        "VE.Calc.English.exactWords",
+        "VE.Calc.English.exprDepth",
+        "VE.Calc.English.fill",
+        "VE.Calc.English.natWords",
+        "VE.Calc.English.phraseWords",
+        "VE.Calc.English.placesPhrase",
+        "VE.Calc.English.printedWords",
+        "VE.Calc.English.renderAtom",
+        "VE.Calc.English.renderClaim",
+        "VE.Calc.English.renderExpr",
+        "VE.Calc.English.renderTerm",
+        "VE.Calc.English.reservedWords",
+        "VE.Calc.English.valueWordsOk"
       ]
     },
     "VE/Calc/Syntax.lean": {
@@ -12174,6 +12219,150 @@
         "main",
         "phraseJson",
         "relName"
+      ]
+    },
+    "VE/Events/Calendar.lean": {
+      "C": [
+        "VE.Events.beforeB",
+        "VE.Events.rank",
+        "VE.Events.dateDay",
+        "VE.Events.namedRank",
+        "VE.Events.strictLinearB",
+        "VE.Events.calendarCheck",
+        "VE.Events.embeddable",
+        "VE.Events.numbering"
+      ],
+      "G[R]": [
+        "VE.Events.daysText"
+      ]
+    },
+    "VE/Events/Completion.lean": {
+      "S": [
+        "VE.Events.DayExtension"
+      ],
+      "C": [
+        "VE.Events.isConst",
+        {
+          "name": "VE.Events.isVar",
+          "tied": [
+            "VE.Events.isVar_beq"
+          ]
+        },
+        {
+          "name": "VE.Events.hits",
+          "tied": [
+            "VE.Events.hits_vacuous"
+          ]
+        },
+        {
+          "name": "VE.Events.vacuous",
+          "tied": [
+            "VE.Events.hits_vacuous"
+          ]
+        },
+        {
+          "name": "VE.Events.up",
+          "tied": [
+            "VE.Events.dayExtension_transfer"
+          ]
+        },
+        {
+          "name": "VE.Events.down",
+          "tied": [
+            "VE.Events.dayExtension_transfer"
+          ]
+        }
+      ]
+    },
+    "VE/Events/Decl.lean": {
+      "S": [
+        "VE.Events.EventSort",
+        "VE.Events.StateSort",
+        "VE.Events.LinkForm",
+        "VE.Events.Link",
+        "VE.Events.EventsEnv",
+        "VE.Events.dateName",
+        "VE.Events.dateConst",
+        "VE.Events.startRole",
+        "VE.Events.boundRole",
+        "VE.Events.sig2",
+        "VE.Events.consecutive",
+        "VE.Events.EventsTyped",
+        "VE.Events.regenEnv"
+      ],
+      "G[R]": [
+        "VE.Events.maxDates",
+        "VE.Events.eventSorts",
+        "VE.Events.stateSorts",
+        "VE.Events.roleSorts",
+        "VE.Events.rolePreds",
+        "VE.Events.WellFormedEvents"
+      ],
+      "D[R]": [
+        "VE.Events.roleWordingOk",
+        "VE.Events.beforeWording",
+        "VE.Events.linkWording"
+      ]
+    },
+    "VE/Events/Examples.lean": {
+      "T": [
+        "VE.Events.Examples.d",
+        "VE.Events.Examples.base",
+        "VE.Events.Examples.envDay",
+        "VE.Events.Examples.chain",
+        "VE.Events.Examples.firstFailing",
+        "VE.Events.Examples.c12",
+        "VE.Events.Examples.c13",
+        "VE.Events.Examples.c14",
+        "VE.Events.Examples.vT1",
+        "VE.Events.Examples.mT1",
+        "VE.Events.Examples.vT2",
+        "VE.Events.Examples.vT2b",
+        "VE.Events.Examples.mT2b",
+        "VE.Events.Examples.vT3",
+        "VE.Events.Examples.between",
+        "VE.Events.Examples.after12",
+        "VE.Events.Examples.actAfter12",
+        "VE.Events.Examples.c21",
+        "VE.Events.Examples.c27",
+        "VE.Events.Examples.inProgress",
+        "VE.Events.Examples.throughout",
+        "VE.Events.Examples.vEv",
+        "VE.Events.Examples.envEv",
+        "VE.Events.Examples.sit",
+        "VE.Events.Examples.vT13",
+        "VE.Events.Examples.confirmedBefore",
+        "VE.Events.Examples.mT13",
+        "VE.Events.Examples.vR1"
+      ]
+    },
+    "VE/Events/Premises.lean": {
+      "S": [
+        "VE.Events.bin",
+        "VE.Events.irreflexiveF",
+        "VE.Events.transitiveF",
+        "VE.Events.linearF",
+        "VE.Events.dateFactF",
+        "VE.Events.adjacentF",
+        "VE.Events.oneRoleF",
+        "VE.Events.notBeforeBeginF",
+        "VE.Events.linkForwardF",
+        "VE.Events.linkWeakerF",
+        "VE.Events.weakerPairs",
+        "VE.Events.calendarLabelled",
+        "VE.Events.conventionLabelled",
+        "VE.Events.eventsLabelled",
+        "VE.Events.orderPremises",
+        "VE.Events.calendarPremises",
+        "VE.Events.conventionPremises",
+        "VE.Events.eventsX",
+        "VE.Events.Embeds"
+      ],
+      "G[I]": [
+        "VE.Events.isoPair"
+      ],
+      "P": [
+        "VE.Events.unorderedSameF"
       ]
     }
   }

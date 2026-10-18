@@ -108,6 +108,7 @@ import VE.SpeechActs.Source.Admission.Run
 import VE.Time.Wire
 import VE.Time.Document
 import VE.Calc.Examples
+import VE.Calc.Render
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Risk.Cond
@@ -150,3 +151,8 @@ import VE.Ask.ZeroWire
 import VE.Ask.ZeroAnswer
 import VE.Ask.Examples
 import VE.Norms.FamilySpec
+import VE.Events.Decl
+import VE.Events.Premises
+import VE.Events.Calendar
+import VE.Events.Completion
+import VE.Events.Examples
