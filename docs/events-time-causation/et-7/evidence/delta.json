@@ -1,0 +1,17 @@
+{
+  "comment": "et-7's changed records against main c2b1a7d4. Inputs: T12's environment (tests/test_alternatives_fill.py `environment()`, `permitted` unspecified, profiles alternatives@0, norm-defaults@0, norms@0, relational-fol@0) and the gate list. Base texts are the answers of main (tests/test_asimov_laws.py and tests/test_compose_dispatch.py at the base assert them); head texts are this branch's (tests/test_alternatives_fill.py, tests/test_compose_dispatch.py). No base record had a JSON path.",
+  "records": [
+    {"surface": "Lean VE.Compose.todayGate / dispatch; Python ve.profiles.checker_family", "input": ["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0"],
+     "base": "UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented", "head": "ok (route alternatives; family fol)", "row": 1},
+    {"surface": "service mode environment (Lean Standalone.validatedComposedEnvironment); ve.environment.Environment", "input": "T12 environment",
+     "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "valid", "row": 3},
+    {"surface": "service mode alternatives, kind alt-environment", "input": "T12 environment", "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "{\"valid\": true}", "row": 3},
+    {"surface": "service mode alternatives, kind alt-elaborate", "input": "T12 source", "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "the filled elaboration (fill, unspecified, unsaid, reached, fragment_fill added)", "row": 3},
+    {"surface": "service mode alternatives, kind alt-conflict with packages", "input": "T12 source", "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "CONFLICT-FREE or UNKNOWN with detail", "row": 3},
+    {"surface": "service mode alternatives, kind alt-followable", "input": "T12 source", "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "FOLLOWABLE, DILEMMA (diagnosis UNSETTLED(...) or today's), UNKNOWN or not computed", "row": 3},
+    {"surface": "service mode alternatives, kind alt-validate", "input": "T12 source", "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route", "row": 4, "quoted": ["norm-defaults@0"]},
+    {"surface": "service mode alternatives, kind alt-certificate", "input": "T12 source", "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "UnsupportedProfile: case kind alt-certificate with norm-defaults@0 is not implemented on the alternatives route", "row": 4, "quoted": ["norm-defaults@0"]},
+    {"surface": "service mode alternatives, kind alt-conflict with witness", "input": "T12 source", "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "UnsupportedProfile: alt-conflict witnesses with norm-defaults@0 are not implemented", "row": 4, "quoted": ["norm-defaults@0"]},
+    {"surface": "service mode alternatives, kind admission", "input": "T12 source", "base": "UnsupportedProfile: Unsupported profile norm-defaults@0", "head": "UnsupportedProfile: Unsupported profile norm-defaults@0", "row": null}
+  ]
+}
