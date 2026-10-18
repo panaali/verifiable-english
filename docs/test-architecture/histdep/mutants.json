@@ -1,0 +1,395 @@
+{
+ "mutants": [
+  {
+   "id": "H1",
+   "file": "tests/test_heavy_tests.py",
+   "claim": "a new test that runs `git log` in a file that is not listed fails the lint",
+   "find": "def test_heavy_inventory_is_generated_from_complete_measurement():",
+   "replace": "def test_seeded_git_log():\n    subprocess.run([\"git\", \"log\", \"-1\"], cwd=ROOT, check=True, capture_output=True)\n\n\ndef test_heavy_inventory_is_generated_from_complete_measurement():",
+   "tests": [
+    "tests/test_history_tests.py::test_the_tree_passes"
+   ]
+  },
+  {
+   "id": "H2",
+   "file": "tests/history-dependent.json",
+   "claim": "deleting one entry (tests/test_ar8_evidence.py) fails the lint",
+   "find": "  {\n   \"test\": \"tests/test_ar8_evidence.py\",\n   \"why\": \"starts git (git show) in docs/architecture/ar-8/measure.py, tests/test_ar8_evidence.py; runs pytest on test files the source does not name, in tools/nested_pytest.py\",\n   \"recorded\": [\n    \"coverage map\",\n    \"source\"\n   ],\n   \"via\": [\n    \"docs/architecture/ar-8/measure.py:git: git\",\n    \"docs/architecture/ar-8/measure.py:lines_at: git show\",\n    \"tests/test_ar8_evidence.py:git: git\",\n    \"tools/nested_pytest.py:command: pytest\"\n   ]\n  },\n",
+   "replace": "",
+   "tests": [
+    "tests/test_history_tests.py::test_the_tree_passes",
+    "tests/test_history_tests.py::test_deleting_any_entry_of_the_committed_list_fails"
+   ]
+  },
+  {
+   "id": "H3",
+   "file": "tools/history_tests.py",
+   "claim": "a listed unit that no longer reads history is reported stale, not failed",
+   "find": "    return Findings(errors, stale)\n",
+   "replace": "    return Findings(errors + stale, stale)\n",
+   "tests": [
+    "tests/test_history_tests.py::test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing"
+   ]
+  },
+  {
+   "id": "H4",
+   "file": "tools/history_tests.py",
+   "claim": "a stale entry is reported at all",
+   "find": "for unit in sorted(have.keys() - want.keys())]",
+   "replace": "for unit in sorted(have.keys() - have.keys())]",
+   "tests": [
+    "tests/test_history_tests.py::test_an_entry_whose_unit_no_longer_reads_history_is_reported_stale_without_failing",
+    "tests/test_history_tests.py::test_a_unit_found_only_through_the_map_is_stale_once_its_function_stops_starting_git"
+   ]
+  },
+  {
+   "id": "H5",
+   "file": "tools/history_tests.py",
+   "claim": "a named argument vector (`GIT = (\"git\", ...)`) is a site of the code that uses it",
+   "find": "            self._add(START, node, _subcommand(arguments))\n",
+   "replace": "            pass\n",
+   "tests": [
+    "tests/test_history_tests.py::test_argument_vectors_shell_strings_and_named_vectors_are_sites_of_the_code_that_runs_them",
+    "tests/test_history_tests.py::test_the_tree_passes"
+   ]
+  },
+  {
+   "id": "H6",
+   "file": "tools/history_tests.py",
+   "claim": "a compared \".git\" name is not a read",
+   "find": "            if isinstance(parent, ast.Compare):\n                return False\n",
+   "replace": "            if isinstance(parent, ast.Compare):\n                return True\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_git_path_is_a_read_but_a_compared_or_listed_name_is_not"
+   ]
+  },
+  {
+   "id": "H7",
+   "file": "tools/history_tests.py",
+   "claim": "the extract counts a function that starts git only for a unit the map saw start git",
+   "find": "if READ in kinds or START in kinds and tests[i] in started:",
+   "replace": "if READ in kinds or START in kinds:",
+   "tests": [
+    "tests/test_history_tests.py::test_the_extract_counts_a_start_only_where_the_map_saw_git_and_a_read_wherever_it_ran"
+   ]
+  },
+  {
+   "id": "H8",
+   "file": "tools/gate.py",
+   "claim": "--rerun-failed refuses a previous gate of another commit with the same tree",
+   "find": "    if not commit or previous.get(\"commit_sha\") != commit:\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate"
+   ]
+  },
+  {
+   "id": "H9",
+   "file": "tools/gate.py",
+   "claim": "--rerun-failed refuses a previous gate of another runner",
+   "find": "    if previous.get(\"runner\") != runner:\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_gate_rerun.py::test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate"
+   ]
+  },
+  {
+   "id": "H10",
+   "file": "tools/gate.py",
+   "claim": "the gate records the git version among its toolchains",
+   "find": "    result[\"toolchains\"][\"git\"] = next(",
+   "replace": "    result[\"toolchains\"][\"git_seeded\"] = next(",
+   "tests": [
+    "tests/test_gate_integrity.py::test_poisoned_toolchain_variables_do_not_reach_real_tools"
+   ]
+  },
+  {
+   "id": "H11",
+   "file": "tools/gate.py",
+   "claim": "the gate record names its runner",
+   "find": "\"runner\": runner_identity(), ",
+   "replace": "\"runner\": {}, ",
+   "tests": [
+    "tests/test_gate_rerun.py::test_a_full_gate_records_its_tree_and_mode"
+   ]
+  },
+  {
+   "id": "H12",
+   "file": "tools/run_cache.py",
+   "claim": "an entry of a run that read history binds its commit, runner and git",
+   "find": "    if reads.get(\"history\"):\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ]
+  },
+  {
+   "id": "H13",
+   "file": "tools/run_cache.py",
+   "claim": "a bound entry is used only while its commit, runner and git are unchanged",
+   "find": "            now = None if history is None else history.get(name)\n",
+   "replace": "            now = digest\n",
+   "tests": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ]
+  },
+  {
+   "id": "H14",
+   "file": "tools/run_cache.py",
+   "claim": "an entry stored before the binding (format 1) is not used",
+   "find": "FORMAT = \"ve-run-cache@2\"",
+   "replace": "FORMAT = \"ve-run-cache@1\"",
+   "tests": [
+    "tests/test_run_cache.py::test_an_entry_of_the_format_before_history_binding_is_not_used"
+   ]
+  },
+  {
+   "id": "H15",
+   "file": "tests/read_recorder.py",
+   "claim": "the read recorder sees git started through a shell",
+   "find": "            if _starts_git([executable]) or _starts_git(argv):\n",
+   "replace": "            if _starts_git([executable]) or _starts_git(list(argv or ())[:1]):\n",
+   "tests": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ]
+  },
+  {
+   "id": "H16",
+   "file": "tests/read_recorder.py",
+   "claim": "the read recorder sees a `.git` path opened",
+   "find": "                _READS[\"history\"].add(\".git\")\n",
+   "replace": "                pass\n",
+   "tests": [
+    "tests/test_run_cache.py::test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git"
+   ]
+  },
+  {
+   "id": "H17",
+   "file": "tools/gate.py",
+   "claim": "the list is an inventory and a lint only: no gate code reads it",
+   "find": "    # The tests that read history (tests/history-dependent.json) read it through this git.\n",
+   "replace": "    # The tests that read history (tests/history-dependent.json) read it through this git.\n    result[\"history\"] = json.loads((ROOT / \"tests/history-dependent.json\").read_text())\n",
+   "tests": [
+    "tests/test_history_tests.py::test_only_the_lint_reads_the_list"
+   ]
+  },
+  {
+   "id": "H18",
+   "file": "tools/history_tests.py",
+   "claim": "the modules a test imports are followed (F1: git at import)",
+   "find": "        if kind == \"import\":\n",
+   "replace": "        if kind == \"import\" and False:\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails",
+    "tests/test_history_tests.py::test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone"
+   ]
+  },
+  {
+   "id": "H19",
+   "file": "tools/history_tests.py",
+   "claim": "a name a test uses is followed to the function it names (F1: helpers that start git)",
+   "find": "        if kind == \"name\":\n",
+   "replace": "        if kind == \"name\" and False:\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails"
+   ]
+  },
+  {
+   "id": "H20",
+   "file": "tools/history_tests.py",
+   "claim": "a namespace package's submodule is found (`from conformance import frozen_norm_defaults`)",
+   "find": "if self._file(f\"{directory}/__init__.py\") or self._directory(directory):",
+   "replace": "if self._file(f\"{directory}/__init__.py\"):",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails",
+    "tests/test_history_tests.py::test_a_new_test_in_the_tree_that_imports_the_frozen_oracle_fails"
+   ]
+  },
+  {
+   "id": "H21",
+   "file": "tools/history_tests.py",
+   "claim": "a repository script a child process runs is followed (F1: `[sys.executable, \"tools/x.py\"]`)",
+   "find": "            self._ref((\"script\", text, anchored))\n",
+   "replace": "            pass\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H22",
+   "file": "tools/history_tests.py",
+   "claim": "a module a child Python runs with `-m` is followed",
+   "find": "                self._ref((\"main\", value.value))\n",
+   "replace": "                pass\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H23",
+   "file": "tools/history_tests.py",
+   "claim": "a program held in a variable that names git counts (F1: `[git, \"--version\"]`)",
+   "find": "        if \"git\" in words and set(words) <= PROGRAM_WORDS | {\"git\"}:",
+   "replace": "        if False:",
+   "tests": [
+    "tests/test_history_tests.py::test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts"
+   ]
+  },
+  {
+   "id": "H24",
+   "file": "tools/history_tests.py",
+   "claim": "git after a launcher counts (F1: `env git`, `sh -c \"git log\"`)",
+   "find": "if any(isinstance(element, ast.Constant) and names_git(element.value) for element in elements[1:]):",
+   "replace": "if False:",
+   "tests": [
+    "tests/test_history_tests.py::test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts"
+   ]
+  },
+  {
+   "id": "H25",
+   "file": "tools/history_tests.py",
+   "claim": "a `python -c` program's git counts",
+   "find": "        inner = _Scanner(self.file, tree)\n",
+   "replace": "        return\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts"
+   ]
+  },
+  {
+   "id": "H26",
+   "file": "tools/history_tests.py",
+   "claim": "a conftest or plugin fixture a test uses is followed",
+   "find": "                    if (autouse or name in names) and (provider, qualname) not in used]",
+   "replace": "                    if False]",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_uses_a_conftest_fixture_or_a_data_named_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H27",
+   "file": "tools/history_tests.py",
+   "claim": "a module named in data at a dynamic import is followed",
+   "find": "        if kind == \"named\":  # a module or a script loaded by a name in data: all of it counts\n",
+   "replace": "        if kind == \"named\" and False:\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_uses_a_conftest_fixture_or_a_data_named_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H28",
+   "file": "tools/history_tests.py",
+   "claim": "a pytest run on files the source does not name lists the unit",
+   "find": "            self._add(PYTEST, node)\n        python = next(",
+   "replace": "            pass\n        python = next(",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_runs_pytest_on_files_its_source_does_not_name_fails",
+    "tests/test_history_tests.py::test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone"
+   ]
+  },
+  {
+   "id": "H29",
+   "file": "tools/history_tests.py",
+   "claim": "the closure carries the sites of the code a piece of code runs",
+   "find": "                                found |= closed[child]\n",
+   "replace": "                                pass\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails",
+    "tests/test_history_tests.py::test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H30",
+   "file": "tools/history_tests.py",
+   "claim": "a shell script a test runs is scanned for git",
+   "find": "        if file.endswith(\".sh\"):\n",
+   "replace": "        if file.endswith(\".sh\") and False:\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H31",
+   "file": "tools/git_words.py",
+   "claim": "a command names git in any word, not only its first (`sh -c \"cd x && git log\"`)",
+   "find": "any(os.path.basename(word) == \"git\" for word in words(text))",
+   "replace": "any(os.path.basename(word) == \"git\" for word in words(text)[:1])",
+   "tests": [
+    "tests/test_run_cache.py::test_the_read_recorder_sees_git_started_or_a_git_path_opened",
+    "tests/test_history_tests.py::test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts"
+   ]
+  },
+  {
+   "id": "H32",
+   "file": "tools/history_tests.py",
+   "claim": "a module-level name bound to git is not resolved where another module imports it",
+   "find": "self.defs.update((name, name) for name in self.programs if \".\" not in name)",
+   "replace": "pass",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_uses_a_git_command_bound_in_another_module_fails",
+    "tests/test_history_tests.py::test_a_new_test_in_the_tree_that_runs_the_gate_collections_git_vector_fails"
+   ]
+  },
+  {
+   "id": "H33",
+   "file": "tools/history_tests.py",
+   "claim": "the site of a name bound to git is not reached by code that names it",
+   "find": " | ({facts.programs[key]} if key in facts.programs else set())",
+   "replace": "",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_uses_a_git_command_bound_in_another_module_fails",
+    "tests/test_history_tests.py::test_a_new_test_in_the_tree_that_runs_the_gate_collections_git_vector_fails"
+   ]
+  },
+  {
+   "id": "H34",
+   "file": "tools/history_tests.py",
+   "claim": "a starred program (`[*GIT, \"log\"]`) is not followed to the name it unpacks",
+   "find": "        if isinstance(node, ast.Starred):\n            return recurse(node.value)",
+   "replace": "        if isinstance(node, ast.Starred):\n            return False",
+   "tests": [
+    "tests/test_history_tests.py::test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use"
+   ]
+  },
+  {
+   "id": "H35",
+   "file": "tools/history_tests.py",
+   "claim": "a summed program (`GIT + [\"log\"]`) is not followed to its first operand",
+   "find": "return isinstance(node.op, ast.Add) and recurse(node.left)",
+   "replace": "return False",
+   "tests": [
+    "tests/test_history_tests.py::test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use"
+   ]
+  },
+  {
+   "id": "H36",
+   "file": "tools/history_tests.py",
+   "claim": "what a process call returns counts as the git program",
+   "find": "return _callee(node) not in PROCESS_CALLS and any(",
+   "replace": "return any(",
+   "tests": [
+    "tests/test_history_tests.py::test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use"
+   ]
+  },
+  {
+   "id": "H37",
+   "file": "tools/history_tests.py",
+   "claim": "a class attribute hides a module-level vector of the same name from `bound`",
+   "find": "                self.bound.add(id(statement.value))",
+   "replace": "                self.bound = {id(node) for node in self.vectors.values()}",
+   "tests": [
+    "tests/test_history_tests.py::test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use"
+   ]
+  },
+  {
+   "id": "H38",
+   "file": "tools/history_tests.py",
+   "claim": "names a class binds to git are not found",
+   "find": "*((node.name + \".\", node.body) for node in tree.body if isinstance(node, ast.ClassDef))",
+   "replace": "*()",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_uses_a_git_command_bound_in_another_module_fails",
+    "tests/test_history_tests.py::test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use"
+   ]
+  }
+ ]
+}
