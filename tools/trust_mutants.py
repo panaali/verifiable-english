@@ -58,7 +58,7 @@ CHECK_PROOF = re.compile(r":=\s*(?:by\s+)?(?:decide|native_decide|rfl)(?:\s+\+\w
 ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*)$", re.M)
 STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
         "for", "unless", "mut", "have", "show"}
-LIST_METHODS = ("find?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
+LIST_METHODS = ("find\\?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
                 "elem|isPrefixOf|take|drop|reverse|sum|count|findSome\\?|eraseDups|dropLast|tail|getLast\\?|mapM|forM")
 LIST_RESULTS = {"map", "filter", "flatMap", "filterMap", "take", "drop", "reverse", "eraseDups", "dropLast", "tail",
                 "zip"}
@@ -377,11 +377,13 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             if r == "theorem" and not first <= m.line <= last:
                 cut_proof(path, first, last)
         for stage in (built[:1], built[1:]):  # the mutated module alone first: most mutants end there
-            for _ in range(8):
+            for attempt in range(8):
                 code, output = scratch.lake(env, "build", *(f"+{x}" for x in stage)) if stage else (0, "")
                 if code == 0:
                     break
                 found = [(f, int(n), message, role(tree, f, int(n), m)) for f, n, message in ERROR.findall(output)]
+                if not found and attempt == 0:  # once more: Lake can fail with no located error under load
+                    continue
                 if not found:
                     return "UNKNOWN", "the build failed with no located error: " + output[-300:]
                 for f, n, message, r in found:
