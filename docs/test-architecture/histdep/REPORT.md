@@ -20,13 +20,23 @@ result to its commit, runner and toolchains. The work started from `b5248038` an
 | R2 and R3 stay complete, live and without reuse; the list must not let any merge or nightly skip a test; nothing weakens what is checked | `c6de68038` | Only the lint, its test and the registry (which runs the lint as writer and checker) name the list. No gate, merge, selection or cache code reads it. The merge train has no tree reuse (merge-train.sh, "No reuse ... no identical-tree reuse of any PASS"), so the plan's 3.2 step 4 shortcut is not built. The two binding changes only refuse or rerun more. | `test_only_the_lint_reads_the_list`; seeded bug H17 |
 | No timing-threshold correctness test | — | None added. The tests use `HANG_TIMEOUT` for their subprocesses. | — |
 | Seeded bugs: a new `git log` test that is not listed; one entry deleted; one per behaviour | `66983f6cc`, `c6de68038` | `docs/test-architecture/histdep/mutants.json`, H1–H17, run by `tools/mutants.py`: 17/17 killed (`mutants-evidence.json`) | below |
+| Review F1 (B): a test the saved extract does not cover was judged by the git calls of its own file only | fix round 1 | `--write` and the lint now judge each unit by the source it can run (`_Sources.reach`), not its own file: see "Fix round 1" below. | `test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone` and five F1 tests; seeded bugs H18–H31 |
 
 ## The list
 
-On the merged tree, **94** test units read history. That is 93 from the map plus `tests/test_b16f_senses_document.py`,
-which main added after the map was recorded; the per-file scan finds it from its own `git` calls.
-- `recorded`: 61 entries through the coverage map only, 32 through both the map and their own source, 1 through
-  source only.
+After fix round 1, **125** test units are listed (94 before it). `recorded`: 93 through both the coverage map and
+the source the unit can run, 32 through the source only. Every unit the map saw read history is also found from its
+source alone (`test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone`), so none is listed
+through the map only. Of the 32 found through the source only:
+- `tests/test_b16f_senses_document.py`, which main added after the map was recorded;
+- 23 that reach git through code the map did not see them start git through on `de309d61`: an import, a helper, a
+  repository script, a fixture or a module named in data. The reach over-approximates (a named function counts as
+  run), so some of these never start git on a given run; listing one is the safe side, since nothing skips or
+  reuses a test because it is listed;
+- 8 whose only reason is a pytest run on test files the source does not name (`runs pytest`, see below).
+
+The numbers before fix round 1, for the record: 94 units; 61 through the map only, 32 through both, 1 through the
+source only.
 - **How the scan and the map agree:** of the map's 428 units, exactly the 93 it recorded starting git ran a function
   that the source scan finds starting git. No unit started git without such a function, and none ran one without
   starting git. All 32 test files that start git themselves are among the 93. The map's 3 opaque units are all among
@@ -42,14 +52,40 @@ which main added after the map was recorded; the per-file scan finds it from its
   - `test_gate_integrity` reads `.git/index` of a fixture repository;
   - `test_run_cache` opens a fixture repository's `.git/HEAD`.
 
-What a site is (`tools/history_tests.py` `sites`):
+What a site is (`tools/history_tests.py` `sites`; the words that name git are `tools/git_words.py`'s, which the
+run-time recorder `tests/read_recorder.py` uses too):
 - **Starts git:**
-  - an argument vector whose first element is the string `"git"`;
-  - a process call whose command string starts with `git`;
+  - an argument vector whose first element's program is git (`"git"`, `"/usr/bin/git"`);
+  - an argument vector of a launcher (`env`, `sh`, `bash`, `timeout`, `xargs`, `uv`, ...) with a later argument
+    that names git (`["env", "git", "log"]`, `["sh", "-c", "cd x && git log"]`);
+  - a process call whose command string names git (`"git status"`, `"cd repo && git log -1"`);
+  - a program held in a variable whose name says git (`git`, `GIT_BIN`), or that is assigned, in the code around
+    it, a value with a string whose program is git (`git = shutil.which("git")`, `os.environ.get("GIT", "git")`);
+  - a lookup of git (`shutil.which("git")`);
+  - a `python -c` program that does any of these (it is scanned as Python);
   - a use of a module- or class-level vector such as `GIT = ("git", ...)`, attributed to the code that uses it, not
     to the import.
 - **Reads `.git`:** `.git` used as a path: joined, passed to a call, or assigned. A compared name, a name in a list
   of skipped names, or a name passed to a string-matching method does not count.
+- **Runs pytest** (`-m pytest`, `pytest.main`): the test files of a nested run come from data, a directory or the
+  whole suite, which the source does not name, so the unit is listed (`why`: "runs pytest on test files the source
+  does not name").
+
+What a unit can run (`_Sources.reach`), followed transitively in the source, without importing or running anything:
+- all of its own file;
+- the top level of every module it imports (any import form; a namespace package such as `conformance/` included);
+- every function or class its code names, resolved through its imports and re-exports (`from m import f`,
+  `import a.b as c`, `a.b.f`, `from m import *`), with all methods of a class;
+- the conftests above it, their `pytest_plugins`, and the fixtures it uses: autouse ones, those its functions or
+  the fixtures it uses take as arguments, those named in `usefixtures`/`getfixturevalue`;
+- all of a repository script a child process runs or a loader loads: a `.py` or `.sh` path in an argument vector of
+  a Python or a launcher, in a command string, or passed to `spec_from_file_location`/`run_path`, also a path built
+  from `__file__` (`ROOT / "tools" / "gate.py"`) or held in a variable; a module run with `-m`;
+- where code imports a module by a computed name (`importlib.import_module(name)`, a loader with a path the source
+  does not spell), every module or script that a string of the same file names (`"ve.norm_defaults_contract"`).
+
+Each piece of code's sites are closed once over the graph (strongly connected groups, `_Sources.closure`). On this
+tree the lint takes about 12 s and reads about 840 Python files.
 
 Each site is attributed to the `co_qualname` of the code object that runs it, which is the name the map records.
 `test_genexpr_class_body_and_default_sites_carry_the_code_objects_qualname` checks this against compiled code objects.
@@ -58,9 +94,12 @@ Each site is attributed to the `co_qualname` of the code object that runs it, wh
 - **Starts the map can miss.** It records git started by a Python process of the project environment. Every such
   start in the extract is explained by a source site. A start by another program would give an entry with no `via`,
   and none exists today.
-- **New git calls in already-mapped helpers.** If code that a mapped unit already ran gains a git call, the scan of
-  the test's own file does not see it. That unit is listed only after `--save-map` from a newer map. A test file's
-  own new git call is caught at once (H1).
+- **What the source reach does not follow.** A method called on an object whose class the source does not name, an
+  attribute fetched by a computed name (`getattr(module, name)` after a static import), a program assembled at run
+  time from parts none of which names git, and the conftests' session hooks (`pytest_sessionstart`, which run once
+  for the whole run, not for a unit). Git started by git itself (a hook, a merge driver) needs the unit to start git
+  first, so the unit is listed anyway. The differential against the map is the check that these limits leave no unit
+  out today.
 - **Per-file granularity.** The map's unit is the test file, so the entry is per file. `via` names the test
   functions in the file that start git themselves.
 - **Churn.** Editing a git call in a listed unit's own file, or in a function its `via` names, changes the generated
@@ -93,7 +132,7 @@ live.
 
 All are Python (no Lean or Rust file changed). They are in `mutants.json` with `file` and `tests` keys. `tools/mutants.py` checks
 that the named tests pass unmutated, applies each bug, requires a named test to fail and restores the file's
-bytes. The result is **17/17 killed** (`mutants-evidence.json`, rerun on the merged tree).
+bytes. The result is **31/31 killed** (`mutants-evidence.json`, rerun after fix round 1; H18–H31 are that round's).
 
 | Bug | File | Fault | Test that failed |
 |---|---|---|---|
@@ -114,6 +153,20 @@ bytes. The result is **17/17 killed** (`mutants-evidence.json`, rerun on the mer
 | H15 | `tests/read_recorder.py` | git started through `sh -c` not seen | `test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git` |
 | H16 | `tests/read_recorder.py` | a `.git` path opened not seen | the same test |
 | H17 | `tools/gate.py` | the gate reads the list | `test_only_the_lint_reads_the_list` |
+| H18 | `tools/history_tests.py` | `import x` statements followed to no module | `test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails` |
+| H19 | `tools/history_tests.py` | a name a unit uses not followed to its function | the same test |
+| H20 | `tools/history_tests.py` | a namespace package (`conformance/`) not found | the same test, `test_a_new_test_in_the_tree_that_imports_the_frozen_oracle_fails` |
+| H21 | `tools/history_tests.py` | a script path a child process runs not followed | `test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails` |
+| H22 | `tools/history_tests.py` | `python -m module` not followed | the same test |
+| H23 | `tools/history_tests.py` | a program in a variable named git not counted | `test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts` |
+| H24 | `tools/history_tests.py` | git after a launcher (`env`, `sh -c`) not counted | the same test |
+| H25 | `tools/history_tests.py` | a `python -c` program not scanned | the same test |
+| H26 | `tools/history_tests.py` | conftest and plugin fixtures not followed | `test_a_new_test_that_uses_a_conftest_fixture_or_a_data_named_module_that_starts_git_fails` |
+| H27 | `tools/history_tests.py` | modules named in data at a dynamic import not followed | the same test |
+| H28 | `tools/history_tests.py` | a nested pytest run does not list the unit | `test_a_new_test_that_runs_pytest_on_files_its_source_does_not_name_fails`, `test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone` |
+| H29 | `tools/history_tests.py` | the closure drops the sites of the code a piece of code runs | the import and script tests |
+| H30 | `tools/history_tests.py` | a shell script a unit runs not scanned | the script test |
+| H31 | `tools/git_words.py` | only a command's first word checked for git | `test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts`, `test_run_cache.py::test_the_read_recorder_sees_git_started_or_a_git_path_opened` |
 
 The first run of the harness counted six of these bugs as surviving, although each made its test fail. The harness
 reads failed IDs as `\S+`, so it cannot match a parametrized ID with a space in it. The new tests' IDs now have no
@@ -143,13 +196,57 @@ spaces (`66983f6cc`).
 A seeded change to `tools/history_tests.py` (H3) on the working tree selects 102 units, `tests/test_history_tests.py`
 among them.
 
+## Fix round 1 (tarch-histdep-review.final.md)
+
+The review's verdict was FIX with one B finding (F1) and two C findings (F2, F3). No DELTA row changes: rows 1 and 2
+still cite R3 and R13, and no DRI signature is needed.
+
+- **F1 (B), fixed as a class.** A unit was judged by the git calls of its own file only, so a new test that reached git
+  any other way passed the lint. Every instance the review listed is now found:
+  - git at import (`conformance/frozen_norm_defaults.py`, `tests/test_regen_generated.py`'s top level);
+  - helpers that start git, through any import form;
+  - a child process running a repository tool;
+  - the forms the scan missed: `[git, "--version"]` (tools/gate.py `check_toolchains` is now a site), `"/usr/bin/git"`,
+    `["env", "git", ...]`, `["sh", "-c", "git log"]`.
+
+  The fix is structural: the lint follows the source a unit can run (see "What a unit can run" above), with the
+  oracle, the coverage map, as a differential test. Every one of the 93 units the saved map saw read history is
+  found from its source alone; before the fix 61 of them were found only through the map. Where the source cannot
+  say what runs, the unit is listed: a pytest run on test files that come from data, or modules that a dynamic
+  import loads by a name in data. Which words name git is defined once, in `tools/git_words.py`, for the run-time
+  recorder and for the lint. The review's PROBE F1 failed before the fix (`AssertionError: []`) and passes after it.
+  It is now `test_a_new_test_in_the_tree_that_imports_the_frozen_oracle_fails`.
+  - Regression tests: `test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails`,
+    `test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails`,
+    `test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts`,
+    `test_a_new_test_that_uses_a_conftest_fixture_or_a_data_named_module_that_starts_git_fails`,
+    `test_a_new_test_that_runs_pytest_on_files_its_source_does_not_name_fails`,
+    `test_a_new_test_in_the_tree_that_imports_the_frozen_oracle_fails`,
+    `test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone`,
+    `test_the_run_and_the_source_decide_what_names_git_with_one_definition`, and the extended
+    `test_run_cache.py::test_the_read_recorder_sees_git_started_or_a_git_path_opened`. Seeded bugs H18–H31 are each
+    killed.
+  - Cost: the lint reads about 840 Python files and takes about 12 s, up from about 6 s. The list grows from 94 to
+    125 units, all on the safe side.
+- **F2 (C), not changed.** A `.git` string that is assigned still counts as a read, which is the safe side. Saving
+  the extract again from the same maps would add `tests/test_hang_guards.py`. Since this round that unit is listed
+  through the source reach anyway.
+- **F3 (C), narrowed, not closed.** The recorder sees history only in the nested run's pytest processes. Since this
+  round, a process whose arguments name git in any word binds the run, which covers a `python -c` program or a shell
+  that starts git. A child that starts git without naming it in its arguments is still not seen by the recorder.
+  The source lint lists such a corpus file through the reach.
+- **Runs.** The selected tests on the Mac runner (`3d2869ac` plus the report edits, base `2d4b9320`): **112 of 432
+  units, all passed** (515 s). `lake build` (959 jobs) and `lean/audit.py` pass. `tools/test_layer_policy.py` and
+  `regen_generated.py --check --only history-tests` pass. The full gate was not run by the builder.
+
 ## Follow-ups (not in this batch)
 
 1. **The candidate regen list.** Add `history-tests` to manage-agents `cand-regen-entries.txt` once a candidate has
-   failed on it. Its writer reads only the tree and the saved extract (about 6 s). Until then, a candidate whose two
+   failed on it. Its writer reads only the tree and the saved extract (about 12 s since fix round 1). Until then, a candidate whose two
    sides each add history readers fails `test_the_tree_passes` with "run `python tools/history_tests.py --write`".
-2. **Refreshing the extract.** Re-save it (`--save-map`) when a newer map is recorded, so that new git calls in
-   helpers already mapped are listed. Today these are caught only when a unit's own file changes.
+2. **Refreshing the extract.** Re-save it (`--save-map`) when a newer map is recorded, so that the differential test
+   checks the reach against a newer run. Since fix round 1 a new git call in a helper is caught through the source
+   reach without it.
 3. **R1 selection.** It could always add the listed units when the base differs from HEAD. That adds tests and never
    skips one, but costs 94 units. It needs a DRI decision on cost, and it is outside rank 3.
 
@@ -159,7 +256,8 @@ among them.
 2. PASS. The delivery table above maps each plan row and directive to a commit and test. The list is generated
    (`test_the_tree_passes`, the regen entry). No report test of this batch's HEAD is added (D4); the batch's numbers
    are in this report and `mutants-evidence.json`.
-3. PASS. 17 seeded bugs, 17 killed (`tools/mutants.py docs/test-architecture/histdep/mutants.json`). A missing entry
+3. PASS. 31 seeded bugs, 31 killed (`tools/mutants.py docs/test-architecture/histdep/mutants.json`; H18–H31 from fix
+   round 1). A missing entry
    (H2), an extra stale entry (H3, H4) and an edited entry (`test_an_edited_entry_or_map_header_fails`) are each caught.
 4. N.A. No Python, Lean or Rust checker behaviour changes.
 5. N.A. No relayed field.

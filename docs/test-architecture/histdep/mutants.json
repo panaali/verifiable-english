@@ -14,7 +14,7 @@
    "id": "H2",
    "file": "tests/history-dependent.json",
    "claim": "deleting one entry (tests/test_ar8_evidence.py) fails the lint",
-   "find": "  {\n   \"test\": \"tests/test_ar8_evidence.py\",\n   \"why\": \"starts git in tests/test_ar8_evidence.py\",\n   \"recorded\": [\n    \"coverage map\",\n    \"source\"\n   ],\n   \"via\": [\n    \"tests/test_ar8_evidence.py:git: git\"\n   ]\n  },\n",
+   "find": "  {\n   \"test\": \"tests/test_ar8_evidence.py\",\n   \"why\": \"starts git (git show) in docs/architecture/ar-8/measure.py, tests/test_ar8_evidence.py; runs pytest on test files the source does not name, in tools/nested_pytest.py\",\n   \"recorded\": [\n    \"coverage map\",\n    \"source\"\n   ],\n   \"via\": [\n    \"docs/architecture/ar-8/measure.py:git: git\",\n    \"docs/architecture/ar-8/measure.py:lines_at: git show\",\n    \"tests/test_ar8_evidence.py:git: git\",\n    \"tools/nested_pytest.py:command: pytest\"\n   ]\n  },\n",
    "replace": "",
    "tests": [
     "tests/test_history_tests.py::test_the_tree_passes",
@@ -171,6 +171,151 @@
    "replace": "    # The tests that read history (tests/history-dependent.json) read it through this git.\n    result[\"history\"] = json.loads((ROOT / \"tests/history-dependent.json\").read_text())\n",
    "tests": [
     "tests/test_history_tests.py::test_only_the_lint_reads_the_list"
+   ]
+  },
+  {
+   "id": "H18",
+   "file": "tools/history_tests.py",
+   "claim": "the modules a test imports are followed (F1: git at import)",
+   "find": "        if kind == \"import\":\n",
+   "replace": "        if kind == \"import\" and False:\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails",
+    "tests/test_history_tests.py::test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone"
+   ]
+  },
+  {
+   "id": "H19",
+   "file": "tools/history_tests.py",
+   "claim": "a name a test uses is followed to the function it names (F1: helpers that start git)",
+   "find": "        if kind == \"name\":\n",
+   "replace": "        if kind == \"name\" and False:\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails"
+   ]
+  },
+  {
+   "id": "H20",
+   "file": "tools/history_tests.py",
+   "claim": "a namespace package's submodule is found (`from conformance import frozen_norm_defaults`)",
+   "find": "if self._file(f\"{directory}/__init__.py\") or self._directory(directory):",
+   "replace": "if self._file(f\"{directory}/__init__.py\"):",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails",
+    "tests/test_history_tests.py::test_a_new_test_in_the_tree_that_imports_the_frozen_oracle_fails"
+   ]
+  },
+  {
+   "id": "H21",
+   "file": "tools/history_tests.py",
+   "claim": "a repository script a child process runs is followed (F1: `[sys.executable, \"tools/x.py\"]`)",
+   "find": "            self._ref((\"script\", text, anchored))\n",
+   "replace": "            pass\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H22",
+   "file": "tools/history_tests.py",
+   "claim": "a module a child Python runs with `-m` is followed",
+   "find": "                self._ref((\"main\", value.value))\n",
+   "replace": "                pass\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H23",
+   "file": "tools/history_tests.py",
+   "claim": "a program held in a variable that names git counts (F1: `[git, \"--version\"]`)",
+   "find": "        if \"git\" in words and set(words) <= PROGRAM_WORDS | {\"git\"}:",
+   "replace": "        if False:",
+   "tests": [
+    "tests/test_history_tests.py::test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts"
+   ]
+  },
+  {
+   "id": "H24",
+   "file": "tools/history_tests.py",
+   "claim": "git after a launcher counts (F1: `env git`, `sh -c \"git log\"`)",
+   "find": "if any(isinstance(element, ast.Constant) and names_git(element.value) for element in elements[1:]):",
+   "replace": "if False:",
+   "tests": [
+    "tests/test_history_tests.py::test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts"
+   ]
+  },
+  {
+   "id": "H25",
+   "file": "tools/history_tests.py",
+   "claim": "a `python -c` program's git counts",
+   "find": "        inner = _Scanner(self.file, tree)\n",
+   "replace": "        return\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts"
+   ]
+  },
+  {
+   "id": "H26",
+   "file": "tools/history_tests.py",
+   "claim": "a conftest or plugin fixture a test uses is followed",
+   "find": "                    if (autouse or name in names) and (provider, qualname) not in used]",
+   "replace": "                    if False]",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_uses_a_conftest_fixture_or_a_data_named_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H27",
+   "file": "tools/history_tests.py",
+   "claim": "a module named in data at a dynamic import is followed",
+   "find": "        if kind == \"named\":  # a module or a script loaded by a name in data: all of it counts\n",
+   "replace": "        if kind == \"named\" and False:\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_uses_a_conftest_fixture_or_a_data_named_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H28",
+   "file": "tools/history_tests.py",
+   "claim": "a pytest run on files the source does not name lists the unit",
+   "find": "            self._add(PYTEST, node)\n        python = next(",
+   "replace": "            pass\n        python = next(",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_runs_pytest_on_files_its_source_does_not_name_fails",
+    "tests/test_history_tests.py::test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone"
+   ]
+  },
+  {
+   "id": "H29",
+   "file": "tools/history_tests.py",
+   "claim": "the closure carries the sites of the code a piece of code runs",
+   "find": "                                found |= closed[child]\n",
+   "replace": "                                pass\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails",
+    "tests/test_history_tests.py::test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H30",
+   "file": "tools/history_tests.py",
+   "claim": "a shell script a test runs is scanned for git",
+   "find": "        if file.endswith(\".sh\"):\n",
+   "replace": "        if file.endswith(\".sh\") and False:\n",
+   "tests": [
+    "tests/test_history_tests.py::test_a_new_test_that_starts_a_repository_script_or_module_that_starts_git_fails"
+   ]
+  },
+  {
+   "id": "H31",
+   "file": "tools/git_words.py",
+   "claim": "a command names git in any word, not only its first (`sh -c \"cd x && git log\"`)",
+   "find": "any(os.path.basename(word) == \"git\" for word in words(text))",
+   "replace": "any(os.path.basename(word) == \"git\" for word in words(text)[:1])",
+   "tests": [
+    "tests/test_run_cache.py::test_the_read_recorder_sees_git_started_or_a_git_path_opened",
+    "tests/test_history_tests.py::test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts"
    ]
   }
  ]
