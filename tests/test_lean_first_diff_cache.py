@@ -136,7 +136,7 @@ def change_corpus(world, monkeypatch):
 
 
 def change_env(world, monkeypatch):
-    monkeypatch.setenv("VE_RUST_TIMEOUT", "61")
+    monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", "another")
 
 
 def change_python(world, monkeypatch):
