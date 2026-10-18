@@ -1,0 +1,36 @@
+{
+  "note": "fu-docs-1017 changes comments, docstrings and DELTA prose only, so no behaviour is claimed. These seeds show that the tests over each changed product file can fail. Each was planted alone, then restored with git checkout; S3 also rebuilt ve_service and relocked lean/checkers.lock for the seeded build only (the restored lock is unchanged), so its failure is behavioural, not a pin mismatch.",
+  "mutants": [
+    {
+      "id": "S1",
+      "bug": "_lean_route sends no closure or order family document to Lean (`return False` for `family_in_scope(env)`)",
+      "file": "ve/norms.py",
+      "test": "tests/test_stage2_norms.py::test_lean_family_route_answers_as_the_retained_python_route",
+      "observed": "FAILED [closure-reach]: assert ve.norms._lean_route(doc)",
+      "caught": true,
+      "restored": true
+    },
+    {
+      "id": "S2",
+      "bug": "resolve_base drops MERGE_HEAD from the merge base, so an uncommitted sync of main into a branch is checked against the branch's old base",
+      "file": "tools/trust_map.py",
+      "test": "tests/test_trust_ratchet.py::test_an_uncommitted_sync_of_main_into_a_branch_is_checked_as_committed",
+      "observed": "1 failed, 104 passed (tests/test_trust_ratchet.py)",
+      "caught": true,
+      "restored": true
+    },
+    {
+      "id": "S3",
+      "bug": "firstOrderDefinition ignores the definition body (`folEntry entry` only), so a definition over an n-ary atom goes back to the FOL view",
+      "file": "lean/VE/Norms/Family.lean",
+      "test": "tests/test_stage2_norms.py::test_a_definition_over_a_ternary_predicate_has_its_premises",
+      "also_failed": [
+        "tests/test_stage2_norms.py::test_nary_definitions_on_the_core_family_match_python[3-body]",
+        "tests/test_stage2_norms.py::test_nary_definitions_on_the_core_family_match_python[4-body]"
+      ],
+      "observed": "VEError: invalid indexed formula (3 failed, 4 passed)",
+      "caught": true,
+      "restored": true
+    }
+  ]
+}
