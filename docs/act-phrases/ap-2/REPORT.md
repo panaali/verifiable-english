@@ -192,7 +192,10 @@ both words, `.fill ["and", "or"]` refusing both, `SEEK`, `FREELY` and `AND` in c
   unchanged (trusted +145, K +0). No test in `main-known-red.txt` was hit. After the third recheck fix (F11), on
   `db140213`: 74 units, exit 0, 0 failed (`test_acts_vocab_mutants.py` 1,108 s of them, on the Mac runner with 6
   jobs); `lake build` and `lean/audit.py` pass; `trust_map.py --check` passes unchanged (trusted +145, K +0). No test
-  in `main-known-red.txt` was hit. The full gate is the chain's.
+  in `main-known-red.txt` was hit. After the fourth recheck fix (F13, F14), on `77b20b9b`: 74 units, exit 0, 0 failed
+  (`test_acts_vocab_mutants.py` 714 s of them, on the Mac runner with 6 jobs); `lake build` and `lean/audit.py`
+  pass; `trust_map.py --check` passes unchanged (trusted +145, K +0). No test in `main-known-red.txt` was hit. The
+  full gate is the chain's.
 - **Overlap:** `tools/layer_policy.py` is also edited by `lean-first/b18`, in a different hunk (lines 116 and 141;
   mine is 135). `git merge-tree HEAD lean-first/b18` merges it cleanly; that branch's other conflicts with this one
   are generated inventories (R12). No other in-flight branch touches `lean/VE/Acts/` or the plan and spec files.
