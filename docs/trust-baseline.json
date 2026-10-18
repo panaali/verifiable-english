@@ -750,6 +750,13 @@
   },
   {
    "class": "S",
+   "lines": 137,
+   "reason": "qt-a1: S +137 (VE/Cardinality/Syntax.lean +81, VE/Cardinality/Semantics.lean +56); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a1, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
+  },
+  {
+   "class": "S",
    "lines": 17,
    "reason": "sc-1a: new Lean-owned behaviour of scope@0 (the layout's list runs): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource, paraCounts, lineStart, spacesOnly, skipSpaces, markerLen, lastNonBlank, boldLabel, isBlank, isDigit, sp, nl; continues, indexOf, runFrom, listRun tied); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1a, 2026-10-18",

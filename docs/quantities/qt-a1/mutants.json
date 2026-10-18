@@ -1,0 +1,621 @@
+{
+ "item": "qt-a1",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-a1/mutants.json --no-baseline --evidence docs/quantities/qt-a1/evidence/mutants-run.json, after a passing `lake build VE.Cardinality.Examples`; each mutant is applied alone, the module is built, the file is restored. Mutants that change a specification and its check together also adjust admits_iff, so the build fails at a fixture.",
+ "mutants": [
+  {
+   "id": "R-not",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "inRegion reads `not b` as `b`",
+   "find": "  | .not b => !(b.inRegion ps r)",
+   "replace": "  | .not b => b.inRegion ps r",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "E-population",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "a proportion's erasure drops the nonempty-population conjunct",
+   "find": "  .and (.lt (.num dl 0) n) (p.cmp.erase (.scale dl p.den m) (.scale dl p.num n))",
+   "replace": "  .and .top (p.cmp.erase (.scale dl p.den m) (.scale dl p.num n))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "R-limit",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "the predicate limit fires at 6 instead of above 6",
+   "find": "    if (predsOn E fs s).length > maxPredicates then",
+   "replace": "    if (predsOn E fs s).length ≥ maxPredicates then",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "S-atom-any-arity",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a body atom needs only some declared predicate, of any arity or sort (spec and check together)",
+   "find": "  | .atom p => E.q.predicates p = some [.obj s]\n  | .any => True\n  | .not b => BodyTyped E s b\n  | .and a b => BodyTyped E s a ∧ BodyTyped E s b\n  | .or a b => BodyTyped E s a ∧ BodyTyped E s b\n\n/-- Independent admission: counts and proportions name a declared finite sort with typed bodies; a proportion's\nfraction is between 0 and 1 with a positive denominator; W6a parts are W6a-admitted. (Freshness of region constants\nis `CEnv.WellFormed`.) -/\ninductive Admitted (E : CEnv) : CFormula → Prop\n  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]",
+   "replace": "  | .atom p => (E.q.predicates p).isSome = true\n  | .any => True\n  | .not b => BodyTyped E s b\n  | .and a b => BodyTyped E s a ∧ BodyTyped E s b\n  | .or a b => BodyTyped E s a ∧ BodyTyped E s b\n\n/-- Independent admission: counts and proportions name a declared finite sort with typed bodies; a proportion's\nfraction is between 0 and 1 with a positive denominator; W6a parts are W6a-admitted. (Freshness of region constants\nis `CEnv.WellFormed`.) -/\ninductive Admitted (E : CEnv) : CFormula → Prop\n  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => (E.q.predicates p).isSome",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "M-cmp-ge-reversed",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .ge` compares the wrong way",
+   "find": "  | .ge, a, b => b ≤ a",
+   "replace": "  | .ge, a, b => a ≤ b",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "E-countFin-duplicates",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "countFin counts listed objects with duplicates",
+   "find": "  ((firstUse (M.domains s)).filter (fun x => b.evalFin M x)).length",
+   "replace": "  ((M.domains s).filter (fun x => b.evalFin M x)).length",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-rel-eq-le",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Rel.holds .eq` read as `≤`: exactly n means at most n",
+   "find": "  | .eq, a, b => a = b\n\n/-- `cmp.holds",
+   "replace": "  | .eq, a, b => a ≤ b\n\n/-- `cmp.holds",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-rel-lt-le",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Rel.holds .lt` read as `≤`",
+   "find": "Prop\n  | .lt, a, b => a < b",
+   "replace": "Prop\n  | .lt, a, b => a ≤ b",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-body-not",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .not` without the negation",
+   "find": "  | .not b => ¬ b.holds T x",
+   "replace": "  | .not b => b.holds T x",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-body-or-and",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .or` read as `∧`",
+   "find": "  | .or a b => a.holds T x ∨ b.holds T x",
+   "replace": "  | .or a b => a.holds T x ∧ b.holds T x",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-cmp-lt-le",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .lt` read as `≤`",
+   "find": "  | .gt, a, b => b < a\n  | .ge, a, b => b ≤ a\n  | .lt, a, b => a < b",
+   "replace": "  | .gt, a, b => b < a\n  | .ge, a, b => b ≤ a\n  | .lt, a, b => a ≤ b",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-cmp-le-lt",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .le` read as `<`",
+   "find": "  | .lt, a, b => a < b\n  | .le, a, b => a ≤ b\n  | .eq, a, b => a = b\n\n/-- `ns`",
+   "replace": "  | .lt, a, b => a < b\n  | .le, a, b => a < b\n  | .eq, a, b => a = b\n\n/-- `ns`",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-cmp-eq-le",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .eq` read as `≤`",
+   "find": "  | .eq, a, b => a = b\n\n/-- `ns`",
+   "replace": "  | .eq, a, b => a ≤ b\n\n/-- `ns`",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-holds-quantity-true",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .quantity` read as `True`",
+   "find": "  | .quantity a => a.tdenote T []",
+   "replace": "  | .quantity a => True",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-holds-not",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .not` without the negation",
+   "find": "  | .not a => ¬ a.holds T",
+   "replace": "  | .not a => a.holds T",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-holds-and-or",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .and` read as `∨`",
+   "find": "  | .and a b => a.holds T ∧ b.holds T",
+   "replace": "  | .and a b => a.holds T ∨ b.holds T",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-holds-or-and",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .or` read as `∧`",
+   "find": "  | .or a b => a.holds T ∨ b.holds T",
+   "replace": "  | .or a b => a.holds T ∧ b.holds T",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-holds-implies-reversed",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .implies` reads the converse",
+   "find": "  | .implies a b => a.holds T → b.holds T",
+   "replace": "  | .implies a b => b.holds T → a.holds T",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-proportion-not-finite",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a proportion over a sort not declared finite is admitted (spec, check and admits_iff)",
+   "find": "  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩",
+   "replace": "  | proportion {p} : BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hw hp hd hn => exact ⟨⟨⟨hw, hp⟩, hd⟩, hn⟩⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-quantity-unchecked",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a W6a part is admitted unchecked (spec, check and admits_iff)",
+   "find": "  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h",
+   "replace": "  | quantity {a} : Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => true\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a => exact ⟨fun _ => .quantity, fun _ => rfl⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-and-left-only",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`.and` is admitted when its left part is (spec, check and admits_iff)",
+   "find": "  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩\n  | not a ih =>\n    simp only [CFormula.admits, ih]\n    exact ⟨.not, fun h => by cases h with | not h => exact h⟩\n  | and a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .and h.1 h.2, fun h => by cases h with | and x y => exact ⟨x, y⟩⟩",
+   "replace": "  | and {a b} : Admitted E a → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩\n  | not a ih =>\n    simp only [CFormula.admits, ih]\n    exact ⟨.not, fun h => by cases h with | not h => exact h⟩\n  | and a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .and h, fun h => by cases h with | and x => exact x⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "F1-fresh-reversed",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`CEnv.WellFormed.fresh` reversed",
+   "find": "c.startsWith regionPrefix = false",
+   "replace": "c.startsWith regionPrefix = true",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-rel-le-lt",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Rel.holds .le` read as `<`",
+   "find": "  | .le, a, b => a ≤ b\n  | .eq, a, b => a = b\n\n/-- `cmp",
+   "replace": "  | .le, a, b => a < b\n  | .eq, a, b => a = b\n\n/-- `cmp",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-body-and-or",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .and` read as `∨`",
+   "find": "  | .and a b => a.holds T x ∧ b.holds T x",
+   "replace": "  | .and a b => a.holds T x ∨ b.holds T x",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-body-atom-true",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .atom` read as `True`",
+   "find": "  | .atom p => T.relation p [.obj x]",
+   "replace": "  | .atom p => True",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-body-any-false",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .any` read as `False`",
+   "find": "  | .any => True\n  | .not b => ¬ b.holds",
+   "replace": "  | .any => False\n  | .not b => ¬ b.holds",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-cmp-gt-ge",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .gt` read as `≥`",
+   "find": "  | .gt, a, b => b < a",
+   "replace": "  | .gt, a, b => b ≤ a",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-cmp-ge-gt",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .ge` read as `>`",
+   "find": "  | .ge, a, b => b ≤ a",
+   "replace": "  | .ge, a, b => b < a",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-counts-mismatch",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Counts` accepts a list of the wrong length",
+   "find": "  | _, _ => False",
+   "replace": "  | _, _ => True",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-counts-nil",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Counts` refuses the empty lists",
+   "find": "  | [], [] => True",
+   "replace": "  | [], [] => False",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-coefficient",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CountAtom.holds` ignores the coefficients",
+   "find": "p.1.1 * (p.2 : Int)",
+   "replace": "(p.2 : Int)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-population",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Proportion.holds` drops the nonempty population",
+   "find": "(.and p.whole p.part) m ∧ 0 < n ∧",
+   "replace": "(.and p.whole p.part) m ∧",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "note": "The build fails first at proportion_holds_iff (Theorems.lean), which restates Proportion.holds; with that proof replaced by sorry, Examples.lean's population_cases and cmp_cases_two fail too (checked 2026-10-18)."
+  },
+  {
+   "id": "C-part-only",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Proportion.holds` counts the part without the whole",
+   "find": "HasCount T p.sort (.and p.whole p.part) m",
+   "replace": "HasCount T p.sort p.part m",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "note": "The build fails first at proportion_holds_iff (Theorems.lean); with that proof replaced by sorry, Examples.lean's population_cases fails too (checked 2026-10-18)."
+  },
+  {
+   "id": "C-implies-and",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .implies` read as `∧`",
+   "find": "  | .implies a b => a.holds T → b.holds T",
+   "replace": "  | .implies a b => a.holds T ∧ b.holds T",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-admissible-w6a",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Admissible` drops W6a's admissibility",
+   "find": "  T.Admissible E.q ∧ ∀ s ∈ E.finite",
+   "replace": "  True ∧ ∀ s ∈ E.finite",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-entails-premises",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CEntails` ignores the premises",
+   "find": "(∀ a ∈ ps, a.holds T) → c.holds T",
+   "replace": "c.holds T",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-entails-admissible",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CEntails` ranges over every structure",
+   "find": "Admissible E T → (∀ a ∈ ps",
+   "replace": "(∀ a ∈ ps",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-hascount-objects",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`HasCount` counts objects of every sort",
+   "find": "x ∈ xs ↔ T.objects s x ∧ b.holds T x",
+   "replace": "x ∈ xs ↔ b.holds T x",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "note": "The build fails first at hasCount_exists_unique (Theorems.lean); with that proof replaced by sorry, Examples.lean's two_some, two_all and body counts fail too (checked 2026-10-18)."
+  },
+  {
+   "id": "C-finite-declared",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`CEnv.WellFormed` drops `finiteDeclared`",
+   "find": "  finiteDeclared : ∀ s ∈ E.finite, s ∈ E.q.sorts",
+   "replace": "  finiteDeclared : True",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-body-not-unchecked",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a body under `not` is admitted unchecked (spec and check)",
+   "find": "  | .not b => BodyTyped E s b\n  | .and a b => BodyTyped E s a ∧ BodyTyped E s b\n  | .or a b => BodyTyped E s a ∧ BodyTyped E s b\n\n/-- Independent admission: counts and proportions name a declared finite sort with typed bodies; a proportion's\nfraction is between 0 and 1 with a positive denominator; W6a parts are W6a-admitted. (Freshness of region constants\nis `CEnv.WellFormed`.) -/\ninductive Admitted (E : CEnv) : CFormula → Prop\n  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih",
+   "replace": "  | .not b => True\n  | .and a b => BodyTyped E s a ∧ BodyTyped E s b\n  | .or a b => BodyTyped E s a ∧ BodyTyped E s b\n\n/-- Independent admission: counts and proportions name a declared finite sort with typed bodies; a proportion's\nfraction is between 0 and 1 with a positive denominator; W6a parts are W6a-admitted. (Freshness of region constants\nis `CEnv.WellFormed`.) -/\ninductive Admitted (E : CEnv) : CFormula → Prop\n  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => true\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simp [bodyCheck, BodyTyped]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-body-and-left",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a body `and` checks its left part only (spec and check)",
+   "find": "  | .and a b => BodyTyped E s a ∧ BodyTyped E s b\n  | .or a b => BodyTyped E s a ∧ BodyTyped E s b\n\n/-- Independent admission: counts and proportions name a declared finite sort with typed bodies; a proportion's\nfraction is between 0 and 1 with a positive denominator; W6a parts are W6a-admitted. (Freshness of region constants\nis `CEnv.WellFormed`.) -/\ninductive Admitted (E : CEnv) : CFormula → Prop\n  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b",
+   "replace": "  | .and a b => BodyTyped E s a\n  | .or a b => BodyTyped E s a ∧ BodyTyped E s b\n\n/-- Independent admission: counts and proportions name a declared finite sort with typed bodies; a proportion's\nfraction is between 0 and 1 with a positive denominator; W6a parts are W6a-admitted. (Freshness of region constants\nis `CEnv.WellFormed`.) -/\ninductive Admitted (E : CEnv) : CFormula → Prop\n  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-body-or-right",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a body `or` checks its right part only (spec and check)",
+   "find": "  | .or a b => BodyTyped E s a ∧ BodyTyped E s b\n\n/-- Independent admission: counts and proportions name a declared finite sort with typed bodies; a proportion's\nfraction is between 0 and 1 with a positive denominator; W6a parts are W6a-admitted. (Freshness of region constants\nis `CEnv.WellFormed`.) -/\ninductive Admitted (E : CEnv) : CFormula → Prop\n  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b",
+   "replace": "  | .or a b => BodyTyped E s b\n\n/-- Independent admission: counts and proportions name a declared finite sort with typed bodies; a proportion's\nfraction is between 0 and 1 with a positive denominator; W6a parts are W6a-admitted. (Freshness of region constants\nis `CEnv.WellFormed`.) -/\ninductive Admitted (E : CEnv) : CFormula → Prop\n  | quantity {a} : VE.Time.Admitted E.q [] a → Admitted E (.quantity a)\n  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s b",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-count-finite",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a count over a sort not declared finite is admitted (spec, check and admits_iff)",
+   "find": "  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩",
+   "replace": "  | count {c} : (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h, fun h => by cases h with | count hb => exact hb⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-count-terms",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a count's bodies are admitted unchecked (spec, check and admits_iff)",
+   "find": "  | count {c} : c.sort ∈ E.finite → (∀ kb ∈ c.terms, BodyTyped E c.sort kb.2) → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩",
+   "replace": "  | count {c} : c.sort ∈ E.finite → Admitted E (.count c)\n  | proportion {p} : p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h, fun h => by cases h with | count hs => exact hs⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-proportion-whole",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a proportion's whole is admitted unchecked (spec, check and admits_iff)",
+   "find": "p.sort ∈ E.finite → BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩",
+   "replace": "p.sort ∈ E.finite → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hp hd hn => exact ⟨⟨⟨hs, hp⟩, hd⟩, hn⟩⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-proportion-part",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a proportion's part is admitted unchecked (spec, check and admits_iff)",
+   "find": "BodyTyped E p.sort p.whole → BodyTyped E p.sort p.part →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩",
+   "replace": "BodyTyped E p.sort p.whole →\n      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hd hn => exact ⟨⟨⟨hs, hw⟩, hd⟩, hn⟩⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-proportion-den",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a proportion with denominator 0 is admitted (spec, check and admits_iff)",
+   "find": "      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩",
+   "replace": "      p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hn => exact ⟨⟨⟨hs, hw⟩, hp⟩, hn⟩⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-proportion-num",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a fraction above 1 is admitted (spec, check and admits_iff)",
+   "find": "      0 < p.den → p.num ≤ p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩",
+   "replace": "      0 < p.den → Admitted E (.proportion p)\n  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd => exact ⟨⟨⟨hs, hw⟩, hp⟩, hd⟩⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-not-unchecked",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`.not` is admitted unchecked (spec, check and admits_iff)",
+   "find": "  | not {a} : Admitted E a → Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩\n  | not a ih =>\n    simp only [CFormula.admits, ih]\n    exact ⟨.not, fun h => by cases h with | not h => exact h⟩",
+   "replace": "  | not {a} : Admitted E (.not a)\n  | and {a b} : Admitted E a → Admitted E b → Admitted E (.and a b)\n  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => true\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩\n  | not a ih => exact ⟨fun _ => .not, fun _ => rfl⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-or-right-only",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`.or` is admitted when its right part is (spec, check and admits_iff)",
+   "find": "  | or {a b} : Admitted E a → Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩\n  | not a ih =>\n    simp only [CFormula.admits, ih]\n    exact ⟨.not, fun h => by cases h with | not h => exact h⟩\n  | and a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .and h.1 h.2, fun h => by cases h with | and x y => exact ⟨x, y⟩⟩\n  | or a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .or h.1 h.2, fun h => by cases h with | or x y => exact ⟨x, y⟩⟩",
+   "replace": "  | or {a b} : Admitted E b → Admitted E (.or a b)\n  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩\n  | not a ih =>\n    simp only [CFormula.admits, ih]\n    exact ⟨.not, fun h => by cases h with | not h => exact h⟩\n  | and a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .and h.1 h.2, fun h => by cases h with | and x y => exact ⟨x, y⟩⟩\n  | or a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .or h, fun h => by cases h with | or x => exact x⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "C-implies-left-only",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`.implies` is admitted when its left part is (spec, check and admits_iff)",
+   "find": "  | implies {a b} : Admitted E a → Admitted E b → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E && b.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩\n  | not a ih =>\n    simp only [CFormula.admits, ih]\n    exact ⟨.not, fun h => by cases h with | not h => exact h⟩\n  | and a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .and h.1 h.2, fun h => by cases h with | and x y => exact ⟨x, y⟩⟩\n  | or a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .or h.1 h.2, fun h => by cases h with | or x y => exact ⟨x, y⟩⟩\n  | implies a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .implies h.1 h.2, fun h => by cases h with | implies x y => exact ⟨x, y⟩⟩",
+   "replace": "  | implies {a b} : Admitted E a → Admitted E (.implies a b)\n\ndef bodyCheck (E : CEnv) (s : String) : Body → Bool\n  | .atom p => E.q.predicates p == some [.obj s]\n  | .any => true\n  | .not b => bodyCheck E s b\n  | .and a b => bodyCheck E s a && bodyCheck E s b\n  | .or a b => bodyCheck E s a && bodyCheck E s b\n\ndef CFormula.admits (E : CEnv) : CFormula → Bool\n  | .quantity a => a.admits E.q []\n  | .count c => E.finite.contains c.sort && c.terms.all (fun kb => bodyCheck E c.sort kb.2)\n  | .proportion p => E.finite.contains p.sort && bodyCheck E p.sort p.whole &&\n      bodyCheck E p.sort p.part && decide (0 < p.den) && decide (p.num ≤ p.den)\n  | .not a => a.admits E\n  | .and a b => a.admits E && b.admits E\n  | .or a b => a.admits E && b.admits E\n  | .implies a b => a.admits E\n\ntheorem bodyCheck_iff (E : CEnv) (s : String) (b : Body) : bodyCheck E s b = true ↔ BodyTyped E s b := by\n  induction b with\n  | atom p => simp [bodyCheck, BodyTyped]\n  | any => simp [bodyCheck, BodyTyped]\n  | not b ih => simpa [bodyCheck, BodyTyped] using ih\n  | and a b ia ib | or a b ia ib => simp [bodyCheck, BodyTyped, ia, ib]\n\ntheorem admits_iff (E : CEnv) (a : CFormula) : a.admits E = true ↔ Admitted E a := by\n  induction a with\n  | quantity a =>\n    simp only [CFormula.admits]\n    constructor\n    · intro h; exact .quantity (VE.Time.units_admit_sound _ _ _ h)\n    · intro h; cases h with | quantity h => exact VE.Time.units_admit_complete _ _ _ h\n  | count c =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, List.all_eq_true, bodyCheck_iff]\n    exact ⟨fun h => .count h.1 h.2, fun h => by cases h with | count hs hb => exact ⟨hs, hb⟩⟩\n  | proportion p =>\n    simp only [CFormula.admits, Bool.and_eq_true, List.contains_iff_mem, bodyCheck_iff, decide_eq_true_eq]\n    exact ⟨fun h => .proportion h.1.1.1.1 h.1.1.1.2 h.1.1.2 h.1.2 h.2,\n      fun h => by cases h with | proportion hs hw hp hd hn => exact ⟨⟨⟨⟨hs, hw⟩, hp⟩, hd⟩, hn⟩⟩\n  | not a ih =>\n    simp only [CFormula.admits, ih]\n    exact ⟨.not, fun h => by cases h with | not h => exact h⟩\n  | and a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .and h.1 h.2, fun h => by cases h with | and x y => exact ⟨x, y⟩⟩\n  | or a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .or h.1 h.2, fun h => by cases h with | or x y => exact ⟨x, y⟩⟩\n  | implies a b ia ib =>\n    simp only [CFormula.admits, Bool.and_eq_true, ia, ib]\n    exact ⟨fun h => .implies h, fun h => by cases h with | implies x => exact x⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  }
+ ]
+}
