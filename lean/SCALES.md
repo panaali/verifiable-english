@@ -39,11 +39,12 @@ check into `Intended` through `modelData_valid` and `premises_iff_intended`.
 |---|---|
 | FB1 (u0165.s01) | 64 models over two responses; facts and premises: 0; without the closed premise: some; the one instance `uplift/gives_serious_uplift/closed` at (r2, r1) with the facts: 0 |
 | FB1's lower twin | "minor harm" (lower): 0 models; the seeded bug (comparative reversed) makes it 1 |
-| FB2 (u0226.s01, s02) | without the endpoint premise: 3 and 1 over the two ends, 1 and 0 over three dispositions; with it: 1 and 0 over both (A2) |
+| FB2 (u0226.s01, s02) | without the endpoint premise: 3 and 1 over the two ends, 1 and 0 over three dispositions; with it: 1 and 0 over both (A2); `fb2_refuted`: with it, no disposition is more autonomous than fully autonomous in any admissible structure (`Entails`) |
 | FB3 (u0043.s01) | the reading set {not all the same; pairwise different}: (true, false) on two levels, (true, true) on three; `trust_intended`, `trust_not_intended` (9.5: irreflexivity broken, "as much as" not transitive) |
 | FB4 (UDHR u094) | `∀c₁ c₂. same(c₁, c₂)` is well typed, holds with the premises on equal children and fails on unequal ones |
 | FB8 (hostile) | `WellFormed` refuses an undeclared comparative, an `above` cycle (`DependencyCycle: …`), `above` across directions, `comparable` without `same`, a graded word that is not a W2 open term, a predicate in two roles or two dimensions, an undeclared sort, a one-place equative, a two-place graded word, 17 grades; duplicate labels (6 labels, 4 or 5 distinct) |
 | `order_cases`, `symbols_cases` | kahn's cycle check, QS-1's caps (16 grades, 64 pairs) and the symbol lists `WellFormed` reads |
+| one role per predicate | every pair of positions of `Dimension.symbols` of one arity (comparative, equative, two graded words), shared across two dimensions or within one: refused; renamed apart: accepted; each dimension's own conjuncts checked in every position of the block |
 
 ## Differences from the spec's text
 
