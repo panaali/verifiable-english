@@ -390,3 +390,81 @@ def test_prewarm_refuses_a_commit_without_the_cache(tmp_path):
     assert git("worktree", "list", "--porcelain").stdout.count("worktree ") == 1
     assert [path.name for path in (tmp_path / "cache").iterdir()] == []
     assert sorted(os.listdir(repo)) == [".git", "f"]
+
+
+# --- the corpus key part (`sources`), run for real (review F2) ---------------------------------------------------
+
+def _gz(path: Path, value) -> None:
+    import gzip
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(gzip.compress(json.dumps(value).encode()))
+
+
+def _commit(repo: Path, branch: str, files: dict) -> None:
+    git = lambda *args: subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True)  # noqa: E731
+    if not (repo / ".git").exists():
+        repo.mkdir(parents=True, exist_ok=True)
+        git("init", "-q")
+        git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "root", "--allow-empty")
+    git("checkout", "-q", "-B", branch)
+    for name, data in files.items():
+        (repo / name).parent.mkdir(parents=True, exist_ok=True)
+        (repo / name).write_bytes(data)
+    git("add", ".")
+    git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "c", "--allow-empty")
+
+
+def _write(path: Path, data: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(data)
+
+
+PACKED = b'---\n{"senses": {"packs": ["pack.json"]}}\n---\nA document.\n'
+# corpus: (write its inputs, [(edit an input, the case whose source digest must change, or None)], a case)
+SOURCE_INPUTS = {
+    "probe": (lambda w: _write(w.root / "tests/probe_matrix.py", "a"),
+              [(lambda w: _write(w.root / "tests/probe_matrix.py", "b"), "any")], "any"),
+    "conformance": (lambda w: [_write(w.root / f"conformance/{name}.json", name) for name in diff.CONFORMANCE],
+                    [(lambda w, name=name: _write(w.root / f"conformance/{name}.json", "edited"), f"{name}/x")
+                     for name in diff.CONFORMANCE], f"{diff.CONFORMANCE[0]}/x"),
+    **{corpus: (lambda w, corpus=corpus: _write(w.out.with_suffix(f".{corpus}.json"), "a"),
+                [(lambda w, corpus=corpus: _write(w.out.with_suffix(f".{corpus}.json"), "b"), "any")], "any")
+       for corpus in ("readings", "rights", "norm_defaults", "document")},
+    **{corpus: (lambda w, path=path: _gz(w.checkout / path, [{"id": "one", "v": 1}, {"id": "two", "v": 1}]),
+                [(lambda w, path=path: _gz(w.checkout / path, [{"id": "one", "v": 2}, {"id": "two", "v": 1}]), "one"),
+                 (lambda w, path=path: _gz(w.checkout / path, [{"id": "two", "v": 1}]), "one")], "two")
+       for corpus, path in (("discourse", diff.DISCOURSE), ("quantity", diff.QUANTITY))},
+    "pilots": (lambda w: _commit(w.checkout, "pilot/a", {"usecases/x.ve.md": PACKED, "usecases/pack.json": b"1"}),
+               [(lambda w: _commit(w.checkout, "pilot/a", {"usecases/pack.json": b"2"}), None),  # beside it
+                (lambda w: _commit(w.checkout, "pilot/a", {"usecases/x.ve.md": PACKED + b"More.\n"}),
+                 "pilot/a:usecases/x.ve.md"),
+                (lambda w: _commit(w.checkout, "pilot/b", {"usecases/y.ve.md": b"Another.\n"}), None)],
+               "pilot/a:usecases/x.ve.md"),
+}
+
+
+def test_every_corpus_has_its_source_inputs_tested():
+    assert sorted(SOURCE_INPUTS) == sorted(diff.CORPORA)
+
+
+@pytest.mark.parametrize("corpus", sorted(SOURCE_INPUTS))
+def test_each_input_a_corpus_reads_changes_its_key(tmp_path, monkeypatch, corpus):
+    """`sources` itself (the `world` fixture replaces it): every input a corpus's records read changes its digest,
+    and the source digest of the case it belongs to; the files a pilot names beside it change the digest though
+    no record carries theirs."""
+    w = argparse.Namespace(root=tmp_path / "root", out=tmp_path / "ab/base.jsonl", checkout=tmp_path / "checkout")
+    w.checkout.mkdir()
+    monkeypatch.setattr(diff, "ROOT", w.checkout)
+    write, edits, case = SOURCE_INPUTS[corpus]
+    write(w)
+    seen = [cache.sources(corpus, w.root, w.out)]
+    assert seen[0][1](case) is not None
+    for edit, changed in edits:
+        before = seen[-1]
+        edit(w)
+        seen.append(cache.sources(corpus, w.root, w.out))
+        assert seen[-1][0] != before[0], (corpus, changed)
+        if changed is not None:
+            assert seen[-1][1](changed) != before[1](changed)
+        assert seen[-1][1](case) is not None
+    assert len({digest for digest, _ in seen}) == len(seen)
