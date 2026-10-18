@@ -1,0 +1,139 @@
+{
+ "mutants": [
+  {
+   "id": "erase-cmp",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "erase_iff: erasure of a proportion's `more than` is faithful",
+   "source_sha256": "d0e234b185c2c4f649a8bcfb5d49da0279e8b5576468289cd34e0b5bfc1f39e6",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.0,
+   "output_tail": "\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [122/124] Built VE.Cardinality.Erase (953ms)\n\u2716 [123/124] Building VE.Cardinality.Theorems (5.9s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a1b/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a1b/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a1b/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:657:21: Type mismatch\n  eq_comm\nhas type\n  ?m.476 = ?m.477 \u2194 ?m.477 = ?m.476\nbut is expected to have type\n  \u2191p.num * \u2191(regionSize T p.sort p.whole) < \u2191p.den * \u2191(regionSize T p.sort (p.whole.and p.part)) \u2194\n    \u2191p.num * \u2191(regionSize T p.sort p.whole) \u2264 \u2191p.den * \u2191(regionSize T p.sort (p.whole.and p.part))\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "bridge",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "bridge_hold: a bridge sums the regions outside the universal's body",
+   "source_sha256": "d0e234b185c2c4f649a8bcfb5d49da0279e8b5576468289cd34e0b5bfc1f39e6",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.3,
+   "output_tail": "ld/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:597:9: Application type mismatch: The argument\n  key.mp\nhas type\n  QFormula.tdenote (withRegions E fs T) [] (QFormula.all s a') \u2192\n    QFormula.tdenote (withRegions E fs T) [] (QFormula.eq (regionSum E fs s b.not) (QTerm.num dl 0))\nbut is expected to have type\n  QFormula.tdenote (withRegions E fs T) []\n    ((s, b, QFormula.all s a').snd.snd.implies\n      (QFormula.eq (regionSum E fs (s, b, QFormula.all s a').fst (s, b, QFormula.all s a').snd.fst) (QTerm.num dl 0)))\nin the application\n  And.intro key.mp\nerror: VE/Cardinality/Theorems.lean:746:28: Application type mismatch: The argument\n  hz\nhas type\n  Time.Admitted (E.elab (c :: ps)) [] (QFormula.eq (regionSum E (c :: ps) x.fst x.snd.fst.not) (QTerm.num dl 0))\nbut is expected to have type\n  Time.Admitted (E.elab (c :: ps)) [] (QFormula.eq (regionSum E (c :: ps) x.fst x.snd.fst) (QTerm.num dl 0))\nin the application\n  Time.Admitted.implies hU hz\nerror: VE/Cardinality/Theorems.lean:746:42: Application type mismatch: The argument\n  hz\nhas type\n  Time.Admitted (E.elab (c :: ps)) [] (QFormula.eq (regionSum E (c :: ps) x.fst x.snd.fst.not) (QTerm.num dl 0))\nbut is expected to have type\n  Time.Admitted (E.elab (c :: ps)) [] (QFormula.eq (regionSum E (c :: ps) x.fst x.snd.fst) (QTerm.num dl 0))\nin the application\n  Time.Admitted.implies hz\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "elab-tag",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "withRegions_admissible: region constants are declared dimensionless, as withRegions reads them",
+   "source_sha256": "adbc6b650d2d5480d981586e9502eb7d8b2d95845cbc36fe00f96341a15a91f9",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.3,
+   "output_tail": "ment\n  rfl\nhas type\n  ?m.151 = ?m.151\nbut is expected to have type\n  Time.TValue.Typed (withRegions E fs T).objects (Time.QType.qty Time.dayTag)\n    (Time.TValue.qty dl \u2191(regionSize T s (regionBody (predsOn E fs s) r)))\nin the application\n  \u27e8?m.149, rfl\u27e9\nerror: VE/Cardinality/Theorems.lean:699:31: unsolved goals\nE : CEnv\nfs : List CFormula\n\u0393 : List String\ns : String\nhs : s \u2208 countedSorts fs\nb : Body\nr : Region\nhr : r \u2208 List.filter (fun r => Body.inRegion (predsOn E fs s) r b) (regions (predsOn E fs s).length)\nht :\n  QTerm.const dl (regionConst s r) \u2208\n    List.map (fun r => QTerm.const dl (regionConst s r))\n      (List.filter (fun r => Body.inRegion (predsOn E fs s) r b) (regions (predsOn E fs s).length))\nthis : ((regionTable E fs).any fun x => x.fst == regionConst s r) = true\n\u22a2 Time.dayTag = dl\nerror: VE/Cardinality/Theorems.lean:741:56: unsolved goals\nE : CEnv\nhE : E.WellFormed\nps : List CFormula\nc : CFormula\nhps : \u2200 (a : CFormula), a \u2208 ps \u2192 Admitted E a\nhc : Admitted E c\nhfs : \u2200 (a : CFormula), a \u2208 c :: ps \u2192 Admitted E a\nherase : \u2200 (a : CFormula), a \u2208 c :: ps \u2192 Time.Admitted (E.elab (c :: ps)) [] (CFormula.erase E (c :: ps) a)\ne : String \u00d7 String \u00d7 Region\nhe : e \u2208 regionTable E (c :: ps)\nha : QFormula.le (QTerm.num dl 0) (QTerm.const dl e.fst) \u2208 nonnegPremises E (c :: ps)\nthis : ((regionTable E (c :: ps)).any fun x => x.fst == e.fst) = true\n\u22a2 Time.dayTag = dl\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "admitted-tag",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "erasedProblem_admitted: region sums carry a tag W6a admits for sums (meaning is unchanged by it)",
+   "source_sha256": "adbc6b650d2d5480d981586e9502eb7d8b2d95845cbc36fe00f96341a15a91f9",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.0,
+   "output_tail": "ake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a1b/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:690:33: Tactic `decide` proved that the proposition\n  dl \u2260 Time.dayTag\nis false\nerror: VE/Cardinality/Theorems.lean:690:49: Application type mismatch: The argument\n  rfl\nhas type\n  ?m.40 = ?m.40\nbut is expected to have type\n  dl = Time.dimensionless\nin the application\n  Or.inl rfl\nerror: VE/Cardinality/Theorems.lean:699:25: Application type mismatch: The argument\n  rfl\nhas type\n  ?m.82 = ?m.82\nbut is expected to have type\n  dl = Time.dimensionless\nin the application\n  Or.inl rfl\nerror: VE/Cardinality/Theorems.lean:706:28: Tactic `decide` proved that the proposition\n  dl \u2260 Time.dayTag\nis false\nerror: VE/Cardinality/Theorems.lean:706:44: Application type mismatch: The argument\n  rfl\nhas type\n  ?m.34 = ?m.34\nbut is expected to have type\n  dl = Time.dimensionless\nin the application\n  Or.inl rfl\nerror: VE/Cardinality/Theorems.lean:741:50: Application type mismatch: The argument\n  rfl\nhas type\n  ?m.212 = ?m.212\nbut is expected to have type\n  dl = Time.dimensionless\nin the application\n  Or.inl rfl\nerror: VE/Cardinality/Theorems.lean:745:112: Application type mismatch: The argument\n  rfl\nhas type\n  ?m.312 = ?m.312\nbut is expected to have type\n  dl = Time.dimensionless\nin the application\n  Or.inl rfl\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "sound-fs",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "cardinality_elab_sound: the regions come from the whole problem, conclusion included",
+   "source_sha256": "d0e234b185c2c4f649a8bcfb5d49da0279e8b5576468289cd34e0b5bfc1f39e6",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.4,
+   "output_tail": "a ha => ?m.50\nhas type\n  QFormula.tdenote (withRegions E (c :: ps) T) [] (erasedProblem E ps c).snd\nbut is expected to have type\n  QFormula.tdenote (withRegions E (c :: ?m.42) T) [] (CFormula.erase E (c :: ?m.42) c)\nin the application\n  (erase_iff E hE (c :: ?m.42) T hT c hc List.mem_cons_self).mpr\n    (h \u03b1 (withRegions E (c :: ps) T) (withRegions_admissible E hE (c :: ps) T hT) fun a ha => ?m.50)\nerror: VE/Cardinality/Theorems.lean:740:89: Application type mismatch: The argument\n  he\nhas type\n  e \u2208 regionTable E ps\nbut is expected to have type\n  e \u2208 regionTable E (c :: ps)\nin the application\n  And.intro he\nerror: VE/Cardinality/Theorems.lean:743:60: Application type mismatch: The argument\n  hx\nhas type\n  x \u2208 countedUniversals E ps\nbut is expected to have type\n  ?m.247 \u2208 countedUniversals E (c :: ps)\nin the application\n  countedUniversals_spec hfs hx\nerror: VE/Cardinality/Theorems.lean:747:4: Type mismatch\n  herase b (List.mem_cons_of_mem c hb)\nhas type\n  Time.Admitted (E.elab (c :: ps)) [] (CFormula.erase E (c :: ps) b)\nbut is expected to have type\n  Time.Admitted (E.elab (c :: ps)) [] (CFormula.erase E ps b)\nerror: VE/Cardinality/Theorems.lean:748:4: Type mismatch\n  herase c List.mem_cons_self\nhas type\n  Time.Admitted (E.elab (c :: ps)) [] (CFormula.erase E (c :: ps) c)\nbut is expected to have type\n  Time.Admitted (E.elab (c :: ps)) [] (CFormula.erase E ps c)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "name-sep",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "regionConst_inj: two (sort, region) pairs never share a region constant",
+   "source_sha256": "adbc6b650d2d5480d981586e9502eb7d8b2d95845cbc36fe00f96341a15a91f9",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.4,
+   "output_tail": "ake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:198:5: unsolved goals\ns : String\nr : Region\n\u22a2 (bitString r).data = '_' :: '_' :: (bitString r).data\nerror: VE/Cardinality/Theorems.lean:217:53: Application type mismatch: The argument\n  hd\nhas type\n  (List.map (fun b => if b = true then '1' else '0') r).reverse ++ (s.data.reverse ++ regionPrefix.data.reverse) =\n    (List.map (fun b => if b = true then '1' else '0') r').reverse ++ (s'.data.reverse ++ regionPrefix.data.reverse)\nbut is expected to have type\n  (List.map (fun b => if b = true then '1' else '0') r).reverse ++ '_' :: ?m.44 =\n    (List.map (fun b => if b = true then '1' else '0') r').reverse ++ '_' :: ?m.45\nin the application\n  split_underscore (List.map (fun b => if b = true then '1' else '0') r).reverse\n    (List.map (fun b => if b = true then '1' else '0') r').reverse ?m.44 ?m.45 (hb r) (hb r') hd\nerror: VE/Cardinality/Theorems.lean:213:23: unsolved goals\ns s' : String\nr r' : Region\nh : regionConst s r = regionConst s' r'\nhd :\n  (List.map (fun b => if b = true then '1' else '0') r).reverse ++ (s.data.reverse ++ regionPrefix.data.reverse) =\n    (List.map (fun b => if b = true then '1' else '0') r').reverse ++ (s'.data.reverse ++ regionPrefix.data.reverse)\nhb : \u2200 (q : Region), \u00ac'_' \u2208 (List.map (fun b => if b = true then '1' else '0') q).reverse\n\u22a2 s = s' \u2227 r = r'\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "name-prefix",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "regionConst_startsWith: every region constant begins with the prefix WellFormed keeps declared constants out of",
+   "source_sha256": "adbc6b650d2d5480d981586e9502eb7d8b2d95845cbc36fe00f96341a15a91f9",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.7,
+   "output_tail": ", List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [121/124] Built VE.Cardinality.Regions (836ms)\n\u2714 [122/124] Built VE.Cardinality.Erase (640ms)\n\u2716 [123/124] Building VE.Cardinality.Theorems (4.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a1b/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a1b/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a1b/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:198:5: unsolved goals\ns : String\nr : Region\n\u22a2 s.data ++ (regionPrefix.data ++ '_' :: '_' :: (bitString r).data) =\n    regionPrefix.data ++ (s.data ++ '_' :: '_' :: (bitString r).data)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "region-body",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "regionSize_sum: a region's body is its own truth values (regions partition the sort)",
+   "source_sha256": "adbc6b650d2d5480d981586e9502eb7d8b2d95845cbc36fe00f96341a15a91f9",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.3,
+   "output_tail": "option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [121/124] Built VE.Cardinality.Regions (759ms)\n\u2714 [122/124] Built VE.Cardinality.Erase (628ms)\n\u2716 [123/124] Building VE.Cardinality.Theorems (3.8s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a1b/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a1b/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a1b/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a1b/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:270:4: 'show' tactic failed, pattern\n  Body.holds T x ((if v = true then Body.atom p else (Body.atom p).not).and (regionBody ps r)) \u2194 ?m.108\nis not definitionally equal to target\n  Body.holds T x (regionBody (p :: ps) (v :: r)) \u2194\n    List.map (fun p => decide (T.relation p [Time.TValue.obj x])) (p :: ps) = v :: r\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "withRegions-size",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "regionSum_denote: withRegions reads a region constant as its own region's size",
+   "source_sha256": "d0e234b185c2c4f649a8bcfb5d49da0279e8b5576468289cd34e0b5bfc1f39e6",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.4,
+   "output_tail": "(QTerm.const dl e.fst) \u2208 nonnegPremises E fs\nhs : (List.find? (fun x => x.fst == e.fst) (regionTable E fs)).isSome = true\nc s : String\nr : Region\nhf : List.find? (fun x => x.fst == e.fst) (regionTable E fs) = some (c, s, r)\n\u22a2 \u2191(regionSize T s Body.any) = \u2191(regionSize T s (regionBody (predsOn E fs s) r))\nerror: VE/Cardinality/Theorems.lean:355:73: unsolved goals\n\u03b1 : Type u\nE : CEnv\nfs : List CFormula\nT : TStructure \u03b1\ns' : String\nleft\u271d\u00b9 : s' \u2208 countedSorts fs\nr' : Region\nleft\u271d : r' \u2208 regions (predsOn E fs s').length\nhe' : (regionConst s' r', s', r') \u2208 List.map (fun r => (regionConst s' r, s', r)) (regions (predsOn E fs s').length)\nhs : s' \u2208 countedSorts fs\nhr : r' \u2208 regions (predsOn E fs s').length\nhe : List.find? (fun e => e.fst == regionConst s' r') (regionTable E fs) = some (regionConst s' r', s', r')\n\u22a2 \u2191(regionSize T s' Body.any) = \u2191(regionSize T s' (regionBody (predsOn E fs s') r'))\nerror: VE/Cardinality/Theorems.lean:574:69: unsolved goals\n\u03b1 : Type u\nE : CEnv\nhE : E.WellFormed\nfs : List CFormula\nT : TStructure \u03b1\nhT : Admissible E T\nc : String\nhany : ((regionTable E fs).any fun x => x.fst == c) = true\ne : String \u00d7 String \u00d7 Region\nhe : e \u2208 regionTable E fs\nhec : (e.fst == c) = true\nc' s : String\nr : Region\nhf : List.find? (fun e => e.fst == c) (regionTable E fs) = some (c', s, r)\n\u22a2 \u2191(regionSize T s Body.any) = \u2191(regionSize T s (regionBody (predsOn E fs s) r))\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  }
+ ]
+}
