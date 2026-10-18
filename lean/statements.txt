@@ -10665,6 +10665,396 @@ theorem VE.NormDefaults.Admission.wire_report_consequenceX
                 VE.Formula.denote S [] res.report.root.formula
   -- uses VE.Data.Background.generate@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Graph.Claim.formula@VE.ClaimGraph VE.Graph.Claim@VE.ClaimGraph VE.Graph.Report.root@VE.ClaimGraph VE.NormDefaults.Admission.AdmittedX.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.doc@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX.report@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.AdmittedX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.admitDocumentX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Admission.otherAssumptionsX@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.background@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.Route.Admission.Doc.flags@VE.Route.Admission VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 1523594539
+theorem VE.NormDefaults.Packs.X_legacy
+  ∀ (s r : VE.NormDefaults.Packs.Pack),
+    VE.NormDefaults.Packs.X [s, r] = List.map (fun x => x.snd) (s.labelled ++ r.labelled)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs
+  -- expr 3946834832
+theorem VE.NormDefaults.Packs.X_single
+  ∀ (p : VE.NormDefaults.Packs.Pack), VE.NormDefaults.Packs.X [p] = List.map (fun x => x.snd) p.labelled
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs
+  -- expr 1045114216
+theorem VE.NormDefaults.Packs.X_soft_first
+  ∀ {U : VE.NormDefaults.UDoc} {used : Nat} {ps qs : List VE.NormDefaults.Packs.Pack},
+    VE.NormDefaults.Packs.assemble U used ps = Except.ok qs →
+      VE.NormDefaults.Packs.X qs =
+        List.map (fun x => x.snd) (VE.NormDefaults.Packs.packPremises qs "soft") ++
+          VE.NormDefaults.Packs.X (List.filter (fun x => x.id != "soft") qs)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.Packs.packPremises@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 1812855979
+theorem VE.NormDefaults.Packs.assembleIn_constraint
+  ∀ (pre : List (String × String)) (E : VE.Environment) (used : Nat),
+    used ≤ 256 →
+      ∀ (ps : List VE.NormDefaults.Packs.Pack),
+        VE.NormDefaults.Packs.ordered ps = ps →
+          (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ ps → p.id ∈ VE.NormDefaults.Packs.packOrder) →
+            (∀ (i : String), i ∈ VE.NormDefaults.Packs.packOrder → List.countP (fun x => x.id == i) ps ≤ 1) →
+              (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ ps → p.decls = [] ∧ p.consts = []) →
+                (List.map (fun x => x.fst) (VE.NormDefaults.Packs.labelledX ps)).Nodup →
+                  ∀ (qs : List VE.NormDefaults.Packs.Pack),
+                    VE.NormDefaults.Packs.ordered qs = ps →
+                      (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ qs → p.id ∈ VE.NormDefaults.Packs.packOrder) →
+                        (∀ (i : String), i ∈ VE.NormDefaults.Packs.packOrder → List.countP (fun x => x.id == i) qs ≤ 1) →
+                          VE.NormDefaults.Packs.assembleIn pre E used qs = Except.ok ps
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.consts@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.decls@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.assembleIn@VE.NormDefaults.Packs VE.NormDefaults.Packs.labelledX@VE.NormDefaults.Packs VE.NormDefaults.Packs.ordered@VE.NormDefaults.Packs VE.NormDefaults.Packs.packOrder@VE.NormDefaults.Packs
+  -- expr 771593107
+theorem VE.NormDefaults.Packs.assembleIn_ok
+  ∀ {pre : List (String × String)} {E : VE.Environment} {used : Nat} {ps qs : List VE.NormDefaults.Packs.Pack},
+    VE.NormDefaults.Packs.assembleIn pre E used ps = Except.ok qs →
+      (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ ps → p.id ∈ VE.NormDefaults.Packs.packOrder) ∧
+        (∀ (i : String), i ∈ VE.NormDefaults.Packs.packOrder → List.countP (fun x => x.id == i) ps ≤ 1) ∧
+          qs = VE.NormDefaults.Packs.ordered ps ∧
+            VE.NormDefaults.Packs.firstRepeat []
+                  (List.flatMap (fun p => List.map (fun a => (p.id, a.fst)) p.labelled) qs) =
+                Option.none ∧
+              (∀ (x : String × String),
+                  x ∈ List.flatMap (fun p => List.map (fun n => (p.id, n)) p.names) qs →
+                    VE.NormDefaults.Packs.declaredIn E x.snd = Bool.false) ∧
+                VE.NormDefaults.Packs.firstRepeat [] (List.flatMap (fun p => List.map (fun n => (p.id, n)) p.names) qs) =
+                    Option.none ∧
+                  (∀ (p : VE.NormDefaults.Packs.Pack),
+                      p ∈ qs → ∀ (n : String), n ∈ p.names → VE.NormDefaults.Packs.ownPrefixIn pre p n = Bool.true) ∧
+                    used + (VE.NormDefaults.Packs.names qs).length ≤ 256
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.names@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.assembleIn@VE.NormDefaults.Packs VE.NormDefaults.Packs.declaredIn@VE.NormDefaults.Packs VE.NormDefaults.Packs.firstRepeat@VE.NormDefaults.Packs VE.NormDefaults.Packs.names@VE.NormDefaults.Packs VE.NormDefaults.Packs.ordered@VE.NormDefaults.Packs VE.NormDefaults.Packs.ownPrefixIn@VE.NormDefaults.Packs VE.NormDefaults.Packs.packOrder@VE.NormDefaults.Packs
+  -- expr 2731021893
+theorem VE.NormDefaults.Packs.assemble_fresh
+  ∀ {U : VE.NormDefaults.UDoc} {used : Nat} {ps qs : List VE.NormDefaults.Packs.Pack},
+    VE.NormDefaults.Packs.assemble U used ps = Except.ok qs →
+      (List.map (fun x => x.fst) (VE.NormDefaults.Packs.labelledX qs)).Nodup ∧
+        (VE.NormDefaults.Packs.names qs).Nodup ∧
+          (∀ (p : VE.NormDefaults.Packs.Pack),
+              p ∈ qs →
+                ∀ (n : String),
+                  n ∈ p.names →
+                    (VE.NormDefaults.Packs.fullEnv U).predicates n = Option.none ∧
+                      (VE.NormDefaults.Packs.fullEnv U).constants n = Option.none ∧
+                        VE.NormDefaults.Packs.ownPrefix p n = Bool.true) ∧
+            used + (VE.NormDefaults.Packs.names qs).length ≤ 256
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.names@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.Packs.fullEnv@VE.NormDefaults.Packs VE.NormDefaults.Packs.labelledX@VE.NormDefaults.Packs VE.NormDefaults.Packs.names@VE.NormDefaults.Packs VE.NormDefaults.Packs.ownPrefix@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 2348930377
+theorem VE.NormDefaults.Packs.assemble_legacy_rights
+  ∀ (U : VE.NormDefaults.UDoc) (R : VE.Rights.RightsDoc) (used : Nat),
+    used ≤ 256 →
+      (List.map (fun x => x.fst)
+            (VE.NormDefaults.Wire.softLabelledU U (VE.Rights.correlate R) ++ VE.Rights.limPremisesLabelled R)).Nodup →
+        VE.NormDefaults.Packs.assemble U used
+              [VE.NormDefaults.Wire.softPack U (VE.Rights.correlate R), VE.NormDefaults.Wire.rightsPack R] =
+            Except.ok [VE.NormDefaults.Wire.softPack U (VE.Rights.correlate R), VE.NormDefaults.Wire.rightsPack R] ∧
+          VE.NormDefaults.Packs.assemble U used
+              [VE.NormDefaults.Wire.rightsPack R, VE.NormDefaults.Wire.softPack U (VE.Rights.correlate R)] =
+            Except.ok [VE.NormDefaults.Wire.softPack U (VE.Rights.correlate R), VE.NormDefaults.Wire.rightsPack R]
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.rightsPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremisesLabelled@VE.Rights.Correlate
+  -- expr 547970802
+theorem VE.NormDefaults.Packs.assemble_legacy_soft
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (used : Nat),
+    used ≤ 256 →
+      (List.map (fun x => x.fst) (VE.NormDefaults.Wire.softLabelledU U D)).Nodup →
+        VE.NormDefaults.Packs.assemble U used [VE.NormDefaults.Wire.softPack U D] =
+          Except.ok [VE.NormDefaults.Wire.softPack U D]
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 2428982651
+theorem VE.NormDefaults.Packs.assemble_nil
+  ∀ (U : VE.NormDefaults.UDoc) (used : Nat), used ≤ 256 → VE.NormDefaults.Packs.assemble U used [] = Except.ok []
+  -- uses VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 3214162349
+theorem VE.NormDefaults.Packs.assemble_order
+  ∀ {U : VE.NormDefaults.UDoc} {used : Nat} {ps qs : List VE.NormDefaults.Packs.Pack},
+    VE.NormDefaults.Packs.assemble U used ps = Except.ok qs →
+      qs = VE.NormDefaults.Packs.ordered ps ∧
+        qs.Perm ps ∧ (List.map (fun x => x.id) qs).Sublist VE.NormDefaults.Packs.packOrder
+  -- uses VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.Packs.ordered@VE.NormDefaults.Packs VE.NormDefaults.Packs.packOrder@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 1229644074
+theorem VE.NormDefaults.Packs.assemble_wellFormed
+  ∀ {U : VE.NormDefaults.UDoc} {used : Nat} {ps qs : List VE.NormDefaults.Packs.Pack},
+    VE.NormDefaults.Packs.assemble U used ps = Except.ok qs →
+      (∀ (p : VE.NormDefaults.Packs.Pack),
+          p ∈ ps →
+            ∀ (a : String × VE.Formula),
+              a ∈ p.labelled →
+                VE.Formula.WellFormed
+                  (VE.NormDefaults.Packs.extendEnv (VE.Norms.envAt (VE.NormDefaults.fill U) 0) p.decls p.consts) []
+                  a.snd) →
+        ∀ (a : VE.Formula), a ∈ VE.NormDefaults.Packs.X qs → VE.Formula.WellFormed (VE.NormDefaults.Packs.envX U qs) [] a
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.consts@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.decls@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.Packs.envX@VE.NormDefaults.Packs VE.NormDefaults.Packs.extendEnv@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 2359425922
+theorem VE.NormDefaults.Packs.elaborateArrays_keys
+  ∀ (qs : List VE.NormDefaults.Packs.Pack),
+    List.map (fun x => x.fst) (VE.NormDefaults.Packs.elaborateArrays qs) = ["soft", "rights"]
+  -- uses VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.elaborateArrays@VE.NormDefaults.Packs
+  -- expr 1409404672
+theorem VE.NormDefaults.Packs.elaborateArrays_legacy
+  ∀ (s r : VE.NormDefaults.Packs.Pack),
+    s.id = "soft" →
+      r.id = "rights" →
+        VE.NormDefaults.Packs.elaborateArrays [s, r] =
+          [("soft",
+              Lean.Json.arr
+                (List.map
+                    (fun x =>
+                      match x with
+                      | (l, a) => Lean.Json.mkObj [("label", Lean.Json.str l), ("ast", VE.SoftNorms.Wire.enc a)])
+                    (List.take ((s.labelled ++ r.labelled).length - r.labelled.length)
+                      (s.labelled ++ r.labelled))).toArray),
+            ("rights",
+              Lean.Json.arr
+                (List.map
+                    (fun x =>
+                      match x with
+                      | (l, a) => Lean.Json.mkObj [("label", Lean.Json.str l), ("ast", VE.SoftNorms.Wire.enc a)])
+                    (List.drop ((s.labelled ++ r.labelled).length - r.labelled.length)
+                      (s.labelled ++ r.labelled))).toArray)]
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.elaborateArrays.match_1@VE.NormDefaults.Packs VE.NormDefaults.Packs.elaborateArrays@VE.NormDefaults.Packs VE.SoftNorms.Wire.enc@VE.SoftNorms.Wire
+  -- expr 1668789486
+theorem VE.NormDefaults.Packs.envX_nil
+  ∀ (U : VE.NormDefaults.UDoc), VE.NormDefaults.Packs.envX U [] = VE.Norms.envAt (VE.NormDefaults.fill U) 0
+  -- uses VE.Environment@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.envX@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 1917405039
+theorem VE.NormDefaults.Packs.extendEnv_nil
+  ∀ (E : VE.Environment), VE.NormDefaults.Packs.extendEnv E [] [] = E
+  -- uses VE.Environment@VE.Syntax VE.NormDefaults.Packs.extendEnv@VE.NormDefaults.Packs
+  -- expr 2745767596
+theorem VE.NormDefaults.Packs.filledX_whole
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (w : Lean.Json) (fw : VE.NormDefaults.Wire.FilledX L),
+    VE.NormDefaults.Wire.filledX L w = Except.ok fw → VE.NormDefaults.Wire.extraValid L.U L.X fw.S.M fw.F = Bool.true
+  -- uses VE.NormDefaults.Wire.FilledX.F@VE.NormDefaults.Layered VE.NormDefaults.Wire.FilledX.S@VE.NormDefaults.Layered VE.NormDefaults.Wire.FilledX@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.Wire.filledX@VE.NormDefaults.Layered
+  -- expr 3799277324
+theorem VE.NormDefaults.Packs.filterMap_congr
+  ∀ {α β : Type} {f g : α → Option β} {l : List α},
+    (∀ (x : α), x ∈ l → f x = g x) → List.filterMap f l = List.filterMap g l
+  -- uses
+  -- expr 202688023
+theorem VE.NormDefaults.Packs.filterMap_find_ids
+  ∀ (O : List String) (l : List VE.NormDefaults.Packs.Pack),
+    (List.map (fun x => x.id) (List.filterMap (fun i => List.find? (fun x => x.id == i) l) O)).Sublist O
+  -- uses VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs
+  -- expr 1662596014
+theorem VE.NormDefaults.Packs.filterMap_find_perm
+  ∀ (O : List String),
+    O.Nodup →
+      ∀ (l : List VE.NormDefaults.Packs.Pack),
+        (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ l → p.id ∈ O) →
+          (∀ (i : String), i ∈ O → List.countP (fun x => x.id == i) l ≤ 1) →
+            (List.filterMap (fun i => List.find? (fun x => x.id == i) l) O).Perm l
+  -- uses VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs
+  -- expr 603548941
+theorem VE.NormDefaults.Packs.firstFailing_one
+  ∀ (p : VE.NormDefaults.Packs.Pack) (holds : VE.Formula → Bool),
+    (VE.NormDefaults.Packs.firstFailing [p] holds = Option.none ↔
+        (List.map (fun x => x.snd) p.labelled).all holds = Bool.true) ∧
+      ∀ (i l : String), VE.NormDefaults.Packs.firstFailing [p] holds = Option.some (i, l) → i = p.id
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.firstFailing@VE.NormDefaults.Packs
+  -- expr 1001370776
+theorem VE.NormDefaults.Packs.firstFailing_some
+  ∀ (qs : List VE.NormDefaults.Packs.Pack) (holds : VE.Formula → Bool),
+    (VE.NormDefaults.Packs.X qs).all holds = Bool.false → (VE.NormDefaults.Packs.firstFailing qs holds).isSome = Bool.true
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.firstFailing@VE.NormDefaults.Packs
+  -- expr 3097663139
+theorem VE.NormDefaults.Packs.firstFailing_two
+  ∀ (s r : VE.NormDefaults.Packs.Pack) (holds : VE.Formula → Bool),
+    VE.NormDefaults.Packs.firstFailing [s, r] holds =
+      (VE.NormDefaults.Packs.firstFailing [s] holds).or (VE.NormDefaults.Packs.firstFailing [r] holds)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.firstFailing@VE.NormDefaults.Packs
+  -- expr 3334137784
+theorem VE.NormDefaults.Packs.firstRepeat_none
+  ∀ (seen : List String) (l : List (String × String)),
+    VE.NormDefaults.Packs.firstRepeat seen l = Option.none →
+      (List.map (fun x => x.snd) l).Nodup ∧ ∀ (x : String × String), x ∈ l → ¬x.snd ∈ seen
+  -- uses VE.NormDefaults.Packs.firstRepeat@VE.NormDefaults.Packs
+  -- expr 1579889385
+theorem VE.NormDefaults.Packs.firstRepeat_none_of
+  ∀ (seen : List String) (l : List (String × String)),
+    (List.map (fun x => x.snd) l).Nodup →
+      (∀ (x : String × String), x ∈ l → ¬x.snd ∈ seen) → VE.NormDefaults.Packs.firstRepeat seen l = Option.none
+  -- uses VE.NormDefaults.Packs.firstRepeat@VE.NormDefaults.Packs
+  -- expr 4040779569
+theorem VE.NormDefaults.Packs.legacy_drop
+  ∀ (s r : List (String × VE.Formula)), List.drop ((s ++ r).length - r.length) (s ++ r) = r
+  -- uses VE.Formula@VE.Syntax
+  -- expr 2159951683
+theorem VE.NormDefaults.Packs.legacy_take
+  ∀ (s r : List (String × VE.Formula)), List.take ((s ++ r).length - r.length) (s ++ r) = s
+  -- uses VE.Formula@VE.Syntax
+  -- expr 4073500724
+theorem VE.NormDefaults.Packs.lookup_flatMap_mem
+  ∀ {α β γ : Type} [inst : BEq α] [LawfulBEq α] {f : β → List (α × γ)} {qs : List β} {p : β},
+    p ∈ qs →
+      ∀ {n : α} {v : γ},
+        List.lookup n (f p) = Option.some v →
+          (∀ (q : β), q ∈ qs → ∀ (w : γ), (n, w) ∈ f q → q = p) → List.lookup n (List.flatMap f qs) = Option.some v
+  -- uses
+  -- expr 4012062574
+theorem VE.NormDefaults.Packs.lookup_flatMap_none
+  ∀ {α β γ : Type} [inst : BEq α] [LawfulBEq α] {f : β → List (α × γ)} {qs : List β} {n : α} {v : γ},
+    List.lookup n (List.flatMap f qs) = Option.some v → ∃ q, q ∈ qs ∧ (n, v) ∈ f q
+  -- uses
+  -- expr 821265318
+theorem VE.NormDefaults.Packs.lookup_mem
+  ∀ {α γ : Type} [inst : BEq α] [LawfulBEq α] {n : α} {v : γ} {l : List (α × γ)},
+    List.lookup n l = Option.some v → (n, v) ∈ l
+  -- uses
+  -- expr 3122011733
+theorem VE.NormDefaults.Packs.mem_filterMap_find
+  ∀ {O : List String} {l : List VE.NormDefaults.Packs.Pack} {q : VE.NormDefaults.Packs.Pack},
+    q ∈ List.filterMap (fun i => List.find? (fun x => x.id == i) l) O → q ∈ l ∧ q.id ∈ O
+  -- uses VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs
+  -- expr 1706948672
+theorem VE.NormDefaults.Packs.names_unique
+  ∀ {qs : List VE.NormDefaults.Packs.Pack},
+    (VE.NormDefaults.Packs.names qs).Nodup →
+      ∀ (p : VE.NormDefaults.Packs.Pack),
+        p ∈ qs → ∀ (q : VE.NormDefaults.Packs.Pack), q ∈ qs → ∀ (n : String), n ∈ p.names → n ∈ q.names → q = p
+  -- uses VE.NormDefaults.Packs.Pack.names@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.names@VE.NormDefaults.Packs
+  -- expr 1106347134
+theorem VE.NormDefaults.Packs.packFault_legacy_rights
+  ∀ (U : VE.NormDefaults.UDoc) (R : VE.Rights.RightsDoc) (M : VE.FiniteModel VE.Bridge.Entity)
+    (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity),
+    VE.NormDefaults.Wire.extraValid U
+          (VE.NormDefaults.Packs.X
+            [VE.NormDefaults.Wire.softPack U (VE.Rights.correlate R), VE.NormDefaults.Wire.rightsPack R])
+          M F =
+        Bool.false →
+      (VE.NormDefaults.Packs.packFault
+          [VE.NormDefaults.Wire.softPack U (VE.Rights.correlate R), VE.NormDefaults.Wire.rightsPack R] fun a =>
+          VE.Formula.eval (M.withFill F) [] a) =
+        VE.Route.Wire.invalidModel
+          (if
+              VE.NormDefaults.Wire.extraValid U
+                  (List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU U (VE.Rights.correlate R))) M F =
+                Bool.true then
+            "rights"
+          else "soft")
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.packFault@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.Wire.rightsPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Route.Wire.invalidModel@VE.Route.Wire
+  -- expr 845032707
+theorem VE.NormDefaults.Packs.packFault_legacy_soft
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity)
+    (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity),
+    VE.NormDefaults.Wire.extraValid U (VE.NormDefaults.Packs.X [VE.NormDefaults.Wire.softPack U D]) M F = Bool.false →
+      (VE.NormDefaults.Packs.packFault [VE.NormDefaults.Wire.softPack U D] fun a => VE.Formula.eval (M.withFill F) [] a) =
+        VE.Route.Wire.invalidModel "soft"
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.packFault@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.Route.Wire.invalidModel@VE.Route.Wire VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 2767230494
+theorem VE.NormDefaults.Packs.packPremises_absent
+  ∀ (qs : List VE.NormDefaults.Packs.Pack) (i : String),
+    (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ qs → p.id ≠ i) → VE.NormDefaults.Packs.packPremises qs i = []
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.id@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.packPremises@VE.NormDefaults.Packs
+  -- expr 1278508972
+theorem VE.NormDefaults.Packs.packPremises_legacy
+  ∀ (U : VE.NormDefaults.UDoc) (R : VE.Rights.RightsDoc),
+    VE.NormDefaults.Packs.packPremises
+          [VE.NormDefaults.Wire.softPack U (VE.Rights.correlate R), VE.NormDefaults.Wire.rightsPack R] "soft" =
+        VE.NormDefaults.Wire.softLabelledU U (VE.Rights.correlate R) ∧
+      VE.NormDefaults.Packs.packPremises
+          [VE.NormDefaults.Wire.softPack U (VE.Rights.correlate R), VE.NormDefaults.Wire.rightsPack R] "rights" =
+        VE.Rights.limPremisesLabelled R
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.packPremises@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.rightsPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremisesLabelled@VE.Rights.Correlate
+  -- expr 2638900774
+theorem VE.NormDefaults.Packs.packPremises_sub
+  ∀ (qs : List VE.NormDefaults.Packs.Pack) (i : String) (a : String × VE.Formula),
+    a ∈ VE.NormDefaults.Packs.packPremises qs i → a ∈ VE.NormDefaults.Packs.labelledX qs
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.labelledX@VE.NormDefaults.Packs VE.NormDefaults.Packs.packPremises@VE.NormDefaults.Packs
+  -- expr 754880861
+theorem VE.NormDefaults.Packs.pk_coh
+  ∀ (M N : VE.SoftNorms.SoftNode),
+    (VE.SoftNorms.Wire.cohLabel M N).data = "soft:coherence:".data ++ (M.name.data ++ ',' :: N.name.data)
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.cohLabel@VE.SoftNorms.Wire
+  -- expr 4191174507
+theorem VE.NormDefaults.Packs.pk_exc_inj
+  ∀ {n n' : String} {k k' : List Char} {i i' : Nat},
+    ¬':' ∈ n.data →
+      ¬':' ∈ n'.data →
+        ¬':' ∈ k →
+          ¬':' ∈ k' →
+            "soft:exception:".data ++ (n.data ++ ':' :: (k ++ ':' :: Nat.toDigits 10 i)) =
+                "soft:exception:".data ++ (n'.data ++ ':' :: (k' ++ ':' :: Nat.toDigits 10 i')) →
+              n = n' ∧ k = k' ∧ i = i'
+  -- uses
+  -- expr 3367643760
+theorem VE.NormDefaults.Packs.pk_exc_ne_coh
+  ∀ {X Y : List Char}, "soft:exception:".data ++ X ≠ "soft:coherence:".data ++ Y
+  -- uses
+  -- expr 3411234247
+theorem VE.NormDefaults.Packs.pk_exc_nec
+  ∀ (n : String) (i : Nat),
+    (ToString.toString "soft:exception:" ++ ToString.toString n ++ ToString.toString ":necessary:" ++
+          ToString.toString i).data =
+      "soft:exception:".data ++ (n.data ++ ':' :: ("necessary".data ++ ':' :: Nat.toDigits 10 i))
+  -- uses
+  -- expr 77643908
+theorem VE.NormDefaults.Packs.pk_exc_parts
+  ∀ {n : String} {s m : Nat} {b : String},
+    b ∈
+        List.map
+            (fun i =>
+              ToString.toString "soft:exception:" ++ ToString.toString n ++ ToString.toString ":sufficient:" ++
+                ToString.toString i)
+            (List.range s) ++
+          List.map
+            (fun i =>
+              ToString.toString "soft:exception:" ++ ToString.toString n ++ ToString.toString ":necessary:" ++
+                ToString.toString i)
+            (List.range m) →
+      ∃ k i,
+        (k = "sufficient".data ∨ k = "necessary".data) ∧
+          b.data = "soft:exception:".data ++ (n.data ++ ':' :: (k ++ ':' :: Nat.toDigits 10 i))
+  -- uses
+  -- expr 1678476252
+theorem VE.NormDefaults.Packs.pk_exc_suff
+  ∀ (n : String) (i : Nat),
+    (ToString.toString "soft:exception:" ++ ToString.toString n ++ ToString.toString ":sufficient:" ++
+          ToString.toString i).data =
+      "soft:exception:".data ++ (n.data ++ ':' :: ("sufficient".data ++ ':' :: Nat.toDigits 10 i))
+  -- uses
+  -- expr 476788524
+theorem VE.NormDefaults.Packs.pk_kind_sep
+  ∀ {k : List Char}, k = "sufficient".data ∨ k = "necessary".data → ¬':' ∈ k
+  -- uses
+  -- expr 2251136770
+theorem VE.NormDefaults.Packs.pk_mem_exc
+  ∀ {D : VE.SoftNorms.SoftDoc} {x : String},
+    x ∈ VE.SoftNorms.Wire.excLabels D →
+      ∃ k i n,
+        (k = "sufficient".data ∨ k = "necessary".data) ∧
+          x.data = "soft:exception:".data ++ (n.data ++ ':' :: (k ++ ':' :: Nat.toDigits 10 i))
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.excLabels@VE.SoftNorms.Wire
+  -- expr 1592963572
+theorem VE.NormDefaults.Packs.pk_ruleName
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {N : VE.SoftNorms.SoftNode}, N ∈ D.T.nodes → VE.Norms.ruleName N.name = Bool.true
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.ruleName@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
+  -- expr 2643128152
+theorem VE.NormDefaults.Packs.pk_ruleName_sep
+  ∀ {n : String}, VE.Norms.ruleName n = Bool.true → ¬':' ∈ n.data ∧ ¬',' ∈ n.data
+  -- uses VE.Norms.ruleName@VE.Norms.Tree
+  -- expr 3911359335
+theorem VE.NormDefaults.Packs.pk_split
+  ∀ {s : Char} (a a' b b' : List Char), ¬s ∈ a → ¬s ∈ a' → a ++ s :: b = a' ++ s :: b' → a = a' ∧ b = b'
+  -- uses
+  -- expr 1460608438
+theorem VE.NormDefaults.Packs.pk_toString
+  ∀ (s : String), ToString.toString s = s
+  -- uses
+  -- expr 426872543
+theorem VE.NormDefaults.Packs.pk_zip_fst
+  ∀ {α β : Type} (l : List α) (m : List β), (List.map (fun x => x.fst) (l.zip m)).Sublist l
+  -- uses
+  -- expr 3072448454
+theorem VE.NormDefaults.Packs.softLabelledU_labels_nodup
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      VE.NormDefaults.WellFormedU U = Bool.true →
+        (List.map (fun x => x.fst) (VE.NormDefaults.Wire.softLabelledU U D)).Nodup
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
+  -- expr 589828960
+theorem VE.NormDefaults.Packs.xWithout_nil
+  ∀ (qs : List VE.NormDefaults.Packs.Pack), VE.NormDefaults.Packs.xWithout qs [] = VE.NormDefaults.Packs.X qs
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.xWithout@VE.NormDefaults.Packs
+  -- expr 3565351733
+theorem VE.NormDefaults.Packs.xWithout_sub
+  ∀ (qs : List VE.NormDefaults.Packs.Pack) (drop : List String) (a : VE.Formula),
+    a ∈ VE.NormDefaults.Packs.xWithout qs drop → a ∈ VE.NormDefaults.Packs.X qs
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.xWithout@VE.NormDefaults.Packs
+  -- expr 1593433496
 theorem VE.NormDefaults.Run.normDefaults_wire_admission
   ∀ (j answer : Lean.Json),
     VE.NormDefaults.Run.runCase j = Except.ok answer →
@@ -11081,9 +11471,9 @@ theorem VE.NormDefaults.Wire.decodeSoftU_source
               L.U =
                   { D := VE.SoftNorms.soften src.D,
                     unspec := VE.NormDefaults.Wire.unspecOf environment (VE.SoftNorms.soften src.D) } ∧
-                L.labelled = VE.NormDefaults.Wire.softLabelledU L.U src.D ∧ L.rightsCount = 0 ∧ L.route = "soft-norms@0"
-  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.labelled@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.rightsCount@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.route@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.placeholderJson@VE.NormDefaults.Wire VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.NormDefaults.Wire.unspecOf@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
-  -- expr 373563461
+                L.packs = [VE.NormDefaults.Wire.softPack L.U src.D] ∧ L.route = "soft-norms@0"
+  -- uses VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.route@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.placeholderJson@VE.NormDefaults.Wire VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.unspecOf@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 2950983822
 theorem VE.NormDefaults.Wire.decodeSourceU_plain
   ∀ {environment norms : Lean.Json} {s : VE.NormDefaults.Wire.SourceU},
     VE.NormDefaults.Wire.decodeSourceU environment norms = Except.ok s →
@@ -19860,6 +20250,19 @@ theorem VE.Readings.Wire.chainText_eq
     VE.Readings.Wire.chainText c X = VE.Readings.Wire.chainTextSpec c X
   -- uses VE.Formula@VE.Syntax VE.Readings.Chain@VE.Readings.Doc VE.Readings.Wire.chainText@VE.Readings.Wire VE.Readings.Wire.chainTextSpec@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 904810859
+theorem VE.Readings.Wire.choiceLayeredG_norms_packs
+  ∀ (b : VE.Readings.Wire.Admitted2) (N : VE.Readings.NDoc) (c : VE.Readings.Choice)
+    (wfc : VE.NormDefaults.WellFormedU (VE.Readings.choiceU N c) = Bool.true) (hN : N.D = b.D),
+    VE.Readings.normsShaped N.D = Bool.true →
+      ∀
+        (L :
+          { L //
+            L.U = VE.Readings.choiceU N c ∧
+              L.X = VE.Readings.choiceX N c ∧
+                ∀ (a : VE.Formula), a ∈ L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) [] a }),
+        VE.Readings.Wire.choiceLayeredG b N c wfc hN = Except.ok L → L.val.packs = []
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.Admitted2.D@VE.Readings.SupWire VE.Readings.Wire.Admitted2@VE.Readings.SupWire VE.Readings.Wire.choiceLayeredG@VE.Readings.UnspecifiedWire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.normsShaped@VE.Readings.Unspecified
+  -- expr 11281653
 theorem VE.Readings.Wire.choiceU_E
   ∀ (r : VE.Readings.Wire.AdmittedND) (c : VE.Readings.Choice),
     (VE.Readings.choiceU r.N c).D.E = r.b.a.re.se.ne.rv.environment
@@ -28881,6 +29284,19 @@ theorem VE.Readings.toSubstring_bsize_ascii
   ∀ (p : String), VE.Readings.AsciiL p.data → p.toSubstring.bsize = p.data.length
   -- uses VE.Readings.AsciiL@VE.Readings.Strings
   -- expr 3197839193
+theorem VE.Readings.transfers_X
+  ∀ (D : VE.Readings.Doc) (qs : List VE.NormDefaults.Packs.Pack)
+    (Qc : VE.NormDefaults.Packs.Pack → VE.Readings.Choice → List VE.Formula),
+    (∀ (p : VE.NormDefaults.Packs.Pack), p ∈ qs → VE.Readings.Transfers D (List.map (fun x => x.snd) p.labelled) (Qc p)) →
+      VE.Readings.Transfers D (VE.NormDefaults.Packs.X qs) fun c => List.flatMap (fun p => Qc p c) qs
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Transfers@VE.Readings.SupExtra
+  -- expr 1707942661
+theorem VE.Readings.transfers_append
+  ∀ (D : VE.Readings.Doc) (Q₁ Q₂ : List VE.Formula) (Q₁c Q₂c : VE.Readings.Choice → List VE.Formula),
+    VE.Readings.Transfers D Q₁ Q₁c →
+      VE.Readings.Transfers D Q₂ Q₂c → VE.Readings.Transfers D (Q₁ ++ Q₂) fun c => Q₁c c ++ Q₂c c
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Transfers@VE.Readings.SupExtra
+  -- expr 1426925416
 theorem VE.Readings.transfers_nil
   ∀ (D : VE.Readings.Doc), VE.Readings.Transfers D [] fun x => []
   -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Transfers@VE.Readings.SupExtra

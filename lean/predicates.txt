@@ -268,6 +268,10 @@ module VE.NormDefaults.FillCheck
 module VE.NormDefaults.Layered
 module VE.NormDefaults.LayeredAdmission
 module VE.NormDefaults.LayeredEntail
+module VE.NormDefaults.Packs
+module VE.NormDefaults.PacksExamples
+module VE.NormDefaults.PacksLabels
+module VE.NormDefaults.PacksLegacy
 module VE.NormDefaults.Premises
 module VE.NormDefaults.Replay
 module VE.NormDefaults.Report
@@ -384,6 +388,7 @@ module VE.Readings.SupExtraExamples
 module VE.Readings.SupFill
 module VE.Readings.SupFillWire
 module VE.Readings.SupFree
+module VE.Readings.SupPacks
 module VE.Readings.SupRun
 module VE.Readings.SupSlot
 module VE.Readings.SupVerdictsExamples
