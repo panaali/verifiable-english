@@ -192,7 +192,16 @@ The 11 pending sets, and why each still has no content:
   read nor excluded. It was fixed in fdecc7db by moving the file to `readings/results.json`, which the corpus already
   excludes as a use case's recorded results. After the sync, the run on bfe20a9e (60 of 434 units, Mac runner
   ve-mac-1) passed: exit 0, 0 failed.
-- **Not run:** the full gate (the chain runs it on the final HEAD); no reader evaluation, since no new English.
+- **Full gate on 070bc3fe (chain, Mac runner ve-mac-1):** 17,228 passed, 0 failed, 1 failure at the skip-policy
+  stage. The runner does not store the pinned source, so
+  `tests/test_safety_framework.py::test_readings_rerun_equals_committed_readings` skipped, and its combined reason
+  ("the Lean service is not built or the pinned source is not stored on this machine") was not on the allowlist.
+  The fix splits the skip in two. A missing Lean service keeps the decorator reason, which the gate builds and
+  never allows. A missing source skips inside the test with the same reason as its sibling
+  `test_build_check_writes_nothing_beside_the_source`, and `tools/gate-optional.json` allowlists that reason for
+  this node only (checked with `tools.gate.permitted`: the source reason is allowed, the service reason is
+  refused). `tests/test_safety_framework.py` and `tests/test_gate.py` pass, 24 passed. The chain gates the new HEAD.
+- **Not run by me:** the full gate (the chain runs it on the final HEAD); no reader evaluation, since no new English.
 - **Main's known-red tests:** none is in this item's selection.
 
 ## Next items

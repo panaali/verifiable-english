@@ -240,9 +240,11 @@ def test_ve_decides_every_content_bearing_set_and_keeps_its_unit_open():
     assert whole["residual"]["separations"] == sum(v["content"] for v in saved["sets"].values())
 
 
-@pytest.mark.skipif(not OWN["severity_and_dates"].RISK_ROUTE.exists() or not build_document.DEFAULT_SOURCE.exists(),
-                    reason="the Lean service is not built or the pinned source is not stored on this machine")
+@pytest.mark.skipif(not OWN["severity_and_dates"].RISK_ROUTE.exists(), reason="the Lean service is not built")
 def test_readings_rerun_equals_committed_readings():
+    """The part documents are cut from the pinned source, which the gate runner does not store (tools/gate-optional.json)."""
+    if not build_document.DEFAULT_SOURCE.exists():
+        pytest.skip("the pinned source is not stored on this machine")
     assert readings_r1.main(["--check"]) == 0
 
 
