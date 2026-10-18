@@ -5019,6 +5019,7 @@
 'VE.Service.runMode_familyNorms' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_graph' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.runMode_metered' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_model' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_normDefaults' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_norms' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -5833,6 +5834,14 @@
 'ResponseShape.Encoders.Family.readingsChoices_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Family.readings_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Family.readings_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Metered.answer_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Metered.binding_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Metered.row_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Metered.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Metered.runCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Metered.scanState_statused' does not depend on any axioms
+'ResponseShape.Encoders.Metered.scan_statused' does not depend on any axioms
+'ResponseShape.Encoders.Metered.trace_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.NormDefaults.admitDocumentX_kinds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.NormDefaults.admitDocument_kinds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free' depends on axioms: [propext,

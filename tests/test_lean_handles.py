@@ -388,8 +388,6 @@ def test_lean_background_is_asked_once_per_request(monkeypatch):
     from ve import background as background_module
     from ve.backends import relay
     from ve.environment import Environment
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
     monkeypatch.setattr(relay, "_answers", __import__("weakref").WeakKeyDictionary())
     described = json.loads(json.dumps(POLICY))
     sort = next(iter(described["vocabulary"]["sorts"].values()))

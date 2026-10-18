@@ -39,7 +39,6 @@ def test_the_lean_owned_operations_are_the_single_owner_table_s_lean_rows():
 def test_single_owner_operations_write_no_shadow_record(op, monkeypatch, tmp_path):
     log = tmp_path / "shadow.jsonl"
     monkeypatch.setenv("VE_SHADOW_LOG", str(log))
-    monkeypatch.setenv("VE_AUTHORITY", "shadow")
     seen = []
     monkeypatch.setattr(dispatch, "observers", [lambda name, authority: seen.append((name, authority))])
     assert dispatch.owned(op, lambda: "answer") == "answer"
