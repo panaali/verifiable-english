@@ -124,6 +124,10 @@ module VE.Attribution.Structure
 module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
+module VE.Calc.Decls
+module VE.Calc.Eval
+module VE.Calc.Examples
+module VE.Calc.Syntax
 module VE.CertificateWire
 module VE.Checks
 module VE.ClaimGraph
@@ -591,6 +595,22 @@ VE.Ask.UnitBound@VE.Ask.Binding
 VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
 VE.Bridge.JsonEntails@VE.Bridge
+VE.Calc.CausesAt@VE.Calc.Decls
+VE.Calc.Claim.Defined@VE.Calc.Syntax
+VE.Calc.Claim.Holds@VE.Calc.Syntax
+VE.Calc.Claim.Overflows@VE.Calc.Decls
+VE.Calc.Claim.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Denotes.below@VE.Calc.Syntax
+VE.Calc.Denotes@VE.Calc.Syntax
+VE.Calc.Expr.Overflows@VE.Calc.Decls
+VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.NameExhausted.below@VE.Calc.Decls
+VE.Calc.NameExhausted@VE.Calc.Decls
+VE.Calc.NameOverflows.below@VE.Calc.Decls
+VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.Small@VE.Calc.Decls
+VE.Calc.Val.Agrees@VE.Calc.Decls
+VE.Calc.WellFormed@VE.Calc.Decls
 VE.Closure.ClosedAt@VE.Closure.Paths
 VE.Closure.Edge.Typed@VE.Closure.Substitution
 VE.Closure.Edge.denote@VE.Closure.Substitution
