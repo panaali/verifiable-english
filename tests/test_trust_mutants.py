@@ -179,3 +179,19 @@ def test_max_mutants_lists_the_rest_as_not_run(package, tmp_path):
     printed = [line for line in done.stdout.splitlines() if line.startswith("NOT RUN ")]
     assert len(printed) == len(mutants) - 3
     assert done.returncode == (1 if any(m["status"] == "SURVIVOR" for m in ran) else 3)
+
+
+def test_the_generator_cuts_every_list_a_condition_reads():
+    """The list positions of reviews ap-2 F7, F10 and F11 (a method's receiver, `for ... in`, a `++` operand), and
+    the token operators; nothing inside a string literal is mutated."""
+    import trust_mutants
+    text = ('def ok (fs : List (List String)) (ms : List String) : Bool := Id.run do\n'
+            '  for f in fs do\n    if (f.find? (· == "x<1")).isSome then return false\n'
+            '  return fs.all (·.isEmpty) && (ms ++ ["y"]).length < 3\n')
+    found = {(op, text[s:e], new) for op, s, e, new in trust_mutants.mutants(text, "def", 0, len(text))}
+    assert {("list-drop-first", "f", "(f.drop 1)"), ("list-drop-last", "fs", "(fs.dropLast)"),
+            ("list-first", "ms", "(ms.take 1)"), ("append-left", ' ++ ["y"]', ""), ("lt-le", "<", "≤"),
+            ("lit-plus", "3", "4"), ("all-any", "all", "any"), ("and-or", "&&", "||"),
+            ("bool-flip", "false", "true")} <= found
+    literal = text.index('"x<1"')
+    assert not [m for m in trust_mutants.mutants(text, "def", 0, len(text)) if literal <= m[1] < literal + 5]

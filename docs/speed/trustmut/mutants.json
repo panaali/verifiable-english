@@ -59,6 +59,16 @@
     "tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run"
    ],
    "claim": "every mutant past --max-mutants prints as NOT RUN"
+  },
+  {
+   "id": "TM7",
+   "file": "tools/trust_mutants.py",
+   "find": "LIST_METHODS = (\"find\\\\?|any|",
+   "replace": "LIST_METHODS = (\"find?|any|",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_generator_cuts_every_list_a_condition_reads"
+   ],
+   "claim": "the receiver of every list method (`.find?` included) is a list the operators cut"
   }
  ]
 }
