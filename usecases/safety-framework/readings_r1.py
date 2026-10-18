@@ -7,7 +7,7 @@ query was UNKNOWN and the ALL, SOME and NONE answers came from the harness's per
 sets have since merged on the soft chain (composition S1 and S2a; readings-defaults; the rd-9 soft chain).
 `build_document.py` now gives every set whose readings are each one rule of `rules.d1.ve` that rule as content.
 
-This writes `readings.json` here: for every set, either the reading that keeps it
+This writes `readings/results.json` here: for every set, either the reading that keeps it
 pending (no rule, or several), or VE's answer on its part document (the set's source unit alone, its open terms and
 the set: L70, no whole-document readings run on a large document) from `ve document check`, with the English VE
 shows; and VE's answer on the whole D1 document. A unit with an open set stays OPEN: the text has two readings, and
@@ -25,7 +25,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import build_document as B  # noqa: E402
 
-OUT = HERE / "readings.json"
+OUT = HERE / "readings" / "results.json"
 
 
 def set_units():
@@ -103,7 +103,7 @@ def main(argv=None):
     text = json.dumps(results, indent=1, sort_keys=True, ensure_ascii=False) + "\n"
     if args.check:
         if OUT.read_text() != text:
-            raise SystemExit("readings.json is out of date")
+            raise SystemExit("readings/results.json is out of date")
         return 0
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(text)
