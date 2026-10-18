@@ -1,0 +1,30 @@
+{
+  "item": "ties-fu-1017",
+  "comment": "Seeded bugs of the ties pass. Each was planted, made the named check fail, and was restored (lake build of the named module, or python3 tools/trust_map.py --check exit 1 and the named test). L*: a tied declaration changed, so the theorem that ties it fails to prove. T*: the side-table tie or the statement dump broken.",
+  "mutants": [
+    {"id": "L1", "file": "lean/VE/Norms/Family.lean", "target": "lean/VE/Norms/FamilySpec.lean",
+     "change": "firstOrderDefinition ignores the head's arity (drops `VE.Core.Layers.folEntry entry &&`)",
+     "test": "lake build VE.Norms.FamilySpec: VE.Norms.Family.firstOrderDefinition_fol fails (FamilySpec.lean:101, invalid projection)"},
+    {"id": "L2", "file": "lean/VE/Norms/Family.lean", "target": "lean/VE/Norms/FamilySpec.lean",
+     "change": "firstOrder without the definitions conjunct (the three lines fu-lf14c-f4 added)",
+     "test": "lake build VE.Norms.FamilySpec: VE.Norms.Family.firstOrder_fol fails (FamilySpec.lean:129, dependent elimination failed)"},
+    {"id": "L3", "file": "lean/VE/Norms/Family.lean", "target": "lean/VE/Norms/FamilySpec.lean",
+     "change": "firstOrderFormula accepts every decoded core formula (`| .ok _ => true` for `(VE.Core.erase a).isSome`)",
+     "test": "lake build VE.Norms.FamilySpec: VE.Norms.Family.firstOrderFormula_fol fails (FamilySpec.lean:83, application type mismatch)"},
+    {"id": "L3b", "file": "lean/VE/Norms/Family.lean", "target": "lean/VE/Norms/FamilySpec.lean",
+     "change": "orderFol accepts comparisons (`| .lt _ _ | .le _ _ => true`)",
+     "test": "lake build VE.Norms.FamilySpec: VE.Norms.Family.orderFol_embed fails (FamilySpec.lean:47, unsolved goals)"},
+    {"id": "L3c", "file": "lean/VE/Norms/Family.lean", "target": "lean/VE/Norms/FamilySpec.lean",
+     "change": "orderTermFol accepts numbers and arithmetic (`| _ => true`)",
+     "test": "lake build VE.Norms.FamilySpec: VE.Norms.Family.orderTermFol_embed fails (FamilySpec.lean:23, unsolved goals)"},
+    {"id": "L4", "file": "lean/VE/Rights/Run.lean", "target": "lean/ResponseShape/Encoders/Rights.lean",
+     "change": "runRightsKind writes the UNKNOWN status line without its colon (`UNKNOWN {d}, budget 10000`)",
+     "test": "lake build ResponseShape.Encoders.Rights: ResponseShape.Encoders.Rights.runRightsKind_packages fails (Encoders/Rights.lean:189, unsolved goals); runRightsKind_fits still proves, since skeletons treat patterns as any"},
+    {"id": "T1", "file": "lean/statements.txt",
+     "change": "the -- uses line of VE.Norms.Family.firstOrderDefinition_fol without VE.Norms.Family.firstOrderDefinition@VE.Norms.Family",
+     "test": "python3 tools/trust_map.py --check exit 1 ('the statement of VE.Norms.Family.firstOrderDefinition_fol does not mention VE.Norms.Family.firstOrderDefinition of VE.Norms.Family'); tests/test_trust_ratchet.py::test_committed_budget_passes_its_check fails"},
+    {"id": "T2", "file": "tools/trust-classes.json",
+     "change": "VE.Norms.Family.firstOrder tied to an unrelated theorem, VE.Core.embed_of_erase, in place of firstOrder_fol",
+     "test": "python3 tools/trust_map.py --check exit 1 ('the statement of VE.Core.embed_of_erase does not mention VE.Norms.Family.firstOrder of VE.Norms.Family'); tests/test_trust_ratchet.py::test_committed_budget_passes_its_check fails"}
+  ]
+}

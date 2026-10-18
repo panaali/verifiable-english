@@ -44,6 +44,8 @@ its merge strategy:
 | heavy-tests | `tests/heavy.json` (from the saved Mac duration report) | regenerate |
 | platform-divergences | `tests/platform-divergences.json` (saved from both runners' gate records) | json |
 | platform-contract | `tests/platform-contract.json` (the x86 contract suite, from the tree and the divergence list) | regenerate |
+| history-map | `tests/history-map.json` (saved from the coverage map: the units that start git or read `.git`) | json |
+| history-tests | `tests/history-dependent.json` (the tests that read history, from the saved map and the test sources) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
