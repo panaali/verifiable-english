@@ -1,6 +1,7 @@
 import VE.Cardinality.Theorems
 import VE.Order.Tableau
 import VE.Order.Wire
+import VE.Readings.Strings
 
 /-! Fixtures of `cardinality@0`'s core (docs/spec/quantities.md 9.1: FA1, FA1b, FA1c, FA2, FA3, FA8, FA9a, FA9c, FA10).
 
@@ -10,7 +11,7 @@ counts each body directly on a finite model, with no regions, so comparing it wi
 erased problem; Lean replays it here. -/
 namespace VE.Cardinality.Examples
 open VE.Cardinality
-open VE.Time (QFormula)
+open VE.Time (QFormula TStructure)
 
 /-- A finite model of one sort: `rows` lists, for each kind of object, the predicates it has and how many there are. -/
 def rowsModel (s : String) (rows : List (List String × Nat)) : VE.Order.FiniteModel Nat :=
@@ -226,9 +227,14 @@ def userModel (yes no : Nat) : VE.Order.FiniteModel Nat := rowsModel "user" [(["
 #guard ([(0, 0), (3, 2), (1, 999)] : List (Nat × Nat)).all fun r =>
   agrees users [oneIn1000, bareAtom, moreThanHalf] (userModel r.1 r.2)
 
-/-! ## The meaning itself, on a two-object structure -/
+/-! ## Every case of the trusted meaning and admission, in both directions
 
-/-- Two users, the first curious. -/
+Standing ruling R16 signs the trusted lines of `Syntax.lean` and `Semantics.lean` only when every definition is
+exercised by a check that can fail. Each theorem below states a case of a definition that a changed case falsifies,
+true cases beside false ones, so `tools/trust_map.py` sees the definition used (`tests/test_cardinality_exercised.py`)
+and every bug of `docs/quantities/qt-a1/mutants.json` fails the build. -/
+
+/-- Two users, the first curious: a share is 1 in 2. -/
 def two : VE.Time.TStructure Nat where
   objects s x := s = "user" ∧ x < 2
   constant _ := none
@@ -240,19 +246,122 @@ theorem two_some : HasCount two "user" (.and .any harm) 1 :=
 theorem two_all : HasCount two "user" .any 2 :=
   ⟨[0, 1], by simp, rfl, fun x => by simp [two, Body.holds]; omega⟩
 
+-- The first user is curious and the second is not; `or` and `and` combine both sides.
+theorem body_cases : Body.holds two 0 harm ∧ ¬ Body.holds two 1 harm ∧ Body.holds two 1 (.not harm) ∧
+    ¬ Body.holds two 0 (.not harm) ∧ Body.holds two 1 .any ∧ Body.holds two 1 (.or harm (.not harm)) ∧
+    ¬ Body.holds two 1 (.or harm harm) ∧ Body.holds two 0 (.and .any harm) ∧ ¬ Body.holds two 1 (.and .any harm) := by
+  simp [Body.holds, two, harm]
+
+theorem harm_two : HasCount two "user" harm 1 :=
+  ⟨[0], by simp, rfl, fun x => by simp [two, Body.holds, harm]; omega⟩
+theorem not_harm_two : HasCount two "user" (.not harm) 1 :=
+  ⟨[1], by simp, rfl, fun x => by simp [two, Body.holds, harm]; omega⟩
+theorem harm_or_not_two : HasCount two "user" (.or harm (.not harm)) 2 :=
+  ⟨[0, 1], by simp, rfl, fun x => by simp [two, Body.holds, harm]; omega⟩
+theorem neither_two : HasCount two "user" (.and (.not harm) harm) 0 :=
+  ⟨[], by simp, rfl, fun x => by simp [two, Body.holds, harm]⟩
+
+/-- The terms of a count atom have one list of counts. -/
+theorem counts_unique {α : Type} {T : TStructure α} (c : CountAtom) {ns ms : List Nat}
+    (hn : Counts T c.sort c.terms ns) (hm : Counts T c.sort c.terms ms) : ns = ms := by
+  suffices ∀ (terms : List (Int × Body)) (ns ms : List Nat), Counts T c.sort terms ns → Counts T c.sort terms ms →
+    ns = ms from this _ _ _ hn hm
+  intro terms
+  induction terms with
+  | nil => intro ns ms hn hm; cases ns <;> cases ms <;> first | rfl | exact (hn : False).elim | exact (hm : False).elim
+  | cons kb rest ih =>
+    intro ns ms hn hm
+    cases ns <;> cases ms <;> first | exact (hn : False).elim | exact (hm : False).elim | skip
+    rename_i n ns m ms
+    rw [hasCount_unique hn.1 hm.1, ih ns ms hn.2 hm.2]
+
+theorem counts_two : Counts two "user" [(1, .any), (-1, harm)] [2, 1] ∧ ¬ Counts two "user" [(1, .any)] [] ∧
+    ¬ Counts two "user" [] [2] ∧ ¬ Counts two "user" [(1, .any)] [2, 1] :=
+  ⟨⟨two_all, harm_two, trivial⟩, id, id, fun h => h.2⟩
+
+/-- On `two`, a count of every user compares 2 with the bound. -/
+theorem everyone_two (r : Rel) (k : Int) : CountAtom.holds two ⟨"user", [(1, .any)], r, k⟩ ↔ r.holds 2 k := by
+  constructor
+  · rintro ⟨ns, hc, h⟩
+    match ns, hc with
+    | [n], ⟨hn, _⟩ => rw [hasCount_unique hn two_all] at h; simpa using h
+  · intro h; exact ⟨[2], ⟨two_all, trivial⟩, by simpa using h⟩
+
+def everyone (r : Rel) (k : Int) : CFormula := .count ⟨"user", [(1, .any)], r, k⟩
+
+theorem rel_cases_two :
+    (everyone .lt 3).holds two ∧ ¬ (everyone .lt 2).holds two ∧ (everyone .le 2).holds two ∧
+    ¬ (everyone .le 1).holds two ∧ (everyone .eq 2).holds two ∧ ¬ (everyone .eq 1).holds two ∧
+    ¬ (everyone .eq 3).holds two := by
+  simp only [everyone, CFormula.holds, everyone_two, Rel.holds]; decide
+
+-- "2 users, less one curious user, is 1": a term's coefficient multiplies its count.
+theorem weighted_two : (CFormula.count ⟨"user", [(1, .any), (-1, harm)], .eq, 1⟩).holds two ∧
+    ¬ (CFormula.count ⟨"user", [(1, .any), (-1, harm)], .eq, 3⟩).holds two := by
+  have : ∀ k : Int, (CFormula.count ⟨"user", [(1, .any), (-1, harm)], .eq, k⟩).holds two ↔ k = 1 := fun k => by
+    constructor
+    · rintro ⟨ns, hc, h⟩
+      rw [counts_unique ⟨"user", [(1, .any), (-1, harm)], .eq, k⟩ hc counts_two.1] at h
+      simp [Rel.holds] at h; omega
+    · rintro rfl; exact ⟨[2, 1], counts_two.1, by simp [Rel.holds]⟩
+  exact ⟨(this 1).mpr rfl, fun h => by have := (this 3).mp h; omega⟩
+
+/-- On `two`, the share of curious users is 1 in 2. -/
+theorem share_two (c : Cmp) (num den : Nat) :
+    Proportion.holds two ⟨"user", .any, harm, c, num, den⟩ ↔ c.holds den (num * 2) := by
+  constructor
+  · rintro ⟨n, m, hn, hm, -, h⟩
+    rw [hasCount_unique hn two_all, hasCount_unique hm two_some] at h; simpa using h
+  · intro h; exact ⟨2, 1, two_all, two_some, by omega, by simpa using h⟩
+
+def share (c : Cmp) (num den : Nat) : CFormula := .proportion ⟨"user", .any, harm, c, num, den⟩
+
+theorem cmp_cases_two :
+    ¬ (share .gt 1 2).holds two ∧ (share .gt 1 3).holds two ∧ (share .ge 1 2).holds two ∧
+    ¬ (share .ge 2 3).holds two ∧ ¬ (share .lt 1 2).holds two ∧ (share .lt 2 3).holds two ∧
+    (share .le 1 2).holds two ∧ ¬ (share .le 1 3).holds two ∧ (share .eq 1 2).holds two ∧
+    ¬ (share .eq 1 3).holds two ∧ ¬ (share .eq 2 3).holds two := by
+  simp only [share, CFormula.holds, share_two, Cmp.holds]; omega
+
+/-- No users. -/
+def nobody : TStructure Nat where
+  objects _ _ := False
+  constant _ := none
+  relation _ _ := False
+
+-- "At least 0 in 1" holds of a nonempty population only; the share counts the whole that has the part.
+theorem population_cases : (share .ge 0 1).holds two ∧ ¬ (share .ge 0 1).holds nobody ∧
+    ¬ Proportion.holds two ⟨"user", .not harm, harm, .gt, 0, 1⟩ := by
+  refine ⟨(share_two .ge 0 1).mpr (by simp [Cmp.holds]), ?_, ?_⟩
+  · rintro ⟨n, m, hn, -, hpos, -⟩
+    rw [hasCount_unique hn ⟨[], by simp, rfl, fun x => by simp [nobody]⟩] at hpos; simp at hpos
+  · rintro ⟨n, m, -, hm, -, h⟩
+    rw [hasCount_unique hm neither_two] at h; simp [Cmp.holds] at h
+
+def somebodyCurious : QFormula := .ex "user" (.unary "curious" (.var 0))
+def everybodyCurious : QFormula := .all "user" (.unary "curious" (.var 0))
+
+theorem quantity_cases : (CFormula.quantity .top).holds two ∧ ¬ (CFormula.quantity .bottom).holds two ∧
+    (CFormula.quantity somebodyCurious).holds two ∧ ¬ (CFormula.quantity everybodyCurious).holds two := by
+  refine ⟨trivial, id, ⟨0, by simp [two], .obj 0, rfl, by simp [two]⟩, fun h => ?_⟩
+  obtain ⟨v, hv, hr⟩ := h 1 (by simp [two])
+  simp [VE.Time.QTerm.tdenote] at hv; subst hv; simp [two] at hr
+
+/-- A true and a false statement about `two`. -/
+def yes : CFormula := everyone .eq 2
+def no : CFormula := everyone .eq 1
+
+theorem connective_cases :
+    (CFormula.not no).holds two ∧ ¬ (CFormula.not yes).holds two ∧
+    (CFormula.and yes yes).holds two ∧ ¬ (CFormula.and yes no).holds two ∧ ¬ (CFormula.and no yes).holds two ∧
+    (CFormula.or yes no).holds two ∧ (CFormula.or no yes).holds two ∧ ¬ (CFormula.or no no).holds two ∧
+    (CFormula.implies no no).holds two ∧ (CFormula.implies no yes).holds two ∧
+    (CFormula.implies yes yes).holds two ∧ ¬ (CFormula.implies yes no).holds two := by
+  simp only [yes, no, everyone, CFormula.holds, everyone_two, Rel.holds]; decide
+
 -- "More than half" fails (1 of 2) and "at least 1 in 1,000" holds.
-example : ¬ moreThanHalf.holds two := by
-  rintro ⟨n, m, hn, hm, -, h⟩
-  rw [hasCount_unique hn two_all, hasCount_unique hm two_some] at h
-  simp [Cmp.holds] at h
-
-example : oneIn1000.holds two := ⟨2, 1, two_all, two_some, by omega, by simp [Cmp.holds]⟩
-
--- The decoder's freshness test (`WellFormed.fresh`) fails on `colliding`'s constant.
-#guard "cardinality__fomc_policymaker__0".startsWith regionPrefix
-
-example : users.WellFormed :=
-  ⟨by simp [users, fomc], by intro c τ h; simp [users, fomc] at h⟩
+theorem fa10_two : ¬ moreThanHalf.holds two ∧ oneIn1000.holds two := by
+  simp only [moreThanHalf, oneIn1000, CFormula.holds, share_two, Cmp.holds]; decide
 
 theorem two_admissible : Admissible users two := by
   refine ⟨⟨by simp [users, fomc], ?_⟩, fun s _ => ⟨if s = "user" then [0, 1] else [], fun x => ?_⟩⟩
@@ -260,17 +369,88 @@ theorem two_admissible : Admissible users two := by
     exact ⟨[.obj "user"], by simp [users, fomc, inc, stay], by simp [two, VE.Time.TTuple, VE.Time.TValue.Typed]⟩
   · by_cases hs : s = "user" <;> simp [two, hs] <;> omega
 
--- "At least 0 users" follows from no premises; "at most 1 user" fails on `two`.
-example : CEntails users [] (.count (atLeastAtom "user" .any 0)) := by
-  intro α T hT _
-  obtain ⟨n, hn, -⟩ := hasCount_exists_unique users T hT "user" (by simp [users]) .any
-  exact ⟨[n], ⟨hn, trivial⟩, by simp [atLeastAtom, Rel.holds]⟩
+theorem mem_le_sum : ∀ {xs : List Nat} {x : Nat}, x ∈ xs → x ≤ xs.sum
+  | _ :: _, _, .head _ => by simp
+  | _ :: _, _, .tail _ h => by have := mem_le_sum h; simp; omega
 
-example : ¬ (CFormula.count (atMostAtom "user" .any 1)).holds two := by
-  rintro ⟨ns, hc, h⟩
-  match ns, hc with
-  | [n], ⟨hn, _⟩ =>
-    rw [hasCount_unique hn two_all] at h
-    simp [atMostAtom, Rel.holds] at h
+/-- Every natural number is a user: no finite list holds them all. -/
+def everyNat : TStructure Nat := { two with objects := fun s _ => s = "user" }
+/-- `two` with a relation on a predicate `users` does not declare. -/
+def wild : TStructure Nat := { two with relation := fun p vs => p = "nope" ∧ vs = [.obj 0] }
+
+theorem admissible_cases : Admissible users two ∧ ¬ Admissible users everyNat ∧ ¬ Admissible users wild := by
+  refine ⟨two_admissible, fun ⟨_, h⟩ => ?_, fun ⟨⟨_, h⟩, _⟩ => ?_⟩
+  · obtain ⟨xs, hxs⟩ := h "user" (by simp [users])
+    have := mem_le_sum ((hxs (xs.sum + 1)).mp rfl); omega
+  · obtain ⟨τs, hp, -⟩ := h "nope" [.obj 0] ⟨rfl, rfl⟩
+    simp [users, fomc, inc, stay] at hp
+
+-- "At least 0 users" follows from no premises, "at least 1" from "exactly 2", and "at most 1" from neither.
+theorem entails_cases : CEntails users [] (.count (atLeastAtom "user" .any 0)) ∧
+    CEntails users [.count (exactlyAtom "user" .any 2)] (.count (atLeastAtom "user" .any 1)) ∧
+    ¬ CEntails.{0} users [] (.count (atMostAtom "user" .any 1)) := by
+  refine ⟨fun α T hT _ => ?_, fun α T hT hps => ?_, fun h => ?_⟩
+  · obtain ⟨n, hn, -⟩ := hasCount_exists_unique users T hT "user" (by simp [users]) .any
+    exact ⟨[n], ⟨hn, trivial⟩, by simp [atLeastAtom, Rel.holds]⟩
+  · obtain ⟨ns, hc, h⟩ := hps _ (List.mem_singleton_self _)
+    match ns, hc with
+    | [n], ⟨hn, _⟩ =>
+      simp [exactlyAtom, Rel.holds] at h
+      exact ⟨[n], ⟨hn, trivial⟩, by simp [atLeastAtom, Rel.holds]; omega⟩
+  · obtain ⟨ns, hc, h⟩ := h Nat two two_admissible (by simp)
+    match ns, hc with
+    | [n], ⟨hn, _⟩ =>
+      rw [hasCount_unique hn two_all] at h
+      simp [atMostAtom, Rel.holds] at h
+
+-- FA9a's colliding constant begins with the region prefix, so `colliding` is not `WellFormed`.
+theorem colliding_prefix : "cardinality__fomc_policymaker__0".startsWith regionPrefix = true := by
+  have h := VE.Readings.startsWith_append_ascii regionPrefix "fomc_policymaker__0" (by decide)
+  have e : regionPrefix ++ "fomc_policymaker__0" = "cardinality__fomc_policymaker__0" := by decide
+  rwa [e] at h
+
+/-- `fomc` with a constant `rate`, which no region constant can be; and with an undeclared finite sort. -/
+def named : CEnv := { fomc with q := { fomc.q with constants := fun c => if c == "rate" then some (.qty dl) else none } }
+def ghost : CEnv := { fomc with finite := ["ghost"] }
+
+theorem wellFormed_cases : users.WellFormed ∧ named.WellFormed ∧ ¬ colliding.WellFormed ∧ ¬ ghost.WellFormed := by
+  refine ⟨⟨by simp [users, fomc], by intro c τ h; simp [users, fomc] at h⟩, ⟨by simp [named, fomc], ?_⟩,
+    fun h => ?_, fun h => ?_⟩
+  · intro c τ h
+    simp only [named] at h
+    split at h
+    · rename_i hc; simp at hc; subst hc; decide
+    · simp at h
+  · have := h.fresh "cardinality__fomc_policymaker__0" (.qty dl) (by simp [colliding])
+    rw [colliding_prefix] at this; exact Bool.noConfusion this
+  · exact absurd (h.finiteDeclared "ghost" (by simp [ghost])) (by simp [ghost, fomc, pm])
+
+-- Each part of a statement is checked: the finite sort, the bodies' atoms below `not`, `and` and `or`, the fraction,
+-- the W6a part (`nope` is undeclared), and both sides of each connective.
+def good : CFormula := .count (exactlyAtom pm (.atom inc) 16)
+def badQ : CFormula := .quantity (.all pm (.unary "nope" (.var 0)))
+def badP : CFormula := .proportion ⟨"user", .any, harm, .ge, 1, 2⟩
+
+theorem admitted_cases :
+    Admitted fomc good ∧ ¬ Admitted fomc badQ ∧ ¬ Admitted fomc badP ∧ Admitted users badP ∧
+    ¬ Admitted users (.proportion ⟨"user", .atom inc, harm, .ge, 1, 2⟩) ∧
+    ¬ Admitted users (.proportion ⟨"user", .any, .atom inc, .ge, 1, 2⟩) ∧
+    ¬ Admitted fomc (.count ⟨pm, [(1, .atom inc), (1, .atom "curious")], .le, 3⟩) ∧
+    ¬ Admitted fomc (.count (exactlyAtom pm (.not (.atom "advises")) 1)) ∧
+    ¬ Admitted fomc (.count (exactlyAtom pm (.and (.atom inc) (.atom "advises")) 1)) ∧
+    ¬ Admitted fomc (.count (exactlyAtom pm (.or (.atom "advises") (.atom inc)) 1)) ∧
+    Admitted fomc (.count (exactlyAtom pm (.or (.not (.atom stay)) (.and .any (.atom inc))) 1)) ∧
+    Admitted users (.proportion ⟨"user", .any, harm, .le, 2, 2⟩) ∧
+    ¬ Admitted users (.proportion ⟨"user", .any, harm, .le, 3, 2⟩) ∧
+    ¬ Admitted users (.proportion ⟨"user", .any, harm, .le, 0, 0⟩) ∧
+    Admitted fomc (.not good) ∧ ¬ Admitted fomc (.not badQ) ∧
+    Admitted fomc (.and good good) ∧ ¬ Admitted fomc (.and good badQ) ∧ ¬ Admitted fomc (.and badQ good) ∧
+    Admitted fomc (.or good good) ∧ ¬ Admitted fomc (.or good badQ) ∧ ¬ Admitted fomc (.or badQ good) ∧
+    Admitted fomc (.implies good good) ∧ ¬ Admitted fomc (.implies good badQ) ∧
+    ¬ Admitted fomc (.implies badQ good) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    first
+    | exact admits_sound _ _ (by decide)
+    | exact fun h => absurd (admits_complete _ _ h) (by decide)
 
 end VE.Cardinality.Examples
