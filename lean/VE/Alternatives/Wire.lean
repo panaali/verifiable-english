@@ -229,8 +229,6 @@ structure AltSource where
 def decodeAltSource (environment norms premises : Json) (scope : Scope := .document) :
     Except String AltSource := do
   let ps ← profileGate environment
-  -- The completion is read by `decodeAltSourceU` only, over `placeholderJson` (without the profile): this decoder
-  -- refuses it by name (`Compose.pendingWithDefaults`) before W1's envelope gate, which does not know the profile.
   if let some refusal := VE.Compose.pendingWithDefaults ps then throw refusal
   let block ← match environment.getObjVal? "alternatives" with
     | .ok b => pure b

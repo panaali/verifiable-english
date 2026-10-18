@@ -70,10 +70,14 @@ def todayGate (ps : List String) : Except String Unit :=
 
 /-- The composed blocks with `norm-defaults@0` that no route but the block's own reads yet. The gate refuses
 `risk@0` with the completion (check 5, the same text); ET-7 answers `alternatives@0` sources with it on the
-alternatives route only, and et-7b admits their documents (docs/spec/events-time-causation.md 5). Until then the
-`document` mode, the norm-defaults route and the alternatives decoder without the completion (which the English
-reader's boundary and the route's `admission` call) refuse such a list by name, before any decoder that does not
-read it (`Service.Document.environmentOf`, `NormDefaults.Run.runGated`, `Alternatives.Wire.decodeAltSource`). -/
+alternatives route only, and et-7b admits their documents (docs/spec/events-time-causation.md 5). Until then each
+reader that does not read the completion refuses such a list by name, before any decoder of its own:
+* the `document` mode (`Service.Document.environmentOf`), after the environment mode's own first fault, and never
+  `CheckerUnavailable`, which would hand the document to Python's path and the norm-defaults route;
+* the norm-defaults route (`NormDefaults.Run.runGated`), before the norms envelope's field check;
+* the alternatives decoder without the completion (`Alternatives.Wire.decodeAltSource`; `decodeAltSourceU` reads
+  the completion over `placeholderJson`, without the profile), which the English reader's boundary (`ve ask`) and
+  the route's `admission` call. -/
 def pendingWithDefaults (ps : List String) : Option String :=
   if ps.contains "norm-defaults@0" then
     (["risk@0", "alternatives@0"].find? ps.contains).map

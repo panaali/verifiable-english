@@ -2135,6 +2135,9 @@
         "VE.Compose.today",
         "VE.Compose.todayGate",
         "VE.Compose.todayHead"
+      ],
+      "G[R]": [
+        "VE.Compose.pendingWithDefaults"
       ]
     },
     "VE/Compose/Examples.lean": {
@@ -4869,6 +4872,7 @@
         "VE.NormDefaults.Run.runAdmission",
         "VE.NormDefaults.Run.runCase",
         "VE.NormDefaults.Run.runCaseReported",
+        "VE.NormDefaults.Run.runGated",
         "VE.NormDefaults.Run.runOtherCase",
         {
           "name": "VE.NormDefaults.Admission.runAdmissionX",

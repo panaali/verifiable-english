@@ -344,9 +344,7 @@ theorem normDefaults_wire_admissionX (j answer : Json) (h : runCase j = .ok answ
   rw [he', hd']
   exact ⟨id, hid, Admission.runAdmissionX_sound id environment document answer ha⟩
 
-/-- `runCase` behind the refusal of a composed block this route does not read (`Compose.pendingWithDefaults`):
-an environment listing `alternatives@0` or `risk@0` with the profile is refused by name before any decoder runs,
-never rejected by the norms envelope's field check. -/
+/-- `runCase` behind `Compose.pendingWithDefaults`: a composed block this route does not read is refused by name. -/
 def runGated (j : Json) : Except String Json :=
   match VE.Compose.pendingWithDefaults (Wire.profilesOf (j.getObjValD "environment")) with
   | some refusal => .error refusal
