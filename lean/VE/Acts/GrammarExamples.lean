@@ -4,9 +4,9 @@ import VE.Acts.Read
 
 This file holds the fixtures that need no rule table: the generic listing boundaries LG1 to LG8, the same limits on a
 real parse (a small grammar whose phrases have 63, 64, 65, 255 and 256 derivations), the vocabulary check with one
-fixture per D-31 text, the review's counterexamples FR1, FR2 and FR6, and FR7 (every vocabulary of 11.2, 11.2b and
-the ap-2 measurement passes). The rule table's fixtures (G5 to L0, the 11.2b raw and meaning counts, N1 to N5) join
-them with the grammar.
+fixture per D-31 text and every pair of them in D-31's order, the review's counterexamples FR1, FR2 and FR6, and FR7
+(every vocabulary of 11.2, 11.2b and the ap-2 measurement passes). The rule table's fixtures (G5 to L0, the 11.2b raw
+and meaning counts, N1 to N5) join them with the grammar.
 -/
 
 namespace VE.Acts.Examples
@@ -58,6 +58,7 @@ def count : Listing (List Nat) → Option Nat
   | .limit => none
 
 #guard toy.wf
+#guard rawCap == 256 && stepBudget == 2100000 && maxReadings == 64     -- D2's values (docs/act-phrases/ap-2)
 #guard raw ["e", "c", "c"] == some 63 && raw ["b", "b", "b", "b", "b", "b"] == some 64 && raw ["d", "f"] == some 65
 #guard raw ["c", "d", "g"] == some 255 && raw ["b", "b", "b", "b", "b", "b", "b", "b"] == some 256
 #guard count (readingsIn toy μd rawCap stepBudget (phrase ["e", "c", "c"])) == some 63            -- 63 readings
@@ -88,39 +89,92 @@ def errOf (V : Vocab) : String :=
   | .error e => e
 def frames (fs : List Frame) : Vocab := ⟨fs, []⟩
 
-#guard errOf (frames (List.replicate 129 (fr "seek" [""] [] []))) == "ResourceLimit: more than 128 frames"   -- 31a
-#guard errOf (frames [fr "" [] [] []]) == "InvalidInput: a frame has an empty head"                          -- 31b
-#guard errOf (frames [⟨["Seek"], [], [], []⟩]) ==
-  "InvalidInput: frame 'Seek' has the head word 'Seek', which is not a lower-case word of letters"           -- 31c
-#guard errOf (frames [fr "be held" [] [] []]) == "InvalidInput: frame 'be held' has the reserved head word 'be'" -- 31d
-#guard errOf (frames [fr "seek" [] [] [], fr "seek" [] [] []]) == "InvalidInput: frame 'seek' is declared twice" -- 31e
-#guard errOf (frames [fr "take" [] [] [], fr "take part" [] [] []]) ==
-  "InvalidInput: frame heads 'take' and 'take part' overlap: one begins the other"                          -- 31f
-#guard errOf (frames [fr "seek" ["in", "in"] [] []]) == "InvalidInput: frame 'seek' lists the marker 'in' twice" -- 31g
-#guard errOf (frames [fr "seek" [] [] ["in", "in"]]) ==
-  "InvalidInput: frame 'seek' lists the modifier marker 'in' twice"                                         -- 31h
-#guard errOf (frames [fr "subjected" ["to"] ["by"] []]) ==
-  "InvalidInput: frame 'subjected' splits 'by', which is not one of its markers"                            -- 31i, FR6
-#guard errOf (frames [fr "seek" [] [] [""]]) == "InvalidInput: frame 'seek' has an empty modifier marker"     -- 31j
-#guard errOf (frames [fr "seek" ["in"] [] ["in"]]) ==
-  "InvalidInput: frame 'seek' lists 'in' both as a marker and as a modifier marker"                         -- 31k
+/-- One vocabulary per D-31 row, in D-31's order, with the row's text: each fails its own row's condition and no
+earlier one. Across rows the heads are distinct and none begins another, and the adverbs are distinct, so the union
+of two rows' vocabularies fails no earlier condition than the two fail alone (31r and 31s, which look across frames
+and adverbs, come last). -/
+def d31 : List (String × Vocab × String) :=
+  [("31a", frames (List.replicate 129 (fr "seek" [""] [] [])), "ResourceLimit: more than 128 frames"),
+   ("31b", frames [fr "" [] [] []], "InvalidInput: a frame has an empty head"),
+   ("31c", frames [⟨["Seek"], [], [], []⟩],
+    "InvalidInput: frame 'Seek' has the head word 'Seek', which is not a lower-case word of letters"),
+   ("31d", frames [fr "be held" [] [] []], "InvalidInput: frame 'be held' has the reserved head word 'be'"),
+   ("31e", frames [fr "claim" [] [] [], fr "claim" [] [] []], "InvalidInput: frame 'claim' is declared twice"),
+   ("31f", frames [fr "take" [] [] [], fr "take part" [] [] []],
+    "InvalidInput: frame heads 'take' and 'take part' overlap: one begins the other"),
+   ("31g", frames [fr "gather" ["in", "in"] [] []], "InvalidInput: frame 'gather' lists the marker 'in' twice"),
+   ("31h", frames [fr "hold" [] [] ["at", "at"]], "InvalidInput: frame 'hold' lists the modifier marker 'at' twice"),
+   ("31i", frames [fr "subjected" ["to"] ["by"] []],                                                         -- FR6
+    "InvalidInput: frame 'subjected' splits 'by', which is not one of its markers"),
+   ("31j", frames [fr "join" [] [] [""]], "InvalidInput: frame 'join' has an empty modifier marker"),
+   ("31k", frames [fr "keep" ["in"] [] ["in"]],
+    "InvalidInput: frame 'keep' lists 'in' both as a marker and as a modifier marker"),
+   ("31l", frames [fr "stand" ["in front", "in  front"] [] []],                                              -- FR2
+    "InvalidInput: frame 'stand' has the marker 'in  front', which is not words separated by single spaces"),
+   ("31m", frames [fr "mark" ["In"] [] []],
+    "InvalidInput: frame 'mark' has the marker word 'In', which is not a lower-case word of letters"),
+   ("31n", frames [fr "name" ["or"] [] []], "InvalidInput: frame 'name' has the reserved marker word 'or'"),
+   ("31o", frames [fr "open" ["in"] [] ["in front"]],
+    "InvalidInput: frame 'open' has the markers 'in' and 'in front', and one begins the other"),
+   ("31p", ⟨[], ["freely", "freely"]⟩, "InvalidInput: the adverb 'freely' is declared twice"),
+   ("31q", ⟨[], ["and"]⟩, "InvalidInput: the adverb 'and' is not a lower-case word of letters, or is reserved"),
+   ("31r", ⟨[fr "rest" [] [] ["gladly"]], ["gladly"]⟩,
+    "InvalidInput: the adverb 'gladly' is also a marker or head word"),
+   ("31s", frames [fr "sit" ["on"] [] [], fr "on hold" [] [] []],
+    "InvalidInput: frame 'on hold' begins with the marker word 'on'")]
+
+def union (V W : Vocab) : Vocab := ⟨V.frames ++ W.frames, V.adverbs ++ W.adverbs⟩
+/-- D-31's order: for every two rows, the union of their vocabularies, either way round, raises the earlier row's
+text. A permutation of the checks that is not the identity puts some pair of rows out of order. -/
+def inOrder : List (String × Vocab × String) → Bool
+  | [] => true
+  | (_, V, e) :: rest => rest.all (fun (_, W, _) => errOf (union V W) == e && errOf (union W V) == e) && inOrder rest
+
+#guard d31.map (·.1) == ["31a", "31b", "31c", "31d", "31e", "31f", "31g", "31h", "31i", "31j", "31k", "31l", "31m",
+  "31n", "31o", "31p", "31q", "31r", "31s"]
+#guard d31.all (fun (_, V, e) => errOf V == e)                                     -- each row's text
+#guard inOrder d31                                                                 -- D-31's order, every pair
+
+/-! The other cases of each condition: both sides of 31a's limit, each half of a condition that has two (`wordOk`,
+31l, 31q, 31r), every reserved word in each position (1.2), and words and heads that are prefixes as strings only. -/
+
+/-- `k` distinct heads of three lower-case letters. -/
+def heads (k : Nat) : List Frame :=
+  (List.range k).map (fun i => fr (String.mk ['w', Char.ofNat (97 + i / 26), Char.ofNat (97 + i % 26)]) [] [] [])
+#guard errOf (frames (heads 128)) == "ok" && errOf (frames (heads 129)) == "ResourceLimit: more than 128 frames"
+#guard errOf (frames [fr "se3k" [] [] []]) ==
+  "InvalidInput: frame 'se3k' has the head word 'se3k', which is not a lower-case word of letters"          -- 31c
+#guard errOf (frames [fr "seek" [] [] ["se3k"]]) ==
+  "InvalidInput: frame 'seek' has the marker word 'se3k', which is not a lower-case word of letters"        -- 31m
+#guard errOf (frames [fr "seek" [] [] ["-in"]]) ==
+  "InvalidInput: frame 'seek' has the marker word '-in', which is not a lower-case word of letters"         -- 31m
+#guard errOf ⟨[], ["Freely"]⟩ == "InvalidInput: the adverb 'Freely' is not a lower-case word of letters, or is reserved"
+#guard errOf ⟨[], ["se3k"]⟩ == "InvalidInput: the adverb 'se3k' is not a lower-case word of letters, or is reserved"
+#guard framesOk ⟨[fr "check-in" ["o'er"] [] []], ["half-heartedly"]⟩       -- inner `-` and `'` are word letters
 #guard errOf (frames [fr "seek" ["", " "] [] []]) ==
   "InvalidInput: frame 'seek' has the marker ' ', which is not words separated by single spaces"            -- 31l, FR1
-#guard errOf (frames [fr "stand" ["in front", "in  front"] [] []]) ==
-  "InvalidInput: frame 'stand' has the marker 'in  front', which is not words separated by single spaces"   -- 31l, FR2
 #guard errOf (frames [fr "seek" [] [] [" in"]]) ==
   "InvalidInput: frame 'seek' has the marker ' in', which is not words separated by single spaces"          -- 31l
-#guard errOf (frames [fr "seek" ["In"] [] []]) ==
-  "InvalidInput: frame 'seek' has the marker word 'In', which is not a lower-case word of letters"          -- 31m
-#guard errOf (frames [fr "seek" ["or"] [] []]) == "InvalidInput: frame 'seek' has the reserved marker word 'or'" -- 31n
-#guard errOf (frames [fr "seek" ["in"] [] ["in front"]]) ==
-  "InvalidInput: frame 'seek' has the markers 'in' and 'in front', and one begins the other"                -- 31o
-#guard errOf ⟨[], ["freely", "freely"]⟩ == "InvalidInput: the adverb 'freely' is declared twice"             -- 31p
-#guard errOf ⟨[], ["and"]⟩ == "InvalidInput: the adverb 'and' is not a lower-case word of letters, or is reserved" -- 31q
-#guard errOf ⟨[fr "seek" [] [] ["freely"]], ["freely"]⟩ ==
-  "InvalidInput: the adverb 'freely' is also a marker or head word"                                         -- 31r
-#guard errOf (frames [fr "seek" ["in"] [] [], fr "in vain" [] [] []]) ==
-  "InvalidInput: frame 'in vain' begins with the marker word 'in'"                                          -- 31s
+#guard errOf ⟨[fr "rest" [] [] []], ["rest"]⟩ == "InvalidInput: the adverb 'rest' is also a marker or head word" -- 31r
+#guard errOf ⟨[fr "rest" ["in"] [] []], ["in"]⟩ == "InvalidInput: the adverb 'in' is also a marker or head word"
+#guard errOf (frames [fr "to go" [] [] []]) == "InvalidInput: frame 'to go' has the reserved head word 'to'" -- 31d
+
+/-- The reserved words of 1.2, from the spec's lists: a head word may be none of `headReserved`, a marker word none of
+`markerReserved` (*to* and *for* are markers), an adverb none of `headReserved`. -/
+def headReserved : List String := ["and", "or", "nor", "to", "be"] ++ Lexical.clauseWords
+def markerReserved : List String := ["and", "or", "nor", "be"] ++ Lexical.clauseWords
+
+#guard headReserved.all fun w =>
+  errOf (frames [fr ("seek " ++ w) [] [] []]) == s!"InvalidInput: frame 'seek {w}' has the reserved head word '{w}'"
+#guard markerReserved.all fun w =>
+  errOf (frames [fr "seek" ["in " ++ w] [] []]) == s!"InvalidInput: frame 'seek' has the reserved marker word '{w}'" &&
+  errOf (frames [fr "seek" [] [] [w]]) == s!"InvalidInput: frame 'seek' has the reserved marker word '{w}'"
+#guard headReserved.all fun w =>
+  errOf ⟨[], [w]⟩ == s!"InvalidInput: the adverb '{w}' is not a lower-case word of letters, or is reserved"
+#guard framesOk (frames [fr "seek" ["to"] [] ["for"]]) && framesOk (frames [fr "care for" [] [] []])
+#guard framesOk (frames [fr "take" [] [] [], fr "taken" [] [] []])      -- 31f is about words, not letters
+#guard framesOk (frames [fr "seek" ["in"] [] ["into"]])                   -- 31o likewise
+#guard framesOk (frames [fr "sit" ["on"] [] [], fr "carry on" [] [] []])   -- 31s: only a head's first word
 #guard errOf (frames [fr "must seek" [] [] []]) == "InvalidInput: frame 'must seek' has the reserved head word 'must'"
 #guard errOf (frames [fr "seek" ["if"] [] []]) == "InvalidInput: frame 'seek' has the reserved marker word 'if'"
 #guard errOf ⟨[], ["not"]⟩ == "InvalidInput: the adverb 'not' is not a lower-case word of letters, or is reserved"
