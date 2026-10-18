@@ -768,6 +768,20 @@
    "reason": "qt-b1: S +78 (VE/Scales/Syntax.lean +29, VE/Scales/Premises.lean +27, VE/Scales/Intended.lean +22); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1, 2026-10-18",
    "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
+  },
+  {
+   "class": "V",
+   "lines": 78,
+   "reason": "pk-1: VE/NormDefaults/Packs.lean +73, VE/NormDefaults/Layered.lean +5 (K +0, S +0, V +78)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1, 2026-10-18",
+   "commit": "93131f967bb3ad87674c214b19347986f33c79b2"
+  },
+  {
+   "class": "S",
+   "lines": 137,
+   "reason": "qt-a1: S +137 (VE/Cardinality/Syntax.lean +81, VE/Cardinality/Semantics.lean +56); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a1, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
   }
  ]
 }

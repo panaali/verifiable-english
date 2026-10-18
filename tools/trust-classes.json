@@ -4776,8 +4776,10 @@
         "VE.NormDefaults.Wire.LayeredU.X",
         "VE.NormDefaults.Wire.LayeredU.background",
         "VE.NormDefaults.Wire.layeredCase",
+        "VE.NormDefaults.Wire.rightsPack",
         "VE.NormDefaults.Wire.runLayered",
-        "VE.NormDefaults.Wire.softLabelledU"
+        "VE.NormDefaults.Wire.softLabelledU",
+        "VE.NormDefaults.Wire.softPack"
       ]
     },
     "VE/NormDefaults/Premises.lean": {
@@ -4979,6 +4981,7 @@
       "C": [
         "VE.NormDefaults.Wire.ConflictReplayU",
         "VE.NormDefaults.Wire.EntailmentReplayU",
+        "VE.NormDefaults.Wire.authorVocab",
         "VE.NormDefaults.Wire.checkAuthor",
         "VE.NormDefaults.Wire.checkAuthorN",
         "VE.NormDefaults.Wire.conflictFreeCheckU",
@@ -12634,6 +12637,97 @@
         "VE.Events.unorderedSameF"
       ]
     },
+    "VE/NormDefaults/Packs.lean": {
+      "D[V]": [
+        "VE.NormDefaults.Packs.Pack",
+        "VE.NormDefaults.Packs.PackKind",
+        "VE.NormDefaults.Packs.RequestPath",
+        "VE.NormDefaults.Packs.labelledJson",
+        {
+          "name": "VE.NormDefaults.Packs.elaborateArrays",
+          "tied": [
+            "VE.NormDefaults.Packs.elaborateArrays_legacy",
+            "VE.NormDefaults.Packs.elaborateArrays_keys"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.NormDefaults.Packs.firstFailing",
+        "VE.NormDefaults.Packs.legacyIds",
+        "VE.NormDefaults.Packs.reserved",
+        {
+          "name": "VE.NormDefaults.Packs.packFault",
+          "tied": [
+            "VE.NormDefaults.Packs.packFault_legacy_rights",
+            "VE.NormDefaults.Packs.packFault_legacy_soft"
+          ]
+        }
+      ],
+      "G[V]": [
+        "VE.NormDefaults.Packs.Pack.names",
+        "VE.NormDefaults.Packs.X",
+        "VE.NormDefaults.Packs.coherenceLabels",
+        "VE.NormDefaults.Packs.declaredIn",
+        "VE.NormDefaults.Packs.envX",
+        "VE.NormDefaults.Packs.extendEnv",
+        "VE.NormDefaults.Packs.firstRepeat",
+        "VE.NormDefaults.Packs.fullEnv",
+        "VE.NormDefaults.Packs.labelledX",
+        "VE.NormDefaults.Packs.names",
+        "VE.NormDefaults.Packs.ordered",
+        "VE.NormDefaults.Packs.ownPrefix",
+        "VE.NormDefaults.Packs.ownPrefixIn",
+        "VE.NormDefaults.Packs.packOrder",
+        "VE.NormDefaults.Packs.packPremises",
+        "VE.NormDefaults.Packs.reservedPrefixes",
+        {
+          "name": "VE.NormDefaults.Packs.assemble",
+          "tied": [
+            "VE.NormDefaults.Packs.assemble_order",
+            "VE.NormDefaults.Packs.assemble_fresh"
+          ]
+        },
+        {
+          "name": "VE.NormDefaults.Packs.assembleIn",
+          "tied": [
+            "VE.NormDefaults.Packs.assembleIn_ok"
+          ]
+        },
+        {
+          "name": "VE.NormDefaults.Packs.xWithout",
+          "tied": [
+            "VE.NormDefaults.Packs.xWithout_nil",
+            "VE.NormDefaults.Packs.xWithout_sub"
+          ]
+        }
+      ]
+    },
+    "VE/NormDefaults/PacksExamples.lean": {
+      "T": [
+        "VE.NormDefaults.Packs.Fixtures.E",
+        "VE.NormDefaults.Packs.Fixtures.P",
+        "VE.NormDefaults.Packs.Fixtures.att",
+        "VE.NormDefaults.Packs.Fixtures.diag",
+        "VE.NormDefaults.Packs.Fixtures.ev",
+        "VE.NormDefaults.Packs.Fixtures.fixturePrefixes",
+        "VE.NormDefaults.Packs.Fixtures.holds",
+        "VE.NormDefaults.Packs.Fixtures.rights",
+        "VE.NormDefaults.Packs.Fixtures.soft",
+        "VE.NormDefaults.Packs.Fixtures.weighing",
+        "VE.NormDefaults.Packs.Fixtures.φ"
+      ]
+    },
+    "VE/NormDefaults/PacksLegacyExamples.lean": {
+      "T": [
+        "VE.NormDefaults.Packs.Fixtures.cx",
+        "VE.NormDefaults.Packs.Fixtures.gen",
+        "VE.NormDefaults.Packs.Fixtures.legacyLabels",
+        "VE.NormDefaults.Packs.Fixtures.legacyPacks",
+        "VE.NormDefaults.Packs.Fixtures.legacyU",
+        "VE.NormDefaults.Packs.Fixtures.muX",
+        "VE.NormDefaults.Packs.Fixtures.rightsDocs"
+      ]
+    },
     "VE/Layout/List.lean": {
       "D[V]": [
         "VE.Layout.boldLabel",
@@ -12691,6 +12785,161 @@
         "VE.Scope.Examples.seven",
         "VE.Scope.Examples.shortPieces",
         "VE.Scope.Examples.situationsPieces"
+      ]
+    },
+    "VE/Cardinality/Syntax.lean": {
+      "S": [
+        "VE.Cardinality.Body",
+        "VE.Cardinality.Rel",
+        "VE.Cardinality.CountAtom",
+        "VE.Cardinality.Cmp",
+        "VE.Cardinality.Proportion",
+        "VE.Cardinality.CFormula",
+        "VE.Cardinality.CEnv",
+        "VE.Cardinality.regionPrefix",
+        "VE.Cardinality.CEnv.WellFormed",
+        "VE.Cardinality.BodyTyped",
+        "VE.Cardinality.Admitted"
+      ],
+      "C": [
+        {
+          "name": "VE.Cardinality.bodyCheck",
+          "tied": [
+            "VE.Cardinality.bodyCheck_iff"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.CFormula.admits",
+          "tied": [
+            "VE.Cardinality.admits_iff"
+          ]
+        }
+      ]
+    },
+    "VE/Cardinality/Semantics.lean": {
+      "S": [
+        "VE.Cardinality.Body.holds",
+        "VE.Cardinality.HasCount",
+        "VE.Cardinality.Rel.holds",
+        "VE.Cardinality.Cmp.holds",
+        "VE.Cardinality.Counts",
+        "VE.Cardinality.CountAtom.holds",
+        "VE.Cardinality.Proportion.holds",
+        "VE.Cardinality.CFormula.holds",
+        "VE.Cardinality.Admissible",
+        "VE.Cardinality.CEntails"
+      ]
+    },
+    "VE/Cardinality/Regions.lean": {
+      "C": [
+        "VE.Cardinality.firstUse",
+        "VE.Cardinality.Body.atoms",
+        "VE.Cardinality.bodyOfQ?",
+        "VE.Cardinality.universalsOf",
+        "VE.Cardinality.CFormula.universalsC",
+        "VE.Cardinality.CFormula.countBodies",
+        "VE.Cardinality.countedSorts",
+        "VE.Cardinality.countedUniversals",
+        "VE.Cardinality.predsOn",
+        "VE.Cardinality.Region",
+        "VE.Cardinality.regions",
+        "VE.Cardinality.Body.inRegion",
+        "VE.Cardinality.bitString",
+        "VE.Cardinality.regionConst",
+        "VE.Cardinality.regionTable",
+        "VE.Cardinality.dl",
+        "VE.Cardinality.CEnv.elab",
+        "VE.Cardinality.regionBody"
+      ],
+      "G[R]": [
+        "VE.Cardinality.maxCountedSorts",
+        "VE.Cardinality.maxPredicates",
+        "VE.Cardinality.problemLimits"
+      ]
+    },
+    "VE/Cardinality/Erase.lean": {
+      "C": [
+        "VE.Cardinality.sumTerms",
+        "VE.Cardinality.regionSum",
+        "VE.Cardinality.CountAtom.erase",
+        "VE.Cardinality.Cmp.erase",
+        "VE.Cardinality.Proportion.erase",
+        "VE.Cardinality.CFormula.erase",
+        "VE.Cardinality.nonnegPremises",
+        "VE.Cardinality.bridgePremises",
+        "VE.Cardinality.erasedProblem",
+        "VE.Cardinality.Body.evalFin",
+        "VE.Cardinality.countFin",
+        "VE.Cardinality.withRegionsFinite",
+        "VE.Cardinality.refutesC"
+      ],
+      "P": [
+        "VE.Cardinality.regionSize",
+        "VE.Cardinality.withRegions"
+      ]
+    },
+    "VE/Cardinality/Theorems.lean": {
+      "C": [
+        "VE.Cardinality.atLeastAtom",
+        "VE.Cardinality.atMostAtom",
+        "VE.Cardinality.exactlyAtom",
+        "VE.Cardinality.nOfMFormula",
+        "VE.Cardinality.Body.toFormula"
+      ]
+    },
+    "VE/Cardinality/Examples.lean": {
+      "T": [
+        "VE.Cardinality.Examples.rowsModel",
+        "VE.Cardinality.Examples.cmpB",
+        "VE.Cardinality.Examples.holdsFin",
+        "VE.Cardinality.Examples.erasedFin",
+        "VE.Cardinality.Examples.agrees",
+        "VE.Cardinality.Examples.pm",
+        "VE.Cardinality.Examples.inc",
+        "VE.Cardinality.Examples.stay",
+        "VE.Cardinality.Examples.fomc",
+        "VE.Cardinality.Examples.isInc",
+        "VE.Cardinality.Examples.isStay",
+        "VE.Cardinality.Examples.noneBoth",
+        "VE.Cardinality.Examples.fa1Conclusion",
+        "VE.Cardinality.Examples.fa1",
+        "VE.Cardinality.Examples.fa1AtLeast",
+        "VE.Cardinality.Examples.replays",
+        "VE.Cardinality.Examples.fa1Trace",
+        "VE.Cardinality.Examples.fa1AtLeastTrace",
+        "VE.Cardinality.Examples.fa1bModel",
+        "VE.Cardinality.Examples.fa1c",
+        "VE.Cardinality.Examples.fa1cModel",
+        "VE.Cardinality.Examples.flagged",
+        "VE.Cardinality.Examples.agreeOn",
+        "VE.Cardinality.Examples.many",
+        "VE.Cardinality.Examples.manyQ",
+        "VE.Cardinality.Examples.collide",
+        "VE.Cardinality.Examples.collideModel",
+        "VE.Cardinality.Examples.users",
+        "VE.Cardinality.Examples.harm",
+        "VE.Cardinality.Examples.oneIn1000",
+        "VE.Cardinality.Examples.bareAtom",
+        "VE.Cardinality.Examples.moreThanHalf",
+        "VE.Cardinality.Examples.userModel",
+        "VE.Cardinality.Examples.two",
+        "VE.Cardinality.Examples.colliding",
+        "VE.Cardinality.Examples.dupModel",
+        "VE.Cardinality.Examples.fa1Model",
+        "VE.Cardinality.Examples.everyone",
+        "VE.Cardinality.Examples.share",
+        "VE.Cardinality.Examples.nobody",
+        "VE.Cardinality.Examples.somebodyCurious",
+        "VE.Cardinality.Examples.everybodyCurious",
+        "VE.Cardinality.Examples.yes",
+        "VE.Cardinality.Examples.no",
+        "VE.Cardinality.Examples.everyNat",
+        "VE.Cardinality.Examples.wild",
+        "VE.Cardinality.Examples.named",
+        "VE.Cardinality.Examples.ghost",
+        "VE.Cardinality.Examples.good",
+        "VE.Cardinality.Examples.badQ",
+        "VE.Cardinality.Examples.badP"
       ]
     }
   }
