@@ -2645,6 +2645,84 @@ theorem VE.Calc.values_stated
         d ∈ ds → ∀ (q : Rat), d.source = VE.Calc.Source.stated q → VE.Calc.values ds d.name = Option.some q
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.stated@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
   -- expr 3273210734
+theorem VE.Cardinality.CEnv.WellFormed.finiteDeclared
+  ∀ {E : VE.Cardinality.CEnv}, E.WellFormed → ∀ (s : String), s ∈ E.finite → s ∈ E.q.sorts
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Time.QEnv.sorts@VE.Time.Syntax
+  -- expr 4040140844
+theorem VE.Cardinality.CEnv.WellFormed.fresh
+  ∀ {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (c : String) (τ : VE.Time.QType),
+        E.q.constants c = Option.some τ → c.startsWith VE.Cardinality.regionPrefix = Bool.false
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.regionPrefix@VE.Cardinality.Syntax VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
+  -- expr 2783318274
+theorem VE.Cardinality.Examples.two_all
+  VE.Cardinality.HasCount VE.Cardinality.Examples.two "user" VE.Cardinality.Body.any 2
+  -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.HasCount@VE.Cardinality.Semantics
+  -- expr 1969085093
+theorem VE.Cardinality.Examples.two_some
+  VE.Cardinality.HasCount VE.Cardinality.Examples.two "user" (VE.Cardinality.Body.any.and VE.Cardinality.Examples.harm) 1
+  -- uses VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.HasCount@VE.Cardinality.Semantics
+  -- expr 2895958237
+theorem VE.Cardinality.admits_complete
+  ∀ (E : VE.Cardinality.CEnv) (a : VE.Cardinality.CFormula),
+    VE.Cardinality.Admitted E a → VE.Cardinality.CFormula.admits E a = Bool.true
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.admits@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax
+  -- expr 90134320
+theorem VE.Cardinality.admits_iff
+  ∀ (E : VE.Cardinality.CEnv) (a : VE.Cardinality.CFormula),
+    VE.Cardinality.CFormula.admits E a = Bool.true ↔ VE.Cardinality.Admitted E a
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.admits@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax
+  -- expr 1372293335
+theorem VE.Cardinality.admits_sound
+  ∀ (E : VE.Cardinality.CEnv) (a : VE.Cardinality.CFormula),
+    VE.Cardinality.CFormula.admits E a = Bool.true → VE.Cardinality.Admitted E a
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.admits@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax
+  -- expr 3580892083
+theorem VE.Cardinality.bodyCheck_iff
+  ∀ (E : VE.Cardinality.CEnv) (s : String) (b : VE.Cardinality.Body),
+    VE.Cardinality.bodyCheck E s b = Bool.true ↔ VE.Cardinality.BodyTyped E s b
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.bodyCheck@VE.Cardinality.Syntax
+  -- expr 4260019375
+theorem VE.Cardinality.exists_nodup_filter
+  ∀ {α : Type u} (P : α → Prop) (xs : List α), ∃ ys, ys.Nodup ∧ ∀ (x : α), x ∈ ys ↔ x ∈ xs ∧ P x
+  -- uses
+  -- expr 3200230773
+theorem VE.Cardinality.hasCount_exists_unique
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body),
+            ∃ n, VE.Cardinality.HasCount T s b n ∧ ∀ (m : Nat), VE.Cardinality.HasCount T s b m → m = n
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 980603039
+theorem VE.Cardinality.hasCount_unique
+  ∀ {α : Type u} {T : VE.Time.TStructure α} {s : String} {b : VE.Cardinality.Body} {n m : Nat},
+    VE.Cardinality.HasCount T s b n → VE.Cardinality.HasCount T s b m → n = m
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2589477521
+theorem VE.Cardinality.nodup_length_eq
+  ∀ {α : Type u} {xs ys : List α}, xs.Nodup → ys.Nodup → (∀ (x : α), x ∈ xs ↔ x ∈ ys) → xs.length = ys.length
+  -- uses
+  -- expr 475827540
+theorem VE.Cardinality.nonneg_hold
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α)
+    (a : VE.Time.QFormula),
+    a ∈ VE.Cardinality.nonnegPremises E fs → VE.Time.QFormula.tdenote (VE.Cardinality.withRegions E fs T) [] a
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.nonnegPremises@VE.Cardinality.Erase VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QFormula.tdenote@VE.Time.Semantics VE.Time.QFormula@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics
+  -- expr 1862298806
+theorem VE.Cardinality.proportion_holds_iff
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (p : VE.Cardinality.Proportion),
+        VE.Cardinality.Admitted E (VE.Cardinality.CFormula.proportion p) →
+          (VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.proportion p) ↔
+            ∃ n m,
+              VE.Cardinality.HasCount T p.sort p.whole n ∧
+                VE.Cardinality.HasCount T p.sort (p.whole.and p.part) m ∧ 0 < n ∧ p.cmp.holds (↑m * ↑p.den) (↑n * ↑p.num))
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.proportion@VE.Cardinality.Syntax VE.Cardinality.Cmp.holds@VE.Cardinality.Semantics VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Cardinality.Proportion.cmp@VE.Cardinality.Syntax VE.Cardinality.Proportion.den@VE.Cardinality.Syntax VE.Cardinality.Proportion.num@VE.Cardinality.Syntax VE.Cardinality.Proportion.part@VE.Cardinality.Syntax VE.Cardinality.Proportion.sort@VE.Cardinality.Syntax VE.Cardinality.Proportion.whole@VE.Cardinality.Syntax VE.Cardinality.Proportion@VE.Cardinality.Syntax VE.Time.TStructure@VE.Time.Semantics
+  -- expr 984423562
 theorem VE.CertificateWire.ClosureQuery.accepts_sound
   ∀ {E : VE.Environment} (q : VE.CertificateWire.ClosureQuery E),
     q.accepts = Bool.true → VE.Closure.Entails E q.premises q.conclusion

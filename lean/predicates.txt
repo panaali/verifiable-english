@@ -129,6 +129,12 @@ module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.Render
 module VE.Calc.Syntax
+module VE.Cardinality.Erase
+module VE.Cardinality.Examples
+module VE.Cardinality.Regions
+module VE.Cardinality.Semantics
+module VE.Cardinality.Syntax
+module VE.Cardinality.Theorems
 module VE.CertificateWire
 module VE.Checks
 module VE.ClaimGraph
@@ -617,6 +623,20 @@ VE.Calc.NameOverflows@VE.Calc.Decls
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
+VE.Cardinality.Admissible@VE.Cardinality.Semantics
+VE.Cardinality.Admitted.below@VE.Cardinality.Syntax
+VE.Cardinality.Admitted@VE.Cardinality.Syntax
+VE.Cardinality.Body.holds@VE.Cardinality.Semantics
+VE.Cardinality.BodyTyped@VE.Cardinality.Syntax
+VE.Cardinality.CEntails@VE.Cardinality.Semantics
+VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax
+VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics
+VE.Cardinality.Cmp.holds@VE.Cardinality.Semantics
+VE.Cardinality.CountAtom.holds@VE.Cardinality.Semantics
+VE.Cardinality.Counts@VE.Cardinality.Semantics
+VE.Cardinality.HasCount@VE.Cardinality.Semantics
+VE.Cardinality.Proportion.holds@VE.Cardinality.Semantics
+VE.Cardinality.Rel.holds@VE.Cardinality.Semantics
 VE.Closure.ClosedAt@VE.Closure.Paths
 VE.Closure.Edge.Typed@VE.Closure.Substitution
 VE.Closure.Edge.denote@VE.Closure.Substitution
