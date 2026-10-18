@@ -570,4 +570,16 @@ def r16 : VE.Rights.Right := epsilon.rs.headD r9
 #guard (Content.right r16).declared ==
   [("right", "r16"), ("rule", "may-marry"), ("rule", "recognise-marriage"), ("rule", "register-marriage")]
 
+/-! `pendingWithDefaults`: the composed blocks refused with `norm-defaults@0` (et-7 review F1); the `risk@0` text is
+the gate's own. -/
+#guard pendingWithDefaults ["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0"] ==
+  some "UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented"
+#guard pendingWithDefaults ["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0", "risk@0"] ==
+  some "UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented"
+#guard match todayGate ["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0", "risk@0"] with
+  | .error m => some m == pendingWithDefaults ["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0", "risk@0"]
+  | .ok _ => false
+#guard pendingWithDefaults ["alternatives@0", "norms@0", "relational-fol@0"] == none
+#guard pendingWithDefaults ["norm-defaults@0", "norms@0", "relational-fol@0"] == none
+
 end VE.Compose.Examples
