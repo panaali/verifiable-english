@@ -16,6 +16,22 @@
    "expected": true
   },
   {
+   "unit": "u042",
+   "part": "translation-part01.ve.md",
+   "before": "UNFORMALISED",
+   "after": "CHECKED",
+   "row_changed": true,
+   "expected": true
+  },
+  {
+   "unit": "u043",
+   "part": "translation-part01.ve.md",
+   "before": "UNFORMALISED",
+   "after": "OPEN",
+   "row_changed": true,
+   "expected": true
+  },
+  {
    "unit": "u060",
    "part": "translation-part02.ve.md",
    "before": "UNFORMALISED",

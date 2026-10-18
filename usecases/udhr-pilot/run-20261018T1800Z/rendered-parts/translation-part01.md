@@ -63,7 +63,7 @@ Recorded meaning: The passage is recorded as a rule.
 This sentence could mean:
 One reading is: Every practice must be prohibited, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both.
 Another reading is: Every practice must not be carried out, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both.
-These two readings differ here: actor is an actor; attack is an attack; b is a bearer; c is a community; d is a distinction; h is a holding; interference is an interference; intrusion is an intrusion; m is a measure; person is a person; practice is a practice; prosecution is a prosecution; s is a subjection; thing is a thing; practice is classified as "is_slave_trade". Here the text does not say whether practice must be prohibited; this situation answers 'no'. Under *Every practice must be prohibited, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both*, practice still must. Under *Every practice must not be carried out, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both*, practice is not required to.
+These two readings differ here: act is an act; actor is an actor; applicability is an applicability; attack is an attack; b is a bearer; c is a community; day is a day; d is a distinction; finding is a finding of guilt; h is a holding; imposition is an imposition; interference is an interference; intrusion is an intrusion; m is a measure; penalty is a penalty; person is a person; practice is a practice; prosecution is a prosecution; s is a subjection; thing is a thing; practice is classified as "is_slave_trade". Here the text does not say whether practice must be prohibited; this situation answers 'no'. Under *Every practice must be prohibited, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both*, practice still must. Under *Every practice must not be carried out, if either that practice is classified as "is_slavery_u025" or that practice is classified as "is_slave_trade", or both*, practice is not required to.
 These two readings are about different acts: *be prohibited* / *be carried out*. No situation separates them on a shared act.
 ## Article 5
 Recorded meaning: The passage is recorded as a comment about the text.
@@ -130,9 +130,41 @@ Recorded meaning: The passage is recorded as a comment about the text.
 1. Everyone charged with a penal offence has the right to be presumed innocent until proved guilty according to law in a public trial at which he has had all the guarantees necessary for his defence.
 Recorded meaning: The passage is recorded as a passage without a formal reading yet, for this reason: other act phrase grammar.
 2. No one shall be held guilty of any penal offence on account of any act or omission which did not constitute a penal offence, under national or international law, at the time when it was committed.
-Recorded meaning: The passage is recorded as a passage without a formal reading yet, for this reason: time.
+Checked reading: Every finding of guilt must not take place, if there is an act such that both of the following hold:
+  (a) that finding of guilt has the recorded relation "on_account_of" to that act;
+  (b) there is a day such that both of the following hold:
+    (i) that act has the recorded relation "committed_on" to that day;
+    (ii) it is not the case that that act has the recorded relation "constitutes_penal_offence_on" to that day.
 Nor shall a heavier penalty be imposed than the one that was applicable at the time the penal offence was committed.
-Recorded meaning: The passage is recorded as a passage without a formal reading yet, for this reason: time.
+Open reading: Every imposition must not take place, if there is a first penalty such that both of the following hold:
+  (a) that imposition imposes the first penalty;
+  (b) there is an act such that both of the following hold:
+    (i) that imposition has the recorded relation "imposed_for" to that act;
+    (ii) there is a day such that all of the following hold:
+      (a) that act has the recorded relation "committed_on" to that day;
+      (b) both of the following hold:
+        (i) there is an applicability such that both that applicability has the recorded relation "applicability_to" to that act and that applicability has the recorded relation "applicable_on" to that day;
+        (ii) for every applicability that has the recorded relation "applicability_to" to that act and has the recorded relation "applicable_on" to that day, there is a second penalty such that both that applicability has the recorded relation "applicability_of" to the second penalty and the first penalty has the recorded relation "heavier_than" to the second penalty.
+This sentence could mean:
+One reading is: Every imposition must not take place, if there is a first penalty such that both of the following hold:
+  (a) that imposition imposes the first penalty;
+  (b) there is an act such that both of the following hold:
+    (i) that imposition has the recorded relation "imposed_for" to that act;
+    (ii) there is a day such that all of the following hold:
+      (a) that act has the recorded relation "committed_on" to that day;
+      (b) both of the following hold:
+        (i) there is an applicability such that both that applicability has the recorded relation "applicability_to" to that act and that applicability has the recorded relation "applicable_on" to that day;
+        (ii) for every applicability that has the recorded relation "applicability_to" to that act and has the recorded relation "applicable_on" to that day, there is a second penalty such that both that applicability has the recorded relation "applicability_of" to the second penalty and the first penalty has the recorded relation "heavier_than" to the second penalty.
+Another reading is: Every imposition must not take place, if there is a first penalty such that both of the following hold:
+  (a) that imposition imposes the first penalty;
+  (b) there is an act such that both of the following hold:
+    (i) that imposition has the recorded relation "imposed_for" to that act;
+    (ii) there is a day such that both of the following hold:
+      (a) that act has the recorded relation "committed_on" to that day;
+      (b) there is an applicability such that all of the following hold:
+        (i) both that applicability has the recorded relation "applicability_to" to that act and that applicability has the recorded relation "applicable_on" to that day;
+        (ii) there is a second penalty such that both that applicability has the recorded relation "applicability_of" to the second penalty and the first penalty has the recorded relation "heavier_than" to the second penalty.
+These two readings differ in a checked situation that VE cannot yet show in words.
 ## Article 12
 Recorded meaning: The passage is recorded as a comment about the text.
 No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence

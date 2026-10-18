@@ -100,7 +100,7 @@ def existential_content(universal):
     rule = content["norm"]
     exists_act = rule["guard"]
     # guard: exists penalty (imposes and exists act (imposed_for and exists day (committed_on and (E and F))))
-    day = exists_act[2][2][2][2][2][2]                   # the `exists day` node
+    day = exists_act[2][2][2][2]                   # the `exists day` node
     assert day[0] == "exists" and day[1] == "day", day[:2]
     body = day[2]                                         # ["and", committed_on, ["and", E, F]]
     assert body[0] == "and" and body[2][0] == "and" and body[2][2][0] == "forall", body[2][2][:2]

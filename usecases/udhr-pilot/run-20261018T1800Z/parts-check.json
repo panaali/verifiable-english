@@ -1,35 +1,35 @@
 {
  "translation-part01.ve.md": {
-  "seconds": 23.4,
+  "seconds": 53.0,
   "coverage": {
    "accounted_bytes": 4724,
    "bytes_by_kind": {
     "asserted": 760,
     "attributed": 801,
     "meta": 265,
-    "norm": 947,
-    "unformalised": 1951
+    "norm": 1265,
+    "unformalised": 1633
    },
    "bytes_by_status": {
-    "CHECKED": 192,
+    "CHECKED": 392,
     "LABELLED": 265,
-    "OPEN": 1264,
-    "UNFORMALISED": 3003
+    "OPEN": 1382,
+    "UNFORMALISED": 2685
    },
    "coverage_percent": 100,
    "residual": {
     "assumptions": 0,
     "bridge_leaves": 0,
-    "open_terms": 57,
-    "unresolved_reading_sets": 3,
-    "separations": 3,
+    "open_terms": 58,
+    "unresolved_reading_sets": 4,
+    "separations": 4,
     "readings_findings": 1,
     "pending_candidates": 0,
     "couplings": 0,
-    "gaps": 9,
+    "gaps": 11,
     "ungrounded_defaults": 0
    },
-   "residual_total": 73,
+   "residual_total": 78,
    "source_bytes": 4724,
    "unformalised_reasons": {
     "attribution": 4,
@@ -39,7 +39,7 @@
     "norms": 5,
     "other_act_phrase_grammar": 2,
     "other_metaphorical_endowment": 1,
-    "time": 3
+    "time": 1
    },
    "norm_defaults": {
     "gaps": [
@@ -47,7 +47,9 @@
      "attack_upon_honour_or_reputation_permitted",
      "compel_association_membership_permitted",
      "distinction_by_country_status_permitted",
+     "finding_of_guilt_permitted",
      "holding_in_slavery_or_servitude_permitted",
+     "imposition_permitted",
      "interference_with_private_domains_permitted",
      "prohibition_of_slavery_and_slave_trade_required",
      "slavery_or_slave_trade_practice_permitted",
@@ -68,6 +70,10 @@
     ],
     [
      "rs_u037",
+     0
+    ],
+    [
+     "rs_u043",
      0
     ]
    ],
@@ -126,18 +132,18 @@
    "u039": "UNFORMALISED",
    "u040": "LABELLED",
    "u041": "UNFORMALISED",
-   "u042": "UNFORMALISED",
-   "u043": "UNFORMALISED",
+   "u042": "CHECKED",
+   "u043": "OPEN",
    "u044": "LABELLED",
    "u045a": "OPEN",
    "u045b": "CHECKED",
    "u046": "OPEN"
   },
-  "document_id": "b0846ef28f5ca7186c2ce0b2c2a2780c129eb2fb2593fa350a1d775767a0217f",
+  "document_id": "5e3cd85f154d362532fb3e0b5cc670ac9db00adac549618fe77c737c26126dea",
   "source_id": "21e79137e9b2a73deed618c2ea187ddf0370fe9daa0ba8199f6f575d59677017"
  },
  "translation-part02.ve.md": {
-  "seconds": 6.4,
+  "seconds": 7.0,
   "coverage": {
    "accounted_bytes": 1849,
    "bytes_by_kind": {
@@ -232,7 +238,7 @@
   "source_id": "30c55dadeebc806a044087a9d96f8f6d9c42d8413ef6370c497720eb840bfd3a"
  },
  "translation-part03.ve.md": {
-  "seconds": 6.8,
+  "seconds": 6.3,
   "coverage": {
    "accounted_bytes": 3004,
    "bytes_by_kind": {
@@ -325,7 +331,7 @@
   "source_id": "6b7e27dc922576da04415b58d838185d7986dbc99de87339a4bd6016e5ffc339"
  },
  "translation-part04.ve.md": {
-  "seconds": 8.7,
+  "seconds": 9.0,
   "coverage": {
    "accounted_bytes": 1339,
    "bytes_by_kind": {
