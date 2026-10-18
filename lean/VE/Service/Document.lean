@@ -662,8 +662,6 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then
-    -- The environment mode's first fault, else the named refusal (never `CheckerUnavailable`: Python's own path
-    -- would send the block to the norm-defaults route, whose decoder does not read it).
     throw ((environmentFault environment).getD refusal)
   if listed.contains "rights@0" && (block != .none || listed.contains "norm-defaults@0") then
     throw (unavailable "rights with norm-defaults, alternatives or risk needs its composed Lean route")
