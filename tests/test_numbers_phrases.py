@@ -1,16 +1,30 @@
 """The existing English reader consumes the Lean-generated comparison rows."""
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 
+from subprocesses import HANG_TIMEOUT
 from ve import ast
 from ve.english import _COMPARISONS
 from tools import numbers_phrases
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_the_committed_table_is_the_lean_generators_output():
+    """Review F1 (me-1a): the committed rows are what `VE/Numbers/PhrasesMain.lean` prints now, checked by the
+    generator itself, unmocked, so an edit of `orderPhrases` without `--write` fails the suite. elan's `lake` is
+    the fallback when PATH has none."""
+    env = {**os.environ, "PATH": os.environ.get("PATH", "") + os.pathsep + str(Path.home() / ".elan/bin")}
+    done = subprocess.run([sys.executable, str(ROOT / "tools/numbers_phrases.py"), "--check"], cwd=ROOT, env=env,
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, (done.stdout, done.stderr)
+
 
 def test_comparison_rows_match_generated_table():
-    path = Path(__file__).resolve().parents[1] / "ve/numbers_phrases.json"
+    path = ROOT / "ve/numbers_phrases.json"
     rows = json.loads(path.read_text())
     operators = {"eq": ast.Eq, "lt": ast.Lt, "le": ast.Le}
     assert _COMPARISONS == tuple(
@@ -30,7 +44,7 @@ def test_generator_writes_lean_output_and_check_refuses_any_other_file(tmp_path,
     """`--write` stores exactly what the Lean generator printed; `--check` passes only on that file, and a
     generator failure is never a pass. The Lean run is replaced by its recorded output."""
     target = tmp_path / "numbers_phrases.json"
-    printed = (Path(__file__).resolve().parents[1] / "ve/numbers_phrases.json").read_text()
+    printed = (ROOT / "ve/numbers_phrases.json").read_text()
     result = subprocess.CompletedProcess([], 0, stdout=printed.rstrip("\n"), stderr="")
     monkeypatch.setattr(numbers_phrases, "TARGET", target)
     monkeypatch.setattr(numbers_phrases.subprocess, "run", lambda *args, **kwargs: result)

@@ -51,9 +51,9 @@
     "file": "lean/VE/Numbers/PhrasesMain.lean",
     "behaviour": "the generated comparison table",
     "mutation": "relName writes \"le\" for .lt",
-    "test": "tools/numbers_phrases.py --check; after --write: tests/test_numbers_phrases.py::test_comparison_rows_match_generated_table",
+    "test": "tests/test_numbers_phrases.py::test_the_committed_table_is_the_lean_generators_output (review F1: runs tools/numbers_phrases.py --check unmocked); after --write: tests/test_numbers_phrases.py::test_comparison_rows_match_generated_table",
     "result": "failed; restored",
-    "observed": "ve/numbers_phrases.json is stale (exit 1); 1 failed"
+    "observed": "ve/numbers_phrases.json is stale (exit 1); review fix: 1 failed, 2 passed (test_the_committed_table_is_the_lean_generators_output)"
   },
   {
     "file": "ve/english.py",
@@ -78,5 +78,21 @@
     "test": "tests/test_consolidation_tools.py::test_the_skeleton_step_names_every_top_level_executable_main",
     "result": "failed; removed",
     "observed": "Right contains one more item: 'ZzMain.lean'"
+  },
+  {
+    "file": "lean/VE/Numbers/Phrases.lean, lean/VE/Numbers/Examples.lean",
+    "behaviour": "review F1: an orderPhrases row edited together with its guard is still caught by the suite",
+    "mutation": "\"{0} is more than {1}\" becomes \"{0} is greater than {1}\" in orderPhrases and in the guard at Examples.lean:93; lake build VE.Numbers.Examples passes",
+    "test": "tests/test_numbers_phrases.py::test_the_committed_table_is_the_lean_generators_output",
+    "result": "failed; restored",
+    "observed": "lake build: Build completed successfully; pytest: 1 failed, 2 passed (ve/numbers_phrases.json is stale)"
+  },
+  {
+    "file": "tools/regen_generated.py",
+    "behaviour": "review F1 (the class): every generated file under ve/ names the unmocked check the suite or gate runs",
+    "mutation": "the numbers-phrases entry loses its fresh= line",
+    "test": "tests/test_regen_generated.py::test_every_table_the_product_reads_is_checked_by_the_suite_or_the_gate",
+    "result": "failed; restored",
+    "observed": "1 failed, 39 deselected"
   }
 ]
