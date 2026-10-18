@@ -1,12 +1,9 @@
 sc-1a statement diff against docs/spec/scope.md 4.1, 4.2 and 5.1 (108 approved declarations)
 
-exact (30):
+exact (22):
   def GovernedItem
   def boldLabel
   def continues
-  def depthLimit
-  def depthOk
-  def hasOwn
   def indexOf
   def isBlank
   def isDigit
@@ -14,30 +11,25 @@ exact (30):
   def lineStart
   def listRun
   def markerLen
-  def members
   def nl
   def ofSource
-  def ownSafe
   def paraCounts
   def runFrom
   def skipSpaces
   def sp
   def spacesOnly
-  def substOwn
   structure Unit
   theorem listRun_iff
   theorem listRun_ok_iff
   theorem mergeParts_conflict
   theorem mergeParts_keys
-  theorem substOwn_id
-  theorem substOwn_no_own
 
 differ (1):
   def mergeParts
     approved: ['def mergeParts (u : String) (lead item : Json) : Except String Json := do let bad := s!"InvalidInput: scope@0 parts of {u} must be objects" let ls ← (VE.Bridge.fields lead).mapError (fun _ => bad) let is ← (VE.Bridge.fields item).mapError (fun _ => bad) match ls.find? (fun kv => is.any (·.1 == kv.1)) with | some (k, _) => throw s!"ScopeConflict: {u}: {k}" | none => pure (Json.mkObj (ls ++ is))']
     built:    ['def mergeParts (u : String) (lead item : Json) : Except String Json := do let bad := s!"InvalidInput: scope@0 parts of {u} must be objects" let ls ← (lookups lead).mapError (fun _ => bad) let is ← (lookups item).mapError (fun _ => bad) match ls.find? (fun kv => is.any (·.1 == kv.1)) with | some (k, _) => throw s!"ScopeConflict: {u}: {k}" | none => pure (Json.mkObj (ls ++ is))']
 
-not built in sc-1a (77):
+not built in sc-1a (85):
   def BlockBound
   def Commutes
   def ItemUnit
@@ -58,6 +50,8 @@ not built in sc-1a (77):
   def coveredLayout
   def coversU
   def defSpans
+  def depthLimit
+  def depthOk
   def edgesFor
   def edgesInto
   def edgesOf
@@ -66,6 +60,7 @@ not built in sc-1a (77):
   def govern
   def governorsOf
   def graph
+  def hasOwn
   def headingOf
   def idOf
   def innermostAnchor
@@ -77,6 +72,7 @@ not built in sc-1a (77):
   def itemRun
   def keysOf
   def kindOf
+  def members
   def narrower
   def narrowing
   def newContent
@@ -84,6 +80,7 @@ not built in sc-1a (77):
   def objectOf
   def orderCheck
   def ordered
+  def ownSafe
   def partUnits
   def patch
   def payload
@@ -93,6 +90,7 @@ not built in sc-1a (77):
   def ruleUnits
   def setUnits
   def spansOf
+  def substOwn
   def unary
   def unitIds
   def unitsOf
@@ -115,19 +113,16 @@ not built in sc-1a (77):
   theorem itemRule_decoder
   theorem nonrule_refused
   theorem readings_refused
+  theorem substOwn_id
+  theorem substOwn_no_own
 
-built, not in the spec (helpers) (14):
+built, not in the spec (helpers) (9):
   def lookups
   theorem continues_iff
   theorem firstKeys_mem
-  theorem hasOwn_mono
-  theorem impl_map_eq
   theorem indexOf_iff
   theorem listRun_ok
   theorem lookups_absent
   theorem lookups_spec
   theorem mem_runFrom
-  theorem members_obj
   theorem mkObj_getObjVal
-  theorem substOwn_id_le
-  theorem substOwn_no_own_le
