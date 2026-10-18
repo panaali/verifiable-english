@@ -112,6 +112,12 @@ def fa1AtLeastTrace : VE.Order.Tableau.Trace :=
 -- The trace does not close the problem without the exclusion premise.
 #guard !replays fa1.dropLast fa1Conclusion fa1Trace
 
+/-- A model of FA1 (2 stay only, 16 increase only): every premise, bridge and the conclusion hold, so it refutes
+nothing. -/
+def fa1Model : VE.Order.FiniteModel Nat := rowsModel pm [([stay], 2), ([inc], 16)]
+#guard agrees fomc (fa1Conclusion :: fa1) fa1Model && !refutesC fomc fa1 fa1Conclusion fa1Model
+#guard (fa1Conclusion :: fa1).all (holdsFin fa1Model)
+
 /-- FA1b's countermodel (neither, stay only, increase only, both) = (1, 1, 15, 1). -/
 def fa1bModel : VE.Order.FiniteModel Nat := rowsModel pm [([], 1), ([stay], 1), ([inc], 15), ([inc, stay], 1)]
 
@@ -151,6 +157,9 @@ def agreeOn (M : VE.Order.FiniteModel Nat) (n m : Nat) : Bool :=
   (List.range 4).all fun n => (List.range 4).all fun m => agreeOn (flagged t k j) n m
 -- Every number of flagged objects, at the bound 2.
 #guard [6, 7, 8].all fun t => (List.range (t + 1)).all fun k => agreeOn (flagged t k 0) 2 2
+-- A model may list an object twice; it is still one object.
+def dupModel : VE.Order.FiniteModel Nat := { flagged 3 2 0 with domains := fun t => if t == pm then [0, 1, 0, 2] else [] }
+#guard (List.range 4).all fun n => agreeOn dupModel n 2
 
 /-! ## FA3, FA8: admission and the problem limits -/
 
