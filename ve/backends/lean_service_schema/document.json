@@ -4,7 +4,9 @@
   "row": {
     "anyOf": [
       {"$ref": "common.json#/$defs/case_error"},
-      {"$ref": "common.json#/$defs/error"},
+      {"$ref": "#/$defs/plain_error"},
+      {"$ref": "#/$defs/model_error"},
+      {"$ref": "#/$defs/fence_error"},
       {
         "additionalProperties": false,
         "properties": {
@@ -155,6 +157,27 @@
       ],
       "type": "object"
     },
+    "fence_error": {
+      "additionalProperties": false,
+      "properties": {
+        "error": {"$ref": "common.json#/$defs/text"},
+        "id": {"type": "string", "x-equals": "/id"},
+        "span": {
+          "additionalProperties": false,
+          "properties": {
+            "column": {"$ref": "common.json#/$defs/nat"},
+            "end": {"$ref": "common.json#/$defs/nat"},
+            "line": {"$ref": "common.json#/$defs/nat"},
+            "start": {"$ref": "common.json#/$defs/nat"}
+          },
+          "required": ["start", "end", "line", "column"],
+          "type": "object"
+        },
+        "status": {"const": "error"}
+      },
+      "required": ["id", "status", "error", "span"],
+      "type": "object"
+    },
     "meaning": {
       "$comment": "Discourse.Loader.meaningStatus: specified, or one contextual, open or unformalised member.",
       "anyOf": [
@@ -179,6 +202,17 @@
         }
       ]
     },
+    "model_error": {
+      "additionalProperties": false,
+      "properties": {
+        "error": {"$ref": "common.json#/$defs/text"},
+        "id": {"x-echo": "/id"},
+        "path": {"$ref": "common.json#/$defs/text"},
+        "status": {"const": "error"}
+      },
+      "required": ["id", "status", "error", "path"],
+      "type": "object"
+    },
     "narrowing": {
       "$comment": "Discourse.Loader.narrowingIds: a front-matter narrowing, relayed whole.",
       "additionalProperties": false,
@@ -191,6 +225,12 @@
         "version": {"minimum": 1, "type": "integer"}
       },
       "required": ["id", "set", "version", "keeps", "by", "reason_spans"],
+      "type": "object"
+    },
+    "plain_error": {
+      "additionalProperties": false,
+      "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+      "required": ["id", "status", "error"],
       "type": "object"
     },
     "rights_block": {

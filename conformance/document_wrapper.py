@@ -33,9 +33,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FAIL_CLOSED = ("CheckerUnavailable", "ResourceLimit")
 # `VE.Service.Document.ownedProfiles` (checked against the Lean mode by `tests/test_lean_document_wrapper.py`).
 OWNED = frozenset({"alternatives@0", "data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "rights@0",
-                   "risk@0", "time@0"})
-# `VE.Service.Document.ownedBeneath`: a profile owned only beneath another.
-OWNED_BENEATH = {"soft-norms@0": "rights@0"}
+                   "risk@0", "soft-norms@0", "time@0"})
 
 
 def text_of(document) -> str:
@@ -64,14 +62,21 @@ def projection_of(units, coverage, document_id, source_id):
 
 
 def wrapper_coverage(coverage, doc):
-    """The coverage fields the Lean document mode owns. Python adds norm-defaults gap evidence and
-    content-bearing readings findings after that answer; the public result retains both."""
+    """The coverage fields the Lean document mode owns. Python adds norm-defaults gap evidence, content-bearing
+    readings findings and a soft document's lines (the soft route's, batch 16f) after that answer; the public result
+    retains them."""
     defaults = doc.get("norm_defaults") is not None
     from ve.document import _content_bearing
     readings = _content_bearing(doc)
-    if not defaults and not readings:
+    soft = doc.get("soft_document") is not None and doc.get("rights_document") is None
+    if not defaults and not readings and not soft:
         return coverage
     base = deepcopy(coverage)
+    if soft:
+        for key in ("soft_status", "default_exceptions_by_decider", "soft_residual_labels", "soft_background_labels"):
+            base.pop(key, None)
+        for key in ("default_exceptions", "holistic_overrides", "instruction_switches", "weighing_points"):
+            base["residual"].pop(key, None)
     if defaults:
         base.pop("norm_defaults", None)
         base["residual"].pop("gaps", None)
@@ -99,7 +104,7 @@ def python_answer(text: str) -> dict:
             result = (_report(doc) if "graph" in doc["meta"] else
                       {"coverage": coverage(doc), "document_id": doc["document_id"], "source_id": doc["source_id"]})
         except VEError as exc:
-            answer = {"outcome": "error", "code": exc.code, "text": exc.message}
+            answer = {"outcome": "error", "code": exc.code, "text": exc.message, **_location(exc.to_dict())}
             owner = owner_of(exc, text)
             if owner is not None:
                 answer["owner"] = owner
@@ -123,8 +128,14 @@ def lean_answers(service, texts) -> list:
             out.append({"outcome": "ok", "value": projection_of(row["units"], row["coverage"], row["document_id"],
                                                                  row["source_id"])})
         else:
-            out.append({"outcome": "error", "code": entry.get("code") or "InvalidInput", "text": row["error"]})
+            out.append({"outcome": "error", "code": entry.get("code") or "InvalidInput", "text": row["error"],
+                        **_location(row)})
     return out
+
+
+def _location(record: dict) -> dict:
+    """The location an error names (batch 16f): its JSON `path` and its source `span`, compared with the text."""
+    return {key: record[key] for key in ("path", "span") if record.get(key)}
 
 
 def environment_error(text: str):
@@ -182,7 +193,7 @@ def verdict(python, lean) -> str:
         return "differ"
     if python["outcome"] == "ok":
         return "agree" if python["value"] == lean["value"] else "differ"
-    if (python["code"], python["text"]) == (lean["code"], lean["text"]):
+    if (python["code"], python["text"], _location(python)) == (lean["code"], lean["text"], _location(lean)):
         return "agree"
     return python.get("owner", "differ")
 
@@ -195,7 +206,7 @@ def owned(document) -> bool:
     if type(environment) is not dict:
         return False
     profiles = environment.get("profiles")
-    if type(profiles) is not list or not all(type(p) is str and (p in OWNED or OWNED_BENEATH.get(p) in profiles)
+    if type(profiles) is not list or not all(type(p) is str and p in OWNED
                                               for p in profiles):
         return False
     blocks = {"risk@0": {"alternatives", "risk"}, "alternatives@0": {"alternatives"}}
@@ -346,6 +357,7 @@ def _generated():
         _unit("a", (0, 3), "asserted", content={"ast": ["eq", ["const", "alpha"], ["const", "beta"]]})]},
         "body": "A=B"}))
     out += _block_seeds()
+    out += _layer_seeds()
     fence_body = "Alice is in finance.\n```ve a\nAlice is in finance.\n```\n"
     out.append(("fence", {"front": {"format": "ve-document@1", "environment": env_json, "units": [
         _unit("a", (0, len("Alice is in finance.\n")), "asserted", content={"fence": "a"}, surface="strict")]},
@@ -381,6 +393,50 @@ def _alternatives_environment():
             "vocabulary": {"sorts": {name: {"description": name} for name in ("robot", "action", "harm")},
                            "predicates": predicates, "constants": constants},
             "alternatives": block}
+
+
+def _layer_seeds():
+    """Batch 16f's documents: a plain `norms@0` document (an active norm, a quoted one and a claim graph on the norms
+    route) and a `soft-norms@0` document (a default rule whose exception decision an `open` meaning and a formula
+    cite, which only the soft route's `E″` declares, and a claim graph on the soft route)."""
+    from ve.profiles import LANGUAGE, SPEC_REVISION
+    environment = {"language": LANGUAGE, "profiles": ["documents@1", "norms@0", "relational-fol@0"],
+                   "spec_revision": SPEC_REVISION, "vocabulary": {
+                       "sorts": {"person": {"description": "a person"}},
+                       "predicates": {
+                           "share_required": {"arguments": ["person"], "description": "the person must share",
+                                              "regulated": {"role": "obligation", "default": "deny",
+                                                            "act": "{0} share"}},
+                           "consents": {"arguments": ["person"], "description": "the person consents",
+                                        "verbalisation": "{0} consents"}},
+                       "constants": {"alice": {"sort": "person", "description": "Alice"}}}}
+    rule = {"name": "share-rule", "predicate": "share_required", "sign": True,
+            "guard": ["unary", "consents", ["var", 0]], "unless": [], "over": []}
+    consents = ["unary", "consents", ["const", "alice"]]
+    body = "Share if consenting. They say: never share. Alice consents.\n"
+    a, b = len("Share if consenting. "), len("Share if consenting. They say: never share. ")
+    out = [("norms-content", {"front": {"format": "ve-document@1", "environment": environment, "units": [
+        _unit("rule", (0, a), "norm", support="assumption", content={"norm": rule}),
+        _unit("said", (a, b), ["attributed", "anthropic", "says", "norm"], support="testimony",
+              content={"norm": {**rule, "name": "never-share", "sign": False, "guard": ["top"]}}),
+        _unit("fact", (b, len(body)), "asserted", support="observation", content={"ast": consents})],
+        "graph": {"root": "claim", "nodes": [{"name": "claim", "ast": consents, "unit": "fact"}]}},
+        "body": body})]
+    soft = deepcopy(environment)
+    soft["profiles"] = ["documents@1", "norms@0", "relational-fol@0", "soft-norms@0"]
+    default = {**rule, "mode": "default",
+               "exception": {"decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}}
+    excepted = ["unary", "soft__excepted__share_rule", ["const", "alice"]]
+    body = "Share if consenting. Alice consents. Alice is excepted.\n"
+    a, b = len("Share if consenting. "), len("Share if consenting. Alice consents. ")
+    out.append(("soft-norms", {"front": {"format": "ve-document@1", "environment": soft, "units": [
+        _unit("rule", (0, a), "norm", {"open": ["soft__excepted__share_rule"]}, support="assumption",
+              content={"norm": default}),
+        _unit("fact", (a, b), "asserted", support="observation", content={"ast": consents}),
+        _unit("excepted", (b, len(body)), "asserted", support="assumption", content={"ast": excepted})],
+        "graph": {"root": "claim", "nodes": [{"name": "claim", "ast": consents, "unit": "fact"}]}},
+        "body": body}))
+    return out
 
 
 def _block_seeds():
