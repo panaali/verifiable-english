@@ -96,4 +96,19 @@ open VE.Numbers
 #guard equalsPhrase.1 = "{0} equals {1}" ∧ equalsPhrase.2.Holds 1 1 ∧ ¬ equalsPhrase.2.Holds 1 2
 #guard withinPhrase = "{0} is from {1} through {2}"
 
+-- Every unknown's text is the spec's table (section 1.5), word for word; N is the case's budget.
+#guard [UnknownReason.limit .digits, .limit .evaluations, .limit .derivationSteps, .limit .witnessPoints,
+    .limit .polyTerms, .floatingPointNotModelled, .derivationInconclusive, .consistencyInconclusive,
+    .identityNotShown, .unboundedStatement].map (UnknownReason.text 25) =
+  ["unknown: an exact value would have more than 4,096 digits",
+   "unknown: the budget of 25 evaluation steps ran out",
+   "unknown: the derivation search ran out of its 10,000 combination steps",
+   "unknown: the consistency search tried its 4,096 candidate points",
+   "unknown: a normal form would have more than 10,000 terms",
+   "unknown: floating-point computation not modelled",
+   "unknown: no certificate and no counterexample was found",
+   "unknown: neither a witness nor an enclosure decides it",
+   "unknown: the normal forms differ and no point where the sides differ was found",
+   "stated, not decided: a quantifier has no bound"]
+
 end VE.Numbers.Examples
