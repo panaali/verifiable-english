@@ -766,6 +766,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.counts_two
 #print axioms VE.Cardinality.Examples.counts_unique
 #print axioms VE.Cardinality.Examples.entails_cases
+#print axioms VE.Cardinality.Examples.erase_two
 #print axioms VE.Cardinality.Examples.everyone_two
 #print axioms VE.Cardinality.Examples.fa10_two
 #print axioms VE.Cardinality.Examples.fa1_entails

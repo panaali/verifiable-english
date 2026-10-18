@@ -381,6 +381,17 @@ theorem two_admissible : Admissible users two := by
     exact ⟨[.obj "user"], by simp [users, fomc, inc, stay], by simp [two, VE.Time.TTuple, VE.Time.TValue.Typed]⟩
   · by_cases hs : s = "user" <;> simp [two, hs] <;> omega
 
+/-- `erase_iff` in each direction on `two`: "at least 1 in 1,000 are curious" holds and its erasure holds; "more than
+half are curious" fails and so does its erasure, where region constants are region sizes. -/
+theorem erase_two : (oneIn1000.erase users [oneIn1000, moreThanHalf]).tdenote
+      (withRegions users [oneIn1000, moreThanHalf] two) [] ∧
+    ¬ (moreThanHalf.erase users [oneIn1000, moreThanHalf]).tdenote
+      (withRegions users [oneIn1000, moreThanHalf] two) [] := by
+  have hE : users.WellFormed := ⟨by decide, fun _ _ h => nomatch h⟩
+  have ha : ∀ a ∈ [oneIn1000, moreThanHalf], a.admits users = true := by decide +kernel
+  have hi := fun a h => erase_iff users hE _ two two_admissible a (admits_sound _ _ (ha a h)) h
+  exact ⟨(hi _ (by simp)).mp fa10_two.2, fun h => fa10_two.1 ((hi _ (by simp)).mpr h)⟩
+
 theorem mem_le_sum : ∀ {xs : List Nat} {x : Nat}, x ∈ xs → x ≤ xs.sum
   | _ :: _, _, .head _ => by simp
   | _ :: _, _, .tail _ h => by have := mem_le_sum h; simp; omega
