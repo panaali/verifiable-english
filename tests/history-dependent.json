@@ -50,6 +50,7 @@
    "via": [
     "tests/answer_store.py:changed_guarded_paths.<locals>.git: git",
     "tests/test_answer_store.py:_repository: git",
+    "tests/test_answer_store.py:_repository.<locals>.run: git",
     "tools/nested_pytest.py:command: pytest"
    ]
   },
@@ -202,6 +203,7 @@
     "tools/batch_evidence.py:mutant_source_problems: git cat-file",
     "tools/evidence/__init__.py:git: git",
     "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git"
    ]
   },
@@ -375,6 +377,7 @@
     "tools/batch_evidence.py:mutant_source_problems: git cat-file",
     "tools/evidence/__init__.py:git: git",
     "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/lean_first_diff.py:pilot_companions: git cat-file",
     "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
@@ -429,6 +432,7 @@
    "via": [
     "tests/test_gate_collection.py:git: git",
     "tests/test_gate_collection.py:test_a_record_round_trips_and_binds_its_commit_and_tree: git notes",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest"
    ]
@@ -446,6 +450,7 @@
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest",
     "tools/trust_map.py:extract_rev: git archive",
@@ -466,11 +471,12 @@
     "tests/test_gate_integrity.py:test_fsmonitor_hook_cannot_hide_edited_source: git, git add, git config, git status",
     "tests/test_gate_integrity.py:test_gate_environment_uses_real_repository_and_recorder: git rev-parse",
     "tests/test_gate_integrity.py:test_index_bits_cannot_hide_edited_source: git status, git update-index",
-    "tests/test_gate_integrity.py:test_source_identity_reports_clean_tree_and_leaves_index_alone: .git, git, git rev-parse",
+    "tests/test_gate_integrity.py:test_source_identity_reports_clean_tree_and_leaves_index_alone: .git, git rev-parse",
     "tests/test_gate_integrity.py:test_staged_change_stays_dirty_when_the_file_matches_the_commit: git add",
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest",
     "tools/trust_map.py:extract_rev: git archive",
@@ -492,6 +498,7 @@
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest",
     "tools/trust_map.py:extract_rev: git archive",
@@ -511,6 +518,7 @@
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest",
     "tools/trust_map.py:extract_rev: git archive",
@@ -534,6 +542,7 @@
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest",
     "tools/trust_map.py:extract_rev: git archive",
@@ -627,6 +636,7 @@
     "tools/batch_evidence.py:changed_since: git",
     "tools/batch_evidence.py:mutant_source_problems: git cat-file",
     "tools/batch_scope.py:_git_out: git",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest",
     "tools/trust_map.py:extract_rev: git archive",
@@ -714,6 +724,7 @@
     "source"
    ],
    "via": [
+    "tests/test_lean_share.py:GIT: git",
     "tests/test_lean_share.py:clone: git clone",
     "tests/test_lean_share.py:git: git",
     "tools/lean_share.py:_git: git"
@@ -895,6 +906,7 @@
     "tools/gate.py:check_toolchains: git",
     "tools/gate.py:source_identity: git",
     "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest",
     "tools/trust_map.py:extract_rev: git archive",
