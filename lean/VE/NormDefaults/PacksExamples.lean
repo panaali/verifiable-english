@@ -69,6 +69,7 @@ def ev (n : String) : Pack := ⟨"events", .constraint, [], [(n, "person")], [],
 -- A5: the empty pack list.
 #guard diag (assembleIn P E 3 []) == "ok [] []"
 #guard X [] = []
+#guard X [soft, weighing] = [φ, φ, .bottom]
 
 -- A6: an unknown id, and the vocabulary limit (the prefix rows of a provider are added by its batch).
 #guard diag (assembleIn P E 3 [{ soft with id := "acts" }]) == "InvalidInput: unknown premise pack acts"

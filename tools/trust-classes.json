@@ -12417,9 +12417,11 @@
     "VE/NormDefaults/PacksLegacyExamples.lean": {
       "T": [
         "VE.NormDefaults.Packs.Fixtures.cx",
+        "VE.NormDefaults.Packs.Fixtures.gen",
         "VE.NormDefaults.Packs.Fixtures.legacyLabels",
         "VE.NormDefaults.Packs.Fixtures.legacyPacks",
         "VE.NormDefaults.Packs.Fixtures.legacyU",
+        "VE.NormDefaults.Packs.Fixtures.muX",
         "VE.NormDefaults.Packs.Fixtures.rightsDocs"
       ]
     }
