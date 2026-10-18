@@ -168,3 +168,48 @@ def test_empty_quantifier_domains_match_python(profiles):
            "model": model.to_dict(), "formula": formula_to_data(env, f)}
           for i, f in enumerate(formulas_)]
     assert [row["suitable"] for row in run(nv)] == [False, False]
+
+
+ROW = {"kind": "top", "value": True, "bindings": [], "detail": "", "children": 0}
+
+
+@pytest.mark.parametrize("rows", [
+    [],                                                                 # no tree
+    [{**ROW, "kind": "document", "children": 2}, ROW],                  # a count past the end
+    [{**ROW, "kind": "document", "children": 1}, ROW, ROW],             # a row outside the tree
+    [ROW, ROW],                                                         # two roots
+    [{**ROW, "children": -1}],                                          # a negative count
+    [{**ROW, "children": True}],                                        # a Boolean count
+    [{**ROW, "bindings": [{"debruijn_index": 1, "sort": "s", "local_id": "x"}]}],   # a shifted index
+    [{k: v for k, v in ROW.items() if k != "detail"}],                  # a missing member
+    "rows",                                                             # not a list
+])
+def test_explanation_rows_must_be_exactly_one_tree(rows):
+    """Lean-first batch 18: the service writes an explanation as preorder rows (`MeteredTrace.Trace.json`); rows
+    that are not exactly one tree in preorder are no answer."""
+    from ve.errors import CheckerUnavailable
+    with pytest.raises(CheckerUnavailable):
+        _explanation(rows)
+
+
+def test_explanation_rows_rebuild_the_tree():
+    rows = [{**ROW, "kind": "document", "detail": "all statements satisfied", "children": 2},
+            {**ROW, "kind": "and", "children": 1}, ROW, ROW]
+    tree = _explanation(rows).to_dict()
+    assert [child["kind"] for child in tree["children"]] == ["and", "top"]
+    assert [child["kind"] for child in tree["children"][0]["children"]] == ["top"]
+
+
+@pytest.mark.parametrize("kind, answer", [
+    ("evaluate-budgeted", {"id": "c", "status": "ok", "suitable": True, "evaluations": 1, "exhausted": False}),
+    ("non-vacuity", {"id": "c", "status": "ok", "evaluation": {"status": "Satisfied", "value": True,
+                                                                "evaluations": 1, "explanation": None}}),
+])
+def test_a_metered_answer_of_the_other_kind_is_no_answer(monkeypatch, kind, answer):
+    """The `metered` row is one of two alternatives (`metered.json`); the client binds it to the kind it sent."""
+    from ve.backends import lean_runner, relay
+    from ve.errors import CheckerUnavailable
+    monkeypatch.setattr(relay, "rows", lambda mode, cases, **_: [answer])
+    call = lean_runner.metered_evaluation if kind == "evaluate-budgeted" else lean_runner.metered_nonvacuity
+    with pytest.raises(CheckerUnavailable, match="of another kind"):
+        call({"id": "c"})
