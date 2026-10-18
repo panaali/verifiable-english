@@ -80,6 +80,16 @@ def count : Listing (List Nat) → Option Nat
   Term.accepts (.fill ["and"]) (.word "asylum") && !Term.accepts (.fill ["and"]) (.word "And") &&
   !Term.accepts .never (.word "seek") && !Term.accepts .never .comma && !Term.accepts (.fill []) .comma
 
+/-! Each terminal over a list with its word first and last of two, and each case fold with every letter a capital
+(ap-2 reviews F13 and F14: a terminal that reads one end of its list, or folds the case of one end of a word). -/
+
+#guard Term.accepts (.adv ["freely", "gladly"]) (.word "freely") &&
+  Term.accepts (.adv ["freely", "gladly"]) (.word "gladly") && !Term.accepts (.adv ["freely", "gladly"]) (.word "fully")
+#guard !Term.accepts (.fill ["and", "or"]) (.word "and") && !Term.accepts (.fill ["and", "or"]) (.word "or") &&
+  Term.accepts (.fill ["and", "or"]) (.word "asylum")
+#guard Term.accepts (.kw "seek") (.word "SEEK") && Term.accepts (.adv ["freely"]) (.word "FREELY") &&
+  !Term.accepts (.fill ["and"]) (.word "AND")
+
 /-! ### The vocabulary check (1.4): one fixture per D-31 text -/
 
 def fr (h : String) (m s mods : List String) : Frame := ⟨wordsOf h, m, s, mods⟩
@@ -283,6 +293,17 @@ head word, marker, marker word, frame or adverb), and 31s on a one-word head (ap
   "InvalidInput: frame 'on hold' begins with the marker word 'on'"                         -- 31s: a later marker word
 #guard errOf (frames [fr "sit" ["on"] [] [], fr "on" [] [] []]) ==
   "InvalidInput: frame 'on' begins with the marker word 'on'"                                    -- 31s: one-word head
+
+/-! `wordOk`'s case check with a capital past the first letter and with one only at the end (ap-2 review F14: a case
+fold of the first letter only accepts `sEek`). -/
+
+#guard errOf (frames [fr "sEek" [] [] []]) ==
+  "InvalidInput: frame 'sEek' has the head word 'sEek', which is not a lower-case word of letters"          -- 31c
+#guard errOf (frames [fr "seeK" [] [] []]) ==
+  "InvalidInput: frame 'seeK' has the head word 'seeK', which is not a lower-case word of letters"          -- 31c
+#guard errOf (frames [fr "mark" ["iN"] [] []]) ==
+  "InvalidInput: frame 'mark' has the marker word 'iN', which is not a lower-case word of letters"          -- 31m
+#guard errOf ⟨[], ["frEely"]⟩ == "InvalidInput: the adverb 'frEely' is not a lower-case word of letters, or is reserved"
 
 /-! ### FR7: the vocabularies of 11.2, the 13 `ap0` rows of 11.2b and the ap-2 measurement's generated frames -/
 

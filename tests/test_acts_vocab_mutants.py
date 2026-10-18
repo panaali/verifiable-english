@@ -105,8 +105,10 @@ def _moved(source: int, target: int):
 
 ROWS = [row for row, _ in _d31()]
 
-# The definitions of 1.4 whose lists the generated mutants below cut or swap, with the word lists of 1.2 it reads.
-SCOPE = ("def joinWords ", "def clauseWords ", "def wordsOf ", "def firstDup ", "def checkVocab ")
+# The definitions whose lists and case folds the generated mutants below cut or swap: every definition of
+# `Syntax.lean`, read from its source (1.4's check, the word lists of 1.2 it reads, and the terminals of 5.1; ap-2
+# review F13: `Term.accepts` was missing from a hand-written list).
+SCOPE = tuple(f"def {name} " for name in re.findall(r"^def ([\w.]+) ", _sources()[0], re.M))
 # A method on a list, and a position that takes a list as its argument.
 LIST_METHOD = re.compile(r"\.(find\?|any|all|contains|isPrefixOf|isEmpty|flatMap|map|filter|length|head\?)(?![\w?])")
 LIST_ARGUMENT = re.compile(r"\bfor \w+ in |\bfirstDup |\.isPrefixOf |\.intercalate ")
@@ -173,16 +175,42 @@ def _arity(binders: str) -> int:
     return binders.count("(")
 
 
+def _list_fields_of_constructors(syntax: str) -> dict[str, list[int]]:
+    """For each constructor of an `inductive` of `syntax`, the positions of its arguments declared `List`."""
+    positions: dict[str, list[int]] = {}
+    for block in re.findall(r"^inductive \w+([^\n]*\n(?:  [^\n]*\n)*)", syntax, re.M):
+        for ctor, binders in re.findall(r"\| (\w+)((?: \([^()]*\))*)", block):
+            names = [(name, kind.strip()) for names, kind in re.findall(r"\(([^():]+):([^()]*)\)", binders)
+                     for name in names.split()]
+            positions[ctor] = [i for i, (_, kind) in enumerate(names) if kind.startswith("List")]
+    return positions
+
+
+def _in_pattern(text: str, start: int) -> bool:
+    """Whether `start` is in the pattern of a match arm (`  | .adv ws, .word v =>`), where a name is bound."""
+    line = text.rindex("\n", 0, start) + 1
+    return text.startswith("  | ", line) and "=>" not in text[line:start]
+
+
 def _list_names(syntax: str) -> tuple[set[str], dict[str, int], dict[str, int]]:
     """The names whose values are lists, read from the declarations of `syntax` (the type checker's job, done for this
-    file's small set of forms): the structure fields declared `List`, the definitions whose result is a `List` and the
-    lets of `checkVocab` that are annotated `List` or bound to a list, each with its number of arguments."""
+    file's small set of forms): the structure fields declared `List`, the definitions whose result is a `List`, and
+    the local names: the lets of `checkVocab` that are annotated `List` or bound to a list, and the names a match arm
+    of a definition of `SCOPE` binds to a constructor's argument declared `List` (ap-2 review F13: `ws` and `ex` of
+    `Term.accepts`), each with its number of arguments."""
     fields = {name for block in re.findall(r"^structure \w+ where\n((?:  .*\n)+)", syntax, re.M)
               for name in re.findall(r"^  (\w+) : List\b", block, re.M)}
     defs = {name.rsplit(".", 1)[-1]: _arity(binders) + len(signature.split("→")) - 1
             for name, binders, signature in re.findall(r"^def ([\w.]+)((?: \([^()]*\))*) : ([^\n]*?)(?: :=.*)?$",
                                                        syntax, re.M) if _result_is_list(signature)}
     lets: dict[str, int] = {}
+    ctors = _list_fields_of_constructors(syntax)
+    for scope in SCOPE:
+        lo, hi = _span(syntax, scope)
+        for pattern in re.findall(r"^  \| (.*?) =>", syntax[lo:hi], re.M):
+            for ctor, args in re.findall(r"\.(\w+)((?: \w+)*)", pattern):
+                lets |= {args.split()[i]: 0 for i in ctors.get(ctor, []) if i < len(args.split())}
+    lets.pop("_", None)
     lo, hi = _span(syntax, "def checkVocab ")
     for name, binders, annotation, value in re.findall(r"^  let (\w+)((?: \([^()]*\))*)(?: : ([^\n]*?))? := (.*)$",
                                                        _masked(syntax[lo:hi]), re.M):
@@ -209,7 +237,8 @@ def _atom_pattern(fields, defs: dict[str, int], lets: dict[str, int]) -> re.Patt
 
 
 def _atoms(syntax: str) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
-    """In the definitions of `SCOPE`: every occurrence of a list-valued name (not where it is bound), and every list
+    """In the definitions of `SCOPE`: every occurrence of a list-valued name (not where a `def`, `let` or match arm
+    binds it), and every list
     function named without its argument (`flatMap wordsOf`), whose results are lists built inside that argument."""
     text = _masked(syntax)
     pattern = _atom_pattern(*_list_names(syntax))
@@ -217,7 +246,7 @@ def _atoms(syntax: str) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
     for scope in SCOPE:
         lo, hi = _span(text, scope)
         for m in pattern.finditer(text, lo, hi):
-            if re.search(r"(?:\bdef|\blet) $", text[max(0, m.start() - 4):m.start()]):
+            if re.search(r"(?:\bdef|\blet) $", text[max(0, m.start() - 4):m.start()]) or _in_pattern(text, m.start()):
                 continue
             if not any(k.startswith("f") and v is not None for k, v in m.groupdict().items()):
                 atoms.append(m.span())
@@ -266,6 +295,24 @@ def _cut(term: str, cut: str) -> str:
     return f"({term if whole or ' ' not in term else f'({term})'}.{cut})"
 
 
+# The ways a case fold reads only part of a word (ap-2 review F14: `decapitalize` for `toLower`): the word as its list
+# of characters, the part of `CUTS` folded and the rest kept, each `{x}` the word.
+FOLD = re.compile(r"(?<![\w.])(\w+)\.(toLower|toUpper)(?![\w?'])")
+CASE_CUTS = {
+    "first-only": "String.mk (({x}.toList.take 1).map Char.{fold} ++ {x}.toList.drop 1)",
+    "last-only": "String.mk ({x}.toList.dropLast ++ ({x}.toList.reverse.take 1).map Char.{fold})",
+    "without-first": "String.mk ({x}.toList.take 1 ++ ({x}.toList.drop 1).map Char.{fold})",
+    "without-last": "String.mk ({x}.toList.dropLast.map Char.{fold} ++ {x}.toList.reverse.take 1)",
+}
+assert set(CASE_CUTS) == set(CUTS)
+
+
+def _folds(syntax: str) -> list[re.Match]:
+    """Every case fold of a word in the definitions of `SCOPE` (`v.toLower`)."""
+    text = _masked(syntax)
+    return [m for scope in SCOPE for m in FOLD.finditer(text, *_span(text, scope))]
+
+
 def _slug(term: str) -> str:
     return re.sub(r"[^A-Za-z0-9.]+", "-", term.replace("++", "and").replace("≠", "ne")).strip("-.")
 
@@ -280,9 +327,11 @@ def _generated() -> dict:
     """Two kinds of mutant for every list of 1.4's check, numbered in source order within a name:
 
     - **part of the list** (ap-2 review F7: 31c and 31r read only a head's first word; F11: 31f and 31s skip the first
-      or the last frame, 31s reads a head's first word only when it has two): each list cut in each way of `CUTS`, so
-      a condition must be pinned with its fault in a later element, in an earlier one, at the start and at the end
-      (a word, marker, frame or adverb);
+      or the last frame, 31s reads a head's first word only when it has two; F13: `Term.accepts` reads one adverb or
+      excluded word): each list cut in each way of `CUTS`, so a condition must be pinned with its fault in a later
+      element, in an earlier one, at the start and at the end (a word, marker, frame, adverb or excluded word);
+    - **part of the word** (F14: a case fold of its first letter only): each case fold cut in each way of
+      `CASE_CUTS`, so a case check must be pinned with a capital past the first letter and with one at the end;
     - **another marker list** (F7: 31o over markers only, 31i over modifiers too, 31g without `""`): each of a
       frame's marker lists replaced by each of the others, so a condition must be pinned on the list 1.4 names."""
     syntax = _sources()[0]
@@ -297,6 +346,8 @@ def _generated() -> dict:
             add(f"{kind}-{_slug(syntax[start:end])}", _at(start, end, _cut(syntax[start:end], cut)))
         for start, end in _atoms(syntax)[1]:
             add(f"{kind}-each-{syntax[start:end]}", _at(start, end, f"(fun x => ({syntax[start:end]} x).{cut})"))
+        for m in _folds(syntax):
+            add(f"case-{kind}-{m.group()}", _at(*m.span(), f"({CASE_CUTS[kind].format(x=m[1], fold=m[2])})"))
     for start, end in _siblings(syntax):
         own = "(ms f)" if syntax[start:end] == "ms f" else syntax[start:end]
         defines_ms = syntax.startswith("  let ms ", syntax.rindex("\n", 0, start) + 1)
@@ -367,6 +418,16 @@ MUTANTS = {
     "31s-f-not-first": _replace("  for f in fs do\n    if let some w := f.head.head?",
                                 "  for f in fs.drop 1 do\n    if let some w := f.head.head?"),
     "31s-one-word-head": _replace("f.head.head?", "f.head.dropLast.head?"),
+    # The review's four in `Term.accepts` (ap-2 review F13) and four case folds of a first letter only (F14), as it
+    # wrote them; `_generated` makes each of them again (`REVIEW_F13`, `REVIEW_F14`).
+    "accepts-adv-first-only": _replace("ws.contains v.toLower", "(ws.take 1).contains v.toLower"),
+    "accepts-adv-last-only": _replace("ws.contains v.toLower", "(ws.reverse.take 1).contains v.toLower"),
+    "accepts-fill-first-only": _replace("!ex.contains v.toLower", "!(ex.take 1).contains v.toLower"),
+    "accepts-fill-last-only": _replace("!ex.contains v.toLower", "!(ex.reverse.take 1).contains v.toLower"),
+    "accepts-kw-decapitalize": _replace("v.toLower == w", "v.decapitalize == w"),
+    "accepts-adv-decapitalize": _replace("ws.contains v.toLower", "ws.contains v.decapitalize"),
+    "accepts-fill-decapitalize": _replace("!ex.contains v.toLower", "!ex.contains v.decapitalize"),
+    "wordOk-decapitalize": _replace("w == w.toLower", "w == w.decapitalize"),
     # The same kinds elsewhere: the other halves and word lists, and each limit one off.
     "31a-129-accepted": _replace("128 < fs.length", "129 < fs.length"),
     "wordOk-without-lower-case": _replace("VE.Norms.Wire.actWord w && w == w.toLower", "VE.Norms.Wire.actWord w"),
@@ -393,6 +454,15 @@ MUTANTS = {
 # The review's four (F11) and the generated mutant that makes each again.
 REVIEW_F11 = {"31f-g-not-first": "without-first-fs-8", "31f-f-not-last": "without-last-fs-7",
               "31s-f-not-first": "without-first-fs-19", "31s-one-word-head": "without-last-f.head-6"}
+# The review's four in `Term.accepts` (F13) and the generated mutant that makes each again.
+REVIEW_F13 = {"accepts-adv-first-only": "first-only-ws-1", "accepts-adv-last-only": "last-only-ws-1",
+              "accepts-fill-first-only": "first-only-ex-1", "accepts-fill-last-only": "last-only-ex-1"}
+# The review's four case folds (F14), `decapitalize` folding the first letter only, and the generated one that folds
+# the first letter only of the same fold.
+REVIEW_F14 = {"accepts-kw-decapitalize": "case-first-only-v.toLower-1",
+              "accepts-adv-decapitalize": "case-first-only-v.toLower-2",
+              "accepts-fill-decapitalize": "case-first-only-v.toLower-3",
+              "wordOk-decapitalize": "case-first-only-w.toLower-1"}
 
 
 @pytest.fixture(scope="module")
@@ -452,9 +522,23 @@ def test_the_generated_mutants_cover_every_list_of_the_check():
         assert len([n for n in generated if n.startswith(f"{kind}-each-")]) == len(bare) > 0, kind
     # The review's four are generated: each is the same source as its generated mutant, up to parentheses.
     syntax_read = _sources()[:2]
-    for review, name in REVIEW_F11.items():
+    for review, name in {**REVIEW_F11, **REVIEW_F13}.items():
         same = [re.sub(r"[()]", "", MUTANTS[m](*syntax_read)[0]) for m in (review, name)]
         assert same[0] == same[1], (review, name)
+    # F14: each of the review's folds is cut by a generated mutant at the same fold, the only one on its line.
+    for review, name in REVIEW_F14.items():
+        changed = [[i for i, (a, b) in enumerate(zip(syntax.split("\n"), MUTANTS[m](*syntax_read)[0].split("\n")))
+                    if a != b] for m in (review, name)]
+        assert changed[0] == changed[1] and len(changed[0]) == 1, (review, name)
+        assert syntax.split("\n")[changed[0][0]].count("toLower") == 1, review
+    # F13: every definition of `Syntax.lean` is in scope, `Term.accepts` among them, and its two lists are cut.
+    assert set(SCOPE) == {f"def {n} " for n in re.findall(r"^def ([\w.]+)", syntax, re.M)} >= {"def Term.accepts "}
+    assert {syntax[s:e] for s, e in terms} >= {"ws", "ex"}
+    # F14: every case fold is cut in each way of `CASE_CUTS`.
+    folds = _folds(syntax)
+    assert [m.group() for m in folds] == ["v.toLower", "v.toLower", "v.toLower", "w.toLower"]
+    for kind in CASE_CUTS:
+        assert len([n for n in generated if n.startswith(f"case-{kind}-")]) == len(folds), kind
     for term in ("f.head", "·.head", "f.markers", "f.split", "f.mods", "(ms f)", "ms f", "fs", "V.adverbs", "mwords",
                  "g.head", "wordsOf m", "V.frames", "Lexical.clauseWords", '["and", "or", "nor", "to", "be"]',
                  "(ms f).flatMap wordsOf"):
@@ -471,11 +555,14 @@ def test_the_generated_mutants_cover_every_list_of_the_check():
 
 def test_the_list_valued_names_are_read_from_the_declarations():
     """`_list_names` types the names of `Syntax.lean` from their declarations: every list field, every definition whose
-    result is a list (not `firstDup`, which takes one) and every let of `checkVocab` bound to a list (not `hd`)."""
-    fields, defs, lets = _list_names(_sources()[0])
+    result is a list (not `firstDup`, which takes one), every let of `checkVocab` bound to a list (not `hd`) and every
+    name a match arm binds to a constructor's `List` argument (`ws` and `ex` of `Term.accepts`, not `w` or `v`)."""
+    syntax = _sources()[0]
+    fields, defs, lets = _list_names(syntax)
     assert fields == {"head", "markers", "split", "mods", "frames", "adverbs"}
     assert defs == {"joinWords": 0, "clauseWords": 0, "wordsOf": 1}
-    assert lets == {"fs": 0, "resv": 0, "mresv": 0, "ms": 1, "mwords": 0}
+    assert lets == {"fs": 0, "resv": 0, "mresv": 0, "ms": 1, "mwords": 0, "ws": 0, "ex": 0}
+    assert {c: p for c, p in _list_fields_of_constructors(syntax).items() if p} == {"adv": [0], "fill": [0]}
 
 
 @pytest.mark.parametrize("name", sorted(EQUIVALENT))
