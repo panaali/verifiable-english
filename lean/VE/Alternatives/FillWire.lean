@@ -259,6 +259,19 @@ theorem denote_withFill_base (A : AltDoc) (unspec : List String) (h : WellFormed
   VE.Norms.denote_relation_congr (VE.NormDefaults.unsaid_undeclared (VE.NormDefaults.uvalid h) 0) B _
     (fun _ vs hn => VE.NormDefaults.withFill_agrees B F _ hn vs) φ [] [] hφ
 
+/-- A filling validated on a valid situation is admissible on the route's base, the slot premises included: no
+statement over the admissible fillings of a validated scenario is vacuous (SR-A1, SR-A4). -/
+theorem admissibleAltU_of_fillValid {α : Type u} [DecidableEq α] (A : AltDoc) (unspec : List String)
+    (hA : WellFormedAlt A = true) (h : WellFormedU ⟨inlineTree A, unspec⟩ = true) (M : VE.FiniteModel α)
+    (valid : M.Valid (VE.Norms.envAt (inlineTree A) 0)) (hb : backgroundValidAlt A M = true)
+    (F : FiniteFill ⟨inlineTree A, unspec⟩ α) (hfill : fillValid ⟨inlineTree A, unspec⟩ M F = true) :
+    BaseAdmissibleAltU A unspec (VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ M.asStructure (finFill M F)) := by
+  have hv := altValid_of_wellFormed A hA
+  have hbase := baseAdmissibleAlt_of_valid A M valid hb
+  refine ⟨?_, fun a ha => (denote_withFill_base A unspec h _ _ a (altPremises_wellFormed hv a ha)).mpr (hbase.2 a ha)⟩
+  simp only [backgroundValidAlt, Bool.and_eq_true] at hb
+  exact VE.NormDefaults.admissible_of_fillValid _ h M valid hb.1 F hfill
+
 /-- DILEMMA: a valid witness, a validated filling and a typed chooser at which ¬followable° holds refute the
 document-wide claim. `hA` types Γ over the base vocabulary, which declares no unsaid predicate (SR-A1). -/
 theorem alternativesU_dilemma_witness_sound {α : Type u} [DecidableEq α] (A : AltDoc) (unspec : List String)
@@ -270,18 +283,12 @@ theorem alternativesU_dilemma_witness_sound {α : Type u} [DecidableEq α] (A : 
     ¬ (∀ B : VE.Structure.{u}, BaseAdmissibleAltU A unspec B → VE.Norms.Sat B A.Γ →
         (allFollowableU A unspec).denote B []) := by
   have hv := altValid_of_wellFormed A hA
-  have hbase := baseAdmissibleAlt_of_valid A M valid hb
-  let B := VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ M.asStructure (finFill M F)
-  have hbU : BaseAdmissibleU ⟨inlineTree A, unspec⟩ B := by
-    simp only [backgroundValidAlt, Bool.and_eq_true] at hb
-    exact VE.NormDefaults.admissible_of_fillValid _ h M valid hb.1 F hfill
-  have hslot : Sat B (altPremises A) := fun a ha =>
-    (denote_withFill_base A unspec h _ _ a (altPremises_wellFormed hv a ha)).mpr (hbase.2 a ha)
-  have hG : Sat B A.Γ := fun a ha =>
+  have hG : Sat (VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ M.asStructure (finFill M F)) A.Γ := fun a ha =>
     (denote_withFill_base A unspec h _ _ a (hv.premises a ha)).mpr
       ((VE.eval_iff_denote M [] a).mp (List.all_eq_true.mp hΓ a ha))
   intro hall
-  have hF' := (bindAll_denote_nil _ _ _).mp (hall B ⟨hbU, hslot⟩ hG) [r] ⟨typed, trivial⟩
+  have hF' := (bindAll_denote_nil _ _ _).mp
+    (hall _ (admissibleAltU_of_fillValid A unspec hA h M valid hb F hfill) hG) [r] ⟨typed, trivial⟩
   exact ((VE.NormDefaults.eval_withFill _ M F _ _).mp hd) hF'
 
 structure DilemmaDataU (s : AltSourceU) where
@@ -357,5 +364,161 @@ def diagnoseU (A : AltDoc) (unspec : List String) (M : VE.FiniteModel VE.Bridge.
   else match unsettledAt A unspec M F r with
     | [] => diagnoseIn (fill ⟨inlineTree A, unspec⟩) A (M.withFill F) r
     | as => .unsettled as
+
+/-! ## Scenario values (the evidence contract C, spec 5 and 6.4) -/
+
+open VE.NormDefaults (FillTables coneOf coneValuesAt agreed subsets unsaidAtoms fillOfAtoms)
+
+def SettledF (A : AltDoc) (unspec : List String) (B : VE.Structure.{u}) (φ : VE.Formula) (vs : List B.Carrier)
+    (b : Bool) : Prop :=
+  ∀ F : FillTables ⟨inlineTree A, unspec⟩ B,
+    BaseAdmissibleAltU A unspec (VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ B F) →
+    (φ.denote (VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ B F) (tupleVal vs) ↔ b = true)
+
+def UndecidedF (A : AltDoc) (unspec : List String) (B : VE.Structure.{u}) (φ : VE.Formula)
+    (vs : List B.Carrier) : Prop :=
+  ∃ F₁ F₂ : FillTables ⟨inlineTree A, unspec⟩ B,
+    BaseAdmissibleAltU A unspec (VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ B F₁) ∧
+    BaseAdmissibleAltU A unspec (VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ B F₂) ∧
+    φ.denote (VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ B F₁) (tupleVal vs) ∧
+    ¬ φ.denote (VE.NormDefaults.withFill ⟨inlineTree A, unspec⟩ B F₂) (tupleVal vs)
+
+inductive AltStatus
+  | clear
+  | notClear
+  | undecided
+  | unknown
+  deriving DecidableEq
+
+/-- A scenario row: the scenario's validity, today's (its model, its background with the slot premises, its signed
+rows, the existence checks and Γ), a typed chooser and action, and one filling validated by `fillValid`, so that
+no status is vacuous (SR-A4); then the evidence its status needs (C). `unknown` needs no more. -/
+structure ScenarioRowU (A : AltDoc) (unspec : List String) where
+  M : VE.FiniteModel VE.Bridge.Entity
+  rows : List Row
+  chooser : VE.Bridge.Entity
+  action : VE.Bridge.Entity
+  status : AltStatus
+  valid : M.Valid (VE.Norms.envAt (inlineTree A) 0)
+  background : backgroundValidAlt A M = true
+  checked : validateAlternatives A M rows = .ok ()
+  chooser_typed : chooser ∈ M.domains A.alt.chooser
+  action_typed : action ∈ M.domains A.alt.action
+  F : FiniteFill ⟨inlineTree A, unspec⟩ VE.Bridge.Entity
+  filled : fillValid ⟨inlineTree A, unspec⟩ M F = true
+  clear_sound : status = .clear → SettledF.{0} A unspec M.asStructure (clearFU A unspec) [chooser, action] true
+  notClear_sound : status = .notClear →
+    SettledF.{0} A unspec M.asStructure (clearFU A unspec) [chooser, action] false
+  undecided_sound : status = .undecided → UndecidedF.{0} A unspec M.asStructure (clearFU A unspec) [chooser, action]
+
+/-- A value every assignment of `C` agrees on is settled (Kleene with `C = []`, enumeration of the cone). -/
+theorem settledF_of_agreed (A : AltDoc) (unspec : List String) (M : VE.FiniteModel VE.Bridge.Entity)
+    (C : List (String × List VE.Bridge.Entity)) (vs : List VE.Bridge.Entity) (b : Bool)
+    (h : agreed (coneValuesAt ⟨inlineTree A, unspec⟩ M C (tupleVal vs) (clearFU A unspec)) = some b) :
+    SettledF.{0} A unspec M.asStructure (clearFU A unspec) vs b :=
+  fun F hF => VE.NormDefaults.denote_of_coneValuesAt _ M C _ _ b (VE.NormDefaults.agreed_all h) F hF.1.2
+
+/-- Two validated fillings with opposite values of `clear°` are UNDECIDED (as `undecided_witness_sound`). -/
+theorem undecidedF_of_fillings (A : AltDoc) (unspec : List String) (hA : WellFormedAlt A = true)
+    (h : WellFormedU ⟨inlineTree A, unspec⟩ = true) (M : VE.FiniteModel VE.Bridge.Entity)
+    (valid : M.Valid (envAt (inlineTree A) 0)) (hb : backgroundValidAlt A M = true)
+    (F₁ F₂ : FiniteFill ⟨inlineTree A, unspec⟩ VE.Bridge.Entity) (vs : List VE.Bridge.Entity)
+    (hc : fillValid ⟨inlineTree A, unspec⟩ M F₁ = true ∧ fillValid ⟨inlineTree A, unspec⟩ M F₂ = true ∧
+      (clearFU A unspec).eval (M.withFill F₁) (tupleVal vs) = true ∧
+      (clearFU A unspec).eval (M.withFill F₂) (tupleVal vs) = false) :
+    UndecidedF.{0} A unspec M.asStructure (clearFU A unspec) vs :=
+  ⟨finFill M F₁, finFill M F₂, admissibleAltU_of_fillValid A unspec hA h M valid hb F₁ hc.1,
+    admissibleAltU_of_fillValid A unspec hA h M valid hb F₂ hc.2.1,
+    (VE.NormDefaults.eval_withFill _ M F₁ _ _).mp hc.2.2.1, fun hd => by
+      have := (VE.NormDefaults.eval_withFill _ M F₂ _ _).mpr hd
+      rw [hc.2.2.2] at this
+      cases this⟩
+
+/-- Two refillings of the cone `C` of `F`, at which `φ` holds and fails, each validated (untrusted: `settleU`
+checks them). -/
+def fillingsAt (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (F : FiniteFill U VE.Bridge.Entity)
+    (C : List (String × List VE.Bridge.Entity)) (ρ : List VE.Bridge.Entity) (φ : VE.Formula) :
+    Option (FiniteFill U VE.Bridge.Entity × FiniteFill U VE.Bridge.Entity) :=
+  let at_ (b : Bool) := ((subsets C).find? fun S =>
+    fillValid U M (refill F C S) && (φ.eval (M.withFill (refill F C S)) ρ == b)).map (refill F C)
+  match at_ true, at_ false with
+  | some F₁, some F₂ => some (F₁, F₂)
+  | _, _ => none
+
+/-- A filling for the scenario: the supplied one, else an assignment of the unsaid atoms when there are at most
+`budget` of them, else nothing filled; the first that `fillValid` accepts. -/
+def fillingFor (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (supplied : Option (FiniteFill U VE.Bridge.Entity))
+    (budget : Nat) : Option (FiniteFill U VE.Bridge.Entity) :=
+  let atoms := unsaidAtoms U M
+  (supplied.toList ++ (if atoms.length ≤ budget then (subsets atoms).map fillOfAtoms else [fillOfAtoms []])).find?
+    (fillValid U M)
+
+section Scenario
+variable (A : AltDoc) (unspec : List String) (hA : WellFormedAlt A = true)
+  (h : WellFormedU ⟨inlineTree A, unspec⟩ = true) (M : VE.FiniteModel VE.Bridge.Entity) (rows : List Row)
+  (valid : M.Valid (envAt (inlineTree A) 0)) (hb : backgroundValidAlt A M = true)
+  (checked : validateAlternatives A M rows = .ok ()) (F : FiniteFill ⟨inlineTree A, unspec⟩ VE.Bridge.Entity)
+  (filled : fillValid ⟨inlineTree A, unspec⟩ M F = true)
+
+/-- One alternative's row (C): a definite Kleene value, else enumeration of the cone of `clear°(r, a)` within
+`budget`, else two validated refillings of the cone; UNKNOWN otherwise. The label names the evidence
+(`MAX_UNSAID_ATOMS` when the cone exceeds the budget). -/
+def settleU (budget : Nat) (r a : VE.Bridge.Entity) (hr : r ∈ M.domains A.alt.chooser)
+    (ha : a ∈ M.domains A.alt.action) : ScenarioRowU A unspec × String :=
+  let U : UDoc := ⟨inlineTree A, unspec⟩
+  let ρ := tupleVal [r, a]
+  let unknown (label : String) : ScenarioRowU A unspec × String :=
+    (⟨M, rows, r, a, .unknown, valid, hb, checked, hr, ha, F, filled, nofun, nofun, nofun⟩, label)
+  let settled (b : Bool) (hs : SettledF.{0} A unspec M.asStructure (clearFU A unspec) [r, a] b) (label : String) :
+      ScenarioRowU A unspec × String := match b, hs with
+    | true, hs => (⟨M, rows, r, a, .clear, valid, hb, checked, hr, ha, F, filled, fun _ => hs, nofun, nofun⟩, label)
+    | false, hs => (⟨M, rows, r, a, .notClear, valid, hb, checked, hr, ha, F, filled, nofun, fun _ => hs, nofun⟩,
+        label)
+  match hk : agreed (coneValuesAt U M [] ρ (clearFU A unspec)) with
+  | some b => settled b (settledF_of_agreed A unspec M [] [r, a] b hk) "kleene"
+  | none =>
+    let C := coneOf U M ρ (clearFU A unspec)
+    if C.length > budget then unknown "MAX_UNSAID_ATOMS" else
+    match he : agreed (coneValuesAt U M C ρ (clearFU A unspec)) with
+    | some b => settled b (settledF_of_agreed A unspec M C [r, a] b he) "enumeration"
+    | none => match fillingsAt U M F C ρ (clearFU A unspec) with
+      | some (F₁, F₂) =>
+        if hc : fillValid U M F₁ = true ∧ fillValid U M F₂ = true ∧
+            (clearFU A unspec).eval (M.withFill F₁) ρ = true ∧ (clearFU A unspec).eval (M.withFill F₂) ρ = false then
+          (⟨M, rows, r, a, .undecided, valid, hb, checked, hr, ha, F, filled, nofun, nofun,
+            fun _ => undecidedF_of_fillings A unspec hA h M valid hb F₁ F₂ [r, a] hc⟩, "fillings")
+        else unknown "search"
+      | none => unknown "search"
+
+/-- The rows of chooser `r`: one per available alternative of the action sort, in `available` order. -/
+def chooserRowsU (budget : Nat) (r : VE.Bridge.Entity) (hr : r ∈ M.domains A.alt.chooser) :
+    List (ScenarioRowU A unspec × String) :=
+  (availOf M A.alt.available r).filterMap fun a =>
+    if ha : a ∈ M.domains A.alt.action then some (settleU A unspec hA h M rows valid hb checked F filled budget r a hr ha)
+    else none
+
+end Scenario
+
+theorem fillingFor_valid {U : UDoc} {M : VE.FiniteModel VE.Bridge.Entity} {supplied : Option (FiniteFill U _)}
+    {budget : Nat} {F : FiniteFill U VE.Bridge.Entity} (h : fillingFor U M supplied budget = some F) :
+    fillValid U M F = true :=
+  List.find?_some h
+
+/-- The scenario's rows, chooser by chooser (spec 6.4's `scenarioRowU`): today's validation (whose text the runner
+answers on failure), then a validated filling, then each chooser's rows; `none` when no filling is validated, and
+every alternative is UNKNOWN. -/
+def scenarioRowsU (s : AltSourceU) (sc : Replay.Scenario s.src) (supplied : Option (FiniteFill s.U VE.Bridge.Entity))
+    (budget : Nat) : Option (List (VE.Bridge.Entity × List (ScenarioRowU s.src.A s.unspec × String))) :=
+  if hm : altModelChecks s.src.A sc.M sc.rows = true then
+    if hU : WellFormedU s.U = true then
+      match hf : fillingFor s.U sc.M supplied budget with
+      | some F =>
+        have hval : validateAlternatives s.src.A sc.M sc.rows = .ok () := validateAlternativesWith_ok.mpr hm
+        have hs := Replay.validate_sound_decoded s.src sc hval
+        some ((sc.M.domains s.src.A.alt.chooser).attach.map fun ⟨r, hr⟩ => (r, chooserRowsU s.src.A s.unspec
+          s.src.wf hU sc.M sc.rows hs.1 hs.2.1 hval F (fillingFor_valid hf) budget r hr))
+      | none => none
+    else none
+  else none
 
 end VE.Alternatives

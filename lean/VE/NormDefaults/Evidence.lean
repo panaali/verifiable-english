@@ -836,13 +836,38 @@ def coneAtomV {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) 
   if p ∈ unsaidNames U then (if (p, vs) ∈ C then some (decide ((p, vs) ∈ A)) else none)
   else some (decide (vs ∈ M.relations p))
 
-/-- The value of `n` at `vs` under each assignment of the atoms `C` that no `Fill_T`
-formula refutes in Kleene evaluation (`none` where it stays unknown). -/
+/-- The value of `φ` at `ρ` under each assignment of the atoms `C` that no `Fill_T`
+formula refutes in Kleene evaluation (`none` where it stays unknown); `C = []` is plain
+Kleene evaluation. -/
+def coneValuesAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C : List (String × List α))
+    (ρ : List α) (φ : VE.Formula) : List (Option Bool) :=
+  (subsets C).filterMap (fun A =>
+    if (fillPremises U).any (fun ψ => kleene M (coneAtomV U M C A) [] ψ == some false) then none
+    else some (kleene M (coneAtomV U M C A) ρ φ))
+
+/-- `coneValuesAt` of the outcome of `n` at `vs`. -/
 def coneValues {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C : List (String × List α))
     (n : String) (vs : List α) : List (Option Bool) :=
-  (subsets C).filterMap (fun A =>
-    if (fillPremises U).any (fun φ => kleene M (coneAtomV U M C A) [] φ == some false) then none
-    else some (kleene M (coneAtomV U M C A) (tupleVal vs) (outcomeBase (fill U) n)))
+  coneValuesAt U M C (tupleVal vs) (outcomeBase (fill U) n)
+
+/-- The definite value every entry has, when at least one entry is left. -/
+def agreed : List (Option Bool) → Option Bool
+  | some b :: bs => if bs.all (· == some b) then some b else none
+  | _ => none
+
+theorem agreed_all {l : List (Option Bool)} {b : Bool} (h : agreed l = some b) : ∀ x ∈ l, x = some b := by
+  intro x hx
+  unfold agreed at h
+  split at h
+  · split at h
+    · rename_i hall
+      simp only [Option.some.injEq] at h
+      subst h
+      rcases List.mem_cons.mp hx with h' | h'
+      · exact h'
+      · simpa using List.all_eq_true.mp hall _ h'
+    · cases h
+  · cases h
 
 /-- `enumerateSettled`: every assignment of the cone's unsaid atoms (at most
 `MAX_UNSAID_ATOMS` of them) that `Fill_T` does not refute gives `b`, and at least one
@@ -850,49 +875,28 @@ assignment is left. -/
 def enumerateSettled {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
     Option Bool :=
   let C := coneAtoms U M n vs
-  if C.length > MAX_UNSAID_ATOMS then none else
-  match coneValues U M C n vs with
-  | some b :: bs => if bs.all (· == some b) then some b else none
-  | _ => none
+  if C.length > MAX_UNSAID_ATOMS then none else agreed (coneValues U M C n vs)
 
 theorem enumerate_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {n : String} {vs : List α}
     {b : Bool} (he : enumerateSettled U M n vs = some b) :
     ∀ x ∈ coneValues U M (coneAtoms U M n vs) n vs, x = some b := by
-  intro x hx
   unfold enumerateSettled at he
   simp only at he
   split at he
   · cases he
-  · split at he
-    · rename_i b0 bs hvals
-      split at he
-      · rename_i hall
-        simp only [Option.some.injEq] at he
-        subst he
-        rw [hvals] at hx
-        rcases List.mem_cons.mp hx with h' | h'
-        · exact h'
-        · simpa using List.all_eq_true.mp hall _ h'
-      · cases he
-    · cases he
+  · exact agreed_all he
 
-/-- `settled_of_enumeration`: agreement of every assignment of the cone that `Fill_T`
-does not refute is SETTLED. Any atom list is sound here: an admissible filling agrees
-with the assignment of its own values on the list, which no `Fill_T` formula refutes
+/-- Agreement of every assignment of `C` that `Fill_T` does not refute is the value of `φ`
+under every filling that satisfies `Fill_T`. Any atom list is sound here: such a filling
+agrees with the assignment of its own values on the list, which no `Fill_T` formula refutes
 (each is true under the filling), and a definite Kleene value is the filling's value. -/
-theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U : UDoc) (h : WellFormedU U = true)
-    (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true)
-    (r : Regulated) (hr : r ∈ U.D.T.regulated) (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
-    (b : Bool) (he : enumerateSettled U M r.name vs = some b) : SettledAs U M.asStructure r vs b := by
-  have _ := h
-  have _ := valid
-  have _ := hb
-  have _ := hr
-  have _ := typed
+theorem denote_of_coneValuesAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
+    (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) (b : Bool)
+    (hall : ∀ x ∈ coneValuesAt U M C ρ φ, x = some b) (F : FillTables U M.asStructure)
+    (hF : Sat (withFill U M.asStructure F) (fillPremises U)) :
+    φ.denote (withFill U M.asStructure F) ρ ↔ b = true := by
   classical
-  intro F hF
   let S := withFill U M.asStructure F
-  let C := coneAtoms U M r.name vs
   let A := C.filter (fun a => decide (S.relation a.1 a.2))
   have hA : ∀ p ws c, coneAtomV U M C A p ws = some c → (S.relation p ws ↔ c = true) := by
     intro p ws c hc
@@ -910,18 +914,32 @@ theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U : UDoc) (h : We
       subst hc
       rw [withFill_off U _ F hun]
       simp [VE.FiniteModel.asStructure]
-  have hK : ∀ φ ρ c, kleene M (coneAtomV U M C A) ρ φ = some c → (φ.denote S ρ ↔ c = true) :=
+  have hK : ∀ ψ σ c, kleene M (coneAtomV U M C A) σ ψ = some c → (ψ.denote S σ ↔ c = true) :=
     kleene_sound M _ S.relation hA
-  have hnot : (fillPremises U).any (fun φ => kleene M (coneAtomV U M C A) [] φ == some false) = false := by
+  have hnot : (fillPremises U).any (fun ψ => kleene M (coneAtomV U M C A) [] ψ == some false) = false := by
     rw [Bool.eq_false_iff]
     intro hany
-    obtain ⟨φ, hφ, hk⟩ := List.any_eq_true.mp hany
-    have := (hK φ [] false (by simpa using hk)).mp (hF.2 φ hφ)
+    obtain ⟨ψ, hψ, hk⟩ := List.any_eq_true.mp hany
+    have := (hK ψ [] false (by simpa using hk)).mp (hF ψ hψ)
     cases this
-  have hmem : kleene M (coneAtomV U M C A) (tupleVal vs) (outcomeBase (fill U) r.name) ∈
-      coneValues U M C r.name vs :=
+  have hmem : kleene M (coneAtomV U M C A) ρ φ ∈ coneValuesAt U M C ρ φ :=
     List.mem_filterMap.mpr ⟨A, filter_mem_subsets _ C, by simp [hnot]⟩
-  exact hK _ _ b (enumerate_all he _ hmem)
+  exact hK _ _ b (hall _ hmem)
+
+/-- `settled_of_enumeration`: agreement of every assignment of the cone that `Fill_T`
+does not refute is SETTLED (`denote_of_coneValuesAt`). -/
+theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U : UDoc) (h : WellFormedU U = true)
+    (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true)
+    (r : Regulated) (hr : r ∈ U.D.T.regulated) (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
+    (b : Bool) (he : enumerateSettled U M r.name vs = some b) : SettledAs U M.asStructure r vs b := by
+  have _ := h
+  have _ := valid
+  have _ := hb
+  have _ := hr
+  have _ := typed
+  intro F hF
+  exact denote_of_coneValuesAt U M (coneAtoms U M r.name vs) (tupleVal vs) (outcomeBase (fill U) r.name) b
+    (enumerate_all he) F hF.2
 
 /-! ## The fragment gate -/
 
