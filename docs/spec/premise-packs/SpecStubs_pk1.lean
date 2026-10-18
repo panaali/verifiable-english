@@ -199,14 +199,49 @@ theorem packPremises_absent (qs : List Pack) (i : String) (h : ∀ p ∈ qs, p.i
   rw [List.find?_eq_none.mpr (fun p hp => by simpa using h p hp)]
   rfl
 
-/-! ## 2.7 Diagnostics -/
+/-- 2.6 (DF5): soft is first in `X`, so `X` is soft's premises, then the other packs' (`R` in defeasible's
+`DefaultsView`). -/
+theorem X_soft_first {U : UDoc} {used : Nat} {ps qs : List Pack} (h : assemble U used ps = .ok qs) :
+    X qs = (packPremises qs "soft").map (·.2) ++ X (qs.filter (·.id != "soft")) := sorry
+
+/-! ## 2.7 Elaborate entries -/
+
+def labelledJson (l : String) (a : VE.Formula) (origin : Option RequestPath) : Json :=
+  Json.mkObj ([("label", .str l), ("ast", VE.SoftNorms.Wire.enc a)] ++
+    match origin with | some o => [("origin", toJson o)] | none => [])
+
+/-- One further pack's entry: its premises and its generated names, each with its origin. -/
+def packEntry (p : Pack) : String × Json :=
+  (p.id, Json.mkObj [
+    ("premises", Json.arr (p.labelled.map (fun (l, a) => labelledJson l a (p.origins.lookup l))).toArray),
+    ("names", Json.arr ((p.decls.map (fun (d : String × List String) => let (n, ss) := d; Json.mkObj [("name", .str n), ("arguments", toJson ss),
+        ("origin", toJson ((p.origins.lookup n).getD []))])) ++
+      (p.consts.map (fun (d : String × String) => let (n, s) := d; Json.mkObj [("name", .str n), ("sort", .str s),
+        ("origin", toJson ((p.origins.lookup n).getD []))]))).toArray)])
+
+/-- 2.7: the `"soft"` and `"rights"` arrays as today (`Layered.lean:150–153`), then one entry per further pack,
+in `packOrder` (none on a legacy list, which holds only soft and rights). -/
+def elaborateArrays (qs : List Pack) : List (String × Json) :=
+  [("soft", Json.arr ((packPremises qs "soft").map (fun (l, a) => labelledJson l a none)).toArray),
+   ("rights", Json.arr ((packPremises qs "rights").map (fun (l, a) => labelledJson l a none)).toArray)] ++
+  (qs.filter (fun p => p.id != "soft" && p.id != "rights")).map packEntry
+
+/-- 2.7 (7′): on a legacy list the arrays are today's expressions over `labelled` and `rightsCount`. -/
+theorem elaborateArrays_legacy (s r : Pack) (hs : s.id = "soft") (hr : r.id = "rights") :
+    elaborateArrays [s, r] =
+      [("soft", Json.arr (((s.labelled ++ r.labelled).take ((s.labelled ++ r.labelled).length - r.labelled.length)).map
+          (fun (l, a) => Json.mkObj [("label", .str l), ("ast", VE.SoftNorms.Wire.enc a)])).toArray),
+       ("rights", Json.arr (((s.labelled ++ r.labelled).drop ((s.labelled ++ r.labelled).length - r.labelled.length)).map
+          (fun (l, a) => Json.mkObj [("label", .str l), ("ast", VE.SoftNorms.Wire.enc a)])).toArray)] := sorry
+
+/-! ## 2.8 Diagnostics -/
 
 /-- The first premise of `X`, in `X` order, that `holds` rejects, with its pack id and label. -/
 def firstFailing (qs : List Pack) (holds : VE.Formula → Bool) : Option (String × String) :=
   (qs.flatMap (fun p => p.labelled.map (fun a => (p.id, a)))).findSome? fun (i, l, a) =>
     if holds a then none else some (i, l)
 
-/-- 2.7: `filledX`'s text when `X` fails: today's for a legacy list, pack and label otherwise. -/
+/-- 2.8: `filledX`'s text when `X` fails: today's for a legacy list, pack and label otherwise. -/
 def packFault (qs : List Pack) (holds : VE.Formula → Bool) : String :=
   match firstFailing qs holds with
   | some (i, l) =>
@@ -217,7 +252,7 @@ def packFault (qs : List Pack) (holds : VE.Formula → Bool) : String :=
 theorem firstFailing_some (qs : List Pack) (holds : VE.Formula → Bool) (h : (X qs).all holds = false) :
     (firstFailing qs holds).isSome := sorry
 
-/-- 2.7 (8): on a legacy rights list the text is `Layered.lean:289–290`'s. -/
+/-- 2.8 (8): on a legacy rights list the text is `Layered.lean:289–290`'s. -/
 theorem packFault_legacy_rights (U : UDoc) (R : VE.Rights.RightsDoc) (M : VE.FiniteModel VE.Bridge.Entity)
     (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity)
     (hx : extraValid U (X [softPack U (VE.Rights.correlate R), rightsPack R]) M F = false) :
@@ -225,18 +260,18 @@ theorem packFault_legacy_rights (U : UDoc) (R : VE.Rights.RightsDoc) (M : VE.Fin
       VE.Route.Wire.invalidModel
         (if extraValid U ((softLabelledU U (VE.Rights.correlate R)).map (·.2)) M F then "rights" else "soft") := sorry
 
-/-- 2.7 (8): on a legacy soft list it is `InvalidModel(soft)`. -/
+/-- 2.8 (8): on a legacy soft list it is `InvalidModel(soft)`. -/
 theorem packFault_legacy_soft (U : UDoc) (D : VE.SoftNorms.SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity)
     (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (hx : extraValid U (X [softPack U D]) M F = false) :
     packFault [softPack U D] (fun a => a.eval (M.withFill F) []) = VE.Route.Wire.invalidModel "soft" := sorry
 
-/-! ## 2.8 What PK-1 guarantees about witnesses -/
+/-! ## 2.9 What PK-1 guarantees about witnesses -/
 
-/-- 2.8: `X` without the premises under the labels in `drop`. -/
+/-- 2.9: `X` without the premises under the labels in `drop`. -/
 def xWithout (qs : List Pack) (drop : List String) : List VE.Formula :=
   ((labelledX qs).filter (fun a => !drop.contains a.1)).map (·.2)
 
-/-- 2.8: the soft pack's coherence labels, from the colliding pairs (DF7's collision witness drops these). -/
+/-- 2.9: the soft pack's coherence labels, from the colliding pairs (DF7's collision witness drops these). -/
 def coherenceLabels (D : VE.SoftNorms.SoftDoc) : List String :=
   (VE.SoftNorms.collidingPairs D).map (fun (M, N) => VE.SoftNorms.Wire.cohLabel M N)
 
@@ -250,17 +285,17 @@ theorem xWithout_sub (qs : List Pack) (drop : List String) : ∀ a ∈ xWithout 
   obtain ⟨b, ⟨hb, _⟩, rfl⟩ := ha
   exact List.mem_map.mpr ⟨b, hb, rfl⟩
 
-/-- 2.8 (9): every filled situation the layered route accepts satisfies the whole `X`. -/
+/-- 2.9 (9): every filled situation the layered route accepts satisfies the whole `X`. -/
 theorem filledX_whole (L : LayeredU) (w : Json) (fw : VE.NormDefaults.Wire.FilledX L)
     (_h : VE.NormDefaults.Wire.filledX L w = .ok fw) : extraValid L.U L.X fw.S.M fw.F = true := fw.extra_ok
 
-/-! ## 2.9 Provider obligations -/
+/-! ## 2.10 Provider obligations -/
 
 /-- `B` with the relations and constants replaced. -/
 def expandBy (B : VE.Structure.{u}) (R : String → List B.Carrier → Prop) (k : String → Option B.Carrier) :
     VE.Structure.{u} := { B with relation := R, constant := k }
 
-/-- 2.9 (1): a vocabulary pack's expansion step after `earlier`: every admissible base of the base and the earlier
+/-- 2.10 (1): a vocabulary pack's expansion step after `earlier`: every admissible base of the base and the earlier
 packs expands, changing only `p`'s own names, to a typed structure that still is one and satisfies `p`'s premises. -/
 def ExpandsOn (U : UDoc) (earlier : List Pack) (p : Pack) : Prop :=
   ∀ B : VE.Structure.{u}, BaseAdmissibleX U (X earlier) B →
@@ -271,18 +306,18 @@ def ExpandsOn (U : UDoc) (earlier : List Pack) (p : Pack) : Prop :=
       (∀ c ∈ p.consts, ∃ e, k c.1 = some e ∧ B.domain c.2 e) ∧
       BaseAdmissibleX U (X earlier) (expandBy B R k) ∧ Sat (expandBy B R k) (p.labelled.map (·.2))
 
-/-- 2.9 (5): every label and generated name has an origin, and nothing else does. -/
+/-- 2.10 (5): every label and generated name has an origin, and nothing else does. -/
 def OriginsExact (p : Pack) : Prop := p.origins.map (·.1) = p.labelled.map (·.1) ++ p.names
 
-/-! ## 2.10 The kind table -/
+/-! ## 2.11 The kind table -/
 
-/-- 2.10: one row of the layered route's kind table. -/
+/-- 2.11: one row of the layered route's kind table. -/
 structure KindRow where
   kind : String
   pack : Option String
   run : LayeredU → String → Json → Except String Json
 
-/-- 2.10: the row for `kind`, refused when the pack it needs is absent. -/
+/-- 2.11: the row for `kind`, refused when the pack it needs is absent. -/
 def dispatch (rows : List KindRow) (ids : List String) (L : LayeredU) (id kind : String) (j : Json) :
     Except String (Option Json) :=
   match rows.find? (·.kind == kind) with
@@ -293,7 +328,7 @@ def dispatch (rows : List KindRow) (ids : List String) (L : LayeredU) (id kind :
       else throw s!"UnsupportedProfile: case kind {kind} needs the {i} premise pack"
     | none => some <$> r.run L id j
 
-/-- 2.10: today's four kinds (`Layered.lean:410–437`), as rows. -/
+/-- 2.11: today's four kinds (`Layered.lean:410–437`), as rows. -/
 def legacyKinds : List String :=
   ["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-status", "norm-defaults-report"]
 
@@ -308,12 +343,12 @@ theorem dispatch_legacy (ids : List String) (L : LayeredU) (id kind : String) (j
 
 end VE.NormDefaults.Packs
 
-/-! ## 2.11 `transfers_append` -/
+/-! ## 2.12 `transfers_append` -/
 
 namespace VE.Readings
 universe u
 
-/-- 2.11: carried families concatenate. -/
+/-- 2.12: carried families concatenate. -/
 theorem transfers_append (D : Doc) (Q₁ Q₂ : List VE.Formula) (Q₁c Q₂c : Choice → List VE.Formula)
     (h₁ : Transfers.{u} D Q₁ Q₁c) (h₂ : Transfers.{u} D Q₂ Q₂c) :
     Transfers.{u} D (Q₁ ++ Q₂) (fun c => Q₁c c ++ Q₂c c) := by
@@ -324,7 +359,7 @@ theorem transfers_append (D : Doc) (Q₁ Q₂ : List VE.Formula) (Q₁c Q₂c : 
   · rw [VE.Compose.sat_append, VE.Compose.sat_append]
     exact and_congr (h₁.2 c hc B hB he) (h₂.2 c hc B hB he)
 
-/-- 2.11: one family per pack gives the family of `X`. -/
+/-- 2.12: one family per pack gives the family of `X`. -/
 theorem transfers_X (D : Doc) (qs : List VE.NormDefaults.Packs.Pack)
     (Qc : VE.NormDefaults.Packs.Pack → Choice → List VE.Formula)
     (h : ∀ p ∈ qs, Transfers.{u} D (p.labelled.map (·.2)) (Qc p)) :
@@ -419,6 +454,13 @@ def holds (a : VE.Formula) : Bool := a != .bottom
 #guard (packPremises [soft, rights] "rights").map (·.1) == ["rights:limitation:l1:act:necessary:c1"]
 #guard (packPremises [soft] "rights").isEmpty
 #guard xWithout [soft, weighing] ["soft:coherence:r1,r2"] = [φ, .bottom]
+
+-- A9: elaborate entries: today's two arrays on a legacy list; one more entry per further pack otherwise.
+#guard (elaborateArrays [soft, rights]).map (·.1) == ["soft", "rights"]
+#guard (elaborateArrays []).map (·.1) == ["soft", "rights"]
+#guard (elaborateArrays [soft, weighing, ev "date__d"]).map (·.1) == ["soft", "rights", "weighing", "events"]
+#guard ((elaborateArrays [soft, rights]).lookup "soft").map (·.compress) ==
+  some "[{\"ast\":[\"top\"],\"label\":\"soft:exception:r1:sufficient:0\"},{\"ast\":[\"top\"],\"label\":\"soft:coherence:r1,r2\"}]"
 
 -- The reserved prefixes are pairwise disjoint (no prefix begins another).
 #guard reservedPrefixes.all fun (o, x) => reservedPrefixes.all fun (o', y) => o == o' || !x.startsWith y
