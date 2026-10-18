@@ -144,7 +144,9 @@ Files touched by hand: `lean/VE/Cardinality/*.lean` (new), `lean/CARDINALITY.md`
 (JSON ledgers with the `ve-generated` merge driver; `feature/ap-2`, `feature/et-7`, `feature/pk-1`, `foundation/me-1`
 and `lean-first/b18` also touch `tools/trust-classes.json`, which merges by module key). No branch of `lean-first/*`,
 `feature/*`, `infra/*`, `foundation/*` touches the new paths (`git diff --name-only main...<branch>` for each, at the
-start). Outside the repository: one row appended to `manage-agents/FOLLOW-UPS.md` ("## qt-a1").
+start). Outside the repository: one row appended to `manage-agents/FOLLOW-UPS.md` ("## qt-a1"). Recheck F7 found the
+first append overwritten by another writer; fix round 2 re-appended it with `>>` and saved its text in
+`evidence/follow-ups-row.md` (re-append verbatim if it goes missing; the probe is in that file).
 
 ## Tests
 
