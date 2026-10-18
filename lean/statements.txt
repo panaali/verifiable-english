@@ -15735,6 +15735,114 @@ theorem VE.Norms.yields_wellFormed
       ∀ (f : Nat) (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → VE.Formula.WellFormed E Γ (VE.Norms.yields T f N)
   -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.RulesTyped@VE.Norms.Elaborate VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.yields@VE.Norms.Elaborate
   -- expr 1018618366
+theorem VE.Numbers.Printed.value_ofDec
+  ∀ (d : VE.Time.Dec), (VE.Numbers.Printed.ofDec d).value = VE.Numbers.decValue d
+  -- uses VE.Numbers.Printed.ofDec@VE.Numbers.Round VE.Numbers.Printed.value@VE.Numbers.Round VE.Numbers.decValue@VE.Numbers.Decimal VE.Time.Dec@VE.Time.Decimal
+  -- expr 3650989879
+theorem VE.Numbers.Printed.value_sci
+  ∀ (d : VE.Time.Dec) (e : Int), (VE.Numbers.Printed.sci d e).value = VE.Numbers.decValue d * VE.Numbers.tenPow e
+  -- uses VE.Numbers.Printed.sci@VE.Numbers.Round VE.Numbers.Printed.value@VE.Numbers.Round VE.Numbers.decValue@VE.Numbers.Decimal VE.Numbers.tenPow@VE.Numbers.Decimal VE.Time.Dec@VE.Time.Decimal
+  -- expr 4118751620
+theorem VE.Numbers.decValue_lower
+  ∀ (d : VE.Time.Dec) (k : Nat) (q : Int), VE.Time.lower d k = Option.some q → VE.Numbers.decValue d = ↑q / 10 ^ k
+  -- uses VE.Numbers.decValue@VE.Numbers.Decimal VE.Time.Dec@VE.Time.Decimal VE.Time.lower@VE.Time.Decimal
+  -- expr 3615097640
+theorem VE.Numbers.down_iff
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.down p x ↔ VE.Numbers.Rounding.down.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.down@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 3059658347
+theorem VE.Numbers.floor_eq_iff
+  ∀ (z : Rat) (d : Int), z.floor = d ↔ ↑d ≤ z ∧ z < ↑(d + 1)
+  -- uses
+  -- expr 383376331
+theorem VE.Numbers.halfEven_iff
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.halfEven p x ↔ VE.Numbers.Rounding.halfEven.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 2155798866
+theorem VE.Numbers.halfEven_interval
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.halfEven p x ↔
+      ↑p.digits < x * VE.Numbers.tenPow p.places + 1 / 2 ∧ x * VE.Numbers.tenPow p.places + 1 / 2 < ↑(p.digits + 1) ∨
+        (x * VE.Numbers.tenPow p.places + 1 / 2 = ↑p.digits ∨ x * VE.Numbers.tenPow p.places + 1 / 2 = ↑(p.digits + 1)) ∧
+          p.digits % 2 = 0
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 3108751074
+theorem VE.Numbers.interval_off_tie
+  ∀ (z : Rat) (d : Int), ↑z.floor ≠ z → (↑d < z ∧ z < ↑(d + 1) ∨ (z = ↑d ∨ z = ↑(d + 1)) ∧ d % 2 = 0 ↔ z.floor = d)
+  -- uses
+  -- expr 2204359387
+theorem VE.Numbers.interval_on_tie
+  ∀ (z : Rat) (d : Int),
+    ↑z.floor = z →
+      (↑d < z ∧ z < ↑(d + 1) ∨ (z = ↑d ∨ z = ↑(d + 1)) ∧ d % 2 = 0 ↔
+        (if z.floor % 2 ≠ 0 then z.floor - 1 else z.floor) = d)
+  -- uses
+  -- expr 3231253976
+theorem VE.Numbers.roundsTo_close
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.tiesUp p x →
+      -(1 / 2) ≤ x * VE.Numbers.tenPow p.places - ↑p.digits ∧ x * VE.Numbers.tenPow p.places - ↑p.digits < 1 / 2
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 3602410566
+theorem VE.Numbers.roundsTo_iff_round
+  ∀ (r : VE.Numbers.Rounding) (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo r p x ↔ r.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 1646360886
+theorem VE.Numbers.roundsTo_round
+  ∀ (r : VE.Numbers.Rounding) (k : Int) (x : Rat), VE.Numbers.RoundsTo r { digits := r.round k x, places := k } x
+  -- uses VE.Numbers.Printed.mk@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 1679147506
+theorem VE.Numbers.roundsTo_unique
+  ∀ (r : VE.Numbers.Rounding) (x : Rat) (p q : VE.Numbers.Printed),
+    p.places = q.places → VE.Numbers.RoundsTo r p x → VE.Numbers.RoundsTo r q x → p = q
+  -- uses VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 215544591
+theorem VE.Numbers.rules_agree_off_tie
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.tieAt p.places x = Bool.false →
+      (VE.Numbers.RoundsTo VE.Numbers.Rounding.tiesUp p x ↔ VE.Numbers.RoundsTo VE.Numbers.Rounding.halfEven p x)
+  -- uses VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round VE.Numbers.tieAt@VE.Numbers.Round
+  -- expr 1574880746
+theorem VE.Numbers.rules_differ_iff
+  ∀ (k : Int) (x : Rat),
+    VE.Numbers.Rounding.tiesUp.round k x ≠ VE.Numbers.Rounding.halfEven.round k x ↔
+      VE.Numbers.tieAt k x = Bool.true ∧ VE.Numbers.Rounding.tiesUp.round k x % 2 ≠ 0
+  -- uses VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.tieAt@VE.Numbers.Round
+  -- expr 510166729
+theorem VE.Numbers.tenPow_add
+  ∀ (a b : Int), VE.Numbers.tenPow (a + b) = VE.Numbers.tenPow a * VE.Numbers.tenPow b
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 2017014382
+theorem VE.Numbers.tenPow_eq_zpow
+  ∀ (k : Int), VE.Numbers.tenPow k = 10 ^ k
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 1810063078
+theorem VE.Numbers.tenPow_pos
+  ∀ (k : Int), 0 < VE.Numbers.tenPow k
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 866807559
+theorem VE.Numbers.tieAt_iff
+  ∀ (k : Int) (x : Rat), VE.Numbers.tieAt k x = Bool.true ↔ ∃ d, 2 * (x * VE.Numbers.tenPow k) = ↑(2 * d - 1)
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal VE.Numbers.tieAt@VE.Numbers.Round
+  -- expr 3057435939
+theorem VE.Numbers.tieAt_iff_floor_tie
+  ∀ (k : Int) (x : Rat),
+    VE.Numbers.tieAt k x = Bool.true ↔ ↑(x * VE.Numbers.tenPow k + 1 / 2).floor = x * VE.Numbers.tenPow k + 1 / 2
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal VE.Numbers.tieAt@VE.Numbers.Round
+  -- expr 2803417522
+theorem VE.Numbers.tiesUp_iff
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.tiesUp p x ↔ VE.Numbers.Rounding.tiesUp.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 3974865933
+theorem VE.Numbers.up_iff
+  ∀ (p : VE.Numbers.Printed) (x : Rat),
+    VE.Numbers.RoundsTo VE.Numbers.Rounding.up p x ↔ VE.Numbers.Rounding.up.round p.places x = p.digits
+  -- uses VE.Numbers.Printed.digits@VE.Numbers.Round VE.Numbers.Printed.places@VE.Numbers.Round VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding.round@VE.Numbers.Round VE.Numbers.Rounding.up@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 3663241666
 theorem VE.Order.Document.nonempty
   ∀ {E : VE.Order.Environment} (self : VE.Order.Document E), self.formulas ≠ []
   -- uses VE.Order.Document.formulas@VE.Order.Syntax VE.Order.Document@VE.Order.Syntax VE.Order.Environment@VE.Order.Syntax VE.Order.Formula@VE.Order.Syntax
