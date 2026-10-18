@@ -4361,6 +4361,48 @@
         "VE.JsonInput.values"
       ]
     },
+    "VE/Judgments/Decl.lean": {
+      "D[V]": [
+        "VE.Judgments.records"
+      ],
+      "S": [
+        "VE.Judgments.Judgment",
+        "VE.Judgments.Rec",
+        "VE.Judgments.admit",
+        "VE.Judgments.baseEnv",
+        "VE.Judgments.faultOf",
+        "VE.Judgments.names"
+      ]
+    },
+    "VE/Judgments/Examples.lean": {
+      "T": [
+        "VE.Judgments.Examples.E",
+        "VE.Judgments.Examples.Eω",
+        "VE.Judgments.Examples.J1",
+        "VE.Judgments.Examples.P",
+        "VE.Judgments.Examples.Pω",
+        "VE.Judgments.Examples.defs",
+        "VE.Judgments.Examples.envText",
+        "VE.Judgments.Examples.errText",
+        "VE.Judgments.Examples.factor",
+        "VE.Judgments.Examples.fγ",
+        "VE.Judgments.Examples.guardα",
+        "VE.Judgments.Examples.jrec",
+        "VE.Judgments.Examples.judgment",
+        "VE.Judgments.Examples.okVal",
+        "VE.Judgments.Examples.regulated",
+        "VE.Judgments.Examples.regulatedω",
+        "VE.Judgments.Examples.table",
+        "VE.Judgments.Examples.termText",
+        "VE.Judgments.Examples.u",
+        "VE.Judgments.Examples.w2Probe"
+      ]
+    },
+    "VE/Judgments/Scan.lean": {
+      "S": [
+        "VE.Judgments.opensIn"
+      ]
+    },
     "VE/LexicalProofs.lean": {
       "P": [
         "VE.Surface.canonicalName",
@@ -12073,27 +12115,61 @@
     },
     "VE/Calc/Examples.lean": {
       "T": [
+        "VE.Calc.Examples.atoms",
         "VE.Calc.Examples.baseline",
         "VE.Calc.Examples.baselineDecls",
         "VE.Calc.Examples.big",
         "VE.Calc.Examples.bigDecl",
+        "VE.Calc.Examples.depth",
+        "VE.Calc.Examples.depth3",
         "VE.Calc.Examples.empty",
         "VE.Calc.Examples.eq",
+        "VE.Calc.Examples.grow",
         "VE.Calc.Examples.increase",
         "VE.Calc.Examples.largeDecls",
+        "VE.Calc.Examples.letters",
+        "VE.Calc.Examples.line",
         "VE.Calc.Examples.lit",
         "VE.Calc.Examples.lt",
         "VE.Calc.Examples.none'",
         "VE.Calc.Examples.noonMean",
+        "VE.Calc.Examples.numerals",
+        "VE.Calc.Examples.okAtom",
+        "VE.Calc.Examples.okExpr",
+        "VE.Calc.Examples.okTerm",
         "VE.Calc.Examples.physicsDecls",
         "VE.Calc.Examples.physicsDisplacement",
+        "VE.Calc.Examples.readAtom",
+        "VE.Calc.Examples.readExpr",
+        "VE.Calc.Examples.readLine",
+        "VE.Calc.Examples.readTerm",
+        "VE.Calc.Examples.readsBack",
         "VE.Calc.Examples.readsBig",
         "VE.Calc.Examples.round",
         "VE.Calc.Examples.seven",
         "VE.Calc.Examples.sources",
         "VE.Calc.Examples.sq",
         "VE.Calc.Examples.strictRate",
-        "VE.Calc.Examples.symbolsRate"
+        "VE.Calc.Examples.symbolsRate",
+        "VE.Calc.Examples.upTo2",
+        "VE.Calc.Examples.words"
+      ]
+    },
+    "VE/Calc/Render.lean": {
+      "G[V]": [
+        "VE.Calc.English.exactWords",
+        "VE.Calc.English.exprDepth",
+        "VE.Calc.English.fill",
+        "VE.Calc.English.natWords",
+        "VE.Calc.English.phraseWords",
+        "VE.Calc.English.placesPhrase",
+        "VE.Calc.English.printedWords",
+        "VE.Calc.English.renderAtom",
+        "VE.Calc.English.renderClaim",
+        "VE.Calc.English.renderExpr",
+        "VE.Calc.English.renderTerm",
+        "VE.Calc.English.reservedWords",
+        "VE.Calc.English.valueWordsOk"
       ]
     },
     "VE/Calc/Syntax.lean": {

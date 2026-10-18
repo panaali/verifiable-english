@@ -1,0 +1,198 @@
+[
+ {
+  "rule": "a hit re-validates every line (record_problem)",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_damaged_entry_is_a_miss_and_is_replaced[retyped]",
+  "failed": true,
+  "summary": "1 failed in 0.32s"
+ },
+ {
+  "rule": "the commit is keyed",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_key_part_changed_is_a_miss[change_commit]",
+  "failed": true,
+  "summary": "1 failed in 0.35s"
+ },
+ {
+  "rule": "the Lean build key is keyed",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_key_part_changed_is_a_miss[change_lean]",
+  "failed": true,
+  "summary": "1 failed in 0.45s"
+ },
+ {
+  "rule": "the recorder is keyed",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_key_part_changed_is_a_miss[change_recorder]",
+  "failed": true,
+  "summary": "1 failed in 0.37s"
+ },
+ {
+  "rule": "the corpus inputs are keyed",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_key_part_changed_is_a_miss[change_corpus]",
+  "failed": true,
+  "summary": "1 failed in 0.32s"
+ },
+ {
+  "rule": "the authority is keyed",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_the_authority_is_part_of_the_key",
+  "failed": true,
+  "summary": "1 failed in 0.33s"
+ },
+ {
+  "rule": "the environment is keyed",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_key_part_changed_is_a_miss[change_env]",
+  "failed": true,
+  "summary": "1 failed in 0.29s"
+ },
+ {
+  "rule": "the Python version is keyed",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_key_part_changed_is_a_miss[change_python]",
+  "failed": true,
+  "summary": "1 failed in 0.33s"
+ },
+ {
+  "rule": "a dirty root is neither read nor stored",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_dirty_root_is_neither_read_nor_stored",
+  "failed": true,
+  "summary": "1 failed in 0.28s"
+ },
+ {
+  "rule": "the stored segment's digest is checked",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_damaged_entry_is_a_miss_and_is_replaced[flipped byte]",
+  "failed": true,
+  "summary": "1 failed in 0.28s"
+ },
+ {
+  "rule": "a hit holds every case (completeness)",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_damaged_entry_is_a_miss_and_is_replaced[a whole record dropped]",
+  "failed": true,
+  "summary": "1 failed in 0.30s"
+ },
+ {
+  "rule": "a hit is the recorder's canonical text",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_damaged_entry_is_a_miss_and_is_replaced[not canonical]",
+  "failed": true,
+  "summary": "1 failed in 0.34s"
+ },
+ {
+  "rule": "a hit's records read the corpus's sources",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_damaged_entry_is_a_miss_and_is_replaced[another source]",
+  "failed": true,
+  "summary": "1 failed in 0.31s"
+ },
+ {
+  "rule": "a damaged entry is set aside and replaced",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_damaged_entry_is_a_miss_and_is_replaced[flipped byte]",
+  "failed": true,
+  "summary": "1 failed in 0.33s"
+ },
+ {
+  "rule": "only builds the root's lock pins are stored",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_an_unpinned_build_is_not_stored",
+  "failed": true,
+  "summary": "1 failed in 0.35s"
+ },
+ {
+  "rule": "the recording's scratch path is stored portable",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_hit_returns_the_records_a_recording_writes",
+  "failed": true,
+  "summary": "1 failed in 0.46s"
+ },
+ {
+  "rule": "entries are 0644 files",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_store_layout_names_every_key_part",
+  "failed": true,
+  "summary": "1 failed in 0.44s"
+ },
+ {
+  "rule": "no cache: record runs as before",
+  "file": "tools/lean_first_diff.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_without_a_cache_record_runs_as_before",
+  "failed": true,
+  "summary": "1 failed in 0.57s"
+ },
+ {
+  "rule": "a child recording is split at newlines only",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_hit_returns_the_records_a_recording_writes",
+  "failed": true,
+  "summary": "1 failed in 0.44s"
+ },
+ {
+  "rule": "the key is the same after recording before anything is stored",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_key_that_changes_while_recording_stores_nothing",
+  "failed": true,
+  "summary": "1 failed in 0.31s"
+ },
+ {
+  "rule": "a failed recording writes and stores nothing",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_failed_recording_writes_and_stores_nothing",
+  "failed": true,
+  "summary": "1 failed in 0.38s"
+ },
+ {
+  "rule": "prune keeps the entries used lately",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_prune_keeps_what_was_stored_or_used_lately",
+  "failed": true,
+  "summary": "1 failed in 0.30s"
+ },
+ {
+  "rule": "the checker builds are keyed (review F1)",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_a_base_recorded_with_an_old_pinned_build_is_not_reused",
+  "failed": true,
+  "summary": "1 failed in 0.42s"
+ },
+ {
+  "rule": "every Lean executable is keyed (review F1)",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_key_part_changed_is_a_miss[change_route_build]",
+  "failed": true,
+  "summary": "1 failed in 0.42s"
+ },
+ {
+  "rule": "an overridden checker is keyed by its contents (review F1)",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_key_part_changed_is_a_miss[change_rust_override]",
+  "failed": true,
+  "summary": "1 failed in 0.41s"
+ },
+ {
+  "rule": "a pilot's companion files are keyed (review F2)",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_input_a_corpus_reads_changes_its_key[pilots]",
+  "failed": true,
+  "summary": "1 failed in 0.27s"
+ },
+ {
+  "rule": "the discourse corpus file is keyed (review F2)",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_input_a_corpus_reads_changes_its_key[discourse]",
+  "failed": true,
+  "summary": "1 failed in 0.28s"
+ },
+ {
+  "rule": "a conformance file is keyed (review F2)",
+  "file": "tools/lean_first_cache.py",
+  "test": "tests/test_lean_first_diff_cache.py::test_each_input_a_corpus_reads_changes_its_key[conformance]",
+  "failed": true,
+  "summary": "1 failed in 0.18s"
+ }
+]
