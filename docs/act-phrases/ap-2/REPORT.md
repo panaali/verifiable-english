@@ -154,7 +154,10 @@ and 31r and 31s with their fault in a marker's later word (adverb `front`, head 
   `test_ap2_limits_provisional.py`, because section 9 quoted the retracted phrase. With section 9 reworded, that
   file's 3 tests pass. No test in `main-known-red.txt` was hit. After the recheck fix (F7), on `7e457d65`: 74 units,
   exit 0, 0 failed (`test_acts_vocab_mutants.py` 383 s of them, on the Mac runner with 6 jobs); `lake build` and
-  `lean/audit.py` pass. No test in `main-known-red.txt` was hit. The full gate is the chain's.
+  `lean/audit.py` pass. No test in `main-known-red.txt` was hit. After the second recheck fix (F10), on
+  `8c0e99b6`: 74 units, exit 0, 0 failed (`test_acts_vocab_mutants.py` 1,415 s of them, on the VM with 6 jobs, where
+  `mac-pytest.sh` yielded to a candidate gate); `lake build` and `lean/audit.py` pass; `trust_map.py --check` passes
+  unchanged (trusted +145, K +0). No test in `main-known-red.txt` was hit. The full gate is the chain's.
 - **Overlap:** `tools/layer_policy.py` is also edited by `lean-first/b18`, in a different hunk (lines 116 and 141;
   mine is 135). `git merge-tree HEAD lean-first/b18` merges it cleanly; that branch's other conflicts with this one
   are generated inventories (R12). No other in-flight branch touches `lean/VE/Acts/` or the plan and spec files.
