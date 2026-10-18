@@ -25,7 +25,7 @@ completion).
 - Shape `alternatives.json#/$defs/validate_fill` and `chooser_fill` (statuses and evidence as enums, `sameLength` with
   `alternatives`), sharing `evaluation` with today's row; encoder theorem `validateU_fits`.
 - Python: no product change. The relay passes rows as they are (`ve/alternatives.py`); every text is Lean's.
-- Fixtures: `tests/test_alternatives_fill.py` (6 tests), `FillExamples.lean` `#guard`s (T12, T12b, budget 0, a
+- Fixtures: `tests/test_alternatives_fill.py` (5 test functions, 8 test ids), `FillExamples.lean` `#guard`s (T12, T12b, budget 0, a
   malformed budget); 14 genuine cases in `tests/data/route-cases.jsonl`, 9 in `tests/data/relay-gate-cases.jsonl`.
 
 ## Plan rows (ET-7, plan 5; 2.10, 3.4; spec 5 and 6.4)
