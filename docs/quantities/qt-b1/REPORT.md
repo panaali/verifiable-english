@@ -118,7 +118,8 @@ trusted definition carries a killed mutant (above); FOLLOW-UPS row "## qt-b1" in
 - `lake build` of the new modules (the merge's `regen_generated.py --resolve` builds and checks everything); the
   Examples build takes about 5 s.
 - Selected tests on the Mac runner (`mac-pytest.sh --select`, HEAD b8da5c83, clean): 121/441 units, exit 0, 0 failed.
-  Rerun after the sync and these documents: see the final line below.
+  After the sync with main and these documents (HEAD c2d37e53, clean): exit 0, 0 failed, 1,434 s (the runner
+  recorded 359 units for the merged tree).
 - `tests/test_scales_exercised.py`: 3 passed. `tools/gate_collection.py --check --prebuilt`: 3 added, 0 removed, 0
   refused, 0 stale, 0 malformed. `tools/regen_generated.py --check --skip route-cases`: 30 entries checked.
 - Not run here: the full gate (the chain runs it on the final HEAD); `route-cases` regeneration (needs the Rust
