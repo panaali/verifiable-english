@@ -353,9 +353,13 @@ def decodeShared (D : Doc) (premises conclusion : Json) :
 
 /-- The conflict certificates, one per conflict target of `sup D`'s soft route, read from an object keyed by the
     target's name. -/
-def decodeConflictCerts (D : Doc) (j : Json) : List (Option VE.Tableau.Certificate) :=
-  (VE.Norms.targets (soften (correlate (sup D).1))).map (fun t =>
+def decodeConflictCertsFor (ts : List (String × List String × VE.Formula)) (j : Json) :
+    List (Option VE.Tableau.Certificate) :=
+  ts.map (fun t =>
     (VE.CertificateWire.decodeCertificate (j.getObjValD t.1)).toOption)
+
+def decodeConflictCerts (D : Doc) (j : Json) : List (Option VE.Tableau.Certificate) :=
+  decodeConflictCertsFor (VE.Norms.targets (soften (correlate (sup D).1))) j
 
 /-- `replayCertificate` on an admitted document. -/
 def replayCertificateOf (b : Admitted2) (j : Lean.Json) : Except String CertificateReplay := do
@@ -380,16 +384,22 @@ structure ModelReplay extends SupReplay where
   M : VE.FiniteModel VE.Bridge.Entity
   valid : M.Valid (envAt (soften (correlate (sup D).1)) 0)
 
-/-- `replayModel` on an admitted document. -/
-def replayModelOf (b : Admitted2) (j : Lean.Json) : Except String ModelReplay := do
+/-- Validate the admitted superposed document once, then decode models under that validation. -/
+def prepareModelReplay (b : Admitted2) :
+    Except String (Lean.Json → Except String ModelReplay) := do
   let _ ← supReplayOf b
   if hs : b.D.chain ≠ .rights ∧ superposable b.D = true ∧ (choices b.D).isEmpty = false ∧
       choicesSoftChecked b.D = true then
-    let A ← decodeChoice (j.getObjValD "assumed")
-    let ⟨(Γ, φ), hΓ, hφ⟩ ← decodeShared b.D (j.getObjValD "premises") (j.getObjValD "conclusion")
-    let ⟨M, valid⟩ ← decodeSupModel b.a.re b.D ⟨b.wf, hs.1, hs.2.1⟩ (by rw [b.frame]; rfl) (← j.getObjVal? "model")
-    pure ⟨⟨b.D, b.wf, hs.1, hs.2.1, hs.2.2.1, hs.2.2.2⟩, A, Γ, φ, hΓ, hφ, M, valid⟩
+    pure (fun j => do
+      let A ← decodeChoice (j.getObjValD "assumed")
+      let ⟨(Γ, φ), hΓ, hφ⟩ ← decodeShared b.D (j.getObjValD "premises") (j.getObjValD "conclusion")
+      let ⟨M, valid⟩ ← decodeSupModel b.a.re b.D ⟨b.wf, hs.1, hs.2.1⟩ (by rw [b.frame]; rfl) (← j.getObjVal? "model")
+      pure ⟨⟨b.D, b.wf, hs.1, hs.2.1, hs.2.2.1, hs.2.2.2⟩, A, Γ, φ, hΓ, hφ, M, valid⟩)
   else throw "InvalidInput: readings document is not superposable"
+
+/-- `replayModel` on an admitted document. -/
+def replayModelOf (b : Admitted2) (j : Lean.Json) : Except String ModelReplay := do
+  (← prepareModelReplay b) j
 
 def replayModel (j : Lean.Json) : Except String ModelReplay := do
   replayModelOf (← admitS2 (← j.getObjVal? "environment") (← j.getObjVal? "document")) j

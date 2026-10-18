@@ -655,3 +655,26 @@ formed; otherwise Lean names the enumerated route's cause.
 certificate and model evidence on the filled superposition. `UnspecifiedWire.lean` supplies the filled environment,
 `Fill_T`, and the service row. The response shape and its encoder proof are in `ResponseShape`; Python validates the
 row against that generated shape and binds its request references before using it.
+
+# Superposed verdicts and English (readings-defaults, batch RD-7)
+
+`SupVerdictsWire.lean` handles `readings-verdicts` on the superposed route. Lean checks the proposed evidence, folds
+ALL, SOME and NONE, reports per-reading premise statuses and dead readings, and selects the English plan. The old
+budget-free enumerated request remains available on the completion route; RD-7's superposed request carries its
+explicit search budget. `SupVerdictsExamples.lean` checks the fold boundaries and the shared-condition independence
+line. `ResponseShape.Encoders.ReadingsRoute` proves that each superposed answer fits its typed response shape.
+
+* `supDependencies_replay`: removing a condition not used by the joint replay leaves every accepted certificate
+  replayable. `greedy_replay_sound` establishes the deletion step used by that result.
+* `readings_wire_sup_verdicts_all`: a checked superposed certificate, including one under the empty assumed choice,
+  proves the conclusion in each compatible choice that takes the assumptions.
+* `readings_wire_sup_counter_row`: a checked countermodel encodes its own compatible choice and gives a pulled base
+  where the conclusion is false.
+* `readings_wire_sup_verdicts_some`: given sound proved and refuted rows, the SOME fold supplies both a proved choice
+  and a choice with a countermodel.
+* `readings_wire_sup_verdicts_none`: if the refuted rows cover exactly the compatible choices taking the assumption,
+  the NONE fold supplies a countermodel for every such choice.
+* `readings_wire_sup_premises_model`: a checked model also supplies a model of its reading's premises.
+* `readings_wire_sup_dead`: a checked dead-reading certificate rules that candidate out of every compatible choice.
+* `readings_wire_sup_nd_all` and `readings_wire_sup_nd_counter`: the same certificate and countermodel guarantees
+  hold under the unspecified completion, with `Fill_T` carried through the superposed slot.

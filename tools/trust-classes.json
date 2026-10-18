@@ -718,6 +718,12 @@
         "ResponseShape.Schemas.ReadingsRoute.shownModel",
         "ResponseShape.Schemas.ReadingsRoute.softException",
         "ResponseShape.Schemas.ReadingsRoute.softNode",
+        "ResponseShape.Schemas.ReadingsRoute.supCandidate",
+        "ResponseShape.Schemas.ReadingsRoute.supModel",
+        "ResponseShape.Schemas.ReadingsRoute.supProof",
+        "ResponseShape.Schemas.ReadingsRoute.supResult",
+        "ResponseShape.Schemas.ReadingsRoute.supScope",
+        "ResponseShape.Schemas.ReadingsRoute.supVerdicts",
         "ResponseShape.Schemas.ReadingsRoute.unit",
         "ResponseShape.Schemas.ReadingsRoute.units",
         "ResponseShape.Schemas.ReadingsRoute.validate",
@@ -5311,6 +5317,11 @@
         "VE.Norms.Wire.canonicalEnvironmentJson"
       ]
     },
+    "VE/Norms/WitnessKind.lean": {
+      "G[V]": [
+        "VE.Norms.witnessKind"
+      ]
+    },
     "VE/Order/Checks.lean": {
       "T": [
         "VE.Order.Checks.data",
@@ -6470,6 +6481,19 @@
         "VE.Readings.instDecidableAsciiL"
       ]
     },
+    "VE/Readings/SupDependencies.lean": {
+      "G[V]": [
+        "VE.Readings.SupProof",
+        "VE.Readings.SupProof.check",
+        "VE.Readings.supCoherence",
+        "VE.Readings.supDependencies",
+        "VE.Readings.supLiteral",
+        "VE.Readings.supMentions",
+        "VE.Readings.supProofs",
+        "VE.Readings.supReplayMiddle",
+        "VE.Readings.traceUsed"
+      ]
+    },
     "VE/Readings/SupExtra.lean": {
       "S": [
         "VE.Readings.Transfers"
@@ -6543,6 +6567,7 @@
         "VE.Readings.Run.choiceModel",
         "VE.Readings.Run.conflictFreeAnswer",
         "VE.Readings.Run.conflictKind",
+        "VE.Readings.Run.conflictPackageAnswer",
         "VE.Readings.Run.deadAnswer",
         "VE.Readings.Run.encodedChoice",
         "VE.Readings.Run.evidenceKinds",
@@ -6552,15 +6577,72 @@
         "VE.Readings.Run.runCertificate",
         "VE.Readings.Run.runChoice",
         "VE.Readings.Run.runConflict",
+        "VE.Readings.Run.runConflictPrepared",
         "VE.Readings.Run.runDead",
         "VE.Readings.Run.runElaborate",
         "VE.Readings.Run.runModel",
+        "VE.Readings.Run.runModelWithReplay",
         "VE.Readings.Run.runS2",
         "VE.Readings.Run.s2Kinds",
         "VE.Readings.Run.slotLabels"
       ],
       "G[I]": [
         "VE.Readings.Run.choiceHash"
+      ]
+    },
+    "VE/Readings/SupVerdictsExamples.lean": {
+      "T": [
+        "VE.Readings.SupVerdictsExamples.E",
+        "VE.Readings.SupVerdictsExamples.budget",
+        "VE.Readings.SupVerdictsExamples.c",
+        "VE.Readings.SupVerdictsExamples.cert",
+        "VE.Readings.SupVerdictsExamples.d",
+        "VE.Readings.SupVerdictsExamples.g",
+        "VE.Readings.SupVerdictsExamples.labels",
+        "VE.Readings.SupVerdictsExamples.m",
+        "VE.Readings.SupVerdictsExamples.p",
+        "VE.Readings.SupVerdictsExamples.proof"
+      ]
+    },
+    "VE/Readings/SupVerdictsWire.lean": {
+      "G[V]": [
+        "VE.Readings.Run.SupBudget",
+        "VE.Readings.Run.SupBudget.json",
+        "VE.Readings.Run.SupContext",
+        "VE.Readings.Run.SupContext.D",
+        "VE.Readings.Run.SupContext.Q",
+        "VE.Readings.Run.SupContext.modelFree",
+        "VE.Readings.Run.SupContext.run",
+        "VE.Readings.Run.SupScope",
+        "VE.Readings.Run.SupScope.choice",
+        "VE.Readings.Run.SupScope.coh",
+        "VE.Readings.Run.SupScope.labels",
+        "VE.Readings.Run.SupWitnessNote",
+        "VE.Readings.Run.emptySupScope",
+        "VE.Readings.Run.firstSupProposals",
+        "VE.Readings.Run.maxSupModelProposals",
+        "VE.Readings.Run.runSupVerdicts",
+        "VE.Readings.Run.supAnswer",
+        "VE.Readings.Run.supCandidateJson",
+        "VE.Readings.Run.supEvidence",
+        "VE.Readings.Run.supFind",
+        "VE.Readings.Run.supIndependent",
+        "VE.Readings.Run.supModelFree",
+        "VE.Readings.Run.supModelJson",
+        "VE.Readings.Run.supOpen",
+        "VE.Readings.Run.supPieceCase",
+        "VE.Readings.Run.supPlan",
+        "VE.Readings.Run.supProofJson",
+        "VE.Readings.Run.supProvided",
+        "VE.Readings.Run.supResult",
+        "VE.Readings.Run.supRuleName",
+        "VE.Readings.Run.supScope",
+        "VE.Readings.Run.supScopeJson",
+        "VE.Readings.Run.supScopes",
+        "VE.Readings.Run.supShown",
+        "VE.Readings.Run.supUnchecked",
+        "VE.Readings.Run.supWitnessTexts",
+        "VE.Readings.Wire.dedupChoices"
       ]
     },
     "VE/Readings/SupWire.lean": {
@@ -6576,10 +6658,12 @@
         "VE.Readings.Wire.decodeAssumed",
         "VE.Readings.Wire.decodeChoice",
         "VE.Readings.Wire.decodeConflictCerts",
+        "VE.Readings.Wire.decodeConflictCertsFor",
         "VE.Readings.Wire.decodeCouplings",
         "VE.Readings.Wire.decodeNarrowings",
         "VE.Readings.Wire.decodeShared",
         "VE.Readings.Wire.decodeSupModel",
+        "VE.Readings.Wire.prepareModelReplay",
         "VE.Readings.Wire.replayCertificate",
         "VE.Readings.Wire.replayCertificateOf",
         "VE.Readings.Wire.replayModel",
@@ -7267,8 +7351,7 @@
         "VE.Rights.Run.tuples",
         "VE.Rights.Run.unitOpen",
         "VE.Rights.Run.unitStatuses",
-        "VE.Rights.Run.usesRightsPath",
-        "VE.Rights.Run.witnessKind"
+        "VE.Rights.Run.usesRightsPath"
       ]
     },
     "VE/Rights/Scope.lean": {
@@ -9778,8 +9861,7 @@
         "VE.SoftNorms.Run.runCase",
         "VE.SoftNorms.Run.runCaseReported",
         "VE.SoftNorms.Run.runSoftKind",
-        "VE.SoftNorms.Run.softWithout",
-        "VE.SoftNorms.Run.witnessKind"
+        "VE.SoftNorms.Run.softWithout"
       ],
       "G[R]": [
         "VE.SoftNorms.Run.softDiagnosticCode",
