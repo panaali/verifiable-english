@@ -1,0 +1,33 @@
+[ab-cache] miss probe/python: no entry 2e324d29702c1f06
+[ab-cache] miss probe/lean: no entry 06fc667d0510da0f
+[ab-cache] miss conformance/python: no entry 01744382614208ce
+[ab-cache] miss conformance/lean: no entry 4dc722206a361a7b
+[ab-cache] miss pilots/default: no entry 7f35c10702f0c1ca
+[ab-cache] miss readings/default: no entry 14b553d228c5d62b
+[ab-cache] miss discourse/default: no entry ed89001efbd45242
+[ab-cache] miss rights/default: no entry cee3fd8fb1b656c5
+[ab-cache] miss quantity/python: no entry 51792a3023a48f89
+[ab-cache] miss quantity/lean: no entry 2965e8222e60333c
+[ab-cache] miss norm_defaults/default: no entry ccd24d2bfc720277
+[ab-cache] miss document/default: no entry 76690c8f33e7e550
+Traceback (most recent call last):
+  File "/home/seyran/code/ve-speed-abcache/tools/lean_first_diff.py", line 1159, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/seyran/code/ve-speed-abcache/tools/lean_first_diff.py", line 1124, in main
+    return record(args)
+  File "/home/seyran/code/ve-speed-abcache/tools/lean_first_diff.py", line 744, in record
+    return _cache_module().record(args, Path(cache))
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-speed-abcache/tools/lean_first_cache.py", line 269, in record
+    row = json.loads(line)
+  File "/home/seyran/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/json/__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/home/seyran/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/json/decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+json.decoder.JSONDecodeError: Unterminated string starting at: line 1 column 684 (char 683)

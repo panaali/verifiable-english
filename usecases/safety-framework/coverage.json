@@ -22,7 +22,7 @@
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "fsf.d1.ve.md (built locally, not committed)",
- "document_sha256": "17a3989ea1ad9456185b8d2807a1add441b8fbc9d1de8c8a0efc2528692e2996",
+ "document_sha256": "e07a34e19c8b88351c75dcab78a6b16413a7d8842c53369358d5972d6b453038",
  "master_bytes_by_status": {
   "CHECKED": 4595,
   "LABELLED": 35557,
@@ -32,14 +32,18 @@
  "residual": {
   "assumptions": 1,
   "bridge_leaves": 0,
+  "couplings": 0,
   "default_exceptions": 0,
   "holistic_overrides": 0,
   "instruction_switches": 0,
   "open_terms": 16,
+  "pending_candidates": 0,
+  "readings_findings": 5,
+  "separations": 7,
   "unresolved_reading_sets": 18,
   "weighing_points": 0
  },
- "residual_total": 35,
+ "residual_total": 47,
  "soft_background_labels": [],
  "soft_residual_labels": [],
  "soft_status": "CHECKED",
