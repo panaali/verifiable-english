@@ -1,0 +1,97 @@
+{
+ "base": "c4d7ea565339 (main before me-1a)",
+ "before": "05b85b631 (main with me-1a merged)",
+ "after": "db74414d9 (the two ties commits)",
+ "totals": {
+  "before": {
+   "K": 997,
+   "S": 10228,
+   "G[V]": 27940,
+   "tied": 263,
+   "trusted": 52111,
+   "lines": 172403
+  },
+  "after": {
+   "K": 997,
+   "S": 10220,
+   "G[V]": 27948,
+   "tied": 271,
+   "trusted": 52103,
+   "lines": 172403
+  }
+ },
+ "files": {
+  "VE/Numbers/Decimal.lean": {
+   "before": {
+    "K": 0,
+    "S": 9,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 9,
+    "lines": 45
+   },
+   "after": {
+    "K": 0,
+    "S": 5,
+    "G[V]": 4,
+    "tied": 4,
+    "trusted": 5,
+    "lines": 45
+   }
+  },
+  "VE/Numbers/Phrases.lean": {
+   "before": {
+    "K": 0,
+    "S": 17,
+    "G[V]": 9,
+    "tied": 0,
+    "trusted": 26,
+    "lines": 36
+   },
+   "after": {
+    "K": 0,
+    "S": 17,
+    "G[V]": 9,
+    "tied": 0,
+    "trusted": 26,
+    "lines": 36
+   }
+  },
+  "VE/Numbers/PhrasesMain.lean": {
+   "before": {
+    "K": 0,
+    "S": 0,
+    "G[V]": 14,
+    "tied": 0,
+    "trusted": 14,
+    "lines": 19
+   },
+   "after": {
+    "K": 0,
+    "S": 0,
+    "G[V]": 14,
+    "tied": 0,
+    "trusted": 14,
+    "lines": 19
+   }
+  },
+  "VE/Numbers/Round.lean": {
+   "before": {
+    "K": 0,
+    "S": 50,
+    "G[V]": 4,
+    "tied": 0,
+    "trusted": 54,
+    "lines": 321
+   },
+   "after": {
+    "K": 0,
+    "S": 46,
+    "G[V]": 8,
+    "tied": 4,
+    "trusted": 50,
+    "lines": 321
+   }
+  }
+ }
+}
