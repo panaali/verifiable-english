@@ -467,13 +467,11 @@ def check_readings(env, sets, conclusion_ast, *, max_steps=10_000, max_domain_si
 
 
 def _check_readings_lean(env, sets, conclusion_ast, options):
-    from .backends.dispatch import pinned
     from .backends.relay import decide
     from .errors import CheckerUnavailable
     evidence = {}
-    with pinned("lean"):
-        result = _check_readings_python(env, sets, conclusion_ast, evidence=evidence,
-                                        verify_choices=True, **options)
+    result = _check_readings_python(env, sets, conclusion_ast, evidence=evidence,
+                                    verify_choices=True, **options)
     if options["couplings"] or options["joint_choices"] is not None:
         return result
     verdict = result["verdict"]

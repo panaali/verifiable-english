@@ -105,7 +105,8 @@
           {"contains": {"const": "english.question"}},
           {"contains": {"const": "search-budget"}},
           {"contains": {"const": "ask"}},
-          {"contains": {"const": "words"}}
+          {"contains": {"const": "words"}},
+          {"contains": {"const": "metered"}}
         ]
       },
       "protocol": {"const": 2},

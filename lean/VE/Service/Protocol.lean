@@ -3,6 +3,7 @@ import VE.Order.ProfileGate
 import VE.CertificateWire
 import VE.Order.Surface
 import VE.Route.Run
+import VE.Route.MeteredRun
 import VE.Norms.Run
 import VE.Service.EnglishRun
 import VE.EnglishGrammar.Run
@@ -74,7 +75,7 @@ inductive Mode where
   | environment | model | check | identity
   | parse | graph | readings | readingsChoices | bundle | familyNorms
   | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
-  | discourse | readingsRoute | diagnose | document | englishQuestion | searchBudget | ask | words
+  | discourse | readingsRoute | diagnose | document | englishQuestion | searchBudget | ask | words | metered
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -114,12 +115,13 @@ def Mode.name : Mode → String
   | .searchBudget => "search-budget"
   | .ask => "ask"
   | .words => "words"
+  | .metered => "metered"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
   .englishRead, .englishGrammar, .englishCheck,
   .environment, .model, .check, .identity, .parse, .graph, .readings, .readingsChoices, .bundle, .familyNorms,
   .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
-  .discourse, .readingsRoute, .diagnose, .document, .englishQuestion, .searchBudget, .ask, .words]
+  .discourse, .readingsRoute, .diagnose, .document, .englishQuestion, .searchBudget, .ask, .words, .metered]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
@@ -174,6 +176,7 @@ def runMode : Mode → Json → Json
   | .searchBudget, j => VE.SearchBudget.Run.runCaseReported j
   | .ask, j => VE.Ask.Run.caseReported j
   | .words, j => VE.Words.Run.caseReported j
+  | .metered, j => VE.Route.MeteredRun.runCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -744,6 +747,9 @@ theorem runMode_ask (j : Json) :
 
 theorem runMode_words (j : Json) :
     runMode .words j = VE.Words.Run.caseReported j := rfl
+
+theorem runMode_metered (j : Json) :
+    runMode .metered j = VE.Route.MeteredRun.runCaseReported j := rfl
 
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
