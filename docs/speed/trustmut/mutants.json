@@ -1,0 +1,64 @@
+{
+ "mutants": [
+  {
+   "id": "TM1",
+   "file": "tools/trust_mutants.py",
+   "find": "                    if r == \"check\" or f in tests:",
+   "replace": "                    if r in (\"check\", \"proof\") or f in tests:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
+   ],
+   "claim": "only an error inside a check (or a --test file) kills; a failing proof is cut"
+  },
+  {
+   "id": "TM2",
+   "file": "tools/trust_mutants.py",
+   "find": "        for stage in (built[:1], built[1:]):",
+   "replace": "        for stage in (built[:1], []):",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor"
+   ],
+   "claim": "the modules that import the mutated one and hold its checks are built"
+  },
+  {
+   "id": "TM3",
+   "file": "tools/trust_mutants.py",
+   "find": "    if chain is None:\n        return \"[]\"",
+   "replace": "    if chain is None:\n        return atom",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors"
+   ],
+   "claim": "a list is cut to [] (a guard over [] leaves that survivor)"
+  },
+  {
+   "id": "TM4",
+   "file": "tools/trust_mutants.py",
+   "find": "(m.definition, m.operator) in allow:\n                m.status, m.detail = \"ALLOWED\", allow[(m.definition, m.operator)]",
+   "replace": "m.definition in {d for d, _ in allow}:\n                m.status, m.detail = \"ALLOWED\", \"any operator\"",
+   "tests": [
+    "tests/test_trust_mutants.py::test_allow_suppresses_exactly_its_operator"
+   ],
+   "claim": "--allow suppresses exactly the listed definition and operator"
+  },
+  {
+   "id": "TM5",
+   "file": "tools/trust_mutants.py",
+   "find": "shutil.copytree(lean, self.lean, symlinks=True, ignore=shutil.ignore_patterns(\".lake\", \".cache\"))",
+   "replace": "shutil.copytree(lean, self.lean, symlinks=True, ignore=shutil.ignore_patterns(\".lake\", \".cache\"), copy_function=os.link)",
+   "tests": [
+    "tests/test_trust_mutants.py::test_mutants_are_built_in_a_scratch_copy"
+   ],
+   "claim": "mutants are written to a private copy: the checkout's bytes and times stay"
+  },
+  {
+   "id": "TM6",
+   "file": "tools/trust_mutants.py",
+   "find": "    for m in not_run:\n",
+   "replace": "    for m in not_run[:1]:\n",
+   "tests": [
+    "tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run"
+   ],
+   "claim": "every mutant past --max-mutants prints as NOT RUN"
+  }
+ ]
+}
