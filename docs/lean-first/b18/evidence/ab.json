@@ -259,6 +259,20 @@
    "base": {
     "timeout": 600
    },
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
    "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
@@ -298,11 +312,11 @@
   "rights/default": 2500
  },
  "totals": {
-  "same": 100399,
-  "unavailable": 11
+  "same": 100398,
+  "unavailable": 12
  },
  "unavailable_both": {
-  "pilots/default": 11
+  "pilots/default": 12
  },
  "unlisted": 0
 }
