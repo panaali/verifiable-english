@@ -691,6 +691,20 @@
    "reason": "RD-7 review fix (F1, F2): V +12 in VE/Readings/SupVerdictsWire.lean. supOpen and the need-driven supScopes list the scopes whose evidence an answer can use, replacing the deleted Python loops that generated conflict, certificate and model evidence for every scope (_prepare, entailment, premises_answer); the untaken check is skipped past the 1024-choice budget (UNKNOWN). SIGNED by standing ruling R6 (DRI-RULINGS.md); tested by test_superposed_scopes_follow_the_asked_scope_first and test_untaken_check_waits_for_the_checked_budget.",
    "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
    "commit": "177bdb2483ec9ffe417532dbe7418f35550d7de4"
+  },
+  {
+   "class": "S",
+   "lines": 69,
+   "reason": "ap-2: lean/VE/Acts/Syntax.lean +109 (S 45, D[V] 53 checkVocab, G[V] 11), lean/VE/Acts/Read.lean +36 (S 24, G[V] 12 untied; listing and valueOf tied, 15); K +0; total +145",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
+  },
+  {
+   "class": "V",
+   "lines": 76,
+   "reason": "ap-2: lean/VE/Acts/Syntax.lean +109 (S 45, D[V] 53 checkVocab, G[V] 11), lean/VE/Acts/Read.lean +36 (S 24, G[V] 12 untied; listing and valueOf tied, 15); K +0; total +145",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
   }
  ]
 }
