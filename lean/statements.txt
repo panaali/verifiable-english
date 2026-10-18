@@ -10558,6 +10558,91 @@ theorem VE.GraphChecks.testCertificate_sound
   ∀ (E : VE.Environment), VE.Graph.CertificateSound E VE.GraphChecks.valid
   -- uses VE.Environment@VE.Syntax VE.Graph.CertificateSound@VE.ClaimGraph VE.GraphChecks.TestCertificate@VE.GraphChecks VE.GraphChecks.valid@VE.GraphChecks
   -- expr 3640407803
+theorem VE.Judgments.Examples.names_omega
+  Option.map VE.Judgments.names
+      (VE.Judgments.Examples.okVal
+        (VE.Judgments.admit VE.Judgments.Examples.Eω [] VE.Judgments.Examples.regulatedω
+          [VE.Judgments.Examples.jrec "arbitrary_measure" ["measure"],
+            VE.Judgments.Examples.jrec "arbitrary_interference" ["interference"]])) =
+    Option.some ["arbitrary_measure", "arbitrary_interference"]
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.Examples.Eω@VE.Judgments.Examples VE.Judgments.Examples.jrec@VE.Judgments.Examples VE.Judgments.Examples.okVal@VE.Judgments.Examples VE.Judgments.Examples.regulatedω@VE.Judgments.Examples VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.names@VE.Judgments.Decl
+  -- expr 319133479
+theorem VE.Judgments.admit_first_fault
+  ∀ (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : List String) (rs : List VE.Judgments.Rec)
+    (e : String),
+    VE.Judgments.admit E defs regulated rs = Except.error e →
+      ∃ pre r post,
+        rs = pre ++ r :: post ∧
+          (∀ (q : VE.Judgments.Rec), q ∈ pre → VE.Judgments.faultOf E defs regulated q = Option.none) ∧
+            VE.Judgments.faultOf E defs regulated r = Option.some e
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.faultOf@VE.Judgments.Decl
+  -- expr 1364825600
+theorem VE.Judgments.admit_ok_iff
+  ∀ (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : List String) (rs : List VE.Judgments.Rec)
+    (js : List VE.Judgments.Judgment),
+    VE.Judgments.admit E defs regulated rs = Except.ok js ↔
+      js = List.map (fun x => x.fst) rs ∧
+        ∀ (r : VE.Judgments.Rec), r ∈ rs → VE.Judgments.faultOf E defs regulated r = Option.none
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.faultOf@VE.Judgments.Decl
+  -- expr 4037456850
+theorem VE.Judgments.faultOf_none_iff
+  ∀ (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : List String) (r : VE.Judgments.Rec),
+    VE.Judgments.faultOf E defs regulated r = Option.none ↔
+      (VE.Judgments.baseEnv E defs).predicates r.fst.name = Option.some r.fst.arguments ∧
+        ¬r.fst.name ∈ regulated ∧ r.snd.fst = 0 ∧ r.snd.snd = 0 ∧ r.fst.decidedBy ≠ "unstated"
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Judgments.Judgment.arguments@VE.Judgments.Decl VE.Judgments.Judgment.decidedBy@VE.Judgments.Decl VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.baseEnv@VE.Judgments.Decl VE.Judgments.faultOf@VE.Judgments.Decl
+  -- expr 1520884731
+theorem VE.Judgments.foldlM_ok_length
+  ∀ {ε α : Type} {F : List String → α → Except ε (List String)},
+    (∀ (b : List String) (a : α) (s : List String), F b a = Except.ok s → s.length = b.length + 1) →
+      ∀ (L : List α) (b s : List String), List.foldlM F b L = Except.ok s → s.length = b.length + L.length
+  -- uses
+  -- expr 227205935
+theorem VE.Judgments.foldlM_ok_mono
+  ∀ {ε α β : Type} {F G : β → α → Except ε β},
+    (∀ (b : β) (a : α) (s : β), F b a = Except.ok s → G b a = Except.ok s) →
+      ∀ (L : List α) (b s : β), List.foldlM F b L = Except.ok s → List.foldlM G b L = Except.ok s
+  -- uses
+  -- expr 868318478
+theorem VE.Judgments.openTermNames_length
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (xs : Array Lean.Json) (python data : Bool)
+    (formula : Option (Lean.Json → Except String Unit)) (sorts : Bool) (ns : List String),
+    VE.Discourse.Loader.openTermNames rv (Lean.Json.arr xs) python data formula sorts = Except.ok ns →
+      ns.length = xs.toList.length
+  -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 3449000226
+theorem VE.Judgments.openTermNames_sorts
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (python data : Bool)
+    (formula : Option (Lean.Json → Except String Unit)) (ns : List String),
+    VE.Discourse.Loader.openTermNames rv j python data formula = Except.ok ns →
+      VE.Discourse.Loader.openTermNames rv j python data formula Bool.true = Except.ok ns
+  -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 2195587411
+theorem VE.Judgments.opensIn_iff
+  ∀ (J : List String) (fs : List VE.Formula) (j : String),
+    j ∈ VE.Judgments.opensIn J fs ↔ j ∈ J ∧ ∃ φ, φ ∈ fs ∧ j ∈ VE.Norms.preds φ
+  -- uses VE.Formula@VE.Syntax VE.Judgments.opensIn@VE.Judgments.Scan VE.Norms.preds@VE.Norms.Tree
+  -- expr 3008546099
+theorem VE.Judgments.opensIn_isEmpty
+  ∀ (J : List String) (fs : List VE.Formula),
+    (!(VE.Judgments.opensIn J fs).isEmpty) = fs.any fun f => (VE.Norms.preds f).any J.contains
+  -- uses VE.Formula@VE.Syntax VE.Judgments.opensIn@VE.Judgments.Scan VE.Norms.preds@VE.Norms.Tree
+  -- expr 2080945256
+theorem VE.Judgments.records_names
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (data : Bool) (formula : Option (Lean.Json → Except String Unit))
+    (rs : List VE.Judgments.Rec),
+    VE.Judgments.records rv j data formula = Except.ok rs →
+      VE.Discourse.Loader.openTermNames rv j Bool.true data formula Bool.true =
+        Except.ok (List.map (fun x => x.fst.name) rs)
+  -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.records@VE.Judgments.Decl VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 1569103883
+theorem VE.Judgments.records_refuse
+  ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (data : Bool) (formula : Option (Lean.Json → Except String Unit))
+    (e : String),
+    VE.Discourse.Loader.openTermNames rv j Bool.true data formula Bool.true = Except.error e →
+      VE.Judgments.records rv j data formula = Except.error e
+  -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.records@VE.Judgments.Decl VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 787098227
 theorem VE.NormDefaults.Admission.admitDocumentX_spec
   ∀ (environment document : Lean.Json) (res : VE.NormDefaults.Admission.AdmittedX),
     VE.NormDefaults.Admission.admitDocumentX environment document = Except.ok res →
@@ -31397,6 +31482,13 @@ theorem VE.Rights.Run.licence_spec
         else if VE.Rights.rightCollision D N n = Bool.true then Option.some "collision" else Option.none
   -- uses VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.Run.licence@VE.Rights.Run VE.Rights.Run.licence_spec.match_1@VE.Rights.Run VE.Rights.cited@VE.Rights.Scope VE.Rights.rightCollision@VE.Rights.Scope VE.Rights.sameEffectStrict@VE.Rights.Scope
   -- expr 2437203483
+theorem VE.Rights.Run.nodeOpen_eq
+  ∀ (openNames : List String) (N : VE.SoftNorms.SoftNode),
+    VE.Rights.Run.nodeOpen openNames N =
+      (N.mode == VE.SoftNorms.Mode.default || !N.alterable.isEmpty || (VE.Norms.preds N.guard).any openNames.contains ||
+        N.carveOuts.any fun f => (VE.Norms.preds f).any openNames.contains)
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.Rights.Run.nodeOpen@VE.Rights.Run VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.instDecidableEqMode@VE.SoftNorms.Tree
+  -- expr 933350
 theorem VE.Rights.Run.rights_wire_acceptance
   ∀ (j answer : Lean.Json),
     VE.Rights.Run.runCase j = Except.ok answer →
