@@ -249,13 +249,107 @@ def test_t12f_an_invalid_witness_is_never_a_dilemma():
 
 def test_cases_outside_this_item_are_refused_with_the_profile():
     src = source([PULL_FORBIDDEN])
-    row = run_case(src | {"kind": "alt-validate", "scenario": witness()})
-    assert row["error"] == ("UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented "
+    row = run_case(src | {"kind": "alt-certificate", "premises": [], "conclusion": ["top"], "certificate": {}})
+    assert row["error"] == ("UnsupportedProfile: case kind alt-certificate with norm-defaults@0 is not implemented "
                             "on the alternatives route")
     # Review F1: an admission goes through the decoder without the completion, which refuses the pair by name.
     admission = run_case({"id": "a", "kind": "admission", "environment": environment(),
                           "document": {"units": [], "graph": {"root": "x", "nodes": []}}})
     assert (admission["status"], admission["error"]) == ("error", PENDING)
+
+
+# et-7b: scenario values under the evidence contract (spec 5, C): clear or not clear only when settled (Kleene, or
+# enumeration of the cone), UNDECIDED only from two validated fillings, UNKNOWN otherwise, naming the budget.
+
+def statuses(row, chooser=0):
+    c = row["choosers"][chooser]
+    return list(zip(c["alternatives"], c["statuses"], c["evidence"]))
+
+
+def validate(src, scenario=None, **extra):
+    return run_case(src | {"kind": "alt-validate", "scenario": scenario or witness()} | extra)
+
+
+def t12b_source(norms):
+    """T12b: `y_permitted` unspecified, and push's permission guarded by nd u12's excluded middle."""
+    env = environment()
+    env["vocabulary"]["predicates"]["y_permitted"] = {"arguments": ["act"], "description": "permission", "regulated":
+                                                      {"role": "permission", "default": "unspecified",
+                                                       "act": "{0} be tried"}}
+    return source(norms, env=env)
+
+
+Y = ["unary", "y_permitted", v(0)]
+PUSH_MAY_GUARDED = rule("push-may", "permitted", True, ["and", ["unary", "pushing", v(0)], ["or", Y, ["not", Y]]])
+PUSH_REQUIRED = rule("push-required", "required", True, ["unary", "pushing", v(0)])
+
+
+def test_t12_scenario_push_undecided_pull_not_clear():
+    """T12's scenario: push has no rule, so two validated fillings answer both ways (UNDECIDED, never clear);
+    pull is forbidden under every filling. With the push permission, push is clear."""
+    src = source([PULL_FORBIDDEN])
+    row = validate(src)
+    assert statuses(row) == [("push", "undecided", "fillings"), ("pull", "not clear", "kleene")], row
+    assert row["choosers"][0]["text"] == (
+        "no action is known to be clear at r: UNSETTLED(push): no available action is known to be clear here: the "
+        "text does not say whether r may take push (push undecided: the text does not say whether it may be "
+        "performed, pull not clear)")
+    assert row["text"].endswith("clear and not clear hold under every admissible filling of what the text leaves "
+                                "unsaid (unspecified: permitted)")
+    assert row["environment_id"] == Environment(src["environment"]).environment_id
+    assert row["document_hash"] == document_hash(src)
+    followable = validate(source([PULL_FORBIDDEN_OVER, PUSH_MAY]))
+    assert statuses(followable) == [("push", "clear", "kleene"), ("pull", "not clear", "kleene")]
+    assert followable["choosers"][0]["text"].startswith("r has a clear action: push")
+
+
+def test_t12b_kleene_unknown_is_settled_by_enumeration_and_unknown_without_budget():
+    """T12b: Kleene leaves push unknown, enumeration of its cone settles it clear (never UNDECIDED); with
+    `max_unsaid_atoms` 0 it is UNKNOWN naming the budget."""
+    src = t12b_source([PULL_FORBIDDEN, PUSH_MAY_GUARDED])
+    assert statuses(validate(src)) == [("push", "clear", "enumeration"), ("pull", "not clear", "kleene")]
+    row = validate(src, max_unsaid_atoms=0)
+    assert statuses(row) == [("push", "UNKNOWN", "MAX_UNSAID_ATOMS"), ("pull", "not clear", "kleene")]
+    assert "push UNKNOWN: more than 0 unsaid atoms decide it" in row["choosers"][0]["text"]
+    assert statuses(validate(src, max_unsaid_atoms=99)) == statuses(validate(src))
+
+
+def test_t12f_scenario_half_invalid_scenarios_keep_todays_texts():
+    """T12f's scenario half (SR-A4): a scenario that violates a slot premise, or whose `available` names an action as
+    its chooser, answers today's validation text (the same as without the profile) and no status."""
+    plain = source([PULL_FORBIDDEN], env=environment(profiles=["alternatives@0", "norms@0", "relational-fol@0"],
+                                                     default="allow"))
+    wrong_sort = witness()
+    wrong_sort["model"]["relations"]["available"].append(["pull", "push"])
+    for scenario in (witness(agents=("r", "r2"), shared=("push",)), wrong_sort):
+        row, today = validate(source([PULL_FORBIDDEN]), scenario), validate(plain, scenario)
+        assert (row["status"], row["error"]) == ("error", today["error"]), (row, today)
+        assert "choosers" not in row
+
+
+def test_a_scenario_without_a_validated_filling_is_unknown():
+    """Push is required and `permitted` unspecified, so nothing filled is no admissible filling: with no budget to
+    search, no filling is validated and every alternative is UNKNOWN; a supplied validated filling gives rows."""
+    src = source([PULL_FORBIDDEN, PUSH_REQUIRED])
+    row = validate(src, max_unsaid_atoms=0)
+    assert statuses(row) == [("push", "UNKNOWN", "no filling"), ("pull", "UNKNOWN", "no filling")]
+    supplied = validate(src, witness(filling={"unsaid__permitted": [["push"]]}), max_unsaid_atoms=0)
+    assert [s[2] for s in statuses(supplied)] != ["no filling", "no filling"], supplied
+
+
+@pytest.mark.parametrize("extra, error", [
+    ({"max_unsaid_atoms": "3"}, "InvalidInput: max_unsaid_atoms must be a natural number"),
+    ({"max_unsaid_atoms": True}, "InvalidInput: max_unsaid_atoms must be a natural number"),
+    ({"max_unsaid_atoms": {}}, "InvalidInput: max_unsaid_atoms must be a natural number"),
+    ({"filling": {"unsaid__other": []}}, "InvalidInput: unknown filling table unsaid__other")])
+def test_scenario_request_faults(extra, error):
+    scenario = witness()
+    if "filling" in extra:
+        scenario["filling"] = extra.pop("filling")
+    else:
+        del scenario["filling"]
+    row = validate(source([PULL_FORBIDDEN]), scenario, **extra)
+    assert (row["status"], row["error"]) == ("error", error)
 
 
 # Review F1: until et-7b admits them, every route and entry point that does not read the completion beside a
