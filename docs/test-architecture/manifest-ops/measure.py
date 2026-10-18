@@ -90,11 +90,18 @@ def git(*args: str, cwd: Path = ROOT) -> str:
     return subprocess.run(["git", *args], cwd=cwd, check=True, capture_output=True, text=True).stdout.strip()
 
 
-def shadow_jobs() -> list[dict]:
+def shadow_jobs(only: set[str] | None = None) -> list[dict]:
+    """The shadow changes (those in `only`, when given); each needs its pinned map in the shared cache, which is
+    not committed (`VE_SHADOW_MAPS` names another directory)."""
     cache = Path(os.environ.get("VE_SHADOW_MAPS") or Path.home() / ".cache/ve-testmap")
     jobs = []
     for change in json.loads(CHANGES.read_text()):
+        if only is not None and change["label"] not in only:
+            continue
         path = cache / change["r1_map"]
+        if not path.is_file():
+            raise SystemExit(f"{path}: missing; the shadow rows need the maps the shadow table pinned "
+                             "(set VE_SHADOW_MAPS, or --only merge rows)")
         if hashlib.sha256(path.read_bytes()).hexdigest() != change["r1_map_sha256"]:
             raise SystemExit(f"{path}: not the map the shadow table pinned")
         jobs.append({"label": change["label"], "base": change["base"], "head": change["head"],
@@ -169,7 +176,7 @@ def replay(selector: Path, drift: bool = False, only: set[str] | None = None) ->
         env = {**os.environ, "XDG_CACHE_HOME": f"{directory}/xdg", "VE_TESTMAP_CACHE": f"{directory}/no-maps",
                "VE_LEAN_BUILDS": f"{directory}/no-builds"}
         env.pop("VE_TESTMAP", None)
-        for table, jobs in (("merges", merge_jobs(drift)), ("shadow", shadow_jobs())):
+        for table, jobs in (("merges", merge_jobs(drift)), ("shadow", shadow_jobs(only))):
             for job in jobs:
                 if only is not None and job["label"] not in only:
                     continue
@@ -213,10 +220,11 @@ def table(saved: dict) -> str:
             for label in labels:
                 row = rows_of[name][label]
                 plan = row["plan"]
-                if plan["units"] != total:
+                if plan["units"] != total and row["r1"]["units"] != total:
                     continue
                 everything += 1
-                cause = because(plan, total)
+                # Either rule's plan: the print's (`plan`) and a `--run`'s (`r1`).
+                cause = list(dict.fromkeys(because(plan, total) + because(row["r1"], total)))
                 caused += bool(cause)
                 subject = (git("log", "-1", "--format=%s", label).removeprefix("Merge ").split(" (", 1)[0]
                            if name == "merges" else label)
@@ -266,15 +274,15 @@ def table(saved: dict) -> str:
     out.append(f"{edits[MANIFEST]} merges edit the manifest, {edits[PINS]} the pins.")
     out.append("")
     out.append("Upper bound of any narrowing of the manifest and pin rules: the units only their reasons select "
-               "(plans without a full-suite reason), as if every one were dropped:")
+               "(plans without a full-suite reason), as if every one were dropped, under each rule:")
     out.append("")
-    out.append("| Label | Changes | Manifest only | Pins only | Either | Plans with any | Per plan |")
-    out.append("|---|---|---:|---:|---:|---:|---:|")
+    out.append("| Label | Changes | Rule | Manifest only | Pins only | Either | Plans with any | Per plan |")
+    out.append("|---|---|---|---:|---:|---:|---:|---:|")
     for label in labels:
-        for name, rows in saved[label]["rows"].items():
-            plans = [row["plan"] for row in rows.values() if not row["plan"]["full"]]
+        for (name, rows), column in ((item, column) for item in saved[label]["rows"].items() for column in ("plan", "r1")):
+            plans = [row[column] for row in rows.values() if not row[column]["full"]]
             gain = [plan["units"] - plan["without_both"] for plan in plans]
-            out.append(f"| {label} | {name} ({len(rows)}) | "
+            out.append(f"| {label} | {name} ({len(rows)}) | {column} | "
                        f"{sum(plan['units'] - plan['without_manifest'] for plan in plans)} | "
                        f"{sum(plan['units'] - plan['without_pins'] for plan in plans)} | {sum(gain)} | "
                        f"{sum(1 for units in gain if units)} | {round(sum(gain) / len(rows), 1)} |")
