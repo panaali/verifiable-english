@@ -11,6 +11,7 @@ from __future__ import annotations
 import itertools
 import json
 from pathlib import Path
+import platform
 import sys
 
 import pytest
@@ -39,6 +40,7 @@ class FakeGate:
         policy.write_text(json.dumps({"version": 1, "optional_tests": [], "deselected_tests": []}))
         self.output = tmp_path / "record.json"
         self.root, self.tree, self.failing, self.skipping, self.seen = root, "tree-1", {FAILED}, set(), []
+        self.commit = "commit-1"
         self.trust = None  # the counts `trust_map.py --files` writes (None: trust_counts())
         self.toolchains = {"lean": "Lean (version 4.24.0)", "rustc": "rustc 1.90.0"}
         scratches = itertools.count()
@@ -59,7 +61,7 @@ class FakeGate:
             from test_gate_integrity import fake_trust
             fake_trust(args, stage, self.trust)
         if stage == "commit":
-            return "commit-1"
+            return self.commit
         if stage == "tree":
             return self.tree
         if stage == "Python environment":
@@ -154,6 +156,7 @@ def _edit(fake, change):
 @pytest.mark.parametrize("change, refusal", [
     (lambda fake: setattr(fake, "tree", "tree-2"), "ran on tree 'tree-1', not 'tree-2'"),
     (lambda fake: fake.toolchains.update(lean="Lean (version 4.25.0)"), "other toolchains"),
+    (lambda fake: fake.toolchains.update(git="git version 2.99.0"), "other toolchains"),
     (lambda fake: fake.output.unlink(), "no previous gate record"),
     (lambda fake: fake.output.write_text("{"), "no previous gate record"),
     (lambda fake: _edit(fake, lambda r: r.update(status="passed")), "status is 'passed'"),
@@ -168,7 +171,7 @@ def _edit(fake, change):
                                                               "reason": "x"})), "failed outside its tests"),
     (lambda fake: _edit(fake, lambda r: r.update(failures=[f for f in r["failures"] if f["stage"] != "pytest"])),
      "names no failed test"),
-], ids=["another tree", "other toolchains", "no record", "unreadable record", "passed", "rerun passed",
+], ids=["another tree", "other toolchains", "another git", "no record", "unreadable record", "passed", "rerun passed",
         "dirty", "suite incomplete", "coverage failure", "skip policy failure", "foreign node id",
         "no failed test"])
 def test_anything_but_test_failures_on_this_tree_runs_the_full_gate(fake, change, refusal):
@@ -182,10 +185,29 @@ def test_anything_but_test_failures_on_this_tree_runs_the_full_gate(fake, change
     assert "Lean audit" in fake.stages() and "native Rust tests" in fake.stages()
 
 
+@pytest.mark.parametrize("change, refusal", [
+    (lambda fake: setattr(fake, "commit", "commit-2"), "ran on commit 'commit-1', not 'commit-2'"),
+    (lambda fake: _edit(fake, lambda r: r["runner"].update(node="another-runner")), "ran on runner {"),
+    (lambda fake: _edit(fake, lambda r: r.pop("runner")), "ran on runner None, not {"),
+], ids=["another-commit", "another-runner", "no-runner"])
+def test_the_same_tree_on_another_commit_or_runner_runs_the_full_gate(fake, change, refusal):
+    """No test's result is carried to another commit or runner: a test that reads history
+    (tests/history-dependent.json) can change with the commit alone, the tree the same (R13: the same commit)."""
+    fake.run()
+    change(fake)
+    fake.failing = set()
+    code, record = fake.run("--rerun-failed")
+    assert record["tree_sha"] == "tree-1" and refusal in record["rerun_failed"]["refused"], record["rerun_failed"]
+    assert (code, record["status"], record["mode"]) == (0, "passed", "full")
+    assert fake.pytest_targets() == [["tests"], ["tests"]]
+
+
 def test_a_full_gate_records_its_tree_and_mode(fake):
     fake.failing = set()
     code, record = fake.run()
     assert (code, record["status"], record["mode"], record["tree_sha"]) == (0, "passed", "full", "tree-1")
+    assert record["runner"] == gate.runner_identity() == {
+        "system": platform.system(), "machine": platform.machine(), "node": platform.node()}
     assert "rerun_failed" not in record
     # Its whole collection is its commit's record; the base's came from the base's record.
     assert fake.records == [("commit-1", BASELINE)] and record["collection"]["head_record"] == "written"

@@ -151,4 +151,49 @@ theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.right
     · fits
   · exact of_softNorms (Bool.eq_false_iff.mpr ‹_›) (SoftNorms.runCaseReported_fits j hj)
 
+/-- The detail of a failed certificate package names the first target whose certificate is
+missing or invalid. -/
+theorem firstFailure_text {res : RightsConflictReplay} {d : String} (h : firstFailure res = some d) :
+    ∃ t, d = "missing certificate for " ++ t ∨ d = "invalid certificate for " ++ t := by
+  unfold firstFailure at h
+  obtain ⟨⟨t, c⟩, _, hd⟩ := Option.map_eq_some_iff.mp h
+  cases c <;> simp only [toString] at hd <;> subst hd
+  · exact ⟨t.1 ++ "", Or.inl (by simp)⟩
+  · exact ⟨t.1 ++ "", Or.inr (by simp)⟩
+
+/-- What `runRightsKind` writes for a rights-conflict case over certificate packages: beside
+UNKNOWN, a detail naming the first failing certificate, the status line of that detail and no
+premise; beside CONFLICT-FREE, the CONFLICT-FREE status line and no detail. The per-verdict
+constraints of `ResponseShape.Schemas.Rights.packages` say the same; the skeleton theorem
+(`runRightsKind_fits`) checks only the fields, not these patterns and counts. -/
+theorem runRightsKind_packages (id : String) (j answer : Json)
+    (hw : (j.getObjVal? "witness").toBool = false)
+    (h : runRightsKind id "rights-conflict" j = .ok answer) :
+    ∃ T : Json,
+      (∃ d t, (d = "missing certificate for " ++ t ∨ d = "invalid certificate for " ++ t) ∧
+        answer = VE.Route.Wire.ok id [("verdict", .str "UNKNOWN"),
+          ("status_text", .str ("UNKNOWN: " ++ d ++ ", budget 10000")), ("targets", T),
+          ("conditional_on", toJson ([] : List String)), ("detail", .str d)]) ∨
+      (∃ rest C, answer = VE.Route.Wire.ok id [("verdict", .str "CONFLICT-FREE"),
+          ("status_text", .str ("CONFLICT-FREE among rules on the same act, conditional on " ++ rest)),
+          ("targets", T), ("conditional_on", C)]) := by
+  unfold runRightsKind at h
+  simp only [String.reduceBEq, Bool.false_eq_true, ↓reduceIte, hw, Bool.and_false] at h
+  cases hr : replayRightsConflict j with
+  | error e => simp [hr] at h; cases h
+  | ok res =>
+    simp only [hr] at h
+    cases h
+    refine ⟨toJson (List.map (fun x => x.fst) (VE.Norms.targets (VE.SoftNorms.soften (correlate res.src.D)))), ?_⟩
+    cases hf : res.conflictFree
+    · have hs := firstFailure_of_not_free j res hr hf
+      obtain ⟨d, hd⟩ := Option.isSome_iff_exists.mp hs
+      left
+      obtain ⟨t, ht⟩ := firstFailure_text hd
+      refine ⟨d, t, ht, ?_⟩
+      simp [hd, toString]
+    · right
+      simp only [↓reduceIte, toString, String.append_assoc]
+      cases firstFailure res <;> exact ⟨_, _, rfl⟩
+
 end ResponseShape.Encoders.Rights
