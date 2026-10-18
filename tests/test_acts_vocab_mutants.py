@@ -103,16 +103,18 @@ def _moved(source: int, target: int):
 
 ROWS = [row for row, _ in _d31()]
 
-# The definitions of 1.4 whose lists the generated mutants below cut or swap.
-SCOPE = ("def wordsOf ", "def firstDup ", "def checkVocab ")
+# The definitions of 1.4 whose lists the generated mutants below cut or swap, with the word lists of 1.2 it reads.
+SCOPE = ("def joinWords ", "def clauseWords ", "def wordsOf ", "def firstDup ", "def checkVocab ")
 # A method on a list, and a position that takes a list as its argument.
 LIST_METHOD = re.compile(r"\.(find\?|any|all|contains|isPrefixOf|isEmpty|flatMap|map|filter|length|head\?)(?![\w?])")
 LIST_ARGUMENT = re.compile(r"\bfor \w+ in |\bfirstDup |\.isPrefixOf |\.intercalate ")
+# The methods whose result is a list again, so a binding whose value starts with a list and one of them is a list.
+LIST_RESULT = ("flatMap", "filter", "map", "take")
 NAME = "._·?'"
+CLOSE, OPEN = {")": "(", "]": "["}, {"(": ")", "[": "]"}
 # A frame's marker lists, as `checkVocab` writes them (`ms f` is the two without `""`); each stands for the others.
 SIBLINGS = ["(f.markers ++ f.mods)", '(f.markers.filter (· ≠ ""))', "(ms f)", "f.markers", "f.split", "f.mods"]
-SIBLING = re.compile("|".join([re.escape(s) for s in SIBLINGS[:3]] + [r"\bms f\b"] +
-                              [rf"\b{re.escape(s)}\b" for s in SIBLINGS[3:]]))
+SIBLING = [re.escape(s) for s in SIBLINGS[:3]] + [r"\bms f\b"] + [rf"\b{re.escape(s)}\b" for s in SIBLINGS[3:]]
 
 
 def _span(text: str, start: str) -> tuple[int, int]:
@@ -126,11 +128,17 @@ def _span(text: str, start: str) -> tuple[int, int]:
     raise AssertionError(f"no {start!r}")
 
 
+def _masked(text: str) -> str:
+    """`text` with the inside of every string literal blanked (same length), so a word or bracket in a message is never
+    read as code."""
+    return re.sub(r'"[^"\n]*"', lambda m: '"' + " " * (len(m.group()) - 2) + '"', text)
+
+
 def _term_before(text: str, end: int) -> int:
-    """The start of the term that ends at `end`: a balanced group, or a name such as `f.head` or `·.head`."""
-    if text[end - 1] == ")":
-        depth, i = 0, end - 1
-        while (depth := depth + {")": 1, "(": -1}.get(text[i], 0)) != 0:
+    """The start of the term that ends at `end`: a balanced group or list, or a name such as `f.head` or `·.head`."""
+    if text[end - 1] in CLOSE:
+        close, depth, i = text[end - 1], 0, end - 1
+        while (depth := depth + {close: 1, CLOSE[close]: -1}.get(text[i], 0)) != 0:
             i -= 1
         return i
     i = end
@@ -140,10 +148,10 @@ def _term_before(text: str, end: int) -> int:
 
 
 def _term_after(text: str, start: int) -> int:
-    """The end of the term that starts at `start`: a balanced group, an application up to `do`, or a name."""
-    if text[start] == "(":
-        depth, i = 0, start
-        while (depth := depth + {"(": 1, ")": -1}.get(text[i], 0)) != 0:
+    """The end of the term that starts at `start`: a balanced group or list, an application up to `do`, or a name."""
+    if text[start] in OPEN:
+        opening, depth, i = text[start], 0, start
+        while (depth := depth + {opening: 1, OPEN[opening]: -1}.get(text[i], 0)) != 0:
             i += 1
         return i + 1
     if text[start - 3:start] == "in ":
@@ -154,16 +162,93 @@ def _term_after(text: str, start: int) -> int:
     return i
 
 
+def _result_is_list(signature: str) -> bool:
+    """A declared type `A → B → C` is a list's when its result `C` is."""
+    return signature.split("→")[-1].strip().startswith("List")
+
+
+def _arity(binders: str) -> int:
+    return binders.count("(")
+
+
+def _list_names(syntax: str) -> tuple[set[str], dict[str, int], dict[str, int]]:
+    """The names whose values are lists, read from the declarations of `syntax` (the type checker's job, done for this
+    file's small set of forms): the structure fields declared `List`, the definitions whose result is a `List` and the
+    lets of `checkVocab` that are annotated `List` or bound to a list, each with its number of arguments."""
+    fields = {name for block in re.findall(r"^structure \w+ where\n((?:  .*\n)+)", syntax, re.M)
+              for name in re.findall(r"^  (\w+) : List\b", block, re.M)}
+    defs = {name.rsplit(".", 1)[-1]: _arity(binders) + len(signature.split("→")) - 1
+            for name, binders, signature in re.findall(r"^def ([\w.]+)((?: \([^()]*\))*) : ([^\n]*?)(?: :=.*)?$",
+                                                       syntax, re.M) if _result_is_list(signature)}
+    lets: dict[str, int] = {}
+    lo, hi = _span(syntax, "def checkVocab ")
+    for name, binders, annotation, value in re.findall(r"^  let (\w+)((?: \([^()]*\))*)(?: : ([^\n]*?))? := (.*)$",
+                                                       _masked(syntax[lo:hi]), re.M):
+        atoms = _atom_pattern(fields, defs, lets)
+        lead = atoms.match(value)
+        rest = value[lead.end():] if lead else None
+        if (_result_is_list(annotation) if annotation else
+                rest is not None and (rest == "" or rest.startswith(" ++ ") or
+                                      re.match(rf"\.({'|'.join(LIST_RESULT)})\b", rest))):
+            lets[name] = _arity(binders)
+    return fields, defs, lets
+
+
+def _atom_pattern(fields, defs: dict[str, int], lets: dict[str, int]) -> re.Pattern:
+    """A list-valued name: a list field of a name or `·`, a list definition or let (with `Lexical.` or not) applied to
+    as many arguments as it takes, or a list literal. A function's arguments are read by `_atoms`."""
+    names = [rf"(?:\w+\.)*{re.escape(n)}" for n, k in {**defs, **lets}.items() if k == 0]
+    funcs = [re.escape(n) for n, k in {**defs, **lets}.items() if k > 0]
+    parts = [rf"(?:(?<![\w.·])[A-Za-z_]\w*|·)\.(?:{'|'.join(sorted(fields))})(?![\w?'])"] if fields else []
+    parts += [rf"(?<![\w.]){n}(?![\w?'])" for n in names]
+    parts += [rf"(?<![\w.])(?P<f{i}>{n})(?![\w?'])" for i, n in enumerate(funcs)]
+    parts.append(r"\[[^\[\]]+\]")
+    return re.compile("|".join(parts))
+
+
+def _atoms(syntax: str) -> tuple[list[tuple[int, int]], list[tuple[int, int]]]:
+    """In the definitions of `SCOPE`: every occurrence of a list-valued name (not where it is bound), and every list
+    function named without its argument (`flatMap wordsOf`), whose results are lists built inside that argument."""
+    text = _masked(syntax)
+    pattern = _atom_pattern(*_list_names(syntax))
+    atoms, bare = [], []
+    for scope in SCOPE:
+        lo, hi = _span(text, scope)
+        for m in pattern.finditer(text, lo, hi):
+            if re.search(r"(?:\bdef|\blet) $", text[max(0, m.start() - 4):m.start()]):
+                continue
+            if not any(k.startswith("f") and v is not None for k, v in m.groupdict().items()):
+                atoms.append(m.span())
+            elif text[m.end()] == " " and (text[m.end() + 1].isalnum() or text[m.end() + 1] in "(·["):
+                atoms.append((m.start(), _term_after(text, m.end() + 1)))
+            else:
+                bare.append(m.span())
+    return atoms, bare
+
+
 def _list_terms(syntax: str) -> list[tuple[int, int]]:
     """Every list the definitions of `SCOPE` range over: each receiver of a list method and each list argument, but not
-    the argument of a definition's own recursive call (Lean refuses a recursion whose argument does not shrink)."""
-    terms = set()
+    the argument of a definition's own recursive call (Lean refuses a recursion whose argument does not shrink); each
+    operand of `++`; each value of a list binding; each list a `flatMap`'s function builds; and every occurrence of a
+    list-valued name (`_atoms`), wherever it stands. A term that is another one in parentheses is the same list."""
+    text, terms = _masked(syntax), set()
     for scope in SCOPE:
-        lo, hi = _span(syntax, scope)
-        terms |= {(_term_before(syntax, m.start()), m.start()) for m in LIST_METHOD.finditer(syntax, lo, hi)}
-        terms |= {(m.end(), _term_after(syntax, m.end())) for m in LIST_ARGUMENT.finditer(syntax, lo, hi)
+        lo, hi = _span(text, scope)
+        terms |= {(_term_before(text, m.start()), m.start()) for m in LIST_METHOD.finditer(text, lo, hi)}
+        terms |= {(m.end(), _term_after(text, m.end())) for m in LIST_ARGUMENT.finditer(text, lo, hi)
                   if m.group() != scope.split()[1] + " "}
-    return sorted((start, end) for start, end in terms if start < end)
+        terms |= {(_term_before(text, m.start()), m.start()) for m in re.finditer(r" \+\+ ", text[:hi]) if lo <= m.start()}
+        terms |= {(m.end(), _term_after(text, m.end())) for m in re.finditer(r" \+\+ ", text[:hi]) if lo <= m.start()}
+        terms |= {(m.end(), _term_after(text, m.start() + len(".flatMap ")) - 1)
+                  for m in re.finditer(r"\.flatMap \(fun \w+ => ", text[:hi]) if lo <= m.start()}
+    _, defs, lets = _list_names(syntax)
+    lo, hi = _span(text, "def checkVocab ")
+    for m in re.finditer(r"^(?:def|  let) (\w+)[^\n]*? := (?!do$)(.+)$", text, re.M):
+        if m.group(1) in defs or (m.group(1) in lets and lo <= m.start() < hi):
+            terms.add(m.span(2))
+    terms |= set(_atoms(syntax)[0])
+    terms = {(s, e) for s, e in terms if s < e}
+    return sorted((s, e) for s, e in terms if not ((s - 1, e + 1) in terms and text[s - 1] == "(" and text[e] == ")"))
 
 
 def _first_only(term: str) -> str:
@@ -200,25 +285,40 @@ def _generated() -> dict:
 
     for start, end in _list_terms(syntax):
         add(f"first-only-{_slug(syntax[start:end])}", _at(start, end, _first_only(syntax[start:end])))
-    lo, hi = _span(syntax, "def checkVocab ")
-    for m in SIBLING.finditer(syntax, lo, hi):
-        own = "(ms f)" if m.group() == "ms f" else m.group()
-        defines_ms = syntax.startswith("  let ms ", syntax.rindex("\n", 0, m.start()) + 1)
+    for start, end in _atoms(syntax)[1]:
+        add(f"first-only-each-{syntax[start:end]}", _at(start, end, f"(fun x => ({syntax[start:end]} x).take 1)"))
+    for start, end in _siblings(syntax):
+        own = "(ms f)" if syntax[start:end] == "ms f" else syntax[start:end]
+        defines_ms = syntax.startswith("  let ms ", syntax.rindex("\n", 0, start) + 1)
         for other in SIBLINGS:
             if other != own and not (defines_ms and other == "(ms f)"):
-                add(f"{_slug(own)}-as-{_slug(other)}", _at(m.start(), m.end(), other))
+                add(f"{_slug(own)}-as-{_slug(other)}", _at(start, end, other))
     return mutants
+
+
+def _siblings(syntax: str) -> list[tuple[int, int]]:
+    """Every occurrence in `checkVocab` of a frame's marker list, the operands of `(f.markers ++ f.mods)` among them
+    (ap-2 review F10); `ms f` in parentheses is the same list as `(ms f)`."""
+    lo, hi = _span(syntax, "def checkVocab ")
+    spans = {m.span() for s in SIBLING for m in re.finditer(s, syntax[:hi]) if lo <= m.start()}
+    return sorted((s, e) for s, e in spans if not ((s - 1, e + 1) in spans and syntax[s - 1] == "("))
 
 
 # Generated mutants that change no answer of `checkVocab`, so no fixture can kill them, each with the reason.
 EQUIVALENT: dict[str, str] = {
     "first-only-head-1": "31b: a head's first word is absent exactly when the head is empty",
-    "first-only-f.head-5": "31s: the first word of a head's first word is its first word",
+    "first-only-f.head-6": "31s: the first word of a head's first word is its first word",
+    "first-only-wordsOf-m-2": "31l: a marker's words cut to the first are empty exactly when its words are",
     "ms-f-as-f.markers-and-f.mods-1": "the marker words: `\"\"` has no words, so it adds none",
     "ms-f-as-f.markers-and-f.mods-3": "31m: `\"\"` has no words, so it adds no word to check",
     "ms-f-as-f.markers-and-f.mods-4": "31n: `\"\"` has no words, so it adds no word to check",
     "ms-f-as-f.markers-and-f.mods-6": "31o: no marker begins `\"\"`, since 31l refused every other marker without words",
-    "f.markers-as-f.markers.filter-ne-3": "31k: 31j refused an empty modifier marker, so `\"\"` matches none",
+    "f.markers-as-f.markers.filter-ne-4": "31k: 31j refused an empty modifier marker, so `\"\"` matches none",
+    # `ms f` with a list repeated or filtered twice (F10): `ms f` is read only through `find?` and `contains` and as
+    # 31o's `for` with its `n != m`, and a repeated element changes none of their answers.
+    "f.markers-as-f.markers-and-f.mods-1": "`ms f` is `f.markers ++ f.mods ++ f.mods`: the modifiers again",
+    "f.markers-as-f.markers.filter-ne-1": "`ms f` filters `\"\"` out of the argument markers twice",
+    "f.mods-as-f.markers-and-f.mods-1": "`ms f` is `f.markers ++ f.markers ++ f.mods`: the argument markers again",
 }
 
 MUTANTS = {
@@ -238,6 +338,11 @@ MUTANTS = {
     "31i-modifier-split": _replace("f.split.find? (!f.markers.contains ·)",
                                    "f.split.find? (!(f.markers ++ f.mods).contains ·)"),
     "31g-without-direct-object": _replace("firstDup f.markers", 'firstDup (f.markers.filter (· ≠ ""))'),
+    # The review's two in an operand of `++` and in a list a function argument builds (ap-2 review F10), as it wrote
+    # them; `_generated` makes them again (`first-only-each-wordsOf-1`, `first-only-f.mods-1`).
+    "mwords-first-word-of-a-marker": _replace("fs.flatMap (fun f => (ms f).flatMap wordsOf)",
+                                              "fs.flatMap (fun f => (ms f).flatMap (fun m => (wordsOf m).take 1))"),
+    "ms-first-modifier-only": _replace("(f.markers ++ f.mods).filter", "(f.markers ++ f.mods.take 1).filter"),
     # The same kinds elsewhere: the other halves and word lists, and each limit one off.
     "31a-129-accepted": _replace("128 < fs.length", "129 < fs.length"),
     "wordOk-without-lower-case": _replace("VE.Norms.Wire.actWord w && w == w.toLower", "VE.Norms.Wire.actWord w"),
@@ -310,10 +415,31 @@ def test_the_generated_mutants_cover_every_list_of_the_check():
     is a generated one."""
     syntax = _sources()[0]
     generated = _generated()
-    assert len([n for n in generated if n.startswith("first-only-")]) == len(_list_terms(syntax))
-    for term in ("f.head", "·.head", "f.markers", "f.split", "f.mods", "(ms f)", "ms f", "fs", "V.adverbs", "mwords"):
-        assert any(syntax[s:e] == term for s, e in _list_terms(syntax)), term
+    terms, (atoms, bare) = _list_terms(syntax), _atoms(syntax)
+    assert len([n for n in generated if n.startswith("first-only-") and not n.startswith("first-only-each-")]) == \
+        len(terms)
+    assert len([n for n in generated if n.startswith("first-only-each-")]) == len(bare) > 0
+    for term in ("f.head", "·.head", "f.markers", "f.split", "f.mods", "(ms f)", "ms f", "fs", "V.adverbs", "mwords",
+                 "g.head", "wordsOf m", "V.frames", "Lexical.clauseWords", '["and", "or", "nor", "to", "be"]',
+                 "(ms f).flatMap wordsOf"):
+        assert any(syntax[s:e] == term for s, e in terms), term
+    # F10: both operands of `ms f`'s `++`, and each `wordsOf` a `flatMap` takes, are cut.
+    line = syntax.index("  let ms ")
+    assert {syntax[s:e] for s, e in terms if line < s < syntax.index("\n", line)} >= {"f.markers", "f.mods"}
+    assert {syntax[s:e] for s, e in bare} == {"wordsOf"} and len(bare) == syntax.count("flatMap wordsOf")
+    # Every occurrence of a list-valued name is cut where it stands, alone or in parentheses.
+    for s, e in atoms:
+        assert (s, e) in terms or (s - 1, e + 1) in terms, syntax[s:e]
     assert set(EQUIVALENT) <= set(generated)
+
+
+def test_the_list_valued_names_are_read_from_the_declarations():
+    """`_list_names` types the names of `Syntax.lean` from their declarations: every list field, every definition whose
+    result is a list (not `firstDup`, which takes one) and every let of `checkVocab` bound to a list (not `hd`)."""
+    fields, defs, lets = _list_names(_sources()[0])
+    assert fields == {"head", "markers", "split", "mods", "frames", "adverbs"}
+    assert defs == {"joinWords": 0, "clauseWords": 0, "wordsOf": 1}
+    assert lets == {"fs": 0, "resv": 0, "mresv": 0, "ms": 1, "mwords": 0}
 
 
 @pytest.mark.parametrize("name", sorted(EQUIVALENT))
