@@ -203,7 +203,7 @@ def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,
         return EvaluationResult("ResourceLimit", None, root, evaluator.work)
 
 
-@semantic_entry("evaluate")
+@semantic_entry("evaluate", engine="lean")
 def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluations: int = 1_000_000,
              max_trace_nodes: int = 10_000, trace: bool = True) -> EvaluationResult:
     """Evaluate with Lean's metered evaluator, in the public schema."""

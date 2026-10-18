@@ -74,6 +74,10 @@
       "VE.Service.Standalone",
       "VE.Route.Run"
     ],
+    "metered": [
+      "VE.Route.MeteredRun",
+      "VE.Route.Run"
+    ],
     "model": [
       "VE.Service.Standalone",
       "VE.Route.Run"
@@ -150,7 +154,7 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "51cd0ccbe9d2d6e964e49c8a30785dad379b30e0ec954ee6b030cabdd95740fb",
+    "lean/VE/Service/Protocol.lean": "d5877580a48674ca6885979c0a6aa8816d9596eca4dc525359df8387b3e0ed36",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

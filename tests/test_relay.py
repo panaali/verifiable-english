@@ -164,7 +164,6 @@ def test_risk_eval_reads_its_cases_with_leans_own_json_parser():
 @needs_service
 def test_genuine_typing_rejection_is_leans(monkeypatch):
     """Lean's code and text, unstripped: `UnknownSymbol: ...` (wording list W1 of DELTA.md)."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     env = Environment(raw_environment(()))
     ast = json.loads(json.dumps(formula_to_data(env, Unary("base", Const("x")))).replace('"base"', '"missing"'))
     case = {"id": "c", "environment": env.to_dict(), "ast": ast}

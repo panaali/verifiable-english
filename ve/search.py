@@ -115,7 +115,7 @@ def _check_countermodel_values(premises: tuple[Any, ...], conclusion: Any, model
     return valid, tuple(values), bool(result.value), work, ("Valid" if valid else "NotCountermodel")
 
 
-@semantic_entry("countermodel.check")
+@semantic_entry("countermodel.check", engine="lean")
 def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model: FiniteModel,
                        *, max_evaluations: int = 1_000_000) -> CountermodelCheck:
     """Independently validate and check a purported finite countermodel: the values, counts and status

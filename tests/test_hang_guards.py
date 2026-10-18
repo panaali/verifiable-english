@@ -299,7 +299,6 @@ CALLERS = {
 def waits(monkeypatch):
     """The (mode, timeout) of every request a route caller makes, each of which is then unavailable."""
     from ve.backends import relay
-    monkeypatch.delenv("VE_AUTHORITY", raising=False)
     seen = []
 
     class Recording:

@@ -57,9 +57,11 @@ def test_comparator_failure_cannot_change_lean_verdict(monkeypatch, tmp_path):
 
 @pytest.mark.parametrize("override", ["python", "shadow", "rust-experimental"])
 def test_other_authorities_cannot_decide_admission(monkeypatch, override):
+    """A leftover override names no authority since lean-first batch 18: Lean reads, Python's parser never."""
     monkeypatch.setenv("VE_AUTHORITY_OVERRIDES", f"english.admission={override}")
-    with pytest.raises(CheckerUnavailable, match="Lean-authoritative"):
-        EN.parse_english(ENV, SOURCE)
+    monkeypatch.setenv("VE_ENGLISH_COMPARATOR", "0")
+    monkeypatch.setattr(EN, "_python_reading", lambda *_args, **_kwargs: pytest.fail("Python parser called"))
+    assert EN.parse_english(ENV, SOURCE).formulas
 
 
 def test_missing_or_malformed_reader_is_checker_unavailable(monkeypatch):

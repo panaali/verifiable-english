@@ -490,19 +490,6 @@ class _PythonBudget(BaseException):
     """A Python call spent PYTHON_CPU seconds (not an answer of the implementation)."""
 
 
-@contextmanager
-def python_authority():
-    previous = os.environ.get("VE_AUTHORITY")
-    os.environ["VE_AUTHORITY"] = "python"
-    try:
-        yield
-    finally:
-        if previous is None:
-            os.environ.pop("VE_AUTHORITY", None)
-        else:
-            os.environ["VE_AUTHORITY"] = previous
-
-
 def held(engine, answer):
     """`answer` as the fuzzer keeps it: every answer is signed, reported and stored as JSON text, so one
     that cannot be (`unholdable`: a diagnostic quoting a lone surrogate, say) is Python's crash, or a Lean
@@ -523,7 +510,7 @@ def call_python(function, harness):
     from ve.errors import VEError
     spend("python_calls")
     try:
-        with python_authority(), _cpu_alarm(PYTHON_CPU):
+        with _cpu_alarm(PYTHON_CPU):
             return function()
     except _PythonBudget:
         return {"outcome": "timeout"}

@@ -942,6 +942,7 @@
         "ResponseShape.Skeletons.evaluate",
         "ResponseShape.Skeletons.familyNorms",
         "ResponseShape.Skeletons.graph",
+        "ResponseShape.Skeletons.metered",
         "ResponseShape.Skeletons.model",
         "ResponseShape.Skeletons.norms",
         "ResponseShape.Skeletons.order",
@@ -8344,6 +8345,12 @@
       "G[V]": [
         "VE.Route.MeteredTrace.Entity",
         "VE.Route.MeteredTrace.Ops",
+        "VE.Route.MeteredTrace.Row",
+        "VE.Route.MeteredTrace.Row.json",
+        "VE.Route.MeteredTrace.Trace",
+        "VE.Route.MeteredTrace.Trace.json",
+        "VE.Route.MeteredTrace.Trace.rows",
+        "VE.Route.MeteredTrace.Trace.rowsOf",
         "VE.Route.MeteredTrace.closure",
         "VE.Route.MeteredTrace.core",
         "VE.Route.MeteredTrace.detailB",
@@ -8367,6 +8374,7 @@
         "VE.Route.MeteredTrace.tupleText"
       ],
       "G[I]": [
+        "VE.Route.MeteredTrace.bindingJson",
         "VE.Route.MeteredTrace.bindingsJson"
       ]
     },
@@ -11814,6 +11822,22 @@
       "G[V]": [
         "ResponseShape.Encoders.Family.familyNormsFolFits",
         "ResponseShape.Encoders.Family.familyNormsGenericFits"
+      ]
+    },
+    "ResponseShape/Encoders/Metered.lean": {
+      "P": [
+        "ResponseShape.Encoders.Metered.Statused"
+      ]
+    },
+    "ResponseShape/Schemas/Metered.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.Metered.binding",
+        "ResponseShape.Schemas.Metered.evaluated",
+        "ResponseShape.Schemas.Metered.evaluation",
+        "ResponseShape.Schemas.Metered.file",
+        "ResponseShape.Schemas.Metered.node",
+        "ResponseShape.Schemas.Metered.nonVacuity",
+        "ResponseShape.Schemas.Metered.row"
       ]
     },
     "VE/LimitTies.lean": {
