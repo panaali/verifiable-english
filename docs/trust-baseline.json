@@ -775,6 +775,20 @@
    "reason": "et-7b: scenario values with the completion: VE/Alternatives/FillWire.lean S +42 (ScenarioRowU 21, UndecidedF 8, AltStatus 7, SettledF 6); VE/Alternatives/Run.lean V +70 (runValidateU 31, chooserReportU 18, budgetOf 7, statusPhrase 7, statusLabel 6, runCaseU +1); ResponseShape/Schemas/Alternatives.lean V +23 (evaluation 16, chooser_fill 13, validate_fill 4, file +2, row +1, validate -13); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7b, 2026-10-18",
    "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
+  },
+  {
+   "class": "V",
+   "lines": 78,
+   "reason": "pk-1: VE/NormDefaults/Packs.lean +73, VE/NormDefaults/Layered.lean +5 (K +0, S +0, V +78)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1, 2026-10-18",
+   "commit": "93131f967bb3ad87674c214b19347986f33c79b2"
+  },
+  {
+   "class": "S",
+   "lines": 137,
+   "reason": "qt-a1: S +137 (VE/Cardinality/Syntax.lean +81, VE/Cardinality/Semantics.lean +56); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a1, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
   }
  ]
 }
