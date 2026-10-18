@@ -6,11 +6,14 @@ tests/test_lean_first_diff_cache.py fail. Each file is restored byte for byte af
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
+from tools import nested_pytest  # noqa: E402
 CACHE, DIFF = "tools/lean_first_cache.py", "tools/lean_first_diff.py"
 TESTS = "tests/test_lean_first_diff_cache.py"
 # (rule, file, text, replacement, the test that must fail)
@@ -75,8 +78,8 @@ def main() -> int:
         assert source.count(text) == 1, (rule, text)
         path.write_text(source.replace(text, replacement))
         try:
-            done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-x",
-                                   f"{TESTS}::{test}"], cwd=ROOT, capture_output=True, text=True)
+            done = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", "-x", f"{TESTS}::{test}"]),
+                                  cwd=ROOT, env=nested_pytest.environment(os.environ), capture_output=True, text=True)
         finally:
             path.write_bytes(original)
         rows.append({"rule": rule, "file": name, "test": f"{TESTS}::{test}", "failed": done.returncode == 1,
