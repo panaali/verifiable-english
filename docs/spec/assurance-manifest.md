@@ -135,8 +135,9 @@ through the pinned `Gate.decodeEnvelope`.
 | File | File lines | Decoder lines | Ranges | File SHA-256 |
 |---|---:|---:|---|---|
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
-| `lean/VE/Alternatives/Replay.lean` | 328 | 328 | 1–328 | `1b69bb125b3d…` |
-| `lean/VE/Alternatives/Wire.lean` | 415 | 415 | 1–415 | `2bca023f9fb7…` |
+| `lean/VE/Alternatives/Replay.lean` | 333 | 333 | 1–333 | `dc387661ef1e…` |
+| `lean/VE/Alternatives/FillWire.lean` | 361 | 361 | 1–361 | `a7a473ee5398…` |
+| `lean/VE/Alternatives/Wire.lean` | 420 | 420 | 1–420 | `7e74ced8c5a3…` |
 | `lean/VE/Attribution/Admission.lean` | 343 | 343 | 1–343 | `de9ae29eed4d…` |
 | `lean/VE/Attribution/Content.lean` | 726 | 726 | 1–726 | `42d7518d9a79…` |
 | `lean/VE/Attribution/Preflight.lean` | 457 | 457 | 1–457 | `fa6956756459…` |
@@ -213,7 +214,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/NormDefaults/LayeredEntail.lean` | 197 | 197 | 1–197 | `252900e276fa…` |
 | `lean/VE/Readings/SoftWire.lean` | 198 | 198 | 1–198 | `0a0c5f133b9d…` |
 | `lean/VE/Readings/SoftVerdicts.lean` | 190 | 190 | 1–190 | `091687de6752…` |
-| **total** | | **35,436** | | |
+| **total** | | **35,807** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
