@@ -1132,8 +1132,12 @@
     "VE/Alternatives/FillExamples.lean": {
       "T": [
         "VE.Alternatives.FillExamples.env",
+        "VE.Alternatives.FillExamples.envS",
         "VE.Alternatives.FillExamples.errorOf",
-        "VE.Alternatives.FillExamples.ndProfiles"
+        "VE.Alternatives.FillExamples.ndProfiles",
+        "VE.Alternatives.FillExamples.pullForbidden",
+        "VE.Alternatives.FillExamples.pushMayGuarded",
+        "VE.Alternatives.FillExamples.scenario"
       ]
     },
     "VE/Alternatives/FillWire.lean": {

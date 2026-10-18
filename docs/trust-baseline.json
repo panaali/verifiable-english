@@ -761,6 +761,20 @@
    "reason": "sc-1a: new Lean-owned behaviour of scope@0 (the layout's list runs): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource, paraCounts, lineStart, spacesOnly, skipSpaces, markerLen, lastNonBlank, boldLabel, isBlank, isDigit, sp, nl; continues, indexOf, runFrom, listRun tied); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1a, 2026-10-18",
    "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
+  },
+  {
+   "class": "S",
+   "lines": 42,
+   "reason": "et-7b: scenario values with the completion: VE/Alternatives/FillWire.lean S +42 (ScenarioRowU 21, UndecidedF 8, AltStatus 7, SettledF 6); VE/Alternatives/Run.lean V +70 (runValidateU 31, chooserReportU 18, budgetOf 7, statusPhrase 7, statusLabel 6, runCaseU +1); ResponseShape/Schemas/Alternatives.lean V +23 (evaluation 16, chooser_fill 13, validate_fill 4, file +2, row +1, validate -13); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7b, 2026-10-18",
+   "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
+  },
+  {
+   "class": "V",
+   "lines": 93,
+   "reason": "et-7b: scenario values with the completion: VE/Alternatives/FillWire.lean S +42 (ScenarioRowU 21, UndecidedF 8, AltStatus 7, SettledF 6); VE/Alternatives/Run.lean V +70 (runValidateU 31, chooserReportU 18, budgetOf 7, statusPhrase 7, statusLabel 6, runCaseU +1); ResponseShape/Schemas/Alternatives.lean V +23 (evaluation 16, chooser_fill 13, validate_fill 4, file +2, row +1, validate -13); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7b, 2026-10-18",
+   "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
   }
  ]
 }
