@@ -12634,6 +12634,9 @@
         "VE.Cardinality.exactlyAtom",
         "VE.Cardinality.nOfMFormula",
         "VE.Cardinality.Body.toFormula"
+      ],
+      "P": [
+        "VE.Cardinality.termGo"
       ]
     },
     "VE/Cardinality/Examples.lean": {
