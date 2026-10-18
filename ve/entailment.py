@@ -597,6 +597,36 @@ def prove_entailment(env: Any, premises: Sequence[Any], conclusion: Any, *,
     return EntailmentResult("Found", certificate, searcher.steps)
 
 
+def prove_alternatives_entailment(case: dict, conclusion: Any, premises: Sequence[Any] = (), *,
+                                  max_steps: int = 10_000) -> dict | None:
+    """An `alt-certificate` certificate for `conclusion` (formula data) on the alternatives route, or None
+    when the search finds none within `max_steps`. Lean binds the generated Background, the slot premises and
+    the layer premises of the case's source, then the case's `premises` (`Replay.replayAltEntailment`); the
+    search runs over that list in that order. It is untrusted: `prove_entailment` refuses an environment with
+    the alternatives block, so it searches the same vocabulary without the block, binds the trace to the
+    case's environment, and Lean binds and replays it as every certificate."""
+    from .alternatives import run_case
+    from .ast import formula_from_data
+    from .environment import Environment
+    raw = case["environment"]
+    elaborated = run_case({"id": case.get("id", "alt-certificate"), "kind": "alt-elaborate", "environment": raw,
+                           "norms": case.get("norms", []), "units": case.get("units", [])})
+    if elaborated.get("status") != "ok":
+        raise CheckerUnavailable(f"CheckerUnavailable: {elaborated.get('error')}")
+    bound = [*(x["ast"] for x in elaborated["background"]), *(x["ast"] for x in elaborated["alternatives"]),
+             *(x["ast"] for x in elaborated["premises"]), *premises]
+    search = Environment({**{k: v for k, v in raw.items() if k != "alternatives"},
+                          "profiles": [p for p in raw["profiles"] if p != "alternatives@0"]})
+    proof = prove_entailment(search, [formula_from_data(search, a) for a in bound],
+                             formula_from_data(search, conclusion), max_steps=max_steps, _background=False)
+    if proof.status != "Found":
+        return None
+    env = Environment(raw)
+    formulas = tuple(formula_from_data(env, a) for a in bound)
+    return {**_binding(env, formulas, formula_from_data(env, conclusion), generated_premises=[False] * len(formulas)),
+            "trace": proof.certificate["trace"]}
+
+
 def _prove_order(env, premises, conclusion, max_steps) -> EntailmentResult:
     """order@0: untrusted Farkas-tableau search, then independent replay."""
     from .order import search

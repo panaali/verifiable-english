@@ -7,13 +7,13 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | | count |
 |---|---:|
 | leaves:bound | 243 |
-| leaves:closed domain | 252 |
-| leaves:none | 1321 |
+| leaves:closed domain | 253 |
+| leaves:none | 1327 |
 | modes | 36 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 920 |
-| today:shape | 495 |
+| today:not probed | 926 |
+| today:shape | 496 |
 | today:unbound | 137 |
 | answers | 536 |
 | probes | 10204 |
@@ -1240,6 +1240,7 @@ Delegates: `/` to norms.
 | `/document_hash` | string | none |  | pattern | 4 | not probed |
 | `/environment_id` | string | none |  | pattern | 4 | not probed |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/fill/*/generator` | string | closed domain | const |  | 0 | shape |
 | `/id` | any | bound | x-echo |  | 22 | shape |
 | `/id` | string | bound | x-equals |  | 22 | shape |
 | `/inlined/*/norm/name` | string | none |  |  | 0 | not probed |
@@ -1253,6 +1254,8 @@ Delegates: `/` to norms.
 | `/model_id` | string | none |  | pattern | 4 | not probed |
 | `/order/*` | string | none |  |  | 13 | later Lean request |
 | `/premises/*/label` | string | none |  | pattern | 13 | later Lean request |
+| `/reached/*/predicate` | string | none |  |  | 0 | not probed |
+| `/reached/*/sorts/*` | string | none |  |  | 0 | not probed |
 | `/report/assumptions/*/label` | string | bound | x-claim-nodes |  | 2 | shape |
 | `/report/assumptions/*/name` | string | bound | x-claim-nodes |  | 2 | shape |
 | `/report/root/label` | string | bound | x-claim-nodes |  | 2 | shape |
@@ -1268,6 +1271,10 @@ Delegates: `/` to norms.
 | `/unmapped_obligations` | string | none |  | minLength | 2 | not probed |
 | `/unmapped_obligations/*/act` | string | none |  |  | 0 | not probed |
 | `/unmapped_obligations/*/obligation` | string | none |  |  | 0 | not probed |
+| `/unsaid/*/description` | string | none |  | minLength | 0 | not probed |
+| `/unsaid/*/name` | string | none |  | pattern | 0 | not probed |
+| `/unsaid/*/sorts/*` | string | none |  |  | 0 | not probed |
+| `/unspecified/*` | string | none |  |  | 0 | not probed |
 | `/verdict` | string | closed domain | const |  | 9 | shape |
 | `/verdict` | string | closed domain | enum |  | 9 | shape |
 
@@ -1277,6 +1284,7 @@ Delegates: `/` to norms.
 | `/background/*/ast` | generated_formula |  | 55 |
 | `/base_premises/*/ast` | generated_formula |  | 24 |
 | `/conflict_targets/*/ast` | generated_formula |  | 59 |
+| `/fill/*/ast` | generated_formula |  | 0 |
 | `/followable/ast` | generated_formula |  | 236 |
 | `/followable/clear` | generated_formula |  | 171 |
 | `/followable/followable` | generated_formula |  | 226 |
@@ -1288,6 +1296,7 @@ Delegates: `/` to norms.
 | `/profile_exists/avoidable` | generated_formula |  | 100 |
 | `/profile_exists/prevents` | generated_formula |  | 180 |
 | `/profile_exists/unavoidable` | generated_formula |  | 150 |
+| `/reached/*/ast` | generated_formula |  | 0 |
 | `/report/assumptions/*/ast` | fol_formula | x-claim-nodes | 50 |
 | `/report/root/ast` | fol_formula | x-claim-nodes | 50 |
 
@@ -1322,6 +1331,7 @@ Delegates: `/` to norms.
 | `/coverage/alternatives/narrowings` |  |  |  |  |
 | `/coverage/alternatives/proximate_judgments` |  |  |  | drop: refuse/accepted; drop+count: accept/accepted; duplicate: refuse/accepted; duplicate+count: accept/accepted |
 | `/coverage/alternatives/unmapped_obligations` |  |  |  |  |
+| `/fill` |  |  |  |  |
 | `/inlined` |  |  |  |  |
 | `/inlined/*/norm/over` |  |  |  |  |
 | `/inlined/*/norm/unless` |  |  |  |  |
@@ -1329,10 +1339,15 @@ Delegates: `/` to norms.
 | `/legend` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted, accept/transport; reverse: accept/accepted, accept/transport |
 | `/order` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted, accept/transport; reverse: accept/accepted, accept/transport |
 | `/premises` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted, accept/transport; reverse: accept/accepted, accept/transport |
+| `/reached` |  |  |  |  |
+| `/reached/*/sorts` |  |  |  |  |
 | `/report/assumptions` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/targets` |  |  |  |  |
 | `/tuple` |  |  |  |  |
 | `/unmapped_obligations` |  |  |  |  |
+| `/unsaid` |  |  |  |  |
+| `/unsaid/*/sorts` |  |  |  |  |
+| `/unspecified` |  |  |  |  |
 
 ## risk
 
