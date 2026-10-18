@@ -85,6 +85,8 @@ module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
 module VE.Alternatives.Examples
+module VE.Alternatives.FillExamples
+module VE.Alternatives.FillWire
 module VE.Alternatives.Followable
 module VE.Alternatives.Inline
 module VE.Alternatives.Replay
@@ -129,6 +131,12 @@ module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.Render
 module VE.Calc.Syntax
+module VE.Cardinality.Erase
+module VE.Cardinality.Examples
+module VE.Cardinality.Regions
+module VE.Cardinality.Semantics
+module VE.Cardinality.Syntax
+module VE.Cardinality.Theorems
 module VE.CertificateWire
 module VE.Checks
 module VE.ClaimGraph
@@ -259,6 +267,7 @@ module VE.Json
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
+module VE.Layout.List
 module VE.LexicalProofs
 module VE.ModelProofs
 module VE.NormDefaults.Admission
@@ -272,6 +281,10 @@ module VE.NormDefaults.FillCheck
 module VE.NormDefaults.Layered
 module VE.NormDefaults.LayeredAdmission
 module VE.NormDefaults.LayeredEntail
+module VE.NormDefaults.Packs
+module VE.NormDefaults.PacksExamples
+module VE.NormDefaults.PacksLegacy
+module VE.NormDefaults.PacksLegacyExamples
 module VE.NormDefaults.Premises
 module VE.NormDefaults.Replay
 module VE.NormDefaults.Report
@@ -388,6 +401,7 @@ module VE.Readings.SupExtraExamples
 module VE.Readings.SupFill
 module VE.Readings.SupFillWire
 module VE.Readings.SupFree
+module VE.Readings.SupPacks
 module VE.Readings.SupRun
 module VE.Readings.SupSlot
 module VE.Readings.SupVerdictsExamples
@@ -459,6 +473,7 @@ module VE.Route.Steps
 module VE.Route.Typed
 module VE.Route.Wire
 module VE.Route.WireSound
+module VE.Scope.Examples
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
 module VE.SearchBudget.Examples
@@ -565,6 +580,7 @@ ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
+VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline
 VE.Alternatives.Avail@VE.Alternatives.Followable
 VE.Alternatives.BaseAdmissibleAlt@VE.Alternatives.Background
@@ -617,6 +633,20 @@ VE.Calc.NameOverflows@VE.Calc.Decls
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
+VE.Cardinality.Admissible@VE.Cardinality.Semantics
+VE.Cardinality.Admitted.below@VE.Cardinality.Syntax
+VE.Cardinality.Admitted@VE.Cardinality.Syntax
+VE.Cardinality.Body.holds@VE.Cardinality.Semantics
+VE.Cardinality.BodyTyped@VE.Cardinality.Syntax
+VE.Cardinality.CEntails@VE.Cardinality.Semantics
+VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax
+VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics
+VE.Cardinality.Cmp.holds@VE.Cardinality.Semantics
+VE.Cardinality.CountAtom.holds@VE.Cardinality.Semantics
+VE.Cardinality.Counts@VE.Cardinality.Semantics
+VE.Cardinality.HasCount@VE.Cardinality.Semantics
+VE.Cardinality.Proportion.holds@VE.Cardinality.Semantics
+VE.Cardinality.Rel.holds@VE.Cardinality.Semantics
 VE.Closure.ClosedAt@VE.Closure.Paths
 VE.Closure.Edge.Typed@VE.Closure.Substitution
 VE.Closure.Edge.denote@VE.Closure.Substitution
@@ -758,6 +788,7 @@ VE.Graph.Unfolds.below@VE.ClaimGraph
 VE.Graph.Unfolds@VE.ClaimGraph
 VE.Graph.tableauValid@VE.ClaimGraph
 VE.GraphChecks.valid@VE.GraphChecks
+VE.Layout.GovernedItem@VE.Layout.List
 VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run
 VE.NormDefaults.Admission.CertificatesBound@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.CertificatesBoundX@VE.NormDefaults.LayeredAdmission

@@ -350,7 +350,8 @@ def test_permission_default_stays_allow_until_norm_defaults_combines_with_risk_a
     needs alternatives@0 and risk@0, which norm-defaults@0 does not combine with yet
     (docs/spec/norm-defaults.md 3.3, integration gap). Python and Lean's risk route both reject the
     switched environment, so the case keeps v2's default and README says why. When this test fails,
-    the combination exists: switch `permitted` to `unspecified` and re-run."""
+    the combination exists: switch `permitted` to `unspecified` and re-run. (The alternatives route alone
+    takes the completion since events-time-causation ET-7; risk@0 with it is its own batch.)"""
     from tests import lean_routes
     from ve.errors import UnsupportedProfile
     env = cases.environment()
@@ -360,10 +361,10 @@ def test_permission_default_stays_allow_until_norm_defaults_combines_with_risk_a
     switched["vocabulary"]["predicates"]["permitted"]["regulated"]["default"] = "unspecified"
     with pytest.raises(UnsupportedProfile, match="Unsupported profile norm-defaults@0"):
         Environment(switched)
+    # Without risk@0 the alternatives route takes the completion (events-time-causation ET-7); risk@0 does not yet.
     without_risk = {k: v for k, v in switched.items() if k != "risk"}
     without_risk["profiles"] = [p for p in switched["profiles"] if p != "risk@0"]
-    with pytest.raises(UnsupportedProfile, match="Unsupported profile norm-defaults@0"):
-        Environment(without_risk)
+    assert "norm-defaults@0" in Environment(without_risk).profiles
     (row,) = lean_routes.rows("risk", [{"id": "switched", "kind": "risk-elaborate", "environment": switched,
                                         "norms": []}])
     assert (row["status"], row["error"]) == ("error", "UnsupportedProfile: Unsupported profile norm-defaults@0")
