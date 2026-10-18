@@ -3,7 +3,10 @@
 DRI signature needed: none. **Stopped after step 1 (the task's stop rule).** Fewer than 3 merges select
 everything because of the manifest or the pins: 0 of 54 with the map taken as fresh, 2 of 54 with the
 selector's own drift check. In both of those 2, the cause is the uncertain units, not the missing operation
-map. No selector code changed, and no VE output changed (DELTA.md: no rows).
+map. No selector code changed, and no VE output changed (DELTA.md: no rows). The pins still block the
+`--run` rule's narrowing, though: under `r1` (the `modes` rule) the pin reason alone selects 328 units over
+the 54 merges (fresh map), 311 of them in two merges, `109c7de1d` (165) and `c4d7ea565` (146). Neither plan
+selects everything, so the stop rule holds; the pins' effect on `r1` is Follow-up 4.
 
 Task: test-architecture draft 2, rank 4 item 5 (`reviews/test-architecture-2026-10-14.md` 2.3 and 3.5),
 which the DRI's decision #5 (`reviews/dri-decisions-20261017b.md`) asked to re-measure. The worry behind it:
@@ -36,10 +39,13 @@ ways:
   a manifest edit adds all of them ("unmapped manifest reader").
 
 A plan "selects everything" when it selects all 434 units, whether or not it has a full-suite reason.
-A plan selects everything **because of** the manifest or the pins under two conditions. Either its
+Every change has two plans: `plan` (a print's, and the gate's selection) and `r1` (a feedback `--run`'s,
+`answer_cutoff.R1_RULE`, the `modes` rule). A plan selects everything **because of** the manifest or the pins
+under two conditions. Either its
 full-suite reasons hold "ve/assurance-manifest.json: no safe operation map". Or the units that still have a
 reason after the manifest's reasons (`is_manifest`), the pins' reasons (`is_pin`: "reads", "names" or
-"lists the directory of" `lean/checkers.lock`) or both are dropped are fewer than all 434.
+"lists the directory of" `lean/checkers.lock`) or both are dropped are fewer than all 434. The "Because
+of" column reads both plans.
 `python3 docs/test-architecture/manifest-ops/measure.py --check` recomputes every saved row in a worktree
 of the saved commit. It also fails when the tables below are not what `--table` prints from the saved rows
 (D4: batch evidence, not a permanent test).
@@ -144,14 +150,18 @@ The merges that edit `ve/assurance-manifest.json` or `lean/checkers.lock` (from 
 
 14 merges edit the manifest, 13 the pins.
 
-Upper bound of any narrowing of the manifest and pin rules: the units only their reasons select (plans without a full-suite reason), as if every one were dropped:
+Upper bound of any narrowing of the manifest and pin rules: the units only their reasons select (plans without a full-suite reason), as if every one were dropped, under each rule:
 
-| Label | Changes | Manifest only | Pins only | Either | Plans with any | Per plan |
-|---|---|---:|---:|---:|---:|---:|
-| before | merges (54) | 17 | 7 | 24 | 10 | 0.4 |
-| before | shadow (10) | 3 | 2 | 5 | 3 | 0.5 |
-| before-drift | merges (54) | 42 | 0 | 42 | 2 | 0.8 |
-| before-drift | shadow (10) | 3 | 2 | 5 | 3 | 0.5 |
+| Label | Changes | Rule | Manifest only | Pins only | Either | Plans with any | Per plan |
+|---|---|---|---:|---:|---:|---:|---:|
+| before | merges (54) | plan | 17 | 7 | 24 | 10 | 0.4 |
+| before | merges (54) | r1 | 17 | 328 | 345 | 10 | 6.4 |
+| before | shadow (10) | plan | 3 | 2 | 5 | 3 | 0.5 |
+| before | shadow (10) | r1 | 3 | 10 | 13 | 3 | 1.3 |
+| before-drift | merges (54) | plan | 42 | 0 | 42 | 2 | 0.8 |
+| before-drift | merges (54) | r1 | 42 | 0 | 42 | 2 | 0.8 |
+| before-drift | shadow (10) | plan | 3 | 2 | 5 | 3 | 0.5 |
+| before-drift | shadow (10) | r1 | 3 | 10 | 13 | 3 | 1.3 |
 <!-- measure.py --table: end -->
 
 What the tables show:
@@ -160,16 +170,25 @@ What the tables show:
   `ve/assurance-manifest.json`. None of the 256 saved plans (64 changes x 2 rules x 2 labels) gives
   "no safe operation map": no merge added or removed the file, changed `version`, or broke the operation list. tarch-select's
   shared-field narrowing (`../select/REPORT.md` row "5.") already covers every manifest edit made since
-  2026-10-14. Candidates (a) and (b) of the task (presence changes, IMPORT_FIELDS edits) occur in none of
-  these 54 merges.
-- **The pins decide no plan.** 13 merges edit `lean/checkers.lock` (the edits table above). Every one of
-  them adds `ve_service` digests: 1 to 22 per merge, 2 merges also add `rust_jsonl` digests, and no merge
-  drops a pin. Each pin change thus pins a new service build, and the same merges' Lean and schema changes
-  select every service user anyway. Measured: of the units a pin reason selects (293 in most of these
-  plans), all but 7 over the 54 merges also have another reason (fresh map), and none under drift. With the
-  binary cutoff on (not measured: no build records for these merges), a changed `ve_service` digest still
-  selects all its runners (`service_impact`), so the pins can add more only on a merge that pins a service
-  build other than its own head's.
+  2026-10-14. One merge adds an operation: `b98d87947` (qa-q2) adds `question.answer` (and edits
+  `question.read`). `manifest_impact` already maps an added operation to its presence readers ("registers
+  manifest operation question.answer"); only an added or removed manifest *file* (`presence_changed`) has
+  no map, and no merge does that. The other 13 manifest merges change only `lean_decoders`. No merge edits
+  an IMPORT_FIELDS field. So candidates (a) and (b) of the task have nothing left to narrow here.
+- **The pins decide no plan that selects everything, but they block the `--run` narrowing.** 13 merges
+  edit `lean/checkers.lock` (the edits table above). Every one of them adds `ve_service` digests: 1 to 22
+  per merge, 2 merges also add `rust_jsonl` digests, and no merge drops a pin. For the print plan (`plan`)
+  the same merges' Lean and schema changes select every service user anyway: of the units a pin reason
+  selects (293 in most of these plans), all but 7 over the 54 merges also have another reason (fresh map).
+  For `r1` they do not. The `modes` rule drops the service users whose recorded modes did not change, and
+  the pin reason ("reads lean/checkers.lock", every recorded reader of the pin file) adds them back. That
+  is why `r1` selects the same units as `plan` in every row. Fresh map, the pins alone select 328 `r1`
+  units over the 54 merges (upper-bound table, rule `r1`): 165 on `109c7de1d` (lf-16f: 371 units, 206
+  without the pin reasons), 146 on `c4d7ea565` (rd-7: 365, 219 without), 5 each on `85b20fcba`,
+  `d7ea7228b` and `f811fa69c`, 1 each on `b5248038e` and `b96f04a5a`. With the manifest's reasons added,
+  345 units (6.4 per merge). Over the 10 shadow changes, the pins alone select 10 `r1` units. Under drift,
+  none: the static graph's answers for uncertain units select the same units. This is cutoff finding 1,
+  still open.
 - **The manifest decides 2 plans, and only under drift** (`a4676c0b7` fu-docs-1017, `e7f6968d4`
   ties-fu-1017). The deciding reason is "unmapped manifest reader": a manifest edit adds every unit the
   drift check made uncertain. Without it, those plans select 415 and 411 units. That is map staleness, not
@@ -191,20 +210,25 @@ all 434 units are 132.3 min). The averages and the upper bound are in the genera
 
 | Changes | Plan | Before: units / min / plans with full-suite reasons | After |
 |---|---|---|---|
-| 54 merges, fresh map | `plan` and `r1` (equal: no build record) | 201.9 / 68.1 / 4 | not built (stop rule) |
+| 54 merges, fresh map | `plan` and `r1` (equal: the pin reason adds back what `r1` drops) | 201.9 / 68.1 / 4 | not built (stop rule) |
 | 54 merges, drift check | `plan` and `r1` | 330.4 / 105.1 / 4 | not built (stop rule) |
 | 10 shadow changes | `plan` and `r1` | 343.4 / 114.2 / 0 | not built (stop rule) |
 
 **Upper bound on any narrowing of the manifest and pins rules**, sound or not: drop every unit only their
-reasons select. That saves 24 units in all over 54 merges with a fresh map (0.4 per merge), 42 under drift
-(0.8 per merge, in 2 merges), and 5 over the 10 shadow changes (0.5 per change). So step 2 could not move
-the averages by even one unit, and it was not built.
+reasons select. For the print plan (`plan`), that saves 24 units in all over 54 merges with a fresh map
+(0.4 per merge), 42 under drift (0.8 per merge, in 2 merges), and 5 over the 10 shadow changes (0.5 per
+change). For the `--run` plan (`r1`), it saves 345 units over the 54 merges with a fresh map (6.4 per
+merge; 328 from the pins alone, 311 of them in 2 merges), 42 under drift, and 13 over the shadow changes
+(1.3 per change). Step 2 was not built because the stop rule counts plans that select everything (0 fresh,
+2 under drift), not because the gain is nil: a pin narrowing for `r1` is worth about 6 units per merge on
+a fresh map (Follow-up 4).
 
 Limits of the measurement:
 
 - No Lean build record exists for these merges, so the binary cutoff is off. It would narrow only the Lean
   runners that are not the service; a pin change always comes with a service rebuild, as shown above.
-  `r1` (the `modes` rule) therefore equals `plan` in every row.
+  `r1` (the `modes` rule) selects the same units as `plan` in every row, but not for that reason: the pin
+  reason adds back every service user the `modes` rule drops (section 1, the pins).
 - The merges use one recorded map. Real runs use the nearest cached map, which lies somewhere between the
   two labels.
 
@@ -222,8 +246,15 @@ Limits of the measurement:
    uncertain units whose static closure holds `ve/assurance.py` is sound but worth 2 merges.
 3. **`tests/conftest.py` stays a full-suite reason** (3 merges). Its fixtures run in every unit, so this
    is correct as it stands.
-4. Re-run the answer-level cutoff decision (#5) with the measurement above: the manifest and the pins are
-   no longer the blocker named in the 14:33Z escalation.
+4. **The pins still block the `--run` (`r1`) narrowing**, the blocker named in the 14:33Z escalation
+   (cutoff finding 1). The manifest is no longer a blocker; the pins are. Fresh map, they alone select 328
+   `r1` units over the 54 merges, nearly all in the two Lean-first/readings merges that pin a new service
+   (`109c7de1d` 165, `c4d7ea565` 146). The candidate is a pin exemption for client-only readers under the
+   `modes` rule, like the one the `answers` rule has (`answer_cutoff.CutoffCoverage`: a unit whose only pin
+   read is the client's pin check in `LeanService._spawn` is not selected by a pin change when the head's
+   build is pinned). It needs its own soundness argument (the `modes` rule has no build of the head to check
+   against the pins), its own mutants, and a re-measure with `measure.py`. Decision #5 should take this as
+   the remaining blocker, worth about 6 units per merge.
 
 ## Orchestrator lines
 
@@ -236,29 +267,56 @@ safe map. On main `de9cfa84f`'s selector, none of those items' merges (`3160fb80
 difference; the old selector was not replayed here. A suggested L59 note for the orchestrator: "re-measured
 2026-10-18 (tarch-manifest-ops REPORT.md): on main's selector 0 of 54 merges since Oct 14 select everything
 for want of a manifest map; the whole-suite plans come from service_schema.py edits, tests/conftest.py and
-map staleness".
+map staleness; the pins still add back 328 units to the --run (modes) plans of those merges".
+
+## Review round 1 (tarch-manifest-ops-review-ov)
+
+- **F1 (B)**, fixed: `measure.py`'s upper-bound table now has a row per rule (`plan`, `r1`), and `because`
+  reads both plans. Section 1 (the pins), section 2's upper bound and its limits, Follow-up 4, the summary
+  and the suggested L59 note now say that the pins alone select 328 `r1` units over the 54 merges (345 with
+  the manifest's reasons, 6.4 per merge). The stop rule is unchanged (0 fresh, 2 under drift, for both
+  plans). Regression: S5.
+- **F2 (C)**, fixed: section 1 names `b98d87947`'s added operation `question.answer` and how
+  `manifest_impact` maps it; the other 13 manifest merges change only `lean_decoders`.
+- **F3 (C)**, fixed: `shadow_jobs` hashes only the shadow rows `--only` names and exits with a message
+  (not a `FileNotFoundError`) when a pinned map is missing. Regression: S6.
+- **F4 (C)**, recorded: the Size section below.
 
 ## Seeded bugs
 
-No Lean, Rust or `ve/` file is touched. The one Python tooling change, the `NOT_REGENERATED` entry, is seeded
-as S4. The evidence script's three claims are each seeded in `measure.py`, shown to fail
-`measure.py --check`, and restored. Unseeded, `measure.py --check` prints "replayed 2 labels: every row as
-saved" (exit 0), and so does `--check --only a4676c0b7,e7f6968d4,109c7de1d`:
+No Lean, Rust or `ve/` file is touched. The Python changes are the evidence script `measure.py` and one
+`NOT_REGENERATED` entry in `tools/regen_generated.py`. Each claim is a mutant in `mutants.json` (file, find,
+replace, and the test or command that must fail), run by `uv run python tools/mutants.py
+docs/test-architecture/manifest-ops/mutants.json --evidence docs/test-architecture/manifest-ops/evidence/mutants-run.json`:
+6 of 6 killed, each command or test passing unmutated first (`baseline_exit` 0) and the file restored.
 
 | # | File | Seeded bug | Failing check |
 |---|---|---|---|
 | S1 | `docs/test-architecture/manifest-ops/measure.py` | `is_manifest` forgets "unmapped manifest reader" | `measure.py --check --only a4676c0b7,e7f6968d4` exits 1: "4 rows differ" (both labels; under drift `without_manifest` is 434, not 415/411) |
-| S2 | `docs/test-architecture/manifest-ops/measure.py` | `is_pin` forgets "reads lean/checkers.lock" (the recorded pin readers) | `measure.py --check --only 109c7de1d` exits 1: "1 rows differ" (the fresh row's `pins_only` loses `tests/test_lean_first_oracle.py`) |
+| S2 | `docs/test-architecture/manifest-ops/measure.py` | `is_pin` forgets "reads lean/checkers.lock" (the recorded pin readers) | `measure.py --check --only 109c7de1d` exits 1: "1 rows differ" |
 | S3 | `docs/test-architecture/manifest-ops/measure.py` | `because` counts a plan as caused when `without_manifest <= total` | `measure.py --check --only none` exits 1: "the tables between the markers are not what --table prints from the saved rows" |
-| S4 | `tools/regen_generated.py` | the `NOT_REGENERATED` entry for `measure.py` is missing | `tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason` fails: "register these writers in GENERATED or NOT_REGENERATED: ['docs/test-architecture/manifest-ops/measure.py']" |
+| S4 | `tools/regen_generated.py` | the `NOT_REGENERATED` entry for `measure.py` is missing | `tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason` fails |
+| S5 | `docs/test-architecture/manifest-ops/measure.py` | the upper-bound table's `r1` rows read the print plan (F1) | `measure.py --check --only none` exits 1: the tables differ (the `r1` pins-only cell is 7, not 328) |
+| S6 | `docs/test-architecture/manifest-ops/measure.py` | `shadow_jobs` ignores `--only`, so a merge-only check needs every shadow map (F3) | `VE_SHADOW_MAPS=/nonexistent/... measure.py --check --only none` exits 1: "...: missing; the shadow rows need the maps the shadow table pinned" |
+
+`because` reading the `r1` plan as well as `plan` has no mutant: on the saved rows both plans give the same
+causes (0 fresh, 2 under drift), so dropping either leaves the tables unchanged.
+
+## Size
+
+About 520 hand-written lines (`measure.py` ~350, this report's prose ~150, `mutants.json`, DELTA.md and the
+registry entry), over the ~400 guideline. The generated block in this report and the saved evidence are
+not counted. Most of it is the report's argument; the script is one replay plus the tables.
 
 ## Self-review against BUILDER-CHECKLIST
 
 1. Lean answers typed and contained: N.A., no relay or route is touched.
 2. Deliverables: PASS. Step 1 is `measure.py` + `evidence/replay.json.gz` + section 1. The stop rule is met
    (0 fresh / 2 drift < 3), so steps 2-3 were not built (the task's own rule). Section 2 holds the before
-   numbers and the upper bound. No permanent report test (D4); `measure.py --check` exits 0.
-3. Tests can fail: PASS. Seeded bugs S1-S4 above, each with its failing check; the unseeded check passes.
+   numbers and the upper bound, for both the print plan and the `--run` plan (`r1`). No permanent report
+   test (D4); `measure.py --check` exits 0.
+3. Tests can fail: PASS. Seeded bugs S1-S6 above (`mutants.json`, 6/6 killed by `tools/mutants.py`), each
+   with its failing check; the unseeded check passes.
 4. Py/Lean/Rust agreement: N.A., no product behaviour changes.
 5. R8 binding: N.A., no Lean answer is read.
 6. Gate evidence matches the final HEAD: PASS. Synced with main; the saved rows are pinned to `de9cfa84f`
