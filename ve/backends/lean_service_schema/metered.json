@@ -32,16 +32,42 @@
       "type": "object"
     },
     "evaluation": {
-      "$comment": "Metered.resultFields and the explanation: null unless the case asks for a trace.",
-      "additionalProperties": false,
-      "properties": {
-        "evaluations": {"$ref": "common.json#/$defs/nat"},
-        "explanation": {"anyOf": [{"type": "null"}, {"items": {"$ref": "#/$defs/node"}, "minItems": 1, "type": "array"}]},
-        "status": {"enum": ["Satisfied", "Violated", "ResourceLimit"]},
-        "value": {"type": ["boolean", "null"]}
-      },
-      "required": ["status", "value", "evaluations", "explanation"],
-      "type": "object"
+      "$comment": "Metered.resultFields and the explanation (null unless the case asks for a trace): a satisfied document is true, a violated one false, an exhausted budget has no value.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "evaluations": {"$ref": "common.json#/$defs/nat"},
+            "explanation": {"anyOf": [{"type": "null"}, {"items": {"$ref": "#/$defs/node"}, "minItems": 1, "type": "array"}]},
+            "status": {"const": "Satisfied"},
+            "value": {"const": true}
+          },
+          "required": ["status", "value", "evaluations", "explanation"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "evaluations": {"$ref": "common.json#/$defs/nat"},
+            "explanation": {"anyOf": [{"type": "null"}, {"items": {"$ref": "#/$defs/node"}, "minItems": 1, "type": "array"}]},
+            "status": {"const": "Violated"},
+            "value": {"const": false}
+          },
+          "required": ["status", "value", "evaluations", "explanation"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "evaluations": {"$ref": "common.json#/$defs/nat"},
+            "explanation": {"anyOf": [{"type": "null"}, {"items": {"$ref": "#/$defs/node"}, "minItems": 1, "type": "array"}]},
+            "status": {"const": "ResourceLimit"},
+            "value": {"const": null}
+          },
+          "required": ["status", "value", "evaluations", "explanation"],
+          "type": "object"
+        }
+      ]
     },
     "node": {
       "$comment": "MeteredTrace.Row.json: one explanation node in preorder and the number of its children, whose subtrees follow it in order.",

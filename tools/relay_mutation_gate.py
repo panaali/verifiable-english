@@ -425,13 +425,6 @@ def _environment(data):
     return Environment.from_dict(data)
 
 
-def _metered(operation):
-    def call(case, executable):
-        return lean_backend.run(operation, executable, [case], runner="ve_metered",
-                                timeout=lean_backend.configured_timeout(lean_backend.ROUTE_TIMEOUT))
-    return call
-
-
 def _graph_compose(case, executable):
     return lean_backend.run("graph.compose", executable, [case], runner="ve_conformance",
                             mode="route" if case.get("kind") == "certificate" else "check-certificate",
@@ -473,8 +466,6 @@ def _speech_source(case, executable):
 
 # route: (runner, mode, case kinds or None for any, call, rebuild the case the call sends or None if verbatim)
 ONE_SHOT = {
-    "ve_metered::evaluate": ("ve_metered", "", {"evaluate-budgeted"}, _metered("evaluate"), None),
-    "ve_metered::countermodel.search": ("ve_metered", "", {"non-vacuity"}, _metered("countermodel.search"), None),
     "ve_conformance:route:graph.compose": ("ve_conformance", "route", {"certificate"}, _graph_compose, None),
     "ve_conformance:check-certificate:graph.compose": ("ve_conformance", "check-certificate", None,
                                                        _graph_compose, None),

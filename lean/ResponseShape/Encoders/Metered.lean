@@ -11,28 +11,30 @@ open VE.Route VE.Route.MeteredRun
 
 variable {req : Json}
 
-/-- The three statuses of a metered document result. -/
+/-- The three metered document results: satisfied and true, violated and false, or exhausted with no
+value. -/
 def Statused (r : Metered.Result) : Prop :=
-  r.status = "Satisfied" ∨ r.status = "Violated" ∨ r.status = "ResourceLimit"
+  (r.status = "Satisfied" ∧ r.value = some true) ∨ (r.status = "Violated" ∧ r.value = some false) ∨
+    (r.status = "ResourceLimit" ∧ r.value = none)
 
 theorem scan_statused {α : Type} (step : α → Nat → Option (Bool × Nat)) (limit : Nat) :
     ∀ (fs : List α) (work : Nat), Statused (Metered.scan step limit fs work)
-  | [], _ => Or.inl rfl
+  | [], _ => Or.inl ⟨rfl, rfl⟩
   | f :: fs, work => by
     unfold Metered.scan
     split
-    · exact Or.inr (Or.inr rfl)
-    · exact Or.inr (Or.inl rfl)
+    · exact Or.inr (Or.inr ⟨rfl, rfl⟩)
+    · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
     · exact scan_statused step limit fs _
 
 theorem scanState_statused {α σ : Type} (step : α → σ → Option (Bool × σ)) (work : σ → Nat) (limit : Nat) :
     ∀ (fs : List α) (state : σ), Statused (Metered.scanState step work limit fs state)
-  | [], _ => Or.inl rfl
+  | [], _ => Or.inl ⟨rfl, rfl⟩
   | f :: fs, state => by
     unfold Metered.scanState
     split
-    · exact Or.inr (Or.inr rfl)
-    · exact Or.inr (Or.inl rfl)
+    · exact Or.inr (Or.inr ⟨rfl, rfl⟩)
+    · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
     · exact scanState_statused step work limit fs _
 
 theorem binding_fits (index : Nat) (b : String × String) :
@@ -61,7 +63,7 @@ theorem answer_fits {α ρ σ entity : Type} (q : Query) (s : Session α ρ σ e
     split <;> fits
   | evaluate fs =>
     simp only [answer, Wire.ok, Metered.resultFields]
-    rcases hs fs with h | h | h <;> rw [h] <;> split <;> fits using trace_fits
+    rcases hs fs with ⟨h, hv⟩ | ⟨h, hv⟩ | ⟨h, hv⟩ <;> rw [h, hv] <;> split <;> fits using trace_fits
 
 theorem runCase_fits (j : Json) : OkFits req Skeletons.metered (runCase j) := by
   unfold runCase run
