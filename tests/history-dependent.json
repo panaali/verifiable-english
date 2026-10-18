@@ -1219,6 +1219,16 @@
    ]
   },
   {
+   "test": "tests/test_readings_sup_verdicts.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
    "test": "tests/test_readings_verdicts_lean.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
