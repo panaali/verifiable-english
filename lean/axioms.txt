@@ -1269,6 +1269,7 @@
 'VE.Events.dayExtension_transfer' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.hits_vacuous' depends on axioms: [propext, Quot.sound]
 'VE.Events.isConst_eq' depends on axioms: [propext, Quot.sound]
+'VE.Events.isVar_beq' does not depend on any axioms
 'VE.Events.isVar_eq' depends on axioms: [propext, Quot.sound]
 'VE.Events.mem_dates_of_consecutive' depends on axioms: [propext]
 'VE.Events.term_map' depends on axioms: [propext]

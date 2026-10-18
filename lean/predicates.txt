@@ -700,7 +700,6 @@ VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
-VE.Events.CalendarReading@VE.Events.Premises
 VE.Events.DayExtension@VE.Events.Completion
 VE.Events.Embeds@VE.Events.Premises
 VE.FiniteModel.Valid@VE.Finite

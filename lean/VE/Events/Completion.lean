@@ -81,6 +81,10 @@ def DayExtension (day : String) (ng : List String) (M : VE.Structure.{u}) (S : V
 theorem isVar_eq {k : Nat} {t : VE.Term} (h : isVar k t = true) : t = .var k := by
   cases t <;> simp_all [isVar]
 
+/-- `isVar k t` is the spec's `t == .var k`, so `hits` is the spec's function. -/
+theorem isVar_beq (k : Nat) (t : VE.Term) : isVar k t = (t == .var k) := by
+  cases t <;> rfl
+
 theorem isConst_eq {t : VE.Term} (h : isConst t = true) : ∃ c, t = .const c := by
   cases t <;> simp_all [isConst]
 

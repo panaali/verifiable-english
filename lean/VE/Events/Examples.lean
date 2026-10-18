@@ -44,6 +44,9 @@ def c14 : String := dateName (d 2026 10 14)
 -- T1: labels, no adjacency; the dates ordered as the calendar orders them, both ways
 def vT1 : EventsEnv := base [d 2026 10 12, d 2027 1 5]
 #guard WellFormedEvents envDay vT1
+#guard (regenEnv envDay vT1).constants c12 == some "day" && (regenEnv envDay vT1).constants c13 == none
+#guard (regenEnv envDay vT1).sorts == envDay.sorts
+#guard EventsTyped (regenEnv envDay vT1) vT1 && !EventsTyped envDay vT1
 #guard (calendarLabelled vT1).map (·.1) ==
   ["events:irreflexive", "events:transitive", "events:linear", "events:date:2026-10-12:2027-01-05"]
 #guard orderPremises vT1 == [irreflexiveF vT1, transitiveF vT1, linearF vT1]
@@ -191,7 +194,9 @@ def mT13 (confirmed acted : String) : VE.FiniteModel String :=
 #guard (eventsX vT13).all (·.eval (mT13 "a" "b") []) && confirmedBefore.eval (mT13 "a" "b") []
 #guard (eventsX vT13).all (·.eval (mT13 "b" "b") []) && (VE.Formula.not confirmedBefore).eval (mT13 "b" "b") []
 
--- T9 (shape only): role wordings
+-- T9 (shape only): the profile wordings and the role wordings
+#guard beforeWording == "{0} is before {1}"
+#guard linkWording .contributed == "{0} contributed to {1}" && linkWording .necessary == "{0} was necessary for {1}"
 #guard roleWordingOk "{0} is committed on {1}"
 #guard roleWordingOk "{0} happens on {1}"
 #guard !roleWordingOk "{0} committed {1}"

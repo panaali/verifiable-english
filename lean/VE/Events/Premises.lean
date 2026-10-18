@@ -4,7 +4,7 @@ import VE.Norms.Prefix
 /-! The generated premises `Ev_V` (docs/spec/events-time-causation.md 1.4, 6.1): the calendar
 premises (order, consecutive named dates, adjacency) and the conventions (one day per event, one
 beginning and one end per state, no end before the beginning, the two link conventions), each
-labelled `events:<name>`; calendar readings and embeddings (1.5); and the theorems that every
+labelled `events:<name>`; embeddings of a structure into the calendar (1.5); and the theorems that every
 embedding satisfies the calendar premises and that named dates are ordered as W6a orders them. -/
 namespace VE.Events
 open VE.Norms (Sat)
@@ -79,10 +79,6 @@ def Embeds (V : EventsEnv) (S : VE.Structure.{u}) (num : S.Carrier → Nat) : Pr
   (∀ x, S.domain V.day x → num x ≤ dateMax) ∧
   (∀ x y, S.domain V.day x → S.domain V.day y → (S.relation V.before [x, y] ↔ num x < num y)) ∧
   (∀ D ∈ V.dates, ∃ x, S.constant (dateName D) = some x ∧ S.domain V.day x ∧ num x = D.num)
-
-/-- The intended reading: an embedding onto every civil day (the day domain is fixed, A). -/
-def CalendarReading (V : EventsEnv) (S : VE.Structure.{u}) (num : S.Carrier → Nat) : Prop :=
-  Embeds V S num ∧ ∀ n, n ≤ dateMax → ∃ x, S.domain V.day x ∧ num x = n
 
 /-- T2b's claim: two days neither of which is before the other are the same day. -/
 def unorderedSameF (V : EventsEnv) : VE.Formula :=
