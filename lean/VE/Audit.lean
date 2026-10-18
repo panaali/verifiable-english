@@ -41,6 +41,9 @@ import VE.Attribution.Wire
 import VE.Bridge
 import VE.Calc.Decls
 import VE.Calc.Eval
+import VE.Cardinality.Examples
+import VE.Cardinality.Syntax
+import VE.Cardinality.Theorems
 import VE.CertificateWire
 import VE.ClaimGraph
 import VE.Closure.Congruence
@@ -740,6 +743,20 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.values_free
 #print axioms VE.Calc.values_missing
 #print axioms VE.Calc.values_stated
+#print axioms VE.Cardinality.CEnv.WellFormed.finiteDeclared
+#print axioms VE.Cardinality.CEnv.WellFormed.fresh
+#print axioms VE.Cardinality.Examples.two_all
+#print axioms VE.Cardinality.Examples.two_some
+#print axioms VE.Cardinality.admits_complete
+#print axioms VE.Cardinality.admits_iff
+#print axioms VE.Cardinality.admits_sound
+#print axioms VE.Cardinality.bodyCheck_iff
+#print axioms VE.Cardinality.exists_nodup_filter
+#print axioms VE.Cardinality.hasCount_exists_unique
+#print axioms VE.Cardinality.hasCount_unique
+#print axioms VE.Cardinality.nodup_length_eq
+#print axioms VE.Cardinality.nonneg_hold
+#print axioms VE.Cardinality.proportion_holds_iff
 #print axioms VE.CertificateWire.ClosureQuery.accepts_sound
 #print axioms VE.CertificateWire.Query.accepts_sound
 #print axioms VE.Closure.Path.first
