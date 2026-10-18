@@ -100,8 +100,9 @@ No Rust code changed.
   spec copies are 3,393 lines, verbatim and mandated. The evidence JSON is written by the scripts. Product code is
   within the ~600 cap; with the evidence scripts the total is about 820.
 - **Tests:** the selected tests (`mac-pytest.sh --select`, merge base `802b8ff9b`, on `3dbb2184`) ran 66 units, exit
-  0, 0 failed. After the sync with main (`01f74cf4a`) they were run again on the final code (section 8). No test in
-  `main-known-red.txt` was hit. The full gate is the chain's.
+  0, 0 failed. After the sync with main (`01f74cf4a`) they ran again on `04435990` (the code is final; only this
+  report changes after it): 66 units, exit 0, 0 failed. No test in `main-known-red.txt` was hit. The full gate is the
+  chain's.
 - **Overlap:** `tools/layer_policy.py` is also edited by `lean-first/b18`, in a different hunk (lines 116 and 141;
   mine is 135). `git merge-tree HEAD lean-first/b18` merges it cleanly; that branch's other conflicts with this one
   are generated inventories (R12). No other in-flight branch touches `lean/VE/Acts/` or the plan and spec files.
