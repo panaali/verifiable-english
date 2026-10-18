@@ -2656,6 +2656,10 @@ theorem VE.Cardinality.CEnv.WellFormed.fresh
         E.q.constants c = Option.some τ → c.startsWith VE.Cardinality.regionPrefix = Bool.false
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.regionPrefix@VE.Cardinality.Syntax VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
   -- expr 2783318274
+theorem VE.Cardinality.Examples.two_admissible
+  VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.two
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
+  -- expr 2768497032
 theorem VE.Cardinality.Examples.two_all
   VE.Cardinality.HasCount VE.Cardinality.Examples.two "user" VE.Cardinality.Body.any 2
   -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.HasCount@VE.Cardinality.Semantics

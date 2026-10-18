@@ -12542,7 +12542,8 @@
         "VE.Cardinality.Examples.bareAtom",
         "VE.Cardinality.Examples.moreThanHalf",
         "VE.Cardinality.Examples.userModel",
-        "VE.Cardinality.Examples.two"
+        "VE.Cardinality.Examples.two",
+        "VE.Cardinality.Examples.colliding"
       ]
     }
   }
