@@ -1,0 +1,114 @@
+{
+ "item": "qt-a1b",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-a1b/mutants.json --no-baseline --evidence docs/quantities/qt-a1b/evidence/mutants-run.json, after a passing `lake build VE.Cardinality.Examples`; each mutant is applied alone, the module and its dependents are built, the file is restored. The proofs of spec 3.6 are generic, so a mutant fails at the theorem it breaks (first_errors) or at fa1_entails.",
+ "mutants": [
+  {
+   "id": "erase-cmp",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "erase_iff: erasure of a proportion's `more than` is faithful",
+   "find": "  | .gt => .lt b a",
+   "replace": "  | .gt => .le b a",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "bridge",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "bridge_hold: a bridge sums the regions outside the universal's body",
+   "find": "    let z : QFormula := .eq (regionSum E fs x.1 (.not x.2.1)) (.num dl 0)",
+   "replace": "    let z : QFormula := .eq (regionSum E fs x.1 x.2.1) (.num dl 0)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "elab-tag",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "withRegions_admissible: region constants are declared dimensionless, as withRegions reads them",
+   "find": "      if (regionTable E fs).any (·.1 == c) then some (.qty dl) else E.q.constants c }",
+   "replace": "      if (regionTable E fs).any (·.1 == c) then some (.qty VE.Time.dayTag) else E.q.constants c }",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "admitted-tag",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "erasedProblem_admitted: region sums carry a tag W6a admits for sums (meaning is unchanged by it)",
+   "find": "def dl : String := VE.Time.dimensionless",
+   "replace": "def dl : String := VE.Time.dayTag",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "sound-fs",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "cardinality_elab_sound: the regions come from the whole problem, conclusion included",
+   "find": "  let fs := c :: ps",
+   "replace": "  let fs := ps",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "name-sep",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "regionConst_inj: two (sort, region) pairs never share a region constant",
+   "find": "def regionConst (s : String) (r : Region) : String := regionPrefix ++ s ++ \"__\" ++ bitString r",
+   "replace": "def regionConst (s : String) (r : Region) : String := regionPrefix ++ s ++ bitString r",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "name-prefix",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "regionConst_startsWith: every region constant begins with the prefix WellFormed keeps declared constants out of",
+   "find": "def regionConst (s : String) (r : Region) : String := regionPrefix ++ s ++ \"__\" ++ bitString r",
+   "replace": "def regionConst (s : String) (r : Region) : String := s ++ regionPrefix ++ \"__\" ++ bitString r",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "region-body",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "regionSize_sum: a region's body is its own truth values (regions partition the sort)",
+   "find": "  (ps.zip r).foldr (fun pv acc => .and (if pv.2 then .atom pv.1 else .not (.atom pv.1)) acc) .any",
+   "replace": "  (ps.zip r).foldr (fun pv acc => .and (if pv.2 then .not (.atom pv.1) else .atom pv.1) acc) .any",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  },
+  {
+   "id": "withRegions-size",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "regionSum_denote: withRegions reads a region constant as its own region's size",
+   "find": "      | some (_, s, r) => some (.qty dl (regionSize T s (regionBody (predsOn E fs s) r)))",
+   "replace": "      | some (_, s, r) => some (.qty dl (regionSize T s .any))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ]
+  }
+ ]
+}
