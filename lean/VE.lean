@@ -108,6 +108,7 @@ import VE.SpeechActs.Source.Admission.Run
 import VE.Time.Wire
 import VE.Time.Document
 import VE.Calc.Examples
+import VE.Calc.Render
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Risk.Cond
@@ -125,6 +126,9 @@ import VE.Risk.Wire
 import VE.Risk.Admission
 import VE.Rights.Examples
 import VE.Rights.Run
+import VE.Judgments.Decl
+import VE.Judgments.Scan
+import VE.Judgments.Examples
 import VE.Question.Properties
 import VE.Question.Examples
 import VE.Question.Run
@@ -154,3 +158,8 @@ import VE.Alternatives.FillExamples
 import VE.NormDefaults.Examples
 import VE.Core.Checks
 import VE.TableauChecks
+import VE.Events.Decl
+import VE.Events.Premises
+import VE.Events.Calendar
+import VE.Events.Completion
+import VE.Events.Examples

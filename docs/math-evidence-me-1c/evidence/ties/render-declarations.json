@@ -1,0 +1,126 @@
+{
+ "problems": [],
+ "file_lines": 119,
+ "declarations": [
+  {
+   "declaration": "VE.Calc.English.reservedWords",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 5,
+   "start": 6,
+   "end": 10
+  },
+  {
+   "declaration": "VE.Calc.English.phraseWords",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 4,
+   "start": 11,
+   "end": 14
+  },
+  {
+   "declaration": "VE.Calc.English.valueWordsOk",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 8,
+   "start": 15,
+   "end": 22
+  },
+  {
+   "declaration": "VE.Calc.English.natWords",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 7,
+   "start": 23,
+   "end": 29
+  },
+  {
+   "declaration": "VE.Calc.English.placesPhrase",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 7,
+   "start": 30,
+   "end": 36
+  },
+  {
+   "declaration": "VE.Calc.English.printedWords",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 8,
+   "start": 37,
+   "end": 44
+  },
+  {
+   "declaration": "VE.Calc.English.exactWords",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 6,
+   "start": 45,
+   "end": 50
+  },
+  {
+   "declaration": "VE.Calc.English.exprDepth",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 5,
+   "start": 51,
+   "end": 55
+  },
+  {
+   "declaration": "VE.Calc.English.renderAtom",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 8,
+   "start": 56,
+   "end": 63
+  },
+  {
+   "declaration": "VE.Calc.English.renderTerm",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 10,
+   "start": 64,
+   "end": 73
+  },
+  {
+   "declaration": "VE.Calc.English.renderExpr",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 13,
+   "start": 74,
+   "end": 86
+  },
+  {
+   "declaration": "VE.Calc.English.fill",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 10,
+   "start": 87,
+   "end": 96
+  },
+  {
+   "declaration": "VE.Calc.English.renderClaim",
+   "class": "G[V]",
+   "tied": false,
+   "trusted": true,
+   "lines": 22,
+   "start": 97,
+   "end": 118
+  }
+ ],
+ "trusted_total": 113,
+ "theorems_naming_one": [],
+ "theorems_in_dump": 5774
+}

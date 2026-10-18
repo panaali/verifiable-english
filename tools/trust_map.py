@@ -395,6 +395,22 @@ def is_trusted(cls: str, tied: bool, problems: list[str]) -> bool:
     return bool(problems) or cls in {"K", "S", "?"} or cls[0] in "DG" and cls.endswith("[V]") and not tied
 
 
+def unexercised(table: dict[str, dict[str, object]], proved: dict[str, set[Ident] | None],
+                modules: Iterable[str]) -> list[str]:
+    """The trusted declarations (`is_trusted`, by their table class) of `modules` that no theorem's
+    statement uses, as `module: name`. Standing ruling R16 signs trusted growth only when every new
+    trusted definition is exercised by a check that can fail; the compiled `-- uses` lines are the
+    oracle for "a theorem states something about it", so a definition nothing states fails here."""
+    used = {ident for found in proved.values() if found for ident in found}
+    missing = []
+    for module in modules:
+        for name, entry in sorted(table.get(module, {}).items()):
+            cls, tied = (entry["class"], True) if isinstance(entry, dict) else (entry, False)
+            if is_trusted(cls, tied, []) and ident(module, name) not in used:
+                missing.append(f"{module}: {name}")
+    return missing
+
+
 def is_anchor(cls: str, tied: bool, problems: list[str]) -> bool:
     """What a tie can point at: a declaration the budget counts as trusted by its validated
     class (K, S, untied [V]); not one trusted only because it is unclassified or failed validation."""
