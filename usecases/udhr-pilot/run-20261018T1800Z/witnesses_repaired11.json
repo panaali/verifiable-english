@@ -1,0 +1,21 @@
+{
+  "u061.entitlement": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        true
+      ],
+      "lean_point_status": "SETTLED yes",
+      "predicate": "is_entitled_to_protection_by_society_and_the_state",
+      "row": [
+        "c0"
+      ],
+      "rules": [
+        "u061-entitlement"
+      ],
+      "status": "SETTLED",
+      "value": true
+    }
+  ]
+}
