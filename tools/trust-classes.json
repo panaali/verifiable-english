@@ -356,6 +356,8 @@
         "ResponseShape.Schemas.Alternatives.elaborate",
         "ResponseShape.Schemas.Alternatives.environment",
         "ResponseShape.Schemas.Alternatives.file",
+        "ResponseShape.Schemas.Alternatives.fillNames",
+        "ResponseShape.Schemas.Alternatives.fill_path",
         "ResponseShape.Schemas.Alternatives.followable",
         "ResponseShape.Schemas.Alternatives.followable_witness",
         "ResponseShape.Schemas.Alternatives.kind",
@@ -1124,6 +1126,117 @@
         "VE.Alternatives.Examples.validation"
       ]
     },
+    "VE/Alternatives/FillExamples.lean": {
+      "T": [
+        "VE.Alternatives.FillExamples.env",
+        "VE.Alternatives.FillExamples.errorOf",
+        "VE.Alternatives.FillExamples.ndProfiles"
+      ]
+    },
+    "VE/Alternatives/FillWire.lean": {
+      "S": [
+        "VE.Alternatives.AltConflictFreeU",
+        "VE.Alternatives.notFollowableFU",
+        "VE.Alternatives.targetAcceptedU"
+      ],
+      "C": [
+        "VE.Alternatives.altConflictFreeCheckU"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.Alternatives.AltSourceU",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_conflict_sound",
+            "VE.Alternatives.alternativesU_wire_followable_sound"
+          ]
+        },
+        {
+          "name": "VE.Alternatives.AltSourceU.U",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_dilemma_sound"
+          ]
+        },
+        "VE.Alternatives.baseEnvironmentJsonAltU",
+        {
+          "name": "VE.Alternatives.decodeAltSourceU",
+          "tied": [
+            "VE.Alternatives.decodeAltSourceU_conservative"
+          ]
+        },
+        "VE.Alternatives.decodePackageU",
+        {
+          "name": "VE.Alternatives.noUnspecified",
+          "tied": [
+            "VE.Alternatives.decodeAltSourceU_conservative"
+          ]
+        },
+        "VE.Alternatives.sourceOfU"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Alternatives.AltConflictReplayU",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_conflict_sound"
+          ]
+        },
+        {
+          "name": "VE.Alternatives.AltConflictReplayU.conflictFree",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_conflict_sound"
+          ]
+        },
+        {
+          "name": "VE.Alternatives.DilemmaDataU",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_dilemma_sound"
+          ]
+        },
+        {
+          "name": "VE.Alternatives.DilemmaDataU.dilemma",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_dilemma_sound"
+          ]
+        },
+        {
+          "name": "VE.Alternatives.FollowableUReplay",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_followable_sound"
+          ]
+        },
+        "VE.Alternatives.FollowableUReplay.conflictFree",
+        {
+          "name": "VE.Alternatives.FollowableUReplay.followable",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_followable_sound"
+          ]
+        },
+        "VE.Alternatives.conflictCertsU",
+        {
+          "name": "VE.Alternatives.replayAltConflictU",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_conflict_sound"
+          ]
+        },
+        {
+          "name": "VE.Alternatives.replayDilemmaU",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_dilemma_sound"
+          ]
+        },
+        {
+          "name": "VE.Alternatives.replayFollowableU",
+          "tied": [
+            "VE.Alternatives.alternativesU_wire_followable_sound"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Alternatives.diagnoseU",
+        "VE.Alternatives.firstFailureU",
+        "VE.Alternatives.refill",
+        "VE.Alternatives.unsettledAt"
+      ]
+    },
     "VE/Alternatives/Followable.lean": {
       "S": [
         "VE.Alternatives.Avail",
@@ -1155,6 +1268,7 @@
         "VE.Alternatives.Replay.FollowableReplay.conflictFree",
         "VE.Alternatives.Replay.baseEnvironmentJson",
         "VE.Alternatives.Replay.decodePackage",
+        "VE.Alternatives.Replay.decodePackageAt",
         "VE.Alternatives.Replay.decodeRows",
         "VE.Alternatives.Replay.decodeScenario",
         "VE.Alternatives.Replay.entity",
@@ -1205,15 +1319,21 @@
         "VE.Alternatives.Run.encodeAdmitted",
         "VE.Alternatives.Run.ids",
         "VE.Alternatives.Run.joined",
+        "VE.Alternatives.Run.joinedNames",
         "VE.Alternatives.Run.notComputed",
         "VE.Alternatives.Run.ok",
+        "VE.Alternatives.Run.regeneratedU",
         "VE.Alternatives.Run.runAdmission",
         "VE.Alternatives.Run.runCase",
         "VE.Alternatives.Run.runCaseReported",
+        "VE.Alternatives.Run.runCaseU",
         "VE.Alternatives.Run.runConflict",
+        "VE.Alternatives.Run.runConflictU",
         "VE.Alternatives.Run.runConflictWitness",
         "VE.Alternatives.Run.runElaborate",
+        "VE.Alternatives.Run.runElaborateU",
         "VE.Alternatives.Run.runFollowable",
+        "VE.Alternatives.Run.runFollowableU",
         "VE.Alternatives.Run.runValidate",
         "VE.Alternatives.Run.unmappedText",
         "VE.Alternatives.Run.usesAltPath"
@@ -1236,7 +1356,9 @@
         "VE.Alternatives.e1B",
         "VE.Alternatives.nm",
         "VE.Alternatives.permittedAt",
+        "VE.Alternatives.permittedIn",
         "VE.Alternatives.requiredAt",
+        "VE.Alternatives.requiredIn",
         "VE.Alternatives.rowDenotes",
         "VE.Alternatives.scenarioConflict"
       ],
@@ -1244,6 +1366,7 @@
         "VE.Alternatives.altModelChecks",
         "VE.Alternatives.availOf",
         "VE.Alternatives.duties",
+        "VE.Alternatives.dutiesIn",
         "VE.Alternatives.e2B",
         "VE.Alternatives.e3B",
         "VE.Alternatives.instEntityNameEntity",
@@ -1270,6 +1393,7 @@
       "G[R]": [
         "VE.Alternatives.Diagnosis",
         "VE.Alternatives.diagnose",
+        "VE.Alternatives.diagnoseIn",
         "VE.Alternatives.modelError"
       ]
     },
@@ -1311,6 +1435,7 @@
         "VE.Alternatives.Wire.optionalFields",
         "VE.Alternatives.Wire.profileExists",
         "VE.Alternatives.Wire.regenerated",
+        "VE.Alternatives.Wire.regeneratedOn",
         "VE.Alternatives.Wire.unmappedObligations"
       ]
     },
@@ -2010,6 +2135,9 @@
         "VE.Compose.today",
         "VE.Compose.todayGate",
         "VE.Compose.todayHead"
+      ],
+      "G[R]": [
+        "VE.Compose.pendingWithDefaults"
       ]
     },
     "VE/Compose/Examples.lean": {
@@ -4786,6 +4914,7 @@
         "VE.NormDefaults.Run.runAdmission",
         "VE.NormDefaults.Run.runCase",
         "VE.NormDefaults.Run.runCaseReported",
+        "VE.NormDefaults.Run.runGated",
         "VE.NormDefaults.Run.runOtherCase",
         {
           "name": "VE.NormDefaults.Admission.runAdmissionX",
