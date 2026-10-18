@@ -9118,6 +9118,10 @@ theorem VE.Events.isConst_eq
   ∀ {t : VE.Term}, VE.Events.isConst t = Bool.true → ∃ c, t = VE.Term.const c
   -- uses VE.Events.isConst@VE.Events.Completion VE.Term.const@VE.Syntax VE.Term@VE.Syntax
   -- expr 333779698
+theorem VE.Events.isVar_beq
+  ∀ (k : Nat) (t : VE.Term), VE.Events.isVar k t = (t == VE.Term.var k)
+  -- uses VE.Events.isVar@VE.Events.Completion VE.Term.var@VE.Syntax VE.Term@VE.Syntax VE.instBEqTerm@VE.Syntax
+  -- expr 1419534940
 theorem VE.Events.isVar_eq
   ∀ {k : Nat} {t : VE.Term}, VE.Events.isVar k t = Bool.true → t = VE.Term.var k
   -- uses VE.Events.isVar@VE.Events.Completion VE.Term.var@VE.Syntax VE.Term@VE.Syntax

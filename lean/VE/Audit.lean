@@ -1617,6 +1617,7 @@ import VE.WireContract.Engine
 #print axioms VE.Events.dayExtension_transfer
 #print axioms VE.Events.hits_vacuous
 #print axioms VE.Events.isConst_eq
+#print axioms VE.Events.isVar_beq
 #print axioms VE.Events.isVar_eq
 #print axioms VE.Events.mem_dates_of_consecutive
 #print axioms VE.Events.term_map
