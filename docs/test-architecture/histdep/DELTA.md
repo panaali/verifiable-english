@@ -10,7 +10,8 @@ which add a check and skip nothing; and the run cache's entry format 2 (`tools/r
 git common directory whose entries for runs that read history now also bind the commit, the runner and git's version.
 No test's outcome changes because of either. Fix round 1 widens two private checks, again only toward listing or
 binding more: the lint follows the source a unit can run, and the read recorder binds a run whose process names
-git in any word of its arguments (`tools/git_words.py`).
+git in any word of its arguments (`tools/git_words.py`). Fix round 2 widens the lint again, toward listing more: a
+name bound to the git program in one module counts where another module uses it.
 
 | # | Delta | Ruling | Test |
 |---|-------|--------|------|
