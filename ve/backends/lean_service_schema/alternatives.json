@@ -458,7 +458,7 @@
       "$comment": "NormDefaults.Wire.hasProfile of the case's environment: norm-defaults@0 is among its profiles (ET-7).",
       "properties": {
         "environment": {
-          "properties": {"profiles": {"contains": {"const": "norm-defaults@0"}, "type": "array"}},
+          "properties": {"profiles": {"contains": {"const": "norm-defaults@0"}, "items": {"type": "string"}, "type": "array"}},
           "required": ["profiles"],
           "type": "object"
         }

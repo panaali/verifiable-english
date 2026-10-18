@@ -33,7 +33,7 @@ def fill_path : Shape :=
       ("environment", n [
         obj,
         .required ["profiles"],
-        props [("profiles", n [arr, .contains (constS "norm-defaults@0")])]])]]
+        props [("profiles", n [arr, .items str, .contains (constS "norm-defaults@0")])]])]]
 
 /-- The fields `NormDefaults.Wire.regeneratedU` adds after the norms fields of `fill (inlineTree A)`. -/
 def fillNames : List String := ["fill", "unspecified", "unsaid", "reached", "fragment_fill"]

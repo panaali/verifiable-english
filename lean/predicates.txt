@@ -85,6 +85,7 @@ module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
 module VE.Alternatives.Examples
+module VE.Alternatives.FillExamples
 module VE.Alternatives.FillWire
 module VE.Alternatives.Followable
 module VE.Alternatives.Inline
