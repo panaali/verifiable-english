@@ -73,6 +73,47 @@ def metered_environment(env):
     return encoded_environment(env, "lean-metered", lambda: model_environment(env.to_dict()))
 
 
+# One encoding per model object (`encoded_model`), bounded like the environment cache.
+_MODELS: dict[int, tuple] = {}
+_MODELS_LIMIT = 256
+
+
+def encoded_model(model):
+    """A model's case encoding, once per model object: a `FiniteModel` is frozen, so its content cannot
+    change, and the many cases one model is sent with share one encoding, which the wire check does not
+    walk again. The cache is keyed by the object (it holds the object, so its `id` is not reused), never by
+    the identities a model claims: two objects claiming one identity with different contents (a stale or
+    forged `model_id`) are two encodings, and Lean checks each claim against its own content."""
+    from ..environment_wire import EncodedEnvironment
+    entry = _MODELS.get(id(model))
+    if entry is not None and entry[0] is model:
+        return entry[1]
+    encoding = EncodedEnvironment(model.to_dict())
+    if len(_MODELS) >= _MODELS_LIMIT:
+        _MODELS.clear()
+    _MODELS[id(model)] = (model, encoding)
+    return encoding
+
+
+_FORMULAS: dict[int, tuple] = {}
+
+
+def encoded_formula(formula):
+    """A formula's case AST, once per formula object (a frozen AST node), wire-checked when it is built
+    (`checked_list`); keyed by the object, which the cache holds, as `encoded_model` is."""
+    from ..ast import _to_data
+    from ..environment_wire import checked_list
+    entry = _FORMULAS.get(id(formula))
+    if entry is not None and entry[0] is formula:
+        return entry[1]
+    data = _to_data(formula)
+    encoding = checked_list(data) if type(data) is list else data
+    if len(_FORMULAS) >= _MODELS_LIMIT:
+        _FORMULAS.clear()
+    _FORMULAS[id(formula)] = (formula, encoding)
+    return encoding
+
+
 def evaluation_case(env, case_id: str, ast: list, model: dict) -> tuple[str, dict]:
     """(mode, case) for evaluating the formulas `ast` on `model`; rows carry `values`."""
     case = {"id": case_id, "environment": cached_route_environment(env), "model": model, "ast": ast}

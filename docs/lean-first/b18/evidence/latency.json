@@ -1,0 +1,181 @@
+{
+ "udhr": {
+  "runs": {
+   "base": [
+    {
+     "wall_s": 66.56953953509219,
+     "cpu_s": 66.59589500000001,
+     "exit": 0,
+     "stdout_sha256": "0436f8325f7f63421a9fcf5ea8867e54d24c3b85a2bb14e5595b8ef9a8964bf9",
+     "stdout_bytes": 435581,
+     "stderr": ""
+    },
+    {
+     "wall_s": 68.96992116305046,
+     "cpu_s": 69.006208,
+     "exit": 0,
+     "stdout_sha256": "0436f8325f7f63421a9fcf5ea8867e54d24c3b85a2bb14e5595b8ef9a8964bf9",
+     "stdout_bytes": 435581,
+     "stderr": ""
+    },
+    {
+     "wall_s": 80.15303315385245,
+     "cpu_s": 80.20673,
+     "exit": 0,
+     "stdout_sha256": "0436f8325f7f63421a9fcf5ea8867e54d24c3b85a2bb14e5595b8ef9a8964bf9",
+     "stdout_bytes": 435581,
+     "stderr": ""
+    }
+   ],
+   "head": [
+    {
+     "wall_s": 64.83104918897152,
+     "cpu_s": 64.86307899999997,
+     "exit": 0,
+     "stdout_sha256": "0436f8325f7f63421a9fcf5ea8867e54d24c3b85a2bb14e5595b8ef9a8964bf9",
+     "stdout_bytes": 435581,
+     "stderr": ""
+    },
+    {
+     "wall_s": 64.40888599003665,
+     "cpu_s": 64.44576700000003,
+     "exit": 0,
+     "stdout_sha256": "0436f8325f7f63421a9fcf5ea8867e54d24c3b85a2bb14e5595b8ef9a8964bf9",
+     "stdout_bytes": 435581,
+     "stderr": ""
+    },
+    {
+     "wall_s": 88.04241467011161,
+     "cpu_s": 88.09784299999995,
+     "exit": 0,
+     "stdout_sha256": "0436f8325f7f63421a9fcf5ea8867e54d24c3b85a2bb14e5595b8ef9a8964bf9",
+     "stdout_bytes": 435581,
+     "stderr": ""
+    }
+   ]
+  },
+  "median": {
+   "base": {
+    "wall_s": 68.96992116305046,
+    "cpu_s": 69.006208
+   },
+   "head": {
+    "wall_s": 64.83104918897152,
+    "cpu_s": 64.86307899999997
+   }
+  },
+  "wall_ratio": 0.9399901884142464,
+  "child_cpu_ratio": 0.9399600540287617,
+  "document_sha256": "868f47c6baca8f4db51ff55ae3632c6354c07926b81369ea178ae92a21f21e77",
+  "same_output": true,
+  "within_budget": true
+ },
+ "eligibility": {
+  "runs": {
+   "base": [
+    {
+     "wall_s": 369.8062467810232,
+     "cpu_s": 209.43869300000003,
+     "exit": 0,
+     "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5",
+     "stdout_bytes": 686,
+     "stderr": ""
+    }
+   ],
+   "head": [
+    {
+     "wall_s": 267.11677250405774,
+     "cpu_s": 148.69152,
+     "exit": 0,
+     "stdout_sha256": "a66dd5128f617e05c337878a1619514dbed7bb0516fbf91f98a65a0f374ba7a5",
+     "stdout_bytes": 686,
+     "stderr": ""
+    }
+   ]
+  },
+  "median": {
+   "base": {
+    "wall_s": 369.8062467810232,
+    "cpu_s": 209.43869300000003
+   },
+   "head": {
+    "wall_s": 267.11677250405774,
+    "cpu_s": 148.69152
+   }
+  },
+  "wall_ratio": 0.7223154687871675,
+  "child_cpu_ratio": 0.7099524823715357,
+  "same_output": true,
+  "within_budget": true
+ },
+ "agent-policy": {
+  "runs": {
+   "base": [
+    {
+     "wall_s": 85.60693069896661,
+     "cpu_s": 210.6947260000001,
+     "exit": 0,
+     "stdout_sha256": "2a4fbe57bd356793f5f26a92cd28cc7fbc480879adb0ecc05e4e70487cbbc5bb",
+     "stdout_bytes": 3694,
+     "stderr": ""
+    },
+    {
+     "wall_s": 101.21647472283803,
+     "cpu_s": 262.18738899999994,
+     "exit": 0,
+     "stdout_sha256": "2a4fbe57bd356793f5f26a92cd28cc7fbc480879adb0ecc05e4e70487cbbc5bb",
+     "stdout_bytes": 3694,
+     "stderr": ""
+    },
+    {
+     "wall_s": 138.24827751517296,
+     "cpu_s": 349.26861700000006,
+     "exit": 0,
+     "stdout_sha256": "2a4fbe57bd356793f5f26a92cd28cc7fbc480879adb0ecc05e4e70487cbbc5bb",
+     "stdout_bytes": 3694,
+     "stderr": ""
+    }
+   ],
+   "head": [
+    {
+     "wall_s": 126.30161485588178,
+     "cpu_s": 272.717981,
+     "exit": 0,
+     "stdout_sha256": "2a4fbe57bd356793f5f26a92cd28cc7fbc480879adb0ecc05e4e70487cbbc5bb",
+     "stdout_bytes": 3694,
+     "stderr": ""
+    },
+    {
+     "wall_s": 143.83050336386077,
+     "cpu_s": 308.708836,
+     "exit": 0,
+     "stdout_sha256": "2a4fbe57bd356793f5f26a92cd28cc7fbc480879adb0ecc05e4e70487cbbc5bb",
+     "stdout_bytes": 3694,
+     "stderr": ""
+    },
+    {
+     "wall_s": 181.05313812801614,
+     "cpu_s": 393.94001600000007,
+     "exit": 0,
+     "stdout_sha256": "2a4fbe57bd356793f5f26a92cd28cc7fbc480879adb0ecc05e4e70487cbbc5bb",
+     "stdout_bytes": 3694,
+     "stderr": ""
+    }
+   ]
+  },
+  "median": {
+   "base": {
+    "wall_s": 101.21647472283803,
+    "cpu_s": 262.18738899999994
+   },
+   "head": {
+    "wall_s": 143.83050336386077,
+    "cpu_s": 308.708836
+   }
+  },
+  "wall_ratio": 1.421018700342144,
+  "child_cpu_ratio": 1.177435868206461,
+  "same_output": true,
+  "within_budget": false
+ }
+}
