@@ -125,6 +125,10 @@ private def largeDecls : List Decl :=
 (limit − 1, limit and limit + 1). -/
 
 #guard maxDigits = 4096
+-- The unknown's text (`VE.Numbers.UnknownReason.text`, spec 1.5) names this limit.
+#guard let s := toString maxDigits
+  UnknownReason.text 0 (.limit .digits) =
+    s!"unknown: an exact value would have more than {s.take (s.length - 3)},{s.drop (s.length - 3)} digits"
 #guard digitCount (10 ^ 4095) = 4096
 #guard Small ((10 : Rat) ^ 4095)
 #guard Small ((10 : Rat) ^ 4095 * 9)
