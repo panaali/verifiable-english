@@ -8,6 +8,7 @@ import VE.EnglishGrammar.Run
 import VE.Senses.Run
 import VE.Attribution.Preflight
 import VE.Rights.Run
+import VE.Limits
 
 /-! # The `document` service mode: the `ve-document@1` wrapper (docs/LEAN-FIRST-PLAN.md, row 16a)
 
@@ -152,7 +153,7 @@ def pythonMayRead (front : String) : Bool :=
   ["NaN", "Infinity"].any fun t => (front.splitOn t).length > 1
 
 /-- The largest number the document mode reads, `VE.JsonInput`'s bound. -/
-def maxNumber : Nat := 9007199254740991
+def maxNumber : Nat := VE.Limits.maxIndex
 
 def hexDigit (c : Char) : Option Nat :=
   if c.isDigit then some (c.toNat - '0'.toNat)
@@ -312,7 +313,7 @@ def frontDepth (front : String) : Except String Unit := do
     else if c == '"' then quoted := true
     else if c == '[' || c == '{' then
       depth := depth + 1
-      if depth > 256 then throw "ResourceLimit: JSON depth exceeds 256"
+      if depth > VE.Limits.maxJsonDepth then throw "ResourceLimit: JSON depth exceeds 256"
     else if c == ']' || c == '}' then
       depth := depth - 1
 
@@ -492,10 +493,10 @@ def vocabularyFault (environment : Json) : Option String := walked do
   let sorts ← table "sorts"
   let predicates ← table "predicates"
   let constants ← table "constants"
-  if sorts.length > 32 || predicates.length > 256 then stop
+  if sorts.length > VE.Limits.maxSorts || predicates.length > VE.Limits.maxPredicates then stop
   let mut seen : List String := []
   for (name, _) in sorts ++ predicates ++ constants do
-    if name.length > 64 then fault "ResourceLimit: Identifier exceeds 64 ASCII bytes"
+    if name.length > VE.Limits.maxIdentifierBytes then fault "ResourceLimit: Identifier exceeds 64 ASCII bytes"
     unless VE.Surface.identifier name do fault s!"Invalid ASCII identifier: {pyR name}"
     if seen.contains name then fault s!"DuplicateDeclaration: Symbol {pyR name} is declared in multiple categories"
     if VE.Surface.reserved.contains name || VE.Surface.generatedName name then

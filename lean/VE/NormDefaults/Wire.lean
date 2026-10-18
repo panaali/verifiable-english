@@ -1,5 +1,6 @@
 import VE.NormDefaults.Routes
 import VE.Norms.Replay
+import VE.Limits
 
 /-! The `norm-defaults@0` decoder and its replay (docs/spec/norm-defaults.md 2.1,
 6 and 8).
@@ -101,7 +102,7 @@ def checkAuthorN (environment : Json) (generated : Nat) (U : UDoc) : Except Stri
     throw "ResourceLimit: vocabulary size"
   if U.D.T.nodes.length + U.unspec.length > 256 then throw "ResourceLimit: rules"
   if U.unspec.any (fun p => p.utf8ByteSize > 56) then throw "ResourceLimit: unspecified name length"
-  if (U.D.T.nodes.map ruleNodes).sum + fillGuardNodes U > 10000 then
+  if (U.D.T.nodes.map ruleNodes).sum + fillGuardNodes U > VE.Limits.maxNodes then
     throw "ResourceLimit: AST exceeds 10,000 nodes"
   if U.D.T.nodes.any (fun N => decide (N.pred ∈ U.unspec) && decide (height U.D.T (fuel U.D.T) N > 15)) then
     throw "ResourceLimit: precedence depth"

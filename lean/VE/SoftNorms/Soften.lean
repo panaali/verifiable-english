@@ -507,7 +507,7 @@ def checkW1 (D : Doc) : Except String Unit := do
         typeDiagnostic D.E r.sorts.reverse φ
         unless φ.check D.E r.sorts.reverse do throw s!"InvalidInput: ill-typed rule {N.name}"
         nodes := nodes + VE.Bridge.formulaNodes φ
-        if nodes > 10000 then throw "ResourceLimit: AST exceeds 10,000 nodes"
+        if nodes > VE.Limits.maxNodes then throw "ResourceLimit: AST exceeds 10,000 nodes"
   for N in T.nodes do
     for m in N.over do
       match T.nodes.find? (·.name == m) with
@@ -545,7 +545,7 @@ def validSoftName (s : String) : Bool :=
     first ≥ 'a' && first ≤ 'z' &&
       rest.all (fun c => (c ≥ 'a' && c ≤ 'z') ||
                          (c ≥ '0' && c ≤ '9') || c == '_') &&
-      s.utf8ByteSize ≤ 64 && !containsDunder s
+      s.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes && !containsDunder s
 
 def definedOrRegulated (D : SoftDoc) (p : String) : Bool :=
   (D.T.regulated.map (·.name)).contains p || (D.T.definitions.map (·.name)).contains p
@@ -567,9 +567,9 @@ def checkSoftEnv (D : SoftDoc) : Except String Unit := do
   if env.outranking = .strict && env.outrankingDecider.isSome then
     throw "InvalidInput: strict outranking has no decider"
   for d in env.outrankingDecider.toList do
-    if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for outranking"
+    if d.isEmpty || d.utf8ByteSize > VE.Limits.maxIdentifierBytes then throw "InvalidInput: invalid decider for outranking"
   for d in env.exceptionDecider.toList do
-    if d.isEmpty || d.utf8ByteSize > 64 then throw "InvalidInput: invalid decider for exception"
+    if d.isEmpty || d.utf8ByteSize > VE.Limits.maxIdentifierBytes then throw "InvalidInput: invalid decider for exception"
   for (field, pairs) in [("outranks", env.outranks), ("ties", env.ties)] do
     for pair in pairs do
       if pair.1 == pair.2 || pairs.count pair > 1 then
@@ -595,7 +595,7 @@ def checkSoftRule (D : SoftDoc) (N : SoftNode) : Except String Unit := do
   | .default, none => throw s!"InvalidInput: rule {N.name} needs an exception"
   | _, _ => pure ()
   if let some e := N.exception then
-    unless e.decidedBy.all (fun d => !d.isEmpty && d.utf8ByteSize ≤ 64) do
+    unless e.decidedBy.all (fun d => !d.isEmpty && d.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes) do
       throw s!"InvalidInput: invalid decider for rule {N.name}"
   if let some e := N.exception then
     if e.decidedBy.isNone && env.exceptionDecider.isNone then

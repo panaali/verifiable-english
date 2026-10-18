@@ -5,6 +5,7 @@ import VE.Route.NonVacuity
 import VE.Route.AstLimit
 import VE.Core.Layers
 import VE.Service.Standalone
+import VE.Limits
 
 /-! The batch-15a Lean entry point. Existing route cases keep their proved
 response shapes; batch 15b can relay this case after its trace and witness
@@ -157,7 +158,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (model : Json) :
   | .closure => do
     let rv ← Run.decodeRouteVocabulary e
     let r ← request q (fun j => do
-        let f ← VE.Closure.Bridge.decodeFormula 64 j
+        let f ← VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth j
         unless f.check rv.environment [] do throw "ill-typed or unbound formula"
         pure f)
       (VE.Closure.Bridge.decodeFormulas rv.environment)
@@ -166,7 +167,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (model : Json) :
   | .order => do
     let rv ← Wire.decodeOrderVocabulary e.vocabulary
     let r ← request q (fun j => do
-        let f ← VE.Order.Wire.decodeFormula 64 j
+        let f ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth j
         unless f.check rv.vocabulary.environment [] do throw "ill-typed or unbound formula"
         pure f)
       (VE.Order.Wire.decodeFormulas rv.vocabulary.environment)
@@ -176,7 +177,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (model : Json) :
   | .closureNary => do
     let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
     let r ← request q (fun j => do
-        let f ← VE.Core.Bridge.decodeFormula 64 j
+        let f ← VE.Core.Bridge.decodeFormula VE.Limits.maxDepth j
         VE.Core.Bridge.checkFormula v.environment f "formula"
         pure f)
       (VE.Core.Bridge.decodeFormulas v.environment)

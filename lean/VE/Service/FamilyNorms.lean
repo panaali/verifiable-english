@@ -2,6 +2,7 @@ import VE.Norms.Flagged
 import VE.Norms.Family
 import VE.Service.Standalone
 import VE.Order.Conservativity
+import VE.Limits
 
 /-! Norm documents on the closure, core and order families of `ve.core@0.2`
 (SEMANTICS-MIGRATION-PLAN.md stage 2c): the service `family-norms` mode,
@@ -60,7 +61,7 @@ structure Checker (F C : Type) where
 def closureChecker (E : VE.Environment) : Checker VE.Closure.Formula VE.Closure.Tableau.Certificate where
   embed := VE.Closure.embed
   formula := fun j => do
-    let a ← VE.Closure.Bridge.decodeFormula 64 j
+    let a ← VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth j
     unless a.check E [] do throw "ill-typed or unbound formula"
     pure a
   certificate := VE.CertificateWire.decodeClosureCertificate
@@ -71,7 +72,7 @@ def closureChecker (E : VE.Environment) : Checker VE.Closure.Formula VE.Closure.
 def coreChecker (E : VE.Environment) : Checker VE.Core.Formula VE.Core.Tableau.Certificate where
   embed := VE.Core.embed
   formula := fun j => do
-    let a ← VE.Core.Bridge.decodeFormula 64 j
+    let a ← VE.Core.Bridge.decodeFormula VE.Limits.maxDepth j
     VE.Core.Bridge.checkFormula E a "formula"
     pure a
   certificate := VE.Core.Wire.decodeCertificate
@@ -82,7 +83,7 @@ def coreChecker (E : VE.Environment) : Checker VE.Core.Formula VE.Core.Tableau.C
 def orderChecker (E : VE.Order.Environment) : Checker VE.Order.Formula VE.Order.Tableau.Certificate where
   embed := VE.Order.embed
   formula := fun j => do
-    let a ← VE.Order.Wire.decodeFormula 64 j
+    let a ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth j
     unless a.check E [] do throw "ill-typed or unbound formula"
     pure a
   certificate := VE.Order.Wire.decodeCertificate

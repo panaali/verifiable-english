@@ -1,5 +1,6 @@
 import VE.Bridge
 import VE.Order.Wire
+import VE.Limits
 
 /-! Model decoding for the `route` and `quantity` runners.
 
@@ -26,11 +27,11 @@ are not arrays are left to the decoder's diagnostics. -/
 def modelLimits (sorts : List String) (ds rs : Json) : Except String Unit := do
   for s in sorts do
     if let .ok (.arr xs) := ds.getObjVal? s then
-      if xs.size > 1000 then throw domainLimit
+      if xs.size > VE.Limits.maxEntities then throw domainLimit
   let rows := match rs with
     | .obj kvs => kvs.foldl (fun n _ v => match v with | .arr xs => n + xs.size | _ => n) 0
     | _ => 0
-  if rows > 100000 then throw tupleLimit
+  if rows > VE.Limits.maxTuples then throw tupleLimit
 
 /-- Whether a list has no repeated element, in one pass with a hash set. -/
 def distinct {β : Type} [BEq β] [Hashable β] (xs : List β) : Bool :=
@@ -209,7 +210,7 @@ def decodeModelData (v : VE.Bridge.Vocabulary) (j : Json) : Except String VE.Bri
   let domains ← v.sorts.mapM fun s => do
     let xs ← localIds (← ds.getObjVal? s)
     unless distinct xs do throw "duplicate domain entity"
-    if xs.length > 1000 then throw domainLimit
+    if xs.length > VE.Limits.maxEntities then throw domainLimit
     pure (s, xs)
   let sets := domainSets domains
   let constants ← v.constants.mapM fun (c, s) => do
@@ -226,7 +227,7 @@ def decodeModelData (v : VE.Bridge.Vocabulary) (j : Json) : Except String VE.Bri
         unless inDomain sets s x do throw "dangling or wrong-sort tuple"
       pure tuple
     pure (p, tuples)
-  if (relations.map (fun p => p.2.length)).foldl (· + ·) 0 > 100000 then throw tupleLimit
+  if (relations.map (fun p => p.2.length)).foldl (· + ·) 0 > VE.Limits.maxTuples then throw tupleLimit
   pure ⟨domains, constants, relations⟩
 
 /-- `VE.Order.Wire.decodeValue` against hash-set domains. -/
@@ -261,7 +262,7 @@ def decodeOrderModel (v : VE.Order.Vocabulary) (j : Json) :
     let xs ← strings (← ds.getObjVal? s)
     unless xs.all identifier do throw "invalid local identifier"
     unless distinct xs do throw "duplicate domain entity"
-    if xs.length > 1000 then throw domainLimit
+    if xs.length > VE.Limits.maxEntities then throw domainLimit
     pure (s, xs)
   let sets := domainSets domains
   let constants ← v.constants.mapM fun (c, s) => do
@@ -273,7 +274,7 @@ def decodeOrderModel (v : VE.Order.Vocabulary) (j : Json) :
       (ss.zip cells).mapM fun (s, cell) => decodeValue sets s cell
     unless distinct (rows.map (·.map cellKey)) do throw "duplicate relation tuple"
     pure (p, rows)
-  if (relations.map (fun p => p.2.length)).foldl (· + ·) 0 > 100000 then throw tupleLimit
+  if (relations.map (fun p => p.2.length)).foldl (· + ·) 0 > VE.Limits.maxTuples then throw tupleLimit
   let d : VE.Order.ModelData VE.Order.Wire.Entity :=
     ⟨domains.map (fun (s, xs) => (s, xs.map (s, ·))), constants, relations⟩
   unless validOrderFast v d do throw "model is not semantically admissible"
