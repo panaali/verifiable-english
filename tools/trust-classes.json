@@ -349,12 +349,14 @@
         "ResponseShape.Schemas.Alternatives.assumedCell",
         "ResponseShape.Schemas.Alternatives.certificate",
         "ResponseShape.Schemas.Alternatives.chooser",
+        "ResponseShape.Schemas.Alternatives.chooser_fill",
         "ResponseShape.Schemas.Alternatives.conflict_witness",
         "ResponseShape.Schemas.Alternatives.counterfactualCell",
         "ResponseShape.Schemas.Alternatives.coverage",
         "ResponseShape.Schemas.Alternatives.declaredCell",
         "ResponseShape.Schemas.Alternatives.elaborate",
         "ResponseShape.Schemas.Alternatives.environment",
+        "ResponseShape.Schemas.Alternatives.evaluation",
         "ResponseShape.Schemas.Alternatives.file",
         "ResponseShape.Schemas.Alternatives.fillNames",
         "ResponseShape.Schemas.Alternatives.fill_path",
@@ -364,7 +366,8 @@
         "ResponseShape.Schemas.Alternatives.proximateCell",
         "ResponseShape.Schemas.Alternatives.regenerated",
         "ResponseShape.Schemas.Alternatives.row",
-        "ResponseShape.Schemas.Alternatives.validate"
+        "ResponseShape.Schemas.Alternatives.validate",
+        "ResponseShape.Schemas.Alternatives.validate_fill"
       ]
     },
     "ResponseShape/Schemas/Bundle.lean": {
@@ -1136,11 +1139,20 @@
     "VE/Alternatives/FillWire.lean": {
       "S": [
         "VE.Alternatives.AltConflictFreeU",
+        "VE.Alternatives.AltStatus",
+        "VE.Alternatives.ScenarioRowU",
+        "VE.Alternatives.SettledF",
+        "VE.Alternatives.UndecidedF",
         "VE.Alternatives.notFollowableFU",
         "VE.Alternatives.targetAcceptedU"
       ],
       "C": [
-        "VE.Alternatives.altConflictFreeCheckU"
+        "VE.Alternatives.altConflictFreeCheckU",
+        "VE.Alternatives.chooserRowsU",
+        "VE.Alternatives.fillingFor",
+        "VE.Alternatives.fillingsAt",
+        "VE.Alternatives.scenarioRowsU",
+        "VE.Alternatives.settleU"
       ],
       "D[V]": [
         {
@@ -1231,6 +1243,7 @@
         }
       ],
       "G[R]": [
+        "VE.Alternatives.AltEvidence",
         "VE.Alternatives.diagnoseU",
         "VE.Alternatives.firstFailureU",
         "VE.Alternatives.refill",
@@ -1314,6 +1327,7 @@
         "VE.Alternatives.Run.actWords",
         "VE.Alternatives.Run.assumedHarmFree",
         "VE.Alternatives.Run.chooserReport",
+        "VE.Alternatives.Run.chooserReportU",
         "VE.Alternatives.Run.conflictStatus",
         "VE.Alternatives.Run.dutyText",
         "VE.Alternatives.Run.encodeAdmitted",
@@ -1335,14 +1349,22 @@
         "VE.Alternatives.Run.runFollowable",
         "VE.Alternatives.Run.runFollowableU",
         "VE.Alternatives.Run.runValidate",
+        "VE.Alternatives.Run.runValidateU",
+        "VE.Alternatives.Run.statusLabel",
+        "VE.Alternatives.Run.statusPhrase",
         "VE.Alternatives.Run.unmappedText",
         "VE.Alternatives.Run.usesAltPath"
       ],
       "G[R]": [
-        "VE.Alternatives.Run.diagnosisText"
+        "VE.Alternatives.Run.budgetText",
+        "VE.Alternatives.Run.diagnosisText",
+        "VE.Alternatives.Run.evidenceLabel"
       ],
       "G[I]": [
         "VE.Alternatives.Run.modelId"
+      ],
+      "D[V]": [
+        "VE.Alternatives.Run.budgetOf"
       ]
     },
     "VE/Alternatives/Validate.lean": {
@@ -4613,6 +4635,7 @@
         "VE.FiniteModel.withFill",
         "VE.NormDefaults.FiniteFill",
         "VE.NormDefaults.MAX_UNSAID_ATOMS",
+        "VE.NormDefaults.agreed",
         "VE.NormDefaults.allTuples",
         "VE.NormDefaults.atomV",
         "VE.NormDefaults.closeCone",
@@ -4625,6 +4648,7 @@
         "VE.NormDefaults.coneList",
         "VE.NormDefaults.coneOf",
         "VE.NormDefaults.coneValues",
+        "VE.NormDefaults.coneValuesAt",
         "VE.NormDefaults.enumerateSettled",
         "VE.NormDefaults.fillBody",
         "VE.NormDefaults.fillOfAtoms",

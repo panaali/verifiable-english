@@ -64,6 +64,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_case_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_coverage_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_fits
+#print axioms ResponseShape.Encoders.Alternatives.evidenceLabels_fits
 #print axioms ResponseShape.Encoders.Alternatives.fields_obj
 #print axioms ResponseShape.Encoders.Alternatives.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.Alternatives.followableU_fits
@@ -77,6 +78,8 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Alternatives.runCaseU_fits
 #print axioms ResponseShape.Encoders.Alternatives.runCase_fits
 #print axioms ResponseShape.Encoders.Alternatives.sourceOf_taken
+#print axioms ResponseShape.Encoders.Alternatives.statusLabels_fits
+#print axioms ResponseShape.Encoders.Alternatives.validateU_fits
 #print axioms ResponseShape.Encoders.Alternatives.validate_fits
 #print axioms ResponseShape.Encoders.Ask.answeredFields_fits
 #print axioms ResponseShape.Encoders.Ask.answered_ok

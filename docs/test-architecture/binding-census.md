@@ -7,13 +7,13 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | | count |
 |---|---:|
 | leaves:bound | 243 |
-| leaves:closed domain | 253 |
+| leaves:closed domain | 255 |
 | leaves:none | 1327 |
 | modes | 36 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
 | today:not probed | 926 |
-| today:shape | 496 |
+| today:shape | 498 |
 | today:unbound | 137 |
 | answers | 536 |
 | probes | 10204 |
@@ -1190,11 +1190,13 @@ Delegates: `/` to norms.
 | `/choosers/*/breaches/*` | string | none |  |  | 0 | not probed |
 | `/choosers/*/chooser` | string | none |  |  | 2 | not probed |
 | `/choosers/*/clear/*` | string | none |  |  | 3 | not probed |
+| `/choosers/*/evidence/*` | string | closed domain | enum |  | 0 | shape |
 | `/choosers/*/inaction/*` | string | none |  |  | 2 | not probed |
 | `/choosers/*/permitted/*` | string | none |  |  | 3 | not probed |
 | `/choosers/*/prevents/*/0` | string | none |  |  | 1 | not probed |
 | `/choosers/*/prevents/*/1` | string | none |  |  | 1 | not probed |
 | `/choosers/*/required/*` | string | none |  |  | 0 | not probed |
+| `/choosers/*/statuses/*` | string | closed domain | enum |  | 0 | shape |
 | `/choosers/*/text` | string | none |  | minLength | 2 | not probed |
 | `/choosers/*/unavoidable/*` | string | none |  |  | 0 | not probed |
 | `/choosers/*/violations/*` | string | none |  |  | 0 | not probed |
@@ -1309,15 +1311,17 @@ Delegates: `/` to norms.
 | `/choosers` |  |  |  |  |
 | `/choosers/*/allows` |  |  |  |  |
 | `/choosers/*/allows/*` |  |  |  |  |
-| `/choosers/*/alternatives` |  |  |  |  |
+| `/choosers/*/alternatives` |  |  | x-same-length |  |
 | `/choosers/*/avoidable` |  |  |  |  |
 | `/choosers/*/breaches` |  |  |  |  |
 | `/choosers/*/clear` |  |  |  |  |
+| `/choosers/*/evidence` |  |  | x-same-length |  |
 | `/choosers/*/inaction` |  |  |  |  |
 | `/choosers/*/permitted` |  |  |  |  |
 | `/choosers/*/prevents` |  |  |  |  |
 | `/choosers/*/prevents/*` |  |  |  |  |
 | `/choosers/*/required` |  |  |  |  |
+| `/choosers/*/statuses` |  |  | x-same-length |  |
 | `/choosers/*/unavoidable` |  |  |  |  |
 | `/choosers/*/violations` |  |  |  |  |
 | `/choosers/*/violations/*/arguments` |  |  |  |  |

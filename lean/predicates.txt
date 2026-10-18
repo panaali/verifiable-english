@@ -582,7 +582,9 @@ VE.Alternatives.FollowableIn@VE.Alternatives.Followable
 VE.Alternatives.PrefixAdmissibleAlt@VE.Alternatives.Background
 VE.Alternatives.RowsConsistent@VE.Alternatives.Validate
 VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
+VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
+VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
 VE.Ask.BlockLine@VE.Ask.Lines
 VE.Ask.CaseBinding@VE.Ask.Binding
 VE.Ask.Consistent@VE.Ask.Plain
