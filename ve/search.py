@@ -138,7 +138,7 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
 
 def _check_countermodel_lean(env, premises, conclusion, model, max_evaluations):
     from .ast import _to_data
-    from .backends.lean_runner import lean_mode, cached_route_environment
+    from .backends.lean_runner import background_environment, lean_mode
     from .backends.relay import decide
     from .backends.rust_jsonl import soft_case
     from .evaluate import _evaluate_lean
@@ -155,7 +155,9 @@ def _check_countermodel_lean(env, premises, conclusion, model, max_evaluations):
                                tuple(meaning_id(env, x) for x in premises), meaning_id(env, conclusion))
     if result.status == "ResourceLimit":
         return result
-    request = {"id": "countermodel", "environment": cached_route_environment(env), **soft_case(env),
+    # The model environment (`profiles.model_environment`, display text dropped): the check reads the
+    # model only, and the route refuses the blocks no model reads (an `alternatives` block, say).
+    request = {"id": "countermodel", "environment": background_environment(env), **soft_case(env),
                "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
                "model": model.to_dict(), "max_evaluations": max_evaluations, "kind": "countermodel"}
     row = decide(lean_mode(env), [request])[0]
@@ -204,8 +206,8 @@ def _witness_checked(env: Any, premises: tuple[Any, ...], conclusion: Any, model
     bypassed). The check re-evaluates what the search already evaluated, within
     the caller's budget; its work is not charged to the public search counters.
     The entry is Lean's (lean-first batch 18): its values and counts come from the metered evaluator
-    and its verdict from the countermodel route, over the route projection of the environment
-    (`cached_route_environment`, which drops the display text no model reads).
+    and its verdict from the countermodel route, over the model environment
+    (`background_environment`: what no model reads, display text included, is dropped).
     """
     return check_countermodel(env, premises, conclusion, model, max_evaluations=max_evaluations).valid
 

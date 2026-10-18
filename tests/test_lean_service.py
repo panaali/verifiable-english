@@ -1310,6 +1310,13 @@ _SCHEMA_SEEDS = {
     "ask": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "words": ({"id": "c"}, {"id": "c", "status": "ok",
                            "result": {"environment_id": "a" * 64, "lexicon_id": "a" * 64, "lines": ["x"]}}),
+    "metered": ({"id": "c", "kind": "evaluate-budgeted", "environment": {}, "model": {}, "ast": [["top"]],
+                 "max_evaluations": 4, "trace": True},
+                {"id": "c", "status": "ok", "evaluation": {
+                    "status": "Satisfied", "value": True, "evaluations": 1,
+                    "explanation": [{"kind": "document", "value": True, "bindings": [], "detail": "all statements satisfied",
+                                     "children": 1},
+                                    {"kind": "top", "value": True, "bindings": [], "detail": "", "children": 0}]}}),
     "environment": ({"id": "c", "environment": {"profiles": ["relational-fol@0"]}},
                     {"id": "c", "status": "ok", "environment_id": "a" * 64,
                      "profiles": ["relational-fol@0"], "family": "fol"}),
@@ -1405,6 +1412,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
                  "supporting_edges" if mode == "graph" else
                  "verdict" if mode in ("readings", "readings-choices") else
                  "lemmas" if mode == "bundle" else
+                 "evaluation" if mode == "metered" else
                  "valid" if mode == "family-norms" else "values")
         answer["results"][0][field] = "true"
     elif mutation in ("wrong-digest", "wrong-index", "unbound-row"):
