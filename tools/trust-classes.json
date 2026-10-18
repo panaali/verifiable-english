@@ -4606,8 +4606,10 @@
         "VE.NormDefaults.Wire.LayeredU.X",
         "VE.NormDefaults.Wire.LayeredU.background",
         "VE.NormDefaults.Wire.layeredCase",
+        "VE.NormDefaults.Wire.rightsPack",
         "VE.NormDefaults.Wire.runLayered",
-        "VE.NormDefaults.Wire.softLabelledU"
+        "VE.NormDefaults.Wire.softLabelledU",
+        "VE.NormDefaults.Wire.softPack"
       ]
     },
     "VE/NormDefaults/Premises.lean": {
@@ -4808,6 +4810,7 @@
       "C": [
         "VE.NormDefaults.Wire.ConflictReplayU",
         "VE.NormDefaults.Wire.EntailmentReplayU",
+        "VE.NormDefaults.Wire.authorVocab",
         "VE.NormDefaults.Wire.checkAuthor",
         "VE.NormDefaults.Wire.checkAuthorN",
         "VE.NormDefaults.Wire.conflictFreeCheckU",
@@ -12329,6 +12332,91 @@
       ],
       "P": [
         "VE.Events.unorderedSameF"
+      ]
+    },
+    "VE/NormDefaults/Packs.lean": {
+      "D[V]": [
+        "VE.NormDefaults.Packs.Pack",
+        "VE.NormDefaults.Packs.PackKind",
+        "VE.NormDefaults.Packs.RequestPath",
+        "VE.NormDefaults.Packs.labelledJson",
+        {
+          "name": "VE.NormDefaults.Packs.elaborateArrays",
+          "tied": [
+            "VE.NormDefaults.Packs.elaborateArrays_legacy",
+            "VE.NormDefaults.Packs.elaborateArrays_keys"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.NormDefaults.Packs.firstFailing",
+        "VE.NormDefaults.Packs.legacyIds",
+        "VE.NormDefaults.Packs.reserved",
+        {
+          "name": "VE.NormDefaults.Packs.packFault",
+          "tied": [
+            "VE.NormDefaults.Packs.packFault_legacy_rights",
+            "VE.NormDefaults.Packs.packFault_legacy_soft"
+          ]
+        }
+      ],
+      "G[V]": [
+        "VE.NormDefaults.Packs.Pack.names",
+        "VE.NormDefaults.Packs.X",
+        "VE.NormDefaults.Packs.coherenceLabels",
+        "VE.NormDefaults.Packs.declaredIn",
+        "VE.NormDefaults.Packs.envX",
+        "VE.NormDefaults.Packs.extendEnv",
+        "VE.NormDefaults.Packs.firstRepeat",
+        "VE.NormDefaults.Packs.fullEnv",
+        "VE.NormDefaults.Packs.labelledX",
+        "VE.NormDefaults.Packs.names",
+        "VE.NormDefaults.Packs.ordered",
+        "VE.NormDefaults.Packs.ownPrefix",
+        "VE.NormDefaults.Packs.ownPrefixIn",
+        "VE.NormDefaults.Packs.packOrder",
+        "VE.NormDefaults.Packs.packPremises",
+        "VE.NormDefaults.Packs.reservedPrefixes",
+        {
+          "name": "VE.NormDefaults.Packs.assemble",
+          "tied": [
+            "VE.NormDefaults.Packs.assemble_order",
+            "VE.NormDefaults.Packs.assemble_fresh"
+          ]
+        },
+        {
+          "name": "VE.NormDefaults.Packs.assembleIn",
+          "tied": [
+            "VE.NormDefaults.Packs.assembleIn_ok"
+          ]
+        },
+        {
+          "name": "VE.NormDefaults.Packs.xWithout",
+          "tied": [
+            "VE.NormDefaults.Packs.xWithout_nil",
+            "VE.NormDefaults.Packs.xWithout_sub"
+          ]
+        }
+      ]
+    },
+    "VE/NormDefaults/PacksExamples.lean": {
+      "T": [
+        "VE.NormDefaults.Packs.Fixtures.E",
+        "VE.NormDefaults.Packs.Fixtures.P",
+        "VE.NormDefaults.Packs.Fixtures.att",
+        "VE.NormDefaults.Packs.Fixtures.cx",
+        "VE.NormDefaults.Packs.Fixtures.diag",
+        "VE.NormDefaults.Packs.Fixtures.ev",
+        "VE.NormDefaults.Packs.Fixtures.fixturePrefixes",
+        "VE.NormDefaults.Packs.Fixtures.holds",
+        "VE.NormDefaults.Packs.Fixtures.legacyLabels",
+        "VE.NormDefaults.Packs.Fixtures.legacyPacks",
+        "VE.NormDefaults.Packs.Fixtures.legacyU",
+        "VE.NormDefaults.Packs.Fixtures.rights",
+        "VE.NormDefaults.Packs.Fixtures.rightsDocs",
+        "VE.NormDefaults.Packs.Fixtures.soft",
+        "VE.NormDefaults.Packs.Fixtures.weighing",
+        "VE.NormDefaults.Packs.Fixtures.φ"
       ]
     }
   }

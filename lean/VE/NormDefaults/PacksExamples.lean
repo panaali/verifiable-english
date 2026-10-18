@@ -129,6 +129,13 @@ def legacyLabels (R : VE.Rights.RightsDoc) : List String := (labelledX (legacyPa
 #guard (VE.SoftNorms.decisionNames (VE.Rights.correlate VE.Rights.Examples.gamma)).head?.all fun n =>
   diag (assemble (legacyU VE.Rights.Examples.gamma) 0 [⟨"soft", .vocabulary, [(n, [])], [], [], []⟩]) ==
     s!"InvalidInput: generated name {n} of pack soft is already declared"
+-- `envX` is the base environment extended by every pack's names; the base predicates stay.
+#guard (envX (legacyU VE.Rights.Examples.gamma) [att "attitudes__k__2", ev "date__e"]).predicates "attitudes__k__2" ==
+    some ["person"] &&
+  (envX (legacyU VE.Rights.Examples.gamma) [att "attitudes__k__2", ev "date__e"]).constants "date__e" == some "person" &&
+  (VE.SoftNorms.decisionNames (VE.Rights.correlate VE.Rights.Examples.gamma)).all fun n =>
+    (envX (legacyU VE.Rights.Examples.gamma) [att "attitudes__k__2"]).predicates n ==
+      (VE.Norms.envAt (fill (legacyU VE.Rights.Examples.gamma)) 0).predicates n
 -- The coherence labels are the soft pack's `soft:coherence:` labels.
 #guard (rightsDocs.take 5).all fun R =>
   coherenceLabels (VE.Rights.correlate R) ==
