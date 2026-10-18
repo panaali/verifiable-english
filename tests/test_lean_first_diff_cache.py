@@ -400,10 +400,9 @@ def _gz(path: Path, value) -> None:
     path.write_bytes(gzip.compress(json.dumps(value).encode()))
 
 
-def _commit(repo: Path, branch: str, files: dict) -> None:
+def _commit(repo: Path, branch: str, files: dict, init: bool = False) -> None:
     git = lambda *args: subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True)  # noqa: E731
-    if not (repo / ".git").exists():
-        repo.mkdir(parents=True, exist_ok=True)
+    if init:
         git("init", "-q")
         git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "root", "--allow-empty")
     git("checkout", "-q", "-B", branch)
@@ -434,7 +433,8 @@ SOURCE_INPUTS = {
                 [(lambda w, path=path: _gz(w.checkout / path, [{"id": "one", "v": 2}, {"id": "two", "v": 1}]), "one"),
                  (lambda w, path=path: _gz(w.checkout / path, [{"id": "two", "v": 1}]), "one")], "two")
        for corpus, path in (("discourse", diff.DISCOURSE), ("quantity", diff.QUANTITY))},
-    "pilots": (lambda w: _commit(w.checkout, "pilot/a", {"usecases/x.ve.md": PACKED, "usecases/pack.json": b"1"}),
+    "pilots": (lambda w: _commit(w.checkout, "pilot/a", {"usecases/x.ve.md": PACKED, "usecases/pack.json": b"1"},
+                                         init=True),
                [(lambda w: _commit(w.checkout, "pilot/a", {"usecases/pack.json": b"2"}), None),  # beside it
                 (lambda w: _commit(w.checkout, "pilot/a", {"usecases/x.ve.md": PACKED + b"More.\n"}),
                  "pilot/a:usecases/x.ve.md"),
