@@ -3,6 +3,7 @@ import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Explain
 import VE.Norms.Run
+import VE.Compose.Dispatch
 
 /-! The `ve_service` mode `norm-defaults` (docs/spec/norm-defaults.md 3, 6 and 8), formerly the one-shot `ve_norm_defaults_route`. The frozen
 norms route is unchanged; this executable adds the `norm-defaults@0` branch and
@@ -343,9 +344,15 @@ theorem normDefaults_wire_admissionX (j answer : Json) (h : runCase j = .ok answ
   rw [he', hd']
   exact ⟨id, hid, Admission.runAdmissionX_sound id environment document answer ha⟩
 
+/-- `runCase` behind `Compose.pendingWithDefaults`: a composed block this route does not read is refused by name. -/
+def runGated (j : Json) : Except String Json :=
+  match VE.Compose.pendingWithDefaults (Wire.profilesOf (j.getObjValD "environment")) with
+  | some refusal => .error refusal
+  | none => runCase j
+
 def runCaseReported (j : Json) : Json :=
   if usesNormDefaultsPath j then
-    match runCase j with
+    match runGated j with
     | .ok result => result
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"),
         ("error", .str message)]

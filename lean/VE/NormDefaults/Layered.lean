@@ -1,6 +1,7 @@
 import VE.NormDefaults.Report
 import VE.NormDefaults.Explain
 import VE.Rights.Wire
+import VE.NormDefaults.Packs
 
 /-! The soft and rights branches of `norm-defaults@0` (docs/spec/norm-defaults.md 2.3 and
 3.3): `fill` runs last, so the soft route checks `fill (soften T)` and the rights route
@@ -12,7 +13,8 @@ the author limits of section 8 are checked on the softened tree (`checkAuthorN`,
 the route's generated predicates) and `WellFormedU` is required. The route's extra base
 premises `X` are soft's `Soft_T` with `Coh_T` regenerated on `fill U` (its selections read
 unsaid atoms where guards mention unspecified predicates, 3.3) and, on the rights route,
-the limitation premises; the base background is `Background_base(E‴) ++ X ++ Fill_T`, in
+the limitation premises, as premise packs in `Packs.packOrder` (`softPack`, `rightsPack`,
+`Packs.assemble`); the base background is `Background_base(E‴) ++ X ++ Fill_T`, in
 Python's generator order (soft, rights, norm-defaults).
 
 Evidence on these routes is a base situation of the route's base vocabulary (decision and
@@ -52,24 +54,31 @@ def softLabelledU (U : UDoc) (D : SoftDoc) : List (String × VE.Formula) :=
   (VE.SoftNorms.Wire.excLabels D).zip (VE.SoftNorms.excPremises D) ++
     (VE.SoftNorms.collidingPairs D).map (fun (M, N) => (VE.SoftNorms.Wire.cohLabel M N, cohPremiseU U D M N))
 
+/-- Soft's `Exc_T ++ Coh_T` on `fill U` as a premise pack; its names are declared in `U` by `soften`. -/
+def softPack (U : UDoc) (D : SoftDoc) : Packs.Pack := ⟨"soft", .constraint, [], [], softLabelledU U D, []⟩
+
+/-- The rights limitation premises as a premise pack; its names are declared in `U` by `correlate`. -/
+def rightsPack (R : VE.Rights.RightsDoc) : Packs.Pack :=
+  ⟨"rights", .constraint, [], [], VE.Rights.limPremisesLabelled R, []⟩
+
 /-! ## The decoded source -/
 
-/-- A soft or rights source under the profile: `U = (soften D, unspec)`, the labelled extra
-base premises, the base situation vocabulary and the bindings of its packages. -/
+/-- A soft or rights source under the profile: `U = (soften D, unspec)`, the premise packs of
+its extra base premises (`Packs.assemble`d), the base situation vocabulary and the bindings of
+its packages. -/
 structure LayeredU where
   route : String
   D : SoftDoc
   U : UDoc
   wfU : WellFormedU U = true
-  labelled : List (String × VE.Formula)
-  rightsCount : Nat
+  packs : List Packs.Pack
   sitVocab : VE.Bridge.Vocabulary
   sitValid : ∀ M : VE.FiniteModel Entity, M.Valid sitVocab.environment → M.Valid (envAt U.D 0)
   baseEnv : Json
   envId : String
   docHash : String
 
-def LayeredU.X (L : LayeredU) : List VE.Formula := L.labelled.map (·.2)
+def LayeredU.X (L : LayeredU) : List VE.Formula := Packs.X L.packs
 
 /-- `Background_base(E‴) ++ X ++ Fill_T`. -/
 def LayeredU.background (L : LayeredU) : List VE.Formula :=
@@ -98,7 +107,9 @@ def decodeSoftU (environment norms : Json) : Except String LayeredU := do
     let baseEnv ← withUnsaid U (← VE.SoftNorms.Wire.basePrimeJson src.D env')
     let envId ← VE.Route.Wire.environmentId profiles (← canonicalEnvironmentJsonU environment)
     let docHash ← VE.SoftNorms.Wire.softDocumentHash profiles environment norms
-    pure ⟨"soft-norms@0", src.D, U, h, softLabelledU U src.D, 0,
+    let packs ← Packs.assemble U (authorVocab environment (VE.SoftNorms.decisions src.D).length U)
+      [softPack U src.D]
+    pure ⟨"soft-norms@0", src.D, U, h, packs,
       VE.SoftNorms.Wire.primeModelVocabulary src.se src.D, VE.SoftNorms.Wire.primeModel_valid src,
       baseEnv, envId, docHash⟩
   else throw "InvalidInput: norm-defaults document is not well formed"
@@ -117,8 +128,10 @@ def decodeRightsU (environment document : Json) : Except String LayeredU := do
       let baseEnv ← withUnsaid U (← VE.Rights.Wire.basePrimeJsonR src.D env')
       let envId ← VE.Route.Wire.environmentId profiles (← canonicalEnvironmentJsonU environment)
       let docHash ← VE.Rights.Wire.rightsDocumentHash profiles environment document
-      let rights := VE.Rights.limPremisesLabelled src.D
-      pure ⟨"rights@0", D, U, h, softLabelledU U D ++ rights, rights.length,
+      let packs ← Packs.assemble U
+        (authorVocab environment ((VE.Rights.genDecls src.D).length + (VE.SoftNorms.decisions D).length) U)
+        [softPack U D, rightsPack src.D]
+      pure ⟨"rights@0", D, U, h, packs,
         VE.Rights.Wire.primeModelVocabularyR src.re src.D, (fun M h => VE.Rights.Wire.primeModelR_valid src M hg h),
         baseEnv, envId, docHash⟩
     else throw "InvalidInput: a rights-generated predicate is a layer symbol"
@@ -146,12 +159,8 @@ def sourceField (L : LayeredU) : String := if L.route == "rights@0" then "docume
 /-! ## Regenerated outputs -/
 
 def layeredElaborate (L : LayeredU) : List (String × Json) :=
-  regeneratedU L.U ++
-  [("soft", Json.arr ((L.labelled.take (L.labelled.length - L.rightsCount)).map (fun (l, a) =>
-      Json.mkObj [("label", .str l), ("ast", enc a)])).toArray),
-   ("rights", Json.arr ((L.labelled.drop (L.labelled.length - L.rightsCount)).map (fun (l, a) =>
-      Json.mkObj [("label", .str l), ("ast", enc a)])).toArray),
-   ("environment_id", .str L.envId), ("document_hash", .str L.docHash),
+  regeneratedU L.U ++ Packs.elaborateArrays L.packs ++
+  [("environment_id", .str L.envId), ("document_hash", .str L.docHash),
    ("base_environment", L.baseEnv)]
 
 /-! ## Admissibility with `X` -/
@@ -285,9 +294,7 @@ def filledX (L : LayeredU) (w : Json) : Except String (FilledX L) := do
   let F ← decodeFilling L.U S.M (w.getObjValD "filling")
   if hf : fillValid L.U S.M F = true then
     if hx : extraValid L.U L.X S.M F = true then pure ⟨S, F, hf, hx⟩
-    else
-      let soft := (L.labelled.take (L.labelled.length - L.rightsCount)).map (·.2)
-      throw (VE.Route.Wire.invalidModel (if extraValid L.U soft S.M F then "rights" else "soft"))
+    else throw (Packs.packFault L.packs (fun a => a.eval (S.M.withFill F) []))
   else throw (VE.Route.Wire.invalidModel "unsaid")
 
 theorem FilledX.admissible {L : LayeredU} (w : FilledX L) :

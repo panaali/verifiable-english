@@ -1189,7 +1189,7 @@ Lists are written as they are passed. "ok r" is `.ok r`; a text is the complete 
 | D43 | `norm-defaults@0, norms@0, relational-fol@0, soft-norms@0` | ok `soft` (the soft head's `fill` runs last; its document abstention is its own, 4.2) |
 | D44 | `norm-defaults@0, norms@0, relational-fol@0, rights@0, soft-norms@0` | ok `rights` |
 | D45 | `norm-defaults@0, relational-fol@0` | `UnsupportedProfile: norm-defaults@0 requires norms@0` |
-| D46 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0` | `UnsupportedProfile: alternatives@0 with norm-defaults@0 is not implemented` |
+| D46 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0` | ok `alternatives` (the completion on the alternatives route, events-time-causation ET-7) |
 | D47 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0, risk@0` | `UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented` (check 5 before check 6) |
 | D48 | `norm-defaults@0, relational-fol@0, risk@0` | `UnsupportedProfile: risk@0 requires alternatives@0` (check 4 before check 5) |
 | D49 | `norm-defaults@0, norms@0, relational-fol@0, speech-acts@0` | `UnsupportedProfile: speech-acts@0 with norm-defaults@0` |

@@ -1,0 +1,33 @@
+{
+ "item": "eff-20261018-1",
+ "commit": "a1b4ba9ed",
+ "machine": "VM (32 vCPU), Lean build current, Rust release binary present; VE_RUN_CACHE pointed at a fresh directory for check-cold, the same directory for the three runs after it",
+ "command": "uv run python tools/regen_generated.py --check | --write (every entry)",
+ "logs": ["check-cold.log", "check-warm.log", "write.log", "check-after-write.log"],
+ "runs": {
+  "check-cold": {"seconds": 270.5, "exit": 0, "load_1m_start_end": [11.74, 18.80],
+                 "lean-statements": 139.3, "lean-audit-manifests": 84.1},
+  "check-warm": {"seconds": 47.3, "exit": 0, "load_1m_start_end": [18.68, 20.35],
+                 "lean-statements": 1.9, "lean-audit-manifests": 3.5,
+                 "replayed": {"lean-statements": "7a5794d5", "lean-audit-manifests": "97672562"}},
+  "write": {"seconds": 33.9, "exit": 0, "load_1m_start_end": [20.35, 18.76],
+            "lean-statements": 2.5, "lean-audit-manifests": 4.2, "tree_changed": false,
+            "replayed": {"lean-statements": "7a5794d5", "lean-audit-manifests": "97672562"}},
+  "check-after-write": {"seconds": 49.8, "exit": 0, "load_1m_start_end": [18.76, 19.64],
+                        "lean-statements": 1.8, "lean-audit-manifests": 3.9,
+                        "replayed": {"lean-statements": "7a5794d5", "lean-audit-manifests": "97672562"}}
+ },
+ "saved_by_warm_check_seconds": 223.2,
+ "stop_rule": {"needs_seconds": 150, "met": true},
+ "earlier_runs_same_code_but_the_toolchain_key": {
+  "commit": "ea92f3305",
+  "check-cold": 413.1, "check-warm": 64.5, "write": 40.5, "check-after-write": 56.0,
+  "load_1m": "23-28",
+  "note": "the logs of these runs were replaced by the runs above; numbers from this session's transcript"
+ },
+ "smoke_single_entries_at_29c359c08": {
+  "lean_statements_check": {"cold": 190.37, "warm": 1.47},
+  "audit_check": {"cold": 85.87, "warm": 3.48, "stdout_identical": true},
+  "load_1m": "13-19"
+ }
+}

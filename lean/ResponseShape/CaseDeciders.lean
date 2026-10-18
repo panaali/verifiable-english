@@ -25,6 +25,7 @@ inductive CaseDecider where
   | riskPath
   | reportsPath
   | speechPath
+  | altFillPath
   deriving Inhabited, Repr, BEq, DecidableEq, Lean.ToExpr
 
 namespace CaseDecider
@@ -32,7 +33,7 @@ namespace CaseDecider
 /-- Every decider (`all_complete`). -/
 def all : List CaseDecider :=
   [.softPath, .rightsPath, .normDefaultsPath, .normsPath, .discoursePath, .altPath, .riskPath, .reportsPath,
-    .speechPath]
+    .speechPath, .altFillPath]
 
 theorem all_complete (d : CaseDecider) : d ∈ all := by
   cases d <;> simp [all]
@@ -48,6 +49,7 @@ def name : CaseDecider → String
   | .riskPath => "Risk.Run.usesRiskPath"
   | .reportsPath => "Reports.Run.usesReportsPath"
   | .speechPath => "SpeechActs.Run.usesSpeechPath"
+  | .altFillPath => "NormDefaults.Wire.hasProfile of the environment"
 
 /-- The runner's test of the case. -/
 def fn : CaseDecider → Json → Bool
@@ -60,6 +62,7 @@ def fn : CaseDecider → Json → Bool
   | .riskPath => VE.Risk.Run.usesRiskPath
   | .reportsPath => VE.Reports.Run.usesReportsPath
   | .speechPath => VE.SpeechActs.Run.usesSpeechPath
+  | .altFillPath => fun j => VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment")
 
 def ofName? (n : String) : Option CaseDecider := all.find? (·.name == n)
 

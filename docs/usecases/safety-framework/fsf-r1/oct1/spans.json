@@ -1,0 +1,2864 @@
+{
+ "source_sha256": "18e3375b35c6699a8bf864606e48a20fae0152f1073c37c51e27a0c0f0c53946",
+ "source_bytes": 54373,
+ "units": [
+  {
+   "id": "p1-title",
+   "span": [
+    0,
+    64
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p1-published",
+   "span": [
+    64,
+    91
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D3",
+    "carries": "version_3_1_date"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "p2-heading",
+   "span": [
+    91,
+    126
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-purpose",
+   "span": [
+    126,
+    284
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-complements",
+   "span": [
+    284,
+    447
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-informed",
+   "span": [
+    447,
+    550
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-components",
+   "span": [
+    550,
+    1063
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-tcl-ccl",
+   "span": [
+    1063,
+    1379
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-addresses",
+   "span": [
+    1379,
+    1504
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-each-type",
+   "span": [
+    1504,
+    1613
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-cross-cutting",
+   "span": [
+    1613,
+    1759
+   ],
+   "kind": "unformalised",
+   "reason": "process_description",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "ov-glossary-pointer",
+   "span": [
+    1759,
+    1855
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-public-good",
+   "span": [
+    1855,
+    1926
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-current",
+   "span": [
+    1926,
+    2060
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-social-value",
+   "span": [
+    2060,
+    2446
+   ],
+   "kind": "causal",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-early",
+   "span": [
+    2446,
+    2501
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-may-change",
+   "span": [
+    2501,
+    2630
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "ov-review-periodically",
+   "span": [
+    2630,
+    2789
+   ],
+   "kind": "unformalised",
+   "reason": "no_deadline_or_trigger",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "fn3",
+   "span": [
+    2789,
+    3027
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn2",
+   "span": [
+    3027,
+    3169
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn1-urls",
+   "span": [
+    3169,
+    3519
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p2-footer",
+   "span": [
+    3519,
+    3549
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p3-contents",
+   "span": [
+    3549,
+    4635
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s1-heading",
+   "span": [
+    4635,
+    4682
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s1-intro",
+   "span": [
+    4682,
+    4897
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s11-heading",
+   "span": [
+    4897,
+    4907
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s11-focus",
+   "span": [
+    4907,
+    5032
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s11-complements",
+   "span": [
+    5032,
+    5241
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s11-not-exclusive",
+   "span": [
+    5241,
+    5450
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-heading",
+   "span": [
+    5450,
+    5511
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-built",
+   "span": [
+    5511,
+    5621
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-ccl-definition",
+   "span": [
+    5621,
+    5758
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D2",
+    "carries": "CCLs: might lead to severe harm"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "s12-determined",
+   "span": [
+    5758,
+    5975
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-component",
+   "span": [
+    5975,
+    6047
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-two-kinds",
+   "span": [
+    6047,
+    6160
+   ],
+   "kind": "asserted",
+   "premises": [
+    "closure-ccl-kinds"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s12-misuse-domains",
+   "span": [
+    6160,
+    6289
+   ],
+   "kind": "asserted",
+   "premises": [
+    "closure-misuse-ccls"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s12-domain-definitions",
+   "span": [
+    6289,
+    6716
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-ml-rd-ccls",
+   "span": [
+    6716,
+    6919
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-cross-cutting",
+   "span": [
+    6919,
+    7083
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-introduces",
+   "span": [
+    7083,
+    7163
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-tcl-purpose",
+   "span": [
+    7163,
+    7358
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-tcl-domains",
+   "span": [
+    7358,
+    7432
+   ],
+   "kind": "asserted",
+   "premises": [
+    "closure-tcls"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s12-may-include",
+   "span": [
+    7432,
+    7521
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s12-tcl-proximity",
+   "span": [
+    7521,
+    7702
+   ],
+   "kind": "unformalised",
+   "reason": "no_trigger_stated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "p4-footer",
+   "span": [
+    7702,
+    7732
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s13-heading",
+   "span": [
+    7732,
+    7786
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s13-process",
+   "span": [
+    7786,
+    7964
+   ],
+   "kind": "unformalised",
+   "reason": "as_appropriate",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s131-heading",
+   "span": [
+    7964,
+    7990
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s131-first",
+   "span": [
+    7990,
+    8061
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s131-identify",
+   "span": [
+    8061,
+    8236
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s131-consider",
+   "span": [
+    8236,
+    8525
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s131-domains",
+   "span": [
+    8525,
+    8789
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s131-continue",
+   "span": [
+    8789,
+    9013
+   ],
+   "kind": "unformalised",
+   "reason": "as_appropriate",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s131-four-domains",
+   "span": [
+    9013,
+    9142
+   ],
+   "kind": "asserted",
+   "premises": [
+    "bridge-one-domain"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s132-heading",
+   "span": [
+    9142,
+    9173
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-purpose",
+   "span": [
+    9173,
+    9348
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-cca",
+   "span": [
+    9348,
+    9461
+   ],
+   "kind": "norm",
+   "rule": "f2",
+   "open_terms": [
+    "ot9_frontier_model"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s132-subsequent",
+   "span": [
+    9461,
+    9892
+   ],
+   "kind": "norm",
+   "reading_set": "rs5_subsequent",
+   "open_terms": [
+    "ot10_material_capability_change"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s132-mcca",
+   "span": [
+    9892,
+    10206
+   ],
+   "kind": "norm",
+   "rule": "f5",
+   "status": "CHECKED"
+  },
+  {
+   "id": "s132-mcca-factors",
+   "span": [
+    10206,
+    10345
+   ],
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-light-weight",
+   "span": [
+    10345,
+    10706
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-non-frontier",
+   "span": [
+    10706,
+    10862
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-early-warning",
+   "span": [
+    10862,
+    11131
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-alert-thresholds",
+   "span": [
+    11131,
+    11379
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-scaffolding",
+   "span": [
+    11379,
+    11654
+   ],
+   "kind": "unformalised",
+   "reason": "aim_without_force",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s132-may-run",
+   "span": [
+    11654,
+    11696
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn4",
+   "span": [
+    11696,
+    12034
+   ],
+   "kind": "norm",
+   "reading_set": "rs7_footnote4",
+   "open_terms": [
+    "ot8_low_risk_external",
+    "ot3_governance_determination"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "p5-footer",
+   "span": [
+    12034,
+    12064
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p6-header",
+   "span": [
+    12064,
+    12090
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-may-run-continued",
+   "span": [
+    12090,
+    12202
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-further-analysis",
+   "span": [
+    12202,
+    12347
+   ],
+   "kind": "unformalised",
+   "reason": "as_appropriate",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s132-strive",
+   "span": [
+    12347,
+    12558
+   ],
+   "kind": "unformalised",
+   "reason": "aim_without_force",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s132-insights",
+   "span": [
+    12558,
+    12683
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-means",
+   "span": [
+    12683,
+    12951
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s132-engage",
+   "span": [
+    12951,
+    13097
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "note-ml-rd-must",
+   "span": [
+    13097,
+    13349
+   ],
+   "kind": "norm",
+   "reading_set": "rs4_elicitation",
+   "status": "OPEN"
+  },
+  {
+   "id": "note-ml-rd-expect",
+   "span": [
+    13349,
+    13481
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "note-ml-rd-may-use",
+   "span": [
+    13481,
+    13705
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s133-heading",
+   "span": [
+    13705,
+    13727
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s133-apply",
+   "span": [
+    13727,
+    13955
+   ],
+   "kind": "unformalised",
+   "reason": "where_appropriate",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s133-alert",
+   "span": [
+    13955,
+    14138
+   ],
+   "kind": "norm",
+   "rule": "f6",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s133-inform",
+   "span": [
+    14138,
+    14207
+   ],
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s133-central",
+   "span": [
+    14207,
+    14315
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s133-update-threshold",
+   "span": [
+    14315,
+    14548
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s133-categories",
+   "span": [
+    14548,
+    14845
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s133-limited",
+   "span": [
+    14845,
+    15081
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s133-determined-later",
+   "span": [
+    15081,
+    15346
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s133-reflect",
+   "span": [
+    15346,
+    15660
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s134-heading",
+   "span": [
+    15660,
+    15691
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s134-various",
+   "span": [
+    15691,
+    15783
+   ],
+   "kind": "unformalised",
+   "reason": "unspecified_process",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s134-security",
+   "span": [
+    15783,
+    15962
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p6-footer",
+   "span": [
+    15962,
+    15992
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p7-header",
+   "span": [
+    15992,
+    16018
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s134-deployment",
+   "span": [
+    16018,
+    16220
+   ],
+   "kind": "unformalised",
+   "reason": "unspecified_process",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s134-rra",
+   "span": [
+    16220,
+    16346
+   ],
+   "kind": "norm",
+   "rule": "f7-rra",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s134-safety-case",
+   "span": [
+    16346,
+    16449
+   ],
+   "kind": "norm",
+   "rule": "f7-sc",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s134-see",
+   "span": [
+    16449,
+    16564
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s135-heading",
+   "span": [
+    16564,
+    16600
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s135-intro",
+   "span": [
+    16600,
+    16767
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s135-bullet1",
+   "span": [
+    16767,
+    17060
+   ],
+   "kind": "norm",
+   "rule": "f8",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet2",
+   "span": [
+    17060,
+    17256
+   ],
+   "kind": "norm",
+   "reading_set": "rs1_bullet2",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet2-dm",
+   "span": [
+    17256,
+    17746
+   ],
+   "kind": "norm",
+   "open_terms": [
+    "ot2_residual_risk_acceptable"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet2-only",
+   "span": [
+    17746,
+    17841
+   ],
+   "kind": "norm",
+   "reading_set": "rs8_bullet2",
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet2-sec",
+   "span": [
+    17841,
+    18276
+   ],
+   "kind": "norm",
+   "open_terms": [
+    "ot4_security_adequate",
+    "ot5_open_release_beneficial",
+    "ot14_security_level"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet3",
+   "span": [
+    18276,
+    18470
+   ],
+   "kind": "norm",
+   "reading_set": "rs1_bullet3",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet3-dm",
+   "span": [
+    18470,
+    18739
+   ],
+   "kind": "norm",
+   "reading_set": "rs9_bullet3",
+   "open_terms": [
+    "ot2_residual_risk_acceptable"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet3-only",
+   "span": [
+    18739,
+    18845
+   ],
+   "kind": "norm",
+   "reading_set": "rs8_bullet3",
+   "open_terms": [
+    "ot7_high_risk_internal"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet3-sec",
+   "span": [
+    18845,
+    19280
+   ],
+   "kind": "norm",
+   "open_terms": [
+    "ot4_security_adequate",
+    "ot5_open_release_beneficial",
+    "ot14_security_level"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "fn5",
+   "span": [
+    19280,
+    19635
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p7-footer",
+   "span": [
+    19635,
+    19665
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p8-header",
+   "span": [
+    19665,
+    19691
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s135-bullet4",
+   "span": [
+    19691,
+    19913
+   ],
+   "kind": "norm",
+   "reading_set": "rs1_bullet4",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet4-dm",
+   "span": [
+    19913,
+    20349
+   ],
+   "kind": "norm",
+   "open_terms": [
+    "ot2_residual_risk_acceptable",
+    "ot6_unlikely_propensities"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet4-only",
+   "span": [
+    20349,
+    20455
+   ],
+   "kind": "norm",
+   "reading_set": "rs8_bullet4",
+   "open_terms": [
+    "ot7_high_risk_internal"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-bullet4-sec",
+   "span": [
+    20455,
+    20763
+   ],
+   "kind": "norm",
+   "open_terms": [
+    "ot4_security_adequate",
+    "ot5_open_release_beneficial"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s135-note",
+   "span": [
+    20763,
+    21159
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s135-holistic",
+   "span": [
+    21159,
+    21348
+   ],
+   "kind": "norm",
+   "reading_set": "rs4_holistic",
+   "status": "OPEN"
+  },
+  {
+   "id": "p8-footer",
+   "span": [
+    21348,
+    21378
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s2-heading",
+   "span": [
+    21378,
+    21422
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s2-intro",
+   "span": [
+    21422,
+    21699
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s21-heading",
+   "span": [
+    21699,
+    21723
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s21-categories",
+   "span": [
+    21723,
+    22029
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s21-levels",
+   "span": [
+    22029,
+    22182
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s21-process",
+   "span": [
+    22182,
+    22498
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s21-centered",
+   "span": [
+    22498,
+    22684
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s211-heading",
+   "span": [
+    22684,
+    22711
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s211-important",
+   "span": [
+    22711,
+    22947
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s211-because",
+   "span": [
+    22947,
+    23179
+   ],
+   "kind": "causal",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s211-saif",
+   "span": [
+    23179,
+    23704
+   ],
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s211-levels",
+   "span": [
+    23704,
+    23849
+   ],
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s211-sl2plus",
+   "span": [
+    23849,
+    24080
+   ],
+   "kind": "asserted",
+   "premises": [
+    "measures-sl2plus"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s211-may-include",
+   "span": [
+    24080,
+    24566
+   ],
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s211-expect",
+   "span": [
+    24566,
+    24718
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn6",
+   "span": [
+    24718,
+    25384
+   ],
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "p9-footer",
+   "span": [
+    25384,
+    25414
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s212-heading",
+   "span": [
+    25414,
+    25469
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s212-applied",
+   "span": [
+    25469,
+    25666
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s212-step1",
+   "span": [
+    25666,
+    26064
+   ],
+   "kind": "unformalised",
+   "reason": "iterative_process",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s212-step1b",
+   "span": [
+    26064,
+    27534
+   ],
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s212-step1c",
+   "span": [
+    27534,
+    27642
+   ],
+   "kind": "norm",
+   "restates": "f7-sc",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s212-step2",
+   "span": [
+    27642,
+    27888
+   ],
+   "kind": "norm",
+   "reading_set": "rs2_misuse",
+   "open_terms": [
+    "ot3_governance_determination"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s212-deem",
+   "span": [
+    27888,
+    28130
+   ],
+   "kind": "unformalised",
+   "reason": "degree_term",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s212-step3",
+   "span": [
+    28130,
+    28358
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s212-submitted",
+   "span": [
+    28358,
+    28544
+   ],
+   "kind": "norm",
+   "rule": "f14",
+   "status": "CHECKED"
+  },
+  {
+   "id": "s212-designed",
+   "span": [
+    28544,
+    28857
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s212-believe",
+   "span": [
+    28857,
+    29112
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn7",
+   "span": [
+    29112,
+    29166
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p10-footer",
+   "span": [
+    29166,
+    29197
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p11-header",
+   "span": [
+    29197,
+    29223
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s22-insider-assessment",
+   "span": [
+    29223,
+    29530
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s22-insider-not-required",
+   "span": [
+    29530,
+    29622
+   ],
+   "kind": "norm",
+   "reading_set": "rs6_insider",
+   "status": "OPEN"
+  },
+  {
+   "id": "s22-heading",
+   "span": [
+    29622,
+    29651
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s22-set-out",
+   "span": [
+    29651,
+    29816
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s22-expect",
+   "span": [
+    29816,
+    29853
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s22-recommend",
+   "span": [
+    29853,
+    30039
+   ],
+   "kind": "norm",
+   "reading_set": "rs3_misuse",
+   "open_terms": [
+    "ot14_security_level",
+    "ot16_adjustment"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s22-posture",
+   "span": [
+    30039,
+    30139
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s22-adjusted",
+   "span": [
+    30139,
+    30621
+   ],
+   "kind": "unformalised",
+   "reason": "may_be_adjusted",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s22-believe",
+   "span": [
+    30621,
+    30772
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s221-heading",
+   "span": [
+    30772,
+    30824
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s221-focus",
+   "span": [
+    30824,
+    30945
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s221-table-heading",
+   "span": [
+    30945,
+    31061
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s221-ccl",
+   "span": [
+    31061,
+    31227
+   ],
+   "kind": "asserted",
+   "premises": [
+    "levels-cbrn"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s221-rationale",
+   "span": [
+    31227,
+    31617
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s221-tcl",
+   "span": [
+    31617,
+    31869
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D2",
+    "carries": "the CBRN TCL: significant but not severe"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "fn8",
+   "span": [
+    31869,
+    31974
+   ],
+   "kind": "unformalised",
+   "reason": "degree_term",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "p11-footer",
+   "span": [
+    31974,
+    32005
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s222-heading",
+   "span": [
+    32005,
+    32043
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s222-focus",
+   "span": [
+    32043,
+    32166
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s222-table-heading",
+   "span": [
+    32166,
+    32283
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s222-ccl",
+   "span": [
+    32283,
+    32427
+   ],
+   "kind": "asserted",
+   "premises": [
+    "levels-cyber"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s222-rationale",
+   "span": [
+    32427,
+    32729
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s223-heading",
+   "span": [
+    32729,
+    32756
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s223-focus",
+   "span": [
+    32756,
+    32920
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s223-note",
+   "span": [
+    32920,
+    33154
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s223-table-heading",
+   "span": [
+    33154,
+    33286
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s223-ccl",
+   "span": [
+    33286,
+    33621
+   ],
+   "kind": "asserted",
+   "premises": [
+    "levels-manipulation"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s223-rationale",
+   "span": [
+    33621,
+    33835
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p12-footer",
+   "span": [
+    33835,
+    33866
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s3-heading",
+   "span": [
+    33866,
+    33941
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s3-intro",
+   "span": [
+    33941,
+    34215
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s31-heading",
+   "span": [
+    34215,
+    34239
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s31-similar",
+   "span": [
+    34239,
+    34501
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s311-heading",
+   "span": [
+    34501,
+    34528
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s311-important",
+   "span": [
+    34528,
+    34652
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s311-likelihood",
+   "span": [
+    34652,
+    34841
+   ],
+   "kind": "causal",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s311-rely",
+   "span": [
+    34841,
+    34939
+   ],
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "fn9-a",
+   "span": [
+    34939,
+    35026
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-heading",
+   "span": [
+    35026,
+    35055
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-applied",
+   "span": [
+    35055,
+    35173
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-similar",
+   "span": [
+    35173,
+    35286
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-step1",
+   "span": [
+    35286,
+    35689
+   ],
+   "kind": "unformalised",
+   "reason": "iterative_process",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s312-step1b",
+   "span": [
+    35689,
+    36836
+   ],
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-step1c",
+   "span": [
+    36836,
+    36944
+   ],
+   "kind": "norm",
+   "restates": "f7-sc",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "fn10",
+   "span": [
+    36944,
+    36999
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn9-b",
+   "span": [
+    36999,
+    37154
+   ],
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "p13-footer",
+   "span": [
+    37154,
+    37185
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p14-header",
+   "span": [
+    37185,
+    37211
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-step2",
+   "span": [
+    37211,
+    37492
+   ],
+   "kind": "norm",
+   "reading_set": "rs2_ml_rd",
+   "open_terms": [
+    "ot3_governance_determination",
+    "ot7_high_risk_internal"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s312-deem",
+   "span": [
+    37492,
+    37725
+   ],
+   "kind": "unformalised",
+   "reason": "degree_term",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s312-step3",
+   "span": [
+    37725,
+    37953
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-submitted",
+   "span": [
+    37953,
+    38139
+   ],
+   "kind": "norm",
+   "restates": "f14",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-designed",
+   "span": [
+    38139,
+    38452
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s312-believe",
+   "span": [
+    38452,
+    38707
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s32-heading",
+   "span": [
+    38707,
+    38753
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s32-tiered",
+   "span": [
+    38753,
+    39397
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s321-heading",
+   "span": [
+    39397,
+    39462
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s321-tcl",
+   "span": [
+    39462,
+    39901
+   ],
+   "kind": "asserted",
+   "premises": [
+    "levels-stealth"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s321-periodic",
+   "span": [
+    39901,
+    40021
+   ],
+   "kind": "norm",
+   "rule": "f17-pra",
+   "open_terms": [
+    "ot1_level_reached",
+    "ot12_periodic"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s321-may",
+   "span": [
+    40021,
+    40151
+   ],
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s321-internal",
+   "span": [
+    40151,
+    40326
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s321-safeguards",
+   "span": [
+    40326,
+    40534
+   ],
+   "kind": "norm",
+   "rule": "f17-add",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s322-heading",
+   "span": [
+    40534,
+    40574
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s322-define",
+   "span": [
+    40574,
+    40694
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D2",
+    "carries": "ML R&D CCLs: severe"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "s322-expect",
+   "span": [
+    40694,
+    40731
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s322-recommend",
+   "span": [
+    40731,
+    40779
+   ],
+   "kind": "norm",
+   "reading_set": "rs3_ml_rd",
+   "open_terms": [
+    "ot14_security_level",
+    "ot16_adjustment"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "p14-footer",
+   "span": [
+    40779,
+    40810
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p15-header",
+   "span": [
+    40810,
+    40836
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s322-recommend-continued",
+   "span": [
+    40836,
+    40986
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s322-table-heading",
+   "span": [
+    40986,
+    41105
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s322-acceleration",
+   "span": [
+    41105,
+    41273
+   ],
+   "kind": "asserted",
+   "premises": [
+    "levels-ml-rd-acceleration"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s322-acceleration-rationale",
+   "span": [
+    41273,
+    41946
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s322-automation",
+   "span": [
+    41946,
+    42127
+   ],
+   "kind": "asserted",
+   "premises": [
+    "levels-ml-rd-automation"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "s322-automation-recommend",
+   "span": [
+    42127,
+    42269
+   ],
+   "kind": "unformalised",
+   "reason": "addressed_to_the_field",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s322-automation-rationale",
+   "span": [
+    42269,
+    42517
+   ],
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s322-catastrophic",
+   "span": [
+    42517,
+    42676
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D2",
+    "carries": "catastrophic: unranked"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "s322-exceptional",
+   "span": [
+    42676,
+    42817
+   ],
+   "kind": "unformalised",
+   "reason": "addressed_to_the_field",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "fn13",
+   "span": [
+    42817,
+    43049
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn12",
+   "span": [
+    43049,
+    43228
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn11",
+   "span": [
+    43228,
+    43297
+   ],
+   "kind": "unformalised",
+   "reason": "may_be_adjusted",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "p15-footer",
+   "span": [
+    43297,
+    43328
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s4-heading",
+   "span": [
+    43328,
+    43420
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s41-structure",
+   "span": [
+    43420,
+    43610
+   ],
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s41-responsibilities",
+   "span": [
+    43610,
+    43735
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s41-reviews",
+   "span": [
+    43735,
+    43847
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p16-footer",
+   "span": [
+    43847,
+    43878
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s5-heading",
+   "span": [
+    43878,
+    43951
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s51-yearly",
+   "span": [
+    43951,
+    44018
+   ],
+   "kind": "norm",
+   "rule": "f18-yearly",
+   "status": "CHECKED"
+  },
+  {
+   "id": "s51-frequent",
+   "span": [
+    44018,
+    44163
+   ],
+   "kind": "norm",
+   "rule": "f18-frequent",
+   "open_terms": [
+    "ot13_reasonable_grounds"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s51-process",
+   "span": [
+    44163,
+    44543
+   ],
+   "kind": "unformalised",
+   "reason": "process_description",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s51-may-update",
+   "span": [
+    44543,
+    44795
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s51-governance-bodies",
+   "span": [
+    44795,
+    44905
+   ],
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s52-heading",
+   "span": [
+    44905,
+    44921
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s52-aim",
+   "span": [
+    44921,
+    45160
+   ],
+   "kind": "norm",
+   "reading_set": "rs4_aim",
+   "open_terms": [
+    "ot1_level_reached",
+    "ot11_public_safety_disclosure"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "s52-may-include",
+   "span": [
+    45160,
+    45672
+   ],
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s52-may-also",
+   "span": [
+    45672,
+    45808
+   ],
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s52-continue",
+   "span": [
+    45808,
+    45880
+   ],
+   "kind": "unformalised",
+   "reason": "no_deadline_or_trigger",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s53-heading",
+   "span": [
+    45880,
+    45919
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s53-v31",
+   "span": [
+    45919,
+    45952
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D3",
+    "carries": "version_3_1_date"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "s53-changes",
+   "span": [
+    45952,
+    46525
+   ],
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "s53-v30",
+   "span": [
+    46525,
+    46562
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D3",
+    "carries": "version_3_0_date"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "s53-v20",
+   "span": [
+    46562,
+    46597
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D3",
+    "carries": "version_2_0_date"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "s53-v10",
+   "span": [
+    46597,
+    46628
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D3",
+    "carries": "version_1_0_date"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "p17-footer",
+   "span": [
+    46628,
+    46659
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-heading",
+   "span": [
+    46659,
+    46700
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-frontier",
+   "span": [
+    46700,
+    47007
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-checkpoints",
+   "span": [
+    47007,
+    47329
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-model",
+   "span": [
+    47329,
+    47438
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-domains",
+   "span": [
+    47438,
+    48178
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-ccl",
+   "span": [
+    48178,
+    48455
+   ],
+   "kind": "meta",
+   "routed": {
+    "document": "D2",
+    "carries": "CCLs: severe"
+   },
+   "status": "CHECKED"
+  },
+  {
+   "id": "g-tcl",
+   "span": [
+    48455,
+    48743
+   ],
+   "kind": "asserted",
+   "premises": [
+    "tcl-not-ccl"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "g-alert",
+   "span": [
+    48743,
+    49088
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-inherent",
+   "span": [
+    49088,
+    49338
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-cca",
+   "span": [
+    49338,
+    49489
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-early-warning",
+   "span": [
+    49489,
+    49675
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p18-footer",
+   "span": [
+    49675,
+    49706
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p19-header",
+   "span": [
+    49706,
+    49732
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-early-warning-continued",
+   "span": [
+    49732,
+    49883
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-mcca",
+   "span": [
+    49883,
+    50407
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-increases",
+   "span": [
+    50407,
+    50714
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-response-plans",
+   "span": [
+    50714,
+    51201
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-deployment-mitigations",
+   "span": [
+    51201,
+    51550
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-external",
+   "span": [
+    51550,
+    51743
+   ],
+   "kind": "asserted",
+   "premises": [
+    "activities-low-risk"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "g-low-risk",
+   "span": [
+    51743,
+    51880
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-internal",
+   "span": [
+    51880,
+    51980
+   ],
+   "kind": "asserted",
+   "premises": [
+    "activities-internal-external"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "g-high-risk",
+   "span": [
+    51980,
+    52210
+   ],
+   "kind": "asserted",
+   "premises": [
+    "activities-high-risk"
+   ],
+   "status": "CHECKED"
+  },
+  {
+   "id": "g-security-mitigations",
+   "span": [
+    52210,
+    52526
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-communicate",
+   "span": [
+    52526,
+    52672
+   ],
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "g-rand",
+   "span": [
+    52672,
+    52915
+   ],
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "fn14",
+   "span": [
+    52915,
+    52985
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p19-footer",
+   "span": [
+    52985,
+    53016
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p20-header",
+   "span": [
+    53016,
+    53067
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-rra",
+   "span": [
+    53067,
+    53214
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-rra-part",
+   "span": [
+    53214,
+    53333
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-within",
+   "span": [
+    53333,
+    53440
+   ],
+   "kind": "norm",
+   "reading_set": "rs4_within",
+   "status": "OPEN"
+  },
+  {
+   "id": "g-safety-cases",
+   "span": [
+    53440,
+    53579
+   ],
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-safety-case-when",
+   "span": [
+    53579,
+    53727
+   ],
+   "kind": "norm",
+   "restates": "f7-sc",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
+  },
+  {
+   "id": "g-safety-case-misuse",
+   "span": [
+    53727,
+    54025
+   ],
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "id": "g-safety-case-ml-rd",
+   "span": [
+    54025,
+    54279
+   ],
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "id": "fn15",
+   "span": [
+    54279,
+    54342
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "id": "p20-footer",
+   "span": [
+    54342,
+    54373
+   ],
+   "kind": "meta",
+   "status": "LABELLED"
+  }
+ ]
+}
