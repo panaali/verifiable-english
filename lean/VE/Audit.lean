@@ -138,7 +138,6 @@ import VE.NormDefaults.Layered
 import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.LayeredEntail
 import VE.NormDefaults.Packs
-import VE.NormDefaults.PacksLabels
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLegacyExamples
 import VE.NormDefaults.Premises
@@ -1880,20 +1879,6 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Packs.packPremises_absent
 #print axioms VE.NormDefaults.Packs.packPremises_legacy
 #print axioms VE.NormDefaults.Packs.packPremises_sub
-#print axioms VE.NormDefaults.Packs.pk_coh
-#print axioms VE.NormDefaults.Packs.pk_exc_inj
-#print axioms VE.NormDefaults.Packs.pk_exc_ne_coh
-#print axioms VE.NormDefaults.Packs.pk_exc_nec
-#print axioms VE.NormDefaults.Packs.pk_exc_parts
-#print axioms VE.NormDefaults.Packs.pk_exc_suff
-#print axioms VE.NormDefaults.Packs.pk_kind_sep
-#print axioms VE.NormDefaults.Packs.pk_mem_exc
-#print axioms VE.NormDefaults.Packs.pk_ruleName
-#print axioms VE.NormDefaults.Packs.pk_ruleName_sep
-#print axioms VE.NormDefaults.Packs.pk_split
-#print axioms VE.NormDefaults.Packs.pk_toString
-#print axioms VE.NormDefaults.Packs.pk_zip_fst
-#print axioms VE.NormDefaults.Packs.softLabelledU_labels_nodup
 #print axioms VE.NormDefaults.Packs.xWithout_nil
 #print axioms VE.NormDefaults.Packs.xWithout_sub
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admission

@@ -156,7 +156,6 @@ import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Examples
 import VE.NormDefaults.Packs
-import VE.NormDefaults.PacksLabels
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLegacyExamples

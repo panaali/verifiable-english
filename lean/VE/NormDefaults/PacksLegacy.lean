@@ -1,4 +1,4 @@
-import VE.NormDefaults.PacksLabels
+import VE.NormDefaults.Layered
 import VE.Readings.SupWitness
 
 /-! The premise-pack theorems over `Layered.lean`'s legacy packs (docs/spec/premise-packs.md 2.5 (3), 2.6, 2.8 and
