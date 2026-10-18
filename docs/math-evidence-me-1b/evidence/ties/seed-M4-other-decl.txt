@@ -1,0 +1,6 @@
+$ python3 tools/trust_map.py --check   # seed M4-other-decl: values tied only to VE.Calc.Denotes.unique (same profile, about Denotes only)
+class lines: K 997, S 10324, D 14924, G 30726, C 9976, P 77496, T 16100, o 13474
+D/G groups: D[V] 13190, D[R] 1180, D[I] 554, G[V] 27951, G[R] 2502, G[I] 273
+tied 320, unclassified 0, trusted 52161 (K + S + untied [V] + unclassified), 174017 lines in 538 files
+VE/Calc/Decls.lean: VE.Calc.values: the statement of VE.Calc.Denotes.unique does not mention VE.Calc.values of VE.Calc.Decls
+exit 1
