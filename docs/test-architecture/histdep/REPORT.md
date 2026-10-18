@@ -21,6 +21,7 @@ result to its commit, runner and toolchains. The work started from `b5248038` an
 | No timing-threshold correctness test | — | None added. The tests use `HANG_TIMEOUT` for their subprocesses. | — |
 | Seeded bugs: a new `git log` test that is not listed; one entry deleted; one per behaviour | `66983f6cc`, `c6de68038` | `docs/test-architecture/histdep/mutants.json`, H1–H17, run by `tools/mutants.py`: 17/17 killed (`mutants-evidence.json`) | below |
 | Review F1 (B): a test the saved extract does not cover was judged by the git calls of its own file only | fix round 1 | `--write` and the lint now judge each unit by the source it can run (`_Sources.reach`), not its own file: see "Fix round 1" below. | `test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone` and five F1 tests; seeded bugs H18–H31 |
+| Re-check F4 (B): a git command list imported from another module never counted (`from tools.gate_collection import GIT`, then `[*GIT, "log"]`) | fix round 2 | A module- or class-level name bound to the git program is a site of the name, reached by code that names it under any import form; one test decides whether an expression used as a program, or bound to a name, holds git. See "Fix round 2" below. | `test_a_new_test_that_uses_a_git_command_bound_in_another_module_fails`, `test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use`, `test_a_new_test_in_the_tree_that_runs_the_gate_collections_git_vector_fails`; seeded bugs H32–H38 |
 
 ## The list
 
@@ -132,7 +133,8 @@ live.
 
 All are Python (no Lean or Rust file changed). They are in `mutants.json` with `file` and `tests` keys. `tools/mutants.py` checks
 that the named tests pass unmutated, applies each bug, requires a named test to fail and restores the file's
-bytes. The result is **31/31 killed** (`mutants-evidence.json`, rerun after fix round 1; H18–H31 are that round's).
+bytes. The result is **38/38 killed** (`mutants-evidence.json`, rerun after fix round 2; H18–H31 are fix round 1's,
+H32–H38 fix round 2's).
 
 | Bug | File | Fault | Test that failed |
 |---|---|---|---|
@@ -167,6 +169,13 @@ bytes. The result is **31/31 killed** (`mutants-evidence.json`, rerun after fix 
 | H29 | `tools/history_tests.py` | the closure drops the sites of the code a piece of code runs | the import and script tests |
 | H30 | `tools/history_tests.py` | a shell script a unit runs not scanned | the script test |
 | H31 | `tools/git_words.py` | only a command's first word checked for git | `test_a_program_the_scan_cannot_read_as_a_literal_git_still_counts`, `test_run_cache.py::test_the_read_recorder_sees_git_started_or_a_git_path_opened` |
+| H32 | `tools/history_tests.py` | a module-level name bound to git not resolved where another module imports it | `test_a_new_test_that_uses_a_git_command_bound_in_another_module_fails` |
+| H33 | `tools/history_tests.py` | the site of a name bound to git not reached by code that names it | the same test |
+| H34 | `tools/history_tests.py` | a starred program (`[*GIT, "log"]`) not followed to the name it unpacks | `test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use` |
+| H35 | `tools/history_tests.py` | a summed program (`GIT + ["log"]`) not followed to its first operand | the same test |
+| H36 | `tools/history_tests.py` | what a process call returns counted as the git program | the same test |
+| H37 | `tools/history_tests.py` | a class attribute hides a module-level vector of the same name from `bound` | the same test |
+| H38 | `tools/history_tests.py` | names a class binds to git not found | the same test |
 
 The first run of the harness counted six of these bugs as surviving, although each made its test fail. The harness
 reads failed IDs as `\S+`, so it cannot match a parametrized ID with a space in it. The new tests' IDs now have no
@@ -239,6 +248,48 @@ still cite R3 and R13, and no DRI signature is needed.
   units, all passed** (515 s). `lake build` (959 jobs) and `lean/audit.py` pass. `tools/test_layer_policy.py` and
   `regen_generated.py --check --only history-tests` pass. The full gate was not run by the builder.
 
+## Fix round 2 (tarch-histdep-looprecheck1.final.md)
+
+The re-check confirmed F1 fixed and found one B finding (F4) and three C follow-ups (F5, F6, F7). No DELTA row
+changes: rows 1 and 2 still cite R3 and R13, and no DRI signature is needed.
+
+- **F4 (B), fixed as a class.** A git command bound to a name in one module and used in another never counted.
+  Named lists were tracked per file, and a starred first element was skipped. So a new test with
+  `from tools.gate_collection import GIT` and `subprocess.run([*GIT, "log"])` passed the lint. The class is "a
+  program held by a name that the using file does not bind". Two structural changes remove it:
+  - A module- or class-level name bound to the git program is a site of the name (`_Scanner.programs`: `GIT = ("git",
+    ...)`, `PROGRAM = os.environ.get("GIT", "git")`, `Repo.GIT`). The reach's name resolution reaches it from any
+    code that names it, in any module, under any import form: an alias, a module or class attribute, a re-export, a
+    star import. So the name the user gives it does not matter (`from m import GIT as tool`).
+  - One test, `_Scanner._names_git_program`, decides both whether an expression used as a program holds git and
+    whether a bound value does. It covers starred and summed programs (`[*GIT, "log"]`, `GIT + ["log"]`), a split, an
+    environment lookup and a choice (`"git log".split()`, `os.environ.get("GIT") or "git"`). What a process call
+    returns is git's output, not the program, so `out = check_output(["git", ...])` used later is not a second site.
+  - While writing the tests, a pre-existing fault of the same kind showed up: `bound` was keyed by bare name, so a
+    class attribute `Repo.GIT` hid the module-level `GIT` vector, which then counted as a site of the module's top
+    level. `bound` now holds every bound vector (H37).
+
+  The review's PROBE F4 failed before the fix (`AssertionError: not listed`) and passes after it. It is now
+  `test_a_new_test_in_the_tree_that_runs_the_gate_collections_git_vector_fails`.
+  - Regression tests: `test_a_new_test_that_uses_a_git_command_bound_in_another_module_fails` (starred, alias, module
+    attribute, class attribute, re-export, star import, sum, a bound string program; another module's non-git names
+    are not listed), `test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use`, and
+    `test_a_new_test_in_the_tree_that_runs_the_gate_collections_git_vector_fails`. Seeded bugs H32–H38 are each killed.
+  - The list stays at 125 units (93 through both the map and the source, 32 through the source only). Twelve entries
+    change their `via`: ten now also name `tools/gate_collection.py:GIT`, one names `tests/test_lean_share.py:GIT`,
+    and one names `tests/test_answer_store.py:_repository.<locals>.run`. One false site goes away:
+    `test_source_identity_reports_clean_tree_and_leaves_index_alone` loses a plain `git` site. That site was
+    `(head, False)`, where `head` is `git rev-parse`'s output; the test is still listed through its `git rev-parse`.
+  - Cost: the lint takes about 11 s on the tree.
+- **F5, F6, F7 (C), not in this round.** F6's `"git log".split()` and `[os.environ.get("GIT", "git"), ...]` are now
+  found through the shared test above. Its other forms are still follow-ups: `runpy.run_module`, `getattr(m, "git")`,
+  `@pytest.fixture(name=...)`, and an f-string or `[sys.executable] + [...]` command that runs a repository tool. So
+  are F5 (class bodies run at import) and F7 (`os.walk` does not follow symlinks).
+- **Runs.** The selected tests (`c00645eb`, base `2d4b9320`): **112 of 432 units, all passed** (851 s; the Mac
+  runner was busy, so `mac-pytest.sh --select` ran it on the VM). `tests/test_history_tests.py` (25) passes locally.
+  `lake build` (959 jobs) and `lean/audit.py` pass. `regen_generated.py --check` passes (30 entries). The full gate
+  was not run by the builder.
+
 ## Follow-ups (not in this batch)
 
 1. **The candidate regen list.** Add `history-tests` to manage-agents `cand-regen-entries.txt` once a candidate has
@@ -256,8 +307,8 @@ still cite R3 and R13, and no DRI signature is needed.
 2. PASS. The delivery table above maps each plan row and directive to a commit and test. The list is generated
    (`test_the_tree_passes`, the regen entry). No report test of this batch's HEAD is added (D4); the batch's numbers
    are in this report and `mutants-evidence.json`.
-3. PASS. 31 seeded bugs, 31 killed (`tools/mutants.py docs/test-architecture/histdep/mutants.json`; H18–H31 from fix
-   round 1). A missing entry
+3. PASS. 38 seeded bugs, 38 killed (`tools/mutants.py docs/test-architecture/histdep/mutants.json`; H18–H31 from fix
+   round 1, H32–H38 from fix round 2). A missing entry
    (H2), an extra stale entry (H3, H4) and an edited entry (`test_an_edited_entry_or_map_header_fails`) are each caught.
 4. N.A. No Python, Lean or Rust checker behaviour changes.
 5. N.A. No relayed field.
