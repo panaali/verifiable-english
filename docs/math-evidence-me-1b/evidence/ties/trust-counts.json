@@ -1,0 +1,79 @@
+{
+ "base": "802b8ff9b1ca (main before me-1b)",
+ "before": "c2b1a7d44 (main with me-1b merged)",
+ "after": "infra/ties-me-1b (tools/trust-classes.json: VE.Calc.values tied)",
+ "totals": {
+  "before": {
+   "K": 997,
+   "S": 10327,
+   "G[V]": 27948,
+   "tied": 320,
+   "trusted": 52161,
+   "lines": 174017
+  },
+  "after": {
+   "K": 997,
+   "S": 10324,
+   "G[V]": 27951,
+   "tied": 323,
+   "trusted": 52158,
+   "lines": 174017
+  }
+ },
+ "files": {
+  "VE/Calc/Decls.lean": {
+   "before": {
+    "K": 0,
+    "S": 70,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 70,
+    "lines": 860
+   },
+   "after": {
+    "K": 0,
+    "S": 67,
+    "G[V]": 3,
+    "tied": 3,
+    "trusted": 67,
+    "lines": 860
+   }
+  },
+  "VE/Calc/Eval.lean": {
+   "before": {
+    "K": 0,
+    "S": 0,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 0,
+    "lines": 147
+   },
+   "after": {
+    "K": 0,
+    "S": 0,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 0,
+    "lines": 147
+   }
+  },
+  "VE/Calc/Syntax.lean": {
+   "before": {
+    "K": 0,
+    "S": 37,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 37,
+    "lines": 63
+   },
+   "after": {
+    "K": 0,
+    "S": 37,
+    "G[V]": 0,
+    "tied": 0,
+    "trusted": 37,
+    "lines": 63
+   }
+  }
+ }
+}

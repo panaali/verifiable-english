@@ -705,6 +705,20 @@
    "reason": "jt-1: VE/Judgments/Decl.lean +52 (S +36, D[V] +16), VE/Judgments/Scan.lean +4 (S), VE/Rights/Run.lean -2 (nodeOpen shortened to the shared scan); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1, 2026-10-18",
    "commit": "de9cfa84f0145d69c8474faeb76d59ddf35b3cbf"
+  },
+  {
+   "class": "S",
+   "lines": 107,
+   "reason": "me-1b Calc meaning and checker: VE/Calc/Decls.lean S +70, VE/Calc/Syntax.lean S +37, VE/Calc/Eval.lean +0 (K +0, V +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1b, 2026-10-17",
+   "commit": "05b85b631f8071fafac690f57c5f23f810168657"
+  },
+  {
+   "class": "S",
+   "lines": 139,
+   "reason": "et-3: events Lean core, S +139 (VE/Events/Decl.lean +64, VE/Events/Premises.lean +63, VE/Events/Completion.lean +12); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
   }
  ]
 }
