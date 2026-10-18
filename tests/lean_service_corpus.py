@@ -494,9 +494,14 @@ def family_norms_cases():
 def document_cases():
     """The `document` mode's answers: the wrapper's generated seed documents (accepted, MIXED parts, reading
     sets, an admitted graph, a rejection and a refusal), the repository's accepted bluedot document, and
-    malformed requests."""
+    malformed requests; and a senses document (batch 16f), a preamble line and a fence read to a formula, with the
+    texts of the pack files beside it as `ve document` sends them (lf-16f looprecheck1 F7)."""
     from conformance import document_wrapper as dw
+    from ve import document as D
     chosen = {"plain", "mixed", "reading-sets", "graph-bridge", "open-terms", "fence",
               "usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/causal.ve.md"}
     cases = [{"id": name, "document": dw.text_of(doc)} for name, doc in dw.seeds() if name in chosen]
+    senses = Path(__file__).parent / "data" / "b16f-senses"
+    cases.append({**D._document_case((senses / "c_written_definition_line.senses.md").read_bytes(), True, senses),
+                  "id": "senses"})
     return cases + [{"id": "empty", "document": ""}, {"id": "not-text", "document": 7}, *ADVERSARIAL]

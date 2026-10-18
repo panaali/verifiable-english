@@ -499,6 +499,70 @@ def test_fsmonitor_hook_cannot_hide_edited_source(tmp_path, monkeypatch):
     assert gate.source_identity(env)[1] is True
 
 
+def committed_source(tmp_path):
+    """A repository whose HEAD commits source.py, and the gate environment it is checked in."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    env = gate.gate_environment(tmp_path / "scratch")
+    identity = ["-c", "user.name=gate", "-c", "user.email=gate@example.invalid"]
+    subprocess.run(["git", "init", "-q"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("one\n")
+    subprocess.run(["git", "add", "source.py"], cwd=repo, env=env, check=True)
+    subprocess.run(["git", *identity, "commit", "-q", "-m", "source"], cwd=repo, env=env, check=True)
+    return repo, env
+
+
+@pytest.mark.parametrize("bit", ["--assume-unchanged", "--skip-worktree"])
+def test_index_bits_cannot_hide_edited_source(tmp_path, monkeypatch, bit):
+    repo, env = committed_source(tmp_path)
+    subprocess.run(["git", "update-index", bit, "source.py"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("a longer edit\n")
+    plain = subprocess.run(["git", "status", "--porcelain"], cwd=repo, env=env,
+                           capture_output=True, text=True, check=True)
+    assert plain.stdout == ""
+    monkeypatch.setattr(gate, "ROOT", repo)
+    assert gate.source_identity(env)[1] is True
+
+
+def test_source_identity_reports_clean_tree_and_leaves_index_alone(tmp_path, monkeypatch):
+    repo, env = committed_source(tmp_path)
+    index = repo / ".git/index"
+    before = index.read_bytes(), index.stat().st_mtime_ns
+    monkeypatch.setattr(gate, "ROOT", repo)
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, env=env, text=True).strip()
+    assert gate.source_identity(env) == (head, False)
+    (repo / "new.py").write_text("")
+    assert gate.source_identity(env) == (head, True)
+    assert (index.read_bytes(), index.stat().st_mtime_ns) == before
+    assert not (tmp_path / "scratch/source-index").exists()
+
+
+def test_staged_change_stays_dirty_when_the_file_matches_the_commit(tmp_path, monkeypatch):
+    repo, env = committed_source(tmp_path)
+    (repo / "source.py").write_text("two\n")
+    subprocess.run(["git", "add", "source.py"], cwd=repo, env=env, check=True)
+    (repo / "source.py").write_text("one\n")
+    monkeypatch.setattr(gate, "ROOT", repo)
+    assert gate.source_identity(env)[1] is True
+
+
+def test_clean_status_is_checked_again_on_a_fresh_index_of_the_commit(tmp_path, monkeypatch):
+    env = gate.gate_environment(tmp_path / "scratch")
+    seen = []
+
+    def fake_command(args, *, env, stage, cwd=None):
+        seen.append((stage, args, env.get("GIT_INDEX_FILE")))
+        return {"commit": "recorded", "worktree content": " M source.py"}.get(stage, "")
+
+    monkeypatch.setattr(gate, "command", fake_command)
+    assert gate.source_identity(env) == ("recorded", True)
+    index = str(tmp_path / "scratch/source-index")
+    assert [(stage, name) for stage, _, name in seen] == [
+        ("commit", None), ("worktree status", None), ("worktree index", index), ("worktree content", index)]
+    assert seen[2][1][-2:] == ["read-tree", "recorded"]
+    assert seen[3][1] == seen[1][1] and "--untracked-files=all" in seen[3][1]
+
+
 def test_gate_rejects_untracked_source_before_build(tmp_path, monkeypatch):
     output = tmp_path / "record.json"
     monkeypatch.setattr(sys, "argv", ["gate.py", "--output", str(output)])

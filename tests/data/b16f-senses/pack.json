@@ -1,0 +1,55 @@
+{
+ "format": "ve.sense-pack@1",
+ "name": "constitution-probe@1",
+ "sorts": [
+  {
+   "name": "being",
+   "noun": "being",
+   "plural": "beings",
+   "description": "A being.",
+   "letter": "B"
+  }
+ ],
+ "senses": [
+  {
+   "word": "corrigible",
+   "index": 1,
+   "gloss": "oversight respecting",
+   "description": "does not actively undermine legitimate human oversight",
+   "kinds": [
+    "being"
+   ],
+   "wording": "{0} is corrigible"
+  },
+  {
+   "word": "corrigible",
+   "index": 2,
+   "gloss": "blindly obedient",
+   "description": "obeys any human without question",
+   "kinds": [
+    "being"
+   ],
+   "wording": "{0} is corrigible"
+  },
+  {
+   "word": "safe",
+   "index": 1,
+   "gloss": "broadly safe",
+   "description": "the constitution's technical sense: supports appropriate human oversight",
+   "kinds": [
+    "being"
+   ],
+   "wording": "{0} is safe"
+  },
+  {
+   "word": "safe",
+   "index": 2,
+   "gloss": "harmless",
+   "description": "not in danger of harm",
+   "kinds": [
+    "being"
+   ],
+   "wording": "{0} is safe"
+  }
+ ]
+}
