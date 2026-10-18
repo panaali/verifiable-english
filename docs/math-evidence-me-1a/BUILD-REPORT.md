@@ -68,6 +68,21 @@ as test failures, so three methods are used:
 | 8 | `ve/english.py` | "lt" read as `ast.Le` | `test_comparison_rows_match_generated_table` + 3 `test_english_lean_s3.py` cases |
 | 9 | `tools/numbers_phrases.py` | `--check` passes on any existing file | `test_generator_writes_lean_output_and_check_refuses_any_other_file` |
 | 10 | `tools/consolidation-ledger.json` | a top-level main the step does not name | `test_the_skeleton_step_names_every_top_level_executable_main` |
+| 11 | `lean/VE/Numbers/Phrases.lean` + `Examples.lean` | review F1: a row and its guard edited together; `lake build` passes | `test_the_committed_table_is_the_lean_generators_output` |
+| 12 | `tools/regen_generated.py` | review F1: `numbers-phrases` loses its `fresh` check | `test_every_table_the_product_reads_is_checked_by_the_suite_or_the_gate` |
+
+## Review fix (F1)
+
+The review (me-1a-review.final.md) found one B: no automatic check compared `ve/numbers_phrases.json` with its Lean
+generator; the only generator test mocked `subprocess.run`. Fixed as a class:
+- `tests/test_numbers_phrases.py::test_the_committed_table_is_the_lean_generators_output` runs
+  `tools/numbers_phrases.py --check` unmocked, with `HANG_TIMEOUT`. The review's probe (a stub `lake` printing `[]`)
+  exited 1 before the fix and exits 0 after it.
+- `tools/regen_generated.py`'s `Generated` has a `fresh` field: the test or gate stage that runs the entry's check
+  unmocked. `tests/test_regen_generated.py::test_every_table_the_product_reads_is_checked_by_the_suite_or_the_gate`
+  requires it for every entry owning a file under `ve/` (eight entries) and checks that the named test function or
+  gate stage exists. `--list` prints it.
+- Seeded bugs 7 (re-run), 11 and 12 in mutants.json; DELTA row 3 cites the new test. C2's note is in DELTA row 1.
 
 ## Verification
 
