@@ -214,9 +214,9 @@ behaviour to seed. The evidence script's three claims are each seeded in `measur
 
 | # | File | Seeded bug | Failing check |
 |---|---|---|---|
-| S1 | `docs/test-architecture/manifest-ops/measure.py` | `is_manifest` forgets "unmapped manifest reader" | `measure.py --check --only a4676c0b7,e7f6968d4`: rows differ (`without_manifest` 434, not 415/411) |
-| S2 | `docs/test-architecture/manifest-ops/measure.py` | `is_pin` forgets "reads lean/checkers.lock" (the recorded pin readers) | `measure.py --check --only 109c7de1d`: the `before` row differs (`pins_only` loses `tests/test_lean_first_oracle.py`) |
-| S3 | `docs/test-architecture/manifest-ops/measure.py` | `because` counts a plan as caused when `without_manifest <= total` | `measure.py --check`: "the tables between the markers are not what --table prints" |
+| S1 | `docs/test-architecture/manifest-ops/measure.py` | `is_manifest` forgets "unmapped manifest reader" | `measure.py --check --only a4676c0b7,e7f6968d4` exits 1: "4 rows differ" (both labels; under drift `without_manifest` is 434, not 415/411) |
+| S2 | `docs/test-architecture/manifest-ops/measure.py` | `is_pin` forgets "reads lean/checkers.lock" (the recorded pin readers) | `measure.py --check --only 109c7de1d` exits 1: "2 rows differ" (the fresh row's `pins_only` loses `tests/test_lean_first_oracle.py`) |
+| S3 | `docs/test-architecture/manifest-ops/measure.py` | `because` counts a plan as caused when `without_manifest <= total` | `measure.py --check --only none` exits 1: "the tables between the markers are not what --table prints from the saved rows" |
 
 ## Self-review against BUILDER-CHECKLIST
 
