@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 35426,
+    "total_lines": 35436,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -653,12 +653,12 @@
       },
       {
         "file": "lean/VE/Readings/SupWire.lean",
-        "lines": 397,
-        "sha256": "5d8393aeea86b02e48b61c398e2dfd9a5408a5df64112fb470fb043aee3d6366",
+        "lines": 407,
+        "sha256": "a6ab89747a3b4175d1f0777836e8e638d9510e53b9e57cf4f170467f31ac06db",
         "ranges": [
           [
             1,
-            397
+            407
           ]
         ],
         "declarations": [
@@ -673,13 +673,15 @@
           "decodeSupModel",
           "decodeAssumed",
           "decodeShared",
+          "decodeConflictCertsFor",
           "decodeConflictCerts",
           "replayCertificateOf",
           "replayCertificate",
+          "prepareModelReplay",
           "replayModelOf",
           "replayModel"
         ],
-        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively; the admission and the certificate and model replays also take an admitted document (`admitS2Rest`, `admitS2Of`, `replayCertificateOf`, `replayModelOf`) so a case is admitted once (readings-defaults RD-2a review B2)"
+        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively; the admission and the certificate and model replays also take an admitted document (`admitS2Rest`, `admitS2Of`, `replayCertificateOf`, `replayModelOf`) so a case is admitted once (readings-defaults RD-2a review B2); `prepareModelReplay` runs the same admission checks once and returns the model decoder for every scope of one superposed verdicts request, and `decodeConflictCertsFor` reads the certificates for already computed targets (RD-7)"
       },
       {
         "file": "lean/VE/Readings/UnspecifiedWire.lean",
@@ -1221,26 +1223,6 @@
         "reason": "readings-mode decoder: environment, fixed premises, reading sets, conclusion, verdict and evidence; the full file is pinned conservatively"
       },
       {
-        "file": "lean/VE/Service/ReadingsChoices.lean",
-        "lines": 257,
-        "sha256": "9881463bf7607b77d6a448d01d81e24452dc5adfa467673a91a7b1a13c86b4a5",
-        "ranges": [
-          [
-            1,
-            257
-          ]
-        ],
-        "declarations": [
-          "metadata",
-          "validateCouplings",
-          "expected",
-          "plan",
-          "check",
-          "run"
-        ],
-        "reason": "coupled and joint readings choice decoder: set metadata, compatibility, bounded plan, complete evidence and checked verdict; the full file is pinned conservatively"
-      },
-      {
         "file": "lean/VE/SoftNorms/Admission.lean",
         "lines": 332,
         "sha256": "5f867e8a26a78cf4b0a1aba6716354a32d9c609b0ed45d94311143e5a5e4d82b",
@@ -1409,6 +1391,26 @@
           "gateLines"
         ],
         "reason": "readings-defaults RD-4b: the document product decoder, per-component evidence replay on each regenerated case, conclusion typing, --under binding, product verdict, decided units and English plan; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Service/ReadingsChoices.lean",
+        "lines": 257,
+        "sha256": "9881463bf7607b77d6a448d01d81e24452dc5adfa467673a91a7b1a13c86b4a5",
+        "ranges": [
+          [
+            1,
+            257
+          ]
+        ],
+        "declarations": [
+          "metadata",
+          "validateCouplings",
+          "expected",
+          "plan",
+          "check",
+          "run"
+        ],
+        "reason": "coupled and joint readings choice decoder: set metadata, compatibility, bounded plan, complete evidence and checked verdict; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Norms/Family.lean",
@@ -1725,7 +1727,6 @@
     ],
     "other_json": {
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
-      "lean/VE/SearchBudget/Run.lean": "lean:runner-glue: the search-budget case (premise ASTs read leniently into facts, the requested sorts) and its budget row; the row only bounds an untrusted search whose models Lean checks (demand_sound, sortBounds_sound)",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
       "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
@@ -1743,6 +1744,8 @@
       "lean/VE/Rights/Run.lean": "lean:runner-glue: ve_rights_route case dispatch and response rows",
       "lean/VE/Readings/Run.lean": "lean:runner-glue: ve_readings_route case dispatch and response rows; readings-validate and readings-separate rows regenerated from the pinned Wire decoder; the S2a kinds dispatched to SupRun",
       "lean/VE/Readings/SupRun.lean": "lean:runner-glue: ve_readings_route S2a case kinds; case fields are read through the pinned SupWire and Wire decoders, and the response rows are built from Lean checks (supCertificateCheck, supModelCheck, slotConflictFreeCheck, deadCheck, unsatCheck); readings-choice runs the lower route on the regenerated choice document with its regenerated assertions, accepts a chain certificate only when the lower conflict kind finds the case's conflict packages CONFLICT-FREE on the same document, and choice-model reads its model through the chain decoders (decodeModel, decodeModelR, decodeModelData)",
+      "lean/VE/Readings/SupVerdictsWire.lean": "lean:runner-glue: readings-verdicts superposed request dispatch and response rows; evidence is checked by the existing pinned readings decoders and Lean folds its accepted results",
+      "lean/VE/Readings/SupVerdictsExamples.lean": "computed regression guards for the superposed verdict and English plan; no production runner imports this file",
       "lean/VE/Readings/Route.lean": "lean:runner-glue: the readings@1 route of 1.1 and the regenerated S2a elaboration rows (elaborateFields); builds JSON, reads none",
       "lean/VE/Norms/Run.lean": "lean:runner-glue: ve_norms_route case dispatch and error rows",
       "lean/VE/NormDefaults/Run.lean": "lean:runner-glue: ve_norm_defaults_route case dispatch and response rows",
@@ -1760,7 +1763,6 @@
       "lean/VE/Route/Checks.lean": "executable regressions (#eval checks); not on any runner path",
       "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",
       "lean/ResponseShape.lean": "the service's response shapes (lib ResponseShape, outside the trusted VE tree): renders the client's schema files and checks responses for ve_response_decode; no runner, executable production path or theorem imports it",
-      "lean/ResponseShape/Schemas/Common.lean": "the response shapes' shared value domains (common.json) and their predicates over a JSON value; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/Schemas.lean": "collects the response shapes and renders the client's schema files; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/ResponseShape/CaseDeciders.lean": "the runners' tests of the request case that the response shapes select on (CaseDecider.fn calls each runner's own test; the norms one reads the case environment for Norms.Plain.layered); test tooling, not on any runner path",
       "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
@@ -1781,7 +1783,6 @@
       "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/RiskEval.lean": "theorems that the risk-eval mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/SpeechActs.lean": "theorems that the speech-acts mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/Family.lean": "theorems that the graph, readings, bundle and family-norms modes' rows fit their shapes; its one Json-taking def is a proof (familyNormsFolFits), not on any runner path",
       "lean/ResponseShape/EnumSites.lean": "lists every enum and const of the response shapes and the fields that resolve to one, for tests/test_enum_domains.py (test tooling; JSON only to print the list and in proof helpers; not on any runner path)",
       "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
@@ -1795,8 +1796,6 @@
       "lean/VE/WireContract/Hooks/Corpus.lean": "diagnostic only: no verdict depends on it. Hand-written hooks and view of the engine corpus contracts (docs/spec/wire-contract.md 8.1)",
       "lean/VE/WireContract/Hooks/SoftNorms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the soft_source adapter of the pilot contract soft-norms@0 (docs/spec/wire-contract.md section 6); they call SoftNorms.Phases, Wire.primeVocabulary, validateSoft and checkW1 read-only and only read their results",
       "lean/VE/WireContract/Hooks/Norms.lean": "diagnostic only: no verdict depends on it. Hooks, classifiers and the norm_source adapter of the contract norms@0 (docs/spec/wire-contract-s5.md 2.3, 2.5); they call Norms.Wire.decodeNormsEnvironment, the route's environment decoder, Route.dependencyOrder and Norms.height read-only, never decodeSource, and hold the diagnostic syntax and typing walks of 2.5",
-      "lean/VE/WireContract/Hooks/NormDefaults.lean": "diagnostic only: no verdict depends on it. Hooks and the adapter of the contract norm-defaults@0 (docs/spec/wire-contract-s5.md 2.4, 2.5); they read the author document through Norms.Wire.decodeNormsEnvironment and Norms.Wire.decodeNorm read-only, never decodeSource",
-      "lean/VE/Route/AstLimit.lean": "rejection only: the static AST node, depth and numeral limits walked over a case's raw formula JSON before any pinned decoder runs (Python _Decoder's budget order); it returns a ResourceLimit fault or nothing, never a decoded value, and every formula it passes is still decoded by a pinned decoder",
       "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)",
       "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
       "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
@@ -1812,6 +1811,11 @@
       "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean.",
       "lean/VE/Readings/ComponentsExamples.lean": "readings-defaults RD-4b: #guard fixtures of 1.10's rule and of the document order of decided units, building a JSON document of unit ids; no decoder",
       "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path",
+      "lean/VE/SearchBudget/Run.lean": "lean:runner-glue: the search-budget case (premise ASTs read leniently into facts, the requested sorts) and its budget row; the row only bounds an untrusted search whose models Lean checks (demand_sound, sortBounds_sound)",
+      "lean/ResponseShape/Schemas/Common.lean": "the response shapes' shared value domains (common.json) and their predicates over a JSON value; test tooling beside lean/ResponseShape.lean, not on any runner path",
+      "lean/ResponseShape/Encoders/Family.lean": "theorems that the graph, readings, bundle and family-norms modes' rows fit their shapes; its one Json-taking def is a proof (familyNormsFolFits), not on any runner path",
+      "lean/VE/WireContract/Hooks/NormDefaults.lean": "diagnostic only: no verdict depends on it. Hooks and the adapter of the contract norm-defaults@0 (docs/spec/wire-contract-s5.md 2.4, 2.5); they read the author document through Norms.Wire.decodeNormsEnvironment and Norms.Wire.decodeNorm read-only, never decodeSource",
+      "lean/VE/Route/AstLimit.lean": "rejection only: the static AST node, depth and numeral limits walked over a case's raw formula JSON before any pinned decoder runs (Python _Decoder's budget order); it returns a ResourceLimit fault or nothing, never a decoded value, and every formula it passes is still decoded by a pinned decoder",
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing"
     }

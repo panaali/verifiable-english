@@ -1,0 +1,90 @@
+{
+ "wording": [
+  {
+   "base": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/base.pilots/pack.json'",
+   "head": "ve.errors.VEError: Cannot read sense pack: [Errno 2] No such file or directory: '/tmp/rd7-ab/head.pilots/pack.json'"
+  }
+ ],
+ "unavailable": [
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"exit\": 5, \"stderr\": [], \"stdout\": {\"error\": {\"code\": \"CheckerUnavailable\", \"message\": \"ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\"}, \"status\": \"CheckerUnavailable\"}}"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"exit\": 5, \"stderr\": [], \"stdout\": {\"error\": {\"code\": \"CheckerUnavailable\", \"message\": \"ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\"}, \"status\": \"CheckerUnavailable\"}}"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"exit\": 5, \"stderr\": [], \"stdout\": {\"error\": {\"code\": \"CheckerUnavailable\", \"message\": \"ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\"}, \"status\": \"CheckerUnavailable\"}}"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"exit\": 5, \"stderr\": [], \"stdout\": {\"error\": {\"code\": \"CheckerUnavailable\", \"message\": \"ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\"}, \"status\": \"CheckerUnavailable\"}}"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"exit\": 5, \"stderr\": [], \"stdout\": {\"error\": {\"code\": \"CheckerUnavailable\", \"message\": \"ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\"}, \"status\": \"CheckerUnavailable\"}}"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"exit\": 5, \"stderr\": [], \"stdout\": {\"error\": {\"code\": \"CheckerUnavailable\", \"message\": \"ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\"}, \"status\": \"CheckerUnavailable\"}}"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"exit\": 5, \"stderr\": [], \"stdout\": {\"error\": {\"code\": \"CheckerUnavailable\", \"message\": \"ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError\"}, \"status\": \"CheckerUnavailable\"}}"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "op": "document_check",
+   "reason": "R7: whole-UDHR document check is CheckerUnavailable or past the recorder's 600 s on both sides in the parallel recording; rerun serially with VE_RUST_TIMEOUT=60 (evidence/udhr-serial.json): the same CheckerUnavailable code and message on both sides, differing only in the checkout's Rust binary path and the elapsed seconds"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "op": "document_check",
+   "reason": "R7: whole-UDHR document check is CheckerUnavailable or past the recorder's 600 s on both sides in the parallel recording; rerun serially with VE_RUST_TIMEOUT=60 (evidence/udhr-serial.json): the same CheckerUnavailable code and message on both sides, differing only in the checkout's Rust binary path and the elapsed seconds"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"timeout\": 600}"
+  },
+  {
+   "corpus": "pilots",
+   "authority": "default",
+   "case": "pilot/udhr-20261017T1800Z:usecases/udhr-pilot/run-20261017T1800Z/experiment-whole/translation-whole.ve.md",
+   "op": "document_check",
+   "reason": "R7: unavailable on both sides with identical outputs: {\"timeout\": 600}"
+  }
+ ],
+ "order": [],
+ "verdict": [],
+ "availability": []
+}
