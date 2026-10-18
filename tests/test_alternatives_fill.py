@@ -207,6 +207,15 @@ def test_nd_u11_alternatives_part_every_alternative_unsettled():
     assert row["diagnosis"].startswith("UNSETTLED(a, b, c): ")
 
 
+def test_settled_dilemma_keeps_todays_classification_on_the_filled_outcomes():
+    """With no UNDECIDED alternative the diagnosis is today's procedure on `fill (inlineTree A)`: only pull is
+    available and the rule forbids it under every filling."""
+    src = source([PULL_FORBIDDEN], units=())
+    packages = conflict_packages(src, elaborate(src))
+    row = run_case(src | {"kind": "alt-followable", "packages": packages, "witness": witness(("pull",))})
+    assert (row["verdict"], row["diagnosis"]) == ("DILEMMA", "NONE-PERMITTED: every available action is forbidden")
+
+
 def test_t12e_conflict_free_needs_the_slot_premises():
     """T12e (SR-A3): the conflict lives only where an action is available to two agents, which
     `alternatives:own` excludes: CONFLICT-FREE over `BaseAdmissibleAltU`, never over the bases without it."""
