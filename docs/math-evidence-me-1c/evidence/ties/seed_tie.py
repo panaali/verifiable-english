@@ -1,4 +1,9 @@
-"""Plant one seeded tie in the checkout, run trust_map --check, restore the file (git checkout)."""
+"""Plant one seeded tie in the checkout, run trust_map --check, restore the file (git checkout).
+
+Run from the checkout's root: python3 seed_tie.py SEED OUTPUT. S1's saved output also holds the
+ratchet test (tests/test_trust_ratchet.py::test_committed_budget_passes_its_check) run with the seed
+in place; this script no longer runs it (tests/test_nested_pytest.py lists every file that builds a
+pytest command)."""
 import json, subprocess, sys
 from pathlib import Path
 seed, out = sys.argv[1], Path(sys.argv[2])
@@ -29,11 +34,5 @@ try:
         stm.write_text("\n".join(lines))
     r = subprocess.run([sys.executable, "tools/trust_map.py", "--check"], capture_output=True, text=True)
     out.write_text(f"$ python3 tools/trust_map.py --check   # seed {seed}: {what}\n{r.stdout}{r.stderr}exit {r.returncode}\n")
-    if seed == "S1-unrelated":
-        t = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider",
-                            "tests/test_trust_ratchet.py::test_committed_budget_passes_its_check"],
-                           capture_output=True, text=True)
-        out.write_text(out.read_text() + "\n$ pytest tests/test_trust_ratchet.py::test_committed_budget_passes_its_check\n"
-                       + t.stdout[-600:] + f"exit {t.returncode}\n")
 finally:
     subprocess.run(["git", "checkout", "--", str(path)], check=True)

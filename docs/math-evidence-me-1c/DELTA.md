@@ -95,7 +95,7 @@ in `evidence/ties/seed-*.txt`, summary in [`evidence/ties/seeded-ties.json`](evi
 
 | Seed | Temporary change | `python3 tools/trust_map.py --check` |
 | --- | --- | --- |
-| S1 | `renderClaim` tied to an unrelated theorem, `VE.Calc.Claim.decide_holds` (`tools/trust-classes.json`) | exit 1: "VE.Calc.English.renderClaim: the statement of VE.Calc.Claim.decide_holds does not mention VE.Calc.English.renderClaim of VE.Calc.Render". `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` fails too |
+| S1 | `renderClaim` tied to an unrelated theorem, `VE.Calc.Claim.decide_holds` (`tools/trust-classes.json`) | exit 1: "VE.Calc.English.renderClaim: the statement of VE.Calc.Claim.decide_holds does not mention VE.Calc.English.renderClaim of VE.Calc.Render". `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` fails too (run with the seed in place; recorded in `seed-S1-unrelated.txt`) |
 | S2 | An existing tie's `-- uses` line broken: `VE.Calc.values@VE.Calc.Decls` removed from `VE.Calc.values_stated` (`lean/statements.txt`; me-1b's tie, the one tie in `VE.Calc`) | exit 1: "VE.Calc.values: the statement of VE.Calc.values_stated does not mention VE.Calc.values of VE.Calc.Decls" |
 | S3 | `renderClaim` tied to spec 9's `VE.Calc.English.read_render`, which no Lean file states | exit 1: "VE.Calc.English.renderClaim: tying theorem VE.Calc.English.read_render is not in statements.txt" |
 
