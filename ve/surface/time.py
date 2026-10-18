@@ -11,6 +11,7 @@ import re
 from itertools import product
 
 from ..errors import AmbiguousDerivation, ResourceLimit, SyntaxError, UnsupportedProfile, VEError
+from ..limits import MAX_SOURCE_BYTES
 from ..units import (DIMENSIONLESS, POINTS_SUFFIX, day_number, decimal_exact, elaborate_quantity,
                      render_coordinate, sentence_initial)
 
@@ -136,7 +137,7 @@ def parse_quantity_sentence(env, source):
     """Enumerate every derivation in this restricted W6 sentence grammar."""
     if env.unit_schema is None:
         raise UnsupportedProfile("quantity English requires ve-units@1")
-    if type(source) is not str or len(source.encode("utf-8")) > 65536:
+    if type(source) is not str or len(source.encode("utf-8")) > MAX_SOURCE_BYTES:
         raise SyntaxError("Invalid quantity sentence")
     source = " ".join(source.split())
     if not source.endswith("."):

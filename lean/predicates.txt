@@ -247,6 +247,8 @@ module VE.Grammar.TableProofs
 module VE.GraphChecks
 module VE.Json
 module VE.LexicalProofs
+module VE.LimitTies
+module VE.Limits
 module VE.ModelProofs
 module VE.NormDefaults.Admission
 module VE.NormDefaults.Check

@@ -59,7 +59,7 @@ def error : Shape :=
         ("code", ref "common.json#/$defs/code")]]
 
 def handshake : Shape :=
-  c "Service.Protocol.handshake: this protocol, every mode and at least the client's limits." [
+  c "Service.Protocol.handshake: this protocol, every mode, the code domain, the limits and the handle table." [
     obj,
     .required ["service", "protocol", "modes", "codes", "limits", "handles"],
     closed [
@@ -72,13 +72,11 @@ def handshake : Shape :=
       ("codes", c
         "Service.Protocol.rejectionCodes: exactly the code domain of the rows (common.json code), so a service with another code list is refused at its start."
         [.const (toJson VE.Service.rejectionCodes)]),
-      ("limits", n [
-        obj,
-        .required ["max_line_bytes", "max_cases", "json_depth"],
-        closed [
-          ("max_line_bytes", n [.type ["integer"], .minimum VE.Service.maxLineBytes]),
-          ("max_cases", n [.type ["integer"], .minimum VE.Service.maxCases]),
-          ("json_depth", n [.type ["integer"], .minimum 256])]]),
+      ("limits", c
+        "VE.Limits.stated: the runtime envelope's limits, exactly: the client reads every limit from here (ve/limits.py)."
+        [obj,
+          .required (VE.Limits.stated.map (·.1)),
+          closed (VE.Limits.stated.map fun (name, limit) => (name, .const (toJson limit)))]),
       ("handles", c
         "Service.Protocol.Handles: the case member naming a handle and the table's bounds, exactly: the client keeps the same table (Handles.insert)."
         [obj,

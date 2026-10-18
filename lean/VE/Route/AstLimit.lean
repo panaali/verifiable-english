@@ -1,4 +1,5 @@
 import Lean.Data.Json
+import VE.Limits
 
 /-! The static AST limits of wire formulas, in Python's decoder order.
 
@@ -18,8 +19,7 @@ formula is decoded, typed or evaluated. -/
 namespace VE.Route.AstLimit
 open Lean
 
-def maxNodes : Nat := 10000
-def maxDepth : Nat := 64
+export VE.Limits (maxNodes maxDepth)
 
 def nodeLimit : String := "ResourceLimit: AST node count"
 def depthLimit : String := "ResourceLimit: formula depth exceeds 64"

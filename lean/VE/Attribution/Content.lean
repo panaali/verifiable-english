@@ -1,6 +1,7 @@
 import VE.Route.Admission
 import VE.Definitions.Layer
 import VE.Norms.Tree
+import VE.Limits
 
 /-! `reports@0` (docs/spec/attribution.md, draft 10): contents, keys, identities,
 generated names, `E_reports`, elaboration and the executable well-formedness
@@ -696,8 +697,8 @@ def metaOk (D : ReportDoc) (m : UnitMeta) : Bool :=
      | _ => false
    | none => true)
 
-/-- `MAX_PREDICATES` of P0, the bound of 4.1 step 7 on `E_reports`. -/
-def maxPredicates : Nat := 256
+-- `MAX_PREDICATES` of P0 bounds 4.1 step 7 on `E_reports`.
+export VE.Limits (maxPredicates)
 
 /-- 4.1, as one executable check. The HashCollision part compares the objects of
 `digestTable` and no other. -/

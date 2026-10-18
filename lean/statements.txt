@@ -28973,9 +28973,9 @@ theorem VE.Reports.WF.nodup
   -- expr 233711839
 theorem VE.Reports.WF.predicateCount
   ∀ {D : VE.Reports.ReportDoc},
-    VE.Reports.WF D → D.authorPredicates.length + (VE.Reports.names D).length ≤ VE.Reports.maxPredicates
-  -- uses VE.Reports.ReportDoc.authorPredicates@VE.Attribution.Content VE.Reports.ReportDoc@VE.Attribution.Content VE.Reports.WF@VE.Attribution.Facts VE.Reports.maxPredicates@VE.Attribution.Content VE.Reports.names@VE.Attribution.Content
-  -- expr 1038143500
+    VE.Reports.WF D → D.authorPredicates.length + (VE.Reports.names D).length ≤ VE.Limits.maxPredicates
+  -- uses VE.Limits.maxPredicates@VE.Limits VE.Reports.ReportDoc.authorPredicates@VE.Attribution.Content VE.Reports.ReportDoc@VE.Attribution.Content VE.Reports.WF@VE.Attribution.Facts VE.Reports.names@VE.Attribution.Content
+  -- expr 736746264
 theorem VE.Reports.WF.scoped
   ∀ {D : VE.Reports.ReportDoc},
     VE.Reports.WF D → ∀ (s : VE.Reports.ScopedCheck), s ∈ D.scoped → VE.Reports.scopedOk D s = Bool.true
@@ -38281,12 +38281,12 @@ theorem VE.SoftNorms.limitWalk_eq
     1 ≤ d →
       VE.SoftNorms.limitWalk n d φ =
         if
-            n + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).fst ≤ VE.SoftNorms.maxNodes ∧
-              d - 1 + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).snd ≤ VE.SoftNorms.maxDepth then
+            n + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).fst ≤ VE.Limits.maxNodes ∧
+              d - 1 + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).snd ≤ VE.Limits.maxDepth then
           Option.some (n + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).fst)
         else Option.none
-  -- uses VE.Formula@VE.Syntax VE.SoftNorms.fsize@VE.SoftNorms.Soften VE.SoftNorms.limitWalk@VE.SoftNorms.Soften VE.SoftNorms.maxDepth@VE.SoftNorms.Soften VE.SoftNorms.maxNodes@VE.SoftNorms.Soften VE.SoftNorms.noSubst@VE.SoftNorms.Soften
-  -- expr 1060259640
+  -- uses VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.SoftNorms.fsize@VE.SoftNorms.Soften VE.SoftNorms.limitWalk@VE.SoftNorms.Soften VE.SoftNorms.noSubst@VE.SoftNorms.Soften
+  -- expr 2977934017
 theorem VE.SoftNorms.liveStrictIn_denote
   ∀ (S : VE.Structure) (ρ : VE.Valuation S) (regs : List VE.Norms.Regulated) (N : VE.SoftNorms.SoftNode),
     VE.Formula.denote S ρ (VE.SoftNorms.liveStrictIn regs N) ↔
@@ -39092,9 +39092,9 @@ theorem VE.SoftNorms.term_embed
 theorem VE.SoftNorms.tick_eq
   ∀ (n d t : Nat),
     VE.SoftNorms.limitWalk.tick n d t =
-      if n + 1 + t ≤ VE.SoftNorms.maxNodes ∧ d ≤ VE.SoftNorms.maxDepth then Option.some (n + 1 + t) else Option.none
-  -- uses VE.SoftNorms.limitWalk.tick@VE.SoftNorms.Soften VE.SoftNorms.maxDepth@VE.SoftNorms.Soften VE.SoftNorms.maxNodes@VE.SoftNorms.Soften
-  -- expr 4266421846
+      if n + 1 + t ≤ VE.Limits.maxNodes ∧ d ≤ VE.Limits.maxDepth then Option.some (n + 1 + t) else Option.none
+  -- uses VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.SoftNorms.limitWalk.tick@VE.SoftNorms.Soften
+  -- expr 4022427536
 theorem VE.SoftNorms.universal_down
   ∀ {D : VE.SoftNorms.SoftDoc} {B₀ B : VE.Structure} (e : B₀.Carrier → B.Carrier),
     (∀ (x y : B₀.Carrier), e x = e y → x = y) →

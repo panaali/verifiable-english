@@ -31,6 +31,19 @@ def test_one_class_per_code_of_the_service():
     assert list(relay.CLASSES) == HANDSHAKE_CODES == ROW_CODES
 
 
+def test_each_code_has_exactly_one_class_in_ve_errors():
+    """Lean-first batch 18: every class of `ve.errors` that declares a code declares one of the service's
+    codes, no two declare the same one, and no class is defined twice (a second definition shadowed the
+    first `CheckerUnavailable`). `AdmissionError` is one of them; `ve.admission` re-exports it."""
+    from ve import errors
+    declared = [cls.code for cls in relay._DECLARED]
+    assert sorted(declared) == sorted(HANDSHAKE_CODES)
+    source = ast_module.parse(Path(errors.__file__).read_text())
+    names = [node.name for node in source.body if isinstance(node, ast_module.ClassDef)]
+    assert len(names) == len(set(names))
+    assert AdmissionError is errors.AdmissionError
+
+
 @needs_service
 def test_the_service_states_the_code_list_the_client_requires():
     from ve.backends.lean_service import LeanService

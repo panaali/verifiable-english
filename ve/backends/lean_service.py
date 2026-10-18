@@ -88,14 +88,13 @@ import threading
 import time
 
 from ..errors import CheckerUnavailable, ResourceLimit, VEError
+from ..limits import MAX_CASES, MAX_LINE_BYTES  # the service's handshake limits (VE.Limits)
 from ..environment_wire import EncodedEnvironment
 from .service_schema import MODES, Invalid, check_handshake, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_service"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
-MAX_LINE_BYTES = 16 * 1024 * 1024
-MAX_CASES = 4096
 BATCH_CASES = 256
 BATCH_BYTES = 4 * 1024 * 1024
 STARTUP_TIMEOUT = 30.0
