@@ -122,12 +122,12 @@ removed from the definition, and M9 now targets the filter.
   `docs/premise-packs/pk-1s/*`. No branch in `lean-first/*`, `feature/*`, `infra/*` or `foundation/*` touches them
   (`git diff --name-only main...<branch>`). No branch touches pk-1's target files either: `Layered.lean`,
   `LayeredAdmission.lean`, `UnspecifiedWire.lean`, `SoftWire.lean`, `SoftDefaults.lean`.
-- **Size.** About 1,320 changed lines after fix round 1, all documents (`git diff --stat` against the merge base
+- **Size.** 1,311 changed lines after fix round 1, all documents (`git diff --stat` against the merge base
   `802b8ff9b`):
   - the type-checked stub, 621 lines: statements, real definitions, fixtures and the file check;
   - the spec, 366 lines;
   - the seeded bugs, 145 lines (`mutants.py` 126, `mutants.json` 19);
-  - this report and DELTA, about 185 lines.
+  - this report and DELTA, 179 lines.
 
   This is over the ~600 guide. The stub is the deliverable the task requires, and the fix round's checks (F1's
   fixture, the file check) are in it. The spec cites it instead of copying the Lean. A statement spec is not split
