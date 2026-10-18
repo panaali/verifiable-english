@@ -59,7 +59,7 @@ this worktree, and writes [evidence/n-measurement.json](evidence/n-measurement.j
 | Goal: the render round trip | ap-2b (`Linearize.lean`) | — |
 | New files `Syntax`, `Grammar`, `Meaning`, `Read`, `Linearize`, `GrammarExamples` | `Syntax`, `Read`, `GrammarExamples` **done**; `Grammar`, `Meaning`, `Linearize` ap-2b | `lean/VE/Acts/` |
 | Shared files: none | **held**: the only hand-written shared file is `tools/layer_policy.py`, which the plan lists for every batch with new modules (`VE.Acts.` joins layer 3; section 7) | — |
-| Generated: roots, `Audit.lean`, axioms, statements, pins, gate collection | **done** with `regen_generated.py --write` and `--resolve`. Pins are unchanged (no checker changed). The review fixes add 59 tests (`tests/test_acts_vocab_mutants.py` 56, `tests/test_ap2_limits_provisional.py` 3): `gate_collection.py --check --prebuilt` reports 59 added, 0 removed | — |
+| Generated: roots, `Audit.lean`, axioms, statements, pins, gate collection | **done** with `regen_generated.py --write` and `--resolve`. Pins are unchanged (no checker changed). The review fixes add 192 tests (`tests/test_acts_vocab_mutants.py` 189, `tests/test_ap2_limits_provisional.py` 3): `gate_collection.py --check --prebuilt` reports 192 added, 0 removed | — |
 | Statement `grammar_wf` | ap-2b | — |
 | Statements `read_unique`, `readings_exact`, `readings_nodup` (and spec 5.6's `read_none`, `read_many`, `readings_limit`, `listing_ok`) | **proved generically**: `readIn_unique`, `readingsIn_exact`, `readingsIn_nodup`, `readIn_none`, `readIn_many`, `readingsIn_limit` for any grammar `G` with `G.wf` and any meaning; `listing_ok` exactly as spec 5.6 writes it, plus `listing_limit`. Spec 5.6's statements follow in ap-2b by instantiating `G := grammar V`, `μ := meaning V` and using `grammar_wf` | `Read.lean` |
 | Statement `read_normal` | ap-2b | — |
@@ -104,23 +104,40 @@ blocks are D-31's 19 rows in the spec's order. On the fixtures before the fix, 2
 that kill them are in `GrammarExamples.lean` 83-186: one vocabulary per D-31 row in a table, every pair of rows
 joined either way round raising the earlier row's text (D-31's order), and the cases listed in section 9.
 
+The recheck (F7) found six more that kept every `#guard` passing: 31c and 31r read only a head's first word, 31o over
+argument markers only or over modifier markers only, 31i letting `split` name a modifier marker, and 31g ignoring
+`""`. Their class is a condition over a list that reads only part of it, or the wrong one of a frame's marker lists.
+The test now generates it from `Syntax.lean`'s source: every list that `wordsOf`, `firstDup` and `checkVocab` range
+over (each receiver of a list method, each `for` and `firstDup` argument) cut to its first element, and every marker
+list of a frame (`f.markers`, `f.split`, `f.mods`, both, `ms f`, the markers without `""`) replaced by each of the
+others: 126 mutants, plus the review's six as it wrote them. On the fixtures before the fix, 31 of the 126 survived.
+Seven of them change no answer of `checkVocab` (a head's first word is absent exactly when the head is; `""` has no
+words; 31j has refused `""` as a modifier marker before 31k); they are listed with the reason in `EQUIVALENT`, and a
+test checks that each still passes, so a wrong entry fails. The 24 others are killed by the guards of
+`GrammarExamples.lean` 189-230: each condition with its fault in a later head word, marker, marker word, frame or
+adverb (`seek Asylum`, `take part` beside `take part in`, markers `in, on, in`, adverbs `gladly, rest`), and on the
+list 1.4 names (`""` twice refused, `""` split accepted, a modifier marker not split, `in front` with modifier `in`).
+In all, 186 mutants: 179 fail at a `#guard` and nowhere else, and 7 are equivalent.
+
 ## 5. Trust, size and tests
 
 - **Trust:** `trust_map.py --check` PASS: K +0, S +69, untied V +76, trusted +145, tied +15. Per file: Syntax.lean
   +109 (S 45, D[V] 53, G[V] 11) and Read.lean +36 (S 24, G[V] 12). `GrammarExamples.lean`'s definitions are T. The
   allowance is signed by standing ruling R16, and the FOLLOW-UPS "## ap-2" row asks for the ties pass.
-- **Size:** hand-written lines: Lean 537 (Syntax 128, Read 193, GrammarExamples 216), `tools/layer_policy.py` 1, the
-  two evidence scripts 341 (`measure_n.py` 236, `seed_bugs.py` 105) and the review fixes' two tests 234
-  (`test_acts_vocab_mutants.py` 177, `test_ap2_limits_provisional.py` 57), plus this report and DELTA. The plan and
+- **Size:** hand-written lines: Lean 581 (Syntax 128, Read 193, GrammarExamples 260), `tools/layer_policy.py` 1, the
+  two evidence scripts 341 (`measure_n.py` 236, `seed_bugs.py` 105) and the review fixes' two tests 384
+  (`test_acts_vocab_mutants.py` 327, `test_ap2_limits_provisional.py` 57), plus this report and DELTA. The plan and
   spec copies are 3,393 lines, verbatim and mandated. The evidence JSON is written by the scripts. Product code
-  (Syntax and Read, 321) is within the ~600 cap; with fixtures, scripts and tests the total is about 1,110 (review
+  (Syntax and Read, 321) is within the ~600 cap; with fixtures, scripts and tests the total is about 1,310 (review
   F6, a follow-up).
 - **Tests:** the selected tests (`mac-pytest.sh --select`, merge base `802b8ff9b`, on `3dbb2184`) ran 66 units, exit
   0, 0 failed. After the sync with main (`01f74cf4a`) they ran again on `04435990` (the code is final; only this
   report changes after it): 66 units, exit 0, 0 failed. No test in `main-known-red.txt` was hit. After the review
   fixes, on `21e9715a`: 74 units (lints, `lake build`, `lean/audit.py` and 73 test files). 73 passed. One failed:
   `test_ap2_limits_provisional.py`, because section 9 quoted the retracted phrase. With section 9 reworded, that
-  file's 3 tests pass. No test in `main-known-red.txt` was hit. The full gate is the chain's.
+  file's 3 tests pass. No test in `main-known-red.txt` was hit. After the recheck fix (F7), on `7e457d65`: 74 units,
+  exit 0, 0 failed (`test_acts_vocab_mutants.py` 383 s of them, on the Mac runner with 6 jobs); `lake build` and
+  `lean/audit.py` pass. No test in `main-known-red.txt` was hit. The full gate is the chain's.
 - **Overlap:** `tools/layer_policy.py` is also edited by `lean-first/b18`, in a different hunk (lines 116 and 141;
   mine is 135). `git merge-tree HEAD lean-first/b18` merges it cleanly; that branch's other conflicts with this one
   are generated inventories (R12). No other in-flight branch touches `lean/VE/Acts/` or the plan and spec files.
@@ -165,10 +182,10 @@ a further cut or a DRI signature for its growth. The DRI may prefer to sign AP-2
    `test_ap2_limits_provisional.py`, reads saved evidence. The overlap
    is in section 5.
 3. Tests and gates can fail: **PASS**. 10 seeded bugs in [mutants.json](mutants.json), each failing a proof, `#guard` or
-   check (none at a hash or build-only step); `seed_bugs.py`. After review F1, 54 mutants of `checkVocab` and the
-   limits each fail a `#guard` (`tests/test_acts_vocab_mutants.py`, section 4).
+   check (none at a hash or build-only step); `seed_bugs.py`. After reviews F1 and F7, 179 mutants of `checkVocab`
+   and the limits each fail a `#guard`, and 7 generated ones are equivalent, each with its reason (`tests/test_acts_vocab_mutants.py`, section 4).
 4. Python, Lean and Rust agree: **N.A.** for the differential: the new modules are Lean only, and Python and Rust
-   read nothing of them. Valid inputs still pass: FR7 `#guard` (`GrammarExamples.lean` 214) over every vocabulary
+   read nothing of them. Valid inputs still pass: FR7 `#guard` (`GrammarExamples.lean` 258) over every vocabulary
    of spec 11.2 and 11.2b.
 5. R8 binding: **N.A.**, no relayed answer.
 6. Gate evidence matches the final HEAD: **PASS** for what a builder runs. Synced with main (`01f74cf4a`); the
@@ -188,7 +205,7 @@ a further cut or a DRI signature for its growth. The DRI may prefer to sign AP-2
 12. No CPU or memory regression: **N.A.**, no route or pilot path runs this code. The measurement's largest parse is
     19,184 steps (section 2).
 13. `Test-removed` trailers: **PASS**. No test was removed or renamed: `gate_collection.py --check --prebuilt` reports
-    59 added (the review fixes' tests), 0 removed, 0 refused, 0 stale, 0 malformed.
+    192 added (the review fixes' tests), 0 removed, 0 refused, 0 stale, 0 malformed.
 
 Build checklist (`prompts/build-checklist.txt`): 13 (seeded mutants) and 18 (fixture numbers computed by `#guard`; a
 boundary fixture for each direction of `listing_ok`'s iff: LG1/LG2, LG4/LG5) apply and hold. 6 holds (UNKNOWN as
@@ -207,3 +224,11 @@ evidence test (`test_ap2_limits_provisional.py` reads the saved measurement).
 | F4 (C): `maxReadings` copies `VE.Readings.maxChoices` | follow-up (pinned at 64 by a `#guard` meanwhile) | — |
 | F5 (C): SR16's bounded re-check and DRI go not recorded | follow-up for the DRI (section 1) | — |
 | F6 (C): size over ~600 | follow-up (section 5) | — |
+
+Recheck (`ap-2-looprecheck1.final.md`): F1 and F2 confirmed fixed.
+
+| Finding | Fix | Regression test |
+|---|---|---|
+| F7 (B): six `checkVocab` mutants survive (31c, 31r on a head's first word; 31o over one marker list; 31i splitting a modifier marker; 31g without `""`) | the class, generated from `Syntax.lean`: every list of 1.4's check cut to its first element, every marker list swapped for each other one (126 mutants, 7 equivalent with their reasons), the review's six as written; one guard per survivor in `GrammarExamples.lean` 189-230 (section 4) | `tests/test_acts_vocab_mutants.py` (186 mutants; the review's probe passes) |
+| F8 (C): 31c's `{h}` not pinned | fixed with F7: `seek Asylum` raises 31c's text with the head `seek Asylum` | `GrammarExamples.lean` 193 |
+| F9 (C): 31l's second half unreachable | the comment of `GrammarExamples.lean` 138-140 no longer counts 31l among the conditions whose halves are pinned, and says why its second half never decides; the code is unchanged (spec 1.4 states both halves) | — |
