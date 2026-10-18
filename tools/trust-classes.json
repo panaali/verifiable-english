@@ -12543,7 +12543,9 @@
         "VE.Cardinality.Examples.moreThanHalf",
         "VE.Cardinality.Examples.userModel",
         "VE.Cardinality.Examples.two",
-        "VE.Cardinality.Examples.colliding"
+        "VE.Cardinality.Examples.colliding",
+        "VE.Cardinality.Examples.dupModel",
+        "VE.Cardinality.Examples.fa1Model"
       ]
     }
   }

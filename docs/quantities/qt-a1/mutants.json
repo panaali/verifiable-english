@@ -1,0 +1,43 @@
+{
+ "item": "qt-a1",
+ "language": "Lean",
+ "how": "each mutation applied alone, `lake build VE.Cardinality.Examples`, file restored (driver outside the repository); every mutant fails the build at the named fixture",
+ "mutants": [
+  {
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "mutation": "inRegion reads `not b` as `b`",
+   "test": "lean/VE/Cardinality/Examples.lean: FA1 node count (91), FA1 certificate replay for 'exactly 16' and 'at least 16', FA1 model agreement (agrees fomc ... fa1Model)",
+   "build_exit": 1
+  },
+  {
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "mutation": "a proportion's erasure drops the nonempty-population conjunct",
+   "test": "lean/VE/Cardinality/Examples.lean: FA9c/FA10 agreement of meaning and erasure on the empty and nonempty user models (agrees users ...)",
+   "build_exit": 1
+  },
+  {
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "mutation": "the predicate limit fires at 6 instead of above 6",
+   "test": "lean/VE/Cardinality/Examples.lean: FA8 'with six predicates the limits pass' (problemLimits ... many 6)",
+   "build_exit": 1
+  },
+  {
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "mutation": "a body atom needs only some declared predicate, of any arity or sort (specification and check together)",
+   "test": "lean/VE/Cardinality/Examples.lean: FA8 hostile admission: a binary predicate and another sort's predicate are refused",
+   "build_exit": 1
+  },
+  {
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "mutation": "`Cmp.holds .ge` compares the wrong way",
+   "test": "lean/VE/Cardinality/Examples.lean: example `oneIn1000.holds two` (at least 1 in 1,000 of two users, one curious)",
+   "build_exit": 1
+  },
+  {
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "mutation": "countFin counts listed objects with duplicates",
+   "test": "lean/VE/Cardinality/Examples.lean: FA2 duplicate-domain agreement with W6a's sugar (agreeOn dupModel)",
+   "build_exit": 1
+  }
+ ]
+}
