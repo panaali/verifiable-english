@@ -454,6 +454,10 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
     path = keep(scratch.lean / m.file)
     text = path.read_text()
     path.write_text(text[:m.start] + m.after + text[m.end:])
+    # No proof in the mutated module is a check (`role`), so none is elaborated (lines kept, so roles still hold).
+    for first, last, r, _ in sorted(tree.roles[m.file], reverse=True):
+        if r == "theorem" and not first <= m.line <= last:
+            cut_proof(path, first, last)
     cut: set[tuple[str, int]] = set()
     built = targets(tree, m, tests, deep)
     try:
