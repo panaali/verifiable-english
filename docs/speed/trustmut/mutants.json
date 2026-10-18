@@ -69,6 +69,36 @@
     "tests/test_trust_mutants.py::test_the_generator_cuts_every_list_a_condition_reads"
    ],
    "claim": "the receiver of every list method (`.find?` included) is a list the operators cut"
+  },
+  {
+   "id": "TM8",
+   "file": "tools/trust_mutants.py",
+   "find": "        return \"check\" if CHECK_PROOF.search(span) else \"proof\"",
+   "replace": "        return \"check\" if kind == \"command\" or CHECK_PROOF.search(span) else \"proof\"",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill"
+   ],
+   "claim": "an `example` is a check only when decide, native_decide or rfl proves it (review F1)"
+  },
+  {
+   "id": "TM9",
+   "file": "tools/trust_mutants.py",
+   "find": "    return next((r for s, e, r, _ in tree.roles.get(file, ()) if s <= line <= e), \"other\")",
+   "replace": "    return next((\"check\" if r == \"proof\" and file != m.file and stated(tree, n, m) else r\n                 for s, e, r, n in tree.roles.get(file, ()) if s <= line <= e), \"other\")",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
+   ],
+   "claim": "a theorem whose statement names the definition, proved by a tactic, is a proof: its failure is cut, never a kill (review F1)"
+  },
+  {
+   "id": "TM10",
+   "file": "tools/trust_mutants.py",
+   "find": " or tree.files[x].rpartition(\"/\")[0] == home or stated(tree, n, m))}",
+   "replace": " or tree.files[x].rpartition(\"/\")[0] == home)}",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_decide_check_outside_the_directory_naming_the_definition_kills"
+   ],
+   "claim": "a check outside the definition's directory whose statement names it is built"
   }
  ]
 }

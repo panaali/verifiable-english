@@ -11,10 +11,10 @@ compiled range (lean/declarations.txt), comments and strings excluded, on its ch
 
 Each mutant is built in a private scratch copy of lean/ (its build restored from tools/lean_share.py's checked build
 of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, its proofs cut to `sorry`
-(no proof there is a check), then each module that imports it and holds checks for it: a theorem whose compiled
-statement (lean/statements.txt) uses it, and every other check in a module of its directory (of the whole cone with
---deep), and the --test files. A check is a `#guard`/`#guard_msgs`, an `example`, a theorem proved by `decide`,
-`native_decide` or `rfl`, or that theorem whose statement uses it. The mutant is
+(no proof there is a check), then each module that imports it and holds checks for it: a check whose compiled
+statement (lean/statements.txt) uses it, every other check in a module of its directory (of the whole cone with
+--deep), and the --test files. A check is a `#guard`/`#guard_msgs`, or an `example` or theorem proved by `decide`,
+`native_decide` or `rfl`; every other `example` or theorem is a proof, whatever its statement names. The mutant is
 - KILLED when Lean reports an error inside a check or a --test file;
 - INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means);
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
@@ -53,7 +53,8 @@ from lean_statements import declaration_list, module_name, source_hash, sources 
 from tools import lake_outputs, lean_share, trust_map  # noqa: E402
 
 OPEN, CLOSE = "([{⟨", ")]}⟩"
-CHECK_COMMAND = re.compile(r"(?m)^\s*(?:@\[[^\]]*\]\s*)*(?:#guard_msgs|#guard|example)\b")
+GUARD = re.compile(r"(?m)^\s*(?:#guard_msgs|#guard)\b")
+EXAMPLE = re.compile(r"(?m)^\s*(?:@\[[^\]]*\]\s*)*example\b")
 CHECK_PROOF = re.compile(r":=\s*(?:by\s+)?(?:decide|native_decide|rfl)(?:\s+\+\w+)*\s*$")
 ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*)$", re.M)
 STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
@@ -235,9 +236,18 @@ def changed_lines(root: Path, base: str) -> dict[str, set[int]]:
     return out
 
 
+def classify(kind: str, span: str) -> str:
+    """check, proof or other, for a declaration of `kind` whose code (comments and strings blanked) is `span`: an
+    `example` or theorem is a check only when `decide`, `native_decide` or `rfl` proves it (inside `#guard_msgs` too),
+    any other is a proof, wherever it is and whatever its statement names; a `#guard` is a check."""
+    if kind == "theorem" or kind == "command" and EXAMPLE.search(span):
+        return "check" if CHECK_PROOF.search(span) else "proof"
+    return "check" if kind == "command" and GUARD.search(span) else "other"
+
+
 @dataclass
 class Tree:
-    roles: dict[str, list[tuple[int, int, str, str | None]]]  # file -> (first, last line, check|theorem|other, name)
+    roles: dict[str, list[tuple[int, int, str, str | None]]]  # file -> (first, last line, check|proof|other, name)
     uses: dict[str, set[tuple[str, str]] | None]  # theorem -> the constants its statement uses
     files: dict[str, str]  # module -> file under lean/
     importers: dict[str, set[str]]
@@ -258,9 +268,7 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
     for c in classified:
         d, text = c.decl, texts[c.module]
         span = "\n".join(masked[c.module][d.start - 1:d.end])
-        check = d.kind == "command" and CHECK_COMMAND.search(span) or d.kind == "theorem" and CHECK_PROOF.search(span)
-        roles.setdefault(c.module, []).append((d.start, d.end, "check" if check else "theorem" if d.kind == "theorem"
-                                               else "other", d.name))
+        roles.setdefault(c.module, []).append((d.start, d.end, classify(d.kind, span), d.name))
         lines = changed.get(c.module, set())
         if not (c.trusted and d.name and d.kind not in ("theorem", "command", "unrecorded")
                 and lines & set(range(d.start, d.end + 1))):
@@ -309,17 +317,15 @@ def targets(tree: Tree, m: Mutant, tests: list[str], deep: bool = False) -> list
         cone |= new
         todo += new
     checks = {x for x in cone for s, e, r, n in tree.roles.get(tree.files[x], ())
-              if r == "check" and (deep or tree.files[x].rpartition("/")[0] == home)
-              or r == "theorem" and stated(tree, n, m)}
+              if r == "check" and (deep or tree.files[x].rpartition("/")[0] == home or stated(tree, n, m))}
     return [module, *sorted((checks | {module_name(t) for t in tests}) - {module})]
 
 
 def role(tree: Tree, file: str, line: int, m: Mutant) -> str:
-    """check, proof or other; a theorem whose statement uses the definition is a check outside the mutated module."""
-    for s, e, r, name in tree.roles.get(file, ()):
-        if s <= line <= e:
-            return r if r != "theorem" else "check" if file != m.file and stated(tree, name, m) else "proof"
-    return "other"
+    """mutated (inside the mutated declaration), else the role `classify` gave the declaration at `line`."""
+    if file == m.file and m.lines[0] <= line <= m.lines[1]:
+        return "mutated"
+    return next((r for s, e, r, _ in tree.roles.get(file, ()) if s <= line <= e), "other")
 
 
 def cut_proof(path: Path, first: int, last: int) -> bool:
@@ -374,7 +380,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         text = path.read_text()
         path.write_text(text[:m.start] + m.after + text[m.end:])
         for first, last, r, _ in sorted(tree.roles[m.file], reverse=True):
-            if r == "theorem" and not first <= m.line <= last:
+            if r == "proof" and not first <= m.line <= last:
                 cut_proof(path, first, last)
         for stage in (built[:1], built[1:]):  # the mutated module alone first: most mutants end there
             for attempt in range(8):
@@ -387,7 +393,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 if not found:
                     return "UNKNOWN", "the build failed with no located error: " + output[-300:]
                 for f, n, message, r in found:
-                    if f == m.file and m.lines[0] <= n <= m.lines[1]:
+                    if r == "mutated":
                         return "INVALID", message[:200]
                 for f, n, message, r in found:
                     if r == "check" or f in tests:
