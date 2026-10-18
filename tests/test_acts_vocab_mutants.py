@@ -39,15 +39,39 @@ def _split_imports(text: str) -> tuple[list[str], str]:
     return imports, "\n".join(line for line in lines if not line.startswith("import "))
 
 
+# What the sweep's mutants (`_sweep`) write in place of a comparison: `a ≼ₘ b` says `a` begins `b` (a string by its
+# characters, a list by its elements), `a ≽ₘ b` that `b` begins `a`, `⋠ₘ` and `⋡ₘ` their negations; `xs.preContains y`
+# says `y` begins an element of `xs`, `xs.containsPre y` that an element begins `y`.
+PRELUDE = """
+namespace VEMutant
+class Pre (α : Type) where pre : α → α → Bool
+instance : Pre String := ⟨fun a b => b.startsWith a⟩
+instance {β : Type} [BEq β] : Pre (List β) := ⟨fun a b => a.isPrefixOf b⟩
+def sup {α : Type} [Pre α] (a b : α) : Bool := Pre.pre b a
+def npre {α : Type} [Pre α] (a b : α) : Bool := !Pre.pre a b
+def nsup {α : Type} [Pre α] (a b : α) : Bool := !Pre.pre b a
+end VEMutant
+infix:50 " ≼ₘ " => VEMutant.Pre.pre
+infix:50 " ≽ₘ " => VEMutant.sup
+infix:50 " ⋠ₘ " => VEMutant.npre
+infix:50 " ⋡ₘ " => VEMutant.nsup
+def List.preContains {α : Type} [VEMutant.Pre α] (xs : List α) (y : α) : Bool := xs.any (VEMutant.Pre.pre y ·)
+def List.containsPre {α : Type} [VEMutant.Pre α] (xs : List α) (y : α) : Bool := xs.any (VEMutant.Pre.pre · y)
+def List.revPrefixOf {α : Type} [BEq α] (a b : List α) : Bool := b.isPrefixOf a
+def List.beqOf {α : Type} [BEq α] (a b : List α) : Bool := a == b
+"""
+
+
 def _assemble(syntax: str, read: str, examples: str) -> str:
-    """One file: the three modules' bodies, with the imports they take from outside `VE.Acts`, and no proofs."""
+    """One file: the three modules' bodies, with the imports they take from outside `VE.Acts`, the sweep's `PRELUDE`,
+    and no proofs."""
     read = read[:read.index("section Proofs")] + "end VE.Acts\n"
     imports, bodies = [], []
     for text in (syntax, read, examples):
         own, body = _split_imports(text)
         imports += [line for line in own if not line.startswith("import VE.Acts.") and line not in imports]
         bodies.append(body)
-    return "\n".join(imports) + "\n" + "\n".join(bodies)
+    return "\n".join(imports) + "\n" + PRELUDE + "\n".join(bodies)
 
 
 def _check_vocab(syntax: str) -> tuple[list[str], list[list[str]], list[str]]:
@@ -365,6 +389,183 @@ def _siblings(syntax: str) -> list[tuple[int, int]]:
     return sorted((s, e) for s, e in spans if not ((s - 1, e + 1) in spans and syntax[s - 1] == "("))
 
 
+def _definitions(text: str) -> list[tuple[str, int, int]]:
+    """Every definition of a module (of `Read.lean`, those before its proofs), as (name, start, end)."""
+    text = text[:text.index("section Proofs")] if "section Proofs" in text else text
+    return [(name, *_span(text, f"def {name} ")) for name in re.findall(r"^def ([\w.]+)[ \n]", text, re.M)]
+
+
+def _inductives(texts: tuple[str, ...]) -> dict[str, dict[str, list[str]]]:
+    """For each `inductive` of `texts`, its constructors, each with the types of its arguments (`Tok.fixed`:
+    `["Nat"]`)."""
+    found: dict[str, dict[str, list[str]]] = {}
+    for text in texts:
+        for name, block in re.findall(r"^inductive (\w+)([^\n]*(?:\n  [^\n]*)*)", text, re.M):
+            found[name] = {ctor: [kind.strip() for names, kind in re.findall(r"\(([^():]+):([^()]*)\)", binders)
+                                  for _ in names.split()]
+                           for ctor, binders in re.findall(r"\| (\w+)((?: \([^()]*\))*)", block)}
+    return found
+
+
+def _nullary(inductives: dict[str, dict[str, list[str]]]) -> dict[str, list[str]]:
+    """For each `inductive` with two constructors without arguments or more, those constructors (and `Bool`'s two)."""
+    groups = {"Bool": ["true", "false"]}
+    for name, ctors in inductives.items():
+        names = [f".{c}" for c, kinds in ctors.items() if not kinds]
+        if len(names) > 1:
+            groups[name] = names
+    return groups
+
+
+def _top_level(pattern: str, sep: str = ",") -> list[tuple[int, int]]:
+    """The spans of `pattern`'s parts between the separators that are not inside a bracket."""
+    spans, depth, start = [], 0, 0
+    for i, ch in enumerate(pattern):
+        depth += {"(": 1, "[": 1, ")": -1, "]": -1}.get(ch, 0)
+        if ch == sep and depth == 0:
+            spans.append((start, i))
+            start = i + 1
+    spans.append((start, len(pattern)))
+    return [(s + len(pattern[s:e]) - len(pattern[s:e].lstrip()), e - (len(pattern[s:e]) - len(pattern[s:e].rstrip())))
+            for s, e in spans]
+
+
+BOUND = re.compile(r"(?<![\w.])([a-zA-Zα-ωΑ-Ω][\w']*)")
+NOT_BOUND = {"none", "some", "true", "false"}
+
+
+def _arms(text: str, lo: int, hi: int) -> list[dict]:
+    """The match arms between `lo` and `hi`: where the pattern and the body are, the names the pattern binds, and the
+    arms of the same `match` (same indentation, one after the other)."""
+    arms = []
+    for m in re.finditer(r"^( +)\| (.*?) =>(.*)$", text[:hi], re.M):
+        if m.start() < lo:
+            continue
+        indent = len(m.group(1))
+        end = next((k.start() for k in re.finditer(r"^ *\| ", text[m.end():hi], re.M)
+                    if len(k.group()) - 2 <= indent), hi - m.end()) + m.end()
+        bound = {b for b in BOUND.findall(m.group(2)) if b not in NOT_BOUND}
+        arms.append({"indent": indent, "pattern": m.span(2), "body": (m.start(3), end), "bound": bound})
+    for i, arm in enumerate(arms):
+        arm["later"] = []
+        for later in arms[i + 1:]:
+            if later["indent"] != arm["indent"]:
+                break
+            arm["later"].append(later)
+    return arms
+
+
+def _sweep() -> dict:
+    """The sweep of the acting DRI's note for ap-2 review F15: in every definition of `Syntax.lean` and `Read.lean`
+    (before its proofs), each match arm and each comparison changed in turn.
+
+    - **arms**: each argument of a pattern made `_` (unless it binds a name the arm reads), each constructor in a
+      pattern made each other constructor of its `inductive` with the same argument types (the `inductive` of an argument
+      that the definition's type names, such as `Tok` in `Term → Tok → Bool`; otherwise the one `inductive` with a
+      constructor of that name, and none if two have one, such as `ok`), each number in a pattern made `_`, each `_` that a constructor declares `Nat` made `0` and `(_ + 1)`, each arm dropped when a later arm
+      of its `match` matches everything, and each body that is `true`, `false` or a constructor without arguments of
+      the result's `inductive` that has others made each of the others;
+    - **comparisons**: each `==`, `!=` and `≠` negated and made a prefix test either way round (`≼ₘ`, `≽ₘ`; the
+      word begins the keyword, or the keyword begins the word), each `contains` made a prefix test either way round,
+      each `isPrefixOf` made the reverse prefix test, a suffix test and an equality, each `<` made `≤` and back;
+    - **logic and numbers**: each `&&` made `||` and back, each `!` dropped, each number one more and one less.
+
+    A definition over a type variable (`firsts`) has no prefix test, so its comparisons are only negated. Mutants that
+    Lean refuses (an arm made redundant) are in `UNWRITABLE`, each with its reason."""
+    sources = {"syntax": _sources()[0], "read": _sources()[1]}
+    inductives = _inductives(tuple(sources.values()))
+    nullary = _nullary(inductives)
+    mutants: dict = {}
+
+    def add(op: str, name: str, where: str, start: int, end: int, new: str) -> None:
+        stem = f"sweep-{op}-{name}"
+        k = sum(1 for other in mutants if other.rsplit("-", 1)[0] == stem)
+        mutants[f"{stem}-{k + 1}"] = _at_in(where, start, end, new)
+
+    for where, source in sources.items():
+        text = _masked(source)
+        for name, lo, hi in _definitions(source):
+            signature = text[lo:text.find(":=", lo, hi) if ":=" in text[lo:hi] else text.index("\n", lo)]
+            generic = "α" in signature
+            result = re.split(r" : | → ", signature.strip())[-1].split()[0]
+            # The types a definition by pattern matching (`def Term.accepts : Term → Tok → Bool`) matches on.
+            scrutinees = [k.strip() for k in signature.split(" : ", 1)[1].split("→")[:-1]] if "(" not in signature else []
+            for arm in _arms(text, lo, hi):
+                p0, p1 = arm["pattern"]
+                body = text[arm["body"][0]:arm["body"][1]]
+                for position, (s, e) in enumerate(_top_level(text[p0:p1])):
+                    part = text[p0 + s:p0 + e]
+                    if part != "_" and not any(re.search(rf"(?<![\w.]){re.escape(b)}(?![\w'])", body)
+                                               for b in BOUND.findall(part) if b not in NOT_BOUND):
+                        add("wildcard", name, where, p0 + s, p0 + e, "_")
+                    owner = {}
+                    for c in re.finditer(r"(?<![\w.])\.(\w+)", part):
+                        owners = [ctors for ctors in inductives.values() if c[1] in ctors]
+                        if c.start() == 0 and arm["indent"] == 2 and position < len(scrutinees):
+                            owners = [inductives[scrutinees[position]]] if scrutinees[position] in inductives else []
+                        if c.start() == 0:
+                            owner = owners[0] if len(owners) == 1 else {}
+                        for other, k in owners[0].items() if len(owners) == 1 else ():
+                            if other != c[1] and k == owners[0][c[1]]:
+                                add("ctor-swap", name, where, p0 + s + c.start(), p0 + s + c.end(), f".{other}")
+                    ctor = re.match(r"\.(\w+) ", part)
+                    for i, (a0, a1) in enumerate(_top_level(part[ctor.end():], " ") if ctor else []):
+                        arg, at = part[ctor.end() + a0:ctor.end() + a1], p0 + s + ctor.end()
+                        if re.fullmatch(r"\d+|\(_ \+ \d+\)", arg):
+                            add("wildcard-index", name, where, at + a0, at + a1, "_")
+                        if arg == "_" and owner.get(ctor[1], [])[i:i + 1] == ["Nat"]:
+                            add("index-0", name, where, at + a0, at + a1, "0")
+                            add("index-succ", name, where, at + a0, at + a1, "(_ + 1)")
+                if any(all(t == "_" for t in re.split(r"\s*,\s*", text[slice(*la["pattern"])])) for la in arm["later"]):
+                    line = text.rindex("\n", 0, p0) + 1
+                    add("drop-arm", name, where, line, text.index("\n", arm["body"][0]) + 1, "")
+                b0, b1 = arm["body"]
+                value = text[b0:b1].strip()
+                for other in nullary.get(result, []) if value in nullary.get(result, []) else []:
+                    if other != value:
+                        at = b0 + text[b0:b1].index(value)
+                        add("arm-value", name, where, at, at + len(value), other)
+            for m in re.finditer(r" (==|!=|≠) ", text[:hi]):
+                if m.start() < lo:
+                    continue
+                negated = {"==": " != ", "!=": " == ", "≠": " = "}[m[1]]
+                add("negate", name, where, *m.span(), negated)
+                if not generic:
+                    for op in ((" ≼ₘ ", " ≽ₘ ") if m[1] == "==" else (" ⋠ₘ ", " ⋡ₘ ")):
+                        add("prefix", name, where, *m.span(), op)
+            for m in re.finditer(r"\.contains\b", text[:hi]):
+                if m.start() >= lo and not generic:
+                    add("contains-prefix", name, where, *m.span(), ".preContains")
+                    add("contains-prefix", name, where, *m.span(), ".containsPre")
+            for m in re.finditer(r"\.isPrefixOf\b", text[:hi]):
+                if m.start() >= lo:
+                    for other in (".revPrefixOf", ".isSuffixOf", ".beqOf"):
+                        add("prefix-other", name, where, *m.span(), other)
+            for m in re.finditer(r" (<|≤) ", text[:hi]):
+                if m.start() >= lo:
+                    add("strict", name, where, *m.span(), " ≤ " if m[1] == "<" else " < ")
+            for m in re.finditer(r" (&&|\|\|) ", text[:hi]):
+                if m.start() >= lo:
+                    add("and-or", name, where, *m.span(), " || " if m[1] == "&&" else " && ")
+            for m in re.finditer(r"(?<!\w)!(?!=)", text[:hi]):
+                if m.start() >= lo:
+                    add("not-dropped", name, where, *m.span(), "")
+            for m in re.finditer(r"(?<![\w.])\d+(?![\w.])", text[:hi]):
+                if m.start() >= lo:
+                    add("number-up", name, where, *m.span(), str(int(m[0]) + 1))
+                    if int(m[0]) > 0:
+                        add("number-down", name, where, *m.span(), str(int(m[0]) - 1))
+    return mutants
+
+
+def _at_in(where: str, start: int, end: int, new: str):
+    def mutate(syntax: str, read: str) -> tuple[str, str]:
+        if where == "syntax":
+            return syntax[:start] + new + syntax[end:], read
+        return syntax, read[:start] + new + read[end:]
+    return mutate
+
+
 # Generated mutants that change no answer of `checkVocab`, so no fixture can kill them, each with the reason.
 EQUIVALENT: dict[str, str] = {
     "first-only-head-1": "31b: a head's first word is absent exactly when the head is empty",
@@ -387,6 +588,33 @@ EQUIVALENT: dict[str, str] = {
                              "its last word, being shorter",
     "without-last-wordsOf-n-1": "31o: 31l made each marker its words joined by single spaces, so two distinct markers "
                                 "have distinct words, and one's words begin the other's only if they are shorter",
+    # The sweep (ap-2 review F15): a comparison made a prefix test where only equal values pass it.
+    "sweep-prefix-wordOk-1": "`w.toLower` has as many letters as `w`, so `w` begins it exactly when the two are equal",
+    "sweep-prefix-wordOk-2": "`w.toLower` has as many letters as `w`, so it begins `w` exactly when the two are equal",
+    "sweep-prefix-wordsOf-1": "only `\"\"` begins `\"\"`, so a piece that does not begin it is a piece other than `\"\"`",
+    "sweep-prefix-checkVocab-1": "`ms f`: only `\"\"` begins `\"\"`, so a marker that does not begin it is not `\"\"`",
+    "sweep-prefix-checkVocab-3": "31f: `f.head` begins `g.head`, so `g.head` begins `f.head` only when the two are equal",
+    "sweep-prefix-checkVocab-5": "31l: a marker's words joined by single spaces are never longer than the marker, so the "
+                                 "marker begins them only when the two are equal",
+    "sweep-prefix-checkVocab-7": "31l: only `[]` begins `[]`",
+    "sweep-prefix-checkVocab-9": "31o: 31l made `n` and `m` their words joined by single spaces, and `m`'s words begin "
+                                 "`n`'s, so `n` is at least as long as `m` and begins it only when the two are equal",
+    "sweep-contains-prefix-checkVocab-6": "31j: a modifier marker begins `\"\"` exactly when it is `\"\"`",
+    "sweep-contains-prefix-clauseWords-2": "no word of `actReserved` but a join word begins with a join word (`and`, "
+                                           "`or`, `nor`, `for`), and `clauseWords`'s list is pinned",
+    "sweep-wildcard-valueOf-1": "the last arm of `valueOf`'s match: `.error _` is the only case the arm before leaves",
+}
+
+# The sweep's mutants that Lean refuses, each with its reason: each makes a later arm of its match redundant, so it is
+# not a function a fixture could run (`test_an_unwritable_mutant_is_refused_by_lean`).
+UNWRITABLE: dict[str, str] = {
+    "sweep-wildcard-firstDup-1": "`| _ => none` leaves `x :: xs` nothing to match",
+    "sweep-wildcard-firsts-1": "`| _ => []` leaves `x :: xs` nothing to match",
+    "sweep-wildcard-listing-1": "`| _ => .limit` leaves `some ts` nothing to match",
+    "sweep-wildcard-readIn-1": "`| _ => .limit` leaves the three `.ok` arms nothing to match",
+    "sweep-wildcard-readIn-2": "`| _ => .none` leaves `.ok [A]` and `.ok (A :: B :: _)` nothing to match",
+    "sweep-ctor-swap-Term.accepts-20": "`.fill ws, .word v` before `.fill ex, .word v` leaves the second nothing",
+    "sweep-ctor-swap-Term.accepts-21": "`.adv ex, .word v` after `.adv ws, .word v` matches nothing",
 }
 
 MUTANTS = {
@@ -428,6 +656,15 @@ MUTANTS = {
     "accepts-adv-decapitalize": _replace("ws.contains v.toLower", "ws.contains v.decapitalize"),
     "accepts-fill-decapitalize": _replace("!ex.contains v.toLower", "!ex.contains v.decapitalize"),
     "wordOk-decapitalize": _replace("w == w.toLower", "w == w.decapitalize"),
+    # The review's five in `Term.accepts` (ap-2 review F15), as it wrote them; the sweep makes each of them again
+    # (`REVIEW_F15`); and F16's `firstDup` that names a later duplicate.
+    "accepts-fixed-any-token": _replace("| .fixed, .fixed _ => true", "| .fixed, _ => true"),
+    "accepts-comma-any-token": _replace("| .comma, .comma => true", "| .comma, _ => true"),
+    "accepts-fixed-not-0": _replace("| .fixed, .fixed _ => true", "| .fixed, .fixed (_ + 1) => true"),
+    "accepts-kw-own-prefix": _replace("v.toLower == w", "w.startsWith v.toLower"),
+    "accepts-adv-own-prefix": _replace("ws.contains v.toLower", "ws.any (·.startsWith v.toLower)"),
+    "firstDup-later-duplicate": _replace("if xs.contains x then some x else firstDup xs",
+                                         "(firstDup xs).orElse fun _ => if xs.contains x then some x else none"),
     # The same kinds elsewhere: the other halves and word lists, and each limit one off.
     "31a-129-accepted": _replace("128 < fs.length", "129 < fs.length"),
     "wordOk-without-lower-case": _replace("VE.Norms.Wire.actWord w && w == w.toLower", "VE.Norms.Wire.actWord w"),
@@ -448,6 +685,8 @@ MUTANTS = {
        for i in range(len(ROWS) - 1)},
     # Every list of 1.4's check cut to its first element, and every marker list swapped for another (F7).
     **_generated(),
+    # Every match arm and every comparison of `Syntax.lean` and `Read.lean` changed in turn (F15).
+    **_sweep(),
 }
 
 
@@ -463,6 +702,24 @@ REVIEW_F14 = {"accepts-kw-decapitalize": "case-first-only-v.toLower-1",
               "accepts-adv-decapitalize": "case-first-only-v.toLower-2",
               "accepts-fill-decapitalize": "case-first-only-v.toLower-3",
               "wordOk-decapitalize": "case-first-only-w.toLower-1"}
+
+# The review's five (F15) and the sweep's mutant that makes each again: the same arm of `Term.accepts` changed, with the
+# same answers (`test_the_sweep_covers_every_arm_and_comparison`).
+REVIEW_F15 = {"accepts-fixed-any-token": "sweep-wildcard-Term.accepts-6",
+              "accepts-comma-any-token": "sweep-wildcard-Term.accepts-8",
+              "accepts-fixed-not-0": "sweep-index-succ-Term.accepts-1",
+              "accepts-kw-own-prefix": "sweep-prefix-Term.accepts-1",
+              "accepts-adv-own-prefix": "sweep-contains-prefix-Term.accepts-1"}
+
+
+def _errors(out: str) -> list[str]:
+    """The errors of an elaboration, each by its code (`lean.redundantMatchAlt`), `""` for one without a code."""
+    return re.findall(r": error(?:\(([\w.]+)\))?:", out)
+
+
+def _killed(out: str) -> bool:
+    """Every error is a `#guard` that failed, and there is one."""
+    return 0 < out.count(GUARD_FAILED) == len(_errors(out))
 
 
 @pytest.fixture(scope="module")
@@ -498,7 +755,7 @@ def test_the_unmutated_sources_elaborate_cleanly(lake, tmp_path):
     assert done.returncode == 0 and "error" not in done.stdout + done.stderr, done.stdout + done.stderr
 
 
-@pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT)))
+@pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT) - set(UNWRITABLE)))
 def test_every_seeded_mutant_fails_a_fixture(lake, tmp_path, name):
     syntax, read, examples = _sources()
     mutated = MUTANTS[name](syntax, read)
@@ -506,7 +763,59 @@ def test_every_seeded_mutant_fails_a_fixture(lake, tmp_path, name):
     done = _elaborate(lake, tmp_path, _assemble(*mutated, examples))
     out = done.stdout + done.stderr
     assert done.returncode != 0, f"{name} survives every #guard"
-    assert out.count(": error:") == out.count(GUARD_FAILED) > 0, f"{name} fails before a #guard:\n{out}"
+    assert _killed(out), f"{name} fails before a #guard, or not only at #guards:\n{out}"
+
+
+@pytest.mark.parametrize("name", sorted(UNWRITABLE))
+def test_an_unwritable_mutant_is_refused_by_lean(lake, tmp_path, name):
+    """A mutant listed as unwritable is refused by Lean for a redundant arm, and for nothing else but `#guard`s: if
+    Lean accepts it, a fixture must kill it, and the list is wrong."""
+    syntax, read, examples = _sources()
+    done = _elaborate(lake, tmp_path, _assemble(*MUTANTS[name](syntax, read), examples))
+    errors = _errors(done.stdout + done.stderr)
+    assert "lean.redundantMatchAlt" in errors, f"{name} ({UNWRITABLE[name]}) is not refused:\n{done.stdout}"
+    assert set(errors) <= {"lean.redundantMatchAlt", ""}, errors
+    assert errors.count("") == (done.stdout + done.stderr).count(GUARD_FAILED), done.stdout
+
+
+def test_the_killed_check_counts_errors_with_a_code():
+    """An error with a code (`error(lean.redundantMatchAlt):`) is an error: a mutant that Lean refuses is not counted
+    as killed by the `#guard`s that fail after it (the check before ap-2 review F15 counted only `: error:`)."""
+    guard = f"F.lean:9:0: error: Expression\n  x == y\n{GUARD_FAILED}\n"
+    assert _killed(guard) and not _killed("")
+    assert not _killed("F.lean:3:2: error(lean.redundantMatchAlt): Redundant alternative\n" + guard)
+    assert not _killed("F.lean:3:2: error: unknown identifier 'x'\n" + guard)
+
+
+def test_the_sweep_covers_every_arm_and_comparison():
+    """The sweep changes every match arm and every comparison of `Syntax.lean` and `Read.lean`'s definitions: each
+    arm of `Term.accepts` has its pattern's arguments made `_` or its constructors swapped, and each comparison is
+    negated; the review's five (F15) are made again, each changing the same line; every equivalent or unwritable mutant
+    is the sweep's or generated."""
+    syntax, read, _ = _sources()
+    sweep = _sweep()
+    for where, source in (("syntax", syntax), ("read", read)):
+        text = _masked(source)
+        for name, lo, hi in _definitions(source):
+            comparisons = len(re.findall(r" (==|!=|≠) ", text[lo:hi]))
+            assert len([n for n in sweep if n.startswith(f"sweep-negate-{name}-")]) == comparisons, name
+            contains = len(re.findall(r"\.contains\b", text[lo:hi]))
+            if "α" not in text[lo:text.index("\n", lo)]:
+                assert len([n for n in sweep if n.startswith(f"sweep-contains-prefix-{name}-")]) == 2 * contains, name
+    lo, hi = _span(_masked(syntax), "def Term.accepts ")
+    arms = _arms(_masked(syntax), lo, hi)
+    assert len(arms) == 8
+    changed = {n.rsplit("-", 1)[0] for n in sweep if "-Term.accepts-" in n}
+    assert {"sweep-wildcard-Term.accepts", "sweep-ctor-swap-Term.accepts", "sweep-drop-arm-Term.accepts",
+            "sweep-arm-value-Term.accepts", "sweep-index-succ-Term.accepts", "sweep-index-0-Term.accepts",
+            "sweep-wildcard-index-Term.accepts", "sweep-prefix-Term.accepts",
+            "sweep-contains-prefix-Term.accepts"} <= changed
+    for review, name in REVIEW_F15.items():
+        lines = [[i for i, (a, b) in enumerate(zip(syntax.split("\n"), MUTANTS[m](syntax, read)[0].split("\n")))
+                  if a != b] for m in (review, name)]
+        assert lines[0] == lines[1] and len(lines[0]) == 1, (review, name)
+    assert set(UNWRITABLE) <= set(sweep)
+    assert set(EQUIVALENT) <= set(sweep) | set(_generated())
 
 
 def test_the_generated_mutants_cover_every_list_of_the_check():
@@ -550,7 +859,7 @@ def test_the_generated_mutants_cover_every_list_of_the_check():
     # Every occurrence of a list-valued name is cut where it stands, alone or in parentheses.
     for s, e in atoms:
         assert (s, e) in terms or (s - 1, e + 1) in terms, syntax[s:e]
-    assert set(EQUIVALENT) <= set(generated)
+    assert {n for n in EQUIVALENT if not n.startswith("sweep-")} <= set(generated)
 
 
 def test_the_list_valued_names_are_read_from_the_declarations():

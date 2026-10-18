@@ -90,6 +90,35 @@ def count : Listing (List Nat) → Option Nat
 #guard Term.accepts (.kw "seek") (.word "SEEK") && Term.accepts (.adv ["freely"]) (.word "FREELY") &&
   !Term.accepts (.fill ["and"]) (.word "AND")
 
+/-! `Term.accepts`'s truth table: every kind of terminal against every kind of token (ap-2 review F15: a terminal
+that accepts a token of another kind, or a word that only begins its word or that its word begins). -/
+
+/-- For each word terminal of `acceptsTable`: its word in lower case, in capitals, with only its first and only its
+last letter a capital, a strict prefix and an extension; each list's other word; and another word. -/
+def tableWords : List String :=
+  ["seek", "SEEK", "Seek", "seeK", "see", "seeks", "freely", "FREELY", "Freely", "freelY", "free", "freelys", "gladly",
+   "GLADLY", "glad", "and", "AND", "And", "anD", "an", "andes", "or", "OR", "o", "order", "asylum"]
+/-- A token of every kind: the words of `tableWords`, `fixed` and `slot` at 0 and past it, and the comma. -/
+def tableToks : List Tok := tableWords.map Tok.word ++ [.fixed 0, .fixed 1, .slot 0, .slot 1, .slot 2, .comma]
+/-- Each kind of terminal, the list terminals with two words, one and none, and exactly the tokens of `tableToks` it
+accepts: it refuses the others. -/
+def acceptsTable : List (Term × List Tok) :=
+  [(.subj, [.slot 0]), (.slot, [.slot 1, .slot 2]), (.fixed, [.fixed 0, .fixed 1]), (.comma, [.comma]), (.never, []),
+   (.kw "seek", ["seek", "SEEK", "Seek", "seeK"].map Tok.word),
+   (.adv ["freely", "gladly"], ["freely", "FREELY", "Freely", "freelY", "gladly", "GLADLY"].map Tok.word),
+   (.adv ["gladly"], ["gladly", "GLADLY"].map Tok.word), (.adv [], []),
+   (.fill ["and", "or"], (tableWords.filter (!["and", "AND", "And", "anD", "or", "OR"].contains ·)).map Tok.word),
+   (.fill ["or"], (tableWords.filter (!["or", "OR"].contains ·)).map Tok.word), (.fill [], tableWords.map Tok.word)]
+
+#guard acceptsTable.all fun (t, ys) => tableToks.filter (Term.accepts t) == ys
+
+/-- Every kind of terminal is in `acceptsTable`. -/
+theorem acceptsTable_terms (t : Term) : acceptsTable.any (·.1.ctorIdx == t.ctorIdx) = true := by
+  cases t <;> rfl
+/-- Every kind of token is in `tableToks`. -/
+theorem tableToks_kinds (k : Tok) : tableToks.any (·.ctorIdx == k.ctorIdx) = true := by
+  cases k <;> rfl
+
 /-! ### The vocabulary check (1.4): one fixture per D-31 text -/
 
 def fr (h : String) (m s mods : List String) : Frame := ⟨wordsOf h, m, s, mods⟩
@@ -304,6 +333,49 @@ fold of the first letter only accepts `sEek`). -/
 #guard errOf (frames [fr "mark" ["iN"] [] []]) ==
   "InvalidInput: frame 'mark' has the marker word 'iN', which is not a lower-case word of letters"          -- 31m
 #guard errOf ⟨[], ["frEely"]⟩ == "InvalidInput: the adverb 'frEely' is not a lower-case word of letters, or is reserved"
+
+/-! ### The other definitions, each over a table of its cases (ap-2 review F15 and F16) -/
+
+#guard ([([], none), (["a"], none), (["a", "a"], some "a"), (["a", "b"], none), (["a", "b", "a"], some "a"),
+    (["a", "b", "b"], some "b"), (["a", "b", "b", "a"], some "a"), (["b", "a", "a", "b"], some "b"),
+    (["a", "ab"], none), (["ab", "a"], none)] : List (List String × Option String)).all fun (xs, d) => firstDup xs == d
+#guard ([("in", ["in"]), ("in front", ["in", "front"]), ("in  front", ["in", "front"]), (" in", ["in"]),
+    ("in ", ["in"]), ("", []), (" ", [])] : List (String × List String)).all fun (m, ws) => wordsOf m == ws
+#guard [("seek", true), ("a", true), ("check-in", true), ("o'er", true), ("Seek", false), ("sEek", false),
+    ("seeK", false), ("SEEK", false), ("se3k", false), ("-in", false), ("'in", false), ("", false)].all
+  fun (w, ok) => wordOk w == ok
+#guard ([([], []), ([1], [1]), ([1, 1], [1]), ([1, 2], [1, 2]), ([2, 1, 2, 3, 1], [2, 1, 3])] :
+    List (List Nat × List Nat)).all fun (xs, ys) => firsts xs == ys
+#guard valueOf μ1 (t 0) == some "a" &&
+  valueOf (fun _ _ => .error "no" : VE.Grammar.Meaning Tok Unit String String) (t 0) == none
+#guard errOf (frames [fr "claim" [] [] [], fr "take" [] [] [], fr "take" [] [] [], fr "claim" [] [] []]) ==
+  "InvalidInput: frame 'claim' is declared twice"                                 -- 31e: the first that occurs again
+
+/-- Each word of `R` one letter longer, and without its last letter: words that begin a word of `R` or that one
+begins, other than the words of `R`. -/
+def near (R : List String) : List String :=
+  (R.flatMap fun w => [w ++ "x", w.dropRight 1]).filter fun v => v != "" && !R.contains v
+
+/-! Each test of a word against a word list, or of two markers, with a word that only begins a word of the list or
+that a word of the list begins (ap-2 review F15: a membership or equality test made a prefix test). -/
+
+#guard near ["and", "nor", "no"] == ["andx", "an", "norx", "nox", "n"]
+#guard (near headReserved).all fun w => framesOk (frames [fr ("seek " ++ w) [] [] []]) && framesOk ⟨[], [w]⟩ -- 31d, 31q
+#guard (near markerReserved).all fun w => framesOk (frames [fr "seek" ["in " ++ w] [] [w]])                  -- 31n
+#guard errOf (frames [fr "move" ["into"] ["in"] []]) ==
+  "InvalidInput: frame 'move' splits 'in', which is not one of its markers"                                 -- 31i
+#guard errOf (frames [fr "move" ["in"] ["into"] []]) ==
+  "InvalidInput: frame 'move' splits 'into', which is not one of its markers"                               -- 31i
+#guard framesOk (frames [fr "keep" ["into"] [] ["in"]]) && framesOk (frames [fr "keep" ["in"] [] ["into"]]) -- 31k
+#guard errOf (frames [fr "seek" [] [] ["in "]]) ==
+  "InvalidInput: frame 'seek' has the marker 'in ', which is not words separated by single spaces"          -- 31l
+#guard errOf (frames [fr "seek" ["in front "] [] []]) ==
+  "InvalidInput: frame 'seek' has the marker 'in front ', which is not words separated by single spaces"    -- 31l
+#guard framesOk ⟨[fr "rest" ["into"] [] []], ["in"]⟩ && framesOk ⟨[fr "rest" ["in"] [] []], ["inward"]⟩ &&
+  framesOk ⟨[fr "restore" [] [] []], ["rest"]⟩ && framesOk ⟨[fr "rest" [] [] []], ["restfully"]⟩            -- 31r
+#guard framesOk (frames [fr "sit" ["onto"] [] [], fr "on hold" [] [] []]) &&
+  framesOk (frames [fr "sit" ["on"] [] [], fr "onward" [] [] []])                                           -- 31s
+#guard framesOk (frames [fr "take" [] [] [], fr "taken part" [] [] []])                                     -- 31f
 
 /-! ### FR7: the vocabularies of 11.2, the 13 `ap0` rows of 11.2b and the ap-2 measurement's generated frames -/
 
