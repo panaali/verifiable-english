@@ -1,0 +1,7 @@
+# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at ee29c7b06 (this file's own commit follows)
+ee29c7b0682f19e83b44d4567bd2a3ea7dca6dfe ap-2: DELTA (trust +145 under R16), REPORT (cut, ap-2b), seeded bugs re-run on the final code
+69429bb9dc3ec348a564606f7ccaebb9113a9309 ap-2: GrammarExamples: a raw budget of 0 is the limit outcome
+b0cfc1ff5f0eec3cf055b64402972e7ee1f69053 ap-2: seeded bugs (9 Lean, 1 Python), each failing its check, restored; mutants.json
+3dbb2184b42de1d3425b7b48175f8937cf162e77 ap-2: VE.Acts.Syntax (tokens, frames, terminals, framesOk with the D-31 texts) and VE.Acts.Read (the D2 listing, readings and reading, proved)
+aec067d28f5b9418c473f401679bfeed0823e795 ap-2: N re-measurement after D9 (i): R = 2, S = 19,184 on 38 rows; N = 256 and the step budget 2,100,000 stand
+597b0d8e45be56b29341bda5bbaa7c93a3d71ddf ap-2: copy the act-phrases plan (draft 4) and spec (draft 3) verbatim from bb5b2f90d; register the N re-measurement
