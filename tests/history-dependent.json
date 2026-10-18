@@ -632,13 +632,15 @@
   },
   {
    "test": "tests/test_lean_dump_cache.py",
-   "why": "starts git (git init, git ls-files, git rev-parse) in tests/test_lean_dump_cache.py, tools/cache_store.py, tools/source_graph.py",
+   "why": "starts git (git init, git ls-files, git rev-parse) in tests/test_lean_dump_cache.py, tools/cache_store.py, tools/source_graph.py; reads .git in tests/test_lean_dump_cache.py",
    "recorded": [
     "source"
    ],
    "via": [
     "tests/test_lean_dump_cache.py:dump: git init",
+    "tests/test_lean_dump_cache.py:test_a_tree_whose_inputs_cannot_be_read_runs_the_dump: .git",
     "tests/test_lean_dump_cache.py:test_the_cache_directory: git rev-parse",
+    "tests/test_lean_dump_cache.py:test_two_checkouts_of_one_tree_share_an_entry: .git, git init",
     "tools/cache_store.py:directory: git rev-parse",
     "tools/source_graph.py:tracked: git ls-files"
    ]
