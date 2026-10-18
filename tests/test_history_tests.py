@@ -495,6 +495,98 @@ def test_a_new_test_in_the_tree_that_imports_the_frozen_oracle_fails(tmp_path):
         "conformance/frozen_norm_defaults.py)" in history_tests.lint(tmp_path).errors
 
 
+COMMANDS = """
+    import os
+    import subprocess
+    GIT = ("git", "--no-optional-locks", "-c", "core.quotePath=false")
+    PROGRAM = os.environ.get("GIT", "git")
+    LAKE = ("lake", "build")
+    OUTPUT = subprocess.check_output(["lake", "--version"])
+    GITK = "gitk"
+
+    class Repo:
+        GIT = ["git", "-C", "repo"]
+"""
+
+
+def test_a_new_test_that_uses_a_git_command_bound_in_another_module_fails(tmp_path):
+    """F4: a git command bound to a name in one module (`tools/gate_collection.py`'s `GIT`) and used in another
+    (`from tools.gate_collection import GIT`, then `[*GIT, "log"]`) counts, whatever the name is called where it
+    is used and however it is reached: an alias, a module attribute, a class attribute, a re-export, a star
+    import, a sum. A module's other names do not."""
+    run = "import subprocess\n{}\n\ndef test_x():\n    subprocess.run({})\n"
+    errors = _new_test(tmp_path, {
+        "tools/commands.py": COMMANDS, "tools/again.py": "from commands import GIT  # noqa: F401\n",
+        "tests/test_starred.py": run.format("from commands import GIT", '[*GIT, "log", "-1"]'),
+        "tests/test_alias.py": run.format("from commands import GIT as tool", '[*tool, "log"]'),
+        "tests/test_module.py": run.format("import commands", '[*commands.GIT, "log"]'),
+        "tests/test_sum.py": run.format("from commands import GIT as base", 'list(base) + ["log"]'),
+        "tests/test_string.py": run.format("from commands import PROGRAM as program", '[program, "status"]'),
+        "tests/test_class.py": run.format("from commands import Repo", '[*Repo.GIT, "log"]'),
+        "tests/test_reexport.py": run.format("from again import GIT as command", "command"),
+        "tests/test_star.py": run.format("from commands import *  # noqa: F403", '[*GIT, "log"]'),
+        "tests/test_other.py": run.format("from commands import LAKE, OUTPUT, GITK", "[*LAKE, OUTPUT, GITK]")})
+    assert [error.split(" reads history")[0] for error in errors] == [
+        f"missing: tests/test_{name}.py" for name in ("alias", "class", "module", "reexport", "star", "starred",
+                                                      "string", "sum")]
+    assert errors[-1].endswith("(starts git in tools/commands.py)")
+
+
+def test_a_name_bound_to_git_is_a_site_of_the_name_and_a_starred_or_summed_one_of_its_use(tmp_path):
+    """F4: which module- and class-level names hold the git program (`programs`), by the same test as a program
+    in a command, and the use of an imported one as a program: starred, summed, split, looked up or chosen. What
+    a process call returns is git's output, not the program."""
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "tools/commands.py").write_text(textwrap.dedent(COMMANDS))
+    scanner = history_tests._scan("tools/commands.py", tmp_path)
+    assert {name: (site.kind, site.line) for name, site in scanner.programs.items()} == {
+        "GIT": (START, 4), "PROGRAM": (START, 5), "Repo.GIT": (START, 11)}
+    assert scanner.found == set()
+    source = """
+        import os, subprocess
+        from commands import GIT, LAKE
+
+        def starred():
+            return subprocess.run([*GIT, "log"])
+
+        def summed():
+            return subprocess.run(GIT + ["log"])
+
+        def split():
+            return subprocess.run("git log".split())
+
+        def looked_up():
+            return subprocess.run([os.environ.get("GIT", "git"), "log"])
+
+        def chosen():
+            return subprocess.run([os.environ.get("GIT") or "git", "log"])
+
+        def output():
+            out = subprocess.check_output(["git", "log"])
+            return (out, 1), [out.strip()], subprocess.run([*LAKE, "build"]), "gitk log".split()
+    """
+    found = _sites(tmp_path, source)
+    assert found == {("starred", START, ""), ("summed", START, ""), ("split", START, ""), ("looked_up", START, ""),
+                     ("chosen", START, ""), ("output", START, "log")}
+    assert {qualname for qualname, _, _ in found} <= _qualnames(source)
+
+
+def test_a_new_test_in_the_tree_that_runs_the_gate_collections_git_vector_fails(tmp_path):
+    """PROBE F4 on this checkout: a copy of the tree (by links) with one new test that runs
+    `[*GIT, "log", "-1"]` with `GIT` imported from `tools/gate_collection.py`."""
+    for name in os.listdir(ROOT):
+        if name != "tests":
+            os.symlink(ROOT / name, tmp_path / name)
+    (tmp_path / "tests").mkdir()
+    for name in os.listdir(ROOT / "tests"):
+        os.symlink(ROOT / "tests" / name, tmp_path / "tests" / name)
+    (tmp_path / "tests/test_zz_probe.py").write_text(
+        'import subprocess\nfrom tools.gate_collection import GIT\n\ndef test_x():\n'
+        '    subprocess.run([*GIT, "log", "-1"])\n')
+    assert any(error.startswith("missing: tests/test_zz_probe.py reads history and is not listed (starts git in ")
+               for error in history_tests.lint(tmp_path).errors)
+
+
 def test_the_run_and_the_source_decide_what_names_git_with_one_definition():
     """tests/read_recorder.py (at run time) and the lint (in the source) both call tools/git_words.py."""
     sys.path.insert(0, str(ROOT))

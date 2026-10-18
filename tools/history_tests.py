@@ -29,14 +29,18 @@ it starts no git itself.
 
 A site is found by the shape of the code (`sites`): a command whose program is git (`tools/git_words.py`, which
 the run-time recorder tests/read_recorder.py uses too: `git`, `/usr/bin/git`, git after a launcher such as `env`
-or in `sh -c "cd x && git log"`, a `python -c` program that starts it), a program in a variable whose name says
-git or that is assigned a string that does (`git = shutil.which("git")`), a lookup of git (`shutil.which("git")`),
-a path made from ".git", or a pytest run (`-m pytest`, `pytest.main`), whose test files the source does not name,
-which lists the unit on the safe side. The map then says which units ran each site's function; what a unit
-reaches in the source counts whatever ran. The reach over-approximates: a unit that names a function that starts
-git is listed even if it never calls it. It does not follow a call it cannot resolve in the source (a method of
-an object of unknown class, `getattr` by a computed name, a program assembled at run time from parts that do not
-name git); the conftests' session hooks run for the whole run, not for one unit, and are not followed.
+or in `sh -c "cd x && git log"`, a `python -c` program that starts it), a program that holds git
+(`_Scanner._names_git_program`: a variable whose name says git or that is assigned a value that does, `git =
+shutil.which("git")`, starred or summed, `[*GIT, "log"]`, `GIT + ["log"]`, split, looked up or chosen), a lookup
+of git (`shutil.which("git")`), a path made from ".git", or a pytest run (`-m pytest`, `pytest.main`), whose test
+files the source does not name, which lists the unit on the safe side. A module- or class-level name bound to the
+git program by the same test (`GIT = ("git", "-c", ...)`, `PROGRAM = "git"`) is a site of the name
+(`_Scanner.programs`): code that names it, in any module and under any alias, reaches it. The map then says which
+units ran each site's function; what a unit reaches in the source counts whatever ran. The reach
+over-approximates: a unit that names a function or a name that starts git is listed even if it never calls it.
+It does not follow a call it cannot resolve in the source (a method of an object of unknown class, `getattr` by
+a computed name, a program assembled at run time from parts that do not name git); the conftests' session hooks
+run for the whole run, not for one unit, and are not followed.
 """
 from __future__ import annotations
 
@@ -193,13 +197,30 @@ class _Scanner(ast.NodeVisitor):
         # A module's or class's named argument vector (`GIT = ("git", "-c", ...)`) starts nothing where it is
         # bound: the code that uses the name does.
         self.vectors: dict[str, ast.AST] = {}
-        for body in [tree.body, *(node.body for node in tree.body if isinstance(node, ast.ClassDef))]:
-            for statement in body:
-                if isinstance(statement, (ast.Assign, ast.AnnAssign)) and self._vector(statement.value):
-                    targets = statement.targets if isinstance(statement, ast.Assign) else [statement.target]
-                    if all(isinstance(target, ast.Name) for target in targets):
-                        self.vectors.update((target.id, statement.value) for target in targets)
-        self.bound = {id(node) for node in self.vectors.values()}
+        bindings = [(prefix, statement) for prefix, body in
+                    [("", tree.body), *((node.name + ".", node.body) for node in tree.body if isinstance(node, ast.ClassDef))]
+                    for statement in body if isinstance(statement, (ast.Assign, ast.AnnAssign))
+                    and statement.value is not None and all(isinstance(target, ast.Name) for target in (
+                        statement.targets if isinstance(statement, ast.Assign) else [statement.target]))]
+        self.bound: set[int] = set()  # every bound vector, also one a class binds to a module's name (`Repo.GIT`)
+        for _, statement in bindings:
+            if self._vector(statement.value):
+                targets = statement.targets if isinstance(statement, ast.Assign) else [statement.target]
+                self.vectors.update((target.id, statement.value) for target in targets)
+                self.bound.add(id(statement.value))
+        # Each module- or class-level name bound to the git program (`GIT = ("git", "-c", ...)`, `PROGRAM = "git"`,
+        # `GIT = os.environ.get("GIT", "git")`), under its qualified name (`GIT`, `Repo.GIT`): code that names it,
+        # in this file or through an import of any form, reaches this site (`_Sources.name`), whatever the name
+        # is called where it is used (`from m import GIT as tool`, `[*m.GIT, "log"]`).
+        self.programs: dict[str, Site] = {}
+        for prefix, statement in bindings:
+            vector = id(statement.value) in self.bound
+            for target in statement.targets if isinstance(statement, ast.Assign) else [statement.target]:
+                if vector or self._names_git_program(target) or self._names_git_program(statement.value):
+                    self.programs[prefix + target.id] = Site(
+                        file, prefix + target.id, START, statement.lineno,
+                        _subcommand(statement.value.elts[1:]) if vector else "")
+        self.defs.update((name, name) for name in self.programs if "." not in name)
         # `pytest_plugins = ["answer_store"]` imports each plugin module.
         for statement in tree.body:
             if isinstance(statement, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "pytest_plugins"
@@ -220,6 +241,10 @@ class _Scanner(ast.NodeVisitor):
                         if isinstance(target, ast.Name):
                             self.assigned.setdefault((scope, target.id), []).append(child.value)
                 self._assignments(child, scope, prefix)
+
+    def code(self) -> set[str]:
+        """Every piece of code of the file and every name it binds to git (`programs`): all a script runs."""
+        return {"<module>", "<main>", *self.refs, *self.sites_of, *self.params, *self.programs}
 
     def _values(self, name: str) -> list[ast.AST]:
         """The values assigned to a name where the current code would find it: in itself, else in the code
@@ -397,7 +422,8 @@ class _Scanner(ast.NodeVisitor):
 
     def _program(self, program, call) -> None:
         """A process call's program: a command string (`"git log"`, `"cd x && git log"` for a shell, `"python3
-        tools/gate.py"`) or a variable."""
+        tools/gate.py"`) or an expression that holds git (`_names_git_program`). An argument vector written in the
+        call is its own site (`_argument_vector`)."""
         text = _string(program)
         if text is not None and isinstance(program, ast.Constant):
             for word in _command_words(text):
@@ -410,18 +436,44 @@ class _Scanner(ast.NodeVisitor):
                           and not words[1].startswith("-") else "")
             elif names_git(text):
                 self._add(START, call)
-        elif self._names_git_program(program):
+        elif not isinstance(program, (ast.List, ast.Tuple)) and self._names_git_program(program):
             self._add(START, call)
 
-    def _names_git_program(self, node) -> bool:
-        """Whether a variable used as a program holds git: its name says so (`git`, `GIT_BIN`), or a value assigned
-        to it in this file names the git program (`git = shutil.which("git")`, `os.environ.get("GIT", "git")`)."""
+    def _names_git_program(self, node, depth: int = 0) -> bool:
+        """Whether an expression used as a program, or bound to a name, holds git: the one test for both.
+
+        A string whose first word is git (`"git"`, `f"git -C {root} log"`); a variable whose name says so (`git`,
+        `GIT_BIN`, `m.GIT`) or that a value assigned to it in this file holds git (`git = shutil.which("git")`);
+        a call other than a process call handed git or called on it (`os.environ.get("GIT", "git")`, `"git
+        log".split()`, `list(GIT)`);
+        the first element of a vector or of a sum (`[*GIT, "log"]`, `GIT + ["log"]`), either branch of a choice
+        (`os.environ.get("GIT") or "git"`). A name bound to this file's own vector is not: the code that loads it
+        is the site (`visit_Name`), with the subcommand."""
+        if depth > 8:
+            return False
+        recurse = lambda inner: self._names_git_program(inner, depth + 1)  # noqa: E731
+        text = _string(node)
+        if text is not None:
+            return _program_is_git(text)
+        if isinstance(node, ast.Starred):
+            return recurse(node.value)
+        if isinstance(node, ast.BinOp):
+            return isinstance(node.op, ast.Add) and recurse(node.left)
+        if isinstance(node, ast.BoolOp):
+            return any(recurse(value) for value in node.values)
+        if isinstance(node, ast.IfExp):
+            return recurse(node.body) or recurse(node.orelse)
+        if isinstance(node, (ast.List, ast.Tuple)):
+            return bool(node.elts) and id(node) not in self.bound and recurse(node.elts[0])
+        if isinstance(node, ast.Call):  # what a process call returns is git's output, not the program
+            return _callee(node) not in PROCESS_CALLS and any(recurse(argument) for argument in [*node.args, *(keyword.value for keyword in node.keywords)]) \
+                or isinstance(node.func, ast.Attribute) and recurse(node.func.value)
+        if isinstance(node, ast.Name) and node.id in self.vectors:
+            return False
         words = [word for word in re.split(r"[^a-z]+", _identifier(node).lower()) if word]
         if "git" in words and set(words) <= PROGRAM_WORDS | {"git"}:
             return True
-        return isinstance(node, ast.Name) and node.id not in self.vectors and any(
-            isinstance(inner, ast.Constant) and isinstance(inner.value, str) and _program_is_git(inner.value)
-            for value in self._values(node.id) for inner in ast.walk(value))
+        return isinstance(node, ast.Name) and any(recurse(value) for value in self._values(node.id))
 
     def visit_Attribute(self, node) -> None:
         chain, value = [node.attr], node.value
@@ -510,7 +562,7 @@ class _Scanner(ast.NodeVisitor):
                 and os.path.basename(first.value.split()[0]) in LAUNCHERS:
             if any(isinstance(element, ast.Constant) and names_git(element.value) for element in elements[1:]):
                 self._add(START, node)
-        elif not isinstance(first, ast.Starred) and self._names_git_program(first):
+        elif self._names_git_program(first):  # `[git, "log"]`, `[*GIT, "log"]` with `GIT` imported
             self._add(START, node)
         if any(_string(option) == "-m" and _string(value) == "pytest" and isinstance(value, ast.Constant)
                for option, value in zip(elements, elements[1:])):
@@ -811,9 +863,9 @@ class _Sources:
         if target[0] == "module":
             return [(file, "<module>")]
         if target[0] == "script":
-            return [(file, key) for key in {"<module>", "<main>", *scanner.refs, *scanner.sites_of, *scanner.params}]
+            return [(file, key) for key in scanner.code()]
         qualname = target[2]
-        return [(file, "<module>")] + [(file, key) for key in (*scanner.refs, *scanner.sites_of, *scanner.params)
+        return [(file, "<module>")] + [(file, key) for key in scanner.code() - {"<module>", "<main>"}
                                        if key == qualname or key.startswith(qualname + ".")]
 
     def conftests(self, unit: str) -> list[str]:
@@ -840,7 +892,9 @@ class _Sources:
                         if not line.lstrip().startswith("#") and names_git(line)}
             return self._memo(("shell", file), lines)
         facts = self.scanner(file)
-        return facts.sites_of.get(key, set()) if facts else set()
+        if facts is None:
+            return set()
+        return facts.sites_of.get(key, set()) | ({facts.programs[key]} if key in facts.programs else set())
 
     def edges(self, node: tuple[str, str]) -> list[tuple[str, str]]:
         """The pieces of code one piece can run: what each name, import and script in it is."""
@@ -908,7 +962,7 @@ class _Sources:
         if scanner is None:
             return set()
         providers = self.conftests(unit)
-        roots = [(unit, key) for key in {"<module>", "<main>", *scanner.refs, *scanner.sites_of, *scanner.params}]
+        roots = [(unit, key) for key in scanner.code()]
         roots += [(conftest, "<module>") for conftest in providers]
         for conftest in list(providers):
             facts = self.scanner(conftest)
