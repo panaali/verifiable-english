@@ -157,18 +157,19 @@ Upper bound of any narrowing of the manifest and pin rules: the units only their
 What the tables show:
 
 - **The manifest always has a safe operation map now.** 14 of the 54 merges edit
-  `ve/assurance-manifest.json`. None of the 256 saved plans (64 changes x 2 rules x 2 labels) gives "no safe operation map":
-  no merge added or removed the file, changed `version`, or broke the operation list. tarch-select's
+  `ve/assurance-manifest.json`. None of the 256 saved plans (64 changes x 2 rules x 2 labels) gives
+  "no safe operation map": no merge added or removed the file, changed `version`, or broke the operation list. tarch-select's
   shared-field narrowing (`../select/REPORT.md` row "5.") already covers every manifest edit made since
   2026-10-14. Candidates (a) and (b) of the task (presence changes, IMPORT_FIELDS edits) occur in none of
   these 54 merges.
 - **The pins decide no plan.** 13 merges edit `lean/checkers.lock` (the edits table above). Every one of
   them adds `ve_service` digests: 1 to 22 per merge, 2 merges also add `rust_jsonl` digests, and no merge
-  drops a pin. A
-  pin change is therefore a new service build, and every service user is selected through the Lean change
-  anyway. This holds with or without the binary cutoff: a changed `ve_service` digest selects all its
-  runners (`service_impact`). The pin readers (293 units) are almost all service users or readers of the
-  schema files, so dropping every pin reason changes 7 units across all 54 merges.
+  drops a pin. Each pin change thus pins a new service build, and the same merges' Lean and schema changes
+  select every service user anyway. Measured: of the units a pin reason selects (293 in most of these
+  plans), all but 7 over the 54 merges also have another reason (fresh map), and none under drift. With the
+  binary cutoff on (not measured: no build records for these merges), a changed `ve_service` digest still
+  selects all its runners (`service_impact`), so the pins can add more only on a merge that pins a service
+  build other than its own head's.
 - **The manifest decides 2 plans, and only under drift** (`a4676c0b7` fu-docs-1017, `e7f6968d4`
   ties-fu-1017). The deciding reason is "unmapped manifest reader": a manifest edit adds every unit the
   drift check made uncertain. Without it, those plans select 415 and 411 units. That is map staleness, not
@@ -210,9 +211,9 @@ Limits of the measurement:
 ## Follow-ups (not built here)
 
 1. **`service_schema.py` is the largest real cause.** A new or changed `Compiler._x_*` method selects
-   every runner of the module (393 units). The compiler dispatches on schema keywords (`x-<keyword>` runs `_x_<keyword>`,
-   `service_schema.py:189`), and a new method "not called by name" keeps the whole file. A sound narrowing would read which keywords the
-   schemas under `ve/backends/lean_service_schema/` use: those files are in the recorded map's reads, and
+   every runner of the module (393 units). The compiler dispatches on schema keywords (`x-<keyword>` runs
+   `_x_<keyword>`, `service_schema.py:189`), and a new method "not called by name" keeps the whole file. A
+   sound narrowing would read which keywords the schemas under `ve/backends/lean_service_schema/` use: those files are in the recorded map's reads, and
    a new keyword that no schema names selects only the compiler's own tests. This needs its own measurement
    and its own mutants.
 2. **Map staleness under drift** (31 of 54 full). The static graph answers for every uncertain unit, and
@@ -226,10 +227,16 @@ Limits of the measurement:
 
 ## Orchestrator lines
 
-None needed: nothing is installed or wired. For the record: `L59` ("a branch that touches the manifest
-selects all ~400 units") describes the selector before tarch-select. On main `de9cfa84f` a manifest edit
-selects its operation readers. With a stale map it also selects the uncertain units (2 of 54 merges decided
-by that).
+None needed: nothing is installed or wired. For the record, on L59 ("a branch that touched
+ve/assurance-manifest.json (no safe operation map) picks all ~392-402 units"): its five verify-fixes
+(premise-scale, me-1, tarch-contract, rd-9, lf-16e) ran Oct 15-16. The first four ran before tarch-select
+merged (`ee4ae48ad`, Oct 16 12:18Z), which mapped shared-field edits; before it, a shared-field edit had no
+safe map. On main `de9cfa84f`'s selector, none of those items' merges (`3160fb800`, `05b85b631`,
+`bf6c03baf`, `d7ea7228b`, `8bc65a907`) gives "no safe operation map" (tables above). That is the likely
+difference; the old selector was not replayed here. A suggested L59 note for the orchestrator: "re-measured
+2026-10-18 (tarch-manifest-ops REPORT.md): on main's selector 0 of 54 merges since Oct 14 select everything
+for want of a manifest map; the whole-suite plans come from service_schema.py edits, tests/conftest.py and
+map staleness".
 
 ## Seeded bugs
 
@@ -247,4 +254,21 @@ saved" (exit 0), and so does `--check --only a4676c0b7,e7f6968d4,109c7de1d`:
 
 ## Self-review against BUILDER-CHECKLIST
 
-See the build report's final section (the same items, one line each).
+1. Lean answers typed and contained: N.A., no relay or route is touched.
+2. Deliverables: PASS. Step 1 is `measure.py` + `evidence/replay.json.gz` + section 1. The stop rule is met
+   (0 fresh / 2 drift < 3), so steps 2-3 were not built (the task's own rule). Section 2 holds the before
+   numbers and the upper bound. No permanent report test (D4); `measure.py --check` exits 0.
+3. Tests can fail: PASS. Seeded bugs S1-S4 above, each with its failing check; the unseeded check passes.
+4. Py/Lean/Rust agreement: N.A., no product behaviour changes.
+5. R8 binding: N.A., no Lean answer is read.
+6. Gate evidence matches the final HEAD: PASS. Synced with main; the saved rows are pinned to `de9cfa84f`
+   and recomputed there by `--check`, so a sync does not move them. The chain runs the gate on the final HEAD.
+7. No unsigned item: PASS. DELTA.md has no rows, and no signature is needed.
+8. Every user-visible change in DELTA: PASS. There is no VE or selector output change (no `ve/`, `lean/`,
+   `rust/` or selector file touched).
+9. Test selection: PASS. `mac-pytest.sh --select` on this branch picked about 113 units, not all of them. It
+   ran and caught S4 (`tests/test_regen_generated.py`), and passes with 0 failed on the final tree.
+10. Lean statements: N.A., no Lean change.
+11. Budgets fail closed: N.A., no budget or deadline code; the evidence script has no timeout.
+12. CPU/memory: N.A., no product code.
+13. Test-removed trailers: N.A., no test removed or renamed.
