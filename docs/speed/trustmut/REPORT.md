@@ -138,8 +138,30 @@ docs/speed/trustmut/mutants.json` kills 7 of 7, each at its named test, the file
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
 | Size: at most ~500 changed lines outside generated files | over: see below |
 
-Size: about 840 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
-(`tools/trust_mutants.py` about 490, the test 200, `replay.py` 95, this report and DELTA about 130). The size rule's
-fallback is to deliver steps 1-3 for the operators step 1 showed matter, and every operator but `arm-default`,
-`body-true`/`body-false`, `ne-eq`, `all-any` and `append-*` left a survivor on a finding's line; removing those saves
-under 20 lines, so all are kept. The rest is the runner the task asks for (scratch copies, staged builds, proof cuts).
+Size: about 1,030 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
+(`evidence/*.json`, `mutants-evidence.json`): `tools/trust_mutants.py` 504, the test 199, `replay.py` 94, the
+seeded bugs' `mutants.json` 74, this report and DELTA 160. That is about twice the guideline. The size rule's
+fallback is to deliver steps 1-3 for the operators step 1 showed matter; every operator but `arm-default`,
+`body-true`/`body-false`, `ne-eq`, `all-any` and `append-*` left a survivor on a finding's line, and removing those
+saves under 20 lines, so all are kept. The bulk is the runner the task asks for (selection, scratch copies with
+the shared build, staged builds, proof cuts, the kill rule), and splitting it would leave no usable tool.
+
+## 6. Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no Lean answer is relayed; the tool reads Lake's build log, and a failure it cannot place is UNKNOWN.
+2. PASS: section 5 maps every task line to its delivery; no rule break (no product code, no permanent report
+   test: `replay.py` reads saved evidence, D4).
+3. PASS: seeded bugs TM1–TM7 (`mutants.json`, `mutants-evidence.json`), each failing only its named test;
+   `--allow` names an exact (definition, operator) pair (`test_allow_suppresses_exactly_its_operator`).
+4. N.A.: no Python, Lean or Rust product code changed.
+5. N.A.: no relayed field.
+6. PASS: synced with main (cb033316a) before the final runs; the chain runs the gate on the final HEAD.
+7. PASS: DELTA has no rows and reserves nothing; trust +0 (no Lean file changed).
+8. PASS: `git diff --stat main...HEAD -- ve lean rust conformance` is empty.
+9. PASS: `tools/select_tests.py` selects 24 units, `tests/test_trust_mutants.py` among them
+   (`repo_map.py file tools/trust_mutants.py`).
+10. N.A.: no Lean statement or proof.
+11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
+12. N.A.: no product code; the tool's own times are in section 1.
+13. N.A.: no test removed or renamed; `tools/gate_collection.py --check --prebuilt`: 8 added, 0 refused, 0 stale,
+    0 malformed.
