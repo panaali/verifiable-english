@@ -60,7 +60,13 @@ class Dump:
 
 
 @pytest.fixture
-def dump(tmp_path) -> Dump:
+def dump(tmp_path, monkeypatch) -> Dump:
+    """The scratch tree, with an installed toolchain of its own (`ELAN_HOME`)."""
+    toolchain = tmp_path / "elan/toolchains/leanprover--lean4---v4.24.0"
+    for name in ("bin/lean", "bin/lake", "lib/lean/libleanshared.so"):
+        (toolchain / name).parent.mkdir(parents=True, exist_ok=True)
+        (toolchain / name).write_bytes(name.encode())
+    monkeypatch.setenv("ELAN_HOME", str(tmp_path / "elan"))
     root = tmp_path / "tree"
     for name, text in SOURCES.items():
         (root / name).parent.mkdir(parents=True, exist_ok=True)
@@ -107,6 +113,10 @@ CHANGES = {
     "a Lean source renamed": lambda dump, monkeypatch: (dump.root / "lean/VE/A.lean").rename(
         dump.root / "lean/VE/Z.lean"),
     "the toolchain": _edit("lean/lean-toolchain", "leanprover/lean4:v4.25.0\n"),
+    "the installed toolchain's library": lambda dump, monkeypatch: (
+        dump.root.parent / "elan/toolchains/leanprover--lean4---v4.24.0/lib/lean/libleanshared.so").write_bytes(b"x"),
+    "the installed toolchain's lean": lambda dump, monkeypatch: (
+        dump.root.parent / "elan/toolchains/leanprover--lean4---v4.24.0/bin/lean").unlink(),
     "the lakefile": _edit("lean/lakefile.toml", SOURCES["lean/lakefile.toml"] + "\n# edited\n"),
     "a lakefile.lean added": _edit("lean/lakefile.lean", "import Lake\n"),
     "the Lake manifest": _edit("lean/lake-manifest.json", '{"version": "1.1.0", "packages": [], "name": "x"}\n'),
