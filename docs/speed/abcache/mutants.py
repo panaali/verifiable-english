@@ -48,8 +48,8 @@ MUTANTS = [
      "if False:", "test_a_damaged_entry_is_a_miss_and_is_replaced[another source]"),
     ("a damaged entry is set aside and replaced", CACHE, "        os.rename(entry, refused)\n", "",
      "test_a_damaged_entry_is_a_miss_and_is_replaced[flipped byte]"),
-    ("only builds the root's lock pins are stored", CACHE, "checkers = pinned_checkers(root)",
-     'checkers = {}', "test_an_unpinned_build_is_not_stored"),
+    ("only builds the root's lock pins are stored", CACHE, '            pinned_checkers(root, shared["checkers"])\n',
+     "", "test_an_unpinned_build_is_not_stored"),
     ("the recording's scratch path is stored portable", CACHE,
      'data = text.replace(_stem(out), SCRATCH + ".").encode()', "data = text.encode()",
      "test_hit_returns_the_records_a_recording_writes"),
@@ -66,6 +66,23 @@ MUTANTS = [
      "test_a_failed_recording_writes_and_stores_nothing"),
     ("prune keeps the entries used lately", CACHE, "os.utime(entry)  # used now", "pass  # used now",
      "test_prune_keeps_what_was_stored_or_used_lately"),
+    # review F1: the checker builds a recording ran are keyed, not the lock's membership alone
+    ("the checker builds are keyed (review F1)", CACHE, '"checkers": checker_builds(root)}', '"checkers": None}',
+     "test_a_base_recorded_with_an_old_pinned_build_is_not_reused"),
+    ("every Lean executable is keyed (review F1)", CACHE, 'found[f"lean/{path.name}"] = _file_sha256(path)',
+     "pass", "test_each_key_part_changed_is_a_miss[change_route_build]"),
+    ("an overridden checker is keyed by its contents (review F1)", CACHE,
+     "found[name] = _file_sha256(Path(os.environ.get(variable) or root / default))",
+     "found[name] = os.environ.get(variable) or default", "test_each_key_part_changed_is_a_miss[change_rust_override]"),
+    # review F2: `sources` itself is tested, branch by branch
+    ("a pilot's companion files are keyed (review F2)", CACHE, "_json_sha256([blobs, beside])", "_json_sha256([blobs])",
+     "test_each_input_a_corpus_reads_changes_its_key[pilots]"),
+    ("the discourse corpus file is keyed (review F2)", CACHE, "return diff.digest(diff.ROOT / path), by_case.get",
+     'return "0" * 64, by_case.get', "test_each_input_a_corpus_reads_changes_its_key[discourse]"),
+    ("a conformance file is keyed (review F2)", CACHE,
+     'files = {name: diff.digest(root / f"conformance/{name}.json") for name in diff.CONFORMANCE}',
+     'files = {name: "0" * 64 for name in diff.CONFORMANCE}',
+     "test_each_input_a_corpus_reads_changes_its_key[conformance]"),
 ]
 
 
