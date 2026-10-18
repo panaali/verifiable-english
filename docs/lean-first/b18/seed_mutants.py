@@ -55,8 +55,10 @@ MUTANTS = (
 
 
 def run_test(test: str) -> dict:
-    proc = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", "-p", "no:cacheprovider", test],
-                          cwd=ROOT, env={**os.environ, "VE_NATIVE_PREBUILT": "1"},
+    sys.path.insert(0, str(ROOT / "tools"))
+    import nested_pytest
+    proc = subprocess.run(nested_pytest.command(["-q", "-x", "-p", "no:cacheprovider", test]), cwd=ROOT,
+                          env=nested_pytest.environment(os.environ, VE_NATIVE_PREBUILT="1"),
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     return {"exit_code": proc.returncode, "failed": "FAILED" in proc.stdout or " failed" in proc.stdout,
             "output_tail": proc.stdout[-1500:]}
