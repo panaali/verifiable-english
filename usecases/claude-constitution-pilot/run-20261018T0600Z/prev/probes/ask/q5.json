@@ -1,0 +1,29 @@
+{
+  "operation": "question.read",
+  "assurance": "experimental",
+  "intent": "unconfirmed",
+  "proof": "not_checked",
+  "answer": "no_answer",
+  "result": {
+    "class": "SyntaxError",
+    "code": "NoDerivation",
+    "identities": {
+      "actions_version": "28",
+      "environment_id": "dec959f2f8331c68844ab22dedf4eca264155f07679d74a9d66d21d161787b14",
+      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
+      "lexicon_id": "8ce556ecb0abf53f647004d7b95f8630764359639db23701bf1991b87658b4ae",
+      "question_version": "question@1",
+      "source_sha256": "985f7400d0fc40b3e0920da8b54f7153c3b8a89984099463c61d23f58e3ac642"
+    },
+    "span": [
+      0,
+      66
+    ],
+    "status": "none",
+    "text": "The question has no reading with the current vocabulary. Closest sentence tried: \"every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\".\". Unknown English phrase 'must seek clarification in each situation'. Nearest declared wordings: 'must seek clarification in {1}'; 'is classified as \"input_is_specific_instructions\"'; 'must remain firm in {1}'."
+  },
+  "error": {
+    "class": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\".\". Unknown English phrase 'must seek clarification in each situation'. Nearest declared wordings: 'must seek clarification in {1}'; 'is classified as \"input_is_specific_instructions\"'; 'must remain firm in {1}'."
+  }
+}
