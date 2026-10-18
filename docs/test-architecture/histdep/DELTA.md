@@ -8,7 +8,9 @@ Not deltas, so not in the table: the new inventory `tests/history-dependent.json
 `tests/history-map.json` and their lint (`tools/history_tests.py`, run by `tests/test_history_tests.py` in the gate),
 which add a check and skip nothing; and the run cache's entry format 2 (`tools/run_cache.py`), a private cache in the
 git common directory whose entries for runs that read history now also bind the commit, the runner and git's version.
-No test's outcome changes because of either.
+No test's outcome changes because of either. Fix round 1 widens two private checks, again only toward listing or
+binding more: the lint follows the source a unit can run, and the read recorder binds a run whose process names
+git in any word of its arguments (`tools/git_words.py`).
 
 | # | Delta | Ruling | Test |
 |---|-------|--------|------|
