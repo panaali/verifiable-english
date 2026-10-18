@@ -11837,6 +11837,7 @@
         "ResponseShape.Schemas.Metered.file",
         "ResponseShape.Schemas.Metered.node",
         "ResponseShape.Schemas.Metered.nonVacuity",
+        "ResponseShape.Schemas.Metered.result",
         "ResponseShape.Schemas.Metered.row"
       ]
     },

@@ -1585,16 +1585,6 @@
    "reason": "Untyped: every retype of the field is accepted (no type in its schema). Type it in lean/ResponseShape/Schemas."
   },
   {
-   "route": "ve_metered::evaluate",
-   "mutation": "*",
-   "path": [
-    "*/evaluation*"
-   ],
-   "kind": "follow-up",
-   "id": "F8",
-   "reason": "ve_metered `evaluation` is typed `object` in the assurance manifest (no field types), so a malformed evaluation reaches lean_runner's callers. Give the metered evaluation a typed response shape."
-  },
-  {
    "route": "ve_senses_route::senses.read",
    "mutation": "*",
    "path": [

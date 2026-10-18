@@ -25,15 +25,20 @@ def node : Shape :=
       ("detail", str),
       ("children", ref "common.json#/$defs/nat")]]
 
-def evaluation : Shape :=
-  c "Metered.resultFields and the explanation: null unless the case asks for a trace." [
+/-- One of the three document results: its status and value, as `Metered.scan` writes them. -/
+def result (status : String) (value : Json) : Shape :=
+  n [
     obj,
     .required ["status", "value", "evaluations", "explanation"],
     closed [
-      ("status", enumS ["Satisfied", "Violated", "ResourceLimit"]),
-      ("value", .type ["boolean", "null"]),
+      ("status", constS status),
+      ("value", .const value),
       ("evaluations", ref "common.json#/$defs/nat"),
       ("explanation", .anyOf [.type ["null"], n [arr, .minItems 1, .items (ref "#/$defs/node")]])]]
+
+def evaluation : Shape :=
+  c "Metered.resultFields and the explanation (null unless the case asks for a trace): a satisfied document is true, a violated one false, an exhausted budget has no value." [
+    .anyOf [result "Satisfied" (.bool true), result "Violated" (.bool false), result "ResourceLimit" .null]]
 
 def evaluated : Shape :=
   n [

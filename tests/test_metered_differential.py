@@ -27,7 +27,7 @@ from ve.errors import VEError
 from ve.ast import (WIRE_TAGS, Add, And, Atom, Binary, Body, Bottom, Const, Eq, Exists,
                     Forall, Implies, Le, Lt, Named, Not, Num, Or, Reach, Scale, Top,
                     Unary, Var, formula_from_data, formula_to_data)
-from ve.evaluate import _evaluate_validated
+from ve.evaluate import _evaluate_validated, _explanation
 from tests import nonvacuity_oracle
 
 
@@ -55,7 +55,10 @@ def public(row, kind):
     if row.get("status") != "ok":
         return "error"
     if kind == "evaluate-budgeted":
-        return row["evaluation"]
+        # The explanation is preorder rows since lean-first batch 18; the public tree is rebuilt from them.
+        evaluation = row["evaluation"]
+        rows = evaluation["explanation"]
+        return {**evaluation, "explanation": None if rows is None else _explanation(rows).to_dict()}
     return [row["suitable"], row["evaluations"], row["exhausted"]]
 
 
