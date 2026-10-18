@@ -36668,9 +36668,18 @@ theorem VE.Scales.Examples.symbols_cases
   VE.Scales.Examples.uplift.symbols = ["gives_more_uplift", "gives_serious_uplift"] ∧
     VE.Scales.Examples.shared.symbols = ["gives_more_uplift", "gives_more_uplift", "gives_serious_uplift"] ∧
       Decidable.decide { dims := [VE.Scales.Examples.uplift, VE.Scales.Examples.harm] }.symbols.Nodup = Bool.true ∧
-        Decidable.decide { dims := [VE.Scales.Examples.shared] }.symbols.Nodup = Bool.false
-  -- uses VE.Scales.Dimension.symbols@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Examples.harm@VE.Scales.Examples VE.Scales.Examples.shared@VE.Scales.Examples VE.Scales.Examples.uplift@VE.Scales.Examples VE.Scales.ScaleDoc.mk@VE.Scales.Syntax VE.Scales.ScaleDoc.symbols@VE.Scales.Syntax
-  -- expr 724533652
+        Decidable.decide { dims := [VE.Scales.Examples.shared] }.symbols.Nodup = Bool.false ∧
+          Decidable.decide
+              {
+                    dims :=
+                      [VE.Scales.Examples.uplift,
+                        have __src := VE.Scales.Examples.harm;
+                        { name := __src.name, sort := __src.sort, more := "gives_more_uplift", same := __src.same,
+                          comparable := __src.comparable, grades := __src.grades,
+                          above := __src.above }] }.symbols.Nodup =
+            Bool.false
+  -- uses VE.Scales.Dimension.above@VE.Scales.Syntax VE.Scales.Dimension.comparable@VE.Scales.Syntax VE.Scales.Dimension.grades@VE.Scales.Syntax VE.Scales.Dimension.mk@VE.Scales.Syntax VE.Scales.Dimension.name@VE.Scales.Syntax VE.Scales.Dimension.same@VE.Scales.Syntax VE.Scales.Dimension.sort@VE.Scales.Syntax VE.Scales.Dimension.symbols@VE.Scales.Syntax VE.Scales.Dimension@VE.Scales.Syntax VE.Scales.Examples.harm@VE.Scales.Examples VE.Scales.Examples.shared@VE.Scales.Examples VE.Scales.Examples.uplift@VE.Scales.Examples VE.Scales.ScaleDoc.mk@VE.Scales.Syntax VE.Scales.ScaleDoc.symbols@VE.Scales.Syntax
+  -- expr 2945225963
 theorem VE.Scales.Examples.trust_intended
   VE.Scales.Intended VE.Scales.Examples.twoLevels.toModel.asStructure VE.Scales.Examples.trust ∧
     VE.Scales.Intended VE.Scales.Examples.threeLevels.toModel.asStructure VE.Scales.Examples.trust
