@@ -145,6 +145,9 @@ import VE.NormDefaults.FillCheck
 import VE.NormDefaults.Layered
 import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.LayeredEntail
+import VE.NormDefaults.Packs
+import VE.NormDefaults.PacksLegacy
+import VE.NormDefaults.PacksLegacyExamples
 import VE.NormDefaults.Premises
 import VE.NormDefaults.Replay
 import VE.NormDefaults.Report
@@ -239,6 +242,7 @@ import VE.Readings.SupExtraExamples
 import VE.Readings.SupFill
 import VE.Readings.SupFillWire
 import VE.Readings.SupFree
+import VE.Readings.SupPacks
 import VE.Readings.SupRun
 import VE.Readings.SupSlot
 import VE.Readings.SupVerdictsSound
@@ -1963,6 +1967,44 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Admission.softLeafX_formula
 #print axioms VE.NormDefaults.Admission.wire_report_consequence
 #print axioms VE.NormDefaults.Admission.wire_report_consequenceX
+#print axioms VE.NormDefaults.Packs.X_legacy
+#print axioms VE.NormDefaults.Packs.X_single
+#print axioms VE.NormDefaults.Packs.X_soft_first
+#print axioms VE.NormDefaults.Packs.assembleIn_constraint
+#print axioms VE.NormDefaults.Packs.assembleIn_ok
+#print axioms VE.NormDefaults.Packs.assemble_fresh
+#print axioms VE.NormDefaults.Packs.assemble_legacy_rights
+#print axioms VE.NormDefaults.Packs.assemble_legacy_soft
+#print axioms VE.NormDefaults.Packs.assemble_nil
+#print axioms VE.NormDefaults.Packs.assemble_order
+#print axioms VE.NormDefaults.Packs.assemble_wellFormed
+#print axioms VE.NormDefaults.Packs.elaborateArrays_keys
+#print axioms VE.NormDefaults.Packs.elaborateArrays_legacy
+#print axioms VE.NormDefaults.Packs.envX_nil
+#print axioms VE.NormDefaults.Packs.extendEnv_nil
+#print axioms VE.NormDefaults.Packs.filledX_whole
+#print axioms VE.NormDefaults.Packs.filterMap_congr
+#print axioms VE.NormDefaults.Packs.filterMap_find_ids
+#print axioms VE.NormDefaults.Packs.filterMap_find_perm
+#print axioms VE.NormDefaults.Packs.firstFailing_one
+#print axioms VE.NormDefaults.Packs.firstFailing_some
+#print axioms VE.NormDefaults.Packs.firstFailing_two
+#print axioms VE.NormDefaults.Packs.firstRepeat_none
+#print axioms VE.NormDefaults.Packs.firstRepeat_none_of
+#print axioms VE.NormDefaults.Packs.legacy_drop
+#print axioms VE.NormDefaults.Packs.legacy_take
+#print axioms VE.NormDefaults.Packs.lookup_flatMap_mem
+#print axioms VE.NormDefaults.Packs.lookup_flatMap_none
+#print axioms VE.NormDefaults.Packs.lookup_mem
+#print axioms VE.NormDefaults.Packs.mem_filterMap_find
+#print axioms VE.NormDefaults.Packs.names_unique
+#print axioms VE.NormDefaults.Packs.packFault_legacy_rights
+#print axioms VE.NormDefaults.Packs.packFault_legacy_soft
+#print axioms VE.NormDefaults.Packs.packPremises_absent
+#print axioms VE.NormDefaults.Packs.packPremises_legacy
+#print axioms VE.NormDefaults.Packs.packPremises_sub
+#print axioms VE.NormDefaults.Packs.xWithout_nil
+#print axioms VE.NormDefaults.Packs.xWithout_sub
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admission
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admissionX
 #print axioms VE.NormDefaults.Run.runAdmission_sound
@@ -3260,6 +3302,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.candidate_of_fill
 #print axioms VE.Readings.Wire.candidate_unsaid
 #print axioms VE.Readings.Wire.chainText_eq
+#print axioms VE.Readings.Wire.choiceLayeredG_norms_packs
 #print axioms VE.Readings.Wire.choiceU_E
 #print axioms VE.Readings.Wire.choiceU_E_of
 #print axioms VE.Readings.Wire.choice_soft_frame
@@ -4380,6 +4423,8 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.toDigits_ne_nil
 #print axioms VE.Readings.toString_data
 #print axioms VE.Readings.toSubstring_bsize_ascii
+#print axioms VE.Readings.transfers_X
+#print axioms VE.Readings.transfers_append
 #print axioms VE.Readings.transfers_nil
 #print axioms VE.Readings.triple_pair
 #print axioms VE.Readings.triple_sup

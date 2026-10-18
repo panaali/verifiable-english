@@ -164,5 +164,10 @@ import VE.Events.Premises
 import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Examples
+import VE.NormDefaults.Packs
+import VE.NormDefaults.PacksLegacy
+import VE.NormDefaults.PacksExamples
+import VE.NormDefaults.PacksLegacyExamples
+import VE.Readings.SupPacks
 import VE.Layout.List
 import VE.Scope.Examples

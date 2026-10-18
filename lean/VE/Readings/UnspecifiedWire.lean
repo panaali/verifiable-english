@@ -506,13 +506,10 @@ def choiceLayeredG (b : Admitted2) (N : NDoc) (c : Choice)
     let baseEnv ← VE.NormDefaults.Wire.baseEnvironmentJsonU re.lowerJson U
     let envId ← VE.Route.Wire.environmentId profiles (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU re.lowerJson)
     let docHash ← VE.Readings.Run.choiceHash b (VE.Readings.Run.choiceJsons b.a.doc.itemsJ c)
-    pure ⟨⟨"norms@0", correlate X, U, wfc, softXL N X, 0,
+    pure ⟨⟨"norms@0", correlate X, U, wfc, [],
       VE.Norms.Replay.baseModelVocabulary re.se.ne U.D,
-      VE.Norms.Replay.baseModel_valid re.se.ne U.D (choiceU_E_of b N hN hn c), baseEnv, envId, docHash⟩, rfl, rfl,
-      fun a ha => by
-        have : choiceX N c = [] := choiceX_normsShaped N hn c
-        simp only [VE.NormDefaults.Wire.LayeredU.X] at ha
-        exact absurd (show a ∈ choiceX N c from ha) (by rw [this]; exact List.not_mem_nil)⟩
+      VE.Norms.Replay.baseModel_valid re.se.ne U.D (choiceU_E_of b N hN hn c), baseEnv, envId, docHash⟩, rfl,
+      (choiceX_normsShaped N hn c).symm, fun a ha => absurd ha List.not_mem_nil⟩
   else if N.D.chain == .soft then
     if hnr : noRights X = true then
       if hws : VE.SoftNorms.WellFormedSoft (correlate X) = true then
@@ -524,9 +521,10 @@ def choiceLayeredG (b : Admitted2) (N : NDoc) (c : Choice)
         let baseEnv ← VE.NormDefaults.Wire.withUnsaid U (← VE.SoftNorms.Wire.basePrimeJson (correlate X) env')
         let envId ← VE.Route.Wire.environmentId profiles (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU re.lowerJson)
         let docHash ← VE.Readings.Run.choiceHash b (VE.Readings.Run.choiceJsons b.a.doc.itemsJ c)
-        pure ⟨⟨"soft-norms@0", correlate X, U, wfc, softXL N X, 0,
+        pure ⟨⟨"soft-norms@0", correlate X, U, wfc, [VE.NormDefaults.Wire.softPack U (correlate X)],
           VE.SoftNorms.Wire.primeModelVocabulary re.se (correlate X), VE.SoftNorms.Wire.primeModel_valid src,
-          baseEnv, envId, docHash⟩, rfl, rfl, softX_wellFormed N X hws wfc⟩
+          baseEnv, envId, docHash⟩, rfl, VE.NormDefaults.Packs.X_single _, fun a ha => softX_wellFormed N X hws wfc a
+            (by simpa only [VE.NormDefaults.Wire.LayeredU.X, VE.NormDefaults.Packs.X_single] using ha)⟩
       else throw ("InvalidInput: soft norm document is not well-formed under " ++ choiceText N.D c)
     else throw ("UnsupportedProfile: rights content requires rights@0 under " ++ choiceText N.D c)
   else throw "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
