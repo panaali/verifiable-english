@@ -103,6 +103,124 @@ def _moved(source: int, target: int):
 
 ROWS = [row for row, _ in _d31()]
 
+# The definitions of 1.4 whose lists the generated mutants below cut or swap.
+SCOPE = ("def wordsOf ", "def firstDup ", "def checkVocab ")
+# A method on a list, and a position that takes a list as its argument.
+LIST_METHOD = re.compile(r"\.(find\?|any|all|contains|isPrefixOf|isEmpty|flatMap|map|filter|length|head\?)(?![\w?])")
+LIST_ARGUMENT = re.compile(r"\bfor \w+ in |\bfirstDup |\.isPrefixOf |\.intercalate ")
+NAME = "._·?'"
+# A frame's marker lists, as `checkVocab` writes them (`ms f` is the two without `""`); each stands for the others.
+SIBLINGS = ["(f.markers ++ f.mods)", '(f.markers.filter (· ≠ ""))', "(ms f)", "f.markers", "f.split", "f.mods"]
+SIBLING = re.compile("|".join([re.escape(s) for s in SIBLINGS[:3]] + [r"\bms f\b"] +
+                              [rf"\b{re.escape(s)}\b" for s in SIBLINGS[3:]]))
+
+
+def _span(text: str, start: str) -> tuple[int, int]:
+    """Where the definition that begins with `start` is: its first line to the next line that is not indented."""
+    lines, offset = text.split("\n"), 0
+    for i, line in enumerate(lines):
+        if line.startswith(start):
+            end = next(k for k in range(i + 1, len(lines)) if not lines[k].startswith(" "))
+            return offset, offset + sum(len(line) + 1 for line in lines[i:end])
+        offset += len(line) + 1
+    raise AssertionError(f"no {start!r}")
+
+
+def _term_before(text: str, end: int) -> int:
+    """The start of the term that ends at `end`: a balanced group, or a name such as `f.head` or `·.head`."""
+    if text[end - 1] == ")":
+        depth, i = 0, end - 1
+        while (depth := depth + {")": 1, "(": -1}.get(text[i], 0)) != 0:
+            i -= 1
+        return i
+    i = end
+    while text[i - 1].isalnum() or text[i - 1] in NAME:
+        i -= 1
+    return i
+
+
+def _term_after(text: str, start: int) -> int:
+    """The end of the term that starts at `start`: a balanced group, an application up to `do`, or a name."""
+    if text[start] == "(":
+        depth, i = 0, start
+        while (depth := depth + {"(": 1, ")": -1}.get(text[i], 0)) != 0:
+            i += 1
+        return i + 1
+    if text[start - 3:start] == "in ":
+        return text.index(" do", start)
+    i = start
+    while text[i].isalnum() or text[i] in NAME:
+        i += 1
+    return i
+
+
+def _list_terms(syntax: str) -> list[tuple[int, int]]:
+    """Every list the definitions of `SCOPE` range over: each receiver of a list method and each list argument, but not
+    the argument of a definition's own recursive call (Lean refuses a recursion whose argument does not shrink)."""
+    terms = set()
+    for scope in SCOPE:
+        lo, hi = _span(syntax, scope)
+        terms |= {(_term_before(syntax, m.start()), m.start()) for m in LIST_METHOD.finditer(syntax, lo, hi)}
+        terms |= {(m.end(), _term_after(syntax, m.end())) for m in LIST_ARGUMENT.finditer(syntax, lo, hi)
+                  if m.group() != scope.split()[1] + " "}
+    return sorted((start, end) for start, end in terms if start < end)
+
+
+def _first_only(term: str) -> str:
+    """`term` cut to its first element. A `·` term stays the function's argument, so it is piped."""
+    if term.startswith("·"):
+        return f"{term}.take 1 |>"
+    whole = term.startswith("(") and _term_after(term, 0) == len(term)
+    return f"({term if whole or ' ' not in term else f'({term})'}.take 1)"
+
+
+def _slug(term: str) -> str:
+    return re.sub(r"[^A-Za-z0-9.]+", "-", term.replace("++", "and").replace("≠", "ne")).strip("-.")
+
+
+def _at(start: int, end: int, new: str):
+    def mutate(syntax: str, read: str) -> tuple[str, str]:
+        return syntax[:start] + new + syntax[end:], read
+    return mutate
+
+
+def _generated() -> dict:
+    """Two kinds of mutant for every list of 1.4's check, numbered in source order within a name:
+
+    - **first only** (ap-2 review F7: 31c and 31r read only a head's first word): each list cut to its first element,
+      so a condition must be pinned with its fault in a later element (a later word, marker, frame or adverb);
+    - **another marker list** (F7: 31o over markers only, 31i over modifiers too, 31g without `""`): each of a
+      frame's marker lists replaced by each of the others, so a condition must be pinned on the list 1.4 names."""
+    syntax = _sources()[0]
+    mutants: dict = {}
+
+    def add(name: str, mutate) -> None:
+        k = sum(1 for other in mutants if other.rsplit("-", 1)[0] == name)
+        mutants[f"{name}-{k + 1}"] = mutate
+
+    for start, end in _list_terms(syntax):
+        add(f"first-only-{_slug(syntax[start:end])}", _at(start, end, _first_only(syntax[start:end])))
+    lo, hi = _span(syntax, "def checkVocab ")
+    for m in SIBLING.finditer(syntax, lo, hi):
+        own = "(ms f)" if m.group() == "ms f" else m.group()
+        defines_ms = syntax.startswith("  let ms ", syntax.rindex("\n", 0, m.start()) + 1)
+        for other in SIBLINGS:
+            if other != own and not (defines_ms and other == "(ms f)"):
+                add(f"{_slug(own)}-as-{_slug(other)}", _at(m.start(), m.end(), other))
+    return mutants
+
+
+# Generated mutants that change no answer of `checkVocab`, so no fixture can kill them, each with the reason.
+EQUIVALENT: dict[str, str] = {
+    "first-only-head-1": "31b: a head's first word is absent exactly when the head is empty",
+    "first-only-f.head-5": "31s: the first word of a head's first word is its first word",
+    "ms-f-as-f.markers-and-f.mods-1": "the marker words: `\"\"` has no words, so it adds none",
+    "ms-f-as-f.markers-and-f.mods-3": "31m: `\"\"` has no words, so it adds no word to check",
+    "ms-f-as-f.markers-and-f.mods-4": "31n: `\"\"` has no words, so it adds no word to check",
+    "ms-f-as-f.markers-and-f.mods-6": "31o: no marker begins `\"\"`, since 31l refused every other marker without words",
+    "f.markers-as-f.markers.filter-ne-3": "31k: 31j refused an empty modifier marker, so `\"\"` matches none",
+}
+
 MUTANTS = {
     # The review's seven (ap-2 review F1).
     "31a-128-refused": _replace("128 < fs.length", "128 ≤ fs.length"),
@@ -112,6 +230,14 @@ MUTANTS = {
     "31r-without-head-words": _replace("mwords.contains a || fs.any (·.head.contains a)", "mwords.contains a"),
     "31k-before-31g": _moved(ROWS.index("31k"), ROWS.index("31g")),
     "stepBudget-1000000": _replace("def stepBudget : Nat := 2100000", "def stepBudget : Nat := 1000000", "read"),
+    # The review's six of the same class (ap-2 review F7), as it wrote them; `_generated` makes each of them again.
+    "31o-outer-markers-only": _replace("    for m in ms f do", '    for m in f.markers.filter (· ≠ "") do'),
+    "31o-inner-modifiers-only": _replace("(ms f).find? (fun n => n != m", "f.mods.find? (fun n => n != m"),
+    "31c-first-head-word": _replace("f.head.find? (!wordOk ·)", "(f.head.take 1).find? (!wordOk ·)"),
+    "31r-first-head-word": _replace("fs.any (·.head.contains a)", "fs.any (fun f => (f.head.take 1).contains a)"),
+    "31i-modifier-split": _replace("f.split.find? (!f.markers.contains ·)",
+                                   "f.split.find? (!(f.markers ++ f.mods).contains ·)"),
+    "31g-without-direct-object": _replace("firstDup f.markers", 'firstDup (f.markers.filter (· ≠ ""))'),
     # The same kinds elsewhere: the other halves and word lists, and each limit one off.
     "31a-129-accepted": _replace("128 < fs.length", "129 < fs.length"),
     "wordOk-without-lower-case": _replace("VE.Norms.Wire.actWord w && w == w.toLower", "VE.Norms.Wire.actWord w"),
@@ -130,6 +256,8 @@ MUTANTS = {
     **{f"{row}-dropped": _order(lambda n, i=i: [j for j in range(n) if j != i]) for i, row in enumerate(ROWS)},
     **{f"{ROWS[i]}-{ROWS[i + 1]}-swapped": _order(lambda n, i=i: [*range(i), i + 1, i, *range(i + 2, n)])
        for i in range(len(ROWS) - 1)},
+    # Every list of 1.4's check cut to its first element, and every marker list swapped for another (F7).
+    **_generated(),
 }
 
 
@@ -166,7 +294,7 @@ def test_the_unmutated_sources_elaborate_cleanly(lake, tmp_path):
     assert done.returncode == 0 and "error" not in done.stdout + done.stderr, done.stdout + done.stderr
 
 
-@pytest.mark.parametrize("name", sorted(MUTANTS))
+@pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT)))
 def test_every_seeded_mutant_fails_a_fixture(lake, tmp_path, name):
     syntax, read, examples = _sources()
     mutated = MUTANTS[name](syntax, read)
@@ -175,3 +303,25 @@ def test_every_seeded_mutant_fails_a_fixture(lake, tmp_path, name):
     out = done.stdout + done.stderr
     assert done.returncode != 0, f"{name} survives every #guard"
     assert out.count(": error:") == out.count(GUARD_FAILED) > 0, f"{name} fails before a #guard:\n{out}"
+
+
+def test_the_generated_mutants_cover_every_list_of_the_check():
+    """Each list of 1.4's check is cut once, the lists the review named are among them, and every equivalent mutant
+    is a generated one."""
+    syntax = _sources()[0]
+    generated = _generated()
+    assert len([n for n in generated if n.startswith("first-only-")]) == len(_list_terms(syntax))
+    for term in ("f.head", "·.head", "f.markers", "f.split", "f.mods", "(ms f)", "ms f", "fs", "V.adverbs", "mwords"):
+        assert any(syntax[s:e] == term for s, e in _list_terms(syntax)), term
+    assert set(EQUIVALENT) <= set(generated)
+
+
+@pytest.mark.parametrize("name", sorted(EQUIVALENT))
+def test_an_equivalent_mutant_elaborates_and_passes_every_fixture(lake, tmp_path, name):
+    """A mutant listed as equivalent changes the source and still passes: if a fixture kills it, it was not
+    equivalent, and the list is wrong."""
+    syntax, read, examples = _sources()
+    mutated = MUTANTS[name](syntax, read)
+    assert mutated != (syntax, read)
+    done = _elaborate(lake, tmp_path, _assemble(*mutated, examples))
+    assert done.returncode == 0, f"{name} ({EQUIVALENT[name]}) fails:\n{done.stdout + done.stderr}"
