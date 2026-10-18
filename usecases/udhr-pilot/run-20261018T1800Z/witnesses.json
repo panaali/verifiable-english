@@ -799,6 +799,219 @@
         "value": null
       }
     ],
+    "u042.prohibited": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "finding_of_guilt_permitted",
+        "row": [
+          "f1"
+        ],
+        "rules": [
+          "u042-prohibited"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "finding_of_guilt_permitted",
+        "row": [
+          "f2"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "finding_of_guilt_permitted",
+        "row": [
+          "f1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u043.existential": [
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [
+          "u043-existential"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [
+          "u043-existential"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [
+          "u043-existential"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
+    "u043.universal": [
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [
+          "u043-universal"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "SETTLED",
+          false
+        ],
+        "lean_point_status": "SETTLED no",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [
+          "u043-universal"
+        ],
+        "status": "SETTLED",
+        "value": false
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      },
+      {
+        "as_expected": true,
+        "expected": [
+          "UNDECIDED",
+          null
+        ],
+        "lean_point_status": "UNDECIDED",
+        "predicate": "imposition_permitted",
+        "row": [
+          "i1"
+        ],
+        "rules": [],
+        "status": "UNDECIDED",
+        "value": null
+      }
+    ],
     "u045a.prohibited": [
       {
         "as_expected": true,

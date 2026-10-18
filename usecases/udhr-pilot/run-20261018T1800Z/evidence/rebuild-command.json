@@ -1,0 +1,32 @@
+{
+ "part01": {
+  "check_noop_exit": 2,
+  "check_noop_output": "readings_s1_pilot.py: error: reading-set ids changed: rebuild is not a no-op",
+  "rebuild_exit": 0,
+  "rebuilt_document_loads": "no: InvalidInput: invalid situation d19e749f4b9c999ff662becc0be0e14205038a1f4ec9cfce38e070d1763b9cb3"
+ },
+ "part02": {
+  "check_noop_exit": 2,
+  "check_noop_output": "readings_s1_pilot.py: error: reading-set ids changed: rebuild is not a no-op",
+  "rebuild_exit": 0,
+  "rebuilt_document_loads": "no: InvalidInput: invalid situation 3fa34a2c855b2290eadc5e0dce4c6d41ac7129ad04cd07763c79bbcec8e3c87c"
+ },
+ "part03": {
+  "check_noop_exit": 0,
+  "check_noop_output": "{\"sets\": 1, \"no_op\": true}",
+  "rebuild_exit": 0,
+  "rebuilt_document_loads": true
+ },
+ "part04": {
+  "check_noop_exit": 2,
+  "check_noop_output": "readings_s1_pilot.py: error: reading-set ids changed: rebuild is not a no-op",
+  "rebuild_exit": 0,
+  "rebuilt_document_loads": "no: InvalidInput: invalid situation 6f90f3299a1218dc575cddb2ded715aa12e2b6c04cb7e503b866c3473e929a47"
+ },
+ "whole": {
+  "check_noop_exit": 2,
+  "check_noop_output": "readings_s1_pilot.py: error: reading-set ids changed: rebuild is not a no-op",
+  "rebuild_exit": 0,
+  "rebuilt_document_loads": "no: InvalidInput: invalid situation 78a089d1090be541d6f97678e3a544dd1ec43054ce9d2a6603a03938c7f93d09"
+ }
+}

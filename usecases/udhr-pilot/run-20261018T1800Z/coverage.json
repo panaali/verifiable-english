@@ -1,5 +1,5 @@
 {
- "load_seconds": 0.1,
+ "load_seconds": 0.3,
  "coverage": {
   "accounted_bytes": 10916,
   "bytes_by_kind": {

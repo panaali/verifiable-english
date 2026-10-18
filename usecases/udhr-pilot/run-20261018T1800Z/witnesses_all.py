@@ -15,6 +15,8 @@ for uid, cands in [*U.CANDIDATES.items(), *RS.CANDIDATES.items(), *R2.CANDIDATES
                    *R4.NEW_CANDIDATES.items(), *R5.NEW_CANDIDATES.items(), *R6.NEW.items(), *R7.NEW.items(), *R10.NEW.items(), *R11.NEW.items(), *R12.NEW.items(), *[(u, [(c, sp, w)]) for u, (c, sp, w) in R13.NEW.items()], *R15.NEW.items(), *[("u020", [("prohibited", R8.U020, "")]), ("u098", [("unassigned", R8.U098, "")])]]:
     for cid, spec, _why in cands:
         specs[f"{uid}.{cid}"] = spec
+import et0_specs as ET0
+specs.update(ET0.specs())      # 20261018T1800Z: ET-0's u042 and u043 witnesses
 docs, status, bad = {}, {}, []
 for path in sorted((HERE / "readings").glob("*.ve.md")):
     key = ".".join(path.name.split(".")[:2])

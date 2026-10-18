@@ -207,6 +207,45 @@
    "relational-fol@0"
   ]
  },
+ "u042.prohibited": {
+  "coverage_bytes": {
+   "CHECKED": 200
+  },
+  "path": "readings/u042.prohibited.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u043.existential": {
+  "coverage_bytes": {
+   "OPEN": 118
+  },
+  "path": "readings/u043.existential.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
+ "u043.universal": {
+  "coverage_bytes": {
+   "OPEN": 118
+  },
+  "path": "readings/u043.universal.ve.md",
+  "premises": "model",
+  "profiles": [
+   "documents@1",
+   "norm-defaults@0",
+   "norms@0",
+   "relational-fol@0"
+  ]
+ },
  "u045a.prohibited": {
   "coverage_bytes": {
    "OPEN": 100

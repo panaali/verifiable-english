@@ -301,32 +301,33 @@
   "u027"
  ],
  "audit_20261017T1800Z_units_unfaithful": [],
- "audit_newly_verified_units": [
-  "u110",
-  "u027",
-  "u037"
- ],
+ "audit_20261018T0600Z": {
+  "changed_units_checked": 0,
+  "faithful": 20,
+  "file": "previous-20261018T0600Z/AUDIT.md",
+  "note": "the previous audit rejected no unit and asked for no repair; its verdicts are carried",
+  "sampled": 20,
+  "unfaithful": []
+ },
+ "audit_20261018T1800Z_note": "the orchestrator's audit of this run should re-verify changed_units: u010, u060, u042, u043",
+ "audit_newly_verified_units": [],
  "audit_newly_verified_units_note": "judged FAITHFUL by the 20261017T1800Z audit (u037 and u027 after the reading-set repair, u110 after its repair) and unchanged since",
- "audit_pending_bytes": 0,
- "audit_pending_units": [],
- "audit_repair_this_run": "none: the previous audit rejected no unit, so there was nothing to repair",
- "audit_repairs": [],
- "audit_repairs_previous_run": [
-  {
-   "audit": "20261017T0600Z",
-   "reason": "named by the 20261017T0600Z audit as having u037's structure: the scope of 'cruel, inhuman or degrading' over 'treatment or punishment' is a reading of the word order; a second candidate keeps the adjectives on 'treatment' alone",
-   "unit": "u027"
-  },
-  {
-   "audit": "20261017T0600Z",
-   "reason": "the 20261017T0600Z audit: the scope of 'arbitrary' over 'arrest, detention or exile' is a reading of the word order and u037 had only the wide one; a second candidate keeps 'arbitrary' on 'arrest' alone",
-   "unit": "u037"
-  }
+ "audit_pending_bytes": 132,
+ "audit_pending_claim_units": [
+  "u060",
+  "u042",
+  "u043"
  ],
+ "audit_pending_units": [
+  "u010"
+ ],
+ "audit_repair_this_run": "none: the previous audit (20261018T0600Z) rejected no unit",
+ "audit_repairs": [],
+ "audit_repairs_previous_run": [],
  "audit_verified_covered_bytes": 4820,
  "audit_verified_covered_bytes_before_x5": 4828,
  "audit_verified_covered_percent": 44.16,
- "audit_verified_note": "verified = judged FAITHFUL by an audit and not changed since, and not marked claimed:false. The 20261017T1800Z audit judged u110, u027 and u037 FAITHFUL (the three units that waited for it, 283 B), and nothing changed since, so audit-verified bytes rise from 4,537 to 4,820 and equal the claimed bytes. Under X5, u035 and u111 never count. No unit changed this run, so none leaves the verified set.",
+ "audit_verified_note": "verified = judged FAITHFUL by an audit and not changed since, and not marked claimed:false. The four changed units are not audited yet, so verified bytes stay at 4,820 while claimed bytes rise to 4,952 (u010, 132 B, claimed until audited).",
  "audit_verified_units": [
   "u001",
   "u002",
@@ -505,20 +506,25 @@
  ],
  "audit_verified_units_reexpressed_this_run": [],
  "audit_verified_units_withdrawn_this_run": {},
- "baseline": "ve-green-tarch-histdep",
+ "baseline": "ve-green-eff-20261018-1",
  "bytes_accounted": 10916,
  "bytes_accounted_percent": 100.0,
  "bytes_by_status": {
-  "CHECKED": 1019,
+  "CHECKED": 1219,
   "LABELLED": 535,
-  "OPEN": 2413,
-  "READINGS": 1358,
-  "UNFORMALISED": 5591
+  "OPEN": 2611,
+  "READINGS": 1476,
+  "UNFORMALISED": 5075
  },
- "changed_units": [],
+ "changed_units": [
+  "u010",
+  "u060",
+  "u042",
+  "u043"
+ ],
  "checks": {
-  "build": "lake build ve_service ve_metered and tools/rust_build.py (binary pinned in lean/checkers.lock) built in this worktree before the checks",
-  "companions": "PASS: 61 companions check (premises model) and 135 Lean status rows as expected (re-run at ve-green-tarch-histdep; witnesses.json and companions-check.json identical to the previous run's)",
+  "build": "lake build (the default targets) and tools/rust_build.py (binary pinned in lean/checkers.lock) built in this worktree before the checks",
+  "companions": "PASS: 64 companions check (premises model) and 148 Lean status rows as expected (re-run at ve-green-eff-20261018-1; the previous run's 135 rows are identical, 13 are new for u042/u043)",
   "legacy_document": {
    "check_seconds": 0.1,
    "coverage": "PASS (100%)",
@@ -528,38 +534,114 @@
    }
   },
   "limits_met": [
-   "Rust checker: default VE_RUST_TIMEOUT kept; no prlimit run, so no raised limit and no peak resident-set record; (measured in an earlier run, not re-run) a part with 19 regulated predicates (u001-u108, 16 choices) was refused at the old 5 s limit, so the four parts were the largest that checked then",
-   "the whole declaration as ONE document (experiment-whole/): six two-reading sets with their own vocabulary as RD-4b components (u025, u027, u037, u055, u073, u111) and the rest in the main component, built by whole.py (byte-identical to the previous run's); at ve-green-tarch-histdep load_document succeeds after 648.3 s (coverage 100%) and check_document answers CONFLICT-FREE, premises 'model' after 687.0 s (experiment-whole/whole-check.json)",
+   "Rust checker: default VE_RUST_TIMEOUT kept. Part01 (11 regulated predicates, 21 sorts, 16 choices) checks under prlimit --as=6442450944 in 46.6 s with a peak child resident set of 104.0 MB; no raised limit was needed",
+   "the whole declaration as ONE document (experiment-whole/): six two-reading sets with their own vocabulary as RD-4b components and the rest in the main component (now with u043's set); at ve-green-eff-20261018-1 load_document succeeds after 2577.8 s (coverage 100%) and check_document answers CONFLICT-FREE, premises 'model' after 2525.2 s (previous run: 648.3 s and 687.0 s; about 3.8 times slower now: the process's user CPU time, 86 min, equals its 85 min wall time, so this is added cost of the whole declaration with the 7 new sorts, not queueing on a loaded machine, though the VM load average was 30 to 44)",
    "the whole declaration with every candidate in the main document (integrate.py u001 u114; measured earlier, not re-run): Lean elaborates it on the superposed route, but Python's one-element search finds no separating situation for u111's pair both_aims / listed_aims in 6 min 58 s (experiment-whole/integrate-whole.log), so no document is produced"
   ],
-  "parts": "PASS: ve document check on all 4 parts at ve-green-tarch-histdep: premises 'model' for every choice, CONFLICT-FREE under every reading; all four parts are byte-identical to the previous run's",
+  "parts": "PASS: ve document check on all 4 parts at ve-green-eff-20261018-1: premises 'model' for every choice, CONFLICT-FREE under every reading (part01 53.0 s, part02 7.0 s, part03 6.3 s, part04 9.0 s)",
   "parts_cover_source_exactly": "PASS (4 slices concatenate to the pinned 10,916 bytes)",
   "repaired_units": {
-   "note": "none this run"
+   "note": "no audit repair this run; the four plan repairs are listed in plan_repairs"
   },
-  "unchanged_units": "PASS: 130 of 130 units have the same status, meaning id and row in the part files as in the previous run",
+  "seeded_bugs_translation": [
+   {
+    "check": "Lean norm-defaults-status witnesses (u042.prohibited)",
+    "fault": "the `not` before constitutes_penal_offence_on is removed",
+    "faulty": "FAILS: [(['f1'], 'UNDECIDED', ['SETTLED', False]), (['f1'], 'SETTLED no', ['UNDECIDED', None])]",
+    "restored": "all as expected",
+    "unit": "u042"
+   },
+   {
+    "check": "Lean norm-defaults-status witnesses (u042.prohibited)",
+    "fault": "the rule's sign is flipped (a finding on account of a non-offence would be REQUIRED, not forbidden)",
+    "faulty": "FAILS: [(['f1'], 'SETTLED yes', ['SETTLED', False])]",
+    "restored": "all as expected",
+    "unit": "u042"
+   },
+   {
+    "check": "Lean norm-defaults-status witnesses (u043.existential)",
+    "fault": "the existential reading is given the universal reading's guard",
+    "faulty": "FAILS: [(['i1'], 'UNDECIDED', ['SETTLED', False])]",
+    "restored": "all as expected",
+    "unit": "u043"
+   },
+   {
+    "check": "Lean norm-defaults-status witnesses (u043.universal)",
+    "fault": "heavier_than's arguments are swapped in the universal reading (lighter-than)",
+    "faulty": "FAILS: [(['i1'], 'UNDECIDED', ['SETTLED', False]), (['i1'], 'UNDECIDED', ['SETTLED', False])]",
+    "restored": "all as expected",
+    "unit": "u043"
+   },
+   {
+    "check": "the rendering must contain the expected sentence",
+    "fault": "the two constants of the binary predicate are swapped",
+    "faulty": "FAILS: expected sentence absent",
+    "restored": "all as expected",
+    "unit": "u010"
+   },
+   {
+    "check": "load_document",
+    "fault": "the unit's meaning names an open term the document does not declare",
+    "faulty": "refused: invalid meaning status",
+    "restored": "loads (the part checks)",
+    "unit": "u010"
+   },
+   {
+    "check": "load_document",
+    "fault": "the unit's meaning names an open term the document does not declare",
+    "faulty": "refused: invalid meaning status",
+    "restored": "loads (the part checks)",
+    "unit": "u060"
+   },
+   {
+    "check": "load_document (Lean admits every separation)",
+    "fault": "the recorded separating situation's value flipped, or the two readings made equal",
+    "faulty": {
+     "a_flipped_value": "refused: distinguishing model does not separate readings",
+     "b_readings_equal": "refused: distinguishing model does not separate readings",
+     "control_unchanged_loads": "admitted"
+    },
+    "restored": "loads (part01 checks)",
+    "unit": "u043"
+   }
+  ],
+  "unchanged_units": "PASS: 126 of 130 units have the same status and row in the part files as in the previous run; the four others are the changed units",
   "whole_document": {
-   "check_seconds": 687.0,
+   "check_seconds": 2525.2,
    "coverage_percent": 100,
-   "load_seconds": 648.3,
+   "load_seconds": 2577.8,
    "premises": "model",
    "readings_status": "CONFLICT-FREE",
-   "tag": "ve-green-tarch-histdep"
+   "tag": "ve-green-eff-20261018-1"
   },
   "wrong_separating_situation": {
    "result": "refused: distinguishing model does not separate readings",
-   "set": "rs_u111"
+   "set": "rs_u111",
+   "u043": {
+    "a_flipped_value": "refused: distinguishing model does not separate readings",
+    "b_readings_equal": "refused: distinguishing model does not separate readings",
+    "control_unchanged_loads": "admitted"
+   }
   }
  },
- "claimed_change_vs_previous_run_bytes": 0,
- "claimed_change_vs_previous_run_bytes_under_x5": 0,
- "claimed_covered_bytes": 4820,
+ "claimed_change_vs_previous_run_bytes": 132,
+ "claimed_change_vs_previous_run_bytes_under_x5": 132,
+ "claimed_covered_bytes": 4952,
  "claimed_covered_bytes_previous_run": 4820,
  "claimed_covered_bytes_previous_run_under_x5": 4820,
- "claimed_covered_bytes_without_x5_marks": 5325,
- "claimed_covered_percent": 44.16,
- "claimed_covered_percent_without_x5_marks": 48.78,
- "companion_documents": 61,
+ "claimed_covered_bytes_without_x5_marks": 5841,
+ "claimed_covered_percent": 45.36,
+ "claimed_covered_percent_without_x5_marks": 53.51,
+ "claimed_false_pending_audit": {
+  "bytes": 318,
+  "note": "u042 (200 B) and u043 (118 B) are claimed:false until this run's audit, as the ET-0 ledger proposal and the prompt say; u060 (66 B) is claimed:false for presupposition (X5). If the audit finds u042 and u043 FAITHFUL they add 318 B to the claimed and verified bytes.",
+  "units": [
+   "u060",
+   "u042",
+   "u043"
+  ]
+ },
+ "companion_documents": 64,
  "couplings": [
   {
    "axis": "freely_scope",
@@ -576,31 +658,163 @@
    ]
   }
  ],
- "distinct_regulated_predicates_across_parts": 23,
+ "covered_bytes_all_statuses_including_claimed_false": 5841,
+ "distinct_regulated_predicates_across_parts": 25,
  "document_ids": {
-  "translation-part01.ve.md": "a7e36e7f6719101c1c61eb8479a0bd25fa6352c71ef6eccc7102486f48dd8f34",
-  "translation-part02.ve.md": "08526d23257ef066590abac363604fd210b33b0450a74989f5a4e1416cfbe2bd",
-  "translation-part03.ve.md": "f129615e3897a89c1bf8ed56fceb05606c75a9049d6d51e7cc807a4195093f72",
-  "translation-part04.ve.md": "f1d2ab3584b86ac3ca71493c729ad7ef580a6f7590e645b344cfc0bddc1f2071"
+  "translation-part01.ve.md": "5e3cd85f154d362532fb3e0b5cc670ac9db00adac549618fe77c737c26126dea",
+  "translation-part02.ve.md": "fed5d63a407d6f175b4817154b87a827cbf3ff13be4e6d25e124170d9784374f",
+  "translation-part03.ve.md": "802b2025e55aede8acad7284b3d9e662c0021ed35ed8403b338bae6053af0061",
+  "translation-part04.ve.md": "0d1e84a99480f4ee58532eee8141e36e372f22b146fdc79a9271d380ce8833f5"
+ },
+ "document_ids_changed_in": [
+  "translation-part01.ve.md",
+  "translation-part02.ve.md",
+  "translation-part03.ve.md",
+  "translation-part04.ve.md"
+ ],
+ "et0_rerun": {
+  "bar": {
+   "checker_available": true,
+   "part01_conflict_free_under_every_reading": true,
+   "premises_model": true,
+   "u042_loads_and_checks": true
+  },
+  "expected_vs_measured": {
+   "u042_bytes": [
+    200,
+    200
+   ],
+   "u043_bytes": [
+    118,
+    118
+   ]
+  },
+  "note": "ET-6 takes the part01 wall time, peak child resident set and verdict as its check-time evidence. The whole-declaration run took about 3.8 times as long as last run's; its user CPU time equals its wall time (86 min vs 85 min), so the slowdown is added work, not contention (the VM's load average was 30 to 44 on 32 CPUs).",
+  "other_parts_seconds": {
+   "translation-part01.ve.md": 53.0,
+   "translation-part02.ve.md": 7.0,
+   "translation-part03.ve.md": 6.3,
+   "translation-part04.ve.md": 9.0
+  },
+  "part01": {
+   "VE_RUST_TIMEOUT": "default (unset)",
+   "address_space_cap_bytes": 6442450944,
+   "bytes_by_status": {
+    "CHECKED": 392,
+    "LABELLED": 265,
+    "OPEN": 1382,
+    "UNFORMALISED": 2685
+   },
+   "conflict": "CONFLICT-FREE",
+   "document": "usecases/udhr-pilot/run-20261018T1800Z/translation-part01.ve.md",
+   "label": "part01-prlimit",
+   "peak_child_resident_set_mb": {
+    "ve": 4.8,
+    "ve_service": 104.0
+   },
+   "peak_child_resident_set_mb_max": 104.0,
+   "premises": "model",
+   "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+   "unit_status": {
+    "u010": "OPEN",
+    "u042": "CHECKED",
+    "u043": "OPEN"
+   },
+   "verdict": "ok",
+   "wall_seconds": 46.6
+  },
+  "plan": "events-time-causation ET-0 rerun",
+  "rows": {
+   "u042": {
+    "bytes": 200,
+    "claimed": false,
+    "status": "CHECKED"
+   },
+   "u043": {
+    "bytes": 118,
+    "claimed": false,
+    "status": "OPEN in the loader, READINGS in the ledger"
+   }
+  },
+  "whole_declaration": {
+   "check_seconds": 2525.2,
+   "load_seconds": 2577.8,
+   "premises": "model",
+   "readings_status": "CONFLICT-FREE"
+  }
  },
  "feature_upgrades": {
   "bytes": 0,
   "count": 0,
-  "note": "no newly merged feature lets any UNFORMALISED unit move",
+  "note": "none: the four changed units are plan-directed repairs, not upgrades from a newly merged feature",
   "units": []
  },
  "features_merged_since_previous_baseline": [
-  "none a translator can write. Merges since ve-green-fu-ar2-decoders: lf-16f (the document check moves into Lean; document.py/senses_document.py), lf-16g (a precondition stop, no behaviour change), rd-7 (superposed reading verdicts computed in Lean; its report says the readings, norm-defaults and document corpora are identical to the base), me-1a (VE.Numbers core: decimal and rounding, 'no public output change' per its DELTA), and tests/tools (tarch-histdep, ties-lf-16f, ties-fu-1017, fu-docs-1017, fix-fsmonitor-gate). No construct, profile or sentence form is new; the only measurable effect on the UDHR is speed."
+  "no construct, profile or sentence form was found that this run tried to use beyond the two directed plan sections. Merges since ve-green-tarch-histdep (155 commits) are jt-1, et-3, et-7, pk-1s, fsf-r1, me-1b, me-1c, ties-me-1a/b/c, speed-abcache, tarch-manifest-ops and eff-20261018-1 (trust classes, manifests, tests, speed and evidence tooling); this run did not search the 38 remaining UNFORMALISED units for newly expressible ones, because its instructions direct only JT-0p and ET-0."
  ],
- "language_change_for_udhr": "none for what a translator can write: no construct was added. All 130 units load with the same status, meaning id and row as in the previous run; the four parts, the 61 companions and the whole declaration check as before and faster.",
+ "jt0p": {
+  "expected_vs_measured": {
+   "other_units_keep_status": true,
+   "premises_readings_conflicts_equal": true,
+   "u010_bytes_claimed": [
+    132,
+    132
+   ],
+   "u060_bytes": [
+    66,
+    66
+   ]
+  },
+  "item1_instrument": "judgment-terms.json (and the keys open_term_class etc. below)",
+  "item2_units": {
+   "u010": {
+    "bytes": 132,
+    "claimed": true,
+    "status": "OPEN"
+   },
+   "u060": {
+    "bytes": 66,
+    "claimed": false,
+    "missing_feature": "presupposition",
+    "status": "OPEN"
+   }
+  },
+  "labels": "of_greatest_importance_for's record has the argument labels [understanding, realization] (distinct, not [thing, thing])",
+  "preconditions": "u010 (span 1330-1462) and u060 (5733-5799) were unchanged and UNFORMALISED; the records greatest_importance and natural_group_unit were in the shared list and unused",
+  "verbalisation": "none for of_greatest_importance_for (the wording lint rejects '{0} is of the greatest importance for {1}')"
+ },
+ "judgment_term_bytes": {
+  "by_missing_feature": {
+   "none": 2557,
+   "presupposition": 66
+  },
+  "by_status": {
+   "OPEN": 1595,
+   "READINGS": 1028
+  },
+  "total": 2623
+ },
+ "judgment_term_units": {
+  "by_missing_feature": {
+   "none": 23,
+   "presupposition": 1
+  },
+  "by_status": {
+   "OPEN": 17,
+   "READINGS": 7
+  },
+  "total": 24
+ },
+ "language_change_for_udhr": "none for what a translator can write: no construct was added. The four changed units use constructs that were already there (reified events and days as sorts, an open comparison, an asserted ground atom, a reading set); ET-0 is a rerun made possible by the checker now answering on part01 with the larger vocabulary.",
  "language_findings": [
-  "NO NEW TRANSLATION CAPABILITY for the UDHR at ve-green-tarch-histdep: the merged work since the last run is the document check in Lean (lf-16f/g), superposed reading verdicts in Lean (rd-7), the numbers core (me-1a) and tests/tools. The 42 UNFORMALISED units keep the blockers they had.",
-  "all four parts check at the new tag with premises 'model' and CONFLICT-FREE under every reading (part01 15.5 s, part02 4.2 s, part03 4.7 s, part04 6.0 s); the parts are byte-identical to the previous run's, and integrate.py all rebuilds them byte for byte (same separating situations)",
-  "the whole declaration as ONE document LOADS in 648.3 s at 100% coverage and CHECKS in 687.0 s with readings CONFLICT-FREE and premises 'model' (previous run: 762.8 s and 1163.2 s; the check is about 41% faster, which fits rd-7's cut in prover searches). Default Rust limit kept, no prlimit run.",
-  "the whole declaration with every candidate in the main document (integrate.py u001 u114) was not re-run (earlier result: Python's one-element search finds no separating situation for u111's pair)",
-  "the natural view still shows a norm as 'The passage is recorded as a rule' (rendering of norms is unchanged at this tag)"
+  "u042 loads CHECKED (200 B) and u043 loads OPEN in the loader (118 B; READINGS in the ledger as a reading set of both readings, with a Lean-admitted separating situation); part01 stays CONFLICT-FREE under every one of its 16 choices with premises 'model' (46.6 s under a 6 GB address-space cap, peak child 104.0 MB): the ET-0 bar is met.",
+  "u010 and u060 are OPEN asserted judgments (+132 B and +66 B); rendering changed only where JT-0p expected. Both are stated with no new profile; u060's 'the' (uniqueness) is the missing presupposition.",
+  "the committed `--rebuild-reading-ids` command is unusable on this pilot's parts: not a no-op on the unchanged parts 1, 2, 4 and the whole declaration, and its output does not load (evidence/rebuild-command.json). This is a defect in the committed tool (it adds regulated-predicate relations to situation bases), not in the translation.",
+  "the natural view still words the two ET-0 predicates as 'has the recorded relation \"committed_on\" to ...' because their English wordings are refused by the lint; ET-6 restates them.",
+  "u043's two readings differ only when several penalties were applicable on the day; the Lean-checked separating situation has two (a lighter and a heavier one). 'The one' in the source is a definite description that presupposes one: that presupposition is not represented.",
+  "the whole declaration as ONE document loads in 2577.8 s and checks in 2525.2 s (about 3.8 times last run's 648.3 s and 687.0 s; CPU time equals wall time, so it is added work from the 7 new sorts and the new set, not machine load), CONFLICT-FREE under every reading, premises 'model'."
  ],
- "limits_unchanged_note": "limits unchanged and still blocking the 42 UNFORMALISED units: act-phrase grammar (8), time (5), causation (4), attribution (4), rules (7), comparison (2), modality/belief (2), and singletons",
+ "limits_unchanged_note": "limits still blocking the 38 UNFORMALISED units: act-phrase grammar (8), rules (7), causation (4), attribution (4), right lines across open sets (4), time (3), comparison (2), modality/belief (2), and singletons. ET-0 moved two 'time' units (u042, u043) and JT-0p two 'evaluative open claim' units (u010, u060) out of the tally.",
  "missing_feature_tally": {
   "attribution": 4,
   "causation": 4,
@@ -609,12 +823,11 @@
   "norms": 7,
   "other:act_phrase_grammar": 8,
   "other:comparison": 2,
-  "other:evaluative_open_claim": 2,
   "other:grounding_of_authority": 1,
   "other:metaphorical_endowment": 1,
   "other:priority_of_rights": 1,
   "other:right_lines_across_open_sets": 4,
-  "time": 5
+  "time": 3
  },
  "missing_feature_tally_previous_run": {
   "attribution": 4,
@@ -632,20 +845,24 @@
   "time": 5
  },
  "no_invented_permissions": {
+  "new_units": "u042 and u043 declare the completion 'unspecified'; a case outside either rule is UNDECIDED in the Lean status rows (never permitted); u010 and u060 are assertions with no norm predicate",
   "regulated_predicates": "every regulated predicate of every part and companion declares the completion 'unspecified' (u074's permission included: it was 'allow' under a guard-top rule that never consulted it); a case outside a rule is UNDECIDED",
   "scope": "no candidate names a bearer the words do not name; liberties are permissions stated only where the right names something one does",
-  "status_rows": "135 Lean status rows over 61 companions, all as expected (re-run at ve-green-tarch-histdep; identical to the previous run's)"
+  "status_rows": "148 Lean status rows over 64 companions, all as expected (135 over 61 are the previous run's, identical; 13 over 3 are new: u042.prohibited, u043.universal, u043.existential)"
  },
  "not_done_this_run": [
-  "no blind audit of this run (the orchestrator audits); no seeded bug in product code (this run changed no file under ve/, lean/ or rust/; see seeded-bugs.md)"
+  "no blind audit of this run (the orchestrator audits)",
+  "no seeded bug in product code (this run changed no file under ve/, lean/ or rust/); seeded faults in the translation are in seeded-bugs-translation.json",
+  "JT-5r (the 31 term splits) was not started, as directed",
+  "no search of the other 38 UNFORMALISED units for newly expressible ones (not directed)"
  ],
  "old_boundary_aggregation": {
-  "CHECKED": 10,
+  "CHECKED": 11,
   "LABELLED": 34,
   "MIXED": 4,
-  "OPEN": 20,
-  "READINGS": 9,
-  "UNFORMALISED": 39
+  "OPEN": 22,
+  "READINGS": 10,
+  "UNFORMALISED": 35
  },
  "old_to_new_units": {
   "u001": [
@@ -1012,6 +1229,97 @@
   ]
  },
  "old_unit_count": 116,
+ "open_term_class": {
+  "adequate": "judgment",
+  "adequate_standard_of_living": "judgment",
+  "aimed_at_destruction_of_rights": "attitude",
+  "arbitrary": "judgment",
+  "community_of_full_development": "classification",
+  "competent": "classification",
+  "compulsory": "classification",
+  "contrary_to_un_purposes_and_principles": "classification",
+  "democratic_society": "judgment",
+  "determined_by_law": "classification",
+  "discrimination": "judgment",
+  "due_recognition_and_respect": "judgment",
+  "duties_to_the_community": "classification",
+  "effective": "judgment",
+  "equal_before_law": "judgment",
+  "equal_pay_for_equal_work": "judgment",
+  "equal_protection_of_the_law": "judgment",
+  "essential": "judgment",
+  "fair": "judgment",
+  "free_and_full_consent": "judgment",
+  "free_and_full_development": "judgment",
+  "free_education": "judgment",
+  "full_development_of_the_human_personality": "judgment",
+  "full_equality": "judgment",
+  "fundamental_rights_granted": "classification",
+  "general_welfare": "judgment",
+  "generally_available": "proportion",
+  "genuine": "judgment",
+  "guarantees_necessary_for_defence": "judgment",
+  "heavier": "judgment",
+  "ill_treatment": "judgment",
+  "inalienable_rights": "classification",
+  "independent_and_impartial": "judgment",
+  "inherent_dignity": "judgment",
+  "just": "judgment",
+  "just_and_favourable_conditions_of_work": "judgment",
+  "just_requirements": "judgment",
+  "justice": "judgment",
+  "member_of_society": "classification",
+  "merit": "judgment",
+  "moral_and_material_interests": "classification",
+  "morality": "judgment",
+  "natural_and_fundamental_group_unit_of_society": "judgment",
+  "non_political_crime": "classification",
+  "of_greatest_importance_for": "judgment",
+  "own_country": "classification",
+  "persecution": "judgment",
+  "private_life": "classification",
+  "protection_of_the_family": "classification",
+  "public_order": "judgment",
+  "reasonable": "judgment",
+  "rights_and_freedoms_set_forth": "classification",
+  "servitude": "classification",
+  "slave_trade": "classification",
+  "slavery": "classification",
+  "social_security": "classification",
+  "spirit_of_brotherhood": "judgment",
+  "status_of_country_or_territory": "classification"
+ },
+ "open_term_class_borderline": [
+  "discrimination",
+  "equal_before_law",
+  "equal_pay_for_equal_work",
+  "equal_protection_of_the_law",
+  "free_and_full_consent",
+  "free_and_full_development",
+  "full_development_of_the_human_personality",
+  "full_equality",
+  "independent_and_impartial",
+  "persecution",
+  "public_order"
+ ],
+ "open_term_class_counts": {
+  "attitude": 1,
+  "classification": 20,
+  "judgment": 36,
+  "proportion": 1
+ },
+ "open_term_class_differs_from_phase1": [],
+ "open_term_class_note": "first live run of the instrument: no previous class of this pilot; the 52 terms unchanged since 20261012T1800Z reproduce phase 1's classes (0 differ); the seven new or renamed terms are given a one-line reason in open_term_class_reasons_for_new_terms. 'heavier' (u043) is new this run.",
+ "open_term_class_reasons_for_new_terms": {
+  "adequate_standard_of_living": "'adequate' is evaluative: the standard of adequacy is not stated",
+  "equal_pay_for_equal_work": "which work counts as equal and which pay as equal needs a comparison standard the text does not state; it also classifies work, so it is borderline",
+  "free_education": "'free' needs a threshold the text does not state (does a nominal fee, or the cost of books, make education not free?); a graded word",
+  "heavier": "a graded comparative: the standard for comparing the weight of two penalties is not stated",
+  "moral_and_material_interests": "which interests result from a production is a matter of classifying interests; no evaluative or threshold standard is involved",
+  "natural_and_fundamental_group_unit_of_society": "carried from phase 1 (judgment): 'natural' and 'fundamental' need standards the text does not state; the record replaces the unused natural_group_unit placeholder (JT-0p item 2)",
+  "of_greatest_importance_for": "carried from phase 1 (judgment): 'greatest importance' is graded and evaluative; the record replaces the unused greatest_importance placeholder (JT-0p item 2)",
+  "own_country": "which country is a person's own is a matter of classifying the relation (the words do not say which relation); no evaluative standard"
+ },
  "open_terms": [
   {
    "decided_by": "unstated",
@@ -1055,23 +1363,23 @@
    "sufficient": []
   },
   {
-   "decided_by": "unstated",
+   "decided_by": "unresolved_decider",
    "factors": [
     "comparison class",
     "measure of importance"
    ],
-   "name": "greatest_importance",
+   "name": "of_greatest_importance_for",
    "necessary": [],
    "sufficient": []
   },
   {
-   "decided_by": "unstated",
+   "decided_by": "unresolved_decider",
    "factors": [
     "meaning of natural",
     "meaning of fundamental",
-    "what counts as family"
+    "what counts as a group unit of society"
    ],
-   "name": "natural_group_unit",
+   "name": "natural_and_fundamental_group_unit_of_society",
    "necessary": [],
    "sufficient": []
   },
@@ -1557,21 +1865,41 @@
    "name": "own_country",
    "necessary": [],
    "sufficient": []
+  },
+  {
+   "decided_by": "unstated",
+   "factors": [
+    "which of two penalties is heavier"
+   ],
+   "name": "heavier",
+   "necessary": [],
+   "sufficient": []
   }
  ],
- "open_terms_added": [],
- "open_terms_count": 57,
- "open_terms_dropped": [],
+ "open_terms_added": [
+  "heavier",
+  "of_greatest_importance_for",
+  "natural_and_fundamental_group_unit_of_society"
+ ],
+ "open_terms_count": 58,
+ "open_terms_dropped": [
+  "greatest_importance",
+  "natural_group_unit"
+ ],
+ "open_terms_replaced": {
+  "greatest_importance": "of_greatest_importance_for",
+  "natural_group_unit": "natural_and_fundamental_group_unit_of_society"
+ },
  "part_checks": {
   "translation-part01.ve.md": {
    "conflict": "CONFLICT-FREE",
    "coverage_bytes_by_status": {
-    "CHECKED": 192,
+    "CHECKED": 392,
     "LABELLED": 265,
-    "OPEN": 1132,
-    "UNFORMALISED": 3135
+    "OPEN": 1382,
+    "UNFORMALISED": 2685
    },
-   "document_id": "a7e36e7f6719101c1c61eb8479a0bd25fa6352c71ef6eccc7102486f48dd8f34",
+   "document_id": "5e3cd85f154d362532fb3e0b5cc670ac9db00adac549618fe77c737c26126dea",
    "premises": {
     "choice": [
      [
@@ -1585,6 +1913,10 @@
      [
       "rs_u037",
       0
+     ],
+     [
+      "rs_u043",
+      0
      ]
     ],
     "evidence": "model",
@@ -1597,25 +1929,25 @@
     "assumptions": 0,
     "bridge_leaves": 0,
     "couplings": 0,
-    "gaps": 9,
-    "open_terms": 57,
+    "gaps": 11,
+    "open_terms": 58,
     "pending_candidates": 0,
     "readings_findings": 1,
-    "separations": 3,
+    "separations": 4,
     "ungrounded_defaults": 0,
-    "unresolved_reading_sets": 3
+    "unresolved_reading_sets": 4
    },
-   "seconds": 15.5
+   "seconds": 53.0
   },
   "translation-part02.ve.md": {
    "conflict": "CONFLICT-FREE",
    "coverage_bytes_by_status": {
     "CHECKED": 363,
     "LABELLED": 105,
-    "OPEN": 693,
-    "UNFORMALISED": 688
+    "OPEN": 759,
+    "UNFORMALISED": 622
    },
-   "document_id": "08526d23257ef066590abac363604fd210b33b0450a74989f5a4e1416cfbe2bd",
+   "document_id": "fed5d63a407d6f175b4817154b87a827cbf3ff13be4e6d25e124170d9784374f",
    "premises": {
     "choice": [
      [
@@ -1645,7 +1977,7 @@
     "ungrounded_defaults": 0,
     "unresolved_reading_sets": 2
    },
-   "seconds": 4.2
+   "seconds": 7.0
   },
   "translation-part03.ve.md": {
    "conflict": null,
@@ -1655,7 +1987,7 @@
     "OPEN": 896,
     "UNFORMALISED": 1624
    },
-   "document_id": "f129615e3897a89c1bf8ed56fceb05606c75a9049d6d51e7cc807a4195093f72",
+   "document_id": "802b2025e55aede8acad7284b3d9e662c0021ed35ed8403b338bae6053af0061",
    "premises": {
     "model_id": "1a8334a2de76ab9ab31419911d005342d267027facd4c9be2c1a76c80b70bc24",
     "status": "model"
@@ -1669,7 +2001,7 @@
     "ungrounded_defaults": 0,
     "unresolved_reading_sets": 1
    },
-   "seconds": 4.7
+   "seconds": 6.3
   },
   "translation-part04.ve.md": {
    "conflict": "CONFLICT-FREE",
@@ -1679,7 +2011,7 @@
     "OPEN": 1050,
     "UNFORMALISED": 144
    },
-   "document_id": "f1d2ab3584b86ac3ca71493c729ad7ef580a6f7590e645b344cfc0bddc1f2071",
+   "document_id": "0d1e84a99480f4ee58532eee8141e36e372f22b146fdc79a9271d380ce8833f5",
    "premises": {
     "choice": [
      [
@@ -1721,18 +2053,18 @@
     "ungrounded_defaults": 0,
     "unresolved_reading_sets": 5
    },
-   "seconds": 6.0
+   "seconds": 9.0
   }
  },
  "part_regulated_predicates": {
-  "translation-part01.ve.md": 9,
+  "translation-part01.ve.md": 11,
   "translation-part02.ve.md": 5,
   "translation-part03.ve.md": 7,
   "translation-part04.ve.md": 5
  },
  "parts": [
   {
-   "choices": 8,
+   "choices": 16,
    "first": "u001",
    "label": "part01",
    "last": "u046",
@@ -1786,7 +2118,28 @@
   "OPEN": 3771,
   "UNFORMALISED": 5591
  },
- "plan_repairs": [],
+ "plan_repairs": [
+  {
+   "item": "JT-0p",
+   "plan": "judgment-terms",
+   "unit": "u010"
+  },
+  {
+   "item": "JT-0p",
+   "plan": "judgment-terms",
+   "unit": "u060"
+  },
+  {
+   "item": "ET-0",
+   "plan": "events-time-causation",
+   "unit": "u042"
+  },
+  {
+   "item": "ET-0",
+   "plan": "events-time-causation",
+   "unit": "u043"
+  }
+ ],
  "plan_repairs_in_carried_state": {
   "items": [
    {
@@ -1812,22 +2165,22 @@
   ],
   "note": "landed by the previous run (run-20261014T1800Z) and carried here unchanged; re-verified this run (companions, Lean status rows, qt0p isolated measurement); not changed this run, so not in changed_units"
  },
- "plan_repairs_note": "none this run; the earlier plan repairs (u097 QT-0p, u085, u091, u106 AP-0 item 1; u039 not landed) are carried in the parts, unchanged (plan_repairs_in_carried_state). QT-0p's preconditions were re-checked: u097's span is 8857-8933 and part03 is byte-identical to the previous run's; the SC-M0 scope tally is carried unchanged (scope-tally.json)",
+ "plan_repairs_note": "JT-0p item 2 (u010, u060: UNFORMALISED -> OPEN) and ET-0 (u042: UNFORMALISED -> CHECKED; u043: UNFORMALISED -> READINGS in the ledger, OPEN in the loader) landed; JT-0p item 1 (the open-term class instrument) is ledger fields only and is not a changed unit. The carried plan repairs (u097 QT-0p, u085, u091, u106 AP-0 item 1; u039 not landed) are in plan_repairs_in_carried_state. QT-0p's preconditions were re-checked: u097's span is 8857-8933 and part03 differs from the previous run's only in the shared open-term record list.",
  "predicates_dropped": [],
- "presupposition_check": "No heading or speaker marker presupposes a substantive claim; no heading or label changed this run (no unit changed), so the labelled units are the audited previous run's. u060 stays UNFORMALISED as an evaluative claim. u045b, u099b and u100b begin with a conjunction: each carries the subject of the previous unit (noted in its elided field), not a presupposed claim.",
- "previous_baseline": "ve-green-fu-ar2-decoders",
- "previous_run": "run-20261017T1800Z (ve-green-fu-ar2-decoders); its parts, units, readings and metrics are in previous-20261017T1800Z/",
- "previous_run_audit_verified_covered_bytes": 4537,
+ "presupposition_check": "No heading or speaker marker presupposes a substantive claim; no heading or label changed this run. u060 ('The family is the natural and fundamental group unit of society') is now an OPEN asserted judgment whose presupposition ('the' = uniqueness) is recorded as missing_feature presupposition, claimed:false. u045b, u099b and u100b begin with a conjunction: each carries the subject of the previous unit (noted in its elided field), not a presupposed claim.",
+ "previous_baseline": "ve-green-tarch-histdep",
+ "previous_run": "run-20261018T0600Z (ve-green-tarch-histdep); its parts, units, readings and metrics are in previous-20261018T0600Z/",
+ "previous_run_audit_verified_covered_bytes": 4820,
  "previous_run_old_boundary_aggregation": {
   "CHECKED": 10,
   "LABELLED": 34,
   "MIXED": 4,
-  "OPEN": 22,
-  "READINGS": 7,
+  "OPEN": 20,
+  "READINGS": 9,
   "UNFORMALISED": 39
  },
- "previous_run_reading_set_candidates": 18,
- "previous_run_reading_set_count": 9,
+ "previous_run_reading_set_candidates": 22,
+ "previous_run_reading_set_count": 11,
  "previous_run_unit_counts_by_status": {
   "CHECKED": 18,
   "LABELLED": 34,
@@ -1837,7 +2190,7 @@
  },
  "qt0p_u097": {
   "in_this_run": {
-   "note": "carried unchanged; the isolated measurement (qt0p_isolated.py) was re-run at ve-green-tarch-histdep and gives the same result (part03 OPEN +76 B, premises `model`; the probe 'Must higher education be free under this sentence?' is UNDECIDED at a stage that is neither elementary nor fundamental, and the three controls are SETTLED yes); part03 is byte-identical to the previous run's",
+   "note": "carried unchanged. Preconditions re-checked: u097's span is 8857-8933; part03 differs from the previous run's only in the shared open-term record list. The isolated measurement (qt0p_isolated.py) was not re-run: it builds from the superseded previous-20261013T0600Z/ directory that is no longer in this run; the companion witnesses (probe UNDECIDED at a higher stage, three controls SETTLED yes) were re-run and are unchanged.",
    "u097_status": "OPEN"
   },
   "isolated_measurement": {
@@ -1932,13 +2285,16 @@
    }
   ]
  },
- "reading_set_candidates": 22,
- "reading_set_count": 11,
- "reading_sets_changed_this_run": {},
+ "reading_set_candidates": 24,
+ "reading_set_count": 12,
+ "reading_sets_changed_this_run": {
+  "u043": "new: universal and existential readings of 'the one that was applicable' (ET-0, plan P2)"
+ },
  "reading_sets_multi_candidate": [
   "u025",
   "u027",
   "u037",
+  "u043",
   "u052",
   "u055",
   "u073",
@@ -1948,13 +2304,45 @@
   "u111",
   "u114"
  ],
+ "rebuild_command_check": {
+  "part01": {
+   "check_noop_exit": 2,
+   "check_noop_output": "readings_s1_pilot.py: error: reading-set ids changed: rebuild is not a no-op",
+   "rebuild_exit": 0,
+   "rebuilt_document_loads": "no: InvalidInput: invalid situation d19e749f4b9c999ff662becc0be0e14205038a1f4ec9cfce38e070d1763b9cb3"
+  },
+  "part02": {
+   "check_noop_exit": 2,
+   "check_noop_output": "readings_s1_pilot.py: error: reading-set ids changed: rebuild is not a no-op",
+   "rebuild_exit": 0,
+   "rebuilt_document_loads": "no: InvalidInput: invalid situation 3fa34a2c855b2290eadc5e0dce4c6d41ac7129ad04cd07763c79bbcec8e3c87c"
+  },
+  "part03": {
+   "check_noop_exit": 0,
+   "check_noop_output": "{\"sets\": 1, \"no_op\": true}",
+   "rebuild_exit": 0,
+   "rebuilt_document_loads": true
+  },
+  "part04": {
+   "check_noop_exit": 2,
+   "check_noop_output": "readings_s1_pilot.py: error: reading-set ids changed: rebuild is not a no-op",
+   "rebuild_exit": 0,
+   "rebuilt_document_loads": "no: InvalidInput: invalid situation 6f90f3299a1218dc575cddb2ded715aa12e2b6c04cb7e503b866c3473e929a47"
+  },
+  "whole": {
+   "check_noop_exit": 2,
+   "check_noop_output": "readings_s1_pilot.py: error: reading-set ids changed: rebuild is not a no-op",
+   "rebuild_exit": 0,
+   "rebuilt_document_loads": "no: InvalidInput: invalid situation 78a089d1090be541d6f97678e3a544dd1ec43054ce9d2a6603a03938c7f93d09"
+  }
+ },
  "rendering_change": {
-  "verdict": "no change in how norms are worded",
-  "what": "none: rendered-parts/ and readings-rendered.md are regenerated and carry the same wording"
+  "verdict": "JT-0p's rendering expectation holds: the rendering changes only at u010, at u060 and at the one line of u025's situation (u042 and u043 are ET-0's)",
+  "what": "rendered-parts/ regenerated. Against the previous run's rendering: u010 now reads 'Open reading: \"common_understanding_of_these_rights_and_freedoms\" has the recorded relation \"of_greatest_importance_for\" to \"full_realization_of_this_pledge\".'; u060 reads 'Open reading: \"the_family\" is classified as \"natural_and_fundamental_group_unit_of_society\".'; u042 and u043 render their rule with the two lint-refused wordings as recorded relations (\"committed_on\", \"constitutes_penal_offence_on\"); and u025's distinguishing situation names one more element (\"thing is a thing\")."
  },
  "repaired_unit_reasons": {},
  "repaired_units": [],
- "run": "run-20261018T0600Z",
+ "run": "run-20261018T1800Z",
  "scope_tally": {
   "file": "scope-tally.json",
   "governors": [
@@ -1965,6 +2353,7 @@
    "u112",
    "u114"
   ],
+  "note": "carried unchanged (scope-tally.json): u010, u060, u042 and u043 keep their other:scope tag and governed_by; the tally changes no status or content",
   "totals": {
    "by_effect": {
     "carve-out": {
@@ -2029,6 +2418,68 @@
    "units_total": 130
   }
  },
+ "seeded_bugs_translation": [
+  {
+   "check": "Lean norm-defaults-status witnesses (u042.prohibited)",
+   "fault": "the `not` before constitutes_penal_offence_on is removed",
+   "faulty": "FAILS: [(['f1'], 'UNDECIDED', ['SETTLED', False]), (['f1'], 'SETTLED no', ['UNDECIDED', None])]",
+   "restored": "all as expected",
+   "unit": "u042"
+  },
+  {
+   "check": "Lean norm-defaults-status witnesses (u042.prohibited)",
+   "fault": "the rule's sign is flipped (a finding on account of a non-offence would be REQUIRED, not forbidden)",
+   "faulty": "FAILS: [(['f1'], 'SETTLED yes', ['SETTLED', False])]",
+   "restored": "all as expected",
+   "unit": "u042"
+  },
+  {
+   "check": "Lean norm-defaults-status witnesses (u043.existential)",
+   "fault": "the existential reading is given the universal reading's guard",
+   "faulty": "FAILS: [(['i1'], 'UNDECIDED', ['SETTLED', False])]",
+   "restored": "all as expected",
+   "unit": "u043"
+  },
+  {
+   "check": "Lean norm-defaults-status witnesses (u043.universal)",
+   "fault": "heavier_than's arguments are swapped in the universal reading (lighter-than)",
+   "faulty": "FAILS: [(['i1'], 'UNDECIDED', ['SETTLED', False]), (['i1'], 'UNDECIDED', ['SETTLED', False])]",
+   "restored": "all as expected",
+   "unit": "u043"
+  },
+  {
+   "check": "the rendering must contain the expected sentence",
+   "fault": "the two constants of the binary predicate are swapped",
+   "faulty": "FAILS: expected sentence absent",
+   "restored": "all as expected",
+   "unit": "u010"
+  },
+  {
+   "check": "load_document",
+   "fault": "the unit's meaning names an open term the document does not declare",
+   "faulty": "refused: invalid meaning status",
+   "restored": "loads (the part checks)",
+   "unit": "u010"
+  },
+  {
+   "check": "load_document",
+   "fault": "the unit's meaning names an open term the document does not declare",
+   "faulty": "refused: invalid meaning status",
+   "restored": "loads (the part checks)",
+   "unit": "u060"
+  },
+  {
+   "check": "load_document (Lean admits every separation)",
+   "fault": "the recorded separating situation's value flipped, or the two readings made equal",
+   "faulty": {
+    "a_flipped_value": "refused: distinguishing model does not separate readings",
+    "b_readings_equal": "refused: distinguishing model does not separate readings",
+    "control_unchanged_loads": "admitted"
+   },
+   "restored": "loads (part01 checks)",
+   "unit": "u043"
+  }
+ ],
  "single_reading_unit_count": 42,
  "single_reading_units": [
   "u020",
@@ -2080,7 +2531,7 @@
   "path": "source/udhr.md",
   "sha256": "d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a"
  },
- "status_witness_rows": 135,
+ "status_witness_rows": 148,
  "status_witnesses": {
   "u020.prohibited": [
    {
@@ -2875,6 +3326,219 @@
     "predicate": "arrest_detention_or_exile_permitted",
     "row": [
      "c5"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   }
+  ],
+  "u042.prohibited": [
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "finding_of_guilt_permitted",
+    "row": [
+     "f1"
+    ],
+    "rules": [
+     "u042-prohibited"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "finding_of_guilt_permitted",
+    "row": [
+     "f2"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "finding_of_guilt_permitted",
+    "row": [
+     "f1"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   }
+  ],
+  "u043.existential": [
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [
+     "u043-existential"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [
+     "u043-existential"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [
+     "u043-existential"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   }
+  ],
+  "u043.universal": [
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [
+     "u043-universal"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "SETTLED",
+     false
+    ],
+    "lean_point_status": "SETTLED no",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [
+     "u043-universal"
+    ],
+    "status": "SETTLED",
+    "value": false
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
+    ],
+    "rules": [],
+    "status": "UNDECIDED",
+    "value": null
+   },
+   {
+    "as_expected": true,
+    "expected": [
+     "UNDECIDED",
+     null
+    ],
+    "lean_point_status": "UNDECIDED",
+    "predicate": "imposition_permitted",
+    "row": [
+     "i1"
     ],
     "rules": [],
     "status": "UNDECIDED",
@@ -4431,11 +5095,11 @@
  },
  "unit_count": 130,
  "unit_counts_by_status": {
-  "CHECKED": 18,
+  "CHECKED": 19,
   "LABELLED": 34,
-  "OPEN": 25,
-  "READINGS": 11,
-  "UNFORMALISED": 42
+  "OPEN": 27,
+  "READINGS": 12,
+  "UNFORMALISED": 38
  },
  "unit_counts_by_status_change": {
   "audit_repairs": {
@@ -4447,27 +5111,75 @@
    "units": 0
   },
   "plan_repairs": {
-   "bytes": 0,
-   "units": 0
+   "by_plan": {
+    "events-time-causation ET-0": {
+     "bytes": 318,
+     "units": 2
+    },
+    "judgment-terms JT-0p": {
+     "bytes": 198,
+     "units": 2
+    }
+   },
+   "bytes": 516,
+   "units": 4
   }
  },
  "unit_scale": "sentence or clause; unchanged (130 units; no re-segmentation needed)",
- "units_changed_this_run": [],
+ "units_by_open_term_class": {
+  "attitude": {
+   "bytes": 225,
+   "units": 1
+  },
+  "classification": {
+   "bytes": 2045,
+   "units": 15
+  },
+  "exception": {
+   "bytes": 0,
+   "units": 0
+  },
+  "judgment": {
+   "bytes": 2623,
+   "units": 24
+  },
+  "proportion": {
+   "bytes": 70,
+   "units": 1
+  }
+ },
+ "units_changed_this_run": [
+  "u010",
+  "u060",
+  "u042",
+  "u043"
+ ],
  "units_rejected_by_audit_and_repaired": [],
  "units_repaired_same_defect_not_rejected": [],
  "units_with_only_open_term_factors_rewritten": [],
  "vocabulary_change_check": {
-  "entity_sort": "no sort named `entity` is declared (grep of the four parts: 0); the sort `production` (u106) is not reserved",
+  "changes": "JT-0p: sort `thing` (noun 'thing', plural 'things') in part01, part02 and the whole declaration, 3 constants, 2 predicates; ET-0: sorts finding, act, day, imposition, penalty, applicability and 11 predicates in part01 and the whole declaration",
+  "companions": "witnesses_all.py: 61 previous companions and 135 rows identical to the previous run's, plus 3 new companions and 13 rows",
+  "entity_sort": "no sort named `entity` is declared in any part (checked by finish23.py); each part has at most one sort with the noun 'thing' (part01 and part02: `thing`)",
+  "rebuild_command": "the committed `tools/readings_s1_pilot.py --rebuild-reading-ids <part> --check-noop` is NOT a no-op on the unchanged parts 1, 2, 4 and the whole declaration (part03 is), and the document it writes for them does not load ('invalid situation'): it extends situation bases by every declared sort and by the regulated predicates' relations, which Lean refuses in a base. The ids were therefore rebuilt by vocab_patch.py (the reference build's rule: extend only by the new vocabulary, then recompute every id with VE's own identity functions); evidence/rebuild-command.json",
   "result": {
-   "differences": [],
-   "environment_changed_in": [],
-   "note": "no vocabulary change and no unit change: the situation step (integrate.py all) rebuilds all four parts byte for byte, witnesses_all.py gives the same 135 rows, and compare_units.py finds 130 of 130 units with the same status, meaning id and row",
+   "differences": [
+    "u010",
+    "u042",
+    "u043",
+    "u060"
+   ],
+   "environment_changed_in": [
+    "translation-part01.ve.md",
+    "translation-part02.ve.md"
+   ],
+   "note": "130 of 130 units were compared with the previous run's parts: exactly the four changed units differ (status and row); every fenced unit of the other 126 parses with the same status and the same row",
    "unexpected": [],
    "units": 130
   },
   "rule": "DRI 2026-10-14 15:30Z (2): after any vocabulary change rerun the situation step and check every existing unit parses unchanged",
-  "rust_time_limit": "default VE_RUST_TIMEOUT kept; no prlimit run, so no raised limit and no peak resident-set record",
-  "situation_step": "witnesses_all.py (Lean status rows for every companion) and check_parts.py/compare_units.py (every part); this pilot has no nd.py"
+  "rust_time_limit": "default VE_RUST_TIMEOUT kept. part01's check under `prlimit --as=6442450944`: cap 6442450944 bytes, wall 46.6 s, peak child resident set 104.0 MB (ve_service; sampled every 0.1 s, the Rust ve process peaked at 4.8 MB in the samples); no raised limit (evidence/et0-rerun.json)",
+  "situation_step": "this pilot has no nd.py: the step is witnesses_all.py (Lean status rows for every companion), check_parts.py (every part), compare_units.py (every unit's status and row) and, for the new reading set, the Lean-elaborated search in et0_apply.py"
  },
  "whole_document_experiment": {
   "component_sets": [
@@ -4482,11 +5194,11 @@
    "check": {
     "premises": "model",
     "readings_status": "CONFLICT-FREE",
-    "seconds": 687.0
+    "seconds": 2525.2
    },
    "load": {
     "coverage_percent": 100,
-    "seconds": 648.3
+    "seconds": 2577.8
    }
   },
   "files": [
@@ -4497,7 +5209,8 @@
    "experiment-whole/integrate-whole.log",
    "experiment-whole/translation-whole.ve.md"
   ],
-  "result": "loads and checks at ve-green-tarch-histdep"
+  "note": "whole.py was NOT re-run: the whole declaration's new vocabulary and the four units were applied to experiment-whole/translation-whole.ve.md directly by the same scripts as the parts (jt0p_apply.py, et0_apply.py), because the pre-parts translation.ve.md the builder reads is not kept up to date",
+  "result": "loads and checks at ve-green-eff-20261018-1"
  },
  "whole_document_legacy": {
   "coverage": {
@@ -4541,6 +5254,7 @@
    }
   },
   "file": "translation.ve.md",
+  "note": "translation.ve.md (the pre-parts form) keeps its units as they were; only its shared open-term record list was updated (greatest_importance -> of_greatest_importance_for, natural_group_unit -> natural_and_fundamental_group_unit_of_society), so no record names a removed term. It is no longer the source the parts are built from.",
   "premises": {
    "reason": "non-assertion reading elaboration pending",
    "status": "UNKNOWN"
@@ -4549,16 +5263,21 @@
   "why_not_content": "the legacy form keeps candidates as companion documents (no content in the main document), so its premises stay UNKNOWN; it cannot hold the couplings (readings@1 absent), which the parts carry"
  },
  "words_only": {
-  "note": "no reading was added, removed or changed this run; the reading sets are the previous run's, whose audit judged them FAITHFUL",
+  "note": "u043's two readings come from the words 'the one that was applicable' (a definite description that fits one applicable penalty and does not say which to compare with when several were applicable), as the ET-0 plan P2 and the run's instruction state; no outside knowledge is used. u010 and u060 are single-reading units. No other reading changed.",
   "open_questions_listed_that_the_text_does_not_raise": 0,
-  "readings_added_this_run": {},
+  "readings_added_this_run": {
+   "u043": [
+    "universal",
+    "existential"
+   ]
+  },
   "readings_changed_this_run": {},
   "readings_removed_this_run": {},
   "rule": "lead, 2026-10-08/09: readings come from the words only; rights are not duties to provide; no duty readings for rights, either way"
  },
  "x5_claimed_false": {
   "bytes": 505,
-  "note": "carried unchanged since the 20261014 runs: the translator marks the two units whose own residual says part of the meaning is missing; the 20261017T1800Z audit confirmed no marked unit as claimed. Counts with and without the mark are both given.",
+  "note": "u035 and u111 carried; u060 (presupposition) and, until the audit, u042 and u043 are also claimed:false (see claimed_false_pending_audit). Counts with and without the mark are both given.",
   "rule": "DRI X5, 2026-10-14: a unit whose ledger entry is marked `claimed: false` (an OPEN unit with part of its meaning missing) is never counted as claimed or verified bytes",
   "units": {
    "u035": {

@@ -1,0 +1,217 @@
+{
+ "open_term_class": {
+  "equal_before_law": "judgment",
+  "inherent_dignity": "judgment",
+  "inalienable_rights": "classification",
+  "essential": "judgment",
+  "of_greatest_importance_for": "judgment",
+  "natural_and_fundamental_group_unit_of_society": "judgment",
+  "arbitrary": "judgment",
+  "fair": "judgment",
+  "adequate": "judgment",
+  "just": "judgment",
+  "reasonable": "judgment",
+  "genuine": "judgment",
+  "spirit_of_brotherhood": "judgment",
+  "justice": "judgment",
+  "contrary_to_un_purposes_and_principles": "classification",
+  "non_political_crime": "classification",
+  "rights_and_freedoms_set_forth": "classification",
+  "aimed_at_destruction_of_rights": "attitude",
+  "discrimination": "judgment",
+  "equal_protection_of_the_law": "judgment",
+  "effective": "judgment",
+  "competent": "classification",
+  "fundamental_rights_granted": "classification",
+  "independent_and_impartial": "judgment",
+  "guarantees_necessary_for_defence": "judgment",
+  "persecution": "judgment",
+  "full_equality": "judgment",
+  "determined_by_law": "classification",
+  "due_recognition_and_respect": "judgment",
+  "just_requirements": "judgment",
+  "morality": "judgment",
+  "public_order": "judgment",
+  "general_welfare": "judgment",
+  "democratic_society": "judgment",
+  "protection_of_the_family": "classification",
+  "duties_to_the_community": "classification",
+  "free_and_full_development": "judgment",
+  "status_of_country_or_territory": "classification",
+  "slavery": "classification",
+  "servitude": "classification",
+  "slave_trade": "classification",
+  "ill_treatment": "judgment",
+  "private_life": "classification",
+  "free_and_full_consent": "judgment",
+  "generally_available": "proportion",
+  "merit": "judgment",
+  "full_development_of_the_human_personality": "judgment",
+  "social_security": "classification",
+  "just_and_favourable_conditions_of_work": "judgment",
+  "community_of_full_development": "classification",
+  "compulsory": "classification",
+  "member_of_society": "classification"
+ },
+ "unclassified": [],
+ "class_counts": {
+  "attitude": 1,
+  "classification": 18,
+  "judgment": 32,
+  "proportion": 1
+ },
+ "borderline_judgment_terms": [
+  "discrimination",
+  "equal_before_law",
+  "equal_protection_of_the_law",
+  "free_and_full_consent",
+  "free_and_full_development",
+  "full_development_of_the_human_personality",
+  "full_equality",
+  "independent_and_impartial",
+  "persecution",
+  "public_order"
+ ],
+ "judgment_term_units": {
+  "total": 20,
+  "by_status": {
+   "OPEN": 16,
+   "READINGS": 4
+  },
+  "by_missing_feature": {
+   "none": 19,
+   "presupposition": 1
+  }
+ },
+ "judgment_term_bytes": {
+  "total": 2143,
+  "by_status": {
+   "OPEN": 1398,
+   "READINGS": 745
+  },
+  "by_missing_feature": {
+   "none": 2077,
+   "presupposition": 66
+  }
+ },
+ "units_by_open_term_class": {
+  "attitude": {
+   "units": 1,
+   "bytes": 225
+  },
+  "classification": {
+   "units": 12,
+   "bytes": 1699
+  },
+  "judgment": {
+   "units": 20,
+   "bytes": 2143
+  },
+  "proportion": {
+   "units": 1,
+   "bytes": 70
+  }
+ },
+ "catalogue_units_by_status": {
+  "OPEN": {
+   "with_judgment_term": {
+    "units": 5,
+    "bytes": 437
+   },
+   "without_judgment_term": {
+    "units": 0,
+    "bytes": 0
+   }
+  },
+  "READINGS": {
+   "with_judgment_term": {
+    "units": 3,
+    "bytes": 627
+   },
+   "without_judgment_term": {
+    "units": 0,
+    "bytes": 0
+   }
+  },
+  "UNFORMALISED": {
+   "with_judgment_term": {
+    "units": 0,
+    "bytes": 0
+   },
+   "without_judgment_term": {
+    "units": 8,
+    "bytes": 1433
+   }
+  }
+ },
+ "judgment_terms": {
+  "u010": [
+   "of_greatest_importance_for"
+  ],
+  "u027": [
+   "ill_treatment"
+  ],
+  "u032": [
+   "discrimination",
+   "equal_protection_of_the_law"
+  ],
+  "u033a": [
+   "discrimination",
+   "equal_protection_of_the_law"
+  ],
+  "u033b": [
+   "discrimination",
+   "equal_protection_of_the_law"
+  ],
+  "u035": [
+   "effective"
+  ],
+  "u037": [
+   "arbitrary"
+  ],
+  "u045a": [
+   "arbitrary"
+  ],
+  "u046": [
+   "arbitrary"
+  ],
+  "u051": [
+   "persecution"
+  ],
+  "u052": [
+   "genuine"
+  ],
+  "u055": [
+   "arbitrary"
+  ],
+  "u059": [
+   "free_and_full_consent"
+  ],
+  "u060": [
+   "natural_and_fundamental_group_unit_of_society"
+  ],
+  "u064": [
+   "arbitrary"
+  ],
+  "u084c": [
+   "just_and_favourable_conditions_of_work"
+  ],
+  "u099b": [
+   "merit"
+  ],
+  "u100a": [
+   "full_development_of_the_human_personality"
+  ],
+  "u110": [
+   "free_and_full_development"
+  ],
+  "u111": [
+   "democratic_society",
+   "due_recognition_and_respect",
+   "general_welfare",
+   "just_requirements",
+   "morality",
+   "public_order"
+  ]
+ }
+}
