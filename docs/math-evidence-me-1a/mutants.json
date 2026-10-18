@@ -24,6 +24,14 @@
     "observed": "error: VE/Numbers/Examples.lean:74:0"
   },
   {
+    "file": "lean/VE/Numbers/Round.lean",
+    "behaviour": "every unknown's text is the spec's table (section 1.5)",
+    "mutation": "UnknownReason.text (.limit .witnessPoints) says 4,069 candidate points instead of 4,096",
+    "test": "lake build VE.Numbers.Examples (#guard at Examples.lean:100, the spec table)",
+    "result": "failed; restored",
+    "observed": "error: VE/Numbers/Examples.lean:100:0"
+  },
+  {
     "file": "lean/VE/Numbers/Decimal.lean",
     "behaviour": "a decimal normalisation: the exact value of a written decimal",
     "mutation": "decValue normalises away the sign (d.significand.natAbs). As written, the proof decValue_lower fails first (Decimal.lean:20, rewrite failed); with decValue_lower, Printed.value_ofDec and Printed.value_sci replaced by sorry for the mutant, the fixture catches it",
@@ -62,5 +70,13 @@
     "test": "tests/test_numbers_phrases.py::test_generator_writes_lean_output_and_check_refuses_any_other_file",
     "result": "failed; restored",
     "observed": "1 failed, 1 passed"
+  },
+  {
+    "file": "tools/consolidation-ledger.json",
+    "behaviour": "the skeleton step names every top-level executable main",
+    "mutation": "a new top-level lean/ZzMain.lean that the step does not name",
+    "test": "tests/test_consolidation_tools.py::test_the_skeleton_step_names_every_top_level_executable_main",
+    "result": "failed; removed",
+    "observed": "Right contains one more item: 'ZzMain.lean'"
   }
 ]
