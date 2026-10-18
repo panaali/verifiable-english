@@ -1,0 +1,54 @@
+{
+ "base": {
+  "minutes": {
+   "corpus files": 4.4,
+   "discourse": 0.5,
+   "document": 0.6,
+   "norm_defaults": 2.5,
+   "pilots+readings": 18.1,
+   "probe+conformance": 24.5,
+   "rights+quantity": 8.8
+  },
+  "records": {
+   "conformance/lean": 19806,
+   "conformance/python": 19806,
+   "discourse/default": 6350,
+   "document/default": 3632,
+   "norm_defaults/default": 2020,
+   "pilots/default": 563,
+   "probe/lean": 9435,
+   "probe/python": 9435,
+   "quantity/lean": 12863,
+   "quantity/python": 12863,
+   "readings/default": 1137,
+   "rights/default": 2500
+  },
+  "total_minutes": 59.4
+ },
+ "head": {
+  "minutes": {
+   "corpus files": 4.3,
+   "discourse": 0.1,
+   "document": 1.1,
+   "norm_defaults": 1.6,
+   "pilots+readings": 18.3,
+   "probe+conformance": 6.5,
+   "rights+quantity": 2.9
+  },
+  "records": {
+   "conformance/lean": 19806,
+   "conformance/python": 19806,
+   "discourse/default": 6350,
+   "document/default": 3632,
+   "norm_defaults/default": 2020,
+   "pilots/default": 563,
+   "probe/lean": 9435,
+   "probe/python": 9435,
+   "quantity/lean": 12863,
+   "quantity/python": 12863,
+   "readings/default": 1137,
+   "rights/default": 2500
+  },
+  "total_minutes": 34.8
+ }
+}
