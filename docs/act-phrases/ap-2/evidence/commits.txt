@@ -1,4 +1,9 @@
-# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at e96fd5bfc (this file's own commit follows)
+# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at dc5b6295d (this file's own commit follows)
+dc5b6295da7a2da9ba3da9d01d16bc367401dfa0 ap-2: REPORT: selected tests after the second recheck fix (F10)
+8c0e99b6ea658fbef6ff1670eb607f05259ad408 ap-2: REPORT and DELTA after the second recheck fix (F10): typed list terms, mutant counts, guard lines, size
+268d5e40137aaac73bb3b019e4bab3a5acf6f9e3 ap-2 F10: regenerate lean/declarations.txt for the new guards (regen_generated.py --write)
+81b0427b5e07a304b50b9b3e9c3a3902e71b75a4 ap-2 F10: list terms typed from the declarations, so every operand of ++, binding value, flatMap result and list-valued name is cut; marker lists swapped inside ++; the guards that kill them
+3d1085285cb224c97333ac82bc255c469a060458 ap-2: saved commit list after the recheck fix (main..HEAD --no-merges)
 e96fd5bfc7b836099d885a1c54d69e41fba222d4 ap-2: REPORT and DELTA after the recheck fix (F7, F8, F9): mutant classes, guard lines, size, tests
 7e457d654104a1d503ad2c7ca2ae6ab3a4735083 ap-2 F7: regenerate lean/declarations.txt for the new fixtures (regen_generated.py --write)
 430531bd37c174e02f457985d9aeb06894ac3ddb ap-2 F7: every list of 1.4's check cut to its first element and every marker list swapped, generated; the guards that kill them
