@@ -158,8 +158,6 @@ def checker_family(profiles):
         raise UnsupportedProfile("risk@0 requires alternatives@0")
     if "risk@0" in profiles and "norm-defaults@0" in profiles:
         raise UnsupportedProfile("risk@0 with norm-defaults@0 is not implemented")
-    if "alternatives@0" in profiles and "norm-defaults@0" in profiles:
-        raise UnsupportedProfile("alternatives@0 with norm-defaults@0 is not implemented")
     for profile in profiles:
         if profile not in BY_NAME:
             raise UnsupportedProfile(f"Unsupported profile {profile}")

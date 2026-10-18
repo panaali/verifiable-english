@@ -41,10 +41,63 @@ texts not chosen. The PDF states no licence, so it is not committed here.
 | [results.json](results.json) | everything the harness computed |
 | [build_document.py](build_document.py), [spans.json](spans.json), [coverage.json](coverage.json) | the byte-by-byte accounting of the source text |
 | [reference.py](reference.py) | a second reading of the commitments in plain Python, which shares no code with VE |
+| [readings_r1.py](readings_r1.py), [readings/results.json](readings/results.json) | fsf-r1: VE's own answer on every reading set that carries content |
+| [measure_r1.py](measure_r1.py) | fsf-r1: each unit's status on Oct 1 and today, and the gaps by feature ([evidence](../../docs/usecases/safety-framework/fsf-r1/)) |
 | [../../tests/test_safety_framework.py](../../tests/test_safety_framework.py) | the test: it fails on any mismatch with the key or any change in a result |
 
 Run `python usecases/safety-framework/run.py` to recompute everything (a few minutes). The severity family
-needs the Lean risk route, so run `lake build` in `lean/` first.
+needs the Lean risk route, so run `lake build` in `lean/` first. `build_document.py` and `readings_r1.py` also
+need the pinned Rust binary (`python3 tools/rust_build.py`).
+
+## Re-measured on 2026-10-18 (fsf-r1)
+
+The translation was re-checked on main at 93131f96 with the same rules. Since Oct 1, soft norms gained the rd-9
+soft chain, readings gained rd-1 to rd-9, the Lean-first relocation merged, and so did qa-q2.
+
+- **The same translation gives the same answers.** `run.py --check` and `build_document.py --check` pass
+  unchanged on main: 257 of 262 answers agree with the key, and every unit keeps its Oct 1 status.
+- **Seven reading sets now carry content, and VE decides each of them itself.** On Oct 1 every reading set had
+  pending content, so VE's own readings query was UNKNOWN (PLAN 12, item 13). Content-bearing sets have since
+  merged on the soft chain. A set whose readings are each one rule now gives each reading that rule as its
+  content: RS2 on two units, RS4holistic, RS4within, RS4elicitation, RS6 and RS9.
+  - On its own part document, Lean admits each set and finds a separating situation. It answers CONFLICT-FREE
+    under every reading, with a checked model of the premises ([readings/results.json](readings/results.json)).
+  - Each unit stays OPEN, because the text has two readings and a translation of someone else's text never picks
+    one.
+- **Eleven sets still have a pending reading.** Either the reading has no rule (RS3 F, RS4aim intent, RS7 M, RS8
+  scope) or it has several (RS1 G, RS5 R). A candidate's content is one rule, so VE's verdict on the whole D1
+  document stays UNKNOWN (route `pending`) until those readings can be written.
+- **An independent check on a second model** ([fidelity-check.md](../../docs/usecases/safety-framework/fsf-r1/fidelity-check.md))
+  found RS2 and RS6 faithful, with notes. It argues that "should" and "must" each have one reading here, against the
+  soft-norms rule that every force word keeps both, and that RS9 = same drops "severe". These two questions are for
+  the DRI; the translation is unchanged. Under R14 it classifies C1 and C3 as translation artefacts (below).
+
+| Status | Oct 1 bytes | Oct 18 bytes |
+|---|---|---|
+| CHECKED | 4,595 (8.5%) | 4,595 (8.5%) |
+| OPEN | 7,356 (13.5%) | 7,356 (13.5%) |
+| LABELLED | 35,557 (65.4%) | 35,557 (65.4%) |
+| UNFORMALISED | 6,865 (12.6%) | 6,865 (12.6%) |
+
+### What each byte that is not CHECKED waits for
+
+From [gaps.json](../../docs/usecases/safety-framework/fsf-r1/gaps.json). A unit counts under every blocker it has;
+"alone" counts the units with no other blocker, so their bytes move when that one feature lands.
+
+| Feature | Units | Bytes | Alone: units, bytes |
+|---|---|---|---|
+| judgment terms (16 open terms; "as appropriate", "where appropriate", "adequate") | 36 | 7,976 (OPEN 6,621, UNFORMALISED 1,355) | 23, 5,114 |
+| modality ("may", "could": LABELLED hedged) | 18 | 3,276 | 18, 3,276 |
+| process and deadline wording ("periodically", "this will inform", "the process will involve", an iterative process) | 11 | 2,212 | 11, 2,212 |
+| readings with no rule or with several rules | 11 | 2,161 | 1, 95 |
+| external references (RAND security levels, SAIF) | 7 | 1,978 | 7, 1,978 |
+| attitudes: beliefs and expectations (LABELLED attributed) | 11 | 1,855 | 11, 1,855 |
+| two readings kept, each decided by VE (fsf-r1; not a VE gap) | 7 | 1,436 | 4, 640 |
+| causation (LABELLED causal) | 3 | 807 | 3, 807 |
+| defeasible: "may be adjusted" | 2 | 551 | 2, 551 |
+| attitudes: aims without force ("we strive", "we seek") | 2 | 486 | 2, 486 |
+| addressee: a recommendation to the field | 2 | 283 | 2, 283 |
+| no claim to check (layout, exposition, definitions, examples) | 165 | 29,619 | 165, 29,619 |
 
 ## Result: agreement with the answer key
 
@@ -121,9 +174,12 @@ review the Framework periodically" names no deadline, and "the updated version .
 appropriate corporate governance bodies" concerns the order of events. [spans.json](spans.json) gives every unit
 and its reason.
 
-## Conflicts found
+## Conflicts in the translation
 
-**Two conflicts.** Each needs its own choice of readings.
+**Two conflicts between readings of the translation; neither is a conflict in the source.** Each needs its own
+choice of readings. Under R14 (DRI-RULINGS.md), an independent source check on a second model
+([fidelity-check.md](../../docs/usecases/safety-framework/fsf-r1/fidelity-check.md)) classified both as
+translation artefacts on 2026-10-18. Until then this section presented them as findings about the source.
 
 - **C3.** Rule F9 says that deployment mitigations need not be in place for an internal deployment of a misuse
   model. Rule F10 says that they must be in place for a high-risk internal deployment of an ML R&D model. A model
@@ -138,6 +194,14 @@ and its reason.
 
 VE finds a witness situation that satisfies every premise for each. These are the only conflicts in the whole
 document (C-doc).
+
+The source check traces both to a reading that merges two acts the source words differently:
+
+- C3: RS9 = same merges "residual risk of harm" (bullet 2) with "residual risk of severe harm" (bullet 3). Each
+  bullet's "This is required only for ..." sentence then releases or requires the other bullet's condition.
+- C1: RS6 = same merges mitigations against "insider misuse" with Security Level 2+'s measures against "insider
+  threats". RS3 = Ds with strict force also reads "recommend ... the field of frontier AI should apply" as the
+  developer's "must".
 
 **No conflict in the other three pairs.**
 
@@ -190,8 +254,10 @@ condition makes no rule conclude "acceptable", but no rule says "not acceptable"
   deployment is high-risk or low-risk; "frontier model"; "periodic"; "reasonable grounds". The text names a
   decider for most of them ("we" or the governance function) and gives no criteria, so VE never decides them. Every
   answer in families A, B, K and R is "required, given the stated level and findings".
-- **18 reading sets.** VE's own readings query returns UNKNOWN for norm readings, as the plan expected. The ALL,
-  SOME and NONE answers come from the harness, which builds one document per choice of readings.
+- **18 reading sets.** On Oct 1, VE's own readings query returned UNKNOWN for norm readings, as the plan expected.
+  Since fsf-r1, seven sets carry content and VE separates and checks them itself; the other eleven are pending (see
+  "Re-measured on 2026-10-18"). The ALL, SOME and NONE answers still come from the harness, which builds one
+  document per choice of readings.
 - **Order of events.** VE has no deadlines inside a process, so "prior to", "after" and "upon completion" are read
   as conditions that already hold.
 - **External standards.** The RAND security levels, SAIF and the cited papers are pointers, not content.
@@ -200,7 +266,8 @@ condition makes no rule conclude "acceptable", but no rule says "not acceptable"
 
 ## Span accounting
 
-All 54,373 bytes of the source are in exactly one unit of the document (290 units).
+All 54,373 bytes of the source are in exactly one unit of the document (290 units). These are the Oct 1 figures;
+on Oct 18 every unit has the same status (the table under "Re-measured on 2026-10-18").
 
 | Status | Bytes | Share |
 |---|---|---|
@@ -218,7 +285,7 @@ page layout. The commitments are OPEN because their conditions use open terms.
 | Metric | Result | Expected |
 |---|---|---|
 | M1 agreement with the key | 257/262 | 262/262, every miss explained |
-| M2 reading sets | 14 sets (13 in the main document, RS10 in the date document), placed on 18 units; at most 16 choices per item, and 64 for C-doc, the union over every act; VE's own readings query is UNKNOWN on every norm set | as found |
+| M2 reading sets | 14 sets (13 in the main document, RS10 in the date document), placed on 18 units; at most 16 choices per item, and 64 for C-doc, the union over every act. Oct 1: VE's own readings query is UNKNOWN on every norm set. Oct 18: 7 of the 18 placed sets carry content, and VE answers CONFLICT-FREE with a model on each part document; the whole document stays UNKNOWN | as found |
 | M3 CHECKED share | 8.5% | under 10% |
 | M4 how each answer is backed | each per-choice answer rests on a case model that VE validated, a replayed certificate, or the Lean risk route | reported |
 | M5 one-off identifiers | 0 | 0 |

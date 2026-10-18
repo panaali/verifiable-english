@@ -661,8 +661,8 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
   let block := blockOf listed
-  if listed.contains "norm-defaults@0" && block != .none then
-    throw (undecided environment "norm-defaults with alternatives or risk needs its composed Lean route")
+  if let some refusal := VE.Compose.pendingWithDefaults listed then
+    throw ((environmentFault environment).getD refusal)
   if listed.contains "rights@0" && (block != .none || listed.contains "norm-defaults@0") then
     throw (unavailable "rights with norm-defaults, alternatives or risk needs its composed Lean route")
   let soft := listed.contains "soft-norms@0" && !listed.contains "rights@0"

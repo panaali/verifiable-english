@@ -32,20 +32,22 @@ theorem labelled_fits {A : AltDoc} {p : String × VE.Formula} (h : p ∈ (altPre
   Fits.strIn (premiseLabels_mem A _ (List.of_mem_zip h).1)
 
 theorem elaborate_fits (id : String) (src : Wire.AltSource)
-    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = false) :
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = false)
+    (hfill : (CaseCond.decided .altFillPath).holds req = false) :
     Fits req (skel% "alternatives.json#/$defs/elaborate") (ok id (Wire.regenerated src)) := by
-  unfold ok VE.Route.Wire.ok Wire.regenerated Wire.encodeNode Wire.labelled Wire.profileExists
+  unfold ok VE.Route.Wire.ok Wire.regenerated Wire.regeneratedOn Wire.encodeNode Wire.labelled Wire.profileExists
     VE.Norms.Wire.regenerated profileWords profileDef
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
   fits using labelled_fits
 
 theorem elaborate_coverage_fits (id : String) (src : Wire.AltSource)
     (environment units narrowings : Json)
-    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = true) :
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = true)
+    (hfill : (CaseCond.decided .altFillPath).holds req = false) :
     Fits req (skel% "alternatives.json#/$defs/elaborate")
       (ok id (Wire.regenerated src ++
         [("coverage", Wire.coverage src.A environment units narrowings)])) := by
-  unfold ok VE.Route.Wire.ok Wire.regenerated Wire.encodeNode Wire.labelled Wire.profileExists
+  unfold ok VE.Route.Wire.ok Wire.regenerated Wire.regeneratedOn Wire.encodeNode Wire.labelled Wire.profileExists
     VE.Norms.Wire.regenerated profileWords profileDef Wire.coverage
   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
   fits using labelled_fits
@@ -62,16 +64,90 @@ theorem elaborate_coverage_fits (id : String) (src : Wire.AltSource)
       fits
 
 theorem elaborate_case_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
-    (hp : usesAltPath j = true) (hK : j.getObjValD "kind" = .str "alt-elaborate") :
+    (hp : usesAltPath j = true) (hK : j.getObjValD "kind" = .str "alt-elaborate")
+    (hf : VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") = false) :
     OkFits j Skeletons.alternatives (runElaborate id j) := by
   unfold runElaborate
   okfits
   split
   · fits_from elaborate_coverage_fits (req := j) id _ _ _ _
-      (CaseCond.path_ok ‹j.getObjVal? "coverage_units" = .ok _›)
+      (CaseCond.path_ok ‹j.getObjVal? "coverage_units" = .ok _›) hf
   · simp only [List.append_nil]
     fits_from elaborate_fits (req := j) id _
-      (CaseCond.path_error hobj ‹j.getObjVal? "coverage_units" = .error _›)
+      (CaseCond.path_error hobj ‹j.getObjVal? "coverage_units" = .error _›) hf
+
+/-! ### With the completion (`norm-defaults@0`, ET-7) -/
+
+theorem elaborateU_fits (id : String) (s : AltSourceU)
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = false)
+    (hfill : (CaseCond.decided .altFillPath).holds req = true) :
+    Fits req (skel% "alternatives.json#/$defs/elaborate") (ok id (regeneratedU s)) := by
+  unfold ok VE.Route.Wire.ok regeneratedU Wire.regeneratedOn Wire.encodeNode Wire.labelled Wire.profileExists
+    VE.NormDefaults.Wire.regeneratedU VE.Norms.Wire.regenerated profileWords profileDef
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
+  fits using labelled_fits
+
+theorem elaborateU_coverage_fits (id : String) (s : AltSourceU) (environment units narrowings : Json)
+    (hcoverage : (CaseCond.path ["coverage_units"]).holds req = true)
+    (hfill : (CaseCond.decided .altFillPath).holds req = true) :
+    Fits req (skel% "alternatives.json#/$defs/elaborate")
+      (ok id (regeneratedU s ++ [("coverage", Wire.coverage s.src.A environment units narrowings)])) := by
+  unfold ok VE.Route.Wire.ok regeneratedU Wire.regeneratedOn Wire.encodeNode Wire.labelled Wire.profileExists
+    VE.NormDefaults.Wire.regeneratedU VE.Norms.Wire.regenerated profileWords profileDef Wire.coverage
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte, Bool.false_eq_true]
+  fits using labelled_fits
+  case h_2 x completion item heq hx =>
+    simp only [List.mem_flatMap, List.mem_filterMap] at hx
+    rcases hx with ⟨action, _, harm, _, h⟩
+    split at h <;> simp only [Option.some.injEq, reduceCtorEq] at h
+    subst_vars
+    fits
+    all_goals
+      split at heq <;> simp only [Option.some.injEq, reduceCtorEq] at heq
+      subst_vars
+      fits
+
+theorem elaborateU_case_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesAltPath j = true) (hK : j.getObjValD "kind" = .str "alt-elaborate")
+    (hf : VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") = true) :
+    OkFits j Skeletons.alternatives (runElaborateU id j) := by
+  unfold runElaborateU
+  okfits
+  split
+  · fits_from elaborateU_coverage_fits (req := j) id _ _ _ _
+      (CaseCond.path_ok ‹j.getObjVal? "coverage_units" = .ok _›) (by simpa [CaseCond.holds, CaseDecider.fn] using hf)
+  · simp only [List.append_nil]
+    fits_from elaborateU_fits (req := j) id _
+      (CaseCond.path_error hobj ‹j.getObjVal? "coverage_units" = .error _›) (by simpa [CaseCond.holds, CaseDecider.fn] using hf)
+
+theorem conflictU_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w) (hp : usesAltPath j = true)
+    (hK : j.getObjValD "kind" = .str "alt-conflict") : OkFits j Skeletons.alternatives (runConflictU id j) := by
+  unfold runConflictU
+  okfits
+  all_goals (try simp only [ok, VE.Route.Wire.ok])
+  all_goals fits
+
+theorem followableU_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
+    (hp : usesAltPath j = true)
+    (hK : j.getObjValD "kind" = .str "alt-followable") :
+    OkFits j Skeletons.alternatives (runFollowableU id j) := by
+  unfold runFollowableU
+  okfits
+  all_goals (try simp only [ok, VE.Route.Wire.ok])
+  all_goals fits
+
+theorem runCaseU_fits (id kind : String) (j : Json) (hi : VE.Bridge.stringField j "id" = .ok id)
+    (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesAltPath j = true)
+    (hf : VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") = true) :
+    OkFits j Skeletons.alternatives (runCaseU id kind j) := by
+  unfold runCaseU
+  okfits
+  all_goals read_kind
+  all_goals first
+    | exact elaborateU_case_fits _ _ ‹_› hp ‹_› hf
+    | exact conflictU_fits _ _ ‹_› hp ‹_›
+    | exact followableU_fits _ _ ‹_› hp ‹_›
+    | (simp only [ok, VE.Route.Wire.ok]; fits)
 
 theorem fields_obj {j : Json} {fs : VE.Bridge.Fields} (h : VE.Bridge.fields j = .ok fs) : ∃ m, j = .obj m := by
   cases j <;> first | exact ⟨_, rfl⟩ | (simp [VE.Bridge.fields, Json.getObj?] at h; cases h)
@@ -188,7 +264,8 @@ theorem runCase_fits (j : Json) (hp : usesAltPath j = true) : OkFits j Skeletons
   all_goals read_kind
   all_goals first
     | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
-    | exact elaborate_case_fits _ _ ‹_› hp ‹_›
+    | exact runCaseU_fits _ _ _ ‹_› ‹_› hp ‹_›
+    | exact elaborate_case_fits _ _ ‹_› hp ‹_› (Bool.eq_false_iff.mpr ‹_›)
     | exact validate_fits _ _ hp ‹_›
     | exact conflict_fits _ _ ‹_› hp ‹_›
     | exact followable_fits _ _ ‹_› hp ‹_›

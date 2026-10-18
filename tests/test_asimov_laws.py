@@ -392,20 +392,19 @@ def _unspecified_permission(data):
 
 
 def test_permission_default_stays_allow_until_norm_defaults_combines_with_alternatives():
-    """The source grants no permission by default, so `allow` is not stated by it, but this case's
-    followability verdicts need alternatives@0, and norm-defaults@0 does not combine with it yet
-    (docs/spec/norm-defaults.md 3.3, integration gap). Python and Lean's alternatives route both
-    reject the switched environment, so the case keeps its default and README says why. When this
-    test fails, the combination exists: switch `permitted` to `unspecified` and re-run."""
+    """The source grants no permission by default, so `allow` is not stated by it. Since events-time-causation
+    ET-7 the combination exists: the alternatives route takes `norm-defaults@0`, the switched environment
+    constructs and Lean elaborates `fill (inlineTree A)` with `permitted` unspecified. The case keeps `allow`
+    until ET-8 switches it and re-runs it (README, "The completion defaults and `unspecified`")."""
     from tests import lean_routes
-    from ve.errors import UnsupportedProfile
     data = load()[0]
     assert "alternatives@0" in data["profiles"]
+    assert data["vocabulary"]["predicates"]["permitted"]["regulated"]["default"] == "allow"
     switched = _unspecified_permission(data)
-    with pytest.raises(UnsupportedProfile, match="Unsupported profile norm-defaults@0"):
-        Environment(switched)
+    assert Environment(switched).environment_id != Environment(data).environment_id
     (row,) = lean_routes.rows("alternatives", [{"id": "switched", "kind": "alt-elaborate", "environment": switched,
                                                 "norms": norms()}])
-    assert (row["status"], row["error"]) == ("error", "UnsupportedProfile: Unsupported profile norm-defaults@0")
+    assert row["status"] == "ok", row
+    assert (row["unspecified"], [x["name"] for x in row["unsaid"]]) == (["permitted"], ["unsaid__permitted"])
     readme = (ROOT / "README.md").read_text()
     assert "## The completion defaults and `unspecified`" in readme
