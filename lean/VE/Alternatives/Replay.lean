@@ -38,10 +38,10 @@ def documentHash (ps : List String) (environment norms units : Json) : Except St
     (Json.mkObj [("environment_id", .str envId), ("norms", norms), ("units", units)])
 
 /-- A package bound to the source, or `none`: the outer binding, the certificate, and its
-inner binding to the regenerated base environment, premises and conclusion. -/
-def decodePackage (ps : List String) (environment norms units package : Json) (target : String)
-    (premises : List VE.Formula) (conclusion : VE.Formula) : Option VE.Tableau.Certificate := Id.run do
-  let some baseEnv := (baseEnvironmentJson environment ps).toOption | none
+inner binding to the regenerated base environment `baseEnv`, premises and conclusion. -/
+def decodePackageAt (baseEnv : Except String Json) (ps : List String) (environment norms units package : Json)
+    (target : String) (premises : List VE.Formula) (conclusion : VE.Formula) : Option VE.Tableau.Certificate := Id.run do
+  let some baseEnv := baseEnv.toOption | none
   let some baseProfiles := (strings (baseEnv.getObjValD "profiles")).toOption | none
   let some envId := (environmentId ps environment).toOption | none
   let some docHash := (documentHash ps environment norms units).toOption | none
@@ -53,6 +53,11 @@ def decodePackage (ps : List String) (environment norms units package : Json) (t
       (VE.Route.Wire.encodeFormula conclusion) c.environment_id c.premise_meaning_ids c.conclusion_meaning_id with
   | .ok () => some c
   | .error _ => none
+
+/-- `decodePackageAt` over the source's regenerated base environment. -/
+def decodePackage (ps : List String) (environment norms units package : Json) (target : String)
+    (premises : List VE.Formula) (conclusion : VE.Formula) : Option VE.Tableau.Certificate :=
+  decodePackageAt (baseEnvironmentJson environment ps) ps environment norms units package target premises conclusion
 
 /-- Every conflict target's package (target order), bound to `Background_baseAlt` or to W1's
 `Background_base` alone (4.5). -/

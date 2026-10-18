@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import tomllib
 
 from layer_policy import ROOT, lean_layer
 
@@ -50,6 +51,63 @@ def diagnostic_only_violation(importer: str, imported: str) -> str | None:
         return None
     return (f"{importer} -> {imported}: {DIAGNOSTIC_ONLY}.* is diagnostic only and may be imported by "
             f"{DIAGNOSTIC_ONLY}.*, VE.Service.Diagnose and (the engine only) VE.Audit (docs/spec/wire-contract.md 7.3)")
+
+
+# et-7 review F2: a module no default target imports is never compiled by `lake build` (the gate's build), so its
+# `#guard`s cannot fail. The only modules outside the default build: the roots of the lakefile's non-default
+# executables, built when named, and these scripts, each run with `lake env lean --run` by the tool named here.
+RUN_ONLY = {"VE.Numbers.PhrasesMain": "tools/numbers_phrases.py"}
+
+
+def lake_globs(lakefile: dict) -> tuple[list[tuple[str, str]], set[str]]:
+    """The default build's module globs, as (module, "one" | "andSubmodules" | "submodules"), and the roots of the
+    executables outside `defaultTargets`. A library's globs default to its roots (`roots`, default its name); a
+    glob `A.*` is A and its submodules, `A.+` its submodules only. Anything else Lake could read differently fails
+    closed (ValueError)."""
+    libraries = {lib["name"]: lib for lib in lakefile.get("lean_lib", [])}
+    executables = {exe["name"]: exe.get("root", exe["name"]) for exe in lakefile.get("lean_exe", [])}
+    defaults = lakefile.get("defaultTargets", [])
+    globs = []
+    for target in defaults:
+        if target in executables:
+            globs.append((executables[target], "one"))
+        elif target in libraries:
+            lib = libraries[target]
+            for glob in lib.get("globs", lib.get("roots", [target])):
+                if type(glob) is not str or not re.fullmatch(r"[A-Za-z_][\w']*(\.[A-Za-z_][\w']*)*(\.[*+])?", glob):
+                    raise ValueError(f"lean/lakefile.toml: library {target} has a glob this check cannot read: "
+                                     f"{glob!r}")
+                if glob.endswith((".*", ".+")):
+                    globs.append((glob[:-2], "andSubmodules" if glob.endswith("*") else "submodules"))
+                else:
+                    globs.append((glob, "one"))
+        else:
+            raise ValueError(f"lean/lakefile.toml: default target {target} is neither a lean_lib nor a lean_exe")
+    return globs, {root for name, root in executables.items() if name not in defaults}
+
+
+def unbuilt_modules(modules: set[str], read: dict[str, list[str]], lakefile: dict,
+                    run_only: dict[str, str] = RUN_ONLY, root: Path = ROOT) -> list[str]:
+    """The problems of the tree's `modules` against the default build: each module outside the import closure
+    (`read`: module -> imports) of the default targets, but for the non-default executables' roots and `run_only`,
+    and each `run_only` entry that is stale (not a tree module, built by default, or not named by its tool)."""
+    globs, on_demand = lake_globs(lakefile)
+    stack = [m for m in modules for name, kind in globs
+             if (kind != "submodules" and m == name) or (kind != "one" and m.startswith(name + "."))]
+    built = set()
+    while stack:
+        module = stack.pop()
+        if module not in built:
+            built.add(module)
+            stack.extend(m for m in read.get(module, ()) if m in modules)
+    problems = [f"Lean module no default target builds (import it from VE.lean, or name its runner in "
+                f"RUN_ONLY): {m}" for m in sorted(modules - built - on_demand - run_only.keys())]
+    for module, tool in sorted(run_only.items()):
+        path = module.replace(".", "/") + ".lean"
+        if (module not in modules or module in built or not (root / tool).is_file()
+                or path not in (root / tool).read_text()):
+            problems.append(f"stale RUN_ONLY entry: {module} (run by {tool})")
+    return problems
 
 
 class HeaderError(ValueError):
@@ -234,6 +292,12 @@ def main() -> int:
             if importer_layer is not None and imported_layer is not None and importer_layer < imported_layer:
                 edges.add(f"{importer} -> {imported}")
     expected = json.loads(LEDGER.read_text())
+    # A tree without a lakefile has no default build (the layer tests' trees); the repository's is read directly by
+    # tests/test_lean_default_build.py, so a lost lakefile still fails there and in `lake build`.
+    lakefile = ROOT / "lean/lakefile.toml"
+    unbuilt = unbuilt_modules(set(paths), read, tomllib.loads(lakefile.read_text())) if lakefile.is_file() else []
+    for message in unbuilt:
+        print(message, file=sys.stderr)
     for message in (f"unmapped Lean module: {x}" for x in unmapped):
         print(message, file=sys.stderr)
     for message in (f"Lean header not in the plain layout: {x}" for x in sorted(headers)):
@@ -246,7 +310,7 @@ def main() -> int:
         print(f"new outward Lean import: {edge}", file=sys.stderr)
     for edge in sorted(expected.keys() - edges):
         print(f"stale Lean exception: {edge}", file=sys.stderr)
-    if unmapped or headers or unknown or diagnostic or edges != expected.keys():
+    if unmapped or headers or unknown or diagnostic or unbuilt or edges != expected.keys():
         return 1
     print(f"Lean layer graph kept ({len(paths)} modules, {len(edges)} reviewed legacy edges)")
     return 0

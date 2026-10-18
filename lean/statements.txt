@@ -489,6 +489,13 @@ theorem VE.Alternatives.alt_conflict_free
         VE.Alternatives.altConflictFreeCheck A certs = Bool.true → VE.Alternatives.AltConflictFree A
   -- uses VE.Alternatives.AltConflictFree@VE.Alternatives.Background VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.altConflictFreeCheck@VE.Alternatives.Background VE.Tableau.Certificate@VE.Tableau
   -- expr 4214038775
+theorem VE.Alternatives.alt_conflict_freeU
+  ∀ (A : VE.Alternatives.AltDoc) (unspec : List String),
+    VE.NormDefaults.WellFormedU { D := VE.Alternatives.inlineTree A, unspec := unspec } = Bool.true →
+      ∀ (certs : List (Option VE.Tableau.Certificate)),
+        VE.Alternatives.altConflictFreeCheckU A unspec certs = Bool.true → VE.Alternatives.AltConflictFreeU A unspec
+  -- uses VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.altConflictFreeCheckU@VE.Alternatives.FillWire VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Tableau.Certificate@VE.Tableau
+  -- expr 3416075797
 theorem VE.Alternatives.alt_conflict_witness_sound
   ∀ {α : Type u} [inst : DecidableEq α] (A : VE.Alternatives.AltDoc),
     VE.Alternatives.WellFormedAlt A = Bool.true →
@@ -628,6 +635,68 @@ theorem VE.Alternatives.alternative_monotone
                     (VE.Alternatives.preventsF A.alt))
   -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.allowsF@VE.Alternatives.Decl VE.Alternatives.altPremises@VE.Alternatives.Background VE.Alternatives.avoidableF@VE.Alternatives.Decl VE.Alternatives.extendAvailable@VE.Alternatives.Background VE.Alternatives.preventsF@VE.Alternatives.Decl VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3477700140
+theorem VE.Alternatives.alternativesU_dilemma_witness_sound
+  ∀ {α : Type u} [inst : DecidableEq α] (A : VE.Alternatives.AltDoc) (unspec : List String),
+    VE.Alternatives.WellFormedAlt A = Bool.true →
+      VE.NormDefaults.WellFormedU { D := VE.Alternatives.inlineTree A, unspec := unspec } = Bool.true →
+        ∀ (M : VE.FiniteModel α)
+          (F : VE.NormDefaults.FiniteFill { D := VE.Alternatives.inlineTree A, unspec := unspec } α),
+          M.Valid (VE.Norms.envAt (VE.Alternatives.inlineTree A) 0) →
+            VE.Alternatives.backgroundValidAlt A M = Bool.true →
+              VE.NormDefaults.fillValid { D := VE.Alternatives.inlineTree A, unspec := unspec } M F = Bool.true →
+                (A.Γ.all fun p => VE.Formula.eval M [] p) = Bool.true →
+                  ∀ (r : α),
+                    r ∈ M.domains A.alt.chooser →
+                      VE.Formula.eval (M.withFill F) (VE.Norms.tupleVal [r]) (VE.Alternatives.notFollowableFU A unspec) =
+                          Bool.true →
+                        ¬∀ (B : VE.Structure),
+                            VE.NormDefaults.BaseAdmissibleAltU A unspec B →
+                              VE.Norms.Sat B A.Γ → VE.Formula.denote B [] (VE.NormDefaults.allFollowableU A unspec)
+  -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc.Γ@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.AltEnv.chooser@VE.Alternatives.Decl VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.backgroundValidAlt@VE.Alternatives.Background VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Alternatives.notFollowableFU@VE.Alternatives.FillWire VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.domains@VE.Finite VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.BaseAdmissibleAltU@VE.NormDefaults.Routes VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.allFollowableU@VE.NormDefaults.Routes VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.Norms.Sat@VE.Norms.Prefix VE.Norms.envAt@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 482212347
+theorem VE.Alternatives.alternativesU_wire_conflict_sound
+  ∀ (j : Lean.Json) (res : VE.Alternatives.AltConflictReplayU),
+    VE.Alternatives.replayAltConflictU j = Except.ok res →
+      res.conflictFree = Bool.true →
+        VE.Alternatives.decodeAltSourceU (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "units") =
+            Except.ok res.src ∧
+          VE.NormDefaults.WellFormedU { D := VE.Alternatives.inlineTree res.src.src.A, unspec := res.src.unspec } =
+              Bool.true ∧
+            VE.Alternatives.AltConflictFreeU res.src.src.A res.src.unspec
+  -- uses VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire VE.Alternatives.AltConflictReplayU.conflictFree@VE.Alternatives.FillWire VE.Alternatives.AltConflictReplayU.src@VE.Alternatives.FillWire VE.Alternatives.AltConflictReplayU@VE.Alternatives.FillWire VE.Alternatives.AltSourceU.src@VE.Alternatives.FillWire VE.Alternatives.AltSourceU.unspec@VE.Alternatives.FillWire VE.Alternatives.AltSourceU@VE.Alternatives.FillWire VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.decodeAltSourceU@VE.Alternatives.FillWire VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Alternatives.replayAltConflictU@VE.Alternatives.FillWire VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree
+  -- expr 634596930
+theorem VE.Alternatives.alternativesU_wire_dilemma_sound
+  ∀ (j : Lean.Json) (s : VE.Alternatives.AltSourceU) (w : VE.Alternatives.DilemmaDataU s),
+    VE.Alternatives.replayDilemmaU j = Except.ok ⟨s, w⟩ →
+      w.dilemma = Bool.true →
+        VE.Alternatives.decodeAltSourceU (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "units") =
+            Except.ok s ∧
+          VE.Alternatives.WellFormedAlt s.src.A = Bool.true ∧
+            VE.NormDefaults.WellFormedU s.U = Bool.true ∧
+              VE.Alternatives.AltConflictFreeU s.src.A s.unspec ∧
+                VE.Alternatives.validateAlternatives s.src.A w.sc.M w.sc.rows = Except.ok () ∧
+                  VE.NormDefaults.fillValid s.U w.sc.M w.F = Bool.true ∧
+                    ¬∀ (B : VE.Structure),
+                        VE.NormDefaults.BaseAdmissibleAltU s.src.A s.unspec B →
+                          VE.Norms.Sat B s.src.A.Γ →
+                            VE.Formula.denote B [] (VE.NormDefaults.allFollowableU s.src.A s.unspec)
+  -- uses VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire VE.Alternatives.AltDoc.Γ@VE.Alternatives.Decl VE.Alternatives.AltSourceU.U@VE.Alternatives.FillWire VE.Alternatives.AltSourceU.src@VE.Alternatives.FillWire VE.Alternatives.AltSourceU.unspec@VE.Alternatives.FillWire VE.Alternatives.AltSourceU@VE.Alternatives.FillWire VE.Alternatives.DilemmaDataU.F@VE.Alternatives.FillWire VE.Alternatives.DilemmaDataU.dilemma@VE.Alternatives.FillWire VE.Alternatives.DilemmaDataU.sc@VE.Alternatives.FillWire VE.Alternatives.DilemmaDataU@VE.Alternatives.FillWire VE.Alternatives.Replay.Scenario.M@VE.Alternatives.Replay VE.Alternatives.Replay.Scenario.rows@VE.Alternatives.Replay VE.Alternatives.WellFormedAlt@VE.Alternatives.Decl VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.decodeAltSourceU@VE.Alternatives.FillWire VE.Alternatives.instEntityNameEntity@VE.Alternatives.Validate VE.Alternatives.replayDilemmaU@VE.Alternatives.FillWire VE.Alternatives.validateAlternatives@VE.Alternatives.Validate VE.Bridge.Entity@VE.Bridge VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleAltU@VE.NormDefaults.Routes VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.allFollowableU@VE.NormDefaults.Routes VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 466118912
+theorem VE.Alternatives.alternativesU_wire_followable_sound
+  ∀ (j : Lean.Json) (res : VE.Alternatives.FollowableUReplay),
+    VE.Alternatives.replayFollowableU j = Except.ok res →
+      res.followable = Bool.true →
+        VE.Alternatives.decodeAltSourceU (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "units") =
+            Except.ok res.src ∧
+          VE.NormDefaults.WellFormedU { D := VE.Alternatives.inlineTree res.src.src.A, unspec := res.src.unspec } =
+              Bool.true ∧
+            VE.Alternatives.AltConflictFreeU res.src.src.A res.src.unspec ∧
+              ∀ (B : VE.Structure),
+                VE.NormDefaults.BaseAdmissibleAltU res.src.src.A res.src.unspec B →
+                  VE.Norms.Sat B res.src.src.A.Γ →
+                    VE.Formula.denote B [] (VE.NormDefaults.allFollowableU res.src.src.A res.src.unspec)
+  -- uses VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire VE.Alternatives.AltDoc.Γ@VE.Alternatives.Decl VE.Alternatives.AltSourceU.src@VE.Alternatives.FillWire VE.Alternatives.AltSourceU.unspec@VE.Alternatives.FillWire VE.Alternatives.AltSourceU@VE.Alternatives.FillWire VE.Alternatives.FollowableUReplay.followable@VE.Alternatives.FillWire VE.Alternatives.FollowableUReplay.src@VE.Alternatives.FillWire VE.Alternatives.FollowableUReplay@VE.Alternatives.FillWire VE.Alternatives.Wire.AltSource.A@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.decodeAltSourceU@VE.Alternatives.FillWire VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Alternatives.replayFollowableU@VE.Alternatives.FillWire VE.Formula.denote@VE.Semantics VE.NormDefaults.BaseAdmissibleAltU@VE.NormDefaults.Routes VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.allFollowableU@VE.NormDefaults.Routes VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2515496719
 theorem VE.Alternatives.alternatives_conservative
   ∀ (A : VE.Alternatives.AltDoc),
     VE.Alternatives.WellFormedAlt A = Bool.true →
@@ -769,12 +838,29 @@ theorem VE.Alternatives.clear_denote_of
                 VE.Alternatives.ClearIn A S r a)
   -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.AltEnv.action@VE.Alternatives.Decl VE.Alternatives.AltEnv.chooser@VE.Alternatives.Decl VE.Alternatives.AltValid@VE.Alternatives.Inline VE.Alternatives.ClearIn@VE.Alternatives.Followable VE.Alternatives.clearF@VE.Alternatives.Followable VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Formula.denote@VE.Semantics VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.restrictAll@VE.Norms.Subst VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1960512780
+theorem VE.Alternatives.decodeAltSourceU_conservative
+  ∀ (environment norms premises : Lean.Json),
+    VE.Alternatives.noUnspecified environment = Bool.true →
+      VE.Alternatives.decodeAltSourceU environment norms premises =
+        Except.map (fun s => { src := s, unspec := [] }) (VE.Alternatives.Wire.decodeAltSource environment norms premises)
+  -- uses VE.Alternatives.AltSourceU.mk@VE.Alternatives.FillWire VE.Alternatives.AltSourceU@VE.Alternatives.FillWire VE.Alternatives.Wire.AltSource@VE.Alternatives.Wire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.Wire.decodeAltSource@VE.Alternatives.Wire VE.Alternatives.decodeAltSourceU@VE.Alternatives.FillWire VE.Alternatives.noUnspecified@VE.Alternatives.FillWire
+  -- expr 3109637608
 theorem VE.Alternatives.denote_forget_preds
   ∀ {ns : List String} (S : VE.Structure) (a : VE.Formula) (ρ : VE.Valuation S),
     (∀ (p : String), p ∈ VE.Norms.preds a → ¬p ∈ ns) →
       (VE.Formula.denote (VE.Norms.forget ns S) ρ a ↔ VE.Formula.denote S ρ a)
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.forget@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 994218848
+theorem VE.Alternatives.denote_withFill_base
+  ∀ (A : VE.Alternatives.AltDoc) (unspec : List String),
+    VE.NormDefaults.WellFormedU { D := VE.Alternatives.inlineTree A, unspec := unspec } = Bool.true →
+      ∀ (B : VE.Structure) (F : VE.NormDefaults.FillTables { D := VE.Alternatives.inlineTree A, unspec := unspec } B)
+        (φ : VE.Formula),
+        VE.Formula.WellFormed (VE.Norms.envAt (VE.Alternatives.inlineTree A) 0) [] φ →
+          (VE.Formula.denote (VE.NormDefaults.withFill { D := VE.Alternatives.inlineTree A, unspec := unspec } B F) [] φ ↔
+            VE.Formula.denote B [] φ)
+  -- uses VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.inlineTree@VE.Alternatives.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.FillTables@VE.NormDefaults.Premises VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.envAt@VE.Norms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 528610494
 theorem VE.Alternatives.dilemma_expansion
   ∀ (A : VE.Alternatives.AltDoc),
     VE.Alternatives.WellFormedAlt A = Bool.true →
@@ -1182,6 +1268,13 @@ theorem VE.Alternatives.sortOf_extEnv
     VE.Term.sortOf (VE.Alternatives.extEnv A) Γ t = VE.Term.sortOf A.E Γ t
   -- uses VE.Alternatives.AltDoc.E@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.extEnv@VE.Alternatives.Decl VE.Term.sortOf@VE.Syntax VE.Term@VE.Syntax
   -- expr 3039765053
+theorem VE.Alternatives.sourceOfU_ok
+  ∀ {j : Lean.Json} {s : VE.Alternatives.AltSourceU},
+    VE.Alternatives.sourceOfU j = Except.ok s →
+      VE.Alternatives.decodeAltSourceU (j.getObjValD "environment") (j.getObjValD "norms") (j.getObjValD "units") =
+        Except.ok s
+  -- uses VE.Alternatives.AltSourceU@VE.Alternatives.FillWire VE.Alternatives.Wire.Scope.document@VE.Alternatives.Wire VE.Alternatives.decodeAltSourceU@VE.Alternatives.FillWire VE.Alternatives.sourceOfU@VE.Alternatives.FillWire
+  -- expr 2794097648
 theorem VE.Alternatives.term_denote_withDefinitions
   ∀ (A : VE.Alternatives.AltDoc) (S : VE.Structure) (ρ : VE.Valuation S) (t : VE.Term),
     VE.Term.denote (VE.Alternatives.withDefinitions A S) ρ t = VE.Term.denote S ρ t
@@ -1249,6 +1342,19 @@ theorem VE.Alternatives.withDefinitions_relation_some
           VE.TupleTyped S ss vs ∧ VE.Formula.denote S (VE.Norms.tupleVal vs) F
   -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.profileDef@VE.Alternatives.Decl VE.Alternatives.withDefinitions@VE.Alternatives.Decl VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2520055024
+theorem VE.Alternatives.zip_all_target
+  ∀ {β : Type} {ts : List β} {cs : List (Option VE.Tableau.Certificate)} {f : β → VE.Tableau.Certificate → Bool},
+    (ts.length == cs.length &&
+          (ts.zip cs).all fun x =>
+            match x with
+            | (t, c) =>
+              match c with
+              | Option.some c => f t c
+              | Option.none => Bool.false) =
+        Bool.true →
+      ∀ {t : β}, t ∈ ts → ∃ c, f t c = Bool.true
+  -- uses VE.Alternatives.altConflictFreeCheckU.match_1@VE.Alternatives.FillWire VE.Alternatives.zip_all_target.match_1@VE.Alternatives.FillWire VE.Tableau.Certificate@VE.Tableau
+  -- expr 120590332
 theorem VE.Ask.Answer.groups_view
   ∀ (a : VE.Ask.Answer), a.groups = a.view.groups
   -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer.view@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Group@VE.Ask.Groups VE.Ask.View.groups@VE.Ask.Lines
@@ -4386,9 +4492,9 @@ theorem VE.Compose.todayHead_not_wrapper
 theorem VE.Compose.today_alternatives
   ∀ (ps : List String),
     VE.Compose.today ps = Except.ok VE.Compose.Route.alternatives →
-      "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ ¬"soft-norms@0" ∈ ps ∧ ¬"risk@0" ∈ ps ∧ ¬"norm-defaults@0" ∈ ps
+      "alternatives@0" ∈ ps ∧ "norms@0" ∈ ps ∧ ¬"soft-norms@0" ∈ ps ∧ ¬"risk@0" ∈ ps
   -- uses VE.Compose.Route.alternatives@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.today@VE.Compose.Dispatch
-  -- expr 3917155973
+  -- expr 1345660475
 theorem VE.Compose.today_classify
   ∀ (ps : List String),
     (∀ (p : String), p ∈ ps → VE.Route.Gate.known p = Bool.true) →
