@@ -67,9 +67,10 @@ def table() -> list[str]:
         hits = [m for m in mutants if m["status"] == "SURVIVOR" and m["line"] in sites.get(m["file"], [])]
         first = {m["id"] for m in mutants[:60]}
         c = data["counts"]
-        listed = "; ".join(f"`{m['file'].split('/')[-1]}:{m['line']}` {m['operator']}" for m in hits[:6])
+        sites = list(dict.fromkeys(f"`{m['file'].split('/')[-1]}:{m['line']}` {m['operator']}" for m in hits))
+        listed = "; ".join(sites[:6]) + (" ..." if len(sites) > 6 else "")
         rows.append(f"| {finding} | `{head[:9]}` | {len(mutants)} / {c['SURVIVOR']} / {c['INVALID']} / {c['UNKNOWN']} "
-                    f"| {data['seconds']} | {len(hits)}: {listed}{' ...' if len(hits) > 6 else ''} "
+                    f"| {data['seconds']} | {len(hits)}: {listed} "
                     f"| {'yes' if hits else 'NO'} | {'yes' if any(m['id'] in first for m in hits) else 'no'} |")
     return rows
 
