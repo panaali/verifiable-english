@@ -1,0 +1,137 @@
+[
+  {
+    "n": 1,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "renderExpr: an infix phrase has an atom on its left (me-1 review F1)",
+    "mutation": "| .sub a b => return (← renderAtom words a) ++ \" minus \" ++ (← renderTerm words b)  ->  | .sub a b => return (← renderTerm words a) ++ \" minus \" ++ (← renderTerm words b)",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:350: a difference minus a value has no line; the 11.2 read-back sweep at 446)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:350, VE/Calc/Examples.lean:446"
+  },
+  {
+    "n": 2,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "renderExpr: at most one phrase inside another (exprDepth bound 2)",
+    "mutation": "if exprDepth e > 2 then none else  ->  if exprDepth e > 3 then none else",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:352: a value minus a two-phrase term has no line; the read-back sweep at 446)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:352, VE/Calc/Examples.lean:446"
+  },
+  {
+    "n": 3,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "reservedWords: value words contain no reserved word (\"equals\")",
+    "mutation": "\"is\", \"be\", \"equals\",  ->  \"is\", \"be\",",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:488-492: value words containing a reserved word, here \"the x equals y\", are refused)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:488"
+  },
+  {
+    "n": 4,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "valueWordsOk: value words begin with \"the\"",
+    "mutation": "w.startsWith \"the \" && (w.splitOn  ->  w.startsWith \"\" && (w.splitOn",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:488-492: the value words \"baseline\" and \"the\" are refused)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:488"
+  },
+  {
+    "n": 5,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "natWords: the places in words (seventeen)",
+    "mutation": "\"seventeen\"  ->  \"seventy\"",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:470-478: the places one through twenty in words, then 21)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:470"
+  },
+  {
+    "n": 6,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "placesPhrase: one place is singular",
+    "mutation": "if n = 1 then \"one decimal place\"  ->  if n = 0 then \"one decimal place\"",
+    "test": "lake build VE.Calc.Examples (#guards at Examples.lean:463 and 470: one decimal place is singular)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:463, VE/Calc/Examples.lean:470"
+  },
+  {
+    "n": 7,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "exactWords: a numeral has at most 40 places",
+    "mutation": "(List.range 41).findSome?  ->  (List.range 42).findSome?",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:484: a value with 41 decimal places has no numeral)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:484"
+  },
+  {
+    "n": 8,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "printedWords: a negative place count is written with ten to the power",
+    "mutation": "some (toString p.digits ++ \" times ten to the power \" ++ toString (-p.places))  ->  some (toString p.digits ++ \" times ten to the power \" ++ toString p.places)",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:467: 3 times ten to the power 2)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:467"
+  },
+  {
+    "n": 9,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "renderClaim: rounding up says \"rounded up\"",
+    "mutation": "| .up => v ++ \" is \" ++ printed ++ \" when rounded up to \" ++ places  ->  | .up => v ++ \" is \" ++ printed ++ \" when rounded to \" ++ places",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:463: \"rounded up\")",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:463"
+  },
+  {
+    "n": 10,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "fill: filled text is never read as a placeholder",
+    "mutation": "| true, some a => a ++ fill args rest  ->  | true, some a => a.replace \"{1}\" (args.getD 1 \"\") ++ fill args rest",
+    "test": "lake build VE.Calc.Examples (#guards at Examples.lean:364 and 366: a template slot inside value words stays as written)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:364, VE/Calc/Examples.lean:366"
+  },
+  {
+    "n": 11,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "renderClaim: a line begins with a capital",
+    "mutation": "pure (line.capitalize ++ \".\")  ->  pure (line ++ \".\")",
+    "test": "lake build VE.Calc.Examples (every #guard that expects a line, 321-470)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:321, VE/Calc/Examples.lean:323, VE/Calc/Examples.lean:353, VE/Calc/Examples.lean:356, VE/Calc/Examples.lean:357, VE/Calc/Examples.lean:364, VE/Calc/Examples.lean:366, VE/Calc/Examples.lean:452, VE/Calc/Examples.lean:453, VE/Calc/Examples.lean:455, VE/Calc/Examples.lean:457, VE/Calc/Examples.lean:461, VE/Calc/Examples.lean:463, VE/Calc/Examples.lean:465, VE/Calc/Examples.lean:467, VE/Calc/Examples.lean:470"
+  },
+  {
+    "n": 12,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "renderAtom: value words must have 11.2's form",
+    "mutation": "if valueWordsOk w then pure w else none  ->  pure w",
+    "test": "lake build VE.Calc.Examples (#guards at Examples.lean:361-363: value words that read as a phrase or are double-spaced have no line; the read-back sweep at 446)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:361, VE/Calc/Examples.lean:362, VE/Calc/Examples.lean:363, VE/Calc/Examples.lean:446"
+  },
+  {
+    "n": 13,
+    "file": "lean/VE/Calc/Render.lean",
+    "behaviour": "phraseWords: value words do not begin with a phrase word (\"the sum of\")",
+    "mutation": "[\"the sum of\", \"the product of\",  ->  [\"the product of\",",
+    "test": "lake build VE.Calc.Examples (#guard at Examples.lean:488-492: \"the sum of the a\" is refused)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:488"
+  },
+  {
+    "n": 14,
+    "file": "lean/VE/Calc/Decls.lean",
+    "behaviour": "Small: a negative value within the digit limit is small (me-1b review F1; check added here)",
+    "mutation": "digitCount q.num.natAbs ≤ maxDigits ∧ digitCount q.den ≤ maxDigits  ->  0 ≤ q ∧ digitCount q.num.natAbs ≤ maxDigits ∧ digitCount q.den ≤ maxDigits",
+    "test": "lake build VE.Calc.Examples (#guards at Examples.lean:138: minus 10^4095 is Small, and 141: a negative value's claim is decided)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:138, VE/Calc/Examples.lean:141"
+  },
+  {
+    "n": 15,
+    "file": "lean/VE/Calc/Decls.lean",
+    "behaviour": "NameExhausted.here: only an exhausted count (me-1b review F2; check added here)",
+    "mutation": "(∃ d ∈ ds, d.name = n ∧ d.source = .counted q .exhausted) → NameExhausted ds n  ->  (∃ d ∈ ds, ∃ r, d.name = n ∧ d.source = .counted q r) → NameExhausted ds n; and | exhausted => exact NameExhausted.here ⟨d, hd, rfl, hs⟩  ->  | exhausted => exact NameExhausted.here ⟨d, hd, _, rfl, hs⟩",
+    "test": "lake build VE.Calc.Examples (example at Examples.lean:304-314: a finished count is not exhausted; it fails at 312, unsolved goal. The positive example at 292-293 also fails, on the changed constructor shape)",
+    "result": "failed; restored",
+    "observed": "the mutated file compiled; error: VE/Calc/Examples.lean:292, VE/Calc/Examples.lean:293, VE/Calc/Examples.lean:312"
+  }
+]

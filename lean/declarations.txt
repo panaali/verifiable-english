@@ -3334,7 +3334,7 @@ module VE.Calc.Eval 0ff9293940a52844d3f8e616bf547ca32a0d25493947d873faf6c84d00dc
 112:0-123:61 theorem VE.Calc.Claim.decide_holds@VE.Calc.Eval
 125:0-139:26 theorem VE.Calc.Claim.decide_undefined@VE.Calc.Eval
 141:0-145:35 theorem VE.Calc.Claim.decide_fails@VE.Calc.Eval
-module VE.Calc.Examples 6f0882b6345c75d3747681c46d30242d19feaa2095a2709da237a53650a3908c
+module VE.Calc.Examples 156fff051b55a5ba026eaa23c947cda9e2e719df62c147c24cbb329193ab46e4
 12:0-12:43 def VE.Calc.Examples.empty@VE.Calc.Examples
 13:0-13:42 def VE.Calc.Examples.lit@VE.Calc.Examples
 14:0-14:64 def VE.Calc.Examples.eq@VE.Calc.Examples
