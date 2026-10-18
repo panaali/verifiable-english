@@ -282,7 +282,11 @@ def main(argv=(), cache=False):
           "(headline results and helper lemmas); only the declared standard axiom allowlist.")
 
 
+def cached_mode(argv):
+    """Whether a command line may replay an earlier run's Lean output for the same inputs (tools/lean_dump_cache.py):
+    the explicit modes, the regeneration's (tools/regen_generated.py); the plain run, the gate's, always runs Lean."""
+    return list(argv) in (["--check"], ["--write"])
+
+
 if __name__ == "__main__":
-    # The explicit modes are the regeneration's (tools/regen_generated.py), which may replay an earlier run's Lean
-    # output for the same inputs (tools/lean_dump_cache.py); the plain run, the gate's, always runs Lean.
-    main(sys.argv[1:], cache=sys.argv[1:] in (["--check"], ["--write"]))
+    main(sys.argv[1:], cache=cached_mode(sys.argv[1:]))

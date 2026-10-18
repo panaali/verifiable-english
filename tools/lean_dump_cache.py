@@ -150,6 +150,9 @@ def cached(step: str, root: Path, sources: Callable[[], list[Path]], run: Callab
         return list(entry["outputs"])
     texts = run()
     if len(texts) == count and inputs(step, root, sources(), files, values, code_root) == current:
-        cache_store.store(path, {"format": FORMAT, "step": step, "key": key, "inputs": current,
-                                 "outputs": list(texts)}, KEEP)
+        try:
+            cache_store.store(path, {"format": FORMAT, "step": step, "key": key, "inputs": current,
+                                     "outputs": list(texts)}, KEEP)
+        except OSError as error:  # the dump stands; the next run dumps again
+            print(f"{step}: not stored: {error}", file=sys.stderr)
     return texts
