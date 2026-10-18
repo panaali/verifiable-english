@@ -362,8 +362,9 @@ HELPER = """
 
 def test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails(tmp_path):
     """F1: a test that is not in the saved extract was judged by the git calls of its own file only. Git started
-    at import (`conformance/frozen_norm_defaults.py`), in a helper called through any import form, or in a
-    namespace package's module is found through the code the test can run."""
+    at import (`conformance/frozen_norm_defaults.py`, also by an import made for its effect only), in a helper
+    called through any import form, or in a namespace package's module is found through the code the test can
+    run; a helper that is imported but whose git function is never named is not."""
     errors = _new_test(tmp_path, {
         "conformance/oracle.py": "import subprocess\nSOURCE = subprocess.check_output(['git', 'show', 'x:y'])\n",
         "tools/helper.py": HELPER,
@@ -372,6 +373,7 @@ def test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails(tm
         "tests/test_attribute.py": "import tools.helper\n\ndef test_x():\n    assert tools.helper.head()\n",
         "tests/test_alias.py": "import sys\nsys.path.insert(0, 'tools')\nimport helper as h\n\n"
                                "def test_x():\n    assert h.head()\n",
+        "tests/test_side_effect.py": "import conformance.oracle  # noqa: F401\n\ndef test_x():\n    pass\n",
         "tests/test_unused.py": "from helper import plain\n\ndef test_x():\n    assert plain() == 1\n"})
     assert errors == [
         "missing: tests/test_alias.py reads history and is not listed (starts git (git rev-parse) in tools/helper.py)",
@@ -379,6 +381,8 @@ def test_a_new_test_that_reaches_git_only_through_an_import_or_a_helper_fails(tm
         "tools/helper.py)",
         "missing: tests/test_from.py reads history and is not listed (starts git (git rev-parse) in tools/helper.py)",
         "missing: tests/test_import.py reads history and is not listed (starts git (git show) in "
+        "conformance/oracle.py)",
+        "missing: tests/test_side_effect.py reads history and is not listed (starts git (git show) in "
         "conformance/oracle.py)"]
 
 
