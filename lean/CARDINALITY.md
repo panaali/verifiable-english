@@ -19,7 +19,7 @@ theorems (listed at the end).
 | `Regions.lean` | counted sorts and recognised universal statements (`bodyOfQ?`, `universalsOf`, `countedSorts`, `countedUniversals`), `predsOn`, `regions`, `Body.inRegion`, `regionConst`, `regionTable`, `CEnv.elab`, `regionBody`; the problem limits P1 and P2 (`problemLimits`) |
 | `Erase.lean` | `regionSum`, the erasure of counts and proportions (`CFormula.erase`), `nonnegPremises`, `bridgePremises`, `erasedProblem`; `withRegions` (region constants read as region sizes); the finite countermodel check: `Body.evalFin`, `countFin`, `withRegionsFinite`, `refutesC` |
 | `Theorems.lean` | `hasCount_exists_unique`, `hasCount_unique`, `nonneg_hold`, `proportion_holds_iff`; W6a's four counting forms as count atoms (`atLeastAtom`, `atMostAtom`, `exactlyAtom`, `nOfMFormula`) and `Body.toFormula` |
-| `Examples.lean` | the fixtures as `#guard` lines and `example` proofs (below) |
+| `Examples.lean` | the fixtures as `#guard` lines, and named theorems that state every case of the trusted meaning and admission (below) |
 
 ## Theorems in plain words
 
@@ -47,8 +47,10 @@ models of 6, 7 and 8 objects), FA3 ("exactly 16 of the 18" admitted), FA8 (hosti
 predicates and at 8 and 9 counted sorts; a universal statement with seven predicates and no count makes no region),
 FA9a (a declared constant spelled like a region constant: erasure overwrites it, which is why `WellFormed` is a
 hypothesis), FA9c and FA10 (an empty population: "at least 1 in 1,000" false as a proportion, true as a bare count
-atom; the rows of 9.1), and `example` proofs of the meaning on a two-user structure (`Admissible`, `HasCount`,
-`CountAtom.holds`, `Proportion.holds`, `CEntails`, `WellFormed`).
+atom; the rows of 9.1), and named theorems on a two-user structure that state every case of each trusted definition, true
+cases beside false ones (`Body.holds`, `HasCount`, `Rel.holds`, `Cmp.holds`, `Counts`, `CountAtom.holds`,
+`Proportion.holds`, `CFormula.holds`, `Admissible`, `CEntails`, `WellFormed`, `Admitted`), so a changed case fails the
+build (`docs/quantities/qt-a1/mutants.json`) and `tests/test_cardinality_exercised.py` finds each definition used.
 
 ## Differences from the spec
 

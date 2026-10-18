@@ -86,19 +86,27 @@ meaning (FOLLOW-UPS "## qt-a1"). Until it lands no route uses erasure or `refute
 certificate says only that the erased problem is entailed. Order: qt-a1b, then QT-A2 (or QT-A2 first: they touch
 different declarations), then QT-A3.
 
-## Seeded bugs (Lean; harness `evidence/seeded-bugs-harness.py.txt`, results `mutants.json`)
+## Seeded bugs (Lean; `uv run python tools/mutants.py docs/quantities/qt-a1/mutants.json --no-baseline`, results `evidence/mutants-run.json`)
 
-Each mutation was applied alone to the committed tree, `lake build VE.Cardinality.Examples` run (exit 1 for all six),
-then the file restored.
+Each mutation is applied alone to the committed tree, `lake build VE.Cardinality.Examples` is run, and the file is
+restored (`tools/mutants.py`, after a passing build). 51 mutants, 51 killed: the first round's six, review F1's
+fifteen, and one for every other case of each trusted definition of `Syntax.lean` and `Semantics.lean`. A mutant that
+changes a specification and its check together (`Admitted` with `CFormula.admits`, `BodyTyped` with `bodyCheck`)
+also adjusts `admits_iff` or `bodyCheck_iff`, so the build fails at a fixture rather than at that proof. Where each
+fails is in `evidence/mutants-run.json` (`first_errors`): 48 at a fixture of `Examples.lean`, three first at a
+theorem of `Theorems.lean` that restates the definition (`proportion_holds_iff`, `hasCount_exists_unique`); with that
+proof replaced by `sorry` those three fail at fixtures too (each mutant's `note`).
 
 | # | File | Mutant | Fails |
 |---|---|---|---|
 | 1 | `lean/VE/Cardinality/Regions.lean` | `Body.inRegion` reads `not b` as `b` (the plan's) | FA1's 91-node guard, both certificate replays (`replays fa1 …`, `replays fa1AtLeast …`), FA1's model guard (`agrees fomc … fa1Model`) |
 | 2 | `lean/VE/Cardinality/Erase.lean` | a proportion's erasure drops its nonempty-population conjunct | FA9c/FA10's meaning-against-erasure guard on the empty model (`agrees users …`) |
 | 3 | `lean/VE/Cardinality/Regions.lean` | the predicate limit fires at 6 instead of above 6 | FA8's "with six it passes" guard |
-| 4 | `lean/VE/Cardinality/Syntax.lean` | a body atom needs only some declared predicate (specification `BodyTyped` and check `bodyCheck` changed together, so `admits_iff` still holds) | FA8's guards refusing a binary predicate and another sort's predicate |
-| 5 | `lean/VE/Cardinality/Semantics.lean` | `Cmp.holds .ge` compares the wrong way | `example : oneIn1000.holds two` |
+| 4 | `lean/VE/Cardinality/Syntax.lean` | a body atom needs only some declared predicate (specification `BodyTyped` and check `bodyCheck` changed together, so `admits_iff` still holds) | FA8's guards refusing a binary predicate and another sort's predicate; `admitted_cases` |
+| 5 | `lean/VE/Cardinality/Semantics.lean` | `Cmp.holds .ge` compares the wrong way | `cmp_cases_two`, `population_cases`, `fa10_two` |
 | 6 | `lean/VE/Cardinality/Erase.lean` | `countFin` counts a twice-listed object twice | FA2's duplicate-domain guard (`agreeOn dupModel`), added for this mutant, which survived the first fixture set |
+| 7–22 | `Semantics.lean`, `Syntax.lean` | review F1's fifteen (`F1-*` in `mutants.json`): `Rel.holds .eq`, `.lt`; `Body.holds .not`, `.or`; `Cmp.holds .lt`, `.le`, `.eq`; `CFormula.holds .quantity`, `.not`, `.and`, `.or`, `.implies`; a proportion over a sort not declared finite; a W6a part unchecked; `.and` checking its left part; `WellFormed.fresh` reversed | `rel_cases_two`, `body_cases` and the body counts, `cmp_cases_two`, `quantity_cases`, `connective_cases`, `admitted_cases`, `wellFormed_cases` |
+| 23–51 | `Semantics.lean`, `Syntax.lean` | every other case (`C-*`): `Rel.holds .le`; `Body.holds .and`, `.atom`, `.any`; `Cmp.holds .gt`, `.ge`; `Counts` on lists of the wrong length and on empty lists; the coefficients; the population; the whole; `.implies` as `∧`; both halves of `Admissible`; `CEntails` without premises or admissibility; `HasCount`'s sort; `finiteDeclared`; `BodyTyped` under `not`, `and`, `or`; a count's sort and bodies; a proportion's whole, part, denominator and fraction; `.not`, `.or`, `.implies` checking one part | the theorems above, `weighted_two`, `counts_two`, `admissible_cases`, `entails_cases`, FA8's guards |
 
 Python and Rust: no product code changed (only `tools/trust-classes.json`, a data table, and docs), so no seeded bug
 there.
@@ -123,8 +131,8 @@ route: the Asimov extended case's P6 (two deaths against one) and, as the feed's
 ## Size
 
 Hand-written Lean: 575 lines of product code (`Syntax` 152, `Semantics` 67, `Regions` 133, `Erase` 107, `Theorems`
-116) and 276 lines of fixtures (`Examples`); `lean/CARDINALITY.md` 69; `lean/VE.lean` +1; `tools/trust-classes.json`
-+141 (the side table); `docs/trust-baseline.json` +7 (the allowance). The product code is inside the ~600-line guide;
+116) and 456 lines of fixtures (`Examples`; 276 before fix round 1); `lean/CARDINALITY.md` 69; `lean/VE.lean` +1; `tools/trust-classes.json`
++155 (the side table); `docs/trust-baseline.json` +7 (the allowance). The product code is inside the ~600-line guide;
 with the fixtures the item is about 850 lines, the smallest part that carries the plan's fixtures FA1 to FA3 and FA8
 with their seeded bugs. The generated inventories (`declarations.txt`, `statements.txt`, `predicates.txt`,
 `axioms.txt`, `VE/Audit.lean`) and this directory's docs and evidence are outside the count.
@@ -165,8 +173,9 @@ All AGENT. None HUMAN or EXTERNAL.
 2. Every deliverable built, no rule broken: PASS, "Plan rows" above lists each row with its commit or the item it
    moves to (qt-a1b, QT-A2); no Python copy of a Lean decision, no report test, no authority switch; overlap checked
    ("Overlap" above).
-3. Tests and gates can fail: PASS, six seeded bugs, each failing the build at a named fixture (`mutants.json`); the
-   sixth survived the first fixtures and a fixture was added (`agreeOn dupModel`).
+3. Tests and gates can fail: PASS, 51 seeded bugs, one per case of each trusted definition, each failing the build
+   (`mutants.json`, `evidence/mutants-run.json`); the sixth survived the first fixtures and a fixture was added
+   (`agreeOn dupModel`); review F1's fifteen survived the first round and the theorems of fix round 1 were added.
 4. Python, Lean and Rust agree: PASS for the core's two internal routes: meaning (`holdsFin`) against erasure on
    finite models (`agrees` guards) and the count atoms against W6a's expansion (`agreeOn`); Python and Rust are not
    involved until QT-A3.
@@ -180,14 +189,26 @@ All AGENT. None HUMAN or EXTERNAL.
 9. Test selection finds the tests: PASS, 58 of 435 units selected, including `lake build`, which runs every `#guard`
    and fails for each seeded bug.
 10. Lean statements say what is claimed: PASS, `evidence/statements.json` (54 exact; the 4 differences are the
-    ratio cases moved to QT-A2); seeded bug 5 breaks an `example` about the meaning.
+    ratio cases moved to QT-A2); seeded bug 5 breaks a theorem about the meaning (`cmp_cases_two`).
 11. Budgets and limits fail closed: PASS for the limits here: `problemLimits` refuses with `ResourceLimit` at 7
     predicates and 9 counted sorts and passes at 6 and 8 (FA8 guards); no search or budget exists in this item.
 12. No CPU or memory regression: PASS, no route changed; the new module adds about 8 s to `lake build`
     (`lake env lean VE/Cardinality/Examples.lean`: 7.9 s), after FA2's grid was cut from about 80 s.
 13. Test-removed trailers: N.A., no test removed or renamed (`gate_collection.py --check --prebuilt`: 0 removed).
 
+## Fix round 1 (review `qt-a1-review.final.md`)
+
+* **F1 (B), R16's "every new trusted definition is exercised by a test that can fail".** Fixed as a class: named
+  theorems in `Examples.lean` state every case of every trusted definition of `Syntax.lean` and `Semantics.lean`,
+  true cases beside false ones (the earlier `example`s became theorems, which `tools/trust_map.py` can see);
+  `tests/test_cardinality_exercised.py` runs the R16 rule (`trust_map.unexercised`) over every file of
+  `lean/VE/Cardinality/`, so a trusted definition a later item adds there fails until a theorem states it; the
+  seeded bugs are now a `tools/mutants.py` file with one bug per case (51, all killed; the review's 15 are `F1-*`).
+  The review's probe now prints `[]`. No trusted line changes: S +137 as before, the new fixtures are T.
+* F2 to F6 (C) are notes for the plan and the orchestrator (QT-A2's prompt, FA2's range, FA8's predicates, QT-A3's
+  order, size); no change here.
+
 ## Commits
 
-`git log --oneline main..HEAD --no-merges` at the time of writing: 5b073b3bb, 4ea2976c0, 5fef22e32, a5b780b4e, and
-the report commit that adds this file.
+`git log --oneline main..HEAD --no-merges` at the time of writing: 5b073b3bb, 4ea2976c0, 5fef22e32, a5b780b4e, b20a8e306
+(the report), and fix round 1's commits after it.
