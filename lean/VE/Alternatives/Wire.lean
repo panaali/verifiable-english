@@ -315,18 +315,23 @@ def legend (A : AltDoc) : List String :=
    | [] => []
    | rs => [s!"The following duties do not bear on the choice: {", ".intercalate (rs.map (fun r => quoted r.act))}."])
 
-def regenerated (src : AltSource) : List (String × Json) :=
+/-- The block's outputs over the tree `D` and the followability formulas `(∀r. followable°, followable°,
+clear°)`, then `rest`: the inlined tree here, its filling under `norm-defaults@0`. -/
+def regeneratedOn (src : AltSource) (D : Doc) (fol : VE.Formula × VE.Formula × VE.Formula)
+    (rest : List (String × Json)) : List (String × Json) :=
   let A := src.A
   [("legend", toJson (legend A)),
-   ("inlined", Json.arr ((inlineTree A).T.nodes.map encodeNode).toArray),
+   ("inlined", Json.arr (D.T.nodes.map encodeNode).toArray),
    ("alternatives", labelled (altPremiseLabels A) (altPremises A)),
    ("base_premises", labelled src.labels A.Γ),
-   ("followable", Json.mkObj [("ast", enc (allFollowable A)), ("followable", enc (followableF A)),
-     ("clear", enc (clearF A))]),
+   ("followable", Json.mkObj [("ast", enc fol.1), ("followable", enc fol.2.1), ("clear", enc fol.2.2)]),
    ("profile_exists", profileExists A.alt),
    ("unmapped_obligations", Json.arr ((unmappedObligations A).map (fun r =>
-     Json.mkObj [("obligation", .str r.name), ("act", .str (r.act.getD ""))])).toArray)] ++
-  VE.Norms.Wire.regenerated (inlineTree A)
+     Json.mkObj [("obligation", .str r.name), ("act", .str (r.act.getD ""))])).toArray)] ++ rest
+
+def regenerated (src : AltSource) : List (String × Json) :=
+  regeneratedOn src (inlineTree src.A) (allFollowable src.A, followableF src.A, clearF src.A)
+    (VE.Norms.Wire.regenerated (inlineTree src.A))
 
 /-! The document wrapper's alternatives coverage is a view of accepted
 assertions. Keep its cell selection and counts beside the block semantics. -/

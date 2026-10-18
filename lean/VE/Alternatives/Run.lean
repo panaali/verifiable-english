@@ -1,4 +1,5 @@
 import VE.Alternatives.Admission
+import VE.Alternatives.FillWire
 import VE.Norms.Run
 
 /-! The `ve_service` mode `alternatives` (docs/spec/alternatives.md 7.3), formerly the one-shot `ve_alternatives_route`. Each case is
@@ -24,7 +25,10 @@ environment and `alternatives@0`, `norms@0` among its profiles.
   the block as on every case, and the declarations of the other profiles (definitions, data
   flags) validated by W1 rather than refused as the document cases still do.
 * Any case without the profile, the block or an `alt-*` kind is delegated unchanged to
-  `VE.Norms.Run`. -/
+  `VE.Norms.Run`.
+* With `norm-defaults@0` (ET-7, `FillWire`), `alt-elaborate`, `alt-environment`, `alt-conflict` with
+  `packages` and `alt-followable` run on `fill (inlineTree A)`: the same answers, with `Fill_T` in the bases and a
+  witness `filling`; the untrusted diagnosis gains UNSETTLED. Admission keeps today's decoder. -/
 namespace VE.Alternatives.Run
 open Lean
 open VE.Norms
@@ -61,6 +65,7 @@ def diagnosisText (r : VE.Bridge.Entity) : Diagnosis VE.Bridge.Entity → String
     let t := ", ".intercalate (ds.map (dutyText r))
     s!"JOINTLY-UNDISCHARGEABLE({t}): each of {t} is discharged by some permitted available action, but no single action discharges all of them"
   | .clear as => s!"clear: {joined as}"
+  | .unsettled as => s!"UNSETTLED({joined as}): no available action is known to be clear here: the text does not say whether {r.2} may take {" or ".intercalate (as.map (·.2))}"
 
 /-- An act phrase without its slots (`{0} prevent {1}` → `prevent`). -/
 def actWords (act : String) : String :=
@@ -261,11 +266,75 @@ def runElaborate (id : String) (j : Json) : Except String Json := do
     | .error _ => []
   return ok id (Wire.regenerated src ++ coverage)
 
+/-! ## With the completion (`norm-defaults@0`, ET-7) -/
+
+open VE.NormDefaults (fill allFollowableU followableFU clearFU fillValid)
+
+def joinedNames : List String → String
+  | [] => "none"
+  | ns => ", ".intercalate ns
+
+def regeneratedU (s : AltSourceU) : List (String × Json) :=
+  Wire.regeneratedOn s.src (fill s.U)
+    (allFollowableU s.src.A s.unspec, followableFU s.src.A s.unspec, clearFU s.src.A s.unspec)
+    (VE.NormDefaults.Wire.regeneratedU s.U)
+
+def runConflictU (id : String) (j : Json) : Except String Json := do
+  if (j.getObjVal? "witness").toBool then
+    throw "UnsupportedProfile: alt-conflict witnesses with norm-defaults@0 are not implemented"
+  let res ← replayAltConflictU j
+  let ts := toJson ((targets (fill res.src.U)).map (·.1))
+  if res.conflictFree then return ok id [("verdict", .str "CONFLICT-FREE"), ("targets", ts)]
+  return ok id [("verdict", .str "UNKNOWN"), ("targets", ts), ("detail", .str (firstFailureU res))]
+
+def runFollowableU (id : String) (j : Json) : Except String Json := do
+  if (j.getObjVal? "witness").toBool then
+    let ⟨s, w⟩ ← replayDilemmaU j
+    unless VE.NormDefaults.WellFormedU s.U && altConflictFreeCheckU s.src.A s.unspec w.certs do
+      return ok id [("verdict", .str "not computed"), ("text", .str notComputed)]
+    match validateAlternativesWith s.src.labels s.src.A w.sc.M w.sc.rows with
+    | .error e => throw e
+    | .ok () => pure ()
+    unless fillValid s.U w.sc.M w.F do throw (VE.Route.Wire.invalidModel "unsaid")
+    if w.dilemma then
+      let d := diagnosisText w.r (diagnoseU s.src.A s.unspec w.sc.M w.F w.r)
+      return ok id [("verdict", .str "DILEMMA"), ("chooser", .str w.r.2), ("diagnosis", .str d),
+        ("text", .str s!"DILEMMA at {w.r.2}: under the supplied filling of what the text leaves unsaid, no available action complies with the mapped obligations and the declared action constraints here; {d}. This is a situation the rules do not cover, not a verdict that they are wrong.")]
+    return ok id [("verdict", .str "UNKNOWN"),
+      ("text", .str "UNKNOWN: the witness chooser has a clear action under the supplied filling")]
+  let res ← replayFollowableU j
+  unless res.conflictFree do
+    return ok id [("verdict", .str "not computed"), ("text", .str notComputed)]
+  if res.followable then
+    let certId := (VE.CertificateWire.digest "ve-alternatives-certificate\n"
+      ((j.getObjValD "package").getObjValD "certificate")).toOption.getD ""
+    return ok id [("verdict", .str "FOLLOWABLE"), ("conditional_on", toJson res.src.src.labels),
+      ("text", .str (followableText res.src.src certId ++
+        s!" It holds under every admissible filling of what the text leaves unsaid (unspecified: {joinedNames res.src.unspec}).")) ]
+  return ok id [("verdict", .str "UNKNOWN"),
+    ("text", .str "UNKNOWN: no accepted followability certificate for this source")]
+
+def runCaseU (id kind : String) (j : Json) : Except String Json := do
+  if kind == "alt-elaborate" then
+    let s ← sourceOfU j
+    let coverage := match j.getObjVal? "coverage_units" with
+      | .ok units => [("coverage", Wire.coverage s.src.A (j.getObjValD "environment") units
+          (j.getObjValD "narrowings"))]
+      | .error _ => []
+    return ok id (regeneratedU s ++ coverage)
+  if kind == "alt-environment" then
+    let _ ← decodeAltSourceU (← j.getObjVal? "environment") (Json.arr #[]) .null .environment
+    return ok id [("valid", .bool true)]
+  if kind == "alt-conflict" then return ← runConflictU id j
+  if kind == "alt-followable" then return ← runFollowableU id j
+  throw s!"UnsupportedProfile: case kind {kind} with norm-defaults@0 is not implemented on the alternatives route"
+
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
   if kind == "admission" then
     return ← runAdmission id (← j.getObjVal? "environment") (← j.getObjVal? "document")
+  if VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") then return ← runCaseU id kind j
   if kind == "alt-elaborate" then
     return ← runElaborate id j
   if kind == "alt-environment" then
