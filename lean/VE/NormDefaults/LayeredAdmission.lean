@@ -32,7 +32,7 @@ open VE.Order.ProfileGate (bind_ok)
 theorem decodeSoftU_source (environment norms : Json) (L : LayeredU) (h : decodeSoftU environment norms = .ok L) :
     ∃ env' src, placeholderJson environment = .ok env' ∧ VE.SoftNorms.Wire.decodeSoftSource env' norms = .ok src ∧
       L.D = src.D ∧ L.U = ⟨VE.SoftNorms.soften src.D, unspecOf environment (VE.SoftNorms.soften src.D)⟩ ∧
-      L.labelled = softLabelledU L.U src.D ∧ L.rightsCount = 0 ∧ L.route = "soft-norms@0" := by
+      L.packs = [softPack L.U src.D] ∧ L.route = "soft-norms@0" := by
   unfold decodeSoftU at h
   obtain ⟨env', he, h⟩ := bind_ok h
   obtain ⟨src, hs, h⟩ := bind_ok h
@@ -43,8 +43,11 @@ theorem decodeSoftU_source (environment norms : Json) (L : LayeredU) (h : decode
     obtain ⟨_, _, h⟩ := bind_ok h
     obtain ⟨_, _, h⟩ := bind_ok h
     obtain ⟨_, _, h⟩ := bind_ok h
+    obtain ⟨qs, hq, h⟩ := bind_ok h
     cases h
-    exact ⟨env', src, he, hs, rfl, rfl, rfl, rfl, rfl⟩
+    refine ⟨env', src, he, hs, rfl, rfl, ?_, rfl⟩
+    rw [(Packs.assemble_order hq).1]
+    simp [Packs.ordered, Packs.packOrder, softPack]
   · cases h
 
 theorem decodeSoftU_X_wellFormed (environment norms : Json) (L : LayeredU) (h : decodeSoftU environment norms = .ok L) :
@@ -54,7 +57,7 @@ theorem decodeSoftU_X_wellFormed (environment norms : Json) (L : LayeredU) (h : 
   unfold LayeredU.X
   rw [hl]
   rw [hU] at hw ⊢
-  exact softLabelledU_wellFormed src.D _ src.wf hw
+  simpa [Packs.X, Packs.labelledX, softPack] using softLabelledU_wellFormed src.D _ src.wf hw
 
 structure LayeredEntailment where
   L : LayeredU
@@ -102,7 +105,7 @@ universe u
     unit pointer. -/
 def SoftLeafX (L : Wire.LayeredU) (w : WireNode) : Prop :=
   (w.deduction.isNone && w.unit.isNone &&
-    (L.labelled.take (L.labelled.length - L.rightsCount)).any
+    (Packs.packPremises L.packs "soft").any
       (fun (l, a) => decide (w.claim.label = l ∧ w.claim.formula = a))) = true
 
 instance (L : Wire.LayeredU) (w : WireNode) : Decidable (SoftLeafX L w) := by
@@ -301,7 +304,7 @@ theorem softLeafX_formula (L : Wire.LayeredU) (w : WireNode) (h : SoftLeafX L w)
   obtain ⟨⟨l, a⟩, hm, he⟩ := List.any_eq_true.mp h.2
   have heq : w.claim.label = l ∧ w.claim.formula = a := of_decide_eq_true he
   rw [heq.2]
-  exact List.mem_map.mpr ⟨(l, a), List.mem_of_mem_take hm, rfl⟩
+  exact List.mem_map.mpr ⟨(l, a), Packs.packPremises_sub _ _ _ hm, rfl⟩
 
 theorem wire_report_consequenceX (environment document : Json) (res : AdmittedX)
     (h : admitDocumentX environment document = .ok res) (S : VE.Structure.{u}) (hS : S.Admissible (fill res.L.U).E)
