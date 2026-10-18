@@ -1,9 +1,11 @@
 # et-7b build report: scenario values for `alternatives@0` with the completion (ET-7, second part)
 
-No DRI signature is reserved. DELTA row 1 cites the DRI's SYNTHESIS.md (4.1 item 4 with O18) for the scenario answers,
-as et-7's merged row 3 does for the first half of the same batch; the feature-feed rules allow only standing-ruling
-citations, and et-7's review left the same question to the DRI (its F4, deferred). Row 2 is R16. Branch
-`feature/et-7b`, synced with main `cb033316a`. Next item: **et-8** (the Asimov and ET-1 pilot on the completion).
+**DRI signature needed: DELTA row 1** (`alt-validate` with `norm-defaults@0` is now answered where et-7 refused it
+by name). This is the plan's ET-7 deliverable, but widening what is accepted is outside every standing ruling. The
+feature-feed rules forbid citing SYNTHESIS.md as a signature, and et-7's review left that citation to the DRI (F4).
+So the item stops at review-ready's [delta] check by design (L52) until the DRI signs the row. Row 2 (trust) is R16.
+Branch `feature/et-7b`, synced with main `cb033316a`. Next item: **et-8** (the Asimov and ET-1 pilot on the
+completion).
 
 ## What was built
 
@@ -72,7 +74,7 @@ reordered `AltStatus`'s constructors and survived (order is unobservable); its r
 
 - Trust: K +0, S +42, V +93 (135 lines, R16's cap 150), per declaration in DELTA row 2; `trust_map.py --check`
   passes; ties row in manage-agents FOLLOW-UPS.md "## et-7b".
-- Size: 727 hand-written lines added (Lean 443, of which proofs and `#guard`s about 120; tests 96; side tables and
+- Size: 727 hand-written lines added (Lean 443, of which proofs and `#guard`s about 150; tests 96; side tables and
   pins 41; this report, DELTA and mutants 147), measured with `git diff --numstat` against the merge base, generated
   files, recorded cases and saved evidence excluded. That is above ~600 (the code alone is 580). The scenario half
   could not be split further: its rows, runner, shape and fixtures go together, and the remaining refusals are
@@ -101,7 +103,8 @@ reordered `AltStatus`'s constructors and survived (order is unobservable); its r
 5. R8 binding: PASS for statuses and evidence (enum, `sameLength`; R1–R3). Chooser and alternative names keep the F4
    class of today's scenario rows, because the model's domains are an object keyed by a sort.
 6. Gate evidence matches HEAD: PASS. Synced with main `cb033316a` (73a944f7); the gate is the chain's.
-7. No unsigned item: PASS. `review-ready.py --delta-dri-needed`: no row reserved (row 1: see the first paragraph).
+7. No unsigned item: PASS except the one reserved row. `review-ready.py --delta-dri-needed` lists DELTA row 1, the
+   reason the item stops (first line); row 2 cites R16 with its evidence.
 8. Every user-visible change in DELTA: PASS. [evidence/delta.json](evidence/delta.json), 13 records.
 9. Test selection: PASS. `select_tests.py --base $(git merge-base HEAD main)` selects 361 of 442 units, including
    `test_alternatives_fill.py` and `test_route_row_schemas.py`, the tests the seeded bugs break.
