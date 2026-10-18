@@ -705,6 +705,13 @@
    "reason": "me-1b Calc meaning and checker: VE/Calc/Decls.lean S +70, VE/Calc/Syntax.lean S +37, VE/Calc/Eval.lean +0 (K +0, V +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1b, 2026-10-17",
    "commit": "05b85b631f8071fafac690f57c5f23f810168657"
+  },
+  {
+   "class": "V",
+   "lines": 113,
+   "reason": "me-1c Calc display lines: VE/Calc/Render.lean +113 (V, G[V]: reservedWords, phraseWords, valueWordsOk, natWords, placesPhrase, printedWords, exactWords, exprDepth, renderAtom, renderTerm, renderExpr, fill, renderClaim); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1c, 2026-10-17",
+   "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
   }
  ]
 }
