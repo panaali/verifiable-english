@@ -1,4 +1,10 @@
-# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at ee29c7b06 (this file's own commit follows)
+# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at 7dbd8d82d (this file's own commit follows)
+7dbd8d82dc4c91e782d77ecd1ed775648ef40256 ap-2: REPORT section 9 no longer quotes the retracted phrase; selected tests after the review fixes
+21e9715acc898a01324ffd4d42fd318eb3b61a7b ap-2: REPORT and DELTA after the review fixes (F1, F2): line references, mutants, size, section 9
+3967dd405d23f2ea538b3ed31dae8593d711db47 ap-2 F2: rawCap and stepBudget stay provisional; deferred item 5 stays open
+0ce22f03d05a53cd48e07a23ef22c450ec141357 ap-2 F1: pin every checkVocab condition, D-31's order and the D2 limits; mutation smoke test
+584ac3bb36a3909d1307239af5d07a7ca3323d71 ap-2: REPORT: selected tests on the synced code
+04435990430e17556d77f4eaa81ddb10e18b13b2 ap-2: saved commit list (main..HEAD --no-merges)
 ee29c7b0682f19e83b44d4567bd2a3ea7dca6dfe ap-2: DELTA (trust +145 under R16), REPORT (cut, ap-2b), seeded bugs re-run on the final code
 69429bb9dc3ec348a564606f7ccaebb9113a9309 ap-2: GrammarExamples: a raw budget of 0 is the limit outcome
 b0cfc1ff5f0eec3cf055b64402972e7ee1f69053 ap-2: seeded bugs (9 Lean, 1 Python), each failing its check, restored; mutants.json
