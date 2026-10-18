@@ -1,12 +1,16 @@
+import Lean
 import VE.NormDefaults.LayeredAdmission
 import VE.Readings.SupExtra
+import VE.Rights.Examples
+import ResponseShape.Schemas.NormDefaults
 
 /-! Statement stub of PK-1, premise packs (docs/spec/premise-packs.md). Evidence for the statement review, not
 product code: it lives under docs/, imports the tree on `main` unchanged, and some proofs are `sorry` (the build item
-pk-1 proves them in `lean/VE/NormDefaults/Packs.lean`). Check it from `lean/` with
+pk-1 proves them in the files of spec section 5). Check it from `lean/` with
 `PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/premise-packs/SpecStubs_pk1.lean`.
 
-Section numbers in comments are the spec's. -/
+Section numbers in comments are the spec's. `planFiles` (section 5, at the end) gives the pk-1 file of every
+declaration, and a check there fails when a declaration uses a module or declaration its file cannot import. -/
 
 namespace VE.NormDefaults.Packs
 open Lean
@@ -40,9 +44,6 @@ def packOrder : List String := ["soft", "rights", "weighing", "attitudes", "scal
 /-- 2.3: each reserved prefix with its owner. -/
 def reservedPrefixes : List (String × String) :=
   [("soft", "soft__"), ("rights", "rights__"), ("norm-defaults", "unsaid__")]
-
-/-- The fixtures' provider rows (attitudes AT-2, events ET-4 add theirs in their own batches). -/
-def fixturePrefixes : List (String × String) := [("attitudes", "attitudes__"), ("events", "date__")]
 
 /-- 2.3: an author name that begins with a reserved prefix. -/
 def reserved (n : String) : Bool := reservedPrefixes.any (fun (_, x) => n.startsWith x)
@@ -157,8 +158,10 @@ theorem softLabelledU_labels_nodup (U : UDoc) (D : VE.SoftNorms.SoftDoc)
     (hs : VE.SoftNorms.WellFormedSoft D = true) (hw : WellFormedU U = true) :
     ((softLabelledU U D).map (·.1)).Nodup := sorry
 
+/-- 2.6: the hypothesis is the rights source's own `wf` (`Rights/Wire.lean:270`): `WellFormedSoft (correlate R)`
+does not see repeated limitation or condition names (fixture F1). -/
 theorem legacy_labels_nodup (U : UDoc) (R : VE.Rights.RightsDoc)
-    (hs : VE.SoftNorms.WellFormedSoft (VE.Rights.correlate R) = true) (hw : WellFormedU U = true) :
+    (hs : VE.Rights.WellFormedRights R = true) (hw : WellFormedU U = true) :
     ((softLabelledU U (VE.Rights.correlate R) ++ VE.Rights.limPremisesLabelled R).map (·.1)).Nodup := sorry
 
 /-- 2.6 (5): assembly accepts today's soft source unchanged. -/
@@ -210,7 +213,7 @@ def labelledJson (l : String) (a : VE.Formula) (origin : Option RequestPath) : J
   Json.mkObj ([("label", .str l), ("ast", VE.SoftNorms.Wire.enc a)] ++
     match origin with | some o => [("origin", toJson o)] | none => [])
 
-/-- One further pack's entry: its premises and its generated names, each with its origin. -/
+/-- pk-1b: one further pack's entry, its premises and its generated names, each with its origin. -/
 def packEntry (p : Pack) : String × Json :=
   (p.id, Json.mkObj [
     ("premises", Json.arr (p.labelled.map (fun (l, a) => labelledJson l a (p.origins.lookup l))).toArray),
@@ -219,11 +222,18 @@ def packEntry (p : Pack) : String × Json :=
       (p.consts.map (fun (d : String × String) => let (n, s) := d; Json.mkObj [("name", .str n), ("sort", .str s),
         ("origin", toJson ((p.origins.lookup n).getD []))]))).toArray)])
 
-/-- 2.7: the `"soft"` and `"rights"` arrays as today (`Layered.lean:150–153`), then one entry per further pack,
-in `packOrder` (none on a legacy list, which holds only soft and rights). -/
+/-- 2.7: the `"soft"` and `"rights"` arrays as today (`Layered.lean:150–153`), and nothing else, whatever the pack
+list: `layered_elaborate` is closed on these two keys, and `layeredCase_fits` quantifies over every `LayeredU`. -/
 def elaborateArrays (qs : List Pack) : List (String × Json) :=
   [("soft", Json.arr ((packPremises qs "soft").map (fun (l, a) => labelledJson l a none)).toArray),
-   ("rights", Json.arr ((packPremises qs "rights").map (fun (l, a) => labelledJson l a none)).toArray)] ++
+   ("rights", Json.arr ((packPremises qs "rights").map (fun (l, a) => labelledJson l a none)).toArray)]
+
+/-- 2.7: the keys pk-1's elaborate writes do not depend on the packs (the fact the encoder theorem needs). -/
+theorem elaborateArrays_keys (qs : List Pack) : (elaborateArrays qs).map (·.1) = ["soft", "rights"] := rfl
+
+/-- pk-1b: one entry per further pack, in `packOrder` (none on a legacy list, which holds only soft and rights).
+It lands together with its keys in `layered_elaborate`, with the first provider's shape row. -/
+def furtherEntries (qs : List Pack) : List (String × Json) :=
   (qs.filter (fun p => p.id != "soft" && p.id != "rights")).map packEntry
 
 /-- 2.7 (7′): on a legacy list the arrays are today's expressions over `labelled` and `rightsCount`. -/
@@ -289,13 +299,13 @@ theorem xWithout_sub (qs : List Pack) (drop : List String) : ∀ a ∈ xWithout 
 theorem filledX_whole (L : LayeredU) (w : Json) (fw : VE.NormDefaults.Wire.FilledX L)
     (_h : VE.NormDefaults.Wire.filledX L w = .ok fw) : extraValid L.U L.X fw.S.M fw.F = true := fw.extra_ok
 
-/-! ## 2.10 Provider obligations -/
+/-! ## 3 Provider obligations (they land with AT-2) -/
 
 /-- `B` with the relations and constants replaced. -/
 def expandBy (B : VE.Structure.{u}) (R : String → List B.Carrier → Prop) (k : String → Option B.Carrier) :
     VE.Structure.{u} := { B with relation := R, constant := k }
 
-/-- 2.10 (1): a vocabulary pack's expansion step after `earlier`: every admissible base of the base and the earlier
+/-- 3 (1): a vocabulary pack's expansion step after `earlier`: every admissible base of the base and the earlier
 packs expands, changing only `p`'s own names, to a typed structure that still is one and satisfies `p`'s premises. -/
 def ExpandsOn (U : UDoc) (earlier : List Pack) (p : Pack) : Prop :=
   ∀ B : VE.Structure.{u}, BaseAdmissibleX U (X earlier) B →
@@ -306,19 +316,19 @@ def ExpandsOn (U : UDoc) (earlier : List Pack) (p : Pack) : Prop :=
       (∀ c ∈ p.consts, ∃ e, k c.1 = some e ∧ B.domain c.2 e) ∧
       BaseAdmissibleX U (X earlier) (expandBy B R k) ∧ Sat (expandBy B R k) (p.labelled.map (·.2))
 
-/-- 2.10 (5): every label and generated name has an origin, and nothing else does. -/
+/-- 3 (5): every label and generated name has an origin, and nothing else does. -/
 def OriginsExact (p : Pack) : Prop := p.origins.map (·.1) = p.labelled.map (·.1) ++ p.names
 
-/-! ## 2.11 The kind table -/
+/-! ## 2.10 The kind table -/
 
-/-- 2.11: one row of the layered route's kind table. -/
-structure KindRow where
+/-- 2.10: one row of a kind table over sources `α` (`LayeredU` in `Layered.lean`; generic so that it sits below it). -/
+structure KindRow (α : Type) where
   kind : String
   pack : Option String
-  run : LayeredU → String → Json → Except String Json
+  run : α → String → Json → Except String Json
 
-/-- 2.11: the row for `kind`, refused when the pack it needs is absent. -/
-def dispatch (rows : List KindRow) (ids : List String) (L : LayeredU) (id kind : String) (j : Json) :
+/-- 2.10: the row for `kind`, refused when the pack it needs is absent. -/
+def dispatch {α : Type} (rows : List (KindRow α)) (ids : List String) (L : α) (id kind : String) (j : Json) :
     Except String (Option Json) :=
   match rows.find? (·.kind == kind) with
   | none => pure none
@@ -328,11 +338,12 @@ def dispatch (rows : List KindRow) (ids : List String) (L : LayeredU) (id kind :
       else throw s!"UnsupportedProfile: case kind {kind} needs the {i} premise pack"
     | none => some <$> r.run L id j
 
-/-- 2.11: today's four kinds (`Layered.lean:410–437`), as rows. -/
+/-- 2.10: today's four kinds (`Layered.lean:410–437`), as rows. In pk-1 today's `layeredCase` is kept as
+`legacyCase` (body unchanged), the rows call it, and `layeredCase` becomes `dispatch legacyRows`. -/
 def legacyKinds : List String :=
   ["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-status", "norm-defaults-report"]
 
-def legacyRows : List KindRow := legacyKinds.map fun k =>
+def legacyRows : List (KindRow LayeredU) := legacyKinds.map fun k =>
   ⟨k, none, fun L id j => do
     match ← VE.NormDefaults.Wire.layeredCase L id k j with
     | some a => pure a
@@ -343,12 +354,12 @@ theorem dispatch_legacy (ids : List String) (L : LayeredU) (id kind : String) (j
 
 end VE.NormDefaults.Packs
 
-/-! ## 2.12 `transfers_append` -/
+/-! ## 2.11 `transfers_append` -/
 
 namespace VE.Readings
 universe u
 
-/-- 2.12: carried families concatenate. -/
+/-- 2.11: carried families concatenate. -/
 theorem transfers_append (D : Doc) (Q₁ Q₂ : List VE.Formula) (Q₁c Q₂c : Choice → List VE.Formula)
     (h₁ : Transfers.{u} D Q₁ Q₁c) (h₂ : Transfers.{u} D Q₂ Q₂c) :
     Transfers.{u} D (Q₁ ++ Q₂) (fun c => Q₁c c ++ Q₂c c) := by
@@ -359,7 +370,7 @@ theorem transfers_append (D : Doc) (Q₁ Q₂ : List VE.Formula) (Q₁c Q₂c : 
   · rw [VE.Compose.sat_append, VE.Compose.sat_append]
     exact and_congr (h₁.2 c hc B hB he) (h₂.2 c hc B hB he)
 
-/-- 2.12: one family per pack gives the family of `X`. -/
+/-- 2.11: one family per pack gives the family of `X`. -/
 theorem transfers_X (D : Doc) (qs : List VE.NormDefaults.Packs.Pack)
     (Qc : VE.NormDefaults.Packs.Pack → Choice → List VE.Formula)
     (h : ∀ p ∈ qs, Transfers.{u} D (p.labelled.map (·.2)) (Qc p)) :
@@ -384,6 +395,9 @@ open VE.NormDefaults.Packs
 /-- An author environment: `person`, the predicate `helps`, and the author name `attitudes__knows__1` (fixture A4). -/
 def E : VE.Environment :=
   ⟨["person"], fun n => if n == "helps" || n == "attitudes__knows__1" then some ["person"] else none, fun _ => none⟩
+
+/-- The fixtures' provider rows (attitudes AT-2, events ET-4 add theirs in their own batches). -/
+def fixturePrefixes : List (String × String) := [("attitudes", "attitudes__"), ("events", "date__")]
 
 /-- The prefix table with the two provider rows the fixtures need. -/
 def P : List (String × String) := reservedPrefixes ++ fixturePrefixes
@@ -455,14 +469,153 @@ def holds (a : VE.Formula) : Bool := a != .bottom
 #guard (packPremises [soft] "rights").isEmpty
 #guard xWithout [soft, weighing] ["soft:coherence:r1,r2"] = [φ, .bottom]
 
--- A9: elaborate entries: today's two arrays on a legacy list; one more entry per further pack otherwise.
+-- A9: elaborate entries: today's two arrays on every list (pk-1); one more entry per further pack (pk-1b).
 #guard (elaborateArrays [soft, rights]).map (·.1) == ["soft", "rights"]
 #guard (elaborateArrays []).map (·.1) == ["soft", "rights"]
-#guard (elaborateArrays [soft, weighing, ev "date__d"]).map (·.1) == ["soft", "rights", "weighing", "events"]
+#guard (elaborateArrays [soft, weighing, ev "date__d"]).map (·.1) == ["soft", "rights"]
+#guard (furtherEntries [soft, rights]).isEmpty
+#guard (furtherEntries [soft, weighing, ev "date__d"]).map (·.1) == ["weighing", "events"]
 #guard ((elaborateArrays [soft, rights]).lookup "soft").map (·.compress) ==
   some "[{\"ast\":[\"top\"],\"label\":\"soft:exception:r1:sufficient:0\"},{\"ast\":[\"top\"],\"label\":\"soft:coherence:r1,r2\"}]"
 
 -- The reserved prefixes are pairwise disjoint (no prefix begins another).
 #guard reservedPrefixes.all fun (o, x) => reservedPrefixes.all fun (o', y) => o == o' || !x.startsWith y
 
+-- A9′ (F2): the closed shape of `norm-defaults-elaborate` (`ResponseShape/Schemas/NormDefaults.lean:124`), read from
+-- the shape itself, has every key pk-1's elaborate writes (for every pack list, `elaborateArrays_keys`) and no key of a
+-- further pack, so `furtherEntries` must land with a shape row (pk-1b).
+def closedKeys : ResponseShape.Shape → List String
+  | .node _ kws => kws.flatMap fun
+    | .object ps (some (.bool false)) => ps.map (·.1)
+    | _ => []
+  | _ => []
+def elaborateKeys : List String := closedKeys ResponseShape.Schemas.NormDefaults.layered_elaborate
+#guard ["soft", "rights", "base_environment"].all elaborateKeys.contains
+#guard (elaborateArrays [soft, weighing, ev "date__d"]).all (elaborateKeys.contains ·.1)
+#guard !packOrder.any (fun i => i != "soft" && i != "rights" && elaborateKeys.contains i)
+
+-- F1: `WellFormedSoft (correlate R)` and `WellFormedU` hold on a rights document that repeats a limitation (or a
+-- condition), yet its labels repeat; `WellFormedRights`, the hypothesis of `legacy_labels_nodup`, refuses it.
+open VE.Rights.Examples (alpha gamma gamma7 rho epsilon l29) in
+def rightsDocs : List VE.Rights.RightsDoc :=
+  [alpha, gamma, gamma7, rho, epsilon, { gamma with limits := [l29, l29] },
+   { gamma with limits := [{ l29 with conditions := l29.conditions ++ l29.conditions.take 1 }] }]
+def legacyU (R : VE.Rights.RightsDoc) : UDoc := ⟨VE.SoftNorms.soften (VE.Rights.correlate R), []⟩
+def legacyLabels (R : VE.Rights.RightsDoc) : List String :=
+  (VE.NormDefaults.Wire.softLabelledU (legacyU R) (VE.Rights.correlate R) ++ VE.Rights.limPremisesLabelled R).map (·.1)
+#guard (rightsDocs.drop 5).all fun R => VE.SoftNorms.WellFormedSoft (VE.Rights.correlate R) &&
+  WellFormedU (legacyU R) && !decide (legacyLabels R).Nodup && !VE.Rights.WellFormedRights R
+-- Both statements on every fixture document (both directions occur: five well formed, two refused).
+#guard rightsDocs.all fun R => !VE.Rights.WellFormedRights R || decide (legacyLabels R).Nodup
+#guard rightsDocs.all fun R => !VE.SoftNorms.WellFormedSoft (VE.Rights.correlate R) ||
+  decide (((VE.NormDefaults.Wire.softLabelledU (legacyU R) (VE.Rights.correlate R)).map (·.1)).Nodup)
+#guard (rightsDocs.map VE.Rights.WellFormedRights) == [true, true, true, true, true, false, false]
+
 end VE.NormDefaults.Packs.Fixtures
+
+/-! ## 5 The build's files, checked
+
+`planFiles` is spec section 5's file list: each pk-1 file in import order, the modules it imports, the modules that
+will import it, and the stub declarations it holds. The check below fails when a declaration uses a module outside
+its file's imports or a declaration of a later file, when a file's importer is already among its imports (an import
+cycle), or when a stub declaration has no file. -/
+
+namespace VE.NormDefaults.Packs.Plan
+open Lean Meta
+
+structure PlanFile where
+  file : String
+  /-- `none`: lands with a provider or pk-1b, above every file here. -/
+  imports : Option (List Name)
+  importedBy : List Name
+  decls : List Name
+  deriving Inhabited
+
+def planFiles : List PlanFile := [
+  ⟨"lean/VE/NormDefaults/Packs.lean", some [`VE.NormDefaults.Explain, `VE.Rights.Wire], [`VE.NormDefaults.Layered],
+   [``PackKind, ``RequestPath, ``Pack, ``packOrder, ``reservedPrefixes, ``reserved, ``Pack.names, ``ownPrefixIn,
+    ``ownPrefix, ``ordered, ``labelledX, ``X, ``names, ``packPremises, ``extendEnv, ``fullEnv, ``envX,
+    ``firstRepeat, ``declaredIn, ``assembleIn, ``assemble, ``extendEnv_nil, ``envX_nil, ``assemble_order,
+    ``assemble_fresh, ``assemble_wellFormed, ``assemble_nil, ``X_legacy, ``legacy_take, ``legacy_drop,
+    ``packPremises_absent, ``X_soft_first, ``legacyIds, ``labelledJson, ``elaborateArrays, ``elaborateArrays_keys,
+    ``elaborateArrays_legacy, ``firstFailing, ``packFault, ``firstFailing_some, ``xWithout, ``coherenceLabels,
+    ``xWithout_nil, ``xWithout_sub, ``KindRow, ``dispatch]⟩,
+  ⟨"lean/VE/NormDefaults/Layered.lean (hunks)", some [`VE.NormDefaults.Layered], [],
+   [``softPack, ``rightsPack, ``legacyKinds, ``legacyRows]⟩,
+  ⟨"lean/VE/NormDefaults/PacksLegacy.lean", some [`VE.NormDefaults.Layered],
+   [`VE.NormDefaults.LayeredAdmission, `VE.Readings.UnspecifiedWire],
+   [``softLabelledU_labels_nodup, ``legacy_labels_nodup, ``assemble_legacy_soft, ``assemble_legacy_rights,
+    ``packPremises_legacy, ``packFault_legacy_rights, ``packFault_legacy_soft, ``filledX_whole, ``dispatch_legacy]⟩,
+  ⟨"lean/VE/Readings/SupPacks.lean", some [`VE.Readings.SupExtra], [],
+   [``VE.Readings.transfers_append, ``VE.Readings.transfers_X]⟩,
+  ⟨"pk-1b and AT-2", none, [], [``packEntry, ``furtherEntries, ``expandBy, ``ExpandsOn, ``OriginsExact]⟩]
+
+/-- `ms` and every module they import, directly or not. -/
+partial def closure (env : Lean.Environment) (ms : List Name) : NameSet :=
+  let rec go (acc : NameSet) : List Name → NameSet
+    | [] => acc
+    | m :: rest =>
+      if acc.contains m then go acc rest
+      else match env.getModuleIdx? m with
+        | none => go acc rest
+        | some i => go (acc.insert m) ((env.header.moduleData[i]!.imports.map (·.module)).toList ++ rest)
+  go {} ms
+
+/-- The file index of a stub declaration, if `planFiles` lists it. -/
+def fileOf (n : Name) : Option Nat := planFiles.findIdx? (·.decls.contains n)
+
+/-- The constants `ci` uses, with its constructors' (a structure's fields are in its constructor). -/
+def uses (env : Lean.Environment) (ci : ConstantInfo) : List Name :=
+  let own := ci.getUsedConstantsAsSet.toList
+  match ci with
+  | .inductInfo v => own ++ v.ctors.flatMap fun c => ((env.find? c).map (·.getUsedConstantsAsSet.toList)).getD []
+  | _ => own
+
+/-- The faults of declaration `n` of file `k`: a module outside `allowed`, or a stub declaration of a later file,
+reached directly or through the stub's auxiliary declarations (matchers, instances, projections). -/
+partial def faults (env : Lean.Environment) (k : Nat) (allowed : NameSet) (n : Name) : List String := Id.run do
+  let mut out := #[]
+  let mut seen : NameSet := {}
+  let mut todo := [n]
+  while !todo.isEmpty do
+    let c := todo.head!
+    todo := todo.tail!
+    if seen.contains c then continue
+    seen := seen.insert c
+    match env.getModuleIdxFor? c with
+    | some i =>
+      let m := env.header.moduleNames[i]!
+      unless allowed.contains m do out := out.push s!"{n} uses {c} of {m}"
+    | none =>
+      if c != n then
+        if let some j := fileOf c then
+          if j > k then out := out.push s!"{n} uses {c} of the later file {(planFiles[j]!).file}"
+          continue
+      if let some ci := env.find? c then todo := uses env ci ++ todo
+  return out.toList
+
+/-- The stub's own declarations that need a file: the direct children of the stub's namespaces. -/
+def stubDecls (env : Lean.Environment) : List Name :=
+  (env.constants.map₂.toList.map (·.1)).filter fun n =>
+    (n.getPrefix == `VE.NormDefaults.Packs || n.getPrefix == `VE.Readings) && !n.isInternal &&
+    !(n.getString!.startsWith "inst") && (env.find? n).any (fun ci => !ci.isCtor && !(ci matches .recInfo _))
+
+run_meta do
+  let env ← getEnv
+  let mut bad : Array String := #[]
+  for h : k in [0:planFiles.length] do
+    let f := planFiles[k]
+    let some ims := f.imports | continue
+    let allowed := closure env ims
+    for m in f.importedBy do
+      if allowed.contains m then bad := bad.push s!"{f.file}: its importer {m} is among its imports (a cycle)"
+    for n in f.decls do
+      if (env.find? n).isNone then bad := bad.push s!"{f.file}: no declaration {n}"
+      else bad := bad ++ (faults env k allowed n).toArray.map (s!"{f.file}: " ++ ·)
+  for n in stubDecls env do
+    if (fileOf n).isNone then bad := bad.push s!"{n} has no file in planFiles"
+  unless (env.find? ``legacy_labels_nodup).any (·.type.getUsedConstants.contains ``VE.Rights.WellFormedRights) do
+    bad := bad.push "legacy_labels_nodup does not assume the rights source's WellFormedRights (F1)"
+  unless bad.isEmpty do throwError m!"section 5's files do not build:\n{"\n".intercalate bad.toList}"
+
+end VE.NormDefaults.Packs.Plan
