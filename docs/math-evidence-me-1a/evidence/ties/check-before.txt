@@ -1,0 +1,12 @@
+$ python3 tools/trust_map.py --check --since c4d7ea565  # at 05b85b631 (main with me-1a merged)
+class lines: K 997, S 10228, D 14924, G 30704, C 9879, P 76483, T 15778, o 13410
+D/G groups: D[V] 13190, D[R] 1180, D[I] 554, G[V] 27940, G[R] 2491, G[I] 273
+tied 263, unclassified 0, trusted 52111 (K + S + untied [V] + unclassified), 172403 lines in 533 files
+against c4d7ea565339: K +0, S +76, D +0, G +44, tied +0, unclassified +0, trusted +103
+  VE/Numbers/Round.lean: trusted +54
+  VE/Numbers/Phrases.lean: trusted +26
+  VE/Numbers/PhrasesMain.lean: trusted +14
+  VE/Numbers/Decimal.lean: trusted +9
+note: c4d7ea565339 records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 997, 'S': 10152, 'V': 40859} (the merge train's --write has not run since)
+PASS: K, S and untied [V] within c4d7ea565339 and the allowances introduced since
+exit 0

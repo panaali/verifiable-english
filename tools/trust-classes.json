@@ -12027,8 +12027,15 @@
     },
     "VE/Numbers/Decimal.lean": {
       "S": [
-        "VE.Numbers.decValue",
         "VE.Numbers.tenPow"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Numbers.decValue",
+          "tied": [
+            "VE.Numbers.Printed.value_ofDec"
+          ]
+        }
       ]
     },
     "VE/Numbers/Round.lean": {
@@ -12040,12 +12047,17 @@
         "VE.Numbers.Rounding",
         "VE.Numbers.RoundsTo",
         "VE.Numbers.UnknownReason",
-        "VE.Numbers.Verdict",
-        "VE.Numbers.tieAt"
+        "VE.Numbers.Verdict"
       ],
       "G[V]": [
         "VE.Numbers.Printed.ofDec",
-        "VE.Numbers.Printed.sci"
+        "VE.Numbers.Printed.sci",
+        {
+          "name": "VE.Numbers.tieAt",
+          "tied": [
+            "VE.Numbers.tieAt_iff"
+          ]
+        }
       ],
       "G[R]": [
         "VE.Numbers.UnknownReason.text"
