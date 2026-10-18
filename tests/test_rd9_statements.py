@@ -144,3 +144,37 @@ def test_a_signed_edit_that_no_longer_applies_fails(capsys, monkeypatch):
     monkeypatch.setitem(checker.SIGNED, "ndTextWith", (ruling, ("not in the approved text", after)))
     assert checker.main() == 1
     assert "ndTextWith: the signed edit does not apply to the approved text" in capsys.readouterr().out
+
+
+SC6 = 6
+
+
+def test_soft_leaf_reads_the_soft_pack_as_the_premise_packs_spec_approves(capsys):
+    """PK-1 (docs/spec/premise-packs.md 5) rewrites `SoftLeafX` by one quoted edit: it reads the soft pack's premises
+    instead of `labelled` and `rightsCount`. The checker reports it as approved by that spec, never as DRI-signed."""
+    checker = _checker()
+    assert checker.main() == 0
+    out = capsys.readouterr().out
+    assert set(checker.SUPERSEDED) == {"SoftLeafX"} and not set(checker.SUPERSEDED) & set(checker.SIGNED)
+    assert ("SoftLeafX: APPROVED by a later statement spec: docs/spec/premise-packs.md 5 (pk-1s statement review, "
+            "merge 49a926ee7): approved text with its one approved edit") in out
+
+
+@pytest.mark.parametrize("before, after", [
+    # The rights pack's premises instead of the soft pack's.
+    ('(Packs.packPremises L.packs "soft")', '(Packs.packPremises L.packs "rights")'),
+    # The whole X instead of the soft pack's premises.
+    ('(Packs.packPremises L.packs "soft")', "(Packs.labelledX L.packs)"),
+])
+def test_a_soft_leaf_other_than_the_approved_edit_fails(tmp_path, capsys, before, after):
+    checker = _checker()
+    title, start, stop, sources, expected, later = checker.SECTIONS[SC6]
+    source = next(s for s in sources if s.name == "LayeredAdmission.lean")
+    text = source.read_text()
+    assert before in text
+    copy = tmp_path / source.name
+    copy.write_text(text.replace(before, after, 1))
+    sections = list(checker.SECTIONS)
+    sections[SC6] = (title, start, stop, [copy if s == source else s for s in sources], expected, later)
+    assert checker.main(sections) == 1
+    assert "SoftLeafX: def differs" in capsys.readouterr().out
