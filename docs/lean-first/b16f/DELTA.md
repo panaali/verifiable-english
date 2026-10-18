@@ -139,6 +139,7 @@ allow-list; only B9 remains, a located row without its location.
 | 6 | Trust budget: untied V +273 over 85b20fcb, by file: `lean/VE/Service/Document.lean` +265, `lean/VE/Discourse/Loader.lean` +5, `lean/ResponseShape/Schemas/Document.lean` +3; K +0, S +0 (`tools/trust_map.py --check` on the final code commit). The build's +142 (Document.lean +139, its schema +3) is recorded in `docs/trust-baseline.json`. The review fixes add +131: the senses route's composition (review F2: `sensesLayer` G[V], `SensesLayer`, `sensesContentOf`, `frozenEnv` D[V], and the grown `check`, `environmentOf`, `formulaCheck`, `sourceUnit`, `unitsOf`, `split`, `documentCase`) and the F3 speedups (`typedFormula`, `Loader.cutsBytes` D[V]); the identity helpers (`Env.version`, `Env.meaningId`, `Loader.sourceIdOf`) are D[I] and F1's `partsPrefix`, `yieldedParts` G[R], none trusted. Each new trusted definition is exercised by a test that can fail (the seeded faults below); the ties pass is a FOLLOW-UPS.md row. | R16 signs the build's +142 (`docs/trust-baseline.json`). The +131: SIGNED by the DRI 2026-10-17 (dri-decisions-20261017b.md #1), recorded with `tools/trust_map.py --allow` in `docs/trust-baseline.json`; condition: the ties pass (FOLLOW-UPS.md, ties-lf-16f) cuts it back by 2026-10-24 |
 | 7 | CPU: the head's check and render on four pilots, over the base, are 0.97 to 1.27 times (`evidence/cpu.json`, 7 repeats, load about 8). Lean's document request is at most 0.253 s: within 1 s Lean CPU and 2 s wall per document check. The review's F3 speedups took the two constitution pilots' render from 1.34 and 1.35 to 1.27 and 1.22 (+0.19 s and +0.09 s): a unit's UTF-8 span check no longer encodes the whole source for every unit, a formula is typed against the route vocabulary decoded once, and the soft document is built once. The rest is the request itself on a 1,100-unit document: about 0.12 s in the mode (the front matter's parse and passes, the document identity's canonical JSON and SHA-256), the rest the shared transport (the frozen JSON reader and the digests of a 360 KB case) and the client's schema check, which R8 requires; SHA-256 and canonical JSON are in the hash-frozen `VE/CertificateWire.lean`. | R4 covers the absolute budgets, which hold. The render ratio on the two constitution pilots (1.27 and 1.22): SIGNED by the DRI 2026-10-17 (dri-decisions-20261017b.md #1) |
 | 8 | Who decides, the senses group (review F2): Lean decides 5 of the 7 senses ledger documents (4 accepted with the prior path's report, 1 rejected with its text); the other 2 keep the retained path with their genuine diagnostics. The public outcome is unchanged: the measurement compares each with the prior path (0 differing) and the A/B lists no difference. | No user-visible delta: none needed |
+| 9 | Trust ties pass for row 6 (infra item ties-lf-16f, 2026-10-18). Re-measured on main `2d4b93206` against the batch's base `85b20fcba`: the +273 is 29 declarations that grew (+288) and 3 that shrank (-15): Document.lean +265, Loader.lean +5, Schemas/Document.lean +3. The build's +142 is 21 grown and the 3 shrunk; the review fixes' +131 is 13 grown (5 of them grew in both). No theorem of `lean/statements.txt` names any of them, so `tools/trust_map.py` can accept no tie, and none is added: the ties remove 0 of the +131 and 0 of the +273. Untied V stays 40,244; the per-file counts, the list of declarations with the theorem that would tie each, and the seeded ties are in "Trust ties pass" below. | R16 (DRI-RULINGS.md): this is the ties pass R16 asks for; it changes no line, class, allowance or signature (`tools/trust-classes.json` and `docs/trust-baseline.json` unchanged). `python3 tools/trust_map.py --check` PASS before and after; seeded ties S1–S4 below each make it exit 1, and S1 and S2b fail `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` |
 
 ## Follow-ups
 
@@ -149,9 +150,95 @@ allow-list; only B9 remains, a located row without its location.
 - A senses refusal carries the route's diagnostic object (`{"unit", "code"}` or the refused reading), which a typed
   error row of its own could carry; then the two retained senses documents are decided too. A `ve.core@0` document
   without `senses` keeps the retained path (no corpus case).
-- R16's ties pass for the new trusted lines (FOLLOW-UPS.md).
+- R16's ties pass for the new trusted lines (FOLLOW-UPS.md): run as infra item ties-lf-16f (row 9, "Trust ties pass"
+  below). It found no existing theorem to tie any of the lines; the theorems that would are listed there.
 - 16e's rights path answers a rejected soft rule with Lean's class code where Python's relay raises the soft route's
   contract code (`decode_rule`); the same reason made this batch's soft path fail closed. No corpus case shows it.
+
+## Trust ties pass (row 9; infra item ties-lf-16f, 2026-10-18)
+
+Method. `tools/trust_map.py`'s classifying pass (`walk`) was run on main with the batch merged (`2d4b93206`), on the
+batch's base (`85b20fcba`) and on the build's last commit before the review fixes (`29949afef`), and every trusted
+declaration (untied D[V] or G[V]) of the three files the batch grew was compared one by one between the trees. For each
+declaration that grew, every theorem of `lean/statements.txt` was searched for one whose `-- uses` line names it (the
+tool's own test of a tie, `classify`): none does, for any of the 29. Every Lean file of the tree was also searched for a
+theorem that names one of them. The only one is `ResponseShape.Encoders.Document.runCaseReported_fits`, an encoder
+theorem: it is not in the dump (the dump reads `lean/VE/Audit.lean` only, seeded tie S3), and its statement (`Fits`)
+fixes the answer's form, not its meaning. There is no `VE.Service.runMode_document` equation, and
+`VE.Service.Document.decodeRowKind_json`, the file's one dumped theorem, names only `decodeRowKind`, `RowKind` and
+`RowKind.json`, which the batch did not grow. So nothing is tied, and `tools/trust-classes.json` is unchanged.
+
+`split` and `documentCase`, which row 6 lists, were edited in place: their lines did not change (20 and 11), so
+they hold none of the +273.
+
+### Per-file counts (untied V lines, `trust_map.py`; base = `85b20fcba`, before = `2d4b93206` (main with the batch merged), after = the same tree, since nothing is tied)
+
+| File | V base | V before | The batch's V | V after | Ties | The batch's V after the ties |
+| --- | --- | --- | --- | --- | --- | --- |
+| `VE/Service/Document.lean` | 901 | 1,166 | +265 | 1,166 | 0 | +265 |
+| `VE/Discourse/Loader.lean` | 625 | 630 | +5 | 630 | 0 | +5 |
+| `ResponseShape/Schemas/Document.lean` | 177 | 180 | +3 | 180 | 0 | +3 |
+| **All files** | **39,941** | **40,244** | **+273** | **40,244** | **0** | **+273** |
+
+All files: +303 between the two trees = this batch's +273 and +30 from items merged between them
+(`VE/EnglishGrammar/Policy.lean` +15, `VE/Norms/Family.lean` +12, `ResponseShape/Schemas/Rights.lean` +6,
+`VE/Core/Layers.lean` +1, `VE/Rights/Scope.lean` -4). K stays 997. S is 10,138 at the base and 10,152 on main; the +14 is
+`VE/Closure/Order.lean`, not this batch. Tied lines stay 263 and the trusted total 51,393. `trust_map.py --check` passes
+before and after, against `109c7de1d` (the merge base) and the allowances introduced since. Of the +131 that the DRI
+signed on condition of this pass (dri-decisions-20261017b.md #1), the ties remove 0, and 0 of the whole +273.
+
+### Declarations no existing theorem ties
+
+Lines are untied V lines: base -> now, and in brackets how many came from the build (B, `85b20fcba..29949afef`) and
+how many from the review fixes (F, `29949afef..2d4b93206`). The last column is a proposal. None of these theorems is
+written or checked in Lean here: the task allows ties to existing theorems only, and no trusted code was added to make
+up for one. Each would need a tree anchor on its `-- uses` line (a K, S or untied [V] declaration other than the one
+it ties).
+
+| File | Declaration | Lines | Why no existing theorem ties it | A theorem that would |
+| --- | --- | --- | --- | --- |
+| `VE/Service/Document.lean` | `sensesLayer` (G[V]) | 0 -> 64 (F 64) | No theorem names it. The senses route's theorems (`VE.Senses.readDocument_ok` and the like) are about `Senses.readDocument`, not the request this function builds or the answer it reads back | A senses wire theorem: `sensesLayer E front raw fences lexicon packs = .ok N` implies `Senses.Run.readCase` answered the request built from the English fences in unit order (their ids, the pack texts, `own`, the work budget, the reading-set units, the defaults) with a reading of status `one` or `open`; `N.projected` is `extendedEnv` (or `frozenEnv`) of that reading's `environment`; and `N.formulas` pairs each fence id with the `formula` of the unit the reading maps the fence to |
+| `VE/Service/Document.lean` | `softContentOf` | 0 -> 24 (B 24) | No theorem names it | `softContentOf L … kind content = .ok (.soft c, mid)` for `content = {"norm": v}` implies that `SoftNorms.Wire.decodeSoftNorm se (wireJson 257 content) = .ok N` for `L.rules = some se`, with `c = softCanonical N v` and `mid = nullableMeaningId L.extended.profiles L.extended.envId c`. Every other content's answer is `contentOf L.extended …`'s |
+| `VE/Service/Document.lean` | `check` | 56 -> 72 (B 11, F 5) | No theorem names it. `ResponseShape.Encoders.Document.document_fits` names `documentCase` and fixes form only (outside the dump) | A runner-level wire theorem per group (as rd-9's list proposes for its runners): `check text … = .ok c` implies that each unit row is `sourceUnit`'s answer under the layer the environment selects (`softLayer`'s `E″` under `Env.soft`, `sensesLayer`'s projection under `senses`, `rightsDoc` under `rights@0`). It also implies that a claim graph passed `admitGraph`, so that the route's admission soundness (`VE.SoftNorms.Run.runAdmission_sound`, `VE.Norms.Run.runAdmission_sound`) applies to it |
+| `VE/Service/Document.lean` | `softSource` (G[V]) | 0 -> 14 (B 14) | No theorem names it | `softSource env ns = .ok src` implies `SoftNorms.Wire.decodeSoftSource (wireJson 257 env) (the wire form of ns) = .ok src` and that the soft document hash of the same pair is defined. Its error branch only maps to `CheckerUnavailable` |
+| `VE/Service/Document.lean` | `extendedEnv` | 0 -> 13 (B 13) | No theorem names it | `extendedEnv j = .ok E` implies `Standalone.validated j (typing := true) = .ok E.checked` with the first-order family, `Route.Run.decodeRouteVocabulary E.checked.envelope = .ok E.rv`, `Route.Gate.profilesOf j = .ok E.profiles`, and `Standalone.environmentIdOf E.profiles j = .ok E.envId`. These are the identities every soft or senses unit's `meaning_id` is bound to |
+| `VE/Service/Document.lean` | `frozenEnv` | 0 -> 13 (F 13) | No theorem names it | `frozenEnv j = .ok E` implies `Standalone.decodeLegacy j = .ok l` with `l` a `.v0` envelope, `E.legacy = some l`, `E.profiles = l.profiles` and `Standalone.legacyEnvironmentId l j = .ok E.envId` |
+| `VE/Service/Document.lean` | `sensesContentOf` | 0 -> 11 (F 11) | No theorem names it | An English fence the senses route read to `ast` answers `formulaOf N.projected ast`'s formula and id; one it read as a preamble line or an open unit answers none; any other content answers `contentOf N.projected …`'s |
+| `VE/Service/Document.lean` | `environmentOf` | 31 -> 41 (B 7, F 3) | No theorem names it. `environmentOf` in `VE/WireContract/Hooks/Norms.lean` is another declaration | A gate theorem: `environmentOf env units senses = .ok E` implies either that `Standalone.isLegacy env`, `senses` and `E` is `frozenEnv env`'s, or that every listed profile is in `ownedProfiles` and `E` is `decodedEnvironment env (blockOf (listedProfiles env))`'s. Under `soft-norms@0` without `rights@0`, with `units` an array, it also implies `softSource env (softSourceNorms units)` succeeded |
+| `VE/Service/Document.lean` | `contentOf` | 55 -> 65 (B 10) | No theorem names it. `contentOf` in `VE/Discourse/WellFormed.lean` is another declaration | The norm branch the batch added: for a `{"norm": …}` content under `norm-defaults@0`, or under `norms@0` without a block, an answer `(.norm node, mid)` has `Norms.Wire.decodeNorm content = .ok node` and `mid = Route.Wire.meaningId E.profiles E.envId (Alternatives.Wire.encodeNode node)` |
+| `VE/Service/Document.lean` | `admitGraph` | 67 -> 77 (B 10) | No theorem names it | `admitGraph E … = .ok ()` with `E.block = .none` implies that the route the environment selects answered the document it built: under `Env.soft`, `SoftNorms.Run.runAdmission "admission" (wireJson 257 E.lower) (wireJson 257 document) = .ok a`; under `usesNorms` (without `norm-defaults@0`), `Norms.Run.runAdmission`'s. Each route's `runAdmission_sound` then gives the meaning |
+| `VE/Service/Document.lean` | `softRules` (G[V]) | 0 -> 10 (B 10) | No theorem names it | `softRules x flat = .ok none` exactly when no unit of `flat` holds norm content, and `.ok (some se)` implies `se` is the `se` of `SoftNorms.Wire.decodeSoftSource` of `x` with every `soft__` predicate removed (`_rule_source`) and no norms |
+| `VE/Service/Document.lean` | `softSourceNorms` | 0 -> 10 (B 10) | No theorem names it | Through `softSource`'s theorem above: the soft source the mode checks is `decodeSoftSource` of the environment and of exactly the contents of the top-level `norm` units that hold `norm`, in order (Python's `_soft_contents`) |
+| `VE/Service/Document.lean` | `SoftLayer` | 0 -> 9 (B 9) | A structure: its fields appear only as types; a structure's own text cannot tie it | The `softLayer` theorem below, which names its fields |
+| `VE/Service/Document.lean` | `softLayer` (G[V]) | 0 -> 9 (B 9) | No theorem names it | `softLayer E d raw = .ok L` implies a `src` with `softSource E.lower (softSourceNorms (Json.arr raw.toArray)) = .ok src` and `SoftNorms.Wire.primeJson src.D (wireJson 257 E.lower) = .ok p`, such that `extendedEnv p = .ok L.extended`, `L.openNames = d ++ SoftNorms.decisionNames src.D` and `softRules p (partsPrefix raw) = .ok L.rules` |
+| `VE/Service/Document.lean` | `SensesLayer` | 0 -> 7 (F 7) | A structure, as above | The `sensesLayer` theorem above |
+| `VE/Service/Document.lean` | `Env.regulates` | 0 -> 7 (B 7) | No theorem names it | With `usesNorms` below: an equation with the norms route's own dispatch test `Norms.Run.usesNormsPath` (Python's `_uses_norms`) on the admission request `admitGraph` sends under `norms@0` |
+| `VE/Service/Document.lean` | `typedFormula` | 0 -> 7 (F 7) | No theorem names it | An equation with the `check` mode's decoder: for an `E` with `E.checked.envelope.family = .fol` and `Route.Run.decodeRouteVocabulary E.checked.envelope = .ok E.rv` (what `decodedEnvironment` and `extendedEnv` build), `(typedFormula E ast).isOk = (Standalone.decodeTyped E.checked ast true).isOk`. The docstring claims this (the F3 speedup decodes the vocabulary once), and it should hold, since `Route.Run.decodeRouteVocabulary` is defined as `Route.Typed.routeVocabulary`; no theorem states it |
+| `VE/Service/Document.lean` | `Env` | 11 -> 17 (B 3, F 3) | A structure, as above (the fields `generated` and `legacy`) | The `extendedEnv`, `frozenEnv` and `sensesLayer` theorems above, which fix both fields |
+| `VE/Service/Document.lean` | `formulaCheck` | 7 -> 13 (F 6) | No theorem names it | `formulaCheck E ast = .ok ()` implies `Standalone.legacyTyped E.json ast true` succeeds when `E.legacy` is some envelope, and `typedFormula E ast` succeeds otherwise |
+| `VE/Service/Document.lean` | `unitsOf` | 27 -> 33 (B 1, F 5) | No theorem names it | A partition theorem: `unitsOf … source … raw = .ok us` implies that the spans of `us`, in order, start at 0, each start where the previous one ends, end at `source.utf8ByteSize`, and cut no UTF-8 character (`Loader.cutsBytes source.toUTF8 a b = false`). It also implies that each unit is `sourceUnit`'s answer for its JSON |
+| `VE/Service/Document.lean` | `runCaseReported` (G[V]) | 2 -> 8 (B 6) | Only `ResponseShape.Encoders.Document.runCaseReported_fits` names it: outside the dump, and form only | A located-row theorem: when `documentCase j` fails and `locatedOf j message = some (text, at_)`, a row's `path` is the `path` of `Standalone.reportedModel`'s row for the one refused model, with that row's `error`, and a row's `span` is the span `Standalone.parseRejection` gives for the first refused strict fence (the owning modes' answers, row 4) |
+| `VE/Service/Document.lean` | `sourceUnit` | 49 -> 53 (B 2, F 2) | No theorem names it | Part of the `unitsOf` theorem: a unit's `content` and `meaningId` are the answer of the content function its layer selects (`rightsContentOf`, `softContentOf`, `sensesContentOf` or `contentOf`), and a stated `meaning_id` equals it |
+| `VE/Service/Document.lean` | `Env.soft`, `usesNorms` | 0 -> 3 each (B 3 each) | No theorem names them | `usesNorms`: the `usesNormsPath` equation above. `Env.soft` is a two-profile test (`soft-norms@0` without `rights@0`). Only the routing theorems above (`admitGraph`, `check`) give it meaning; an equation with its own definition would be vacuous |
+| `VE/Service/Document.lean` | `readingSetHasStrayNull` (G[V]) | 14 -> 16 (B 2) | No theorem names it | Its only reader is `strayNull` (D[R]), so it can only refuse (a stray `null` keeps the retained path). That makes it a classification question for the DRI ([R]), not a tie |
+| `VE/Discourse/Loader.lean` | `cutsBytes` | 0 -> 4 (F 4) | No theorem names it. `cutsCharacter` is defined from it, so an equation with it would move the trust to the less direct side | None the tool can take: its meaning is Lean core's `String.fromUTF8?`, and core is outside the tree. The `unitsOf` partition theorem above states what the mode relies on |
+| `VE/Discourse/Loader.lean` | `documentMetadata` | 3 -> 4 (F 1, the `senses` key) | A key list; no theorem names it | None: it is a table whose value is the statement. The loader tests check its agreement with Python's `_split` |
+| `ResponseShape/Schemas/Document.lean` | `row` (+2), `file` (+1) (G[V]) | 15 -> 17, 10 -> 11 (B 3) | Response shapes: no dumped theorem names them. The encoder theorems (`locatedRow_fits`, `runCaseReported_fits`) read the generated shape through `skel%`, not these declarations, and are outside the dump | As in rd-9's pass: a dumped theorem that the encoder's `skel%` shape is this declaration's render. Even then, it would fix only the answer's form |
+
+`decodedEnvironment` (41 -> 34), `rightsDoc` (27 -> 23) and `ownedBeneath` (4 -> 0) shrank; they are untied at the base
+and now. One tie outside this batch's lines is available: `VE.Service.Document.decodeRowKind_json` is a decoder round
+trip (`decodeRowKind rights j = .ok k → k.json = j`) that the tool accepts for `decodeRowKind` (9 lines; seeded tie
+S2a). That declaration predates the batch, so it is left to a later pass and not added here.
+
+### Seeded ties (each restored after its run; the tree was clean afterwards)
+
+| Seed | Temporary change | `python3 tools/trust_map.py --check` |
+| --- | --- | --- |
+| S1 | `sensesLayer` tied to an unrelated theorem, `VE.Service.Document.decodeRowKind_json` (`tools/trust-classes.json`) | exit 1: "VE.Service.Document.sensesLayer: the statement of VE.Service.Document.decodeRowKind_json does not mention VE.Service.Document.sensesLayer of VE.Service.Document". `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` fails (`assert 1 == 0`) |
+| S2a (control) | `decodeRowKind` tied to `decodeRowKind_json`, the round trip that names it | exit 0: "tied +9 … VE/Service/Document.lean: trusted -9". The ratchet test passes. A tie the tool can verify is accepted, so S1's and S2b's failures come from the missing mention, not from the tool |
+| S2b | S2a's tie with that theorem's `-- uses` line broken: `VE.Service.Document.decodeRowKind@VE.Service.Document` removed (`lean/statements.txt`) | exit 1: "VE.Service.Document.decodeRowKind: the statement of VE.Service.Document.decodeRowKind_json does not mention VE.Service.Document.decodeRowKind of VE.Service.Document". The ratchet test fails |
+| S3 | `runCaseReported` tied to the encoder theorem `ResponseShape.Encoders.Document.runCaseReported_fits` | exit 1: "tying theorem ResponseShape.Encoders.Document.runCaseReported_fits is not in statements.txt" |
+| S4 | An existing tie's `-- uses` line broken: `VE.Readings.softX@VE.Readings.SoftDefaults` removed from `VE.Readings.softPremisesIn_fill` | exit 1: "VE.Readings.softX: the statement of VE.Readings.softPremisesIn_fill does not mention VE.Readings.softX of VE.Readings.SoftDefaults" |
 
 ## Seeded faults
 
