@@ -635,6 +635,13 @@
    "reason": "lf-16f review fixes: the senses route's composition and the F3 speedups, VE/Service/Document.lean +126, VE/Discourse/Loader.lean +5 (ties pass by 2026-10-24)",
    "signature": "SIGNED by the DRI 2026-10-17 (dri-decisions-20261017b.md #1)",
    "commit": "4e2c73dec5d0c60db87122a45242f69633c4ba19"
+  },
+  {
+   "class": "V",
+   "lines": 34,
+   "reason": "lf-18 (lean-first batch 18): the metered evaluator as a service mode, new Lean-owned behaviour replacing the deleted Python evaluation authority: VE/Route/MeteredTrace.lean +30 (Trace, Row, Trace.rows, Trace.rowsOf, Row.json, Trace.json), ResponseShape/Skeletons.lean +3 (metered), VE/Service/Protocol.lean +2 (the metered mode), ResponseShape/Schemas.lean +1; S -3 (VE/Limits.lean replaces three S copies), K +0; tested by tests/test_metered_lean.py and the relay gate's service:metered mutants; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
   }
  ]
 }
