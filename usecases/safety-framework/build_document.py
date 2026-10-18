@@ -531,21 +531,88 @@ def spans(source):
 
 def situation_model(env, case_id):
     """The case as a model over the document environment (regulated tables empty)."""
-    import run as R
     from ve.model import FiniteModel
-    atoms = R.fact_atoms() | R.case_atoms(R.CASES[case_id])
-    relations = {p: [] for p in env.predicates}
-    for atom in atoms:
-        relations[atom[0]].append(list(atom[1:]))
-    return FiniteModel.from_dict(env, {"complete": True, "domains": R.DOMAINS,
-                                       "constants": {c: c for c in env.constants},
-                                       "relations": {p: sorted(r) for p, r in relations.items()}})
+    return FiniteModel.from_dict(env, {"complete": True, **hint(case_id, env.predicates)})
+
+
+# fsf-r1 (2026-10-18): a reading set whose every reading is one rule of rules.d1.ve carries that rule as its
+# content under `readings@1` (composition S1 and S2a on the soft chain), so that VE separates and checks its
+# readings itself. A reading with no rule or with several rules has no single content and stays pending (W2).
+FORCE_WORDS = {"rs4_holistic": "should", "rs4_within": "should", "rs4_elicitation": "must"}
+
+
+def content_bearing(set_id):
+    return all(len(rules) == 1 and " or " not in rules[0] for rules in READINGS[set_id][1].values())
+
+
+def environment():
+    """The D1 environment: the vocabulary's profiles and `readings@1`."""
+    raw = V.environment()
+    raw["profiles"] = sorted({*raw["profiles"], "readings@1"})
+    return raw
+
+
+def content_set(env, set_id, uid, unit_span, source):
+    """The content-bearing set of `set_id` on unit `uid`; its situations are recorded by `record_situations`.
+    Twins share one rule name, so that VE can see when they differ only in force (E14)."""
+    from ve.readings import s1_content_meaning_id
+    harness_set, choices = READINGS[set_id]
+    readings = []
+    for choice, (rule_id,) in choices.items():
+        norm = {**json.loads(T.parsed_rule(rule_id)), "name": set_id.replace("_", "-")}
+        reading = {"id": choice, "kind": "norm", "content": {"norm": norm}}
+        readings.append({**reading, "meaning_id": s1_content_meaning_id(env, set_id, reading),
+                         "admission": {"who": "translator", "why": f"{harness_set} = {choice}: rule {rule_id} of "
+                                                                     "rules.d1.ve",
+                                       "distinguishing_models": {other: "pending" for other in choices
+                                                                 if other != choice}}})
+    reading_set = {"id": set_id.replace("_", "-"), "unit": uid, "version": 1, "status": "open", "readings": readings}
+    if set_id in FORCE_WORDS:
+        at = source.index(f" {FORCE_WORDS[set_id]} ".encode(), unit_span[0]) + 1
+        reading_set["source_word"] = [at, at + len(FORCE_WORDS[set_id])]
+    return reading_set
+
+
+def record_situations(raw_env, units, reading_sets):
+    """Each content-bearing set with the situations Python's search finds for its pairs, D1's distinguishing case
+    of the set tried first. Lean checks every one when the document is loaded."""
+    from ve.readings_route import document_wire
+    from ve.readings_s1 import record_situations as record, search
+    wire = document_wire([{"id": u["id"], "kind": u["kind"] if type(u["kind"]) is str else u["kind"][0],
+                           "content": u.get("content")} for u in units], reading_sets)
+    harness = {set_id.replace("_", "-"): READINGS[set_id][0] for set_id in READINGS}
+    recorded = []
+    for reading_set in reading_sets:
+        if "situations" not in reading_set and "models" not in reading_set:
+            found = search(raw_env, wire, reading_set["id"], hints=[hint(DISTINGUISHING[harness[reading_set["id"]]])])
+            reading_set = record(reading_set, {k: v for k, v in found.items() if v is not None})
+        recorded.append(reading_set)
+    return recorded
+
+
+def hint(case_id, predicates=None):
+    """A case of cases.json as a base over `predicates` (default: the author vocabulary): the level tables and the
+    case facts, every other table empty."""
+    import run as R
+    relations = {p: [] for p in (T.base_environment().predicates if predicates is None else predicates)}
+    for atom in R.fact_atoms() | R.case_atoms(R.CASES[case_id]):
+        if atom[0] in relations:
+            relations[atom[0]].append(list(atom[1:]))
+    return {"domains": R.DOMAINS, "constants": {c: c for c in T.base_environment().constants},
+            "relations": {p: sorted(rows) for p, rows in relations.items()}}
+
+
+def open_term_declarations(names=None):
+    return [{"name": name, "arguments": [], "decided_by": decider, "necessary": [], "sufficient": [],
+             "factors": [what] + factors, "precedents": [], "jurisdiction": "fsf_v3_1", "version": 1}
+            for name, (decider, what, factors) in OPEN_TERMS.items() if names is None or name in names]
 
 
 def build(source):
     from ve import ast as A
-    raw_env = V.environment()
-    env = T.environment()
+    from ve.softnorms import SoftEnvironment
+    raw_env = environment()
+    env = SoftEnvironment(raw_env)
     facts = {block_id: formulas for block_id, _, formulas in T.facts()}
     used_rules, units, reading_sets, records = set(), [], [], []
     for (anchor, uid, spec), span in zip(UNITS, spans(source)):
@@ -567,7 +634,11 @@ def build(source):
                 used_rules.add(spec["rule"])
                 unit["content"] = {"norm": json.loads(T.parsed_rule(spec["rule"]))}
                 record["rule"] = spec["rule"]
-        if "reading_set" in spec:
+        if "reading_set" in spec and content_bearing(spec["reading_set"]):
+            reading_sets.append(content_set(env, spec["reading_set"], uid, span, source))
+            record["reading_set"] = spec["reading_set"]
+            record["reading_content"] = True
+        elif "reading_set" in spec:
             set_id = spec["reading_set"]
             harness_set, choices = READINGS[set_id]
             model = situation_model(env, DISTINGUISHING[harness_set])
@@ -590,11 +661,9 @@ def build(source):
             record["open_terms"] = spec["meaning"]["open"]
         units.append(unit)
         records.append(record)
-    open_terms = [{"name": name, "arguments": [], "decided_by": decider, "necessary": [], "sufficient": [],
-                   "factors": [what] + factors, "precedents": [], "jurisdiction": "fsf_v3_1", "version": 1}
-                  for name, (decider, what, factors) in OPEN_TERMS.items()]
     meta_block = {"format": "ve-document@1", "environment": raw_env, "units": units,
-                  "open_terms": open_terms, "reading_sets": reading_sets}
+                  "open_terms": open_term_declarations(),
+                  "reading_sets": record_situations(raw_env, units, reading_sets)}
     document = b"---\n" + json.dumps(meta_block, indent=1, ensure_ascii=False).encode() + b"\n---\n" + source
     return document, records
 
