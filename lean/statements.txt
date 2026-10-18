@@ -179,6 +179,14 @@ theorem Iceberg.water_unchanged
   ∀ (t : Iceberg.Tub) (p : Iceberg.Process t), t.rho * p.finalInclusionVolume = t.inclusionMass → p.finalHeight = t.rim
   -- uses Iceberg.Process.finalHeight@Iceberg Iceberg.Process.finalInclusionVolume@Iceberg Iceberg.Process@Iceberg Iceberg.Q@Iceberg Iceberg.Tub.inclusionMass@Iceberg Iceberg.Tub.rho@Iceberg Iceberg.Tub.rim@Iceberg Iceberg.Tub@Iceberg
   -- expr 1320852752
+theorem VE.Acts.Examples.acceptsTable_terms
+  ∀ (t : VE.Acts.Term), (VE.Acts.Examples.acceptsTable.any fun x => x.fst.ctorIdx == t.ctorIdx) = Bool.true
+  -- uses VE.Acts.Examples.acceptsTable@VE.Acts.GrammarExamples VE.Acts.Lexical.Tok@VE.Acts.Syntax VE.Acts.Term.ctorIdx@VE.Acts.Syntax VE.Acts.Term@VE.Acts.Syntax
+  -- expr 3048015348
+theorem VE.Acts.Examples.tableToks_kinds
+  ∀ (k : VE.Acts.Lexical.Tok), (VE.Acts.Examples.tableToks.any fun x => x.ctorIdx == k.ctorIdx) = Bool.true
+  -- uses VE.Acts.Examples.tableToks@VE.Acts.GrammarExamples VE.Acts.Lexical.Tok.ctorIdx@VE.Acts.Syntax VE.Acts.Lexical.Tok@VE.Acts.Syntax
+  -- expr 1677402360
 theorem VE.Acts.listing_limit
   ∀ {α : Type} [inst : DecidableEq α] (N L : Nat) (parsed : Option (List (VE.Grammar.Tree VE.Acts.Lexical.Tok)))
     (μ : VE.Grammar.Tree VE.Acts.Lexical.Tok → Option α),

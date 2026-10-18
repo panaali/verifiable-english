@@ -33,6 +33,8 @@
 'Iceberg.root_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Iceberg.stage_within_capacity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'Iceberg.water_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.Examples.acceptsTable_terms' does not depend on any axioms
+'VE.Acts.Examples.tableToks_kinds' does not depend on any axioms
 'VE.Acts.listing_limit' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_nodup' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_ok' depends on axioms: [propext, Quot.sound]
