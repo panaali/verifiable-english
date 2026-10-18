@@ -219,15 +219,15 @@ def test_a_set_carries_content_exactly_when_each_reading_is_one_rule_and_that_ru
             assert source[start:stop].decode() == word
     assert content == {"rs2_misuse", "rs2_ml_rd", "rs4_holistic", "rs4_within", "rs4_elicitation", "rs6_insider",
                        "rs9_bullet3"}
-    saved = json.loads((HERE / "readings.json").read_text())["sets"]
+    saved = json.loads((HERE / "readings" / "results.json").read_text())["sets"]
     assert {s for s, v in saved.items() if v["content"]} == content
 
 
 def test_ve_decides_every_content_bearing_set_and_keeps_its_unit_open():
-    """readings.json as `readings_r1.py` wrote it: VE (Lean) admitted each part document, found its readings
+    """readings/results.json as `readings_r1.py` wrote it: VE (Lean) admitted each part document, found its readings
     CONFLICT-FREE with a checked model of its premises, and showed a separation; the unit stays OPEN. The whole
     document's verdict stays UNKNOWN while any set has a pending reading."""
-    saved = json.loads((HERE / "readings.json").read_text())
+    saved = json.loads((HERE / "readings" / "results.json").read_text())
     for set_id, entry in saved["sets"].items():
         if not entry["content"]:
             assert entry["pending"] and "refused" not in entry, set_id

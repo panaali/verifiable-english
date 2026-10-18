@@ -2,7 +2,7 @@
 
     python usecases/safety-framework/measure_r1.py [--check]
 
-Reads saved files only: `spans.json`, `coverage.json`, `results.json` and `readings.json` (from `readings_r1.py`)
+Reads saved files only: `spans.json`, `coverage.json`, `results.json` and `readings/results.json` (from `readings_r1.py`)
 here, and the Oct 1 `spans.json` and `coverage.json` saved in `docs/usecases/safety-framework/fsf-r1/oct1/`
 (main's copies at 93131f96, last changed by 2a5bd3fe on 2026-10-01). It writes `units.json` and `gaps.json` beside
 the Oct 1 copies. `--check` fails if either would change.
@@ -85,7 +85,7 @@ def measure():
     spans = load(HERE / "spans.json")["units"]
     oct1 = {u["id"]: u["status"] for u in load(EVIDENCE / "oct1" / "spans.json")["units"]}
     results = load(HERE / "results.json")
-    readings = load(HERE / "readings.json")["sets"]
+    readings = load(HERE / "readings" / "results.json")["sets"]
     rows = {r["id"]: r for r in results["comparison"]}
     by_rule = {}
     for item_id, item in results["items"].items():

@@ -41,7 +41,7 @@ texts not chosen. The PDF states no licence, so it is not committed here.
 | [results.json](results.json) | everything the harness computed |
 | [build_document.py](build_document.py), [spans.json](spans.json), [coverage.json](coverage.json) | the byte-by-byte accounting of the source text |
 | [reference.py](reference.py) | a second reading of the commitments in plain Python, which shares no code with VE |
-| [readings_r1.py](readings_r1.py), [readings.json](readings.json) | fsf-r1: VE's own answer on every reading set that carries content |
+| [readings_r1.py](readings_r1.py), [readings/results.json](readings/results.json) | fsf-r1: VE's own answer on every reading set that carries content |
 | [measure_r1.py](measure_r1.py) | fsf-r1: each unit's status on Oct 1 and today, and the gaps by feature ([evidence](../../docs/usecases/safety-framework/fsf-r1/)) |
 | [../../tests/test_safety_framework.py](../../tests/test_safety_framework.py) | the test: it fails on any mismatch with the key or any change in a result |
 
@@ -61,7 +61,7 @@ soft chain, readings gained rd-1 to rd-9, the Lean-first relocation merged, and 
   merged on the soft chain. A set whose readings are each one rule now gives each reading that rule as its
   content: RS2 on two units, RS4holistic, RS4within, RS4elicitation, RS6 and RS9.
   - On its own part document, Lean admits each set and finds a separating situation. It answers CONFLICT-FREE
-    under every reading, with a checked model of the premises ([readings.json](readings.json)).
+    under every reading, with a checked model of the premises ([readings/results.json](readings/results.json)).
   - Each unit stays OPEN, because the text has two readings and a translation of someone else's text never picks
     one.
 - **Eleven sets still have a pending reading.** Either the reading has no rule (RS3 F, RS4aim intent, RS7 M, RS8
