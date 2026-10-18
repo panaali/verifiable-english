@@ -121,6 +121,29 @@ Averages (minutes: the recorded Mac seconds of the selected units, summed, / 60)
 | shadow (10) | plan | 343.4 / 114.2 / 0 | 343.4 / 114.2 / 0 |
 | shadow (10) | r1 | 343.4 / 114.2 / 0 | 343.4 / 114.2 / 0 |
 
+The merges that edit `ve/assurance-manifest.json` or `lean/checkers.lock` (from the fixed merge commits), with the digests each adds to (+) or drops from (-) each pinned checker:
+
+| Merge | Manifest | Pins |
+|---|---|---|
+| `4667e8de6` | edited | ve_service +1 -0 |
+| `b96f04a5a` | edited | ve_service +2 -0 |
+| `b98d87947` | edited | ve_service +7 -0 |
+| `16a02693a` |  | ve_service +5 -0 |
+| `8cbb3049f` | edited | rust_jsonl +2 -0, ve_service +10 -0 |
+| `3160fb800` | edited | rust_jsonl +5 -0, ve_service +8 -0 |
+| `d7ea7228b` | edited | ve_service +22 -0 |
+| `8bc65a907` | edited | ve_service +12 -0 |
+| `85b20fcba` |  | ve_service +3 -0 |
+| `f811fa69c` | edited | ve_service +5 -0 |
+| `b5248038e` | edited | ve_service +2 -0 |
+| `109c7de1d` | edited | ve_service +8 -0 |
+| `a4676c0b7` | edited |  |
+| `c4d7ea565` | edited | ve_service +22 -0 |
+| `05b85b631` | edited |  |
+| `e7f6968d4` | edited |  |
+
+14 merges edit the manifest, 13 the pins.
+
 Upper bound of any narrowing of the manifest and pin rules: the units only their reasons select (plans without a full-suite reason), as if every one were dropped:
 
 | Label | Changes | Manifest only | Pins only | Either | Plans with any | Per plan |
@@ -139,8 +162,9 @@ What the tables show:
   shared-field narrowing (`../select/REPORT.md` row "5.") already covers every manifest edit made since
   2026-10-14. Candidates (a) and (b) of the task (presence changes, IMPORT_FIELDS edits) occur in none of
   these 54 merges.
-- **The pins decide no plan.** 13 merges edit `lean/checkers.lock`. Every one of them adds `ve_service`
-  digests: 1 to 22 per merge, 2 merges also add `rust_jsonl` digests, and no merge only removes pins. A
+- **The pins decide no plan.** 13 merges edit `lean/checkers.lock` (the edits table above). Every one of
+  them adds `ve_service` digests: 1 to 22 per merge, 2 merges also add `rust_jsonl` digests, and no merge
+  drops a pin. A
   pin change is therefore a new service build, and every service user is selected through the Lean change
   anyway. This holds with or without the binary cutoff: a changed `ve_service` digest selects all its
   runners (`service_impact`). The pin readers (293 units) are almost all service users or readers of the
