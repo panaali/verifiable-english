@@ -117,8 +117,10 @@ joined either way round raising the earlier row's text (D-31's order), and the c
   F6, a follow-up).
 - **Tests:** the selected tests (`mac-pytest.sh --select`, merge base `802b8ff9b`, on `3dbb2184`) ran 66 units, exit
   0, 0 failed. After the sync with main (`01f74cf4a`) they ran again on `04435990` (the code is final; only this
-  report changes after it): 66 units, exit 0, 0 failed. No test in `main-known-red.txt` was hit. The full gate is the
-  chain's.
+  report changes after it): 66 units, exit 0, 0 failed. No test in `main-known-red.txt` was hit. After the review
+  fixes, on `21e9715a`: 74 units (lints, `lake build`, `lean/audit.py` and 73 test files). 73 passed. One failed:
+  `test_ap2_limits_provisional.py`, because section 9 quoted the retracted phrase. With section 9 reworded, that
+  file's 3 tests pass. No test in `main-known-red.txt` was hit. The full gate is the chain's.
 - **Overlap:** `tools/layer_policy.py` is also edited by `lean-first/b18`, in a different hunk (lines 116 and 141;
   mine is 135). `git merge-tree HEAD lean-first/b18` merges it cleanly; that branch's other conflicts with this one
   are generated inventories (R12). No other in-flight branch touches `lean/VE/Acts/` or the plan and spec files.
@@ -200,7 +202,7 @@ evidence test (`test_ap2_limits_provisional.py` reads the saved measurement).
 | Finding | Fix | Regression test |
 |---|---|---|
 | F1 (B): seven `checkVocab` and limit mutants survive | the class: a D-31 table with one vocabulary per row and every pair in D-31's order; 128 and 129 distinct frames; `se3k` as head, marker and adverb, `-in` as marker, `Freely` as adverb, inner `-` and `'` accepted; an adverb equal to a head word and to a marker word; every reserved word of 1.2 as head, marker, modifier and adverb word (*to* and *for* accepted as markers); `take`/`taken`, `in`/`into` and `carry on` (string prefixes and later words are not word prefixes or first words); `rawCap`, `stepBudget` and `maxReadings` pinned | `tests/test_acts_vocab_mutants.py` (54 mutants, generated rows dropped and swapped included; the review's probe passes) |
-| F2 (B): "no longer provisional" without the plan's condition | `rawCap` and `stepBudget` say "provisional (plan 11, deferred item 5)"; section 2, its plan row and `measure_n.py`'s docstring say the M1 frames are the measurer's and the values stay provisional; deferred item 5 stays open | `tests/test_ap2_limits_provisional.py` |
+| F2 (B): the limits called final without the plan's condition | `rawCap` and `stepBudget` say "provisional (plan 11, deferred item 5)"; section 2, its plan row and `measure_n.py`'s docstring say the M1 frames are the measurer's and the values stay provisional; deferred item 5 stays open | `tests/test_ap2_limits_provisional.py` |
 | F3 (C): AP-1's names in `Syntax.lean`, layer of `Lexical` | follow-up (ap-1a moves them; section 7.2) | — |
 | F4 (C): `maxReadings` copies `VE.Readings.maxChoices` | follow-up (pinned at 64 by a `#guard` meanwhile) | — |
 | F5 (C): SR16's bounded re-check and DRI go not recorded | follow-up for the DRI (section 1) | — |
