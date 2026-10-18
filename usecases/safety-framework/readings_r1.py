@@ -7,7 +7,7 @@ query was UNKNOWN and the ALL, SOME and NONE answers came from the harness's per
 sets have since merged on the soft chain (composition S1 and S2a; readings-defaults; the rd-9 soft chain).
 `build_document.py` now gives every set whose readings are each one rule of `rules.d1.ve` that rule as content.
 
-This writes `docs/usecases/safety-framework/fsf-r1/readings.json`: for every set, either the reading that keeps it
+This writes `readings.json` here: for every set, either the reading that keeps it
 pending (no rule, or several), or VE's answer on its part document (the set's source unit alone, its open terms and
 the set: L70, no whole-document readings run on a large document) from `ve document check`, with the English VE
 shows; and VE's answer on the whole D1 document. A unit with an open set stays OPEN: the text has two readings, and
@@ -25,7 +25,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import build_document as B  # noqa: E402
 
-OUT = HERE.parents[1] / "docs" / "usecases" / "safety-framework" / "fsf-r1" / "readings.json"
+OUT = HERE / "readings.json"
 
 
 def set_units():

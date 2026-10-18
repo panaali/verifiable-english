@@ -1,0 +1,757 @@
+{
+ "rs1_bullet2": {
+  "pending": {
+   "g": "RS1 = g: rules f9-acc, f9-dm, f9-sec of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s135-bullet2"
+ },
+ "rs1_bullet3": {
+  "pending": {
+   "g": "RS1 = g: rules f10-acc, f10-dm-same or f10-dm-diff, f10-sec of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s135-bullet3"
+ },
+ "rs1_bullet4": {
+  "pending": {
+   "g": "RS1 = g: rules f11-acc, f11-dm, f11-sec of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s135-bullet4"
+ },
+ "rs2_misuse": {
+  "conflict": "CONFLICT-FREE",
+  "english": [
+   "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 1 is read.",
+   "Read sentence 1 as *Every proposal must not proceed, if both of the following hold:\n  (a) that proposal is external;\n  (b) there is a level such that both that proposal has reached that level and that level is misuse, unless that proposal is classified as \"governance_found_acceptable\"*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+  ],
+  "findings": {
+   "SeparatedByActOnly": 0,
+   "SeparatedByDecisionOnly": 0
+  },
+  "pairs": [
+   {
+    "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+    "wording": "E24"
+   }
+  ],
+  "premises": "model",
+  "re_expressed": true,
+  "readings": {
+   "p": {
+    "guard": [
+     "and",
+     [
+      "unary",
+      "external",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "exists",
+      "level",
+      [
+       "and",
+       [
+        "binary",
+        "reached",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "misuse",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ]
+    ],
+    "name": "rs2-misuse",
+    "over": [],
+    "predicate": "proceed",
+    "sign": false,
+    "unless": [
+     [
+      "unary",
+      "governance_found_acceptable",
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   },
+   "u": {
+    "guard": [
+     "unary",
+     "external",
+     [
+      "var",
+      0
+     ]
+    ],
+    "name": "rs2-misuse",
+    "over": [],
+    "predicate": "proceed",
+    "sign": false,
+    "unless": [
+     [
+      "unary",
+      "governance_found_acceptable",
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   }
+  },
+  "route": "superposed",
+  "status": "OPEN",
+  "unit": "s212-step2"
+ },
+ "rs2_ml_rd": {
+  "conflict": "CONFLICT-FREE",
+  "english": [
+   "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 1 is read.",
+   "Read sentence 1 as *Every proposal must not proceed, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that both that proposal has reached that level and that level is classified as \"ml_rd_and_misalignment\", unless that proposal is classified as \"governance_found_acceptable\"*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+  ],
+  "findings": {
+   "SeparatedByActOnly": 0,
+   "SeparatedByDecisionOnly": 0
+  },
+  "pairs": [
+   {
+    "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+    "wording": "E24"
+   }
+  ],
+  "premises": "model",
+  "re_expressed": true,
+  "readings": {
+   "p": {
+    "guard": [
+     "and",
+     [
+      "or",
+      [
+       "unary",
+       "external",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "high_risk",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     [
+      "exists",
+      "level",
+      [
+       "and",
+       [
+        "binary",
+        "reached",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "ml_rd_and_misalignment",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ]
+    ],
+    "name": "rs2-ml-rd",
+    "over": [],
+    "predicate": "proceed",
+    "sign": false,
+    "unless": [
+     [
+      "unary",
+      "governance_found_acceptable",
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   },
+   "u": {
+    "guard": [
+     "or",
+     [
+      "unary",
+      "external",
+      [
+       "var",
+       0
+      ]
+     ],
+     [
+      "unary",
+      "high_risk",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "name": "rs2-ml-rd",
+    "over": [],
+    "predicate": "proceed",
+    "sign": false,
+    "unless": [
+     [
+      "unary",
+      "governance_found_acceptable",
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   }
+  },
+  "route": "superposed",
+  "status": "OPEN",
+  "unit": "s312-step2"
+ },
+ "rs3_misuse": {
+  "pending": {
+   "f": "RS3 and RS3force = f: rules (none) of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s22-recommend"
+ },
+ "rs3_ml_rd": {
+  "pending": {
+   "f": "RS3 and RS3force = f: rules (none) of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s322-recommend"
+ },
+ "rs4_aim": {
+  "pending": {
+   "intent": "RS4aim = intent: rules (none) of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s52-aim"
+ },
+ "rs4_elicitation": {
+  "conflict": "CONFLICT-FREE",
+  "english": [
+   "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 1 is read.",
+   "Read sentence 1 as *must*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+  ],
+  "findings": {
+   "SeparatedByActOnly": 0,
+   "SeparatedByDecisionOnly": 1
+  },
+  "pairs": [
+   {
+    "text": "This sentence says *must*. (1) *Every proposal must have its risk assessment consider greater elicitation effort by others.* (2) *Every proposal should have its risk assessment consider greater elicitation effort by others.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
+    "wording": "E14"
+   }
+  ],
+  "premises": "model",
+  "re_expressed": true,
+  "readings": {
+   "default": {
+    "exception": {
+     "decided_by": "unstated",
+     "factors": [],
+     "necessary": [],
+     "sufficient": []
+    },
+    "guard": [
+     "top"
+    ],
+    "mode": "default",
+    "name": "rs4-elicitation",
+    "over": [],
+    "predicate": "elicitation_considered",
+    "sign": true,
+    "unless": []
+   },
+   "strict": {
+    "guard": [
+     "top"
+    ],
+    "name": "rs4-elicitation",
+    "over": [],
+    "predicate": "elicitation_considered",
+    "sign": true,
+    "unless": []
+   }
+  },
+  "route": "superposed",
+  "status": "OPEN",
+  "unit": "note-ml-rd-must"
+ },
+ "rs4_holistic": {
+  "conflict": "CONFLICT-FREE",
+  "english": [
+   "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 1 is read.",
+   "Read sentence 1 as *must*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+  ],
+  "findings": {
+   "SeparatedByActOnly": 0,
+   "SeparatedByDecisionOnly": 1
+  },
+  "pairs": [
+   {
+    "text": "This sentence says *should*. (1) *Every proposal must have its mitigations assessed holistically in proportion to expected impact.* (2) *Every proposal should have its mitigations assessed holistically in proportion to expected impact.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
+    "wording": "E14"
+   }
+  ],
+  "premises": "model",
+  "re_expressed": true,
+  "readings": {
+   "default": {
+    "exception": {
+     "decided_by": "unstated",
+     "factors": [],
+     "necessary": [],
+     "sufficient": []
+    },
+    "guard": [
+     "top"
+    ],
+    "mode": "default",
+    "name": "rs4-holistic",
+    "over": [],
+    "predicate": "holistic",
+    "sign": true,
+    "unless": []
+   },
+   "strict": {
+    "guard": [
+     "top"
+    ],
+    "name": "rs4-holistic",
+    "over": [],
+    "predicate": "holistic",
+    "sign": true,
+    "unless": []
+   }
+  },
+  "route": "superposed",
+  "status": "OPEN",
+  "unit": "s135-holistic"
+ },
+ "rs4_within": {
+  "conflict": "CONFLICT-FREE",
+  "english": [
+   "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 1 is read.",
+   "Read sentence 1 as *must*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+  ],
+  "findings": {
+   "SeparatedByActOnly": 0,
+   "SeparatedByDecisionOnly": 1
+  },
+  "pairs": [
+   {
+    "text": "This sentence says *should*. (1) *Every proposal must have its residual risk brought within the acceptable levels, if there is a level such that that proposal has reached that level.* (2) *Every proposal should have its residual risk brought within the acceptable levels, if there is a level such that that proposal has reached that level.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
+    "wording": "E14"
+   }
+  ],
+  "premises": "model",
+  "re_expressed": true,
+  "readings": {
+   "default": {
+    "exception": {
+     "decided_by": "unstated",
+     "factors": [],
+     "necessary": [],
+     "sufficient": []
+    },
+    "guard": [
+     "exists",
+     "level",
+     [
+      "binary",
+      "reached",
+      [
+       "var",
+       1
+      ],
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "default",
+    "name": "rs4-within",
+    "over": [],
+    "predicate": "within_levels",
+    "sign": true,
+    "unless": []
+   },
+   "strict": {
+    "guard": [
+     "exists",
+     "level",
+     [
+      "binary",
+      "reached",
+      [
+       "var",
+       1
+      ],
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "name": "rs4-within",
+    "over": [],
+    "predicate": "within_levels",
+    "sign": true,
+    "unless": []
+   }
+  },
+  "route": "superposed",
+  "status": "OPEN",
+  "unit": "g-within"
+ },
+ "rs5_subsequent": {
+  "pending": {
+   "r": "RS5 = r: rules f4-check-r, f4-further-r of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s132-subsequent"
+ },
+ "rs6_insider": {
+  "conflict": "CONFLICT-FREE",
+  "english": [
+   "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 1 is read.",
+   "Read sentence 1 as *Every proposal need not apply each measure to the model weights, if both of the following hold:\n  (a) there is a level such that both that proposal has reached that level and that level is misuse;\n  (b) that measure addresses insiders*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+  ],
+  "findings": {
+   "SeparatedByActOnly": 1,
+   "SeparatedByDecisionOnly": 0
+  },
+  "pairs": [
+   {
+    "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+    "wording": "E24"
+   }
+  ],
+  "premises": "model",
+  "re_expressed": true,
+  "readings": {
+   "different": {
+    "guard": [
+     "exists",
+     "level",
+     [
+      "and",
+      [
+       "binary",
+       "reached",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "misuse",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "name": "rs6-insider",
+    "over": [],
+    "predicate": "insider_mitigations_added",
+    "sign": false,
+    "unless": []
+   },
+   "same": {
+    "guard": [
+     "and",
+     [
+      "exists",
+      "level",
+      [
+       "and",
+       [
+        "binary",
+        "reached",
+        [
+         "var",
+         2
+        ],
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "misuse",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     [
+      "binary",
+      "addresses",
+      [
+       "var",
+       0
+      ],
+      [
+       "const",
+       "insiders"
+      ]
+     ]
+    ],
+    "name": "rs6-insider",
+    "over": [],
+    "predicate": "applied",
+    "sign": false,
+    "unless": []
+   }
+  },
+  "route": "superposed",
+  "status": "OPEN",
+  "unit": "s22-insider-not-required"
+ },
+ "rs7_footnote4": {
+  "pending": {
+   "m": "RS7 = m: rules (none) of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "fn4"
+ },
+ "rs8_bullet2": {
+  "pending": {
+   "scope": "RS8 = scope: rules (none) of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s135-bullet2-only"
+ },
+ "rs8_bullet3": {
+  "pending": {
+   "rel": "RS8 = rel: rules f10-rel-same or f10-rel-diff of rules.d1.ve",
+   "scope": "RS8 = scope: rules (none) of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s135-bullet3-only"
+ },
+ "rs8_bullet4": {
+  "pending": {
+   "scope": "RS8 = scope: rules (none) of rules.d1.ve"
+  },
+  "re_expressed": false,
+  "unit": "s135-bullet4-only"
+ },
+ "rs9_bullet3": {
+  "conflict": "CONFLICT-FREE",
+  "english": [
+   "Under every reading of the open sentence, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 1 is read.",
+   "Read sentence 1 as *Every proposal must have mitigations make the residual risk of harm acceptable, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that all of the following hold:\n    (i) that proposal has reached that level;\n    (ii) both that level is critical and that level is classified as \"ml_rd_and_misalignment\"*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
+  ],
+  "findings": {
+   "SeparatedByActOnly": 1,
+   "SeparatedByDecisionOnly": 0
+  },
+  "pairs": [
+   {
+    "text": "These two readings differ here: cbrn is a domain; cyber is a domain; harmful_manipulation is a domain; ml_rd_and_misalignment_domain is a domain; cbrn_uplift_level_1 is a level; cbrn_uplift_tcl is a level; cyber_uplift_level_1 is a level; harmful_manipulation_level_1 is a level; ml_rd_acceleration_level_1 is a level; ml_rd_automation_level_1 is a level; stealth_and_situational_awareness_tcl is a level; insider_threat_measures is a measure; security_level_2_plus is a measure; security_level_3 is a measure; security_level_4 is a measure; p is a proposal; insiders is a threat; insider_threat_measures addresses insiders; cbrn_uplift_level_1 concerns cbrn; cbrn_uplift_tcl concerns cbrn; cyber_uplift_level_1 concerns cyber; harmful_manipulation_level_1 concerns harmful_manipulation; ml_rd_acceleration_level_1 concerns ml_rd_and_misalignment_domain; ml_rd_automation_level_1 concerns ml_rd_and_misalignment_domain; stealth_and_situational_awareness_tcl concerns ml_rd_and_misalignment_domain; cbrn_uplift_level_1 is critical; cyber_uplift_level_1 is critical; harmful_manipulation_level_1 is critical; ml_rd_acceleration_level_1 is critical; ml_rd_automation_level_1 is critical; p is classified as \"high_risk\"; security_level_2_plus includes insider_threat_measures; p is internal; cbrn_uplift_level_1 is misuse; cbrn_uplift_tcl is misuse; cyber_uplift_level_1 is misuse; harmful_manipulation_level_1 is misuse; ml_rd_acceleration_level_1 is classified as \"ml_rd_and_misalignment\"; ml_rd_automation_level_1 is classified as \"ml_rd_and_misalignment\"; stealth_and_situational_awareness_tcl is classified as \"ml_rd_and_misalignment\"; p has reached ml_rd_acceleration_level_1; cbrn_uplift_level_1 recommends security_level_2_plus; cyber_uplift_level_1 recommends security_level_2_plus; harmful_manipulation_level_1 recommends security_level_2_plus; ml_rd_acceleration_level_1 recommends security_level_3; ml_rd_automation_level_1 recommends security_level_4; cbrn_uplift_tcl is tracked; stealth_and_situational_awareness_tcl is tracked. Under *Every proposal must have mitigations make the residual risk of harm acceptable, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that all of the following hold:\n    (i) that proposal has reached that level;\n    (ii) both that level is critical and that level is classified as \"ml_rd_and_misalignment\"*, p still must. Under *Every proposal must have mitigations make the residual risk of severe harm acceptable, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that all of the following hold:\n    (i) that proposal has reached that level;\n    (ii) both that level is critical and that level is classified as \"ml_rd_and_misalignment\"*, p is not required to.",
+    "wording": "E19"
+   }
+  ],
+  "premises": "model",
+  "re_expressed": true,
+  "readings": {
+   "different": {
+    "guard": [
+     "and",
+     [
+      "or",
+      [
+       "unary",
+       "external",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "high_risk",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     [
+      "exists",
+      "level",
+      [
+       "and",
+       [
+        "binary",
+        "reached",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "and",
+        [
+         "unary",
+         "critical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "ml_rd_and_misalignment",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "name": "rs9-bullet3",
+    "over": [],
+    "predicate": "severe_harm_mitigated",
+    "sign": true,
+    "unless": []
+   },
+   "same": {
+    "guard": [
+     "and",
+     [
+      "or",
+      [
+       "unary",
+       "external",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "high_risk",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     [
+      "exists",
+      "level",
+      [
+       "and",
+       [
+        "binary",
+        "reached",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "and",
+        [
+         "unary",
+         "critical",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "ml_rd_and_misalignment",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "name": "rs9-bullet3",
+    "over": [],
+    "predicate": "harm_mitigated",
+    "sign": true,
+    "unless": []
+   }
+  },
+  "route": "superposed",
+  "status": "OPEN",
+  "unit": "s135-bullet3-dm"
+ }
+}
