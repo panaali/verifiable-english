@@ -13,9 +13,9 @@ namespace VE.Acts
 open Lexical (Tok)
 open VE.Grammar (Grammar Tree Derives Meaning parse)
 
-/-- The raw derivation budget N (D2): R = 2 measured on 38 rows after D9 (i) (docs/act-phrases/ap-2), so 256 stands. -/
+/-- The raw derivation budget N (D2), provisional (plan 11, deferred item 5): R = 2 after D9 (i) on AP-0's rows. -/
 def rawCap : Nat := 256
-/-- The step budget (D2): S = 19,184 measured at cap 256 after D9 (i), and 10 S ≤ 2,100,000, so the budget stands. -/
+/-- The step budget (D2), provisional (plan 11, deferred item 5): S = 19,184 at cap 256 after D9 (i), 10 S ≤ it. -/
 def stepBudget : Nat := 2100000
 /-- The public listing limit: `readings@1`'s `maxChoices`. -/
 def maxReadings : Nat := 64
