@@ -1,0 +1,14 @@
+{
+  "purpose": "Review F2 of rd-7: `ve document check` cost on n two-reading sets (no couplings), measured on the fixed code; the Lean service is a child process, so its CPU is included.",
+  "code_commit": "cd4f21c4c6e7a06342eff1c706b62884fc37c8a0",
+  "command": "/usr/bin/time -f '%U %S %e' uv run python -I f2.py N  (f2.py: the review's F2 probe, printing the prove_entailment count)",
+  "fixed": [
+    {"sets": 3, "choices": 8, "prover_searches": 8, "user_s": 1.07, "sys_s": 0.27, "wall_s": 1.35},
+    {"sets": 6, "choices": 64, "prover_searches": 14, "user_s": 3.52, "sys_s": 0.33, "wall_s": 3.86}
+  ],
+  "review_reported": {
+    "f90694b2": [{"sets": 3, "cpu_s": 3.1}, {"sets": 6, "cpu_s": 58.0, "prover_searches": 910}],
+    "base f98183bf": [{"sets": 3, "cpu_s": 1.2}, {"sets": 6, "cpu_s": 4.5, "prover_searches": 14}]
+  },
+  "test": "tests/test_readings_sup_verdicts.py::test_check_prover_searches_do_not_grow_with_the_choices"
+}

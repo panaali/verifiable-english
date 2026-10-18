@@ -128,6 +128,15 @@ def _wording(frame):
     return wording
 
 
+def _provided(wording, labels):
+    # Rendering a producer-selected frame, with no Python wording selection.
+    lines = ([] if not labels else [{"frame": "E3", "result": None, "readings": [], "model": None,
+                                    "gaps": [], "label": None}])
+    lines += [{"frame": "P1", "result": None, "readings": [], "model": None, "gaps": [], "label": l}
+              for l in labels]
+    return wording.plan({"english": lines})
+
+
 def test_a_used_pair_label_gets_norm_defaults_pair_sentence_as_its_e3_line():
     """F-ND1's conflict answer: `conditional_on: ["unsaid:pair:help_required,help_permitted"]` is worded as E3 with
     norm-defaults 4.1's pair sentence (readings-defaults 2.2, 2.6)."""
@@ -138,8 +147,8 @@ def test_a_used_pair_label_gets_norm_defaults_pair_sentence_as_its_e3_line():
     # article rule looks at the first letter only; that is norm-defaults' wording, kept byte for byte by Q2.4.)
     reused = pair(frame, "help_required")
     assert reused.startswith("Whenever an agent must help a") and reused.endswith(" user, it may help that user.")
-    assert wording.provided(["unsaid:pair:help_required,help_permitted"]) == [PROVIDED, reused]
-    assert wording.provided([]) == []
+    assert _provided(wording, ["unsaid:pair:help_required,help_permitted"]) == [PROVIDED, reused]
+    assert _provided(wording, []) == []
 
 
 @pytest.mark.parametrize("label", [
@@ -151,8 +160,12 @@ def test_a_used_pair_label_gets_norm_defaults_pair_sentence_as_its_e3_line():
     "unsaid:pair:nothing,help_permitted",
 ])
 def test_a_pair_label_that_names_no_declared_pair_is_refused(label):
+    from ve.errors import CheckerUnavailable
+    wording = _wording(_pair_frame())
     with pytest.raises(VEError, match="names no declared pair"):
-        _wording(_pair_frame()).provided([label])
+        wording.pair_premise(label)
+    with pytest.raises(CheckerUnavailable, match="names no declared pair"):
+        _provided(wording, [label])
 
 
 def test_no_s2_fixture_answer_shows_a_reading_number(tmp_path):

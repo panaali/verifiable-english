@@ -161,7 +161,7 @@ reading-set list, and coherent shifts of both units and sense-map occurrences by
 
 The historical gate above describes its actual earlier run. The final-HEAD gate is recorded separately in
 `evidence.json` as `final_gate`. Its `HEAD` target is symbolic because a commit cannot embed its own hash. The
-report commit completes the commit list as the `self` entry, and the report test checks that list against Git.
+report commit completes the commit list as the `self` entry; the report test checks the saved list and final target.
 The final gate runs `lake build`, `python3 lean/audit.py`, and the full pytest suite in the foreground on that
 exact committed HEAD.
 

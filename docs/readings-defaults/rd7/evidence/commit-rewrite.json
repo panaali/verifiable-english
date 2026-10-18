@@ -1,0 +1,30 @@
+{
+  "why": "The chain gate of 50f86877 failed its collection check: 22e91f69 carried three Test-removed trailers for tests the review fix cd4f21c4 restored (review F3), and the gate has no way to withdraw a trailer. The commits from 22e91f69 to 50f86877 were rebuilt with git commit-tree: only 22e91f69's message changed (the three trailers became a note); every tree, author, committer and date is unchanged, and git diff between the old and new heads is empty. The branch was never pushed; the old head is kept as refs/backup/rd-7/before-trailer-rewrite. Evidence recorded before the rebuild keeps the old hashes: each ran on the same tree as its new commit.",
+  "old_head": "50f86877b9789022cb4bd28f6dc071bfd7f7d89f",
+  "new_head": "0aa43d458f6800123074cdac1d4f43fb107f33bf",
+  "map": [
+    ["22e91f694", "b3412992a"],
+    ["f7ea87a6f", "de1ff20f0"],
+    ["371ffd682", "a4f465cb5"],
+    ["d51d23f5d", "879a8e860"],
+    ["e79f9b135", "aae84c208"],
+    ["e53d6ee19", "e8ad091e3"],
+    ["074f96d3f", "5890d6dbb"],
+    ["70b3a2bb0", "eb0e95833"],
+    ["76ea1d9f7", "6e135b614"],
+    ["3210b4065", "ec254616d"],
+    ["340604ba8", "785454be1"],
+    ["f90694b26", "295cefd70"],
+    ["cd4f21c4c", "177bdb248"],
+    ["f4d0b4c01", "d6e78c02d"],
+    ["8f432ef33", "c97983143"],
+    ["9ff8cda19", "823c8bc60"],
+    ["50f86877b", "0aa43d458"]
+  ],
+  "dropped_trailers": [
+    "tests/test_readings_budget_zero.py::test_budget_zero_after_the_conflict_status_is_certified[F-ND1 enumerated oracle]",
+    "tests/test_readings_budget_zero.py::test_budget_zero_every_verdict_op_is_unknown[F-ND1 enumerated oracle]",
+    "tests/test_readings_components_document.py::test_each_case_is_answered_as_a_document_of_its_own"
+  ],
+  "collection_check": "gate_collection.py --check --prebuilt on 0aa43d45: 15104 collected, 15082 at f98183bf; 24 added, 2 removed by a trailer, 0 refused, 0 stale and 0 malformed"
+}

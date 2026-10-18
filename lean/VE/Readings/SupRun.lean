@@ -58,6 +58,15 @@ def runElaborate (id : String) (b : Admitted2) : Except String Json := do
 
 /-! ## `readings-conflict` -/
 
+def conflictPackageAnswer (id : String) (D : Doc) (A : Choice)
+    (X : VE.SoftNorms.SoftDoc) (ts : List (String × List String × VE.Formula))
+    (j : Json) : Json :=
+  let certs := decodeConflictCertsFor ts (j.getObjValD "conflict_certificates")
+  let free := VE.Compose.slotConflictFreeCheck X (slotUnder D A) certs
+  okWith id [("verdict", .str (if free then "CONFLICT-FREE" else "UNKNOWN")),
+    ("assumed", choiceJson A), ("targets", toJson (ts.map (·.1))),
+    ("reading_premises", toJson (slotLabels D))]
+
 def runConflict (id : String) (b : Admitted2) (j : Json) : Except String Json := do
   let r ← supReplayOf b
   let D := r.D
@@ -80,10 +89,15 @@ def runConflict (id : String) (b : Admitted2) (j : Json) : Except String Json :=
       return okWith id [("verdict", .str (if conflict then "CONFLICT" else "UNKNOWN")), ("target", .str t.1),
         ("assumed", choiceJson A), ("choice", choiceJson (encodedChoice D M))]
     else throw "InvalidInput: readings document is not superposable"
-  let certs := decodeConflictCerts D (j.getObjValD "conflict_certificates")
-  let free := VE.Compose.slotConflictFreeCheck X (slotUnder D A) certs
-  pure (okWith id [("verdict", .str (if free then "CONFLICT-FREE" else "UNKNOWN")), ("assumed", choiceJson A),
-    ("targets", toJson ((targets (soften X)).map (·.1))), ("reading_premises", toJson (slotLabels D))])
+  pure (conflictPackageAnswer id D A X (targets (soften X)) j)
+
+def runConflictPrepared (id : String) (b : Admitted2) (r : SupReplay)
+    (checked : List Choice) (X : VE.SoftNorms.SoftDoc)
+    (ts : List (String × List String × VE.Formula)) (j : Json) : Except String Json := do
+  if (j.getObjVal? "witness").toBool then return ← runConflict id b j
+  let ⟨A, _⟩ ← decodeAssumed r.D (j.getObjValD "assumed")
+  unless checked.any (fun c => A.all (c.contains ·)) do throw (untakenText r.D A)
+  pure (conflictPackageAnswer id r.D A X ts j)
 
 /-! ## `readings-certificate` and `readings-model` -/
 
@@ -95,8 +109,9 @@ def runCertificate (id : String) (b : Admitted2) (j : Json) : Except String Json
   pure (okWith id [("accepted", .bool (free && valid)), ("conflict_free", .bool free), ("valid", .bool valid),
     ("assumed", choiceJson r.assumed), ("reading_premises", toJson (slotLabels r.D))])
 
-def runModel (id : String) (b : Admitted2) (j : Json) : Except String Json := do
-  let r ← replayModelOf b j
+def runModelWithReplay (id : String) (j : Json)
+    (replay : Json → Except String ModelReplay) : Except String Json := do
+  let r ← replay j
   unless r.assumed.all (fun x => (candidate r.D x.1 x.2).isSome) && takenBy r.D r.assumed do
     throw (if r.assumed.all (fun x => (candidate r.D x.1 x.2).isSome) then untakenText r.D r.assumed
            else "InvalidInput: assumed reading is no candidate")
@@ -106,6 +121,9 @@ def runModel (id : String) (b : Admitted2) (j : Json) : Except String Json := do
   pure (okWith id [("valid", .bool valid), ("conclusion_value", .bool value),
     ("first_failing", match firstFailing r.D r.assumed r.M with | some l => .str l | none => .null),
     ("assumed", choiceJson r.assumed), ("choice", choiceJson (encodedChoice r.D r.M))])
+
+def runModel (id : String) (b : Admitted2) (j : Json) : Except String Json :=
+  runModelWithReplay id j (replayModelOf b)
 
 /-! ## `readings-dead` -/
 
