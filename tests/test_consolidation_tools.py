@@ -1172,6 +1172,16 @@ def test_committed_ledger_names_real_declarations():
         assert f"| {r['step']} | {r['removed']} | {r['tied']} |" in plan, r["step"]
 
 
+def test_the_skeleton_step_names_every_top_level_executable_main():
+    """Step 7 names the executables' mains one by one (a `*Main.lean` glob also matched generator mains such as
+    VE/Numbers/PhrasesMain.lean, which no route runs): every top-level `lean/*Main.lean` is one of them."""
+    steps = {row["step"]: row for row in json.loads((ROOT / "tools/consolidation-ledger.json").read_text())["steps"]}
+    patterns = [g for entry in steps["7"]["removed"] if "names" not in entry for g in trust_map.expand(entry["module"])]
+    mains = sorted(p.name for p in (ROOT / "lean").glob("*Main.lean"))
+    assert mains and all(p.endswith(".lean") and "/" not in p and "*" not in p for p in patterns)
+    assert sorted(patterns) == mains
+
+
 def test_committed_ties_are_valid():
     """Every tie in the committed table passes the checks above against the committed dump."""
     table = trust_map.load_table()
