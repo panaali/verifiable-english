@@ -1,6 +1,6 @@
 sc-1a statement diff against docs/spec/scope.md 4.1, 4.2 and 5.1 (108 approved declarations)
 
-exact (22):
+exact (20):
   def GovernedItem
   def boldLabel
   def continues
@@ -21,15 +21,10 @@ exact (22):
   structure Unit
   theorem listRun_iff
   theorem listRun_ok_iff
-  theorem mergeParts_conflict
-  theorem mergeParts_keys
 
-differ (1):
-  def mergeParts
-    approved: ['def mergeParts (u : String) (lead item : Json) : Except String Json := do let bad := s!"InvalidInput: scope@0 parts of {u} must be objects" let ls ← (VE.Bridge.fields lead).mapError (fun _ => bad) let is ← (VE.Bridge.fields item).mapError (fun _ => bad) match ls.find? (fun kv => is.any (·.1 == kv.1)) with | some (k, _) => throw s!"ScopeConflict: {u}: {k}" | none => pure (Json.mkObj (ls ++ is))']
-    built:    ['def mergeParts (u : String) (lead item : Json) : Except String Json := do let bad := s!"InvalidInput: scope@0 parts of {u} must be objects" let ls ← (lookups lead).mapError (fun _ => bad) let is ← (lookups item).mapError (fun _ => bad) match ls.find? (fun kv => is.any (·.1 == kv.1)) with | some (k, _) => throw s!"ScopeConflict: {u}: {k}" | none => pure (Json.mkObj (ls ++ is))']
+differ (0):
 
-not built in sc-1a (85):
+not built in sc-1a (88):
   def BlockBound
   def Commutes
   def ItemUnit
@@ -73,6 +68,7 @@ not built in sc-1a (85):
   def keysOf
   def kindOf
   def members
+  def mergeParts
   def narrower
   def narrowing
   def newContent
@@ -111,18 +107,15 @@ not built in sc-1a (85):
   theorem govern_strings
   theorem governorsOf_iff
   theorem itemRule_decoder
+  theorem mergeParts_conflict
+  theorem mergeParts_keys
   theorem nonrule_refused
   theorem readings_refused
   theorem substOwn_id
   theorem substOwn_no_own
 
-built, not in the spec (helpers) (9):
-  def lookups
+built, not in the spec (helpers) (4):
   theorem continues_iff
-  theorem firstKeys_mem
   theorem indexOf_iff
   theorem listRun_ok
-  theorem lookups_absent
-  theorem lookups_spec
   theorem mem_runFrom
-  theorem mkObj_getObjVal

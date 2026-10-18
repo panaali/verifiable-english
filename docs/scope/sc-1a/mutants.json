@@ -1,123 +1,123 @@
-[
- {
-  "name": "run-depth-at-least",
-  "language": "lean",
-  "file": "lean/VE/Layout/List.lean",
-  "claim": "the run governs only items of the first item's depth (sub-bullets are not governed: F2′)",
-  "mutation": {
-   "from": "(if x.item == some d then x.id :: runFrom d xs else runFrom d xs)",
-   "to": "(if x.item.any (d ≤ ·) then x.id :: runFrom d xs else runFrom d xs)"
+{
+ "note": "Each mutant was applied to the committed source and built with `lake build VE.Scope.Examples`, then the source was restored. `fixtures_with_proofs_bypassed`: the mutated definitions compiled with lean/VE/Scope/Examples.lean in a scratch file (never committed) without List.lean's proofs, so the fixtures run; an unmutated control raised no error.",
+ "mutants": [
+  {
+   "name": "run-depth-at-least",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "claim": "the run governs only items of the first item's depth (sub-bullets are not governed: F2′)",
+   "mutation": {
+    "from": "(if x.item == some d then x.id :: runFrom d xs else runFrom d xs)",
+    "to": "(if x.item.any (d ≤ ·) then x.id :: runFrom d xs else runFrom d xs)"
+   },
+   "test": "theorem mem_runFrom (VE/Layout/List.lean:113)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "fixtures_with_proofs_bypassed": [
+    "#guard (listRun (layoutOf situationsPieces) \"u0072.s02\").toO",
+    "theorem short_run"
+   ]
   },
-  "test": "theorem mem_runFrom (VE/Layout/List.lean:113)",
-  "also_fails": [],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- },
- {
-  "name": "continues-ignores-midline",
-  "language": "lean",
-  "file": "lean/VE/Layout/List.lean",
-  "claim": "a mid-line continuation keeps the run going (F2)",
-  "mutation": {
-   "from": "def continues (d : Nat) (x : Unit) : Bool := x.item.any (d ≤ ·) || x.midLine",
-   "to": "def continues (d : Nat) (x : Unit) : Bool := x.item.any (d ≤ ·)"
+  {
+   "name": "continues-ignores-midline",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "claim": "a mid-line continuation keeps the run going (F2)",
+   "mutation": {
+    "from": "def continues (d : Nat) (x : Unit) : Bool := x.item.any (d ≤ ·) || x.midLine",
+    "to": "def continues (d : Nat) (x : Unit) : Bool := x.item.any (d ≤ ·)"
+   },
+   "test": "theorem continues_iff (VE/Layout/List.lean:108)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "fixtures_with_proofs_bypassed": [
+    "#guard (listRun (layoutOf powerPieces) \"u0181.s02\").toOption",
+    "#guard (listRun (layoutOf situationsPieces) \"u0072.s02\").toO",
+    "theorem short_run"
+   ]
   },
-  "test": "theorem continues_iff (VE/Layout/List.lean:108)",
-  "also_fails": [],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- },
- {
-  "name": "lead-not-required",
-  "language": "lean",
-  "file": "lean/VE/Layout/List.lean",
-  "claim": "a list reach needs a lead-in that ends with \":\" (F2″, NotALeadIn)",
-  "mutation": {
-   "from": "      if x.lead then\n",
-   "to": "      if true then\n"
+  {
+   "name": "lead-not-required",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "claim": "a list reach needs a lead-in that ends with \":\" (F2″, NotALeadIn)",
+   "mutation": {
+    "from": "      if x.lead then\n",
+    "to": "      if true then\n"
+   },
+   "test": "theorem listRun_ok (VE/Layout/List.lean:184)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "fixtures_with_proofs_bypassed": [
+    "#guard listRun (layoutOf hcPieces) \"u0165.s01\" matches .erro",
+    "theorem short_run"
+   ]
   },
-  "test": "theorem listRun_ok (VE/Layout/List.lean:184)",
-  "also_fails": [],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- },
- {
-  "name": "odd-indent-item",
-  "language": "lean",
-  "file": "lean/VE/Layout/List.lean",
-  "claim": "an odd indentation is not an item (spec 1.2)",
-  "mutation": {
-   "from": "| some _ => if (f - ls) % 2 == 0 then some ((f - ls) / 2) else none",
-   "to": "| some _ => some ((f - ls) / 2)"
+  {
+   "name": "odd-indent-item",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "claim": "an odd indentation is not an item (spec 1.2)",
+   "mutation": {
+    "from": "| some _ => if (f - ls) % 2 == 0 then some ((f - ls) / 2) else none",
+    "to": "| some _ => some ((f - ls) / 2)"
+   },
+   "test": "theorem short_layout (VE/Scope/Examples.lean:107)",
+   "also_fails": [
+    "theorem short_run (VE/Scope/Examples.lean:117)"
+   ],
+   "command": "cd lean && lake build VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "fixtures_with_proofs_bypassed": [
+    "theorem short_layout",
+    "theorem short_run"
+   ]
   },
-  "test": "theorem short_layout (VE/Scope/Examples.lean:106)",
-  "also_fails": [
-   "theorem short_run (VE/Scope/Examples.lean:116)"
-  ],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- },
- {
-  "name": "para-counts-every-newline",
-  "language": "lean",
-  "file": "lean/VE/Layout/List.lean",
-  "claim": "para counts blank lines only (L1, L1-p)",
-  "mutation": {
-   "from": "if c == nl then (arr, if blank then cnt + 1 else cnt, true)",
-   "to": "if c == nl then (arr, cnt + 1, true)"
+  {
+   "name": "para-counts-every-newline",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "claim": "para counts blank lines only (L1, L1-p)",
+   "mutation": {
+    "from": "if c == nl then (arr, if blank then cnt + 1 else cnt, true)",
+    "to": "if c == nl then (arr, cnt + 1, true)"
+   },
+   "test": "#guard (layoutOf (VE/Scope/Examples.lean:64)",
+   "also_fails": [
+    "theorem short_layout (VE/Scope/Examples.lean:107)",
+    "theorem of_source (VE/Scope/Examples.lean:113)",
+    "theorem para_counts (VE/Scope/Examples.lean:156)",
+    "#guard paraAgrees (VE/Scope/Examples.lean:159)"
+   ],
+   "command": "cd lean && lake build VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "fixtures_with_proofs_bypassed": [
+    "#guard (layoutOf hcPieces).map (fun x => (x.id, x.item, x.mi",
+    "theorem short_layout",
+    "theorem of_source",
+    "theorem para_counts",
+    "#guard paraAgrees hcPieces && paraAgrees powerPieces && para"
+   ]
   },
-  "test": "#guard (layoutOf (VE/Scope/Examples.lean:65)",
-  "also_fails": [
-   "theorem short_layout (VE/Scope/Examples.lean:106)",
-   "theorem of_source (VE/Scope/Examples.lean:112)",
-   "theorem para_counts (VE/Scope/Examples.lean:154)",
-   "#guard paraAgrees (VE/Scope/Examples.lean:157)"
-  ],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- },
- {
-  "name": "merge-overrides-conflict",
-  "language": "lean",
-  "file": "lean/VE/Scope/Effects.lean",
-  "claim": "a key both parts write is ScopeConflict, never an override (F1′, one owner per field)",
-  "mutation": {
-   "from": "  | some (k, _) => throw s!\"ScopeConflict: {u}: {k}\"\n  | none => pure (Json.mkObj (ls ++ is))",
-   "to": "  | some (_, _) => pure (Json.mkObj (ls ++ is))\n  | none => pure (Json.mkObj (ls ++ is))"
-  },
-  "test": "theorem mergeParts_keys (VE/Scope/Theorems.lean:93)",
-  "also_fails": [
-   "theorem mergeParts_conflict (VE/Scope/Theorems.lean:132)"
-  ],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- },
- {
-  "name": "lookups-is-fields",
-  "language": "lean",
-  "file": "lean/VE/Scope/Effects.lean",
-  "claim": "the joined object holds only members lookup finds (mergeParts_keys for every JSON value)",
-  "mutation": {
-   "from": "  pure (VE.Readings.Wire.firstKeys (fs.filterMap fun kv => (j.getObjVal? kv.1).toOption.map (kv.1, ·)))",
-   "to": "  pure fs"
-  },
-  "test": "theorem lookups_spec (VE/Scope/Theorems.lean:25)",
-  "also_fails": [],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- },
- {
-  "name": "marker-without-space",
-  "language": "lean",
-  "file": "lean/VE/Layout/List.lean",
-  "claim": "a list marker needs its space (`*x` is not an item)",
-  "mutation": {
-   "from": "(c == 42 || c == 45 || c == 43) && b.get! (f + 1) == sp then some 2",
-   "to": "(c == 42 || c == 45 || c == 43) then some 2"
-  },
-  "test": "theorem markers (VE/Scope/Examples.lean:123)",
-  "also_fails": [],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- }
-]
+  {
+   "name": "marker-without-space",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "claim": "a list marker needs its space (`*x` is not an item)",
+   "mutation": {
+    "from": "(c == 42 || c == 45 || c == 43) && b.get! (f + 1) == sp then some 2",
+    "to": "(c == 42 || c == 45 || c == 43) then some 2"
+   },
+   "test": "theorem markers (VE/Scope/Examples.lean:125)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "fixtures_with_proofs_bypassed": [
+    "theorem markers"
+   ]
+  }
+ ]
+}

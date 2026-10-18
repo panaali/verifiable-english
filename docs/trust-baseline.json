@@ -729,15 +729,15 @@
   },
   {
    "class": "S",
-   "lines": 25,
-   "reason": "sc-1a: new Lean-owned behaviour of scope@0 (layout list runs, joining parts): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource and its byte tests, paraCounts; continues, indexOf, runFrom, listRun tied), lean/VE/Scope/Effects.lean +14 (S 8: mergeParts; G[V] 6: lookups); K +0",
+   "lines": 17,
+   "reason": "sc-1a: new Lean-owned behaviour of scope@0 (the layout's list runs): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource, paraCounts, lineStart, spacesOnly, skipSpaces, markerLen, lastNonBlank, boldLabel, isBlank, isDigit, sp, nl; continues, indexOf, runFrom, listRun tied); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1a, 2026-10-18",
    "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
   },
   {
    "class": "V",
-   "lines": 68,
-   "reason": "sc-1a: new Lean-owned behaviour of scope@0 (layout list runs, joining parts): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource and its byte tests, paraCounts; continues, indexOf, runFrom, listRun tied), lean/VE/Scope/Effects.lean +14 (S 8: mergeParts; G[V] 6: lookups); K +0",
+   "lines": 62,
+   "reason": "sc-1a: new Lean-owned behaviour of scope@0 (the layout's list runs): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource, paraCounts, lineStart, spacesOnly, skipSpaces, markerLen, lastNonBlank, boldLabel, isBlank, isDigit, sp, nl; continues, indexOf, runFrom, listRun tied); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1a, 2026-10-18",
    "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
   }

@@ -293,7 +293,6 @@ import VE.Route.RunSound
 import VE.Route.Wire
 import VE.Route.WireSound
 import VE.Scope.Examples
-import VE.Scope.Theorems
 import VE.SearchBudget.Budget
 import VE.SearchBudget.Demand
 import VE.Semantics
@@ -5319,13 +5318,6 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.para_counts
 #print axioms VE.Scope.Examples.short_layout
 #print axioms VE.Scope.Examples.short_run
-#print axioms VE.Scope.Examples.unordered_join
-#print axioms VE.Scope.firstKeys_mem
-#print axioms VE.Scope.lookups_absent
-#print axioms VE.Scope.lookups_spec
-#print axioms VE.Scope.mergeParts_conflict
-#print axioms VE.Scope.mergeParts_keys
-#print axioms VE.Scope.mkObj_getObjVal
 #print axioms VE.SearchBudget.chain_denote
 #print axioms VE.SearchBudget.conjuncts_denote
 #print axioms VE.SearchBudget.demand_sound

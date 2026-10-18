@@ -36606,69 +36606,20 @@ theorem VE.Scope.Examples.short_run
         | Except.error "NotALeadIn: a.s01" => Bool.true
         | x => Bool.false) =
         Bool.true ∧
-      (match VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.prosePieces) "x.s01" with
-          | Except.error "NotALeadIn: x.s01" => Bool.true
+      (match VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s04" with
+          | Except.error "NotALeadIn: a.s04" => Bool.true
           | x => Bool.false) =
           Bool.true ∧
-        (match VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "z" with
-          | Except.error "ScopeUnknownUnit: z" => Bool.true
-          | x => Bool.false) =
-          Bool.true
-  -- uses VE.Layout.listRun@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.prosePieces@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples VE.Scope.Examples.short_run.match_1@VE.Scope.Examples VE.Scope.Examples.short_run.match_3@VE.Scope.Examples match_38@VE.Scope.Examples
-  -- expr 1196300068
-theorem VE.Scope.Examples.unordered_join
-  (VE.Scope.Examples.unordered.getObjVal? "0").isOk = Bool.false ∧
-    (VE.Scope.Examples.unordered.getObjVal? "a").isOk = Bool.true ∧
-      Option.map (fun o => (o.getObjVal? "0").isOk)
-            (VE.Scope.Examples.mergePartsText "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
-          Option.some Bool.true ∧
-        Option.map (fun o => (o.getObjVal? "0").isOk)
-              (VE.Scope.mergeParts "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
-            Option.some Bool.false ∧
-          Option.map (fun o => (o.getObjVal? "a").isOk)
-              (VE.Scope.mergeParts "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
-            Option.some Bool.true
-  -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
-  -- expr 1307899726
-theorem VE.Scope.firstKeys_mem
-  ∀ (l : List (String × Lean.Json)),
-    (∀ (p : String × Lean.Json), p ∈ l → ∀ (q : String × Lean.Json), q ∈ l → p.fst = q.fst → p = q) →
-      ∀ (p : String × Lean.Json), p ∈ l → p ∈ VE.Readings.Wire.firstKeys l
-  -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
-  -- expr 2628849165
-theorem VE.Scope.lookups_absent
-  ∀ (j : Lean.Json) (ls : List (String × Lean.Json)),
-    VE.Scope.lookups j = Except.ok ls →
-      ∀ (k : String), (j.getObjVal? k).toOption = Option.none ↔ ¬k ∈ List.map (fun x => x.fst) ls
-  -- uses VE.Scope.lookups@VE.Scope.Effects
-  -- expr 1096841098
-theorem VE.Scope.lookups_spec
-  ∀ (j : Lean.Json) (ls : List (String × Lean.Json)),
-    VE.Scope.lookups j = Except.ok ls →
-      (List.map (fun x => x.fst) ls).Nodup ∧ ∀ (k : String) (v : Lean.Json), (k, v) ∈ ls ↔ j.getObjVal? k = Except.ok v
-  -- uses VE.Scope.lookups@VE.Scope.Effects
-  -- expr 3638113382
-theorem VE.Scope.mergeParts_conflict
-  ∀ (u : String) (lead item : Lean.Json) (k : String),
-    (lead.getObjVal? k).toOption.isSome = Bool.true →
-      (item.getObjVal? k).toOption.isSome = Bool.true → (VE.Scope.mergeParts u lead item).isOk = Bool.false
-  -- uses VE.Scope.mergeParts@VE.Scope.Effects
-  -- expr 2393194960
-theorem VE.Scope.mergeParts_keys
-  ∀ (u : String) (lead item out : Lean.Json),
-    VE.Scope.mergeParts u lead item = Except.ok out →
-      ∀ (k : String) (v : Lean.Json),
-        out.getObjVal? k = Except.ok v ↔
-          lead.getObjVal? k = Except.ok v ∧ (item.getObjVal? k).toOption = Option.none ∨
-            item.getObjVal? k = Except.ok v ∧ (lead.getObjVal? k).toOption = Option.none
-  -- uses VE.Scope.mergeParts@VE.Scope.Effects
-  -- expr 90748884
-theorem VE.Scope.mkObj_getObjVal
-  ∀ (l : List (String × Lean.Json)),
-    (List.map (fun x => x.fst) l).Nodup →
-      ∀ (k : String) (v : Lean.Json), (Lean.Json.mkObj l).getObjVal? k = Except.ok v ↔ (k, v) ∈ l
-  -- uses
-  -- expr 4158588899
+        (match VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.prosePieces) "x.s01" with
+            | Except.error "NotALeadIn: x.s01" => Bool.true
+            | x => Bool.false) =
+            Bool.true ∧
+          (match VE.Layout.listRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "z" with
+            | Except.error "ScopeUnknownUnit: z" => Bool.true
+            | x => Bool.false) =
+            Bool.true
+  -- uses VE.Layout.listRun@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.prosePieces@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples VE.Scope.Examples.short_run.match_1@VE.Scope.Examples VE.Scope.Examples.short_run.match_3@VE.Scope.Examples VE.Scope.Examples.short_run.match_5@VE.Scope.Examples match_38@VE.Scope.Examples
+  -- expr 1692558156
 theorem VE.SearchBudget.chain_denote
   ∀ {S : VE.Structure} {s : String} (a : VE.Formula) (σ : VE.Valuation S),
     VE.Formula.denote S σ a →

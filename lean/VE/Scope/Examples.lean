@@ -1,12 +1,11 @@
 import VE.Layout.List
-import VE.Scope.Theorems
 
 /-! Acceptance fixtures of scope@0's SC-1a part (docs/spec/scope.md 7.1). Layout fixtures use the pilot's own bytes
-    for each unit, shortened only inside sentences (7.0); each is a theorem by `decide`, so the kernel computes it.
-    JSON fixtures are `#guard`s. -/
+    for each unit, shortened only inside sentences (7.0). The pilot excerpts are `#guard`s; the same contracts are
+    kernel theorems (`decide`) on short layouts. -/
 
 namespace VE.Scope.Examples
-open Lean VE.Layout
+open VE.Layout
 
 /-! ### Fixture layouts -/
 
@@ -92,6 +91,8 @@ def seven : List String := ["u0165.s01", "u0165.s02", "u0165.s03", "u0165.s04", 
 
 #guard listRun (layoutOf prosePieces) "x.s01" matches .error "NotALeadIn: x.s01"
 #guard listRun (layoutOf hcPieces) "u0164.s01" matches .error "NotALeadIn: u0164.s01"
+-- a unit that does not end with ":" is no lead-in, even when an item follows it
+#guard listRun (layoutOf hcPieces) "u0165.s01" matches .error "NotALeadIn: u0165.s01"
 #guard listRun (layoutOf hcPieces) "u9999.s01" matches .error "ScopeUnknownUnit: u9999.s01"
 
 /-! ### The same contracts as kernel theorems, on a short layout with every field: a lead-in mid-line, two
@@ -115,6 +116,7 @@ theorem of_source : ofSource "Rules:\n* a\n  b\n" [("u1", 0, 7), ("u2", 7, 11), 
 
 theorem short_run : (listRun (layoutOf shortPieces) "a.s02").toOption = some ["a.s03", "a.s06"] ∧
     (listRun (layoutOf shortPieces) "a.s01" matches .error "NotALeadIn: a.s01") ∧
+    (listRun (layoutOf shortPieces) "a.s04" matches .error "NotALeadIn: a.s04") ∧
     (listRun (layoutOf prosePieces) "x.s01" matches .error "NotALeadIn: x.s01") ∧
     (listRun (layoutOf shortPieces) "z" matches .error "ScopeUnknownUnit: z") := by decide +kernel
 
@@ -155,56 +157,5 @@ theorem para_counts : (paraCounts "a\n\n  \n\t\r\nb ".toUTF8).toList = [0, 0, 0,
     paraAgrees [("a", "x\n\n  \n\t\r\nb "), ("b", "c\n \n"), ("c", "\n\nd")] = true := by decide
 
 #guard paraAgrees hcPieces && paraAgrees powerPieces && paraAgrees situationsPieces
-
-/-! ### JSON fixtures: joining parts -/
-
-def j (s : String) : Json := (Json.parse s).toOption.getD .null
-
-def leadPart : Json := j "{\"sign\": false, \"unless\": [], \"over\": []}"
-def item1 : Json :=
-  j "{\"name\": \"hc-cbrn-uplift\", \"predicate\": \"restricted_act_permitted\", \"guard\": [\"unary\", \"mass_casualty_weapon_uplift\", [\"var\", 1]]}"
-def item3sign : Json := j "{\"name\": \"hc-cyberweapons\", \"predicate\": \"p\", \"sign\": false, \"guard\": [\"top\"]}"
-
--- F1-m: the frame joined to u0165.s01's part is the whole rule object, all six W1 keys
-#guard (mergeParts "u0165.s01" leadPart item1).toOption.map (·.compress) ==
-  some "{\"guard\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"name\":\"hc-cbrn-uplift\",\"over\":[],\"predicate\":\"restricted_act_permitted\",\"sign\":false,\"unless\":[]}"
-
--- F1′: an item that also writes `sign`
-#guard (mergeParts "u0165.s03" leadPart item3sign) matches .error "ScopeConflict: u0165.s03: sign"
-
--- parts that are not objects
-#guard (mergeParts "u0165.s01" (j "[]") item1) matches .error "InvalidInput: scope@0 parts of u0165.s01 must be objects"
-#guard (mergeParts "u0165.s01" leadPart (.str "x")) matches .error "InvalidInput: scope@0 parts of u0165.s01 must be objects"
-
--- `lookups` lists exactly what `VE.Bridge.fields` lists on parsed objects
-#guard [leadPart, item1, item3sign].all fun o =>
-  (lookups o).toOption.map (·.map (·.1)) == (VE.Bridge.fields o).toOption.map (·.map (·.1))
-
-/-- Counterfixture F-wf: the spec's text of `mergeParts` (4.2), which reads `VE.Bridge.fields`, kept only to show
-    why `mergeParts` reads members through `lookups`. -/
-def mergePartsText (u : String) (lead item : Json) : Except String Json := do
-  let bad := s!"InvalidInput: scope@0 parts of {u} must be objects"
-  let ls ← (VE.Bridge.fields lead).mapError (fun _ => bad)
-  let is ← (VE.Bridge.fields item).mapError (fun _ => bad)
-  match ls.find? (fun kv => is.any (·.1 == kv.1)) with
-  | some (k, _) => throw s!"ScopeConflict: {u}: {k}"
-  | none => pure (Json.mkObj (ls ++ is))
-
-/-- An object whose tree is out of order: it lists the key "0", which lookup does not find. -/
-def unordered : Json :=
-  .obj ⟨⟨Std.DTreeMap.Internal.Impl.inner 2 "a" (.bool true) .leaf (.inner 1 "0" (.bool false) .leaf .leaf)⟩⟩
-
-/-- On `unordered`, the spec's text writes "0" into the joined object although neither side's lookup finds it,
-    so `mergeParts_keys` would be false of it; `mergeParts` keeps only what lookup finds, and is the spec's text
-    on every well-formed object. -/
-theorem unordered_join :
-    (unordered.getObjVal? "0").isOk = false ∧ (unordered.getObjVal? "a").isOk = true ∧
-    ((mergePartsText "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "0").isOk)) = some true ∧
-    ((mergeParts "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "0").isOk)) = some false ∧
-    ((mergeParts "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "a").isOk)) = some true := by
-  decide +kernel
-
-#guard [leadPart, item1, item3sign].all fun o =>
-  ((mergePartsText "u" leadPart o).toOption.map (·.compress)) == ((mergeParts "u" leadPart o).toOption.map (·.compress))
 
 end VE.Scope.Examples

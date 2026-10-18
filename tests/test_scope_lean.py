@@ -1,4 +1,4 @@
-"""scope@0's Lean core (sc-1a): the layout's list runs and the effects on a rule's JSON object.
+"""scope@0's Lean core (sc-1a): the layout's list runs.
 
 The fixtures themselves are Lean: `lean/VE/Scope/Examples.lean` holds the spec's 7.1 fixtures as kernel theorems
 (`decide`) and `#guard`s, checked by every `lake build`. This file checks what standing ruling R16 asks of the
@@ -22,8 +22,8 @@ def scope_modules() -> list[str]:
 def test_the_scope_files_are_classified():
     table = trust_map.load_table()
     modules = scope_modules()
-    assert {"VE/Layout/List.lean", "VE/Scope/Effects.lean", "VE/Scope/Examples.lean"} <= set(modules)
-    assert all(module in table for module in modules if module != "VE/Scope/Theorems.lean")
+    assert {"VE/Layout/List.lean", "VE/Scope/Examples.lean"} <= set(modules)
+    assert all(module in table for module in modules)
 
 
 def test_every_trusted_scope_definition_is_used_by_a_theorem():
@@ -45,9 +45,9 @@ def test_each_tie_names_a_theorem_about_its_definition():
 
 
 def test_a_definition_no_theorem_uses_is_reported():
-    """The check can fail: drop every theorem that uses `mergeParts` and it names exactly that definition."""
+    """The check can fail: drop every theorem that uses `ofSource` and it names exactly that definition."""
     table = trust_map.load_table()
     proved = trust_map.statements(STATEMENTS)
-    merge = ("VE.Scope.Effects", "VE.Scope.mergeParts")
-    without = {theorem: found for theorem, found in proved.items() if not found or merge not in found}
-    assert trust_map.unexercised(table, without, scope_modules()) == ["VE/Scope/Effects.lean: VE.Scope.mergeParts"]
+    source = ("VE.Layout.List", "VE.Layout.ofSource")
+    without = {theorem: found for theorem, found in proved.items() if not found or source not in found}
+    assert trust_map.unexercised(table, without, scope_modules()) == ["VE/Layout/List.lean: VE.Layout.ofSource"]
