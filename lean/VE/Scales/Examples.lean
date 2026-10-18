@@ -198,6 +198,10 @@ def labels (ds : List Dimension) : List String := (scalePremises ⟨ds⟩).map (
 def cycle : Dimension := withGrades [serious, grave]
   [("gives_grave_uplift", "gives_serious_uplift"), ("gives_serious_uplift", "gives_grave_uplift")]
 def chain : Dimension := withGrades [serious, grave] [("gives_grave_uplift", "gives_serious_uplift")]
+/-- "Whatever gives grave uplift gives serious uplift": r1 grave and not serious breaks it. -/
+def graveOnly (serious : List String) : ModelData := model "response" ["r1", "r2"]
+  [("gives_grave_uplift", [[("response", "r1")]]), ("gives_serious_uplift", unaries "response" serious)]
+#guard !holds (graveOnly []) (prem chain) && holds (graveOnly ["r1"]) (prem chain)
 def shared : Dimension := { uplift with same := some "gives_more_uplift" }
 def manyGrades (n : Nat) (edges : Nat) : Dimension :=
   withGrades ((List.range n).map fun i => ⟨toString i, .upper⟩) ((List.range edges).map fun _ => ("0", "0"))
@@ -213,6 +217,18 @@ theorem order_cases : (VE.Route.dependencyOrder (aboveNodes cycle)).isOk = false
 theorem symbols_cases : uplift.symbols = ["gives_more_uplift", "gives_serious_uplift"] ∧
     shared.symbols = ["gives_more_uplift", "gives_more_uplift", "gives_serious_uplift"] ∧
     decide (ScaleDoc.symbols ⟨[uplift, harm]⟩).Nodup = true ∧
-    decide (ScaleDoc.symbols ⟨[shared]⟩).Nodup = false := by decide
+    decide (ScaleDoc.symbols ⟨[shared]⟩).Nodup = false ∧
+    decide (ScaleDoc.symbols ⟨[uplift, { harm with more := "gives_more_uplift" }]⟩).Nodup = false := by decide
+
+/-- Each remaining conjunct of `WellFormed`, alone: a sort not declared, a one-place equative, a
+two-place graded word, a predicate in two dimensions, 17 grades. -/
+def ghost : Vocabulary := ⟨["response"], resp.predicates ++ [("ghost_more", ["ghost", "ghost"])] ++
+  (List.range 17).map fun i => (toString i, ["response"]), resp.constants⟩
+#guard !WellFormed ghost.environment [] ⟨[{ autonomy with sort := "ghost", more := "ghost_more" }]⟩
+#guard !wf [{ uplift with same := some "minor_harm" }]
+#guard !WellFormed resp.environment ("more_harmful" :: ots) ⟨[withGrades [⟨"more_harmful", .upper⟩] []]⟩
+#guard !wf [uplift, { harm with more := "gives_more_uplift" }]
+#guard !WellFormed ghost.environment ((List.range 17).map toString) ⟨[manyGrades 17 0]⟩ &&
+  WellFormed ghost.environment ((List.range 16).map toString) ⟨[manyGrades 16 0]⟩
 
 end VE.Scales.Examples

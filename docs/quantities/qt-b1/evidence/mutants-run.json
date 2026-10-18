@@ -1,0 +1,754 @@
+{
+ "mutants": [
+  {
+   "id": "B1-lower-reversed",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "the lower closure generated with the comparative reversed (the plan's seeded bug); stops at dim_iff",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.7,
+   "output_tail": "binary d.more (Term.var 1) (Term.var 0)\n                    | Direction.lower => Formula.binary d.more (Term.var 0) (Term.var 1)) \u2192\n                  S.relation g.name [v]\nin the application\n  closedOf h10\nerror: VE/Scales/Theorems.lean:142:8: Application type mismatch: The argument\n  closedTo h10 h11\nhas type\n  \u2200 (g : Grade),\n    g \u2208 d.grades \u2192\n      \u2200 (v : S.Carrier),\n        S.domain d.sort v \u2192\n          \u2200 (v\u2081 : S.Carrier),\n            S.domain d.sort v\u2081 \u2192\n              S.relation g.name [v\u2081] \u2192\n                Formula.denote S [v\u2081, v]\n                    (match g.direction with\n                    | Direction.upper => Formula.binary d.more (Term.var 1) (Term.var 0)\n                    | Direction.lower => Formula.binary d.more (Term.var 0) (Term.var 1)) \u2192\n                  S.relation g.name [v]\nbut is expected to have type\n  \u2200 (x : Grade),\n    x \u2208 d.grades \u2192\n      \u2200 (v : S.Carrier),\n        S.domain d.sort v \u2192\n          \u2200 (v_1 : S.Carrier),\n            S.domain d.sort v_1 \u2192\n              S.relation x.name [v_1] \u2192\n                Formula.denote S [v_1, v]\n                    (match x.direction with\n                    | Direction.upper => Formula.binary d.more (Term.var 1) (Term.var 0)\n                    | Direction.lower => Formula.binary d.more (Term.var 1) (Term.var 0)) \u2192\n                  S.relation x.name [v]\nin the application\n  And.intro (closedTo h10 h11)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "B1-upper-reversed",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "the upper closure generated with the comparative reversed; stops at dim_iff",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.6,
+   "output_tail": "binary d.more (Term.var 1) (Term.var 0)\n                    | Direction.lower => Formula.binary d.more (Term.var 0) (Term.var 1)) \u2192\n                  S.relation g.name [v]\nin the application\n  closedOf h10\nerror: VE/Scales/Theorems.lean:142:8: Application type mismatch: The argument\n  closedTo h10 h11\nhas type\n  \u2200 (g : Grade),\n    g \u2208 d.grades \u2192\n      \u2200 (v : S.Carrier),\n        S.domain d.sort v \u2192\n          \u2200 (v\u2081 : S.Carrier),\n            S.domain d.sort v\u2081 \u2192\n              S.relation g.name [v\u2081] \u2192\n                Formula.denote S [v\u2081, v]\n                    (match g.direction with\n                    | Direction.upper => Formula.binary d.more (Term.var 1) (Term.var 0)\n                    | Direction.lower => Formula.binary d.more (Term.var 0) (Term.var 1)) \u2192\n                  S.relation g.name [v]\nbut is expected to have type\n  \u2200 (x : Grade),\n    x \u2208 d.grades \u2192\n      \u2200 (v : S.Carrier),\n        S.domain d.sort v \u2192\n          \u2200 (v_1 : S.Carrier),\n            S.domain d.sort v_1 \u2192\n              S.relation x.name [v_1] \u2192\n                Formula.denote S [v_1, v]\n                    (match x.direction with\n                    | Direction.upper => Formula.binary d.more (Term.var 0) (Term.var 1)\n                    | Direction.lower => Formula.binary d.more (Term.var 0) (Term.var 1)) \u2192\n                  S.relation x.name [v]\nin the application\n  And.intro (closedTo h10 h11)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "B1-irreflexive-dropped",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "irreflexivity generated as `top`; stops at dim_iff",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.9,
+   "output_tail": "n d.more [v_1, v_2] \u2192 S.relation d.more [v, v_2]` is not an inductive datatype\nerror: VE/Scales/Theorems.lean:125:15: Invalid `\u27e8...\u27e9` notation: The expected type\n  \u2200 (v : S.Carrier),\n    S.domain d.sort v \u2192\n      \u2200 (v_1 : S.Carrier),\n        S.domain d.sort v_1 \u2192\n          \u2200 (v_2 : S.Carrier),\n            S.domain d.sort v_2 \u2192 S.relation d.more [v, v_1] \u2192 S.relation d.more [v_1, v_2] \u2192 S.relation d.more [v, v_2]\nis not an inductive type\n\nNote: This notation can only be used when the expected type is an inductive type with a single constructor\nerror: VE/Scales/Theorems.lean:129:16: Tactic `rcases` failed: `left\u271d : \u2200 (v : S.Carrier),\n  S.domain d.sort v \u2192\n    \u2200 (v_1 : S.Carrier),\n      S.domain d.sort v_1 \u2192\n        \u2200 (v_2 : S.Carrier),\n          S.domain d.sort v_2 \u2192\n            S.relation d.more [v, v_1] \u2192\n              S.relation d.more [v_1, v_2] \u2192 S.relation d.more [v, v_2]` is not an inductive datatype\nerror: VE/Scales/Theorems.lean:139:15: Invalid `\u27e8...\u27e9` notation: The expected type\n  \u2200 (v : S.Carrier),\n    S.domain d.sort v \u2192\n      \u2200 (v_1 : S.Carrier),\n        S.domain d.sort v_1 \u2192\n          \u2200 (v_2 : S.Carrier),\n            S.domain d.sort v_2 \u2192 S.relation d.more [v, v_1] \u2192 S.relation d.more [v_1, v_2] \u2192 S.relation d.more [v, v_2]\nis not an inductive type\n\nNote: This notation can only be used when the expected type is an inductive type with a single constructor\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "B1-same-left-swapped",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "same-left generated with its comparative reversed; stops at dim_iff",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.2,
+   "output_tail": "rems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:121:89: Application type mismatch: The argument\n  hyz\nhas type\n  S.relation d.more [y, z]\nbut is expected to have type\n  S.relation d.more [z, y]\nin the application\n  h7 x (he' x y hxy).left y (he' x y hxy).right z (hm y z hyz).right hxy hyz\nerror: VE/Scales/Theorems.lean:126:79: Type mismatch\n  h7 x y z\nhas type\n  S.relation e [x, y] \u2192 S.relation d.more [y, z] \u2192 S.relation d.more [x, z]\nbut is expected to have type\n  S.relation e [x, y] \u2192 S.relation d.more [z, y] \u2192 S.relation d.more [x, z]\nerror: VE/Scales/Theorems.lean:134:89: Application type mismatch: The argument\n  hyz\nhas type\n  S.relation d.more [y, z]\nbut is expected to have type\n  S.relation d.more [z, y]\nin the application\n  h7 x (he' x y hxy).left y (he' x y hxy).right z (hm y z hyz).right hxy hyz\nerror: VE/Scales/Theorems.lean:140:79: Type mismatch\n  h7 x y z\nhas type\n  S.relation e [x, y] \u2192 S.relation d.more [y, z] \u2192 S.relation d.more [x, z]\nbut is expected to have type\n  S.relation e [x, y] \u2192 S.relation d.more [z, y] \u2192 S.relation d.more [x, z]\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "B1-above-reversed",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "an above premise generated as h-implies-g; stops at dim_iff",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.2,
+   "output_tail": "x]\nerror: VE/Scales/Theorems.lean:137:63: Application type mismatch: The argument\n  hx\nhas type\n  S.relation a [x]\nbut is expected to have type\n  S.relation b [x]\nin the application\n  h12 a b hab x (ha (a, b) hab x hx) hx\nerror: VE/Scales/Theorems.lean:142:82: Type mismatch\n  h13 a b hab x\nhas type\n  S.relation a [x] \u2192 S.relation b [x]\nbut is expected to have type\n  S.relation b [x] \u2192 S.relation a [x]\nerror: VE/Scales/Theorems.lean:191:67: Application type mismatch: The argument\n  hg g hg'\nhas type\n  E.predicates g.name = some [d.sort]\nbut is expected to have type\n  E.predicates h.name = some [d.sort]\nin the application\n  And.intro (hg g hg')\nerror: VE/Scales/Theorems.lean:191:67: Application type mismatch: The argument\n  hg g hg'\nhas type\n  E.predicates g.name = some [d.sort]\nbut is expected to have type\n  E.predicates h.name = some [d.sort]\nin the application\n  And.intro (hg g hg')\nerror: VE/Scales/Theorems.lean:191:67: Application type mismatch: The argument\n  hg g hg'\nhas type\n  E.predicates g.name = some [d.sort]\nbut is expected to have type\n  E.predicates h.name = some [d.sort]\nin the application\n  And.intro (hg g hg')\nerror: VE/Scales/Theorems.lean:191:67: Application type mismatch: The argument\n  hg g hg'\nhas type\n  E.predicates g.name = some [d.sort]\nbut is expected to have type\n  E.predicates h.name = some [d.sort]\nin the application\n  And.intro (hg g hg')\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "B1-label-merged",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "a grade's closed and same premises share one label; stops at the FB8 #guard `wf [{ uplift with same := some \"more_harmful\" }]`",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.9,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (660ms)\n\u2714 [102/103] Built VE.Scales.Theorems (5.6s)\n\u2716 [103/103] Building VE.Scales.Examples (2.5s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Examples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:184:0: Expression\n  !wf\n        [let __src := uplift;\n          { name := __src.name, sort := __src.sort, more := __src.more, same := some \"gives_more_uplift\",\n            comparable := __src.comparable, grades := __src.grades, above := __src.above }] &&\n    wf\n      [let __src := uplift;\n        { name := __src.name, sort := __src.sort, more := __src.more, same := some \"more_harmful\",\n          comparable := __src.comparable, grades := __src.grades, above := __src.above }]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "W-symbols",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips one-dimension-per-predicate; stops at the FB8 shared-symbol #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.8,
+   "output_tail": "s.Examples (2.6s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Examples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:184:0: Expression\n  !wf\n        [let __src := uplift;\n          { name := __src.name, sort := __src.sort, more := __src.more, same := some \"gives_more_uplift\",\n            comparable := __src.comparable, grades := __src.grades, above := __src.above }] &&\n    wf\n      [let __src := uplift;\n        { name := __src.name, sort := __src.sort, more := __src.more, same := some \"more_harmful\",\n          comparable := __src.comparable, grades := __src.grades, above := __src.above }]\ndid not evaluate to `true`\nerror: VE/Scales/Examples.lean:230:0: Expression\n  !wf\n      [uplift,\n        let __src := harm;\n        { name := __src.name, sort := __src.sort, more := \"gives_more_uplift\", same := __src.same,\n          comparable := __src.comparable, grades := __src.grades, above := __src.above }]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "W-labels",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips duplicate labels (A3); stops at scalePremises_labels_nodup",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.1,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (660ms)\n\u2716 [102/103] Building VE.Scales.Theorems (6.2s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:197:2: Type mismatch\n  hD.left.right\nhas type\n  True\nbut is expected to have type\n  (List.map (fun x => x.fst) (scalePremises D)).Nodup\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "W-sort",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips the declared sort; stops at dim_ok",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.1,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (935ms)\n\u2716 [102/103] Building VE.Scales.Theorems (6.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:154:35: Application type mismatch: The argument\n  hs\nhas type\n  True\nbut is expected to have type\n  E.sorts.contains d.sort = true\nin the application\n  List.contains_iff_mem.mp hs\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "W-more",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips the comparative's signature; stops at dim_ok",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.1,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (649ms)\n\u2716 [102/103] Building VE.Scales.Theorems (5.3s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:154:42: Type mismatch: After simplification, term\n  hm\n has type\n  True\nbut is expected to have type\n  E.predicates d.more = some [d.sort, d.sort]\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "W-same",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips the equative's signature; stops at dim_ok",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.2,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (619ms)\n\u2716 [102/103] Building VE.Scales.Theorems (5.4s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:155:33: Type mismatch: After simplification, term\n  he\n has type\n  True\nbut is expected to have type\n  E.predicates e = some [d.sort, d.sort]\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "W-comparable",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed admits `comparable` without `same`; stops at its FB8 #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.7,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (661ms)\n\u2714 [102/103] Built VE.Scales.Theorems (5.3s)\n\u2716 [103/103] Building VE.Scales.Examples (2.5s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Examples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:182:0: Expression\n  !wf\n      [let __src := uplift;\n        { name := __src.name, sort := __src.sort, more := __src.more, same := __src.same, comparable := true,\n          grades := __src.grades, above := __src.above }]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "W-grade-sig",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips a graded word's signature; stops at dim_ok",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.1,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (678ms)\n\u2716 [102/103] Building VE.Scales.Theorems (5.3s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:154:90: Invalid projection: Projections are not supported on this type because it has no fields\n  hg g hg'\nhas type\n  ots.contains g.name = true\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "W-open-term",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips the W2 open-term check; stops at dim_ok (its conjunct shape)",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.6,
+   "output_tail": "\u26a0 [101/103] Built VE.Scales.Premises (638ms)\nwarning: VE/Scales/Premises.lean:53:37: unused variable `openTerms`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2716 [102/103] Building VE.Scales.Theorems (5.8s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:154:90: Invalid projection: Projections are not supported on this type because it has no fields\n  hg g hg'\nhas type\n  (E.predicates g.name == some [d.sort]) = true\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "W-direction",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed admits `above` across directions; stops at its FB8 #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 18.0,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (960ms)\n\u2714 [102/103] Built VE.Scales.Theorems (11s)\n\u2716 [103/103] Building VE.Scales.Examples (5.7s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Examples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:181:0: Expression\n  !wf\n      [withGrades\n          [serious,\n            let __src := grave;\n            { name := __src.name, direction := Direction.lower }]\n          [(\"gives_grave_uplift\", \"gives_serious_uplift\")]]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "W-caps",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips QS-1's caps; stops at the 17-grade #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 16.3,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (1.3s)\n\u2714 [102/103] Built VE.Scales.Theorems (10s)\n\u2716 [103/103] Building VE.Scales.Examples (4.2s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Examples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:231:0: Expression\n  !WellFormed ghost.environment (List.map toString (List.range 17)) { dims := [manyGrades 17 0] } &&\n    WellFormed ghost.environment (List.map toString (List.range 16)) { dims := [manyGrades 16 0] }\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "W-acyclic",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "WellFormed skips kahn; stops at the FB8 cycle #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.8,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (891ms)\n\u2714 [102/103] Built VE.Scales.Theorems (8.0s)\n\u2716 [103/103] Building VE.Scales.Examples (3.7s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Examples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:175:0: Expression\n  !wf\n      [withGrades [serious, grave]\n          [(\"gives_grave_uplift\", \"gives_serious_uplift\"), (\"gives_serious_uplift\", \"gives_grave_uplift\")]]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "H-caps",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "gradeCaps admits 17 grades; stops at order_cases",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.1,
+   "output_tail": "ilt VE.Scales.Premises (874ms)\n\u2714 [102/103] Built VE.Scales.Theorems (8.1s)\n\u2716 [103/103] Building VE.Scales.Examples (4.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Examples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:214:73: Tactic `decide` proved that the proposition\n  (Route.dependencyOrder (aboveNodes cycle)).isOk = false \u2227\n    (Route.dependencyOrder (aboveNodes chain)).isOk = true \u2227\n      (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 16 64))).isOk = true \u2227\n        (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 17 0))).isOk = false \u2227\n          (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 16 65))).isOk = false\nis false\nerror: VE/Scales/Examples.lean:231:0: Expression\n  !WellFormed ghost.environment (List.map toString (List.range 17)) { dims := [manyGrades 17 0] } &&\n    WellFormed ghost.environment (List.map toString (List.range 16)) { dims := [manyGrades 16 0] }\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "H-gradeOrder",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "gradeOrder drops the above pairs; stops at order_cases",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.7,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Premises (889ms)\n\u2714 [102/103] Built VE.Scales.Theorems (8.2s)\n\u2716 [103/103] Building VE.Scales.Examples (3.4s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Examples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:214:73: Tactic `decide` proved that the proposition\n  (Route.dependencyOrder (aboveNodes cycle)).isOk = false \u2227\n    (Route.dependencyOrder (aboveNodes chain)).isOk = true \u2227\n      (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 16 64))).isOk = true \u2227\n        (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 17 0))).isOk = false \u2227\n          (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 16 65))).isOk = false\nis false\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "H-aboveNodes",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "aboveNodes drops every edge; stops at the FB8 cycle #guard and order_cases",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.9,
+   "output_tail": "mples.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:175:0: Expression\n  !wf\n      [withGrades [serious, grave]\n          [(\"gives_grave_uplift\", \"gives_serious_uplift\"), (\"gives_serious_uplift\", \"gives_grave_uplift\")]]\ndid not evaluate to `true`\nerror: VE/Scales/Examples.lean:177:0: Expression\n  match\n    Route.dependencyOrder\n      (aboveNodes\n        (withGrades [serious, grave]\n          [(\"gives_grave_uplift\", \"gives_serious_uplift\"), (\"gives_serious_uplift\", \"gives_grave_uplift\")])) with\n  | Except.error e => e.startsWith \"DependencyCycle:\"\n  | Except.ok a => false\ndid not evaluate to `true`\nerror: VE/Scales/Examples.lean:214:73: Tactic `decide` proved that the proposition\n  (Route.dependencyOrder (aboveNodes cycle)).isOk = false \u2227\n    (Route.dependencyOrder (aboveNodes chain)).isOk = true \u2227\n      (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 16 64))).isOk = true \u2227\n        (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 17 0))).isOk = false \u2227\n          (Closure.Order.admit gradeCaps (gradeOrder (manyGrades 16 65))).isOk = false\nis false\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "H-dim-symbols",
+   "file": "lean/VE/Scales/Syntax.lean",
+   "claim": "Dimension.symbols omits the equative; stops at the FB8 shared-symbol #guard and symbols_cases",
+   "source_sha256": "e53539123d3a928e1b73fa1ab85bc9af4e0c71f07efc09fc2d16262a41c69ddc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.7,
+   "output_tail": "-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:184:0: Expression\n  !wf\n        [let __src := uplift;\n          { name := __src.name, sort := __src.sort, more := __src.more, same := some \"gives_more_uplift\",\n            comparable := __src.comparable, grades := __src.grades, above := __src.above }] &&\n    wf\n      [let __src := uplift;\n        { name := __src.name, sort := __src.sort, more := __src.more, same := some \"more_harmful\",\n          comparable := __src.comparable, grades := __src.grades, above := __src.above }]\ndid not evaluate to `true`\nerror: VE/Scales/Examples.lean:221:104: Tactic `decide` proved that the proposition\n  uplift.symbols = [\"gives_more_uplift\", \"gives_serious_uplift\"] \u2227\n    shared.symbols = [\"gives_more_uplift\", \"gives_more_uplift\", \"gives_serious_uplift\"] \u2227\n      decide { dims := [uplift, harm] }.symbols.Nodup = true \u2227\n        decide { dims := [shared] }.symbols.Nodup = false \u2227\n          decide\n              {\n                    dims :=\n                      [uplift,\n                        let __src := harm;\n                        { name := __src.name, sort := __src.sort, more := \"gives_more_uplift\", same := __src.same,\n                          comparable := __src.comparable, grades := __src.grades,\n                          above := __src.above }] }.symbols.Nodup =\n            false\nis false\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "H-doc-symbols",
+   "file": "lean/VE/Scales/Syntax.lean",
+   "claim": "ScaleDoc.symbols reads the first dimension only; stops at symbols_cases",
+   "source_sha256": "e53539123d3a928e1b73fa1ab85bc9af4e0c71f07efc09fc2d16262a41c69ddc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.1,
+   "output_tail": "/build/lib/lean/VE/Scales/Examples.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Examples.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Examples.setup.json --json\nerror: VE/Scales/Examples.lean:221:104: Tactic `decide` proved that the proposition\n  uplift.symbols = [\"gives_more_uplift\", \"gives_serious_uplift\"] \u2227\n    shared.symbols = [\"gives_more_uplift\", \"gives_more_uplift\", \"gives_serious_uplift\"] \u2227\n      decide { dims := [uplift, harm] }.symbols.Nodup = true \u2227\n        decide { dims := [shared] }.symbols.Nodup = false \u2227\n          decide\n              {\n                    dims :=\n                      [uplift,\n                        let __src := harm;\n                        { name := __src.name, sort := __src.sort, more := \"gives_more_uplift\", same := __src.same,\n                          comparable := __src.comparable, grades := __src.grades,\n                          above := __src.above }] }.symbols.Nodup =\n            false\nis false\nerror: VE/Scales/Examples.lean:230:0: Expression\n  !wf\n      [uplift,\n        let __src := harm;\n        { name := __src.name, sort := __src.sort, more := \"gives_more_uplift\", same := __src.same,\n          comparable := __src.comparable, grades := __src.grades, above := __src.above }]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "D-direction",
+   "file": "lean/VE/Scales/Syntax.lean",
+   "claim": "Direction gains a third constructor; stops at premises' match (missing case)",
+   "source_sha256": "e53539123d3a928e1b73fa1ab85bc9af4e0c71f07efc09fc2d16262a41c69ddc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.1,
+   "output_tail": "\u2714 [99/103] Built VE.Scales.Syntax (1.1s)\n\u2714 [100/103] Built VE.Scales.Intended (682ms)\n\u2716 [101/103] Building VE.Scales.Premises (841ms)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Premises.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Premises.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Premises.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Premises.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Premises.setup.json --json\nerror: VE/Scales/Premises.lean:32:31: Missing cases:\nDirection.level\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Premises\nerror: build failed\n"
+  },
+  {
+   "id": "D-grade",
+   "file": "lean/VE/Scales/Syntax.lean",
+   "claim": "Grade's fields swapped; stops where the fixtures build grades",
+   "source_sha256": "e53539123d3a928e1b73fa1ab85bc9af4e0c71f07efc09fc2d16262a41c69ddc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.5,
+   "output_tail": "tDecidableEqBitVec`, `instDecidableEqBool`, `instDecidableEqChar`, `instDecidableEqFin`, `instDecidableEqList`, `instDecidableEqNat`, `instDecidableEqString`, `instDecidableEqUInt32`, `instDecidableOr`, `BitVec.decEq`, `Bool.decEq`, `List.hasDecEq`, `Nat.decEq`, `Nat.decLe`, `Nat.decLt`, `String.decEq`, and `UInt32.decEq`, reduction got stuck at the `Decidable` instance\n  sorry.data.hasDecEq\n    ['g', 'i', 'v', 'e', 's', '_', 's', 'e', 'r', 'i', 'o', 'u', 's', '_', 'u', 'p', 'l', 'i', 'f', 't']\nerror: VE/Scales/Examples.lean:228:0: cannot evaluate code because 'VE.Scales.Examples.serious' uses 'sorry' and/or contains errors\nerror: VE/Scales/Examples.lean:229:75: Application type mismatch: The argument\n  \"more_harmful\"\nhas type\n  String\nbut is expected to have type\n  Direction\nin the application\n  Grade.mk \"more_harmful\"\nerror: VE/Scales/Examples.lean:229:91: Unknown constant `String.upper`\n\nNote: Inferred this name from the expected resulting type of `.upper`:\n  String\nerror: VE/Scales/Examples.lean:229:0: cannot evaluate code because 'sorryAx' uses 'sorry' and/or contains errors\nerror: VE/Scales/Examples.lean:230:0: cannot evaluate code because 'VE.Scales.Examples.harm' uses 'sorry' and/or contains errors\nerror: VE/Scales/Examples.lean:231:0: cannot evaluate code because 'List.mapTR.loop._at_.VE.Scales.Examples.manyGrades.spec_0' uses 'sorry' and/or contains errors\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "D-dimension",
+   "file": "lean/VE/Scales/Syntax.lean",
+   "claim": "Dimension's name and sort swapped; stops at the WellFormed #guards of the fixture dimensions",
+   "source_sha256": "e53539123d3a928e1b73fa1ab85bc9af4e0c71f07efc09fc2d16262a41c69ddc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.9,
+   "output_tail": " sort := __src.sort, name := \"uplift\", more := __src.more, same := __src.same,\n              comparable := __src.comparable, grades := __src.grades, above := __src.above }]).length,\n      (labels\n            [uplift,\n              let __src := harm;\n              { sort := __src.sort, name := \"uplift\", more := __src.more, same := __src.same,\n                comparable := __src.comparable, grades := __src.grades, above := __src.above }]).eraseDups.length) ==\n    (6, 4)\ndid not evaluate to `true`\nerror: VE/Scales/Examples.lean:189:0: Expression\n  !wf\n        [uplift,\n          let __src := harm;\n          { sort := __src.sort, name := \"uplift\", more := __src.more, same := __src.same,\n            comparable := __src.comparable, grades := __src.grades, above := __src.above }] &&\n    wf [uplift, harm]\ndid not evaluate to `true`\nerror: VE/Scales/Examples.lean:190:0: Expression\n  (labels [uplift, harm]).eraseDups.length == 6\ndid not evaluate to `true`\nerror: VE/Scales/Examples.lean:204:0: Expression\n  !holds (graveOnly []) (prem chain) && holds (graveOnly [\"r1\"]) (prem chain)\ndid not evaluate to `true`\nerror: VE/Scales/Examples.lean:231:0: Expression\n  !WellFormed ghost.environment (List.map toString (List.range 17)) { dims := [manyGrades 17 0] } &&\n    WellFormed ghost.environment (List.map toString (List.range 16)) { dims := [manyGrades 16 0] }\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "D-scaledoc",
+   "file": "lean/VE/Scales/Syntax.lean",
+   "claim": "ScaleDoc's dimensions become an option; stops at ScaleDoc.symbols",
+   "source_sha256": "e53539123d3a928e1b73fa1ab85bc9af4e0c71f07efc09fc2d16262a41c69ddc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.2,
+   "output_tail": "\u2716 [99/103] Building VE.Scales.Syntax (1.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Syntax.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Syntax.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Syntax.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Syntax.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Syntax.setup.json --json\nerror: VE/Scales/Syntax.lean:37:53: Invalid field `flatMap`: The environment does not contain `Option.flatMap`\n  D.dims\nhas type\n  Option Dimension\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "I-irrefl",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.irrefl without its negation; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.4,
+   "output_tail": "\u2714 [99/103] Built VE.Scales.Syntax (1.1s)\n\u2714 [100/103] Built VE.Scales.Intended (796ms)\n\u2714 [101/103] Built VE.Scales.Premises (956ms)\n\u2716 [102/103] Building VE.Scales.Theorems (9.2s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:45: Application type mismatch: The argument\n  a\nhas type\n  \u2200 (x : S.Carrier), S.domain d\u271d.sort x \u2192 S.relation d\u271d.more [x, x]\nbut is expected to have type\n  \u2200 (x : S.Carrier), S.domain d\u271d.sort x \u2192 \u00acS.relation d\u271d.more [x, x]\nin the application\n  And.intro a\nerror: VE/Scales/Theorems.lean:44:45: Application type mismatch: The argument\n  a\nhas type\n  \u2200 (x : S.Carrier), S.domain d\u271d.sort x \u2192 \u00acS.relation d\u271d.more [x, x]\nbut is expected to have type\n  \u2200 (x : S.Carrier), S.domain d\u271d.sort x \u2192 S.relation d\u271d.more [x, x]\nin the application\n  Intended.mk a\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-trans",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.trans reversed; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.3,
+   "output_tail": "n -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:48: Application type mismatch: The argument\n  b\nhas type\n  \u2200 (x y z : S.Carrier),\n    S.domain d\u271d.sort x \u2192\n      S.domain d\u271d.sort y \u2192\n        S.domain d\u271d.sort z \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation d\u271d.more [y, z] \u2192 S.relation d\u271d.more [z, x]\nbut is expected to have type\n  \u2200 (x y z : S.Carrier),\n    S.domain d\u271d.sort x \u2192\n      S.domain d\u271d.sort y \u2192\n        S.domain d\u271d.sort z \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation d\u271d.more [y, z] \u2192 S.relation d\u271d.more [x, z]\nin the application\n  And.intro b\nerror: VE/Scales/Theorems.lean:44:48: Application type mismatch: The argument\n  b\nhas type\n  \u2200 (x y z : S.Carrier),\n    S.domain d\u271d.sort x \u2192\n      S.domain d\u271d.sort y \u2192\n        S.domain d\u271d.sort z \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation d\u271d.more [y, z] \u2192 S.relation d\u271d.more [x, z]\nbut is expected to have type\n  \u2200 (x y z : S.Carrier),\n    S.domain d\u271d.sort x \u2192\n      S.domain d\u271d.sort y \u2192\n        S.domain d\u271d.sort z \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation d\u271d.more [y, z] \u2192 S.relation d\u271d.more [z, x]\nin the application\n  Intended.mk a b\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-sameRefl",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.sameRefl dropped to True; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.1,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Intended (753ms)\n\u2716 [102/103] Building VE.Scales.Theorems (8.2s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:51: Application type mismatch: The argument\n  c\nhas type\n  \u2200 (e : String), d\u271d.same = some e \u2192 True\nbut is expected to have type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x : S.Carrier), S.domain d\u271d.sort x \u2192 S.relation e [x, x]\nin the application\n  And.intro c\nerror: VE/Scales/Theorems.lean:44:51: Application type mismatch: The argument\n  c\nhas type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x : S.Carrier), S.domain d\u271d.sort x \u2192 S.relation e [x, x]\nbut is expected to have type\n  \u2200 (e : String), d\u271d.same = some e \u2192 True\nin the application\n  Intended.mk a b c\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-sameSymm",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.sameSymm reversed to identity; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.0,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Intended (750ms)\n\u2716 [102/103] Building VE.Scales.Theorems (8.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:54: Application type mismatch: The argument\n  d\nhas type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y : S.Carrier), S.relation e [x, y] \u2192 S.relation e [x, y]\nbut is expected to have type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y : S.Carrier), S.relation e [x, y] \u2192 S.relation e [y, x]\nin the application\n  And.intro d\nerror: VE/Scales/Theorems.lean:44:54: Application type mismatch: The argument\n  d\nhas type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y : S.Carrier), S.relation e [x, y] \u2192 S.relation e [y, x]\nbut is expected to have type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y : S.Carrier), S.relation e [x, y] \u2192 S.relation e [x, y]\nin the application\n  Intended.mk a b c d\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-sameTrans",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.sameTrans weakened; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.0,
+   "output_tail": "ilt VE.Scales.Intended (705ms)\n\u2716 [102/103] Building VE.Scales.Theorems (8.1s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:57: Application type mismatch: The argument\n  e\nhas type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y z : S.Carrier), S.relation e [x, y] \u2192 S.relation e [y, z] \u2192 True\nbut is expected to have type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192 \u2200 (x y z : S.Carrier), S.relation e [x, y] \u2192 S.relation e [y, z] \u2192 S.relation e [x, z]\nin the application\n  And.intro e\nerror: VE/Scales/Theorems.lean:44:57: Application type mismatch: The argument\n  e\nhas type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192 \u2200 (x y z : S.Carrier), S.relation e [x, y] \u2192 S.relation e [y, z] \u2192 S.relation e [x, z]\nbut is expected to have type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y z : S.Carrier), S.relation e [x, y] \u2192 S.relation e [y, z] \u2192 True\nin the application\n  Intended.mk a b c d e\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-sameNotMore",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.sameNotMore without its negation; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.1,
+   "output_tail": "\u2714 [101/103] Built VE.Scales.Intended (742ms)\n\u2716 [102/103] Building VE.Scales.Theorems (9.2s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:60: Application type mismatch: The argument\n  f\nhas type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y : S.Carrier), S.relation e [x, y] \u2192 S.relation d\u271d.more [x, y]\nbut is expected to have type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y : S.Carrier), S.relation e [x, y] \u2192 \u00acS.relation d\u271d.more [x, y]\nin the application\n  And.intro f\nerror: VE/Scales/Theorems.lean:44:60: Application type mismatch: The argument\n  f\nhas type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y : S.Carrier), S.relation e [x, y] \u2192 \u00acS.relation d\u271d.more [x, y]\nbut is expected to have type\n  \u2200 (e : String), d\u271d.same = some e \u2192 \u2200 (x y : S.Carrier), S.relation e [x, y] \u2192 S.relation d\u271d.more [x, y]\nin the application\n  Intended.mk a b c d e f\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-sameLeft",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.sameLeft reads more [y, z] as more [z, y]; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.5,
+   "output_tail": "e/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:63: Application type mismatch: The argument\n  g\nhas type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192\n      \u2200 (x y z : S.Carrier), S.relation e [x, y] \u2192 S.relation d\u271d.more [z, y] \u2192 S.relation d\u271d.more [x, z]\nbut is expected to have type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192\n      \u2200 (x y z : S.Carrier), S.relation e [x, y] \u2192 S.relation d\u271d.more [y, z] \u2192 S.relation d\u271d.more [x, z]\nin the application\n  And.intro g\nerror: VE/Scales/Theorems.lean:44:63: Application type mismatch: The argument\n  g\nhas type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192\n      \u2200 (x y z : S.Carrier), S.relation e [x, y] \u2192 S.relation d\u271d.more [y, z] \u2192 S.relation d\u271d.more [x, z]\nbut is expected to have type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192\n      \u2200 (x y z : S.Carrier), S.relation e [x, y] \u2192 S.relation d\u271d.more [z, y] \u2192 S.relation d\u271d.more [x, z]\nin the application\n  Intended.mk a b c d e f g\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-sameRight",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.sameRight reads e [y, z] as e [z, y]; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.3,
+   "output_tail": "ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:66: Application type mismatch: The argument\n  h\nhas type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192\n      \u2200 (x y z : S.Carrier), S.relation d\u271d.more [x, y] \u2192 S.relation e [z, y] \u2192 S.relation d\u271d.more [x, z]\nbut is expected to have type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192\n      \u2200 (x y z : S.Carrier), S.relation d\u271d.more [x, y] \u2192 S.relation e [y, z] \u2192 S.relation d\u271d.more [x, z]\nin the application\n  And.intro h\nerror: VE/Scales/Theorems.lean:44:66: Application type mismatch: The argument\n  h\nhas type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192\n      \u2200 (x y z : S.Carrier), S.relation d\u271d.more [x, y] \u2192 S.relation e [y, z] \u2192 S.relation d\u271d.more [x, z]\nbut is expected to have type\n  \u2200 (e : String),\n    d\u271d.same = some e \u2192\n      \u2200 (x y z : S.Carrier), S.relation d\u271d.more [x, y] \u2192 S.relation e [z, y] \u2192 S.relation d\u271d.more [x, z]\nin the application\n  Intended.mk a b c d e f g h\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-total",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.total loses its equative case; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.9,
+   "output_tail": "heorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:69: Application type mismatch: The argument\n  i\nhas type\n  d\u271d.comparable = true \u2192\n    \u2200 (e : String),\n      d\u271d.same = some e \u2192\n        \u2200 (x y : S.Carrier),\n          S.domain d\u271d.sort x \u2192 S.domain d\u271d.sort y \u2192 S.relation d\u271d.more [x, y] \u2228 S.relation d\u271d.more [y, x]\nbut is expected to have type\n  d\u271d.comparable = true \u2192\n    \u2200 (e : String),\n      d\u271d.same = some e \u2192\n        \u2200 (x y : S.Carrier),\n          S.domain d\u271d.sort x \u2192\n            S.domain d\u271d.sort y \u2192 S.relation d\u271d.more [x, y] \u2228 S.relation d\u271d.more [y, x] \u2228 S.relation e [x, y]\nin the application\n  And.intro i\nerror: VE/Scales/Theorems.lean:44:69: Application type mismatch: The argument\n  i\nhas type\n  d\u271d.comparable = true \u2192\n    \u2200 (e : String),\n      d\u271d.same = some e \u2192\n        \u2200 (x y : S.Carrier),\n          S.domain d\u271d.sort x \u2192\n            S.domain d\u271d.sort y \u2192 S.relation d\u271d.more [x, y] \u2228 S.relation d\u271d.more [y, x] \u2228 S.relation e [x, y]\nbut is expected to have type\n  d\u271d.comparable = true \u2192\n    \u2200 (e : String),\n      d\u271d.same = some e \u2192\n        \u2200 (x y : S.Carrier),\n          S.domain d\u271d.sort x \u2192 S.domain d\u271d.sort y \u2192 S.relation d\u271d.more [x, y] \u2228 S.relation d\u271d.more [y, x]\nin the application\n  Intended.mk a b c d e f g h i\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-closed-upper",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.closed upward with the comparative reversed; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.7,
+   "output_tail": " [x]\nbut is expected to have type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227\n              \u2200 (e : String), d\u271d.same = some e \u2192 S.relation e [x, y] \u2192 S.relation g.name [x]\nin the application\n  And.intro j\nerror: VE/Scales/Theorems.lean:44:72: Application type mismatch: The argument\n  j\nhas type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227\n              \u2200 (e : String), d\u271d.same = some e \u2192 S.relation e [x, y] \u2192 S.relation g.name [x]\nbut is expected to have type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227\n              \u2200 (e : String), d\u271d.same = some e \u2192 S.relation e [x, y] \u2192 S.relation g.name [x]\nin the application\n  Intended.mk a b c d e f g h i j\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-closed-lower",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.closed downward with the comparative reversed; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.2,
+   "output_tail": " [x]\nbut is expected to have type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227\n              \u2200 (e : String), d\u271d.same = some e \u2192 S.relation e [x, y] \u2192 S.relation g.name [x]\nin the application\n  And.intro j\nerror: VE/Scales/Theorems.lean:44:72: Application type mismatch: The argument\n  j\nhas type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227\n              \u2200 (e : String), d\u271d.same = some e \u2192 S.relation e [x, y] \u2192 S.relation g.name [x]\nbut is expected to have type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n              \u2200 (e : String), d\u271d.same = some e \u2192 S.relation e [x, y] \u2192 S.relation g.name [x]\nin the application\n  Intended.mk a b c d e f g h i j\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-closed-same",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.closed under the equative dropped; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.3,
+   "output_tail": "  (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227 True\nbut is expected to have type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227\n              \u2200 (e : String), d\u271d.same = some e \u2192 S.relation e [x, y] \u2192 S.relation g.name [x]\nin the application\n  And.intro j\nerror: VE/Scales/Theorems.lean:44:72: Application type mismatch: The argument\n  j\nhas type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227\n              \u2200 (e : String), d\u271d.same = some e \u2192 S.relation e [x, y] \u2192 S.relation g.name [x]\nbut is expected to have type\n  \u2200 (g : Grade),\n    g \u2208 d\u271d.grades \u2192\n      \u2200 (x y : S.Carrier),\n        S.relation g.name [y] \u2192\n          (g.direction = Direction.upper \u2192 S.relation d\u271d.more [x, y] \u2192 S.relation g.name [x]) \u2227\n            (g.direction = Direction.lower \u2192 S.relation d\u271d.more [y, x] \u2192 S.relation g.name [x]) \u2227 True\nin the application\n  Intended.mk a b c d e f g h i j\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "I-aboveImp",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Intended.aboveImp reversed; stops at intended_iff_and and dim_iff, so premises_iff_intended no longer proves",
+   "source_sha256": "a5a9f7fdd3fea4a458b199ba0b58049558eb020d50a8d00143700dfcbd916596",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Scales.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.9,
+   "output_tail": "> LEAN_PATH=/home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-b1/lean/VE/Scales/Theorems.lean -o /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.olean -i /home/seyran/code/ve-qt-b1/lean/.lake/build/lib/lean/VE/Scales/Theorems.ilean -c /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.c --setup /home/seyran/code/ve-qt-b1/lean/.lake/build/ir/VE/Scales/Theorems.setup.json --json\nerror: VE/Scales/Theorems.lean:43:75: Application type mismatch: The argument\n  k\nhas type\n  \u2200 (p : String \u00d7 String), p \u2208 d\u271d.above \u2192 \u2200 (x : S.Carrier), S.relation p.snd [x] \u2192 S.relation p.fst [x]\nbut is expected to have type\n  \u2200 (p : String \u00d7 String), p \u2208 d\u271d.above \u2192 \u2200 (x : S.Carrier), S.relation p.fst [x] \u2192 S.relation p.snd [x]\nin the application\n  \u27e8j, k\u27e9\nerror: VE/Scales/Theorems.lean:44:75: Application type mismatch: The argument\n  k\nhas type\n  \u2200 (p : String \u00d7 String), p \u2208 d\u271d.above \u2192 \u2200 (x : S.Carrier), S.relation p.fst [x] \u2192 S.relation p.snd [x]\nbut is expected to have type\n  \u2200 (p : String \u00d7 String), p \u2208 d\u271d.above \u2192 \u2200 (x : S.Carrier), S.relation p.snd [x] \u2192 S.relation p.fst [x]\nin the application\n  { irrefl := a, trans := b, sameRefl := c, sameSymm := d, sameTrans := e, sameNotMore := f, sameLeft := g,\n    sameRight := h, total := i, closed := j, aboveImp := k }\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Scales.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "B1-lower-reversed-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): the lower closure generated with the comparative reversed (the plan's seeded bug); stops at FB1's lower twin #guard (0 models becomes 1)",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.9,
+   "output_tail": "VE/Scales/Examples.lean:73:0: error: Expression\n"
+  },
+  {
+   "id": "B1-upper-reversed-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): the upper closure generated with the comparative reversed; stops at FB1's #guards (facts with the premises, and with the one closed instance)",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.1,
+   "output_tail": "VE/Scales/Examples.lean:67:0: error: Expression\nVE/Scales/Examples.lean:70:0: error: Expression\n"
+  },
+  {
+   "id": "B1-irreflexive-dropped-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): irreflexivity generated as `top`; stops at FB2's model-count #guards",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.2,
+   "output_tail": "VE/Scales/Examples.lean:93:0: error: Expression\nVE/Scales/Examples.lean:95:0: error: Expression\nVE/Scales/Examples.lean:97:0: error: Expression\n"
+  },
+  {
+   "id": "B1-same-left-swapped-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): same-left generated with its comparative reversed; stops at trust_intended and FB4's #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.4,
+   "output_tail": "VE/Scales/Examples.lean:135:95: error: Tactic `decide` proved that the proposition\nVE/Scales/Examples.lean:136:95: error: Tactic `decide` proved that the proposition\nVE/Scales/Examples.lean:164:0: error: Expression\n"
+  },
+  {
+   "id": "B1-above-reversed-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): an above premise generated as h-implies-g; stops at the graveOnly #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.1,
+   "output_tail": "VE/Scales/Examples.lean:204:0: error: Expression\n"
+  },
+  {
+   "id": "W-labels-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): WellFormed skips duplicate labels (A3); stops at the FB8 duplicate-label #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.4,
+   "output_tail": "VE/Scales/Examples.lean:189:0: error: Expression\nVE/Scales/Examples.lean:195:0: error: Expression\n"
+  },
+  {
+   "id": "W-sort-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): WellFormed skips the declared sort; stops at the ghost-sort #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.1,
+   "output_tail": "VE/Scales/Examples.lean:227:0: error: Expression\n"
+  },
+  {
+   "id": "W-more-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): WellFormed skips the comparative's signature; stops at the undeclared-comparative #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.2,
+   "output_tail": "VE/Scales/Examples.lean:174:0: error: Expression\n"
+  },
+  {
+   "id": "W-same-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): WellFormed skips the equative's signature; stops at the one-place-equative #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.8,
+   "output_tail": "VE/Scales/Examples.lean:228:0: error: Expression\n"
+  },
+  {
+   "id": "W-grade-sig-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): WellFormed skips a graded word's signature; stops at the two-place-grade #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.8,
+   "output_tail": "VE/Scales/Examples.lean:229:0: error: Expression\n"
+  },
+  {
+   "id": "W-open-term-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): WellFormed skips the W2 open-term check; stops at the open-term #guard",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.9,
+   "output_tail": "VE/Scales/Examples.lean:183:0: error: Expression\n"
+  }
+ ]
+}

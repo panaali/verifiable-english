@@ -8946,7 +8946,9 @@
         "VE.Scales.Examples.cycle",
         "VE.Scales.Examples.chain",
         "VE.Scales.Examples.shared",
-        "VE.Scales.Examples.manyGrades"
+        "VE.Scales.Examples.manyGrades",
+        "VE.Scales.Examples.graveOnly",
+        "VE.Scales.Examples.ghost"
       ]
     },
     "VE/SearchBudget/Budget.lean": {
