@@ -1,0 +1,7 @@
+class lines: K 997, S 10324, D 14924, G 30726, C 9976, P 77496, T 16100, o 13474
+D/G groups: D[V] 13190, D[R] 1180, D[I] 554, G[V] 27951, G[R] 2502, G[I] 273
+tied 323, unclassified 0, trusted 52158 (K + S + untied [V] + unclassified), 174017 lines in 538 files
+against c2b1a7d442b4: K +0, S -3, D +0, G +3, tied +3, unclassified +0, trusted -3
+  VE/Calc/Decls.lean: trusted -3
+note: c2b1a7d442b4 records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 997, 'S': 10327, 'V': 40837} (the merge train's --write has not run since)
+PASS: K, S and untied [V] within c2b1a7d442b4 and the allowances introduced since

@@ -116,6 +116,8 @@ import VE.EnglishGrammar.Run
 import VE.EnglishGrammar.SensesRequest
 import VE.EnvironmentProofs
 import VE.EvaluationCounts
+import VE.Events.Completion
+import VE.Events.Premises
 import VE.Finite
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -124,6 +126,9 @@ import VE.Grammar.Reading
 import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 import VE.GraphChecks
+import VE.Judgments.Decl
+import VE.Judgments.Examples
+import VE.Judgments.Scan
 import VE.LexicalProofs
 import VE.ModelProofs
 import VE.NormDefaults.Admission
@@ -1657,6 +1662,19 @@ import VE.WireContract.Engine
 #print axioms VE.EvaluationCounts.mapM_length
 #print axioms VE.EvaluationCounts.order_decodeFormulas_length
 #print axioms VE.EvaluationCounts.route_decodeFormulas_length
+#print axioms VE.Events.calendar_sat
+#print axioms VE.Events.chain_head
+#print axioms VE.Events.chain_positions
+#print axioms VE.Events.datesOrder_calendar
+#print axioms VE.Events.datesOrder_iff
+#print axioms VE.Events.dayExtension_transfer
+#print axioms VE.Events.hits_vacuous
+#print axioms VE.Events.isConst_eq
+#print axioms VE.Events.isVar_beq
+#print axioms VE.Events.isVar_eq
+#print axioms VE.Events.mem_dates_of_consecutive
+#print axioms VE.Events.term_map
+#print axioms VE.Events.unorderedSame_of_order
 #print axioms VE.Grammar.BOk.addAll
 #print axioms VE.Grammar.BOk.complete
 #print axioms VE.Grammar.BOk.congr
@@ -1821,6 +1839,18 @@ import VE.WireContract.Engine
 #print axioms VE.Graph.resolve_sound
 #print axioms VE.Graph.tableau_certificateSound
 #print axioms VE.GraphChecks.testCertificate_sound
+#print axioms VE.Judgments.Examples.names_omega
+#print axioms VE.Judgments.admit_first_fault
+#print axioms VE.Judgments.admit_ok_iff
+#print axioms VE.Judgments.faultOf_none_iff
+#print axioms VE.Judgments.foldlM_ok_length
+#print axioms VE.Judgments.foldlM_ok_mono
+#print axioms VE.Judgments.openTermNames_length
+#print axioms VE.Judgments.openTermNames_sorts
+#print axioms VE.Judgments.opensIn_iff
+#print axioms VE.Judgments.opensIn_isEmpty
+#print axioms VE.Judgments.records_names
+#print axioms VE.Judgments.records_refuse
 #print axioms VE.NormDefaults.Admission.admitDocumentX_spec
 #print axioms VE.NormDefaults.Admission.admitDocument_spec
 #print axioms VE.NormDefaults.Admission.admitNodesX_ok
@@ -4574,6 +4604,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.RightsValid.selTyped
 #print axioms VE.Rights.RightsValid.wfSoft
 #print axioms VE.Rights.Run.licence_spec
+#print axioms VE.Rights.Run.nodeOpen_eq
 #print axioms VE.Rights.Run.rights_wire_acceptance
 #print axioms VE.Rights.Run.runAdmission_sound
 #print axioms VE.Rights.Wire.RightsSource.defs

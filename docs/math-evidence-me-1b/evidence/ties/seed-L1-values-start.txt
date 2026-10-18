@@ -1,0 +1,69 @@
+$ cd lean && lake build VE.Calc.Decls   # seed L1-values-start: lean/VE/Calc/Decls.lean:29, `values` starts its fold at (fun _ => some 0) instead of (fun _ => none): an undeclared name gets a value
+⚠ [3/8] Replayed VE.Numbers.Decimal
+warning: VE/Numbers/Decimal.lean:16:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: VE/Numbers/Decimal.lean:18:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [4/8] Replayed VE.Numbers.Round
+warning: VE/Numbers/Round.lean:150:38: This simp argument is unused:
+  ← Rat.intCast_add
+
+Hint: Omit it from the simp argument list.
+  simp [̵←̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵i̵n̵j̵]̵[̲R̲a̲t̲.̲i̲n̲t̲C̲a̲s̲t̲_̲i̲n̲j̲]̲
+
+Note: Simp arguments with `←` have the additional effect of removing the other direction from the simp set, even if the simp argument itself is unused. If the hint above does not work, try replacing `←` with `-` to only get that effect and silence this warning.
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✖ [8/8] Building VE.Calc.Decls (3.0s)
+trace: .> LEAN_PATH=/home/seyran/code/ve-ties-me-1b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-ties-me-1b/lean/VE/Calc/Decls.lean -o /home/seyran/code/ve-ties-me-1b/lean/.lake/build/lib/lean/VE/Calc/Decls.olean -i /home/seyran/code/ve-ties-me-1b/lean/.lake/build/lib/lean/VE/Calc/Decls.ilean -c /home/seyran/code/ve-ties-me-1b/lean/.lake/build/ir/VE/Calc/Decls.c --setup /home/seyran/code/ve-ties-me-1b/lean/.lake/build/ir/VE/Calc/Decls.setup.json --json
+error: VE/Calc/Decls.lean:50:2: Type mismatch
+  fold_values_other ds ?m.9 n h
+has type
+  List.foldl (fun τ d m => if m = d.name then d.valueUnder τ else τ m) ?m.9 ds n = ?m.9 n
+but is expected to have type
+  values ds n = none
+warning: VE/Calc/Decls.lean:65:8: This simp argument is unused:
+  values
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵v̵a̵l̵u̵e̵s̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Calc/Decls.lean:249:38: This simp argument is unused:
+  Decl.valueUnder
+
+Hint: Omit it from the simp argument list.
+  simp [Decl.valL, D̵e̵c̵l̵.̵v̵a̵l̵u̵e̵U̵n̵d̵e̵r̵,̵ ̵Val.Agrees, hs]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+error: VE/Calc/Decls.lean:277:36: unsolved goals
+ds : List Decl
+h : WellFormed ds
+n n✝ : String
+⊢ False
+error: VE/Calc/Decls.lean:657:39: unsolved goals
+ds : List Decl
+h : WellFormed ds
+pre : List Decl
+d : Decl
+tail : List Decl
+hds : ds = pre ++ d :: tail
+hprev : CausesAt ds (valuesL pre)
+hd : d ∈ ds
+hdisj : ∀ (a : String), a ∈ List.map Decl.name pre → ∀ (b : String), b ∈ d.name :: List.map Decl.name tail → a ≠ b
+hnot : ∀ (n : String), n ∈ List.map Decl.name pre → ¬n ∈ List.map Decl.name (d :: tail)
+hcpre :
+  ∀ (d' : Decl),
+    d' ∈ pre → ∀ (q : Thunk (Option Rat)) (v : Option Rat), d'.source = Source.counted q (Counted.ok v) → q.get = v
+n✝ : String
+⊢ False
+warning: VE/Calc/Decls.lean:853:6: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+error: Lean exited with code 1
+Some required targets logged failures:
+- VE.Calc.Decls
+error: build failed
+exit 1
