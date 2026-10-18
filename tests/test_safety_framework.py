@@ -20,7 +20,8 @@ HERE = REPO / "usecases" / "safety-framework"
 # usecases/eligibility has modules with the same bare names (run, reference, translation), and
 # both use cases import their siblings lazily by those names. This use case's modules are loaded
 # apart and stand in sys.modules only while its own tests run.
-OWN_NAMES = ("vocabulary", "translation", "run", "reference", "severity_and_dates", "build_document")
+OWN_NAMES = ("vocabulary", "translation", "run", "reference", "severity_and_dates", "build_document",
+             "readings_r1", "measure_r1")
 
 
 def _load_own_modules():
@@ -36,6 +37,7 @@ def _load_own_modules():
 
 OWN = _load_own_modules()
 build_document, reference, run = OWN["build_document"], OWN["reference"], OWN["run"]
+readings_r1, measure_r1 = OWN["readings_r1"], OWN["measure_r1"]
 translation, vocabulary = OWN["translation"], OWN["vocabulary"]
 
 
@@ -186,3 +188,76 @@ def test_build_check_writes_nothing_beside_the_source(tmp_path):
         assert sorted(p.name for p in tmp_path.iterdir()) == ["fsf-3.1.txt"]
     finally:
         tmp_path.chmod(0o755)
+
+
+# --- fsf-r1: reading sets with content (docs/usecases/safety-framework/fsf-r1/REPORT.md) -----------
+
+def test_a_set_carries_content_exactly_when_each_reading_is_one_rule_and_that_rule_is_its_content():
+    """Each content-bearing set's candidates are the translation's own rules, nothing else: one per reading, with
+    the reading's rule of rules.d1.ve as its content under one shared rule name; every other set stays pending."""
+    from ve.softnorms import SoftEnvironment
+    env = SoftEnvironment(build_document.environment())
+    content = set()
+    for set_id, (_, choices) in build_document.READINGS.items():
+        single = all(len(rules) == 1 and " or " not in rules[0] for rules in choices.values())
+        assert build_document.content_bearing(set_id) is single
+        if not single:
+            continue
+        content.add(set_id)
+        word = build_document.FORCE_WORDS.get(set_id, "x")
+        source = f"Text {word} here.".encode()
+        reading_set = build_document.content_set(env, set_id, "u", [0, len(source)], source)
+        assert [r["id"] for r in reading_set["readings"]] == list(choices)
+        for reading in reading_set["readings"]:
+            norm = dict(reading["content"]["norm"])
+            assert norm.pop("name") == set_id.replace("_", "-")
+            expected = json.loads(translation.parsed_rule(choices[reading["id"]][0]))
+            expected.pop("name")
+            assert norm == expected
+        if set_id in build_document.FORCE_WORDS:
+            start, stop = reading_set["source_word"]
+            assert source[start:stop].decode() == word
+    assert content == {"rs2_misuse", "rs2_ml_rd", "rs4_holistic", "rs4_within", "rs4_elicitation", "rs6_insider",
+                       "rs9_bullet3"}
+    saved = json.loads((HERE / "readings.json").read_text())["sets"]
+    assert {s for s, v in saved.items() if v["content"]} == content
+
+
+def test_ve_decides_every_content_bearing_set_and_keeps_its_unit_open():
+    """readings.json as `readings_r1.py` wrote it: VE (Lean) admitted each part document, found its readings
+    CONFLICT-FREE with a checked model of its premises, and showed a separation; the unit stays OPEN. The whole
+    document's verdict stays UNKNOWN while any set has a pending reading."""
+    saved = json.loads((HERE / "readings.json").read_text())
+    for set_id, entry in saved["sets"].items():
+        if not entry["content"]:
+            assert entry["pending"] and "refused" not in entry, set_id
+            continue
+        assert (entry["status"], entry["premises"], entry["route"], entry["conflict"]) == (
+            "OPEN", "model", "superposed", "CONFLICT-FREE"), set_id
+        assert [sorted(p["readings"]) for p in entry["pairs"]] == [sorted(entry["rules"])], set_id
+    whole = saved["whole_document"]
+    assert (whole["route"], whole["premises"]) == ("pending", "UNKNOWN")
+    assert whole["residual"]["separations"] == sum(v["content"] for v in saved["sets"].values())
+
+
+@pytest.mark.skipif(not OWN["severity_and_dates"].RISK_ROUTE.exists() or not build_document.DEFAULT_SOURCE.exists(),
+                    reason="the Lean service is not built or the pinned source is not stored on this machine")
+def test_readings_rerun_equals_committed_readings():
+    assert readings_r1.main(["--check"]) == 0
+
+
+def test_every_unit_and_item_is_measured_once():
+    """measure_r1: every byte is in one unit, every answer-key item is attributed to the units whose rules decide
+    it or to none, a CHECKED unit has no blocker and every other unit at least one known feature."""
+    units, rest = measure_r1.measure()
+    assert sum(u["bytes"] for u in units) == build_document.TEXT_BYTES
+    rows = {r["id"]: r for r in RESULTS["comparison"]}
+    assert rest["answer_key"] == {"items": len(rows), "agree": sum(r["agree"] for r in rows.values())}
+    disagree = set(rest["items_disagree"]).union(*(u["items_disagree"] for u in units))
+    assert disagree == {i for i, r in rows.items() if not r["agree"]}
+    for u in units:
+        assert (u["status"] == "CHECKED") is (u["blockers"] == []), u["id"]
+        assert "unknown" not in u["blockers"], u["id"]
+        assert u["items_agree"] + len(u["items_disagree"]) == u["items"], u["id"]
+    open_terms = {u["id"] for u in json.loads((HERE / "spans.json").read_text())["units"] if u.get("open_terms")}
+    assert {u["id"] for u in units if "judgment terms" in u["blockers"] and u["status"] == "OPEN"} == open_terms
