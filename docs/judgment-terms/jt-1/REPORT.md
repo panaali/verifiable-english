@@ -113,7 +113,10 @@ Per file:
 
 The growth is recorded with `--allow` as S +40 and V +14, `SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1,
 2026-10-18`.
-- Every new trusted definition is exercised by a `#guard` or a theorem that can fail (seeded bugs 1 to 6).
+- Every new trusted definition is exercised by a `#guard` or a theorem that can fail (seeded bugs 1 to 7). In the
+  build round `names` was not (review F1); fix round 1 adds its `#guard` and `names_omega`, and
+  `tests/test_judgments_exercised.py` now checks the condition for every trusted definition of
+  `lean/VE/Judgments/`.
 - The ties-pass row is in manage-agents FOLLOW-UPS.md under "## jt-1 (2026-10-18)".
 - For comparison, the whole batch at `80a9474d2` measured +150 (Status.lean +96), at R16's limit. jt-1b brings its
   +96 under its own row.
@@ -203,3 +206,37 @@ ba70d9f28 jt-1: keep the item merge-sized; status and usage map move to jt-1b
 80a9474d2 jt-1: regenerate inventories, pin ve_service, classify the new declarations
 73da8da28 jt-1: judgment-terms Lean core (Decl, Scan, Status, Examples)
 ```
+
+## Fix round 1 (review `jt-1-review.final.md`)
+
+One B finding (F1) and one C finding (F2, with its follow-up guards). No DRI signature is reserved, and the DELTA row
+still cites R16.
+
+| Finding | Fix | Regression test | Commit |
+|---|---|---|---|
+| F1 B: `VE.Judgments.names` (S) was counted in R16's +54 as exercised, but nothing used it | a `#guard` over `names` on J-ω's two admitted records, and the theorem `names_omega` (same statement, by `decide`). **Class:** `trust_map.unexercised` lists the trusted declarations (`is_trusted`, the budget's one rule) of given modules that no theorem's compiled `-- uses` line names, and a test applies it to `lean/VE/Judgments/`. A trusted judgment definition that nothing states anything about now fails the suite, whichever item adds it. The DELTA row names the new checks | `tests/test_judgments_exercised.py::test_every_trusted_judgment_definition_is_used_by_a_theorem`, `::test_names_is_exercised_by_its_own_theorem`, `::test_a_definition_no_theorem_uses_is_reported`; `Examples.lean:161` (`#guard`), `:164` (`names_omega`) | `f226ea1bc`, `bc9da2da0`, `0bd340432` |
+| F2 C: check order inside one record is pinned only by a proof script | the reviewer's three two-fault guards: each later check of order 2 under the next one's fault (`subjects` `[act]`; `subjects` with `unstated` and a criterion; `arbitrary` with `unstated` and a criterion) | `Examples.lean:132`, `:134`, `:136` | `f226ea1bc` |
+
+The probe given for F1 exited 1 before the fix and 0 after. It reads source text, so the test above is its regression
+form, read from the compiled `-- uses` lines.
+
+Seeded bugs added in this round ([mutants.json](mutants.json), 7 to 10). Each was applied, run and restored:
+
+| # | Mutant | Fails |
+|---|---|---|
+| 7 | `names` reversed (Lean) | `#guard` Examples.lean:161; `decide` in `names_omega` (Examples.lean:167) |
+| 8 | `faultOf` checks regulated before arguments (Lean; `faultOf_none_iff`'s proof stubbed, since its statement holds under the swap) | `#guard` Examples.lean:132 |
+| 9 | `faultOf` checks the decider before the criteria (Lean; proof stubbed the same way) | `#guard` Examples.lean:136 |
+| 10 | `unexercised` reads class S only (Python, `tools/trust_map.py`) | `tests/test_judgments_exercised.py::test_a_definition_no_theorem_uses_is_reported` |
+
+Checks on the fix commits:
+- `lake build`: 977 jobs, no error.
+- `python3 lean/audit.py`: PASS, 537 files, 6,240 theorems, only the standard axioms.
+- `tools/regen_generated.py --check`: 31 entries current.
+- `tools/trust_map.py --check`: PASS (`Examples.lean` is T and `names_omega` is P, so trusted lines do not change).
+- `tools/gate_collection.py --check --prebuilt`: 17,322 collected, 4 added, 0 removed.
+- **Selected tests** at `0bd340432`, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on ve-mac-1:
+  370 units, exit 0, 0 failed. This includes `tests/test_judgments_exercised.py`, `test_trust_budget.py`,
+  `test_trust_ratchet.py`, `test_assurance_manifest.py` and the rights tests.
+- Known red (`main-known-red.txt`): none of its tests was selected or failed.
+- Full gate: not run here, as the task says. The chain runs it on the final HEAD.
