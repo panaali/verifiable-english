@@ -5,9 +5,9 @@ completes each item of the list after it. The design is [docs/spec/scope-PLAN.md
 exact definitions and statements are [docs/spec/scope.md](../docs/spec/scope.md) (sections 1.2, 1.4, 1.5.2, 4 and
 5.1).
 
-This file covers what is built so far, item sc-1a: the layout's list runs and the effects on a rule's JSON object.
-No route or service mode calls them yet. `govern`, the block's admission, the run path `governFast` and the order
-table come next (sc-1ab), and the document mode after that (SC-1b).
+This file covers what is built so far, item sc-1a: the layout's list runs and the join of a lead-in's part with an
+item's part. No route or service mode calls them yet. Conditions and `own`, the order table, `govern`, the block's
+admission and the run path `governFast` come next (sc-1ab), and the document mode after that (SC-1b).
 
 ## `VE/Layout/List.lean`: what the source bytes say
 
@@ -35,14 +35,8 @@ Theorems:
 - Helpers: `continues_iff`, `mem_runFrom` (a unit is in a run exactly when it is an item of the depth and every unit
   before it continues), `indexOf_iff` (with distinct ids, the index is exactly the unit's position), `listRun_ok`.
 
-## `VE/Scope/Effects.lean`: conditions, `own` and joining parts
+## `VE/Scope/Effects.lean`: joining parts
 
-- `depthLimit`: 64, the formula decoders' own depth bound. JSON recursion uses it as fuel.
-- `hasOwn`, `depthOk`, `ownSafe`: whether a condition mentions the reserved string `"own"`; whether it is within the
-  depth limit; whether `own` occurs under no `forall` or `exists` of the base guard grammar.
-- `substOwn g c`: every JSON string `"own"` in the condition `c` replaced by the rule's own guard `g`. Object keys
-  are never touched.
-- `members`: an object's members, or none for another value.
 - `lookups`: an object's members as lookup reads them, each key once.
 - `mergeParts u lead item`: the lead-in's part joined with an item's part. Both must be objects (else
   `InvalidInput: scope@0 parts of <u> must be objects`); a key on both sides is `ScopeConflict: <u>: <key>`, never
@@ -56,10 +50,7 @@ counterfixture `unordered_join` in `Examples.lean` shows both.
 Theorems (`VE/Scope/Theorems.lean`):
 - `mergeParts_keys`: every key of the joined object comes from exactly one side, with that side's value.
 - `mergeParts_conflict`: a key both sides have makes the join fail.
-- `substOwn_no_own`: if the guard has no `own`, the substituted condition has none.
-- `substOwn_id`: a condition without `own` is unchanged by substitution.
-- Helpers: `members_obj`, `hasOwn_mono` (more fuel finds at least as much), `substOwn_no_own_le`, `substOwn_id_le`,
-  `impl_map_eq`, `firstKeys_mem`, `lookups_spec` (what `lookups` lists is exactly what lookup finds, each key once),
+- Helpers: `firstKeys_mem`, `lookups_spec` (what `lookups` lists is exactly what lookup finds, each key once),
   `lookups_absent`, `mkObj_getObjVal`.
 
 ## `VE/Scope/Examples.lean`: the fixtures
@@ -68,6 +59,6 @@ The spec's 7.1 fixtures for this part, over the pilot's own bytes (shortened ins
 of the hard constraints), L1-p (`paraCounts` against draft 1's per-unit count at every byte), F1 and F1‴ (the run of
 "Claude should never:" is its seven bullets, and the sentence after it is not an item), F2 (mid-line continuations
 belong to the run but are not items), F2′ (sub-bullets are depth 1), F2″ (`NotALeadIn`), F1-m and F1′ (joining
-parts, and the conflict on `sign`), F-own. The pilot excerpts are `#guard`s; the same contracts are kernel theorems
-(`decide`) on short layouts (`short_layout`, `short_run`, `of_source`, `markers`, `bold_labels`, `byte_tests`,
-`para_counts`, `own_binder`, `depth_bound`), so each layout definition is stated about by a theorem.
+parts, and the conflict on `sign`), and the counterfixture `unordered_join`. The pilot excerpts are `#guard`s; the
+same contracts are kernel theorems (`decide`) on short layouts (`short_layout`, `short_run`, `of_source`,
+`markers`, `bold_labels`, `byte_tests`, `para_counts`), so each layout definition is stated about by a theorem.

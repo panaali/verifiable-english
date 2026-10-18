@@ -12454,22 +12454,15 @@
     },
     "VE/Scope/Effects.lean": {
       "G[V]": [
-        "VE.Scope.lookups",
-        "VE.Scope.members"
+        "VE.Scope.lookups"
       ],
       "S": [
-        "VE.Scope.depthLimit",
-        "VE.Scope.depthOk",
-        "VE.Scope.hasOwn",
-        "VE.Scope.mergeParts",
-        "VE.Scope.ownSafe",
-        "VE.Scope.substOwn"
+        "VE.Scope.mergeParts"
       ]
     },
     "VE/Scope/Examples.lean": {
       "T": [
         "VE.Scope.Examples.blankLinesRef",
-        "VE.Scope.Examples.guard1",
         "VE.Scope.Examples.hcPieces",
         "VE.Scope.Examples.item1",
         "VE.Scope.Examples.item3sign",
@@ -12484,7 +12477,6 @@
         "VE.Scope.Examples.seven",
         "VE.Scope.Examples.shortPieces",
         "VE.Scope.Examples.situationsPieces",
-        "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.unordered"
       ]
     }

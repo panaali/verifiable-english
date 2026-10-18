@@ -85,9 +85,9 @@
    "from": "  | some (k, _) => throw s!\"ScopeConflict: {u}: {k}\"\n  | none => pure (Json.mkObj (ls ++ is))",
    "to": "  | some (_, _) => pure (Json.mkObj (ls ++ is))\n  | none => pure (Json.mkObj (ls ++ is))"
   },
-  "test": "theorem mergeParts_keys (VE/Scope/Theorems.lean:183)",
+  "test": "theorem mergeParts_keys (VE/Scope/Theorems.lean:93)",
   "also_fails": [
-   "theorem mergeParts_conflict (VE/Scope/Theorems.lean:222)"
+   "theorem mergeParts_conflict (VE/Scope/Theorems.lean:132)"
   ],
   "command": "cd lean && lake build VE.Scope.Examples",
   "result": "build failed; source restored"
@@ -101,37 +101,21 @@
    "from": "  pure (VE.Readings.Wire.firstKeys (fs.filterMap fun kv => (j.getObjVal? kv.1).toOption.map (kv.1, ·)))",
    "to": "  pure fs"
   },
-  "test": "theorem lookups_spec (VE/Scope/Theorems.lean:115)",
+  "test": "theorem lookups_spec (VE/Scope/Theorems.lean:25)",
   "also_fails": [],
   "command": "cd lean && lake build VE.Scope.Examples",
   "result": "build failed; source restored"
  },
  {
-  "name": "substOwn-skips-objects",
+  "name": "marker-without-space",
   "language": "lean",
-  "file": "lean/VE/Scope/Effects.lean",
-  "claim": "own is substituted at any depth, inside attitude nodes too (F-own)",
+  "file": "lean/VE/Layout/List.lean",
+  "claim": "a list marker needs its space (`*x` is not an item)",
   "mutation": {
-   "from": "    | .obj kvs => .obj (kvs.map fun _ v => substOwn g n v)\n",
-   "to": ""
+   "from": "(c == 42 || c == 45 || c == 43) && b.get! (f + 1) == sp then some 2",
+   "to": "(c == 42 || c == 45 || c == 43) then some 2"
   },
-  "test": "theorem substOwn_no_own_le (VE/Scope/Theorems.lean:28)",
-  "also_fails": [
-   "theorem substOwn_id_le (VE/Scope/Theorems.lean:70)"
-  ],
-  "command": "cd lean && lake build VE.Scope.Examples",
-  "result": "build failed; source restored"
- },
- {
-  "name": "ownSafe-ignores-exists",
-  "language": "lean",
-  "file": "lean/VE/Scope/Effects.lean",
-  "claim": "own under an exists binder is not safe (F-own)",
-  "mutation": {
-   "from": "      | [.str \"exists\", _, a] => !hasOwn n a\n",
-   "to": ""
-  },
-  "test": "theorem own_binder (VE/Scope/Examples.lean:221)",
+  "test": "theorem markers (VE/Scope/Examples.lean:123)",
   "also_fails": [],
   "command": "cd lean && lake build VE.Scope.Examples",
   "result": "build failed; source restored"

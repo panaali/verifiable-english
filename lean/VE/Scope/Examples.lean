@@ -156,7 +156,7 @@ theorem para_counts : (paraCounts "a\n\n  \n\t\r\nb ".toUTF8).toList = [0, 0, 0,
 
 #guard paraAgrees hcPieces && paraAgrees powerPieces && paraAgrees situationsPieces
 
-/-! ### JSON fixtures: conditions, `own`, joining parts -/
+/-! ### JSON fixtures: joining parts -/
 
 def j (s : String) : Json := (Json.parse s).toOption.getD .null
 
@@ -164,8 +164,6 @@ def leadPart : Json := j "{\"sign\": false, \"unless\": [], \"over\": []}"
 def item1 : Json :=
   j "{\"name\": \"hc-cbrn-uplift\", \"predicate\": \"restricted_act_permitted\", \"guard\": [\"unary\", \"mass_casualty_weapon_uplift\", [\"var\", 1]]}"
 def item3sign : Json := j "{\"name\": \"hc-cyberweapons\", \"predicate\": \"p\", \"sign\": false, \"guard\": [\"top\"]}"
-def u0173 : Json := j "[\"or\", [\"and\", \"own\", {\"attitude\": {\"holder\": [\"var\", 0], \"mode\": \"knows\", \"content\": \"own\"}}], {\"attitude\": {\"holder\": [\"var\", 0], \"mode\": \"thinks\", \"degree\": \"quite likely\", \"content\": \"own\"}}]"
-def guard1 : Json := j "[\"unary\", \"mass_casualty_weapon_uplift\", [\"var\", 1]]"
 
 -- F1-m: the frame joined to u0165.s01's part is the whole rule object, all six W1 keys
 #guard (mergeParts "u0165.s01" leadPart item1).toOption.map (·.compress) ==
@@ -208,23 +206,5 @@ theorem unordered_join :
 
 #guard [leadPart, item1, item3sign].all fun o =>
   ((mergePartsText "u" leadPart o).toOption.map (·.compress)) == ((mergeParts "u" leadPart o).toOption.map (·.compress))
-
--- F-own: u0173.s01's condition: (true, false after substitution, true, true)
-#guard (hasOwn depthLimit u0173, hasOwn depthLimit (substOwn guard1 depthLimit u0173), ownSafe depthLimit u0173,
-  depthOk depthLimit u0173) == (true, false, true, true)
-#guard (substOwn guard1 depthLimit u0173).compress ==
-  "[\"or\",[\"and\",[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],{\"attitude\":{\"content\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"holder\":[\"var\",0],\"mode\":\"knows\"}}],{\"attitude\":{\"content\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"degree\":\"quite likely\",\"holder\":[\"var\",0],\"mode\":\"thinks\"}}]"
--- an own-free condition is unchanged
-#guard let c := j "[\"unary\", \"tested_by_anthropic\", [\"var\", 1]]"; substOwn (j "[\"top\"]") depthLimit c == c
-
-/-- `own` under a binder is not safe; `own` beside a binder is. -/
-theorem own_binder :
-    ownSafe depthLimit (.arr #[.str "forall", .str "user", .arr #[.str "and", .str "own", .arr #[.str "top"]]]) = false ∧
-    ownSafe depthLimit (.arr #[.str "and", .str "own", .arr #[.str "forall", .str "user", .arr #[.str "top"]]]) = true ∧
-    ownSafe depthLimit (.arr #[.str "exists", .str "user", .str "own"]) = false := by decide
-
-/-- A condition one level deeper than its fuel is not `depthOk`. -/
-theorem depth_bound : depthOk 2 (.arr #[.arr #[.str "top"]]) = false ∧ depthOk 3 (.arr #[.arr #[.str "top"]]) = true := by
-  decide
 
 end VE.Scope.Examples
