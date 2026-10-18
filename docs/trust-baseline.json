@@ -635,6 +635,48 @@
    "reason": "lf-16f review fixes: the senses route's composition and the F3 speedups, VE/Service/Document.lean +126, VE/Discourse/Loader.lean +5 (ties pass by 2026-10-24)",
    "signature": "SIGNED by the DRI 2026-10-17 (dri-decisions-20261017b.md #1)",
    "commit": "4e2c73dec5d0c60db87122a45242f69633c4ba19"
+  },
+  {
+   "class": "V",
+   "lines": 520,
+   "reason": "readings-defaults RD-7: readings-verdicts on the superposed route in Lean. V +520, K +0, S +0: VE/Readings/SupVerdictsWire.lean +413 (superposed folds ALL/SOME/NONE, per-reading premise statuses, dead readings, witness texts and the English plan selection), VE/Readings/SupDependencies.lean +51 (joint dependency replay and set mentions), ResponseShape/Schemas/ReadingsRoute.lean +50 (the typed sup_verdicts response), VE/Readings/Run.lean +9 (dispatch), VE/Norms/WitnessKind.lean +3 (one owner of the witness kind; Rights/Run.lean -3, SoftNorms/Run.lean -3). Every line replaces a Python decision path deleted in the same change (Superposed._fold, _dependencies, _replays, _mentions, _restrictions, _dead_readings, candidate_premises, S2Wording.provided/independent/classification/report/query selection; docs/readings-defaults/rd7/evidence/deletion-ledger.json): SIGNED by standing ruling R6 (DRI-RULINGS.md).",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "870227c3dd81513ed2ade63a12d0e3aaffbc5e30"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "readings-defaults RD-7 follow-up: V +8 (VE/Readings/Run.lean +6 retains the budget-free enumerated service request while Lean selects the superposed route; VE/Readings/SupVerdictsWire.lean +2 restores the E13 independence line from the named conditions). These are part of the RD-7 migration that deletes Python superposed route selection and S2Wording.independent; see docs/readings-defaults/rd7/evidence/deletion-ledger.json.",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "506caeeea4f58e8b948b0e2403e524ef99fc2505"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "readings-defaults RD-7 limit correction: V +1 in VE/Readings/SupVerdictsWire.lean moves the 1024-compatible-choice budget into the Lean-owned superposed verdict answer, replacing the deleted Python Superposed.checked decision; SIGNED by standing ruling R6 (DRI-RULINGS.md), tested by test_superposed_verdicts_keep_the_1024_choice_budget and the saved deletion ledger.",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "506caeeea4f58e8b948b0e2403e524ef99fc2505"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "readings-defaults RD-7 final scoped evidence: V +3 (VE/Readings/SupVerdictsWire.lean +2 for 1024-choice model proposals and checked dead readings; ResponseShape/Schemas/ReadingsRoute.lean +1 for the typed per-scope proposals). These Lean-owned results replace the deleted Python superposed candidate search, count and status paths in docs/readings-defaults/rd7/evidence/deletion-ledger.json; SIGNED by standing ruling R6 (DRI-RULINGS.md), tested by test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix and test_superposed_scope_count_stays_bounded_above_64_choices.",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b3412992afe76c0cbc217033ebad564908462ba7"
+  },
+  {
+   "class": "V",
+   "lines": 71,
+   "reason": "RD-7 R6: shared Lean conflict and model replay replace deleted Python superposed verdict assembly and dependencies; see docs/readings-defaults/rd7/evidence/deletion-ledger.json",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "a4f465cb51a3c346009340bcc633ad1987cb59ae"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "RD-7 review fix (F1, F2): V +12 in VE/Readings/SupVerdictsWire.lean. supOpen and the need-driven supScopes list the scopes whose evidence an answer can use, replacing the deleted Python loops that generated conflict, certificate and model evidence for every scope (_prepare, entailment, premises_answer); the untaken check is skipped past the 1024-choice budget (UNKNOWN). SIGNED by standing ruling R6 (DRI-RULINGS.md); tested by test_superposed_scopes_follow_the_asked_scope_first and test_untaken_check_waits_for_the_checked_budget.",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "177bdb2483ec9ffe417532dbe7418f35550d7de4"
   }
  ]
 }
