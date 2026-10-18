@@ -181,7 +181,7 @@ def labels (ds : List Dimension) : List String := (scalePremises ⟨ds⟩).map (
 #guard !wf [withGrades [serious, { grave with direction := .lower }] [("gives_grave_uplift", "gives_serious_uplift")]]
 #guard !wf [{ uplift with comparable := true }]
 #guard !WellFormed resp.environment ["gives_grave_uplift"] ⟨[uplift]⟩
-#guard !wf [{ uplift with same := some "gives_more_uplift" }]
+#guard !wf [{ uplift with same := some "gives_more_uplift" }] && wf [{ uplift with same := some "more_harmful" }]
 #guard wf [uplift] && wf [withGrades [serious, grave] []] &&
   wf [withGrades [serious, grave] [("gives_grave_uplift", "gives_serious_uplift")]]
 #guard ((labels [uplift, { harm with name := "uplift" }]).length,
@@ -194,5 +194,25 @@ def labels (ds : List Dimension) : List String := (scalePremises ⟨ds⟩).map (
     ("gives_grave_uplift", "gives_serious_uplift")]]).eraseDups.length) == (6, 5)
 #guard !wf [withGrades [serious, grave] [("gives_grave_uplift", "gives_serious_uplift"),
   ("gives_grave_uplift", "gives_serious_uplift")]]
+
+def cycle : Dimension := withGrades [serious, grave]
+  [("gives_grave_uplift", "gives_serious_uplift"), ("gives_serious_uplift", "gives_grave_uplift")]
+def chain : Dimension := withGrades [serious, grave] [("gives_grave_uplift", "gives_serious_uplift")]
+def shared : Dimension := { uplift with same := some "gives_more_uplift" }
+def manyGrades (n : Nat) (edges : Nat) : Dimension :=
+  withGrades ((List.range n).map fun i => ⟨toString i, .upper⟩) ((List.range edges).map fun _ => ("0", "0"))
+
+/-- The `above` order is acyclic by `kahn`, and within QS-1's caps (16 grades, 64 pairs). -/
+theorem order_cases : (VE.Route.dependencyOrder (aboveNodes cycle)).isOk = false ∧
+    (VE.Route.dependencyOrder (aboveNodes chain)).isOk = true ∧
+    ((gradeOrder (manyGrades 16 64)).admit gradeCaps).isOk = true ∧
+    ((gradeOrder (manyGrades 17 0)).admit gradeCaps).isOk = false ∧
+    ((gradeOrder (manyGrades 16 65)).admit gradeCaps).isOk = false := by decide
+
+/-- One dimension per predicate: a predicate both comparative and equative is refused. -/
+theorem symbols_cases : uplift.symbols = ["gives_more_uplift", "gives_serious_uplift"] ∧
+    shared.symbols = ["gives_more_uplift", "gives_more_uplift", "gives_serious_uplift"] ∧
+    decide (ScaleDoc.symbols ⟨[uplift, harm]⟩).Nodup = true ∧
+    decide (ScaleDoc.symbols ⟨[shared]⟩).Nodup = false := by decide
 
 end VE.Scales.Examples

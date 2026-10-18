@@ -4965,6 +4965,30 @@
 'VE.Route.sat_checked' depends on axioms: [propext, Quot.sound]
 'VE.Route.tableauValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.verifyOrder_sound' depends on axioms: [propext, Quot.sound]
+'VE.Scales.Examples.intended_of' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.Examples.order_cases' depends on axioms: [propext, Quot.sound]
+'VE.Scales.Examples.symbols_cases' does not depend on any axioms
+'VE.Scales.Examples.trust_intended' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.Examples.trust_not_intended' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.Intended.aboveImp' does not depend on any axioms
+'VE.Scales.Intended.closed' does not depend on any axioms
+'VE.Scales.Intended.irrefl' does not depend on any axioms
+'VE.Scales.Intended.sameLeft' does not depend on any axioms
+'VE.Scales.Intended.sameNotMore' does not depend on any axioms
+'VE.Scales.Intended.sameRefl' does not depend on any axioms
+'VE.Scales.Intended.sameRight' does not depend on any axioms
+'VE.Scales.Intended.sameSymm' does not depend on any axioms
+'VE.Scales.Intended.sameTrans' does not depend on any axioms
+'VE.Scales.Intended.total' does not depend on any axioms
+'VE.Scales.Intended.trans' does not depend on any axioms
+'VE.Scales.dim_iff' depends on axioms: [propext, Quot.sound]
+'VE.Scales.dim_ok' depends on axioms: [propext, Quot.sound]
+'VE.Scales.intended_iff_and' does not depend on any axioms
+'VE.Scales.premises_iff_intended' depends on axioms: [propext, Quot.sound]
+'VE.Scales.premises_wellTyped' depends on axioms: [propext, Quot.sound]
+'VE.Scales.scalePremises_labels_nodup' depends on axioms: [propext, Quot.sound]
+'VE.Scales.typed1' depends on axioms: [propext]
+'VE.Scales.typed2' depends on axioms: [propext]
 'VE.Scope.Examples.bold_labels' does not depend on any axioms
 'VE.Scope.Examples.byte_tests' does not depend on any axioms
 'VE.Scope.Examples.markers' does not depend on any axioms
