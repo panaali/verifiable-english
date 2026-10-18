@@ -1,0 +1,919 @@
+{
+ "mutants": [
+  {
+   "id": "R-not",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "inRegion reads `not b` as `b`",
+   "source_sha256": "adbc6b650d2d5480d981586e9502eb7d8b2d95845cbc36fe00f96341a15a91f9",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 18.5,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:105",
+    "VE/Cardinality/Examples.lean:111",
+    "VE/Cardinality/Examples.lean:119",
+    "VE/Cardinality/Examples.lean:91"
+   ]
+  },
+  {
+   "id": "E-population",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "a proportion's erasure drops the nonempty-population conjunct",
+   "source_sha256": "d0e234b185c2c4f649a8bcfb5d49da0279e8b5576468289cd34e0b5bfc1f39e6",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.8,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:227"
+   ]
+  },
+  {
+   "id": "R-limit",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "the predicate limit fires at 6 instead of above 6",
+   "source_sha256": "adbc6b650d2d5480d981586e9502eb7d8b2d95845cbc36fe00f96341a15a91f9",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.1,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:183"
+   ]
+  },
+  {
+   "id": "S-atom-any-arity",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a body atom needs only some declared predicate, of any arity or sort (spec and check together)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.7,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "M-cmp-ge-reversed",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .ge` compares the wrong way",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 16.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:324",
+    "VE/Cardinality/Examples.lean:335",
+    "VE/Cardinality/Examples.lean:364"
+   ]
+  },
+  {
+   "id": "E-countFin-duplicates",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "countFin counts listed objects with duplicates",
+   "source_sha256": "d0e234b185c2c4f649a8bcfb5d49da0279e8b5576468289cd34e0b5bfc1f39e6",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:163"
+   ]
+  },
+  {
+   "id": "F1-rel-eq-le",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Rel.holds .eq` read as `≤`: exactly n means at most n",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 18.1,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:296",
+    "VE/Cardinality/Examples.lean:305",
+    "VE/Cardinality/Examples.lean:399"
+   ]
+  },
+  {
+   "id": "F1-rel-lt-le",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Rel.holds .lt` read as `≤`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 16.6,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:296"
+   ]
+  },
+  {
+   "id": "F1-body-not",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .not` without the negation",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.1,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:252",
+    "VE/Cardinality/Examples.lean:258",
+    "VE/Cardinality/Examples.lean:260",
+    "VE/Cardinality/Examples.lean:262"
+   ]
+  },
+  {
+   "id": "F1-body-or-and",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .or` read as `∧`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.9,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:252",
+    "VE/Cardinality/Examples.lean:260"
+   ]
+  },
+  {
+   "id": "F1-cmp-lt-le",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .lt` read as `≤`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.9,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:324"
+   ]
+  },
+  {
+   "id": "F1-cmp-le-lt",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .le` read as `<`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.7,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:324"
+   ]
+  },
+  {
+   "id": "F1-cmp-eq-le",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .eq` read as `≤`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.6,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:324"
+   ]
+  },
+  {
+   "id": "F1-holds-quantity-true",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .quantity` read as `True`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.8,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:346"
+   ]
+  },
+  {
+   "id": "F1-holds-not",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .not` without the negation",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.0,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:360"
+   ]
+  },
+  {
+   "id": "F1-holds-and-or",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .and` read as `∨`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.8,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:360"
+   ]
+  },
+  {
+   "id": "F1-holds-or-and",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .or` read as `∧`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:360"
+   ]
+  },
+  {
+   "id": "F1-holds-implies-reversed",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .implies` reads the converse",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.5,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:360"
+   ]
+  },
+  {
+   "id": "F1-proportion-not-finite",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a proportion over a sort not declared finite is admitted (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 19.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "F1-quantity-unchecked",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a W6a part is admitted unchecked (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 23.0,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "F1-and-left-only",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`.and` is admitted when its left part is (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 23.3,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "F1-fresh-reversed",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`CEnv.WellFormed.fresh` reversed",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 23.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:422",
+    "VE/Cardinality/Examples.lean:425"
+   ]
+  },
+  {
+   "id": "C-rel-le-lt",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Rel.holds .le` read as `<`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 19.5,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:296",
+    "VE/Cardinality/Examples.lean:394"
+   ]
+  },
+  {
+   "id": "C-body-and-or",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .and` read as `∨`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:244",
+    "VE/Cardinality/Examples.lean:252",
+    "VE/Cardinality/Examples.lean:262"
+   ]
+  },
+  {
+   "id": "C-body-atom-true",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .atom` read as `True`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.5,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:244",
+    "VE/Cardinality/Examples.lean:252",
+    "VE/Cardinality/Examples.lean:256",
+    "VE/Cardinality/Examples.lean:258"
+   ]
+  },
+  {
+   "id": "C-body-any-false",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Body.holds .any` read as `False`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.6,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:244",
+    "VE/Cardinality/Examples.lean:247",
+    "VE/Cardinality/Examples.lean:252"
+   ]
+  },
+  {
+   "id": "C-cmp-gt-ge",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .gt` read as `≥`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.2,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:324",
+    "VE/Cardinality/Examples.lean:338",
+    "VE/Cardinality/Examples.lean:364"
+   ]
+  },
+  {
+   "id": "C-cmp-ge-gt",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Cmp.holds .ge` read as `>`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.6,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:324"
+   ]
+  },
+  {
+   "id": "C-counts-mismatch",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Counts` accepts a list of the wrong length",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.6,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:275",
+    "VE/Cardinality/Examples.lean:276",
+    "VE/Cardinality/Examples.lean:280",
+    "VE/Cardinality/Examples.lean:286",
+    "VE/Cardinality/Examples.lean:396",
+    "VE/Cardinality/Examples.lean:401"
+   ]
+  },
+  {
+   "id": "C-counts-nil",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Counts` refuses the empty lists",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:280",
+    "VE/Cardinality/Examples.lean:288",
+    "VE/Cardinality/Examples.lean:394",
+    "VE/Cardinality/Examples.lean:399"
+   ]
+  },
+  {
+   "id": "C-coefficient",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CountAtom.holds` ignores the coefficients",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 16.8,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:305",
+    "VE/Cardinality/Examples.lean:306",
+    "VE/Cardinality/Examples.lean:394",
+    "VE/Cardinality/Examples.lean:399"
+   ]
+  },
+  {
+   "id": "C-population",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Proportion.holds` drops the nonempty population",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.9,
+   "first_errors": [
+    "VE/Cardinality/Theorems.lean:95"
+   ]
+  },
+  {
+   "id": "C-part-only",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Proportion.holds` counts the part without the whole",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.2,
+   "first_errors": [
+    "VE/Cardinality/Theorems.lean:95"
+   ]
+  },
+  {
+   "id": "C-implies-and",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CFormula.holds .implies` read as `∧`",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 19.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:360"
+   ]
+  },
+  {
+   "id": "C-admissible-w6a",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`Admissible` drops W6a's admissibility",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 25.0,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:367",
+    "VE/Cardinality/Examples.lean:368",
+    "VE/Cardinality/Examples.lean:370",
+    "VE/Cardinality/Examples.lean:382",
+    "VE/Cardinality/Examples.lean:385"
+   ]
+  },
+  {
+   "id": "C-entails-premises",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CEntails` ignores the premises",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 150.7,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:392",
+    "VE/Cardinality/Examples.lean:393",
+    "VE/Cardinality/Examples.lean:394",
+    "VE/Cardinality/Examples.lean:395"
+   ]
+  },
+  {
+   "id": "C-entails-admissible",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`CEntails` ranges over every structure",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.3,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:392",
+    "VE/Cardinality/Examples.lean:393",
+    "VE/Cardinality/Examples.lean:394",
+    "VE/Cardinality/Examples.lean:395"
+   ]
+  },
+  {
+   "id": "C-hascount-objects",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "`HasCount` counts objects of every sort",
+   "source_sha256": "6e1df41df305fb93a21ac2c56546fbcc4d890a5a3bcc07cbc41452e849173a3f",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.3,
+   "first_errors": [
+    "VE/Cardinality/Theorems.lean:68",
+    "VE/Cardinality/Theorems.lean:70"
+   ]
+  },
+  {
+   "id": "C-finite-declared",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`CEnv.WellFormed` drops `finiteDeclared`",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.1,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:426"
+   ]
+  },
+  {
+   "id": "C-body-not-unchecked",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a body under `not` is admitted unchecked (spec and check)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.8,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-body-and-left",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a body `and` checks its left part only (spec and check)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.7,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-body-or-right",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a body `or` checks its right part only (spec and check)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.9,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-count-finite",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a count over a sort not declared finite is admitted (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.6,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:171"
+   ]
+  },
+  {
+   "id": "C-count-terms",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a count's bodies are admitted unchecked (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.5,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:172",
+    "VE/Cardinality/Examples.lean:173",
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-proportion-whole",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a proportion's whole is admitted unchecked (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.2,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-proportion-part",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a proportion's part is admitted unchecked (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.3,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-proportion-den",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a proportion with denominator 0 is admitted (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.2,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:175",
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-proportion-num",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "a fraction above 1 is admitted (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.5,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:174",
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-not-unchecked",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`.not` is admitted unchecked (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.7,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-or-right-only",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`.or` is admitted when its right part is (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.4,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  },
+  {
+   "id": "C-implies-left-only",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "`.implies` is admitted when its left part is (spec, check and admits_iff)",
+   "source_sha256": "4912fd2cc92d279e387018aaed675ed20d685b816ab7d0e6cd8ab48cfe84160c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.9,
+   "first_errors": [
+    "VE/Cardinality/Examples.lean:454"
+   ]
+  }
+ ]
+}

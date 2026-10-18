@@ -347,15 +347,42 @@
     "elaborate": {
       "$comment": "Alternatives.Wire.regenerated: the legend, the inlined tree, the alternatives premises, the base premises, the followability formulas, the profile words' existential probes, the unmapped obligations, then Norms.Wire.regenerated of the inlined tree.",
       "additionalProperties": false,
-      "if": {"x-case": {"required": ["coverage_units"]}},
+      "allOf": [
+        {"if": {"x-case": {"required": ["coverage_units"]}}, "then": {"required": ["coverage"]}},
+        {
+          "else": {
+            "not": {
+              "anyOf": [
+                {"required": ["fill"]},
+                {"required": ["unspecified"]},
+                {"required": ["unsaid"]},
+                {"required": ["reached"]},
+                {"required": ["fragment_fill"]}
+              ]
+            }
+          },
+          "if": {"x-case": {"$ref": "#/$defs/fill_path"}},
+          "then": {"required": ["fill", "unspecified", "unsaid", "reached", "fragment_fill"]}
+        }
+      ],
       "properties": {
         "alternatives": {"$ref": "#/$defs/regenerated/alternatives"},
         "background": {"$ref": "common.json#/$defs/norms_background"},
         "base_premises": {"$ref": "common.json#/$defs/labelled_list"},
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
         "coverage": {"$ref": "#/$defs/coverage"},
+        "fill": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "generator": {"const": "fill"}},
+            "required": ["generator", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
         "followable": {"$ref": "#/$defs/regenerated/followable"},
         "fragment": {"type": "boolean"},
+        "fragment_fill": {"type": "boolean"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "inlined": {"$ref": "#/$defs/regenerated/inlined"},
         "legend": {"$ref": "common.json#/$defs/nonempty_strings"},
@@ -372,8 +399,35 @@
           "required": ["avoidable", "unavoidable", "allows", "prevents"],
           "type": "object"
         },
+        "reached": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "predicate": {"type": "string"},
+              "sorts": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["predicate", "sorts", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
         "status": {"const": "ok"},
-        "unmapped_obligations": {"$ref": "#/$defs/regenerated/unmapped_obligations"}
+        "unmapped_obligations": {"$ref": "#/$defs/regenerated/unmapped_obligations"},
+        "unsaid": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {"minLength": 1, "type": "string"},
+              "name": {"pattern": "unsaid__.*", "type": "string"},
+              "sorts": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["name", "sorts", "description"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "unspecified": {"$ref": "common.json#/$defs/strings"}
       },
       "required": [
         "id",
@@ -391,7 +445,6 @@
         "conflict_targets",
         "fragment"
       ],
-      "then": {"required": ["coverage"]},
       "type": "object"
     },
     "environment": {
@@ -399,6 +452,18 @@
       "additionalProperties": false,
       "properties": {"id": {"$ref": "common.json#/$defs/id_ok"}, "status": {"const": "ok"}, "valid": {"const": true}},
       "required": ["id", "status", "valid"],
+      "type": "object"
+    },
+    "fill_path": {
+      "$comment": "NormDefaults.Wire.hasProfile of the case's environment: norm-defaults@0 is among its profiles (ET-7).",
+      "properties": {
+        "environment": {
+          "properties": {"profiles": {"contains": {"const": "norm-defaults@0"}, "items": {"type": "string"}, "type": "array"}},
+          "required": ["profiles"],
+          "type": "object"
+        }
+      },
+      "required": ["environment"],
       "type": "object"
     },
     "followable": {

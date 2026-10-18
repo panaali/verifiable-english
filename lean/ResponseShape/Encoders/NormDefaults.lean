@@ -59,13 +59,29 @@ theorem layeredCase_fits (L : Wire.LayeredU) (id kind : String) (j : Json)
   all_goals (try (intro a ha; injection ha with ha; subst ha))
   all_goals read_kind
   all_goals (try simp only [VE.Route.Wire.ok, Wire.layeredElaborate, Wire.regeneratedU, VE.Norms.Wire.regenerated,
-    Wire.ReportG.toJson, Wire.conflictFields, Wire.statusFields, Wire.underJson, Wire.atomsJson])
+    VE.NormDefaults.Packs.elaborateArrays, VE.NormDefaults.Packs.labelledJson, List.append_nil, Wire.ReportG.toJson, Wire.conflictFields, Wire.statusFields, Wire.underJson, Wire.atomsJson])
   all_goals fits using line_fits
   all_goals try
     exfalso
     have := firstFailureX_of_not_free _ _ (by
       first | exact ‹Wire.conflictFreeX _ _ = false› | exact Bool.eq_false_iff.mpr ‹¬Wire.conflictFreeX _ _ = true›)
     simp_all
+
+/-! A9′ (docs/spec/premise-packs.md 2.7): `layered_elaborate` is closed, and `layeredCase_fits` holds for every
+`LayeredU` because the keys `Packs.elaborateArrays` writes are `soft` and `rights` whatever the packs
+(`Packs.elaborateArrays_keys`). Read from the shape itself: it has every key the layered elaborate writes for a
+further-pack list, and no further pack's id, so a further pack's entry needs its own shape row (AT-2). -/
+#guard
+  let keys : List String := match ResponseShape.Schemas.NormDefaults.layered_elaborate with
+    | .node _ kws => kws.flatMap fun (k : ResponseShape.Shape) => match k with
+      | .object ps (some (.bool false)) => ps.map (fun (p : String × ResponseShape.Shape) => p.1)
+      | _ => []
+    | _ => []
+  let further : List VE.NormDefaults.Packs.Pack :=
+    ["soft", "weighing", "events"].map (⟨·, .constraint, [], [], [], []⟩)
+  ["soft", "rights", "base_environment"].all keys.contains &&
+    (VE.NormDefaults.Packs.elaborateArrays further).all (keys.contains ·.1) &&
+    !VE.NormDefaults.Packs.packOrder.any (fun i => i != "soft" && i != "rights" && keys.contains i)
 
 theorem runLayered_fits (id kind : String) (j : Json)
     (hi : VE.Bridge.stringField j "id" = .ok id)
@@ -142,11 +158,18 @@ theorem runCase_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     have := firstFailure_of_not_free j _ ‹Wire.replayConflictU j = .ok _› (by simp_all)
     simp_all
 
+theorem runGated_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
+    OkFits j Skeletons.normDefaults (runGated j) := by
+  unfold runGated
+  split
+  · exact OkP.error
+  · exact runCase_fits j hp
+
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.normDefaults (runCaseReported j) := by
   unfold runCaseReported
   split
   · split
-    · exact runCase_fits j ‹_› _ ‹_›
+    · exact runGated_fits j ‹_› _ ‹_›
     · fits
   · exact of_norms (Bool.eq_false_iff.mpr ‹_›) (Norms.runCaseReported_fits j hj)
 
