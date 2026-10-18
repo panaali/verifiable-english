@@ -90,6 +90,25 @@ def test_a_stored_dump_is_replayed_without_running(dump, capsys):
     assert capsys.readouterr().err == f"lean-statements: from cache {key[:8]}\n"
 
 
+def test_two_checkouts_of_one_tree_share_an_entry(dump, tmp_path):
+    """Worktrees share the store: every keyed path is under the checkout, so another checkout of the same content
+    at another path replays the first one's dump."""
+    first = dump()
+    other = tmp_path / "other"
+    shutil.copytree(dump.root, other, ignore=shutil.ignore_patterns(".git"))
+    subprocess.run(["git", "init", "-q"], cwd=other, check=True, timeout=HANG_TIMEOUT)
+    copy = Dump(other)
+    assert copy() == first and copy.runs == 0
+
+
+def test_a_tree_whose_inputs_cannot_be_read_runs_the_dump(dump):
+    """Not a git checkout: the code digest cannot be taken, so the dump runs and nothing is stored."""
+    shutil.rmtree(dump.root / ".git")
+    dump()
+    dump()
+    assert dump.runs == 2 and dump.entries() == []
+
+
 def test_the_code_digest_follows_imports_to_the_helpers(dump):
     """The digest covers the two scripts and what their imports reach, transitively: the cache and its store, the
     source graph and the modules it imports."""

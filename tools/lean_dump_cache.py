@@ -35,6 +35,7 @@ from pathlib import Path
 import platform
 import re
 import shutil
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -155,7 +156,11 @@ def cached(step: str, root: Path, sources: Callable[[], list[Path]], run: Callab
     if reason is not None:
         print(f"{step}: not cached: {reason}", file=sys.stderr)
         return run()
-    current = inputs(step, root, listed, files, values, code_root)
+    try:
+        current = inputs(step, root, listed, files, values, code_root)
+    except (OSError, subprocess.SubprocessError, ValueError) as error:  # no key: run as without a cache
+        print(f"{step}: not cached: its inputs cannot be read ({error})", file=sys.stderr)
+        return run()
     key = cache_store.key_of(FORMAT, current)
     path = cache_store.entry_path(folder, key)
     entry = cache_store.load(path)
@@ -164,7 +169,11 @@ def cached(step: str, root: Path, sources: Callable[[], list[Path]], run: Callab
         print(f"{step}: from cache {key[:8]}", file=sys.stderr, flush=True)
         return list(entry["outputs"])
     texts = run()
-    if len(texts) == count and inputs(step, root, sources(), files, values, code_root) == current:
+    try:
+        unchanged = inputs(step, root, sources(), files, values, code_root) == current
+    except (OSError, subprocess.SubprocessError, ValueError):
+        unchanged = False
+    if len(texts) == count and unchanged:
         try:
             cache_store.store(path, {"format": FORMAT, "step": step, "key": key, "inputs": current,
                                      "outputs": list(texts)}, KEEP)
