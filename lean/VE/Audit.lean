@@ -138,9 +138,9 @@ import VE.NormDefaults.Layered
 import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.LayeredEntail
 import VE.NormDefaults.Packs
-import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLabels
 import VE.NormDefaults.PacksLegacy
+import VE.NormDefaults.PacksLegacyExamples
 import VE.NormDefaults.Premises
 import VE.NormDefaults.Replay
 import VE.NormDefaults.Report

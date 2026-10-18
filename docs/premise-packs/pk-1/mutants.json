@@ -1,0 +1,224 @@
+{
+  "item": "pk-1",
+  "base": "93131f967",
+  "mutants": [
+    {
+      "id": "M1",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "behaviour": "packOrder is the one order of X, soft before rights",
+      "edits": [
+        {
+          "from": "def packOrder : List String := [\"soft\", \"rights\",",
+          "to": "def packOrder : List String := [\"rights\", \"soft\","
+        }
+      ],
+      "test": "PacksExamples.lean A1 #guard (line 33)",
+      "also_fails": "Packs.lean X_soft_first",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/Packs.lean:350:26: Tactic `decide` proved that the proposition",
+          "error: VE/NormDefaults/Packs.lean:355:40: Tactic `rfl` failed: The left-hand side",
+          "error: VE/NormDefaults/Packs.lean:355:40: Tactic `rfl` failed: The left-hand side"
+        ]
+      },
+      "guards_only": {
+        "note": "the #guards of PacksExamples.lean run on the mutated Packs.lean with its theorems stripped; the unmutated control passes every guard",
+        "exit": 1,
+        "errors": [
+          "PacksExamples.lean:33: error: Expression"
+        ]
+      }
+    },
+    {
+      "id": "M2",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "behaviour": "a repeated label is refused (firstRepeat keeps the seen list)",
+      "edits": [
+        {
+          "from": "if seen.contains n then some (i, n) else firstRepeat (n :: seen) rest",
+          "to": "if seen.contains n then some (i, n) else firstRepeat seen rest"
+        }
+      ],
+      "test": "PacksExamples.lean A3 #guards (lines 43, 45) and A4 declared twice (line 56)",
+      "also_fails": "Packs.lean firstRepeat_none",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/Packs.lean:267:59: Application type mismatch: The argument"
+        ]
+      },
+      "guards_only": {
+        "note": "the #guards of PacksExamples.lean run on the mutated Packs.lean with its theorems stripped; the unmutated control passes every guard",
+        "exit": 1,
+        "errors": [
+          "PacksExamples.lean:43: error: Expression",
+          "PacksExamples.lean:45: error: Expression",
+          "PacksExamples.lean:56: error: Expression"
+        ]
+      }
+    },
+    {
+      "id": "M3",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "behaviour": "a generated name an author constant declares is refused (declaredIn reads constants)",
+      "edits": [
+        {
+          "from": "def declaredIn (E : VE.Environment) (n : String) : Bool := (E.predicates n).isSome || (E.constants n).isSome",
+          "to": "def declaredIn (E : VE.Environment) (n : String) : Bool := (E.predicates n).isSome"
+        }
+      ],
+      "test": "PacksExamples.lean A4 #guard date__d (line 55)",
+      "also_fails": "Packs.lean assemble_fresh",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/Packs.lean:295:11: Invalid projection: Projections are not supported on this type because it has no fields",
+          "error: VE/NormDefaults/Packs.lean:295:19: Invalid projection: Projections are not supported on this type because it has no fields"
+        ]
+      },
+      "guards_only": {
+        "note": "the #guards of PacksExamples.lean run on the mutated Packs.lean with its theorems stripped; the unmutated control passes every guard",
+        "exit": 1,
+        "errors": [
+          "PacksExamples.lean:55: error: Expression"
+        ]
+      }
+    },
+    {
+      "id": "M4",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "behaviour": "packFault keeps today's text on a legacy list",
+      "edits": [
+        {
+          "from": "    if legacyIds.contains (qs.map (·.id)) then VE.Route.Wire.invalidModel i\n    else VE.Route.Wire.invalidModel i ++ \": \" ++ l",
+          "to": "    VE.Route.Wire.invalidModel i ++ \": \" ++ l"
+        }
+      ],
+      "test": "PacksExamples.lean A7 #guards (lines 82, 83, 85)",
+      "also_fails": null,
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksExamples.lean:82:0: Expression",
+          "error: VE/NormDefaults/PacksExamples.lean:83:0: Expression",
+          "error: VE/NormDefaults/PacksExamples.lean:85:0: Expression"
+        ]
+      },
+      "guards_only": {
+        "note": "the #guards of PacksExamples.lean run on the mutated Packs.lean with its theorems stripped; the unmutated control passes every guard",
+        "exit": 1,
+        "errors": [
+          "PacksExamples.lean:82: error: Expression",
+          "PacksExamples.lean:83: error: Expression",
+          "PacksExamples.lean:85: error: Expression"
+        ]
+      }
+    },
+    {
+      "id": "M5",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "behaviour": "elaborateArrays writes soft and rights only, whatever the packs",
+      "edits": [
+        {
+          "from": "   (\"rights\", Json.arr ((packPremises qs \"rights\").map (fun (l, a) => labelledJson l a none)).toArray)]\n",
+          "to": "   (\"rights\", Json.arr ((packPremises qs \"rights\").map (fun (l, a) => labelledJson l a none)).toArray)] ++\n  (qs.filter (fun p => p.id != \"soft\" && p.id != \"rights\")).map (fun p => (p.id, Json.arr #[]))\n"
+        }
+      ],
+      "test": "PacksExamples.lean A9 #guard (line 99)",
+      "also_fails": "Packs.lean elaborateArrays_keys",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/Packs.lean:380:0: Not a definitional equality: the left-hand side",
+          "error: VE/NormDefaults/Packs.lean:381:103: Type mismatch"
+        ]
+      },
+      "guards_only": {
+        "note": "the #guards of PacksExamples.lean run on the mutated Packs.lean with its theorems stripped; the unmutated control passes every guard",
+        "exit": 1,
+        "errors": [
+          "PacksExamples.lean:99: error: Expression"
+        ]
+      }
+    },
+    {
+      "id": "M6",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "behaviour": "the vocabulary limit counts the packs' names over 256",
+      "edits": [
+        {
+          "from": "if used + (names qs).length > 256 then throw",
+          "to": "if used + (names qs).length > 257 then throw"
+        }
+      ],
+      "test": "PacksExamples.lean A6 #guards (lines 75, 78)",
+      "also_fails": "Packs.lean assembleIn_ok",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/Packs.lean:150:106: Application type mismatch: The argument",
+          "error: VE/NormDefaults/Packs.lean:300:2: Tactic `rfl` failed: The left-hand side"
+        ]
+      },
+      "guards_only": {
+        "note": "the #guards of PacksExamples.lean run on the mutated Packs.lean with its theorems stripped; the unmutated control passes every guard",
+        "exit": 1,
+        "errors": [
+          "PacksExamples.lean:75: error: Expression",
+          "PacksExamples.lean:78: error: Expression"
+        ]
+      }
+    },
+    {
+      "id": "M7",
+      "language": "Lean",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "behaviour": "the norms chain has the empty pack list (JT-R2)",
+      "edits": [
+        {
+          "from": "    pure ⟨⟨\"norms@0\", correlate X, U, wfc, [],",
+          "to": "    pure ⟨⟨\"norms@0\", correlate X, U, wfc, [VE.NormDefaults.Wire.softPack U (correlate X)],"
+        },
+        {
+          "from": "      (choiceX_normsShaped N hn c).symm, fun a ha => absurd ha List.not_mem_nil⟩",
+          "to": "      VE.NormDefaults.Packs.X_single _, fun a ha => by\n        have h0 : (VE.NormDefaults.Wire.softPack U (correlate X)).labelled.map (·.2) = [] := choiceX_normsShaped N hn c\n        simp only [VE.NormDefaults.Wire.LayeredU.X, VE.NormDefaults.Packs.X_single, h0] at ha\n        cases ha⟩"
+        }
+      ],
+      "test": "PacksLegacyExamples.lean choiceLayeredG_norms_packs (theorem)",
+      "build": {
+        "target": "VE.NormDefaults.PacksLegacyExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksLegacyExamples.lean:97:2: Tactic `rfl` failed: The left-hand side"
+        ]
+      }
+    },
+    {
+      "id": "M8",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "behaviour": "the rights route's packs are soft then rights (its rights array, X and InvalidModel(rights))",
+      "edits": [
+        {
+          "from": "        [softPack U D, rightsPack src.D]\n",
+          "to": "        [softPack U D]\n"
+        }
+      ],
+      "test": "tests/test_norm_defaults_layered.py::test_rights_limitation_premises_bind_fillings, ::test_soft_and_rights_fixtures_agree_with_python, ::test_packages_are_bound_to_the_source_and_the_layered_background",
+      "run": "lake build ve_service with the mutant, its digest pinned for the run (regen_generated --only checker-pins), VE_NATIVE_PREBUILT=1 pytest tests/test_norm_defaults_layered.py: 3 failed, 8 passed; Layered.lean and lean/checkers.lock restored and ve_service rebuilt"
+    }
+  ]
+}

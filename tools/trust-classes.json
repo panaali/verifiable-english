@@ -12404,19 +12404,23 @@
         "VE.NormDefaults.Packs.Fixtures.E",
         "VE.NormDefaults.Packs.Fixtures.P",
         "VE.NormDefaults.Packs.Fixtures.att",
-        "VE.NormDefaults.Packs.Fixtures.cx",
         "VE.NormDefaults.Packs.Fixtures.diag",
         "VE.NormDefaults.Packs.Fixtures.ev",
         "VE.NormDefaults.Packs.Fixtures.fixturePrefixes",
         "VE.NormDefaults.Packs.Fixtures.holds",
-        "VE.NormDefaults.Packs.Fixtures.legacyLabels",
-        "VE.NormDefaults.Packs.Fixtures.legacyPacks",
-        "VE.NormDefaults.Packs.Fixtures.legacyU",
         "VE.NormDefaults.Packs.Fixtures.rights",
-        "VE.NormDefaults.Packs.Fixtures.rightsDocs",
         "VE.NormDefaults.Packs.Fixtures.soft",
         "VE.NormDefaults.Packs.Fixtures.weighing",
         "VE.NormDefaults.Packs.Fixtures.φ"
+      ]
+    },
+    "VE/NormDefaults/PacksLegacyExamples.lean": {
+      "T": [
+        "VE.NormDefaults.Packs.Fixtures.cx",
+        "VE.NormDefaults.Packs.Fixtures.legacyLabels",
+        "VE.NormDefaults.Packs.Fixtures.legacyPacks",
+        "VE.NormDefaults.Packs.Fixtures.legacyU",
+        "VE.NormDefaults.Packs.Fixtures.rightsDocs"
       ]
     }
   }
