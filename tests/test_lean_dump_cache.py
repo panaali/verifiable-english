@@ -314,6 +314,20 @@ def test_the_steps_are_the_regeneration_entries():
                                                                    "--check"),)
 
 
+def test_the_command_lines_use_the_cache(monkeypatch, capsys):
+    """`tools/lean_statements.py`'s command line asks for the cache (its one dump serves `--check` and the write);
+    `dump_all` called without it, as the tests of fixture trees call it, does not."""
+    asked = []
+
+    def dump_all(root=lean_statements.ROOT, cache=False):
+        asked.append(cache)
+        return tuple(path.read_text() for path in (lean_statements.OUTPUT, lean_statements.PREDICATES,
+                                                    lean_statements.DECLARATIONS))
+    monkeypatch.setattr(lean_statements, "dump_all", dump_all)
+    assert lean_statements.main(["--check"]) == 0 and asked == [True]
+    assert "PASS:" in capsys.readouterr().out
+
+
 def test_only_the_explicit_audit_modes_are_cached():
     """The plain `lean/audit.py`, the gate's lean_audit stage, always runs Lean."""
     assert audit.cached_mode([]) is False

@@ -1,0 +1,1145 @@
+# regen_generated.py --check (check-after-write), cache: the directory check-cold filled, 2026-10-18T14:53:06Z, HEAD ea92f3305,  14:53:06 up 14 days, 12:12,  0 user,  load average: 16.81, 22.97, 19.98
+gawk: warning: The time extension is obsolete. Use the timex extension from gawkextlib instead.
+    0.1 == check gitattributes
+    0.1 == check wire-contract
+    1.0 == check english-grammar
+    1.1 == check english-lexicon-fixtures
+    1.5 /home/seyran/code/ve-eff-20261018-1/lean/VE/EnglishGrammar/LexiconFixtures.lean
+    1.6 == check question-fixtures
+    2.0 PASS: the Lean fixture guards are the fixture table
+    2.0 == check english-run-copy
+    2.1 PASS: VE/Service/EnglishRun.lean is the generated copy of VE/English/Run.lean
+    2.1 == check route-cases
+    2.8 wrote /home/seyran/code/ve-eff-20261018-1/lean/VE/Route/examples/route-cases.json
+    2.8 == check lean-roots
+    2.8 == check lake-build
+    3.1 ⚠ [90/216] Replayed VE.SoftNorms.Soften
+    3.1 warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+    3.1   Option.bind_eq_bind
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 ⚠ [105/216] Replayed VE.Readings.Separate
+    3.1 warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [113/216] Replayed VE.Readings.Superpose
+    3.1 warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/Readings/Superpose.lean:311:63: unused variable `hch`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [120/216] Replayed VE.Readings.Faithful
+    3.1 warning: VE/Readings/Faithful.lean:234:26: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/Readings/Faithful.lean:235:5: unused variable `hr`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [121/216] Replayed VE.Readings.Strings
+    3.1 warning: VE/Readings/Strings.lean:98:19: This simp argument is unused:
+    3.1   Bool.and_eq_true
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [̵B̵o̵o̵l̵.̵a̵n̵d̵_̵e̵q̵_̵t̵r̵u̵e̵,̵ ̵d̵e̵c̵i̵d̵e̵_̵e̵q̵_̵t̵r̵u̵e̵_̵e̵q̵,̵[̲d̲e̲c̲i̲d̲e̲_̲e̲q̲_̲t̲r̲u̲e̲_̲e̲q̲,̲ List.length_append, List.length_singleton]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Strings.lean:98:37: This simp argument is unused:
+    3.1   decide_eq_true_eq
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [Bool.and_eq_true, d̵e̵c̵i̵d̵e̵_̵e̵q̵_̵t̵r̵u̵e̵_̵e̵q̵,̵ ̵List.length_append, List.length_singleton]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Strings.lean:187:72: This simp argument is unused:
+    3.1   List.length_singleton
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s̵i̵n̵g̵l̵e̵t̵o̵n̵,̵ ̵L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵cons]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Strings.lean:245:32: This simp argument is unused:
+    3.1   pos_add_char
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp [String.Pos.ext_iff, p̵o̵s̵_̵a̵d̵d̵_̵c̵h̵a̵r̵,̵ ̵hA _ (List.getElem_mem hlt)]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 ⚠ [123/216] Replayed VE.Readings.Labels
+    3.1 warning: VE/Readings/Labels.lean:98:56: This simp argument is unused:
+    3.1   h1
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp [label, String.data_append, List.reverse_append, h1̵,̵ ̵h̵2, toString_data]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Labels.lean:98:60: This simp argument is unused:
+    3.1   h2
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp [label, String.data_append, List.reverse_append, h1, h̵2̵,̵ ̵toString_data]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Labels.lean:106:56: This simp argument is unused:
+    3.1   h1
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp [label, String.data_append, List.reverse_append, h1̵,̵ ̵h̵2, h3, toString_data]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Labels.lean:106:60: This simp argument is unused:
+    3.1   h2
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp [label, String.data_append, List.reverse_append, h1, h2̵,̵ ̵h̵3, toString_data]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Labels.lean:106:64: This simp argument is unused:
+    3.1   h3
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp [label, String.data_append, List.reverse_append, h1, h2, h̵3̵,̵ ̵toString_data]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Labels.lean:112:59: This simp argument is unused:
+    3.1   h3
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp [keyLabel, String.data_append, List.reverse_append,̵ ̵h̵3̵]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Labels.lean:123:13: This simp argument is unused:
+    3.1   List.append_assoc
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [̵L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵a̵s̵s̵o̵c̵,̵ ̵L̵i̵s̵t̵.̵c̵o̵n̵s̵_̵a̵p̵p̵e̵n̵d̵,̵[̲L̲i̲s̲t̲.̲c̲o̲n̲s̲_̲a̲p̲p̲e̲n̲d̲,̲ List.nil_append, List.cons.injEq, true_and] at this
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Labels.lean:133:13: This simp argument is unused:
+    3.1   List.append_assoc
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [̵L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵a̵s̵s̵o̵c̵,̵ ̵L̵i̵s̵t̵.̵c̵o̵n̵s̵_̵a̵p̵p̵e̵n̵d̵,̵[̲L̲i̲s̲t̲.̲c̲o̲n̲s̲_̲a̲p̲p̲e̲n̲d̲,̲ List.nil_append, List.cons.injEq, true_and] at this
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 ⚠ [133/216] Replayed VE.SpeechActs.Demand
+    3.1 warning: VE/SpeechActs/Demand.lean:277:24: unused variable `hS`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Demand.lean:345:5: unused variable `hno`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [134/216] Replayed VE.SpeechActs.Answer
+    3.1 warning: VE/SpeechActs/Answer.lean:189:39: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:189:86: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:197:37: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:197:84: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:223:50: unused variable `hS`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:238:43: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:238:90: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:239:50: unused variable `hS`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:243:48: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:243:95: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:248:39: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:248:86: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:256:51: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:257:5: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:269:43: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:269:90: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:270:5: unused variable `hm`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:279:47: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:279:94: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:293:66: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:294:5: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:294:51: unused variable `valid`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:295:5: unused variable `hb`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:295:57: unused variable `hp`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:310:80: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:311:20: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:323:78: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:324:20: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:325:5: unused variable `valid`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Answer.lean:325:30: unused variable `hp`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [135/216] Replayed VE.SpeechActs.Consequence
+    3.1 warning: VE/SpeechActs/Consequence.lean:121:39: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:121:84: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:127:62: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:128:5: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:129:5: unused variable `hb`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:161:47: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:161:94: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:189:45: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:189:92: unused variable `hq`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:190:35: unused variable `hφ`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/SpeechActs/Consequence.lean:215:38: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [138/216] Replayed VE.Readings.Wire
+    3.1 warning: VE/Readings/Wire.lean:1000:75: unused variable `h`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [139/216] Replayed VE.Readings.SupEnv
+    3.1 warning: VE/Readings/SupEnv.lean:414:47: unused variable `hA`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [140/216] Replayed VE.Readings.ChoiceValid
+    3.1 warning: VE/Readings/ChoiceValid.lean:516:0: automatically included section variable(s) unused in theorem `VE.Readings.stratum_edge`:
+    3.1   hc
+    3.1 consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+    3.1   omit hc in theorem ...
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+    3.1 warning: VE/Readings/ChoiceValid.lean:555:19: This simp argument is unused:
+    3.1   VE.SoftNorms.primeNode
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [V̵E̵.̵S̵o̵f̵t̵N̵o̵r̵m̵s̵.̵p̵r̵i̵m̵e̵N̵o̵d̵e̵,̵ ̵hcarve]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/ChoiceValid.lean:563:19: This simp argument is unused:
+    3.1   VE.SoftNorms.primeNode
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [̵V̵E̵.̵S̵o̵f̵t̵N̵o̵r̵m̵s̵.̵p̵r̵i̵m̵e̵N̵o̵d̵e̵,̵ ̵d̵e̵r̵i̵v̵e̵d̵L̵i̵s̵t̵,̵[̲d̲e̲r̲i̲v̲e̲d̲L̲i̲s̲t̲,̲ hfm, halt]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 ⚠ [141/216] Replayed VE.Readings.ChoiceTyped
+    3.1 warning: VE/Readings/ChoiceTyped.lean:90:42: This simp argument is unused:
+    3.1   hhi M N hM hN
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [VE.SoftNorms.pairTriple, hhi M̵ ̵N h̵M hN,̵ hh̵i̵ ̵N̵ ̵M ̵h̵N̵ ̵h̵M̵, hact M hM, hact N hN, hrk M hM,
+    3.1           hrk N hN] at ht ⊢
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/ChoiceTyped.lean:379:38: unused variable `hN`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/Readings/ChoiceTyped.lean:458:7: unused variable `N`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/Readings/ChoiceTyped.lean:459:11: unused variable `N`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [142/216] Replayed VE.Readings.Asserted
+    3.1 warning: VE/Readings/Asserted.lean:151:5: unused variable `hc`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [144/216] Replayed VE.Readings.Situation
+    3.1 warning: VE/Readings/Situation.lean:81:36: This simp argument is unused:
+    3.1   term_relation_congr
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [VE.Formula.denote,̵ ̵t̵e̵r̵m̵_̵r̵e̵l̵a̵t̵i̵o̵n̵_̵c̵o̵n̵g̵r̵]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/Situation.lean:103:36: This simp argument is unused:
+    3.1   term_relation_congr
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [VE.Formula.denote,̵ ̵t̵e̵r̵m̵_̵r̵e̵l̵a̵t̵i̵o̵n̵_̵c̵o̵n̵g̵r̵]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 ⚠ [151/216] Replayed VE.Readings.UpSlot
+    3.1 warning: VE/Readings/UpSlot.lean:80:42: This simp argument is unused:
+    3.1   hhi M N hM hN
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [VE.SoftNorms.pairTriple, hhi M̵ ̵N h̵M hN,̵ hh̵i̵ ̵N̵ ̵M ̵h̵N̵ ̵h̵M̵, hact M hM, hact N hN, hrk M hM,
+    3.1           hrk N hN] at ht ⊢
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/UpSlot.lean:155:39: unused variable `hr`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 warning: VE/Readings/UpSlot.lean:188:17: unused variable `hm`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [152/216] Replayed VE.Readings.SupFree
+    3.1 warning: VE/Readings/SupFree.lean:72:47: unused variable `hA`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [153/216] Replayed VE.Readings.SupAll
+    3.1 warning: VE/Readings/SupAll.lean:227:0: automatically included section variable(s) unused in theorem `VE.Readings.author_frame`:
+    3.1   hh
+    3.1 consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+    3.1   omit hh in theorem ...
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+    3.1 ⚠ [154/216] Replayed VE.Readings.ChoiceWF
+    3.1 warning: VE/Readings/ChoiceWF.lean:19:32: unused variable `hh`
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.1 ⚠ [185/216] Replayed VE.Readings.VerdictsWire
+    3.1 warning: VE/Readings/VerdictsWire.lean:855:59: This simp argument is unused:
+    3.1   Bool.false_eq_true
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp (config := {̵d̵e̵c̵i̵d̵e̵{̲ ̲d̲e̲c̲i̲d̲e̲ := t̵r̵u̵e̵}̵)̵t̲r̲u̲e̲ ̲}̲)̲ only [planItems, hs, B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵,̵ ̵↓reduceIte]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/VerdictsWire.lean:927:42: This simp argument is unused:
+    3.1   Bool.false_eq_true
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp (config := {̵d̵e̵c̵i̵d̵e̵{̲ ̲d̲e̲c̲i̲d̲e̲ := t̵r̵u̵e̵}̵)̵t̲r̲u̲e̲ ̲}̲)̲ only [̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵,̵ ̵↓̵r̵e̵d̵u̵c̵e̵I̵t̵e̵]̵[̲↓̲r̲e̲d̲u̲c̲e̲I̲t̲e̲]̲ at hit
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/VerdictsWire.lean:930:59: This simp argument is unused:
+    3.1   List.mem_singleton
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [List.mem_append, List.mem_cons, L̵i̵s̵t̵.̵m̵e̵m̵_̵s̵i̵n̵g̵l̵e̵t̵o̵n̵,̵ ̵List.mem_flatMap, List.mem_filterMap,
+    3.1       List.not_mem_nil, or_false, false_or, or_imp, forall_and, forall_exists_index, and_imp,
+    3.1   ̲  ̲ ̲ ̲forall_eq, PlanItem.label_text, PlanItem.label_shown, reduceCtorEq, false_implies, implies_true,
+    3.1   ̲  ̲ ̲ ̲and_true, true_and]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/VerdictsWire.lean:932:25: This simp argument is unused:
+    3.1   PlanItem.label_shown
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [List.mem_append, List.mem_cons, List.mem_singleton, List.mem_flatMap,
+    3.1   ̲  ̲ ̲ ̲List.mem_filterMap, List.not_mem_nil, or_false, false_or, or_imp, forall_and,
+    3.1   ̲  ̲ ̲ ̲forall_exists_index, and_imp, forall_eq, PlanItem.label_text, P̵l̵a̵n̵I̵t̵e̵m̵.̵l̵a̵b̵e̵l̵_̵s̵h̵o̵w̵n̵,̵ ̵reduceCtorEq, false_implies,
+    3.1   ̲  ̲ ̲ ̲implies_true, and_true, true_and]
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/VerdictsWire.lean:942:32: This simp argument is unused:
+    3.1   List.mem_append
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [List.mem_a̵p̵p̵e̵n̵d̵,̵ ̵L̵i̵st̵.̵m̵e̵m̵_̵s̵ingleton, List.mem_cons, List.not_mem_nil, or_false,
+    3.1            Option.some.injEq, reduceCtorEq] at h
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/VerdictsWire.lean:942:49: This simp argument is unused:
+    3.1   List.mem_singleton
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [List.mem_append, List.mem_s̵i̵n̵g̵l̵e̵t̵o̵n̵,̵ ̵L̵i̵s̵t̵.̵m̵e̵m̵_̵cons, List.not_mem_nil, or_false,
+    3.1            Option.some.injEq, reduceCtorEq] at h
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Readings/VerdictsWire.lean:946:90: This simp argument is unused:
+    3.1   Option.some.injEq
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [PlanItem.label_text, PlanItem.label_shown, reduceCtorEq,̵ ̵O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵.̵i̵n̵j̵E̵q̵] at hl
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 ⚠ [200/216] Replayed VE.Core.TableauExtendedClosure
+    3.1 warning: VE/Core/TableauExtendedClosure.lean:83:21: `Option.some_bind` has been deprecated: Use `Option.bind_some` instead
+    3.1 warning: VE/Core/TableauExtendedClosure.lean:87:23: `Option.some_bind` has been deprecated: Use `Option.bind_some` instead
+    3.1 warning: VE/Core/TableauExtendedClosure.lean:83:21: This simp argument is unused:
+    3.1   Option.some_bind
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [hx,̵ ̵O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵_̵b̵i̵n̵d̵] at ht
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Core/TableauExtendedClosure.lean:87:23: This simp argument is unused:
+    3.1   Option.some_bind
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [hy, O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵_̵b̵i̵n̵d̵,̵ ̵Option.pure_def, Option.some.injEq] at ht
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Core/TableauExtendedClosure.lean:87:58: This simp argument is unused:
+    3.1   Option.some.injEq
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [hy, Option.some_bind, Option.pure_def,̵ ̵O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵.̵i̵n̵j̵E̵q̵] at ht
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.1 warning: VE/Core/TableauExtendedClosure.lean:97:15: This simp argument is unused:
+    3.1   ground
+    3.1 
+    3.1 Hint: Omit it from the simp argument list.
+    3.1   simp only [g̵r̵o̵u̵n̵d̵,̵ ̵bind, Option.bind] at hg
+    3.1 
+    3.1 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 ⚠ [217/891] Replayed VE.Alternatives.Run
+    3.2 warning: VE/Alternatives/Run.lean:286:54: unused variable `hn`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [262/891] Replayed VE.Attribution.Elaborate
+    3.2 warning: VE/Attribution/Elaborate.lean:106:37: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Elaborate.lean:245:26: unused variable `hw`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Elaborate.lean:272:46: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Elaborate.lean:421:9: unused variable `r`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [263/891] Replayed VE.Attribution.Conservative
+    3.2 warning: VE/Attribution/Conservative.lean:83:41: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [264/891] Replayed VE.Attribution.Structure
+    3.2 warning: VE/Attribution/Structure.lean:34:5: unused variable `hb`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:34:46: unused variable `hs`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:45:5: unused variable `hs₂`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:63:50: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:64:5: unused variable `hu`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:65:5: unused variable `hn`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:65:32: unused variable `hr`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:71:49: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:72:5: unused variable `hu`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:73:5: unused variable `hn`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:73:32: unused variable `hr`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:80:49: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:81:5: unused variable `hu`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:82:5: unused variable `hn`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:82:41: unused variable `hr`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:88:48: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:89:5: unused variable `hu`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:90:5: unused variable `hn`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:90:41: unused variable `hr`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:100:91: unused variable `hk`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Structure.lean:101:19: unused variable `hs`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [266/891] Replayed VE.Attribution.Scoped
+    3.2 warning: VE/Attribution/Scoped.lean:14:50: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:15:5: unused variable `hs`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:16:5: unused variable `hp`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:21:75: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:22:23: unused variable `hs`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:23:5: unused variable `hp`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:60:44: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:81:5: unused variable `hq`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:102:5: unused variable `hs`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Scoped.lean:103:5: unused variable `hp`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [267/891] Replayed VE.Attribution.Assess
+    3.2 warning: VE/Attribution/Assess.lean:55:53: unused variable `h₀`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [268/891] Replayed VE.Attribution.Bridge
+    3.2 warning: VE/Attribution/Bridge.lean:191:46: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Bridge.lean:197:46: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Bridge.lean:208:52: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Attribution/Bridge.lean:216:53: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [277/891] Replayed VE.Discourse.Access
+    3.2 warning: VE/Discourse/Access.lean:283:30: unused variable `m`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Access.lean:606:5: unused variable `ha`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [279/891] Replayed VE.Discourse.Descriptions
+    3.2 warning: VE/Discourse/Descriptions.lean:111:28: unused variable `E`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Descriptions.lean:117:60: unused variable `hσ`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Descriptions.lean:118:32: unused variable `hP`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Descriptions.lean:118:77: unused variable `hS`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [280/891] Replayed VE.Discourse.Fusion
+    3.2 warning: VE/Discourse/Fusion.lean:58:63: unused variable `hσ`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Fusion.lean:59:5: unused variable `hφ`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Fusion.lean:59:31: unused variable `hψ`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [282/891] Replayed VE.Discourse.Joint
+    3.2 warning: VE/Discourse/Joint.lean:263:5: unused variable `hcs`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Joint.lean:346:80: unused variable `h₁`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Joint.lean:346:95: unused variable `h₂`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [283/891] Replayed VE.Discourse.Documents
+    3.2 warning: VE/Discourse/Documents.lean:177:70: unused variable `hfresh`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Documents.lean:202:50: unused variable `hnodup`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [284/891] Replayed VE.Discourse.Elaborate
+    3.2 warning: VE/Discourse/Elaborate.lean:240:56: This simp argument is unused:
+    3.2   unary_var0
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [assertive, VE.Formula.denote, VE.Term.denote, List.getElem?_cons_zero,
+    3.2               List.getElem?_cons_succ, Option.some.injEq,̵ ̵u̵n̵a̵r̵y̵_̵v̵a̵r̵0̵]
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Discourse/Elaborate.lean:340:24: unused variable `hS`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Elaborate.lean:340:69: unused variable `hρ`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [285/891] Replayed VE.Discourse.Resolve
+    3.2 warning: VE/Discourse/Resolve.lean:120:47: This simp argument is unused:
+    3.2   Bool.and_eq_true
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [List.any_eq_true, beq_iff_eq,̵ ̵B̵o̵o̵l̵.̵a̵n̵d̵_̵e̵q̵_̵t̵r̵u̵e̵] at h
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Discourse/Resolve.lean:541:44: unused variable `s`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [286/891] Replayed VE.Discourse.WellFormed
+    3.2 warning: VE/Discourse/WellFormed.lean:469:35: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/WellFormed.lean:475:44: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/WellFormed.lean:729:48: This simp argument is unused:
+    3.2   npSlots
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp ̵[̵n̵p̵S̵l̵o̵t̵s̵]̵
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Discourse/WellFormed.lean:1117:34: This simp argument is unused:
+    3.2   ha
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp [ha̵,̵ ̵h̵b]
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Discourse/WellFormed.lean:1117:38: This simp argument is unused:
+    3.2   hb
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp [ha,̵ ̵h̵b̵]
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 ⚠ [296/891] Replayed VE.Readings.SupExtra
+    3.2 warning: VE/Readings/SupExtra.lean:70:47: unused variable `hA`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [310/891] Replayed VE.EnglishGrammar.Read
+    3.2 warning: VE/EnglishGrammar/Read.lean:458:15: This simp argument is unused:
+    3.2   Prod.fst
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [Prod.f̵st̵,̵ ̵P̵r̵o̵d̵.̵s̵nd, hc, Bool.not_true, Bool.false_eq_true, if_false] at hf
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:458:25: This simp argument is unused:
+    3.2   Prod.snd
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [Prod.fst, P̵r̵o̵d̵.̵s̵n̵d̵,̵ ̵hc, Bool.not_true, Bool.false_eq_true, if_false] at hf
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:465:31: This simp argument is unused:
+    3.2   hp
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only ̵[̵h̵p̵]̵
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:465:101: This simp argument is unused:
+    3.2   hform
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp ̵[̵h̵f̵o̵r̵m̵]̵
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:470:52: This simp argument is unused:
+    3.2   Option.some.injEq
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [hpol, beq_iff_eq, Bool.or_eq_true, Option.some.injEq, O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵.̵i̵n̵j̵E̵q̵,̵ ̵if_true, if_false] at hf
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:470:71: This simp argument is unused:
+    3.2   Option.some.injEq
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [hpol, beq_iff_eq, Bool.or_eq_true, Option.some.injEq, O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵.̵i̵n̵j̵E̵q̵,̵ ̵if_true, if_false] at hf
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:470:90: This simp argument is unused:
+    3.2   if_true
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [hpol, beq_iff_eq, Bool.or_eq_true, Option.some.injEq, Option.some.injEq,
+    3.2   ̲ i̵f̵_̵t̵r̵u̵e̵,̵  ̲ ̲ ̲ ̲ ̲ ̲if_false] at hf
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:470:99: This simp argument is unused:
+    3.2   if_false
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [hpol, beq_iff_eq, Bool.or_eq_true, Option.some.injEq, Option.some.injEq,
+    3.2   ̲  ̲ ̲ ̲ ̲ ̲ ̲ ̲if_true,̵ ̵i̵f̵_̵f̵a̵l̵s̵e̵] at hf
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:476:20: This simp argument is unused:
+    3.2   hpol
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp [̵h̵p̵o̵l̵,̵ ̵h̵l̵e̵f̵t̵]̵[̲h̲l̲e̲f̲t̲]̲
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:484:15: This simp argument is unused:
+    3.2   Prod.fst
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [Prod.f̵st̵,̵ ̵P̵r̵o̵d̵.̵s̵nd, hc, Bool.not_true, Bool.false_eq_true, if_false] at hf
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:484:25: This simp argument is unused:
+    3.2   Prod.snd
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [Prod.fst, P̵r̵o̵d̵.̵s̵n̵d̵,̵ ̵hc, Bool.not_true, Bool.false_eq_true, if_false] at hf
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:491:31: This simp argument is unused:
+    3.2   hp
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only ̵[̵h̵p̵]̵
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:491:101: This simp argument is unused:
+    3.2   hform
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp ̵[̵h̵f̵o̵r̵m̵]̵
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/EnglishGrammar/Read.lean:501:26: This simp argument is unused:
+    3.2   hpol
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp [hp̵o̵l̵,̵ ̵h̵sel.1, hsel.2]
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 ⚠ [337/891] Replayed VE.Ask.Sound
+    3.2 warning: VE/Ask/Sound.lean:188:51: unused variable `e`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [341/891] Replayed VE.Ask.Lines
+    3.2 warning: VE/Ask/Lines.lean:194:27: unused variable `m`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Ask/Lines.lean:194:55: unused variable `m`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [351/891] Replayed VE.Numbers.Decimal
+    3.2 warning: VE/Numbers/Decimal.lean:16:4: try 'simp' instead of 'simpa'
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+    3.2 warning: VE/Numbers/Decimal.lean:18:4: try 'simp' instead of 'simpa'
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+    3.2 ⚠ [352/891] Replayed VE.Numbers.Round
+    3.2 warning: VE/Numbers/Round.lean:150:38: This simp argument is unused:
+    3.2   ← Rat.intCast_add
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp [̵←̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵i̵n̵j̵]̵[̲R̲a̲t̲.̲i̲n̲t̲C̲a̲s̲t̲_̲i̲n̲j̲]̲
+    3.2 
+    3.2 Note: Simp arguments with `←` have the additional effect of removing the other direction from the simp set, even if the simp argument itself is unused. If the hint above does not work, try replacing `←` with `-` to only get that effect and silence this warning.
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 ⚠ [356/891] Replayed VE.Calc.Decls
+    3.2 warning: VE/Calc/Decls.lean:65:8: This simp argument is unused:
+    3.2   values
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp ̵[̵v̵a̵l̵u̵e̵s̵]̵
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Calc/Decls.lean:249:38: This simp argument is unused:
+    3.2   Decl.valueUnder
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp [Decl.valL, D̵e̵c̵l̵.̵v̵a̵l̵u̵e̵U̵n̵d̵e̵r̵,̵ ̵Val.Agrees, hs]
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Calc/Decls.lean:853:6: try 'simp' instead of 'simpa'
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+    3.2 ⚠ [364/891] Replayed VE.Discourse.English
+    3.2 warning: VE/Discourse/English.lean:56:41: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/English.lean:65:42: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [367/891] Replayed VE.Discourse.Theorems
+    3.2 warning: VE/Discourse/Theorems.lean:211:55: This simp argument is unused:
+    3.2   beq_iff_eq
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [bne_iff_ne, ne_eq, Decidable.not_not,̵ ̵b̵e̵q̵_̵i̵f̵f̵_̵e̵q̵] at h2
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Discourse/Theorems.lean:414:39: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Theorems.lean:538:32: This simp argument is unused:
+    3.2   List.contains_iff_mem
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [Bool.not_eq_true',̵ ̵L̵i̵s̵t̵.̵c̵o̵n̵t̵a̵i̵n̵s̵_̵i̵f̵f̵_̵m̵e̵m̵] at hl hc
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Discourse/Theorems.lean:586:8: This simp argument is unused:
+    3.2   List.contains_iff_mem
+    3.2 
+    3.2 Hint: Omit it from the simp argument list.
+    3.2   simp only [Bool.and_eq_true, beq_iff_eq, Option.isNone_iff_eq_none, Bool.not_eq_true',̵
+    3.2   ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵c̵o̵n̵t̵a̵i̵n̵s̵_̵i̵f̵f̵_̵m̵e̵m̵] at hx
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.2 warning: VE/Discourse/Theorems.lean:1013:5: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/Discourse/Theorems.lean:1015:38: unused variable `hmid`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ⚠ [382/891] Replayed VE.Norms.FlaggedSpec
+    3.2 warning: VE/Norms/FlaggedSpec.lean:611:51: unused name
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.tactic.unusedName false`
+    3.2 ⚠ [419/891] Replayed VE.SpeechActs.Run
+    3.2 warning: VE/SpeechActs/Run.lean:289:8: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/SpeechActs/Run.lean:478:71: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/SpeechActs/Run.lean:552:62: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/SpeechActs/Run.lean:578:72: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 warning: VE/SpeechActs/Run.lean:605:5: unused variable `h`
+    3.2 
+    3.2 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.2 ℹ [426/891] Replayed Iceberg
+    3.3 ℹ [889/987] Replayed VE.Audit
+    3.3 ⚠ [945/987] Replayed ResponseShape.Skeleton
+    3.3 warning: ResponseShape/Skeleton.lean:100:10: This simp argument is unused:
+    3.3   e
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp ̵[̵e̵]̵
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Skeleton.lean:144:22: This simp argument is unused:
+    3.3   objectHas
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp_all [o̵b̵j̵e̵c̵t̵H̵a̵s̵,̵ ̵Except.toBool]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Skeleton.lean:155:37: This simp argument is unused:
+    3.3   objectHas
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp_all [Except.toBool,̵ ̵o̵b̵j̵e̵c̵t̵H̵a̵s̵]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Skeleton.lean:430:35: This simp argument is unused:
+    3.3   Bool.or_eq_true
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [List.contains_cons, B̵o̵o̵l̵.̵o̵r̵_̵e̵q̵_̵t̵r̵u̵e̵,̵ ̵beq_iff_eq, List.contains_iff_mem, List.mem_filter,
+    3.3         Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Skeleton.lean:430:52: This simp argument is unused:
+    3.3   beq_iff_eq
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [List.contains_cons, Bool.or_eq_true, b̵e̵q̵_̵i̵f̵f̵_̵e̵q̵,̵ ̵List.contains_iff_mem, List.mem_filter,
+    3.3         Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Skeleton.lean:430:64: This simp argument is unused:
+    3.3   List.contains_iff_mem
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, L̵i̵s̵t̵.̵c̵o̵n̵t̵a̵i̵n̵s̵_̵i̵f̵f̵_̵m̵e̵m̵,̵ ̵List.mem_filter, Bool.not_eq_true',
+    3.3   ̲  ̲ ̲ ̲ ̲ ̲Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Skeleton.lean:430:87: This simp argument is unused:
+    3.3   List.mem_filter
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, List.contains_iff_mem, ̵L̵i̵s̵t̵.̵m̵e̵m̵_̵f̵i̵l̵t̵e̵r̵,̵
+    3.3         Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 ⚠ [961/987] Replayed ResponseShape.Encoders.Alternatives
+    3.3 warning: ResponseShape/Encoders/Alternatives.lean:39:83: This simp argument is unused:
+    3.3   Bool.false_eq_true
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Encoders/Alternatives.lean:50:83: This simp argument is unused:
+    3.3   Bool.false_eq_true
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 ⚠ [963/987] Replayed ResponseShape.Encoders.Rights
+    3.3 warning: ResponseShape/Encoders/Rights.lean:98:31: This simp argument is unused:
+    3.3   entryJson
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [VE.Route.Wire.ok,̵ ̵e̵n̵t̵r̵y̵J̵s̵o̵n̵]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 ⚠ [965/987] Replayed ResponseShape.Encoders.Risk
+    3.3 warning: ResponseShape/Encoders/Risk.lean:17:59: unused variable `hobj`
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.3 warning: ResponseShape/Encoders/Risk.lean:41:56: unused variable `hobj`
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.3 warning: ResponseShape/Encoders/Risk.lean:49:62: unused variable `hobj`
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedVariables false`
+    3.3 ⚠ [971/987] Replayed ResponseShape.Encoders.ReadingsRoute
+    3.3 warning: ResponseShape/Encoders/ReadingsRoute.lean:743:28: This simp argument is unused:
+    3.3   String.reduceEq
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [S̵t̵r̵i̵n̵g̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵Bool.false_eq_true, String.reduceBEq] at *
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Encoders/ReadingsRoute.lean:1157:27: This simp argument is unused:
+    3.3   List.toList_toArray
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [Json.getArr?,̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Encoders/ReadingsRoute.lean:1223:4: This simp argument is unused:
+    3.3   List.toList_toArray
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,̵
+    3.3   ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 warning: ResponseShape/Encoders/ReadingsRoute.lean:1248:4: This simp argument is unused:
+    3.3   hl
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show "environment" ≠ "kind" by decide), he,
+    3.3       getObjVal_set_ne wfe (show "profiles" ≠ "vocabulary" by decide), getObjVal_set_eq wfe, hP,̵
+    3.3   ̵ ̵ ̵ ̵ ̵h̵l̵]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 ⚠ [972/987] Replayed ResponseShape.Encoders.Discourse
+    3.3 warning: ResponseShape/Encoders/Discourse.lean:195:58: This simp argument is unused:
+    3.3   List.append_nil
+    3.3 
+    3.3 Hint: Omit it from the simp argument list.
+    3.3   simp only [List.cons_append, List.nil_append, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵,̵ ̵choicesJson, jointJson]
+    3.3 
+    3.3 Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+    3.3 ℹ [975/987] Replayed ResponseShape.Audit
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3  Classical.choice,
+    3.3  Quot.sound]
+    3.3 Build completed successfully (987 jobs).
+    3.3 == check numbers-phrases
+    5.0 == check lean-mode-deps
+    7.6 == check lean-statements
+   10.0 lean-statements: from cache a2a50ce2
+   10.1 added: 0
+   10.1 removed: 0
+   10.1 changed: 0
+   10.1 PASS: 5787 statements, the predicate list and the declaration list unchanged
+   10.2 == check lean-audit-manifests
+   15.0 lean-audit-manifests: from cache c56a17e6
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1  Classical.choice,
+   15.1  Quot.sound]
+   15.1 PASS: 547 source files; 6291 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+   15.1 == check frozen-inventory
+   15.1 PASS: frozen Lean sources and Main.lean subcommands unchanged
+   15.1 == check trust-tables
+   22.9 class lines: K 997, S 10503, D 14950, G 30864, C 10071, P 77944, T 16656, o 13635
+   22.9 D/G groups: D[V] 13206, D[R] 1190, D[I] 554, G[V] 28062, G[R] 2527, G[I] 275
+   22.9 tied 362, unclassified 0, trusted 52464 (K + S + untied [V] + unclassified), 175620 lines in 547 files
+   22.9 against 7b15a978fdaf: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0
+   22.9 note: 7b15a978fdaf records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 997, 'S': 10503, 'V': 40964} (the merge train's --write has not run since)
+   22.9 PASS: K, S and untied [V] within 7b15a978fdaf and the allowances introduced since
+   22.9 == check checker-pins
+   23.0 == check response-schemas
+   24.2 == check binding-census
+   27.2 binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_verdicts.py:conflict: 'raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict certificates "'
+   27.2 binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights line binding")'
+   27.2 binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights line count")'
+   27.2 binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights wording keys")'
+   27.3 == check english-codes
+   27.6 PASS: the code table is the english.grammar export
+   27.7 == check question-codes
+   27.9 PASS: the question contract is the english.question export
+   27.9 == check question-lock
+   28.0 PASS: ve/question/LOCK.json records the service's question version
+   28.0 == check assurance-manifest
+   29.5 ..                                                                       [100%]
+   29.5 ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-bfui6yw1)
+   29.6 
+   29.6 2 passed in 0.68s
+   29.8 == check assurance-doc
+   30.0 == check layer-ledgers
+   36.5 Lean layer graph kept (547 modules, 22 reviewed legacy edges)
+   36.5 == check import-contract
+   38.9 
+   38.9 ╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+   38.9 ╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+   38.9  ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+   38.9  ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+   38.9 ╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+   38.9 ╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+   38.9   └──▶║║                    ▲ 
+   38.9       ╚╝────────────────────┘
+   38.9 
+   39.0 
+   39.0 ---------
+   39.0 Contracts
+   39.0 ---------
+   39.0 
+   39.0 Analyzed 168 files, 895 dependencies.
+   39.0 -------------------------------------
+   39.0 
+   39.0 VE inward-only imports (reviewed legacy edges) KEPT (41 ignored imports)
+   39.0 
+   39.0 Contracts: 1 kept, 0 broken.
+   39.0 == check uv-lock
+   39.1 Resolved 59 packages in 3ms
+   39.1 == check heavy-tests
+   39.2 == check platform-divergences
+   39.2 == check platform-contract
+   43.6 platform-contract.json: up to date
+   43.6 == check history-map
+   43.6 == check history-tests
+   55.9 tests/history-dependent.json: every test that reads history is listed
+   56.0 regen_generated: checked 31 entries
+# exit 0; end 2026-10-18T14:54:02Z  14:54:02 up 14 days, 12:13,  0 user,  load average: 11.82, 20.54, 19.32
+# trimmed: 12595 lines of Lean output (lake build info lines and #print axioms lines) left out
