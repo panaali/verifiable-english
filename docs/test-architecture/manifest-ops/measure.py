@@ -141,7 +141,8 @@ def summarise(plan: dict, seconds: dict[str, float]) -> dict:
             "without_manifest": without(is_manifest), "without_pins": without(is_pin),
             "without_both": without(lambda reason: is_manifest(reason) or is_pin(reason)),
             # The three reasons that select the most units, the plan's reason lines.
-            "top_reasons": sorted(counts.items(), key=lambda item: (-item[1], item[0]))[:3],
+            "top_reasons": [[reason, count] for reason, count in
+                            sorted(counts.items(), key=lambda item: (-item[1], item[0]))[:3]],
             "manifest": MANIFEST_REASON in plan["full_reasons"]}
 
 
