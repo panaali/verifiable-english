@@ -14,8 +14,13 @@ excepted, which are its outputs), or that it does not record, fails the audit.
 The audit output of every manifest, in order, is the committed record `axioms.txt`; the audit fails when a
 manifest or the record differs from the regenerated one, so a new theorem cannot leave either stale.
 `python3 lean/audit.py --write` regenerates both manifests and the record; `--check` (the default) compares.
+With `--check` or `--write` named, the `#print axioms` output of an earlier run on the same inputs is replayed
+(tools/lean_dump_cache.py, `VE_RUN_CACHE=off` turns it off); every check above runs on it as on a fresh one.
+The plain `python3 lean/audit.py` (the gate's) always runs Lean.
 """
 from concurrent.futures import ThreadPoolExecutor
+import hashlib
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -128,6 +133,13 @@ def _lean_statements():
     return lean_statements
 
 
+def _dump_cache():
+    """tools/lean_dump_cache.py, which replays the `#print axioms` output of an earlier run on the same inputs."""
+    _lean_statements()
+    import lean_dump_cache
+    return lean_dump_cache
+
+
 def manifest_of(module):
     return MANIFESTS[1] if module == "ResponseShape" or module.startswith("ResponseShape.") else MANIFESTS[0]
 
@@ -202,7 +214,23 @@ def recorded_names(text):
     return re.findall(r"^'([^']+)' (?:does not depend on any axioms|depends on axioms)", text, re.M)
 
 
-def main(argv=()):
+def axiom_outputs(imports, texts):
+    """The `#print axioms` output of each text, in order: the modules `imports` built, then the texts elaborated at
+    once."""
+    if imports:
+        subprocess.run(["lake", "build", *imports], cwd=ROOT, text=True, capture_output=True, check=True)
+    with tempfile.TemporaryDirectory(prefix="ve-audit-") as scratch:
+        files = [Path(scratch) / f"Part{index}.lean" for index in range(len(texts))]
+        for file, text in zip(files, texts):
+            file.write_text(text, encoding="utf-8")
+        with ThreadPoolExecutor(max(1, len(files))) as pool:
+            results = list(pool.map(lambda file: subprocess.run(["lake", "env", "lean", str(file)], cwd=ROOT,
+                                                                text=True, capture_output=True, check=True),
+                                    files))
+    return [result.stdout for result in results]
+
+
+def main(argv=(), cache=False):
     if list(argv) not in ([], ["--check"], ["--write"]):
         raise SystemExit("usage: python3 lean/audit.py [--check | --write]")
     write = list(argv) == ["--write"]
@@ -219,23 +247,22 @@ def main(argv=()):
             raise AssertionError(f"{manifest} is stale: missing {sorted(set(theorems[manifest]) - listed)[:10]}, "
                                  f"extra {sorted(listed - set(theorems[manifest]))[:10]}; "
                                  "regenerate with python3 lean/audit.py --write")
-    # Each manifest's imports, built: a module no default target imports has no object file until named.
+    # Each manifest's imports, built by `axiom_outputs`: a module no default target imports has no object file
+    # until named.
     imports = sorted({module for names in theorems.values() for module in names.values()})
-    if imports:
-        subprocess.run(["lake", "build", *imports], cwd=ROOT, text=True, capture_output=True, check=True)
     # The manifests' parts, elaborated at once and read in manifest order.
     texts = [text for manifest in MANIFESTS for text in parts(manifest, theorems[manifest])]
-    with tempfile.TemporaryDirectory(prefix="ve-audit-") as scratch:
-        files = [Path(scratch) / f"Part{index}.lean" for index in range(len(texts))]
-        for file, text in zip(files, texts):
-            file.write_text(text, encoding="utf-8")
-        with ThreadPoolExecutor(max(1, len(files))) as pool:
-            results = list(pool.map(lambda file: subprocess.run(["lake", "env", "lean", str(file)], cwd=ROOT,
-                                                                text=True, capture_output=True, check=True),
-                                    files))
+    if cache:
+        dump_cache = _dump_cache()
+        outputs = dump_cache.cached(dump_cache.AUDIT, ROOT.parent, lambda: _lean_statements().sources(ROOT.parent),
+                                    lambda: axiom_outputs(imports, texts), count=len(texts),
+                                    files=(f"lean/{DECLARATIONS}",),
+                                    values={"texts": hashlib.sha256(json.dumps(texts).encode()).hexdigest()})
+    else:
+        outputs = axiom_outputs(imports, texts)
     seen, output = set(), ""
-    for result in results:
-        for line in unwrapped(result.stdout):
+    for stdout in outputs:
+        for line in unwrapped(stdout):
             match = re.fullmatch(r"'([^']+)' (does not depend on any axioms|depends on axioms: \[(.*)\])", line)
             if not match:
                 raise AssertionError(f"Unexpected audit output: {line}")
@@ -243,7 +270,7 @@ def main(argv=()):
             seen.add(name)
             axioms = set(dependencies.split(", ")) if dependencies else set()
             assert axioms <= ALLOWED, (name, axioms - ALLOWED)
-        output += result.stdout
+        output += stdout
     assert seen == actual
     print(output, end="")
     if write:
@@ -256,4 +283,6 @@ def main(argv=()):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    # The explicit modes are the regeneration's (tools/regen_generated.py), which may replay an earlier run's Lean
+    # output for the same inputs (tools/lean_dump_cache.py); the plain run, the gate's, always runs Lean.
+    main(sys.argv[1:], cache=sys.argv[1:] in (["--check"], ["--write"]))
