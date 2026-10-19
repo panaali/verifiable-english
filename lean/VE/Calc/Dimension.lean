@@ -117,26 +117,14 @@ theorem Rescale.of_one (ρ : Rescale) : ρ.of PhysDim.one = 1 := by
 
 theorem Rescale.of_insertExp (ρ : Rescale) (e : String × Int) (l : List (String × Int)) :
     ρ.of ⟨insertExp e l⟩ = ρ.factor e.1 ^ e.2 * ρ.of ⟨l⟩ := by
-  have hadd := fun b => Rat.zpow_add (ρ.factor_ne b)
   induction l with
   | nil => by_cases h : e.2 = 0 <;> simp [insertExp, h, Rescale.of, zpowR_eq]
   | cons hd rest ih =>
       obtain ⟨n, k⟩ := hd
+      have h0 := Rat.zpow_add (ρ.factor_ne n) k e.2
       simp only [insertExp]
-      by_cases h1 : e.1 = n
-      · have h0 := hadd n k e.2
-        by_cases h2 : k + e.2 = 0
-        · simp only [h1, h2, if_true, Rescale.of_cons] at h0 ⊢
-          rw [Rat.zpow_zero] at h0
-          grind
-        · simp only [h1, h2, if_true, if_false, Rescale.of_cons]
-          rw [h0]; grind
-      · by_cases h3 : e.1 < n
-        · by_cases h4 : e.2 = 0
-          · simp [h1, h3, h4]
-          · simp [h1, h3, h4, Rescale.of_cons]
-        · simp only [h1, h3, if_false, Rescale.of_cons, ih]
-          grind
+      repeat' split
+      all_goals simp_all [Rescale.of_cons] <;> grind
 
 theorem Rescale.of_mul_any (ρ : Rescale) (a b : PhysDim) : ρ.of (a.mul b) = ρ.of a * ρ.of b := by
   obtain ⟨as⟩ := a
@@ -175,6 +163,10 @@ theorem Rescale.of_npow (ρ : Rescale) (a : PhysDim) (k : Nat) : ρ.of (a.npow k
         rw [Rescale.of_cons, Rescale.of_cons, ih, zpowR_mul_nat _ (ρ.factor_ne _),
           mul_pow_nat]
 
+theorem bind2_some {α β γ : Type} {o : Option α} {p : Option β} {f : α → β → Option γ} {d : γ}
+    (h : (do let x ← o; let y ← p; f x y) = some d) : ∃ x y, o = some x ∧ p = some y ∧ f x y = some d := by
+  cases o <;> cases p <;> simp_all [bind]
+
 /-- Evaluation under rescaled values: the value of an expression of dimension `d` scales by `ρ.of d`. -/
 theorem Expr.eval_rescale (Γ : String → Option PhysDim) (ρ : Rescale) (σ : Values) (e : Expr)
     (d : PhysDim) (hd : e.dimOf Γ = some d) :
@@ -189,62 +181,28 @@ theorem Expr.eval_rescale (Γ : String → Option PhysDim) (ρ : Rescale) (σ : 
       simp only [Expr.eval, Rescale.apply, hd]
       cases σ n <;> rfl
   | add a b iha ihb | sub a b iha ihb =>
-      simp only [Expr.dimOf] at hd
-      cases ha : a.dimOf Γ with
-      | none => simp [ha] at hd
-      | some x =>
-        cases hb : b.dimOf Γ with
-        | none => simp [ha, hb] at hd
-        | some y =>
-          by_cases hxy : x = y
-          · simp [ha, hb, hxy] at hd
-            subst hd hxy
-            simp only [Expr.eval, iha x ha, ihb x hb]
-            cases a.eval σ <;> cases b.eval σ <;> simp <;> grind
-          · simp [ha, hb, hxy] at hd
+      obtain ⟨x, y, ha, hb, h⟩ := bind2_some hd
+      by_cases hxy : x = y <;> simp [hxy] at h
+      subst h hxy
+      simp only [Expr.eval, iha _ ha, ihb _ hb]
+      cases a.eval σ <;> cases b.eval σ <;> simp <;> grind
   | mul a b iha ihb =>
-      simp only [Expr.dimOf] at hd
-      cases ha : a.dimOf Γ with
-      | none => simp [ha] at hd
-      | some x =>
-        cases hb : b.dimOf Γ with
-        | none => simp [ha, hb] at hd
-        | some y =>
-          simp [ha, hb] at hd
-          subst hd
-          simp only [Expr.eval, iha x ha, ihb y hb, Rescale.of_mul_any]
-          cases a.eval σ <;> cases b.eval σ <;> simp <;> grind
+      obtain ⟨x, y, ha, hb, h⟩ := bind2_some hd
+      cases h
+      simp only [Expr.eval, iha _ ha, ihb _ hb, Rescale.of_mul_any]
+      cases a.eval σ <;> cases b.eval σ <;> simp <;> grind
   | div a b iha ihb =>
-      simp only [Expr.dimOf] at hd
-      cases ha : a.dimOf Γ with
-      | none => simp [ha] at hd
-      | some x =>
-        cases hb : b.dimOf Γ with
-        | none => simp [ha, hb] at hd
-        | some y =>
-          simp [ha, hb] at hd
-          subst hd
-          have hy := Rat.ne_of_gt (ρ.of_pos y)
-          simp only [Expr.eval, iha x ha, ihb y hb, Rescale.of_mul_any, Rescale.of_inv]
-          cases a.eval σ <;> cases hv : b.eval σ <;> simp
-          rename_i u v
-          by_cases hv0 : v = 0
-          · simp [hv0]
-          · have hmul : v * ρ.of y ≠ 0 := fun h => by
-              rcases Rat.mul_eq_zero.mp h with h | h
-              · exact hv0 h
-              · exact hy h
-            simp [hv0, hmul]
-            grind
+      obtain ⟨x, y, ha, hb, h⟩ := bind2_some hd
+      cases h
+      have hy := Rat.ne_of_gt (ρ.of_pos y)
+      simp only [Expr.eval, iha _ ha, ihb _ hb, Rescale.of_mul_any, Rescale.of_inv]
+      cases a.eval σ <;> cases b.eval σ <;> simp
+      rename_i v
+      by_cases hv : v = 0 <;> simp [hv, Rat.mul_eq_zero, hy] <;> grind
   | pow a k iha =>
-      simp only [Expr.dimOf] at hd
-      cases ha : a.dimOf Γ with
-      | none => simp [ha] at hd
-      | some x =>
-        simp [ha] at hd
-        subst hd
-        simp only [Expr.eval, iha x ha, Rescale.of_npow]
-        cases a.eval σ <;> simp [mul_pow_nat]
+      obtain ⟨x, ha, rfl⟩ := Option.map_eq_some_iff.mp hd
+      simp only [Expr.eval, iha x ha, Rescale.of_npow]
+      cases a.eval σ <;> simp [mul_pow_nat]
 
 theorem denotes_rescale (Γ : String → Option PhysDim) (ρ : Rescale) (σ : Values) (e : Expr) (d : PhysDim)
     (x : Rat) (hΓ : ∀ n d', Γ n = some d' → d'.Normal) (hd : e.dimOf Γ = some d) (hx : Denotes σ e x) :
@@ -257,13 +215,7 @@ theorem denotes_rescale (Γ : String → Option PhysDim) (ρ : Rescale) (σ : Va
 theorem Comparison.holds_scale (c : Comparison) (x y o : Rat) (ho : 0 < o) :
     c.Holds (x * o) (y * o) ↔ c.Holds x y := by
   have hne : o ≠ 0 := fun h => by rw [h] at ho; exact absurd ho (by decide)
-  have heq : ∀ u v : Rat, u * o = v * o ↔ u = v := fun u v => by
-    constructor
-    · intro h
-      have := congrArg (· * o⁻¹) h
-      simp only [Rat.mul_assoc, Rat.mul_inv_cancel o hne, Rat.mul_one] at this
-      exact this
-    · intro h; rw [h]
+  have heq : ∀ u v : Rat, u * o = v * o ↔ u = v := fun u v => by grind
   have hlt : ∀ u v : Rat, u * o < v * o ↔ u < v := fun u v => Rat.mul_lt_mul_right ho
   have hle : ∀ u v : Rat, u * o ≤ v * o ↔ u ≤ v := fun u v => by
     constructor
@@ -299,9 +251,7 @@ theorem convert_by_factors (σ : Values) (u v : String) (fu fv q x : Rat) (hu : 
     Denotes σ (.mul (.lit q) (.val u)) x ↔ Denotes σ (.mul (.lit (q * fu / fv)) (.val v)) x := by
   simp [← Expr.eval_iff, Expr.eval, hu, hv, Rat.div_mul_cancel hfv]
 
-theorem legacy_nominal (t t' : String) (h : t ≠ t') : legacyDim t ≠ legacyDim t' := by
-  intro heq
-  simp only [legacyDim, PhysDim.mk.injEq, List.cons.injEq, Prod.mk.injEq, and_true] at heq
-  exact h heq
+theorem legacy_nominal (t t' : String) (h : t ≠ t') : legacyDim t ≠ legacyDim t' :=
+  fun heq => h (by simpa [legacyDim] using heq)
 
 end VE.Calc

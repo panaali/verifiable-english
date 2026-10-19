@@ -2809,6 +2809,16 @@ theorem VE.Calc.Val.guard_agrees
   ∀ (q : Rat), VE.Calc.Val.Agrees✝ (VE.Calc.Val.guard q) (Option.some q)
   -- uses VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls
   -- expr 724329628
+theorem VE.Calc.bind2_some
+  ∀ {α β γ : Type} {o : Option α} {p : Option β} {f : α → β → Option γ} {d : γ},
+    (do
+          let x ← o
+          let y ← p
+          f x y) =
+        Option.some d →
+      ∃ x y, o = Option.some x ∧ p = Option.some y ∧ f x y = Option.some d
+  -- uses
+  -- expr 972118345
 theorem VE.Calc.causes_accumulate
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds →

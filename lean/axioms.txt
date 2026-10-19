@@ -409,6 +409,7 @@
 'VE.Calc.Val.bin_tooLarge' depends on axioms: [propext, Quot.sound]
 'VE.Calc.Val.div_agrees' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Val.guard_agrees' depends on axioms: [propext]
+'VE.Calc.bind2_some' depends on axioms: [propext, Quot.sound]
 'VE.Calc.causes_accumulate' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.causes_step' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.compare_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
