@@ -51,11 +51,15 @@ def env! (s : String) : UnitEnv :=
   match Json.parse s >>= decode with | .ok u => u | .error e => ⟨[], .str e⟩
 def dims (s : String) (vals : List (String × Option String)) (e : Expr) : String :=
   says (do let Γ ← (env! s).context vals; dimE Γ e) dimWords
-/-- Each claim decided under the values and units, then again with every length rescaled by 1,000. -/
+/-- Lengths times 1,000 and times 2. -/
+def ρ : Rescale := ⟨fun b => if b = "length" then 1000 else if b = "time" then 2 else 1, fun b => by
+  by_cases h : b = "length" <;> by_cases h' : b = "time" <;> simp only [h, h', if_true, if_false] <;> decide⟩
+instance : DecidablePred PhysDim.Normal := fun d => by unfold PhysDim.Normal; infer_instance
+def context! (s : String) (vals : List (String × Option String)) : String → Option PhysDim :=
+  match (env! s).context vals with | .ok Γ => Γ | .error _ => fun _ => none
+/-- Each claim decided under the values and units, then again in the units `ρ`. -/
 def rescaled (s : String) (vals : List (String × Option String)) (σ : Values) (c : Claim) : String :=
   let u := env! s
-  let ρ : Rescale := ⟨fun b => if b = "length" then 1000 else 1, fun b => by
-    by_cases h : b = "length" <;> simp only [h, if_true, if_false] <;> decide⟩
   let τ : Values := fun n => (σ n).orElse fun _ => u.values n
   let word := fun (v : Verdict) => match v with | .holds => "holds" | .fails => "fails" | .undefined => "undefined"
   says (u.context vals) fun Γ => word (c.decide τ) ++ " " ++ word (c.decide (ρ.apply Γ τ))
@@ -79,6 +83,12 @@ FIXTURES = [
     ("h7-difference", f'dims {P} {H7} (.sub (.val "t") (.div (.val "d") (.val "lam")))',
      "DimensionMismatch: time and dimensionless"),
     ("h7-frequency", f'dims {P} {H7} (.div (.lit 3) (.pow (.val "t") 4))', "ok one per time to the power 4"),
+    ("h7-dimof", f'reprStr ([.div (.val "d") (.sub (.val "vv") (.val "v")), .div (.val "d") (.val "lam"), '
+                 f'.add (.val "d") (.val "t")].map fun (e : Expr) => (e.dimOf (context! {P} {H7})).map dimWords)',
+     '[some "time", some "dimensionless", none]'),
+    ("normal", f'reprStr ((["meter_per_second", "second"].filterMap (env! {P}).find?).map (decide ·.dim.Normal) ++ '
+               '[⟨[("time", 1), ("length", 1)]⟩, ⟨[("length", 0)]⟩, ⟨[("length", 1), ("length", 1)]⟩].map '
+               '(decide <| PhysDim.Normal ·))', "[true, true, false, false, false]"),
     ("h7-velocity", f'dims {P} {H7} (.div (.val "d") (.val "t"))', "ok length per time"),
     ("h7-area", f'dims {P} {H7} (.mul (.val "d") (.pow (.val "d") 2))', "ok length cubed"),
     ("h7-unknown", f'dims {P} {H7} (.add (.val "d") (.val "absent"))',
@@ -91,6 +101,10 @@ FIXTURES = [
      "ok holds holds"),
     ("h7u-rounds-3", f'rescaled {P} {H7} {SIGMA} (.rounds .tiesUp (.mul (.lit 2) (.pow (.val "ratio") 2)) ⟨3, 8⟩)',
      "ok fails fails"),
+    ("h7u-values", f'reprStr (["path", "vv", "ratio", "t"].map (ρ.apply (context! {P} {H7}) '
+                   f'(fun n => if n = "path" then some 20000000 else if n = "vv" then some 3 else '
+                   f'if n = "ratio" then some (1/10000) else none)))',
+     "[some 20000000000, some 1500, some (1 : Rat)/10000, none]"),
     # H-7c: 2.5 kilometers are 2,500 meters, by the ratio of the factors, in any units.
     ("h7c", f'rescaled {P} {H7} {SIGMA} (.compare ⟨.eq, false⟩ (.mul (.lit (5/2)) (.val "kilometer")) '
             f'(.mul (.lit 2500) (.val "meter")))', "ok holds holds"),
@@ -179,3 +193,16 @@ def test_fixture(lean, key, expected):
 
 def test_every_fixture_printed_once(lean):
     assert sorted(lean) == sorted(key for key, _, _ in FIXTURES)
+
+
+def test_a_change_of_units_has_positive_factors(lean, tmp_path):
+    """`Rescale` admits a factor of 1 and no factor of 0: the invariance theorems are about positive changes."""
+    def elaborates(factor):
+        source = tmp_path / "Factor.lean"
+        source.write_text(f"import VE.Calc.Dimension\nexample : VE.Calc.Rescale := ⟨fun _ => {factor}, "
+                          "fun _ => by dsimp only; decide⟩\n")
+        return subprocess.run([shutil.which("lake"), "env", "lean", str(source)], cwd=LEAN, capture_output=True,
+                              text=True, timeout=HANG_TIMEOUT)
+    assert elaborates(1).returncode == 0
+    refused = elaborates(0)
+    assert refused.returncode != 0 and "decide" in refused.stdout, refused.stdout
