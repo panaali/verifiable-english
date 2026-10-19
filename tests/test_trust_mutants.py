@@ -724,6 +724,7 @@ JUDGED = [
     ("rfl-under-guard-msgs", GUARD + "-\n+ error: Type mismatch\n+   rfl", "#guard_msgs in\nexample : f 3 = 5 := rfl",
      "RFL"),
     ("rfl-out-of-budget", "maximum recursion depth has been reached", "example : f 3 = 5 := rfl", "RFL"),
+    ("parse-at-rfl", "unexpected token '<;>'; expected command", "example : f 3 = 5 := rfl", "UNKNOWN"),
     # The safe cases: each is UNKNOWN.
     ("rfl-shape-in-a-decide-check", "Type mismatch\n  rfl\nhas type", "example : f 3 = 5 := by decide", "UNKNOWN"),
     ("guard-expr-defeq", "Failed: `f 3` is not definitionally equal to `5`", "#guard_expr f 3 =~ 5", "UNKNOWN"),
@@ -762,6 +763,36 @@ def test_a_check_kills_only_when_its_message_states_a_refutation(name, message, 
     import trust_mutants
     line = span.split("\n")[-1]
     assert trust_mutants.judge(message, "check", line, line, trust_mutants.code_only(span)) == verdict
+
+
+DECIDE_FALSE = "Tactic `decide` proved that the proposition\n  f 3 = 5\nis false"
+
+
+def test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition():
+    """Review F8, F11 and hunt H4/H5 on `settle` alone (its builds faked): every error must be KILL, an `rfl` check's
+    only when `decide` then refutes its statement, and each check must read the mutated definition."""
+    import trust_mutants
+    text = "#guard f 1 == 2\ndef s := ⟨0, by decide⟩\nexample : f 3 = 5 := rfl\n"
+    roles = {"A.lean": [(1, 1, "check", None), (2, 2, "other", "s"), (3, 3, "check", None)]}
+    rebuilt: list = []
+
+    def settle(errors, reads=lambda key: True):
+        def rebuild(now):
+            assert now["A.lean"].split("\n")[2] == "example : f 3 = 5 := by decide"
+            return rebuilt.pop()
+        return trust_mutants.settle(errors, lambda f: text, lambda f: text, roles, rebuild, reads)
+    assert settle([("A.lean", 1, REFUTE)]) == ("KILLED", f"lean/A.lean:1: {REFUTE.split(chr(10))[0]}")
+    assert settle([("A.lean", 1, REFUTE), ("A.lean", 2, DECIDE_FALSE)])[0] == "UNKNOWN"  # F8: beside a definition
+    assert settle([("A.lean", 2, DECIDE_FALSE), ("A.lean", 1, REFUTE)])[0] == "UNKNOWN"
+    assert settle([("A.lean", 1, REFUTE)], reads=lambda key: key != ("A.lean", (1, 1)))[0] == "UNKNOWN"  # H4, H5
+    rfl = ("A.lean", 3, "Type mismatch\n  rfl")
+    for answer, verdict in (([("A.lean", 3, DECIDE_FALSE)], "KILLED"), ([], "UNKNOWN"), (None, "UNKNOWN"),
+                            ([("A.lean", 3, "Tactic `decide` failed for proposition")], "UNKNOWN"),
+                            ([("A.lean", 3, DECIDE_FALSE), ("A.lean", 2, "unsolved goals")], "UNKNOWN")):
+        rebuilt.append(answer)
+        assert settle([rfl])[0] == verdict, answer  # F11: a stuck or unanswered `rfl` refutes nothing
+    rebuilt.append([("A.lean", 3, DECIDE_FALSE)])
+    assert settle([rfl], reads=lambda key: False)[0] == "UNKNOWN" and rebuilt
 
 
 @pytest.mark.parametrize(("text", "first", "last", "after"), [

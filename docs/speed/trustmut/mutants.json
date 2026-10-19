@@ -73,8 +73,8 @@
   {
    "id": "TM8",
    "file": "tools/trust_mutants.py",
-   "find": "        return \"check\" if proved and not tactics else \"proof\"",
-   "replace": "        return \"check\" if kind == \"command\" or proved and not tactics else \"proof\"",
+   "find": "        return \"check\" if proved and not tactics and closed else \"proof\"",
+   "replace": "        return \"check\" if kind == \"command\" or proved and not tactics and closed else \"proof\"",
    "tests": [
     "tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill"
    ],
@@ -109,7 +109,7 @@
     "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill",
     "tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps"
    ],
-   "claim": "a `#guard_msgs … in` line opens the command it wraps (one span), as `set_option … in` (review F6)"
+   "claim": "a `#guard_msgs \u2026 in` line opens the command it wraps (one span), as `set_option \u2026 in` (review F6)"
   },
   {
    "id": "TM12",
@@ -227,12 +227,12 @@
   {
    "id": "TM23",
    "file": "tools/trust_mutants.py",
-   "find": "                other = next((x for x in roles if not kills(*x)), None)",
-   "replace": "                other = None",
+   "find": "    if role != \"check\" or built != checkout or not built.strip() or PARSE.match(message):",
+   "replace": "    if built != checkout or not built.strip() or PARSE.match(message):",
    "tests": [
-    "tests/test_trust_mutants.py::test_an_error_outside_every_check_is_unknown"
+    "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
    ],
-   "claim": "only an error inside a check (or a --test file) kills; one in a definition is UNKNOWN"
+   "claim": "only an error inside a check kills; one in a definition or a proof is UNKNOWN (`judge`)"
   },
   {
    "id": "TM24",
@@ -247,12 +247,12 @@
   {
    "id": "TM25",
    "file": "tools/trust_mutants.py",
-   "find": "                other = next((x for x in roles if not kills(*x)), None)",
-   "replace": "                other = None if any(kills(*x) for x in roles) else roles[0]",
+   "find": "    if bad := next((x for x in rows if x[3] == NONE), None):",
+   "replace": "    if bad := next((x for x in rows[:1] if x[3] == NONE), None):",
    "tests": [
-    "tests/test_trust_mutants.py::test_an_error_in_a_definition_beside_a_failing_check_is_unknown"
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
    ],
-   "claim": "an error in a definition is UNKNOWN even beside a failing check (review F8)"
+   "claim": "an error in a definition is UNKNOWN even beside a failing check (review F8; `settle` reads every error)"
   },
   {
    "id": "TM26",
@@ -298,18 +298,18 @@
   {
    "id": "TM30",
    "file": "tools/trust_mutants.py",
-   "find": "    return not PARSE.match(message) and not NO_ANSWER.search(message) and (",
-   "replace": "    return not NO_ANSWER.search(message) and (",
+   "find": "    if role != \"check\" or built != checkout or not built.strip() or PARSE.match(message):",
+   "replace": "    if role != \"check\" or built != checkout or not built.strip():",
    "tests": [
-    "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
+    "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation"
    ],
-   "claim": "a parse error never kills (review F9: a cut left behind)"
+   "claim": "a parse error never kills, nor sends an `rfl` check to `decide` (review F9: a cut left behind)"
   },
   {
    "id": "TM31",
    "file": "tools/trust_mutants.py",
-   "find": "role == \"check\" and built == checkout and bool(built.strip()))",
-   "replace": "role == \"check\")",
+   "find": "    if role != \"check\" or built != checkout or not built.strip() or PARSE.match(message):",
+   "replace": "    if role != \"check\" or not built.strip() or PARSE.match(message):",
    "tests": [
     "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
    ],
@@ -328,45 +328,46 @@
   {
    "id": "TM33",
    "file": "tools/trust_mutants.py",
-   "find": "    return not PARSE.match(message) and not NO_ANSWER.search(message) and (",
-   "replace": "    return not PARSE.match(message) and (",
+   "find": "    if REFUTED.fullmatch(message):",
+   "replace": "    if REFUTED.fullmatch(message) or NO_ANSWER.search(message):",
    "tests": [
     "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
     "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[decide]",
     "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill"
    ],
-   "claim": "a check (or a --test file) that gives no answer never kills (review F10)"
+   "claim": "a check that gives no answer never kills (review F10; since F11 because it states no refutation)"
   },
   {
    "id": "TM34",
    "file": "tools/trust_mutants.py",
-   "find": "ERROR = re.compile(r\"^error: (?:\\./)*(\\S+?\\.lean):(\\d+):\\d+: (.*(?:\\n(?!(?:error|warning|info|trace|note):|[✖⚠✔ℹ] \"\n                   r\"|Some required ).*)*)\", re.M)",
-   "replace": "ERROR = re.compile(r\"^error: (?:\\./)*(\\S+?\\.lean):(\\d+):\\d+: (.*)$\", re.M)",
+   "find": "ERROR = re.compile(r\"^error: (?:\\./)*(\\S+?\\.lean):(\\d+):(\\d+): \" + REST, re.M)",
+   "replace": "ERROR = re.compile(r\"^error: (?:\\./)*(\\S+?\\.lean):(\\d+):(\\d+): (.*)$\", re.M)",
    "tests": [
     "tests/test_trust_mutants.py::test_an_error_is_read_with_its_whole_message",
-    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[guard-msgs]"
+    "tests/test_trust_mutants.py::test_a_check_wrapped_in_guard_msgs_kills"
    ],
-   "claim": "an error is read with its whole message, so a #guard_msgs quoting a budget error on a later line gives no answer (review F10)"
+   "claim": "an error is read with its whole message (review F10; a refutation is matched whole, F11)"
   },
   {
    "id": "TM35",
    "file": "tools/trust_mutants.py",
-   "find": "if NO_ANSWER.search(\n                        mutated[2]) else",
-   "replace": "if False and NO_ANSWER.search(\n                        mutated[2]) else",
+   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not inside_tactic)",
+   "replace": "    return bool(PARSE.match(message) or REFUSED.search(message) and not inside_tactic)",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[in-definition]"
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
    ],
-   "claim": "a mutated declaration that runs out of budget is UNKNOWN, not INVALID (review F10)"
+   "claim": "a refusal that quotes Lean's budget is no refusal: UNKNOWN, not INVALID (review F10, F12)"
   },
   {
    "id": "TM36",
    "file": "tools/trust_mutants.py",
-   "find": "        if blank := next((t for t in new if NO_ANSWER.search(failing[t][1])), None):",
-   "replace": "        if blank := None:",
+   "find": "            if status != \"KILLED\":\n                return status, detail",
+   "replace": "            if status == \"INVALID\":\n                return status, detail",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]"
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]",
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[outside-equal]"
    ],
-   "claim": "an outside --test file that gives no answer never kills (review F10)"
+   "claim": "an outside --test file kills only by the rule inside lean/: one that gives no answer, or a stuck `rfl`, never kills (review F10, F11)"
   },
   {
    "id": "TM37",
@@ -377,7 +378,7 @@
     "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
     "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[stuck]"
    ],
-   "claim": "a decide that gets stuck or cannot evaluate gives no answer (review F10)"
+   "claim": "a decide that gets stuck or cannot evaluate gives no answer (UNKNOWN, marked so in the detail) (review F10)"
   },
   {
    "id": "TM38",
@@ -388,7 +389,7 @@
     "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
     "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]"
    ],
-   "claim": "a check out of heartbeats gives no answer (review F10)"
+   "claim": "a check out of heartbeats gives no answer (UNKNOWN, marked so in the detail) (review F10)"
   },
   {
    "id": "TM39",
@@ -410,7 +411,127 @@
     "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill",
     "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[rfl]"
    ],
-   "claim": "a check over the recursion limit gives no answer (review F10, PROBE F10)"
+   "claim": "a check over the recursion limit gives no answer (UNKNOWN, marked so in the detail) (review F10, PROBE F10)"
+  },
+  {
+   "id": "TM41",
+   "file": "tools/trust_mutants.py",
+   "find": "    if pending := {x[0]: x for x in rows if x[3] == RFL}:",
+   "replace": "    if pending := {}:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_probe_f11_a_stuck_rfl_check_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl]",
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
+   ],
+   "claim": "an `rfl` check's failure kills only when `decide` then refutes its statement (review F11, PROBE F11)"
+  },
+  {
+   "id": "TM42",
+   "file": "tools/trust_mutants.py",
+   "find": "        return said if all(m.startswith(\"info:\") and name in EVALUATED and not NO_ANSWER.search(m)",
+   "replace": "        return said if all(m.startswith(\"info:\") and not NO_ANSWER.search(m)",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation",
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[reduce-doc]"
+   ],
+   "claim": "a `#guard_msgs` diff kills only between answers: an `#eval`'s value, never a `#reduce`'s or `#check`'s info (review F11)"
+  },
+  {
+   "id": "TM43",
+   "file": "tools/trust_mutants.py",
+   "find": "    for f, n, message, column in errors:\n        if not refused(",
+   "replace": "    for f, n, message, column in errors[:1]:\n        if not refused(",
+   "tests": [
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "claim": "INVALID needs every error of the mutated declaration to be a refusal (review F12)"
+  },
+  {
+   "id": "TM44",
+   "file": "tools/trust_mutants.py",
+   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not inside_tactic)",
+   "replace": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message))",
+   "tests": [
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text",
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "claim": "an error inside a tactic block of the mutated declaration is a tactic's, never a refusal (review F12)"
+  },
+  {
+   "id": "TM45",
+   "file": "tools/trust_mutants.py",
+   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not inside_tactic)",
+   "replace": "    return not NO_ANSWER.search(message) and not message.startswith(\"unsolved goals\")",
+   "tests": [
+    "tests/test_trust_mutants.py::test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown",
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "claim": "a tactic out of budget in the mutated declaration is UNKNOWN, never INVALID (review F12, PROBE F12)"
+  },
+  {
+   "id": "TM46",
+   "file": "tools/trust_mutants.py",
+   "find": "        closed = colon is not None and not bare[head.end():colon].strip()",
+   "replace": "        closed = True",
+   "tests": [
+    "tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H1]"
+   ],
+   "claim": "a check with a hypothesis before its colon is a proof: `decide` refutes only its goal (hunt H1)"
+  },
+  {
+   "id": "TM47",
+   "file": "tools/trust_mutants.py",
+   "find": "    if bad := next((x for x in rows if not reads(x[0])), None):",
+   "replace": "    if bad := None:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H4]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H5]",
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
+   ],
+   "claim": "a kill needs the check's statement to read the mutated definition (hunt H4, H5)"
+  },
+  {
+   "id": "TM48",
+   "file": "tools/trust_mutants.py",
+   "find": "        | some (.defnInfo d) => if !decidable d.type then todo := todo ++ used [d.type, d.value]",
+   "replace": "        | some (.defnInfo d) => todo := todo ++ used [d.type, d.value]",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H4]"
+   ],
+   "claim": "Lean's dependency walk never enters a `Decidable` instance (hunt H4)"
+  },
+  {
+   "id": "TM49",
+   "file": "tools/trust_mutants.py",
+   "find": "    return text[:s] + \"by decide\" + \"\\n\" * text.count(\"\\n\", s, e) + text[e:]",
+   "replace": "    return text[:s] + \"by native_decide\" + \"\\n\" * text.count(\"\\n\", s, e) + text[e:]",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl-native]",
+    "tests/test_trust_mutants.py::test_decided_rewrites_only_the_rfl_and_keeps_every_line"
+   ],
+   "claim": "an `rfl` check is asked `decide`, never `native_decide`, which evaluates compiled code (hunt H7)"
+  },
+  {
+   "id": "TM50",
+   "file": "tools/trust_mutants.py",
+   "find": "REFUSED = re.compile(r\"[Uu]nknown (?:identifier|constant)|",
+   "replace": "REFUSED = re.compile(r\"failed to synthesize|[Uu]nknown (?:identifier|constant)|",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H2]",
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "claim": "instance search that fails (its own budget, hunt H2, H3) is no refusal: UNKNOWN"
+  },
+  {
+   "id": "TM51",
+   "file": "tools/trust_mutants.py",
+   "find": "            copy.write_text(now[str(t)])",
+   "replace": "            copy.write_text(t.read_text())",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[outside-decide]"
+   ],
+   "claim": "an outside --test file's `rfl` check is asked `decide` in its copy, as inside lean/ (review F11)"
   }
  ]
 }
