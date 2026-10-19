@@ -14,7 +14,6 @@ from pathlib import Path
 import pytest
 
 from tests import ce4
-from tests.test_readings_sd_ce4 import C7
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "docs/research/evidence/defeasible/baseline"
@@ -22,14 +21,14 @@ REPORT = ROOT / "docs/research/defeasible-phase1.md"
 SETS = ("force-u0036-s05", "force-u0156-s03", "force-u0263-s04-p2")
 
 
-def _script():
-    spec = importlib.util.spec_from_file_location("df_baseline", ROOT / "research/defeasible/baseline.py")
+def _cases():
+    spec = importlib.util.spec_from_file_location("df_baseline_cases", ROOT / "research/defeasible/baseline_cases.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
-baseline = _script()
+baseline = _cases()
 RECORD = json.loads((EVIDENCE / "baseline.json").read_text())
 
 
@@ -45,12 +44,25 @@ def test_saved_files_are_the_recorded_ones():
         assert hashlib.sha256((EVIDENCE / name).read_bytes()).hexdigest() == digest, name
 
 
+def rule_question(set_id):
+    """The set's rule read as a strict universal over its predicate's sorts: `∀ x̄. guard → (¬) p(x̄)`."""
+    [R] = [R for R in ce4.reading_sets() if R["id"] == set_id]
+    rule = R["readings"][0]["content"]["norm"]
+    sorts = ce4.environment()["vocabulary"]["predicates"][rule["predicate"]]["arguments"]
+    atom = [{1: "unary", 2: "binary"}[len(sorts)], rule["predicate"], *[["var", i] for i in reversed(range(len(sorts)))]]
+    body = atom if rule["sign"] else ["not", atom]
+    body = body if rule["guard"] == ["top"] else ["implies", rule["guard"], body]
+    for sort in reversed(sorts):
+        body = ["forall", sort, body]
+    return body
+
+
 def test_questions_are_p1s_three():
-    """P-1's three sets in order; each saved question is the script's, and the first is RD-9's C7."""
+    """P-1's three sets in order; each saved question is the script's and is the set's own rule as a universal."""
     assert list(baseline.QUESTIONS) == list(SETS) and set(SETS) < set(ce4.SETS)
     for set_id in SETS:
         assert json.loads((EVIDENCE / f"question-{set_id}.json").read_text()) == baseline.QUESTIONS[set_id]
-    assert baseline.QUESTIONS["force-u0036-s05"] == C7
+        assert baseline.QUESTIONS[set_id] == rule_question(set_id)
 
 
 @pytest.mark.parametrize("set_id", SETS)
