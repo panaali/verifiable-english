@@ -132,9 +132,13 @@ module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
 module VE.Calc.Decls
+module VE.Calc.Derive
+module VE.Calc.DeriveExamples
 module VE.Calc.Dimension
 module VE.Calc.Eval
 module VE.Calc.Examples
+module VE.Calc.FourierMotzkin
+module VE.Calc.Linear
 module VE.Calc.Render
 module VE.Calc.Syntax
 module VE.Cardinality.Erase
@@ -276,6 +280,7 @@ module VE.Json
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
+module VE.Judgments.Status
 module VE.Layout.Anchors
 module VE.Layout.Discourse
 module VE.Layout.List
@@ -653,6 +658,7 @@ VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
 VE.Calc.PhysDim.Normal@VE.Calc.Dimension
+VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
