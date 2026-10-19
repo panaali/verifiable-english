@@ -158,8 +158,10 @@ handshake do. Everything they write is under `tmp_path`, and there are no sleeps
 
 The selected tests on the Mac runner (`mac-pytest.sh --select`, HEAD cdc539c34) ran 111 of 448 units in 1994 s, with
 0 failed. After that I added the Lake-less test and its fallback, then ran `tests/test_regen_generated.py`: 55
-passed. `gate_collection.py --check --prebuilt`: 18226 collected, 14 added, 0 removed, 0 refused, 0 stale,
-0 malformed.
+passed. After the second sync with main (9a6ba67ae; `lake build` 918 s, its ve_service pinned by main's lock),
+`tests/test_regen_generated.py` again passed 55, and `--check` of gitattributes, history-tests, platform-contract and
+heavy-tests passed. `gate_collection.py --check --prebuilt`: 18237 collected, 15 added, 0 removed, 0 refused,
+0 stale, 0 malformed.
 
 ## Seeded bugs (docs/infra/eff-20261019-1/seeded-bugs.json; all Python, the only language changed)
 
@@ -221,7 +223,7 @@ Each bug was planted, made its test fail, and was restored:
 4. PASS: base and head were run side by side on the same scratch state (the evidence table). On the ready path, a
    full `--check` on the real tree ran every user.
 5. N.A.: there is no relayed field to bind.
-6. PASS: synced with main a671d23b9 before the final checks. The full gate runs on the final HEAD (chain).
+6. PASS: synced with main (a671d23b9, then 9a6ba67ae) before the final checks. The full gate runs on the final HEAD (chain).
 7. PASS: no DELTA rows, no trust growth (tooling only), and no signature reserved.
 8. PASS: no user-visible product delta. The tool's own output change is documented in docs/merge-tooling.md.
 9. PASS: the selector chose `tests/test_regen_generated.py` for `tools/regen_generated.py` (select.log: 111 units).
@@ -232,4 +234,5 @@ Each bug was planted, made its test fail, and was restored:
 12. PASS: a pinned and current service costs one `lake build --no-build ve_service` (0.4–0.6 s) per run
     (`test_a_pinned_and_current_service_runs_no_bootstrap` counts the Lake calls). The timings are in the
     evidence table.
-13. PASS: no test removed or renamed. `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
+13. PASS: no test removed or renamed. `gate_collection.py --check --prebuilt`: 15 added, 0 refused, 0 stale,
+    0 malformed.
