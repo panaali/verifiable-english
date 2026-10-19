@@ -1,0 +1,29 @@
+{
+  "budget": {
+    "max_domain_size": 2,
+    "max_evaluations": 100000,
+    "max_models": 10000,
+    "max_steps": 10000
+  },
+  "choice": [
+    [
+      "force-u0036-s05",
+      1
+    ],
+    [
+      "force-u0156-s03",
+      3
+    ],
+    [
+      "scope-u0165-s03",
+      1
+    ],
+    [
+      "force-u0263-s04-p2",
+      1
+    ]
+  ],
+  "route": "superposed",
+  "verdict": "UNKNOWN",
+  "english": []
+}

@@ -1,0 +1,579 @@
+{
+ "document": "usecases/claude-constitution-pilot/run-20261019T0600Z/readings/nd-all.ve.md",
+ "group": "all",
+ "search_seconds": 78.5,
+ "sets": [
+  {
+   "set": "force-u0036-s05",
+   "unit": "u0036.s05",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0156-s03",
+   "unit": "u0156.s03",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    },
+    {
+     "id": "strict-in-frame",
+     "content": "norm"
+    },
+    {
+     "id": "default-in-frame",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "force-u0263-s04-p2",
+   "unit": "u0263.s04.p2",
+   "candidates": [
+    {
+     "id": "strict",
+     "content": "norm"
+    },
+    {
+     "id": "default",
+     "content": "norm"
+    }
+   ]
+  },
+  {
+   "set": "scope-u0165-s03",
+   "unit": "u0165.s03",
+   "candidates": [
+    {
+     "id": "wide",
+     "content": "norm"
+    },
+    {
+     "id": "narrow",
+     "content": "norm"
+    }
+   ]
+  }
+ ],
+ "pairs_without_situation": [],
+ "search_limits": [],
+ "load_seconds": 13.4,
+ "admitted": true,
+ "check_seconds": 140.4,
+ "premises": {
+  "candidates": [
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 0,
+    "set": "force-u0036-s05",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      1
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 1,
+    "set": "force-u0036-s05",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 0,
+    "set": "force-u0156-s03",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 1,
+    "set": "force-u0156-s03",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      2
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 2,
+    "set": "force-u0156-s03",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      3
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 3,
+    "set": "force-u0156-s03",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 0,
+    "set": "scope-u0165-s03",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 1,
+    "set": "scope-u0165-s03",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "index": 0,
+    "set": "force-u0263-s04-p2",
+    "status": "model"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "index": 1,
+    "set": "force-u0263-s04-p2",
+    "status": "model"
+   }
+  ],
+  "choice": [
+   [
+    "force-u0036-s05",
+    0
+   ],
+   [
+    "force-u0156-s03",
+    0
+   ],
+   [
+    "scope-u0165-s03",
+    0
+   ],
+   [
+    "force-u0263-s04-p2",
+    0
+   ]
+  ],
+  "evidence": "model",
+  "gaps": [],
+  "model": {
+   "complete": true,
+   "constants": {
+    "anthropic": "e0",
+    "claude": "e0",
+    "operators": "e1",
+    "users": "e2",
+    "ve__here": "e0"
+   },
+   "domains": {
+    "claude_instance": [],
+    "entity": [
+     "e0"
+    ],
+    "hard_constraint": [],
+    "operator": [],
+    "operator_input": [],
+    "principal_type": [
+     "e0",
+     "e1",
+     "e2"
+    ],
+    "situation": [],
+    "user": [],
+    "ve__reading": [
+     "e0"
+    ]
+   },
+   "relations": {
+    "asked_to_keep_system_prompt_confidential": [],
+    "attempt_to_kill_or_disempower_most_of_humanity": [],
+    "child_sexual_abuse_material": [],
+    "clear_and_substantial_undermining_of_oversight": [],
+    "compliance_against_guidelines": [],
+    "compliance_unethical": [],
+    "compliance_unsafe": [],
+    "could_cause_significant_damage_if_deployed": [],
+    "creating_a_cyberweapon": [],
+    "creating_malicious_code": [],
+    "critical_infrastructure_uplift": [],
+    "exception_to_asking_for_clarification": [],
+    "exception_to_complying_with_exploit_instruction": [],
+    "exception_to_not_deceiving_about_system_prompt": [],
+    "explicit_instruction_against_exploits": [],
+    "general_exception_to_complying": [],
+    "genuine_ambiguity": [],
+    "genuine_helpfulness": [
+     [
+      "e0"
+     ]
+    ],
+    "human": [],
+    "illegitimate_absolute_control": [],
+    "input_is_information": [],
+    "input_is_persona": [],
+    "input_is_specific_instructions": [],
+    "instruction_abandon_identity_in_persona": [],
+    "instruction_act_against_guidelines": [],
+    "instruction_cla
+{
+ "checked_by": {
+  "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+  "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+  "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+ },
+ "separations": {
+  "outcome": 2,
+  "selects": 7,
+  "holds": 0
+ },
+ "findings": {
+  "SeparatedByDecisionOnly": 0,
+  "SeparatedByActOnly": 0
+ },
+ "pending_candidates": 0,
+ "couplings": 0,
+ "route": "superposed",
+ "choice_count": 32,
+ "choices_checked": 32,
+ "narrowings_stale": [],
+ "reading_premises": [],
+ "not_superposable": null,
+ "sizes": {
+  "limits": {
+   "nodes": 10000,
+   "predicates": 256,
+   "sorts": 32
+  },
+  "nodes": 303,
+  "predicates": 91,
+  "sorts": 9
+ },
+ "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+ "conflict": {
+  "assumed": [],
+  "choices": [
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      0
+     ],
+     [
+      "scope-u0165-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "scope-u0165-s03",
+      0
+     ],
+     [
+      "force-u0263-s04-p2",
+      1
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "force-u0156-s03",
+      1
+     ],
+     [
+      "scope-u0165-s03",
+      1
+     ],
+     [
+      "force-u0263-s04-p2",
+      0
+     ]
+    ],
+    "status": "CONFLICT-FREE"
+   },
+   {
+    "choice": [
+     [
+      "force-u0036-s05",
+      0
+     ],
+     [
+      "f

@@ -1,0 +1,679 @@
+{
+  "what": "PS-0p step 6 (presupposition-PLAN 2.1 step 7): the formalised rules whose source sentence contains “the user”, “the operator” or a role/pronoun possessive; one row per match and per reading; a goal key is (role noun, words, position, rule predicate, guard, carve-outs) up to the unit's variable names (guards are de Bruijn formulas)",
+  "scanned_norm_units": [
+    {
+      "unit": "u0036.s05",
+      "predicate": "clarification_required",
+      "act": "{0} seek clarification in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        "strict",
+        "default"
+      ]
+    },
+    {
+      "unit": "u0052.s01",
+      "predicate": "judgment_use_required",
+      "act": "{0} use good judgment when evaluating conversational inputs",
+      "argument_sorts": [
+        "claude_instance"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0062.s01",
+      "predicate": "operator_input_permitted",
+      "act": "{0} give Claude {1}",
+      "argument_sorts": [
+        "operator",
+        "operator_input"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0073.s05",
+      "predicate": "system_prompt_compliance_required",
+      "act": "{0} comply with the system prompt instructions in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0123.s01.p1",
+      "predicate": "operator_input_permitted",
+      "act": "{0} give Claude {1}",
+      "argument_sorts": [
+        "operator",
+        "operator_input"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0123.s02.p1",
+      "predicate": "operator_input_permitted",
+      "act": "{0} give Claude {1}",
+      "argument_sorts": [
+        "operator",
+        "operator_input"
+      ],
+      "matches_in_source": [
+        "the operator"
+      ],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0123.s03",
+      "predicate": "operator_input_permitted",
+      "act": "{0} give Claude {1}",
+      "argument_sorts": [
+        "operator",
+        "operator_input"
+      ],
+      "matches_in_source": [
+        "the user"
+      ],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0125.s04.p2",
+      "predicate": "denial_of_being_claude_permitted",
+      "act": "{0} directly deny being Claude",
+      "argument_sorts": [
+        "claude_instance"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0156.s03",
+      "predicate": "system_prompt_deception_permitted",
+      "act": "{0} actively deceive {1} about system prompt existence-or-content",
+      "argument_sorts": [
+        "claude_instance",
+        "user"
+      ],
+      "matches_in_source": [
+        "the user",
+        "its content"
+      ],
+      "readings": [
+        "strict",
+        "default",
+        "strict-in-frame",
+        "default-in-frame"
+      ]
+    },
+    {
+      "unit": "u0165.s01",
+      "predicate": "weapons_uplift_permitted",
+      "act": "{0} do the weapons uplift in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0165.s02",
+      "predicate": "infrastructure_uplift_permitted",
+      "act": "{0} do the infrastructure uplift in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0165.s03",
+      "predicate": "cyberweapon_creation_permitted",
+      "act": "{0} do the creation in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        "wide",
+        "narrow"
+      ]
+    },
+    {
+      "unit": "u0165.s04",
+      "predicate": "oversight_undermining_permitted",
+      "act": "{0} do the undermining in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0165.s05",
+      "predicate": "humanity_attack_participation_permitted",
+      "act": "{0} do the participation in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0165.s06",
+      "predicate": "illegitimate_control_involvement_permitted",
+      "act": "{0} do the involvement in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0165.s07",
+      "predicate": "csam_generation_permitted_for_claude",
+      "act": "{0} do the generation in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0168.s01",
+      "predicate": "firmness_required",
+      "act": "{0} remain firm in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        null
+      ]
+    },
+    {
+      "unit": "u0263.s04.p2",
+      "predicate": "exploit_instruction_compliance_required",
+      "act": "{0} comply with the instruction against unintended exploits in {1}",
+      "argument_sorts": [
+        "claude_instance",
+        "situation"
+      ],
+      "matches_in_source": [],
+      "readings": [
+        "strict",
+        "default"
+      ]
+    }
+  ],
+  "occurrences": [
+    {
+      "unit": "u0123.s02.p1",
+      "reading": null,
+      "words": "the operator",
+      "role": "operator",
+      "position": "guard",
+      "where": "packed inside the wording or description of guard atom instruction_abandon_identity_in_persona, instruction_act_against_guidelines, instruction_claim_human_when_asked, instruction_deceptive_tactics_harming_users, instruction_decline_or_withhold, instruction_endanger_health_or_safety, instruction_false_information_deceiving_user, instruction_focus_on_tasks, instruction_promote_own_products, instruction_respond_differently, instruction_role_play_custom_persona (no formula position: the translation boundary)",
+      "rule": "op-may-instruct-the-five-kinds",
+      "predicate": "operator_input_permitted",
+      "guard": [
+        "or",
+        [
+          "or",
+          [
+            "or",
+            [
+              "or",
+              [
+                "unary",
+                "instruction_role_play_custom_persona",
+                [
+                  "var",
+                  0
+                ]
+              ],
+              [
+                "unary",
+                "instruction_decline_or_withhold",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ],
+            [
+              "binary",
+              "instruction_promote_own_products",
+              [
+                "var",
+                1
+              ],
+              [
+                "var",
+                0
+              ]
+            ]
+          ],
+          [
+            "unary",
+            "instruction_focus_on_tasks",
+            [
+              "var",
+              0
+            ]
+          ]
+        ],
+        [
+          "unary",
+          "instruction_respond_differently",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      "unless": [
+        [
+          "unary",
+          "instruction_abandon_identity_in_persona",
+          [
+            "var",
+            0
+          ]
+        ],
+        [
+          "unary",
+          "instruction_claim_human_when_asked",
+          [
+            "var",
+            0
+          ]
+        ],
+        [
+          "unary",
+          "instruction_deceptive_tactics_harming_users",
+          [
+            "var",
+            0
+          ]
+        ],
+        [
+          "unary",
+          "instruction_false_information_deceiving_user",
+          [
+            "var",
+            0
+          ]
+        ],
+        [
+          "unary",
+          "instruction_endanger_health_or_safety",
+          [
+            "var",
+            0
+          ]
+        ],
+        [
+          "unary",
+          "instruction_act_against_guidelines",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      "over": []
+    },
+    {
+      "unit": "u0123.s03",
+      "reading": null,
+      "words": "the user",
+      "role": "user",
+      "position": "guard",
+      "where": "packed inside the wording or description of guard atom instruction_false_information_deceiving_user (no formula position: the translation boundary)",
+      "rule": "op-not-the-six-instructions",
+      "predicate": "operator_input_permitted",
+      "guard": [
+        "or",
+        [
+          "or",
+          [
+            "or",
+            [
+              "or",
+              [
+                "or",
+                [
+                  "unary",
+                  "instruction_abandon_identity_in_persona",
+                  [
+                    "var",
+                    0
+                  ]
+                ],
+                [
+                  "unary",
+                  "instruction_claim_human_when_asked",
+                  [
+                    "var",
+                    0
+                  ]
+                ]
+              ],
+              [
+                "unary",
+                "instruction_deceptive_tactics_harming_users",
+                [
+                  "var",
+                  0
+                ]
+              ]
+            ],
+            [
+              "unary",
+              "instruction_false_information_deceiving_user",
+              [
+                "var",
+                0
+              ]
+            ]
+          ],
+          [
+            "unary",
+            "instruction_endanger_health_or_safety",
+            [
+              "var",
+              0
+            ]
+          ]
+        ],
+        [
+          "unary",
+          "instruction_act_against_guidelines",
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      "unless": [],
+      "over": []
+    },
+    {
+      "unit": "u0156.s03",
+      "reading": "strict",
+      "words": "the user",
+      "role": "user",
+      "position": "act",
+      "where": "argument {1} of sort user of the rule's act “{0} actively deceive {1} about system prompt existence-or-content”",
+      "rule": "no-system-prompt-deception",
+      "predicate": "system_prompt_deception_permitted",
+      "guard": [
+        "top"
+      ],
+      "unless": [],
+      "over": []
+    },
+    {
+      "unit": "u0156.s03",
+      "reading": "default",
+      "words": "the user",
+      "role": "user",
+      "position": "act",
+      "where": "argument {1} of sort user of the rule's act “{0} actively deceive {1} about system prompt existence-or-content”",
+      "rule": "no-system-prompt-deception",
+      "predicate": "system_prompt_deception_permitted",
+      "guard": [
+        "top"
+      ],
+      "unless": [
+        [
+          "binary",
+          "exception_to_not_deceiving_about_system_prompt",
+          [
+            "var",
+            1
+          ],
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      "over": []
+    },
+    {
+      "unit": "u0156.s03",
+      "reading": "strict-in-frame",
+      "words": "the user",
+      "role": "user",
+      "position": "act",
+      "where": "argument {1} of sort user of the rule's act “{0} actively deceive {1} about system prompt existence-or-content”",
+      "rule": "no-system-prompt-deception",
+      "predicate": "system_prompt_deception_permitted",
+      "guard": [
+        "unary",
+        "asked_to_keep_system_prompt_confidential",
+        [
+          "var",
+          1
+        ]
+      ],
+      "unless": [],
+      "over": []
+    },
+    {
+      "unit": "u0156.s03",
+      "reading": "default-in-frame",
+      "words": "the user",
+      "role": "user",
+      "position": "act",
+      "where": "argument {1} of sort user of the rule's act “{0} actively deceive {1} about system prompt existence-or-content”",
+      "rule": "no-system-prompt-deception",
+      "predicate": "system_prompt_deception_permitted",
+      "guard": [
+        "unary",
+        "asked_to_keep_system_prompt_confidential",
+        [
+          "var",
+          1
+        ]
+      ],
+      "unless": [
+        [
+          "binary",
+          "exception_to_not_deceiving_about_system_prompt",
+          [
+            "var",
+            1
+          ],
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      "over": []
+    },
+    {
+      "unit": "u0156.s03",
+      "reading": "strict",
+      "words": "its content",
+      "role": "other",
+      "position": "act",
+      "where": "folded into the rule's act “{0} actively deceive {1} about system prompt existence-or-content”",
+      "rule": "no-system-prompt-deception",
+      "predicate": "system_prompt_deception_permitted",
+      "guard": [
+        "top"
+      ],
+      "unless": [],
+      "over": []
+    },
+    {
+      "unit": "u0156.s03",
+      "reading": "default",
+      "words": "its content",
+      "role": "other",
+      "position": "act",
+      "where": "folded into the rule's act “{0} actively deceive {1} about system prompt existence-or-content”",
+      "rule": "no-system-prompt-deception",
+      "predicate": "system_prompt_deception_permitted",
+      "guard": [
+        "top"
+      ],
+      "unless": [
+        [
+          "binary",
+          "exception_to_not_deceiving_about_system_prompt",
+          [
+            "var",
+            1
+          ],
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      "over": []
+    },
+    {
+      "unit": "u0156.s03",
+      "reading": "strict-in-frame",
+      "words": "its content",
+      "role": "other",
+      "position": "act",
+      "where": "folded into the rule's act “{0} actively deceive {1} about system prompt existence-or-content”",
+      "rule": "no-system-prompt-deception",
+      "predicate": "system_prompt_deception_permitted",
+      "guard": [
+        "unary",
+        "asked_to_keep_system_prompt_confidential",
+        [
+          "var",
+          1
+        ]
+      ],
+      "unless": [],
+      "over": []
+    },
+    {
+      "unit": "u0156.s03",
+      "reading": "default-in-frame",
+      "words": "its content",
+      "role": "other",
+      "position": "act",
+      "where": "folded into the rule's act “{0} actively deceive {1} about system prompt existence-or-content”",
+      "rule": "no-system-prompt-deception",
+      "predicate": "system_prompt_deception_permitted",
+      "guard": [
+        "unary",
+        "asked_to_keep_system_prompt_confidential",
+        [
+          "var",
+          1
+        ]
+      ],
+      "unless": [
+        [
+          "binary",
+          "exception_to_not_deceiving_about_system_prompt",
+          [
+            "var",
+            1
+          ],
+          [
+            "var",
+            0
+          ]
+        ]
+      ],
+      "over": []
+    }
+  ],
+  "counts": {
+    "user": {
+      "source_occurrences": 2,
+      "rows_per_reading": 5,
+      "units": [
+        "u0123.s03",
+        "u0156.s03"
+      ],
+      "in_act": 4,
+      "in_guard_atom": 1,
+      "distinct_goals": 5,
+      "goals_sharing_identical_applicability": 0
+    },
+    "operator": {
+      "source_occurrences": 1,
+      "rows_per_reading": 1,
+      "units": [
+        "u0123.s02.p1"
+      ],
+      "in_act": 0,
+      "in_guard_atom": 1,
+      "distinct_goals": 1,
+      "goals_sharing_identical_applicability": 0
+    },
+    "other": {
+      "source_occurrences": 1,
+      "rows_per_reading": 4,
+      "units": [
+        "u0156.s03"
+      ],
+      "in_act": 4,
+      "in_guard_atom": 0,
+      "distinct_goals": 4,
+      "goals_sharing_identical_applicability": 0
+    }
+  },
+  "all_roles": {
+    "distinct_goals": 10,
+    "goals_sharing_identical_applicability": 8,
+    "applicability_groups_with_more_than_one_goal": 4,
+    "reading": "two goals share identical applicability when their rules have the same guard and carve-outs; they are different goals when their rows (words, position) differ, so nothing is coupled (PS-3 reads this count)"
+  },
+  "note": "`source_occurrences` are the matches in the sentences of the 18 formalised rules (phase 1 found 4 in 3 units); `rows_per_reading` multiplies by the readings of a reading set (u0156.s03 has four candidates). Occurrences in a guard atom are packed inside an open term the translator named (instruction_*): they have no formula position. The 98 unformalised G1 matches of phase 1 are not rules and are not counted here"
+}

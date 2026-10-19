@@ -1,0 +1,11 @@
+{
+ "what": "run 20261019T0600Z: PS-0p items added to the document with the repaired QT-0p wording (sort `principal_type` with the noun “principal type of Claude”, no predicate `claude_principal_type`); the start document already holds u0245. Whole-document premise check of the document nd.py all wrote",
+ "limit": "search budget max_evaluations 100000 (Lean's premise budget), not a timeout; VE_RUST_TIMEOUT left at its default",
+ "variants": [
+  {"variant": "A'", "added": "u0286", "premises": "model", "premise_candidates": {"model": 10}, "conflict": "CONFLICT-FREE (32 choices)", "bytes_by_status": {"CHECKED": 215, "LABELLED": 364, "OPEN": 2555, "UNFORMALISED": 181759}},
+  {"variant": "F'", "added": "u0032", "premises": "model", "premise_candidates": {"model": 10}, "conflict": "CONFLICT-FREE (32 choices)", "bytes_by_status": {"CHECKED": 186, "LABELLED": 364, "OPEN": 2593, "UNFORMALISED": 181750}},
+  {"variant": "all", "added": "u0286 + u0032", "premises": "model", "premise_candidates": {"model": 10}, "conflict": "CONFLICT-FREE (32 choices)", "bytes_by_status": {"CHECKED": 215, "LABELLED": 364, "OPEN": 2593, "UNFORMALISED": 181721}, "note": "the final document of this run; evidence/checkpoint-final.json"}
+ ],
+ "reading": "In 20261018T1800Z the same items (variants A to D and F) made the premise check UNKNOWN. The only change between the two measurements is QT-0p's wording: the unary predicate `claude_principal_type` over a sort of size 3 is now the sort itself. The measurement does not say why the old shape exhausted the budget; it says the new shape does not.",
+ "source": "scratch directories under usecases/claude-constitution-pilot (deleted afterwards), each running apply_plans.py ps0p --only=... then nd.py all; result read from readings/nd-all-result.json"
+}
