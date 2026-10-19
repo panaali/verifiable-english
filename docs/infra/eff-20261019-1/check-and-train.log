@@ -1,0 +1,9 @@
+# branch tool after its --write: --check: rc=1 (trust-tables only: the scratch edit's 2 unclassified trusted lines), 69 s; --check --skip trust-tables: rc=0, 58 s
+regen_generated: failed: trust-tables
+regen_generated: checked 30 entries
+# merge-train first pass on the start state: --write --only lake-build --only checker-pins: rc=0, 1 s; then --write: rc=0, 45 s, no bootstrap
+== write lake-build
+== write checker-pins
+regen_generated: wrote 2 entries
+0
+regen_generated: wrote 31 entries
