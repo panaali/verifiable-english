@@ -184,6 +184,20 @@ def test_the_sites_only_shrink_whatever_their_owner():
     assert len(identity_lint.growth([], [lean, dict(lean, domain="ve-source-{}\n")])) == 2
 
 
+def test_a_module_split_into_its_package_keeps_its_sites():
+    """AR-16a: `ve/x.py` became the package `ve/x/`; its sites moved to the package's modules are not growth, and any
+    site beyond them still is, as is a package site while the module keeps its own."""
+    lean = {"path": "ve/x.py", "scope": "f", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"}
+    report = dict(lean, domain="ve-report-{}\n", scope="g")
+    moved = [dict(lean, path="ve/x/load.py"), dict(report, path="ve/x/report.py")]
+    assert identity_lint.growth([lean, report], moved) == []
+    [problem] = identity_lint.growth([lean, report], [*moved, dict(lean, path="ve/x/lean.py")])
+    assert "Lean-owned site ve/x.py 've-meaning-{}\\n' added since the base" in problem
+    assert len(identity_lint.growth([lean], [lean, dict(lean, path="ve/x/load.py")])) == 1
+    assert len(identity_lint.growth([lean], [dict(lean, path="ve/xy/load.py")])) == 1
+    assert len(identity_lint.growth([lean], [dict(lean, path="ve/y/load.py")])) == 1
+
+
 def _flipped(entry: dict) -> dict:
     """`entry` under the other owner."""
     keys = {"path": entry["path"], "scope": entry["scope"], "domain": entry["domain"]}

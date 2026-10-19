@@ -316,7 +316,7 @@ the manifest `notes`, not changed:
 | `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
 | `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |
 | `reference.validate` | combination | python → python | experimental / experimental | `ve.equivalence:validate_reference` | none | none | none | `python:implementation`<br>`python:reference-rule` |
-| `document.check` | combination | python → lean | experimental / experimental | `ve.document:check_document` | none | none | none | `python:implementation`<br>`python:surface`<br>`python:record-identity` |
+| `document.check` | combination | python → lean | experimental / experimental | `ve.document.report:check_document` | none | none | none | `python:implementation`<br>`python:surface`<br>`python:record-identity` |
 | `wire.diagnose` | leaf | lean-only → lean | experimental / experimental | none | `ve_service diagnose soft-elaborate,admission,norms-elaborate,norms-conflict,norms-certificate,norm-defaults-elaborate,norm-defaults-conflict,norm-defaults-certificate` | none | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue` |
 | `check` | combination | python → lean | experimental / experimental | `ve.check:check` | none | none | none | `python:implementation`<br>`python:display` |
 <!-- END GENERATED -->
