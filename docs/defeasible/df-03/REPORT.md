@@ -79,7 +79,8 @@ No product code changed, so there is no Lean, `ve/` or Rust seeded bug to plant.
 
 - `tests/test_defeasible_baseline_evidence.py` and `tests/test_history_tests.py`: 35 passed.
 - Selected tests (`mac-pytest.sh --select`, 24/446 units, on the Mac runner). The first run failed only the
-  history-test lint, which I fixed in `b4158e08d`. The final selected run is below.
+  history-test lint, which I fixed in `b4158e08d`. The final selected run, at `76195178`, passed all 24 units with 0
+  failed. Only this report line has changed since.
 - `tools/gate_collection.py --check --prebuilt`: 10 added, 0 removed, 0 refused, 0 stale, 0 malformed.
   `tools/regen_generated.py --check`: 31 entries checked, all current.
 - The chain runs the full gate on the final HEAD.
