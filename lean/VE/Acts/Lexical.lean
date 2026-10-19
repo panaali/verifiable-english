@@ -12,14 +12,14 @@ enters the act grammar. A plain predicate with an act is worded "{0} has the rig
 namespace VE.Acts.Lexical
 open VE.Norms.Wire (actReserved words actWord scanSlots)
 
-/-- Words an act may hold only inside a declared fixed phrase in AP-1, and in the grammar's join positions (1.2). -/
-def joinWords : List String := ["and", "or", "nor", "for"]
-/-- Words no act may hold, fixed phrases included: today's `actReserved` without the join words (1.2). -/
-def clauseWords : List String := actReserved.filter (fun w => !joinWords.contains w)
-
 /-- A token of an act phrase (1.1): a word, a declared fixed phrase (its index), a slot `{i}`, or a comma. -/
 inductive Tok | word (w : String) | fixed (i : Nat) | slot (i : Nat) | comma
   deriving DecidableEq, Repr
+
+/-- Words an act may hold only inside a declared fixed phrase in AP-1, and in the grammar's join positions (1.2). -/
+def joinWords : List String := ["and", "or", "nor", "for"]
+/-- Words no act may hold, fixed phrases included: today's `actReserved` without the join words (1.2). -/
+def clauseWords : List String := VE.Norms.Wire.actReserved.filter (fun w => !joinWords.contains w)
 
 /-- The limits of 12: an act phrase's bytes, a fixed phrase's bytes, and the fixed phrases of a document. -/
 def maxActBytes : Nat := 400

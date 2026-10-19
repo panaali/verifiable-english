@@ -5,8 +5,7 @@ import VE.Grammar.Basic
 
 A document declares **frames** (a head and the markers that introduce its arguments and modifiers) and **adverbs**;
 `framesOk` is the check of 1.4, run as `checkVocab`, which raises the first failing condition's text in the order of
-D-31 (10). An act phrase is read as a list of tokens (`Lexical.Tok`, 1.1, defined in `VE.Acts.Lexical`) by a
-grammar over the terminals `Term`.
+D-31 (10). An act phrase is read as a list of tokens (`Lexical.Tok`, 1.1) by a grammar over the terminals `Term`.
 The rule table, the act trees and the meaning (1.5, 5.2, 5.3) build on these.
 -/
 
