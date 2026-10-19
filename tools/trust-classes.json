@@ -12640,7 +12640,6 @@
         "VE.Calc.Derivation",
         "VE.Calc.Derivation.check",
         "VE.Calc.Derivation.replay",
-        "VE.Calc.Derive.run",
         "VE.Calc.Derive.search",
         "VE.Calc.Step",
         "VE.Calc.Step.derive",
@@ -12653,6 +12652,7 @@
     "VE/Calc/DeriveExamples.lean": {
       "T": [
         "VE.Calc.DeriveExamples.below",
+        "VE.Calc.DeriveExamples.checked",
         "VE.Calc.DeriveExamples.fact",
         "VE.Calc.DeriveExamples.forged",
         "VE.Calc.DeriveExamples.h6",
@@ -12660,7 +12660,8 @@
         "VE.Calc.DeriveExamples.h6Steps",
         "VE.Calc.DeriveExamples.links",
         "VE.Calc.DeriveExamples.none3",
-        "VE.Calc.DeriveExamples.pt"
+        "VE.Calc.DeriveExamples.pt",
+        "VE.Calc.DeriveExamples.sBelow"
       ]
     },
     "VE/Events/Calendar.lean": {
