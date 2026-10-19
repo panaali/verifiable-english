@@ -176,6 +176,8 @@ import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLegacyExamples
 import VE.Readings.SupPacks
+import VE.Layout.Anchors
+import VE.Layout.Discourse
 import VE.Layout.List
 import VE.Scope.Examples
 import VE.Defaults.Premises

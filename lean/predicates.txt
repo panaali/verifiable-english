@@ -276,6 +276,8 @@ module VE.Json
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
+module VE.Layout.Anchors
+module VE.Layout.Discourse
 module VE.Layout.List
 module VE.LexicalProofs
 module VE.LimitTies
@@ -811,6 +813,7 @@ VE.Graph.Unfolds@VE.ClaimGraph
 VE.Graph.tableauValid@VE.ClaimGraph
 VE.GraphChecks.valid@VE.GraphChecks
 VE.Layout.GovernedItem@VE.Layout.List
+VE.Layout.ItemUnit@VE.Layout.List
 VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run
 VE.NormDefaults.Admission.CertificatesBound@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.CertificatesBoundX@VE.NormDefaults.LayeredAdmission
