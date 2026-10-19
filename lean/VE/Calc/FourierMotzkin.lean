@@ -9,9 +9,21 @@ def maxFacts : Nat := 64
 def maxUnknowns : Nat := 16
 def maxSteps : Nat := 10000
 
+/-- Names in order of first appearance, each once. -/
+def firstAppearance (ns : List String) : List String :=
+  ns.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) []
+
 /-- The unknowns of a list of facts, in order of first appearance. -/
-def unknowns (fs : List QFact) : List String :=
-  (fs.flatMap fun f => f.form.coeffs.map (·.1)).foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) []
+def unknowns (fs : List QFact) : List String := firstAppearance (fs.flatMap fun f => f.form.coeffs.map (·.1))
+
+/-- A derivation's input is within the limits of spec 5: at most `maxFacts` facts, and at most `maxUnknowns` unknowns
+counting `names` (the square links') with the facts'. Checked once, on the derivation's input. -/
+def admits (fs : List QFact) (names : List String) : Bool :=
+  fs.length ≤ maxFacts && (firstAppearance (unknowns fs ++ names)).length ≤ maxUnknowns
+
+/-- A search step within the combinations left for the whole derivation (the state). Running out throws, so it ends
+the derivation as `limit .derivationSteps` and no search can turn it into "nothing found". -/
+abbrev Search := StateT Nat (Except Unit)
 
 /-- One coefficient per unknown, in order of first appearance, zeros dropped. -/
 def _root_.VE.Calc.QLin.norm (L : QLin) : QLin :=
@@ -35,19 +47,20 @@ def Row.combine (x : String) (p n : Row) : Row :=
   ⟨⟨(QLin.add (p.fact.form.scale (-cn)) (n.fact.form.scale cp)).norm, p.fact.strict || n.fact.strict⟩,
     List.zipWith (fun a b => -cn * a + cp * b) p.weights n.weights⟩
 
-/-- Eliminates `x` with the number of combinations it takes, or none when they are more than `budget`; they are
-counted before any is built. -/
-def eliminate (x : String) (rows : List Row) (budget : Nat) : Option (List Row × Nat) :=
+/-- Eliminates `x`, charging its combinations to the budget before any is built; throws when they are more than
+the budget left. -/
+def eliminate (x : String) (rows : List Row) : Search (List Row) := do
   let pos := rows.filter fun r => decide (0 < r.fact.form.coeffOf x)
   let neg := rows.filter fun r => decide (r.fact.form.coeffOf x < 0)
   let zero := rows.filter fun r => r.fact.form.coeffOf x == 0
-  if pos.length * neg.length > budget then none else
-  some ((zero ++ pos.flatMap fun p => neg.map (Row.combine x p)).filter (!·.trivial), pos.length * neg.length)
+  let left ← get
+  if pos.length * neg.length > left then throw ()
+  set (left - pos.length * neg.length)
+  pure ((zero ++ pos.flatMap fun p => neg.map (Row.combine x p)).filter (!·.trivial))
 
 inductive Result where
   | refuted (weights : List Rat)
   | point (κ : List (String × Rat))
-  | exhausted
   deriving Repr
 
 /-- The value of `x` meeting every row, given the later unknowns' values in `κ`: a bound itself when it meets them
@@ -71,41 +84,31 @@ def backSubstitute : List (String × List Row) → List (String × Rat) → List
   | [], κ => κ
   | (x, rows) :: rest, κ => backSubstitute rest ((x, pick x rows κ) :: κ)
 
-/-- Eliminates `xs` in order within `budget` combinations; the stages are recorded, latest first. -/
-def run : List String → List Row → List (String × List Row) → Nat → Option (List Row × List (String × List Row))
-  | [], rows, stages, _ => some (rows, stages)
-  | x :: xs, rows, stages, budget =>
-      match eliminate x rows budget with
-      | none => none
-      | some (next, used) => run xs next ((x, rows) :: stages) (budget - used)
+/-- Eliminates `xs` in order; the stages are recorded, latest first. -/
+def run : List String → List Row → List (String × List Row) → Search (List Row × List (String × List Row))
+  | [], rows, stages => pure (rows, stages)
+  | x :: xs, rows, stages => do run xs (← eliminate x rows) ((x, rows) :: stages)
 
 def inputRows (fs : List QFact) : List Row :=
   (List.range fs.length).zip fs |>.map fun (i, f) =>
     ⟨⟨f.form.norm, f.strict⟩, (List.range fs.length).map fun j => if i = j then 1 else 0⟩
 
 /-- Searches a refutation of `fs`, or a point satisfying all of them. -/
-def search (fs : List QFact) : Result :=
-  let xs := unknowns fs
-  if fs.length > maxFacts || xs.length > maxUnknowns then .exhausted else
-  match run xs (inputRows fs) [] maxSteps with
-  | none => .exhausted
-  | some (rows, stages) =>
-    match rows.find? Row.contradiction with
-    | some r => .refuted r.weights
-    | none => .point (backSubstitute stages [])
+def search (fs : List QFact) : Search Result := do
+  let (rows, stages) ← run (unknowns fs) (inputRows fs) []
+  match rows.find? Row.contradiction with
+  | some r => pure (.refuted r.weights)
+  | none => pure (.point (backSubstitute stages []))
 
 /-- The least upper bound on `x` that the facts imply, with its strictness: every other unknown eliminated. -/
-def upperBound (fs : List QFact) (x : String) : Option (Rat × Bool) :=
-  let xs := (unknowns fs).filter (· != x)
-  match run xs (inputRows fs) [] maxSteps with
-  | none => none
-  | some (rows, _) =>
-    let ups := rows.filterMap fun r =>
-      let c := r.fact.form.coeffOf x
-      if decide (c < 0) && r.fact.form.coeffs.all (·.1 == x) then some (r.fact.form.const / -c, r.fact.strict)
-      else none
-    ups.foldl (fun best u => match best with
-      | none => some u
-      | some b => if u.1 < b.1 || (u.1 == b.1 && u.2) then some u else some b) none
+def upperBound (fs : List QFact) (x : String) : Search (Option (Rat × Bool)) := do
+  let (rows, _) ← run ((unknowns fs).filter (· != x)) (inputRows fs) []
+  let ups := rows.filterMap fun r =>
+    let c := r.fact.form.coeffOf x
+    if decide (c < 0) && r.fact.form.coeffs.all (·.1 == x) then some (r.fact.form.const / -c, r.fact.strict)
+    else none
+  pure <| ups.foldl (fun best u => match best with
+    | none => some u
+    | some b => if u.1 < b.1 || (u.1 == b.1 && u.2) then some u else some b) none
 
 end VE.Calc.FM
