@@ -1,10 +1,13 @@
 import VE.Cardinality.Semantics
 import VE.Cardinality.Regions
+import VE.Cardinality.Ratio
 import VE.Order.Consequence
 
 /-! Erasure of a `cardinality@0` problem into W6a (docs/spec/quantities.md 3.5, 3.9).
 
-Each count becomes a sum of region constants and each proportion its linear form over a nonempty population. A
+Each count becomes a sum of region constants, each proportion its linear form over a nonempty population, and each
+ratio statement its linear form over a positive denominator in its operands' tag (`roundingQ`); a count operand
+becomes its dimensionless region sum. A
 recognised universal statement over a counted sort stays as written; erasure adds a bridge premise saying it holds
 exactly when the regions outside its body sum to 0. Every region constant gets the premise `0 ≤ n`. The erased problem
 goes to W6a's existing certificate route. A finite countermodel is a model of the original vocabulary: Lean computes
@@ -43,10 +46,24 @@ def Proportion.erase (E : CEnv) (fs : List CFormula) (p : Proportion) : QFormula
   let m := regionSum E fs p.sort (.and p.whole p.part)
   .and (.lt (.num dl 0) n) (p.cmp.erase (.scale dl p.den m) (.scale dl p.num n))
 
+def CTerm.erase (E : CEnv) (fs : List CFormula) : CTerm → QTerm
+  | .quantity t => t
+  | .count s b => regionSum E fs s b
+
 def CFormula.erase (E : CEnv) (fs : List CFormula) : CFormula → QFormula
   | .quantity a => a
   | .count c => c.erase E fs
   | .proportion p => p.erase E fs
+  | .roundsTo r n d D k =>
+      let g := (n.tagOf E).getD dl
+      .and (.lt (.num g 0) (d.erase E fs)) (roundingQ g r (n.erase E fs) (d.erase E fs) D k)
+  | .percentOf p w D k =>
+      let g := (p.tagOf E).getD dl
+      .and (.lt (.num g 0) (w.erase E fs))
+        (.eq (.scale g (100 * 10 ^ k) (p.erase E fs)) (.scale g D (w.erase E fs)))
+  | .percentRoundsTo r p w D k =>
+      let g := (p.tagOf E).getD dl
+      .and (.lt (.num g 0) (w.erase E fs)) (roundingQ g r (.scale g 100 (p.erase E fs)) (w.erase E fs) D k)
   | .not a => .not (a.erase E fs)
   | .and a b => .and (a.erase E fs) (b.erase E fs)
   | .or a b => .or (a.erase E fs) (b.erase E fs)
