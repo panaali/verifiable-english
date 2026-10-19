@@ -223,6 +223,12 @@ example : addedDay vT3 mC numC (d 2026 10 13).num := by unfold addedDay; decide
 example : ¬ addedDay vT3 mC numC (d 2026 10 12).num := by unfold addedDay; decide
 example : ¬ addedDay vT3 mC numC (dateMax + 1) := by unfold addedDay; decide
 example : isDayC vT3 mC numC (.inl "a") ∧ ¬ isDayC vT3 mC numC (.inl "k") := by simp only [isDayC]; decide
+-- a finite situation is never a calendar reading: day 0 is missing (1.5)
+example : ¬ CalendarReading vT3 mC.asStructure numC := fun h => by
+  obtain ⟨x, hx, hn⟩ := h.2 0 (by decide)
+  have hx : x ∈ ["a", "b"] := hx
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+  rcases hx with rfl | rfl <;> exact absurd hn (by decide)
 
 -- T7: a document with no day vocabulary, with and without the block: the same verdicts
 def envT7 : VE.Environment :=

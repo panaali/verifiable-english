@@ -1,0 +1,61 @@
+"""et-3b seeded bugs: apply one mutant to the committed tree, run `lake build VE.Events.Examples`, then elaborate the
+six events files as one scratch file so every #guard and example runs even when a proof upstream fails; restore.
+Usage: python3 harness.py <worktree> <mutant> (prints one JSON record)."""
+import subprocess, sys, os, re, json
+ROOT = sys.argv[1]
+LEAN = ROOT + '/lean'
+env = dict(os.environ, PATH=os.path.expanduser('~/.elan/bin') + ':' + os.environ['PATH'])
+MUTANTS = {
+ 'numOf-shift': ('VE/Events/Completion.lean', '  | .inr n => n\ndef oldTuple', '  | .inr n => n + 1\ndef oldTuple'),
+ 'oldTuple-added-old': ('VE/Events/Completion.lean', '  | .inr _ :: _ => none', '  | .inr _ :: _ => some []'),
+ 'addedDay-no-bound': ('VE/Events/Completion.lean', '  n ≤ dateMax ∧ ∀ x ∈ M.domains V.day, num x ≠ n',
+   '  ∀ x ∈ M.domains V.day, num x ≠ n'),
+ 'isDayC-any-old': ('VE/Events/Completion.lean', '  | .inl x => x ∈ M.domains V.day\n', '  | .inl _ => True\n'),
+ 'completion-added-any-sort': ('VE/Events/Completion.lean', '    | .inr n => s = V.day ∧ addedDay V M num n',
+   '    | .inr n => addedDay V M num n'),
+ 'completion-added-any-predicate': ('VE/Events/Completion.lean',
+   '    | none => p = V.before ∧ ∃ z w,', '    | none => ∃ z w,'),
+ 'calendarReading-not-onto': ('VE/Events/Premises.lean',
+   '  Embeds V S num ∧ ∀ n, n ≤ dateMax → ∃ x, S.domain V.day x ∧ num x = n', '  Embeds V S num'),
+ 'oldEnv-keeps-links': ('VE/Events/Conservative.lean',
+   'if ss.contains V.day || V.links.any (·.predicate == p) then none', 'if ss.contains V.day then none'),
+ 'oldEnv-keeps-day-constants': ('VE/Events/Conservative.lean', '      | some s => if s == V.day then none else some s',
+   '      | some s => some s'),
+ 'oneRole-before-guard': ('VE/Events/Premises.lean', '  .all sort (.all V.day (.implies (bin role 1 0)',
+   '  .all sort (.all V.day (.implies (bin V.before 1 0)'),
+ 'regen-date-sort': ('VE/Events/Decl.lean', 'then some V.day else E.constants c }', 'then some "date" else E.constants c }'),
+}
+FILES = ['VE/Events/Decl.lean', 'VE/Events/Premises.lean', 'VE/Events/Calendar.lean', 'VE/Events/Completion.lean',
+         'VE/Events/Conservative.lean', 'VE/Events/Examples.lean']
+IMPORTS = ['import VE.Semantics', 'import VE.Time.Calendar', 'import VE.Norms.Prefix', 'import VE.Finite',
+           'import VE.Readings.Names', 'import VE.Readings.Superpose']
+name = sys.argv[2]
+path, old, new = MUTANTS[name]
+src = open(os.path.join(LEAN, path)).read()
+assert src.count(old) == 1, name
+open(os.path.join(LEAN, path), 'w').write(src.replace(old, new))
+try:
+    b = subprocess.run(['lake', 'build', 'VE.Events.Examples'], cwd=LEAN, env=env, capture_output=True, text=True)
+    errs = [l for l in b.stdout.splitlines() if l.startswith('error:') and 'Lean exited' not in l]
+    parts, origin = list(IMPORTS), [None] * len(IMPORTS)
+    for f in FILES:
+        for i, l in enumerate(open(os.path.join(LEAN, f)).read().splitlines(), 1):
+            if not l.startswith('import '):
+                parts.append(l); origin.append((f, i, l.strip()))
+    scratch = os.path.join(LEAN, 'EtThreeBMutantScratch.lean')
+    open(scratch, 'w').write('\n'.join(parts) + '\n')
+    s = subprocess.run(['lake', 'env', 'lean', 'EtThreeBMutantScratch.lean'], cwd=LEAN, env=env, capture_output=True,
+                       text=True)
+    os.remove(scratch)
+    failing = []
+    for l in s.stdout.splitlines():
+        m = re.match(r'EtThreeBMutantScratch.lean:(\d+):\d+: error: (.*)', l)
+        if m:
+            f, i, text = origin[int(m.group(1)) - 1]
+            failing.append({'at': f'lean/{f}:{i}', 'line': text[:120], 'error': m.group(2)[:80]})
+    print(json.dumps({'mutant': name, 'file': 'lean/' + path, 'replace': old.strip(), 'with': new.strip(),
+                      'lake_build_VE.Events.Examples': 'passes' if b.returncode == 0 else 'fails',
+                      'build_errors': [e[:160] for e in errs[:4]], 'failing': failing[:12]}, indent=1,
+                     ensure_ascii=False))
+finally:
+    subprocess.run(['git', 'checkout', '--', 'lean/' + path], cwd=ROOT)
