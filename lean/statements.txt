@@ -11606,23 +11606,6 @@ theorem VE.Layout.anchorReach_iff
                   Option.some u ≠ VE.Layout.headingOf L anchors a
   -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.anchorReach@VE.Layout.Anchors VE.Layout.headingOf@VE.Layout.Anchors VE.Layout.spansOf@VE.Layout.Anchors VE.Layout.within@VE.Layout.Anchors
   -- expr 1592377411
-theorem VE.Layout.before_anchorsOk
-  ∀ (D : VE.Discourse.DDoc), VE.Layout.Before.anchorsOk D = VE.Discourse.anchorsOk D
-  -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.anchorsOk@VE.Discourse.WellFormed VE.Layout.Before.anchorsOk@VE.Layout.Discourse
-  -- expr 3569243851
-theorem VE.Layout.before_innermost
-  ∀ (D : VE.Discourse.DDoc) (u : String), VE.Layout.Before.innermostAnchor D u = VE.Discourse.innermostAnchor D u
-  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.innermostAnchor@VE.Discourse.Access VE.Layout.Before.innermostAnchor@VE.Layout.Discourse
-  -- expr 428907195
-theorem VE.Layout.before_reachesRoot
-  ∀ (D : VE.Discourse.DDoc) (n : Nat) (a : VE.Discourse.Anchor),
-    VE.Layout.Before.reachesRoot D n a = VE.Layout.reachesRoot D.K.anchors n a
-  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Discourse.DDoc.K@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Layout.Before.reachesRoot@VE.Layout.Discourse VE.Layout.reachesRoot@VE.Layout.Anchors
-  -- expr 3874623215
-theorem VE.Layout.before_within
-  ∀ (D : VE.Discourse.DDoc) (u a : String), VE.Layout.Before.within D u a = VE.Discourse.within D u a
-  -- uses VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.within@VE.Discourse.Access VE.Layout.Before.within@VE.Layout.Discourse
-  -- expr 1998848921
 theorem VE.Layout.continues_iff
   ∀ (d : Nat) (x : VE.Layout.Unit),
     VE.Layout.continues d x = Bool.true ↔ (∃ e, x.item = Option.some e ∧ d ≤ e) ∨ x.midLine = Bool.true
@@ -38207,8 +38190,8 @@ theorem VE.Scope.Examples.anchor_checks
                     | Except.error "ManifestMismatch: anchors.s.exports" => Bool.true
                     | x => Bool.false) =
                     Bool.true
-  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.anchorsOk@VE.Layout.Anchors VE.Scope.Examples.anc@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_1@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_3@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_5@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_7@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_9@VE.Scope.Examples match_90@VE.Scope.Examples match_94@VE.Scope.Examples
-  -- expr 3481344879
+  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.anchorsOk@VE.Layout.Anchors VE.Scope.Examples.anc@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_1@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_3@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_5@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_7@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_9@VE.Scope.Examples match_91@VE.Scope.Examples match_95@VE.Scope.Examples
+  -- expr 4279798438
 theorem VE.Scope.Examples.bold_labels
   VE.Layout.boldLabel "**Process**: x".toUTF8 0 14 = Bool.true ∧
     VE.Layout.boldLabel "**No prompt:** x".toUTF8 0 16 = Bool.true ∧
@@ -38292,6 +38275,17 @@ theorem VE.Scope.Examples.para_counts
     VE.Scope.Examples.paraAgrees [("a", "x\n\n  \n\t\x0d\nb "), ("b", "c\n \n"), ("c", "\n\nd")] = Bool.true
   -- uses VE.Layout.paraCounts@VE.Layout.List VE.Scope.Examples.paraAgrees@VE.Scope.Examples
   -- expr 3512158593
+theorem VE.Scope.Examples.reaches_root
+  VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 2 (VE.Scope.Examples.anc "s" (Option.some "r") "S" (5, 15)) =
+      Bool.true ∧
+    VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 1 (VE.Scope.Examples.anc "s" (Option.some "r") "S" (5, 15)) =
+        Bool.false ∧
+      VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 2 (VE.Scope.Examples.anc "x" (Option.some "r") "X" (5, 25)) =
+          Bool.false ∧
+        VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 2 (VE.Scope.Examples.anc "x" (Option.some "m") "X" (5, 15)) =
+          Bool.false
+  -- uses VE.Layout.reachesRoot@VE.Layout.Anchors VE.Scope.Examples.anc@VE.Scope.Examples VE.Scope.Examples.boxAnchors@VE.Scope.Examples
+  -- expr 114329546
 theorem VE.Scope.Examples.short_items
   (VE.Layout.itemRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s03").toOption =
       Option.some ["a.s03", "a.s04", "a.s05"] ∧
@@ -38340,8 +38334,17 @@ theorem VE.Scope.Examples.short_run
             | Except.error "ScopeUnknownUnit: z" => Bool.true
             | x => Bool.false) =
             Bool.true
-  -- uses VE.Layout.listRun@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.prosePieces@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples VE.Scope.Examples.short_run.match_1@VE.Scope.Examples VE.Scope.Examples.short_run.match_3@VE.Scope.Examples VE.Scope.Examples.short_run.match_5@VE.Scope.Examples match_38@VE.Scope.Examples
-  -- expr 1692558156
+  -- uses VE.Layout.listRun@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.prosePieces@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples VE.Scope.Examples.short_run.match_1@VE.Scope.Examples VE.Scope.Examples.short_run.match_3@VE.Scope.Examples VE.Scope.Examples.short_run.match_5@VE.Scope.Examples match_39@VE.Scope.Examples
+  -- expr 1355802801
+theorem VE.Scope.Examples.span_tests
+  VE.Discourse.spanIn (2, 4) (0, 5) = Bool.true ∧
+    VE.Discourse.spanIn (0, 5) (0, 5) = Bool.true ∧
+      VE.Discourse.spanIn (0, 6) (0, 5) = Bool.false ∧
+        VE.Discourse.spanIn (1, 5) (2, 5) = Bool.false ∧
+          VE.Discourse.spansDisjoint (0, 5) (5, 9) = Bool.true ∧
+            VE.Discourse.spansDisjoint (5, 9) (0, 5) = Bool.true ∧ VE.Discourse.spansDisjoint (0, 6) (5, 9) = Bool.false
+  -- uses VE.Discourse.spanIn@VE.Layout.Anchors VE.Discourse.spansDisjoint@VE.Layout.Anchors
+  -- expr 388391006
 theorem VE.SearchBudget.chain_denote
   ∀ {S : VE.Structure} {s : String} (a : VE.Formula) (σ : VE.Valuation S),
     VE.Formula.denote S σ a →

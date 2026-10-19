@@ -1601,10 +1601,6 @@
 'VE.Judgments.records_names' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_refuse' depends on axioms: [propext]
 'VE.Layout.anchorReach_iff' depends on axioms: [propext, Quot.sound]
-'VE.Layout.before_anchorsOk' depends on axioms: [propext, Quot.sound]
-'VE.Layout.before_innermost' depends on axioms: [propext, Quot.sound]
-'VE.Layout.before_reachesRoot' depends on axioms: [Quot.sound]
-'VE.Layout.before_within' depends on axioms: [propext]
 'VE.Layout.continues_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.discourse_anchorsOk_unchanged' depends on axioms: [propext]
 'VE.Layout.discourse_innermost_unchanged' does not depend on any axioms
@@ -5155,9 +5151,11 @@
 'VE.Scope.Examples.markers' does not depend on any axioms
 'VE.Scope.Examples.of_source' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.para_counts' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.reaches_root' does not depend on any axioms
 'VE.Scope.Examples.short_items' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_layout' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_run' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.span_tests' does not depend on any axioms
 'VE.SearchBudget.chain_denote' depends on axioms: [propext, Quot.sound]
 'VE.SearchBudget.conjuncts_denote' depends on axioms: [propext]
 'VE.SearchBudget.demand_sound' depends on axioms: [propext, Quot.sound]

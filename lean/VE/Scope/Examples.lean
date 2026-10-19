@@ -6,6 +6,7 @@ import VE.Layout.Anchors
 
 namespace VE.Scope.Examples
 open VE.Layout
+open VE.Discourse (spanIn spansDisjoint)
 
 /-! ### Fixture layouts -/
 
@@ -255,6 +256,18 @@ theorem box_anchors :
     headingOf boxUnits boxAnchors "s" = some "u2" ∧ (anchorReach boxUnits boxAnchors "s").toOption = some ["u3"] ∧
     (anchorReach boxUnits boxAnchors "w" matches .error "ScopeUnknownAnchor: w") ∧
     (anchorReach boxUnits boxAnchors "q" matches .error "ScopeUnknownAnchor: q") := by decide +kernel
+
+/-! ### The span tests and the walk to the root that the anchor checks use, at their boundaries -/
+
+theorem span_tests : spanIn (2, 4) (0, 5) = true ∧ spanIn (0, 5) (0, 5) = true ∧ spanIn (0, 6) (0, 5) = false ∧
+    spanIn (1, 5) (2, 5) = false ∧ spansDisjoint (0, 5) (5, 9) = true ∧ spansDisjoint (5, 9) (0, 5) = true ∧
+    spansDisjoint (0, 6) (5, 9) = false := by decide
+
+/-- `s` reaches the root in two steps, not one; a span outside its parent's, or a missing parent, never does. -/
+theorem reaches_root : reachesRoot boxAnchors 2 (anc "s" (some "r") "S" (5, 15)) = true ∧
+    reachesRoot boxAnchors 1 (anc "s" (some "r") "S" (5, 15)) = false ∧
+    reachesRoot boxAnchors 2 (anc "x" (some "r") "X" (5, 25)) = false ∧
+    reachesRoot boxAnchors 2 (anc "x" (some "m") "X" (5, 15)) = false := by decide +kernel
 
 /-! ### Discourse's anchor checks, one fixture per diagnostic, in their order, and the limit's boundary. The sibling
     checks compare labels through `String.toLower`, which the kernel does not reduce, so those are `#guard`s -/
