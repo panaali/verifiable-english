@@ -91,7 +91,8 @@ def answers(src, situations):
         validate = run_case(src | {"kind": "alt-validate", "scenario": situation})
         (chooser,) = validate["choosers"]
         out[name] = {"witness": {k: row.get(k) for k in ("verdict", "diagnosis", "text")},
-                     "scenario": dict(zip(chooser["alternatives"], zip(chooser["statuses"], chooser["evidence"]))),
+                     "scenario": {a: [s, e] for a, s, e in zip(chooser["alternatives"], chooser["statuses"],
+                                                               chooser["evidence"])},
                      "scenario_text": chooser["text"]}
     return out
 
