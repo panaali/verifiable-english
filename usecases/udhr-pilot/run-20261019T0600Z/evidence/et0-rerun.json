@@ -1,0 +1,71 @@
+{
+ "plan": "events-time-causation ET-0 rerun",
+ "rows": {
+  "u042": {
+   "bytes": 200,
+   "status": "CHECKED",
+   "claimed": false
+  },
+  "u043": {
+   "bytes": 118,
+   "status": "OPEN in the loader, READINGS in the ledger",
+   "claimed": false
+  }
+ },
+ "part01": {
+  "verdict": "ok",
+  "premises": "model",
+  "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+  "conflict": "CONFLICT-FREE",
+  "bytes_by_status": {
+   "CHECKED": 392,
+   "LABELLED": 265,
+   "OPEN": 1382,
+   "UNFORMALISED": 2685
+  },
+  "unit_status": {
+   "u010": "OPEN",
+   "u042": "CHECKED",
+   "u043": "OPEN"
+  },
+  "label": "part01-prlimit",
+  "document": "usecases/udhr-pilot/run-20261018T1800Z/translation-part01.ve.md",
+  "wall_seconds": 46.6,
+  "address_space_cap_bytes": 6442450944,
+  "VE_RUST_TIMEOUT": "default (unset)",
+  "peak_child_resident_set_mb": {
+   "ve_service": 104.0,
+   "ve": 4.8
+  },
+  "peak_child_resident_set_mb_max": 104.0
+ },
+ "bar": {
+  "u042_loads_and_checks": true,
+  "part01_conflict_free_under_every_reading": true,
+  "premises_model": true,
+  "checker_available": true
+ },
+ "expected_vs_measured": {
+  "u042_bytes": [
+   200,
+   200
+  ],
+  "u043_bytes": [
+   118,
+   118
+  ]
+ },
+ "whole_declaration": {
+  "load_seconds": 2577.8,
+  "check_seconds": 2525.2,
+  "premises": "model",
+  "readings_status": "CONFLICT-FREE"
+ },
+ "other_parts_seconds": {
+  "translation-part01.ve.md": 53.0,
+  "translation-part02.ve.md": 7.0,
+  "translation-part03.ve.md": 6.3,
+  "translation-part04.ve.md": 9.0
+ },
+ "note": "ET-6 takes the part01 wall time, peak child resident set and verdict as its check-time evidence. The whole-declaration run took about 3.8 times as long as last run's; its user CPU time equals its wall time (86 min vs 85 min), so the slowdown is added work, not contention (the VM's load average was 30 to 44 on 32 CPUs)."
+}

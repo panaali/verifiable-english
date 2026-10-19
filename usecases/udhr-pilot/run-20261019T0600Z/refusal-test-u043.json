@@ -1,0 +1,5 @@
+{
+ "control_unchanged_loads": "admitted",
+ "a_flipped_value": "refused: distinguishing model does not separate readings",
+ "b_readings_equal": "refused: distinguishing model does not separate readings"
+}
