@@ -23,7 +23,7 @@ returned PASS). DRI-DECISIONS-PHASE2 DF4 and DF7 concern the kind row and the co
 | `lean/DEFAULTS.md` in plain words, no minimality claim | yes | `lean/DEFAULTS.md` |
 | Trust recorded (R16) | S +18, V +26 (DELTA T1); FOLLOW-UPS "## df-1a" | `docs/trust-baseline.json`, `tools/trust-classes.json` |
 
-The statements built are the reviewed ones: all 20 declarations above compare equal to spec 7.1, token for token after
+The statements built are the reviewed ones: all 21 declarations above compare equal to spec 7.1, token for token after
 whitespace normalisation. None of the statements the task names was changed. Those that are df-1ab's
 (`defaults_coherence_sound`, `forcedAt_sound`, `collisionTuple_some`, `cohU_rank_valid`, `collision_unranked`,
 `decodeLayered_soften`) and DF-2's (`replace_admissible`) are not stated here. No text claims minimality.
@@ -99,13 +99,48 @@ collision) belong to definitions df-1ab builds.
 
 None expected: no CLI path reaches these definitions (plan 5: DF-1a has no pilot effect; P-1 moves with df-1b).
 
-Evidence commit list (`git log --oneline main..HEAD --no-merges`, before this report's commit): see the final line of
-section 7.
-
 ## 7. Tests
 
-COMMITS_AND_TESTS
+- Selected tests on the Mac runner (`mac-pytest.sh --select -- --base 702ff7429 --run`, HEAD fbe0d484, clean): the
+  Lean binary cutoff applied (`ve_service` and every other executable built the same), so the plan is `lake build`
+  (every guard), `lean/audit.py`, the layer policy and 72 test units: **0 failed** (1,246 s). An earlier VM run
+  (no cutoff record, 353 units) stopped at its one failure, `test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`;
+  fixed in fbe0d484 (`other_json` entry), and that file passes in the Mac run above.
+- `uv run python tools/gate_collection.py --check --prebuilt`: 18,161 collected, 0 added, 0 removed, 0 refused,
+  0 stale, 0 malformed.
+- `review-ready.py`: clean, commits, mutants (Lean), relay and delta PASS; the gate is the chain's.
+- Not run by me: the full gate (the chain runs it on the final HEAD).
+
+Evidence commit list (`git log --oneline main..HEAD --no-merges`, before this report's last commit): 116cd243e,
+94c34e5a3, 5ee7887c7, 075edbdfd, fbe0d4846.
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELF_REVIEW
+1. **Every Lean answer typed and contained.** N.A.: no response shape, schema, relay or service mode changes; the
+   kinds are df-1ab's (`ve_service` pin unchanged).
+2. **Every required deliverable built.** PASS, with the size cut named: section 1's table lists each plan row with
+   where it is or that it moves to df-1ab (the plan's own split instruction in the task). Rule grep of the diff: no
+   Python, no Python copy of a Lean decision, no permanent report test; overlap check of the hand-written files
+   against every `feature/*`, `infra/*`, `lean-first/*`, `foundation/*` branch: only `docs/spec/defeasible*.md`,
+   byte-identical on `feature/df-03`.
+3. **Tests and gates can fail.** PASS: 14 Lean mutants, one or more per new definition, each failing a named guard with
+   the theorems removed (`evidence/run_mutants.py`, `evidence/mutants.out`, control passes).
+4. **Python, Lean and Rust agree; valid inputs pass.** N.A.: no route answer changes and nothing reaches the new
+   definitions from Python or Rust; the fixtures decode real JSON documents through `decodeSoftU`.
+5. **R8 binding.** N.A.: no relayed field.
+6. **Gate evidence matches the final HEAD.** PASS: synced at main 702ff7429 (the merge base); the chain gates the
+   committed final HEAD; the evidence commit list is from `main..HEAD --no-merges`.
+7. **No unsigned item.** PASS: DELTA T1 cites R16 with its evidence; `review-ready.py --delta-dri-needed` exit 0.
+8. **Every user-visible change in DELTA.** PASS: none besides trust; `ve_service` and every executable built the same
+   (the Mac run's binary cutoff), and no schema or pin changed (`tools/regen_generated.py --check`).
+9. **Test selection.** PASS: the selection plan includes `lake build`, which elaborates `Examples.lean`'s guards, so a
+   seeded bug in `Premises.lean` fails the selected plan (M1 to M14 fail at a guard); the 72-unit selection follows
+   from the binary cutoff.
+10. **Lean statements say what is claimed.** PASS: the 21 built declarations equal spec 7.1's text; the theorems are
+    about the returned values (`assumptionsOf`, `basisOf`, `followsForm`), and the mutants M8 to M14 change those
+    values and fail guards.
+11. **Budgets and limits fail closed.** N.A.: no budget, limit or deadline is added; `basisOf` never gives `needs`
+    without a checked strict countermodel (M12, DF-α′).
+12. **No CPU or memory regression.** N.A.: nothing on a route runs the new code; no pilot run (L70).
+13. **Test-removed trailers.** PASS: `tools/gate_collection.py --check --prebuilt`: 0 added, 0 removed, 0 refused,
+    0 stale, 0 malformed.
