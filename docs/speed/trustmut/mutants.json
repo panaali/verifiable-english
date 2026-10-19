@@ -616,8 +616,8 @@
   {
    "id": "TM59",
    "file": "tools/trust_mutants.py",
-   "find": "    let compiled := equations.getD c [] ++ (Lean.Compiler.getImplementedBy? env c).toList ++",
-   "replace": "    let compiled := (Lean.Compiler.getImplementedBy? env c).toList ++",
+   "find": "    todo := todo ++ equations.getD c [] ++ (Lean.Compiler.getImplementedBy? env c).toList ++",
+   "replace": "    todo := todo ++ (Lean.Compiler.getImplementedBy? env c).toList ++",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]",
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q5]"
@@ -739,23 +739,25 @@
   {
    "id": "TM71",
    "file": "tools/trust_mutants.py",
-   "find": "    (c == mutated || mutated.isPrefixOf c && (c.isInternal || Meta.isMatcherCore env c || isAuxRecursor env c))",
-   "replace": "    (mutated.isPrefixOf c)",
+   "find": "    let o := owner c 100",
+   "replace": "    let o := mutated",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S1]",
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S2]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S2]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T5]"
    ],
-   "claim": "only the mutated constant and its generated auxiliaries are exempt from the comparison, not its namespace (hunt S1, S2)"
+   "claim": "only the mutated declaration and what Lean generated for it (its owner, its source range) are exempt from the comparison (hunt S1, S2, T5)"
   },
   {
    "id": "TM72",
    "file": "tools/trust_mutants.py",
-   "find": "      if seen.contains c then continue",
-   "replace": "      if seen.contains c || seenInside.contains c then continue",
+   "find": "    if !(info matches .thmInfo _) && !(\u2190 inside c) then say s!\"const {c} {mixHash info.type.hash value.hash}\"",
+   "replace": "    if !(info matches .thmInfo _) && !(\u2190 inside c) && !(seen.toList.any fun x => x == mutated) then say s!\"const {c} {mixHash info.type.hash value.hash}\"",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S3]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S3]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T3]"
    ],
-   "claim": "a constant reached through the mutated definition is still compared where reached otherwise (hunt S3)"
+   "claim": "every constant a check reaches is compared, through the mutated definition too (hunt S3, T3)"
   },
   {
    "id": "TM73",
@@ -806,6 +808,26 @@
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S9]"
    ],
    "claim": "every theorem `@f = @g` is a possible `@[csimp]` lemma, a `local` one included (hunt S9)"
+  },
+  {
+   "id": "TM78",
+   "file": "tools/trust_mutants.py",
+   "find": "    if info matches .axiomInfo _ then say \"axiom\"",
+   "replace": "    pure ()",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T1]"
+   ],
+   "claim": "a check that computes through an axiom of the tree never kills (hunt T1)"
+  },
+  {
+   "id": "TM79",
+   "file": "tools/trust_mutants.py",
+   "find": "    | n + 1, .str p s => if s.startsWith \"_\" || Meta.isMatcherCore env c then owner p n else c",
+   "replace": "    | n + 1, .str p s => if s.startsWith \"_\" || Meta.isMatcherCore env c then p.getPrefix else c",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T5]"
+   ],
+   "claim": "a generated constant belongs to the declaration it was generated for (hunt T5)"
   }
  ]
 }

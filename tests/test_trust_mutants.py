@@ -1329,6 +1329,21 @@ HUNT = [
      ": @sRef9 = @sImpl9 := by\n  funext n\n  simp [sRef9, sImpl9, Nat.shiftLeft_eq]\n  omega\n\nsection\n"
      "\nattribute [local csimp] sRef9_eq\n\ndef sH9 (n : Nat) : Nat := sRef9 n\n\nend\n\n#guard sH9 3 == "
      "6", "sImpl9", {"KILLED"}),
+    # The seventh hunt. T1: an `axiom` in place of a proof; T2: a `@[csimp]` lemma for a core function; T3: source
+    # text read only through the mutated definition (its `lt-le` wrote the `≤` it reads); T5: a `partial def`'s
+    # `_unsafe_rec` named under the mutated structure (owned by its own declaration: Lean's declaration ranges).
+    ("T1", "def tFast1 (n : Nat) : Bool := n < 3\n\naxiom tFast1_iff (n : Nat) : tFast1 n = true ↔ n < 3\n"
+     "\ndef TSmall1 (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable (TSmall1 n) := decidable_of_iff "
+     "_ (tFast1_iff n)\n\nexample : TSmall1 2 := by decide", "tFast1", {"KILLED"}),
+    ("T2", "def tMax2 (n m : Nat) : Nat := if n ≤ m then m else n\n\ntheorem tMax2_eq : @Nat.max = @tMax2 "
+     ":= by\n  funext n m\n  rfl\n\nattribute [csimp] tMax2_eq\n\nexample : Nat.max 2 3 = 3 := by native_decide", "tMax2", {"KILLED"}),
+    ("T3", None, "tRef3", {"KILLED:lt-le"}),
+    ("T5", "class TSize5 (n : Nat) where\n  val : Nat\n\ninstance : TSize5 0 := ⟨0⟩\n\ninstance [s : TSize5 "
+     "n] : TSize5 (n + 1) := ⟨s.val + 1⟩\n\nstructure TW5 (n : Nat) where\n  k : Nat\n\ninstance (priority "
+     ":= low) tFallback5 : BEq (TW5 n) := ⟨fun _ _ => false⟩\n\ninstance tSmall5 [TSize5 n] : BEq (TW5 "
+     "n) := ⟨fun _ _ => true⟩\n\nstructure TLimits5 where\n  depth : Nat := 126\n\npartial def TLimits5.same "
+     "(k : Nat) : Bool := if k > 100 then TLimits5.same (k - 1) else (⟨0⟩ : TW5 ({} : TLimits5).depth) "
+     "== ⟨0⟩\n\n#guard TLimits5.same 0", "TLimits5", {"KILLED"}),
 ]
 HELPER = {  # hunt S6's required package
     "Helper.lean": ("namespace Helper\n\nunsafe def lineOfImpl (path : String) (k : Nat) : String :=\n  match unsafeIO "
@@ -1377,6 +1392,8 @@ HUNT_MODULES = {  # the fifth and sixth hunts' modules beyond a form's own
     "R8": {"Demo/SrcR8.lean": ("namespace Demo\n\ndef rRef8 (n : Nat) : Bool := n < 3\n\ndef rSrc8 : String := ((include_str \"SrcR8.lean\").splitOn "
         "\"\\n\")[2]!\n\n#guard rSrc8 == \"def rRef8 (n : Nat) : Bool := n < 3\" && rRef8 7 == rRef8 7\n\nend "
         "Demo\n")},
+    "T3": {"Demo/SrcT3.lean": ("namespace Demo\n\ndef tSrc3 : String := include_str \"SrcT3.lean\"\n\ndef tRef3 (n : Nat) : Bool "
+        ":= n < 3 && !tSrc3.contains (Char.ofNat 8804)\n\n#guard tRef3 2\n\nend Demo\n")},
 }
 MODULES = {  # the hunt forms that need modules of their own: Lean's meta framework, an import, their own text
     "Demo/Q5Defs.lean": "namespace Demo\n\ndef qRef5 (n : Nat) : Bool := n < 3\n\ndef qImpl5 (n : Nat) : Bool := n < 3\n\n"
@@ -1534,4 +1551,5 @@ def test_a_hunt_form_gets_no_verdict_that_hides_it(tmp_path, row, form, definiti
     git(root, "commit", "-qm", "head")
     done, mutants = tool(root, tmp_path / "run", "--max-mutants", "1000")
     mine = of(mutants, definition)
-    assert mine and not [m for m in mine if m["status"] in never], (mine, done.stdout[-2000:], done.stderr[-2000:])
+    assert mine and not [m for m in mine if m["status"] in never or f"{m['status']}:{m['operator']}" in never], (
+        mine, done.stdout[-2000:], done.stderr[-2000:])
