@@ -33,22 +33,37 @@ QUESTIONS = {
 # What the plan expects today (4.2): P-1 "0" probes answered unless an exception applies; P-2 SOME each.
 EXPECTED = {"p1_answered": 0, "p2_verdict": "SOME"}
 
+# P-1's controls (review df-03 F1): the same frame and sentence with the unit's content changed, or without
+# `soft-norms@0`. Name -> (candidate id, or None for no content; whether the profile stays).
+CONTROLS = {"strict": ("strict", True), "no-content": (None, True), "strict-no-soft": ("strict", False)}
+
 
 def document_bytes(front, text):
     return b"---\n" + json.dumps(front).encode() + b"\n---\n" + text
 
 
-def p1_document(set_id):
-    """The set's `default` candidate alone, in `CE4`'s frame: the set's sentence and one unit with that content."""
+def p1_document(set_id, candidate="default", soft=True):
+    """The set's `default` candidate alone, in `CE4`'s frame: the set's sentence and one unit with that content.
+    A control names another candidate (None: no content) or drops `soft-norms@0` from the profiles."""
     text, units, _ = ce4.source_text()
     [R] = [R for R in ce4.reading_sets() if R["id"] == set_id]
-    [default] = [a for a in R["readings"] if a["id"] == "default"]
     [unit] = [u for u in units if u["id"] == R["unit"]]
     start, stop = unit["span"]
     sentence = text[start:stop]
-    front = {"format": "ve-document@1", "environment": ce4.environment(),
-             "units": [{**unit, "span": [0, len(sentence)], "content": default["content"]}]}
+    content = None
+    if candidate is not None:
+        [chosen] = [a for a in R["readings"] if a["id"] == candidate]
+        content = chosen["content"]
+    environment = ce4.environment()
+    if not soft:
+        environment["profiles"].remove("soft-norms@0")
+    front = {"format": "ve-document@1", "environment": environment,
+             "units": [{**unit, "span": [0, len(sentence)], "content": content}]}
     return document_bytes(front, sentence)
+
+
+def control_name(control, set_id):
+    return f"control-{control}-{set_id}.ve.md"
 
 
 def follows(answer):
