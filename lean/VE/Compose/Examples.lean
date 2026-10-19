@@ -241,6 +241,12 @@ On every list of D-all, the table answers as `dispatch` and its base rows as `to
 #guard legacyProfiles.all (fun p => profileTable.any (·.profile == p)) &&
   profileTable.all (fun r => legacyProfiles.contains r.profile)
 
+/-- `TableAdmits` reads the refusals: soft-norms@0 is refused with alternatives@0, and admitted with norms@0. -/
+example : ¬ TableAdmits profileTable ["alternatives@0", "norms@0", "relational-fol@0", "soft-norms@0"] := by
+  unfold TableAdmits; decide
+example : TableAdmits profileTable ["norms@0", "relational-fol@0", "soft-norms@0"] := by
+  unfold TableAdmits; decide
+
 /-- The wrappers with every profile a route or a wrapper reads: 4,096 sorted lists. -/
 def stackSorted : List String :=
   ["alternatives@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "reports@0", "right-clauses@0",
