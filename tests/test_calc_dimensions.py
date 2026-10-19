@@ -90,6 +90,7 @@ FIXTURES = [
     ("normal", f'reprStr ((["meter_per_second", "second"].filterMap (env! {P}).find?).map (decide ·.dim.Normal) ++ '
                '[⟨[("time", 1), ("length", 1)]⟩, ⟨[("length", 0)]⟩, ⟨[("length", 1), ("length", 1)]⟩].map '
                '(decide <| PhysDim.Normal ·))', "[true, true, false, false, false]"),
+    ("h7-number", f'dims {P} {H7} (.mul (.val "ratio") (.val "d"))', "ok length"),
     ("h7-velocity", f'dims {P} {H7} (.div (.val "d") (.val "t"))', "ok length per time"),
     ("h7-area", f'dims {P} {H7} (.mul (.val "d") (.pow (.val "d") 2))', "ok length cubed"),
     ("h7-unknown", f'dims {P} {H7} (.add (.val "d") (.val "absent"))',
@@ -210,7 +211,7 @@ def lean(tmp_path_factory):
     return dict(row.split("\t", 1) for row in done.stdout.splitlines())
 
 
-@pytest.mark.parametrize("key, expected", [(key, expected) for key, _, expected in FIXTURES if expected])
+@pytest.mark.parametrize("key, expected", [pytest.param(key, expected, id=key) for key, _, expected in FIXTURES if expected])
 def test_fixture(lean, key, expected):
     assert lean[key] == expected
 
