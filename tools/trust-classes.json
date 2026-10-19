@@ -12690,7 +12690,12 @@
     },
     "VE/Events/Completion.lean": {
       "S": [
-        "VE.Events.DayExtension"
+        "VE.Events.DayExtension",
+        "VE.Events.numOf",
+        "VE.Events.oldTuple",
+        "VE.Events.addedDay",
+        "VE.Events.isDayC",
+        "VE.Events.completion"
       ],
       "C": [
         "VE.Events.isConst",
@@ -12724,6 +12729,16 @@
             "VE.Events.dayExtension_transfer"
           ]
         }
+      ]
+    },
+    "VE/Events/Conservative.lean": {
+      "S": [
+        "VE.Events.oldEnv"
+      ],
+      "P": [
+        "VE.Events.expDays",
+        "VE.Events.firstDay",
+        "VE.Events.expansion"
       ]
     },
     "VE/Events/Decl.lean": {
@@ -12785,7 +12800,18 @@
         "VE.Events.Examples.vT13",
         "VE.Events.Examples.confirmedBefore",
         "VE.Events.Examples.mT13",
-        "VE.Events.Examples.vR1"
+        "VE.Events.Examples.vR1",
+        "VE.Events.Examples.mC",
+        "VE.Events.Examples.numC",
+        "VE.Events.Examples.envT7",
+        "VE.Events.Examples.vT7",
+        "VE.Events.Examples.gT7",
+        "VE.Events.Examples.notEntailedT7",
+        "VE.Events.Examples.entailedT7",
+        "VE.Events.Examples.mT7",
+        "VE.Events.Examples.vX",
+        "VE.Events.Examples.envX",
+        "VE.Events.Examples.mX"
       ]
     },
     "VE/Events/Premises.lean": {
@@ -12808,7 +12834,8 @@
         "VE.Events.calendarPremises",
         "VE.Events.conventionPremises",
         "VE.Events.eventsX",
-        "VE.Events.Embeds"
+        "VE.Events.Embeds",
+        "VE.Events.CalendarReading"
       ],
       "G[I]": [
         "VE.Events.isoPair"
