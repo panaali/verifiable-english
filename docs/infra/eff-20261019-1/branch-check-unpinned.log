@@ -1,0 +1,55 @@
+# branch tool, start state (D1 unpinned): --check (VE_REGEN_NO_RUST=1): rc=1, 52 s; stdout 768216 bytes (lake-build's own build log), stderr below in full minus lake's replayed build log
+## stdout: entry lines
+== check gitattributes
+== check wire-contract
+wire-contract: not checked: needs the pinned service
+== check english-grammar
+== check english-lexicon-fixtures
+english-lexicon-fixtures: not checked: needs the pinned service
+== check question-fixtures
+question-fixtures: not checked: needs the pinned service
+== check english-run-copy
+== check route-cases
+route-cases: not checked: needs the pinned service
+== check lean-roots
+== check lake-build
+== check numbers-phrases
+== check lean-mode-deps
+== check lean-statements
+== check lean-audit-manifests
+== check frozen-inventory
+== check trust-tables
+== check checker-pins
+== check response-schemas
+== check binding-census
+== check english-codes
+english-codes: not checked: needs the pinned service
+== check question-codes
+question-codes: not checked: needs the pinned service
+== check question-lock
+== check assurance-manifest
+== check assurance-doc
+== check layer-ledgers
+== check import-contract
+== check uv-lock
+== check heavy-tests
+== check platform-divergences
+== check platform-contract
+== check history-map
+== check history-tests
+## stderr
+regen_generated: the built ve_service 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11 is not pinned in lean/checkers.lock: the entries that start it are not checked; fix: uv run python tools/regen_generated.py --write --only lake-build --only checker-pins (or --write)
+lean-statements: from cache b9f6583b
+lean/declarations.txt is stale; rerun python3 tools/lean_statements.py
+Traceback (most recent call last):
+AssertionError: declarations.txt is stale: 1 modules differ from the sources it was compiled from (VE.Service.Protocol); rerun python3 tools/lean_statements.py
+VE/Service/Protocol.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+checker-pins: the built ve_service is not pinned
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_verdicts.py:conflict: 'raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict certificates "'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights line binding")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights line count")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights wording keys")'
+
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-2i_brlpy)
+Resolved 59 packages in 2ms
+regen_generated: failed: checker-pins, lean-mode-deps, lean-statements, lean-audit-manifests, trust-tables; not checked (needs the pinned service): wire-contract, english-lexicon-fixtures, question-fixtures, route-cases, english-codes, question-codes
