@@ -196,6 +196,8 @@ def test_the_senses_path_is_read_by_the_third_rule():
         assert relay_lint.english_reads(ROOT / name) == [], name
     modules = relay_lint.loader_modules()
     assert ROOT / relay_lint.SENSES_LOADER / "load.py" in modules  # AR-16a: the loader is a package of modules
+    assert {path.name for path in modules} == {path.name for path in (ROOT / "ve/document").iterdir()
+                                                if path.suffix == ".py"}  # every module of it
     loader = "".join(path.read_text() for path in modules)
     assert "if senses is not None" in loader and "parse_english" in loader
     assert all(relay_lint.english_reads(path, branches_only=True) == [] for path in modules)
