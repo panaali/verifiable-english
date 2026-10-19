@@ -34,6 +34,8 @@ from baseline_cases import BINARIES, COMMAND, EXPECTED, QUESTIONS, follows, p1_d
 from tests.subprocesses import HANG_TIMEOUT  # noqa: E402
 
 OUT = ROOT / "docs/research/evidence/defeasible/baseline"
+# What the answers depend on: the product code and `CE4`'s builders and pinned copy.
+INPUTS = ("ve", "lean", "rust", "tools", "tests/ce4.py", "tests/data/ce4", "tests/test_readings_sd_ce4.py")
 
 
 def p2_document():
@@ -73,7 +75,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     head = git("rev-parse", "HEAD")
     main_commit = git("merge-base", "HEAD", "main")
-    changed = git("diff", "--name-only", main_commit, "HEAD", "--", "ve", "lean", "rust", "tools", "tests").split()
+    changed = git("diff", "--name-only", main_commit, "HEAD", "--", *INPUTS).split()
     lock = json.loads((ROOT / "lean/checkers.lock").read_text())
     binaries = {}
     for name, path in BINARIES.items():
@@ -99,7 +101,7 @@ def main():
         "date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
         "main_commit": main_commit,
         "head": head,
-        "product_files_changed_from_main": changed,
+        "inputs_changed_from_main": changed,
         "command": COMMAND,
         "host": {"system": platform.system(), "cpus": os.cpu_count(),
                  "load_before": [round(x, 2) for x in load_before],
