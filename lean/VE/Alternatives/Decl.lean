@@ -1,4 +1,5 @@
 import VE.Norms.Replay
+import VE.Limits
 
 /-! Alternatives documents (docs/spec/alternatives.md 1, 3.1, 4.1, 4.3 and 7.1).
 
@@ -218,8 +219,7 @@ def checkBlock (A : AltDoc) (fixed : List String := []) : Except String Unit := 
   if let some (m, q) := a.performed then
     unless performedOk A do throw s!"AlternativesPerformed: {m}, {q}"
 
-/-- The number of AST nodes of a formula (`ve/limits.py` `MAX_NODES` counts the same). -/
-def maxNodes : Nat := 10000
+export VE.Limits (maxNodes)
 
 /-- Clause 5: `T` over `E` extended by the profile words. -/
 def checkProfileTyping (A : AltDoc) : Except String Unit := do

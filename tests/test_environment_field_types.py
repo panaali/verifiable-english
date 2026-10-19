@@ -167,14 +167,12 @@ def pair(diagnostic):
 
 
 def test_the_bases_are_valid(monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     for build in BASES.values():
         Environment(build())
 
 
 @pytest.mark.parametrize("base, field, data", CASES)
 def test_python_rejects_every_wrong_type_with_a_diagnostic(monkeypatch, base, field, data):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     outcome(lambda: Environment(data))
 
 
@@ -193,7 +191,6 @@ def test_every_python_entry_taking_environment_json_raises_only_diagnostics(monk
     from ve.document import load_document, stored_identities
     from ve.rights import RightsEnvironment
     from ve.softnorms import SoftEnvironment
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     for build in (SoftEnvironment, RightsEnvironment,
                   lambda d: admit_document(d, {"units": []}),
                   lambda d: check_bundle({"version": "ve-bundle@0", "environment": d, "lemmas": []})):
@@ -314,7 +311,6 @@ def test_type_diagnostics_are_leans(monkeypatch, base, field, data):
     an extended envelope, the quantity route's `profiles` and the speech
     route's `vocabulary`; env-profiles-directive3: the reports route's
     `vocabulary`)."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     python = pair(outcome(lambda: Environment(data)))
     lean = lean_diagnostic(data)
     assert lean[0] != "ok", (lean_route(data), data)
@@ -350,7 +346,6 @@ def test_pairs_of_wrong_typed_fields_have_the_routes_diagnostics(monkeypatch, ba
     (env-profiles-directive3) were `language` 7 with `profiles` 7 on the speech
     and alternatives envelopes, where Python reported the language before the
     profiles the block routes read first."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     cases = list(_paired(base))
     python = {}
     for name, data in cases:
@@ -380,7 +375,6 @@ def test_pairs_of_wrong_typed_fields_have_the_routes_diagnostics(monkeypatch, ba
 def test_looprecheck1_examples_have_the_routes_diagnostics(monkeypatch, base, field, value, expected):
     """env-profiles-looprecheck1's failing examples, without Lean: the route
     that decodes each envelope gives these texts (checked against Lean above)."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     data = BASES[base]()
     data[field] = value
     assert pair(outcome(lambda: Environment(data))) == ("InvalidInput", expected)
@@ -397,7 +391,6 @@ def test_directive3_examples_have_the_routes_diagnostics(monkeypatch, base, chan
     envelope whose vocabulary is not an object has no reports block
     (VE.Attribution.Wire reads the block first), and the block routes read
     the profiles before the language (checked against Lean above)."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     data = BASES[base]()
     data.update(changes)
     assert pair(outcome(lambda: Environment(data))) == expected
@@ -448,7 +441,6 @@ def test_every_nested_value_of_every_kind_raises_only_diagnostics(monkeypatch, b
     from ve.readings_s1 import S1Environment
     from ve.rights import RightsEnvironment
     from ve.softnorms import SoftEnvironment
-    monkeypatch.setenv("VE_AUTHORITY", "python")
 
     def identities(data):
         front = {"format": "ve-document@1", "environment": data, "units": []}
@@ -524,7 +516,6 @@ def test_rights_block_diagnostics_are_leans(monkeypatch):
     diagnostic (`decodeRightsBlock`'s types before the soft environment, then
     `checkBlock`'s order). The first failing example was `holders` `[[]]`."""
     from ve.rights import RightsEnvironment
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     case = {"build": RightsEnvironment, "row": {"kind": "rights-elaborate", "document": []}}
     assert _block_matrix("ve_rights_route", case, _rights, list(_rights_cases())) == []
 
@@ -533,7 +524,6 @@ def test_reports_block_diagnostics_are_leans(monkeypatch):
     """The reports block's `holders` and `evidence` as each JSON kind: Python's
     `Environment` rejects with `ve_reports_route`'s diagnostic (the block's
     types before the vocabulary; `holders` 1 to 8 distinct, then declared)."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     cases = [(f"{key}-{kind}", ("vocabulary", "reports", key), value)
              for key in ("holders", "evidence") for kind, value in BLOCK_KINDS.items()]
     case = {"build": Environment, "row": {"kind": "reports-elaborate", "document": {"units": []}}}
@@ -546,7 +536,6 @@ def test_definition_body_with_a_non_string_name_is_rejected_by_both(monkeypatch,
     `TypeError` while its dependencies were collected; Python and Lean both
     reject it now, with Python's elaborator's text (lf-14c review F2: Python's
     decoder keeps the name and its typing check rejects the body)."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     data = pm.raw_environment(("definitions@0",))
     data["vocabulary"]["predicates"]["derived"]["defined"]["body"][1] = value
     assert pair(outcome(lambda: Environment(data))) == (

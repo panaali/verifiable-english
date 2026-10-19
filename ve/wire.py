@@ -5,6 +5,7 @@ code units, not Python's Unicode-code-point order. Surrogates are rejected.
 """
 import hashlib
 import json
+import re
 
 from .errors import DuplicateDeclaration, ResourceLimit, SyntaxError, VEError
 from .limits import MAX_INDEX, MAX_PACKAGE_BYTES, MAX_JSON_DEPTH
@@ -15,8 +16,12 @@ from .limits import MAX_INDEX, MAX_PACKAGE_BYTES, MAX_JSON_DEPTH
 LONE_SURROGATE = "JSON strings must not contain lone UTF-16 surrogates"
 
 
+# A UTF-16 surrogate code point, U+D800 to U+DFFF (in a Python `str` only alone: a pair decodes to one code point).
+_SURROGATE = re.compile("[\ud800-\udfff]")
+
+
 def _string(value: str) -> None:
-    if any(0xD800 <= ord(c) <= 0xDFFF for c in value):
+    if _SURROGATE.search(value):
         raise VEError(LONE_SURROGATE)
 
 

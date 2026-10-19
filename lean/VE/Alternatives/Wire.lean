@@ -1,5 +1,6 @@
 import VE.Alternatives.Validate
 import VE.Compose.Dispatch
+import VE.Limits
 
 /-! The alternatives decoder (docs/spec/alternatives.md 3, 7.3): the profile
 gate, the strict `alternatives` block decoder, the fixed verbalisations, the
@@ -91,7 +92,7 @@ def decodeBlock (raw : Json) : Except String Block := do
   let outcomes ← decodeOutcomes (raw.getObjValD "outcomes")
   let decidedBy ← optString raw "decided_by"
   if let some d := decidedBy then
-    if d.utf8ByteSize > 64 then throw "InvalidInput: alternatives.decided_by"
+    if d.utf8ByteSize > VE.Limits.maxIdentifierBytes then throw "InvalidInput: alternatives.decided_by"
   let performed ← match raw.getObjVal? "performed" with
     | .error _ => pure none
     | .ok p => do
@@ -120,7 +121,7 @@ def decodeBlock (raw : Json) : Except String Block := do
       fs := fs ++ [⟨o, .not (.binary leadsTo (.var 1) (.var 0))⟩]
       avoidsOn := avoidsOn ++ [o]
     | .arr _ =>
-      let body ← match VE.Bridge.decodeFormula 64 (item.getObjValD "body") with
+      let body ← match VE.Bridge.decodeFormula VE.Limits.maxDepth (item.getObjValD "body") with
         | .ok b => pure b
         | .error _ => throw "InvalidInput: alternatives.fulfilments"
       fs := fs ++ [⟨o, body⟩]
@@ -184,7 +185,7 @@ def decodePremises (premises : Json) : Except String (List (String × VE.Formula
   items.mapM fun item => do
     exactFields item ["label", "ast"]
     let label ← stringField item "label"
-    let ast ← VE.Bridge.decodeFormula 64 (item.getObjValD "ast")
+    let ast ← VE.Bridge.decodeFormula VE.Limits.maxDepth (item.getObjValD "ast")
     pure (label, ast)
 
 /-! ## The source -/

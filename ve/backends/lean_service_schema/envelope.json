@@ -2,7 +2,7 @@
   "$id": "envelope.json",
   "$comment": "Service.Protocol lines. `handshake` is the first line; the context of `response` is the request: {id (the nonce), mode, cases (decoded), digests (SHA-256 of each case text as sent, null when the cases text does not split into cases), bytes (trimmed cases text)}. A bound request error is kept; any other mismatch is operational. Binding: the response echoes the nonce and mode, and result i is {index: i, digest: the digest of case i, result}, so omitted, reordered, duplicated and substituted results are rejected without semantic checks; a request error echoes the nonce, the mode and every case digest (docs/spec/lean-service.md, threat model). Every rejection, a request error or a result whose status is error, carries `code` (Service.Protocol.rejectionCode).",
   "handshake": {
-    "$comment": "Service.Protocol.handshake: this protocol, every mode and at least the client's limits.",
+    "$comment": "Service.Protocol.handshake: this protocol, every mode, the code domain, the limits and the handle table.",
     "additionalProperties": false,
     "properties": {
       "codes": {
@@ -31,13 +31,40 @@
       },
       "lean": {"type": "string"},
       "limits": {
+        "$comment": "VE.Limits.stated: the runtime envelope's limits, exactly: the client reads every limit from here (ve/limits.py).",
         "additionalProperties": false,
         "properties": {
-          "json_depth": {"minimum": 256, "type": "integer"},
-          "max_cases": {"minimum": 4096, "type": "integer"},
-          "max_line_bytes": {"minimum": 16777216, "type": "integer"}
+          "json_depth": {"const": 256},
+          "max_cases": {"const": 4096},
+          "max_depth": {"const": 64},
+          "max_entities": {"const": 1000},
+          "max_evaluations": {"const": 1000000},
+          "max_identifier_bytes": {"const": 64},
+          "max_index": {"const": 9007199254740991},
+          "max_line_bytes": {"const": 16777216},
+          "max_nodes": {"const": 10000},
+          "max_package_bytes": {"const": 16777216},
+          "max_predicates": {"const": 256},
+          "max_sorts": {"const": 32},
+          "max_source_bytes": {"const": 65536},
+          "max_tuples": {"const": 100000}
         },
-        "required": ["max_line_bytes", "max_cases", "json_depth"],
+        "required": [
+          "max_source_bytes",
+          "max_package_bytes",
+          "max_depth",
+          "max_nodes",
+          "max_sorts",
+          "max_predicates",
+          "max_entities",
+          "max_tuples",
+          "max_identifier_bytes",
+          "max_evaluations",
+          "max_index",
+          "json_depth",
+          "max_line_bytes",
+          "max_cases"
+        ],
         "type": "object"
       },
       "modes": {
@@ -78,7 +105,8 @@
           {"contains": {"const": "english.question"}},
           {"contains": {"const": "search-budget"}},
           {"contains": {"const": "ask"}},
-          {"contains": {"const": "words"}}
+          {"contains": {"const": "words"}},
+          {"contains": {"const": "metered"}}
         ]
       },
       "protocol": {"const": 2},

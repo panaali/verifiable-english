@@ -32,8 +32,8 @@ from pathlib import Path
 import threading
 import weakref
 
-from ..errors import (CheckerUnavailable, DuplicateDeclaration, InvalidModel, ResourceLimit, ShadowedVariable, Span, SyntaxError,
-                      TypeMismatch, UnboundVariable, UnknownSymbol, UnsupportedProfile, VEError)
+from .. import errors
+from ..errors import CheckerUnavailable, InvalidModel, Span, VEError
 from ..environment_wire import wire_checked
 from .lean_service import DEFAULT_EXECUTABLE, LeanServicePool
 
@@ -48,19 +48,16 @@ _answers: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
 ANSWERS_LIMIT = 256
 
 
-def _admission_error():
-    from ..admission import AdmissionError  # ve.admission imports this package
-    return AdmissionError
-
-
-# One class per code of the service's handshake (`codes`); `None` is resolved lazily.
-CLASSES: dict[str, type | None] = {
-    "InvalidInput": VEError, "SyntaxError": SyntaxError, "UnknownSymbol": UnknownSymbol,
-    "DuplicateDeclaration": DuplicateDeclaration, "UnboundVariable": UnboundVariable,
-    "ShadowedVariable": ShadowedVariable,
-    "TypeMismatch": TypeMismatch, "InvalidModel": InvalidModel, "UnsupportedProfile": UnsupportedProfile,
-    "ResourceLimit": ResourceLimit, "AdmissionError": None, "CheckerUnavailable": CheckerUnavailable,
-}
+# The code domain of the service's rejections (Lean's `rejectionCodes`), as its handshake states it.
+CODES = tuple(json.loads((Path(__file__).resolve().parent / "lean_service_schema/envelope.json").read_text())[
+    "handshake"]["properties"]["codes"]["const"])
+# One class per code: the class of `ve.errors` that declares that `code` itself (`VEError` declares
+# `InvalidInput`), read from the classes, never listed here. A code no class declares, or two classes
+# declare, has no entry, and `tests/test_relay.py` fails on it.
+_DECLARED = [cls for cls in vars(errors).values()
+             if isinstance(cls, type) and issubclass(cls, (VEError, CheckerUnavailable)) and "code" in vars(cls)]
+CLASSES: dict[str, type] = {code: declaring[0] for code in CODES
+                            if len(declaring := [cls for cls in _DECLARED if cls.code == code]) == 1}
 
 
 def _close() -> None:
@@ -96,7 +93,7 @@ def rejection(code: str, message: str, *, generator: str | None = None) -> BaseE
     """Lean's rejection as the exception of its code, with Lean's text."""
     if code not in CLASSES:
         return CheckerUnavailable(f"CheckerUnavailable: the Lean service answered with an unknown code {code!r}")
-    cls = CLASSES[code] or _admission_error()
+    cls = CLASSES[code]
     if cls is CheckerUnavailable:
         return CheckerUnavailable(message)
     return InvalidModel(message, generator=generator) if cls is InvalidModel else cls(message)
