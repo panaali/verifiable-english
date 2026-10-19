@@ -56,7 +56,6 @@ def _python(call):
 
 def test_df1_is_closed_at_the_base(monkeypatch):
     """DF-1 no longer reproduces: Python rejects a non-array `profiles` with Lean's diagnostic."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     fixture = GROUPS["DF-1"]["fixture"]
     lean = fixture["answers"]["lean"]
     assert _python(lambda: Environment(deepcopy(fixture["input"]["environment"]))) == (lean["code"], lean["text"])
@@ -65,7 +64,6 @@ def test_df1_is_closed_at_the_base(monkeypatch):
 @needs_service
 def test_df8_dependency_order_accepts_a_misspelt_vocabulary_field(monkeypatch):
     """Lean's dependency-order route accepts an empty vocabulary that Python rejects."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     case = deepcopy(GROUPS["DF-8"]["accepts_fixture"]["input"])
     assert python_verdict(deepcopy(case))["status"] == "error"
     [row] = relay.decide("route", [case])
@@ -75,7 +73,6 @@ def test_df8_dependency_order_accepts_a_misspelt_vocabulary_field(monkeypatch):
 @pytest.mark.live_service
 @needs_service
 def test_df12_risk_route_rejects_an_nbsp_act_phrase(monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     environment = GROUPS["DF-12"]["fixture"]["input"]
     code, message = _python(lambda: Environment(deepcopy(environment)))
     assert code == "InvalidInput" and "round-trip" in message
@@ -91,7 +88,6 @@ def _norms_environment(act):
 
 @needs_service
 def test_k1_lean_rejects_the_act_phrase_word_no(monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     raw = _norms_environment("{0} be no longer done")
     assert _python(lambda: Environment(deepcopy(raw))) == ("InvalidInput", "InvalidInput: invalid act phrase for permitted")
     assert _python(lambda: Environment(_norms_environment("{0} be longer done"))) == ("ok", "")
@@ -103,7 +99,6 @@ def test_k2_duplicate_protected_entries_are_rejected_by_both(monkeypatch):
     """K2 is closed at the base: Lean's rights route rejects a repeated `protected` name too;
     only the texts differ (a wording change for batch 7's list)."""
     from ve.rights import RightsEnvironment
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     case = {"build": RightsEnvironment, "row": {"kind": "rights-elaborate", "document": []}}
     differing = _block_matrix("ve_rights_route", case, _rights,
                               [("protected-duplicate", ("vocabulary", "rights", "protected"), ["person", "person"])])

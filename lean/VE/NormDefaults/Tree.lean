@@ -1,4 +1,5 @@
 import VE.Norms.Elaborate
+import VE.Limits
 
 /-! The `unspecified` completion (docs/spec/norm-defaults.md sections 2.1, 2.3 and 7):
 documents with unspecified predicates, the elaboration `fill` and the author-side
@@ -122,7 +123,7 @@ def limitsU (U : UDoc) : Bool :=
   decide (U.unspec.map fillName).Nodup &&
   decide (U.D.T.nodes.length + U.unspec.length ≤ 256) &&
   U.D.T.nodes.all (fun N => !(N.pred ∈ U.unspec) || decide (height U.D.T (fuel U.D.T) N ≤ 15)) &&
-  decide ((U.D.T.nodes.map ruleNodes).sum + fillGuardNodes U ≤ 10000)
+  decide ((U.D.T.nodes.map ruleNodes).sum + fillGuardNodes U ≤ VE.Limits.maxNodes)
 
 /-- `WellFormed U.D`; `unspec` duplicate-free, regulated, placeholder `false`; the
 names `fill` introduces unused; and the author-side limits (i)-(v), which

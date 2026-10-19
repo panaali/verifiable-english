@@ -7,15 +7,50 @@ namespace VE.Route.MeteredTrace
 open Lean
 open VE.Route
 
-def bindingsJson (bindings : List (String × String)) : Json :=
-  Json.arr ((bindings.zipIdx.map fun ((sort, name), index) => Json.mkObj
-    [("debruijn_index", toJson index), ("sort", .str sort), ("local_id", .str name)]).toArray)
+/-- An explanation: each node's kind, value (none where nothing was evaluated), the locals bound
+around it (innermost first), its detail and its children. -/
+inductive Trace where
+  | node (kind : String) (value : Option Bool) (bindings : List (String × String))
+      (detail : String) (children : List Trace)
+  deriving Inhabited
 
 def node (kind : String) (value : Option Bool) (bindings : List (String × String))
-    (detail : String) (children : List Json) : Json :=
-  Json.mkObj [("kind", .str kind), ("value", value.map Json.bool |>.getD Json.null),
-    ("bindings", bindingsJson bindings), ("detail", .str detail),
-    ("children", Json.arr children.toArray)]
+    (detail : String) (children : List Trace) : Trace :=
+  .node kind value bindings detail children
+
+/-- One node of an explanation in preorder, with the number of its children; its children's
+subtrees follow it, in order (lean-first batch 18: the service writes this list, whose every
+element is one object, so its shape needs no recursion). -/
+structure Row where
+  kind : String
+  value : Option Bool
+  bindings : List (String × String)
+  detail : String
+  children : Nat
+
+mutual
+/-- The preorder rows of an explanation. -/
+def Trace.rows : Trace → List Row
+  | .node kind value bindings detail children =>
+    ⟨kind, value, bindings, detail, children.length⟩ :: Trace.rowsOf children
+/-- The preorder rows of a list of explanations, one after another. -/
+def Trace.rowsOf : List Trace → List Row
+  | [] => []
+  | t :: ts => t.rows ++ Trace.rowsOf ts
+end
+
+def bindingJson (index : Nat) (binding : String × String) : Json :=
+  Json.mkObj [("debruijn_index", toJson index), ("sort", .str binding.1), ("local_id", .str binding.2)]
+
+def bindingsJson (bindings : List (String × String)) : Json :=
+  Json.arr ((bindings.zipIdx.map fun (binding, index) => bindingJson index binding).toArray)
+
+def Row.json (r : Row) : Json :=
+  Json.mkObj [("kind", .str r.kind), ("value", r.value.map Json.bool |>.getD Json.null),
+    ("bindings", bindingsJson r.bindings), ("detail", .str r.detail), ("children", toJson r.children)]
+
+/-- An explanation as the service writes it: its rows in preorder. -/
+def Trace.json (t : Trace) : Json := Json.arr (t.rows.map Row.json).toArray
 
 def tupleText (items : List String) : String :=
   "(" ++ String.intercalate ", " (items.map (fun x => "'" ++ x ++ "'")) ++
@@ -31,7 +66,7 @@ structure Ops (α ρ entity : Type) where
   leafDetail : α → ρ → String
 
 def render {α ρ entity : Type} (ops : Ops α ρ entity) :
-    Nat → α → ρ → List (String × String) → Json
+    Nat → α → ρ → List (String × String) → Trace
   | 0, _, _, bindings => node "resource_limit" none bindings "formula depth exhausted" []
   | fuel + 1, formula, valuation, bindings =>
     let value := ops.eval formula valuation
@@ -65,7 +100,7 @@ def render {α ρ entity : Type} (ops : Ops α ρ entity) :
       if entities.isEmpty then
         node "forall" (some true) bindings "vacuously true: domain is empty" []
       else
-        let rec visitAll (remaining : List entity) (children : List Json) : List Json × String :=
+        let rec visitAll (remaining : List entity) (children : List Trace) : List Trace × String :=
           match remaining with
           | [] => (children, "all entities checked")
           | e :: es =>
@@ -81,7 +116,7 @@ def render {α ρ entity : Type} (ops : Ops α ρ entity) :
       if entities.isEmpty then
         node "exists" (some false) bindings "false: domain is empty" []
       else
-        let rec visitEx (remaining : List entity) (children : List Json) : List Json × String :=
+        let rec visitEx (remaining : List entity) (children : List Trace) : List Trace × String :=
           match remaining with
           | [] => (children, "no witness")
           | e :: es =>
@@ -95,8 +130,8 @@ def render {α ρ entity : Type} (ops : Ops α ρ entity) :
 
 def document {α ρ σ entity : Type} (ops : Ops α ρ entity)
     (step : α → σ → Option (Bool × σ)) (initial : σ) (valuation : ρ) (fs : List α)
-    (result : Metered.Result) (maxEvaluations maxTraceNodes : Nat) : Json :=
-  let rec collect (items : List α) (state : σ) (done : List Json) (index : Nat) : List Json × Nat :=
+    (result : Metered.Result) (maxEvaluations maxTraceNodes : Nat) : Trace :=
+  let rec collect (items : List α) (state : σ) (done : List Trace) (index : Nat) : List Trace × Nat :=
     match items with
     | [] => (done, index)
     | f :: rest =>

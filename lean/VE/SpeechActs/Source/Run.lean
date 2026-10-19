@@ -1,5 +1,6 @@
 import VE.SpeechActs.Run
 import VE.Discourse.Loader
+import VE.Limits
 
 /-! # The decoded-source wrapper and its records (docs/spec/speech-acts.md 3.2, 3.3, 3.5, 5, 6, 8.5)
 
@@ -204,7 +205,7 @@ def readingSets (se : Wire.SpeechEnvironment) (envId : String) (unitIds : List S
   for i in items do
     for r in readingsOf i do
       if let .arr _ := r.getObjValD "content" then
-        let _ ← VE.Bridge.decodeFormula 64 (r.getObjValD "content")
+        let _ ← VE.Bridge.decodeFormula VE.Limits.maxDepth (r.getObjValD "content")
   let plain := items.filter ordinary
   let _ ← Loader.compileSets se.ne.rv se.profiles envId unitIds (.arr plain.toArray) (python := true)
   let info := fun (i : Json) => (SetInfo.mk (((i.getObjValD "id").getStr?).toOption.getD "")

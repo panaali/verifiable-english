@@ -11,6 +11,7 @@ class Span:
 
 
 class VEError(ValueError):
+    """The class of every input diagnostic, and the one class of the `InvalidInput` code."""
     code = "InvalidInput"
 
     def __init__(self, message: str, *, span: Span | None = None, path: str = "",
@@ -88,8 +89,8 @@ class UnsupportedProfile(_CodeWorded):
     code = "UnsupportedProfile"
 
 
-class CheckerUnavailable(VEError):
-    code = "CheckerUnavailable"
+class AdmissionError(VEError):
+    code = "AdmissionError"
 
 
 class ResourceLimit(VEError):

@@ -3,6 +3,7 @@ import VE.Time.Semantics
 import VE.Time.Count
 import VE.Time.Decimal
 import VE.Time.Budget
+import VE.Limits
 
 /-! The `quantity` subcommand of `ve_conformance`: Lean admission of W6a
 `ve-units@1` environments and `ve-quantity@1` statements (units-schema §3).
@@ -357,7 +358,7 @@ def elabTerm (v : QVocab) (ctx : List String) : Nat → Json → Except String (
       let d ← parseDecimal text
       match lower d (v.places t) with
       | some q =>
-        if (toString q).length > 40 then throw "ResourceLimit: Lowered integer exceeds 40 characters"
+        if (toString q).length > VE.Limits.maxNumeralChars then throw "ResourceLimit: Lowered integer exceeds 40 characters"
         pure (.qty t, .num t q)
       | none => throw s!"UnitPrecision({t}, scale={10 ^ v.places t})"
     | [.str "date", .str text] => do
@@ -390,7 +391,7 @@ def w6b : List String :=
 def elabFormula (v : QVocab) : Nat → List String → Json → Except String QFormula
   | 0, _, _ => throw depthLimit
   | fuel + 1, ctx, j => do
-    let term := elabTerm v ctx 64
+    let term := elabTerm v ctx VE.Limits.maxDepth
     let day := fun (τ : QType) => do same τ (.qty (← v.tag dayTag))
     let items ← match j.getArr? with
       | .ok xs => pure xs.toList
@@ -555,8 +556,8 @@ def decodeQuantity (w : W6Env) (p : Json) : Except String (Admission w) := do
     unless items.isEmpty do
       throw "UnsupportedProfile: trace declarations require the missing numbers2 route"
   let source ← p.getObjVal? "formula"
-  if jsonNodes 257 source > 10000 then throw depthLimit
-  let formula ← elabFormula w.vocab 64 [] source
+  if jsonNodes 257 source > VE.Limits.maxNodes then throw depthLimit
+  let formula ← elabFormula w.vocab VE.Limits.maxDepth [] source
   let q := encQ formula
   if let .ok claimed := p.getObjVal? "Q" then
     let same ← match canonicalText claimed with
@@ -593,7 +594,7 @@ together have at most 10,000 formula and term nodes (Python
 `check_quantity_limits`, Rust `quantity_limits`, in this order). -/
 def quantityLimits {w : W6Env} (ps : List (Admission w)) (c : Admission w) :
     Except String Unit :=
-  if ((c :: ps).map (VE.Order.Wire.formulaNodes ·.formula.erase)).foldl (· + ·) 0 > 10000 then
+  if ((c :: ps).map (VE.Order.Wire.formulaNodes ·.formula.erase)).foldl (· + ·) 0 > VE.Limits.maxNodes then
     .error aggregateLimit
   else .ok ()
 
@@ -724,7 +725,7 @@ def admissions (w : W6Env) (j : Json) : Except String (List (Admission w)) := do
   (← j.getArr?).toList.mapM (decodeQuantity w)
 
 def countBody (w : W6Env) (sort : String) (j : Json) : Except String VE.Order.Formula := do
-  let body ← VE.Order.Wire.decodeFormula 64 j
+  let body ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth j
   unless body.check w.vocab.core.environment [.user sort] do throw "ill-typed counting body"
   pure body
 
@@ -768,7 +769,7 @@ def runConversion (id kind : String) (j : Json) : Except String Json := do
     let d ← parseDecimal (← stringField j "decimal")
     match lower d places with
     | some q =>
-      if (toString q).length > 40 then throw "ResourceLimit: Lowered integer exceeds 40 characters"
+      if (toString q).length > VE.Limits.maxNumeralChars then throw "ResourceLimit: Lowered integer exceeds 40 characters"
       pure (ok id [("coordinate", .str (toString q))])
     | none => throw s!"UnitPrecision(scale={10 ^ places})"
   | "render" => do

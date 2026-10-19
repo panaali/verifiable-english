@@ -584,10 +584,8 @@ def check_argument(graph, *, search=True, max_proof_steps=10_000, max_domain_siz
 
 
 def _check_argument_lean(graph, options):
-    from .backends.dispatch import pinned
     from .backends.relay import decide
-    with pinned("lean"):
-        result = _check_argument_python(graph, **options)
+    result = _check_argument_python(graph, **options)
     if not result.composed:
         return result
     env = graph.env

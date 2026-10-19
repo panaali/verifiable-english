@@ -3,6 +3,7 @@ import VE.Attribution.Preflight
 import VE.Attribution.Status
 import VE.Route.Run
 import VE.Service.TypingDiagnostic
+import VE.Limits
 
 /-! The `ve_service` mode `reports` (spec 9.4), formerly the one-shot `ve_reports_route`. Each case is
 `{"id", "kind", "environment", "document", ...}`. Every formula, key, name,
@@ -74,7 +75,7 @@ def manifestUnknown (E : VE.Environment) (j : Json) : Nat → Option String
   | 0 => none
   | fuel + 1 =>
   match j.getObjVal? "ast" with
-  | .ok ast => match VE.Bridge.decodeFormula 64 ast with
+  | .ok ast => match VE.Bridge.decodeFormula VE.Limits.maxDepth ast with
       | .ok a => unknownPredicate E a
       | .error _ => none
   | .error _ =>
