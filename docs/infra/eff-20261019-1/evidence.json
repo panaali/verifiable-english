@@ -4,7 +4,10 @@
     "worktree": "/home/seyran/code/ve-eff-scratch-20261019 (detached; never ve-integration)",
     "base": "main a34ea95ac38a (Merge feature/me-6)",
     "edit": "lean/VE/Service/Protocol.lean: `def effScratchMarker : Nat := 20261019` before `end VE.Service` (scratch commit cd9423085, not pushed)",
-    "lake_build_seconds": {"base, from a copied .lake": 576, "after the edit": 591},
+    "lake_build_seconds": {
+      "base, from a copied .lake": 576,
+      "after the edit": 591
+    },
     "ve_service_digest": {
       "before (D0)": "5ea6e1f284fbe24875fb0c4f2c6adb44a21d4528e9337bb7ef027a6543044099",
       "after (D1)": "496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11"
@@ -14,42 +17,171 @@
     "ve_service pins at start": 258,
     "environment": "VE_REGEN_NO_RUST=1 for every run below (both tools alike)"
   },
-  "lake_no_build_query": {"command": "lake build --no-build ve_service", "current": {"rc": 0, "seconds": 0.63},
-                          "stale (Protocol.lean edited)": {"rc": 3, "seconds": 0.37}, "missing executable": {"rc": 3}},
+  "lake_no_build_query": {
+    "command": "lake build --no-build ve_service",
+    "current": {
+      "rc": 0,
+      "seconds": 0.63
+    },
+    "stale (Protocol.lean edited)": {
+      "rc": 3,
+      "seconds": 0.37
+    },
+    "missing executable": {
+      "rc": 3
+    }
+  },
   "runs": [
-    {"tool": "main", "command": "--write", "rc": 1, "seconds": 2, "load_1min": [70.74, 70.74],
-     "result": "stopped at english-lexicon-fixtures: CheckerUnavailable ... has unlisted build 496a16a3...; lake-build and checker-pins never ran",
-     "log": "main-write.log"},
-    {"tool": "main", "command": "--check", "rc": 1, "seconds": 492, "load_1min": [72.33, 33.51], "output_bytes": 982656,
-     "tracebacks": 6, "unlisted_build_lines": 16,
-     "failed": "wire-contract, english-lexicon-fixtures, question-fixtures, route-cases, lean-mode-deps, lean-statements, lean-audit-manifests, trust-tables, checker-pins, english-codes, question-codes",
-     "log": "main-check.excerpt.log"},
-    {"tool": "branch", "command": "--write", "rc": 0, "seconds": 575, "load_1min": [67.34, 46.85], "bootstraps": 1,
-     "caches": "cold (the edit changed the dump cache keys)", "log": "branch-write.log"},
-    {"tool": "branch", "command": "--write (same start state again)", "rc": 0, "seconds": 51, "load_1min": [46.48, 67.07],
-     "bootstraps": 1, "caches": "warm", "log": "branch-write.log"},
-    {"tool": "branch", "command": "--check after its --write", "rc": 1, "seconds": 69, "load_1min": [47.91, 55.92],
-     "failed": "trust-tables (the scratch edit adds 2 unclassified trusted lines: the ratchet, not the service)",
-     "tracebacks": 0, "log": "check-and-train.log"},
-    {"tool": "branch", "command": "--check --skip trust-tables after its --write", "rc": 0, "seconds": 58,
-     "load_1min": [58.99, 55.71], "log": "check-and-train.log"},
-    {"tool": "branch", "command": "--check on the start state (D1 unpinned)", "rc": 1, "seconds": 52,
-     "load_1min": [54.64, 42.27], "stderr_bytes": 2454, "unlisted_build_lines": 0, "cause_lines": 1,
-     "not_checked": "wire-contract, english-lexicon-fixtures, question-fixtures, route-cases, english-codes, question-codes",
-     "failed": "checker-pins, lean-mode-deps, lean-statements, lean-audit-manifests, trust-tables (the last four: generated files the edit made stale, as on main)",
-     "log": "branch-check-unpinned.log"},
-    {"tool": "branch", "command": "--write --only lake-build --only checker-pins (merge-train first pass), then --write",
-     "rc": [0, 0], "seconds": [1, 45], "load_1min": [38.3, 43.91], "bootstraps_in_second_run": 0,
-     "log": "check-and-train.log"}
+    {
+      "tool": "main",
+      "command": "--write",
+      "rc": 1,
+      "seconds": 2,
+      "load_1min": [
+        70.74,
+        70.74
+      ],
+      "result": "stopped at english-lexicon-fixtures: CheckerUnavailable ... has unlisted build 496a16a3...; lake-build and checker-pins never ran",
+      "log": "main-write.log"
+    },
+    {
+      "tool": "main",
+      "command": "--check",
+      "rc": 1,
+      "seconds": 492,
+      "load_1min": [
+        72.33,
+        33.51
+      ],
+      "output_bytes": 982656,
+      "tracebacks": 6,
+      "unlisted_build_lines": 16,
+      "failed": "wire-contract, english-lexicon-fixtures, question-fixtures, route-cases, lean-mode-deps, lean-statements, lean-audit-manifests, trust-tables, checker-pins, english-codes, question-codes",
+      "log": "main-check.excerpt.log"
+    },
+    {
+      "tool": "branch",
+      "command": "--write",
+      "rc": 0,
+      "seconds": 575,
+      "load_1min": [
+        67.34,
+        46.85
+      ],
+      "bootstraps": 1,
+      "caches": "cold (the edit changed the dump cache keys)",
+      "log": "branch-write.log"
+    },
+    {
+      "tool": "branch",
+      "command": "--write (same start state again)",
+      "rc": 0,
+      "seconds": 51,
+      "load_1min": [
+        46.48,
+        67.07
+      ],
+      "bootstraps": 1,
+      "caches": "warm",
+      "log": "branch-write.log"
+    },
+    {
+      "tool": "branch",
+      "command": "--check after its --write",
+      "rc": 1,
+      "seconds": 69,
+      "load_1min": [
+        47.91,
+        55.92
+      ],
+      "failed": "trust-tables (the scratch edit adds 2 unclassified trusted lines: the ratchet, not the service)",
+      "tracebacks": 0,
+      "log": "check-and-train.log"
+    },
+    {
+      "tool": "branch",
+      "command": "--check --skip trust-tables after its --write",
+      "rc": 0,
+      "seconds": 58,
+      "load_1min": [
+        58.99,
+        55.71
+      ],
+      "log": "check-and-train.log"
+    },
+    {
+      "tool": "branch",
+      "command": "--check on the start state (D1 unpinned)",
+      "rc": 1,
+      "seconds": 52,
+      "load_1min": [
+        54.64,
+        42.27
+      ],
+      "stderr_bytes": 2454,
+      "unlisted_build_lines": 0,
+      "cause_lines": 1,
+      "not_checked": "wire-contract, english-lexicon-fixtures, question-fixtures, route-cases, english-codes, question-codes",
+      "failed": "checker-pins, lean-mode-deps, lean-statements, lean-audit-manifests, trust-tables (the last four: generated files the edit made stale, as on main)",
+      "log": "branch-check-unpinned.log"
+    },
+    {
+      "tool": "branch",
+      "command": "--write --only lake-build --only checker-pins (merge-train first pass), then --write",
+      "rc": [
+        0,
+        0
+      ],
+      "seconds": [
+        1,
+        45
+      ],
+      "load_1min": [
+        38.3,
+        43.91
+      ],
+      "bootstraps_in_second_run": 0,
+      "log": "check-and-train.log"
+    }
   ],
-  "lock_after_branch_write": {"ve_service added": ["496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11"],
-                              "ve_service removed": [], "rust_jsonl added": [], "rust_jsonl removed": []},
-  "lock_after_first_pass_then_write": {"ve_service added": ["496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11"],
-                                       "ve_service removed": []},
-  "branch_head_check": {"tree": "branch merged with main a671d23b9", "command": "--check (VE_REGEN_NO_RUST=1)",
-                        "seconds": 573, "load_1min": [33.64, 34.7], "bootstraps": 0, "not_checked": 0,
-                        "failed": "history-tests (tests/history-dependent.json stale from this branch's test file; regenerated with --write --only history-tests, commit 'regenerate tests/history-dependent.json')"},
-  "selected_tests": {"runner": "ve-mac-1 (aarch64)", "units": "111/448", "seconds": 1994, "failed": 0,
-                     "head": "cdc539c34"},
-  "gate_collection": "18226 collected; 14 added, 0 removed, 0 refused, 0 stale, 0 malformed"
+  "lock_after_branch_write": {
+    "ve_service added": [
+      "496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11"
+    ],
+    "ve_service removed": [],
+    "rust_jsonl added": [],
+    "rust_jsonl removed": []
+  },
+  "lock_after_first_pass_then_write": {
+    "ve_service added": [
+      "496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11"
+    ],
+    "ve_service removed": []
+  },
+  "branch_head_check": {
+    "tree": "branch merged with main a671d23b9",
+    "command": "--check (VE_REGEN_NO_RUST=1)",
+    "seconds": 573,
+    "load_1min": [
+      33.64,
+      34.7
+    ],
+    "bootstraps": 0,
+    "not_checked": 0,
+    "failed": "history-tests (tests/history-dependent.json stale from this branch's test file; regenerated with --write --only history-tests, commit 'regenerate tests/history-dependent.json')"
+  },
+  "selected_tests": {
+    "runner": "ve-mac-1 (aarch64)",
+    "units": "111/448",
+    "seconds": 1994,
+    "failed": 0,
+    "head": "cdc539c34"
+  },
+  "gate_collection": "18237 collected at the second sync (main 9a6ba67ae); 15 added, 0 removed, 0 refused, 0 stale, 0 malformed",
+  "second_sync": {
+    "main": "9a6ba67ae",
+    "lake_build_seconds": 918,
+    "checker-pins check": "pass",
+    "tests/test_regen_generated.py": "55 passed"
+  }
 }
