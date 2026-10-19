@@ -1,5 +1,6 @@
 import VE.Core.Wire
 import VE.Route.Wire
+import VE.Limits
 
 /-! Route cases on the core family (`closure@0` + `nary@0`) whose vocabulary
 declares `definitions@0` defined predicates or `data@0` functional/total flags
@@ -210,7 +211,7 @@ def naryEntries (environment : Json) : Except String (List NaryDef) := do
       let ss ← strings (← entry.getObjVal? "arguments")
       let j ← VE.Route.Wire.definedPayload p ss payload
       VE.Route.AstLimit.check [j]
-      let body ← (VE.Core.Bridge.decodeFormula 64 j).mapError (VE.Route.Wire.bodyFault p j)
+      let body ← (VE.Core.Bridge.decodeFormula VE.Limits.maxDepth j).mapError (VE.Route.Wire.bodyFault p j)
       if hasReach body then throw VE.Route.Wire.reachBodyUnsupported
       pure (some ⟨p, ss, body⟩)
 
@@ -344,7 +345,7 @@ def completeModel (L : Layered) (environment model : Json) : Except String Json 
     (← VE.Route.Decode.decodeModelData (VE.Core.Wire.modelVocabulary base) complete)
   -- A tuple-limit crossing within the FOL tables, counted with every base tuple.
   let tuples := VE.Route.Budget.tupleCount data
-  if folTuples > VE.Route.Budget.tupleCount folData && tuples > 100000 then
+  if folTuples > VE.Route.Budget.tupleCount folData && tuples > VE.Limits.maxTuples then
     throw VE.Route.Budget.tupleLimit
   let (data, _, _) ← VE.Route.Budget.computeDefinedWith data
     (L.nary.map fun d => (d.name, d.args, d.body)) bodyValue (w, tuples)
@@ -368,7 +369,7 @@ def coreCertificate (profiles : List String) (environment core : Json) (backgrou
   let premisesJson ← j.getObjVal? "premises"
   let _ ← VE.Route.Wire.formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
   let ps ← VE.Core.Bridge.decodeFormulas E premisesJson
-  let c ← VE.Core.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  let c ← VE.Core.Bridge.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
   VE.Core.Bridge.checkFormula E c "conclusion"
   VE.Route.Wire.nodeLimit ((c :: ps).map VE.Core.Bridge.formulaNodes)
   let certificate ← VE.Core.Wire.decodeCertificate (← j.getObjVal? "certificate")

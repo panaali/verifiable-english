@@ -1,5 +1,6 @@
 import VE.Discourse.WellFormed
 import VE.Discourse.Loader
+import VE.Limits
 
 /-! # The discourse wire form (docs/spec/discourse.md 3.1, 3.3, 3.5)
 
@@ -131,7 +132,7 @@ def decodePin (j : Json) : Except String (Option Nat) := do
 def decodeMention (j : Json) : Except String Mention := do
   displayFields j ["id", "unit", "span", "form", "target"] ["restriction", "reading", "presupposition_unit"]
   let restriction ← match ← opt j "restriction" with
-    | some r => some <$> VE.Bridge.decodeFormula 64 r
+    | some r => some <$> VE.Bridge.decodeFormula VE.Limits.maxDepth r
     | none => pure none
   let reading ← match ← optString j "reading" with
     | some r => some <$> decodeReading r

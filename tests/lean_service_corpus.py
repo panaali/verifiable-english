@@ -440,7 +440,27 @@ def corpus():
             "words": words_cases(),
             "readings-choices": [{**choice_plan, "limit": 64},
                                  {**choice_plan, "limit": 1}, choice_verdict],
-            "search-budget": [*search_budget_cases(), *ADVERSARIAL]}
+            "search-budget": [*search_budget_cases(), *ADVERSARIAL],
+            "metered": metered_cases()}
+
+
+def metered_cases():
+    """The `metered` mode's answers: a satisfied and a violated quantified document, each with and without the
+    explanation (a trace's bindings name the model's sort and entities, which `ve.evaluate.read_evaluation`
+    binds to the case, lf-18 review F1), and a non-vacuity case."""
+    from tests.probe_matrix import raw_environment
+    from ve import Environment
+    from ve.ast import Exists, Forall, Unary, Var, _to_data
+    env = Environment(raw_environment(()))
+    model = {"complete": True, "domains": {"item": ["i", "j"]}, "constants": {"x": "i"},
+             "relations": {"base": [["i"]]}}
+    every, some = Forall("item", Unary("base", Var(0))), Exists("item", Unary("base", Var(0)))
+    return [{"id": f"metered-{name}-{trace}", "kind": "evaluate-budgeted", "environment": env.to_dict(),
+             "model": model, "ast": [_to_data(formula)], "max_evaluations": 100, "max_trace_nodes": 100,
+             "trace": trace}
+            for name, formula in (("every", every), ("some", some)) for trace in (True, False)] + [
+        {"id": "metered-nonvacuity", "kind": "non-vacuity", "environment": env.to_dict(), "model": model,
+         "formula": _to_data(every), "max_evaluations": 100, "semantic_nonvacuity": False}]
 
 
 def words_cases():

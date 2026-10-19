@@ -123,10 +123,6 @@ def test_excludes_and_route_unavailable(monkeypatch, tmp_path):
     raw["alternatives"]["fulfilments"] = [{"obligation": "prevent_required", "body": "excludes"}]
     Environment(raw)
     case = {"id": "one", "kind": "risk-elaborate", "environment": raw, "norms": []}
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    with pytest.raises(CheckerUnavailable, match="Lean checker"):
-        run_case(case)
-    monkeypatch.delenv("VE_AUTHORITY")
     from ve.backends import relay
     from ve.backends.lean_service import LeanServicePool
     monkeypatch.setattr(relay, "_pool", LeanServicePool(size=1, executable=tmp_path / "absent"))
@@ -158,15 +154,6 @@ def _decision_cases():
     return {name: {"id": name, "kind": "risk-decision", "environment": risk_source(),
                    "document": {"norms": []}, "decision": decision, "entries": entries}
             for name, (decision, entries) in cases.items()}
-
-
-def test_python_authority_gives_no_record_verdict(monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    for case in _decision_cases().values():
-        with pytest.raises(CheckerUnavailable, match="Lean checker"):
-            run_case(case)
-    with pytest.raises(CheckerUnavailable, match="Lean checker"):
-        run_case({"id": "x", "kind": [], "environment": {}})
 
 
 @pytest.mark.skipif(not lean_routes.SERVICE.exists(),

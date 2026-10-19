@@ -20,6 +20,7 @@ module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
 module ResponseShape.Encoders.Envelope
 module ResponseShape.Encoders.Family
+module ResponseShape.Encoders.Metered
 module ResponseShape.Encoders.NormDefaults
 module ResponseShape.Encoders.Norms
 module ResponseShape.Encoders.Quantity
@@ -55,6 +56,7 @@ module ResponseShape.Schemas.Evaluate
 module ResponseShape.Schemas.FamilyNorms
 module ResponseShape.Schemas.Graph
 module ResponseShape.Schemas.Identity
+module ResponseShape.Schemas.Metered
 module ResponseShape.Schemas.Model
 module ResponseShape.Schemas.NormDefaults
 module ResponseShape.Schemas.Norms
@@ -278,6 +280,8 @@ module VE.Layout.Anchors
 module VE.Layout.Discourse
 module VE.Layout.List
 module VE.LexicalProofs
+module VE.LimitTies
+module VE.Limits
 module VE.ModelProofs
 module VE.NormDefaults.Admission
 module VE.NormDefaults.Check
@@ -582,6 +586,7 @@ ResponseShape.CaseWF@ResponseShape.Skeleton
 ResponseShape.Encoders.Common.KindsRendered@ResponseShape.Encoders.Common
 ResponseShape.Encoders.Discourse.StatusesOk@ResponseShape.Encoders.Discourse
 ResponseShape.Encoders.English.ClassesIn@ResponseShape.Encoders.English
+ResponseShape.Encoders.Metered.Statused@ResponseShape.Encoders.Metered
 ResponseShape.Encoders.ReadingsRoute.PairEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.SetEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.ValidateRows@ResponseShape.Encoders.ReadingsRoute
@@ -775,8 +780,11 @@ VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
+VE.Events.CalendarReading@VE.Events.Premises
 VE.Events.DayExtension@VE.Events.Completion
 VE.Events.Embeds@VE.Events.Premises
+VE.Events.addedDay@VE.Events.Completion
+VE.Events.isDayC@VE.Events.Completion
 VE.FiniteModel.Valid@VE.Finite
 VE.FiniteModel.inDomain@VE.Alternatives.Followable
 VE.Formula.WellFormed@VE.Syntax

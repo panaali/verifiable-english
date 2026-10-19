@@ -171,14 +171,11 @@ def test_nonvacuity_traversal_itself_is_budgeted(env):
 
 def lean_nonvacuity(env, formula, finite, maximum):
     """Lean's non-vacuity answer (the owner since lean-first batch 15b): suitable, work, exhausted."""
-    from tests.subprocesses import HANG_TIMEOUT
     from ve.ast import formula_to_data
-    from ve.backends import lean as lean_backend
-    from ve.backends.lean_runner import METERED_EXECUTABLE, route_environment
-    [row] = lean_backend.run("countermodel.search", METERED_EXECUTABLE, [{
-        "id": "nv", "kind": "non-vacuity", "environment": route_environment(env), "model": finite.to_dict(),
-        "formula": formula_to_data(env, formula), "max_evaluations": maximum}],
-        runner="ve_metered", timeout=HANG_TIMEOUT)
+    from ve.backends.lean_runner import metered_nonvacuity, route_environment
+    row = metered_nonvacuity({
+        "id": "nv", "environment": route_environment(env), "model": finite.to_dict(),
+        "formula": formula_to_data(env, formula), "max_evaluations": maximum})
     return row["suitable"], row["evaluations"], row["exhausted"]
 
 

@@ -27,6 +27,7 @@ from ve.backends.lean_service import (ADDRESS_SPACE, HANDLE_KEY, MAX_CASES, MAX_
                                       executable_sha256)
 from ve.backends.service_schema import DIRECTORY as SCHEMAS
 
+from ve import limits
 from ve.errors import ResourceLimit, VEError
 
 # The client's own behaviours: no test here is ever answered from the answer store (tests/answer_store.py).
@@ -34,6 +35,14 @@ pytestmark = pytest.mark.live_service
 
 # The service's code list, as its handshake states it (envelope.json).
 CODES = json.loads((SCHEMAS / "envelope.json").read_text())["handshake"]["properties"]["codes"]["const"]
+# The limits by their handshake names, as `ve.limits` binds them; `test_handshake` compares them with the live service.
+STATED_LIMITS = {"max_source_bytes": limits.MAX_SOURCE_BYTES, "max_package_bytes": limits.MAX_PACKAGE_BYTES,
+                 "max_depth": limits.MAX_DEPTH, "max_nodes": limits.MAX_NODES, "max_sorts": limits.MAX_SORTS,
+                 "max_predicates": limits.MAX_PREDICATES, "max_entities": limits.MAX_ENTITIES,
+                 "max_tuples": limits.MAX_TUPLES, "max_identifier_bytes": limits.MAX_IDENTIFIER_BYTES,
+                 "max_evaluations": limits.MAX_EVALUATIONS, "max_index": limits.MAX_INDEX,
+                 "json_depth": limits.MAX_JSON_DEPTH, "max_line_bytes": limits.MAX_LINE_BYTES,
+                 "max_cases": limits.MAX_CASES}
 
 ROOT = Path(__file__).resolve().parents[1]
 BIN = ROOT / "lean/.lake/build/bin"
@@ -115,10 +124,11 @@ def test_response_schemas_follow_lean_sources():
     assert set(re.findall(r'\("(\w+)",', request_error)) == set(envelope["$defs"]["error"]["required"])
     handshake = envelope["handshake"]["properties"]
     assert [c["contains"]["const"] for c in handshake["modes"]["allOf"]] == list(MODES)
-    limits = {k: v["minimum"] for k, v in handshake["limits"]["properties"].items()}
-    assert limits == {"max_line_bytes": MAX_LINE_BYTES, "max_cases": MAX_CASES, "json_depth": 256}
-    assert re.search(r"def maxLineBytes : Nat := (\d+)", protocol)[1] == str(MAX_LINE_BYTES)
-    assert re.search(r"def maxCases : Nat := (\d+)", protocol)[1] == str(MAX_CASES)
+    # Every limit is stated exactly (VE.Limits.stated) and the client reads each from there (ve/limits.py).
+    limits = {k: v["const"] for k, v in handshake["limits"]["properties"].items()}
+    assert set(handshake["limits"]["required"]) == set(limits) and handshake["limits"]["additionalProperties"] is False
+    assert limits == STATED_LIMITS
+    assert (limits["max_line_bytes"], limits["max_cases"]) == (MAX_LINE_BYTES, MAX_CASES)
     assert re.search(r"def maxHandles : Nat := (\d+)", protocol)[1] == str(MAX_HANDLES)
     assert re.search(r"def maxHandleBytes : Nat := (\d+)", protocol)[1] == str(MAX_HANDLE_BYTES)
     assert re.search(r'def handleKey : String := "(\w+)"', protocol)[1] == HANDLE_KEY
@@ -167,8 +177,7 @@ def test_handshake(service_executable):
     with LeanService(service_executable) as service:
         assert service.handshake["service"] == "ve-lean@1"
         assert tuple(service.handshake["modes"]) == MODES
-        assert service.handshake["limits"] == {"max_line_bytes": 16777216, "max_cases": 4096,
-                                               "json_depth": 256}
+        assert service.handshake["limits"] == STATED_LIMITS
         # The handle table the client mirrors (lean-first b2): the service states it, the schema pins it.
         assert service.handshake["handles"] == {"member": HANDLE_KEY, "max": MAX_HANDLES,
                                                 "max_bytes": MAX_HANDLE_BYTES}
@@ -516,7 +525,7 @@ def placeholders(value, line):
 hello = {"service": "ve-lean@1", "protocol": 2,
          "modes": __MODES__,
          "codes": __CODES__,
-         "limits": {"max_line_bytes": 16777216, "max_cases": 4096, "json_depth": 256},
+         "limits": __LIMITS__,
          "handles": {"member": "environment_handle", "max": 64, "max_bytes": 67108864}}
 if behaviour == "handshake":
     hello["service"] = "other"
@@ -524,6 +533,10 @@ if behaviour == "null-modes":
     hello["modes"] = None
 if behaviour == "small-limits":
     hello["limits"]["max_cases"] = 1
+if behaviour == "large-limits":
+    hello["limits"]["max_line_bytes"] += 1
+if behaviour == "missing-limit":
+    del hello["limits"]["max_nodes"]
 if behaviour == "bad-protocol":
     hello["protocol"] = 1
 if behaviour == "startup-eof":
@@ -770,7 +783,7 @@ def test_the_injected_clock_records_a_miscomputed_deadline(tmp_path, monkeypatch
 
 def fake(tmp_path, behaviour):
     script = tmp_path / "fake.py"
-    script.write_text(FAKE.replace("__CODES__", json.dumps(CODES)).replace("__MODES__", json.dumps(list(MODES))))
+    script.write_text(FAKE.replace("__CODES__", json.dumps(CODES)).replace("__LIMITS__", json.dumps(STATED_LIMITS)).replace("__MODES__", json.dumps(list(MODES))))
     wrapper = tmp_path / f"fake-{behaviour}"
     wrapper.write_text(f"#!/bin/sh\nexec {sys.executable} {script} {behaviour} {tmp_path / 'marker'}\n")
     wrapper.chmod(0o755)
@@ -1297,6 +1310,13 @@ _SCHEMA_SEEDS = {
     "ask": ({"id": "c"}, {"id": "c", "status": "ok", "result": {}}),
     "words": ({"id": "c"}, {"id": "c", "status": "ok",
                            "result": {"environment_id": "a" * 64, "lexicon_id": "a" * 64, "lines": ["x"]}}),
+    "metered": ({"id": "c", "kind": "evaluate-budgeted", "environment": {}, "model": {}, "ast": [["top"]],
+                 "max_evaluations": 4, "trace": True},
+                {"id": "c", "status": "ok", "evaluation": {
+                    "status": "Satisfied", "value": True, "evaluations": 1,
+                    "explanation": [{"kind": "document", "value": True, "bindings": [], "detail": "all statements satisfied",
+                                     "children": 1},
+                                    {"kind": "top", "value": True, "bindings": [], "detail": "", "children": 0}]}}),
     "environment": ({"id": "c", "environment": {"profiles": ["relational-fol@0"]}},
                     {"id": "c", "status": "ok", "environment_id": "a" * 64,
                      "profiles": ["relational-fol@0"], "family": "fol"}),
@@ -1392,6 +1412,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
                  "supporting_edges" if mode == "graph" else
                  "verdict" if mode in ("readings", "readings-choices") else
                  "lemmas" if mode == "bundle" else
+                 "evaluation" if mode == "metered" else
                  "valid" if mode == "family-norms" else "values")
         answer["results"][0][field] = "true"
     elif mutation in ("wrong-digest", "wrong-index", "unbound-row"):
@@ -1415,8 +1436,8 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
         service.close()
 
 
-@pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits",
-                                       "bad-protocol", "startup-eof"])
+@pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits", "large-limits",
+                                       "missing-limit", "bad-protocol", "startup-eof"])
 def test_bad_or_missing_handshake_is_unavailable(tmp_path, expired, behaviour):
     expired.handshakes = behaviour == "silent"
     service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)

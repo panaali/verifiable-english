@@ -88,14 +88,13 @@ import threading
 import time
 
 from ..errors import CheckerUnavailable, ResourceLimit, VEError
+from ..limits import MAX_CASES, MAX_LINE_BYTES  # the service's handshake limits (VE.Limits)
 from ..environment_wire import EncodedEnvironment
 from .service_schema import MODES, Invalid, check_handshake, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_service"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
-MAX_LINE_BYTES = 16 * 1024 * 1024
-MAX_CASES = 4096
 BATCH_CASES = 256
 BATCH_BYTES = 4 * 1024 * 1024
 STARTUP_TIMEOUT = 30.0
@@ -141,6 +140,9 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "risk-eval": (60.0, 60.0), "quantity": (60.0, 60.0), "norm-defaults": (120.0, 120.0),
     "discourse": (300.0, 300.0), "readings-route": (120.0, 240.0), "diagnose": (120.0, 120.0),
     "document": (120.0, 120.0), "ask": (120.0, 240.0),
+    # The metered evaluator and the non-vacuity check (lean-first batch 18): the one-shot `ve_metered`'s
+    # route limit before, a share per MiB like the core modes'.
+    "metered": (120.0, 30.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20
@@ -408,6 +410,8 @@ class LeanService:
         # The handles the current process holds, in registration order, with their sizes.
         self._registered: dict[str, int] = {}
         self._handle_bytes = 0
+        # The decoded environments the response checks read, by digest (`_decoded_environment`).
+        self._decoded: dict[str, object] = {}
         self.handshake: dict | None = None
         self.stats = {"starts": 0, "restarts": 0, "recycles": 0, "requests": 0, "retries": 0,
                       "registered": 0, "handle_resends": 0}
@@ -648,6 +652,17 @@ class LeanService:
 
     # Handles
 
+    def _decoded_environment(self, digest: str, text: str) -> object:
+        """The decoding of the environment `text` whose SHA-256 is `digest`, kept for the next
+        request against the same handle, as the service keeps its own (`VE.Service.Entry`): at most
+        `MAX_HANDLES` of them, the oldest dropped first. Content-addressed, so never another text's."""
+        decoded = self._decoded.get(digest)
+        if decoded is None:
+            while len(self._decoded) >= MAX_HANDLES:
+                del self._decoded[next(iter(self._decoded))]
+            decoded = self._decoded[digest] = json.loads(text, parse_int=_json_integer)
+        return decoded
+
     def _forget_handles(self) -> None:
         self._registered.clear()
         self._handle_bytes = 0
@@ -867,7 +882,7 @@ class LeanService:
             len(d) + len(t.encode()) + 4 for d, t in environments.items()) + ENVELOPE_BYTES
         if line > MAX_LINE_BYTES:
             return None
-        decoded = {digest: json.loads(text, parse_int=_json_integer) for digest, text in environments.items()}
+        decoded = {digest: self._decoded_environment(digest, text) for digest, text in environments.items()}
         response = self._request(mode, texts, timeout, environments=environments,
                                  expanded=[item.expanded(decoded) for item in chunk])
         return None if response.get("status") == "error" else response
@@ -976,8 +991,11 @@ class LeanServicePool:
 
     def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         chunks = list(self._services[0]._chunks(self._services[0]._sent(mode, cases), parts=len(self._services)))
-        if len(chunks) <= 1:
-            return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
+        if not chunks:
+            return []
+        if len(chunks) == 1:
+            # The cases as sent are the same for every service of the pool: they are encoded once.
+            return self._on_idle(lambda service: service._run_chunk(mode, chunks[0], timeout))
         answers: list = [None] * len(chunks)
         pending = iter(range(len(chunks)))
         claim = threading.Lock()

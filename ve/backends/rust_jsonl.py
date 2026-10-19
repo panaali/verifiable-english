@@ -26,7 +26,7 @@ import threading
 import time
 
 from ..errors import ResourceLimit
-from ..limits import MAX_RUST_MEMORY_BYTES
+from ..limits import MAX_LINE_BYTES, MAX_RUST_MEMORY_BYTES
 from .diagnostics import require_ok
 from ..environment_wire import EncodedEnvironment, encoded_environment, wire_checked
 from .lean_service import CheckerUnavailable, _decode_json, configured_seconds, executable_sha256
@@ -37,7 +37,6 @@ ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = Path(__file__).resolve().parent / "rust_schema"
 DEFAULT_EXECUTABLE = ROOT / "rust/target/release/ve"
 BUILD_LOCK = ROOT / "lean/checkers.lock"
-MAX_LINE_BYTES = 16 * 1024 * 1024
 DEFAULT_TIMEOUT = 5.0
 # The default wall-clock limit of a model search grows with the case (DRI decision ME1): a search spends its 10,000
 # candidate models in about SEARCH_SECONDS[0] + per byte of the case line + per constant squared
