@@ -1,0 +1,15 @@
+{
+ "what": "DRI note F7: the A/B corpora re-recorded on the F7 code head and compared row by row with the batch's saved recordings",
+ "code_head": "450a7101b6421a6acc2de4a5ecbb4b2a10b3462f",
+ "base": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b",
+ "command": "tools/lean_first_diff.py record --root <code head> --corpus probe conformance readings discourse rights quantity norm_defaults document --workers 12",
+ "comparison": "every record keyed by (corpus, authority, op, case), its outcome and source_sha256 compared with evidence/base-ab.jsonl.gz and evidence/head-ab.jsonl.gz",
+ "records": 99847,
+ "identical_to_base": 99847,
+ "identical_to_previous_head": 99847,
+ "differ": 0,
+ "missing": 0,
+ "new_only": 0,
+ "not_rerecorded": "the pilots corpus (563 records: whole-document pilots up to 600 s each); the UDHR document of evidence/latency.json answered the same output at base and head",
+ "recording_sha256": "46ecb832186f79b9b3bbded6fb6911b4129d30f30575cc2b4a70259d0681aae4"
+}

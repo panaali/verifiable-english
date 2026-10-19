@@ -51,6 +51,11 @@ MUTANTS = (
      "request = {\"id\": \"countermodel\", \"environment\": background_environment(env), **soft_case(env),",
      "request = {\"id\": \"countermodel\", \"environment\": env.to_dict(), **soft_case(env),",
      "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did"),
+    # DRI note F7: the client's decoded environments are keyed by their text's digest.
+    ("decoded_environment_ignores_its_digest", "ve/backends/lean_service.py",
+     "        decoded = self._decoded.get(digest)\n",
+     "        decoded = next(iter(self._decoded.values()), None)\n",
+     "tests/test_metered_handles.py::test_the_client_keeps_one_decoding_per_environment_text"),
 )
 
 
