@@ -219,4 +219,7 @@ tools/lean_first_diff.py` is empty, and the commits after it change only tests, 
 `docs/arch/AR-16a/`.
 
 <!-- BEGIN GENERATED AR-16A NUMBERS -->
+- Scope: `beb5c463..7256481b --no-merges`, 7 commits: `7256481b`, `8fb410f7`, `0a122dcf`, `6eba0d5f`, `84ae8a94`, `357efd11`, `7b44fdf4`.
+- Corpus A/B (`beb5c463` against `7256481b`): 100428 records identical, 14 unavailable on both sides with identical outputs (R7, listed), 0 unlisted; pilots 595, document 3632, discourse 6350, rights 2500, readings 1137.
+- Seeded mutants (tools/mutants.py): 16/16 killed.
 <!-- END GENERATED AR-16A NUMBERS -->
