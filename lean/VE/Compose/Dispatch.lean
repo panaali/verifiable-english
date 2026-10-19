@@ -726,4 +726,325 @@ theorem refusal_names (ps : List String) (w : String) (r : Route) (hw : w ∈ ps
     show unsupported (if _ then _ else _) = _
     rw [if_neg (by decide), String.append_assoc]; rfl
 
+/-! ## The profile-gate table (AR-10, SYNTHESIS 2.2)
+
+`profileTable` is the only place a profile is registered, and `gateOf profileTable` is the gate every runner
+calls. The rows are checks in a fixed fault order: after the order error and an unregistered profile, each row in
+table order, its requirements before its refusals, each in list order. A row applies when its profile is listed,
+or when it requires its own profile (a mandatory profile). A profile may have more than one row when its checks sit
+apart in the fault order (`risk@0`; a wrapper refuses an outside route before it requires its own). A missing
+requirement reads `Missing profile q` for a mandatory profile, the frozen classifier's `Unsupported profile p
+without q` on a checker row, and `p requires q` otherwise. The route is the first head of `heads` with a listed
+row; `gate_legacy` shows that on the legacy profiles this is `dispatch`, text and fault order included. -/
+
+structure ProfileRow where
+  profile  : String
+  requires : List String              -- profiles that must be present
+  refuses  : List (String × String)   -- a profile that must be absent, and its refusal text
+  slot     : String                   -- the route head or wrapper position it sits on
+  deriving Repr
+
+/-- A row's refusal of each listed profile, with `p with q`. -/
+def refusing (p : String) (qs : List String) : List (String × String) := qs.map fun q => (q, s!"{p} with {q}")
+
+/-- What `speech-acts@0` refuses: every other base profile but its own two, in code point order. -/
+def speechOthers : List String :=
+  ["alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1", "nary@0", "norm-defaults@0",
+   "order@0", "reports@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
+
+def baseRows : List ProfileRow := [
+  ⟨"alternatives@0", ["norms@0"], refusing "alternatives@0" ["soft-norms@0"], "alternatives"⟩,
+  ⟨"risk@0", ["alternatives@0"], [("norm-defaults@0", "risk@0 with norm-defaults@0 is not implemented")], "risk"⟩,
+  ⟨"speech-acts@0", ["norms@0"], refusing "speech-acts@0" speechOthers, "speechActs"⟩,
+  ⟨"relational-fol@0", ["relational-fol@0"], [], "checker"⟩,
+  ⟨"reports@0", [], [("norms@0", "reports@0 with norms@0 layers"),
+    ("definitions@0", "reports@0 with definitions@0 layers"), ("data@0", "reports@0 with data@0 layers"),
+    ("closure@0", "reports@0 requires the fol checker, not closure@0"),
+    ("nary@0", "reports@0 requires the fol checker, not nary@0"),
+    ("order@0", "reports@0 requires the fol checker, not order@0")], "reports"⟩,
+  ⟨"order@0", [], [("closure@0", "Unsupported profile combination closure@0 x order@0"),
+    ("nary@0", "Unsupported profile combination nary@0 x order@0")], "checker"⟩,
+  ⟨"nary@0", ["closure@0"], [], "checker"⟩,
+  ⟨"risk@0", [], ["closure@0", "nary@0", "order@0"].map (·, "the risk norms route admits FOL documents only"),
+    "risk"⟩,
+  ⟨"rights@0", ["soft-norms@0"], [], "rights"⟩,
+  ⟨"soft-norms@0", ["norms@0"], [], "soft"⟩,
+  ⟨"norm-defaults@0", ["norms@0"], [], "normDefaults"⟩,
+  ⟨"norms@0", [], [], "norms"⟩,
+  ⟨"closure@0", [], [], "checker"⟩,
+  ⟨"data@0", [], [], "layer"⟩,
+  ⟨"definitions@0", [], [], "layer"⟩,
+  ⟨"documents@1", [], [], "layer"⟩,
+  ⟨"time@0", [], [], "layer"⟩]
+
+/-- The routes outside the chain, which no wrapper sits on, as `outside` names them. -/
+def outsideProfiles : List String := ["risk@0", "alternatives@0", "speech-acts@0", "reports@0"]
+
+/-- The stack's wrappers in stack order. -/
+def wrapperRows : List ProfileRow := [
+  ⟨"ve.discourse@1", [], refusing "ve.discourse@1" outsideProfiles, "discourse"⟩,
+  ⟨"right-clauses@0", [], refusing "right-clauses@0" outsideProfiles, "clauses"⟩,
+  ⟨"right-clauses@0", ["rights@0"], [], "clauses"⟩,
+  ⟨"readings@1", [], refusing "readings@1" outsideProfiles, "readings"⟩,
+  ⟨"readings@1", ["norms@0"], [], "readings"⟩]
+
+def profileTable : List ProfileRow := baseRows ++ wrapperRows
+
+/-- The route heads in precedence order: the first one with a listed row is the route. -/
+def heads : List (String × Route) :=
+  [("discourse", .discourse), ("clauses", .clauses), ("readings", .readings), ("risk", .risk),
+   ("alternatives", .alternatives), ("speechActs", .speechActs), ("reports", .reports), ("rights", .rights),
+   ("soft", .soft), ("normDefaults", .normDefaults), ("norms", .norms)]
+
+def routeOf (t : List ProfileRow) (ps : List String) : Route :=
+  match heads.find? (fun h => t.any fun r => r.slot == h.1 && ps.contains r.profile) with
+  | some h => h.2
+  | none => .frozen
+
+def needText (r : ProfileRow) (q : String) : String :=
+  if q == r.profile then s!"Missing profile {q}"
+  else if r.slot == "checker" then s!"Unsupported profile {r.profile} without {q}"
+  else s!"{r.profile} requires {q}"
+
+/-- A row's checks in order, each a fault condition and its text. -/
+def rowChecks (ps : List String) (r : ProfileRow) : List (Bool × String) :=
+  let on := ps.contains r.profile || r.requires.contains r.profile
+  r.requires.map (fun q => (on && !ps.contains q, needText r q)) ++
+    r.refuses.map (fun x => (on && ps.contains x.1, x.2))
+
+def gateOf (t : List ProfileRow) (ps : List String) : Except String Route :=
+  if !decide (ps.Pairwise (· < ·)) then .error (unsupported "profiles must be sorted and unique")
+  else match ps.find? (fun p => !t.any (·.profile == p)) with
+  | some p => .error (unsupported s!"Unsupported profile {p}")
+  | none => match (t.flatMap (rowChecks ps)).find? (·.1) with
+    | some c => .error (unsupported c.2)
+    | none => .ok (routeOf t ps)
+
+/-- What the table admits, read row by row. -/
+def TableAdmits (t : List ProfileRow) (ps : List String) : Prop :=
+  ps.Pairwise (· < ·) ∧ (∀ p ∈ ps, ∃ r ∈ t, r.profile = p) ∧
+    ∀ r ∈ t, (r.profile ∈ ps ∨ r.profile ∈ r.requires) → (∀ q ∈ r.requires, q ∈ ps) ∧ ∀ x ∈ r.refuses, x.1 ∉ ps
+
+def legacyProfiles : List String := registered ++ wrapperProfiles
+
+theorem checks_none (t : List ProfileRow) (ps : List String) :
+    (t.flatMap (rowChecks ps)).find? (·.1) = none ↔
+      ∀ r ∈ t, (r.profile ∈ ps ∨ r.profile ∈ r.requires) → (∀ q ∈ r.requires, q ∈ ps) ∧ ∀ x ∈ r.refuses, x.1 ∉ ps := by
+  rw [List.find?_eq_none]
+  simp only [List.mem_flatMap, rowChecks, List.mem_append, List.mem_map]
+  constructor
+  · intro h r hr hon
+    have hon' : (ps.contains r.profile || r.requires.contains r.profile) = true := by simpa using hon
+    refine ⟨fun q hq => ?_, fun x hx hxp => ?_⟩
+    · have := h _ ⟨r, hr, Or.inl ⟨q, hq, rfl⟩⟩
+      simp only [hon', Bool.true_and, Bool.not_eq_true'] at this
+      simpa using this
+    · have := h _ ⟨r, hr, Or.inr ⟨x, hx, rfl⟩⟩
+      simp only [hon', Bool.true_and] at this
+      simp [hxp] at this
+  · rintro h c ⟨r, hr, (⟨q, hq, rfl⟩ | ⟨x, hx, rfl⟩)⟩ <;> intro hc <;>
+      simp only [Bool.and_eq_true, Bool.or_eq_true, List.contains_iff_mem] at hc
+    · exact (by simpa using hc.2 : q ∉ ps) ((h r hr hc.1).1 q hq)
+    · exact (h r hr hc.1).2 x hx hc.2
+
+theorem gateOf_iff (t ps r) : gateOf t ps = .ok r ↔ TableAdmits t ps ∧ r = routeOf t ps := by
+  unfold gateOf TableAdmits
+  by_cases hs : ps.Pairwise (· < ·)
+  · rw [if_neg (by simpa using hs)]
+    have hk : ps.find? (fun p => !t.any (·.profile == p)) = none ↔ ∀ p ∈ ps, ∃ q ∈ t, q.profile = p := by
+      rw [List.find?_eq_none]; simp
+    split
+    · rename_i p hp
+      simp only [reduceCtorEq, false_iff]
+      rintro ⟨⟨_, hk', _⟩, _⟩
+      rw [hk.mpr hk'] at hp; cases hp
+    · rename_i hp
+      split
+      · rename_i c hc
+        simp only [reduceCtorEq, false_iff]
+        rintro ⟨⟨_, _, hall⟩, _⟩
+        rw [(checks_none t ps).mpr hall] at hc; cases hc
+      · rename_i hc
+        simp only [Except.ok.injEq]
+        exact ⟨fun e => ⟨⟨hs, hk.mp hp, (checks_none t ps).mp hc⟩, e.symm⟩, fun h => h.2.symm⟩
+  · rw [if_pos (by simpa using hs)]
+    simp [hs]
+
+/-! ### `gate_legacy`: on the legacy profiles the table is `dispatch` -/
+
+/-- The answer of the first failed check, or none. -/
+def faultOf (o : Option (Bool × String)) : Except String Unit :=
+  match o with | some c => .error (unsupported c.2) | none => .ok ()
+
+theorem faultOf_ite (c : Bool) (x : Bool × String) (o : Option (Bool × String)) :
+    faultOf (if c = true then some x else o) = if c = true then .error (unsupported x.2) else faultOf o := by
+  cases c <;> rfl
+theorem faultOf_none : faultOf none = .ok () := rfl
+
+theorem find_cons_ite (c : Bool) (e : String) (l : List (Bool × String)) :
+    ((c, e) :: l).find? (·.1) = if c then some (c, e) else l.find? (·.1) := by cases c <;> rfl
+
+/-- `todayGate`'s match on a found profile. -/
+abbrev gateMatch (o : Option String) (f : String → Except String Unit) (b : Except String Unit) :=
+  todayGate.match_1 (fun _ => Except String Unit) o f (fun _ => b)
+
+theorem gateMatch_find (c : Bool) (l : List String) (g : String → Bool) f b :
+    gateMatch (if c = true then l.find? g else none) f b =
+      l.foldr (fun q acc => if (c && g q) = true then f q else acc) b := by
+  induction l with
+  | nil => cases c <;> rfl
+  | cons a l ih =>
+    cases c
+    · simpa using ih
+    · cases h : g a
+      · rw [List.foldr_cons, ← ih, List.find?_cons, h]; simp
+      · rw [List.foldr_cons, List.find?_cons, h]; simp
+
+theorem base_contains (ps : List String) (x : String) :
+    (base ps).contains x = (ps.contains x && !wrapperProfiles.contains x) := by
+  simp only [contains_eq, mem_base, Bool.decide_and, decide_not]
+
+theorem ite_and3 (a b c d : Bool) (e : Except String Unit) (r : Except String Unit) :
+    (if (a && b) = true then e else if (a && c) = true then e else if (a && d) = true then e else r) =
+      if (a && (b || c || d)) = true then e else r := by
+  cases a <;> cases b <;> cases c <;> cases d <;> rfl
+
+theorem find_first {l : List String} {P : String → Bool} {x : String} (hl : l.Pairwise (· < ·))
+    (hx : l.find? P = some x) : ∀ z ∈ l, P z = true → z = x ∨ x < z := by
+  induction l with
+  | nil => cases hx
+  | cons a l ih =>
+    intro z hz hp
+    rw [List.find?_cons] at hx
+    cases ha : P a <;> rw [ha] at hx
+    · rcases List.mem_cons.mp hz with rfl | hz
+      · rw [ha] at hp; cases hp
+      · exact ih (List.pairwise_cons.mp hl).2 hx z hz hp
+    · cases hx
+      rcases List.mem_cons.mp hz with rfl | hz
+      · exact Or.inl rfl
+      · exact Or.inr ((List.pairwise_cons.mp hl).1 z hz)
+
+/-- On two strictly increasing lists, the first element of one that the other lists is the first of the other. -/
+theorem sorted_find {l m : List String} (hl : l.Pairwise (· < ·)) (hm : m.Pairwise (· < ·)) :
+    l.find? m.contains = m.find? l.contains := by
+  cases ha : l.find? m.contains with
+  | none =>
+    symm; rw [List.find?_eq_none] at ha ⊢
+    intro x hx hc
+    exact ha x (List.contains_iff_mem.mp hc) (List.contains_iff_mem.mpr hx)
+  | some x =>
+    have hxl := List.mem_of_find?_eq_some ha
+    have hxm := List.contains_iff_mem.mp (List.find?_some ha)
+    cases hb : m.find? l.contains with
+    | none =>
+      rw [List.find?_eq_none] at hb
+      exact absurd (List.contains_iff_mem.mpr hxl) (hb x hxm)
+    | some y =>
+      have hym := List.mem_of_find?_eq_some hb
+      have hyl := List.contains_iff_mem.mp (List.find?_some hb)
+      rcases find_first hl ha y hyl (List.contains_iff_mem.mpr hym) with rfl | h1
+      · rfl
+      rcases find_first hm hb x hxm (List.contains_iff_mem.mpr hxl) with rfl | h2
+      · rfl
+      exact absurd h2 (String.lt_asymm h1)
+
+theorem find_congr {l : List String} {f g : String → Bool} (h : ∀ x ∈ l, f x = g x) : l.find? f = l.find? g := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    rw [List.find?_cons, List.find?_cons, h a (List.mem_cons_self ..),
+      ih fun x hx => h x (List.mem_cons_of_mem _ hx)]
+
+/-- Today's gate on the base list is the first failed check of the base rows. -/
+theorem todayGate_base (ps : List String) (hs : ps.Pairwise (· < ·)) (h : ∀ p ∈ ps, p ∈ legacyProfiles) :
+    todayGate (base ps) = faultOf ((baseRows.flatMap (rowChecks ps)).find? (·.1)) := by
+  have hsb : (base ps).Pairwise (· < ·) := hs.filter _
+  have hreg : ∀ p ∈ base ps, p ∈ registered := fun p hp => by
+    have := h p (mem_base.mp hp).1
+    simp only [legacyProfiles, List.mem_append] at this
+    exact this.resolve_right (mem_base.mp hp).2
+  have hunk : (base ps).find? (fun p => !registered.contains p) = none :=
+    List.find?_eq_none.mpr fun p hp => by simpa using hreg p hp
+  have hsp : (base ps).find? (fun p => !speechAllow.contains p) = speechOthers.find? ps.contains := by
+    have e1 : (base ps).find? (fun p => !speechAllow.contains p) = (base ps).find? speechOthers.contains :=
+      find_congr fun p hp => by
+        have := hreg p hp
+        simp only [registered, List.mem_cons, List.not_mem_nil, or_false] at this
+        rcases this with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+          rfl <;> rfl
+    rw [e1, sorted_find hsb (by decide)]
+    exact find_congr fun p hp => by
+      simp only [speechOthers, List.mem_cons, List.not_mem_nil, or_false] at hp
+      rw [base_contains]
+      rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp [wrapperProfiles]
+  unfold todayGate
+  rw [hunk, hsp]
+  simp only [decide_eq_true hsb, Bool.not_true, Bool.false_eq_true, if_false]
+  simp only [speechOthers, gateMatch_find, List.foldr_cons, List.foldr_nil]
+  simp only [base_contains, wrapperProfiles, List.contains_cons, List.contains_nil, String.reduceBEq,
+    Bool.or_false, Bool.not_false, Bool.and_true]
+  simp only [baseRows, refusing, speechOthers, rowChecks, List.flatMap_cons, List.flatMap_nil, List.map_cons,
+    List.map_nil, List.cons_append, List.nil_append, List.append_nil, find_cons_ite, List.contains_cons,
+    List.contains_nil, needText, List.find?_nil, String.reduceBEq, Bool.or_false, Bool.or_true,
+    Bool.true_and, toString, String.reduceAppend, if_false, if_true, Bool.false_eq_true, faultOf_ite, faultOf_none]
+  simp only [ite_and3]
+
+theorem todayHead_base (ps : List String) : todayHead (base ps) = todayHead ps := by
+  simp only [todayHead, base_contains, wrapperProfiles, List.contains_cons, List.contains_nil, String.reduceBEq,
+    Bool.or_false, Bool.not_false, Bool.and_true]
+
+/-- The table's route: the first wrapper present, else today's head. -/
+theorem routeOf_table (ps : List String) : routeOf profileTable ps =
+    if ps.contains "ve.discourse@1" then .discourse else if ps.contains "right-clauses@0" then .clauses
+    else if ps.contains "readings@1" then .readings else todayHead ps := by
+  simp only [routeOf, heads, profileTable, baseRows, wrapperRows, todayHead, List.find?_cons, List.find?_nil,
+    List.any_cons, List.any_nil, List.cons_append, List.nil_append, String.reduceBEq, Bool.false_and,
+    Bool.true_and, Bool.or_false, Bool.false_or, Bool.or_self]
+  cases ps.contains "ve.discourse@1" <;> cases ps.contains "right-clauses@0" <;> cases ps.contains "readings@1" <;>
+    cases ps.contains "risk@0" <;> cases ps.contains "alternatives@0" <;> cases ps.contains "speech-acts@0" <;>
+    cases ps.contains "reports@0" <;> cases ps.contains "rights@0" <;> cases ps.contains "soft-norms@0" <;>
+    cases ps.contains "norm-defaults@0" <;> cases ps.contains "norms@0" <;> rfl
+
+/-- On the legacy profiles the table runs today's gate: verdict, refusal text, fault order and route. -/
+theorem gate_legacy (ps) (h : ∀ p ∈ ps, p ∈ legacyProfiles) :
+    gateOf profileTable ps = dispatch ps := by
+  by_cases hs : ps.Pairwise (· < ·)
+  case neg => rw [dispatch_unsorted ps hs]; unfold gateOf; rw [if_pos (by simpa using hs)]
+  have hk : ps.find? (fun p => !profileTable.any (·.profile == p)) = none :=
+    List.find?_eq_none.mpr fun p hp => by
+      have := h p hp
+      simp only [legacyProfiles, registered, wrapperProfiles, List.cons_append, List.nil_append, List.mem_cons,
+        List.not_mem_nil, or_false] at this
+      rcases this with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+        rfl | rfl | rfl | rfl <;> decide
+  unfold gateOf dispatch today
+  rw [if_neg (by simpa using hs), if_neg (by simpa using hs), hk, todayGate_base ps hs h]
+  rw [routeOf_table, todayHead_base]
+  simp only [profileTable, List.flatMap_append, List.find?_append]
+  cases hA : (baseRows.flatMap (rowChecks ps)).find? (·.1) with
+  | some c => rfl
+  | none =>
+    have hrows := (checks_none baseRows ps).mp hA
+    have row : ∀ r ∈ baseRows, r.profile ∈ ps → ∀ q ∈ r.requires, q ∈ ps := fun r hr hp => (hrows r hr (.inl hp)).1
+    have hsoft : "soft-norms@0" ∈ ps → "norms@0" ∈ ps := fun hp =>
+      row ⟨"soft-norms@0", ["norms@0"], [], "soft"⟩ (by simp [baseRows]) hp _ (by simp)
+    have hnd : "norm-defaults@0" ∈ ps → "norms@0" ∈ ps := fun hp =>
+      row ⟨"norm-defaults@0", ["norms@0"], [], "normDefaults"⟩ (by simp [baseRows]) hp _ (by simp)
+    have hri : "rights@0" ∈ ps → "soft-norms@0" ∈ ps := fun hp =>
+      row ⟨"rights@0", ["soft-norms@0"], [], "rights"⟩ (by simp [baseRows]) hp _ (by simp)
+    simp only [Option.none_or, faultOf_none, Except.map]
+    clear hrows row hA hk h
+    simp only [wrapperRows, refusing, outsideProfiles, rowChecks, List.flatMap_cons, List.flatMap_nil, List.map_cons,
+      List.map_nil, List.cons_append, List.nil_append, List.append_nil, find_cons_ite, List.contains_cons,
+      List.contains_nil, needText, List.find?_nil, String.reduceBEq, Bool.or_false,
+      toString, String.reduceAppend, if_false, Bool.false_eq_true, wrapperProfiles, List.filter_cons,
+      List.filter_nil]
+    simp only [contains_eq] at *
+    rcases todayHead_cases ps with ⟨e, h1⟩ | ⟨e, h1⟩ | ⟨e, h1⟩ | ⟨e, h1⟩ | ⟨e, h1⟩ | ⟨e, h1⟩ | ⟨e, h1⟩ |
+      ⟨e, h1⟩ | ⟨e, h1⟩ <;> rw [e] <;>
+      by_cases hd : "ve.discourse@1" ∈ ps <;> by_cases hc : "right-clauses@0" ∈ ps <;>
+      by_cases hr : "readings@1" ∈ ps <;>
+      simp [hd, hc, hr, h1, hsoft, hnd, hri, sitsOn, refusal, outside, wrapperHead, toString, String.reduceAppend]
+
 end VE.Compose
