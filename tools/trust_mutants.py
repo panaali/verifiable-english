@@ -25,10 +25,11 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
   (`settle`, `judge`): inside a check, at a line the checkout has there, its message one of `REFUTED` (`decide`
   proved the proposition false, `native_decide` evaluated it false, a `#guard` did not evaluate to `true`) or a
   `#guard_msgs` diff between answers (an `#eval`'s value, a refutation); an `rfl` check's failure, which a stuck
-  reduction gives too, counts only when `decide` then refutes its statement. Each such check's statement reads the
-  mutated definition, as Lean computes it (`dependencies`: a refutation that came through a cut proof, an instance
-  or a `@[csimp]` lemma, refutes nothing about it), and it has no hypothesis (`classify`). And the same build
-  without the mutant (its control: the same cuts) passes;
+  reduction gives too, counts only when `decide` then refutes its statement. Lean, in the mutant's build, finds
+  the mutated definition in each such check's statement, no hypothesis, no meta code and no bridge resting on a
+  proof the tool cut (`probe`, `READS`: a `Decidable` instance or `@[csimp]` lemma on `sorry` computes through the
+  mutated definition where the statement does not). And the same build without the mutant (its control: the same
+  cuts) passes;
 - INVALID only when Lean refused the mutated declaration's text (`invalid`, `refused`): every error there a parse
   error, or a name, field, pattern or exhaustiveness error (`REFUSED`) outside its tactic blocks;
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
@@ -348,71 +349,117 @@ def classify(kind: str, span: str) -> str:
     return "check" if name in CHECK_COMMANDS else "other"
 
 
-# Lean's answer to "what does each check state, and through what" (`dependencies`), from elaborators run at the
-# check's own position (its namespace, `open`s and section variables): `tm_trust_probe` replaces the proof of a
-# `decide`/`rfl` check, `#tm_trust_guard` and `#tm_trust_eval` replace `#guard` and `#eval`. Each walks the
-# constants the statement uses, transitively through definitions of this tree, never into a theorem's proof, and
-# prints per check `<k>` and then:
-# - `<k> <definition>` for each mutated definition the statement reads, never through a `Decidable` instance
-#   (`decide p` is `p`'s value whatever instance decides it: hunt H4);
-# - `<k> ! <theorem>` for each theorem of this tree behind such an instance, the statement's own included (a cut
-#   one makes `decide` compute through the mutated definition where the statement does not: hunt N1, N2);
+# Lean's answer, in the mutant's own build (the mutant and the tool's cuts in place), to "can this check refute the
+# mutated definition" (`probe`, `run`'s `reading`): elaborators run at the check's own position (its namespace,
+# `open`s and section variables), `tm_trust_probe` in place of a `decide`/`rfl` check's proof, `#tm_trust_guard`
+# and `#tm_trust_eval` in place of `#guard` and `#eval`. Each prints `<k>` for the check, then:
+# - `<k> <definition>` when its statement reads the mutated definition: transitively through definitions of this
+#   tree, never into a proof (an instance that computes through it changes `decide` only when its proof breaks,
+#   and then the tool cut it: the `sorry` below, hunt H4);
+# - `<k> sorry` when a bridge its value is computed through rests on `sorry`, which only the tool's cuts put there:
+#   a `Decidable` instance (by its type, unfolded: hunt P2) applied in it or in a definition it reads, with its
+#   instance arguments (a class's proof field: P7), the one Lean synthesizes for a `decide` check or a Prop
+#   `#eval` (P9), and each `@[csimp]` lemma of a definition it reads (Lean's own table: P3); walked through
+#   definitions and theorems, a chain of them included (P5), whatever their names (P1), in this mutant's build
+#   (which instance Lean picks can change with it: P8). Hunt N1, N2;
 # - `<k> hyps` when the check's goal has a hypothesis (a section `variable` included: hunt H1, N8);
-# - `<k> ?` when it reflects on the environment (it reads a definition's text, as `#print` does: hunt N3).
+# - `<k> ?` when it uses Lean's meta framework (it can read a definition's text, as `#print` does: hunt N3, P4).
 READS = """
 open Lean Meta in
-def tmTrustWalk (k : Name) (roots : List (Expr × Bool)) : MetaM Unit := do
+def tmTrustDecidable (c : Name) : MetaM Bool := do
+  let some info := (← getEnv).find? c | return false
+  forallTelescopeReducing info.type fun _ body => return (← whnfR body).isAppOf ``Decidable
+
+open Lean Meta in
+partial def tmTrustBridges (e : Expr) : MetaM (Array Expr) := do
+  match e with
+  | .const c _ => return if ← tmTrustDecidable c then #[e] else #[]
+  | .app .. =>
+    let f := e.getAppFn
+    let args := e.getAppArgs
+    let mut out ← tmTrustBridges f
+    if let .const c _ := f then
+      if ← tmTrustDecidable c then
+        let infos := (← getFunInfoNArgs f args.size).paramInfo
+        for i in [:min infos.size args.size] do
+          if infos[i]!.isInstImplicit then out := out.push args[i]!
+    for a in args do out := out ++ (← tmTrustBridges a)
+    return out
+  | .lam _ t b _ | .forallE _ t b _ => return (← tmTrustBridges t) ++ (← tmTrustBridges b)
+  | .letE _ t v b _ => return (← tmTrustBridges t) ++ (← tmTrustBridges v) ++ (← tmTrustBridges b)
+  | .mdata _ b | .proj _ _ b => tmTrustBridges b
+  | _ => return #[]
+
+open Lean Meta in
+def tmTrustWalk (k : Name) (roots : List Expr) (given : List Expr) : MetaM Unit := do
   let env ← getEnv
   let names (xs : List String) : NameSet := xs.foldl (fun s n => s.insert n.toName) {}
   let targets := names TARGETS
   let mods := names MODULES
-  let reflect := [``Lean.Environment, ``Lean.ConstantInfo, ``Lean.MonadEnv]
-  let decidable (t : Expr) : Bool := t.getForallBody.getAppFn.constName?.any
-    ([``Decidable, ``DecidableEq, ``DecidablePred, ``DecidableRel].contains ·)
-  let used (es : List Expr) (behind : Bool) : List (Name × Bool) :=
-    es.foldl (fun a e => a ++ e.getUsedConstants.toList.map (·, behind)) []
+  let inTree (c : Name) : Bool := !(env.getModuleIdxFor? c).any (fun i => !mods.contains env.header.moduleNames[i.toNat]!)
+  let metaNs := [`Lean.Meta, `Lean.Elab, `Lean.Core, `Lean.Environment, `Lean.ConstantInfo, `Lean.MonadEnv,
+    `Lean.PrettyPrinter, `Lean.Compiler, `Lean.Kernel]
+  let reflects (c : Name) : Bool := metaNs.any (·.isPrefixOf c)
   IO.println s!"{k}"
+  let mut bridges : Array Expr := given.toArray
+  for e in roots do bridges := bridges ++ (← tmTrustBridges e)
   let mut seen : NameSet := {}
-  let mut seenBehind : NameSet := {}
-  let mut todo := roots.foldl (fun a (e, b) => a ++ used [e] b) []
+  let mut todo : List Name := roots.foldl (fun a e => a ++ e.getUsedConstants.toList) []
   while !todo.isEmpty do
-    let (c, behind) := todo.head!
+    let c := todo.head!
     todo := todo.tail!
-    if behind then
-      if seenBehind.contains c then continue
-      seenBehind := seenBehind.insert c
-    else
-      if seen.contains c then continue
-      seen := seen.insert c
-    if !behind && targets.contains c then IO.println s!"{k} {c}"
+    if seen.contains c then continue
+    seen := seen.insert c
+    if targets.contains c then IO.println s!"{k} {c}"
     let some info := env.find? c | continue
-    if reflect.contains c || info.type.getUsedConstants.any reflect.contains then IO.println s!"{k} ?"
-    if (env.getModuleIdxFor? c).any (fun i => !mods.contains env.header.moduleNames[i.toNat]!) then continue
-    let behind' := behind || decidable info.type
+    if reflects c || info.type.getUsedConstants.any reflects then IO.println s!"{k} ?"
+    if !inTree c then continue
     match info with
-    | .thmInfo _ => if behind then IO.println s!"{k} ! {c}"
-    | .defnInfo d => todo := todo ++ used [d.type, d.value] behind'
-    | _ => todo := todo ++ used [info.type] behind'
+    | .defnInfo d =>
+      bridges := bridges ++ (← tmTrustBridges d.value)
+      todo := todo ++ (d.type.getUsedConstants ++ d.value.getUsedConstants).toList
+    | .thmInfo _ => pure ()
+    | _ => todo := todo ++ info.type.getUsedConstants.toList
+  let mut stack : List Name := bridges.foldl (fun a e => a ++ e.getUsedConstants.toList) []
+  for t in (Lean.Compiler.CSimp.ext.getState env).thmNames.toList do
+    if let some info := env.find? t then
+      if (info.type.getAppArgs[1]?.bind (·.getAppFn.constName?)).any seen.contains then stack := t :: stack
+  let mut done : NameSet := {}
+  while !stack.isEmpty do
+    let c := stack.head!
+    stack := stack.tail!
+    if done.contains c then continue
+    done := done.insert c
+    if c == ``sorryAx then
+      IO.println s!"{k} sorry"
+      break
+    let some info := env.find? c | continue
+    if !inTree c then continue
+    stack := stack ++ info.type.getUsedConstants.toList ++ (info.value?.map (·.getUsedConstants.toList)).getD []
 
 open Lean Elab Tactic Meta in
 elab "tm_trust_probe " k:ident : tactic => do
   let goal ← instantiateMVars (← getMainTarget)
   if (← getLCtx).foldl (fun n d => if d.isImplementationDetail then n else n + 1) 0 > 0 then
     IO.println s!"{k.getId} hyps"
-  let inst ← try pure [(← synthInstance (mkApp (mkConst ``Decidable) goal), true)] catch _ => pure []
-  tmTrustWalk k.getId ((goal, false) :: inst)
+  let inst ← try pure [← synthInstance (mkApp (mkConst ``Decidable) goal)] catch _ => pure []
+  tmTrustWalk k.getId [goal] inst
 
 open Lean Elab Command Term Meta in
 elab "#tm_trust_guard " k:ident e:term : command => liftTermElabM do
   let e ← Term.elabTermEnsuringType e (mkConst ``Bool)
   Term.synthesizeSyntheticMVarsNoPostponing
-  tmTrustWalk k.getId [(← instantiateMVars e, false)]
+  tmTrustWalk k.getId [← instantiateMVars e] []
 
 open Lean Elab Command Term Meta in
 elab "#tm_trust_eval " k:ident e:term : command => liftTermElabM do
   let e ← Term.elabTerm e none
   Term.synthesizeSyntheticMVarsNoPostponing
-  tmTrustWalk k.getId [(← instantiateMVars e, false)]
+  let e ← instantiateMVars e
+  let inst ← if ← isProp e then
+      try pure [← synthInstance (mkApp (mkConst ``Decidable) e)] catch _ => pure []
+    else pure []
+  tmTrustWalk k.getId [e] inst
 """
 
 
@@ -442,39 +489,25 @@ def named(text: str, roles: list[tuple]) -> tuple[str, dict[str, tuple[int, int]
     return text, spans
 
 
-def dependencies(lake, files: dict[str, tuple[Path, list[tuple]]], definitions: list[str], modules: list[str],
-                 folder: Path, jobs: int) -> dict[tuple[str, tuple[int, int]], dict[str, set[str]]]:
-    """(file, (first, last line)) -> {"reads": the mutated definitions its statement reads, "behind": the theorems
-    behind its `Decidable` instances, "flags": `hyps`, `?`}, as `READS` prints it for a copy of the file under
-    `folder` that `lake("env", "lean", copy)` elaborates (`named`; the probe's elaborators after its imports). A
-    check Lean could not read is absent (no kill). `files`: key -> (its path, its roles)."""
-    probe = READS.replace("TARGETS", json.dumps(definitions, ensure_ascii=False)).replace(
+def probe(lake, text: str, roles: list[tuple], definition: str, modules: list[str], copy: Path
+          ) -> dict[tuple[int, int], dict[str, set[str]]]:
+    """(first, last line) -> {"reads": the mutated definitions its statement reads, "flags": `hyps`, `?`, `sorry`}
+    for each check of `text` (a file of this mutant's build, its `roles`), as `READS` prints it for `copy` that
+    `lake("env", "lean", copy)` elaborates (`named`; the probe's elaborators after its imports). A check Lean could
+    not read is absent (no kill)."""
+    text, spans = named(text, roles)
+    lines = text.split("\n")
+    after = max((n + 1 for n, line in enumerate(code_only(text).split("\n")) if line.startswith("import ")), default=0)
+    head = READS.replace("TARGETS", json.dumps([definition], ensure_ascii=False)).replace(
         "MODULES", json.dumps(modules, ensure_ascii=False))
-
-    def one(item: tuple[int, tuple[str, tuple[Path, list]]]) -> dict:
-        i, (key, (path, roles)) = item
-        text, spans = named(path.read_text(), roles)
-        lines = text.split("\n")
-        after = max((n + 1 for n, line in enumerate(code_only(text).split("\n")) if line.startswith("import ")),
-                    default=0)
-        copy = folder / f"reads{i}.lean"
-        copy.write_text("\n".join(["import Lean", *lines[:after], probe, *lines[after:]]))
-        out: dict = {}
-        for line in lake("env", "lean", str(copy))[1].splitlines():
-            name, _, rest = line.partition(" ")
-            if name in spans:
-                entry = out.setdefault((key, spans[name]), {"reads": set(), "behind": set(), "flags": set()})
-                if rest.startswith("! "):
-                    entry["behind"].add(rest[2:])
-                elif rest in ("hyps", "?"):
-                    entry["flags"].add(rest)
-                elif rest:
-                    entry["reads"].add(rest)
-        return out
-
-    folder.mkdir(parents=True, exist_ok=True)
-    with ThreadPoolExecutor(max_workers=max(1, jobs)) as executor:
-        return {k: v for part in executor.map(one, enumerate(files.items())) for k, v in part.items()}
+    copy.write_text("\n".join(["import Lean", *lines[:after], head, *lines[after:]]))
+    out: dict = {}
+    for line in lake("env", "lean", str(copy))[1].splitlines():
+        name, _, rest = line.partition(" ")
+        if name in spans:
+            entry = out.setdefault(spans[name], {"reads": set(), "flags": set()})
+            (entry["flags"] if rest in ("hyps", "?", "sorry") else entry["reads"]).update([rest] if rest else [])
+    return out
 
 
 def file_roles(path: Path) -> list[tuple[int, int, str, None]]:
@@ -632,7 +665,7 @@ def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, 
     F11): KILLED only when every one is KILL (`judge`), or RFL and `decide` then refutes its check's statement, and
     every such check can refute the mutated definition (`reads`: (file, (first, last line)) -> None, else why not:
     Lean does not find the definition in its statement, or its `decide` rests on a theorem the tool cut, `run`'s
-    `reading` of `dependencies`: hunt H4, N1, N2). `rebuild` builds
+    `reading` of `probe`: hunt H4, N1, N2, P1-P9). `rebuild` builds
     with the given files' texts (those checks' `rfl` replaced: `decided`) and returns the errors, None when none is
     located; a rewritten check that gives no error there, or an error that is no refutation, refutes nothing, and any
     other error must still be KILL. `read`, `checkout`: a file's built and checkout text; `roles`: file -> (first,
@@ -782,28 +815,48 @@ class Scratch:
 
 
 def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list[Path], env: dict,
-        deep: bool = False, controls: dict | None = None, reads: dict | None = None) -> tuple[str, str]:
+        deep: bool = False, controls: dict | None = None) -> tuple[str, str]:
     """(status, detail) of one mutant, built in `scratch`, whose files are restored afterwards. The mutated module's
     proofs are cut up front, and a proof that fails elsewhere is cut and the build repeated, before any other error
     is read: a check may fail only because a proof it reads failed. An error in a check is a kill only when its
     control, the same build without the mutant (the same cuts; `controls` caches it across mutants), passes: what
     fails there too reads a cut proof (review F7: `#eval` refuses a value that depends on `sorry`), so it is cut as
-    well and never a kill. `reads`: `dependencies` (a kill needs its check to read the mutated definition)."""
+    well and never a kill; nor is one whose check cannot refute the mutated definition (`reading`)."""
     controls = {} if controls is None else controls
-    reads = {} if reads is None else reads
+    rebuilt: list[bool] = []  # the stages built with the mutant again, once (a control built them without it)
+    current: dict = {"mutant": True, "stage": []}  # whether the stage's last build is the mutant's
+
+    def built_mutant() -> bool:
+        if not rebuilt:
+            write(m.file, True)
+            rebuilt.append(all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage))
+        return rebuilt[0]
+
+    probed: dict[str, dict] = {}  # file -> `probe` of its checks in this mutant's build
 
     def reading(key: tuple) -> str | None:
-        """Why the check at `key` cannot refute the mutated definition (`dependencies`), or None."""
-        entry = reads.get(key)
-        cut = {name for f, spans in cuts.items() for s, e, _, name in tree.roles.get(f, ()) if (s, e) in spans}
+        """Why the check at `key` cannot refute the mutated definition (`probe`), or None."""
+        f, span = key
+        if f not in probed:
+            outside_file = next((t for t in outside if str(t) == f), None)
+            if outside_file is not None:
+                built_mutant()
+            elif not current["mutant"]:  # the probe reads the mutant's build
+                build(current["stage"])
+                current["mutant"] = True
+            text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
+                read(f), tree.roles.get(f, ()))
+            probed[f] = probe(lambda *a: scratch.lake(env, *a), text, mine, m.definition, sorted(tree.files),
+                              scratch.lean.parent / "probe.lean")
+        entry = probed[f].get(span)
         if entry is None or m.definition not in entry["reads"]:
             return f"Lean does not find {m.definition} in its statement"
         if "hyps" in entry["flags"]:
             return "its goal has a hypothesis"
         if "?" in entry["flags"]:
-            return "it reads the environment, as `#print` does"
-        if behind := sorted(entry["behind"] & cut):
-            return f"its `Decidable` instance rests on {behind[0]}, which the tool cut"
+            return "it uses Lean's meta framework, which can read a definition's text"
+        if "sorry" in entry["flags"]:
+            return "it computes through an instance or `@[csimp]` lemma that rests on a proof the tool cut"
         return None
     built = targets(tree, m, tests, deep)
     texts: dict[str, str] = {}  # file -> the checkout's text, written back at the end
@@ -875,6 +928,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             if r == "proof" and not first <= m.line <= last and cut_proof(scratch.lean / m.file, first, last):
                 cuts.setdefault(m.file, []).append((first, last))
         for stage in (built[:1], built[1:]):  # the mutated module alone first: most mutants end there
+            current["stage"] = stage
             for _ in range(12):
                 code, found = build(stage) if stage else (0, [])
                 if code == 0:
@@ -898,6 +952,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                     write(m.file, False)
                     control = build(stage)[1]
                     write(m.file, True)
+                    current["mutant"] = False  # the stage's build is the control's until it is built again
                     if control[:1] and not control[0][0]:  # no located error: not kept for others
                         return "UNKNOWN", f"its control: {control[0][2]}"
                     controls[key] = control
@@ -925,18 +980,14 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             write(m.file, True)
         if not (new := [t for t in failing if t not in controls[key]]):
             return "UNKNOWN", f"{next(iter(failing))} fails without the mutant too"
-        mutant_built = []  # the stages rebuilt with the mutant once (the control built them without), for `rfl`
-
         def again(t: Path, now: dict[str, str]) -> list[tuple[str, int, str]] | None:
             """An outside file's errors with its text `now`, written to a copy in the scratch directory."""
-            if not mutant_built:
-                mutant_built.append(all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage))
             copy = scratch.lean.parent / "outside" / t.name
             copy.parent.mkdir(exist_ok=True)
             copy.write_text(now[str(t)])
             code, output = scratch.lake(env, "env", "lean", str(copy))
             found = [(str(t) if f == str(copy) else f, n, message) for f, n, _, message in located(output, LEAN_ERROR)]
-            return None if not mutant_built[0] or code and not found else found
+            return None if not built_mutant() or code and not found else found
 
         first = ""
         for t in new:  # the same rule as inside lean/ (`settle`), on the file's own commands (`file_roles`)
@@ -1005,7 +1056,6 @@ def main(argv: list[str] | None = None) -> int:
     with tempfile.TemporaryDirectory(prefix="trust-mutants-") as scratch_dir:
         pool: queue.Queue = queue.Queue()
         controls: dict = {}  # the builds without a mutant, by stage and cuts: shared by every scratch
-        reads: dict = {}  # `dependencies`: what each check reads, from the checkout's text
         if run_now:
             first = Scratch(root / "lean", Path(scratch_dir))
             code, output = first.lake(env, "build", *sorted({f"+{x}" for m in run_now for x in targets(tree, m, tests,
@@ -1013,12 +1063,6 @@ def main(argv: list[str] | None = None) -> int:
             failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
             if code or failing:
                 return print(f"the checks fail without a mutant:\n{output[-3000:]}{failing}", file=sys.stderr) or 2
-            checked = {tree.files[x] for m in run_now for x in targets(tree, m, tests, args.deep)}
-            probed = {f: (first.lean / f, tree.roles[f]) for f in sorted(checked)
-                      if any(r == "check" for _, _, r, _ in tree.roles.get(f, ()))}
-            probed.update({str(t): (t, file_roles(t)) for t in outside})
-            reads = dependencies(lambda *a: first.lake(env, *a), probed, sorted({m.definition for m in run_now}),
-                                 sorted(tree.files), Path(scratch_dir) / "reads", jobs)
             pool.put(first)
             for _ in range(min(jobs, len(run_now)) - 1):
                 pool.put(Scratch(root / "lean", Path(scratch_dir), first))
@@ -1026,7 +1070,7 @@ def main(argv: list[str] | None = None) -> int:
         def one(m: Mutant) -> None:
             scratch = pool.get()
             try:
-                m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep, controls, reads)
+                m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep, controls)
             finally:
                 pool.put(scratch)
             if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:

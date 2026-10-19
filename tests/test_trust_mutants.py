@@ -1213,10 +1213,45 @@ HUNT = [
      "by decide\n\nend", "nVar", {"KILLED"}),
     ("N10", "def NT (n : Nat) : Type := if n = 2 then Nat → Nat else Nat\n\ndef nD : Nat := 2  example (x : NT nD) : "
      "Nat := x 1", "nD", {"INVALID"}),
+    # The third hunt: the bridge on a cut proof reached otherwise. P1: a private theorem; P2: an instance typed by
+    # an abbreviation of `Decidable`; P3: `attribute [csimp]` on its own line; P4 (in Demo/Meta.lean): reflection
+    # through the MetaM API; P5 (the instance in Demo/Inst.lean): a theorem that only passes a cut one on; P7: the
+    # theorem as a class's proof field; P8: the mutant changes which instance Lean picks; P9: an `#eval!` of a Prop.
+    ("P1", "def pFast (n : Nat) : Bool := n < 3\n\nprivate theorem pFast_iff (n : Nat) : pFast n = true ↔ n < 3 := by\n"
+     "  simp [pFast]\n\ndef PSmall (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable (PSmall n) := "
+     "decidable_of_iff _ (pFast_iff n)\n\n#guard pFast 7 == pFast 7 && decide (PSmall 2)", "pFast", {"KILLED"}),
+    ("P2", "structure PVer where\n  v : Nat\n\ndef pFastLe (a b : PVer) : Bool := a.v ≤ b.v\n\ntheorem pFastLe_iff "
+     "(a b : PVer) : pFastLe a b = true ↔ a.v ≤ b.v := by\n  simp [pFastLe]\n\ninstance : LE PVer := ⟨fun a b => "
+     "a.v ≤ b.v⟩\n\ninstance : DecidableLE PVer := fun a b => decidable_of_iff _ (pFastLe_iff a b)\n\n"
+     "#guard (⟨2⟩ : PVer) ≤ ⟨3⟩", "pFastLe", {"KILLED"}),
+    ("P3", "def pRef (n : Nat) : Nat := 2 * n\n\ndef pImpl (n : Nat) : Nat := n <<< 1\n\ntheorem pRef_eq : @pRef = "
+     "@pImpl := by\n  funext n\n  simp [pRef, pImpl, Nat.shiftLeft_eq]\n  omega\n\nattribute [csimp] pRef_eq\n\n"
+     "#guard pImpl 0 == pImpl 0 && pRef 3 == 6", "pImpl", {"KILLED"}),
+    ("P4", None, "pZ", {"KILLED"}),
+    ("P5", "def pFast5 (n : Nat) : Bool := n < 3\n\ntheorem pFast5_iff (n : Nat) : pFast5 n = true ↔ n < 3 := by\n"
+     "  simp [pFast5]", "pFast5", {"KILLED"}),
+    ("P7", "class POrdered (α : Type) where\n  le : α → α → Prop\n  leb : α → α → Bool\n  leb_iff : ∀ a b, leb a b = "
+     "true ↔ le a b\n\ninstance [POrdered α] (a b : α) : Decidable (POrdered.le a b) := decidable_of_iff _ "
+     "(POrdered.leb_iff a b)\n\ndef pFastLeN (a b : Nat) : Bool := a ≤ b\n\ntheorem pFastLeN_iff (a b : Nat) : "
+     "pFastLeN a b = true ↔ a ≤ b := by\n  simp [pFastLeN]\n\ninstance : POrdered Nat := ⟨(· ≤ ·), pFastLeN, "
+     "pFastLeN_iff⟩\n\n#guard POrdered.le 2 3", "pFastLeN", {"KILLED"}),
+    ("P8", "abbrev pK : Nat := 3\n\ndef PSmallK (n : Nat) : Prop := n ≤ 3\n\ninstance (n : Nat) : Decidable (PSmallK n) "
+     ":= Nat.decLe n 3\n\ntheorem pSmall_K : (pK == 3) = true ↔ PSmallK pK := by simp [pK, PSmallK]\n\ninstance : "
+     "Decidable (PSmallK pK) := decidable_of_iff _ pSmall_K\n\n#guard pK == pK && decide (PSmallK 2)", "pK",
+     {"KILLED"}),
+    ("P9", "def pFast9 (n : Nat) : Bool := n < 3\n\ntheorem pFast9_iff (n : Nat) : pFast9 n = true ↔ n < 3 := by\n"
+     "  simp [pFast9]\n\ndef PSmall9 (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable (PSmall9 n) := "
+     "decidable_of_iff _ (pFast9_iff n)\n\n/-- info: true -/\n#guard_msgs in\n#eval! pFast9 7 = pFast9 7 ∧ PSmall9 2",
+     "pFast9", {"KILLED"}),
 ]
+INST = ("import Demo.Defs\n\nnamespace Demo\n\ndef PSmall5 (n : Nat) : Prop := n < 3\n\ntheorem pSmall5_iff (n : Nat) : "
+        "pFast5 n = true ↔ PSmall5 n := pFast5_iff n\n\ninstance (n : Nat) : Decidable (PSmall5 n) := decidable_of_iff "
+        "_ (pSmall5_iff n)\n\n#guard pFast5 7 == pFast5 7 && decide (PSmall5 2)\n\nend Demo\n")  # hunt P5
 META = ("import Lean\n\nnamespace Demo\n\ndef nZ (n : Nat) : Nat := n * 0 * 1\n\n/-- info: fun n => n * 0 * 1 -/\n"
         "#guard_msgs in\nopen Lean Meta in\n#eval show MetaM Format from do\n  let _ := nZ\n  ppExpr (← getConstInfo "
-        "``nZ).value!\n\nend Demo\n")  # hunt N3
+        "``nZ).value!\n\ndef pZ (n : Nat) : Nat := n * 0 * 1\n\n/-- info: fun n => n * 0 * 1 -/\n#guard_msgs in\n"
+        "open Lean Meta in\n#eval show MetaM Format from do\n  let _ := pZ\n  ppExpr (← whnfD (.const ``pZ []))\n\n"
+        "end Demo\n")  # hunt N3, P4
 REFUSED_FORM = "def {d} (o : Option Nat) : Bool := o.any (· == 1)\n\n#guard !{d} none"  # no `Option.take`
 
 
@@ -1239,6 +1274,7 @@ def stuck_package(root: Path, folder: Path) -> None:
     text += [f"\n{F12_FORM.replace('{d}', 'sSimpSteps')}\n", f"\n{REFUSED_FORM.replace('{d}', 'sRefused')}\n"]
     text += [f"\n{form}\n" for _, form, _, _ in HUNT if form]
     (root / "lean/Demo/Meta.lean").write_text(META)
+    (root / "lean/Demo/Inst.lean").write_text(INST)
     (root / "lean/Demo/Defs.lean").write_text("".join(text) + "\nend Demo\n")
     (root / "outside").mkdir()
     for row in ("outside-decide", "outside-equal"):
@@ -1311,9 +1347,10 @@ def test_a_name_lean_does_not_know_is_invalid(stuck_run):
 @pytest.mark.parametrize(("row", "form", "definition", "never"), HUNT, ids=[h[0] for h in HUNT])
 def test_a_hunt_form_gets_no_verdict_that_hides_it(stuck_run, row, form, definition, never):
     """The DRI's step 2 (adversarial hunt): each form it found gave KILLED (H1, H1r, H4, H5) or INVALID (H2) on the
-    tool after the inversion, and the second hunt's forms (N1-N10) on the tool after the first; with a check's
+    tool after the inversion, the second hunt's forms (N1-N10) on the tool after the first, and the third's
+    (P1-P9) on the tool after the second; with a check's
     hypotheses read as a proof (`classify`), one command per check, a kill only where Lean finds the definition in
-    the statement and no cut theorem behind its `Decidable` instance (`dependencies`), a cut proof without its
+    the statement, in the mutant's build, and no bridge on a cut proof (`probe`), a cut proof without its
     attributes, instance search and "Function expected" out of the refusals and a shared last line UNKNOWN, none
     does."""
     done, mutants = stuck_run
