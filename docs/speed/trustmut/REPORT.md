@@ -186,14 +186,17 @@ DRI decision; nothing here adds it.
 `tests/test_trust_mutants.py` builds a four-module Lean package under `tmp_path` (its declaration and predicate
 lists written by `tools/lean_statements.py`'s own per-module script, its `lean/statements.txt` by that tool's
 statement script) and runs the tool on it with `TMPDIR` in
-`tmp_path` and `VE_LEAN_SHARE=off`; one test checks the generator and one the check rule (`classify`) alone, without Lean. Each rule has a seeded bug
+`tmp_path` and `VE_LEAN_SHARE=off`; a second package is the truth table of section 1a (`table_package`), and the
+generator, the check rule (`classify`), the spans and the cuts have tests without Lean. Each rule has a seeded bug
 in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format); `uv run python tools/mutants.py
-docs/speed/trustmut/mutants.json` kills 14 of 14, each at its named test, the file restored to its exact bytes
-(`mutants-evidence.json`). Python is the only language whose code changed (no Lean, no Rust).
+docs/speed/trustmut/mutants.json` kills 24 of 24, each at its named test, the file restored to its exact bytes
+(`mutants-evidence.json`, run on the final tool). Python is the only language whose code changed (no Lean, no
+Rust). The parametrized tests have ids without spaces: `tools/mutants.py` reads a failing id up to its first space,
+so TM14, TM19 and TM24 first showed as survivors although their tests failed.
 
 | Mutant | Rule | Bug planted in `tools/trust_mutants.py` | Failing test |
 |---|---|---|---|
-| TM1 | a failing proof is no kill | a `proof` error counts as a kill | `test_a_failing_proof_is_no_kill` |
+| TM1 | a failing proof is cut and the build repeated, never left to decide the mutant | failing proofs are not cut | `test_a_failing_proof_is_no_kill` |
 | TM2 | the importing check modules are built | the second build stage is empty | `test_a_well_guarded_definition_has_no_survivor` |
 | TM3 | a guard over `[]` leaves a survivor | `list-empty` leaves the list unchanged | `test_a_guard_over_the_empty_list_leaves_survivors` |
 | TM4 | `--allow` suppresses exactly its operator | any operator of the definition is allowed | `test_allow_suppresses_exactly_its_operator` |
@@ -206,7 +209,17 @@ docs/speed/trustmut/mutants.json` kills 14 of 14, each at its named test, the fi
 | TM11 | a `#guard_msgs … in` line opens the command it wraps (review F6), in `tools/trust_map.py` | the wrapper is its own command again | `test_a_proof_wrapped_in_guard_msgs_is_no_kill`, `test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps` |
 | TM12 | a `#guard_msgs` around a tactic proof is a proof (review F6) | any wrapper is a check | `test_a_proof_wrapped_in_guard_msgs_is_no_kill` |
 | TM13 | a cut proof loses its `#guard_msgs` wrapper (review F6) | the wrapper is kept | `test_a_proof_wrapped_in_guard_msgs_is_no_kill` |
-| TM14 | a cut proof keeps the comments after it, the next `#guard_msgs`'s docstring (review F6) | the cut runs to the span's end | `test_a_proof_wrapped_in_guard_msgs_is_no_kill` |
+| TM14 | a cut proof keeps the comments after it, the next `#guard_msgs`'s docstring (review F6) | the cut runs to the span's end | `test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it` (since F7 the control cuts the check that loses its docstring, so the end-to-end test no longer sees it) |
+| TM15 | a check error kills only when the build without the mutant passes (F7) | no control | `test_the_truth_table_statuses` |
+| TM16 | every `#print` is a proof (F7) | `#print` is other | `test_the_truth_table_classes`, `test_the_truth_table_statuses` |
+| TM17 | a check form with a tactic block is a proof (F7) | tactic blocks are not counted | `test_the_truth_table_classes`, `test_the_truth_table_statuses` |
+| TM18 | a `#` command is cut by blanking it (F7) | it cannot be cut | `test_the_truth_table_statuses` |
+| TM19 | a blanked command loses its docstring (F7) | the docstring stays | `test_a_cut_command_is_blanked_with_its_docstring` |
+| TM20 | failing proofs are cut before a check error is read (F7) | not when a check fails too | `test_the_truth_table_statuses` |
+| TM21 | every `#` command opens its own span, in `tools/trust_map.py` (F7) | the old list of seven commands | `test_every_hash_command_opens_its_own_span` |
+| TM22 | an outside `--test` file kills only when it passes without the mutant (F7) | any failing file kills | `test_an_outside_test_that_fails_without_the_mutant_is_no_kill` |
+| TM23 | only an error in a check (or a `--test` file) kills; one in a definition is UNKNOWN | any error kills | `test_an_error_outside_every_check_is_unknown` |
+| TM24 | the blanking stops at a string the command before is still writing (F7) | it does not | `test_a_cut_command_is_blanked_with_its_docstring` |
 
 ## 4. Limits and follow-ups
 
@@ -222,7 +235,14 @@ docs/speed/trustmut/mutants.json` kills 14 of 14, each at its named test, the fi
   tell that from a proof script that breaks on a true statement (review F1), so such a definition shows survivors
   until a `#guard` or a `decide`/`rfl` check reads it (qt-a1: 133 survivors, no kill).
 - A `#guard_msgs` whose spec spans lines is not read as a wrapper: it is no check, and a proof under it cannot
-  lose it, so its failure is UNKNOWN (fail closed).
+  lose it, so its failure is UNKNOWN (fail closed), unless the control shows it fails without the mutant (then it
+  is cut).
+- A check that reads a proof the tool cuts is cut in that mutant's build (section 1a), so it cannot kill there even
+  when the mutant also changes the value it reads (the sweep's `#eval` rows): a survivor may be false, never a
+  kill. An outside `--test` file that fails without the mutant cannot be cut (the tool only reads it), so the
+  mutant is UNKNOWN.
+- Each control is one more build per stage and set of cuts, cached across mutants; a mutant whose broken proofs
+  differ needs its own. The replays measure no added time (section 1).
 - A proof term inside a definition (not a theorem or `example`) that fails cannot be cut, so the mutant is UNKNOWN
   (pk-1: 5, at `Readings/UnspecifiedWire.lean:526`).
 - Equivalent mutants (for example `.take 1` of a list that always has one element) are not detected; they go in the
@@ -234,37 +254,39 @@ docs/speed/trustmut/mutants.json` kills 14 of 14, each at its named test, the fi
 |---|---|
 | 1 MEASURE: operators first, replays on pk-1 6b58a0ff, qt-a1 b20a8e30, ap-2 584ac3bb and the recheck HEADs; table; stop rule | section 1; `replay.py`, `evidence/*.json`; 6 of 6 flagged |
 | 2 `tools/trust_mutants.py`: `--base`, trust_map classification ∩ diff, scratch copy with lean_share's build, only importing check modules plus `--test`, kill rule, SURVIVOR line, `--allow`, `--jobs`, `--max-mutants` with NOT RUN, `--json`, time budget | the tool; times in section 1 |
-| 3 tests in a new `tests/test_trust_mutants.py` (six behaviours) and one seeded bug per rule | section 3; 37 tests; TM1–TM14 |
+| 3 tests in a new `tests/test_trust_mutants.py` (six behaviours) and one seeded bug per rule | section 3; 93 tests; TM1–TM24 |
+| Review F7 (DRI note 2026-10-19): the class, the truth table, probes F1, F6, F7 and a sweep, REPORT:27 | section 1a; `sweep.py`, `evidence/sweep.json`; the check rule in section 1 |
 | 4 orchestrator lines, gate-check opinion | section 2 |
-| Rules: R2/R3 unchanged, nothing reads the tool; `trust_map.py --check`, review-ready and gate unchanged; no timing test | `DELTA.md`; no file of the gate or review-ready changed; trust_map's one change (F6) measures +0 here; the tests assert no time |
+| Rules: R2/R3 unchanged, nothing reads the tool; `trust_map.py --check`, review-ready and gate unchanged; no timing test | `DELTA.md`; no file of the gate or review-ready changed; trust_map's two changes (F6, F7) measure +0 here; the tests assert no time |
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
 | Size: at most ~500 changed lines outside generated files | over: see below |
 
-Size: about 1,320 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
-(`evidence/*.json`, `mutants-evidence.json`): `tools/trust_mutants.py` 522, the test 332, `replay.py` 94, the
-seeded bugs' `mutants.json` 145, `tools/trust_map.py` 7, this report and DELTA about 217. That is over twice the
-guideline. The size rule's
+Size: about 1,930 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
+(`evidence/*.json`, `mutants-evidence.json`): `tools/trust_mutants.py` 615, the test 589, `replay.py` 94,
+`sweep.py` 115, the seeded bugs' `mutants.json` 248, `tools/trust_map.py` 10, this report and DELTA about 290. That
+is nearly four times the guideline. The size rule's
 fallback is to deliver steps 1-3 for the operators step 1 showed matter; every operator but `arm-default`,
 `body-true`/`body-false`, `ne-eq`, `all-any` and `append-*` left a survivor on a finding's line, and removing those
 saves under 20 lines, so all are kept. The bulk is the runner the task asks for (selection, scratch copies with
-the shared build, staged builds, proof cuts, the kill rule), and splitting it would leave no usable tool.
+the shared build, staged builds, proof cuts, control builds, the kill rule) and the review rounds' tests (the
+F7 truth table and its package are about 250 of the test's lines), and splitting it would leave no usable tool.
 
 ## 6. Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no Lean answer is relayed; the tool reads Lake's build log, and a failure it cannot place is UNKNOWN.
 2. PASS: section 5 maps every task line to its delivery; no rule break (no product code, no permanent report
    test: `replay.py` reads saved evidence, D4).
-3. PASS: seeded bugs TM1–TM14 (`mutants.json`, `mutants-evidence.json`), each failing only its named test;
+3. PASS: seeded bugs TM1–TM24 (`mutants.json`, `mutants-evidence.json`), each failing its named test;
    `--allow` names an exact (definition, operator) pair (`test_allow_suppresses_exactly_its_operator`).
 4. N.A.: no Python, Lean or Rust product code changed.
 5. N.A.: no relayed field.
-6. PASS: synced with main (cb033316a) before the final runs; the chain runs the gate on the final HEAD.
+6. PASS: based on main at cb033316a; the chain runs the gate on the final HEAD.
 7. PASS: DELTA has no rows and reserves nothing; trust +0 (no Lean file changed).
 8. PASS: `git diff --stat main...HEAD -- ve lean rust conformance` is empty.
-9. PASS: `tools/select_tests.py` selects 24 units, `tests/test_trust_mutants.py` among them
-   (`repo_map.py file tools/trust_mutants.py`).
+9. PASS: `tools/select_tests.py` selects 32 units, `tests/test_trust_mutants.py` among them
+   (`repo_map.py file tools/trust_mutants.py`); all pass on the Mac runner.
 10. N.A.: no Lean statement or proof.
 11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
 12. N.A.: no product code; the tool's own times are in section 1.
-13. N.A.: no test removed or renamed; `tools/gate_collection.py --check --prebuilt`: 37 added, 0 refused, 0 stale,
+13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 93 added, 0 refused, 0 stale,
     0 malformed.
