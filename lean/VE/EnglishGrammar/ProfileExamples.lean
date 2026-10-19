@@ -488,7 +488,7 @@ def forms23 : List String :=
    "{0} is more severe than {1}", "{0} might not lead to {1}", "{0} cannot lead to {1}", "{0} may access {1}",
    "{0} must review {1}"]
 def entries (L : Lexicon) : List String := L.wordings.map (·.2) ++ L.negatives.map (·.2) ++ L.aliases.map (·.2.1)
-#guard idioms1.length == 13 && idioms2.length == 25
+#guard idioms1.length == 13 && idioms2.length == 29
 #guard (idioms1 ++ idioms2 ++ forms23 ++ ["deployed", "owns", "x"].filterMap (mechanicalWording · 1) ++
   ["owns"].filterMap (mechanicalWording · 2) ++ ["related"].filterMap (mechanicalWording · 3) ++
   ["owns"].filterMap (fallbackWording · 1) ++ ["owns"].filterMap (fallbackWording · 2) ++
