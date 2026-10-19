@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 
 from tests.test_readings_s1_lean import env_k, k1_document, lean, norm, reading, reading_set  # noqa: F401
+from tests.test_soft_norms_lean import ranks
 from ve import readings_route
 from ve.errors import CheckerUnavailable, VEError
 
@@ -25,11 +26,13 @@ FORGED = "zz-forged"
 RETYPED = {"null": None, "int": 7, "str": "7", "list": [], "dict": {}, "bool": True}
 ASKS_ALL = ["forall", "agent", ["forall", "user", ["binary", "asks", ["var", 1], ["var", 0]]]]
 # Members whose values Lean derives (D1): mutated at the root and one level below, a mutant there is relayed
-# unchanged or refused by the schema, never anything else.
+# unchanged or refused by the schema, never anything else. The keys of `generated_predicates` and a precedence
+# cause name the request; their forgeries are the tests below (review F1 of AR-17).
 DERIVED = (("vocabulary",), ("sizes",), ("generated_predicates",), ("finding", "cause"), ("slot", "*", "ast"),
-           ("units", "*", "content"), ("names", "*", "candidates", "*", "names"), ("error",))
+           ("units", "*", "content"), ("error",))
 # Faults in a bound member that leave every name bound: the result is Lean's to give (D1).
 RELAYED = {(("choices",), "reorder"), (("units",), "reorder"), (("slot",), "reorder"),  # Lean's order
+           (("names", "*", "candidates", "*", "names"), "reorder"),
            (("slot",), "empty"), (("slot", "*"), "drop"),  # which premises the slot holds; each kept label is bound
            (("narrowings_stale",), "empty"), (("narrowings_stale", "*"), "drop"),  # which narrowings are stale
            (("finding",), "retype:null")}  # whether the document superposes
@@ -47,6 +50,24 @@ def _stale_case():
     return raw, document
 
 
+def _holistic_case():
+    """M10b of lean/VE/Readings/Examples.lean on K1's vocabulary: two sets whose default readings, ranked `lo` and
+    `hi` under holistic outranking, collide on one act, the first switchable by `user`. Superposed with an
+    `outweighs` decision and its shared slot label, and exception and switch decisions in the name map."""
+    raw = env_k()
+    raw["vocabulary"]["soft"] = ranks(["hi", "lo"], "holistic", parties=("user",))
+    document, _ = k1_document(raw)
+    rs1 = document["reading_sets"][0]
+    rs1["readings"][1]["content"]["norm"].update(rank="lo", alterable=["user"])
+    rs2 = {**copy.deepcopy(rs1), "id": "rs2", "unit": "u2"}
+    rs2["readings"][0]["content"] = norm("be-firm", "avoid_required", False)
+    rs2["readings"][1]["content"] = norm("be-firm", "avoid_required", False, "default")
+    rs2["readings"][1]["content"]["norm"]["rank"] = "hi"
+    document["units"].append({"id": "u2"})
+    document["reading_sets"].append(rs2)
+    return raw, document
+
+
 def _recorded():
     """The genuine `readings-elaborate` documents the suite recorded (tests/data/route-cases.jsonl), each once."""
     seen = {}
@@ -55,7 +76,7 @@ def _recorded():
         if mode == "readings-route" and case.get("kind") == "readings-elaborate":
             seen.setdefault(json.dumps([case["environment"], case["document"]], sort_keys=True),
                             (case["environment"], case["document"]))
-    return list(seen.values()) + [_stale_case()]
+    return list(seen.values()) + [_stale_case(), _holistic_case()]
 
 
 def _ask(raw, document, row=None):
@@ -205,30 +226,136 @@ def test_two_faults_are_unavailable_when_one_is_in_what_the_row_names(genuine):
 
 def test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable(genuine):
     """`ReadingsUnsatisfiable` names the request's restrictions, a refusal under a choice its open sets at their
-    versions and indexes; a forgery naming anything else is unavailable, a bound one is Lean's text."""
+    versions and indexes; a forgery naming anything else is unavailable, a bound one is Lean's text. A text with
+    ` under ` names a choice there and nothing else: a part that is not one fails closed (review F2 of AR-17)."""
     raw, document, row = next(answer for answer in genuine if answer[2]["status"] == "error")
     assert row["error"] == "ReadingsUnsatisfiable: keep-default, keep-strict"
-    under = "ResourceLimit: generated background under "
-    cases = {"ReadingsUnsatisfiable: keep-default, zz": False, "ReadingsUnsatisfiable: keep-strict, keep-strict": False,
-             "ReadingsUnsatisfiable: keep-strict": True, under + "rs1@1:1": True, under + "rs1@1:2": False,
-             under + "rs1@2:0": False, under + "rs9@1:0": False, under + "rs1@1:0, rs1@1:1": False,
-             "InvalidInput: a text without a choice": True}
-    for text, bound in cases.items():
+    for text, bound in _REFUSALS.items():
         assert _ask(raw, document, {**row, "error": text}) == (("refused", text) if bound else ("unavailable",)), text
+
+
+_UNDER = "ResourceLimit: generated background under "
+# Each refusal text with whether it is bound to the documents of `_stale_case` and the recorded refusal.
+_REFUSALS = {"ReadingsUnsatisfiable: keep-default, zz": False, "ReadingsUnsatisfiable: keep-strict, keep-strict": False,
+             "ReadingsUnsatisfiable: keep-strict": True, _UNDER + "rs1@1:1": True, _UNDER + "rs1@1:2": False,
+             _UNDER + "rs1@2:0": False, _UNDER + "rs9@1:0": False, _UNDER + "rs1@1:0, rs1@1:1": False,
+             _UNDER + "rs9@1:0, junk": False, _UNDER + "rs1@1:99, junk": False, _UNDER + "rs1@1:0, junk": False,
+             _UNDER + "junk": False, _UNDER: False, "InvalidInput: a text without a choice": True}
+
+
+def test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s(genuine):
+    """Review F2 of AR-17, same class: the completion's relay (`_completion_elaborate`) binds a refusal as the plain
+    route does, instead of relaying any error row."""
+    raw, document, row = next(answer for answer in genuine if answer[2]["status"] == "error")
+    environment = readings_route.wire({**raw, "profiles": sorted({*raw["profiles"], readings_route.NORM_DEFAULTS})})
+    case = {"id": row["id"], "kind": "readings-elaborate", "environment": environment,
+            "document": readings_route.wire(readings_route.document_wire(
+                document["units"], document["reading_sets"], couplings=document.get("couplings", ()),
+                narrowings=document.get("narrowings", ())))}
+    for text, bound in _REFUSALS.items():
+        if bound:
+            with pytest.raises(VEError) as caught:
+                readings_route._completion_elaborate({**row, "error": text}, case)
+            assert not isinstance(caught.value, CheckerUnavailable)
+            assert getattr(caught.value, "message", str(caught.value)) == text, text
+        else:
+            with pytest.raises(CheckerUnavailable):
+                readings_route._completion_elaborate({**row, "error": text}, case)
 
 
 def test_a_slot_label_naming_what_the_request_has_not_is_unavailable(genuine):
     """A label names the request's couplings and narrowings, its open sets at their versions and, for a reading's
-    own premise, an index below the set's number of readings; Lean's own labels stay bound."""
+    own premise, an index below the set's number of readings, and a shared label a generated `outweighs` decision
+    on the request's act and ranks (review F1 of AR-17); Lean's own labels stay bound."""
     forged = ["coupling:zz", "narrowing:zz", "readings:rs9@1:one", "readings:rs1@7:one", "readings:rs1@1:9:quiet",
-              "unsaid:pair:avoid_required,help_required"]
+              "unsaid:pair:avoid_required,help_required", "readings:quiet:outweighs:zz:lo:hi",
+              "readings:quiet:outweighs:avoid_required:lo:zz", "readings:quiet:outweighs:avoid_required:hi:lo",
+              "readings:quiet:outweighs:help_required:lo:hi", "readings:quiet:excepted:rd-2-no-deception"]
     rows = [(raw, document, row) for raw, document, row in genuine if row.get("route") == "superposed"]
-    labels = {entry["label"].partition(":")[0] for _, _, row in rows for entry in row["slot"]}
-    assert {"readings", "coupling", "narrowing"} <= labels
+    labels = {entry["label"].rpartition(":")[0] if "quiet:outweighs" in entry["label"] else
+              entry["label"].partition(":")[0] for _, _, row in rows for entry in row["slot"]}
+    assert {"readings", "coupling", "narrowing", "readings:quiet:outweighs:avoid_required:lo"} <= labels
     for raw, document, row in rows:
         for label in forged:
             assert _ask(raw, document, {**row, "slot": [*row["slot"], {"label": label, "ast": ["top"]}]}) == (
                 "unavailable",), label
+
+
+def _superposed(genuine, holistic=False):
+    return next(answer for answer in genuine if answer[2].get("route") == "superposed"
+                and any(e["label"].startswith("readings:quiet:") for e in answer[2]["slot"]) is holistic)
+
+
+def test_f1_a_name_pair_outside_the_request_is_unavailable(genuine):
+    """Review F1 of AR-17: the name map is a reading's own names (its rule, and its rule's exception and switch
+    decisions) with their names in `sup D`; later answers may cite them (`readings_verdicts._check_sup_answer`), so a
+    pair naming a rule outside the request, a qualified name of another position or a decision the rule has not is
+    unavailable, and Lean's own map in its own order is relayed."""
+    raw, document, row = _superposed(genuine, holistic=True)
+    pairs = row["names"][0]["candidates"][1]["names"]
+    assert [pair[0] for pair in pairs] == ["no-deception", "soft__excepted__no_deception",
+                                            "soft__off__no_deception__user"]
+    forged = [lambda p: p.append(["zz-not-a-rule", "rd-1-zz"]),  # the review's probe
+              lambda p: p.__setitem__(0, ["no-deception", "rd-9-no-deception"]),
+              lambda p: p.__setitem__(0, ["zz", "rd-2-no-deception"]),
+              lambda p: p.__setitem__(1, [p[1][0] + "x", p[1][1]]),
+              lambda p: p.__setitem__(1, [p[1][0], p[1][1] + "x"]),
+              lambda p: p.__setitem__(2, [p[2][0].replace("user", "zz"), p[2][1].replace("user", "zz")]),
+              lambda p: p.pop(2), lambda p: p.append(list(p[0]))]
+    for forge in forged:
+        mutant = copy.deepcopy(row)
+        forge(mutant["names"][0]["candidates"][1]["names"])
+        assert _ask(raw, document, mutant) == ("unavailable",), mutant["names"]
+    mutant = copy.deepcopy(row)
+    mutant["names"][0]["candidates"][1]["names"].reverse()
+    assert _ask(raw, document, mutant) == _shown(mutant)
+    raw, document, row = _superposed(genuine)
+    mutant = copy.deepcopy(row)
+    mutant["names"][0]["candidates"][0]["names"].append(["zz-not-a-rule", "rd-1-zz"])
+    assert _ask(raw, document, mutant) == ("unavailable",)
+
+
+def test_f1_a_generated_decision_key_outside_the_request_is_unavailable(genuine):
+    """Review F1 of AR-17, same class: on the superposed route each generated soft decision's key names a rule of
+    `sup D` that has that decision (a default rule's exception, a party it lists for a switch) or an act and two
+    ranks of the request; a readings bit has no key; each key once. The decision names are Lean's."""
+    raw, document, row = _superposed(genuine, holistic=True)
+    keys = [entry["key"] for entry in row["generated_predicates"]]
+    assert {"excepted": "rd-2-no-deception"} in keys and {"off": "rd-2-no-deception", "party": "user"} in keys
+    assert {"outweighs": "avoid_required", "lower": "lo", "higher": "hi"} in keys
+    forged = [{"excepted": "rd-1-no-deception"}, {"excepted": "rd-9-no-deception"}, {"excepted": "zz"},
+              {"excepted": "rd-2-no-deception", "bearer": "user"}, {"off": "rd-2-no-deception", "party": "zz"},
+              {"off": "rd-4-be-firm", "party": "user"}, {"outweighs": "zz", "lower": "lo", "higher": "hi"},
+              {"outweighs": "avoid_required", "lower": "lo", "higher": "zz"},
+              {"outweighs": "avoid_required", "lower": "lo", "higher": "lo"}, {"aimed": "zz"}]
+    for key in forged:
+        mutant = copy.deepcopy(row)
+        mutant["generated_predicates"].append({"key": key, "layer": "soft", "name": "zz"})
+        assert _ask(raw, document, mutant) == ("unavailable",), key
+    for n, entry in enumerate(row["generated_predicates"]):
+        mutant = copy.deepcopy(row)
+        if entry["layer"] == "readings":
+            mutant["generated_predicates"][n]["key"] = {"excepted": "rd-2-no-deception"}
+        else:
+            mutant["generated_predicates"].append(copy.deepcopy(entry))
+        assert _ask(raw, document, mutant) == ("unavailable",), n
+    mutant = copy.deepcopy(row)
+    mutant["generated_predicates"][-1]["name"] = "zz"
+    assert _ask(raw, document, mutant) == _shown(mutant)  # the outweighs decision's name is Lean's
+
+
+def test_f1_a_precedence_cause_naming_another_rule_is_unavailable(genuine):
+    """Review F1 of AR-17 (C, same class): `precedence under <rule>` names a rule a fixed rule is over and a reading
+    of the named set declares; Lean's genuine cause is relayed, any other rule is unavailable."""
+    raw, document, row = next(answer for answer in genuine
+                               if (answer[2].get("finding") or {}).get("cause", "").startswith("precedence under "))
+    assert row["finding"]["cause"] == "precedence under waive-x"
+    assert _ask(raw, document, row) == _shown(row)
+    fixed = [unit["content"]["norm"]["name"] for unit in document["units"] if "norm" in (unit.get("content") or {})]
+    for rule in ["zz", "no-deception", *fixed]:
+        if rule != "waive-x":
+            mutant = {**row, "finding": {**row["finding"], "cause": "precedence under " + rule}}
+            assert _ask(raw, document, mutant) == ("unavailable",), rule
 
 
 # ---------------------------------------------------------------------------------------------------------------

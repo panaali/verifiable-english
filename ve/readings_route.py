@@ -75,7 +75,7 @@ def elaborate(environment, units, reading_sets, *, couplings=(), narrowings=(), 
         if row["status"] == "error":
             _bind_refusal(row["error"], document)
         elif row["route"] in ("enumerated", "superposed"):
-            _bind_elaborated(row, document)
+            _bind_elaborated(row, environment, document)
     except (_Invalid, Invalid, VEError, TypeError, KeyError, ValueError, AttributeError, IndexError,
             RecursionError) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
@@ -93,17 +93,18 @@ _CHOICE_PART = re.compile(r"(.+)@(0|[1-9][0-9]*):(0|[1-9][0-9]*)", re.DOTALL)
 
 def _bind_refusal(text, document):
     """The ids an S2 refusal names, bound to the request: the restriction ids of `ReadingsUnsatisfiable` are its
-    couplings and narrowings, each once; a choice after ` under ` names open sets of the request at their versions,
-    each once, with an index below its number of readings. The text itself is Lean's."""
+    couplings and narrowings, each once; a text with ` under ` names a choice after it and nothing else, open sets of
+    the request at their versions, each once, with an index below its number of readings (a part that is not one is
+    not Lean's: review F2 of AR-17). The text itself is Lean's."""
     if text.startswith(UNSATISFIABLE):
         ids = text[len(UNSATISFIABLE):].split(", ")
         restrictions = [k["id"] for k in document.get("couplings", [])] + [n["id"] for n in document.get("narrowings", [])]
         _need(len(set(ids)) == len(ids) and set(ids) <= set(restrictions))
         return
-    parts = [_CHOICE_PART.fullmatch(part) for part in text.rpartition(" under ")[2].split(", ")] \
-        if " under " in text else []
-    if not parts or not all(parts):
+    if " under " not in text:
         return
+    parts = [_CHOICE_PART.fullmatch(part) for part in text.rpartition(" under ")[2].split(", ")]
+    _need(all(parts))
     by_id = {R.id: R for R in Document(None, document).sets}
     named = [m[1] for m in parts]
     _need(len(set(named)) == len(named))
@@ -112,21 +113,41 @@ def _bind_refusal(text, document):
         _need(R is not None and R.version == decimal_value(m[2]) and decimal_value(m[3]) < len(R.candidates))
 
 
-def _bind_elaborated(row, document):
-    """The enumerated or superposed S2 row (Lean's `elaborateFields`) bound to the request: the sets a finding names,
-    the stale narrowings, the choices and the counts; on the superposed route also the units, the slot's labels and
-    the name map (`_bind_superposed`). What is left is Lean's alone: the finding's cause, the vocabulary, the
-    contents, the formulas, the qualified names and the sizes."""
-    sets = Document(None, document).sets
+def _bind_elaborated(row, environment, document):
+    """The enumerated or superposed S2 row (Lean's `elaborateFields`) bound to the request: the sets a finding names
+    and the rule a precedence cause names, the stale narrowings, the choices and the counts; on the superposed route
+    also the units, the generated soft decisions, the slot's labels and the name map (`_bind_superposed`). What is
+    left is Lean's alone: the text of a chain's cause, the vocabulary, the contents, the formulas, the generated
+    names and the sizes."""
+    parsed = Document(None, document)
+    sets = parsed.sets
     finding = row["finding"]
     if finding is not None:
         _need(finding["text"].startswith(NOT_SUPERPOSABLE))
         named = finding["text"][len(NOT_SUPERPOSABLE):].split(", ")
         _need(len(set(named)) == len(named) and set(named) <= {R.id for R in sets})
+        _bind_cause(finding["cause"], named, parsed)
     _bind_stale(row["narrowings_stale"], document)
     _bind_counts(row, sets)
     if row["route"] == "superposed":
-        _bind_superposed(row, document, sets)
+        _bind_superposed(row, environment, document, sets)
+
+
+# Lean's `notSuperposable`: a fixed rule's `over` names an interface rule its set's readings rank unlike.
+PRECEDENCE = "precedence under "
+
+
+def _bind_cause(cause, named, parsed):
+    """A finding's cause bound to the request where it names a rule (review F1 of AR-17): `precedence under <rule>`
+    names a rule that a fixed rule of the request is over and a reading of a set the finding names declares. The
+    other causes are Lean's text (the shape of the reading sets, the completion's, or the chain's diagnostic)."""
+    if not cause.startswith(PRECEDENCE):
+        return
+    rule = cause[len(PRECEDENCE):]
+    over = {name for item in parsed.items if item[0] == "fixed" and item[2].kind == "norm"
+            for name in item[2].body.get("over", [])}
+    _need(rule in over and any(body["name"] == rule for R in parsed.sets if R.id in named
+                               for a in R.candidates if a.content is not None for body in a.content.rules()))
 
 
 def _bind_counts(row, sets):
@@ -148,10 +169,12 @@ def _bind_counts(row, sets):
         _need(_nat(checked) and checked <= product)
 
 
-def _bind_superposed(row, document, sets):
-    """The superposed row's units, slot labels and name map bound to the request: each unit a unit of the request
-    (a fixed one once, with no reading fields; each reading with content of an open set once, at its set's unit and
-    version and at its position), each label once and naming the request's sets, couplings or narrowings."""
+def _bind_superposed(row, environment, document, sets):
+    """The superposed row's units, generated soft decisions, slot labels and name map bound to the request: each unit
+    a unit of the request (a fixed one once, with no reading fields; each reading with content of an open set once, at
+    its set's unit and version and at its position), each decision's key (`_bind_generated`), each label once and
+    naming the request's sets, couplings, narrowings or a generated `outweighs` decision, and the name map
+    (`_bind_names`)."""
     positions = _positions(sets)
     by_id = {R.id: R for R in sets}
     fixed_ids = {unit["id"] for unit in document["units"]} - {R.unit for R in sets}
@@ -170,11 +193,12 @@ def _bind_superposed(row, document, sets):
         _need(key not in seen)
         seen.add(key)
     _need(seen >= {(R.id, i) for R in sets for i, a in enumerate(R.candidates) if a.content is not None})
+    decisions = _bind_generated(row["generated_predicates"], environment, document, sets)
     labels = [entry["label"] for entry in row["slot"]]
     _need(len(set(labels)) == len(labels))
     for label in labels:
-        _bind_slot_label(label, document, by_id, shared=True)
-    _bind_names(row["names"], sets, positions)
+        _bind_slot_label(label, document, by_id, decisions)
+    _bind_names(row["names"], sets, positions, decisions)
 
 
 def _positions(sets):
@@ -188,10 +212,11 @@ def _bind_stale(stale, document):
     _need(len(set(stale)) == len(stale) and set(stale) <= {n["id"] for n in document.get("narrowings", [])})
 
 
-def _bind_slot_label(label, document, by_id, *, shared):
+def _bind_slot_label(label, document, by_id, decisions):
     """A slot label (`readings_sup.slot_label`) bound to the request: a coupling or narrowing label names one of
     the request's; a `one` or `own` label an open set at its version, `own` with an index below its number of
-    readings. A `shared` label (holistic outranking) is allowed where `shared` says so; its rule names are Lean's."""
+    readings; a `shared` label (holistic outranking, `readings:quiet:outweighs:<act>:<lower>:<higher>`) the key of
+    one of `decisions`, the generated decisions `_bind_generated` bound (none under the completion)."""
     from .readings_sup import slot_label
     decoded = slot_label(label)
     if decoded.kind in ("coupling", "narrowing"):
@@ -201,16 +226,85 @@ def _bind_slot_label(label, document, by_id, *, shared):
         _need(R is not None and R.version == decoded.version
               and (decoded.kind == "one" or decoded.index < len(R.candidates)))
     else:
-        _need(shared and decoded.kind == "shared")
+        _need(decoded.kind == "shared" and tuple(decoded.key.split(":")) in decisions)
 
 
-def _bind_names(names, sets, positions):
+def _bind_generated(generated, environment, document, sets):
+    """`sup D`'s generated predicates bound to the request (review F1 of AR-17): a readings bit has no key; a soft
+    decision's key names a rule of `sup D` (a fixed rule of the request, or a reading's rule under its position,
+    `qualify`), default for `excepted` and listing the party for `off`, or for `outweighs` an act and two ranks of
+    the request (`_bound_outweighs`); each key once. Returns Lean's decision names by their keys: the names are
+    Lean's."""
+    from .readings_sup import qualify
+    positions = _positions(sets)
+    rules = {item[2].body["name"]: item[2].body for item in Document(None, document).items
+             if item[0] == "fixed" and item[2].kind == "norm"}
+    rules.update({qualify(positions[(R.id, i)], a.content.body["name"]): a.content.body for R in sets
+                  for i, a in enumerate(R.candidates) if a.content is not None and a.content.kind == "norm"})
+    decisions = {}
+    for entry in generated:
+        if entry["layer"] == "readings":
+            _need(entry["key"] is None)
+            continue
+        _need(entry["layer"] == "soft")
+        key = decode_key(entry["key"])
+        if key[0] in ("excepted", "off"):
+            rule = rules.get(key[1])
+            _need(rule is not None and key[2] is None
+                  and (rule.get("mode", "strict") == "default" if key[0] == "excepted"
+                       else key[3] in rule.get("alterable", [])))
+        else:
+            _need(key[0] == "outweighs" and _bound_outweighs(key[1:], environment, rules.values()))
+        _need(key not in decisions)
+        decisions[key] = entry["name"]
+    return decisions
+
+
+def _bound_outweighs(key, environment, rules):
+    """An `outweighs` decision's act and ranks bound to the request: two distinct ranks it declares, each the rank of
+    a rule of `sup D` on that act (`VE.SoftNorms.actKey`). Which pairs collide and outrank is Lean's."""
+    from .environment import Environment
+    from .readings_s1 import _act_key
+    act, lower, higher = key
+    request = Environment(environment)
+    ranks = environment["vocabulary"].get("soft", {}).get("ranks", [])
+    ranked = {(_act_key(request, rule["predicate"]), rule.get("rank")) for rule in rules}
+    return lower != higher and {lower, higher} <= set(ranks) and {(act, lower), (act, higher)} <= ranked
+
+
+def _bind_names(names, sets, positions, decisions):
     """The name map bound to the request: every open set in source order at its version, every reading of it in
-    order with its id and position. The names themselves are Lean's."""
+    order with its id and position and exactly its own names (`_own_names`), in Lean's order (review F1 of AR-17:
+    the original names are what later answers may cite, `readings_verdicts._check_sup_answer`)."""
     _need([(e["set"], e["version"]) for e in names] == [(R.id, R.version) for R in sets])
     for entry, R in zip(names, sets):
         _need([(c["index"], c["id"], c["position"]) for c in entry["candidates"]]
               == [(i, a.id, positions[(R.id, i)]) for i, a in enumerate(R.candidates)])
+        for candidate, authored in zip(entry["candidates"], R.candidates):
+            pairs = [tuple(pair) for pair in candidate["names"]]
+            _need(sorted(pairs) == sorted(_own_names(authored, candidate["position"], decisions)))
+
+
+def _own_names(candidate, position, decisions):
+    """A reading's own names with their names in `sup D` (Lean's `candidateNames`), from the request: its rule's
+    name and that name under the reading's position (`qualify`); then, per decision its rule has (an exception when
+    it is default, a switch per party it lists), Lean's generated decision of the qualified rule (`decisions`) with
+    its name in the reading's own document, the same name with the rule's own key for the qualified one's (Lean's
+    `nameMap` renames the rule only). A reading without a rule has none."""
+    from .readings_sup import qualify
+    from .softnorms import rule_key
+    if candidate.content is None or candidate.content.kind != "norm":
+        return []
+    rule = candidate.content.body
+    own, qualified = rule["name"], qualify(position, rule["name"])
+    keys = ([("excepted", qualified, None)] if rule.get("mode", "strict") == "default" else []) + [
+        ("off", qualified, None, party) for party in rule.get("alterable", [])]
+    names = [(own, qualified)]
+    for key in keys:
+        name = decisions.get(key)
+        _need(name is not None and rule_key(qualified) in name)
+        names.append((name.replace(rule_key(qualified), rule_key(own), 1), name))
+    return names
 
 
 def _completion_elaborate(row, case, *, checked_part=False):
@@ -218,39 +312,48 @@ def _completion_elaborate(row, case, *, checked_part=False):
     verbatim, else its row bound to the request. Lean owns the route, the choices and their count; nothing of them is
     regenerated here. On the norms chain a content-bearing document takes the pending route when a candidate has no
     content, else the superposed one when Lean finds the filled document superposable (plan RD-6b) and the enumerated
-    one with Lean's cause otherwise, and the row carries the filled document."""
-    if row["status"] == "error":
-        raise VEError(row["error"])
+    one with Lean's cause otherwise, and the row carries the filled document. A refusal is bound as the plain
+    route's is (`_bind_refusal`)."""
     try:
         from .backends.service_schema import Invalid, check_row
         check_row("readings-route", row, case, 0)
         _need(row["id"] == case["id"])
-        sets = Document(None, case["document"]).sets
-        bearing = any(content_bearing(R) for R in sets)
-        pending = any(a.content is None for R in sets for a in R.candidates)
-        if checked_part:
-            # readings-defaults RD-4b: the main case's checked part has no open set; Lean reads it under the
-            # completion (its route stays W2's) and gives its filled document.
-            _need(not sets and row["route"] == "w2")
-            _bind_completion(row, case, checked_part=True)
-        elif not bearing:
-            # No completion: `_bind_completion` refuses every completion field and every pair's `gaps`.
-            _need(row["route"] == "w2")
-            _bind_completion(row, case)
+        if row["status"] == "error":
+            _bind_refusal(row["error"], case["document"])
         else:
-            _need(row["route"] in (("pending",) if pending else ("enumerated", "superposed")))
-            _bind_completion(row, case)
-            if row["route"] == "superposed":
-                _bind_completion_superposed(row, case, sets)
-            elif not pending:
-                _bind_completion_choices(row, sets)
+            _bind_completion_answer(row, case, checked_part)
     except (_Invalid, Invalid, VEError, TypeError, KeyError, ValueError, AttributeError, IndexError,
             RecursionError) as exc:
         raise CheckerUnavailable("the Lean readings route returned an invalid answer") from exc
+    if row["status"] == "error":
+        raise VEError(row["error"])
     return {key: value for key, value in row.items() if key not in ("id", "status")}
 
 
-def _bind_completion_choices(row, sets):
+def _bind_completion_answer(row, case, checked_part):
+    """An `ok` row under the completion bound to the request, by its route."""
+    sets = Document(None, case["document"]).sets
+    bearing = any(content_bearing(R) for R in sets)
+    pending = any(a.content is None for R in sets for a in R.candidates)
+    if checked_part:
+        # readings-defaults RD-4b: the main case's checked part has no open set; Lean reads it under the
+        # completion (its route stays W2's) and gives its filled document.
+        _need(not sets and row["route"] == "w2")
+        _bind_completion(row, case, checked_part=True)
+    elif not bearing:
+        # No completion: `_bind_completion` refuses every completion field and every pair's `gaps`.
+        _need(row["route"] == "w2")
+        _bind_completion(row, case)
+    else:
+        _need(row["route"] in (("pending",) if pending else ("enumerated", "superposed")))
+        _bind_completion(row, case)
+        if row["route"] == "superposed":
+            _bind_completion_superposed(row, case, sets)
+        elif not pending:
+            _bind_completion_choices(row, case, sets)
+
+
+def _bind_completion_choices(row, case, sets):
     """The enumerated row's finding and choices, bound to the request: every open set named in source order with
     Lean's cause (the completion's, or after RD-6b what keeps the filled document from superposing), each choice a
     reading with content of every open set, no choice twice, the count Lean's list's own."""
@@ -258,6 +361,7 @@ def _bind_completion_choices(row, sets):
     _need(type(finding) is dict and set(finding) == {"text", "cause"}
           and finding["text"] == "ReadingsNotSuperposable: " + ", ".join(R.id for R in sets)
           and _name(finding["cause"]))
+    _bind_cause(finding["cause"], [R.id for R in sets], Document(None, case["document"]))
     _need(_arr(_name)(row["narrowings_stale"]))
     if row["choices"] == "over":
         _need(row["choice_count"] == row["choices_checked"] == "over 64")
@@ -284,8 +388,8 @@ def _bind_choice_list(choices, count, sets):
 def _bind_completion_superposed(row, case, sets):
     """The superposed row under the completion (plan RD-6b; Lean's `elaborateFieldsND`), typed by the generated schema and
     bound to what the request fixes: the open sets in order with their versions and candidates, the unit ids, the
-    restriction ids, the declared pairs a `Fill_T` label names, and the choices. What is left is Lean's alone: the
-    formulas, the positions, the qualified names and the sizes."""
+    restriction ids, the declared pairs a `Fill_T` label names, the generated decisions and the name map (as on the
+    plain route), and the choices. What is left is Lean's alone: the formulas, the generated names and the sizes."""
     from .environment import Environment
     from .readings_sup import FILL, slot_label
     _need(row["finding"] is None)
@@ -328,13 +432,10 @@ def _bind_completion_superposed(row, case, sets):
     for entry in row["fill"]:
         decoded = slot_label(entry["label"])
         _need(decoded.kind == FILL and tuple(decoded.key.split(",")) in pairs)
+    decisions = _bind_generated(row["generated_predicates"], case["environment"], raw, sets)
     for entry in row["slot"]:
-        _bind_slot_label(entry["label"], raw, by_id, shared=False)
-    _bind_names(row["names"], sets, positions)
-    for entry, R in zip(row["names"], sets):
-        for candidate, authored in zip(entry["candidates"], R.candidates):
-            authored_names = {rule["name"] for rule in authored.content.rules()} if authored.content is not None else set()
-            _need(all(pair[0] in authored_names for pair in candidate["names"]))
+        _bind_slot_label(entry["label"], raw, by_id, decisions)
+    _bind_names(row["names"], sets, positions, decisions)
     if row["choices"] == "over":
         upper = 1
         for reading_set in sets:
