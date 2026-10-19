@@ -1,4 +1,5 @@
-"""Compare every theorem statement of lean/statements.txt at main with HEAD, ignoring `-- uses` lines."""
+"""Compare every theorem statement of lean/statements.txt at main with HEAD, ignoring the `-- uses` and `-- expr`
+metadata lines (the expression hash moves when an auxiliary matcher is renumbered)."""
 import subprocess, sys
 def blocks(text):
     out, name, body = {}, None, []
@@ -6,7 +7,7 @@ def blocks(text):
         if line.startswith("theorem "):
             if name: out[name] = body
             name, body = line.split()[1], []
-        elif name and not line.lstrip().startswith("-- uses"):
+        elif name and not line.lstrip().startswith(("-- uses", "-- expr")):
             body.append(line)
     if name: out[name] = body
     return out

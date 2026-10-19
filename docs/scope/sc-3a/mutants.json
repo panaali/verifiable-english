@@ -1,5 +1,5 @@
 {
- "note": "Each mutant was applied to the committed source, the four modules were built, and the source was restored (the tree was clean after the run). `test` is the first failing declaration; a `#guard` is named by its line in lean/VE/Scope/Examples.lean. For a mutant a proof caught first, `fixtures_with_proofs_bypassed` lists the fixtures that fail when the failing proofs are replaced by `sorry` in a scratch copy (never committed); `proof_only` explains the four mutants only a theorem can catch. Every new or moved trusted definition of tools/trust_map.py (VE/Layout/Anchors.lean S and D[V], VE/Layout/List.lean S) has at least one mutant.",
+ "note": "Each mutant was applied to the committed source, the four modules were built, and the source was restored (the tree was clean after the run). `test` is the first failing declaration and `also_fails` up to five more; a `#guard` is named by its line in lean/VE/Scope/Examples.lean. For a mutant a proof caught first, `fixtures_with_proofs_bypassed` lists the fixtures that fail when the failing proofs are replaced by `sorry` in a scratch copy (never committed); `proof_only` explains the four mutants only a theorem can catch. Every new or moved trusted definition of tools/trust_map.py (VE/Layout/Anchors.lean S and D[V], VE/Layout/List.lean S) has at least one mutant.",
  "mutants": [
   {
    "name": "within-start",
@@ -72,7 +72,14 @@
     "theorem innermost_within (lean/VE/Layout/Anchors.lean:164)"
    ],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "innermost_within"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 196)",
+    "theorem box_anchors"
+   ]
   },
   {
    "name": "units-order",
@@ -90,7 +97,21 @@
     "theorem anchorReach_iff (lean/VE/Layout/Anchors.lean:176)"
    ],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "anchorReach_iff",
+    "mem_anchorUnits"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 191)",
+    "#guard (line 192)",
+    "#guard (line 193)",
+    "#guard (line 194)",
+    "#guard (line 195)",
+    "#guard (line 214)",
+    "#guard (line 218)",
+    "theorem box_anchors"
+   ]
   },
   {
    "name": "heading-last",
@@ -107,7 +128,16 @@
     "theorem anchorReach_iff (lean/VE/Layout/Anchors.lean:191)"
    ],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "anchorReach_iff"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 192)",
+    "#guard (line 195)",
+    "#guard (line 214)",
+    "theorem box_anchors"
+   ]
   },
   {
    "name": "reach-heading",
@@ -124,7 +154,17 @@
     "theorem anchorReach_iff (lean/VE/Layout/Anchors.lean:192)"
    ],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "anchorReach_iff"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 191)",
+    "#guard (line 193)",
+    "#guard (line 194)",
+    "#guard (line 218)",
+    "theorem box_anchors"
+   ]
   },
   {
    "name": "reach-text",
@@ -312,7 +352,15 @@
    "test": "theorem req_ok (lean/VE/Layout/Anchors.lean:49)",
    "also_fails": [],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "req_ok"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 202)",
+    "#guard (line 295)",
+    "theorem anchor_checks"
+   ]
   },
   {
    "name": "runall-skip",
@@ -329,7 +377,17 @@
     "theorem runAll_cons (lean/VE/Layout/Anchors.lean:44)"
    ],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "runAll_cons",
+    "runAll_ok"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 202)",
+    "#guard (line 293)",
+    "#guard (line 295)",
+    "theorem anchor_checks"
+   ]
   },
   {
    "name": "allok-first",
@@ -346,7 +404,16 @@
     "theorem allOk_iff (lean/VE/Layout/Anchors.lean:57)"
    ],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "allOk_iff",
+    "allOk_ok"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 293)",
+    "#guard (line 295)",
+    "theorem anchor_checks"
+   ]
   },
   {
    "name": "dupof-none",
@@ -361,7 +428,13 @@
    "test": "theorem dupOf_none (lean/VE/Layout/Anchors.lean:71)",
    "also_fails": [],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "dupOf_none"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "theorem anchor_checks"
+   ]
   },
   {
    "name": "spanin-strict",
@@ -469,7 +542,14 @@
    "test": "theorem itemRun_ok (lean/VE/Layout/List.lean:325)",
    "also_fails": [],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
-   "result": "build failed; source restored"
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "itemRun_ok"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 227)",
+    "theorem short_items"
+   ]
   },
   {
    "name": "item-text",
