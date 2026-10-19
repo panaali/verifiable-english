@@ -1,0 +1,58 @@
+[
+  {
+    "bug": "bootstrap skipped",
+    "file": "tools/regen_generated.py",
+    "test": "tests/test_regen_generated.py::test_write_with_an_unpinned_service_bootstraps_once_then_runs_every_entry",
+    "planted": "cause = None",
+    "replaces": "cause = service.ready()",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "prune removes a pre-existing pin",
+    "file": "tools/regen_generated.py",
+    "test": "tests/test_regen_generated.py::test_a_pin_the_lock_had_before_the_run_is_never_removed",
+    "planted": "self.added |= set(_lock().get(\"ve_service\", ()))",
+    "replaces": "self.added |= set(_lock().get(\"ve_service\", ())) - before",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "prune left out (a superseded bootstrap pin stays)",
+    "file": "tools/regen_generated.py",
+    "test": "tests/test_regen_generated.py::test_a_bootstrap_pin_the_final_build_supersedes_is_removed",
+    "planted": "finally:\n        pass",
+    "replaces": "finally:\n        service.prune()",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "--check runs the dependent entries anyway",
+    "file": "tools/regen_generated.py",
+    "test": "tests/test_regen_generated.py::test_check_with_a_service_that_cannot_start_names_the_cause_once_and_checks_no_user",
+    "planted": "unchecked.append(entry.name)",
+    "replaces": "unchecked.append(entry.name)\n            continue",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "Lake asked again after the run's own lake-build (an extra lake call for a pinned and current service)",
+    "file": "tools/regen_generated.py",
+    "test": "tests/test_regen_generated.py::test_a_pinned_and_current_service_runs_no_bootstrap",
+    "planted": "if entry.name == BUILD:\n            self.current = None",
+    "replaces": "if entry.name == BUILD:\n            self.current = True",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "an entry that imports the service client loses its mark (english-codes)",
+    "file": "tools/regen_generated.py",
+    "test": "tests/test_regen_generated.py::test_every_entry_whose_commands_import_the_service_client_is_marked",
+    "planted": "fresh=\"tests/test_english_e2_responses.py::test_the_code_table_is_the_english_grammar_export\"),",
+    "replaces": "fresh=\"tests/test_english_e2_responses.py::test_the_code_table_is_the_english_grammar_export\",\n              service=\"write\"),",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "source_graph resolves a module to its importer again (question-fixtures unseen)",
+    "file": "tools/source_graph.py",
+    "test": "tests/test_regen_generated.py::test_every_entry_whose_commands_import_the_service_client_is_marked",
+    "planted": "if candidate in self._file_set:",
+    "replaces": "if candidate in self._file_set and candidate != importer:",
+    "result": "FAIL (test failed)"
+  }
+]
