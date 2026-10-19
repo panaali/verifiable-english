@@ -363,12 +363,14 @@ retyped) and asks each of P-1's three questions (plan 4.2) through today's route
 
 - P-1: each set's `default` candidate as a standalone soft document in `CE4`'s frame (`CE4`'s environment, the set's
   sentence, one unit with the candidate as its content);
-- P-2: `CE4` itself, as `tests/test_readings_sd_ce4.py` writes it (four sets, each with σ recorded).
+- P-2: `CE4` itself, as `tests/test_readings_sd_ce4.py` writes it (four sets, each with σ recorded);
+- P-1's controls: the same document with the set's `strict` candidate as the content, with no content, and with the
+  `strict` candidate in a frame without `soft-norms@0`.
 
 A P-1 probe counts as answered when today's answer says the conclusion follows (ALL); no verdict today says "unless an
 exception applies". Exit code, stdout and stderr are saved verbatim in
 `docs/research/evidence/defeasible/baseline/baseline.json`, with the documents, the questions, the command, the host
-load (32 CPUs, one-minute load 7.5 before and 7.1 after) and the hashes of `ve_service` and the Rust binary, both
+load (32 CPUs, one-minute load 16.2 before and 15.1 after) and the hashes of `ve_service` and the Rust binary, both
 pinned in `lean/checkers.lock`. No input differs from `main` (`ve/`, `lean/`, `rust/`, `tools/` and `CE4`'s files); no
 model was called; no whole-constitution document was run (L70).
 
@@ -378,13 +380,35 @@ model was called; no whole-constitution document was run (L70).
 | force-u0156-s03 | `∀ c ∀ u. ¬ system_prompt_deception_permitted(c, u)` | NONE | SOME |
 | force-u0263-s04-p2 | `∀ c ∀ s. explicit_instruction_against_exploits(c, s) → exploit_instruction_compliance_required(c, s)` | NONE | SOME |
 
-**Against the plan's expectation.** P-1: 0 of 3 probes answered, as expected ("0"). Each answer is NONE on the
-`assertion-shared-model` route: the premises have a model (`premises.status: model`) in which the conclusion fails,
-the strict countermodel the plan expects; the answer gives that model's id only, with `labels: []` and `vacuous: false`, and says nothing about exceptions. P-2: SOME for each set, as
-expected (C7's value for the first set). In each, the proof reads every set strictly and the countermodel reads the
-probed set by its default reading (index 1) and every other set strictly, with the decider's exception and, for
-u0156.s03, the gap filled 'yes'.
+**Against the plan's expectation.** P-1: 0 of 3 probes answered, the plan's "0", but not for the plan's reason. Each
+answer is NONE on the `assertion-shared-model` route, with `premises.status: model`, `labels: []` and `vacuous: false`,
+and says nothing about exceptions. The default rule never reaches the check. In a `soft-norms@0` document the norm unit
+goes to the soft document, and the route's fixed premises (`_fixed_premises` in `ve/document.py`) are only the
+asserted units, `norms` and `norm_defaults`. So each P-1 question is checked against 0 premises (`fixed_premises: 0` in
+the record). The NONE says that nothing entails the question; it does not say that the rule's exception was taken.
+The controls show it:
 
-So P-1's pilot number is measured: 0 before DF-1b. P-2's SOME is measured before DF-3. Reproduce with
+| Set | Fixed premises (P-1) | `strict` content | No content | `strict`, no `soft-norms@0` |
+|---|---|---|---|---|
+| force-u0036-s05 | 0 | NONE | NONE | ALL |
+| force-u0156-s03 | 0 | NONE | NONE | ALL |
+| force-u0263-s04-p2 | 0 | NONE | NONE | ALL |
+
+With the `strict` candidate as the content, the answer is again NONE over 0 premises, and its stdout is byte for byte
+the no-content answer, model ids included. The same rule without `soft-norms@0` is read as 4 fixed premises and
+answers ALL.
+
+P-2: SOME for each set, as expected (C7's value for the first set). In each, the proof reads every set strictly and the
+countermodel reads the probed set by its default reading (index 1) and every other set strictly, with the decider's
+exception and, for u0156.s03, the gap filled 'yes'.
+
+So P-1's pilot number is measured: 0 before DF-1b. That 0 measures that today's `--conclusion` route reads no rule of a
+soft document; it does not measure an exception taken. P-2's SOME is measured before DF-3.
+
+**For DF-1b.** Today's `--conclusion` route drops a soft document's rules, so P-1's strict half (the `strict`
+candidate entails the question) must not be checked there: on a `soft-norms@0` document it answers NONE where the strict
+rule entails the question. The route should answer ALL or refuse. That is a follow-up on `main`, not this item's.
+
+Reproduce with
 `uv run python research/defeasible/baseline.py` (needs the Lean service and the Rust binary at pinned hashes);
 `tests/test_defeasible_baseline_evidence.py` checks the saved record only.

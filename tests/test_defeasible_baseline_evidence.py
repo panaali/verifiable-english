@@ -107,9 +107,54 @@ def test_p1_measured_zero_of_three():
         data = json.loads(a["stdout"])
         assert data["verdict"] == "NONE" and data["premises"]["status"] == "model" and not data["vacuous"]
         assert "exception" not in a["stdout"]
+        # Review df-03 F1: the route reads no rule of a soft document, so the NONE is over an empty premise set.
+        assert a["fixed_premises"] == RECORD["measured"]["p1_fixed_premises"][a["set"]] == 0
     assert sum(baseline.follows(a) for a in answers) == RECORD["measured"]["p1_answered"] == 0
     assert RECORD["measured"]["p1_answered"] == RECORD["expected"]["p1_answered"]
     assert RECORD["measured"]["p1_verdicts"] == {a["set"]: a["verdict"] for a in answers}
+
+
+def _saved_strict(set_id):
+    """The set's `strict` candidate as the saved `CE4` document has it."""
+    meta, _ = front((EVIDENCE / "p2-ce4.ve.md").read_bytes())
+    [R] = [R for R in meta["reading_sets"] if R["id"] == set_id]
+    [strict] = [a for a in R["readings"] if a["id"] == "strict"]
+    return strict["content"]
+
+
+@pytest.mark.parametrize("set_id", SETS)
+def test_p1_controls_are_the_p1_document_with_one_change(set_id):
+    """Each saved control is the saved P-1 document with only its unit's content changed (to the saved `strict`
+    candidate, or none), or with `soft-norms@0` also dropped from the profiles."""
+    meta, text = front((EVIDENCE / f"p1-{set_id}.ve.md").read_bytes())
+    assert set(baseline.CONTROLS) == {"strict", "no-content", "strict-no-soft"}
+    for control, (candidate, soft) in baseline.CONTROLS.items():
+        expected = json.loads(json.dumps(meta))
+        expected["units"][0]["content"] = None if candidate is None else _saved_strict(set_id)
+        if not soft:
+            expected["environment"]["profiles"].remove("soft-norms@0")
+        data = (EVIDENCE / baseline.control_name(control, set_id)).read_bytes()
+        assert data == baseline.document_bytes(expected, text), control
+
+
+@pytest.mark.parametrize("set_id", SETS)
+def test_p1_none_is_the_empty_premise_set_not_an_exception(set_id):
+    """Review df-03 F1: on a `soft-norms@0` document today's `--conclusion` route reads no norm unit, so the `strict`
+    candidate answers exactly as no content does (NONE over 0 fixed premises, the same model ids); without
+    `soft-norms@0` the same rule is read and answers ALL."""
+    answers = {a["control"]: a for a in RECORD["controls"] if a["set"] == set_id}
+    assert list(answers) == list(baseline.CONTROLS)
+    for control, a in answers.items():
+        assert a["argv"] == ["ve", "document", "readings",
+                             f"docs/research/evidence/defeasible/baseline/{baseline.control_name(control, set_id)}",
+                             "--conclusion", f"docs/research/evidence/defeasible/baseline/question-{set_id}.json"]
+        assert (a["exit"], a["stderr"]) == (0, "")
+        assert json.loads(a["stdout"])["verdict"] == a["verdict"]
+        assert RECORD["measured"]["control_verdicts"][f"{control} {set_id}"] == a["verdict"]
+    strict, empty, plain = answers["strict"], answers["no-content"], answers["strict-no-soft"]
+    assert strict["fixed_premises"] == empty["fixed_premises"] == 0 and strict["stdout"] == empty["stdout"]
+    assert strict["verdict"] == "NONE" and json.loads(strict["stdout"])["premises"]["status"] == "model"
+    assert plain["verdict"] == "ALL" and plain["fixed_premises"] > 0
 
 
 def test_p2_measured_some_from_the_sets_own_default():
@@ -134,12 +179,18 @@ def test_record_names_main_the_command_the_host_and_pinned_binaries():
 
 
 def test_report_section_states_the_recorded_values():
-    """Section 6 names the main commit and states, per set, the recorded P-1 and P-2 verdicts."""
+    """Section 6 names the main commit and states, per set, the recorded P-1 and P-2 verdicts, then P-1's fixed
+    premises and its controls' verdicts."""
     section = REPORT.read_text().split("## 6. DF-0.3 baseline (", 1)[1]
     assert RECORD["date"].startswith(section[:10])
     assert f"`{RECORD['main_commit'][:8]}`" in section
+    measured = RECORD["measured"]
     for set_id in SETS:
-        [row] = [line for line in section.splitlines() if line.startswith(f"| {set_id} |")]
-        cells = [c.strip() for c in row.strip("|").split("|")]
-        assert cells[2:] == [RECORD["measured"]["p1_verdicts"][set_id], RECORD["measured"]["p2_verdicts"][set_id]]
+        verdicts, controls = ([c.strip() for c in line.strip("|").split("|")]
+                              for line in section.splitlines() if line.startswith(f"| {set_id} |"))
+        assert verdicts[2:] == [measured["p1_verdicts"][set_id], measured["p2_verdicts"][set_id]]
+        assert controls[1:] == [str(measured["p1_fixed_premises"][set_id]),
+                                *(measured["control_verdicts"][f"{c} {set_id}"] for c in baseline.CONTROLS)]
     assert "0 of 3 probes answered" in section
+    # Review df-03 F1: the NONE is over 0 premises, so the section must not call it the strict countermodel.
+    assert "the strict countermodel the plan expects" not in section
