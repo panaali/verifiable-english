@@ -756,8 +756,6 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Denotes.unique
 #print axioms VE.Calc.Derivation.check_sound
 #print axioms VE.Calc.Derivation.replay_sound
-#print axioms VE.Calc.Derive.run_counterexample
-#print axioms VE.Calc.Derive.run_follows
 #print axioms VE.Calc.Expr.evalL_agrees
 #print axioms VE.Calc.Expr.evalL_causes
 #print axioms VE.Calc.Expr.evalL_causes_on_names

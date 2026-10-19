@@ -2686,25 +2686,6 @@ theorem VE.Calc.Derivation.replay_sound
             ∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
   -- uses VE.Calc.Derivation.replay@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step@VE.Calc.Derive
   -- expr 2374285068
-theorem VE.Calc.Derive.run_counterexample
-  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (C : VE.Calc.QFact) (κ : List (String × Rat)),
-    VE.Calc.Derive.run P links C = VE.Calc.Answer.counterexample κ →
-      (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds (VE.Calc.Answer.point κ) f) ∧
-        (∀ (l : String × String),
-            l ∈ links →
-              VE.Calc.Answer.point κ l.fst = VE.Calc.Answer.point κ l.snd * VE.Calc.Answer.point κ l.snd ∧
-                0 ≤ VE.Calc.Answer.point κ l.snd) ∧
-          ¬VE.Calc.QFact.Holds (VE.Calc.Answer.point κ) C
-  -- uses VE.Calc.Answer.counterexample@VE.Calc.Derive VE.Calc.Answer.point@VE.Calc.Derive VE.Calc.Answer@VE.Calc.Derive VE.Calc.Derive.run@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
-  -- expr 545856537
-theorem VE.Calc.Derive.run_follows
-  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (C : VE.Calc.QFact) (d : VE.Calc.Derivation),
-    VE.Calc.Derive.run P links C = VE.Calc.Answer.follows d →
-      ∀ (κ : String → Rat),
-        (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds κ f) →
-          (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ C
-  -- uses VE.Calc.Answer.follows@VE.Calc.Derive VE.Calc.Answer@VE.Calc.Derive VE.Calc.Derivation@VE.Calc.Derive VE.Calc.Derive.run@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
-  -- expr 2463133502
 theorem VE.Calc.Expr.evalL_agrees
   ∀ (e : VE.Calc.Expr) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
     (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →

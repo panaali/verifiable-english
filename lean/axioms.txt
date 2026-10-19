@@ -385,8 +385,6 @@
 'VE.Calc.Denotes.unique' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Derivation.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Derivation.replay_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Calc.Derive.run_counterexample' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Calc.Derive.run_follows' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Expr.evalL_agrees' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Expr.evalL_causes' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Expr.evalL_causes_on_names' depends on axioms: [propext, Classical.choice, Quot.sound]

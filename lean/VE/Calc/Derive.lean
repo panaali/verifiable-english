@@ -114,7 +114,7 @@ theorem Counterexample.check_sound (P : List QFact) (links : List (String × Str
     Bool.not_eq_true', decide_eq_false_iff_not] at h
   exact ⟨h.1.1, h.1.2, h.2⟩
 
-/-- What the fact-level search answers. -/
+/-- What the fact-level search answers; untrusted until replayed (`Derivation.check`) or checked by evaluation. -/
 inductive Answer where
   | follows (d : Derivation)
   | counterexample (κ : List (String × Rat))
@@ -169,37 +169,5 @@ def Derive.search (P : List QFact) (links : List (String × String)) (C : QFact)
     | none => match squareSteps P links C with
       | some st => .follows ⟨st⟩
       | none => .unknown .derivationInconclusive
-
-/-- The checked runner: a derivation only if it replays, a counterexample only if it is checked by evaluation. -/
-def Derive.run (P : List QFact) (links : List (String × String)) (C : QFact) : Answer :=
-  match Derive.search P links C with
-  | .follows d => if d.check P links C then .follows d else .unknown .derivationInconclusive
-  | .counterexample κ =>
-      if counterexampleCheck P links C (Answer.point κ) then .counterexample κ else .unknown .derivationInconclusive
-  | .unknown u => .unknown u
-
-theorem Derive.run_follows (P : List QFact) (links : List (String × String)) (C : QFact) (d : Derivation)
-    (h : Derive.run P links C = .follows d) :
-    ∀ κ : String → Rat, (∀ f ∈ P, f.Holds κ) → (∀ l ∈ links, κ l.1 = κ l.2 * κ l.2 ∧ 0 ≤ κ l.2) → C.Holds κ := by
-  unfold Derive.run at h
-  split at h
-  · split at h
-    · rename_i hc; cases h; exact Derivation.check_sound P links C d hc
-    · cases h
-  · split at h <;> cases h
-  · cases h
-
-theorem Derive.run_counterexample (P : List QFact) (links : List (String × String)) (C : QFact)
-    (κ : List (String × Rat)) (h : Derive.run P links C = .counterexample κ) :
-    (∀ f ∈ P, f.Holds (Answer.point κ)) ∧
-      (∀ l ∈ links, Answer.point κ l.1 = Answer.point κ l.2 * Answer.point κ l.2 ∧ 0 ≤ Answer.point κ l.2) ∧
-      ¬ C.Holds (Answer.point κ) := by
-  unfold Derive.run at h
-  split at h
-  · split at h <;> cases h
-  · split at h
-    · rename_i hc; cases h; exact Counterexample.check_sound P links C _ hc
-    · cases h
-  · cases h
 
 end VE.Calc
