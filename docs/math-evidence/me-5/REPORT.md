@@ -17,7 +17,7 @@ match spec 5's text; the only additions are `deriving DecidableEq` (the square s
 |---|---|
 | `lean/VE/Calc/{Linear,FourierMotzkin,Derive}.lean` | yes; fixtures in `lean/VE/Calc/DeriveExamples.lean` (T, as ME-1's `Examples.lean`) |
 | Proves 3.4 | yes: the four theorems above, `lean/audit.py` PASS |
-| Fourier-Motzkin with multiplier tracking within 64 facts, 16 unknowns, 10,000 steps; replayed by `Farkas.check`; counterexamples checked by evaluation | yes (`FM.search`, `Derive.search`); the budget applies to each search and is counted before combinations are built. Answers are replayed (`Derivation.check`) or checked (`counterexampleCheck`): the fixtures do this today, and me-5b's runner will through `follows_of_check` / `counterexample_of_check` |
+| Fourier-Motzkin with multiplier tracking within 64 facts, 16 unknowns, 10,000 steps; replayed by `Farkas.check`; counterexamples checked by evaluation | yes (`FM.search`, `Derive.search`); the limits are checked once on the derivation's input, and one budget covers every search of the derivation, counted before combinations are built (review F1, F2). Answers are replayed (`Derivation.check`) or checked (`counterexampleCheck`): the fixtures do this today, and me-5b's runner will through `follows_of_check` / `counterexample_of_check` |
 | Square rule across a link, the claimed bound tried first | yes (`squareSteps`, `boundCandidate`, `FM.upperBound`) |
 | Fixtures H-6, H-6p, H-6n; no-solution system and its certificate; forged negative-weight certificate; s = 0, r = 1 (A2) | yes, over facts: `DeriveExamples.lean` 28-33 (H-6), 36-38 (H-6p), 41-42 (H-6n), 46-50 (A2), 54-60 (no solution), 64-69 (forged) |
 | R-3, R-4 | the Lean answers only: R-3's certificate (weights 1, 0, 1, 2/5, then the square step with a = 1/20, b = 1/4) and R-4's counterexample (r = 1/5, s = 1/25, d = 2/125) are reproduced exactly (lines 28, 41). The request and answer JSON need ME-2's wire: me-5b |
@@ -45,10 +45,12 @@ match spec 5's text; the only additions are `deriving DecidableEq` (the square s
 P or T. Recorded with `--allow` and signed under R16. The FOLLOW-UPS.md "## me-5" row asks for the ties pass and
 names me-5b.
 
-## Seeded bugs (Lean; [`mutants.json`](mutants.json), 25 mutants, each with its exact edit)
+## Seeded bugs (Lean; [`mutants.json`](mutants.json), 37 mutants, each with its exact edit)
 
 Each mutant is run twice: as written, and with every theorem's proof replaced by `sorry`, so that only the `#guard`s
 in `lean/VE/Calc/DeriveExamples.lean` can catch it. All 25 fail some guard in the second run, and were restored.
+Mutants 17-37 change only the search, which no theorem statement mentions; after the review fixes they were (re)run
+with `lake build VE.Calc.DeriveExamples` as written, and each fails the guards `mutants.json` names.
 - Trusted definitions: `QLin.eval` drops its constant (5); `QFact.Holds` swaps < and ≤ (6); `Answer.point`
   defaults to 2 (8).
 - `Farkas.check`: negative weight (1, the plan's seeded bug), no cancellation (2), zero constant without a strict
@@ -59,6 +61,11 @@ in `lean/VE/Calc/DeriveExamples.lean` can catch it. All 25 fail some guard in th
 - Search: bound not tried (17), loose bound (18), no linear refutation (19), strictness lost (20), weights not
   tracked (21), 17 unknowns (22), back-substitution off by one (23), `upperBound` keeps the loosest (24), 1,000
   steps (25).
+- Limits (review F1): 63 or 1,000 facts (26, 27; 27 is the review's probe), 15 unknowns (28), 20,000 steps (29),
+  `>` made `≥` in `eliminate` (30), links' names not counted (31).
+- Run-outs (review F2): `eliminate` drops the rows instead of throwing (32), a run-out reported as
+  `derivationInconclusive` (33), caught as "nothing found" in the claimed bound (34), the least upper bound (35) or a
+  Farkas step (36), and a fresh budget per search (37).
 
 ## Tests
 
@@ -69,6 +76,24 @@ tests pass (171 passed: trust, frozen sources, audit record, repo map). `regen_g
 passes 30 entries; route-cases needs the Rust binary, which this worktree lacks, and this item does not change it.
 `gate_collection.py --check --prebuilt`: 0 added, 0 removed, 0 refused. Full gate: left to the chain. No test failed
 that main-known-red.txt lists.
+
+## Review fixes (manage-agents me-5-review.final.md)
+
+- **F1 (B), limits unpinned.** Fixtures at and just past each limit, in `DeriveExamples.lean`: `ladder 63` / `ladder 64`
+  (64 and 65 facts with the negated conclusion), `spread 16` / `spread 17` and the same with a link (16 and 17
+  unknowns), `grid 6 8 14 1 2` / `grid 4 6 20 0 1` (exactly 10,000 combinations, the last elimination taking exactly
+  what is left, and 10,001). The limits are checked in one place, `FM.admits`, on the derivation's input; the inner
+  searches no longer check facts and unknowns again (the square rule's last Farkas step adds three facts, so a
+  62-premise derivation was refused there and nowhere else). Mutants 26-31; the review's probe (mutant 27) passes.
+- **F2 (B), a run-out reported as inconclusive.** Every search now runs in `FM.Search` (state: the combinations left
+  for the whole derivation; running out throws), and `Derive.searchWithin` maps a throw to `limit .derivationSteps`.
+  No search returns "nothing found" on a run-out, so the class (the claimed bound, the least upper bound, both Farkas
+  steps) has no member left, and the budget is per derivation, not per search. `budgetSweep` checks six fixtures at
+  every budget below their need (one of them runs all five searches, each taking combinations); `wideS` is the
+  review's example and probe; `grid 6 6 12 6 6` takes two searches of 6,228 combinations, each fitting alone.
+  Mutants 32-37.
+- **F3, F4 (C).** Size and `Expr.inline`: unchanged, as the review asks (Deviations, Next item).
+- **F5 (C).** Back-substitution's cost: a FOLLOW-UPS.md row under "## me-5", for me-5b.
 
 ## Pilot bytes
 
@@ -96,7 +121,8 @@ R-3 and R-4 as cases; `tests/test_calc_derive.py` once a relay exists. R-10a aft
 9. PASS: the selection includes `lake build`, which runs `DeriveExamples.lean`, the file every mutant breaks.
 10. PASS: `lean/audit.py` PASS; the statements are spec 5's verbatim; mutants 1-7 and 9-16 also break a proof as written
     (`proofs_failing_as_is` in `mutants.json`).
-11. PASS: 17 unknowns and 261,888 steps give `unknown (limit derivationSteps)`, never a verdict (guards 92-93).
-12. PASS: the step budget is counted before any combination is built (`FM.eliminate`); the first elimination's
-    count is pinned at 1,024 (guard 91), and the whole fixture file checks in about 3 s.
+11. PASS: each limit is pinned at and just past it (64/65 facts, 16/17 unknowns, 10,000/10,001 combinations), and every
+    budget below what a fixture needs gives `unknown (limit derivationSteps)`, never a verdict (`budgetSweep`).
+12. PASS: the step budget is counted before any combination is built (`FM.eliminate`) and covers the whole derivation
+    (`FM.Search`); the first elimination's count is pinned at 1,024, and the whole fixture file checks in about 8 s.
 13. PASS: no test removed; `gate_collection.py --check --prebuilt` reports 0 stale and 0 malformed trailers.
