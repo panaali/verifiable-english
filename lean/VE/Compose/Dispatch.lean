@@ -3,10 +3,12 @@ import VE.SpeechActs.Wire
 
 /-! The dispatcher (docs/spec/composition.md 1.1 to 1.3, 4.2, 8, 9.3).
 
-`today` is `ve/profiles.py` `checker_family`, check for check and text for text, followed by today's route
-choice (nine routes since `norm-defaults@0` was merged). `dispatch` is `today` on the list without the stack's
-wrapper profiles, followed by the wrappers: each present wrapper must sit on that route, and the head is the first
-wrapper present in stack order, or the route itself. It is the function the wrappers will call; S0 calls it nowhere. -/
+`today` is the former `ve/profiles.py` `checker_family` (`tests/profile_gate_oracle.py`), check for check and
+text for text, followed by today's route choice (nine routes since `norm-defaults@0` was merged). `dispatch` is
+`today` on the list without the stack's wrapper profiles, followed by the wrappers: each present wrapper must sit on
+that route, and the head is the first wrapper present in stack order, or the route itself. Since AR-10 no runner
+calls them: they are the specification of the legacy gate, and the runners call `gateOf profileTable` (below), which
+`gate_legacy` shows is `dispatch` on the legacy profiles. -/
 namespace VE.Compose
 
 def unsupported (message : String) : String := "UnsupportedProfile: " ++ message
@@ -25,7 +27,7 @@ inductive Route
   | readings | clauses | discourse
   deriving DecidableEq, Repr
 
-/-- ve/profiles.py checker_family as a gate: the eighteen checks of 4.2 in order, with its texts. -/
+/-- The former ve/profiles.py checker_family as a gate: the eighteen checks of 4.2 in order, with its texts. -/
 def todayGate (ps : List String) : Except String Unit :=
   if !decide (ps.Pairwise (· < ·)) then .error (unsupported "profiles must be sorted and unique")
   else if ps.contains "alternatives@0" && !ps.contains "norms@0" then
@@ -984,7 +986,8 @@ theorem todayGate_base (ps : List String) (hs : ps.Pairwise (· < ·)) (h : ∀ 
     exact find_congr fun p hp => by
       simp only [speechOthers, List.mem_cons, List.not_mem_nil, or_false] at hp
       rw [base_contains]
-      rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp [wrapperProfiles]
+      rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+        simp [wrapperProfiles]
   unfold todayGate
   rw [hunk, hsp]
   simp only [decide_eq_true hsb, Bool.not_true, Bool.false_eq_true, if_false]

@@ -2141,8 +2141,12 @@
     "VE/Compose/Dispatch.lean": {
       "S": [
         "VE.Compose.ChainList",
+        "VE.Compose.ProfileRow",
+        "VE.Compose.TableAdmits",
         "VE.Compose.TodayList",
         "VE.Compose.base",
+        "VE.Compose.legacyProfiles",
+        "VE.Compose.routeOf",
         "VE.Compose.stackHead",
         "VE.Compose.unsupported",
         "VE.Compose.wrapperHead",
@@ -2150,18 +2154,49 @@
       ],
       "G[V]": [
         "VE.Compose.Route",
+        {
+          "name": "VE.Compose.baseRows",
+          "tied": [
+            "VE.Compose.baseGate_today"
+          ]
+        },
         "VE.Compose.dispatch",
+        "VE.Compose.environmentProfiles",
+        "VE.Compose.environmentWrapper",
+        {
+          "name": "VE.Compose.gateOf",
+          "tied": [
+            "VE.Compose.gateOf_iff"
+          ]
+        },
+        "VE.Compose.heads",
+        "VE.Compose.needText",
         "VE.Compose.outside",
+        "VE.Compose.outsideProfiles",
+        {
+          "name": "VE.Compose.profileTable",
+          "tied": [
+            "VE.Compose.gate_legacy"
+          ]
+        },
         "VE.Compose.refusal",
+        "VE.Compose.refusing",
         "VE.Compose.registered",
+        "VE.Compose.rowChecks",
         "VE.Compose.sitsOn",
         "VE.Compose.speechAllow",
+        "VE.Compose.speechOthers",
         "VE.Compose.today",
         "VE.Compose.todayGate",
-        "VE.Compose.todayHead"
+        "VE.Compose.todayHead",
+        "VE.Compose.wrapperRows"
       ],
       "G[R]": [
         "VE.Compose.pendingWithDefaults"
+      ],
+      "P": [
+        "VE.Compose.faultOf",
+        "VE.Compose.gateMatch"
       ]
     },
     "VE/Compose/Examples.lean": {
@@ -2176,10 +2211,17 @@
         "VE.Compose.Examples.r16",
         "VE.Compose.Examples.r9",
         "VE.Compose.Examples.registrySorted",
+        "VE.Compose.Examples.stackSorted",
         "VE.Compose.Examples.todayCodes",
         "VE.Compose.Examples.todayText",
         "VE.Compose.Examples.todayTexts",
         "VE.Compose.Examples.unsortedLists"
+      ]
+    },
+    "VE/Compose/ProfilesMain.lean": {
+      "G[V]": [
+        "main",
+        "rowJson"
       ]
     },
     "VE/Compose/Slot.lean": {
