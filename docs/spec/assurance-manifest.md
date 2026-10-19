@@ -160,7 +160,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Norms/Flagged.lean` | 389 | 389 | 1–389 | `2921520480a4…` |
 | `lean/VE/Norms/Replay.lean` | 404 | 69 | 103–151, 283–302 | `741968e0457a…` |
 | `lean/VE/Norms/Wire.lean` | 324 | 295 | 28–322 | `3c1209445f6c…` |
-| `lean/VE/Acts/Lexical.lean` | 184 | 136 | 16–151 | `8e49414e6e64…` |
+| `lean/VE/Acts/Lexical.lean` | 184 | 136 | 16–151 | `dd37d314bdb3…` |
 | `lean/VE/Order/Wire.lean` | 301 | 220 | 25–238, 253–258 | `0f2b4ab4442d…` |
 | `lean/VE/Readings/Companions.lean` | 924 | 924 | 1–924 | `00b32a8d7627…` |
 | `lean/VE/Readings/SupFillWire.lean` | 302 | 302 | 1–302 | `e8d7e1dc2262…` |
