@@ -1,6 +1,7 @@
 No DRI signature is needed: trust growth K +0, S +6, V +0 is signed by standing ruling R16; no DELTA row reserves
 one. me-5 delivers the fact-level half of ME-5; the rest is **me-5b** (below). Size: 689 changed lines before this
-report and 791 with it (`git diff --numstat`, generated files excluded), over the ~600 cap (Deviations, below).
+report and 791 with it (`git diff --numstat`, generated files excluded), over the ~600 cap (Deviations, below);
+the review fixes (F1, F2) add 119, to about 910.
 
 # me-5 report: derivations over rational unknowns, at the level of facts
 
