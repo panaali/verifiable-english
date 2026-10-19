@@ -317,6 +317,10 @@ def test_a_decide_check_outside_the_directory_naming_the_definition_kills(defaul
     ("theorem", "theorem t : f 1 = 2 := by decide +kernel", "check"),
     ("command", "example (n : Nat) : f n = n := by\n  simp [f]", "proof"),
     ("command", "example (h : p) : q :=\n  t h", "proof"),
+    ("command", "example (_h : f 0 = 1) : f 1 = 2 := by decide", "proof"),  # hunt H1: a hypothesis decide never reads
+    ("command", "example (_h : f 0 = 1) : f 1 = 2 := rfl", "proof"),
+    ("theorem", "theorem t {α} [Inhabited α] : f 1 = 2 := by decide +revert", "proof"),
+    ("theorem", "theorem Demo.t : f 1 = 2 :=\n  by decide", "check"),
     ("command", "#guard_msgs in\nexample : f 1 = 2 := by simp [f]", "proof"),
     ("command", "#guard_msgs in example : f 1 = 2 := by simp [f]", "proof"),
     ("command", "#guard_msgs (drop warning) in\n@[simp] example : f 1 = 2 := by\n  simp [f]", "proof"),
@@ -760,16 +764,17 @@ def test_a_check_kills_only_when_its_message_states_a_refutation(name, message, 
     assert trust_mutants.judge(message, "check", line, line, trust_mutants.code_only(span)) == verdict
 
 
-@pytest.mark.parametrize(("text", "first", "last", "tactic", "after"), [
-    ("example : f 3 = 5 := rfl\n#guard g\n", 1, 1, "decide", "example : f 3 = 5 := by decide\n#guard g\n"),
-    ("#guard g\ntheorem t : f 3 = 5 := by\n  rfl -- c\n#guard h\n", 2, 3, "native_decide",
-     "#guard g\ntheorem t : f 3 = 5 := by native_decide\n -- c\n#guard h\n"),
-    ("#guard_msgs in\nexample : f 3 = 5 := rfl\n", 1, 2, "decide", "#guard_msgs in\nexample : f 3 = 5 := by decide\n"),
-    ("example : f 3 = 5 := by decide\n", 1, 1, "decide", "example : f 3 = 5 := by decide\n")], ids=short)
-def test_decided_rewrites_only_the_rfl_and_keeps_every_line(text, first, last, tactic, after):
-    """Review F11: the follow-up asks `decide` (or `native_decide`) of the `rfl` check's own statement, in place."""
+@pytest.mark.parametrize(("text", "first", "last", "after"), [
+    ("example : f 3 = 5 := rfl\n#guard g\n", 1, 1, "example : f 3 = 5 := by decide\n#guard g\n"),
+    ("#guard g\ntheorem t : f 3 = 5 := by\n  rfl -- c\n#guard h\n", 2, 3,
+     "#guard g\ntheorem t : f 3 = 5 := by decide\n -- c\n#guard h\n"),
+    ("#guard_msgs in\nexample : f 3 = 5 := rfl\n", 1, 2, "#guard_msgs in\nexample : f 3 = 5 := by decide\n"),
+    ("example : f 3 = 5 := by decide\n", 1, 1, "example : f 3 = 5 := by decide\n")], ids=short)
+def test_decided_rewrites_only_the_rfl_and_keeps_every_line(text, first, last, after):
+    """Review F11: the follow-up asks `decide` of the `rfl` check's own statement, in place (hunt H7: never
+    `native_decide`, which evaluates compiled code an `rfl` check does not read)."""
     import trust_mutants
-    assert trust_mutants.decided(text, first, last, tactic) == after
+    assert trust_mutants.decided(text, first, last) == after
 
 
 DEFINITION = "def bS : {n : Nat // n + 0 = n} := ⟨3, by simp (config := { maxSteps := 9 })⟩ + (by exact 1)\n"
@@ -783,8 +788,7 @@ REFUSALS = [
     ("invalid-field", "Invalid field `take`: The environment does not contain `Option.take`", False, "INVALID"),
     ("invalid-projection", "Invalid projection: Type of", False, "INVALID"),
     ("invalid-pattern", "Invalid pattern", False, "INVALID"),
-    ("synthesize", "failed to synthesize\n  LE Bool", False, "INVALID"),
-    ("implicit", "don't know how to synthesize implicit argument `α`", False, "INVALID"),
+    ("function-expected", "Function expected at\n  x", False, "INVALID"),
     ("missing-cases", "Missing cases:\n(Nat.succ _)", False, "INVALID"),
     # The safe cases: each is UNKNOWN.
     ("simp-steps", "`simp` failed: maximum number of steps exceeded", True, "UNKNOWN"),
@@ -796,6 +800,12 @@ REFUSALS = [
     ("type-mismatch", "Type mismatch\n  \"a\"\nhas type\n  String", False, "UNKNOWN"),
     ("rfl-stuck", "Application type mismatch: The argument\n  rfl\nhas type\n  ?m.10 = ?m.10", False, "UNKNOWN"),
     ("termination", "fail to show termination for\n  Demo.h3", False, "UNKNOWN"),
+    # Hunt H2, H3: instance search fails alike on a missing instance and on its own size or heartbeat budget.
+    ("synthesize", "failed to synthesize\n  LE Bool", False, "UNKNOWN"),
+    ("synthesize-budget", "failed to synthesize\n  Small 79\n(deterministic) timeout at `typeclass`, maximum number "
+     "of heartbeats (200) has been reached", False, "UNKNOWN"),
+    ("implicit", "don't know how to synthesize implicit argument `α`", False, "UNKNOWN"),
+    ("refusal-quoting-budget", "Invalid field `x`: maximum recursion depth has been reached", False, "UNKNOWN"),
     ("recursion", "maximum recursion depth has been reached", False, "UNKNOWN"),
     ("heartbeats", "(deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached",
      False, "UNKNOWN"),
@@ -811,6 +821,37 @@ def test_invalid_only_when_lean_refuses_the_mutated_text(name, message, inside, 
     UNKNOWN, which counts toward the exit code."""
     import trust_mutants
     assert ("INVALID" if trust_mutants.refused(message, inside) else "UNKNOWN") == verdict
+
+
+@pytest.mark.parametrize(("errors", "verdict"), [
+    ([("A.lean", 1, "Invalid field `take`", 32)], "INVALID"),
+    ([("A.lean", 1, "Invalid field `take`", 32), ("A.lean", 1, "unsolved goals", 62)], "UNKNOWN"),
+    ([("A.lean", 1, "unsolved goals", 62), ("A.lean", 1, "Invalid field `take`", 32)], "UNKNOWN"),
+    ([("A.lean", 1, "Invalid field `take`", 62)], "UNKNOWN")], ids=("refusal", "beside-a-tactic", "after-a-tactic",
+                                                                  "in-a-tactic"))
+def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(errors, verdict):
+    """Review F12: a tactic or budget failure in the mutated declaration is UNKNOWN even beside a refusal (it may have
+    caused one, or followed from it), and a refusal inside a tactic block is a tactic's."""
+    import trust_mutants
+    text = "def f (o : Option Nat) : Nat := (o.take 1).length + (by exact 0)\n"
+    assert text[32] == "(" and text[62] == "0"
+    assert trust_mutants.invalid(errors, text, (1, 1))[0] == verdict
+
+
+def test_named_writes_each_check_as_a_declaration_of_what_it_states():
+    """Hunt H4, H5: `dependencies` asks Lean what each check's statement reads, so `named` gives each check that can
+    kill a name, its statement as a theorem's type or its term as a definition's value (the copy is Lean's to read,
+    so lines may join)."""
+    import trust_mutants
+    text = ("/-- info: 3 -/\n#guard_msgs in\n#eval f 3\n#guard f 3 == 3 -- c\n"
+            "@[simp] theorem Demo.t : f 1 = 2 :=\n  by decide\nexample : f 1 = 2 := by simp\n#reduce f 3\n")
+    roles = [(1, 3, "check", None), (4, 4, "check", None), (5, 6, "check", None), (7, 7, "proof", None),
+             (8, 8, "check", None)]
+    named, spans = trust_mutants.named(text, roles)
+    assert named == ("/-- info: 3 -/\n" + " " * 14 + "\nnoncomputable def tmChk_1 := ( f 3)\n"
+                     "noncomputable def tmChk_4 := ( f 3 == 3) -- c\n@[simp] theorem tmChk_5 : f 1 = 2  := sorry\n"
+                     "example : f 1 = 2 := by simp\n#reduce f 3\n")
+    assert spans == {"tmChk_1": (1, 3), "tmChk_4": (4, 4), "tmChk_5": (5, 6)}
 
 
 @pytest.mark.parametrize(("token", "inside"), [("simp", True), ("maxSteps", True), ("⟨3", False), ("bS", False),
@@ -1075,11 +1116,12 @@ def test_a_check_out_of_budget_or_stuck_is_unknown(budget_run, name, check):
 # and `wf 1` alone a different one; `100` is a different one any reduction reaches. The far mutants must be the
 # row's verdict, every other mutant SURVIVOR. Before the fix every UNKNOWN row but `eval-throws`'s value was KILLED.
 STUCK = [  # (row, <far>, the check after the definition ({d} is the definition), the far mutants' verdict, detail)
-    ("rfl", "wf 1", "example : {d} 3 + 0 = 0 + {d} 3 := rfl", "UNKNOWN", "neither"),  # PROBE F11
-    ("by-rfl", "wf 1", "theorem {d}_t : {d} 3 + 0 = 0 + {d} 3 := by rfl", "UNKNOWN", "neither"),
-    ("rfl-equal", "n + wf 1", "example : {d} 3 = 3 := rfl", "UNKNOWN", "neither"),
+    ("rfl", "wf 1", "example : {d} 3 + 0 = 0 + {d} 3 := rfl", "UNKNOWN", "does not refute"),  # PROBE F11
+    ("by-rfl", "wf 1", "theorem {d}_t : {d} 3 + 0 = 0 + {d} 3 := by rfl", "UNKNOWN", "does not refute"),
+    ("rfl-equal", "n + wf 1", "example : {d} 3 = 3 := rfl", "UNKNOWN", "does not refute"),
     ("rfl-decide", "100", "example : {d} 3 = 3 := rfl", "KILLED", "(`decide`: Tactic `decide` proved"),
-    ("rfl-native", "wf 1", "example : {d} 3 = 3 := rfl", "KILLED", "(`native_decide`: Tactic `native_decide` evaluated"),
+    # Hunt H7: `native_decide` would evaluate compiled code, which an `rfl` check never reads, so only `decide` asks.
+    ("rfl-native", "wf 1", "example : {d} 3 = 3 := rfl", "UNKNOWN", "does not refute"),
     ("rfl-wrapped", "100", "#guard_msgs in\nexample : {d} 3 = 3 := rfl", "KILLED", "(`decide`:"),
     ("guard-expr", "n + wf 1", "#guard_expr {d} 3 =~ 3", "UNKNOWN", "Failed:"),
     ("reduce-doc", "n + wf 1", "/-- info: 3 -/\n#guard_msgs in\n#reduce {d} 3", "UNKNOWN", "Docstring"),
@@ -1089,10 +1131,29 @@ STUCK = [  # (row, <far>, the check after the definition ({d} is the definition)
     ("eval-throws", "100", '#eval (do if {d} 3 != 3 then throw (IO.userError "changed") : IO Unit)', "UNKNOWN",
      "changed"),
     ("rfl-in-definition", "100", "def {d}Sub : {x : Nat // x = 3} := ⟨{d} 3, rfl⟩", "UNKNOWN", "mismatch"),
-    ("outside-native", "wf 1", None, "KILLED", "(`native_decide`:"),
-    ("outside-equal", "n + wf 1", None, "UNKNOWN", "neither"),
+    ("outside-decide", "100", None, "KILLED", "(`decide`: Tactic `decide` proved"),
+    ("outside-equal", "n + wf 1", None, "UNKNOWN", "does not refute"),
 ]
 F12_FORM = "def {d} : {n : Nat // n + 0 = n} := ⟨3, by simp (config := { maxSteps := 9 })⟩"  # PROBE F12
+# The forms the adversarial hunt found (the DRI's note, step 2): (row, the text, the definition whose mutants must
+# have none of the statuses). H1: `decide` reads the goal, not the hypothesis the mutant falsifies; H4: the instance
+# rests on a theorem the tool cut, so `decide` computes through the mutated definition although `HSmallP 2` does not
+# read it; H5: a cut `@[csimp]` lemma sends the compiled `hRef` through the mutated `hImpl`; H2: instance search
+# stops at its size budget (128), which is no refusal of the text.
+HUNT = [
+    ("H1", "def hHyp (n : Nat) : Nat := n + 1\n\nexample (_h : hHyp 0 = 1) : hHyp 1 = 2 := by decide", "hHyp",
+     {"KILLED"}),
+    ("H1r", "def hHypRfl (n : Nat) : Nat := n + 1\n\nexample (_h : hHypRfl 0 = 1) : hHypRfl 1 = 2 := rfl", "hHypRfl",
+     {"KILLED"}),
+    ("H4", "def hFast (n : Nat) : Bool := n < 3\n\ntheorem hFast_iff (n : Nat) : hFast n = true ↔ n < 3 := by\n"
+     "  simp [hFast]\n\ndef HSmallP (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable (HSmallP n) := "
+     "decidable_of_iff _ (hFast_iff n)\n\nexample : HSmallP 2 := by decide", "hFast", {"KILLED"}),
+    ("H5", "def hRef (n : Nat) : Nat := 2 * n\n\ndef hImpl (n : Nat) : Nat := n <<< 1\n\n@[csimp] theorem hRef_eq : "
+     "@hRef = @hImpl := by\n  funext n\n  simp [hRef, hImpl, Nat.shiftLeft_eq]\n  omega\n\n#guard hRef 3 == 6", "hImpl",
+     {"KILLED"}),
+    ("H2", "class HSize (n : Nat) where\n  val : Nat\n\ninstance : HSize 0 := ⟨0⟩\n\ninstance [s : HSize n] : "
+     "HSize (n + 1) := ⟨s.val + 1⟩\n\ndef hSize : Nat := HSize.val 127\n\n#guard hSize == 127", "hSize", {"INVALID"}),
+]
 REFUSED_FORM = "def {d} (o : Option Nat) : Bool := o.any (· == 1)\n\n#guard !{d} none"  # no `Option.take`
 
 
@@ -1113,9 +1174,10 @@ def stuck_package(root: Path, folder: Path) -> None:
         text.append(f"\ndef {d} (n : Nat) : Nat := if n ≤ 3 then n else {far}\n\n"
                     + (check.replace("{d}", d) + "\n" if check else ""))
     text += [f"\n{F12_FORM.replace('{d}', 'sSimpSteps')}\n", f"\n{REFUSED_FORM.replace('{d}', 'sRefused')}\n"]
+    text += [f"\n{form}\n" for _, form, _, _ in HUNT]
     (root / "lean/Demo/Defs.lean").write_text("".join(text) + "\nend Demo\n")
     (root / "outside").mkdir()
-    for row in ("outside-native", "outside-equal"):
+    for row in ("outside-decide", "outside-equal"):
         (root / f"outside/{stuck_name(row)}.lean").write_text(
             f"import Demo.Defs\nexample : Demo.{stuck_name(row)} 3 = 3 := rfl\n")
     dump(root, folder, [])
@@ -1128,7 +1190,7 @@ def stuck_run(tmp_path_factory):
     root = tmp_path_factory.mktemp("stuck")
     stuck_package(root, tmp_path_factory.mktemp("stuck-dump"))
     return tool(root, tmp_path_factory.mktemp("stuck-run"), "--max-mutants", "1000", "--test",
-                "outside/sOutsideNative.lean", "--test", "outside/sOutsideEqual.lean")
+                "outside/sOutsideDecide.lean", "--test", "outside/sOutsideEqual.lean")
 
 
 @pytest.mark.parametrize(("row", "far", "check", "verdict", "detail"), STUCK, ids=[s[0] for s in STUCK])
@@ -1180,3 +1242,13 @@ def test_a_name_lean_does_not_know_is_invalid(stuck_run):
     _, mutants = stuck_run
     cuts = [m for m in of(mutants, "sRefused") if m["operator"].startswith("list-") and m["operator"] != "list-empty"]
     assert len(cuts) == 4 and all(m["status"] == "INVALID" and m["detail"].startswith("Invalid field") for m in cuts)
+
+
+@pytest.mark.parametrize(("row", "form", "definition", "never"), HUNT, ids=[h[0] for h in HUNT])
+def test_a_hunt_form_gets_no_verdict_that_hides_it(stuck_run, row, form, definition, never):
+    """The DRI's step 2 (adversarial hunt): each form it found gave KILLED (H1, H1r, H4, H5) or INVALID (H2) on the
+    tool after the inversion; with a check's hypotheses read as a proof (`classify`), a kill only of a statement that
+    reads the definition (`dependencies`) and instance search out of the refusals, none does."""
+    done, mutants = stuck_run
+    mine = of(mutants, definition)
+    assert mine and not [m for m in mine if m["status"] in never], (mine, done.stdout[-2000:])
