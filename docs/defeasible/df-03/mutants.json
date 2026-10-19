@@ -1,0 +1,36 @@
+{
+  "item": "df-03",
+  "note": "seeded bugs, each planted, run against tests/test_defeasible_baseline_evidence.py and restored; no product code changed (no Lean, no ve/, no Rust)",
+  "mutants": [
+    {
+      "file": "research/defeasible/baseline_cases.py",
+      "mutation": "[default] = [a for a in R[\"readings\"] if a[\"id\"] == \"default\"] -> [default] = [a for a in R[\"readings\"] if a[\"id\"] == \"strict\"]",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_p1_document_is_the_default_candidate_alone",
+      "killed": true
+    },
+    {
+      "file": "research/defeasible/baseline_cases.py",
+      "mutation": "[\"binary\", \"clarification_required\", [\"var\", 1], [\"var\", 0]] -> [\"binary\", \"clarification_required\", [\"var\", 0], [\"var\", 1]]",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_questions_are_p1s_three",
+      "killed": true
+    },
+    {
+      "file": "research/defeasible/baseline_cases.py",
+      "mutation": "answer[\"verdict\"] == \"ALL\" -> answer[\"verdict\"] in (\"ALL\", \"NONE\")",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_p1_measured_zero_of_three",
+      "killed": true
+    },
+    {
+      "file": "docs/research/evidence/defeasible/baseline/baseline.json",
+      "mutation": "\"verdict\": \"SOME\" -> \"verdict\": \"ALL\"",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_p2_measured_some_from_the_sets_own_default",
+      "killed": true
+    },
+    {
+      "file": "docs/research/defeasible-phase1.md",
+      "mutation": "| NONE | SOME | -> | NONE | ALL |",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_report_section_states_the_recorded_values",
+      "killed": true
+    }
+  ]
+}
