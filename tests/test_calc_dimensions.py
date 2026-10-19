@@ -79,6 +79,7 @@ FIXTURES = [
     # H-7: "D/(V − v)" is a time, "D/λ" is dimensionless, "D + T" is refused naming both.
     ("h7-time", f'dims {P} {H7} (.div (.val "d") (.sub (.val "vv") (.val "v")))', "ok time"),
     ("h7-ratio", f'dims {P} {H7} (.div (.val "d") (.val "lam"))', "ok dimensionless"),
+    ("h7-ratio-sum", f'dims {P} {H7} (.add (.div (.val "d") (.val "lam")) (.lit 1))', "ok dimensionless"),
     ("h7-sum", f'dims {P} {H7} (.add (.val "d") (.val "t"))', "DimensionMismatch: length and time"),
     ("h7-difference", f'dims {P} {H7} (.sub (.val "t") (.div (.val "d") (.val "lam")))',
      "DimensionMismatch: time and dimensionless"),
@@ -171,6 +172,29 @@ FIXTURES = [
 ]
 
 
+
+def replaced(value, path=()):
+    """Every copy of `value` with one node replaced by a malformed one (checklist item 5)."""
+    for bad in (7, True, None, [], {}, "deep"):
+        yield path, bad
+    children = value.items() if isinstance(value, dict) else enumerate(value) if isinstance(value, list) else ()
+    for key, child in children:
+        yield from replaced(child, path + (key,))
+
+
+def put(value, path, bad):
+    if not path:
+        return bad
+    copy = json.loads(json.dumps(value))
+    copy[path[0]] = put(value[path[0]], path[1:], bad) if len(path) > 1 else bad
+    return copy
+
+
+MALFORMED = [(f"malformed-{i}", f'decoded {lean_str(put(I2, path, bad))}'.replace(
+    '\\"deep\\"', "[" * 10000 + "]" * 10000)) for i, (path, bad) in enumerate(replaced(I2))]
+FIXTURES += [(key, expression, None) for key, expression in MALFORMED]
+
+
 @pytest.fixture(scope="module")
 def lean(tmp_path_factory):
     lake = shutil.which("lake")
@@ -186,9 +210,15 @@ def lean(tmp_path_factory):
     return dict(row.split("\t", 1) for row in done.stdout.splitlines())
 
 
-@pytest.mark.parametrize("key, expected", [(key, expected) for key, _, expected in FIXTURES])
+@pytest.mark.parametrize("key, expected", [(key, expected) for key, _, expected in FIXTURES if expected])
 def test_fixture(lean, key, expected):
     assert lean[key] == expected
+
+
+def test_malformed_environments_get_a_lean_answer(lean):
+    answers = [lean[key] for key, _ in MALFORMED]
+    assert all(a.startswith(("ok ", "InvalidInput: ")) for a in answers), [a for a in answers if not a.startswith("I")]
+    assert sum(a.startswith("ok ") for a in answers) == 4  # no units, a dimensionless unit, an exponent of 7 (twice)
 
 
 def test_every_fixture_printed_once(lean):
