@@ -1,7 +1,7 @@
 # qt-a2 build report: rounding and percent-of for `cardinality@0` (plan QT-A2, spec 3.8)
 
-No DRI signature is reserved. The one DELTA row (trust S +35) cites R16. Size is over the ~600-line guide, at about
-830 hand-written lines; see "Size". With qt-a1 and qt-a1b, `erase_iff` and `cardinality_elab_sound` now cover every
+No DRI signature is reserved. The one DELTA row (trust S +35) cites R16. Size is over the ~600-line guide, at 877
+hand-written lines added (36 changed); see "Size". With qt-a1 and qt-a1b, `erase_iff` and `cardinality_elab_sound` now cover every
 constructor of spec 3.2.
 
 Item: feature item qt-a2 (rank 20, acting DRI dri-featurefeed, 2026-10-18), branch `feature/qt-a2` from main 702ff7429.
@@ -34,7 +34,7 @@ not built; they belong to qt-a1c. DRI-DECISIONS-PHASE2 QT1–QT3 and ME3 change 
 | `roundHalfUp` only as a helper, if it stays | not defined (spec C9) | — |
 | FA4 (paper; 0.296/0.297, 52, 31, 21 of 243; "0.3" vs "0.30") | yes | `Examples.lean:269–271` |
 | Tie fixture, one per rule (1/8 to 0.13/0.12; 1/2 and 3/2) | yes | `:273–276` |
-| FA4c, FA4d (counts as operands; the two readings of "out of") | yes, FA4c's erased problem admitted (5 formulas) | `:288–313` |
+| FA4c, FA4d (counts as operands; the two readings of "out of") | yes; FA4c's erased problem is admitted (5 formulas) | `:288–314` |
 | FA4e (−1/2, ratio and percent) | yes | `:278–280` |
 | FA5 (1.028 under both rules, 103 % rounded and exact, 102.7778 %) | yes | `:316–336` |
 | FA5b (exactly 105 percent against 5 percentage points at 370, 378, 860) | yes | `:337–338` |
@@ -43,7 +43,7 @@ not built; they belong to qt-a1c. DRI-DECISIONS-PHASE2 QT1–QT3 and ME3 change 
 | Seeded bug: upper bound erased with `≤`, the `tiesUp` tie fixture fails | yes | below |
 
 A grid also checks meaning against erasure: every rule, a ratio, a rounded percentage and an exact percentage, with
-a from −6 to 6, b from 0 to 4, D from −7 to 7, and k of 0 or 1 (`:282`). The oracle `holdsFin` decides
+a from −3 to 3, b from 0 to 3, D from −4 to 4, and k of 0 or 1 (`:282`). The oracle `holdsFin` decides
 `VE.Numbers.RoundsTo` directly; the erased side evaluates `roundingQ` on the finite model.
 
 ## Seeded bugs (Lean only; `uv run python tools/mutants.py docs/quantities/qt-a2/mutants.json --no-baseline`)
@@ -93,16 +93,16 @@ Hand-written lines (`git diff --numstat` against the merge base, generated inven
 
 | File | Lines |
 |---|---|
-| Lean product files | +345 −25 |
+| Lean product files | +345 −23 |
 | `Examples.lean` | +183 −2 |
 | `mutants.json` | 78 |
 | `trust-classes.json` | +59 −5 |
 | `CARDINALITY.md` | +23 −6 |
 | `trust-baseline.json` | 7 |
 | follow-ups row | 8 |
-| DELTA and this report | about 130 |
+| DELTA and this report | +174 |
 
-The total is about 830 lines. The size was measured at 344 lines once the core proofs worked, before the fixtures.
+The total is 877 lines added and 36 changed. The size was measured at 344 lines once the core proofs worked, before the fixtures.
 The rest could not be cut into a qt-a2b without leaving this item incoherent:
 - The case theorems are R16's condition for the S lines, so they must ship with the constructors.
 - The tie fixture is the plan's seeded bug.
@@ -153,7 +153,9 @@ All AGENT.
 10. Lean statements say what is claimed: PASS, `evidence/statements.json` (71 exact, 1 spelling, 5 qt-a1c). Each
     mutant breaks the theorem it claims.
 11. Budgets and limits fail closed: N.A., no budget or limit added.
-12. No CPU or memory regression: PASS, no route changed. `Examples.lean` builds in about 20 s, the grid included.
+12. No CPU or memory regression: PASS, no route changed. Rebuilding `Examples.lean` alone took 39 s on the loaded
+    VM (`lake build`). The profiler puts about 24 s of that in FA4c/FA4d's two `#guard`s, which evaluate spec 9.1's
+    602-decision model through `countFin` in the interpreter; each (model, claim) pair is evaluated once.
 13. Test-removed trailers: N.A., no test removed or renamed.
 
 ## Commits
