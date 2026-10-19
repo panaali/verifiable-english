@@ -255,7 +255,6 @@ module VE.EnvironmentProofs
 module VE.EvaluationCounts
 module VE.Events.Calendar
 module VE.Events.Completion
-module VE.Events.Conservative
 module VE.Events.Decl
 module VE.Events.Examples
 module VE.Events.Premises
