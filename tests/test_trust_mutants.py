@@ -1306,8 +1306,58 @@ HUNT = [
     ("R6", None, "rFast6", {"KILLED"}),
     ("R7", None, "rTag7", {"KILLED"}),
     ("R8", None, "rRef8", {"KILLED"}),
+    # The sixth hunt. S1, S2: a definition named under the mutated one (`g.same`, a structure's `Limits.same`) is
+    # compared too; S3: one first reached through the mutated definition is compared where reached otherwise; S5: IO
+    # without the `unsafe*IO` names; S6 (a required package): IO in a dependency; S7: a check's `#eval` printing a
+    # probe line; S8: a library's `leanOptions` (its roots named); S9: a `local` `@[csimp]` lemma.
+    ("S1", "class SSize1 (n : Nat) where\n  val : Nat\n\ninstance : SSize1 0 := ⟨0⟩\n\ninstance [s : SSize1 "
+     "n] : SSize1 (n + 1) := ⟨s.val + 1⟩\n\nstructure SW1 (n : Nat) where\n  k : Nat\n\ninstance (priority "
+     ":= low) sFallback1 : BEq (SW1 n) := ⟨fun _ _ => false⟩\n\ninstance sSmall1 [SSize1 n] : BEq (SW1 "
+     "n) := ⟨fun _ _ => true⟩\n\nabbrev sG1 : Nat := 126\n\ndef sG1.same : Bool := (⟨0⟩ : SW1 sG1) == "
+     "⟨0⟩\n\n#guard sG1.same", "sG1", {"KILLED"}),
+    ("S2", "class SSize2 (n : Nat) where\n  val : Nat\n\ninstance : SSize2 0 := ⟨0⟩\n\ninstance [s : SSize2 "
+     "n] : SSize2 (n + 1) := ⟨s.val + 1⟩\n\nstructure SW2 (n : Nat) where\n  k : Nat\n\ninstance (priority "
+     ":= low) sFallback2 : BEq (SW2 n) := ⟨fun _ _ => false⟩\n\ninstance sSmall2 [SSize2 n] : BEq (SW2 "
+     "n) := ⟨fun _ _ => true⟩\n\nstructure SLimits2 where\n  depth : Nat := 126\n\ndef SLimits2.same : "
+     "Bool := (⟨0⟩ : SW2 ({} : SLimits2).depth) == ⟨0⟩\n\n#guard SLimits2.same", "SLimits2", {"KILLED"}),
+    ("S3", None, "sRef3", {"KILLED"}),
+    ("S5", None, "sRef5", {"KILLED"}),
+    ("S6", None, "sRef6", {"KILLED"}),
+    ("S7", None, "sRef7", {"KILLED"}),
+    ("S8", None, "sFast8", {"KILLED"}),
+    ("S9", "def sRef9 (n : Nat) : Nat := 2 * n\n\ndef sImpl9 (n : Nat) : Nat := n <<< 1\n\ntheorem sRef9_eq "
+     ": @sRef9 = @sImpl9 := by\n  funext n\n  simp [sRef9, sImpl9, Nat.shiftLeft_eq]\n  omega\n\nsection\n"
+     "\nattribute [local csimp] sRef9_eq\n\ndef sH9 (n : Nat) : Nat := sRef9 n\n\nend\n\n#guard sH9 3 == "
+     "6", "sImpl9", {"KILLED"}),
 ]
-HUNT_MODULES = {  # the fifth hunt's modules beyond its form's own
+HELPER = {  # hunt S6's required package
+    "Helper.lean": ("namespace Helper\n\nunsafe def lineOfImpl (path : String) (k : Nat) : String :=\n  match unsafeIO "
+        "(IO.FS.readFile path) with\n  | .ok s => (s.splitOn \"\\n\")[k]!\n  | .error _ => \"\"\n\n@[implemented_by "
+        "lineOfImpl]\ndef lineOf (_path : String) (_k : Nat) : String := \"\"\n\nend Helper\n"),
+    "lakefile.toml": ("name = \"helper\"\n\n[[lean_lib]]\nname = \"Helper\"\n"),
+}
+HUNT_MODULES = {  # the fifth and sixth hunts' modules beyond a form's own
+    "S3": {"Demo/SrcS3.lean": ("namespace Demo\n\ndef sSrc3 : String := include_str \"SrcS3.lean\"\n\ndef sRef3 (n : Nat) : Bool "
+        ":= n < 3 || sSrc3.isEmpty\n\ndef sHasLe3 : Bool := sSrc3.contains (Char.ofNat 8804)\n\n#guard sRef3 "
+        "7 == sRef3 7 && !sHasLe3\n\nend Demo\n")},
+    "S5": {"Demo/SrcS5.lean": ("namespace Demo\n\ndef sRef5 (n : Nat) : Bool := n < 3\n\nunsafe def sSrcImpl5 (k : Nat) : String "
+        ":=\n  match (IO.FS.readFile \"Demo/SrcS5.lean\").toBaseIO.run (unsafeCast ()) with\n  | .ok (.ok "
+        "s) _ => (s.splitOn \"\\n\")[k]!\n  | _ => \"\"\n\n@[implemented_by sSrcImpl5]\ndef sSrc5 (_k : Nat) "
+        ": String := \"\"\n\n#guard sSrc5 2 == \"def sRef5 (n : Nat) : Bool := n < 3\" && sRef5 7 == sRef5 "
+        "7\n\nend Demo\n")},
+    "S6": {"Demo/SrcS6.lean": ("import Helper\n\nnamespace Demo\n\ndef sRef6 (n : Nat) : Bool := n < 3\n\n#guard Helper.lineOf \"Demo/SrcS6.lean\" "
+        "4 == \"def sRef6 (n : Nat) : Bool := n < 3\" && sRef6 7 == sRef6 7\n\nend Demo\n"), "lakefile.toml": ("name = \"demo\"\n\n[[require]]\nname = \"helper\"\npath = \"{helper}\"\n\n[[lean_lib]]\nname = \"Demo\"\nglobs "
+        "= [\"Demo.*\"]\n")},
+    "S7": {"Demo/SrcS7.lean": ("namespace Demo\n\ndef sRef7 (n : Nat) : Bool := n < 3\n\ndef sSrc7 : String := ((include_str \"SrcS7.lean\").splitOn "
+        "\"\\n\")[2]!\n\n#guard sSrc7 == \"def sRef7 (n : Nat) : Bool := n < 3\" && sRef7 7 == sRef7 7\n\n#eval "
+        "IO.println \"tmChk_7 const Demo.sSrc7 0\"\n\nend Demo\n")},
+    "S8": {"Demo/S8.lean": ("namespace Demo\n\nclass SDeep8 (n : Nat) where\n  val : Nat\n\ninstance : SDeep8 0 := ⟨0⟩\n\ninstance "
+        "[s : SDeep8 n] : SDeep8 (n + 1) := ⟨s.val + 1⟩\n\ndef sFast8 (n : Nat) : Bool := n < 3\n\ntheorem "
+        "sFast8_iff (n : Nat) : sFast8 n = true ↔ n < 3 := by\n  simp [sFast8]\n\ndef SSmall8 (n : Nat) "
+        ": Prop := n < 3\n\ninstance (priority := low) sSlow8 (n : Nat) : Decidable (SSmall8 n) := Nat.decLt "
+        "n 3\n\ninstance sFastDec8 (n : Nat) [SDeep8 130] : Decidable (SSmall8 n) := decidable_of_iff "
+        "_ (sFast8_iff n)\n\n#guard sFast8 7 == sFast8 7 && decide (SSmall8 2)\n\nend Demo\n"), "lakefile.toml": ("name = \"demo\"\n\n[[lean_lib]]\nname = \"Demo\"\nroots = [\"Demo.S8\", \"Demo.Wf\"]\n\n[lean_lib.leanOptions]\n"
+        "synthInstance.maxSize = 512\n")},
     "R2": {"Demo/SrcR2.lean": ("namespace Demo\n\ndef rRef2 (n : Nat) : Bool := n < 3\n\nunsafe def rSrcImpl2 (k : Nat) : String "
         ":=\n  match unsafeIO (IO.FS.readFile \"Demo/SrcR2.lean\") with\n  | .ok s => (s.splitOn \"\\n\")[k]!\n"
         "  | .error _ => \"\"\n\n@[implemented_by rSrcImpl2]\ndef rSrc2 (_k : Nat) : String := \"\"\n\n#guard "
@@ -1471,8 +1521,13 @@ def test_a_hunt_form_gets_no_verdict_that_hides_it(tmp_path, row, form, definiti
         "end Demo\n")
     git(root, "add", ".")
     git(root, "commit", "-qm", "wf")
+    if row == "S6":  # a package of its own the tree requires
+        (tmp_path / "helper").mkdir()
+        (tmp_path / "helper/lean-toolchain").write_text((ROOT / "lean/lean-toolchain").read_text())
+        for name, text in HELPER.items():
+            (tmp_path / "helper" / name).write_text(text)
     for name, text in hunt_modules(row, form).items():
-        (root / "lean" / name).write_text(text)
+        (root / "lean" / name).write_text(text.replace("{helper}", str(tmp_path / "helper")))
     (tmp_path / "dump").mkdir()
     dump(root, tmp_path / "dump", [])
     git(root, "add", ".")

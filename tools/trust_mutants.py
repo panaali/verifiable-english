@@ -60,6 +60,7 @@ import os
 from pathlib import Path
 import queue
 import re
+import secrets
 import shutil
 import subprocess
 import sys
@@ -367,46 +368,60 @@ def classify(kind: str, span: str) -> str:
 # what a check reads of its source (hunt Q6).
 READS = """import Lean
 
+open Lean in
+def tmTrustCore (env : Environment) (c : Name) : Bool :=
+  (env.getModuleIdxFor? c).any fun i => [`Init, `Std, `Lean, `Lake].any (·.isPrefixOf env.header.moduleNames[i.toNat]!)
+
 open Lean Meta in
 def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
   let env ← getEnv
-  let mods : NameSet := ((← IO.getEnv "TM_TRUST_MODULES").getD "").splitOn " " |>.foldl (fun s n => s.insert n.toName) {}
+  let say (s : String) : IO Unit := do IO.println s!"{(← IO.getEnv "TM_TRUST_NONCE").getD ""} {k} {s}"
   let mutated := ((← IO.getEnv "TM_TRUST_MUTATED").getD "").toName
-  let inTree (c : Name) : Bool := !(env.getModuleIdxFor? c).any (fun i => !mods.contains env.header.moduleNames[i.toNat]!)
-  let csimps := (Lean.Compiler.CSimp.ext.getState env).thmNames.toList.filterMap fun t => do
-    let info ← env.find? t
-    return ((← info.type.getAppArgs[1]?).getAppFn.constName?.getD .anonymous, t)
-  let io := [``unsafeBaseIO, ``unsafeEIO, ``unsafeIO]
-  IO.println s!"{k} hash {roots.foldl (fun h e => mixHash h e.hash) 7}"
-  if roots.any (·.hasSorry) then IO.println s!"{k} error"
+  let inside (c : Name) : Bool := mutated != .anonymous &&
+    (c == mutated || mutated.isPrefixOf c && (c.isInternal || Meta.isMatcherCore env c || isAuxRecursor env c))
+  -- every theorem `@f = @g` outside Lean's core: a `@[csimp]` lemma, wherever (and however locally) it is given
+  let mut equations : NameMap (List Name) := {}
+  let ours := (env.header.moduleNames.zip env.header.moduleData).foldl (init := env.constants.map₂.toList.map (·.1))
+    fun a (m, d) => if [`Init, `Std, `Lean, `Lake].any (·.isPrefixOf m) then a else a ++ d.constNames.toList
+  for t in ours do
+    if let some (.thmInfo info) := env.find? t then
+      if let some f := (info.type.getAppArgs[1]?).bind (·.constName?) then
+        if info.type.isAppOfArity ``Eq 3 then equations := equations.insert f (t :: (equations.getD f []))
+  let io := [``unsafeBaseIO, ``unsafeEIO, ``unsafeIO, ``IO, ``EIO, ``BaseIO, ``IO.RealWorld]
+  say s!"hash {roots.foldl (fun h e => mixHash h e.hash) 7}"
+  if roots.any (·.hasSorry) then say "error"
   let mut seen : NameSet := {}
+  let mut seenInside : NameSet := {}
   let mut todo : List (Name × Bool) := roots.foldl (fun a e => a ++ e.getUsedConstants.toList.map (·, true)) []
   let mut found := false
   while !todo.isEmpty do
-    let (c, outside) := todo.head!
+    let (c, outside₀) := todo.head!
     todo := todo.tail!
-    if seen.contains c then continue
-    seen := seen.insert c
+    let outside := outside₀ && !inside c
+    if outside then
+      if seen.contains c then continue
+      seen := seen.insert c
+    else
+      if seenInside.contains c then continue
+      seenInside := seenInside.insert c
     if c == ``sorryAx && !found then
-      IO.println s!"{k} sorry"
+      say "sorry"
       found := true
-    if io.contains c || (Lean.getInitFnNameFor? env c).isSome then IO.println s!"{k} io"
     let some info := env.find? c | continue
-    let outside := outside && !(mutated != .anonymous && mutated.isPrefixOf c)
-    let compiled := (csimps.filter (·.1 == c)).map (·.2) ++ (Lean.Compiler.getImplementedBy? env c).toList ++
-      (Lean.getInitFnNameFor? env c).toList ++ [c ++ `_unsafe_rec]
-    todo := todo ++ compiled.map (·, outside)
-    if !inTree c then continue
+    if io.contains c || (Lean.getInitFnNameFor? env c).isSome || info.type.getUsedConstants.any io.contains then
+      say "io"
+    if tmTrustCore env c then continue
     let value := (info.value? (allowOpaque := true)).getD (mkConst ``True)
-    if outside && !(info matches .thmInfo _) then
-      IO.println s!"{k} const {c} {mixHash info.type.hash value.hash}"
-    todo := todo ++ (info.type.getUsedConstants.toList ++ value.getUsedConstants.toList).map (·, outside)
+    if outside && !(info matches .thmInfo _) then say s!"const {c} {mixHash info.type.hash value.hash}"
+    let compiled := equations.getD c [] ++ (Lean.Compiler.getImplementedBy? env c).toList ++
+      (Lean.getInitFnNameFor? env c).toList ++ [c ++ `_unsafe_rec]
+    todo := todo ++ (compiled ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList).map (·, outside)
 
 open Lean Elab Tactic Meta in
 elab "tm_trust_probe " k:ident : tactic => do
   let goal ← instantiateMVars (← getMainTarget)
   if (← getLCtx).foldl (fun n d => if d.isImplementationDetail then n else n + 1) 0 > 0 then
-    IO.println s!"{k.getId} hyps"
+    IO.println s!"{(← IO.getEnv "TM_TRUST_NONCE").getD ""} {k.getId} hyps"
   let inst ← try pure [← instantiateMVars (← synthInstance (mkApp (mkConst ``Decidable) goal))] catch _ => pure []
   tmTrustWalk k.getId (goal :: inst)
 
@@ -458,26 +473,32 @@ def install(lake, lean: Path) -> bool:
         source.unlink()
 
 
-def probe(lake, text: str, roles: list[tuple], copy: Path, outside: bool = False) -> dict[tuple[int, int], dict]:
+def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: bool = False
+          ) -> dict[tuple[int, int], dict]:
     """(first, last line) -> {"flags": what `READS` prints for the check (`hash <h>`, `sorry`, `io`, `hyps`, `error`),
     "consts": {constant: hash} of what it reads outside the mutated definition} for each check of `text` (a file of
-    one build, its `roles`), written to `copy` (`named`, with `import TmTrustProbe` on its first import line, every
-    line kept) and elaborated as the build does: `lake lean`, with the module's own options (a package's
-    `leanOptions` decide which instance Lean picks: hunt R5), or `lake env lean` for an `outside` --test file, as `run`
-    checks one. A check Lean could not read is absent (no kill)."""
+    one build, its `roles`), elaborated as the build elaborates it: written (`named`, with `import TmTrustProbe` on
+    its first import line, every line kept) to the module's own `path` in the scratch copy and restored afterwards,
+    and run by `lake("lean", path)` with that module's options (a package's or library's `leanOptions` decide which
+    instance Lean picks: hunt R5, S8); an `outside` --test file, which the tool only reads, is written to `path`
+    beside it and run by `lake env lean`, as `run` checks one. Only lines that start with this call's nonce are read
+    (a check's own `#eval` can print anything: hunt S7). A check Lean could not read is absent (no kill)."""
     text, spans = named(text, roles)
     lines = text.split("\n")
     first = next((n for n, line in enumerate(code_only(text).split("\n")) if line.startswith("import ")), 0)
     lines[first] = "import TmTrustProbe " + lines[first]
-    copy.write_text("\n".join(lines))
+    nonce = secrets.token_hex(12)
+    before = path.read_text() if path.is_file() else None
+    path.write_text("\n".join(lines))
     try:
-        said = lake(*(("env", "lean") if outside else ("lean",)), str(copy))[1]
+        said = lake({**env, "TM_TRUST_NONCE": nonce}, *(("env", "lean") if outside else ("lean",)), str(path))[1]
     finally:
-        copy.unlink()
+        path.write_text(before) if before is not None else path.unlink()
     out: dict = {}
     for line in said.splitlines():
+        mark, _, line = line.partition(" ")
         name, _, rest = line.partition(" ")
-        if name in spans and rest:
+        if mark == nonce and name in spans and rest:
             entry = out.setdefault(spans[name], {"flags": set(), "consts": {}})
             if rest.startswith("const "):
                 constant, _, value = rest[6:].rpartition(" ")
@@ -488,11 +509,9 @@ def probe(lake, text: str, roles: list[tuple], copy: Path, outside: bool = False
 
 
 def beside(lean: Path, f: str) -> Path:
-    """Where `probe` writes its copy of `f`: beside it in the scratch copy `lean` (an `include_str` there reads what
-    the file's does), or for an outside --test file, which the tool only reads, in the scratch directory."""
-    if Path(f).is_absolute():
-        return lean.parent / f"probe-{Path(f).name}"
-    return lean / Path(f).with_name(Path(f).stem + "__tm_probe.lean")
+    """Where `probe` writes `f`'s probe: the module itself in the scratch copy `lean` (restored afterwards), or for an
+    outside --test file, which the tool only reads, a copy in the scratch directory."""
+    return lean.parent / f"probe-{Path(f).name}" if Path(f).is_absolute() else lean / f
 
 
 def file_roles(path: Path) -> list[tuple[int, int, str, None]]:
@@ -816,7 +835,6 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
     well and never a kill; nor is one whose check cannot refute the mutated definition (`reading`)."""
     controls = {} if controls is None else controls
     hashes = {} if hashes is None else hashes  # (file, span) -> what `probe` gives each check without a mutant
-    probing = {**env, "TM_TRUST_MODULES": " ".join(sorted(tree.files))}
     rebuilt: list[bool] = []  # the stages built with the mutant again, once (a control built them without it)
     current: dict = {"mutant": True, "stage": []}  # whether the stage's last build is the mutant's
 
@@ -840,7 +858,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 current["mutant"] = True
             text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
                 read(f), tree.roles.get(f, ()))
-            probed[f] = probe(lambda *a: scratch.lake({**probing, "TM_TRUST_MUTATED": m.definition}, *a), text, mine,
+            probed[f] = probe(scratch.lake, {**env, "TM_TRUST_MUTATED": m.definition}, text, mine,
                               beside(scratch.lean, f), outside_file is not None)
         entry, control = probed[f].get(span), hashes.get(key)
         if entry is None or control is None or "error" in entry["flags"]:
@@ -1062,14 +1080,12 @@ def main(argv: list[str] | None = None) -> int:
             files = {f: (first.lean / f, tree.roles[f]) for f in sorted({tree.files[x] for m in run_now for x in targets(
                 tree, m, tests, args.deep)}) if any(r == "check" for _, _, r, _ in tree.roles.get(f, ()))}
             files.update({str(t): (t, file_roles(t)) for t in outside})
-            probing = {**env, "TM_TRUST_MODULES": " ".join(sorted(tree.files))}
-            if not install(lambda *a: first.lake(probing, *a), first.lean):
+            if not install(lambda *a: first.lake(env, *a), first.lean):
                 return print("the Lean probe (READS) does not compile", file=sys.stderr) or 2
 
             def control(item: tuple[int, tuple[str, tuple[Path, list]]]) -> dict:
                 i, (key, (path, roles)) = item
-                got = probe(lambda *a: first.lake(probing, *a), path.read_text(), roles, beside(first.lean, key),
-                            Path(key).is_absolute())
+                got = probe(first.lake, env, path.read_text(), roles, beside(first.lean, key), Path(key).is_absolute())
                 return {(key, span): said for span, said in got.items()}
             with ThreadPoolExecutor(max_workers=jobs) as executor:  # each check's elaboration without a mutant
                 hashes.update({k: v for part in executor.map(control, enumerate(files.items())) for k, v in
