@@ -10853,6 +10853,12 @@ theorem VE.EvaluationCounts.route_decodeFormulas_length
     VE.Route.Wire.decodeFormulas E j data = Except.ok fs → ∃ arr, j.getArr? = Except.ok arr ∧ fs.length = arr.size
   -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
   -- expr 761532944
+theorem VE.Events.boundRole_mem
+  ∀ {V : VE.Events.EventsEnv} {s bd : String},
+    VE.Events.boundRole V s = Option.some bd →
+      (∃ e, e ∈ V.events ∧ e.sort = s ∧ e.on = bd) ∨ ∃ x, x ∈ V.states ∧ x.sort = s ∧ x.ends = bd
+  -- uses VE.Events.EventSort.on@VE.Events.Decl VE.Events.EventSort.sort@VE.Events.Decl VE.Events.EventSort@VE.Events.Decl VE.Events.EventsEnv.events@VE.Events.Decl VE.Events.EventsEnv.states@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort.ends@VE.Events.Decl VE.Events.StateSort.sort@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Events.boundRole@VE.Events.Decl
+  -- expr 1463856964
 theorem VE.Events.calendar_sat
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.EventsTyped E V = Bool.true →
@@ -10874,6 +10880,47 @@ theorem VE.Events.chain_positions
         (∀ (p : β × β), p ∈ l.zip l.tail → R p.fst p.snd) → ∀ (x : β), x ∈ l → ∀ (y : β), y ∈ l → x = y ∨ R x y ∨ R y x
   -- uses
   -- expr 3525567212
+theorem VE.Events.completion_admissible
+  ∀ {α : Type} [DecidableEq α] (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.EventsTyped E V = Bool.true →
+      ∀ (M : VE.FiniteModel α),
+        M.Valid E → ∀ (num : α → Nat), VE.Events.Embeds V M.asStructure num → (VE.Events.completion V M num).Admissible E
+  -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Admissible@VE.Semantics
+  -- expr 2825121993
+theorem VE.Events.completion_before_new
+  ∀ {α : Type} {V : VE.Events.EventsEnv} {M : VE.FiniteModel α} {num : α → Nat} {z w : α ⊕ Nat},
+    VE.Events.oldTuple [z, w] = Option.none →
+      ((VE.Events.completion V M num).relation V.before [z, w] ↔
+        VE.Events.isDayC V M num z ∧ VE.Events.isDayC V M num w ∧ VE.Events.numOf num z < VE.Events.numOf num w)
+  -- uses VE.Events.EventsEnv.before@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.Events.isDayC@VE.Events.Completion VE.Events.numOf@VE.Events.Completion VE.Events.oldTuple@VE.Events.Completion VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics
+  -- expr 460115898
+theorem VE.Events.completion_extension
+  ∀ {α : Type} [DecidableEq α] (V : VE.Events.EventsEnv) (M : VE.FiniteModel α) (num : α → Nat),
+    VE.Events.Embeds V M.asStructure num →
+      VE.Events.DayExtension V.day [V.before] M.asStructure (VE.Events.completion V M num) Sum.inl
+  -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv.before@VE.Events.Decl VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics
+  -- expr 1477851673
+theorem VE.Events.completion_reading
+  ∀ {α : Type} [DecidableEq α] (V : VE.Events.EventsEnv) (M : VE.FiniteModel α) (num : α → Nat),
+    VE.Events.Embeds V M.asStructure num →
+      VE.Events.CalendarReading V (VE.Events.completion V M num) (VE.Events.numOf num)
+  -- uses VE.Events.CalendarReading@VE.Events.Premises VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.Events.numOf@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite
+  -- expr 4070260444
+theorem VE.Events.completion_typed
+  ∀ {α : Type} {V : VE.Events.EventsEnv} {M : VE.FiniteModel α} {num : α → Nat} (ss : List String) (xs : List α),
+    VE.TupleTyped M.asStructure ss xs → VE.TupleTyped (VE.Events.completion V M num) ss (List.map Sum.inl xs)
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2837478597
+theorem VE.Events.conventions_exact
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true →
+      ∀ (ng : List String),
+        (∀ (p : String), p ∈ VE.Events.rolePreds V ++ List.map (fun x => x.predicate) V.links → ¬p ∈ ng) →
+          ∀ (a : VE.Formula),
+            a ∈ VE.Events.conventionPremises V →
+              VE.Events.up V.day ng a = Bool.true ∧ VE.Events.down V.day ng a = Bool.true
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.down@VE.Events.Completion VE.Events.rolePreds@VE.Events.Decl VE.Events.up@VE.Events.Completion VE.Formula@VE.Syntax
+  -- expr 897408735
 theorem VE.Events.datesOrder_calendar
   ∀ (D D' : VE.Time.Civil), D.Proper → D'.Proper → (D.num < D'.num ↔ D.Before D')
   -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -10899,6 +10946,12 @@ theorem VE.Events.dayExtension_transfer
           (VE.Events.down day ng a = Bool.true → VE.Formula.denote S (List.map ι ρ) a → VE.Formula.denote M ρ a)
   -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.down@VE.Events.Completion VE.Events.up@VE.Events.Completion VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3827354477
+theorem VE.Events.eventsPremises_wellFormed
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true →
+      ∀ (p : VE.Formula), p ∈ VE.Events.eventsX V → VE.Formula.WellFormed (VE.Events.regenEnv E V) [] p
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 1761829896
 theorem VE.Events.hits_vacuous
   ∀ {day : String} {ng : List String} {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
     VE.Events.DayExtension day ng M S ι →
@@ -10926,6 +10979,25 @@ theorem VE.Events.mem_dates_of_consecutive
     p ∈ VE.Events.consecutive V → p.fst ∈ V.dates ∧ p.snd ∈ V.dates
   -- uses VE.Events.EventsEnv.dates@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.consecutive@VE.Events.Decl VE.Time.Civil@VE.Time.Calendar
   -- expr 2258503509
+theorem VE.Events.oldTuple_eq
+  ∀ {α : Type} {zs : List (α ⊕ Nat)} {xs : List α}, VE.Events.oldTuple zs = Option.some xs → zs = List.map Sum.inl xs
+  -- uses VE.Events.oldTuple@VE.Events.Completion
+  -- expr 3731155968
+theorem VE.Events.oldTuple_map
+  ∀ {α : Type} (xs : List α), VE.Events.oldTuple (List.map Sum.inl xs) = Option.some xs
+  -- uses VE.Events.oldTuple@VE.Events.Completion
+  -- expr 3940699995
+theorem VE.Events.regen_typed
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true → VE.Events.EventsTyped (VE.Events.regenEnv E V) V = Bool.true
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.regenEnv@VE.Events.Decl
+  -- expr 1843268313
+theorem VE.Events.startRole_mem
+  ∀ {V : VE.Events.EventsEnv} {s st : String},
+    VE.Events.startRole V s = Option.some st →
+      (∃ e, e ∈ V.events ∧ e.sort = s ∧ e.on = st) ∨ ∃ x, x ∈ V.states ∧ x.sort = s ∧ x.begins = st
+  -- uses VE.Events.EventSort.on@VE.Events.Decl VE.Events.EventSort.sort@VE.Events.Decl VE.Events.EventSort@VE.Events.Decl VE.Events.EventsEnv.events@VE.Events.Decl VE.Events.EventsEnv.states@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort.begins@VE.Events.Decl VE.Events.StateSort.sort@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Events.startRole@VE.Events.Decl
+  -- expr 1399527894
 theorem VE.Events.term_map
   ∀ {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
     (∀ (c : String), S.constant c = Option.map ι (M.constant c)) →
