@@ -2,7 +2,7 @@ import VE.Cardinality.Syntax
 
 /-! Regions of the counted sorts (docs/spec/quantities.md 3.5).
 
-The counted sorts come from counts only (count atoms and proportions); a recognised universal statement over a
+The counted sorts come from counts only (count atoms, proportions and count operands of a ratio); a recognised universal statement over a
 counted sort adds its predicates on that sort, so it can be bridged (`bridgePremises`). For each counted sort a region
 is one truth value per predicate of `predsOn`, and each region gets one fresh dimensionless integer constant. -/
 namespace VE.Cardinality
@@ -55,11 +55,18 @@ def CFormula.universalsC (E : CEnv) : CFormula → List (String × Body × QForm
   | .implies a b => a.universalsC E ++ b.universalsC E
   | _ => []
 
-/-- The counted sorts and bodies: count atoms and proportions (not universal statements). -/
+def CTerm.countBodies : CTerm → List (String × Body)
+  | .quantity _ => []
+  | .count s b => [(s, b)]
+
+/-- The counted sorts and bodies: count atoms, proportions and count operands (not universal statements). -/
 def CFormula.countBodies : CFormula → List (String × Body)
   | .quantity _ => []
   | .count c => c.terms.map (fun kb => (c.sort, kb.2))
   | .proportion p => [(p.sort, p.whole), (p.sort, p.part)]
+  | .roundsTo _ n d _ _ => n.countBodies ++ d.countBodies
+  | .percentOf p w _ _ => p.countBodies ++ w.countBodies
+  | .percentRoundsTo _ p w _ _ => p.countBodies ++ w.countBodies
   | .not a => a.countBodies
   | .and a b => a.countBodies ++ b.countBodies
   | .or a b => a.countBodies ++ b.countBodies

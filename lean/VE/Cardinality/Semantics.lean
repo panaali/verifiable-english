@@ -3,7 +3,9 @@ import VE.Cardinality.Syntax
 /-! The meaning of `cardinality@0` statements, stated without erasure (docs/spec/quantities.md 3.3).
 
 A count is the length of a duplicate-free list of exactly the counted objects, as `VE.Time.expand_atLeast_iff`
-states counts; counts stay integers. Every proportion requires a nonempty population. -/
+states counts; counts stay integers. Every proportion requires a nonempty population, as a rounding or a percentage requires a
+positive denominator. Rounding is `VE.Numbers.RoundsTo` under the sentence's own tie rule; this track has no rounding
+definition. -/
 namespace VE.Cardinality
 open VE.Time (TStructure)
 universe u v
@@ -48,10 +50,20 @@ def Proportion.holds {α : Type u} (T : TStructure α) (p : Proportion) : Prop :
   ∃ n m : Nat, HasCount T p.sort p.whole n ∧ HasCount T p.sort (.and p.whole p.part) m ∧ 0 < n ∧
     p.cmp.holds (p.den * (m : Int)) (p.num * (n : Int))
 
+/-- The integer an operand denotes: a closed tagged term's coordinate, or a count. -/
+def CTerm.Denotes {α : Type u} (T : TStructure α) : CTerm → Int → Prop
+  | .quantity t, z => ∃ g, t.tdenote T [] = some (.qty g z)
+  | .count s b, z => ∃ n : Nat, HasCount T s b n ∧ z = n
+
 def CFormula.holds {α : Type u} (T : TStructure α) : CFormula → Prop
   | .quantity a => a.tdenote T []
   | .count c => c.holds T
   | .proportion p => p.holds T
+  | .roundsTo r n d D k => ∃ a b, n.Denotes T a ∧ d.Denotes T b ∧ 0 < b ∧
+      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((a : Rat) / b)
+  | .percentOf p w D k => ∃ a b, p.Denotes T a ∧ w.Denotes T b ∧ 0 < b ∧ 100 * 10 ^ k * a = D * b
+  | .percentRoundsTo r p w D k => ∃ a b, p.Denotes T a ∧ w.Denotes T b ∧ 0 < b ∧
+      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((100 * a : Rat) / b)
   | .not a => ¬ a.holds T
   | .and a b => a.holds T ∧ b.holds T
   | .or a b => a.holds T ∨ b.holds T
