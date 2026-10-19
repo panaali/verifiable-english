@@ -1,6 +1,6 @@
 """Asimov's v2 rules re-run with `permitted` completed `unspecified` (events-time-causation ET-8, fixture R2).
 
-`python usecases/asimov-extended/asimov_unspecified.py` writes `unspecified-results.json`. The v2 environment
+`python usecases/asimov-extended/asimov_unspecified.py` writes `unspecified/results.json`. The v2 environment
 (`usecases/asimov-laws/environment.json`) completes `permitted` to allow, a modeling choice the source does not
 make. Here the same 13 rules run on Lean's alternatives route with `norm-defaults@0` and `permitted` completed
 `unspecified` ("the text does not say"): an action is clear only when it is clear under every admissible filling
@@ -161,7 +161,7 @@ def compute():
 
 def main():
     results = compute()
-    (HERE / "unspecified-results.json").write_text(json.dumps(results, indent=1, sort_keys=True) + "\n")
+    (HERE / "unspecified" / "results.json").write_text(json.dumps(results, indent=1, sort_keys=True) + "\n")
     print(json.dumps({k: v for k, v in results.items() if k != "records"} | {
         "records": {k: v for k, v in results["records"].items() if k != "results"}}, indent=1)[:6000])
 

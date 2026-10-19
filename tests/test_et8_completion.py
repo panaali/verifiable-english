@@ -16,7 +16,7 @@ sys.path.insert(0, str(REPO / "experiments" / "events-time-causation"))
 import asimov_unspecified as asimov  # noqa: E402
 import et8_component as component  # noqa: E402
 
-ASIMOV = json.loads((REPO / "usecases/asimov-extended/unspecified-results.json").read_text())
+ASIMOV = json.loads((REPO / "usecases/asimov-extended/unspecified/results.json").read_text())
 EVIDENCE = REPO / "docs/events-time-causation/et-8/evidence"
 COMPONENT = json.loads((EVIDENCE / "component-results.json").read_text())
 # Records whose clear set the completion keeps, removes or empties, one per group, and one that needs risk@0.
