@@ -433,8 +433,8 @@ def MB : Doc := docK ((List.range 11).map binarySet)
 #guard checkedJson .superposed K1 == Lean.toJson (2 : Nat) && checkedJson .superposed MB == .str "over 1024" &&
   checkBudgetText == "ResourceLimit: more than 1024 readings to check"
 -- the choice search stops at the 65th compatible choice, the first taking reading 0 of every set
-def M64 : Doc := docK ((List.range 7).map binarySet)
-#guard (choices M64).length == maxChoices + 1 && (choices M64).head? == some ((List.range 7).map (s!"s{·}", 0))
+#guard let found := choices (docK ((List.range 7).map binarySet))
+  found.length == maxChoices + 1 && found.head? == some ((List.range 7).map (s!"s{·}", 0))
 -- 4.1 step 5: the chain's refusal of the first compatible choice's document whose chain refuses it, naming the choice
 -- (7); under `norms@0` K1's default reading is refused and its strict one is not
 #guard choiceChainText (docK [.set rs1] .norms) [("rs1", 0)] == none &&

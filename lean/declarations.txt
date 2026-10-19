@@ -11638,7 +11638,7 @@ module VE.Readings.Doc 1254e66f3d4a1ced157760cd3708206e5d3c3a09f9f55ea9fabcf70b8
 593:0-623:99 theorem VE.Readings.build_fst_assertions@VE.Readings.Doc
 625:0-635:35 theorem VE.Readings.not_attached_of_formula_only@VE.Readings.Doc
 637:0-659:18 theorem VE.Readings.one_formula_only@VE.Readings.Doc
-module VE.Readings.Examples 84d76f1ee3d6722610a17fd9d970c73f2c0c6403dceb978537736ab947d16344
+module VE.Readings.Examples 19870a506f1a441aa95f93d8da8f5640f2ea731e76321d812b9265179bf84e59
 21:0-23:69 def VE.Readings.Examples.regsK@VE.Readings.Examples
 24:0-32:24 def VE.Readings.Examples.frameWith@VE.Readings.Examples
 33:0-33:30 def VE.Readings.Examples.frameK@VE.Readings.Examples
@@ -11714,7 +11714,6 @@ module VE.Readings.Examples 84d76f1ee3d6722610a17fd9d970c73f2c0c6403dceb97853773
 416:0-416:91 def VE.Readings.Examples.MU@VE.Readings.Examples
 429:0-430:113 def VE.Readings.Examples.binarySet@VE.Readings.Examples
 431:0-431:52 def VE.Readings.Examples.MB@VE.Readings.Examples
-436:0-436:52 def VE.Readings.Examples.M64@VE.Readings.Examples
 445:0-445:129 def VE.Readings.Examples.M7@VE.Readings.Examples
 446:0-446:31 def VE.Readings.Examples.b0'@VE.Readings.Examples
 447:0-447:31 def VE.Readings.Examples.b1'@VE.Readings.Examples
