@@ -12926,7 +12926,10 @@
         "VE.Cardinality.regionPrefix",
         "VE.Cardinality.CEnv.WellFormed",
         "VE.Cardinality.BodyTyped",
-        "VE.Cardinality.Admitted"
+        "VE.Cardinality.Admitted",
+        "VE.Cardinality.CTerm",
+        "VE.Cardinality.admittedRules",
+        "VE.Cardinality.CTermTyped"
       ],
       "C": [
         {
@@ -12939,6 +12942,18 @@
           "name": "VE.Cardinality.CFormula.admits",
           "tied": [
             "VE.Cardinality.admits_iff"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.CTerm.tagOf",
+          "tied": [
+            "VE.Cardinality.tagOf_iff"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.ratioTyped",
+          "tied": [
+            "VE.Cardinality.ratioTyped_iff"
           ]
         }
       ]
@@ -12954,7 +12969,8 @@
         "VE.Cardinality.Proportion.holds",
         "VE.Cardinality.CFormula.holds",
         "VE.Cardinality.Admissible",
-        "VE.Cardinality.CEntails"
+        "VE.Cardinality.CEntails",
+        "VE.Cardinality.CTerm.Denotes"
       ]
     },
     "VE/Cardinality/Regions.lean": {
@@ -12976,12 +12992,24 @@
         "VE.Cardinality.regionTable",
         "VE.Cardinality.dl",
         "VE.Cardinality.CEnv.elab",
-        "VE.Cardinality.regionBody"
+        "VE.Cardinality.regionBody",
+        "VE.Cardinality.CTerm.countBodies"
       ],
       "G[R]": [
         "VE.Cardinality.maxCountedSorts",
         "VE.Cardinality.maxPredicates",
         "VE.Cardinality.problemLimits"
+      ]
+    },
+    "VE/Cardinality/Ratio.lean": {
+      "C": [
+        {
+          "name": "VE.Cardinality.erasedRounding",
+          "tied": [
+            "VE.Cardinality.roundsTo_ratio_agree"
+          ]
+        },
+        "VE.Cardinality.roundingQ"
       ]
     },
     "VE/Cardinality/Erase.lean": {
@@ -12998,7 +13026,8 @@
         "VE.Cardinality.Body.evalFin",
         "VE.Cardinality.countFin",
         "VE.Cardinality.withRegionsFinite",
-        "VE.Cardinality.refutesC"
+        "VE.Cardinality.refutesC",
+        "VE.Cardinality.CTerm.erase"
       ],
       "P": [
         "VE.Cardinality.regionSize",
@@ -13069,7 +13098,32 @@
         "VE.Cardinality.Examples.ghost",
         "VE.Cardinality.Examples.good",
         "VE.Cardinality.Examples.badQ",
-        "VE.Cardinality.Examples.badP"
+        "VE.Cardinality.Examples.badP",
+        "VE.Cardinality.Examples.valFin",
+        "VE.Cardinality.Examples.num",
+        "VE.Cardinality.Examples.rounds",
+        "VE.Cardinality.Examples.none0",
+        "VE.Cardinality.Examples.both",
+        "VE.Cardinality.Examples.dec",
+        "VE.Cardinality.Examples.paper",
+        "VE.Cardinality.Examples.scored",
+        "VE.Cardinality.Examples.falseApp",
+        "VE.Cardinality.Examples.fa4c",
+        "VE.Cardinality.Examples.fa4dOther",
+        "VE.Cardinality.Examples.paperModel",
+        "VE.Cardinality.Examples.news",
+        "VE.Cardinality.Examples.sept",
+        "VE.Cardinality.Examples.june",
+        "VE.Cardinality.Examples.pce",
+        "VE.Cardinality.Examples.fa5",
+        "VE.Cardinality.Examples.relative",
+        "VE.Cardinality.Examples.points",
+        "VE.Cardinality.Examples.date",
+        "VE.Cardinality.Examples.dur",
+        "VE.Cardinality.Examples.cur",
+        "VE.Cardinality.Examples.all2",
+        "VE.Cardinality.Examples.nums",
+        "VE.Cardinality.Examples.fa4"
       ]
     },
     "VE/Layout/Anchors.lean": {
