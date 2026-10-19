@@ -2,9 +2,10 @@ import VE.Cardinality.Syntax
 
 /-! Regions of the counted sorts (docs/spec/quantities.md 3.5).
 
-The counted sorts come from counts only (count atoms, proportions and count operands of a ratio); a recognised universal statement over a
-counted sort adds its predicates on that sort, so it can be bridged (`bridgePremises`). For each counted sort a region
-is one truth value per predicate of `predsOn`, and each region gets one fresh dimensionless integer constant. -/
+The counted sorts come from counts only (count atoms, proportions and count operands of a ratio); a recognised
+universal statement over a counted sort adds its predicates on that sort, so it can be bridged (`bridgePremises`). For
+each counted sort a region is one truth value per predicate of `predsOn`, and each region gets one fresh dimensionless
+integer constant. -/
 namespace VE.Cardinality
 open VE.Time (QEnv QTerm QFormula)
 

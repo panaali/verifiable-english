@@ -13091,7 +13091,9 @@
         "VE.Cardinality.Examples.date",
         "VE.Cardinality.Examples.dur",
         "VE.Cardinality.Examples.cur",
-        "VE.Cardinality.Examples.all2"
+        "VE.Cardinality.Examples.all2",
+        "VE.Cardinality.Examples.nums",
+        "VE.Cardinality.Examples.fa4"
       ]
     }
   }
