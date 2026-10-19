@@ -430,6 +430,15 @@ def binarySet (k : Nat) : Item :=
   .set ⟨s!"s{k}", s!"v{k}", 1, [⟨"a", some (.assertion .top), [], []⟩, ⟨"b", some (.assertion .bottom), [], []⟩]⟩
 def MB : Doc := docK ((List.range 11).map binarySet)
 #guard (checkedChoices MB).length == maxChoiceChecks + 1 && !choicesSoftChecked MB && superposedCheckText MB == none
+#guard checkedJson .superposed K1 == Lean.toJson (2 : Nat) && checkedJson .superposed MB == .str "over 1024" &&
+  checkBudgetText == "ResourceLimit: more than 1024 readings to check"
+-- the choice search stops at the 65th compatible choice, the first taking reading 0 of every set
+def M64 : Doc := docK ((List.range 7).map binarySet)
+#guard (choices M64).length == maxChoices + 1 && (choices M64).head? == some ((List.range 7).map (s!"s{·}", 0))
+-- 4.1 step 5: the chain's refusal of the first compatible choice's document whose chain refuses it, naming the choice
+-- (7); under `norms@0` K1's default reading is refused and its strict one is not
+#guard choiceChainText (docK [.set rs1] .norms) [("rs1", 0)] == none &&
+  routeRefusal false (docK [.set rs1] .norms) == some "InvalidInput: invalid norm fields under rs1@1:1"
 
 /-! ## M7: three candidates, two bits -/
 
@@ -527,6 +536,7 @@ def unlabelled : Doc := ⟨.soft, frameK, [.set rs1, .set rs2kind], [c1], []⟩
 def M17d : Doc := ⟨.soft, frameK, [.set rs1f, .set (rs2f 2)], [c1 2], [⟨"n0", "rs2", 1, ["strict"]⟩]⟩
 #guard (inForce M17d ⟨"n0", "rs2", 1, ["strict"]⟩).isNone && narrowingShape M17d ⟨"n0", "rs2", 1, ["strict"]⟩
 #guard supReady M17d && narrowingPremises M17d == [] && choices M17d == choices (M6)
+#guard unsatText M17d == "ReadingsUnsatisfiable: c1"  -- a stale narrowing is not a restriction it names
 
 /-! ## M18: a coupled formula-only document whose recorded narrowings together keep no choice -/
 
