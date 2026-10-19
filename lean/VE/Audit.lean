@@ -302,6 +302,9 @@ import VE.Route.Run
 import VE.Route.RunSound
 import VE.Route.Wire
 import VE.Route.WireSound
+import VE.Scales.Examples
+import VE.Scales.Intended
+import VE.Scales.Theorems
 import VE.Scope.Examples
 import VE.SearchBudget.Budget
 import VE.SearchBudget.Demand
@@ -5474,6 +5477,31 @@ import VE.WireContract.Engine
 #print axioms VE.Route.sat_checked
 #print axioms VE.Route.tableauValid_certificateSound
 #print axioms VE.Route.verifyOrder_sound
+#print axioms VE.Scales.Examples.fb2_refuted
+#print axioms VE.Scales.Examples.intended_of
+#print axioms VE.Scales.Examples.order_cases
+#print axioms VE.Scales.Examples.symbols_cases
+#print axioms VE.Scales.Examples.trust_intended
+#print axioms VE.Scales.Examples.trust_not_intended
+#print axioms VE.Scales.Intended.aboveImp
+#print axioms VE.Scales.Intended.closed
+#print axioms VE.Scales.Intended.irrefl
+#print axioms VE.Scales.Intended.sameLeft
+#print axioms VE.Scales.Intended.sameNotMore
+#print axioms VE.Scales.Intended.sameRefl
+#print axioms VE.Scales.Intended.sameRight
+#print axioms VE.Scales.Intended.sameSymm
+#print axioms VE.Scales.Intended.sameTrans
+#print axioms VE.Scales.Intended.total
+#print axioms VE.Scales.Intended.trans
+#print axioms VE.Scales.dim_iff
+#print axioms VE.Scales.dim_ok
+#print axioms VE.Scales.intended_iff_and
+#print axioms VE.Scales.premises_iff_intended
+#print axioms VE.Scales.premises_wellTyped
+#print axioms VE.Scales.scalePremises_labels_nodup
+#print axioms VE.Scales.typed1
+#print axioms VE.Scales.typed2
 #print axioms VE.Scope.Examples.bold_labels
 #print axioms VE.Scope.Examples.byte_tests
 #print axioms VE.Scope.Examples.markers
