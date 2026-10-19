@@ -2775,16 +2775,6 @@ theorem VE.Calc.Rescale.pos
   ∀ (self : VE.Calc.Rescale) (b : String), 0 < self.factor b
   -- uses VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
   -- expr 3281404362
-theorem VE.Calc.Units.dimE_ok
-  ∀ (Γ : String → Option VE.Calc.PhysDim) (e : VE.Calc.Expr) (d : VE.Calc.PhysDim),
-    VE.Calc.Units.dimE Γ e = Except.ok d ↔ VE.Calc.Expr.dimOf Γ e = Option.some d
-  -- uses VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Units.dimE@VE.Calc.Units
-  -- expr 3840545299
-theorem VE.Calc.Units.except_bind_ok
-  ∀ {α β : Type} (m : Except String α) (f : α → Except String β) (b : β),
-    m >>= f = Except.ok b ↔ ∃ a, m = Except.ok a ∧ f a = Except.ok b
-  -- uses
-  -- expr 3200979648
 theorem VE.Calc.Val.bin_exhausted
   ∀ (f : Rat → Rat → VE.Calc.Val) (a b : VE.Calc.Val),
     (∀ (x y : Rat), f x y ≠ VE.Calc.Val.exhausted) →
