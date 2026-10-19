@@ -134,6 +134,7 @@
 'VE.Alternatives.expansion_relation_typed' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.extEnv_predicates_none' depends on axioms: [propext]
 'VE.Alternatives.extEnv_predicates_some' depends on axioms: [propext]
+'VE.Alternatives.fillingFor_error' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.fillingFor_valid' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.findReg_some' depends on axioms: [propext]
 'VE.Alternatives.followable_denote' depends on axioms: [propext, Classical.choice, Quot.sound]

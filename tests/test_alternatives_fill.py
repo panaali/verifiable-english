@@ -310,7 +310,8 @@ def test_t12b_kleene_unknown_is_settled_by_enumeration_and_unknown_without_budge
     assert statuses(validate(src)) == [("push", "clear", "enumeration"), ("pull", "not clear", "kleene")]
     row = validate(src, max_unsaid_atoms=0)
     assert statuses(row) == [("push", "UNKNOWN", "MAX_UNSAID_ATOMS"), ("pull", "not clear", "kleene")]
-    assert "push UNKNOWN: more than 0 unsaid atoms decide it" in row["choosers"][0]["text"]
+    assert "push UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched" in (
+        row["choosers"][0]["text"])
     assert statuses(validate(src, max_unsaid_atoms=99)) == statuses(validate(src))
 
 
@@ -327,14 +328,39 @@ def test_t12f_scenario_half_invalid_scenarios_keep_todays_texts():
         assert "choosers" not in row
 
 
-def test_a_scenario_without_a_validated_filling_is_unknown():
-    """Push is required and `permitted` unspecified, so nothing filled is no admissible filling: with no budget to
-    search, no filling is validated and every alternative is UNKNOWN; a supplied validated filling gives rows."""
+BUDGET_TEXT = "{} UNKNOWN: more than {} unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched"
+
+
+def test_a_scenario_whose_filling_search_the_budget_cuts_is_unknown_naming_the_budget():
+    """Review F1: push is required and `permitted` unspecified, so nothing filled is no admissible filling. The
+    scenario leaves two atoms unsaid (`permitted` of push and of pull): with a budget below two the search for a
+    filling is cut, and every alternative is UNKNOWN naming the budget, never "no filling"; with two the search finds
+    one and push is settled. A supplied validated filling needs no search for a filling, so pull is settled; push's
+    own cone still exceeds a budget of zero."""
     src = source([PULL_FORBIDDEN, PUSH_REQUIRED])
-    row = validate(src, max_unsaid_atoms=0)
-    assert statuses(row) == [("push", "UNKNOWN", "no filling"), ("pull", "UNKNOWN", "no filling")]
+    for budget in (0, 1):
+        row = validate(src, max_unsaid_atoms=budget)
+        assert statuses(row) == [("push", "UNKNOWN", "MAX_UNSAID_ATOMS"), ("pull", "UNKNOWN", "MAX_UNSAID_ATOMS")], row
+        assert row["choosers"][0]["text"] == "no action is known to be clear at r ({}, {})".format(
+            BUDGET_TEXT.format("push", budget), BUDGET_TEXT.format("pull", budget))
+    settled = [("push", "clear", "enumeration"), ("pull", "not clear", "kleene")]
+    assert statuses(validate(src, max_unsaid_atoms=2)) == statuses(validate(src)) == settled
     supplied = validate(src, witness(filling={"unsaid__permitted": [["push"]]}), max_unsaid_atoms=0)
-    assert [s[2] for s in statuses(supplied)] != ["no filling", "no filling"], supplied
+    assert statuses(supplied) == [("push", "UNKNOWN", "MAX_UNSAID_ATOMS"), settled[1]], supplied
+
+
+@pytest.mark.parametrize("count, expected", [(12, ("not clear", "kleene")), (13, ("UNKNOWN", "MAX_UNSAID_ATOMS"))])
+def test_the_default_budget_is_named_when_the_scenario_leaves_more_atoms_unsaid(count, expected):
+    """Review F1's example: one chooser with `count` actions, each required. At `MAX_UNSAID_ATOMS` (12) unsaid atoms
+    the search finds a filling and plain three-valued evaluation answers; at 13 it is cut, and every alternative is
+    UNKNOWN naming the budget at its default."""
+    actions = tuple(f"a{i}" for i in range(count))
+    scenario = witness(actions)
+    scenario["model"]["relations"]["pushing"] = [[a] for a in actions]
+    row = validate(source([PUSH_REQUIRED], units=()), scenario)
+    assert {s[1:] for s in statuses(row)} == {expected}, row
+    if expected[0] == "UNKNOWN":
+        assert BUDGET_TEXT.format("a0", 12) in row["choosers"][0]["text"]
 
 
 @pytest.mark.parametrize("extra, error", [

@@ -1001,13 +1001,24 @@ theorem VE.Alternatives.extEnv_predicates_some
     VE.Alternatives.profileDef A.alt p = Option.some (ss, F) → (VE.Alternatives.extEnv A).predicates p = Option.some ss
   -- uses VE.Alternatives.AltDoc.alt@VE.Alternatives.Decl VE.Alternatives.AltDoc@VE.Alternatives.Decl VE.Alternatives.extEnv@VE.Alternatives.Decl VE.Alternatives.profileDef@VE.Alternatives.Decl VE.Environment.predicates@VE.Syntax VE.Formula@VE.Syntax
   -- expr 437983594
+theorem VE.Alternatives.fillingFor_error
+  ∀ {U : VE.NormDefaults.UDoc} {M : VE.FiniteModel VE.Bridge.Entity}
+    {supplied : Option (VE.NormDefaults.FiniteFill U VE.Bridge.Entity)} {budget : Nat} {e : VE.Alternatives.AltEvidence},
+    VE.Alternatives.fillingFor U M supplied budget = Except.error e →
+      e = VE.Alternatives.AltEvidence.budget ∧ budget < (VE.NormDefaults.unsaidAtoms U M).length ∨
+        e = VE.Alternatives.AltEvidence.noFilling ∧
+          ∀ (S : List (String × List VE.Bridge.Entity)),
+            S ∈ VE.NormDefaults.subsets (VE.NormDefaults.unsaidAtoms U M) →
+              VE.NormDefaults.fillValid U M (VE.NormDefaults.fillOfAtoms S) = Bool.false
+  -- uses VE.Alternatives.AltEvidence.budget@VE.Alternatives.FillWire VE.Alternatives.AltEvidence.noFilling@VE.Alternatives.FillWire VE.Alternatives.AltEvidence@VE.Alternatives.FillWire VE.Alternatives.fillingFor@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fillOfAtoms@VE.NormDefaults.Evidence VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.subsets@VE.NormDefaults.Evidence VE.NormDefaults.unsaidAtoms@VE.NormDefaults.Evidence
+  -- expr 3096695888
 theorem VE.Alternatives.fillingFor_valid
   ∀ {U : VE.NormDefaults.UDoc} {M : VE.FiniteModel VE.Bridge.Entity}
     {supplied : Option (VE.NormDefaults.FiniteFill U VE.Bridge.Entity)} {budget : Nat}
     {F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity},
-    VE.Alternatives.fillingFor U M supplied budget = Option.some F → VE.NormDefaults.fillValid U M F = Bool.true
-  -- uses VE.Alternatives.fillingFor@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fillValid@VE.NormDefaults.Evidence
-  -- expr 1885227119
+    VE.Alternatives.fillingFor U M supplied budget = Except.ok F → VE.NormDefaults.fillValid U M F = Bool.true
+  -- uses VE.Alternatives.AltEvidence@VE.Alternatives.FillWire VE.Alternatives.fillingFor@VE.Alternatives.FillWire VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fillValid@VE.NormDefaults.Evidence
+  -- expr 235078123
 theorem VE.Alternatives.findReg_some
   ∀ {T : VE.Norms.Tree} {n : String} {r : VE.Norms.Regulated},
     VE.Alternatives.findReg T n = Option.some r → r ∈ T.regulated ∧ r.name = n
