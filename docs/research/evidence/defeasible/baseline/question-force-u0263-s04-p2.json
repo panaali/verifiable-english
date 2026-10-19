@@ -1,0 +1,1 @@
+["forall", "claude_instance", ["forall", "situation", ["implies", ["binary", "explicit_instruction_against_exploits", ["var", 1], ["var", 0]], ["binary", "exploit_instruction_compliance_required", ["var", 1], ["var", 0]]]]]
