@@ -125,8 +125,8 @@ also touch, in other modules; `docs/trust-baseline.json`, whose allowances merge
 
 ## Tests
 
-- Selected tests on the Mac runner (`mac-pytest.sh --select -- --base 702ff7429 --run`), HEAD 64571cab, product code
-  final: 67 units, 0 failed, exit 0. These include `lake build`, `lean/audit.py`, `test_cardinality_exercised.py`,
+- Selected tests on the Mac runner (`mac-pytest.sh --select -- --base 702ff7429 --run`): 67 units, 0 failed, exit 0,
+  on HEAD 64571cab and again on c0e81908, where all code is final; only this report changes after it. These include `lake build`, `lean/audit.py`, `test_cardinality_exercised.py`,
   `test_trust_budget.py` and `test_frozen_sources.py`.
 - `regen_generated.py --write --skip route-cases`, then `--only lean-statements` and `--only lean-audit-manifests`
   after the last Lean edit. `route-cases` needs the Rust binary, and no route case changed. Statements: additions only.
@@ -161,4 +161,4 @@ All AGENT.
 ## Commits
 
 `git log --oneline main..HEAD --no-merges` at the time of writing: f641cf7f2, 93d97aed6, 3571ac592, 707605ba5,
-c7032deab, 5309b6d05, 64571cabd, and the commit of this report.
+c7032deab, 5309b6d05, 64571cabd, f6b3da1dc, c0e819080, and the commit of this report's last edit.
