@@ -908,6 +908,20 @@
    "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
    "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
   }
  ]
 }

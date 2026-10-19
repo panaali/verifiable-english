@@ -1,4 +1,5 @@
-"""scope@0's Lean core (sc-1a, sc-3a): the layout's list runs, label reaches and anchors.
+"""scope@0's Lean core (sc-1a, sc-3a, sc-1ab): the layout's list runs, label reaches and anchors, and the effects on
+a rule's JSON object.
 
 The fixtures themselves are Lean: `lean/VE/Scope/Examples.lean` holds the spec's 7.1 fixtures as kernel theorems
 (`decide`) and `#guard`s, checked by every `lake build`. This file checks what standing ruling R16 asks of the
@@ -7,6 +8,8 @@ some theorem (the compiled `-- uses` lines of `lean/statements.txt`, read throug
 rule), and each tie the side table records names a theorem about it."""
 
 from pathlib import Path
+
+import pytest
 
 from tools import trust_map
 
@@ -22,8 +25,8 @@ def scope_modules() -> list[str]:
 def test_the_scope_files_are_classified():
     table = trust_map.load_table()
     modules = scope_modules()
-    assert {"VE/Layout/Anchors.lean", "VE/Layout/Discourse.lean", "VE/Layout/List.lean",
-            "VE/Scope/Examples.lean"} <= set(modules)
+    assert {"VE/Layout/Anchors.lean", "VE/Layout/Discourse.lean", "VE/Layout/List.lean", "VE/Scope/Effects.lean",
+            "VE/Scope/Examples.lean", "VE/Scope/Theorems.lean"} <= set(modules)
     assert all(module in table for module in modules)
 
 
@@ -63,10 +66,19 @@ def test_each_tie_names_a_theorem_about_its_definition():
     assert ("VE.Layout.Anchors", "VE.Layout.anchorsOk") in proved["VE.Layout.discourse_anchorsOk_unchanged"]
 
 
+def unexercised_without(module: str, name: str) -> list[str]:
+    """The unexercised definitions once every theorem that uses `name` of `module` is dropped."""
+    proved = trust_map.statements(STATEMENTS)
+    without = {theorem: found for theorem, found in proved.items() if not found or (module, name) not in found}
+    return trust_map.unexercised(trust_map.load_table(), without, scope_modules())
+
+
 def test_a_definition_no_theorem_uses_is_reported():
     """The check can fail: drop every theorem that uses `ofSource` and it names exactly that definition."""
-    table = trust_map.load_table()
-    proved = trust_map.statements(STATEMENTS)
-    source = ("VE.Layout.List", "VE.Layout.ofSource")
-    without = {theorem: found for theorem, found in proved.items() if not found or source not in found}
-    assert trust_map.unexercised(table, without, scope_modules()) == ["VE/Layout/List.lean: VE.Layout.ofSource"]
+    assert unexercised_without("VE.Layout.List", "VE.Layout.ofSource") == ["VE/Layout/List.lean: VE.Layout.ofSource"]
+
+
+@pytest.mark.parametrize("name", ["VE.Scope.mergeParts", "VE.Scope.narrowing", "VE.Scope.ownSafe"])
+def test_an_effects_definition_no_theorem_uses_is_reported(name):
+    """The same for the effects (sc-1ab): each named definition is reported once its theorems are dropped."""
+    assert unexercised_without("VE.Scope.Effects", name) == [f"VE/Scope/Effects.lean: {name}"]
