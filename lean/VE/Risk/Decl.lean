@@ -1,4 +1,5 @@
 import VE.Alternatives.Validate
+import VE.Limits
 
 /-! Risk documents (docs/spec/risk.md 1.1, 1.2, 4.1, 4.5 and 7.1).
 
@@ -254,8 +255,7 @@ def checkRiskBlock (R : RiskDoc) : Except String Unit := do
     unless (R.risk.quantityKinds.map Prod.fst).contains k do throw s!"UnknownSymbol: risk.required_estimators {k}"
   unless R.alt.outcomes == .signed do throw "RiskOutcomes: risk@0 requires outcomes signed"
 
-/-- The number of AST nodes a formula may have after inlining. -/
-def maxNodes : Nat := 10000
+export VE.Limits (maxNodes)
 
 /-- Clause 7: `T` over `E_risk` extended by the six words, and the inlining limit. -/
 def checkRiskTyping (R : RiskDoc) : Except String Unit := do

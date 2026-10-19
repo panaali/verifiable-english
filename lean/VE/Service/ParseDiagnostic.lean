@@ -1,5 +1,6 @@
 import VE.Service.TypingDiagnostic
 import VE.Surface
+import VE.Limits
 
 /-! Error reporting for rejected strict surface sources. The family surface
 parsers decide acceptance. This walk runs only after rejection and names the
@@ -72,7 +73,7 @@ def ident (role : String) : Scan (String × Nat) := do
   while (c.source[i]?.map identChar).getD false do i := i + 1
   let name := String.mk ((c.source.toList.drop start).take (i - start))
   advance (i - start)
-  if name.length > 64 then fails "ResourceLimit" (role ++ " exceeds 64 ASCII bytes") (some start)
+  if name.length > VE.Limits.maxIdentifierBytes then fails "ResourceLimit" (role ++ " exceeds 64 ASCII bytes") (some start)
   pure (name, start)
 
 def reserved : List String := VE.Surface.reserved
@@ -87,7 +88,7 @@ def numeral : Scan Unit := do
   if i == c.offset then fails "SyntaxError" "expected an integer numeral"
   let digits := String.mk ((c.source.toList.drop c.offset).take (i - c.offset))
   advance (i - c.offset)
-  if i - start > 40 then fails "ResourceLimit" "numeral exceeds 40 characters" (some start)
+  if i - start > VE.Limits.maxNumeralChars then fails "ResourceLimit" "numeral exceeds 40 characters" (some start)
   if (digits.length > 1 && digits.startsWith "0") ||
       (digits == "0" && c.offset > start) then
     fails "SyntaxError" "non-canonical integer numeral" (some start)
@@ -149,7 +150,7 @@ def binder (role : String) : Scan String := do
 
 def complete (start : Nat) : Scan Unit := do
   let c ← get
-  if c.nodes ≥ 10000 then
+  if c.nodes ≥ VE.Limits.maxNodes then
     fails "ResourceLimit" "document exceeds 10000 AST nodes" (some start)
   modify fun state => { state with nodes := state.nodes + 1 }
 
@@ -157,7 +158,7 @@ def formula (depth : Nat) : Nat → Scan Unit
   | 0 => fails "ResourceLimit" "formula exceeds nesting limit 64"
   | fuel + 1 => do
     let c ← get
-    if depth > 64 then fails "ResourceLimit" "formula exceeds nesting limit 64"
+    if depth > VE.Limits.maxDepth then fails "ResourceLimit" "formula exceeds nesting limit 64"
     if ← hasPrefix "true" then
       let next := c.source[c.offset + 4]?
       if !(next.map identChar).getD false then

@@ -1,9 +1,11 @@
-"""Under the Lean authority no reported evaluation value or count is Rust's (lean-first batch 15b, review B3).
+"""No reported evaluation value or count is Rust's (lean-first batch 15b, review B3; batch 18: Lean is the one
+authority).
 
-Rust keeps search only: under `VE_AUTHORITY=lean` its evaluator may still score search candidates, but every
+Rust keeps search only: its evaluator may still score search candidates, but every
 value, count and status a public operation reports comes from Lean's metered evaluator. The guard below fails
 any Rust request that is not a search, so a public path that asks Rust's evaluator for a reported answer
-fails here, whichever operation it is; the answers must equal Python's own, counts included. The closure
+fails here, whichever operation it is; the answers must equal the retained Python evaluator's
+(`tests/python_oracle.py`), counts included. The closure
 fixtures are the ones on which Rust's evaluator under-counted (DELTA V1).
 """
 from __future__ import annotations
@@ -37,7 +39,7 @@ def rust_searches_only(monkeypatch):
     monkeypatch.setattr(rust_jsonl, "run", guarded)
 
 
-def answers(env, formulas, model):
+def answers(env, formulas, model, evaluate=evaluate, check_countermodel=check_countermodel):
     document = document_from_data(env, formulas)
     *premises, last = document.formulas
     result = evaluate(env, document, model, trace=False)
@@ -53,20 +55,18 @@ def test_closure_fixtures_reach_both_outcomes():
 
 
 @pytest.mark.parametrize("case", CLOSURE, ids=[case["id"] for case in CLOSURE])
-def test_lean_authority_reports_lean_values_and_counts(case, monkeypatch, rust_searches_only):
+def test_lean_authority_reports_lean_values_and_counts(case, rust_searches_only):
+    from tests import python_oracle
     env = Environment(case["environment"])
     model = FiniteModel.from_dict(env, case["model"])
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = answers(env, case["ast"], model)
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    expected = answers(env, case["ast"], model, python_oracle.evaluate, python_oracle.check_countermodel)
     assert answers(env, case["ast"], model) == expected, case["id"]
 
 
-def test_lean_authority_search_checks_its_witness_with_lean(monkeypatch, rust_searches_only):
+def test_lean_authority_search_checks_its_witness_with_lean(rust_searches_only):
     case = next(case for case in CLOSURE if case["id"] == "closure_cycle")
     env = Environment(case["environment"])
     document = document_from_data(env, case["ast"])
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     found = find_countermodel(env, (), document.formulas[1], max_domain_size=2)
     assert found.status == "Found" and check_countermodel(env, (), document.formulas[1], found.model).valid
     different = find_distinguishing_model(env, document.formulas[0], document.formulas[1], max_domain_size=2)
@@ -77,9 +77,11 @@ def test_lean_authority_search_checks_its_witness_with_lean(monkeypatch, rust_se
 @pytest.mark.parametrize("search", ["countermodel_search", "distinguishing_model"])
 def test_lean_selected_search_pins_its_witness_check(search, global_authority, monkeypatch,
                                                      rust_searches_only):
-    """A check override must not let a Lean-selected Rust search publish a Python-checked witness."""
+    """No leftover setting lets a Rust search publish a Python-checked witness (lean-first batch 18: the
+    overrides are gone, and the witness check is Lean's)."""
+    import importlib
     from ve.backends import dispatch
-    from ve import search as search_module
+    evaluate_module = importlib.import_module("ve.evaluate")
     case = next(case for case in CLOSURE if case["id"] == "closure_cycle")
     env = Environment(case["environment"])
     first, second = document_from_data(env, case["ast"]).formulas[:2]
@@ -91,12 +93,12 @@ def test_lean_selected_search_pins_its_witness_check(search, global_authority, m
     def python_check_used(*args, **kwargs):
         pytest.fail("a Lean-selected search used Python to check its witness")
 
-    monkeypatch.setattr(search_module, "_evaluate_validated", python_check_used)
+    monkeypatch.setattr(evaluate_module, "_evaluate_validated", python_check_used)
     if search == "countermodel_search":
         result = find_countermodel(env, (), second, max_domain_size=2)
     else:
         result = find_distinguishing_model(env, first, second, max_domain_size=2)
     assert result.status == "Found"
-    assert (search, "lean") in seen
+    assert (search, "rust") in seen
     assert ("countermodel_check", "lean") in seen
     assert ("countermodel_check", "python") not in seen

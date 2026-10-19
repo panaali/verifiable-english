@@ -1,4 +1,5 @@
 import VE.Route.Wire
+import VE.Limits
 
 /-! Executable admission of documents on the new route (PLAN-EXPAND2 3.6). A
 JSON document on `ve.core@0.2` is decoded to units with nested kind trees
@@ -30,7 +31,7 @@ universe u
 def tokenChar (c : Char) : Bool := c.isAlphanum || c == '_' || c == '-' || c == '.'
 
 /-- Names inside kinds and labels: nonempty, at most 64 bytes, `[A-Za-z0-9_.-]`. -/
-def token (s : String) : Bool := !s.isEmpty && s.utf8ByteSize ≤ 64 && s.all tokenChar
+def token (s : String) : Bool := !s.isEmpty && s.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes && s.all tokenChar
 
 /-- The W2 content kinds; kinds nest. -/
 inductive Kind where

@@ -12,6 +12,7 @@ import ResponseShape.Encoders.English
 import ResponseShape.Encoders.EnglishLean
 import ResponseShape.Encoders.Envelope
 import ResponseShape.Encoders.Family
+import ResponseShape.Encoders.Metered
 import ResponseShape.Encoders.NormDefaults
 import ResponseShape.Encoders.Norms
 import ResponseShape.Encoders.Quantity
@@ -187,6 +188,16 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Family.readingsChoices_reported
 #print axioms ResponseShape.Encoders.Family.readings_fits
 #print axioms ResponseShape.Encoders.Family.readings_reported
+#print axioms ResponseShape.Encoders.Metered.answer_fits
+#print axioms ResponseShape.Encoders.Metered.binding_fits
+#print axioms ResponseShape.Encoders.Metered.reportedWith_fits
+#print axioms ResponseShape.Encoders.Metered.row_fits
+#print axioms ResponseShape.Encoders.Metered.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Metered.runCase_fits
+#print axioms ResponseShape.Encoders.Metered.runWith_fits
+#print axioms ResponseShape.Encoders.Metered.scanState_statused
+#print axioms ResponseShape.Encoders.Metered.scan_statused
+#print axioms ResponseShape.Encoders.Metered.trace_fits
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocumentX_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free

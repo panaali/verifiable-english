@@ -198,10 +198,9 @@ def test_review_clause_nonvacuity_excludes_empty_guard_relation(operation):
 def test_semantic_guard_matches_implication_across_all_small_interpretations():
     """Lean's non-vacuity check (the owner since batch 15b) treats a clause like its implication."""
     from itertools import product
-    from tests.subprocesses import HANG_TIMEOUT
     from ve.ast import formula_to_data
-    from ve.backends import lean as lean_backend
-    from ve.backends.lean_runner import METERED_EXECUTABLE, route_environment
+    from ve.backends.lean_runner import route_environment
+    from ve.backends.relay import rows as relay_rows
     env = review_search_environment()
     p, q = Unary('dep', Var(0)), Unary('rev', Var(0))
     implication = Forall('service', Implies(p, q))
@@ -220,8 +219,7 @@ def test_semantic_guard_matches_implication_across_all_small_interpretations():
                               'environment': route_environment(env), 'model': model.to_dict(),
                               'formula': formula_to_data(env, formula), 'max_evaluations': 10_000,
                               'semantic_nonvacuity': True})
-    rows = lean_backend.run('countermodel.search', METERED_EXECUTABLE, cases, runner='ve_metered',
-                            timeout=HANG_TIMEOUT)
+    rows = relay_rows('metered', cases)
     assert len(rows) == 3 * 21 and all(row['status'] == 'ok' and not row['exhausted'] for row in rows)
     answers = [row['suitable'] for row in rows]
     assert {answers[i] for i in range(0, len(answers), 3)} == {False, True}

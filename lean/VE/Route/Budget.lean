@@ -5,6 +5,7 @@ import VE.Definitions.Layer
 import VE.Order.Wire
 import VE.Time.Budget
 import VE.Route.Closure
+import VE.Limits
 
 /-! The Python/Rust evaluation budget on the `route` subcommand.
 
@@ -374,7 +375,7 @@ def tableWith (M : VE.FiniteModel Entity) (body : List Entity → Nat → Option
       Except String (Nat × Nat × List (List Entity))
   | [], acc, (w, n, rows) => match body acc w with
     | none => .error definitionBudget
-    | some (true, w) => if n + 1 > 100000 then .error tupleLimit else .ok (w, n + 1, acc.reverse :: rows)
+    | some (true, w) => if n + 1 > VE.Limits.maxTuples then .error tupleLimit else .ok (w, n + 1, acc.reverse :: rows)
     | some (false, w) => .ok (w, n, rows)
   | s :: ss, acc, st => (M.domains s).foldlM (fun st v => tableWith M body ss (v :: acc) st) st
 

@@ -953,6 +953,7 @@
         "ResponseShape.Skeletons.evaluate",
         "ResponseShape.Skeletons.familyNorms",
         "ResponseShape.Skeletons.graph",
+        "ResponseShape.Skeletons.metered",
         "ResponseShape.Skeletons.model",
         "ResponseShape.Skeletons.norms",
         "ResponseShape.Skeletons.order",
@@ -1076,9 +1077,6 @@
       "C": [
         "VE.Alternatives.checkBlock",
         "VE.Alternatives.inlineTree"
-      ],
-      "G[R]": [
-        "VE.Alternatives.maxNodes"
       ]
     },
     "VE/Alternatives/Examples.lean": {
@@ -1592,7 +1590,6 @@
         "VE.Reports.keyOf",
         "VE.Reports.keys",
         "VE.Reports.lexLe",
-        "VE.Reports.maxPredicates",
         "VE.Reports.meaningObject",
         "VE.Reports.metaObject",
         "VE.Reports.metaOk",
@@ -5520,10 +5517,6 @@
         "VE.Norms.Wire.scanSlotsAux",
         "VE.Norms.Wire.words"
       ],
-      "D[R]": [
-        "VE.Norms.Wire.maxIndex",
-        "VE.Norms.Wire.maxNodes"
-      ],
       "D[I]": [
         "VE.Norms.Wire.appendPredicates",
         "VE.Norms.Wire.canonicalAct",
@@ -7951,9 +7944,6 @@
         "VE.Risk.mightName",
         "VE.Risk.orWorseName",
         "VE.Risk.toAlt"
-      ],
-      "G[R]": [
-        "VE.Risk.maxNodes"
       ]
     },
     "VE/Risk/Derive.lean": {
@@ -8397,8 +8387,6 @@
       "G[R]": [
         "VE.Route.AstLimit.depthLimit",
         "VE.Route.AstLimit.diagnostic",
-        "VE.Route.AstLimit.maxDepth",
-        "VE.Route.AstLimit.maxNodes",
         "VE.Route.AstLimit.nodeLimit",
         "VE.Route.AstLimit.numeralLimit"
       ]
@@ -8630,6 +8618,7 @@
     },
     "VE/Route/MeteredRun.lean": {
       "G[V]": [
+        "VE.Route.MeteredRun.Prepared",
         "VE.Route.MeteredRun.Query",
         "VE.Route.MeteredRun.Request",
         "VE.Route.MeteredRun.Session",
@@ -8640,11 +8629,14 @@
         "VE.Route.MeteredRun.main",
         "VE.Route.MeteredRun.nonVacuityResult",
         "VE.Route.MeteredRun.order",
+        "VE.Route.MeteredRun.prepare",
         "VE.Route.MeteredRun.query",
+        "VE.Route.MeteredRun.reportedWith",
         "VE.Route.MeteredRun.request",
         "VE.Route.MeteredRun.run",
         "VE.Route.MeteredRun.runCase",
         "VE.Route.MeteredRun.runCaseReported",
+        "VE.Route.MeteredRun.runWith",
         "VE.Route.MeteredRun.tick",
         "VE.Route.MeteredRun.tickCache"
       ]
@@ -8653,6 +8645,12 @@
       "G[V]": [
         "VE.Route.MeteredTrace.Entity",
         "VE.Route.MeteredTrace.Ops",
+        "VE.Route.MeteredTrace.Row",
+        "VE.Route.MeteredTrace.Row.json",
+        "VE.Route.MeteredTrace.Trace",
+        "VE.Route.MeteredTrace.Trace.json",
+        "VE.Route.MeteredTrace.Trace.rows",
+        "VE.Route.MeteredTrace.Trace.rowsOf",
         "VE.Route.MeteredTrace.closure",
         "VE.Route.MeteredTrace.core",
         "VE.Route.MeteredTrace.detailB",
@@ -8676,6 +8674,7 @@
         "VE.Route.MeteredTrace.tupleText"
       ],
       "G[I]": [
+        "VE.Route.MeteredTrace.bindingJson",
         "VE.Route.MeteredTrace.bindingsJson"
       ]
     },
@@ -9219,8 +9218,6 @@
         "VE.Senses.glossAfter",
         "VE.Senses.glossMark",
         "VE.Senses.isDefaultIn",
-        "VE.Senses.maxPredicates",
-        "VE.Senses.maxSorts",
         "VE.Senses.preCheck",
         "VE.Senses.project",
         "VE.Senses.project_total",
@@ -9727,21 +9724,25 @@
     },
     "VE/Service/Protocol.lean": {
       "D[V]": [
+        "VE.Service.Handles.entry?",
         "VE.Service.Handles.expand",
         "VE.Service.Mode.name",
         "VE.Service.Mode.ofName?",
         "VE.Service.bindResults",
+        "VE.Service.caseBounds",
         "VE.Service.commas",
         "VE.Service.decodeBudget",
         "VE.Service.decodeCases",
         "VE.Service.decodeRequest",
         "VE.Service.decodeString",
         "VE.Service.expandCases",
+        "VE.Service.memberCuts",
         "VE.Service.objectMembers",
         "VE.Service.parseEnglishCases",
         "VE.Service.register",
         "VE.Service.registerOne",
         "VE.Service.respond",
+        "VE.Service.restrictedCases",
         "VE.Service.results"
       ],
       "D[I]": [
@@ -9761,6 +9762,8 @@
       ],
       "G[V]": [
         "VE.Service.Budget",
+        "VE.Service.Entry",
+        "VE.Service.Entry.of",
         "VE.Service.Handles",
         "VE.Service.Handles.insert",
         "VE.Service.Mode",
@@ -9768,6 +9771,7 @@
         "VE.Service.Request.budget",
         "VE.Service.bound",
         "VE.Service.caseResult",
+        "VE.Service.caseResultWith",
         "VE.Service.codeMembers",
         "VE.Service.coding",
         "VE.Service.englishReported",
@@ -9786,13 +9790,17 @@
       "G[R]": [
         "VE.Service.caseError",
         "VE.Service.lineError",
-        "VE.Service.maxCases",
         "VE.Service.maxHandleBytes",
         "VE.Service.maxHandles",
-        "VE.Service.maxLineBytes",
         "VE.Service.rejectionCode",
         "VE.Service.rejectionCodes",
         "VE.Service.requestError"
+      ],
+      "T": [
+        "VE.Service.objectMembersByChars",
+        "VE.Service.renderCases",
+        "VE.Service.sameCases",
+        "VE.Service.sameMembers"
       ]
     },
     "VE/Service/Readings.lean": {
@@ -9891,7 +9899,6 @@
         "VE.Service.Standalone.validatedEnvironment"
       ],
       "G[R]": [
-        "VE.Service.Standalone.maxSourceBytes",
         "VE.Service.Standalone.modelError",
         "VE.Service.Standalone.parseRejection"
       ],
@@ -9922,8 +9929,6 @@
       "G[R]": [
         "VE.Service.TypingDiagnostic.diagnose",
         "VE.Service.TypingDiagnostic.hexDigits",
-        "VE.Service.TypingDiagnostic.maxDepth",
-        "VE.Service.TypingDiagnostic.maxNodes",
         "VE.Service.TypingDiagnostic.nonPrintable",
         "VE.Service.TypingDiagnostic.pyJson",
         "VE.Service.TypingDiagnostic.pyRepr",
@@ -10201,8 +10206,6 @@
         "VE.SoftNorms.defaultDecidesF",
         "VE.SoftNorms.defaultPos",
         "VE.SoftNorms.limitWalk",
-        "VE.SoftNorms.maxDepth",
-        "VE.SoftNorms.maxNodes",
         "VE.SoftNorms.withinLimits"
       ]
     },
@@ -10905,9 +10908,6 @@
         "VE.Time.quantB",
         "VE.Time.refutesB",
         "VE.Time.relIndex"
-      ],
-      "G[R]": [
-        "VE.Time.maxEvaluations"
       ]
     },
     "VE/Time/Calendar.lean": {
@@ -10975,9 +10975,6 @@
         "VE.Time.parseDecimal",
         "VE.Time.render",
         "VE.Time.renderAmount"
-      ],
-      "D[R]": [
-        "VE.Time.maxNumeralChars"
       ],
       "G[V]": [
         "VE.Time.digitList"
@@ -12137,6 +12134,78 @@
       "G[V]": [
         "ResponseShape.Encoders.Family.familyNormsFolFits",
         "ResponseShape.Encoders.Family.familyNormsGenericFits"
+      ]
+    },
+    "ResponseShape/Encoders/Metered.lean": {
+      "P": [
+        "ResponseShape.Encoders.Metered.Statused"
+      ]
+    },
+    "ResponseShape/Schemas/Metered.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.Metered.binding",
+        "ResponseShape.Schemas.Metered.evaluated",
+        "ResponseShape.Schemas.Metered.evaluation",
+        "ResponseShape.Schemas.Metered.file",
+        "ResponseShape.Schemas.Metered.node",
+        "ResponseShape.Schemas.Metered.nonVacuity",
+        "ResponseShape.Schemas.Metered.result",
+        "ResponseShape.Schemas.Metered.row"
+      ]
+    },
+    "VE/LimitTies.lean": {
+      "T": [
+        "VE.LimitTies.closureEnvironment",
+        "VE.LimitTies.countermodel",
+        "VE.LimitTies.declarations",
+        "VE.LimitTies.depthFault",
+        "VE.LimitTies.described",
+        "VE.LimitTies.domainFault",
+        "VE.LimitTies.domainOf",
+        "VE.LimitTies.empty",
+        "VE.LimitTies.emptyOrder",
+        "VE.LimitTies.entries",
+        "VE.LimitTies.failure",
+        "VE.LimitTies.folDomain",
+        "VE.LimitTies.folEnvironment",
+        "VE.LimitTies.induct",
+        "VE.LimitTies.name",
+        "VE.LimitTies.nested",
+        "VE.LimitTies.nots",
+        "VE.LimitTies.orderDeclarations",
+        "VE.LimitTies.orderDomain",
+        "VE.LimitTies.orderEnvironment",
+        "VE.LimitTies.query",
+        "VE.LimitTies.top",
+        "VE.LimitTies.tops",
+        "VE.LimitTies.tree",
+        "VE.LimitTies.unaryOnS0",
+        "VE.LimitTies.vocabulary",
+        "VE.LimitTies.vocabularyFault"
+      ]
+    },
+    "VE/Limits.lean": {
+      "D[R]": [
+        "VE.Limits.maxIndex",
+        "VE.Limits.maxNumeralChars"
+      ],
+      "G[R]": [
+        "VE.Limits.maxCases",
+        "VE.Limits.maxDepth",
+        "VE.Limits.maxEntities",
+        "VE.Limits.maxEvaluations",
+        "VE.Limits.maxIdentifierBytes",
+        "VE.Limits.maxJsonDepth",
+        "VE.Limits.maxLineBytes",
+        "VE.Limits.maxNodes",
+        "VE.Limits.maxPackageBytes",
+        "VE.Limits.maxSourceBytes",
+        "VE.Limits.maxTuples",
+        "VE.Limits.stated"
+      ],
+      "S": [
+        "VE.Limits.maxPredicates",
+        "VE.Limits.maxSorts"
       ]
     },
     "VE/Norms/Family.lean": {
