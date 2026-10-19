@@ -5,5 +5,5 @@ regen_generated: checked 30 entries
 == write lake-build
 == write checker-pins
 regen_generated: wrote 2 entries
-0
+bootstrap lines in the second run (--write): 0
 regen_generated: wrote 31 entries

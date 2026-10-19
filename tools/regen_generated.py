@@ -599,10 +599,14 @@ def entry_named(name: str) -> Generated:
 
 def _service_current() -> bool:
     """Whether Lake has nothing to rebuild for ve_service: the build entry's own command with `--no-build`, which
-    exits 3 when the target is missing or out of date."""
+    exits 3 when the target is missing or out of date. True when Lake cannot be run here: then the pin alone
+    decides, as the service client does."""
     build = entry_named(BUILD)
-    return subprocess.run([*build.write[0], "--no-build", SERVICE_TARGET], cwd=ROOT / build.cwd,
-                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+    try:
+        return subprocess.run([*build.write[0], "--no-build", SERVICE_TARGET], cwd=ROOT / build.cwd,
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+    except OSError:
+        return True
 
 
 def _lean_files(entry: Generated) -> dict[Path, bytes]:

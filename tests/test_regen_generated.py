@@ -828,6 +828,22 @@ def test_check_with_a_ready_service_checks_every_user_and_asks_lake_once(tmp_pat
     assert "not checked" not in "".join(capsys.readouterr())
 
 
+def test_without_lake_the_pin_alone_decides_as_before(tmp_path, monkeypatch, capsys):
+    """A machine without Lake on PATH checked a service user against a pinned build before this change; it still
+    does (no question to Lake can be asked), and an unpinned build is still refused."""
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v0", pins=[_digest("built from v0")],
+                         users=USERS)
+    monkeypatch.setattr(R, "GENERATED", tuple(
+        dataclasses.replace(entry, write=((str(tmp_path / "no-such-lake"),),)) if entry.name == R.BUILD else entry
+        for entry in R.GENERATED))
+    (root / "user.py").write_text(FAKE_USER.replace('if build != "built from "', 'if False and build != "built from "'))
+    assert R.main(["--check", "--only", "english-codes"]) == 0
+    assert _log(root, "service.log") == ["english-codes built from v0"]
+    (root / "lean/checkers.lock").write_text(json.dumps({"rust_jsonl": [], "ve_service": ["old"]}, indent=2) + "\n")
+    assert R.main(["--check", "--only", "english-codes"]) == 1
+    assert "is not pinned in lean/checkers.lock" in capsys.readouterr().err
+
+
 # Which entries start the service: every entry whose commands import the client carries the mark.
 
 SERVICE_CLIENT = "ve/backends/lean_service.py"
