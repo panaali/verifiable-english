@@ -113,40 +113,35 @@ reading as a **DILEMMA** (`JOINTLY-UNDISCHARGEABLE`).
 | Explicit alternatives and prevention | Missing | Checked via available actions, `prevents`, and mapped `avoids` fulfilment |
 | Zeroth priority across a human-injury ban | Open | Checked, with Rule 9's necessity test (a translation choice) |
 | Law 3 yields to Laws 1 and 2 | Partial: yields to Law 1 only | Checked via Rule 12 and Rule 13's two exceptions, jointly across threats |
-| Followability | No alternatives check | 6 of 9 distinct spec models (17 entries) have a clear action; 3 do not |
+| Followability | No alternatives check | 6 of 9 distinct spec models (17 entries) have a clear action; 3 do not (2 of 9 with `permitted` unspecified) |
 
 ## The completion defaults and `unspecified`
 
 The environment completes `permitted` to allow, `required` and `prevent_required` to not required, and each
 derived name (`breaks_first_law`, `breaks_zeroth_law`, `has_lawful_option`, `lawfully_avoidable_threat`) to false.
 **The allow is not in the source.** Asimov's laws forbid and require; they never say that whatever they leave open
-is permitted. Since `norm-defaults@0` merged, VE has a completion that says exactly that: `unspecified`, "the
-text does not say". This case should use it for `permitted`, and it does not yet:
+is permitted. `norm-defaults@0` has the completion that says so: `unspecified`, "the text does not say".
 
-| | Before `norm-defaults@0` | Now |
+**Measured with `unspecified` (events-time-causation ET-8).** Since ET-7, `norm-defaults@0` combines with
+`alternatives@0`, and [asimov_unspecified.py](../asimov-extended/asimov_unspecified.py) re-runs these 13 rules with
+`permitted` completed `unspecified` ([results](../asimov-extended/unspecified-results.json)). An action is then clear
+only if it is clear under every admissible filling of what the text leaves unsaid. An action that only the old
+default permitted is "undecided: the text does not say whether it may be performed". Lean reports it as
+`UNSETTLED(...)` only when two validated fillings disagree.
+
+| | allow (the committed environment) | `unspecified` |
 |---|---|---|
-| `permitted` | allow (a modeling choice) | **allow, unchanged** (a modeling choice; `unspecified` is blocked, below) |
-| `required`, `prevent_required` | not required unless a rule requires | unchanged |
-| derived names | false unless a rule derives them | unchanged: each is this translation's own definition, so false-unless-derived is part of the definition, not a claim about the source |
-| verdicts | CONFLICT-FREE; 6 of 9 distinct spec models have a clear action | **unchanged** |
+| the 13 rules | CHECKED | CHECKED: one reading each, the same text and manifest blocks |
+| document conflict verdict | CONFLICT-FREE (8 replayed targets) | CONFLICT-FREE (8 replayed targets, over the filling premises) |
+| distinct spec models with a clear action | 6 of 9 | **2 of 9** (`d-full`, `e`); `a`, `c`, `o` and `l5` have an UNSETTLED action |
+| DILEMMA witnesses `b-A0`, `b-A1`, `j` | NONE-PERMITTED, NONE-PERMITTED, OVER-REQUIRED | the same, with the filling that permits nothing unsaid |
 
-**Why it is not switched.** Every verdict here (FOLLOWABLE, DILEMMA, the clear actions) comes from
-`alternatives@0`, and `norm-defaults@0` does not combine with it yet (docs/spec/norm-defaults.md 3.3,
-"Integration gap"): the alternatives route still consumes completed allow/deny norms and cannot classify a
-permission the text leaves open. Both engines reject the switched environment: Python with `UnsupportedProfile:
-alternatives@0 with norm-defaults@0 is not implemented`, and Lean's alternatives route with `UnsupportedProfile:
-Unsupported profile norm-defaults@0` (a test checks both). Rust decodes no `alternatives@0` environment; it
-evaluates the base formulas Lean produces, so it has no separate leg. The spec forbids reporting a two-valued
-decision for a silent permission, so the case keeps allow rather than pretend.
-
-**What would change.** Under the combined profile, an alternative is clear only if it is clear under every
-admissible filling of the silences, so an alternative that only the default permits would become "undecided:
-the text does not say whether it may be performed", and not clear. Most clear actions here rest on the default:
-rules 1, 2 and 9 grant the only permissions. The [extended case](../asimov-extended/README.md#the-permission-default)
-measures the deny side of this on 51 records: with nothing permitted by default, these rules give a clear action
-in 13 of them instead of 37. That is a bound, not the `unspecified` result, which is not computed. `required` and
-`prevent_required` are candidates too (the laws list duties and do not say that no other exists); they are not
-measured.
+Every action still clear rests on a rule's permission: rule 1 (protective), rule 2 (ordered) or rule 9 (the
+excused First Law breach). The committed environment keeps allow because the [extended
+case](../asimov-extended/README.md#why-the-default-is-not-unspecified) runs these rules on `risk@0`, which does not
+take the completion yet. The figures above the table, and "6 of 9", are the allow results. `required` and
+`prevent_required` are also candidates for `unspecified`: the laws list duties and do not say that no other
+exists. They are not measured.
 
 ## OPEN: fidelity and evidence
 
@@ -171,9 +166,9 @@ measured.
   meets two threats is then as clear as one that meets only one of them.
   Preferring the alternative that meets fewer threats needs a ranking the
   source does not give.
-- **OPEN — the permission default.** `permitted` completes to allow, which the source does not state.
-  `unspecified` is the faithful completion, and it waits for `norm-defaults@0` to combine with `alternatives@0`
-  (see [above](#the-completion-defaults-and-unspecified)).
+- **OPEN — the permission default.** `permitted` completes to allow, which the source does not state. Under
+  `unspecified` (measured [above](#the-completion-defaults-and-unspecified)), 2 of the 9 distinct spec models keep a
+  clear action. The committed environment stays allow until `risk@0` takes the completion.
 - **OPEN — time and uncertain outcomes.** The signed table gives a single
   Boolean outcome for each action and harm at one decision. Multi-step plans,
   uncertain outcomes, joint prevention, and an independently justified causal

@@ -66,6 +66,7 @@ def test_the_committed_counts_derive_from_the_committed_rows():
                                 "unspecified": sum(bool(r["unspecified"]["clear"]) for r in rows.values())}
     assert (records["clear"], ASIMOV["spec_models"]["clear"]) == ({"allow": 30, "deny": 11, "unspecified": 11}, 2)
     assert all(set(r["unspecified"]["clear"]) <= set(r["allow"]) for r in rows.values())
+    assert all(sorted(r["unspecified"]["clear"]) == sorted(r["deny"]) for r in rows.values())
     assert records["with_undecided"] == sorted(
         n for n, r in rows.items() if any(s == "undecided" for s, _ in r["unspecified"]["statuses"].values()))
     decided = [r["unspecified"] for r in rows.values()] + list(ASIMOV["spec_models"]["results"].values())
