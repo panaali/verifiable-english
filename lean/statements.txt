@@ -6027,21 +6027,6 @@ theorem VE.Defaults.basis_strict_sound
                           VE.NormDefaults.EntailsX U X Γ φ
   -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Basis.strict@VE.Defaults.Premises VE.Defaults.Basis@VE.Defaults.Premises VE.Defaults.assumptionsOf@VE.Defaults.Premises VE.Defaults.basisOf@VE.Defaults.Premises VE.Defaults.certChecks@VE.Defaults.Premises VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Tableau.Certificate@VE.Tableau
   -- expr 2695570811
-theorem VE.Defaults.collision_sound
-  ∀ (U : VE.NormDefaults.UDoc),
-    VE.NormDefaults.WellFormedU U = Bool.true →
-      ∀ (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
-        M.Valid (VE.Norms.envAt U.D 0) →
-          ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String),
-            VE.Defaults.collisionCheck U D R M F m n = Bool.true → ¬VE.Defaults.DefaultCoherent U D R
-  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.collisionCheck@VE.Defaults.Premises VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
-  -- expr 1143425634
-theorem VE.Defaults.defaultCoherenceCheck_sound
-  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula)
-    (certs : List (Option VE.Tableau.Certificate)),
-    VE.Defaults.defaultCoherenceCheck U D R certs = Bool.true → VE.Defaults.DefaultCoherent U D R
-  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.defaultCoherenceCheck@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Tableau.Certificate@VE.Tableau
-  -- expr 1184126990
 theorem VE.Defaults.dflt_wellFormed
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -6072,15 +6057,6 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
-theorem VE.Defaults.pairChecks_sound
-  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (P Q : VE.SoftNorms.SoftNode)
-    (c : Option VE.Tableau.Certificate),
-    VE.Defaults.pairChecks U D R P Q c = Bool.true →
-      ∀ (B : VE.Structure),
-        VE.NormDefaults.Wire.BaseAdmissibleX U (VE.SoftNorms.excPremises D ++ R ++ VE.Defaults.dfltPremises D) B →
-          VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU U D P Q)
-  -- uses VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Defaults.pairChecks@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
-  -- expr 2900267181
 theorem VE.Defaults.premisesX_split
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula),
     VE.NormDefaults.Wire.premisesX U (VE.Defaults.defaultX D X) Γ =

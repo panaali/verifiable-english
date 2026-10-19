@@ -1,18 +1,14 @@
 import VE.Readings.VerdictsWire
 import VE.Readings.SupEnv
 
-/-! Answers that hold unless an exception applies (docs/spec/defeasible.md 3.1 to 3.5 and 7.1; plan DF-1a): the
-no-exception premises `Dflt_T`, the gate, the basis and the form.
+/-! Answers that hold unless an exception applies (docs/spec/defeasible.md 3.1, 3.2, 3.4, 3.5 and 7.1; plan DF-1a, first
+part): the no-exception premises `Dflt_T`, the basis and the form. The gate (spec 3.3) is df-1ab's.
 
 `Dflt_T` is regenerated from the decoded soft document: per default rule, "its exception holds only where one of its
 stated sufficient conditions holds" (`∀x̄. excepted → ⊥ ∨ C₁ ∨ … ∨ C_k`); per switch, "no one has turned it off"; per
 `outweighs` decision, "the lower-ranked consideration does not outweigh the higher one". A default answer is RD-9's
 checked entailment with `defaultX D X = X ++ Dflt_T`, so RD-9's theorems apply unchanged (`acceptanceX`,
 `modelCheckX_sound`).
-
-The gate `DefaultCoherent` asks that no two colliding default rules both select on a base admissible with
-`Exc_T ++ R ++ Dflt_T`. It has three outcomes: one checked certificate per pair (`defaultCoherenceCheck_sound`), a
-checked finite collision (`collision_sound`), or neither.
 
 The basis is three-valued: `strict` when the certificate keeps no `Dflt_T` label (`basis_strict_sound`), `needs` when
 it keeps some and a strict countermodel checks with RD-9's `xModelOk` (`basis_needs_sound`), `unsettled` otherwise.
@@ -130,89 +126,6 @@ theorem strict_of_withoutDefaults (U : UDoc) (D : SoftDoc) (X Γ : List VE.Formu
     · exact Or.inr ha
     · obtain ⟨_, _, rfl⟩ := List.mem_map.mp ha
       exact Or.inl rfl) h
-
-/-! ## The gate -/
-
-/-- On every base admissible with the exception premises, the other packs' premises `R` and `Dflt_T`, no colliding
-    pair of default rules both selects. -/
-def DefaultCoherent (U : UDoc) (D : SoftDoc) (R : List VE.Formula) : Prop :=
-  ∀ B : VE.Structure.{u}, BaseAdmissibleX U (excPremises D ++ R ++ dfltPremises D) B →
-    ∀ M N, (M, N) ∈ collidingPairs D → (cohPremiseU U D M N).denote B []
-
-/-- One pair's certificate checks: the pair's `cohPremiseU` from `Exc_T ++ R ++ Dflt_T` with the base background
-    and `Fill_T`. -/
-def pairChecks (U : UDoc) (D : SoftDoc) (R : List VE.Formula) (P Q : SoftNode)
-    (c : Option VE.Tableau.Certificate) : Bool :=
-  match c with
-  | some c => VE.Tableau.checkCertificate (envAt (fill U) 0)
-      (VE.Norms.backgroundBase (fill U) ++ (excPremises D ++ R ++ dfltPremises D) ++ fillPremises U)
-      (cohPremiseU U D P Q) c
-  | none => false
-
-/-- One certificate per colliding pair, in `collidingPairs` order. -/
-def defaultCoherenceCheck (U : UDoc) (D : SoftDoc) (R : List VE.Formula)
-    (certs : List (Option VE.Tableau.Certificate)) : Bool :=
-  (collidingPairs D).length == certs.length &&
-    ((collidingPairs D).zip certs).all (fun (p, c) => pairChecks U D R p.1 p.2 c)
-
-/-- One pair resolved: its coherence premise holds on every base admissible with `Exc_T ++ R ++ Dflt_T`. -/
-theorem pairChecks_sound (U : UDoc) (D : SoftDoc) (R : List VE.Formula) (P Q : SoftNode)
-    (c : Option VE.Tableau.Certificate) (hc : pairChecks U D R P Q c = true) (B : VE.Structure.{u})
-    (hB : BaseAdmissibleX U (excPremises D ++ R ++ dfltPremises D) B) : (cohPremiseU U D P Q).denote B [] := by
-  cases c with
-  | none => cases hc
-  | some c =>
-    exact VE.Tableau.checkCertificate_sound.{u} _ _ _ c hc B hB.1.1.1 (fun a ha => by
-      rcases List.mem_append.mp ha with ha | ha
-      · rcases List.mem_append.mp ha with ha | ha
-        · exact hB.1.1.2 a ha
-        · exact hB.2 a ha
-      · exact hB.1.2 a ha)
-
-theorem defaultCoherenceCheck_sound (U : UDoc) (D : SoftDoc) (R : List VE.Formula)
-    (certs : List (Option VE.Tableau.Certificate)) (hc : defaultCoherenceCheck U D R certs = true) :
-    DefaultCoherent.{u} U D R := by
-  intro B hB M N hMN
-  simp only [defaultCoherenceCheck, Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at hc
-  obtain ⟨hl, hall⟩ := hc
-  obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hMN
-  have hlt : i < (collidingPairs D).length := (List.getElem?_eq_some_iff.mp hi).1
-  have hlt' : i < certs.length := hl ▸ hlt
-  have hmem : ((M, N), certs[i]) ∈ (collidingPairs D).zip certs := by
-    apply List.mem_iff_getElem?.mpr
-    refine ⟨i, ?_⟩
-    rw [List.getElem?_zip_eq_some]
-    exact ⟨hi, List.getElem?_eq_getElem hlt'⟩
-  exact pairChecks_sound U D R M N _ (hall _ hmem) B hB
-
-/-- A checked collision: the finite base and filling satisfy the base background, `Fill_T` and
-    `Exc_T ++ R ++ Dflt_T`, and the coherence premise of the named colliding pair is false there. -/
-def collisionCheck (U : UDoc) (D : SoftDoc) (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity)
-    (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String) : Bool :=
-  match (collidingPairs D).find? (fun p => p.1.name == m && p.2.name == n) with
-  | none => false
-  | some (P, Q) =>
-    VE.Norms.backgroundValid U.D M && VE.NormDefaults.fillValid U M F &&
-      VE.NormDefaults.Wire.extraValid U (excPremises D ++ R ++ dfltPremises D) M F &&
-      !(cohPremiseU U D P Q).eval (M.withFill F) []
-
-theorem collision_sound (U : UDoc) (h : WellFormedU U = true) (D : SoftDoc) (R : List VE.Formula)
-    (M : VE.FiniteModel VE.Bridge.Entity) (valid : M.Valid (envAt U.D 0))
-    (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String)
-    (hc : collisionCheck U D R M F m n = true) :
-    ¬ DefaultCoherent.{0} U D R := by
-  intro hcoh
-  unfold collisionCheck at hc
-  split at hc
-  · cases hc
-  · rename_i P Q hf
-    simp only [Bool.and_eq_true, Bool.not_eq_true'] at hc
-    obtain ⟨⟨⟨hb, hF⟩, hX⟩, hn⟩ := hc
-    have hB := VE.NormDefaults.Wire.admissibleX_of_fill U h _ M valid hb F hF hX
-    have hd := hcoh _ hB P Q (List.mem_of_find?_eq_some hf)
-    rw [← VE.NormDefaults.eval_withFill] at hd
-    rw [hd] at hn
-    cases hn
 
 /-! ## The basis -/
 

@@ -1200,12 +1200,9 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
 #print axioms VE.Defaults.basis_strict_sound
-#print axioms VE.Defaults.collision_sound
-#print axioms VE.Defaults.defaultCoherenceCheck_sound
 #print axioms VE.Defaults.dflt_wellFormed
 #print axioms VE.Defaults.entailsX_mono
 #print axioms VE.Defaults.followsForm_short
-#print axioms VE.Defaults.pairChecks_sound
 #print axioms VE.Defaults.premisesX_split
 #print axioms VE.Defaults.strict_of_withoutDefaults
 #print axioms VE.Definitions.Alias.alias_acceptance

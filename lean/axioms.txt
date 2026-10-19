@@ -831,12 +831,9 @@
 'VE.Defaults.atom_wf' does not depend on any axioms
 'VE.Defaults.basis_needs_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.basis_strict_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Defaults.collision_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Defaults.defaultCoherenceCheck_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.dflt_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.entailsX_mono' depends on axioms: [propext, Quot.sound]
 'VE.Defaults.followsForm_short' depends on axioms: [propext, Quot.sound]
-'VE.Defaults.pairChecks_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.premisesX_split' depends on axioms: [propext, Quot.sound]
 'VE.Defaults.strict_of_withoutDefaults' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Alias.alias_acceptance' depends on axioms: [propext, Classical.choice, Quot.sound]
