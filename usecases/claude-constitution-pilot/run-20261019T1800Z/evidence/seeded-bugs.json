@@ -1,0 +1,47 @@
+{
+ "needed_for_product_code": false,
+ "why": "no product code (Lean, Python, Rust) was changed: this run adds and changes files under usecases/ only (lean/.lake and rust/target in the worktree are ignored build products; `git diff ve-green-et-3b -- ve lean rust` is empty). The claims below are the translator's; each was planted and caught.",
+ "translation_faults": [
+  {
+   "claim": "u0013.presupposition says that there is a core value of Claude",
+   "planted": "the existential turned into “for every thing”",
+   "file": "translation-without-content.ve.md (fence of the unit)",
+   "failing_check": "finish_20261019T1800Z.py: the exact-English assertion on the unit (`Checked reading: There is a thing that is a core value of claude.`)",
+   "failure": "rendered English: Checked reading: Every thing is a core value of claude.",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "u0013.presupposition is about Claude's core values, not another party's",
+   "planted": "the owner constant replaced by `anthropic`",
+   "file": "translation-without-content.ve.md (fence of the unit)",
+   "failing_check": "Lean's typing check of the formula (ve.ast.formula_from_data)",
+   "failure": "TypeMismatch: TypeMismatch: Predicate 'core_value_of' expects ('entity', 'entity'), received ('entity', ",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "u0013.presupposition says core value, not nature",
+   "planted": "the predicate replaced by nature_of (not in the document without the other units)",
+   "file": "translation-without-content.ve.md",
+   "failing_check": "Lean's typing check",
+   "failure": "UnknownSymbol: UnknownSymbol: Unknown predicate 'nature_of'",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "the ledger step applies once: u0013 must start as the old “not admitted” unit",
+   "planted": "the ledger step run twice on its own output",
+   "file": "ledger_1800z.py",
+   "failing_check": "ledger_1800z.apply's assertion on the old status and note",
+   "failure": "AssertionError: ",
+   "restored": "in-memory fault; the file was not touched"
+  },
+  {
+   "claim": "the document's rendering of u0013 states the existence of a core value",
+   "planted": "the fence turned into “Every thing is a core value of claude.” in a scratch copy of translation.ve.md",
+   "file": "scratch copy (deleted afterwards)",
+   "failing_check": "finish_20261019T1800Z.py: block_after(render, 'Claude’s core values') == 'Checked reading: There is a thing that is a core value of claude.'",
+   "failure": "the rendering reads “Every thing is a core value of claude.”",
+   "restored": "scratch copy deleted; the run's translation was not touched"
+  }
+ ],
+ "premise_check_note": "the premise-check dependence on identifiers (evidence/ps6r/premise-variants.json) is a measurement of VE's search budget, not a seeded fault"
+}

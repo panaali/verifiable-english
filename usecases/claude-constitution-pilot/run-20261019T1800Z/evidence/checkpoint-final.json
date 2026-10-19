@@ -1,0 +1,186 @@
+{
+ "label": "final",
+ "document": "usecases/claude-constitution-pilot/run-20261019T1800Z/readings/nd-all.ve.md",
+ "start_document": "usecases/claude-constitution-pilot/run-20261019T1800Z/prev/translation.ve.md",
+ "x3_vocabulary": {
+  "predicates_before": 71,
+  "predicates_after": 71,
+  "predicates_added": [
+   "core_value_of"
+  ],
+  "sorts_added": [],
+  "constants_added": [],
+  "existing_predicate_wordings_changed": {},
+  "existing_sort_nouns_changed": {},
+  "noun_of_sort_entity": "thing",
+  "intended_removals": {
+   "predicates": {
+    "genuine_helpfulness": [
+     "{0} is helpful",
+     null
+    ]
+   },
+   "sorts": {}
+  }
+ },
+ "units_start": 1132,
+ "units_now": 1132,
+ "units_differing_from_start": [
+  "u0013.presupposition",
+  "u0032.presupposition"
+ ],
+ "units_missing_now": [],
+ "units_new_now": [],
+ "x3_fenced_units": {
+  "u0248": {
+   "start": [
+    "not",
+    [
+     "unary",
+     "human",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "now": [
+    "not",
+    [
+     "unary",
+     "human",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "unchanged": true
+  }
+ },
+ "x3_fences": {
+  "u0248": {
+   "text": "Claude is not human.",
+   "formulas": [
+    [
+     "not",
+     [
+      "unary",
+      "human",
+      [
+       "const",
+       "claude"
+      ]
+     ]
+    ]
+   ],
+   "unchanged": true
+  },
+  "u0245.presupposition": {
+   "text": "Claude is novel.",
+   "formulas": [
+    [
+     "unary",
+     "novel_entity",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "unchanged": true
+  },
+  "u0286.presupposition": {
+   "text": "Some thing is unsolved.",
+   "formulas": [
+    [
+     "exists",
+     "entity",
+     [
+      "unary",
+      "open_problem",
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   ],
+   "unchanged": true
+  },
+  "u0032.presupposition": {
+   "text": "Some thing is helpful.",
+   "removed": true
+  }
+ },
+ "fences_new": {
+  "u0013.presupposition": "Some thing is a core value of claude."
+ },
+ "fenced_units_now": [
+  "u0248"
+ ],
+ "document_check": {
+  "returncode": 0,
+  "seconds": 172.6,
+  "stderr": "",
+  "admitted": true,
+  "premises": "model",
+  "premises_route": "superposed",
+  "reading_route": "superposed",
+  "choices": 32,
+  "conflict": "CONFLICT-FREE",
+  "conflicts_by_choice": {
+   "CONFLICT-FREE": 32
+  },
+  "bytes_by_status": {
+   "CHECKED": 239,
+   "LABELLED": 364,
+   "OPEN": 2555,
+   "UNFORMALISED": 181735
+  },
+  "bytes_by_status_start": {
+   "CHECKED": 215,
+   "LABELLED": 364,
+   "OPEN": 2593,
+   "UNFORMALISED": 181721
+  },
+  "residual": {
+   "assumptions": 24,
+   "bridge_leaves": 0,
+   "open_terms": 52,
+   "unresolved_reading_sets": 4,
+   "separations": 9,
+   "readings_findings": 0,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 12,
+   "ungrounded_defaults": 0
+  },
+  "residual_start": {
+   "assumptions": 24,
+   "bridge_leaves": 0,
+   "open_terms": 53,
+   "unresolved_reading_sets": 4,
+   "separations": 9,
+   "readings_findings": 0,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 12,
+   "ungrounded_defaults": 0
+  }
+ },
+ "conclusions": {
+  "conclusion-no-denial": {
+   "returncode": 0,
+   "verdict": "ALL",
+   "evidence": "certificate",
+   "route": "superposed"
+  },
+  "conclusion-no-claim-human": {
+   "returncode": 0,
+   "verdict": "ALL",
+   "evidence": "certificate",
+   "route": "superposed"
+  }
+ }
+}

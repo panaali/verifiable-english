@@ -1,0 +1,1872 @@
+{
+ "open_term_class": {
+  "good_judgment": "judgment",
+  "child_sexual_abuse_material": "classification",
+  "mass_casualty_weapon_uplift": "judgment",
+  "critical_infrastructure_uplift": "judgment",
+  "damaging_cyberweapon_or_malicious_code": "judgment",
+  "clear_and_substantial_undermining_of_oversight": "judgment",
+  "attempt_to_kill_or_disempower_most_of_humanity": "proportion",
+  "illegitimate_absolute_control": "judgment",
+  "genuine_ambiguity": "judgment",
+  "seemingly_compelling_argument_to_cross_line": "judgment",
+  "compliance_unsafe": "judgment",
+  "compliance_unethical": "judgment",
+  "compliance_against_guidelines": "classification",
+  "general_exception_to_complying": "exception",
+  "input_is_specific_instructions": "classification",
+  "input_is_persona": "classification",
+  "input_is_information": "classification",
+  "instruction_role_play_custom_persona": "classification",
+  "instruction_decline_or_withhold": "classification",
+  "instruction_promote_own_products": "classification",
+  "instruction_focus_on_tasks": "classification",
+  "instruction_respond_differently": "classification",
+  "instruction_dishonest_looking_within_honesty": "judgment",
+  "instruction_abandon_identity_in_persona": "judgment",
+  "instruction_claim_human_when_asked": "classification",
+  "instruction_deceptive_tactics_harming_users": "judgment",
+  "instruction_false_information_deceiving_user": "classification",
+  "instruction_endanger_health_or_safety": "judgment",
+  "instruction_act_against_guidelines": "classification",
+  "restricted_action_knowing_or_quite_likely": "attitude",
+  "exception_to_asking_for_clarification": "exception",
+  "exception_to_not_deceiving_about_system_prompt": "exception",
+  "exception_to_complying_with_exploit_instruction": "exception",
+  "broad_safety": "judgment",
+  "ethical_harm": "judgment",
+  "genuine_helpfulness": "judgment",
+  "appropriate_oversight": "judgment"
+ },
+ "unclassified": [],
+ "class_counts": {
+  "attitude": 1,
+  "classification": 13,
+  "exception": 4,
+  "judgment": 18,
+  "proportion": 1
+ },
+ "borderline_judgment_terms": [
+  "instruction_abandon_identity_in_persona",
+  "instruction_deceptive_tactics_harming_users",
+  "instruction_dishonest_looking_within_honesty",
+  "instruction_endanger_health_or_safety"
+ ],
+ "judgment_term_units": {
+  "total": 507,
+  "by_status": {
+   "LABELLED": 1,
+   "OPEN": 12,
+   "READINGS": 1,
+   "UNFORMALISED": 493
+  },
+  "by_missing_feature": {
+   "attribution": 2,
+   "causation": 32,
+   "counting": 7,
+   "defaults": 27,
+   "none": 14,
+   "norms": 361,
+   "other:discourse": 21,
+   "quantities": 43
+  }
+ },
+ "judgment_term_bytes": {
+  "total": 88989,
+  "by_status": {
+   "LABELLED": 19,
+   "OPEN": 2082,
+   "READINGS": 68,
+   "UNFORMALISED": 86820
+  },
+  "by_missing_feature": {
+   "attribution": 256,
+   "causation": 5599,
+   "counting": 1475,
+   "defaults": 4209,
+   "none": 2169,
+   "norms": 68076,
+   "other:discourse": 1775,
+   "quantities": 5430
+  }
+ },
+ "units_by_open_term_class": {
+  "attitude": {
+   "units": 7,
+   "bytes": 874
+  },
+  "classification": {
+   "units": 6,
+   "bytes": 1246
+  },
+  "exception": {
+   "units": 1,
+   "bytes": 234
+  },
+  "judgment": {
+   "units": 507,
+   "bytes": 88989
+  },
+  "proportion": {
+   "units": 1,
+   "bytes": 116
+  }
+ },
+ "catalogue_units_by_status": {
+  "OPEN": {
+   "with_judgment_term": {
+    "units": 3,
+    "bytes": 589
+   },
+   "without_judgment_term": {
+    "units": 0,
+    "bytes": 0
+   }
+  },
+  "READINGS": {
+   "with_judgment_term": {
+    "units": 1,
+    "bytes": 68
+   },
+   "without_judgment_term": {
+    "units": 0,
+    "bytes": 0
+   }
+  },
+  "UNFORMALISED": {
+   "with_judgment_term": {
+    "units": 99,
+    "bytes": 20985
+   },
+   "without_judgment_term": {
+    "units": 80,
+    "bytes": 16755
+   }
+  }
+ },
+ "judgment_terms": {
+  "u0004.s01": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0004.s02": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0005.s01": [
+   "broad_safety"
+  ],
+  "u0005.s02": [
+   "broad_safety"
+  ],
+  "u0007.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0007.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0007.s03": [
+   "genuine_helpfulness"
+  ],
+  "u0009.s01": [
+   "ethical_harm"
+  ],
+  "u0009.s02": [
+   "ethical_harm"
+  ],
+  "u0010.s01": [
+   "good_judgment"
+  ],
+  "u0010.s02": [
+   "good_judgment"
+  ],
+  "u0010.s03": [
+   "good_judgment"
+  ],
+  "u0010.s04": [
+   "good_judgment"
+  ],
+  "u0010.s05": [
+   "good_judgment"
+  ],
+  "u0010.s06": [
+   "good_judgment"
+  ],
+  "u0012.s01": [
+   "good_judgment"
+  ],
+  "u0012.s02": [
+   "good_judgment"
+  ],
+  "u0012.s03": [
+   "good_judgment"
+  ],
+  "u0012.s04": [
+   "good_judgment"
+  ],
+  "u0012.s05": [
+   "good_judgment"
+  ],
+  "u0014.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0014.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0014.s03": [
+   "genuine_helpfulness"
+  ],
+  "u0015.s01": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0015.s02": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0015.s03": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0015.s04": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0015.s05": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0015.s06": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0015.s07": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0015.s08": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0016.s01": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0016.s02": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0017.s01": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0017.s02": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0017.s03": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0017.s04": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0017.s05": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0018.s01": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0018.s02": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0018.s03": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0018.s04": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0019.s01": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0019.s02": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0019.s03": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0019.s04": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0019.s05": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0019.s06": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0019.s07": [
+   "broad_safety",
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0020.s01": [
+   "broad_safety"
+  ],
+  "u0020.s02": [
+   "broad_safety"
+  ],
+  "u0020.s03": [
+   "broad_safety"
+  ],
+  "u0020.s04": [
+   "broad_safety"
+  ],
+  "u0020.s05": [
+   "broad_safety"
+  ],
+  "u0021.s01": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0021.s02": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0021.s03": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0021.s04": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0024.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0024.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0024.s03": [
+   "genuine_helpfulness"
+  ],
+  "u0024.s04": [
+   "genuine_helpfulness"
+  ],
+  "u0024.s05": [
+   "genuine_helpfulness"
+  ],
+  "u0025.s01": [
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0025.s02": [
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0025.s03": [
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0025.s04": [
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0026": [
+   "genuine_helpfulness"
+  ],
+  "u0027.presupposition": [
+   "genuine_helpfulness"
+  ],
+  "u0031.s01": [
+   "ethical_harm"
+  ],
+  "u0031.s02": [
+   "ethical_harm"
+  ],
+  "u0031.s03": [
+   "ethical_harm"
+  ],
+  "u0031.s04": [
+   "ethical_harm"
+  ],
+  "u0032.presupposition": [
+   "genuine_helpfulness"
+  ],
+  "u0033.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0033.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0033.s03": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s03": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s04": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s05": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s06": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s07": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s08": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s09": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s10": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s11": [
+   "genuine_helpfulness"
+  ],
+  "u0035.s12": [
+   "genuine_helpfulness"
+  ],
+  "u0036.s05": [
+   "genuine_ambiguity"
+  ],
+  "u0040.presupposition": [
+   "genuine_helpfulness"
+  ],
+  "u0046.s01": [
+   "ethical_harm"
+  ],
+  "u0046.s02": [
+   "ethical_harm"
+  ],
+  "u0046.s03": [
+   "ethical_harm"
+  ],
+  "u0047.s01": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0047.s02": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0047.s03": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0047.s04": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0047.s05": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0047.s06": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0047.s07": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0047.s08": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0052.s01": [
+   "good_judgment"
+  ],
+  "u0052.s02": [
+   "good_judgment"
+  ],
+  "u0052.s03": [
+   "good_judgment"
+  ],
+  "u0052.s04": [
+   "good_judgment"
+  ],
+  "u0053.s01": [
+   "good_judgment"
+  ],
+  "u0053.s02": [
+   "good_judgment"
+  ],
+  "u0053.s03": [
+   "good_judgment"
+  ],
+  "u0053.s04": [
+   "good_judgment"
+  ],
+  "u0053.s05": [
+   "good_judgment"
+  ],
+  "u0056.s01": [
+   "ethical_harm"
+  ],
+  "u0056.s02": [
+   "ethical_harm"
+  ],
+  "u0056.s03": [
+   "ethical_harm"
+  ],
+  "u0059.s01": [
+   "ethical_harm"
+  ],
+  "u0059.s02": [
+   "ethical_harm"
+  ],
+  "u0059.s03": [
+   "ethical_harm"
+  ],
+  "u0059.s04": [
+   "ethical_harm"
+  ],
+  "u0059.s05": [
+   "ethical_harm"
+  ],
+  "u0059.s06": [
+   "ethical_harm"
+  ],
+  "u0062.s01": [
+   "instruction_abandon_identity_in_persona",
+   "instruction_deceptive_tactics_harming_users",
+   "instruction_endanger_health_or_safety"
+  ],
+  "u0066.s01": [
+   "ethical_harm"
+  ],
+  "u0066.s02": [
+   "ethical_harm"
+  ],
+  "u0066.s03": [
+   "ethical_harm"
+  ],
+  "u0067.s01": [
+   "ethical_harm"
+  ],
+  "u0067.s02": [
+   "ethical_harm"
+  ],
+  "u0067.s03": [
+   "ethical_harm"
+  ],
+  "u0067.s04": [
+   "ethical_harm"
+  ],
+  "u0067.s05": [
+   "ethical_harm"
+  ],
+  "u0067.s06": [
+   "ethical_harm"
+  ],
+  "u0067.s07": [
+   "ethical_harm"
+  ],
+  "u0073.s01": [
+   "broad_safety"
+  ],
+  "u0073.s02": [
+   "broad_safety"
+  ],
+  "u0073.s03": [
+   "broad_safety"
+  ],
+  "u0073.s04": [
+   "broad_safety"
+  ],
+  "u0073.s05": [
+   "compliance_unsafe",
+   "compliance_unethical"
+  ],
+  "u0073.s06": [
+   "broad_safety"
+  ],
+  "u0073.s07": [
+   "broad_safety"
+  ],
+  "u0073.s08": [
+   "broad_safety"
+  ],
+  "u0073.s09": [
+   "broad_safety"
+  ],
+  "u0073.s10": [
+   "broad_safety"
+  ],
+  "u0076.s01": [
+   "good_judgment"
+  ],
+  "u0076.s02": [
+   "good_judgment"
+  ],
+  "u0078.s02": [
+   "ethical_harm"
+  ],
+  "u0080.s01": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0080.s02": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0080.s03": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0080.s04": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0080.s05": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0080.s06": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0081.s01": [
+   "good_judgment"
+  ],
+  "u0081.s02": [
+   "good_judgment"
+  ],
+  "u0081.s03": [
+   "good_judgment"
+  ],
+  "u0081.s04": [
+   "good_judgment"
+  ],
+  "u0081.s05": [
+   "good_judgment"
+  ],
+  "u0083.presupposition": [
+   "genuine_helpfulness"
+  ],
+  "u0084.s01": [
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0084.s02": [
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0084.s03": [
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0084.s04": [
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0085.s01": [
+   "ethical_harm"
+  ],
+  "u0085.s02": [
+   "ethical_harm"
+  ],
+  "u0085.s03": [
+   "ethical_harm"
+  ],
+  "u0085.s04": [
+   "ethical_harm"
+  ],
+  "u0085.s05": [
+   "ethical_harm"
+  ],
+  "u0085.s06": [
+   "ethical_harm"
+  ],
+  "u0085.s07": [
+   "ethical_harm"
+  ],
+  "u0085.s08": [
+   "ethical_harm"
+  ],
+  "u0085.s09": [
+   "ethical_harm"
+  ],
+  "u0085.s10": [
+   "ethical_harm"
+  ],
+  "u0085.s11": [
+   "ethical_harm"
+  ],
+  "u0085.s12": [
+   "ethical_harm"
+  ],
+  "u0085.s13": [
+   "ethical_harm"
+  ],
+  "u0086.s01": [
+   "ethical_harm"
+  ],
+  "u0086.s02": [
+   "ethical_harm"
+  ],
+  "u0086.s03": [
+   "ethical_harm"
+  ],
+  "u0087.s01": [
+   "ethical_harm"
+  ],
+  "u0087.s02": [
+   "ethical_harm"
+  ],
+  "u0087.s03": [
+   "ethical_harm"
+  ],
+  "u0087.s04": [
+   "ethical_harm"
+  ],
+  "u0087.s05": [
+   "ethical_harm"
+  ],
+  "u0087.s06": [
+   "ethical_harm"
+  ],
+  "u0088.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0088.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0089": [
+   "ethical_harm"
+  ],
+  "u0090.s01": [
+   "ethical_harm",
+   "good_judgment"
+  ],
+  "u0090.s02": [
+   "ethical_harm",
+   "good_judgment"
+  ],
+  "u0090.s03": [
+   "ethical_harm",
+   "good_judgment"
+  ],
+  "u0100.s01": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0100.s02": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0100.s03": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0100.s04": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0100.s05": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0104.s01": [
+   "broad_safety"
+  ],
+  "u0104.s02": [
+   "broad_safety"
+  ],
+  "u0104.s03": [
+   "broad_safety"
+  ],
+  "u0104.s04": [
+   "broad_safety"
+  ],
+  "u0107.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0107.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0107.s03": [
+   "genuine_helpfulness"
+  ],
+  "u0110.s01": [
+   "broad_safety"
+  ],
+  "u0110.s02": [
+   "broad_safety"
+  ],
+  "u0110.s03": [
+   "broad_safety"
+  ],
+  "u0110.s04": [
+   "broad_safety"
+  ],
+  "u0110.s05": [
+   "broad_safety"
+  ],
+  "u0118.s01": [
+   "ethical_harm"
+  ],
+  "u0118.s02": [
+   "ethical_harm"
+  ],
+  "u0118.s03": [
+   "ethical_harm"
+  ],
+  "u0118.s04": [
+   "ethical_harm"
+  ],
+  "u0122.s01": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0122.s02": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0122.s03": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0122.s04": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0123.s01.p1": [
+   "instruction_dishonest_looking_within_honesty",
+   "instruction_abandon_identity_in_persona",
+   "instruction_deceptive_tactics_harming_users",
+   "instruction_endanger_health_or_safety"
+  ],
+  "u0123.s02.p1": [
+   "instruction_abandon_identity_in_persona",
+   "instruction_deceptive_tactics_harming_users",
+   "instruction_endanger_health_or_safety"
+  ],
+  "u0123.s03": [
+   "instruction_abandon_identity_in_persona",
+   "instruction_deceptive_tactics_harming_users",
+   "instruction_endanger_health_or_safety"
+  ],
+  "u0126": [
+   "ethical_harm"
+  ],
+  "u0127.s01": [
+   "broad_safety"
+  ],
+  "u0127.s02": [
+   "broad_safety"
+  ],
+  "u0129.s01": [
+   "ethical_harm"
+  ],
+  "u0129.s02": [
+   "ethical_harm"
+  ],
+  "u0129.s03": [
+   "ethical_harm"
+  ],
+  "u0131.s01": [
+   "ethical_harm",
+   "good_judgment"
+  ],
+  "u0131.s02": [
+   "ethical_harm",
+   "good_judgment"
+  ],
+  "u0133.s01": [
+   "ethical_harm"
+  ],
+  "u0133.s02": [
+   "ethical_harm"
+  ],
+  "u0133.s03": [
+   "ethical_harm"
+  ],
+  "u0133.s04": [
+   "ethical_harm"
+  ],
+  "u0133.s05": [
+   "ethical_harm"
+  ],
+  "u0133.s06": [
+   "ethical_harm"
+  ],
+  "u0135.s01": [
+   "ethical_harm"
+  ],
+  "u0135.s02": [
+   "ethical_harm"
+  ],
+  "u0135.s03": [
+   "ethical_harm"
+  ],
+  "u0135.s04": [
+   "ethical_harm"
+  ],
+  "u0135.s05": [
+   "ethical_harm"
+  ],
+  "u0135.s06": [
+   "ethical_harm"
+  ],
+  "u0135.s07": [
+   "ethical_harm"
+  ],
+  "u0135.s08": [
+   "ethical_harm"
+  ],
+  "u0137.s01": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0137.s02": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0137.s03": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0137.s04": [
+   "broad_safety",
+   "genuine_helpfulness",
+   "ethical_harm"
+  ],
+  "u0139.s01": [
+   "ethical_harm"
+  ],
+  "u0139.s02": [
+   "ethical_harm"
+  ],
+  "u0139.s03": [
+   "ethical_harm"
+  ],
+  "u0139.s04": [
+   "ethical_harm"
+  ],
+  "u0139.s05": [
+   "ethical_harm"
+  ],
+  "u0139.s06": [
+   "ethical_harm"
+  ],
+  "u0139.s07": [
+   "ethical_harm"
+  ],
+  "u0139.s08": [
+   "ethical_harm"
+  ],
+  "u0139.s09": [
+   "ethical_harm"
+  ],
+  "u0139.s10": [
+   "ethical_harm"
+  ],
+  "u0139.s11": [
+   "ethical_harm"
+  ],
+  "u0139.s12": [
+   "ethical_harm"
+  ],
+  "u0139.s13": [
+   "ethical_harm"
+  ],
+  "u0139.s14": [
+   "ethical_harm"
+  ],
+  "u0141.s01": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s02": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s03": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s04": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s05": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s06": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s07": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s08": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s09": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s10": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s11": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s12": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0141.s13": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0142.s01": [
+   "good_judgment"
+  ],
+  "u0142.s02": [
+   "good_judgment"
+  ],
+  "u0144.s01": [
+   "ethical_harm"
+  ],
+  "u0144.s02": [
+   "ethical_harm"
+  ],
+  "u0145.s01": [
+   "ethical_harm"
+  ],
+  "u0145.s02": [
+   "ethical_harm"
+  ],
+  "u0145.s03": [
+   "ethical_harm"
+  ],
+  "u0145.s04": [
+   "ethical_harm"
+  ],
+  "u0145.s05": [
+   "ethical_harm"
+  ],
+  "u0146.s01": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0146.s02": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0146.s03": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0146.s04": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0146.s05": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0146.s06": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0146.s07": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0146.s08": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0147.s01": [
+   "ethical_harm"
+  ],
+  "u0147.s02": [
+   "ethical_harm"
+  ],
+  "u0147.s03": [
+   "ethical_harm"
+  ],
+  "u0147.s04": [
+   "ethical_harm"
+  ],
+  "u0147.s05": [
+   "ethical_harm"
+  ],
+  "u0148.s01": [
+   "ethical_harm"
+  ],
+  "u0148.s02": [
+   "ethical_harm"
+  ],
+  "u0148.s03": [
+   "ethical_harm"
+  ],
+  "u0149.s01": [
+   "ethical_harm"
+  ],
+  "u0149.s02": [
+   "ethical_harm"
+  ],
+  "u0149.s03": [
+   "ethical_harm"
+  ],
+  "u0149.s04": [
+   "ethical_harm"
+  ],
+  "u0150.s01": [
+   "ethical_harm"
+  ],
+  "u0150.s02": [
+   "ethical_harm"
+  ],
+  "u0150.s03": [
+   "ethical_harm"
+  ],
+  "u0150.s04": [
+   "ethical_harm"
+  ],
+  "u0155.s01": [
+   "genuine_helpfulness",
+   "ethical_harm",
+   "good_judgment"
+  ],
+  "u0155.s02": [
+   "genuine_helpfulness",
+   "ethical_harm",
+   "good_judgment"
+  ],
+  "u0155.s03": [
+   "genuine_helpfulness",
+   "ethical_harm",
+   "good_judgment"
+  ],
+  "u0159.s01": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s02": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s03": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s04": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s05": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s06": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s07": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s08": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s09": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s10": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s11": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s12": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s13": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s14": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s15": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s16": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0159.s17": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0160.s01": [
+   "ethical_harm"
+  ],
+  "u0160.s02": [
+   "ethical_harm"
+  ],
+  "u0160.s03": [
+   "ethical_harm"
+  ],
+  "u0160.s04": [
+   "ethical_harm"
+  ],
+  "u0165.s01": [
+   "mass_casualty_weapon_uplift"
+  ],
+  "u0165.s02": [
+   "critical_infrastructure_uplift"
+  ],
+  "u0165.s03": [
+   "damaging_cyberweapon_or_malicious_code"
+  ],
+  "u0165.s04": [
+   "clear_and_substantial_undermining_of_oversight"
+  ],
+  "u0165.s06": [
+   "illegitimate_absolute_control"
+  ],
+  "u0168.s01": [
+   "seemingly_compelling_argument_to_cross_line"
+  ],
+  "u0171.s01": [
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0171.s02": [
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0171.s03": [
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0171.s04": [
+   "appropriate_oversight",
+   "ethical_harm"
+  ],
+  "u0175.s01": [
+   "ethical_harm"
+  ],
+  "u0175.s02": [
+   "ethical_harm"
+  ],
+  "u0175.s03": [
+   "ethical_harm"
+  ],
+  "u0175.s04": [
+   "ethical_harm"
+  ],
+  "u0175.s05": [
+   "ethical_harm"
+  ],
+  "u0177.s01": [
+   "appropriate_oversight"
+  ],
+  "u0177.s02": [
+   "appropriate_oversight"
+  ],
+  "u0180.s01": [
+   "ethical_harm"
+  ],
+  "u0180.s02": [
+   "ethical_harm"
+  ],
+  "u0180.s03": [
+   "ethical_harm"
+  ],
+  "u0187.s01": [
+   "ethical_harm"
+  ],
+  "u0187.s02": [
+   "ethical_harm"
+  ],
+  "u0187.s03": [
+   "ethical_harm"
+  ],
+  "u0187.s04": [
+   "ethical_harm"
+  ],
+  "u0187.s05": [
+   "ethical_harm"
+  ],
+  "u0194.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0194.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0194.s03": [
+   "genuine_helpfulness"
+  ],
+  "u0196.s01": [
+   "broad_safety"
+  ],
+  "u0196.s02": [
+   "broad_safety"
+  ],
+  "u0200.s01": [
+   "ethical_harm"
+  ],
+  "u0200.s02": [
+   "ethical_harm"
+  ],
+  "u0200.s03": [
+   "ethical_harm"
+  ],
+  "u0200.s04": [
+   "ethical_harm"
+  ],
+  "u0200.s05": [
+   "ethical_harm"
+  ],
+  "u0200.s06": [
+   "ethical_harm"
+  ],
+  "u0201.s01": [
+   "ethical_harm"
+  ],
+  "u0201.s02": [
+   "ethical_harm"
+  ],
+  "u0201.s03": [
+   "ethical_harm"
+  ],
+  "u0202.s01": [
+   "ethical_harm"
+  ],
+  "u0202.s02": [
+   "ethical_harm"
+  ],
+  "u0202.s03": [
+   "ethical_harm"
+  ],
+  "u0202.s04": [
+   "ethical_harm"
+  ],
+  "u0202.s05": [
+   "ethical_harm"
+  ],
+  "u0202.s06": [
+   "ethical_harm"
+  ],
+  "u0202.s07": [
+   "ethical_harm"
+  ],
+  "u0204.s01": [
+   "ethical_harm"
+  ],
+  "u0204.s02": [
+   "ethical_harm"
+  ],
+  "u0204.s03": [
+   "ethical_harm"
+  ],
+  "u0205.s01": [
+   "appropriate_oversight"
+  ],
+  "u0205.s02": [
+   "appropriate_oversight"
+  ],
+  "u0205.s03": [
+   "appropriate_oversight"
+  ],
+  "u0205.s04": [
+   "appropriate_oversight"
+  ],
+  "u0207.presupposition": [
+   "broad_safety"
+  ],
+  "u0208.s01": [
+   "broad_safety"
+  ],
+  "u0208.s02": [
+   "broad_safety"
+  ],
+  "u0209.s01": [
+   "ethical_harm"
+  ],
+  "u0209.s02": [
+   "ethical_harm"
+  ],
+  "u0209.s03": [
+   "ethical_harm"
+  ],
+  "u0209.s04": [
+   "ethical_harm"
+  ],
+  "u0209.s05": [
+   "ethical_harm"
+  ],
+  "u0209.s06": [
+   "ethical_harm"
+  ],
+  "u0209.s07": [
+   "ethical_harm"
+  ],
+  "u0211.s01": [
+   "broad_safety"
+  ],
+  "u0211.s02": [
+   "broad_safety"
+  ],
+  "u0211.s03": [
+   "broad_safety"
+  ],
+  "u0211.s04": [
+   "broad_safety"
+  ],
+  "u0213.s01": [
+   "broad_safety"
+  ],
+  "u0213.s02": [
+   "broad_safety"
+  ],
+  "u0213.s03": [
+   "broad_safety"
+  ],
+  "u0213.s04": [
+   "broad_safety"
+  ],
+  "u0214.s01": [
+   "broad_safety"
+  ],
+  "u0214.s02": [
+   "broad_safety"
+  ],
+  "u0215.s01": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0215.s02": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0215.s03": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0215.s04": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0215.s05": [
+   "broad_safety",
+   "ethical_harm"
+  ],
+  "u0216.s01": [
+   "broad_safety"
+  ],
+  "u0216.s02": [
+   "broad_safety"
+  ],
+  "u0217": [
+   "broad_safety"
+  ],
+  "u0218.s01": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s02": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s03": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s04": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s05": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s06": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s07": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s08": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s09": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s10": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s11": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s12": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s13": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s14": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s15": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s16": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s17": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s18": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s19": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s20": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s21": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s22": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s23": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0218.s24": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0220.s01": [
+   "broad_safety"
+  ],
+  "u0220.s02": [
+   "broad_safety"
+  ],
+  "u0220.s03": [
+   "broad_safety"
+  ],
+  "u0220.s04": [
+   "broad_safety"
+  ],
+  "u0220.s05": [
+   "broad_safety"
+  ],
+  "u0220.s06": [
+   "broad_safety"
+  ],
+  "u0222.s01": [
+   "broad_safety"
+  ],
+  "u0222.s02": [
+   "broad_safety"
+  ],
+  "u0222.s03": [
+   "broad_safety"
+  ],
+  "u0222.s04": [
+   "broad_safety"
+  ],
+  "u0222.s05": [
+   "broad_safety"
+  ],
+  "u0222.s06": [
+   "broad_safety"
+  ],
+  "u0222.s07": [
+   "broad_safety"
+  ],
+  "u0223.s01": [
+   "broad_safety"
+  ],
+  "u0223.s02": [
+   "broad_safety"
+  ],
+  "u0223.s03": [
+   "broad_safety"
+  ],
+  "u0223.s04": [
+   "broad_safety"
+  ],
+  "u0224.s01": [
+   "broad_safety"
+  ],
+  "u0224.s02": [
+   "broad_safety"
+  ],
+  "u0224.s03": [
+   "broad_safety"
+  ],
+  "u0225.s01": [
+   "broad_safety"
+  ],
+  "u0225.s02": [
+   "broad_safety"
+  ],
+  "u0226.s01": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0226.s02": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0227.s01": [
+   "ethical_harm"
+  ],
+  "u0227.s02": [
+   "ethical_harm"
+  ],
+  "u0227.s03": [
+   "ethical_harm"
+  ],
+  "u0227.s04": [
+   "ethical_harm"
+  ],
+  "u0228.s01": [
+   "ethical_harm"
+  ],
+  "u0228.s02": [
+   "ethical_harm"
+  ],
+  "u0228.s03": [
+   "ethical_harm"
+  ],
+  "u0229.s01": [
+   "broad_safety"
+  ],
+  "u0229.s02": [
+   "broad_safety"
+  ],
+  "u0229.s03": [
+   "broad_safety"
+  ],
+  "u0233.s01": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0233.s02": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0233.s03": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0233.s04": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0234.s01": [
+   "broad_safety",
+   "appropriate_oversight",
+   "genuine_helpfulness"
+  ],
+  "u0234.s02": [
+   "broad_safety",
+   "appropriate_oversight",
+   "genuine_helpfulness"
+  ],
+  "u0244.s01": [
+   "broad_safety"
+  ],
+  "u0244.s02": [
+   "broad_safety"
+  ],
+  "u0244.s03": [
+   "broad_safety"
+  ],
+  "u0263.s01": [
+   "ethical_harm"
+  ],
+  "u0263.s02": [
+   "ethical_harm"
+  ],
+  "u0263.s03": [
+   "ethical_harm"
+  ],
+  "u0264.s01": [
+   "broad_safety"
+  ],
+  "u0264.s02": [
+   "broad_safety"
+  ],
+  "u0264.s03": [
+   "broad_safety"
+  ],
+  "u0264.s04": [
+   "broad_safety"
+  ],
+  "u0264.s05": [
+   "broad_safety"
+  ],
+  "u0274.s01": [
+   "ethical_harm"
+  ],
+  "u0274.s02": [
+   "ethical_harm"
+  ],
+  "u0274.s03": [
+   "ethical_harm"
+  ],
+  "u0274.s04": [
+   "ethical_harm"
+  ],
+  "u0274.s05": [
+   "ethical_harm"
+  ],
+  "u0288.s01": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0288.s02": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0288.s03": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0288.s04": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0288.s05": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0288.s06": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0288.s07": [
+   "broad_safety",
+   "appropriate_oversight"
+  ],
+  "u0289.s01": [
+   "good_judgment"
+  ],
+  "u0289.s02": [
+   "good_judgment"
+  ],
+  "u0289.s03": [
+   "good_judgment"
+  ],
+  "u0289.s04": [
+   "good_judgment"
+  ],
+  "u0289.s05": [
+   "good_judgment"
+  ],
+  "u0290.s01": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0290.s02": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0290.s03": [
+   "broad_safety",
+   "genuine_helpfulness"
+  ],
+  "u0299.s01": [
+   "genuine_helpfulness"
+  ],
+  "u0299.s02": [
+   "genuine_helpfulness"
+  ],
+  "u0299.s03": [
+   "genuine_helpfulness"
+  ],
+  "u0299.s04": [
+   "genuine_helpfulness"
+  ],
+  "u0299.s05": [
+   "genuine_helpfulness"
+  ]
+ }
+}
