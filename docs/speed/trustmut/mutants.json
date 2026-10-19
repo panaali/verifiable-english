@@ -137,7 +137,8 @@
    "find": "        end = next((s for s in starts if at < s <= hi and not t[s:hi].strip() and not code_only(text[s:hi]).strip()),\n                   hi)",
    "replace": "        end = hi",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it"
    ],
    "claim": "a proof cut keeps the comments after it: the next `#guard_msgs`'s docstring (review F6)"
   },
