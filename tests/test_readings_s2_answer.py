@@ -217,6 +217,20 @@ def test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable(genuine
         assert _ask(raw, document, {**row, "error": text}) == (("refused", text) if bound else ("unavailable",)), text
 
 
+def test_a_slot_label_naming_what_the_request_has_not_is_unavailable(genuine):
+    """A label names the request's couplings and narrowings, its open sets at their versions and, for a reading's
+    own premise, an index below the set's number of readings; Lean's own labels stay bound."""
+    forged = ["coupling:zz", "narrowing:zz", "readings:rs9@1:one", "readings:rs1@7:one", "readings:rs1@1:9:quiet",
+              "unsaid:pair:avoid_required,help_required"]
+    rows = [(raw, document, row) for raw, document, row in genuine if row.get("route") == "superposed"]
+    labels = {entry["label"].partition(":")[0] for _, _, row in rows for entry in row["slot"]}
+    assert {"readings", "coupling", "narrowing"} <= labels
+    for raw, document, row in rows:
+        for label in forged:
+            assert _ask(raw, document, {**row, "slot": [*row["slot"], {"label": label, "ast": ["top"]}]}) == (
+                "unavailable",), label
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # The Python regeneration's tests, converted to Lean's answer on the same input (tests/test_readings_s2_python.py)
 
