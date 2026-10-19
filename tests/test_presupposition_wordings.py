@@ -60,14 +60,14 @@ def env():
     return environment()
 
 
-@pytest.mark.parametrize('name,noun,owner', NOUNS)
+@pytest.mark.parametrize('name,noun,owner', NOUNS, ids=[n[0] for n in NOUNS])
 def test_each_pilot_wording_is_admitted(env, name, noun, owner):
     words = EnglishVocabulary(env)
     assert words.predicates[name] == '{0} is a ' + noun + ' of {1}'
     assert not [i for i in words.issues if i.path.startswith(f'/vocabulary/predicates/{name}/')]
 
 
-@pytest.mark.parametrize('name,noun,owner', NOUNS)
+@pytest.mark.parametrize('name,noun,owner', NOUNS, ids=[n[0] for n in NOUNS])
 def test_existence_sentence_parses_exactly_and_round_trips(env, name, noun, owner):
     sentence = f'Some thing is a {noun} of {owner}.'
     assert formulas(env, sentence) == [existence(name, owner)]
@@ -82,7 +82,7 @@ def test_the_plan_sentence_with_capitalised_display_parses_exactly(env):
         existence('core_value_of', 'claude')]
 
 
-@pytest.mark.parametrize('name,noun,owner', [n for n in NOUNS if n[0] in ('mission_of', 'nature_of')])
+@pytest.mark.parametrize('name,noun,owner', NOUNS[2:], ids=[n[0] for n in NOUNS[2:]])
 def test_enumerated_uniqueness_parses_to_exactly_u_of_d(env, name, noun, owner):
     rendered = render_english(formula_from_data(env, uniqueness(name, owner)), env) + '.'
     assert rendered == ('There is a first thing such that both of the following hold:\n'
