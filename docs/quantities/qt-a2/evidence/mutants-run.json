@@ -1,0 +1,544 @@
+{
+ "mutants": [
+  {
+   "id": "plan-tiesUp-upper-le",
+   "file": "lean/VE/Cardinality/Ratio.lean",
+   "claim": "roundingQ: the tiesUp upper bound is strict (plan's seeded bug; the tie fixture 1/8 to 0.12)",
+   "source_sha256": "7be6c00f6ac3bb17c874d2e198dbbf1b73166e1bc0d5e3e83470c19e59042611",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.5,
+   "output_tail": "_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [125/128] Building VE.Cardinality.Ratio (1.4s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Ratio.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.setup.json --json\nerror: VE/Cardinality/Ratio.lean:103:71: unsolved goals\ncase tiesUp\n\u03b1 : Type u\nW : TStructure \u03b1\ng : String\na b : QTerm\nx y D : Int\nk : Nat\nha : QTerm.tdenote W [] a = some (Time.TValue.qty g x)\nhb : QTerm.tdenote W [] b = some (Time.TValue.qty g y)\n\u22a2 (2 * D - 1) * y \u2264 2 * 10 ^ k * x \u2192 (2 * 10 ^ k * x \u2264 (2 * D + 1) * y \u2194 2 * 10 ^ k * x < (2 * D + 1) * y)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Ratio\nerror: build failed\n"
+  },
+  {
+   "id": "erasedRounding-tiesUp-upper-le",
+   "file": "lean/VE/Cardinality/Ratio.lean",
+   "claim": "roundsTo_ratio_agree: erasedRounding's tiesUp upper bound is strict",
+   "source_sha256": "7be6c00f6ac3bb17c874d2e198dbbf1b73166e1bc0d5e3e83470c19e59042611",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.6,
+   "output_tail": "lity/Ratio.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.setup.json --json\nerror: VE/Cardinality/Ratio.lean:69:11: unsolved goals\ncase tiesUp\na b D : Int\nk : Nat\nhb : 0 < b\nh :\n  \u2200 (c m : Int),\n    (\u2191c \u2264 \u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2194 c * b \u2264 m * 10 ^ k * a) \u2227\n      (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) < \u2191c \u2194 m * 10 ^ k * a < c * b) \u2227\n        (\u2191c < \u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2194 c * b < m * 10 ^ k * a) \u2227\n          (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2264 \u2191c \u2194 m * 10 ^ k * a \u2264 c * b) \u2227\n            (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) = \u2191c \u2194 m * 10 ^ k * a = c * b)\nh1 : 2 * \u2191D - 1 \u2264 2 * (\u2191a / \u2191b * tenPow \u2191k) \u2194 (2 * D - 1) * b \u2264 2 * 10 ^ k * a\nh2 : 2 * (\u2191a / \u2191b * tenPow \u2191k) < 2 * \u2191D + 1 \u2194 2 * 10 ^ k * a < (2 * D + 1) * b\n\u22a2 (2 * D - 1) * b \u2264 2 * 10 ^ k * a \u2227 2 * 10 ^ k * a \u2264 (2 * D + 1) * b \u2194\n    (2 * D - 1) * b \u2264 2 * 10 ^ k * a \u2227 2 * 10 ^ k * a < (2 * D + 1) * b\nerror: VE/Cardinality/Ratio.lean:103:71: unsolved goals\ncase tiesUp\n\u03b1 : Type u\nW : TStructure \u03b1\ng : String\na b : QTerm\nx y D : Int\nk : Nat\nha : QTerm.tdenote W [] a = some (Time.TValue.qty g x)\nhb : QTerm.tdenote W [] b = some (Time.TValue.qty g y)\n\u22a2 (2 * D - 1) * y \u2264 2 * 10 ^ k * x \u2192 (2 * 10 ^ k * x < (2 * D + 1) * y \u2194 2 * 10 ^ k * x \u2264 (2 * D + 1) * y)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Ratio\nerror: build failed\n"
+  },
+  {
+   "id": "erasedRounding-halfEven-parity",
+   "file": "lean/VE/Cardinality/Ratio.lean",
+   "claim": "roundsTo_ratio_agree: halfEven keeps an endpoint only for an even D",
+   "source_sha256": "7be6c00f6ac3bb17c874d2e198dbbf1b73166e1bc0d5e3e83470c19e59042611",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.5,
+   "output_tail": "/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.setup.json --json\nerror: VE/Cardinality/Ratio.lean:83:14: omega could not prove the goal:\na possible counterexample may satisfy the constraints\n  d - e \u2265 1\n  c \u2265 1\nwhere\n c := b\n d := (2 * D + 1) * b\n e := 2 * 10 ^ k * a\nerror: VE/Cardinality/Ratio.lean:83:14: omega could not prove the goal:\na possible counterexample may satisfy the constraints\n  d - e \u2265 1\n  c \u2265 1\nwhere\n c := b\n d := (2 * D + 1) * b\n e := 2 * 10 ^ k * a\nerror: VE/Cardinality/Ratio.lean:103:71: unsolved goals\ncase halfEven.isTrue\n\u03b1 : Type u\nW : TStructure \u03b1\ng : String\na b : QTerm\nx y D : Int\nk : Nat\nha : QTerm.tdenote W [] a = some (Time.TValue.qty g x)\nhb : QTerm.tdenote W [] b = some (Time.TValue.qty g y)\nh\u271d : D % 2 = 0\n\u22a2 \u00acD % 2 = 1 \u2192\n    ((2 * D - 1) * y \u2264 2 * 10 ^ k * x \u2227 2 * 10 ^ k * x \u2264 (2 * D + 1) * y \u2194\n      (2 * D - 1) * y < 2 * 10 ^ k * x \u2227 2 * 10 ^ k * x < (2 * D + 1) * y)\n\ncase halfEven.isFalse\n\u03b1 : Type u\nW : TStructure \u03b1\ng : String\na b : QTerm\nx y D : Int\nk : Nat\nha : QTerm.tdenote W [] a = some (Time.TValue.qty g x)\nhb : QTerm.tdenote W [] b = some (Time.TValue.qty g y)\nh\u271d : \u00acD % 2 = 0\n\u22a2 D % 2 = 1 \u2192\n    ((2 * D - 1) * y < 2 * 10 ^ k * x \u2227 2 * 10 ^ k * x < (2 * D + 1) * y \u2194\n      (2 * D - 1) * y \u2264 2 * 10 ^ k * x \u2227 2 * 10 ^ k * x \u2264 (2 * D + 1) * y)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Ratio\nerror: build failed\n"
+  },
+  {
+   "id": "erasedRounding-down-lower",
+   "file": "lean/VE/Cardinality/Ratio.lean",
+   "claim": "roundsTo_ratio_agree: down's lower bound is inclusive",
+   "source_sha256": "7be6c00f6ac3bb17c874d2e198dbbf1b73166e1bc0d5e3e83470c19e59042611",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.6,
+   "output_tail": "0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Ratio.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.setup.json --json\nerror: VE/Cardinality/Ratio.lean:84:9: unsolved goals\ncase down\na b D : Int\nk : Nat\nhb : 0 < b\nh :\n  \u2200 (c m : Int),\n    (\u2191c \u2264 \u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2194 c * b \u2264 m * 10 ^ k * a) \u2227\n      (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) < \u2191c \u2194 m * 10 ^ k * a < c * b) \u2227\n        (\u2191c < \u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2194 c * b < m * 10 ^ k * a) \u2227\n          (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2264 \u2191c \u2194 m * 10 ^ k * a \u2264 c * b) \u2227\n            (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) = \u2191c \u2194 m * 10 ^ k * a = c * b)\nh1 : \u2191D \u2264 \u2191a / \u2191b * tenPow \u2191k \u2194 D * b \u2264 10 ^ k * a\nh2 : \u2191a / \u2191b * tenPow \u2191k < \u2191D + 1 \u2194 10 ^ k * a < (D + 1) * b\n\u22a2 D * b < 10 ^ k * a \u2227 10 ^ k * a < (D + 1) * b \u2194 D * b \u2264 10 ^ k * a \u2227 10 ^ k * a < (D + 1) * b\nerror: VE/Cardinality/Ratio.lean:103:71: unsolved goals\ncase down\n\u03b1 : Type u\nW : TStructure \u03b1\ng : String\na b : QTerm\nx y D : Int\nk : Nat\nha : QTerm.tdenote W [] a = some (Time.TValue.qty g x)\nhb : QTerm.tdenote W [] b = some (Time.TValue.qty g y)\n\u22a2 10 ^ k * x < (D + 1) * y \u2192 (D * y \u2264 10 ^ k * x \u2194 D * y < 10 ^ k * x)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Ratio\nerror: build failed\n"
+  },
+  {
+   "id": "erasedRounding-up-upper",
+   "file": "lean/VE/Cardinality/Ratio.lean",
+   "claim": "roundsTo_ratio_agree: up's upper bound is inclusive",
+   "source_sha256": "7be6c00f6ac3bb17c874d2e198dbbf1b73166e1bc0d5e3e83470c19e59042611",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.7,
+   "output_tail": ".24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Ratio.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.setup.json --json\nerror: VE/Cardinality/Ratio.lean:89:7: unsolved goals\ncase up\na b D : Int\nk : Nat\nhb : 0 < b\nh :\n  \u2200 (c m : Int),\n    (\u2191c \u2264 \u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2194 c * b \u2264 m * 10 ^ k * a) \u2227\n      (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) < \u2191c \u2194 m * 10 ^ k * a < c * b) \u2227\n        (\u2191c < \u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2194 c * b < m * 10 ^ k * a) \u2227\n          (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) \u2264 \u2191c \u2194 m * 10 ^ k * a \u2264 c * b) \u2227\n            (\u2191m * (\u2191a / \u2191b * tenPow \u2191k) = \u2191c \u2194 m * 10 ^ k * a = c * b)\nh1 : \u2191D - 1 < \u2191a / \u2191b * tenPow \u2191k \u2194 (D - 1) * b < 10 ^ k * a\nh2 : \u2191a / \u2191b * tenPow \u2191k \u2264 \u2191D \u2194 10 ^ k * a \u2264 D * b\n\u22a2 (D - 1) * b < 10 ^ k * a \u2227 10 ^ k * a < D * b \u2194 (D - 1) * b < 10 ^ k * a \u2227 10 ^ k * a \u2264 D * b\nerror: VE/Cardinality/Ratio.lean:103:71: unsolved goals\ncase up\n\u03b1 : Type u\nW : TStructure \u03b1\ng : String\na b : QTerm\nx y D : Int\nk : Nat\nha : QTerm.tdenote W [] a = some (Time.TValue.qty g x)\nhb : QTerm.tdenote W [] b = some (Time.TValue.qty g y)\n\u22a2 (D - 1) * y < 10 ^ k * x \u2192 (10 ^ k * x \u2264 D * y \u2194 10 ^ k * x < D * y)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Ratio\nerror: build failed\n"
+  },
+  {
+   "id": "roundingQ-halfEven-parity",
+   "file": "lean/VE/Cardinality/Ratio.lean",
+   "claim": "roundingQ: halfEven's erased form keeps endpoints only for an even D (the halfEven tie fixture)",
+   "source_sha256": "7be6c00f6ac3bb17c874d2e198dbbf1b73166e1bc0d5e3e83470c19e59042611",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "lding VE.Cardinality.Ratio (1.6s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Ratio.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Ratio.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Ratio.setup.json --json\nerror: VE/Cardinality/Ratio.lean:103:71: unsolved goals\ncase halfEven.isTrue\n\u03b1 : Type u\nW : TStructure \u03b1\ng : String\na b : QTerm\nx y D : Int\nk : Nat\nha : QTerm.tdenote W [] a = some (Time.TValue.qty g x)\nhb : QTerm.tdenote W [] b = some (Time.TValue.qty g y)\nh\u271d : D % 2 = 1\n\u22a2 \u00acD % 2 = 0 \u2192\n    ((2 * D - 1) * y \u2264 2 * 10 ^ k * x \u2227 2 * 10 ^ k * x \u2264 (2 * D + 1) * y \u2194\n      (2 * D - 1) * y < 2 * 10 ^ k * x \u2227 2 * 10 ^ k * x < (2 * D + 1) * y)\n\ncase halfEven.isFalse\n\u03b1 : Type u\nW : TStructure \u03b1\ng : String\na b : QTerm\nx y D : Int\nk : Nat\nha : QTerm.tdenote W [] a = some (Time.TValue.qty g x)\nhb : QTerm.tdenote W [] b = some (Time.TValue.qty g y)\nh\u271d : \u00acD % 2 = 1\n\u22a2 D % 2 = 0 \u2192\n    ((2 * D - 1) * y < 2 * 10 ^ k * x \u2227 2 * 10 ^ k * x < (2 * D + 1) * y \u2194\n      (2 * D - 1) * y \u2264 2 * 10 ^ k * x \u2227 2 * 10 ^ k * x \u2264 (2 * D + 1) * y)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Ratio\nerror: build failed\n"
+  },
+  {
+   "id": "S-rules-down",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "admittedRules: down is not admitted (decision d)",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 68.3,
+   "output_tail": "chains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Examples.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Examples.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Examples.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Examples.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Examples.setup.json --json\nerror: VE/Cardinality/Examples.lean:343:0: Expression\n  ![CFormula.roundsTo Numbers.Rounding.down sept june 1 0, CFormula.percentRoundsTo Numbers.Rounding.up sept june 1 0,\n          CFormula.roundsTo Numbers.Rounding.tiesUp date date 1 0, CFormula.percentOf date date 1 0,\n          CFormula.roundsTo Numbers.Rounding.halfEven sept (CTerm.count pm Body.any) 1 0,\n          CFormula.percentOf sept date 1 0].any\n      fun x => CFormula.admits news x\ndid not evaluate to `true`\nerror: VE/Cardinality/Examples.lean:633:54: Tactic `decide` proved that the proposition\n  Numbers.Rounding.tiesUp \u2208 admittedRules \u2227\n    Numbers.Rounding.halfEven \u2208 admittedRules \u2227\n      \u00acNumbers.Rounding.down \u2208 admittedRules \u2227 \u00acNumbers.Rounding.up \u2208 admittedRules\nis false\nerror: VE/Cardinality/Examples.lean:658:56: Tactic `decide` proved that the proposition\n  \u00acCFormula.admits news (CFormula.roundsTo Numbers.Rounding.down sept june 1 0) = true\nis false\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "S-rules-no-halfEven",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "admittedRules: halfEven is admitted (decision d)",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 69.0,
+   "output_tail": "\nerror: VE/Cardinality/Examples.lean:269:0: Expression\n  (fa4.all fun x => CFormula.admits fomc x) && fa4.all fun x => nums x == (true, true)\ndid not evaluate to `true`\nerror: VE/Cardinality/Examples.lean:335:0: Expression\n  (fa5.all fun x => CFormula.admits news x) && [relative, points].all fun x => CFormula.admits news x\ndid not evaluate to `true`\nerror: VE/Cardinality/Examples.lean:633:54: Tactic `decide` proved that the proposition\n  Numbers.Rounding.tiesUp \u2208 admittedRules \u2227\n    Numbers.Rounding.halfEven \u2208 admittedRules \u2227\n      \u00acNumbers.Rounding.down \u2208 admittedRules \u2227 \u00acNumbers.Rounding.up \u2208 admittedRules\nis false\nerror: VE/Cardinality/Examples.lean:658:56: Expected type must not contain metavariables\n  \u00acCFormula.admits ?m.119 ?m.120 = true\nerror: VE/Cardinality/Examples.lean:658:6: Type mismatch\n  fun h => absurd \u22ef \u22ef\nhas type\n  (h : Admitted ?m.119 ?m.120) \u2192 ?m.122 h\nbut is expected to have type\n  Admitted news (CFormula.roundsTo Numbers.Rounding.halfEven sept june 1 0)\nerror: VE/Cardinality/Examples.lean:658:56: Expected type must not contain metavariables\n  \u00acCFormula.admits ?m.171 ?m.172 = true\nerror: VE/Cardinality/Examples.lean:658:6: Type mismatch\n  fun h => absurd \u22ef \u22ef\nhas type\n  (h : Admitted ?m.171 ?m.172) \u2192 ?m.174 h\nbut is expected to have type\n  Admitted news (CFormula.percentRoundsTo Numbers.Rounding.halfEven (CTerm.count pm Body.any) (num 3) 1 0)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "S-cterm-no-count",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "CTerm: a ratio can take a count as an operand",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.4,
+   "output_tail": "VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:98:65: Unknown constant `VE.Cardinality.CTerm.count`\n\nNote: Inferred this name from the expected resulting type of `.count`:\n  CTerm\nerror: VE/Cardinality/Syntax.lean:130:4: Unknown constant `VE.Cardinality.CTerm.count`\n\nNote: Inferred this name from the expected resulting type of `.count`:\n  CTerm\nerror: VE/Cardinality/Syntax.lean:167:2: Invalid alternative name `count`: There are no unhandled alternatives\nerror: VE/Cardinality/Syntax.lean:166:41: unsolved goals\ncase quantity.mpr.quantity\nE : CEnv\ng : String\nt : QTerm\nh : Time.HasType E.q [] t (Time.QType.qty g)\n\u22a2 sorry () = some g\nwarning: VE/Cardinality/Syntax.lean:162:17: declaration uses 'sorry'\nwarning: VE/Cardinality/Syntax.lean:166:63: This simp argument is unused:\n  (VE.Time.typeOf_iff _ _ _ _).mpr h\n\nHint: Omit it from the simp argument list.\n  simp [CTerm.tagOf,\u0335 \u0335(\u0335V\u0335E\u0335.\u0335T\u0335i\u0335m\u0335e\u0335.\u0335t\u0335y\u0335p\u0335e\u0335O\u0335f\u0335_\u0335i\u0335f\u0335f\u0335 \u0335_\u0335 \u0335_\u0335 \u0335_\u0335 \u0335_\u0335)\u0335.\u0335m\u0335p\u0335r\u0335 \u0335h\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-ctermTyped-count-finite",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "CTermTyped: a count operand names a declared finite sort",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.7,
+   "output_tail": "y.Syntax (2.6s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:173:95: Application type mismatch: The argument\n  hs.left\nhas type\n  s \u2208 E.finite\nbut is expected to have type\n  BodyTyped ?m.277 ?m.278 ?m.279\nin the application\n  CTermTyped.count hs.left\nerror: VE/Cardinality/Syntax.lean:175:28: Too many variable names provided at alternative `count`: 2 provided, but 1 expected\nerror: VE/Cardinality/Syntax.lean:175:81: Unknown identifier `hb`\nerror: VE/Cardinality/Syntax.lean:175:42: unsolved goals\ncase count.mpr.count\nE : CEnv\ns : String\nb : Body\nhs : BodyTyped E s b\n\u22a2 s \u2208 E.finite \u2227 bodyCheck E s b = true\nwarning: VE/Cardinality/Syntax.lean:175:51: This simp argument is unused:\n  hs\n\nHint: Omit it from the simp argument list.\n  simp [h\u0335s\u0335,\u0335 \u0335(bodyCheck_iff E s b).mpr hb]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-ctermTyped-count-body",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "CTermTyped: a count operand's body is typed",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.8,
+   "output_tail": "Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [123/128] Building VE.Cardinality.Syntax (2.6s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:173:88: Function expected at\n  CTermTyped.count hs.left\nbut this term has type\n  CTermTyped E (CTerm.count s ?m.279) Time.dimensionless\n\nNote: Expected a function because this term is being applied to the argument\n  hs.2\nerror: VE/Cardinality/Syntax.lean:175:28: Too many variable names provided at alternative `count`: 2 provided, but 1 expected\nerror: VE/Cardinality/Syntax.lean:175:81: Unknown identifier `hb`\nerror: VE/Cardinality/Syntax.lean:175:42: unsolved goals\ncase count.mpr.count\nE : CEnv\ns : String\nb : Body\nhs : s \u2208 E.finite\n\u22a2 bodyCheck E s b = true\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-ctermTyped-quantity-tag",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "CTermTyped: a quantity operand has its own W6a tag",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.1,
+   "output_tail": "ean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [123/128] Building VE.Cardinality.Syntax (2.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:165:82: Application type mismatch: The argument\n  hg\nhas type\n  QTerm.typeOf E.q [] t = some (Time.QType.qty g)\nbut is expected to have type\n  QTerm.typeOf E.q [] t = some (Time.QType.qty Time.dimensionless)\nin the application\n  (Time.typeOf_iff E.q [] t (Time.QType.qty Time.dimensionless)).mp hg\nerror: VE/Cardinality/Syntax.lean:167:41: unsolved goals\ncase quantity.mpr.quantity\nE : CEnv\ng : String\nt : QTerm\nh : Time.HasType E.q [] t (Time.QType.qty Time.dimensionless)\n\u22a2 Time.dimensionless = g\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-admitted-roundsTo-rule",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "Admitted.roundsTo: a rounding names an admitted rule",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.0,
+   "output_tail": "/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:199:48: Application type mismatch: The argument\n  hr\nhas type\n  r \u2208 admittedRules\nbut is expected to have type\n  ?m.410 \u2260 Time.dayTag\nin the application\n  Admitted.roundsTo hr\nerror: VE/Cardinality/Syntax.lean:200:6: Too many variable names provided at alternative `roundsTo`: 4 provided, but 3 expected\nerror: VE/Cardinality/Syntax.lean:200:39: Application type mismatch: The argument\n  hr\nhas type\n  g\u271d \u2260 Time.dayTag\nbut is expected to have type\n  r \u2208 admittedRules\nin the application\n  And.intro hr\nerror: VE/Cardinality/Syntax.lean:200:46: Application type mismatch: The argument\n  hg\nhas type\n  CTermTyped E n g\u271d\nbut is expected to have type\n  ?m.538 \u2260 Time.dayTag\nin the application\n  And.intro hg\nerror: VE/Cardinality/Syntax.lean:200:50: Application type mismatch: The argument\n  hn\nhas type\n  CTermTyped E d g\u271d\nbut is expected to have type\n  CTermTyped E n ?m.538\nin the application\n  And.intro hn\nerror: VE/Cardinality/Syntax.lean:200:54: Unknown identifier `hd`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-admitted-roundsTo-day",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "Admitted.roundsTo: no ratio of dates",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.8,
+   "output_tail": "VE.Cardinality.Syntax (2.6s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:199:51: Application type mismatch: The argument\n  hg\nhas type\n  g \u2260 Time.dayTag\nbut is expected to have type\n  CTermTyped ?m.404 ?m.406 ?m.410\nin the application\n  Admitted.roundsTo hr hg\nerror: VE/Cardinality/Syntax.lean:200:6: Too many variable names provided at alternative `roundsTo`: 4 provided, but 3 expected\nerror: VE/Cardinality/Syntax.lean:200:46: Application type mismatch: The argument\n  hg\nhas type\n  CTermTyped E n g\u271d\nbut is expected to have type\n  ?m.540 \u2260 Time.dayTag\nin the application\n  And.intro hg\nerror: VE/Cardinality/Syntax.lean:200:50: Application type mismatch: The argument\n  hn\nhas type\n  CTermTyped E d g\u271d\nbut is expected to have type\n  CTermTyped E n ?m.540\nin the application\n  And.intro hn\nerror: VE/Cardinality/Syntax.lean:200:54: Unknown identifier `hd`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-admitted-roundsTo-den",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "Admitted.roundsTo: the denominator has the numerator's tag",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.0,
+   "output_tail": "\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [123/128] Building VE.Cardinality.Syntax (2.8s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:199:57: Application type mismatch: The argument\n  hd\nhas type\n  CTermTyped E d g\nbut is expected to have type\n  CTermTyped E n g\nin the application\n  Admitted.roundsTo hr hg hn hd\nerror: VE/Cardinality/Syntax.lean:200:54: Application type mismatch: The argument\n  hd\nhas type\n  CTermTyped E n g\u271d\nbut is expected to have type\n  CTermTyped E d g\u271d\nin the application\n  \u27e8hn, hd\u27e9\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-admitted-percentOf-whole",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "Admitted.percentOf: the whole has the part's tag",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.7,
+   "output_tail": "\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [123/128] Building VE.Cardinality.Syntax (2.5s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:207:51: Application type mismatch: The argument\n  hw\nhas type\n  CTermTyped E w g\nbut is expected to have type\n  CTermTyped E p g\nin the application\n  Admitted.percentOf hg hp hw\nerror: VE/Cardinality/Syntax.lean:208:48: Application type mismatch: The argument\n  hw\nhas type\n  CTermTyped E p g\u271d\nbut is expected to have type\n  CTermTyped E w g\u271d\nin the application\n  \u27e8hp, hw\u27e9\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-admitted-percentOf-day",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "Admitted.percentOf: no percentage of dates",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.8,
+   "output_tail": " VE.Cardinality.Syntax (2.7s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:207:45: Application type mismatch: The argument\n  hg\nhas type\n  g \u2260 Time.dayTag\nbut is expected to have type\n  CTermTyped ?m.793 ?m.794 ?m.798\nin the application\n  Admitted.percentOf hg\nerror: VE/Cardinality/Syntax.lean:208:6: Too many variable names provided at alternative `percentOf`: 3 provided, but 2 expected\nerror: VE/Cardinality/Syntax.lean:208:40: Application type mismatch: The argument\n  hg\nhas type\n  CTermTyped E p g\u271d\nbut is expected to have type\n  ?m.909 \u2260 Time.dayTag\nin the application\n  And.intro hg\nerror: VE/Cardinality/Syntax.lean:208:44: Application type mismatch: The argument\n  hp\nhas type\n  CTermTyped E w g\u271d\nbut is expected to have type\n  CTermTyped E p ?m.909\nin the application\n  And.intro hp\nerror: VE/Cardinality/Syntax.lean:208:48: Unknown identifier `hw`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "S-admitted-percentRoundsTo-rule",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "Admitted.percentRoundsTo: a rounded percentage names an admitted rule",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.3,
+   "output_tail": "/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:203:55: Application type mismatch: The argument\n  hr\nhas type\n  r \u2208 admittedRules\nbut is expected to have type\n  ?m.606 \u2260 Time.dayTag\nin the application\n  Admitted.percentRoundsTo hr\nerror: VE/Cardinality/Syntax.lean:204:6: Too many variable names provided at alternative `percentRoundsTo`: 4 provided, but 3 expected\nerror: VE/Cardinality/Syntax.lean:204:46: Application type mismatch: The argument\n  hr\nhas type\n  g\u271d \u2260 Time.dayTag\nbut is expected to have type\n  r \u2208 admittedRules\nin the application\n  And.intro hr\nerror: VE/Cardinality/Syntax.lean:204:53: Application type mismatch: The argument\n  hg\nhas type\n  CTermTyped E n g\u271d\nbut is expected to have type\n  ?m.734 \u2260 Time.dayTag\nin the application\n  And.intro hg\nerror: VE/Cardinality/Syntax.lean:204:57: Application type mismatch: The argument\n  hn\nhas type\n  CTermTyped E d g\u271d\nbut is expected to have type\n  CTermTyped E n ?m.734\nin the application\n  And.intro hn\nerror: VE/Cardinality/Syntax.lean:204:61: Unknown identifier `hd`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "C-ratioTyped-day",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "ratioTyped: refuses dates (FA9e)",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.7,
+   "output_tail": " it from the simp argument list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [123/128] Building VE.Cardinality.Syntax (2.6s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Syntax.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nerror: VE/Cardinality/Syntax.lean:181:8: Invalid `\u27e8...\u27e9` notation: The expected type\n  val\u271d\u00b9 = val\u271d \u2192 \u00acval\u271d = Time.dayTag\nis not an inductive type\n\nNote: This notation can only be used when the expected type is an inductive type with a single constructor\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "C-tagOf-count-body",
+   "file": "lean/VE/Cardinality/Syntax.lean",
+   "claim": "CTerm.tagOf: a count's body must be typed",
+   "source_sha256": "ebc2c6d860acc0088f8253bec38a8cf5b5cbae1ac514c8886704e3060f2bc6d4",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.8,
+   "output_tail": "eyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Syntax.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Syntax.setup.json --json\nwarning: VE/Cardinality/Syntax.lean:131:13: unused variable `b`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nerror: VE/Cardinality/Syntax.lean:173:8: `simp` made no progress\nwarning: VE/Cardinality/Syntax.lean:169:28: This simp argument is unused:\n  Bool.and_eq_true\n\nHint: Omit it from the simp argument list.\n  simp only [CTerm.tagOf, B\u0335o\u0335o\u0335l\u0335.\u0335a\u0335n\u0335d\u0335_\u0335e\u0335q\u0335_\u0335t\u0335r\u0335u\u0335e\u0335,\u0335 \u0335List.contains_iff_mem, bodyCheck_iff]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Cardinality/Syntax.lean:169:69: This simp argument is unused:\n  bodyCheck_iff\n\nHint: Omit it from the simp argument list.\n  simp only [CTerm.tagOf, Bool.and_eq_true, List.contains_iff_mem,\u0335 \u0335b\u0335o\u0335d\u0335y\u0335C\u0335h\u0335e\u0335c\u0335k\u0335_\u0335i\u0335f\u0335f\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Cardinality/Syntax.lean:175:55: This simp argument is unused:\n  (bodyCheck_iff E s b).mpr hb\n\nHint: Omit it from the simp argument list.\n  simp [hs,\u0335 \u0335(\u0335b\u0335o\u0335d\u0335y\u0335C\u0335h\u0335e\u0335c\u0335k\u0335_\u0335i\u0335f\u0335f\u0335 \u0335E\u0335 \u0335s\u0335 \u0335b\u0335)\u0335.\u0335m\u0335p\u0335r\u0335 \u0335h\u0335b\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Syntax\nerror: build failed\n"
+  },
+  {
+   "id": "M-denotes-count",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "CTerm.Denotes: a count operand denotes its count",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.1,
+   "output_tail": "t VE.Cardinality.Erase (911ms)\n\u2716 [127/128] Building VE.Cardinality.Theorems (5.9s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:669:48: Application type mismatch: The argument\n  e\nhas type\n  z' = \u2191(regionSize T s b)\nbut is expected to have type\n  z' = \u2191(regionSize T s b) + 1\nin the application\n  \u27e8hasCount_regionSize hT hs b, e\u27e9\nerror: VE/Cardinality/Theorems.lean:668:59: unsolved goals\n\u03b1 : Type u\nE : CEnv\nhE : E.WellFormed\nfs : List CFormula\nT : TStructure \u03b1\nhT : Admissible E T\ns : String\nb : Body\nhs : s \u2208 E.finite\nhb : BodyTyped E s b\nhsub : \u2200 (sb : String \u00d7 Body), sb \u2208 (CTerm.count s b).countBodies \u2192 sb \u2208 List.flatMap (fun x => x.countBodies) fs\nhc : s \u2208 countedSorts fs\nhbs : \u2200 (p : String), p \u2208 b.atoms \u2192 p \u2208 predsOn E fs s\nz' : Int\nx\u271d : CTerm.Denotes T (CTerm.count s b) z'\nn : Nat\nhn : HasCount T s b n\ne : z' = \u2191n + 1\n\u22a2 \u2191n + 1 = \u2191n\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-denotes-quantity",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "CTerm.Denotes: a quantity operand denotes its own value",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.6,
+   "output_tail": "ome/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:662:63: Type mismatch\n  hv\nhas type\n  QTerm.tdenote T [] t = some (Time.TValue.qty g z)\nbut is expected to have type\n  QTerm.tdenote T [] t \u2260 some (Time.TValue.qty g z)\nerror: VE/Cardinality/Theorems.lean:663:21: Tactic `cases` failed: major premise type is not an inductive type\n  some (Time.TValue.qty g z) = some (Time.TValue.qty g' z') \u2192 False\n\nExplanation: the `cases` tactic is for constructor-based reasoning as well as for applying custom cases principles with a 'using' clause or a registered '@[cases_eliminator]' theorem. The above type neither is an inductive type nor has a registered theorem.\n\ncase quantity.refine_1\n\u03b1 : Type u\nE : CEnv\nhE : E.WellFormed\nfs : List CFormula\nT : TStructure \u03b1\nhT : Admissible E T\ng : String\nt : QTerm\nhsub : \u2200 (sb : String \u00d7 Body), sb \u2208 (CTerm.quantity t).countBodies \u2192 sb \u2208 List.flatMap (fun x => x.countBodies) fs\nh : Time.HasType E.q [] t (Time.QType.qty g)\nz : Int\nhv : QTerm.tdenote T [] t = some (Time.TValue.qty g z)\nhty : Time.TValue.Typed T.objects (Time.QType.qty g) (Time.TValue.qty g z)\nz' : Int\nx\u271d : CTerm.Denotes T (CTerm.quantity t) z'\ng' : String\nh' : some (Time.TValue.qty g z) \u2260 some (Time.TValue.qty g' z')\n\u22a2 z' = z\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-roundsTo-positive",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "holds.roundsTo: a rounding needs a positive denominator",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.2,
+   "output_tail": "Args false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [125/128] Built VE.Cardinality.Semantics (908ms)\n\u2714 [126/128] Built VE.Cardinality.Erase (922ms)\n\u2716 [127/128] Building VE.Cardinality.Theorems (6.1s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:637:2: Type mismatch\n  and_congr_right fun h => Iff.symm (roundsTo_ratio_agree r zn zd D k h)\nhas type\n  0 < zd \u2227 Numbers.RoundsTo r { digits := D, places := \u2191k } (\u2191zn / \u2191zd) \u2194 0 < zd \u2227 erasedRounding r zn zd D k\nbut is expected to have type\n  Numbers.RoundsTo r { digits := D, places := \u2191k } (\u2191zn / \u2191zd) \u2194 0 < zd \u2227 erasedRounding r zn zd D k\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-roundsTo-swap",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "holds.roundsTo: the numerator is divided by the denominator",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.3,
+   "output_tail": "er can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [125/128] Built VE.Cardinality.Semantics (1.1s)\n\u2714 [126/128] Built VE.Cardinality.Erase (1.3s)\n\u2716 [127/128] Building VE.Cardinality.Theorems (9.7s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:637:33: Type mismatch\n  Iff.symm (roundsTo_ratio_agree r zn zd D k h)\nhas type\n  Numbers.RoundsTo r { digits := D, places := \u2191k } (\u2191zn / \u2191zd) \u2194 erasedRounding r zn zd D k\nbut is expected to have type\n  Numbers.RoundsTo r { digits := D, places := \u2191k } (\u2191zd / \u2191zn) \u2194 erasedRounding r zn zd D k\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-roundsTo-rule",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "holds.roundsTo: the sentence's own tie rule",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.2,
+   "output_tail": "m the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [125/128] Built VE.Cardinality.Semantics (1.5s)\nwarning: VE/Cardinality/Semantics.lean:62:14: unused variable `r`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2714 [126/128] Built VE.Cardinality.Erase (1.5s)\n\u2716 [127/128] Building VE.Cardinality.Theorems (8.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:637:33: Type mismatch\n  Iff.symm (roundsTo_ratio_agree r zn zd D k h)\nhas type\n  Numbers.RoundsTo r { digits := D, places := \u2191k } (\u2191zn / \u2191zd) \u2194 erasedRounding r zn zd D k\nbut is expected to have type\n  Numbers.RoundsTo Numbers.Rounding.tiesUp { digits := D, places := \u2191k } (\u2191zn / \u2191zd) \u2194 erasedRounding r zn zd D k\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-roundsTo-places",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "holds.roundsTo: the printed places",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.4,
+   "output_tail": "ar\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [125/128] Built VE.Cardinality.Semantics (869ms)\nwarning: VE/Cardinality/Semantics.lean:62:22: unused variable `k`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2714 [126/128] Built VE.Cardinality.Erase (882ms)\n\u2716 [127/128] Building VE.Cardinality.Theorems (8.5s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:637:33: Type mismatch\n  Iff.symm (roundsTo_ratio_agree r zn zd D k h)\nhas type\n  Numbers.RoundsTo r { digits := D, places := \u2191k } (\u2191zn / \u2191zd) \u2194 erasedRounding r zn zd D k\nbut is expected to have type\n  Numbers.RoundsTo r { digits := D, places := 0 } (\u2191zn / \u2191zd) \u2194 erasedRounding r zn zd D k\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-percentOf-scale",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "holds.percentOf: D / 10^k percent",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.5,
+   "output_tail": "his simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [125/128] Built VE.Cardinality.Semantics (1.2s)\nwarning: VE/Cardinality/Semantics.lean:64:21: unused variable `k`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2714 [126/128] Built VE.Cardinality.Erase (1.1s)\n\u2716 [127/128] Building VE.Cardinality.Theorems (5.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:640:82: unsolved goals\n\u03b1 : Type u\nT : TStructure \u03b1\nn d : CTerm\nzn zd : Int\nhn : \u2200 (z : Int), CTerm.Denotes T n z \u2194 z = zn\nhd : \u2200 (z : Int), CTerm.Denotes T d z \u2194 z = zd\nD : Int\nk : Nat\n\u22a2 0 < zd \u2227 100 * zn = D * zd \u2194 0 < zd \u2227 100 * 10 ^ k * zn = D * zd\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-percentOf-positive",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "holds.percentOf: a percentage needs a positive whole",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.3,
+   "output_tail": ".\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [125/128] Built VE.Cardinality.Semantics (840ms)\n\u2714 [126/128] Built VE.Cardinality.Erase (865ms)\n\u2716 [127/128] Building VE.Cardinality.Theorems (5.5s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:640:82: unsolved goals\n\u03b1 : Type u\nT : TStructure \u03b1\nn d : CTerm\nzn zd : Int\nhn : \u2200 (z : Int), CTerm.Denotes T n z \u2194 z = zn\nhd : \u2200 (z : Int), CTerm.Denotes T d z \u2194 z = zd\nD : Int\nk : Nat\n\u22a2 100 * 10 ^ k * zn = D * zd \u2194 0 < zd \u2227 100 * 10 ^ k * zn = D * zd\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-percentRoundsTo-100",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "holds.percentRoundsTo: a percentage is 100 times the ratio",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.9,
+   "output_tail": "s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [125/128] Built VE.Cardinality.Semantics (967ms)\n\u2714 [126/128] Built VE.Cardinality.Erase (915ms)\n\u2716 [127/128] Building VE.Cardinality.Theorems (8.9s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:648:13: Type mismatch\n  Iff.rfl\nhas type\n  ?m.29 \u2194 ?m.29\nbut is expected to have type\n  Numbers.RoundsTo r { digits := D, places := \u2191k } (\u2191zn / \u2191zd) \u2194\n    Numbers.RoundsTo r { digits := D, places := \u2191k } (100 * \u2191zn / \u2191zd)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "M-percentRoundsTo-rule",
+   "file": "lean/VE/Cardinality/Semantics.lean",
+   "claim": "holds.percentRoundsTo: the sentence's own tie rule",
+   "source_sha256": "a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.7,
+   "output_tail": "his simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [125/128] Built VE.Cardinality.Semantics (1.3s)\nwarning: VE/Cardinality/Semantics.lean:65:21: unused variable `r`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2714 [126/128] Built VE.Cardinality.Erase (1.3s)\n\u2716 [127/128] Building VE.Cardinality.Theorems (6.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:648:13: Type mismatch\n  Iff.rfl\nhas type\n  ?m.29 \u2194 ?m.29\nbut is expected to have type\n  Numbers.RoundsTo Numbers.Rounding.halfEven { digits := D, places := \u2191k } (100 * \u2191zn / \u2191zd) \u2194\n    Numbers.RoundsTo r { digits := D, places := \u2191k } (100 * \u2191zn / \u2191zd)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "E-roundsTo-positive",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "erase_iff: the erased rounding keeps 0 < denominator",
+   "source_sha256": "eebc15fc7087ec740685a336d11006d869bea7c29228ee62a5df61f90d4a0963",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.7,
+   "output_tail": "p only [roundsTo_holds_iff hn' hd', CFormula.erase, gn, QFormula.tdenote, e\u0335d\u0335,\u0335 \u0335QTerm.tdenote,\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332tcompare_qty, roundingQ_iff _ _ _ _ _ en ed]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Cardinality/Theorems.lean:714:85: This simp argument is unused:\n  QTerm.tdenote\n\nHint: Omit it from the simp argument list.\n  simp only [roundsTo_holds_iff hn' hd', CFormula.erase, gn, QFormula.tdenote, ed, Q\u0335T\u0335e\u0335r\u0335m\u0335.\u0335td\u0335e\u0335n\u0335o\u0335t\u0335e\u0335,\u0335 \u0335t\u0335compare_qty,\n        roundingQ_iff _ _ _ _ _ en ed]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Cardinality/Theorems.lean:714:100: This simp argument is unused:\n  tcompare_qty\n\nHint: Omit it from the simp argument list.\n  simp only [roundsTo_holds_iff hn' hd', CFormula.erase, gn, QFormula.tdenote, ed, QTerm.tdenote, \u0335t\u0335c\u0335o\u0335m\u0335p\u0335a\u0335r\u0335e\u0335_\u0335q\u0335t\u0335y\u0335,\u0335\n        roundingQ_iff _ _ _ _ _ en ed]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: VE/Cardinality/Theorems.lean:817:17: Application type mismatch: The argument\n  Time.Admitted.lt (Time.HasType.num hv) hd'\nhas type\n  Time.Admitted (E.elab fs) [] (QFormula.lt (QTerm.num g ?m.671) (CTerm.erase E fs d))\nbut is expected to have type\n  Time.Admitted (E.elab fs) [] QFormula.top\nin the application\n  Time.Admitted.and (Time.Admitted.lt (Time.HasType.num hv) hd')\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "E-percentOf-scale",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "erase_iff: the erased percentage scales the part by 100 \u00b7 10^k",
+   "source_sha256": "eebc15fc7087ec740685a336d11006d869bea7c29228ee62a5df61f90d4a0963",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.8,
+   "output_tail": "s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [126/128] Built VE.Cardinality.Erase (941ms)\nwarning: VE/Cardinality/Erase.lean:60:21: unused variable `k`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2716 [127/128] Building VE.Cardinality.Theorems (5.7s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a2/lean/VE/Cardinality/Theorems.lean -o /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.olean -i /home/seyran/code/ve-qt-a2/lean/.lake/build/lib/lean/VE/Cardinality/Theorems.ilean -c /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.c --setup /home/seyran/code/ve-qt-a2/lean/.lake/build/ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:721:19: Type mismatch\n  eq_comm\nhas type\n  ?m.638 = ?m.639 \u2194 ?m.639 = ?m.638\nbut is expected to have type\n  100 * 10 ^ k * zp = D * zw \u2194 D * zw = 100 * zp\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "E-percentRoundsTo-100",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "erase_iff: the erased rounded percentage scales the part by 100",
+   "source_sha256": "eebc15fc7087ec740685a336d11006d869bea7c29228ee62a5df61f90d4a0963",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.3,
+   "output_tail": "b)))\nr : Numbers.Rounding\np w : CTerm\nD : Int\nk : Nat\ng : String\na\u271d\u00b9 : r \u2208 admittedRules\na\u271d : g \u2260 Time.dayTag\nhp : CTermTyped E p g\nhw : CTermTyped E w g\nhsub : \u2200 (sb : String \u00d7 Body), sb \u2208 p.countBodies \u2228 sb \u2208 w.countBodies \u2192 sb \u2208 List.flatMap (fun x => x.countBodies) fs\nzp : Int\nhp' : \u2200 (z' : Int), CTerm.Denotes T p z' \u2194 z' = zp\nep : QTerm.tdenote (withRegions E fs T) [] (CTerm.erase E fs p) = some (Time.TValue.qty g zp)\ngp : (CTerm.tagOf E p).getD dl = g\nzw : Int\nhw' : \u2200 (z' : Int), CTerm.Denotes T w z' \u2194 z' = zw\new : QTerm.tdenote (withRegions E fs T) [] (CTerm.erase E fs w) = some (Time.TValue.qty g zw)\nes :\n  QTerm.tdenote (withRegions E fs T) [] (QTerm.scale g 100 (CTerm.erase E fs p)) = some (Time.TValue.qty g (100 * zp))\n\u22a2 0 < zw \u2227 erasedRounding r (100 * zp) zw D k \u2194\n    0 < zw \u2227 QFormula.tdenote (withRegions E fs T) [] (roundingQ g r (CTerm.erase E fs p) (CTerm.erase E fs w) D k)\nwarning: VE/Cardinality/Theorems.lean:729:6: This simp argument is unused:\n  roundingQ_iff _ _ _ _ _ es ew\n\nHint: Omit it from the simp argument list.\n  simp only [percentRoundsTo_holds_iff hp' hw', CFormula.erase, gp, QFormula.tdenote, ew,\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332QTerm.tdenote, t\u0335c\u0335o\u0335m\u0335p\u0335a\u0335r\u0335e\u0335_\u0335q\u0335t\u0335y\u0335,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335r\u0335o\u0335u\u0335n\u0335d\u0335i\u0335n\u0335g\u0335Q\u0335_\u0335i\u0335f\u0335f\u0335 \u0335_\u0335 \u0335_\u0335 \u0335_\u0335 \u0335_\u0335 \u0335_\u0335 \u0335e\u0335s\u0335 \u0335e\u0335w\u0335]\u0335t\u0332c\u0332o\u0332m\u0332p\u0332a\u0332r\u0332e\u0332_\u0332q\u0332t\u0332y\u0332]\u0332\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "E-cterm-count",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "erase_iff: a count operand erases to its body's region sum",
+   "source_sha256": "eebc15fc7087ec740685a336d11006d869bea7c29228ee62a5df61f90d4a0963",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.4,
+   "output_tail": "ir/VE/Cardinality/Theorems.setup.json --json\nerror: VE/Cardinality/Theorems.lean:669:53: Application type mismatch: The argument\n  regionSum_denote hT fs hs hc b hbs []\nhas type\n  QTerm.tdenote (withRegions E fs T) [] (regionSum E fs s b) = some (Time.TValue.qty dl \u2191(regionSize T s b))\nbut is expected to have type\n  QTerm.tdenote (withRegions E fs T) [] (CTerm.erase E fs (CTerm.count s b)) =\n    some (Time.TValue.qty Time.dimensionless \u2191(regionSize T s b))\nin the application\n  And.intro (regionSum_denote hT fs hs hc b hbs [])\nerror: VE/Cardinality/Theorems.lean:784:11: Application type mismatch: The argument\n  regionSum_typed\n    (counted_of_mem\n        (hsub (s, b)\n          (of_eq_true\n            (Eq.trans List.mem_cons._simp_1\n              (Eq.trans (congr (congrArg Or (eq_self (s, b))) List.not_mem_nil._simp_1) (or_false True)))))).left\n    b\nhas type\n  Time.HasType (CEnv.elab ?m.107 fs) ?m.109 (regionSum ?m.107 fs s b) (Time.QType.qty dl)\nbut is expected to have type\n  Time.HasType (E.elab fs) [] (CTerm.erase E fs (CTerm.count s b)) (Time.QType.qty Time.dimensionless)\nin the application\n  And.intro\n    (regionSum_typed\n      (counted_of_mem\n          (hsub (s, b)\n            (of_eq_true\n              (Eq.trans List.mem_cons._simp_1\n                (Eq.trans (congr (congrArg Or (eq_self (s, b))) List.not_mem_nil._simp_1) (or_false True)))))).left\n      b)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "E-roundsTo-tag",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "erase_iff: the erased rounding is in its operands' tag",
+   "source_sha256": "eebc15fc7087ec740685a336d11006d869bea7c29228ee62a5df61f90d4a0963",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.1,
+   "output_tail": "sed:\n  gn\n\nHint: Omit it from the simp argument list.\n  simp only [roundsTo_holds_iff hn' hd', CFormula.erase, g\u0335n\u0335,\u0335 \u0335QFormula.tdenote, ed, QTerm.tdenote,\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332tcompare_qty,\n  \u0335  \u0335 \u0335 \u0335 \u0335 \u0335roundingQ_iff _ _ _ _ _ en ed]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Cardinality/Theorems.lean:714:100: This simp argument is unused:\n  tcompare_qty\n\nHint: Omit it from the simp argument list.\n  simp only [roundsTo_holds_iff hn' hd', CFormula.erase, gn, QFormula.tdenote, ed, QTerm.tdenote, \u0335t\u0335c\u0335o\u0335m\u0335p\u0335a\u0335r\u0335e\u0335_\u0335q\u0335t\u0335y\u0335,\u0335\n        roundingQ_iff _ _ _ _ _ en ed]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Cardinality/Theorems.lean:715:6: This simp argument is unused:\n  roundingQ_iff _ _ _ _ _ en ed\n\nHint: Omit it from the simp argument list.\n  simp only [roundsTo_holds_iff hn' hd', CFormula.erase, gn, QFormula.tdenote, ed, QTerm.tdenote,\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332t\u0335c\u0335o\u0335m\u0335p\u0335a\u0335r\u0335e\u0335_\u0335q\u0335t\u0335y\u0335,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335 \u0335 \u0335r\u0335o\u0335u\u0335n\u0335d\u0335i\u0335n\u0335g\u0335Q\u0335_\u0335i\u0335f\u0335f\u0335 \u0335_\u0335 \u0335_\u0335 \u0335_\u0335 \u0335_\u0335 \u0335_\u0335 \u0335e\u0335n\u0335 \u0335e\u0335d\u0335]\u0335t\u0332c\u0332o\u0332m\u0332p\u0332a\u0332r\u0332e\u0332_\u0332q\u0332t\u0332y\u0332]\u0332\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: VE/Cardinality/Theorems.lean:817:28: Application type mismatch: The argument\n  hv\nhas type\n  (E.elab fs).ValidTag g\nbut is expected to have type\n  (E.elab fs).ValidTag dl\nin the application\n  Time.HasType.num hv\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  },
+  {
+   "id": "G-countBodies-den",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "erase_iff: a denominator's count body is counted (its sort and predicates get regions)",
+   "source_sha256": "6aa3a041d8e66315cffed5066ee8d869f5ca2c02f26f1934a1b37958223f41a2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.4,
+   "output_tail": "me from the expected resulting type of `.inl`:\n  sb \u2208 n.countBodies\nerror: VE/Cardinality/Theorems.lean:713:76: Unknown constant `Membership.mem.inr`\n\nNote: Inferred this name from the expected resulting type of `.inr`:\n  sb \u2208 n.countBodies\nerror: VE/Cardinality/Theorems.lean:713:76: Unknown constant `List.Mem.inr`\n\nNote: Inferred this name from the expected resulting type of `.inr`:\n  sb \u2208 n.countBodies\nwarning: VE/Cardinality/Theorems.lean:711:37: This simp argument is unused:\n  List.mem_append\n\nHint: Omit it from the simp argument list.\n  simp only [CFormula.countBodies,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335m\u0335e\u0335m\u0335_\u0335a\u0335p\u0335p\u0335e\u0335n\u0335d\u0335] at hsub\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: VE/Cardinality/Theorems.lean:810:66: Unknown constant `Membership.mem.inl`\n\nNote: Inferred this name from the expected resulting type of `.inl`:\n  sb \u2208 n.countBodies\nerror: VE/Cardinality/Theorems.lean:810:66: Unknown constant `List.Mem.inl`\n\nNote: Inferred this name from the expected resulting type of `.inl`:\n  sb \u2208 n.countBodies\nerror: VE/Cardinality/Theorems.lean:811:59: Unknown constant `Membership.mem.inr`\n\nNote: Inferred this name from the expected resulting type of `.inr`:\n  sb \u2208 n.countBodies\nerror: VE/Cardinality/Theorems.lean:811:59: Unknown constant `List.Mem.inr`\n\nNote: Inferred this name from the expected resulting type of `.inr`:\n  sb \u2208 n.countBodies\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Theorems\nerror: build failed\n"
+  }
+ ]
+}
