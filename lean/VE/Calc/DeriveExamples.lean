@@ -78,8 +78,10 @@ def sBelow : QFact := fact (1/25) [("s", -1)] true
 #guard checked (h6 (2/100) ++ [fact 1 [("s", -1)] false]) links (below (1/4)) &&
   Derive.search (h6 (2/100) ++ [fact 1 [("s", -1)] false]) links (below (1/4)) matches .follows _
 
--- A reported point gives 0 to an unknown it does not list: here s, which meets s = r² at r = 0.
-#guard Derive.search [] links (below 0) = .counterexample [("r", 0)] && checked [] links (below 0)
+-- The claimed bound is tried first even at 0; a reported point gives 0 to an unknown it does not list: here s and
+-- r, which only the link reads, so the link holds.
+#guard Derive.search [] links (below 0) = .counterexample [("r", 0), ("s", 0)] && checked [] links (below 0)
+#guard Derive.search [] links (fact 0 [("t", -1)] true) = .counterexample [("t", 0)]
 
 -- The budget: 17 unknowns are beyond the 16 the search takes.
 #guard Derive.search ((List.range 17).map fun i => fact 0 [(s!"x{i}", 1)] false) [] (fact 0 [("x0", 1)] true) =
