@@ -9440,6 +9440,7 @@
         "VE.Service.decodeRequest",
         "VE.Service.decodeString",
         "VE.Service.expandCases",
+        "VE.Service.memberCuts",
         "VE.Service.objectMembers",
         "VE.Service.parseEnglishCases",
         "VE.Service.register",
@@ -9500,8 +9501,10 @@
         "VE.Service.requestError"
       ],
       "T": [
+        "VE.Service.objectMembersByChars",
         "VE.Service.renderCases",
-        "VE.Service.sameCases"
+        "VE.Service.sameCases",
+        "VE.Service.sameMembers"
       ]
     },
     "VE/Service/Readings.lean": {
