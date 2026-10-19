@@ -105,6 +105,20 @@ def f10() -> str:
             + ", ".join(f"{n} '{k}'" for k, n in kinds.most_common()) + ".")
 
 
+def f11() -> str:
+    """Review F11/F12's rule on the saved replays (run with it): the kills by message, and the UNKNOWN and INVALID by
+    reason, the detail's text after its location."""
+    kinds: dict[str, Counter] = {"KILLED": Counter(), "UNKNOWN": Counter(), "INVALID": Counter()}
+    for head in dict.fromkeys(head for _, head, _, _ in FINDINGS):
+        for m in json.loads((EVIDENCE / f"{head[:8]}.json").read_text())["mutants"]:
+            if m["status"] in kinds:
+                said = m["detail"].split(": ", 1)[1] if m["detail"].startswith("lean/") else m["detail"]
+                reason = said[said.rfind(" ("):].strip() if said.endswith(")") and " (" in said else ""
+                kinds[m["status"]][" ".join(said.split()[:3]) + (f" {reason}" if reason else "")] += 1
+    return "Review F11/F12 on the replays: " + "; ".join(
+        f"{status}: " + ", ".join(f"{n} '{k}'" for k, n in found.most_common()) for status, found in kinds.items())
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--run", action="store_true")
@@ -116,7 +130,7 @@ def main() -> int:
             if not args.only or head.startswith(args.only):
                 replay(head, base, args.jobs)
     if not args.only:
-        print("\n".join([*table(), "", f9(), f10()]))
+        print("\n".join([*table(), "", f9(), f10(), f11()]))
     return 0
 
 

@@ -818,7 +818,7 @@ DEFINITION = "def bS : {n : Nat // n + 0 = n} := ⟨3, by simp (config := { maxS
 # inside a tactic block there, and the verdict. INVALID only when Lean refused the text; every other row is UNKNOWN.
 REFUSALS = [
     ("parse", "unexpected token ']'; expected term", False, "INVALID"),
-    ("parse-in-tactic", "unexpected token '<;>'; expected command", True, "INVALID"),
+    ("parse-elsewhere", "unexpected token '<;>'; expected command", True, "UNKNOWN"),  # hunt R3
     ("unknown-identifier", "Unknown identifier `A`", False, "INVALID"),
     ("unknown-constant", "Unknown constant `VE.Cardinality.Body.all`", False, "INVALID"),
     ("invalid-field", "Invalid field `take`: The environment does not contain `Option.take`", False, "INVALID"),
@@ -865,12 +865,14 @@ def test_invalid_only_when_lean_refuses_the_mutated_text(name, message, inside, 
     ([("A.lean", 1, "unsolved goals", 62), ("A.lean", 1, "Invalid field `take`", 32)], "UNKNOWN"),
     ([("A.lean", 1, "Invalid field `take`", 62)], "UNKNOWN"),
     ([("A.lean", 1, "Invalid field `symm`", 44)], "UNKNOWN"),  # hunt Q9: outside the mutant's text
-    ([("A.lean", 1, "unexpected token ')'; expected term", 44)], "INVALID")],
-    ids=("refusal", "beside-a-tactic", "after-a-tactic", "in-a-tactic", "outside-the-edit", "parse-anywhere"))
+    ([("A.lean", 1, "unexpected token ')'; expected term", 34)], "INVALID"),
+    ([("A.lean", 1, "unexpected token; expected command", 44)], "UNKNOWN")],  # hunt R3: the tool's padding
+    ids=("refusal", "beside-a-tactic", "after-a-tactic", "in-a-tactic", "outside-the-edit", "parse-in-the-edit",
+         "parse-outside-the-edit"))
 def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(errors, verdict):
     """Review F12: a tactic or budget failure in the mutated declaration is UNKNOWN even beside a refusal (it may have
     caused one, or followed from it), a refusal inside a tactic block is a tactic's, and one outside the text the
-    mutant wrote is a proof term's or another's (hunt Q9); a parse error is the mutant's wherever Lean reports it."""
+    mutant wrote is a proof term's or another's (hunt Q9), a parse error there too (the tool's line padding: R3)."""
     import trust_mutants
     text = "def f (o : Option Nat) : Nat := (o.take 1).length + (by exact 0)\n"
     assert text[32] == "(" and text[62] == "0"
@@ -1282,7 +1284,50 @@ HUNT = [
      "qFallback10 : BEq (QW10 n) := ⟨fun _ _ => false⟩\n\ninstance qSmall10 [QSize10 n] : BEq (QW10 n) := ⟨fun _ _ => "
      "true⟩\n\nabbrev qG10 : Nat := 126\n\n#guard (⟨0⟩ : QW10 qG10) == ⟨0⟩", "qG10", {"KILLED"}),
     ("Q12", None, "qRef12", {"KILLED"}),
+    # The fifth hunt. R1: a `partial def`'s compiled body (`_unsafe_rec`) through the cut proof; R2: an
+    # `implemented_by` that reads the source file (`unsafeIO`); R3: the tool's own line padding makes a parse error
+    # below the mutant's text; R5: a package's `leanOptions` decide which instance Lean picks (the probe elaborates as
+    # the build does); R6: an `initialize`d value; R7: a `#guard_msgs` diff between two printings of one refutation (an
+    # unexpander reads the mutated definition); R8: `include_str` in a definition the check reads.
+    ("R1", "def rFast1 (n : Nat) : Bool := n < 3\n\ntheorem rFast1_iff (n : Nat) : rFast1 n = true ↔ n < "
+     "3 := by\n  simp [rFast1]\n\ndef RSmall1 (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable "
+     "(RSmall1 n) := decidable_of_iff _ (rFast1_iff n)\n\npartial def rLoop1 (n : Nat) : Bool := if "
+     "n > 100 then rLoop1 (n - 1) else decide (RSmall1 n)\n\n#guard rFast1 7 == rFast1 7 && rLoop1 "
+     "2", "rFast1", {"KILLED"}),
+    ("R2", None, "rRef2", {"KILLED"}),
+    ("R3", "def rG3 (xs : List Nat) (k : Nat := 0) : List Nat := xs ++ [k]\n\ndef rPick3 (n : Nat) : List "
+     "Nat := by\n  exact rG3 [n,\n    3] 5\n\n#guard rPick3 2 == [2, 3, 5]", "rPick3", {"INVALID"}),
+    ("R5", "class RDeep5 (n : Nat) where\n  val : Nat\n\ninstance : RDeep5 0 := ⟨0⟩\n\ninstance [s : RDeep5 "
+     "n] : RDeep5 (n + 1) := ⟨s.val + 1⟩\n\ndef rFast5 (n : Nat) : Bool := n < 3\n\ntheorem rFast5_iff "
+     "(n : Nat) : rFast5 n = true ↔ n < 3 := by\n  simp [rFast5]\n\ndef RSmall5 (n : Nat) : Prop := "
+     "n < 3\n\ninstance (priority := low) rSlow5 (n : Nat) : Decidable (RSmall5 n) := Nat.decLt n 3\n"
+     "\ninstance rFastDec5 (n : Nat) [RDeep5 130] : Decidable (RSmall5 n) := decidable_of_iff _ (rFast5_iff "
+     "n)\n\n#guard rFast5 7 == rFast5 7 && decide (RSmall5 2)", "rFast5", {"KILLED"}),
+    ("R6", None, "rFast6", {"KILLED"}),
+    ("R7", None, "rTag7", {"KILLED"}),
+    ("R8", None, "rRef8", {"KILLED"}),
 ]
+HUNT_MODULES = {  # the fifth hunt's modules beyond its form's own
+    "R2": {"Demo/SrcR2.lean": ("namespace Demo\n\ndef rRef2 (n : Nat) : Bool := n < 3\n\nunsafe def rSrcImpl2 (k : Nat) : String "
+        ":=\n  match unsafeIO (IO.FS.readFile \"Demo/SrcR2.lean\") with\n  | .ok s => (s.splitOn \"\\n\")[k]!\n"
+        "  | .error _ => \"\"\n\n@[implemented_by rSrcImpl2]\ndef rSrc2 (_k : Nat) : String := \"\"\n\n#guard "
+        "rSrc2 2 == \"def rRef2 (n : Nat) : Bool := n < 3\" && rRef2 7 == rRef2 7\n\nend Demo\n")},
+    "R5": {"lakefile.toml": ("name = \"demo\"\n\n[leanOptions]\nsynthInstance.maxSize = 512\n\n[[lean_lib]]\nname = \"Demo\"\nglobs "
+        "= [\"Demo.*\"]\n")},
+    "R6": {"Demo/R6Defs.lean": ("namespace Demo\n\ndef rFast6 (n : Nat) : Bool := n < 3\n\ntheorem rFast6_iff (n : Nat) : rFast6 "
+        "n = true ↔ n < 3 := by\n  simp [rFast6]\n\ndef RSmall6 (n : Nat) : Prop := n < 3\n\ninstance (n "
+        ": Nat) : Decidable (RSmall6 n) := decidable_of_iff _ (rFast6_iff n)\n\ninitialize rSmallTwo6 "
+        ": Bool ← pure (decide (RSmall6 2))\n\nend Demo\n"), "Demo/R6Use.lean": ("import Demo.R6Defs\n\nnamespace Demo\n\n#guard rSmallTwo6\n\nend Demo\n")},
+    "R7": {"Demo/R7.lean": ("import Lean\n\nnamespace Demo\n\ndef rTag7 (n : Nat) : Bool := n < 7\n\ndef RSmall7 (n : Nat) : Prop "
+        ":= n < 5\n\ninstance (n : Nat) : Decidable (RSmall7 n) := Nat.decLt n 5\n\nopen Lean PrettyPrinter "
+        "in\n@[app_unexpander RSmall7] def rUnexpand7 : Unexpander\n  | `($_ $n:num) => if rTag7 n.getNat "
+        "then `($(mkIdent `tiny) $n) else `($(mkIdent `big) $n)\n  | _ => throw ()\n\n/--\nerror: Expression\n"
+        "  decide (big 7)\ndid not evaluate to `true`\n-/\n#guard_msgs in\n#guard decide (RSmall7 7)\n\nend "
+        "Demo\n")},
+    "R8": {"Demo/SrcR8.lean": ("namespace Demo\n\ndef rRef8 (n : Nat) : Bool := n < 3\n\ndef rSrc8 : String := ((include_str \"SrcR8.lean\").splitOn "
+        "\"\\n\")[2]!\n\n#guard rSrc8 == \"def rRef8 (n : Nat) : Bool := n < 3\" && rRef8 7 == rRef8 7\n\nend "
+        "Demo\n")},
+}
 MODULES = {  # the hunt forms that need modules of their own: Lean's meta framework, an import, their own text
     "Demo/Q5Defs.lean": "namespace Demo\n\ndef qRef5 (n : Nat) : Bool := n < 3\n\ndef qImpl5 (n : Nat) : Bool := n < 3\n\n"
                         "theorem qRef5_eq : @qRef5 = @qImpl5 := by\n  funext n\n  simp [qRef5, qImpl5]\n\nattribute [csimp] "
@@ -1405,7 +1450,7 @@ def hunt_modules(row: str, form: str | None) -> dict[str, str]:
     extra = {"N3": {"Demo/Meta.lean": META_N3}, "P4": {"Demo/Meta.lean": META_P4}, "P5": {"Demo/Inst.lean": INST},
              "Q5": {k: v for k, v in MODULES.items() if "Q5" in k}, "Q6": {"Demo/Src6.lean": MODULES["Demo/Src6.lean"]},
              "Q7": {"Demo/Src7.lean": MODULES["Demo/Src7.lean"]},
-             "Q12": {"Demo/Src12.lean": MODULES["Demo/Src12.lean"]}}.get(row, {})
+             "Q12": {"Demo/Src12.lean": MODULES["Demo/Src12.lean"]}, **HUNT_MODULES}.get(row, {})
     return {**modules, **extra}
 
 

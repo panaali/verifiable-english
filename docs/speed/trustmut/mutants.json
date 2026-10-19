@@ -351,8 +351,8 @@
   {
    "id": "TM35",
    "file": "tools/trust_mutants.py",
-   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not elsewhere)",
-   "replace": "    return bool(PARSE.match(message) or REFUSED.search(message) and not elsewhere)",
+   "find": "    return not NO_ANSWER.search(message) and not elsewhere and bool(PARSE.match(message) or REFUSED.match(message))",
+   "replace": "    return not elsewhere and bool(PARSE.match(message) or REFUSED.search(message))",
    "tests": [
     "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
    ],
@@ -461,7 +461,7 @@
   {
    "id": "TM45",
    "file": "tools/trust_mutants.py",
-   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not elsewhere)",
+   "find": "    return not NO_ANSWER.search(message) and not elsewhere and bool(PARSE.match(message) or REFUSED.match(message))",
    "replace": "    return not NO_ANSWER.search(message) and not message.startswith(\"unsolved goals\")",
    "tests": [
     "tests/test_trust_mutants.py::test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown",
@@ -538,7 +538,7 @@
   {
    "id": "TM52",
    "file": "tools/trust_mutants.py",
-   "find": "        if \"sorry\" in entry:",
+   "find": "        if \"sorry\" in entry[\"flags\"]:",
    "replace": "        if False:",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1]",
@@ -551,7 +551,7 @@
   {
    "id": "TM53",
    "file": "tools/trust_mutants.py",
-   "find": "        if \"hyps\" in entry:",
+   "find": "        if \"hyps\" in entry[\"flags\"]:",
    "replace": "        if False:",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N8]"
@@ -561,7 +561,7 @@
   {
    "id": "TM54",
    "file": "tools/trust_mutants.py",
-   "find": "        if f\"hash {hashes.get(key)}\" not in entry:",
+   "find": "        if not control[\"flags\"] >= {x for x in entry[\"flags\"] if x.startswith(\"hash \")}:",
    "replace": "        if False:",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]",
@@ -616,8 +616,8 @@
   {
    "id": "TM59",
    "file": "tools/trust_mutants.py",
-   "find": "    todo := todo ++ (csimps.filter (\u00b7.1 == c)).map (\u00b7.2) ++ (Lean.Compiler.getImplementedBy? env c).toList",
-   "replace": "    todo := todo ++ (Lean.Compiler.getImplementedBy? env c).toList",
+   "find": "    let compiled := (csimps.filter (\u00b7.1 == c)).map (\u00b7.2) ++ (Lean.Compiler.getImplementedBy? env c).toList ++",
+   "replace": "    let compiled := (Lean.Compiler.getImplementedBy? env c).toList ++",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]",
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q5]"
@@ -627,8 +627,8 @@
   {
    "id": "TM60",
    "file": "tools/trust_mutants.py",
-   "find": "      ((info.value? (allowOpaque := true)).map (\u00b7.getUsedConstants.toList)).getD []",
-   "replace": "      ((info.value?).map (\u00b7.getUsedConstants.toList)).getD []",
+   "find": "    let value := (info.value? (allowOpaque := true)).getD (mkConst ``True)",
+   "replace": "    let value := (info.value?).getD (mkConst ``True)",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q3]"
    ],
@@ -673,6 +673,68 @@
     "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
    ],
    "claim": "nothing is cut up front: a cut proof is one the mutant broke, which is what the probe's `sorry` means (hunt H4-Q5)"
+  },
+  {
+   "id": "TM65",
+   "file": "tools/trust_mutants.py",
+   "find": "      (Lean.getInitFnNameFor? env c).toList ++ [c ++ `_unsafe_rec]",
+   "replace": "      (Lean.getInitFnNameFor? env c).toList",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R1]"
+   ],
+   "claim": "the walk reads a `partial def`'s compiled body (`_unsafe_rec`) (hunt R1)"
+  },
+  {
+   "id": "TM66",
+   "file": "tools/trust_mutants.py",
+   "find": "        if \"io\" in entry[\"flags\"]:",
+   "replace": "        if False:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R2]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R6]"
+   ],
+   "claim": "a check that runs IO (`unsafeIO`, an `initialize`d value) never kills (hunt R2, R6)"
+  },
+  {
+   "id": "TM67",
+   "file": "tools/trust_mutants.py",
+   "find": "        if drift := next((c for c, h in entry[\"consts\"].items() if control[\"consts\"].get(c) != h), None):",
+   "replace": "        if drift := None:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R8]"
+   ],
+   "claim": "a kill needs every definition the check reads, outside the mutated one, as without the mutant (hunt R8)"
+  },
+  {
+   "id": "TM68",
+   "file": "tools/trust_mutants.py",
+   "find": "        said = lake(*((\"env\", \"lean\") if outside else (\"lean\",)), str(copy))[1]",
+   "replace": "        said = lake(\"env\", \"lean\", str(copy))[1]",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R5]"
+   ],
+   "claim": "the probe elaborates a file as the build does, with the module's options (hunt R5)"
+  },
+  {
+   "id": "TM69",
+   "file": "tools/trust_mutants.py",
+   "find": "    return expected is not None and generated is not None and bool(expected) != bool(generated)",
+   "replace": "    return expected is not None and generated is not None and expected != generated",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R7]"
+   ],
+   "claim": "a `#guard_msgs` diff kills only when the check's truth changed: one side empty (hunt R7)"
+  },
+  {
+   "id": "TM70",
+   "file": "tools/trust_mutants.py",
+   "find": "    return not NO_ANSWER.search(message) and not elsewhere and bool(PARSE.match(message) or REFUSED.match(message))",
+   "replace": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not elsewhere)",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R3]",
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "claim": "a parse error counts as a refusal only inside the mutant's own text, not one the tool's padding made (hunt R3)"
   }
  ]
 }
