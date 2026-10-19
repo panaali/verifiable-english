@@ -19,19 +19,24 @@ statement (lean/statements.txt) uses it, every other check in a module of its di
 proof (`classify`): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an `example` or theorem proved by
 `decide`, `native_decide` or `rfl`, with no other tactic block in it; a `#guard_msgs … in` is what it wraps. Every
 other `example` or theorem, a check form with a tactic block inside, and every `#print` (it lists or shows proofs)
-is a proof, whatever its statement names. The mutant is
-- KILLED when every error Lean reports is a check's own (`attributed`: inside a check, at a line the checkout has
-  there, no parse error, and an answer: `NO_ANSWER`, a check out of budget or stuck, refutes nothing, review F10)
-  or a --test file's, and the same build without the mutant (its control: the same cuts) passes;
-- INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means),
-  unless Lean ran out of budget there (UNKNOWN: F10);
+is a proof, whatever its statement names. Each verdict that counts for nothing has one positive condition, and
+every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mutant is
+- KILLED only when every error Lean reports, in lean/ or in an outside --test file, is a check's own refutation
+  (`settle`, `judge`): inside a check, at a line the checkout has there, its message one of `REFUTED` (`decide`
+  proved the proposition false, `native_decide` evaluated it false, a `#guard` did not evaluate to `true`) or a
+  `#guard_msgs` diff between answers (an `#eval`'s value, a refutation); an `rfl` check's failure, which a stuck
+  reduction gives too, counts only when `decide`, else `native_decide`, then refutes its statement. And the same
+  build without the mutant (its control: the same cuts) passes;
+- INVALID only when Lean refused the mutated declaration's text (`refused`): a parse error there, or a name,
+  field, pattern or instance error (`REFUSED`) outside its tactic blocks;
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
   `sorry` (a `#print` blanked) and the build repeated, before any other error is read; and a check that fails in
   the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way;
-- UNKNOWN when anything else fails (an error in a definition, or in a command that is no check), even beside a
-  failing check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse), when
-  a check or --test file gives no answer (F10), and when the mutant moves a line after its declaration (a longer
-  replacement no blank line there can take: F9);
+- UNKNOWN in every other case: an error in a definition, or in a command that is no check, even beside a failing
+  check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse); a check
+  whose message states no refutation (out of budget, stuck, a tactic that fails, an unclassified message: F10,
+  F11); an error in the mutated declaration that is no refusal (a tactic, a type mismatch, Lean's budget: F12);
+  and a mutant that moves a line after its declaration (a longer replacement no blank line there can take: F9);
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> <operator>: <before> -> <after>` unless --allow
@@ -69,16 +74,36 @@ CHECK_COMMANDS = {"guard", "guard_expr", "eval", "eval!", "reduce", "check"}
 TACTIC = re.compile(r"\bby\b")
 EXAMPLE = re.compile(r"(?m)^\s*(?:@\[[^\]]*\]\s*)*example\b")
 CHECK_PROOF = re.compile(r":=\s*(?:by\s+)?(?:decide|native_decide|rfl)(?:\s+\+\w+)*\s*$")
-# A located error with its whole message: its lines run to the next line Lake or Lean starts itself.
-ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*(?:\n(?!(?:error|warning|info|trace|note):|[✖⚠✔ℹ] "
-                   r"|Some required ).*)*)", re.M)
+# A located error with its whole message (file, line, column, message): its lines run to the next line Lake or Lean
+# starts itself. Lake writes `error: <file>:<line>:<column>: …`, `lake env lean` (an outside --test file) `<file>:…:
+# error: …`.
+REST = r"(.*(?:\n(?!(?:error|warning|info|trace|note):|[✖⚠✔ℹ] |Some required |\S+?\.lean:\d+:\d+: ).*)*)"
+ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):(\d+): " + REST, re.M)
+LEAN_ERROR = re.compile(r"^(\S+?\.lean):(\d+):(\d+): error: " + REST, re.M)
 PARSE = re.compile(r"(?:unexpected|expected) ")  # how Lean's parser errors start ("unexpected token '<;>'; ...")
+# The one condition under which an error kills (review F11, the DRI's note 2026-10-19c: the rule inverted, so a
+# message nobody classified is no kill): it is a check's own error and states a refutation, a value Lean computed
+# that is not the one the check states. These are Lean 4.24's refutations, matched whole; every other message
+# refutes nothing (a stuck reduction, a tactic that fails, Lean's budget, `rfl`'s, which a stuck reduction gives
+# too, `#guard_expr`'s and `#check`'s definitional equality, an `#eval` that throws).
+REFUTED = re.compile(r"Tactic `decide` proved that the proposition\n.*\nis false|Tactic `native_decide` evaluated "
+                     r"that the proposition\n.*\nis false|Expression\n.*\ndid not evaluate to `true`", re.S)
+GUARD_DIFF = "❌️ Docstring on `#guard_msgs` does not match generated message:\n\n"
+EVALUATED = {"eval", "eval!"}  # the commands whose `info` is a value Lean computed (`#reduce` prints a stuck term)
+# Lean refused the mutated text itself (review F12, the rule inverted): a parse error anywhere in the mutated
+# declaration, or one of these elaboration errors outside every tactic block of it (`in_tactic`). Any other error
+# there is UNKNOWN: a tactic that fails, Lean's budget, a type mismatch (a proof term that is false or whose
+# reduction got stuck gives one too, review F11), and anything not classified.
+REFUSED = re.compile(r"[Uu]nknown (?:identifier|constant)|Invalid (?:field|projection|pattern)|failed to synthesize|"
+                     r"don't know how to synthesize|[Ff]unction expected|Missing cases|ambiguous, possible interpret")
 # Lean gave no answer (review F10): it ran out of budget (Lean's runtime exceptions, maxRecDepth and maxHeartbeats,
-# and the kernel's), or `decide`/`native_decide` could not reduce or evaluate the instance. Anywhere in the message:
-# a `#guard_msgs` quotes the error it got on a later line, and a pretty-printer failure wraps it.
+# and the kernel's), or `decide`/`native_decide` could not reduce or evaluate the instance. Since F11 no verdict
+# depends on it (an answer is what `REFUTED` names): it marks the detail, and an `#eval`'s `info` that quotes it is
+# no answer. Anywhere in the message: a pretty-printer failure wraps it.
 NO_ANSWER = re.compile(r"maximum recursion depth|maximum number of heartbeats|\(deterministic\) timeout|\(kernel\) "
                        r"(?:deep recursion|deterministic timeout|interrupted)|stack overflow|"
                        r"Tactic `(?:decide|native_decide)` failed")
+KILL, RFL, NONE = "KILL", "RFL", "UNKNOWN"  # `judge`'s verdicts on one error
 STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
         "for", "unless", "mut", "have", "show"}
 LIST_METHODS = ("find\\?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
@@ -310,6 +335,14 @@ def classify(kind: str, span: str) -> str:
     return "check" if name in CHECK_COMMANDS else "other"
 
 
+def file_roles(path: Path) -> list[tuple[int, int, str, None]]:
+    """(first, last line, role, None) of each command of an outside --test file, read as `plan` reads lean/
+    (`trust_map.scan`, `classify`), but with no compiled declarations: a named theorem there is unrecorded, so other."""
+    decls, _, _ = trust_map.scan(path, [])
+    code = code_only(path.read_text()).split("\n")
+    return [(d.start, d.end, classify(d.kind, "\n".join(code[d.start - 1:d.end])), None) for d in decls]
+
+
 @dataclass
 class Tree:
     roles: dict[str, list[tuple[int, int, str, str | None]]]  # file -> (first, last line, check|proof|other, name)
@@ -395,13 +428,131 @@ def moved(before: str, after: str, lines: tuple[int, int]) -> int | None:
                  and old[n - 1:n] != new[n - 1:n]), None)
 
 
-def attributed(message: str, role: str, built: str, checkout: str, test: bool) -> bool:
-    """Whether an error kills (review F9): it is a check's own error, or a --test file's, at a line the mutant and the
-    cuts left as the checkout has it (`built`, `checkout`: that line), and no parse error, which a cut left behind or
-    a moved line makes, never a check, and no answer (`NO_ANSWER`, review F10: a check that runs out of budget did
-    not refute the mutant). Any other error is UNKNOWN (fail closed)."""
-    return not PARSE.match(message) and not NO_ANSWER.search(message) and (
-        test or role == "check" and built == checkout and bool(built.strip()))
+def located(output: str, pattern: re.Pattern = ERROR) -> list[tuple[str, int, int, str]]:
+    return [(f, int(n), int(c), message.rstrip()) for f, n, c, message in pattern.findall(output)]
+
+
+def refutes(message: str, name: str | None) -> bool:
+    """Whether `message`, an error at a check whose `#` command is `name` (`command`), states a refutation: one of
+    `REFUTED`, whole, or a `#guard_msgs` diff whose two sides hold answers only and differ. An answer is an
+    `#eval`'s `info` (a value it computed) or a refutation; a message the diff cannot show as two sides (Lean's
+    `guard_msgs.diff` off) is none."""
+    if REFUTED.fullmatch(message):
+        return True
+    if not message.startswith(GUARD_DIFF):
+        return False
+    sides: dict[str, list[str]] = {"-": [], "+": []}
+    for line in message[len(GUARD_DIFF):].split("\n"):
+        if line[:1] not in ("-", "+", " ") or line[1:2] not in ("", " "):
+            return False
+        for side in ("-+" if line[0] == " " else line[0]):
+            sides[side].append(line[2:])
+
+    def answers(lines: list[str]) -> list[str] | None:
+        said = [m.strip() for m in re.split(r"(?m)^---$", "\n".join(lines)) if m.strip()]
+        return said if all(m.startswith("info:") and name in EVALUATED and not NO_ANSWER.search(m)
+                           or m.startswith("error:") and REFUTED.fullmatch(m[6:].strip()) for m in said) else None
+    expected, generated = answers(sides["-"]), answers(sides["+"])
+    return expected is not None and generated is not None and expected != generated
+
+
+def judge(message: str, role: str, built: str, checkout: str, span: str) -> str:
+    """KILL, RFL or UNKNOWN for one error left after the cuts and the control (review F11: one positive condition).
+    KILL only when it is a check's own error (`role` check, at a line the mutant and the cuts left as the checkout
+    has it: `built`, `checkout`; review F9) whose message states a refutation (`refutes`; `span` is the check's
+    code). RFL when that check is proved by `rfl`: its failure reads the same whether the two sides differ or their
+    reduction got stuck, so `settle` asks `decide`, then `native_decide`, of its statement. Anything else is UNKNOWN:
+    a parse error (a cut left behind, a moved line), an error outside every check, any other message (fail closed)."""
+    if role != "check" or built != checkout or not built.strip() or PARSE.match(message):
+        return NONE
+    if refutes(message, command(span)):
+        return KILL
+    proved = CHECK_PROOF.search(unwrapped(span))
+    return RFL if proved and re.search(r"\brfl\s*$", proved[0]) else NONE
+
+
+def decided(text: str, first: int, last: int, tactic: str) -> str:
+    """`text` with the `rfl` (or `by rfl`) that proves the check on lines first..last replaced by `by <tactic>`,
+    every line kept."""
+    starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n"), len(text) + 1]
+    lo, hi = starts[first - 1], starts[min(last, len(starts) - 1)] - 1
+    found = re.search(r"(?:\bby\s+)?\brfl(?=\s*$)", unwrapped(code_only(text)[lo:hi]))
+    if found is None:
+        return text
+    s, e = lo + found.start(), lo + found.end()
+    return text[:s] + f"by {tactic}" + "\n" * text.count("\n", s, e) + text[e:]
+
+
+def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, list], rebuild,
+           where=lambda f: f"lean/{f}") -> tuple[str, str]:
+    """KILLED or UNKNOWN for the errors (file, line, message) a build left after the cuts and its control (review
+    F11): KILLED only when every one is KILL (`judge`), or RFL and its check's statement is refuted by `decide`, else
+    by `native_decide`. `rebuild` builds with the given files' texts (those checks' `rfl` replaced: `decided`) and
+    returns the errors, None when none is located; a rewritten check that gives no error there, or an error that is
+    no refutation, refutes nothing, and any other error must still be KILL. `read`, `checkout`: a file's built and
+    checkout text; `roles`: file -> (first, last line, role, ...)."""
+    def verdicts(found: list[tuple[str, int, str]], now: dict[str, tuple[str, str]]) -> list[tuple]:
+        """`judge` on each error; `now`: file -> its built and checkout text with the rewrites, if any."""
+        rows = []
+        for f, n, message in found:
+            span = next(((s, e, r) for s, e, r, *_ in roles.get(f, ()) if s <= n <= e), None)
+            text, original = now[f] if f in now else (read(f), checkout(f))
+            built, original = text.split("\n"), original.split("\n")
+            code = "\n".join(code_only(text).split("\n")[span[0] - 1:span[1]]) if span else ""
+            rows.append(((f, span and span[:2]), n, message, judge(
+                message, span[2] if span else "other", built[n - 1] if 0 < n <= len(built) else "",
+                original[n - 1] if 0 < n <= len(original) else "", code)))
+        return rows
+
+    rows = verdicts(errors, {})
+    if bad := next((x for x in rows if x[3] == NONE), None):
+        return "UNKNOWN", f"{where(bad[0][0])}:{bad[1]}: {brief(bad[2])}"
+    pending = {x[0]: x for x in rows if x[3] == RFL}
+    tactics: dict[tuple, str] = {}  # each rfl check's rewrite: decide, then native_decide where decide refuted nothing
+    confirmed: dict[tuple, str] = {}
+    for tactic in ("decide", "native_decide") if pending else ():
+        tactics.update(dict.fromkeys(pending, tactic))
+        now: dict[str, tuple[str, str]] = {}  # the same rewrite in the checkout's text, which `judge` compares
+        for (f, (s, e)), name in tactics.items():
+            now[f] = tuple(decided(x, s, e, name) for x in (now[f] if f in now else (read(f), checkout(f))))
+        if (found := rebuild({f: texts[0] for f, texts in now.items()})) is None:
+            return "UNKNOWN", f"{where(next(iter(pending))[0])}: the build with `{tactic}` has no located error"
+        again = verdicts(found, now)
+        if bad := next((x for x in again if x[0] not in tactics and x[3] != KILL), None):
+            return "UNKNOWN", f"{where(bad[0][0])}:{bad[1]}: {brief(bad[2])}"
+        for key in list(pending):
+            if (mine := [x for x in again if x[0] == key]) and all(x[3] == KILL for x in mine):
+                confirmed[key] = f"`{tactic}`: {brief(mine[0][2], 60)}"
+                del pending[key]
+        if not pending:
+            break
+    if pending:
+        (f, _), n, message, _ = next(iter(pending.values()))
+        return "UNKNOWN", (f"{where(f)}:{n}: {brief(message)} (an `rfl` check that neither `decide` nor `native_decide` "
+                           "refutes)")
+    (f, span), n, message, _ = next((x for x in rows if x[3] == KILL), rows[0])
+    return "KILLED", f"{where(f)}:{n}: {brief(message, 120)}" + (
+        f" ({confirmed[f, span]})" if (f, span) in confirmed else "")
+
+
+def in_tactic(code: str, at: int, lo: int, hi: int) -> bool:
+    """Whether code[at] is inside a tactic block of the declaration code[lo:hi] (code only): from a `by` to the end
+    of the bracket group it is in, else of the declaration, and from `decreasing_by` to the end."""
+    for found in re.finditer(r"\bby\b|\bdecreasing_by\b", code[lo:hi]):
+        if (start := lo + found.start()) > at:
+            break
+        depth, j = 0, start
+        while j < hi and (depth := depth + (code[j] in OPEN) - (code[j] in CLOSE)) >= 0:
+            j += 1
+        if at < j:
+            return True
+    return False
+
+
+def refused(message: str, inside_tactic: bool) -> bool:
+    """Whether an error in the mutated declaration says Lean refused its text (review F12, `REFUSED`): INVALID; any
+    other error there makes the mutant UNKNOWN."""
+    return bool(PARSE.match(message) or REFUSED.match(message) and not inside_tactic)
 
 
 def brief(message: str, size: int = 200) -> str:
@@ -494,13 +645,31 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         for s, e in cuts.get(f, ()):
             cut_proof(path, s, e)
 
+    columns: dict[tuple[str, int, str], int] = {}  # each error's column, which `in_tactic` reads
+
     def build(stage: list[str]) -> tuple[int, list[tuple[str, int, str]]]:
         for attempt in range(3):  # again: Lake can fail with no located error under load
             code, output = scratch.lake(env, "build", *(f"+{x}" for x in stage))
-            found = [(f, int(n), message.rstrip()) for f, n, message in ERROR.findall(output)]
+            found = located(output)
+            columns.update(((f, n, message), c) for f, n, c, message in found)
             if code == 0 or found:
-                return code, found
+                return code, [(f, n, message) for f, n, _, message in found]
         return code, [("", 0, "the build failed with no located error: " + output[-300:])]
+
+    def read(f: str) -> str:
+        return (scratch.lean / f).read_text()
+
+    def rebuild(stage: list[str], now: dict[str, str]) -> list[tuple[str, int, str]] | None:
+        """The errors of `stage` built with the files' texts `now`, which are restored afterwards."""
+        before = {f: read(f) for f in now}
+        try:
+            for f, text in now.items():
+                (scratch.lean / f).write_text(text)
+            code, found = build(stage)
+            return None if found[:1] and not found[0][0] else found
+        finally:
+            for f, text in before.items():
+                (scratch.lean / f).write_text(text)
 
     def state() -> tuple:
         return tuple(sorted((f, tuple(c)) for f, c in cuts.items() if c))
@@ -527,11 +696,17 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         cuts.setdefault(f, []).append((s, e))
         return None
 
-    def kills(f: str, n: int, message: str, r: str) -> bool:
-        built = (scratch.lean / f).read_text().split("\n")
-        checkout = texts[f].split("\n") if f in texts else built
-        return attributed(message, r, built[n - 1] if 0 < n <= len(built) else "",
-                          checkout[n - 1] if 0 < n <= len(checkout) else "", f in tests)
+    def invalid(mutated: list[tuple[str, int, str, str]]) -> tuple[str, str]:
+        """INVALID when one of the mutated declaration's errors says Lean refused its text (`refused`), else UNKNOWN
+        (review F12: a tactic that fails or Lean's budget there decides nothing)."""
+        text = read(m.file)
+        code, starts = code_only(text), [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n"), len(text) + 1]
+        lo, hi = starts[m.lines[0] - 1], starts[min(m.lines[1], len(starts) - 1)] - 1
+        for f, n, message, _ in mutated:
+            at = starts[min(n, len(starts)) - 1] + columns.get((f, n, message), 0)
+            if refused(message, in_tactic(code, at, lo, hi)):
+                return "INVALID", brief(message)
+        return "UNKNOWN", f"lean/{mutated[0][0]}:{mutated[0][1]}: {brief(mutated[0][2])}"
 
     try:
         write(m.file, True)
@@ -548,9 +723,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 if not found[0][0]:
                     return "UNKNOWN", found[0][2]
                 roles = [(f, n, message, role(tree, f, n, m)) for f, n, message in found]
-                if mutated := next((x for x in roles if x[3] == "mutated"), None):  # Lean refused it, unless out
-                    return ("UNKNOWN", f"lean/{mutated[0]}:{mutated[1]}: {brief(mutated[2])}") if NO_ANSWER.search(
-                        mutated[2]) else ("INVALID", brief(mutated[2]))  # of budget there (review F10)
+                if mutated := [x for x in roles if x[3] == "mutated"]:
+                    return invalid(mutated)
                 if proofs := [x for x in roles if x[3] == "proof" and x[0] not in tests]:
                     for f, n, message in each(proofs):  # cut first: a check may fail only because it reads one
                         if why := cut(f, n, f"the failing proof cannot be cut: {brief(message)}"):
@@ -569,13 +743,12 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                         return "UNKNOWN", why
                 if control:
                     continue
-                # A kill only when every error is a check's own (`attributed`): one elsewhere (a definition whose
-                # proof term the mutant breaks, review F8) leaves `sorry` that a check may refuse, and a parse error
-                # or a line that is not the checkout's is the tool's own edit (review F9), so it decides.
-                other = next((x for x in roles if not kills(*x)), None)
-                f, n, message, _ = other or roles[0]
-                return ("UNKNOWN", f"lean/{f}:{n}: {brief(message)}") if other else (
-                    "KILLED", f"lean/{f}:{n}: {brief(message, 120)}")
+                # A kill only when every error is a check's own refutation (`settle`): one elsewhere (a definition
+                # whose proof term the mutant breaks, review F8) leaves `sorry` that a check may refuse, a parse
+                # error or a line that is not the checkout's is the tool's own edit (review F9), and a message that
+                # states no refutation refutes nothing (F10, F11), so each decides UNKNOWN.
+                return settle(found, read, lambda f: texts[f] if f in texts else read(f), tree.roles,
+                              lambda now: rebuild(stage, now))
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
         failing = {t: out for t in outside if (out := scratch.lake(env, "env", "lean", str(t)))[0]}
@@ -586,11 +759,34 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             write(m.file, False)
             ok = all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage)
             controls[key] = [t for t in outside if not ok or scratch.lake(env, "env", "lean", str(t))[0]]
+            write(m.file, True)
         if not (new := [t for t in failing if t not in controls[key]]):
             return "UNKNOWN", f"{next(iter(failing))} fails without the mutant too"
-        if blank := next((t for t in new if NO_ANSWER.search(failing[t][1])), None):  # out of budget: review F10
-            return "UNKNOWN", f"{blank} fails with no answer: " + NO_ANSWER.search(failing[blank][1])[0]
-        return "KILLED", f"{new[0]} fails"
+        mutant_built = []  # the stages rebuilt with the mutant once (the control built them without), for `rfl`
+
+        def again(t: Path, now: dict[str, str]) -> list[tuple[str, int, str]] | None:
+            """An outside file's errors with its text `now`, written to a copy in the scratch directory."""
+            if not mutant_built:
+                mutant_built.append(all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage))
+            copy = scratch.lean.parent / "outside" / t.name
+            copy.parent.mkdir(exist_ok=True)
+            copy.write_text(now[str(t)])
+            code, output = scratch.lake(env, "env", "lean", str(copy))
+            found = [(str(t) if f == str(copy) else f, n, message) for f, n, _, message in located(output, LEAN_ERROR)]
+            return None if not mutant_built[0] or code and not found else found
+
+        first = ""
+        for t in new:  # the same rule as inside lean/ (`settle`), on the file's own commands (`file_roles`)
+            found = [(f, n, message) for f, n, _, message in located(failing[t][1], LEAN_ERROR)]
+            if not found:
+                return "UNKNOWN", f"{t} fails with no located error: {failing[t][1][-200:]}"
+            text = t.read_text()
+            status, detail = settle(found, lambda f: text if f == str(t) else "", lambda f: text if f == str(t) else "",
+                                    {str(t): file_roles(t)}, lambda now, t=t: again(t, now), str)
+            if status != "KILLED":
+                return status, detail
+            first = first or detail
+        return "KILLED", first
     finally:
         for f, text in texts.items():
             (scratch.lean / f).write_text(text)
