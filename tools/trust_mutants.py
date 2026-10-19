@@ -64,6 +64,7 @@ TACTIC = re.compile(r"\bby\b")
 EXAMPLE = re.compile(r"(?m)^\s*(?:@\[[^\]]*\]\s*)*example\b")
 CHECK_PROOF = re.compile(r":=\s*(?:by\s+)?(?:decide|native_decide|rfl)(?:\s+\+\w+)*\s*$")
 ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*)$", re.M)
+PARSE = re.compile(r"(?:unexpected|expected) ")  # how Lean's parser errors start ("unexpected token '<;>'; ...")
 STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
         "for", "unless", "mut", "have", "show"}
 LIST_METHODS = ("find\\?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
@@ -101,6 +102,7 @@ class Mutant:
     after: str
     status: str = "NOT RUN"
     detail: str = ""
+    edit: tuple[int, str] = (0, "")  # what `run` writes: text[start:edit[0]] -> edit[1] (`relined`)
 
 
 def group(t: str, i: int, step: int = 1) -> int:
@@ -219,10 +221,28 @@ def mutants(text: str, kind: str, lo: int, hi: int) -> list[tuple[str, int, int,
                 if not (one and op in ("list-first", "list-last"))]  # `[x].take 1` is `[x]`
     kept: dict[tuple[int, int, str], str] = {}
     for op, s, e, new in out:
-        new += "\n" * (text.count("\n", s, e) - new.count("\n"))  # every line stays where it was
+        if (edit := relined(text, s, e, new, hi))[0] == e:  # a shorter one padded
+            new = edit[1]
         if new != text[s:e]:
             kept.setdefault((s, e, new), op)
     return [(op, s, e, new) for (s, e, new), op in kept.items()]
+
+
+def relined(text: str, s: int, e: int, new: str, hi: int) -> tuple[int, str]:
+    """(end, replacement) of the edit text[s:e] -> `new` in the declaration ending at text[hi] that keeps every line
+    after the declaration where it was (review F9: the cuts and the roles read the checkout's line numbers). A
+    shorter replacement is padded with line ends; a longer one takes its extra line ends from the blank lines right
+    after the declaration (outside every comment), so the edit runs over them. With too few, the edit is `new` as it
+    is, and `run` refuses the mutant (UNKNOWN), since the lines after it moved."""
+    extra = new.count("\n") - text.count("\n", s, e)
+    if extra <= 0:
+        return e, new + "\n" * -extra
+    first = text.find("\n", hi) + 1  # the line after the declaration's last
+    blank = re.match(r"(?:[ \t]*\n)*", text[first:]) if first else None
+    if blank is None or blank[0].count("\n") < extra or not code_only(text[:first] + "X").endswith("X"):
+        return e, new
+    end = first + len("".join(blank[0].splitlines(keepends=True)[:extra]))
+    return end, new + text[e:first]
 
 
 def git(root: Path, *args: str) -> subprocess.CompletedProcess:
@@ -310,11 +330,13 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
             continue
         starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n")]
         r = ranged[0]
-        for op, s, e, new in sorted(mutants(text, d.kind, starts[r.start[0] - 1] + r.start[1],
-                                            starts[r.end[0] - 1] + r.end[1]), key=lambda x: x[1]):
-            first = text.count("\n", 0, s) + 1
-            if lines & set(range(first, first + text.count("\n", s, e) + 1)):
-                found.append(Mutant("", c.module, first, d.name, op, s, e, (r.start[0], r.end[0]), text[s:e], new))
+        hi = starts[r.end[0] - 1] + r.end[1]
+        for op, s, e, new in sorted(mutants(text, d.kind, starts[r.start[0] - 1] + r.start[1], hi),
+                                    key=lambda x: x[1]):
+            first, edit = text.count("\n", 0, s) + 1, relined(text, s, e, new, hi)
+            if lines & set(range(first, first + text.count("\n", s, e) + 1)):  # its lines run over the blanks it takes
+                found.append(Mutant("", c.module, first, d.name, op, s, e, (r.start[0], max(
+                    r.end[0], text.count("\n", 0, edit[0]))), text[s:e], new, edit=edit))
     seen: Counter = Counter()  # each tier in turn; in it, the k-th of every (definition, operator) first
     keys = []
     for i, m in enumerate(found):
@@ -350,6 +372,20 @@ def targets(tree: Tree, m: Mutant, tests: list[str], deep: bool = False) -> list
     checks = {x for x in cone for s, e, r, n in tree.roles.get(tree.files[x], ())
               if r == "check" and (deep or tree.files[x].rpartition("/")[0] == home or stated(tree, n, m))}
     return [module, *sorted((checks | {module_name(t) for t in tests}) - {module})]
+
+
+def moved(before: str, after: str, lines: tuple[int, int]) -> int | None:
+    """The first line outside lines[0]..lines[1] that is not where it was in `before` (review F9), else None."""
+    old, new = before.split("\n"), after.split("\n")
+    return next((n for n in range(1, max(len(old), len(new)) + 1) if not lines[0] <= n <= lines[1]
+                 and old[n - 1:n] != new[n - 1:n]), None)
+
+
+def attributed(message: str, role: str, built: str, checkout: str, test: bool) -> bool:
+    """Whether an error kills (review F9): it is a check's own error, or a --test file's, at a line the mutant and the
+    cuts left as the checkout has it (`built`, `checkout`: that line), and no parse error, which a cut left behind or
+    a moved line makes, never a check. Any other error is UNKNOWN (fail closed)."""
+    return not PARSE.match(message) and (test or role == "check" and built == checkout and bool(built.strip()))
 
 
 def role(tree: Tree, file: str, line: int, m: Mutant) -> str:
@@ -433,7 +469,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
     def write(f: str, mutated: bool) -> None:
         path = scratch.lean / f
         text = texts.setdefault(f, path.read_text())
-        path.write_text(text[:m.start] + m.after + text[m.end:] if mutated and f == m.file else text)
+        path.write_text(text[:m.start] + m.edit[1] + text[m.edit[0]:] if mutated and f == m.file else text)
         for s, e in cuts.get(f, ()):
             cut_proof(path, s, e)
 
@@ -470,8 +506,16 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         cuts.setdefault(f, []).append((s, e))
         return None
 
+    def kills(f: str, n: int, message: str, r: str) -> bool:
+        built = (scratch.lean / f).read_text().split("\n")
+        checkout = texts[f].split("\n") if f in texts else built
+        return attributed(message, r, built[n - 1] if 0 < n <= len(built) else "",
+                          checkout[n - 1] if 0 < n <= len(checkout) else "", f in tests)
+
     try:
         write(m.file, True)
+        if (n := moved(texts[m.file], (scratch.lean / m.file).read_text(), m.lines)) is not None:
+            return "UNKNOWN", f"lean/{m.file}:{n}: the mutant moves this line (no blank line after it takes its lines)"
         for first, last, r, _ in sorted(tree.roles[m.file], reverse=True):
             if r == "proof" and not first <= m.line <= last and cut_proof(scratch.lean / m.file, first, last):
                 cuts.setdefault(m.file, []).append((first, last))
@@ -503,9 +547,10 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                         return "UNKNOWN", why
                 if control:
                     continue
-                # A kill only when every error is in a check or a --test file: one elsewhere (a definition whose
-                # proof term the mutant breaks, review F8) leaves `sorry` that a check may refuse, so it decides.
-                other = next((x for x in roles if x[3] != "check" and x[0] not in tests), None)
+                # A kill only when every error is a check's own (`attributed`): one elsewhere (a definition whose
+                # proof term the mutant breaks, review F8) leaves `sorry` that a check may refuse, and a parse error
+                # or a line that is not the checkout's is the tool's own edit (review F9), so it decides.
+                other = next((x for x in roles if not kills(*x)), None)
                 f, n, message, _ = other or roles[0]
                 return ("UNKNOWN", f"lean/{f}:{n}: {message[:200]}") if other else (
                     "KILLED", f"lean/{f}:{n}: {message[:120]}")
@@ -613,7 +658,7 @@ def main(argv: list[str] | None = None) -> int:
             "base": git(root, "rev-parse", base).stdout.strip(), "head": git(root, "rev-parse", "HEAD").stdout.strip(),
             "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
             "counts": counts, "definitions": [f"lean/{f}: {d}" for f, d in definitions],
-            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end")} for m in found]}))
+            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")} for m in found]}))
     return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
 
 
