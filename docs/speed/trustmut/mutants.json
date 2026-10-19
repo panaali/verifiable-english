@@ -3,12 +3,12 @@
   {
    "id": "TM1",
    "file": "tools/trust_mutants.py",
-   "find": "                    if r == \"check\" or f in tests:",
-   "replace": "                    if r in (\"check\", \"proof\") or f in tests:",
+   "find": "                if proofs := [x for x in roles if x[3] == \"proof\" and x[0] not in tests]:",
+   "replace": "                if proofs := [x for x in roles if x[3] == \"proof\" and x[0] not in tests and False]:",
    "tests": [
     "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
    ],
-   "claim": "only an error inside a check (or a --test file) kills; a failing proof is cut"
+   "claim": "a failing proof is cut and the build repeated, never left to decide the mutant"
   },
   {
    "id": "TM2",
@@ -73,8 +73,8 @@
   {
    "id": "TM8",
    "file": "tools/trust_mutants.py",
-   "find": "        return \"check\" if CHECK_PROOF.search(bare) else \"proof\"",
-   "replace": "        return \"check\" if kind == \"command\" or CHECK_PROOF.search(bare) else \"proof\"",
+   "find": "        return \"check\" if proved and not tactics else \"proof\"",
+   "replace": "        return \"check\" if kind == \"command\" or proved and not tactics else \"proof\"",
    "tests": [
     "tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill"
    ],
@@ -140,6 +140,108 @@
     "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
    ],
    "claim": "a proof cut keeps the comments after it: the next `#guard_msgs`'s docstring (review F6)"
+  },
+  {
+   "id": "TM15",
+   "file": "tools/trust_mutants.py",
+   "find": "                    controls[key] = build(stage)[1]",
+   "replace": "                    controls[key] = []",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "claim": "a check error is a kill only when the same build without the mutant passes (review F7: `#eval` of a cut proof)"
+  },
+  {
+   "id": "TM16",
+   "file": "tools/trust_mutants.py",
+   "find": "    if name == \"print\" or name in CHECK_COMMANDS and tactics:",
+   "replace": "    if name in CHECK_COMMANDS and tactics:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_classes",
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "claim": "every `#print` (and `#print axioms`) is a proof (review F7)"
+  },
+  {
+   "id": "TM17",
+   "file": "tools/trust_mutants.py",
+   "find": "    tactics = len(TACTIC.findall(bare)) - (len(TACTIC.findall(proved[0])) if proved else 0)",
+   "replace": "    tactics = 0",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_classes",
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "claim": "a check form with a tactic block inside is a proof (review F7)"
+  },
+  {
+   "id": "TM18",
+   "file": "tools/trust_mutants.py",
+   "find": "    if command(t[lo:hi]):",
+   "replace": "    if False:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "claim": "a `#` command is cut by blanking it whole (review F7)"
+  },
+  {
+   "id": "TM19",
+   "file": "tools/trust_mutants.py",
+   "find": "        while begin and not t[starts[n := text.count(\"\\n\", 0, begin) - 1]:lo].strip():\n            begin = starts[n]\n",
+   "replace": "",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
+   ],
+   "claim": "a cut `#` command loses the docstring before it (review F7)"
+  },
+  {
+   "id": "TM20",
+   "file": "tools/trust_mutants.py",
+   "find": "                if proofs := [x for x in roles if x[3] == \"proof\" and x[0] not in tests]:",
+   "replace": "                if (proofs := [x for x in roles if x[3] == \"proof\" and x[0] not in tests]) and not any(\n                        x[3] == \"check\" for x in roles):",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "claim": "failing proofs are cut before a check error is read: a check may fail only because it reads one (review F7)"
+  },
+  {
+   "id": "TM21",
+   "file": "tools/trust_map.py",
+   "find": "COMMAND = re.compile(r\"^\\s*#[A-Za-z_]\")",
+   "replace": "COMMAND = re.compile(r\"^\\s*#(?:guard_msgs|guard|eval|print|check|reduce|synth)\\b\")",
+   "tests": [
+    "tests/test_trust_mutants.py::test_every_hash_command_opens_its_own_span"
+   ],
+   "claim": "every `#` command opens its own span (`#guard_expr`, `#eval!`, `#check_failure`: review F7)"
+  },
+  {
+   "id": "TM22",
+   "file": "tools/trust_mutants.py",
+   "find": "        if kill := next((t for t in failing if t not in controls[key]), None):",
+   "replace": "        if kill := next(iter(failing), None):",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
+   ],
+   "claim": "an outside --test file kills only when it passes without the mutant (review F7)"
+  },
+  {
+   "id": "TM23",
+   "file": "tools/trust_mutants.py",
+   "find": "                kill = next((x for x in roles if x[3] == \"check\" or x[0] in tests), None)",
+   "replace": "                kill = roles[0]",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_error_outside_every_check_is_unknown"
+   ],
+   "claim": "only an error inside a check (or a --test file) kills; one in a definition is UNKNOWN"
+  },
+  {
+   "id": "TM24",
+   "file": "tools/trust_mutants.py",
+   "find": "        while not code_only(text[:begin] + \"X\").endswith(\"X\"):  # a string or comment still open there\n            begin = text.index(\"\\n\", begin) + 1\n",
+   "replace": "",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
+   ],
+   "claim": "the blanking stops at a string the command before is still writing (review F7)"
   }
  ]
 }
