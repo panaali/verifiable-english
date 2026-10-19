@@ -147,10 +147,10 @@ def dump(root: Path, folder: Path, stated: list[str] = STATED) -> None:
         root, folder, script, "Statements", {"VE_STATEMENT_NAMES": str(folder / "names.txt"), **PATH}))
 
 
-@pytest.fixture(scope="module")
-def package(tmp_path_factory) -> Path:
-    root = tmp_path_factory.mktemp("package")
-    (root / "lean/Demo/Far").mkdir(parents=True)
+def scaffold(root: Path, *folders: str) -> None:
+    """An empty Lean package `Demo` at `root` with the folders under lean/Demo/, committed as the base."""
+    for folder in folders:
+        (root / "lean/Demo" / folder).mkdir(parents=True)
     (root / "tools").mkdir()
     (root / "lean/lean-toolchain").write_text((ROOT / "lean/lean-toolchain").read_text())
     (root / "lean/lakefile.toml").write_text('name = "demo"\n\n[[lean_lib]]\nname = "Demo"\nglobs = ["Demo.*"]\n')
@@ -159,6 +159,12 @@ def package(tmp_path_factory) -> Path:
     git(root, "init", "-q")
     git(root, "add", ".")
     git(root, "commit", "-qm", "base")
+
+
+@pytest.fixture(scope="module")
+def package(tmp_path_factory) -> Path:
+    root = tmp_path_factory.mktemp("package")
+    scaffold(root, "Far")
     for name, text in (("Defs", DEFS), ("Proofs", PROOFS), ("Examples", EXAMPLES), ("Far/Check", FAR)):
         (root / f"lean/Demo/{name}.lean").write_text(text)
     dump(root, tmp_path_factory.mktemp("dump"))
@@ -415,6 +421,10 @@ FORMS = [  # (form, class, value reading, proof reading)
     ("tactic example", "proof", "example : {v} = {e} := by {tac}", "example : {w}.val = 0 := by {tac}"),
     ("tactic theorem", "proof", "theorem {id}_t : {v} = {e} := by {tac}", "theorem {id}_t : {w}.val = 0 := by {tac}"),
     ("#guard with a tactic block", "proof", "#guard (⟨0, by {tac}⟩ : Fin (2 - {n})).val == 0", None),
+    # Review F8's form (the recheck's missing row): a definition with a proof inside it, and a check of its value
+    # (0 whatever the definition is) beside it. The mutant breaks the proof: an error in a definition, UNKNOWN.
+    ("definition with a proof", "other", "def {id}_s : {{x : Nat // x = 0 ∧ {v} = {e}}} := ⟨0, by decide⟩\n"
+     "#guard {id}_s.val == 0", "def {id}_s : Fin ({n}) := {w}\n#guard {id}_s.val == 0"),
 ]
 WRAPS = ("bare", "wrapped", "doc")  # the command alone, under `#guard_msgs in`, and with its docstring too
 # A definition's type and body, its values on 0..5, its value at 1, that value as a size `{n}` and the proof `{p}`
@@ -428,8 +438,9 @@ RICH = {"type": "Bool", "body": "!(n < 1) && (n ≤ 3 || decide (n = 5)) && n !=
 
 def table_rows(group: bool = True) -> list[dict]:
     """One row per form, reading, wrapping and setting, with the status its definition's mutants must have: KILLED
-    when a check compares the value (a bare or info-dropping `#reduce` compares nothing), else SURVIVOR. With
-    `group`, the rows that must not kill share one definition per wrapping, setting and reading."""
+    when a check compares the value (a bare or info-dropping `#reduce` compares nothing), UNKNOWN when a command
+    that is no check reads it (an error there is no kill), else SURVIVOR. With `group`, the rows that must survive
+    share one definition per wrapping, setting and reading."""
     rows = []
     for setting in ("mutated", "other"):
         for wrap in WRAPS:
@@ -437,9 +448,12 @@ def table_rows(group: bool = True) -> list[dict]:
                 for form, cls, value, proof in FORMS:
                     if (text := value if reads == "value" else proof) is not None:
                         kills = reads == "value" and cls == "check" and (form != "#reduce" or wrap == "doc")
+                        expected = "KILLED" if kills else "UNKNOWN" if reads == "value" and cls == "other" \
+                            else "SURVIVOR"
                         rows.append({"form": form, "class": cls, "reads": reads, "wrap": wrap, "setting": setting,
-                                     "expected": "KILLED" if kills else "SURVIVOR", "text": text,
-                                     "key": (setting, wrap, reads, form if kills or not group else "")})
+                                     "expected": expected, "text": text,
+                                     "key": (setting, wrap, reads, form if expected != "SURVIVOR" or not group
+                                             else "")})
     names: dict[tuple, str] = {}
     for i, row in enumerate(rows):
         row["d"], row["id"] = names.setdefault(row["key"], f"r{len(names)}"), f"x{i}"
@@ -452,16 +466,7 @@ def table_package(root: Path, folder: Path, rich: bool = False, group: bool = Tr
     Demo/O/Checks.lean their proofs and readings. Each row's docstring is the messages Lean gives its bare command."""
     mode = RICH if rich else SIMPLE
     rows = table_rows(group)
-    (root / "lean/Demo/M").mkdir(parents=True)
-    (root / "lean/Demo/O").mkdir(parents=True)
-    (root / "tools").mkdir()
-    (root / "lean/lean-toolchain").write_text((ROOT / "lean/lean-toolchain").read_text())
-    (root / "lean/lakefile.toml").write_text('name = "demo"\n\n[[lean_lib]]\nname = "Demo"\nglobs = ["Demo.*"]\n')
-    (root / ".gitignore").write_text(".lake/\n")
-    (root / "tools/trust-classes.json").write_text('{"modules": {}}\n')
-    git(root, "init", "-q")
-    git(root, "add", ".")
-    git(root, "commit", "-qm", "base")
+    scaffold(root, "M", "O")
     files = {"mutated": "Demo/M/Defs.lean", "other": "Demo/O/Checks.lean"}
 
     def write(messages: dict[tuple[str, int], list[str]] | None) -> None:
@@ -483,13 +488,13 @@ def table_package(root: Path, folder: Path, rich: bool = False, group: bool = Tr
             said = [] if messages is None else messages[files[row["setting"]], row["line"]]
             if messages is None or row["wrap"] == "bare":
                 row["line"] = len(lines) + 1
-                lines += [command, ""]
+                lines += [*command.split("\n"), ""]
                 continue
             if row["wrap"] == "doc":
                 lines += ["/--", *"\n---\n".join(said).split("\n"), "-/"] if said else ["/-- -/"]
             row["line"] = len(lines) + 2
-            lines += ["#guard_msgs (drop info) in" if said and row["wrap"] == "wrapped" else "#guard_msgs in", command,
-                      ""]
+            lines += ["#guard_msgs (drop info) in" if said and row["wrap"] == "wrapped" else "#guard_msgs in",
+                      *command.split("\n"), ""]
         for name, lines in texts.items():
             (root / "lean" / name).write_text("\n".join([*lines, f"end Demo.{name.split('/')[1]}", ""]))
 
@@ -508,6 +513,12 @@ def table_package(root: Path, folder: Path, rich: bool = False, group: bool = Tr
     for row in rows:
         messages.setdefault((files[row["setting"]], row["line"]), [])
     write(messages)
+    helpers: dict[str, list[str]] = {}  # the rows' own definitions are test helpers (T), never mutated
+    for row in rows:
+        if row["text"].startswith("def "):
+            name = files[row["setting"]]
+            helpers.setdefault(name, []).append(f"Demo.{name.split('/')[1]}.{row['id']}_s")
+    (root / "tools/trust-classes.json").write_text(json.dumps({"modules": {f: {"T": n} for f, n in helpers.items()}}))
     dump(root, folder, [])
     git(root, "add", ".")
     git(root, "commit", "-qm", "head")
@@ -602,7 +613,8 @@ def test_the_truth_table_classes(table_run):
 def test_the_truth_table_statuses(table_run):
     """Review F7 (the DRI's table): in the mutated module (its proofs cut up front) and in another (a proof the
     mutant breaks is cut there), whether the reading is the value or a cut proof, bare, wrapped or with a
-    docstring: a check that compares the value kills, and nothing a cut or broken proof can change ever does."""
+    docstring: a check that compares the value kills, and nothing a cut or broken proof can change ever does; a
+    definition whose proof the mutant breaks is UNKNOWN at its own line, whatever check fails beside it (F8)."""
     _, rows, done, mutants = table_run
     module = {"mutated": "lean/Demo/M/Defs.lean", "other": "lean/Demo/O/Checks.lean"}
     space = {"mutated": "Demo.M", "other": "Demo.O"}
@@ -611,5 +623,132 @@ def test_the_truth_table_statuses(table_run):
     for row in rows:
         status, where = statuses[f"{space[row['setting']]}.{row['d']}"]
         lines = range(row["line"] - (row["wrap"] != "bare"), row["line"] + 1)  # the wrapper's or the command's
-        places = [f"{module[row['setting']]}:{n}" for n in lines] if row["expected"] == "KILLED" else [""]
+        places = [f"{module[row['setting']]}:{n}" for n in lines] if row["expected"] != "SURVIVOR" else [""]
         assert status == row["expected"] and where in places, (row, done.stdout)
+
+
+ARMS = "def f : Nat → List Nat\n  | 0 => [1]\n  | _ => [2,\n   3]"
+
+
+@pytest.mark.parametrize(("decl", "rest", "before", "new", "mutated"), [
+    ("def f :=\n  [1,\n   2]", "\n\n#guard f == [1, 2]\n", "[1,\n   2]", "[]", "def f :=\n  []\n\n\n#guard f == [1, 2]\n"),
+    (ARMS, "\n\n#guard f 1 == [2, 3]\n", "[1]", "[2,\n   3]",
+     "def f : Nat → List Nat\n  | 0 => [2,\n   3]\n  | _ => [2,\n   3]\n#guard f 1 == [2, 3]\n"),
+    (ARMS, "\n#guard f 1 == [2, 3]\n", "[1]", "[2,\n   3]", None),
+    (ARMS, " /-\n\n-/\n#guard f 1 == [2, 3]\n", "[1]", "[2,\n   3]", None)],
+    ids=("fewer", "more", "more-no-blank", "more-blank-in-a-comment"))
+def test_an_edit_keeps_every_line_after_its_declaration(decl, rest, before, new, mutated):
+    """Review F9: a shorter replacement is padded; a longer one takes its extra line ends from the blank lines right
+    after the declaration (never from a comment), else it is written as it is (`mutated` None) and `moved` finds
+    the first line it moved, which `run` reports as UNKNOWN."""
+    import trust_mutants
+    text, s = decl + rest, decl.index(before)
+    end, edit = trust_mutants.relined(text, s, s + len(before), new, len(decl))
+    after = text[:s] + edit + text[end:]
+    assert after == (mutated or text[:s] + new + text[s + len(before):])
+    lines = (1, max(decl.count("\n") + 1, text.count("\n", 0, end)))
+    assert trust_mutants.moved(text, after, lines) == (None if mutated else decl.count("\n") + 2)
+
+
+@pytest.mark.parametrize(("message", "role", "built", "checkout", "test", "kills"), [
+    ("Expression\n  f 1 == 2\ndid not evaluate to `true`", "check", "#guard f 1 == 2", "#guard f 1 == 2", False, True),
+    ("unexpected token '<;>'; expected command", "check", "  <;> trivial", "#guard f 1 == 2", False, False),
+    ("unexpected token '<;>'; expected command", "check", "#guard f 1 == 2", "#guard f 1 == 2", False, False),
+    ("expected term", "check", "#guard f 1 == 2", "#guard f 1 == 2", False, False),
+    ("Expression", "check", "  <;> trivial", "#guard f 1 == 2", False, False),
+    ("Expression", "check", "", "", False, False),
+    ("Tactic `decide` proved that the proposition", "other", "def s := ⟨0, by decide⟩",
+     "def s := ⟨0, by decide⟩", False, False),
+    ("Expression", "other", "#guard g", "#guard g", True, True),
+    ("unexpected end of input", "other", "#guard g", "#guard g", True, False)], ids=short)
+def test_only_a_checks_own_error_kills(message, role, built, checkout, test, kills):
+    """Review F9 (the DRI's step 2): an error kills only at a check line the mutant and the cuts left as the checkout
+    has it, or in a --test file, and never when Lean's parser reports it (a cut left behind, a moved line)."""
+    import trust_mutants
+    assert trust_mutants.attributed(message, role, built, checkout, test) is kills
+
+
+# Review F9's axis: an operator whose replacement can span lines, with fewer, the same or more lines than what it
+# replaces; each definition is followed by a tactic proof over three lines (cut up front in the mutated module: a
+# cut at moved lines leaves `<;> trivial` behind) and then by its check. `arm-true`/`arm-false` write one token and
+# the list cuts and `append-*` one line or fewer, so only `arm-default` has "more". "tight": no blank line follows the
+# definition, so the longer replacement cannot keep the lines after it, and the mutant is UNKNOWN.
+LINES = [  # (shape, the definition after its name, what the reading check compares, [(operator, before, lines)])
+    ("default-more", " : Nat → List Nat\n  | 0 => [7]\n  | _ => [2,\n      3]", "({d} 0, {d} 1) == ([7], [2, 3])",
+     [("arm-default", "[7]", "more")]),
+    ("default-more-tight", " : Nat → List Nat\n  | 0 => [7]\n  | _ => [2,\n      3]",
+     "({d} 0, {d} 1) == ([7], [2, 3])", [("arm-default", "[7]", "more")]),
+    ("default-fewer", " : Nat → List Nat\n  | 0 => [7,\n      8]\n  | _ => [2]", "({d} 0, {d} 1) == ([7, 8], [2])",
+     [("arm-default", "[7,\n      8]", "fewer")]),
+    ("default-same", " : Nat → List Nat\n  | 0 => [7]\n  | _ => [2]", "({d} 0, {d} 1) == ([7], [2])",
+     [("arm-default", "[7]", "same")]),
+    ("arm-bool", " : Nat → Bool\n  | 0 => 1 <\n      2\n  | _ => 2 < 1", "{d} 0 && !{d} 1",
+     [("arm-false", "1 <\n      2", "fewer"), ("arm-true", "2 < 1", "same")]),
+    ("list-multi", " (n : Nat) : List Nat := [n,\n    5]", "({d} 0, {d} 1) == ([0, 5], [1, 5])",
+     [("list-first", "[n,\n    5]", "same"), ("list-drop-last", "[n,\n    5]", "same"),
+      ("list-empty", "[n,\n    5]", "fewer")]),
+    ("list-single", " (n : Nat) : List Nat := [n, 5]", "({d} 0, {d} 1) == ([0, 5], [1, 5])",
+     [("list-first", "[n, 5]", "same"), ("list-drop-last", "[n, 5]", "same"), ("list-empty", "[n, 5]", "same")]),
+    ("append-left-multi", " (n : Nat) : List Nat := [n] ++ [5,\n    6]", "{d} 0 == [0, 5, 6]",
+     [("append-left", " ++ [5,\n    6]", "fewer"), ("append-right", "[n] ++ ", "same")]),
+    ("append-right-multi", " (n : Nat) : List Nat := [n,\n    5] ++ [6]", "{d} 0 == [0, 5, 6]",
+     [("append-right", "[n,\n    5] ++ ", "fewer"), ("append-left", " ++ [6]", "same")]),
+]
+
+
+def lines_package(root: Path, folder: Path) -> list[dict]:
+    """The axis as a Lean package at `root` (committed over an empty base): each shape read by a check that compares
+    it and by one that reads nothing (`#guard true`), in the mutated module (Demo/LM/Defs.lean) and in another
+    (Demo/LO/Checks.lean, its definitions and proofs in Demo/LO/Defs.lean)."""
+    scaffold(root, "LM", "LO")
+    texts = {"LM/Defs": ["namespace Demo.LM", ""], "LO/Defs": ["namespace Demo.LO", ""],
+             "LO/Checks": ["import Demo.LO.Defs", "", "namespace Demo.LO", ""]}
+    rows = []
+    for setting, defs, checks in (("mutated", "LM/Defs", "LM/Defs"), ("other", "LO/Defs", "LO/Checks")):
+        for shape, body, compares, targets in LINES:
+            for reads in (True, False):
+                d = f"s{len(rows)}"
+                texts[defs] += [*f"def {d}{body}".split("\n"), *([""] if not shape.endswith("tight") else []),
+                                f"theorem {d}_ok : True := by", "  skip", "  <;> trivial"]
+                rows.append({"shape": shape, "setting": setting, "reads": reads, "d": d, "targets": targets,
+                             "file": f"lean/Demo/{checks}.lean", "line": len(texts[checks]) + 1,
+                             "space": f"Demo.{checks.split('/')[0]}"})
+                texts[checks] += [f"#guard {compares.format(d=d)}" if reads else "#guard true", ""]
+    for name, lines in texts.items():
+        (root / f"lean/Demo/{name}.lean").write_text("\n".join([*lines, f"end Demo.{name.split('/')[0]}", ""]))
+    dump(root, folder, [])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+    return rows
+
+
+@pytest.fixture(scope="module")
+def lines_run(tmp_path_factory):
+    root = tmp_path_factory.mktemp("lines")
+    rows = lines_package(root, tmp_path_factory.mktemp("lines-dump"))
+    done, mutants = tool(root, tmp_path_factory.mktemp("lines-run"), "--max-mutants", "100000")
+    return rows, done, mutants
+
+
+def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):
+    """Review F9 (PROBE F9 is the blind default-more row of the mutated module): fewer, the same or more lines, in the mutated module or another, a
+    mutant is KILLED only by the check that compares the value, at that check's line; one no check reads survives;
+    a longer replacement no blank line can take is UNKNOWN. Every mutant's lines are those the axis names."""
+    rows, done, mutants = lines_run
+    assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr
+    for row in rows:
+        mine = [m for m in mutants if m["definition"] == f"{row['space']}.{row['d']}"]
+        tight = row["shape"].endswith("tight")
+        for operator, before, lines in row["targets"]:
+            (m,) = [m for m in mine if (m["operator"], m["before"]) == (operator, before)]
+            change = m["after"].rstrip("\n").count("\n") - before.count("\n")
+            assert {"fewer": change < 0, "same": change == 0, "more": change > 0}[lines], m
+            expected = "UNKNOWN" if tight and lines == "more" else "KILLED" if row["reads"] else "SURVIVOR"
+            assert m["status"] == expected, (row, m)
+        for m in mine:
+            if m["status"] == "KILLED":
+                assert row["reads"] and m["detail"].startswith(f"{row['file']}:{row['line']}: "), (row, m)
+            elif m["status"] == "UNKNOWN":
+                assert tight and m["operator"] == "arm-default" and "moves this line" in m["detail"], (row, m)
+            else:
+                assert m["status"] in ("SURVIVOR", "INVALID"), (row, m)
