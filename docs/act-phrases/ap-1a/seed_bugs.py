@@ -59,6 +59,8 @@ MUTANTS = [
     ("check-join-accepted", "check", LEX,
      '| some (.word w) => throw s!"InvalidInput: act phrase for {name} joins acts with \'{w}\' outside a fixed phrase"',
      "| some (.word _) => pure act", None),
+    ("check-comma-passes", "check", LEX, "| .word w => joinWords.contains w.toLower | .comma => true | _ => false",
+     "| .word w => joinWords.contains w.toLower | .comma => false | _ => false", None),
     ("check-join-case", "check", LEX, "| .word w => joinWords.contains w.toLower", "| .word w => joinWords.contains w",
      None),
     ("Form.text-swap", "Form.text", LEX, '| .right => "has the right"', '| .right => "is entitled"', None),
@@ -83,12 +85,18 @@ MUTANTS = [
 ]
 
 
-def run(mutant) -> dict:
+THEOREMS = "/-! ### Theorems (4.3) -/"
+
+
+def run(mutant, fixtures_only: bool = False) -> dict:
     ident, definition, path, old, new, check = mutant
     target = ROOT / path
     text = target.read_text()
     assert text.count(old) == 1, f"{ident}: {old!r} occurs {text.count(old)} times in {path}"
-    target.write_text(text.replace(old, new))
+    mutated = text.replace(old, new)
+    if fixtures_only:
+        mutated = mutated[:mutated.index(THEOREMS)] + "end VE.Acts.Lexical\n"
+    target.write_text(mutated)
     env = {**os.environ, "PATH": f"{Path.home()}/.elan/bin:{os.environ['PATH']}"}
     try:
         cwd = ROOT if check else ROOT / "lean"
@@ -103,8 +111,14 @@ def run(mutant) -> dict:
     else:
         found = re.search(r"error: (VE/\S+\.lean:\d+):\d+: (.*)", out)
         failed = f"lean/{found.group(1)}: {found.group(2)[:120]}" if found else ""
-    return {"id": ident, "definition": definition, "file": path, "mutation": [old, new],
-            "test": failed, "killed": proc.returncode != 0}
+    result = {"id": ident, "definition": definition, "file": path, "mutation": [old, new],
+              "test": failed, "killed": proc.returncode != 0}
+    if not fixtures_only and path == LEX and failed.startswith(LEX):
+        # caught by a proof of Lexical.lean: plant it again without the proofs, so a fixture must catch it too
+        again = run(mutant, fixtures_only=True)
+        result["fixtures_only"] = again["test"]
+        result["killed"] = result["killed"] and again["killed"]
+    return result
 
 
 def main() -> None:
@@ -114,7 +128,7 @@ def main() -> None:
     chosen = [m for m in MUTANTS if not args.only or m[0] in args.only]
     results = [run(m) for m in chosen]
     for r in results:
-        print(("KILLED  " if r["killed"] else "SURVIVED"), r["id"], "|", r["test"])
+        print(("KILLED  " if r["killed"] else "SURVIVED"), r["id"], "|", r["test"], "|", r.get("fixtures_only", ""))
     if not args.only:
         (Path(__file__).parent / "mutants.json").write_text(json.dumps(results, indent=1, ensure_ascii=False) + "\n")
     subprocess.run(BUILD, cwd=ROOT / "lean", env={**os.environ, "PATH": f"{Path.home()}/.elan/bin:{os.environ['PATH']}"},
