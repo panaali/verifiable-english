@@ -129,7 +129,8 @@ DECL = re.compile(
     r"^\s*(?:@\[[^\]]*\]\s*)*(?:(?:private|protected|noncomputable|nonrec|partial|unsafe|scoped|local)\s+)*"
     r"(?P<kind>class\s+inductive|deriving\s+instance|def|abbrev|structure|inductive|class|instance|theorem|"
     r"lemma|example|opaque|axiom|macro_rules|macro|syntax|notation|infixl|infixr|infix|prefix|postfix|elab)\b")
-COMMAND = re.compile(r"^\s*#(?:guard_msgs|guard|eval|print|check|reduce|synth)\b")
+# Every `#` command (`#guard`, `#eval!`, `#guard_expr`, `#check_failure`, ...) opens its own span; `#[` is a term.
+COMMAND = re.compile(r"^\s*#[A-Za-z_]")
 STRUCTURAL = re.compile(r"^\s*(?:namespace|end|section|noncomputable\s+section|open|variable|universe|"
                         r"set_option|import|attribute|mutual|export)\b")
 # `#guard_msgs … in` (its spec one parenthesis group on its line) wraps the command after it, as `set_option … in`.

@@ -13,14 +13,18 @@ Each mutant is built in a private scratch copy of lean/ (its build restored from
 of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, its proofs cut to `sorry`
 (no proof there is a check), then each module that imports it and holds checks for it: a check whose compiled
 statement (lean/statements.txt) uses it, every other check in a module of its directory (of the whole cone with
---deep), and the --test files. A check is a `#guard`, or an `example` or theorem proved by `decide`, `native_decide`
-or `rfl`; every other `example` or theorem is a proof, whatever its statement names, and a `#guard_msgs … in` is
-what it wraps (a check around anything but a proof; cut with its proof). The mutant is
-- KILLED when Lean reports an error inside a check or a --test file;
+--deep), and the --test files. A check is a command whose outcome Lean computes from definitions alone, never from a
+proof (`classify`): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an `example` or theorem proved by
+`decide`, `native_decide` or `rfl`, with no other tactic block in it; a `#guard_msgs … in` is what it wraps. Every
+other `example` or theorem, a check form with a tactic block inside, and every `#print` (it lists or shows proofs)
+is a proof, whatever its statement names. The mutant is
+- KILLED when Lean reports an error inside a check or a --test file, and the same build without the mutant (its
+  control: the same cuts) passes;
 - INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means);
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
-  `sorry` and the build repeated;
-- UNKNOWN when anything else fails;
+  `sorry` (a `#print` blanked) and the build repeated, before any other error is read; and a check that fails in
+  the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way;
+- UNKNOWN when anything else fails (an error in a definition, or in a command that is no check);
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> <operator>: <before> -> <after>` unless --allow
@@ -54,7 +58,8 @@ from lean_statements import declaration_list, module_name, source_hash, sources 
 from tools import lake_outputs, lean_share, trust_map  # noqa: E402
 
 OPEN, CLOSE = "([{⟨", ")]}⟩"
-GUARD = re.compile(r"(?m)^\s*#guard\b")
+CHECK_COMMANDS = {"guard", "guard_expr", "eval", "eval!", "reduce", "check"}
+TACTIC = re.compile(r"\bby\b")
 EXAMPLE = re.compile(r"(?m)^\s*(?:@\[[^\]]*\]\s*)*example\b")
 CHECK_PROOF = re.compile(r":=\s*(?:by\s+)?(?:decide|native_decide|rfl)(?:\s+\+\w+)*\s*$")
 ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*)$", re.M)
@@ -237,16 +242,37 @@ def changed_lines(root: Path, base: str) -> dict[str, set[int]]:
     return out
 
 
+def unwrapped(span: str) -> str:
+    """`span` (code only) with its `#guard_msgs … in` wrappers blanked."""
+    return trust_map.GUARD_WRAPPER.sub(lambda w: " " * len(w[0]), span)
+
+
+def command(span: str) -> str | None:
+    """The `#` command a span (code only) runs, past its `#guard_msgs … in`, `set_option … in` and `open … in`
+    prefixes: `guard`, `eval!`, `print`, ...; None for a declaration or an `example`."""
+    found = re.match(r"(?:\s|(?:set_option|open)\b[^\n]*?\bin\b)*#([A-Za-z_]\w*!?)", unwrapped(span))
+    return found[1] if found else None
+
+
 def classify(kind: str, span: str) -> str:
-    """check, proof or other, for a declaration of `kind` whose code (comments and strings blanked) is `span`: an
-    `example` or theorem is a check only when `decide`, `native_decide` or `rfl` proves it, any other is a proof,
-    wherever it is and whatever its statement names; a `#guard` is a check. A `#guard_msgs … in` is the command it
-    wraps (trust_map puts both in one span): a check unless that is a proof (review F6); one it cannot read is no
-    check."""
-    bare = trust_map.GUARD_WRAPPER.sub(lambda w: " " * len(w[0]), span)
+    """check, proof or other, for a declaration of `kind` whose code (comments and strings blanked) is `span`. A
+    check is a command whose outcome Lean computes from definitions alone, never from a proof: `#guard`,
+    `#guard_expr`, `#eval`, `#reduce`, `#check`, or an `example` or theorem proved by `decide`, `native_decide` or
+    `rfl`, with no other tactic block (`by`) in it. Every other `example` or theorem is a proof (review F1), and so
+    is a check form with a tactic block inside (a mutant can break the tactic and nothing else) and every `#print`
+    (`#print axioms` lists `sorryAx` once the tool cuts a proof, and `#print` shows the definition's text and its
+    proofs: review F7). A `#guard_msgs … in` is the command it wraps (trust_map puts both in one span: review F6).
+    Any other command, and one this cannot read, is other: an error there is no kill. A check whose outcome a cut
+    proof still changes (`#eval` refuses a value that depends on `sorry`) is caught by the control build in `run`."""
+    bare = unwrapped(span)
+    proved = CHECK_PROOF.search(bare)
+    tactics = len(TACTIC.findall(bare)) - (len(TACTIC.findall(proved[0])) if proved else 0)
     if kind == "theorem" or kind == "command" and EXAMPLE.search(bare):
-        return "check" if CHECK_PROOF.search(bare) else "proof"
-    return "check" if kind == "command" and (bare != span or GUARD.search(bare)) else "other"
+        return "check" if proved and not tactics else "proof"
+    name = command(span) if kind == "command" else None
+    if name == "print" or name in CHECK_COMMANDS and tactics:
+        return "proof"
+    return "check" if name in CHECK_COMMANDS else "other"
 
 
 @dataclass
@@ -333,13 +359,23 @@ def role(tree: Tree, file: str, line: int, m: Mutant) -> str:
 
 
 def cut_proof(path: Path, first: int, last: int) -> bool:
-    """The theorem on lines first..last of `path` with its proof replaced by `sorry` and its `#guard_msgs … in`
-    wrappers blanked (the `sorry` warning would fail them: review F6), every line kept. The comment lines after the
-    proof stay: a docstring there is the next command's (trust_map's span ends before that command's first code
-    line), and a `#guard_msgs` reads its docstring."""
+    """The theorem or `example` on lines first..last of `path` with its proof replaced by `sorry` and its
+    `#guard_msgs … in` wrappers blanked (the `sorry` warning would fail them: review F6), or the `#` command there
+    blanked whole with the comments before it (it declares nothing; its docstring is the `#guard_msgs`'s: review
+    F7), every line kept. The comment lines after the span stay: a docstring there is the next command's
+    (trust_map's span ends before that command's first code line), and a `#guard_msgs` reads its docstring."""
     text = path.read_text()
     starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n"), len(text) + 1]
     lo, hi, t = starts[first - 1], starts[min(last, len(starts) - 1)] - 1, code_only(text)
+    if command(t[lo:hi]):
+        begin = lo  # back over the lines with no code before it, to the first outside every string and comment
+        while begin and not t[starts[n := text.count("\n", 0, begin) - 1]:lo].strip():
+            begin = starts[n]
+        while not code_only(text[:begin] + "X").endswith("X"):  # a string or comment still open there
+            begin = text.index("\n", begin) + 1
+        end = lo + len(t[lo:hi].rstrip())
+        path.write_text(text[:begin] + re.sub(r"[^\n]", " ", text[begin:end]) + text[end:])
+        return True
     arm = re.search(r"(?m)^\s*\|", t[lo:hi])
     found = [x for x in (depth0(t, lo, hi, ":="), lo + arm.start() if arm else None) if x is not None]
     if found:
@@ -381,52 +417,108 @@ class Scratch:
 
 
 def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list[Path], env: dict,
-        deep: bool = False) -> tuple[str, str]:
-    """(status, detail) of one mutant, built in `scratch`, whose files are restored afterwards."""
-    touched: dict[Path, bytes] = {}
-    cut: set[tuple[str, int]] = set()
+        deep: bool = False, controls: dict | None = None) -> tuple[str, str]:
+    """(status, detail) of one mutant, built in `scratch`, whose files are restored afterwards. The mutated module's
+    proofs are cut up front, and a proof that fails elsewhere is cut and the build repeated, before any other error
+    is read: a check may fail only because a proof it reads failed. An error in a check is a kill only when its
+    control, the same build without the mutant (the same cuts; `controls` caches it across mutants), passes: what
+    fails there too reads a cut proof (review F7: `#eval` refuses a value that depends on `sorry`), so it is cut as
+    well and never a kill."""
+    controls = {} if controls is None else controls
     built = targets(tree, m, tests, deep)
+    texts: dict[str, str] = {}  # file -> the checkout's text, written back at the end
+    cuts: dict[str, list[tuple[int, int]]] = {}  # file -> the spans cut in it
+
+    def write(f: str, mutated: bool) -> None:
+        path = scratch.lean / f
+        text = texts.setdefault(f, path.read_text())
+        path.write_text(text[:m.start] + m.after + text[m.end:] if mutated and f == m.file else text)
+        for s, e in cuts.get(f, ()):
+            cut_proof(path, s, e)
+
+    def build(stage: list[str]) -> tuple[int, list[tuple[str, int, str]]]:
+        for attempt in range(2):  # once more: Lake can fail with no located error under load
+            code, output = scratch.lake(env, "build", *(f"+{x}" for x in stage))
+            found = [(f, int(n), message) for f, n, message in ERROR.findall(output)]
+            if code == 0 or found:
+                return code, found
+        return code, [("", 0, "the build failed with no located error: " + output[-300:])]
+
+    def state() -> tuple:
+        return tuple(sorted((f, tuple(c)) for f, c in cuts.items() if c))
+
+    def each(found: list[tuple]) -> list[tuple[str, int, str]]:
+        """The first error of each declaration in `found`."""
+        first: dict[tuple[str, int], tuple[str, int, str]] = {}
+        for f, n, message, *_ in found:
+            first.setdefault((f, next((s for s, e, *_ in tree.roles.get(f, ()) if s <= n <= e), n)), (f, n, message))
+        return list(first.values())
+
+    def cut(f: str, n: int, why: str) -> str | None:
+        """Cuts the proof, check or `#` command at f:n, unless already cut; else the reason (UNKNOWN)."""
+        found = next(((s, e, r) for s, e, r, _ in tree.roles.get(f, ()) if s <= n <= e), None)
+        why = f"lean/{f}:{n}: {why}" if f else why
+        if found is None or role(tree, f, n, m) == "mutated" or found[:2] in cuts.get(f, ()):
+            return why
+        s, e, r = found
+        path = scratch.lean / f
+        texts.setdefault(f, path.read_text())
+        if r == "other" and not command("\n".join(code_only(path.read_text()).split("\n")[s - 1:e])) \
+                or not cut_proof(path, s, e):
+            return why
+        cuts.setdefault(f, []).append((s, e))
+        return None
+
     try:
-        path = scratch.lean / m.file
-        touched[path] = path.read_bytes()
-        text = path.read_text()
-        path.write_text(text[:m.start] + m.after + text[m.end:])
+        write(m.file, True)
         for first, last, r, _ in sorted(tree.roles[m.file], reverse=True):
-            if r == "proof" and not first <= m.line <= last:
-                cut_proof(path, first, last)
+            if r == "proof" and not first <= m.line <= last and cut_proof(scratch.lean / m.file, first, last):
+                cuts.setdefault(m.file, []).append((first, last))
         for stage in (built[:1], built[1:]):  # the mutated module alone first: most mutants end there
-            for attempt in range(8):
-                code, output = scratch.lake(env, "build", *(f"+{x}" for x in stage)) if stage else (0, "")
+            for _ in range(12):
+                code, found = build(stage) if stage else (0, [])
                 if code == 0:
                     break
-                found = [(f, int(n), message, role(tree, f, int(n), m)) for f, n, message in ERROR.findall(output)]
-                if not found and attempt == 0:  # once more: Lake can fail with no located error under load
+                if not found[0][0]:
+                    return "UNKNOWN", found[0][2]
+                roles = [(f, n, message, role(tree, f, n, m)) for f, n, message in found]
+                if mutated := next((x for x in roles if x[3] == "mutated"), None):
+                    return "INVALID", mutated[2][:200]
+                if proofs := [x for x in roles if x[3] == "proof" and x[0] not in tests]:
+                    for f, n, message in each(proofs):  # cut first: a check may fail only because it reads one
+                        if why := cut(f, n, f"the failing proof cannot be cut: {message[:200]}"):
+                            return "UNKNOWN", why
                     continue
-                if not found:
-                    return "UNKNOWN", "the build failed with no located error: " + output[-300:]
-                for f, n, message, r in found:
-                    if r == "mutated":
-                        return "INVALID", message[:200]
-                for f, n, message, r in found:
-                    if r == "check" or f in tests:
-                        return "KILLED", f"lean/{f}:{n}: {message[:120]}"
-                proofs = {(f, s, e) for f, n, _, r in found if r == "proof"
-                          for s, e, *_ in tree.roles[f] if s <= n <= e}
-                if (other := [x for x in found if x[3] != "proof"]) or not proofs or {p[:2] for p in proofs} <= cut:
-                    f, n, message, _ = (other or found)[0]
-                    return "UNKNOWN", f"lean/{f}:{n}: {message[:200]}"
-                for f, s, e in proofs - {p for p in proofs if p[:2] in cut}:
-                    touched.setdefault(scratch.lean / f, (scratch.lean / f).read_bytes())
-                    if not cut_proof(scratch.lean / f, s, e):
-                        return "UNKNOWN", f"lean/{f}:{s}: the failing proof cannot be cut"
-                    cut.add((f, s))
+                key = (tuple(stage), state())
+                if key not in controls:  # the same build without the mutant
+                    write(m.file, False)
+                    controls[key] = build(stage)[1]
+                    write(m.file, True)
+                for f, n, message in each(controls[key]):  # it fails there too: it reads a cut proof, so cut it
+                    if why := cut(f, n, f"fails without the mutant too: {message[:200]}"):
+                        return "UNKNOWN", why
+                if controls[key]:
+                    continue
+                kill = next((x for x in roles if x[3] == "check" or x[0] in tests), None)
+                f, n, message, _ = kill or roles[0]
+                return ("KILLED", f"lean/{f}:{n}: {message[:120]}") if kill else (
+                    "UNKNOWN", f"lean/{f}:{n}: {message[:200]}")
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
         failing = [test for test in outside if scratch.lake(env, "env", "lean", str(test))[0]]
-        return ("KILLED", f"{failing[0]} fails") if failing else ("SURVIVOR", "")
+        if not failing:
+            return "SURVIVOR", ""
+        key = ("outside", tuple(built), state())
+        if key not in controls:
+            write(m.file, False)
+            ok = all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage)
+            controls[key] = [t for t in outside if not ok or scratch.lake(env, "env", "lean", str(t))[0]]
+        if kill := next((t for t in failing if t not in controls[key]), None):
+            return "KILLED", f"{kill} fails"
+        return "UNKNOWN", f"{failing[0]} fails without the mutant too"
     finally:
-        for p, data in touched.items():
-            p.write_bytes(data)
+        for f, text in texts.items():
+            (scratch.lean / f).write_text(text)
 
 
 def evidence(data: dict) -> str:
@@ -478,6 +570,7 @@ def main(argv: list[str] | None = None) -> int:
           f"base {base[:12]}", flush=True)
     with tempfile.TemporaryDirectory(prefix="trust-mutants-") as scratch_dir:
         pool: queue.Queue = queue.Queue()
+        controls: dict = {}  # the builds without a mutant, by stage and cuts: shared by every scratch
         if run_now:
             first = Scratch(root / "lean", Path(scratch_dir))
             code, output = first.lake(env, "build", *sorted({f"+{x}" for m in run_now for x in targets(tree, m, tests,
@@ -492,7 +585,7 @@ def main(argv: list[str] | None = None) -> int:
         def one(m: Mutant) -> None:
             scratch = pool.get()
             try:
-                m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep)
+                m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep, controls)
             finally:
                 pool.put(scratch)
             if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
