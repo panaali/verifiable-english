@@ -49,7 +49,7 @@
         "lean/VE/Judgments/Examples.lean:163 (J-γ, 11.3), with Status.lean's theorem proofs stubbed for the run",
         "lean/VE/Judgments/Examples.lean:165 (J-γ′, 11.3), with Status.lean's theorem proofs stubbed for the run",
         "lean/VE/Judgments/Examples.lean:279 (carve-out status (internal row)), with Status.lean's theorem proofs stubbed for the run",
-        "lean/VE/Judgments/Examples.lean:297 (J-β removal, 11.9), with Status.lean's theorem proofs stubbed for the run"
+        "lean/VE/Judgments/Examples.lean:300 (J-β removal, 11.9), with Status.lean's theorem proofs stubbed for the run"
       ],
       "command": "cd lean && lake build VE.Judgments.Examples",
       "restored": true
@@ -71,6 +71,26 @@
         "lean/VE/Judgments/Status.lean:232 (proof of status_ok_iff no longer checks)",
         "lean/VE/Judgments/Status.lean:260 (proof of status_legacy no longer checks)",
         "lean/VE/Judgments/Examples.lean:224 (J-τ′ (a)-(e), 11.3), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "status-unused-before-unlisted",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.status",
+      "mutation": [
+        {
+          "from": "    if let some j := deps.find? (!u.listed.contains ·) then throw s!\"JudgmentNotListed: {u.id} {j}\"\n    if u.complete then\n      if let some j := u.listed.find? (fun j => J.contains j && !deps.contains j) then\n        throw s!\"JudgmentListedUnused: {u.id} {j}\"",
+          "to": "    if u.complete then\n      if let some j := u.listed.find? (fun j => J.contains j && !deps.contains j) then\n        throw s!\"JudgmentListedUnused: {u.id} {j}\"\n    if let some j := deps.find? (!u.listed.contains ·) then throw s!\"JudgmentNotListed: {u.id} {j}\""
+        }
+      ],
+      "claim": "refusal order (plan 2.1, item 6): JudgmentNotListed before JudgmentListedUnused",
+      "test": "lean/VE/Judgments/Status.lean:224",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:224 (proof of status_ok_iff no longer checks; its statement, a conjunction, still holds)",
+        "lean/VE/Judgments/Examples.lean:294 (the refusal order under both faults (internal row)), with Status.lean's theorem proofs stubbed for the run"
       ],
       "command": "cd lean && lake build VE.Judgments.Examples",
       "restored": true
@@ -345,7 +365,7 @@
         "lean/VE/Judgments/Status.lean:287 (proof of usageMap_complete no longer checks)",
         "lean/VE/Judgments/Status.lean:299 (proof of usageMap_rows no longer checks)",
         "lean/VE/Judgments/Examples.lean:185 (J-μ usage, 11.3), with Status.lean's theorem proofs stubbed for the run",
-        "lean/VE/Judgments/Examples.lean:302 (J-τ usage, 11.9), with Status.lean's theorem proofs stubbed for the run"
+        "lean/VE/Judgments/Examples.lean:305 (J-τ usage, 11.9), with Status.lean's theorem proofs stubbed for the run"
       ],
       "command": "cd lean && lake build VE.Judgments.Examples",
       "restored": true

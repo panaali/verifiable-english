@@ -290,6 +290,9 @@ theorem viewOf_xi : viewOf [(fsξ, [true])] (fun _ => [some (.formula fξ)]) "u0
     ⟨"u055", "open", ["arbitrary"], false, none, some ⟨true, true, [some (.formula fξ)]⟩⟩ := by decide
 #guard viewOf [(fsξ, [true])] (fun _ => [some (.formula fξ)]) "u055" "open" ["arbitrary"] false none == uξ
 #guard (viewOf [(fsξ, [true])] (fun _ => [some (.formula fξ)]) "u1" "open" ["arbitrary"] false none).set == none
+-- the refusal order under both faults: an unlisted judgment used (`unreasonable`) before a listed one unused
+#guard errText (status defs J2 (view "u1" "open" ["arbitrary"] (some (.rule (rule "r" (u "unreasonable")))))) ==
+  some "JudgmentNotListed: u1 unreasonable"
 
 /-! ## 11.9 Removal: both hypotheses of `status_remove_unused` are needed -/
 
