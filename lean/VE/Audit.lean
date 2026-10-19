@@ -45,6 +45,7 @@ import VE.Bridge
 import VE.Calc.Decls
 import VE.Calc.Eval
 import VE.Cardinality.Examples
+import VE.Cardinality.Ratio
 import VE.Cardinality.Syntax
 import VE.Cardinality.Theorems
 import VE.CertificateWire
@@ -782,13 +783,21 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.CEnv.WellFormed.finiteDeclared
 #print axioms VE.Cardinality.CEnv.WellFormed.fresh
 #print axioms VE.Cardinality.Examples.admissible_cases
+#print axioms VE.Cardinality.Examples.admittedRules_cases
 #print axioms VE.Cardinality.Examples.admitted_cases
+#print axioms VE.Cardinality.Examples.admitted_ratio_cases
 #print axioms VE.Cardinality.Examples.body_cases
 #print axioms VE.Cardinality.Examples.cmp_cases_two
 #print axioms VE.Cardinality.Examples.colliding_prefix
 #print axioms VE.Cardinality.Examples.connective_cases
 #print axioms VE.Cardinality.Examples.counts_two
 #print axioms VE.Cardinality.Examples.counts_unique
+#print axioms VE.Cardinality.Examples.cterm_typed_cases
+#print axioms VE.Cardinality.Examples.den_all
+#print axioms VE.Cardinality.Examples.den_cur
+#print axioms VE.Cardinality.Examples.den_nobody
+#print axioms VE.Cardinality.Examples.den_num
+#print axioms VE.Cardinality.Examples.denotes_cases
 #print axioms VE.Cardinality.Examples.entails_cases
 #print axioms VE.Cardinality.Examples.erase_two
 #print axioms VE.Cardinality.Examples.everyone_two
@@ -802,6 +811,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.not_harm_two
 #print axioms VE.Cardinality.Examples.population_cases
 #print axioms VE.Cardinality.Examples.quantity_cases
+#print axioms VE.Cardinality.Examples.ratio_cases
 #print axioms VE.Cardinality.Examples.rel_cases_two
 #print axioms VE.Cardinality.Examples.share_two
 #print axioms VE.Cardinality.Examples.two_admissible
@@ -822,6 +832,8 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.countedUniversals_spec
 #print axioms VE.Cardinality.counted_of_mem
 #print axioms VE.Cardinality.counts_iff
+#print axioms VE.Cardinality.cterm_erase
+#print axioms VE.Cardinality.cterm_typed
 #print axioms VE.Cardinality.denote_congr
 #print axioms VE.Cardinality.elab_declared
 #print axioms VE.Cardinality.erase_admitted
@@ -834,6 +846,8 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.hasCount_regionSize
 #print axioms VE.Cardinality.hasCount_unique
 #print axioms VE.Cardinality.hasCount_zero
+#print axioms VE.Cardinality.hasType_elab
+#print axioms VE.Cardinality.hasType_validTag
 #print axioms VE.Cardinality.holds_withRegions
 #print axioms VE.Cardinality.inRegion_iff
 #print axioms VE.Cardinality.length_filter_or
@@ -845,7 +859,11 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.nodup_length_eq
 #print axioms VE.Cardinality.nonneg_hold
 #print axioms VE.Cardinality.not_regionName
+#print axioms VE.Cardinality.percentOf_holds_iff
+#print axioms VE.Cardinality.percentRoundsTo_holds_iff
 #print axioms VE.Cardinality.proportion_holds_iff
+#print axioms VE.Cardinality.ratioTyped_iff
+#print axioms VE.Cardinality.ratio_cmp
 #print axioms VE.Cardinality.regionBody_holds
 #print axioms VE.Cardinality.regionConst_inj
 #print axioms VE.Cardinality.regionConst_startsWith
@@ -855,13 +873,19 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.regionSum_denote
 #print axioms VE.Cardinality.regionSum_typed
 #print axioms VE.Cardinality.regions_nodup
+#print axioms VE.Cardinality.roundingQ_admitted
+#print axioms VE.Cardinality.roundingQ_iff
+#print axioms VE.Cardinality.roundsTo_holds_iff
+#print axioms VE.Cardinality.roundsTo_ratio_agree
 #print axioms VE.Cardinality.split_underscore
 #print axioms VE.Cardinality.startsWith_of_data
 #print axioms VE.Cardinality.substrEq_prefix
 #print axioms VE.Cardinality.sumTerms_denote
 #print axioms VE.Cardinality.sumTerms_typed
 #print axioms VE.Cardinality.sum_classes
+#print axioms VE.Cardinality.tagOf_iff
 #print axioms VE.Cardinality.tcompare_qty
+#print axioms VE.Cardinality.tdenote_withRegions
 #print axioms VE.Cardinality.universalsC_admitted
 #print axioms VE.Cardinality.universalsOf_admitted
 #print axioms VE.Cardinality.withRegions_admissible
