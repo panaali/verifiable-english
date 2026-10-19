@@ -12,6 +12,7 @@ lines the review names; the default --max-mutants 60 column says whether one of 
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 import shutil
@@ -88,6 +89,22 @@ def f9() -> str:
     return f"Review F9 on the replays: {moved} mutants change their line count, {parsed} kills are parse errors."
 
 
+def f10() -> str:
+    """Review F10's rule on the saved replays: a kill or INVALID where Lean gave no answer (`NO_ANSWER`; now UNKNOWN).
+    The evidence keeps each message's first line, where every form `NO_ANSWER` names but a `#guard_msgs` quote
+    shows (no replayed tree has a `#guard_msgs`), and the kills' first lines by kind."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    from trust_mutants import NO_ANSWER
+    blank, kinds = 0, Counter()
+    for head in dict.fromkeys(head for _, head, _, _ in FINDINGS):
+        for m in json.loads((EVIDENCE / f"{head[:8]}.json").read_text())["mutants"]:
+            blank += m["status"] in ("KILLED", "INVALID") and bool(NO_ANSWER.search(m["detail"]))
+            if m["status"] == "KILLED":
+                kinds[" ".join(m["detail"].split(": ", 1)[1].split()[:4])] += 1
+    return (f"Review F10 on the replays: {blank} kills or INVALID gave no answer; the kills: "
+            + ", ".join(f"{n} '{k}'" for k, n in kinds.most_common()) + ".")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--run", action="store_true")
@@ -99,7 +116,7 @@ def main() -> int:
             if not args.only or head.startswith(args.only):
                 replay(head, base, args.jobs)
     if not args.only:
-        print("\n".join([*table(), "", f9()]))
+        print("\n".join([*table(), "", f9(), f10()]))
     return 0
 
 
