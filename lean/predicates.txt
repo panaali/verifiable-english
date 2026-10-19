@@ -697,7 +697,6 @@ VE.Data.Background.EntailsData@VE.Data.Background
 VE.Data.Background.Functional@VE.Data.Background
 VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
-VE.Defaults.DefaultCoherent@VE.Defaults.Premises
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
 VE.Definitions.Bundle.ReadingBound@VE.Definitions.Bundle

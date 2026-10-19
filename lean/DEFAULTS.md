@@ -13,8 +13,8 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 
 | File | Contents |
 |---|---|
-| `Premises.lean` | `Dflt_T` (`dfltOf`, `dfltLabelled`), `defaultX`, the gate (`DefaultCoherent`, `pairChecks`, `defaultCoherenceCheck`, `collisionCheck`), the basis (`assumptionsOf`, `Basis`, `basisOf`) and the form (`Form`, `followsForm`) |
-| `Examples.lean` | the fixtures of spec 8.1 and 8.2 that these definitions decide (DF-α to DF-ζ, DF-ι, DF-κ, DF-ω, DF-σ), as `#guard`s on documents decoded by `decodeSoftU` |
+| `Premises.lean` | `Dflt_T` (`dfltOf`, `dfltLabelled`), `defaultX`, the basis (`assumptionsOf`, `Basis`, `basisOf`) and the form (`Form`, `followsForm`) |
+| `Examples.lean` | the fixtures of spec 8.1 and 8.2 that these definitions decide (DF-α to DF-ζ, DF-ι, DF-κ, DF-σ), as `#guard`s on documents decoded by `decodeSoftU` |
 
 ## Definitions
 
@@ -25,9 +25,6 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
   consideration does not outweigh the higher one on this act", labelled `default:ranking:<low>:<high>:<act>`.
 - **`defaultX D X`** is the document's own premises followed by these; **`withoutDefaults D X`** reads each of them
   as `⊤`.
-- **`DefaultCoherent U D R`**, the gate: on every base admissible with the exception premises, the other packs'
-  premises `R` and `Dflt_T`, no two colliding rules both select. **`defaultCoherenceCheck`** checks one certificate
-  per colliding pair, in pair order; **`collisionCheck`** checks a finite base and filling where they do.
 - **`assumptionsOf`**: the `Dflt_T` labels a certificate needs, found by readings' `usedLabels` (a label is dropped
   when the certificate still checks with its premise read as `⊤`). The list is enough for this certificate; another
   certificate may need fewer.
@@ -42,9 +39,6 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 - `dflt_wellFormed`: every premise of `Dflt_T` is a closed formula typed over the filled base vocabulary.
 - `entailsX_mono`, `strict_of_withoutDefaults`: adding premises or `⊤` keeps an entailment; what follows with `Dflt_T`
   read as `⊤` follows from the document's own premises.
-- `pairChecks_sound`, `defaultCoherenceCheck_sound`: a checked pair certificate makes that pair's coherence premise
-  hold on every admissible base; all of them checked give the gate.
-- `collision_sound`: a checked collision refutes the gate. With neither check the gate is unknown.
 - `premisesX_split`: RD-9's premise list for `defaultX` is the document's part, then `Dflt_T`, then the rest.
 - `assumptions_sound`: a checked certificate gives the entailment from the document's premises and the kept
   assumptions alone.
@@ -59,5 +53,7 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 
 - `bindAll_wellFormed_inv` moved unchanged from `Norms/FlaggedSpec.lean` (layer 4) to `Norms/Elaborate.lean`, beside
   `bindAll_wellFormed`, so that `dflt_wellFormed` can use it at layer 2.
-- Not yet built (df-1ab): `decisionFree`, `questionDiag`, `limitDiag`, `selU`, `collisionTuple` and its theorem,
-  `cohU_rank_valid`, `collision_unranked`, `decidersOf`, `giveWayDeciders`, and all of `Wire.lean` (spec 7.2).
+- Not yet built (df-1ab): the gate (`DefaultCoherent`, `pairChecks`, `defaultCoherenceCheck`, `collisionCheck` and
+  their soundness theorems, cut for size and kept on local branch `wip/df-1ab-gate`), `decisionFree`, `questionDiag`,
+  `limitDiag`, `selU`, `collisionTuple` and its theorem, `cohU_rank_valid`, `collision_unranked`, `decidersOf`,
+  `giveWayDeciders`, and all of `Wire.lean` (spec 7.2).
