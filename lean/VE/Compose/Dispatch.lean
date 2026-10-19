@@ -790,6 +790,13 @@ def wrapperRows : List ProfileRow := [
 
 def profileTable : List ProfileRow := baseRows ++ wrapperRows
 
+/-- The one wrapper an environment lists: the environment mode gates a list with it by the whole table, and any
+other list by the base rows. -/
+def environmentWrapper : String := "readings@1"
+
+/-- The profiles an environment may list, in table order (`ve/profiles.py` `BY_NAME`). -/
+def environmentProfiles : List String := (baseRows.map (·.profile)).eraseDups ++ [environmentWrapper]
+
 /-- The route heads in precedence order: the first one with a listed row is the route. -/
 def heads : List (String × Route) :=
   [("discourse", .discourse), ("clauses", .clauses), ("readings", .readings), ("risk", .risk),
