@@ -1,59 +1,10 @@
--- sc-3a evidence (docs/scope/sc-3a/REPORT.md, "Cost"): discourse's pre-move containment (Before.*) against the calls,
--- on a synthetic discourse document of n units and 40 sections. Copy to lean/VE/Layout/BenchScratch.lean with the
--- Before definitions of before-bodies.lean.txt, then: cd lean && lake env lean --run VE/Layout/BenchScratch.lean 300
+-- sc-3a evidence (docs/scope/sc-3a/REPORT.md, "Cost"): discourse's pre-move containment (`Before.*`) against the
+-- calls, on a synthetic discourse document of n units and 40 sections. To run on the item's HEAD: put the lines of
+-- before-bodies.lean.txt from `namespace VE.Layout` up to (not including) `theorem before_within`, then
+-- `end VE.Layout`, in place of the marked line below, save as lean/VE/Layout/BenchScratch.lean, and run
+--   cd lean && lake env lean --run VE/Layout/BenchScratch.lean 300
 import VE.Layout.Discourse
-namespace VE.Layout
-
-namespace Before
-open VE.Discourse (DDoc Anchor unitKeys anchorOf unaryPred req runAll allOk dupOf spanIn spansDisjoint)
-
-def unitSpan (D : DDoc) (u : String) : Option (Nat × Nat) :=
-  ((unitKeys D).find? (·.1 == u)).map fun k => (k.2.1, k.2.2.1)
-
-def within (D : DDoc) (unit anchor : String) : Bool :=
-  match unitSpan D unit, anchorOf D anchor with
-  | some (b, e), some a => a.span.1 ≤ b && e ≤ a.span.2
-  | _, _ => false
-
-def narrower (best : Option Anchor) (a : Anchor) : Option Anchor :=
-  match best with
-  | none => some a
-  | some b => if a.span.2 - a.span.1 < b.span.2 - b.span.1 then some a else some b
-
-def innermostAnchor (D : DDoc) (unit : String) : Option Anchor :=
-  (D.K.anchors.filter fun a => within D unit a.id).foldl narrower none
-
-def reachesRoot (D : DDoc) : Nat → Anchor → Bool
-  | 0, _ => false
-  | n + 1, a => match a.parent with
-    | none => true
-    | some p => match anchorOf D p with
-      | some b => spanIn a.span b.span && reachesRoot D n b
-      | none => false
-
-def definitionIn (D : DDoc) (a : Anchor) : Bool :=
-  D.base.units.any fun x => decide (x.kind = .definition) && spanIn (x.start, x.stop) a.span
-
-def anchorsOk (D : DDoc) : Except String _root_.Unit := runAll [
-  fun _ => req (D.K.anchors.length ≤ 1024) "ResourceLimit: anchors",
-  fun _ => match dupOf (D.K.anchors.map Anchor.id) with
-    | some a => .error ("DuplicateDeclaration: anchor " ++ a)
-    | none => .ok (),
-  fun _ => req ((D.K.anchors.filter (·.parent.isNone)).length == 1 || D.K.anchors.isEmpty)
-    "InvalidInput: anchors must form one tree",
-  fun _ => allOk D.K.anchors fun a => req (reachesRoot D (D.K.anchors.length + 1) a)
-    ("DanglingAnchor: " ++ ((a.parent).getD a.id)),
-  fun _ => allOk D.K.anchors fun a => allOk D.K.anchors fun b =>
-    if a.id != b.id && a.parent == b.parent && a.parent.isSome then
-      if a.label.toLower == b.label.toLower then .error ("DuplicateAnchor: " ++ a.label)
-      else req (spansDisjoint a.span b.span) ("InvalidInput: anchors " ++ a.id ++ ", " ++ b.id ++ " overlap")
-    else .ok (),
-  fun _ => allOk D.K.anchors fun a => req (a.exports.all fun p => unaryPred D.E p && definitionIn D a)
-    ("ManifestMismatch: anchors." ++ a.id ++ ".exports")]
-
-end Before
-
-end VE.Layout
+-- (the Before definitions of before-bodies.lean.txt go here)
 
 open VE.Discourse VE.Route.Admission in
 def benchDoc (n a : Nat) : DDoc :=
