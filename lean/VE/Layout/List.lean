@@ -103,6 +103,30 @@ def GovernedItem (L : List Unit) (lead u : String) : Prop :=
     (L[i+1]?).bind (·.item) = some d ∧ i < j ∧ (L[j]?).map (·.id) = some u ∧ (L[j]?).bind (·.item) = some d ∧
     ∀ k, i < k → k < j → ∃ x, L[k]? = some x ∧ ((∃ e, x.item = some e ∧ d ≤ e) ∨ x.midLine = true)
 
+/-! ## An item's units: the label reach (SC-3a) -/
+
+def itemFrom (d : Nat) : List Unit → List String
+  | [] => []
+  | x :: xs => if x.item.any (d < ·) || x.midLine then x.id :: itemFrom d xs else []
+
+def itemRun (L : List Unit) (item : String) : Except String (List String) :=
+  match indexOf L item with
+  | none => .error s!"ScopeUnknownUnit: {item}"
+  | some i =>
+    match L[i]? with
+    | some x =>
+      match x.item with
+      | some d => if x.label then .ok (x.id :: itemFrom d (L.drop (i + 1))) else .error s!"NotALabel: {item}"
+      | none => .error s!"NotALabel: {item}"
+    | none => .error s!"ScopeUnknownUnit: {item}"
+
+/-- Independent statement of an item's units (SC-3a). -/
+def ItemUnit (L : List Unit) (item u : String) : Prop :=
+  ∃ (i d : Nat), (L[i]?).map (·.id) = some item ∧ (L[i]?).bind (·.item) = some d ∧
+    (L[i]?).map (·.label) = some true ∧
+    (u = item ∨ ∃ (j : Nat), i < j ∧ (L[j]?).map (·.id) = some u ∧
+      ∀ k, i < k → k ≤ j → ∃ x, L[k]? = some x ∧ ((∃ e, x.item = some e ∧ d < e) ∨ x.midLine = true))
+
 /-! ## Theorems (spec 5.1) -/
 
 theorem continues_iff (d : Nat) (x : Unit) :
@@ -252,5 +276,90 @@ theorem listRun_iff (L : List Unit) (hd : (L.map (·.id)).Nodup) (lead : String)
     · simp only [List.getElem?_drop]; rw [show i' + 1 + (j - (i' + 1)) = j by omega]; exact hz
     · obtain ⟨w, hw, hcw⟩ := hk (i' + 1 + k) (by omega) (by omega)
       exact ⟨w, by simpa only [List.getElem?_drop] using hw, (continues_iff d' w).mpr hcw⟩
+
+/-! ## Theorems (spec 5.5) -/
+
+/-- A unit is in an item's continuation exactly when it and every unit before it is deeper or mid-line. -/
+theorem mem_itemFrom (d : Nat) (u : String) : ∀ (M : List Unit),
+    u ∈ itemFrom d M ↔ ∃ (j : Nat) (x : Unit), M[j]? = some x ∧ x.id = u ∧
+      ∀ k : Nat, k ≤ j → ∃ y : Unit, M[k]? = some y ∧ ((∃ e, y.item = some e ∧ d < e) ∨ y.midLine = true)
+  | [] => by simp [itemFrom]
+  | x :: xs => by
+    have hc : (x.item.any (d < ·) || x.midLine) = true ↔ (∃ e, x.item = some e ∧ d < e) ∨ x.midLine = true := by
+      cases x.item <;> simp
+    by_cases hx : (x.item.any (d < ·) || x.midLine) = true
+    · simp only [itemFrom, hx, if_true, List.mem_cons, mem_itemFrom d u xs]
+      constructor
+      · rintro (rfl | ⟨j, y, hy, hu, hk⟩)
+        · exact ⟨0, x, rfl, rfl, fun k hk => by
+            rw [Nat.le_zero.mp hk]; exact ⟨x, rfl, hc.mp hx⟩⟩
+        · refine ⟨j + 1, y, by simpa using hy, hu, fun k hk' => ?_⟩
+          cases k with
+          | zero => exact ⟨x, rfl, hc.mp hx⟩
+          | succ k => simpa using hk k (Nat.le_of_succ_le_succ hk')
+      · rintro ⟨j, y, hy, hu, hk⟩
+        cases j with
+        | zero => simp at hy; subst hy; exact Or.inl hu.symm
+        | succ j => exact Or.inr ⟨j, y, by simpa using hy, hu, fun k hk' => by
+            simpa using hk (k + 1) (Nat.succ_le_succ hk')⟩
+    · simp only [itemFrom, hx, Bool.false_eq_true, if_false, List.not_mem_nil, false_iff]
+      rintro ⟨j, y, _, _, hk⟩
+      obtain ⟨z, hz, hcz⟩ := hk 0 (Nat.zero_le j)
+      simp at hz; subst hz; exact hx (hc.mpr hcz)
+
+/-- What a successful item run is made of. -/
+theorem itemRun_ok (L : List Unit) (item : String) (us : List String) (h : itemRun L item = .ok us) :
+    ∃ i x d, indexOf L item = some i ∧ L[i]? = some x ∧ x.item = some d ∧ x.label = true ∧
+      us = x.id :: itemFrom d (L.drop (i + 1)) := by
+  unfold itemRun at h
+  cases hi : indexOf L item with
+  | none => simp [hi] at h
+  | some i =>
+    cases hx : L[i]? with
+    | none => simp [hi, hx] at h
+    | some x =>
+      cases hd : x.item with
+      | none => simp [hi, hx, hd] at h
+      | some d =>
+        cases hl : x.label with
+        | false => simp [hi, hx, hd, hl] at h
+        | true =>
+          simp only [hi, hx, hd, hl, if_true, Except.ok.injEq] at h
+          exact ⟨i, x, d, rfl, hx, hd, hl, h.symm⟩
+
+theorem itemRun_iff (L : List Unit) (hd : (L.map (·.id)).Nodup) (item : String) (us : List String)
+    (h : itemRun L item = .ok us) (u : String) : u ∈ us ↔ ItemUnit L item u := by
+  obtain ⟨i, x, d, hi, hx, hxd, hxl, rfl⟩ := itemRun_ok L item us h
+  have hid := (indexOf_iff L hd item i).mp hi
+  have hxi : x.id = item := by simpa [hx] using hid
+  rw [List.mem_cons, mem_itemFrom]
+  constructor
+  · rintro (rfl | ⟨j, z, hz, hzu, hk⟩)
+    · exact ⟨i, d, hid, by simp [hx, hxd], by simp [hx, hxl], Or.inl hxi⟩
+    · refine ⟨i, d, hid, by simp [hx, hxd], by simp [hx, hxl], Or.inr ⟨i + 1 + j, by omega, ?_, ?_⟩⟩
+      · simp only [List.getElem?_drop] at hz; simp [hz, hzu]
+      · intro k hik hkj
+        obtain ⟨w, hw, hcw⟩ := hk (k - (i + 1)) (by omega)
+        simp only [List.getElem?_drop] at hw
+        rw [show i + 1 + (k - (i + 1)) = k by omega] at hw
+        exact ⟨w, hw, hcw⟩
+  · rintro ⟨i', d', hid', hit', _, hu⟩
+    have hii : i' = i := by
+      have : (L.map (·.id))[i']? = (L.map (·.id))[i]? := by simp only [List.getElem?_map, hid, hid']
+      have hlen : i' < (L.map (·.id)).length := by
+        rcases Nat.lt_or_ge i' (L.map (·.id)).length with h' | h'
+        · exact h'
+        · simp [List.getElem?_eq_none (by simpa using h')] at hid'
+      exact List.getElem?_inj hlen hd this
+    subst hii
+    have hdd : d' = d := by simp [hx, hxd] at hit'; exact hit'.symm
+    subst hdd
+    rcases hu with rfl | ⟨j, hij, hju, hk⟩
+    · exact Or.inl hxi.symm
+    · obtain ⟨z, hz, hzu⟩ := Option.map_eq_some_iff.mp hju
+      refine Or.inr ⟨j - (i' + 1), z, ?_, hzu, fun k hk' => ?_⟩
+      · simp only [List.getElem?_drop]; rw [show i' + 1 + (j - (i' + 1)) = j by omega]; exact hz
+      · obtain ⟨w, hw, hcw⟩ := hk (i' + 1 + k) (by omega) (by omega)
+        exact ⟨w, by simpa only [List.getElem?_drop] using hw, hcw⟩
 
 end VE.Layout
