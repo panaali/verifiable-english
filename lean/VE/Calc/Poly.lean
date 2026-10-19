@@ -44,14 +44,16 @@ def varsLe : List (String × Nat) → List (String × Nat) → Bool
 
 def Poly.cons0 (m : Mono) (p : Poly) : Poly := if m.coeff = 0 then p else m :: p
 
-/-- Merges neighbours with the same variables and drops zero coefficients. -/
-def Poly.combine : Poly → Poly
-  | [] => []
-  | m :: p => match Poly.combine p with
-    | n :: q => if m.vars = n.vars then Poly.cons0 ⟨m.coeff + n.coeff, m.vars⟩ q else Poly.cons0 m (n :: q)
-    | [] => Poly.cons0 m []
+/-- Merges each monomial into the last one kept when their variables agree, dropping zero coefficients; the kept
+monomials are in reverse order. Tail-recursive: a sum may have 10,000 terms. -/
+def Poly.combine : Poly → Poly → Poly
+  | acc, [] => acc
+  | n :: acc, m :: p =>
+    if m.vars = n.vars then Poly.combine (Poly.cons0 ⟨n.coeff + m.coeff, m.vars⟩ acc) p
+    else Poly.combine (Poly.cons0 m (n :: acc)) p
+  | [], m :: p => Poly.combine (Poly.cons0 m []) p
 
-def Poly.norm (p : Poly) : Poly := Poly.combine (p.mergeSort fun m n => varsLe m.vars n.vars)
+def Poly.norm (p : Poly) : Poly := (Poly.combine [] (p.mergeSort fun m n => varsLe m.vars n.vars)).reverse
 def Poly.one : Poly := [⟨1, []⟩]
 def Poly.neg (p : Poly) : Poly := p.map fun m => ⟨-m.coeff, m.vars⟩
 
@@ -163,14 +165,9 @@ theorem Poly.eval_cons0 (κ : String → Rat) (m : Mono) (p : Poly) :
     Poly.eval κ (Poly.cons0 m p) = Poly.eval κ (m :: p) := by
   unfold Poly.cons0; split <;> simp_all [Poly.eval_cons] <;> grind
 
-theorem Poly.eval_combine (κ : String → Rat) (p : Poly) : Poly.eval κ (Poly.combine p) = Poly.eval κ p := by
-  induction p with
-  | nil => rfl
-  | cons m p ih =>
-      simp only [Poly.combine]
-      split <;> rename_i h <;> rw [h] at ih
-      · split <;> simp_all [Poly.eval_cons0, Poly.eval_cons] <;> grind
-      · simp_all [Poly.eval_cons0, Poly.eval_cons]
+theorem Poly.eval_combine (κ : String → Rat) (acc p : Poly) :
+    Poly.eval κ (Poly.combine acc p) = Poly.eval κ acc + Poly.eval κ p := by
+  fun_induction Poly.combine acc p <;> simp_all [Poly.eval_cons0, Poly.eval_cons, Poly.eval_nil] <;> grind
 
 theorem Poly.eval_perm (κ : String → Rat) {p q : Poly} (h : p.Perm q) : Poly.eval κ p = Poly.eval κ q := by
   induction h with
@@ -180,7 +177,8 @@ theorem Poly.eval_perm (κ : String → Rat) {p q : Poly} (h : p.Perm q) : Poly.
   | trans _ _ ih1 ih2 => rw [ih1, ih2]
 
 theorem Poly.eval_norm (κ : String → Rat) (p : Poly) : Poly.eval κ (Poly.norm p) = Poly.eval κ p := by
-  rw [Poly.norm, Poly.eval_combine, Poly.eval_perm κ (List.mergeSort_perm p _)]
+  rw [Poly.norm, Poly.eval_perm κ (List.reverse_perm _), Poly.eval_combine, Poly.eval_perm κ (List.mergeSort_perm p _),
+    Poly.eval_nil]; grind
 
 theorem Poly.eval_neg (κ : String → Rat) (p : Poly) : Poly.eval κ (Poly.neg p) = - Poly.eval κ p := by
   induction p with

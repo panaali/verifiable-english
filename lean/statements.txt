@@ -2935,9 +2935,10 @@ theorem VE.Calc.Poly.eval_append
   -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 2179061850
 theorem VE.Calc.Poly.eval_combine
-  ∀ (κ : String → Rat) (p : VE.Calc.Poly), VE.Calc.Poly.eval κ p.combine = VE.Calc.Poly.eval κ p
+  ∀ (κ : String → Rat) (acc p : VE.Calc.Poly),
+    VE.Calc.Poly.eval κ (acc.combine p) = VE.Calc.Poly.eval κ acc + VE.Calc.Poly.eval κ p
   -- uses VE.Calc.Poly.combine@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
-  -- expr 611332640
+  -- expr 2799579848
 theorem VE.Calc.Poly.eval_cons
   ∀ (κ : String → Rat) (m : VE.Calc.Mono) (p : VE.Calc.Poly),
     VE.Calc.Poly.eval κ (m :: p) = m.coeff * VE.Calc.vprod κ m.vars + VE.Calc.Poly.eval κ p
