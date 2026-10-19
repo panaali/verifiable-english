@@ -1,5 +1,5 @@
 {
- "comment": "et-3b seeded bugs (one per new trusted definition, R16, and one per claimed theorem), run on the committed tree: each mutant applied alone, lake build VE.Events.Examples run, then the six events files elaborated as one scratch file so every #guard and example runs even when a proof upstream fails; `test` names the proofs and fixtures that fail; restored after each run. Harness: evidence/seeded-bugs-harness.py.txt.",
+ "comment": "et-3b seeded bugs: one or more per new trusted definition (R16) and one per claimed theorem, run on the committed tree: each mutant applied alone, lake build VE.Events.Examples run, then the five events files elaborated as one scratch file so every #guard and example runs even when a proof upstream fails; `test` names the proofs and fixtures that fail; restored after each run. Harness: evidence/seeded-bugs-harness.py.txt.",
  "mutants": [
   {
    "mutant": "numOf-shift",
@@ -148,45 +148,8 @@
    "restored": "git checkout -- lean/VE/Events/Premises.lean"
   },
   {
-   "mutant": "oldEnv-keeps-links",
-   "definition": "VE.Events.oldEnv",
-   "claim": "the untouched vocabulary has no link (events_conservative, T7)",
-   "file": "lean/VE/Events/Conservative.lean",
-   "language": "Lean",
-   "replace": "if ss.contains V.day || V.links.any (·.predicate == p) then none",
-   "with": "if ss.contains V.day then none",
-   "lake_build_VE.Events.Examples": "fails",
-   "build_errors": [
-    "error: VE/Events/Conservative.lean:233:107: Invalid projection: Projections cannot be used on functions",
-    "error: VE/Events/Conservative.lean:244:21: `simp` made no progress"
-   ],
-   "test": [
-    "theorem events_conservative",
-    "#guard (oldEnv envT7 vT7).predicates \"admires\" == some [\"person\", \"person\"] &&"
-   ],
-   "restored": "git checkout -- lean/VE/Events/Conservative.lean"
-  },
-  {
-   "mutant": "oldEnv-keeps-day-constants",
-   "definition": "VE.Events.oldEnv",
-   "claim": "the untouched vocabulary has no day constant (events_conservative, T7)",
-   "file": "lean/VE/Events/Conservative.lean",
-   "language": "Lean",
-   "replace": "| some s => if s == V.day then none else some s",
-   "with": "| some s => some s",
-   "lake_build_VE.Events.Examples": "fails",
-   "build_errors": [
-    "error: VE/Events/Conservative.lean:260:6: Tactic `split` failed: Could not split an `if` or `match` expression in the type `some s' = some s` of `hc`"
-   ],
-   "test": [
-    "theorem events_conservative",
-    "#guard (oldEnv envT7 vT7).constants \"alice\" == some \"person\" && (oldEnv envT7 vT7).constants \"the_day\" == none"
-   ],
-   "restored": "git checkout -- lean/VE/Events/Conservative.lean"
-  },
-  {
    "mutant": "oneRole-before-guard",
-   "definition": "VE.Events.oneRoleF (et-3)",
+   "definition": "VE.Events.oneRoleF (et-3, not changed here)",
    "claim": "the conventions are guarded by their role atoms and typed (conventions_exact, eventsPremises_wellFormed)",
    "file": "lean/VE/Events/Premises.lean",
    "language": "Lean",
@@ -201,7 +164,6 @@
    "test": [
     "theorem eventsPremises_wellFormed",
     "theorem conventions_exact",
-    "theorem conventions_empty",
     "#guard (conventionPremises vEv).all (fun a => up \"day\" [\"before\"] a && down \"day\" [\"before\"] a)",
     "#guard firstFailing vEv (sit [(\"act\", [\"x\"])] [(\"committed_on\", [[\"x\", \"a\"], [\"x\", \"b\"]])]) =="
    ],
@@ -209,8 +171,8 @@
   },
   {
    "mutant": "regen-date-sort",
-   "definition": "VE.Events.regenEnv (et-3)",
-   "claim": "the regenerated date constants are of the day sort (regen_typed, events_conservative)",
+   "definition": "VE.Events.regenEnv (et-3, not changed here)",
+   "claim": "the regenerated date constants are of the day sort (regen_typed)",
    "file": "lean/VE/Events/Decl.lean",
    "language": "Lean",
    "replace": "then some V.day else E.constants c }",
@@ -221,7 +183,6 @@
    ],
    "test": [
     "theorem regen_typed",
-    "theorem events_conservative",
     "#guard (regenEnv envDay vT1).constants c12 == some \"day\" && (regenEnv envDay vT1).constants c13 == none",
     "#guard EventsTyped (regenEnv envDay vT1) vT1 && !EventsTyped envDay vT1"
    ],

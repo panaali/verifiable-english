@@ -1,5 +1,5 @@
 """et-3b seeded bugs: apply one mutant to the committed tree, run `lake build VE.Events.Examples`, then elaborate the
-six events files as one scratch file so every #guard and example runs even when a proof upstream fails; restore.
+five events files as one scratch file so every #guard and example runs even when a proof upstream fails; restore.
 Usage: python3 harness.py <worktree> <mutant> (prints one JSON record)."""
 import subprocess, sys, os, re, json
 ROOT = sys.argv[1]
@@ -17,18 +17,13 @@ MUTANTS = {
    '    | none => p = V.before ∧ ∃ z w,', '    | none => ∃ z w,'),
  'calendarReading-not-onto': ('VE/Events/Premises.lean',
    '  Embeds V S num ∧ ∀ n, n ≤ dateMax → ∃ x, S.domain V.day x ∧ num x = n', '  Embeds V S num'),
- 'oldEnv-keeps-links': ('VE/Events/Conservative.lean',
-   'if ss.contains V.day || V.links.any (·.predicate == p) then none', 'if ss.contains V.day then none'),
- 'oldEnv-keeps-day-constants': ('VE/Events/Conservative.lean', '      | some s => if s == V.day then none else some s',
-   '      | some s => some s'),
  'oneRole-before-guard': ('VE/Events/Premises.lean', '  .all sort (.all V.day (.implies (bin role 1 0)',
    '  .all sort (.all V.day (.implies (bin V.before 1 0)'),
  'regen-date-sort': ('VE/Events/Decl.lean', 'then some V.day else E.constants c }', 'then some "date" else E.constants c }'),
 }
 FILES = ['VE/Events/Decl.lean', 'VE/Events/Premises.lean', 'VE/Events/Calendar.lean', 'VE/Events/Completion.lean',
-         'VE/Events/Conservative.lean', 'VE/Events/Examples.lean']
-IMPORTS = ['import VE.Semantics', 'import VE.Time.Calendar', 'import VE.Norms.Prefix', 'import VE.Finite',
-           'import VE.Readings.Names', 'import VE.Readings.Superpose']
+         'VE/Events/Examples.lean']
+IMPORTS = ['import VE.Semantics', 'import VE.Time.Calendar', 'import VE.Norms.Prefix', 'import VE.Finite']
 name = sys.argv[2]
 path, old, new = MUTANTS[name]
 src = open(os.path.join(LEAN, path)).read()

@@ -42,7 +42,6 @@
   "def notBeforeBeginF",
   "def numOf",
   "def numbering",
-  "def oldEnv",
   "def oldTuple",
   "def oneRoleF",
   "def orderPremises",
@@ -68,18 +67,19 @@
   "theorem datesOrder_iff",
   "theorem dayExtension_transfer",
   "theorem eventsPremises_wellFormed",
-  "theorem events_conservative",
   "theorem regen_typed"
  ],
  "differs": [],
  "not_built": [
+  "def oldEnv",
   "theorem embeddable_complete",
   "theorem embeddable_sound",
-  "theorem eventsPremises_satisfiable"
+  "theorem eventsPremises_satisfiable",
+  "theorem events_conservative"
  ],
  "counts": {
-  "exact": 70,
+  "exact": 68,
   "differs": 0,
-  "not_built": 3
+  "not_built": 5
  }
 }
