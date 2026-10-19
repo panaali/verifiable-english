@@ -26,7 +26,7 @@ MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
          "environment", "model", "check", "identity", "parse", "graph", "readings", "readings-choices", "bundle", "family-norms",
          "soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval", "quantity",
          "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question",
-         "search-budget", "ask", "words")
+         "search-budget", "ask", "words", "metered")
 
 
 class Invalid(Exception):

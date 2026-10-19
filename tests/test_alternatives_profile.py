@@ -104,10 +104,6 @@ def test_block_rejections(edit, diagnostic):
 def test_route_fails_closed_without_lean(monkeypatch, tmp_path):
     raw = source()
     case = {"id": "one", "kind": "alt-elaborate", "environment": raw, "norms": []}
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    with pytest.raises(CheckerUnavailable, match="Lean checker"):
-        run_case(case)
-    monkeypatch.delenv("VE_AUTHORITY")
     from ve.backends import relay
     from ve.backends.lean_service import LeanServicePool
     monkeypatch.setattr(relay, "_pool", LeanServicePool(size=1, executable=tmp_path / "absent"))

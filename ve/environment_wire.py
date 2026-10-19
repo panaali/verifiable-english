@@ -65,13 +65,29 @@ class EncodedEnvironment(_FrozenDict):
         raise TypeError("cached checker environment is immutable")
 
 
+class CheckedList(_FrozenList):
+    """A JSON array the wire check admitted when it was built (`checked_list`), frozen, so `wire_checked`
+    does not walk it again."""
+
+
+def checked_list(value: list) -> CheckedList:
+    """`value` after the wire check, frozen (`CheckedList`)."""
+    wire_checked([value])
+    return CheckedList(value)
+
+
 _cache: dict[tuple[str, str], EncodedEnvironment] = {}
 _lock = threading.Lock()
 _LIMIT = 256
 
 
 def encoded_environment(env, projection: str, build) -> EncodedEnvironment:
-    key = (env.environment_id, projection)
+    return encoded_value((env.environment_id, projection), build)
+
+
+def encoded_value(key: tuple, build) -> EncodedEnvironment:
+    """The encoding of the immutable JSON object `build()` builds, once per `key` (an identity that
+    determines the object: an environment's digest and projection, or a model's identities)."""
     with _lock:
         cached = _cache.get(key)
     if cached is not None:
@@ -101,7 +117,8 @@ def wire_checked(cases: list) -> list:
     (rule R9 of batch 9: wording row W9.3 is Lean's depth limit). Only a value nested past
     `TRANSPORT_DEPTH`, which the encoder's C stack may not write, is the wire's runtime limit;
     the walk itself is iterative, so no depth raises `RecursionError`. A cached `EncodedEnvironment` was encoded from an
-    environment the wire check already admitted, so it is not walked again."""
+    environment the wire check already admitted, and a `CheckedList` was checked when it was built, so neither is
+    walked again."""
     from .errors import ResourceLimit, VEError
     from .wire import validate_json
     if type(cases) is not list:
@@ -123,7 +140,7 @@ def wire_checked(cases: list) -> list:
         elif kind is float:
             if not math.isfinite(value):
                 raise VEError(unsupported)
-        elif isinstance(value, EncodedEnvironment):
+        elif isinstance(value, (EncodedEnvironment, CheckedList)):
             pass
         elif kind in (dict, _FrozenDict, list, _FrozenList):
             if depth >= TRANSPORT_DEPTH or id(value) in path:  # a cycle never ends

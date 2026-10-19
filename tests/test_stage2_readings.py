@@ -57,7 +57,6 @@ def _complete_choice_case(monkeypatch, *, joint=False):
         return real(mode, batch, **kw)
 
     monkeypatch.setattr(relay, "decide", spy)
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     result = check_readings(env(), sets, ["bottom"],
                             **({"joint_choices": joint_choices} if joint else
                                {"couplings": [coupling]}))
@@ -83,7 +82,6 @@ def test_joint_choices_ignore_authored_sets_in_every_wire_vector(
                 "readings": [{"kind": "question" if authored_nonasserted else "asserted",
                               "content": None if authored_nonasserted else ["top"]}]}
     sets = [authored, open_set] if authored_first else [open_set, authored]
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     captured = []
     real = relay.decide
 
@@ -118,7 +116,6 @@ def test_joint_result_uses_lean_verdict_even_when_python_proposes_all(monkeypatc
         return real(mode, batch, **kw)
 
     monkeypatch.setattr(relay, "decide", lean_unknown)
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     result = check_readings(env(), sets, ["top"],
                             joint_choices={"status": "complete", "choices": [{"open@1": 0}]})
     assert len(checked) == 1
@@ -156,7 +153,6 @@ def test_joint_proof_premises_follow_set_order_not_mapping_order(monkeypatch, re
     sets = [{"id": key, "version": 1, "readings": [{"kind": "asserted", "content": formula}]}
             for key, formula in (("a", ATOM), ("b", NEGATED))]
     choice = dict(reversed([("a@1", 0), ("b@1", 0)])) if reverse_keys else {"a@1": 0, "b@1": 0}
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     result = check_readings(env(), sets, ["bottom"],
                             joint_choices={"status": "complete", "choices": [choice]})
     assert result["verdict"] == "ALL"
@@ -324,7 +320,6 @@ def test_coupled_zero_choice_budget_is_unknown():
 
 
 def test_coupled_zero_search_budget_is_unknown(monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     sets = [{"id": name, "version": 1, "readings": [
         {"kind": "asserted", "content": formula, "labels": {"force": "x"}}]}
         for name, formula in (("a", ATOM), ("b", NEGATED))]
@@ -353,12 +348,10 @@ def cases(monkeypatch):
 @pytest.mark.parametrize("verdict", list(QUERIES))
 def test_readings_verdicts_match_python_and_are_lean_checked(monkeypatch, verdict):
     sets, conclusion, fixed = QUERIES[verdict]
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     expected = check_readings(env(), sets, conclusion, fixed=fixed)
     assert expected["verdict"] == verdict
     seen = []
     monkeypatch.setattr(dispatch, "observers", [lambda op, auth: seen.append((op, auth))])
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     calls = cases(monkeypatch)
     assert check_readings(env(), sets, conclusion, fixed=fixed) == expected
     assert ("readings", "lean") in seen
@@ -368,7 +361,6 @@ def test_readings_verdicts_match_python_and_are_lean_checked(monkeypatch, verdic
 
 def submitted(monkeypatch, verdict):
     sets, conclusion, fixed = QUERIES[verdict]
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     calls = cases(monkeypatch)
     check_readings(env(), sets, conclusion, fixed=fixed)
     return copy.deepcopy(calls[0][0])
@@ -394,7 +386,6 @@ def test_lean_rebuilds_premises_and_checks_evidence(monkeypatch, verdict, change
 def test_a_verdict_lean_does_not_confirm_is_unavailable(monkeypatch):
     from ve.backends.diagnostics import checker_error
     sets, conclusion, fixed = QUERIES["ALL"]
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     real = relay.decide
 
     def refuse(mode, batch, **kw):
@@ -420,9 +411,7 @@ def test_readings_over_a_norms_environment(monkeypatch, verdict):
     raw = pm.raw_environment(("norms@0",))
     norms_env = Environment(raw)
     sets, conclusion, fixed = QUERIES[verdict]
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     expected = check_readings(norms_env, sets, conclusion, fixed=fixed)
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     calls = cases(monkeypatch)
     assert check_readings(norms_env, sets, conclusion, fixed=fixed) == expected
     assert [row["verdict"] for _, row in calls] == [verdict]
@@ -436,10 +425,8 @@ def test_readings_on_the_closure_core_and_order_families(monkeypatch, family, ve
     """Lean's readings mode checks verdicts over every family (VE/Service/Family.lean)."""
     family_env = Environment(pm.raw_environment(family))
     sets, conclusion, fixed = QUERIES[verdict]
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     expected = check_readings(family_env, sets, conclusion, fixed=fixed)
     assert expected["verdict"] == verdict
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     calls = cases(monkeypatch)
     assert check_readings(family_env, sets, conclusion, fixed=fixed) == expected
     [(case, row)] = calls
@@ -457,10 +444,8 @@ def test_readings_on_the_frozen_envelopes(monkeypatch, kind, verdict):
     from tests.test_stage2_graph import legacy_environment
     legacy = legacy_environment(kind)
     sets, conclusion, fixed = QUERIES[verdict]
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     expected = check_readings(legacy, sets, conclusion, fixed=fixed)
     assert expected["verdict"] == verdict
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     calls = cases(monkeypatch)
     assert check_readings(legacy, sets, conclusion, fixed=fixed) == expected
     assert [row["verdict"] for _, row in calls] == [verdict]
