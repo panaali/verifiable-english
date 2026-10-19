@@ -1,0 +1,18 @@
+# Plan's seeded bug (roundingQ tiesUp upper bound .lt -> .le) with roundingQ_iff's proof replaced by sorry, so the
+# build reaches the fixtures. Command: lake build VE.Cardinality.Examples; error lines:
+error: VE/Cardinality/Examples.lean:273:0: Expression
+  decide
+    ((nums (rounds Numbers.Rounding.tiesUp 1 8 13 2), nums (rounds Numbers.Rounding.tiesUp 1 8 12 2)) =
+      ((true, true), false, false))
+error: VE/Cardinality/Examples.lean:279:0: Expression
+  [rounds Numbers.Rounding.tiesUp (-1) 2 (-1) 0,
+        CFormula.percentRoundsTo Numbers.Rounding.tiesUp (num (-1)) (num 200) (-1) 0].all
+    fun x => nums x == (false, false)
+error: VE/Cardinality/Examples.lean:282:0: Expression
+  [Numbers.Rounding.tiesUp, Numbers.Rounding.halfEven, Numbers.Rounding.down, Numbers.Rounding.up].all fun r =>
+    (List.range 7).all fun a =>
+      (List.range 4).all fun b =>
+error: Lean exited with code 1
+Some required targets logged failures:
+- VE.Cardinality.Examples
+error: build failed

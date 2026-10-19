@@ -1,0 +1,57 @@
+control: 0 failures
+M1 VE.Defaults.dfltOf: FAILS 3 guards
+    #guard holds dβ fun L => dfltLabels L.D == [excN "r1"] && bareExceptionLabels L.D == [] &&
+    #guard holds dβ fun L => (check1 L L.X [] .top ["urgent"] []).isNone &&
+    #guard holds dβ fun L => !follows1 L (defaultX L.D L.X) [] xAll && wireOk L (defaultX L.D 
+M2 VE.Defaults.dfltOf: FAILS 1 guards
+    #guard holds dε fun L => dfltLabels L.D == [excN "r1", "default:switch:r1:user"] &&
+M3 VE.Defaults.dfltLabelled: FAILS 1 guards
+    #guard holds dδ fun L => dfltLabels L.D == [excN "r1", excN "r2", rankL] && bareExceptionL
+M4 VE.Defaults.dfltPremises: FAILS 9 guards
+    #guard holds dα fun L => dfltLabels L.D == [excN "r1"] &&
+    #guard holds dα fun L => (ps L []).length == 5 && certChecks L.U (ps L []) notExc cNeeds &
+    #guard holds dα fun L => certChecks L.U (ps L []) excSelf cStrict &&
+    #guard holds dβ fun L => dfltLabels L.D == [excN "r1"] && bareExceptionLabels L.D == [] &&
+    #guard holds dβ fun L => (check1 L L.X [] .top ["urgent"] []).isNone &&
+    #guard holds dβ fun L => follows1 L (defaultX L.D L.X) [] βii && assume1 L [] βii == [excN
+    #guard holds dγ fun L => (collidingPairs L.D).map (fun (P, Q) => (P.name, Q.name)) == [("r
+    #guard holds dε fun L => dfltLabels L.D == [excN "r1", "default:switch:r1:user"] &&
+    #guard holds dα fun L => (ps L []).length == (VE.NormDefaults.Wire.premisesX L.U L.X []).l
+M5 VE.Defaults.dfltLabels: FAILS 4 guards
+    #guard holds dγ fun L => (collidingPairs L.D).map (fun (P, Q) => (P.name, Q.name)) == [("r
+    #guard holds dδ fun L => dfltLabels L.D == [excN "r1", excN "r2", rankL] && bareExceptionL
+    #guard holds dδs fun L => dfltLabels L.D == [excN "r1", excN "r2"] && assume1 L [] xAll ==
+    #guard holds dε fun L => dfltLabels L.D == [excN "r1", "default:switch:r1:user"] &&
+M6 VE.Defaults.defaultX: FAILS 7 guards
+    #guard holds dα fun L => dfltLabels L.D == [excN "r1"] &&
+    #guard holds dα fun L => (ps L []).length == 5 && certChecks L.U (ps L []) notExc cNeeds &
+    #guard holds dα fun L => certChecks L.U (ps L []) excSelf cStrict &&
+    #guard holds dβ fun L => (check1 L L.X [] .top ["urgent"] []).isNone &&
+    #guard holds dβ fun L => follows1 L (defaultX L.D L.X) [] βii && assume1 L [] βii == [excN
+    #guard holds dγ fun L => (collidingPairs L.D).map (fun (P, Q) => (P.name, Q.name)) == [("r
+    #guard holds dα fun L => (ps L []).length == (VE.NormDefaults.Wire.premisesX L.U L.X []).l
+M7 VE.Defaults.withoutDefaults: FAILS 1 guards
+    #guard holds dα fun L => dfltLabels L.D == [excN "r1"] &&
+M8 VE.Defaults.certChecks: FAILS 2 guards
+    #guard holds dα fun L => (ps L []).length == 5 && certChecks L.U (ps L []) notExc cNeeds &
+    #guard holds dα fun L => !certChecks L.U (VE.NormDefaults.Wire.premisesX L.U (withoutDefau
+M9 VE.Defaults.assumptionsOf: FAILS 1 guards
+    #guard holds dα fun L => (ps L []).length == 5 && certChecks L.U (ps L []) notExc cNeeds &
+M10 VE.Defaults.assumptionsOf: FAILS 1 guards
+    #guard holds dα fun L => certChecks L.U (ps L []) excSelf cStrict &&
+M11 VE.Defaults.basisOf: FAILS 6 guards
+    #guard holds dα fun L => assume1 L [] xAll == [excN "r1"] &&
+    #guard holds dα fun L => !wireOk L L.X [] xAll [] && basisOf (assume1 L [] xAll) (wireOk L
+    #guard holds dα fun L => (ps L []).length == 5 && certChecks L.U (ps L []) notExc cNeeds &
+    #guard holds dβ fun L => follows1 L (defaultX L.D L.X) [] βii && assume1 L [] βii == [excN
+    #guard holds dδ fun L => dfltLabels L.D == [excN "r1", excN "r2", rankL] && bareExceptionL
+    #guard holds dε fun L => dfltLabels L.D == [excN "r1", "default:switch:r1:user"] &&
+M12 VE.Defaults.basisOf: FAILS 2 guards
+    #guard holds dα fun L => !wireOk L L.X [] xAll [] && basisOf (assume1 L [] xAll) (wireOk L
+    #guard holds dα fun L => (ps L []).length == 5 && certChecks L.U (ps L []) notExc cNeeds &
+M13 VE.Defaults.bareExceptionLabels: FAILS 2 guards
+    #guard holds dβ fun L => dfltLabels L.D == [excN "r1"] && bareExceptionLabels L.D == [] &&
+    #guard holds dβ fun L => follows1 L (defaultX L.D L.X) [] βii && assume1 L [] βii == [excN
+M14 VE.Defaults.followsForm: FAILS 1 guards
+    #guard holds dε fun L => dfltLabels L.D == [excN "r1", "default:switch:r1:user"] &&
+ALL MUTANTS FAIL THEIR GUARDS

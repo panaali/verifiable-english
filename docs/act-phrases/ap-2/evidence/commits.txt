@@ -1,0 +1,36 @@
+# ap-2 commits: git log --no-merges --format='%H %s' main..HEAD, saved at d62384166 (this file's own commit follows)
+d6238416676e7fdea8818f5d7052f9f27b92be7d ap-2: REPORT: selected tests after the fifth recheck fix (F15, F16, F17)
+4f254e51681c68130cd6b4833bd1e96d96f24c42 ap-2: REPORT and DELTA after the fifth recheck fix (F15, F16, F17): the truth table, the tables, the sweep and its survivors with reasons, mutant counts, line numbers, size
+b863a0b92c01fc25d41a90f6d475c05b07dc0459 ap-2 F15: regenerate lean/declarations.txt, statements.txt, axioms.txt and Audit.lean for the new table and its two theorems (regen_generated.py --write); the fixtures classed T
+34c04fe7ecaa52d8c590224fd36fd4fde7ecb5de ap-2 F15, F16: Term.accepts's truth table (every terminal kind against every token kind, both kinds proved complete by ctorIdx), a table for firstDup, wordsOf, wordOk, firsts and valueOf, prefix words against every word test of 1.4; the sweep: every match arm and comparison of Syntax.lean and Read.lean changed in turn; errors with a code count as errors
+a3e7c25d8a6f5359a19938526867b163ef8ca772 ap-2: saved commit list after the fourth recheck fix (main..HEAD --no-merges)
+b468535c54109982d87fae8d930e1b1de455cfd4 ap-2: REPORT: selected tests after the fourth recheck fix (F13, F14)
+77b20b9b71c5c5f55af2913148f6243cf45abd3f ap-2: REPORT and DELTA after the fourth recheck fix (F13, F14): scope of every definition, case-fold cuts, mutant counts, guard lines, size
+edc9e94063cf7b1cc0136adeab7f4e73939ca291 ap-2 F13, F14: regenerate lean/declarations.txt for the new guards (tools/lean_statements.py)
+0d45264aed8df7b9f07ce950865e2c2b7fc0e05c ap-2 F13, F14: mutants generated over every definition of Syntax.lean (Term.accepts's lists typed from the constructors) and every case fold cut four ways; the review's eight by name; the guards that kill them
+4655e658ec30a7837fa9626f2edc33906260b0e0 ap-2: saved commit list after the third recheck fix (main..HEAD --no-merges)
+b5ab83add8aef589c7a0528c54dd073acc64b0c4 ap-2: REPORT and DELTA after the third recheck fix (F11): the four cuts, mutant counts, guard lines, size, selected tests
+db14021349aa9e166b72e167ad8d7bb91b360547 ap-2 F11: regenerate lean/declarations.txt for the new guards (regen_generated.py --write)
+61f4be42e1101a074a8cdfc246fb53231a5ed9b2 ap-2 F11: every list of 1.4's check also read only at its other end (last element alone, without the first, without the last), generated; the review's four by name; the guards that kill them
+aa2fd56e3e335b5c8926a97d729d5da022754513 ap-2: saved commit list after the second recheck fix (main..HEAD --no-merges)
+dc5b6295da7a2da9ba3da9d01d16bc367401dfa0 ap-2: REPORT: selected tests after the second recheck fix (F10)
+8c0e99b6ea658fbef6ff1670eb607f05259ad408 ap-2: REPORT and DELTA after the second recheck fix (F10): typed list terms, mutant counts, guard lines, size
+268d5e40137aaac73bb3b019e4bab3a5acf6f9e3 ap-2 F10: regenerate lean/declarations.txt for the new guards (regen_generated.py --write)
+81b0427b5e07a304b50b9b3e9c3a3902e71b75a4 ap-2 F10: list terms typed from the declarations, so every operand of ++, binding value, flatMap result and list-valued name is cut; marker lists swapped inside ++; the guards that kill them
+3d1085285cb224c97333ac82bc255c469a060458 ap-2: saved commit list after the recheck fix (main..HEAD --no-merges)
+e96fd5bfc7b836099d885a1c54d69e41fba222d4 ap-2: REPORT and DELTA after the recheck fix (F7, F8, F9): mutant classes, guard lines, size, tests
+7e457d654104a1d503ad2c7ca2ae6ab3a4735083 ap-2 F7: regenerate lean/declarations.txt for the new fixtures (regen_generated.py --write)
+430531bd37c174e02f457985d9aeb06894ac3ddb ap-2 F7: every list of 1.4's check cut to its first element and every marker list swapped, generated; the guards that kill them
+e13a4e413574b68e88446043e873661114182ab2 ap-2: saved commit list after the review fixes (main..HEAD --no-merges)
+7dbd8d82dc4c91e782d77ecd1ed775648ef40256 ap-2: REPORT section 9 no longer quotes the retracted phrase; selected tests after the review fixes
+21e9715acc898a01324ffd4d42fd318eb3b61a7b ap-2: REPORT and DELTA after the review fixes (F1, F2): line references, mutants, size, section 9
+3967dd405d23f2ea538b3ed31dae8593d711db47 ap-2 F2: rawCap and stepBudget stay provisional; deferred item 5 stays open
+0ce22f03d05a53cd48e07a23ef22c450ec141357 ap-2 F1: pin every checkVocab condition, D-31's order and the D2 limits; mutation smoke test
+584ac3bb36a3909d1307239af5d07a7ca3323d71 ap-2: REPORT: selected tests on the synced code
+04435990430e17556d77f4eaa81ddb10e18b13b2 ap-2: saved commit list (main..HEAD --no-merges)
+ee29c7b0682f19e83b44d4567bd2a3ea7dca6dfe ap-2: DELTA (trust +145 under R16), REPORT (cut, ap-2b), seeded bugs re-run on the final code
+69429bb9dc3ec348a564606f7ccaebb9113a9309 ap-2: GrammarExamples: a raw budget of 0 is the limit outcome
+b0cfc1ff5f0eec3cf055b64402972e7ee1f69053 ap-2: seeded bugs (9 Lean, 1 Python), each failing its check, restored; mutants.json
+3dbb2184b42de1d3425b7b48175f8937cf162e77 ap-2: VE.Acts.Syntax (tokens, frames, terminals, framesOk with the D-31 texts) and VE.Acts.Read (the D2 listing, readings and reading, proved)
+aec067d28f5b9418c473f401679bfeed0823e795 ap-2: N re-measurement after D9 (i): R = 2, S = 19,184 on 38 rows; N = 256 and the step budget 2,100,000 stand
+597b0d8e45be56b29341bda5bbaa7c93a3d71ddf ap-2: copy the act-phrases plan (draft 4) and spec (draft 3) verbatim from bb5b2f90d; register the N re-measurement
