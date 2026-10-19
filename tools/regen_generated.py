@@ -22,6 +22,13 @@ script only runs them, in order), and how a merge combines two sides of the file
 driver installed, `git merge` resolves those files by their strategy and never stops on them. Without it,
 `--resolve` does the same from the index stages of each conflicted path.
 
+Some writers and checks start the Lean service (`service` on their entry), which refuses a build that is not in
+`lean/checkers.lock`. Before the first of them, and again after the run changed a Lean file, `--write` and
+`--resolve` make sure ve_service is built from the tree (Lake decides) and pinned: if not, they run the
+`lake-build` and `checker-pins` entries' own steps first, and at the end remove the pins this bootstrap added that
+are not the final build. `--check` writes nothing: with a service that cannot start it prints the cause once, fails
+the entry that fixes it, and reports the entries that start the service as not checked.
+
 `--resolve` (merge-train, docs/merge-tooling.md): run after `git merge --no-commit`. If any conflicted path is
 not a generated file it changes nothing and exits 2 (an agent sync is needed). Otherwise it resolves the
 conflicted generated files, runs every writer and then every check, stages the generated files and exits 0,
@@ -61,11 +68,16 @@ class Generated:
     # `gate:<stage>`. Required for every entry owning a file under `ve/`, which the product reads at run time:
     # a check that only runs by hand lets its two owners drift (tests/test_regen_generated.py).
     fresh: str = ""
+    # Which of its commands start the Lean service (ve/backends/lean_service.py): "write" (the writer, and so the
+    # check), "check" (only the check) or "" (none). Before such a command the run builds and pins ve_service
+    # (`_Service`); every entry whose commands import the service client carries it (tests/test_regen_generated.py).
+    service: str = ""
 
 
 # In dependency order: generated Lean before the build; the build before the statement dumps, the checker pins
 # and the Lean-rendered tables; the declaration list before the audit manifests generated from it (AR-1); every
-# generated Lean file before the frozen inventory that hashes it; the collection last.
+# generated Lean file before the frozen inventory that hashes it; the collection last. An entry that starts the
+# Lean service (`service`) may come before the build: the run builds and pins ve_service first (`_Service`).
 GENERATED = (
     Generated("gitattributes", (".gitattributes",), ("write_attributes",), ("check_attributes",),
               note="the merge attributes of every pattern below"),
@@ -81,19 +93,20 @@ GENERATED = (
               ((PY, "-m", "tools.wire_contract", "--check"),
                (PY, "-m", "tools.wire_contract", "--check", "--directory", "conformance/wire-contract/contracts")),
               note="a changed contract needs a higher `revision` in its source (WC10)",
-              fresh="gate:Wire contract check"),
+              fresh="gate:Wire contract check", service="check"),
     Generated("english-grammar", ("lean/VE/EnglishGrammar/Fixed/*.lean", "ve/english_grammar/LOCK.json"),
               ((PY, "tools/english_grammar_gen.py", "--write"),), ((PY, "tools/english_grammar_gen.py", "--check"),),
               note="refuses when a hashed Lean file changed without a new --actions-version (a person decides)",
               fresh="tests/test_english_grammar_gen.py::test_the_repository_is_in_sync"),
     Generated("english-lexicon-fixtures", ("lean/VE/EnglishGrammar/LexiconFixtures.lean",),
-              ((PY, "-m", "conformance.english_lean_lexicon", "--lean-fixtures"),), None),
+              ((PY, "-m", "conformance.english_lean_lexicon", "--lean-fixtures"),), None, service="write"),
     Generated("question-fixtures", ("lean/VE/Question/Fixtures.lean",),
-              ((PY, "tools/question_fixtures.py", "--write"),), ((PY, "tools/question_fixtures.py", "--check"),)),
+              ((PY, "tools/question_fixtures.py", "--write"),), ((PY, "tools/question_fixtures.py", "--check"),),
+              service="write"),
     Generated("english-run-copy", ("lean/VE/Service/EnglishRun.lean",),
               ((PY, "VE/Service/english_copy.py"),), ((PY, "VE/Service/english_copy.py", "--check"),), cwd="lean"),
     Generated("route-cases", ("lean/VE/Route/examples/route-cases.json",),
-              ((PY, "lean/VE/Route/examples/generate.py"),), None),
+              ((PY, "lean/VE/Route/examples/generate.py"),), None, service="write"),
     Generated("lean-roots", ("lean/VE.lean", "lean/ResponseShape.lean"), None, None, merge="union",
               note="import lists; `lake build` checks the union"),
     Generated("lake-build", (), (("lake", "build"),), (("lake", "build"),), cwd="lean",
@@ -128,10 +141,11 @@ GENERATED = (
               note="from the response schemas and the recorded answers and probes (--record re-records those)"),
     Generated("english-codes", ("ve/english_grammar/codes.json",),
               ((PY, "tools/english_codes.py", "--write"),), ((PY, "tools/english_codes.py", "--check"),),
-              fresh="tests/test_english_e2_responses.py::test_the_code_table_is_the_english_grammar_export"),
+              fresh="tests/test_english_e2_responses.py::test_the_code_table_is_the_english_grammar_export",
+              service="write"),
     Generated("question-codes", ("ve/question/codes.json",),
               ((PY, "tools/question_codes.py", "--write"),), ((PY, "tools/question_codes.py", "--check"),),
-              fresh="tests/test_question_reading.py::test_the_contract_files_are_the_services"),
+              fresh="tests/test_question_reading.py::test_the_contract_files_are_the_services", service="write"),
     Generated("question-lock", ("ve/question/LOCK.json",),
               ((PY, "tools/question_lock.py", "--write"),), ((PY, "tools/question_lock.py"),),
               note="hashes lean/VE/Question/*.lean (after question-fixtures) with question-codes' version",
@@ -270,10 +284,11 @@ def _write_lock(lock: dict) -> None:
     LOCK.write_text(json.dumps({key: sorted(set(values)) for key, values in lock.items()}, indent=2) + "\n")
 
 
-def _service_digest() -> str:
+def _service_digest() -> str | None:
+    """The SHA-256 of the built ve_service, None when it is not built."""
     sys.path.insert(0, str(ROOT))
     from ve.backends.lean_service import DEFAULT_EXECUTABLE, executable_sha256
-    return executable_sha256(DEFAULT_EXECUTABLE)
+    return executable_sha256(DEFAULT_EXECUTABLE) if DEFAULT_EXECUTABLE.is_file() else None
 
 
 def _rust_digest(build: bool) -> str | None:
@@ -288,8 +303,11 @@ def _rust_digest(build: bool) -> str | None:
 
 def pin_checkers() -> int:
     """Pin the built `ve_service` and (unless VE_REGEN_NO_RUST is set) the rebuilt Rust release binary."""
-    lock = _lock()
-    lock.setdefault("ve_service", []).append(_service_digest())
+    lock, digest = _lock(), _service_digest()
+    if digest is None:
+        print("checker-pins: ve_service is not built (lake build)", file=sys.stderr)
+        return 1
+    lock.setdefault("ve_service", []).append(digest)
     if not os.environ.get("VE_REGEN_NO_RUST"):
         digest = _rust_digest(build=True)
         if digest is None:
@@ -301,8 +319,10 @@ def pin_checkers() -> int:
 
 
 def check_pins() -> int:
-    lock, problems = _lock(), []
-    if _service_digest() not in lock.get("ve_service", ()):
+    lock, problems, digest = _lock(), [], _service_digest()
+    if digest is None:
+        problems.append("ve_service is not built (lake build)")
+    elif digest not in lock.get("ve_service", ()):
         problems.append("the built ve_service is not pinned")
     if not os.environ.get("VE_REGEN_NO_RUST"):
         digest = _rust_digest(build=False)
@@ -524,15 +544,25 @@ def install_driver() -> int:
 # Running writers and checks
 
 
-def _run(entry: Generated, steps, root: Path = ROOT) -> int:
-    for step in steps:
-        if isinstance(step, str):  # a function of this module
-            code = globals()[step]()
-        else:
-            code = subprocess.run(list(step), cwd=root / entry.cwd).returncode
-        if code:
-            return code
-    return 0
+def _run(entry: Generated, steps, root: Path = ROOT, environment: dict | None = None) -> int:
+    """Run `steps` in order, with `environment` added to this process's for their duration."""
+    saved = {name: os.environ.get(name) for name in environment or ()}
+    os.environ.update(environment or {})
+    try:
+        for step in steps:
+            if isinstance(step, str):  # a function of this module
+                code = globals()[step]()
+            else:
+                code = subprocess.run(list(step), cwd=root / entry.cwd).returncode
+            if code:
+                return code
+        return 0
+    finally:
+        for name, value in saved.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
 
 
 def _check_by_rewriting(entry: Generated, root: Path = ROOT) -> int:
@@ -555,6 +585,98 @@ def _check_by_rewriting(entry: Generated, root: Path = ROOT) -> int:
     return 1 if stale else 0
 
 
+# The Lean service before the entries that start it
+
+
+SERVICE_TARGET = "ve_service"                   # the Lake target ve/backends/lean_service.py runs
+BUILD, PINS = "lake-build", "checker-pins"      # the entries whose steps build it and pin it
+FIX = "uv run python tools/regen_generated.py --write --only lake-build --only checker-pins (or --write)"
+
+
+def entry_named(name: str) -> Generated:
+    return next(entry for entry in GENERATED if entry.name == name)
+
+
+def _service_current() -> bool:
+    """Whether Lake has nothing to rebuild for ve_service: the build entry's own command with `--no-build`, which
+    exits 3 when the target is missing or out of date. True when Lake cannot be run here: then the pin alone
+    decides, as the service client does."""
+    build = entry_named(BUILD)
+    try:
+        return subprocess.run([*build.write[0], "--no-build", SERVICE_TARGET], cwd=ROOT / build.cwd,
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+    except OSError:
+        return True
+
+
+def _lean_files(entry: Generated) -> dict[Path, bytes]:
+    """The entry's files under lean/ that a build may read (all but the pins)."""
+    return {path: path.read_bytes() for path in owned_files(entry)
+            if path.relative_to(ROOT).parts[0] == "lean" and path != LOCK}
+
+
+class _Service:
+    """ve_service across one run. A command that starts it needs it built from the tree as it is then (Lake
+    decides) and pinned in lean/checkers.lock. `ready` makes it so by running the build entry's and the pin
+    entry's own steps; Lake is asked again only after the run changed a Lean file. `prune` removes, at the end,
+    the pins `ready` added that are not the final build, so the lock ends as an in-order run leaves it."""
+
+    def __init__(self) -> None:
+        self.current: bool | None = None    # Lake's answer; None: not asked since the tree changed
+        self.added: set[str] = set()         # the ve_service pins `ready` added
+
+    def problem(self) -> tuple[str, str] | None:
+        """(the entry that fixes it, why the service cannot start), or None when it can."""
+        if self.current is None:
+            self.current = _service_current()
+        digest = _service_digest()
+        if digest is None:
+            return BUILD, "ve_service is not built"
+        if not self.current:
+            return BUILD, (f"the built ve_service {digest} is not current for the Lean sources "
+                           f"(lake build --no-build {SERVICE_TARGET})")
+        if digest not in _lock().get("ve_service", ()):
+            return PINS, f"the built ve_service {digest} is not pinned in lean/checkers.lock"
+        return None
+
+    def ready(self) -> str | None:
+        """Build and pin the service unless it can start; the name of a failed entry, or None."""
+        problem = self.problem()
+        if problem is None:
+            return None
+        print(f"== bootstrap: {problem[1]}; running {BUILD} and {PINS} first", flush=True)
+        before = set(_lock().get("ve_service", ()))
+        for name in (BUILD, PINS):
+            entry = entry_named(name)
+            # The Rust pin stays the pin entry's own, in its place in the run.
+            if _run(entry, entry.write, environment={"VE_REGEN_NO_RUST": "1"} if name == PINS else None):
+                return name
+        self.added |= set(_lock().get("ve_service", ())) - before
+        self.current = None
+        problem = self.problem()
+        if problem is not None:
+            print(f"regen_generated: after {BUILD} and {PINS}: {problem[1]}", file=sys.stderr)
+            return problem[0]
+        return None
+
+    def ran(self, entry: Generated, changed: bool) -> None:
+        """`entry` ran its writer; `changed`: it changed a Lean file. Its own build makes ve_service current
+        (its step builds the default targets, ve_service among them)."""
+        if entry.name == BUILD:
+            self.current = True
+        elif changed:
+            self.current = None
+
+    def prune(self) -> None:
+        stale = self.added - {_service_digest()}
+        if stale:
+            lock = _lock()
+            lock["ve_service"] = [pin for pin in lock.get("ve_service", ()) if pin not in stale]
+            _write_lock(lock)
+            print(f"== unpinned the bootstrap's ve_service builds that are not the final build: {', '.join(sorted(stale))}",
+                  flush=True)
+
+
 def selected(only, skip) -> list[Generated]:
     names = {entry.name for entry in GENERATED}
     unknown = (set(only or ()) | set(skip or ())) - names
@@ -564,21 +686,43 @@ def selected(only, skip) -> list[Generated]:
 
 
 def write(entries) -> list[str]:
-    failed = []
-    for entry in entries:
-        if entry.write is None:
-            continue
-        print(f"== write {entry.name}", flush=True)
-        if _run(entry, entry.write):
-            failed.append(entry.name)
-            break  # later entries read this one's output
+    failed, service = [], _Service()
+    try:
+        for entry in entries:
+            if entry.write is None:
+                continue
+            if entry.service == "write":
+                cause = service.ready()
+                if cause is not None:
+                    failed.append(cause)
+                    break
+            print(f"== write {entry.name}", flush=True)
+            lean = _lean_files(entry)
+            if _run(entry, entry.write):
+                failed.append(entry.name)
+                break  # later entries read this one's output
+            service.ran(entry, _lean_files(entry) != lean)
+    finally:
+        service.prune()
     return failed
 
 
-def check(entries) -> list[str]:
-    failed = []
+def check(entries) -> tuple[list[str], list[str]]:
+    """(the failed entries, the entries not checked because the service cannot start). Writes no tracked file."""
+    failed, unchecked, problem = [], [], None
+    service = _Service()
     for entry in entries:
         print(f"== check {entry.name}", flush=True)
+        if entry.service and service.current is None:  # asked once, before the first entry that starts it
+            problem = service.problem()
+            if problem is not None:
+                print(f"regen_generated: {problem[1]}: the entries that start it are not checked; fix: {FIX}",
+                      file=sys.stderr, flush=True)
+                failed.append(problem[0])
+        if entry.service and problem is not None:
+            print(f"{entry.name}: not checked: needs the pinned service", flush=True)
+            unchecked.append(entry.name)
+            continue
         if entry.check is not None:
             code = _run(entry, entry.check)
         elif entry.write is not None:
@@ -587,7 +731,7 @@ def check(entries) -> list[str]:
             continue
         if code:
             failed.append(entry.name)
-    return failed
+    return list(dict.fromkeys(failed)), unchecked
 
 
 # Finishing a merge
@@ -630,9 +774,11 @@ def resolve(entries, root: Path = ROOT) -> int:
     for path in retired:
         _git(root, "rm", "-q", "-f", "--", path)
         print(f"resolved {path} (deleted: {RETIRED[path]})")
-    failed = write(entries) or check(entries)
-    if failed:
-        print(f"regen_generated --resolve: failed: {', '.join(failed)}", file=sys.stderr)
+    failed, unchecked = write(entries), []
+    if not failed:
+        failed, unchecked = check(entries)
+    if failed or unchecked:
+        print(f"regen_generated --resolve: failed: {', '.join(failed + unchecked)}", file=sys.stderr)
         return 1
     tracked = set(_git(root, "ls-files").split())
     # Only patterns that name a file (git refuses a pathspec that matches nothing).
@@ -658,6 +804,8 @@ def listing() -> str:
                     f"    write: {show(entry.write)}{'  (cwd ' + entry.cwd + ')' if entry.cwd != '.' else ''}\n"
                     f"    check: {show(entry.check) if entry.check else 'rewrite and compare' if entry.write else '-'}"
                     + (f"\n    fresh: {entry.fresh}" if entry.fresh else "")
+                    + (f"\n    service: its {'writer (and so its check)' if entry.service == 'write' else 'check'} "
+                       "starts the Lean service" if entry.service else "")
                     + (f"\n    note: {entry.note}" if entry.note else ""))
     return "\n".join(rows)
 
@@ -689,9 +837,11 @@ def main(argv=None) -> int:
     entries = selected(args.only, args.skip)
     if args.resolve:
         return resolve(entries)
-    failed = write(entries) if args.write else check(entries)
-    if failed:
-        print(f"regen_generated: failed: {', '.join(failed)}", file=sys.stderr)
+    failed, unchecked = (write(entries), []) if args.write else check(entries)
+    if failed or unchecked:
+        print(f"regen_generated: failed: {', '.join(failed)}"
+              + (f"; not checked (needs the pinned service): {', '.join(unchecked)}" if unchecked else ""),
+              file=sys.stderr)
         return 1
     print(f"regen_generated: {'wrote' if args.write else 'checked'} {len(entries)} entries")
     return 0
