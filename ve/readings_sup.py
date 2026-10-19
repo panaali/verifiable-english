@@ -1,8 +1,10 @@
-"""S2a's deterministic choice encoding and compatible-choice search.
+"""S2a's deterministic choice encoding.
 
 These are elaboration inputs, not verdicts.  A verdict needs the S2 Lean replay
 and its checked evidence; callers must not infer ALL from this module alone.
 The order here is the source order of ``Document.sets`` and candidate order.
+The compatible choices, their count and the route's refusal are Lean's alone
+(`readings-elaborate`, relayed by ``readings_route.elaborate``).
 """
 
 from __future__ import annotations
@@ -162,58 +164,6 @@ def in_force(reading_set, narrowing: dict) -> bool:
     return reading_set.id == narrowing["set"] and reading_set.version == narrowing["version"]
 
 
-def compatible(sets, choice: dict[str, int], couplings=(), narrowings=()) -> bool:
-    """Exactly one valid index per active set, with all active restrictions."""
-    if list(choice) != [reading_set.id for reading_set in sets]:
-        return False
-    by_id = {reading_set.id: reading_set for reading_set in sets}
-    if any(type(choice[reading_set.id]) is not int or
-           not 0 <= choice[reading_set.id] < len(reading_set.candidates)
-           for reading_set in sets):
-        return False
-    for coupling in couplings:
-        labels = [by_id[ref["set"]].candidates[choice[ref["set"]]].labels.get(coupling["axis"])
-                  for ref in coupling["sets"]]
-        if any(label is None or label != labels[0] for label in labels):
-            return False
-    for narrowing in narrowings:
-        reading_set = by_id.get(narrowing["set"])
-        if reading_set is not None and in_force(reading_set, narrowing):
-            if reading_set.candidates[choice[reading_set.id]].id not in narrowing["keeps"]:
-                return False
-    return True
-
-
-def choices(sets, couplings=(), narrowings=(), *, limit=MAX_CHOICES):
-    """Return at most ``limit + 1`` compatible choices and an over-budget flag.
-
-    The extra choice distinguishes exactly 64 from more than 64.  A stale
-    narrowing is ignored, as required by S2 1.2.
-    """
-    if limit < 0:
-        raise ValueError("negative choice limit")
-    result: list[dict[str, int]] = []
-    selected: dict[str, int] = {}
-
-    def visit(position: int):
-        if len(result) > limit:
-            return
-        if position == len(sets):
-            if compatible(sets, selected, couplings, narrowings):
-                result.append(dict(selected))
-            return
-        reading_set = sets[position]
-        for index in range(len(reading_set.candidates)):
-            selected[reading_set.id] = index
-            visit(position + 1)
-            if len(result) > limit:
-                break
-        selected.pop(reading_set.id, None)
-
-    visit(0)
-    return result, len(result) > limit
-
-
 class SlotLabel(NamedTuple):
     """A slot label read by its kind (1.6): `one` (`readings:<set>@<v>:one`), `own` (`readings:<set>@<v>:<i>:quiet`),
     `shared` (`readings:quiet:outweighs:<a>:<L>:<H>`, `key` the part after `readings:quiet:`), `coupling` and
@@ -348,56 +298,7 @@ def superposed_document(doc):
     return frame, contents, soft
 
 
-def unsatisfiable_ids(sets, couplings=(), narrowings=()):
-    """The ids of `ReadingsUnsatisfiable: <ids>` (7): the couplings and the narrowings in force, sorted."""
-    active = {(reading_set.id, reading_set.version) for reading_set in sets}
-    return ", ".join(sorted([item["id"] for item in couplings] +
-                            [item["id"] for item in narrowings
-                             if (item["set"], item["version"]) in active]))
-
-
 # DRI ruling 5 (2026-10-03): the superposed route runs the chain's check on every compatible choice's document, up to
 # this many choices (Lean's `maxChoiceChecks`); past them the superposed verdict kinds refuse with CHECK_BUDGET_TEXT.
 MAX_CHOICE_CHECKS = 1024
 CHECK_BUDGET_TEXT = f"ResourceLimit: more than {MAX_CHOICE_CHECKS} readings to check"
-
-
-def choice_text(sets, choice) -> str:
-    """A choice as section 7 writes it: `<set>@<v>:<i>` in source order."""
-    return ", ".join(f"{R.id}@{R.version}:{choice[R.id]}" for R in sets)
-
-
-def choice_chain_text(doc, choice):
-    """The chain's diagnostic of a compatible choice's document with the choice, or None (Lean's
-    `choiceChainText`)."""
-    from .readings_s1 import Side
-    text = Side(doc.senv, choice_contents(doc, choice), doc.unit_ids).chain_text()
-    return None if text is None else f"{text} under {choice_text(doc.sets, choice)}"
-
-
-def route_refusal(doc, route, couplings=(), narrowings=()):
-    """4.1 steps 3 and 5 on the superposed and enumerated routes (Lean's `routeRefusal`): `ReadingsUnsatisfiable`
-    when no choice is compatible, else the chain's diagnostic under the first compatible choice whose document the
-    chain refuses, among every choice up to the route's budget (MAX_CHOICE_CHECKS superposed, 64 enumerated)."""
-    sets = doc.sets
-    if route not in ("superposed", "enumerated"):
-        return None
-    found, _ = choices(sets, couplings, narrowings, limit=0)
-    if not found:
-        return "ReadingsUnsatisfiable: " + unsatisfiable_ids(sets, couplings, narrowings)
-    budget = MAX_CHOICE_CHECKS if route == "superposed" else MAX_CHOICES
-    checked, over = choices(sets, couplings, narrowings, limit=budget)
-    if over:
-        return None
-    for choice in checked:
-        text = choice_chain_text(doc, choice)
-        if text is not None:
-            return text
-    return None
-
-
-def choices_checked(sets, route, couplings=(), narrowings=()):
-    """The `choices_checked` field of `readings-elaborate`: how many compatible choices' documents were checked."""
-    budget = MAX_CHOICE_CHECKS if route == "superposed" else MAX_CHOICES
-    found, over = choices(sets, couplings, narrowings, limit=budget)
-    return f"over {budget}" if over else len(found)
