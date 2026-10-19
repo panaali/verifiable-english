@@ -2387,15 +2387,15 @@
         "VE.Defaults.Fixtures.check1",
         "VE.Defaults.Fixtures.configs",
         "VE.Defaults.Fixtures.dfltJ",
-        "VE.Defaults.Fixtures.dα",
-        "VE.Defaults.Fixtures.dβ",
-        "VE.Defaults.Fixtures.dγ",
-        "VE.Defaults.Fixtures.dδ",
-        "VE.Defaults.Fixtures.dδs",
-        "VE.Defaults.Fixtures.dε",
-        "VE.Defaults.Fixtures.dζ",
-        "VE.Defaults.Fixtures.dζ0",
-        "VE.Defaults.Fixtures.dσ",
+        "VE.Defaults.Fixtures.d\u03b1",
+        "VE.Defaults.Fixtures.d\u03b2",
+        "VE.Defaults.Fixtures.d\u03b3",
+        "VE.Defaults.Fixtures.d\u03b4",
+        "VE.Defaults.Fixtures.d\u03b4s",
+        "VE.Defaults.Fixtures.d\u03b5",
+        "VE.Defaults.Fixtures.d\u03b6",
+        "VE.Defaults.Fixtures.d\u03b60",
+        "VE.Defaults.Fixtures.d\u03c3",
         "VE.Defaults.Fixtures.elemOf",
         "VE.Defaults.Fixtures.envJ",
         "VE.Defaults.Fixtures.exc1",
@@ -2425,7 +2425,7 @@
         "VE.Defaults.Fixtures.xAll",
         "VE.Defaults.Fixtures.xPerm",
         "VE.Defaults.Fixtures.xReq",
-        "VE.Defaults.Fixtures.βii"
+        "VE.Defaults.Fixtures.\u03b2ii"
       ]
     },
     "VE/Defaults/Premises.lean": {
@@ -13240,6 +13240,23 @@
         "VE.Layout.within"
       ]
     },
-    "VE/Layout/Discourse.lean": {}
+    "VE/Layout/Discourse.lean": {},
+    "VE/Calc/Dimension.lean": {
+      "S": [
+        "VE.Calc.Expr.dimOf",
+        "VE.Calc.PhysDim",
+        "VE.Calc.PhysDim.Normal",
+        "VE.Calc.PhysDim.inv",
+        "VE.Calc.PhysDim.mul",
+        "VE.Calc.PhysDim.npow",
+        "VE.Calc.PhysDim.one",
+        "VE.Calc.Rescale",
+        "VE.Calc.Rescale.apply",
+        "VE.Calc.Rescale.of",
+        "VE.Calc.insertExp",
+        "VE.Calc.legacyDim",
+        "VE.Calc.zpowR"
+      ]
+    }
   }
 }
