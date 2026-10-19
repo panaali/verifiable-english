@@ -9,6 +9,7 @@ import ResponseShape.Schemas.Document
 import ResponseShape.Schemas.Question
 import ResponseShape.Schemas.Ask
 import ResponseShape.Schemas.Words
+import ResponseShape.Schemas.Metered
 import ResponseShape.Schemas.Discourse
 import ResponseShape.Schemas.English
 import ResponseShape.Schemas.EnglishLean
@@ -58,6 +59,7 @@ def files : List File := [
   Question.file,
   Ask.file,
   Words.file,
+  Metered.file,
   Environment.file,
   Evaluate.file,
   FamilyNorms.file,

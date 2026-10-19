@@ -113,11 +113,11 @@ def lean_entry(module: str) -> bool:
 
 
 def lean_layer(module: str) -> int | None:
-    if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks"}:
-        return 5  # aggregation and audit targets
+    if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks", "VE.LimitTies"}:
+        return 5  # aggregation and audit targets (VE.LimitTies checks frozen and hashed copies of VE.Limits)
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
-                  "VE.Question.Examples", "VE.Question.Fixtures"}:
-        return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run or Question.Run
+                  "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples"}:
+        return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run or Alternatives.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
@@ -138,7 +138,7 @@ def lean_layer(module: str) -> int | None:
     }:
         return 3
     if module.startswith(("VE.Core.", "VE.Json")) or module in {
-        "VE.Syntax", "VE.Semantics", "VE.Typing", "VE.Finite", "VE.Consequence",
+        "VE.Limits", "VE.Syntax", "VE.Semantics", "VE.Typing", "VE.Finite", "VE.Consequence",
         "VE.Bridge", "VE.RoundTrip", "VE.CertificateWire", "VE.ClaimGraph",
         "VE.GraphChecks", "VE.ModelProofs", "VE.EnvironmentProofs",
         "VE.Tableau", "VE.TableauClosure", "VE.TableauChecker",

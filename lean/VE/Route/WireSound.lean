@@ -1,4 +1,5 @@
 import VE.Route.Wire
+import VE.Limits
 
 /-! One acceptance theorem for the `route` runners `Wire.runFol`,
 `Wire.runClosure` and `Wire.runOrder` (docs/CONSOLIDATION-PLAN.md step 2a).
@@ -785,7 +786,7 @@ def closureFamily : Family.{u} where
   Intended := RouteIntended
   layer := closureLayer
   decodePremises rv j := do VE.Closure.Bridge.decodeFormulas rv.environment (← j.getObjVal? "premises")
-  decodeConclusion _ j := do VE.Closure.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  decodeConclusion _ j := do VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
   decodeDocument rv j := do VE.Closure.Bridge.decodeFormulas rv.environment (← j.getObjVal? "ast")
 
 /-- `runClosure` with the closure checker and the embedded `fullBackground`. -/
@@ -943,7 +944,7 @@ def orderFamily : Family.{u} where
     (Background.OrderStringAdmissible rv.vocabulary.environment rv.literals) (fun _ h => h.1)
   decodePremises rv j := do
     VE.Order.Wire.decodeFormulas rv.vocabulary.environment (← j.getObjVal? "premises")
-  decodeConclusion _ j := do VE.Order.Wire.decodeFormula 64 (← j.getObjVal? "conclusion")
+  decodeConclusion _ j := do VE.Order.Wire.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
   decodeDocument rv j := do VE.Order.Wire.decodeFormulas rv.vocabulary.environment (← j.getObjVal? "ast")
 
 /-- `runOrder` with the order checker and the order form of `literals`. -/

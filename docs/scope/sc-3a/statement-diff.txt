@@ -1,0 +1,31 @@
+sc-3a statement diff against docs/spec/scope.md 4.1 (anchor and item parts) and 5.5 (VE.Layout)
+
+exact (17):
+  def itemFrom
+  def itemRun
+  def ItemUnit
+  def spansOf
+  def within
+  def narrower
+  def innermostAnchor
+  def anchorUnits
+  def headingOf
+  def anchorReach
+  def reachesRoot
+  def anchorsOk
+  theorem itemRun_iff
+  theorem anchorReach_iff
+  theorem discourse_within_unchanged
+  theorem discourse_innermost_unchanged
+  theorem discourse_anchorsOk_unchanged
+
+differ (0):
+
+not built in sc-3a, spec 5.5 (sc-3ab, after sc-1ac's SDoc and govern; or SC-3b) (7):
+  anchor_reach_iff
+  assertion_carve_denote
+  assertion_restrict_denote
+  carveAssertion
+  label_reach_iff
+  restrictAssertion
+  title_identity

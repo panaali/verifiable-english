@@ -1,5 +1,6 @@
 import VE.Attribution.Bridge
 import VE.Norms.Wire
+import VE.Limits
 
 /-! The `reports@0` wire decoder (spec 3, 4.1, 9.4). Nothing on the wire
 supplies `E_reports`, a key, a generated name, a premise, an open term or a
@@ -278,7 +279,7 @@ def decodeScoped (j : Json) : Except String (ScopedCheck × Option (Json × Opti
   let payloads ← (← (← j.getObjVal? "payloads").getArr?).toList.mapM decodePath
   let c ← j.getObjVal? "conclusion"
   exactFields c ["ast"]
-  let conclusion ← VE.Bridge.decodeFormula 64 (← c.getObjVal? "ast")
+  let conclusion ← VE.Bridge.decodeFormula VE.Limits.maxDepth (← c.getObjVal? "ast")
   let certificate := (j.getObjVal? "certificate").toOption
   let envelope := (j.getObjVal? "envelope").toOption
   require (certificate.isSome || envelope.isNone) s!"InvalidInput: envelope without a certificate on scoped check {id}"
@@ -472,7 +473,7 @@ def firstFailure (D : ReportDoc) : String :=
       s!"InvalidInput: unformalised kind reason does not match meaning of {m.id}"
     else s!"InvalidInput: meaning of {m.id}"
   | none =>
-  if !((names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ 64)) &&
+  if !((names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes)) &&
       decide (names D).Nodup && decide (D.authorPredicates.length + (names D).length ≤ maxPredicates)) then
     "ResourceLimit: MAX_PREDICATES"
   else "InvalidInput: the document is not well-formed"

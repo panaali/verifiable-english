@@ -1,5 +1,6 @@
 import VE.SoftNorms.Phases
 import VE.SoftNorms.Once
+import VE.Limits
 
 /-! The soft-norms decoder and replays (docs/spec/soft-norms.md 3, 9.3 and 9.4).
 
@@ -96,7 +97,7 @@ structure SoftSource where
 `MAX_IDENTIFIER_BYTES`, and at most `MAX_PREDICATES` predicates. -/
 def primeVocabulary (se : SoftEnvironment) (D : SoftDoc) : Except String Unit := do
   for n in decisionNames D do
-    if n.utf8ByteSize > 64 then throw s!"ResourceLimit: decision predicate {n}"
+    if n.utf8ByteSize > VE.Limits.maxIdentifierBytes then throw s!"ResourceLimit: decision predicate {n}"
   if se.ne.rv.vocabulary.predicates.length + (decisions D).length > 256 then
     throw "ResourceLimit: extended vocabulary"
 

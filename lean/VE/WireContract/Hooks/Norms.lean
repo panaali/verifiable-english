@@ -2,6 +2,8 @@ import VE.Norms.Wire
 import VE.NormDefaults.Wire
 import VE.WireContract.Engine
 import VE.WireContract.Tables.Norms
+import VE.Limits
+import VE.WireContract.Names
 
 /-! The hand-written hooks, classifiers and adapter of the contract `norms@0`
 (docs/spec/wire-contract-s5.md 2.3 and 2.5).
@@ -161,14 +163,14 @@ def synFormula : Nat → Nat → Json → Except String (VE.Formula × Nat)
 
 /-- A rule's guard, then its carve-outs, under one count (as `decodeNorm`'s `shared := true`). -/
 def synRule (rule : Json) : Except String (List VE.Formula) := do
-  let (guard, count) ← synFormula 64 0 (ruleField rule "guard")
+  let (guard, count) ← synFormula VE.Limits.maxDepth 0 (ruleField rule "guard")
   let carveOuts ← match ruleField rule "unless" with
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: unless and over must be arrays"
   let mut count := count
   let mut formulas := [guard]
   for x in carveOuts do
-    let (φ, next) ← synFormula 64 count x
+    let (φ, next) ← synFormula VE.Limits.maxDepth count x
     count := next
     formulas := formulas ++ [φ]
   pure formulas
@@ -180,14 +182,14 @@ def syntaxMember (budget shape : String) (e : String) : ClassifierResult :=
 /-- 3.9 at the `k`-th carve-out: the guard and the carve-outs before it are read under one count (each holds,
     by rule 2), and the item's first refused node names the member. -/
 def carveOutSyntax (rule : Json) (k : Nat) : ClassifierResult :=
-  match synFormula 64 0 (ruleField rule "guard"), ruleField rule "unless" with
+  match synFormula VE.Limits.maxDepth 0 (ruleField rule "guard"), ruleField rule "unless" with
   | .ok (_, count), .arr xs =>
     let rec go : Nat → Nat → List Json → ClassifierResult
       | _, _, [] => .ok
-      | 0, count, x :: _ => match synFormula 64 count x with
+      | 0, count, x :: _ => match synFormula VE.Limits.maxDepth count x with
         | .ok _ => .ok
         | .error e => syntaxMember "3.9a" "3.9b" e
-      | i + 1, count, x :: rest => match synFormula 64 count x with
+      | i + 1, count, x :: rest => match synFormula VE.Limits.maxDepth count x with
         | .ok (_, next) => go i next rest
         | .error _ => .ok
     go k count xs.toList
@@ -197,7 +199,7 @@ def carveOutSyntax (rule : Json) (k : Nat) : ClassifierResult :=
 
 /-- Enter one node: the running total gains one; past 10,000 it is `_Checker`'s `ResourceLimit`. -/
 def tick (n : Nat) : Except String Nat :=
-  if n + 1 > 10000 then .error "ResourceLimit: AST exceeds 10,000 nodes" else .ok (n + 1)
+  if n + 1 > VE.Limits.maxNodes then .error "ResourceLimit: AST exceeds 10,000 nodes" else .ok (n + 1)
 
 def typeTerm (E : VE.Environment) (Γ : List String) (n : Nat) (t : VE.Term) : Except String (String × Nat) := do
   let n ← tick n
@@ -359,7 +361,7 @@ def predicate : String → Json → List Pointer → HookResult
 def classifier : String → Json → List Pointer → ClassifierResult
   -- 3.8: the guard with the rule's fresh count
   | "guard_syntax", root, items => match itemValue root items 0 with
-    | some rule => match synFormula 64 0 (ruleField rule "guard") with
+    | some rule => match synFormula VE.Limits.maxDepth 0 (ruleField rule "guard") with
       | .ok _ => .ok
       | .error e => syntaxMember "3.8a" "3.8b" e
     | none => .ok
@@ -446,7 +448,7 @@ def registered : List String :=
 `tests/test_wire_contract_s5_lean.py::test_l8_syntax_walk_is_budget_formula_on_the_corpus`. -/
 
 def sameAsBudget (count : Nat) (j : Json) : Bool :=
-  match synFormula 64 count j, VE.Norms.Wire.budgetFormula 64 count j with
+  match synFormula VE.Limits.maxDepth count j, VE.Norms.Wire.budgetFormula VE.Limits.maxDepth count j with
   | .ok a, .ok b => a == b
   | .error a, .error b => a == b
   | _, _ => false
@@ -480,5 +482,10 @@ def l8Samples : List Json :=
 #guard (synFormula 64 0 (.arr #[.str "eq", .arr #[.str "const", (num 5)], .arr #[.str "var", (num 0)]])).toBool
 #guard (synFormula 64 0 (.arr #[.str "forall", (num 5), .arr #[.str "top"]])).toBool
 #guard !(VE.Norms.Wire.budgetFormula 64 0 (.arr #[.str "forall", (num 5), .arr #[.str "top"]])).toBool
+
+-- The generated name classes (`ve/wire_contract/names.json`) bound an identifier as `VE.Limits` does
+-- (lf-18 review F2; `VE.LimitTies` may not import a diagnostic-only module, spec 7.3).
+#guard [VE.WireContract.Names.decider, VE.WireContract.Names.rule_name, VE.WireContract.Names.soft_name].all
+  (·.maxBytes == some VE.Limits.maxIdentifierBytes)
 
 end VE.WireContract.Hooks.Norms

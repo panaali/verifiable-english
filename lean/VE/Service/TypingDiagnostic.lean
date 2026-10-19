@@ -1,4 +1,5 @@
 import VE.Bridge
+import VE.Limits
 
 /-! Python-compatible typing diagnostics for the standalone `check` mode.
 
@@ -82,9 +83,7 @@ abbrev Check := StateT Nat (Except String)
 
 def fail {α : Type} (code message : String) : Check α := throw s!"{code}: {message}"
 
-/-- Python `ve/limits.py` `MAX_NODES` and `MAX_DEPTH`. -/
-def maxNodes : Nat := 10000
-def maxDepth : Nat := 64
+export VE.Limits (maxNodes maxDepth)
 
 /-- `_Checker.tick`. -/
 def tick : Check Unit := do
