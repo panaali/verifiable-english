@@ -74,7 +74,7 @@ private def renderTerm (words : String → Option String) : Expr → Option Stri
 /-- 11.2 `expression`: a term, or one infix phrase at the top with an atom on its left, and at
 most one phrase inside another (`NestedPhrase`). Anything else is `none`: the display then names
 the intermediate values. -/
-def renderExpr (words : String → Option String) (e : Expr) : Option String :=
+private def renderExpr (words : String → Option String) (e : Expr) : Option String :=
   if exprDepth e > 2 then none else
   match e with
   | .sub a b => return (← renderAtom words a) ++ " minus " ++ (← renderTerm words b)

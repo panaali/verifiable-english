@@ -13041,6 +13041,56 @@
         "VE.Cardinality.Examples.badQ",
         "VE.Cardinality.Examples.badP"
       ]
+    },
+    "VE/Calc/Dimension.lean": {
+      "S": [
+        "VE.Calc.Expr.dimOf",
+        "VE.Calc.PhysDim",
+        "VE.Calc.PhysDim.Normal",
+        "VE.Calc.PhysDim.inv",
+        "VE.Calc.PhysDim.mul",
+        "VE.Calc.PhysDim.npow",
+        "VE.Calc.PhysDim.one",
+        "VE.Calc.Rescale",
+        "VE.Calc.Rescale.apply",
+        "VE.Calc.Rescale.of",
+        "VE.Calc.insertExp",
+        "VE.Calc.legacyDim",
+        "VE.Calc.zpowR"
+      ]
+    },
+    "VE/Calc/Units.lean": {
+      "D[V]": [
+        "VE.Calc.Units.UnitDef",
+        "VE.Calc.Units.UnitEnv",
+        "VE.Calc.Units.decode",
+        "VE.Calc.Units.decodeFactor",
+        "VE.Calc.Units.decodeUnit",
+        "VE.Calc.Units.decodeV2"
+      ],
+      "D[R]": [
+        "VE.Calc.Units.affineNames",
+        "VE.Calc.Units.checkFields",
+        "VE.Calc.Units.decodeExponents",
+        "VE.Calc.Units.decodeLegacy",
+        "VE.Calc.Units.logarithmicNames"
+      ],
+      "D[I]": [
+        "VE.Calc.Units.UnitEnv.environmentId"
+      ],
+      "G[V]": [
+        "VE.Calc.Units.UnitEnv.find?",
+        "VE.Calc.Units.UnitEnv.values"
+      ],
+      "G[R]": [
+        "VE.Calc.Units.UnitEnv.context",
+        "VE.Calc.Units.dimWords",
+        "VE.Calc.Units.invalid",
+        "VE.Calc.Units.mismatch"
+      ],
+      "C": [
+        "VE.Calc.Units.dimE"
+      ]
     }
   }
 }

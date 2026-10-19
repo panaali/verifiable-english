@@ -1,9 +1,8 @@
 import VE.Calc.Dimension
-import VE.Calc.Render
 import VE.Time.Wire
 
 /-! `ve-units@2` (math-evidence spec 6.2, ME-6): its only decoder, its identity (3.3, J1) and the
-dimension checks of a claim. A `ve-units@1` environment is decoded by W6a's frozen decoder,
+dimension of an expression with its diagnostic. A `ve-units@1` environment is decoded by W6a's frozen decoder,
 unchanged; each of its tags is its own base dimension (`legacyDim`) and has no factor. -/
 
 namespace VE.Calc.Units
@@ -163,25 +162,5 @@ theorem dimE_ok (Γ : String → Option PhysDim) (e : Expr) (d : PhysDim) :
   | pow a k iha =>
       simp only [dimE, Expr.dimOf, except_bind_ok, Option.map_eq_some_iff, iha]
       simp [pure, Except.pure]
-
-def same (x y : PhysDim) : Except String Unit := if x = y then pure () else throw (mismatch x y)
-
-/-- The dimension checks of a claim (6.2): the sides of a comparison and of a range share one
-dimension, and a rounding claim is on a dimensionless expression. -/
-def checkClaim (u : UnitEnv) (Γ : String → Option PhysDim) (words : String → Option String) :
-    Claim → Except String Unit
-  | .compare _ a b => do same (← dimE Γ a) (← dimE Γ b)
-  | .within e lo hi => do
-      let x ← dimE Γ e
-      same x (← dimE Γ lo)
-      same x (← dimE Γ hi)
-  | .rounds _ e _ => do
-      let x ← dimE Γ e
-      unless x = PhysDim.one do
-        let unit := match u.units.find? (fun d => d.dim = x ∧ d.factor = some 1) with
-          | some d => d.name.replace "_" " "
-          | none => "unit of " ++ dimWords x
-        throw s!"RoundingNeedsNumber: divide by one {unit} to round \
-          {(English.renderExpr words e).getD "the expression"}"
 
 end VE.Calc.Units

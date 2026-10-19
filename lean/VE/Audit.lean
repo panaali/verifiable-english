@@ -779,6 +779,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Val.bin_tooLarge
 #print axioms VE.Calc.Val.div_agrees
 #print axioms VE.Calc.Val.guard_agrees
+#print axioms VE.Calc.bind2_some
 #print axioms VE.Calc.causes_accumulate
 #print axioms VE.Calc.causes_step
 #print axioms VE.Calc.compare_invariant
