@@ -4855,7 +4855,7 @@ module VE.Definitions.Route 45c238bfe5d883dd13e12f1b66be70eaf58de016a4d4f35e1987
 54:0-110:32 theorem VE.Definitions.acceptance@VE.Definitions.Route
 112:0-128:43 theorem VE.Definitions.countermodel@VE.Definitions.Route
 130:0-158:30 theorem VE.Definitions.closure_acceptance@VE.Definitions.Route
-module VE.Discourse.Access 7f51162f2e8c62d45f123ccf3fbba74504206072ce8caf236932e41fc6db42fa
+module VE.Discourse.Access d6ce876030e260da820d5f8362a29aeccd9bee06f33b643ee0a5d7cee7779ba8
 26:0-27:94 def VE.Discourse.punctChar@VE.Discourse.Access
 29:0-34:76 def VE.Discourse.spaceChar@VE.Discourse.Access
 36:0-36:74 def VE.Discourse.wordChar@VE.Discourse.Access
@@ -4947,7 +4947,7 @@ module VE.Discourse.Access 7f51162f2e8c62d45f123ccf3fbba74504206072ce8caf236932e
 567:0-571:11 theorem VE.Discourse.kind_fit@VE.Discourse.Access
 573:0-575:24 theorem VE.Discourse.narrower_mem@VE.Discourse.Access
 577:0-579:30 theorem VE.Discourse.innermost_within@VE.Discourse.Access
-581:0-646:107 theorem VE.Discourse.acc_no_heuristic@VE.Discourse.Access
+581:0-650:107 theorem VE.Discourse.acc_no_heuristic@VE.Discourse.Access
 module VE.Discourse.Admission fec503af29b50e6df828c516683b1d63b76a74f50f00623a4aaa32e0300ba69e
 34:0-34:49 def VE.Discourse.discourseProfile@VE.Discourse.Admission
 36:0-36:98 def VE.Discourse.baseProfiles@VE.Discourse.Admission
@@ -7906,10 +7906,10 @@ module VE.Layout.Anchors 510feb53d134208d46e12f1910b41e49c554ff63124b771113e61c2
 159:0-164:34 theorem VE.Layout.innermost_within@VE.Layout.Anchors
 166:0-171:55 theorem VE.Layout.mem_anchorUnits@VE.Layout.Anchors
 173:0-192:16 theorem VE.Layout.anchorReach_iff@VE.Layout.Anchors
-module VE.Layout.Discourse 154349b9c2d6bbed1fd55bc3a8a4636132a36f8ebecdb5e2067bf22f9b5e4d69
-9:0-11:100 theorem VE.Layout.discourse_within_unchanged@VE.Layout.Discourse
-13:0-15:107 theorem VE.Layout.discourse_innermost_unchanged@VE.Layout.Discourse
-17:0-21:41 theorem VE.Layout.discourse_anchorsOk_unchanged@VE.Layout.Discourse
+module VE.Layout.Discourse 7767f9ab5dc362ac93ad94d6edce318594cd8cea6d9ec62cfb396b26873c583c
+9:0-12:111 theorem VE.Layout.discourse_within_unchanged@VE.Layout.Discourse
+14:0-18:22 theorem VE.Layout.discourse_innermost_unchanged@VE.Layout.Discourse
+20:0-24:41 theorem VE.Layout.discourse_anchorsOk_unchanged@VE.Layout.Discourse
 module VE.Layout.List c8587a6b2928d2ebfeee53efe6a6a298e14a56216137f385f398f676c27d154c
 7:0-16:28 structure VE.Layout.Unit@VE.Layout.List
 9:2-9:4 def VE.Layout.Unit.id@VE.Layout.List

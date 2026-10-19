@@ -136,13 +136,13 @@ def anchorOf (D : DDoc) (a : String) : Option Anchor := D.K.anchors.find? (·.id
 
 /-- The unit lies inside the anchor's span. -/
 def within (D : DDoc) (unit anchor : String) : Bool :=
-  VE.Layout.within ((unitKeys D).map (fun k => (k.1, k.2.1, k.2.2.1))) D.K.anchors unit anchor
+  VE.Layout.within (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors unit anchor
 
 def narrower (best : Option Anchor) (a : Anchor) : Option Anchor := VE.Layout.narrower best a
 
 /-- The smallest anchor containing the unit (the first of equal size). -/
 def innermostAnchor (D : DDoc) (unit : String) : Option Anchor :=
-  VE.Layout.innermostAnchor ((unitKeys D).map (fun k => (k.1, k.2.1, k.2.2.1))) D.K.anchors unit
+  VE.Layout.innermostAnchor (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors unit
 
 /-- The registration of a constant (binder names are never constants). -/
 def registered (D : DDoc) (c : String) : Option Name :=
@@ -592,12 +592,16 @@ theorem acc_no_heuristic (D D₂ : DDoc) (m : Slot) (t : Target)
     (hb : unitKeys D = unitKeys D₂ ∧ lemmaNames D = lemmaNames D₂) :
     Acc D m t ↔ Acc D₂ m t := by
   obtain ⟨hn, hc, han, hd, _, hE⟩ := hK
+  have hsp : D.base.units.map (fun x => (x.id, x.start, x.stop)) =
+      D₂.base.units.map (fun x => (x.id, x.start, x.stop)) := by
+    have h := congrArg (List.map fun k => (k.1, k.2.1, k.2.2.1)) hb.1
+    simpa only [unitKeys, unitKey, List.map_map, Function.comp_def] using h
   have hw : ∀ u a, within D u a = within D₂ u a := by
     intro u a
-    simp only [within, hb.1, han]
+    simp only [within, hsp, han]
   have hi : ∀ u, innermostAnchor D u = innermostAnchor D₂ u := by
     intro u
-    simp only [innermostAnchor, hb.1, han]
+    simp only [innermostAnchor, hsp, han]
   have hu : unitIds D = unitIds D₂ := by simp only [unitIds, hb.1]
   have hown : ownText D m = ownText D₂ m := by
     unfold ownText

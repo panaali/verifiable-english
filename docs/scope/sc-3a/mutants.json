@@ -517,11 +517,13 @@
    "definition": "VE.Discourse.within",
    "claim": "discourse's within is the moved body on its own spans",
    "mutation": {
-    "from": "VE.Layout.within ((unitKeys D).map (fun k => (k.1, k.2.1, k.2.2.1))) D.K.anchors unit anchor",
-    "to": "VE.Layout.within ((unitKeys D).map (fun k => (k.1, k.2.1, k.2.1))) D.K.anchors unit anchor"
+    "from": "VE.Layout.within (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors unit anchor",
+    "to": "VE.Layout.within (D.base.units.map fun x => (x.id, x.start, x.start)) D.K.anchors unit anchor"
    },
-   "test": "theorem innermost_within (lean/VE/Discourse/Access.lean:579)",
-   "also_fails": [],
+   "test": "theorem innermost_within (lean/VE/Discourse/Access.lean)",
+   "also_fails": [
+    "theorem acc_no_heuristic (lean/VE/Discourse/Access.lean)"
+   ],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
    "result": "build failed; source restored",
    "proofs_bypassed": [
@@ -538,10 +540,10 @@
    "definition": "VE.Discourse.innermostAnchor",
    "claim": "discourse's innermost anchor is the moved body",
    "mutation": {
-    "from": "VE.Layout.innermostAnchor ((unitKeys D).map (fun k => (k.1, k.2.1, k.2.2.1))) D.K.anchors unit",
-    "to": "VE.Layout.innermostAnchor ((unitKeys D).map (fun k => (k.1, k.2.1, k.2.2.1))) D.K.anchors.reverse unit"
+    "from": "VE.Layout.innermostAnchor (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors unit",
+    "to": "VE.Layout.innermostAnchor (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors.reverse unit"
    },
-   "test": "theorem innermost_within (lean/VE/Discourse/Access.lean:579)",
+   "test": "theorem innermost_within (lean/VE/Discourse/Access.lean)",
    "also_fails": [],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
    "result": "build failed; source restored",
@@ -562,10 +564,8 @@
     "from": "(unaryPred D.E)",
     "to": "(fun _ => true)"
    },
-   "test": "theorem discourse_innermost_unchanged (lean/VE/Layout/Discourse.lean:17)",
-   "also_fails": [
-    "theorem discourse_anchorsOk_unchanged (lean/VE/Layout/Discourse.lean:21)"
-   ],
+   "test": "theorem discourse_anchorsOk_unchanged (lean/VE/Layout/Discourse.lean)",
+   "also_fails": [],
    "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
    "result": "build failed; source restored",
    "proofs_bypassed": [
