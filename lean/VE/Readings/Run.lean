@@ -2,6 +2,7 @@ import VE.Readings.Wire
 import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
+import VE.Readings.SupVerdictsSound
 import VE.Readings.SoftVerdicts
 import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
@@ -499,7 +500,16 @@ def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admi
   if underSoftCompletion b.a.re b.D then
     if kind == "readings-verdicts" then return ← runVerdictsSD id b j
     return ← runSDKind id kind (← admitSDOf b) j
-  if kind == "readings-verdicts" then return ← runVerdicts lower id b j
+  if kind == "readings-verdicts" then
+    if underCompletion b.a.re b.D then
+      let f ← admitNDFull b
+      -- RD-3's budget-free enumerated request remains a service contract. RD-7's
+      -- superposed evidence generator supplies its explicit search budget.
+      if routeND f.r.N == .superposed && (j.getObjVal? "budget").isOk then
+        return ← runSupVerdicts id b j
+    else if routeOf (b.a.re.lower.contains "norm-defaults@0") b.D == .superposed then
+      return ← runSupVerdicts id b j
+    return ← runVerdicts lower id b j
   if !underCompletion b.a.re b.D then return ← runS2 lower id kind b j
   runNDKind id kind (← admitNDFull b) j
 
@@ -612,8 +622,14 @@ def runAdmitted (j : Json) (id kind : String) (ready : ComponentAdmission) : Exc
   -- order: before the completion's kinds), so the completion's admission of an `nd` component runs once more there.
   if kind == "readings-verdicts" then
     match ready with
-    | .s2 b => return ← runVerdicts runLowerWith id b j
-    | .nd f => return ← runVerdicts runLowerWith id f.r.b j
+    | .s2 b =>
+      if routeOf (b.a.re.lower.contains "norm-defaults@0") b.D == .superposed then
+        return ← runSupVerdicts id b j
+      return ← runVerdicts runLowerWith id b j
+    | .nd f =>
+      if routeND f.r.N == .superposed && (j.getObjVal? "budget").isOk then
+        return ← runSupVerdicts id f.r.b j
+      return ← runVerdicts runLowerWith id f.r.b j
     | .s1 _ => throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
   match ready with
   | .s2 b => runS2 runLowerWith id kind b j

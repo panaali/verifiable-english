@@ -10,28 +10,34 @@ a key of everything the run can read:
   and manifest (tests run `lake env lean` on scripts that read the built modules); the interpreter's
   version, `uv.lock`, the run's settings, and its `VE_` environment and `PYTHONPATH` but its output paths;
 * dynamic, recorded by `tests/read_recorder.py` in every process of the run that made the entry: each file
-  it opened or imported, each directory it listed (by its entries' names) and each program it started.
+  it opened or imported, each directory it listed (by its entries' names) and each program it started;
+* history, when the run started git or opened a path in a `.git` directory: the commit checked out, the
+  runner and the git version (`history_inputs`). Such a run's result can change with the commit alone (the
+  tests of tests/history-dependent.json), so its entry is never used on another commit, runner or git.
 
 An entry is named by the static key and holds the dynamic inputs' digests; it is used only when every one
 of them is unchanged, so a stale key or a changed read re-runs. Only a run that `ok` accepts is stored, and
 only when the static inputs did not change while it ran. `VE_RUN_CACHE=off` turns the cache off; a path
-puts it there. By default it is in the git common directory, shared by the checkout's worktrees.
-`tests/test_run_cache.py` changes each kind of keyed input and checks that the entry is not used.
+puts it there. By default it is in the git common directory, shared by the checkout's worktrees; the store
+(directory, entry names, atomic writes, pruning) is `tools/cache_store.py`'s. `tests/test_run_cache.py` changes each kind of keyed input and checks that the
+entry is not used.
 """
 from __future__ import annotations
 
 from collections.abc import Callable
-import gzip
-import hashlib
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 
+from tools import cache_store
+from tools.cache_store import file_digest, listing_digest
+
 ROOT = Path(__file__).resolve().parents[1]
-FORMAT = "ve-run-cache@1"
+# 2: an entry of a run that read history binds its commit, runner and git (`history_inputs`); an entry of
+# format 1 does not, so none is used.
+FORMAT = "ve-run-cache@2"
 # Entries kept per cache directory, newest first (the wire gate corpus's is about 10 MB compressed).
 KEEP = 4
 # The settings that name the run's own output (a fresh temporary path each run), not an input: the record,
@@ -46,33 +52,7 @@ PLUGIN = "tests.read_recorder"
 def cache_directory(root: Path = ROOT) -> Path | None:
     """Where entries are kept (`VE_RUN_CACHE`, else the git common directory's `ve-run-cache`), or None
     when the cache is off."""
-    setting = os.environ.get("VE_RUN_CACHE")
-    if setting == "off":
-        return None
-    if setting:
-        return Path(setting)
-    from tests.subprocesses import HANG_TIMEOUT
-    found = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd=root,
-                           capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    return Path(found.stdout.strip()) / "ve-run-cache" if found.returncode == 0 and found.stdout.strip() else None
-
-
-def file_digest(path: Path) -> str:
-    if not path.is_file():
-        return "absent"
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1 << 20), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def listing_digest(path: Path) -> str:
-    try:
-        names = sorted(os.listdir(path))
-    except OSError:
-        return "absent"
-    return hashlib.sha256("\n".join(names).encode("utf-8", "surrogateescape")).hexdigest()
+    return cache_store.directory(root)
 
 
 def rust_binary(root: Path, environment: dict) -> Path:
@@ -114,49 +94,58 @@ def run_settings(root: Path, environment: dict) -> dict[str, str]:
 
 
 def key_of(inputs: dict[str, str]) -> str:
-    return hashlib.sha256(json.dumps([FORMAT, sorted(inputs.items())]).encode()).hexdigest()
+    return cache_store.key_of(FORMAT, inputs)
 
 
-def dynamic_inputs(root: Path, reads: dict[str, set]) -> dict[str, str]:
-    """{input: digest} of what the run read (`tests/read_recorder.py`)."""
+def history_inputs(root: Path) -> dict[str, str] | None:
+    """{input: value} binding a run that read history to what it read it on: the commit checked out at `root`,
+    the runner (`tools/gate.py` `runner_identity`) and the git version; None when git cannot say."""
+    from tests.subprocesses import HANG_TIMEOUT
+    from tools.gate import runner_identity
+    answers = [subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+               for args in (["rev-parse", "--verify", "HEAD"], ["--version"])]
+    if any(answer.returncode or not answer.stdout.strip() for answer in answers):
+        return None
+    return {"history:commit": answers[0].stdout.strip(), "history:git": answers[1].stdout.strip(),
+            "history:runner": json.dumps(runner_identity(), sort_keys=True)}
+
+
+def dynamic_inputs(root: Path, reads: dict[str, set]) -> dict[str, str] | None:
+    """{input: digest} of what the run read (`tests/read_recorder.py`), with the history it read on when it read
+    any (`history_inputs`); None when that history cannot be named, so the run is not stored."""
     inputs = {f"file:{name}": file_digest(root / name) for name in reads["files"]}
     inputs.update((f"directory:{name}", listing_digest(root / name)) for name in reads["directories"])
     inputs.update((f"program:{name}", file_digest(root / name)) for name in reads["programs"])
+    if reads.get("history"):
+        history = history_inputs(root)
+        if history is None:
+            return None
+        inputs.update(history)
     return dict(sorted(inputs.items()))
 
 
 def current(root: Path, inputs: dict[str, str]) -> bool:
-    """Whether every recorded dynamic input still has its digest."""
+    """Whether every recorded dynamic input still has its digest, and a run that read history is on the same
+    commit, runner and git."""
+    history = None
     for name, digest in inputs.items():
         kind, _, path = name.partition(":")
-        now = listing_digest(root / path) if kind == "directory" else file_digest(root / path)
+        if kind == "history":
+            history = history_inputs(root) if history is None else history
+            now = None if history is None else history.get(name)
+        else:
+            now = listing_digest(root / path) if kind == "directory" else file_digest(root / path)
         if now != digest:
             return False
     return True
 
 
 def _reads(prefix: Path) -> dict[str, set]:
-    found = {"files": set(), "directories": set(), "programs": set()}
+    found = {"files": set(), "directories": set(), "programs": set(), "history": set()}
     for path in prefix.parent.glob(f"{prefix.name}.*.json"):
         for kind, names in json.loads(path.read_text()).items():
-            found[kind].update(names)
+            found.setdefault(kind, set()).update(names)
     return found
-
-
-def _write(path: Path, entry: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(f"{path.name}.{os.getpid()}.tmp")
-    with gzip.open(temporary, "wt") as handle:
-        json.dump(entry, handle)
-    temporary.replace(path)
-    entries = []
-    for found in path.parent.glob("*.json.gz"):
-        try:
-            entries.append((found.stat().st_mtime, found))
-        except OSError:  # removed by another run meanwhile
-            pass
-    for _, stale in sorted(entries, reverse=True)[KEEP:]:
-        stale.unlink(missing_ok=True)
 
 
 def cached_run(output: Path, *, starts: list[str], settings: dict, environment: dict,
@@ -170,24 +159,23 @@ def cached_run(output: Path, *, starts: list[str], settings: dict, environment: 
         return run(dict(environment)), "off"
     inputs = static_inputs(root, starts, settings, environment)
     key = key_of(inputs)
-    entry_path = directory / f"{key}.json.gz"
-    try:
-        with gzip.open(entry_path, "rt") as handle:
-            entry = json.load(handle)
-    except (OSError, ValueError, EOFError):
-        entry = None
-    if isinstance(entry, dict) and entry.get("format") == FORMAT and entry.get("key") == key \
+    entry_path = cache_store.entry_path(directory, key)
+    entry = cache_store.load(entry_path)
+    if entry is not None and entry.get("format") == FORMAT and entry.get("key") == key \
             and isinstance(entry.get("dynamic"), dict) and current(root, entry["dynamic"]):
         output.write_text(entry["output"])
-        entry_path.touch()
+        cache_store.touch(entry_path)
         return subprocess.CompletedProcess(entry["args"], entry["returncode"], entry["stdout"], entry["stderr"]), "hit"
     with tempfile.TemporaryDirectory(prefix="ve-reads-") as scratch:
         prefix = Path(scratch) / "reads"
         result = run({**environment, "VE_RECORD_READS": str(prefix), "VE_READS_ROOT": str(root)})
         reads = _reads(prefix)
     # Nothing recorded means the plugin did not run: no entry could be checked later.
-    if ok(result) and reads["files"] and key_of(static_inputs(root, starts, settings, environment)) == key:
-        _write(entry_path, {"format": FORMAT, "key": key, "static": inputs, "dynamic": dynamic_inputs(root, reads),
-                            "output": output.read_text(), "args": [str(a) for a in result.args],
-                            "returncode": result.returncode, "stdout": result.stdout, "stderr": result.stderr})
+    dynamic = dynamic_inputs(root, reads)
+    if ok(result) and reads["files"] and dynamic is not None \
+            and key_of(static_inputs(root, starts, settings, environment)) == key:
+        cache_store.store(entry_path, {"format": FORMAT, "key": key, "static": inputs, "dynamic": dynamic,
+                                       "output": output.read_text(), "args": [str(a) for a in result.args],
+                                       "returncode": result.returncode, "stdout": result.stdout,
+                                       "stderr": result.stderr}, KEEP)
     return result, "miss"

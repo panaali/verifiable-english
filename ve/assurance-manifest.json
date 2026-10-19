@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 35450,
+    "total_lines": 35846,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -86,16 +86,17 @@
       },
       {
         "file": "lean/VE/Alternatives/Replay.lean",
-        "lines": 328,
-        "sha256": "1b69bb125b3dffc0c53e6e97099a5fe72f1759d3c492757a37c8e61eb06b0f78",
+        "lines": 333,
+        "sha256": "dc387661ef1e31661700bcc43b471bcbef167e935facbf925a5eaac1397a56d9",
         "ranges": [
           [
             1,
-            328
+            333
           ]
         ],
         "declarations": [
           "documentHash",
+          "decodePackageAt",
           "decodePackage",
           "sourceOf",
           "decodeRows",
@@ -105,12 +106,12 @@
       },
       {
         "file": "lean/VE/Alternatives/Wire.lean",
-        "lines": 416,
-        "sha256": "207a5df0a613b7cec6ebab81dfe9daf2ec37149eff02428c1deb26269c112754",
+        "lines": 423,
+        "sha256": "77bab0654eb05c84aa7648afb3b0f8116efb3bb2d127ed52d566461d95177e4d",
         "ranges": [
           [
             1,
-            416
+            423
           ]
         ],
         "declarations": [
@@ -404,12 +405,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 446,
-        "sha256": "86b4275dd14ba776d7f3a0190213c4c7cfd082a5ec5c87da0deab5b9dbd25e55",
+        "lines": 453,
+        "sha256": "897020d420570643b33cd03c2475c78ea4098955a0972010bec9a03808d396af",
         "ranges": [
           [
             1,
-            446
+            453
           ]
         ],
         "declarations": [
@@ -472,12 +473,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 442,
-        "sha256": "404602f5f12d16dededdea27923704a21b322c91e7cb3758ea4c89562bc99f8d",
+        "lines": 447,
+        "sha256": "c3e8614ba02860ef348417414ffe12db08aeb6b7e1227b1034f6ef33a32a17c6",
         "ranges": [
           [
             1,
-            442
+            447
           ]
         ],
         "declarations": [
@@ -652,12 +653,12 @@
       },
       {
         "file": "lean/VE/Readings/SupWire.lean",
-        "lines": 397,
-        "sha256": "5d8393aeea86b02e48b61c398e2dfd9a5408a5df64112fb470fb043aee3d6366",
+        "lines": 407,
+        "sha256": "a6ab89747a3b4175d1f0777836e8e638d9510e53b9e57cf4f170467f31ac06db",
         "ranges": [
           [
             1,
-            397
+            407
           ]
         ],
         "declarations": [
@@ -672,22 +673,24 @@
           "decodeSupModel",
           "decodeAssumed",
           "decodeShared",
+          "decodeConflictCertsFor",
           "decodeConflictCerts",
           "replayCertificateOf",
           "replayCertificate",
+          "prepareModelReplay",
           "replayModelOf",
           "replayModel"
         ],
-        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively; the admission and the certificate and model replays also take an admitted document (`admitS2Rest`, `admitS2Of`, `replayCertificateOf`, `replayModelOf`) so a case is admitted once (readings-defaults RD-2a review B2)"
+        "reason": "readings@1 S2a decoder: couplings and narrowings with W2's checks and texts, the superposed admission, choices, models over sup D's base vocabulary, and the certificate and model replays of readings_wire_all_sound and readings_wire_model_sound, and the superposed admission's refusals before any verdict (ReadingsUnsatisfiable, and the soft check of every compatible choice's document of DRI ruling 5: readings_wire_satisfiable, readings_wire_choice_wellFormed); the full file is pinned conservatively; the admission and the certificate and model replays also take an admitted document (`admitS2Rest`, `admitS2Of`, `replayCertificateOf`, `replayModelOf`) so a case is admitted once (readings-defaults RD-2a review B2); `prepareModelReplay` runs the same admission checks once and returns the model decoder for every scope of one superposed verdicts request, and `decodeConflictCertsFor` reads the certificates for already computed targets (RD-7)"
       },
       {
         "file": "lean/VE/Readings/UnspecifiedWire.lean",
-        "lines": 800,
-        "sha256": "d0d0e1b96bcf881c3222ac0c1a57380535155ab7c10ddacf641152ee92744267",
+        "lines": 798,
+        "sha256": "5584252f0a1553b676ac408fcb8e1903364b4c7c643662b16452d20030c6d0ea",
         "ranges": [
           [
             1,
-            800
+            798
           ]
         ],
         "declarations": [
@@ -711,7 +714,7 @@
       {
         "file": "lean/VE/Readings/VerdictsWire.lean",
         "lines": 1847,
-        "sha256": "69e2aeff2ef9388146f4c0d199fdbe472d4889a416712add3d5ec426d718bf86",
+        "sha256": "fedf217a0f311ab29c9bc68eac10b453fd73e512ca7e721cdb760d5a68fd9dff",
         "ranges": [
           [
             1,
@@ -1066,7 +1069,7 @@
       {
         "file": "lean/VE/Service/Document.lean",
         "lines": 1842,
-        "sha256": "a1ad4524945278fe8561b41701d9e4afc38f97900dc5c3726fa4485791856862",
+        "sha256": "f6d4799b6d2f800be386d8b43b7164bbb87b2d3318c2121867ee2cbdee1553a0",
         "ranges": [
           [
             1,
@@ -1651,12 +1654,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/LayeredAdmission.lean",
-        "lines": 378,
-        "sha256": "c68165ab906c49ce0e605336187026598ea003826640e1d6dd35b18d2dc5fd18",
+        "lines": 381,
+        "sha256": "e536158827380bc68b9d57e0c44001c3d6524ea8865262997ebb892e7467bc49",
         "ranges": [
           [
             1,
-            378
+            381
           ]
         ],
         "declarations": [
@@ -1720,6 +1723,27 @@
           "runVerdictsSD"
         ],
         "reason": "rd-9 SC-5: readings-verdicts under the soft completion: each compatible choice taking assumed checked by sdChoiceText and its evidence decoded on its own choiceLayeredG source (xEvidenceOf) as XEvidence (choiceU N c) (choiceX N c); every row holds of sdSem (sd_rowsHold); beyond 64 only the evidence's own choices; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Alternatives/FillWire.lean",
+        "lines": 361,
+        "sha256": "a7a473ee539897b9b07861908b3c0f49406e898ad6326a1e057209329897fab2",
+        "ranges": [
+          [
+            1,
+            361
+          ]
+        ],
+        "declarations": [
+          "decodeAltSourceU",
+          "baseEnvironmentJsonAltU",
+          "decodePackageU",
+          "sourceOfU",
+          "replayAltConflictU",
+          "replayFollowableU",
+          "replayDilemmaU"
+        ],
+        "reason": "the alternatives source with the completion, its package bindings and witness filling from JSON (ET-7); the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1813,7 +1837,14 @@
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Schemas/Metered.lean": "the metered mode's response shape (metered.json) and the JSON constants of its three results; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing",
-      "lean/VE/LimitTies.lean": "build-time checks only: its #guards build JSON inputs to check the frozen decoders' limits against VE.Limits at the limit and one past it (lf-18 review F2); no executable, service mode or record reads it"
+      "lean/VE/LimitTies.lean": "build-time checks only: its #guards build JSON inputs to check the frozen decoders' limits against VE.Limits at the limit and one past it (lf-18 review F2); no executable, service mode or record reads it",
+      "lean/VE/Numbers/PhrasesMain.lean": "generator only: prints the fixed comparison phrase table as JSON for ve/numbers_phrases.json; reads no request and is not a service decoder",
+      "lean/VE/Judgments/Decl.lean": "lean:judgments-records: `records` reads the `open_terms` fields only after W2's validator (`Loader.openTermNames`, sorts flag on) has checked them, and returns W2's names and refusals (records_names, records_refuse); no service mode or route calls it yet (JT-2)",
+      "lean/VE/Norms/FamilySpec.lean": "statements about the family norms dispatch test Norms.Family.firstOrder (getObjVal? and getObjValD of the declarations and norms it reads); no runtime JSON handling",
+      "lean/VE/Readings/SupVerdictsWire.lean": "lean:runner-glue: readings-verdicts superposed request dispatch and response rows; evidence is checked by the existing pinned readings decoders and Lean folds its accepted results",
+      "lean/VE/Readings/SupVerdictsExamples.lean": "computed regression guards for the superposed verdict and English plan; no production runner imports this file",
+      "lean/VE/NormDefaults/Packs.lean": "encoder only: premise packs (PK-1); `labelledJson` and `elaborateArrays` write the layered elaborate's `soft` and `rights` arrays from Lean values; it reads no request JSON (the packs come from the pinned Layered.lean decoders)",
+      "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d); no runtime decoding"
     }
   },
   "plan_operations": {

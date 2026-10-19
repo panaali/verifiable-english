@@ -10,7 +10,7 @@ import VE.Service.ParseDiagnostic
 import VE.Risk.Wire
 import VE.Time.Wire
 import VE.Compose.Dispatch
-import VE.Alternatives.Wire
+import VE.Alternatives.FillWire
 import VE.SpeechActs.Wire
 import VE.Attribution.Wire
 import VE.SoftNorms.Phases
@@ -234,7 +234,10 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
       (Json.mkObj [("norms", empty), ("units", empty)])
     pure ()
   else if named.contains "alternatives@0" || (environment.getObjVal? "alternatives").isOk then
-    let _ ← VE.Alternatives.Wire.decodeAltSource environment empty empty .environment
+    if VE.NormDefaults.Wire.hasProfile environment then
+      let _ ← VE.Alternatives.decodeAltSourceU environment empty empty .environment
+    else
+      let _ ← VE.Alternatives.Wire.decodeAltSource environment empty empty .environment
     pure ()
   else if named.contains "speech-acts@0" || (environment.getObjVal? "speech_acts").isOk then
     let _ ← VE.SpeechActs.Wire.decodeSpeechEnvironmentFull environment

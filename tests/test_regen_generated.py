@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import ast
 import builtins
+import dataclasses
 import fnmatch
 import json
 from pathlib import Path
@@ -89,6 +90,38 @@ def test_every_pattern_names_a_tracked_file_and_owns_it():
             for name in matched:
                 assert R.owner(name) is entry, (name, R.owner(name))
     assert R.owner("ve/document.py") is None and R.owner("lean/VE/Route/Wire.lean") is None
+
+
+def _unfreshened(entries) -> list[str]:
+    """Entries owning a `ve/` file whose `fresh` names no gate stage and no test function of the suite."""
+    gate = (ROOT / "tools/gate.py").read_text()
+    problems = []
+    for entry in entries:
+        if not any(pattern.startswith("ve/") for pattern in entry.paths):
+            continue
+        if entry.fresh.startswith("gate:"):
+            if f'stage="{entry.fresh.removeprefix("gate:")}"' not in gate:
+                problems.append(f"{entry.name}: no gate stage {entry.fresh}")
+            continue
+        path, _, name = entry.fresh.partition("::")
+        functions = ({node.name for node in ast.parse((ROOT / path).read_text()).body
+                      if isinstance(node, ast.FunctionDef)}
+                     if path.startswith("tests/test_") and path in TRACKED else set())
+        if name not in functions:
+            problems.append(f"{entry.name}: no automatic check {entry.fresh!r}")
+    return problems
+
+
+def test_every_table_the_product_reads_is_checked_by_the_suite_or_the_gate():
+    """Review F1 (me-1a): a generated file under `ve/` whose check only runs by hand drifts from its owner
+    (`ve/numbers_phrases.json` had only a mocked test). Each such entry names the test or gate stage that runs
+    its check unmocked."""
+    assert _unfreshened(R.GENERATED) == []
+    numbers = next(entry for entry in R.GENERATED if entry.name == "numbers-phrases")
+    for fresh in ("", "tests/test_numbers_phrases.py::test_no_such_test", "gate:No such stage",
+                  "tests/test_numbers_phrases.py"):
+        assert _unfreshened([dataclasses.replace(numbers, fresh=fresh)]) != []
+    assert "fresh: gate:Wire contract check" in R.listing()
 
 
 def test_gitattributes_is_generated_from_the_registry():

@@ -1,0 +1,4 @@
+class lines: K 997, S 10220, D 14924, G 30712, C 9879, P 76483, T 15778, o 13410
+tied 267, unclassified 0, trusted 52107 (K + S + untied [V] + unclassified), 172403 lines in 533 files
+VE/Numbers/Decimal.lean: VE.Numbers.decValue: the statement of VE.Numbers.tenPow_add does not mention VE.Numbers.decValue of VE.Numbers.Decimal
+exit 1

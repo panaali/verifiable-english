@@ -259,7 +259,7 @@ def test_a_rust_process_that_writes_two_records_is_no_answer(rust, tmp_path):
 
 
 @pytest.mark.parametrize("phase", ["write", "response"])
-def test_a_rust_record_completed_past_its_deadline_is_no_answer(tmp_path, monkeypatch, phase):
+def test_a_rust_record_completed_past_its_deadline_is_no_answer(rust, tmp_path, monkeypatch, phase):
     """The deadline passes during the last write of the case or the read that completes the record
     (no select follows either): the record is not accepted, and its process is not reused."""
     from types import SimpleNamespace
