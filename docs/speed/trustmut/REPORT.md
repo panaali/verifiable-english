@@ -154,8 +154,9 @@ The sweep (`docs/speed/trustmut/sweep.py --run`, evidence `evidence/sweep.json` 
 `trust_map.py` and of the tables it ran): the same table with the rich body `!(n < 1) && (n ≤ 3 || decide (n = 5))
 && n != 2 && ([n] ++ [1]).all (· ≥ 1) && [n, 3].any (· == 3) && true`, which carries every operator of the test
 package and every other operator but the arms (54 mutants each), and the value read as `(List.range 6).map r`; the
-arms and the multi-line forms are the F9 table (section 1c), in the same run. All 3,024 mutants ran (926 s at 16
-jobs on the final tool after F9): 1,330 KILLED, 1,484 SURVIVOR, 210 UNKNOWN, 0 INVALID. No row that reads a proof,
+arms and the multi-line forms are the F9 table (section 1c), in the same run. All 3,024 mutants ran (1,362 s at 16
+jobs at 5-minute load 25–46, on the final tool and table; a run before TM29's test was added took 926 s,
+every verdict the same): 1,330 KILLED, 1,484 SURVIVOR, 210 UNKNOWN, 0 INVALID. No row that reads a proof,
 and no row that is no check, has a KILLED mutant; every row expected to kill does; the UNKNOWN are exactly the
 non-equivalent mutants of the six definitions F8's form reads (35 each), UNKNOWN at that definition. The
 definitions a check or F8's definition reads keep 19 survivors each (38 + 6 such definitions), all equivalent
