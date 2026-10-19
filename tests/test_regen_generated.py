@@ -629,7 +629,7 @@ root, name, change = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3:]
 exe = root / "bin/ve_service"
 build = exe.read_text()
 with (root / "service.log").open("a") as log:
-    log.write(f"{name} {build}\\n")
+    log.write(f"{name} {build}\\n".replace("\\n", "|", build.count("\\n")))
 if hashlib.sha256(build.encode()).hexdigest() not in json.loads((root / "lean/checkers.lock").read_text())["ve_service"]:
     sys.exit(f"CheckerUnavailable: {exe} has unlisted build")
 if build != "built from " + (root / "lean/Source.lean").read_text():
@@ -763,6 +763,36 @@ def test_a_failed_bootstrap_build_stops_the_run_and_names_the_build(tmp_path, mo
     assert R.main(["--write"]) == 1
     assert "regen_generated: failed: lake-build" in capsys.readouterr().err
     assert _log(root, "service.log") == [] and _pins(root) == ["old"]
+
+
+def test_resolve_of_two_pinned_sides_builds_and_pins_the_merged_service_in_one_run(tmp_path, monkeypatch):
+    """L58/L82: each side pinned its own build; the merged Lean tree builds one neither pinned. One `--resolve`
+    builds and pins it before the first user, runs every writer and check, and stages the lock with both
+    sides' pins and the merged build."""
+    root = _service_tree(tmp_path, monkeypatch, source="1\n2\n3\n", built="1\n2\n3\n",
+                         pins=[_digest("built from 1\n2\n3\n")], users=USERS)
+    (root / ".gitignore").write_text("bin/\n*.log\n")
+    for args in (("init", "-q", "-b", "base"), ("config", "user.email", "t@example.com"), ("config", "user.name", "t")):
+        _git(root, *args)
+    _commit(root, {}, "base")
+    sides = {"theirs": "1\n2\n3t\n", "ours": "1o\n2\n3\n"}
+    for side, source in sides.items():
+        _git(root, "checkout", "-q", "-b", side, "base")
+        lock = json.loads((root / "lean/checkers.lock").read_text())
+        _commit(root, {"lean/Source.lean": source, "lean/checkers.lock": json.dumps(
+            {**lock, "ve_service": sorted([*lock["ve_service"], _digest(f"built from {source}")])}, indent=2) + "\n"},
+            side)
+    (root / "bin/ve_service").write_text(f"built from {sides['ours']}")  # this worktree's build
+    _git(root, "merge", "--no-commit", "-q", "theirs", check=False)
+    assert _git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD", check=False).returncode == 0
+    assert R.resolve(R.GENERATED, root) == 0
+    merged = "1o\n2\n3t\n"
+    assert (root / "lean/Source.lean").read_text() == merged
+    assert _log(root, "service.log") == [f"{name} built from 1o|2|3t|" for name in
+                                         ("english-lexicon-fixtures", "english-codes")] * 2  # writers, then checks
+    assert _pins(root) == sorted(_digest(f"built from {source}") for source in ("1\n2\n3\n", *sides.values(), merged))
+    assert _git(root, "commit", "-q", "--no-edit", check=False).returncode == 0
+    assert _git(root, "status", "--porcelain").stdout == ""
 
 
 @pytest.mark.parametrize("built, pins, cause, why", [
