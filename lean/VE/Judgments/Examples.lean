@@ -271,6 +271,26 @@ theorem names_omega : (okVal (admit Eω [] regulatedω
 #guard [u037ω, u045aω].map (fun v => okVal (status [] Jω v)) == [some "OPEN", some "OPEN"]
 #guard usageMap [] Jω [u037ω, u045aω] == ([("arbitrary_measure", ["u037"]), ("arbitrary_interference", ["u045a"])], [])
 
+/-! ## Rows the build adds (internal: no row of section 11, not replayed), one per definition no row reaches -/
+
+-- a rule's carve-outs are read: the guard is judgment-free, the carve-out uses `arbitrary`
+def ruleκ : VE.Norms.Node := VE.Norms.Checks.rule "no-arrest" "subjects" false (u "arrest") [u "arbitrary"]
+theorem formulas_carve : (Content.rule ruleκ).formulas = [u "arrest", u "arbitrary"] := rfl
+#guard errText (status defs J1 (view "u1" "specified" [] (some (.rule ruleκ)))) ==
+  some "JudgmentNotChecked: u1 arbitrary"
+-- a definition reached through another: `prolonged_detention` uses `wrongful_detention`, which uses `arbitrary`
+def defsChain : List VE.Definitions.Def :=
+  defs ++ [⟨"prolonged_detention", ["act"], .and (u "wrongful_detention") (u "prolonged")⟩]
+theorem reachedBodies_chain : reachedBodies defsChain [u "prolonged_detention"] =
+    [.and (u "detention") (u "arbitrary"), .and (u "wrongful_detention") (u "prolonged")] := by decide
+#guard dependsOn defsChain J1 [u "prolonged_detention"] == ["arbitrary"]
+-- `viewOf` takes the unit's own active set from the loader's list, with its candidates (J-ξ's view)
+def fsξ : VE.Discourse.FrontSet := ⟨"s1", "u055", 1, "authored", []⟩
+theorem viewOf_xi : viewOf [(fsξ, [true])] (fun _ => [some (.formula fξ)]) "u055" "open" ["arbitrary"] false none =
+    ⟨"u055", "open", ["arbitrary"], false, none, some ⟨true, true, [some (.formula fξ)]⟩⟩ := by decide
+#guard viewOf [(fsξ, [true])] (fun _ => [some (.formula fξ)]) "u055" "open" ["arbitrary"] false none == uξ
+#guard (viewOf [(fsξ, [true])] (fun _ => [some (.formula fξ)]) "u1" "open" ["arbitrary"] false none).set == none
+
 /-! ## 11.9 Removal: both hypotheses of `status_remove_unused` are needed -/
 
 -- J-β lists nothing and depends on `arbitrary`: removing it would hide the refusal
