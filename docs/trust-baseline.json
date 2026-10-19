@@ -798,34 +798,6 @@
    "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
   },
   {
-   "class": "S",
-   "lines": 35,
-   "reason": "qt-a2: S +35 (K +0, V +0): lean/VE/Cardinality/Syntax.lean +25 (CTerm 6, CTermTyped 6, admittedRules 3, CFormula +4, Admitted +6), lean/VE/Cardinality/Semantics.lean +10 (CTerm.Denotes 5, CFormula.holds +5)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a2, 2026-10-18",
-   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
-  },
-  {
-   "class": "S",
-   "lines": 6,
-   "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
-   "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
-  },
-  {
-   "class": "V",
-   "lines": 34,
-   "reason": "lf-18 (lean-first batch 18): the metered evaluator as a service mode, new Lean-owned behaviour replacing the deleted Python evaluation authority: VE/Route/MeteredTrace.lean +30 (Trace, Row, Trace.rows, Trace.rowsOf, Row.json, Trace.json), ResponseShape/Skeletons.lean +3 (metered), VE/Service/Protocol.lean +2 (the metered mode), ResponseShape/Schemas.lean +1; S -3 (VE/Limits.lean replaces three S copies), K +0; tested by tests/test_metered_lean.py and the relay gate's service:metered mutants; ties pass in manage-agents FOLLOW-UPS.md",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
-   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
-  },
-  {
-   "class": "V",
-   "lines": 86,
-   "reason": "lf-18 F7 (DRI note lf-18-dri-note-20261019): the decoded environment kept with each handle, and the request and case texts cut from their bytes, new Lean-owned behaviour: VE/Service/Protocol.lean +62 (Entry, Entry.of, Handles.entry?, caseResultWith, caseBounds, restrictedCases, memberCuts; objectMembersByChars, sameMembers, renderCases and sameCases are class T), VE/Route/MeteredRun.lean +24 (Prepared, prepare, runWith, reportedWith); with T1 the item is V +120, S -3, K +0 (+117); tested by tests/test_metered_handles.py, the objectMembers and restrictedCases #guards and the caseResult_cached theorem; ties pass in manage-agents FOLLOW-UPS.md",
-   "signature": "standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
-   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
-  },
-  {
    "class": "V",
    "lines": 4,
    "reason": "ps-6r: VE/EnglishGrammar/Lexicon.lean V +4 (four idiom rows in idioms2: core value, guideline, mission, nature of)",
@@ -845,6 +817,41 @@
    "reason": "df-1a: VE/Defaults/Premises.lean S +18 (dfltOf, dfltLabelled), V +26 (untied G[V]: dfltPremises, dfltLabels, defaultX, withoutDefaults, bareExceptionLabels, Basis, Form)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1a, 2026-10-18",
    "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "S",
+   "lines": 35,
+   "reason": "qt-a2: S +35 (K +0, V +0): lean/VE/Cardinality/Syntax.lean +25 (CTerm 6, CTermTyped 6, admittedRules 3, CFormula +4, Admitted +6), lean/VE/Cardinality/Semantics.lean +10 (CTerm.Denotes 5, CFormula.holds +5)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a2, 2026-10-18",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "S",
+   "lines": 88,
+   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "V",
+   "lines": 34,
+   "reason": "lf-18 (lean-first batch 18): the metered evaluator as a service mode, new Lean-owned behaviour replacing the deleted Python evaluation authority: VE/Route/MeteredTrace.lean +30 (Trace, Row, Trace.rows, Trace.rowsOf, Row.json, Trace.json), ResponseShape/Skeletons.lean +3 (metered), VE/Service/Protocol.lean +2 (the metered mode), ResponseShape/Schemas.lean +1; S -3 (VE/Limits.lean replaces three S copies), K +0; tested by tests/test_metered_lean.py and the relay gate's service:metered mutants; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
+  },
+  {
+   "class": "V",
+   "lines": 86,
+   "reason": "lf-18 F7 (DRI note lf-18-dri-note-20261019): the decoded environment kept with each handle, and the request and case texts cut from their bytes, new Lean-owned behaviour: VE/Service/Protocol.lean +62 (Entry, Entry.of, Handles.entry?, caseResultWith, caseBounds, restrictedCases, memberCuts; objectMembersByChars, sameMembers, renderCases and sameCases are class T), VE/Route/MeteredRun.lean +24 (Prepared, prepare, runWith, reportedWith); with T1 the item is V +120, S -3, K +0 (+117); tested by tests/test_metered_handles.py, the objectMembers and restrictedCases #guards and the caseResult_cached theorem; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
   },
   {
    "class": "S",
@@ -894,6 +901,13 @@
    "reason": "me-6: lean/VE/Calc/Dimension.lean S +55 (PhysDim 5, PhysDim.Normal 2, PhysDim.one 2, insertExp 8, PhysDim.mul 1, PhysDim.inv 1, PhysDim.npow 3, Expr.dimOf 12, Rescale 5, zpowR 4, Rescale.of 3, Rescale.apply 6, legacyDim 3); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6, 2026-10-18",
    "commit": "9ea276842060977979999c8f3db730d94f527ceb"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
+   "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
   }
  ]
 }
