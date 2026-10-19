@@ -27,9 +27,9 @@ of the English (a non-wording guard) carries the marker `# relay-lint: non-wordi
 counted in the report.
 
 A third rule keeps the senses path's English in Lean (readings-defaults plan, RD-8): no module of the senses path
-(`PARSE_FREE`) names `parse_english`, and in `ve/document.py` no `if` statement whose test reads `senses` names it
-in its body, so a fence of a senses document is never read by Python's English reader. Names are read with
-Python's own parser (a call, an attribute, an import).
+(`PARSE_FREE`) names `parse_english`, and in the document loader's package (`ve/document/`, each module) no `if`
+statement whose test reads `senses` names it in its body, so a fence of a senses document is never read by Python's
+English reader. Names are read with Python's own parser (a call, an attribute, an import).
 
 A fourth rule keeps situation and point wording in Lean (question answering Q2.4, plan 4.5 and 5): no readings or
 norm-defaults module (`WORDING_GLOBS`) words an element line, a filled gap or a point's silence itself. A string
@@ -83,9 +83,9 @@ from ve.environment import WORDING_LAYER_PREFIXES  # noqa: E402
 READINGS_RESERVED = (*RESERVED, *WORDING_LAYER_PREFIXES["soft-norms@0"])
 NON_WORDING = "# relay-lint: non-wording"
 # The senses path (RD-8): the modules that may not name Python's English reader, and the loader whose senses
-# branches may not.
+# branches may not: every module of its package (AR-16a split `ve/document.py` into `ve/document/`).
 PARSE_FREE = ("ve/senses_document.py", "ve/backends/senses.py", "ve/senses/__init__.py")
-SENSES_LOADER = "ve/document.py"
+SENSES_LOADER = "ve/document"
 ENGLISH_READER = "parse_english"
 # The situation-wording rule (Q2.4): the modules, the phrases only Lean words, and the listed frames.
 WORDING_GLOBS = ("ve/readings*.py", "ve/norm_defaults*.py")
@@ -318,6 +318,11 @@ def _names_reader(node: ast.AST) -> list[int]:
     return lines
 
 
+def loader_modules() -> list[Path]:
+    """The modules of the document loader's package (`SENSES_LOADER`), whose senses branches the third rule reads."""
+    return sorted((ROOT / SENSES_LOADER).glob("*.py"))
+
+
 def english_reads(path: Path, *, branches_only: bool = False) -> list[str]:
     """The places where `path` names Python's English reader: anywhere, or with `branches_only` only in the body
     of an `if` whose test reads the name `senses`."""
@@ -352,8 +357,8 @@ def main(argv: list[str] | None = None) -> int:
     # The senses path's files are pinned by tests/test_relay_lint.py; a tree without them has no senses path.
     senses = paths if argv else [ROOT / p for p in PARSE_FREE if (ROOT / p).is_file()]
     found += [f for p in senses for f in english_reads(p)]
-    if not argv and (ROOT / SENSES_LOADER).is_file():
-        found += english_reads(ROOT / SENSES_LOADER, branches_only=True)
+    if not argv:
+        found += [f for p in loader_modules() for f in english_reads(p, branches_only=True)]
     wording = paths if argv else sorted(p for pattern in WORDING_GLOBS for p in ROOT.glob(pattern))
     frames: set = set()
     found += [f for p in wording for f in wording_findings(p, frames)]
