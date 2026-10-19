@@ -111,6 +111,7 @@ import VE.Calc.Examples
 import VE.Calc.Render
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
+import VE.Scales.Examples
 import VE.Cardinality.Examples
 import VE.Risk.Cond
 import VE.Risk.Derive
@@ -155,6 +156,9 @@ import VE.Ask.ZeroWire
 import VE.Ask.ZeroAnswer
 import VE.Ask.Examples
 import VE.Norms.FamilySpec
+import VE.Acts.Syntax
+import VE.Acts.Read
+import VE.Acts.GrammarExamples
 import VE.Alternatives.FillExamples
 import VE.NormDefaults.Examples
 import VE.Core.Checks
@@ -171,3 +175,5 @@ import VE.NormDefaults.PacksLegacyExamples
 import VE.Readings.SupPacks
 import VE.Layout.List
 import VE.Scope.Examples
+import VE.Defaults.Premises
+import VE.Defaults.Examples

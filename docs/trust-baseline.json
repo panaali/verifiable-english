@@ -796,6 +796,55 @@
    "reason": "et-7b fix1 (review F1): VE/Alternatives/Run.lean V +1 (statusPhrase: the search UNKNOWN names its cause); et-7b's total K +0, S +42, V +94 (136 lines)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7b, 2026-10-19",
    "commit": "cb033316a7cb0476e856065e4047efe411bbe43d"
+  },
+  {
+   "class": "S",
+   "lines": 69,
+   "reason": "ap-2: lean/VE/Acts/Syntax.lean +109 (S 45, D[V] 53 checkVocab, G[V] 11), lean/VE/Acts/Read.lean +36 (S 24, G[V] 12 untied; listing and valueOf tied, 15); K +0; total +145",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
+  },
+  {
+   "class": "V",
+   "lines": 76,
+   "reason": "ap-2: lean/VE/Acts/Syntax.lean +109 (S 45, D[V] 53 checkVocab, G[V] 11), lean/VE/Acts/Read.lean +36 (S 24, G[V] 12 untied; listing and valueOf tied, 15); K +0; total +145",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
+  },
+  {
+   "class": "S",
+   "lines": 78,
+   "reason": "qt-b1: S +78 (VE/Scales/Syntax.lean +29, VE/Scales/Premises.lean +27, VE/Scales/Intended.lean +22); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1, 2026-10-18",
+   "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "ps-6r: VE/EnglishGrammar/Lexicon.lean V +4 (four idiom rows in idioms2: core value, guideline, mission, nature of)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-6r, 2026-10-18",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "S",
+   "lines": 18,
+   "reason": "df-1a: VE/Defaults/Premises.lean S +18 (dfltOf, dfltLabelled), V +26 (untied G[V]: dfltPremises, dfltLabels, defaultX, withoutDefaults, bareExceptionLabels, Basis, Form)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1a, 2026-10-18",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "V",
+   "lines": 26,
+   "reason": "df-1a: VE/Defaults/Premises.lean S +18 (dfltOf, dfltLabelled), V +26 (untied G[V]: dfltPremises, dfltLabels, defaultX, withoutDefaults, bareExceptionLabels, Basis, Form)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1a, 2026-10-18",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "S",
+   "lines": 35,
+   "reason": "qt-a2: S +35 (K +0, V +0): lean/VE/Cardinality/Syntax.lean +25 (CTerm 6, CTermTyped 6, admittedRules 3, CFormula +4, Admitted +6), lean/VE/Cardinality/Semantics.lean +10 (CTerm.Denotes 5, CFormula.holds +5)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a2, 2026-10-18",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
   }
  ]
 }

@@ -242,6 +242,13 @@ theorem bindAll_wellFormed {sorts : List String} (hs : ∀ s ∈ sorts, s ∈ E.
     refine ⟨hs s List.mem_cons_self, ?_⟩
     exact ih (fun t ht => hs t (List.mem_cons_of_mem _ ht)) (s :: Δ) body (by simpa using h)
 
+theorem bindAll_wellFormed_inv {E : VE.Environment} (body : VE.Formula) :
+    ∀ (ss Γ : List String), (bindAll ss body).WellFormed E Γ → body.WellFormed E (ss.reverse ++ Γ)
+  | [], Γ, h => h
+  | s :: ss, Γ, h => by
+    have := bindAll_wellFormed_inv body ss (s :: Γ) h.2
+    simpa [List.reverse_cons, List.append_assoc] using this
+
 theorem elab_wellFormed {r : Regulated} (hT : RulesTyped T E r.sorts.reverse r.name)
     (ha : Arity r.sorts) (hp : E.predicates r.name = some r.sorts) (hs : ∀ s ∈ r.sorts, s ∈ E.sorts) :
     (elabPremise T r).WellFormed E [] := by

@@ -1,0 +1,25 @@
+"""One-off: compare the qt-b1 Lean declarations with the approved blocks of spec 6.1 and 6.2 (whitespace-normalised,
+theorems up to the proof's `:=`), using tools/check_readings_defaults_statements.declarations."""
+import json, sys
+from pathlib import Path
+ROOT = Path(sys.argv[1])
+sys.path.insert(0, str(ROOT / 'tools'))
+from check_readings_defaults_statements import declarations, lean_of
+spec = (ROOT / 'docs/spec/quantities.md').read_text()
+sec = spec.split('### 6.1 Declarations and premises (QT-B1)', 1)[1].split('### 6.3', 1)[0]
+approved = {}
+for b in [b.split('```', 1)[0] for b in sec.split('```lean')[1:]]:
+    for k, v in declarations(b, statements_only=True).items():
+        approved.setdefault(k, []).extend(v)
+lean = lean_of([f for f in sorted((ROOT / 'lean/VE/Scales').glob('*.lean')) if f.name != 'Examples.lean'])
+out = {'exact': [], 'differs': [], 'not_built': []}
+for (kind, name), texts in sorted(approved.items()):
+    found = lean.get((kind, name), [])
+    if not found:
+        out['not_built'].append(f'{kind} {name}')
+        continue
+    a, l = texts[0], found[0]
+    (out['exact'] if a == l else out['differs']).append(f'{kind} {name}' if a == l else
+        {'decl': f'{kind} {name}', 'approved': a, 'lean': l})
+out['counts'] = {k: len(v) for k, v in out.items() if isinstance(v, list)}
+print(json.dumps(out, indent=1, ensure_ascii=False))
