@@ -1,0 +1,274 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16d_document.py:87 (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_b16d_document.py::test_norm_defaults_readings_and_english_fence_are_decided_by_lean"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_b16d_document.py::test_norm_defaults_readings_and_english_fence_are_decided_by_lean"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.7,
+   "output_tail": "ocument.py:88: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/assurance.py:127: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/document/report.py:386: in check_document\n    return _check_document(path)\n           ^^^^^^^^^^^^^^^^^^^^^\nve/document/report.py:390: in _check_document\n    doc = _load(Path(path), admit=True)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document/load.py:42: in _load\n    return _load_document(raw, path, None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n_ = (b'---\\n{\\n \"format\": \"ve-document@1\",\\n \"environment\": {\\n  \"language\": \"ve.core@0.2\",\\n  \"profiles\": [\\n   \"document...n```\\n', PosixPath('/home/seyran/code/ve-arch-20261019-2/tests/data/readings_s2/constitution-nd-readings.ve.md'), None)\n\n>   monkeypatch.setattr(D_load, \"_load_document\", lambda *_: pytest.fail(\"retained document loader ran\"))\n                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: retained document loader ran\n\ntests/test_b16d_document.py:87: Failed\n=========================== short test summary info ============================\nFAILED tests/test_b16d_document.py::test_norm_defaults_readings_and_english_fence_are_decided_by_lean\n1 failed in 1.32s\n\nve: English comparator: {\"records\": 1, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 1}} (/tmp/ve-english-comparator-iti9ew0a)\n"
+  },
+  {
+   "id": "M2",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16d_document.py:124 (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_b16d_document.py::test_labeled_pending_pilot_is_lean_decided"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_b16d_document.py::test_labeled_pending_pilot_is_lean_decided"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.3,
+   "output_tail": "       ^^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_b16d_document.py:125: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/assurance.py:127: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/document/report.py:386: in check_document\n    return _check_document(path)\n           ^^^^^^^^^^^^^^^^^^^^^\nve/document/report.py:390: in _check_document\n    doc = _load(Path(path), admit=True)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document/load.py:42: in _load\n    return _load_document(raw, path, None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n_ = (b'---\\n{\"format\": \"ve-document@1\", \"reading_sets\": [{\"id\": \"force-u0036-s05\", \"unit\": \"u0036.s05\", \"version\": 1, \"sta....\\n```\\n', PosixPath('/tmp/pytest-of-seyran/pytest-27493/test_labeled_pending_pilot_is_0/without-content.ve.md'), None)\n\n>   monkeypatch.setattr(D_load, \"_load_document\", lambda *_: pytest.fail(\"retained loader ran\"))\n                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: retained loader ran\n\ntests/test_b16d_document.py:124: Failed\n=========================== short test summary info ============================\nFAILED tests/test_b16d_document.py::test_labeled_pending_pilot_is_lean_decided\n1 failed in 2.48s\n\nve: English comparator: {\"records\": 2, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 2}} (/tmp/ve-english-comparator-5ng_e57o)\n"
+  },
+  {
+   "id": "M3",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:64 (the no_python_loader fixture) (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_coverage_and_statuses_are_leans"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_document_lean_switch.py::test_coverage_and_statuses_are_leans"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.9,
+   "output_tail": "h, no_python_loader, monkeypatch):\n        path = write(tmp_path, dw.text_of(GENERATED[\"reading-sets\"]))\n        row = D._lean_answer(path.read_bytes(), False)\n>       doc = D.load_document(path)\n              ^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_document_lean_switch.py:85: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/document/load.py:31: in load_document\n    return _load(Path(path), admit=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document/load.py:42: in _load\n    return _load_document(raw, path, None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nargs = (b'---\\n{\"format\": \"ve-document@1\", \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\"], \"spec...or.\\nWeights.\\n', PosixPath('/tmp/pytest-of-seyran/pytest-27497/test_coverage_and_statuses_are0/document.ve.md'), None)\nkwargs = {}\n\n    def refuse(*args, **kwargs):\n>       raise AssertionError(\"Python's own document loader ran on a document Lean owns\")\nE       AssertionError: Python's own document loader ran on a document Lean owns\n\ntests/test_document_lean_switch.py:63: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_coverage_and_statuses_are_leans\n1 failed in 0.26s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ewd63w5i)\n"
+  },
+  {
+   "id": "M4",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:74 (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_owned_documents_are_decided_by_lean[plain]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_document_lean_switch.py::test_owned_documents_are_decided_by_lean[plain]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.0,
+   "output_tail": "                              ^^^^^^\ntests/test_document_lean_switch.py:76: in <lambda>\n    head = outcome(lambda: D.check_document(path)), outcome(lambda: D.coverage(D.load_document(path)))\n                           ^^^^^^^^^^^^^^^^^^^^^^\nve/assurance.py:127: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/document/report.py:386: in check_document\n    return _check_document(path)\n           ^^^^^^^^^^^^^^^^^^^^^\nve/document/report.py:390: in _check_document\n    doc = _load(Path(path), admit=True)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document/load.py:42: in _load\n    return _load_document(raw, path, None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_document_lean_switch.py:75: in <lambda>\n    lambda *a, **k: (_ for _ in ()).throw(AssertionError(\"retained path\")))\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <tuple_iterator object at 0x7c009795f190>\n\n>   lambda *a, **k: (_ for _ in ()).throw(AssertionError(\"retained path\")))\nE   AssertionError: retained path\n\ntests/test_document_lean_switch.py:75: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_owned_documents_are_decided_by_lean[plain]\n1 failed in 0.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-j8say3wt)\n"
+  },
+  {
+   "id": "M5",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:104 (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_null_content_is_absent_on_the_lean_path"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_document_lean_switch.py::test_null_content_is_absent_on_the_lean_path"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.1,
+   "output_tail": "(call(), default=str))}\n                                              ^^^^^^\ntests/test_document_lean_switch.py:106: in <lambda>\n    assert outcome(lambda: D.check_document(path)) == expected\n                           ^^^^^^^^^^^^^^^^^^^^^^\nve/assurance.py:127: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/document/report.py:386: in check_document\n    return _check_document(path)\n           ^^^^^^^^^^^^^^^^^^^^^\nve/document/report.py:390: in _check_document\n    doc = _load(Path(path), admit=True)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document/load.py:42: in _load\n    return _load_document(raw, path, None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_document_lean_switch.py:105: in <lambda>\n    lambda *a, **k: (_ for _ in ()).throw(AssertionError(\"retained path\")))\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <tuple_iterator object at 0x72f00d95dea0>\n\n>   lambda *a, **k: (_ for _ in ()).throw(AssertionError(\"retained path\")))\nE   AssertionError: retained path\n\ntests/test_document_lean_switch.py:105: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_null_content_is_absent_on_the_lean_path\n1 failed in 0.34s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-kvifh_q8)\n"
+  },
+  {
+   "id": "M6",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:387 (ve.document.load._load_document): an undecided answer takes the retained loader exactly once; seeded: it runs twice",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_undecided_answers_take_the_retained_path"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [],
+   "killed": false,
+   "mutant_exit": 1,
+   "seconds": 4.2,
+   "output_tail": "rface parser\":\n            assert isinstance(error, CheckerUnavailable) and \"strict fence needs a surface parser\" in error.message\n        else:\n            assert isinstance(error, CheckerUnavailable) and reason in error.message\n        assert f\"| {listed} |\" in DELTA.read_text(), \"every retained reason is a row of the batch's DELTA.md\"\n        expected = outcome(python_path(path))\n        calls = []\n        original = D._load_document\n        monkeypatch.setattr(D_load, \"_load_document\", lambda *a: calls.append(a) or original(*a))\n        assert outcome(lambda: D.check_document(path)) == expected\n>       assert len(calls) == 1\nE       assert 2 == 1\nE        +  where 2 = len([(b'---\\n{\"format\": \"ve-document@1\", \"environment\": {\"language\": \"ve.core@0.2\", \"profiles\": [\"relational-fol@0\"], \"spe... one.\\nMeta.\\n', PosixPath('/tmp/pytest-of-seyran/pytest-27504/test_undecided_answers_take_th3/document.ve.md'), None)])\n\ntests/test_document_lean_switch.py:389: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_undecided_answers_take_the_retained_path[document checks under order@0 need its Lean profile route]\nFAILED tests/test_document_lean_switch.py::test_undecided_answers_take_the_retained_path[front matter outside the restricted JSON reader]\n2 failed, 2 passed in 1.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-q07uslgx)\n",
+   "problem": "the mutant survives"
+  },
+  {
+   "id": "M7",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16e_rights_document.py:54 (ve.document.load._lean_answer -> None): the comparison really runs the retained path; seeded: the retained path's document id is wrong",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_b16e_rights_document.py::test_rights_corpus_sample_is_lean_decided_with_the_prior_outcome"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_b16e_rights_document.py::test_rights_corpus_sample_is_lean_decided_with_the_prior_outcome"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.2,
+   "output_tail": "or headed in ((False, True) if seed % 4 == 0 else (False,)):\n                path = tmp_path / f\"s{seed}-{headed}.ve.md\"\n                path.write_text(_text(seed, headed))\n                lean, new, old = _both(path)\n>               assert new == old, (seed, headed)\nE               AssertionError: (0, False)\nE               assert [{'returned':...iberty-1.\\n'}] == [{'returned':...iberty-1.\\n'}]\nE                 \nE                 At index 0 diff: {'returned': {'format': 've-document@1', 'source_id': '92080be99cf388216ad5643d86ea92878ed2d7e1ad048388799fedcc7746e062', 'document_id': 'c555c9939cfcc6cb0584fc0ed51e30bb671aa8c004a7361f8f3d31ab1f013ca4', 'coverage': {'accounted_bytes': 40, 'bytes_by_kind': {'bar': 8, 'norm': 8, 'right': 24}, 'bytes_by_status': {'CHECKED': 8, 'OPEN': 32}, 'coverage_percent': 100, 'residual': {'assumptions': 0, 'bridge_leaves': 0, 'open_terms': 0, 'unresolved_reading_sets': 0, 'default_exceptions': 1, 'holistic_overrides': 0, 'instruction_switches': 0, 'weighing_points':...\nE                 \nE                 ...Full output truncated (2 lines hidden), use '-vv' to show\n\ntests/test_b16e_rights_document.py:111: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_b16e_rights_document.py::test_rights_corpus_sample_is_lean_decided_with_the_prior_outcome\n1 failed in 0.74s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-rydupo29)\n"
+  },
+  {
+   "id": "M8",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16f_document.py:55 (ve.document.load._lean_answer -> None): the comparison really runs the retained path; seeded: the retained path's document id is wrong",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_b16f_document.py::test_the_layer_seeds_are_decided_by_lean_with_the_retained_public_outcome[soft-norms]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_b16f_document.py::test_the_layer_seeds_are_decided_by_lean_with_the_retained_public_outcome[soft-norms]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.3,
+   "output_tail": "= old and \"returned\" in new[0], (new, old)\nE       AssertionError: ([{'returned': {'format': 've-document@1', 'source_id': '373f08d7b7b38467f47187acb35e4de60a388dc38a308cfb860cc0177b146...ssified as \"consents\".\nE         Alice is excepted.\nE         Checked reading: Alice is classified as \"soft__excepted__share_rule\".\nE         '}])\nE       assert (True and [{'returned':...re_rule\".\\n'}] == [{'returned':...re_rule\".\\n'}]\nE         \nE         At index 0 diff: {'returned': {'format': 've-document@1', 'source_id': '373f08d7b7b38467f47187acb35e4de60a388dc38a308cfb860cc0177b1460d0', 'document_id': '5b747db13aa90e547ac5707654b1867de4b9bc69901a61911a255273918f2703', 'coverage': {'accounted_bytes': 56, 'bytes_by_kind': {'asserted': 35, 'norm': 21}, 'bytes_by_status': {'CHECKED': 35, 'OPEN': 21}, 'coverage_percent': 100, 'residual': {'assumptions': 2, 'bridge_leaves': 0, 'open_terms': 0, 'unresolved_reading_sets': 0, 'default_exceptions': 1, 'holistic_overrides': 0, 'instruction_switches': 0, 'weighing_points': 0}, ...\nE         \nE         ...Full output truncated (2 lines hidden), use '-vv' to show)\n\ntests/test_b16f_document.py:67: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_b16f_document.py::test_the_layer_seeds_are_decided_by_lean_with_the_retained_public_outcome[soft-norms]\n1 failed in 0.40s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-l4lgwzpd)\n"
+  },
+  {
+   "id": "M9",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16f_senses_document.py:68 (ve.document.load._lean_answer -> None): the comparison really runs the retained path; seeded: the retained path's document id is wrong",
+   "source_sha256": "7d6110ed0e22b64102c795513ca56c685248304386a5214e98b5a3d263899b43",
+   "tests": [
+    "tests/test_b16f_senses_document.py::test_a_valid_senses_document_is_decided_by_lean[d_parenthetical_switch-modern]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_b16f_senses_document.py::test_a_valid_senses_document_is_decided_by_lean[d_parenthetical_switch-modern]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.7,
+   "output_tail": "rt decided and new == old and \"returned\" in new[0], (new, old)\nE       AssertionError: ([{'returned': {'format': 've-document@1', 'source_id': 'f544267e29849738456676226975c824b8a952cffadba6aadf913f08f34a5....}, ...}}, {'raised': {'code': 'UnknownSymbol', 'message': \"UnknownSymbol: Unknown predicate 'sense__corrigible_1'\"}}])\nE       assert (True and [{'returned':...rigible_1'\"}}] == [{'returned':...rigible_1'\"}}]\nE         \nE         At index 0 diff: {'returned': {'format': 've-document@1', 'source_id': 'f544267e29849738456676226975c824b8a952cffadba6aadf913f08f34a5ac4', 'document_id': '6789b4fe8ae6a448af424d690475b577a2bc12dbab983c5849ffdec1aacaf21c', 'coverage': {'accounted_bytes': 12, 'bytes_by_kind': {'asserted': 12}, 'bytes_by_status': {'CHECKED': 12}, 'coverage_percent': 100, 'residual': {'assumptions': 1, 'bridge_leaves': 0, 'open_terms': 0, 'unresolved_reading_sets': 0}, 'residual_total': 1, 'source_bytes': 12, 'unformalised_reasons': {}}, 'reading_plan': {'route': 'single', 'choices': [{}]},...\nE         \nE         ...Full output truncated (2 lines hidden), use '-vv' to show)\n\ntests/test_b16f_senses_document.py:83: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_b16f_senses_document.py::test_a_valid_senses_document_is_decided_by_lean[d_parenthetical_switch-modern]\n1 failed in 0.59s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qslssdjn)\n"
+  },
+  {
+   "id": "M10",
+   "file": "ve/document/lean.py",
+   "claim": "retargeted patches tests/test_document_lean_switch.py:610 (ve.document.source.Environment, ve.document.lean.Environment): a document Lean accepted that Python cannot build is CheckerUnavailable; seeded: the build failure escapes as VEError",
+   "source_sha256": "f6d1fe1ca37b3a90136173b475c7f90c8d0db416704e2044cbac1df4f8e76e65",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_a_document_lean_accepted_that_python_cannot_build_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_document_lean_switch.py::test_a_document_lean_accepted_that_python_cannot_build_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.3,
+   "output_tail": " _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/document/load.py:31: in load_document\n    return _load(Path(path), admit=False)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document/load.py:43: in _load\n    return _lean_document(raw, path, row, admitted=admit, prepared=prepared)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document/lean.py:169: in _lean_document\n    env = _environment(meta[\"environment\"])\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/document/source.py:155: in _environment\n    return Environment(data)\n           ^^^^^^^^^^^^^^^^^\ntests/test_document_lean_switch.py:610: in <lambda>\n    monkeypatch.setattr(module, \"Environment\", lambda data: (_ for _ in ()).throw(VEError(\"no\")))\n                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <tuple_iterator object at 0x7fb2c57e0370>\n\n>   monkeypatch.setattr(module, \"Environment\", lambda data: (_ for _ in ()).throw(VEError(\"no\")))\nE   ve.errors.VEError: no\n\ntests/test_document_lean_switch.py:610: VEError\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_a_document_lean_accepted_that_python_cannot_build_is_unavailable\n1 failed in 0.35s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jmpcbtz4)\n"
+  },
+  {
+   "id": "M11",
+   "file": "ve/document/report.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:638 (ve.document.report.admit_document): the admission route rejecting what Lean admitted is CheckerUnavailable; seeded: the rejection escapes",
+   "source_sha256": "1133ffa52fb7cbf02b033768c403c1c4a45f051d752788e6867d252d2e2a4764",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_the_admission_route_rejecting_what_lean_admitted_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_document_lean_switch.py::test_the_admission_route_rejecting_what_lean_admitted_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.2,
+   "output_tail": "t_lean_switch.py:640: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/assurance.py:127: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/document/report.py:386: in check_document\n    return _check_document(path)\n           ^^^^^^^^^^^^^^^^^^^^^\nve/document/report.py:392: in _check_document\n    return _report(doc)\n           ^^^^^^^^^^^^\nve/document/report.py:553: in _report\n    result[\"admission\"] = admit_document(env, admission)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests/test_document_lean_switch.py:638: in <lambda>\n    monkeypatch.setattr(D_report, \"admit_document\", lambda env, document: (_ for _ in ()).throw(VEError(\"refused\")))\n                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <tuple_iterator object at 0x72ca10ec2c50>\n\n>   monkeypatch.setattr(D_report, \"admit_document\", lambda env, document: (_ for _ in ()).throw(VEError(\"refused\")))\nE   ve.errors.VEError: refused\n\ntests/test_document_lean_switch.py:638: VEError\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_the_admission_route_rejecting_what_lean_admitted_is_unavailable\n1 failed in 0.38s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-x9j4ruy2)\n"
+  },
+  {
+   "id": "M12",
+   "file": "ve/document/report.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:645 (ve.document.report._check_narrowing_choices): Python's narrowing checks never run on a Lean-admitted document; seeded: they always run",
+   "source_sha256": "1133ffa52fb7cbf02b033768c403c1c4a45f051d752788e6867d252d2e2a4764",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_python_graph_checks_do_not_run_on_a_lean_admitted_document"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_document_lean_switch.py::test_python_graph_checks_do_not_run_on_a_lean_admitted_document"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.9,
+   "output_tail": "ort\"]\n               ^^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_document_lean_switch.py:646: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/assurance.py:127: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/document/report.py:386: in check_document\n    return _check_document(path)\n           ^^^^^^^^^^^^^^^^^^^^^\nve/document/report.py:392: in _check_document\n    return _report(doc)\n           ^^^^^^^^^^^^\nve/document/report.py:566: in _report\n    _check_narrowing_choices(doc[\"meta\"], labels)\ntests/test_document_lean_switch.py:645: in <lambda>\n    monkeypatch.setattr(D_report, \"_check_narrowing_choices\", lambda *a: (_ for _ in ()).throw(AssertionError(\"ran\")))\n                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <tuple_iterator object at 0x7743afe95120>\n\n>   monkeypatch.setattr(D_report, \"_check_narrowing_choices\", lambda *a: (_ for _ in ()).throw(AssertionError(\"ran\")))\nE   AssertionError: ran\n\ntests/test_document_lean_switch.py:645: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_document_lean_switch.py::test_python_graph_checks_do_not_run_on_a_lean_admitted_document\n1 failed in 0.30s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ohvst7u8)\n"
+  },
+  {
+   "id": "M13",
+   "file": "ve/document/__init__.py",
+   "claim": "every name callers import from ve.document is still importable, as its owner's object; seeded: one re-export dropped",
+   "source_sha256": "effc9226c8e6f9fa7fae9c1db8a704c811b523cb9f9d0b4067f7efed072543cc",
+   "tests": [
+    "tests/test_document_split.py::test_every_name_callers_import_is_the_owners_object[coverage_defaults]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_document_split.py::test_every_name_callers_import_is_the_owners_object[coverage_defaults]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.6,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____ test_every_name_callers_import_is_the_owners_object[coverage_defaults] ____\n\nname = 'coverage_defaults'\n\n    @pytest.mark.parametrize(\"name\", EXPORTED)\n    def test_every_name_callers_import_is_the_owners_object(name):\n        [owner] = [module for module in MODULES if name in _defined(module)]\n        value = vars(importlib.import_module(f\"ve.document.{owner}\"))[name]\n>       assert getattr(D, name) is value\n               ^^^^^^^^^^^^^^^^\nE       AttributeError: module 've.document' has no attribute 'coverage_defaults'\n\ntests/test_document_split.py:101: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_document_split.py::test_every_name_callers_import_is_the_owners_object[coverage_defaults]\n1 failed in 0.12s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pmyv98an)\n"
+  },
+  {
+   "id": "M14",
+   "file": "ve/document/__main__.py",
+   "claim": "`python -m ve.document` still runs the command line; seeded: it exits without running it",
+   "source_sha256": "6cc7b8b801c4aeace3cb36dfb26a6e884261cabdd589ac2f380a1fd380eda976",
+   "tests": [
+    "tests/test_document_split.py::test_python_m_ve_document_runs_the_command_line"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_document_split.py::test_python_m_ve_document_runs_the_command_line"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "                                                [100%]\n=================================== FAILURES ===================================\n_______________ test_python_m_ve_document_runs_the_command_line ________________\n\n    def test_python_m_ve_document_runs_the_command_line():\n        done = subprocess.run([sys.executable, \"-m\", \"ve.document\", \"--help\"], cwd=ROOT, capture_output=True,\n                              text=True, timeout=HANG_TIMEOUT)\n>       assert done.returncode == 0 and done.stdout.startswith(\"usage: ve document\")\nE       AssertionError: assert (0 == 0 and False)\nE        +  where 0 = CompletedProcess(args=['/home/seyran/code/ve-arch-20261019-2/.venv/bin/python', '-m', 've.document', '--help'], returncode=0, stdout='', stderr='').returncode\nE        +  and   False = <built-in method startswith of str object at 0x16237d0>('usage: ve document')\nE        +    where <built-in method startswith of str object at 0x16237d0> = ''.startswith\nE        +      where '' = CompletedProcess(args=['/home/seyran/code/ve-arch-20261019-2/.venv/bin/python', '-m', 've.document', '--help'], returncode=0, stdout='', stderr='').stdout\n\ntests/test_document_split.py:145: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_document_split.py::test_python_m_ve_document_runs_the_command_line\n1 failed in 0.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-7cvmtcjt)\n"
+  },
+  {
+   "id": "M15",
+   "file": "tools/identity_lint.py",
+   "claim": "the identity ratchet counts a split module's package sites as the module's only when the module itself is gone; seeded: also while it remains",
+   "source_sha256": "05e00e0699874a949f7a162eafe93bb67a2adeca5f087cb7232dfc332d02ad75",
+   "tests": [
+    "tests/test_identity_lint.py::test_a_module_split_into_its_package_keeps_its_sites"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [],
+   "killed": false,
+   "mutant_exit": 0,
+   "seconds": 1.9,
+   "output_tail": ".                                                                        [100%]\n1 passed in 0.21s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-eoqfzi67)\n",
+   "problem": "the mutant survives"
+  },
+  {
+   "id": "M16",
+   "file": "tools/relay_lint.py",
+   "claim": "the senses-loader rule reads every module of ve/document/; seeded: only load.py",
+   "source_sha256": "56120dbe9f3151560945231a1cb8bcbe2fd237c273455cb45899b4c0ddec6c3e",
+   "tests": [
+    "tests/test_relay_lint.py::test_the_senses_path_is_read_by_the_third_rule"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_lint.py::test_the_senses_path_is_read_by_the_third_rule"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.6,
+   "output_tail": " FAILURES ===================================\n________________ test_the_senses_path_is_read_by_the_third_rule ________________\n\n    def test_the_senses_path_is_read_by_the_third_rule():\n        \"\"\"Every module of the senses path exists and passes; the document loader has a senses branch to read.\"\"\"\n        for name in relay_lint.PARSE_FREE:\n            assert (ROOT / name).is_file(), name\n            assert relay_lint.english_reads(ROOT / name) == [], name\n        modules = relay_lint.loader_modules()\n        assert ROOT / relay_lint.SENSES_LOADER / \"load.py\" in modules  # AR-16a: the loader is a package of modules\n>       assert {path.name for path in modules} == {path.name for path in (ROOT / \"ve/document\").iterdir()\n                                                    if path.suffix == \".py\"}  # every module of it\nE       AssertionError: assert {'load.py'} == {'__init__.py...load.py', ...}\nE         \nE         Extra items in the right set:\nE         '__init__.py'\nE         'lean.py'\nE         'render.py'\nE         'source.py'\nE         '__main__.py'...\nE         \nE         ...Full output truncated (4 lines hidden), use '-vv' to show\n\ntests/test_relay_lint.py:199: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_lint.py::test_the_senses_path_is_read_by_the_third_rule\n1 failed in 0.11s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-v7erx5mg)\n"
+  }
+ ]
+}
