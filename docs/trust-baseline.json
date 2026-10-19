@@ -901,6 +901,27 @@
    "reason": "ap-1a: VE/Acts/Lexical.lean +138 (S 28: Tok, joinWords, clauseWords moved from VE/Acts/Syntax.lean -9, and the limits, fixedOk, Form, Form.text, wording; D[V] 110: fold, normal, dropComma, slotOf?, pieceToks, rawLex, phraseToks, clash, decodeFixed, group, lex, check, Form.ofText?), VE/Acts/LexicalBase.lean +48 (D[V], moved verbatim from VE/Norms/Wire.lean), VE/Norms/Wire.lean -27 (-48 moved, +21 canonicalActIn, decodeRegulatedWith, decodeRegulatedIn): S +19, V +131, K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1a, 2026-10-18",
    "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "S",
+   "lines": 88,
+   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
+   "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
   }
  ]
 }
