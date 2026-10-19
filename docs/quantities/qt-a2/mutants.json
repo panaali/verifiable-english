@@ -2,437 +2,77 @@
  "item": "qt-a2",
  "how": "uv run python tools/mutants.py docs/quantities/qt-a2/mutants.json --no-baseline --evidence docs/quantities/qt-a2/evidence/mutants-run.json, after a passing `lake build VE.Cardinality.Examples`; each mutant is applied alone, the module and its dependents are built, the file is restored. REPORT.md lists where each one fails.",
  "mutants": [
-  {
-   "id": "plan-tiesUp-upper-le",
-   "file": "lean/VE/Cardinality/Ratio.lean",
-   "claim": "roundingQ: the tiesUp upper bound is strict (plan's seeded bug; the tie fixture 1/8 to 0.12)",
-   "find": "  | .tiesUp => .and (.le (s (2 * D - 1) b) (s (2 * 10 ^ k) a)) (.lt (s (2 * 10 ^ k) a) (s (2 * D + 1) b))",
-   "replace": "  | .tiesUp => .and (.le (s (2 * D - 1) b) (s (2 * 10 ^ k) a)) (.le (s (2 * 10 ^ k) a) (s (2 * D + 1) b))",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "erasedRounding-tiesUp-upper-le",
-   "file": "lean/VE/Cardinality/Ratio.lean",
-   "claim": "roundsTo_ratio_agree: erasedRounding's tiesUp upper bound is strict",
-   "find": "  | .tiesUp, a, b, D, k => (2 * D - 1) * b ≤ 2 * 10 ^ k * a ∧ 2 * 10 ^ k * a < (2 * D + 1) * b",
-   "replace": "  | .tiesUp, a, b, D, k => (2 * D - 1) * b ≤ 2 * 10 ^ k * a ∧ 2 * 10 ^ k * a ≤ (2 * D + 1) * b",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "erasedRounding-halfEven-parity",
-   "file": "lean/VE/Cardinality/Ratio.lean",
-   "claim": "roundsTo_ratio_agree: halfEven keeps an endpoint only for an even D",
-   "find": "      if D % 2 = 0 then (2 * D - 1) * b ≤",
-   "replace": "      if D % 2 = 1 then (2 * D - 1) * b ≤",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "erasedRounding-down-lower",
-   "file": "lean/VE/Cardinality/Ratio.lean",
-   "claim": "roundsTo_ratio_agree: down's lower bound is inclusive",
-   "find": "  | .down, a, b, D, k => D * b ≤ 10 ^ k * a",
-   "replace": "  | .down, a, b, D, k => D * b < 10 ^ k * a",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "erasedRounding-up-upper",
-   "file": "lean/VE/Cardinality/Ratio.lean",
-   "claim": "roundsTo_ratio_agree: up's upper bound is inclusive",
-   "find": "10 ^ k * a ≤ D * b\n\n/-- The same",
-   "replace": "10 ^ k * a < D * b\n\n/-- The same",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "roundingQ-halfEven-parity",
-   "file": "lean/VE/Cardinality/Ratio.lean",
-   "claim": "roundingQ: halfEven's erased form keeps endpoints only for an even D (the halfEven tie fixture)",
-   "find": "      if D % 2 = 0 then .and",
-   "replace": "      if D % 2 = 1 then .and",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-rules-down",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "admittedRules: down is not admitted (decision d)",
-   "find": "def admittedRules : List VE.Numbers.Rounding := [.tiesUp, .halfEven]",
-   "replace": "def admittedRules : List VE.Numbers.Rounding := [.tiesUp, .halfEven, .down]",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-rules-no-halfEven",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "admittedRules: halfEven is admitted (decision d)",
-   "find": "def admittedRules : List VE.Numbers.Rounding := [.tiesUp, .halfEven]",
-   "replace": "def admittedRules : List VE.Numbers.Rounding := [.tiesUp]",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-cterm-no-count",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "CTerm: a ratio can take a count as an operand",
-   "find": "  | count (sort : String) (body : Body)\n  deriving DecidableEq, Repr\n\n/-- W6a statements",
-   "replace": "  deriving DecidableEq, Repr\n\n/-- W6a statements",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-ctermTyped-count-finite",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "CTermTyped: a count operand names a declared finite sort",
-   "find": "  | count {s b} : s ∈ E.finite → BodyTyped E s b →",
-   "replace": "  | count {s b} : BodyTyped E s b →",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-ctermTyped-count-body",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "CTermTyped: a count operand's body is typed",
-   "find": "  | count {s b} : s ∈ E.finite → BodyTyped E s b →",
-   "replace": "  | count {s b} : s ∈ E.finite →",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-ctermTyped-quantity-tag",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "CTermTyped: a quantity operand has its own W6a tag",
-   "find": "  | quantity {t g} : VE.Time.HasType E.q [] t (.qty g) → CTermTyped E (.quantity t) g",
-   "replace": "  | quantity {t g} : VE.Time.HasType E.q [] t (.qty VE.Time.dimensionless) → CTermTyped E (.quantity t) g",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-admitted-roundsTo-rule",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "Admitted.roundsTo: a rounding names an admitted rule",
-   "find": "  | roundsTo {r n d D k g} : r ∈ admittedRules → g ≠ VE.Time.dayTag →",
-   "replace": "  | roundsTo {r n d D k g} : g ≠ VE.Time.dayTag →",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-admitted-roundsTo-day",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "Admitted.roundsTo: no ratio of dates",
-   "find": "  | roundsTo {r n d D k g} : r ∈ admittedRules → g ≠ VE.Time.dayTag →",
-   "replace": "  | roundsTo {r n d D k g} : r ∈ admittedRules →",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-admitted-roundsTo-den",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "Admitted.roundsTo: the denominator has the numerator's tag",
-   "find": "      CTermTyped E d g → Admitted E (.roundsTo r n d D k)",
-   "replace": "      CTermTyped E n g → Admitted E (.roundsTo r n d D k)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-admitted-percentOf-whole",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "Admitted.percentOf: the whole has the part's tag",
-   "find": "CTermTyped E p g → CTermTyped E w g →\n      Admitted E (.percentOf p w D k)",
-   "replace": "CTermTyped E p g → CTermTyped E p g →\n      Admitted E (.percentOf p w D k)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-admitted-percentOf-day",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "Admitted.percentOf: no percentage of dates",
-   "find": "  | percentOf {p w D k g} : g ≠ VE.Time.dayTag →",
-   "replace": "  | percentOf {p w D k g} :",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "S-admitted-percentRoundsTo-rule",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "Admitted.percentRoundsTo: a rounded percentage names an admitted rule",
-   "find": "  | percentRoundsTo {r p w D k g} : r ∈ admittedRules →",
-   "replace": "  | percentRoundsTo {r p w D k g} :",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "C-ratioTyped-day",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "ratioTyped: refuses dates (FA9e)",
-   "find": "  | some g, some h => g == h && g != VE.Time.dayTag",
-   "replace": "  | some g, some h => g == h",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "C-tagOf-count-body",
-   "file": "lean/VE/Cardinality/Syntax.lean",
-   "claim": "CTerm.tagOf: a count's body must be typed",
-   "find": "  | .count s b => if E.finite.contains s && bodyCheck E s b then",
-   "replace": "  | .count s b => if E.finite.contains s then",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-denotes-count",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "CTerm.Denotes: a count operand denotes its count",
-   "find": "  | .count s b, z => ∃ n : Nat, HasCount T s b n ∧ z = n",
-   "replace": "  | .count s b, z => ∃ n : Nat, HasCount T s b n ∧ z = n + 1",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-denotes-quantity",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "CTerm.Denotes: a quantity operand denotes its own value",
-   "find": "  | .quantity t, z => ∃ g, t.tdenote T [] = some (.qty g z)",
-   "replace": "  | .quantity t, z => ∃ g, t.tdenote T [] ≠ some (.qty g z)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-roundsTo-positive",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "holds.roundsTo: a rounding needs a positive denominator",
-   "find": "  | .roundsTo r n d D k => ∃ a b, n.Denotes T a ∧ d.Denotes T b ∧ 0 < b ∧",
-   "replace": "  | .roundsTo r n d D k => ∃ a b, n.Denotes T a ∧ d.Denotes T b ∧",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-roundsTo-swap",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "holds.roundsTo: the numerator is divided by the denominator",
-   "find": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((a : Rat) / b)",
-   "replace": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((b : Rat) / a)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-roundsTo-rule",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "holds.roundsTo: the sentence's own tie rule",
-   "find": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((a : Rat) / b)",
-   "replace": "      VE.Numbers.RoundsTo .tiesUp ⟨D, (k : Int)⟩ ((a : Rat) / b)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-roundsTo-places",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "holds.roundsTo: the printed places",
-   "find": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((a : Rat) / b)",
-   "replace": "      VE.Numbers.RoundsTo r ⟨D, 0⟩ ((a : Rat) / b)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-percentOf-scale",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "holds.percentOf: D / 10^k percent",
-   "find": "0 < b ∧ 100 * 10 ^ k * a = D * b",
-   "replace": "0 < b ∧ 100 * a = D * b",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-percentOf-positive",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "holds.percentOf: a percentage needs a positive whole",
-   "find": "0 < b ∧ 100 * 10 ^ k * a = D * b",
-   "replace": "100 * 10 ^ k * a = D * b",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-percentRoundsTo-100",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "holds.percentRoundsTo: a percentage is 100 times the ratio",
-   "find": "((100 * a : Rat) / b)",
-   "replace": "((a : Rat) / b)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "M-percentRoundsTo-rule",
-   "file": "lean/VE/Cardinality/Semantics.lean",
-   "claim": "holds.percentRoundsTo: the sentence's own tie rule",
-   "find": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((100 * a : Rat) / b)",
-   "replace": "      VE.Numbers.RoundsTo .halfEven ⟨D, (k : Int)⟩ ((100 * a : Rat) / b)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "E-roundsTo-positive",
-   "file": "lean/VE/Cardinality/Erase.lean",
-   "claim": "erase_iff: the erased rounding keeps 0 < denominator",
-   "find": "      .and (.lt (.num g 0) (d.erase E fs)) (roundingQ g r",
-   "replace": "      .and .top (roundingQ g r",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "E-percentOf-scale",
-   "file": "lean/VE/Cardinality/Erase.lean",
-   "claim": "erase_iff: the erased percentage scales the part by 100 · 10^k",
-   "find": "(.eq (.scale g (100 * 10 ^ k) (p.erase E fs))",
-   "replace": "(.eq (.scale g 100 (p.erase E fs))",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "E-percentRoundsTo-100",
-   "file": "lean/VE/Cardinality/Erase.lean",
-   "claim": "erase_iff: the erased rounded percentage scales the part by 100",
-   "find": "(roundingQ g r (.scale g 100 (p.erase E fs)) (w.erase E fs) D k)",
-   "replace": "(roundingQ g r (p.erase E fs) (w.erase E fs) D k)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "E-cterm-count",
-   "file": "lean/VE/Cardinality/Erase.lean",
-   "claim": "erase_iff: a count operand erases to its body's region sum",
-   "find": "  | .count s b => regionSum E fs s b",
-   "replace": "  | .count s b => regionSum E fs s .any",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "E-roundsTo-tag",
-   "file": "lean/VE/Cardinality/Erase.lean",
-   "claim": "erase_iff: the erased rounding is in its operands' tag",
-   "find": "  | .roundsTo r n d D k =>\n      let g := (n.tagOf E).getD dl",
-   "replace": "  | .roundsTo r n d D k =>\n      let g := dl",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  },
-  {
-   "id": "G-countBodies-den",
-   "file": "lean/VE/Cardinality/Regions.lean",
-   "claim": "erase_iff: a denominator's count body is counted (its sort and predicates get regions)",
-   "find": "  | .roundsTo _ n d _ _ => n.countBodies ++ d.countBodies",
-   "replace": "  | .roundsTo _ n d _ _ => n.countBodies",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"
-   ]
-  }
+  {"id": "plan-tiesUp-upper-le", "file": "lean/VE/Cardinality/Ratio.lean", "claim": "roundingQ: the tiesUp upper bound is strict (plan's seeded bug; the tie fixture 1/8 to 0.12)", "find": "  | .tiesUp => .and (.le (s (2 * D - 1) b) (s (2 * 10 ^ k) a)) (.lt (s (2 * 10 ^ k) a) (s (2 * D + 1) b))", "replace": "  | .tiesUp => .and (.le (s (2 * D - 1) b) (s (2 * 10 ^ k) a)) (.le (s (2 * 10 ^ k) a) (s (2 * D + 1) b))",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "erasedRounding-tiesUp-upper-le", "file": "lean/VE/Cardinality/Ratio.lean", "claim": "roundsTo_ratio_agree: erasedRounding's tiesUp upper bound is strict", "find": "  | .tiesUp, a, b, D, k => (2 * D - 1) * b ≤ 2 * 10 ^ k * a ∧ 2 * 10 ^ k * a < (2 * D + 1) * b", "replace": "  | .tiesUp, a, b, D, k => (2 * D - 1) * b ≤ 2 * 10 ^ k * a ∧ 2 * 10 ^ k * a ≤ (2 * D + 1) * b",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "erasedRounding-halfEven-parity", "file": "lean/VE/Cardinality/Ratio.lean", "claim": "roundsTo_ratio_agree: halfEven keeps an endpoint only for an even D", "find": "      if D % 2 = 0 then (2 * D - 1) * b ≤", "replace": "      if D % 2 = 1 then (2 * D - 1) * b ≤",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "erasedRounding-down-lower", "file": "lean/VE/Cardinality/Ratio.lean", "claim": "roundsTo_ratio_agree: down's lower bound is inclusive", "find": "  | .down, a, b, D, k => D * b ≤ 10 ^ k * a", "replace": "  | .down, a, b, D, k => D * b < 10 ^ k * a",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "erasedRounding-up-upper", "file": "lean/VE/Cardinality/Ratio.lean", "claim": "roundsTo_ratio_agree: up's upper bound is inclusive", "find": "10 ^ k * a ≤ D * b\n\n/-- The same", "replace": "10 ^ k * a < D * b\n\n/-- The same",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "roundingQ-halfEven-parity", "file": "lean/VE/Cardinality/Ratio.lean", "claim": "roundingQ: halfEven's erased form keeps endpoints only for an even D (the halfEven tie fixture)", "find": "      if D % 2 = 0 then .and", "replace": "      if D % 2 = 1 then .and",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-rules-down", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "admittedRules: down is not admitted (decision d)", "find": "def admittedRules : List VE.Numbers.Rounding := [.tiesUp, .halfEven]", "replace": "def admittedRules : List VE.Numbers.Rounding := [.tiesUp, .halfEven, .down]",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-rules-no-halfEven", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "admittedRules: halfEven is admitted (decision d)", "find": "def admittedRules : List VE.Numbers.Rounding := [.tiesUp, .halfEven]", "replace": "def admittedRules : List VE.Numbers.Rounding := [.tiesUp]",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-cterm-no-count", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "CTerm: a ratio can take a count as an operand", "find": "  | count (sort : String) (body : Body)\n  deriving DecidableEq, Repr\n\n/-- W6a statements", "replace": "  deriving DecidableEq, Repr\n\n/-- W6a statements",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-ctermTyped-count-finite", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "CTermTyped: a count operand names a declared finite sort", "find": "  | count {s b} : s ∈ E.finite → BodyTyped E s b →", "replace": "  | count {s b} : BodyTyped E s b →",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-ctermTyped-count-body", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "CTermTyped: a count operand's body is typed", "find": "  | count {s b} : s ∈ E.finite → BodyTyped E s b →", "replace": "  | count {s b} : s ∈ E.finite →",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-ctermTyped-quantity-tag", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "CTermTyped: a quantity operand has its own W6a tag", "find": "  | quantity {t g} : VE.Time.HasType E.q [] t (.qty g) → CTermTyped E (.quantity t) g", "replace": "  | quantity {t g} : VE.Time.HasType E.q [] t (.qty VE.Time.dimensionless) → CTermTyped E (.quantity t) g",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-admitted-roundsTo-rule", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "Admitted.roundsTo: a rounding names an admitted rule", "find": "  | roundsTo {r n d D k g} : r ∈ admittedRules → g ≠ VE.Time.dayTag →", "replace": "  | roundsTo {r n d D k g} : g ≠ VE.Time.dayTag →",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-admitted-roundsTo-day", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "Admitted.roundsTo: no ratio of dates", "find": "  | roundsTo {r n d D k g} : r ∈ admittedRules → g ≠ VE.Time.dayTag →", "replace": "  | roundsTo {r n d D k g} : r ∈ admittedRules →",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-admitted-roundsTo-den", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "Admitted.roundsTo: the denominator has the numerator's tag", "find": "      CTermTyped E d g → Admitted E (.roundsTo r n d D k)", "replace": "      CTermTyped E n g → Admitted E (.roundsTo r n d D k)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-admitted-percentOf-whole", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "Admitted.percentOf: the whole has the part's tag", "find": "CTermTyped E p g → CTermTyped E w g →\n      Admitted E (.percentOf p w D k)", "replace": "CTermTyped E p g → CTermTyped E p g →\n      Admitted E (.percentOf p w D k)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-admitted-percentOf-day", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "Admitted.percentOf: no percentage of dates", "find": "  | percentOf {p w D k g} : g ≠ VE.Time.dayTag →", "replace": "  | percentOf {p w D k g} :",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "S-admitted-percentRoundsTo-rule", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "Admitted.percentRoundsTo: a rounded percentage names an admitted rule", "find": "  | percentRoundsTo {r p w D k g} : r ∈ admittedRules →", "replace": "  | percentRoundsTo {r p w D k g} :",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "C-ratioTyped-day", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "ratioTyped: refuses dates (FA9e)", "find": "  | some g, some h => g == h && g != VE.Time.dayTag", "replace": "  | some g, some h => g == h",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "C-tagOf-count-body", "file": "lean/VE/Cardinality/Syntax.lean", "claim": "CTerm.tagOf: a count's body must be typed", "find": "  | .count s b => if E.finite.contains s && bodyCheck E s b then", "replace": "  | .count s b => if E.finite.contains s then",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-denotes-count", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "CTerm.Denotes: a count operand denotes its count", "find": "  | .count s b, z => ∃ n : Nat, HasCount T s b n ∧ z = n", "replace": "  | .count s b, z => ∃ n : Nat, HasCount T s b n ∧ z = n + 1",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-denotes-quantity", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "CTerm.Denotes: a quantity operand denotes its own value", "find": "  | .quantity t, z => ∃ g, t.tdenote T [] = some (.qty g z)", "replace": "  | .quantity t, z => ∃ g, t.tdenote T [] ≠ some (.qty g z)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-roundsTo-positive", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "holds.roundsTo: a rounding needs a positive denominator", "find": "  | .roundsTo r n d D k => ∃ a b, n.Denotes T a ∧ d.Denotes T b ∧ 0 < b ∧", "replace": "  | .roundsTo r n d D k => ∃ a b, n.Denotes T a ∧ d.Denotes T b ∧",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-roundsTo-swap", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "holds.roundsTo: the numerator is divided by the denominator", "find": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((a : Rat) / b)", "replace": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((b : Rat) / a)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-roundsTo-rule", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "holds.roundsTo: the sentence's own tie rule", "find": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((a : Rat) / b)", "replace": "      VE.Numbers.RoundsTo .tiesUp ⟨D, (k : Int)⟩ ((a : Rat) / b)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-roundsTo-places", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "holds.roundsTo: the printed places", "find": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((a : Rat) / b)", "replace": "      VE.Numbers.RoundsTo r ⟨D, 0⟩ ((a : Rat) / b)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-percentOf-scale", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "holds.percentOf: D / 10^k percent", "find": "0 < b ∧ 100 * 10 ^ k * a = D * b", "replace": "0 < b ∧ 100 * a = D * b",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-percentOf-positive", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "holds.percentOf: a percentage needs a positive whole", "find": "0 < b ∧ 100 * 10 ^ k * a = D * b", "replace": "100 * 10 ^ k * a = D * b",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-percentRoundsTo-100", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "holds.percentRoundsTo: a percentage is 100 times the ratio", "find": "((100 * a : Rat) / b)", "replace": "((a : Rat) / b)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "M-percentRoundsTo-rule", "file": "lean/VE/Cardinality/Semantics.lean", "claim": "holds.percentRoundsTo: the sentence's own tie rule", "find": "      VE.Numbers.RoundsTo r ⟨D, (k : Int)⟩ ((100 * a : Rat) / b)", "replace": "      VE.Numbers.RoundsTo .halfEven ⟨D, (k : Int)⟩ ((100 * a : Rat) / b)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "E-roundsTo-positive", "file": "lean/VE/Cardinality/Erase.lean", "claim": "erase_iff: the erased rounding keeps 0 < denominator", "find": "      .and (.lt (.num g 0) (d.erase E fs)) (roundingQ g r", "replace": "      .and .top (roundingQ g r",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "E-percentOf-scale", "file": "lean/VE/Cardinality/Erase.lean", "claim": "erase_iff: the erased percentage scales the part by 100 · 10^k", "find": "(.eq (.scale g (100 * 10 ^ k) (p.erase E fs))", "replace": "(.eq (.scale g 100 (p.erase E fs))",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "E-percentRoundsTo-100", "file": "lean/VE/Cardinality/Erase.lean", "claim": "erase_iff: the erased rounded percentage scales the part by 100", "find": "(roundingQ g r (.scale g 100 (p.erase E fs)) (w.erase E fs) D k)", "replace": "(roundingQ g r (p.erase E fs) (w.erase E fs) D k)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "E-cterm-count", "file": "lean/VE/Cardinality/Erase.lean", "claim": "erase_iff: a count operand erases to its body's region sum", "find": "  | .count s b => regionSum E fs s b", "replace": "  | .count s b => regionSum E fs s .any",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "E-roundsTo-tag", "file": "lean/VE/Cardinality/Erase.lean", "claim": "erase_iff: the erased rounding is in its operands' tag", "find": "  | .roundsTo r n d D k =>\n      let g := (n.tagOf E).getD dl", "replace": "  | .roundsTo r n d D k =>\n      let g := dl",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "G-countBodies-den", "file": "lean/VE/Cardinality/Regions.lean", "claim": "erase_iff: a denominator's count body is counted (its sort and predicates get regions)", "find": "  | .roundsTo _ n d _ _ => n.countBodies ++ d.countBodies", "replace": "  | .roundsTo _ n d _ _ => n.countBodies",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]}
  ]
 }

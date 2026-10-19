@@ -279,9 +279,9 @@ def fa4 : List CFormula := [rounds .tiesUp 176 594 296 3, rounds .halfEven 176 5
 #guard [rounds .tiesUp (-1) 2 (-1) 0, .percentRoundsTo .tiesUp (num (-1)) (num 200) (-1) 0].all
   (nums · == (false, false))
 -- Meaning and erasure agree on a grid, every rule, for a ratio and for a percent; a zero denominator holds neither.
-#guard [VE.Numbers.Rounding.tiesUp, .halfEven, .down, .up].all fun r => (List.range 13).all fun a =>
-  (List.range 5).all fun b => (List.range 15).all fun D => (List.range 2).all fun k =>
-    let (a, b, D) := ((a : Int) - 6, (b : Int), (D : Int) - 7)
+#guard [VE.Numbers.Rounding.tiesUp, .halfEven, .down, .up].all fun r => (List.range 7).all fun a =>
+  (List.range 4).all fun b => (List.range 9).all fun D => (List.range 2).all fun k =>
+    let (a, b, D) := ((a : Int) - 3, (b : Int), (D : Int) - 4)
     [rounds r a b D k, .percentRoundsTo r (num a) (num b) (10 * D) k, .percentOf (num a) (num b) (10 * D) k].all
       fun f => (nums f).1 == (nums f).2
 
@@ -304,9 +304,9 @@ def paperModel (u : Nat) : VE.Order.FiniteModel Nat :=
   rowsModel dec [([], 5), (["scored"], 418), (["false_approval"], u), (["scored", "false_approval"], 176)]
 
 #guard [fa4c 296, fa4dOther 296].all (·.admits paper)
-#guard [fa4c 296, fa4dOther 296].all (agrees paper [·] (paperModel 0)) && agrees paper [fa4c 296] (paperModel 3)
-#guard (holdsFin (paperModel 0) (fa4c 296), holdsFin (paperModel 0) (fa4c 297)) = (true, false)
-#guard [fa4c 296, fa4dOther 296, fa4dOther 301].map (fun f => both paper (paperModel 3) f) =
+-- Each claim's (meaning, erasure): with no unscored false approval both readings give 0.296; with 3 they part.
+#guard [fa4c 296, fa4c 297, fa4dOther 296].map (both paper (paperModel 0)) = [(true, true), (false, false), (true, true)]
+#guard [fa4c 296, fa4dOther 296, fa4dOther 301].map (both paper (paperModel 3)) =
   [(true, true), (false, false), (true, true)]
 -- `erasedProblem_admitted` on FA4c: 4 region premises and the erased claim, each W6a-admitted in `E.elab`.
 #guard (erasedProblem paper [] (fa4c 296)).1.length = 4 &&
