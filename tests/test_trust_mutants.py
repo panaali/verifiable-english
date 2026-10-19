@@ -381,12 +381,16 @@ FORMS = [  # (form, class, value reading, proof reading)
     ("rfl example", "check", "example : {v} = {e} := rfl", "example : {w}.val = 0 := rfl"),
     ("tactic example", "proof", "example : {v} = {e} := by {tac}", "example : {w}.val = 0 := by {tac}"),
     ("tactic theorem", "proof", "theorem {id}_t : {v} = {e} := by {tac}", "theorem {id}_t : {w}.val = 0 := by {tac}"),
-    ("#guard with a tactic block", "proof", "#guard (⟨0, by {tac}⟩ : Fin (2 - {d} 1)).val == 0", None),
+    ("#guard with a tactic block", "proof", "#guard (⟨0, by {tac}⟩ : Fin (2 - {n})).val == 0", None),
 ]
 WRAPS = ("bare", "wrapped", "doc")  # the command alone, under `#guard_msgs in`, and with its docstring too
-SIMPLE = ("n + 0", "[0, 1, 2, 3, 4, 5]")  # the body read on 0..5: one mutant (lit-plus)
-RICH = ("if !(n < 1) && (n ≤ 3 || n == 5) && n != 2 && ([n] ++ [1]).all (· ≥ 1) && [n, 3].any (· == 3) && true then 1 "
-        "else 0", "[0, 1, 0, 1, 0, 1]")  # the sweep's: every operator of the package but the arms
+# A definition's type and body, its values on 0..5, its value at 1, that value as a size `{n}` and the proof `{p}`
+# (`{d} 1 = {one}`) turned into `1 = {n}`.
+SIMPLE = {"type": "Nat", "body": "n + 0", "e": "[0, 1, 2, 3, 4, 5]", "one": "1", "n": "{d} 1",
+          "one_eq": "{p}.symm"}  # one mutant: lit-plus
+RICH = {"type": "Bool", "body": "!(n < 1) && (n ≤ 3 || decide (n = 5)) && n != 2 && ([n] ++ [1]).all (· ≥ 1) && "
+        "[n, 3].any (· == 3) && true", "e": "[false, true, false, true, false, true]", "one": "true",
+        "n": "({d} 1).toNat", "one_eq": "(congrArg Bool.toNat {p}).symm"}  # the sweep's: every operator but the arms
 
 
 def table_rows(group: bool = True) -> list[dict]:
@@ -413,7 +417,7 @@ def table_package(root: Path, folder: Path, rich: bool = False, group: bool = Tr
     """The table as a Lean package at `root` (committed over an empty base): Demo/M/Defs.lean holds the mutated
     setting (definitions, proofs and readings in one module), Demo/O/Defs.lean the other setting's definitions and
     Demo/O/Checks.lean their proofs and readings. Each row's docstring is the messages Lean gives its bare command."""
-    body, values = RICH if rich else SIMPLE
+    mode = RICH if rich else SIMPLE
     rows = table_rows(group)
     (root / "lean/Demo/M").mkdir(parents=True)
     (root / "lean/Demo/O").mkdir(parents=True)
@@ -436,12 +440,13 @@ def table_package(root: Path, folder: Path, rich: bool = False, group: bool = Tr
             if d not in seen:
                 seen.add(d)
                 texts["Demo/M/Defs.lean" if row["setting"] == "mutated" else "Demo/O/Defs.lean"] += [
-                    f"def {d} (n : Nat) : Nat := {body}", ""]
+                    f"def {d} (n : Nat) : {mode['type']} := {mode['body']}", ""]
                 if row["reads"] == "proof":
-                    lines += [f"theorem {d}_p : {d} 1 = 1 := by exact (by decide)", ""]
-            command = row["text"].format(d=d, id=row["id"], p=f"{d}_p", v=f"(List.range 6).map {d}", e=values,
-                                         tac="exact (by decide)",
-                                         w=f"(⟨0, Nat.lt_of_lt_of_eq Nat.zero_lt_one {d}_p.symm⟩ : Fin ({d} 1))")
+                    lines += [f"theorem {d}_p : {d} 1 = {mode['one']} := by exact (by decide)", ""]
+            size, one_eq = mode["n"].format(d=d), mode["one_eq"].format(p=f"{d}_p")
+            command = row["text"].format(d=d, id=row["id"], p=f"{d}_p", v=f"(List.range 6).map {d}", e=mode["e"],
+                                         tac="exact (by decide)", n=size,
+                                         w=f"(⟨0, Nat.lt_of_lt_of_eq Nat.zero_lt_one {one_eq}⟩ : Fin ({size}))")
             said = [] if messages is None else messages[files[row["setting"]], row["line"]]
             if messages is None or row["wrap"] == "bare":
                 row["line"] = len(lines) + 1
@@ -485,7 +490,7 @@ def test_classify_truth_table(form, cls, value, proof, wrap):
     for text in (value, proof):
         if text is None:
             continue
-        command = text.format(d="f", id="t", p="f_p", v="f 1", e="1", tac="simp [f]", w="(⟨0, f_p⟩ : Fin 2)")
+        command = text.format(d="f", id="t", p="f_p", v="f 1", e="1", tac="simp [f]", w="(⟨0, f_p⟩ : Fin 2)", n="f 1")
         span = {"bare": command, "wrapped": f"#guard_msgs (drop info) in\n{command}",
                 "doc": f"/-- info: 1 -/\n#guard_msgs in\n{command}"}[wrap]
         code = trust_mutants.code_only(span)
