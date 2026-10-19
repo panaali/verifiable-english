@@ -206,26 +206,22 @@ def checked_premises(env, layer_premises, case_premises):
 
 @semantic_entry("definitions.elaborate")
 def validate_background(env, model) -> None:
-    """Background validity of a model under the selected authority.
-
-    Under a backend authority Lean's model mode decides (it checks the flags,
-    definitions, literals and profile generators); the Python checks name a
-    rejection both make (`backends.validation.decided`). A search candidate
-    without an identity (`_defer_model_id`) and environments outside Lean's
-    model mode keep the Python checks.
+    """Background validity of a model: Lean's model mode decides (it checks the flags, definitions,
+    literals and profile generators), and the Python checks then construct (`validated_model`: a
+    rejection after Lean accepted is `CheckerUnavailable`). A search candidate without an identity
+    (`_defer_model_id`) and environments outside Lean's model mode keep the Python checks.
     """
-    from .backends.dispatch import authority_for, execute
     from .backends.validation import model_in_scope, validated_model
-    if (authority_for("model_validation") in ("python", "rust-experimental") or not model_in_scope(env)
-            or getattr(env, "soft_premises", ()) or not getattr(model, "model_id", "")):
+    if (not model_in_scope(env) or getattr(env, "soft_premises", ())
+            or not getattr(model, "model_id", "")):
         return _validate_background_python(env, model)
 
     def python():
         _validate_background_python(env, model)
         return model
 
-    execute("model_validation", {"kind": "model"}, python,
-            lean=lambda: validated_model(env, model.to_dict(), python))
+    from .backends.dispatch import owned
+    owned("model_validation", lambda: validated_model(env, model.to_dict(), python))
 
 
 def _validate_background_python(env, model) -> None:

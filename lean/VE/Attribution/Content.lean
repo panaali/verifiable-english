@@ -1,6 +1,7 @@
 import VE.Route.Admission
 import VE.Definitions.Layer
 import VE.Norms.Tree
+import VE.Limits
 
 /-! `reports@0` (docs/spec/attribution.md, draft 10): contents, keys, identities,
 generated names, `E_reports`, elaboration and the executable well-formedness
@@ -696,8 +697,8 @@ def metaOk (D : ReportDoc) (m : UnitMeta) : Bool :=
      | _ => false
    | none => true)
 
-/-- `MAX_PREDICATES` of P0, the bound of 4.1 step 7 on `E_reports`. -/
-def maxPredicates : Nat := 256
+-- `MAX_PREDICATES` of P0 bounds 4.1 step 7 on `E_reports`.
+export VE.Limits (maxPredicates)
 
 /-- 4.1, as one executable check. The HashCollision part compares the objects of
 `digestTable` and no other. -/
@@ -711,7 +712,7 @@ def WellFormedReports (D : ReportDoc) : Bool :=
   decide (D.assessments.map (·.id)).Nodup &&
   D.assessments.all (assessmentOk D) &&
   decide (∀ a ∈ digestTable D, ∀ b ∈ digestTable D, a.1 = b.1 → a.2 = b.2) &&
-  (names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ 64)) &&
+  (names D).all (fun n => (D.E.predicates n).isNone && decide (n.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes)) &&
   decide (names D).Nodup &&
   D.lits.all (fun l => D.E.constants l == some VE.Route.Background.stringSort) &&
   D.«scoped».all (scopedOk D) &&

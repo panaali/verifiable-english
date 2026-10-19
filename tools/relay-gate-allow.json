@@ -1601,16 +1601,6 @@
    "reason": "Untyped: every retype of the field is accepted (no type in its schema). Type it in lean/ResponseShape/Schemas."
   },
   {
-   "route": "ve_metered::evaluate",
-   "mutation": "*",
-   "path": [
-    "*/evaluation*"
-   ],
-   "kind": "follow-up",
-   "id": "F8",
-   "reason": "ve_metered `evaluation` is typed `object` in the assurance manifest (no field types), so a malformed evaluation reaches lean_runner's callers. Give the metered evaluation a typed response shape."
-  },
-  {
    "route": "ve_senses_route::senses.read",
    "mutation": "*",
    "path": [
@@ -2211,6 +2201,145 @@
    "kind": "by-design",
    "id": "B9",
    "reason": "A located rejection (batch 16f: a distinguishing model's `path`, `Service.Document.locatedModel`; a strict fence's `span`, `locatedFence`) without its location is a plain error row, a shape the owning modes also write; a location is information the owning mode adds (R3). A location the row carries is bound by the client (`ve/document.py` `_names_a_model_member`, `_spans_a_strict_fence`; tests/test_b16f_document.py::test_a_located_row_without_its_location_is_a_plain_rejection)."
+  },
+  {
+   "route": "service:metered",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/evaluation/explanation/*/bindings",
+    "results/*/result/evaluation/explanation/*/detail"
+   ],
+   "kind": "by-design",
+   "id": "B10",
+   "reason": "lf-18 review F1: the metered explanation's display content, which Lean's trace writes after the value is known (VE.Route.MeteredTrace; DRI-RULINGS R8): a node's `detail` is empty where Lean has none to give (a connective, a document), its `value` is null where nothing was evaluated (a resource-limit node), and its `bindings` are the locals of the enclosing quantifiers, a count the trace's own tree decides. Every binding that is present is bound to the request: its sort and entity are the case model's and its de Bruijn index is its position (ve.evaluate.read_evaluation), so a rebound, retyped or duplicated binding is refused."
+  },
+  {
+   "route": "service:metered",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/evaluation/explanation/*/value"
+   ],
+   "kind": "by-design",
+   "id": "B10",
+   "reason": "lf-18 review F1: the metered explanation's display content, which Lean's trace writes after the value is known (VE.Route.MeteredTrace; DRI-RULINGS R8): a node's `detail` is empty where Lean has none to give (a connective, a document), its `value` is null where nothing was evaluated (a resource-limit node), and its `bindings` are the locals of the enclosing quantifiers, a count the trace's own tree decides. Every binding that is present is bound to the request: its sort and entity are the case model's and its de Bruijn index is its position (ve.evaluate.read_evaluation), so a rebound, retyped or duplicated binding is refused."
+  },
+  {
+   "route": "service:metered",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/evaluation/explanation/*/kind"
+   ],
+   "kind": "by-design",
+   "id": "B4",
+   "reason": "Rendered text (`canonical`) that equals a request string by content, not a name the answer binds."
+  },
+  {
+   "route": "service:metered",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/evaluation/explanation/*/kind"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:graph",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/background/*/ast/*/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/tables/might/*/witness/*/quantity",
+    "results/*/result/tables/might/*/witness/*/value"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:risk",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/tables/might/*/witness/*/quantity",
+    "results/*/result/tables/might/*/witness/*/value"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:quantity",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/report/root/quantity/formula/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:discourse",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/report/assumptions/*/ast/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/sets/*/pairs/*/pair/gaps",
+    "results/*/result/sets/*/pairs/*/pair/other_value"
+   ],
+   "kind": "follow-up",
+   "id": "F5",
+   "reason": "Drop accepted: the field is optional in its schema; state the encoder's condition (or require it) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "retype",
+   "path": [
+    "results/*/result/sets/*/pairs/*/pair/other_value",
+    "results/*/result/sets/*/pairs/*/pair/witness_value",
+    "results/*/result/units/*/content/norm/exception/decided_by"
+   ],
+   "kind": "follow-up",
+   "id": "F3",
+   "reason": "Retype accepted: the field is a union, has no type, or is an array whose items have no type (a 10,000-deep array is accepted) in its schema; type it (or record the union) in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/sets/*/pairs/*/pair/situation",
+    "results/*/result/sets/*/pairs/*/pair/witness",
+    "results/*/result/names/*/candidates/*/names/*/*",
+    "results/*/result/units/*/content/norm/exception/decided_by"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/names/*/candidates/*/names/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
   }
  ]
 }

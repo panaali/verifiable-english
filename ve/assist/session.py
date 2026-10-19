@@ -230,11 +230,9 @@ class AssistSession(_Ledger, _Proposals, _Views):
                     if self._lean_refutes(premises, conclusion, model):
                         return "no"
                 else:
-                    from ..backends.dispatch import pinned
-                    with pinned("lean"):
-                        checked = check_countermodel(
-                            self.env, premises, conclusion, model,
-                            max_evaluations=budget["max_evaluations"])
+                    checked = check_countermodel(
+                        self.env, premises, conclusion, model,
+                        max_evaluations=budget["max_evaluations"])
                     if checked.valid:
                         return "no"
         except (ValueError, VEError):

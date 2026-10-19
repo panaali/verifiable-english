@@ -1,4 +1,5 @@
 import VE.Order.Consequence
+import VE.Limits
 
 /-! The W6 finite-evaluation budget (units-schema gate 4).
 
@@ -12,8 +13,7 @@ into UNKNOWN, never into a different answer. -/
 namespace VE.Time
 open VE.Order
 
-/-- Python/Rust `MAX_EVALUATIONS`. -/
-def maxEvaluations : Nat := 1000000
+export VE.Limits (maxEvaluations)
 
 /-! Relation membership in constant time, as Python's `frozenset` and Rust's
 `BTreeSet` tables: a hash set per listed predicate, the list otherwise. -/
