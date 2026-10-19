@@ -87,10 +87,10 @@ No product code changed, so there is no Lean, `ve/` or Rust seeded bug to plant.
 
 - Trust: `tools/trust_map.py --check` reports K +0, S +0, D +0, G +0 and trusted +0 against 702ff742 (PASS). There is
   no allowance and no FOLLOW-UPS row.
-- Size: 691 hand-written lines, counted with `git diff --numstat` from the merge base and leaving out the three copied
-  files. That is the 61-line report section, 214 lines of scripts, 197 of test, 141 of this report and 78 of
-  `mutants.json`. The script also wrote 396 lines of evidence, which count as generated (1,087 lines if counted). Over
-  the ~600 limit: review F1's controls, their tests and their record added 179 hand-written and 219 evidence lines.
+- Size: 693 hand-written lines, counted with `git diff --numstat` from the merge base and leaving out the three copied
+  files. That is the 61-line report section, 214 lines of scripts, 197 of test, 143 of this report and 78 of
+  `mutants.json`. The script also wrote 396 lines of evidence, which count as generated (1,089 lines if counted). Over
+  the ~600 limit: review F1's controls, their tests and their record added 183 hand-written and 219 evidence lines.
 - Pilot bytes: 0 B moved. This is the "before" of the constitution's defaults path (8,764 B primary, research share). It
   claims nothing.
 - Pre-existing red: none of `main-known-red.txt` is in the selected set.
@@ -106,8 +106,11 @@ No product code changed, so there is no Lean, `ve/` or Rust seeded bug to plant.
 - `tests/test_defeasible_baseline_evidence.py` and `tests/test_history_tests.py`: 35 passed.
 - Selected tests (`mac-pytest.sh --select`, 24/446 units, on the Mac runner). The first run failed only the
   history-test lint, which I fixed in `b4158e08d`. The final selected run, at `76195178`, passed all 24 units with 0
-  failed. Only this report line has changed since.
-- `tools/gate_collection.py --check --prebuilt`: 10 added, 0 removed, 0 refused, 0 stale, 0 malformed.
+  failed.
+- Review F1 round, at `113fa8de`: PROBE F1 failed before the fix and passes after it. The evidence test file and
+  `tests/test_history_tests.py`: 41 passed. Selected run: 24/24 units, 0 failed (Mac runner). `lake build` passed and
+  `lean/audit.py` passed (no Lean file changed). Only this report changed since.
+- `tools/gate_collection.py --check --prebuilt`: 16 added, 0 removed, 0 refused, 0 stale, 0 malformed.
   `tools/regen_generated.py --check`: 31 entries checked, all current.
 - The chain runs the full gate on the final HEAD.
 
