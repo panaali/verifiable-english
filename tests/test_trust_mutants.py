@@ -85,9 +85,9 @@ example : quad 1 = 4 := by
 
 #guard_msgs in example : quad 2 = 8 := by simp [quad]
 
-/-- info: 6 -/
+-- an `#eval` prints no answer (hunt Q4, Q7, Q8): a `#guard` under the wrapper
 #guard_msgs (whitespace := lax) in
-#eval twice 3
+#guard twice 3 == 6
 
 #guard_msgs in example : twice 2 = 4 := by decide
 
@@ -243,12 +243,12 @@ def test_a_proof_wrapped_in_guard_msgs_is_no_kill(default_run):
 
 
 def test_a_check_wrapped_in_guard_msgs_kills(default_run):
-    """Review F6: a `#guard_msgs` around an `#eval` (its spec in parentheses) or a `decide` example is a check."""
+    """Review F6: a `#guard_msgs` around a `#guard` (its spec in parentheses) or a `decide` example is a check."""
     _, mutants, _, _ = default_run
     twice = of(mutants, "twice")
     assert {m["operator"] for m in twice} == {"lit-plus", "lit-minus"}
     assert all(m["status"] == "KILLED" and m["detail"].split(": ")[0] in (
-        "lean/Demo/Examples.lean:18", "lean/Demo/Examples.lean:21") for m in twice), twice
+        "lean/Demo/Examples.lean:18", "lean/Demo/Examples.lean:19", "lean/Demo/Examples.lean:21") for m in twice), twice
 
 
 def test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps(tmp_path):
@@ -366,8 +366,8 @@ def test_allow_suppresses_exactly_its_operator(package, tmp_path):
 
 def test_an_outside_test_that_fails_without_the_mutant_is_no_kill(package, default_run, tmp_path):
     """Review F7: a --test file outside lean/ kills only when it passes without the mutant (its control). One whose
-    `#eval` reads `double_eq`, which the tool cuts up front in Demo/Defs.lean, fails either way: the mutants no
-    check kills are UNKNOWN, never KILLED; a mutant that breaks the other file is KILLED by it."""
+    `#eval` reads `double_eq` fails either way once the tool cuts it (since F11 only a proof the mutant breaks is
+    cut: `double`'s): that mutant is UNKNOWN, never KILLED; every other verdict is as without the files."""
     (package / "outside").mkdir(exist_ok=True)
     (package / "outside/Value.lean").write_text("import Demo.Defs\n#guard Demo.small 2\n#guard !Demo.small 3\n")
     (package / "outside/Reads.lean").write_text(
@@ -376,9 +376,9 @@ def test_an_outside_test_that_fails_without_the_mutant_is_no_kill(package, defau
     done, mutants = tool(package, tmp_path / "run", "--test", "outside/Value.lean", "--test", "outside/Reads.lean")
     before = {m["id"]: m["status"] for m in default_run[1]}
     assert [m for m in mutants if "Reads.lean" in m["detail"] and m["status"] != "UNKNOWN"] == [], done.stdout
-    assert "SURVIVOR" in {before[m["id"]] for m in mutants if m["file"] == "Demo/Defs.lean"}
+    assert [before[m["id"]] for m in mutants if m["definition"] == "Demo.double"] == ["SURVIVOR"]
     for m in mutants:
-        if before[m["id"]] == "SURVIVOR" and m["file"] == "Demo/Defs.lean":  # Reads.lean imports it only
+        if m["definition"] == "Demo.double":  # it breaks `double_eq`, which Reads.lean reads
             assert m["status"] == "UNKNOWN" and m["detail"].endswith("Reads.lean fails without the mutant too"), m
         else:
             assert m["status"] == before[m["id"]], m
@@ -422,8 +422,9 @@ FORMS = [  # (form, class, value reading, proof reading, the value reading's mut
     # Review F11: the message an `#eval` throws is the file's own, no refutation Lean states.
     ("#eval", "check", '#eval (do if {v} != {e} then throw (IO.userError "changed") : IO Unit)', "#eval {w}.val",
      "UNKNOWN"),
-    # Review F11: an `#eval`'s value under its docstring is an answer Lean computed.
-    ("#eval value", "check", "#eval {v}", None, "doc KILLED"),
+    # Hunt Q4, Q7, Q8: an `#eval`'s output under its docstring is no answer (instances Lean picks after elaboration
+    # format it, and it can read files).
+    ("#eval value", "check", "#eval {v}", None, "doc UNKNOWN"),
     # Review F11: `#reduce` prints a stuck term as readily as a value, so its docstring compares no answer.
     ("#reduce", "check", "#reduce {v}", "#reduce {w}.val", "doc UNKNOWN"),
     ("#check", "check", "#check (rfl : {v} = {e})", "#check {w}", "UNKNOWN"),
@@ -714,8 +715,8 @@ JUDGED = [
     ("native-false", "Tactic `native_decide` evaluated that the proposition\n  f 1 = 2\nis false",
      "example : f 1 = 2 := by native_decide", "KILL"),
     ("guard-false", REFUTE, "#guard f 1 == 2", "KILL"),
-    ("eval-value-differs", GUARD + "- info: 5\n+ info: 4", "/-- info: 5 -/\n#guard_msgs in\n#eval f 3", "KILL"),
-    ("eval-lines-differ", GUARD + "  info: 1\n- ---\n- info: 2\n+ 3", "#guard_msgs in\n#eval f", "KILL"),
+    ("eval-value-differs", GUARD + "- info: 5\n+ info: 4", "/-- info: 5 -/\n#guard_msgs in\n#eval f 3", "UNKNOWN"),
+    ("eval-lines-differ", GUARD + "  info: 1\n- ---\n- info: 2\n+ 3", "#guard_msgs in\n#eval f", "UNKNOWN"),
     ("guard-under-guard-msgs", GUARD + "-\n+ error: Expression\n+   f 1 == 2\n+ did not evaluate to `true`",
      "#guard_msgs in\n#guard f 1 == 2", "KILL"),
     ("decide-under-guard-msgs", GUARD + "-\n+ error: Tactic `decide` proved that the proposition\n+   f 1 = 2\n"
@@ -761,7 +762,7 @@ JUDGED = [
 @pytest.mark.parametrize(("name", "message", "span", "verdict"), JUDGED, ids=[j[0] for j in JUDGED])
 def test_a_check_kills_only_when_its_message_states_a_refutation(name, message, span, verdict):
     """Review F11 (the DRI's note 2026-10-19c, step 1): KILL needs a message that states a refutation (`REFUTED`,
-    whole, or a `#guard_msgs` diff between answers: an `#eval`'s value or a refutation); an `rfl` check is RFL (its
+    whole, or a `#guard_msgs` diff between refutations; no `info`: hunt Q4, Q7, Q8); an `rfl` check is RFL (its
     message is the same when the reduction got stuck); every other message is UNKNOWN, one test each."""
     import trust_mutants
     line = span.split("\n")[-1]
@@ -862,15 +863,18 @@ def test_invalid_only_when_lean_refuses_the_mutated_text(name, message, inside, 
     ([("A.lean", 1, "Invalid field `take`", 32)], "INVALID"),
     ([("A.lean", 1, "Invalid field `take`", 32), ("A.lean", 1, "unsolved goals", 62)], "UNKNOWN"),
     ([("A.lean", 1, "unsolved goals", 62), ("A.lean", 1, "Invalid field `take`", 32)], "UNKNOWN"),
-    ([("A.lean", 1, "Invalid field `take`", 62)], "UNKNOWN")], ids=("refusal", "beside-a-tactic", "after-a-tactic",
-                                                                  "in-a-tactic"))
+    ([("A.lean", 1, "Invalid field `take`", 62)], "UNKNOWN"),
+    ([("A.lean", 1, "Invalid field `symm`", 44)], "UNKNOWN"),  # hunt Q9: outside the mutant's text
+    ([("A.lean", 1, "unexpected token ')'; expected term", 44)], "INVALID")],
+    ids=("refusal", "beside-a-tactic", "after-a-tactic", "in-a-tactic", "outside-the-edit", "parse-anywhere"))
 def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(errors, verdict):
     """Review F12: a tactic or budget failure in the mutated declaration is UNKNOWN even beside a refusal (it may have
-    caused one, or followed from it), and a refusal inside a tactic block is a tactic's."""
+    caused one, or followed from it), a refusal inside a tactic block is a tactic's, and one outside the text the
+    mutant wrote is a proof term's or another's (hunt Q9); a parse error is the mutant's wherever Lean reports it."""
     import trust_mutants
     text = "def f (o : Option Nat) : Nat := (o.take 1).length + (by exact 0)\n"
     assert text[32] == "(" and text[62] == "0"
-    assert trust_mutants.invalid(errors, text, (1, 1))[0] == verdict
+    assert trust_mutants.invalid(errors, text, (1, 1), (32, 42))[0] == verdict  # the edit wrote `(o.take 1)`
 
 
 def test_named_writes_each_check_as_a_declaration_of_what_it_states():
@@ -883,10 +887,10 @@ def test_named_writes_each_check_as_a_declaration_of_what_it_states():
     roles = [(1, 3, "check", None), (4, 4, "check", None), (5, 6, "check", None), (7, 7, "proof", None),
              (8, 8, "check", None)]
     named, spans = trust_mutants.named(text, roles)
-    assert named == (" " * 14 + "\n" + " " * 14 + "\n#tm_trust_eval tmChk_1 f 3\n#tm_trust_guard tmChk_4 f 3 == 3 -- c\n"
-                     "@[simp] theorem Demo.t : f 1 = 2 := by tm_trust_probe tmChk_5; exact sorry\n"
-                     "example : f 1 = 2 := by simp\n#reduce f 3\n")
-    assert spans == {"tmChk_1": (1, 3), "tmChk_4": (4, 4), "tmChk_5": (5, 6)}
+    assert named == ("/-- info: 3 -/\n#guard_msgs in\n#eval f 3\n#tm_trust_guard tmChk_4 f 3 == 3 -- c\n"
+                     "@[simp] theorem Demo.t : f 1 = 2 := by tm_trust_probe tmChk_5; exact sorry\n\n"
+                     "example : f 1 = 2 := by simp\n#reduce f 3\n")  # every line kept (hunt Q6)
+    assert spans == {"tmChk_4": (4, 4), "tmChk_5": (5, 6)}  # an `#eval` prints no answer (hunt Q4, Q7, Q8)
 
 
 @pytest.mark.parametrize(("token", "inside"), [("simp", True), ("maxSteps", True), ("⟨3", False), ("bS", False),
@@ -1016,8 +1020,7 @@ NO_ANSWERS = [
     "(kernel) deep recursion detected", "(kernel) deterministic timeout", "(kernel) interrupted"]
 ANSWERS = ["Tactic `decide` proved that the proposition\n  bigF 3 = 3\nis false",
            "Tactic `native_decide` evaluated that the proposition\n  bigF 3 = 3\nis false",
-           "Expression\n  f 1 == 2\ndid not evaluate to `true`",
-           "❌️ Docstring on `#guard_msgs` does not match generated message:\n\n- info: 3\n+ info: 4"]
+           "Expression\n  f 1 == 2\ndid not evaluate to `true`"]
 
 
 @pytest.mark.parametrize("message", NO_ANSWERS + ANSWERS, ids=short)
@@ -1161,7 +1164,7 @@ STUCK = [  # (row, <far>, the check after the definition ({d} is the definition)
     ("guard-expr", "n + wf 1", "#guard_expr {d} 3 =~ 3", "UNKNOWN", "Failed:"),
     ("reduce-doc", "n + wf 1", "/-- info: 3 -/\n#guard_msgs in\n#reduce {d} 3", "UNKNOWN", "Docstring"),
     ("eval-doc", "n + wf 1", "/-- info: 3 -/\n#guard_msgs in\n#eval {d} 3", "SURVIVOR", ""),
-    ("eval-doc-refuted", "wf 1", "/-- info: 3 -/\n#guard_msgs in\n#eval {d} 3", "KILLED", "Docstring"),
+    ("eval-doc-refuted", "wf 1", "/-- info: 3 -/\n#guard_msgs in\n#eval {d} 3", "UNKNOWN", "Docstring"),  # Q8
     ("check-rfl", "100", "#check (rfl : {d} 3 = 3)", "UNKNOWN", "Type mismatch"),
     ("eval-throws", "100", '#eval (do if {d} 3 != 3 then throw (IO.userError "changed") : IO Unit)', "UNKNOWN",
      "changed"),
@@ -1243,15 +1246,69 @@ HUNT = [
      "  simp [pFast9]\n\ndef PSmall9 (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable (PSmall9 n) := "
      "decidable_of_iff _ (pFast9_iff n)\n\n/-- info: true -/\n#guard_msgs in\n#eval! pFast9 7 = pFast9 7 ∧ PSmall9 2",
      "pFast9", {"KILLED"}),
+    # The fourth hunt. Q1-Q3: the cut proof passed explicitly to `decidable_of_iff`, inside a definition, behind an
+    # `opaque`; Q4, Q8: an `#eval`'s output, formatted by an instance Lean picks after elaboration (one on a cut
+    # proof, one out of its size budget); Q5 (Demo/Q5Defs.lean, Demo/Q5Inst.lean): `native_decide` through a cut
+    # `@[csimp]` lemma of what the synthesized instance reads; Q6, Q7, Q12 (Demo/Src6.lean, Src7.lean, Src12.lean):
+    # a check that reads the source text; Q9: a proof term the mutant broke outside its own text; Q10: an instance
+    # search out of budget picks another instance silently.
+    ("Q1", "def qFast1 (n : Nat) : Bool := n < 3\n\ntheorem qFast1_iff (n : Nat) : qFast1 n = true ↔ n < 3 := by\n"
+     "  simp [qFast1]\n\ndef QSmall1 (n : Nat) : Prop := n < 3\n\n#guard qFast1 7 == qFast1 7 && @decide (QSmall1 2) "
+     "(decidable_of_iff _ (qFast1_iff 2))", "qFast1", {"KILLED"}),
+    ("Q2", "def qFast2 (n : Nat) : Bool := n < 3\n\ntheorem qFast2_iff (n : Nat) : qFast2 n = true ↔ n < 3 := by\n"
+     "  simp [qFast2]\n\ndef QSmall2 (n : Nat) : Prop := n < 3\n\ndef qIsSmall2 (n : Nat) : Bool := @decide "
+     "(QSmall2 n) (decidable_of_iff _ (qFast2_iff n))\n\n#guard qFast2 7 == qFast2 7 && qIsSmall2 2", "qFast2",
+     {"KILLED"}),
+    ("Q3", "def qFast3 (n : Nat) : Bool := n < 3\n\ntheorem qFast3_iff (n : Nat) : qFast3 n = true ↔ n < 3 := by\n"
+     "  simp [qFast3]\n\ndef QSmall3 (n : Nat) : Prop := n < 3\n\nopaque qSmallDec3 (n : Nat) : Decidable (QSmall3 n) "
+     ":= decidable_of_iff _ (qFast3_iff n)\n\n#guard qFast3 7 == qFast3 7 && @decide (QSmall3 2) (qSmallDec3 2)",
+     "qFast3", {"KILLED"}),
+    ("Q4", "def qFast4 (n : Nat) : Bool := n < 3\n\ntheorem qFast4_iff (n : Nat) : qFast4 n = true ↔ n < 3 := by\n"
+     "  simp [qFast4]\n\ndef QSmall4 (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable (QSmall4 n) := "
+     "decidable_of_iff _ (qFast4_iff n)\n\nstructure QVer4 where\n  v : Nat\n\ninstance : Repr QVer4 := ⟨fun x _ => "
+     "if QSmall4 x.v then \"small\" else \"big\"⟩\n\n/-- info: (true, small) -/\n#guard_msgs in\n#eval! (qFast4 7 == "
+     "qFast4 7, (⟨2⟩ : QVer4))", "qFast4", {"KILLED"}),
+    ("Q5", None, "qImpl5", {"KILLED"}),
+    ("Q6", None, "qRef6", {"KILLED"}),
+    ("Q7", None, "qRef7", {"KILLED"}),
+    ("Q8", "class QSize8 (n : Nat) where\n  val : Nat\n\ninstance : QSize8 0 := ⟨0⟩\n\ninstance [s : QSize8 n] : "
+     "QSize8 (n + 1) := ⟨s.val + 1⟩\n\nstructure QW8 (n : Nat) where\n  k : Nat\n\ninstance [QSize8 n] : Repr (QW8 n) "
+     ":= ⟨fun _ _ => \"w\"⟩\n\nabbrev qG8 : Nat := 126\n\n/-- info: w -/\n#guard_msgs in\n#eval (⟨0⟩ : QW8 qG8)", "qG8",
+     {"KILLED"}),
+    ("Q9", "def qPick (n : Nat) (h : n = 3) : Fin 4 := ⟨n, h.symm ▸ Nat.lt_succ_self 3⟩\n\n#guard (qPick 3 rfl).val == 3",
+     "qPick", {"INVALID"}),
+    ("Q10", "class QSize10 (n : Nat) where\n  val : Nat\n\ninstance : QSize10 0 := ⟨0⟩\n\ninstance [s : QSize10 n] : "
+     "QSize10 (n + 1) := ⟨s.val + 1⟩\n\nstructure QW10 (n : Nat) where\n  k : Nat\n\ninstance (priority := low) "
+     "qFallback10 : BEq (QW10 n) := ⟨fun _ _ => false⟩\n\ninstance qSmall10 [QSize10 n] : BEq (QW10 n) := ⟨fun _ _ => "
+     "true⟩\n\nabbrev qG10 : Nat := 126\n\n#guard (⟨0⟩ : QW10 qG10) == ⟨0⟩", "qG10", {"KILLED"}),
+    ("Q12", None, "qRef12", {"KILLED"}),
 ]
-INST = ("import Demo.Defs\n\nnamespace Demo\n\ndef PSmall5 (n : Nat) : Prop := n < 3\n\ntheorem pSmall5_iff (n : Nat) : "
+MODULES = {  # the hunt forms that need modules of their own: Lean's meta framework, an import, their own text
+    "Demo/Q5Defs.lean": "namespace Demo\n\ndef qRef5 (n : Nat) : Bool := n < 3\n\ndef qImpl5 (n : Nat) : Bool := n < 3\n\n"
+                        "theorem qRef5_eq : @qRef5 = @qImpl5 := by\n  funext n\n  simp [qRef5, qImpl5]\n\nattribute [csimp] "
+                        "qRef5_eq\n\nend Demo\n",
+    "Demo/Q5Inst.lean": "import Demo.Q5Defs\n\nnamespace Demo\n\ndef QSmall5 (n : Nat) : Prop := n < 3\n\ntheorem qRef5_iff "
+                        "(n : Nat) : qRef5 n = true ↔ QSmall5 n := by\n  simp [qRef5, QSmall5]\n\ninstance (n : Nat) : "
+                        "Decidable (QSmall5 n) := decidable_of_iff _ (qRef5_iff n)\n\nexample : qImpl5 0 = qImpl5 0 ∧ "
+                        "QSmall5 2 := by native_decide\n\nend Demo\n",
+    "Demo/Src6.lean": "import Lean\n\nnamespace Demo\n\ndef qRef6 (n : Nat) : Bool := n < 3\n\n#guard (by_elab do return "
+                      "Lean.toExpr (((← Lean.getFileMap).source.splitOn \"\\n\")[4]!)) == \"def qRef6 (n : Nat) : Bool := "
+                      "n < 3\" && qRef6 7 == qRef6 7\n\nend Demo\n",
+    "Demo/Src7.lean": "namespace Demo\n\ndef qRef7 (n : Nat) : Bool := n < 3\n\n/-- info: true -/\n#guard_msgs in\n#eval show "
+                      "IO Bool from do\n  let s ← IO.FS.readFile \"Demo/Src7.lean\"\n  return (s.splitOn \"\\n\")[2]! == "
+                      "\"def qRef7 (n : Nat) : Bool := n < 3\" && qRef7 7 == qRef7 7\n\nend Demo\n",
+    "Demo/Src12.lean": "namespace Demo\n\ndef qRef12 (n : Nat) : Bool := n < 3\n\n#guard ((include_str \"Src12.lean\").splitOn "
+                       "\"\\n\")[2]! == \"def qRef12 (n : Nat) : Bool := n < 3\" && qRef12 7 == qRef12 7\n\nend Demo\n",
+}
+INST = ("import Demo.HuntP5\n\nnamespace Demo\n\ndef PSmall5 (n : Nat) : Prop := n < 3\n\ntheorem pSmall5_iff (n : Nat) : "
         "pFast5 n = true ↔ PSmall5 n := pFast5_iff n\n\ninstance (n : Nat) : Decidable (PSmall5 n) := decidable_of_iff "
         "_ (pSmall5_iff n)\n\n#guard pFast5 7 == pFast5 7 && decide (PSmall5 2)\n\nend Demo\n")  # hunt P5
-META = ("import Lean\n\nnamespace Demo\n\ndef nZ (n : Nat) : Nat := n * 0 * 1\n\n/-- info: fun n => n * 0 * 1 -/\n"
-        "#guard_msgs in\nopen Lean Meta in\n#eval show MetaM Format from do\n  let _ := nZ\n  ppExpr (← getConstInfo "
-        "``nZ).value!\n\ndef pZ (n : Nat) : Nat := n * 0 * 1\n\n/-- info: fun n => n * 0 * 1 -/\n#guard_msgs in\n"
-        "open Lean Meta in\n#eval show MetaM Format from do\n  let _ := pZ\n  ppExpr (← whnfD (.const ``pZ []))\n\n"
-        "end Demo\n")  # hunt N3, P4
+META_N3 = ("import Lean\n\nnamespace Demo\n\ndef nZ (n : Nat) : Nat := n * 0 * 1\n\n/-- info: fun n => n * 0 * 1 -/\n#guard_msgs "
+           "in\nopen Lean Meta in\n#eval show MetaM Format from do\n  let _ := nZ\n  ppExpr (← getConstInfo ``nZ).value!\n\nend "
+           "Demo\n")  # hunt N3
+META_P4 = ("import Lean\n\nnamespace Demo\n\ndef pZ (n : Nat) : Nat := n * 0 * 1\n\n/-- info: fun n => n * 0 * 1 -/\n#guard_msgs "
+           "in\nopen Lean Meta in\n#eval show MetaM Format from do\n  let _ := pZ\n  ppExpr (← whnfD (.const ``pZ "
+           "[]))\n\nend Demo\n")  # hunt P4
 REFUSED_FORM = "def {d} (o : Option Nat) : Bool := o.any (· == 1)\n\n#guard !{d} none"  # no `Option.take`
 
 
@@ -1272,9 +1329,6 @@ def stuck_package(root: Path, folder: Path) -> None:
         text.append(f"\ndef {d} (n : Nat) : Nat := if n ≤ 3 then n else {far}\n\n"
                     + (check.replace("{d}", d) + "\n" if check else ""))
     text += [f"\n{F12_FORM.replace('{d}', 'sSimpSteps')}\n", f"\n{REFUSED_FORM.replace('{d}', 'sRefused')}\n"]
-    text += [f"\n{form}\n" for _, form, _, _ in HUNT if form]
-    (root / "lean/Demo/Meta.lean").write_text(META)
-    (root / "lean/Demo/Inst.lean").write_text(INST)
     (root / "lean/Demo/Defs.lean").write_text("".join(text) + "\nend Demo\n")
     (root / "outside").mkdir()
     for row in ("outside-decide", "outside-equal"):
@@ -1296,9 +1350,10 @@ def stuck_run(tmp_path_factory):
 @pytest.mark.parametrize(("row", "far", "check", "verdict", "detail"), STUCK, ids=[s[0] for s in STUCK])
 def test_a_check_that_states_no_refutation_is_unknown(stuck_run, row, far, check, verdict, detail):
     """Review F11 (the rule inverted): the mutants that send the definition to <far> are KILLED only where Lean
-    states a refutation (`decide` or `native_decide` asked after a failing `rfl`, an `#eval`'s value), UNKNOWN where
+    states a refutation (`decide` asked after a failing `rfl`), UNKNOWN where
     the check fails stating none (a stuck `rfl` or `#guard_expr`, a `#reduce` that prints a stuck term, an `#eval`
-    that throws, a `#check`), SURVIVOR where it passes; in lean/ and in an outside --test file alike."""
+    that throws, a `#check`, an `#eval`'s output: hunt Q4, Q7, Q8), SURVIVOR where it passes; in lean/ and in an
+    outside --test file alike."""
     done, mutants = stuck_run
     mine = {(m["operator"], m["before"]): m for m in of(mutants, stuck_name(row))}
     far_ones = {("le-lt", "≤"), ("lit-minus", "3")}
@@ -1344,15 +1399,39 @@ def test_a_name_lean_does_not_know_is_invalid(stuck_run):
     assert len(cuts) == 4 and all(m["status"] == "INVALID" and m["detail"].startswith("Invalid field") for m in cuts)
 
 
+def hunt_modules(row: str, form: str | None) -> dict[str, str]:
+    """The modules of one hunt form's package: its own (`Demo/Hunt<row>.lean`), and those it needs (`MODULES`)."""
+    modules = {f"Demo/Hunt{row}.lean": f"import Demo.Wf\n\nnamespace Demo\n\n{form}\n\nend Demo\n"} if form else {}
+    extra = {"N3": {"Demo/Meta.lean": META_N3}, "P4": {"Demo/Meta.lean": META_P4}, "P5": {"Demo/Inst.lean": INST},
+             "Q5": {k: v for k, v in MODULES.items() if "Q5" in k}, "Q6": {"Demo/Src6.lean": MODULES["Demo/Src6.lean"]},
+             "Q7": {"Demo/Src7.lean": MODULES["Demo/Src7.lean"]},
+             "Q12": {"Demo/Src12.lean": MODULES["Demo/Src12.lean"]}}.get(row, {})
+    return {**modules, **extra}
+
+
 @pytest.mark.parametrize(("row", "form", "definition", "never"), HUNT, ids=[h[0] for h in HUNT])
-def test_a_hunt_form_gets_no_verdict_that_hides_it(stuck_run, row, form, definition, never):
+def test_a_hunt_form_gets_no_verdict_that_hides_it(tmp_path, row, form, definition, never):
     """The DRI's step 2 (adversarial hunt): each form it found gave KILLED (H1, H1r, H4, H5) or INVALID (H2) on the
-    tool after the inversion, the second hunt's forms (N1-N10) on the tool after the first, and the third's
-    (P1-P9) on the tool after the second; with a check's
+    tool after the inversion, the second hunt's forms (N1-N10) on the tool after the first, the third's (P1-P9)
+    and the fourth's (Q1-Q12) on the tools after the second and the third; with a check's
     hypotheses read as a proof (`classify`), one command per check, a kill only where Lean finds the definition in
-    the statement, in the mutant's build, and no bridge on a cut proof (`probe`), a cut proof without its
-    attributes, instance search and "Function expected" out of the refusals and a shared last line UNKNOWN, none
-    does."""
-    done, mutants = stuck_run
+    the statement, in the mutant's build, elaborated as without the mutant and reaching no proof it broke (`probe`;
+    nothing cut up front), no `#eval` output as an answer, a cut proof without its attributes, instance search and
+    "Function expected" out of the refusals, a refusal only in the mutant's own text, and a shared last line
+    UNKNOWN, none does."""
+    root = tmp_path / "package"  # its own package: the form's mutants only, built from its module alone
+    scaffold(root, "")
+    (root / "lean/Demo/Wf.lean").write_text(
+        "namespace Demo\n\ndef wf (n : Nat) : Nat := if _ : n = 0 then 0 else wf (n - 1)\ntermination_by n\n\n"
+        "end Demo\n")
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "wf")
+    for name, text in hunt_modules(row, form).items():
+        (root / "lean" / name).write_text(text)
+    (tmp_path / "dump").mkdir()
+    dump(root, tmp_path / "dump", [])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+    done, mutants = tool(root, tmp_path / "run", "--max-mutants", "1000")
     mine = of(mutants, definition)
-    assert mine and not [m for m in mine if m["status"] in never], (mine, done.stdout[-2000:])
+    assert mine and not [m for m in mine if m["status"] in never], (mine, done.stdout[-2000:], done.stderr[-2000:])
