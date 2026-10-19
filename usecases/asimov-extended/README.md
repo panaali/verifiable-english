@@ -16,7 +16,7 @@ nothing about orders that conflict with each other. Each added rule, derived nam
 | [asimov_extended_reading.py](asimov_extended_reading.py) | an independent reading of all 29 rules for one robot |
 | [asimov_extended_check.py](asimov_extended_check.py) | runs VE on every case and compares the results with the answer key |
 | [answer-key.json](answer-key.json), [results.json](results.json) | the key from PLAN.md sections 6–8, and VE's results |
-| [asimov_unspecified.py](asimov_unspecified.py), [unspecified-results.json](unspecified-results.json) | v2's rules re-run with `permitted` completed `unspecified` (events-time-causation ET-8), and the results |
+| [asimov_unspecified.py](asimov_unspecified.py), [unspecified/results.json](unspecified/results.json) | v2's rules re-run with `permitted` completed `unspecified` (events-time-causation ET-8), and the results |
 
 SHA-256: `base.ve` `c0eef6e84eec517ed5fcd6afae5352895bf424337b94b714640081e6f8b537f5`, `rules.ve`
 `6180eecd325c2ce9b9861f46223c7a1d30b2c82028d91e93454fc58c0f4a392a`.
@@ -264,6 +264,6 @@ the route's 180 s deadline, so the script sets a 900 s wall-clock limit per scen
 
 ```sh
 PATH="$HOME/.elan/bin:$PATH" uv run python usecases/asimov-extended/asimov_extended_check.py   # writes results.json
-PATH="$HOME/.elan/bin:$PATH" uv run python usecases/asimov-extended/asimov_unspecified.py      # writes unspecified-results.json
+PATH="$HOME/.elan/bin:$PATH" uv run python usecases/asimov-extended/asimov_unspecified.py      # writes unspecified/results.json
 PATH="$HOME/.elan/bin:$PATH" uv run pytest -q tests/test_asimov_extended.py tests/test_asimov_laws.py
 ```

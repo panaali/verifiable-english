@@ -124,7 +124,7 @@ is permitted. `norm-defaults@0` has the completion that says so: `unspecified`, 
 
 **Measured with `unspecified` (events-time-causation ET-8).** Since ET-7, `norm-defaults@0` combines with
 `alternatives@0`, and [asimov_unspecified.py](../asimov-extended/asimov_unspecified.py) re-runs these 13 rules with
-`permitted` completed `unspecified` ([results](../asimov-extended/unspecified-results.json)). An action is then clear
+`permitted` completed `unspecified` ([results](../asimov-extended/unspecified/results.json)). An action is then clear
 only if it is clear under every admissible filling of what the text leaves unsaid. An action that only the old
 default permitted is "undecided: the text does not say whether it may be performed". Lean reports it as
 `UNSETTLED(...)` only when two validated fillings disagree.
