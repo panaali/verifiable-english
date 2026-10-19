@@ -48,6 +48,11 @@ IDIOMS = {
         '{0} is projected to occur in {1}',
         '{0} pledged {1}',
         '{0} is a citizen of {1}',
+        # presupposition PS-6r: the relational nouns of the constitution's heading presuppositions
+        '{0} is a core value of {1}',
+        '{0} is a guideline of {1}',
+        '{0} is a mission of {1}',
+        '{0} is a nature of {1}',
         '{0} is within the jurisdiction of {1}',
         '{0} abridges the privileges or immunities of {1}',
         '{0} deprives {1} of life, liberty, or property',

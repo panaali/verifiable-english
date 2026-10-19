@@ -126,13 +126,6 @@ theorem wf_preds_congr {E E' : VE.Environment} (hs : E'.sorts = E.sorts) (hc : E
       ib (fun p h' => hp p (List.mem_append_right _ h')) Γ h.2⟩
   | all s a ih | ex s a ih => intro hp Γ h; exact ⟨hs ▸ h.1, ih hp _ h.2⟩
 
-theorem bindAll_wellFormed_inv {E : VE.Environment} (body : VE.Formula) :
-    ∀ (ss Γ : List String), (bindAll ss body).WellFormed E Γ → body.WellFormed E (ss.reverse ++ Γ)
-  | [], Γ, h => h
-  | s :: ss, Γ, h => by
-    have := bindAll_wellFormed_inv body ss (s :: Γ) h.2
-    simpa [List.reverse_cons, List.append_assoc] using this
-
 /-- A definition premise typed over an environment types its body there. -/
 theorem definition_body_wellFormed {E : VE.Environment} (d : Definition) (h : d.premise.WellFormed E []) :
     d.body.WellFormed E d.args.reverse := by
