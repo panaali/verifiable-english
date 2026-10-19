@@ -1,0 +1,93 @@
+{
+ "base": "beb5c463026211d9e8be684884153565ca0026b9",
+ "changes": [
+  {
+   "added": 38,
+   "deleted": 0,
+   "path": "docs/arch/AR-17/mutants.json"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "docs/test-architecture/binding-census.json"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/test-architecture/binding-census.md"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "lean/ResponseShape/Schemas/ReadingsRoute.lean"
+  },
+  {
+   "added": 12,
+   "deleted": 2,
+   "path": "lean/VE/Readings/Examples.lean"
+  },
+  {
+   "added": 45,
+   "deleted": 45,
+   "path": "lean/declarations.txt"
+  },
+  {
+   "added": 263,
+   "deleted": 0,
+   "path": "tests/test_readings_s2_answer.py"
+  },
+  {
+   "added": 0,
+   "deleted": 32,
+   "path": "tests/test_readings_s2_lean.py"
+  },
+  {
+   "added": 6,
+   "deleted": 34,
+   "path": "tests/test_readings_s2_python.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "ve/backends/lean_service_schema/readings-route.json"
+  },
+  {
+   "added": 152,
+   "deleted": 115,
+   "path": "ve/readings_route.py"
+  },
+  {
+   "added": 0,
+   "deleted": 67,
+   "path": "ve/readings_s1.py"
+  },
+  {
+   "added": 4,
+   "deleted": 328,
+   "path": "ve/readings_sup.py"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "43570b7ea6118a640027c31c77fef58de3f72b65",
+   "subject": "AR-17: the 65-choice #guard without a new definition (trust +0); regenerated declarations"
+  },
+  {
+   "hash": "cbad85b67e7c7521923e4ad9d47e8c149e76a302",
+   "subject": "AR-17: delete the Python route refusal, choice search and chain text; their tests are Lean #guards"
+  },
+  {
+   "hash": "f71b6b2526192c83e5f3261fdba1d15a0497632f",
+   "subject": "AR-17: forged slot labels are unavailable; the batch's seeded mutants"
+  },
+  {
+   "hash": "0f4dc2218ca0d464a17c7a84b7f2b028c7f41d68",
+   "subject": "AR-17: the readings-route shape says the client binds the S2 row and regenerates none of it; regenerated schema, declarations and binding census"
+  },
+  {
+   "hash": "e0fe5d00778eaba0c9bf4abf3e68151c0566490d",
+   "subject": "AR-17: relay Lean's S2 row bound to the request; delete the Python regeneration compare"
+  }
+ ],
+ "head": "43570b7ea6118a640027c31c77fef58de3f72b65"
+}
