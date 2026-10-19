@@ -12590,6 +12590,79 @@
         "VE.Calc.English.valueWordsOk"
       ]
     },
+    "VE/Calc/Linear.lean": {
+      "S": [
+        "VE.Calc.QFact",
+        "VE.Calc.QFact.Holds",
+        "VE.Calc.QLin",
+        "VE.Calc.QLin.eval"
+      ],
+      "C": [
+        "VE.Calc.Farkas",
+        "VE.Calc.Farkas.check",
+        "VE.Calc.Farkas.combination",
+        "VE.Calc.QFact.negate",
+        "VE.Calc.QLin.add",
+        "VE.Calc.QLin.coeffOf",
+        "VE.Calc.QLin.scale",
+        "VE.Calc.instDecidableHolds"
+      ]
+    },
+    "VE/Calc/FourierMotzkin.lean": {
+      "G[R]": [
+        "VE.Calc.FM.maxFacts",
+        "VE.Calc.FM.maxSteps",
+        "VE.Calc.FM.maxUnknowns"
+      ],
+      "C": [
+        "VE.Calc.FM.Result",
+        "VE.Calc.FM.Row",
+        "VE.Calc.FM.Row.combine",
+        "VE.Calc.FM.Row.contradiction",
+        "VE.Calc.FM.Row.trivial",
+        "VE.Calc.FM.backSubstitute",
+        "VE.Calc.FM.eliminate",
+        "VE.Calc.FM.inputRows",
+        "VE.Calc.FM.pick",
+        "VE.Calc.FM.run",
+        "VE.Calc.FM.search",
+        "VE.Calc.FM.unknowns",
+        "VE.Calc.FM.upperBound",
+        "VE.Calc.QLin.norm"
+      ]
+    },
+    "VE/Calc/Derive.lean": {
+      "S": [
+        "VE.Calc.Answer.point"
+      ],
+      "C": [
+        "VE.Calc.Answer",
+        "VE.Calc.Derivation",
+        "VE.Calc.Derivation.check",
+        "VE.Calc.Derivation.replay",
+        "VE.Calc.Derive.run",
+        "VE.Calc.Derive.search",
+        "VE.Calc.Step",
+        "VE.Calc.Step.derive",
+        "VE.Calc.boundCandidate",
+        "VE.Calc.counterexampleCheck",
+        "VE.Calc.farkasStep",
+        "VE.Calc.squareSteps"
+      ]
+    },
+    "VE/Calc/DeriveExamples.lean": {
+      "T": [
+        "VE.Calc.DeriveExamples.below",
+        "VE.Calc.DeriveExamples.fact",
+        "VE.Calc.DeriveExamples.forged",
+        "VE.Calc.DeriveExamples.h6",
+        "VE.Calc.DeriveExamples.h6First",
+        "VE.Calc.DeriveExamples.h6Steps",
+        "VE.Calc.DeriveExamples.links",
+        "VE.Calc.DeriveExamples.none3",
+        "VE.Calc.DeriveExamples.pt"
+      ]
+    },
     "VE/Events/Calendar.lean": {
       "C": [
         "VE.Events.beforeB",

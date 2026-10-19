@@ -74,3 +74,16 @@ gives the expression back) is ME-11's, whose engine then replaces this file's ph
 * A phrase template is filled in one pass, so "{1}" inside value words stays as written. A comparison with
   no phrase in `VE.Numbers.Phrases` (equality with `swap` set) has no line. Lines begin with a capital and
   end with a full stop.
+
+## Derivations over rational unknowns (`Linear`, `FourierMotzkin`, `Derive`; me-5)
+
+Spec §5 at the level of facts `0 ≤ L` or `0 < L` over linear forms `QLin`. `Farkas.check_sound`: nonnegative
+weights whose combination cancels every unknown and leaves a negative constant (or zero, with a positive weight
+on a strict fact) refute the facts. `lt_of_sq_lt` is the square rule. `Derivation.check_sound`: a replayed list of
+Farkas and square steps proves its last fact wherever the premises and the square links (s = r · r, 0 ≤ r) hold.
+`Counterexample.check_sound`: a point passing `counterexampleCheck` meets every premise and link and refutes the
+conclusion. The Fourier-Motzkin search (`FM.search`, at most 64 facts, 16 unknowns, 10,000 combinations) is
+untrusted: `Derive.run` keeps a derivation only if it replays and a point only if it passes the check
+(`Derive.run_follows`, `Derive.run_counterexample`). Linear infeasibility over ℚ with rational coefficients is
+infeasibility over the reals, so the soundness also holds for real-valued quantities; this is stated here, not
+proved. The lowering of claims to facts, `Follows` and the `follows` check are me-5b's.
