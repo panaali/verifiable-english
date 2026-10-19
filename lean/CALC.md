@@ -82,8 +82,8 @@ weights whose combination cancels every unknown and leaves a negative constant (
 on a strict fact) refute the facts. `lt_of_sq_lt` is the square rule. `Derivation.check_sound`: a replayed list of
 Farkas and square steps proves its last fact wherever the premises and the square links (s = r · r, 0 ≤ r) hold.
 `Counterexample.check_sound`: a point passing `counterexampleCheck` meets every premise and link and refutes the
-conclusion. The Fourier-Motzkin search (`FM.search`, at most 64 facts, 16 unknowns, 10,000 combinations) is
-untrusted: `Derive.run` keeps a derivation only if it replays and a point only if it passes the check
-(`Derive.run_follows`, `Derive.run_counterexample`). Linear infeasibility over ℚ with rational coefficients is
-infeasibility over the reals, so the soundness also holds for real-valued quantities; this is stated here, not
-proved. The lowering of claims to facts, `Follows` and the `follows` check are me-5b's.
+conclusion. The search (`FM.search`, Fourier-Motzkin with multipliers, at most 64 facts, 16 unknowns and 10,000
+combinations per search; `Derive.search` across square links) is untrusted: an answer counts only once
+`Derivation.check` replays it or `counterexampleCheck` passes (the fixtures do this; me-5b's runner will).
+Linear infeasibility over ℚ with rational coefficients is infeasibility over the reals, so the soundness also holds
+for real-valued quantities; this is stated here, not proved. The lowering of claims to facts, `Follows` and the `follows` check are me-5b's.
