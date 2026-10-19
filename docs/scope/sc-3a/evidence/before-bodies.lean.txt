@@ -57,8 +57,8 @@ def anchorsOk (D : DDoc) : Except String _root_.Unit := runAll [
 end Before
 
 theorem before_within (D : VE.Discourse.DDoc) (u a : String) : Before.within D u a = VE.Discourse.within D u a := by
-  simp only [Before.within, Before.unitSpan, VE.Discourse.within, within, VE.Discourse.anchorOf, List.find?_map,
-    Option.map_map]
+  simp only [Before.within, Before.unitSpan, VE.Discourse.within, within, VE.Discourse.anchorOf,
+    VE.Discourse.unitKeys, VE.Discourse.unitKey, List.find?_map, Option.map_map, Function.comp_def]
   rfl
 
 theorem before_innermost (D : VE.Discourse.DDoc) (u : String) :

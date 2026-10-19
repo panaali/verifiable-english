@@ -1603,8 +1603,8 @@
 'VE.Layout.anchorReach_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.continues_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.discourse_anchorsOk_unchanged' depends on axioms: [propext]
-'VE.Layout.discourse_innermost_unchanged' does not depend on any axioms
-'VE.Layout.discourse_within_unchanged' does not depend on any axioms
+'VE.Layout.discourse_innermost_unchanged' depends on axioms: [propext]
+'VE.Layout.discourse_within_unchanged' depends on axioms: [propext]
 'VE.Layout.indexOf_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Layout.innermost_within' depends on axioms: [propext]
 'VE.Layout.itemRun_iff' depends on axioms: [propext, Classical.choice, Quot.sound]

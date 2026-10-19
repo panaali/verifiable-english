@@ -1,0 +1,87 @@
+-- sc-3a evidence (docs/scope/sc-3a/REPORT.md, "Cost"): discourse's pre-move containment (Before.*) against the calls,
+-- on a synthetic discourse document of n units and 40 sections. Copy to lean/VE/Layout/BenchScratch.lean with the
+-- Before definitions of before-bodies.lean.txt, then: cd lean && lake env lean --run VE/Layout/BenchScratch.lean 300
+import VE.Layout.Discourse
+namespace VE.Layout
+
+namespace Before
+open VE.Discourse (DDoc Anchor unitKeys anchorOf unaryPred req runAll allOk dupOf spanIn spansDisjoint)
+
+def unitSpan (D : DDoc) (u : String) : Option (Nat × Nat) :=
+  ((unitKeys D).find? (·.1 == u)).map fun k => (k.2.1, k.2.2.1)
+
+def within (D : DDoc) (unit anchor : String) : Bool :=
+  match unitSpan D unit, anchorOf D anchor with
+  | some (b, e), some a => a.span.1 ≤ b && e ≤ a.span.2
+  | _, _ => false
+
+def narrower (best : Option Anchor) (a : Anchor) : Option Anchor :=
+  match best with
+  | none => some a
+  | some b => if a.span.2 - a.span.1 < b.span.2 - b.span.1 then some a else some b
+
+def innermostAnchor (D : DDoc) (unit : String) : Option Anchor :=
+  (D.K.anchors.filter fun a => within D unit a.id).foldl narrower none
+
+def reachesRoot (D : DDoc) : Nat → Anchor → Bool
+  | 0, _ => false
+  | n + 1, a => match a.parent with
+    | none => true
+    | some p => match anchorOf D p with
+      | some b => spanIn a.span b.span && reachesRoot D n b
+      | none => false
+
+def definitionIn (D : DDoc) (a : Anchor) : Bool :=
+  D.base.units.any fun x => decide (x.kind = .definition) && spanIn (x.start, x.stop) a.span
+
+def anchorsOk (D : DDoc) : Except String _root_.Unit := runAll [
+  fun _ => req (D.K.anchors.length ≤ 1024) "ResourceLimit: anchors",
+  fun _ => match dupOf (D.K.anchors.map Anchor.id) with
+    | some a => .error ("DuplicateDeclaration: anchor " ++ a)
+    | none => .ok (),
+  fun _ => req ((D.K.anchors.filter (·.parent.isNone)).length == 1 || D.K.anchors.isEmpty)
+    "InvalidInput: anchors must form one tree",
+  fun _ => allOk D.K.anchors fun a => req (reachesRoot D (D.K.anchors.length + 1) a)
+    ("DanglingAnchor: " ++ ((a.parent).getD a.id)),
+  fun _ => allOk D.K.anchors fun a => allOk D.K.anchors fun b =>
+    if a.id != b.id && a.parent == b.parent && a.parent.isSome then
+      if a.label.toLower == b.label.toLower then .error ("DuplicateAnchor: " ++ a.label)
+      else req (spansDisjoint a.span b.span) ("InvalidInput: anchors " ++ a.id ++ ", " ++ b.id ++ " overlap")
+    else .ok (),
+  fun _ => allOk D.K.anchors fun a => req (a.exports.all fun p => unaryPred D.E p && definitionIn D a)
+    ("ManifestMismatch: anchors." ++ a.id ++ ".exports")]
+
+end Before
+
+end VE.Layout
+
+open VE.Discourse VE.Route.Admission in
+def benchDoc (n a : Nat) : DDoc :=
+  let units := (List.range n).map fun i => (⟨s!"u{i}", 100 * i, 100 * i + 100, .asserted, none⟩ : DocUnit)
+  let anchors := (⟨"doc", "document", none, "D", (0, 100 * n), none, []⟩ : Anchor) ::
+    (List.range a).map fun j => (⟨s!"s{j}", "section", some "doc", s!"S{j}",
+      (100 * (j * n / a), 100 * ((j + 1) * n / a)), none, []⟩ : Anchor)
+  { E := ⟨[], fun _ => none, fun _ => none⟩,
+    base := { literals := [], flags := [], units := units, lemmas := [], openTerms := [], readingSets := [], narrowings := [] },
+    K := { definitionsVersion := "1", documentSort := "document", anchors := anchors, names := [], contentNames := [],
+           mentions := [], documents := [], imports := [], groups := [], constraints := [], validity := [],
+           selfTruth := [], choices := [] },
+    sourceId := "s", text := fun _ => none, sets := [], status := [], prose := "", files := Lean.Json.null }
+
+/-- Per unit: the innermost anchor, then `within` against it for every earlier unit (earlierUnits' pattern). -/
+def work (inner : VE.Discourse.DDoc → String → Option VE.Discourse.Anchor) (wi : VE.Discourse.DDoc → String → String → Bool) (D : VE.Discourse.DDoc) : Nat :=
+  let ids := D.base.units.map (·.id)
+  ids.foldl (fun acc u => match inner D u with
+    | some a => acc + ((ids.takeWhile (· != u)).filter fun v => wi D v a.id).length
+    | none => acc) 0
+
+def main (args : List String) : IO Unit := do
+  let n := (args.headD "1132").toNat!
+  let D ← IO.lazyPure fun _ => benchDoc n 40
+  for _ in [0, 1, 2] do
+    let t0 ← IO.monoNanosNow
+    let r1 ← IO.lazyPure fun _ => work VE.Layout.Before.innermostAnchor VE.Layout.Before.within D
+    IO.println s!"before: {r1} in {((← IO.monoNanosNow) - t0) / 1000000} ms"
+    let t1 ← IO.monoNanosNow
+    let r2 ← IO.lazyPure fun _ => work VE.Discourse.innermostAnchor VE.Discourse.within D
+    IO.println s!"after:  {r2} in {((← IO.monoNanosNow) - t1) / 1000000} ms"
