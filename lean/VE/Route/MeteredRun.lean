@@ -14,7 +14,12 @@ contracts have been checked against the frozen oracle.
 Every case reads its environment through the service's one validation
 (`Standalone.evaluable`: the frozen `ve.core@0` and `ve.core@0.1` envelopes by
 their frozen decoders, `ve.core@0.2` by `Standalone.validated`), and each
-family is decoded once into a `Session` that both case kinds use. -/
+family is decoded once into a `Session` that both case kinds use.
+
+What a case decodes from its environment alone is a `Prepared` (`prepare`): the
+service keeps it with an environment handle and answers every case against that
+handle with it (`VE.Service.Entry`), and `runCase` is `runWith` of the case's own
+environment's. -/
 namespace VE.Route.MeteredRun
 open Lean
 open VE.Route
@@ -142,21 +147,41 @@ def order (limit : Nat) (M : VE.Order.FiniteModel VE.Order.Wire.Entity)
     trace := MeteredTrace.order M, closed := [], initial := 0, work := id
     document := Metered.evaluate (fun f w => eval f [] w) limit }
 
-/-- The family dispatch: each family's vocabulary, request and model decoders,
-in that order, then `answer`. -/
-def run (q : Query) (checked : VE.Service.Standalone.Validated) (model : Json) :
+/-- What a case decodes from its environment alone: the service's validation and,
+on first use, the layers and the family's vocabulary decoded from it (each still an
+`Except`, so that a case meets its faults in the same order as before). -/
+structure Prepared where
+  checked : Except String VE.Service.Standalone.Validated
+  layered : Thunk (Except String VE.Core.Layers.Layered)
+  route : Thunk (Except String Wire.RouteVocabulary)
+  order : Thunk (Except String Wire.RouteOrderVocabulary)
+  core : Thunk (Except String VE.Bridge.Vocabulary)
+
+def prepare (environment : Json) : Prepared :=
+  let checked := VE.Service.Standalone.evaluable environment
+  { checked
+    layered := Thunk.mk fun _ => do
+      let c ← checked
+      VE.Core.Layers.decodeLayered c.envelope.profiles (← c.layers.elim (throw "no layers") pure)
+    route := Thunk.mk fun _ => do Run.decodeRouteVocabulary (← checked).envelope
+    order := Thunk.mk fun _ => do Wire.decodeOrderVocabulary (← checked).envelope.vocabulary
+    core := Thunk.mk fun _ => do VE.Core.Bridge.decodeEnvironment (← checked).decodable }
+
+/-- The family dispatch: each family's vocabulary (`p`, of the validated environment
+`checked`), request and model decoders, in that order, then `answer`. -/
+def run (q : Query) (checked : VE.Service.Standalone.Validated) (p : Prepared) (model : Json) :
     Except String Json := do
   let e := checked.envelope
   match e.family with
   | .fol => do
-    let rv ← Run.decodeRouteVocabulary e
+    let rv ← p.route.get
     let data := e.profiles.contains "data@0"
     let r ← request q (Wire.decodeClosed rv.environment · data)
       (Wire.decodeFormulas rv.environment · data)
     let M ← Wire.decodeDataModel rv model
     pure (answer q (fol q.limit M (Budget.tableMem M (Wire.modelIndex rv M))) r)
   | .closure => do
-    let rv ← Run.decodeRouteVocabulary e
+    let rv ← p.route.get
     let r ← request q (fun j => do
         let f ← VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth j
         unless f.check rv.environment [] do throw "ill-typed or unbound formula"
@@ -165,7 +190,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (model : Json) :
     let M ← Wire.decodeDataModel rv model
     pure (answer q (closure q.limit M (Budget.tableMem M (Wire.modelIndex rv M))) r)
   | .order => do
-    let rv ← Wire.decodeOrderVocabulary e.vocabulary
+    let rv ← p.order.get
     let r ← request q (fun j => do
         let f ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth j
         unless f.check rv.vocabulary.environment [] do throw "ill-typed or unbound formula"
@@ -175,7 +200,7 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (model : Json) :
     let M := (Budget.sortOrderData d).toModel
     pure (answer q (order q.limit M (Budget.orderMem M (Wire.orderIndex rv M))) r)
   | .closureNary => do
-    let v ← VE.Core.Bridge.decodeEnvironment checked.decodable
+    let v ← p.core.get
     let r ← request q (fun j => do
         let f ← VE.Core.Bridge.decodeFormula VE.Limits.maxDepth j
         VE.Core.Bridge.checkFormula v.environment f "formula"
@@ -184,26 +209,35 @@ def run (q : Query) (checked : VE.Service.Standalone.Validated) (model : Json) :
     let M ← VE.Core.Wire.decodeModel v model
     pure (answer q (core q.limit M (Budget.tableMem M (VE.Core.Wire.index v M))) r)
 
-def runCase (j : Json) : Except String Json := do
+/-- A case answered with `prepared`, what its environment decodes to (`prepare`). -/
+def runWith (prepared : Except String Prepared) (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Bridge.stringField j "kind"
   unless kind == "evaluate-budgeted" || kind == "non-vacuity" do throw "unknown case kind"
-  let checked ← VE.Service.Standalone.evaluable (← j.getObjVal? "environment")
+  let p ← prepared
+  let checked ← p.checked
   let model ← j.getObjVal? "model"
   -- A layered core environment's model gains its defined tables, computed by
   -- the one owner (`Core.Layers.completeModel`).
   let model ← match checked.layers with
-    | some layered => do
-      VE.Core.Layers.completeModel
-        (← VE.Core.Layers.decodeLayered checked.envelope.profiles layered) layered model
+    | some layered => do VE.Core.Layers.completeModel (← p.layered.get) layered model
     | none => pure model
-  run (← query j id (kind == "non-vacuity")) checked model
+  run (← query j id (kind == "non-vacuity")) checked p model
 
-def runCaseReported (j : Json) : Json :=
-  match runCase j with
+def runCase (j : Json) : Except String Json := runWith (prepare <$> j.getObjVal? "environment") j
+
+def reportedWith (prepared : Except String Prepared) (j : Json) : Json :=
+  match runWith prepared j with
   | .ok result => result
   | .error message => Json.mkObj [("id", j.getObjValD "id"),
       ("status", .str "error"), ("error", .str message)]
+
+def runCaseReported (j : Json) : Json := reportedWith (prepare <$> j.getObjVal? "environment") j
+
+/-- A case answered with what its own environment decodes to is answered as it was sent. -/
+theorem reportedWith_prepare (j environment : Json) (h : j.getObjVal? "environment" = .ok environment) :
+    reportedWith (.ok (prepare environment)) j = runCaseReported j := by
+  simp [runCaseReported, h, Functor.map, Except.map]
 
 def main (paths : List String) : IO UInt32 := do
   let input ← match paths with

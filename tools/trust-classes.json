@@ -8322,6 +8322,7 @@
     },
     "VE/Route/MeteredRun.lean": {
       "G[V]": [
+        "VE.Route.MeteredRun.Prepared",
         "VE.Route.MeteredRun.Query",
         "VE.Route.MeteredRun.Request",
         "VE.Route.MeteredRun.Session",
@@ -8332,11 +8333,14 @@
         "VE.Route.MeteredRun.main",
         "VE.Route.MeteredRun.nonVacuityResult",
         "VE.Route.MeteredRun.order",
+        "VE.Route.MeteredRun.prepare",
         "VE.Route.MeteredRun.query",
+        "VE.Route.MeteredRun.reportedWith",
         "VE.Route.MeteredRun.request",
         "VE.Route.MeteredRun.run",
         "VE.Route.MeteredRun.runCase",
         "VE.Route.MeteredRun.runCaseReported",
+        "VE.Route.MeteredRun.runWith",
         "VE.Route.MeteredRun.tick",
         "VE.Route.MeteredRun.tickCache"
       ]
@@ -9424,10 +9428,12 @@
     },
     "VE/Service/Protocol.lean": {
       "D[V]": [
+        "VE.Service.Handles.entry?",
         "VE.Service.Handles.expand",
         "VE.Service.Mode.name",
         "VE.Service.Mode.ofName?",
         "VE.Service.bindResults",
+        "VE.Service.caseBounds",
         "VE.Service.commas",
         "VE.Service.decodeBudget",
         "VE.Service.decodeCases",
@@ -9439,6 +9445,7 @@
         "VE.Service.register",
         "VE.Service.registerOne",
         "VE.Service.respond",
+        "VE.Service.restrictedCases",
         "VE.Service.results"
       ],
       "D[I]": [
@@ -9458,6 +9465,8 @@
       ],
       "G[V]": [
         "VE.Service.Budget",
+        "VE.Service.Entry",
+        "VE.Service.Entry.of",
         "VE.Service.Handles",
         "VE.Service.Handles.insert",
         "VE.Service.Mode",
@@ -9465,6 +9474,7 @@
         "VE.Service.Request.budget",
         "VE.Service.bound",
         "VE.Service.caseResult",
+        "VE.Service.caseResultWith",
         "VE.Service.codeMembers",
         "VE.Service.coding",
         "VE.Service.englishReported",
@@ -9488,6 +9498,10 @@
         "VE.Service.rejectionCode",
         "VE.Service.rejectionCodes",
         "VE.Service.requestError"
+      ],
+      "T": [
+        "VE.Service.renderCases",
+        "VE.Service.sameCases"
       ]
     },
     "VE/Service/Readings.lean": {

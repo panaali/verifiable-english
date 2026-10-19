@@ -410,6 +410,8 @@ class LeanService:
         # The handles the current process holds, in registration order, with their sizes.
         self._registered: dict[str, int] = {}
         self._handle_bytes = 0
+        # The decoded environments the response checks read, by digest (`_decoded_environment`).
+        self._decoded: dict[str, object] = {}
         self.handshake: dict | None = None
         self.stats = {"starts": 0, "restarts": 0, "recycles": 0, "requests": 0, "retries": 0,
                       "registered": 0, "handle_resends": 0}
@@ -650,6 +652,17 @@ class LeanService:
 
     # Handles
 
+    def _decoded_environment(self, digest: str, text: str) -> object:
+        """The decoding of the environment `text` whose SHA-256 is `digest`, kept for the next
+        request against the same handle, as the service keeps its own (`VE.Service.Entry`): at most
+        `MAX_HANDLES` of them, the oldest dropped first. Content-addressed, so never another text's."""
+        decoded = self._decoded.get(digest)
+        if decoded is None:
+            while len(self._decoded) >= MAX_HANDLES:
+                del self._decoded[next(iter(self._decoded))]
+            decoded = self._decoded[digest] = json.loads(text, parse_int=_json_integer)
+        return decoded
+
     def _forget_handles(self) -> None:
         self._registered.clear()
         self._handle_bytes = 0
@@ -869,7 +882,7 @@ class LeanService:
             len(d) + len(t.encode()) + 4 for d, t in environments.items()) + ENVELOPE_BYTES
         if line > MAX_LINE_BYTES:
             return None
-        decoded = {digest: json.loads(text, parse_int=_json_integer) for digest, text in environments.items()}
+        decoded = {digest: self._decoded_environment(digest, text) for digest, text in environments.items()}
         response = self._request(mode, texts, timeout, environments=environments,
                                  expanded=[item.expanded(decoded) for item in chunk])
         return None if response.get("status") == "error" else response

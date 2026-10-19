@@ -273,6 +273,7 @@ import VE.Route.Gate
 import VE.Route.Layer
 import VE.Route.Metered
 import VE.Route.MeteredProofs
+import VE.Route.MeteredRun
 import VE.Route.Readings
 import VE.Route.Route
 import VE.Route.Run
@@ -5069,6 +5070,7 @@ import VE.WireContract.Engine
 #print axioms VE.Route.MeteredProofs.core_sound
 #print axioms VE.Route.MeteredProofs.fol_sound
 #print axioms VE.Route.MeteredProofs.order_sound
+#print axioms VE.Route.MeteredRun.reportedWith_prepare
 #print axioms VE.Route.Run.route_gate
 #print axioms VE.Route.Run.route_gate_rejects
 #print axioms VE.Route.Run.route_rejects_before_checking
@@ -5254,6 +5256,7 @@ import VE.WireContract.Engine
 #print axioms VE.Senses.wf_iff_no_failure
 #print axioms VE.Service.Diagnose.diagnoseCase_registered
 #print axioms VE.Service.Document.decodeRowKind_json
+#print axioms VE.Service.Entry.prepared_eq
 #print axioms VE.Service.Family.Checked.accepted
 #print axioms VE.Service.Family.closureRefutes_sound
 #print axioms VE.Service.Family.closure_graph_entails
@@ -5330,9 +5333,14 @@ import VE.WireContract.Engine
 #print axioms VE.Service.Standalone.checkedModelTables_error_preserved
 #print axioms VE.Service.boundResults_eq
 #print axioms VE.Service.bound_eq
+#print axioms VE.Service.caseResultWith_entry
+#print axioms VE.Service.caseResultWith_none
+#print axioms VE.Service.caseResultWith_unmetered
+#print axioms VE.Service.caseResult_cached
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.coding_error
 #print axioms VE.Service.coding_of_status
+#print axioms VE.Service.entry_hit
 #print axioms VE.Service.expandCases_unexpanded
 #print axioms VE.Service.expand_hit
 #print axioms VE.Service.expand_miss
