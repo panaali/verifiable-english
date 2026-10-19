@@ -157,14 +157,14 @@ def boundCandidate (P : List QFact) (links : List (String × String)) (C : QFact
   | .point κ => some (fixed ++ κ)
   | _ => none
 
-/-- The search, in the order of spec 5: a linear refutation, a linear point that is a counterexample, the claimed
-bound across a square link as a counterexample, then the square rule. -/
+/-- The search, in the order of spec 5: a linear refutation; else a counterexample, the claimed bound across a square
+link tried first, then the linear point; else the square rule. -/
 def Derive.search (P : List QFact) (links : List (String × String)) (C : QFact) : Answer :=
   match FM.search (P ++ [C.negate]) with
   | .exhausted => .unknown (.limit .derivationSteps)
   | .refuted ws => .follows ⟨[.farkas C ⟨ws⟩]⟩
   | .point κ =>
-    match (κ :: (boundCandidate P links C).toList).find? (counterexampleCheck P links C ∘ Answer.point) with
+    match ((boundCandidate P links C).toList ++ [κ]).find? (counterexampleCheck P links C ∘ Answer.point) with
     | some κ => .counterexample κ
     | none => match squareSteps P links C with
       | some st => .follows ⟨st⟩

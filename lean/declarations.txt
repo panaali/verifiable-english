@@ -3504,7 +3504,7 @@ module VE.Calc.Decls 26973c20b976dcfd01d264ddc68b6c2f083dc80fc83d18efdb91ddbb2a8
 793:0-816:38 theorem VE.Calc.Claim.run_decided@VE.Calc.Decls
 818:0-845:34 theorem VE.Calc.Claim.run_unknown@VE.Calc.Decls
 847:0-858:35 theorem VE.Calc.Claim.run_complete@VE.Calc.Decls
-module VE.Calc.Derive 490df73b6e01790525530e96f6e7fbc8dee283461ba739508b46aa01e07c8b72
+module VE.Calc.Derive 79b1f68183ee9a84a95ccab410b8487aab7415bd3eb30077adc9cd79372707d7
 8:0-13:28 inductive VE.Calc.Step@VE.Calc.Derive
 13:11-13:15 def VE.Calc.instReprStep.repr@VE.Calc.Derive
 13:11-13:15 instance VE.Calc.instReprStep@VE.Calc.Derive
@@ -3534,7 +3534,7 @@ module VE.Calc.Derive 490df73b6e01790525530e96f6e7fbc8dee283461ba739508b46aa01e0
 132:0-146:39 def VE.Calc.squareSteps@VE.Calc.Derive
 148:0-158:13 def VE.Calc.boundCandidate@VE.Calc.Derive
 160:0-171:48 def VE.Calc.Derive.search@VE.Calc.Derive
-module VE.Calc.DeriveExamples 31ff72dac6a2ca48f35fbffff77004c53ed6c12eab845f7ecc2a7ea5f07ee53f
+module VE.Calc.DeriveExamples 15372e735d4f2f7a65b71e3951829c31b6dc194e94f3f22f977f507578d3a3d2
 9:0-9:90 def VE.Calc.DeriveExamples.fact@VE.Calc.DeriveExamples
 10:0-10:65 def VE.Calc.DeriveExamples.pt@VE.Calc.DeriveExamples
 11:0-16:23 def VE.Calc.DeriveExamples.checked@VE.Calc.DeriveExamples
