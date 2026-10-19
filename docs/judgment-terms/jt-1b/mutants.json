@@ -95,21 +95,21 @@
       "restored": true
     },
     {
-      "name": "content-no-deceq",
+      "name": "content-eq-wrong",
       "language": "Lean",
       "file": "lean/VE/Judgments/Status.lean",
       "definition": "VE.Judgments.Content",
       "mutation": [
         {
           "from": "  | rule (N : VE.Norms.Node)\n  deriving DecidableEq, Repr",
-          "to": "  | rule (N : VE.Norms.Node)\n  deriving Repr"
+          "to": "  | rule (N : VE.Norms.Node)\n  deriving Repr\n\ninstance : DecidableEq Content := fun _ _ => isFalse (by sorry)"
         }
       ],
-      "claim": "Content is data: its derived equality is what UnitView's and ActiveSet's equality (and the viewOf #guards) are built on",
-      "test": "lean/VE/Judgments/Status.lean:98",
+      "claim": "Content's equality is the derived one: two equal contents compare equal (the viewOf #guard compares J-ξ's views)",
+      "test": "lean/VE/Judgments/Examples.lean:291",
       "fails": [
-        "lean/VE/Judgments/Status.lean:98 (derived instance of ActiveSet fails)",
-        "lean/VE/Judgments/Status.lean:109 (derived instance of UnitView fails)"
+        "lean/VE/Judgments/Examples.lean:290 (viewOf_xi (internal row): `decide` finds the statement false)",
+        "lean/VE/Judgments/Examples.lean:291 (viewOf builds J-ξ's view (internal row))"
       ],
       "command": "cd lean && lake build VE.Judgments.Examples",
       "restored": true
@@ -212,6 +212,26 @@
       "test": "lean/VE/Judgments/Status.lean:143",
       "fails": [
         "lean/VE/Judgments/Status.lean:143 (proof of viewOf_legacy no longer checks)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "activeSet-eq-wrong",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.ActiveSet",
+      "mutation": [
+        {
+          "from": "  candidates  : List (Option Content)\n  deriving DecidableEq, Repr",
+          "to": "  candidates  : List (Option Content)\n  deriving Repr\n\ninstance : DecidableEq ActiveSet := fun _ _ => isFalse (by sorry)"
+        }
+      ],
+      "claim": "ActiveSet's equality is the derived one: two equal sets compare equal (the viewOf #guard compares J-ξ's views)",
+      "test": "lean/VE/Judgments/Examples.lean:291",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:290 (viewOf_xi (internal row): `decide` finds the statement false)",
+        "lean/VE/Judgments/Examples.lean:291 (viewOf builds J-ξ's view (internal row))"
       ],
       "command": "cd lean && lake build VE.Judgments.Examples",
       "restored": true
