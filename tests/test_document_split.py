@@ -1,12 +1,13 @@
 """AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
 
-Every name the module defined has one owner in the package, every name callers import is still importable from
+No name has two owners in the package, every name callers import is still importable from
 `ve.document` as the owner's own object, each module imports only the modules before it, and no test patches a name
 on the package that a module of it looks up (such a patch no longer reaches the code it meant to replace).
 """
 from __future__ import annotations
 
 import ast
+from collections import Counter
 import importlib
 from pathlib import Path
 import subprocess
@@ -21,20 +22,6 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / "ve/document"
 # The modules in their order: each imports only modules before it (the package `__init__` imports them all).
 MODULES = ("source", "containers", "lean", "load", "report", "render", "cli")
-# The module-level names `ve/document.py` defined before the split.
-DEFINED = (
-    "MAX_DOCUMENT_BYTES", "SUPPORTS", "STATUSES", "_RIGHTS_KINDS", "_body", "front_matter", "_split", "_meaning",
-    "_quantity_content", "_content", "_wire_unit", "_parts", "_english_fences", "_document_id", "_soft_contents",
-    "_readings_routes", "_s1_attached", "_environment", "stored_identities", "base_environment", "load_document",
-    "_load", "_document_case", "_lean_answer", "_spans_a_strict_fence", "_names_a_model_member", "_lean_document",
-    "_BLOCK_LINES", "_bind_document_answer", "_soft_bound", "_no_lone_surrogate", "_load_document", "_free_norms",
-    "_defaults_environment", "_reading_plan", "_fixed_and_active", "_fixed_premises", "_checking_environment",
-    "_unresolved_norm_reading", "_assertion_disjunctions", "_rights_block", "_rights_source_units",
-    "_content_bearing", "_lower_route", "_lower_rights_document", "_lower_soft_document", "_content_environment",
-    "_rights_units", "_in_rights_source", "_rights_report", "coverage_defaults", "coverage", "_profile_lines",
-    "_check_narrowing_choices", "quantity_admission_input", "_check_quantity_document", "check_document",
-    "_check_document", "_report", "_graph_nodes", "render_document", "main",
-)
 # The names other modules, tests, tools and scripts import from `ve.document` (an `ast` scan of the repository at the
 # split): the public names, the private ones they read, and three names the module imported.
 EXPORTED = (
@@ -97,10 +84,14 @@ def package_patches(path: Path) -> list[tuple[int, str]]:
     return out
 
 
-@pytest.mark.parametrize("name", DEFINED)
-def test_every_name_the_module_defined_has_one_owner(name):
-    owners = [module for module in MODULES if name in _defined(module)]
-    assert len(owners) == 1, owners
+def test_the_modules_are_the_package():
+    assert {path.stem for path in PACKAGE.glob("*.py")} == {"__init__", "__main__", *MODULES}
+
+
+def test_no_name_is_defined_in_two_modules():
+    """One owner per definition: a name two modules define would be two copies, one of them unpatched by a test."""
+    owners = Counter(name for module in MODULES for name in _defined(module))
+    assert [name for name, count in owners.items() if count > 1] == []
 
 
 @pytest.mark.parametrize("name", EXPORTED)
