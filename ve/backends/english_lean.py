@@ -9,7 +9,10 @@ records a shadow outcome but never decides admission (docs/spec/english-lean-e2.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
+import threading
+from dataclasses import asdict, is_dataclass
 from pathlib import Path
 from typing import Callable
 
@@ -17,7 +20,6 @@ from .. import ast
 from .. import errors
 from ..english_grammar import actions_version, codes, export, grammar_id, lexicon_id
 from ..errors import AmbiguousDerivation, CheckerUnavailable, ResourceLimit, VEError, Span
-from . import dispatch
 from . import relay
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -549,6 +551,89 @@ def python_class(exc: BaseException) -> str:
     return type(exc).__name__ if isinstance(exc, (VEError, CheckerUnavailable)) else f"internal:{type(exc).__name__}"
 
 
+# The comparator's record of one call: the difference classes of its two outcomes (moved here from
+# `backends.dispatch` with the shadow authority, lean-first batch 18; this comparator is its one user).
+_log_lock = threading.Lock()
+
+
+def _record(value):
+    if hasattr(value, "to_dict"):
+        return _record(value.to_dict())
+    if is_dataclass(value):
+        return _record(asdict(value))
+    if isinstance(value, dict):
+        return {key: _record(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_record(item) for item in value]
+    return value
+
+
+def _classes(left, right) -> list[str]:
+    left, right = _record(left), _record(right)
+    classes: set[str] = set()
+    identities = {"environment_id", "source_id", "meaning_id", "model_id",
+                  "claim_id", "edge_id", "graph_id"}
+    composition = {"composition", "assumptions", "assumption_claim_ids",
+                   "supporting_edge_ids", "unresolved_obligations"}
+
+    def shape(path: tuple[str, ...]) -> None:
+        classes.add("schema")
+        if "explanation" in path or "trace" in path:
+            classes.add("explanation")
+        if any(part in composition for part in path):
+            classes.add("composition")
+
+    def visit(a, b, path: tuple[str, ...] = ()) -> None:
+        if type(a) is not type(b):
+            shape(path)
+            return
+        if isinstance(a, dict):
+            if a.keys() != b.keys():
+                shape(path)
+            for key in a.keys() & b.keys():
+                visit(a[key], b[key], (*path, key))
+            return
+        if isinstance(a, list):
+            if len(a) != len(b):
+                shape(path)
+            for x, y in zip(a, b):
+                visit(x, y, path)
+            return
+        if a == b:
+            return
+        key = path[-1] if path else ""
+        if "explanation" in path or "trace" in path:
+            classes.add("explanation")
+        elif any(part in composition for part in path):
+            classes.add("composition")
+        elif key == "status":
+            classes.update(("verdict", "budget-outcome"))
+        elif key in {"valid", "value", "values", "refutes", "composed", "verdict"}:
+            classes.add("verdict")
+        elif key in identities:
+            classes.add("identity")
+        elif key in {"evaluations", "steps", "models_checked"}:
+            classes.add("count-value")
+        elif key in {"code", "generator"}:
+            classes.add("diagnostic-code")
+        elif key in {"message", "detail"}:
+            classes.add("diagnostic-message")
+        else:
+            classes.add("schema")
+
+    visit(left, right)
+    return sorted(classes)
+
+
+def append_record(record: dict) -> None:
+    """Append one comparator record to the shadow log (`VE_SHADOW_LOG`, default ve-shadow.jsonl)."""
+    path = Path(os.environ.get("VE_SHADOW_LOG", "ve-shadow.jsonl"))
+    line = json.dumps(record, sort_keys=True, ensure_ascii=False, separators=(",", ":")) + "\n"
+    with _log_lock:
+        with path.open("a", encoding="utf-8") as stream:
+            stream.write(line)
+
+
 def shadow_record(env, source: str, words, python, lean) -> dict:
     """The shadow record of one call (spec 4.5): `python` is Python's grammatical reading (`ve.english`'s
     `_Reading`) or the exception it raised, `lean` the Lean side's reading or exception."""
@@ -580,7 +665,7 @@ def shadow_record(env, source: str, words, python, lean) -> dict:
         right = reading.comparison(left["code"])
         record["lean"] = reading.record()
         record["identities"] = reading.response["identities"]
-    record["classes"] = [] if "excluded" in record else dispatch._classes(left, right)
+    record["classes"] = [] if "excluded" in record else _classes(left, right)
     if TRANSPORT is not None:
         record["planted"] = "test transport"  # a test's answer, not Lean's: no evidence either way
     return record

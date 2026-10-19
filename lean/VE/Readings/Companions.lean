@@ -2,6 +2,7 @@ import VE.Readings.Wire
 import VE.Order.ProfileGate
 import VE.Discourse.Loader
 import VE.Attribution.Content
+import VE.Limits
 
 /-! Readings that carry their own vocabulary (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13,
 6.6's wire part; plan RD-4a).
@@ -304,7 +305,7 @@ def companionMeaningId (companion content : Json) : Except String String := do
   let profiles ← VE.Bridge.strings (← environment.getObjVal? "profiles")
   -- The content's canonical AST: a formula's, or the W1 rule's (`rule.to_dict()`'s form, `encodeNode`).
   let ast ← match content with
-    | .arr _ => pure (VE.Route.Wire.encodeFormula (← VE.Bridge.decodeFormula 64 content))
+    | .arr _ => pure (VE.Route.Wire.encodeFormula (← VE.Bridge.decodeFormula VE.Limits.maxDepth content))
     | _ => pure (VE.Reports.encodeNode (← VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", content.getObjValD "norm")])))
   VE.Route.Wire.meaningId profiles (← VE.Route.Wire.environmentId profiles environment) ast
 

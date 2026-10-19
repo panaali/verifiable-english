@@ -1,4 +1,5 @@
 import VE.Norms.Layer
+import VE.Limits
 
 /-! Speech-act documents (docs/spec/speech-acts.md sections 1, 3, 4.1, 4.2 and
 8.1): the scope block, commands, questions, queries, the semantic core
@@ -183,7 +184,7 @@ def core (D : SpeechDoc) :
 
 /-- A W2 token: `[A-Za-z0-9_.-]`, 1 to 64 bytes. -/
 def token (s : String) : Bool :=
-  !s.isEmpty && s.utf8ByteSize ≤ 64 &&
+  !s.isEmpty && s.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes &&
     s.toList.all (fun c => c.isAlphanum || c == '_' || c == '.' || c == '-')
 
 /-- Each constant declared with the sort in the same position. -/

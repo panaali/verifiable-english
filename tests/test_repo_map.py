@@ -296,8 +296,10 @@ def test_a_map_from_before_the_relay_changed_gives_the_static_answer(built, cach
     static = next(r for r in built[0] if r.mode == "english.question")
     relay = "ve/backends/english_lean.py"
     assert static.relays.get(relay) and static.tests, (static.relays, static.tests)
-    last = subprocess.run(["git", "log", "-1", "--format=%H", "--", relay], cwd=ROOT, capture_output=True,
-                          text=True, check=True).stdout.strip()
+    # The commit the review case names (it added `read_question`), fixed: the file's latest commit moves with
+    # every branch that edits it, and an edit with no import-time effect (lean-first batch 18's) leaves a map
+    # that only imported the file valid.
+    last = "db138256cf71e7c3416aa4acd420cf3e3125314f"
     before = subprocess.run(["git", "rev-parse", f"{last}^"], cwd=ROOT, capture_output=True, text=True,
                             check=True).stdout.strip()
     recorded = static.tests[0]

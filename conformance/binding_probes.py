@@ -204,7 +204,7 @@ def _ask():
             "case": entry["case"], "names": entry["names"]}
 
 
-C, S, M = "ve_conformance", "ve_service", "ve_metered"
+C, S = "ve_conformance", "ve_service"
 BUILDERS = {
     ("english.admission", S, "english.read", None): lambda: _english_case("english.read"),
     ("english.admission", S, "english.grammar", None): lambda: _english_case("english.grammar"),
@@ -227,9 +227,9 @@ BUILDERS = {
     ("evaluate", C, "", None): lambda: _evaluate_case(_legacy(), "evaluate"),
     ("evaluate", C, "route", "evaluate"): lambda: _evaluate_case(_route(), "evaluate", "evaluate"),
     ("evaluate", C, "order", "evaluate"): lambda: _evaluate_case(_order(), "evaluate", "evaluate"),
-    ("evaluate", M, "", "evaluate-budgeted"):
+    ("evaluate", S, "metered", "evaluate-budgeted"):
         lambda: {**_evaluate_case(_route(), "evaluate", "evaluate-budgeted"), "max_evaluations": 100, "trace": True},
-    ("countermodel.search", M, "", "non-vacuity"):
+    ("countermodel.search", S, "metered", "non-vacuity"):
         lambda: {"id": "non-vacuity", "kind": "non-vacuity", "environment": _route(), "model": _model(_route()),
                  "formula": ["top"], "max_evaluations": 100},
     ("countermodel.check", C, "", "countermodel"): lambda: _countermodel_case(_legacy(), "countermodel"),

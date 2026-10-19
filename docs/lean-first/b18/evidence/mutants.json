@@ -1,0 +1,238 @@
+{
+ "mutants": [
+  {
+   "name": "model_encoding_keyed_by_claim",
+   "language": "Python",
+   "file": "ve/backends/lean_runner.py",
+   "test": "tests/test_stage2_evaluation.py::test_a_cached_model_encoding_never_stands_for_another_model",
+   "source_sha256": "ad6b5ea112d161a707a200a97a9862fe0d101ee9f178cac94129f8b49ed8cf65",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "tants': {'alpha': 'a', 'beta': 'b'}, 'relations': {'knows': [['a', 'b']], 'ready': [['a']]}} is not {'complete': True, 'domains': {'person': ['a', 'b']}, 'constants': {'alpha': 'a', 'beta': 'b'}, 'relations': {'knows': [['a', 'b']], 'ready': [['a']]}})\nE        +  where {'complete': True, 'domains': {'person': ['a', 'b']}, 'constants': {'alpha': 'a', 'beta': 'b'}, 'relations': {'knows': [['a', 'b']], 'ready': [['a']]}} = <function encoded_model at 0x7b6587c9bcc0>(FiniteModel(domains=mappingproxy({'person': ('a', 'b')}), constants=mappingproxy({'alpha': 'a', 'beta': 'b'}), relatio...215a1564437370413', model_id='99718da6d7b302e8e5a4e5a096e8ecddf57b89e45a94875dae6c7b75d6a5e9ff', defined_predicates=()))\nE        +  and   {'complete': True, 'domains': {'person': ['a', 'b']}, 'constants': {'alpha': 'a', 'beta': 'b'}, 'relations': {'knows': [['a', 'b']], 'ready': [['a']]}} = <function encoded_model at 0x7b6587c9bcc0>(FiniteModel(domains=mappingproxy({'person': ('a', 'b')}), constants=mappingproxy({'alpha': 'a', 'beta': 'b'}), relatio...215a1564437370413', model_id='99718da6d7b302e8e5a4e5a096e8ecddf57b89e45a94875dae6c7b75d6a5e9ff', defined_predicates=()))\n\ntests/test_stage2_evaluation.py:265: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_stage2_evaluation.py::test_a_cached_model_encoding_never_stands_for_another_model\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.17s\n"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": ".                                                                        [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-auzev4te)\n\n1 passed in 0.14s\n"
+   }
+  },
+  {
+   "name": "duplicate_error_class",
+   "language": "Python",
+   "file": "ve/errors.py",
+   "test": "tests/test_relay.py::test_each_code_has_exactly_one_class_in_ve_errors",
+   "source_sha256": "fbc87e832c892ffd7e708e52790f8d8943d6fd24ac204feca6dc1bce330886be",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "`ve.errors` that declares a code declares one of the service's\n        codes, no two declare the same one, and no class is defined twice (a second definition shadowed the\n        first `CheckerUnavailable`). `AdmissionError` is one of them; `ve.admission` re-exports it.\"\"\"\n        from ve import errors\n        declared = [cls.code for cls in relay._DECLARED]\n        assert sorted(declared) == sorted(HANDSHAKE_CODES)\n        source = ast_module.parse(Path(errors.__file__).read_text())\n        names = [node.name for node in source.body if isinstance(node, ast_module.ClassDef)]\n>       assert len(names) == len(set(names))\nE       AssertionError: assert 17 == 16\nE        +  where 17 = len(['Span', 'VEError', 'SyntaxError', 'AmbiguousDerivation', '_CodeWorded', 'UnknownSymbol', ...])\nE        +  and   16 = len({'AdmissionError', 'AmbiguousDerivation', 'AuthorityViolation', 'CheckerUnavailable', 'DuplicateDeclaration', 'InvalidModel', ...})\nE        +    where {'AdmissionError', 'AmbiguousDerivation', 'AuthorityViolation', 'CheckerUnavailable', 'DuplicateDeclaration', 'InvalidModel', ...} = set(['Span', 'VEError', 'SyntaxError', 'AmbiguousDerivation', '_CodeWorded', 'UnknownSymbol', ...])\n\ntests/test_relay.py:43: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay.py::test_each_code_has_exactly_one_class_in_ve_errors\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.12s\n"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": ".                                                                        [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-2_xvvqd8)\n\n1 passed in 0.09s\n"
+   }
+  },
+  {
+   "name": "python_authority_returns",
+   "language": "Python",
+   "file": "ve/evaluate.py",
+   "test": "tests/test_stage2_dispatch.py::test_no_setting_selects_an_authority",
+   "source_sha256": "ccc8c7dfad0dcf1b74d2087f01203772124a53aa856f664692daa28654b11f5d",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "il(\n            \"the Python evaluator answered a public evaluation\"))\n        model = FiniteModel.from_dict(env, model_wire(env))\n>       assert evaluate(env, Top(), model).value is True\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_stage2_dispatch.py:42: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/assurance.py:127: in guarded\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\nve/evaluate.py:238: in evaluate\n    return _evaluate_validated(formulas, model, max_evaluations=max_evaluations,\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\na = ((Top(),), FiniteModel(domains=mappingproxy({'item': ('i',)}), constants=mappingproxy({'x': 'i'}), relations=mappingpr...f7c0bd6ef1ee7086', model_id='7bbc17131e3bc7d78dbad8a7850aed51e8708edb3bd7780652e81f7f238a3402', defined_predicates=()))\nk = {'max_evaluations': 1000000, 'max_trace_nodes': 10000, 'trace': True}\n\n>   monkeypatch.setattr(evaluate_module, \"_evaluate_validated\", lambda *a, **k: python.append(a) or pytest.fail(\n        \"the Python evaluator answered a public evaluation\"))\nE   Failed: the Python evaluator answered a public evaluation\n\ntests/test_stage2_dispatch.py:39: Failed\n=========================== short test summary info ============================\nFAILED tests/test_stage2_dispatch.py::test_no_setting_selects_an_authority[setting0]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.18s\n"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": "....                                                                     [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0vhut59z)\n\n4 passed in 0.17s\n"
+   }
+  },
+  {
+   "name": "limit_read_under_another_name",
+   "language": "Python",
+   "file": "ve/limits.py",
+   "test": "tests/test_lean_service.py::test_handshake",
+   "source_sha256": "be1dfbde2e038bdfd203991d36bfdb3510e69842dc6efc855d825e7998b3bfa2",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "F\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3n551oe4)\n\n=================================== FAILURES ===================================\n________________________________ test_handshake ________________________________\n\nservice_executable = PosixPath('/home/seyran/code/ve-lf-18/lean/.lake/build/bin/ve_service')\n\n    def test_handshake(service_executable):\n        with LeanService(service_executable) as service:\n            assert service.handshake[\"service\"] == \"ve-lean@1\"\n            assert tuple(service.handshake[\"modes\"]) == MODES\n>           assert service.handshake[\"limits\"] == STATED_LIMITS\nE           AssertionError: assert {'json_depth'...s': 1000, ...} == {'max_source_...': 10000, ...}\nE             \nE             Omitting 13 identical items, use -vv to show\nE             Differing items:\nE             {'max_depth': 64} != {'max_depth': 10000}\nE             Use -v to get more diff\n\ntests/test_lean_service.py:180: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_lean_service.py::test_handshake - AssertionError: assert {'...\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.54s\n"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": ".                                                                        [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-_9wz9_p6)\n\n1 passed in 0.46s\n"
+   }
+  },
+  {
+   "name": "explanation_rows_outside_the_tree",
+   "language": "Python",
+   "file": "ve/evaluate.py",
+   "test": "tests/test_metered_lean.py::test_explanation_rows_must_be_exactly_one_tree",
+   "source_sha256": "ccc8c7dfad0dcf1b74d2087f01203772124a53aa856f664692daa28654b11f5d",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "t\", \"children\": 2}, ROW],                  # a count past the end\n        [{**ROW, \"kind\": \"document\", \"children\": 1}, ROW, ROW],             # a row outside the tree\n        [ROW, ROW],                                                         # two roots\n        [{**ROW, \"children\": -1}],                                          # a negative count\n        [{**ROW, \"children\": True}],                                        # a Boolean count\n        [{**ROW, \"bindings\": [{\"debruijn_index\": 1, \"sort\": \"s\", \"local_id\": \"x\"}]}],   # a shifted index\n        [{k: v for k, v in ROW.items() if k != \"detail\"}],                  # a missing member\n        \"rows\",                                                             # not a list\n    ])\n    def test_explanation_rows_must_be_exactly_one_tree(rows):\n        \"\"\"Lean-first batch 18: the service writes an explanation as preorder rows (`MeteredTrace.Trace.json`); rows\n        that are not exactly one tree in preorder are no answer.\"\"\"\n        from ve.errors import CheckerUnavailable\n>       with pytest.raises(CheckerUnavailable):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_metered_lean.py:194: Failed\n=========================== short test summary info ============================\nFAILED tests/test_metered_lean.py::test_explanation_rows_must_be_exactly_one_tree[rows2]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 2 passed in 0.10s\n"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": ".........                                                                [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ili4_qap)\n\n9 passed in 0.08s\n"
+   }
+  },
+  {
+   "name": "metered_answer_kind_unbound",
+   "language": "Python",
+   "file": "ve/backends/lean_runner.py",
+   "test": "tests/test_metered_lean.py::test_a_metered_answer_of_the_other_kind_is_no_answer",
+   "source_sha256": "ad6b5ea112d161a707a200a97a9862fe0d101ee9f178cac94129f8b49ed8cf65",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "udgeted'\nanswer = {'id': 'c', 'status': 'ok', 'suitable': True, 'evaluations': 1, ...}\n\n    @pytest.mark.parametrize(\"kind, answer\", [\n        (\"evaluate-budgeted\", {\"id\": \"c\", \"status\": \"ok\", \"suitable\": True, \"evaluations\": 1, \"exhausted\": False}),\n        (\"non-vacuity\", {\"id\": \"c\", \"status\": \"ok\", \"evaluation\": {\"status\": \"Satisfied\", \"value\": True,\n                                                                    \"evaluations\": 1, \"explanation\": None}}),\n    ])\n    def test_a_metered_answer_of_the_other_kind_is_no_answer(monkeypatch, kind, answer):\n        \"\"\"The `metered` row is one of two alternatives (`metered.json`); the client binds it to the kind it sent.\"\"\"\n        from ve.backends import lean_runner, relay\n        from ve.errors import CheckerUnavailable\n        monkeypatch.setattr(relay, \"rows\", lambda mode, cases, **_: [answer])\n        call = lean_runner.metered_evaluation if kind == \"evaluate-budgeted\" else lean_runner.metered_nonvacuity\n>       with pytest.raises(CheckerUnavailable, match=\"of another kind\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE CheckerUnavailable\n\ntests/test_metered_lean.py:217: Failed\n=========================== short test summary info ============================\nFAILED tests/test_metered_lean.py::test_a_metered_answer_of_the_other_kind_is_no_answer[evaluate-budgeted-answer0]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.10s\n"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": "..                                                                       [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-nxze39tk)\n\n2 passed in 0.07s\n"
+   }
+  },
+  {
+   "name": "countermodel_route_reads_display_blocks",
+   "language": "Python",
+   "file": "ve/search.py",
+   "test": "tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did",
+   "source_sha256": "17a14af5b4ee2a5a922116845b9d7a07e8d98bdfec619f99163e3b9a06cfef9d",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "swer_as_the_base_did(group):\n        envs = [(name, raw) for name, raw in ENVIRONMENTS if name.split(\"#\")[0] == group]\n        answers = model_cases.run_all(envs)\n        expected = {case: value for case, value in ORACLE[\"answers\"].items()\n                    if case.split(\"|\")[0].split(\"#\")[0] == group}\n        assert answers.keys() == expected.keys()\n        for case, value in expected.items():\n>           assert answers[case] == value, case\nE           AssertionError: ve.core@0.2:alternatives@0,data@0,norms@0,relational-fol@0#1|distinguishing\nE           assert {'error': 'In... vocabulary]'} == {'ok': {'deta...ed': 11, ...}}\nE             \nE             Left contains 2 more items:\nE             {'error': 'InvalidInput',\nE              'message': 'fields do not match: expected [language, profiles, spec_revision, '\nE                         'vocabulary], got [alternatives, language, profiles, '\nE                         'spec_revision, vocabulary]'}\nE             Right contains 1 more item:...\nE             \nE             ...Full output truncated (14 lines hidden), use '-vv' to show\n\ntests/test_model_environment.py:84: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_model_environment.py::test_search_status_and_comparison_answer_as_the_base_did[ve.core@0.2:alternatives@0,data@0,norms@0,relational-fol@0]\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 1 passed in 0.73s\n"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": "........................................................................ [ 57%]\n......................................................                   [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-14k92wtl)\n\n126 passed in 41.08s\n"
+   }
+  },
+  {
+   "name": "decoded_environment_ignores_its_digest",
+   "language": "Python",
+   "file": "ve/backends/lean_service.py",
+   "test": "tests/test_metered_handles.py::test_the_client_keeps_one_decoding_per_environment_text",
+   "source_sha256": "9419cbdde57dad6d9dd6bdfc5a5b5a87b491db6b39817d76aa0b67f97001b6f1",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": " 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ipsaiv4m)\n\n=================================== FAILURES ===================================\n___________ test_the_client_keeps_one_decoding_per_environment_text ____________\n\n    def test_the_client_keeps_one_decoding_per_environment_text():\n        \"\"\"The client's decoded environments are keyed by the digest of their text, are each that text's\n        decoding, and are bounded by `MAX_HANDLES` (the oldest dropped first).\"\"\"\n        service = LeanService(handles=True)\n        texts = [json.dumps({**raw_environment(()), \"spec_revision\": f\"r{n}\"}, separators=(\",\", \":\"))\n                 for n in range(MAX_HANDLES + 2)]\n        for _ in range(2):\n            for text in texts[:3]:\n>               assert service._decoded_environment(case_digest(text), text) == json.loads(text)\nE               AssertionError: assert {'language': ...tion': 'x'}}}} == {'language': ...tion': 'x'}}}}\nE                 \nE                 Omitting 3 identical items, use -vv to show\nE                 Differing items:\nE                 {'spec_revision': 'r0'} != {'spec_revision': 'r1'}\nE                 Use -v to get more diff\n\ntests/test_metered_handles.py:148: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_metered_handles.py::test_the_client_keeps_one_decoding_per_environment_text\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed in 0.09s\n"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": ".                                                                        [100%]\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-_rzpg3tw)\n\n1 passed in 0.07s\n"
+   }
+  },
+  {
+   "name": "trace_rows_miscount_children",
+   "language": "Lean",
+   "file": "lean/VE/Route/MeteredTrace.lean",
+   "edit": "Trace.rows: children.length -> children.length + 1",
+   "test": "tests/test_metered_lean.py::test_budgeted_values_counts_and_traces_match_python; tests/test_stage2_evaluation.py::test_traced_evaluation_matches_python",
+   "how": "lake build ve_service ve_metered, the mutated ve_service pinned for the run (lean/checkers.lock restored after), VE_NATIVE_PREBUILT=1",
+   "result": "18 failed: CheckerUnavailable: a Lean evaluation trace node names children past its end",
+   "restored": "lake build; both tests pass"
+  },
+  {
+   "name": "handshake_drops_a_limit",
+   "language": "Lean",
+   "file": "lean/VE/Service/Protocol.lean",
+   "edit": "handshake limits: VE.Limits.stated without max_nodes",
+   "test": "tests/test_lean_service.py::test_handshake",
+   "how": "as above; the full lake build also fails at ResponseShape/Schemas.lean's handshake #guard",
+   "result": "failed: CheckerUnavailable: unexpected handshake (limits: missing field max_nodes)",
+   "restored": "lake build; test passes"
+  },
+  {
+   "name": "row_field_renamed",
+   "language": "Lean",
+   "file": "lean/VE/Route/MeteredTrace.lean",
+   "edit": "Row.json: field children -> kids (BUILDER-CHECKLIST 10: the encoder theorem must break)",
+   "test": "lake build ResponseShape.Encoders.Metered",
+   "how": "build only",
+   "result": "ResponseShape/Encoders/Metered.lean:45:96: unsolved goals (row_fits)",
+   "restored": "lake build 965 jobs"
+  },
+  {
+   "name": "handle_entry_ignores_its_key",
+   "language": "Lean",
+   "file": "lean/VE/Service/Protocol.lean",
+   "test": "lake build VE.Service.Protocol (entry_hit); tests/test_metered_handles.py::test_interleaved_handles_answer_each_case_as_its_own_environment_does",
+   "how": "run by hand on f6c4ecd7a: edit the file, `lake build` (and for a runtime test `lake build ve_service`, a temporary pin by `tools/regen_generated.py --write --only checker-pins`, the test), restore the file and lean/checkers.lock, rebuild; `Handles.entry?` answers `h.table.values.head?` for any handle: the build fails at `entry_hit` (unsolved goals); with that proof stubbed, the test fails",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "error: VE/Service/Protocol.lean:875:12: unsolved goals (entry_hit)\ntests/test_metered_handles.py: E AssertionError: assert False where False = same_json([... 'id': 'fol ...\n1 failed, 2 passed in 0.94s"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": "Build completed successfully (967 jobs).\n3 passed in 1.34s"
+   }
+  },
+  {
+   "name": "handle_table_never_drops",
+   "language": "Lean",
+   "file": "lean/VE/Service/Protocol.lean",
+   "test": "tests/test_metered_handles.py::test_a_dropped_or_refused_handle_never_answers_from_its_old_decoding",
+   "how": "run by hand on f6c4ecd7a: edit the file, `lake build` (and for a runtime test `lake build ve_service`, a temporary pin by `tools/regen_generated.py --write --only checker-pins`, the test), restore the file and lean/checkers.lock, rebuild; `Handles.insert` keeps the table (`then h else h`) instead of emptying it past maxHandles",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "E AssertionError: assert ('ok' == 'error' ...)  (the dropped handle was answered)\n1 failed, 1 passed, 36 deselected in 1.58s"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": "3 passed in 1.34s"
+   }
+  },
+  {
+   "name": "case_texts_trimmed",
+   "language": "Lean",
+   "file": "lean/VE/Service/Protocol.lean",
+   "test": "lake build VE.Service.Protocol (the restrictedCases #guards)",
+   "how": "run by hand on f6c4ecd7a: edit the file, `lake build` (and for a runtime test `lake build ve_service`, a temporary pin by `tools/regen_generated.py --write --only checker-pins`, the test), restore the file and lean/checkers.lock, rebuild; `restrictedCases` parses each cut text trimmed, which moves a parse error's offset",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "error: VE/Service/Protocol.lean:552:0: Expression ... (the 16,105-batch #guard against parseCases)\nerror: build failed"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": "Build completed successfully (967 jobs)."
+   }
+  },
+  {
+   "name": "member_cuts_every_colon",
+   "language": "Lean",
+   "file": "lean/VE/Service/Protocol.lean",
+   "test": "lake build VE.Service.Protocol (the objectMembers #guards)",
+   "how": "run by hand on 450a7101b: edit the file, `lake build` (and for a runtime test `lake build ve_service`, a temporary pin by `tools/regen_generated.py --write --only checker-pins`, the test), restore the file and lean/checkers.lock, rebuild; `restrictedCases` parses each cut text trimmed, which moves a parse error's offset; `memberCuts` takes every top-level `:` as the key's end (`colon.isNone` dropped)",
+   "mutant": {
+    "exit_code": 1,
+    "failed": true,
+    "output_tail": "error: VE/Service/Protocol.lean:344:0: Expression ...\nerror: VE/Service/Protocol.lean:347:0: Expression ...\nerror: build failed"
+   },
+   "restored": {
+    "exit_code": 0,
+    "failed": false,
+    "output_tail": "Build completed successfully (967 jobs)."
+   }
+  }
+ ]
+}

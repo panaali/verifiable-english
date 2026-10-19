@@ -623,20 +623,6 @@
    "commit": "85b20fcba4b1b0473de9e41888059e7e1be22b3a"
   },
   {
-   "class": "S",
-   "lines": 76,
-   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
-   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
-  },
-  {
-   "class": "V",
-   "lines": 27,
-   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
-   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
-  },
-  {
    "class": "V",
    "lines": 142,
    "reason": "lf-16f (lean-first batch 16f): new Lean-owned document-mode behaviour composing existing routes: plain norms@0 content on the norms route, a soft-norms@0 document on the soft route (its E'' environment, soft source, rule source and canonical content), the environment mode's fault where no route is composed, and located distinguishing-model and strict-fence diagnostics. Untied V by file against 85b20fcba: VE/Service/Document.lean +139 (Env.soft, Env.regulates, usesNorms, softSourceNorms, SoftLayer, extendedEnv, softContentOf D[V]; softSource, softLayer, softRules G[V]; and the grown check, contentOf, sourceUnit, unitsOf, decodedEnvironment, environmentOf, admitGraph, strayNull, runCaseReported), ResponseShape/Schemas/Document.lean +3 (row). K +0, S +0. Itemised in docs/lean-first/b16f/DELTA.md row 6; the ties pass is a FOLLOW-UPS.md row.",
@@ -649,6 +635,34 @@
    "reason": "lf-16f review fixes: the senses route's composition and the F3 speedups, VE/Service/Document.lean +126, VE/Discourse/Loader.lean +5 (ties pass by 2026-10-24)",
    "signature": "SIGNED by the DRI 2026-10-17 (dri-decisions-20261017b.md #1)",
    "commit": "4e2c73dec5d0c60db87122a45242f69633c4ba19"
+  },
+  {
+   "class": "V",
+   "lines": 34,
+   "reason": "lf-18 (lean-first batch 18): the metered evaluator as a service mode, new Lean-owned behaviour replacing the deleted Python evaluation authority: VE/Route/MeteredTrace.lean +30 (Trace, Row, Trace.rows, Trace.rowsOf, Row.json, Trace.json), ResponseShape/Skeletons.lean +3 (metered), VE/Service/Protocol.lean +2 (the metered mode), ResponseShape/Schemas.lean +1; S -3 (VE/Limits.lean replaces three S copies), K +0; tested by tests/test_metered_lean.py and the relay gate's service:metered mutants; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
+  },
+  {
+   "class": "V",
+   "lines": 86,
+   "reason": "lf-18 F7 (DRI note lf-18-dri-note-20261019): the decoded environment kept with each handle, and the request and case texts cut from their bytes, new Lean-owned behaviour: VE/Service/Protocol.lean +62 (Entry, Entry.of, Handles.entry?, caseResultWith, caseBounds, restrictedCases, memberCuts; objectMembersByChars, sameMembers, renderCases and sameCases are class T), VE/Route/MeteredRun.lean +24 (Prepared, prepare, runWith, reportedWith); with T1 the item is V +120, S -3, K +0 (+117); tested by tests/test_metered_handles.py, the objectMembers and restrictedCases #guards and the caseResult_cached theorem; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
+  },
+  {
+   "class": "S",
+   "lines": 76,
+   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
+  },
+  {
+   "class": "V",
+   "lines": 27,
+   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
   },
   {
    "class": "V",

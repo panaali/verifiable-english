@@ -1,5 +1,6 @@
 import VE.Compose.Content
 import VE.Rights.Route
+import VE.Limits
 
 /-! Reading candidates with content and a candidate's document (docs/spec/composition-s1.md 1.1 to 1.4, 4.2 to
 4.4, 8.2).
@@ -170,7 +171,7 @@ def allStrict (X : RightsDoc) : Bool := X.soft.T.nodes.all (fun N => N.mode == .
 /-- Every generated decision predicate of the soft document within `MAX_IDENTIFIER_BYTES` (soft-norms 6.4): the
     limit the soft decoder's `primeVocabulary` and Python's chain check enforce on every soft document, and the
     rights chain's `validateRights` on its elaboration (composition-s2.md 1.8 and fixture M16, DRI ruling 2). -/
-def namesFit (X : RightsDoc) : Bool := (VE.SoftNorms.decisionNames X.soft).all (·.utf8ByteSize ≤ 64)
+def namesFit (X : RightsDoc) : Bool := (VE.SoftNorms.decisionNames X.soft).all (·.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes)
 def chainWF : Chain → RightsDoc → Bool
   | .rights, X => WellFormedRights X
   | .soft, X => noRights X && namesFit X && WellFormedSoft X.soft

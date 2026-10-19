@@ -116,7 +116,6 @@ def lean_case(graph):
     (lambda case: case["nodes"][1].update(source="false.\n"), "claim_id"),
 ])
 def test_lean_graph_mode_rechecks_identities_and_bindings(monkeypatch, change, message):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     case = lean_case(packages()["shared"])
     assert relay.decide("graph", [case])[0]["assumptions"] == ["a"]
     change(case)

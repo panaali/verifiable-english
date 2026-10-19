@@ -77,7 +77,9 @@ MANIFEST_SEEDS = (
      _rename_mode("ve_service", "norms", ("norms-elaborate",))),
     ("certificate.check", "lean.bindings[ve_conformance route certificate].response",
      _require_field("ve_conformance", "route", ("certificate",))),
-    ("evaluate", "lean_call_sites", _no_call_sites),
+    # Its one-shot call site went with lean-first batch 18 (the metered evaluator is a service mode).
+    ("evaluate", "lean.bindings[ve_conformance route evaluate].response",
+     _require_field("ve_conformance", "route", ("evaluate",))),
     ("bundle.check", "lean_call_sites", _no_call_sites),
 )
 
