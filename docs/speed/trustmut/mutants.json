@@ -145,8 +145,8 @@
   {
    "id": "TM15",
    "file": "tools/trust_mutants.py",
-   "find": "                    controls[key] = build(stage)[1]",
-   "replace": "                    controls[key] = []",
+   "find": "                    control = build(stage)[1]",
+   "replace": "                    control = []",
    "tests": [
     "tests/test_trust_mutants.py::test_the_truth_table_statuses"
    ],
@@ -227,8 +227,8 @@
   {
    "id": "TM23",
    "file": "tools/trust_mutants.py",
-   "find": "                kill = next((x for x in roles if x[3] == \"check\" or x[0] in tests), None)",
-   "replace": "                kill = roles[0]",
+   "find": "                other = next((x for x in roles if x[3] != \"check\" and x[0] not in tests), None)",
+   "replace": "                other = None",
    "tests": [
     "tests/test_trust_mutants.py::test_an_error_outside_every_check_is_unknown"
    ],
@@ -243,6 +243,16 @@
     "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
    ],
    "claim": "the blanking stops at a string the command before is still writing (review F7)"
+  },
+  {
+   "id": "TM25",
+   "file": "tools/trust_mutants.py",
+   "find": "                other = next((x for x in roles if x[3] != \"check\" and x[0] not in tests), None)",
+   "replace": "                other = None if any(x[3] == \"check\" or x[0] in tests for x in roles) else roles[0]",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_error_in_a_definition_beside_a_failing_check_is_unknown"
+   ],
+   "claim": "an error in a definition is UNKNOWN even beside a failing check (review F8)"
   }
  ]
 }
