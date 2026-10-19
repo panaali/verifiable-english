@@ -179,7 +179,10 @@ survived.
 ## Tests run
 
 - Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`; the Mac runner yielded to a
-  candidate gate, so it ran on the VM): see the result line in the build report. The selection is every unit
+  candidate gate, so it ran on the VM; 6,763 s): 451 of 452 units passed. The one failure was
+  `tests/test_readings_defaults_rd2a_report.py::test_seeded_bugs_name_real_tests`, which reads rd2a's saved evidence
+  naming `ve/document.py`. It was fixed in `7256481b` with a `MOVED` map beside the test's `SUPERSEDED` map, and it
+  now passes (7 passed). The selection is every unit
   (452/452). The cause is inherent to the move: the deleted module `ve/document.py` is in nearly every test's
   static import closure, and many tests list `ve/`.
 - `tests/test_document_split.py`, `tests/test_assurance_manifest.py`, and the tests each mutant names: passed.
@@ -217,6 +220,37 @@ The head recording was made at `0016c3d9`. From there to `<G>`, `ve/`, `lean/`, 
 `tools/lean_first_diff.py` are unchanged: `git diff --stat 0016c3d9 <G> -- ve lean rust conformance
 tools/lean_first_diff.py` is empty, and the commits after it change only tests, `tools/` lints and
 `docs/arch/AR-16a/`.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Every Lean answer typed and contained: N.A. No relay, schema or binding changed; `_lean_document` and
+   `_bind_document_answer` moved verbatim (`evidence/verbatim.json`). Their existing fuzz tests pass unchanged
+   (`tests/test_document_lean_switch.py`).
+2. Every deliverable built, no rule broken: PASS. See "Plan rows and directives". No new report test (D4): the
+   only new test file is `tests/test_document_split.py`, which pins structure. No new Python copy of a Lean decision.
+   Overlaps are listed under "Coordination".
+3. Tests can fail: PASS. 16/16 seeded mutants killed, one per retargeted patch site (M1 to M12) plus M13 to M16
+   (`evidence/mutants.json`). `test_the_scanner_finds_a_patch_on_the_package` shows that the stale-patch scanner
+   finds patches.
+4. Python, Lean and Rust agree; valid inputs still pass: PASS. The corpus A/B over nine corpora has 0 differences,
+   and the recordings are byte-identical after the solo re-runs (`evidence/ab.json`, `pilot-rerun.json`).
+5. R8 binding: N.A. The binding code moved verbatim; no field read changed.
+6. Gate evidence matches the final HEAD: N.A. here. The chain gates the final HEAD; "After the gate" lists the
+   re-save. The scope base is `git merge-base` (`beb5c463`), synced with `main` in `0016c3d9`.
+7. No unsigned item: PASS. DELTA's two rows cite R7. Trust +0 (`trust_map.py --check`).
+8. Every user-visible change in DELTA: PASS. The A/B is empty; DELTA says none.
+9. Test selection: PASS. The selection is every unit, which is inherent to deleting a module most tests import
+   (`select_tests.py --explain`: "imports ve/document.py (static)"). It includes the changed tests first and every
+   test the mutants name.
+10. Lean statements: N.A. No Lean change.
+11. Budgets, limits and deadlines: N.A. No budget path changed. `test_document_split.py` uses `HANG_TIMEOUT`.
+12. No CPU or memory regression: PASS. A pure move; base and head recordings are identical. Run alone: UDHR whole
+    482 s base against 486 s head, and 632 s against 797 s
+    (wall time on a shared VM, so not a CPU measurement; the code that runs is the same text); the constitution run-20261019T1800Z documents within ±3 s, except `soft-chain`
+    at 138 s against 99 s (`evidence/pilot-rerun.json`). Importing `ve.document` loads the same external modules.
+13. Test-removed trailers: PASS. `uv run python tools/gate_collection.py --check --prebuilt`: 18273 collected,
+    48 added, 0 removed, 0 refused, 0 stale, 0 malformed. The IDs `test_every_name_the_module_defined_has_one_owner[*]`
+    existed only on this branch (`357efd11` to `6eba0d5f`), never at the merge base.
 
 <!-- BEGIN GENERATED AR-16A NUMBERS -->
 - Scope: `beb5c463..7256481b --no-merges`, 7 commits: `7256481b`, `8fb410f7`, `0a122dcf`, `6eba0d5f`, `84ae8a94`, `357efd11`, `7b44fdf4`.
