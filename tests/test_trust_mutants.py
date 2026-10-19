@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -90,6 +91,11 @@ example : quad 1 = 4 := by
 def loneFin : Fin 1 := ⟨lone 0, by decide⟩
 """
 STATED = ["Demo.Far.half_four", "Demo.double_eq", "Demo.double_two", "Demo.four"]
+
+
+def short(value) -> str:
+    """A test id without spaces (tools/mutants.py reads failing ids up to the first space)."""
+    return re.sub(r"[^\w#!]+", "-", str(value)).strip("-")[:40]
 
 
 def git(root: Path, *args: str) -> None:
@@ -242,7 +248,8 @@ def test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps(tmp_path):
      "-- #guard_msgs in\n" + " " * 14 + "\nexample : f 1 = 2  := sorry\n\n#guard f 1\n"),
     ("#guard_msgs in example : f 1 = 2 := by simp [f]\n\n/-- info: 2\n-/\n#guard_msgs in\n#eval f 1\n", 4,
      " " * 15 + "example : f 1 = 2  := sorry\n\n/-- info: 2\n-/\n#guard_msgs in\n#eval f 1\n"),
-    ("example : f 1 = 2 := by\n  simp [f] /- a\n  b -/\n-- c\n", 4, "example : f 1 = 2  := sorry\n\n\n-- c\n")])
+    ("example : f 1 = 2 := by\n  simp [f] /- a\n  b -/\n-- c\n", 4, "example : f 1 = 2  := sorry\n\n\n-- c\n")],
+    ids=short)
 def test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it(tmp_path, text, last, cut):
     """Review F6: the cut blanks the wrapper (the `sorry` warning would fail it) and keeps the whole comments after
     the proof (the next `#guard_msgs`'s docstring is in the span before it), every line kept."""
@@ -290,7 +297,7 @@ def test_a_decide_check_outside_the_directory_naming_the_definition_kills(defaul
     ("theorem", "theorem t : f [] = [] := by\n  simp [f]\n  rfl", "proof"),
     ("theorem", "theorem t : f [] = [] := by simp [f]; decide", "proof"),
     ("def", "def f (n : Nat) : Nat := n", "other"),
-    ("command", "open Demo", "other")])
+    ("command", "open Demo", "other")], ids=short)
 def test_only_guards_and_decide_rfl_proofs_are_checks(kind, text, role):
     """Review F1 (and SupExtra.lean's and Status.lean's `example`s): an `example` or theorem is a check only when
     `decide`, `native_decide` or `rfl` proves it, whatever its statement names."""
@@ -482,7 +489,7 @@ def table_package(root: Path, folder: Path, rich: bool = False, group: bool = Tr
 
 
 @pytest.mark.parametrize("wrap", WRAPS)
-@pytest.mark.parametrize(("form", "cls", "value", "proof"), FORMS)
+@pytest.mark.parametrize(("form", "cls", "value", "proof"), FORMS, ids=[f[0].replace(" ", "-") for f in FORMS])
 def test_classify_truth_table(form, cls, value, proof, wrap):
     """Review F7: each form's class is the same bare, under `#guard_msgs in` and with a docstring too; a check form
     with a tactic block in it is a proof."""
@@ -510,7 +517,7 @@ def test_classify_truth_table(form, cls, value, proof, wrap):
     ("#check_failure f true", "other"),
     ("#exit", "other"),
     ("example : (⟨0, by simp⟩ : Fin 2).val = 0 := by decide", "proof"),
-    ("example : f 1 = 1 := by exact (by decide)", "proof")])
+    ("example : f 1 = 1 := by exact (by decide)", "proof")], ids=short)
 def test_classify_reads_every_command(text, cls):
     """Review F7: a check form with a tactic block anywhere in it is a proof; `#print` in any spelling is a proof;
     a command that is none of the check forms is other (an error there is no kill)."""
@@ -535,7 +542,7 @@ def test_every_hash_command_opens_its_own_span(tmp_path):
 @pytest.mark.parametrize(("text", "first", "last", "cut"), [
     ("#guard f 1\n/-- info: 1\n-/\n#guard_msgs in\n#eval f 1\n-- c\n", 4, 6,
      "#guard f 1\n" + " " * 11 + "\n  \n" + " " * 14 + "\n" + " " * 9 + "\n-- c\n"),
-    ('#eval "a\n-- b"\n#guard_msgs in #print axioms f\n', 3, 3, '#eval "a\n-- b"\n' + " " * 30 + "\n")])
+    ('#eval "a\n-- b"\n#guard_msgs in #print axioms f\n', 3, 3, '#eval "a\n-- b"\n' + " " * 30 + "\n")], ids=short)
 def test_a_cut_command_is_blanked_with_its_docstring(tmp_path, text, first, last, cut):
     """Review F7: a `#` command is cut whole, with the comment lines before it (its `#guard_msgs` docstring), but
     never a string the command before it is still writing; every line is kept."""
