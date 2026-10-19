@@ -53,10 +53,18 @@
   {
    "id": "M6",
    "file": "ve/document/load.py",
-   "claim": "retargeted patch tests/test_document_lean_switch.py:387 (ve.document.load._load_document): an undecided answer takes the retained loader exactly once; seeded: it runs twice",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:387 (ve.document.load._load_document): an undecided answer takes the retained loader exactly once; seeded: it runs twice (a command: the test's parameters hold spaces, which the harness's FAILED pattern does not read)",
    "find": "            return _load_document(raw, path, None)\n",
    "replace": "            return _load_document(raw, path, None) and _load_document(raw, path, None)\n",
-   "tests": [
+   "command": [
+    "uv",
+    "run",
+    "python",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
     "tests/test_document_lean_switch.py::test_undecided_answers_take_the_retained_path"
    ]
   },
