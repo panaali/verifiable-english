@@ -243,6 +243,11 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
   mutant is UNKNOWN.
 - Each control is one more build per stage and set of cuts, cached across mutants; a mutant whose broken proofs
   differ needs its own. The replays measure no added time (section 1).
+- A build that fails with no located error is retried twice, then UNKNOWN; a control that fails that way is not
+  cached (it would make every mutant sharing it UNKNOWN). In the final selected run on the Mac runner (six test
+  files at once) `test_a_guard_over_the_empty_list_leaves_survivors` failed once at its exact `SURVIVOR` line and
+  passed when rerun alone; its log was gone, so the cause is not known. An unlocated Lake failure under load would
+  give that (an UNKNOWN in place of the survivor: fail closed, never a kill).
 - A proof term inside a definition (not a theorem or `example`) that fails cannot be cut, so the mutant is UNKNOWN
   (pk-1: 5, at `Readings/UnspecifiedWire.lean:526`).
 - Equivalent mutants (for example `.take 1` of a list that always has one element) are not detected; they go in the
