@@ -1,23 +1,23 @@
 {
   "item": "DF-0.3",
   "plan": "docs/spec/defeasible-PLAN.md (00a45ce36), DF-0 item 3",
-  "date": "2026-10-19T06:11Z",
+  "date": "2026-10-19T06:23Z",
   "main_commit": "702ff74292457dfc47e22139c8ea1011113c98a5",
-  "head": "96ec7965766ba6ce2016ea08c7b63f1eb4516864",
-  "product_files_changed_from_main": [],
+  "head": "cd8eba4a4eadb22296fa9e0345557006616473a5",
+  "inputs_changed_from_main": [],
   "command": "uv run python research/defeasible/baseline.py",
   "host": {
     "system": "Linux",
     "cpus": 32,
     "load_before": [
-      36.93,
-      32.21,
-      24.05
+      7.47,
+      16.91,
+      22.9
     ],
     "load_after": [
-      37.18,
-      32.91,
-      24.63
+      7.14,
+      16.38,
+      22.63
     ]
   },
   "binaries": {

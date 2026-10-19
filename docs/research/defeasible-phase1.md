@@ -368,9 +368,9 @@ retyped) and asks each of P-1's three questions (plan 4.2) through today's route
 A P-1 probe counts as answered when today's answer says the conclusion follows (ALL); no verdict today says "unless an
 exception applies". Exit code, stdout and stderr are saved verbatim in
 `docs/research/evidence/defeasible/baseline/baseline.json`, with the documents, the questions, the command, the host
-load (32 CPUs, load 36.9 before and 37.2 after, other work on the host) and the hashes of `ve_service` and the Rust
-binary, both pinned in `lean/checkers.lock`. No product file differs from `main`; no model was called; no
-whole-constitution document was run (L70).
+load (32 CPUs, one-minute load 7.5 before and 7.1 after) and the hashes of `ve_service` and the Rust binary, both
+pinned in `lean/checkers.lock`. No input differs from `main` (`ve/`, `lean/`, `rust/`, `tools/` and `CE4`'s files); no
+model was called; no whole-constitution document was run (L70).
 
 | Set | Question | P-1 (standalone default) | P-2 (`CE4`) |
 |---|---|---|---|
