@@ -452,12 +452,14 @@ structure IdentityRow where
   sides : Option (Rat × Rat) := none
   deriving Repr, DecidableEq
 
-/-- Over inlined sides: compare the normal forms, else try the 13 points over `names`. -/
-def identityDecide (names : List String) (a' b' : Expr) : IdentityRow :=
+/-- Over inlined sides: compare the normal forms, else try the 13 points over the names of `keep` the sides read. The
+names are listed only once the normaliser has accepted both sides, whose trees are then within the node limit. -/
+def identityDecide (keep : List String) (a' b' : Expr) : IdentityRow :=
   match Identity.compare a' b' with
   | none => ⟨.unknown (.limit .polyTerms), none, none⟩
   | some true => ⟨.decided .holds, none, none⟩
   | some false =>
+    let names := keep.filter (· ∈ a'.names ++ b'.names)
     match ((List.range 13).map (identityPoint names)).find? (differsAt a' b') with
     | some κ => ⟨.decided .fails, some κ, (a'.eval (κ.lookup ·)).bind fun x => (b'.eval (κ.lookup ·)).map (x, ·)⟩
     | none => ⟨.unknown .identityNotShown, none, none⟩
@@ -466,20 +468,20 @@ def identityDecide (names : List String) (a' b' : Expr) : IdentityRow :=
 then decide over the free values the sides read, in declaration order. -/
 def identityRun (ds : List Decl) (a b : Expr) : IdentityRow :=
   match a.inline ds (freeNames ds), b.inline ds (freeNames ds) with
-  | .ok a', .ok b' => identityDecide ((freeNames ds).filter (· ∈ a'.names ++ b'.names)) a' b'
+  | .ok a', .ok b' => identityDecide (freeNames ds) a' b'
   | .error .exhausted, _ | .ok _, .error .exhausted => ⟨.unknown (.limit .evaluations), none, none⟩
   | _, _ => ⟨.decided .undefined, none, none⟩
 
-theorem identityDecide_outcome (names : List String) (a' b' : Expr) :
-    ((identityDecide names a' b').outcome = .decided .holds → identityCheck a' b' = true) ∧
-    ((identityDecide names a' b').outcome = .decided .fails → ∃ κ, differsAt a' b' κ = true) ∧
-    (identityDecide names a' b').outcome ≠ .decided .undefined ∧
-    (∀ u, (identityDecide names a' b').outcome = .unknown u → u = .limit .polyTerms ∨ u = .identityNotShown) := by
+theorem identityDecide_outcome (keep : List String) (a' b' : Expr) :
+    ((identityDecide keep a' b').outcome = .decided .holds → identityCheck a' b' = true) ∧
+    ((identityDecide keep a' b').outcome = .decided .fails → ∃ κ, differsAt a' b' κ = true) ∧
+    (identityDecide keep a' b').outcome ≠ .decided .undefined ∧
+    (∀ u, (identityDecide keep a' b').outcome = .unknown u → u = .limit .polyTerms ∨ u = .identityNotShown) := by
   unfold identityDecide
   split
   · simp
   · rename_i h; simp [identityCheck, h]
-  · split
+  · dsimp only; split
     · rename_i κ hκ; simpa using ⟨κ, List.find?_some hκ⟩
     · simp
 
