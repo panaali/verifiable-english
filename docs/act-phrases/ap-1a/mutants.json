@@ -374,6 +374,17 @@
   "killed": true
  },
  {
+  "id": "wording-subject",
+  "definition": "wording",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   ":= \"{0} \" ++ f.text",
+   ":= \"{1} \" ++ f.text"
+  ],
+  "test": "lean/VE/Acts/Compat.lean:14: (deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached",
+  "killed": true
+ },
+ {
   "id": "canonicalActIn-profile",
   "definition": "canonicalActIn",
   "file": "lean/VE/Norms/Wire.lean",

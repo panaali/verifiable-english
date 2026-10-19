@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[3]
 LEX, WIRE, POLICY = "lean/VE/Acts/Lexical.lean", "lean/VE/Norms/Wire.lean", "tools/layer_policy.py"
 BUILD = ["lake", "build", "VE.Acts.LexicalExamples"]
 IMPORTS = ["uv", "run", "python", "tools/check_lean_imports.py"]
+COMPAT = ["lake", "-d", "lean", "build", "VE.Acts.Compat"]  # the proof of wording_subject_first, not the fixtures
 
 # (id, definition, file, old, new, check); check None is BUILD
 MUTANTS = [
@@ -64,6 +65,7 @@ MUTANTS = [
     ("Form.ofText-entitled", "Form.ofText?", LEX, 'else if s == "is entitled" then', 'else if s == "is entitled to" then',
      None),
     ("wording-drop", "wording", LEX, "act.drop 4", "act.drop 3", None),
+    ("wording-subject", "wording", LEX, ':= "{0} " ++ f.text', ':= "{1} " ++ f.text', COMPAT),
     ("canonicalActIn-profile", "canonicalActIn", WIRE,
      'if profiles.contains "acts@0" then VE.Acts.Lexical.check', 'if profiles.contains "acts@1" then VE.Acts.Lexical.check',
      None),
@@ -95,7 +97,9 @@ def run(mutant) -> dict:
         subprocess.run(["git", "checkout", "--", path], cwd=ROOT, check=True)
     out = proc.stdout + proc.stderr
     if check:
-        failed = next((line for line in out.splitlines() if "outward" in line), out.strip()[-200:])
+        found = re.search(r"error: (VE/\S+\.lean:\d+):\d+: (.*)", out)
+        failed = (f"lean/{found.group(1)}: {found.group(2)[:120]}" if found else
+                  next((line for line in out.splitlines() if "outward" in line), out.strip()[-200:]))
     else:
         found = re.search(r"error: (VE/\S+\.lean:\d+):\d+: (.*)", out)
         failed = f"lean/{found.group(1)}: {found.group(2)[:120]}" if found else ""
