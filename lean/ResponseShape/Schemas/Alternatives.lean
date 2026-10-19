@@ -239,6 +239,22 @@ def chooser : Shape :=
       (.required ["violations", "breaches"])
       (.not (.anyOf [.required ["violations"], .required ["breaches"]]))]
 
+/-- A scenario's per-chooser evaluation, its chooser objects at `chooser` (a `$defs` pointer). -/
+def evaluation (chooser : String) : List Shape := [
+  obj,
+  .required ["id", "status", "model_id", "environment_id", "document_hash", "choosers", "assumed_harm_free", "unmapped_obligations", "conditional_on", "text"],
+  closed [
+    ("id", ref "common.json#/$defs/id_ok"),
+    ("status", constS "ok"),
+    ("model_id", ref "common.json#/$defs/hex64_or_empty"),
+    ("environment_id", ref "common.json#/$defs/hex64"),
+    ("document_hash", ref "common.json#/$defs/hex64"),
+    ("choosers", n [arr, .items (ref chooser)]),
+    ("assumed_harm_free", ref "common.json#/$defs/strings"),
+    ("unmapped_obligations", ref "common.json#/$defs/text"),
+    ("conditional_on", n [arr, .items (constS "alternatives:table_complete"), .maxItems 1]),
+    ("text", ref "common.json#/$defs/text")]]
+
 def validate : Shape :=
   c "Alternatives.Run.runValidate: a CONFLICT on the scenario, or the per-chooser evaluation." [
     .anyOf [
@@ -255,20 +271,24 @@ def validate : Shape :=
           ("environment_id", ref "common.json#/$defs/hex64"),
           ("document_hash", ref "common.json#/$defs/hex64"),
           ("text", ref "common.json#/$defs/text")]],
-      n [
-        obj,
-        .required ["id", "status", "model_id", "environment_id", "document_hash", "choosers", "assumed_harm_free", "unmapped_obligations", "conditional_on", "text"],
-        closed [
-          ("id", ref "common.json#/$defs/id_ok"),
-          ("status", constS "ok"),
-          ("model_id", ref "common.json#/$defs/hex64_or_empty"),
-          ("environment_id", ref "common.json#/$defs/hex64"),
-          ("document_hash", ref "common.json#/$defs/hex64"),
-          ("choosers", n [arr, .items (ref "#/$defs/chooser")]),
-          ("assumed_harm_free", ref "common.json#/$defs/strings"),
-          ("unmapped_obligations", ref "common.json#/$defs/text"),
-          ("conditional_on", n [arr, .items (constS "alternatives:table_complete"), .maxItems 1]),
-          ("text", ref "common.json#/$defs/text")]]]]
+      n (evaluation "#/$defs/chooser")]]
+
+def chooser_fill : Shape :=
+  c "Alternatives.Run.chooserReportU: each available alternative's status and its evidence, with the completion." [
+    obj,
+    .required ["chooser", "alternatives", "statuses", "evidence", "text"],
+    .sameLength ["alternatives", "statuses", "evidence"],
+    closed [
+      ("chooser", str),
+      ("alternatives", ref "common.json#/$defs/strings"),
+      ("statuses", n [arr, .items (enumS ["clear", "not clear", "undecided", "UNKNOWN"])]),
+      ("evidence", n [arr, .items (enumS ["kleene", "enumeration", "fillings", "MAX_UNSAID_ATOMS", "search",
+        "no filling"])]),
+      ("text", ref "common.json#/$defs/text")]]
+
+def validate_fill : Shape :=
+  c "Alternatives.Run.runValidateU: the per-chooser statuses of a scenario with the completion (ET-7)."
+    (evaluation "#/$defs/chooser_fill")
 
 def conflict_witness : Shape :=
   c "Alternatives.Run.runConflictWitness: the requested target (no target list)." [
@@ -352,6 +372,7 @@ def «row» : Shape :=
       .select [
         (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
         (ref "#/$defs/kind/alt-elaborate", ref "#/$defs/elaborate"),
+        (.allOf [ref "#/$defs/kind/alt-validate", ref "#/$defs/fill_path"], ref "#/$defs/validate_fill"),
         (ref "#/$defs/kind/alt-validate", ref "#/$defs/validate"),
         (.allOf [ref "#/$defs/kind/alt-conflict", .required ["witness"]], ref "#/$defs/conflict_witness"),
         (ref "#/$defs/kind/alt-conflict", ref "common.json#/$defs/packages_conflict"),
@@ -376,6 +397,8 @@ def file : File where
     ("coverage", .schema coverage),
     ("chooser", .schema chooser),
     ("validate", .schema validate),
+    ("chooser_fill", .schema chooser_fill),
+    ("validate_fill", .schema validate_fill),
     ("conflict_witness", .schema conflict_witness),
     ("followable_witness", .schema followable_witness),
     ("followable", .schema followable),
