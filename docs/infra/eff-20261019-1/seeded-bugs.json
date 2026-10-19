@@ -54,5 +54,13 @@
     "planted": "if candidate in self._file_set:",
     "replaces": "if candidate in self._file_set and candidate != importer:",
     "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "a machine without Lake crashes the preflight instead of letting the pin decide",
+    "file": "tools/regen_generated.py",
+    "test": "tests/test_regen_generated.py::test_without_lake_the_pin_alone_decides_as_before",
+    "planted": "raise",
+    "replaces": "return True (in except OSError)",
+    "result": "FAIL (test failed)"
   }
 ]
