@@ -73,8 +73,8 @@
   {
    "id": "TM8",
    "file": "tools/trust_mutants.py",
-   "find": "        return \"check\" if CHECK_PROOF.search(span) else \"proof\"",
-   "replace": "        return \"check\" if kind == \"command\" or CHECK_PROOF.search(span) else \"proof\"",
+   "find": "        return \"check\" if CHECK_PROOF.search(bare) else \"proof\"",
+   "replace": "        return \"check\" if kind == \"command\" or CHECK_PROOF.search(bare) else \"proof\"",
    "tests": [
     "tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill"
    ],
@@ -99,6 +99,47 @@
     "tests/test_trust_mutants.py::test_a_decide_check_outside_the_directory_naming_the_definition_kills"
    ],
    "claim": "a check outside the definition's directory whose statement names it is built"
+  },
+  {
+   "id": "TM11",
+   "file": "tools/trust_map.py",
+   "find": "|^\\s*(?:\"\n                    + GUARD_WRAPPER.pattern + r\")\\s*$\")",
+   "replace": "\")",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps"
+   ],
+   "claim": "a `#guard_msgs … in` line opens the command it wraps (one span), as `set_option … in` (review F6)"
+  },
+  {
+   "id": "TM12",
+   "file": "tools/trust_mutants.py",
+   "find": "    if kind == \"theorem\" or kind == \"command\" and EXAMPLE.search(bare):",
+   "replace": "    if bare != span:\n        return \"check\"\n    if kind == \"theorem\" or kind == \"command\" and EXAMPLE.search(bare):",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+   ],
+   "claim": "a `#guard_msgs` around a tactic proof is a proof, never a kill (review F6)"
+  },
+  {
+   "id": "TM13",
+   "file": "tools/trust_mutants.py",
+   "find": "            head[w.start():w.end()] = re.sub(r\"[^\\n]\", \" \", w[0])",
+   "replace": "            pass",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+   ],
+   "claim": "a proof cut to `sorry` loses its `#guard_msgs` wrapper, which the `sorry` warning would fail (review F6)"
+  },
+  {
+   "id": "TM14",
+   "file": "tools/trust_mutants.py",
+   "find": "        end = next((s for s in starts if at < s <= hi and not t[s:hi].strip() and not code_only(text[s:hi]).strip()),\n                   hi)",
+   "replace": "        end = hi",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+   ],
+   "claim": "a proof cut keeps the comments after it: the next `#guard_msgs`'s docstring (review F6)"
   }
  ]
 }

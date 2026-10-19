@@ -13,8 +13,9 @@ Each mutant is built in a private scratch copy of lean/ (its build restored from
 of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, its proofs cut to `sorry`
 (no proof there is a check), then each module that imports it and holds checks for it: a check whose compiled
 statement (lean/statements.txt) uses it, every other check in a module of its directory (of the whole cone with
---deep), and the --test files. A check is a `#guard`/`#guard_msgs`, or an `example` or theorem proved by `decide`,
-`native_decide` or `rfl`; every other `example` or theorem is a proof, whatever its statement names. The mutant is
+--deep), and the --test files. A check is a `#guard`, or an `example` or theorem proved by `decide`, `native_decide`
+or `rfl`; every other `example` or theorem is a proof, whatever its statement names, and a `#guard_msgs … in` is
+what it wraps (a check around anything but a proof; cut with its proof). The mutant is
 - KILLED when Lean reports an error inside a check or a --test file;
 - INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means);
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
@@ -53,7 +54,7 @@ from lean_statements import declaration_list, module_name, source_hash, sources 
 from tools import lake_outputs, lean_share, trust_map  # noqa: E402
 
 OPEN, CLOSE = "([{⟨", ")]}⟩"
-GUARD = re.compile(r"(?m)^\s*(?:#guard_msgs|#guard)\b")
+GUARD = re.compile(r"(?m)^\s*#guard\b")
 EXAMPLE = re.compile(r"(?m)^\s*(?:@\[[^\]]*\]\s*)*example\b")
 CHECK_PROOF = re.compile(r":=\s*(?:by\s+)?(?:decide|native_decide|rfl)(?:\s+\+\w+)*\s*$")
 ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*)$", re.M)
@@ -238,11 +239,14 @@ def changed_lines(root: Path, base: str) -> dict[str, set[int]]:
 
 def classify(kind: str, span: str) -> str:
     """check, proof or other, for a declaration of `kind` whose code (comments and strings blanked) is `span`: an
-    `example` or theorem is a check only when `decide`, `native_decide` or `rfl` proves it (inside `#guard_msgs` too),
-    any other is a proof, wherever it is and whatever its statement names; a `#guard` is a check."""
-    if kind == "theorem" or kind == "command" and EXAMPLE.search(span):
-        return "check" if CHECK_PROOF.search(span) else "proof"
-    return "check" if kind == "command" and GUARD.search(span) else "other"
+    `example` or theorem is a check only when `decide`, `native_decide` or `rfl` proves it, any other is a proof,
+    wherever it is and whatever its statement names; a `#guard` is a check. A `#guard_msgs … in` is the command it
+    wraps (trust_map puts both in one span): a check unless that is a proof (review F6); one it cannot read is no
+    check."""
+    bare = trust_map.GUARD_WRAPPER.sub(lambda w: " " * len(w[0]), span)
+    if kind == "theorem" or kind == "command" and EXAMPLE.search(bare):
+        return "check" if CHECK_PROOF.search(bare) else "proof"
+    return "check" if kind == "command" and (bare != span or GUARD.search(bare)) else "other"
 
 
 @dataclass
@@ -329,14 +333,22 @@ def role(tree: Tree, file: str, line: int, m: Mutant) -> str:
 
 
 def cut_proof(path: Path, first: int, last: int) -> bool:
-    """The theorem on lines first..last of `path` with its proof replaced by `sorry`, every line kept."""
+    """The theorem on lines first..last of `path` with its proof replaced by `sorry` and its `#guard_msgs … in`
+    wrappers blanked (the `sorry` warning would fail them: review F6), every line kept. The comment lines after the
+    proof stay: a docstring there is the next command's (trust_map's span ends before that command's first code
+    line), and a `#guard_msgs` reads its docstring."""
     text = path.read_text()
     starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n"), len(text) + 1]
     lo, hi, t = starts[first - 1], starts[min(last, len(starts) - 1)] - 1, code_only(text)
     arm = re.search(r"(?m)^\s*\|", t[lo:hi])
     found = [x for x in (depth0(t, lo, hi, ":="), lo + arm.start() if arm else None) if x is not None]
     if found:
-        path.write_text(text[:min(found)] + " := sorry" + "\n" * text.count("\n", min(found), hi) + text[hi:])
+        head, at = list(text), min(found)
+        for w in trust_map.GUARD_WRAPPER.finditer(t, lo, at):
+            head[w.start():w.end()] = re.sub(r"[^\n]", " ", w[0])
+        end = next((s for s in starts if at < s <= hi and not t[s:hi].strip() and not code_only(text[s:hi]).strip()),
+                   hi)  # the first line from which only whole comments are left
+        path.write_text("".join(head[:at]) + " := sorry" + "\n" * text.count("\n", at, end) + text[end:])
     return bool(found)
 
 
