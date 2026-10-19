@@ -199,6 +199,7 @@ Seeded bugs for F7 (`evidence/mutants.json`; each restored, and its test passed 
 | Python | `ve/backends/lean_service.py` | `_decoded_environment` answers any kept decoding, whatever the digest | `test_the_client_keeps_one_decoding_per_environment_text` |
 
 Runs on the code head `450a7101b`: the selected tests (`select_tests --base ffb3155a5`, 434 units, Mac runner)
-passed with 0 failures; `lake build` (967 jobs), `lean/audit.py`, `tools/trust_map.py --check` and
+passed with 0 failures, `tests/test_relay_mutation_gate.py` among them (F7 changes no relay check;
+`evidence/relay-gate.json` stays the run at `1a2e1dc2`); `lake build` (967 jobs), `lean/audit.py`, `tools/trust_map.py --check` and
 `tools/regen_generated.py --check` (28 entries) pass. On `f6c4ecd7a` the selected tests had found only the two
 trust-budget tests, before the R16 allowance was recorded in `450a7101b`.
