@@ -52,6 +52,9 @@ def twice (n : Nat) : Nat := 2 * n
 /-- Read only by a definition (no check): its error is UNKNOWN. -/
 def lone (n : Nat) : Nat := n + 0
 
+/-- Read by subtype definitions, and by checks of their values only (review F8): their errors are UNKNOWN. -/
+def boxed (n : Nat) : Nat := n + 0
+
 end Demo
 """
 PROOFS = """import Demo.Defs
@@ -89,6 +92,20 @@ example : quad 1 = 4 := by
 #guard_msgs in example : twice 2 = 4 := by decide
 
 def loneFin : Fin 1 := ⟨lone 0, by decide⟩
+
+def boxedEval : {x : Nat // boxed x = x} := ⟨0, by decide⟩
+
+/-- info: 0 -/
+#guard_msgs in
+#eval boxedEval.val
+
+def boxedGuard : {x : Nat // boxed x = x} := ⟨0, by decide⟩
+
+#guard boxedGuard.val == 0
+
+def boxedDecide : {x : Nat // boxed x = x} := ⟨0, by decide⟩
+
+example : boxedDecide.val = 0 := by decide
 """
 STATED = ["Demo.Far.half_four", "Demo.double_eq", "Demo.double_two", "Demo.four"]
 
@@ -267,6 +284,15 @@ def test_an_error_outside_every_check_is_unknown(default_run):
     _, mutants, _, _ = default_run
     (lone,) = of(mutants, "lone")
     assert (lone["status"], lone["detail"].split(": ")[0]) == ("UNKNOWN", "lean/Demo/Examples.lean:23"), lone
+
+
+def test_an_error_in_a_definition_beside_a_failing_check_is_unknown(default_run):
+    """Review F8: the mutant breaks the `by decide` of three subtype definitions; Lean puts `sorry` there, and the
+    `#eval` of one's value refuses it (the value is 0 whatever `boxed` is). The control has no such break, so
+    it passes; the definitions' errors still decide: UNKNOWN at the first, never a kill."""
+    _, mutants, _, _ = default_run
+    (boxed,) = of(mutants, "boxed")
+    assert (boxed["status"], boxed["detail"].split(": ")[0]) == ("UNKNOWN", "lean/Demo/Examples.lean:25"), boxed
 
 
 def test_a_decide_check_outside_the_directory_naming_the_definition_kills(default_run):

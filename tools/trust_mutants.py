@@ -18,13 +18,14 @@ proof (`classify`): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an
 `decide`, `native_decide` or `rfl`, with no other tactic block in it; a `#guard_msgs … in` is what it wraps. Every
 other `example` or theorem, a check form with a tactic block inside, and every `#print` (it lists or shows proofs)
 is a proof, whatever its statement names. The mutant is
-- KILLED when Lean reports an error inside a check or a --test file, and the same build without the mutant (its
-  control: the same cuts) passes;
+- KILLED when every error Lean reports is inside a check or a --test file, and the same build without the mutant
+  (its control: the same cuts) passes;
 - INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means);
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
   `sorry` (a `#print` blanked) and the build repeated, before any other error is read; and a check that fails in
   the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way;
-- UNKNOWN when anything else fails (an error in a definition, or in a command that is no check);
+- UNKNOWN when anything else fails (an error in a definition, or in a command that is no check), even beside a
+  failing check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse);
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> <operator>: <before> -> <after>` unless --allow
@@ -490,21 +491,24 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                             return "UNKNOWN", why
                     continue
                 key = (tuple(stage), state())
-                if key not in controls:  # the same build without the mutant
+                if (control := controls.get(key)) is None:  # the same build without the mutant
                     write(m.file, False)
-                    controls[key] = build(stage)[1]
+                    control = build(stage)[1]
                     write(m.file, True)
-                    if controls[key][:1] and not controls[key][0][0]:  # no located error: not kept for others
-                        return "UNKNOWN", f"its control: {controls.pop(key)[0][2]}"
-                for f, n, message in each(controls[key]):  # it fails there too: it reads a cut proof, so cut it
+                    if control[:1] and not control[0][0]:  # no located error: not kept for others
+                        return "UNKNOWN", f"its control: {control[0][2]}"
+                    controls[key] = control
+                for f, n, message in each(control):  # it fails there too: it reads a cut proof, so cut it
                     if why := cut(f, n, f"fails without the mutant too: {message[:200]}"):
                         return "UNKNOWN", why
-                if controls[key]:
+                if control:
                     continue
-                kill = next((x for x in roles if x[3] == "check" or x[0] in tests), None)
-                f, n, message, _ = kill or roles[0]
-                return ("KILLED", f"lean/{f}:{n}: {message[:120]}") if kill else (
-                    "UNKNOWN", f"lean/{f}:{n}: {message[:200]}")
+                # A kill only when every error is in a check or a --test file: one elsewhere (a definition whose
+                # proof term the mutant breaks, review F8) leaves `sorry` that a check may refuse, so it decides.
+                other = next((x for x in roles if x[3] != "check" and x[0] not in tests), None)
+                f, n, message, _ = other or roles[0]
+                return ("UNKNOWN", f"lean/{f}:{n}: {message[:200]}") if other else (
+                    "KILLED", f"lean/{f}:{n}: {message[:120]}")
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
         failing = [test for test in outside if scratch.lake(env, "env", "lean", str(test))[0]]
