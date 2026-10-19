@@ -135,20 +135,20 @@
     "status": "ok",
     "choosers": [
      {
-      "chooser": "r",
       "alternatives": [
        "push",
        "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "MAX_UNSAID_ATOMS",
+       "kleene"
       ],
       "statuses": [
        "UNKNOWN",
        "not clear"
       ],
-      "evidence": [
-       "MAX_UNSAID_ATOMS",
-       "kleene"
-      ],
-      "text": "no action is known to be clear at r (push UNKNOWN: more than 0 unsaid atoms decide it, pull not clear)"
+      "text": "no action is known to be clear at r (push UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched, pull not clear)"
      }
     ]
    }
@@ -252,20 +252,96 @@
     "status": "ok",
     "choosers": [
      {
-      "chooser": "r",
       "alternatives": [
        "push",
        "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "MAX_UNSAID_ATOMS",
+       "MAX_UNSAID_ATOMS"
       ],
       "statuses": [
        "UNKNOWN",
        "UNKNOWN"
       ],
-      "evidence": [
-       "no filling",
-       "no filling"
+      "text": "no action is known to be clear at r (push UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched, pull UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-required"
+   ],
+   "max_unsaid_atoms": 1,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "alternatives": [
+       "push",
+       "pull"
       ],
-      "text": "no action is known to be clear at r (push UNKNOWN: no filling of what the text leaves unsaid is validated here, pull UNKNOWN: no filling of what the text leaves unsaid is validated here)"
+      "chooser": "r",
+      "evidence": [
+       "MAX_UNSAID_ATOMS",
+       "MAX_UNSAID_ATOMS"
+      ],
+      "statuses": [
+       "UNKNOWN",
+       "UNKNOWN"
+      ],
+      "text": "no action is known to be clear at r (push UNKNOWN: more than 1 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched, pull UNKNOWN: more than 1 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-required"
+   ],
+   "max_unsaid_atoms": 2,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "enumeration",
+       "kleene"
+      ],
+      "statuses": [
+       "clear",
+       "not clear"
+      ],
+      "text": "r has a clear action: push (push clear, pull not clear)"
      }
     ]
    }
@@ -294,20 +370,20 @@
     "status": "ok",
     "choosers": [
      {
-      "chooser": "r",
       "alternatives": [
        "push",
        "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "MAX_UNSAID_ATOMS",
+       "kleene"
       ],
       "statuses": [
        "UNKNOWN",
        "not clear"
       ],
-      "evidence": [
-       "MAX_UNSAID_ATOMS",
-       "kleene"
-      ],
-      "text": "no action is known to be clear at r (push UNKNOWN: more than 0 unsaid atoms decide it, pull not clear)"
+      "text": "no action is known to be clear at r (push UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched, pull not clear)"
      }
     ]
    }

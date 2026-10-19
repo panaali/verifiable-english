@@ -789,6 +789,13 @@
    "reason": "qt-a1: S +137 (VE/Cardinality/Syntax.lean +81, VE/Cardinality/Semantics.lean +56); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a1, 2026-10-18",
    "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "et-7b fix1 (review F1): VE/Alternatives/Run.lean V +1 (statusPhrase: the search UNKNOWN names its cause); et-7b's total K +0, S +42, V +94 (136 lines)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7b, 2026-10-19",
+   "commit": "cb033316a7cb0476e856065e4047efe411bbe43d"
   }
  ]
 }
