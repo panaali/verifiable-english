@@ -42,6 +42,12 @@ example : triple 1 = 3 := by simp [triple]
 /-- Read only by a `decide` check outside this directory whose statement names it. -/
 def half (n : Nat) : Nat := n / 2
 
+/-- Read only by tactic `example`s wrapped in `#guard_msgs` (review F6). -/
+def quad (n : Nat) : Nat := n + n + n + n + 0
+
+/-- Read only by checks wrapped in `#guard_msgs`: an `#eval` and a `decide` example. -/
+def twice (n : Nat) : Nat := 2 * n
+
 end Demo
 """
 PROOFS = """import Demo.Defs
@@ -65,6 +71,18 @@ open Demo
 #guard evens [] == []
 
 example : triple 2 = 6 := by simp [triple]
+
+#guard_msgs in
+example : quad 1 = 4 := by
+  simp [quad]
+
+#guard_msgs in example : quad 2 = 8 := by simp [quad]
+
+/-- info: 6 -/
+#guard_msgs (whitespace := lax) in
+#eval twice 3
+
+#guard_msgs in example : twice 2 = 4 := by decide
 """
 STATED = ["Demo.Far.half_four", "Demo.double_eq", "Demo.double_two", "Demo.four"]
 
@@ -182,6 +200,55 @@ def test_an_example_proved_by_a_tactic_is_no_kill(default_run):
     assert (triple["operator"], triple["after"], triple["status"]) == ("lit-plus", "1", "SURVIVOR")
 
 
+def test_a_proof_wrapped_in_guard_msgs_is_no_kill(default_run):
+    """Review F6 (PROBE F6): Lean reports a wrapped proof's failure at its `#guard_msgs` line, written alone or with
+    the `example`; the wrapper is the proof's, and it is blanked with the cut (else the `sorry` warning trips it)."""
+    _, mutants, _, _ = default_run
+    (quad,) = of(mutants, "quad")
+    assert (quad["operator"], quad["after"], quad["status"]) == ("lit-plus", "1", "SURVIVOR"), quad
+
+
+def test_a_check_wrapped_in_guard_msgs_kills(default_run):
+    """Review F6: a `#guard_msgs` around an `#eval` (its spec in parentheses) or a `decide` example is a check."""
+    _, mutants, _, _ = default_run
+    twice = of(mutants, "twice")
+    assert {m["operator"] for m in twice} == {"lit-plus", "lit-minus"}
+    assert all(m["status"] == "KILLED" and m["detail"].split(": ")[0] in (
+        "lean/Demo/Examples.lean:18", "lean/Demo/Examples.lean:21") for m in twice), twice
+
+
+def test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps(tmp_path):
+    """Review F6: trust_map.scan opens a command at the `#guard_msgs … in` line before it, as at `set_option … in`,
+    so the role of the line Lean reports is the wrapped command's."""
+    import trust_map
+    import trust_mutants
+    path = tmp_path / "A.lean"
+    path.write_text("#guard f 1\n\n#guard_msgs in\nexample : f 1 = 2 := by\n  simp [f]\n\n/-- info: 2 -/\n"
+                    "#guard_msgs (whitespace := lax) in\n#eval f 1\n")
+    decls, _, problems = trust_map.scan(path, [])
+    code = trust_mutants.code_only(path.read_text()).split("\n")
+    assert problems == []
+    assert [(d.start, d.end, trust_mutants.classify(d.kind, "\n".join(code[d.start - 1:d.end]))) for d in decls] == [
+        (1, 2, "check"), (3, 7, "proof"), (8, 9, "check")]
+
+
+@pytest.mark.parametrize(("text", "last", "cut"), [
+    ("-- #guard_msgs in\n#guard_msgs in\nexample : f 1 = 2 := by\n  simp [f]\n#guard f 1\n", 4,
+     "-- #guard_msgs in\n" + " " * 14 + "\nexample : f 1 = 2  := sorry\n\n#guard f 1\n"),
+    ("#guard_msgs in example : f 1 = 2 := by simp [f]\n\n/-- info: 2\n-/\n#guard_msgs in\n#eval f 1\n", 4,
+     " " * 15 + "example : f 1 = 2  := sorry\n\n/-- info: 2\n-/\n#guard_msgs in\n#eval f 1\n"),
+    ("example : f 1 = 2 := by\n  simp [f] /- a\n  b -/\n-- c\n", 4, "example : f 1 = 2  := sorry\n\n\n-- c\n")])
+def test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it(tmp_path, text, last, cut):
+    """Review F6: the cut blanks the wrapper (the `sorry` warning would fail it) and keeps the whole comments after
+    the proof (the next `#guard_msgs`'s docstring is in the span before it), every line kept."""
+    import trust_mutants
+    path = tmp_path / "A.lean"
+    path.write_text(text)
+    first = 2 if text.startswith("--") else 1
+    assert trust_mutants.cut_proof(path, first, last)
+    assert path.read_text() == cut
+
+
 def test_a_decide_check_outside_the_directory_naming_the_definition_kills(default_run):
     _, mutants, _, _ = default_run
     half = of(mutants, "half")
@@ -199,6 +266,14 @@ def test_a_decide_check_outside_the_directory_naming_the_definition_kills(defaul
     ("command", "example (n : Nat) : f n = n := by\n  simp [f]", "proof"),
     ("command", "example (h : p) : q :=\n  t h", "proof"),
     ("command", "#guard_msgs in\nexample : f 1 = 2 := by simp [f]", "proof"),
+    ("command", "#guard_msgs in example : f 1 = 2 := by simp [f]", "proof"),
+    ("command", "#guard_msgs (drop warning) in\n@[simp] example : f 1 = 2 := by\n  simp [f]", "proof"),
+    ("theorem", "#guard_msgs in\ntheorem t : f 1 = 2 := by simp [f]", "proof"),
+    ("command", "#guard_msgs in example : f 1 = 2 := by decide", "check"),
+    ("command", "#guard_msgs (whitespace := lax) in\n#eval f 1", "check"),
+    ("command", "#guard_msgs in\n#guard f 1", "check"),
+    ("command", "#guard_msgs (drop\n  info) in\n#eval f 1", "other"),
+    ("command", "#guard_msgs", "other"),
     ("theorem", "theorem t : f [] = [] := by\n  simp [f]\n  rfl", "proof"),
     ("theorem", "theorem t : f [] = [] := by simp [f]; decide", "proof"),
     ("def", "def f (n : Nat) : Nat := n", "other"),
