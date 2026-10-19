@@ -105,7 +105,8 @@ All Python (no product code changed). Each was applied, its test run, and the fi
 - `tests/test_et8_completion.py` (5 passed); the touched Asimov tests (3 passed); the 9 mutants.
 - Selected tests (`mac-pytest.sh --select`, ve-mac-1, HEAD `7e9e033f`): 1 failed, `test_difffuzz.py::
   test_every_fixture_is_read_or_excluded_with_a_reason` (the results file's first path), fixed in `a86285987`; the
-  rerun passes. Final selected run: see below. No test of main-known-red.txt was hit.
+  rerun passes. Final selected run (ve-mac-1, HEAD `1dc98f1f`): 265 units, exit 0, 0 failed. No test of
+  main-known-red.txt was hit.
 - `tools/regen_generated.py --check` (31 entries), `tools/repo_map.py --check`, `tools/gate_collection.py --check
   --prebuilt` (5 added, 0 refused, stale or malformed), `tools/trust_map.py --check`, `lake build` (no Lean change).
   The full gate is the chain's, on the final HEAD.
