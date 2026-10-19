@@ -122,7 +122,6 @@ def test_environments_and_models_match_frozen_python_on_every_profile_combinatio
 
 
 def test_lean_checks_the_norms_profile_of_a_model(monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     env = environment({"required": obligation(), "permitted": permission()})
     wire = {"complete": True, "domains": {"act": ["a"]}, "constants": {},
             "relations": {"required": [["a"]], "permitted": []}}
@@ -142,7 +141,6 @@ def fake_lean(monkeypatch, row):
 
     monkeypatch.setattr(relay, "decide", run)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     return calls
 
 
@@ -250,7 +248,6 @@ def test_all_authorities_use_lean_for_environment_and_model(monkeypatch):
         return original(mode, cases, **kw)
     monkeypatch.setattr(relay, "decide", traced)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
-    monkeypatch.setenv("VE_AUTHORITY", "rust-experimental")
     env = Environment(raw)
     FiniteModel.from_dict(env, pm.model_wire(env))
     assert "environment" in calls and "model" in calls
@@ -265,10 +262,8 @@ def test_lean_rejects_a_model_whose_claimed_identity_is_stale(monkeypatch):
     from ve.evaluate import evaluate
     env = Environment(pm.raw_environment(()))
     other = Environment(pm.raw_environment(("data@0",)))
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     model = FiniteModel.from_dict(env, pm.model_wire(env))
     formula = Unary("base", Const("x"))
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     row = relay.decide("model", [{"id": "m", "environment": env.to_dict(), "model": pm.model_wire(env),
                                      "claimed": {"environment_id": env.environment_id,
                                                  "model_id": model.model_id}}])[0]
@@ -289,11 +284,9 @@ def test_model_identity_sorts_domains_as_python_does(monkeypatch):
     env = Environment(pm.raw_environment(()))
     wire = pm.model_wire(env)
     wire["domains"]["item"] = ["j2", "i", "j10"]
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     expected = FiniteModel.from_dict(env, wire).model_id
     row = relay.decide("model", [{"id": "m", "environment": env.to_dict(), "model": wire}])[0]
     assert row["model_id"] == expected
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert FiniteModel.from_dict(env, wire).model_id == expected
 
 
@@ -329,7 +322,6 @@ def test_definitions_elaborate_in_lean_in_python_order(monkeypatch, family):
 
 def test_a_definition_cycle_both_checkers_reject_is_named_by_python(monkeypatch):
     from ve.definitions import compile_definitions
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     env = Environment(chained())
     entries = {**env.definition_entries,
                "derived": {"arguments": ["item"], "body": ["unary", "top_derived", ["var", 0]]}}
@@ -347,11 +339,9 @@ def test_definitions_are_leans_answer_and_python_does_not_arbitrate(monkeypatch)
                "derived": {"arguments": ["item"], "body": ["unary", "missing", ["var", 0]]}}
     fake_lean(monkeypatch, lambda mode, case: {"id": "definitions", "status": "ok",
                                                "premises": [], "generators": [], "background": []})
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     assert compile_definitions(env, entries, version="v-accepted") == ()
     fake_lean(monkeypatch, lambda mode, case: {"id": "definitions", "status": "ok",
                                                "premises": [["top"]], "generators": [], "background": []})
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     with pytest.raises(CheckerUnavailable, match="malformed Lean Background result"):
         compile_definitions(env, {**entries, "derived": {"arguments": ["item"], "body": ["top"]}},
                             version="v-malformed")
@@ -363,7 +353,6 @@ def test_frozen_envelopes_and_their_models_are_validated_in_lean(monkeypatch, ki
     from ve.ast import Const, Unary
     from ve.evaluate import evaluate
     from tests.test_stage2_graph import legacy_environment
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     env = legacy_environment(kind)
     data = env.to_dict()
     bad = json.loads(json.dumps(data))
@@ -379,7 +368,6 @@ def test_frozen_envelopes_and_their_models_are_validated_in_lean(monkeypatch, ki
         return original(mode, cases, **kw)
     monkeypatch.setattr(relay, "decide", traced)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert [outcome(lambda: Environment(x)) for x in (data, bad)] + \
         [outcome(lambda: FiniteModel.from_dict(env, w)) for w in (wire, wrong)] == expected
     assert "environment" in seen and "model" in seen

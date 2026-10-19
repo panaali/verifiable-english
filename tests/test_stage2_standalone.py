@@ -799,7 +799,6 @@ def test_public_typing_uses_standalone_lean(monkeypatch):
     from ve.ast import Document, Unary, Const, check_document, check_formula
     from ve.errors import VEError
     env = Environment(raw_environment(()))
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert check_formula(env, Top()) == Top()
     assert check_document(env, Document((Top(),))) == Document((Top(),))
     with pytest.raises(VEError):
@@ -860,11 +859,9 @@ def test_lean_typing_on_legacy_envelopes_matches_python(kind, monkeypatch):
     from ve.ast import Binary, Const, Forall, Unary, Var, check_formula
     env = _legacy_environment(kind)
     formula = Forall("item", Unary("base", Var(0)))
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     assert check_formula(env, formula) == formula
     row = run("check", [{"id": "c", "environment": env.to_dict(), "ast": formula_to_data(env, formula)}])[0]
     assert row["meaning_id"] == meaning_id(env, formula)
-    monkeypatch.delenv("VE_AUTHORITY")
     for bad in (Unary("missing", Const("x")), Binary("base", Const("x"), Const("x"))):
         expected = _typing_error(env, bad)
         monkeypatch.setenv("VE_AUTHORITY", "lean")

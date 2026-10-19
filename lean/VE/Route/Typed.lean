@@ -1,6 +1,7 @@
 import VE.Core.Bridge
 import VE.Core.Layers
 import VE.Route.Wire
+import VE.Limits
 
 /-! The typed check of formulas, family by family (`check`, and `legacy` on the frozen envelopes): the one
 function both the standalone typing service (`VE.Service.Standalone.decodeTyped`) and the English reader's typed
@@ -50,7 +51,7 @@ def check (e : Gate.Envelope) (environment ast : Json) (formula : Bool) : Except
   | .closure =>
     let rv ← routeVocabulary e
     if formula then
-      let a ← VE.Closure.Bridge.decodeFormula 64 ast
+      let a ← VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth ast
       unless a.check rv.environment [] do throw "ill-typed or unbound formula"
     else
       let _ ← VE.Closure.Bridge.decodeFormulas rv.environment ast
@@ -58,7 +59,7 @@ def check (e : Gate.Envelope) (environment ast : Json) (formula : Bool) : Except
   | .closureNary =>
     let v ← VE.Core.Bridge.decodeEnvironment environment
     if formula then
-      let a ← VE.Core.Bridge.decodeFormula 64 ast
+      let a ← VE.Core.Bridge.decodeFormula VE.Limits.maxDepth ast
       VE.Core.Bridge.checkFormula v.environment a "formula"
     else
       let _ ← VE.Core.Bridge.decodeFormulas v.environment ast
@@ -66,7 +67,7 @@ def check (e : Gate.Envelope) (environment ast : Json) (formula : Bool) : Except
   | .order =>
     let v ← Wire.decodeOrderVocabulary e.vocabulary
     if formula then
-      let a ← VE.Order.Wire.decodeFormula 64 ast
+      let a ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth ast
       unless a.check v.vocabulary.environment [] do throw "ill-typed or unbound formula"
     else
       let _ ← VE.Order.Wire.decodeFormulas v.vocabulary.environment ast

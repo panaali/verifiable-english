@@ -347,7 +347,7 @@ class NormDocument:
 
     @semantic_entry("norms.elaborate")
     def elaborate(self, predicate):
-        """The generated layer premise of `predicate`, from the selected authority."""
+        """The generated layer premise of `predicate`, from Lean."""
         self._require_completion()
         from .backends.dispatch import owned
         if not _lean_route(self):
@@ -373,7 +373,7 @@ class NormDocument:
 
     @semantic_entry("norms.elaborate")
     def premises(self):
-        """The labelled layer premises in layer order, from the selected authority."""
+        """The labelled layer premises in layer order, from Lean."""
         self._require_completion()
         from .backends.dispatch import owned
         if not _lean_route(self):
@@ -553,7 +553,7 @@ def _norm_certificate_lean(document, premises, conclusion, certificate):
 
 def _base_model(document, env, model):
     """The witness model over the base environment. Decoding validates it,
-    Background included, under the selected authority (FiniteModel.from_dict)."""
+    Background included, by Lean (FiniteModel.from_dict)."""
     from .model import FiniteModel
     model = FiniteModel.from_dict(env, model) if type(model) is dict else model
     if model.environment_id != env.environment_id:

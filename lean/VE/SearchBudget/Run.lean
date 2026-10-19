@@ -1,6 +1,7 @@
 import VE.SearchBudget.Budget
 import VE.Bridge
 import VE.Route.Wire
+import VE.Limits
 
 /-! # Service mode `search-budget` (premise-scale)
 
@@ -24,7 +25,7 @@ namespace VE.SearchBudget.Run
 open Lean VE
 
 /-- Most JSON nodes read when splitting the premises into conjuncts (`ve/limits.py` MAX_NODES). -/
-def maxConjunctNodes : Nat := 10000
+def maxConjunctNodes : Nat := VE.Limits.maxNodes
 
 /-- The top-level conjuncts of a JSON AST, at most `fuel` deep. -/
 def jsonConjuncts : Nat → Json → List Json
@@ -36,7 +37,7 @@ def jsonConjuncts : Nat → Json → List Json
 /-- The facts of the premises the core decoder reads; any other conjunct is left out. -/
 def decodeFacts (premises : Array Json) : List Formula :=
   (premises.toList.flatMap (jsonConjuncts maxConjunctNodes)).filterMap
-    fun j => (VE.Bridge.decodeFormula 64 j).toOption
+    fun j => (VE.Bridge.decodeFormula VE.Limits.maxDepth j).toOption
 
 /-- The declared constants with a string sort. -/
 def decodeConstants (vocabulary : Json) : List (String × String) :=

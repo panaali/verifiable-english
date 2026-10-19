@@ -82,7 +82,6 @@ def test_definitions_sugar_is_leans(monkeypatch, source):
     14a deleted the retained Python reading): Lean is asked, and its answer
     equals the retained reader's."""
     env = Environment(pm.raw_environment(("definitions@0",)))
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     monkeypatch.setattr(validation, "_ACCEPTED", {})
     expected = (outcome(lambda: parser._parse_python(env, source).document),
                 outcome(lambda: print_document(env, parser._parse_python(env, source).document)))
@@ -107,7 +106,6 @@ def fake(monkeypatch, row):
 
     monkeypatch.setattr(relay, "decide", run)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
 
 
 def test_lean_acceptance_of_a_python_rejection_is_unavailable(monkeypatch):

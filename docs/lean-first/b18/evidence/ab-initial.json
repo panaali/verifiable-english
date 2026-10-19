@@ -1,0 +1,2886 @@
+{
+ "differences": [
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "case": "pilot/cc-20261017T1800Z:usecases/claude-constitution-pilot/run-20261017T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "exit": 5,
+    "stderr": [],
+    "stdout": {
+     "error": {
+      "code": "CheckerUnavailable",
+      "message": "ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError"
+     },
+     "status": "CheckerUnavailable"
+    }
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "exit": 0,
+    "stderr": [],
+    "stdout": {
+     "coverage": {
+      "accounted_bytes": 10916,
+      "bytes_by_kind": {
+       "asserted": 1695,
+       "attributed": 801,
+       "meta": 535,
+       "norm": 3042,
+       "unformalised": 4843
+      },
+      "bytes_by_status": {
+       "CHECKED": 1019,
+       "LABELLED": 535,
+       "OPEN": 3238,
+       "UNFORMALISED": 6124
+      },
+      "coverage_percent": 100,
+      "norm_defaults": {
+       "findings": [],
+       "gaps": [
+        "arrest_detention_or_exile_permitted",
+        "attack_upon_honour_or_reputation_permitted",
+        "deprivation_of_property_permitted",
+        "distinction_by_country_status_permitted",
+        "education_generally_available_required",
+        "elementary_education_compulsory_required",
+        "entry_into_marriage_permitted",
+        "exercise_permitted",
+        "holding_in_slavery_or_servitude_permitted",
+        "interference_with_private_domains_permitted",
+        "interpretation_permitted",
+        "invoke_asylum_right_in_case_permitted",
+        "subjection_to_ill_treatment_permitted"
+       ]
+      },
+      "residual": {
+       "assumptions": 0,
+       "bridge_leaves": 0,
+       "couplings": 1,
+       "gaps": 13,
+       "open_terms": 52,
+       "pending_candidates": 0,
+       "readings_findings": 4,
+       "separations": 8,
+       "ungrounded_defaults": 0,
+       "unresolved_reading_sets": 11
+      },
+      "residual_total": 89,
+      "source_bytes": 10916,
+      "unformalised_reasons": {
+       "attribution": 4,
+       "causation": 4,
+       "defaults": 1,
+       "modality_belief": 2,
+       "norms": 7,
+       "other_act_phrase_grammar": 11,
+       "other_comparison": 2,
+       "other_evaluative_open_claim": 2,
+       "other_grounding_of_authority": 1,
+       "other_metaphorical_endowment": 1,
+       "other_priority_of_rights": 1,
+       "other_right_lines_across_open_sets": 4,
+       "quantities": 1,
+       "time": 5
+      }
+     },
+     "document_id": "a331968a7481c13173d947eaff4f0d8eddffec5c5e7a2262bc0d9a7dceef66ab",
+     "format": "ve-document@1",
+     "norm_defaults": {
+      "background_labels": [],
+      "environment_id": "381c4b71a43c9896251d263369aa219ae10818516002fb5f1740623ef05b9ff4",
+      "fill_hash": "bb3b39f2741a0104ff5a372a3dac79866c46a7b7d4dc1187a6e0123043dce4d5",
+      "filled_environment_id": "e20704510819175edfaff19f086e6600a6b172111d3557bd603cd80e4258a24f",
+      "report": {
+       "arrest_detention_or_exile_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "attack_upon_honour_or_reputation_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "compel_association_membership_permitted": [
+        "completion: unspecified",
+        "gaps: none"
+       ],
+       "deprivation_of_property_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "distinction_by_country_status_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "education_directed_to_personality_required": [
+        "completion: unspecified",
+        "gaps: none"
+       ],
+       "education_directed_to_respect_for_rights_required": [
+        "completion: unspecified",
+        "gaps: none"
+       ],
+       "education_generally_available_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "elementary_education_compulsory_required": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "entry_into_marriage_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "equal_access_to_higher_education_required": [
+        "completion: unspecified",
+        "gaps: none"
+       ],
+       "exercise_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "holding_in_slavery_or_servitude_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "interference_with_private_domains_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "interpretation_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "invoke_asylum_right_in_case_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ],
+       "subjection_to_ill_treatment_permitted": [
+        "completion: unspecified",
+        "gaps: reachable"
+       ]
+      },
+      "unsaid_predicates": [
+       "unsaid__arrest_detention_or_exile_permitted",
+       "unsaid__attack_upon_honour_or_reputation_permitted",
+       "unsaid__compel_association_membership_permitted",
+       "unsaid__deprivation_of_property_permitted",
+       "unsaid__distinction_by_country_status_permitted",
+       "unsaid__education_directed_to_personality_required",
+       "unsaid__education_directed_to_respect_for_rights_required",
+       "unsaid__education_generally_available_required",
+       "unsaid__elementary_education_compulsory_required",
+       "unsaid__entry_into_marriage_permitted",
+       "unsaid__equal_access_to_higher_education_required",
+       "unsaid__exercise_permitted",
+       "unsaid__holding_in_slavery_or_servitude_permitted",
+       "unsaid__interference_with_private_domains_permitted",
+       "unsaid__interpretation_permitted",
+       "unsaid__invoke_asylum_right_in_case_permitted",
+       "unsaid__subjection_to_ill_treatment_permitted"
+      ]
+     },
+     "premises": {
+      "components": [
+       {
+        "component": "main",
+        "status": "model"
+       },
+       {
+        "component": "rs_u025",
+        "status": "model"
+       },
+       {
+        "component": "rs_u049",
+        "status": "model"
+       },
+       {
+        "component": "rs_u055",
+        "status": "model"
+       },
+       {
+        "component": "rs_u073",
+        "status": "model"
+       },
+       {
+        "component": "rs_u077",
+        "status": "model"
+       },
+       {
+        "component": "rs_u111",
+        "status": "model"
+       }
+      ],
+      "route": "components",
+      "status": "model"
+     },
+     "reading_plan": {
+      "budget": {
+       "max_choices": 64
+      },
+      "choice_count": 65,
+      "route": "UNKNOWN",
+      "units": [
+       "u025",
+       "u049",
+       "u052",
+       "u055",
+       "u073",
+       "u077",
+       "u110",
+       "u111",
+       "u114"
+      ]
+     },
+     "readings": {
+      "checked_by": {
+       "lean": "readings-defaults RD-4b: Readings.Wire.splitCase splits the document; each case's readings@1 admission, separations and findings (readings-validate), its route and choices (readings-elaborate), every verdict, the product fold, the Lean-decided units and the English plan (readings-verdicts)",
+       "python": "W2 structure of the reading sets (companion passed through unread); evidence proposed by Python's generators, every piece checked by Lean"
+      },
+      "components": [
+       {
+        "component": "main",
+        "conflict": {
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          }
+         ],
+         "conditional_on": [
+          "coupling:freely-scope"
+         ],
+         "reading_premises_used": [
+          "coupling:freely-scope"
+         ],
+         "restrictions": [
+          "coupling:freely-scope"
+         ],
+         "route": "enumerated",
+         "status": "CONFLICT-FREE",
+         "status_text": "CONFLICT-FREE among rules on the same act under every reading (16 readings checked one at a time)"
+        },
+        "dead_readings": [],
+        "premises": {
+         "candidates": [
+          {
+           "index": 0,
+           "set": "rs_u052",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u052",
+           "status": "model"
+          },
+          {
+           "index": 0,
+           "set": "rs_u105b",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u105b",
+           "status": "model"
+          },
+          {
+           "index": 0,
+           "set": "rs_u105c",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u105c",
+           "status": "model"
+          },
+          {
+           "index": 0,
+           "set": "rs_u110",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u110",
+           "status": "UNKNOWN"
+          },
+          {
+           "index": 0,
+           "set": "rs_u114",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u114",
+           "status": "model"
+          }
+         ],
+         "choice": [
+          [
+           "rs_u052",
+           0
+          ],
+          [
+           "rs_u105b",
+           0
+          ],
+          [
+           "rs_u105c",
+           0
+          ],
+          [
+           "rs_u110",
+           0
+          ],
+          [
+           "rs_u114",
+           0
+          ]
+         ],
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "UNKNOWN"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "UNKNOWN"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "UNKNOWN"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             0
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "UNKNOWN"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "UNKNOWN"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             0
+            ],
+            [
+             "rs_u105c",
+             0
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "UNKNOWN"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             0
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             0
+            ]
+           ],
+           "status": "UNKNOWN"
+          },
+          {
+           "choice": [
+            [
+             "rs_u052",
+             1
+            ],
+            [
+             "rs_u105b",
+             1
+            ],
+            [
+             "rs_u105c",
+             1
+            ],
+            [
+             "rs_u110",
+             1
+            ],
+            [
+             "rs_u114",
+             1
+            ]
+           ],
+           "status": "UNKNOWN"
+          }
+         ],
+         "evidence": "per choice",
+         "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+           "actor": [],
+           "attack": [],
+           "bearer": [],
+           "community": [],
+           "course_of_education": [],
+           "deprivation": [],
+           "distinction": [],
+           "education_kind": [],
+           "exercise": [],
+           "family": [],
+           "holding": [],
+           "interference": [],
+           "interpretation": [],
+           "intrusion": [],
+           "marriage_entry": [],
+           "measure": [],
+           "person": [],
+           "prosecution": [],
+           "subjection": []
+          },
+          "relations": {
+           "arises_from_acts_contrary_to_un": [],
+           "arises_from_acts_contrary_to_un_u052": [],
+           "arises_from_non_political_crime": [],
+           "arises_from_non_political_crime_u052": [],
+           "arrest_detention_or_exile_permitted": [],
+           "asylum_right_covers_case": [],
+           "attack_upon_honour_or_reputation_permitted": [],
+           "based_on_international_status": [],
+           "based_on_jurisdictional_status": [],
+           "based_on_political_status": [],
+           "compel_association_membership_permitted": [],
+           "concerns_correspondence": [],
+           "concerns_correspondence_u046": [],
+           "concerns_family": [],
+           "concerns_family_u046": [],
+           "concerns_home": [],
+           "concerns_home_u046": [],
+           "concerns_honour": [],
+           "concerns_privacy": [],
+           "concerns_privacy_u046": [],
+           "concerns_reputation": [],
+           "declaration_implies_destructive_right": [],
+           "deprivation_of_property_permitted": [],
+           "distinction_by_country_status_permitted": [],
+           "education_directed_to_personality_required": [],
+           "education_directed_to_respect_for_rights_required": [],
+           "education_generally_available_required": [],
+           "elementary_education_compulsory_required": [],
+           "entry_into_marriage_permitted": [],
+           "equal_access_to_higher_education_required": [],
+           "exercise_contrary_to_un": [],
+           "exercise_of_declared_right": [],
+           "exercise_permitted": [],
+           "full_development_possible_in": [],
+           "has_free_consent_of_each_spouse": [],
+           "has_full_consent_of_each_spouse": [],
+           "has_right_freely_share_scientific_advancement": [],
+           "has_right_share_scientific_advancement_unqualified": [],
+           "has_the_right_freely_to_enjoy_the_arts": [],
+           "has_the_right_to_an_effective_remedy": [],
+           "has_the_right_to_education": [],
+           "has_the_right_to_enjoy_the_arts_unqualified": [],
+           "has_the_right_to_form_and_join_trade_unions": [],
+           "has_the_right_to_free_choice_of_employment": [],
+           "has_the_right_to_just_and_favourable_conditions_of_work": [],
+           "has_the_right_to_liberty": [],
+           "has_the_right_to_life": [],
+           "has_the_right_to_movement_and_residence": [],
+           "has_the_right_to_opinion_and_expression": [],
+           "has_the_right_to_own_property": [],
+           "has_the_right_to_protection_against_unemployment": [],
+           "has_the_right_to_protection_of_the_law_against": [],
+           "has_the_right_to_recognition_as_a_person": [],
+           "has_the_right_to_security_of_person": [],
+           "has_the_right_to_seek_and_enjoy_asylum": [],
+           "has_the_right_to_social_security_as_a_member_of_society": [],
+           "has_the_right_to_take_part_in_cultural_life": [],
+           "has_the_right_to_thought_conscience_religion": [],
+           "has_the_right_to_work": [],
+           "holding_in_slavery_or_servitude_permitted": [],
+           "implies_right_to_destroy_declared_rights": [],
+           "interference_with_private_domains_permitted": [],
+           "interpretation_permitted": [],
+           "invoke_asylum_right_in_case_permitted": [],
+           "is_arbitrary": [],
+           "is_arbitrary_u045a": [],
+           "is_arbitrary_u046": [],
+           "is_arbitrary_u064": [],
+           "is_arrest": [],
+           "is_attack_upon_honour": [],
+           "is_attack_upon_reputation": [],
+           "is_cruel": [],
+           "is_degrading": [],
+           "is_detention": [],
+           "is_elementary": [],
+           "is_entitled_to_a_nationality": [],
+           "is_entitled_to_equal_protection_of_the_law": [],
+           "is_entitled_to_protection_against_discrimination": [],
+           "is_entitled_to_protection_against_incitement": [],
+           "is_entitled_to_protection_by_society_and_the_state": [],
+           "is_exile": [],
+           "is_inhuman": [],
+           "is_professional": [],
+           "is_punishment": [],
+           "is_servitude": [],
+           "is_slavery": [],
+           "is_technical": [],
+           "is_torture": [],
+           "is_treatment": [],
+           "owes_duties_to": [],
+           "subjection_to_ill_treatment_permitted": [],
+           "unsaid__arrest_detention_or_exile_permitted": [],
+           "unsaid__attack_upon_honour_or_reputation_permitted": [],
+           "unsaid__compel_association_membership_permitted": [],
+           "unsaid__deprivation_of_property_permitted": [],
+           "unsaid__distinction_by_country_status_permitted": [],
+           "unsaid__education_directed_to_personality_required": [],
+           "unsaid__education_directed_to_respect_for_rights_required": [],
+           "unsaid__education_generally_available_required": [],
+           "unsaid__elementary_education_compulsory_required": [],
+           "unsaid__entry_into_marriage_permitted": [],
+           "unsaid__equal_access_to_higher_education_required": [],
+           "unsaid__exercise_permitted": [],
+           "unsaid__holding_in_slavery_or_servitude_permitted": [],
+           "unsaid__interference_with_private_domains_permitted": [],
+           "unsaid__interpretation_permitted": [],
+           "unsaid__invoke_asylum_right_in_case_permitted": [],
+           "unsaid__subjection_to_ill_treatment_permitted": []
+          }
+         },
+         "route": "enumerated",
+         "status": "model"
+        },
+        "route": "enumerated",
+        "sets": [
+         {
+          "candidates": [
+           {
+            "chain_findings": [],
+            "id": "invocation_barred",
+            "index": 0,
+            "pending": false
+           },
+           {
+            "chain_findings": [],
+            "id": "case_excluded",
+            "index": 1,
+            "pending": false
+           }
+          ],
+          "findings": [],
+          "not_certified": [],
+          "pairs": [
+           {
+            "probe": "selects",
+            "readings": [
+             "invocation_barred",
+             "case_excluded"
+            ],
+            "situation": "7ff1da3a17afa474850af0a79b01de682bf13dd96de3a04243752cf5a40c57b7",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+            "wording": "E24"
+           }
+          ],
+          "set": "rs_u052",
+          "unit": "u052",
+          "version": 4
+         },
+         {
+          "candidates": [
+           {
+            "chain_findings": [],
+            "id": "interpretive_ban",
+            "index": 0,
+            "pending": false
+           },
+           {
+            "chain_findings": [],
+            "id": "no_implied_right",
+            "index": 1,
+            "pending": false
+           }
+          ],
+          "findings": [],
+          "not_certified": [],
+          "pairs": [
+           {
+            "probe": "selects",
+            "readings": [
+             "interpretive_ban",
+             "no_implied_right"
+            ],
+            "situation": "f0f23c5af7b469d61ae5073b43c5405c6adc685e4d6c7588250b17814a1c50b0",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+            "wording": "E24"
+           }
+          ],
+          "set": "rs_u114",
+          "unit": "u114",
+          "version": 3
+         }
+        ],
+        "unchecked": [],
+        "units": [
+         "u020",
+         "u022a",
+         "u022b",
+         "u022c",
+         "u024",
+         "u027",
+         "u029",
+         "u032",
+         "u033a",
+         "u033b",
+         "u035",
+         "u037",
+         "u045a",
+         "u045b",
+         "u046",
+         "u048",
+         "u051",
+         "u052",
+         "u054",
+         "u059",
+         "u061",
+         "u063",
+         "u064",
+         "u066",
+         "u070",
+         "u074",
+         "u081",
+         "u084a",
+         "u084b",
+         "u084c",
+         "u084d",
+         "u087",
+         "u096",
+         "u098",
+         "u099a",
+         "u099b",
+         "u100a",
+         "u100b",
+         "u105a",
+         "u105b",
+         "u105c",
+         "u110",
+         "u112",
+         "u114"
+        ]
+       },
+       {
+        "component": "rs_u025",
+        "conflict": {
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u025",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u025",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          }
+         ],
+         "conditional_on": [],
+         "reading_premises_used": [],
+         "restrictions": [],
+         "route": "enumerated",
+         "status": "CONFLICT-FREE",
+         "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+        },
+        "dead_readings": [],
+        "premises": {
+         "candidates": [
+          {
+           "index": 0,
+           "set": "rs_u025",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u025",
+           "status": "model"
+          }
+         ],
+         "choice": [
+          [
+           "rs_u025",
+           0
+          ]
+         ],
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u025",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u025",
+             1
+            ]
+           ],
+           "status": "model"
+          }
+         ],
+         "evidence": "per choice",
+         "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+           "practice": []
+          },
+          "relations": {
+           "is_slave_trade": [],
+           "is_slavery": [],
+           "prohibition_of_slavery_and_slave_trade_required": [],
+           "slavery_or_slave_trade_practice_permitted": [],
+           "unsaid__prohibition_of_slavery_and_slave_trade_required": [],
+           "unsaid__slavery_or_slave_trade_practice_permitted": []
+          }
+         },
+         "route": "enumerated",
+         "status": "model"
+        },
+        "route": "enumerated",
+        "sets": [
+         {
+          "candidates": [
+           {
+            "chain_findings": [],
+            "id": "required_prohibited",
+            "index": 0,
+            "pending": false
+           },
+           {
+            "chain_findings": [],
+            "id": "practice_prohibited",
+            "index": 1,
+            "pending": false
+           }
+          ],
+          "findings": [
+           "SeparatedByActOnly: rs_u025: 0, 1"
+          ],
+          "not_certified": [],
+          "pairs": [
+           {
+            "probe": "outcome",
+            "readings": [
+             "required_prohibited",
+             "practice_prohibited"
+            ],
+            "situation": "460ca9340aa2570392b0adac00d22cde69e2996ff68fa98e9c2f634d0ae3621f",
+            "text": "These two readings differ here: p is a practice; p is classified as \"is_slave_trade\". Here the text does not say whether p must be prohibited; this situation answers 'no'. Under *Every practice must be prohibited, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*, p still must. Under *Every practice must not be carried out, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*, p is not required to.",
+            "wording": "E19"
+           }
+          ],
+          "set": "rs_u025",
+          "unit": "u025",
+          "version": 3
+         }
+        ],
+        "unchecked": [],
+        "units": [
+         "u025"
+        ]
+       },
+       {
+        "component": "rs_u049",
+        "conflict": {
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u049",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u049",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          }
+         ],
+         "conditional_on": [],
+         "reading_premises_used": [],
+         "restrictions": [],
+         "route": "enumerated",
+         "status": "CONFLICT-FREE",
+         "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+        },
+        "dead_readings": [],
+        "premises": {
+         "candidates": [
+          {
+           "index": 0,
+           "set": "rs_u049",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u049",
+           "status": "model"
+          }
+         ],
+         "choice": [
+          [
+           "rs_u049",
+           0
+          ]
+         ],
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u049",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u049",
+             1
+            ]
+           ],
+           "status": "model"
+          }
+         ],
+         "evidence": "per choice",
+         "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+           "person": []
+          },
+          "relations": {
+           "has_the_right_to_leave_and_return_nationality": [],
+           "has_the_right_to_leave_and_return_residence": [],
+           "unsaid__has_the_right_to_leave_and_return_nationality": [],
+           "unsaid__has_the_right_to_leave_and_return_residence": []
+          }
+         },
+         "route": "enumerated",
+         "status": "model"
+        },
+        "route": "enumerated",
+        "sets": [
+         {
+          "candidates": [
+           {
+            "chain_findings": [],
+            "id": "entitlement_nationality",
+            "index": 0,
+            "pending": false
+           },
+           {
+            "chain_findings": [],
+            "id": "entitlement_residence",
+            "index": 1,
+            "pending": false
+           }
+          ],
+          "findings": [
+           "SeparatedByActOnly: rs_u049: 0, 1"
+          ],
+          "not_certified": [],
+          "pairs": [
+           {
+            "probe": "outcome",
+            "readings": [
+             "entitlement_nationality",
+             "entitlement_residence"
+            ],
+            "situation": "47255bc6b528c414e435947283cbc066e2a50efd9b7d837fb1e1cd7090a0cc74",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+            "wording": "E24"
+           }
+          ],
+          "set": "rs_u049",
+          "unit": "u049",
+          "version": 6
+         }
+        ],
+        "unchecked": [],
+        "units": [
+         "u049"
+        ]
+       },
+       {
+        "component": "rs_u055",
+        "conflict": {
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u055",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u055",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          }
+         ],
+         "conditional_on": [],
+         "reading_premises_used": [],
+         "restrictions": [],
+         "route": "enumerated",
+         "status": "CONFLICT-FREE",
+         "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+        },
+        "dead_readings": [],
+        "premises": {
+         "candidates": [
+          {
+           "index": 0,
+           "set": "rs_u055",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u055",
+           "status": "model"
+          }
+         ],
+         "choice": [
+          [
+           "rs_u055",
+           0
+          ]
+         ],
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u055",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u055",
+             1
+            ]
+           ],
+           "status": "model"
+          }
+         ],
+         "evidence": "per choice",
+         "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+           "measure": []
+          },
+          "relations": {
+           "is_arbitrary": [],
+           "is_denial_of_change": [],
+           "is_deprivation_of_nationality": [],
+           "loss_of_nationality_permitted": [],
+           "unsaid__loss_of_nationality_permitted": []
+          }
+         },
+         "route": "enumerated",
+         "status": "model"
+        },
+        "route": "enumerated",
+        "sets": [
+         {
+          "candidates": [
+           {
+            "chain_findings": [],
+            "id": "both_acts",
+            "index": 0,
+            "pending": false
+           },
+           {
+            "chain_findings": [],
+            "id": "deprivation_only",
+            "index": 1,
+            "pending": false
+           }
+          ],
+          "findings": [],
+          "not_certified": [],
+          "pairs": [
+           {
+            "probe": "selects",
+            "readings": [
+             "both_acts",
+             "deprivation_only"
+            ],
+            "situation": "0c614420696d3d03a52b4d05363596507ccde14c476fa48db1c7ea492c0fe4bc",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+            "wording": "E24"
+           }
+          ],
+          "set": "rs_u055",
+          "unit": "u055",
+          "version": 3
+         }
+        ],
+        "unchecked": [],
+        "units": [
+         "u055"
+        ]
+       },
+       {
+        "component": "rs_u073",
+        "conflict": {
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u073",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u073",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          }
+         ],
+         "conditional_on": [],
+         "reading_premises_used": [],
+         "restrictions": [],
+         "route": "enumerated",
+         "status": "CONFLICT-FREE",
+         "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+        },
+        "dead_readings": [],
+        "premises": {
+         "candidates": [
+          {
+           "index": 0,
+           "set": "rs_u073",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u073",
+           "status": "model"
+          }
+         ],
+         "choice": [
+          [
+           "rs_u073",
+           0
+          ]
+         ],
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u073",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u073",
+             1
+            ]
+           ],
+           "status": "model"
+          }
+         ],
+         "evidence": "per choice",
+         "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+           "person": []
+          },
+          "relations": {
+           "right_to_peaceful_assembly_and_any_association": [],
+           "right_to_peaceful_assembly_and_peaceful_association": [],
+           "unsaid__right_to_peaceful_assembly_and_any_association": [],
+           "unsaid__right_to_peaceful_assembly_and_peaceful_association": []
+          }
+         },
+         "route": "enumerated",
+         "status": "model"
+        },
+        "route": "enumerated",
+        "sets": [
+         {
+          "candidates": [
+           {
+            "chain_findings": [],
+            "id": "peaceful_assembly_and_association",
+            "index": 0,
+            "pending": false
+           },
+           {
+            "chain_findings": [],
+            "id": "peaceful_both",
+            "index": 1,
+            "pending": false
+           }
+          ],
+          "findings": [
+           "SeparatedByActOnly: rs_u073: 0, 1"
+          ],
+          "not_certified": [],
+          "pairs": [
+           {
+            "probe": "outcome",
+            "readings": [
+             "peaceful_assembly_and_association",
+             "peaceful_both"
+            ],
+            "situation": "a0b797cec1bfdad105970665caba54aeb11f477b12521730606a7acd9cf5227b",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+            "wording": "E24"
+           }
+          ],
+          "set": "rs_u073",
+          "unit": "u073",
+          "version": 9
+         }
+        ],
+        "unchecked": [],
+        "units": [
+         "u073"
+        ]
+       },
+       {
+        "component": "rs_u077",
+        "conflict": {
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u077",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u077",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          }
+         ],
+         "conditional_on": [],
+         "reading_premises_used": [],
+         "restrictions": [],
+         "route": "enumerated",
+         "status": "CONFLICT-FREE",
+         "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+        },
+        "dead_readings": [],
+        "premises": {
+         "candidates": [
+          {
+           "index": 0,
+           "set": "rs_u077",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u077",
+           "status": "model"
+          }
+         ],
+         "choice": [
+          [
+           "rs_u077",
+           0
+          ]
+         ],
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u077",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u077",
+             1
+            ]
+           ],
+           "status": "model"
+          }
+         ],
+         "evidence": "per choice",
+         "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+           "person": []
+          },
+          "relations": {
+           "has_right_to_equal_public_service_access_nationality": [],
+           "has_right_to_equal_public_service_access_residence": [],
+           "unsaid__has_right_to_equal_public_service_access_nationality": [],
+           "unsaid__has_right_to_equal_public_service_access_residence": []
+          }
+         },
+         "route": "enumerated",
+         "status": "model"
+        },
+        "route": "enumerated",
+        "sets": [
+         {
+          "candidates": [
+           {
+            "chain_findings": [],
+            "id": "entitlement_nationality",
+            "index": 0,
+            "pending": false
+           },
+           {
+            "chain_findings": [],
+            "id": "entitlement_residence",
+            "index": 1,
+            "pending": false
+           }
+          ],
+          "findings": [
+           "SeparatedByActOnly: rs_u077: 0, 1"
+          ],
+          "not_certified": [],
+          "pairs": [
+           {
+            "probe": "outcome",
+            "readings": [
+             "entitlement_nationality",
+             "entitlement_residence"
+            ],
+            "situation": "816e8782171c9860b10ed3193780b98e62e1af07c4700aa3fd5f9323e545dbae",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+            "wording": "E24"
+           }
+          ],
+          "set": "rs_u077",
+          "unit": "u077",
+          "version": 4
+         }
+        ],
+        "unchecked": [],
+        "units": [
+         "u077"
+        ]
+       },
+       {
+        "component": "rs_u111",
+        "conflict": {
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u111",
+             0
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          },
+          {
+           "choice": [
+            [
+             "rs_u111",
+             1
+            ]
+           ],
+           "status": "CONFLICT-FREE"
+          }
+         ],
+         "conditional_on": [],
+         "reading_premises_used": [],
+         "restrictions": [],
+         "route": "enumerated",
+         "status": "CONFLICT-FREE",
+         "status_text": "CONFLICT-FREE among rules on the same act under every reading (2 readings checked one at a time)"
+        },
+        "dead_readings": [],
+        "premises": {
+         "candidates": [
+          {
+           "index": 0,
+           "set": "rs_u111",
+           "status": "model"
+          },
+          {
+           "index": 1,
+           "set": "rs_u111",
+           "status": "model"
+          }
+         ],
+         "choice": [
+          [
+           "rs_u111",
+           0
+          ]
+         ],
+         "choices": [
+          {
+           "choice": [
+            [
+             "rs_u111",
+             0
+            ]
+           ],
+           "status": "model"
+          },
+          {
+           "choice": [
+            [
+             "rs_u111",
+             1
+            ]
+           ],
+           "status": "model"
+          }
+         ],
+         "evidence": "per choice",
+         "model": {
+          "complete": true,
+          "constants": {},
+          "domains": {
+           "limitation": []
+          },
+          "relations": {
+           "is_determined_by_law": [],
+           "limitation_permitted": [],
+           "serves_any_other_purpose": [],
+           "serves_just_requirements": [],
+           "serves_recognition_of_rights_of_others": [],
+           "unsaid__limitation_permitted": []
+          }
+         },
+         "route": "enumerated",
+         "status": "model"
+        },
+        "route": "enumerated",
+        "sets": [
+         {
+          "candidates": [
+           {
+            "chain_findings": [],
+            "id": "listed_aims",
+            "index": 0,
+            "pending": false
+           },
+           {
+            "chain_findings": [],
+            "id": "both_aims",
+            "index": 1,
+            "pending": false
+           }
+          ],
+          "findings": [],
+          "not_certified": [],
+          "pairs": [
+           {
+            "probe": "selects",
+            "readings": [
+             "listed_aims",
+             "both_aims"
+            ],
+            "situation": "373b568ed8e6e13e7570f9c3f508d5b3a291ddb8ac0b9ecfc259135ad4ad0ef4",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+            "wording": "E24"
+           }
+          ],
+          "set": "rs_u111",
+          "unit": "u111",
+          "version": 5
+         }
+        ],
+        "unchecked": [],
+        "units": [
+         "u111"
+        ]
+       }
+      ],
+      "conflict": {
+       "components": [
+        {
+         "component": "main",
+         "status": "CONFLICT-FREE"
+        },
+        {
+         "component": "rs_u025",
+         "status": "CONFLICT-FREE"
+        },
+        {
+         "component": "rs_u049",
+         "status": "CONFLICT-FREE"
+        },
+        {
+         "component": "rs_u055",
+         "status": "CONFLICT-FREE"
+        },
+        {
+         "component": "rs_u073",
+         "status": "CONFLICT-FREE"
+        },
+        {
+         "component": "rs_u077",
+         "status": "CONFLICT-FREE"
+        },
+        {
+         "component": "rs_u111",
+         "status": "CONFLICT-FREE"
+        }
+       ],
+       "route": "components",
+       "status": "CONFLICT-FREE"
+      },
+      "couplings": 1,
+      "decided_units": [
+       "u020",
+       "u022a",
+       "u022b",
+       "u022c",
+       "u024",
+       "u025",
+       "u027",
+       "u029",
+       "u032",
+       "u033a",
+       "u033b",
+       "u035",
+       "u037",
+       "u045a",
+       "u045b",
+       "u046",
+       "u048",
+       "u049",
+       "u051",
+       "u052",
+       "u054",
+       "u055",
+       "u059",
+       "u061",
+       "u063",
+       "u064",
+       "u066",
+       "u070",
+       "u073",
+       "u074",
+       "u077",
+       "u081",
+       "u084a",
+       "u084b",
+       "u084c",
+       "u084d",
+       "u087",
+       "u096",
+       "u098",
+       "u099a",
+       "u099b",
+       "u100a",
+       "u100b",
+       "u105a",
+       "u111",
+       "u112",
+       "u114"
+      ],
+      "english": [
+       "Each open sentence below was checked by itself, under each of its readings.",
+       "The readings of sentences 59, 120, 121, 126 and 130 were checked one way at a time, not together.",
+       "Under every reading of the 5 open sentences, no two rules on the same act contradict each other.",
+       "This holds provided that:",
+       "Sentences 120 and 121 are read with the same label freely_scope, because of sentences 119, 120 and 121.",
+       "This does not depend on how sentence 59 is read.",
+       "This does not depend on how sentence 126 is read.",
+       "This does not depend on how sentence 130 is read.",
+       "Sentence 30 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "The readings of sentence 30 were checked one way at a time, not together.",
+       "Under every reading of sentence 30, no two rules on the same act contradict each other.",
+       "This does not depend on how sentence 30 is read.",
+       "Sentence 56 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "The readings of sentence 56 were checked one way at a time, not together.",
+       "Under every reading of sentence 56, no two rules on the same act contradict each other.",
+       "This does not depend on how sentence 56 is read.",
+       "Sentence 62 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "The readings of sentence 62 were checked one way at a time, not together.",
+       "Under every reading of sentence 62, no two rules on the same act contradict each other.",
+       "This does not depend on how sentence 62 is read.",
+       "Sentence 81 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "The readings of sentence 81 were checked one way at a time, not together.",
+       "Under every reading of sentence 81, no two rules on the same act contradict each other.",
+       "This does not depend on how sentence 81 is read.",
+       "Sentence 85 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "The readings of sentence 85 were checked one way at a time, not together.",
+       "Under every reading of sentence 85, no two rules on the same act contradict each other.",
+       "This does not depend on how sentence 85 is read.",
+       "Sentence 127 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "The readings of sentence 127 were checked one way at a time, not together.",
+       "Under every reading of sentence 127, no two rules on the same act contradict each other.",
+       "This does not depend on how sentence 127 is read.",
+       "Each open sentence below was checked by itself, under each of its readings.",
+       "Read sentence 59 as *Every person must not invoke the right to seek as well as enjoy asylum in the case of each prosecution, if either that prosecution is classified as \"arises_from_non_political_crime_u052\" or that prosecution is classified as \"arises_from_acts_contrary_to_un_u052\", or both* and sentence 120 as *Every person is classified as \"has_the_right_freely_to_enjoy_the_arts\"* and sentence 121 as *Every person is classified as \"has_right_freely_share_scientific_advancement\"* and sentence 126 as *For every person, there is a first community such that all of the following hold:\n  (a) that person has the recorded relation \"owes_duties_to\" to the first community;\n  (b) both of the following hold:\n    (i) that person has the recorded relation \"full_development_possible_in\" to the first community;\n    (ii) for every second community that that person has the recorded relation \"full_development_possible_in\" to, the second community is the same as the first community* and sentence 130 as *Every interpretation must not be adopted, if that interpretation is classified as \"implies_right_to_destroy_declared_rights\"*: the sentences of this document can all be true together, as here: nothing exists.",
+       "Sentence 30 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "Read sentence 30 as *Every practice must be prohibited, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*: the sentences of this document can all be true together, as here: nothing exists.",
+       "Sentence 56 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "Read sentence 56 as *Every person is classified as \"has_the_right_to_leave_and_return_nationality\"*: the sentences of this document can all be true together, as here: nothing exists.",
+       "Sentence 62 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "Read sentence 62 as *Every measure must not take place, if all of the following hold:\n  (a) either that measure is classified as \"is_deprivation_of_nationality\" or that measure is classified as \"is_denial_of_change\", or both;\n  (b) that measure is arbitrary*: the sentences of this document can all be true together, as here: nothing exists.",
+       "Sentence 81 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "Read sentence 81 as *Every person is classified as \"right_to_peaceful_assembly_and_any_association\"*: the sentences of this document can all be true together, as here: nothing exists.",
+       "Sentence 85 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "Read sentence 85 as *Every person is classified as \"has_right_to_equal_public_service_access_nationality\"*: the sentences of this document can all be true together, as here: nothing exists.",
+       "Sentence 127 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+       "Read sentence 127 as *Every limitation must not be imposed, if it is not the case that all of the following hold:\n  (a) both of the following hold:\n    (i) that limitation is classified as \"is_determined_by_law\";\n    (ii) it is not the case that that limitation is classified as \"serves_any_other_purpose\";\n  (b) either that limitation is classified as \"serves_recognition_of_rights_of_others\" or that limitation is classified as \"serves_just_requirements\", or both*: the sentences of this document can all be true together, as here: nothing exists."
+      ],
+      "findings": {
+       "SeparatedByActOnly": 4,
+       "SeparatedByDecisionOnly": 0
+      },
+      "pending_candidates": 0,
+      "route": "components",
+      "separations": {
+       "holds": 0,
+       "outcome": 4,
+       "selects": 4
+      },
+      "sets": [
+       {
+        "candidates": [
+         {
+          "chain_findings": [],
+          "id": "invocation_barred",
+          "index": 0,
+          "pending": false
+         },
+         {
+          "chain_findings": [],
+          "id": "case_excluded",
+          "index": 1,
+          "pending": false
+         }
+        ],
+        "findings": [],
+        "not_certified": [],
+        "pairs": [
+         {
+          "probe": "selects",
+          "readings": [
+           "invocation_barred",
+           "case_excluded"
+          ],
+          "situation": "7ff1da3a17afa474850af0a79b01de682bf13dd96de3a04243752cf5a40c57b7",
+          "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+          "wording": "E24"
+         }
+        ],
+        "set": "rs_u052",
+        "unit": "u052",
+        "version": 4
+       },
+       {
+        "candidates": [
+         {
+          "chain_findings": [],
+          "id": "interpretive_ban",
+          "index": 0,
+          "pending": false
+         },
+         {
+          "chain_findings": [],
+          "id": "no_implied_right",
+          "index": 1,
+          "pending": false
+         }
+        ],
+        "findings": [],
+        "not_certified": [],
+        "pairs": [
+         {
+          "probe": "selects",
+          "readings": [
+           "interpretive_ban",
+           "no_implied_right"
+          ],
+          "situation": "f0f23c5af7b469d61ae5073b43c5405c6adc685e4d6c7588250b17814a1c50b0",
+          "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+          "wording": "E24"
+         }
+        ],
+        "set": "rs_u114",
+        "unit": "u114",
+        "version": 3
+       },
+       {
+        "candidates": [
+         {
+          "chain_findings": [],
+          "id": "required_prohibited",
+          "index": 0,
+          "pending": false
+         },
+         {
+          "chain_findings": [],
+          "id": "practice_prohibited",
+          "index": 1,
+          "pending": false
+         }
+        ],
+        "findings": [
+         "SeparatedByActOnly: rs_u025: 0, 1"
+        ],
+        "not_certified": [],
+        "pairs": [
+         {
+          "probe": "outcome",
+          "readings": [
+           "required_prohibited",
+           "practice_prohibited"
+          ],
+          "situation": "460ca9340aa2570392b0adac00d22cde69e2996ff68fa98e9c2f634d0ae3621f",
+          "text": "These two readings differ here: p is a practice; p is classified as \"is_slave_trade\". Here the text does not say whether p must be prohibited; this situation answers 'no'. Under *Every practice must be prohibited, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*, p still must. Under *Every practice must not be carried out, if either that practice is slavery or that practice is classified as \"is_slave_trade\", or both*, p is not required to.",
+          "wording": "E19"
+         }
+        ],
+        "set": "rs_u025",
+        "unit": "u025",
+        "version": 3
+       },
+       {
+        "candidates": [
+         {
+          "chain_findings": [],
+          "id": "entitlement_nationality",
+          "index": 0,
+          "pending": false
+         },
+         {
+          "chain_findings": [],
+          "id": "entitlement_residence",
+          "index": 1,
+          "pending": false
+         }
+        ],
+        "findings": [
+         "SeparatedByActOnly: rs_u049: 0, 1"
+        ],
+        "not_certified": [],
+        "pairs": [
+         {
+          "probe": "outcome",
+          "readings": [
+           "entitlement_nationality",
+           "entitlement_residence"
+          ],
+          "situation": "47255bc6b528c414e435947283cbc066e2a50efd9b7d837fb1e1cd7090a0cc74",
+          "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+          "wording": "E24"
+         }
+        ],
+        "set": "rs_u049",
+        "unit": "u049",
+        "version": 6
+       },
+       {
+        "candidates": [
+         {
+          "chain_findings": [],
+          "id": "both_acts",
+          "index": 0,
+          "pending": false
+         },
+         {
+          "chain_findings": [],
+          "id": "deprivation_only",
+          "index": 1,
+          "pending": false
+         }
+        ],
+        "findings": [],
+        "not_certified": [],
+        "pairs": [
+         {
+          "probe": "selects",
+          "readings": [
+           "both_acts",
+           "deprivation_only"
+          ],
+          "situation": "0c614420696d3d03a52b4d05363596507ccde14c476fa48db1c7ea492c0fe4bc",
+          "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+          "wording": "E24"
+         }
+        ],
+        "set": "rs_u055",
+        "unit": "u055",
+        "version": 3
+       },
+       {
+        "candidates": [
+         {
+          "chain_findings": [],
+          "id": "peaceful_assembly_and_association",
+          "index": 0,
+          "pending": false
+         },
+         {
+          "chain_findings": [],
+          "id": "peaceful_both",
+          "index": 1,
+          "pending": false
+         }
+        ],
+        "findings": [
+         "SeparatedByActOnly: rs_u073: 0, 1"
+        ],
+        "not_certified": [],
+        "pairs": [
+         {
+          "probe": "outcome",
+          "readings": [
+           "peaceful_assembly_and_association",
+           "peaceful_both"
+          ],
+          "situation": "a0b797cec1bfdad105970665caba54aeb11f477b12521730606a7acd9cf5227b",
+          "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+          "wording": "E24"
+         }
+        ],
+        "set": "rs_u073",
+        "unit": "u073",
+        "version": 9
+       },
+       {
+        "candidates": [
+         {
+          "chain_findings": [],
+          "id": "entitlement_nationality",
+          "index": 0,
+          "pending": false
+         },
+         {
+          "chain_findings": [],
+          "id": "entitlement_residence",
+          "index": 1,
+          "pending": false
+         }
+        ],
+        "findings": [
+         "SeparatedByActOnly: rs_u077: 0, 1"
+        ],
+        "not_certified": [],
+        "pairs": [
+         {
+          "probe": "outcome",
+          "readings": [
+           "entitlement_nationality",
+           "entitlement_residence"
+          ],
+          "situation": "816e8782171c9860b10ed3193780b98e62e1af07c4700aa3fd5f9323e545dbae",
+          "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+          "wording": "E24"
+         }
+        ],
+        "set": "rs_u077",
+        "unit": "u077",
+        "version": 4
+       },
+       {
+        "candidates": [
+         {
+          "chain_findings": [],
+          "id": "listed_aims",
+          "index": 0,
+          "pending": false
+         },
+         {
+          "chain_findings": [],
+          "id": "both_aims",
+          "index": 1,
+          "pending": false
+         }
+        ],
+        "findings": [],
+        "not_certified": [],
+        "pairs": [
+         {
+          "probe": "selects",
+          "readings": [
+           "listed_aims",
+           "both_aims"
+          ],
+          "situation": "373b568ed8e6e13e7570f9c3f508d5b3a291ddb8ac0b9ecfc259135ad4ad0ef4",
+          "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+          "wording": "E24"
+         }
+        ],
+        "set": "rs_u111",
+        "unit": "u111",
+        "version": 5
+       }
+      ],
+      "status": "CONFLICT-FREE"
+     },
+     "source_id": "92edf7c3f6d1f8a297288d400f712ae2664b57f0549a26b780f3d2fab2d7b111"
+    }
+   },
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "availability",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": false,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
+   "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  },
+  {
+   "authority": "default",
+   "base": {
+    "timeout": 600
+   },
+   "case": "pilot/udhr-20261017T1800Z:usecases/udhr-pilot/run-20261017T1800Z/experiment-whole/translation-whole.ve.md",
+   "class": "unavailable",
+   "corpus": "pilots",
+   "head": {
+    "timeout": 600
+   },
+   "listed": true,
+   "op": "document_check"
+  }
+ ],
+ "totals": {
+  "availability": 1,
+  "same": 100398,
+  "unavailable": 11
+ },
+ "unavailable_both": {
+  "pilots/default": 11
+ },
+ "unlisted": 1
+}

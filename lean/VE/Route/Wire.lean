@@ -12,6 +12,7 @@ import VE.Route.Steps
 import VE.Route.AstLimit
 import VE.Route.PyDecoder
 import VE.Core.Bridge
+import VE.Limits
 
 /-! Wire decoding for the `route` subcommand (`ve.core@0.2`). The envelope is
 decoded by `Gate.decodeEnvelope`; the vocabulary by the family's decoder, which
@@ -79,7 +80,7 @@ def bodyFault (p : String) (j : Json) (e : String) : String :=
     | some m => m
     | none =>
       if VE.Reports.Preflight.hasReach 65 j then reachBodyUnsupported
-      else if (VE.Core.Bridge.decodeFormula 64 j).isOk then e
+      else if (VE.Core.Bridge.decodeFormula VE.Limits.maxDepth j).isOk then e
       else VE.Definitions.bodyNotTyped p
   | _ => VE.Definitions.bodyNotTyped p
 
@@ -91,7 +92,7 @@ decoded formula (Python decodes each body with its own decoder). Reachability bo
 are not yet admitted by the Lean definitions layer. -/
 def decodeBody (p : String) (j : Json) : Except String VE.Formula := do
   AstLimit.check [j]
-  (VE.Bridge.decodeFormula 64 j).mapError (bodyFault p j)
+  (VE.Bridge.decodeFormula VE.Limits.maxDepth j).mapError (bodyFault p j)
 
 /-- Python's text for a `defined` payload whose arguments are not the declaration's. -/
 def argumentsDiffer (p : String) : String :=
@@ -138,7 +139,7 @@ def decodeVocabulary (profiles : List String) (v : Json)
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
   let constants ← fields (← v.getObjVal? "constants")
-  if sorts.length > 32 || predicates.length > 256 then
+  if sorts.length > VE.Limits.maxSorts || predicates.length > VE.Limits.maxPredicates then
     throw "ResourceLimit: vocabulary size"
   VE.Bridge.checkVocabularyNames sorts predicates constants
   -- An explicit finite witness lets downstream proofs use the same distinct
@@ -520,7 +521,7 @@ built or anything is evaluated: the document, or the premises and conclusion
 together, have at most 10,000 nodes (Python `_check_aggregate_ast` and
 `check_document`, Rust's shared node counter). -/
 def nodeLimit (sizes : List Nat) : Except String Unit :=
-  if sizes.foldl (· + ·) 0 > 10000 then .error "ResourceLimit: AST node count" else .ok ()
+  if sizes.foldl (· + ·) 0 > VE.Limits.maxNodes then .error "ResourceLimit: AST node count" else .ok ()
 
 /-- A case's formulas as one shared decoder reads them (a document, or the
 premises followed by the conclusion), within the AST limits before anything is
@@ -532,7 +533,7 @@ def formulasJson (j : Json) (conclusion : Option Json := none) : Except String (
 
 def decodeFormulas (E : VE.Environment) (j : Json) (data : Bool := false) :
     Except String (List VE.Formula) := do
-  let fs ← (← formulasJson j).mapM (VE.Bridge.decodeFormula 64)
+  let fs ← (← formulasJson j).mapM (VE.Bridge.decodeFormula VE.Limits.maxDepth)
   nodeLimit (fs.map VE.Bridge.formulaNodes)
   if data && fs.any usesStringBinder then throw "UnsupportedProfile: $string quantification requires data stage 2"
   unless fs.all (fun a => a.check E []) do throw "ill-typed or unbound formula"
@@ -542,7 +543,7 @@ def decodeFormulas (E : VE.Environment) (j : Json) (data : Bool := false) :
 its own AST limits, then decoding, then typing. -/
 def decodeClosed (E : VE.Environment) (j : Json) (data : Bool := false) : Except String VE.Formula := do
   AstLimit.check [j]
-  let a ← VE.Bridge.decodeFormula 64 j
+  let a ← VE.Bridge.decodeFormula VE.Limits.maxDepth j
   if data && usesStringBinder a then throw "UnsupportedProfile: $string quantification requires data stage 2"
   unless a.check E [] do throw "ill-typed or unbound conclusion"
   pure a
@@ -616,7 +617,7 @@ def runClosure (profiles : List String) (environment : Json) (rv : RouteVocabula
   let ps ← VE.Closure.Bridge.decodeFormulas E premisesJson
   if profiles.contains "data@0" && ps.any closureUsesStringBinder then
     throw "$string quantification requires data stage 2"
-  let c ← VE.Closure.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  let c ← VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
   if profiles.contains "data@0" && closureUsesStringBinder c then
     throw "$string quantification requires data stage 2"
   unless c.check E [] do throw "ill-typed or unbound conclusion"
@@ -681,7 +682,7 @@ def runOrder (profiles : List String) (environment : Json) (rv : RouteOrderVocab
   let premisesJson ← j.getObjVal? "premises"
   let _ ← formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
   let ps ← VE.Order.Wire.decodeFormulas E premisesJson
-  let c ← VE.Order.Wire.decodeFormula 64 (← j.getObjVal? "conclusion")
+  let c ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
   unless c.check E [] do throw "ill-typed or unbound conclusion"
   nodeLimit ((c :: ps).map VE.Order.Wire.formulaNodes)
   if kind == "countermodel" then
