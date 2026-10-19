@@ -416,16 +416,27 @@ theorem elab_declared {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) {c : S
     List.any_eq_false.mpr fun e he => by simp [not_regionName hE fs hc e he]
   simp [CEnv.elab, this, hc]
 
+theorem hasType_elab {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) {Γ : List String} {t : QTerm}
+    {τ : VE.Time.QType} (h : VE.Time.HasType E.q Γ t τ) : VE.Time.HasType (E.elab fs) Γ t τ := by
+  induction h with
+  | obj hc => exact .obj (elab_declared hE fs hc)
+  | const hv hc => exact .const hv (elab_declared hE fs hc)
+  | _ => constructor <;> assumption
+
 /-- Admission in `E.q` is admission in the elaborated environment. -/
 theorem admitted_elab {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) {Γ : List String} {a : QFormula}
     (h : VE.Time.Admitted E.q Γ a) : VE.Time.Admitted (E.elab fs) Γ a := by
-  have ht : ∀ {Γ t τ}, VE.Time.HasType E.q Γ t τ → VE.Time.HasType (E.elab fs) Γ t τ := by
-    intro Γ t τ h
-    induction h with
-    | obj hc => exact .obj (elab_declared hE fs hc)
-    | const hv hc => exact .const hv (elab_declared hE fs hc)
-    | _ => constructor <;> assumption
-  induction h <;> constructor <;> first | assumption | exact ht ‹_›
+  induction h <;> constructor <;> first | assumption | exact hasType_elab hE fs ‹_›
+
+/-- A typed term reads only declared constants, which `withRegions` keeps. -/
+theorem tdenote_withRegions {α : Type u} {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) (T : TStructure α)
+    {Γ : List String} {ρ : List α} {t : QTerm} {τ : VE.Time.QType} (h : VE.Time.HasType E.q Γ t τ) :
+    t.tdenote (withRegions E fs T) ρ = t.tdenote T ρ := by
+  induction h with
+  | obj hc | const _ hc => simp [QTerm.tdenote, withRegions_declared hE fs T hc]
+  | add _ _ _ _ il ir => simp [QTerm.tdenote, il, ir]
+  | scale _ _ _ iu => simp [QTerm.tdenote, iu]
+  | _ => rfl
 
 /-- A well-formed core formula reads only declared constants. -/
 theorem denote_congr {E : VE.Order.Environment} (S : VE.Order.Structure.{u})
@@ -596,10 +607,6 @@ theorem bridge_hold {α : Type u} (E : CEnv) (hE : E.WellFormed) (fs : List CFor
     simp [Body.holds, withRegions]
   exact ⟨key.mp, key.mpr⟩
 
-theorem tcompare_qty {α : Type u} (R : Int → Int → Prop) (g : String) (a b : Int) :
-    VE.Time.TCompare (α := α) R (some (.qty g a)) (some (.qty g b)) ↔ R a b :=
-  ⟨fun ⟨_, _, _, h1, h2, h⟩ => by cases h1; cases h2; exact h, fun h => ⟨g, a, b, rfl, rfl, h⟩⟩
-
 theorem counts_iff {α : Type u} {E : CEnv} {T : TStructure α} (hT : Admissible E T) {s : String}
     (hs : s ∈ E.finite) : ∀ (terms : List (Int × Body)) (ns : List Nat),
       Counts T s terms ns ↔ ns = terms.map fun kb => regionSize T s kb.2
@@ -616,6 +623,51 @@ theorem countAtom_holds_iff {α : Type u} {E : CEnv} {T : TStructure α} (hT : A
       fun p => p.1.1 * (p.2 : Int)) = terms.map fun kb => kb.1 * (regionSize T c.sort kb.2 : Int) := by
     intro terms; induction terms <;> simp_all
   simp only [CountAtom.holds, counts_iff hT hs, exists_eq_left, hz]
+
+/-! ## Ratio statements, given the integers their operands denote -/
+
+section
+variable {α : Type u} {T : TStructure α} {n d : CTerm} {zn zd : Int}
+  (hn : ∀ z, n.Denotes T z ↔ z = zn) (hd : ∀ z, d.Denotes T z ↔ z = zd)
+include hn hd
+
+theorem roundsTo_holds_iff (r : VE.Numbers.Rounding) (D : Int) (k : Nat) :
+    (CFormula.roundsTo r n d D k).holds T ↔ 0 < zd ∧ erasedRounding r zn zd D k := by
+  simp only [CFormula.holds, hn, hd, exists_and_left, exists_eq_left]
+  exact and_congr_right fun h => (roundsTo_ratio_agree r zn zd D k h).symm
+
+theorem percentOf_holds_iff (D : Int) (k : Nat) :
+    (CFormula.percentOf n d D k).holds T ↔ 0 < zd ∧ 100 * 10 ^ k * zn = D * zd := by
+  simp only [CFormula.holds, hn, hd, exists_and_left, exists_eq_left]
+
+theorem percentRoundsTo_holds_iff (r : VE.Numbers.Rounding) (D : Int) (k : Nat) :
+    (CFormula.percentRoundsTo r n d D k).holds T ↔ 0 < zd ∧ erasedRounding r (100 * zn) zd D k := by
+  simp only [CFormula.holds, hn, hd, exists_and_left, exists_eq_left]
+  refine and_congr_right fun h => ?_
+  rw [roundsTo_ratio_agree r _ zd D k h]
+  push_cast; exact Iff.rfl
+end
+
+/-- A typed ratio operand denotes one integer, and its erasure denotes it in its tag where region constants are
+region sizes; erasure reads the operand's tag from `tagOf`. -/
+theorem cterm_erase {α : Type u} {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) {T : TStructure α}
+    (hT : Admissible E T) {x : CTerm} {g : String} (hx : CTermTyped E x g)
+    (hsub : ∀ sb ∈ x.countBodies, sb ∈ fs.flatMap (·.countBodies)) :
+    ∃ z, (∀ z', x.Denotes T z' ↔ z' = z) ∧
+      (x.erase E fs).tdenote (withRegions E fs T) [] = some (.qty g z) ∧ (x.tagOf E).getD dl = g := by
+  cases hx with
+  | @quantity t g h =>
+    obtain ⟨v, hv, hty, -⟩ := VE.Time.term_faithful hT.1 (VE.Time.typed_nil T) h
+    obtain ⟨z, rfl⟩ := VE.Time.typed_qty hty
+    refine ⟨z, fun z' => ⟨fun ⟨g', h'⟩ => ?_, fun e => ⟨g, e ▸ hv⟩⟩, ?_, ?_⟩
+    · rw [hv] at h'; cases h'; rfl
+    · simp [CTerm.erase, tdenote_withRegions hE fs T h, hv]
+    · simp [(tagOf_iff E _ g).mpr (.quantity h)]
+  | @count s b hs hb =>
+    have ⟨hc, hbs⟩ := counted_of_mem (E := E) (hsub (s, b) (by simp [CTerm.countBodies]))
+    refine ⟨regionSize T s b, fun z' => ⟨fun ⟨n, hn, e⟩ => by rw [e, regionSize_eq hn],
+      fun e => ⟨_, hasCount_regionSize hT hs b, e⟩⟩, regionSum_denote hT fs hs hc b hbs [], ?_⟩
+    simp [(tagOf_iff E _ _).mpr (.count hs hb)]
 
 theorem erase_iff_of {α : Type u} (E : CEnv) (hE : E.WellFormed) (fs : List CFormula) (T : TStructure α)
     (hT : Admissible E T) {a : CFormula} (ha : Admitted E a)
@@ -655,6 +707,26 @@ theorem erase_iff_of {α : Type u} (E : CEnv) (hE : E.WellFormed) (fs : List CFo
     rw [hex fun n m => 0 < n ∧ p.cmp.holds (p.den * (m : Int)) (p.num * (n : Int))]
     (cases p.cmp <;> simp [Cmp.holds, Cmp.erase, QFormula.tdenote, tcompare_qty, QTerm.tdenote, hN, hM]) <;>
       exact fun _ => eq_comm
+  | @roundsTo r n d D k g _ _ hn hd =>
+    simp only [CFormula.countBodies, List.mem_append] at hsub
+    obtain ⟨zn, hn', en, gn⟩ := cterm_erase hE fs hT hn fun sb h => hsub sb (.inl h)
+    obtain ⟨zd, hd', ed, -⟩ := cterm_erase hE fs hT hd fun sb h => hsub sb (.inr h)
+    simp only [roundsTo_holds_iff hn' hd', CFormula.erase, gn, QFormula.tdenote, ed, QTerm.tdenote, tcompare_qty,
+      roundingQ_iff _ _ _ _ _ en ed]
+  | @percentOf p w D k g _ hp hw =>
+    simp only [CFormula.countBodies, List.mem_append] at hsub
+    obtain ⟨zp, hp', ep, gp⟩ := cterm_erase hE fs hT hp fun sb h => hsub sb (.inl h)
+    obtain ⟨zw, hw', ew, -⟩ := cterm_erase hE fs hT hw fun sb h => hsub sb (.inr h)
+    simp [percentOf_holds_iff hp' hw', CFormula.erase, gp, QFormula.tdenote, ew, ep, QTerm.tdenote, tcompare_qty]
+    exact fun _ => eq_comm
+  | @percentRoundsTo r p w D k g _ _ hp hw =>
+    simp only [CFormula.countBodies, List.mem_append] at hsub
+    obtain ⟨zp, hp', ep, gp⟩ := cterm_erase hE fs hT hp fun sb h => hsub sb (.inl h)
+    obtain ⟨zw, hw', ew, -⟩ := cterm_erase hE fs hT hw fun sb h => hsub sb (.inr h)
+    have es : (QTerm.scale g 100 (p.erase E fs)).tdenote (withRegions E fs T) [] = some (.qty g (100 * zp)) := by
+      simp [QTerm.tdenote, ep]
+    simp only [percentRoundsTo_holds_iff hp' hw', CFormula.erase, gp, QFormula.tdenote, ew, QTerm.tdenote, tcompare_qty,
+      roundingQ_iff _ _ _ _ _ es ew]
   | not _ ih => simp only [CFormula.holds, CFormula.erase, QFormula.tdenote, ih hsub]
   | and _ _ ia ib | or _ _ ia ib | implies _ _ ia ib =>
     simp only [CFormula.countBodies, List.mem_append] at hsub
@@ -698,6 +770,20 @@ theorem regionSum_typed {E : CEnv} {fs : List CFormula} {Γ : List String} {s : 
       List.any_eq_true.mpr ⟨_, mem_regionTable hs (List.mem_filter.mp hr).1, by simp⟩
     exact .const (Or.inl rfl) (by simp [CEnv.elab, this])
 
+theorem hasType_validTag {E : VE.Time.QEnv} {Γ : List String} {t : QTerm} {g : String}
+    (h : VE.Time.HasType E Γ t (.qty g)) : E.ValidTag g := by
+  cases h <;> assumption
+
+/-- A typed ratio operand erases to a term of its tag in the elaborated environment. -/
+theorem cterm_typed {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) {x : CTerm} {g : String}
+    (hx : CTermTyped E x g) (hsub : ∀ sb ∈ x.countBodies, sb ∈ fs.flatMap (·.countBodies)) :
+    VE.Time.HasType (E.elab fs) [] (x.erase E fs) (.qty g) ∧ (x.tagOf E).getD dl = g := by
+  cases hx with
+  | quantity h => exact ⟨hasType_elab hE fs h, by simp [(tagOf_iff E _ _).mpr (.quantity h)]⟩
+  | @count s b hs hb =>
+    exact ⟨regionSum_typed (counted_of_mem (E := E) (hsub (s, b) (by simp [CTerm.countBodies]))).1 b,
+      by simp [(tagOf_iff E _ _).mpr (.count hs hb)]⟩
+
 theorem erase_admitted {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) {a : CFormula} (ha : Admitted E a)
     (hsub : ∀ sb ∈ a.countBodies, sb ∈ fs.flatMap (·.countBodies)) :
     VE.Time.Admitted (E.elab fs) [] (a.erase E fs) := by
@@ -719,6 +805,16 @@ theorem erase_admitted {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) {a : 
     simp only [CFormula.erase, Proportion.erase]
     refine .and (.lt (.num (Or.inl rfl)) (regionSum_typed hc _)) ?_
     cases p.cmp <;> constructor <;> first | exact hM | exact hN
+  | @roundsTo r n d D k g _ hg hn hd | @percentRoundsTo r n d D k g _ hg hn hd | @percentOf n d D k g hg hn hd =>
+    simp only [CFormula.countBodies, List.mem_append] at hsub
+    obtain ⟨hn', gn⟩ := cterm_typed hE fs hn fun sb h => hsub sb (.inl h)
+    have hd' := (cterm_typed hE fs hd fun sb h => hsub sb (.inr h)).1
+    have hv := hasType_validTag hn'
+    simp only [CFormula.erase, gn]
+    first
+    | exact .and (.lt (.num hv) hd') (roundingQ_admitted r D k hg hv hn' hd')
+    | exact .and (.lt (.num hv) hd') (roundingQ_admitted r D k hg hv (.scale hg hv hn') hd')
+    | exact .and (.lt (.num hv) hd') (.eq (.scale hg hv hn') (.scale hg hv hd'))
   | not _ ih => exact .not (ih hsub)
   | and _ _ ia ib | or _ _ ia ib | implies _ _ ia ib =>
     simp only [CFormula.countBodies, List.mem_append] at hsub
