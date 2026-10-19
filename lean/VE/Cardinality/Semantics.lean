@@ -3,8 +3,8 @@ import VE.Cardinality.Syntax
 /-! The meaning of `cardinality@0` statements, stated without erasure (docs/spec/quantities.md 3.3).
 
 A count is the length of a duplicate-free list of exactly the counted objects, as `VE.Time.expand_atLeast_iff`
-states counts; counts stay integers. Every proportion requires a nonempty population, as a rounding or a percentage requires a
-positive denominator. Rounding is `VE.Numbers.RoundsTo` under the sentence's own tie rule; this track has no rounding
+states counts; counts stay integers. Every proportion requires a nonempty population, and every rounding and percentage
+a positive denominator. Rounding is `VE.Numbers.RoundsTo` under the sentence's own tie rule; this track has no rounding
 definition. -/
 namespace VE.Cardinality
 open VE.Time (TStructure)

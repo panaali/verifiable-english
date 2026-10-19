@@ -262,28 +262,28 @@ def num (z : Int) : CTerm := .quantity (.num dl z)
 def rounds (r : VE.Numbers.Rounding) (a b D : Int) (k : Nat) : CFormula := .roundsTo r (num a) (num b) D k
 def none0 : VE.Order.FiniteModel Nat := rowsModel pm []
 def both (E : CEnv) (M : VE.Order.FiniteModel Nat) (f : CFormula) : Bool × Bool := (holdsFin M f, erasedFin E [f] M f)
+def nums : CFormula → Bool × Bool := both fomc none0
 
-#guard [rounds .tiesUp 176 594 296 3, rounds .halfEven 176 594 296 3, rounds .tiesUp 52 243 214 3,
-  rounds .tiesUp 31 243 128 3, rounds .tiesUp 21 243 86 3, rounds .tiesUp 26 100 3 1].all (·.admits fomc)
-#guard [rounds .tiesUp 176 594 296 3, rounds .halfEven 176 594 296 3, rounds .tiesUp 52 243 214 3,
-  rounds .tiesUp 31 243 128 3, rounds .tiesUp 21 243 86 3, rounds .tiesUp 26 100 3 1].all (both fomc none0 · == (true, true))
+def fa4 : List CFormula := [rounds .tiesUp 176 594 296 3, rounds .halfEven 176 594 296 3, rounds .tiesUp 52 243 214 3,
+  rounds .tiesUp 31 243 128 3, rounds .tiesUp 21 243 86 3, rounds .tiesUp 26 100 3 1]
+#guard fa4.all (·.admits fomc) && fa4.all (nums · == (true, true))
 -- "0.297" is false, and "0.30" (two places) is a different claim from "0.3".
-#guard [rounds .tiesUp 176 594 297 3, rounds .tiesUp 26 100 30 2].all (both fomc none0 · == (false, false))
+#guard [rounds .tiesUp 176 594 297 3, rounds .tiesUp 26 100 30 2].all (nums · == (false, false))
 -- The tie fixture, one per rule: 1/8 = 0.125.
-#guard (both fomc none0 (rounds .tiesUp 1 8 13 2), both fomc none0 (rounds .tiesUp 1 8 12 2)) = ((true, true), (false, false))
-#guard (both fomc none0 (rounds .halfEven 1 8 13 2), both fomc none0 (rounds .halfEven 1 8 12 2)) = ((false, false), (true, true))
-#guard ([rounds .tiesUp 1 2 0 0, rounds .tiesUp 1 2 1 0, rounds .halfEven 1 2 0 0, rounds .halfEven 1 2 1 0,
-  rounds .halfEven 3 2 2 0, rounds .halfEven 3 2 1 0].map (both fomc none0)).map (·.1) = [false, true, true, false, true, false]
+#guard (nums (rounds .tiesUp 1 8 13 2), nums (rounds .tiesUp 1 8 12 2)) = ((true, true), (false, false))
+#guard (nums (rounds .halfEven 1 8 13 2), nums (rounds .halfEven 1 8 12 2)) = ((false, false), (true, true))
+#guard [rounds .tiesUp 1 2 0 0, rounds .tiesUp 1 2 1 0, rounds .halfEven 1 2 0 0, rounds .halfEven 1 2 1 0,
+  rounds .halfEven 3 2 2 0, rounds .halfEven 3 2 1 0].map (nums · |>.1) = [false, true, true, false, true, false]
 -- FA4e: ties go to the larger value, also below 0, for a ratio and for a percent.
-#guard [rounds .tiesUp (-1) 2 0 0, .percentRoundsTo .tiesUp (num (-1)) (num 200) 0 0].all (both fomc none0 · == (true, true))
+#guard [rounds .tiesUp (-1) 2 0 0, .percentRoundsTo .tiesUp (num (-1)) (num 200) 0 0].all (nums · == (true, true))
 #guard [rounds .tiesUp (-1) 2 (-1) 0, .percentRoundsTo .tiesUp (num (-1)) (num 200) (-1) 0].all
-  (both fomc none0 · == (false, false))
+  (nums · == (false, false))
 -- Meaning and erasure agree on a grid, every rule, for a ratio and for a percent; a zero denominator holds neither.
-#guard [VE.Numbers.Rounding.tiesUp, .halfEven, .down, .up].all fun r => (List.range 13).all fun a => (List.range 5).all fun b =>
-  (List.range 15).all fun D => (List.range 2).all fun k =>
+#guard [VE.Numbers.Rounding.tiesUp, .halfEven, .down, .up].all fun r => (List.range 13).all fun a =>
+  (List.range 5).all fun b => (List.range 15).all fun D => (List.range 2).all fun k =>
     let (a, b, D) := ((a : Int) - 6, (b : Int), (D : Int) - 7)
     [rounds r a b D k, .percentRoundsTo r (num a) (num b) (10 * D) k, .percentOf (num a) (num b) (10 * D) k].all
-      fun f => (both fomc none0 f).1 == (both fomc none0 f).2
+      fun f => (nums f).1 == (nums f).2
 
 /-! ## FA4c, FA4d: counts as operands; "divided by" names each operand's whole body -/
 
@@ -294,7 +294,8 @@ def paper : CEnv where
   finite := [dec]
 def scored : Body := .atom "scored"
 def falseApp : Body := .atom "false_approval"
-/-- "The number of scored decisions that are false approvals, divided by the number of scored decisions, rounds to …". -/
+/-- "The number of scored decisions that are false approvals, divided by the number of scored decisions, rounds to
+…". -/
 def fa4c (D : Int) : CFormula := .roundsTo .tiesUp (.count dec (.and scored falseApp)) (.count dec scored) D 3
 /-- The other reading "out of" allowed: every false approval, scored or not. -/
 def fa4dOther (D : Int) : CFormula := .roundsTo .tiesUp (.count dec falseApp) (.count dec scored) D 3
@@ -309,7 +310,8 @@ def paperModel (u : Nat) : VE.Order.FiniteModel Nat :=
   [(true, true), (false, false), (true, true)]
 -- `erasedProblem_admitted` on FA4c: 4 region premises and the erased claim, each W6a-admitted in `E.elab`.
 #guard (erasedProblem paper [] (fa4c 296)).1.length = 4 &&
-  ((erasedProblem paper [] (fa4c 296)).1 ++ [(erasedProblem paper [] (fa4c 296)).2]).all (·.admits (paper.elab [fa4c 296]) [])
+  ((erasedProblem paper [] (fa4c 296)).1 ++ [(erasedProblem paper [] (fa4c 296)).2]).all
+    (·.admits (paper.elab [fa4c 296]) [])
 
 /-! ## FA5, FA5b: PCE estimates in basis points (September 370, June 360); FA9e: admission of ratios -/
 
@@ -321,12 +323,14 @@ def news : CEnv where
 def sept : CTerm := .quantity (.const "bp" "sept")
 def june : CTerm := .quantity (.const "bp" "june")
 def pce (s : Int) : VE.Order.FiniteModel Nat :=
-  { none0 with constants := fun c => if c == "sept" then some (.inr s) else if c == "june" then some (.inr 360) else none }
+  { none0 with
+    constants := fun c => if c == "sept" then some (.inr s) else if c == "june" then some (.inr 360) else none }
 def fa5 : List CFormula := [.roundsTo .tiesUp sept june 1028 3, .roundsTo .halfEven sept june 1028 3,
   .percentRoundsTo .tiesUp sept june 103 0, .percentOf sept june 103 0, .percentOf sept june 1027778 4]
 /-- "… is exactly 105 percent of …" against "… minus … equals 5 percentage points" (500 at 2 places). -/
 def relative : CFormula := .percentOf sept june 105 0
-def points : CFormula := .quantity (.eq (.add "bp" (.const "bp" "sept") (.scale "bp" (-1) (.const "bp" "june"))) (.num "bp" 500))
+def points : CFormula :=
+  .quantity (.eq (.add "bp" (.const "bp" "sept") (.scale "bp" (-1) (.const "bp" "june"))) (.num "bp" 500))
 
 #guard fa5.all (·.admits news) && [relative, points].all (·.admits news)
 #guard fa5.map (both news (pce 370)) = [(true, true), (true, true), (true, true), (false, false), (false, false)]
@@ -597,8 +601,8 @@ theorem den_num {α : Type} (T : TStructure α) (z z' : Int) : (num z).Denotes T
 -- A count denotes its count; a closed number its value; an object, no integer.
 theorem denotes_cases : cur.Denotes two 1 ∧ ¬ cur.Denotes two 2 ∧ (num 7).Denotes two 7 ∧ ¬ (num 7).Denotes two 8 ∧
     ¬ (CTerm.quantity (.obj "x")).Denotes two 0 := by
-  refine ⟨(den_cur 1).mpr rfl, fun h => by simp [den_cur] at h, (den_num _ 7 7).mpr rfl, fun h => by simp [den_num] at h,
-    fun ⟨g, h⟩ => ?_⟩
+  refine ⟨(den_cur 1).mpr rfl, fun h => by simp [den_cur] at h, (den_num _ 7 7).mpr rfl,
+    fun h => by simp [den_num] at h, fun ⟨g, h⟩ => ?_⟩
   simp [VE.Time.QTerm.tdenote, two] at h
 
 -- On `two` the share of curious users is 1/2 = 50 percent: rule, places, operand order and the positive denominator.
@@ -606,19 +610,22 @@ theorem ratio_cases :
     (CFormula.roundsTo .tiesUp cur all2 5 1).holds two ∧ ¬ (CFormula.roundsTo .tiesUp cur all2 5 0).holds two ∧
     ¬ (CFormula.roundsTo .tiesUp all2 cur 5 1).holds two ∧ (CFormula.roundsTo .tiesUp cur all2 1 0).holds two ∧
     (CFormula.roundsTo .halfEven cur all2 0 0).holds two ∧ ¬ (CFormula.roundsTo .halfEven cur all2 1 0).holds two ∧
-    ¬ (CFormula.roundsTo .tiesUp cur all2 0 0).holds two ∧ ¬ (CFormula.roundsTo .tiesUp (.count "user" harm) (.count "user" .any) 0 0).holds nobody ∧
+    ¬ (CFormula.roundsTo .tiesUp cur all2 0 0).holds two ∧
+    ¬ (CFormula.roundsTo .tiesUp (.count "user" harm) (.count "user" .any) 0 0).holds nobody ∧
     (CFormula.percentOf cur all2 50 0).holds two ∧ (CFormula.percentOf cur all2 500 1).holds two ∧
     ¬ (CFormula.percentOf cur all2 50 1).holds two ∧ ¬ (CFormula.percentOf all2 cur 50 0).holds two ∧
     ¬ (CFormula.percentOf (.count "user" harm) (.count "user" .any) 0 0).holds nobody ∧
-    (CFormula.percentRoundsTo .tiesUp cur all2 50 0).holds two ∧ ¬ (CFormula.percentRoundsTo .tiesUp cur all2 1 0).holds two ∧
+    (CFormula.percentRoundsTo .tiesUp cur all2 50 0).holds two ∧
+    ¬ (CFormula.percentRoundsTo .tiesUp cur all2 1 0).holds two ∧
     ¬ (CFormula.percentRoundsTo .tiesUp cur all2 500 0).holds two ∧
     ¬ (CFormula.percentRoundsTo .tiesUp (.count "user" harm) (.count "user" .any) 0 0).holds nobody ∧
     (CFormula.percentRoundsTo .tiesUp (num 1) (num 200) 1 0).holds two ∧
     (CFormula.percentRoundsTo .halfEven (num 1) (num 200) 0 0).holds two ∧
     ¬ (CFormula.percentRoundsTo .halfEven (num 1) (num 200) 1 0).holds two := by
-  simp only [roundsTo_holds_iff den_cur den_all, roundsTo_holds_iff den_all den_cur, percentOf_holds_iff den_cur den_all,
-    percentOf_holds_iff den_all den_cur, percentRoundsTo_holds_iff den_cur den_all, roundsTo_holds_iff (den_nobody _) (den_nobody _),
-    percentOf_holds_iff (den_nobody _) (den_nobody _), percentRoundsTo_holds_iff (den_nobody _) (den_nobody _),
+  simp only [roundsTo_holds_iff den_cur den_all, roundsTo_holds_iff den_all den_cur,
+    percentOf_holds_iff den_cur den_all, percentOf_holds_iff den_all den_cur, percentRoundsTo_holds_iff den_cur den_all,
+    roundsTo_holds_iff (den_nobody _) (den_nobody _), percentOf_holds_iff (den_nobody _) (den_nobody _),
+    percentRoundsTo_holds_iff (den_nobody _) (den_nobody _),
     percentRoundsTo_holds_iff (den_num two 1) (den_num two 200), erasedRounding]
   simp
 
@@ -643,7 +650,8 @@ theorem admitted_ratio_cases :
     ¬ Admitted news (.percentOf sept (.count pm .any) 1 0) ∧ ¬ Admitted news (.percentOf (.count pm .any) sept 1 0) ∧
     Admitted news (.percentRoundsTo .halfEven (.count pm .any) (num 3) 1 0) ∧
     ¬ Admitted news (.percentRoundsTo .up sept june 1 0) ∧ ¬ Admitted news (.percentRoundsTo .tiesUp date date 1 0) ∧
-    ¬ Admitted news (.percentRoundsTo .tiesUp (num 3) sept 1 0) ∧ ¬ Admitted news (.percentRoundsTo .tiesUp sept (num 3) 1 0) := by
+    ¬ Admitted news (.percentRoundsTo .tiesUp (num 3) sept 1 0) ∧
+    ¬ Admitted news (.percentRoundsTo .tiesUp sept (num 3) 1 0) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     first
     | exact admits_sound _ _ (by decide)
