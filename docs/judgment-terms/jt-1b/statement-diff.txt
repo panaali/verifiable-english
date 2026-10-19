@@ -1,0 +1,33 @@
+# jt-1b: the Lean blocks of docs/spec/judgment-terms.md section 4 against lean/VE/Judgments/Status.lean, compared by
+# tools/check_readings_defaults_statements.declarations (a theorem up to its proof's `:=`), strict equality after
+# whitespace normalisation; `inductive Content` by the same normal form. Run 2026-10-19 on the item's code.
+EXACT def Content.formulas
+EXACT def UnitView.complete
+EXACT def UnitView.legacy
+EXACT def UnitView.reads
+EXACT def defEdges
+EXACT def dependsOn
+EXACT def dependsOnC
+EXACT def reachedBodies
+EXACT def status
+EXACT def usageMap
+EXACT def viewOf
+EXACT structure ActiveSet
+EXACT structure UnitView
+EXACT theorem dependsOnC_remove
+EXACT theorem dependsOn_iff
+EXACT theorem dependsOn_no_defs
+EXACT theorem status_checked
+EXACT theorem status_eq
+EXACT theorem status_legacy
+EXACT theorem status_never_checked
+EXACT theorem status_ok_iff
+EXACT theorem status_remove_unused
+EXACT theorem usageMap_complete
+EXACT theorem usageMap_rows
+EXACT theorem usageMap_sound
+EXACT theorem usageMap_unused
+EXACT theorem viewOf_legacy
+EXACT inductive Content
+28 of 28 exact
+helpers not in the spec: theorem dependsOnC_sub, theorem filter_remove, theorem find_congr_mem, theorem mem_defEdges, theorem path_last

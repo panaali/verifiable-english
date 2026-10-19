@@ -16,6 +16,7 @@ nothing about orders that conflict with each other. Each added rule, derived nam
 | [asimov_extended_reading.py](asimov_extended_reading.py) | an independent reading of all 29 rules for one robot |
 | [asimov_extended_check.py](asimov_extended_check.py) | runs VE on every case and compares the results with the answer key |
 | [answer-key.json](answer-key.json), [results.json](results.json) | the key from PLAN.md sections 6–8, and VE's results |
+| [asimov_unspecified.py](asimov_unspecified.py), [unspecified/results.json](unspecified/results.json) | v2's rules re-run with `permitted` completed `unspecified` (events-time-causation ET-8), and the results |
 
 SHA-256: `base.ve` `c0eef6e84eec517ed5fcd6afae5352895bf424337b94b714640081e6f8b537f5`, `rules.ve`
 `6180eecd325c2ce9b9861f46223c7a1d30b2c82028d91e93454fc58c0f4a392a`.
@@ -40,9 +41,11 @@ SHA-256: `base.ve` `c0eef6e84eec517ed5fcd6afae5352895bf424337b94b714640081e6f8b5
   give a clear action in only 13 of the 51 records, and P9's base verdict is among those that change. The extended
   rules' decisions change in none of the 51 records. In the 300 sampled ones, the clear set changes in 3, and
   `permitted` changes in 9: six keep their clear action, but one of their actions is permitted only by the default
-  that Asimov's text does not give; see [the permission default](#the-permission-default). The `unspecified`
-  completion of `norm-defaults@0` would state the source's silence, but it does not combine with `alternatives@0`
-  and `risk@0` yet, so the default stays and no verdict changes ([why](#why-the-default-is-not-unspecified)).
+  that Asimov's text does not give; see [the permission default](#the-permission-default).
+- **With `permitted` completed `unspecified`** (ET-8): v2's 13 rules stay CHECKED and CONFLICT-FREE. Of the 43
+  records that need no `risk@0`, 11 have a clear action (30 with the default allow). Of the 9 distinct v2 spec
+  models, 2 do (6 with allow). The extended rules are not re-run: `risk@0` does not take the completion yet
+  ([why](#why-the-default-is-not-unspecified)).
 
 ## The rules and their check status
 
@@ -184,39 +187,40 @@ of the nine, the actions only the default permits (`ext_permitted_only_by_defaul
 
 ### Why the default is not `unspecified`
 
-The review's finding was that unspecified actions default to permitted. Since `norm-defaults@0` merged, VE has
-a completion for exactly this case: `unspecified`, "when nothing else in the text decides, the text does not say
-whether an action may be performed". It is the faithful one here, and the case does not use it yet:
+The review's finding was that unspecified actions default to permitted. `norm-defaults@0` has a completion for
+exactly this case: `unspecified`, "when nothing else in the text decides, the text does not say whether an action
+may be performed". It is the faithful one here. Every result of this case is a `risk@0` decision, and `risk@0` does
+not combine with the completion (docs/spec/norm-defaults.md 3.3; the events-time-causation plan, 2.10, leaves it to
+its own batch). Python rejects the switched environment with `UnsupportedProfile: risk@0 with norm-defaults@0 is not
+implemented`, and Lean's risk route with `UnsupportedProfile: Unsupported profile norm-defaults@0`. A test checks
+both, so this section fails when the combination lands. Until then the environment keeps allow.
 
-| | Before `norm-defaults@0` | Now |
-|---|---|---|
-| `permitted` | allow (v2's modeling choice) | **allow, unchanged**; `unspecified` is blocked, below |
-| `required`, `prevent_required`, the derived names | deny | unchanged; a derived name is this project's own definition, so false-unless-derived is part of it |
-| verdicts on the 51 records and the 300 sampled | as above | **unchanged**: no verdict changes, because nothing was re-run under a different completion |
+**v2's rules, measured with `unspecified` (ET-8).** Since ET-7 the alternatives route takes the completion.
+[asimov_unspecified.py](asimov_unspecified.py) runs v2's 13 rules there (the `usecases/asimov-laws` reading, with
+`prevents`). It runs every record whose cells are all certain; a `might` cell needs `risk@0`. Each record is decided
+under allow, deny and `unspecified`. Under allow, every run record has the clear set it has in `results.json` on the
+risk route.
 
-Every result of this case is a `risk@0` decision over `alternatives@0` choices, and `norm-defaults@0` combines
-with neither yet (docs/spec/norm-defaults.md 3.3, "Integration gap"): the routes still consume completed
-allow/deny norms and cannot report a permission the text leaves open. Both engines reject the switched
-environment: Python with `UnsupportedProfile: risk@0 with norm-defaults@0 is not implemented` (and, without
-`risk@0`, `alternatives@0 with norm-defaults@0 is not implemented`), and Lean's risk route with
-`UnsupportedProfile: Unsupported profile norm-defaults@0`; a test checks both, so this section fails when the
-combination lands. Rust decodes neither profile; it has no separate leg.
+| v2's rules (1–13) | allow | deny | `unspecified` |
+| --- | --- | --- | --- |
+| check status, conflict verdict | CHECKED, CONFLICT-FREE | | CHECKED, CONFLICT-FREE (8 targets replayed) |
+| the 43 of the 51 records without a `might` cell: records with a clear action | 30 | 11 | **11** |
+| the 9 distinct v2 spec models: models with a clear action | 6 | | **2** (`d-full`, `e`) |
+| not run (`risk@0`) | O5, P1, P2, P3, P4, P7, P9, P10 | | |
 
-The deny measurement above shows where the default matters, but it is not the `unspecified` result, which is not
-computed. Where only the default permits an action, `unspecified` would make that action neither permitted nor
-forbidden but UNDECIDED, and so not clear (spec 3.3: a clear action needs its permission under every admissible
-filling). For the extended rules the deny run finds such actions in 9 of the 300 sampled records
-(`ext_permitted_only_by_default`) and in none of the 51 records; for the v2 rules, `permitted` changes in 38 of the
-51, P9 among them, and in 208 of the 300.
+Under `unspecified`, every clear set is the deny clear set on the same record, and no action is clear that is not
+clear under allow. 19 of the 43 records have an UNDECIDED action, shown as `UNSETTLED(...)`: two validated fillings
+disagree about it, so a silent permission is all that is left. The earlier figures (13 of 51 with deny, 37 of 51
+with allow, on the risk route) stay as measured. The extended rules (1–29) have no `unspecified` result. On the 51
+records their decisions do not change between allow and deny; that is a bound, not the computed result.
 
 ## OPEN
 
 - **The permission default.** An action that no rule forbids is permitted. This is v2's modeling choice, not
   Asimov's, and most v2 verdicts depend on it ([above](#the-permission-default)). The faithful completion is
-  `unspecified`, which waits for `norm-defaults@0` to combine with `alternatives@0` and `risk@0`
-  ([why](#why-the-default-is-not-unspecified)); otherwise revising it needs an authored rule saying which actions
-  the laws leave permitted. The extended rules' decisions on the 51 records do not depend
-  on it; in 9 of the 300 sampled records, an action is permitted only by it.
+  `unspecified`. v2's rules have been measured with it ([ET-8](#why-the-default-is-not-unspecified)); the extended
+  rules wait for `risk@0` to take the completion. The extended rules' decisions on the 51 records do not depend on
+  the default; in 9 of the 300 sampled records, an action is permitted only by it.
 
 - **Counting and aggregation.** Worst-case comparison counts one death the same as two (P6), and one threat to the
   robot the same as two. The missing feature is `risk@0` stage C (costs, additive loss) or a way to state
@@ -252,9 +256,14 @@ about 12 minutes (the 702 decisions with the default denied 366 s, the mutants 6
 On the sample, the v2 rules give a clear action in 256 of 300 records and the extended rules in 295. The 5
 extended dilemmas are 1 NONE-PERMITTED (every action breaks the Zeroth Law, as Q2 says) and 4 OVER-REQUIRED.
 
+A run of `asimov_unspecified.py` (one Lean service) took about 12 minutes. Under `unspecified`, one scenario
+check of `R:dominated-action-when-threats-conflict` (four actions, two threats) took about 145 s of Lean CPU, near
+the route's 180 s deadline, so the script sets a 900 s wall-clock limit per scenario.
+
 ## Running it
 
 ```sh
 PATH="$HOME/.elan/bin:$PATH" uv run python usecases/asimov-extended/asimov_extended_check.py   # writes results.json
+PATH="$HOME/.elan/bin:$PATH" uv run python usecases/asimov-extended/asimov_unspecified.py      # writes unspecified/results.json
 PATH="$HOME/.elan/bin:$PATH" uv run pytest -q tests/test_asimov_extended.py tests/test_asimov_laws.py
 ```
