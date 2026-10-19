@@ -285,7 +285,7 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
 | Size: at most ~500 changed lines outside generated files | over: see below |
 
-Size: about 1,980 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
+Size: about 2,050 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
 (`evidence/*.json`, `mutants-evidence.json`): `tools/trust_mutants.py` 621, the test 615, `replay.py` 94,
 `sweep.py` 115, the seeded bugs' `mutants.json` 258, `tools/trust_map.py` 10, this report and DELTA about 305. That
 is nearly four times the guideline. The size rule's
