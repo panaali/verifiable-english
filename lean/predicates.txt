@@ -130,6 +130,7 @@ module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
 module VE.Calc.Decls
+module VE.Calc.Dimension
 module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.Render
@@ -273,6 +274,8 @@ module VE.Json
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
+module VE.Layout.Anchors
+module VE.Layout.Discourse
 module VE.Layout.List
 module VE.LexicalProofs
 module VE.ModelProofs
@@ -605,7 +608,9 @@ VE.Alternatives.FollowableIn@VE.Alternatives.Followable
 VE.Alternatives.PrefixAdmissibleAlt@VE.Alternatives.Background
 VE.Alternatives.RowsConsistent@VE.Alternatives.Validate
 VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
+VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
+VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
 VE.Ask.BlockLine@VE.Ask.Lines
 VE.Ask.CaseBinding@VE.Ask.Binding
 VE.Ask.Consistent@VE.Ask.Plain
@@ -642,6 +647,7 @@ VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.PhysDim.Normal@VE.Calc.Dimension
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
@@ -807,6 +813,7 @@ VE.Graph.Unfolds@VE.ClaimGraph
 VE.Graph.tableauValid@VE.ClaimGraph
 VE.GraphChecks.valid@VE.GraphChecks
 VE.Layout.GovernedItem@VE.Layout.List
+VE.Layout.ItemUnit@VE.Layout.List
 VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run
 VE.NormDefaults.Admission.CertificatesBound@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.CertificatesBoundX@VE.NormDefaults.LayeredAdmission

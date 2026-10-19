@@ -109,6 +109,7 @@ import VE.Time.Wire
 import VE.Time.Document
 import VE.Calc.Examples
 import VE.Calc.Render
+import VE.Calc.Dimension
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
@@ -173,6 +174,8 @@ import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLegacyExamples
 import VE.Readings.SupPacks
+import VE.Layout.Anchors
+import VE.Layout.Discourse
 import VE.Layout.List
 import VE.Scope.Examples
 import VE.Defaults.Premises

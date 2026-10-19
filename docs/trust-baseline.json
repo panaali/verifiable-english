@@ -831,6 +831,48 @@
    "reason": "et-3b: VE/Events/Completion.lean +23, VE/Events/Premises.lean +4 (S; K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3b, 2026-10-18",
    "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "S",
+   "lines": 42,
+   "reason": "et-7b: scenario values with the completion: VE/Alternatives/FillWire.lean S +42 (ScenarioRowU 21, UndecidedF 8, AltStatus 7, SettledF 6); VE/Alternatives/Run.lean V +70 (runValidateU 31, chooserReportU 18, budgetOf 7, statusPhrase 7, statusLabel 6, runCaseU +1); ResponseShape/Schemas/Alternatives.lean V +23 (evaluation 16, chooser_fill 13, validate_fill 4, file +2, row +1, validate -13); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7b, 2026-10-18",
+   "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
+  },
+  {
+   "class": "V",
+   "lines": 93,
+   "reason": "et-7b: scenario values with the completion: VE/Alternatives/FillWire.lean S +42 (ScenarioRowU 21, UndecidedF 8, AltStatus 7, SettledF 6); VE/Alternatives/Run.lean V +70 (runValidateU 31, chooserReportU 18, budgetOf 7, statusPhrase 7, statusLabel 6, runCaseU +1); ResponseShape/Schemas/Alternatives.lean V +23 (evaluation 16, chooser_fill 13, validate_fill 4, file +2, row +1, validate -13); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7b, 2026-10-18",
+   "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "et-7b fix1 (review F1): VE/Alternatives/Run.lean V +1 (statusPhrase: the search UNKNOWN names its cause); et-7b's total K +0, S +42, V +94 (136 lines)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7b, 2026-10-19",
+   "commit": "cb033316a7cb0476e856065e4047efe411bbe43d"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "sc-3a: S +6 V +5 net; K +0 (VE/Layout/Anchors.lean +68: S +63 for discourse's moved containment bodies, anchor checks and generic checks, D[V] +5 headingOf, spansOf; VE/Layout/List.lean S +7 ItemUnit; VE/Discourse/WellFormed.lean -48 and VE/Discourse/Access.lean -16, the moved bodies)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-3a, 2026-10-19",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "sc-3a: S +6 V +5 net; K +0 (VE/Layout/Anchors.lean +68: S +63 for discourse's moved containment bodies, anchor checks and generic checks, D[V] +5 headingOf, spansOf; VE/Layout/List.lean S +7 ItemUnit; VE/Discourse/WellFormed.lean -48 and VE/Discourse/Access.lean -16, the moved bodies)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-3a, 2026-10-19",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "S",
+   "lines": 55,
+   "reason": "me-6: lean/VE/Calc/Dimension.lean S +55 (PhysDim 5, PhysDim.Normal 2, PhysDim.one 2, insertExp 8, PhysDim.mul 1, PhysDim.inv 1, PhysDim.npow 3, Expr.dimOf 12, Rescale 5, zpowR 4, Rescale.of 3, Rescale.apply 6, legacyDim 3); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6, 2026-10-18",
+   "commit": "9ea276842060977979999c8f3db730d94f527ceb"
   }
  ]
 }
