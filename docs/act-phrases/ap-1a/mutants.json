@@ -1,0 +1,453 @@
+[
+ {
+  "id": "joinWords-nor",
+  "definition": "joinWords",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "[\"and\", \"or\", \"nor\", \"for\"]",
+   "[\"and\", \"or\", \"for\"]"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:113: Expression",
+  "killed": true
+ },
+ {
+  "id": "joinWords-for",
+  "definition": "joinWords",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "[\"and\", \"or\", \"nor\", \"for\"]",
+   "[\"and\", \"or\", \"nor\"]"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:42: Expression",
+  "killed": true
+ },
+ {
+  "id": "clauseWords-all",
+  "definition": "clauseWords",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "actReserved.filter (fun w => !joinWords.contains w)",
+   "actReserved"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:32: Expression",
+  "killed": true
+ },
+ {
+  "id": "maxActBytes",
+  "definition": "maxActBytes",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "def maxActBytes : Nat := 400",
+   "def maxActBytes : Nat := 401"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:103: Expression",
+  "killed": true
+ },
+ {
+  "id": "maxPhraseBytes",
+  "definition": "maxPhraseBytes",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "def maxPhraseBytes : Nat := 300",
+   "def maxPhraseBytes : Nat := 299"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:174: Expression",
+  "killed": true
+ },
+ {
+  "id": "maxPhrases",
+  "definition": "maxPhrases",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "def maxPhrases : Nat := 128",
+   "def maxPhrases : Nat := 127"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:174: Expression",
+  "killed": true
+ },
+ {
+  "id": "fold-codepoint",
+  "definition": "fold",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "c.toNat == 0x2019",
+   "c.toNat == 0x2018"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:92: Expression",
+  "killed": true
+ },
+ {
+  "id": "normal-no-fold",
+  "definition": "normal",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "\" \".intercalate (words (fold s))",
+   "\" \".intercalate (words s)"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:92: Expression",
+  "killed": true
+ },
+ {
+  "id": "dropComma-keeps",
+  "definition": "dropComma",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "then w.dropRight 1 else w",
+   "then w else w"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:61: Expression",
+  "killed": true
+ },
+ {
+  "id": "slotOf-length",
+  "definition": "slotOf?",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "w.length ≥ 3",
+   "w.length ≥ 2"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:220: Expression",
+  "killed": true
+ },
+ {
+  "id": "slotOf-digits",
+  "definition": "slotOf?",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "if d.all Char.isDigit then",
+   "if true then"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:220: Expression",
+  "killed": true
+ },
+ {
+  "id": "pieceToks-no-comma",
+  "definition": "pieceToks",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "then [t, Tok.comma] else [t]",
+   "then [t] else [t]"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:128: Expression",
+  "killed": true
+ },
+ {
+  "id": "pieceToks-inner-comma",
+  "definition": "pieceToks",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "body.isEmpty || body.contains ','",
+   "body.isEmpty"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:188: Expression",
+  "killed": true
+ },
+ {
+  "id": "rawLex-final-comma",
+  "definition": "rawLex",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "if ts.getLast? == some Tok.comma then throw \"comma\"",
+   ""
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:128: Expression",
+  "killed": true
+ },
+ {
+  "id": "phraseToks-bytes",
+  "definition": "phraseToks",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "n.utf8ByteSize > maxPhraseBytes",
+   "n.utf8ByteSize ≥ maxPhraseBytes"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:183: Expression",
+  "killed": true
+ },
+ {
+  "id": "phraseToks-clause",
+  "definition": "phraseToks",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "if clauseWords.contains w.toLower then",
+   "if clauseWords.contains w then"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:193: Expression",
+  "killed": true
+ },
+ {
+  "id": "phraseToks-two-words",
+  "definition": "phraseToks",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "unless nw ≥ 2 do",
+   "unless nw ≥ 1 do"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:194: Expression",
+  "killed": true
+ },
+ {
+  "id": "phraseToks-last-edge",
+  "definition": "phraseToks",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "edgeOk ts.head? && edgeOk ts.getLast?",
+   "edgeOk ts.head?"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:119: Expression",
+  "killed": true
+ },
+ {
+  "id": "clash-self",
+  "definition": "clash",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "(k != 0 || p != q)",
+   "(p != q)"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:203: Expression",
+  "killed": true
+ },
+ {
+  "id": "clash-suffix",
+  "definition": "clash",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "(r.isPrefixOf q || q.isPrefixOf r)",
+   "(q.isPrefixOf r)"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:117: Expression",
+  "killed": true
+ },
+ {
+  "id": "clash-contained",
+  "definition": "clash",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "(r.isPrefixOf q || q.isPrefixOf r)",
+   "(r.isPrefixOf q)"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:206: Expression",
+  "killed": true
+ },
+ {
+  "id": "decodeFixed-limit",
+  "definition": "decodeFixed",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "fx.length > maxPhrases",
+   "fx.length ≥ maxPhrases"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:180: Expression",
+  "killed": true
+ },
+ {
+  "id": "decodeFixed-twice",
+  "definition": "decodeFixed",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "if i < j ∧ p = q then",
+   "if i < j ∧ p = q ∧ i = 0 then"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:200: Expression",
+  "killed": true
+ },
+ {
+  "id": "fixedOk-true",
+  "definition": "fixedOk",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "def fixedOk (fx : List String) : Bool := (decodeFixed fx).isOk",
+   "def fixedOk (_fx : List String) : Bool := true"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:212: Expression",
+  "killed": true
+ },
+ {
+  "id": "group-short",
+  "definition": "group",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   ".fixed i :: group ps n ((t :: rest).drop (ps.getD i []).length)",
+   ".fixed i :: group ps n ((t :: rest).drop 1)"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:32: Expression",
+  "killed": true
+ },
+ {
+  "id": "lex-no-group",
+  "definition": "lex",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "pure (group ps ts.length ts)",
+   "pure ts"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:32: Expression",
+  "killed": true
+ },
+ {
+  "id": "check-start",
+  "definition": "check",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "unless act.startsWith \"{0} \" && slots",
+   "unless slots"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:230: Expression",
+  "killed": true
+ },
+ {
+  "id": "check-bytes",
+  "definition": "check",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "act.utf8ByteSize ≤ maxActBytes",
+   "act.utf8ByteSize < maxActBytes"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:102: Expression",
+  "killed": true
+ },
+ {
+  "id": "check-clause-comma",
+  "definition": "check",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "clauseWords.contains (dropComma w).toLower",
+   "clauseWords.contains w.toLower"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:241: Expression",
+  "killed": true
+ },
+ {
+  "id": "check-join-accepted",
+  "definition": "check",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "| some (.word w) => throw s!\"InvalidInput: act phrase for {name} joins acts with '{w}' outside a fixed phrase\"",
+   "| some (.word _) => pure act"
+  ],
+  "test": "lean/VE/Acts/Lexical.lean:171: unsolved goals",
+  "killed": true
+ },
+ {
+  "id": "check-join-case",
+  "definition": "check",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "| .word w => joinWords.contains w.toLower",
+   "| .word w => joinWords.contains w"
+  ],
+  "test": "lean/VE/Acts/Lexical.lean:173: unsolved goals",
+  "killed": true
+ },
+ {
+  "id": "Form.text-swap",
+  "definition": "Form.text",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "| .right => \"has the right\"",
+   "| .right => \"is entitled\""
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:44: Expression",
+  "killed": true
+ },
+ {
+  "id": "Form.ofText-entitled",
+  "definition": "Form.ofText?",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "else if s == \"is entitled\" then",
+   "else if s == \"is entitled to\" then"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:143: Expression",
+  "killed": true
+ },
+ {
+  "id": "wording-drop",
+  "definition": "wording",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "act.drop 4",
+   "act.drop 3"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:36: Expression",
+  "killed": true
+ },
+ {
+  "id": "canonicalActIn-profile",
+  "definition": "canonicalActIn",
+  "file": "lean/VE/Norms/Wire.lean",
+  "mutation": [
+   "if profiles.contains \"acts@0\" then VE.Acts.Lexical.check",
+   "if profiles.contains \"acts@1\" then VE.Acts.Lexical.check"
+  ],
+  "test": "lean/VE/Norms/Wire.lean:90: unsolved goals",
+  "killed": true
+ },
+ {
+  "id": "decodeRegulatedIn-off",
+  "definition": "decodeRegulatedIn",
+  "file": "lean/VE/Norms/Wire.lean",
+  "mutation": [
+   "decodeRegulatedWith (profiles.contains \"acts@0\")",
+   "decodeRegulatedWith false"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:134: Expression",
+  "killed": true
+ },
+ {
+  "id": "decodeRegulatedWith-plain-fields",
+  "definition": "decodeRegulatedWith",
+  "file": "lean/VE/Norms/Wire.lean",
+  "mutation": [
+   "(if acts && role == .plain then [\"act\", \"form\"]",
+   "(if role == .plain then [\"act\", \"form\"]"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:165: Expression",
+  "killed": true
+ },
+ {
+  "id": "decodeRegulatedWith-both-or-neither",
+  "definition": "decodeRegulatedWith",
+  "file": "lean/VE/Norms/Wire.lean",
+  "mutation": [
+   "if keys.contains \"act\" != keys.contains \"form\" then",
+   "if keys.contains \"act\" && !keys.contains \"form\" then"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:136: Expression",
+  "killed": true
+ },
+ {
+  "id": "decodeRegulatedWith-form",
+  "definition": "decodeRegulatedWith",
+  "file": "lean/VE/Norms/Wire.lean",
+  "mutation": [
+   "VE.Acts.Lexical.Form.ofText?).isNone",
+   "VE.Acts.Lexical.Form.ofText?).isNone && false"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:138: Expression",
+  "killed": true
+ },
+ {
+  "id": "decodeRegulatedWith-plain-act",
+  "definition": "decodeRegulatedWith",
+  "file": "lean/VE/Norms/Wire.lean",
+  "mutation": [
+   "role == .plain && !(acts && keys.contains \"act\")",
+   "role == .plain && !acts"
+  ],
+  "test": "lean/VE/Acts/LexicalExamples.lean:145: Expression",
+  "killed": true
+ },
+ {
+  "id": "layer-policy",
+  "definition": "lean_layer",
+  "file": "tools/layer_policy.py",
+  "mutation": [
+   "\"VE.Acts.LexicalBase\", \"VE.Acts.Lexical\", ",
+   ""
+  ],
+  "test": "new outward Lean import: VE.Norms.Wire -> VE.Acts.Lexical",
+  "killed": true
+ }
+]
