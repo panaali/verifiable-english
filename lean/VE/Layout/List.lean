@@ -1,5 +1,6 @@
-/-! Scope's layout (scope@0, docs/spec/scope.md 1.2 and 4.1): what the source bytes say about each unit, and the
-    list run of a lead-in and the label reach of an item. The layout is read from the source bytes and each unit's span, never from the wire. -/
+/-! Scope's layout (scope@0, docs/spec/scope.md 1.2 and 4.1): what the source bytes say about each unit, the list
+    run of a lead-in and the label reach of an item. The layout is read from the source bytes and each unit's span,
+    never from the wire. -/
 
 namespace VE.Layout
 
