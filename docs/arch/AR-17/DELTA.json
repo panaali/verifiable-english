@@ -1,0 +1,8 @@
+{
+ "wording": [
+  {
+   "base": "{\"lean\": \"readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate\", \"not_certified\": \"SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)\", \"python\": \"W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean\"}",
+   "head": "{\"lean\": \"readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate\", \"not_certified\": \"SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)\", \"python\": \"W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes are Lean's, bound to the request (the sets, units, narrowings and choices they name)\"}"
+  }
+ ]
+}
