@@ -2622,7 +2622,6 @@
         "VE.Discourse.entityTarget",
         "VE.Discourse.flush",
         "VE.Discourse.formFits",
-        "VE.Discourse.innermostAnchor",
         "VE.Discourse.instDecidableAcc",
         "VE.Discourse.joinLimit",
         "VE.Discourse.lemmaNames",
@@ -2647,10 +2646,8 @@
         "VE.Discourse.unaryPred",
         "VE.Discourse.unitIds",
         "VE.Discourse.unitIdsBefore",
-        "VE.Discourse.unitSpan",
         "VE.Discourse.unitString",
         "VE.Discourse.unitTarget",
-        "VE.Discourse.within",
         "VE.Discourse.wordAt"
       ],
       "C": [
@@ -2685,6 +2682,20 @@
       ],
       "D[I]": [
         "VE.Discourse.canonTarget"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Discourse.innermostAnchor",
+          "tied": [
+            "VE.Layout.discourse_innermost_unchanged"
+          ]
+        },
+        {
+          "name": "VE.Discourse.within",
+          "tied": [
+            "VE.Layout.discourse_within_unchanged"
+          ]
+        }
       ]
     },
     "VE/Discourse/Admission.lean": {
@@ -3148,8 +3159,6 @@
         "VE.Discourse.TreeTyped",
         "VE.Discourse.WellFormedDiscourse",
         "VE.Discourse.activeSets",
-        "VE.Discourse.allOk",
-        "VE.Discourse.anchorsOk",
         "VE.Discourse.boundOk",
         "VE.Discourse.boundUnits",
         "VE.Discourse.claimsOk",
@@ -3157,9 +3166,7 @@
         "VE.Discourse.contentUnit",
         "VE.Discourse.coverageOk",
         "VE.Discourse.coveredOk",
-        "VE.Discourse.definitionIn",
         "VE.Discourse.definitionVersion",
-        "VE.Discourse.dupOf",
         "VE.Discourse.firstDup",
         "VE.Discourse.groupFormula",
         "VE.Discourse.groupedUnits",
@@ -3172,17 +3179,12 @@
         "VE.Discourse.mentionsOk",
         "VE.Discourse.owningUnit",
         "VE.Discourse.pinOk",
-        "VE.Discourse.reachesRoot",
         "VE.Discourse.recordedBytes",
         "VE.Discourse.recordedGroupReading",
-        "VE.Discourse.req",
         "VE.Discourse.restrictionSort",
-        "VE.Discourse.runAll",
         "VE.Discourse.scopesOverlap",
         "VE.Discourse.setUnit",
         "VE.Discourse.slotUnit",
-        "VE.Discourse.spanIn",
-        "VE.Discourse.spansDisjoint",
         "VE.Discourse.spansNested",
         "VE.Discourse.symbolsOf",
         "VE.Discourse.tablesOk",
@@ -3200,6 +3202,14 @@
         "VE.Discourse.formText",
         "VE.Discourse.kindText",
         "VE.Discourse.readingName"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Discourse.anchorsOk",
+          "tied": [
+            "VE.Layout.discourse_anchorsOk_unchanged"
+          ]
+        }
       ]
     },
     "VE/Discourse/Wire.lean": {
@@ -12686,6 +12696,18 @@
           ]
         },
         {
+          "name": "VE.Layout.itemFrom",
+          "tied": [
+            "VE.Layout.mem_itemFrom"
+          ]
+        },
+        {
+          "name": "VE.Layout.itemRun",
+          "tied": [
+            "VE.Layout.itemRun_iff"
+          ]
+        },
+        {
           "name": "VE.Layout.listRun",
           "tied": [
             "VE.Layout.listRun_iff",
@@ -12701,13 +12723,18 @@
       ],
       "S": [
         "VE.Layout.GovernedItem",
+        "VE.Layout.ItemUnit",
         "VE.Layout.Unit"
       ]
     },
     "VE/Scope/Examples.lean": {
       "T": [
+        "VE.Scope.Examples.anc",
         "VE.Scope.Examples.blankLinesRef",
+        "VE.Scope.Examples.boxAnchors",
+        "VE.Scope.Examples.boxUnits",
         "VE.Scope.Examples.hcPieces",
+        "VE.Scope.Examples.instructablePieces",
         "VE.Scope.Examples.layoutOf",
         "VE.Scope.Examples.mk",
         "VE.Scope.Examples.paraAgrees",
@@ -12715,7 +12742,10 @@
         "VE.Scope.Examples.prosePieces",
         "VE.Scope.Examples.seven",
         "VE.Scope.Examples.shortPieces",
-        "VE.Scope.Examples.situationsPieces"
+        "VE.Scope.Examples.situationsPieces",
+        "VE.Scope.Examples.spanOver",
+        "VE.Scope.Examples.udhrAnchors",
+        "VE.Scope.Examples.udhrPieces"
       ]
     },
     "VE/Cardinality/Syntax.lean": {
@@ -13224,6 +13254,38 @@
         "VE.Calc.legacyDim",
         "VE.Calc.zpowR"
       ]
-    }
+    },
+    "VE/Layout/Anchors.lean": {
+      "D[V]": [
+        "VE.Layout.headingOf",
+        "VE.Layout.spansOf",
+        {
+          "name": "VE.Layout.anchorReach",
+          "tied": [
+            "VE.Layout.anchorReach_iff"
+          ]
+        },
+        {
+          "name": "VE.Layout.anchorUnits",
+          "tied": [
+            "VE.Layout.mem_anchorUnits"
+          ]
+        }
+      ],
+      "S": [
+        "VE.Discourse.allOk",
+        "VE.Discourse.dupOf",
+        "VE.Discourse.req",
+        "VE.Discourse.runAll",
+        "VE.Discourse.spanIn",
+        "VE.Discourse.spansDisjoint",
+        "VE.Layout.anchorsOk",
+        "VE.Layout.innermostAnchor",
+        "VE.Layout.narrower",
+        "VE.Layout.reachesRoot",
+        "VE.Layout.within"
+      ]
+    },
+    "VE/Layout/Discourse.lean": {}
   }
 }
