@@ -186,6 +186,8 @@ module VE.Core.TableauExtendedInduction
 module VE.Core.TableauExtendedRules
 module VE.Core.Wire
 module VE.Data.Background
+module VE.Defaults.Examples
+module VE.Defaults.Premises
 module VE.Definitions.Alias
 module VE.Definitions.Bundle
 module VE.Definitions.Elaborate
@@ -695,6 +697,7 @@ VE.Data.Background.EntailsData@VE.Data.Background
 VE.Data.Background.Functional@VE.Data.Background
 VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
+VE.Defaults.DefaultCoherent@VE.Defaults.Premises
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
 VE.Definitions.Bundle.ReadingBound@VE.Definitions.Bundle

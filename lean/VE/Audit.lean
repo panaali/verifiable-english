@@ -84,6 +84,7 @@ import VE.Core.TableauExtendedInduction
 import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
+import VE.Defaults.Premises
 import VE.Definitions.Alias
 import VE.Definitions.Bundle
 import VE.Definitions.Elaborate
@@ -1195,6 +1196,18 @@ import VE.WireContract.Engine
 #print axioms VE.Data.Background.premises_sat_iff
 #print axioms VE.Data.Background.string_encoding_sound
 #print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Defaults.assumptions_sound
+#print axioms VE.Defaults.atom_wf
+#print axioms VE.Defaults.basis_needs_sound
+#print axioms VE.Defaults.basis_strict_sound
+#print axioms VE.Defaults.collision_sound
+#print axioms VE.Defaults.defaultCoherenceCheck_sound
+#print axioms VE.Defaults.dflt_wellFormed
+#print axioms VE.Defaults.entailsX_mono
+#print axioms VE.Defaults.followsForm_short
+#print axioms VE.Defaults.pairChecks_sound
+#print axioms VE.Defaults.premisesX_split
+#print axioms VE.Defaults.strict_of_withoutDefaults
 #print axioms VE.Definitions.Alias.alias_acceptance
 #print axioms VE.Definitions.Alias.conservative
 #print axioms VE.Definitions.Alias.faithful
@@ -2460,7 +2473,6 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.Flagged.replayEntailment_source
 #print axioms VE.Norms.FlaggedSpec.baseEnv_hidden
 #print axioms VE.Norms.FlaggedSpec.baseEnv_predicates
-#print axioms VE.Norms.FlaggedSpec.bindAll_wellFormed_inv
 #print axioms VE.Norms.FlaggedSpec.conflictFreeCheck_background
 #print axioms VE.Norms.FlaggedSpec.conflictFreeCheck_definition_base
 #print axioms VE.Norms.FlaggedSpec.conflictFree_of_base
@@ -2558,6 +2570,7 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.bindAll_denote
 #print axioms VE.Norms.bindAll_denote_nil
 #print axioms VE.Norms.bindAll_wellFormed
+#print axioms VE.Norms.bindAll_wellFormed_inv
 #print axioms VE.Norms.body_iff_clash
 #print axioms VE.Norms.body_iff_outcome
 #print axioms VE.Norms.catalaValue_spec
