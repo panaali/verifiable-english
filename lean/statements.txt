@@ -7637,17 +7637,17 @@ theorem VE.Discourse.allOk_first_error
   ∀ {α : Type} (f : α → Except String Unit) (e : String) (x : α) (pre post : List α),
     (∀ (y : α), y ∈ pre → f y = Except.ok ()) →
       f x = Except.error e → VE.Discourse.allOk (pre ++ x :: post) f = Except.error e
-  -- uses VE.Discourse.allOk@VE.Discourse.WellFormed
+  -- uses VE.Discourse.allOk@VE.Layout.Anchors
   -- expr 1179617325
 theorem VE.Discourse.allOk_iff
   ∀ {α : Type} (xs : List α) (f : α → Except String Unit),
     VE.Discourse.allOk xs f = Except.ok () ↔ ∀ (x : α), x ∈ xs → f x = Except.ok ()
-  -- uses VE.Discourse.allOk@VE.Discourse.WellFormed
+  -- uses VE.Discourse.allOk@VE.Layout.Anchors
   -- expr 164814015
 theorem VE.Discourse.allOk_ok
   ∀ {α : Type} (xs : List α) (f : α → Except String Unit),
     VE.Discourse.allOk xs f = Except.ok () → ∀ (x : α), x ∈ xs → f x = Except.ok ()
-  -- uses VE.Discourse.allOk@VE.Discourse.WellFormed
+  -- uses VE.Discourse.allOk@VE.Layout.Anchors
   -- expr 2016512843
 theorem VE.Discourse.assertive_denote
   ∀ (E : VE.Environment) (σ : String),
@@ -8027,7 +8027,7 @@ theorem VE.Discourse.document_sort_conservative
   -- expr 995816508
 theorem VE.Discourse.dupOf_none
   ∀ (xs : List String), VE.Discourse.dupOf xs = Option.none → xs.Nodup
-  -- uses VE.Discourse.dupOf@VE.Discourse.WellFormed
+  -- uses VE.Discourse.dupOf@VE.Layout.Anchors
   -- expr 897550804
 theorem VE.Discourse.dup_nodup
   ∀ {xs : List String} {f : String → String},
@@ -8036,7 +8036,7 @@ theorem VE.Discourse.dup_nodup
         | Option.none => Except.ok ()) =
         Except.ok () →
       xs.Nodup
-  -- uses VE.Discourse.dupOf@VE.Discourse.WellFormed VE.Discourse.dup_nodup.match_1@VE.Discourse.Theorems
+  -- uses VE.Discourse.dupOf@VE.Layout.Anchors VE.Discourse.dup_nodup.match_1@VE.Discourse.Theorems
   -- expr 2791109239
 theorem VE.Discourse.elaborateD_capture
   ∀ (D : VE.Discourse.DDoc) (d : VE.Discourse.DTree) (σ : VE.Discourse.Assignment) (A : VE.Formula),
@@ -8795,7 +8795,7 @@ theorem VE.Discourse.report_extends_joint
   -- expr 3383407018
 theorem VE.Discourse.req_ok
   ∀ (b : Bool) (e : String), VE.Discourse.req b e = Except.ok () ↔ b = Bool.true
-  -- uses VE.Discourse.req@VE.Discourse.WellFormed
+  -- uses VE.Discourse.req@VE.Layout.Anchors
   -- expr 952980094
 theorem VE.Discourse.restr_agree
   ∀ (D : VE.Discourse.DDoc) (S : VE.Structure) (σ : VE.Discourse.Assignment) (r : VE.Discourse.Restr),
@@ -8816,26 +8816,26 @@ theorem VE.Discourse.restr_wf
 theorem VE.Discourse.runAll_cons
   ∀ (f : Unit → Except String Unit) (fs : List (Unit → Except String Unit)),
     VE.Discourse.runAll (f :: fs) = Except.ok () ↔ f () = Except.ok () ∧ VE.Discourse.runAll fs = Except.ok ()
-  -- uses VE.Discourse.runAll@VE.Discourse.WellFormed
+  -- uses VE.Discourse.runAll@VE.Layout.Anchors
   -- expr 2856106244
 theorem VE.Discourse.runAll_error
   ∀ (fs : List (Unit → Except String Unit)) (e : String),
     VE.Discourse.runAll fs = Except.error e → ∃ f, f ∈ fs ∧ f () = Except.error e
-  -- uses VE.Discourse.runAll@VE.Discourse.WellFormed
+  -- uses VE.Discourse.runAll@VE.Layout.Anchors
   -- expr 3126582453
 theorem VE.Discourse.runAll_head_error
   ∀ (f : Unit → Except String Unit) (fs : List (Unit → Except String Unit)) (e : String),
     f () = Except.error e → VE.Discourse.runAll (f :: fs) = Except.error e
-  -- uses VE.Discourse.runAll@VE.Discourse.WellFormed
+  -- uses VE.Discourse.runAll@VE.Layout.Anchors
   -- expr 4158480084
 theorem VE.Discourse.runAll_nil
   VE.Discourse.runAll [] = Except.ok ()
-  -- uses VE.Discourse.runAll@VE.Discourse.WellFormed
+  -- uses VE.Discourse.runAll@VE.Layout.Anchors
   -- expr 3421925556
 theorem VE.Discourse.runAll_ok
   ∀ (fs : List (Unit → Except String Unit)),
     VE.Discourse.runAll fs = Except.ok () → ∀ (f : Unit → Except String Unit), f ∈ fs → f () = Except.ok ()
-  -- uses VE.Discourse.runAll@VE.Discourse.WellFormed
+  -- uses VE.Discourse.runAll@VE.Layout.Anchors
   -- expr 1187730749
 theorem VE.Discourse.satisfiesAll_iff
   ∀ (K : VE.Discourse.Manifest) (c : VE.Discourse.Choice),
@@ -12194,17 +12194,72 @@ theorem VE.Judgments.records_refuse
       VE.Judgments.records rv j data formula = Except.error e
   -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.records@VE.Judgments.Decl VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 787098227
+theorem VE.Layout.anchorReach_iff
+  ∀ (L : List VE.Layout.Unit),
+    (List.map (fun x => x.id) L).Nodup →
+      ∀ (anchors : List VE.Discourse.Anchor) (a : String) (us : List String),
+        VE.Layout.anchorReach L anchors a = Except.ok us →
+          ∀ (u : String),
+            u ∈ us ↔
+              u ∈ List.map (fun x => x.id) L ∧
+                VE.Layout.within (VE.Layout.spansOf L) anchors u a = Bool.true ∧
+                  Option.some u ≠ VE.Layout.headingOf L anchors a
+  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.anchorReach@VE.Layout.Anchors VE.Layout.headingOf@VE.Layout.Anchors VE.Layout.spansOf@VE.Layout.Anchors VE.Layout.within@VE.Layout.Anchors
+  -- expr 1592377411
 theorem VE.Layout.continues_iff
   ∀ (d : Nat) (x : VE.Layout.Unit),
     VE.Layout.continues d x = Bool.true ↔ (∃ e, x.item = Option.some e ∧ d ≤ e) ∨ x.midLine = Bool.true
   -- uses VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit.midLine@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.continues@VE.Layout.List
   -- expr 2220005026
+theorem VE.Layout.discourse_anchorsOk_unchanged
+  ∀ (D : VE.Discourse.DDoc),
+    VE.Discourse.anchorsOk D =
+      VE.Layout.anchorsOk D.K.anchors
+        (List.map (fun x => (x.start, x.stop))
+          (List.filter (fun x => Decidable.decide (x.kind = VE.Route.Admission.Kind.definition)) D.base.units))
+        (VE.Discourse.unaryPred D.E)
+  -- uses VE.Discourse.DDoc.E@VE.Discourse.Manifest VE.Discourse.DDoc.K@VE.Discourse.Manifest VE.Discourse.DDoc.base@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.anchorsOk@VE.Discourse.WellFormed VE.Discourse.unaryPred@VE.Discourse.Access VE.Layout.anchorsOk@VE.Layout.Anchors VE.Route.Admission.Doc.units@VE.Route.Admission VE.Route.Admission.DocUnit.kind@VE.Route.Admission VE.Route.Admission.DocUnit.start@VE.Route.Admission VE.Route.Admission.DocUnit.stop@VE.Route.Admission VE.Route.Admission.DocUnit@VE.Route.Admission VE.Route.Admission.Kind.definition@VE.Route.Admission VE.Route.Admission.Kind@VE.Route.Admission VE.Route.Admission.instDecidableEqKind@VE.Route.Admission
+  -- expr 1203371869
+theorem VE.Layout.discourse_innermost_unchanged
+  ∀ (D : VE.Discourse.DDoc) (u : String),
+    VE.Discourse.innermostAnchor D u =
+      VE.Layout.innermostAnchor (List.map (fun k => (k.fst, k.snd.fst, k.snd.snd.fst)) (VE.Discourse.unitKeys D))
+        D.K.anchors u
+  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Discourse.DDoc.K@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.innermostAnchor@VE.Discourse.Access VE.Discourse.unitKeys@VE.Discourse.Access VE.Layout.innermostAnchor@VE.Layout.Anchors VE.Route.Admission.Kind@VE.Route.Admission
+  -- expr 2581908128
+theorem VE.Layout.discourse_within_unchanged
+  ∀ (D : VE.Discourse.DDoc) (u a : String),
+    VE.Discourse.within D u a =
+      VE.Layout.within (List.map (fun k => (k.fst, k.snd.fst, k.snd.snd.fst)) (VE.Discourse.unitKeys D)) D.K.anchors u a
+  -- uses VE.Discourse.DDoc.K@VE.Discourse.Manifest VE.Discourse.DDoc@VE.Discourse.Manifest VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.unitKeys@VE.Discourse.Access VE.Discourse.within@VE.Discourse.Access VE.Layout.within@VE.Layout.Anchors VE.Route.Admission.Kind@VE.Route.Admission
+  -- expr 249674274
 theorem VE.Layout.indexOf_iff
   ∀ (L : List VE.Layout.Unit),
     (List.map (fun x => x.id) L).Nodup →
       ∀ (u : String) (i : Nat), VE.Layout.indexOf L u = Option.some i ↔ Option.map (fun x => x.id) L[i]? = Option.some u
   -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.indexOf@VE.Layout.List
   -- expr 2272596416
+theorem VE.Layout.innermost_within
+  ∀ {spans : List (String × Nat × Nat)} {anchors : List VE.Discourse.Anchor} {u : String} {a : VE.Discourse.Anchor},
+    VE.Layout.innermostAnchor spans anchors u = Option.some a → VE.Layout.within spans anchors u a.id = Bool.true
+  -- uses VE.Discourse.Anchor.id@VE.Discourse.Manifest VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.innermostAnchor@VE.Layout.Anchors VE.Layout.within@VE.Layout.Anchors
+  -- expr 4057651555
+theorem VE.Layout.itemRun_iff
+  ∀ (L : List VE.Layout.Unit),
+    (List.map (fun x => x.id) L).Nodup →
+      ∀ (item : String) (us : List String),
+        VE.Layout.itemRun L item = Except.ok us → ∀ (u : String), u ∈ us ↔ VE.Layout.ItemUnit L item u
+  -- uses VE.Layout.ItemUnit@VE.Layout.List VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.itemRun@VE.Layout.List
+  -- expr 1130699965
+theorem VE.Layout.itemRun_ok
+  ∀ (L : List VE.Layout.Unit) (item : String) (us : List String),
+    VE.Layout.itemRun L item = Except.ok us →
+      ∃ i x d,
+        VE.Layout.indexOf L item = Option.some i ∧
+          L[i]? = Option.some x ∧
+            x.item = Option.some d ∧ x.label = Bool.true ∧ us = x.id :: VE.Layout.itemFrom d (List.drop (i + 1) L)
+  -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit.label@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.indexOf@VE.Layout.List VE.Layout.itemFrom@VE.Layout.List VE.Layout.itemRun@VE.Layout.List
+  -- expr 2818413695
 theorem VE.Layout.listRun_iff
   ∀ (L : List VE.Layout.Unit),
     (List.map (fun x => x.id) L).Nodup →
@@ -12233,6 +12288,22 @@ theorem VE.Layout.listRun_ok_iff
                 (L[i + 1]?.bind fun x => x.item) = Option.some d
   -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit.lead@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.listRun@VE.Layout.List
   -- expr 2804772307
+theorem VE.Layout.mem_anchorUnits
+  ∀ (L : List VE.Layout.Unit) (anchors : List VE.Discourse.Anchor) (a u : String),
+    u ∈ VE.Layout.anchorUnits L anchors a ↔
+      u ∈ List.map (fun x => x.id) L ∧ VE.Layout.within (VE.Layout.spansOf L) anchors u a = Bool.true
+  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.anchorUnits@VE.Layout.Anchors VE.Layout.spansOf@VE.Layout.Anchors VE.Layout.within@VE.Layout.Anchors
+  -- expr 3664458920
+theorem VE.Layout.mem_itemFrom
+  ∀ (d : Nat) (u : String) (M : List VE.Layout.Unit),
+    u ∈ VE.Layout.itemFrom d M ↔
+      ∃ j x,
+        M[j]? = Option.some x ∧
+          x.id = u ∧
+            ∀ (k : Nat),
+              k ≤ j → ∃ y, M[k]? = Option.some y ∧ ((∃ e, y.item = Option.some e ∧ d < e) ∨ y.midLine = Bool.true)
+  -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit.midLine@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.itemFrom@VE.Layout.List
+  -- expr 1257091323
 theorem VE.Layout.mem_runFrom
   ∀ (d : Nat) (u : String) (M : List VE.Layout.Unit),
     u ∈ VE.Layout.runFrom d M ↔
@@ -12242,6 +12313,11 @@ theorem VE.Layout.mem_runFrom
             x.item = Option.some d ∧ ∀ (k : Nat), k < j → ∃ y, M[k]? = Option.some y ∧ VE.Layout.continues d y = Bool.true
   -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit.item@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.continues@VE.Layout.List VE.Layout.runFrom@VE.Layout.List
   -- expr 2505211613
+theorem VE.Layout.narrower_mem
+  ∀ (l : List VE.Discourse.Anchor) (best : Option VE.Discourse.Anchor) (a : VE.Discourse.Anchor),
+    List.foldl VE.Layout.narrower best l = Option.some a → best = Option.some a ∨ a ∈ l
+  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.narrower@VE.Layout.Anchors
+  -- expr 3886279747
 theorem VE.NormDefaults.Admission.admitDocumentX_spec
   ∀ (environment document : Lean.Json) (res : VE.NormDefaults.Admission.AdmittedX),
     VE.NormDefaults.Admission.admitDocumentX environment document = Except.ok res →
@@ -38664,6 +38740,72 @@ theorem VE.Scales.typed2
         E.predicates p = Option.some [s, s] → S.relation p [x, y] → S.domain s x ∧ S.domain s y
   -- uses VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
   -- expr 159750638
+theorem VE.Scope.Examples.anchor_checks
+  (match
+        VE.Layout.anchorsOk (List.replicate 1025 (VE.Scope.Examples.anc "r" Option.none "R" (0, 20))) [] fun x =>
+          Bool.true with
+      | Except.error "ResourceLimit: anchors" => Bool.true
+      | x => Bool.false) =
+      Bool.true ∧
+    (match
+          VE.Layout.anchorsOk (List.replicate 1024 (VE.Scope.Examples.anc "r" Option.none "R" (0, 20))) [] fun x =>
+            Bool.true with
+        | Except.error "DuplicateDeclaration: anchor r" => Bool.true
+        | x => Bool.false) =
+        Bool.true ∧
+      (match
+            VE.Layout.anchorsOk
+              [VE.Scope.Examples.anc "r" Option.none "R" (0, 20), VE.Scope.Examples.anc "q" Option.none "Q" (0, 20)] []
+              fun x => Bool.true with
+          | Except.error "InvalidInput: anchors must form one tree" => Bool.true
+          | x => Bool.false) =
+          Bool.true ∧
+        (match VE.Layout.anchorsOk [] [] fun x => Bool.true with
+            | Except.ok PUnit.unit => Bool.true
+            | x => Bool.false) =
+            Bool.true ∧
+          (match
+                VE.Layout.anchorsOk
+                  [VE.Scope.Examples.anc "r" Option.none "R" (0, 20),
+                    VE.Scope.Examples.anc "s" (Option.some "m") "S" (5, 15)]
+                  [] fun x => Bool.true with
+              | Except.error "DanglingAnchor: m" => Bool.true
+              | x => Bool.false) =
+              Bool.true ∧
+            (match
+                  VE.Layout.anchorsOk
+                    [VE.Scope.Examples.anc "r" Option.none "R" (0, 20),
+                      VE.Scope.Examples.anc "s" (Option.some "r") "S" (5, 25)]
+                    [] fun x => Bool.true with
+                | Except.error "DanglingAnchor: r" => Bool.true
+                | x => Bool.false) =
+                Bool.true ∧
+              (match
+                    VE.Layout.anchorsOk
+                      [VE.Scope.Examples.anc "r" Option.none "R" (0, 20),
+                        VE.Scope.Examples.anc "s" (Option.some "r") "S" (0, 10) ["p"]]
+                      [(2, 4)] fun x => Bool.true with
+                  | Except.ok PUnit.unit => Bool.true
+                  | x => Bool.false) =
+                  Bool.true ∧
+                (match
+                      VE.Layout.anchorsOk
+                        [VE.Scope.Examples.anc "r" Option.none "R" (0, 20),
+                          VE.Scope.Examples.anc "s" (Option.some "r") "S" (0, 10) ["p"]]
+                        [(2, 4)] fun x => Bool.false with
+                    | Except.error "ManifestMismatch: anchors.s.exports" => Bool.true
+                    | x => Bool.false) =
+                    Bool.true ∧
+                  (match
+                      VE.Layout.anchorsOk
+                        [VE.Scope.Examples.anc "r" Option.none "R" (0, 20),
+                          VE.Scope.Examples.anc "s" (Option.some "r") "S" (0, 10) ["p"]]
+                        [(8, 12)] fun x => Bool.true with
+                    | Except.error "ManifestMismatch: anchors.s.exports" => Bool.true
+                    | x => Bool.false) =
+                    Bool.true
+  -- uses VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.anchorsOk@VE.Layout.Anchors VE.Scope.Examples.anc@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_1@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_3@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_5@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_7@VE.Scope.Examples VE.Scope.Examples.anchor_checks.match_9@VE.Scope.Examples match_91@VE.Scope.Examples match_95@VE.Scope.Examples
+  -- expr 4279798438
 theorem VE.Scope.Examples.bold_labels
   VE.Layout.boldLabel "**Process**: x".toUTF8 0 14 = Bool.true ∧
     VE.Layout.boldLabel "**No prompt:** x".toUTF8 0 16 = Bool.true ∧
@@ -38671,6 +38813,39 @@ theorem VE.Scope.Examples.bold_labels
         VE.Layout.boldLabel "**** x".toUTF8 0 6 = Bool.false ∧ VE.Layout.boldLabel "**a\nb:** x".toUTF8 0 10 = Bool.false
   -- uses VE.Layout.boldLabel@VE.Layout.List
   -- expr 201206826
+theorem VE.Scope.Examples.box_anchors
+  List.map (fun u => VE.Layout.within (VE.Layout.spansOf VE.Scope.Examples.boxUnits) VE.Scope.Examples.boxAnchors u "s")
+        ["u1", "u2", "u3", "u4"] =
+      [Bool.false, Bool.true, Bool.true, Bool.false] ∧
+    VE.Layout.within (VE.Layout.spansOf VE.Scope.Examples.boxUnits) VE.Scope.Examples.boxAnchors "u9" "r" = Bool.false ∧
+      VE.Layout.within (VE.Layout.spansOf VE.Scope.Examples.boxUnits) VE.Scope.Examples.boxAnchors "u1" "q" = Bool.false ∧
+        List.map
+              (fun u =>
+                Option.map (fun x => x.id)
+                  (VE.Layout.innermostAnchor (VE.Layout.spansOf VE.Scope.Examples.boxUnits) VE.Scope.Examples.boxAnchors
+                    u))
+              ["u1", "u3", "u4"] =
+            [Option.some "r", Option.some "s", Option.some "t"] ∧
+          Option.map (fun x => x.id)
+                (VE.Layout.innermostAnchor (VE.Layout.spansOf VE.Scope.Examples.boxUnits)
+                  [VE.Scope.Examples.anc "a" Option.none "A" (0, 20), VE.Scope.Examples.anc "b" Option.none "B" (0, 20)]
+                  "u2") =
+              Option.some "a" ∧
+            VE.Layout.innermostAnchor (VE.Layout.spansOf VE.Scope.Examples.boxUnits) VE.Scope.Examples.boxAnchors "u9" =
+                Option.none ∧
+              VE.Layout.headingOf VE.Scope.Examples.boxUnits VE.Scope.Examples.boxAnchors "s" = Option.some "u2" ∧
+                (VE.Layout.anchorReach VE.Scope.Examples.boxUnits VE.Scope.Examples.boxAnchors "s").toOption =
+                    Option.some ["u3"] ∧
+                  (match VE.Layout.anchorReach VE.Scope.Examples.boxUnits VE.Scope.Examples.boxAnchors "w" with
+                      | Except.error "ScopeUnknownAnchor: w" => Bool.true
+                      | x => Bool.false) =
+                      Bool.true ∧
+                    (match VE.Layout.anchorReach VE.Scope.Examples.boxUnits VE.Scope.Examples.boxAnchors "q" with
+                      | Except.error "ScopeUnknownAnchor: q" => Bool.true
+                      | x => Bool.false) =
+                      Bool.true
+  -- uses VE.Discourse.Anchor.id@VE.Discourse.Manifest VE.Discourse.Anchor@VE.Discourse.Manifest VE.Layout.anchorReach@VE.Layout.Anchors VE.Layout.headingOf@VE.Layout.Anchors VE.Layout.innermostAnchor@VE.Layout.Anchors VE.Layout.spansOf@VE.Layout.Anchors VE.Layout.within@VE.Layout.Anchors VE.Scope.Examples.anc@VE.Scope.Examples VE.Scope.Examples.boxAnchors@VE.Scope.Examples VE.Scope.Examples.boxUnits@VE.Scope.Examples VE.Scope.Examples.box_anchors.match_1@VE.Scope.Examples VE.Scope.Examples.box_anchors.match_3@VE.Scope.Examples
+  -- expr 1892604616
 theorem VE.Scope.Examples.byte_tests
   VE.Layout.isBlank VE.Layout.sp = Bool.true ∧
     VE.Layout.isBlank VE.Layout.nl = Bool.true ∧
@@ -38714,6 +38889,36 @@ theorem VE.Scope.Examples.para_counts
     VE.Scope.Examples.paraAgrees [("a", "x\n\n  \n\t\x0d\nb "), ("b", "c\n \n"), ("c", "\n\nd")] = Bool.true
   -- uses VE.Layout.paraCounts@VE.Layout.List VE.Scope.Examples.paraAgrees@VE.Scope.Examples
   -- expr 3512158593
+theorem VE.Scope.Examples.reaches_root
+  VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 2 (VE.Scope.Examples.anc "s" (Option.some "r") "S" (5, 15)) =
+      Bool.true ∧
+    VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 1 (VE.Scope.Examples.anc "s" (Option.some "r") "S" (5, 15)) =
+        Bool.false ∧
+      VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 2 (VE.Scope.Examples.anc "x" (Option.some "r") "X" (5, 25)) =
+          Bool.false ∧
+        VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 2 (VE.Scope.Examples.anc "x" (Option.some "m") "X" (5, 15)) =
+          Bool.false
+  -- uses VE.Layout.reachesRoot@VE.Layout.Anchors VE.Scope.Examples.anc@VE.Scope.Examples VE.Scope.Examples.boxAnchors@VE.Scope.Examples
+  -- expr 114329546
+theorem VE.Scope.Examples.short_items
+  (VE.Layout.itemRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s03").toOption =
+      Option.some ["a.s03", "a.s04", "a.s05"] ∧
+    (VE.Layout.itemRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s06").toOption =
+        Option.some ["a.s06"] ∧
+      (match VE.Layout.itemRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s08" with
+          | Except.error "NotALabel: a.s08" => Bool.true
+          | x => Bool.false) =
+          Bool.true ∧
+        (match VE.Layout.itemRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s04" with
+            | Except.error "NotALabel: a.s04" => Bool.true
+            | x => Bool.false) =
+            Bool.true ∧
+          (match VE.Layout.itemRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "z" with
+            | Except.error "ScopeUnknownUnit: z" => Bool.true
+            | x => Bool.false) =
+            Bool.true
+  -- uses VE.Layout.itemRun@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples VE.Scope.Examples.short_items.match_1@VE.Scope.Examples VE.Scope.Examples.short_items.match_3@VE.Scope.Examples VE.Scope.Examples.short_run.match_5@VE.Scope.Examples
+  -- expr 1342265170
 theorem VE.Scope.Examples.short_layout
   List.map (fun x => (x.item, x.midLine, x.lead, x.label, x.para))
       (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) =
@@ -38743,8 +38948,17 @@ theorem VE.Scope.Examples.short_run
             | Except.error "ScopeUnknownUnit: z" => Bool.true
             | x => Bool.false) =
             Bool.true
-  -- uses VE.Layout.listRun@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.prosePieces@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples VE.Scope.Examples.short_run.match_1@VE.Scope.Examples VE.Scope.Examples.short_run.match_3@VE.Scope.Examples VE.Scope.Examples.short_run.match_5@VE.Scope.Examples match_38@VE.Scope.Examples
-  -- expr 1692558156
+  -- uses VE.Layout.listRun@VE.Layout.List VE.Scope.Examples.layoutOf@VE.Scope.Examples VE.Scope.Examples.prosePieces@VE.Scope.Examples VE.Scope.Examples.shortPieces@VE.Scope.Examples VE.Scope.Examples.short_run.match_1@VE.Scope.Examples VE.Scope.Examples.short_run.match_3@VE.Scope.Examples VE.Scope.Examples.short_run.match_5@VE.Scope.Examples match_39@VE.Scope.Examples
+  -- expr 1355802801
+theorem VE.Scope.Examples.span_tests
+  VE.Discourse.spanIn (2, 4) (0, 5) = Bool.true ∧
+    VE.Discourse.spanIn (0, 5) (0, 5) = Bool.true ∧
+      VE.Discourse.spanIn (0, 6) (0, 5) = Bool.false ∧
+        VE.Discourse.spanIn (1, 5) (2, 5) = Bool.false ∧
+          VE.Discourse.spansDisjoint (0, 5) (5, 9) = Bool.true ∧
+            VE.Discourse.spansDisjoint (5, 9) (0, 5) = Bool.true ∧ VE.Discourse.spansDisjoint (0, 6) (5, 9) = Bool.false
+  -- uses VE.Discourse.spanIn@VE.Layout.Anchors VE.Discourse.spansDisjoint@VE.Layout.Anchors
+  -- expr 388391006
 theorem VE.SearchBudget.chain_denote
   ∀ {S : VE.Structure} {s : String} (a : VE.Formula) (σ : VE.Valuation S),
     VE.Formula.denote S σ a →

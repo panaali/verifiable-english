@@ -1669,12 +1669,22 @@
 'VE.Judgments.opensIn_isEmpty' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_names' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.records_refuse' depends on axioms: [propext]
+'VE.Layout.anchorReach_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.continues_iff' depends on axioms: [propext, Quot.sound]
+'VE.Layout.discourse_anchorsOk_unchanged' depends on axioms: [propext]
+'VE.Layout.discourse_innermost_unchanged' depends on axioms: [propext]
+'VE.Layout.discourse_within_unchanged' depends on axioms: [propext]
 'VE.Layout.indexOf_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Layout.innermost_within' depends on axioms: [propext]
+'VE.Layout.itemRun_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Layout.itemRun_ok' depends on axioms: [propext]
 'VE.Layout.listRun_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Layout.listRun_ok' depends on axioms: [propext]
 'VE.Layout.listRun_ok_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Layout.mem_anchorUnits' depends on axioms: [propext, Quot.sound]
+'VE.Layout.mem_itemFrom' depends on axioms: [propext, Quot.sound]
 'VE.Layout.mem_runFrom' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Layout.narrower_mem' does not depend on any axioms
 'VE.NormDefaults.Admission.admitDocumentX_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.Admission.admitDocument_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.NormDefaults.Admission.admitNodesX_ok' depends on axioms: [propext, Quot.sound]
@@ -5205,13 +5215,18 @@
 'VE.Scales.scalePremises_labels_nodup' depends on axioms: [propext, Quot.sound]
 'VE.Scales.typed1' depends on axioms: [propext]
 'VE.Scales.typed2' depends on axioms: [propext]
+'VE.Scope.Examples.anchor_checks' depends on axioms: [propext]
 'VE.Scope.Examples.bold_labels' does not depend on any axioms
+'VE.Scope.Examples.box_anchors' does not depend on any axioms
 'VE.Scope.Examples.byte_tests' does not depend on any axioms
 'VE.Scope.Examples.markers' does not depend on any axioms
 'VE.Scope.Examples.of_source' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.para_counts' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.reaches_root' does not depend on any axioms
+'VE.Scope.Examples.short_items' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_layout' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_run' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.span_tests' does not depend on any axioms
 'VE.SearchBudget.chain_denote' depends on axioms: [propext, Quot.sound]
 'VE.SearchBudget.conjuncts_denote' depends on axioms: [propext]
 'VE.SearchBudget.demand_sound' depends on axioms: [propext, Quot.sound]

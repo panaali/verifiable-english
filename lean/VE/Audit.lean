@@ -137,6 +137,8 @@ import VE.GraphChecks
 import VE.Judgments.Decl
 import VE.Judgments.Examples
 import VE.Judgments.Scan
+import VE.Layout.Anchors
+import VE.Layout.Discourse
 import VE.Layout.List
 import VE.LexicalProofs
 import VE.ModelProofs
@@ -2040,12 +2042,22 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.opensIn_isEmpty
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
+#print axioms VE.Layout.anchorReach_iff
 #print axioms VE.Layout.continues_iff
+#print axioms VE.Layout.discourse_anchorsOk_unchanged
+#print axioms VE.Layout.discourse_innermost_unchanged
+#print axioms VE.Layout.discourse_within_unchanged
 #print axioms VE.Layout.indexOf_iff
+#print axioms VE.Layout.innermost_within
+#print axioms VE.Layout.itemRun_iff
+#print axioms VE.Layout.itemRun_ok
 #print axioms VE.Layout.listRun_iff
 #print axioms VE.Layout.listRun_ok
 #print axioms VE.Layout.listRun_ok_iff
+#print axioms VE.Layout.mem_anchorUnits
+#print axioms VE.Layout.mem_itemFrom
 #print axioms VE.Layout.mem_runFrom
+#print axioms VE.Layout.narrower_mem
 #print axioms VE.NormDefaults.Admission.admitDocumentX_spec
 #print axioms VE.NormDefaults.Admission.admitDocument_spec
 #print axioms VE.NormDefaults.Admission.admitNodesX_ok
@@ -5576,13 +5588,18 @@ import VE.WireContract.Engine
 #print axioms VE.Scales.scalePremises_labels_nodup
 #print axioms VE.Scales.typed1
 #print axioms VE.Scales.typed2
+#print axioms VE.Scope.Examples.anchor_checks
 #print axioms VE.Scope.Examples.bold_labels
+#print axioms VE.Scope.Examples.box_anchors
 #print axioms VE.Scope.Examples.byte_tests
 #print axioms VE.Scope.Examples.markers
 #print axioms VE.Scope.Examples.of_source
 #print axioms VE.Scope.Examples.para_counts
+#print axioms VE.Scope.Examples.reaches_root
+#print axioms VE.Scope.Examples.short_items
 #print axioms VE.Scope.Examples.short_layout
 #print axioms VE.Scope.Examples.short_run
+#print axioms VE.Scope.Examples.span_tests
 #print axioms VE.SearchBudget.chain_denote
 #print axioms VE.SearchBudget.conjuncts_denote
 #print axioms VE.SearchBudget.demand_sound
