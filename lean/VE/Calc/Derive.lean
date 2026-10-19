@@ -124,50 +124,62 @@ inductive Answer where
 def Answer.point (κ : List (String × Rat)) (n : String) : Rat := (κ.lookup n).getD 0
 
 /-- A Farkas step for `goal` from `known`, found by the search. -/
-def farkasStep (known : List QFact) (goal : QFact) : Option Step :=
-  match FM.search (known ++ [goal.negate]) with
-  | .refuted ws => some (.farkas goal ⟨ws⟩)
-  | _ => none
+def farkasStep (known : List QFact) (goal : QFact) : FM.Search (Option Step) := do
+  match ← FM.search (known ++ [goal.negate]) with
+  | .refuted ws => pure (some (.farkas goal ⟨ws⟩))
+  | .point _ => pure none
 
 /-- Across a square link `(s, r)` with the conclusion an upper bound `r < b` or `r ≤ b`: the least upper bound `a` on
 `s`, one square step, and a last Farkas step when the conclusion is not literally `0 < b − r`. -/
-def squareSteps (P : List QFact) (links : List (String × String)) (C : QFact) : Option (List Step) := do
-  let (r, c) ← match C.form.norm.coeffs with | [p] => some p | _ => none
+def squareSteps (P : List QFact) (links : List (String × String)) (C : QFact) : FM.Search (Option (List Step)) := do
+  let [(r, c)] := C.form.norm.coeffs | return none
   let b := C.form.const / -c
-  let (s, _) ← links.find? (·.2 == r)
-  guard (decide (c < 0) && decide (0 < b))
-  let (a, strict) ← FM.upperBound P s
-  let a ← if strict && decide (a ≤ b * b) then some a else if decide (a < b * b) then some (b * b) else none
+  let some (s, _) := links.find? (·.2 == r) | return none
+  unless decide (c < 0) && decide (0 < b) do return none
+  let some (a, strict) ← FM.upperBound P s | return none
+  let some a := if strict && decide (a ≤ b * b) then some a else if decide (a < b * b) then some (b * b) else none
+    | return none
   let g : QFact := ⟨⟨a, [(s, -1)]⟩, true⟩
-  let first ← farkasStep P g
+  let some first ← farkasStep P g | return none
   let derived : QFact := ⟨⟨b, [(r, -1)]⟩, true⟩
-  if derived = C then pure [first, .square s r a b] else
-    let last ← farkasStep (P ++ [g, derived]) C
-    pure [first, .square s r a b, last]
+  if derived = C then return some [first, .square s r a b]
+  let some last ← farkasStep (P ++ [g, derived]) C | return none
+  return some [first, .square s r a b, last]
 
 /-- Across a square link: the claimed bound itself, `r = b` and `s = b²`, the other unknowns found by the search. -/
-def boundCandidate (P : List QFact) (links : List (String × String)) (C : QFact) : Option (List (String × Rat)) := do
-  let (r, c) ← match C.form.norm.coeffs with | [p] => some p | _ => none
+def boundCandidate (P : List QFact) (links : List (String × String)) (C : QFact) :
+    FM.Search (Option (List (String × Rat))) := do
+  let [(r, c)] := C.form.norm.coeffs | return none
   let b := C.form.const / -c
-  let (s, _) ← links.find? (·.2 == r)
+  let some (s, _) := links.find? (·.2 == r) | return none
   let fixed : List (String × Rat) := [(r, b), (s, b * b)]
   let subst := fun (f : QFact) => QFact.mk ⟨f.form.eval fun n => if n ∈ [r, s] then (fixed.lookup n).getD 0 else 0,
     f.form.coeffs.filter (·.1 ∉ [r, s])⟩ f.strict
-  match FM.search (P.map subst) with
-  | .point κ => some (fixed ++ κ)
-  | _ => none
+  match ← FM.search (P.map subst) with
+  | .point κ => return some (fixed ++ κ)
+  | .refuted _ => return none
 
 /-- The search, in the order of spec 5: a linear refutation; else a counterexample, the claimed bound across a square
-link tried first, then the linear point; else the square rule. -/
-def Derive.search (P : List QFact) (links : List (String × String)) (C : QFact) : Answer :=
-  match FM.search (P ++ [C.negate]) with
-  | .exhausted => .unknown (.limit .derivationSteps)
-  | .refuted ws => .follows ⟨[.farkas C ⟨ws⟩]⟩
+link tried first, then the linear point; else the square rule. Every search it runs draws on one budget. -/
+def Derive.answer (P : List QFact) (links : List (String × String)) (C : QFact) : FM.Search Answer := do
+  match ← FM.search (P ++ [C.negate]) with
+  | .refuted ws => return .follows ⟨[.farkas C ⟨ws⟩]⟩
   | .point κ =>
-    match ((boundCandidate P links C).toList ++ [κ]).find? (counterexampleCheck P links C ∘ Answer.point) with
-    | some κ => .counterexample κ
-    | none => match squareSteps P links C with
-      | some st => .follows ⟨st⟩
-      | none => .unknown .derivationInconclusive
+    match ((← boundCandidate P links C).toList ++ [κ]).find? (counterexampleCheck P links C ∘ Answer.point) with
+    | some κ => return .counterexample κ
+    | none => match ← squareSteps P links C with
+      | some st => return .follows ⟨st⟩
+      | none => return .unknown .derivationInconclusive
+
+/-- `Derive.answer` within `budget` combinations for the whole derivation, on an input within 64 facts and 16
+unknowns: past any of these limits, wherever the search stops, the answer is `limit .derivationSteps` (spec 5). -/
+def Derive.searchWithin (budget : Nat) (P : List QFact) (links : List (String × String)) (C : QFact) : Answer :=
+  if !FM.admits (P ++ [C.negate]) (links.flatMap fun l => [l.1, l.2]) then .unknown (.limit .derivationSteps) else
+  match (Derive.answer P links C).run' budget with
+  | .ok a => a
+  | .error _ => .unknown (.limit .derivationSteps)
+
+def Derive.search (P : List QFact) (links : List (String × String)) (C : QFact) : Answer :=
+  Derive.searchWithin FM.maxSteps P links C
 
 end VE.Calc

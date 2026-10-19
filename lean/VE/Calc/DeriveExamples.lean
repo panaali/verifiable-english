@@ -54,7 +54,7 @@ def h6Steps : List Step := [h6First, .square "s" "r" (1/20) (1/4)]
 def none3 : List QFact := [fact (-2) [("x", 1), ("y", 1)] false, fact 0 [("x", -1)] false, fact 0 [("y", -1)] false]
 #guard Farkas.check none3 ⟨[1, 1, 1]⟩ && !Farkas.check none3 ⟨[1, 1]⟩ && !Farkas.check none3 ⟨[1, 1, 0]⟩
 #guard !Farkas.check none3 ⟨[1, 1, 1, 0]⟩
-#guard match FM.search none3 with | .refuted ws => Farkas.check none3 ⟨ws⟩ | _ => false
+#guard match (FM.search none3).run' FM.maxSteps with | .ok (.refuted ws) => Farkas.check none3 ⟨ws⟩ | _ => false
 #guard checked none3 [] (fact 0 [("x", 1)] true) && Derive.search none3 [] (fact 0 [("x", 1)] true) matches .follows _
 #guard Farkas.check [fact 0 [("x", 1)] true, fact 0 [("x", -1)] false] ⟨[1, 1]⟩
 #guard !Farkas.check [fact 0 [("x", 1)] false, fact 0 [("x", -1)] false] ⟨[1, 1]⟩
@@ -83,14 +83,78 @@ def sBelow : QFact := fact (1/25) [("s", -1)] true
 #guard Derive.search [] links (below 0) = .counterexample [("r", 0), ("s", 0)] && checked [] links (below 0)
 #guard Derive.search [] links (fact 0 [("t", -1)] true) = .counterexample [("t", 0)]
 
--- The budget: 17 unknowns are beyond the 16 the search takes; and 64 facts whose second elimination needs 261,888
--- combinations, beyond the 10,000 (counted before they are built: the first takes 1,024).
+-- The limits, at and just past each (spec 5's table: 64 facts, 16 unknowns, 10,000 combinations, each giving
+-- `limit .derivationSteps`). Facts and unknowns are counted once, on the derivation's input: the premises and the
+-- negated conclusion, with the square links' names among the unknowns.
+def stepLimit : Answer := .unknown (.limit .derivationSteps)
+/-- `n` premises x ≥ −i; with the negated conclusion x ≥ −1000 they are n + 1 facts, refuted in n combinations. -/
+def ladder (n : Nat) : List QFact := (List.range n).map fun (i : Nat) => fact ((i : Int) : Rat) [("x", 1)] false
+def xFloor : QFact := fact 1000 [("x", 1)] false
+#guard checked (ladder 63) [] xFloor && Derive.search (ladder 63) [] xFloor matches .follows _
+#guard Derive.search (ladder 64) [] xFloor = stepLimit
+/-- `n` premises x_i ≥ 0 on `n` unknowns. -/
+def spread (n : Nat) : List QFact := (List.range n).map fun i => fact 0 [(s!"x{i}", 1)] false
+def x0Pos : QFact := fact 0 [("x0", 1)] false
+#guard checked (spread 16) [] x0Pos && Derive.search (spread 16) [] x0Pos matches .follows _
+#guard Derive.search (spread 17) [] x0Pos = stepLimit
+#guard checked (spread 15) [("s", "x0")] x0Pos && Derive.search (spread 15) [("s", "x0")] x0Pos matches .follows _
+#guard Derive.search (spread 16) [("s", "x0")] x0Pos = stepLimit
+/-- `a₁` facts x + y ≥ 0, `a₂` facts x − y + 10 ≥ 0, `b` facts −x ≥ 0, `c` facts 5 − y ≥ 0 and `d` facts y + 1 ≥ 0:
+eliminating x takes (a₁ + a₂)·b combinations and y then (a₁·b + d)·(a₂·b + c). They are consistent (x = y = 0). -/
+def grid (a₁ a₂ b c d : Nat) : List QFact :=
+  List.replicate a₁ (fact 0 [("x", 1), ("y", 1)] false) ++ List.replicate a₂ (fact 10 [("x", 1), ("y", -1)] false) ++
+  List.replicate b (fact 0 [("x", -1)] false) ++ List.replicate c (fact 5 [("y", -1)] false) ++
+  List.replicate d (fact 1 [("y", 1)] false)
+/-- y > −1 follows from y ≥ 0; its negation −1 − y ≥ 0 is one more of the `c` facts. -/
+def yAbove : QFact := fact 1 [("y", 1)] true
+-- 14·14 + (6·14 + 2)·(8·14 + 2) = 10,000 combinations, the second elimination taking exactly what is left:
+-- answered; 10·20 + (4·20 + 1)·(6·20 + 1) = 10,001: not, and answered with a budget of 10,001.
+#guard checked (grid 6 8 14 1 2) [] yAbove && Derive.search (grid 6 8 14 1 2) [] yAbove matches .follows _
+#guard Derive.search (grid 4 6 20 0 1) [] yAbove = stepLimit
+#guard Derive.searchWithin 10001 (grid 4 6 20 0 1) [] yAbove matches .follows _
+
+-- 64 facts whose second elimination needs 261,888 combinations, beyond the 10,000 (counted before they are built:
+-- the first takes 1,024).
 def wide : List QFact :=
   ((List.range 32).map fun (i : Nat) => fact 0 [("x", 1), ("y", ((i : Int) : Rat)), ("z", 1)] false) ++
   ((List.range 32).map fun (j : Nat) => fact 0 [("x", -1), ("y", -((j : Int) : Rat) - 1/2), ("z", 1)] false)
-#guard (FM.eliminate "x" (FM.inputRows wide) FM.maxSteps).map (·.2) = some 1024
-#guard Derive.search wide [] (fact 0 [("z", 1)] true) = .unknown (.limit .derivationSteps)
-#guard Derive.search ((List.range 17).map fun i => fact 0 [(s!"x{i}", 1)] false) [] (fact 0 [("x0", 1)] true) =
-  .unknown (.limit .derivationSteps)
+#guard ((FM.eliminate "x" (FM.inputRows wide)).run FM.maxSteps).toOption.map (FM.maxSteps - ·.2) = some 1024
+#guard Derive.search wide [] (fact 0 [("z", 1)] true) = stepLimit
+
+-- The budget covers the whole derivation, and running out anywhere is `limit .derivationSteps`, never
+-- `derivationInconclusive` or another answer. r ≤ 1/3 under H-6 runs all five searches, each taking combinations:
+-- the main one 2, the claimed bound 2, the least upper bound on s 2, and the two Farkas steps 3 and 3.
+def rAtMost : QFact := fact (1/3) [("r", -1)] false
+def cost {α : Type} (m : FM.Search α) : Nat := match m.run FM.maxSteps with | .ok (_, l) => FM.maxSteps - l | _ => 0
+#guard [cost (FM.search (h6 (2/100) ++ [rAtMost.negate])), cost (boundCandidate (h6 (2/100)) links rAtMost),
+  cost (FM.upperBound (h6 (2/100)) "s"), cost (farkasStep (h6 (2/100)) (fact (1/20) [("s", -1)] true)),
+  cost (farkasStep (h6 (2/100) ++ [fact (1/20) [("s", -1)] true, below (1/3)]) rAtMost),
+  cost (Derive.answer (h6 (2/100)) links rAtMost)] = [2, 2, 2, 3, 3, 12]
+#guard checked (h6 (2/100)) links rAtMost && Derive.search (h6 (2/100)) links rAtMost matches .follows ⟨[_, _, _]⟩
+/-- Below the `need` the derivation takes, every budget answers `limit .derivationSteps`; from `need` on, the full
+answer. -/
+def budgetSweep (P : List QFact) (links : List (String × String)) (C : QFact) (need : Nat) : Bool :=
+  (List.range need).all (fun b => Derive.searchWithin b P links C == stepLimit) &&
+    Derive.searchWithin need P links C == Derive.search P links C && Derive.search P links C != stepLimit
+#guard budgetSweep (h6 (2/100)) links rAtMost 12
+#guard budgetSweep (h6 (2/100)) links (below (1/4)) 9
+#guard budgetSweep (h6 (2/100)) links (below (1/5)) 4
+#guard budgetSweep (h6 (2/100)) links sBelow 3
+#guard budgetSweep (h6 (2/100)) [] (below (1/4)) 2
+#guard budgetSweep none3 [] (fact 0 [("x", 1)] true) 4
+-- Review me-5 F2: 63 of `wide`'s facts with s added: the main search finds a point, then the claimed bound runs out.
+def wideS : List QFact := (wide.drop 1).map fun f => ⟨⟨f.form.const, ("s", 1) :: f.form.coeffs⟩, f.strict⟩
+#guard Derive.search wideS links (below (1/4)) = stepLimit
+-- The same at r < 0, where the main search takes no combination and the square rule does not apply (0 is not a
+-- positive bound): only the claimed bound's search (r = 0, s = 0, a counterexample if found) can run out.
+#guard cost (FM.search (wideS ++ [(below 0).negate])) = 0 && Derive.search wideS links (below 0) = stepLimit
+-- Two searches of 6,228 combinations each, the main one and the claimed bound's: each alone fits, together they do
+-- not; with the budget for both, the claimed bound is the counterexample.
+#guard cost (FM.search (grid 6 6 12 6 6)) = 6228
+#guard Derive.search (grid 6 6 12 6 6) links (below (1/4)) = stepLimit
+#guard match Derive.searchWithin 12456 (grid 6 6 12 6 6) links (below (1/4)) with
+  | .counterexample κ =>
+    κ.take 2 == [("r", 1/4), ("s", 1/16)] && counterexampleCheck (grid 6 6 12 6 6) links (below (1/4)) (pt κ)
+  | _ => false
 
 end VE.Calc.DeriveExamples
