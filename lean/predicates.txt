@@ -187,6 +187,8 @@ module VE.Core.TableauExtendedInduction
 module VE.Core.TableauExtendedRules
 module VE.Core.Wire
 module VE.Data.Background
+module VE.Defaults.Examples
+module VE.Defaults.Premises
 module VE.Definitions.Alias
 module VE.Definitions.Bundle
 module VE.Definitions.Elaborate
