@@ -23,17 +23,19 @@ only:
 | `list-empty`, `list-first`, `list-last`, `list-drop-first`, `list-drop-last` | a list -> `[]`, its first element only, its last only, without its first, without its last. A list is a list method's receiver or result, a `for … in` range, an operand of `++`, a list literal, or a `List`-typed body |
 | `append-left`, `append-right` | each operand of `++` dropped |
 
-A mutant Lean refuses inside the mutated declaration is INVALID: the compiler decides what a mutant means, never
-the text. A check is a command whose outcome Lean computes from definitions alone, never from a proof (`classify`
+Every edit keeps each line after its declaration where it was (`relined`, review F9, section 1c), so the proof
+cuts and the roles, which read the checkout's line numbers, read the mutated text right. A mutant Lean refuses
+inside the mutated declaration is INVALID: the compiler decides what a mutant means, never the text. A check is a command whose outcome Lean computes from definitions alone, never from a proof (`classify`
 in the tool, the one rule every module goes through): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an
 `example` or theorem proved by `decide`/`native_decide`/`rfl`, with no other tactic block in it; a
 `#guard_msgs … in` is the command it wraps, bare or with its docstring. Every other `example` or theorem is a proof,
 whatever its statement names, and so are a check form with a tactic block inside and every `#print` (`#print axioms`
 included). A failing proof is cut to `sorry` (a `#` command blanked, with its docstring) and the build repeated
 before any other error is read, so it is never a kill (BUILDER-CHECKLIST 3; pk-1's `assemble_wellFormed`); an error
-in a check kills only when the same build without the mutant passes (section 1a). Any other command is no check: an
-error there is UNKNOWN, and so is an error in a definition, even beside a failing check (section 1b). The modules built for a mutant are those of the mutated
-module's directory that hold checks, and any module of its cone holding a check whose compiled statement
+in a check kills only when the same build without the mutant passes (section 1a), and only when it is the check's
+own error: at a line the checkout has there, and no parse error (section 1c). Any other command is no check: an
+error there is UNKNOWN, and so is an error in a definition, even beside a failing check (section 1b). The modules
+built for a mutant are those of the mutated module's directory that hold checks, and any module of its cone holding a check whose compiled statement
 (`lean/statements.txt`, `-- uses`) names the definition.
 
 Review fix F1: the first tool also counted every `example` as a check, and a tactic-proved theorem outside the
@@ -55,8 +57,11 @@ would fail it) but keeps the comments after it (a docstring there belongs to the
 `#guard_msgs`, and the cut only keeps comment text the source already had, so the replays below stand as run.
 
 Replays on the reviewed HEADs, every mutant run (`replay.py --run`, 8 jobs on the VM, base = the branch's merge
-base with main), rerun with the final tool after review fix F8: every mutant's verdict and kill line is the same as
-in the F1 round's evidence (and in the F7 round's) (compared by mutant id). "Survivors on the named lines" are survivors on a line the
+base with main), rerun with the tool after review fix F8: every mutant's verdict and kill line is the same as
+in the F1 round's evidence (and in the F7 round's) (compared by mutant id). Review fix F9 changes none of them, so
+they were not rerun: `replay.py` checks the saved evidence against F9's two new rules and prints "0 mutants change
+their line count, 0 kills are parse errors" (every kill is a `#guard`'s "Expression … did not evaluate to `true`"
+but one `rfl` theorem's "Not a definitional equality"), and `relined` only changes an edit that adds lines. "Survivors on the named lines" are survivors on a line the
 review names for that finding; "within the default 60" says whether one of them is among the first 60 mutants of
 the tool's order:
 
@@ -137,21 +142,24 @@ proof the tool cuts: a theorem `r_p : r 1 = 1` proved by a tactic, through `⟨0
 | tactic `example` | proof | a proof script (review F1) | SURVIVOR | SURVIVOR |
 | tactic theorem | proof | a proof script (review F1) | SURVIVOR | SURVIVOR |
 | `#guard` with a tactic block | proof | the mutant breaks the tactic, not the comparison | SURVIVOR | (its tactic is the proof) |
+| a definition with a proof inside it, a `#guard` of its value beside it (F8's form, added for F9) | other | a definition cannot be cut; the mutant breaks its `by decide` | UNKNOWN | SURVIVOR |
 
 Every row holds in both settings and all three wrappings: `test_the_truth_table_statuses` runs the package (the
-definitions `n + 0`, one mutant each; 50 definitions, the rows that must not kill sharing one per wrapping, setting
-and reading) and `test_the_truth_table_classes` checks each row's role on the package's own spans;
+definitions `n + 0`, one mutant each; 56 definitions, the rows that must survive sharing one per wrapping, setting
+and reading; the rows' own definitions are classed T in the package's trust-classes.json, so only `r` is mutated) and `test_the_truth_table_classes` checks each row's role on the package's own spans;
 `test_classify_truth_table` and `test_classify_reads_every_command` check `classify` alone, with the spellings
 `#eval!`, `set_option … in`, nested wrappers, `#synth`, `#check_failure` and `#exit`.
 
 The sweep (`docs/speed/trustmut/sweep.py --run`, evidence `evidence/sweep.json` with the sha256 of the tool, of
-`trust_map.py` and of the table it ran): the same table with the rich body `!(n < 1) && (n ≤ 3 || decide (n = 5))
+`trust_map.py` and of the tables it ran): the same table with the rich body `!(n < 1) && (n ≤ 3 || decide (n = 5))
 && n != 2 && ([n] ++ [1]).all (· ≥ 1) && [n, 3].any (· == 3) && true`, which carries every operator of the test
-package and every other operator but the arms (54 mutants each), and the value read as `(List.range 6).map r`. All 2,700
-mutants ran (576 s at 16 jobs, rerun with the final tool after F8: every row's verdicts the same): 1,330 KILLED, 1,370 SURVIVOR, 0 UNKNOWN, 0 INVALID. No row that reads a proof, and
-no row that is no check, has a KILLED mutant, and every row expected to kill does. The definitions a check reads
-keep 19 survivors each (38 such definitions), all equivalent mutants, equal to the original on every `n`, not
-only on 0..5:
+package and every other operator but the arms (54 mutants each), and the value read as `(List.range 6).map r`; the
+arms and the multi-line forms are the F9 table (section 1c), in the same run. All 3,024 mutants ran (926 s at 16
+jobs on the final tool after F9): 1,330 KILLED, 1,484 SURVIVOR, 210 UNKNOWN, 0 INVALID. No row that reads a proof,
+and no row that is no check, has a KILLED mutant; every row expected to kill does; the UNKNOWN are exactly the
+non-equivalent mutants of the six definitions F8's form reads (35 each), UNKNOWN at that definition. The
+definitions a check or F8's definition reads keep 19 survivors each (38 + 6 such definitions), all equivalent
+mutants, equal to the original on every `n`, not only on 0..5:
 - the conjunct `([n] ++ [1]).all (· ≥ 1)` is true whenever `!(n < 1)` is, so its 16 mutants change nothing:
   `all-any`, `append-left`, `append-right`, `list-empty`/`list-drop-first`/`list-drop-last` of `[n]`, `[1]` and
   `[n] ++ [1]`, `list-first` and `list-last` of `[n] ++ [1]`, `[1]` -> `[2]` (lit-plus) and `≥ 1` -> `≥ 0`
@@ -173,6 +181,58 @@ one check form (`#eval` under `#guard_msgs`, `#guard`, a `decide` `example`); PR
 The rerun replays and the sweep (section 1) change no verdict: none of their kills had a definition error beside
 it. The same fix reads the control cache once per mutant and never pops it (review follow-up: a thread could pop a
 key another had just found, a KeyError), so a control with no located error is never stored.
+
+## 1c. Review fix F9: a kill is a check's own error, and no edit moves a line
+
+F9 was the fifth form of one class (F1, F6, F7, F8, F9): the tool reported KILLED although no check failed on the
+mutant. This time the error came from the tool's own edit. `arm-default` copied a two-line catch-all arm
+(`| _ => [2,⏎3]`) into `| 0 => [1]`; only shorter replacements were padded, so every later line moved down one,
+the up-front cut of the tactic proof below ran at its old line numbers and left `<;> trivial` behind, and Lean's
+parse error at the old line of a `#guard` (which does not read `pick 0`) read as a failing check. The fix, the
+DRI's three steps (note 2026-10-19b):
+
+1. **No edit moves a line.** `relined` (one function for every operator) keeps each line after the mutated
+   declaration where it was: a shorter replacement is padded with line ends, as before; a longer one takes its
+   extra line ends from the blank lines right after the declaration (outside every comment), so the declaration
+   ends on the line it ended on or on a blank line below it, and its lines (`Mutant.lines`) run over them. When
+   too few blank lines follow, the edit is written as it is and the guard `moved` sees it: any line outside the
+   mutated declaration that is not the checkout's line makes the mutant UNKNOWN ("the mutant moves this line"),
+   never KILLED.
+2. **A kill is attributed.** `attributed` decides each error: it kills only inside a check (or a `--test` file), at
+   a line the mutant and the cuts left as the checkout has it, and never as a parse error (Lean's parser messages
+   start "unexpected " or "expected "): a cut left behind or a moved line is no check's failure. Any other error
+   (a parse error, a definition, a proof that cannot be cut, a command that is no check) is UNKNOWN (fail closed).
+3. **The table has the axis.** `LINES` in `tests/test_trust_mutants.py`: every operator whose replacement can span
+   lines, with fewer, the same or more lines than what it replaces, each definition followed by a three-line
+   tactic proof (cut up front in the mutated module, the trap of F9) and then its check, read by a check that
+   compares the value and by one that reads nothing (`#guard true`), in the mutated module and in another; and the
+   forms table (section 1a) has F8's form, a definition with a proof inside it.
+
+| Shape | Operators and lines | Compared by a check | Read by nothing |
+|---|---|---|---|
+| `default-more`: `\| 0 => [7]`, `\| _ => [2,⏎3]` (PROBE F9's form) | `arm-default`: more | KILLED (16 of 16) | SURVIVOR (16 of 16) |
+| `default-more-tight`: the same, no blank line after it | `arm-default`: more | UNKNOWN ("moves this line"), the other 15 KILLED | UNKNOWN, the other 15 SURVIVOR |
+| `default-fewer`: `\| 0 => [7,⏎8]`, `\| _ => [2]` | `arm-default`: fewer | KILLED (16) | SURVIVOR (16) |
+| `default-same`: `\| 0 => [7]`, `\| _ => [2]` | `arm-default`: same | KILLED (12) | SURVIVOR (12) |
+| `arm-bool`: `\| 0 => 1 <⏎2`, `\| _ => 2 < 1` | `arm-false`: fewer, `arm-true`: same | KILLED (6), 11 SURVIVOR (equivalent, below) | SURVIVOR (17) |
+| `list-multi`: `[n,⏎5]` | `list-first`, `list-drop-last`: same; `list-empty`: fewer | KILLED (7) | SURVIVOR (7) |
+| `list-single`: `[n, 5]` | `list-first`, `list-drop-last`, `list-empty`: same | KILLED (7) | SURVIVOR (7) |
+| `append-left-multi`: `[n] ++ [5,⏎6]` | `append-left`: fewer, `append-right`: same | KILLED (19) | SURVIVOR (19) |
+| `append-right-multi`: `[n,⏎5] ++ [6]` | `append-right`: fewer, `append-left`: same | KILLED (19) | SURVIVOR (19) |
+
+Each row holds in both settings (36 definitions, 516 mutants, every one run: 234 KILLED, 278 SURVIVOR, 4 UNKNOWN,
+0 INVALID; the sweep's evidence, and `test_a_replacement_of_any_line_count_is_decided_by_the_checks` on the same
+package, both through `lines_problems`). Every KILLED is at its own comparing check's line, and no mutant of a
+definition no check reads is KILLED. Only `arm-default` can write more lines: `arm-true`/`arm-false` write one
+token, the list cuts wrap the list they cut (`(xs.take 1)` has its lines), `list-empty` and `append-*` write one
+line or none, and the token operators keep the line. The 22 survivors of the compared rows are all `arm-bool`'s and
+all equivalent (each arm keeps its value on every `n`): `arm-true` of `1 <⏎2` and `arm-false` of `2 < 1` (each
+arm's own value), `1 <⏎2` read as `1 ≤ 2`, `0 < 2` or `1 < 3` (still true), and `2 < 1` read as `2 ≤ 1`, `2 = 1`,
+`2 < 0`, `1 < 1`, `2 < 2` or `3 < 1` (still false).
+
+PROBE F1, F6, F7, F8 and F9 pass on the final tool (F9: `[('arm-default', 'SURVIVOR', '')]`, exit 0, where it
+printed KILLED at `Defs.lean:11: unexpected token '<;>'` before the fix). The seeded bugs TM26–TM32 plant each
+rule of the fix (section 3).
 
 ## 2. Orchestrator lines (not edited here: /home/seyran/code/manage-agents is the orchestrator's)
 
@@ -202,10 +262,11 @@ DRI decision; nothing here adds it.
 `tests/test_trust_mutants.py` builds a four-module Lean package under `tmp_path` (its declaration and predicate
 lists written by `tools/lean_statements.py`'s own per-module script, its `lean/statements.txt` by that tool's
 statement script) and runs the tool on it with `TMPDIR` in
-`tmp_path` and `VE_LEAN_SHARE=off`; a second package is the truth table of section 1a (`table_package`), and the
-generator, the check rule (`classify`), the spans and the cuts have tests without Lean. Each rule has a seeded bug
+`tmp_path` and `VE_LEAN_SHARE=off`; a second package is the truth table of section 1a (`table_package`), a third
+the line axis of section 1c (`lines_package`), and the generator, the check rule (`classify`), the spans, the
+cuts, the line-keeping edit (`relined`, `moved`) and the kill rule (`attributed`) have tests without Lean. Each rule has a seeded bug
 in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format); `uv run python tools/mutants.py
-docs/speed/trustmut/mutants.json` kills 25 of 25, each at its named test, the file restored to its exact bytes
+docs/speed/trustmut/mutants.json` kills 32 of 32, each at its named test, the file restored to its exact bytes
 (`mutants-evidence.json`, run on the final tool). Python is the only language whose code changed (no Lean, no
 Rust). The parametrized tests have ids without spaces: `tools/mutants.py` reads a failing id up to its first space,
 so TM14, TM19 and TM24 first showed as survivors although their tests failed.
@@ -234,9 +295,16 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
 | TM20 | failing proofs are cut before a check error is read (F7) | not when a check fails too | `test_the_truth_table_statuses` |
 | TM21 | every `#` command opens its own span, in `tools/trust_map.py` (F7) | the old list of seven commands | `test_every_hash_command_opens_its_own_span` |
 | TM22 | an outside `--test` file kills only when it passes without the mutant (F7) | any failing file kills | `test_an_outside_test_that_fails_without_the_mutant_is_no_kill` |
-| TM23 | only an error in a check (or a `--test` file) kills; one in a definition is UNKNOWN | any error kills | `test_an_error_outside_every_check_is_unknown` |
+| TM23 | only an error in a check (or a `--test` file) kills; one in a definition is UNKNOWN | any error kills (since F9 on `attributed`) | `test_an_error_outside_every_check_is_unknown` |
 | TM24 | the blanking stops at a string the command before is still writing (F7) | it does not | `test_a_cut_command_is_blanked_with_its_docstring` |
-| TM25 | an error in a definition is UNKNOWN even beside a failing check (F8) | a failing check wins | `test_an_error_in_a_definition_beside_a_failing_check_is_unknown` |
+| TM25 | an error in a definition is UNKNOWN even beside a failing check (F8) | a failing check wins (since F9 on `attributed`) | `test_an_error_in_a_definition_beside_a_failing_check_is_unknown` |
+| TM26 | a longer replacement takes its extra line ends from the blank lines after its declaration (F9) | it never does | `test_an_edit_keeps_every_line_after_its_declaration`, `test_a_replacement_of_any_line_count_is_decided_by_the_checks` |
+| TM27 | those blank lines are never inside a comment (F9) | the comment test dropped | `test_an_edit_keeps_every_line_after_its_declaration` |
+| TM28 | a mutant that moves a line after its declaration is UNKNOWN (F9) | no guard | `test_a_replacement_of_any_line_count_is_decided_by_the_checks` |
+| TM29 | the guard compares each line, not only the count (F9) | it compares the count | `test_moved_finds_the_first_line_after_the_declaration_that_moved` (first named the edit test, where it survived: no case there keeps the count and moves a line; the new test has one) |
+| TM30 | a parse error never kills (F9) | the parse test dropped | `test_only_a_checks_own_error_kills` |
+| TM31 | a check's error kills only at a line the checkout has there (F9) | any check line kills | `test_only_a_checks_own_error_kills` |
+| TM32 | the mutated declaration's lines run over the blank lines its edit takes (F9) | they end where the declaration did | `test_a_replacement_of_any_line_count_is_decided_by_the_checks` |
 
 ## 4. Limits and follow-ups
 
@@ -260,7 +328,10 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
   mutant is UNKNOWN.
 - Each control is one more build per stage and set of cuts, cached across mutants; a mutant whose broken proofs
   differ needs its own. The replays measure no added time (section 1).
-- The replays, the sweep and the seeded bugs ran on the final tool (after F8).
+- The sweep and the seeded bugs ran on the final tool (after F9); the replays on the tool after F8, which F9 changes
+  for none of their mutants (section 1).
+- A longer replacement with no blank line after its declaration to take its extra lines is UNKNOWN (fail closed),
+  and so is any parse error outside the mutated declaration; the six replays have neither.
 - A build that fails with no located error is retried twice, then UNKNOWN; a control that fails that way is not
   cached (it would make every mutant sharing it UNKNOWN). In the final selected run on the Mac runner (six test
   files at once) `test_a_guard_over_the_empty_list_leaves_survivors` failed once at its exact `SURVIVOR` line and
@@ -277,30 +348,32 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
 |---|---|
 | 1 MEASURE: operators first, replays on pk-1 6b58a0ff, qt-a1 b20a8e30, ap-2 584ac3bb and the recheck HEADs; table; stop rule | section 1; `replay.py`, `evidence/*.json`; 6 of 6 flagged |
 | 2 `tools/trust_mutants.py`: `--base`, trust_map classification ∩ diff, scratch copy with lean_share's build, only importing check modules plus `--test`, kill rule, SURVIVOR line, `--allow`, `--jobs`, `--max-mutants` with NOT RUN, `--json`, time budget | the tool; times in section 1 |
-| 3 tests in a new `tests/test_trust_mutants.py` (six behaviours) and one seeded bug per rule | section 3; 94 tests; TM1–TM25 |
+| 3 tests in a new `tests/test_trust_mutants.py` (six behaviours) and one seeded bug per rule | section 3; 115 tests; TM1–TM32 |
 | Review F7 (DRI note 2026-10-19): the class, the truth table, probes F1, F6, F7 and a sweep, REPORT:27 | section 1a; `sweep.py`, `evidence/sweep.json`; the check rule in section 1 |
 | Recheck F8: a definition's error beside a failing check, probe F8 | section 1b; TM25; replays and sweep rerun |
+| Recheck F9 (DRI note 2026-10-19b): no edit moves a line or the mutant is UNKNOWN, a kill is a check's own error, the line axis and F8's form in the tables, probes F1, F6–F9, a sweep, 25 seeded bugs still killed | section 1c; `relined`, `moved`, `attributed`; `LINES`, `lines_package`; `sweep.py`; TM26–TM32 (32 of 32) |
 | 4 orchestrator lines, gate-check opinion | section 2 |
 | Rules: R2/R3 unchanged, nothing reads the tool; `trust_map.py --check`, review-ready and gate unchanged; no timing test | `DELTA.md`; no file of the gate or review-ready changed; trust_map's two changes (F6, F7) measure +0 here; the tests assert no time |
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
 | Size: at most ~500 changed lines outside generated files | over: see below |
 
-Size: about 2,050 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
-(`evidence/*.json`, `mutants-evidence.json`): `tools/trust_mutants.py` 621, the test 615, `replay.py` 94,
-`sweep.py` 115, the seeded bugs' `mutants.json` 258, `tools/trust_map.py` 10, this report and DELTA about 305. That
+Size: about 2,520 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
+(`evidence/*.json`, `mutants-evidence.json`): `tools/trust_mutants.py` 670, the test 800, `replay.py` 107,
+`sweep.py` 158, the seeded bugs' `mutants.json` 329, `tools/trust_map.py` 10, this report and DELTA about 445. That
 is nearly four times the guideline. The size rule's
 fallback is to deliver steps 1-3 for the operators step 1 showed matter; every operator but `arm-default`,
 `body-true`/`body-false`, `ne-eq`, `all-any` and `append-*` left a survivor on a finding's line, and removing those
 saves under 20 lines, so all are kept. The bulk is the runner the task asks for (selection, scratch copies with
 the shared build, staged builds, proof cuts, control builds, the kill rule) and the review rounds' tests (the
-F7 truth table and its package are about 250 of the test's lines), and splitting it would leave no usable tool.
+F7 truth table and its package are about 250 of the test's lines, F9's line axis about 170), and splitting it
+would leave no usable tool.
 
 ## 6. Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no Lean answer is relayed; the tool reads Lake's build log, and a failure it cannot place is UNKNOWN.
 2. PASS: section 5 maps every task line to its delivery; no rule break (no product code, no permanent report
    test: `replay.py` reads saved evidence, D4).
-3. PASS: seeded bugs TM1–TM25 (`mutants.json`, `mutants-evidence.json`), each failing its named test;
+3. PASS: seeded bugs TM1–TM32 (`mutants.json`, `mutants-evidence.json`), each failing its named test;
    `--allow` names an exact (definition, operator) pair (`test_allow_suppresses_exactly_its_operator`).
 4. N.A.: no Python, Lean or Rust product code changed.
 5. N.A.: no relayed field.
@@ -312,5 +385,5 @@ F7 truth table and its package are about 250 of the test's lines), and splitting
 10. N.A.: no Lean statement or proof.
 11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
 12. N.A.: no product code; the tool's own times are in section 1.
-13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 94 added, 0 refused, 0 stale,
+13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 115 added, 0 refused, 0 stale,
     0 malformed.

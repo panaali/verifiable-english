@@ -291,7 +291,7 @@
    "find": "                 and old[n - 1:n] != new[n - 1:n]), None)",
    "replace": "                 and len(old) != len(new)), None)",
    "tests": [
-    "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration"
+    "tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved"
    ],
    "claim": "`moved` compares every line after the declaration, not only the line count (review F9)"
   },
