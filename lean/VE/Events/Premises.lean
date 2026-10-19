@@ -76,6 +76,10 @@ def Embeds (V : EventsEnv) (S : VE.Structure.{u}) (num : S.Carrier → Nat) : Pr
   (∀ x y, S.domain V.day x → S.domain V.day y → (S.relation V.before [x, y] ↔ num x < num y)) ∧
   (∀ D ∈ V.dates, ∃ x, S.constant (dateName D) = some x ∧ S.domain V.day x ∧ num x = D.num)
 
+/-- A calendar reading: an embedding onto every civil day `0..dateMax` (1.5). -/
+def CalendarReading (V : EventsEnv) (S : VE.Structure.{u}) (num : S.Carrier → Nat) : Prop :=
+  Embeds V S num ∧ ∀ n, n ≤ dateMax → ∃ x, S.domain V.day x ∧ num x = n
+
 /-- T2b's claim: two days neither of which is before the other are the same day. -/
 def unorderedSameF (V : EventsEnv) : VE.Formula :=
   .all V.day (.all V.day (.implies (.and (.not (bin V.before 1 0)) (.not (bin V.before 0 1)))
