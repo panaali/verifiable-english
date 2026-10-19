@@ -800,14 +800,7 @@
   {
    "class": "S",
    "lines": 55,
-   "reason": "me-6: lean/VE/Calc/Dimension.lean S +55 (PhysDim, PhysDim.Normal, PhysDim.one, insertExp, PhysDim.mul, PhysDim.inv, PhysDim.npow, Expr.dimOf, Rescale, zpowR, Rescale.of, Rescale.apply, legacyDim); lean/VE/Calc/Units.lean V +60 (D[V] UnitDef, UnitEnv, decodeFactor, decodeUnit, decodeV2, decode; G[V] UnitEnv.find?, UnitEnv.values); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6, 2026-10-18",
-   "commit": "9ea276842060977979999c8f3db730d94f527ceb"
-  },
-  {
-   "class": "V",
-   "lines": 60,
-   "reason": "me-6: lean/VE/Calc/Dimension.lean S +55 (PhysDim, PhysDim.Normal, PhysDim.one, insertExp, PhysDim.mul, PhysDim.inv, PhysDim.npow, Expr.dimOf, Rescale, zpowR, Rescale.of, Rescale.apply, legacyDim); lean/VE/Calc/Units.lean V +60 (D[V] UnitDef, UnitEnv, decodeFactor, decodeUnit, decodeV2, decode; G[V] UnitEnv.find?, UnitEnv.values); K +0",
+   "reason": "me-6: lean/VE/Calc/Dimension.lean S +55 (PhysDim 5, PhysDim.Normal 2, PhysDim.one 2, insertExp 8, PhysDim.mul 1, PhysDim.inv 1, PhysDim.npow 3, Expr.dimOf 12, Rescale 5, zpowR 4, Rescale.of 3, Rescale.apply 6, legacyDim 3); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6, 2026-10-18",
    "commit": "9ea276842060977979999c8f3db730d94f527ceb"
   }
