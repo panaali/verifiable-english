@@ -16897,7 +16897,7 @@ module VE.Scope.Effects 76d034cbd2f835309381cbbd7b032eaf69a03bb29fe463e3bad6e950
 64:0-66:13 def VE.Scope.narrowing@VE.Scope.Effects
 68:0-73:17 def VE.Scope.Commutes@VE.Scope.Effects
 77:0-83:40 def VE.Scope.mergeParts@VE.Scope.Effects
-module VE.Scope.Examples 29bd7ee1a43d1702e457d52931781bc4dff222e2bf217f4300ae2345c3e03a24
+module VE.Scope.Examples b1ba30ef8b7614ea301e71bec7550bc72203789c4e8a7516ceccc8fcaa7c199b
 15:0-18:14 def VE.Scope.Examples.mk@VE.Scope.Examples
 20:0-20:111 def VE.Scope.Examples.layoutOf@VE.Scope.Examples
 22:0-32:71 def VE.Scope.Examples.hcPieces@VE.Scope.Examples
@@ -16940,12 +16940,12 @@ module VE.Scope.Examples 29bd7ee1a43d1702e457d52931781bc4dff222e2bf217f4300ae234
 374:0-375:65 def VE.Scope.Examples.nest@VE.Scope.Examples
 380:0-383:18 theorem VE.Scope.Examples.effects_six@VE.Scope.Examples
 385:0-389:92 theorem VE.Scope.Examples.own_binder@VE.Scope.Examples
-391:0-393:8 theorem VE.Scope.Examples.depth_bound@VE.Scope.Examples
-395:0-398:95 theorem VE.Scope.Examples.narrowings@VE.Scope.Examples
-402:0-402:108 def VE.Scope.Examples.narrowK@VE.Scope.Examples
-403:0-403:89 def VE.Scope.Examples.carveT@VE.Scope.Examples
-404:0-404:111 def VE.Scope.Examples.ownCarve@VE.Scope.Examples
-405:0-405:41 def VE.Scope.Examples.reguard173@VE.Scope.Examples
+391:0-394:8 theorem VE.Scope.Examples.depth_bound@VE.Scope.Examples
+396:0-399:95 theorem VE.Scope.Examples.narrowings@VE.Scope.Examples
+403:0-403:108 def VE.Scope.Examples.narrowK@VE.Scope.Examples
+404:0-404:89 def VE.Scope.Examples.carveT@VE.Scope.Examples
+405:0-405:111 def VE.Scope.Examples.ownCarve@VE.Scope.Examples
+406:0-406:41 def VE.Scope.Examples.reguard173@VE.Scope.Examples
 module VE.Scope.Theorems 69cf2e3374332761b9048474b1812fccfdc907df6bd4d5a63d200180d498ebdb
 9:0-9:96 theorem VE.Scope.members_obj@VE.Scope.Theorems
 11:0-26:48 theorem VE.Scope.hasOwn_mono@VE.Scope.Theorems

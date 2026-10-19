@@ -389,7 +389,8 @@ theorem own_binder :
     ownSafe depthLimit (.arr #[.str "exists", .str "user", .str "own"]) = false := by decide
 
 /-- A condition one level deeper than its fuel is not `depthOk`. -/
-theorem depth_bound : depthOk 2 (.arr #[.arr #[.str "top"]]) = false ∧ depthOk 3 (.arr #[.arr #[.str "top"]]) = true := by
+theorem depth_bound : depthOk 2 (.arr #[.arr #[.str "top"]]) = false ∧ depthOk 3 (.arr #[.arr #[.str "top"]]) = true ∧
+    ownSafe 2 (.arr #[.arr #[.str "top"]]) = true := by
   decide
 
 /-- Plain narrowing is `["and", "own", C]` with `C` free of `own`. -/
@@ -406,6 +407,9 @@ def reguard173 : Effect := .reguard u0173
 #guard (Commutes reguard173 reguard173, Commutes reguard173 narrowK, Commutes narrowK carveT, Commutes carveT narrowK,
   Commutes carveT carveT, Commutes narrowK narrowK, Commutes ownCarve carveT, Commutes (.frame leadPart) narrowK) ==
   (false, false, true, true, true, true, false, false)
+-- and a narrowing with an own carve-out, or a carve-out with a reguard that is no narrowing, in either order
+#guard [Commutes narrowK ownCarve, Commutes ownCarve narrowK, Commutes reguard173 carveT, Commutes carveT reguard173] ==
+  [false, false, false, false]
 
 end Effects
 

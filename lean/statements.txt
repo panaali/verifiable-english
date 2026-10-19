@@ -39171,9 +39171,10 @@ theorem VE.Scope.Examples.byte_tests
   -- expr 1449821843
 theorem VE.Scope.Examples.depth_bound
   VE.Scope.depthOk 2 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.false ∧
-    VE.Scope.depthOk 3 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.true
-  -- uses VE.Scope.depthOk@VE.Scope.Effects
-  -- expr 3351120605
+    VE.Scope.depthOk 3 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.true ∧
+      VE.Scope.ownSafe 2 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.true
+  -- uses VE.Scope.depthOk@VE.Scope.Effects VE.Scope.ownSafe@VE.Scope.Effects
+  -- expr 3566393300
 theorem VE.Scope.Examples.effects_six
   ∀ (e : VE.Scope.Effect),
     (∃ p, e = VE.Scope.Effect.frame p) ∨
