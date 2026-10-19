@@ -780,8 +780,11 @@ VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
+VE.Events.CalendarReading@VE.Events.Premises
 VE.Events.DayExtension@VE.Events.Completion
 VE.Events.Embeds@VE.Events.Premises
+VE.Events.addedDay@VE.Events.Completion
+VE.Events.isDayC@VE.Events.Completion
 VE.FiniteModel.Valid@VE.Finite
 VE.FiniteModel.inDomain@VE.Alternatives.Followable
 VE.Formula.WellFormed@VE.Syntax

@@ -7,8 +7,10 @@ difference from 6.1. `lean/audit.py` audits every theorem: no unfinished proof, 
 and `Quot.sound`. No existing Lean source changed; `VE.lean` gained one block of imports and `VE/Audit.lean` its
 generated entries.
 
-ET-3 is delivered in two parts. This item (et-3) holds the block, the generated premises, the calendar check and
-the completion's fragment with its transfer theorem. **et-3b** holds the rest of 6.1 and 6.2 (listed at the end).
+ET-3 is delivered in parts. et-3 holds the block, the generated premises, the calendar check and the completion's
+fragment with its transfer theorem. et-3b adds the completion itself, the typing theorems and the conventions' place
+in the fragment. Conservativity, `embeddable_sound`, `embeddable_complete` and `eventsPremises_satisfiable` are not built yet (listed at the end); one of them,
+`embeddable_sound`, does not hold as approved.
 
 ## Files
 
@@ -17,7 +19,7 @@ the completion's fragment with its transfer theorem. **et-3b** holds the rest of
 | `Decl.lean` | `EventSort`, `StateSort`, `LinkForm`, `Link`, `EventsEnv`; `maxDates`, `dateName`, `dateConst`; role sorts and predicates, `startRole`, `boundRole`; `roleWordingOk`, `beforeWording`, `linkWording`; `consecutive`; `WellFormedEvents` (the block against the author's environment), `regenEnv`, `EventsTyped` |
 | `Premises.lean` | the formulas of 1.4 (`irreflexiveF`, `transitiveF`, `linearF`, `dateFactF`, `adjacentF`, `oneRoleF`, `notBeforeBeginF`, `linkForwardF`, `linkWeakerF`), the labelled lists (`calendarLabelled`, `conventionLabelled`, `eventsLabelled`), `orderPremises`, `calendarPremises`, `conventionPremises`, `eventsX`, `Embeds`; `calendar_sat`, `datesOrder_iff`, `datesOrder_calendar`, `unorderedSame_of_order` |
 | `Calendar.lean` | the check of 1.6 on finite situations: `beforeB`, `rank`, `dateDay`, `namedRank`, `strictLinearB`, `calendarCheck` (its diagnostic texts), `embeddable`, `numbering` |
-| `Completion.lean` | the fragment of 1.7: `isConst`, `isVar`, `hits`, `vacuous`, `up`, `down`, `DayExtension`; `hits_vacuous`, `dayExtension_transfer` |
+| `Completion.lean` | the completion of 1.7 (`numOf`, `oldTuple`, `addedDay`, `isDayC`, `completion`) and its fragment (`isConst`, `isVar`, `hits`, `vacuous`, `up`, `down`, `DayExtension`); `hits_vacuous`, `dayExtension_transfer`, `completion_extension`, `completion_reading`, `completion_admissible`, `conventions_exact` |
 | `Examples.lean` | the fixtures as `#guard` lines (below) |
 
 ## Theorems (6.2) in plain words
@@ -34,6 +36,16 @@ the completion's fragment with its transfer theorem. **et-3b** holds the rest of
   tuples with them), an `up` formula true at old elements stays true, and a `down` formula false at old elements
   stays false. `hits_vacuous` is its base: a formula that `hits` variable `k` is false, and one `vacuous` at `k` is
   true, whenever `k` is an added day, at every valuation of the extension.
+* **`regen_typed`**: a block that passes `WellFormedEvents` against the author's environment is typed
+  (`EventsTyped`) against the environment with the date constants added.
+* **`eventsPremises_wellFormed`**: every generated premise is closed and typed in that environment.
+* **`conventions_exact`**: every convention is both `up` and `down` whenever no role or link predicate is in `ng`:
+  each day quantifier in a convention is guarded by a role or link atom, so added days never change its value.
+* **`completion_extension`**, **`completion_reading`**, **`completion_admissible`**: the completion of a situation
+  numbered as civil days adds a day for every unused day number, with no facts except their order. It is a day
+  extension of the situation in which only `before` has tuples with added days. Its days are every civil day, so it
+  is a calendar reading (`CalendarReading`: an embedding onto `0..dateMax`). It is a structure of the situation's
+  environment.
 * **`unorderedSame_of_order`** (fixture T2b, not in 6.2): the order premises entail that two days neither before
   the other are the same day. It needs `linear`.
 
@@ -46,20 +58,29 @@ refutes the claim), T3 and T3e (every diagnostic text of `calendarCheck`, its pa
 `up`), T4 to T6 (the first violated premise's label, and the accepted cases, including a state with no last day),
 T9's shape rows (`roleWordingOk`, the profile wordings), T10 (64 and 65 dates, a repeated date, a declared constant
 with a date's name, `DateRange(1969-12-31)`), T11 and R1's premise counts, T13 (strict precedence: a confirmation
-on 12 October is before an action on 13 October; on the same day it is not). T7 (conservativity) is et-3b's; T8
-(identity on the wire) and T10's `EventsReserved` are the decoder's (ET-4).
+on 12 October is before an action on 13 October; on the same day it is not). et-3b adds the completion's pieces
+(old tuples, numbers, added days; a finite situation is never a calendar reading) and the counterexample to
+`embeddable_sound` (below). T7 (conservativity) is et-3c's; T8 (identity on the wire) and T10's `EventsReserved` are
+the decoder's (ET-4).
 
 ## Differences from 6.1
 
-* None in the delivered declarations: every definition and theorem statement of 6.1 and 6.2 built here is the
-  approved text, whitespace aside (`docs/events-time-causation/et-3/evidence/statements.json`). `isVar` and `isVar_beq` are proof helpers that read
+* None in the delivered declarations: every definition and theorem statement of 6.1 and 6.2 built is the approved
+  text, whitespace aside (`docs/events-time-causation/et-3/evidence/statements.json`,
+  `docs/events-time-causation/et-3b/evidence/statements.json`). `isVar` and `isVar_beq` are proof helpers that read
   `hits`'s test `t == .var k` as a function on the term; `unorderedSame_of_order` is fixture T2b's theorem.
-* `CalendarReading` (with `onto`) moves to et-3b with `completion_reading`, its first use.
+  `oldTuple_map`, `oldTuple_eq`, `completion_before_new`, `completion_typed`, `startRole_mem` and `boundRole_mem`
+  are proof helpers.
 
-## et-3b: the rest of ET-3
+## Not built yet (et-3c)
 
-`completion` (`numOf`, `oldTuple`, `addedDay`, `isDayC`) with `completion_extension`, `completion_reading`,
-`completion_admissible` and `CalendarReading`; `embeddable_sound` and `embeddable_complete` (which tie
-`calendarCheck`, `embeddable` and `numbering`); `regen_typed`, `eventsPremises_wellFormed`,
-`eventsPremises_satisfiable`, `conventions_exact`; `Conservative.lean` with `oldEnv` and `events_conservative`, and
-fixture T7.
+* `Conservative.lean`: `oldEnv` and `events_conservative`, with fixture T7. A proof exists in this branch's history
+  (et-3b's report names the commits); it was moved out for size.
+
+* **`embeddable_sound` does not hold as approved.** `EventsTyped` bounds no year, so a named date after 9999-12-31
+  passes the check: a situation whose one day is named 10000-01-01 is `embeddable`, but its number is
+  `dateMax + 1`, and no numbering embeds it (`Examples.lean`, the last fixture). The statement needs an amendment
+  (a year bound in `EventsTyped`, or a hypothesis) that only the DRI can approve.
+* `embeddable_complete` and `eventsPremises_satisfiable` are left for et-3c because of size. No counterexample is
+  known to either; the planned proof of the second takes the named dates' days in date order as the situation and
+  gets `embeddable` from the first.
