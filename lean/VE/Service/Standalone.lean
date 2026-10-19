@@ -17,6 +17,7 @@ import VE.SoftNorms.Phases
 import VE.Rights.Wire
 import VE.Readings.Wire
 import VE.NormDefaults.Wire
+import VE.Limits
 
 /-! Standalone service validation and identity endpoints. These wrap the same
 decoders used by the route; successful model answers require a checked model. -/
@@ -469,7 +470,7 @@ private def modelError (message : String) : String :=
   else s!"InvalidModel: {message}"
 
 private def longModelAtom : Json → Bool
-  | .str value => value.utf8ByteSize > 64
+  | .str value => value.utf8ByteSize > VE.Limits.maxIdentifierBytes
   | _ => false
 
 private def longModelString (model : Json) : Bool :=
@@ -685,8 +686,7 @@ def encodeClosure : VE.Closure.Formula → Json
   | .reachBody k s a t u => Json.arr #[.str "reach", encodeKind k,
       Json.arr #[.str "body", .str s, encodeClosure a], VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
 
-/-- Python's source cap (`MAX_SOURCE_BYTES`). -/
-def maxSourceBytes : Nat := 65536
+export VE.Limits (maxSourceBytes)
 
 /-- The `definitions@0` sugar over `environment` (none without the profile): a
 defined predicate's declared argument sorts, and whether a parsed body is its
@@ -730,16 +730,16 @@ def surfaceReader (environment : Json) (checked : Validated) : Except String Sur
   match e.family with
   | .fol => do
     let E := (← VE.Route.Run.decodeRouteVocabulary e).environment
-    pure (.of (sugarOf e.profiles environment (VE.Bridge.decodeFormula 64)) (VE.Surface.parseWith E)
+    pure (.of (sugarOf e.profiles environment (VE.Bridge.decodeFormula VE.Limits.maxDepth)) (VE.Surface.parseWith E)
       (VE.Surface.parseStatementsWith E) (VE.Surface.parseRawWith E) VE.Route.Wire.encodeFormula VE.Surface.print)
   | .closure => do
     let E := (← VE.Route.Run.decodeRouteVocabulary e).environment
-    pure (.of (sugarOf e.profiles environment (VE.Closure.Bridge.decodeFormula 64))
+    pure (.of (sugarOf e.profiles environment (VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth))
       (VE.Closure.Surface.parseWith E) (VE.Closure.Surface.parseStatementsWith E)
       (VE.Closure.Surface.parseRawWith E) encodeClosure VE.Closure.Surface.print)
   | .closureNary => do
     let E := (← VE.Core.Bridge.decodeEnvironment checked.decodable).environment
-    pure (.of (sugarOf e.profiles environment (VE.Core.Bridge.decodeFormula 64))
+    pure (.of (sugarOf e.profiles environment (VE.Core.Bridge.decodeFormula VE.Limits.maxDepth))
       (VE.Core.Surface.parseWith E) (VE.Core.Surface.parseStatementsWith E)
       (VE.Core.Surface.parseRawWith E) VE.Core.Wire.encodeFormula VE.Core.Surface.print)
   | .order => do
@@ -849,7 +849,7 @@ private def modelAtom (value : Json) (path : String) : Except ModelFault String 
   let .str word := value | modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
   unless VE.Surface.identifier word do
     modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
-  if word.utf8ByteSize > 64 then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
+  if word.utf8ByteSize > VE.Limits.maxIdentifierBytes then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
   pure word
 
 private def modelCell (order : Bool) (sort : String) (value : Json) (path : String) :
@@ -893,7 +893,7 @@ private def locatedEnvironmentFields (environment : Json) : Except ModelFault Un
     modelFault "" "predicates must be an object"
   let .ok constantEntries := VE.Bridge.fields constants |
     modelFault "" "constants must be an object"
-  if sortEntries.length > 32 || predicateEntries.length > 256 then
+  if sortEntries.length > VE.Limits.maxSorts || predicateEntries.length > VE.Limits.maxPredicates then
     modelFault "" "ResourceLimit: Vocabulary exceeds sort or predicate limit"
   match VE.Bridge.checkVocabularyNames sortEntries predicateEntries constantEntries with
   | .ok () => pure ()
@@ -996,10 +996,10 @@ private def locatedModelTables (environment model : Json) : Except ModelFault Un
   -- Static limits precede cell decoding in all families.
   for sort in sortNames do
     if let .arr cells := domains.getObjValD sort then
-      if cells.size > 1000 then modelFault s!"/domains/{sort}" "ResourceLimit: domain exceeds entity limit"
+      if cells.size > VE.Limits.maxEntities then modelFault s!"/domains/{sort}" "ResourceLimit: domain exceeds entity limit"
   let total := relationFields.foldl (fun count (_, rows) =>
     match rows with | .arr cells => count + cells.size | _ => count) 0
-  if total > 100000 then modelFault "/relations" "ResourceLimit: model exceeds total relation tuple limit"
+  if total > VE.Limits.maxTuples then modelFault "/relations" "ResourceLimit: model exceeds total relation tuple limit"
   let mut decodedDomains : List (String × List String) := []
   for sort in sortNames do
     let .arr cells := domains.getObjValD sort |

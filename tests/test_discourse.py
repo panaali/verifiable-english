@@ -627,11 +627,15 @@ def test_discourse_wording(tmp_path):
 
 
 def _route_answers(monkeypatch, answer):
-    """The Lean discourse route (service mode `discourse`) answers `answer`: its rows, or an exception."""
+    """The Lean discourse route (service mode `discourse`) answers `answer`: its rows, or an exception.
+    Every other mode (the metered evaluator's, since lean-first batch 18) is the service's own."""
     from ve.backends import relay
+    real = relay.rows
 
-    def rows(mode, cases, **_):
-        assert mode == "discourse" and len(cases) == 1
+    def rows(mode, cases, **options):
+        if mode != "discourse":
+            return real(mode, cases, **options)
+        assert len(cases) == 1
         if isinstance(answer, BaseException):
             raise answer
         return answer

@@ -1,4 +1,5 @@
 import Std
+import VE.Limits
 
 /-! W6 exact decimal lowering (units-schema §2.3, obligation `Time.decimal_exact`).
 
@@ -122,7 +123,7 @@ theorem render_zero (k : Nat) : (render k 0).neg = false := by simp [render]
 
 /-! ## Wire spelling (boundary code, differentially tested against Python/Rust) -/
 
-def maxNumeralChars : Nat := 40
+export VE.Limits (maxNumeralChars)
 
 def digitOf (c : Char) : Option Nat :=
   if 48 ≤ c.toNat ∧ c.toNat ≤ 57 then some (c.toNat - 48) else none

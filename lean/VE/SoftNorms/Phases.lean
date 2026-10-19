@@ -1,4 +1,5 @@
 import VE.SoftNorms.Status
+import VE.Limits
 
 /-! The soft validation table (docs/spec/soft-norms.md 8), as ordered phases.
 
@@ -43,7 +44,7 @@ def keysOf (j : Json) : Option (List String) := (fields j).toOption.map (·.map 
 def sameKeys (actual expected : List String) : Bool :=
   actual.length == expected.length && expected.all actual.contains
 
-def deciderOk (d : String) : Bool := !d.isEmpty && d.utf8ByteSize ≤ 64
+def deciderOk (d : String) : Bool := !d.isEmpty && d.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes
 
 /-! ## Phase 1: envelope -/
 

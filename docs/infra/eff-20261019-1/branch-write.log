@@ -1,0 +1,56 @@
+# branch tool, same start state: --write (VE_REGEN_NO_RUST=1), cold dump caches: rc=0, 575 s. Entry, bootstrap and summary lines.
+== write gitattributes
+== write wire-contract
+== write english-grammar
+== bootstrap: the built ve_service 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11 is not pinned in lean/checkers.lock; running lake-build and checker-pins first
+== write english-lexicon-fixtures
+== write question-fixtures
+== write english-run-copy
+== write route-cases
+== write lake-build
+== write numbers-phrases
+== write lean-mode-deps
+== write lean-statements
+== write lean-audit-manifests
+== write frozen-inventory
+== write checker-pins
+== write response-schemas
+== write binding-census
+== write english-codes
+== write question-codes
+== write question-lock
+== write assurance-doc
+== write import-contract
+== write uv-lock
+== write heavy-tests
+== write platform-contract
+== write history-tests
+regen_generated: wrote 31 entries
+# rerun from the same start state, warm caches: rc=0, 51 s
+== write gitattributes
+== write wire-contract
+== write english-grammar
+== bootstrap: the built ve_service 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11 is not pinned in lean/checkers.lock; running lake-build and checker-pins first
+== write english-lexicon-fixtures
+== write question-fixtures
+== write english-run-copy
+== write route-cases
+== write lake-build
+== write numbers-phrases
+== write lean-mode-deps
+== write lean-statements
+== write lean-audit-manifests
+== write frozen-inventory
+== write checker-pins
+== write response-schemas
+== write binding-census
+== write english-codes
+== write question-codes
+== write question-lock
+== write assurance-doc
+== write import-contract
+== write uv-lock
+== write heavy-tests
+== write platform-contract
+== write history-tests
+regen_generated: wrote 31 entries

@@ -1,0 +1,466 @@
+{
+ "base": "main aeedb8ad2 (et-7): every alt-validate case with norm-defaults@0 is refused with `base.error`, asserted there by tests/test_alternatives_fill.py::test_cases_outside_this_item_are_refused_with_the_profile",
+ "head": "feature/et-7b, the pinned ve_service",
+ "records": [
+  {
+   "norms": [
+    "pull-forbidden"
+   ],
+   "max_unsaid_atoms": null,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "chooser": "r",
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "statuses": [
+       "undecided",
+       "not clear"
+      ],
+      "evidence": [
+       "fillings",
+       "kleene"
+      ],
+      "text": "no action is known to be clear at r: UNSETTLED(push): no available action is known to be clear here: the text does not say whether r may take push (push undecided: the text does not say whether it may be performed, pull not clear)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-may"
+   ],
+   "max_unsaid_atoms": null,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "chooser": "r",
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "statuses": [
+       "clear",
+       "not clear"
+      ],
+      "evidence": [
+       "kleene",
+       "kleene"
+      ],
+      "text": "r has a clear action: push (push clear, pull not clear)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-may"
+   ],
+   "max_unsaid_atoms": null,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "chooser": "r",
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "statuses": [
+       "clear",
+       "not clear"
+      ],
+      "evidence": [
+       "enumeration",
+       "kleene"
+      ],
+      "text": "r has a clear action: push (push clear, pull not clear)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-may"
+   ],
+   "max_unsaid_atoms": 0,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "MAX_UNSAID_ATOMS",
+       "kleene"
+      ],
+      "statuses": [
+       "UNKNOWN",
+       "not clear"
+      ],
+      "text": "no action is known to be clear at r (push UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched, pull not clear)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-may"
+   ],
+   "max_unsaid_atoms": 99,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "chooser": "r",
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "statuses": [
+       "clear",
+       "not clear"
+      ],
+      "evidence": [
+       "enumeration",
+       "kleene"
+      ],
+      "text": "r has a clear action: push (push clear, pull not clear)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden"
+   ],
+   "max_unsaid_atoms": null,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r",
+    "r2"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "error",
+    "error": "InvalidModel(alternatives): action push is available to two choosers: r, r2"
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden"
+   ],
+   "max_unsaid_atoms": null,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "error",
+    "error": "dangling or wrong-sort tuple"
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-required"
+   ],
+   "max_unsaid_atoms": 0,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "MAX_UNSAID_ATOMS",
+       "MAX_UNSAID_ATOMS"
+      ],
+      "statuses": [
+       "UNKNOWN",
+       "UNKNOWN"
+      ],
+      "text": "no action is known to be clear at r (push UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched, pull UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-required"
+   ],
+   "max_unsaid_atoms": 1,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "MAX_UNSAID_ATOMS",
+       "MAX_UNSAID_ATOMS"
+      ],
+      "statuses": [
+       "UNKNOWN",
+       "UNKNOWN"
+      ],
+      "text": "no action is known to be clear at r (push UNKNOWN: more than 1 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched, pull UNKNOWN: more than 1 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-required"
+   ],
+   "max_unsaid_atoms": 2,
+   "filling": {
+    "unsaid__permitted": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "enumeration",
+       "kleene"
+      ],
+      "statuses": [
+       "clear",
+       "not clear"
+      ],
+      "text": "r has a clear action: push (push clear, pull not clear)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden",
+    "push-required"
+   ],
+   "max_unsaid_atoms": 0,
+   "filling": {
+    "unsaid__permitted": [
+     [
+      "push"
+     ]
+    ]
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "ok",
+    "choosers": [
+     {
+      "alternatives": [
+       "push",
+       "pull"
+      ],
+      "chooser": "r",
+      "evidence": [
+       "MAX_UNSAID_ATOMS",
+       "kleene"
+      ],
+      "statuses": [
+       "UNKNOWN",
+       "not clear"
+      ],
+      "text": "no action is known to be clear at r (push UNKNOWN: more than 0 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched, pull not clear)"
+     }
+    ]
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden"
+   ],
+   "max_unsaid_atoms": "3",
+   "filling": null,
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "error",
+    "error": "InvalidInput: max_unsaid_atoms must be a natural number"
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden"
+   ],
+   "max_unsaid_atoms": true,
+   "filling": null,
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "error",
+    "error": "InvalidInput: max_unsaid_atoms must be a natural number"
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden"
+   ],
+   "max_unsaid_atoms": {},
+   "filling": null,
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "error",
+    "error": "InvalidInput: max_unsaid_atoms must be a natural number"
+   }
+  },
+  {
+   "norms": [
+    "pull-forbidden"
+   ],
+   "max_unsaid_atoms": null,
+   "filling": {
+    "unsaid__other": []
+   },
+   "agents": [
+    "r"
+   ],
+   "base": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind alt-validate with norm-defaults@0 is not implemented on the alternatives route"
+   },
+   "head": {
+    "status": "error",
+    "error": "InvalidInput: unknown filling table unsaid__other"
+   }
+  }
+ ]
+}
