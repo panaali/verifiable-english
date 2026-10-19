@@ -1614,7 +1614,7 @@ module VE.Acts.LexicalBase c6e189d8f86943aa538dfa06406e854fed0a2df70e2ce252318c9
 45:0-45:78 def VE.Norms.Wire.words@VE.Acts.LexicalBase
 47:0-47:81 def VE.Norms.Wire.asciiLetter@VE.Acts.LexicalBase
 49:0-52:15 def VE.Norms.Wire.actWord@VE.Acts.LexicalBase
-module VE.Acts.LexicalExamples 06e30ef90998439d44e5db8e17832f6022c8300a4523eb0dd856065fd0a3a09b
+module VE.Acts.LexicalExamples 244c58e897bf9d905df740bbd7ea7fe7bad7300fbb36fe1fbacd318694637167
 12:0-12:64 def VE.Acts.LexicalExamples.okS@VE.Acts.LexicalExamples
 13:0-15:17 def VE.Acts.LexicalExamples.errS@VE.Acts.LexicalExamples
 16:0-18:17 def VE.Acts.LexicalExamples.errFixed@VE.Acts.LexicalExamples
