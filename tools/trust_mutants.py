@@ -377,8 +377,24 @@ def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
   let env ← getEnv
   let say (s : String) : IO Unit := do IO.println s!"{(← IO.getEnv "TM_TRUST_NONCE").getD ""} {k} {s}"
   let mutated := ((← IO.getEnv "TM_TRUST_MUTATED").getD "").toName
-  let inside (c : Name) : Bool := mutated != .anonymous &&
-    (c == mutated || mutated.isPrefixOf c && (c.isInternal || Meta.isMatcherCore env c || isAuxRecursor env c))
+  let lines := ((← IO.getEnv "TM_TRUST_LINES").getD "").splitOn " " |>.filterMap String.toNat?
+  let moduleOf (c : Name) : Name :=
+    ((env.getModuleIdxFor? c).map (env.header.moduleNames[·.toNat]!)).getD env.mainModule
+  -- the declaration a generated constant belongs to: its name without internal parts (`_unsafe_rec`, `_unary`,
+  -- `_default`, numbers) and matchers
+  let rec owner (c : Name) (fuel : Nat) : Name := match fuel, c with
+    | n + 1, .str p s => if s.startsWith "_" || Meta.isMatcherCore env c then owner p n else c
+    | n + 1, .num p _ => owner p n
+    | _, _ => c
+  -- the mutated declaration and what Lean generated for it: its source range is inside the mutated one's
+  let inside (c : Name) : MetaM Bool := do
+    if mutated.isAnonymous then return false
+    let o := owner c 100
+    if o == mutated then return true
+    if moduleOf o != moduleOf mutated then return false
+    match ← findDeclarationRanges? o, lines with
+    | some r, [s, e] => return s ≤ r.range.pos.line && r.range.endPos.line ≤ e
+    | _, _ => return false
   -- every theorem `@f = @g` outside Lean's core: a `@[csimp]` lemma, wherever (and however locally) it is given
   let mut equations : NameMap (List Name) := {}
   let ours := (env.header.moduleNames.zip env.header.moduleData).foldl (init := env.constants.map₂.toList.map (·.1))
@@ -391,31 +407,27 @@ def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
   say s!"hash {roots.foldl (fun h e => mixHash h e.hash) 7}"
   if roots.any (·.hasSorry) then say "error"
   let mut seen : NameSet := {}
-  let mut seenInside : NameSet := {}
-  let mut todo : List (Name × Bool) := roots.foldl (fun a e => a ++ e.getUsedConstants.toList.map (·, true)) []
+  let mut todo : List Name := roots.foldl (fun a e => a ++ e.getUsedConstants.toList) []
   let mut found := false
   while !todo.isEmpty do
-    let (c, outside₀) := todo.head!
+    let c := todo.head!
     todo := todo.tail!
-    let outside := outside₀ && !inside c
-    if outside then
-      if seen.contains c then continue
-      seen := seen.insert c
-    else
-      if seenInside.contains c then continue
-      seenInside := seenInside.insert c
+    if seen.contains c then continue
+    seen := seen.insert c
     if c == ``sorryAx && !found then
       say "sorry"
       found := true
     let some info := env.find? c | continue
     if io.contains c || (Lean.getInitFnNameFor? env c).isSome || info.type.getUsedConstants.any io.contains then
       say "io"
-    if tmTrustCore env c then continue
-    let value := (info.value? (allowOpaque := true)).getD (mkConst ``True)
-    if outside && !(info matches .thmInfo _) then say s!"const {c} {mixHash info.type.hash value.hash}"
-    let compiled := equations.getD c [] ++ (Lean.Compiler.getImplementedBy? env c).toList ++
+    -- what the compiler runs for it (a core constant's `@[csimp]` lemma of this tree included: hunt T2)
+    todo := todo ++ equations.getD c [] ++ (Lean.Compiler.getImplementedBy? env c).toList ++
       (Lean.getInitFnNameFor? env c).toList ++ [c ++ `_unsafe_rec]
-    todo := todo ++ (compiled ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList).map (·, outside)
+    if tmTrustCore env c then continue
+    if info matches .axiomInfo _ then say "axiom"
+    let value := (info.value? (allowOpaque := true)).getD (mkConst ``True)
+    if !(info matches .thmInfo _) && !(← inside c) then say s!"const {c} {mixHash info.type.hash value.hash}"
+    todo := todo ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList
 
 open Lean Elab Tactic Meta in
 elab "tm_trust_probe " k:ident : tactic => do
@@ -858,7 +870,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 current["mutant"] = True
             text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
                 read(f), tree.roles.get(f, ()))
-            probed[f] = probe(scratch.lake, {**env, "TM_TRUST_MUTATED": m.definition}, text, mine,
+            probed[f] = probe(scratch.lake, {**env, "TM_TRUST_MUTATED": m.definition,
+                                             "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
                               beside(scratch.lean, f), outside_file is not None)
         entry, control = probed[f].get(span), hashes.get(key)
         if entry is None or control is None or "error" in entry["flags"]:
@@ -867,6 +880,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             return "its goal has a hypothesis"
         if "sorry" in entry["flags"]:
             return "it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it)"
+        if "axiom" in entry["flags"]:
+            return "it computes through an axiom of this tree, which the mutant can make false"
         if "io" in entry["flags"]:
             return "it runs IO (an `initialize`d value, `unsafeIO`), which can read the mutated source"
         if not control["flags"] >= {x for x in entry["flags"] if x.startswith("hash ")}:
