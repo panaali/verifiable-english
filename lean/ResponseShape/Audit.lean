@@ -181,9 +181,11 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Family.readings_reported
 #print axioms ResponseShape.Encoders.Metered.answer_fits
 #print axioms ResponseShape.Encoders.Metered.binding_fits
+#print axioms ResponseShape.Encoders.Metered.reportedWith_fits
 #print axioms ResponseShape.Encoders.Metered.row_fits
 #print axioms ResponseShape.Encoders.Metered.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Metered.runCase_fits
+#print axioms ResponseShape.Encoders.Metered.runWith_fits
 #print axioms ResponseShape.Encoders.Metered.scanState_statused
 #print axioms ResponseShape.Encoders.Metered.scan_statused
 #print axioms ResponseShape.Encoders.Metered.trace_fits

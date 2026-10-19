@@ -34879,6 +34879,13 @@ theorem VE.Route.MeteredProofs.order_sound
           b = fs.all fun f => VE.Order.Formula.eval M [] f
   -- uses VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.evaluate@VE.Route.Metered VE.Time.evalB@VE.Time.Budget
   -- expr 1155899805
+theorem VE.Route.MeteredRun.reportedWith_prepare
+  ∀ (j environment : Lean.Json),
+    j.getObjVal? "environment" = Except.ok environment →
+      VE.Route.MeteredRun.reportedWith (Except.ok (VE.Route.MeteredRun.prepare environment)) j =
+        VE.Route.MeteredRun.runCaseReported j
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.reportedWith@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun
+  -- expr 2173106182
 theorem VE.Route.Run.route_gate
   ∀ (j r : Lean.Json),
     VE.Route.Run.runCase j = Except.ok r →
@@ -36370,6 +36377,10 @@ theorem VE.Service.Document.decodeRowKind_json
     VE.Service.Document.decodeRowKind rights j = Except.ok k → k.json = j
   -- uses VE.Service.Document.RowKind.json@VE.Service.Document VE.Service.Document.RowKind@VE.Service.Document VE.Service.Document.decodeRowKind@VE.Service.Document
   -- expr 2427365272
+theorem VE.Service.Entry.prepared_eq
+  ∀ (self : VE.Service.Entry), self.prepared.get = VE.Route.MeteredRun.prepare self.environment
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry.prepared@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol
+  -- expr 2627895562
 theorem VE.Service.Family.Checked.accepted
   ∀ {F C : Type} {wf : F → Bool} {valid : C → List F → F → Bool} (self : VE.Service.Family.Checked F C wf valid),
     VE.Service.GenericGraph.check wf (VE.Service.Family.claimValid valid) self.graph = Option.some self.report
@@ -37048,12 +37059,14 @@ theorem VE.Service.Standalone.checkedModelTables_error_preserved
   -- uses VE.Service.Standalone.ModelFault@VE.Service.Standalone VE.Service.Standalone.checkedModelTables@VE.Service.Standalone VE.Service.Standalone.locatedModelTables@VE.Service.Standalone
   -- expr 171467256
 theorem VE.Service.boundResults_eq
-  ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (digests : Array String) (i : Nat)
-    (h : i < cases.size),
-    (VE.Service.bindResults (VE.Service.results r cases) digests)[i]? =
-      Option.some (VE.Service.bound i (digests.getD i "") (VE.Service.caseResult r.mode i cases[i]))
-  -- uses VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.bindResults@VE.Service.Protocol VE.Service.bound@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
-  -- expr 4020929959
+  ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (entries : Array (Option VE.Service.Entry))
+    (digests : Array String) (i : Nat) (h : i < cases.size),
+    (VE.Service.bindResults (VE.Service.results r cases entries) digests)[i]? =
+      Option.some
+        (VE.Service.bound i (digests.getD i "")
+          (VE.Service.caseResultWith r.mode i (entries.getD i Option.none) cases[i]))
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.bindResults@VE.Service.Protocol VE.Service.bound@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
+  -- expr 2011845644
 theorem VE.Service.bound_eq
   ∀ (index : Nat) (digest : String) (result : Lean.Json),
     VE.Service.bound index digest result =
@@ -37062,6 +37075,38 @@ theorem VE.Service.bound_eq
           VE.Service.coding result)
   -- uses VE.Service.bound@VE.Service.Protocol VE.Service.coding@VE.Service.Protocol
   -- expr 203835929
+theorem VE.Service.caseResultWith_entry
+  ∀ (i : Nat) (entry : VE.Service.Entry) (j : Lean.Json),
+    j.getObjVal? "environment" = Except.ok entry.environment →
+      VE.Service.caseResultWith VE.Service.Mode.metered i (Option.some entry) (Except.ok j) =
+        VE.Service.caseResult VE.Service.Mode.metered i (Except.ok j)
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- expr 2995407994
+theorem VE.Service.caseResultWith_none
+  ∀ (m : VE.Service.Mode) (i : Nat) (c : Except String Lean.Json),
+    VE.Service.caseResultWith m i Option.none c = VE.Service.caseResult m i c
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- expr 66040465
+theorem VE.Service.caseResultWith_unmetered
+  ∀ (m : VE.Service.Mode),
+    m ≠ VE.Service.Mode.metered →
+      ∀ (i : Nat) (entry : Option VE.Service.Entry) (c : Except String Lean.Json),
+        VE.Service.caseResultWith m i entry c = VE.Service.caseResult m i c
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- expr 3823144046
+theorem VE.Service.caseResult_cached
+  ∀ (h : VE.Service.Handles) (i : Nat) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String)
+    (entry : VE.Service.Entry),
+    (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
+      (∀ (e : Lean.Json), (Lean.Json.obj kvs).getObjVal? "environment" ≠ Except.ok e) →
+        h.table[d]? = Option.some entry →
+          kvs.WF →
+            VE.Service.caseResultWith VE.Service.Mode.metered i (h.entry? (Lean.Json.obj kvs))
+                (Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment))) =
+              VE.Service.caseResult VE.Service.Mode.metered i
+                (Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment)))
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 4135141905
 theorem VE.Service.caseResult_ok
   ∀ (m : VE.Service.Mode) (i : Nat) (j : Lean.Json), VE.Service.caseResult m i (Except.ok j) = VE.Service.runMode m j
   -- uses VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
@@ -37076,20 +37121,27 @@ theorem VE.Service.coding_of_status
   ∀ (result : Lean.Json), result.getObjValD "status" ≠ Lean.Json.str "error" → VE.Service.coding result = []
   -- uses VE.Service.coding@VE.Service.Protocol
   -- expr 3882396647
+theorem VE.Service.entry_hit
+  ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (entry : VE.Service.Entry),
+    (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
+      (∀ (e : Lean.Json), (Lean.Json.obj kvs).getObjVal? "environment" ≠ Except.ok e) →
+        h.table[d]? = Option.some entry → h.entry? (Lean.Json.obj kvs) = Option.some entry
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 992174531
 theorem VE.Service.expandCases_unexpanded
   ∀ (h : VE.Service.Handles) (m : VE.Service.Mode) (cases : Array (Except String Lean.Json)),
     m = VE.Service.Mode.english ∨ m = VE.Service.Mode.riskEval → VE.Service.expandCases h m cases = Except.ok cases
   -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.english@VE.Service.Protocol VE.Service.Mode.riskEval@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol
   -- expr 3871372086
 theorem VE.Service.expand_hit
-  ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (env : Lean.Json),
+  ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (entry : VE.Service.Entry),
     (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
       (∀ (e : Lean.Json), (Lean.Json.obj kvs).getObjVal? "environment" ≠ Except.ok e) →
-        h.table[d]? = Option.some env →
+        h.table[d]? = Option.some entry →
           h.expand (Lean.Json.obj kvs) =
-            Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" env))
-  -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
-  -- expr 3036323980
+            Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment))
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 1501435221
 theorem VE.Service.expand_miss
   ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String),
     (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
@@ -37099,8 +37151,8 @@ theorem VE.Service.expand_miss
             Except.error
               (ToString.toString "CheckerUnavailable: environment handle " ++ ToString.toString d ++
                 ToString.toString " is not registered")
-  -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
-  -- expr 2688008507
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 3127159811
 theorem VE.Service.expand_plain
   ∀ (h : VE.Service.Handles) (j : Lean.Json),
     (∀ (d : String), j.getObjVal? VE.Service.handleKey ≠ Except.ok (Lean.Json.str d)) → h.expand j = Except.ok j
@@ -37146,10 +37198,12 @@ theorem VE.Service.respond_decoded
   -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.decodeRequest@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.objectMembers@VE.Service.Protocol VE.Service.register@VE.Service.Protocol VE.Service.requestError@VE.Service.Protocol VE.Service.respond.match_1@VE.Service.Protocol VE.Service.respond@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
   -- expr 1165328922
 theorem VE.Service.results_eq
-  ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (i : Nat) (h : i < cases.size),
-    (VE.Service.results r cases)[i]? = Option.some (VE.Service.caseResult r.mode i cases[i])
-  -- uses VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
-  -- expr 1305739100
+  ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (entries : Array (Option VE.Service.Entry))
+    (i : Nat) (h : i < cases.size),
+    (VE.Service.results r cases entries)[i]? =
+      Option.some (VE.Service.caseResultWith r.mode i (entries.getD i Option.none) cases[i])
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
+  -- expr 2848766935
 theorem VE.Service.runMode_alternatives
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.alternatives j = VE.Alternatives.Run.runCaseReported j
   -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
@@ -37320,9 +37374,11 @@ theorem VE.Service.runRequest_ok
               VE.Service.caseDigests r.cases = Except.ok digests →
                 digests.size = cases.size →
                   VE.Service.expandCases h r.mode cases = Except.ok expanded →
-                    VE.Service.runRequest h r = Except.ok (VE.Service.response r expanded digests)
-  -- uses VE.Service.Budget.bytes@VE.Service.Protocol VE.Service.Budget.cases@VE.Service.Protocol VE.Service.Budget@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Request.budget@VE.Service.Protocol VE.Service.Request.cases@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseDigests@VE.Service.Protocol VE.Service.decodeCases@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol VE.Service.response@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
-  -- expr 1959429401
+                    VE.Service.runRequest h r =
+                      Except.ok
+                        (VE.Service.response r expanded digests (Array.map (fun x => x.toOption.bind h.entry?) cases))
+  -- uses VE.Service.Budget.bytes@VE.Service.Protocol VE.Service.Budget.cases@VE.Service.Protocol VE.Service.Budget@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Request.budget@VE.Service.Protocol VE.Service.Request.cases@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseDigests@VE.Service.Protocol VE.Service.decodeCases@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol VE.Service.response@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
+  -- expr 618208589
 theorem VE.SoftNorms.Admission.admitDocument_spec
   ∀ (environment document : Lean.Json) (res : VE.SoftNorms.Admission.Admitted),
     VE.SoftNorms.Admission.admitDocument environment document = Except.ok res →

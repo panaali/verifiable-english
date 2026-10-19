@@ -65,17 +65,27 @@ theorem answer_fits {α ρ σ entity : Type} (q : Query) (s : Session α ρ σ e
     simp only [answer, Wire.ok, Metered.resultFields]
     rcases hs fs with ⟨h, hv⟩ | ⟨h, hv⟩ | ⟨h, hv⟩ <;> rw [h, hv] <;> split <;> fits using trace_fits
 
-theorem runCase_fits (j : Json) : OkFits req Skeletons.metered (runCase j) := by
-  unfold runCase run
+/-- Every row fits whatever environment decoding the case is answered with: its own (`runCase`) or
+the one the service keeps with its handle (`VE.Service.caseResultWith`). -/
+theorem runWith_fits (p : Except String Prepared) (j : Json) :
+    OkFits req Skeletons.metered (runWith p j) := by
+  unfold runWith run
   okfits
   all_goals first
     | exact answer_fits _ _ (fun fs => scan_statused _ _ fs 0) _
     | exact answer_fits _ _ (fun fs => scanState_statused _ _ _ fs _) _
 
-theorem runCaseReported_fits (j : Json) : Fits j Skeletons.metered (runCaseReported j) := by
-  unfold runCaseReported
+theorem runCase_fits (j : Json) : OkFits req Skeletons.metered (runCase j) :=
+  runWith_fits _ j
+
+theorem reportedWith_fits (p : Except String Prepared) (j : Json) :
+    Fits j Skeletons.metered (reportedWith p j) := by
+  unfold reportedWith
   split
-  · exact runCase_fits j _ ‹_›
+  · exact runWith_fits p j _ ‹_›
   · fits
+
+theorem runCaseReported_fits (j : Json) : Fits j Skeletons.metered (runCaseReported j) :=
+  reportedWith_fits _ j
 
 end ResponseShape.Encoders.Metered

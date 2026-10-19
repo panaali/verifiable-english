@@ -32,6 +32,7 @@ import VE.Service.Diagnose
 import VE.Service.Document
 import VE.SearchBudget.Run
 import Std.Data.HashMap
+import Std.Data.TreeMap.Raw.Lemmas
 import VE.Limits
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
@@ -61,7 +62,9 @@ environments (`"environments": {digest: environment}`, each key the SHA-256 of i
 text), and a case may then name one by `environment_handle` in place of its `environment`.
 The case is answered as the same case with that environment (`Handles.expand`); a handle
 the table does not hold makes the request a bound `CheckerUnavailable` request error, which
-the client answers by sending the environment again.
+the client answers by sending the environment again. Each entry also keeps what the
+`metered` mode decodes from its environment alone (`Entry`), so cases against a handle do
+not decode it again (`caseResult_cached`).
 
 Trusted, as for the one-shot runners: the member splitter `objectMembers` and the
 restricted decoder `VE.JsonInput`, which have no refinement theorem. -/
@@ -341,9 +344,6 @@ def decodeRequest (members : Array (String × String)) : Except String Request :
   | _, none, _ => throw "request field mode is missing"
   | _, _, none => throw "request field cases is missing"
 
-/-- The per-case results: exactly `caseResult` in request order. -/
-def results (r : Request) (cases : Array (Except String Json)) : Array Json :=
-  cases.mapIdx (caseResult r.mode)
 
 /-! ## Case digests
 
@@ -471,12 +471,12 @@ private def commas (bytes : ByteArray) (stop : Nat) (i depth : Nat) (quoted esca
   else if quoted || depth != 0 then none else some acc
 termination_by stop - i
 
-/-- `caseDigest` of every case text of a `cases` array, in one pass over its UTF-8 bytes
+/-- The byte ranges of the case texts of a `cases` array, in one pass over its UTF-8 bytes
 with `VE.JsonInput.caseTexts`'s rules: the trimmed array's body is split at the commas
-outside strings and brackets. Delimiters are ASCII, and no byte of a multi-byte UTF-8
-character is ASCII, so the byte split is the character split. -/
-def caseDigests (text : String) : Except String (Array String) := do
-  let bytes := text.toUTF8
+outside strings and brackets, and each range is the untrimmed text `caseTexts` cuts.
+Delimiters are ASCII, and no byte of a multi-byte UTF-8 character is ASCII, so the byte
+split is the character split. `caseDigests` is `caseDigest` of every range. -/
+def caseBounds (bytes : ByteArray) : Except String (Array (Nat × Nat)) := do
   let mut lo := 0
   let mut hi := bytes.size
   while lo < hi && space bytes[lo]! do lo := lo + 1
@@ -486,7 +486,11 @@ def caseDigests (text : String) : Except String (Array String) := do
   if (trimmed bytes (lo + 1) (hi - 1)).isEmpty then return #[]
   let some cuts := commas bytes (hi - 1) (lo + 1) 0 false false [] | throw "unbalanced batch array"
   let bounds := (lo :: cuts.reverse) ++ [hi - 1]
-  return ((bounds.zip bounds.tail).map fun (a, b) => Sha256.digest (trimmed bytes (a + 1) b)).toArray
+  return ((bounds.zip bounds.tail).map fun (a, b) => (a + 1, b)).toArray
+
+def caseDigests (text : String) : Except String (Array String) := do
+  let bytes := text.toUTF8
+  return (← caseBounds bytes).map fun (a, b) => Sha256.digest (trimmed bytes a b)
 
 #guard ["[]", " [ ] ", "[1]", " [ {\"a\":\"x,]\\\"\"} ,\t[1,2]\r, \"é,ü\" ,3] "].all fun t =>
   match caseDigests t, VE.JsonInput.caseTexts t with
@@ -501,16 +505,6 @@ def bound (index : Nat) (digest : String) (result : Json) : Json :=
 /-- Results, each bound to its position and its case digest in `digests`. -/
 def bindResults (rs : Array Json) (digests : Array String) : Array Json :=
   rs.mapIdx fun i x => bound i (digests.getD i "") x
-
-/-- The response to a request whose cases decode to `cases` and whose case digests are
-`digests` (one per case). The results are computed once, for both `results` and
-`counts`. -/
-def response (r : Request) (cases : Array (Except String Json)) (digests : Array String) : Json :=
-  let rs := results r cases
-  Json.mkObj [("id", .str r.id), ("status", .str "ok"), ("mode", .str r.mode.name),
-    ("results", .arr (bindResults rs digests)),
-    ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
-      ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])]
 
 /-- Check the complete English batch with Lean.Json.parse, like the one-shot
 runner, then preserve each case's source text for its second parse. -/
@@ -527,10 +521,46 @@ def parseLeanCases (text : String) : Except String (Array (Except String Json)) 
   let cases ← (← Json.parse text).getArr?
   pure (cases.map .ok)
 
+/-- `VE.JsonInput.parseCases` of an array whose texts `caseBounds` cuts, read from those cuts
+instead of the frozen `caseTexts`, which builds each text from a list of characters (the
+same texts; the `#guard`s below). Any other batch is `parseCases`' own, its error included. -/
+def restrictedCases (text : String) (allowNull : Bool) : Except String (Array (Except String Json)) :=
+  match caseBounds text.toUTF8 with
+  | .ok bounds =>
+    if text.utf8ByteSize > 16777216 then VE.JsonInput.parseCases text allowNull
+    else bounds.mapM fun (a, b) =>
+      match VE.JsonInput.parse (text.extract ⟨a⟩ ⟨b⟩) 255 allowNull with
+      | .ok j => pure (.ok j)
+      | .error message =>
+        if (message.splitOn "ResourceLimit: JSON depth").length > 1 then
+          pure (.error "ResourceLimit: JSON depth exceeds 256")
+        else throw message
+  | .error _ => VE.JsonInput.parseCases text allowNull
+
+/-- The same answer as `VE.JsonInput.parseCases`, error text included, on every array of at most
+four characters over the delimiters, an escape, a key, a number and a multi-byte character
+(16,105 batches), and on nested, deep and whitespace-padded batches. -/
+private def renderCases : Except String (Array (Except String Json)) → String
+  | .ok cases => "ok " ++ toString (cases.toList.map fun c : Except String Json => match c with
+      | .ok j => "ok " ++ j.compress
+      | .error m => "error " ++ m)
+  | .error m => "error " ++ m
+
+private def sameCases (text : String) (allowNull : Bool := false) : Bool :=
+  renderCases (restrictedCases text allowNull) == renderCases (VE.JsonInput.parseCases text allowNull)
+
+#guard (List.range 5).all fun length => (List.range (11 ^ length)).all fun n =>
+  let alphabet := ['[', ']', '{', '}', '"', '\\', ',', ' ', '1', ':', 'é']
+  sameCases ("[" ++ String.mk ((List.range length).map fun i => alphabet.getD ((n / 11 ^ i) % 11) ' ') ++ "]")
+#guard ["[]", " [ ] ", "[1]", "[1,,2]", "[ 1 , 2 ]", "[\t1\n]", "[\"a,]\\\"\",{\"k\":[1,{\"j\":\"x\"}]}]",
+  "[{\"a\":1,\"a\":2}]", "[1.5]", "[null]", "[\"\\ud800\"]", "[[[1]],[2],3]", "[1,2", "[1]]", "[{]", " [ \"é,ü\" ,3] ",
+  "[" ++ String.mk (List.replicate 300 '[') ++ String.mk (List.replicate 300 ']') ++ ",1]"].all sameCases
+#guard sameCases "[null,{\"a\":null}]" true
+
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases
   else if r.mode == .riskEval || r.mode == .document then parseLeanCases r.cases
-  else VE.JsonInput.parseCases r.cases (r.mode == .model)
+  else restrictedCases r.cases (r.mode == .model)
 
 /-! ## Environment handles (docs/LEAN-FIRST-PLAN.md, F2, batch 2)
 
@@ -551,8 +581,20 @@ def maxHandleBytes : Nat := 67108864
 /-- The case member naming a registered environment. -/
 def handleKey : String := "environment_handle"
 
+/-- A registered environment, and what the `metered` mode decodes from it alone
+(`MeteredRun.prepare`), decoded on the first case against it. It is kept in the entry, so it
+is replaced or dropped exactly with its handle, and it is always this environment's
+(`prepared_eq`): the table holds at most `maxHandles` of them, one per held environment. -/
+structure Entry where
+  environment : Json
+  prepared : Thunk VE.Route.MeteredRun.Prepared
+  prepared_eq : prepared.get = VE.Route.MeteredRun.prepare environment
+
+def Entry.of (environment : Json) : Entry :=
+  ⟨environment, Thunk.mk fun _ => VE.Route.MeteredRun.prepare environment, rfl⟩
+
 structure Handles where
-  table : Std.HashMap String Json := {}
+  table : Std.HashMap String Entry := {}
   bytes : Nat := 0
 
 /-- Register `env`, whose text has `size` bytes, under `digest`: unchanged when the digest is
@@ -562,7 +604,7 @@ def Handles.insert (h : Handles) (digest : String) (env : Json) (size : Nat) : H
   else
     let base : Handles :=
       if h.table.size + 1 > maxHandles || h.bytes + size > maxHandleBytes then {} else h
-    { table := base.table.insert digest env, bytes := base.bytes + size }
+    { table := base.table.insert digest (Entry.of env), bytes := base.bytes + size }
 
 /-- The table after registering one member of `environments`: its key must be the SHA-256 of
 its value's text, and the value is parsed by the restricted decoder one level shallower than a
@@ -592,10 +634,41 @@ def Handles.expand (h : Handles) (j : Json) : Except String Json :=
     match j.getObjVal? handleKey, j.getObjVal? "environment" with
     | .ok (.str d), .error _ =>
       match h.table[d]? with
-      | some env => pure (.obj ((kvs.erase handleKey).insert "environment" env))
+      | some e => pure (.obj ((kvs.erase handleKey).insert "environment" e.environment))
       | none => throw s!"CheckerUnavailable: environment handle {d} is not registered"
     | _, _ => pure j
   | _ => pure j
+
+/-- The entry a case names: its handle's, when it names a held handle and no environment. -/
+def Handles.entry? (h : Handles) (j : Json) : Option Entry :=
+  match j.getObjVal? handleKey, j.getObjVal? "environment" with
+  | .ok (.str d), .error _ => h.table[d]?
+  | _, _ => none
+
+/-- `caseResult`, except that a `metered` case against a held handle is answered with the
+entry's decoded environment, which answers it as `caseResult` does (`caseResult_cached`). -/
+def caseResultWith (m : Mode) (index : Nat) (entry : Option Entry) : Except String Json → Json
+  | .ok j => match m, entry with
+    | .metered, some e => VE.Route.MeteredRun.reportedWith (.ok e.prepared.get) j
+    | _, _ => runMode m j
+  | .error message => caseError m index message
+
+/-- The per-case results in request order: `caseResultWith` of each case and the entry of the
+case as sent (`entries`). -/
+def results (r : Request) (cases : Array (Except String Json)) (entries : Array (Option Entry)) :
+    Array Json :=
+  cases.mapIdx fun i c => caseResultWith r.mode i (entries.getD i none) c
+
+/-- The response to a request whose cases decode to `cases` and whose case digests are
+`digests` (one per case). The results are computed once, for both `results` and
+`counts`. -/
+def response (r : Request) (cases : Array (Except String Json)) (digests : Array String)
+    (entries : Array (Option Entry) := #[]) : Json :=
+  let rs := results r cases entries
+  Json.mkObj [("id", .str r.id), ("status", .str "ok"), ("mode", .str r.mode.name),
+    ("results", .arr (bindResults rs digests)),
+    ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
+      ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])]
 
 /-- Every decoded case expanded (`Handles.expand`), except in the English and `risk-eval`
 modes. -/
@@ -623,7 +696,7 @@ def runRequest (h : Handles) (r : Request) : Except String Json := do
     throw s!"ResourceLimit: batch has {cases.size} cases; budget is {budget.cases}"
   let digests ← caseDigests r.cases
   unless digests.size == cases.size do throw "batch split mismatch"
-  pure (response r (← expandCases h r.mode cases) digests)
+  pure (response r (← expandCases h r.mode cases) digests (cases.map (·.toOption.bind h.entry?)))
 
 /-- The error for a line whose envelope cannot be decoded: it answers no request, so
 it carries the id when one can be read and no binding. -/
@@ -755,8 +828,8 @@ theorem runMode_metered (j : Json) :
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
 
 /-- A request within its budget whose cases decode, one digest per case, is answered with
-`response`: `results`, the existing runner applied to every case in order, each bound
-to its case digest. -/
+`response`: `results`, the existing runner applied to every case in order (with the entry of a
+case against a held handle, `caseResult_cached`), each bound to its case digest. -/
 theorem runRequest_ok (h : Handles) (r : Request) (budget : Budget) (cases expanded : Array (Except String Json))
     (digests : Array String) (hq : r.budget = .ok budget)
     (hb : r.cases.utf8ByteSize ≤ budget.bytes) (ha : r.cases.trim.startsWith "[" = true)
@@ -764,7 +837,7 @@ theorem runRequest_ok (h : Handles) (r : Request) (budget : Budget) (cases expan
     (hc : cases.size ≤ budget.cases)
     (ht : caseDigests r.cases = .ok digests) (hn : digests.size = cases.size)
     (hx : expandCases h r.mode cases = .ok expanded) :
-    runRequest h r = .ok (response r expanded digests) := by
+    runRequest h r = .ok (response r expanded digests (cases.map (·.toOption.bind h.entry?))) := by
   simp [runRequest, hq, Nat.not_lt.mpr hb, ha, hp, Nat.not_lt.mpr hc, ht, hn, hx, bind, Except.bind, pure,
     Except.pure]
 
@@ -781,15 +854,56 @@ theorem expand_plain (h : Handles) (j : Json) (hj : ∀ d, j.getObjVal? handleKe
 
 /-- A case that names a registered handle and no environment is answered as the case with
 that environment in place of the handle. -/
-theorem expand_hit (h : Handles) (kvs : Std.TreeMap.Raw String Json compare) (d : String) (env : Json)
+theorem expand_hit (h : Handles) (kvs : Std.TreeMap.Raw String Json compare) (d : String) (entry : Entry)
     (hd : (Json.obj kvs).getObjVal? handleKey = .ok (.str d))
     (he : ∀ e, (Json.obj kvs).getObjVal? "environment" ≠ .ok e)
-    (ht : h.table[d]? = some env) :
-    h.expand (.obj kvs) = .ok (.obj ((kvs.erase handleKey).insert "environment" env)) := by
+    (ht : h.table[d]? = some entry) :
+    h.expand (.obj kvs) = .ok (.obj ((kvs.erase handleKey).insert "environment" entry.environment)) := by
   unfold Handles.expand
   cases hv : (Json.obj kvs).getObjVal? "environment" with
   | ok e => exact absurd hv (he e)
   | error _ => simp [hd, ht, pure, Except.pure]
+
+/-- Such a case's entry is its handle's. -/
+theorem entry_hit (h : Handles) (kvs : Std.TreeMap.Raw String Json compare) (d : String) (entry : Entry)
+    (hd : (Json.obj kvs).getObjVal? handleKey = .ok (.str d))
+    (he : ∀ e, (Json.obj kvs).getObjVal? "environment" ≠ .ok e)
+    (ht : h.table[d]? = some entry) : h.entry? (.obj kvs) = some entry := by
+  unfold Handles.entry?
+  cases hv : (Json.obj kvs).getObjVal? "environment" with
+  | ok e => exact absurd hv (he e)
+  | error _ => simp [hd, ht]
+
+/-- Without an entry, or outside the `metered` mode, a result is `caseResult`'s. -/
+theorem caseResultWith_none (m : Mode) (i : Nat) (c : Except String Json) :
+    caseResultWith m i none c = caseResult m i c := by
+  cases c <;> cases m <;> rfl
+
+theorem caseResultWith_unmetered (m : Mode) (hm : m ≠ .metered) (i : Nat) (entry : Option Entry)
+    (c : Except String Json) : caseResultWith m i entry c = caseResult m i c := by
+  cases c <;> cases m <;> cases entry <;> first | rfl | exact absurd rfl hm
+
+/-- A `metered` case answered with an entry of its own environment is answered as `caseResult`
+answers it. -/
+theorem caseResultWith_entry (i : Nat) (entry : Entry) (j : Json)
+    (hj : j.getObjVal? "environment" = .ok entry.environment) :
+    caseResultWith .metered i (some entry) (.ok j) = caseResult .metered i (.ok j) := by
+  simp only [caseResultWith, caseResult, runMode, entry.prepared_eq]
+  exact VE.Route.MeteredRun.reportedWith_prepare j _ hj
+
+/-- The kept decoding never changes an answer: a `metered` case that names a held handle and no
+environment, an object with well-formed members (as every decoded object is), is answered with its
+entry exactly as its expansion (`expand_hit`), the case with the entry's environment in its place. -/
+theorem caseResult_cached (h : Handles) (i : Nat) (kvs : Std.TreeMap.Raw String Json compare) (d : String)
+    (entry : Entry) (hd : (Json.obj kvs).getObjVal? handleKey = .ok (.str d))
+    (he : ∀ e, (Json.obj kvs).getObjVal? "environment" ≠ .ok e)
+    (ht : h.table[d]? = some entry) (hw : kvs.WF) :
+    caseResultWith .metered i (h.entry? (.obj kvs))
+        (.ok (.obj ((kvs.erase handleKey).insert "environment" entry.environment))) =
+      caseResult .metered i (.ok (.obj ((kvs.erase handleKey).insert "environment" entry.environment))) := by
+  rw [entry_hit h kvs d entry hd he ht]
+  apply caseResultWith_entry
+  simp [Json.getObjVal?, Std.TreeMap.Raw.getElem?_insert_self hw.erase, pure, Except.pure]
 
 /-- A case that names a handle the table does not hold makes the request unavailable. -/
 theorem expand_miss (h : Handles) (kvs : Std.TreeMap.Raw String Json compare) (d : String)
@@ -840,16 +954,17 @@ theorem respond_decoded (h : Handles) (line : String) (members : Array (String �
   simp only [respond, hm, hr]
   split <;> (try split) <;> rfl
 
-theorem results_eq (r : Request) (cases : Array (Except String Json)) (i : Nat) (h : i < cases.size) :
-    (results r cases)[i]? = some (caseResult r.mode i cases[i]) := by
+theorem results_eq (r : Request) (cases : Array (Except String Json)) (entries : Array (Option Entry))
+    (i : Nat) (h : i < cases.size) :
+    (results r cases entries)[i]? = some (caseResultWith r.mode i (entries.getD i none) cases[i]) := by
   simp [results, h]
 
 /-- Result `i` of a response is case `i`'s runner result, bound to its position and to
 its case digest. -/
-theorem boundResults_eq (r : Request) (cases : Array (Except String Json)) (digests : Array String)
-    (i : Nat) (h : i < cases.size) :
-    (bindResults (results r cases) digests)[i]? =
-      some (bound i (digests.getD i "") (caseResult r.mode i cases[i])) := by
+theorem boundResults_eq (r : Request) (cases : Array (Except String Json)) (entries : Array (Option Entry))
+    (digests : Array String) (i : Nat) (h : i < cases.size) :
+    (bindResults (results r cases entries) digests)[i]? =
+      some (bound i (digests.getD i "") (caseResultWith r.mode i (entries.getD i none) cases[i])) := by
   simp [bindResults, results, h]
 
 /-- A bound entry is the runner's result unchanged, beside its position, its digest and its
