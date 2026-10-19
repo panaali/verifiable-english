@@ -1,0 +1,35 @@
+{
+ "item": "ps-6r",
+ "how": "uv run python tools/mutants.py docs/presupposition/ps-6r/mutants.json --evidence docs/presupposition/ps-6r/evidence/mutants-run.json runs the Python mutants: each is applied alone, its tests run, the file is restored. The Lean mutant (manual) needs a lake build and a temporary checker pin, so a hash refusal cannot pass for a kill; its steps are in `steps`.",
+ "mutants": [
+  {"id": "PY1-drop-nature", "file": "ve/english_vocabulary.py",
+   "claim": "B1/B2: the nature row is admitted, its existence sentence parses exactly, its uniqueness round-trips; Python and Lean tables agree",
+   "find": "        '{0} is a nature of {1}',\n", "replace": "",
+   "tests": ["tests/test_presupposition_wordings.py::test_each_pilot_wording_is_admitted[nature_of]",
+             "tests/test_presupposition_wordings.py::test_existence_sentence_parses_exactly_and_round_trips[nature_of]",
+             "tests/test_presupposition_wordings.py::test_enumerated_uniqueness_parses_to_exactly_u_of_d[nature_of]",
+             "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"]},
+  {"id": "PY2-core-value-typo", "file": "ve/english_vocabulary.py",
+   "claim": "B1: the plan's sentence 'Some thing is a core value of Claude.' parses to exactly the existence of a core value",
+   "find": "        '{0} is a core value of {1}',\n", "replace": "        '{0} is a core values of {1}',\n",
+   "tests": ["tests/test_presupposition_wordings.py::test_each_pilot_wording_is_admitted[core_value_of]",
+             "tests/test_presupposition_wordings.py::test_the_plan_sentence_with_capitalised_display_parses_exactly",
+             "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"]},
+  {"id": "PY3-rejected-heads-reserved", "file": "ve/printer.py",
+   "claim": "B3 (the plan's seeded bug): the collision check counts the head 'is' of the four rejected-by-the-printer binaries as another symbol's, so '{0} is human' falls back to '{0} is classified as \"human\"' (phase 1's symptom, fixed by 7080d6d04)",
+   "find": "            eligible = set(preliminary._accepted)\n", "replace": "            eligible = set(env.predicates)\n",
+   "tests": ["tests/test_presupposition_wordings.py::test_the_four_wordings_leave_human_unchanged"]}
+ ],
+ "manual": [
+  {"id": "LEAN1-mission-row", "file": "lean/VE/EnglishGrammar/Lexicon.lean",
+   "claim": "B1/B4: Lean's lexicon check (V6) accepts exactly the Python rows; a Lean row that differs refuses the vocabulary selection",
+   "find": "   \"{0} is a mission of {1}\",\n", "replace": "   \"{0} is a mission for {1}\",\n",
+   "steps": ["apply", "cd lean && lake build", "uv run python tools/regen_generated.py --write --only checker-pins (the mutant build is pinned, so the service answers)",
+             "uv run pytest tests/test_presupposition_wordings.py tests/test_english_lean_tables.py", "restore Lexicon.lean and lean/checkers.lock; lake build"],
+   "result": "9 failed, 7 passed: every test that declares mission_of fails with 'The vocabulary selection was not accepted (invalidGrammar lexicon: V6 predicate mission_of)', and test_idiom_tables_equal_python fails; the #guard on the table lengths passes (same length), so the kill is the behaviour, not a build step",
+   "tests": ["tests/test_presupposition_wordings.py::test_existence_sentence_parses_exactly_and_round_trips[mission_of]",
+             "tests/test_presupposition_wordings.py::test_enumerated_uniqueness_parses_to_exactly_u_of_d[mission_of]",
+             "tests/test_presupposition_wordings.py::test_the_four_wordings_leave_human_unchanged",
+             "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"]}
+ ]
+}

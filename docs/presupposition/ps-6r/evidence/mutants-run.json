@@ -1,0 +1,65 @@
+{
+ "mutants": [
+  {
+   "id": "PY1-drop-nature",
+   "file": "ve/english_vocabulary.py",
+   "claim": "B1/B2: the nature row is admitted, its existence sentence parses exactly, its uniqueness round-trips; Python and Lean tables agree",
+   "source_sha256": "800eb4fa13dc21ea16550ae757f046bda7d9cf44262555a95b408fda77e398e8",
+   "tests": [
+    "tests/test_presupposition_wordings.py::test_each_pilot_wording_is_admitted[nature_of]",
+    "tests/test_presupposition_wordings.py::test_existence_sentence_parses_exactly_and_round_trips[nature_of]",
+    "tests/test_presupposition_wordings.py::test_enumerated_uniqueness_parses_to_exactly_u_of_d[nature_of]",
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python",
+    "tests/test_presupposition_wordings.py::test_each_pilot_wording_is_admitted[nature_of]",
+    "tests/test_presupposition_wordings.py::test_enumerated_uniqueness_parses_to_exactly_u_of_d[nature_of]",
+    "tests/test_presupposition_wordings.py::test_existence_sentence_parses_exactly_and_round_trips[nature_of]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.9,
+   "output_tail": "                              ^^^^      ^\nE         +   (b) for every second thing that has the recorded relation \"nature_of\" to claude, the second thing is the same as the first thing.\nE         ?                                   ++++++++++++++++++++++ ^^^^      ^  ++++\n\ntests/test_presupposition_wordings.py:88: AssertionError\n________________________ test_idiom_tables_equal_python ________________________\n\n    def test_idiom_tables_equal_python():\n        assert set(_strings(_definition(LEXICON, 'idioms1'))) == IDIOMS[1]\n>       assert set(_strings(_definition(LEXICON, 'idioms2'))) == IDIOMS[2]\nE       AssertionError: assert {'{0} abridge...ver {1}', ...} == {'{0} abridge...ver {1}', ...}\nE         \nE         Extra items in the left set:\nE         '{0} is a nature of {1}'\nE         Use -v to get more diff\n\ntests/test_english_lean_tables.py:35: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_presupposition_wordings.py::test_each_pilot_wording_is_admitted[nature_of]\nFAILED tests/test_presupposition_wordings.py::test_existence_sentence_parses_exactly_and_round_trips[nature_of]\nFAILED tests/test_presupposition_wordings.py::test_enumerated_uniqueness_parses_to_exactly_u_of_d[nature_of]\nFAILED tests/test_english_lean_tables.py::test_idiom_tables_equal_python - As...\n4 failed in 0.53s\n\nve: English comparator: {\"records\": 1, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 1}} (/tmp/ve-english-comparator-llut7uke)\n"
+  },
+  {
+   "id": "PY2-core-value-typo",
+   "file": "ve/english_vocabulary.py",
+   "claim": "B1: the plan's sentence 'Some thing is a core value of Claude.' parses to exactly the existence of a core value",
+   "source_sha256": "800eb4fa13dc21ea16550ae757f046bda7d9cf44262555a95b408fda77e398e8",
+   "tests": [
+    "tests/test_presupposition_wordings.py::test_each_pilot_wording_is_admitted[core_value_of]",
+    "tests/test_presupposition_wordings.py::test_the_plan_sentence_with_capitalised_display_parses_exactly",
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_english_lean_tables.py::test_idiom_tables_equal_python",
+    "tests/test_presupposition_wordings.py::test_each_pilot_wording_is_admitted[core_value_of]",
+    "tests/test_presupposition_wordings.py::test_the_plan_sentence_with_capitalised_display_parses_exactly"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.3,
+   "output_tail": "   if reading.status != 'one':\n>           raise reading.rejection()\nE           ve.errors.SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a core value of Claude'. Nearest declared wordings: 'has the recorded relation \"core_value_of\" to {1}'; 'Claude'; 'is a nature of {1}'.\n\nve/english.py:1754: SyntaxError\n________________________ test_idiom_tables_equal_python ________________________\n\n    def test_idiom_tables_equal_python():\n        assert set(_strings(_definition(LEXICON, 'idioms1'))) == IDIOMS[1]\n>       assert set(_strings(_definition(LEXICON, 'idioms2'))) == IDIOMS[2]\nE       AssertionError: assert {'{0} abridge...ver {1}', ...} == {'{0} abridge...ver {1}', ...}\nE         \nE         Extra items in the left set:\nE         '{0} is a core value of {1}'\nE         Extra items in the right set:\nE         '{0} is a core values of {1}'\nE         Use -v to get more diff\n\ntests/test_english_lean_tables.py:35: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_presupposition_wordings.py::test_each_pilot_wording_is_admitted[core_value_of]\nFAILED tests/test_presupposition_wordings.py::test_the_plan_sentence_with_capitalised_display_parses_exactly\nFAILED tests/test_english_lean_tables.py::test_idiom_tables_equal_python - As...\n3 failed in 0.34s\n\nve: English comparator: {\"records\": 1, \"excluded\": 0, \"planted\": 0, \"classes\": {\"agree\": 1}} (/tmp/ve-english-comparator-73rzf7nz)\n"
+  },
+  {
+   "id": "PY3-rejected-heads-reserved",
+   "file": "ve/printer.py",
+   "claim": "B3 (the plan's seeded bug): the collision check counts the head 'is' of the four rejected-by-the-printer binaries as another symbol's, so '{0} is human' falls back to '{0} is classified as \"human\"' (phase 1's symptom, fixed by 7080d6d04)",
+   "source_sha256": "7b956df080552d75d372e42e274ad6c43753e7e509c95afd28b5840522d32503",
+   "tests": [
+    "tests/test_presupposition_wordings.py::test_the_four_wordings_leave_human_unchanged"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_presupposition_wordings.py::test_the_four_wordings_leave_human_unchanged"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.0,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________________ test_the_four_wordings_leave_human_unchanged _________________\n\nenv = Environment(language='ve.core@0', profile='relational-fol@0', profiles=('relational-fol@0',), spec_revision='ve-v0-dra...}), speech_acts=None, unit_schema=None, units=None, reports=None, soft=None, rights=None, alternatives=None, risk=None)\n\n    def test_the_four_wordings_leave_human_unchanged(env):\n        alone, beside = EnglishVocabulary(environment(nouns=False)), EnglishVocabulary(env)\n>       assert beside.predicates['human'] == alone.predicates['human'] == '{0} is human'\nE       assert '{0} is classified as \"human\"' == '{0} is human'\nE         \nE         - {0} is human\nE         + {0} is classified as \"human\"\n\ntests/test_presupposition_wordings.py:97: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_presupposition_wordings.py::test_the_four_wordings_leave_human_unchanged\n1 failed in 0.15s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cqv7qqjv)\n"
+  }
+ ]
+}
