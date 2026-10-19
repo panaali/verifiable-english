@@ -15,102 +15,20 @@ open VE.English (Tok)
 open VE.Route.Admission (ReadingSet DocUnit)
 universe u
 
-def req (b : Bool) (e : String) : Except String Unit := if b then .ok () else .error e
+/-! The generic checks (`req`, `runAll`, `allOk`, `spanIn`, `spansDisjoint`, `dupOf` and their lemmas) are in
+`VE/Layout/Anchors.lean`, beside the anchor checks that call them. -/
 
-/-- Run the stages in order; the first failure is the diagnostic. -/
-def runAll : List (Unit → Except String Unit) → Except String Unit
-  | [] => .ok ()
-  | f :: fs => match f () with
-    | .ok _ => runAll fs
-    | .error e => .error e
-
-theorem runAll_ok : ∀ (fs : List (Unit → Except String Unit)), runAll fs = .ok () → ∀ f ∈ fs, f () = .ok ()
-  | [], _, _, hf => nomatch hf
-  | g :: gs, h, f, hf => by
-    unfold runAll at h
-    split at h
-    · rename_i hg
-      rcases List.mem_cons.mp hf with rfl | hf
-      · exact hg
-      · exact runAll_ok gs h f hf
-    · cases h
-
-def allOk {α : Type} (xs : List α) (f : α → Except String Unit) : Except String Unit :=
-  runAll (xs.map fun x _ => f x)
-
-theorem allOk_ok {α : Type} (xs : List α) (f : α → Except String Unit) (h : allOk xs f = .ok ()) :
-    ∀ x ∈ xs, f x = .ok () := by
-  intro x hx
-  exact runAll_ok _ h _ (List.mem_map.mpr ⟨x, hx, rfl⟩)
-
-theorem runAll_nil : runAll [] = .ok () := rfl
-
-theorem runAll_cons (f : Unit → Except String Unit) (fs : List (Unit → Except String Unit)) :
-    runAll (f :: fs) = .ok () ↔ f () = .ok () ∧ runAll fs = .ok () := by
-  show (match f () with | .ok _ => runAll fs | .error e => .error e) = .ok () ↔ _
-  cases h : f () with
-  | ok v => simp
-  | error e => simp
-
-theorem req_ok (b : Bool) (e : String) : req b e = .ok () ↔ b = true := by
-  unfold req; cases b <;> simp
-
-theorem allOk_iff {α : Type} (xs : List α) (f : α → Except String Unit) :
-    allOk xs f = .ok () ↔ ∀ x ∈ xs, f x = .ok () := by
-  unfold allOk
-  induction xs with
-  | nil => simp [runAll]
-  | cons x xs ih => simp [runAll_cons, ih]
-
-def spanIn (inner outer : Nat × Nat) : Bool := outer.1 ≤ inner.1 && inner.2 ≤ outer.2
-def spansDisjoint (a b : Nat × Nat) : Bool := a.2 ≤ b.1 || b.2 ≤ a.1
 def spansNested (a b : Nat × Nat) : Bool := a != b && (spanIn a b || spanIn b a)
-
-def dupOf : List String → Option String
-  | [] => none
-  | x :: xs => if xs.contains x then some x else dupOf xs
-
-theorem dupOf_none : ∀ xs : List String, dupOf xs = none → xs.Nodup
-  | [], _ => List.nodup_nil
-  | x :: xs, h => by
-    unfold dupOf at h
-    split at h
-    · cases h
-    · rename_i hc
-      exact List.nodup_cons.mpr ⟨by simpa using hc, dupOf_none xs h⟩
 
 def firstDup (xs : List String) : Option String :=
   (xs.zipIdx.find? fun (x, i) => (xs.take i).contains x).map Prod.fst
 
-/-- The anchor reaches the root through parents within the fuel. -/
-def reachesRoot (D : DDoc) : Nat → Anchor → Bool
-  | 0, _ => false
-  | n + 1, a => match a.parent with
-    | none => true
-    | some p => match anchorOf D p with
-      | some b => spanIn a.span b.span && reachesRoot D n b
-      | none => false
-
-def definitionIn (D : DDoc) (a : Anchor) : Bool :=
-  D.base.units.any fun x => decide (x.kind = .definition) && spanIn (x.start, x.stop) a.span
-
-/-- 4.1(2): one tree, nested and non-overlapping spans, unique labels per parent, exports. -/
-def anchorsOk (D : DDoc) : Except String Unit := runAll [
-  fun _ => req (D.K.anchors.length ≤ 1024) "ResourceLimit: anchors",
-  fun _ => match dupOf (D.K.anchors.map Anchor.id) with
-    | some a => .error ("DuplicateDeclaration: anchor " ++ a)
-    | none => .ok (),
-  fun _ => req ((D.K.anchors.filter (·.parent.isNone)).length == 1 || D.K.anchors.isEmpty)
-    "InvalidInput: anchors must form one tree",
-  fun _ => allOk D.K.anchors fun a => req (reachesRoot D (D.K.anchors.length + 1) a)
-    ("DanglingAnchor: " ++ ((a.parent).getD a.id)),
-  fun _ => allOk D.K.anchors fun a => allOk D.K.anchors fun b =>
-    if a.id != b.id && a.parent == b.parent && a.parent.isSome then
-      if a.label.toLower == b.label.toLower then .error ("DuplicateAnchor: " ++ a.label)
-      else req (spansDisjoint a.span b.span) ("InvalidInput: anchors " ++ a.id ++ ", " ++ b.id ++ " overlap")
-    else .ok (),
-  fun _ => allOk D.K.anchors fun a => req (a.exports.all fun p => unaryPred D.E p && definitionIn D a)
-    ("ManifestMismatch: anchors." ++ a.id ++ ".exports")]
+/-- 4.1(2): one tree, nested and non-overlapping spans, unique labels per parent, exports. The body is
+`VE.Layout.anchorsOk`, which scope's admission calls too, over the spans of the definition units. -/
+def anchorsOk (D : DDoc) : Except String Unit :=
+  VE.Layout.anchorsOk D.K.anchors
+    ((D.base.units.filter (fun x => decide (x.kind = .definition))).map (fun x => (x.start, x.stop)))
+    (unaryPred D.E)
 
 def scopesOverlap (D : DDoc) (a b : String) : Bool :=
   match anchorOf D a, anchorOf D b with

@@ -1,0 +1,23 @@
+base 702ff7429: 5978 theorems; HEAD: 5993
+statements changed: 0 []
+theorems removed: 0 []
+theorems added: 15
+  + VE.Layout.anchorReach_iff
+  + VE.Layout.discourse_anchorsOk_unchanged
+  + VE.Layout.discourse_innermost_unchanged
+  + VE.Layout.discourse_within_unchanged
+  + VE.Layout.innermost_within
+  + VE.Layout.itemRun_iff
+  + VE.Layout.itemRun_ok
+  + VE.Layout.mem_anchorUnits
+  + VE.Layout.mem_itemFrom
+  + VE.Layout.narrower_mem
+  + VE.Scope.Examples.anchor_checks
+  + VE.Scope.Examples.box_anchors
+  + VE.Scope.Examples.reaches_root
+  + VE.Scope.Examples.short_items
+  + VE.Scope.Examples.span_tests
+VE.Discourse.acc_no_heuristic: unchanged
+VE.Discourse.name_scope: unchanged
+VE.Discourse.innermost_within: unchanged
+VE.Discourse.narrower_mem: unchanged
