@@ -8703,6 +8703,111 @@
         "VE.Route.WireSound.orderRunner"
       ]
     },
+    "VE/Scales/Syntax.lean": {
+      "S": [
+        "VE.Scales.Direction",
+        "VE.Scales.Grade",
+        "VE.Scales.Dimension",
+        "VE.Scales.ScaleDoc",
+        "VE.Scales.Dimension.symbols",
+        "VE.Scales.ScaleDoc.symbols"
+      ],
+      "C": [
+        "VE.Scales.rel2",
+        "VE.Scales.rel1"
+      ]
+    },
+    "VE/Scales/Premises.lean": {
+      "S": [
+        "VE.Scales.gradeOrder",
+        "VE.Scales.gradeCaps",
+        "VE.Scales.aboveNodes",
+        "VE.Scales.WellFormed"
+      ],
+      "C": [
+        {
+          "name": "VE.Scales.premises",
+          "tied": [
+            "VE.Scales.dim_iff"
+          ]
+        },
+        {
+          "name": "VE.Scales.scalePremises",
+          "tied": [
+            "VE.Scales.premises_iff_intended"
+          ]
+        }
+      ]
+    },
+    "VE/Scales/Intended.lean": {
+      "S": [
+        "VE.Scales.Intended"
+      ]
+    },
+    "VE/Scales/Examples.lean": {
+      "T": [
+        "VE.Scales.Examples.subsets",
+        "VE.Scales.Examples.model",
+        "VE.Scales.Examples.unaries",
+        "VE.Scales.Examples.binaries",
+        "VE.Scales.Examples.holds",
+        "VE.Scales.Examples.prem",
+        "VE.Scales.Examples.count",
+        "VE.Scales.Examples.c",
+        "VE.Scales.Examples.u",
+        "VE.Scales.Examples.b",
+        "VE.Scales.Examples.resp",
+        "VE.Scales.Examples.ots",
+        "VE.Scales.Examples.serious",
+        "VE.Scales.Examples.uplift",
+        "VE.Scales.Examples.harm",
+        "VE.Scales.Examples.twoResp",
+        "VE.Scales.Examples.fb1Facts",
+        "VE.Scales.Examples.fb1Lower",
+        "VE.Scales.Examples.bodyAt",
+        "VE.Scales.Examples.disp",
+        "VE.Scales.Examples.autonomy",
+        "VE.Scales.Examples.between",
+        "VE.Scales.Examples.endpoint",
+        "VE.Scales.Examples.aboveTop",
+        "VE.Scales.Examples.dispModels",
+        "VE.Scales.Examples.ends",
+        "VE.Scales.Examples.principals",
+        "VE.Scales.Examples.trust",
+        "VE.Scales.Examples.notAllSame",
+        "VE.Scales.Examples.pairwiseDifferent",
+        "VE.Scales.Examples.pt",
+        "VE.Scales.Examples.trustModel",
+        "VE.Scales.Examples.twoLevels",
+        "VE.Scales.Examples.threeLevels",
+        "VE.Scales.Examples.reflexiveMore",
+        "VE.Scales.Examples.sameNotTrans",
+        "VE.Scales.Examples.children",
+        "VE.Scales.Examples.protection",
+        "VE.Scales.Examples.allSame",
+        "VE.Scales.Examples.kid",
+        "VE.Scales.Examples.kids",
+        "VE.Scales.Examples.equalKids",
+        "VE.Scales.Examples.unequalKids",
+        "VE.Scales.Examples.grave",
+        "VE.Scales.Examples.withGrades",
+        "VE.Scales.Examples.wf",
+        "VE.Scales.Examples.labels",
+        "VE.Scales.Examples.cycle",
+        "VE.Scales.Examples.chain",
+        "VE.Scales.Examples.shared",
+        "VE.Scales.Examples.manyGrades",
+        "VE.Scales.Examples.graveOnly",
+        "VE.Scales.Examples.ghost",
+        "VE.Scales.Examples.base",
+        "VE.Scales.Examples.setAt",
+        "VE.Scales.Examples.roleName",
+        "VE.Scales.Examples.roleUnaries",
+        "VE.Scales.Examples.roleVocab",
+        "VE.Scales.Examples.roleWf",
+        "VE.Scales.Examples.rolePairs"
+      ]
+    },
     "VE/SearchBudget/Budget.lean": {
       "C": [
         "VE.SearchBudget.sortBound",

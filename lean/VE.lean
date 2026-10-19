@@ -111,6 +111,7 @@ import VE.Calc.Examples
 import VE.Calc.Render
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
+import VE.Scales.Examples
 import VE.Cardinality.Examples
 import VE.Risk.Cond
 import VE.Risk.Derive
