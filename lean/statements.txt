@@ -2989,6 +2989,12 @@ theorem VE.Cardinality.Examples.admissible_cases
       ¬VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.wild
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Examples.everyNat@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.Examples.wild@VE.Cardinality.Examples
   -- expr 4201433885
+theorem VE.Cardinality.Examples.admittedRules_cases
+  VE.Numbers.Rounding.tiesUp ∈ VE.Cardinality.admittedRules ∧
+    VE.Numbers.Rounding.halfEven ∈ VE.Cardinality.admittedRules ∧
+      ¬VE.Numbers.Rounding.down ∈ VE.Cardinality.admittedRules ∧ ¬VE.Numbers.Rounding.up ∈ VE.Cardinality.admittedRules
+  -- uses VE.Cardinality.admittedRules@VE.Cardinality.Syntax VE.Numbers.Rounding.down@VE.Numbers.Round VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.Rounding.up@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
+  -- expr 2016024150
 theorem VE.Cardinality.Examples.admitted_cases
   VE.Cardinality.Admitted VE.Cardinality.Examples.fomc VE.Cardinality.Examples.good ∧
     ¬VE.Cardinality.Admitted VE.Cardinality.Examples.fomc VE.Cardinality.Examples.badQ ∧
@@ -3069,6 +3075,55 @@ theorem VE.Cardinality.Examples.admitted_cases
                                                       (VE.Cardinality.Examples.badQ.implies VE.Cardinality.Examples.good)
   -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Body.or@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CFormula.and@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.implies@VE.Cardinality.Syntax VE.Cardinality.CFormula.not@VE.Cardinality.Syntax VE.Cardinality.CFormula.or@VE.Cardinality.Syntax VE.Cardinality.CFormula.proportion@VE.Cardinality.Syntax VE.Cardinality.Cmp.ge@VE.Cardinality.Syntax VE.Cardinality.Cmp.le@VE.Cardinality.Syntax VE.Cardinality.CountAtom.mk@VE.Cardinality.Syntax VE.Cardinality.Examples.badP@VE.Cardinality.Examples VE.Cardinality.Examples.badQ@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Cardinality.Examples.good@VE.Cardinality.Examples VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.inc@VE.Cardinality.Examples VE.Cardinality.Examples.pm@VE.Cardinality.Examples VE.Cardinality.Examples.stay@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.Proportion.mk@VE.Cardinality.Syntax VE.Cardinality.Rel.le@VE.Cardinality.Syntax VE.Cardinality.exactlyAtom@VE.Cardinality.Theorems
   -- expr 2989638611
+theorem VE.Cardinality.Examples.admitted_ratio_cases
+  VE.Cardinality.Admitted VE.Cardinality.Examples.news
+      (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp VE.Cardinality.Examples.sept
+        VE.Cardinality.Examples.june 1 0) ∧
+    VE.Cardinality.Admitted VE.Cardinality.Examples.news
+        (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.halfEven VE.Cardinality.Examples.sept
+          VE.Cardinality.Examples.june 1 0) ∧
+      ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+            (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.down VE.Cardinality.Examples.sept
+              VE.Cardinality.Examples.june 1 0) ∧
+        ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+              (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp VE.Cardinality.Examples.sept
+                (VE.Cardinality.CTerm.count VE.Cardinality.Examples.pm VE.Cardinality.Body.any) 1 0) ∧
+          ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp
+                  (VE.Cardinality.CTerm.count VE.Cardinality.Examples.pm VE.Cardinality.Body.any)
+                  VE.Cardinality.Examples.sept 1 0) ∧
+            ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                  (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp VE.Cardinality.Examples.date
+                    VE.Cardinality.Examples.date 1 0) ∧
+              VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                  (VE.Cardinality.CFormula.percentOf VE.Cardinality.Examples.sept VE.Cardinality.Examples.june 1 0) ∧
+                ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                      (VE.Cardinality.CFormula.percentOf VE.Cardinality.Examples.date VE.Cardinality.Examples.date 1 0) ∧
+                  ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                        (VE.Cardinality.CFormula.percentOf VE.Cardinality.Examples.sept
+                          (VE.Cardinality.CTerm.count VE.Cardinality.Examples.pm VE.Cardinality.Body.any) 1 0) ∧
+                    ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                          (VE.Cardinality.CFormula.percentOf
+                            (VE.Cardinality.CTerm.count VE.Cardinality.Examples.pm VE.Cardinality.Body.any)
+                            VE.Cardinality.Examples.sept 1 0) ∧
+                      VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                          (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.halfEven
+                            (VE.Cardinality.CTerm.count VE.Cardinality.Examples.pm VE.Cardinality.Body.any)
+                            (VE.Cardinality.Examples.num 3) 1 0) ∧
+                        ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                              (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.up VE.Cardinality.Examples.sept
+                                VE.Cardinality.Examples.june 1 0) ∧
+                          ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                                (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.tiesUp
+                                  VE.Cardinality.Examples.date VE.Cardinality.Examples.date 1 0) ∧
+                            ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                                  (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.tiesUp
+                                    (VE.Cardinality.Examples.num 3) VE.Cardinality.Examples.sept 1 0) ∧
+                              ¬VE.Cardinality.Admitted VE.Cardinality.Examples.news
+                                  (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.tiesUp
+                                    VE.Cardinality.Examples.sept (VE.Cardinality.Examples.num 3) 1 0)
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.CFormula.percentOf@VE.Cardinality.Syntax VE.Cardinality.CFormula.percentRoundsTo@VE.Cardinality.Syntax VE.Cardinality.CFormula.roundsTo@VE.Cardinality.Syntax VE.Cardinality.CTerm.count@VE.Cardinality.Syntax VE.Cardinality.Examples.date@VE.Cardinality.Examples VE.Cardinality.Examples.june@VE.Cardinality.Examples VE.Cardinality.Examples.news@VE.Cardinality.Examples VE.Cardinality.Examples.num@VE.Cardinality.Examples VE.Cardinality.Examples.pm@VE.Cardinality.Examples VE.Cardinality.Examples.sept@VE.Cardinality.Examples VE.Numbers.Rounding.down@VE.Numbers.Round VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round VE.Numbers.Rounding.up@VE.Numbers.Round
+  -- expr 616284954
 theorem VE.Cardinality.Examples.body_cases
   VE.Cardinality.Body.holds VE.Cardinality.Examples.two 0 VE.Cardinality.Examples.harm ∧
     ¬VE.Cardinality.Body.holds VE.Cardinality.Examples.two 1 VE.Cardinality.Examples.harm ∧
@@ -3150,6 +3205,46 @@ theorem VE.Cardinality.Examples.counts_unique
     VE.Cardinality.Counts T c.sort c.terms ns → VE.Cardinality.Counts T c.sort c.terms ms → ns = ms
   -- uses VE.Cardinality.CountAtom.sort@VE.Cardinality.Syntax VE.Cardinality.CountAtom.terms@VE.Cardinality.Syntax VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Counts@VE.Cardinality.Semantics VE.Time.TStructure@VE.Time.Semantics
   -- expr 1974341167
+theorem VE.Cardinality.Examples.cterm_typed_cases
+  VE.Cardinality.CTermTyped VE.Cardinality.Examples.users VE.Cardinality.Examples.cur VE.Cardinality.dl ∧
+    ¬VE.Cardinality.CTermTyped VE.Cardinality.Examples.users VE.Cardinality.Examples.cur "bp" ∧
+      ¬VE.Cardinality.CTermTyped VE.Cardinality.Examples.fomc VE.Cardinality.Examples.cur VE.Cardinality.dl ∧
+        ¬VE.Cardinality.CTermTyped VE.Cardinality.Examples.users
+              (VE.Cardinality.CTerm.count "user" (VE.Cardinality.Body.atom VE.Cardinality.Examples.inc))
+              VE.Cardinality.dl ∧
+          VE.Cardinality.CTermTyped VE.Cardinality.Examples.news VE.Cardinality.Examples.sept "bp" ∧
+            ¬VE.Cardinality.CTermTyped VE.Cardinality.Examples.news VE.Cardinality.Examples.sept VE.Cardinality.dl ∧
+              ¬VE.Cardinality.CTermTyped VE.Cardinality.Examples.news
+                  (VE.Cardinality.CTerm.quantity (VE.Time.QTerm.const "bp" "rate")) "bp"
+  -- uses VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.CTerm.count@VE.Cardinality.Syntax VE.Cardinality.CTerm.quantity@VE.Cardinality.Syntax VE.Cardinality.CTermTyped@VE.Cardinality.Syntax VE.Cardinality.Examples.cur@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Cardinality.Examples.inc@VE.Cardinality.Examples VE.Cardinality.Examples.news@VE.Cardinality.Examples VE.Cardinality.Examples.sept@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples VE.Cardinality.dl@VE.Cardinality.Regions VE.Time.QTerm.const@VE.Time.Syntax
+  -- expr 2941280069
+theorem VE.Cardinality.Examples.den_all
+  ∀ (z : Int), VE.Cardinality.CTerm.Denotes VE.Cardinality.Examples.two VE.Cardinality.Examples.all2 z ↔ z = 2
+  -- uses VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.Examples.all2@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples
+  -- expr 1465878152
+theorem VE.Cardinality.Examples.den_cur
+  ∀ (z : Int), VE.Cardinality.CTerm.Denotes VE.Cardinality.Examples.two VE.Cardinality.Examples.cur z ↔ z = 1
+  -- uses VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.Examples.cur@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples
+  -- expr 874207018
+theorem VE.Cardinality.Examples.den_nobody
+  ∀ (b : VE.Cardinality.Body) (z : Int),
+    VE.Cardinality.CTerm.Denotes VE.Cardinality.Examples.nobody (VE.Cardinality.CTerm.count "user" b) z ↔ z = 0
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.CTerm.count@VE.Cardinality.Syntax VE.Cardinality.Examples.nobody@VE.Cardinality.Examples
+  -- expr 654343381
+theorem VE.Cardinality.Examples.den_num
+  ∀ {α : Type} (T : VE.Time.TStructure α) (z z' : Int),
+    VE.Cardinality.CTerm.Denotes T (VE.Cardinality.Examples.num z) z' ↔ z' = z
+  -- uses VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.Examples.num@VE.Cardinality.Examples VE.Time.TStructure@VE.Time.Semantics
+  -- expr 1959815613
+theorem VE.Cardinality.Examples.denotes_cases
+  VE.Cardinality.CTerm.Denotes VE.Cardinality.Examples.two VE.Cardinality.Examples.cur 1 ∧
+    ¬VE.Cardinality.CTerm.Denotes VE.Cardinality.Examples.two VE.Cardinality.Examples.cur 2 ∧
+      VE.Cardinality.CTerm.Denotes VE.Cardinality.Examples.two (VE.Cardinality.Examples.num 7) 7 ∧
+        ¬VE.Cardinality.CTerm.Denotes VE.Cardinality.Examples.two (VE.Cardinality.Examples.num 7) 8 ∧
+          ¬VE.Cardinality.CTerm.Denotes VE.Cardinality.Examples.two
+              (VE.Cardinality.CTerm.quantity (VE.Time.QTerm.obj "x")) 0
+  -- uses VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.CTerm.quantity@VE.Cardinality.Syntax VE.Cardinality.Examples.cur@VE.Cardinality.Examples VE.Cardinality.Examples.num@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Time.QTerm.obj@VE.Time.Syntax
+  -- expr 1693582714
 theorem VE.Cardinality.Examples.entails_cases
   VE.Cardinality.CEntails VE.Cardinality.Examples.users []
       (VE.Cardinality.CFormula.count (VE.Cardinality.atLeastAtom "user" VE.Cardinality.Body.any 0)) ∧
@@ -3236,6 +3331,71 @@ theorem VE.Cardinality.Examples.quantity_cases
             (VE.Cardinality.CFormula.quantity VE.Cardinality.Examples.everybodyCurious)
   -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.quantity@VE.Cardinality.Syntax VE.Cardinality.Examples.everybodyCurious@VE.Cardinality.Examples VE.Cardinality.Examples.somebodyCurious@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Time.QFormula.bottom@VE.Time.Syntax VE.Time.QFormula.top@VE.Time.Syntax
   -- expr 3146073850
+theorem VE.Cardinality.Examples.ratio_cases
+  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+      (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp VE.Cardinality.Examples.cur
+        VE.Cardinality.Examples.all2 5 1) ∧
+    ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+          (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp VE.Cardinality.Examples.cur
+            VE.Cardinality.Examples.all2 5 0) ∧
+      ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+            (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp VE.Cardinality.Examples.all2
+              VE.Cardinality.Examples.cur 5 1) ∧
+        VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+            (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp VE.Cardinality.Examples.cur
+              VE.Cardinality.Examples.all2 1 0) ∧
+          VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+              (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.halfEven VE.Cardinality.Examples.cur
+                VE.Cardinality.Examples.all2 0 0) ∧
+            ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                  (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.halfEven VE.Cardinality.Examples.cur
+                    VE.Cardinality.Examples.all2 1 0) ∧
+              ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                    (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp VE.Cardinality.Examples.cur
+                      VE.Cardinality.Examples.all2 0 0) ∧
+                ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.nobody
+                      (VE.Cardinality.CFormula.roundsTo VE.Numbers.Rounding.tiesUp
+                        (VE.Cardinality.CTerm.count "user" VE.Cardinality.Examples.harm)
+                        (VE.Cardinality.CTerm.count "user" VE.Cardinality.Body.any) 0 0) ∧
+                  VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                      (VE.Cardinality.CFormula.percentOf VE.Cardinality.Examples.cur VE.Cardinality.Examples.all2 50 0) ∧
+                    VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                        (VE.Cardinality.CFormula.percentOf VE.Cardinality.Examples.cur VE.Cardinality.Examples.all2 500
+                          1) ∧
+                      ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                            (VE.Cardinality.CFormula.percentOf VE.Cardinality.Examples.cur VE.Cardinality.Examples.all2 50
+                              1) ∧
+                        ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                              (VE.Cardinality.CFormula.percentOf VE.Cardinality.Examples.all2 VE.Cardinality.Examples.cur
+                                50 0) ∧
+                          ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.nobody
+                                (VE.Cardinality.CFormula.percentOf
+                                  (VE.Cardinality.CTerm.count "user" VE.Cardinality.Examples.harm)
+                                  (VE.Cardinality.CTerm.count "user" VE.Cardinality.Body.any) 0 0) ∧
+                            VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                                (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.tiesUp
+                                  VE.Cardinality.Examples.cur VE.Cardinality.Examples.all2 50 0) ∧
+                              ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                                    (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.tiesUp
+                                      VE.Cardinality.Examples.cur VE.Cardinality.Examples.all2 1 0) ∧
+                                ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                                      (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.tiesUp
+                                        VE.Cardinality.Examples.cur VE.Cardinality.Examples.all2 500 0) ∧
+                                  ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.nobody
+                                        (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.tiesUp
+                                          (VE.Cardinality.CTerm.count "user" VE.Cardinality.Examples.harm)
+                                          (VE.Cardinality.CTerm.count "user" VE.Cardinality.Body.any) 0 0) ∧
+                                    VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                                        (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.tiesUp
+                                          (VE.Cardinality.Examples.num 1) (VE.Cardinality.Examples.num 200) 1 0) ∧
+                                      VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                                          (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.halfEven
+                                            (VE.Cardinality.Examples.num 1) (VE.Cardinality.Examples.num 200) 0 0) ∧
+                                        ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
+                                            (VE.Cardinality.CFormula.percentRoundsTo VE.Numbers.Rounding.halfEven
+                                              (VE.Cardinality.Examples.num 1) (VE.Cardinality.Examples.num 200) 1 0)
+  -- uses VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.percentOf@VE.Cardinality.Syntax VE.Cardinality.CFormula.percentRoundsTo@VE.Cardinality.Syntax VE.Cardinality.CFormula.roundsTo@VE.Cardinality.Syntax VE.Cardinality.CTerm.count@VE.Cardinality.Syntax VE.Cardinality.Examples.all2@VE.Cardinality.Examples VE.Cardinality.Examples.cur@VE.Cardinality.Examples VE.Cardinality.Examples.harm@VE.Cardinality.Examples VE.Cardinality.Examples.nobody@VE.Cardinality.Examples VE.Cardinality.Examples.num@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Numbers.Rounding.halfEven@VE.Numbers.Round VE.Numbers.Rounding.tiesUp@VE.Numbers.Round
+  -- expr 620036473
 theorem VE.Cardinality.Examples.rel_cases_two
   VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.lt 3) ∧
     ¬VE.Cardinality.CFormula.holds VE.Cardinality.Examples.two
@@ -3386,6 +3546,32 @@ theorem VE.Cardinality.counts_iff
             VE.Cardinality.Counts T s terms ns ↔ ns = List.map (fun kb => VE.Cardinality.regionSize T s kb.snd) terms
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.Counts@VE.Cardinality.Semantics VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Time.TStructure@VE.Time.Semantics
   -- expr 3814873919
+theorem VE.Cardinality.cterm_erase
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) {T : VE.Time.TStructure α},
+        VE.Cardinality.Admissible E T →
+          ∀ {x : VE.Cardinality.CTerm} {g : String},
+            VE.Cardinality.CTermTyped E x g →
+              (∀ (sb : String × VE.Cardinality.Body),
+                  sb ∈ x.countBodies → sb ∈ List.flatMap (fun x => x.countBodies) fs) →
+                ∃ z,
+                  (∀ (z' : Int), VE.Cardinality.CTerm.Denotes T x z' ↔ z' = z) ∧
+                    VE.Time.QTerm.tdenote (VE.Cardinality.withRegions E fs T) [] (VE.Cardinality.CTerm.erase E fs x) =
+                        Option.some (VE.Time.TValue.qty g z) ∧
+                      (VE.Cardinality.CTerm.tagOf E x).getD VE.Cardinality.dl = g
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.countBodies@VE.Cardinality.Regions VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.CTerm.countBodies@VE.Cardinality.Regions VE.Cardinality.CTerm.erase@VE.Cardinality.Erase VE.Cardinality.CTerm.tagOf@VE.Cardinality.Syntax VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CTermTyped@VE.Cardinality.Syntax VE.Cardinality.dl@VE.Cardinality.Regions VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.QTerm.tdenote@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.qty@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 1896627006
+theorem VE.Cardinality.cterm_typed
+  ∀ {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) {x : VE.Cardinality.CTerm} {g : String},
+        VE.Cardinality.CTermTyped E x g →
+          (∀ (sb : String × VE.Cardinality.Body), sb ∈ x.countBodies → sb ∈ List.flatMap (fun x => x.countBodies) fs) →
+            VE.Time.HasType (E.elab fs) [] (VE.Cardinality.CTerm.erase E fs x) (VE.Time.QType.qty g) ∧
+              (VE.Cardinality.CTerm.tagOf E x).getD VE.Cardinality.dl = g
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.countBodies@VE.Cardinality.Regions VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CTerm.countBodies@VE.Cardinality.Regions VE.Cardinality.CTerm.erase@VE.Cardinality.Erase VE.Cardinality.CTerm.tagOf@VE.Cardinality.Syntax VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CTermTyped@VE.Cardinality.Syntax VE.Cardinality.dl@VE.Cardinality.Regions VE.Time.HasType@VE.Time.Syntax VE.Time.QType.qty@VE.Time.Syntax
+  -- expr 2418372759
 theorem VE.Cardinality.denote_congr
   ∀ {E : VE.Order.Environment} (S : VE.Order.Structure) (k : String → Option (VE.Order.Value S.Carrier)),
     (∀ (c : String) (σ : VE.Order.SortName), E.constants c = Option.some σ → k c = S.constant c) →
@@ -3485,6 +3671,18 @@ theorem VE.Cardinality.hasCount_zero
     VE.Cardinality.HasCount T s b n → (n = 0 ↔ ∀ (x : α), T.objects s x → ¬VE.Cardinality.Body.holds T x b)
   -- uses VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Time.TStructure.objects@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics
   -- expr 618527546
+theorem VE.Cardinality.hasType_elab
+  ∀ {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) {Γ : List String} {t : VE.Time.QTerm} {τ : VE.Time.QType},
+        VE.Time.HasType E.q Γ t τ → VE.Time.HasType (E.elab fs) Γ t τ
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Time.HasType@VE.Time.Syntax VE.Time.QTerm@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
+  -- expr 2557023975
+theorem VE.Cardinality.hasType_validTag
+  ∀ {E : VE.Time.QEnv} {Γ : List String} {t : VE.Time.QTerm} {g : String},
+    VE.Time.HasType E Γ t (VE.Time.QType.qty g) → E.ValidTag g
+  -- uses VE.Time.HasType@VE.Time.Syntax VE.Time.QEnv.ValidTag@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.QTerm@VE.Time.Syntax VE.Time.QType.qty@VE.Time.Syntax
+  -- expr 3316673650
 theorem VE.Cardinality.holds_withRegions
   ∀ {α : Type u} (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α) (x : α)
     (b : VE.Cardinality.Body),
@@ -3553,6 +3751,24 @@ theorem VE.Cardinality.not_regionName
           ∀ (e : String × String × VE.Cardinality.Region), e ∈ VE.Cardinality.regionTable E fs → (e.fst == c) = Bool.false
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
   -- expr 870826058
+theorem VE.Cardinality.percentOf_holds_iff
+  ∀ {α : Type u} {T : VE.Time.TStructure α} {n d : VE.Cardinality.CTerm} {zn zd : Int},
+    (∀ (z : Int), VE.Cardinality.CTerm.Denotes T n z ↔ z = zn) →
+      (∀ (z : Int), VE.Cardinality.CTerm.Denotes T d z ↔ z = zd) →
+        ∀ (D : Int) (k : Nat),
+          VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.percentOf n d D k) ↔
+            0 < zd ∧ 100 * 10 ^ k * zn = D * zd
+  -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.percentOf@VE.Cardinality.Syntax VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Time.TStructure@VE.Time.Semantics
+  -- expr 1811138577
+theorem VE.Cardinality.percentRoundsTo_holds_iff
+  ∀ {α : Type u} {T : VE.Time.TStructure α} {n d : VE.Cardinality.CTerm} {zn zd : Int},
+    (∀ (z : Int), VE.Cardinality.CTerm.Denotes T n z ↔ z = zn) →
+      (∀ (z : Int), VE.Cardinality.CTerm.Denotes T d z ↔ z = zd) →
+        ∀ (r : VE.Numbers.Rounding) (D : Int) (k : Nat),
+          VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.percentRoundsTo r n d D k) ↔
+            0 < zd ∧ VE.Cardinality.erasedRounding r (100 * zn) zd D k
+  -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.percentRoundsTo@VE.Cardinality.Syntax VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.erasedRounding@VE.Cardinality.Ratio VE.Numbers.Rounding@VE.Numbers.Round VE.Time.TStructure@VE.Time.Semantics
+  -- expr 1348203355
 theorem VE.Cardinality.proportion_holds_iff
   ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
     VE.Cardinality.Admissible E T →
@@ -3564,6 +3780,23 @@ theorem VE.Cardinality.proportion_holds_iff
                 VE.Cardinality.HasCount T p.sort (p.whole.and p.part) m ∧ 0 < n ∧ p.cmp.holds (↑m * ↑p.den) (↑n * ↑p.num))
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.proportion@VE.Cardinality.Syntax VE.Cardinality.Cmp.holds@VE.Cardinality.Semantics VE.Cardinality.HasCount@VE.Cardinality.Semantics VE.Cardinality.Proportion.cmp@VE.Cardinality.Syntax VE.Cardinality.Proportion.den@VE.Cardinality.Syntax VE.Cardinality.Proportion.num@VE.Cardinality.Syntax VE.Cardinality.Proportion.part@VE.Cardinality.Syntax VE.Cardinality.Proportion.sort@VE.Cardinality.Syntax VE.Cardinality.Proportion.whole@VE.Cardinality.Syntax VE.Cardinality.Proportion@VE.Cardinality.Syntax VE.Time.TStructure@VE.Time.Semantics
   -- expr 984423562
+theorem VE.Cardinality.ratioTyped_iff
+  ∀ (E : VE.Cardinality.CEnv) (x y : VE.Cardinality.CTerm),
+    VE.Cardinality.ratioTyped E x y = Bool.true ↔
+      ∃ g, g ≠ VE.Time.dayTag ∧ VE.Cardinality.CTermTyped E x g ∧ VE.Cardinality.CTermTyped E y g
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CTermTyped@VE.Cardinality.Syntax VE.Cardinality.ratioTyped@VE.Cardinality.Syntax VE.Time.dayTag@VE.Time.Syntax
+  -- expr 4039167198
+theorem VE.Cardinality.ratio_cmp
+  ∀ (a b : Int) (k : Nat),
+    0 < b →
+      ∀ (c m : Int),
+        (↑c ≤ ↑m * (↑a / ↑b * VE.Numbers.tenPow ↑k) ↔ c * b ≤ m * 10 ^ k * a) ∧
+          (↑m * (↑a / ↑b * VE.Numbers.tenPow ↑k) < ↑c ↔ m * 10 ^ k * a < c * b) ∧
+            (↑c < ↑m * (↑a / ↑b * VE.Numbers.tenPow ↑k) ↔ c * b < m * 10 ^ k * a) ∧
+              (↑m * (↑a / ↑b * VE.Numbers.tenPow ↑k) ≤ ↑c ↔ m * 10 ^ k * a ≤ c * b) ∧
+                (↑m * (↑a / ↑b * VE.Numbers.tenPow ↑k) = ↑c ↔ m * 10 ^ k * a = c * b)
+  -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
+  -- expr 3737261940
 theorem VE.Cardinality.regionBody_holds
   ∀ {α : Type u} (T : VE.Time.TStructure α) (x : α) (ps : List String) (r : VE.Cardinality.Region),
     List.length r = ps.length →
@@ -3631,6 +3864,36 @@ theorem VE.Cardinality.regions_nodup
   ∀ (n : Nat), (VE.Cardinality.regions n).Nodup
   -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regions@VE.Cardinality.Regions
   -- expr 2204394794
+theorem VE.Cardinality.roundingQ_admitted
+  ∀ {E : VE.Time.QEnv} {Γ : List String} {g : String} (r : VE.Numbers.Rounding) {a b : VE.Time.QTerm} (D : Int) (k : Nat),
+    g ≠ VE.Time.dayTag →
+      E.ValidTag g →
+        VE.Time.HasType E Γ a (VE.Time.QType.qty g) →
+          VE.Time.HasType E Γ b (VE.Time.QType.qty g) → VE.Time.Admitted E Γ (VE.Cardinality.roundingQ g r a b D k)
+  -- uses VE.Cardinality.roundingQ@VE.Cardinality.Ratio VE.Numbers.Rounding@VE.Numbers.Round VE.Time.Admitted@VE.Time.Syntax VE.Time.HasType@VE.Time.Syntax VE.Time.QEnv.ValidTag@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.QTerm@VE.Time.Syntax VE.Time.QType.qty@VE.Time.Syntax VE.Time.dayTag@VE.Time.Syntax
+  -- expr 4067508308
+theorem VE.Cardinality.roundingQ_iff
+  ∀ {α : Type u} (W : VE.Time.TStructure α) (g : String) (r : VE.Numbers.Rounding) {a b : VE.Time.QTerm} {x y : Int}
+    (D : Int) (k : Nat),
+    VE.Time.QTerm.tdenote W [] a = Option.some (VE.Time.TValue.qty g x) →
+      VE.Time.QTerm.tdenote W [] b = Option.some (VE.Time.TValue.qty g y) →
+        (VE.Time.QFormula.tdenote W [] (VE.Cardinality.roundingQ g r a b D k) ↔ VE.Cardinality.erasedRounding r x y D k)
+  -- uses VE.Cardinality.erasedRounding@VE.Cardinality.Ratio VE.Cardinality.roundingQ@VE.Cardinality.Ratio VE.Numbers.Rounding@VE.Numbers.Round VE.Time.QFormula.tdenote@VE.Time.Semantics VE.Time.QTerm.tdenote@VE.Time.Semantics VE.Time.QTerm@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.qty@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 4109629387
+theorem VE.Cardinality.roundsTo_holds_iff
+  ∀ {α : Type u} {T : VE.Time.TStructure α} {n d : VE.Cardinality.CTerm} {zn zd : Int},
+    (∀ (z : Int), VE.Cardinality.CTerm.Denotes T n z ↔ z = zn) →
+      (∀ (z : Int), VE.Cardinality.CTerm.Denotes T d z ↔ z = zd) →
+        ∀ (r : VE.Numbers.Rounding) (D : Int) (k : Nat),
+          VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.roundsTo r n d D k) ↔
+            0 < zd ∧ VE.Cardinality.erasedRounding r zn zd D k
+  -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.roundsTo@VE.Cardinality.Syntax VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.erasedRounding@VE.Cardinality.Ratio VE.Numbers.Rounding@VE.Numbers.Round VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2772188117
+theorem VE.Cardinality.roundsTo_ratio_agree
+  ∀ (r : VE.Numbers.Rounding) (a b D : Int) (k : Nat),
+    0 < b → (VE.Cardinality.erasedRounding r a b D k ↔ VE.Numbers.RoundsTo r { digits := D, places := ↑k } (↑a / ↑b))
+  -- uses VE.Cardinality.erasedRounding@VE.Cardinality.Ratio VE.Numbers.Printed.mk@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.RoundsTo@VE.Numbers.Round
+  -- expr 1981240952
 theorem VE.Cardinality.split_underscore
   ∀ (u v x y : List Char), ¬'_' ∈ u → ¬'_' ∈ v → u ++ '_' :: x = v ++ '_' :: y → u = v ∧ x = y
   -- uses
@@ -3669,11 +3932,25 @@ theorem VE.Cardinality.sum_classes
         ↑(List.filter (fun x => Decidable.decide (f x ∈ R)) xs).length
   -- uses
   -- expr 161836773
+theorem VE.Cardinality.tagOf_iff
+  ∀ (E : VE.Cardinality.CEnv) (x : VE.Cardinality.CTerm) (g : String),
+    VE.Cardinality.CTerm.tagOf E x = Option.some g ↔ VE.Cardinality.CTermTyped E x g
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CTerm.tagOf@VE.Cardinality.Syntax VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CTermTyped@VE.Cardinality.Syntax
+  -- expr 1177412884
 theorem VE.Cardinality.tcompare_qty
   ∀ {α : Type u} (R : Int → Int → Prop) (g : String) (a b : Int),
     VE.Time.TCompare R (Option.some (VE.Time.TValue.qty g a)) (Option.some (VE.Time.TValue.qty g b)) ↔ R a b
   -- uses VE.Time.TCompare@VE.Time.Semantics VE.Time.TValue.qty@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
   -- expr 3365289319
+theorem VE.Cardinality.tdenote_withRegions
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv},
+    E.WellFormed →
+      ∀ (fs : List VE.Cardinality.CFormula) (T : VE.Time.TStructure α) {Γ : List String} {ρ : List α} {t : VE.Time.QTerm}
+        {τ : VE.Time.QType},
+        VE.Time.HasType E.q Γ t τ →
+          VE.Time.QTerm.tdenote (VE.Cardinality.withRegions E fs T) ρ t = VE.Time.QTerm.tdenote T ρ t
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.HasType@VE.Time.Syntax VE.Time.QTerm.tdenote@VE.Time.Semantics VE.Time.QTerm@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 3341621720
 theorem VE.Cardinality.universalsC_admitted
   ∀ {E : VE.Cardinality.CEnv} {f : VE.Cardinality.CFormula},
     VE.Cardinality.Admitted E f →
