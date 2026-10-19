@@ -1,0 +1,1 @@
+["forall", "claude_instance", ["forall", "user", ["not", ["binary", "system_prompt_deception_permitted", ["var", 1], ["var", 0]]]]]
