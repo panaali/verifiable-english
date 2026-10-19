@@ -8,6 +8,8 @@ growth only when "every new trusted definition is exercised by a test that can f
 Selected: each declaration tools/trust_map.py counts as trusted (not a theorem or check) whose lines hold a line
 the tree adds or changes over REV (default: the merge base of HEAD and main). The `OPERATORS` mutate it inside its
 compiled range (lean/declarations.txt), comments and strings excluded, on its changed lines only (all of a new one).
+Every edit keeps each line after the declaration where it was (`relined`), so the cuts and the roles, which read
+the checkout's line numbers, read the mutated text right (review F9).
 
 Each mutant is built in a private scratch copy of lean/ (its build restored from tools/lean_share.py's checked build
 of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, its proofs cut to `sorry`
@@ -18,14 +20,16 @@ proof (`classify`): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an
 `decide`, `native_decide` or `rfl`, with no other tactic block in it; a `#guard_msgs … in` is what it wraps. Every
 other `example` or theorem, a check form with a tactic block inside, and every `#print` (it lists or shows proofs)
 is a proof, whatever its statement names. The mutant is
-- KILLED when every error Lean reports is inside a check or a --test file, and the same build without the mutant
-  (its control: the same cuts) passes;
+- KILLED when every error Lean reports is a check's own (`attributed`: inside a check, at a line the checkout has
+  there, and no parse error) or a --test file's, and the same build without the mutant (its control: the same
+  cuts) passes;
 - INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means);
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
   `sorry` (a `#print` blanked) and the build repeated, before any other error is read; and a check that fails in
   the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way;
 - UNKNOWN when anything else fails (an error in a definition, or in a command that is no check), even beside a
-  failing check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse);
+  failing check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse), and
+  when the mutant moves a line after its declaration (a longer replacement no blank line there can take: F9);
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> <operator>: <before> -> <after>` unless --allow

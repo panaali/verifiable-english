@@ -631,7 +631,8 @@ ARMS = "def f : Nat → List Nat\n  | 0 => [1]\n  | _ => [2,\n   3]"
 
 
 @pytest.mark.parametrize(("decl", "rest", "before", "new", "mutated"), [
-    ("def f :=\n  [1,\n   2]", "\n\n#guard f == [1, 2]\n", "[1,\n   2]", "[]", "def f :=\n  []\n\n\n#guard f == [1, 2]\n"),
+    ("def f :=\n  [1,\n   2]", "\n\n#guard f == [1, 2]\n", "[1,\n   2]", "[]",
+     "def f :=\n  []\n\n\n#guard f == [1, 2]\n"),
     (ARMS, "\n\n#guard f 1 == [2, 3]\n", "[1]", "[2,\n   3]",
      "def f : Nat → List Nat\n  | 0 => [2,\n   3]\n  | _ => [2,\n   3]\n#guard f 1 == [2, 3]\n"),
     (ARMS, "\n#guard f 1 == [2, 3]\n", "[1]", "[2,\n   3]", None),
@@ -730,25 +731,40 @@ def lines_run(tmp_path_factory):
     return rows, done, mutants
 
 
-def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):
-    """Review F9 (PROBE F9 is the blind default-more row of the mutated module): fewer, the same or more lines, in the mutated module or another, a
-    mutant is KILLED only by the check that compares the value, at that check's line; one no check reads survives;
-    a longer replacement no blank line can take is UNKNOWN. Every mutant's lines are those the axis names."""
-    rows, done, mutants = lines_run
-    assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr
+def lines_problems(rows: list[dict], mutants: list[dict]) -> list[tuple]:
+    """The rows of the line axis whose mutants break its rule (the test's and sweep.py's one reading of it): a
+    target's lines are those the axis names and its status is KILLED under the check that compares the value,
+    SURVIVOR under the one that reads nothing, UNKNOWN when it is longer and no blank line can take its lines; every
+    other mutant is KILLED only by the comparing check at its line, UNKNOWN only as such a target, else SURVIVOR or
+    INVALID."""
+    problems = []
     for row in rows:
         mine = [m for m in mutants if m["definition"] == f"{row['space']}.{row['d']}"]
         tight = row["shape"].endswith("tight")
         for operator, before, lines in row["targets"]:
-            (m,) = [m for m in mine if (m["operator"], m["before"]) == (operator, before)]
+            found = [m for m in mine if (m["operator"], m["before"]) == (operator, before)]
+            if len(found) != 1:
+                problems.append((row, operator, before, "not one mutant", found))
+                continue
+            m = found[0]
             change = m["after"].rstrip("\n").count("\n") - before.count("\n")
-            assert {"fewer": change < 0, "same": change == 0, "more": change > 0}[lines], m
             expected = "UNKNOWN" if tight and lines == "more" else "KILLED" if row["reads"] else "SURVIVOR"
-            assert m["status"] == expected, (row, m)
+            if not {"fewer": change < 0, "same": change == 0, "more": change > 0}[lines] or m["status"] != expected:
+                problems.append((row, m, f"expected {expected} with {lines} lines"))
         for m in mine:
-            if m["status"] == "KILLED":
-                assert row["reads"] and m["detail"].startswith(f"{row['file']}:{row['line']}: "), (row, m)
-            elif m["status"] == "UNKNOWN":
-                assert tight and m["operator"] == "arm-default" and "moves this line" in m["detail"], (row, m)
-            else:
-                assert m["status"] in ("SURVIVOR", "INVALID"), (row, m)
+            allowed = {"KILLED": row["reads"] and m["detail"].startswith(f"{row['file']}:{row['line']}: "),
+                       "UNKNOWN": tight and m["operator"] == "arm-default" and "moves this line" in m["detail"],
+                       "SURVIVOR": True, "INVALID": True}
+            if not allowed.get(m["status"]):
+                problems.append((row, m))
+    return problems
+
+
+def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):
+    """Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the
+    same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the
+    value, at that check's line; one no check reads survives; a longer replacement no blank line can take is
+    UNKNOWN (`lines_problems`)."""
+    rows, done, mutants = lines_run
+    assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr
+    assert lines_problems(rows, mutants) == []
