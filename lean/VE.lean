@@ -175,3 +175,5 @@ import VE.NormDefaults.PacksLegacyExamples
 import VE.Readings.SupPacks
 import VE.Layout.List
 import VE.Scope.Examples
+import VE.Defaults.Premises
+import VE.Defaults.Examples
