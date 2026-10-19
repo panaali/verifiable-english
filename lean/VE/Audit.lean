@@ -1971,10 +1971,6 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
 #print axioms VE.Layout.anchorReach_iff
-#print axioms VE.Layout.before_anchorsOk
-#print axioms VE.Layout.before_innermost
-#print axioms VE.Layout.before_reachesRoot
-#print axioms VE.Layout.before_within
 #print axioms VE.Layout.continues_iff
 #print axioms VE.Layout.discourse_anchorsOk_unchanged
 #print axioms VE.Layout.discourse_innermost_unchanged
@@ -5525,9 +5521,11 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.markers
 #print axioms VE.Scope.Examples.of_source
 #print axioms VE.Scope.Examples.para_counts
+#print axioms VE.Scope.Examples.reaches_root
 #print axioms VE.Scope.Examples.short_items
 #print axioms VE.Scope.Examples.short_layout
 #print axioms VE.Scope.Examples.short_run
+#print axioms VE.Scope.Examples.span_tests
 #print axioms VE.SearchBudget.chain_denote
 #print axioms VE.SearchBudget.conjuncts_denote
 #print axioms VE.SearchBudget.demand_sound

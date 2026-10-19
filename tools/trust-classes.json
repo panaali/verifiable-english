@@ -13103,16 +13103,6 @@
         "VE.Layout.within"
       ]
     },
-    "VE/Layout/Discourse.lean": {
-      "T": [
-        "VE.Layout.Before.anchorsOk",
-        "VE.Layout.Before.definitionIn",
-        "VE.Layout.Before.innermostAnchor",
-        "VE.Layout.Before.narrower",
-        "VE.Layout.Before.reachesRoot",
-        "VE.Layout.Before.unitSpan",
-        "VE.Layout.Before.within"
-      ]
-    }
+    "VE/Layout/Discourse.lean": {}
   }
 }
