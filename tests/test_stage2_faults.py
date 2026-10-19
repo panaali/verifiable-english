@@ -125,7 +125,6 @@ def lean_authority(monkeypatch):
     # No cached Lean answer may stand in for the faulty backend.
     monkeypatch.setattr(ve.ast, "_LEAN_TYPED", {})
     monkeypatch.setattr(validation, "_ACCEPTED", {})
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
 
 
 def use_pool(monkeypatch, executable, **options):

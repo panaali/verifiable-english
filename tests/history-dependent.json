@@ -1291,7 +1291,7 @@
   },
   {
    "test": "tests/test_regen_generated.py",
-   "why": "starts git (git check-attr, git ls-files, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, tools/regen_generated.py",
+   "why": "starts git (git check-attr, git config, git ls-files, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, tools/regen_generated.py, tools/source_graph.py",
    "recorded": [
     "coverage map",
     "source"
@@ -1303,8 +1303,10 @@
     "tests/test_regen_generated.py:test_owner_agrees_with_git_on_every_tracked_file: git check-attr",
     "tools/regen_generated.py:_git: git",
     "tools/regen_generated.py:_stage: git show",
+    "tools/regen_generated.py:install_driver: git config",
     "tools/regen_generated.py:merge_text: git merge-file",
-    "tools/regen_generated.py:resolve: git rev-parse"
+    "tools/regen_generated.py:resolve: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files"
    ]
   },
   {
@@ -1341,7 +1343,7 @@
   },
   {
    "test": "tests/test_repo_map.py",
-   "why": "starts git (git add, git cat-file, git config, git init, git log, git ls-files, git merge-base, git merge-file, git rev-list, git rev-parse, git show, git status, git write-tree) in tests/test_repo_map.py, tools/regen_generated.py, tools/repo_map.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git add, git cat-file, git config, git init, git ls-files, git merge-base, git merge-file, git rev-list, git rev-parse, git show, git status, git write-tree) in tests/test_repo_map.py, tools/regen_generated.py, tools/repo_map.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
@@ -1350,7 +1352,7 @@
     "tests/test_repo_map.py:commands: git",
     "tests/test_repo_map.py:head: git rev-parse",
     "tests/test_repo_map.py:rights_map: git status",
-    "tests/test_repo_map.py:test_a_map_from_before_the_relay_changed_gives_the_static_answer: git log, git rev-parse",
+    "tests/test_repo_map.py:test_a_map_from_before_the_relay_changed_gives_the_static_answer: git rev-parse",
     "tests/test_repo_map.py:test_every_command_named_in_agents_md_exists_and_the_fast_ones_answer_help: git",
     "tests/test_repo_map.py:test_map_expectations_with_an_untracked_file: git init, git ls-files",
     "tools/nested_pytest.py:command: pytest",

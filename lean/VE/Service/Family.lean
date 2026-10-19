@@ -1,6 +1,7 @@
 import VE.Service.Graph
 import VE.Service.Readings
 import VE.Service.GenericReadings
+import VE.Limits
 
 /-! The service `graph` and `readings` modes on the closure, core and order
 families of `ve.core@0.2` (SEMANTICS-MIGRATION-PLAN.md sections 1.2 and 2.1,
@@ -105,7 +106,7 @@ def closureEnv (environment : Json) (checked : Standalone.Validated) : Except St
   let bg ← Standalone.folBackground environment rv
   let decodeF := fun (j : Json) => do
     VE.Route.AstLimit.check [j]
-    let a ← VE.Closure.Bridge.decodeFormula 64 j
+    let a ← VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth j
     if data && VE.Route.Wire.closureUsesStringBinder a then
       throw "UnsupportedProfile: $string quantification requires data stage 2"
     unless a.check E [] do throw "ill-typed or unbound formula"
@@ -181,7 +182,7 @@ def coreEnv (environment : Json) (checked : Standalone.Validated) : Except Strin
   let bg := base ++ profile.map (fun (a, g) => (VE.Core.embed a, g))
   let decodeF := fun (j : Json) => do
     VE.Route.AstLimit.check [j]
-    let a ← VE.Core.Bridge.decodeFormula 64 j
+    let a ← VE.Core.Bridge.decodeFormula VE.Limits.maxDepth j
     VE.Core.Bridge.checkFormula E a "formula"
     unless a.check E [] do throw "ill-typed or unbound formula"
     pure a
@@ -248,7 +249,7 @@ def orderEnv (environment : Json) (checked : Standalone.Validated) : Except Stri
   let lits := VE.Route.Background.literals rv.literals
   let decodeF := fun (j : Json) => do
     VE.Route.AstLimit.check [j]
-    let a ← VE.Order.Wire.decodeFormula 64 j
+    let a ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth j
     unless a.check E [] do throw "ill-typed or unbound formula"
     pure a
   pure ⟨rv, {
@@ -336,7 +337,7 @@ def legacyFolCtx (environment : Json) (v : VE.Bridge.Vocabulary) :
     Except String (Ctx VE.Formula VE.Tableau.Certificate (FolModel v.environment)) :=
   legacyCtx (.v0 v) environment
     (fun j => do
-      let a ← VE.Bridge.decodeFormula 64 j
+      let a ← VE.Bridge.decodeFormula VE.Limits.maxDepth j
       unless a.check v.environment [] do throw "ill-typed or unbound formula"
       pure a)
     VE.CertificateWire.decodeCertificate
@@ -346,7 +347,7 @@ def legacyClosureCtx (environment : Json) (v : VE.Bridge.Vocabulary) :
     Except String (Ctx VE.Closure.Formula VE.Closure.Tableau.Certificate (ClosureModel v.environment)) :=
   legacyCtx (.closure v) environment
     (fun j => do
-      let a ← VE.Closure.Bridge.decodeFormula 64 j
+      let a ← VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth j
       unless a.check v.environment [] do throw "ill-typed or unbound formula"
       pure a)
     VE.CertificateWire.decodeClosureCertificate
@@ -361,7 +362,7 @@ def legacyOrderCtx (environment : Json) (v : VE.Order.Vocabulary) :
     Except String (Ctx VE.Order.Formula VE.Order.Tableau.Certificate (OrderModel v.environment)) :=
   legacyCtx (.order v) environment
     (fun j => do
-      let a ← VE.Order.Wire.decodeFormula 64 j
+      let a ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth j
       unless a.check v.environment [] do throw "ill-typed or unbound formula"
       pure a)
     VE.Order.Wire.decodeCertificate

@@ -17,6 +17,7 @@ import ResponseShape.Encoders.Question
 import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Words
+import ResponseShape.Encoders.Metered
 
 /-! # Every encoder against its shape
 
@@ -76,5 +77,6 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact SearchBudget.runCaseReported_fits j
   · exact Ask.caseReported_fits j
   · exact Words.caseReported_fits j
+  · exact Metered.runCaseReported_fits j
 
 end ResponseShape.Encoders

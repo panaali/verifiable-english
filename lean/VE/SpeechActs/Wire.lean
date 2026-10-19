@@ -3,6 +3,7 @@ import VE.Norms.Replay
 import VE.Route.Admission
 import Std.Data.TreeMap.Raw.Lemmas
 import Std.Data.TreeMap.Raw.WF
+import VE.Limits
 
 /-! The `speech-acts@0` decoder (docs/spec/speech-acts.md 1.6, 3.1, 3.2 and 8.6).
 
@@ -328,13 +329,13 @@ def decodeAnswer (j : Json) : Except String Answer :=
 type diagnostic (norms.md 11.1) before its check, so an undeclared constant or predicate is `UnknownSymbol` in both
 checkers. -/
 def decodeBudgetFormula (j : Json) : Except String VE.Formula := do
-  let φ ← VE.Bridge.decodeFormula 64 j
-  if VE.Bridge.formulaNodes φ > 10000 then throw "ResourceLimit: AST exceeds depth or node budget"
+  let φ ← VE.Bridge.decodeFormula VE.Limits.maxDepth j
+  if VE.Bridge.formulaNodes φ > VE.Limits.maxNodes then throw "ResourceLimit: AST exceeds depth or node budget"
   pure φ
 
 def decodeBudgetNorm (j : Json) : Except String VE.Norms.Node := do
   let n ← VE.Norms.Wire.decodeNorm j
-  if (n.guard :: n.carveOuts).any (fun φ => VE.Bridge.formulaNodes φ > 10000) then
+  if (n.guard :: n.carveOuts).any (fun φ => VE.Bridge.formulaNodes φ > VE.Limits.maxNodes) then
     throw "ResourceLimit: AST exceeds depth or node budget"
   pure n
 

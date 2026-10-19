@@ -35,10 +35,20 @@ def _superposed_case():
             "conflict_targets": [], "conclusions": [["top"], ["bottom"]]}
 
 
+def _countermodel(premises, conclusion, model, budget=1_000_000):
+    """A countermodel case as the Rust checker reads it (the case `check_countermodel` sent it before
+    lean-first batch 18)."""
+    from ve.ast import _to_data
+    return rust_jsonl.run({"id": "countermodel", "environment": rust_jsonl.cached_rust_environment(ENV),
+                           **rust_jsonl.soft_case(ENV), "premises": [_to_data(f) for f in premises],
+                           "conclusion": _to_data(conclusion), "model": model.to_dict(),
+                           "max_evaluations": budget})
+
+
 def _calls():
     """Every public adapter that runs Rust, on inputs giving each record shape it can answer with."""
     from ve.ast import _to_data
-    from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
+    from ve.search import find_countermodel, find_distinguishing_model
     other = FiniteModel.from_dict(ENV, {**model_wire(ENV), "relations": {"base": []}})
     return {
         # Typing is Lean's since lean-first batch 13b; Rust's `check` records are still produced by its checker.
@@ -46,11 +56,12 @@ def _calls():
                                           "ast": _to_data(ATOM)}),
         "typing-document": lambda: rust_jsonl.run({"id": "typing", "kind": "check", "environment": ENV.to_dict(),
                                                    "ast": [_to_data(ATOM), _to_data(Top())]}),
-        # `evaluate` sends Rust nothing since batch 15b (its record here was the Rust typing call before it).
-        "countermodel-valid": lambda: check_countermodel(ENV, (ATOM,), Bottom(), MODEL),
-        "countermodel-premise-false": lambda: check_countermodel(ENV, (ATOM, Top()), Bottom(), other),
-        "countermodel-conclusion-true": lambda: check_countermodel(ENV, (Top(),), ATOM, MODEL),
-        "countermodel-budget": lambda: check_countermodel(ENV, (ATOM, Top()), Bottom(), MODEL, max_evaluations=1),
+        # `evaluate` sends Rust nothing since batch 15b, and the countermodel check nothing since batch 18
+        # (Lean is its one authority); the checker still writes countermodel records, sent here directly.
+        "countermodel-valid": lambda: _countermodel((ATOM,), Bottom(), MODEL),
+        "countermodel-premise-false": lambda: _countermodel((ATOM, Top()), Bottom(), other),
+        "countermodel-conclusion-true": lambda: _countermodel((Top(),), ATOM, MODEL),
+        "countermodel-budget": lambda: _countermodel((ATOM, Top()), Bottom(), MODEL, 1),
         "search-found": lambda: find_countermodel(ENV, (Top(),), ATOM, max_domain_size=1),
         "search-not-found": lambda: find_countermodel(ENV, (ATOM,), ATOM, max_domain_size=1),
         "distinguishing-found": lambda: find_distinguishing_model(ENV, ATOM, Not(ATOM), max_domain_size=1),
@@ -77,7 +88,6 @@ def genuine():
 
     out = {}
     with pytest.MonkeyPatch.context() as patch:
-        patch.setenv("VE_AUTHORITY", "rust-experimental")
         patch.setattr(rust_jsonl, "_run_checker", spy)
         for name, call in _calls().items():
             seen.clear()

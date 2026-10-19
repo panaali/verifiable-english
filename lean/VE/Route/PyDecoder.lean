@@ -1,4 +1,5 @@
 import VE.Route.AstLimit
+import VE.Limits
 
 /-! Python's view of an AST on the wire: `repr` of a name and the walk of its `_Decoder`.
 
@@ -40,7 +41,7 @@ def formulaArity : String → Option Nat
 /-- Python `decimal_from_wire`. -/
 def decimal : Json → Walk _root_.Unit
   | .str s =>
-    if s.length > 40 then throw "ResourceLimit: Integer literal exceeds 40 characters"
+    if s.length > VE.Limits.maxNumeralChars then throw "ResourceLimit: Integer literal exceeds 40 characters"
     else
       let ok := match s.toList with
         | '-' :: ds => VE.Route.AstLimit.digitsOk ds && ds != ['0']
@@ -58,7 +59,7 @@ def decodeNode : Nat → Bool → Nat → Json → Walk _root_.Unit
   | fuel + 1, term, depth, j => do
     let n := (← get) + 1
     set n
-    if n > 10000 || depth > 64 then throw "ResourceLimit: AST exceeds depth or node budget"
+    if n > VE.Limits.maxNodes || depth > VE.Limits.maxDepth then throw "ResourceLimit: AST exceeds depth or node budget"
     let (tag, args) ← match j with
       | .arr a => match a.toList with
         | .str t :: rest => pure (t, rest)
