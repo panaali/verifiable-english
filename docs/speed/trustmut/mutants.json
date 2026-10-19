@@ -109,7 +109,7 @@
     "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill",
     "tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps"
    ],
-   "claim": "a `#guard_msgs … in` line opens the command it wraps (one span), as `set_option … in` (review F6)"
+   "claim": "a `#guard_msgs \u2026 in` line opens the command it wraps (one span), as `set_option \u2026 in` (review F6)"
   },
   {
    "id": "TM12",
@@ -227,7 +227,7 @@
   {
    "id": "TM23",
    "file": "tools/trust_mutants.py",
-   "find": "                other = next((x for x in roles if x[3] != \"check\" and x[0] not in tests), None)",
+   "find": "                other = next((x for x in roles if not kills(*x)), None)",
    "replace": "                other = None",
    "tests": [
     "tests/test_trust_mutants.py::test_an_error_outside_every_check_is_unknown"
@@ -247,12 +247,83 @@
   {
    "id": "TM25",
    "file": "tools/trust_mutants.py",
-   "find": "                other = next((x for x in roles if x[3] != \"check\" and x[0] not in tests), None)",
-   "replace": "                other = None if any(x[3] == \"check\" or x[0] in tests for x in roles) else roles[0]",
+   "find": "                other = next((x for x in roles if not kills(*x)), None)",
+   "replace": "                other = None if any(kills(*x) for x in roles) else roles[0]",
    "tests": [
     "tests/test_trust_mutants.py::test_an_error_in_a_definition_beside_a_failing_check_is_unknown"
    ],
    "claim": "an error in a definition is UNKNOWN even beside a failing check (review F8)"
+  },
+  {
+   "id": "TM26",
+   "file": "tools/trust_mutants.py",
+   "find": "    if blank is None or blank[0].count(\"\\n\") < extra or not code_only(text[:first] + \"X\").endswith(\"X\"):",
+   "replace": "    if True:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration",
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
+   ],
+   "claim": "a longer replacement takes its extra line ends from the blank lines after its declaration (review F9)"
+  },
+  {
+   "id": "TM27",
+   "file": "tools/trust_mutants.py",
+   "find": "    if blank is None or blank[0].count(\"\\n\") < extra or not code_only(text[:first] + \"X\").endswith(\"X\"):",
+   "replace": "    if blank is None or blank[0].count(\"\\n\") < extra:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration"
+   ],
+   "claim": "the blank lines a longer replacement takes are never inside a comment (review F9)"
+  },
+  {
+   "id": "TM28",
+   "file": "tools/trust_mutants.py",
+   "find": "        if (n := moved(texts[m.file], (scratch.lean / m.file).read_text(), m.lines)) is not None:",
+   "replace": "        if (n := None) is not None:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
+   ],
+   "claim": "a mutant that moves a line after its declaration is UNKNOWN (review F9)"
+  },
+  {
+   "id": "TM29",
+   "file": "tools/trust_mutants.py",
+   "find": "                 and old[n - 1:n] != new[n - 1:n]), None)",
+   "replace": "                 and len(old) != len(new)), None)",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration"
+   ],
+   "claim": "`moved` compares every line after the declaration, not only the line count (review F9)"
+  },
+  {
+   "id": "TM30",
+   "file": "tools/trust_mutants.py",
+   "find": "    return not PARSE.match(message) and (",
+   "replace": "    return (",
+   "tests": [
+    "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
+   ],
+   "claim": "a parse error never kills (review F9: a cut left behind)"
+  },
+  {
+   "id": "TM31",
+   "file": "tools/trust_mutants.py",
+   "find": "role == \"check\" and built == checkout and bool(built.strip()))",
+   "replace": "role == \"check\")",
+   "tests": [
+    "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
+   ],
+   "claim": "a check's error kills only at a line the mutant and the cuts left as the checkout has it (review F9)"
+  },
+  {
+   "id": "TM32",
+   "file": "tools/trust_mutants.py",
+   "find": "(r.start[0], max(\n                    r.end[0], text.count(\"\\n\", 0, edit[0])))",
+   "replace": "(r.start[0], max(\n                    r.end[0], r.end[0]))",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
+   ],
+   "claim": "the mutated declaration's lines run over the blank lines its edit takes (review F9)"
   }
  ]
 }
