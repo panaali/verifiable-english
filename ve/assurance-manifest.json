@@ -67,7 +67,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 35822,
+    "total_lines": 36025,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1727,12 +1727,12 @@
       },
       {
         "file": "lean/VE/Alternatives/FillWire.lean",
-        "lines": 361,
-        "sha256": "a7a473ee539897b9b07861908b3c0f49406e898ad6326a1e057209329897fab2",
+        "lines": 564,
+        "sha256": "5b736870014d1c1b614284e3884d43e077ccf33032b210079fac1fbe3016ea25",
         "ranges": [
           [
             1,
-            361
+            564
           ]
         ],
         "declarations": [
@@ -1744,7 +1744,7 @@
           "replayFollowableU",
           "replayDilemmaU"
         ],
-        "reason": "the alternatives source with the completion, its package bindings and witness filling from JSON (ET-7); the full file is pinned conservatively"
+        "reason": "the alternatives source with the completion, its package bindings and witness filling from JSON (ET-7; et-7b's scenario rows use the same decoded source); the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1842,9 +1842,9 @@
       "lean/VE/Route/AstLimit.lean": "rejection only: the static AST node, depth and numeral limits walked over a case's raw formula JSON before any pinned decoder runs (Python _Decoder's budget order); it returns a ResourceLimit fault or nothing, never a decoded value, and every formula it passes is still decoded by a pinned decoder",
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing",
+      "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d) and literal scenario cases for runValidateU (et-7b, T12 and T12b); no runtime decoding",
       "lean/VE/NormDefaults/Packs.lean": "encoder only: premise packs (PK-1); `labelledJson` and `elaborateArrays` write the layered elaborate's `soft` and `rights` arrays from Lean values; it reads no request JSON (the packs come from the pinned Layered.lean decoders)",
-      "lean/VE/Defaults/Examples.lean": "test fixtures only: df-1a's `#guard`s parse their soft documents and finite situations from JSON literals and run the pinned decoders (`decodeSoftU`, `situationX`, `decodeFilling`) on them; no service mode reads this file",
-      "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d); no runtime decoding"
+      "lean/VE/Defaults/Examples.lean": "test fixtures only: df-1a's `#guard`s parse their soft documents and finite situations from JSON literals and run the pinned decoders (`decodeSoftU`, `situationX`, `decodeFilling`) on them; no service mode reads this file"
     }
   },
   "plan_operations": {
