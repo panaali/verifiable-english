@@ -437,7 +437,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             cut_proof(path, s, e)
 
     def build(stage: list[str]) -> tuple[int, list[tuple[str, int, str]]]:
-        for attempt in range(2):  # once more: Lake can fail with no located error under load
+        for attempt in range(3):  # again: Lake can fail with no located error under load
             code, output = scratch.lake(env, "build", *(f"+{x}" for x in stage))
             found = [(f, int(n), message) for f, n, message in ERROR.findall(output)]
             if code == 0 or found:
@@ -494,6 +494,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                     write(m.file, False)
                     controls[key] = build(stage)[1]
                     write(m.file, True)
+                    if controls[key][:1] and not controls[key][0][0]:  # no located error: not kept for others
+                        return "UNKNOWN", f"its control: {controls.pop(key)[0][2]}"
                 for f, n, message in each(controls[key]):  # it fails there too: it reads a cut proof, so cut it
                     if why := cut(f, n, f"fails without the mutant too: {message[:200]}"):
                         return "UNKNOWN", why
