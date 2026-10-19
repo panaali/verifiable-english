@@ -1,0 +1,334 @@
+{
+  "item": "jt-1b",
+  "date": "2026-10-19",
+  "note": "Each mutant was applied to the committed lean/VE/Judgments/Status.lean, built with lake (PATH=~/.elan/bin), and the source restored (byte-compared afterwards). A #guard that evaluates to false, or a proof or theorem that no longer checks, fails the build of the named module. When the first run failed only inside Status.lean, a second run replaced the proof of every Status.lean theorem by sorry (definitions unchanged) to show which fixtures the mutant breaks; the baseline of that stubbed file builds. Mutants 1 to 4 are the plan's four status seeded bugs; every trusted definition of Status.lean (tools/trust_map.py) has at least one mutant. No Python or Rust product code changed.",
+  "mutants": [
+    {
+      "name": "dependsOn-no-closure",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.dependsOn",
+      "mutation": [
+        {
+          "from": "opensIn J (fs ++ reachedBodies defs fs)",
+          "to": "opensIn J fs"
+        }
+      ],
+      "claim": "plan bug 1: dependence follows W3 definitions (J-γ, J-γ′)",
+      "test": "lean/VE/Judgments/Status.lean:65",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:65 (proof of dependsOn_iff no longer checks)",
+        "lean/VE/Judgments/Examples.lean:163 (J-γ, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:165 (J-γ′, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:174 (dependence through definitions, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:286 (definition chain (internal row)), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "status-specified-checked",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.status",
+      "mutation": [
+        {
+          "from": "if u.meaning == \"specified\" then\n",
+          "to": "if u.meaning == \"specified!\" then\n"
+        },
+        {
+          "from": "pure (if deps.isEmpty then u.legacy",
+          "to": "pure (if deps.isEmpty || u.meaning == \"specified\" then u.legacy"
+        }
+      ],
+      "claim": "plan bug 2: specified content that uses a judgment is refused, never CHECKED (J-β)",
+      "test": "lean/VE/Judgments/Status.lean:176",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:176 (proof of status_eq no longer checks)",
+        "lean/VE/Judgments/Examples.lean:158 (J-β, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:163 (J-γ, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:165 (J-γ′, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:279 (carve-out status (internal row)), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:297 (J-β removal, 11.9), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "listed-unused-without-complete",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.status",
+      "mutation": [
+        {
+          "from": "    if u.complete then\n",
+          "to": "    if true then\n"
+        }
+      ],
+      "claim": "plan bug 6: JudgmentListedUnused only on a complete unit (J-τ′)",
+      "test": "lean/VE/Judgments/Status.lean:232",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:232 (proof of status_ok_iff no longer checks)",
+        "lean/VE/Judgments/Status.lean:260 (proof of status_legacy no longer checks)",
+        "lean/VE/Judgments/Examples.lean:224 (J-τ′ (a)-(e), 11.3), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "complete-own-first",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.UnitView.complete",
+      "mutation": [
+        {
+          "from": "  match u.set with\n  | some s => !s.candidates.isEmpty && s.candidates.all Option.isSome\n  | none => u.own.isSome",
+          "to": "  u.own.isSome || match u.set with\n  | some s => !s.candidates.isEmpty && s.candidates.all Option.isSome\n  | none => false"
+        }
+      ],
+      "claim": "plan bug 7: the active set takes precedence over own content in complete (J-τ′ (d))",
+      "test": "lean/VE/Judgments/Examples.lean:224",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:224 (J-τ′ (a)-(e), 11.3)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "content-no-deceq",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.Content",
+      "mutation": [
+        {
+          "from": "  | rule (N : VE.Norms.Node)\n  deriving DecidableEq, Repr",
+          "to": "  | rule (N : VE.Norms.Node)\n  deriving Repr"
+        }
+      ],
+      "claim": "Content is data: its derived equality is what UnitView's and ActiveSet's equality (and the viewOf #guards) are built on",
+      "test": "lean/VE/Judgments/Status.lean:98",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:98 (derived instance of ActiveSet fails)",
+        "lean/VE/Judgments/Status.lean:109 (derived instance of UnitView fails)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "formulas-guard-only",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.Content.formulas",
+      "mutation": [
+        {
+          "from": "  | .rule N => N.guard :: N.carveOuts",
+          "to": "  | .rule N => [N.guard]"
+        }
+      ],
+      "claim": "a rule is read through its guard and its carve-outs",
+      "test": "lean/VE/Judgments/Examples.lean:278",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:278 (formulas_carve (internal row))",
+        "lean/VE/Judgments/Examples.lean:279 (carve-out status (internal row))"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "defEdges-reversed",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.defEdges",
+      "mutation": [
+        {
+          "from": "(VE.Norms.preds d.body).map (d.name, ·)",
+          "to": "(VE.Norms.preds d.body).map (·, d.name)"
+        }
+      ],
+      "claim": "a defined name points at its body's predicates",
+      "test": "lean/VE/Judgments/Status.lean:53",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:53 (proof of mem_defEdges no longer checks)",
+        "lean/VE/Judgments/Examples.lean:285 (reachedBodies_chain (internal row)), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:286 (definition chain (internal row)), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "reachedBodies-direct-only",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.reachedBodies",
+      "mutation": [
+        {
+          "from": "p == d.name || VE.Closure.reachEval .plus (defEdges defs) p d.name",
+          "to": "p == d.name"
+        }
+      ],
+      "claim": "a definition reached through another is read",
+      "test": "lean/VE/Judgments/Status.lean:70",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:70 (proof of dependsOn_iff no longer checks)",
+        "lean/VE/Judgments/Examples.lean:285 (reachedBodies_chain (internal row)), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:286 (definition chain (internal row)), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "dependsOnC-ignores-defs",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.dependsOnC",
+      "mutation": [
+        {
+          "from": "dependsOn defs J (cs.flatMap Content.formulas)",
+          "to": "dependsOn [] J (cs.flatMap Content.formulas)"
+        }
+      ],
+      "claim": "contents depend through definitions too (J-γ′)",
+      "test": "lean/VE/Judgments/Status.lean:88",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:88 (proof of dependsOnC_sub no longer checks)",
+        "lean/VE/Judgments/Examples.lean:163 (J-γ, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:165 (J-γ′, 11.3), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "activeSet-fields-swapped",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.ActiveSet",
+      "mutation": [
+        {
+          "from": "  authored    : Bool\n  allAsserted : Bool\n",
+          "to": "  allAsserted : Bool\n  authored    : Bool\n"
+        }
+      ],
+      "claim": "the active set's flags are the loader's, in its order",
+      "test": "lean/VE/Judgments/Status.lean:143",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:143 (proof of viewOf_legacy no longer checks)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "unitView-id-meaning-swapped",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.UnitView",
+      "mutation": [
+        {
+          "from": "  id       : String\n  meaning  : String\n",
+          "to": "  meaning  : String\n  id       : String\n"
+        }
+      ],
+      "claim": "a unit's id and meaning are its own fields",
+      "test": "lean/VE/Judgments/Examples.lean:156",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:156 (J-α usage, 11.3)",
+        "lean/VE/Judgments/Examples.lean:158 (J-β, 11.3)",
+        "lean/VE/Judgments/Examples.lean:163 (J-γ, 11.3)",
+        "lean/VE/Judgments/Examples.lean:165 (J-γ′, 11.3)",
+        "lean/VE/Judgments/Examples.lean:167 (J-γ″, 11.3)",
+        "lean/VE/Judgments/Examples.lean:180 (J-θ usage, 11.3)",
+        "lean/VE/Judgments/Examples.lean:184 (J-μ, 11.3)",
+        "lean/VE/Judgments/Examples.lean:191 (J-ξ usage, 11.3)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "reads-ignores-set",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.UnitView.reads",
+      "mutation": [
+        {
+          "from": "  | some s => s.candidates.filterMap fun c => c",
+          "to": "  | some s => u.own.toList"
+        }
+      ],
+      "claim": "a unit with an active set is read through its readings (J-ξ)",
+      "test": "lean/VE/Judgments/Examples.lean:189",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:189 (J-ξ, 11.3)",
+        "lean/VE/Judgments/Examples.lean:191 (J-ξ usage, 11.3)",
+        "lean/VE/Judgments/Examples.lean:204 (J-ξ′, 11.3)",
+        "lean/VE/Judgments/Examples.lean:206 (J-ξ′ usage, 11.3)",
+        "lean/VE/Judgments/Examples.lean:227 (J-τ′ (e), 11.3)"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "legacy-ignores-set",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.UnitView.legacy",
+      "mutation": [
+        {
+          "from": "  | some s => VE.Discourse.Loader.w2SetStatus s.authored s.allAsserted",
+          "to": "  | some s => VE.Discourse.Loader.w2Status u.own.isSome u.meaning"
+        }
+      ],
+      "claim": "today's status of a unit with an active set is the set's (J-ξ legacy CHECKED)",
+      "test": "lean/VE/Judgments/Status.lean:143",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:143 (proof of viewOf_legacy no longer checks)",
+        "lean/VE/Judgments/Examples.lean:190 (J-ξ legacy, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:224 (J-τ′ (a)-(e), 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:229 (J-λ, 11.3), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "viewOf-drops-candidates",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.viewOf",
+      "mutation": [
+        {
+          "from": "kinds.all id, candidates rs⟩",
+          "to": "kinds.all id, []⟩"
+        }
+      ],
+      "claim": "viewOf keeps the active set's candidates",
+      "test": "lean/VE/Judgments/Examples.lean:290",
+      "fails": [
+        "lean/VE/Judgments/Examples.lean:290 (viewOf_xi (internal row))",
+        "lean/VE/Judgments/Examples.lean:291 (viewOf builds J-ξ's view (internal row))"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    },
+    {
+      "name": "usageMap-keeps-empty-rows",
+      "language": "Lean",
+      "file": "lean/VE/Judgments/Status.lean",
+      "definition": "VE.Judgments.usageMap",
+      "mutation": [
+        {
+          "from": "(rows.filter (!·.2.isEmpty), ",
+          "to": "(rows, "
+        }
+      ],
+      "claim": "no row of the usage map is empty (J-μ)",
+      "test": "lean/VE/Judgments/Status.lean:277",
+      "fails": [
+        "lean/VE/Judgments/Status.lean:277 (proof of usageMap_sound no longer checks)",
+        "lean/VE/Judgments/Status.lean:287 (proof of usageMap_complete no longer checks)",
+        "lean/VE/Judgments/Status.lean:299 (proof of usageMap_rows no longer checks)",
+        "lean/VE/Judgments/Examples.lean:185 (J-μ usage, 11.3), with Status.lean's theorem proofs stubbed for the run",
+        "lean/VE/Judgments/Examples.lean:302 (J-τ usage, 11.9), with Status.lean's theorem proofs stubbed for the run"
+      ],
+      "command": "cd lean && lake build VE.Judgments.Examples",
+      "restored": true
+    }
+  ]
+}
