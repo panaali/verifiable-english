@@ -810,6 +810,13 @@
    "reason": "df-1a: VE/Defaults/Premises.lean S +18 (dfltOf, dfltLabelled), V +26 (untied G[V]: dfltPremises, dfltLabels, defaultX, withoutDefaults, bareExceptionLabels, Basis, Form)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1a, 2026-10-18",
    "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "S",
+   "lines": 35,
+   "reason": "qt-a2: S +35 (K +0, V +0): lean/VE/Cardinality/Syntax.lean +25 (CTerm 6, CTermTyped 6, admittedRules 3, CFormula +4, Admitted +6), lean/VE/Cardinality/Semantics.lean +10 (CTerm.Denotes 5, CFormula.holds +5)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a2, 2026-10-18",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
   }
  ]
 }
