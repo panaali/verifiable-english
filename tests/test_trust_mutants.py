@@ -651,6 +651,18 @@ def test_an_edit_keeps_every_line_after_its_declaration(decl, rest, before, new,
     assert trust_mutants.moved(text, after, lines) == (None if mutated else decl.count("\n") + 2)
 
 
+@pytest.mark.parametrize(("after", "lines", "line"), [
+    ("def f := [1,\n  2]\n#guard f == [1]\n#guard g\n", (1, 2), 3),
+    ("def f := [1,\n  2]\n#guard f == [1]\n#guard g\n", (1, 1), 2),
+    ("def f := [2]\n#guard f == [1]\n\n#guard g\n", (1, 1), None),
+    ("def f := [1]\n#guard f == [1]\n\n#guard g", (1, 1), 5)], ids=("count-kept", "own-line", "same", "count"))
+def test_moved_finds_the_first_line_after_the_declaration_that_moved(after, lines, line):
+    """Review F9: `moved` compares each line outside the mutated declaration, not only the line count (an edit that
+    took a blank line below a check keeps the count and moves the check)."""
+    import trust_mutants
+    assert trust_mutants.moved("def f := [1]\n#guard f == [1]\n\n#guard g\n", after, lines) == line
+
+
 @pytest.mark.parametrize(("message", "role", "built", "checkout", "test", "kills"), [
     ("Expression\n  f 1 == 2\ndid not evaluate to `true`", "check", "#guard f 1 == 2", "#guard f 1 == 2", False, True),
     ("unexpected token '<;>'; expected command", "check", "  <;> trivial", "#guard f 1 == 2", False, False),

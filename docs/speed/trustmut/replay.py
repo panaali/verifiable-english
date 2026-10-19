@@ -75,6 +75,19 @@ def table() -> list[str]:
     return rows
 
 
+def f9() -> str:
+    """Review F9's rules on the saved replays: a mutant that changes its line count (`relined` decides it now) and a
+    kill on a parse error (now UNKNOWN, `PARSE`); with neither, the F9 fix changes no replayed verdict."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    from trust_mutants import PARSE
+    moved = parsed = 0
+    for head in dict.fromkeys(head for _, head, _, _ in FINDINGS):
+        for m in json.loads((EVIDENCE / f"{head[:8]}.json").read_text())["mutants"]:
+            moved += m["after"].count("\n") != m["before"].count("\n")
+            parsed += m["status"] == "KILLED" and bool(PARSE.match(m["detail"].split(": ", 1)[1]))
+    return f"Review F9 on the replays: {moved} mutants change their line count, {parsed} kills are parse errors."
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--run", action="store_true")
@@ -86,7 +99,7 @@ def main() -> int:
             if not args.only or head.startswith(args.only):
                 replay(head, base, args.jobs)
     if not args.only:
-        print("\n".join(table()))
+        print("\n".join([*table(), "", f9()]))
     return 0
 
 
