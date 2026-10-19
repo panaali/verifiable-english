@@ -5,9 +5,36 @@ extension adds days with no facts except those of the predicates in `ng` (`befor
 tables); `hits ng k a` says `a` is false whenever variable `k` is an added day, `vacuous ng k a` that
 it is true then. `up` formulas stay true in every day extension and `down` formulas stay false
 (`dayExtension_transfer`): a universal day quantifier needs a guarded body for `up`, an existential
-one a body that hits its variable for `down`. Order atoms are never guards. -/
+one a body that hits its variable for `down`. Order atoms are never guards.
+
+The completion adds one day for each civil day number a numbering leaves unused, with no facts
+except their order (`completion_extension`, `completion_reading`, `completion_admissible`). -/
 namespace VE.Events
+open VE.Time (dateMax)
 universe u v
+
+def numOf {α : Type} (num : α → Nat) : α ⊕ Nat → Nat
+  | .inl x => num x
+  | .inr n => n
+def oldTuple {α : Type} : List (α ⊕ Nat) → Option (List α)
+  | [] => some []
+  | .inl x :: zs => (oldTuple zs).map (x :: ·)
+  | .inr _ :: _ => none
+def addedDay {α : Type} (V : EventsEnv) (M : VE.FiniteModel α) (num : α → Nat) (n : Nat) : Prop :=
+  n ≤ dateMax ∧ ∀ x ∈ M.domains V.day, num x ≠ n
+def isDayC {α : Type} (V : EventsEnv) (M : VE.FiniteModel α) (num : α → Nat) : α ⊕ Nat → Prop
+  | .inl x => x ∈ M.domains V.day
+  | .inr n => addedDay V M num n
+
+def completion {α : Type} (V : EventsEnv) (M : VE.FiniteModel α) (num : α → Nat) : VE.Structure.{0} where
+  Carrier := α ⊕ Nat
+  domain := fun s z => match z with
+    | .inl x => x ∈ M.domains s
+    | .inr n => s = V.day ∧ addedDay V M num n
+  constant := fun c => (M.constants c).map Sum.inl
+  relation := fun p zs => match oldTuple zs with
+    | some xs => xs ∈ M.relations p
+    | none => p = V.before ∧ ∃ z w, zs = [z, w] ∧ isDayC V M num z ∧ isDayC V M num w ∧ numOf num z < numOf num w
 
 def isConst : VE.Term → Bool
   | .const _ => true
@@ -235,5 +262,176 @@ theorem dayExtension_transfer (day : String) (ng : List String) (M : VE.Structur
     · have hd : s = day := newDay s y hy (fun x hxy => himg ⟨x, hxy⟩)
       have hhit : hits ng 0 a = true := by simpa [hd] using h.2
       exact absurd hs ((hv a 0 (y :: ρ.map ι) y rfl (fun x hxy => himg ⟨x, hxy⟩)).1 hhit)
+
+end VE.Events
+namespace VE.Events
+open VE.Time (dateMax)
+
+/-! ## The completion -/
+
+theorem oldTuple_map {α : Type} : ∀ xs : List α, oldTuple (xs.map Sum.inl : List (α ⊕ Nat)) = some xs
+  | [] => rfl
+  | x :: xs => by simp [oldTuple, oldTuple_map xs]
+
+theorem oldTuple_eq {α : Type} : ∀ {zs : List (α ⊕ Nat)} {xs : List α}, oldTuple zs = some xs →
+    zs = xs.map Sum.inl
+  | [], xs, h => by simp [oldTuple] at h; subst h; rfl
+  | .inl x :: zs, xs, h => by
+    simp only [oldTuple, Option.map_eq_some_iff] at h
+    obtain ⟨ys, hy, rfl⟩ := h
+    simp [oldTuple_eq hy]
+  | .inr _ :: _, _, h => by simp [oldTuple] at h
+
+/-- The completion's `before` on two days, one of them added: their numbers' order. -/
+theorem completion_before_new {α : Type} {V : EventsEnv} {M : VE.FiniteModel α} {num : α → Nat}
+    {z w : α ⊕ Nat} (h : oldTuple [z, w] = none) :
+    (completion V M num).relation V.before [z, w] ↔ isDayC V M num z ∧ isDayC V M num w ∧ numOf num z < numOf num w := by
+  simp only [completion, h, true_and]
+  constructor
+  · rintro ⟨z', w', he, hz, hw, hl⟩
+    simp only [List.cons.injEq, and_true] at he; obtain ⟨rfl, rfl⟩ := he
+    exact ⟨hz, hw, hl⟩
+  · exact fun ⟨hz, hw, hl⟩ => ⟨z, w, rfl, hz, hw, hl⟩
+
+/-- The completion is a day extension in which only `before` has tuples with added days ... -/
+theorem completion_extension {α : Type} [DecidableEq α] (V : EventsEnv) (M : VE.FiniteModel α) (num : α → Nat)
+    (hm : Embeds V M.asStructure num) :
+    DayExtension V.day [V.before] M.asStructure (completion V M num) Sum.inl := by
+  have _ := hm
+  refine ⟨fun x y h => Sum.inl.inj h, fun s x => Iff.rfl, ?_, fun c => rfl, fun p xs => ?_, ?_⟩
+  · intro s y hy hn
+    cases y with
+    | inl x => exact absurd rfl (hn x)
+    | inr n => exact hy.1
+  · simp only [completion, VE.FiniteModel.asStructure, oldTuple_map]
+  · intro p ys hr ⟨y, hy, hn⟩
+    cases h : oldTuple ys with
+    | some xs =>
+      rw [oldTuple_eq h] at hy
+      obtain ⟨x, -, rfl⟩ := List.mem_map.1 hy
+      exact absurd rfl (hn x)
+    | none =>
+      simp only [completion, h] at hr
+      simp [hr.1]
+
+/-- ... whose days are every civil day ... -/
+theorem completion_reading {α : Type} [DecidableEq α] (V : EventsEnv) (M : VE.FiniteModel α) (num : α → Nat)
+    (hm : Embeds V M.asStructure num) :
+    CalendarReading V (completion V M num) (numOf num) := by
+  obtain ⟨inj, le, ord, dates⟩ := hm
+  refine ⟨⟨?_, ?_, ?_, ?_⟩, ?_⟩
+  · intro z w hz hw he
+    cases z with
+    | inl x => cases w with
+      | inl y => exact congrArg Sum.inl (inj x y hz hw he)
+      | inr m => exact absurd he (hw.2.2 x hz)
+    | inr n => cases w with
+      | inl y => exact absurd he.symm (hz.2.2 y hw)
+      | inr m => simp only [numOf] at he; rw [he]
+  · intro z hz
+    cases z with
+    | inl x => exact le x hz
+    | inr n => exact hz.2.1
+  · intro z w hz hw
+    have dz : isDayC V M num z := by cases z with
+      | inl x => exact hz
+      | inr n => exact hz.2
+    have dw : isDayC V M num w := by cases w with
+      | inl x => exact hw
+      | inr n => exact hw.2
+    cases z with
+    | inl x => cases w with
+      | inl y => exact ord x y hz hw
+      | inr m => exact (completion_before_new rfl).trans ⟨fun h => h.2.2, fun h => ⟨dz, dw, h⟩⟩
+    | inr n => exact (completion_before_new rfl).trans ⟨fun h => h.2.2, fun h => ⟨dz, dw, h⟩⟩
+  · intro D hD
+    obtain ⟨x, hx, dx, nx⟩ := dates D hD
+    exact ⟨.inl x, by simp [completion, VE.FiniteModel.asStructure] at hx ⊢; exact hx, dx, nx⟩
+  · intro n hn
+    by_cases h : ∃ x ∈ M.domains V.day, num x = n
+    · obtain ⟨x, hx, rfl⟩ := h
+      exact ⟨.inl x, hx, rfl⟩
+    · exact ⟨.inr n, ⟨rfl, hn, fun x hx he => h ⟨x, hx, he⟩⟩, rfl⟩
+
+theorem completion_typed {α : Type} {V : EventsEnv} {M : VE.FiniteModel α} {num : α → Nat} :
+    ∀ (ss : List String) (xs : List α), VE.TupleTyped M.asStructure ss xs →
+      VE.TupleTyped (completion V M num) ss (xs.map Sum.inl)
+  | [], [], _ => trivial
+  | _ :: ss, _ :: xs, ⟨h, ht⟩ => ⟨h, completion_typed ss xs ht⟩
+  | [], _ :: _, h => h.elim
+  | _ :: _, [], h => h.elim
+
+/-- ... and which is a structure of the situation's environment. -/
+theorem completion_admissible {α : Type} [DecidableEq α] (E : VE.Environment) (V : EventsEnv)
+    (hT : EventsTyped E V = true) (M : VE.FiniteModel α) (valid : M.Valid E) (num : α → Nat)
+    (hm : Embeds V M.asStructure num) :
+    (completion V M num).Admissible E := by
+  have _ := hm
+  have hb : E.predicates V.before = some [V.day, V.day] := by
+    simp only [EventsTyped, sig2, Bool.and_eq_true, beq_iff_eq] at hT; exact hT.1.1.1.1.1.2
+  refine ⟨fun c s hc => ?_, fun p zs hr => ?_⟩
+  · obtain ⟨v, hv, dv⟩ := valid.1 c s hc
+    exact ⟨.inl v, by simp [completion, VE.FiniteModel.asStructure] at hv ⊢; exact hv, dv⟩
+  · cases h : oldTuple zs with
+    | some xs =>
+      have hr : xs ∈ M.relations p := by simpa only [completion, h] using hr
+      obtain ⟨ss, hp, ht⟩ := valid.2 p xs hr
+      exact ⟨ss, hp, oldTuple_eq h ▸ completion_typed ss xs ht⟩
+    | none =>
+      simp only [completion, h] at hr
+      obtain ⟨rfl, z, w, rfl, hz, hw, -⟩ := hr
+      have day : ∀ z, isDayC V M num z → (completion V M num).domain V.day z := fun z hz => by
+        cases z with
+        | inl x => exact hz
+        | inr n => exact ⟨rfl, hz⟩
+      exact ⟨[V.day, V.day], hb, day z hz, day w hw, trivial⟩
+
+
+/-- The conventions are in the fragment both ways. -/
+theorem conventions_exact (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E V = true) (ng : List String)
+    (hng : ∀ p ∈ rolePreds V ++ V.links.map (·.predicate), p ∉ ng) :
+    ∀ a ∈ conventionPremises V, up V.day ng a = true ∧ down V.day ng a = true := by
+  have _ := h
+  have role : ∀ p ∈ rolePreds V, p ∉ ng := fun p hp => hng p (List.mem_append_left _ hp)
+  have link : ∀ l ∈ V.links, l.predicate ∉ ng := fun l hl =>
+    hng l.predicate (List.mem_append_right _ (List.mem_map_of_mem hl))
+  have onR : ∀ e ∈ V.events, e.on ∈ rolePreds V := fun e he => by
+    simp only [rolePreds, List.mem_append, List.mem_map]; exact .inl ⟨e, he, rfl⟩
+  have beginsR : ∀ x ∈ V.states, x.begins ∈ rolePreds V := fun x hx => by
+    simp only [rolePreds, List.mem_append, List.mem_flatMap]; exact .inr ⟨x, hx, by simp⟩
+  have endsR : ∀ x ∈ V.states, x.ends ∈ rolePreds V := fun x hx => by
+    simp only [rolePreds, List.mem_append, List.mem_flatMap]; exact .inr ⟨x, hx, by simp⟩
+  intro a ha
+  simp only [conventionPremises, conventionLabelled, List.map_append, List.map_map, List.mem_append,
+    List.mem_map, Function.comp, List.map_flatMap, List.mem_flatMap, List.map_cons, List.map_nil,
+    List.mem_cons, List.not_mem_nil, or_false] at ha
+  rcases ha with ((⟨e, hm, rfl⟩ | ⟨x, hm, hx⟩) | ⟨l, hm, rfl⟩) | ⟨⟨n, c⟩, hm, rfl⟩
+  · have := role _ (onR e hm)
+    simp [oneRoleF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, this]
+  · have hb := role _ (beginsR x hm)
+    have he := role _ (endsR x hm)
+    rcases hx with rfl | rfl | rfl
+    · simp [oneRoleF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, hb]
+    · simp [oneRoleF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, he]
+    · simp [notBeforeBeginF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, hb, he]
+  · have hl := link l hm
+    unfold linkForwardF
+    split
+    · next st bd hst hbd =>
+      have h1 : st ∉ ng := by
+        rcases startRole_mem hst with ⟨e, he, -, rfl⟩ | ⟨x, hx, -, rfl⟩
+        · exact role _ (onR e he)
+        · exact role _ (beginsR x hx)
+      have h2 : bd ∉ ng := by
+        rcases boundRole_mem hbd with ⟨e, he, -, rfl⟩ | ⟨x, hx, -, rfl⟩
+        · exact role _ (onR e he)
+        · exact role _ (endsR x hx)
+      simp [bin, up, down, hits, vacuous, ← isVar_beq, isVar, hl, h1, h2]
+    · simp [up, down]
+  · simp only [weakerPairs, List.mem_flatMap, List.mem_filter, List.mem_map] at hm
+    obtain ⟨n', ⟨hn, -⟩, c', -, he'⟩ := hm
+    simp only [Prod.mk.injEq] at he'; obtain ⟨rfl, rfl⟩ := he'
+    have hl := link n' hn
+    simp [linkWeakerF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, hl]
 
 end VE.Events

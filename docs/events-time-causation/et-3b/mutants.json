@@ -1,0 +1,192 @@
+{
+ "comment": "et-3b seeded bugs: one or more per new trusted definition (R16) and one per claimed theorem, run on the committed tree: each mutant applied alone, lake build VE.Events.Examples run, then the five events files elaborated as one scratch file so every #guard and example runs even when a proof upstream fails; `test` names the proofs and fixtures that fail; restored after each run. Harness: evidence/seeded-bugs-harness.py.txt.",
+ "mutants": [
+  {
+   "mutant": "numOf-shift",
+   "definition": "VE.Events.numOf",
+   "claim": "an added day is numbered by its own number (completion_reading)",
+   "file": "lean/VE/Events/Completion.lean",
+   "language": "Lean",
+   "replace": "| .inr n => n\ndef oldTuple",
+   "with": "| .inr n => n + 1\ndef oldTuple",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Completion.lean:327:33: Application type mismatch: The argument",
+    "error: VE/Events/Completion.lean:329:38: Application type mismatch: The argument",
+    "error: VE/Events/Completion.lean:330:46: Tactic `rewrite` failed: Did not find an occurrence of the pattern",
+    "error: VE/Events/Completion.lean:334:15: Type mismatch"
+   ],
+   "test": [
+    "theorem completion_reading",
+    "#guard numOf (fun (_ : String) => 5) (.inl \"a\") == 5 && numOf (fun (_ : String) => 5) (.inr 3) == 3"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Completion.lean"
+  },
+  {
+   "mutant": "oldTuple-added-old",
+   "definition": "VE.Events.oldTuple",
+   "claim": "a tuple with an added day is not an old tuple (completion_extension)",
+   "file": "lean/VE/Events/Completion.lean",
+   "language": "Lean",
+   "replace": "| .inr _ :: _ => none",
+   "with": "| .inr _ :: _ => some []",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Completion.lean:283:25: unsolved goals",
+    "error: VE/Events/Completion.lean:345:46: Application type mismatch: The argument",
+    "error: VE/Events/Completion.lean:346:44: Application type mismatch: The argument"
+   ],
+   "test": [
+    "theorem oldTuple_eq",
+    "theorem completion_reading",
+    "#guard oldTuple ([.inl \"a\", .inr 3] : List (String ⊕ Nat)) == none && oldTuple ([.inr 3, .inl \"a\"] : List (Str"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Completion.lean"
+  },
+  {
+   "mutant": "addedDay-no-bound",
+   "definition": "VE.Events.addedDay",
+   "claim": "added days are civil days, at most dateMax (completion_reading)",
+   "file": "lean/VE/Events/Completion.lean",
+   "language": "Lean",
+   "replace": "n ≤ dateMax ∧ ∀ x ∈ M.domains V.day, num x ≠ n",
+   "with": "∀ x ∈ M.domains V.day, num x ≠ n",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Completion.lean:327:34: Invalid projection: Projections cannot be used on functions",
+    "error: VE/Events/Completion.lean:329:39: Invalid projection: Projections cannot be used on functions",
+    "error: VE/Events/Completion.lean:334:21: Invalid projection: Projections cannot be used on functions",
+    "error: VE/Events/Completion.lean:354:21: Invalid `⟨...⟩` notation: The expected type"
+   ],
+   "test": [
+    "theorem completion_reading",
+    "example : ¬ addedDay vT3 mC numC (dateMax + 1) := by unfold addedDay; decide"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Completion.lean"
+  },
+  {
+   "mutant": "isDayC-any-old",
+   "definition": "VE.Events.isDayC",
+   "claim": "only days take part in the added before tuples (completion_admissible, completion_reading)",
+   "file": "lean/VE/Events/Completion.lean",
+   "language": "Lean",
+   "replace": "| .inl x => x ∈ M.domains V.day",
+   "with": "| .inl _ => True",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Completion.lean:337:17: Type mismatch",
+    "error: VE/Events/Completion.lean:340:17: Type mismatch",
+    "error: VE/Events/Completion.lean:385:19: Type mismatch"
+   ],
+   "test": [
+    "theorem completion_reading",
+    "theorem completion_admissible",
+    "example : isDayC vT3 mC numC (.inl \"a\") ∧ ¬ isDayC vT3 mC numC (.inl \"k\") := by simp only [isDayC]; decide"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Completion.lean"
+  },
+  {
+   "mutant": "completion-added-any-sort",
+   "definition": "VE.Events.completion",
+   "claim": "an added day belongs to the day sort only (completion_extension)",
+   "file": "lean/VE/Events/Completion.lean",
+   "language": "Lean",
+   "replace": "| .inr n => s = V.day ∧ addedDay V M num n",
+   "with": "| .inr n => addedDay V M num n",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Completion.lean:305:15: Type mismatch",
+    "error: VE/Events/Completion.lean:327:34: Invalid projection: Projections cannot be used on functions",
+    "error: VE/Events/Completion.lean:329:39: Invalid projection: Projections cannot be used on functions",
+    "error: VE/Events/Completion.lean:334:21: Invalid projection: Projections cannot be used on functions"
+   ],
+   "test": [
+    "theorem completion_extension",
+    "theorem completion_reading",
+    "theorem completion_admissible"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Completion.lean"
+  },
+  {
+   "mutant": "completion-added-any-predicate",
+   "definition": "VE.Events.completion",
+   "claim": "only before has tuples with added days (completion_extension, completion_admissible)",
+   "file": "lean/VE/Events/Completion.lean",
+   "language": "Lean",
+   "replace": "| none => p = V.before ∧ ∃ z w,",
+   "with": "| none => ∃ z w,",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Completion.lean:315:12: Invalid projection: Cannot project a value of non-propositional type",
+    "error: VE/Events/Completion.lean:313:11: unsolved goals",
+    "error: VE/Events/Completion.lean:382:14: Tactic `subst` failed: invalid equality proof, it is not of the form (x = t) or (t = x)"
+   ],
+   "test": [
+    "theorem completion_extension",
+    "theorem completion_admissible"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Completion.lean"
+  },
+  {
+   "mutant": "calendarReading-not-onto",
+   "definition": "VE.Events.CalendarReading",
+   "claim": "a calendar reading is onto every civil day; a finite situation never is (1.5)",
+   "file": "lean/VE/Events/Premises.lean",
+   "language": "Lean",
+   "replace": "Embeds V S num ∧ ∀ n, n ≤ dateMax → ∃ x, S.domain V.day x ∧ num x = n",
+   "with": "Embeds V S num",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Completion.lean:322:10: Invalid `⟨...⟩` notation: The expected type",
+    "error: VE/Events/Completion.lean:323:10: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+    "error: VE/Events/Completion.lean:331:2: No goals to be solved"
+   ],
+   "test": [
+    "theorem completion_reading",
+    "example : ¬ CalendarReading vT3 mC.asStructure numC := fun h => by"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Premises.lean"
+  },
+  {
+   "mutant": "oneRole-before-guard",
+   "definition": "VE.Events.oneRoleF (et-3, not changed here)",
+   "claim": "the conventions are guarded by their role atoms and typed (conventions_exact, eventsPremises_wellFormed)",
+   "file": "lean/VE/Events/Premises.lean",
+   "language": "Lean",
+   "replace": ".all sort (.all V.day (.implies (bin role 1 0)",
+   "with": ".all sort (.all V.day (.implies (bin V.before 1 0)",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Premises.lean:292:2: unsolved goals",
+    "error: VE/Events/Premises.lean:299:4: unsolved goals",
+    "error: VE/Events/Premises.lean:300:4: unsolved goals"
+   ],
+   "test": [
+    "theorem eventsPremises_wellFormed",
+    "theorem conventions_exact",
+    "#guard (conventionPremises vEv).all (fun a => up \"day\" [\"before\"] a && down \"day\" [\"before\"] a)",
+    "#guard firstFailing vEv (sit [(\"act\", [\"x\"])] [(\"committed_on\", [[\"x\", \"a\"], [\"x\", \"b\"]])]) =="
+   ],
+   "restored": "git checkout -- lean/VE/Events/Premises.lean"
+  },
+  {
+   "mutant": "regen-date-sort",
+   "definition": "VE.Events.regenEnv (et-3, not changed here)",
+   "claim": "the regenerated date constants are of the day sort (regen_typed)",
+   "file": "lean/VE/Events/Decl.lean",
+   "language": "Lean",
+   "replace": "then some V.day else E.constants c }",
+   "with": "then some \"date\" else E.constants c }",
+   "lake_build_VE.Events.Examples": "fails",
+   "build_errors": [
+    "error: VE/Events/Premises.lean:230:2: unsolved goals"
+   ],
+   "test": [
+    "theorem regen_typed",
+    "#guard (regenEnv envDay vT1).constants c12 == some \"day\" && (regenEnv envDay vT1).constants c13 == none",
+    "#guard EventsTyped (regenEnv envDay vT1) vT1 && !EventsTyped envDay vT1"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Decl.lean"
+  }
+ ]
+}
