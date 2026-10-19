@@ -12,7 +12,7 @@ from typing import NamedTuple
 
 from .ast import decimal_value
 from .errors import VEError
-from .readings_s1 import Content, decode_content
+from .readings_s1 import decode_content
 
 MAX_CHOICES = 64
 READING_SORT = "ve__reading"
@@ -43,10 +43,6 @@ def conj(formulas: list) -> list:
     return _fold("and", "top", formulas)
 
 
-def disj(formulas: list) -> list:
-    return _fold("or", "bottom", formulas)
-
-
 def pattern(position: int, count: int, index: int) -> list:
     """The choice atom, least significant bit first, in Lean's tree shape."""
     if position < 1 or index < 0 or index >= 1 << bits_of(count):
@@ -74,47 +70,6 @@ def choice_vocabulary(sets) -> dict:
                            for bit in range(bits_of(len(reading_set.candidates)))}}
 
 
-def sup_ready(sets, couplings=(), narrowings=(), *, doc=None) -> bool:
-    """The shape conjuncts of S2 1.8, including the active-version checks.
-
-    The decoder has further checks, notably a shared coupling label value.
-    This predicate deliberately mirrors only ``supReady`` in the spec.
-    """
-    ids = [reading_set.id for reading_set in sets]
-    if doc is not None:
-        units = [item[1] if item[0] != "set" else item[2].unit for item in doc.items]
-        if len(units) != len(set(units)):
-            return False
-        frame = doc.senv.frame_data["vocabulary"]
-        if HERE in frame.get("constants", {}) or any(
-                bit in frame.get("predicates", {}) for bit in choice_vocabulary(sets)["predicates"]):
-            return False
-    if len(ids) != len(set(ids)) or any(
-            not reading_set.candidates or any(a.content is None for a in reading_set.candidates)
-            for reading_set in sets):
-        return False
-    by_version = {(reading_set.id, reading_set.version): reading_set for reading_set in sets}
-    if len({item["id"] for item in couplings}) != len(couplings):
-        return False
-    for coupling in couplings:
-        refs = [(ref["set"], ref["version"]) for ref in coupling["sets"]]
-        if (len(refs) < 2 or len({set_id for set_id, _ in refs}) != len(refs)
-                or any(ref not in by_version for ref in refs)):
-            return False
-        if any(coupling["axis"] not in candidate.labels
-               for ref in refs for candidate in by_version[ref].candidates):
-            return False
-    if len({item["id"] for item in narrowings}) != len(narrowings):
-        return False
-    for narrowing in narrowings:
-        reading_set = by_version.get((narrowing["set"], narrowing["version"]))
-        if reading_set is not None:
-            candidate_ids = {a.id for a in reading_set.candidates}
-            if not narrowing["keeps"] or not set(narrowing["keeps"]) <= candidate_ids:
-                return False
-    return True
-
-
 def position(sets, set_id: str, index: int) -> int:
     """The 1-based candidate position across all open sets."""
     before = 0
@@ -138,28 +93,6 @@ def copies(doc, name: str) -> list[str]:
             return [qualify(position(doc.sets, reading_set.id, index), name)
                     for index in range(len(reading_set.candidates))]
     return [name]
-
-
-def first_nonuniform(doc):
-    """The first fixed child and interface rule with unlike candidate parents."""
-    for _, fixed in doc.fixed_units():
-        if fixed.kind != "norm":
-            continue
-        for name in fixed.body.get("over", []):
-            for reading_set in doc.sets:
-                if ("rule", name) not in doc.interface_of(reading_set):
-                    continue
-                parents = [frozenset(a.content.body.get("over", [])) for a in reading_set.candidates
-                           if a.content is not None and a.content.kind == "norm"
-                           and a.content.body.get("name") == name]
-                if len(parents) != len(reading_set.candidates) or len(set(parents)) != 1:
-                    return reading_set.id, name
-    return None
-
-
-def uniform_precedence(doc) -> bool:
-    """S2 1.8's protection against an unchosen copy yielding to a fixed child."""
-    return first_nonuniform(doc) is None
 
 
 def choice_contents(doc, choice):
@@ -223,73 +156,6 @@ def superposed_contents(doc):
             else:
                 raise VEError("UnsupportedProfile: rights superposition is S2b")
     return out
-
-
-def canonical_content(content):
-    """The S2 wire spelling of a transformed assertion or soft rule."""
-    if content.kind == "assertion":
-        return {"assertion": content.body}
-    if content.kind != "norm":
-        return {"kind": content.kind}
-    rule = content.body
-    exception = rule.get("exception")
-    return {"norm": {"name": rule["name"], "predicate": rule["predicate"], "sign": rule["sign"],
-                     "mode": rule.get("mode", "strict"), "guard": rule.get("guard", ["top"]),
-                     "unless": rule.get("unless", []), "over": rule.get("over", []),
-                     "rank": rule.get("rank"), "alterable": rule.get("alterable", []),
-                     "exception": ({"decided_by": exception.get("decided_by"),
-                                    "sufficient": exception.get("sufficient", []),
-                                    "necessary": exception.get("necessary", []),
-                                    "factors": exception.get("factors", [])}
-                                   if exception is not None else None),
-                     "hard": rule.get("hard", False)}}
-
-
-def superposed_units(doc):
-    """The source positions and transformed units independently regenerated for Lean comparison."""
-    transformed = iter(superposed_contents(doc))
-    units = []
-    for item in doc.items:
-        if item[0] == "fixed":
-            units.append({"unit": item[1], "content": canonical_content(next(transformed))})
-        elif item[0] == "set":
-            reading_set = item[2]
-            for index, candidate in enumerate(reading_set.candidates):
-                if candidate.content is not None:
-                    units.append({"unit": reading_set.unit, "set": reading_set.id,
-                                  "version": reading_set.version, "index": index,
-                                  "position": position(doc.sets, reading_set.id, index),
-                                  "content": canonical_content(next(transformed))})
-    return units
-
-
-def name_map(doc, soft):
-    """The candidate rule and decision names in Lean's S2 elaboration order. A decision's two names are Lean's, found
-    by what it decides: in the candidate's own document (its side's soft document) and in `sup D` (`soft`, the soft
-    document of `superposed_document`)."""
-    from .readings_s1 import Side
-    attached = doc.attached()
-    result = []
-    for reading_set in doc.sets:
-        candidates = []
-        for index, candidate in enumerate(reading_set.candidates):
-            names = []
-            if candidate.content is not None and candidate.content.kind == "norm":
-                rule = candidate.content.body
-                name = rule["name"]
-                qualified = qualify(position(doc.sets, reading_set.id, index), name)
-                names.append([name, qualified])
-                decided = ([("excepted",)] if rule.get("mode", "strict") == "default" else []) + [
-                    ("off", party) for party in rule.get("alterable", [])]
-                if decided:
-                    own = Side(doc.senv, doc.one(attached, reading_set.id, index), doc.unit_ids)
-                    own._elaborate()
-                    names += [[own.soft.decision_name((kind, name, *party)),
-                               soft.decision_name((kind, qualified, *party))] for kind, *party in decided]
-            candidates.append({"index": index, "id": candidate.id,
-                               "position": position(doc.sets, reading_set.id, index), "names": names})
-        result.append({"set": reading_set.id, "version": reading_set.version, "candidates": candidates})
-    return result
 
 
 def in_force(reading_set, narrowing: dict) -> bool:
@@ -458,22 +324,6 @@ def choice_core(sets, couplings=(), narrowings=()):
             narrowing_premises(sets, narrowings))
 
 
-def _decision_atom(name, sorts):
-    if len(sorts) == 1:
-        return ["unary", name, ["var", 0]]
-    if len(sorts) == 2:
-        return ["binary", name, ["var", 1], ["var", 0]]
-    return ["bottom"]
-
-
-def _quiet_formula(sets, name, sorts, owners):
-    atoms = [conj([choice_atom(sets, sets[m].id, i) for m, i in owner]) for owner in owners]
-    formula = ["implies", _decision_atom(name, sorts), disj(atoms)]
-    for sort in reversed(sorts):
-        formula = ["forall", sort, formula]
-    return formula
-
-
 def superposed_document(doc):
     """`sup D` as Python's soft elaborator reads it (1.4): the frame extended by the choice vocabulary, the
     transformed contents in source order, and the soft document of their rules, every gated assertion typed over
@@ -496,81 +346,6 @@ def superposed_document(doc):
         if content.kind == "assertion":
             formula_from_data(soft.extended_env, content.body, _generated=True)
     return frame, contents, soft
-
-
-def superposed_elaboration(doc, couplings=(), narrowings=(), superposed=None):
-    """Regenerate the S2a labelled slot and sizes, including decision-table quiescence.
-
-    Decision names and colliding pairs come from Lean's soft elaboration of the transformed document
-    (`superposed`, `superposed_document`'s answer, computed when not given); their ownership comes from the source
-    positions.
-    """
-    vocabulary = choice_vocabulary(doc.sets)
-    frame, _, soft = superposed or superposed_document(doc)
-    key_of = {name: key for key, name in soft.decision_by_key.items()}
-    origin = {}
-    for m, reading_set in enumerate(doc.sets):
-        for i, candidate in enumerate(reading_set.candidates):
-            if candidate.content is not None and candidate.content.kind == "norm":
-                origin[qualify(position(doc.sets, reading_set.id, i),
-                               candidate.content.body["name"])] = (m, i)
-    keys = []
-    # Each decision's name is Lean's, found by what it decides (`SoftNormDocument.decision_name`).
-    for rule in soft.rules:
-        if rule.mode == "default":
-            name = soft.decision_name(("excepted", rule.core.name))
-            keys.append((name, soft.decisions[name], [([origin[rule.core.name]]
-                                                      if rule.core.name in origin else [])]))
-    for rule in soft.rules:
-        for party in rule.alterable:
-            name = soft.decision_name(("off", rule.core.name, party))
-            keys.append((name, soft.decisions[name], [([origin[rule.core.name]]
-                                                      if rule.core.name in origin else [])]))
-    if soft.env.soft["outranking"]["mode"] == "holistic":
-        triples = {}
-        for left, right in soft.collisions:
-            name = soft.override_for_pair.get(frozenset((left.core.name, right.core.name)))
-            if name is None:
-                continue
-            triples.setdefault(name, [])
-            owner = list(dict.fromkeys(origin[n] for n in (left.core.name, right.core.name) if n in origin))
-            if len(owner) == 2 and owner[0][0] == owner[1][0]:
-                continue
-            if owner not in triples[name]:
-                triples[name].append(owner)
-        keys.extend((name, soft.decisions[name], owners) for name, owners in triples.items())
-    labelled = one_premises(doc.sets)
-    for m, reading_set in enumerate(doc.sets):
-        for i, _ in enumerate(reading_set.candidates):
-            mine = [_quiet_formula(doc.sets, name, sorts, owners)
-                    for name, sorts, owners in keys if owners == [[(m, i)]]]
-            if mine:
-                labelled.append((SlotLabel("own", reading_set.id, reading_set.version, i).render(), conj(mine)))
-    for name, sorts, owners in keys:
-        if [] in owners or (len(owners) == 1 and len(owners[0]) == 1):
-            continue
-        if [] not in owners:
-            _, act, low, high = key_of[name]
-            labelled.append((SlotLabel("shared", key=f"outweighs:{act}:{low}:{high}").render(),
-                             _quiet_formula(doc.sets, name, sorts, owners)))
-    labelled += coupling_premises(doc.sets, couplings) + narrowing_premises(doc.sets, narrowings)
-
-    def nodes(tree):
-        return 1 + sum(nodes(item) for item in tree if type(item) is list)
-
-    sizes = {"sorts": len(frame["vocabulary"]["sorts"]),
-             "predicates": (len(doc.senv.frame_data["vocabulary"]["predicates"]) +
-                            len(vocabulary["predicates"]) + len(soft.decisions)),
-             "nodes": sum(nodes(rule["norm"]["guard"]) +
-                          sum(nodes(unless) for unless in rule["norm"]["unless"])
-                          for rule in (r.to_dict() for r in soft.elaborated.rules)),
-             "limits": {"sorts": 32, "predicates": 256, "nodes": 10000}}
-    return labelled, sizes
-
-
-def choice_slot(doc, couplings=(), narrowings=()):
-    """The full S2a labelled slot independently regenerated in Python."""
-    return superposed_elaboration(doc, couplings, narrowings)[0]
 
 
 def unsatisfiable_ids(sets, couplings=(), narrowings=()):
