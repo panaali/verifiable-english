@@ -109,7 +109,7 @@
     "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill",
     "tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps"
    ],
-   "claim": "a `#guard_msgs \u2026 in` line opens the command it wraps (one span), as `set_option \u2026 in` (review F6)"
+   "claim": "a `#guard_msgs … in` line opens the command it wraps (one span), as `set_option … in` (review F6)"
   },
   {
    "id": "TM12",
@@ -217,8 +217,8 @@
   {
    "id": "TM22",
    "file": "tools/trust_mutants.py",
-   "find": "        if kill := next((t for t in failing if t not in controls[key]), None):",
-   "replace": "        if kill := next(iter(failing), None):",
+   "find": "        if not (new := [t for t in failing if t not in controls[key]]):",
+   "replace": "        if not (new := list(failing)):",
    "tests": [
     "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
    ],
@@ -298,8 +298,8 @@
   {
    "id": "TM30",
    "file": "tools/trust_mutants.py",
-   "find": "    return not PARSE.match(message) and (",
-   "replace": "    return (",
+   "find": "    return not PARSE.match(message) and not NO_ANSWER.search(message) and (",
+   "replace": "    return not NO_ANSWER.search(message) and (",
    "tests": [
     "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
    ],
@@ -324,6 +324,93 @@
     "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
    ],
    "claim": "the mutated declaration's lines run over the blank lines its edit takes (review F9)"
+  },
+  {
+   "id": "TM33",
+   "file": "tools/trust_mutants.py",
+   "find": "    return not PARSE.match(message) and not NO_ANSWER.search(message) and (",
+   "replace": "    return not PARSE.match(message) and (",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[decide]",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill"
+   ],
+   "claim": "a check (or a --test file) that gives no answer never kills (review F10)"
+  },
+  {
+   "id": "TM34",
+   "file": "tools/trust_mutants.py",
+   "find": "ERROR = re.compile(r\"^error: (?:\\./)*(\\S+?\\.lean):(\\d+):\\d+: (.*(?:\\n(?!(?:error|warning|info|trace|note):|[✖⚠✔ℹ] \"\n                   r\"|Some required ).*)*)\", re.M)",
+   "replace": "ERROR = re.compile(r\"^error: (?:\\./)*(\\S+?\\.lean):(\\d+):\\d+: (.*)$\", re.M)",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_error_is_read_with_its_whole_message",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[guard-msgs]"
+   ],
+   "claim": "an error is read with its whole message, so a #guard_msgs quoting a budget error on a later line gives no answer (review F10)"
+  },
+  {
+   "id": "TM35",
+   "file": "tools/trust_mutants.py",
+   "find": "if NO_ANSWER.search(\n                        mutated[2]) else",
+   "replace": "if False and NO_ANSWER.search(\n                        mutated[2]) else",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[in-definition]"
+   ],
+   "claim": "a mutated declaration that runs out of budget is UNKNOWN, not INVALID (review F10)"
+  },
+  {
+   "id": "TM36",
+   "file": "tools/trust_mutants.py",
+   "find": "        if blank := next((t for t in new if NO_ANSWER.search(failing[t][1])), None):",
+   "replace": "        if blank := None:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]"
+   ],
+   "claim": "an outside --test file that gives no answer never kills (review F10)"
+  },
+  {
+   "id": "TM37",
+   "file": "tools/trust_mutants.py",
+   "find": "|stack overflow|\"\n                       r\"Tactic `(?:decide|native_decide)` failed\")",
+   "replace": "|stack overflow\")",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[stuck]"
+   ],
+   "claim": "a decide that gets stuck or cannot evaluate gives no answer (review F10)"
+  },
+  {
+   "id": "TM38",
+   "file": "tools/trust_mutants.py",
+   "find": "maximum number of heartbeats|\\(deterministic\\) timeout|",
+   "replace": "",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]"
+   ],
+   "claim": "a check out of heartbeats gives no answer (review F10)"
+  },
+  {
+   "id": "TM39",
+   "file": "tools/trust_mutants.py",
+   "find": "|\\(kernel\\) \"\n                       r\"(?:deep recursion|deterministic timeout|interrupted)",
+   "replace": "",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "claim": "the kernel's limits give no answer (review F10)"
+  },
+  {
+   "id": "TM40",
+   "file": "tools/trust_mutants.py",
+   "find": "NO_ANSWER = re.compile(r\"maximum recursion depth|",
+   "replace": "NO_ANSWER = re.compile(r\"",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[rfl]"
+   ],
+   "claim": "a check over the recursion limit gives no answer (review F10, PROBE F10)"
   }
  ]
 }
