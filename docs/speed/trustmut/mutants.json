@@ -616,7 +616,7 @@
   {
    "id": "TM59",
    "file": "tools/trust_mutants.py",
-   "find": "    let compiled := (csimps.filter (\u00b7.1 == c)).map (\u00b7.2) ++ (Lean.Compiler.getImplementedBy? env c).toList ++",
+   "find": "    let compiled := equations.getD c [] ++ (Lean.Compiler.getImplementedBy? env c).toList ++",
    "replace": "    let compiled := (Lean.Compiler.getImplementedBy? env c).toList ++",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]",
@@ -647,7 +647,7 @@
   {
    "id": "TM62",
    "file": "tools/trust_mutants.py",
-   "find": "  if roots.any (\u00b7.hasSorry) then IO.println s!\"{k} error\"",
+   "find": "  if roots.any (\u00b7.hasSorry) then say \"error\"",
    "replace": "  pure ()",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q12]"
@@ -708,8 +708,8 @@
   {
    "id": "TM68",
    "file": "tools/trust_mutants.py",
-   "find": "        said = lake(*((\"env\", \"lean\") if outside else (\"lean\",)), str(copy))[1]",
-   "replace": "        said = lake(\"env\", \"lean\", str(copy))[1]",
+   "find": "        said = lake({**env, \"TM_TRUST_NONCE\": nonce}, *((\"env\", \"lean\") if outside else (\"lean\",)), str(path))[1]",
+   "replace": "        said = lake({**env, \"TM_TRUST_NONCE\": nonce}, \"env\", \"lean\", str(path))[1]",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R5]"
    ],
@@ -735,6 +735,77 @@
     "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
    ],
    "claim": "a parse error counts as a refusal only inside the mutant's own text, not one the tool's padding made (hunt R3)"
+  },
+  {
+   "id": "TM71",
+   "file": "tools/trust_mutants.py",
+   "find": "    (c == mutated || mutated.isPrefixOf c && (c.isInternal || Meta.isMatcherCore env c || isAuxRecursor env c))",
+   "replace": "    (mutated.isPrefixOf c)",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S1]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S2]"
+   ],
+   "claim": "only the mutated constant and its generated auxiliaries are exempt from the comparison, not its namespace (hunt S1, S2)"
+  },
+  {
+   "id": "TM72",
+   "file": "tools/trust_mutants.py",
+   "find": "      if seen.contains c then continue",
+   "replace": "      if seen.contains c || seenInside.contains c then continue",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S3]"
+   ],
+   "claim": "a constant reached through the mutated definition is still compared where reached otherwise (hunt S3)"
+  },
+  {
+   "id": "TM73",
+   "file": "tools/trust_mutants.py",
+   "find": "  let io := [``unsafeBaseIO, ``unsafeEIO, ``unsafeIO, ``IO, ``EIO, ``BaseIO, ``IO.RealWorld]",
+   "replace": "  let io := [``unsafeBaseIO, ``unsafeEIO, ``unsafeIO]",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S5]"
+   ],
+   "claim": "IO is known by its types, not by the `unsafe*IO` names (hunt S5)"
+  },
+  {
+   "id": "TM74",
+   "file": "tools/trust_mutants.py",
+   "find": "fun i => [`Init, `Std, `Lean, `Lake].any",
+   "replace": "fun i => [`Init, `Std, `Lean, `Lake, `Helper].any",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S6]"
+   ],
+   "claim": "the walk reads every package but Lean's own core (hunt S6)"
+  },
+  {
+   "id": "TM75",
+   "file": "tools/trust_mutants.py",
+   "find": "        mark, _, line = line.partition(\" \")\n        name, _, rest = line.partition(\" \")\n        if mark == nonce and name in spans and rest:",
+   "replace": "        if line.startswith(nonce + \" \"):\n            line = line[len(nonce) + 1:]\n        name, _, rest = line.partition(\" \")\n        if name in spans and rest:",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S7]"
+   ],
+   "claim": "the probe reads only lines with its own nonce (hunt S7)"
+  },
+  {
+   "id": "TM76",
+   "file": "tools/trust_mutants.py",
+   "find": "    return lean.parent / f\"probe-{Path(f).name}\" if Path(f).is_absolute() else lean / f",
+   "replace": "    return lean.parent / f\"probe-{Path(f).name}\" if Path(f).is_absolute() else lean / Path(f).with_name(Path(f).stem + \"_p.lean\")",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S8]"
+   ],
+   "claim": "the probe elaborates a module at its own path, with its library's options (hunt S8)"
+  },
+  {
+   "id": "TM77",
+   "file": "tools/trust_mutants.py",
+   "find": "    if let some (.thmInfo info) := env.find? t then",
+   "replace": "    if let some (.thmInfo info) := (env.find? t).filter (fun _ => (Lean.Compiler.CSimp.ext.getState env).thmNames.contains t) then",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S9]"
+   ],
+   "claim": "every theorem `@f = @g` is a possible `@[csimp]` lemma, a `local` one included (hunt S9)"
   }
  ]
 }
