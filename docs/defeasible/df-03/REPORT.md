@@ -66,8 +66,9 @@ No product code changed, so there is no Lean, `ve/` or Rust seeded bug to plant.
 
 - Trust: `tools/trust_map.py --check` reports K +0, S +0, D +0, G +0 and trusted +0 against 702ff742 (PASS). There is
   no allowance and no FOLLOW-UPS row.
-- Size: 586 hand-written lines, counted with `git diff --numstat` from the merge base and leaving out the three copied
-  files. That is the 39-line report section, 199 lines of scripts, 135 of test, 177 of saved evidence and this report.
+- Size: 510 hand-written lines, counted with `git diff --numstat` from the merge base and leaving out the three copied
+  files. That is the 37-line report section, 180 lines of scripts, 145 of test, 112 of this report and 36 of
+  `mutants.json`. The script also wrote 177 lines of evidence, which count as generated (687 lines if counted).
 - Pilot bytes: 0 B moved. This is the "before" of the constitution's defaults path (8,764 B primary, research share). It
   claims nothing.
 - Pre-existing red: none of `main-known-red.txt` is in the selected set.
