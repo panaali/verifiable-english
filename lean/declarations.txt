@@ -3534,7 +3534,7 @@ module VE.Calc.Derive 490df73b6e01790525530e96f6e7fbc8dee283461ba739508b46aa01e0
 132:0-146:39 def VE.Calc.squareSteps@VE.Calc.Derive
 148:0-158:13 def VE.Calc.boundCandidate@VE.Calc.Derive
 160:0-171:48 def VE.Calc.Derive.search@VE.Calc.Derive
-module VE.Calc.DeriveExamples c02211b65214a47a44db0e31b2c3a6797f590ccf1bf2b21956998faf65d80e6d
+module VE.Calc.DeriveExamples 31ff72dac6a2ca48f35fbffff77004c53ed6c12eab845f7ecc2a7ea5f07ee53f
 9:0-9:90 def VE.Calc.DeriveExamples.fact@VE.Calc.DeriveExamples
 10:0-10:65 def VE.Calc.DeriveExamples.pt@VE.Calc.DeriveExamples
 11:0-16:23 def VE.Calc.DeriveExamples.checked@VE.Calc.DeriveExamples
@@ -3543,9 +3543,9 @@ module VE.Calc.DeriveExamples c02211b65214a47a44db0e31b2c3a6797f590ccf1bf2b21956
 22:0-23:54 def VE.Calc.DeriveExamples.below@VE.Calc.DeriveExamples
 26:0-26:77 def VE.Calc.DeriveExamples.h6First@VE.Calc.DeriveExamples
 27:0-27:66 def VE.Calc.DeriveExamples.h6Steps@VE.Calc.DeriveExamples
-52:0-52:116 def VE.Calc.DeriveExamples.none3@VE.Calc.DeriveExamples
-61:0-61:41 def VE.Calc.DeriveExamples.forged@VE.Calc.DeriveExamples
-62:0-62:50 def VE.Calc.DeriveExamples.sBelow@VE.Calc.DeriveExamples
+54:0-54:116 def VE.Calc.DeriveExamples.none3@VE.Calc.DeriveExamples
+64:0-64:41 def VE.Calc.DeriveExamples.forged@VE.Calc.DeriveExamples
+65:0-65:50 def VE.Calc.DeriveExamples.sBelow@VE.Calc.DeriveExamples
 module VE.Calc.Eval 0ff9293940a52844d3f8e616bf547ca32a0d25493947d873faf6c84d00dcfacf
 6:0-16:38 def VE.Calc.Expr.eval@VE.Calc.Eval
 18:0-72:27 theorem VE.Calc.Expr.eval_sound@VE.Calc.Eval

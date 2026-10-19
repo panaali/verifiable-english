@@ -12592,16 +12592,16 @@
     },
     "VE/Calc/Linear.lean": {
       "S": [
-        "VE.Calc.QFact",
         "VE.Calc.QFact.Holds",
-        "VE.Calc.QLin",
         "VE.Calc.QLin.eval"
       ],
       "C": [
         "VE.Calc.Farkas",
         "VE.Calc.Farkas.check",
         "VE.Calc.Farkas.combination",
+        "VE.Calc.QFact",
         "VE.Calc.QFact.negate",
+        "VE.Calc.QLin",
         "VE.Calc.QLin.add",
         "VE.Calc.QLin.coeffOf",
         "VE.Calc.QLin.scale",
