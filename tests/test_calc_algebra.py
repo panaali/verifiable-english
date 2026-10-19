@@ -96,6 +96,7 @@ FIXTURES = [
     # Limits (spec 3.2, `limit .polyTerms`): at and just past each one, never a verdict past it.
     ("nodes-10000", 'compare ((sumx 4999).pow 1, .mul (l 5000) (v "x"))', "some true"),
     ("nodes-10001", 'compare (sumx 5000, .mul (l 5001) (v "x"))', "none"),
+    ("nodes-10001-pow", 'compare (((sumx 4999).pow 1).pow 1, .mul (l 5000) (v "x"))', "none"),
     ("nodes-shared", 'compare (doubled, .mul (l 1099511627776) (v "x"))', "none"),
     ("product-10000", 'compare (.mul (geo "x" 99) (geo "y" 99), .mul (geo "y" 99) (geo "x" 99))', "some true"),
     ("product-10100", 'compare (.mul (geo "x" 100) (geo "y" 99), .mul (geo "y" 99) (geo "x" 100))', "none"),
@@ -105,6 +106,7 @@ FIXTURES = [
     ("digits-4097", "reprStr (Poly.ofExpr? (.pow (l 10) 4096))", "none"),
     ("exponent-4096", 'check (.pow (v "x") 4096, .pow (.pow (v "x") 64) 64)', "true"),
     ("exponent-4097", 'compare (.mul (.pow (v "x") 4096) (v "x"), .pow (v "x") 4097)', "none"),
+    ("exponent-4097-product", 'compare (.mul (.pow (v "x") 4096) (v "x"), .mul (v "x") (.pow (v "x") 4096))', "none"),
     ("over-the-limit-is-not-an-identity", 'check (sumx 5000, .mul (l 5001) (v "x"))', "false"),
 ]
 
