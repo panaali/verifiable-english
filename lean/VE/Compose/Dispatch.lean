@@ -1047,4 +1047,33 @@ theorem gate_legacy (ps) (h : ∀ p ∈ ps, p ∈ legacyProfiles) :
       by_cases hr : "readings@1" ∈ ps <;>
       simp [hd, hc, hr, h1, hsoft, hnd, hri, sitsOn, refusal, outside, wrapperHead, toString, String.reduceAppend]
 
+/-- The base rows' route: today's head. -/
+theorem routeOf_base (ps : List String) : routeOf baseRows ps = todayHead ps := by
+  simp only [routeOf, heads, baseRows, todayHead, List.find?_cons, List.find?_nil, List.any_cons, List.any_nil,
+    String.reduceBEq, Bool.false_and, Bool.true_and, Bool.or_false, Bool.false_or, Bool.or_self]
+  cases ps.contains "risk@0" <;> cases ps.contains "alternatives@0" <;> cases ps.contains "speech-acts@0" <;>
+    cases ps.contains "reports@0" <;> cases ps.contains "rights@0" <;> cases ps.contains "soft-norms@0" <;>
+    cases ps.contains "norm-defaults@0" <;> cases ps.contains "norms@0" <;> rfl
+
+/-- The base rows alone, where a wrapper is not registered, run `today` on the registered profiles. -/
+theorem baseGate_today (ps : List String) (h : ∀ p ∈ ps, p ∈ registered) : gateOf baseRows ps = today ps := by
+  by_cases hs : ps.Pairwise (· < ·)
+  case neg => unfold gateOf today todayGate; rw [if_pos (by simpa using hs), if_pos (by simpa using hs)]; rfl
+  have hl : ∀ p ∈ ps, p ∈ legacyProfiles := fun p hp => List.mem_append_left _ (h p hp)
+  have hb : base ps = ps := base_of_no_wrapper fun w hw hp => by
+    have := h w hp
+    simp only [wrapperProfiles, List.mem_cons, List.not_mem_nil, or_false] at hw
+    rcases hw with rfl | rfl | rfl <;> simp [registered] at this
+  have hk : ps.find? (fun p => !baseRows.any (·.profile == p)) = none :=
+    List.find?_eq_none.mpr fun p hp => by
+      have := h p hp
+      simp only [registered, List.mem_cons, List.not_mem_nil, or_false] at this
+      rcases this with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+        rfl <;> decide
+  have ht := todayGate_base ps hs hl
+  rw [hb] at ht
+  unfold gateOf today
+  rw [if_neg (by simpa using hs), hk, ht, routeOf_base]
+  cases (baseRows.flatMap (rowChecks ps)).find? (·.1) <;> rfl
+
 end VE.Compose
