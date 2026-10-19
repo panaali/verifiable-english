@@ -1,0 +1,24 @@
+{
+ "base": "beb5c463026211d9e8be684884153565ca0026b9",
+ "head": "0016c3d916d6d871cb3c45209070d64d9ed8a00b",
+ "definitions": 63,
+ "moved_verbatim": 63,
+ "top_level_comments": 2,
+ "added": [],
+ "module_lines": {
+  "ve/document/__init__.py": 41,
+  "ve/document/__main__.py": 6,
+  "ve/document/cli.py": 122,
+  "ve/document/containers.py": 132,
+  "ve/document/lean.py": 390,
+  "ve/document/load.py": 434,
+  "ve/document/render.py": 200,
+  "ve/document/report.py": 629,
+  "ve/document/source.py": 198
+ },
+ "modules_without_definitions": [
+  "ve/document/__init__.py",
+  "ve/document/__main__.py"
+ ],
+ "errors": []
+}
