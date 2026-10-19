@@ -130,10 +130,12 @@ module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
 module VE.Calc.Decls
+module VE.Calc.Dimension
 module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.Render
 module VE.Calc.Syntax
+module VE.Calc.Units
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Regions
@@ -639,6 +641,7 @@ VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.PhysDim.Normal@VE.Calc.Dimension
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls

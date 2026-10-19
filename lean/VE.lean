@@ -109,6 +109,8 @@ import VE.Time.Wire
 import VE.Time.Document
 import VE.Calc.Examples
 import VE.Calc.Render
+import VE.Calc.Dimension
+import VE.Calc.Units
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
