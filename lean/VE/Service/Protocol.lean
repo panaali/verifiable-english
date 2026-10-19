@@ -249,11 +249,51 @@ structure Request where
   registers (`register`). -/
   environmentsText : Option String := none
 
+/-- The members of the object body bytes `[i, stop)`, scanned from `i`: each member's start, its first
+top-level `:` and its end. -/
+private def memberCuts (bytes : ByteArray) (stop i depth : Nat) (quoted escaped : Bool) (colon : Option Nat)
+    (start : Nat) (acc : Array (Nat × Nat × Nat)) : Except String (Array (Nat × Nat × Nat)) :=
+  if i < stop then
+    let c := bytes[i]!
+    if quoted then
+      if escaped then memberCuts bytes stop (i + 1) depth true false colon start acc
+      else if c == 92 then memberCuts bytes stop (i + 1) depth true true colon start acc
+      else memberCuts bytes stop (i + 1) depth (c != 34) false colon start acc
+    else if c == 34 then memberCuts bytes stop (i + 1) depth true false colon start acc
+    else if c == 91 || c == 123 then memberCuts bytes stop (i + 1) (depth + 1) false false colon start acc
+    else if c == 93 || c == 125 then
+      if depth == 0 then .error "unexpected request delimiter"
+      else memberCuts bytes stop (i + 1) (depth - 1) false false colon start acc
+    else if depth == 0 && c == 58 && colon.isNone then
+      memberCuts bytes stop (i + 1) depth false false (some i) start acc
+    else if depth == 0 && c == 44 then
+      match colon with
+      | some k => memberCuts bytes stop (i + 1) depth false false none (i + 1) (acc.push (start, k, i))
+      | none => .error "request member without a value"
+    else memberCuts bytes stop (i + 1) depth false false colon start acc
+  else if quoted || depth != 0 then .error "unterminated request"
+  else match colon with
+    | some k => .ok (acc.push (start, k, stop))
+    | none => .error "request member without a value"
+termination_by stop - i
+
 /-- Split a JSON object's text into top-level `(key, value)` texts without decoding
 them. Quotes, escapes and bracket depth are tracked as in the batch splitter of
 `VE.JsonInput`; every piece is then decoded by the restricted decoder, which requires
-it to be exactly one value. -/
+it to be exactly one value. The scan reads the UTF-8 bytes: delimiters are ASCII, and no
+byte of a multi-byte character is, so the cuts are those of a scan over characters
+(`objectMembersByChars`, the `#guard`s below). -/
 def objectMembers (text : String) : Except String (Array (String × String)) := do
+  let text := text.trim
+  unless text.startsWith "{" && text.endsWith "}" do throw "request must be a JSON object"
+  if ((text.drop 1).dropRight 1).trim.isEmpty then return #[]
+  let bytes := text.toUTF8
+  let cuts ← memberCuts bytes (bytes.size - 1) 1 0 false false none 1 #[]
+  return cuts.map fun (a, k, b) => (text.extract ⟨a⟩ ⟨k⟩, text.extract ⟨k + 1⟩ ⟨b⟩)
+
+/-- `objectMembers` over characters, as it was written before it scanned bytes: the oracle of the
+`#guard`s below. -/
+private def objectMembersByChars (text : String) : Except String (Array (String × String)) := do
   let text := text.trim
   unless text.startsWith "{" && text.endsWith "}" do throw "request must be a JSON object"
   let body := (text.drop 1).dropRight 1
@@ -291,6 +331,22 @@ def objectMembers (text : String) : Except String (Array (String × String)) := 
   match key with
   | some k => return members.push (k, body.extract start body.endPos)
   | none => throw "request member without a value"
+
+private def sameMembers (text : String) : Bool :=
+  match objectMembers text, objectMembersByChars text with
+  | .ok a, .ok b => a == b
+  | .error a, .error b => a == b
+  | _, _ => false
+
+-- The same members, or the same error, on every object of at most four characters over the
+-- delimiters, an escape, a key character and a multi-byte character (16,105 objects), and on
+-- padded, nested and real request envelopes.
+#guard (List.range 5).all fun length => (List.range (11 ^ length)).all fun n =>
+  let alphabet := ['{', '}', '[', ']', '"', '\\', ',', ':', ' ', 'a', 'é']
+  sameMembers ("{" ++ String.mk ((List.range length).map fun i => alphabet.getD ((n / 11 ^ i) % 11) ' ') ++ "}")
+#guard ["{}", " { } ", "x", "{", "}", "{\"a\"}", "{\"a\":1,}", "{,}", "{\"a\":[1,{\"b\":\"},:\"}],\"c\":\"é\\\"\"}",
+  "\t{\"id\":\"1\",\"mode\":\"metered\",\"cases\":[{\"id\":\"e\",\"kind\":\"non-vacuity\"}]}\n",
+  "{\"a\":1:2}", "{\"a\"::1}", "{\"a\":{]}", "{\"a\":\"unterminated}"].all sameMembers
 
 def decodeString (what raw : String) : Except String String := do
   match ← VE.JsonInput.parse raw with

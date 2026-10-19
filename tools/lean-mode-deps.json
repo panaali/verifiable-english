@@ -154,7 +154,7 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "eb372becc496c8b2cf280a78b66f81880555ddaefe90540209690b0a37903a1a",
+    "lean/VE/Service/Protocol.lean": "271e1aabd35ef68d39ca614c515ed16b3bbc27015a78bd9a36a7e69bf873df01",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

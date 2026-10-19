@@ -991,8 +991,11 @@ class LeanServicePool:
 
     def run_bound(self, mode: str, cases: list, *, timeout: float | None = None) -> list:
         chunks = list(self._services[0]._chunks(self._services[0]._sent(mode, cases), parts=len(self._services)))
-        if len(chunks) <= 1:
-            return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
+        if not chunks:
+            return []
+        if len(chunks) == 1:
+            # The cases as sent are the same for every service of the pool: they are encoded once.
+            return self._on_idle(lambda service: service._run_chunk(mode, chunks[0], timeout))
         answers: list = [None] * len(chunks)
         pending = iter(range(len(chunks)))
         claim = threading.Lock()
