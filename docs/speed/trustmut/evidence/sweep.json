@@ -1,4 +1,4 @@
-{"base": "6a40f0853cef2ceece6f3377cf757461ee12f94e", "head": "55afebac4ca200b21419384eb431847b4a8a6c6a", "jobs": 16, "max_mutants": 100000, "deep": false, "tests": [], "seconds": 1362, "counts": {"KILLED": 1330, "SURVIVOR": 1484, "UNKNOWN": 210, "INVALID": 0, "ALLOWED": 0, "NOT RUN": 0}, "lines_exit": 1, "exit": 1, "sources": {"tools/trust_mutants.py": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb", "tools/trust_map.py": "4f183615862d09350bb5ff12fa2c111b1c466635367f45453ae295a1482da74d", "tests/test_trust_mutants.py": "4f2fe145f7123b5ad325cf911697d9e025045933fbfcae6d145c6483eeac79c1"}, "rows": [
+{"base": "abd87729f0c7010d6da2c65a13cf6e368b73f670", "head": "f2fb6767b31120cdaa9c670d73f603168d3c3027", "jobs": 16, "max_mutants": 100000, "deep": false, "tests": [], "seconds": 812, "counts": {"KILLED": 1330, "SURVIVOR": 1484, "UNKNOWN": 210, "INVALID": 0, "ALLOWED": 0, "NOT RUN": 0}, "lines_exit": 1, "exit": 1, "sources": {"tools/trust_mutants.py": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20", "tools/trust_map.py": "4f183615862d09350bb5ff12fa2c111b1c466635367f45453ae295a1482da74d", "tests/test_trust_mutants.py": "264a9d707178a28ca7753c303a5f832bcad79decc5c62d3af90865309279596b"}, "rows": [
 {"form": "#guard", "class": "check", "reads": "value", "wrap": "bare", "setting": "mutated", "expected": "KILLED", "d": "r0", "id": "x0", "line": 5},
 {"form": "#guard_expr", "class": "check", "reads": "value", "wrap": "bare", "setting": "mutated", "expected": "KILLED", "d": "r1", "id": "x1", "line": 9},
 {"form": "#eval", "class": "check", "reads": "value", "wrap": "bare", "setting": "mutated", "expected": "KILLED", "d": "r2", "id": "x2", "line": 13},
@@ -3174,7 +3174,7 @@
 ["Demo.O.r53", "list-drop-first", 53, "[n, 3]", "([n, 3].drop 1)", "SURVIVOR", ""],
 ["Demo.O.r54", "list-drop-first", 55, "[n, 3]", "([n, 3].drop 1)", "SURVIVOR", ""],
 ["Demo.O.r55", "list-drop-first", 57, "[n, 3]", "([n, 3].drop 1)", "SURVIVOR", ""]
-], "lines": {"seconds": 66, "counts": {"KILLED": 234, "SURVIVOR": 278, "UNKNOWN": 4, "INVALID": 0, "ALLOWED": 0, "NOT RUN": 0}, "rows": [
+], "lines": {"seconds": 44, "counts": {"KILLED": 234, "SURVIVOR": 278, "UNKNOWN": 4, "INVALID": 0, "ALLOWED": 0, "NOT RUN": 0}, "rows": [
 {"shape": "default-more", "setting": "mutated", "reads": true, "d": "s0", "targets": [["arm-default", "[7]", "more"]], "file": "lean/Demo/LM/Defs.lean", "line": 11, "space": "Demo.LM"},
 {"shape": "default-more", "setting": "mutated", "reads": false, "d": "s1", "targets": [["arm-default", "[7]", "more"]], "file": "lean/Demo/LM/Defs.lean", "line": 21, "space": "Demo.LM"},
 {"shape": "default-more-tight", "setting": "mutated", "reads": true, "d": "s2", "targets": [["arm-default", "[7]", "more"]], "file": "lean/Demo/LM/Defs.lean", "line": 30, "space": "Demo.LM"},
