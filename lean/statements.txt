@@ -10676,14 +10676,6 @@ theorem VE.Events.completion_typed
     VE.TupleTyped M.asStructure ss xs → VE.TupleTyped (VE.Events.completion V M num) ss (List.map Sum.inl xs)
   -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2837478597
-theorem VE.Events.conventions_empty
-  ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
-    (∀ (p : String),
-        p ∈ VE.Events.rolePreds V ++ List.map (fun x => x.predicate) V.links →
-          ∀ (v w : S.Carrier), ¬S.relation p [v, w]) →
-      VE.Norms.Sat S (VE.Events.conventionPremises V)
-  -- uses VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.rolePreds@VE.Events.Decl VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 3765286622
 theorem VE.Events.conventions_exact
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true →
@@ -10694,17 +10686,6 @@ theorem VE.Events.conventions_exact
               VE.Events.up V.day ng a = Bool.true ∧ VE.Events.down V.day ng a = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.down@VE.Events.Completion VE.Events.rolePreds@VE.Events.Decl VE.Events.up@VE.Events.Completion VE.Formula@VE.Syntax
   -- expr 897408735
-theorem VE.Events.dateName_data
-  ∀ (D : VE.Time.Civil),
-    (VE.Events.dateName D).data =
-      "date__".data ++
-        ((VE.Time.pad 4 D.year).data ++ '_' :: ((VE.Time.pad 2 D.month).data ++ '_' :: (VE.Time.pad 2 D.day).data))
-  -- uses VE.Events.dateName@VE.Events.Decl VE.Time.Civil.day@VE.Time.Calendar VE.Time.Civil.month@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.pad@VE.Time.Calendar
-  -- expr 3166515157
-theorem VE.Events.dateName_inj
-  ∀ {D D' : VE.Time.Civil}, VE.Events.dateName D = VE.Events.dateName D' → D = D'
-  -- uses VE.Events.dateName@VE.Events.Decl VE.Time.Civil@VE.Time.Calendar
-  -- expr 4251266956
 theorem VE.Events.datesOrder_calendar
   ∀ (D D' : VE.Time.Civil), D.Proper → D'.Proper → (D.num < D'.num ↔ D.Before D')
   -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -10736,30 +10717,6 @@ theorem VE.Events.eventsPremises_wellFormed
       ∀ (p : VE.Formula), p ∈ VE.Events.eventsX V → VE.Formula.WellFormed (VE.Events.regenEnv E V) [] p
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
   -- expr 1761829896
-theorem VE.Events.events_conservative
-  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
-    VE.Events.WellFormedEvents E V = Bool.true →
-      ∀ (Γ : List VE.Formula) (φ : VE.Formula),
-        (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Events.oldEnv E V) [] a) →
-          VE.Formula.WellFormed (VE.Events.oldEnv E V) [] φ →
-            ((∀ (S : VE.Structure),
-                S.Admissible (VE.Events.regenEnv E V) →
-                  VE.Norms.Sat S (VE.Events.eventsX V) → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ) ↔
-              ∀ (S : VE.Structure), S.Admissible (VE.Events.oldEnv E V) → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ)
-  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.oldEnv@VE.Events.Conservative VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 4202943264
-theorem VE.Events.expansion_typed
-  ∀ {E : VE.Environment} {V : VE.Events.EventsEnv} {S : VE.Structure} (ss : List String) (xs : List S.Carrier),
-    ¬V.day ∈ ss → VE.TupleTyped S ss xs → VE.TupleTyped (VE.Events.expansion E V S) ss (List.map Sum.inl xs)
-  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.expansion@VE.Events.Conservative VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
-  -- expr 2716582330
-theorem VE.Events.guarded_empty
-  ∀ {S : VE.Structure} {p : String},
-    (∀ (v w : S.Carrier), ¬S.relation p [v, w]) →
-      ∀ (s s' : String) (body : VE.Formula) (ρ : List S.Carrier),
-        VE.Formula.denote S ρ (VE.Formula.all s (VE.Formula.all s' ((VE.Events.bin p 1 0).implies body)))
-  -- uses VE.Events.bin@VE.Events.Premises VE.Formula.all@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 2080213390
 theorem VE.Events.hits_vacuous
   ∀ {day : String} {ng : List String} {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
     VE.Events.DayExtension day ng M S ι →
@@ -10795,14 +10752,6 @@ theorem VE.Events.oldTuple_map
   ∀ {α : Type} (xs : List α), VE.Events.oldTuple (List.map Sum.inl xs) = Option.some xs
   -- uses VE.Events.oldTuple@VE.Events.Completion
   -- expr 3940699995
-theorem VE.Events.pad_chars
-  ∀ (w n : Nat) (c : Char), c ∈ (VE.Time.pad w n).data → c ≠ '_' ∧ c ≠ '-'
-  -- uses VE.Time.pad@VE.Time.Calendar
-  -- expr 1341793061
-theorem VE.Events.pad_value
-  ∀ (w n : Nat), List.foldl (fun v c => 10 * v + (c.toNat - 48)) 0 (VE.Time.pad w n).data = n
-  -- uses VE.Time.pad@VE.Time.Calendar
-  -- expr 1295606217
 theorem VE.Events.regen_typed
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true → VE.Events.EventsTyped (VE.Events.regenEnv E V) V = Bool.true
@@ -10820,29 +10769,11 @@ theorem VE.Events.term_map
       ∀ (t : VE.Term) (ρ : List M.Carrier), VE.Term.denote S (List.map ι ρ) t = Option.map ι (VE.Term.denote M ρ t)
   -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax
   -- expr 1627714130
-theorem VE.Events.tupleTyped_relation
-  ∀ (S : VE.Structure) (r : String → List S.Carrier → Prop) (ss : List String) (xs : List S.Carrier),
-    VE.TupleTyped S ss xs →
-      VE.TupleTyped { Carrier := S.Carrier, domain := S.domain, constant := S.constant, relation := r } ss xs
-  -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
-  -- expr 3453759998
 theorem VE.Events.unorderedSame_of_order
   ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
     VE.Norms.Sat S (VE.Events.orderPremises V) → VE.Formula.denote S [] (VE.Events.unorderedSameF V)
   -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.orderPremises@VE.Events.Premises VE.Events.unorderedSameF@VE.Events.Premises VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 998155647
-theorem VE.Events.wf_transfer
-  ∀ (E' : VE.Environment) (S T : VE.Structure) (ι : S.Carrier → T.Carrier),
-    (∀ (x y : S.Carrier), ι x = ι y → x = y) →
-      (∀ (s : String), s ∈ E'.sorts → ∀ (y : T.Carrier), T.domain s y ↔ ∃ x, ι x = y ∧ S.domain s x) →
-        (∀ (c s : String), E'.constants c = Option.some s → T.constant c = Option.map ι (S.constant c)) →
-          (∀ (p : String) (ss : List String),
-              E'.predicates p = Option.some ss →
-                ∀ (xs : List S.Carrier), T.relation p (List.map ι xs) ↔ S.relation p xs) →
-            ∀ (a : VE.Formula) (Γ : List String) (ρ : List S.Carrier),
-              VE.Formula.WellFormed E' Γ a → (VE.Formula.denote T (List.map ι ρ) a ↔ VE.Formula.denote S ρ a)
-  -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
-  -- expr 676985057
 theorem VE.Grammar.BOk.addAll
   ∀ {X : Type} {cap n : Nat} {Pold Pnew : Nat → X → Prop} {e : VE.Grammar.Bucket X} {cands : List (Nat × X)},
     VE.Grammar.BOk cap n Pold e →
