@@ -366,6 +366,22 @@ theorem mergeParts_text (u : String) (lead item : Json) (hl : ∀ kvs, lead = .o
 -- an own-free condition is unchanged
 #guard let c := j "[\"unary\", \"tested_by_anthropic\", [\"var\", 1]]"; substOwn (j "[\"top\"]") depthLimit c == c
 
+-- `own` as an object's value counts and is replaced; an object key "own" is neither
+#guard (hasOwn depthLimit (j "{\"content\": \"own\"}"), hasOwn depthLimit (j "{\"own\": 1}")) == (true, false)
+#guard (substOwn guard1 depthLimit (j "{\"own\": \"own\"}")).compress ==
+  "{\"own\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]]}"
+
+/-- A condition nested `n` arrays deep. -/
+def nest : Nat → Json | 0 => .str "top" | n + 1 => .arr #[nest n]
+
+-- the depth limit: 63 nested arrays pass, 64 do not
+#guard (depthOk depthLimit (nest 63), depthOk depthLimit (nest 64)) == (true, false)
+
+/-- The six effects of spec 1.3, no more. -/
+theorem effects_six (e : Effect) : (∃ p, e = .frame p) ∨ (∃ c, e = .reguard c) ∨ (∃ c, e = .carveOut c) ∨
+    e = .precedes ∨ e = .yields ∨ e = .title := by
+  cases e <;> simp
+
 /-- `own` under a binder is not safe; `own` beside a binder is. -/
 theorem own_binder :
     ownSafe depthLimit (.arr #[.str "forall", .str "user", .arr #[.str "and", .str "own", .arr #[.str "top"]]]) = false ∧

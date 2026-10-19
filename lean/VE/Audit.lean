@@ -5648,6 +5648,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.box_anchors
 #print axioms VE.Scope.Examples.byte_tests
 #print axioms VE.Scope.Examples.depth_bound
+#print axioms VE.Scope.Examples.effects_six
 #print axioms VE.Scope.Examples.markers
 #print axioms VE.Scope.Examples.mergeParts_text
 #print axioms VE.Scope.Examples.narrowings
