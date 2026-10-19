@@ -2646,6 +2646,10 @@ theorem VE.Calc.Claim.run_unknown
             u = VE.Numbers.UnknownReason.limit VE.Numbers.Limit.evaluations ∧ VE.Calc.Claim.ReadsExhausted ds c
   -- uses VE.Calc.Claim.Overflows@VE.Calc.Decls VE.Calc.Claim.ReadsExhausted@VE.Calc.Decls VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Numbers.Limit.digits@VE.Numbers.Round VE.Numbers.Limit.evaluations@VE.Numbers.Round VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.limit@VE.Numbers.Round VE.Numbers.UnknownReason@VE.Numbers.Round
   -- expr 3624850836
+theorem VE.Calc.Comparison.holds_scale
+  ∀ (c : VE.Numbers.Comparison) (x y o : Rat), 0 < o → (c.Holds (x * o) (y * o) ↔ c.Holds x y)
+  -- uses VE.Numbers.Comparison.Holds@VE.Numbers.Phrases VE.Numbers.Comparison@VE.Numbers.Phrases
+  -- expr 3004143482
 theorem VE.Calc.Decl.valL_agrees
   ∀ (d : VE.Calc.Decl) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
     (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →
@@ -2705,6 +2709,13 @@ theorem VE.Calc.Expr.eval_iff
   ∀ (σ : VE.Calc.Values) (e : VE.Calc.Expr) (q : Rat), VE.Calc.Expr.eval σ e = Option.some q ↔ VE.Calc.Denotes σ e q
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
   -- expr 211348137
+theorem VE.Calc.Expr.eval_rescale
+  ∀ (Γ : String → Option VE.Calc.PhysDim) (ρ : VE.Calc.Rescale) (σ : VE.Calc.Values) (e : VE.Calc.Expr)
+    (d : VE.Calc.PhysDim),
+    VE.Calc.Expr.dimOf Γ e = Option.some d →
+      VE.Calc.Expr.eval (ρ.apply Γ σ) e = Option.map (fun x => x * ρ.of d) (VE.Calc.Expr.eval σ e)
+  -- uses VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.apply@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.Values@VE.Calc.Syntax
+  -- expr 1355505248
 theorem VE.Calc.Expr.eval_sound
   ∀ (σ : VE.Calc.Values) (e : VE.Calc.Expr) (q : Rat), VE.Calc.Expr.eval σ e = Option.some q → VE.Calc.Denotes σ e q
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
@@ -2722,6 +2733,48 @@ theorem VE.Calc.Expr.overflow_lift
         VE.Calc.Expr.Overflows ds child → VE.Calc.Expr.Overflows ds parent
   -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr.subexprs@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax
   -- expr 1123596397
+theorem VE.Calc.Rescale.factor_ne
+  ∀ (ρ : VE.Calc.Rescale) (b : String), ρ.factor b ≠ 0
+  -- uses VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 1626041523
+theorem VE.Calc.Rescale.of_cons
+  ∀ (ρ : VE.Calc.Rescale) (e : String × Int) (l : List (String × Int)),
+    ρ.of { exps := e :: l } = ρ.factor e.fst ^ e.snd * ρ.of { exps := l }
+  -- uses VE.Calc.PhysDim.mk@VE.Calc.Dimension VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 1745326639
+theorem VE.Calc.Rescale.of_insertExp
+  ∀ (ρ : VE.Calc.Rescale) (e : String × Int) (l : List (String × Int)),
+    ρ.of { exps := VE.Calc.insertExp e l } = ρ.factor e.fst ^ e.snd * ρ.of { exps := l }
+  -- uses VE.Calc.PhysDim.mk@VE.Calc.Dimension VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.insertExp@VE.Calc.Dimension
+  -- expr 3636659495
+theorem VE.Calc.Rescale.of_inv
+  ∀ (ρ : VE.Calc.Rescale) (a : VE.Calc.PhysDim), ρ.of a.inv = (ρ.of a)⁻¹
+  -- uses VE.Calc.PhysDim.inv@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 1661819310
+theorem VE.Calc.Rescale.of_mul
+  ∀ (ρ : VE.Calc.Rescale) (a b : VE.Calc.PhysDim), a.Normal → b.Normal → ρ.of (a.mul b) = ρ.of a * ρ.of b
+  -- uses VE.Calc.PhysDim.Normal@VE.Calc.Dimension VE.Calc.PhysDim.mul@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 1818305846
+theorem VE.Calc.Rescale.of_mul_any
+  ∀ (ρ : VE.Calc.Rescale) (a b : VE.Calc.PhysDim), ρ.of (a.mul b) = ρ.of a * ρ.of b
+  -- uses VE.Calc.PhysDim.mul@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 2282557716
+theorem VE.Calc.Rescale.of_npow
+  ∀ (ρ : VE.Calc.Rescale) (a : VE.Calc.PhysDim) (k : Nat), ρ.of (a.npow k) = ρ.of a ^ k
+  -- uses VE.Calc.PhysDim.npow@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 1564984785
+theorem VE.Calc.Rescale.of_one
+  ∀ (ρ : VE.Calc.Rescale), ρ.of VE.Calc.PhysDim.one = 1
+  -- uses VE.Calc.PhysDim.one@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 2948041730
+theorem VE.Calc.Rescale.of_pos
+  ∀ (ρ : VE.Calc.Rescale) (d : VE.Calc.PhysDim), 0 < ρ.of d
+  -- uses VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 3120007850
+theorem VE.Calc.Rescale.pos
+  ∀ (self : VE.Calc.Rescale) (b : String), 0 < self.factor b
+  -- uses VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
+  -- expr 3281404362
 theorem VE.Calc.Val.bin_exhausted
   ∀ (f : Rat → Rat → VE.Calc.Val) (a b : VE.Calc.Val),
     (∀ (x y : Rat), f x y ≠ VE.Calc.Val.exhausted) →
@@ -2746,6 +2799,16 @@ theorem VE.Calc.Val.guard_agrees
   ∀ (q : Rat), VE.Calc.Val.Agrees✝ (VE.Calc.Val.guard q) (Option.some q)
   -- uses VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls
   -- expr 724329628
+theorem VE.Calc.bind2_some
+  ∀ {α β γ : Type} {o : Option α} {p : Option β} {f : α → β → Option γ} {d : γ},
+    (do
+          let x ← o
+          let y ← p
+          f x y) =
+        Option.some d →
+      ∃ x y, o = Option.some x ∧ p = Option.some y ∧ f x y = Option.some d
+  -- uses
+  -- expr 972118345
 theorem VE.Calc.causes_accumulate
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds →
@@ -2762,6 +2825,32 @@ theorem VE.Calc.causes_step
           VE.Calc.CausesAt✝ ds (VE.Calc.valuesL pre) → VE.Calc.CausesAt✝¹ ds (VE.Calc.valuesL (pre ++ [d]))
   -- uses VE.Calc.CausesAt@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
   -- expr 667908898
+theorem VE.Calc.compare_invariant
+  ∀ (Γ : String → Option VE.Calc.PhysDim) (ρ : VE.Calc.Rescale) (σ : VE.Calc.Values) (c : VE.Numbers.Comparison)
+    (a b : VE.Calc.Expr) (d : VE.Calc.PhysDim),
+    (∀ (n : String) (d' : VE.Calc.PhysDim), Γ n = Option.some d' → d'.Normal) →
+      VE.Calc.Expr.dimOf Γ a = Option.some d →
+        VE.Calc.Expr.dimOf Γ b = Option.some d →
+          (VE.Calc.Claim.Holds σ (VE.Calc.Claim.compare c a b) ↔
+            VE.Calc.Claim.Holds (ρ.apply Γ σ) (VE.Calc.Claim.compare c a b))
+  -- uses VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim.compare@VE.Calc.Syntax VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim.Normal@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.apply@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Comparison@VE.Numbers.Phrases
+  -- expr 4201259139
+theorem VE.Calc.convert_by_factors
+  ∀ (σ : VE.Calc.Values) (u v : String) (fu fv q x : Rat),
+    σ u = Option.some fu →
+      σ v = Option.some fv →
+        fv ≠ 0 →
+          (VE.Calc.Denotes σ ((VE.Calc.Expr.lit q).mul (VE.Calc.Expr.val u)) x ↔
+            VE.Calc.Denotes σ ((VE.Calc.Expr.lit (q * fu / fv)).mul (VE.Calc.Expr.val v)) x)
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.lit@VE.Calc.Syntax VE.Calc.Expr.mul@VE.Calc.Syntax VE.Calc.Expr.val@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
+  -- expr 399966881
+theorem VE.Calc.denotes_rescale
+  ∀ (Γ : String → Option VE.Calc.PhysDim) (ρ : VE.Calc.Rescale) (σ : VE.Calc.Values) (e : VE.Calc.Expr)
+    (d : VE.Calc.PhysDim) (x : Rat),
+    (∀ (n : String) (d' : VE.Calc.PhysDim), Γ n = Option.some d' → d'.Normal) →
+      VE.Calc.Expr.dimOf Γ e = Option.some d → VE.Calc.Denotes σ e x → VE.Calc.Denotes (ρ.apply Γ σ) e (x * ρ.of d)
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim.Normal@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.apply@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.Values@VE.Calc.Syntax
+  -- expr 1234588885
 theorem VE.Calc.findingKind_source_iff
   ∀ (software : Option String) (checks : List Bool),
     VE.Calc.findingKind software checks = VE.Calc.FindingKind.source ↔
@@ -2793,6 +2882,31 @@ theorem VE.Calc.fold_values_other
     ¬n ∈ List.map VE.Calc.Decl.name ds → List.foldl (fun τ d m => if m = d.name then d.valueUnder τ else τ m) σ ds n = σ n
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.valueUnder@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
   -- expr 2916287160
+theorem VE.Calc.foldl_mul_rat
+  ∀ (a : Rat) (l : List Rat), List.foldl (fun x1 x2 => x1 * x2) a l = a * List.foldl (fun x1 x2 => x1 * x2) 1 l
+  -- uses
+  -- expr 1323853608
+theorem VE.Calc.legacy_nominal
+  ∀ (t t' : String), t ≠ t' → VE.Calc.legacyDim t ≠ VE.Calc.legacyDim t'
+  -- uses VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.legacyDim@VE.Calc.Dimension
+  -- expr 2174396226
+theorem VE.Calc.mul_pow_nat
+  ∀ (a b : Rat) (k : Nat), (a * b) ^ k = a ^ k * b ^ k
+  -- uses
+  -- expr 3198866195
+theorem VE.Calc.one_pow_nat
+  ∀ (k : Nat), 1 ^ k = 1
+  -- uses
+  -- expr 2190264131
+theorem VE.Calc.rounds_invariant
+  ∀ (Γ : String → Option VE.Calc.PhysDim) (ρ : VE.Calc.Rescale) (σ : VE.Calc.Values) (r : VE.Numbers.Rounding)
+    (e : VE.Calc.Expr) (p : VE.Numbers.Printed),
+    (∀ (n : String) (d' : VE.Calc.PhysDim), Γ n = Option.some d' → d'.Normal) →
+      VE.Calc.Expr.dimOf Γ e = Option.some VE.Calc.PhysDim.one →
+        (VE.Calc.Claim.Holds σ (VE.Calc.Claim.rounds r e p) ↔
+          VE.Calc.Claim.Holds (ρ.apply Γ σ) (VE.Calc.Claim.rounds r e p))
+  -- uses VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim.rounds@VE.Calc.Syntax VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim.Normal@VE.Calc.Dimension VE.Calc.PhysDim.one@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.apply@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
+  -- expr 2148205015
 theorem VE.Calc.valuesL_agrees
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds → ∀ (n : String), VE.Calc.Val.Agrees✝ (VE.Calc.valuesL ds n) (VE.Calc.values ds n)
@@ -2850,6 +2964,14 @@ theorem VE.Calc.values_stated
         d ∈ ds → ∀ (q : Rat), d.source = VE.Calc.Source.stated q → VE.Calc.values ds d.name = Option.some q
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.stated@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
   -- expr 3273210734
+theorem VE.Calc.zpowR_eq
+  ∀ (q : Rat) (i : Int), VE.Calc.zpowR q i = q ^ i
+  -- uses VE.Calc.zpowR@VE.Calc.Dimension
+  -- expr 2043650304
+theorem VE.Calc.zpowR_mul_nat
+  ∀ (q : Rat), q ≠ 0 → ∀ (i : Int) (k : Nat), q ^ (i * ↑k) = (q ^ i) ^ k
+  -- uses
+  -- expr 606363440
 theorem VE.Cardinality.CEnv.WellFormed.finiteDeclared
   ∀ {E : VE.Cardinality.CEnv}, E.WellFormed → ∀ (s : String), s ∈ E.finite → s ∈ E.q.sorts
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Time.QEnv.sorts@VE.Time.Syntax
