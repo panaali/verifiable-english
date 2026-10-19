@@ -24,10 +24,15 @@ only:
 | `append-left`, `append-right` | each operand of `++` dropped |
 
 A mutant Lean refuses inside the mutated declaration is INVALID: the compiler decides what a mutant means, never
-the text. A check is a `#guard`/`#guard_msgs`, or an `example` or theorem proved by `decide`/`native_decide`/`rfl`
-(`classify` in the tool, the one rule every module goes through). Every other `example` or theorem is a proof,
-whatever its statement names: a failing proof is cut to `sorry` and the build repeated, so it is never a kill
-(BUILDER-CHECKLIST 3; pk-1's `assemble_wellFormed`). The modules built for a mutant are those of the mutated
+the text. A check is a command whose outcome Lean computes from definitions alone, never from a proof (`classify`
+in the tool, the one rule every module goes through): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an
+`example` or theorem proved by `decide`/`native_decide`/`rfl`, with no other tactic block in it; a
+`#guard_msgs … in` is the command it wraps, bare or with its docstring. Every other `example` or theorem is a proof,
+whatever its statement names, and so are a check form with a tactic block inside and every `#print` (`#print axioms`
+included). A failing proof is cut to `sorry` (a `#` command blanked, with its docstring) and the build repeated
+before any other error is read, so it is never a kill (BUILDER-CHECKLIST 3; pk-1's `assemble_wellFormed`); an error
+in a check kills only when the same build without the mutant passes (section 1a). Any other command is no check: an
+error there is UNKNOWN. The modules built for a mutant are those of the mutated
 module's directory that hold checks, and any module of its cone holding a check whose compiled statement
 (`lean/statements.txt`, `-- uses`) names the definition.
 
@@ -50,17 +55,19 @@ would fail it) but keeps the comments after it (a docstring there belongs to the
 `#guard_msgs`, and the cut only keeps comment text the source already had, so the replays below stand as run.
 
 Replays on the reviewed HEADs, every mutant run (`replay.py --run`, 8 jobs on the VM, base = the branch's merge
-base with main). "Survivors on the named lines" are survivors on a line the review names for that finding;
-"within the default 60" says whether one of them is among the first 60 mutants of the tool's order:
+base with main), rerun with the final tool after review fix F7: every mutant's verdict and kill line is the same as
+in the F1 round's evidence (compared by mutant id). "Survivors on the named lines" are survivors on a line the
+review names for that finding; "within the default 60" says whether one of them is among the first 60 mutants of
+the tool's order:
 
 | Finding | HEAD | Mutants (run / survivors / invalid / unknown) | Seconds at 8 jobs | Survivors on the named lines | Flagged | Within the default 60 |
 |---|---|---|---|---|---|---|
-| pk-1 F1 | `6b58a0ff7` | 248 / 91 / 35 / 5 | 873 | 10: `Packs.lean:423` list-empty; `Packs.lean:423` list-first; `Packs.lean:423` list-drop-last; `Packs.lean:423` list-last; `Packs.lean:423` list-drop-first | yes | yes |
-| qt-a1 F1 | `b20a8e306` | 140 / 133 / 7 / 0 | 299 | 43: `Semantics.lean:24` arm-true; `Semantics.lean:52` arm-true; `Semantics.lean:24` arm-false; `Semantics.lean:52` arm-false; `Semantics.lean:14` not-drop; `Semantics.lean:55` not-drop ... | yes | yes |
-| ap-2 F1 | `584ac3bb3` | 413 / 117 / 21 / 0 | 466 | 29: `Syntax.lean:80` lt-le; `Read.lean:19` lit-plus; `Read.lean:19` lit-minus; `Syntax.lean:80` lit-minus; `Syntax.lean:119` any-all; `Syntax.lean:119` list-empty ... | yes | yes |
-| ap-2 F7 | `e13a4e413` | 413 / 59 / 21 / 0 | 280 | 18: `Syntax.lean:119` any-all; `Syntax.lean:83` list-first; `Syntax.lean:96` list-first; `Syntax.lean:113` list-first; `Syntax.lean:113` list-drop-last; `Syntax.lean:119` list-first ... | yes | yes |
-| ap-2 F10 | `3d1085285` | 413 / 35 / 21 / 0 | 316 | 4: `Syntax.lean:78` list-first; `Syntax.lean:78` list-last; `Syntax.lean:79` list-last | yes | no |
-| ap-2 F11 | `aa2fd56e3` | 413 / 33 / 21 / 0 | 485 | 6: `Syntax.lean:88` list-drop-last; `Syntax.lean:122` list-first; `Syntax.lean:122` list-drop-last; `Syntax.lean:89` list-drop-first; `Syntax.lean:121` list-last; `Syntax.lean:121` list-drop-first | yes | no |
+| pk-1 F1 | `6b58a0ff7` | 248 / 91 / 35 / 5 | 733 | 10: `Packs.lean:423` list-empty; `Packs.lean:423` list-first; `Packs.lean:423` list-drop-last; `Packs.lean:423` list-last; `Packs.lean:423` list-drop-first | yes | yes |
+| qt-a1 F1 | `b20a8e306` | 140 / 133 / 7 / 0 | 222 | 43: `Semantics.lean:24` arm-true; `Semantics.lean:52` arm-true; `Semantics.lean:24` arm-false; `Semantics.lean:52` arm-false; `Semantics.lean:14` not-drop; `Semantics.lean:55` not-drop ... | yes | yes |
+| ap-2 F1 | `584ac3bb3` | 413 / 117 / 21 / 0 | 255 | 29: `Syntax.lean:80` lt-le; `Read.lean:19` lit-plus; `Read.lean:19` lit-minus; `Syntax.lean:80` lit-minus; `Syntax.lean:119` any-all; `Syntax.lean:119` list-empty ... | yes | yes |
+| ap-2 F7 | `e13a4e413` | 413 / 59 / 21 / 0 | 267 | 18: `Syntax.lean:119` any-all; `Syntax.lean:83` list-first; `Syntax.lean:96` list-first; `Syntax.lean:113` list-first; `Syntax.lean:113` list-drop-last; `Syntax.lean:119` list-first ... | yes | yes |
+| ap-2 F10 | `3d1085285` | 413 / 35 / 21 / 0 | 275 | 4: `Syntax.lean:78` list-first; `Syntax.lean:78` list-last; `Syntax.lean:79` list-last | yes | no |
+| ap-2 F11 | `aa2fd56e3` | 413 / 33 / 21 / 0 | 275 | 6: `Syntax.lean:88` list-drop-last; `Syntax.lean:122` list-first; `Syntax.lean:122` list-drop-last; `Syntax.lean:89` list-drop-first; `Syntax.lean:121` list-last; `Syntax.lean:121` list-drop-first | yes | no |
 
 Exact reviewer mutants among the survivors (the rest of each finding's survivors are the same class on its lines):
 - pk-1 F1: `coherenceLabels := []` (M035, list-empty), and `X := []` (M028, this item's review F1). `fullEnv := envAt (fill U) 0` is outside the operators
@@ -83,11 +90,73 @@ Result: the tool flags all 6 of the 6 findings (stop rule: at least 3), so steps
 `--max-mutants 60` it flags 4: ap-2 has 413 mutants, and its F10 and F11 survivors are tier-2 and tier-3 list cuts,
 so they print as NOT RUN and the run exits 3 (incomplete) until it is rerun with a larger `--max-mutants`.
 
-Times (the "Seconds" column, measured with the final tool after the F1 fix, 8 jobs on the 32-core VM while other
-work ran): every replay is within the 20-minute budget. qt-a1 took 299 s, the four ap-2 HEADs 280–485 s (5-minute
-load up to 30), and pk-1 873 s (5-minute load 14–22; 1,142 s at load 30–41 before the fix): its mutated modules (`Packs.lean`, `PacksLegacy.lean`) are proof-heavy. A first pk-1 run that built
-every check module importing the mutated one, not only those of its directory, was stopped after an hour at load
-51; that is why `--deep` is opt-in.
+Times (the "Seconds" column, measured with the final tool after the F7 fix, 8 jobs on the 32-core VM, 5-minute
+load 3–12 while other work ran): every replay is within the 20-minute budget. qt-a1 took 222 s, the four ap-2
+HEADs 255–275 s, and pk-1 733 s: its mutated modules (`Packs.lean`, `PacksLegacy.lean`) are proof-heavy. The F1
+round measured 299 s, 280–485 s and 873 s under a heavier load (up to 30), so the control builds of section 1a add
+no measurable time on these trees (no check there fails without the mutant, so each control is built once per
+stage and set of cuts, and cached). A first pk-1 run that built every check module importing the mutated one, not
+only those of its directory, was stopped after an hour at load 51; that is why `--deep` is opt-in.
+
+## 1a. Review fix F7: a check whose outcome a proof can change never kills
+
+F7 was the third form of one class (F1, F6, F7): a command counted as a check while its outcome depends on a
+proof that the mutant breaks or that the tool cuts to `sorry`. `#guard_msgs in #print axioms T` lists `sorryAx`
+once T's proof is cut, so in the mutated module (proofs cut up front) every mutant was KILLED (27 of 27 in the
+review's probe, known survivors included). Lean 4.24 also refuses `#eval` of a value that depends on `sorry`
+("aborting evaluation since the expression depends on the 'sorry' axiom"), so an `#eval` check reading a cut proof
+killed the same way. The fix removes the class in three places:
+
+- **The rule** (`classify`): a check is only a form whose outcome Lean computes from definitions, with no tactic
+  block in it (a mutant can break a tactic and nothing else); `#print` in any spelling is a proof. Every `#`
+  command now opens its own span in `tools/trust_map.py` (`#guard_expr`, `#eval!`, `#check_failure` were read as
+  part of the declaration before them), and any command that is not a check form is no check (UNKNOWN on error).
+- **The cut**: a failing proof is cut before any other error is read (Lean adds a failed theorem with `sorry`, so
+  a check reading it fails only for that reason), and a `#` command is cut by blanking it with its docstring.
+- **The control**: an error in a check is a kill only when the same build without the mutant (the same cuts; one
+  build per stage and set of cuts, cached across mutants) passes. What fails there too reads a cut proof: it is
+  cut as well, never a kill. An outside `--test` file that fails without the mutant too makes the mutant UNKNOWN.
+  This closes the class for forms the rule does not name, since it asks Lean rather than the text.
+
+The DRI's truth table (`FORMS` in `tests/test_trust_mutants.py`; each form bare, under `#guard_msgs in` and with
+its docstring too, in the mutated module and in another module; reading the definition's value, and reading a
+proof the tool cuts: a theorem `r_p : r 1 = 1` proved by a tactic, through `⟨0, …r_p…⟩ : Fin (r 1)`):
+
+| Form | Class | Why | Reads the value: the mutant is | Reads a cut proof: the mutant is |
+|---|---|---|---|---|
+| `#guard` | check | evaluates compiled code, where proofs are erased | KILLED | SURVIVOR |
+| `#guard_expr` | check | compares terms by definitional equality | KILLED | SURVIVOR |
+| `#eval` | check | evaluates; refuses `sorry`, which the control catches | KILLED | SURVIVOR (control) |
+| `#reduce` | check | reduces; proofs are not reduced | KILLED with its docstring; SURVIVOR bare or `(drop info)` (nothing compares the output) | SURVIVOR |
+| `#check` | check | elaborates the term against its type; proofs show as `⋯` | KILLED | SURVIVOR |
+| `#print` | proof | shows a theorem's proof term and a definition's text | SURVIVOR | SURVIVOR |
+| `#print axioms` | proof | lists `sorryAx` once a proof is cut | SURVIVOR | SURVIVOR |
+| `decide` `example` | check | kernel reduction of a decision procedure | KILLED | SURVIVOR |
+| `rfl` `example` | check | definitional equality | KILLED | SURVIVOR |
+| tactic `example` | proof | a proof script (review F1) | SURVIVOR | SURVIVOR |
+| tactic theorem | proof | a proof script (review F1) | SURVIVOR | SURVIVOR |
+| `#guard` with a tactic block | proof | the mutant breaks the tactic, not the comparison | SURVIVOR | (its tactic is the proof) |
+
+Every row holds in both settings and all three wrappings: `test_the_truth_table_statuses` runs the package (the
+definitions `n + 0`, one mutant each; 50 definitions, the rows that must not kill sharing one per wrapping, setting
+and reading) and `test_the_truth_table_classes` checks each row's role on the package's own spans;
+`test_classify_truth_table` and `test_classify_reads_every_command` check `classify` alone, with the spellings
+`#eval!`, `set_option … in`, nested wrappers, `#synth`, `#check_failure` and `#exit`.
+
+The sweep (`docs/speed/trustmut/sweep.py --run`, evidence `evidence/sweep.json` with the sha256 of the tool, of
+`trust_map.py` and of the table it ran): the same table with the rich body `!(n < 1) && (n ≤ 3 || decide (n = 5))
+&& n != 2 && ([n] ++ [1]).all (· ≥ 1) && [n, 3].any (· == 3) && true`, which carries every operator of the test
+package and every other operator but the arms (54 mutants each), and the value read as `(List.range 6).map r`. All 2,700
+mutants ran (575 s at 16 jobs): 1,330 KILLED, 1,370 SURVIVOR, 0 UNKNOWN, 0 INVALID. No row that reads a proof, and
+no row that is no check, has a KILLED mutant, and every row expected to kill does. The definitions a check reads
+keep 19 survivors each (38 such definitions), all equivalent mutants, equal to the original on every `n`, not
+only on 0..5:
+- the conjunct `([n] ++ [1]).all (· ≥ 1)` is true whenever `!(n < 1)` is, so its 16 mutants change nothing:
+  `all-any`, `append-left`, `append-right`, `list-empty`/`list-drop-first`/`list-drop-last` of `[n]`, `[1]` and
+  `[n] ++ [1]`, `list-first` and `list-last` of `[n] ++ [1]`, `[1]` -> `[2]` (lit-plus) and `≥ 1` -> `≥ 0`
+  (lit-minus; `n = 0` is already false by the first conjunct);
+- `n < 1` -> `n < 0` (lit-minus): at `n = 0` the `.all` conjunct is false anyway;
+- `[n, 3].any (· == 3)` is always true, and so are its `list-drop-first` (`[3]`) and `list-last` (`[3]`) cuts.
 
 ## 2. Orchestrator lines (not edited here: /home/seyran/code/manage-agents is the orchestrator's)
 
