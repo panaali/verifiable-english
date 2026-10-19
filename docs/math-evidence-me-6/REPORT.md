@@ -75,12 +75,20 @@ On wip/me-6b, `insertExp`'s cancelled-exponent mutant first survived; fixture `[
 
 ## Tests run
 
+On 7ee9738bf, after syncing main (b7613541c, qt-a2) with `regen_generated.py --resolve`:
 - `tests/test_calc_dimensions.py`: 23 passed.
+- Selected tests on the Mac runner (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): 76 units,
+  exit 0, 0 failed. They include `tests/test_calc_dimensions.py`, `test_hang_guards.py` and `test_trust_budget.py`.
+- `lake build`: PASS.
 - `python3 lean/audit.py`: PASS.
-- `uv run python tools/regen_generated.py --check`: 31 entries, PASS.
+- `regen_generated.py --check`: 31 entries.
 - `trust_map.py --check`: PASS.
-- The selected tests (`mac-pytest.sh --select`) are recorded below.
+- `tools/gate_collection.py --check --prebuilt`: 23 added, 0 refused, 0 stale, 0 malformed.
+- No test in `main-known-red.txt` is touched.
 - The full gate is the chain's.
+
+Size: 518 hand-written lines over the merge base, generated files excluded and the side tables counted, before this
+section.
 
 ## Pilot bytes
 
@@ -89,3 +97,28 @@ On wip/me-6b, `insertExp`'s cancelled-exponent mutant first survived; fixture `[
 ## Next item
 
 me-6b, then me-5 (derivations) and me-9 (identities); ME-P2 after ME-4.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no service mode, relay or Lean answer that Python reads. Lean evaluations are read by the test only.
+2. PASS: each plan row is mapped to a test in "Plan rows", with me-6b named. The diff has no Python copy of a Lean
+   decision (the test only states fixtures), no permanent report test, and no file in another in-flight branch.
+3. PASS: 15 of 15 mutants killed by named tests (`mutants.json`), including the plan's seeded bug
+   (`test_fixture[h7-ratio]`). `test_a_change_of_units_has_positive_factors` must reject a factor of 0 and accept 1.
+4. N.A.: dimensions have no Python or Rust implementation; Lean is the only one.
+5. N.A.: no relayed answer to bind. Unknown names give no dimension (`test_fixture[h7-unknown]`).
+6. PASS: synced with main at 7ee9738bf. The selected run is on that HEAD; the full gate is the chain's.
+7. PASS: the DELTA row cites R16 with per-declaration lines; `trust_map.py --check` PASS; the FOLLOW-UPS "## me-6"
+   row exists.
+8. PASS: no public output changes, and DELTA says so. The one row is the trust growth.
+9. PASS: `select_tests.py` selects `tests/test_calc_dimensions.py` (76 units, not all).
+10. PASS: theorem statements match spec 6.1 verbatim (see the statement gate). With proofs intact, the mutants also
+    break proofs: for example `dimof-div` breaks `Expr.eval_rescale`. No hypothesis was added. No
+    `tools/check_*_statements.py` covers math-evidence.
+11. N.A.: no budget, limit or deadline. The test waits with `HANG_TIMEOUT` and has no sleep
+    (`tests/test_hang_guards.py` passed in the selected run).
+12. N.A.: nothing on a pilot or document path changes; no route is registered.
+13. PASS: no test removed; `gate_collection.py --check --prebuilt` reports 0 refused, stale or malformed trailers.
+
+Sibling lesson (me-1c F1, raw-text comparison): N.A. here, because me-6 compares no words. In me-6b, unit and base
+names are identifiers (`[a-z][a-z0-9_]*`), so case and punctuation variants are refused, not folded.
