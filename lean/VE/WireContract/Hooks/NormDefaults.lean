@@ -1,6 +1,7 @@
 import VE.NormDefaults.Admission
 import VE.WireContract.Hooks.Norms
 import VE.WireContract.Tables.NormDefaults
+import VE.Limits
 
 /-! The hand-written hooks and adapter of the contract `norm-defaults@0`
 (docs/spec/wire-contract-s5.md 2.4 and 2.5).
@@ -45,7 +46,7 @@ def firstOverBudget (premises : List (String × VE.Formula)) : Option String :=
     | _, [] => none
     | n, (label, φ) :: rest =>
       let total := n + VE.Bridge.formulaNodes φ
-      if total > 10000 || formulaDepth φ > 64 then some label else go total rest
+      if total > VE.Limits.maxNodes || formulaDepth φ > VE.Limits.maxDepth then some label else go total rest
   go 0 premises
 
 def holdsUnless (b : Bool) : HookResult := if b then .fail [] else .ok
@@ -64,7 +65,7 @@ def own : String → Json → List Pointer → HookResult
     | none => .ok
   -- 6.1, 6.2: `checkAuthor`'s node budget with the fill guards, and the height on unspecified predicates
   | "filled_ast_fits", root, _ => match author root with
-    | some U => holdsUnless ((U.D.T.nodes.map ruleNodes).sum + fillGuardNodes U > 10000)
+    | some U => holdsUnless ((U.D.T.nodes.map ruleNodes).sum + fillGuardNodes U > VE.Limits.maxNodes)
     | none => .ok
   | "filled_precedence_depth_fits", root, _ => match author root with
     | some U => holdsUnless (U.D.T.nodes.any fun N =>

@@ -10853,6 +10853,12 @@ theorem VE.EvaluationCounts.route_decodeFormulas_length
     VE.Route.Wire.decodeFormulas E j data = Except.ok fs → ∃ arr, j.getArr? = Except.ok arr ∧ fs.length = arr.size
   -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
   -- expr 761532944
+theorem VE.Events.boundRole_mem
+  ∀ {V : VE.Events.EventsEnv} {s bd : String},
+    VE.Events.boundRole V s = Option.some bd →
+      (∃ e, e ∈ V.events ∧ e.sort = s ∧ e.on = bd) ∨ ∃ x, x ∈ V.states ∧ x.sort = s ∧ x.ends = bd
+  -- uses VE.Events.EventSort.on@VE.Events.Decl VE.Events.EventSort.sort@VE.Events.Decl VE.Events.EventSort@VE.Events.Decl VE.Events.EventsEnv.events@VE.Events.Decl VE.Events.EventsEnv.states@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort.ends@VE.Events.Decl VE.Events.StateSort.sort@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Events.boundRole@VE.Events.Decl
+  -- expr 1463856964
 theorem VE.Events.calendar_sat
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.EventsTyped E V = Bool.true →
@@ -10874,6 +10880,47 @@ theorem VE.Events.chain_positions
         (∀ (p : β × β), p ∈ l.zip l.tail → R p.fst p.snd) → ∀ (x : β), x ∈ l → ∀ (y : β), y ∈ l → x = y ∨ R x y ∨ R y x
   -- uses
   -- expr 3525567212
+theorem VE.Events.completion_admissible
+  ∀ {α : Type} [DecidableEq α] (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.EventsTyped E V = Bool.true →
+      ∀ (M : VE.FiniteModel α),
+        M.Valid E → ∀ (num : α → Nat), VE.Events.Embeds V M.asStructure num → (VE.Events.completion V M num).Admissible E
+  -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Admissible@VE.Semantics
+  -- expr 2825121993
+theorem VE.Events.completion_before_new
+  ∀ {α : Type} {V : VE.Events.EventsEnv} {M : VE.FiniteModel α} {num : α → Nat} {z w : α ⊕ Nat},
+    VE.Events.oldTuple [z, w] = Option.none →
+      ((VE.Events.completion V M num).relation V.before [z, w] ↔
+        VE.Events.isDayC V M num z ∧ VE.Events.isDayC V M num w ∧ VE.Events.numOf num z < VE.Events.numOf num w)
+  -- uses VE.Events.EventsEnv.before@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.Events.isDayC@VE.Events.Completion VE.Events.numOf@VE.Events.Completion VE.Events.oldTuple@VE.Events.Completion VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics
+  -- expr 460115898
+theorem VE.Events.completion_extension
+  ∀ {α : Type} [DecidableEq α] (V : VE.Events.EventsEnv) (M : VE.FiniteModel α) (num : α → Nat),
+    VE.Events.Embeds V M.asStructure num →
+      VE.Events.DayExtension V.day [V.before] M.asStructure (VE.Events.completion V M num) Sum.inl
+  -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv.before@VE.Events.Decl VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics
+  -- expr 1477851673
+theorem VE.Events.completion_reading
+  ∀ {α : Type} [DecidableEq α] (V : VE.Events.EventsEnv) (M : VE.FiniteModel α) (num : α → Nat),
+    VE.Events.Embeds V M.asStructure num →
+      VE.Events.CalendarReading V (VE.Events.completion V M num) (VE.Events.numOf num)
+  -- uses VE.Events.CalendarReading@VE.Events.Premises VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.Events.numOf@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite
+  -- expr 4070260444
+theorem VE.Events.completion_typed
+  ∀ {α : Type} {V : VE.Events.EventsEnv} {M : VE.FiniteModel α} {num : α → Nat} (ss : List String) (xs : List α),
+    VE.TupleTyped M.asStructure ss xs → VE.TupleTyped (VE.Events.completion V M num) ss (List.map Sum.inl xs)
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2837478597
+theorem VE.Events.conventions_exact
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true →
+      ∀ (ng : List String),
+        (∀ (p : String), p ∈ VE.Events.rolePreds V ++ List.map (fun x => x.predicate) V.links → ¬p ∈ ng) →
+          ∀ (a : VE.Formula),
+            a ∈ VE.Events.conventionPremises V →
+              VE.Events.up V.day ng a = Bool.true ∧ VE.Events.down V.day ng a = Bool.true
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.down@VE.Events.Completion VE.Events.rolePreds@VE.Events.Decl VE.Events.up@VE.Events.Completion VE.Formula@VE.Syntax
+  -- expr 897408735
 theorem VE.Events.datesOrder_calendar
   ∀ (D D' : VE.Time.Civil), D.Proper → D'.Proper → (D.num < D'.num ↔ D.Before D')
   -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -10899,6 +10946,12 @@ theorem VE.Events.dayExtension_transfer
           (VE.Events.down day ng a = Bool.true → VE.Formula.denote S (List.map ι ρ) a → VE.Formula.denote M ρ a)
   -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.down@VE.Events.Completion VE.Events.up@VE.Events.Completion VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3827354477
+theorem VE.Events.eventsPremises_wellFormed
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true →
+      ∀ (p : VE.Formula), p ∈ VE.Events.eventsX V → VE.Formula.WellFormed (VE.Events.regenEnv E V) [] p
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 1761829896
 theorem VE.Events.hits_vacuous
   ∀ {day : String} {ng : List String} {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
     VE.Events.DayExtension day ng M S ι →
@@ -10926,6 +10979,25 @@ theorem VE.Events.mem_dates_of_consecutive
     p ∈ VE.Events.consecutive V → p.fst ∈ V.dates ∧ p.snd ∈ V.dates
   -- uses VE.Events.EventsEnv.dates@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.consecutive@VE.Events.Decl VE.Time.Civil@VE.Time.Calendar
   -- expr 2258503509
+theorem VE.Events.oldTuple_eq
+  ∀ {α : Type} {zs : List (α ⊕ Nat)} {xs : List α}, VE.Events.oldTuple zs = Option.some xs → zs = List.map Sum.inl xs
+  -- uses VE.Events.oldTuple@VE.Events.Completion
+  -- expr 3731155968
+theorem VE.Events.oldTuple_map
+  ∀ {α : Type} (xs : List α), VE.Events.oldTuple (List.map Sum.inl xs) = Option.some xs
+  -- uses VE.Events.oldTuple@VE.Events.Completion
+  -- expr 3940699995
+theorem VE.Events.regen_typed
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true → VE.Events.EventsTyped (VE.Events.regenEnv E V) V = Bool.true
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.regenEnv@VE.Events.Decl
+  -- expr 1843268313
+theorem VE.Events.startRole_mem
+  ∀ {V : VE.Events.EventsEnv} {s st : String},
+    VE.Events.startRole V s = Option.some st →
+      (∃ e, e ∈ V.events ∧ e.sort = s ∧ e.on = st) ∨ ∃ x, x ∈ V.states ∧ x.sort = s ∧ x.begins = st
+  -- uses VE.Events.EventSort.on@VE.Events.Decl VE.Events.EventSort.sort@VE.Events.Decl VE.Events.EventSort@VE.Events.Decl VE.Events.EventsEnv.events@VE.Events.Decl VE.Events.EventsEnv.states@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort.begins@VE.Events.Decl VE.Events.StateSort.sort@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Events.startRole@VE.Events.Decl
+  -- expr 1399527894
 theorem VE.Events.term_map
   ∀ {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
     (∀ (c : String), S.constant c = Option.map ι (M.constant c)) →
@@ -31746,9 +31818,9 @@ theorem VE.Reports.WF.nodup
   -- expr 233711839
 theorem VE.Reports.WF.predicateCount
   ∀ {D : VE.Reports.ReportDoc},
-    VE.Reports.WF D → D.authorPredicates.length + (VE.Reports.names D).length ≤ VE.Reports.maxPredicates
-  -- uses VE.Reports.ReportDoc.authorPredicates@VE.Attribution.Content VE.Reports.ReportDoc@VE.Attribution.Content VE.Reports.WF@VE.Attribution.Facts VE.Reports.maxPredicates@VE.Attribution.Content VE.Reports.names@VE.Attribution.Content
-  -- expr 1038143500
+    VE.Reports.WF D → D.authorPredicates.length + (VE.Reports.names D).length ≤ VE.Limits.maxPredicates
+  -- uses VE.Limits.maxPredicates@VE.Limits VE.Reports.ReportDoc.authorPredicates@VE.Attribution.Content VE.Reports.ReportDoc@VE.Attribution.Content VE.Reports.WF@VE.Attribution.Facts VE.Reports.names@VE.Attribution.Content
+  -- expr 736746264
 theorem VE.Reports.WF.scoped
   ∀ {D : VE.Reports.ReportDoc},
     VE.Reports.WF D → ∀ (s : VE.Reports.ScopedCheck), s ∈ D.scoped → VE.Reports.scopedOk D s = Bool.true
@@ -37659,6 +37731,13 @@ theorem VE.Route.MeteredProofs.order_sound
           b = fs.all fun f => VE.Order.Formula.eval M [] f
   -- uses VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.evaluate@VE.Route.Metered VE.Time.evalB@VE.Time.Budget
   -- expr 1155899805
+theorem VE.Route.MeteredRun.reportedWith_prepare
+  ∀ (j environment : Lean.Json),
+    j.getObjVal? "environment" = Except.ok environment →
+      VE.Route.MeteredRun.reportedWith (Except.ok (VE.Route.MeteredRun.prepare environment)) j =
+        VE.Route.MeteredRun.runCaseReported j
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.reportedWith@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun
+  -- expr 2173106182
 theorem VE.Route.Run.route_gate
   ∀ (j r : Lean.Json),
     VE.Route.Run.runCase j = Except.ok r →
@@ -39606,6 +39685,10 @@ theorem VE.Service.Document.decodeRowKind_json
     VE.Service.Document.decodeRowKind rights j = Except.ok k → k.json = j
   -- uses VE.Service.Document.RowKind.json@VE.Service.Document VE.Service.Document.RowKind@VE.Service.Document VE.Service.Document.decodeRowKind@VE.Service.Document
   -- expr 2427365272
+theorem VE.Service.Entry.prepared_eq
+  ∀ (self : VE.Service.Entry), self.prepared.get = VE.Route.MeteredRun.prepare self.environment
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry.prepared@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol
+  -- expr 2627895562
 theorem VE.Service.Family.Checked.accepted
   ∀ {F C : Type} {wf : F → Bool} {valid : C → List F → F → Bool} (self : VE.Service.Family.Checked F C wf valid),
     VE.Service.GenericGraph.check wf (VE.Service.Family.claimValid valid) self.graph = Option.some self.report
@@ -40284,12 +40367,14 @@ theorem VE.Service.Standalone.checkedModelTables_error_preserved
   -- uses VE.Service.Standalone.ModelFault@VE.Service.Standalone VE.Service.Standalone.checkedModelTables@VE.Service.Standalone VE.Service.Standalone.locatedModelTables@VE.Service.Standalone
   -- expr 171467256
 theorem VE.Service.boundResults_eq
-  ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (digests : Array String) (i : Nat)
-    (h : i < cases.size),
-    (VE.Service.bindResults (VE.Service.results r cases) digests)[i]? =
-      Option.some (VE.Service.bound i (digests.getD i "") (VE.Service.caseResult r.mode i cases[i]))
-  -- uses VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.bindResults@VE.Service.Protocol VE.Service.bound@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
-  -- expr 4020929959
+  ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (entries : Array (Option VE.Service.Entry))
+    (digests : Array String) (i : Nat) (h : i < cases.size),
+    (VE.Service.bindResults (VE.Service.results r cases entries) digests)[i]? =
+      Option.some
+        (VE.Service.bound i (digests.getD i "")
+          (VE.Service.caseResultWith r.mode i (entries.getD i Option.none) cases[i]))
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.bindResults@VE.Service.Protocol VE.Service.bound@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
+  -- expr 2011845644
 theorem VE.Service.bound_eq
   ∀ (index : Nat) (digest : String) (result : Lean.Json),
     VE.Service.bound index digest result =
@@ -40298,6 +40383,38 @@ theorem VE.Service.bound_eq
           VE.Service.coding result)
   -- uses VE.Service.bound@VE.Service.Protocol VE.Service.coding@VE.Service.Protocol
   -- expr 203835929
+theorem VE.Service.caseResultWith_entry
+  ∀ (i : Nat) (entry : VE.Service.Entry) (j : Lean.Json),
+    j.getObjVal? "environment" = Except.ok entry.environment →
+      VE.Service.caseResultWith VE.Service.Mode.metered i (Option.some entry) (Except.ok j) =
+        VE.Service.caseResult VE.Service.Mode.metered i (Except.ok j)
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- expr 2995407994
+theorem VE.Service.caseResultWith_none
+  ∀ (m : VE.Service.Mode) (i : Nat) (c : Except String Lean.Json),
+    VE.Service.caseResultWith m i Option.none c = VE.Service.caseResult m i c
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- expr 66040465
+theorem VE.Service.caseResultWith_unmetered
+  ∀ (m : VE.Service.Mode),
+    m ≠ VE.Service.Mode.metered →
+      ∀ (i : Nat) (entry : Option VE.Service.Entry) (c : Except String Lean.Json),
+        VE.Service.caseResultWith m i entry c = VE.Service.caseResult m i c
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- expr 3823144046
+theorem VE.Service.caseResult_cached
+  ∀ (h : VE.Service.Handles) (i : Nat) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String)
+    (entry : VE.Service.Entry),
+    (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
+      (∀ (e : Lean.Json), (Lean.Json.obj kvs).getObjVal? "environment" ≠ Except.ok e) →
+        h.table[d]? = Option.some entry →
+          kvs.WF →
+            VE.Service.caseResultWith VE.Service.Mode.metered i (h.entry? (Lean.Json.obj kvs))
+                (Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment))) =
+              VE.Service.caseResult VE.Service.Mode.metered i
+                (Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment)))
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 4135141905
 theorem VE.Service.caseResult_ok
   ∀ (m : VE.Service.Mode) (i : Nat) (j : Lean.Json), VE.Service.caseResult m i (Except.ok j) = VE.Service.runMode m j
   -- uses VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
@@ -40312,20 +40429,27 @@ theorem VE.Service.coding_of_status
   ∀ (result : Lean.Json), result.getObjValD "status" ≠ Lean.Json.str "error" → VE.Service.coding result = []
   -- uses VE.Service.coding@VE.Service.Protocol
   -- expr 3882396647
+theorem VE.Service.entry_hit
+  ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (entry : VE.Service.Entry),
+    (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
+      (∀ (e : Lean.Json), (Lean.Json.obj kvs).getObjVal? "environment" ≠ Except.ok e) →
+        h.table[d]? = Option.some entry → h.entry? (Lean.Json.obj kvs) = Option.some entry
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 992174531
 theorem VE.Service.expandCases_unexpanded
   ∀ (h : VE.Service.Handles) (m : VE.Service.Mode) (cases : Array (Except String Lean.Json)),
     m = VE.Service.Mode.english ∨ m = VE.Service.Mode.riskEval → VE.Service.expandCases h m cases = Except.ok cases
   -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.english@VE.Service.Protocol VE.Service.Mode.riskEval@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol
   -- expr 3871372086
 theorem VE.Service.expand_hit
-  ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (env : Lean.Json),
+  ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (entry : VE.Service.Entry),
     (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
       (∀ (e : Lean.Json), (Lean.Json.obj kvs).getObjVal? "environment" ≠ Except.ok e) →
-        h.table[d]? = Option.some env →
+        h.table[d]? = Option.some entry →
           h.expand (Lean.Json.obj kvs) =
-            Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" env))
-  -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
-  -- expr 3036323980
+            Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment))
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 1501435221
 theorem VE.Service.expand_miss
   ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String),
     (Lean.Json.obj kvs).getObjVal? VE.Service.handleKey = Except.ok (Lean.Json.str d) →
@@ -40335,8 +40459,8 @@ theorem VE.Service.expand_miss
             Except.error
               (ToString.toString "CheckerUnavailable: environment handle " ++ ToString.toString d ++
                 ToString.toString " is not registered")
-  -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
-  -- expr 2688008507
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- expr 3127159811
 theorem VE.Service.expand_plain
   ∀ (h : VE.Service.Handles) (j : Lean.Json),
     (∀ (d : String), j.getObjVal? VE.Service.handleKey ≠ Except.ok (Lean.Json.str d)) → h.expand j = Except.ok j
@@ -40382,10 +40506,12 @@ theorem VE.Service.respond_decoded
   -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.decodeRequest@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.objectMembers@VE.Service.Protocol VE.Service.register@VE.Service.Protocol VE.Service.requestError@VE.Service.Protocol VE.Service.respond.match_1@VE.Service.Protocol VE.Service.respond@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
   -- expr 1165328922
 theorem VE.Service.results_eq
-  ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (i : Nat) (h : i < cases.size),
-    (VE.Service.results r cases)[i]? = Option.some (VE.Service.caseResult r.mode i cases[i])
-  -- uses VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
-  -- expr 1305739100
+  ∀ (r : VE.Service.Request) (cases : Array (Except String Lean.Json)) (entries : Array (Option VE.Service.Entry))
+    (i : Nat) (h : i < cases.size),
+    (VE.Service.results r cases entries)[i]? =
+      Option.some (VE.Service.caseResultWith r.mode i (entries.getD i Option.none) cases[i])
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
+  -- expr 2848766935
 theorem VE.Service.runMode_alternatives
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.alternatives j = VE.Alternatives.Run.runCaseReported j
   -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
@@ -40466,6 +40592,10 @@ theorem VE.Service.runMode_identity
     VE.Service.runMode VE.Service.Mode.identity j = VE.Service.Standalone.reported VE.Service.Standalone.identityCase j
   -- uses VE.Service.Mode.identity@VE.Service.Protocol VE.Service.Standalone.identityCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 3910335735
+theorem VE.Service.runMode_metered
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.metered j = VE.Route.MeteredRun.runCaseReported j
+  -- uses VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun VE.Service.Mode.metered@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- expr 2610763039
 theorem VE.Service.runMode_model
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.model j = VE.Service.Standalone.reportedModel j
   -- uses VE.Service.Mode.model@VE.Service.Protocol VE.Service.Standalone.reportedModel@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
@@ -40552,9 +40682,11 @@ theorem VE.Service.runRequest_ok
               VE.Service.caseDigests r.cases = Except.ok digests →
                 digests.size = cases.size →
                   VE.Service.expandCases h r.mode cases = Except.ok expanded →
-                    VE.Service.runRequest h r = Except.ok (VE.Service.response r expanded digests)
-  -- uses VE.Service.Budget.bytes@VE.Service.Protocol VE.Service.Budget.cases@VE.Service.Protocol VE.Service.Budget@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Request.budget@VE.Service.Protocol VE.Service.Request.cases@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseDigests@VE.Service.Protocol VE.Service.decodeCases@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol VE.Service.response@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
-  -- expr 1959429401
+                    VE.Service.runRequest h r =
+                      Except.ok
+                        (VE.Service.response r expanded digests (Array.map (fun x => x.toOption.bind h.entry?) cases))
+  -- uses VE.Service.Budget.bytes@VE.Service.Protocol VE.Service.Budget.cases@VE.Service.Protocol VE.Service.Budget@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Request.budget@VE.Service.Protocol VE.Service.Request.cases@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseDigests@VE.Service.Protocol VE.Service.decodeCases@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol VE.Service.response@VE.Service.Protocol VE.Service.runRequest@VE.Service.Protocol
+  -- expr 618208589
 theorem VE.SoftNorms.Admission.admitDocument_spec
   ∀ (environment document : Lean.Json) (res : VE.SoftNorms.Admission.Admitted),
     VE.SoftNorms.Admission.admitDocument environment document = Except.ok res →
@@ -41517,12 +41649,12 @@ theorem VE.SoftNorms.limitWalk_eq
     1 ≤ d →
       VE.SoftNorms.limitWalk n d φ =
         if
-            n + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).fst ≤ VE.SoftNorms.maxNodes ∧
-              d - 1 + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).snd ≤ VE.SoftNorms.maxDepth then
+            n + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).fst ≤ VE.Limits.maxNodes ∧
+              d - 1 + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).snd ≤ VE.Limits.maxDepth then
           Option.some (n + (VE.SoftNorms.fsize VE.SoftNorms.noSubst φ).fst)
         else Option.none
-  -- uses VE.Formula@VE.Syntax VE.SoftNorms.fsize@VE.SoftNorms.Soften VE.SoftNorms.limitWalk@VE.SoftNorms.Soften VE.SoftNorms.maxDepth@VE.SoftNorms.Soften VE.SoftNorms.maxNodes@VE.SoftNorms.Soften VE.SoftNorms.noSubst@VE.SoftNorms.Soften
-  -- expr 1060259640
+  -- uses VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.SoftNorms.fsize@VE.SoftNorms.Soften VE.SoftNorms.limitWalk@VE.SoftNorms.Soften VE.SoftNorms.noSubst@VE.SoftNorms.Soften
+  -- expr 2977934017
 theorem VE.SoftNorms.liveStrictIn_denote
   ∀ (S : VE.Structure) (ρ : VE.Valuation S) (regs : List VE.Norms.Regulated) (N : VE.SoftNorms.SoftNode),
     VE.Formula.denote S ρ (VE.SoftNorms.liveStrictIn regs N) ↔
@@ -42328,9 +42460,9 @@ theorem VE.SoftNorms.term_embed
 theorem VE.SoftNorms.tick_eq
   ∀ (n d t : Nat),
     VE.SoftNorms.limitWalk.tick n d t =
-      if n + 1 + t ≤ VE.SoftNorms.maxNodes ∧ d ≤ VE.SoftNorms.maxDepth then Option.some (n + 1 + t) else Option.none
-  -- uses VE.SoftNorms.limitWalk.tick@VE.SoftNorms.Soften VE.SoftNorms.maxDepth@VE.SoftNorms.Soften VE.SoftNorms.maxNodes@VE.SoftNorms.Soften
-  -- expr 4266421846
+      if n + 1 + t ≤ VE.Limits.maxNodes ∧ d ≤ VE.Limits.maxDepth then Option.some (n + 1 + t) else Option.none
+  -- uses VE.Limits.maxDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.SoftNorms.limitWalk.tick@VE.SoftNorms.Soften
+  -- expr 4022427536
 theorem VE.SoftNorms.universal_down
   ∀ {D : VE.SoftNorms.SoftDoc} {B₀ B : VE.Structure} (e : B₀.Carrier → B.Carrier),
     (∀ (x y : B₀.Carrier), e x = e y → x = y) →

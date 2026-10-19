@@ -278,10 +278,8 @@ class CedarTranslation:
                 if name in ("principal", "action", "resource", "permitted"):
                     wire["relations"][name] = [row for row in rows if row[0] == request_id]
             def truth(formula):
-                from ..backends.dispatch import pinned
                 model = FiniteModel.from_dict(self.environment, wire)
-                with pinned("lean"):
-                    answer = evaluate(self.environment, Forall("request", formula), model, trace=False)
+                answer = evaluate(self.environment, Forall("request", formula), model, trace=False)
                 if answer.status == "ResourceLimit" or answer.value is None:
                     from ..errors import CheckerUnavailable
                     raise CheckerUnavailable("CheckerUnavailable: Cedar evaluation did not finish")

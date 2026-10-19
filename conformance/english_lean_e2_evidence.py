@@ -132,13 +132,13 @@ def lean_outcomes(index: int, texts: list[str], lexicon: dict | None = None) -> 
 
 
 def compare(left: dict, lean: dict) -> tuple[list[str], dict]:
-    from ve.backends import dispatch
+    from ve.backends.english_lean import _classes
     if lean["status"] == "unavailable":
         right = {"verdict": "unavailable", "code": "CheckerUnavailable"}
     else:
         right = lean["reading"].comparison(left["code"])
     compared = {k: v for k, v in left.items() if k not in ("message", "excluded")}  # as shadow_record compares
-    classes = [] if "excluded" in left else dispatch._classes(compared, right)
+    classes = [] if "excluded" in left else _classes(compared, right)
     return classes, right
 
 

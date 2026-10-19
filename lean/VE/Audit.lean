@@ -301,6 +301,7 @@ import VE.Route.Gate
 import VE.Route.Layer
 import VE.Route.Metered
 import VE.Route.MeteredProofs
+import VE.Route.MeteredRun
 import VE.Route.Readings
 import VE.Route.Route
 import VE.Route.Run
@@ -1853,17 +1854,29 @@ import VE.WireContract.Engine
 #print axioms VE.EvaluationCounts.mapM_length
 #print axioms VE.EvaluationCounts.order_decodeFormulas_length
 #print axioms VE.EvaluationCounts.route_decodeFormulas_length
+#print axioms VE.Events.boundRole_mem
 #print axioms VE.Events.calendar_sat
 #print axioms VE.Events.chain_head
 #print axioms VE.Events.chain_positions
+#print axioms VE.Events.completion_admissible
+#print axioms VE.Events.completion_before_new
+#print axioms VE.Events.completion_extension
+#print axioms VE.Events.completion_reading
+#print axioms VE.Events.completion_typed
+#print axioms VE.Events.conventions_exact
 #print axioms VE.Events.datesOrder_calendar
 #print axioms VE.Events.datesOrder_iff
 #print axioms VE.Events.dayExtension_transfer
+#print axioms VE.Events.eventsPremises_wellFormed
 #print axioms VE.Events.hits_vacuous
 #print axioms VE.Events.isConst_eq
 #print axioms VE.Events.isVar_beq
 #print axioms VE.Events.isVar_eq
 #print axioms VE.Events.mem_dates_of_consecutive
+#print axioms VE.Events.oldTuple_eq
+#print axioms VE.Events.oldTuple_map
+#print axioms VE.Events.regen_typed
+#print axioms VE.Events.startRole_mem
 #print axioms VE.Events.term_map
 #print axioms VE.Events.unorderedSame_of_order
 #print axioms VE.Grammar.BOk.addAll
@@ -5442,6 +5455,7 @@ import VE.WireContract.Engine
 #print axioms VE.Route.MeteredProofs.core_sound
 #print axioms VE.Route.MeteredProofs.fol_sound
 #print axioms VE.Route.MeteredProofs.order_sound
+#print axioms VE.Route.MeteredRun.reportedWith_prepare
 #print axioms VE.Route.Run.route_gate
 #print axioms VE.Route.Run.route_gate_rejects
 #print axioms VE.Route.Run.route_rejects_before_checking
@@ -5664,6 +5678,7 @@ import VE.WireContract.Engine
 #print axioms VE.Senses.wf_iff_no_failure
 #print axioms VE.Service.Diagnose.diagnoseCase_registered
 #print axioms VE.Service.Document.decodeRowKind_json
+#print axioms VE.Service.Entry.prepared_eq
 #print axioms VE.Service.Family.Checked.accepted
 #print axioms VE.Service.Family.closureRefutes_sound
 #print axioms VE.Service.Family.closure_graph_entails
@@ -5740,9 +5755,14 @@ import VE.WireContract.Engine
 #print axioms VE.Service.Standalone.checkedModelTables_error_preserved
 #print axioms VE.Service.boundResults_eq
 #print axioms VE.Service.bound_eq
+#print axioms VE.Service.caseResultWith_entry
+#print axioms VE.Service.caseResultWith_none
+#print axioms VE.Service.caseResultWith_unmetered
+#print axioms VE.Service.caseResult_cached
 #print axioms VE.Service.caseResult_ok
 #print axioms VE.Service.coding_error
 #print axioms VE.Service.coding_of_status
+#print axioms VE.Service.entry_hit
 #print axioms VE.Service.expandCases_unexpanded
 #print axioms VE.Service.expand_hit
 #print axioms VE.Service.expand_miss
@@ -5770,6 +5790,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_familyNorms
 #print axioms VE.Service.runMode_graph
 #print axioms VE.Service.runMode_identity
+#print axioms VE.Service.runMode_metered
 #print axioms VE.Service.runMode_model
 #print axioms VE.Service.runMode_normDefaults
 #print axioms VE.Service.runMode_norms

@@ -13,12 +13,26 @@ from ve import Environment, FiniteModel
 from ve.ast import (And, Atom, Binary, Body, Bottom, Const, Document, Eq, Exists,
                     Forall, Implies, Le, Lt, Named, Not, Num, Or, Reach, Top,
                     Unary, Var, formula_to_data)
-from ve.evaluate import evaluate
+from ve.evaluate import _evaluate_validated, _explanation
 from tests import nonvacuity_oracle
 
 
 EXE = Path(__file__).resolve().parents[1] / "lean/.lake/build/bin/ve_metered"
 FAMILIES = ((), ("closure@0",), ("closure@0", "nary@0"), ("order@0",))
+
+
+def python(formulas, model, **options):
+    """The retained Python evaluator's answer (`evaluate` itself is Lean's since lean-first batch 18)."""
+    return _evaluate_validated(tuple(formulas), model, **options).to_dict()
+
+
+def lean(row, case):
+    """A metered row's evaluation, its explanation rows rebuilt into the public tree (`_explanation`), every
+    binding bound to the case's model."""
+    evaluation = row["evaluation"]
+    rows = evaluation["explanation"]
+    return {**evaluation, "explanation": None if rows is None
+            else _explanation(rows, case["model"]["domains"]).to_dict()}
 
 
 def run(cases):
@@ -69,13 +83,13 @@ def test_budgeted_values_counts_and_traces_match_python(profiles):
                           "ast": [formula_to_data(env, formula)],
                           "max_evaluations": budget, "max_trace_nodes": trace_budget,
                           "trace": trace})
-            expected.append(evaluate(env, formula, model, max_evaluations=budget,
-                                     max_trace_nodes=trace_budget, trace=trace).to_dict())
+            expected.append(python((formula,), model, max_evaluations=budget,
+                                   max_trace_nodes=trace_budget, trace=trace))
     rows = run(cases)
     assert len(rows) == len(cases)
     for case, row, answer in zip(cases, rows, expected, strict=True):
         assert row["status"] == "ok", (case, row)
-        assert row["evaluation"] == answer, (case, row["evaluation"], answer)
+        assert lean(row, case) == answer, (case, row["evaluation"], answer)
 
 
 @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
@@ -90,10 +104,9 @@ def test_document_budget_is_shared_and_stops_at_first_violation(profiles):
                           "environment": raw, "model": model.to_dict(),
                           "ast": [formula_to_data(env, f) for f in document.formulas],
                           "max_evaluations": budget, "trace": True})
-            expected.append(evaluate(env, document, model, max_evaluations=budget,
-                                     trace=True).to_dict())
-    for row, answer in zip(run(cases), expected, strict=True):
-        assert row["evaluation"] == answer
+            expected.append(python(document.formulas, model, max_evaluations=budget, trace=True))
+    for case, row, answer in zip(cases, run(cases), expected, strict=True):
+        assert lean(row, case) == answer
 
 
 @pytest.mark.skipif(not EXE.exists(), reason="ve_metered has not been built")
@@ -149,11 +162,57 @@ def test_empty_quantifier_domains_match_python(profiles):
               "model": model.to_dict(), "ast": [formula_to_data(env, f)], "trace": True,
               "max_evaluations": budget}
              for i, (f, budget) in enumerate((f, b) for f in formulas_ for b in (0, 1, 2))]
-    expected = [evaluate(env, f, model, trace=True, max_evaluations=budget).to_dict()
+    expected = [python((f,), model, trace=True, max_evaluations=budget)
                 for f in formulas_ for budget in (0, 1, 2)]
-    for row, answer in zip(run(cases), expected, strict=True):
-        assert row["evaluation"] == answer
+    for case, row, answer in zip(cases, run(cases), expected, strict=True):
+        assert lean(row, case) == answer
     nv = [{"id": str(i), "kind": "non-vacuity", "environment": raw,
            "model": model.to_dict(), "formula": formula_to_data(env, f)}
           for i, f in enumerate(formulas_)]
     assert [row["suitable"] for row in run(nv)] == [False, False]
+
+
+ROW = {"kind": "top", "value": True, "bindings": [], "detail": "", "children": 0}
+DOMAINS = {"s": ["x"]}  # the model the rows answer: the shifted index below binds an entity it holds
+
+
+@pytest.mark.parametrize("rows", [
+    [],                                                                 # no tree
+    [{**ROW, "kind": "document", "children": 2}, ROW],                  # a count past the end
+    [{**ROW, "kind": "document", "children": 1}, ROW, ROW],             # a row outside the tree
+    [ROW, ROW],                                                         # two roots
+    [{**ROW, "children": -1}],                                          # a negative count
+    [{**ROW, "children": True}],                                        # a Boolean count
+    [{**ROW, "bindings": [{"debruijn_index": 1, "sort": "s", "local_id": "x"}]}],   # a shifted index
+    [{k: v for k, v in ROW.items() if k != "detail"}],                  # a missing member
+    "rows",                                                             # not a list
+])
+def test_explanation_rows_must_be_exactly_one_tree(rows):
+    """Lean-first batch 18: the service writes an explanation as preorder rows (`MeteredTrace.Trace.json`); rows
+    that are not exactly one tree in preorder are no answer."""
+    from ve.errors import CheckerUnavailable
+    with pytest.raises(CheckerUnavailable):
+        _explanation(rows, DOMAINS)
+
+
+def test_explanation_rows_rebuild_the_tree():
+    rows = [{**ROW, "kind": "document", "detail": "all statements satisfied", "children": 2},
+            {**ROW, "kind": "and", "children": 1}, ROW, ROW]
+    tree = _explanation(rows, DOMAINS).to_dict()
+    assert [child["kind"] for child in tree["children"]] == ["and", "top"]
+    assert [child["kind"] for child in tree["children"][0]["children"]] == ["top"]
+
+
+@pytest.mark.parametrize("kind, answer", [
+    ("evaluate-budgeted", {"id": "c", "status": "ok", "suitable": True, "evaluations": 1, "exhausted": False}),
+    ("non-vacuity", {"id": "c", "status": "ok", "evaluation": {"status": "Satisfied", "value": True,
+                                                                "evaluations": 1, "explanation": None}}),
+])
+def test_a_metered_answer_of_the_other_kind_is_no_answer(monkeypatch, kind, answer):
+    """The `metered` row is one of two alternatives (`metered.json`); the client binds it to the kind it sent."""
+    from ve.backends import lean_runner, relay
+    from ve.errors import CheckerUnavailable
+    monkeypatch.setattr(relay, "rows", lambda mode, cases, **_: [answer])
+    call = lean_runner.metered_evaluation if kind == "evaluate-budgeted" else lean_runner.metered_nonvacuity
+    with pytest.raises(CheckerUnavailable, match="of another kind"):
+        call({"id": "c"})
