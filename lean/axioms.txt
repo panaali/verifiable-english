@@ -5270,6 +5270,7 @@
 'VE.Scope.Examples.box_anchors' does not depend on any axioms
 'VE.Scope.Examples.byte_tests' does not depend on any axioms
 'VE.Scope.Examples.depth_bound' does not depend on any axioms
+'VE.Scope.Examples.effects_six' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.markers' does not depend on any axioms
 'VE.Scope.Examples.mergeParts_text' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.Examples.narrowings' depends on axioms: [propext]

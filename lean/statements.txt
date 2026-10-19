@@ -39174,6 +39174,14 @@ theorem VE.Scope.Examples.depth_bound
     VE.Scope.depthOk 3 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.true
   -- uses VE.Scope.depthOk@VE.Scope.Effects
   -- expr 3351120605
+theorem VE.Scope.Examples.effects_six
+  ∀ (e : VE.Scope.Effect),
+    (∃ p, e = VE.Scope.Effect.frame p) ∨
+      (∃ c, e = VE.Scope.Effect.reguard c) ∨
+        (∃ c, e = VE.Scope.Effect.carveOut c) ∨
+          e = VE.Scope.Effect.precedes ∨ e = VE.Scope.Effect.yields ∨ e = VE.Scope.Effect.title
+  -- uses VE.Scope.Effect.carveOut@VE.Scope.Effects VE.Scope.Effect.frame@VE.Scope.Effects VE.Scope.Effect.precedes@VE.Scope.Effects VE.Scope.Effect.reguard@VE.Scope.Effects VE.Scope.Effect.title@VE.Scope.Effects VE.Scope.Effect.yields@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
+  -- expr 91933473
 theorem VE.Scope.Examples.markers
   VE.Layout.markerLen "* x".toUTF8 0 3 = Option.some 2 ∧
     VE.Layout.markerLen "- x".toUTF8 0 3 = Option.some 2 ∧
