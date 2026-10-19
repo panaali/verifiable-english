@@ -1,8 +1,9 @@
-import VE.Calc.Inline
+import VE.Calc.Decls
 
-/-! Algebraic identities (spec 8.2, plan 3.8): both sides are inlined with the free values kept (spec 2.7, J3), brought
-to fractions of normal polynomials over ℚ, and compared cross-multiplied. Equal normal forms prove the identity; a
-point where both sides denote and differ, found by trying small values, refutes it. -/
+/-! Algebraic identities (spec 8.2, plan 3.8), over expressions whose names are all free: both sides are brought to
+fractions of normal polynomials over ℚ and compared cross-multiplied. Equal normal forms mean equal values wherever both
+sides denote; a point where both sides denote and differ refutes the identity. Inlining the named values (spec 2.7),
+the meaning `IsIdentity` and the runner are me-9b's. -/
 
 namespace VE.Calc
 open VE.Numbers
@@ -54,8 +55,12 @@ def Poly.norm (p : Poly) : Poly := Poly.combine (p.mergeSort fun m n => varsLe m
 def Poly.one : Poly := [⟨1, []⟩]
 def Poly.neg (p : Poly) : Poly := p.map fun m => ⟨-m.coeff, m.vars⟩
 
+/-- Numerators and denominators below `10 ^ maxDigits` have at most `maxDigits` digits (2.4): one comparison with a
+constant instead of `Small`'s digit list, since every intermediate coefficient is checked. -/
+def Poly.coeffBound : Nat := 10 ^ maxDigits
 def Poly.fits (p : Poly) : Bool :=
-  p.length ≤ maxPolyTerms && p.all fun m => decide (Small m.coeff) && m.vars.all (·.2 ≤ maxPolyExponent)
+  p.length ≤ maxPolyTerms && p.all fun m =>
+    m.coeff.num.natAbs < Poly.coeffBound && m.coeff.den < Poly.coeffBound && m.vars.all (·.2 ≤ maxPolyExponent)
 def Poly.guard (p : Poly) : Option Poly := if p.fits then some p else none
 def Poly.add? (p q : Poly) : Option Poly :=
   if p.length + q.length ≤ maxPolyTerms then Poly.guard (Poly.norm (p ++ q)) else none
@@ -106,8 +111,10 @@ def Expr.hasDiv : Expr → Bool
   | .div _ _ => true
   | .pow a _ => a.hasDiv
 
-/-- The normal form of a division-free expression; `none` with division or beyond the limits. -/
-def Poly.ofExpr? (e : Expr) : Option Poly := if e.hasDiv then none else (Frac.ofExpr? e).map Prod.fst
+/-- The normal form of a division-free expression (its fraction form's denominator is then 1); `none` with division or
+beyond the limits. -/
+def Poly.ofExpr? (e : Expr) : Option Poly :=
+  if e.hasDiv then none else (Frac.ofExpr? e).bind fun f => if f.2 = Poly.one then some f.1 else none
 
 /-- Both sides cross-multiplied and compared; `none` beyond the limits. -/
 def Identity.compare (a b : Expr) : Option Bool :=
@@ -313,52 +320,24 @@ theorem Frac.ofExpr_sound (κ : String → Rat) (e : Expr) (n d : Poly) (x : Rat
   · exact Frac.go_sound κ e x hx _ h
   · cases h
 
-theorem Expr.denotes_of_noDiv (κ : String → Rat) (e : Expr) (h : e.hasDiv = false) :
-    ∃ x, Denotes (fun v => some (κ v)) e x := by
-  induction e with
-  | lit q => exact ⟨q, .lit⟩
-  | val n => exact ⟨κ n, .val rfl⟩
-  | div => simp [Expr.hasDiv] at h
-  | pow a k ih => obtain ⟨x, hx⟩ := ih (by simpa [Expr.hasDiv] using h); exact ⟨_, .pow hx⟩
-  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb =>
-      simp only [Expr.hasDiv, Bool.or_eq_false_iff] at h
-      obtain ⟨x, hx⟩ := iha h.1; obtain ⟨y, hy⟩ := ihb h.2
-      first | exact ⟨_, .add hx hy⟩ | exact ⟨_, .sub hx hy⟩ | exact ⟨_, .mul hx hy⟩
-
-theorem Frac.go_one (κ : String → Rat) (e : Expr) (h : e.hasDiv = false) (f : Frac) (hf : Frac.go e = some f) :
-    Poly.eval κ f.2 = 1 := by
-  induction e generalizing f with
-  | lit q => simp only [Frac.go, Option.some.injEq] at hf; subst hf; exact Poly.eval_one κ
-  | val n => simp only [Frac.go, Option.some.injEq] at hf; subst hf; exact Poly.eval_one κ
-  | div => simp [Expr.hasDiv] at h
-  | pow a k ih =>
-      simp only [Frac.go, Option.bind_eq_some_iff] at hf; obtain ⟨g, hg, hf⟩ := hf
-      rw [Poly.pow?_sound κ (Frac.pair_some hf).2, ih (by simpa [Expr.hasDiv] using h) g hg]
-      exact rone_pow k
-  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb =>
-      simp only [Expr.hasDiv, Bool.or_eq_false_iff] at h
-      simp only [Frac.go, Option.bind_eq_some_iff] at hf; obtain ⟨g, hg, g', hg', hf⟩ := hf
-      have h1 := iha h.1 g hg; have h2 := ihb h.2 g' hg'
-      first
-        | (rw [Poly.mul?_sound κ (Frac.pair_some hf).2, h1, h2]; grind)
-        | (unfold Frac.add? at hf; split at hf
-           · simp only [Option.map_eq_some_iff] at hf; obtain ⟨s, _, rfl⟩ := hf; exact h1
-           · simp only [Option.bind_eq_some_iff, Option.map_eq_some_iff] at hf
-             obtain ⟨_, _, _, _, _, _, d, hd, rfl⟩ := hf; rw [Poly.mul?_sound κ hd, h1, h2]; grind)
+theorem Expr.eval_noDiv (κ : String → Rat) (e : Expr) (h : e.hasDiv = false) :
+    (e.eval fun v => some (κ v)) ≠ none := by
+  induction e <;> simp_all [Expr.hasDiv, Expr.eval, Option.ne_none_iff_exists']
 
 theorem Poly.ofExpr_sound (κ : String → Rat) (e : Expr) (p : Poly) (h : Poly.ofExpr? e = some p) :
     Denotes (fun n => some (κ n)) e (p.eval κ) := by
   unfold Poly.ofExpr? at h; split at h
   · cases h
   · rename_i hd
-    simp only [Option.map_eq_some_iff] at h; obtain ⟨f, hf, rfl⟩ := h
-    obtain ⟨x, hx⟩ := Expr.denotes_of_noDiv κ e (by simpa using hd)
-    have hm := Frac.ofExpr_sound κ e f.1 f.2 x hf hx
-    unfold Frac.ofExpr? at hf; split at hf
-    · rw [Frac.go_one κ e (by simpa using hd) f hf] at hm
+    simp only [Option.bind_eq_some_iff] at h; obtain ⟨f, hf, h⟩ := h
+    split at h
+    · rename_i h1; cases h
+      obtain ⟨x, hx⟩ := Option.ne_none_iff_exists'.mp (Expr.eval_noDiv κ e (by simpa using hd))
+      have hm := Frac.ofExpr_sound κ e f.1 f.2 x hf (Expr.eval_sound _ _ _ hx)
+      rw [h1, Poly.eval_one] at hm
       have : x = Poly.eval κ f.1 := by rw [hm.2]; grind
-      rw [← this]; exact hx
-    · cases hf
+      rw [← this]; exact Expr.eval_sound _ _ _ hx
+    · cases h
 
 /-- **Identity**: equal cross-multiplied normal forms mean equal values wherever both sides denote. -/
 theorem identity_sound (a b : Expr) (h : identityCheck a b = true) (κ : String → Rat) (x y : Rat)
@@ -383,169 +362,10 @@ theorem identity_sound (a b : Expr) (h : identityCheck a b = true) (κ : String 
           have e1 := Poly.mul?_sound κ hl; have e2 := Poly.mul?_sound κ hr
           rw [h1.2, h2.2]; grind
 
-/-! ### Meaning, refutation and the runner -/
-
-/-- The meaning of an identity: the two sides are equal wherever both denote, for every value of the free values. -/
-def IsIdentity (ds : List Decl) (a b : Expr) : Prop :=
-  ∀ κ x y, Denotes (values (assign ds (freeNames ds) κ)) a x → Denotes (values (assign ds (freeNames ds) κ)) b y →
-    x = y
-
-/-- What a "not an identity" row states. -/
-def NotIdentity (ds : List Decl) (a b : Expr) : Prop :=
-  ∃ κ x y, Denotes (values (assign ds (freeNames ds) κ)) a x ∧ Denotes (values (assign ds (freeNames ds) κ)) b y ∧
-    x ≠ y
-
-theorem not_isIdentity (ds : List Decl) (a b : Expr) (h : NotIdentity ds a b) : ¬ IsIdentity ds a b := by
-  obtain ⟨κ, x, y, hx, hy, hne⟩ := h
-  exact fun hi => hne (hi κ x y hx hy)
-
 theorem differsAt_sound (a b : Expr) (κ : List (String × Rat)) (h : differsAt a b κ = true) :
     ∃ x y, Denotes (fun n => κ.lookup n) a x ∧ Denotes (fun n => κ.lookup n) b y ∧ x ≠ y := by
   simp only [differsAt] at h; split at h
   · rename_i x y hx hy; exact ⟨x, y, Expr.eval_sound _ _ _ hx, Expr.eval_sound _ _ _ hy, by simpa using h⟩
   · cases h
-
-theorem Denotes.mono {σ τ : Values} {e : Expr} {x : Rat} (h : Denotes σ e x) (hστ : ∀ n q, σ n = some q → τ n = some q) :
-    Denotes τ e x := by
-  induction h with
-  | lit => exact .lit
-  | val hv => exact .val (hστ _ _ hv)
-  | add _ _ iha ihb => exact .add iha ihb
-  | sub _ _ iha ihb => exact .sub iha ihb
-  | mul _ _ iha ihb => exact .mul iha ihb
-  | div _ _ hne iha ihb => exact .div iha ihb hne
-  | pow _ ih => exact .pow ih
-
-theorem freeNames_mem (ds : List Decl) : ∀ n ∈ freeNames ds, n ∈ ds.map Decl.name := by
-  intro n hn; simp only [freeNames, List.mem_map, List.mem_filter] at hn ⊢
-  obtain ⟨d, ⟨hd, _⟩, rfl⟩ := hn; exact ⟨d, hd, rfl⟩
-
-/-- Over the inlined sides, the normaliser proves the identity and a differing point refutes it (J3). -/
-theorem isIdentity_of_check (ds : List Decl) (h : WellFormed ds) (a b a' b' : Expr)
-    (ha : a.inline ds (freeNames ds) = .ok a') (hb : b.inline ds (freeNames ds) = .ok b')
-    (hc : identityCheck a' b' = true) : IsIdentity ds a b := by
-  intro κ x y hx hy
-  exact identity_sound a' b' hc κ x y ((Expr.inline_sound ds h _ (freeNames_mem ds) a a' ha κ x).mp hx)
-    ((Expr.inline_sound ds h _ (freeNames_mem ds) b b' hb κ y).mp hy)
-
-theorem notIdentity_of_differsAt (ds : List Decl) (h : WellFormed ds) (a b a' b' : Expr)
-    (ha : a.inline ds (freeNames ds) = .ok a') (hb : b.inline ds (freeNames ds) = .ok b')
-    (κ : List (String × Rat)) (hd : differsAt a' b' κ = true) : NotIdentity ds a b := by
-  obtain ⟨x, y, hx, hy, hne⟩ := differsAt_sound a' b' κ hd
-  let κ' : String → Rat := fun n => (κ.lookup n).getD 0
-  have hm : ∀ n q, κ.lookup n = some q → some (κ' n) = some q := by intro n q h; simp [κ', h]
-  exact ⟨κ', x, y, (Expr.inline_sound ds h _ (freeNames_mem ds) a a' ha κ' x).mpr (hx.mono hm),
-    (Expr.inline_sound ds h _ (freeNames_mem ds) b b' hb κ' y).mpr (hy.mono hm), hne⟩
-
-/-- The values tried, in order: point `i` gives the `j`th name the value `identityValues[i * (j + 1) % 13]`, so
-point 0 sets every name to 1. -/
-def identityValues : List Rat := [1, 2, 3, -1, 1/2, 5, -2, 1/3, 7, -3, 3/2, 11, 0]
-
-def identityPoint (names : List String) (i : Nat) : List (String × Rat) :=
-  names.mapIdx fun j n => (n, identityValues.getD (i * (j + 1) % 13) 0)
-
-/-- A row: its outcome, and for `fails` the point (one value per free value read, in declaration order) and the two
-sides' values there. -/
-structure IdentityRow where
-  outcome : Outcome
-  point : Option (List (String × Rat)) := none
-  sides : Option (Rat × Rat) := none
-  deriving Repr, DecidableEq
-
-/-- Over inlined sides: compare the normal forms, else try the 13 points over the names of `keep` the sides read. The
-names are listed only once the normaliser has accepted both sides, whose trees are then within the node limit. -/
-def identityDecide (keep : List String) (a' b' : Expr) : IdentityRow :=
-  match Identity.compare a' b' with
-  | none => ⟨.unknown (.limit .polyTerms), none, none⟩
-  | some true => ⟨.decided .holds, none, none⟩
-  | some false =>
-    let names := keep.filter (· ∈ a'.names ++ b'.names)
-    match ((List.range 13).map (identityPoint names)).find? (differsAt a' b') with
-    | some κ => ⟨.decided .fails, some κ, (a'.eval (κ.lookup ·)).bind fun x => (b'.eval (κ.lookup ·)).map (x, ·)⟩
-    | none => ⟨.unknown .identityNotShown, none, none⟩
-
-/-- The identity row (spec 8.2): inline both sides with the free values kept, the first faulty side naming the fault;
-then decide over the free values the sides read, in declaration order. -/
-def identityRun (ds : List Decl) (a b : Expr) : IdentityRow :=
-  match a.inline ds (freeNames ds), b.inline ds (freeNames ds) with
-  | .ok a', .ok b' => identityDecide (freeNames ds) a' b'
-  | .error .exhausted, _ | .ok _, .error .exhausted => ⟨.unknown (.limit .evaluations), none, none⟩
-  | _, _ => ⟨.decided .undefined, none, none⟩
-
-theorem identityDecide_outcome (keep : List String) (a' b' : Expr) :
-    ((identityDecide keep a' b').outcome = .decided .holds → identityCheck a' b' = true) ∧
-    ((identityDecide keep a' b').outcome = .decided .fails → ∃ κ, differsAt a' b' κ = true) ∧
-    (identityDecide keep a' b').outcome ≠ .decided .undefined ∧
-    (∀ u, (identityDecide keep a' b').outcome = .unknown u → u = .limit .polyTerms ∨ u = .identityNotShown) := by
-  unfold identityDecide
-  split
-  · simp
-  · rename_i h; simp [identityCheck, h]
-  · dsimp only; split
-    · rename_i κ hκ; simpa using ⟨κ, List.find?_some hκ⟩
-    · simp
-
-theorem identityRun_holds (ds : List Decl) (h : WellFormed ds) (a b : Expr)
-    (hr : (identityRun ds a b).outcome = .decided .holds) : IsIdentity ds a b := by
-  cases ha : a.inline ds (freeNames ds) with
-  | error v => cases v <;> simp [identityRun, ha] at hr
-  | ok a' =>
-    cases hb : b.inline ds (freeNames ds) with
-    | error v => cases v <;> simp [identityRun, ha, hb] at hr
-    | ok b' =>
-        simp only [identityRun, ha, hb] at hr
-        exact isIdentity_of_check ds h a b _ _ ha hb ((identityDecide_outcome _ _ _).1 hr)
-
-theorem identityRun_fails (ds : List Decl) (h : WellFormed ds) (a b : Expr)
-    (hr : (identityRun ds a b).outcome = .decided .fails) : NotIdentity ds a b := by
-  cases ha : a.inline ds (freeNames ds) with
-  | error v => cases v <;> simp [identityRun, ha] at hr
-  | ok a' =>
-    cases hb : b.inline ds (freeNames ds) with
-    | error v => cases v <;> simp [identityRun, ha, hb] at hr
-    | ok b' =>
-        simp only [identityRun, ha, hb] at hr
-        obtain ⟨κ, hκ⟩ := (identityDecide_outcome _ _ _).2.1 hr
-        exact notIdentity_of_differsAt ds h a b _ _ ha hb κ hκ
-
-theorem identityRun_undefined (ds : List Decl) (h : WellFormed ds) (a b : Expr)
-    (hr : (identityRun ds a b).outcome = .decided .undefined) :
-    ∃ e ∈ [a, b], ∀ κ x, ¬ Denotes (values (assign ds (freeNames ds) κ)) e x := by
-  have hu := fun e (he : e.inline ds (freeNames ds) = .error .undefined) => Expr.inline_undefined ds h _ e he
-  cases ha : a.inline ds (freeNames ds) with
-  | error v =>
-      rcases Expr.inline_error ds _ a v ha with rfl | rfl
-      · exact ⟨a, by simp, hu a ha⟩
-      · simp [identityRun, ha] at hr
-  | ok a' =>
-    cases hb : b.inline ds (freeNames ds) with
-    | error v =>
-        rcases Expr.inline_error ds _ b v hb with rfl | rfl
-        · exact ⟨b, by simp, hu b hb⟩
-        · simp [identityRun, ha, hb] at hr
-    | ok b' => simp only [identityRun, ha, hb] at hr; exact absurd hr (identityDecide_outcome _ _ _).2.2.1
-
-/-- An unknown row gives one of the identity's reasons, with the cause the evaluation budget names (spec 3.4). -/
-theorem identityRun_unknown (ds : List Decl) (a b : Expr) (u : UnknownReason)
-    (hr : (identityRun ds a b).outcome = .unknown u) :
-    u ∈ [.limit .polyTerms, .identityNotShown, .limit .digits, .limit .evaluations] ∧
-      (u = .limit .digits → ∃ e ∈ [a, b], e.Overflows ds) ∧
-      (u = .limit .evaluations → ∃ e ∈ [a, b], e.ReadsExhausted ds) := by
-  cases ha : a.inline ds (freeNames ds) with
-  | error v =>
-      rcases Expr.inline_error ds _ a v ha with rfl | rfl
-      · simp [identityRun, ha] at hr
-      · simp only [identityRun, ha, Outcome.unknown.injEq] at hr; subst hr
-        simpa using Or.inl (Expr.inline_exhausted ds _ a ha)
-  | ok a' =>
-    cases hb : b.inline ds (freeNames ds) with
-    | error v =>
-        rcases Expr.inline_error ds _ b v hb with rfl | rfl
-        · simp [identityRun, ha, hb] at hr
-        · simp only [identityRun, ha, hb, Outcome.unknown.injEq] at hr; subst hr
-          simpa using Or.inr (Expr.inline_exhausted ds _ b hb)
-    | ok b' =>
-        simp only [identityRun, ha, hb] at hr
-        rcases (identityDecide_outcome _ _ _).2.2.2 u hr with rfl | rfl <;> simp
 
 end VE.Calc
