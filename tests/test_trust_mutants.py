@@ -408,23 +408,31 @@ def test_the_generator_cuts_every_list_a_condition_reads():
 # value (`{v}`, which a check must catch) and a proof the tool cuts (`{p}`, through the witness `{w}`: up front in
 # the mutated module, when the mutant breaks it in another). An outcome a cut or broken proof can change must never
 # be a kill. `None`: the form has no proof reading of its own (its tactic block is the proof it reads).
-FORMS = [  # (form, class, value reading, proof reading)
-    ("#guard", "check", "#guard {v} == {e}", "#guard {w}.val == 0"),
-    ("#guard_expr", "check", "#guard_expr {v} =~ {e}", "#guard_expr {w}.val =~ 0"),
-    ("#eval", "check", '#eval (do if {v} != {e} then throw (IO.userError "changed") : IO Unit)', "#eval {w}.val"),
-    ("#reduce", "check", "#reduce {v}", "#reduce {w}.val"),
-    ("#check", "check", "#check (rfl : {v} = {e})", "#check {w}"),
-    ("#print", "proof", "#print {d}", "#print {p}"),
-    ("#print axioms", "proof", "#print axioms {d}", "#print axioms {p}"),
-    ("decide example", "check", "example : {v} = {e} := by decide", "example : {w}.val = 0 := by decide"),
-    ("rfl example", "check", "example : {v} = {e} := rfl", "example : {w}.val = 0 := rfl"),
-    ("tactic example", "proof", "example : {v} = {e} := by {tac}", "example : {w}.val = 0 := by {tac}"),
-    ("tactic theorem", "proof", "theorem {id}_t : {v} = {e} := by {tac}", "theorem {id}_t : {w}.val = 0 := by {tac}"),
-    ("#guard with a tactic block", "proof", "#guard (⟨0, by {tac}⟩ : Fin (2 - {n})).val == 0", None),
+FORMS = [  # (form, class, value reading, proof reading, the value reading's mutants: see `table_rows`)
+    ("#guard", "check", "#guard {v} == {e}", "#guard {w}.val == 0", "KILLED"),
+    # Review F11: definitional equality fails alike when the two sides differ and when a reduction got stuck.
+    ("#guard_expr", "check", "#guard_expr {v} =~ {e}", "#guard_expr {w}.val =~ 0", "UNKNOWN"),
+    # Review F11: the message an `#eval` throws is the file's own, no refutation Lean states.
+    ("#eval", "check", '#eval (do if {v} != {e} then throw (IO.userError "changed") : IO Unit)', "#eval {w}.val",
+     "UNKNOWN"),
+    # Review F11: an `#eval`'s value under its docstring is an answer Lean computed.
+    ("#eval value", "check", "#eval {v}", None, "doc KILLED"),
+    # Review F11: `#reduce` prints a stuck term as readily as a value, so its docstring compares no answer.
+    ("#reduce", "check", "#reduce {v}", "#reduce {w}.val", "doc UNKNOWN"),
+    ("#check", "check", "#check (rfl : {v} = {e})", "#check {w}", "UNKNOWN"),
+    ("#print", "proof", "#print {d}", "#print {p}", "SURVIVOR"),
+    ("#print axioms", "proof", "#print axioms {d}", "#print axioms {p}", "SURVIVOR"),
+    ("decide example", "check", "example : {v} = {e} := by decide", "example : {w}.val = 0 := by decide", "KILLED"),
+    # Review F11: `rfl`'s failure kills only when `decide` (or `native_decide`) then refutes the statement.
+    ("rfl example", "check", "example : {v} = {e} := rfl", "example : {w}.val = 0 := rfl", "KILLED"),
+    ("tactic example", "proof", "example : {v} = {e} := by {tac}", "example : {w}.val = 0 := by {tac}", "SURVIVOR"),
+    ("tactic theorem", "proof", "theorem {id}_t : {v} = {e} := by {tac}", "theorem {id}_t : {w}.val = 0 := by {tac}",
+     "SURVIVOR"),
+    ("#guard with a tactic block", "proof", "#guard (⟨0, by {tac}⟩ : Fin (2 - {n})).val == 0", None, "SURVIVOR"),
     # Review F8's form (the recheck's missing row): a definition with a proof inside it, and a check of its value
     # (0 whatever the definition is) beside it. The mutant breaks the proof: an error in a definition, UNKNOWN.
     ("definition with a proof", "other", "def {id}_s : {{x : Nat // x = 0 ∧ {v} = {e}}} := ⟨0, by decide⟩\n"
-     "#guard {id}_s.val == 0", "def {id}_s : Fin ({n}) := {w}\n#guard {id}_s.val == 0"),
+     "#guard {id}_s.val == 0", "def {id}_s : Fin ({n}) := {w}\n#guard {id}_s.val == 0", "UNKNOWN"),
 ]
 WRAPS = ("bare", "wrapped", "doc")  # the command alone, under `#guard_msgs in`, and with its docstring too
 # A definition's type and body, its values on 0..5, its value at 1, that value as a size `{n}` and the proof `{p}`
@@ -437,19 +445,20 @@ RICH = {"type": "Bool", "body": "!(n < 1) && (n ≤ 3 || decide (n = 5)) && n !=
 
 
 def table_rows(group: bool = True) -> list[dict]:
-    """One row per form, reading, wrapping and setting, with the status its definition's mutants must have: KILLED
-    when a check compares the value (a bare or info-dropping `#reduce` compares nothing), UNKNOWN when a command
-    that is no check reads it (an error there is no kill), else SURVIVOR. With `group`, the rows that must survive
-    share one definition per wrapping, setting and reading."""
+    """One row per form, reading, wrapping and setting, with the status its definition's mutants must have: a cut
+    proof's reading is SURVIVOR; the value's is the form's (FORMS; "doc X": X with its docstring, else SURVIVOR,
+    since a bare or info-dropping command compares nothing): KILLED when a check states a refutation of it,
+    UNKNOWN when the check fails stating none, or when a command that is no check reads it (review F11: every
+    error that is no refutation). With `group`, the rows that must survive share one definition per wrapping,
+    setting and reading."""
     rows = []
     for setting in ("mutated", "other"):
         for wrap in WRAPS:
             for reads in ("value", "proof"):
-                for form, cls, value, proof in FORMS:
+                for form, cls, value, proof, verdict in FORMS:
                     if (text := value if reads == "value" else proof) is not None:
-                        kills = reads == "value" and cls == "check" and (form != "#reduce" or wrap == "doc")
-                        expected = "KILLED" if kills else "UNKNOWN" if reads == "value" and cls == "other" \
-                            else "SURVIVOR"
+                        expected = "SURVIVOR" if reads == "proof" else verdict.split()[-1] if wrap == "doc" or \
+                            not verdict.startswith("doc ") else "SURVIVOR"
                         rows.append({"form": form, "class": cls, "reads": reads, "wrap": wrap, "setting": setting,
                                      "expected": expected, "text": text,
                                      "key": (setting, wrap, reads, form if expected != "SURVIVOR" or not group
@@ -526,8 +535,9 @@ def table_package(root: Path, folder: Path, rich: bool = False, group: bool = Tr
 
 
 @pytest.mark.parametrize("wrap", WRAPS)
-@pytest.mark.parametrize(("form", "cls", "value", "proof"), FORMS, ids=[f[0].replace(" ", "-") for f in FORMS])
-def test_classify_truth_table(form, cls, value, proof, wrap):
+@pytest.mark.parametrize(("form", "cls", "value", "proof", "verdict"), FORMS,
+                         ids=[f[0].replace(" ", "-") for f in FORMS])
+def test_classify_truth_table(form, cls, value, proof, verdict, wrap):
     """Review F7: each form's class is the same bare, under `#guard_msgs in` and with a docstring too; a check form
     with a tactic block in it is a proof."""
     import trust_mutants
@@ -663,22 +673,153 @@ def test_moved_finds_the_first_line_after_the_declaration_that_moved(after, line
     assert trust_mutants.moved("def f := [1]\n#guard f == [1]\n\n#guard g\n", after, lines) == line
 
 
-@pytest.mark.parametrize(("message", "role", "built", "checkout", "test", "kills"), [
-    ("Expression\n  f 1 == 2\ndid not evaluate to `true`", "check", "#guard f 1 == 2", "#guard f 1 == 2", False, True),
-    ("unexpected token '<;>'; expected command", "check", "  <;> trivial", "#guard f 1 == 2", False, False),
-    ("unexpected token '<;>'; expected command", "check", "#guard f 1 == 2", "#guard f 1 == 2", False, False),
-    ("expected term", "check", "#guard f 1 == 2", "#guard f 1 == 2", False, False),
-    ("Expression", "check", "  <;> trivial", "#guard f 1 == 2", False, False),
-    ("Expression", "check", "", "", False, False),
-    ("Tactic `decide` proved that the proposition", "other", "def s := ⟨0, by decide⟩",
-     "def s := ⟨0, by decide⟩", False, False),
-    ("Expression", "other", "#guard g", "#guard g", True, True),
-    ("unexpected end of input", "other", "#guard g", "#guard g", True, False)], ids=short)
-def test_only_a_checks_own_error_kills(message, role, built, checkout, test, kills):
-    """Review F9 (the DRI's step 2): an error kills only at a check line the mutant and the cuts left as the checkout
-    has it, or in a --test file, and never when Lean's parser reports it (a cut left behind, a moved line)."""
+REFUTE = "Expression\n  f 1 == 2\ndid not evaluate to `true`"
+
+
+@pytest.mark.parametrize(("message", "role", "built", "checkout", "verdict"), [
+    (REFUTE, "check", "#guard f 1 == 2", "#guard f 1 == 2", "KILL"),
+    ("unexpected token '<;>'; expected command", "check", "  <;> trivial", "#guard f 1 == 2", "UNKNOWN"),
+    ("unexpected token '<;>'; expected command", "check", "#guard f 1 == 2", "#guard f 1 == 2", "UNKNOWN"),
+    ("expected term", "check", "#guard f 1 == 2", "#guard f 1 == 2", "UNKNOWN"),
+    (REFUTE, "check", "  <;> trivial", "#guard f 1 == 2", "UNKNOWN"),
+    (REFUTE, "check", "", "", "UNKNOWN"),
+    ("Tactic `decide` proved that the proposition\n  f 1 = 2\nis false", "other", "def s := ⟨0, by decide⟩",
+     "def s := ⟨0, by decide⟩", "UNKNOWN"),
+    ("Tactic `decide` proved that the proposition\n  f 1 = 2\nis false", "proof", "  constructor <;> decide",
+     "  constructor <;> decide", "UNKNOWN"),
+    (REFUTE, "other", "#guard g", "#guard g", "UNKNOWN"),
+    ("unexpected end of input", "other", "#guard g", "#guard g", "UNKNOWN")], ids=short)
+def test_only_a_checks_own_error_kills(message, role, built, checkout, verdict):
+    """Review F9 (the DRI's step 2) under F11's rule: an error kills only at a check line the mutant and the cuts
+    left as the checkout has it, never when Lean's parser reports it (a cut left behind, a moved line), and never
+    outside a check, whatever it says (a `decide` inside a tactic proof refutes a goal the tactics made)."""
     import trust_mutants
-    assert trust_mutants.attributed(message, role, built, checkout, test) is kills
+    assert trust_mutants.judge(message, role, built, checkout, "#guard f 1 == 2") == verdict
+
+
+GUARD = "❌️ Docstring on `#guard_msgs` does not match generated message:\n\n"
+# Review F11, the rule inverted: one row per message form at a check's own line, the check's code, and the verdict.
+# KILL only when the message states a refutation; RFL when an `rfl` check failed (`settle` asks `decide` and
+# `native_decide`); every other row is a safe case, UNKNOWN.
+JUDGED = [
+    ("decide-false", "Tactic `decide` proved that the proposition\n  f 1 = 2\nis false",
+     "example : f 1 = 2 := by decide", "KILL"),
+    ("native-false", "Tactic `native_decide` evaluated that the proposition\n  f 1 = 2\nis false",
+     "example : f 1 = 2 := by native_decide", "KILL"),
+    ("guard-false", REFUTE, "#guard f 1 == 2", "KILL"),
+    ("eval-value-differs", GUARD + "- info: 5\n+ info: 4", "/-- info: 5 -/\n#guard_msgs in\n#eval f 3", "KILL"),
+    ("eval-lines-differ", GUARD + "  info: 1\n- ---\n- info: 2\n+ 3", "#guard_msgs in\n#eval f", "KILL"),
+    ("guard-under-guard-msgs", GUARD + "-\n+ error: Expression\n+   f 1 == 2\n+ did not evaluate to `true`",
+     "#guard_msgs in\n#guard f 1 == 2", "KILL"),
+    ("decide-under-guard-msgs", GUARD + "-\n+ error: Tactic `decide` proved that the proposition\n+   f 1 = 2\n"
+     "+ is false", "#guard_msgs in example : f 1 = 2 := by decide", "KILL"),
+    ("rfl-term", "Type mismatch\n  rfl\nhas type\n  ?m.7 = ?m.7\nbut is expected to have type\n  f 3 = 5",
+     "example : f 3 = 5 := rfl", "RFL"),
+    ("rfl-tactic", "Tactic `rfl` failed: The left-hand side\n  f 3\nis not definitionally equal to the right-hand "
+     "side\n  5", "theorem t : f 3 = 5 := by\n  rfl", "RFL"),
+    ("rfl-under-guard-msgs", GUARD + "-\n+ error: Type mismatch\n+   rfl", "#guard_msgs in\nexample : f 3 = 5 := rfl",
+     "RFL"),
+    ("rfl-out-of-budget", "maximum recursion depth has been reached", "example : f 3 = 5 := rfl", "RFL"),
+    # The safe cases: each is UNKNOWN.
+    ("rfl-shape-in-a-decide-check", "Type mismatch\n  rfl\nhas type", "example : f 3 = 5 := by decide", "UNKNOWN"),
+    ("guard-expr-defeq", "Failed: `f 3` is not definitionally equal to `5`", "#guard_expr f 3 =~ 5", "UNKNOWN"),
+    ("check-rfl", "Type mismatch\n  rfl\nhas type", "#check (rfl : f 3 = 5)", "UNKNOWN"),
+    ("eval-throws", "changed", '#eval (do if f 3 != 5 then throw (IO.userError "changed") : IO Unit)', "UNKNOWN"),
+    ("reduce-info-differs", GUARD + "- info: 0\n+ info: Acc.rec\n+   (fun x₁ h ih =>", "/-- info: 0 -/\n"
+     "#guard_msgs in\n#reduce g 4", "UNKNOWN"),
+    ("check-info-differs", GUARD + "- info: f 3 : Nat\n+ info: f 4 : Nat", "/-- info: f 3 : Nat -/\n#guard_msgs in\n"
+     "#check f 3", "UNKNOWN"),
+    ("eval-info-quotes-budget", GUARD + "- info: 3\n+ info: [Error pretty printing: maximum recursion depth has been "
+     "reached", "/-- info: 3 -/\n#guard_msgs in\n#eval f 3", "UNKNOWN"),
+    ("eval-budget-error", GUARD + "- info: 3\n+ error: maximum recursion depth has been reached",
+     "/-- info: 3 -/\n#guard_msgs in\n#eval f 3", "UNKNOWN"),
+    ("expected-budget-error", GUARD + "- error: maximum recursion depth has been reached\n+ info: 3",
+     "/-- error: maximum recursion depth has been reached -/\n#guard_msgs in\n#eval f 3", "UNKNOWN"),
+    ("eval-warning", GUARD + "- info: 3\n+ warning: declaration uses 'sorry'\n+ info: 3", "#guard_msgs in\n#eval f 3",
+     "UNKNOWN"),
+    ("no-diff", GUARD + "info: 4", "/-- info: 5 -/\n#guard_msgs in\n#eval f 3", "UNKNOWN"),
+    ("refutation-with-more", "Tactic `decide` proved that the proposition\n  f 1 = 2\nis false\nNote: more",
+     "example : f 1 = 2 := by decide", "UNKNOWN"),
+    ("refutation-quoted", "note: Tactic `decide` proved that the proposition\n  f 1 = 2\nis false",
+     "example : f 1 = 2 := by decide", "UNKNOWN"),
+    ("decide-stuck", "Tactic `decide` failed for proposition\n  f 1 = 2\nbecause its `Decidable` instance\n"
+     "  instDecidableEqNat (f 1) 2\ndid not reduce to `isTrue` or `isFalse`.", "example : f 1 = 2 := by decide",
+     "UNKNOWN"),
+    ("unsolved-goals", "unsolved goals\n⊢ False", "example : f 1 = 2 := by decide", "UNKNOWN"),
+    ("unclassified", "something Lean 4.25 may say", "#guard f 1 == 2", "UNKNOWN"),
+]
+
+
+@pytest.mark.parametrize(("name", "message", "span", "verdict"), JUDGED, ids=[j[0] for j in JUDGED])
+def test_a_check_kills_only_when_its_message_states_a_refutation(name, message, span, verdict):
+    """Review F11 (the DRI's note 2026-10-19c, step 1): KILL needs a message that states a refutation (`REFUTED`,
+    whole, or a `#guard_msgs` diff between answers: an `#eval`'s value or a refutation); an `rfl` check is RFL (its
+    message is the same when the reduction got stuck); every other message is UNKNOWN, one test each."""
+    import trust_mutants
+    line = span.split("\n")[-1]
+    assert trust_mutants.judge(message, "check", line, line, trust_mutants.code_only(span)) == verdict
+
+
+@pytest.mark.parametrize(("text", "first", "last", "tactic", "after"), [
+    ("example : f 3 = 5 := rfl\n#guard g\n", 1, 1, "decide", "example : f 3 = 5 := by decide\n#guard g\n"),
+    ("#guard g\ntheorem t : f 3 = 5 := by\n  rfl -- c\n#guard h\n", 2, 3, "native_decide",
+     "#guard g\ntheorem t : f 3 = 5 := by native_decide\n -- c\n#guard h\n"),
+    ("#guard_msgs in\nexample : f 3 = 5 := rfl\n", 1, 2, "decide", "#guard_msgs in\nexample : f 3 = 5 := by decide\n"),
+    ("example : f 3 = 5 := by decide\n", 1, 1, "decide", "example : f 3 = 5 := by decide\n")], ids=short)
+def test_decided_rewrites_only_the_rfl_and_keeps_every_line(text, first, last, tactic, after):
+    """Review F11: the follow-up asks `decide` (or `native_decide`) of the `rfl` check's own statement, in place."""
+    import trust_mutants
+    assert trust_mutants.decided(text, first, last, tactic) == after
+
+
+DEFINITION = "def bS : {n : Nat // n + 0 = n} := ⟨3, by simp (config := { maxSteps := 9 })⟩ + (by exact 1)\n"
+# Review F12, the rule inverted for INVALID: the message an error in the mutated declaration gives, whether it is
+# inside a tactic block there, and the verdict. INVALID only when Lean refused the text; every other row is UNKNOWN.
+REFUSALS = [
+    ("parse", "unexpected token ']'; expected term", False, "INVALID"),
+    ("parse-in-tactic", "unexpected token '<;>'; expected command", True, "INVALID"),
+    ("unknown-identifier", "Unknown identifier `A`", False, "INVALID"),
+    ("unknown-constant", "Unknown constant `VE.Cardinality.Body.all`", False, "INVALID"),
+    ("invalid-field", "Invalid field `take`: The environment does not contain `Option.take`", False, "INVALID"),
+    ("invalid-projection", "Invalid projection: Type of", False, "INVALID"),
+    ("invalid-pattern", "Invalid pattern", False, "INVALID"),
+    ("synthesize", "failed to synthesize\n  LE Bool", False, "INVALID"),
+    ("implicit", "don't know how to synthesize implicit argument `α`", False, "INVALID"),
+    ("missing-cases", "Missing cases:\n(Nat.succ _)", False, "INVALID"),
+    # The safe cases: each is UNKNOWN.
+    ("simp-steps", "`simp` failed: maximum number of steps exceeded", True, "UNKNOWN"),
+    ("unsolved-goals", "unsolved goals\n⊢ 4 + 0 = 4", True, "UNKNOWN"),
+    ("omega", "omega could not prove the goal:", True, "UNKNOWN"),
+    ("decide-stuck", "Tactic `decide` failed for proposition", True, "UNKNOWN"),
+    ("decide-false", "Tactic `decide` proved that the proposition\n  4 = 3\nis false", True, "UNKNOWN"),
+    ("name-in-tactic", "Unknown identifier `A`", True, "UNKNOWN"),
+    ("type-mismatch", "Type mismatch\n  \"a\"\nhas type\n  String", False, "UNKNOWN"),
+    ("rfl-stuck", "Application type mismatch: The argument\n  rfl\nhas type\n  ?m.10 = ?m.10", False, "UNKNOWN"),
+    ("termination", "fail to show termination for\n  Demo.h3", False, "UNKNOWN"),
+    ("recursion", "maximum recursion depth has been reached", False, "UNKNOWN"),
+    ("heartbeats", "(deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached",
+     False, "UNKNOWN"),
+    ("unclassified", "something Lean 4.25 may say", False, "UNKNOWN"),
+]
+
+
+@pytest.mark.parametrize(("name", "message", "inside", "verdict"), REFUSALS, ids=[r[0] for r in REFUSALS])
+def test_invalid_only_when_lean_refuses_the_mutated_text(name, message, inside, verdict):
+    """Review F12 (the DRI's note, step 1): an error in the mutated declaration is INVALID only when Lean refused its
+    text (a parse error, or a name, field, pattern or instance error outside its tactic blocks); a tactic that
+    fails, Lean's budget, a type mismatch (a false or stuck proof term gives one too) and anything else are
+    UNKNOWN, which counts toward the exit code."""
+    import trust_mutants
+    assert ("INVALID" if trust_mutants.refused(message, inside) else "UNKNOWN") == verdict
+
+
+@pytest.mark.parametrize(("token", "inside"), [("simp", True), ("maxSteps", True), ("⟨3", False), ("bS", False),
+                                               ("+ (", False), ("exact", True), ("1)", True), ("n + 0", False)])
+def test_in_tactic_reads_each_tactic_block_to_its_bracket(token, inside):
+    """Review F12: a tactic block runs from its `by` to the end of the bracket group it is in."""
+    import trust_mutants
+    code = trust_mutants.code_only(DEFINITION)
+    assert trust_mutants.in_tactic(code, DEFINITION.index(token), 0, len(DEFINITION)) is inside
 
 
 # Review F9's axis: an operator whose replacement can span lines, with fewer, the same or more lines than what it
@@ -803,14 +944,15 @@ ANSWERS = ["Tactic `decide` proved that the proposition\n  bigF 3 = 3\nis false"
            "❌️ Docstring on `#guard_msgs` does not match generated message:\n\n- info: 3\n+ info: 4"]
 
 
-@pytest.mark.parametrize("test", [False, True], ids=["check", "test-file"])
 @pytest.mark.parametrize("message", NO_ANSWERS + ANSWERS, ids=short)
-def test_a_check_that_gives_no_answer_never_kills(message, test):
-    """Review F10: a check (or a --test file) that runs out of budget, or whose decision procedure gets stuck, did not
-    refute the mutant: `attributed` refuses it, at the check's own line, whatever the rest of the message says."""
+def test_a_check_that_gives_no_answer_never_kills(message):
+    """Review F10: a check that runs out of budget, or whose decision procedure gets stuck, did not refute the
+    mutant: `judge` refuses it at the check's own line (since F11 because no such message states a refutation)."""
     import trust_mutants
     line = "example : (List.replicate size true).length = size := by decide"
-    assert trust_mutants.attributed(message, "check", line, line, test) is (message in ANSWERS)
+    span = "/-- info: 3 -/\n#guard_msgs in\n#eval f 3\n" if "#guard_msgs" in message else line
+    assert trust_mutants.judge(message, "check", line, line, trust_mutants.code_only(span)) == (
+        "KILL" if message in ANSWERS else "UNKNOWN")
     assert trust_mutants.brief(message).startswith("no answer: ") is (message not in ANSWERS)
 
 
@@ -827,12 +969,26 @@ def test_an_error_is_read_with_its_whole_message():
               "warning: Demo/B.lean:2:0: declaration uses 'sorry'\n"
               "error: Demo/A.lean:18:27: Tactic `decide` proved that the proposition\n  bigF 3 = 3\nis false\n"
               "error: Lean exited with code 1\nSome required targets logged failures:\n- Demo.A\nerror: build failed\n")
-    found = [(f, int(n), m.rstrip()) for f, n, m in trust_mutants.ERROR.findall(output)]
-    assert [(f, n) for f, n, _ in found] == [("Demo/A.lean", 6), ("Demo/A.lean", 11), ("Demo/A.lean", 15),
-                                             ("Demo/A.lean", 18)]
-    assert found[1][2].endswith("+ error: maximum recursion depth has been reached")
-    assert found[2][2].endswith("to set the limit.") and found[3][2].endswith("is false")
-    assert [bool(trust_mutants.NO_ANSWER.search(m)) for _, _, m in found] == [True, True, True, False]
+    found = trust_mutants.located(output)
+    assert [(f, n, c) for f, n, c, _ in found] == [("Demo/A.lean", 6, 61), ("Demo/A.lean", 11, 0),
+                                                   ("Demo/A.lean", 15, 61), ("Demo/A.lean", 18, 27)]
+    assert found[1][3].endswith("+ error: maximum recursion depth has been reached")
+    assert found[2][3].endswith("to set the limit.") and found[3][3].endswith("is false")
+    assert [bool(trust_mutants.NO_ANSWER.search(m)) for *_, m in found] == [True, True, True, False]
+
+
+def test_an_outside_files_errors_are_read_with_their_whole_message():
+    """Review F11: `lake env lean` writes `<file>:<line>:<column>: error: …` (verbatim below); `LEAN_ERROR` reads each
+    whole, to the next message Lean starts, info and diff lines included in theirs."""
+    import trust_mutants
+    output = ("/t/T.lean:2:29: error: Tactic `decide` proved that the proposition\n  Demo.k 3 = 5\nis false\n"
+              "/t/T.lean:3:0: info: 4\n/t/T.lean:4:0: error: ❌️ Docstring on `#guard_msgs` does not match generated "
+              "message:\n\n-\n+ error: Expression\n+   Demo.k 3 == 5\n+ did not evaluate to `true`\n"
+              "/t/T.lean:6:26: error: Type mismatch\n  rfl\nhas type\n  ?m.7 = ?m.7\n")
+    found = trust_mutants.located(output, trust_mutants.LEAN_ERROR)
+    assert [(f, n, c) for f, n, c, _ in found] == [("/t/T.lean", 2, 29), ("/t/T.lean", 4, 0), ("/t/T.lean", 6, 26)]
+    assert found[0][3].endswith("is false") and found[1][3].endswith("did not evaluate to `true`")
+    assert trust_mutants.refutes(found[1][3], "guard") and found[2][3].endswith("?m.7 = ?m.7")
 
 
 # Review F10's package: each definition is `if n ≤ 3 then n else 100000`, read at 3 by a check that holds for every
@@ -904,11 +1060,123 @@ def test_a_check_out_of_budget_or_stuck_is_unknown(budget_run, name, check):
     assert far <= set(mine), (sorted(mine), done.stdout + done.stderr)
     for key, m in mine.items():
         if name.startswith("refuted"):
-            expected = ("KILLED", "fails" if name == "refuted-outside" else "proved that") if key in far else (
-                "SURVIVOR", "")
+            expected = ("KILLED", "proved that") if key in far else ("SURVIVOR", "")
         else:
             expected = ("UNKNOWN", "no answer") if key in far else ("SURVIVOR", "")
         assert m["status"] == expected[0] and expected[1] in m["detail"], m
     if name == "in-definition":  # the Fin's own mutant 3 -> 4: Lean runs out of budget inside it, never INVALID
         own = [m for m in of(mutants, "bInDefinitionFin") if (m["operator"], m["before"]) == ("lit-plus", "3")]
         assert [(m["status"], "no answer" in m["detail"]) for m in own] == [("UNKNOWN", True)], own
+
+
+# Review F11 and F12's package (the DRI's note 2026-10-19c): each definition is `if n ≤ 3 then n else <far>`, read at
+# 3 by the check after it; `le-lt` and `lit-minus` of the 3 send it to <far>. `wf` (well-founded, in the base) is a
+# value no reduction unfolds: `wf 1` is 0, so `n + wf 1` is the same value as `n` (the check holds for the mutant)
+# and `wf 1` alone a different one; `100` is a different one any reduction reaches. The far mutants must be the
+# row's verdict, every other mutant SURVIVOR. Before the fix every UNKNOWN row but `eval-throws`'s value was KILLED.
+STUCK = [  # (row, <far>, the check after the definition ({d} is the definition), the far mutants' verdict, detail)
+    ("rfl", "wf 1", "example : {d} 3 + 0 = 0 + {d} 3 := rfl", "UNKNOWN", "neither"),  # PROBE F11
+    ("by-rfl", "wf 1", "theorem {d}_t : {d} 3 + 0 = 0 + {d} 3 := by rfl", "UNKNOWN", "neither"),
+    ("rfl-equal", "n + wf 1", "example : {d} 3 = 3 := rfl", "UNKNOWN", "neither"),
+    ("rfl-decide", "100", "example : {d} 3 = 3 := rfl", "KILLED", "(`decide`: Tactic `decide` proved"),
+    ("rfl-native", "wf 1", "example : {d} 3 = 3 := rfl", "KILLED", "(`native_decide`: Tactic `native_decide` evaluated"),
+    ("rfl-wrapped", "100", "#guard_msgs in\nexample : {d} 3 = 3 := rfl", "KILLED", "(`decide`:"),
+    ("guard-expr", "n + wf 1", "#guard_expr {d} 3 =~ 3", "UNKNOWN", "Failed:"),
+    ("reduce-doc", "n + wf 1", "/-- info: 3 -/\n#guard_msgs in\n#reduce {d} 3", "UNKNOWN", "Docstring"),
+    ("eval-doc", "n + wf 1", "/-- info: 3 -/\n#guard_msgs in\n#eval {d} 3", "SURVIVOR", ""),
+    ("eval-doc-refuted", "wf 1", "/-- info: 3 -/\n#guard_msgs in\n#eval {d} 3", "KILLED", "Docstring"),
+    ("check-rfl", "100", "#check (rfl : {d} 3 = 3)", "UNKNOWN", "Type mismatch"),
+    ("eval-throws", "100", '#eval (do if {d} 3 != 3 then throw (IO.userError "changed") : IO Unit)', "UNKNOWN",
+     "changed"),
+    ("rfl-in-definition", "100", "def {d}Sub : {x : Nat // x = 3} := ⟨{d} 3, rfl⟩", "UNKNOWN", "mismatch"),
+    ("outside-native", "wf 1", None, "KILLED", "(`native_decide`:"),
+    ("outside-equal", "n + wf 1", None, "UNKNOWN", "neither"),
+]
+F12_FORM = "def {d} : {n : Nat // n + 0 = n} := ⟨3, by simp (config := { maxSteps := 9 })⟩"  # PROBE F12
+REFUSED_FORM = "def {d} (o : Option Nat) : Bool := o.any (· == 1)\n\n#guard !{d} none"  # no `Option.take`
+
+
+def stuck_name(row: str) -> str:
+    return "s" + row.title().replace("-", "")
+
+
+def stuck_package(root: Path, folder: Path) -> None:
+    scaffold(root, "")
+    (root / "lean/Demo/Wf.lean").write_text(
+        "namespace Demo\n\ndef wf (n : Nat) : Nat := if _ : n = 0 then 0 else wf (n - 1)\ntermination_by n\n\n"
+        "end Demo\n")
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "wf")
+    text = ["import Demo.Wf\n\nnamespace Demo\n"]
+    for row, far, check, _, _ in STUCK:
+        d = stuck_name(row)
+        text.append(f"\ndef {d} (n : Nat) : Nat := if n ≤ 3 then n else {far}\n\n"
+                    + (check.replace("{d}", d) + "\n" if check else ""))
+    text += [f"\n{F12_FORM.replace('{d}', 'sSimpSteps')}\n", f"\n{REFUSED_FORM.replace('{d}', 'sRefused')}\n"]
+    (root / "lean/Demo/Defs.lean").write_text("".join(text) + "\nend Demo\n")
+    (root / "outside").mkdir()
+    for row in ("outside-native", "outside-equal"):
+        (root / f"outside/{stuck_name(row)}.lean").write_text(
+            f"import Demo.Defs\nexample : Demo.{stuck_name(row)} 3 = 3 := rfl\n")
+    dump(root, folder, [])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+
+
+@pytest.fixture(scope="module")
+def stuck_run(tmp_path_factory):
+    root = tmp_path_factory.mktemp("stuck")
+    stuck_package(root, tmp_path_factory.mktemp("stuck-dump"))
+    return tool(root, tmp_path_factory.mktemp("stuck-run"), "--max-mutants", "1000", "--test",
+                "outside/sOutsideNative.lean", "--test", "outside/sOutsideEqual.lean")
+
+
+@pytest.mark.parametrize(("row", "far", "check", "verdict", "detail"), STUCK, ids=[s[0] for s in STUCK])
+def test_a_check_that_states_no_refutation_is_unknown(stuck_run, row, far, check, verdict, detail):
+    """Review F11 (the rule inverted): the mutants that send the definition to <far> are KILLED only where Lean
+    states a refutation (`decide` or `native_decide` asked after a failing `rfl`, an `#eval`'s value), UNKNOWN where
+    the check fails stating none (a stuck `rfl` or `#guard_expr`, a `#reduce` that prints a stuck term, an `#eval`
+    that throws, a `#check`), SURVIVOR where it passes; in lean/ and in an outside --test file alike."""
+    done, mutants = stuck_run
+    mine = {(m["operator"], m["before"]): m for m in of(mutants, stuck_name(row))}
+    far_ones = {("le-lt", "≤"), ("lit-minus", "3")}
+    assert far_ones <= set(mine), (sorted(mine), done.stdout + done.stderr)
+    for key, m in mine.items():
+        expected = (verdict, detail) if key in far_ones else ("SURVIVOR", "")
+        assert m["status"] == expected[0] and expected[1] in m["detail"], m
+
+
+def test_probe_f11_a_stuck_rfl_check_is_no_kill(stuck_run):
+    """PROBE F11: `if n ≤ 3 then n else wf 1`, read by `rfl` at 3 by a check that holds for every value; the two
+    mutants that reach `wf 1` got KILLED by rfl's "Type mismatch" (a stuck reduction). Now UNKNOWN."""
+    done, mutants = stuck_run
+    rfl = of(mutants, "sRfl")
+    assert rfl and not [m for m in rfl if m["status"] == "KILLED"], done.stdout + done.stderr
+
+
+def test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown(stuck_run):
+    """PROBE F12: `simp`'s step limit (and any other tactic failure) inside the mutated declaration was INVALID,
+    which counts for nothing; now UNKNOWN, which counts toward the exit code."""
+    done, mutants = stuck_run
+    simp = of(mutants, "sSimpSteps")
+    assert simp and not [m for m in simp if m["status"] == "INVALID"], simp
+    nine = [m for m in simp if (m["operator"], m["before"]) == ("lit-minus", "9")]
+    assert [(m["status"], "maximum number of steps" in m["detail"]) for m in nine] == [("UNKNOWN", True)], nine
+    assert done.returncode == 1
+
+
+def test_a_proof_term_in_the_mutated_definition_is_no_refusal(stuck_run):
+    """Review F12 (the DRI's step 1, INVALID only when the text does not elaborate): the `rfl` of
+    `⟨sRflInDefinition 3, rfl⟩` fails under each of the subtype's own mutants (a type mismatch, which a stuck
+    reduction gives too): UNKNOWN, never INVALID."""
+    _, mutants = stuck_run
+    own = of(mutants, "sRflInDefinitionSub")
+    assert own and {m["status"] for m in own} == {"UNKNOWN"}, own
+
+
+def test_a_name_lean_does_not_know_is_invalid(stuck_run):
+    """Review F12: the one positive condition for INVALID holds: `(o.take 1).any …` and the other list cuts of an
+    `Option` name a field Lean does not have, outside every tactic block."""
+    _, mutants = stuck_run
+    cuts = [m for m in of(mutants, "sRefused") if m["operator"].startswith("list-") and m["operator"] != "list-empty"]
+    assert len(cuts) == 4 and all(m["status"] == "INVALID" and m["detail"].startswith("Invalid field") for m in cuts)
