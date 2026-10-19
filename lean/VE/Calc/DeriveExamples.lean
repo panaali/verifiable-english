@@ -83,7 +83,13 @@ def sBelow : QFact := fact (1/25) [("s", -1)] true
 #guard Derive.search [] links (below 0) = .counterexample [("r", 0), ("s", 0)] && checked [] links (below 0)
 #guard Derive.search [] links (fact 0 [("t", -1)] true) = .counterexample [("t", 0)]
 
--- The budget: 17 unknowns are beyond the 16 the search takes.
+-- The budget: 17 unknowns are beyond the 16 the search takes; and 64 facts whose second elimination needs 261,888
+-- combinations, beyond the 10,000 (counted before they are built: the first takes 1,024).
+def wide : List QFact :=
+  ((List.range 32).map fun (i : Nat) => fact 0 [("x", 1), ("y", ((i : Int) : Rat)), ("z", 1)] false) ++
+  ((List.range 32).map fun (j : Nat) => fact 0 [("x", -1), ("y", -((j : Int) : Rat) - 1/2), ("z", 1)] false)
+#guard (FM.eliminate "x" (FM.inputRows wide) FM.maxSteps).map (·.2) = some 1024
+#guard Derive.search wide [] (fact 0 [("z", 1)] true) = .unknown (.limit .derivationSteps)
 #guard Derive.search ((List.range 17).map fun i => fact 0 [(s!"x{i}", 1)] false) [] (fact 0 [("x0", 1)] true) =
   .unknown (.limit .derivationSteps)
 

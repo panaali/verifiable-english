@@ -35,12 +35,14 @@ def Row.combine (x : String) (p n : Row) : Row :=
   ⟨⟨(QLin.add (p.fact.form.scale (-cn)) (n.fact.form.scale cp)).norm, p.fact.strict || n.fact.strict⟩,
     List.zipWith (fun a b => -cn * a + cp * b) p.weights n.weights⟩
 
-/-- Eliminates `x`; the second component counts the combinations. -/
-def eliminate (x : String) (rows : List Row) : List Row × Nat :=
+/-- Eliminates `x` with the number of combinations it takes, or none when they are more than `budget`; they are
+counted before any is built. -/
+def eliminate (x : String) (rows : List Row) (budget : Nat) : Option (List Row × Nat) :=
   let pos := rows.filter fun r => decide (0 < r.fact.form.coeffOf x)
   let neg := rows.filter fun r => decide (r.fact.form.coeffOf x < 0)
   let zero := rows.filter fun r => r.fact.form.coeffOf x == 0
-  ((zero ++ pos.flatMap fun p => neg.map (Row.combine x p)).filter (!·.trivial), pos.length * neg.length)
+  if pos.length * neg.length > budget then none else
+  some ((zero ++ pos.flatMap fun p => neg.map (Row.combine x p)).filter (!·.trivial), pos.length * neg.length)
 
 inductive Result where
   | refuted (weights : List Rat)
@@ -73,8 +75,9 @@ def backSubstitute : List (String × List Row) → List (String × Rat) → List
 def run : List String → List Row → List (String × List Row) → Nat → Option (List Row × List (String × List Row))
   | [], rows, stages, _ => some (rows, stages)
   | x :: xs, rows, stages, budget =>
-      let (next, used) := eliminate x rows
-      if used > budget then none else run xs next ((x, rows) :: stages) (budget - used)
+      match eliminate x rows budget with
+      | none => none
+      | some (next, used) => run xs next ((x, rows) :: stages) (budget - used)
 
 def inputRows (fs : List QFact) : List Row :=
   (List.range fs.length).zip fs |>.map fun (i, f) =>
