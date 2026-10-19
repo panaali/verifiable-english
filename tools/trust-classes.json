@@ -1137,6 +1137,7 @@
         "VE.Alternatives.FillExamples.ndProfiles",
         "VE.Alternatives.FillExamples.pullForbidden",
         "VE.Alternatives.FillExamples.pushMayGuarded",
+        "VE.Alternatives.FillExamples.pushRequired",
         "VE.Alternatives.FillExamples.scenario"
       ]
     },

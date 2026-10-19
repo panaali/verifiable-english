@@ -75,6 +75,11 @@ def pushMayGuarded : String :=
   "guard": ["and", ["unary", "pushing", ["var", 0]], ["or", ["unary", "y_permitted", ["var", 0]],
   ["not", ["unary", "y_permitted", ["var", 0]]]]]}}"#
 
+/-- Push is required (`required`'s default is deny, `permitted` is unspecified). -/
+def pushRequired : String :=
+  r#"{"norm": {"name": "push-required", "predicate": "required", "sign": true, "unless": [], "over": [],
+  "guard": ["unary", "pushing", ["var", 0]]}}"#
+
 /-- `alt-validate` on one chooser `r` with push and pull available: each alternative's status and evidence. -/
 def scenario (norms : String) (budget : String := "") : List (String × String × String) :=
   let case := (Json.parse (r#"{"environment": null, "units": [], "norms": ["# ++ norms ++ r#"], "scenario": {"model":
@@ -99,6 +104,17 @@ def scenario (norms : String) (budget : String := "") : List (String × String �
 -- T12b with no budget: UNKNOWN naming it.
 #guard scenario (pullForbidden ++ ", " ++ pushMayGuarded) r#", "max_unsaid_atoms": 0"# ==
   [("push", "UNKNOWN", "MAX_UNSAID_ATOMS"), ("pull", "not clear", "kleene")]
+-- Review F1: push required and `permitted` unspecified, so nothing filled is no admissible filling. With no budget
+-- the search for a filling is cut: UNKNOWN naming the budget for every alternative, never "no filling".
+#guard scenario (pullForbidden ++ ", " ++ pushRequired) r#", "max_unsaid_atoms": 0"# ==
+  [("push", "UNKNOWN", "MAX_UNSAID_ATOMS"), ("pull", "UNKNOWN", "MAX_UNSAID_ATOMS")]
+-- Within the budget the search finds a filling (push permitted), so push is not UNKNOWN.
+#guard (scenario (pullForbidden ++ ", " ++ pushRequired)).all (·.2.1 != "UNKNOWN")
+-- Every UNKNOWN's text names its cause: the budget, the search, or no validated filling.
+#guard [AltEvidence.budget, .search, .noFilling].map (fun e => Run.statusPhrase 3 ("act", "push") (.unknown, e)) ==
+  ["push UNKNOWN: more than 3 unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched",
+   "push UNKNOWN: the search found no two validated fillings that disagree on it",
+   "push UNKNOWN: no filling of what the text leaves unsaid is validated here"]
 #guard scenario pullForbidden r#", "max_unsaid_atoms": "0""# ==
   [("", "", "InvalidInput: max_unsaid_atoms must be a natural number")]
 

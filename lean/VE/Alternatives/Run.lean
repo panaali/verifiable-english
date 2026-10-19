@@ -335,7 +335,8 @@ def evidenceLabel : AltEvidence → String
 /-- One alternative in a chooser's text (untrusted). -/
 def statusPhrase (budget : Nat) (a : VE.Bridge.Entity) : AltStatus × AltEvidence → String
   | (.undecided, _) => s!"{a.2} undecided: the text does not say whether it may be performed"
-  | (.unknown, .budget) => s!"{a.2} UNKNOWN: more than {budget} unsaid atoms decide it"
+  | (.unknown, .budget) => s!"{a.2} UNKNOWN: more than {budget} unsaid atoms (MAX_UNSAID_ATOMS) would have to be searched"
+  | (.unknown, .search) => s!"{a.2} UNKNOWN: the search found no two validated fillings that disagree on it"
   | (.unknown, .noFilling) => s!"{a.2} UNKNOWN: no filling of what the text leaves unsaid is validated here"
   | (st, _) => s!"{a.2} {statusLabel st}"
 
@@ -382,11 +383,11 @@ def runValidateU (id : String) (j : Json) : Except String Json := do
   let eid ← environmentId ps environment
   let dh ← documentHash ps environment (j.getObjValD "norms") (j.getObjValD "units")
   let reports := match scenarioRowsU s sc supplied budget with
-    | some cs => cs.map fun (c : VE.Bridge.Entity × List (ScenarioRowU s.src.A s.unspec × AltEvidence)) =>
+    | .ok cs => cs.map fun (c : VE.Bridge.Entity × List (ScenarioRowU s.src.A s.unspec × AltEvidence)) =>
         chooserReportU s.src.A s.unspec sc.M (c.2.head?.map fun (x : ScenarioRowU s.src.A s.unspec × AltEvidence) => x.1.F)
           budget c.1 (c.2.map fun (x : ScenarioRowU s.src.A s.unspec × AltEvidence) => (x.1.action, x.1.status, x.2))
-    | none => (sc.M.domains s.src.A.alt.chooser).map fun r => chooserReportU s.src.A s.unspec sc.M none budget r
-        ((availOf sc.M s.src.A.alt.available r).map (·, .unknown, .noFilling))
+    | .error e => (sc.M.domains s.src.A.alt.chooser).map fun r => chooserReportU s.src.A s.unspec sc.M none budget r
+        ((availOf sc.M s.src.A.alt.available r).map (·, .unknown, e))
   return ok id [("model_id", .str mid), ("environment_id", .str eid), ("document_hash", .str dh),
     ("choosers", Json.arr (reports.map Prod.fst).toArray),
     ("assumed_harm_free", toJson (assumedHarmFree s.src.A sc.M sc.rows)),

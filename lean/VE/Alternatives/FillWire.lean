@@ -391,7 +391,8 @@ inductive AltStatus
   deriving DecidableEq
 
 /-- The evidence a scenario status rests on (C): `budget` when the cone exceeds it, `search` when no two validated
-refillings were found, `noFilling` when no filling of the scenario is validated. -/
+refillings were found, `noFilling` when no filling of the scenario is validated after trying every assignment of
+its unsaid atoms (`budget` when there were more than the budget allows, `fillingFor`). -/
 inductive AltEvidence
   | kleene
   | enumeration
@@ -457,12 +458,36 @@ def fillingsAt (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (F : FiniteFill 
   | _, _ => none
 
 /-- A filling for the scenario: the supplied one, else an assignment of the unsaid atoms when there are at most
-`budget` of them, else nothing filled; the first that `fillValid` accepts. -/
+`budget` of them, else nothing filled; the first that `fillValid` accepts. When none is accepted, the evidence says
+why: `budget` when there were more than `budget` unsaid atoms (so not every assignment was tried), `noFilling` when
+every assignment was tried. -/
 def fillingFor (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (supplied : Option (FiniteFill U VE.Bridge.Entity))
-    (budget : Nat) : Option (FiniteFill U VE.Bridge.Entity) :=
+    (budget : Nat) : Except AltEvidence (FiniteFill U VE.Bridge.Entity) :=
   let atoms := unsaidAtoms U M
-  (supplied.toList ++ (if atoms.length ≤ budget then (subsets atoms).map fillOfAtoms else [fillOfAtoms []])).find?
-    (fillValid U M)
+  let within := atoms.length ≤ budget
+  match (supplied.toList ++ (if within then (subsets atoms).map fillOfAtoms else [fillOfAtoms []])).find?
+      (fillValid U M) with
+  | some F => .ok F
+  | none => .error (if within then .noFilling else .budget)
+
+/-- Why `fillingFor` found no filling, as its evidence says: `budget` exactly when there were more unsaid atoms than
+the budget, and `noFilling` only when every assignment of them was tried and none is validated. -/
+theorem fillingFor_error {U : UDoc} {M : VE.FiniteModel VE.Bridge.Entity} {supplied : Option (FiniteFill U _)}
+    {budget : Nat} {e : AltEvidence} (h : fillingFor U M supplied budget = .error e) :
+    (e = .budget ∧ budget < (unsaidAtoms U M).length) ∨
+    (e = .noFilling ∧ ∀ S ∈ subsets (unsaidAtoms U M), fillValid U M (fillOfAtoms S) = false) := by
+  unfold fillingFor at h
+  dsimp only at h
+  split at h
+  next => cases h
+  next hf =>
+    cases h
+    by_cases hw : (unsaidAtoms U M).length ≤ budget
+    · refine .inr ⟨by simp [hw], fun S hS => ?_⟩
+      simp only [hw, if_true] at hf
+      have := List.find?_eq_none.mp hf (fillOfAtoms S) (List.mem_append_right _ (List.mem_map_of_mem hS))
+      simpa using this
+    · exact .inl ⟨by simp [hw], by omega⟩
 
 section Scenario
 variable (A : AltDoc) (unspec : List String) (hA : WellFormedAlt A = true)
@@ -510,25 +535,30 @@ def chooserRowsU (budget : Nat) (r : VE.Bridge.Entity) (hr : r ∈ M.domains A.a
 end Scenario
 
 theorem fillingFor_valid {U : UDoc} {M : VE.FiniteModel VE.Bridge.Entity} {supplied : Option (FiniteFill U _)}
-    {budget : Nat} {F : FiniteFill U VE.Bridge.Entity} (h : fillingFor U M supplied budget = some F) :
-    fillValid U M F = true :=
-  List.find?_some h
+    {budget : Nat} {F : FiniteFill U VE.Bridge.Entity} (h : fillingFor U M supplied budget = .ok F) :
+    fillValid U M F = true := by
+  unfold fillingFor at h
+  dsimp only at h
+  split at h
+  next _ hf => cases h; exact List.find?_some hf
+  next => cases h
 
 /-- The scenario's rows, chooser by chooser (spec 6.4's `scenarioRowU`): today's validation (whose text the runner
 answers on failure), then a validated filling, then each chooser's rows; `none` when no filling is validated, and
-every alternative is UNKNOWN. -/
+every alternative is UNKNOWN with the evidence `fillingFor` gives (`budget` when it was exhausted). -/
 def scenarioRowsU (s : AltSourceU) (sc : Replay.Scenario s.src) (supplied : Option (FiniteFill s.U VE.Bridge.Entity))
-    (budget : Nat) : Option (List (VE.Bridge.Entity × List (ScenarioRowU s.src.A s.unspec × AltEvidence))) :=
+    (budget : Nat) :
+    Except AltEvidence (List (VE.Bridge.Entity × List (ScenarioRowU s.src.A s.unspec × AltEvidence))) :=
   if hm : altModelChecks s.src.A sc.M sc.rows = true then
     if hU : WellFormedU s.U = true then
       match hf : fillingFor s.U sc.M supplied budget with
-      | some F =>
+      | .ok F =>
         have hval : validateAlternatives s.src.A sc.M sc.rows = .ok () := validateAlternativesWith_ok.mpr hm
         have hs := Replay.validate_sound_decoded s.src sc hval
-        some ((sc.M.domains s.src.A.alt.chooser).attach.map fun ⟨r, hr⟩ => (r, chooserRowsU s.src.A s.unspec
+        .ok ((sc.M.domains s.src.A.alt.chooser).attach.map fun ⟨r, hr⟩ => (r, chooserRowsU s.src.A s.unspec
           s.src.wf hU sc.M sc.rows hs.1 hs.2.1 hval F (fillingFor_valid hf) budget r hr))
-      | none => none
-    else none
-  else none
+      | .error e => .error e
+    else .error .noFilling
+  else .error .noFilling
 
 end VE.Alternatives
