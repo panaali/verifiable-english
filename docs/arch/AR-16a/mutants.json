@@ -1,0 +1,164 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16d_document.py:87 (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "find": "        if row is None:\n            return _load_document(raw, path, None)\n",
+   "replace": "        if True:\n            return _load_document(raw, path, None)\n",
+   "tests": [
+    "tests/test_b16d_document.py::test_norm_defaults_readings_and_english_fence_are_decided_by_lean"
+   ]
+  },
+  {
+   "id": "M2",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16d_document.py:124 (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "find": "        if row is None:\n            return _load_document(raw, path, None)\n",
+   "replace": "        if True:\n            return _load_document(raw, path, None)\n",
+   "tests": [
+    "tests/test_b16d_document.py::test_labeled_pending_pilot_is_lean_decided"
+   ]
+  },
+  {
+   "id": "M3",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:64 (the no_python_loader fixture) (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "find": "        if row is None:\n            return _load_document(raw, path, None)\n",
+   "replace": "        if True:\n            return _load_document(raw, path, None)\n",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_coverage_and_statuses_are_leans"
+   ]
+  },
+  {
+   "id": "M4",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:74 (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "find": "        if row is None:\n            return _load_document(raw, path, None)\n",
+   "replace": "        if True:\n            return _load_document(raw, path, None)\n",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_owned_documents_are_decided_by_lean[plain]"
+   ]
+  },
+  {
+   "id": "M5",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:104 (ve.document.load._load_document): a document Lean decides never takes the retained loader; seeded: `_load` always takes it",
+   "find": "        if row is None:\n            return _load_document(raw, path, None)\n",
+   "replace": "        if True:\n            return _load_document(raw, path, None)\n",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_null_content_is_absent_on_the_lean_path"
+   ]
+  },
+  {
+   "id": "M6",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:387 (ve.document.load._load_document): an undecided answer takes the retained loader exactly once; seeded: it runs twice",
+   "find": "            return _load_document(raw, path, None)\n",
+   "replace": "            return _load_document(raw, path, None) and _load_document(raw, path, None)\n",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_undecided_answers_take_the_retained_path"
+   ]
+  },
+  {
+   "id": "M7",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16e_rights_document.py:54 (ve.document.load._lean_answer -> None): the comparison really runs the retained path; seeded: the retained path's document id is wrong",
+   "find": "    document_id = _document_id(meta, source, fences)\n",
+   "replace": "    document_id = _document_id(meta, source, fences)[:-1]\n",
+   "tests": [
+    "tests/test_b16e_rights_document.py::test_rights_corpus_sample_is_lean_decided_with_the_prior_outcome"
+   ]
+  },
+  {
+   "id": "M8",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16f_document.py:55 (ve.document.load._lean_answer -> None): the comparison really runs the retained path; seeded: the retained path's document id is wrong",
+   "find": "    document_id = _document_id(meta, source, fences)\n",
+   "replace": "    document_id = _document_id(meta, source, fences)[:-1]\n",
+   "tests": [
+    "tests/test_b16f_document.py::test_the_layer_seeds_are_decided_by_lean_with_the_retained_public_outcome[soft-norms]"
+   ]
+  },
+  {
+   "id": "M9",
+   "file": "ve/document/load.py",
+   "claim": "retargeted patch tests/test_b16f_senses_document.py:68 (ve.document.load._lean_answer -> None): the comparison really runs the retained path; seeded: the retained path's document id is wrong",
+   "find": "    document_id = _document_id(meta, source, fences)\n",
+   "replace": "    document_id = _document_id(meta, source, fences)[:-1]\n",
+   "tests": [
+    "tests/test_b16f_senses_document.py::test_a_valid_senses_document_is_decided_by_lean[d_parenthetical_switch-modern]"
+   ]
+  },
+  {
+   "id": "M10",
+   "file": "ve/document/lean.py",
+   "claim": "retargeted patches tests/test_document_lean_switch.py:610 (ve.document.source.Environment, ve.document.lean.Environment): a document Lean accepted that Python cannot build is CheckerUnavailable; seeded: the build failure escapes as VEError",
+   "find": "    except Exception as exc:  # noqa: BLE001 - a document Lean accepted that Python cannot build is a bug\n        raise unavailable(f\"could not be built: {type(exc).__name__}: {exc}\"[:300]) from exc\n    try:\n        _bind_document_answer",
+   "replace": "    except KeyError as exc:  # seeded\n        raise unavailable(f\"could not be built: {type(exc).__name__}: {exc}\"[:300]) from exc\n    try:\n        _bind_document_answer",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_a_document_lean_accepted_that_python_cannot_build_is_unavailable"
+   ]
+  },
+  {
+   "id": "M11",
+   "file": "ve/document/report.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:638 (ve.document.report.admit_document): the admission route rejecting what Lean admitted is CheckerUnavailable; seeded: the rejection escapes",
+   "find": "            except VEError as exc:\n                raise CheckerUnavailable(",
+   "replace": "            except KeyError as exc:\n                raise CheckerUnavailable(",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_the_admission_route_rejecting_what_lean_admitted_is_unavailable"
+   ]
+  },
+  {
+   "id": "M12",
+   "file": "ve/document/report.py",
+   "claim": "retargeted patch tests/test_document_lean_switch.py:645 (ve.document.report._check_narrowing_choices): Python's narrowing checks never run on a Lean-admitted document; seeded: they always run",
+   "find": "        if not lean_admitted:\n            _check_narrowing_choices(doc[\"meta\"], labels)\n",
+   "replace": "        if True:\n            _check_narrowing_choices(doc[\"meta\"], labels)\n",
+   "tests": [
+    "tests/test_document_lean_switch.py::test_python_graph_checks_do_not_run_on_a_lean_admitted_document"
+   ]
+  },
+  {
+   "id": "M13",
+   "file": "ve/document/__init__.py",
+   "claim": "every name callers import from ve.document is still importable, as its owner's object; seeded: one re-export dropped",
+   "find": "check_document, coverage, coverage_defaults, quantity_admission_input)",
+   "replace": "check_document, coverage, quantity_admission_input)",
+   "tests": [
+    "tests/test_document_split.py::test_every_name_callers_import_is_the_owners_object[coverage_defaults]"
+   ]
+  },
+  {
+   "id": "M14",
+   "file": "ve/document/__main__.py",
+   "claim": "`python -m ve.document` still runs the command line; seeded: it exits without running it",
+   "find": "    raise SystemExit(main())",
+   "replace": "    raise SystemExit(0)",
+   "tests": [
+    "tests/test_document_split.py::test_python_m_ve_document_runs_the_command_line"
+   ]
+  },
+  {
+   "id": "M15",
+   "file": "tools/identity_lint.py",
+   "claim": "the identity ratchet counts a split module's package sites as the module's only when the module itself is gone; seeded: also while it remains",
+   "find": "for path in paths(base) - paths(head) if path.endswith(\".py\")}",
+   "replace": "for path in paths(base) if path.endswith(\".py\")}",
+   "tests": [
+    "tests/test_identity_lint.py::test_a_module_split_into_its_package_keeps_its_sites"
+   ]
+  },
+  {
+   "id": "M16",
+   "file": "tools/relay_lint.py",
+   "claim": "the senses-loader rule reads every module of ve/document/; seeded: only load.py",
+   "find": "    return sorted((ROOT / SENSES_LOADER).glob(\"*.py\"))",
+   "replace": "    return sorted((ROOT / SENSES_LOADER).glob(\"load.py\"))",
+   "tests": [
+    "tests/test_relay_lint.py::test_the_senses_path_is_read_by_the_third_rule"
+   ]
+  }
+ ]
+}
