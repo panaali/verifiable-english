@@ -2646,6 +2646,13 @@ theorem VE.Calc.Claim.run_unknown
             u = VE.Numbers.UnknownReason.limit VE.Numbers.Limit.evaluations ∧ VE.Calc.Claim.ReadsExhausted ds c
   -- uses VE.Calc.Claim.Overflows@VE.Calc.Decls VE.Calc.Claim.ReadsExhausted@VE.Calc.Decls VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Numbers.Limit.digits@VE.Numbers.Round VE.Numbers.Limit.evaluations@VE.Numbers.Round VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.limit@VE.Numbers.Round VE.Numbers.UnknownReason@VE.Numbers.Round
   -- expr 3624850836
+theorem VE.Calc.Counterexample.check_sound
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (C : VE.Calc.QFact) (κ : String → Rat),
+    VE.Calc.counterexampleCheck P links C κ = Bool.true →
+      (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds κ f) ∧
+        (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) ∧ ¬VE.Calc.QFact.Holds κ C
+  -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.counterexampleCheck@VE.Calc.Derive
+  -- expr 2877712036
 theorem VE.Calc.Decl.valL_agrees
   ∀ (d : VE.Calc.Decl) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
     (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →
@@ -2662,6 +2669,42 @@ theorem VE.Calc.Denotes.unique
   ∀ {σ : VE.Calc.Values} {e : VE.Calc.Expr} {x y : Rat}, VE.Calc.Denotes σ e x → VE.Calc.Denotes σ e y → x = y
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
   -- expr 1800011211
+theorem VE.Calc.Derivation.check_sound
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (C : VE.Calc.QFact) (d : VE.Calc.Derivation),
+    VE.Calc.Derivation.check P links C d = Bool.true →
+      ∀ (κ : String → Rat),
+        (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds κ f) →
+          (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ C
+  -- uses VE.Calc.Derivation.check@VE.Calc.Derive VE.Calc.Derivation@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 3698919105
+theorem VE.Calc.Derivation.replay_sound
+  ∀ (links : List (String × String)) (steps : List VE.Calc.Step) (known fs : List VE.Calc.QFact),
+    VE.Calc.Derivation.replay links known steps = Option.some fs →
+      ∀ (κ : String → Rat),
+        (∀ (g : VE.Calc.QFact), g ∈ known → VE.Calc.QFact.Holds κ g) →
+          (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) →
+            ∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
+  -- uses VE.Calc.Derivation.replay@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step@VE.Calc.Derive
+  -- expr 2374285068
+theorem VE.Calc.Derive.run_counterexample
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (C : VE.Calc.QFact) (κ : List (String × Rat)),
+    VE.Calc.Derive.run P links C = VE.Calc.Answer.counterexample κ →
+      (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds (VE.Calc.Answer.point κ) f) ∧
+        (∀ (l : String × String),
+            l ∈ links →
+              VE.Calc.Answer.point κ l.fst = VE.Calc.Answer.point κ l.snd * VE.Calc.Answer.point κ l.snd ∧
+                0 ≤ VE.Calc.Answer.point κ l.snd) ∧
+          ¬VE.Calc.QFact.Holds (VE.Calc.Answer.point κ) C
+  -- uses VE.Calc.Answer.counterexample@VE.Calc.Derive VE.Calc.Answer.point@VE.Calc.Derive VE.Calc.Answer@VE.Calc.Derive VE.Calc.Derive.run@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 545856537
+theorem VE.Calc.Derive.run_follows
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (C : VE.Calc.QFact) (d : VE.Calc.Derivation),
+    VE.Calc.Derive.run P links C = VE.Calc.Answer.follows d →
+      ∀ (κ : String → Rat),
+        (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds κ f) →
+          (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ C
+  -- uses VE.Calc.Answer.follows@VE.Calc.Derive VE.Calc.Answer@VE.Calc.Derive VE.Calc.Derivation@VE.Calc.Derive VE.Calc.Derive.run@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 2463133502
 theorem VE.Calc.Expr.evalL_agrees
   ∀ (e : VE.Calc.Expr) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
     (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →
@@ -2722,6 +2765,49 @@ theorem VE.Calc.Expr.overflow_lift
         VE.Calc.Expr.Overflows ds child → VE.Calc.Expr.Overflows ds parent
   -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr.subexprs@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax
   -- expr 1123596397
+theorem VE.Calc.Farkas.check_sound
+  ∀ (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas),
+    VE.Calc.Farkas.check fs c = Bool.true → ∀ (κ : String → Rat), ¬∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
+  -- uses VE.Calc.Farkas.check@VE.Calc.Linear VE.Calc.Farkas@VE.Calc.Linear VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 1580294260
+theorem VE.Calc.Farkas.combination_eval
+  ∀ (κ : String → Rat) (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas),
+    VE.Calc.QLin.eval κ (VE.Calc.Farkas.combination fs c) =
+      (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) c.weights fs).sum
+  -- uses VE.Calc.Farkas.combination@VE.Calc.Linear VE.Calc.Farkas.weights@VE.Calc.Linear VE.Calc.Farkas@VE.Calc.Linear VE.Calc.QFact.form@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear
+  -- expr 919770268
+theorem VE.Calc.QFact.negate_holds
+  ∀ (κ : String → Rat) (f : VE.Calc.QFact), VE.Calc.QFact.Holds κ f.negate ↔ ¬VE.Calc.QFact.Holds κ f
+  -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact.negate@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 2330084071
+theorem VE.Calc.QLin.eval_add
+  ∀ (κ : String → Rat) (L M : VE.Calc.QLin), VE.Calc.QLin.eval κ (L.add M) = VE.Calc.QLin.eval κ L + VE.Calc.QLin.eval κ M
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 619892755
+theorem VE.Calc.QLin.eval_foldl
+  ∀ (κ : String → Rat) (acc : VE.Calc.QLin) (ls : List VE.Calc.QLin),
+    VE.Calc.QLin.eval κ (List.foldl VE.Calc.QLin.add acc ls) =
+      VE.Calc.QLin.eval κ acc + (List.map (VE.Calc.QLin.eval κ) ls).sum
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 2190904397
+theorem VE.Calc.QLin.eval_of_cancel
+  ∀ (κ : String → Rat) (L : VE.Calc.QLin),
+    (∀ (n : String), n ∈ List.map (fun x => x.fst) L.coeffs → L.coeffOf n = 0) → VE.Calc.QLin.eval κ L = L.const
+  -- uses VE.Calc.QLin.coeffOf@VE.Calc.Linear VE.Calc.QLin.coeffs@VE.Calc.Linear VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 3080678736
+theorem VE.Calc.QLin.eval_scale
+  ∀ (κ : String → Rat) (w : Rat) (L : VE.Calc.QLin),
+    VE.Calc.QLin.eval κ (VE.Calc.QLin.scale w L) = w * VE.Calc.QLin.eval κ L
+  -- uses VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.scale@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 3830586438
+theorem VE.Calc.Step.derive_sound
+  ∀ (links : List (String × String)) (known : List VE.Calc.QFact) (st : VE.Calc.Step) (f : VE.Calc.QFact),
+    VE.Calc.Step.derive links known st = Option.some f →
+      ∀ (κ : String → Rat),
+        (∀ (g : VE.Calc.QFact), g ∈ known → VE.Calc.QFact.Holds κ g) →
+          (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ f
+  -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step.derive@VE.Calc.Derive VE.Calc.Step@VE.Calc.Derive
+  -- expr 1985840783
 theorem VE.Calc.Val.bin_exhausted
   ∀ (f : Rat → Rat → VE.Calc.Val) (a b : VE.Calc.Val),
     (∀ (x y : Rat), f x y ≠ VE.Calc.Val.exhausted) →
@@ -2793,6 +2879,21 @@ theorem VE.Calc.fold_values_other
     ¬n ∈ List.map VE.Calc.Decl.name ds → List.foldl (fun τ d m => if m = d.name then d.valueUnder τ else τ m) σ ds n = σ n
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.valueUnder@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
   -- expr 2916287160
+theorem VE.Calc.lt_of_sq_lt
+  ∀ (x a b : Rat), 0 ≤ x → 0 < b → x * x < a → a ≤ b * b → x < b
+  -- uses
+  -- expr 3009184074
+theorem VE.Calc.rsum_append
+  ∀ (l m : List Rat), (l ++ m).sum = l.sum + m.sum
+  -- uses
+  -- expr 1294575389
+theorem VE.Calc.sum_split
+  ∀ (κ : String → Rat) (l : List (String × Rat)) (n : String),
+    (List.map (fun p => p.snd * κ p.fst) l).sum =
+      (List.map (fun x => x.snd) (List.filter (fun x => x.fst == n) l)).sum * κ n +
+        (List.map (fun p => p.snd * κ p.fst) (List.filter (fun p => !p.fst == n) l)).sum
+  -- uses
+  -- expr 2525146929
 theorem VE.Calc.valuesL_agrees
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds → ∀ (n : String), VE.Calc.Val.Agrees✝ (VE.Calc.valuesL ds n) (VE.Calc.values ds n)
@@ -2850,6 +2951,15 @@ theorem VE.Calc.values_stated
         d ∈ ds → ∀ (q : Rat), d.source = VE.Calc.Source.stated q → VE.Calc.values ds d.name = Option.some q
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.stated@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
   -- expr 3273210734
+theorem VE.Calc.weighted_nonneg
+  ∀ (κ : String → Rat) (ws : List Rat) (fs : List VE.Calc.QFact),
+    (∀ (w : Rat), w ∈ ws → 0 ≤ w) →
+      (∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f) →
+        0 ≤ (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) ws fs).sum ∧
+          ((List.zipWith (fun w f => Decidable.decide (0 < w) && f.strict) ws fs).any id = Bool.true →
+            0 < (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) ws fs).sum)
+  -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact.form@VE.Calc.Linear VE.Calc.QFact.strict@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear
+  -- expr 1703173439
 theorem VE.Cardinality.CEnv.WellFormed.finiteDeclared
   ∀ {E : VE.Cardinality.CEnv}, E.WellFormed → ∀ (s : String), s ∈ E.finite → s ∈ E.q.sorts
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Time.QEnv.sorts@VE.Time.Syntax

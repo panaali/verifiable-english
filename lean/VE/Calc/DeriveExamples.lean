@@ -73,6 +73,9 @@ def forged : Farkas := ⟨[0, 1, -1, -2/5]⟩
 #guard !Derivation.check (h6 (2/100)) links (below (1/3)) ⟨h6Steps⟩
 #guard Derive.run (h6 (2/100)) links (fact (1/3) [("r", -1)] false) matches .follows _
 
+/-! A reported point gives 0 to an unknown it does not list: here s, which meets the link s = r² at r = 0. -/
+#guard Derive.run [] links (below 0) = .counterexample [("r", 0)]
+
 /-! The budget: 17 unknowns are beyond the 16 the search takes. -/
 #guard Derive.run ((List.range 17).map fun i => fact 0 [(s!"x{i}", 1)] false) [] (fact 0 [("x0", 1)] true) =
   .unknown (.limit .derivationSteps)
