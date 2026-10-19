@@ -1,0 +1,70 @@
+== write gitattributes
+== write wire-contract
+== write english-grammar
+== write english-lexicon-fixtures
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/seyran/code/ve-eff-scratch-20261019/conformance/english_lean_lexicon.py", line 611, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/conformance/english_lean_lexicon.py", line 601, in main
+    LEAN_FIXTURES.write_text(lean_fixtures())
+                             ~~~~~~~~~~~~~^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/conformance/english_lean_lexicon.py", line 507, in lean_fixtures
+    words = fixture_vocabulary(corpus, name)
+  File "/home/seyran/code/ve-eff-scratch-20261019/conformance/english_lean_lexicon.py", line 358, in fixture_vocabulary
+    env = fixture_environment(corpus, name)
+  File "/home/seyran/code/ve-eff-scratch-20261019/conformance/english_lean_lexicon.py", line 352, in fixture_environment
+    return Environment(data)
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/assurance.py", line 127, in guarded
+    return fn(*args, **kwargs)
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/environment.py", line 187, in __init__
+    validated_environment(self, data, python)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/validation.py", line 91, in validated_environment
+    return construct_after_lean(decode, cache,
+                    lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
+                    lambda built, row: row.get("environment_id") == built.environment_id,
+                    "environment",
+                    lambda built, row: (object.__setattr__(built, "_environment_id", row["environment_id"]), built)[1])
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/validation.py", line 66, in construct_after_lean
+    row = ask()
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/validation.py", line 92, in <lambda>
+    lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
+            ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/relay.py", line 135, in decide
+    return decided(_pool_for(executable).run_bound(mode, wire_checked(cases), timeout=timeout))
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 980, in run_bound
+    return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 970, in _on_idle
+    return call(service)
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 980, in <lambda>
+    return self._on_idle(lambda service: service.run_bound(mode, cases, timeout=timeout))
+                                         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 887, in run_bound
+    entries.extend(self._run_chunk(mode, chunk, timeout))
+                   ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 843, in _run_chunk
+    response = self._handle_request(mode, chunk, timeout)
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 871, in _handle_request
+    response = self._request(mode, texts, timeout, environments=environments,
+                             expanded=[item.expanded(decoded) for item in chunk])
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 833, in _request
+    _, response = self.exchange(mode, cases_text, len(chunk), timeout=timeout, budget=budget, texts=chunk,
+                  ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                environments=environments, expanded=expanded)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 755, in exchange
+    self._ensure()
+    ~~~~~~~~~~~~^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 468, in _ensure
+    self._spawn()
+    ~~~~~~~~~~~^^
+  File "/home/seyran/code/ve-eff-scratch-20261019/ve/backends/lean_service.py", line 485, in _spawn
+    raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
+                             f"expected {', '.join(sorted(allowed))}")
+ve.errors.CheckerUnavailable: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11, expected 003263a44ac3dc5ed24e7476851fa59048eb9b3c222bed7df06d39928a83c93a, 00f91efe2db75ddd9f97624a14830ae3e15135c0ba533483c3c503feb9852da1, 011c8f45fcb96f7b47358244c37cf3287d19981640b4d847e5
+regen_generated: failed: english-lexicon-fixtures
