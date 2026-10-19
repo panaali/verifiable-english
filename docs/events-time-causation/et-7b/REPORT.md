@@ -1,9 +1,9 @@
 # et-7b build report: scenario values for `alternatives@0` with the completion (ET-7, second part)
 
-**DRI signature needed: DELTA row 1** (`alt-validate` with `norm-defaults@0` is now answered where et-7 refused it
-by name). This is the plan's ET-7 deliverable, but widening what is accepted is outside every standing ruling. The
-feature-feed rules forbid citing SYNTHESIS.md as a signature, and et-7's review left that citation to the DRI (F4).
-So the item stops at review-ready's [delta] check by design (L52) until the DRI signs the row. Row 2 (trust) is R16.
+**DELTA row 1 SIGNED by the DRI 2026-10-19 (dri-decisions-20261019.md #1)** (`alt-validate` with `norm-defaults@0`
+is now answered where et-7 refused it by name): an intended widening of the events/alternatives feature, on the
+condition that the branch tests the new answers and the budget-cut UNKNOWN naming `MAX_UNSAID_ATOMS` (it does:
+`tests/test_alternatives_fill.py`). Row 2 (trust) is R16.
 Branch `feature/et-7b`, synced with main `cb033316a`. Next item: **et-8** (the Asimov and ET-1 pilot on the
 completion).
 
