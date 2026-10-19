@@ -85,9 +85,9 @@ All Python (no product code changed). Each was applied, its test run, and the fi
 ## Trust, size, pilot bytes
 
 - Trust: K +0, S +0, V +0; `tools/trust_map.py --check` PASS. No R16 row is needed.
-- Size: 487 hand-written lines added or changed (harnesses 287, tests 113, READMEs 64 added and 60 removed,
-  DELTA, mutants and this report about 130). The generated evidence (`component.json`, the two result files) is
-  not counted.
+- Size: 614 hand-written lines added, 62 removed (`git diff --numstat` against the merge base): harnesses 287,
+  tests 113, READMEs 64, this report, DELTA and mutants 150. That is just above ~600, and the code alone is 400.
+  The generated evidence (`component.json`, the two result files) is not counted.
 - Pilot bytes: 0 new bytes (plan estimate 0). Fidelity of ET-1's bytes: phase 1's FOLLOWABLE for u0172.s01 and
   u0172.s02 (332 B) rested on the allow completion and its legend. On the completion it holds only if the audit
   reads u0172.s02 as a permission. Nothing is claimed before that audit.
