@@ -114,12 +114,12 @@ def test_p1_measured_zero_of_three():
     assert RECORD["measured"]["p1_verdicts"] == {a["set"]: a["verdict"] for a in answers}
 
 
-def _saved_strict(set_id):
-    """The set's `strict` candidate as the saved `CE4` document has it."""
+def _saved_candidate(set_id, candidate):
+    """The set's candidate as the saved `CE4` document has it."""
     meta, _ = front((EVIDENCE / "p2-ce4.ve.md").read_bytes())
     [R] = [R for R in meta["reading_sets"] if R["id"] == set_id]
-    [strict] = [a for a in R["readings"] if a["id"] == "strict"]
-    return strict["content"]
+    [chosen] = [a for a in R["readings"] if a["id"] == candidate]
+    return chosen["content"]
 
 
 @pytest.mark.parametrize("set_id", SETS)
@@ -127,10 +127,11 @@ def test_p1_controls_are_the_p1_document_with_one_change(set_id):
     """Each saved control is the saved P-1 document with only its unit's content changed (to the saved `strict`
     candidate, or none), or with `soft-norms@0` also dropped from the profiles."""
     meta, text = front((EVIDENCE / f"p1-{set_id}.ve.md").read_bytes())
-    assert set(baseline.CONTROLS) == {"strict", "no-content", "strict-no-soft"}
+    assert baseline.CONTROLS == {"strict": ("strict", True), "no-content": (None, True),
+                                 "strict-no-soft": ("strict", False)}
     for control, (candidate, soft) in baseline.CONTROLS.items():
         expected = json.loads(json.dumps(meta))
-        expected["units"][0]["content"] = None if candidate is None else _saved_strict(set_id)
+        expected["units"][0]["content"] = None if candidate is None else _saved_candidate(set_id, candidate)
         if not soft:
             expected["environment"]["profiles"].remove("soft-norms@0")
         data = (EVIDENCE / baseline.control_name(control, set_id)).read_bytes()

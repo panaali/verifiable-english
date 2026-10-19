@@ -3,7 +3,9 @@
 No DRI signature is reserved: there are no DELTA rows (no product code changed) and trust grows by +0.
 
 **Result.** I recorded the baseline on `main` `702ff742`, before DF-1b and DF-3. P-1 is **0 of 3** probes answered: each
-standalone default answers NONE. The plan expected "0". P-2 is **SOME** for each of the three sets, as the plan
+standalone default answers NONE. The plan expected "0", but that NONE is over 0 fixed premises: today's
+`--conclusion` route reads no rule of a `soft-norms@0` document, so the 0 measures that, not an exception taken
+(review F1; the strict, no-content and no-soft controls are in the record). P-2 is **SOME** for each of the three sets, as the plan
 expected. The answers are saved verbatim in `docs/research/evidence/defeasible/baseline/baseline.json`, and the report
 is section 6 of `docs/research/defeasible-phase1.md`.
 
@@ -30,6 +32,7 @@ question, and `tests/test_readings_sd_ce4.py` already holds it. Nothing was miss
 | Task: a test of the SAVED evidence only | `tests/test_defeasible_baseline_evidence.py`, 10 tests. They run neither `ve` nor git (`tools/history_tests.py --check` passes) |
 | Task: the plan files copied verbatim if `main` lacks them | `ba4263ea5`: `docs/spec/defeasible-PLAN.md`, `docs/spec/defeasible.md` and `docs/research/defeasible-phase1.md`, byte-identical to `00a45ce36` |
 | DRI DF1–DF7, X1–X3 | none of them changes DF-0.3. DF4 puts DF-1b and DF-3 in the document-mode queue; this item edits no queued file |
+| Review F1: correct section 6, save the strict-candidate control, test it from the saved record, note it for DF-1b | `0278052eb`: section 6 rewritten with a controls table and a "For DF-1b" paragraph; `baseline.json` `fixed_premises`, `controls`, `measured.p1_fixed_premises`, `measured.control_verdicts`; `control-<name>-<set>.ve.md` ×9; `::test_p1_controls_are_the_p1_document_with_one_change`, `::test_p1_none_is_the_empty_premise_set_not_an_exception`, `::test_p1_measured_zero_of_three`, `::test_report_section_states_the_recorded_values` |
 | L70: part documents only | the largest document is `CE4`, at 19.7 kB |
 
 **Method notes.** "Today's kinds" means today's public route, `ve document readings <doc> --conclusion <question>`.
@@ -43,7 +46,9 @@ answer, so a P-1 probe counts as answered only when the verdict is ALL (`baselin
 - The plan's 0.1/0.2 tables and section 4 of the report still read "DF-0.3 DEFERRED". I left the copies verbatim, and
   section 6 records the result. Updating the plan's status line is the planner's job.
 - I recorded the evidence twice: at `96ec79657`, and again at `cd8eba4a4` by the final script. The answers were the
-  same, and so were the document bytes. Only the date, the head and the host load changed.
+  same, and so were the document bytes. Only the date, the head and the host load changed. A third recording, for
+  review F1 at `0278052eb`, added the controls and the fixed-premise counts; the P-1 and P-2 answers, documents and
+  questions are again byte-identical.
 
 ## Seeded bugs
 
@@ -60,20 +65,41 @@ All of them are in `docs/defeasible/df-03/mutants.json`. Each one was planted, r
 5. `docs/research/defeasible-phase1.md`: a P-2 cell changed to ALL. Failed
    `::test_report_section_states_the_recorded_values`.
 
+For review F1 (entries marked `"finding": "F1"`):
+
+6. `baseline.json`: a P-1 document's `fixed_premises` 0 → 4. Failed `::test_p1_measured_zero_of_three` (and the
+   report test).
+7. `baseline.json`: the `strict` control's `fixed_premises` 0 → 4. Failed
+   `::test_p1_none_is_the_empty_premise_set_not_an_exception[force-u0156-s03]`.
+8. `baseline.json`: the no-soft control's ALL → NONE. Failed
+   `::test_p1_none_is_the_empty_premise_set_not_an_exception[force-u0263-s04-p2]` (and the report test).
+9. `research/defeasible/baseline_cases.py`: the `strict` control takes the `default` candidate. Failed
+   `::test_p1_controls_are_the_p1_document_with_one_change` ×3. It survived the first version of that test, which
+   ignored the candidate's id; the test now looks the candidate up by id and pins `CONTROLS`.
+10. `docs/research/defeasible-phase1.md`: the "strict countermodel the plan expects" claim restored. Failed
+    `::test_report_section_states_the_recorded_values` (PROBE F1 passes only without it).
+11. `docs/research/defeasible-phase1.md`: a control cell ALL → NONE. Failed
+    `::test_report_section_states_the_recorded_values`.
+
 No product code changed, so there is no Lean, `ve/` or Rust seeded bug to plant.
 
 ## Trust, size, pilot bytes, next
 
 - Trust: `tools/trust_map.py --check` reports K +0, S +0, D +0, G +0 and trusted +0 against 702ff742 (PASS). There is
   no allowance and no FOLLOW-UPS row.
-- Size: 510 hand-written lines, counted with `git diff --numstat` from the merge base and leaving out the three copied
-  files. That is the 37-line report section, 180 lines of scripts, 145 of test, 112 of this report and 36 of
-  `mutants.json`. The script also wrote 177 lines of evidence, which count as generated (687 lines if counted).
+- Size: 691 hand-written lines, counted with `git diff --numstat` from the merge base and leaving out the three copied
+  files. That is the 61-line report section, 214 lines of scripts, 197 of test, 141 of this report and 78 of
+  `mutants.json`. The script also wrote 396 lines of evidence, which count as generated (1,087 lines if counted). Over
+  the ~600 limit: review F1's controls, their tests and their record added 179 hand-written and 219 evidence lines.
 - Pilot bytes: 0 B moved. This is the "before" of the constitution's defaults path (8,764 B primary, research share). It
   claims nothing.
 - Pre-existing red: none of `main-known-red.txt` is in the selected set.
 - Next: df-1a (Lean), which may land before or after this record, and then df-1b, which can now cite P-1's measured
-  "0" and claim "0 → 3". DF-3 can cite P-2's measured SOME.
+  "0" and claim "0 → 3". DF-3 can cite P-2's measured SOME. For DF-1b: today's `--conclusion` route drops a soft
+  document's rules, so P-1's strict half must not be checked there (section 6, "For DF-1b").
+- Follow-up on `main` (the review's, not this item's): on a `soft-norms@0` document, `ve document readings
+  --conclusion` answers a definite NONE even when a strict norm unit entails the question; it should answer ALL or
+  refuse. The `strict` control is that case.
 
 ## Tests run
 

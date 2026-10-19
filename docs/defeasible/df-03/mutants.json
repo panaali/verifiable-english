@@ -31,6 +31,48 @@
       "mutation": "| NONE | SOME | -> | NONE | ALL |",
       "test": "tests/test_defeasible_baseline_evidence.py::test_report_section_states_the_recorded_values",
       "killed": true
+    },
+    {
+      "finding": "F1",
+      "file": "docs/research/evidence/defeasible/baseline/baseline.json",
+      "mutation": "p1[force-u0036-s05].fixed_premises and measured.p1_fixed_premises 0 -> 4",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_p1_measured_zero_of_three",
+      "killed": true
+    },
+    {
+      "finding": "F1",
+      "file": "docs/research/evidence/defeasible/baseline/baseline.json",
+      "mutation": "controls[strict, force-u0156-s03].fixed_premises 0 -> 4",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_p1_none_is_the_empty_premise_set_not_an_exception[force-u0156-s03]",
+      "killed": true
+    },
+    {
+      "finding": "F1",
+      "file": "docs/research/evidence/defeasible/baseline/baseline.json",
+      "mutation": "controls[strict-no-soft, force-u0263-s04-p2] ALL -> NONE (stdout, verdict, measured)",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_p1_none_is_the_empty_premise_set_not_an_exception[force-u0263-s04-p2]",
+      "killed": true
+    },
+    {
+      "finding": "F1",
+      "file": "research/defeasible/baseline_cases.py",
+      "mutation": "CONTROLS \"strict\": (\"strict\", True) -> (\"default\", True)",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_p1_controls_are_the_p1_document_with_one_change",
+      "killed": true
+    },
+    {
+      "finding": "F1",
+      "file": "docs/research/defeasible-phase1.md",
+      "mutation": "\"it does not say that the rule's exception was taken.\" -> \"it is the strict countermodel the plan expects.\"",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_report_section_states_the_recorded_values",
+      "killed": true
+    },
+    {
+      "finding": "F1",
+      "file": "docs/research/defeasible-phase1.md",
+      "mutation": "| force-u0156-s03 | 0 | NONE | NONE | ALL | -> ... | NONE |",
+      "test": "tests/test_defeasible_baseline_evidence.py::test_report_section_states_the_recorded_values",
+      "killed": true
     }
   ]
 }
