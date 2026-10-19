@@ -197,6 +197,8 @@ def long (n : Nat) : String := "ab" ++ String.join (List.replicate n " ab")
   some "InvalidInput: fixed phrase 'the court For' must begin and end with a word other than and, or, nor and for"
 #guard (decodeFixed ["court, tribunal"]).isOk
 #guard errFixed ["the court", "the  court"] == some "InvalidInput: fixed phrase 'the  court' is declared twice"
+#guard errFixed ["one two", "the court", "the Court", "the court"] ==
+  some "InvalidInput: fixed phrase 'the court' is declared twice"
 -- a phrase that overlaps itself: its suffix `a b` begins it
 #guard errFixed ["a b a b"] == some "InvalidInput: fixed phrases 'a b a b' and 'a b a b' overlap, or one holds the other"
 #guard errFixed ["one two three", "two three"] ==
@@ -205,6 +207,8 @@ def long (n : Nat) : String := "ab" ++ String.join (List.replicate n " ab")
   some "InvalidInput: fixed phrases 'one two' and 'two three' overlap, or one holds the other"
 #guard (decodeFixed ["one two", "three four", "two one"]).isOk == false
 #guard (decodeFixed ["one two", "three four"]).isOk
+#guard fixedOk ["one two", "three four"] && !fixedOk ["one two", "two three"] && fixedOk []
+#guard errFixed [""] == some "InvalidInput: fixed phrase '' must hold two words or more"
 
 /-! ### Each step of `check` and `lex` -/
 
@@ -231,6 +235,8 @@ def long (n : Nat) : String := "ab" ++ String.join (List.replicate n " ab")
 -- a clause word after a comma, in any case; the literal word `slot` is not one
 #guard errS (chk [] 1 "{0} seek asylum, Then rest") ==
   some "InvalidInput: act phrase for p uses the clause word 'Then'; write the condition in the rule's guard"
+#guard errS (chk [] 1 "{0} go then, rest") ==
+  some "InvalidInput: act phrase for p uses the clause word 'then'; write the condition in the rule's guard"
 #guard errS (chk ["seek asylum"] 1 "{0} seek asylum, rest") ==
   some "InvalidInput: act phrase for p has a comma outside a fixed phrase"
 #guard okS (chk [] 1 "{0} book a slot") == some "{0} book a slot"
