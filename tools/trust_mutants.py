@@ -96,10 +96,10 @@ EVALUATED = {"eval", "eval!"}  # the commands whose `info` is a value Lean compu
 # declaration, or one of these elaboration errors outside every tactic block of it (`in_tactic`), and every error
 # there is one. Any other error there makes the mutant UNKNOWN: a tactic that fails, Lean's budget, a type mismatch
 # (a proof term that is false or whose reduction got stuck gives one too, review F11), an instance or implicit
-# argument Lean could not synthesize (instance search reports its own budget, size and heartbeats, so: hunt H2,
-# H3), and anything not classified.
-REFUSED = re.compile(r"[Uu]nknown (?:identifier|constant)|Invalid (?:field|projection|pattern)|[Ff]unction expected|"
-                     r"Missing cases|ambiguous, possible interpret")
+# argument Lean could not synthesize, and a term that is no function (instance search, a coercion's included, fails
+# alike on its own budget, size and heartbeats: hunt H2, H3, N5), and anything not classified.
+REFUSED = re.compile(r"[Uu]nknown (?:identifier|constant)|Invalid (?:field|projection|pattern)|Missing cases|"
+                     r"ambiguous, possible interpret")
 # Lean gave no answer (review F10): it ran out of budget (Lean's runtime exceptions, maxRecDepth and maxHeartbeats,
 # and the kernel's), or `decide`/`native_decide` could not reduce or evaluate the instance. Since F11 no verdict
 # depends on it (an answer is what `REFUTED` names): it marks the detail, and an `#eval`'s `info` that quotes it is
@@ -146,6 +146,7 @@ class Mutant:
     status: str = "NOT RUN"
     detail: str = ""
     edit: tuple[int, str] = (0, "")  # what `run` writes: text[start:edit[0]] -> edit[1] (`relined`)
+    shared: bool = False  # another command starts on the declaration's last line (hunt N10)
 
 
 def group(t: str, i: int, step: int = 1) -> int:
@@ -330,6 +331,8 @@ def classify(kind: str, span: str) -> str:
     Any other command, and one this cannot read, is other: an error there is no kill. A check whose outcome a cut
     proof still changes (`#eval` refuses a value that depends on `sorry`) is caught by the control build in `run`."""
     bare = unwrapped(span)
+    if len(re.findall(r"(?<![\w.'])(?:example|theorem|lemma|def|abbrev|instance|#[a-z_]+!?)(?![\w'])", bare)) > 1:
+        return "other"  # two commands on its lines (hunt N7): trust_map's spans are whole lines
     proved = CHECK_PROOF.search(bare)
     tactics = len(TACTIC.findall(bare)) - (len(TACTIC.findall(proved[0])) if proved else 0)
     if kind == "theorem" or kind == "command" and EXAMPLE.search(bare):
@@ -345,43 +348,78 @@ def classify(kind: str, span: str) -> str:
     return "check" if name in CHECK_COMMANDS else "other"
 
 
-# Lean's answer to "which mutated definitions does each named check statement read" (`dependencies`): the constants
-# its type and value use, transitively through definitions in this tree, never into a theorem (a proof is no
-# value) or a `Decidable` instance (`decide p` is `p`'s value whatever instance decides it: hunt H4).
+# Lean's answer to "what does each check state, and through what" (`dependencies`), from elaborators run at the
+# check's own position (its namespace, `open`s and section variables): `tm_trust_probe` replaces the proof of a
+# `decide`/`rfl` check, `#tm_trust_guard` and `#tm_trust_eval` replace `#guard` and `#eval`. Each walks the
+# constants the statement uses, transitively through definitions of this tree, never into a theorem's proof, and
+# prints per check `<k>` and then:
+# - `<k> <definition>` for each mutated definition the statement reads, never through a `Decidable` instance
+#   (`decide p` is `p`'s value whatever instance decides it: hunt H4);
+# - `<k> ! <theorem>` for each theorem of this tree behind such an instance, the statement's own included (a cut
+#   one makes `decide` compute through the mutated definition where the statement does not: hunt N1, N2);
+# - `<k> hyps` when the check's goal has a hypothesis (a section `variable` included: hunt H1, N8);
+# - `<k> ?` when it reflects on the environment (it reads a definition's text, as `#print` does: hunt N3).
 READS = """
-open Lean in
-#eval show MetaM Unit from do
+open Lean Meta in
+def tmTrustWalk (k : Name) (roots : List (Expr × Bool)) : MetaM Unit := do
   let env ← getEnv
   let names (xs : List String) : NameSet := xs.foldl (fun s n => s.insert n.toName) {}
   let targets := names TARGETS
   let mods := names MODULES
+  let reflect := [``Lean.Environment, ``Lean.ConstantInfo, ``Lean.MonadEnv]
   let decidable (t : Expr) : Bool := t.getForallBody.getAppFn.constName?.any
     ([``Decidable, ``DecidableEq, ``DecidablePred, ``DecidableRel].contains ·)
-  let used (es : List Expr) : List Name := es.foldl (fun (a : List Name) (e : Expr) => a ++ e.getUsedConstants.toList) []
-  for (n, ci) in env.constants.map₂.toList do
-    if let some k := n.components.find? (·.toString.startsWith "tmChk_") then
-      IO.println s!"{k}"
-      let mut seen : NameSet := {}
-      let mut todo := used (match ci with | .defnInfo d => [d.type, d.value] | c => [c.type])
-      while !todo.isEmpty do
-        let c := todo.head!
-        todo := todo.tail!
-        if seen.contains c then continue
-        seen := seen.insert c
-        if targets.contains c then IO.println s!"{k} {c}"
-        if (env.getModuleIdxFor? c).any (fun i => !mods.contains env.header.moduleNames[i.toNat]!) then continue
-        match env.find? c with
-        | some (.thmInfo _) => pure ()
-        | some (.defnInfo d) => if !decidable d.type then todo := todo ++ used [d.type, d.value]
-        | some info => if !decidable info.type then todo := todo ++ used [info.type]
-        | none => pure ()
+  let used (es : List Expr) (behind : Bool) : List (Name × Bool) :=
+    es.foldl (fun a e => a ++ e.getUsedConstants.toList.map (·, behind)) []
+  IO.println s!"{k}"
+  let mut seen : NameSet := {}
+  let mut seenBehind : NameSet := {}
+  let mut todo := roots.foldl (fun a (e, b) => a ++ used [e] b) []
+  while !todo.isEmpty do
+    let (c, behind) := todo.head!
+    todo := todo.tail!
+    if behind then
+      if seenBehind.contains c then continue
+      seenBehind := seenBehind.insert c
+    else
+      if seen.contains c then continue
+      seen := seen.insert c
+    if !behind && targets.contains c then IO.println s!"{k} {c}"
+    let some info := env.find? c | continue
+    if reflect.contains c || info.type.getUsedConstants.any reflect.contains then IO.println s!"{k} ?"
+    if (env.getModuleIdxFor? c).any (fun i => !mods.contains env.header.moduleNames[i.toNat]!) then continue
+    let behind' := behind || decidable info.type
+    match info with
+    | .thmInfo _ => if behind then IO.println s!"{k} ! {c}"
+    | .defnInfo d => todo := todo ++ used [d.type, d.value] behind'
+    | _ => todo := todo ++ used [info.type] behind'
+
+open Lean Elab Tactic Meta in
+elab "tm_trust_probe " k:ident : tactic => do
+  let goal ← instantiateMVars (← getMainTarget)
+  if (← getLCtx).foldl (fun n d => if d.isImplementationDetail then n else n + 1) 0 > 0 then
+    IO.println s!"{k.getId} hyps"
+  let inst ← try pure [(← synthInstance (mkApp (mkConst ``Decidable) goal), true)] catch _ => pure []
+  tmTrustWalk k.getId ((goal, false) :: inst)
+
+open Lean Elab Command Term Meta in
+elab "#tm_trust_guard " k:ident e:term : command => liftTermElabM do
+  let e ← Term.elabTermEnsuringType e (mkConst ``Bool)
+  Term.synthesizeSyntheticMVarsNoPostponing
+  tmTrustWalk k.getId [(← instantiateMVars e, false)]
+
+open Lean Elab Command Term Meta in
+elab "#tm_trust_eval " k:ident e:term : command => liftTermElabM do
+  let e ← Term.elabTerm e none
+  Term.synthesizeSyntheticMVarsNoPostponing
+  tmTrustWalk k.getId [(← instantiateMVars e, false)]
 """
 
 
 def named(text: str, roles: list[tuple]) -> tuple[str, dict[str, tuple[int, int]]]:
     """`text` with each check that can kill (a `#guard`, an `#eval`, an `example` or theorem proved by `decide`,
-    `native_decide` or `rfl`) written as a declaration `tmChk_<n>` whose type (an `example`'s statement) or value
-    (a command's term) is what the check states, its `#guard_msgs … in` blanked; and the spans by name."""
+    `native_decide` or `rfl`) handed to `READS`'s elaborators in place, as `tmChk_<first line>`, its
+    `#guard_msgs … in` blanked; and the spans by name."""
     starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n"), len(text) + 1]
     spans: dict[str, tuple[int, int]] = {}
     for first, last, role, *_ in sorted(roles, reverse=True):
@@ -391,13 +429,12 @@ def named(text: str, roles: list[tuple]) -> tuple[str, dict[str, tuple[int, int]
         if role != "check":
             continue
         span = "".join(" " if bare[i] == " " and code[i] != " " else text[lo + i] for i in range(len(code)))
-        if command(code) in ("guard", "eval", "eval!"):
+        if (which := command(code)) in ("guard", "eval", "eval!"):
             at = re.search(r"#(?:guard|eval!?)(?![\w!])", bare)
-            end = len(bare.rstrip())
-            span = f"{span[:at.start()]}noncomputable def {name} := ({span[at.end():end]}){span[end:]}"
-        elif command(code) is None and (proved := CHECK_PROOF.search(bare)):
-            head = re.search(r"\b(?:example|theorem\s+[^\s:({\[⦃]+)", bare)
-            span = f"{span[:head.start()]}theorem {name}{span[head.end():proved.start()]} := sorry{span[proved.end():]}"
+            head = "".join(" " if code[i] == " " and not span[i].isspace() else span[i] for i in range(at.start()))
+            span = f"{head}#tm_trust_{which.rstrip('!')} {name}{span[at.end():]}"  # comments blanked: no docstring
+        elif which is None and (proved := CHECK_PROOF.search(bare)):
+            span = f"{span[:proved.start()]}:= by tm_trust_probe {name}; exact sorry{span[proved.end():]}"
         else:
             continue
         spans[name] = (first, last)
@@ -406,23 +443,33 @@ def named(text: str, roles: list[tuple]) -> tuple[str, dict[str, tuple[int, int]
 
 
 def dependencies(lake, files: dict[str, tuple[Path, list[tuple]]], definitions: list[str], modules: list[str],
-                 folder: Path, jobs: int) -> dict[tuple[str, tuple[int, int]], set[str]]:
-    """(file, (first, last line)) -> the mutated definitions each check's statement reads, as Lean computes it
-    (`named`, `READS`) in a copy of the file under `folder` that `lake("env", "lean", copy)` elaborates; a check
-    Lean could not name or read is absent (no kill). `files`: key -> (its path, its roles)."""
+                 folder: Path, jobs: int) -> dict[tuple[str, tuple[int, int]], dict[str, set[str]]]:
+    """(file, (first, last line)) -> {"reads": the mutated definitions its statement reads, "behind": the theorems
+    behind its `Decidable` instances, "flags": `hyps`, `?`}, as `READS` prints it for a copy of the file under
+    `folder` that `lake("env", "lean", copy)` elaborates (`named`; the probe's elaborators after its imports). A
+    check Lean could not read is absent (no kill). `files`: key -> (its path, its roles)."""
     probe = READS.replace("TARGETS", json.dumps(definitions, ensure_ascii=False)).replace(
         "MODULES", json.dumps(modules, ensure_ascii=False))
 
     def one(item: tuple[int, tuple[str, tuple[Path, list]]]) -> dict:
         i, (key, (path, roles)) = item
         text, spans = named(path.read_text(), roles)
+        lines = text.split("\n")
+        after = max((n + 1 for n, line in enumerate(code_only(text).split("\n")) if line.startswith("import ")),
+                    default=0)
         copy = folder / f"reads{i}.lean"
-        copy.write_text("import Lean\n" + text + "\n" + probe)
+        copy.write_text("\n".join(["import Lean", *lines[:after], probe, *lines[after:]]))
         out: dict = {}
         for line in lake("env", "lean", str(copy))[1].splitlines():
-            name, _, definition = line.partition(" ")
+            name, _, rest = line.partition(" ")
             if name in spans:
-                out.setdefault((key, spans[name]), set()).update([definition] if definition else [])
+                entry = out.setdefault((key, spans[name]), {"reads": set(), "behind": set(), "flags": set()})
+                if rest.startswith("! "):
+                    entry["behind"].add(rest[2:])
+                elif rest in ("hyps", "?"):
+                    entry["flags"].add(rest)
+                elif rest:
+                    entry["reads"].add(rest)
         return out
 
     folder.mkdir(parents=True, exist_ok=True)
@@ -478,7 +525,8 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
             first, edit = text.count("\n", 0, s) + 1, relined(text, s, e, new, hi)
             if lines & set(range(first, first + text.count("\n", s, e) + 1)):  # its lines run over the blanks it takes
                 found.append(Mutant("", c.module, first, d.name, op, s, e, (r.start[0], max(
-                    r.end[0], text.count("\n", 0, edit[0]))), text[s:e], new, edit=edit))
+                    r.end[0], text.count("\n", 0, edit[0]))), text[s:e], new, edit=edit, shared=bool(
+                    code_only(text)[hi:text.find("\n", hi) % (len(text) + 1)].strip())))
     seen: Counter = Counter()  # each tier in turn; in it, the k-th of every (definition, operator) first
     keys = []
     for i, m in enumerate(found):
@@ -582,9 +630,9 @@ def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, 
            where=lambda f: f"lean/{f}") -> tuple[str, str]:
     """KILLED or UNKNOWN for the errors (file, line, message) a build left after the cuts and its control (review
     F11): KILLED only when every one is KILL (`judge`), or RFL and `decide` then refutes its check's statement, and
-    every such check's statement reads the mutated definition (`reads`: (file, (first, last line)) -> True when
-    Lean finds the definition in it, `dependencies`; a refutation of a statement that does not read it came through
-    a bridge the tool cut, an instance or `@[csimp]` lemma whose proof is `sorry`: hunt H4, H5). `rebuild` builds
+    every such check can refute the mutated definition (`reads`: (file, (first, last line)) -> None, else why not:
+    Lean does not find the definition in its statement, or its `decide` rests on a theorem the tool cut, `run`'s
+    `reading` of `dependencies`: hunt H4, N1, N2). `rebuild` builds
     with the given files' texts (those checks' `rfl` replaced: `decided`) and returns the errors, None when none is
     located; a rewritten check that gives no error there, or an error that is no refutation, refutes nothing, and any
     other error must still be KILL. `read`, `checkout`: a file's built and checkout text; `roles`: file -> (first,
@@ -606,9 +654,8 @@ def settle(errors: list[tuple[str, int, str]], read, checkout, roles: dict[str, 
     rows = verdicts(errors, {})
     if bad := next((x for x in rows if x[3] == NONE), None):
         return "UNKNOWN", f"{where(bad[0][0])}:{bad[1]}: {brief(bad[2])}"
-    if bad := next((x for x in rows if not reads(x[0])), None):
-        return "UNKNOWN", (f"{where(bad[0][0])}:{bad[1]}: {brief(bad[2])} (its statement does not read the mutated "
-                           "definition, or Lean could not say)")
+    if bad := next(((x, why) for x in rows if (why := reads(x[0]))), None):
+        return "UNKNOWN", f"{where(bad[0][0][0])}:{bad[0][1]}: {brief(bad[0][2])} ({bad[1]})"
     confirmed = ""
     if pending := {x[0]: x for x in rows if x[3] == RFL}:
         now: dict[str, tuple[str, str]] = {}  # the same rewrite in the checkout's text, which `judge` compares
@@ -673,7 +720,9 @@ def role(tree: Tree, file: str, line: int, m: Mutant) -> str:
 
 def cut_proof(path: Path, first: int, last: int) -> bool:
     """The theorem or `example` on lines first..last of `path` with its proof replaced by `sorry` and its
-    `#guard_msgs … in` wrappers blanked (the `sorry` warning would fail them: review F6), or the `#` command there
+    `#guard_msgs … in` wrappers and its attributes blanked (the `sorry` warning would fail a wrapper: review F6; a
+    `@[csimp]` lemma cut to `sorry` would still send compiled code through the mutated definition: hunt N2), or the
+    `#` command there
     blanked whole with the comments before it (it declares nothing; its docstring is the `#guard_msgs`'s: review
     F7), every line kept. The comment lines after the span stay: a docstring there is the next command's
     (trust_map's span ends before that command's first code line), and a `#guard_msgs` reads its docstring."""
@@ -695,6 +744,9 @@ def cut_proof(path: Path, first: int, last: int) -> bool:
         head, at = list(text), min(found)
         for w in trust_map.GUARD_WRAPPER.finditer(t, lo, at):
             head[w.start():w.end()] = re.sub(r"[^\n]", " ", w[0])
+        for a in re.finditer(r"@\[", t[lo:at]):  # and its attributes: a `sorry` is no `@[csimp]` lemma (hunt N2)
+            head[lo + a.start():group(t, lo + a.start() + 1)] = re.sub(r"[^\n]", " ", text[lo + a.start():group(
+                t, lo + a.start() + 1)])
         end = next((s for s in starts if at < s <= hi and not t[s:hi].strip() and not code_only(text[s:hi]).strip()),
                    hi)  # the first line from which only whole comments are left
         path.write_text("".join(head[:at]) + " := sorry" + "\n" * text.count("\n", at, end) + text[end:])
@@ -740,8 +792,19 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
     controls = {} if controls is None else controls
     reads = {} if reads is None else reads
 
-    def reading(key: tuple) -> bool:
-        return m.definition in reads.get(key, ())
+    def reading(key: tuple) -> str | None:
+        """Why the check at `key` cannot refute the mutated definition (`dependencies`), or None."""
+        entry = reads.get(key)
+        cut = {name for f, spans in cuts.items() for s, e, _, name in tree.roles.get(f, ()) if (s, e) in spans}
+        if entry is None or m.definition not in entry["reads"]:
+            return f"Lean does not find {m.definition} in its statement"
+        if "hyps" in entry["flags"]:
+            return "its goal has a hypothesis"
+        if "?" in entry["flags"]:
+            return "it reads the environment, as `#print` does"
+        if behind := sorted(entry["behind"] & cut):
+            return f"its `Decidable` instance rests on {behind[0]}, which the tool cut"
+        return None
     built = targets(tree, m, tests, deep)
     texts: dict[str, str] = {}  # file -> the checkout's text, written back at the end
     cuts: dict[str, list[tuple[int, int]]] = {}  # file -> the spans cut in it
@@ -819,7 +882,10 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 if not found[0][0]:
                     return "UNKNOWN", found[0][2]
                 roles = [(f, n, message, role(tree, f, n, m)) for f, n, message in found]
-                if mutated := [x for x in roles if x[3] == "mutated"]:
+                if (mutated := [x for x in roles if x[3] == "mutated"]) and m.shared:  # whose error: unknown
+                    return "UNKNOWN", (f"lean/{m.file}:{m.lines[1]}: {brief(mutated[0][2])} (another command shares "
+                                       "the mutated declaration's last line)")
+                if mutated:
                     return invalid([(f, n, message, columns.get((f, n, message), 0)) for f, n, message, _ in
                                     mutated], read(m.file), m.lines)
                 if proofs := [x for x in roles if x[3] == "proof" and x[0] not in tests]:
@@ -982,7 +1048,8 @@ def main(argv: list[str] | None = None) -> int:
             "base": git(root, "rev-parse", base).stdout.strip(), "head": git(root, "rev-parse", "HEAD").stdout.strip(),
             "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
             "counts": counts, "definitions": [f"lean/{f}: {d}" for f, d in definitions],
-            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")} for m in found]}))
+            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit", "shared")}
+                          for m in found]}))
     return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
 
 

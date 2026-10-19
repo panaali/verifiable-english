@@ -271,7 +271,9 @@ def test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps(tmp_path):
      "-- #guard_msgs in\n" + " " * 14 + "\nexample : f 1 = 2  := sorry\n\n#guard f 1\n"),
     ("#guard_msgs in example : f 1 = 2 := by simp [f]\n\n/-- info: 2\n-/\n#guard_msgs in\n#eval f 1\n", 4,
      " " * 15 + "example : f 1 = 2  := sorry\n\n/-- info: 2\n-/\n#guard_msgs in\n#eval f 1\n"),
-    ("example : f 1 = 2 := by\n  simp [f] /- a\n  b -/\n-- c\n", 4, "example : f 1 = 2  := sorry\n\n\n-- c\n")],
+    ("example : f 1 = 2 := by\n  simp [f] /- a\n  b -/\n-- c\n", 4, "example : f 1 = 2  := sorry\n\n\n-- c\n"),
+    ("@[csimp, simp] theorem t : @f = @g := by\n  funext n\n  rfl\n#guard f 1 == 2\n", 3,  # hunt N2: no attribute
+     " " * 15 + "theorem t : @f = @g  := sorry\n\n\n#guard f 1 == 2\n")],
     ids=short)
 def test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it(tmp_path, text, last, cut):
     """Review F6: the cut blanks the wrapper (the `sorry` warning would fail it) and keeps the whole comments after
@@ -321,6 +323,7 @@ def test_a_decide_check_outside_the_directory_naming_the_definition_kills(defaul
     ("command", "example (_h : f 0 = 1) : f 1 = 2 := rfl", "proof"),
     ("theorem", "theorem t {α} [Inhabited α] : f 1 = 2 := by decide +revert", "proof"),
     ("theorem", "theorem Demo.t : f 1 = 2 :=\n  by decide", "check"),
+    ("command", "example : f 5 = f 5 := rfl  example (_h : f 0 = 1) : f 1 = 2 := by decide", "other"),  # hunt N7
     ("command", "#guard_msgs in\nexample : f 1 = 2 := by simp [f]", "proof"),
     ("command", "#guard_msgs in example : f 1 = 2 := by simp [f]", "proof"),
     ("command", "#guard_msgs (drop warning) in\n@[simp] example : f 1 = 2 := by\n  simp [f]", "proof"),
@@ -776,7 +779,7 @@ def test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_defini
     roles = {"A.lean": [(1, 1, "check", None), (2, 2, "other", "s"), (3, 3, "check", None)]}
     rebuilt: list = []
 
-    def settle(errors, reads=lambda key: True):
+    def settle(errors, reads=lambda key: None):
         def rebuild(now):
             assert now["A.lean"].split("\n")[2] == "example : f 3 = 5 := by decide"
             return rebuilt.pop()
@@ -784,7 +787,8 @@ def test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_defini
     assert settle([("A.lean", 1, REFUTE)]) == ("KILLED", f"lean/A.lean:1: {REFUTE.split(chr(10))[0]}")
     assert settle([("A.lean", 1, REFUTE), ("A.lean", 2, DECIDE_FALSE)])[0] == "UNKNOWN"  # F8: beside a definition
     assert settle([("A.lean", 2, DECIDE_FALSE), ("A.lean", 1, REFUTE)])[0] == "UNKNOWN"
-    assert settle([("A.lean", 1, REFUTE)], reads=lambda key: key != ("A.lean", (1, 1)))[0] == "UNKNOWN"  # H4, H5
+    assert settle([("A.lean", 1, REFUTE)], reads=lambda key: "no" if key == ("A.lean", (1, 1)) else None) == (
+        "UNKNOWN", f"lean/A.lean:1: {REFUTE.split(chr(10))[0]} (no)")  # hunt H4, H5, N1, N2
     rfl = ("A.lean", 3, "Type mismatch\n  rfl")
     for answer, verdict in (([("A.lean", 3, DECIDE_FALSE)], "KILLED"), ([], "UNKNOWN"), (None, "UNKNOWN"),
                             ([("A.lean", 3, "Tactic `decide` failed for proposition")], "UNKNOWN"),
@@ -792,7 +796,7 @@ def test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_defini
         rebuilt.append(answer)
         assert settle([rfl])[0] == verdict, answer  # F11: a stuck or unanswered `rfl` refutes nothing
     rebuilt.append([("A.lean", 3, DECIDE_FALSE)])
-    assert settle([rfl], reads=lambda key: False)[0] == "UNKNOWN" and rebuilt
+    assert settle([rfl], reads=lambda key: "no")[0] == "UNKNOWN" and rebuilt
 
 
 @pytest.mark.parametrize(("text", "first", "last", "after"), [
@@ -819,7 +823,6 @@ REFUSALS = [
     ("invalid-field", "Invalid field `take`: The environment does not contain `Option.take`", False, "INVALID"),
     ("invalid-projection", "Invalid projection: Type of", False, "INVALID"),
     ("invalid-pattern", "Invalid pattern", False, "INVALID"),
-    ("function-expected", "Function expected at\n  x", False, "INVALID"),
     ("missing-cases", "Missing cases:\n(Nat.succ _)", False, "INVALID"),
     # The safe cases: each is UNKNOWN.
     ("simp-steps", "`simp` failed: maximum number of steps exceeded", True, "UNKNOWN"),
@@ -836,6 +839,7 @@ REFUSALS = [
     ("synthesize-budget", "failed to synthesize\n  Small 79\n(deterministic) timeout at `typeclass`, maximum number "
      "of heartbeats (200) has been reached", False, "UNKNOWN"),
     ("implicit", "don't know how to synthesize implicit argument `α`", False, "UNKNOWN"),
+    ("function-expected", "Function expected at\n  x", False, "UNKNOWN"),  # hunt N5: a coercion's search, out of size
     ("refusal-quoting-budget", "Invalid field `x`: maximum recursion depth has been reached", False, "UNKNOWN"),
     ("recursion", "maximum recursion depth has been reached", False, "UNKNOWN"),
     ("heartbeats", "(deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached",
@@ -870,17 +874,17 @@ def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(er
 
 
 def test_named_writes_each_check_as_a_declaration_of_what_it_states():
-    """Hunt H4, H5: `dependencies` asks Lean what each check's statement reads, so `named` gives each check that can
-    kill a name, its statement as a theorem's type or its term as a definition's value (the copy is Lean's to read,
-    so lines may join)."""
+    """Hunt H4, H5, N1, N2, N8: `dependencies` asks Lean, at each check's own position (its section variables
+    included), what its statement reads: `named` hands each check that can kill to `READS`'s elaborators, its
+    wrapper and a command's docstring blanked."""
     import trust_mutants
     text = ("/-- info: 3 -/\n#guard_msgs in\n#eval f 3\n#guard f 3 == 3 -- c\n"
             "@[simp] theorem Demo.t : f 1 = 2 :=\n  by decide\nexample : f 1 = 2 := by simp\n#reduce f 3\n")
     roles = [(1, 3, "check", None), (4, 4, "check", None), (5, 6, "check", None), (7, 7, "proof", None),
              (8, 8, "check", None)]
     named, spans = trust_mutants.named(text, roles)
-    assert named == ("/-- info: 3 -/\n" + " " * 14 + "\nnoncomputable def tmChk_1 := ( f 3)\n"
-                     "noncomputable def tmChk_4 := ( f 3 == 3) -- c\n@[simp] theorem tmChk_5 : f 1 = 2  := sorry\n"
+    assert named == (" " * 14 + "\n" + " " * 14 + "\n#tm_trust_eval tmChk_1 f 3\n#tm_trust_guard tmChk_4 f 3 == 3 -- c\n"
+                     "@[simp] theorem Demo.t : f 1 = 2 := by tm_trust_probe tmChk_5; exact sorry\n"
                      "example : f 1 = 2 := by simp\n#reduce f 3\n")
     assert spans == {"tmChk_1": (1, 3), "tmChk_4": (4, 4), "tmChk_5": (5, 6)}
 
@@ -1184,7 +1188,35 @@ HUNT = [
      {"KILLED"}),
     ("H2", "class HSize (n : Nat) where\n  val : Nat\n\ninstance : HSize 0 := ⟨0⟩\n\ninstance [s : HSize n] : "
      "HSize (n + 1) := ⟨s.val + 1⟩\n\ndef hSize : Nat := HSize.val 127\n\n#guard hSize == 127", "hSize", {"INVALID"}),
+    # The second hunt. N1, N1g: the statement names the mutated definition in a tautology, and `decide` (or the
+    # compiled `#guard`) still computes through the instance on the cut theorem; N2: the same with the cut `@[csimp]`
+    # lemma; N3 (in Demo/Meta.lean): an `#eval` that prints the definition's text; N5: a coercion's instance search
+    # out of its size budget says "Function expected"; N7: a second command on the check's line; N8: a section
+    # `variable` hypothesis; N10: another command on the mutated declaration's last line.
+    ("N1", "def nFast (n : Nat) : Bool := n < 3\n\ntheorem nFast_iff (n : Nat) : nFast n = true ↔ n < 3 := by\n"
+     "  simp [nFast]\n\ndef NSmallP (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable (NSmallP n) := "
+     "decidable_of_iff _ (nFast_iff n)\n\nexample : nFast 7 = nFast 7 ∧ NSmallP 2 := by decide", "nFast", {"KILLED"}),
+    ("N1g", "def nFastG (n : Nat) : Bool := n < 3\n\ntheorem nFastG_iff (n : Nat) : nFastG n = true ↔ n < 3 := by\n"
+     "  simp [nFastG]\n\ndef NSmallG (n : Nat) : Prop := n < 3\n\ninstance (n : Nat) : Decidable (NSmallG n) := "
+     "decidable_of_iff _ (nFastG_iff n)\n\n#guard nFastG 7 == nFastG 7 && decide (NSmallG 2)", "nFastG", {"KILLED"}),
+    ("N2", "def nRef (n : Nat) : Nat := 2 * n\n\ndef nImpl (n : Nat) : Nat := n <<< 1\n\n@[csimp] theorem nRef_eq : "
+     "@nRef = @nImpl := by\n  funext n\n  simp [nRef, nImpl, Nat.shiftLeft_eq]\n  omega\n\n"
+     "#guard nImpl 0 == nImpl 0 && nRef 3 == 6", "nImpl", {"KILLED"}),
+    ("N3", None, "nZ", {"KILLED"}),
+    ("N5", "class NSize (n : Nat) where\n  val : Nat\n\ninstance : NSize 0 := ⟨0⟩\n\ninstance [s : NSize n] : "
+     "NSize (n + 1) := ⟨s.val + 1⟩\n\nstructure NW (n : Nat) where\n  k : Nat\n\ninstance [NSize n] : CoeFun (NW n) "
+     "(fun _ => Nat → Nat) := ⟨fun w m => w.k + m + NSize.val n⟩\n\ndef nG (x : NW 126) : Nat := x 1\n\n"
+     "#guard nG ⟨0⟩ == 127", "nG", {"INVALID"}),
+    ("N7", "def nTwo (n : Nat) : Nat := n + 1\n\nexample : nTwo 5 = nTwo 5 := rfl  example (_h : nTwo 0 = 1) : "
+     "nTwo 1 = 2 := by decide", "nTwo", {"KILLED"}),
+    ("N8", "def nVar (n : Nat) : Nat := n + 1\n\nsection\n\nvariable (_h : nVar 0 = 1)\n\nexample : nVar 1 = 2 := "
+     "by decide\n\nend", "nVar", {"KILLED"}),
+    ("N10", "def NT (n : Nat) : Type := if n = 2 then Nat → Nat else Nat\n\ndef nD : Nat := 2  example (x : NT nD) : "
+     "Nat := x 1", "nD", {"INVALID"}),
 ]
+META = ("import Lean\n\nnamespace Demo\n\ndef nZ (n : Nat) : Nat := n * 0 * 1\n\n/-- info: fun n => n * 0 * 1 -/\n"
+        "#guard_msgs in\nopen Lean Meta in\n#eval show MetaM Format from do\n  let _ := nZ\n  ppExpr (← getConstInfo "
+        "``nZ).value!\n\nend Demo\n")  # hunt N3
 REFUSED_FORM = "def {d} (o : Option Nat) : Bool := o.any (· == 1)\n\n#guard !{d} none"  # no `Option.take`
 
 
@@ -1205,7 +1237,8 @@ def stuck_package(root: Path, folder: Path) -> None:
         text.append(f"\ndef {d} (n : Nat) : Nat := if n ≤ 3 then n else {far}\n\n"
                     + (check.replace("{d}", d) + "\n" if check else ""))
     text += [f"\n{F12_FORM.replace('{d}', 'sSimpSteps')}\n", f"\n{REFUSED_FORM.replace('{d}', 'sRefused')}\n"]
-    text += [f"\n{form}\n" for _, form, _, _ in HUNT]
+    text += [f"\n{form}\n" for _, form, _, _ in HUNT if form]
+    (root / "lean/Demo/Meta.lean").write_text(META)
     (root / "lean/Demo/Defs.lean").write_text("".join(text) + "\nend Demo\n")
     (root / "outside").mkdir()
     for row in ("outside-decide", "outside-equal"):
@@ -1278,8 +1311,11 @@ def test_a_name_lean_does_not_know_is_invalid(stuck_run):
 @pytest.mark.parametrize(("row", "form", "definition", "never"), HUNT, ids=[h[0] for h in HUNT])
 def test_a_hunt_form_gets_no_verdict_that_hides_it(stuck_run, row, form, definition, never):
     """The DRI's step 2 (adversarial hunt): each form it found gave KILLED (H1, H1r, H4, H5) or INVALID (H2) on the
-    tool after the inversion; with a check's hypotheses read as a proof (`classify`), a kill only of a statement that
-    reads the definition (`dependencies`) and instance search out of the refusals, none does."""
+    tool after the inversion, and the second hunt's forms (N1-N10) on the tool after the first; with a check's
+    hypotheses read as a proof (`classify`), one command per check, a kill only where Lean finds the definition in
+    the statement and no cut theorem behind its `Decidable` instance (`dependencies`), a cut proof without its
+    attributes, instance search and "Function expected" out of the refusals and a shared last line UNKNOWN, none
+    does."""
     done, mutants = stuck_run
     mine = of(mutants, definition)
     assert mine and not [m for m in mine if m["status"] in never], (mine, done.stdout[-2000:])
