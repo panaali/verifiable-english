@@ -3,8 +3,7 @@
 from dataclasses import dataclass
 
 from ve.readings_sup import (bits_of, choice_atom, choice_contents, choice_core, choice_vocabulary,
-                             choices, copies, pattern, sup_ready, superposed_contents,
-                             uniform_precedence, unsatisfiable_ids)
+                             choices, copies, pattern, superposed_contents, unsatisfiable_ids)
 from ve.readings_s1 import Candidate as S1Candidate, Content, Document, ReadingSet
 import pytest
 
@@ -97,8 +96,7 @@ def test_superposition_gates_and_qualifies_without_mutating_sources():
     second = _norm("rule-x", mode="default", sufficient=(["top"],))
     fixed = _norm("stop-x", over=("rule-x",))
     doc = _doc([first, second], [fixed])
-    assert sup_ready(doc.sets)
-    assert uniform_precedence(doc)
+    # Whether it superposes is Lean's: tests/test_readings_s2_answer.py::test_a_fixed_child_over_an_interface_rule_superposes
     assert copies(doc, "rule-x") == ["rd-1-rule-x", "rd-2-rule-x"]
     result = superposed_contents(doc)
     assert result[0].body["over"] == ["rd-1-rule-x", "rd-2-rule-x"]
@@ -110,18 +108,6 @@ def test_superposition_gates_and_qualifies_without_mutating_sources():
     assert fixed.body["over"] == ["rule-x"]
     assert second.body["name"] == "rule-x"
     assert [c.body["name"] for c in choice_contents(doc, {"rs1": 1})] == ["stop-x", "rule-x"]
-
-
-def test_uniform_precedence_catches_m8_leak_and_shape_rejects_m17():
-    fixed = _norm("stop-x", over=("waive-x",))
-    doc = _doc([_norm("waive-x"), _norm("waive-x", over=("base-x",))], [fixed])
-    assert not uniform_precedence(doc)
-    doc.sets[0].candidates[1].content = None
-    assert not sup_ready(doc.sets)
-    doc.sets[0].candidates[1].content = _norm("waive-x", over=("base-x",))
-    coupling = {"id": "c1", "axis": "force", "sets": [
-        {"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}]}
-    assert not sup_ready(doc.sets, [coupling])
 
 
 SLOTS = Slots(numbers={"1", "2", "3"}, readings={"*must*", "*should*", "reading 1", "reading 2"},
