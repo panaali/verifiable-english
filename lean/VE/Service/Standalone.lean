@@ -221,8 +221,8 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 
 /-- The public environment endpoint follows the composed profile head. Each
 statement layer validates its own declarations; the core decoder handles the
-remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows here, and the
-whole table for `readings@1`. -/
+remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows, and the whole
+table for a list with `Compose.environmentWrapper`. -/
 def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
   let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
@@ -281,7 +281,8 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     let _ ← validated environment
     pure ()
   let ps ← VE.Route.Gate.profilesOf environment
-  let _ ← VE.Compose.gateOf (if ps.contains "readings@1" then VE.Compose.profileTable else VE.Compose.baseRows) ps
+  let _ ← VE.Compose.gateOf
+    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
   let family := if ps.contains "order@0" then VE.Route.Gate.Family.order
     else if ps.contains "nary@0" then .closureNary
     else if ps.contains "closure@0" then .closure else .fol

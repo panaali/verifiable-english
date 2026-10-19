@@ -5007,6 +5007,16 @@ theorem VE.Compose.baseAdmissibleP_of_valid
       VE.Compose.backgroundValidP X P M = Bool.true → VE.Compose.BaseAdmissibleP X P M.asStructure
   -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.backgroundValidP@VE.Compose.Slot VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 3512667603
+theorem VE.Compose.baseGate_today
+  ∀ (ps : List String),
+    (∀ (p : String), p ∈ ps → p ∈ VE.Compose.registered) → VE.Compose.gateOf VE.Compose.baseRows ps = VE.Compose.today ps
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.baseRows@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.registered@VE.Compose.Dispatch VE.Compose.today@VE.Compose.Dispatch
+  -- expr 4288404711
+theorem VE.Compose.base_contains
+  ∀ (ps : List String) (x : String),
+    (VE.Compose.base ps).contains x = (ps.contains x && !VE.Compose.wrapperProfiles.contains x)
+  -- uses VE.Compose.base@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
+  -- expr 2914067683
 theorem VE.Compose.base_mem
   ∀ {ps : List String} {p : String}, ¬p ∈ VE.Compose.wrapperProfiles → (p ∈ VE.Compose.base ps ↔ p ∈ ps)
   -- uses VE.Compose.base@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
@@ -5015,6 +5025,15 @@ theorem VE.Compose.base_of_no_wrapper
   ∀ {ps : List String}, (∀ (w : String), w ∈ VE.Compose.wrapperProfiles → ¬w ∈ ps) → VE.Compose.base ps = ps
   -- uses VE.Compose.base@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
   -- expr 1594941042
+theorem VE.Compose.checks_none
+  ∀ (t : List VE.Compose.ProfileRow) (ps : List String),
+    List.find? (fun x => x.fst) (List.flatMap (VE.Compose.rowChecks ps) t) = Option.none ↔
+      ∀ (r : VE.Compose.ProfileRow),
+        r ∈ t →
+          r.profile ∈ ps ∨ r.profile ∈ r.requires →
+            (∀ (q : String), q ∈ r.requires → q ∈ ps) ∧ ∀ (x : String × String), x ∈ r.refuses → ¬x.fst ∈ ps
+  -- uses VE.Compose.ProfileRow.profile@VE.Compose.Dispatch VE.Compose.ProfileRow.refuses@VE.Compose.Dispatch VE.Compose.ProfileRow.requires@VE.Compose.Dispatch VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.rowChecks@VE.Compose.Dispatch
+  -- expr 488160171
 theorem VE.Compose.conflictFreeP_append
   ∀ (X : VE.SoftNorms.SoftDoc) (P Q : List VE.Formula), VE.Compose.ConflictFreeP X P → VE.Compose.ConflictFreeP X (P ++ Q)
   -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
@@ -5079,18 +5098,67 @@ theorem VE.Compose.dispatch_unsorted
       VE.Compose.dispatch ps = Except.error (VE.Compose.unsupported "profiles must be sorted and unique")
   -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.dispatch@VE.Compose.Dispatch VE.Compose.unsupported@VE.Compose.Dispatch
   -- expr 3479148102
+theorem VE.Compose.faultOf_ite
+  ∀ (c : Bool) (x : Bool × String) (o : Option (Bool × String)),
+    VE.Compose.faultOf (if c = Bool.true then Option.some x else o) =
+      if c = Bool.true then Except.error (VE.Compose.unsupported x.snd) else VE.Compose.faultOf o
+  -- uses VE.Compose.faultOf@VE.Compose.Dispatch VE.Compose.unsupported@VE.Compose.Dispatch
+  -- expr 567602365
+theorem VE.Compose.faultOf_none
+  VE.Compose.faultOf Option.none = Except.ok ()
+  -- uses VE.Compose.faultOf@VE.Compose.Dispatch
+  -- expr 465993554
+theorem VE.Compose.find_congr
+  ∀ {l : List String} {f g : String → Bool}, (∀ (x : String), x ∈ l → f x = g x) → List.find? f l = List.find? g l
+  -- uses
+  -- expr 2238557160
+theorem VE.Compose.find_cons_ite
+  ∀ (c : Bool) (e : String) (l : List (Bool × String)),
+    List.find? (fun x => x.fst) ((c, e) :: l) =
+      if c = Bool.true then Option.some (c, e) else List.find? (fun x => x.fst) l
+  -- uses
+  -- expr 3672781057
+theorem VE.Compose.find_first
+  ∀ {l : List String} {P : String → Bool} {x : String},
+    List.Pairwise (fun x1 x2 => x1 < x2) l →
+      List.find? P l = Option.some x → ∀ (z : String), z ∈ l → P z = Bool.true → z = x ∨ x < z
+  -- uses
+  -- expr 3514958761
 theorem VE.Compose.forIn_yield_ok
   ∀ (l : List String) {f : String → PUnit → Except String (ForInStep PUnit)},
     (∀ (p : String), p ∈ l → f p PUnit.unit = Except.ok (ForInStep.yield PUnit.unit)) →
       ForIn.forIn l PUnit.unit f = Except.ok PUnit.unit
   -- uses
   -- expr 3378120449
+theorem VE.Compose.gateMatch_find
+  ∀ (c : Bool) (l : List String) (g : String → Bool) (f : String → Except String Unit) (b : Except String Unit),
+    VE.Compose.gateMatch (if c = Bool.true then List.find? g l else Option.none) f b =
+      List.foldr (fun q acc => if (c && g q) = Bool.true then f q else acc) b l
+  -- uses VE.Compose.gateMatch@VE.Compose.Dispatch
+  -- expr 1580359357
+theorem VE.Compose.gateOf_iff
+  ∀ (t : List VE.Compose.ProfileRow) (ps : List String) (r : VE.Compose.Route),
+    VE.Compose.gateOf t ps = Except.ok r ↔ VE.Compose.TableAdmits t ps ∧ r = VE.Compose.routeOf t ps
+  -- uses VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.TableAdmits@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch
+  -- expr 1599089441
+theorem VE.Compose.gate_legacy
+  ∀ (ps : List String),
+    (∀ (p : String), p ∈ ps → p ∈ VE.Compose.legacyProfiles) →
+      VE.Compose.gateOf VE.Compose.profileTable ps = VE.Compose.dispatch ps
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.dispatch@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.legacyProfiles@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 781844860
 theorem VE.Compose.gate_wellFormed
   ∀ (X : VE.SoftNorms.SoftDoc) (χ : VE.Formula) (P : List VE.Formula),
     VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften X) 0) [] χ →
       VE.Compose.SlotWellFormed X P → VE.Compose.SlotWellFormed X (VE.Compose.gate χ P)
   -- uses VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Compose.gate@VE.Compose.Slot VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 2779446222
+theorem VE.Compose.ite_and3
+  ∀ (a b c d : Bool) (e r : Except String Unit),
+    (if (a && b) = Bool.true then e else if (a && c) = Bool.true then e else if (a && d) = Bool.true then e else r) =
+      if (a && (b || c || d)) = Bool.true then e else r
+  -- uses
+  -- expr 4240862142
 theorem VE.Compose.ite_error_ok
   ∀ {α : Type} {c : Prop} [inst : Decidable c] {e : String} {r : Except String α} {x : α},
     (if c then Except.error e else r) = Except.ok x → ¬c ∧ r = Except.ok x
@@ -5209,6 +5277,19 @@ theorem VE.Compose.rights_valid_is_slot
     VE.Rights.backgroundValidR D M = VE.Compose.backgroundValidP (VE.Rights.correlate D) (VE.Rights.limPremises D) M
   -- uses VE.Compose.backgroundValidP@VE.Compose.Slot VE.FiniteModel@VE.Finite VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.backgroundValidR@VE.Rights.Route VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate
   -- expr 1768588158
+theorem VE.Compose.routeOf_base
+  ∀ (ps : List String), VE.Compose.routeOf VE.Compose.baseRows ps = VE.Compose.todayHead ps
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.baseRows@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch VE.Compose.todayHead@VE.Compose.Dispatch
+  -- expr 3296346633
+theorem VE.Compose.routeOf_table
+  ∀ (ps : List String),
+    VE.Compose.routeOf VE.Compose.profileTable ps =
+      if ps.contains "ve.discourse@1" = Bool.true then VE.Compose.Route.discourse
+      else
+        if ps.contains "right-clauses@0" = Bool.true then VE.Compose.Route.clauses
+        else if ps.contains "readings@1" = Bool.true then VE.Compose.Route.readings else VE.Compose.todayHead ps
+  -- uses VE.Compose.Route.clauses@VE.Compose.Dispatch VE.Compose.Route.discourse@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch VE.Compose.todayHead@VE.Compose.Dispatch
+  -- expr 1482409583
 theorem VE.Compose.sat_append
   ∀ (B : VE.Structure) (P Q : List VE.Formula), VE.Norms.Sat B (P ++ Q) ↔ VE.Norms.Sat B P ∧ VE.Norms.Sat B Q
   -- uses VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure@VE.Semantics
@@ -5440,6 +5521,20 @@ theorem VE.Compose.slot_route_intended
                         VE.Norms.Sat S P → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ
   -- uses VE.Compose.backgroundP@VE.Compose.Slot VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.elaborate@VE.Norms.Elaborate VE.Norms.envAt@VE.Norms.Tree VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.holdsSoft@VE.SoftNorms.Semantics VE.SoftNorms.softPremises@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
   -- expr 1744994507
+theorem VE.Compose.sorted_find
+  ∀ {l m : List String},
+    List.Pairwise (fun x1 x2 => x1 < x2) l →
+      List.Pairwise (fun x1 x2 => x1 < x2) m → List.find? m.contains l = List.find? l.contains m
+  -- uses
+  -- expr 4240111808
+theorem VE.Compose.todayGate_base
+  ∀ (ps : List String),
+    List.Pairwise (fun x1 x2 => x1 < x2) ps →
+      (∀ (p : String), p ∈ ps → p ∈ VE.Compose.legacyProfiles) →
+        VE.Compose.todayGate (VE.Compose.base ps) =
+          VE.Compose.faultOf (List.find? (fun x => x.fst) (List.flatMap (VE.Compose.rowChecks ps) VE.Compose.baseRows))
+  -- uses VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.base@VE.Compose.Dispatch VE.Compose.baseRows@VE.Compose.Dispatch VE.Compose.faultOf@VE.Compose.Dispatch VE.Compose.legacyProfiles@VE.Compose.Dispatch VE.Compose.rowChecks@VE.Compose.Dispatch VE.Compose.todayGate@VE.Compose.Dispatch
+  -- expr 3168638128
 theorem VE.Compose.todayGate_classify
   ∀ (ps : List String),
     (∀ (p : String), p ∈ ps → VE.Route.Gate.known p = Bool.true) →
@@ -5454,6 +5549,10 @@ theorem VE.Compose.todayGate_sound
   ∀ (ps : List String), VE.Compose.todayGate ps = Except.ok () → VE.Compose.TodayList ps
   -- uses VE.Compose.TodayList@VE.Compose.Dispatch VE.Compose.todayGate@VE.Compose.Dispatch
   -- expr 1107656340
+theorem VE.Compose.todayHead_base
+  ∀ (ps : List String), VE.Compose.todayHead (VE.Compose.base ps) = VE.Compose.todayHead ps
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.base@VE.Compose.Dispatch VE.Compose.todayHead@VE.Compose.Dispatch
+  -- expr 3489171809
 theorem VE.Compose.todayHead_cases
   ∀ (l : List String),
     VE.Compose.todayHead l = VE.Compose.Route.risk ∧ "risk@0" ∈ l ∨
