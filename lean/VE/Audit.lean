@@ -43,6 +43,7 @@ import VE.Attribution.Structure
 import VE.Attribution.Wire
 import VE.Bridge
 import VE.Calc.Decls
+import VE.Calc.Dimension
 import VE.Calc.Eval
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
@@ -749,6 +750,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Claim.run_complete
 #print axioms VE.Calc.Claim.run_decided
 #print axioms VE.Calc.Claim.run_unknown
+#print axioms VE.Calc.Comparison.holds_scale
 #print axioms VE.Calc.Decl.valL_agrees
 #print axioms VE.Calc.Denotes.eval_complete
 #print axioms VE.Calc.Denotes.unique
@@ -758,20 +760,40 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Expr.evalL_congr_on
 #print axioms VE.Calc.Expr.eval_congr_on
 #print axioms VE.Calc.Expr.eval_iff
+#print axioms VE.Calc.Expr.eval_rescale
 #print axioms VE.Calc.Expr.eval_sound
 #print axioms VE.Calc.Expr.exhausted_lift
 #print axioms VE.Calc.Expr.overflow_lift
+#print axioms VE.Calc.Rescale.factor_ne
+#print axioms VE.Calc.Rescale.of_cons
+#print axioms VE.Calc.Rescale.of_insertExp
+#print axioms VE.Calc.Rescale.of_inv
+#print axioms VE.Calc.Rescale.of_mul
+#print axioms VE.Calc.Rescale.of_mul_any
+#print axioms VE.Calc.Rescale.of_npow
+#print axioms VE.Calc.Rescale.of_one
+#print axioms VE.Calc.Rescale.of_pos
+#print axioms VE.Calc.Rescale.pos
 #print axioms VE.Calc.Val.bin_exhausted
 #print axioms VE.Calc.Val.bin_tooLarge
 #print axioms VE.Calc.Val.div_agrees
 #print axioms VE.Calc.Val.guard_agrees
+#print axioms VE.Calc.bind2_some
 #print axioms VE.Calc.causes_accumulate
 #print axioms VE.Calc.causes_step
+#print axioms VE.Calc.compare_invariant
+#print axioms VE.Calc.convert_by_factors
+#print axioms VE.Calc.denotes_rescale
 #print axioms VE.Calc.findingKind_source_iff
 #print axioms VE.Calc.firstFault_mem
 #print axioms VE.Calc.firstFault_not_ok
 #print axioms VE.Calc.fold_valuesL_agrees
 #print axioms VE.Calc.fold_values_other
+#print axioms VE.Calc.foldl_mul_rat
+#print axioms VE.Calc.legacy_nominal
+#print axioms VE.Calc.mul_pow_nat
+#print axioms VE.Calc.one_pow_nat
+#print axioms VE.Calc.rounds_invariant
 #print axioms VE.Calc.valuesL_agrees
 #print axioms VE.Calc.valuesL_causes
 #print axioms VE.Calc.values_append_prefix
@@ -781,6 +803,8 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.values_free
 #print axioms VE.Calc.values_missing
 #print axioms VE.Calc.values_stated
+#print axioms VE.Calc.zpowR_eq
+#print axioms VE.Calc.zpowR_mul_nat
 #print axioms VE.Cardinality.CEnv.WellFormed.finiteDeclared
 #print axioms VE.Cardinality.CEnv.WellFormed.fresh
 #print axioms VE.Cardinality.Examples.admissible_cases
