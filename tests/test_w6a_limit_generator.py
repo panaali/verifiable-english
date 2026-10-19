@@ -30,7 +30,7 @@ from subprocesses import HANG_TIMEOUT, run_cpu_bounded
 from conformance.three_way import rust_evaluations
 from ve import Environment, FiniteModel, evaluate
 from ve.ast import document_from_data, formula_from_data
-from ve.backends import dispatch, lean as lean_backend, rust_jsonl
+from ve.backends import dispatch, rust_jsonl
 from ve.backends.lean_service import LeanService
 from ve.errors import ResourceLimit
 from ve.evaluate import _Evaluator
@@ -262,9 +262,8 @@ def meter_python(monkeypatch):
     evaluator whose own check was skipped or widened, or a case that goes on
     charging after its budget is spent, fails here instead of running on.
 
-    The meter reads Python's evaluator, so the metered cases run on the Python
-    authority whatever VE_AUTHORITY selects."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
+    Public calls no longer run Python's evaluator (lean-first batch 18: Lean is the one
+    authority), so a public case that charges a Python unit at all fails its test."""
     units = [0]
     charge = _Evaluator.tick
 
@@ -305,6 +304,7 @@ def test_every_backend_reports_resource_limit_in_bounded_time(seed, monkeypatch)
             python[name] = verdict()
         except Overrun as exc:
             pytest.fail(f"{name}: Python evaluation ran past its budget: {exc}")
+        assert units[0] == 0, f"{name}: a public call charged the Python evaluator {units[0]} units"
     assert all(python.values()), [n for n, v in python.items() if not v]
     quantity = run([str(QUANTITY), "-"], [c[3] for c in cases if c[2] == "quantity"])
     route = run([str(ROUTE), "route", "-"], [c[3] for c in cases if c[2] == "route"])
@@ -328,32 +328,25 @@ BUDGET_OPERATIONS = {"evaluate", "countermodel_check", "definitions_elaboration"
 @pytest.mark.parametrize("seed", SEEDS)
 @pytest.mark.live_service  # it records each request's deadline (tests/answer_store.py INVENTORY row 7)
 def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, monkeypatch):
-    """The Lean-authority counterpart of the metered test above: the same
-    generated cases, through the same public calls under VE_AUTHORITY=lean, each
-    report `ResourceLimit`, and every operation they dispatch runs on Lean (no
-    Python fallback). It counts no Python units: the verdicts are the backends'.
+    """The same generated cases, through the same public calls, each report
+    `ResourceLimit`, and every operation they dispatch runs on Lean (no Python
+    fallback). It counts no Python units: the verdicts are the backends'.
 
     Under load (a 2 h 14 min suite) a backend call once outlasted its client's
-    default; every Lean service request and every `ve_metered` call here must wait
-    the suite's hang guard instead (`VE_LEAN_SERVICE_TIMEOUT`, `VE_LEAN_TIMEOUT`: a
-    request's wall-clock cap beside its mode's CPU deadline, lean-first batch 1).
+    default; every Lean service request here, the metered evaluator's included
+    (a service mode since lean-first batch 18), must wait the suite's hang guard
+    instead (`VE_LEAN_SERVICE_TIMEOUT`: a request's wall-clock cap beside its
+    mode's CPU deadline, lean-first batch 1).
     No operation here is a search, so none asks Rust (lean-first batch 15b: the
     Lean authority's evaluation and countermodel check are Lean's, review B3)."""
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    monkeypatch.delenv("VE_AUTHORITY_OVERRIDES", raising=False)
     calls = []
     monkeypatch.setattr(dispatch, "observers", [*dispatch.observers, lambda op, a: calls.append((op, a))])
-    waits, lean_waits, metered_waits = [], [], []
-    checker, deadline, one_shot = rust_jsonl._run_checker, LeanService._deadline, lean_backend.run
+    waits, lean_waits = [], []
+    checker, deadline = rust_jsonl._run_checker, LeanService._deadline
 
     def recorded(argv, *, input, timeout):
         waits.append(timeout)
         return checker(argv, input=input, timeout=timeout)
-
-    def metered_recorded(operation, executable, cases, *, runner, mode="", timeout=None):
-        if runner == "ve_metered":
-            metered_waits.append(timeout)
-        return one_shot(operation, executable, cases, runner=runner, mode=mode, timeout=timeout)
 
     def lean_recorded(self, mode, size, cases, timeout):
         start = time.monotonic()
@@ -362,43 +355,12 @@ def test_lean_authority_reports_resource_limit_on_every_generated_case(seed, mon
         return result
     monkeypatch.setattr(rust_jsonl, "_run_checker", recorded)
     monkeypatch.setattr(LeanService, "_deadline", lean_recorded)
-    monkeypatch.setattr(lean_backend, "run", metered_recorded)
     dispatched = set()
     for name, verdict, _, _, _ in generate(seed):
         calls.clear()
-        assert verdict(), f"{name}: no ResourceLimit under the Lean authority"
-        assert all(authority == "lean" for _, authority in calls), (name, calls)
+        assert verdict(), f"{name}: no ResourceLimit"
+        assert all(owner == "lean" for _, owner in calls), (name, calls)
         dispatched.update(op for op, _ in calls)
     assert BUDGET_OPERATIONS <= dispatched, BUDGET_OPERATIONS - dispatched
-    assert waits == [], "Rust was asked for a reported answer under the Lean authority"
-    assert metered_waits and set(metered_waits) == {HANG_TIMEOUT}, sorted(set(metered_waits))
+    assert waits == [], "Rust was asked for a reported answer"
     assert lean_waits and set(lean_waits) == {HANG_TIMEOUT}, sorted(set(lean_waits))
-
-
-# --- The Python meter keeps the regression power of the old wall-clock bound ---
-
-@pytest.mark.parametrize("prefix", ["r-binders-"])
-def test_python_meter_stops_an_evaluator_that_skips_its_budget(prefix, monkeypatch):
-    """An evaluator whose budget check is skipped would answer after 2^k units
-    (2^30 for the defined table); the meter stops it one charge past the budget,
-    and the case fails whatever the machine load."""
-    def unchecked(self):
-        self.work += 1
-    monkeypatch.setattr(_Evaluator, "tick", unchecked)
-    units = meter_python(monkeypatch)
-    verdict = next(c[1] for c in generate(0) if c[0].startswith(prefix))
-    with pytest.raises(Overrun):
-        verdict()
-    assert units[0] == MAX_EVALUATIONS + 2
-
-
-def test_python_meter_stops_a_case_that_charges_past_its_first_budget(monkeypatch):
-    """A case that starts a second budget after the first is spent (a retry, or a
-    budget per statement instead of per case) is stopped at its first new charge."""
-    units = meter_python(monkeypatch)
-    verdict = next(c[1] for c in generate(0) if c[0].startswith("r-full-domain-"))
-    assert verdict()
-    assert units[0] == CASE_UNITS
-    with pytest.raises(Overrun):
-        verdict()
-    assert units[0] == CASE_UNITS + 1

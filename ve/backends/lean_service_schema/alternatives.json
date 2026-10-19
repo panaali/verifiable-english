@@ -12,6 +12,10 @@
               "x-select": [
                 {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
                 {"then": {"$ref": "#/$defs/elaborate"}, "when": {"$ref": "#/$defs/kind/alt-elaborate"}},
+                {
+                  "then": {"$ref": "#/$defs/validate_fill"},
+                  "when": {"allOf": [{"$ref": "#/$defs/kind/alt-validate"}, {"$ref": "#/$defs/fill_path"}]}
+                },
                 {"then": {"$ref": "#/$defs/validate"}, "when": {"$ref": "#/$defs/kind/alt-validate"}},
                 {
                   "then": {"$ref": "#/$defs/conflict_witness"},
@@ -154,6 +158,23 @@
       ],
       "then": {"required": ["violations", "breaches"]},
       "type": "object"
+    },
+    "chooser_fill": {
+      "$comment": "Alternatives.Run.chooserReportU: each available alternative's status and its evidence, with the completion.",
+      "additionalProperties": false,
+      "properties": {
+        "alternatives": {"$ref": "common.json#/$defs/strings"},
+        "chooser": {"type": "string"},
+        "evidence": {
+          "items": {"enum": ["kleene", "enumeration", "fillings", "MAX_UNSAID_ATOMS", "search", "no filling"]},
+          "type": "array"
+        },
+        "statuses": {"items": {"enum": ["clear", "not clear", "undecided", "UNKNOWN"]}, "type": "array"},
+        "text": {"$ref": "common.json#/$defs/text"}
+      },
+      "required": ["chooser", "alternatives", "statuses", "evidence", "text"],
+      "type": "object",
+      "x-same-length": ["alternatives", "statuses", "evidence"]
     },
     "conflict_witness": {
       "$comment": "Alternatives.Run.runConflictWitness: the requested target (no target list).",
@@ -627,6 +648,35 @@
           "type": "object"
         }
       ]
+    },
+    "validate_fill": {
+      "$comment": "Alternatives.Run.runValidateU: the per-chooser statuses of a scenario with the completion (ET-7).",
+      "additionalProperties": false,
+      "properties": {
+        "assumed_harm_free": {"$ref": "common.json#/$defs/strings"},
+        "choosers": {"items": {"$ref": "#/$defs/chooser_fill"}, "type": "array"},
+        "conditional_on": {"items": {"const": "alternatives:table_complete"}, "maxItems": 1, "type": "array"},
+        "document_hash": {"$ref": "common.json#/$defs/hex64"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "model_id": {"$ref": "common.json#/$defs/hex64_or_empty"},
+        "status": {"const": "ok"},
+        "text": {"$ref": "common.json#/$defs/text"},
+        "unmapped_obligations": {"$ref": "common.json#/$defs/text"}
+      },
+      "required": [
+        "id",
+        "status",
+        "model_id",
+        "environment_id",
+        "document_hash",
+        "choosers",
+        "assumed_harm_free",
+        "unmapped_obligations",
+        "conditional_on",
+        "text"
+      ],
+      "type": "object"
     }
   }
 }

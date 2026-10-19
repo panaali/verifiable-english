@@ -2,7 +2,7 @@
 
 from ve.assist.session import AssistSession
 from ve.ast import Bottom, Forall, Top, Unary, Var
-from ve.backends.dispatch import authority_for
+from ve.backends import dispatch
 from ve.adapters.cedar import translate
 from ve.environment import Environment, LANGUAGE, PROFILE, SPEC_REVISION
 
@@ -87,14 +87,16 @@ def test_cedar_evaluates_each_request_under_lean(monkeypatch):
     ]
     source = 'permit(principal, action, resource) when { principal == User::"alice" };'
     translated = translate(source, [], [], requests)
-    calls = []
+    calls, seen = [], []
     real = cedar.evaluate
+    monkeypatch.setattr(dispatch, "observers", [lambda op, owner: seen.append((op, owner))])
 
     def evaluated(env, formula, model, **kwargs):
-        calls.append((authority_for("evaluate"), tuple(model.domains["request"])))
+        calls.append(tuple(model.domains["request"]))
         return real(env, formula, model, **kwargs)
 
     monkeypatch.setattr(cedar, "evaluate", evaluated)
     assert [r["decision"] for r in translated.decisions()] == ["allow", "deny"]
-    assert calls == [("lean", ("request0",)), ("lean", ("request0",)),
-                     ("lean", ("request1",)), ("lean", ("request1",))]
+    assert calls == [("request0",), ("request0",), ("request1",), ("request1",)]
+    # Each request's evaluation ran its one owner, Lean (lean-first batch 18: no authority to select).
+    assert [entry for entry in seen if entry[0] == "evaluate"] == [("evaluate", "lean")] * 4

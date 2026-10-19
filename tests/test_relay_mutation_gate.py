@@ -20,6 +20,7 @@
 """
 from __future__ import annotations
 
+import importlib
 import inspect
 import json
 from pathlib import Path
@@ -361,14 +362,22 @@ def test_the_recorder_writes_every_relayed_case(built, tmp_path):
     sys.path.insert(0, str(ROOT / "tools"))
     import nested_pytest
     service = next(row[2] for row in G.load_cases() if row[:2] == ["service", "identity"])
-    one_shot = next(row[3] for row in G.load_cases() if row[0] == "one-shot" and row[1] == "ve_metered"
-                    and row[3].get("kind") == "non-vacuity")
+    # The metered evaluator is a service mode since lean-first batch 18; the one-shot case is a bundle's.
+    metered = next(row[2] for row in G.load_cases() if row[:2] == ["service", "metered"]
+                   and row[2].get("kind") == "non-vacuity")
+    one_shot = next(row[3] for row in G.load_cases() if row[:3] == ["one-shot", "ve_conformance", "route"]
+                    and row[3].get("kind") == "bundle")
     probe = tmp_path / "test_probe.py"
     probe.write_text("import json\n"
                      "from ve.backends import relay, lean_runner\n"
+                     "from ve.bundle import lean_bundle_verdict\n"
+                     f"BIN = {str(ROOT / 'lean/.lake/build/bin')!r}\n"
                      f"def test_probe():\n"
                      f"    relay.rows('identity', [json.loads({json.dumps(json.dumps(service))})])\n"
-                     f"    lean_runner.metered_nonvacuity(json.loads({json.dumps(json.dumps(one_shot))}))\n")
+                     f"    lean_runner.metered_nonvacuity(json.loads({json.dumps(json.dumps(metered))}))\n"
+                     f"    case = json.loads({json.dumps(json.dumps(one_shot))})\n"
+                     f"    lean_bundle_verdict(BIN + '/ve_conformance', case['environment'], case['lemmas'], "
+                     f"case.get('document'))\n")
     out = tmp_path / "recorded"
     done = subprocess.run(nested_pytest.command(["-q", "-p", "tests.route_case_recorder", "-p", "no:cacheprovider",
                                                  "--rootdir", str(ROOT), str(probe)]),
@@ -378,7 +387,9 @@ def test_the_recorder_writes_every_relayed_case(built, tmp_path):
     rows = [json.loads(line) for path in out.glob("relay-*.jsonl") for line in path.read_text().splitlines()]
     assert ["service", "identity", json.dumps(service, separators=(",", ":"))] in [
         [row[0], row[1], json.dumps(json.loads(row[2]), separators=(",", ":"))] for row in rows if row[0] == "service"]
-    assert any(row[:3] == ["one-shot", "ve_metered", ""] and json.loads(row[3]) == one_shot for row in rows)
+    assert ["service", "metered", json.dumps(metered, separators=(",", ":"))] in [
+        [row[0], row[1], json.dumps(json.loads(row[2]), separators=(",", ":"))] for row in rows if row[0] == "service"]
+    assert any(row[:3] == ["one-shot", "ve_conformance", "route"] and json.loads(row[3]) == one_shot for row in rows)
 
 
 
@@ -406,8 +417,8 @@ def test_a_client_without_its_length_check_fails_the_gate(built, without_length_
     assert re.search(r"^accepted service:rights \w+ results/\*/result/[\w/*]*unit_open", failures, re.M), failures
 
 
-FAST_ONE_SHOT = ("ve_metered::evaluate", "ve_metered::countermodel.search", "ve_conformance:route:graph.compose",
-                 "ve_conformance:check-certificate:graph.compose", "ve_conformance:route:bundle.check")
+FAST_ONE_SHOT = ("ve_conformance:route:graph.compose", "ve_conformance:check-certificate:graph.compose",
+                 "ve_conformance:route:bundle.check")
 
 
 @pytest.fixture
@@ -428,3 +439,36 @@ def test_a_reader_without_its_row_count_check_fails_the_gate(built, without_row_
     for route in FAST_ONE_SHOT:
         assert any(f["route"] == route and f["path"] == "." and f["mutation"] in ("empty", "duplicate")
                    for f in report["findings"]), (route, report["failures"])
+
+
+@pytest.fixture
+def without_trace_binding(monkeypatch):
+    """`ve.evaluate` with its trace bindings' request binding removed (lf-18 review F1's in-memory mutant): a
+    binding names any sort and entity."""
+    module = importlib.import_module("ve.evaluate")  # the module: `ve.evaluate` is also the function
+    monkeypatch.setattr(module, "_bound_binding", lambda item, index, entities: (
+        isinstance(item, dict) and set(item) == {"debruijn_index", "sort", "local_id"}
+        and item["debruijn_index"] == index))
+
+
+def test_the_metered_fixtures_ask_for_a_trace_and_the_gate_reaches_its_bindings(built):
+    """lf-18 review F1: no metered fixture asked for a trace, and the gate stopped 5 levels below a service row,
+    so the trace bindings were never mutated. Now a fixture asks for one and its bindings are rebound."""
+    cases = [row[2] for row in G.load_cases() if row[:2] == ["service", "metered"]]
+    assert any(case.get("trace") is True and case["kind"] == "evaluate-budgeted" for case in cases)
+    case = next(case for case in cases if case.get("trace") is True)
+    [answer] = G._service_answers(G.DEFAULT_EXECUTABLE, "metered", [json.dumps(case, separators=(",", ":"))])
+    found = G.mutants(answer, G._strings(case), {}, envelope=G.ENVELOPE["service"])
+    paths = {m.pattern() for m, _ in found if m.kind == "rebind"}
+    binding = "results/*/result/evaluation/explanation/*/bindings/*/"
+    assert {binding + "sort", binding + "local_id"} <= paths
+
+
+def test_a_metered_reader_without_its_trace_binding_fails_the_gate(built, without_trace_binding):
+    """lf-18 review F1: with the binding check removed, a trace naming a sort and an entity the request's model
+    does not hold is accepted, and the gate fails on both fields."""
+    report = G.run_gate({"service:metered"})
+    failures = "\n".join(report["failures"])
+    for field in ("sort", "local_id"):
+        assert re.search(rf"^accepted service:metered rebind results/\*/result/evaluation/explanation/\*/bindings/\*/"
+                         rf"{field}\b", failures, re.M), failures

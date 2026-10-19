@@ -6,6 +6,7 @@ import VE.English.Parse
 import VE.English.Render
 import VE.English.Check
 import VE.Bridge
+import VE.Limits
 
 /-! # Differential runner for `conformance/english_lean.py`
 
@@ -108,7 +109,7 @@ def covers (L : Lexicon) (j : Json) : Except String Bool := do
 
 def runCase (E : Environment) (L : Lexicon) (j : Json) : Except String Json := do
   let tokens ← (← (← j.getObjVal? "tokens").getArr?).toList.mapM decodeTok
-  let formulas ← (← (← j.getObjVal? "formulas").getArr?).toList.mapM (Bridge.decodeFormula 64)
+  let formulas ← (← (← j.getObjVal? "formulas").getArr?).toList.mapM (Bridge.decodeFormula VE.Limits.maxDepth)
   let parsed := match parse E L tokens with
     | some fs => Json.arr (fs.map encodeFormula).toArray
     | none => Json.null

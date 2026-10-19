@@ -1,7 +1,8 @@
 import VE.Events.Completion
 
 /-! The ET-3 fixtures of docs/spec/events-time-causation.md 8 as `#guard` lines: T1 to T6, T10, T13,
-T2b, the fragment rows F1 and the day numbers. T7 (conservativity) is et-3b's, T8 (identity) ET-4's. -/
+T2b, the fragment rows F1 and the day numbers; et-3b's completion pieces and the counterexample to
+`embeddable_sound` as approved. T7 (conservativity) is et-3c's, T8 (identity) ET-4's. -/
 namespace VE.Events.Examples
 open VE.Events
 open VE.Time (Civil dateMax)
@@ -210,5 +211,37 @@ def vR1 : EventsEnv := base [d 2026 6 29, d 2026 9 20, d 2026 9 21, d 2026 9 26,
 #guard (calendarLabelled vR1).length == 3 + 4 + 2
 #guard ((calendarLabelled vR1).filter (·.1.startsWith "events:adjacent:")).map (·.1) ==
   ["events:adjacent:2026-09-20:2026-09-21", "events:adjacent:2026-09-26:2026-09-27"]
+
+-- The completion's pieces (et-3b): old tuples, numbers, added days (T3's situation, 13 October missing)
+#guard oldTuple ([.inl "a", .inl "b"] : List (String ⊕ Nat)) == some ["a", "b"]
+#guard oldTuple ([.inl "a", .inr 3] : List (String ⊕ Nat)) == none && oldTuple ([.inr 3, .inl "a"] : List (String ⊕ Nat)) == none
+#guard numOf (fun (_ : String) => 5) (.inl "a") == 5 && numOf (fun (_ : String) => 5) (.inr 3) == 3
+def mC : VE.FiniteModel String := chain ["a", "b"] [(c12, "a"), (c14, "b")]
+def numC (x : String) : Nat := if x = "a" then (d 2026 10 12).num else (d 2026 10 14).num
+example : addedDay vT3 mC numC (d 2026 10 13).num := by unfold addedDay; decide
+example : ¬ addedDay vT3 mC numC (d 2026 10 12).num := by unfold addedDay; decide
+example : ¬ addedDay vT3 mC numC (dateMax + 1) := by unfold addedDay; decide
+example : isDayC vT3 mC numC (.inl "a") ∧ ¬ isDayC vT3 mC numC (.inl "k") := by simp only [isDayC]; decide
+-- a finite situation is never a calendar reading: day 0 is missing (1.5)
+example : ¬ CalendarReading vT3 mC.asStructure numC := fun h => by
+  obtain ⟨x, hx, hn⟩ := h.2 0 (by decide)
+  have hx : x ∈ ["a", "b"] := hx
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+  rcases hx with rfl | rfl <;> exact absurd hn (by decide)
+
+-- `embeddable_sound` as approved does not hold: `EventsTyped` bounds no year, so a named date after
+-- 9999-12-31 passes the check while its number exceeds `dateMax` (et-3b's report; the DRI's to amend)
+def vX : EventsEnv := base [d 10000 1 1]
+def envX : VE.Environment :=
+  ⟨["day"], fun p => if p = "before" then some ["day", "day"] else none,
+   fun c => if c = dateName (d 10000 1 1) then some "day" else none⟩
+def mX : VE.FiniteModel String := chain ["x"] [(dateName (d 10000 1 1), "x")]
+#guard EventsTyped envX vX && embeddable vX mX && numbering vX mX "x" == dateMax + 1
+-- and no numbering at all embeds it, though the check passes
+example (num : String → Nat) : ¬ Embeds vX mX.asStructure num := fun h => by
+  obtain ⟨x, -, hx, hn⟩ := h.2.2.2 (d 10000 1 1) (by decide)
+  have := h.2.1 x hx
+  rw [hn] at this
+  exact absurd this (by decide)
 
 end VE.Events.Examples

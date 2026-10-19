@@ -1,6 +1,7 @@
 import VE.Risk.Wire
 import VE.Risk.Record
 import VE.Risk.Derive
+import VE.Limits
 
 /-! The risk differential harness of docs/spec/risk.md 8.3 (`ve_service` mode `risk-eval`). It
 is not part of the risk route and decides nothing a user sees: it exposes the trusted
@@ -16,7 +17,7 @@ namespace VE.Risk.Eval
 open Lean VE.Risk
 
 def evalCondition (R : RiskDoc) (qs : List Quantity) (b : Box) (j : Json) : Json :=
-  match elabCond R qs 64 j with
+  match elabCond R qs VE.Limits.maxDepth j with
   | .error (_, e) => Json.mkObj [("error", .str e)]
   | .ok c =>
     if !Scoped b c then

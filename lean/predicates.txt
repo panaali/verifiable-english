@@ -20,6 +20,7 @@ module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
 module ResponseShape.Encoders.Envelope
 module ResponseShape.Encoders.Family
+module ResponseShape.Encoders.Metered
 module ResponseShape.Encoders.NormDefaults
 module ResponseShape.Encoders.Norms
 module ResponseShape.Encoders.Quantity
@@ -55,6 +56,7 @@ module ResponseShape.Schemas.Evaluate
 module ResponseShape.Schemas.FamilyNorms
 module ResponseShape.Schemas.Graph
 module ResponseShape.Schemas.Identity
+module ResponseShape.Schemas.Metered
 module ResponseShape.Schemas.Model
 module ResponseShape.Schemas.NormDefaults
 module ResponseShape.Schemas.Norms
@@ -132,6 +134,7 @@ module VE.Bridge
 module VE.Calc.Decls
 module VE.Calc.Derive
 module VE.Calc.DeriveExamples
+module VE.Calc.Dimension
 module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.FourierMotzkin
@@ -191,6 +194,8 @@ module VE.Core.TableauExtendedInduction
 module VE.Core.TableauExtendedRules
 module VE.Core.Wire
 module VE.Data.Background
+module VE.Defaults.Examples
+module VE.Defaults.Premises
 module VE.Definitions.Alias
 module VE.Definitions.Bundle
 module VE.Definitions.Elaborate
@@ -275,8 +280,12 @@ module VE.Json
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
+module VE.Layout.Anchors
+module VE.Layout.Discourse
 module VE.Layout.List
 module VE.LexicalProofs
+module VE.LimitTies
+module VE.Limits
 module VE.ModelProofs
 module VE.NormDefaults.Admission
 module VE.NormDefaults.Check
@@ -581,6 +590,7 @@ ResponseShape.CaseWF@ResponseShape.Skeleton
 ResponseShape.Encoders.Common.KindsRendered@ResponseShape.Encoders.Common
 ResponseShape.Encoders.Discourse.StatusesOk@ResponseShape.Encoders.Discourse
 ResponseShape.Encoders.English.ClassesIn@ResponseShape.Encoders.English
+ResponseShape.Encoders.Metered.Statused@ResponseShape.Encoders.Metered
 ResponseShape.Encoders.ReadingsRoute.PairEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.SetEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.ValidateRows@ResponseShape.Encoders.ReadingsRoute
@@ -607,7 +617,9 @@ VE.Alternatives.FollowableIn@VE.Alternatives.Followable
 VE.Alternatives.PrefixAdmissibleAlt@VE.Alternatives.Background
 VE.Alternatives.RowsConsistent@VE.Alternatives.Validate
 VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
+VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
+VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
 VE.Ask.BlockLine@VE.Ask.Lines
 VE.Ask.CaseBinding@VE.Ask.Binding
 VE.Ask.Consistent@VE.Ask.Plain
@@ -644,6 +656,7 @@ VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.PhysDim.Normal@VE.Calc.Dimension
 VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
@@ -772,8 +785,11 @@ VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
+VE.Events.CalendarReading@VE.Events.Premises
 VE.Events.DayExtension@VE.Events.Completion
 VE.Events.Embeds@VE.Events.Premises
+VE.Events.addedDay@VE.Events.Completion
+VE.Events.isDayC@VE.Events.Completion
 VE.FiniteModel.Valid@VE.Finite
 VE.FiniteModel.inDomain@VE.Alternatives.Followable
 VE.Formula.WellFormed@VE.Syntax
@@ -807,6 +823,7 @@ VE.Graph.Unfolds@VE.ClaimGraph
 VE.Graph.tableauValid@VE.ClaimGraph
 VE.GraphChecks.valid@VE.GraphChecks
 VE.Layout.GovernedItem@VE.Layout.List
+VE.Layout.ItemUnit@VE.Layout.List
 VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run
 VE.NormDefaults.Admission.CertificatesBound@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.CertificatesBoundX@VE.NormDefaults.LayeredAdmission

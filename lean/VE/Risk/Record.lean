@@ -3,6 +3,7 @@ import VE.Risk.Words
 import VE.Time.Decimal
 import VE.Time.Calendar
 import VE.Order.Wire
+import VE.Limits
 
 /-! Decision records, log entries and admission (docs/spec/risk.md 1.3, 1.4, 3.2,
 3.3 and 4.4 A1 to A3).
@@ -419,7 +420,7 @@ def decodeItem (R : RiskDoc) (qs : List Quantity) (x : Entry) : Except String It
       | .str "necessary" => pure Form.necessary
       | .str "exact" => pure Form.exact
       | _ => throw (recordError "condition")
-    match elabCond R qs 64 (c.getObjValD "condition") with
+    match elabCond R qs VE.Limits.maxDepth (c.getObjValD "condition") with
     | .ok cond =>
       if cond.nodes > maxNodes then throw "ResourceLimit: risk condition nodes"
       pure (.condition ⟨x.id, ← reqStr c "action" "condition", ← reqStr c "harm" "condition", form, cond,

@@ -1,4 +1,5 @@
 import VE.Readings.Assertions
+import VE.Limits
 
 /-! The route of a `readings@1` document and the regenerated elaboration (docs/spec/composition-s2.md 1.1, 1.8,
 3, 4.1, 4.6).
@@ -249,7 +250,7 @@ def sizesJson (D : Doc) (basePredicates : Nat) : Json :=
   let nodes := ((soften X).T.nodes.map (fun N => (N.guard :: N.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum
   Json.mkObj [("sorts", toJson X.E.sorts.length), ("predicates", toJson (basePredicates + (bitDecls D).length +
       (decisions X).length)), ("nodes", toJson nodes),
-    ("limits", Json.mkObj [("sorts", toJson 32), ("predicates", toJson 256), ("nodes", toJson 10000)])]
+    ("limits", Json.mkObj [("sorts", toJson VE.Limits.maxSorts), ("predicates", toJson VE.Limits.maxPredicates), ("nodes", toJson VE.Limits.maxNodes)])]
 
 /-- Declaration provenance for wording. The key comes from the same `genKeys` that
     builds the model vocabulary; its constructor, never its spelling, owns the layer. -/

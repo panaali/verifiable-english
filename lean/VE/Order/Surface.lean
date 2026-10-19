@@ -1,5 +1,6 @@
 import VE.Order.Wire
 import VE.Surface
+import VE.Limits
 
 /-! Executable strict order surface. This is boundary parsing code; checked
 formulas still pass through `Formula.check` before use by semantic routes. -/
@@ -62,7 +63,7 @@ def oversizedIdentifier (source : String) : Bool :=
     if identChar c then
       let next := if length > 0 then length + 1
         else if c ≥ 'a' && c ≤ 'z' then 1 else 0
-      (next, bad || next > 64)
+      (next, bad || next > VE.Limits.maxIdentifierBytes)
     else (0, bad)) (0, false)
   oversized
 
@@ -78,7 +79,7 @@ def oversizedNumeral (source : String) : Bool :=
         if inIdent then (true, 0, false, bad)
         else
           let next := digits + 1
-          (false, next, negative, bad || next + (if negative then 1 else 0) > 40)
+          (false, next, negative, bad || next + (if negative then 1 else 0) > VE.Limits.maxNumeralChars)
       else if c == '-' then (false, 0, true, bad)
       else (false, 0, false, bad)) (false, 0, false, false)
   oversized
@@ -248,13 +249,13 @@ def runCase (j : Json) : Except String Json := do
     let id ← j.getObjValAs? String "id"
     let vocabulary ← Wire.decodeEnvironment (← j.getObjVal? "environment")
     let source ← j.getObjValAs? String "source"
-    if source.utf8ByteSize > 65536 then throw "ResourceLimit: source size"
+    if source.utf8ByteSize > VE.Limits.maxSourceBytes then throw "ResourceLimit: source size"
     if oversizedIdentifier source then throw "ResourceLimit: identifier length"
     if oversizedNumeral source then throw "ResourceLimit: numeral length"
     let some formulas := parse vocabulary.environment source | throw "invalid order surface"
     for formula in formulas do
-      let _ ← Wire.decodeFormula 64 (formulaJson formula)
-    if (formulas.map Wire.formulaNodes).foldl (· + ·) 0 > 10000 then
+      let _ ← Wire.decodeFormula VE.Limits.maxDepth (formulaJson formula)
+    if (formulas.map Wire.formulaNodes).foldl (· + ·) 0 > VE.Limits.maxNodes then
       throw "ResourceLimit: AST node count"
     pure (Json.mkObj [("id", toJson id), ("status", toJson "ok"),
       ("ast", toJson (formulas.map formulaJson))])
