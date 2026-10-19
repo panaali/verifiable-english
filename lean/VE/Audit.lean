@@ -139,6 +139,7 @@ import VE.GraphChecks
 import VE.Judgments.Decl
 import VE.Judgments.Examples
 import VE.Judgments.Scan
+import VE.Judgments.Status
 import VE.Layout.Anchors
 import VE.Layout.Discourse
 import VE.Layout.List
@@ -2060,18 +2061,40 @@ import VE.WireContract.Engine
 #print axioms VE.Graph.resolve_sound
 #print axioms VE.Graph.tableau_certificateSound
 #print axioms VE.GraphChecks.testCertificate_sound
+#print axioms VE.Judgments.Examples.formulas_carve
 #print axioms VE.Judgments.Examples.names_omega
+#print axioms VE.Judgments.Examples.reachedBodies_chain
+#print axioms VE.Judgments.Examples.viewOf_xi
 #print axioms VE.Judgments.admit_first_fault
 #print axioms VE.Judgments.admit_ok_iff
+#print axioms VE.Judgments.dependsOnC_remove
+#print axioms VE.Judgments.dependsOnC_sub
+#print axioms VE.Judgments.dependsOn_iff
+#print axioms VE.Judgments.dependsOn_no_defs
 #print axioms VE.Judgments.faultOf_none_iff
+#print axioms VE.Judgments.filter_remove
+#print axioms VE.Judgments.find_congr_mem
 #print axioms VE.Judgments.foldlM_ok_length
 #print axioms VE.Judgments.foldlM_ok_mono
+#print axioms VE.Judgments.mem_defEdges
 #print axioms VE.Judgments.openTermNames_length
 #print axioms VE.Judgments.openTermNames_sorts
 #print axioms VE.Judgments.opensIn_iff
 #print axioms VE.Judgments.opensIn_isEmpty
+#print axioms VE.Judgments.path_last
 #print axioms VE.Judgments.records_names
 #print axioms VE.Judgments.records_refuse
+#print axioms VE.Judgments.status_checked
+#print axioms VE.Judgments.status_eq
+#print axioms VE.Judgments.status_legacy
+#print axioms VE.Judgments.status_never_checked
+#print axioms VE.Judgments.status_ok_iff
+#print axioms VE.Judgments.status_remove_unused
+#print axioms VE.Judgments.usageMap_complete
+#print axioms VE.Judgments.usageMap_rows
+#print axioms VE.Judgments.usageMap_sound
+#print axioms VE.Judgments.usageMap_unused
+#print axioms VE.Judgments.viewOf_legacy
 #print axioms VE.Layout.anchorReach_iff
 #print axioms VE.Layout.continues_iff
 #print axioms VE.Layout.discourse_anchorsOk_unchanged
