@@ -139,6 +139,7 @@ module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.FourierMotzkin
 module VE.Calc.Linear
+module VE.Calc.Poly
 module VE.Calc.Render
 module VE.Calc.Syntax
 module VE.Cardinality.Erase
@@ -653,6 +654,7 @@ VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Frac.Means@VE.Calc.Poly
 VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
