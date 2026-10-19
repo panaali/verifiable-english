@@ -796,6 +796,20 @@
    "reason": "qt-b1: S +78 (VE/Scales/Syntax.lean +29, VE/Scales/Premises.lean +27, VE/Scales/Intended.lean +22); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1, 2026-10-18",
    "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "sc-3a: S +6 V +5 net; K +0 (VE/Layout/Anchors.lean +68: S +63 for discourse's moved containment bodies, anchor checks and generic checks, D[V] +5 headingOf, spansOf; VE/Layout/List.lean S +7 ItemUnit; VE/Discourse/WellFormed.lean -48 and VE/Discourse/Access.lean -16, the moved bodies)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-3a, 2026-10-19",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "sc-3a: S +6 V +5 net; K +0 (VE/Layout/Anchors.lean +68: S +63 for discourse's moved containment bodies, anchor checks and generic checks, D[V] +5 headingOf, spansOf; VE/Layout/List.lean S +7 ItemUnit; VE/Discourse/WellFormed.lean -48 and VE/Discourse/Access.lean -16, the moved bodies)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-3a, 2026-10-19",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
   }
  ]
 }
