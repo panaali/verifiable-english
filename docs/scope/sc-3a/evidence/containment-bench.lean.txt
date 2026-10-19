@@ -1,0 +1,38 @@
+-- sc-3a evidence (docs/scope/sc-3a/REPORT.md, "Cost"): discourse's pre-move containment (`Before.*`) against the
+-- calls, on a synthetic discourse document of n units and 40 sections. To run on the item's HEAD: put the lines of
+-- before-bodies.lean.txt from `namespace VE.Layout` up to (not including) `theorem before_within`, then
+-- `end VE.Layout`, in place of the marked line below, save as lean/VE/Layout/BenchScratch.lean, and run
+--   cd lean && lake env lean --run VE/Layout/BenchScratch.lean 300
+import VE.Layout.Discourse
+-- (the Before definitions of before-bodies.lean.txt go here)
+
+open VE.Discourse VE.Route.Admission in
+def benchDoc (n a : Nat) : DDoc :=
+  let units := (List.range n).map fun i => (⟨s!"u{i}", 100 * i, 100 * i + 100, .asserted, none⟩ : DocUnit)
+  let anchors := (⟨"doc", "document", none, "D", (0, 100 * n), none, []⟩ : Anchor) ::
+    (List.range a).map fun j => (⟨s!"s{j}", "section", some "doc", s!"S{j}",
+      (100 * (j * n / a), 100 * ((j + 1) * n / a)), none, []⟩ : Anchor)
+  { E := ⟨[], fun _ => none, fun _ => none⟩,
+    base := { literals := [], flags := [], units := units, lemmas := [], openTerms := [], readingSets := [], narrowings := [] },
+    K := { definitionsVersion := "1", documentSort := "document", anchors := anchors, names := [], contentNames := [],
+           mentions := [], documents := [], imports := [], groups := [], constraints := [], validity := [],
+           selfTruth := [], choices := [] },
+    sourceId := "s", text := fun _ => none, sets := [], status := [], prose := "", files := Lean.Json.null }
+
+/-- Per unit: the innermost anchor, then `within` against it for every earlier unit (earlierUnits' pattern). -/
+def work (inner : VE.Discourse.DDoc → String → Option VE.Discourse.Anchor) (wi : VE.Discourse.DDoc → String → String → Bool) (D : VE.Discourse.DDoc) : Nat :=
+  let ids := D.base.units.map (·.id)
+  ids.foldl (fun acc u => match inner D u with
+    | some a => acc + ((ids.takeWhile (· != u)).filter fun v => wi D v a.id).length
+    | none => acc) 0
+
+def main (args : List String) : IO Unit := do
+  let n := (args.headD "1132").toNat!
+  let D ← IO.lazyPure fun _ => benchDoc n 40
+  for _ in [0, 1, 2] do
+    let t0 ← IO.monoNanosNow
+    let r1 ← IO.lazyPure fun _ => work VE.Layout.Before.innermostAnchor VE.Layout.Before.within D
+    IO.println s!"before: {r1} in {((← IO.monoNanosNow) - t0) / 1000000} ms"
+    let t1 ← IO.monoNanosNow
+    let r2 ← IO.lazyPure fun _ => work VE.Discourse.innermostAnchor VE.Discourse.within D
+    IO.println s!"after:  {r2} in {((← IO.monoNanosNow) - t1) / 1000000} ms"

@@ -1,0 +1,658 @@
+{
+ "note": "Each mutant was applied to the committed source, the four modules were built, and the source was restored (the tree was clean after the run). `test` is the first failing declaration and `also_fails` up to five more; a `#guard` is named by its line in lean/VE/Scope/Examples.lean. For a mutant a proof caught first, `fixtures_with_proofs_bypassed` lists the fixtures that fail when the failing proofs are replaced by `sorry` in a scratch copy (never committed); `proof_only` explains the four mutants only a theorem can catch. Every new or moved trusted definition of tools/trust_map.py (VE/Layout/Anchors.lean S and D[V], VE/Layout/List.lean S) has at least one mutant.",
+ "mutants": [
+  {
+   "name": "within-start",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.within",
+   "claim": "a unit starting at the anchor's first byte is within it",
+   "mutation": {
+    "from": "| some (b, e), some a => a.span.1 ≤ b && e ≤ a.span.2",
+    "to": "| some (b, e), some a => a.span.1 < b && e ≤ a.span.2"
+   },
+   "test": "#guard (line 191) (lean/VE/Scope/Examples.lean:191)",
+   "also_fails": [
+    "#guard (line 192) (lean/VE/Scope/Examples.lean:192)",
+    "#guard (line 194) (lean/VE/Scope/Examples.lean:194)",
+    "#guard (line 195) (lean/VE/Scope/Examples.lean:195)",
+    "#guard (line 196) (lean/VE/Scope/Examples.lean:196)",
+    "#guard (line 214) (lean/VE/Scope/Examples.lean:214)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "within-end",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.within",
+   "claim": "a unit ending at the anchor's last byte is within it",
+   "mutation": {
+    "from": "| some (b, e), some a => a.span.1 ≤ b && e ≤ a.span.2",
+    "to": "| some (b, e), some a => a.span.1 ≤ b && e < a.span.2"
+   },
+   "test": "#guard (line 191) (lean/VE/Scope/Examples.lean:191)",
+   "also_fails": [
+    "#guard (line 194) (lean/VE/Scope/Examples.lean:194)",
+    "#guard (line 196) (lean/VE/Scope/Examples.lean:196)",
+    "#guard (line 218) (lean/VE/Scope/Examples.lean:218)",
+    "theorem box_anchors (lean/VE/Scope/Examples.lean:258)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "narrower-tie",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.narrower",
+   "claim": "of two anchors of equal size the first is innermost",
+   "mutation": {
+    "from": "| some b => if a.span.2 - a.span.1 < b.span.2 - b.span.1 then some a else some b",
+    "to": "| some b => if a.span.2 - a.span.1 ≤ b.span.2 - b.span.1 then some a else some b"
+   },
+   "test": "theorem box_anchors (lean/VE/Scope/Examples.lean:258)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "innermost-first",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.innermostAnchor",
+   "claim": "the innermost anchor is the smallest, not the first",
+   "mutation": {
+    "from": "(anchors.filter fun a => within spans anchors unit a.id).foldl narrower none",
+    "to": "(anchors.filter fun a => within spans anchors unit a.id).head?"
+   },
+   "test": "theorem innermost_within (lean/VE/Layout/Anchors.lean:162)",
+   "also_fails": [
+    "theorem innermost_within (lean/VE/Layout/Anchors.lean:164)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "innermost_within"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 196)",
+    "theorem box_anchors"
+   ]
+  },
+  {
+   "name": "units-order",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorUnits",
+   "claim": "an anchor's units are in source order (the heading is the first)",
+   "mutation": {
+    "from": "(L.filter fun x => within (spansOf L) anchors x.id a).map (·.id)",
+    "to": "((L.filter fun x => within (spansOf L) anchors x.id a).map (·.id)).reverse"
+   },
+   "test": "theorem mem_anchorUnits (lean/VE/Layout/Anchors.lean:170)",
+   "also_fails": [
+    "theorem mem_anchorUnits (lean/VE/Layout/Anchors.lean:171)",
+    "theorem anchorReach_iff (lean/VE/Layout/Anchors.lean:176)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "anchorReach_iff",
+    "mem_anchorUnits"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 191)",
+    "#guard (line 192)",
+    "#guard (line 193)",
+    "#guard (line 194)",
+    "#guard (line 195)",
+    "#guard (line 214)",
+    "#guard (line 218)",
+    "theorem box_anchors"
+   ]
+  },
+  {
+   "name": "heading-last",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.headingOf",
+   "claim": "the heading is the anchor's first unit",
+   "mutation": {
+    "from": "(anchorUnits L anchors a).head?",
+    "to": "(anchorUnits L anchors a).getLast?"
+   },
+   "test": "theorem anchorReach_iff (lean/VE/Layout/Anchors.lean:189)",
+   "also_fails": [
+    "theorem anchorReach_iff (lean/VE/Layout/Anchors.lean:191)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "anchorReach_iff"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 192)",
+    "#guard (line 195)",
+    "#guard (line 214)",
+    "theorem box_anchors"
+   ]
+  },
+  {
+   "name": "reach-heading",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorReach",
+   "claim": "the anchor reach leaves out the heading",
+   "mutation": {
+    "from": "| _ :: us => .ok us",
+    "to": "| u :: us => .ok (u :: us)"
+   },
+   "test": "theorem anchorReach_iff (lean/VE/Layout/Anchors.lean:189)",
+   "also_fails": [
+    "theorem anchorReach_iff (lean/VE/Layout/Anchors.lean:192)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "anchorReach_iff"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 191)",
+    "#guard (line 193)",
+    "#guard (line 194)",
+    "#guard (line 218)",
+    "theorem box_anchors"
+   ]
+  },
+  {
+   "name": "reach-text",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorReach",
+   "claim": "an anchor with no unit is ScopeUnknownAnchor",
+   "mutation": {
+    "from": "| [] => .error s!\"ScopeUnknownAnchor: {a}\"",
+    "to": "| [] => .error s!\"ScopeUnknownUnit: {a}\""
+   },
+   "test": "theorem box_anchors (lean/VE/Scope/Examples.lean:258)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "spans-swap",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.spansOf",
+   "claim": "a layout unit's span is (first byte, end)",
+   "mutation": {
+    "from": "L.map fun x => (x.id, x.span.1, x.span.2)",
+    "to": "L.map fun x => (x.id, x.span.2, x.span.1)"
+   },
+   "test": "#guard (line 191) (lean/VE/Scope/Examples.lean:191)",
+   "also_fails": [
+    "#guard (line 192) (lean/VE/Scope/Examples.lean:192)",
+    "#guard (line 193) (lean/VE/Scope/Examples.lean:193)",
+    "#guard (line 194) (lean/VE/Scope/Examples.lean:194)",
+    "#guard (line 196) (lean/VE/Scope/Examples.lean:196)",
+    "#guard (line 214) (lean/VE/Scope/Examples.lean:214)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "root-fuel",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.reachesRoot",
+   "claim": "the walk to the root fails when the fuel runs out",
+   "mutation": {
+    "from": "def reachesRoot (anchors : List VE.Discourse.Anchor) : Nat → VE.Discourse.Anchor → Bool\n  | 0, _ => false",
+    "to": "def reachesRoot (anchors : List VE.Discourse.Anchor) : Nat → VE.Discourse.Anchor → Bool\n  | 0, _ => true"
+   },
+   "test": "theorem reaches_root (lean/VE/Scope/Examples.lean:270)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "root-nested",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.reachesRoot",
+   "claim": "a child's span lies inside its parent's",
+   "mutation": {
+    "from": "| some b => spanIn a.span b.span && reachesRoot anchors n b",
+    "to": "| some b => reachesRoot anchors n b"
+   },
+   "test": "theorem reaches_root (lean/VE/Scope/Examples.lean:270)",
+   "also_fails": [
+    "theorem anchor_checks (lean/VE/Scope/Examples.lean:290)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "limit",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorsOk",
+   "claim": "at most 1,024 anchors (1,025 is ResourceLimit)",
+   "mutation": {
+    "from": "req (anchors.length ≤ 1024)",
+    "to": "req (anchors.length ≤ 1025)"
+   },
+   "test": "theorem anchor_checks (lean/VE/Scope/Examples.lean:290)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "limit-boundary",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorsOk",
+   "claim": "1,024 anchors pass the limit",
+   "mutation": {
+    "from": "req (anchors.length ≤ 1024)",
+    "to": "req (anchors.length < 1024)"
+   },
+   "test": "theorem anchor_checks (lean/VE/Scope/Examples.lean:290)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "one-tree",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorsOk",
+   "claim": "anchors form one tree: exactly one root",
+   "mutation": {
+    "from": "fun _ => req ((anchors.filter (·.parent.isNone)).length == 1 || anchors.isEmpty)",
+    "to": "fun _ => req ((anchors.filter (·.parent.isNone)).length ≤ 1 || anchors.isEmpty)"
+   },
+   "test": "#guard (line 202) (lean/VE/Scope/Examples.lean:202)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "label-case",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorsOk",
+   "claim": "sibling labels are compared without case",
+   "mutation": {
+    "from": "if a.label.toLower == b.label.toLower then",
+    "to": "if a.label == b.label then"
+   },
+   "test": "#guard (line 293) (lean/VE/Scope/Examples.lean:293)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "overlap",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorsOk",
+   "claim": "sibling anchors must not overlap",
+   "mutation": {
+    "from": "else req (spansDisjoint a.span b.span) (\"InvalidInput",
+    "to": "else req true (\"InvalidInput"
+   },
+   "test": "#guard (line 295) (lean/VE/Scope/Examples.lean:295)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "exports-unary",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorsOk",
+   "claim": "an export must be a unary predicate",
+   "mutation": {
+    "from": "req (a.exports.all fun p => unary p && defSpans.any",
+    "to": "req (a.exports.all fun p => true && defSpans.any"
+   },
+   "test": "theorem anchor_checks (lean/VE/Scope/Examples.lean:290)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "exports-def",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Layout.anchorsOk",
+   "claim": "an export needs a definition unit inside the anchor",
+   "mutation": {
+    "from": "unary p && defSpans.any (spanIn · a.span))",
+    "to": "unary p && !defSpans.isEmpty)"
+   },
+   "test": "theorem anchor_checks (lean/VE/Scope/Examples.lean:290)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "req-swap",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Discourse.req",
+   "claim": "req passes exactly when its test holds",
+   "mutation": {
+    "from": "def req (b : Bool) (e : String) : Except String Unit := if b then .ok () else .error e",
+    "to": "def req (b : Bool) (e : String) : Except String Unit := if b then .ok () else .ok ()"
+   },
+   "test": "theorem req_ok (lean/VE/Layout/Anchors.lean:49)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "req_ok"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 202)",
+    "#guard (line 295)",
+    "theorem anchor_checks"
+   ]
+  },
+  {
+   "name": "runall-skip",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Discourse.runAll",
+   "claim": "runAll stops at the first failure",
+   "mutation": {
+    "from": "| .error e => .error e\n\ntheorem runAll_ok",
+    "to": "| .error _ => runAll fs\n\ntheorem runAll_ok"
+   },
+   "test": "theorem runAll_ok (lean/VE/Layout/Anchors.lean:30)",
+   "also_fails": [
+    "theorem runAll_cons (lean/VE/Layout/Anchors.lean:44)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "runAll_cons",
+    "runAll_ok"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 202)",
+    "#guard (line 293)",
+    "#guard (line 295)",
+    "theorem anchor_checks"
+   ]
+  },
+  {
+   "name": "allok-first",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Discourse.allOk",
+   "claim": "allOk checks every element",
+   "mutation": {
+    "from": "runAll (xs.map fun x _ => f x)",
+    "to": "runAll ((xs.take 1).map fun x _ => f x)"
+   },
+   "test": "theorem allOk_ok (lean/VE/Layout/Anchors.lean:38)",
+   "also_fails": [
+    "theorem allOk_iff (lean/VE/Layout/Anchors.lean:57)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "allOk_iff",
+    "allOk_ok"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 293)",
+    "#guard (line 295)",
+    "theorem anchor_checks"
+   ]
+  },
+  {
+   "name": "dupof-none",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Discourse.dupOf",
+   "claim": "dupOf finds a repeated id",
+   "mutation": {
+    "from": "| x :: xs => if xs.contains x then some x else dupOf xs",
+    "to": "| x :: xs => if xs.contains x then none else dupOf xs"
+   },
+   "test": "theorem dupOf_none (lean/VE/Layout/Anchors.lean:71)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "dupOf_none"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "theorem anchor_checks"
+   ]
+  },
+  {
+   "name": "spanin-strict",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Discourse.spanIn",
+   "claim": "spanIn includes the outer span's first byte",
+   "mutation": {
+    "from": "def spanIn (inner outer : Nat × Nat) : Bool := outer.1 ≤ inner.1",
+    "to": "def spanIn (inner outer : Nat × Nat) : Bool := outer.1 < inner.1"
+   },
+   "test": "theorem span_tests (lean/VE/Scope/Examples.lean:264)",
+   "also_fails": [
+    "theorem anchor_checks (lean/VE/Scope/Examples.lean:290)",
+    "#guard (line 293) (lean/VE/Scope/Examples.lean:293)",
+    "#guard (line 295) (lean/VE/Scope/Examples.lean:295)",
+    "#guard (line 297) (lean/VE/Scope/Examples.lean:297)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "disjoint-strict",
+   "language": "lean",
+   "file": "lean/VE/Layout/Anchors.lean",
+   "definition": "VE.Discourse.spansDisjoint",
+   "claim": "touching spans are disjoint",
+   "mutation": {
+    "from": "def spansDisjoint (a b : Nat × Nat) : Bool := a.2 ≤ b.1",
+    "to": "def spansDisjoint (a b : Nat × Nat) : Bool := a.2 < b.1"
+   },
+   "test": "#guard (line 198) (lean/VE/Scope/Examples.lean:198)",
+   "also_fails": [
+    "theorem span_tests (lean/VE/Scope/Examples.lean:264)",
+    "#guard (line 292) (lean/VE/Scope/Examples.lean:292)",
+    "#guard (line 297) (lean/VE/Scope/Examples.lean:297)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "item-same-depth",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "definition": "VE.Layout.itemFrom",
+   "claim": "the next item of the same depth ends the label reach",
+   "mutation": {
+    "from": "| x :: xs => if x.item.any (d < ·) || x.midLine then x.id :: itemFrom d xs else []",
+    "to": "| x :: xs => if x.item.any (d ≤ ·) || x.midLine then x.id :: itemFrom d xs else []"
+   },
+   "test": "theorem mem_itemFrom (lean/VE/Layout/List.lean:293)",
+   "also_fails": [
+    "theorem mem_itemFrom (lean/VE/Layout/List.lean:302)",
+    "theorem mem_itemFrom (lean/VE/Layout/List.lean:303)",
+    "theorem mem_itemFrom (lean/VE/Layout/List.lean:306)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "mem_itemFrom"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 225)",
+    "#guard (line 228)",
+    "theorem short_items"
+   ]
+  },
+  {
+   "name": "item-midline",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "definition": "VE.Layout.itemFrom",
+   "claim": "the item's continuing sentences are in its reach",
+   "mutation": {
+    "from": "| x :: xs => if x.item.any (d < ·) || x.midLine then x.id :: itemFrom d xs else []",
+    "to": "| x :: xs => if x.item.any (d < ·) then x.id :: itemFrom d xs else []"
+   },
+   "test": "theorem mem_itemFrom (lean/VE/Layout/List.lean:293)",
+   "also_fails": [
+    "theorem mem_itemFrom (lean/VE/Layout/List.lean:302)",
+    "theorem mem_itemFrom (lean/VE/Layout/List.lean:303)",
+    "theorem mem_itemFrom (lean/VE/Layout/List.lean:306)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "mem_itemFrom"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 225)",
+    "#guard (line 228)",
+    "theorem short_items"
+   ]
+  },
+  {
+   "name": "item-label",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "definition": "VE.Layout.itemRun",
+   "claim": "only an item with a bold label has a label reach",
+   "mutation": {
+    "from": "| some d => if x.label then .ok",
+    "to": "| some d => if true then .ok"
+   },
+   "test": "theorem itemRun_ok (lean/VE/Layout/List.lean:325)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "itemRun_ok"
+   ],
+   "fixtures_with_proofs_bypassed": [
+    "#guard (line 227)",
+    "theorem short_items"
+   ]
+  },
+  {
+   "name": "item-text",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "definition": "VE.Layout.itemRun",
+   "claim": "an item without a label is NotALabel",
+   "mutation": {
+    "from": ".error s!\"NotALabel: {item}\"\n      | none =>",
+    "to": ".error s!\"NotALeadIn: {item}\"\n      | none =>"
+   },
+   "test": "#guard (line 227) (lean/VE/Scope/Examples.lean:227)",
+   "also_fails": [
+    "theorem short_items (lean/VE/Scope/Examples.lean:237)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored"
+  },
+  {
+   "name": "itemunit-depth",
+   "language": "lean",
+   "file": "lean/VE/Layout/List.lean",
+   "definition": "VE.Layout.ItemUnit",
+   "claim": "the independent statement admits only deeper items",
+   "mutation": {
+    "from": "∀ k, i < k → k ≤ j → ∃ x, L[k]? = some x ∧ ((∃ e, x.item = some e ∧ d < e) ∨ x.midLine = true))",
+    "to": "∀ k, i < k → k ≤ j → ∃ x, L[k]? = some x ∧ ((∃ e, x.item = some e ∧ d ≤ e) ∨ x.midLine = true))"
+   },
+   "test": "theorem itemRun_iff (lean/VE/Layout/List.lean:345)",
+   "also_fails": [
+    "theorem itemRun_iff (lean/VE/Layout/List.lean:363)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "itemRun_iff"
+   ],
+   "fixtures_with_proofs_bypassed": [],
+   "proof_only": "ItemUnit is a Prop, the independent statement of the label reach; only a theorem about it can fail (as GovernedItem in sc-1a)"
+  },
+  {
+   "name": "discourse-within",
+   "language": "lean",
+   "file": "lean/VE/Discourse/Access.lean",
+   "definition": "VE.Discourse.within",
+   "claim": "discourse's within is the moved body on its own spans",
+   "mutation": {
+    "from": "VE.Layout.within (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors unit anchor",
+    "to": "VE.Layout.within (D.base.units.map fun x => (x.id, x.start, x.start)) D.K.anchors unit anchor"
+   },
+   "test": "theorem innermost_within (lean/VE/Discourse/Access.lean)",
+   "also_fails": [
+    "theorem acc_no_heuristic (lean/VE/Discourse/Access.lean)"
+   ],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "discourse_within_unchanged",
+    "innermost_within"
+   ],
+   "fixtures_with_proofs_bypassed": [],
+   "proof_only": "the discourse call has no Lean document fixture; the spec theorem discourse_within_unchanged (rfl) and innermost_within pin it, and docs/scope/sc-3a/evidence/before-bodies.lean.txt proves the calls equal discourse's pre-move bodies on every document"
+  },
+  {
+   "name": "discourse-innermost",
+   "language": "lean",
+   "file": "lean/VE/Discourse/Access.lean",
+   "definition": "VE.Discourse.innermostAnchor",
+   "claim": "discourse's innermost anchor is the moved body",
+   "mutation": {
+    "from": "VE.Layout.innermostAnchor (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors unit",
+    "to": "VE.Layout.innermostAnchor (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors.reverse unit"
+   },
+   "test": "theorem innermost_within (lean/VE/Discourse/Access.lean)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "discourse_innermost_unchanged",
+    "innermost_within"
+   ],
+   "fixtures_with_proofs_bypassed": [],
+   "proof_only": "as discourse-within: discourse_innermost_unchanged (rfl) and innermost_within pin the call"
+  },
+  {
+   "name": "discourse-anchorsok",
+   "language": "lean",
+   "file": "lean/VE/Discourse/WellFormed.lean",
+   "definition": "VE.Discourse.anchorsOk",
+   "claim": "discourse's anchor checks read its environment's unary test",
+   "mutation": {
+    "from": "(unaryPred D.E)",
+    "to": "(fun _ => true)"
+   },
+   "test": "theorem discourse_anchorsOk_unchanged (lean/VE/Layout/Discourse.lean)",
+   "also_fails": [],
+   "command": "cd lean && lake build VE.Layout.Anchors VE.Layout.List VE.Layout.Discourse VE.Scope.Examples",
+   "result": "build failed; source restored",
+   "proofs_bypassed": [
+    "discourse_anchorsOk_unchanged"
+   ],
+   "fixtures_with_proofs_bypassed": [],
+   "proof_only": "as discourse-within: discourse_anchorsOk_unchanged (rfl) pins the call"
+  }
+ ]
+}
