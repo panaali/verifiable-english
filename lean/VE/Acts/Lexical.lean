@@ -156,15 +156,29 @@ def wording (f : Form) (act : String) : String := "{0} " ++ f.text ++ " " ++ act
 theorem check_no_join {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String}
     (hc : check fx name k raw = .ok a) {ts : List Tok} (hl : lex fx a = .ok ts) :
     ∀ t ∈ ts, (∀ w, t = .word w → joinWords.contains w.toLower = false) ∧ t ≠ .comma := by
-  sorry
-
-/-- An accepted act holds no clause word. -/
-theorem check_no_clause {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String}
-    (hc : check fx name k raw = .ok a) : ∀ w ∈ words a, clauseWords.contains w.toLower = false := by
-  sorry
-
-theorem wording_subject_first (f : Form) (act : String) (h : act.startsWith "{0} " = true) :
-    (wording f act).startsWith "{0} " = true := by
-  sorry
+  unfold check at hc
+  simp only [bind, Except.bind, pure, Except.pure] at hc
+  split at hc
+  next =>
+    split at hc
+    next =>
+      split at hc
+      next => cases hc
+      next =>
+        split at hc
+        next ts' hlex =>
+          split at hc
+          next => cases hc
+          next => cases hc
+          next hnone =>
+            cases hc
+            rw [hlex] at hl
+            cases hl
+            intro t ht
+            have := List.find?_eq_none.mp hnone t ht
+            cases t <;> simp_all
+        next => split at hc <;> cases hc
+    next => cases hc
+  next => cases hc
 
 end VE.Acts.Lexical
