@@ -1,0 +1,1731 @@
+{
+ "format": "ve-history-tests@1",
+ "map": {
+  "commit": "de309d61cef97ac8c6b0d205275880efa8ea0fe7",
+  "version": 7,
+  "created": "2026-10-17T21:05:37+00:00",
+  "tests": 428
+ },
+ "tests": [
+  {
+   "test": "tests/test_agent_policy_unspecified.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_answer_cutoff.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tests/test_answer_cutoff.py, tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_answer_cutoff.py:test_pinned_reads_the_pins_of_the_tree_or_of_a_commit: git show",
+    "tools/answer_cutoff.py:pinned: git show",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_order.py:git_dir: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_answer_store.py",
+   "why": "starts git in tests/answer_store.py, tests/test_answer_store.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/answer_store.py:changed_guarded_paths.<locals>.git: git",
+    "tests/test_answer_store.py:_repository: git",
+    "tests/test_answer_store.py:_repository.<locals>.run: git",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_ar6_report.py",
+   "why": "starts git in docs/arch/AR-6/report.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/arch/AR-6/report.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_ar8_evidence.py",
+   "why": "starts git (git show) in docs/architecture/ar-8/measure.py, tests/test_ar8_evidence.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "docs/architecture/ar-8/measure.py:git: git",
+    "docs/architecture/ar-8/measure.py:lines_at: git show",
+    "tests/test_ar8_evidence.py:git: git",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_architecture_docs.py",
+   "why": "starts git (git archive, git show) in tools/architecture_numbers.py, tools/trust_map.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/architecture_numbers.py:git: git",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show"
+   ]
+  },
+  {
+   "test": "tests/test_ask_cli.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_ask_null_free.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_assurance_manifest.py",
+   "why": "starts git (git merge-base, git show) in conformance/frozen_norm_defaults.py, tools/evidence/__init__.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tools/evidence/__init__.py:git: git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base"
+   ]
+  },
+  {
+   "test": "tests/test_b16b_evidence.py",
+   "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_b16d_document.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_b16d_document.py, tools/lean_first_diff.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/probe_matrix.py:generate: git log",
+    "tests/test_b16d_document.py:pilot_rows.<locals>.git: git",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git: git"
+   ]
+  },
+  {
+   "test": "tests/test_b16d_evidence.py",
+   "why": "runs pytest on test files the source does not name, in docs/lean-first/b16d/seed_faults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/lean-first/b16d/seed_faults.py:main: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_b16d_norm_roles.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_b16e_rights_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_b16f_senses_document.py",
+   "why": "starts git (git cat-file) in tests/test_b16f_senses_document.py, tools/lean_first_diff.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_b16f_senses_document.py:test_a_pilot_is_written_with_the_files_it_names_beside_it.<locals>.git: git",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file"
+   ]
+  },
+  {
+   "test": "tests/test_batch_evidence.py",
+   "why": "starts git (git cat-file, git merge-base) in tests/test_batch_evidence.py, tools/batch_evidence.py, tools/evidence/__init__.py, tools/gate_collection.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_batch_evidence.py:_git: git",
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/batch_evidence.py:committed_problems: git cat-file",
+    "tools/batch_evidence.py:mutant_source_problems: git cat-file",
+    "tools/evidence/__init__.py:git: git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_batch_scope.py",
+   "why": "starts git in tests/test_batch_scope.py, tools/batch_evidence.py, tools/batch_scope.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_batch_scope.py:_git: git",
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/batch_scope.py:_git_out: git"
+   ]
+  },
+  {
+   "test": "tests/test_binding_census.py",
+   "why": "starts git (git show) in conformance/frozen_words.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_words.py:_source: git show",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_closure_witnesses.py",
+   "why": "starts git (git show) in experiments/E0/closure_witnesses/validate.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "experiments/E0/closure_witnesses/validate.py:validate: git show"
+   ]
+  },
+  {
+   "test": "tests/test_colab.py",
+   "why": "starts git (git show) in tests/test_runner.py, ve_experiments/runner.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_runner.py:git: git",
+    "ve_experiments/runner.py:_git: git",
+    "ve_experiments/runner.py:require_committed: git show"
+   ]
+  },
+  {
+   "test": "tests/test_consolidation_tools.py",
+   "why": "starts git (git archive, git ls-files, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tests/test_consolidation_tools.py, tools/cache_store.py, tools/source_graph.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_consolidation_tools.py:git: git",
+    "tools/cache_store.py:directory: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_difffuzz.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, ve_experiments/runner.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "ve_experiments/runner.py:_git: git",
+    "ve_experiments/runner.py:require_committed: git show"
+   ]
+  },
+  {
+   "test": "tests/test_english_e26_ab.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/probe_matrix.py:generate: git log",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git: git"
+   ]
+  },
+  {
+   "test": "tests/test_english_e26_report.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/probe_matrix.py:generate: git log",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git: git"
+   ]
+  },
+  {
+   "test": "tests/test_english_grammar_gen.py",
+   "why": "starts git (git cat-file) in tools/english_grammar_gen.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/english_grammar_gen.py:git_blob: git cat-file"
+   ]
+  },
+  {
+   "test": "tests/test_english_lean_route.py",
+   "why": "starts git (git cat-file) in tools/english_grammar_gen.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/english_grammar_gen.py:git_blob: git cat-file"
+   ]
+  },
+  {
+   "test": "tests/test_english_lean_s3.py",
+   "why": "starts git (git cat-file) in tools/english_grammar_gen.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/english_grammar_gen.py:git_blob: git cat-file"
+   ]
+  },
+  {
+   "test": "tests/test_english_unambiguity.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_evidence_bounds.py",
+   "why": "runs pytest on test files the source does not name, in tests/test_evidence_bounds.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_evidence_bounds.py:<module>: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_evidence_toolkit.py",
+   "why": "starts git (git cat-file, git log, git merge-base, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_evidence_toolkit.py, tools/batch_evidence.py, tools/evidence/__init__.py, tools/gate_collection.py, tools/lean_first_diff.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/probe_matrix.py:generate: git log",
+    "tests/test_evidence_toolkit.py:_git: git",
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/batch_evidence.py:committed_problems: git cat-file",
+    "tools/batch_evidence.py:mutant_source_problems: git cat-file",
+    "tools/evidence/__init__.py:git: git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_evidence_tools.py",
+   "why": "starts git (git log, git rev-parse) in tests/probe_matrix.py, tools/lean_service_common.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/probe_matrix.py:generate: git log",
+    "tools/lean_service_common.py:machine: git rev-parse"
+   ]
+  },
+  {
+   "test": "tests/test_frozen_sources.py",
+   "why": "starts git (git archive, git ls-tree, git show) in tests/test_frozen_sources.py, tools/trust_changes.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_frozen_sources.py:git: git",
+    "tools/trust_changes.py:base_blobs: git ls-tree",
+    "tools/trust_changes.py:base_classes: git show",
+    "tools/trust_map.py:extract_rev: git archive"
+   ]
+  },
+  {
+   "test": "tests/test_gate.py",
+   "why": "starts git (git ls-files, git show) in conformance/frozen_norm_defaults.py, tests/test_regen_generated.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_regen_generated.py:<module>: git ls-files",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_gate_collection.py",
+   "why": "starts git (git notes) in tests/test_gate_collection.py, tools/gate_collection.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_gate_collection.py:git: git",
+    "tests/test_gate_collection.py:test_a_record_round_trips_and_binds_its_commit_and_tree: git notes",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_gate_durations.py",
+   "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tests/test_gate_durations.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_gate_durations.py:git: git",
+    "tools/gate.py:check_toolchains: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_integrity.py",
+   "why": "starts git (git add, git archive, git config, git init, git rev-parse, git show, git status, git update-index) in conformance/frozen_norm_defaults.py, tests/test_gate_integrity.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; reads .git in tests/test_gate_integrity.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_gate_integrity.py:committed_source: git, git add, git init",
+    "tests/test_gate_integrity.py:test_fsmonitor_hook_cannot_hide_edited_source: git, git add, git config, git status",
+    "tests/test_gate_integrity.py:test_gate_environment_uses_real_repository_and_recorder: git rev-parse",
+    "tests/test_gate_integrity.py:test_index_bits_cannot_hide_edited_source: git status, git update-index",
+    "tests/test_gate_integrity.py:test_source_identity_reports_clean_tree_and_leaves_index_alone: .git, git rev-parse",
+    "tests/test_gate_integrity.py:test_staged_change_stays_dirty_when_the_file_matches_the_commit: git add",
+    "tools/gate.py:check_toolchains: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_quarantine.py",
+   "why": "starts git (git archive, git ls-files, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tests/test_gate_quarantine.py, tests/test_regen_generated.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_gate_quarantine.py:test_the_tracked_quarantine_is_valid_and_names_collected_tests: git ls-files",
+    "tests/test_regen_generated.py:<module>: git ls-files",
+    "tools/gate.py:check_toolchains: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_rerun.py",
+   "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tools/gate.py:check_toolchains: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gate_trust.py",
+   "why": "starts git (git archive, git cat-file, git rev-parse, git show) in conformance/frozen_norm_defaults.py, docs/arch/AR-4/report.py, tools/batch_evidence.py, tools/batch_scope.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "docs/arch/AR-4/report.py:_git: git",
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/batch_evidence.py:mutant_source_problems: git cat-file",
+    "tools/batch_scope.py:_git_out: git",
+    "tools/gate.py:check_toolchains: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_hang_guards.py",
+   "why": "starts git (git cat-file, git merge-base, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/english_grammar_gen.py, tools/evidence/__init__.py, tools/hooks/precommit.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tools/english_grammar_gen.py:git_blob: git cat-file",
+    "tools/evidence/__init__.py:git: git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base",
+    "tools/hooks/precommit.py:Index.__init__: git rev-parse",
+    "tools/hooks/precommit.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_heavy_tests.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git write-tree) in tools/run_order.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_order.py:git_dir: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_history_tests.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git write-tree) in tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; reads .git in tests/read_recorder.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/read_recorder.py:<module>: .git",
+    "tests/read_recorder.py:_hook: .git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_identity_lint.py",
+   "why": "starts git (git cat-file, git merge-base, git rev-parse, git show) in tests/test_identity_lint.py, tools/identity_lint.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_identity_lint.py:test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist: git show",
+    "tests/test_identity_lint.py:test_the_tree_passes_and_has_not_grown_since_the_merge_base: git merge-base",
+    "tools/identity_lint.py:base_entries: git cat-file, git rev-parse, git show"
+   ]
+  },
+  {
+   "test": "tests/test_lean_audit_record.py",
+   "why": "starts git (git ls-files, git rev-parse) in tools/cache_store.py, tools/source_graph.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/cache_store.py:directory: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files"
+   ]
+  },
+  {
+   "test": "tests/test_lean_dump_cache.py",
+   "why": "starts git (git init, git ls-files, git rev-parse) in tests/test_lean_dump_cache.py, tools/cache_store.py, tools/source_graph.py; reads .git in tests/test_lean_dump_cache.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_lean_dump_cache.py:dump: git init",
+    "tests/test_lean_dump_cache.py:test_a_tree_whose_inputs_cannot_be_read_runs_the_dump: .git",
+    "tests/test_lean_dump_cache.py:test_the_cache_directory: git rev-parse",
+    "tests/test_lean_dump_cache.py:test_two_checkouts_of_one_tree_share_an_entry: .git, git init",
+    "tools/cache_store.py:directory: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_b10a_report.py",
+   "why": "starts git (git archive, git cat-file, git diff, git show) in docs/arch/AR-4/report.py, docs/arch/AR-6/report.py, docs/lean-first/b12/report.py, docs/lean-first/b13b/report.py, docs/lean-first/b16b/report.py, docs/lean-first/b16e/report.py, docs/lean-first/b16f/report.py, docs/spec/question-answering-q2/report.py, tools/batch_evidence.py, tools/batch_scope.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/arch/AR-4/report.py:_git: git",
+    "docs/arch/AR-6/report.py:_git: git",
+    "docs/lean-first/b12/report.py:line_changes: git diff",
+    "docs/lean-first/b12/report.py:render: git show",
+    "docs/lean-first/b13b/report.py:capture_scope.<locals>.git: git",
+    "docs/lean-first/b16b/report.py:git: git",
+    "docs/lean-first/b16e/report.py:save_scope.<locals>.git: git",
+    "docs/lean-first/b16f/report.py:save_scope.<locals>.git: git",
+    "docs/spec/question-answering-q2/report.py:git: git",
+    "tools/batch_evidence.py:changed_since: git",
+    "tools/batch_evidence.py:mutant_source_problems: git cat-file",
+    "tools/batch_scope.py:_git_out: git",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_b12_report.py",
+   "why": "starts git (git archive, git diff, git show) in docs/lean-first/b12/report.py, tests/test_lean_first_b12_report.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "docs/lean-first/b12/report.py:line_changes: git diff",
+    "docs/lean-first/b12/report.py:render: git show",
+    "tests/test_lean_first_b12_report.py:test_branch_trust_allowance_counts_only_batch_12_changes: git show",
+    "tests/test_lean_first_b12_report.py:test_delta_numbers_are_regenerated_from_evidence: git show",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_b13b.py",
+   "why": "starts git in docs/lean-first/b13b/report.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/lean-first/b13b/report.py:capture_scope.<locals>.git: git"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_diff.py",
+   "why": "starts git (git cat-file, git log, git show) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tools/lean_first_diff.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/probe_matrix.py:generate: git log",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git: git"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_diff_cache.py",
+   "why": "starts git (git cat-file, git log, git show, git worktree) in conformance/frozen_norm_defaults.py, tests/probe_matrix.py, tests/test_lean_first_diff_cache.py, tools/lean_first_cache.py, tools/lean_first_diff.py, tools/lean_share.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/probe_matrix.py:generate: git log",
+    "tests/test_lean_first_diff_cache.py:_commit.<locals>.<lambda>: git",
+    "tests/test_lean_first_diff_cache.py:test_a_base_recorded_with_an_old_pinned_build_is_not_reused.<locals>.<lambda>: git",
+    "tests/test_lean_first_diff_cache.py:test_prewarm_refuses_a_commit_without_the_cache.<locals>.<lambda>: git",
+    "tests/test_lean_first_diff_cache.py:world.<locals>.<lambda>: git",
+    "tools/lean_first_cache.py:prewarm: git worktree",
+    "tools/lean_first_diff.py:pilot_companions: git cat-file",
+    "tools/lean_first_diff.py:pilot_documents.<locals>.git: git",
+    "tools/lean_share.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_lean_first_oracle.py",
+   "why": "starts git in tools/lean_first_oracle.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tools/lean_first_oracle.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_lean_service.py",
+   "why": "starts git (git rev-parse) in tools/lean_service_common.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/lean_service_common.py:machine: git rev-parse"
+   ]
+  },
+  {
+   "test": "tests/test_lean_service_schema.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_lean_share.py",
+   "why": "starts git (git clone) in tests/test_lean_share.py, tools/lean_share.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_lean_share.py:GIT: git",
+    "tests/test_lean_share.py:clone: git clone",
+    "tests/test_lean_share.py:git: git",
+    "tools/lean_share.py:_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_mutants.py",
+   "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_native_build_lock.py",
+   "why": "starts git (git add, git init, git ls-files) in tests/conftest.py, tests/test_native_build_lock.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/conftest.py:native_fingerprint: git ls-files",
+    "tests/test_native_build_lock.py:_native_checkout: git add, git init"
+   ]
+  },
+  {
+   "test": "tests/test_nested_pytest.py",
+   "why": "starts git (git ls-files) in tests/test_nested_pytest.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_nested_pytest.py:tracked_python: git ls-files",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_contract.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_differential.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_layered.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_relay_english.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_report.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_soft_kinds.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_switch.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_three_way.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norms_contract.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_numeral_conversion.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_p1_native_counter.py",
+   "why": "runs pytest on test files the source does not name, in experiments/p1_preflight.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "experiments/p1_preflight.py:test_suite: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_platform_contract.py",
+   "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tools/gate.py:check_toolchains: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_precommit_hook.py",
+   "why": "starts git (git add, git commit, git init, git ls-files, git rev-parse) in tests/test_precommit_hook.py, tools/hooks/precommit.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_precommit_hook.py:Staging.__init__: git rev-parse",
+    "tests/test_precommit_hook.py:Staging.git: git",
+    "tests/test_precommit_hook.py:fixture_repo: git add, git commit, git init, git ls-files",
+    "tools/hooks/precommit.py:Index.__init__: git rev-parse",
+    "tools/hooks/precommit.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_question_answering_measure_report.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_question_answering_q2_report.py",
+   "why": "starts git in docs/spec/question-answering-q2/report.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/spec/question-answering-q2/report.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_chain_relay.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_dri_signatures.py",
+   "why": "starts git (git show) in tests/test_rd9_dri_signatures.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_rd9_dri_signatures.py:_entry: git show"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_gap_relay.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_soft_split.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_budget_zero.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_companions_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_component_names.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_components_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_components_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_components_load.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_defaults_names.py",
+   "why": "starts git (git merge-base) in tools/evidence/__init__.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/evidence/__init__.py:git: git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base"
+   ]
+  },
+  {
+   "test": "tests/test_readings_defaults_rd6b_report.py",
+   "why": "starts git (git archive, git show) in tests/test_readings_defaults_rd6b_report.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_readings_defaults_rd6b_report.py:test_trust_growth_is_rd6b_entry_and_listed_for_signature: git show",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_defaults_rd8_report.py",
+   "why": "starts git (git log) in tests/test_readings_defaults_rd8_report.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_readings_defaults_rd8_report.py:test_review_fix_commit_chain_and_final_gate_target: git log"
+   ]
+  },
+  {
+   "test": "tests/test_readings_nd_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_nd_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_rd5_plain_probe.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_rd5_udhr.py",
+   "why": "starts git (git ls-tree, git show) in usecases/udhr-pilot/run-20261010T1400Z/migrate.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_ls: git ls-tree",
+    "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_show: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_rd6b_differential.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_s2_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_ce4.py",
+   "why": "starts git (git cat-file, git show) in conformance/frozen_norm_defaults.py, tests/test_readings_sd_ce4.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tests/test_readings_sd_ce4.py:test_ce4_is_the_pilots_pinned_translation: git cat-file"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_differential.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_document.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sd_relay.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_sup_verdicts.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_readings_verdicts_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_regen_generated.py",
+   "why": "starts git (git check-attr, git ls-files, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, tools/regen_generated.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_regen_generated.py:<module>: git ls-files",
+    "tests/test_regen_generated.py:_git: git",
+    "tests/test_regen_generated.py:test_gitattributes_is_generated_from_the_registry: git check-attr",
+    "tests/test_regen_generated.py:test_owner_agrees_with_git_on_every_tracked_file: git check-attr",
+    "tools/regen_generated.py:_git: git",
+    "tools/regen_generated.py:_stage: git show",
+    "tools/regen_generated.py:merge_text: git merge-file",
+    "tools/regen_generated.py:resolve: git rev-parse"
+   ]
+  },
+  {
+   "test": "tests/test_relay_english_scale.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_relay_lint.py",
+   "why": "starts git (git merge-base) in tools/evidence/__init__.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/evidence/__init__.py:git: git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base"
+   ]
+  },
+  {
+   "test": "tests/test_relay_mutation_gate.py",
+   "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_repo_map.py",
+   "why": "starts git (git add, git cat-file, git config, git init, git ls-files, git merge-base, git merge-file, git rev-list, git rev-parse, git show, git status, git write-tree) in tests/test_repo_map.py, tools/regen_generated.py, tools/repo_map.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_repo_map.py:commands: git",
+    "tests/test_repo_map.py:head: git rev-parse",
+    "tests/test_repo_map.py:rights_map: git status",
+    "tests/test_repo_map.py:test_a_map_from_before_the_relay_changed_gives_the_static_answer: git rev-parse",
+    "tests/test_repo_map.py:test_every_command_named_in_agents_md_exists_and_the_fast_ones_answer_help: git",
+    "tests/test_repo_map.py:test_map_expectations_with_an_untracked_file: git init, git ls-files",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/regen_generated.py:_git: git",
+    "tools/regen_generated.py:_stage: git show",
+    "tools/regen_generated.py:install_driver: git config",
+    "tools/regen_generated.py:merge_text: git merge-file",
+    "tools/regen_generated.py:resolve: git rev-parse",
+    "tools/repo_map.py:tests_from: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_route_row_schemas.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_run_cache.py",
+   "why": "starts git (git commit, git init, git log, git ls-files, git rev-parse) in tests/test_run_cache.py, tools/cache_store.py, tools/run_cache.py, tools/source_graph.py; reads .git in tests/read_recorder.py, tests/test_run_cache.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/read_recorder.py:<module>: .git",
+    "tests/read_recorder.py:_hook: .git",
+    "tests/test_run_cache.py:Repository.__init__: git init",
+    "tests/test_run_cache.py:_commit: git commit, git rev-parse",
+    "tests/test_run_cache.py:_fake_git: git",
+    "tests/test_run_cache.py:test_a_run_that_reads_history_is_used_only_on_its_commit_runner_and_git: git",
+    "tests/test_run_cache.py:test_entries_live_in_the_git_common_directory: git rev-parse",
+    "tests/test_run_cache.py:test_the_read_recorder_keeps_checkout_paths_only: .git",
+    "tests/test_run_cache.py:test_the_read_recorder_sees_git_started_or_a_git_path_opened: .git, git, git log",
+    "tools/cache_store.py:directory: git rev-parse",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_cache.py:history_inputs: git",
+    "tools/source_graph.py:tracked: git ls-files"
+   ]
+  },
+  {
+   "test": "tests/test_run_order.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tests/test_run_order.py, tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_run_order.py:test_the_state_is_in_this_worktrees_own_git_directory: git rev-parse",
+    "tools/answer_cutoff.py:pinned: git show",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_order.py:git_dir: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_runner.py",
+   "why": "starts git (git show) in tests/test_runner.py, ve_experiments/runner.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_runner.py:git: git",
+    "ve_experiments/runner.py:_git: git",
+    "ve_experiments/runner.py:require_committed: git show"
+   ]
+  },
+  {
+   "test": "tests/test_select_tests.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git ls-tree, git merge-base, git rev-list, git rev-parse, git show, git write-tree) in tests/test_select_tests.py, tools/answer_cutoff.py, tools/run_order.py, tools/select_tests.py, tools/select_tests_evidence.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_select_tests.py:git_line: git rev-parse",
+    "tests/test_select_tests.py:head_commit: git rev-parse",
+    "tests/test_select_tests.py:real: git show",
+    "tests/test_select_tests.py:test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users: git",
+    "tests/test_select_tests.py:test_freshness_is_the_map_selection_would_use: git rev-list",
+    "tests/test_select_tests.py:test_no_module_reads_assurance_state_around_the_audited_api: git ls-files",
+    "tests/test_select_tests.py:test_smoke_files_and_top_level_areas_match_the_tree: git ls-tree",
+    "tests/test_select_tests.py:tracked: git ls-files",
+    "tools/answer_cutoff.py:pinned: git show",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_order.py:git_dir: git rev-parse",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/select_tests_evidence.py:git: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_since_pass.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git write-tree) in tests/test_since_pass.py, tools/select_tests.py, tools/since_pass.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_since_pass.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/since_pass.py:git: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_soft_review_regressions.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_softnorms_contract.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_stage0_probe_matrix.py",
+   "why": "starts git (git ls-tree, git show) in tests/probe_matrix.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/probe_matrix.py:pinned_runtime_sha256: git ls-tree, git show"
+   ]
+  },
+  {
+   "test": "tests/test_stage2_standalone.py",
+   "why": "starts git in tools/lean_first_oracle.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tools/lean_first_oracle.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_stage2_validation.py",
+   "why": "starts git in tools/lean_first_oracle.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tools/lean_first_oracle.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_suite_tail.py",
+   "why": "starts git (git rev-parse) in tools/bench/suite_tail.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tools/bench/suite_tail.py:summarise: git rev-parse",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_test_schedule.py",
+   "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_test_speed_b2.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git write-tree) in docs/test-speed-b2/shadow.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/test-speed-b2/shadow.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  },
+  {
+   "test": "tests/test_trust_budget.py",
+   "why": "starts git (git archive, git show) in tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_trust_ratchet.py",
+   "why": "starts git (git archive, git merge-file, git show) in tests/test_trust_ratchet.py, tools/regen_generated.py, tools/trust_map.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tests/test_trust_ratchet.py:git: git",
+    "tools/regen_generated.py:merge_text: git merge-file",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_corpus.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_faults.py",
+   "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_lint.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_s4_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_s5_admission.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_contract_s5_lean.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_wire_gate_corpus.py",
+   "why": "starts git (git ls-files, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/cache_store.py, tools/gate.py, tools/gate_collection.py, tools/run_cache.py, tools/source_graph.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tools/cache_store.py:directory: git rev-parse",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/run_cache.py:history_inputs: git",
+    "tools/source_graph.py:tracked: git ls-files"
+   ]
+  },
+  {
+   "test": "tests/test_words.py",
+   "why": "starts git (git merge-base, git show) in conformance/frozen_norm_defaults.py, conformance/frozen_words.py, tools/evidence/__init__.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "conformance/frozen_words.py:_source: git show",
+    "tools/evidence/__init__.py:git: git",
+    "tools/evidence/__init__.py:merge_base.<locals>.holds: git merge-base"
+   ]
+  },
+  {
+   "test": "tools/test_layer_policy.py",
+   "why": "starts git (git add, git cat-file, git ls-files, git merge-base, git rev-list, git rev-parse, git write-tree) in tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "coverage map",
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest",
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
+   ]
+  }
+ ]
+}

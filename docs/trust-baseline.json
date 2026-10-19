@@ -649,6 +649,174 @@
    "reason": "lf-18 F7 (DRI note lf-18-dri-note-20261019): the decoded environment kept with each handle, and the request and case texts cut from their bytes, new Lean-owned behaviour: VE/Service/Protocol.lean +62 (Entry, Entry.of, Handles.entry?, caseResultWith, caseBounds, restrictedCases, memberCuts; objectMembersByChars, sameMembers, renderCases and sameCases are class T), VE/Route/MeteredRun.lean +24 (Prepared, prepare, runWith, reportedWith); with T1 the item is V +120, S -3, K +0 (+117); tested by tests/test_metered_handles.py, the objectMembers and restrictedCases #guards and the caseResult_cached theorem; ties pass in manage-agents FOLLOW-UPS.md",
    "signature": "standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
    "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
+  },
+  {
+   "class": "S",
+   "lines": 76,
+   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
+  },
+  {
+   "class": "V",
+   "lines": 27,
+   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
+  },
+  {
+   "class": "V",
+   "lines": 520,
+   "reason": "readings-defaults RD-7: readings-verdicts on the superposed route in Lean. V +520, K +0, S +0: VE/Readings/SupVerdictsWire.lean +413 (superposed folds ALL/SOME/NONE, per-reading premise statuses, dead readings, witness texts and the English plan selection), VE/Readings/SupDependencies.lean +51 (joint dependency replay and set mentions), ResponseShape/Schemas/ReadingsRoute.lean +50 (the typed sup_verdicts response), VE/Readings/Run.lean +9 (dispatch), VE/Norms/WitnessKind.lean +3 (one owner of the witness kind; Rights/Run.lean -3, SoftNorms/Run.lean -3). Every line replaces a Python decision path deleted in the same change (Superposed._fold, _dependencies, _replays, _mentions, _restrictions, _dead_readings, candidate_premises, S2Wording.provided/independent/classification/report/query selection; docs/readings-defaults/rd7/evidence/deletion-ledger.json): SIGNED by standing ruling R6 (DRI-RULINGS.md).",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "870227c3dd81513ed2ade63a12d0e3aaffbc5e30"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "readings-defaults RD-7 follow-up: V +8 (VE/Readings/Run.lean +6 retains the budget-free enumerated service request while Lean selects the superposed route; VE/Readings/SupVerdictsWire.lean +2 restores the E13 independence line from the named conditions). These are part of the RD-7 migration that deletes Python superposed route selection and S2Wording.independent; see docs/readings-defaults/rd7/evidence/deletion-ledger.json.",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "506caeeea4f58e8b948b0e2403e524ef99fc2505"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "readings-defaults RD-7 limit correction: V +1 in VE/Readings/SupVerdictsWire.lean moves the 1024-compatible-choice budget into the Lean-owned superposed verdict answer, replacing the deleted Python Superposed.checked decision; SIGNED by standing ruling R6 (DRI-RULINGS.md), tested by test_superposed_verdicts_keep_the_1024_choice_budget and the saved deletion ledger.",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "506caeeea4f58e8b948b0e2403e524ef99fc2505"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "readings-defaults RD-7 final scoped evidence: V +3 (VE/Readings/SupVerdictsWire.lean +2 for 1024-choice model proposals and checked dead readings; ResponseShape/Schemas/ReadingsRoute.lean +1 for the typed per-scope proposals). These Lean-owned results replace the deleted Python superposed candidate search, count and status paths in docs/readings-defaults/rd7/evidence/deletion-ledger.json; SIGNED by standing ruling R6 (DRI-RULINGS.md), tested by test_scoped_proposals_reach_checked_choices_after_the_64_choice_prefix and test_superposed_scope_count_stays_bounded_above_64_choices.",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b3412992afe76c0cbc217033ebad564908462ba7"
+  },
+  {
+   "class": "V",
+   "lines": 71,
+   "reason": "RD-7 R6: shared Lean conflict and model replay replace deleted Python superposed verdict assembly and dependencies; see docs/readings-defaults/rd7/evidence/deletion-ledger.json",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "a4f465cb51a3c346009340bcc633ad1987cb59ae"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "RD-7 review fix (F1, F2): V +12 in VE/Readings/SupVerdictsWire.lean. supOpen and the need-driven supScopes list the scopes whose evidence an answer can use, replacing the deleted Python loops that generated conflict, certificate and model evidence for every scope (_prepare, entailment, premises_answer); the untaken check is skipped past the 1024-choice budget (UNKNOWN). SIGNED by standing ruling R6 (DRI-RULINGS.md); tested by test_superposed_scopes_follow_the_asked_scope_first and test_untaken_check_waits_for_the_checked_budget.",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "177bdb2483ec9ffe417532dbe7418f35550d7de4"
+  },
+  {
+   "class": "S",
+   "lines": 69,
+   "reason": "ap-2: lean/VE/Acts/Syntax.lean +109 (S 45, D[V] 53 checkVocab, G[V] 11), lean/VE/Acts/Read.lean +36 (S 24, G[V] 12 untied; listing and valueOf tied, 15); K +0; total +145",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
+  },
+  {
+   "class": "V",
+   "lines": 76,
+   "reason": "ap-2: lean/VE/Acts/Syntax.lean +109 (S 45, D[V] 53 checkVocab, G[V] 11), lean/VE/Acts/Read.lean +36 (S 24, G[V] 12 untied; listing and valueOf tied, 15); K +0; total +145",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
+  },
+  {
+   "class": "S",
+   "lines": 107,
+   "reason": "me-1b Calc meaning and checker: VE/Calc/Decls.lean S +70, VE/Calc/Syntax.lean S +37, VE/Calc/Eval.lean +0 (K +0, V +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1b, 2026-10-17",
+   "commit": "05b85b631f8071fafac690f57c5f23f810168657"
+  },
+  {
+   "class": "S",
+   "lines": 139,
+   "reason": "et-3: events Lean core, S +139 (VE/Events/Decl.lean +64, VE/Events/Premises.lean +63, VE/Events/Completion.lean +12); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3, 2026-10-18",
+   "commit": "802b8ff9b1ca4d11d82f8f6e028911159d5dc13a"
+  },
+  {
+   "class": "V",
+   "lines": 78,
+   "reason": "pk-1: VE/NormDefaults/Packs.lean +73, VE/NormDefaults/Layered.lean +5 (K +0, S +0, V +78)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1, 2026-10-18",
+   "commit": "93131f967bb3ad87674c214b19347986f33c79b2"
+  },
+  {
+   "class": "S",
+   "lines": 40,
+   "reason": "jt-1: VE/Judgments/Decl.lean +52 (S +36, D[V] +16), VE/Judgments/Scan.lean +4 (S), VE/Rights/Run.lean -2 (nodeOpen shortened to the shared scan); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1, 2026-10-18",
+   "commit": "de9cfa84f0145d69c8474faeb76d59ddf35b3cbf"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "jt-1: VE/Judgments/Decl.lean +52 (S +36, D[V] +16), VE/Judgments/Scan.lean +4 (S), VE/Rights/Run.lean -2 (nodeOpen shortened to the shared scan); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1, 2026-10-18",
+   "commit": "de9cfa84f0145d69c8474faeb76d59ddf35b3cbf"
+  },
+  {
+   "class": "V",
+   "lines": 113,
+   "reason": "me-1c Calc display lines: VE/Calc/Render.lean +113 (V, G[V]: reservedWords, phraseWords, valueWordsOk, natWords, placesPhrase, printedWords, exactWords, exprDepth, renderAtom, renderTerm, renderExpr, fill, renderClaim); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1c, 2026-10-17",
+   "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
+  },
+  {
+   "class": "S",
+   "lines": 18,
+   "reason": "et-7 (alternatives@0 with the completion, events-time-causation ET-7): K +0, S +18, V +121 (139 lines; R16 cap 150), re-measured with tools/trust_map.py on the final tree against main c2b1a7d4. S: VE/Alternatives/FillWire.lean +15, VE/Alternatives/Validate.lean +3. V: VE/Alternatives/Run.lean +62, VE/Alternatives/FillWire.lean +25, ResponseShape/Schemas/Alternatives.lean +20, VE/Alternatives/Wire.lean +5, VE/Alternatives/Replay.lean +5, VE/Service/Standalone.lean +3, ResponseShape/CaseDeciders.lean +3; VE/Compose/Dispatch.lean -2 (the deleted refusal). The replays are tied to alternativesU_wire_conflict_sound, alternativesU_wire_followable_sound, alternativesU_wire_dilemma_sound and decodeAltSourceU_conservative; every new trusted definition is exercised by tests/test_alternatives_fill.py or lean/VE/Alternatives/FillExamples.lean. FOLLOW-UP: a ties pass for the runner and shape lines (manage-agents FOLLOW-UPS.md, et-7).",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7, 2026-10-18",
+   "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
+  },
+  {
+   "class": "V",
+   "lines": 121,
+   "reason": "et-7 (alternatives@0 with the completion, events-time-causation ET-7): K +0, S +18, V +121 (139 lines; R16 cap 150), re-measured with tools/trust_map.py on the final tree against main c2b1a7d4. S: VE/Alternatives/FillWire.lean +15, VE/Alternatives/Validate.lean +3. V: VE/Alternatives/Run.lean +62, VE/Alternatives/FillWire.lean +25, ResponseShape/Schemas/Alternatives.lean +20, VE/Alternatives/Wire.lean +5, VE/Alternatives/Replay.lean +5, VE/Service/Standalone.lean +3, ResponseShape/CaseDeciders.lean +3; VE/Compose/Dispatch.lean -2 (the deleted refusal). The replays are tied to alternativesU_wire_conflict_sound, alternativesU_wire_followable_sound, alternativesU_wire_dilemma_sound and decodeAltSourceU_conservative; every new trusted definition is exercised by tests/test_alternatives_fill.py or lean/VE/Alternatives/FillExamples.lean. FOLLOW-UP: a ties pass for the runner and shape lines (manage-agents FOLLOW-UPS.md, et-7).",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7, 2026-10-18",
+   "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "et-7 review fix (F1): V +7 for the named refusal of alternatives@0 with norm-defaults@0 outside the alternatives route: VE/NormDefaults/Run.lean +6 (runGated, the norm-defaults mode's gate; G[V]), VE/Alternatives/Wire.lean +1 (decodeAltSource refuses the completion it does not read); VE.Compose.pendingWithDefaults, the one text, is G[R]. et-7 now K +0, S +18, V +128 (146 lines; R16 cap 150), re-measured on the fix tree against main c2b1a7d4. Exercised by tests/test_alternatives_fill.py (test_the_norm_defaults_route_refuses_a_composed_block_by_name, test_cases_outside_this_item_are_refused_with_the_profile, test_completion_documents_are_refused_by_name_on_every_entry_point) and lean/VE/Alternatives/FillExamples.lean. FOLLOW-UP: the ties pass of et-7 (manage-agents FOLLOW-UPS.md, et-7) covers these lines too.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-7 review fix, 2026-10-18",
+   "commit": "c2b1a7d442b492934580cc2db099fe6ac27eef92"
+  },
+  {
+   "class": "S",
+   "lines": 17,
+   "reason": "sc-1a: new Lean-owned behaviour of scope@0 (the layout's list runs): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource, paraCounts, lineStart, spacesOnly, skipSpaces, markerLen, lastNonBlank, boldLabel, isBlank, isDigit, sp, nl; continues, indexOf, runFrom, listRun tied); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1a, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
+  },
+  {
+   "class": "V",
+   "lines": 62,
+   "reason": "sc-1a: new Lean-owned behaviour of scope@0 (the layout's list runs): lean/VE/Layout/List.lean +79 (S 17: Unit, GovernedItem; D[V] 62: ofSource, paraCounts, lineStart, spacesOnly, skipSpaces, markerLen, lastNonBlank, boldLabel, isBlank, isDigit, sp, nl; continues, indexOf, runFrom, listRun tied); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1a, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
+  },
+  {
+   "class": "S",
+   "lines": 137,
+   "reason": "qt-a1: S +137 (VE/Cardinality/Syntax.lean +81, VE/Cardinality/Semantics.lean +56); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a1, 2026-10-18",
+   "commit": "c7fc6acace33d5c23616d99249672b666a5ae875"
+  },
+  {
+   "class": "S",
+   "lines": 78,
+   "reason": "qt-b1: S +78 (VE/Scales/Syntax.lean +29, VE/Scales/Premises.lean +27, VE/Scales/Intended.lean +22); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1, 2026-10-18",
+   "commit": "aeedb8ad224e793c2bb440885d736cb78cc27158"
+  },
+  {
+   "class": "S",
+   "lines": 35,
+   "reason": "qt-a2: S +35 (K +0, V +0): lean/VE/Cardinality/Syntax.lean +25 (CTerm 6, CTermTyped 6, admittedRules 3, CFormula +4, Admitted +6), lean/VE/Cardinality/Semantics.lean +10 (CTerm.Denotes 5, CFormula.holds +5)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a2, 2026-10-18",
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5"
   }
  ]
 }

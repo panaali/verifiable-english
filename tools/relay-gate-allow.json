@@ -52,11 +52,16 @@
     "results/*/result/choosers/*/prevents",
     "results/*/result/conditional_on",
     "results/*/result/conflict_targets",
+    "results/*/result/fill",
+    "results/*/result/inlined",
     "results/*/result/legend",
     "results/*/result/order",
     "results/*/result/premises",
+    "results/*/result/reached",
     "results/*/result/report/assumptions",
-    "results/*/result/targets"
+    "results/*/result/targets",
+    "results/*/result/unsaid",
+    "results/*/result/unspecified"
    ],
    "kind": "by-design",
    "id": "B0",
@@ -79,11 +84,16 @@
     "results/*/result/choosers/*/prevents",
     "results/*/result/conditional_on",
     "results/*/result/conflict_targets",
+    "results/*/result/fill",
+    "results/*/result/inlined",
     "results/*/result/legend",
     "results/*/result/order",
     "results/*/result/premises",
+    "results/*/result/reached",
     "results/*/result/report/assumptions",
-    "results/*/result/targets"
+    "results/*/result/targets",
+    "results/*/result/unsaid",
+    "results/*/result/unspecified"
    ],
    "kind": "by-design",
    "id": "B0",
@@ -357,7 +367,6 @@
     "results/*/result/decisions",
     "results/*/result/derived",
     "results/*/result/english",
-    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -394,7 +403,6 @@
     "results/*/result/derived",
     "results/*/result/english",
     "results/*/result/environment_prime/vocabulary/predicates",
-    "results/*/result/fill",
     "results/*/result/fill_premises",
     "results/*/result/fill_premises/*/premises",
     "results/*/result/finding_sets",
@@ -1088,6 +1096,7 @@
     "results/*/result/choosers/*/inaction/*",
     "results/*/result/choosers/*/permitted/*",
     "results/*/result/choosers/*/prevents/*/*",
+    "results/*/result/conditional_on/*",
     "results/*/result/conflict_targets/*/sorts/*",
     "results/*/result/conflict_targets/*/target",
     "results/*/result/coverage/alternatives/alternatives_declared/*/action",
@@ -1105,10 +1114,17 @@
     "results/*/result/coverage/alternatives/proximate_judgments/*/harm",
     "results/*/result/coverage/alternatives/proximate_judgments/*/support",
     "results/*/result/coverage/alternatives/table_complete/decider",
+    "results/*/result/inlined/*/norm/name",
+    "results/*/result/inlined/*/norm/over/*",
+    "results/*/result/inlined/*/norm/predicate",
     "results/*/result/order/*",
+    "results/*/result/reached/*/predicate",
+    "results/*/result/reached/*/sorts/*",
     "results/*/result/target",
     "results/*/result/targets/*",
-    "results/*/result/tuple/*"
+    "results/*/result/tuple/*",
+    "results/*/result/unsaid/*/sorts/*",
+    "results/*/result/unspecified/*"
    ],
    "kind": "follow-up",
    "id": "F4",
@@ -1619,7 +1635,10 @@
    "mutation": "duplicate",
    "path": [
     "results/*/result/conflict_targets/*/sorts",
-    "results/*/result/tuple"
+    "results/*/result/inlined/*/norm/over",
+    "results/*/result/reached/*/sorts",
+    "results/*/result/tuple",
+    "results/*/result/unsaid/*/sorts"
    ],
    "kind": "follow-up",
    "id": "F10",
@@ -1630,7 +1649,10 @@
    "mutation": "empty",
    "path": [
     "results/*/result/conflict_targets/*/sorts",
-    "results/*/result/tuple"
+    "results/*/result/inlined/*/norm/over",
+    "results/*/result/reached/*/sorts",
+    "results/*/result/tuple",
+    "results/*/result/unsaid/*/sorts"
    ],
    "kind": "follow-up",
    "id": "F10",
@@ -1905,6 +1927,7 @@
    "mutation": "empty",
    "path": [
     "results/*/result/conditional_on/*",
+    "results/*/result/inlined/*/norm/name",
     "results/*/result/model_id"
    ],
    "kind": "follow-up",
@@ -2112,6 +2135,26 @@
    "kind": "follow-up",
    "id": "F11",
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/fill"
+   ],
+   "kind": "by-design",
+   "id": "RD7-fill",
+   "reason": "The service transport checks the generated shape. The public completion elaboration binder checks every fill label against the already request-bound Fill_T premises and refuses an empty or missing fill row (test_superposed_answer_retypes_each_field_and_rebinds_each_reference)."
+  },
+  {
+   "route": "service:readings-route",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/fill"
+   ],
+   "kind": "by-design",
+   "id": "RD7-fill",
+   "reason": "The public completion elaboration binder refuses a repeated fill label (test_superposed_answer_retypes_each_field_and_rebinds_each_reference)."
   },
   {
    "route": "service:ask",

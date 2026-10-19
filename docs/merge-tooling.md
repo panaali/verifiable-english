@@ -24,6 +24,7 @@ its merge strategy:
 | route-cases | `lean/VE/Route/examples/route-cases.json` | regenerate |
 | lean-roots | `lean/VE.lean`, `lean/ResponseShape.lean` | union |
 | lake-build | (the build every later entry reads) | - |
+| numbers-phrases | `ve/numbers_phrases.json` (from `VE.Numbers.Phrases`) | regenerate |
 | lean-mode-deps | `tools/lean-mode-deps.json` | regenerate |
 | lean-statements | `lean/statements.txt`, `predicates.txt`, `declarations.txt` | regenerate |
 | lean-audit-manifests | `lean/VE/Audit.lean`, `lean/ResponseShape/Audit.lean`, `lean/axioms.txt` (`audit.py --write`, from `declarations.txt`; AR-1) | regenerate |
@@ -43,6 +44,8 @@ its merge strategy:
 | heavy-tests | `tests/heavy.json` (from the saved Mac duration report) | regenerate |
 | platform-divergences | `tests/platform-divergences.json` (saved from both runners' gate records) | json |
 | platform-contract | `tests/platform-contract.json` (the x86 contract suite, from the tree and the divergence list) | regenerate |
+| history-map | `tests/history-map.json` (saved from the coverage map: the units that start git or read `.git`) | json |
+| history-tests | `tests/history-dependent.json` (the tests that read history, from the saved map and the test sources) | regenerate |
 
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);

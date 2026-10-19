@@ -1,0 +1,47 @@
+{
+  "comment": "Seeded bugs of the me-1a ties pass (infra item ties-me-1a). Each was planted alone on db74414d9, made `python3 tools/trust_map.py --check` exit 1 (output in seed-<id>.txt) and `tests/test_trust_ratchet.py::test_committed_budget_passes_its_check` fail, and was restored. lean/statements.txt is generated (tools/lean_statements.py); it was edited only for the seed and restored.",
+  "seeds": [
+    {
+      "id": "M1-uses-anchor",
+      "file": "lean/statements.txt",
+      "change": "tieAt_iff's `-- uses` line loses VE.Numbers.tenPow@VE.Numbers.Decimal, its one anchor",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Numbers.tieAt: the statement of VE.Numbers.tieAt_iff mentions no K, S or untied [V] declaration of the tree, validly classified, to tie it to"
+    },
+    {
+      "id": "M2-uses-decl",
+      "file": "lean/statements.txt",
+      "change": "tieAt_iff's `-- uses` line loses VE.Numbers.tieAt@VE.Numbers.Round",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Numbers.tieAt: the statement of VE.Numbers.tieAt_iff does not mention VE.Numbers.tieAt of VE.Numbers.Round"
+    },
+    {
+      "id": "M3-unrelated",
+      "file": "tools/trust-classes.json",
+      "change": "tieAt tied to the unrelated VE.Numbers.tenPow_pos instead of tieAt_iff",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Numbers.tieAt: the statement of VE.Numbers.tenPow_pos does not mention VE.Numbers.tieAt of VE.Numbers.Round"
+    },
+    {
+      "id": "M4-other-decl",
+      "file": "tools/trust-classes.json",
+      "change": "tieAt tied to VE.Numbers.Printed.value_sci (same file, about sci and value only) instead of tieAt_iff",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Numbers.tieAt: the statement of VE.Numbers.Printed.value_sci does not mention VE.Numbers.tieAt of VE.Numbers.Round"
+    },
+    {
+      "id": "M5-uses-decl",
+      "file": "lean/statements.txt",
+      "change": "Printed.value_ofDec's `-- uses` line loses VE.Numbers.decValue@VE.Numbers.Decimal",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Numbers.decValue: the statement of VE.Numbers.Printed.value_ofDec does not mention VE.Numbers.decValue of VE.Numbers.Decimal"
+    },
+    {
+      "id": "M6-unrelated",
+      "file": "tools/trust-classes.json",
+      "change": "decValue tied to the unrelated VE.Numbers.tenPow_add instead of Printed.value_ofDec",
+      "test": "python3 tools/trust_map.py --check; tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+      "failure": "VE.Numbers.decValue: the statement of VE.Numbers.tenPow_add does not mention VE.Numbers.decValue of VE.Numbers.Decimal"
+    }
+  ]
+}

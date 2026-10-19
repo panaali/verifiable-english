@@ -55,14 +55,19 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Alternatives.admission_fits
 #print axioms ResponseShape.Encoders.Alternatives.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Alternatives.chooser_fits
+#print axioms ResponseShape.Encoders.Alternatives.conflictU_fits
 #print axioms ResponseShape.Encoders.Alternatives.conflict_fits
 #print axioms ResponseShape.Encoders.Alternatives.decodeAltSource_taken
 #print axioms ResponseShape.Encoders.Alternatives.decodeBlock_taken
+#print axioms ResponseShape.Encoders.Alternatives.elaborateU_case_fits
+#print axioms ResponseShape.Encoders.Alternatives.elaborateU_coverage_fits
+#print axioms ResponseShape.Encoders.Alternatives.elaborateU_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_case_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_coverage_fits
 #print axioms ResponseShape.Encoders.Alternatives.elaborate_fits
 #print axioms ResponseShape.Encoders.Alternatives.fields_obj
 #print axioms ResponseShape.Encoders.Alternatives.firstFailure_of_not_free
+#print axioms ResponseShape.Encoders.Alternatives.followableU_fits
 #print axioms ResponseShape.Encoders.Alternatives.followable_fits
 #print axioms ResponseShape.Encoders.Alternatives.labelled_fits
 #print axioms ResponseShape.Encoders.Alternatives.of_norms
@@ -70,6 +75,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Alternatives.premiseLabels_fits
 #print axioms ResponseShape.Encoders.Alternatives.premiseLabels_mem
 #print axioms ResponseShape.Encoders.Alternatives.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Alternatives.runCaseU_fits
 #print axioms ResponseShape.Encoders.Alternatives.runCase_fits
 #print axioms ResponseShape.Encoders.Alternatives.sourceOf_taken
 #print axioms ResponseShape.Encoders.Alternatives.validate_fits
@@ -199,6 +205,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runGated_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softAdmission_fits
 #print axioms ResponseShape.Encoders.NormDefaults.softCase_fits
@@ -323,8 +330,15 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.strings_arr
 #print axioms ResponseShape.Encoders.ReadingsRoute.strings_toJson
 #print axioms ResponseShape.Encoders.ReadingsRoute.strip_spec
+#print axioms ResponseShape.Encoders.ReadingsRoute.supAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supCandidates_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supResult_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supScopeJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supUnchecked_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.supUnitsFrom_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.supUnits_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supVerdicts_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.supWord_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.toJson_strings
 #print axioms ResponseShape.Encoders.ReadingsRoute.toList_of_mapM
 #print axioms ResponseShape.Encoders.ReadingsRoute.unitsJsonOf_fits
@@ -357,6 +371,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Rights.bar_fits
 #print axioms ResponseShape.Encoders.Rights.elaborate_fits
 #print axioms ResponseShape.Encoders.Rights.firstFailure_of_not_free
+#print axioms ResponseShape.Encoders.Rights.firstFailure_text
 #print axioms ResponseShape.Encoders.Rights.generated_entries_fit
 #print axioms ResponseShape.Encoders.Rights.groundJson_fits
 #print axioms ResponseShape.Encoders.Rights.labelled_contra
@@ -367,6 +382,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Rights.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Rights.runCase_fits
 #print axioms ResponseShape.Encoders.Rights.runRightsKind_fits
+#print axioms ResponseShape.Encoders.Rights.runRightsKind_packages
 #print axioms ResponseShape.Encoders.Risk.admission_fits
 #print axioms ResponseShape.Encoders.Risk.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Risk.audit_fits

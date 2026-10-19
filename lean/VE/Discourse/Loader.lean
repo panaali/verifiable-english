@@ -374,7 +374,7 @@ every necessary and sufficient condition is a closed formula over the environmen
 `formula_from_data` types it, with its first diagnostic; the discourse route (`python = false`) reads only their
 structure, as it did before batch 11a. -/
 def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (python : Bool := false) (data : Bool := false)
-    (formula : Option (Json → Except String Unit) := none) : Except String (List String) := do
+    (formula : Option (Json → Except String Unit) := none) (sorts : Bool := false) : Except String (List String) := do
   let items ← match j with
     | .arr xs => pure xs.toList
     | _ => throw "open_terms must be a list"
@@ -388,7 +388,7 @@ def openTermNames (rv : VE.Route.Wire.RouteVocabulary) (j : Json) (python : Bool
     let name ← field python "duplicate or invalid open term" (stringField item "name")
     unless token name && !seen.contains name do throw "duplicate or invalid open term"
     let args ← field python "invalid open-term arguments" (do strings (← item.getObjVal? "arguments"))
-    unless args.all token && args.eraseDups.length == args.length do throw "invalid open-term arguments"
+    unless args.all token && (sorts || args.eraseDups.length == args.length) do throw "invalid open-term arguments"
     let roles := "open term needs a decision role and jurisdiction"
     let decider ← field python roles (stringField item "decided_by")
     let jurisdiction ← field python roles (stringField item "jurisdiction")

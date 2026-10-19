@@ -1,0 +1,268 @@
+{
+ "restored_build_exit": 0,
+ "all_failed": true,
+ "rows": [
+  {
+   "fixtures_only": {
+    "exit": 1,
+    "failed": true,
+    "output": [
+     "error: VE/Acts/GrammarExamples.lean:27:0: Expression",
+     "did not evaluate to `true`",
+     "error: VE/Acts/GrammarExamples.lean:31:0: Expression",
+     "did not evaluate to `true`",
+     "error: VE/Acts/GrammarExamples.lean:67:0: Expression",
+     "did not evaluate to `true`"
+    ]
+   },
+   "id": "raw-cap-off-by-one",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Read.lean",
+   "mutation": {
+    "from": "| some ts => if N ≤ ts.length then .limit else",
+    "to": "| some ts => if N < ts.length then .limit else"
+   },
+   "claim": "a saturated parse (N raw derivations) is listed: LG2, LG6 and the toy's N raw guard",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/Read.lean:99:6: `simp` made no progress",
+    "error: VE/Acts/Read.lean:104:15: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+    "error: VE/Acts/Read.lean:108:17: Tactic `subst` failed: invalid equality proof, it is not of the form (x = t) or (t = x)",
+    "error: VE/Acts/Read.lean:109:30: Tactic `rfl` failed: The left-hand side",
+    "error: VE/Acts/Read.lean:120:4: unsolved goals",
+    "error: VE/Acts/Read.lean:121:4: unsolved goals"
+   ]
+  },
+  {
+   "fixtures_only": {
+    "exit": 1,
+    "failed": true,
+    "output": [
+     "error: VE/Acts/GrammarExamples.lean:29:0: Expression",
+     "did not evaluate to `true`",
+     "error: VE/Acts/GrammarExamples.lean:64:0: Expression",
+     "did not evaluate to `true`",
+     "error: Lean exited with code 1",
+     "error: build failed"
+    ]
+   },
+   "id": "readings-limit-off-by-one",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Read.lean",
+   "mutation": {
+    "from": "if L < ms.length then .limit else .ok ms",
+    "to": "if L ≤ ms.length then .limit else .ok ms"
+   },
+   "claim": "exactly 64 readings are refused: LG4 and the toy's 64 readings guard",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/Read.lean:104:15: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce",
+    "error: VE/Acts/Read.lean:108:17: Tactic `subst` failed: invalid equality proof, it is not of the form (x = t) or (t = x)",
+    "error: VE/Acts/Read.lean:109:30: Tactic `rfl` failed: The left-hand side",
+    "error: VE/Acts/Read.lean:121:4: unsolved goals",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "fixtures_only": {
+    "exit": 1,
+    "failed": true,
+    "output": [
+     "error: VE/Acts/GrammarExamples.lean:32:0: Expression",
+     "did not evaluate to `true`",
+     "error: VE/Acts/GrammarExamples.lean:34:0: Expression",
+     "did not evaluate to `true`",
+     "error: VE/Acts/GrammarExamples.lean:66:0: Expression",
+     "did not evaluate to `true`"
+    ]
+   },
+   "id": "firsts-keeps-duplicates",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Read.lean",
+   "mutation": {
+    "from": "| x :: xs => x :: (firsts xs).filter (· ≠ x)",
+    "to": "| x :: xs => x :: firsts xs"
+   },
+   "claim": "equal meanings listed twice: nodup_firsts, LG7 and the firsts guard",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/Read.lean:81:4: No goals to be solved",
+    "error: VE/Acts/Read.lean:87:36: Application type mismatch: The argument",
+    "error: VE/Acts/Read.lean:88:4: `simp` made no progress",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "fixtures_only": {
+    "exit": 1,
+    "failed": true,
+    "output": [
+     "error: VE/Acts/GrammarExamples.lean:70:0: Expression",
+     "did not evaluate to `true`",
+     "error: Lean exited with code 1",
+     "error: build failed"
+    ]
+   },
+   "id": "read-picks-first-of-many",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Read.lean",
+   "mutation": {
+    "from": "| .ok (A :: B :: _) => .many A B",
+    "to": "| .ok (A :: _ :: _) => .ok A"
+   },
+   "claim": "two meanings read as one: readIn_many and the hidden-meaning guard",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/Read.lean:162:91: unsolved goals",
+    "error: VE/Acts/Read.lean:184:2: No goals to be solved",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "fixtures_only": null,
+   "id": "derived-ignores-meaning",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Read.lean",
+   "mutation": {
+    "from": "∃ d, Derives G (.n G.start) ts d ∧ ∃ c, μ () d = .ok (A, c, ())",
+    "to": "∃ d, Derives G (.n G.start) ts d"
+   },
+   "claim": "DerivedIn without the meaning: readingsIn_exact does not prove",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/Read.lean:152:14: Application type mismatch: The argument",
+    "error: VE/Acts/Read.lean:154:55: Application type mismatch: The argument",
+    "error: VE/Acts/Read.lean:154:79: Application type mismatch: The argument",
+    "error: VE/Acts/Read.lean:171:49: Application type mismatch: The argument",
+    "error: VE/Acts/Read.lean:171:45: Insufficient number of fields for `⟨...⟩` constructor: Constructor `Eq.refl` does not have explicit fields, but 2 were provided",
+    "error: Lean exited with code 1"
+   ]
+  },
+  {
+   "fixtures_only": {
+    "exit": 1,
+    "failed": true,
+    "output": [
+     "error: VE/Acts/GrammarExamples.lean:62:0: Expression",
+     "did not evaluate to `true`",
+     "error: VE/Acts/GrammarExamples.lean:66:0: Expression",
+     "did not evaluate to `true`",
+     "error: Lean exited with code 1",
+     "error: build failed"
+    ]
+   },
+   "id": "raw-cap-255",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Read.lean",
+   "mutation": {
+    "from": "def rawCap : Nat := 256",
+    "to": "def rawCap : Nat := 255"
+   },
+   "claim": "N measured as 256: the N−1 raw guard (255 derivations, one reading)",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/GrammarExamples.lean:62:0: Expression",
+    "did not evaluate to `true`",
+    "error: VE/Acts/GrammarExamples.lean:66:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "fixtures_only": null,
+   "id": "markers-not-canonical",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Syntax.lean",
+   "mutation": {
+    "from": "if let some m := (ms f).find? (fun m => m != \" \".intercalate (wordsOf m) || wordsOf m == []) then",
+    "to": "if let some m := (ms f).find? (fun m => wordsOf m == []) then"
+   },
+   "claim": "31l dropped for spaced markers: FR2 and the ' in' guard (FR1 still fails 31l by its empty words)",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/GrammarExamples.lean:109:0: Expression",
+    "did not evaluate to `true`",
+    "error: VE/Acts/GrammarExamples.lean:111:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "fixtures_only": null,
+   "id": "split-not-in-markers",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Syntax.lean",
+   "mutation": {
+    "from": "if let some m := f.split.find? (!f.markers.contains ·) then",
+    "to": "if let some m := f.split.find? (fun _ => false) then"
+   },
+   "claim": "31i dropped: FR6",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/GrammarExamples.lean:102:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "fixtures_only": null,
+   "id": "slot-accepts-subject",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Syntax.lean",
+   "mutation": {
+    "from": "| .slot, .slot (_ + 1) => true",
+    "to": "| .slot, .slot _ => true"
+   },
+   "claim": "the terminal `slot` accepts {0}: the terminals guard",
+   "test": "lake build VE.Acts.GrammarExamples",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "error: VE/Acts/GrammarExamples.lean:75:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "fixtures_only": null,
+   "id": "acts-not-surface-layer",
+   "language": "Python",
+   "file": "tools/layer_policy.py",
+   "mutation": {
+    "from": "\"VE.Senses.\", \"VE.Question.\", \"VE.Acts.\")",
+    "to": "\"VE.Senses.\", \"VE.Question.\")"
+   },
+   "claim": "VE.Acts.* falls to layer 2 and imports VE.Grammar.* (layer 3): tools/check_lean_imports.py",
+   "test": "python3 tools/check_lean_imports.py",
+   "exit": 1,
+   "failed": true,
+   "output": [
+    "new outward Lean import: VE.Acts.Read -> VE.Grammar.Reading",
+    "new outward Lean import: VE.Acts.Syntax -> VE.Grammar.Basic"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+[
+ {
+  "id": "M1-uses-decl",
+  "seed": "values_stated's -- uses line loses VE.Calc.values",
+  "file": "lean/statements.txt",
+  "test": "python3 tools/trust_map.py --check",
+  "also_fails": "tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+  "exit": 1,
+  "problem": "VE/Calc/Decls.lean: VE.Calc.values: the statement of VE.Calc.values_stated does not mention VE.Calc.values of VE.Calc.Decls"
+ },
+ {
+  "id": "M2-uses-anchor",
+  "seed": "values_missing's -- uses line loses its anchors VE.Calc.Decl and VE.Calc.Decl.name",
+  "file": "lean/statements.txt",
+  "test": "python3 tools/trust_map.py --check",
+  "also_fails": "tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+  "exit": 1,
+  "problem": "VE/Calc/Decls.lean: VE.Calc.values: the statement of VE.Calc.values_missing mentions no K, S or untied [V] declaration of the tree, validly classified, to tie it to"
+ },
+ {
+  "id": "M3-unrelated",
+  "seed": "values tied only to the unrelated VE.Calc.findingKind_source_iff",
+  "file": "tools/trust-classes.json",
+  "test": "python3 tools/trust_map.py --check",
+  "also_fails": "tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+  "exit": 1,
+  "problem": "VE/Calc/Decls.lean: VE.Calc.values: the statement of VE.Calc.findingKind_source_iff does not mention VE.Calc.values of VE.Calc.Decls"
+ },
+ {
+  "id": "M4-other-decl",
+  "seed": "values tied only to VE.Calc.Denotes.unique (same profile, about Denotes only)",
+  "file": "tools/trust-classes.json",
+  "test": "python3 tools/trust_map.py --check",
+  "also_fails": "tests/test_trust_ratchet.py::test_committed_budget_passes_its_check",
+  "exit": 1,
+  "problem": "VE/Calc/Decls.lean: VE.Calc.values: the statement of VE.Calc.Denotes.unique does not mention VE.Calc.values of VE.Calc.Decls"
+ },
+ {
+  "id": "L1-values-start",
+  "seed": "lean/VE/Calc/Decls.lean:29, `values` starts its fold at (fun _ => some 0) instead of (fun _ => none): an undeclared name gets a value",
+  "file": "lean/VE/Calc/Decls.lean",
+  "test": "cd lean && lake build VE.Calc.Decls",
+  "exit": 1,
+  "problem": "error: VE/Calc/Decls.lean:50:2: Type mismatch (the proof of the tying theorem values_missing)"
+ },
+ {
+  "id": "L2-values-defined",
+  "seed": "lean/VE/Calc/Decls.lean:29, `values` reads each declaration under (fun _ => none) instead of the earlier values: a defined name no longer sees the names it reads",
+  "file": "lean/VE/Calc/Decls.lean",
+  "test": "cd lean && lake build VE.Calc.Decls",
+  "exit": 1,
+  "problem": "error: VE/Calc/Decls.lean:131:4: Type mismatch (the proof of the tying theorem values_defined; also 50 values_missing, 64 values_at)"
+ }
+]
