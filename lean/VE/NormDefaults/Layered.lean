@@ -410,10 +410,9 @@ theorem layered_report_sound (L : LayeredU) (packages : Json) (rep : ReportG (la
 
 /-! ## Dispatch -/
 
-/-- The `norm-defaults-*` kinds of a layered document that this branch answers itself, `none` for any other kind;
-the dispatch of a choice's inner case under the readings completion (`Readings.Run.choiceInnerX`) uses it too, so both
-answer each kind alike. The soft branch's `admission` and `norm-defaults-certificate` are dispatched before it, by
-`NormDefaults.Admission.softCase` (`Run.runCase`). -/
+/-- The `norm-defaults-*` kinds of a layered document that this branch answers itself, `none` for any other kind:
+today's four rows of the kind table (`legacyRows`, dispatched by `kindCase`). The soft branch's `admission` and
+`norm-defaults-certificate` are dispatched before it, by `NormDefaults.Admission.softCase` (`Run.runCase`). -/
 def layeredCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Option Json) := do
   let packages := j.getObjValD "packages"
   if kind == "norm-defaults-elaborate" then
@@ -443,10 +442,26 @@ def layeredCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Op
     return some <| VE.Route.Wire.ok id rep.toJson
   return none
 
+/-- 2.10 (docs/spec/premise-packs.md): today's four kinds, as rows of the kind table. -/
+def legacyKinds : List String :=
+  ["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-status", "norm-defaults-report"]
+
+/-- 2.10: today's rows; each needs no pack and answers by `layeredCase` (`Packs.dispatch_legacy`). -/
+def legacyRows : List (Packs.KindRow LayeredU) := legacyKinds.map fun k =>
+  ⟨k, none, fun L id j => do
+    match ← layeredCase L id k j with
+    | some a => pure a
+    | none => throw "unreachable"⟩
+
+/-- The kind table's dispatch over the source's pack ids; the dispatch of a choice's inner case under the readings
+completion (`Readings.Run.choiceInnerX`) uses it too, so both answer each kind alike. -/
+def kindCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Option Json) :=
+  Packs.dispatch legacyRows (L.packs.map (·.id)) L id kind j
+
 /-- A `norm-defaults-*` case on the soft or rights branch. -/
 def runLayered (id kind : String) (j : Json) : Except String Json := do
   let L ← decodeLayered j
-  match ← layeredCase L id kind j with
+  match ← kindCase L id kind j with
   | some a => pure a
   | none => throw s!"UnsupportedProfile: case kind {kind} is not available on the {L.route} norm-defaults branch"
 

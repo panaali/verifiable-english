@@ -755,12 +755,12 @@ def choiceModelX (L : VE.NormDefaults.Wire.LayeredU) (A : List VE.Formula) (id :
 
 /-- The inner kinds of a choice under the completion, on either chain (4.3), answered on the choice's layered
     source: the certificate kind first (`choiceCertificateX`), the layered kinds by the norm-defaults branch's own
-    dispatch (`layeredCase`), so each answer is that route's on the choice's document, and the choice model; any
+    dispatch (`kindCase`), so each answer is that route's on the choice's document, and the choice model; any
     other kind is the norm-defaults route's refusal. -/
 def choiceInnerX (re : ReadingsEnvironment) (L : VE.NormDefaults.Wire.LayeredU) (A : List VE.Formula)
     (id kind : String) (inner : Json) (assertions : Nat) : Except String Json := do
   if kind == "norm-defaults-certificate" then return VE.Route.Wire.ok id (← choiceCertificateX re L A inner)
-  if let some a ← VE.NormDefaults.Wire.layeredCase L id kind inner then return a
+  if let some a ← VE.NormDefaults.Wire.kindCase L id kind inner then return a
   if kind == "choice-model" then return ← choiceModelX L A id inner assertions
   throw s!"UnsupportedProfile: case kind {kind} is not available on the norm-defaults route"
 
