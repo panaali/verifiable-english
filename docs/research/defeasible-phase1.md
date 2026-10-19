@@ -351,3 +351,40 @@ one `test_assurance_manifest.py` fixture that runs `lake build` in this worktree
 address-space limit, which the compiler inherits; no Lean file differs from `main`'s merge base. The full gate was
 not run: there is no product change to gate. `tools/layer_policy.py` assigns no layer to `research/`, so test
 selection treats these files as unknown paths, as it does for the sibling phase-1 branches' `research/<topic>/`.
+
+## 6. DF-0.3 baseline (2026-10-19)
+
+Added after phase 1 by item df-03; sections 1 to 5 are unchanged. Trigger (0.2): `rd-9/integrate` is merged and `CE4`
+is on `main` (`tests/ce4.py`, `tests/test_readings_sd_ce4.py`). Recorded on `main` `702ff742`, before DF-1b and DF-3.
+
+**Method.** `research/defeasible/baseline.py` builds the documents from `CE4` (the pilot's pinned translation, never
+retyped) and asks each of P-1's three questions (plan 4.2) through today's route, `ve document readings <doc>
+--conclusion <question>`:
+
+- P-1: each set's `default` candidate as a standalone soft document in `CE4`'s frame (`CE4`'s environment, the set's
+  sentence, one unit with the candidate as its content);
+- P-2: `CE4` itself, as `tests/test_readings_sd_ce4.py` writes it (four sets, each with σ recorded).
+
+A P-1 probe counts as answered when today's answer says the conclusion follows (ALL); no verdict today says "unless an
+exception applies". Exit code, stdout and stderr are saved verbatim in
+`docs/research/evidence/defeasible/baseline/baseline.json`, with the documents, the questions, the command, the host
+load (32 CPUs, load 36.9 before and 37.2 after, other work on the host) and the hashes of `ve_service` and the Rust
+binary, both pinned in `lean/checkers.lock`. No product file differs from `main`; no model was called; no
+whole-constitution document was run (L70).
+
+| Set | Question | P-1 (standalone default) | P-2 (`CE4`) |
+|---|---|---|---|
+| force-u0036-s05 | `∀ c ∀ s. genuine_ambiguity(s) → clarification_required(c, s)` | NONE | SOME |
+| force-u0156-s03 | `∀ c ∀ u. ¬ system_prompt_deception_permitted(c, u)` | NONE | SOME |
+| force-u0263-s04-p2 | `∀ c ∀ s. explicit_instruction_against_exploits(c, s) → exploit_instruction_compliance_required(c, s)` | NONE | SOME |
+
+**Against the plan's expectation.** P-1: 0 of 3 probes answered, as expected ("0"). Each answer is NONE on the
+`assertion-shared-model` route: the premises have a model (`premises.status: model`) in which the conclusion fails,
+the strict countermodel the plan expects; the answer gives that model's id only, with `labels: []` and `vacuous: false`, and says nothing about exceptions. P-2: SOME for each set, as
+expected (C7's value for the first set). In each, the proof reads every set strictly and the countermodel reads the
+probed set by its default reading (index 1) and every other set strictly, with the decider's exception and, for
+u0156.s03, the gap filled 'yes'.
+
+So P-1's pilot number is measured: 0 before DF-1b. P-2's SOME is measured before DF-3. Reproduce with
+`uv run python research/defeasible/baseline.py` (needs the Lean service and the Rust binary at pinned hashes);
+`tests/test_defeasible_baseline_evidence.py` checks the saved record only.
