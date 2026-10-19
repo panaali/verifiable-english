@@ -243,6 +243,9 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
   mutant is UNKNOWN.
 - Each control is one more build per stage and set of cuts, cached across mutants; a mutant whose broken proofs
   differ needs its own. The replays measure no added time (section 1).
+- The replays and the sweep ran on the tool one commit before its final one, which only retries a build that fails
+  with no located error once more and stops caching such a control; none of their mutants is UNKNOWN, so that
+  path never ran there and their verdicts stand. The seeded bugs ran on the final tool.
 - A build that fails with no located error is retried twice, then UNKNOWN; a control that fails that way is not
   cached (it would make every mutant sharing it UNKNOWN). In the final selected run on the Mac runner (six test
   files at once) `test_a_guard_over_the_empty_list_leaves_survivors` failed once at its exact `SURVIVOR` line and
