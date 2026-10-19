@@ -4,7 +4,7 @@
    "id": "TM1",
    "file": "tools/trust_mutants.py",
    "claim": "a failing proof is cut and the build repeated, never left to decide the mutant",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
    ],
@@ -14,14 +14,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 55.1,
-   "output_tail": "                                                                        [100%]\n=================================== FAILURES ===================================\n_______________________ test_a_failing_proof_is_no_kill ________________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394357400879409), ...})\n\n    def test_a_failing_proof_is_no_kill(default_run):\n        \"\"\"The mutant breaks `double_eq` in its own module, and `four` and `double_two` in another (review F1:\n        `double_two`'s statement names `double`, and only its proof script fails); no check reads `double`.\"\"\"\n        _, mutants, _, _ = default_run\n        (double,) = of(mutants, \"double\")\n>       assert (double[\"operator\"], double[\"after\"], double[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:226: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill - Asserti...\n1 failed in 27.08s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s40264cq)\n"
+   "seconds": 60.6,
+   "output_tail": "                                                                        [100%]\n=================================== FAILURES ===================================\n_______________________ test_a_failing_proof_is_no_kill ________________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401103453703053), ...})\n\n    def test_a_failing_proof_is_no_kill(default_run):\n        \"\"\"The mutant breaks `double_eq` in its own module, and `four` and `double_two` in another (review F1:\n        `double_two`'s statement names `double`, and only its proof script fails); no check reads `double`.\"\"\"\n        _, mutants, _, _ = default_run\n        (double,) = of(mutants, \"double\")\n>       assert (double[\"operator\"], double[\"after\"], double[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:226: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill - Asserti...\n1 failed in 28.49s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ts7jkyrs)\n"
   },
   {
    "id": "TM2",
    "file": "tools/trust_mutants.py",
    "claim": "the modules that import the mutated one and hold its checks are built",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor"
    ],
@@ -31,14 +31,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 45.5,
-   "output_tail": "=========== FAILURES ===================================\n________________ test_a_well_guarded_definition_has_no_survivor ________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394413189646419), ...})\n\n    def test_a_well_guarded_definition_has_no_survivor(default_run):\n        _, mutants, _, _ = default_run\n        small = of(mutants, \"small\")\n        assert {m[\"operator\"] for m in small} >= {\"lt-le\", \"lt-eq\", \"lit-plus\", \"lit-minus\", \"body-true\", \"body-false\"}\n>       assert all(m[\"status\"] == \"KILLED\" for m in small), small\nE       AssertionError: [{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}, {'id': 'M002', 'file': 'Demo/De...'definition': 'Demo.small', ...}, {'id': 'M025', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}]\nE       assert False\nE        +  where False = all(<generator object test_a_well_guarded_definition_has_no_survivor.<locals>.<genexpr> at 0x741d7a03df20>)\n\ntests/test_trust_mutants.py:206: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor\n1 failed in 16.79s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3iweb8os)\n"
+   "seconds": 48.3,
+   "output_tail": "=========== FAILURES ===================================\n________________ test_a_well_guarded_definition_has_no_survivor ________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401161812634998), ...})\n\n    def test_a_well_guarded_definition_has_no_survivor(default_run):\n        _, mutants, _, _ = default_run\n        small = of(mutants, \"small\")\n        assert {m[\"operator\"] for m in small} >= {\"lt-le\", \"lt-eq\", \"lit-plus\", \"lit-minus\", \"body-true\", \"body-false\"}\n>       assert all(m[\"status\"] == \"KILLED\" for m in small), small\nE       AssertionError: [{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}, {'id': 'M002', 'file': 'Demo/De...'definition': 'Demo.small', ...}, {'id': 'M025', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}]\nE       assert False\nE        +  where False = all(<generator object test_a_well_guarded_definition_has_no_survivor.<locals>.<genexpr> at 0x74460dba9a40>)\n\ntests/test_trust_mutants.py:206: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor\n1 failed in 18.50s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jup00i4b)\n"
   },
   {
    "id": "TM3",
    "file": "tools/trust_mutants.py",
    "claim": "a list is cut to [] (a guard over [] leaves that survivor)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors"
    ],
@@ -48,14 +48,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 54.2,
-   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________ test_a_guard_over_the_empty_list_leaves_survivors _______________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394455330057054), ...})\n\n    def test_a_guard_over_the_empty_list_leaves_survivors(default_run):\n        done, mutants, _, _ = default_run\n        evens = of(mutants, \"evens\")\n        survivors = [m for m in evens if m[\"status\"] == \"SURVIVOR\"]\n>       assert {\"list-empty\", \"list-first\", \"lit-plus\", \"eq-ne\"} <= {m[\"operator\"] for m in survivors}\nE       AssertionError: assert {'eq-ne', 'li...', 'lit-plus'} <= {'eq-ne', 'li...t-minus', ...}\nE         \nE         Extra items in the left set:\nE         'list-empty'\n\ntests/test_trust_mutants.py:214: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors\n1 failed in 28.88s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-g8mht7t6)\n"
+   "seconds": 55.6,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________ test_a_guard_over_the_empty_list_leaves_survivors _______________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401208554768478), ...})\n\n    def test_a_guard_over_the_empty_list_leaves_survivors(default_run):\n        done, mutants, _, _ = default_run\n        evens = of(mutants, \"evens\")\n        survivors = [m for m in evens if m[\"status\"] == \"SURVIVOR\"]\n>       assert {\"list-empty\", \"list-first\", \"lit-plus\", \"eq-ne\"} <= {m[\"operator\"] for m in survivors}\nE       AssertionError: assert {'eq-ne', 'li...', 'lit-plus'} <= {'eq-ne', 'li...t-minus', ...}\nE         \nE         Extra items in the left set:\nE         'list-empty'\n\ntests/test_trust_mutants.py:214: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors\n1 failed in 27.42s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-u76qeave)\n"
   },
   {
    "id": "TM4",
    "file": "tools/trust_mutants.py",
    "claim": "--allow suppresses exactly the listed definition and operator",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_allow_suppresses_exactly_its_operator"
    ],
@@ -65,14 +65,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 51.1,
-   "output_tail": "ckage = PosixPath('/tmp/pytest-of-seyran/pytest-25633/package0')\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-25633/test_allow_suppresses_exactly_0')\n\n    def test_allow_suppresses_exactly_its_operator(package, tmp_path):\n        allow = tmp_path / \"allow.json\"\n        allow.write_text(json.dumps({\"allow\": [{\"definition\": \"Demo.evens\", \"operator\": \"list-empty\",\n                                                \"reason\": \"the fixture's guard is over [] by design\"}]}))\n        done, mutants = tool(package, tmp_path / \"run\", \"--allow\", str(allow))\n        evens = of(mutants, \"evens\")\n        allowed = [m for m in evens if m[\"status\"] == \"ALLOWED\"]\n>       assert allowed and all(m[\"operator\"] == \"list-empty\" for m in allowed)\nE       AssertionError: assert ([{'id': 'M008', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}, {'id': 'M013', 'file': 'Demo/De...nition': 'Demo.evens', ...}, {'id': 'M033', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}, ...] and False)\nE        +  where False = all(<generator object test_allow_suppresses_exactly_its_operator.<locals>.<genexpr> at 0x7ccbdafcfd30>)\n\ntests/test_trust_mutants.py:353: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_allow_suppresses_exactly_its_operator\n1 failed in 24.31s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-wxf5v7bt)\n"
+   "seconds": 50.6,
+   "output_tail": "ckage = PosixPath('/tmp/pytest-of-seyran/pytest-25957/package0')\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-25957/test_allow_suppresses_exactly_0')\n\n    def test_allow_suppresses_exactly_its_operator(package, tmp_path):\n        allow = tmp_path / \"allow.json\"\n        allow.write_text(json.dumps({\"allow\": [{\"definition\": \"Demo.evens\", \"operator\": \"list-empty\",\n                                                \"reason\": \"the fixture's guard is over [] by design\"}]}))\n        done, mutants = tool(package, tmp_path / \"run\", \"--allow\", str(allow))\n        evens = of(mutants, \"evens\")\n        allowed = [m for m in evens if m[\"status\"] == \"ALLOWED\"]\n>       assert allowed and all(m[\"operator\"] == \"list-empty\" for m in allowed)\nE       AssertionError: assert ([{'id': 'M008', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}, {'id': 'M013', 'file': 'Demo/De...nition': 'Demo.evens', ...}, {'id': 'M033', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}, ...] and False)\nE        +  where False = all(<generator object test_allow_suppresses_exactly_its_operator.<locals>.<genexpr> at 0x75971aa6cfb0>)\n\ntests/test_trust_mutants.py:353: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_allow_suppresses_exactly_its_operator\n1 failed in 23.51s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-1irj4stq)\n"
   },
   {
    "id": "TM5",
    "file": "tools/trust_mutants.py",
    "claim": "mutants are written to a private copy: the checkout's bytes and times stay",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_mutants_are_built_in_a_scratch_copy"
    ],
@@ -82,14 +82,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 49.7,
-   "output_tail": "ed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394560241849773), ...})\n\n    def test_mutants_are_built_in_a_scratch_copy(default_run):\n        _, mutants, before, after = default_run\n        assert any(m[\"status\"] == \"KILLED\" for m in mutants)\n>       assert after == before\nE       AssertionError: assert {'.gitignore'...1849773), ...} == {'.gitignore'...1849773), ...}\nE         \nE         Omitting 42 identical items, use -vv to show\nE         Differing items:\nE         {'lean/Demo/Defs.lean': (b'namespace Demo\\n\\n/-- Guarded on both sides of its bound. -/\\ndef small (n : Nat) : Bool :=...nly (review F8): their errors are UNKNOWN. -/\\ndef boxed (n : Nat) : Nat := n + 0\\n\\nend Demo\\n', 1792394584032126983)} != {'lean/Demo/Defs.lean': (b'namespace Demo\\n\\n/-- Guarded on both sides of its bound. -/\\ndef small (n : Nat) : Bool :=...nly (review F8): their errors are UNKNOWN. -/\\ndef boxed (n : Nat) : Nat := n + 0\\n\\nend Demo\\n', 1792394560185140358)}\nE         {'lean/Demo/Examples.lean': (b'i...\nE         \nE         ...Full output truncated (2 lines hidden), use '-vv' to show\n\ntests/test_trust_mutants.py:343: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_mutants_are_built_in_a_scratch_copy\n1 failed in 24.80s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-iomdhzke)\n"
+   "seconds": 48.2,
+   "output_tail": "ed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401311303833106), ...})\n\n    def test_mutants_are_built_in_a_scratch_copy(default_run):\n        _, mutants, before, after = default_run\n        assert any(m[\"status\"] == \"KILLED\" for m in mutants)\n>       assert after == before\nE       AssertionError: assert {'.gitignore'...3833106), ...} == {'.gitignore'...3833106), ...}\nE         \nE         Omitting 42 identical items, use -vv to show\nE         Differing items:\nE         {'lean/Demo/Defs.lean': (b'namespace Demo\\n\\n/-- Guarded on both sides of its bound. -/\\ndef small (n : Nat) : Bool :=...nly (review F8): their errors are UNKNOWN. -/\\ndef boxed (n : Nat) : Nat := n + 0\\n\\nend Demo\\n', 1792401333834875564)} != {'lean/Demo/Defs.lean': (b'namespace Demo\\n\\n/-- Guarded on both sides of its bound. -/\\ndef small (n : Nat) : Bool :=...nly (review F8): their errors are UNKNOWN. -/\\ndef boxed (n : Nat) : Nat := n + 0\\n\\nend Demo\\n', 1792401311242733199)}\nE         {'lean/Demo/Examples.lean': (b'i...\nE         \nE         ...Full output truncated (2 lines hidden), use '-vv' to show\n\ntests/test_trust_mutants.py:343: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_mutants_are_built_in_a_scratch_copy\n1 failed in 23.46s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jpsbqjsr)\n"
   },
   {
    "id": "TM6",
    "file": "tools/trust_mutants.py",
    "claim": "every mutant past --max-mutants prints as NOT RUN",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run"
    ],
@@ -99,14 +99,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 25.6,
-   "output_tail": "/package0')\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-25637/test_max_mutants_lists_the_res1')\nlimit = 3\n\n    @pytest.mark.parametrize(\"limit\", [0, 3])\n    def test_max_mutants_lists_the_rest_as_not_run(package, tmp_path, limit):\n        \"\"\"A budget of 0 runs nothing and never exits 0 (3: incomplete).\"\"\"\n        done, mutants = tool(package, tmp_path / \"run\", \"--max-mutants\", str(limit))\n        ran = [m for m in mutants if m[\"status\"] != \"NOT RUN\"]\n        assert len(ran) == limit and len(mutants) > limit\n        printed = [line for line in done.stdout.splitlines() if line.startswith(\"NOT RUN \")]\n>       assert len(printed) == len(mutants) - limit\nE       AssertionError: assert 1 == (41 - 3)\nE        +  where 1 = len(['NOT RUN lean/Demo/Defs.lean:4 Demo.small lt-eq: < -> ='])\nE        +  and   41 = len([{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}, {'id': 'M002', 'file': 'Demo/De...on': 'boxedEval', ...}, {'id': 'M006', 'file': 'Demo/Examples.lean', 'line': 31, 'definition': 'boxedGuard', ...}, ...])\n\ntests/test_trust_mutants.py:387: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run[0]\nFAILED tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run[3]\n2 failed in 12.02s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0c6b0vmb)\n"
+   "seconds": 27.1,
+   "output_tail": "/package0')\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-25961/test_max_mutants_lists_the_res1')\nlimit = 3\n\n    @pytest.mark.parametrize(\"limit\", [0, 3])\n    def test_max_mutants_lists_the_rest_as_not_run(package, tmp_path, limit):\n        \"\"\"A budget of 0 runs nothing and never exits 0 (3: incomplete).\"\"\"\n        done, mutants = tool(package, tmp_path / \"run\", \"--max-mutants\", str(limit))\n        ran = [m for m in mutants if m[\"status\"] != \"NOT RUN\"]\n        assert len(ran) == limit and len(mutants) > limit\n        printed = [line for line in done.stdout.splitlines() if line.startswith(\"NOT RUN \")]\n>       assert len(printed) == len(mutants) - limit\nE       AssertionError: assert 1 == (41 - 3)\nE        +  where 1 = len(['NOT RUN lean/Demo/Defs.lean:4 Demo.small lt-eq: < -> ='])\nE        +  and   41 = len([{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}, {'id': 'M002', 'file': 'Demo/De...on': 'boxedEval', ...}, {'id': 'M006', 'file': 'Demo/Examples.lean', 'line': 31, 'definition': 'boxedGuard', ...}, ...])\n\ntests/test_trust_mutants.py:387: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run[0]\nFAILED tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run[3]\n2 failed in 13.97s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cqud3xnb)\n"
   },
   {
    "id": "TM7",
    "file": "tools/trust_mutants.py",
    "claim": "the receiver of every list method (`.find?` included) is a list the operators cut",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_the_generator_cuts_every_list_a_condition_reads"
    ],
@@ -117,13 +117,13 @@
    "killed": true,
    "mutant_exit": 1,
    "seconds": 1.5,
-   "output_tail": "    \"\"\"The list positions of reviews ap-2 F7, F10 and F11 (a method's receiver, `for ... in`, a `++` operand), and\n        the token operators; nothing inside a string literal is mutated.\"\"\"\n        import trust_mutants\n        text = ('def ok (fs : List (List String)) (ms : List String) : Bool := Id.run do\\n'\n                '  for f in fs do\\n    if (f.find? (\u00b7 == \"x<1\")).isSome then return false\\n'\n                '  return fs.all (\u00b7.isEmpty) && (ms ++ [\"y\"]).length < 3\\n')\n        found = {(op, text[s:e], new) for op, s, e, new in trust_mutants.mutants(text, \"def\", 0, len(text))}\n>       assert {(\"list-drop-first\", \"f\", \"(f.drop 1)\"), (\"list-drop-last\", \"fs\", \"(fs.dropLast)\"),\n                (\"list-first\", \"ms\", \"(ms.take 1)\"), (\"append-left\", ' ++ [\"y\"]', \"\"), (\"lt-le\", \"<\", \"\u2264\"),\n                (\"lit-plus\", \"3\", \"4\"), (\"all-any\", \"all\", \"any\"), (\"and-or\", \"&&\", \"||\"),\n                (\"bool-flip\", \"false\", \"true\")} <= found\nE       AssertionError: assert {('all-any', ...pLast)'), ...} <= {('all-any', ...\\n\\n\\n'), ...}\nE         \nE         Extra items in the left set:\nE         ('list-drop-first', 'f', '(f.drop 1)')\n\ntests/test_trust_mutants.py:399: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_generator_cuts_every_list_a_condition_reads\n1 failed in 0.14s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-tqu7mwcb)\n"
+   "output_tail": "    \"\"\"The list positions of reviews ap-2 F7, F10 and F11 (a method's receiver, `for ... in`, a `++` operand), and\n        the token operators; nothing inside a string literal is mutated.\"\"\"\n        import trust_mutants\n        text = ('def ok (fs : List (List String)) (ms : List String) : Bool := Id.run do\\n'\n                '  for f in fs do\\n    if (f.find? (\u00b7 == \"x<1\")).isSome then return false\\n'\n                '  return fs.all (\u00b7.isEmpty) && (ms ++ [\"y\"]).length < 3\\n')\n        found = {(op, text[s:e], new) for op, s, e, new in trust_mutants.mutants(text, \"def\", 0, len(text))}\n>       assert {(\"list-drop-first\", \"f\", \"(f.drop 1)\"), (\"list-drop-last\", \"fs\", \"(fs.dropLast)\"),\n                (\"list-first\", \"ms\", \"(ms.take 1)\"), (\"append-left\", ' ++ [\"y\"]', \"\"), (\"lt-le\", \"<\", \"\u2264\"),\n                (\"lit-plus\", \"3\", \"4\"), (\"all-any\", \"all\", \"any\"), (\"and-or\", \"&&\", \"||\"),\n                (\"bool-flip\", \"false\", \"true\")} <= found\nE       AssertionError: assert {('all-any', ...pLast)'), ...} <= {('all-any', ...\\n\\n\\n'), ...}\nE         \nE         Extra items in the left set:\nE         ('list-drop-first', 'f', '(f.drop 1)')\n\ntests/test_trust_mutants.py:399: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_generator_cuts_every_list_a_condition_reads\n1 failed in 0.15s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-xiwx_lq6)\n"
   },
   {
    "id": "TM8",
    "file": "tools/trust_mutants.py",
    "claim": "an `example` is a check only when decide, native_decide or rfl proves it (review F1)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill"
    ],
@@ -133,14 +133,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 62.9,
-   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________________ test_an_example_proved_by_a_tactic_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394639048632602), ...})\n\n    def test_an_example_proved_by_a_tactic_is_no_kill(default_run):\n        \"\"\"Review F1: an `example` not proved by `decide`/`native_decide`/`rfl` is a proof, cut in the mutated module\n        and in the module of its checks alike.\"\"\"\n        _, mutants, _, _ = default_run\n        (triple,) = of(mutants, \"triple\")\n>       assert (triple[\"operator\"], triple[\"after\"], triple[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'KILLED') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'KILLED' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:234: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill\n1 failed in 36.03s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-_88l3cl8)\n"
+   "seconds": 46.8,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________________ test_an_example_proved_by_a_tactic_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401387592587358), ...})\n\n    def test_an_example_proved_by_a_tactic_is_no_kill(default_run):\n        \"\"\"Review F1: an `example` not proved by `decide`/`native_decide`/`rfl` is a proof, cut in the mutated module\n        and in the module of its checks alike.\"\"\"\n        _, mutants, _, _ = default_run\n        (triple,) = of(mutants, \"triple\")\n>       assert (triple[\"operator\"], triple[\"after\"], triple[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'KILLED') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'KILLED' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:234: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill\n1 failed in 22.54s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-nlm4i9__)\n"
   },
   {
    "id": "TM9",
    "file": "tools/trust_mutants.py",
    "claim": "a theorem whose statement names the definition, proved by a tactic, is a proof: its failure is cut, never a kill (review F1)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
    ],
@@ -150,14 +150,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 55.8,
-   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______________________ test_a_failing_proof_is_no_kill ________________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394705801835390), ...})\n\n    def test_a_failing_proof_is_no_kill(default_run):\n        \"\"\"The mutant breaks `double_eq` in its own module, and `four` and `double_two` in another (review F1:\n        `double_two`'s statement names `double`, and only its proof script fails); no check reads `double`.\"\"\"\n        _, mutants, _, _ = default_run\n        (double,) = of(mutants, \"double\")\n>       assert (double[\"operator\"], double[\"after\"], double[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'KILLED') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'KILLED' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:226: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill - Asserti...\n1 failed in 25.07s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-hhc7hko0)\n"
+   "seconds": 50.6,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_______________________ test_a_failing_proof_is_no_kill ________________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401436587796962), ...})\n\n    def test_a_failing_proof_is_no_kill(default_run):\n        \"\"\"The mutant breaks `double_eq` in its own module, and `four` and `double_two` in another (review F1:\n        `double_two`'s statement names `double`, and only its proof script fails); no check reads `double`.\"\"\"\n        _, mutants, _, _ = default_run\n        (double,) = of(mutants, \"double\")\n>       assert (double[\"operator\"], double[\"after\"], double[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'KILLED') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'KILLED' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:226: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill - Asserti...\n1 failed in 24.10s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3n1qfg63)\n"
   },
   {
    "id": "TM10",
    "file": "tools/trust_mutants.py",
    "claim": "a check outside the definition's directory whose statement names it is built",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_decide_check_outside_the_directory_naming_the_definition_kills"
    ],
@@ -167,8 +167,8 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 54.0,
-   "output_tail": "== FAILURES ===================================\n____ test_a_decide_check_outside_the_directory_naming_the_definition_kills _____\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394757754726780), ...})\n\n    def test_a_decide_check_outside_the_directory_naming_the_definition_kills(default_run):\n        _, mutants, _, _ = default_run\n        half = of(mutants, \"half\")\n        assert {m[\"operator\"] for m in half} == {\"lit-plus\", \"lit-minus\"}\n>       assert all(m[\"status\"] == \"KILLED\" and m[\"detail\"].startswith(\"lean/Demo/Far/Check.lean:3:\") for m in half), half\nE       AssertionError: [{'id': 'M016', 'file': 'Demo/Defs.lean', 'line': 20, 'definition': 'Demo.half', ...}, {'id': 'M027', 'file': 'Demo/Defs.lean', 'line': 20, 'definition': 'Demo.half', ...}]\nE       assert False\nE        +  where False = all(<generator object test_a_decide_check_outside_the_directory_naming_the_definition_kills.<locals>.<genexpr> at 0x745ae1bd60a0>)\n\ntests/test_trust_mutants.py:308: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_decide_check_outside_the_directory_naming_the_definition_kills\n1 failed in 27.09s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-lihoqwt6)\n"
+   "seconds": 47.6,
+   "output_tail": "== FAILURES ===================================\n____ test_a_decide_check_outside_the_directory_naming_the_definition_kills _____\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401485431695969), ...})\n\n    def test_a_decide_check_outside_the_directory_naming_the_definition_kills(default_run):\n        _, mutants, _, _ = default_run\n        half = of(mutants, \"half\")\n        assert {m[\"operator\"] for m in half} == {\"lit-plus\", \"lit-minus\"}\n>       assert all(m[\"status\"] == \"KILLED\" and m[\"detail\"].startswith(\"lean/Demo/Far/Check.lean:3:\") for m in half), half\nE       AssertionError: [{'id': 'M016', 'file': 'Demo/Defs.lean', 'line': 20, 'definition': 'Demo.half', ...}, {'id': 'M027', 'file': 'Demo/Defs.lean', 'line': 20, 'definition': 'Demo.half', ...}]\nE       assert False\nE        +  where False = all(<generator object test_a_decide_check_outside_the_directory_naming_the_definition_kills.<locals>.<genexpr> at 0x74c3787dd380>)\n\ntests/test_trust_mutants.py:308: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_decide_check_outside_the_directory_naming_the_definition_kills\n1 failed in 22.86s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-w9u9w8bp)\n"
   },
   {
    "id": "TM11",
@@ -186,14 +186,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 50.3,
-   "output_tail": "p.scan opens a command at the `#guard_msgs \u2026 in` line before it, as at `set_option \u2026 in`,\n        so the role of the line Lean reports is the wrapped command's.\"\"\"\n        import trust_map\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(\"#guard f 1\\n\\n#guard_msgs in\\nexample : f 1 = 2 := by\\n  simp [f]\\n\\n/-- info: 2 -/\\n\"\n                        \"#guard_msgs (whitespace := lax) in\\n#eval f 1\\n\")\n        decls, _, problems = trust_map.scan(path, [])\n        code = trust_mutants.code_only(path.read_text()).split(\"\\n\")\n        assert problems == []\n>       assert [(d.start, d.end, trust_mutants.classify(d.kind, \"\\n\".join(code[d.start - 1:d.end]))) for d in decls] == [\n            (1, 2, \"check\"), (3, 7, \"proof\"), (8, 9, \"check\")]\nE       AssertionError: assert [(1, 2, 'chec..., 9, 'check')] == [(1, 2, 'chec..., 9, 'check')]\nE         \nE         At index 1 diff: (3, 3, 'other') != (3, 7, 'proof')\nE         Left contains 2 more items, first extra item: (8, 8, 'other')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:265: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\nFAILED tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps\n2 failed in 25.63s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-9qgz_l0m)\n"
+   "seconds": 48.2,
+   "output_tail": "p.scan opens a command at the `#guard_msgs \u2026 in` line before it, as at `set_option \u2026 in`,\n        so the role of the line Lean reports is the wrapped command's.\"\"\"\n        import trust_map\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(\"#guard f 1\\n\\n#guard_msgs in\\nexample : f 1 = 2 := by\\n  simp [f]\\n\\n/-- info: 2 -/\\n\"\n                        \"#guard_msgs (whitespace := lax) in\\n#eval f 1\\n\")\n        decls, _, problems = trust_map.scan(path, [])\n        code = trust_mutants.code_only(path.read_text()).split(\"\\n\")\n        assert problems == []\n>       assert [(d.start, d.end, trust_mutants.classify(d.kind, \"\\n\".join(code[d.start - 1:d.end]))) for d in decls] == [\n            (1, 2, \"check\"), (3, 7, \"proof\"), (8, 9, \"check\")]\nE       AssertionError: assert [(1, 2, 'chec..., 9, 'check')] == [(1, 2, 'chec..., 9, 'check')]\nE         \nE         At index 1 diff: (3, 3, 'other') != (3, 7, 'proof')\nE         Left contains 2 more items, first extra item: (8, 8, 'other')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:265: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\nFAILED tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps\n2 failed in 23.56s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-6gc5uymv)\n"
   },
   {
    "id": "TM12",
    "file": "tools/trust_mutants.py",
    "claim": "a `#guard_msgs` around a tactic proof is a proof, never a kill (review F6)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
    ],
@@ -203,14 +203,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 47.2,
-   "output_tail": " ===================================\n________________ test_a_proof_wrapped_in_guard_msgs_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394859381250388), ...})\n\n    def test_a_proof_wrapped_in_guard_msgs_is_no_kill(default_run):\n        \"\"\"Review F6 (PROBE F6): Lean reports a wrapped proof's failure at its `#guard_msgs` line, written alone or with\n        the `example`; the wrapper is the proof's, and it is blanked with the cut (else the `sorry` warning trips it).\"\"\"\n        _, mutants, _, _ = default_run\n        (quad,) = of(mutants, \"quad\")\n>       assert (quad[\"operator\"], quad[\"after\"], quad[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\"), quad\nE       AssertionError: {'id': 'M017', 'file': 'Demo/Defs.lean', 'line': 23, 'definition': 'Demo.quad', ...}\nE       assert ('lit-plus', '1', 'KILLED') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'KILLED' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\n1 failed in 22.95s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dl3ottxj)\n"
+   "seconds": 63.5,
+   "output_tail": " ===================================\n________________ test_a_proof_wrapped_in_guard_msgs_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401582959469434), ...})\n\n    def test_a_proof_wrapped_in_guard_msgs_is_no_kill(default_run):\n        \"\"\"Review F6 (PROBE F6): Lean reports a wrapped proof's failure at its `#guard_msgs` line, written alone or with\n        the `example`; the wrapper is the proof's, and it is blanked with the cut (else the `sorry` warning trips it).\"\"\"\n        _, mutants, _, _ = default_run\n        (quad,) = of(mutants, \"quad\")\n>       assert (quad[\"operator\"], quad[\"after\"], quad[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\"), quad\nE       AssertionError: {'id': 'M017', 'file': 'Demo/Defs.lean', 'line': 23, 'definition': 'Demo.quad', ...}\nE       assert ('lit-plus', '1', 'KILLED') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'KILLED' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\n1 failed in 37.06s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pf73639x)\n"
   },
   {
    "id": "TM13",
    "file": "tools/trust_mutants.py",
    "claim": "a proof cut to `sorry` loses its `#guard_msgs` wrapper, which the `sorry` warning would fail (review F6)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
    ],
@@ -220,14 +220,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 51.5,
-   "output_tail": "==================================\n________________ test_a_proof_wrapped_in_guard_msgs_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792394909791501326), ...})\n\n    def test_a_proof_wrapped_in_guard_msgs_is_no_kill(default_run):\n        \"\"\"Review F6 (PROBE F6): Lean reports a wrapped proof's failure at its `#guard_msgs` line, written alone or with\n        the `example`; the wrapper is the proof's, and it is blanked with the cut (else the `sorry` warning trips it).\"\"\"\n        _, mutants, _, _ = default_run\n        (quad,) = of(mutants, \"quad\")\n>       assert (quad[\"operator\"], quad[\"after\"], quad[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\"), quad\nE       AssertionError: {'id': 'M017', 'file': 'Demo/Defs.lean', 'line': 23, 'definition': 'Demo.quad', ...}\nE       assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\n1 failed in 24.06s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-1dye6ngc)\n"
+   "seconds": 64.0,
+   "output_tail": "==================================\n________________ test_a_proof_wrapped_in_guard_msgs_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792401652571549967), ...})\n\n    def test_a_proof_wrapped_in_guard_msgs_is_no_kill(default_run):\n        \"\"\"Review F6 (PROBE F6): Lean reports a wrapped proof's failure at its `#guard_msgs` line, written alone or with\n        the `example`; the wrapper is the proof's, and it is blanked with the cut (else the `sorry` warning trips it).\"\"\"\n        _, mutants, _, _ = default_run\n        (quad,) = of(mutants, \"quad\")\n>       assert (quad[\"operator\"], quad[\"after\"], quad[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\"), quad\nE       AssertionError: {'id': 'M017', 'file': 'Demo/Defs.lean', 'line': 23, 'definition': 'Demo.quad', ...}\nE       assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\n1 failed in 31.50s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jz5utnbd)\n"
   },
   {
    "id": "TM14",
    "file": "tools/trust_mutants.py",
    "claim": "a proof cut keeps the comments after it: the next `#guard_msgs`'s docstring (review F6)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill",
     "tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it"
@@ -238,14 +238,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 48.7,
-   "output_tail": "c\\n\", 4, \"example : f 1 = 2  := sorry\\n\\n\\n-- c\\n\")],\n        ids=short)\n    def test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it(tmp_path, text, last, cut):\n        \"\"\"Review F6: the cut blanks the wrapper (the `sorry` warning would fail it) and keeps the whole comments after\n        the proof (the next `#guard_msgs`'s docstring is in the span before it), every line kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        first = 2 if text.startswith(\"--\") else 1\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       AssertionError: assert 'example : f ...sorry\\n\\n\\n\\n' == 'example : f ...y\\n\\n\\n-- c\\n'\nE         \nE           example : f 1 = 2  := sorry\nE           \nE           \nE         - -- c\nE         +\n\ntests/test_trust_mutants.py:284: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it[#guard_msgs-in-example-f-1-2-by-simp-f-i-4-example-f-1-2-sorry-info-2-#guard_msgs-i]\nFAILED tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it[example-f-1-2-by-simp-f-a-b-c-4-example-f-1-2-sorry-c]\n2 failed, 2 passed in 24.66s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fqfv5eap)\n"
+   "seconds": 67.2,
+   "output_tail": "c\\n\", 4, \"example : f 1 = 2  := sorry\\n\\n\\n-- c\\n\")],\n        ids=short)\n    def test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it(tmp_path, text, last, cut):\n        \"\"\"Review F6: the cut blanks the wrapper (the `sorry` warning would fail it) and keeps the whole comments after\n        the proof (the next `#guard_msgs`'s docstring is in the span before it), every line kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        first = 2 if text.startswith(\"--\") else 1\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       AssertionError: assert 'example : f ...sorry\\n\\n\\n\\n' == 'example : f ...y\\n\\n\\n-- c\\n'\nE         \nE           example : f 1 = 2  := sorry\nE           \nE           \nE         - -- c\nE         +\n\ntests/test_trust_mutants.py:284: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it[#guard_msgs-in-example-f-1-2-by-simp-f-i-4-example-f-1-2-sorry-info-2-#guard_msgs-i]\nFAILED tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it[example-f-1-2-by-simp-f-a-b-c-4-example-f-1-2-sorry-c]\n2 failed, 2 passed in 34.07s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cdkxde__)\n"
   },
   {
    "id": "TM15",
    "file": "tools/trust_mutants.py",
    "claim": "a check error is a kill only when the same build without the mutant passes (review F7: `#eval` of a cut proof)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_the_truth_table_statuses"
    ],
@@ -255,14 +255,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 109.4,
-   "output_tail": "\"mutated\": \"lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#reduce', 'class': 'check', 'reads': 'value', 'wrap': 'bare', ...}, 'trust_mutants: 56 definitions, 56 muta...mo.O.r51 lit-plus: 0 -> 1\nE             trust_mutants: 47 KILLED, 3 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 31 s\nE             ')\nE           assert ('KILLED' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + KILLED)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 45.52s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-u6b8t8rf)\n"
+   "seconds": 111.6,
+   "output_tail": "\"mutated\": \"lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#reduce', 'class': 'check', 'reads': 'value', 'wrap': 'bare', ...}, 'trust_mutants: 56 definitions, 56 muta...ved that the proposition)\nE             trust_mutants: 47 KILLED, 3 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 32 s\nE             ')\nE           assert ('KILLED' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + KILLED)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 46.49s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-t1rpzpp7)\n"
   },
   {
    "id": "TM16",
    "file": "tools/trust_mutants.py",
    "claim": "every `#print` (and `#print axioms`) is a proof (review F7)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_the_truth_table_classes",
     "tests/test_trust_mutants.py::test_the_truth_table_statuses"
@@ -274,14 +274,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 130.6,
-   "output_tail": "ated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#print', 'class': 'proof', 'reads': 'value', 'wrap': 'doc', ...}, 'trust_mutants: 56 definitions, 56 mutant...o.O.r55 lit-plus: 0 -> 1\nE             trust_mutants: 38 KILLED, 10 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 50 s\nE             ')\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_classes - AssertionE...\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n2 failed in 64.50s (0:01:04)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-7wnpvlxu)\n"
+   "seconds": 127.8,
+   "output_tail": "ated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#print', 'class': 'proof', 'reads': 'value', 'wrap': 'doc', ...}, 'trust_mutants: 56 definitions, 56 mutant...o.O.r55 lit-plus: 0 -> 1\nE             trust_mutants: 38 KILLED, 10 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 48 s\nE             ')\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_classes - AssertionE...\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n2 failed in 61.71s (0:01:01)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-i1eywakb)\n"
   },
   {
    "id": "TM17",
    "file": "tools/trust_mutants.py",
    "claim": "a check form with a tactic block inside is a proof (review F7)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_the_truth_table_classes",
     "tests/test_trust_mutants.py::test_the_truth_table_statuses"
@@ -293,14 +293,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 144.8,
-   "output_tail": "utated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#reduce', 'class': 'check', 'reads': 'value', 'wrap': 'bare', ...}, 'trust_mutants: 56 definitions, 56 muta...mo.O.r55 lit-plus: 0 -> 1\nE             trust_mutants: 44 KILLED, 6 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 60 s\nE             ')\nE           assert ('KILLED' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + KILLED)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_classes - AssertionE...\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n2 failed in 78.71s (0:01:18)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-l96__ii6)\n"
+   "seconds": 137.6,
+   "output_tail": "utated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#reduce', 'class': 'check', 'reads': 'value', 'wrap': 'bare', ...}, 'trust_mutants: 56 definitions, 56 muta...mo.O.r55 lit-plus: 0 -> 1\nE             trust_mutants: 44 KILLED, 6 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 57 s\nE             ')\nE           assert ('KILLED' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + KILLED)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_classes - AssertionE...\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n2 failed in 71.98s (0:01:11)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ijnr431f)\n"
   },
   {
    "id": "TM18",
    "file": "tools/trust_mutants.py",
    "claim": "a `#` command is cut by blanking it whole (review F7)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_the_truth_table_statuses"
    ],
@@ -310,14 +310,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 117.6,
-   "output_tail": " {\"mutated\": \"lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#guard', 'class': 'check', 'reads': 'value', 'wrap': 'bare', ...}, 'trust_mutants: 56 definitions, 56 mutan... `#guard_msgs` does ...)\nE             trust_mutants: 19 KILLED, 0 SURVIVOR, 37 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 29 s\nE             ')\nE           assert ('UNKNOWN' == 'KILLED'\nE             \nE             - KILLED\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 44.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-y6dx8rte)\n"
+   "seconds": 171.8,
+   "output_tail": " {\"mutated\": \"lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#guard', 'class': 'check', 'reads': 'value', 'wrap': 'bare', ...}, 'trust_mutants: 56 definitions, 56 mutan... `#guard_msgs` does ...)\nE             trust_mutants: 19 KILLED, 0 SURVIVOR, 37 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 30 s\nE             ')\nE           assert ('UNKNOWN' == 'KILLED'\nE             \nE             - KILLED\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 53.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-f4o2mvq1)\n"
   },
   {
    "id": "TM19",
    "file": "tools/trust_mutants.py",
    "claim": "a cut `#` command loses the docstring before it (review F7)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
    ],
@@ -327,14 +327,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 2.4,
-   "output_tail": "irst\", \"last\", \"cut\"), [\n        (\"#guard f 1\\n/-- info: 1\\n-/\\n#guard_msgs in\\n#eval f 1\\n-- c\\n\", 4, 6,\n         \"#guard f 1\\n\" + \" \" * 11 + \"\\n  \\n\" + \" \" * 14 + \"\\n\" + \" \" * 9 + \"\\n-- c\\n\"),\n        ('#eval \"a\\n-- b\"\\n#guard_msgs in #print axioms f\\n', 3, 3, '#eval \"a\\n-- b\"\\n' + \" \" * 30 + \"\\n\")], ids=short)\n    def test_a_cut_command_is_blanked_with_its_docstring(tmp_path, text, first, last, cut):\n        \"\"\"Review F7: a `#` command is cut whole, with the comment lines before it (its `#guard_msgs` docstring), but\n        never a string the command before it is still writing; every line is kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       AssertionError: assert '#guard f 1\\n...     \\n-- c\\n' == '#guard f 1\\n...     \\n-- c\\n'\nE         \nE           #guard f 1\nE         -            \nE         -   \nE         + /-- info: 1\nE         + -/\nE                         \nE                    \nE           -- c\n\ntests/test_trust_mutants.py:590: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring[#guard-f-1-info-1-#guard_msgs-in-#eval-f-4-6-#guard-f-1-c]\n1 failed, 1 passed in 0.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-tpn63pyj)\n"
+   "seconds": 2.1,
+   "output_tail": "irst\", \"last\", \"cut\"), [\n        (\"#guard f 1\\n/-- info: 1\\n-/\\n#guard_msgs in\\n#eval f 1\\n-- c\\n\", 4, 6,\n         \"#guard f 1\\n\" + \" \" * 11 + \"\\n  \\n\" + \" \" * 14 + \"\\n\" + \" \" * 9 + \"\\n-- c\\n\"),\n        ('#eval \"a\\n-- b\"\\n#guard_msgs in #print axioms f\\n', 3, 3, '#eval \"a\\n-- b\"\\n' + \" \" * 30 + \"\\n\")], ids=short)\n    def test_a_cut_command_is_blanked_with_its_docstring(tmp_path, text, first, last, cut):\n        \"\"\"Review F7: a `#` command is cut whole, with the comment lines before it (its `#guard_msgs` docstring), but\n        never a string the command before it is still writing; every line is kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       AssertionError: assert '#guard f 1\\n...     \\n-- c\\n' == '#guard f 1\\n...     \\n-- c\\n'\nE         \nE           #guard f 1\nE         -            \nE         -   \nE         + /-- info: 1\nE         + -/\nE                         \nE                    \nE           -- c\n\ntests/test_trust_mutants.py:590: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring[#guard-f-1-info-1-#guard_msgs-in-#eval-f-4-6-#guard-f-1-c]\n1 failed, 1 passed in 0.20s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-tlefgq4t)\n"
   },
   {
    "id": "TM20",
    "file": "tools/trust_mutants.py",
    "claim": "failing proofs are cut before a check error is read: a check may fail only because it reads one (review F7)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_the_truth_table_statuses"
    ],
@@ -344,8 +344,8 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 147.9,
-   "output_tail": "lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#guard', 'class': 'check', 'reads': 'proof', 'wrap': 'bare', ...}, 'trust_mutants: 56 definitions, 56 mutan...ved that the proposition)\nE             trust_mutants: 38 KILLED, 9 SURVIVOR, 9 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 48 s\nE             ')\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 66.01s (0:01:06)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-lnwpme27)\n"
+   "seconds": 112.3,
+   "output_tail": "utated\": \"lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#guard', 'class': 'check', 'reads': 'proof', 'wrap': 'bare', ...}, 'trust_mutants: 56 definitions, 56 mutan...ved that the proposition)\nE             trust_mutants: 38 KILLED, 9 SURVIVOR, 9 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 39 s\nE             ')\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:627: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 51.88s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ttlxj189)\n"
   },
   {
    "id": "TM21",
@@ -361,14 +361,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 1.8,
-   "output_tail": "______________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-25665/test_every_hash_command_opens_0')\n\n    def test_every_hash_command_opens_its_own_span(tmp_path):\n        \"\"\"Review F7: trust_map opens a span at every `#` command, so `classify` sees the command Lean reports.\"\"\"\n        import trust_map\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(\"theorem t : True := by\\n  trivial\\n#check_failure f true\\n#guard_expr f 1 =~ 1\\n#eval! f 1\\n\"\n                        \"def g : Array Nat :=\\n  #[1, 2]\\n\")\n        decls, _, problems = trust_map.scan(path, [])\n        code = trust_mutants.code_only(path.read_text()).split(\"\\n\")\n>       assert [(d.start, d.end, trust_mutants.classify(d.kind, \"\\n\".join(code[d.start - 1:d.end])))\n                for d in decls if d.kind == \"command\"] == [(3, 3, \"other\"), (4, 4, \"check\"), (5, 5, \"check\")]\nE       AssertionError: assert [(5, 5, 'check')] == [(3, 3, 'othe..., 5, 'check')]\nE         \nE         At index 0 diff: (5, 5, 'check') != (3, 3, 'other')\nE         Right contains 2 more items, first extra item: (4, 4, 'check')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:574: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_every_hash_command_opens_its_own_span\n1 failed in 0.16s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-7dll_wqn)\n"
+   "seconds": 1.7,
+   "output_tail": "______________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-26001/test_every_hash_command_opens_0')\n\n    def test_every_hash_command_opens_its_own_span(tmp_path):\n        \"\"\"Review F7: trust_map opens a span at every `#` command, so `classify` sees the command Lean reports.\"\"\"\n        import trust_map\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(\"theorem t : True := by\\n  trivial\\n#check_failure f true\\n#guard_expr f 1 =~ 1\\n#eval! f 1\\n\"\n                        \"def g : Array Nat :=\\n  #[1, 2]\\n\")\n        decls, _, problems = trust_map.scan(path, [])\n        code = trust_mutants.code_only(path.read_text()).split(\"\\n\")\n>       assert [(d.start, d.end, trust_mutants.classify(d.kind, \"\\n\".join(code[d.start - 1:d.end])))\n                for d in decls if d.kind == \"command\"] == [(3, 3, \"other\"), (4, 4, \"check\"), (5, 5, \"check\")]\nE       AssertionError: assert [(5, 5, 'check')] == [(3, 3, 'othe..., 5, 'check')]\nE         \nE         At index 0 diff: (5, 5, 'check') != (3, 3, 'other')\nE         Right contains 2 more items, first extra item: (4, 4, 'check')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:574: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_every_hash_command_opens_its_own_span\n1 failed in 0.17s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-4ndz9soy)\n"
   },
   {
    "id": "TM22",
    "file": "tools/trust_mutants.py",
    "claim": "an outside --test file kills only when it passes without the mutant (review F7)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
    ],
@@ -378,14 +378,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 92.7,
-   "output_tail": "       assert [m for m in mutants if \"Reads.lean\" in m[\"detail\"] and m[\"status\"] != \"UNKNOWN\"] == [], done.stdout\nE       AssertionError: trust_mutants: 13 definitions, 41 mutants (41 to run), 4 jobs, base HEAD~1\nE         SURVIVOR lean/Demo/Examples.lean:35 boxedDecide eq-le: = -> \u2264\nE         SURVIVOR lean/Demo/Examples.lean:25 boxedEval eq-le: = -> \u2264\nE         SURVIVOR lean/Demo/Examples.lean:31 boxedGuard eq-le: = -> \u2264\nE         UNKNOWN lean/Demo/Defs.lean:29 Demo.lone lit-plus: 0 -> 1 (lean/Demo/Examples.lean:23: Tactic `decide` proved that the proposition)\nE         UNKNOWN lean/Demo/Defs.lean:32 Demo.boxed lit-plus: 0 -> 1 (lean/Demo/Examples.lean:25: Tactic `decide` proved that the proposition)\nE         SURVIVOR lean/Demo/Examples.lean:23 loneFin lit-plus: 1 -> 2\nE         trust_mutants: 30 KILLED, 4 SURVIVOR, 2 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN in 20 s\nE         \nE       assert [{'id': 'M008...s', ...}, ...] == []\nE         \nE         Left contains 17 more items, first extra item: {'id': 'M008', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:371: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill\n1 failed in 43.31s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dk2c8xdt)\n"
+   "seconds": 108.5,
+   "output_tail": "       assert [m for m in mutants if \"Reads.lean\" in m[\"detail\"] and m[\"status\"] != \"UNKNOWN\"] == [], done.stdout\nE       AssertionError: trust_mutants: 13 definitions, 41 mutants (41 to run), 4 jobs, base HEAD~1\nE         SURVIVOR lean/Demo/Examples.lean:35 boxedDecide eq-le: = -> \u2264\nE         SURVIVOR lean/Demo/Examples.lean:31 boxedGuard eq-le: = -> \u2264\nE         SURVIVOR lean/Demo/Examples.lean:25 boxedEval eq-le: = -> \u2264\nE         UNKNOWN lean/Demo/Defs.lean:29 Demo.lone lit-plus: 0 -> 1 (lean/Demo/Examples.lean:23: Tactic `decide` proved that the proposition)\nE         UNKNOWN lean/Demo/Defs.lean:32 Demo.boxed lit-plus: 0 -> 1 (lean/Demo/Examples.lean:25: Tactic `decide` proved that the proposition)\nE         SURVIVOR lean/Demo/Examples.lean:23 loneFin lit-plus: 1 -> 2\nE         trust_mutants: 30 KILLED, 4 SURVIVOR, 2 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN in 27 s\nE         \nE       assert [{'id': 'M008...s', ...}, ...] == []\nE         \nE         Left contains 17 more items, first extra item: {'id': 'M008', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:371: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill\n1 failed in 57.95s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ci1pcw1v)\n"
   },
   {
    "id": "TM23",
    "file": "tools/trust_mutants.py",
    "claim": "only an error inside a check (or a --test file) kills; one in a definition is UNKNOWN",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_an_error_outside_every_check_is_unknown"
    ],
@@ -395,14 +395,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 48.8,
-   "output_tail": "                [100%]\n=================================== FAILURES ===================================\n_________________ test_an_error_outside_every_check_is_unknown _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792395758259724684), ...})\n\n    def test_an_error_outside_every_check_is_unknown(default_run):\n        \"\"\"Only an error in a check (or a --test file) kills: `loneFin`'s proof term fails under the mutant, and it is\n        a definition, which cannot be cut.\"\"\"\n        _, mutants, _, _ = default_run\n        (lone,) = of(mutants, \"lone\")\n>       assert (lone[\"status\"], lone[\"detail\"].split(\": \")[0]) == (\"UNKNOWN\", \"lean/Demo/Examples.lean:23\"), lone\nE       AssertionError: {'id': 'M019', 'file': 'Demo/Defs.lean', 'line': 29, 'definition': 'Demo.lone', ...}\nE       assert ('KILLED', 'l...ples.lean:23') == ('UNKNOWN', '...ples.lean:23')\nE         \nE         At index 0 diff: 'KILLED' != 'UNKNOWN'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:292: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_error_outside_every_check_is_unknown\n1 failed in 23.53s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-47syvjec)\n"
+   "seconds": 67.8,
+   "output_tail": "                [100%]\n=================================== FAILURES ===================================\n_________________ test_an_error_outside_every_check_is_unknown _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792402563714008704), ...})\n\n    def test_an_error_outside_every_check_is_unknown(default_run):\n        \"\"\"Only an error in a check (or a --test file) kills: `loneFin`'s proof term fails under the mutant, and it is\n        a definition, which cannot be cut.\"\"\"\n        _, mutants, _, _ = default_run\n        (lone,) = of(mutants, \"lone\")\n>       assert (lone[\"status\"], lone[\"detail\"].split(\": \")[0]) == (\"UNKNOWN\", \"lean/Demo/Examples.lean:23\"), lone\nE       AssertionError: {'id': 'M019', 'file': 'Demo/Defs.lean', 'line': 29, 'definition': 'Demo.lone', ...}\nE       assert ('KILLED', 'l...ples.lean:23') == ('UNKNOWN', '...ples.lean:23')\nE         \nE         At index 0 diff: 'KILLED' != 'UNKNOWN'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:292: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_error_outside_every_check_is_unknown\n1 failed in 31.76s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-uknetcgb)\n"
   },
   {
    "id": "TM24",
    "file": "tools/trust_mutants.py",
    "claim": "the blanking stops at a string the command before is still writing (review F7)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
    ],
@@ -412,14 +412,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 2.2,
-   "output_tail": "nt axioms f\\n', first = 3, last = 3\ncut = '#eval \"a\\n-- b\"\\n                              \\n'\n\n    @pytest.mark.parametrize((\"text\", \"first\", \"last\", \"cut\"), [\n        (\"#guard f 1\\n/-- info: 1\\n-/\\n#guard_msgs in\\n#eval f 1\\n-- c\\n\", 4, 6,\n         \"#guard f 1\\n\" + \" \" * 11 + \"\\n  \\n\" + \" \" * 14 + \"\\n\" + \" \" * 9 + \"\\n-- c\\n\"),\n        ('#eval \"a\\n-- b\"\\n#guard_msgs in #print axioms f\\n', 3, 3, '#eval \"a\\n-- b\"\\n' + \" \" * 30 + \"\\n\")], ids=short)\n    def test_a_cut_command_is_blanked_with_its_docstring(tmp_path, text, first, last, cut):\n        \"\"\"Review F7: a `#` command is cut whole, with the comment lines before it (its `#guard_msgs` docstring), but\n        never a string the command before it is still writing; every line is kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       assert '#eval \"a\\n  ...           \\n' == '#eval \"a\\n--...           \\n'\nE         \nE           #eval \"a\nE         - -- b\"\nE         +\n\ntests/test_trust_mutants.py:590: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring[#eval-a-b-#guard_msgs-in-#print-axioms-f-3-3-#eval-a-b]\n1 failed, 1 passed in 0.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-o5ci0k35)\n"
+   "seconds": 1.8,
+   "output_tail": "nt axioms f\\n', first = 3, last = 3\ncut = '#eval \"a\\n-- b\"\\n                              \\n'\n\n    @pytest.mark.parametrize((\"text\", \"first\", \"last\", \"cut\"), [\n        (\"#guard f 1\\n/-- info: 1\\n-/\\n#guard_msgs in\\n#eval f 1\\n-- c\\n\", 4, 6,\n         \"#guard f 1\\n\" + \" \" * 11 + \"\\n  \\n\" + \" \" * 14 + \"\\n\" + \" \" * 9 + \"\\n-- c\\n\"),\n        ('#eval \"a\\n-- b\"\\n#guard_msgs in #print axioms f\\n', 3, 3, '#eval \"a\\n-- b\"\\n' + \" \" * 30 + \"\\n\")], ids=short)\n    def test_a_cut_command_is_blanked_with_its_docstring(tmp_path, text, first, last, cut):\n        \"\"\"Review F7: a `#` command is cut whole, with the comment lines before it (its `#guard_msgs` docstring), but\n        never a string the command before it is still writing; every line is kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       assert '#eval \"a\\n  ...           \\n' == '#eval \"a\\n--...           \\n'\nE         \nE           #eval \"a\nE         - -- b\"\nE         +\n\ntests/test_trust_mutants.py:590: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring[#eval-a-b-#guard_msgs-in-#print-axioms-f-3-3-#eval-a-b]\n1 failed, 1 passed in 0.16s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-8u15dqzf)\n"
   },
   {
    "id": "TM25",
    "file": "tools/trust_mutants.py",
    "claim": "an error in a definition is UNKNOWN even beside a failing check (review F8)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_an_error_in_a_definition_beside_a_failing_check_is_unknown"
    ],
@@ -429,14 +429,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 56.2,
-   "output_tail": "edProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792395814820346401), ...})\n\n    def test_an_error_in_a_definition_beside_a_failing_check_is_unknown(default_run):\n        \"\"\"Review F8: the mutant breaks the `by decide` of three subtype definitions; Lean puts `sorry` there, and the\n        `#eval` of one's value refuses it (the value is 0 whatever `boxed` is). The control has no such break, so\n        it passes; the definitions' errors still decide: UNKNOWN at the first, never a kill.\"\"\"\n        _, mutants, _, _ = default_run\n        (boxed,) = of(mutants, \"boxed\")\n>       assert (boxed[\"status\"], boxed[\"detail\"].split(\": \")[0]) == (\"UNKNOWN\", \"lean/Demo/Examples.lean:25\"), boxed\nE       AssertionError: {'id': 'M020', 'file': 'Demo/Defs.lean', 'line': 32, 'definition': 'Demo.boxed', ...}\nE       assert ('KILLED', 'l...ples.lean:25') == ('UNKNOWN', '...ples.lean:25')\nE         \nE         At index 0 diff: 'KILLED' != 'UNKNOWN'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:301: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_error_in_a_definition_beside_a_failing_check_is_unknown\n1 failed in 25.46s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-lip3mk6_)\n"
+   "seconds": 61.2,
+   "output_tail": "edProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792402626777765719), ...})\n\n    def test_an_error_in_a_definition_beside_a_failing_check_is_unknown(default_run):\n        \"\"\"Review F8: the mutant breaks the `by decide` of three subtype definitions; Lean puts `sorry` there, and the\n        `#eval` of one's value refuses it (the value is 0 whatever `boxed` is). The control has no such break, so\n        it passes; the definitions' errors still decide: UNKNOWN at the first, never a kill.\"\"\"\n        _, mutants, _, _ = default_run\n        (boxed,) = of(mutants, \"boxed\")\n>       assert (boxed[\"status\"], boxed[\"detail\"].split(\": \")[0]) == (\"UNKNOWN\", \"lean/Demo/Examples.lean:25\"), boxed\nE       AssertionError: {'id': 'M020', 'file': 'Demo/Defs.lean', 'line': 32, 'definition': 'Demo.boxed', ...}\nE       assert ('KILLED', 'l...ples.lean:25') == ('UNKNOWN', '...ples.lean:25')\nE         \nE         At index 0 diff: 'KILLED' != 'UNKNOWN'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:301: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_error_in_a_definition_beside_a_failing_check_is_unknown\n1 failed in 31.67s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-83liikqf)\n"
   },
   {
    "id": "TM26",
    "file": "tools/trust_mutants.py",
    "claim": "a longer replacement takes its extra line ends from the blank lines after its declaration (review F9)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration",
     "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
@@ -448,14 +448,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 259.6,
-   "output_tail": "  def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '...', ...}), ...] == []\nE         \nE         Left contains 8 more items, first extra item: ({'shape': 'default-more', 'setting': 'mutated', 'reads': True, 'd': 's0', ...}, {'id': 'M009', 'file': 'Demo/LM/Defs.lean', 'line': 4, 'definition': 'Demo.LM.s0', ...}, 'expected KILLED with more lines')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:770: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration[more]\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n2 failed, 3 passed in 128.86s (0:02:08)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jld3125q)\n"
+   "seconds": 274.5,
+   "output_tail": "  def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '...', ...}), ...] == []\nE         \nE         Left contains 8 more items, first extra item: ({'shape': 'default-more', 'setting': 'mutated', 'reads': True, 'd': 's0', ...}, {'id': 'M009', 'file': 'Demo/LM/Defs.lean', 'line': 4, 'definition': 'Demo.LM.s0', ...}, 'expected KILLED with more lines')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:782: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration[more]\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n2 failed, 3 passed in 142.29s (0:02:22)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-m7xvrevt)\n"
   },
   {
    "id": "TM27",
    "file": "tools/trust_mutants.py",
    "claim": "the blank lines a longer replacement takes are never inside a comment (review F9)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration"
    ],
@@ -465,14 +465,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 2.2,
-   "output_tail": "S, \" /-\\n\\n-/\\n#guard f 1 == [2, 3]\\n\", \"[1]\", \"[2,\\n   3]\", None)],\n        ids=(\"fewer\", \"more\", \"more-no-blank\", \"more-blank-in-a-comment\"))\n    def test_an_edit_keeps_every_line_after_its_declaration(decl, rest, before, new, mutated):\n        \"\"\"Review F9: a shorter replacement is padded; a longer one takes its extra line ends from the blank lines right\n        after the declaration (never from a comment), else it is written as it is (`mutated` None) and `moved` finds\n        the first line it moved, which `run` reports as UNKNOWN.\"\"\"\n        import trust_mutants\n        text, s = decl + rest, decl.index(before)\n        end, edit = trust_mutants.relined(text, s, s + len(before), new, len(decl))\n        after = text[:s] + edit + text[end:]\n>       assert after == (mutated or text[:s] + new + text[s + len(before):])\nE       AssertionError: assert 'def f : Nat ...1 == [2, 3]\\n' == 'def f : Nat ...1 == [2, 3]\\n'\nE         \nE         Skipping 54 identical leading characters in diff, use -v to show\nE           \nE              3] /-\nE         - \nE           -/\nE           #guard f 1 == [2, 3]\n\ntests/test_trust_mutants.py:649: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration[more-blank-in-a-comment]\n1 failed, 3 passed in 0.22s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-mawg2rgc)\n"
+   "seconds": 1.6,
+   "output_tail": "S, \" /-\\n\\n-/\\n#guard f 1 == [2, 3]\\n\", \"[1]\", \"[2,\\n   3]\", None)],\n        ids=(\"fewer\", \"more\", \"more-no-blank\", \"more-blank-in-a-comment\"))\n    def test_an_edit_keeps_every_line_after_its_declaration(decl, rest, before, new, mutated):\n        \"\"\"Review F9: a shorter replacement is padded; a longer one takes its extra line ends from the blank lines right\n        after the declaration (never from a comment), else it is written as it is (`mutated` None) and `moved` finds\n        the first line it moved, which `run` reports as UNKNOWN.\"\"\"\n        import trust_mutants\n        text, s = decl + rest, decl.index(before)\n        end, edit = trust_mutants.relined(text, s, s + len(before), new, len(decl))\n        after = text[:s] + edit + text[end:]\n>       assert after == (mutated or text[:s] + new + text[s + len(before):])\nE       AssertionError: assert 'def f : Nat ...1 == [2, 3]\\n' == 'def f : Nat ...1 == [2, 3]\\n'\nE         \nE         Skipping 54 identical leading characters in diff, use -v to show\nE           \nE              3] /-\nE         - \nE           -/\nE           #guard f 1 == [2, 3]\n\ntests/test_trust_mutants.py:649: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration[more-blank-in-a-comment]\n1 failed, 3 passed in 0.15s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-v4vdwg4p)\n"
   },
   {
    "id": "TM28",
    "file": "tools/trust_mutants.py",
    "claim": "a mutant that moves a line after its declaration is UNKNOWN (review F9)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
    ],
@@ -482,14 +482,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 248.2,
-   "output_tail": "ting':...n': 'Demo.LM.s8', ...}, {'id': 'M006', 'file': 'Demo/LM/Defs.lean', 'line': 90, 'definition': 'Demo.LM.s9', ...}, ...])\n\n    def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '...O.s21', ...})] == []\nE         \nE         Left contains 4 more items, first extra item: ({'shape': 'default-more-tight', 'setting': 'mutated', 'reads': True, 'd': 's2', ...}, {'id': 'M011', 'file': 'Demo/LM/Defs.lean', 'line': 24, 'definition': 'Demo.LM.s2', ...})\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:770: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n1 failed in 117.78s (0:01:57)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-o96qr_1g)\n"
+   "seconds": 254.6,
+   "output_tail": "ting':...n': 'Demo.LM.s8', ...}, {'id': 'M006', 'file': 'Demo/LM/Defs.lean', 'line': 90, 'definition': 'Demo.LM.s9', ...}, ...])\n\n    def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '...O.s21', ...})] == []\nE         \nE         Left contains 4 more items, first extra item: ({'shape': 'default-more-tight', 'setting': 'mutated', 'reads': True, 'd': 's2', ...}, {'id': 'M011', 'file': 'Demo/LM/Defs.lean', 'line': 24, 'definition': 'Demo.LM.s2', ...})\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:782: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n1 failed in 125.67s (0:02:05)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-eb4ldvi2)\n"
   },
   {
    "id": "TM29",
    "file": "tools/trust_mutants.py",
    "claim": "`moved` compares every line after the declaration, not only the line count (review F9)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved"
    ],
@@ -499,14 +499,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 1.5,
-   "output_tail": "   (\"def f := [1]\\n#guard f == [1]\\n\\n#guard g\", (1, 1), 5)], ids=(\"count-kept\", \"own-line\", \"same\", \"count\"))\n    def test_moved_finds_the_first_line_after_the_declaration_that_moved(after, lines, line):\n        \"\"\"Review F9: `moved` compares each line outside the mutated declaration, not only the line count (an edit that\n        took a blank line below a check keeps the count and moves the check).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.moved(\"def f := [1]\\n#guard f == [1]\\n\\n#guard g\\n\", after, lines) == line\nE       AssertionError: assert 2 == 5\nE        +  where 2 = <function moved at 0x703faa1b6fb0>('def f := [1]\\n#guard f == [1]\\n\\n#guard g\\n', 'def f := [1]\\n#guard f == [1]\\n\\n#guard g', (1, 1))\nE        +    where <function moved at 0x703faa1b6fb0> = <module 'trust_mutants' from '/home/seyran/code/ve-speed-trustmut/tools/trust_mutants.py'>.moved\n\ntests/test_trust_mutants.py:663: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[count-kept]\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[own-line]\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[count]\n3 failed, 1 passed in 0.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-kq56nell)\n"
+   "seconds": 2.6,
+   "output_tail": "   (\"def f := [1]\\n#guard f == [1]\\n\\n#guard g\", (1, 1), 5)], ids=(\"count-kept\", \"own-line\", \"same\", \"count\"))\n    def test_moved_finds_the_first_line_after_the_declaration_that_moved(after, lines, line):\n        \"\"\"Review F9: `moved` compares each line outside the mutated declaration, not only the line count (an edit that\n        took a blank line below a check keeps the count and moves the check).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.moved(\"def f := [1]\\n#guard f == [1]\\n\\n#guard g\\n\", after, lines) == line\nE       AssertionError: assert 2 == 5\nE        +  where 2 = <function moved at 0x7c70eadbecf0>('def f := [1]\\n#guard f == [1]\\n\\n#guard g\\n', 'def f := [1]\\n#guard f == [1]\\n\\n#guard g', (1, 1))\nE        +    where <function moved at 0x7c70eadbecf0> = <module 'trust_mutants' from '/home/seyran/code/ve-speed-trustmut/tools/trust_mutants.py'>.moved\n\ntests/test_trust_mutants.py:663: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[count-kept]\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[own-line]\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[count]\n3 failed, 1 passed in 0.34s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-p420ult6)\n"
   },
   {
    "id": "TM30",
    "file": "tools/trust_mutants.py",
    "claim": "a parse error never kills (review F9: a cut left behind)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
    ],
@@ -516,14 +516,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 1.7,
-   "output_tail": " True, False)], ids=short)\n    def test_only_a_checks_own_error_kills(message, role, built, checkout, test, kills):\n        \"\"\"Review F9 (the DRI's step 2): an error kills only at a check line the mutant and the cuts left as the checkout\n        has it, or in a --test file, and never when Lean's parser reports it (a cut left behind, a moved line).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.attributed(message, role, built, checkout, test) is kills\nE       AssertionError: assert True is False\nE        +  where True = <function attributed at 0x7d2df44b3950>('unexpected end of input', 'other', '#guard g', '#guard g', True)\nE        +    where <function attributed at 0x7d2df44b3950> = <module 'trust_mutants' from '/home/seyran/code/ve-speed-trustmut/tools/trust_mutants.py'>.attributed\n\ntests/test_trust_mutants.py:669: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[unexpected-token-expected-command-check-#guard-f-1-2-#guard-f-1-2-False-False]\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[expected-term-check-#guard-f-1-2-#guard-f-1-2-False-False]\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[unexpected-end-of-input-other-#guard-g-#guard-g-True-False]\n3 failed, 6 passed in 0.19s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-fd8osa8s)\n"
+   "seconds": 2.6,
+   "output_tail": " True, False)], ids=short)\n    def test_only_a_checks_own_error_kills(message, role, built, checkout, test, kills):\n        \"\"\"Review F9 (the DRI's step 2): an error kills only at a check line the mutant and the cuts left as the checkout\n        has it, or in a --test file, and never when Lean's parser reports it (a cut left behind, a moved line).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.attributed(message, role, built, checkout, test) is kills\nE       AssertionError: assert True is False\nE        +  where True = <function attributed at 0x7b0eec05f480>('unexpected end of input', 'other', '#guard g', '#guard g', True)\nE        +    where <function attributed at 0x7b0eec05f480> = <module 'trust_mutants' from '/home/seyran/code/ve-speed-trustmut/tools/trust_mutants.py'>.attributed\n\ntests/test_trust_mutants.py:681: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[unexpected-token-expected-command-check-#guard-f-1-2-#guard-f-1-2-False-False]\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[expected-term-check-#guard-f-1-2-#guard-f-1-2-False-False]\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[unexpected-end-of-input-other-#guard-g-#guard-g-True-False]\n3 failed, 6 passed in 0.26s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dijq8fyk)\n"
   },
   {
    "id": "TM31",
    "file": "tools/trust_mutants.py",
    "claim": "a check's error kills only at a line the mutant and the cuts left as the checkout has it (review F9)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
    ],
@@ -533,14 +533,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 1.6,
-   "output_tail": "def s := \u27e80, by decide\u27e9\",\n         \"def s := \u27e80, by decide\u27e9\", False, False),\n        (\"Expression\", \"other\", \"#guard g\", \"#guard g\", True, True),\n        (\"unexpected end of input\", \"other\", \"#guard g\", \"#guard g\", True, False)], ids=short)\n    def test_only_a_checks_own_error_kills(message, role, built, checkout, test, kills):\n        \"\"\"Review F9 (the DRI's step 2): an error kills only at a check line the mutant and the cuts left as the checkout\n        has it, or in a --test file, and never when Lean's parser reports it (a cut left behind, a moved line).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.attributed(message, role, built, checkout, test) is kills\nE       AssertionError: assert True is False\nE        +  where True = <function attributed at 0x730818a2b950>('Expression', 'check', '', '', False)\nE        +    where <function attributed at 0x730818a2b950> = <module 'trust_mutants' from '/home/seyran/code/ve-speed-trustmut/tools/trust_mutants.py'>.attributed\n\ntests/test_trust_mutants.py:669: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[Expression-check-trivial-#guard-f-1-2-False-False]\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[Expression-check---False-False]\n2 failed, 7 passed in 0.17s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-juuh26n9)\n"
+   "seconds": 2.3,
+   "output_tail": "def s := \u27e80, by decide\u27e9\",\n         \"def s := \u27e80, by decide\u27e9\", False, False),\n        (\"Expression\", \"other\", \"#guard g\", \"#guard g\", True, True),\n        (\"unexpected end of input\", \"other\", \"#guard g\", \"#guard g\", True, False)], ids=short)\n    def test_only_a_checks_own_error_kills(message, role, built, checkout, test, kills):\n        \"\"\"Review F9 (the DRI's step 2): an error kills only at a check line the mutant and the cuts left as the checkout\n        has it, or in a --test file, and never when Lean's parser reports it (a cut left behind, a moved line).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.attributed(message, role, built, checkout, test) is kills\nE       AssertionError: assert True is False\nE        +  where True = <function attributed at 0x7eb26cd73480>('Expression', 'check', '', '', False)\nE        +    where <function attributed at 0x7eb26cd73480> = <module 'trust_mutants' from '/home/seyran/code/ve-speed-trustmut/tools/trust_mutants.py'>.attributed\n\ntests/test_trust_mutants.py:681: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[Expression-check-trivial-#guard-f-1-2-False-False]\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[Expression-check---False-False]\n2 failed, 7 passed in 0.26s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-gy23azh4)\n"
   },
   {
    "id": "TM32",
    "file": "tools/trust_mutants.py",
    "claim": "the mutated declaration's lines run over the blank lines its edit takes (review F9)",
-   "source_sha256": "68178760b43ddf878234c058bcfb512706378af88f9bf439c9b8da15d3f6e9bb",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
    "tests": [
     "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
    ],
@@ -550,8 +550,157 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 229.1,
-   "output_tail": "..}, {'id': 'M006', 'file': 'Demo/LM/Defs.lean', 'line': 90, 'definition': 'Demo.LM.s9', ...}, ...])\n\n    def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '...', ...}), ...] == []\nE         \nE         Left contains 8 more items, first extra item: ({'shape': 'default-more', 'setting': 'mutated', 'reads': True, 'd': 's0', ...}, {'id': 'M009', 'file': 'Demo/LM/Defs.lean', 'line': 4, 'definition': 'Demo.LM.s0', ...}, 'expected KILLED with more lines')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:770: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n1 failed in 113.97s (0:01:53)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-3ctyde06)\n"
+   "seconds": 317.7,
+   "output_tail": "..}, {'id': 'M006', 'file': 'Demo/LM/Defs.lean', 'line': 90, 'definition': 'Demo.LM.s9', ...}, ...])\n\n    def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '...', ...}), ...] == []\nE         \nE         Left contains 8 more items, first extra item: ({'shape': 'default-more', 'setting': 'mutated', 'reads': True, 'd': 's0', ...}, {'id': 'M009', 'file': 'Demo/LM/Defs.lean', 'line': 4, 'definition': 'Demo.LM.s0', ...}, 'expected KILLED with more lines')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:782: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n1 failed in 157.84s (0:02:37)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-6b6ypmyj)\n"
+  },
+  {
+   "id": "TM33",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check (or a --test file) that gives no answer never kills (review F10)",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[decide]",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[decide]",
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 79.9,
+   "output_tail": "_no_answer_never_kills[Tactic-decide-failed-Internal-error-The--check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-Internal-error-The--test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-native_decide-failed-Could-not-ev-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-native_decide-failed-Could-not-ev-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deep-recursion-detected-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deep-recursion-detected-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deterministic-timeout-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deterministic-timeout-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-interrupted-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-interrupted-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[decide]\nFAILED tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill\n22 failed, 8 passed in 39.73s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-hpoo46qn)\n"
+  },
+  {
+   "id": "TM34",
+   "file": "tools/trust_mutants.py",
+   "claim": "an error is read with its whole message, so a #guard_msgs quoting a budget error on a later line gives no answer (review F10)",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_error_is_read_with_its_whole_message",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[guard-msgs]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_an_error_is_read_with_its_whole_message"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 79.5,
+   "output_tail": "r of heartbeats (1000) has \"\n                  \"been reached\\n\\nNote: Use `set_option maxHeartbeats <num>` to set the limit.\\n\\n\"\n                  \"warning: Demo/B.lean:2:0: declaration uses 'sorry'\\n\"\n                  \"error: Demo/A.lean:18:27: Tactic `decide` proved that the proposition\\n  bigF 3 = 3\\nis false\\n\"\n                  \"error: Lean exited with code 1\\nSome required targets logged failures:\\n- Demo.A\\nerror: build failed\\n\")\n        found = [(f, int(n), m.rstrip()) for f, n, m in trust_mutants.ERROR.findall(output)]\n        assert [(f, n) for f, n, _ in found] == [(\"Demo/A.lean\", 6), (\"Demo/A.lean\", 11), (\"Demo/A.lean\", 15),\n                                                 (\"Demo/A.lean\", 18)]\n>       assert found[1][2].endswith(\"+ error: maximum recursion depth has been reached\")\nE       AssertionError: assert False\nE        +  where False = <built-in method endswith of str object at 0x7ee6b2d5b870>('+ error: maximum recursion depth has been reached')\nE        +    where <built-in method endswith of str object at 0x7ee6b2d5b870> = '\u274c\ufe0f Docstring on `#guard_msgs` does not match generated message:'.endswith\n\ntests/test_trust_mutants.py:833: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_error_is_read_with_its_whole_message\n1 failed, 1 passed in 38.22s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-u0v0t0vr)\n"
+  },
+  {
+   "id": "TM35",
+   "file": "tools/trust_mutants.py",
+   "claim": "a mutated declaration that runs out of budget is UNKNOWN, not INVALID (review F10)",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[in-definition]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[in-definition]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 82.3,
+   "output_tail": "sert far <= set(mine), (sorted(mine), done.stdout + done.stderr)\n        for key, m in mine.items():\n            if name.startswith(\"refuted\"):\n                expected = (\"KILLED\", \"fails\" if name == \"refuted-outside\" else \"proved that\") if key in far else (\n                    \"SURVIVOR\", \"\")\n            else:\n                expected = (\"UNKNOWN\", \"no answer\") if key in far else (\"SURVIVOR\", \"\")\n            assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\n        if name == \"in-definition\":  # the Fin's own mutant 3 -> 4: Lean runs out of budget inside it, never INVALID\n            own = [m for m in of(mutants, \"bInDefinitionFin\") if (m[\"operator\"], m[\"before\"]) == (\"lit-plus\", \"3\")]\n>           assert [(m[\"status\"], \"no answer\" in m[\"detail\"]) for m in own] == [(\"UNKNOWN\", True)], own\nE           AssertionError: [{'id': 'M059', 'file': 'Demo/Defs.lean', 'line': 43, 'definition': 'Demo.bInDefinitionFin', ...}]\nE           assert [('INVALID', True)] == [('UNKNOWN', True)]\nE             \nE             At index 0 diff: ('INVALID', True) != ('UNKNOWN', True)\nE             Use -v to get more diff\n\ntests/test_trust_mutants.py:914: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[in-definition]\n1 failed in 39.90s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-l5fkc6po)\n"
+  },
+  {
+   "id": "TM36",
+   "file": "tools/trust_mutants.py",
+   "claim": "an outside --test file that gives no answer never kills (review F10)",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 73.5,
+   "output_tail": "    of the 3) are UNKNOWN with \"no answer\", never KILLED (nor INVALID, when it is inside the mutated definition's own\n        proof), the others SURVIVOR; the refuting checks still kill them, inside lean/ and in a --test file.\"\"\"\n        done, mutants = budget_run\n        mine = {(m[\"operator\"], m[\"before\"]): m for m in of(mutants, \"b\" + name.title().replace(\"-\", \"\"))}\n        far = {(\"le-lt\", \"\u2264\"), (\"lit-minus\", \"3\")}\n        assert far <= set(mine), (sorted(mine), done.stdout + done.stderr)\n        for key, m in mine.items():\n            if name.startswith(\"refuted\"):\n                expected = (\"KILLED\", \"fails\" if name == \"refuted-outside\" else \"proved that\") if key in far else (\n                    \"SURVIVOR\", \"\")\n            else:\n                expected = (\"UNKNOWN\", \"no answer\") if key in far else (\"SURVIVOR\", \"\")\n>           assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M009', 'file': 'Demo/Defs.lean', 'line': 45, 'definition': 'Demo.bOutside', ...}\nE           assert ('KILLED' == 'UNKNOWN'\nE             \nE             - UNKNOWN\nE             + KILLED)\n\ntests/test_trust_mutants.py:911: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]\n1 failed in 31.83s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-8mria_em)\n"
+  },
+  {
+   "id": "TM37",
+   "file": "tools/trust_mutants.py",
+   "claim": "a decide that gets stuck or cannot evaluate gives no answer (review F10)",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[stuck]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[stuck]",
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 57.5,
+   "output_tail": "           if name.startswith(\"refuted\"):\n                expected = (\"KILLED\", \"fails\" if name == \"refuted-outside\" else \"proved that\") if key in far else (\n                    \"SURVIVOR\", \"\")\n            else:\n                expected = (\"UNKNOWN\", \"no answer\") if key in far else (\"SURVIVOR\", \"\")\n>           assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M007', 'file': 'Demo/Defs.lean', 'line': 37, 'definition': 'Demo.bStuck', ...}\nE           assert ('KILLED' == 'UNKNOWN'\nE             \nE             - UNKNOWN\nE             + KILLED)\n\ntests/test_trust_mutants.py:911: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-for-proposition-big-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-for-proposition-big-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-Internal-error-The--check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-Internal-error-The--test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[stuck]\n5 failed, 24 passed in 27.96s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-j9hbzmhk)\n"
+  },
+  {
+   "id": "TM38",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check out of heartbeats gives no answer (review F10)",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]",
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 63.5,
+   "output_tail": "(m[\"operator\"], m[\"before\"]): m for m in of(mutants, \"b\" + name.title().replace(\"-\", \"\"))}\n        far = {(\"le-lt\", \"\u2264\"), (\"lit-minus\", \"3\")}\n        assert far <= set(mine), (sorted(mine), done.stdout + done.stderr)\n        for key, m in mine.items():\n            if name.startswith(\"refuted\"):\n                expected = (\"KILLED\", \"fails\" if name == \"refuted-outside\" else \"proved that\") if key in far else (\n                    \"SURVIVOR\", \"\")\n            else:\n                expected = (\"UNKNOWN\", \"no answer\") if key in far else (\"SURVIVOR\", \"\")\n>           assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M005', 'file': 'Demo/Defs.lean', 'line': 27, 'definition': 'Demo.bHeartbeats', ...}\nE           assert ('KILLED' == 'UNKNOWN'\nE             \nE             - UNKNOWN\nE             + KILLED)\n\ntests/test_trust_mutants.py:911: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[deterministic-timeout-at-whnf-maximum-nu-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[deterministic-timeout-at-whnf-maximum-nu-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]\n3 failed, 26 passed in 30.22s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dmn2vzpe)\n"
+  },
+  {
+   "id": "TM39",
+   "file": "tools/trust_mutants.py",
+   "claim": "the kernel's limits give no answer (review F10)",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "evaluate to `true`', '\u274c\ufe0f Docstring on `#guard_msgs` does not match generated message:\\n\\n- info: 3\\n+ info: 4'])\nE        +  where True = <function attributed at 0x733d3c7bfcc0>('(kernel) interrupted', 'check', 'example : (List.replicate size true).length = size := by decide', 'example : (List.replicate size true).length = size := by decide', True)\nE        +    where <function attributed at 0x733d3c7bfcc0> = <module 'trust_mutants' from '/home/seyran/code/ve-speed-trustmut/tools/trust_mutants.py'>.attributed\n\ntests/test_trust_mutants.py:813: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deep-recursion-detected-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deep-recursion-detected-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deterministic-timeout-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deterministic-timeout-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-interrupted-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-interrupted-test-file]\n6 failed, 22 passed in 0.31s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jl0i_b6i)\n"
+  },
+  {
+   "id": "TM40",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check over the recursion limit gives no answer (review F10, PROBE F10)",
+   "source_sha256": "a915c90b29e1d24e270dc3ac0e225e1602e3e12ea3fa88d197b3088285bafc20",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[rfl]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[rfl]",
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 57.7,
+   "output_tail": "and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M002', 'file': 'Demo/Defs.lean', 'line': 13, 'definition': 'Demo.bRfl', ...}\nE           assert ('KILLED' == 'UNKNOWN'\nE             \nE             - UNKNOWN\nE             + KILLED)\n\ntests/test_trust_mutants.py:911: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[maximum-recursion-depth-has-been-reached-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[maximum-recursion-depth-has-been-reached-test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Error-pretty-printing-maximum-recursion--check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Error-pretty-printing-maximum-recursion--test-file]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Docstring-on-#guard_msgs-does-not-match-0-check]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Docstring-on-#guard_msgs-does-not-match-0-test-file]\nFAILED tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[rfl]\n8 failed, 22 passed in 29.06s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-5te8ibjt)\n"
   }
  ]
 }
