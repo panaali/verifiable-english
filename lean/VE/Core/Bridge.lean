@@ -2,6 +2,7 @@ import VE.Core.Consequence
 import VE.Core.RoundTrip
 import VE.ModelProofs
 import VE.Route.Gate
+import VE.Limits
 
 namespace VE.Core.Bridge
 open Lean
@@ -16,7 +17,7 @@ def decodeEnvironment (j : Json) : Except String Vocabulary := do
   let sorts ← fields (← v.getObjVal? "sorts")
   let predicates ← fields (← v.getObjVal? "predicates")
   let constants ← fields (← v.getObjVal? "constants")
-  if sorts.length > 32 || predicates.length > 256 then
+  if sorts.length > VE.Limits.maxSorts || predicates.length > VE.Limits.maxPredicates then
     throw "ResourceLimit: vocabulary size"
   VE.Bridge.checkVocabularyNames sorts predicates constants
   for (_, entry) in sorts do
@@ -115,9 +116,9 @@ def checkFormula (E : Environment) (a : Formula) (label : String) : Except Strin
     | _ => throw s!"ill-typed or unbound {label}"
 
 def decodeFormulas (E : Environment) (j : Json) : Except String (List Formula) := do
-  let fs ← (← j.getArr?).toList.mapM (decodeFormula 64)
+  let fs ← (← j.getArr?).toList.mapM (decodeFormula VE.Limits.maxDepth)
   for a in fs do checkFormula E a "formula"
-  if (fs.map formulaNodes).foldl (· + ·) 0 > 10000 then throw "ResourceLimit: AST node count"
+  if (fs.map formulaNodes).foldl (· + ·) 0 > VE.Limits.maxNodes then throw "ResourceLimit: AST node count"
   pure fs
 
 def runCase (j : Json) : Except String Json := do
@@ -127,9 +128,9 @@ def runCase (j : Json) : Except String Json := do
   if let .ok kind := j.getObjVal? "kind" then
     unless kind == .str "countermodel" do throw "unknown case kind"
     let ps ← decodeFormulas v.environment (← j.getObjVal? "premises")
-    let c ← decodeFormula 64 (← j.getObjVal? "conclusion")
+    let c ← decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
     checkFormula v.environment c "conclusion"
-    if ((c :: ps).map formulaNodes).foldl (· + ·) 0 > 10000 then
+    if ((c :: ps).map formulaNodes).foldl (· + ·) 0 > VE.Limits.maxNodes then
       throw "ResourceLimit: AST node count"
     return Json.mkObj [("id", .str id), ("status", .str "ok"),
       ("refutes", .bool (countermodelCheck m ps c))]

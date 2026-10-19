@@ -275,7 +275,6 @@ def test_the_conformance_corpus_records_every_operation(monkeypatch):
     """The recorder and the completeness check read one table (`CONFORMANCE_OPS`): a recording is
     complete, and the looprecheck1 B1 reproducer, the same recording with only its `environment`
     records, or without one later operation, is unusable."""
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     monkeypatch.setattr(diff, "CONFORMANCE", ("validation", "countermodels", "closure"))
     records = {("conformance", "python", r["case"], r["op"]): {"outcome": r["outcome"]}
                for r in diff.conformance_records(ROOT, "python")}

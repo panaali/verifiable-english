@@ -1,5 +1,6 @@
 import VE.Rights.Route
 import VE.SoftNorms.Admission
+import VE.Limits
 
 /-! The rights decoder and replays (docs/spec/rights.md 3, 9.3 and 9.4).
 
@@ -186,7 +187,7 @@ def decodeRight (se : SoftEnvironment) (j : Json) : Except String Right := do
   let holder ← stringField j "holder"
   let guard ← match j.getObjVal? "guard" with
     | .error _ => pure .top
-    | .ok g => VE.Bridge.decodeFormula 64 g
+    | .ok g => VE.Bridge.decodeFormula VE.Limits.maxDepth g
   pure ⟨name, holder, guard, ← decodeLines se j⟩
 
 def decodeCondition (j : Json) : Except String Condition := do

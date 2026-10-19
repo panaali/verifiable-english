@@ -1,4 +1,5 @@
 import VE.NormDefaults.Tree
+import VE.Limits
 
 /-! W1's executable `check` (norms 3.1, 4.1, 11.1) as declarative conditions,
 for `fill_wellFormed` (docs/spec/norm-defaults.md 7, proof plan: it "walks W1's
@@ -96,7 +97,7 @@ def astBody (D : Doc) (r : Regulated) (N : Node) (φ : VE.Formula) (nodes : Nat)
     Except String (ForInStep Nat) :=
   typeDiagnostic D.E r.sorts.reverse φ >>= fun _ =>
     if VE.Formula.check D.E r.sorts.reverse φ = true then
-      if nodes + VE.Bridge.formulaNodes φ > 10000 then throw "ResourceLimit: AST exceeds 10,000 nodes"
+      if nodes + VE.Bridge.formulaNodes φ > VE.Limits.maxNodes then throw "ResourceLimit: AST exceeds 10,000 nodes"
       else pure (.yield (nodes + VE.Bridge.formulaNodes φ))
     else throw s!"InvalidInput: ill-typed rule {N.name}"
 

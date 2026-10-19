@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 243 |
-| leaves:closed domain | 253 |
-| leaves:none | 1327 |
-| modes | 36 |
+| leaves:bound | 246 |
+| leaves:closed domain | 257 |
+| leaves:none | 1337 |
+| modes | 37 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 926 |
-| today:shape | 496 |
+| today:not probed | 936 |
+| today:shape | 503 |
 | today:unbound | 137 |
-| answers | 536 |
+| answers | 542 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -1190,11 +1190,13 @@ Delegates: `/` to norms.
 | `/choosers/*/breaches/*` | string | none |  |  | 0 | not probed |
 | `/choosers/*/chooser` | string | none |  |  | 2 | not probed |
 | `/choosers/*/clear/*` | string | none |  |  | 3 | not probed |
+| `/choosers/*/evidence/*` | string | closed domain | enum |  | 0 | shape |
 | `/choosers/*/inaction/*` | string | none |  |  | 2 | not probed |
 | `/choosers/*/permitted/*` | string | none |  |  | 3 | not probed |
 | `/choosers/*/prevents/*/0` | string | none |  |  | 1 | not probed |
 | `/choosers/*/prevents/*/1` | string | none |  |  | 1 | not probed |
 | `/choosers/*/required/*` | string | none |  |  | 0 | not probed |
+| `/choosers/*/statuses/*` | string | closed domain | enum |  | 0 | shape |
 | `/choosers/*/text` | string | none |  | minLength | 2 | not probed |
 | `/choosers/*/unavoidable/*` | string | none |  |  | 0 | not probed |
 | `/choosers/*/violations/*` | string | none |  |  | 0 | not probed |
@@ -1309,15 +1311,17 @@ Delegates: `/` to norms.
 | `/choosers` |  |  |  |  |
 | `/choosers/*/allows` |  |  |  |  |
 | `/choosers/*/allows/*` |  |  |  |  |
-| `/choosers/*/alternatives` |  |  |  |  |
+| `/choosers/*/alternatives` |  |  | x-same-length |  |
 | `/choosers/*/avoidable` |  |  |  |  |
 | `/choosers/*/breaches` |  |  |  |  |
 | `/choosers/*/clear` |  |  |  |  |
+| `/choosers/*/evidence` |  |  | x-same-length |  |
 | `/choosers/*/inaction` |  |  |  |  |
 | `/choosers/*/permitted` |  |  |  |  |
 | `/choosers/*/prevents` |  |  |  |  |
 | `/choosers/*/prevents/*` |  |  |  |  |
 | `/choosers/*/required` |  |  |  |  |
+| `/choosers/*/statuses` |  |  | x-same-length |  |
 | `/choosers/*/unavoidable` |  |  |  |  |
 | `/choosers/*/violations` |  |  |  |  |
 | `/choosers/*/violations/*/arguments` |  |  |  |  |
@@ -2813,7 +2817,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 ## document
 
-6 recorded answers.
+8 recorded answers.
 
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
@@ -2858,17 +2862,17 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/coverage/unformalised_reasons/@key` | key | none |  |  | 1 | hand: `ve/document/lean.py:require` |
 | `/coverage/unformalised_reasons/{}` | integer | none |  | minimum | 1 | hand: `ve/document/lean.py:require` |
 | `/document_id` | string | none |  | pattern | 3 | hand: `ve/document/lean.py:_lean_document` |
-| `/error` | string | none |  | minLength | 3 | not probed |
-| `/id` | any | bound | x-echo |  | 3 | shape |
-| `/id` | string | bound | x-equals |  | 3 | shape |
-| `/path` | string | none |  | minLength | 0 | not probed |
+| `/error` | string | none |  | minLength | 5 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
+| `/id` | string | bound | x-equals |  | 5 | shape |
+| `/path` | string | none |  | minLength | 1 | not probed |
 | `/source` | string | none |  |  | 3 | hand: `ve/document/lean.py:require` |
 | `/source_id` | string | none |  | pattern | 3 | hand: `ve/document/lean.py:_lean_document` |
-| `/span/column` | integer | none |  | minimum | 0 | not probed |
-| `/span/end` | integer | none |  | minimum | 0 | not probed |
-| `/span/line` | integer | none |  | minimum | 0 | not probed |
-| `/span/start` | integer | none |  | minimum | 0 | not probed |
-| `/status` | string | closed domain | const |  | 6 | shape |
+| `/span/column` | integer | none |  | minimum | 1 | not probed |
+| `/span/end` | integer | none |  | minimum | 1 | not probed |
+| `/span/line` | integer | none |  | minimum | 1 | not probed |
+| `/span/start` | integer | none |  | minimum | 1 | not probed |
+| `/status` | string | closed domain | const |  | 8 | shape |
 | `/units/*/content/bar/decided_by` | string | none |  |  | 0 | not probed |
 | `/units/*/content/bar/name` | string | none |  |  | 0 | not probed |
 | `/units/*/content/bar/reading` | string | closed domain | enum |  | 0 | shape |
@@ -3208,6 +3212,33 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/result/lines` |  |  |  | drop: accept/accepted, accept/ve/words.py:read_answer; duplicate: accept/accepted, accept/ve/words.py:read_answer; replace: accept/accepted; reverse: accept/accepted |
+
+## metered
+
+4 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/error` | string | none |  | minLength | 0 | not probed |
+| `/evaluation/evaluations` | integer | none |  | minimum | 2 | not probed |
+| `/evaluation/explanation/*/bindings/*/debruijn_index` | integer | none |  | minimum | 0 | not probed |
+| `/evaluation/explanation/*/bindings/*/local_id` | string | none |  |  | 0 | not probed |
+| `/evaluation/explanation/*/bindings/*/sort` | string | none |  |  | 0 | not probed |
+| `/evaluation/explanation/*/children` | integer | none |  | minimum | 0 | not probed |
+| `/evaluation/explanation/*/detail` | string | none |  |  | 0 | not probed |
+| `/evaluation/explanation/*/kind` | string | none |  |  | 0 | not probed |
+| `/evaluation/status` | string | closed domain | const |  | 2 | shape |
+| `/evaluations` | integer | none |  | minimum | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 4 | shape |
+| `/id` | string | bound | x-equals |  | 4 | shape |
+| `/path` | string | none |  |  | 0 | not probed |
+| `/status` | string | closed domain | const |  | 4 | shape |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/evaluation/explanation` |  |  |  |  |
+| `/evaluation/explanation/*/bindings` |  |  |  |  |
 
 ## Grammars
 

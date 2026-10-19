@@ -6,6 +6,7 @@ import VE.Order.Wire
 import VE.Closure.Bridge
 import VE.Core.Bridge
 import VE.Norms.Plain
+import VE.Limits
 
 /-! Norm documents whose guards leave the first-order fragment, on the closure,
 core and order families (lean-first batch 14b, the stage-2c gap "non-first-order
@@ -395,7 +396,7 @@ def decodeDoc {F : Type} (R : Reader F) (profiles : List String) (regulated : Li
         let φ ← R.decode x
         unless R.check r.sorts.reverse φ do throw s!"InvalidInput: ill-typed rule {name}"
         nodes := nodes + R.nodes φ
-        if nodes > 10000 then throw "ResourceLimit: AST exceeds 10,000 nodes"
+        if nodes > VE.Limits.maxNodes then throw "ResourceLimit: AST exceeds 10,000 nodes"
         if R.regulatedEdge regNames φ then throw "UnsupportedProfile: regulated closure edge in norm guard"
         formulas := formulas ++ [φ]
       match formulas with
@@ -429,7 +430,7 @@ def regulatedOf (environment : Json) : Except String (List Regulated) := do
 
 def closureReader (E : VE.Environment) : Reader VE.Core.Formula where
   ops := coreSyntax
-  decode j := VE.Core.embedClosure <$> VE.Closure.Bridge.decodeFormula 64 j
+  decode j := VE.Core.embedClosure <$> VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth j
   check Γ a := a.check E Γ
   nodes := VE.Core.Bridge.formulaNodes
   regulatedEdge := regulatedEdge
@@ -437,7 +438,7 @@ def closureReader (E : VE.Environment) : Reader VE.Core.Formula where
 
 def coreReader (E : VE.Environment) : Reader VE.Core.Formula where
   ops := coreSyntax
-  decode := VE.Core.Bridge.decodeFormula 64
+  decode := VE.Core.Bridge.decodeFormula VE.Limits.maxDepth
   check Γ a := a.check E Γ
   nodes := VE.Core.Bridge.formulaNodes
   regulatedEdge := regulatedEdge
@@ -445,7 +446,7 @@ def coreReader (E : VE.Environment) : Reader VE.Core.Formula where
 
 def orderReader (E : VE.Order.Environment) : Reader VE.Order.Formula where
   ops := orderSyntax
-  decode := VE.Order.Wire.decodeFormula 64
+  decode := VE.Order.Wire.decodeFormula VE.Limits.maxDepth
   check Γ a := a.check E (Γ.map .user)
   nodes := VE.Order.Wire.formulaNodes
   regulatedEdge _ _ := false
@@ -469,10 +470,10 @@ def usesInt (environment : Json) : Bool :=
 /-- Whether a guard, carve-out or definition body is first-order in its family. A formula the
 family decoder refuses counts as first-order: the FOL view's decoder reports it. -/
 def firstOrderFormula (order : Bool) (j : Json) : Bool :=
-  if order then match VE.Order.Wire.decodeFormula 64 j with
+  if order then match VE.Order.Wire.decodeFormula VE.Limits.maxDepth j with
     | .ok a => orderFol a
     | .error _ => true
-  else match VE.Core.Bridge.decodeFormula 64 j with
+  else match VE.Core.Bridge.decodeFormula VE.Limits.maxDepth j with
     | .ok a => (VE.Core.erase a).isSome
     | .error _ => true
 

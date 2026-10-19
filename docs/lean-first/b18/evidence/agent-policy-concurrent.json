@@ -1,0 +1,30 @@
+{
+ "note": "usecases/agent-policy/check.py base then mutants, base and head started together (/usr/bin/time, children included), 2026-10-18 09:46-09:57 UTC at load 17-23, on the final transport code; answers identical apart from the timing fields.",
+ "runs": {
+  "base base": {
+   "wall_s": 130.04,
+   "user_s": 344.46,
+   "sys_s": 10.21
+  },
+  "base mutants": {
+   "wall_s": 390.6,
+   "user_s": 1277.37,
+   "sys_s": 30.65
+  },
+  "head base": {
+   "wall_s": 176.7,
+   "user_s": 380.01,
+   "sys_s": 14.0
+  },
+  "head mutants": {
+   "wall_s": 464.75,
+   "user_s": 1203.59,
+   "sys_s": 37.46
+  }
+ },
+ "ratios": {
+  "base": 1.358812673023685,
+  "mutants": 1.1898361495135688,
+  "whole": 1.2320413337430856
+ }
+}

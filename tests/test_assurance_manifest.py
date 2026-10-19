@@ -8,6 +8,7 @@ ranges) and exercise the two runtime obligations: operational failure is
 `InvalidInput`; and a migrated operation's verdict can only come from Lean.
 """
 import ast
+from contextlib import contextmanager
 from dataclasses import replace
 import importlib
 import json
@@ -282,7 +283,8 @@ def test_broad_exception_handlers_are_reviewed():
 
 def test_english_admission_is_lean_authoritative():
     assert {op["authority"] for op in OPS} <= {"python", "migrated", "lean-only"}
-    assert assurance.enforced_operations() == frozenset({"english.admission"})
+    # E2's flip, then lean-first batch 18: evaluation and the countermodel check are Lean's alone.
+    assert assurance.enforced_operations() == frozenset({"english.admission", "evaluate", "countermodel.check"})
 
 
 # --- completeness: omissions that no decorator comparison can see ----------------
@@ -645,7 +647,7 @@ def test_guard_blocks_every_python_entry_once_migrated():
                     fn()
             assert caught.value.to_dict()["code"] == "CheckerUnavailable"
             assert caught.value.operation == op["id"]
-    assert assurance.enforced_operations() == frozenset({"english.admission"})
+    assert assurance.enforced_operations() == frozenset({"english.admission", "evaluate", "countermodel.check"})
 
 
 def test_guard_allows_the_lean_engine():
@@ -664,10 +666,21 @@ def p0():
     return Environment(envelope(VOCAB))
 
 
-LEAVES = ("certificate.check", "countermodel.check")
+def _unavailable(*args, **kwargs):
+    raise CheckerUnavailable("CheckerUnavailable: the Lean countermodel check is unavailable (test)")
 
 
-def test_combinations_propagate_unavailability_instead_of_unknown(p0):
+@contextmanager
+def _leaves_unavailable(monkeypatch):
+    """The two leaf checks cannot answer: the certificate check's Python entry is refused (a simulated
+    migration) and the countermodel check, Lean's alone since lean-first batch 18, is unavailable."""
+    from ve import search
+    with monkeypatch.context() as patch, assurance.simulate_migration("certificate.check"):
+        patch.setattr(search, "_check_countermodel_lean", _unavailable)
+        yield
+
+
+def test_combinations_propagate_unavailability_instead_of_unknown(p0, monkeypatch):
     from ve.ast import Bottom, Const, Not, Top, Unary
     from ve.equivalence import compare, validate_reference
     from ve.readings import check_readings
@@ -679,7 +692,11 @@ def test_combinations_propagate_unavailability_instead_of_unknown(p0):
     # Without migration these are ordinary verdicts and UNKNOWNs.
     assert premise_status(p0, (senior,))["status"] == "model"
     assert check_readings(p0, sets, raw)["verdict"] == "SOME"
-    with assurance.simulate_migration(*LEAVES):
+    # The certificate check's Python entry is refused, and the countermodel check (Lean's alone since
+    # lean-first batch 18) cannot answer: every combination is unavailable, never UNKNOWN or a verdict.
+    from ve import search
+    monkeypatch.setattr(search, "_check_countermodel_lean", _unavailable)
+    with assurance.simulate_migration("certificate.check"):
         for premises in ((senior,), (senior, Not(senior)), (Bottom(),)):
             with pytest.raises(CheckerUnavailable):
                 premise_status(p0, premises)
@@ -695,14 +712,16 @@ def test_combinations_propagate_unavailability_instead_of_unknown(p0):
 
 
 def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatch):
-    """Review reproducer: both searches returned Found with countermodel.check migrated."""
+    """Review reproducer: both searches returned Found with countermodel.check migrated. Since lean-first
+    batch 18 the check is Lean's alone; with it unavailable no search publishes a witness."""
     from ve import search
     from ve.ast import Const, Not, Unary
     senior = Unary("senior", Const("alice"))
     assert search.find_countermodel(p0, (), senior).status == "Found"
     assert search.find_distinguishing_model(p0, senior, Not(senior)).status == "Found"
     assert search.find_distinguishing_model(p0, Not(senior), senior).status == "Found"
-    with assurance.simulate_migration("countermodel.check"):
+    with monkeypatch.context() as unavailable:
+        unavailable.setattr(search, "_check_countermodel_lean", _unavailable)
         for run in (lambda: search.find_countermodel(p0, (), senior),
                     lambda: search.find_distinguishing_model(p0, senior, Not(senior)),
                     lambda: search.find_distinguishing_model(p0, Not(senior), senior)):
@@ -718,27 +737,24 @@ def test_search_reports_found_only_through_the_countermodel_check(p0, monkeypatc
         calls.append((tuple(premises), conclusion))
         return replace(real(env, premises, conclusion, model, **kwargs), valid=False, status="NotCountermodel")
     monkeypatch.setattr(search, "check_countermodel", refuse)
-    # Rust's search returns one witness under every authority (lean-first batch 15b: Python has no
-    # search of its own); a refused witness is a disagreement between generator and check, never NotFound.
-    for authority in ("python", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        with pytest.raises(CheckerUnavailable):
-            search.find_countermodel(p0, (), senior)
-        assert set(calls) == {((), senior)}
-        calls.clear()
-        with pytest.raises(CheckerUnavailable):
-            search.find_distinguishing_model(p0, senior, Not(senior))
-        # Each direction of a distinguishing model is checked as a countermodel to it.
-        assert set(calls) == {((senior,), Not(senior)), ((Not(senior),), senior)}
-        calls.clear()
+    # Rust's search returns one witness (lean-first batch 15b: Python has no search of its own); a refused
+    # witness is a disagreement between generator and check, never NotFound.
+    with pytest.raises(CheckerUnavailable):
+        search.find_countermodel(p0, (), senior)
+    assert set(calls) == {((), senior)}
+    calls.clear()
+    with pytest.raises(CheckerUnavailable):
+        search.find_distinguishing_model(p0, senior, Not(senior))
+    # Each direction of a distinguishing model is checked as a countermodel to it.
+    assert set(calls) == {((senior,), Not(senior)), ((Not(senior),), senior)}
 
 
-def test_argument_record_reports_unavailability_not_incompleteness():
+def test_argument_record_reports_unavailability_not_incompleteness(monkeypatch):
     from ve import check_argument
     from ve.argument_fixtures import merged_vocabulary_example
     graph = merged_vocabulary_example()
     assert check_argument(graph).status == "Checked"
-    with assurance.simulate_migration(*LEAVES):
+    with _leaves_unavailable(monkeypatch):
         result = check_argument(graph)
     assert result.status == "CheckerUnavailable" and not result.composed
     assert result.errors[0]["code"] == "CheckerUnavailable"
@@ -1164,12 +1180,12 @@ def test_assist_exit_code_reads_the_error_code():
     assert exit_code({"ok": False, "error": {"code": "BackendError", "message": "m"}}) == 2
 
 
-def test_assist_status_reports_unavailability_not_a_failed_replay():
+def test_assist_status_reports_unavailability_not_a_failed_replay(monkeypatch):
     from tests.test_assist import build_success, new_session
     session = new_session()
     build_success(session)
     assert session.apply("status", {})["ok"]
-    with assurance.simulate_migration(*LEAVES):
+    with _leaves_unavailable(monkeypatch):
         result = session.apply("status", {})
     assert not result["ok"] and result["error"]["code"] == "CheckerUnavailable", result
 

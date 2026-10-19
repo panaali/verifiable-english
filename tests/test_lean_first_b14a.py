@@ -125,7 +125,6 @@ def nary_environment():
 
 @pytest.fixture(autouse=True)
 def default_authority(monkeypatch):
-    monkeypatch.delenv("VE_AUTHORITY", raising=False)
     monkeypatch.setattr(validation, "_ACCEPTED", {})
 
 

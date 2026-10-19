@@ -91,7 +91,6 @@ def test_reserved_word_followed_by_punctuation_keeps_first_fault(service_executa
 
 def test_public_lean_parse_uses_lean_rejection(monkeypatch, service_executable):
     from ve import parser
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     monkeypatch.setattr(parser, "_parse_python", lambda *_: pytest.fail("Python parser decided a Lean rejection"))
     with pytest.raises(VEError) as raised:
         parser.parse_with_metadata(order_environment(), "true  .\n")
@@ -103,7 +102,6 @@ def test_shadowed_binder_keeps_its_diagnostic_code(monkeypatch, service_executab
     from ve import parser
     case = next(c for c in json.loads((ROOT / "conformance/parser.json").read_text())
                 if c["id"] == "parser_edge_019")
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     with pytest.raises(VEError) as raised:
         parser.parse_with_metadata(Environment.from_dict(case["environment"]), case["source"])
     assert raised.value.code == "ShadowedVariable"
@@ -143,9 +141,7 @@ def test_lean_certificate_owns_binding_and_replay_budget(service_executable):
 def test_public_certificate_budget_is_sent_to_lean(monkeypatch, service_executable):
     environment = Environment.from_dict(json.loads((ROOT / "conformance/evaluation.json").read_text())[0]
                                         ["environment"])
-    monkeypatch.setenv("VE_AUTHORITY", "python")
     found = prove_entailment(environment, [Top()], Top())
     assert found.certificate is not None
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
     result = check_entailment_certificate(environment, [Top()], Top(), found.certificate, max_steps=0)
     assert result.status == "ResourceLimit" and result.steps == 0
