@@ -21,15 +21,17 @@ proof (`classify`): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an
 other `example` or theorem, a check form with a tactic block inside, and every `#print` (it lists or shows proofs)
 is a proof, whatever its statement names. The mutant is
 - KILLED when every error Lean reports is a check's own (`attributed`: inside a check, at a line the checkout has
-  there, and no parse error) or a --test file's, and the same build without the mutant (its control: the same
-  cuts) passes;
-- INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means);
+  there, no parse error, and an answer: `NO_ANSWER`, a check out of budget or stuck, refutes nothing, review F10)
+  or a --test file's, and the same build without the mutant (its control: the same cuts) passes;
+- INVALID when the error is inside the mutated declaration (the compiler, not this text, decides what it means),
+  unless Lean ran out of budget there (UNKNOWN: F10);
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
   `sorry` (a `#print` blanked) and the build repeated, before any other error is read; and a check that fails in
   the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way;
 - UNKNOWN when anything else fails (an error in a definition, or in a command that is no check), even beside a
-  failing check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse), and
-  when the mutant moves a line after its declaration (a longer replacement no blank line there can take: F9);
+  failing check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse), when
+  a check or --test file gives no answer (F10), and when the mutant moves a line after its declaration (a longer
+  replacement no blank line there can take: F9);
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> <operator>: <before> -> <after>` unless --allow
@@ -67,8 +69,16 @@ CHECK_COMMANDS = {"guard", "guard_expr", "eval", "eval!", "reduce", "check"}
 TACTIC = re.compile(r"\bby\b")
 EXAMPLE = re.compile(r"(?m)^\s*(?:@\[[^\]]*\]\s*)*example\b")
 CHECK_PROOF = re.compile(r":=\s*(?:by\s+)?(?:decide|native_decide|rfl)(?:\s+\+\w+)*\s*$")
-ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*)$", re.M)
+# A located error with its whole message: its lines run to the next line Lake or Lean starts itself.
+ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):\d+: (.*(?:\n(?!(?:error|warning|info|trace|note):|[✖⚠✔ℹ] "
+                   r"|Some required ).*)*)", re.M)
 PARSE = re.compile(r"(?:unexpected|expected) ")  # how Lean's parser errors start ("unexpected token '<;>'; ...")
+# Lean gave no answer (review F10): it ran out of budget (Lean's runtime exceptions, maxRecDepth and maxHeartbeats,
+# and the kernel's), or `decide`/`native_decide` could not reduce or evaluate the instance. Anywhere in the message:
+# a `#guard_msgs` quotes the error it got on a later line, and a pretty-printer failure wraps it.
+NO_ANSWER = re.compile(r"maximum recursion depth|maximum number of heartbeats|\(deterministic\) timeout|\(kernel\) "
+                       r"(?:deep recursion|deterministic timeout|interrupted)|stack overflow|"
+                       r"Tactic `(?:decide|native_decide)` failed")
 STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
         "for", "unless", "mut", "have", "show"}
 LIST_METHODS = ("find\\?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
@@ -388,8 +398,15 @@ def moved(before: str, after: str, lines: tuple[int, int]) -> int | None:
 def attributed(message: str, role: str, built: str, checkout: str, test: bool) -> bool:
     """Whether an error kills (review F9): it is a check's own error, or a --test file's, at a line the mutant and the
     cuts left as the checkout has it (`built`, `checkout`: that line), and no parse error, which a cut left behind or
-    a moved line makes, never a check. Any other error is UNKNOWN (fail closed)."""
-    return not PARSE.match(message) and (test or role == "check" and built == checkout and bool(built.strip()))
+    a moved line makes, never a check, and no answer (`NO_ANSWER`, review F10: a check that runs out of budget did
+    not refute the mutant). Any other error is UNKNOWN (fail closed)."""
+    return not PARSE.match(message) and not NO_ANSWER.search(message) and (
+        test or role == "check" and built == checkout and bool(built.strip()))
+
+
+def brief(message: str, size: int = 200) -> str:
+    """The first line of an error message (`ERROR` reads all of it), marked when Lean gave no answer (`NO_ANSWER`)."""
+    return ("no answer: " if NO_ANSWER.search(message) else "") + message.split("\n", 1)[0][:size]
 
 
 def role(tree: Tree, file: str, line: int, m: Mutant) -> str:
@@ -480,7 +497,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
     def build(stage: list[str]) -> tuple[int, list[tuple[str, int, str]]]:
         for attempt in range(3):  # again: Lake can fail with no located error under load
             code, output = scratch.lake(env, "build", *(f"+{x}" for x in stage))
-            found = [(f, int(n), message) for f, n, message in ERROR.findall(output)]
+            found = [(f, int(n), message.rstrip()) for f, n, message in ERROR.findall(output)]
             if code == 0 or found:
                 return code, found
         return code, [("", 0, "the build failed with no located error: " + output[-300:])]
@@ -531,11 +548,12 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 if not found[0][0]:
                     return "UNKNOWN", found[0][2]
                 roles = [(f, n, message, role(tree, f, n, m)) for f, n, message in found]
-                if mutated := next((x for x in roles if x[3] == "mutated"), None):
-                    return "INVALID", mutated[2][:200]
+                if mutated := next((x for x in roles if x[3] == "mutated"), None):  # Lean refused it, unless out
+                    return ("UNKNOWN", f"lean/{mutated[0]}:{mutated[1]}: {brief(mutated[2])}") if NO_ANSWER.search(
+                        mutated[2]) else ("INVALID", brief(mutated[2]))  # of budget there (review F10)
                 if proofs := [x for x in roles if x[3] == "proof" and x[0] not in tests]:
                     for f, n, message in each(proofs):  # cut first: a check may fail only because it reads one
-                        if why := cut(f, n, f"the failing proof cannot be cut: {message[:200]}"):
+                        if why := cut(f, n, f"the failing proof cannot be cut: {brief(message)}"):
                             return "UNKNOWN", why
                     continue
                 key = (tuple(stage), state())
@@ -547,7 +565,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                         return "UNKNOWN", f"its control: {control[0][2]}"
                     controls[key] = control
                 for f, n, message in each(control):  # it fails there too: it reads a cut proof, so cut it
-                    if why := cut(f, n, f"fails without the mutant too: {message[:200]}"):
+                    if why := cut(f, n, f"fails without the mutant too: {brief(message)}"):
                         return "UNKNOWN", why
                 if control:
                     continue
@@ -556,11 +574,11 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 # or a line that is not the checkout's is the tool's own edit (review F9), so it decides.
                 other = next((x for x in roles if not kills(*x)), None)
                 f, n, message, _ = other or roles[0]
-                return ("UNKNOWN", f"lean/{f}:{n}: {message[:200]}") if other else (
-                    "KILLED", f"lean/{f}:{n}: {message[:120]}")
+                return ("UNKNOWN", f"lean/{f}:{n}: {brief(message)}") if other else (
+                    "KILLED", f"lean/{f}:{n}: {brief(message, 120)}")
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
-        failing = [test for test in outside if scratch.lake(env, "env", "lean", str(test))[0]]
+        failing = {t: out for t in outside if (out := scratch.lake(env, "env", "lean", str(t)))[0]}
         if not failing:
             return "SURVIVOR", ""
         key = ("outside", tuple(built), state())
@@ -568,9 +586,11 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             write(m.file, False)
             ok = all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage)
             controls[key] = [t for t in outside if not ok or scratch.lake(env, "env", "lean", str(t))[0]]
-        if kill := next((t for t in failing if t not in controls[key]), None):
-            return "KILLED", f"{kill} fails"
-        return "UNKNOWN", f"{failing[0]} fails without the mutant too"
+        if not (new := [t for t in failing if t not in controls[key]]):
+            return "UNKNOWN", f"{next(iter(failing))} fails without the mutant too"
+        if blank := next((t for t in new if NO_ANSWER.search(failing[t][1])), None):  # out of budget: review F10
+            return "UNKNOWN", f"{blank} fails with no answer: " + NO_ANSWER.search(failing[blank][1])[0]
+        return "KILLED", f"{new[0]} fails"
     finally:
         for f, text in texts.items():
             (scratch.lean / f).write_text(text)

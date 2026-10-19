@@ -780,3 +780,135 @@ def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):
     rows, done, mutants = lines_run
     assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr
     assert lines_problems(rows, mutants) == []
+
+
+# Review F10: Lean's messages when it gives no answer, as Lean 4.24 prints them at a check (the budget ones
+# end-to-end in `BUDGET`), and the refutations beside them, which still kill.
+NO_ANSWERS = [
+    "maximum recursion depth has been reached\nuse `set_option maxRecDepth <num>` to increase limit",
+    "(deterministic) timeout at `whnf`, maximum number of heartbeats (1000) has been reached\n\nNote: Use `set_option "
+    "maxHeartbeats <num>` to set the limit.",
+    "[Error pretty printing: maximum recursion depth has been reached\nuse `set_option maxRecDepth <num>` to increase",
+    "❌️ Docstring on `#guard_msgs` does not match generated message:\n\n- info: 3\n+ error: maximum recursion depth "
+    "has been reached",
+    "Tactic `decide` failed for proposition\n  bigS 3 = 0\nbecause its `Decidable` instance\n  instDecidableEqNat "
+    "(bigS 3) 0\ndid not reduce to `isTrue` or `isFalse`.",
+    "Tactic `decide` failed. Internal error: The elaborator is able to reduce the `Decidable` instance, but the "
+    "kernel is not able to",
+    "Tactic `native_decide` failed: Could not evaluate decidable instance. Error: stack overflow",
+    "(kernel) deep recursion detected", "(kernel) deterministic timeout", "(kernel) interrupted"]
+ANSWERS = ["Tactic `decide` proved that the proposition\n  bigF 3 = 3\nis false",
+           "Tactic `native_decide` evaluated that the proposition\n  bigF 3 = 3\nis false",
+           "Expression\n  f 1 == 2\ndid not evaluate to `true`",
+           "❌️ Docstring on `#guard_msgs` does not match generated message:\n\n- info: 3\n+ info: 4"]
+
+
+@pytest.mark.parametrize("test", [False, True], ids=["check", "test-file"])
+@pytest.mark.parametrize("message", NO_ANSWERS + ANSWERS, ids=short)
+def test_a_check_that_gives_no_answer_never_kills(message, test):
+    """Review F10: a check (or a --test file) that runs out of budget, or whose decision procedure gets stuck, did not
+    refute the mutant: `attributed` refuses it, at the check's own line, whatever the rest of the message says."""
+    import trust_mutants
+    line = "example : (List.replicate size true).length = size := by decide"
+    assert trust_mutants.attributed(message, "check", line, line, test) is (message in ANSWERS)
+    assert trust_mutants.brief(message).startswith("no answer: ") is (message not in ANSWERS)
+
+
+def test_an_error_is_read_with_its_whole_message():
+    """Review F10: `ERROR` reads each located error to the next line Lake or Lean starts, so a `#guard_msgs` that
+    quotes a budget error on a later line, or a message with blank lines, is read whole (Lake's output, verbatim)."""
+    import trust_mutants
+    output = ("✖ [2/2] Building Demo.A (5.4s)\ntrace: .> LEAN_PATH=x lean Demo/A.lean\n"
+              "error: Demo/A.lean:6:61: maximum recursion depth has been reached\nuse `set_option maxRecDepth <num>` "
+              "to increase limit\nerror: Demo/A.lean:11:0: ❌️ Docstring on `#guard_msgs` does not match generated "
+              "message:\n\n- info: 100000\n+ error: maximum recursion depth has been reached\n"
+              "error: ./Demo/A.lean:15:61: (deterministic) timeout at `whnf`, maximum number of heartbeats (1000) has "
+              "been reached\n\nNote: Use `set_option maxHeartbeats <num>` to set the limit.\n\n"
+              "warning: Demo/B.lean:2:0: declaration uses 'sorry'\n"
+              "error: Demo/A.lean:18:27: Tactic `decide` proved that the proposition\n  bigF 3 = 3\nis false\n"
+              "error: Lean exited with code 1\nSome required targets logged failures:\n- Demo.A\nerror: build failed\n")
+    found = [(f, int(n), m.rstrip()) for f, n, m in trust_mutants.ERROR.findall(output)]
+    assert [(f, n) for f, n, _ in found] == [("Demo/A.lean", 6), ("Demo/A.lean", 11), ("Demo/A.lean", 15),
+                                             ("Demo/A.lean", 18)]
+    assert found[1][2].endswith("+ error: maximum recursion depth has been reached")
+    assert found[2][2].endswith("to set the limit.") and found[3][2].endswith("is false")
+    assert [bool(trust_mutants.NO_ANSWER.search(m)) for _, _, m in found] == [True, True, True, False]
+
+
+# Review F10's package: each definition is `if n ≤ 3 then n else 100000`, read at 3 by a check that holds for every
+# value (and so cannot catch a mutant) but that Lean cannot finish at 100000 (`le-lt` and `lit-minus` of the 3 send
+# it there): the mutant must never be KILLED. `refuted` is the same definition read by a check that does catch it.
+# `size` is PROBE F10's form (124 passes, 125 hits the recursion limit on Lean 4.24).
+BUDGET = [  # (definition, the check(s) after it; {d} is the definition, `in` says where the check is)
+    ("decide", "example : (List.replicate ({d} 3) true).length = {d} 3 := by decide"),
+    ("rfl", "example : (List.replicate ({d} 3) true).length = {d} 3 := rfl"),
+    ("reduce", "#reduce (List.replicate ({d} 3) true).length"),
+    ("guard-msgs", "/-- info: 3 -/\n#guard_msgs in\n#reduce (List.replicate ({d} 3) true).length"),
+    ("heartbeats", "set_option maxRecDepth 100000 in\nset_option maxHeartbeats 1000 in\n"
+                   "example : (List.replicate ({d} 3) true).length = {d} 3 := by decide"),
+    ("kernel", "example : (List.replicate ({d} 3) true).length = {d} 3 := by decide +kernel"),
+    ("stuck", "example : {d} 3 = {d} 3 + 0 := by decide"),
+    ("in-definition", "def {d}Fin : Fin 5 := ⟨(List.replicate ({d} 3) true).length, by decide⟩"),
+    ("outside", None),
+    ("refuted", "example : {d} 3 = 3 := by decide"),
+    ("refuted-outside", None)]
+
+
+def budget_package(root: Path, folder: Path) -> None:
+    scaffold(root, "")
+    (root / "lean/Demo/Wf.lean").write_text(  # in the base: well-founded, so `decide` cannot unfold it
+        "namespace Demo\n\ndef wf (n : Nat) : Nat := if _ : n = 0 then 0 else wf (n - 1)\ntermination_by n\n\n"
+        "end Demo\n")
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "wf")
+    text = ["import Demo.Wf\n\nnamespace Demo\n\ndef size : Nat := 124\n\n"
+            "example : (List.replicate size true).length = size := by decide\n"]
+    for name, check in BUDGET:
+        d = "b" + name.title().replace("-", "")
+        text.append(f"\ndef {d} (n : Nat) : Nat := if n ≤ 3 then n else {'wf 1' if name == 'stuck' else '100000'}\n\n"
+                    + (check.replace("{d}", d) + "\n" if check else ""))
+    (root / "lean/Demo/Defs.lean").write_text("".join(text) + "\nend Demo\n")
+    (root / "outside").mkdir()
+    (root / "outside/Budget.lean").write_text(
+        "import Demo.Defs\nexample : (List.replicate (Demo.bOutside 3) true).length = Demo.bOutside 3 := by decide\n")
+    (root / "outside/Refute.lean").write_text("import Demo.Defs\nexample : Demo.bRefutedOutside 3 = 3 := by decide\n")
+    dump(root, folder, [])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+
+
+@pytest.fixture(scope="module")
+def budget_run(tmp_path_factory):
+    root = tmp_path_factory.mktemp("budget")
+    budget_package(root, tmp_path_factory.mktemp("budget-dump"))
+    return tool(root, tmp_path_factory.mktemp("budget-run"), "--max-mutants", "1000", "--test", "outside/Budget.lean",
+                "--test", "outside/Refute.lean")
+
+
+def test_probe_f10_a_check_out_of_budget_is_no_kill(budget_run):
+    """PROBE F10: `size` 124 -> 125 sends the `decide` check over Lean's recursion limit; it holds for every `size`,
+    so no mutant of `size` is KILLED."""
+    done, mutants = budget_run
+    size = of(mutants, "size")
+    assert size and not [m for m in size if m["status"] == "KILLED"], done.stdout + done.stderr
+
+
+@pytest.mark.parametrize(("name", "check"), BUDGET, ids=[b[0] for b in BUDGET])
+def test_a_check_out_of_budget_or_stuck_is_unknown(budget_run, name, check):
+    """Review F10, every way Lean gives no answer at a check: the mutants that send it to 100000 (`le-lt`, `lit-minus`
+    of the 3) are UNKNOWN with "no answer", never KILLED (nor INVALID, when it is inside the mutated definition's own
+    proof), the others SURVIVOR; the refuting checks still kill them, inside lean/ and in a --test file."""
+    done, mutants = budget_run
+    mine = {(m["operator"], m["before"]): m for m in of(mutants, "b" + name.title().replace("-", ""))}
+    far = {("le-lt", "≤"), ("lit-minus", "3")}
+    assert far <= set(mine), (sorted(mine), done.stdout + done.stderr)
+    for key, m in mine.items():
+        if name.startswith("refuted"):
+            expected = ("KILLED", "fails" if name == "refuted-outside" else "proved that") if key in far else (
+                "SURVIVOR", "")
+        else:
+            expected = ("UNKNOWN", "no answer") if key in far else ("SURVIVOR", "")
+        assert m["status"] == expected[0] and expected[1] in m["detail"], m
+    if name == "in-definition":  # the Fin's own mutant 3 -> 4: Lean runs out of budget inside it, never INVALID
+        own = [m for m in of(mutants, "bInDefinitionFin") if (m["operator"], m["before"]) == ("lit-plus", "3")]
+        assert [(m["status"], "no answer" in m["detail"]) for m in own] == [("UNKNOWN", True)], own
