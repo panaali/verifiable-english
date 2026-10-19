@@ -624,6 +624,30 @@ theorem countAtom_holds_iff {α : Type u} {E : CEnv} {T : TStructure α} (hT : A
     intro terms; induction terms <;> simp_all
   simp only [CountAtom.holds, counts_iff hT hs, exists_eq_left, hz]
 
+/-! ## Ratio statements, given the integers their operands denote -/
+
+section
+variable {α : Type u} {T : TStructure α} {n d : CTerm} {zn zd : Int}
+  (hn : ∀ z, n.Denotes T z ↔ z = zn) (hd : ∀ z, d.Denotes T z ↔ z = zd)
+include hn hd
+
+theorem roundsTo_holds_iff (r : VE.Numbers.Rounding) (D : Int) (k : Nat) :
+    (CFormula.roundsTo r n d D k).holds T ↔ 0 < zd ∧ erasedRounding r zn zd D k := by
+  simp only [CFormula.holds, hn, hd, exists_and_left, exists_eq_left]
+  exact and_congr_right fun h => (roundsTo_ratio_agree r zn zd D k h).symm
+
+theorem percentOf_holds_iff (D : Int) (k : Nat) :
+    (CFormula.percentOf n d D k).holds T ↔ 0 < zd ∧ 100 * 10 ^ k * zn = D * zd := by
+  simp only [CFormula.holds, hn, hd, exists_and_left, exists_eq_left]
+
+theorem percentRoundsTo_holds_iff (r : VE.Numbers.Rounding) (D : Int) (k : Nat) :
+    (CFormula.percentRoundsTo r n d D k).holds T ↔ 0 < zd ∧ erasedRounding r (100 * zn) zd D k := by
+  simp only [CFormula.holds, hn, hd, exists_and_left, exists_eq_left]
+  refine and_congr_right fun h => ?_
+  rw [roundsTo_ratio_agree r _ zd D k h]
+  push_cast; exact Iff.rfl
+end
+
 /-- A typed ratio operand denotes one integer, and its erasure denotes it in its tag where region constants are
 region sizes; erasure reads the operand's tag from `tagOf`. -/
 theorem cterm_erase {α : Type u} {E : CEnv} (hE : E.WellFormed) (fs : List CFormula) {T : TStructure α}
@@ -687,14 +711,13 @@ theorem erase_iff_of {α : Type u} (E : CEnv) (hE : E.WellFormed) (fs : List CFo
     simp only [CFormula.countBodies, List.mem_append] at hsub
     obtain ⟨zn, hn', en, gn⟩ := cterm_erase hE fs hT hn fun sb h => hsub sb (.inl h)
     obtain ⟨zd, hd', ed, -⟩ := cterm_erase hE fs hT hd fun sb h => hsub sb (.inr h)
-    simp only [CFormula.holds, CFormula.erase, gn, QFormula.tdenote, hn', hd', exists_and_left, exists_eq_left, ed, QTerm.tdenote,
-      tcompare_qty, roundingQ_iff _ _ _ _ _ en ed]
-    exact and_congr_right fun h => (roundsTo_ratio_agree r zn zd D k h).symm
+    simp only [roundsTo_holds_iff hn' hd', CFormula.erase, gn, QFormula.tdenote, ed, QTerm.tdenote, tcompare_qty,
+      roundingQ_iff _ _ _ _ _ en ed]
   | @percentOf p w D k g _ hp hw =>
     simp only [CFormula.countBodies, List.mem_append] at hsub
     obtain ⟨zp, hp', ep, gp⟩ := cterm_erase hE fs hT hp fun sb h => hsub sb (.inl h)
     obtain ⟨zw, hw', ew, -⟩ := cterm_erase hE fs hT hw fun sb h => hsub sb (.inr h)
-    simp [CFormula.holds, CFormula.erase, gp, QFormula.tdenote, hp', hw', ew, ep, QTerm.tdenote, tcompare_qty]
+    simp [percentOf_holds_iff hp' hw', CFormula.erase, gp, QFormula.tdenote, ew, ep, QTerm.tdenote, tcompare_qty]
     exact fun _ => eq_comm
   | @percentRoundsTo r p w D k g _ _ hp hw =>
     simp only [CFormula.countBodies, List.mem_append] at hsub
@@ -702,11 +725,8 @@ theorem erase_iff_of {α : Type u} (E : CEnv) (hE : E.WellFormed) (fs : List CFo
     obtain ⟨zw, hw', ew, -⟩ := cterm_erase hE fs hT hw fun sb h => hsub sb (.inr h)
     have es : (QTerm.scale g 100 (p.erase E fs)).tdenote (withRegions E fs T) [] = some (.qty g (100 * zp)) := by
       simp [QTerm.tdenote, ep]
-    simp only [CFormula.holds, CFormula.erase, gp, QFormula.tdenote, hp', hw', exists_and_left, exists_eq_left, ew, QTerm.tdenote,
-      tcompare_qty, roundingQ_iff _ _ _ _ _ es ew]
-    refine and_congr_right fun h => ?_
-    rw [roundsTo_ratio_agree r _ zw D k h]
-    push_cast; exact Iff.rfl
+    simp only [percentRoundsTo_holds_iff hp' hw', CFormula.erase, gp, QFormula.tdenote, ew, QTerm.tdenote, tcompare_qty,
+      roundingQ_iff _ _ _ _ _ es ew]
   | not _ ih => simp only [CFormula.holds, CFormula.erase, QFormula.tdenote, ih hsub]
   | and _ _ ia ib | or _ _ ia ib | implies _ _ ia ib =>
     simp only [CFormula.countBodies, List.mem_append] at hsub
