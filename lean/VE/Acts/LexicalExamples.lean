@@ -203,6 +203,8 @@ def long (n : Nat) : String := "ab" ++ String.join (List.replicate n " ab")
 #guard errFixed ["a b a b"] == some "InvalidInput: fixed phrases 'a b a b' and 'a b a b' overlap, or one holds the other"
 #guard errFixed ["one two three", "two three"] ==
   some "InvalidInput: fixed phrases 'one two three' and 'two three' overlap, or one holds the other"
+#guard errFixed ["a b c d", "b c"] ==
+  some "InvalidInput: fixed phrases 'a b c d' and 'b c' overlap, or one holds the other"
 #guard errFixed ["two three", "one two"] ==
   some "InvalidInput: fixed phrases 'one two' and 'two three' overlap, or one holds the other"
 #guard (decodeFixed ["one two", "three four", "two one"]).isOk == false
@@ -226,6 +228,7 @@ def long (n : Nat) : String := "ab" ++ String.join (List.replicate n " ab")
 -- the shape test of `canonicalAct`, with a word's final comma dropped
 #guard errS (chk [] 1 "{1} seek asylum") == some "InvalidInput: invalid act phrase for p"
 #guard errS (chk [] 1 "{0}seek asylum") == some "InvalidInput: invalid act phrase for p"
+#guard errS (chk [] 1 "seek {0} asylum") == some "InvalidInput: invalid act phrase for p"
 #guard errS (chk [] 1 "{0}") == some "InvalidInput: invalid act phrase for p"
 #guard okS (chk [] 1 "{0} go") == some "{0} go"
 #guard errS (chk [] 2 "{0} meet {1} {1}") == some "InvalidInput: invalid act phrase for p"
