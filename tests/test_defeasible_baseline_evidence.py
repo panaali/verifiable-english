@@ -49,7 +49,8 @@ def rule_question(set_id):
     [R] = [R for R in ce4.reading_sets() if R["id"] == set_id]
     rule = R["readings"][0]["content"]["norm"]
     sorts = ce4.environment()["vocabulary"]["predicates"][rule["predicate"]]["arguments"]
-    atom = [{1: "unary", 2: "binary"}[len(sorts)], rule["predicate"], *[["var", i] for i in reversed(range(len(sorts)))]]
+    variables = [["var", i] for i in reversed(range(len(sorts)))]
+    atom = [{1: "unary", 2: "binary"}[len(sorts)], rule["predicate"], *variables]
     body = atom if rule["sign"] else ["not", atom]
     body = body if rule["guard"] == ["top"] else ["implies", rule["guard"], body]
     for sort in reversed(sorts):
@@ -124,7 +125,7 @@ def test_p2_measured_some_from_the_sets_own_default():
 
 
 def test_record_names_main_the_command_the_host_and_pinned_binaries():
-    assert re.fullmatch(r"[0-9a-f]{40}", RECORD["main_commit"]) and RECORD["product_files_changed_from_main"] == []
+    assert re.fullmatch(r"[0-9a-f]{40}", RECORD["main_commit"]) and RECORD["inputs_changed_from_main"] == []
     assert RECORD["command"] == baseline.COMMAND and RECORD["item"] == "DF-0.3"
     host = RECORD["host"]
     assert host["cpus"] > 0 and len(host["load_before"]) == len(host["load_after"]) == 3
