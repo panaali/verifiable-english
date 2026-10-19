@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36049,
+    "total_lines": 36168,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -553,15 +553,18 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 339,
-        "sha256": "8a0cb97b3ed8b1094458ffc5cea7379f964904a62401eae7162c5131c4d39d22",
+        "lines": 324,
+        "sha256": "3c1209445f6c5226c7684a142e586a655ed4b0a36d0c326961dc71a681e00d23",
         "ranges": [
           [
-            26,
-            337
+            28,
+            322
           ]
         ],
         "declarations": [
+          "canonicalActIn",
+          "decodeRegulatedWith",
+          "decodeRegulatedIn",
           "decodeRegulated",
           "decodeNormsEnvironment",
           "normFields",
@@ -569,6 +572,25 @@
           "decodeSource",
           "regenerated"
         ]
+      },
+      {
+        "file": "lean/VE/Acts/Lexical.lean",
+        "lines": 184,
+        "sha256": "8e49414e6e6452d87d1562851169fa73b832c3a64ed18626336e71d25eb2d1f6",
+        "ranges": [
+          [
+            16,
+            151
+          ]
+        ],
+        "declarations": [
+          "phraseToks",
+          "decodeFixed",
+          "lex",
+          "check",
+          "wording"
+        ],
+        "reason": "act-phrases AP-1: the act check under acts@0 (Lexical.check reads the raw act JSON), its fixed phrases' decoder and the tokens; the definitions are pinned in full"
       },
       {
         "file": "lean/VE/Order/Wire.lean",
@@ -1845,7 +1867,8 @@
       "lean/VE/Readings/SupVerdictsExamples.lean": "computed regression guards for the superposed verdict and English plan; no production runner imports this file",
       "lean/VE/NormDefaults/Packs.lean": "encoder only: premise packs (PK-1); `labelledJson` and `elaborateArrays` write the layered elaborate's `soft` and `rights` arrays from Lean values; it reads no request JSON (the packs come from the pinned Layered.lean decoders)",
       "lean/VE/Defaults/Examples.lean": "test fixtures only: df-1a's `#guard`s parse their soft documents and finite situations from JSON literals and run the pinned decoders (`decodeSoftU`, `situationX`, `decodeFilling`) on them; no service mode reads this file",
-      "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d) and literal scenario cases for runValidateU (et-7b, T12 and T12b); no runtime decoding"
+      "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d) and literal scenario cases for runValidateU (et-7b, T12 and T12b); no runtime decoding",
+      "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it"
     }
   },
   "plan_operations": {
