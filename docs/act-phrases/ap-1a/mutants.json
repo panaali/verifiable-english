@@ -327,7 +327,20 @@
    "| some (.word _) => pure act"
   ],
   "test": "lean/VE/Acts/Lexical.lean:171: unsolved goals",
-  "killed": true
+  "killed": true,
+  "fixtures_only": "lean/VE/Acts/LexicalExamples.lean:56: Expression"
+ },
+ {
+  "id": "check-comma-passes",
+  "definition": "check",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "mutation": [
+   "| .word w => joinWords.contains w.toLower | .comma => true | _ => false",
+   "| .word w => joinWords.contains w.toLower | .comma => false | _ => false"
+  ],
+  "test": "lean/VE/Acts/Lexical.lean:173: unsolved goals",
+  "killed": true,
+  "fixtures_only": "lean/VE/Acts/LexicalExamples.lean:158: Expression"
  },
  {
   "id": "check-join-case",
@@ -338,7 +351,8 @@
    "| .word w => joinWords.contains w"
   ],
   "test": "lean/VE/Acts/Lexical.lean:173: unsolved goals",
-  "killed": true
+  "killed": true,
+  "fixtures_only": "lean/VE/Acts/LexicalExamples.lean:247: Expression"
  },
  {
   "id": "Form.text-swap",
