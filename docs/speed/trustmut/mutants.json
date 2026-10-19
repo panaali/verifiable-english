@@ -351,8 +351,8 @@
   {
    "id": "TM35",
    "file": "tools/trust_mutants.py",
-   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not inside_tactic)",
-   "replace": "    return bool(PARSE.match(message) or REFUSED.search(message) and not inside_tactic)",
+   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not elsewhere)",
+   "replace": "    return bool(PARSE.match(message) or REFUSED.search(message) and not elsewhere)",
    "tests": [
     "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
    ],
@@ -428,19 +428,20 @@
   {
    "id": "TM42",
    "file": "tools/trust_mutants.py",
-   "find": "        return said if all(m.startswith(\"info:\") and name in EVALUATED and not NO_ANSWER.search(m)",
-   "replace": "        return said if all(m.startswith(\"info:\") and not NO_ANSWER.search(m)",
+   "find": "        return said if all(m.startswith(\"error:\") and REFUTED.fullmatch(m[6:].strip()) for m in said) else None",
+   "replace": "        return said if all(m.startswith(\"info:\") or m.startswith(\"error:\") and REFUTED.fullmatch(m[6:].strip()) for m in said) else None",
    "tests": [
     "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation",
-    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[reduce-doc]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q8]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q4]"
    ],
-   "claim": "a `#guard_msgs` diff kills only between answers: an `#eval`'s value, never a `#reduce`'s or `#check`'s info (review F11)"
+   "claim": "a `#guard_msgs` diff kills only between refutations: no `info` (an `#eval`'s or `#reduce`'s) is an answer (review F11, hunt Q4, Q7, Q8)"
   },
   {
    "id": "TM43",
    "file": "tools/trust_mutants.py",
-   "find": "    for f, n, message, column in errors:\n        if not refused(",
-   "replace": "    for f, n, message, column in errors[:1]:\n        if not refused(",
+   "find": "    for f, n, message, column in errors:\n        at = starts[",
+   "replace": "    for f, n, message, column in errors[:1]:\n        at = starts[",
    "tests": [
     "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
    ],
@@ -449,8 +450,8 @@
   {
    "id": "TM44",
    "file": "tools/trust_mutants.py",
-   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not inside_tactic)",
-   "replace": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message))",
+   "find": "        if not refused(message, in_tactic(code, at, lo, hi) or not edit[0] <= at < max(edit[1], edit[0] + 1)):",
+   "replace": "        if not refused(message, not edit[0] <= at < max(edit[1], edit[0] + 1)):",
    "tests": [
     "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text",
     "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
@@ -460,7 +461,7 @@
   {
    "id": "TM45",
    "file": "tools/trust_mutants.py",
-   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not inside_tactic)",
+   "find": "    return not NO_ANSWER.search(message) and bool(PARSE.match(message) or REFUSED.match(message) and not elsewhere)",
    "replace": "    return not NO_ANSWER.search(message) and not message.startswith(\"unsolved goals\")",
    "tests": [
     "tests/test_trust_mutants.py::test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown",
@@ -494,12 +495,13 @@
   {
    "id": "TM48",
    "file": "tools/trust_mutants.py",
-   "find": "          if infos[i]!.isInstImplicit then out := out.push args[i]!",
-   "replace": "          pure ()",
+   "find": "        if not refused(message, in_tactic(code, at, lo, hi) or not edit[0] <= at < max(edit[1], edit[0] + 1)):",
+   "replace": "        if not refused(message, in_tactic(code, at, lo, hi)):",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P7]"
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q9]"
    ],
-   "claim": "a `Decidable` instance's instance arguments are bridges too: a class's proof field on `sorry` (hunt P7)"
+   "claim": "a refusal counts only inside the text the mutant wrote: a proof term it broke elsewhere fails as a tactic does (hunt Q9)"
   },
   {
    "id": "TM49",
@@ -536,20 +538,20 @@
   {
    "id": "TM52",
    "file": "tools/trust_mutants.py",
-   "find": "        if \"sorry\" in entry[\"flags\"]:",
+   "find": "        if \"sorry\" in entry:",
    "replace": "        if False:",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1]",
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1g]",
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P1]",
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q1]"
    ],
-   "claim": "a check that computes through an instance or `@[csimp]` lemma resting on a cut proof never kills (hunt H4, N1, N2, P1, P3, P5)"
+   "claim": "a check that computes through a proof the mutant broke never kills (hunt H4, N1, N2, P1-P9, Q1-Q3, Q5)"
   },
   {
    "id": "TM53",
    "file": "tools/trust_mutants.py",
-   "find": "        if \"hyps\" in entry[\"flags\"]:",
+   "find": "        if \"hyps\" in entry:",
    "replace": "        if False:",
    "tests": [
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N8]"
@@ -559,12 +561,14 @@
   {
    "id": "TM54",
    "file": "tools/trust_mutants.py",
-   "find": "        if \"?\" in entry[\"flags\"]:",
+   "find": "        if f\"hash {hashes.get(key)}\" not in entry:",
    "replace": "        if False:",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N3]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q10]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P8]"
    ],
-   "claim": "a check that reads the environment (a definition's text) never kills (hunt N3)"
+   "claim": "a kill needs Lean to elaborate the check as without the mutant (hunt Q6, Q10, Q12, P8)"
   },
   {
    "id": "TM55",
@@ -612,23 +616,23 @@
   {
    "id": "TM59",
    "file": "tools/trust_mutants.py",
-   "find": "      if (info.type.getAppArgs[1]?.bind (\u00b7.getAppFn.constName?)).any seen.contains then stack := t :: stack",
-   "replace": "      pure ()",
+   "find": "    todo := todo ++ (csimps.filter (\u00b7.1 == c)).map (\u00b7.2) ++ (Lean.Compiler.getImplementedBy? env c).toList",
+   "replace": "    todo := todo ++ (Lean.Compiler.getImplementedBy? env c).toList",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q5]"
    ],
-   "claim": "a `@[csimp]` lemma of a definition the check reads is a bridge, wherever its attribute is given (hunt P3)"
+   "claim": "the walk reads each `@[csimp]` lemma of what it reaches, wherever its attribute is given (hunt P3, Q5)"
   },
   {
    "id": "TM60",
    "file": "tools/trust_mutants.py",
-   "find": "    stack := stack ++ info.type.getUsedConstants.toList ++ (info.value?.map (\u00b7.getUsedConstants.toList)).getD []",
-   "replace": "    stack := stack ++ info.type.getUsedConstants.toList",
+   "find": "      ((info.value? (allowOpaque := true)).map (\u00b7.getUsedConstants.toList)).getD []",
+   "replace": "      ((info.value?).map (\u00b7.getUsedConstants.toList)).getD []",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P5]",
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1g]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q3]"
    ],
-   "claim": "the walk for `sorry` goes through theorems' proofs, a chain of them included (hunt P5)"
+   "claim": "the walk reads an `opaque` definition's value (hunt Q3)"
   },
   {
    "id": "TM61",
@@ -643,22 +647,32 @@
   {
    "id": "TM62",
    "file": "tools/trust_mutants.py",
-   "find": "  let inst \u2190 if \u2190 isProp e then",
-   "replace": "  let inst \u2190 if false then",
+   "find": "  if roots.any (\u00b7.hasSorry) then IO.println s!\"{k} error\"",
+   "replace": "  pure ()",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P9]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q12]"
    ],
-   "claim": "a Prop `#eval!` is decided by an instance Lean synthesizes, a bridge (hunt P9)"
+   "claim": "a check Lean cannot elaborate in the probe (an `include_str` there) never kills (hunt Q12)"
   },
   {
    "id": "TM63",
    "file": "tools/trust_mutants.py",
-   "find": "forallTelescopeReducing info.type fun _ body => return (\u2190 whnfR body).isAppOf ``Decidable",
-   "replace": "forallTelescope info.type fun _ body => return body.isAppOf ``Decidable",
+   "find": "    lines[first] = \"import TmTrustProbe \" + lines[first]",
+   "replace": "    lines.insert(first, \"import TmTrustProbe\")",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P2]"
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]"
    ],
-   "claim": "a `Decidable` instance is known by its type, an abbreviation unfolded (hunt P2)"
+   "claim": "the probe's copy keeps every line of the file, so what a check reads of its source is the file's (hunt Q6)"
+  },
+  {
+   "id": "TM64",
+   "file": "tools/trust_mutants.py",
+   "find": "        for stage in (built[:1], built[1:]):  # the mutated module alone first: most mutants end there",
+   "replace": "        for first, last, r, _ in sorted(tree.roles[m.file], reverse=True):\n            if r == \"proof\" and cut_proof(scratch.lean / m.file, first, last):\n                cuts.setdefault(m.file, []).append((first, last))\n        for stage in (built[:1], built[1:]):  # the mutated module alone first: most mutants end there",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
+   ],
+   "claim": "nothing is cut up front: a cut proof is one the mutant broke, which is what the probe's `sorry` means (hunt H4-Q5)"
   }
  ]
 }
