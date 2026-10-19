@@ -12661,7 +12661,8 @@
         "VE.Calc.DeriveExamples.links",
         "VE.Calc.DeriveExamples.none3",
         "VE.Calc.DeriveExamples.pt",
-        "VE.Calc.DeriveExamples.sBelow"
+        "VE.Calc.DeriveExamples.sBelow",
+        "VE.Calc.DeriveExamples.wide"
       ]
     },
     "VE/Events/Calendar.lean": {
