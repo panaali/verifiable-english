@@ -901,6 +901,13 @@
    "reason": "me-6: lean/VE/Calc/Dimension.lean S +55 (PhysDim 5, PhysDim.Normal 2, PhysDim.one 2, insertExp 8, PhysDim.mul 1, PhysDim.inv 1, PhysDim.npow 3, Expr.dimOf 12, Rescale 5, zpowR 4, Rescale.of 3, Rescale.apply 6, legacyDim 3); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6, 2026-10-18",
    "commit": "9ea276842060977979999c8f3db730d94f527ceb"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
+   "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
   }
  ]
 }
