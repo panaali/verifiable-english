@@ -386,4 +386,52 @@ theorem completion_admissible {α : Type} [DecidableEq α] (E : VE.Environment) 
         | inr n => exact ⟨rfl, hz⟩
       exact ⟨[V.day, V.day], hb, day z hz, day w hw, trivial⟩
 
+
+/-- The conventions are in the fragment both ways. -/
+theorem conventions_exact (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E V = true) (ng : List String)
+    (hng : ∀ p ∈ rolePreds V ++ V.links.map (·.predicate), p ∉ ng) :
+    ∀ a ∈ conventionPremises V, up V.day ng a = true ∧ down V.day ng a = true := by
+  have _ := h
+  have role : ∀ p ∈ rolePreds V, p ∉ ng := fun p hp => hng p (List.mem_append_left _ hp)
+  have link : ∀ l ∈ V.links, l.predicate ∉ ng := fun l hl =>
+    hng l.predicate (List.mem_append_right _ (List.mem_map_of_mem hl))
+  have onR : ∀ e ∈ V.events, e.on ∈ rolePreds V := fun e he => by
+    simp only [rolePreds, List.mem_append, List.mem_map]; exact .inl ⟨e, he, rfl⟩
+  have beginsR : ∀ x ∈ V.states, x.begins ∈ rolePreds V := fun x hx => by
+    simp only [rolePreds, List.mem_append, List.mem_flatMap]; exact .inr ⟨x, hx, by simp⟩
+  have endsR : ∀ x ∈ V.states, x.ends ∈ rolePreds V := fun x hx => by
+    simp only [rolePreds, List.mem_append, List.mem_flatMap]; exact .inr ⟨x, hx, by simp⟩
+  intro a ha
+  simp only [conventionPremises, conventionLabelled, List.map_append, List.map_map, List.mem_append,
+    List.mem_map, Function.comp, List.map_flatMap, List.mem_flatMap, List.map_cons, List.map_nil,
+    List.mem_cons, List.not_mem_nil, or_false] at ha
+  rcases ha with ((⟨e, hm, rfl⟩ | ⟨x, hm, hx⟩) | ⟨l, hm, rfl⟩) | ⟨⟨n, c⟩, hm, rfl⟩
+  · have := role _ (onR e hm)
+    simp [oneRoleF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, this]
+  · have hb := role _ (beginsR x hm)
+    have he := role _ (endsR x hm)
+    rcases hx with rfl | rfl | rfl
+    · simp [oneRoleF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, hb]
+    · simp [oneRoleF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, he]
+    · simp [notBeforeBeginF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, hb, he]
+  · have hl := link l hm
+    unfold linkForwardF
+    split
+    · next st bd hst hbd =>
+      have h1 : st ∉ ng := by
+        rcases startRole_mem hst with ⟨e, he, -, rfl⟩ | ⟨x, hx, -, rfl⟩
+        · exact role _ (onR e he)
+        · exact role _ (beginsR x hx)
+      have h2 : bd ∉ ng := by
+        rcases boundRole_mem hbd with ⟨e, he, -, rfl⟩ | ⟨x, hx, -, rfl⟩
+        · exact role _ (onR e he)
+        · exact role _ (endsR x hx)
+      simp [bin, up, down, hits, vacuous, ← isVar_beq, isVar, hl, h1, h2]
+    · simp [up, down]
+  · simp only [weakerPairs, List.mem_flatMap, List.mem_filter, List.mem_map] at hm
+    obtain ⟨n', ⟨hn, -⟩, c', -, he'⟩ := hm
+    simp only [Prod.mk.injEq] at he'; obtain ⟨rfl, rfl⟩ := he'
+    have hl := link n' hn
+    simp [linkWeakerF, bin, up, down, hits, vacuous, ← isVar_beq, isVar, hl]
+
 end VE.Events

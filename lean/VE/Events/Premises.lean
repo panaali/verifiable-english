@@ -218,4 +218,105 @@ theorem unorderedSame_of_order (V : EventsEnv) (S : VE.Structure.{u}) (hp : Sat 
   · exact ⟨v, hv, hw⟩
   · exact absurd h h2
 
+theorem regen_typed (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E V = true) :
+    EventsTyped (regenEnv E V) V = true := by
+  simp only [WellFormedEvents, Bool.and_eq_true] at h
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, -⟩, -⟩, -⟩, h8⟩, -⟩, h10⟩, h11⟩, -⟩, -⟩ := h
+  simp only [EventsTyped, Bool.and_eq_true]
+  refine ⟨⟨⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, List.all_eq_true.2 fun l hl => ?_⟩, List.all_eq_true.2 fun D hD => ?_⟩, h11⟩
+  · have := List.all_eq_true.1 h8 l hl
+    simp only [Bool.and_eq_true] at this
+    exact this.1.1.1.1
+  · have := List.all_eq_true.1 h10 D hD
+    simp only [Bool.and_eq_true] at this
+    simp only [regenEnv, this.1.1, Bool.true_and, beq_iff_eq]
+    rw [if_pos (List.any_eq_true.2 ⟨D, hD, by simp⟩)]
+
+/-- The role a sort starts with is one of the block's roles, of that sort and the day sort. -/
+theorem startRole_mem {V : EventsEnv} {s st : String} (h : startRole V s = some st) :
+    (∃ e ∈ V.events, e.sort = s ∧ e.on = st) ∨ (∃ x ∈ V.states, x.sort = s ∧ x.begins = st) := by
+  unfold startRole at h
+  split at h
+  · next e he => exact .inl ⟨e, List.mem_of_find?_eq_some he, by simpa using List.find?_some he, by simpa using h⟩
+  · obtain ⟨x, hx, rfl⟩ := Option.map_eq_some_iff.1 h
+    exact .inr ⟨x, List.mem_of_find?_eq_some hx, by simpa using List.find?_some hx, rfl⟩
+
+theorem boundRole_mem {V : EventsEnv} {s bd : String} (h : boundRole V s = some bd) :
+    (∃ e ∈ V.events, e.sort = s ∧ e.on = bd) ∨ (∃ x ∈ V.states, x.sort = s ∧ x.ends = bd) := by
+  unfold boundRole at h
+  split at h
+  · next e he => exact .inl ⟨e, List.mem_of_find?_eq_some he, by simpa using List.find?_some he, by simpa using h⟩
+  · obtain ⟨x, hx, rfl⟩ := Option.map_eq_some_iff.1 h
+    exact .inr ⟨x, List.mem_of_find?_eq_some hx, by simpa using List.find?_some hx, rfl⟩
+
+/-- Every generated premise is closed and typed over the regenerated environment. -/
+theorem eventsPremises_wellFormed (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E V = true) :
+    ∀ p ∈ eventsX V, p.WellFormed (regenEnv E V) [] := by
+  have hT := regen_typed E V h
+  simp only [WellFormedEvents, Bool.and_eq_true, List.all_eq_true, sig2, beq_iff_eq, decide_eq_true_eq,
+    List.contains_iff_mem] at h
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨hd, hb⟩, he⟩, hs⟩, -⟩, -⟩, -⟩, hl⟩, -⟩, -⟩, -⟩, -⟩, -⟩ := h
+  simp only [EventsTyped, Bool.and_eq_true, List.all_eq_true, beq_iff_eq] at hT
+  have hc : ∀ D ∈ V.dates, (regenEnv E V).constants (dateName D) = some V.day := fun D hD => (hT.1.2 D hD).2
+  have roleSort : ∀ s ∈ roleSorts V, s ∈ E.sorts := by
+    intro s hm
+    simp only [roleSorts, eventSorts, stateSorts, List.mem_append, List.mem_map] at hm
+    rcases hm with ⟨e, hm, rfl⟩ | ⟨x, hm, rfl⟩
+    · exact (he e hm).1.1
+    · exact (hs x hm).1.1.1
+  have startSig : ∀ s st, startRole V s = some st → E.predicates st = some [s, V.day] := by
+    intro s st hr
+    rcases startRole_mem hr with ⟨e, hm, rfl, rfl⟩ | ⟨x, hm, rfl, rfl⟩
+    · exact (he e hm).2
+    · exact (hs x hm).1.2
+  have boundSig : ∀ s bd, boundRole V s = some bd → E.predicates bd = some [s, V.day] := by
+    intro s bd hr
+    rcases boundRole_mem hr with ⟨e, hm, rfl, rfl⟩ | ⟨x, hm, rfl, rfl⟩
+    · exact (he e hm).2
+    · exact (hs x hm).2
+  have hb' : (regenEnv E V).predicates V.before = some [V.day, V.day] := hb
+  have hd' : V.day ∈ (regenEnv E V).sorts := hd
+  intro a ha
+  simp only [eventsX, eventsLabelled, calendarLabelled, conventionLabelled, List.map_append, List.map_map,
+    List.mem_append, List.map_cons, List.map_nil, List.mem_cons, List.mem_map, Function.comp, List.not_mem_nil,
+    or_false, List.mem_filter, List.map_flatMap, List.mem_flatMap] at ha
+  rcases ha with (((rfl | rfl | rfl) | ⟨p, hp, rfl⟩) | ⟨p, ⟨hp, -⟩, rfl⟩) |
+    (((⟨e, hm, rfl⟩ | ⟨x, hm, hx⟩) | ⟨l, hm, rfl⟩) | ⟨⟨n, c⟩, hm, rfl⟩)
+  · simp [irreflexiveF, bin, VE.Formula.WellFormed, VE.Term.sortOf, hb', hd']
+  · simp [transitiveF, bin, VE.Formula.WellFormed, VE.Term.sortOf, hb', hd']
+  · simp [linearF, bin, VE.Formula.WellFormed, VE.Term.sortOf, hb', hd']
+  · obtain ⟨h1, h2⟩ := mem_dates_of_consecutive hp
+    simp [dateFactF, dateConst, VE.Formula.WellFormed, VE.Term.sortOf, hb', hc _ h1, hc _ h2]
+  · obtain ⟨h1, h2⟩ := mem_dates_of_consecutive hp
+    simp [adjacentF, dateConst, VE.Formula.WellFormed, VE.Term.sortOf, hb', hd', hc _ h1, hc _ h2]
+  · have hon : (regenEnv E V).predicates e.on = some [e.sort, V.day] := (he e hm).2
+    have hso : e.sort ∈ (regenEnv E V).sorts := (he e hm).1.1
+    simp [oneRoleF, bin, VE.Formula.WellFormed, VE.Term.sortOf, hon, hso, hd']
+  · have hbg : (regenEnv E V).predicates x.begins = some [x.sort, V.day] := (hs x hm).1.2
+    have hen : (regenEnv E V).predicates x.ends = some [x.sort, V.day] := (hs x hm).2
+    have hso : x.sort ∈ (regenEnv E V).sorts := (hs x hm).1.1.1
+    rcases hx with rfl | rfl | rfl
+    · simp [oneRoleF, bin, VE.Formula.WellFormed, VE.Term.sortOf, hbg, hso, hd']
+    · simp [oneRoleF, bin, VE.Formula.WellFormed, VE.Term.sortOf, hen, hso, hd']
+    · simp [notBeforeBeginF, bin, VE.Formula.WellFormed, VE.Term.sortOf, hbg, hen, hb', hso, hd']
+  · have hlp : (regenEnv E V).predicates l.predicate = some [l.cause, l.effect] := (hl l hm).1.1.1.1
+    have hca : l.cause ∈ (regenEnv E V).sorts := roleSort _ (hl l hm).1.1.1.2
+    have hef : l.effect ∈ (regenEnv E V).sorts := roleSort _ (hl l hm).1.1.2
+    unfold linkForwardF
+    split
+    · next st bd hst hbd =>
+      have h1 : (regenEnv E V).predicates st = some [l.cause, V.day] := startSig _ _ hst
+      have h2 : (regenEnv E V).predicates bd = some [l.effect, V.day] := boundSig _ _ hbd
+      simp [bin, VE.Formula.WellFormed, VE.Term.sortOf, hlp, hca, hef, h1, h2, hb', hd']
+    · trivial
+  · simp only [weakerPairs, List.mem_flatMap, List.mem_filter, List.mem_map, beq_iff_eq, Bool.and_eq_true] at hm
+    obtain ⟨n', ⟨hn, -⟩, c', ⟨hc', ⟨-, h1⟩, h2⟩, he'⟩ := hm
+    simp only [Prod.mk.injEq] at he'; obtain ⟨rfl, rfl⟩ := he'
+    have hnp : (regenEnv E V).predicates n'.predicate = some [n'.cause, n'.effect] := (hl n' hn).1.1.1.1
+    have hcp : (regenEnv E V).predicates c'.predicate = some [n'.cause, n'.effect] := by
+      rw [← h1, ← h2]; exact (hl c' hc').1.1.1.1
+    have hca : n'.cause ∈ (regenEnv E V).sorts := roleSort _ (hl n' hn).1.1.1.2
+    have hef : n'.effect ∈ (regenEnv E V).sorts := roleSort _ (hl n' hn).1.1.2
+    simp [linkWeakerF, bin, VE.Formula.WellFormed, VE.Term.sortOf, hnp, hcp, hca, hef]
+
 end VE.Events
