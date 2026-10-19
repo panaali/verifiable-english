@@ -820,6 +820,13 @@
   },
   {
    "class": "S",
+   "lines": 55,
+   "reason": "me-6: lean/VE/Calc/Dimension.lean S +55 (PhysDim 5, PhysDim.Normal 2, PhysDim.one 2, insertExp 8, PhysDim.mul 1, PhysDim.inv 1, PhysDim.npow 3, Expr.dimOf 12, Rescale 5, zpowR 4, Rescale.of 3, Rescale.apply 6, legacyDim 3); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6, 2026-10-18",
+   "commit": "9ea276842060977979999c8f3db730d94f527ceb"
+  },
+  {
+   "class": "S",
    "lines": 35,
    "reason": "qt-a2: S +35 (K +0, V +0): lean/VE/Cardinality/Syntax.lean +25 (CTerm 6, CTermTyped 6, admittedRules 3, CFormula +4, Admitted +6), lean/VE/Cardinality/Semantics.lean +10 (CTerm.Denotes 5, CFormula.holds +5)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a2, 2026-10-18",
