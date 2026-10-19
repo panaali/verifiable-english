@@ -46,11 +46,14 @@ def h6Steps : List Step := [h6First, .square "s" "r" (1/20) (1/4)]
 #guard !counterexampleCheck (h6 (2/100)) links (below (1/4)) (pt [("r", 1), ("s", 0), ("d", 0)])
 #guard counterexampleCheck (h6 (2/100)) [] (below (1/4)) (pt [("r", 1), ("s", 0), ("d", 0)])
 #guard !counterexampleCheck (h6 (2/100)) links (below (-1/5)) (pt [("r", -1/5), ("s", 1/25), ("d", 2/125)])
+-- A point must meet the premises too: d = 0 breaks d = 0.4 s at s = 1.
+#guard !counterexampleCheck (h6 (2/100)) links (below (1/4)) (pt [("r", 1), ("s", 1), ("d", 0)])
 
 -- A linear system with no solution: x + y ≥ 2, x ≤ 0, y ≤ 0, refuted with each fact weighed once; then anything
 -- follows. A strict fact closes a zero constant.
 def none3 : List QFact := [fact (-2) [("x", 1), ("y", 1)] false, fact 0 [("x", -1)] false, fact 0 [("y", -1)] false]
 #guard Farkas.check none3 ⟨[1, 1, 1]⟩ && !Farkas.check none3 ⟨[1, 1]⟩ && !Farkas.check none3 ⟨[1, 1, 0]⟩
+#guard !Farkas.check none3 ⟨[1, 1, 1, 0]⟩
 #guard match FM.search none3 with | .refuted ws => Farkas.check none3 ⟨ws⟩ | _ => false
 #guard checked none3 [] (fact 0 [("x", 1)] true) && Derive.search none3 [] (fact 0 [("x", 1)] true) matches .follows _
 #guard Farkas.check [fact 0 [("x", 1)] true, fact 0 [("x", -1)] false] ⟨[1, 1]⟩
@@ -71,6 +74,9 @@ def sBelow : QFact := fact (1/25) [("s", -1)] true
 #guard !Derivation.check (h6 (2/100)) links (below (1/4)) ⟨[.square "s" "r" (1/20) (1/4)]⟩
 #guard !Derivation.check (h6 (2/100)) links (below (1/3)) ⟨h6Steps⟩
 #guard checked (h6 (2/100)) links (fact (1/3) [("r", -1)] false)
+-- The square route takes the least upper bound on s: a looser s ≤ 1 beside it changes nothing.
+#guard checked (h6 (2/100) ++ [fact 1 [("s", -1)] false]) links (below (1/4)) &&
+  Derive.search (h6 (2/100) ++ [fact 1 [("s", -1)] false]) links (below (1/4)) matches .follows _
 
 -- A reported point gives 0 to an unknown it does not list: here s, which meets s = r² at r = 0.
 #guard Derive.search [] links (below 0) = .counterexample [("r", 0)] && checked [] links (below 0)
