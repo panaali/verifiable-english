@@ -8010,7 +8010,7 @@ module VE.Judgments.Decl 6380e1cda31818feefcbd44795a1204e53679f7a628f0d61a6ba571
 146:0-167:18 theorem VE.Judgments.faultOf_none_iff@VE.Judgments.Decl
 169:0-182:26 theorem VE.Judgments.admit_ok_iff@VE.Judgments.Decl
 184:0-195:39 theorem VE.Judgments.admit_first_fault@VE.Judgments.Decl
-module VE.Judgments.Examples 79cd2732bb62e087dac62367b8b553f18f0c1e9c0165490c543f90e93173e828
+module VE.Judgments.Examples 7fc223000df09e0934a92c2995df54e706b8d4241336ef896b7c0d3d2689c66b
 15:0-18:17 def VE.Judgments.Examples.errText@VE.Judgments.Examples
 20:0-23:20 def VE.Judgments.Examples.okVal@VE.Judgments.Examples
 27:0-32:106 def VE.Judgments.Examples.envText@VE.Judgments.Examples
@@ -8067,9 +8067,9 @@ module VE.Judgments.Examples 79cd2732bb62e087dac62367b8b553f18f0c1e9c0165490c543
 284:0-285:102 theorem VE.Judgments.Examples.reachedBodies_chain@VE.Judgments.Examples
 288:0-288:68 def VE.Judgments.Examples.fsξ@VE.Judgments.Examples
 289:0-290:102 theorem VE.Judgments.Examples.viewOf_xi@VE.Judgments.Examples
-309:0-312:15 def VE.Judgments.Examples.rulesOf@VE.Judgments.Examples
-315:0-318:114 def VE.Judgments.Examples.docω@VE.Judgments.Examples
-321:0-328:17 def VE.Judgments.Examples.doc11@VE.Judgments.Examples
+312:0-315:15 def VE.Judgments.Examples.rulesOf@VE.Judgments.Examples
+318:0-321:114 def VE.Judgments.Examples.docω@VE.Judgments.Examples
+324:0-331:17 def VE.Judgments.Examples.doc11@VE.Judgments.Examples
 module VE.Judgments.Scan f2291c292462dd6c570ab1676fc13c1c83fbdc04f1e461aba6596b68b61315e6
 9:0-11:65 def VE.Judgments.opensIn@VE.Judgments.Scan
 13:0-14:51 theorem VE.Judgments.opensIn_iff@VE.Judgments.Scan

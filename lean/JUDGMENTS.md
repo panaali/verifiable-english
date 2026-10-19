@@ -185,7 +185,8 @@ Each `#guard` reproduces one row of spec 11 with the value the spec's stub compu
   subjects`); each formula fixture type-checks in 11's environment.
 - Rows this build adds, which are in no table of spec 11 and are not replayed: a rule whose carve-out alone uses
   `arbitrary` (`formulas_carve`), a definition reached through another (`reachedBodies_chain`), and `viewOf` building
-  J-ξ's view (`viewOf_xi`). Each pins a definition that no spec row tests on its own.
+  J-ξ's view (`viewOf_xi`), and the refusal order on a unit with both of `open`'s faults. Each pins a definition
+  or an order that no spec row tests on its own.
 
 ## Deviations from the plan
 
