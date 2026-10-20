@@ -3544,6 +3544,11 @@ theorem VE.Cardinality.Examples.fa2_agree
                 (VE.Cardinality.Body.atom VE.Cardinality.Examples.stay).toFormula)
   -- uses VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.Examples.fa2Model@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Cardinality.Examples.inc@VE.Cardinality.Examples VE.Cardinality.Examples.pm@VE.Cardinality.Examples VE.Cardinality.Examples.stay@VE.Cardinality.Examples VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Formula@VE.Order.Syntax VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atLeast@VE.Time.Count VE.Time.atMost@VE.Time.Count VE.Time.exactly@VE.Time.Count VE.Time.lift@VE.Time.Semantics VE.Time.nOfM@VE.Time.Count
   -- expr 1771152071
+theorem VE.Cardinality.Examples.fa4d_not_entails
+  ¬VE.Cardinality.CEntails VE.Cardinality.Examples.paper [VE.Cardinality.Examples.fa4c 500]
+      (VE.Cardinality.Examples.fa4dOther 500)
+  -- uses VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.fa4c@VE.Cardinality.Examples VE.Cardinality.Examples.fa4dOther@VE.Cardinality.Examples VE.Cardinality.Examples.paper@VE.Cardinality.Examples
+  -- expr 583829652
 theorem VE.Cardinality.Examples.fomc_wellFormed
   VE.Cardinality.Examples.fomc.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.fomc@VE.Cardinality.Examples

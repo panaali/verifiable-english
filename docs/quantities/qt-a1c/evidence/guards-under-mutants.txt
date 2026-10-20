@@ -4,7 +4,7 @@ Examples.lean:207  #guard [6, 7, 8].all fun t => (List.range (t + 1)).all fun k 
 Examples.lean:210  #guard (List.range 4).all fun n => agreeOn dupModel n 2
 Examples.lean:212  #guard [6, 7, 8].all fun t => (List.range 4).all fun k => (List.range (k + 1)).all fun j =
 Examples.lean:246  theorem fa2_agree :
-Examples.lean:584  theorem entails_cases : CEntails users [] (.count (atLeastAtom "user" .any 0)) ∧
+Examples.lean:595  theorem entails_cases : CEntails users [] (.count (atLeastAtom "user" .any 0)) ∧
 == toFormula-not (lean/VE/Cardinality/Theorems.lean), proof stubbed with sorry so the build reaches Examples.lean
 Examples.lean:212  #guard [6, 7, 8].all fun t => (List.range 4).all fun k => (List.range (k + 1)).all fun j =
 == withRegionsFinite-body (lean/VE/Cardinality/Erase.lean), proof stubbed with sorry so the build reaches Examples.lean

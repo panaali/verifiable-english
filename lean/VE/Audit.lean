@@ -874,6 +874,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.fa1b_not_entails
 #print axioms VE.Cardinality.Examples.fa2Model_valid
 #print axioms VE.Cardinality.Examples.fa2_agree
+#print axioms VE.Cardinality.Examples.fa4d_not_entails
 #print axioms VE.Cardinality.Examples.fomc_wellFormed
 #print axioms VE.Cardinality.Examples.harm_or_not_two
 #print axioms VE.Cardinality.Examples.harm_two
