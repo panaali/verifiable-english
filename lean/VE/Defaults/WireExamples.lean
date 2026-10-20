@@ -106,6 +106,11 @@ def pairsJ (st : String) : Json := toJson [Json.mkObj [("rules", toJson ["r1", "
 -- DF-ω: DF-δ without its pair certificate and with no collision: UNKNOWN, never COLLISION
 #guard answer (req δEnv δR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"])]) ==
   VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("pairs", pairsJ "unknown")]
+-- DF-δ: a collision that names the pair but does not check (the weighing decides it): UNKNOWN, the pair unknown and
+-- no `collision` member
+#guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-coherence"
+  [("coherence", toJson [pairJ "r1" "r2"]), ("collision", collJ L "r1" "r2")]) ==
+  VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("pairs", pairsJ "unknown")]
 -- diagnostic 5: the pair list must be `coherence_targets`, in order
 #guard [toJson ([] : List Json), toJson [pairJ "r2" "r1"], toJson [pairJ "r1" "r2", pairJ "r1" "r2"]].all fun c =>
   answer (req δEnv δR "defaults-coherence" [("coherence", c)]) == .str pairText

@@ -7110,6 +7110,14 @@ theorem VE.Defaults.Wire.ViewRest.hl
     VE.Compose.Labelled.wellLabelled (VE.Defaults.dfltLabelled L.D) = Bool.true
   -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
   -- expr 662367307
+theorem VE.Defaults.Wire.coherence_collision_shown
+  ∀ (x : VE.Defaults.Wire.CoherenceReplay),
+    (∀ (P Q : VE.SoftNorms.SoftNode),
+        ((P, Q), VE.Defaults.Wire.PairStatus.collision) ∈ x.pairs → x.collides = Bool.true) ∧
+      (((VE.Defaults.Wire.coherenceFields x).any fun x => x.fst == "collision") = Bool.true → x.verdict = "COLLISION") ∧
+        (x.collides = Bool.true → ¬VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R)
+  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.Wire.CoherenceReplay.collides@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.pairs@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.PairStatus.collision@VE.Defaults.Wire VE.Defaults.Wire.PairStatus@VE.Defaults.Wire VE.Defaults.Wire.coherenceFields@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 673725174
 theorem VE.Defaults.Wire.decodeLayered_soften
   ∀ (j : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
     VE.NormDefaults.Wire.decodeLayered j = Except.ok L → L.U.D = VE.SoftNorms.soften L.D

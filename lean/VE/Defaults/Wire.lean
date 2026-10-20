@@ -271,6 +271,35 @@ def coherenceFields (x : CoherenceReplay) : List (String × Json) :=
     | none => []
   | _, _ => []
 
+/-- What the answer shows of a collision: a pair shown `collision`, or a `collision` member, only with a collision
+    that checks, and a checked collision means the document is not coherent. -/
+theorem coherence_collision_shown (x : CoherenceReplay) :
+    (∀ P Q, ((P, Q), PairStatus.collision) ∈ x.pairs → x.collides = true) ∧
+    ((coherenceFields x).any (·.1 == "collision") = true → x.verdict = "COLLISION") ∧
+    (x.collides = true → ¬ DefaultCoherent.{0} x.v.L.U x.v.L.D x.v.R) := by
+  refine ⟨fun P Q hm => ?_, fun h => ?_, fun hc => ?_⟩
+  · unfold CoherenceReplay.pairs at hm
+    obtain ⟨i, hi, he⟩ := List.mem_mapIdx.mp hm
+    simp only [Prod.mk.injEq] at he
+    obtain ⟨_, hs⟩ := he
+    split at hs
+    · cases hs
+    · split at hs
+      · rename_i hc
+        simp only [Bool.and_eq_true] at hc
+        exact hc.1
+      · cases hs
+  · unfold coherenceFields at h
+    split at h
+    · rename_i hv _
+      exact beq_iff_eq.mp hv
+    · simp at h
+  · unfold CoherenceReplay.collides at hc
+    split at hc
+    · rename_i w _
+      exact collision_sound _ x.v.L.wfU _ _ _ w.S.valid _ _ _ hc
+    · cases hc
+
 /-- The `defaults-*` kinds; `none` for any other kind (one row of PK-1's layered kind table). -/
 def defaultsCase (v : DefaultsView) (id kind : String) (j : Json) : Except String (Option Json) :=
   if kind.startsWith "defaults-" then
