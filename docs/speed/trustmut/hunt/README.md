@@ -16,7 +16,7 @@ probe's own wait. Each fixed form is also a row of `tests/test_trust_mutants.py`
 `run.py` runs them all (or the names given) and saves each exit code, time and last line in
 `../evidence/probes.json` with the sha256 of the tool and of the test file they ran; its summary line:
 
-> Probes on be422c2d3 (this checkout's tool): 80 of 81 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
+> Probes on be422c2d3, de96d2db3 (this checkout's tool): 82 of 83 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
 
 F14c runs `../claims.py`, which binds every sentence of the report and of this README that states a result to
 the saved evidence (review F14 as a class). F15c runs it on `F15c.md`, one wrong count of each form `CLAIM`
