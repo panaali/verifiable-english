@@ -887,6 +887,41 @@
    "reason": "me-6: lean/VE/Calc/Dimension.lean S +55 (PhysDim 5, PhysDim.Normal 2, PhysDim.one 2, insertExp 8, PhysDim.mul 1, PhysDim.inv 1, PhysDim.npow 3, Expr.dimOf 12, Rescale 5, zpowR 4, Rescale.of 3, Rescale.apply 6, legacyDim 3); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6, 2026-10-18",
    "commit": "9ea276842060977979999c8f3db730d94f527ceb"
+  },
+  {
+   "class": "S",
+   "lines": 18,
+   "reason": "ar-10a: profile-gate table; S +18 (VE/Compose/Dispatch.lean +19, -1 elsewhere), V +49 (VE/Compose/Dispatch.lean +43, VE/Compose/ProfilesMain.lean +7, VE/Service/Standalone.lean -1); K +0; trusted +67",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ar-10a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "V",
+   "lines": 49,
+   "reason": "ar-10a: profile-gate table; S +18 (VE/Compose/Dispatch.lean +19, -1 elsewhere), V +49 (VE/Compose/Dispatch.lean +43, VE/Compose/ProfilesMain.lean +7, VE/Service/Standalone.lean -1); K +0; trusted +67",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ar-10a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "S",
+   "lines": 88,
+   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
+   "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
   }
  ]
 }
