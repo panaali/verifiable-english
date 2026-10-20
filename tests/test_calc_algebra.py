@@ -94,24 +94,24 @@ LIMIT_CHECKS = {
 
 
 def digit_rows():
-    """ME-1's digit limit (2.4), for each sign and each side of the line: `top` (10^4096 − 1) is at it, `big`
-    (10^4096) one past it. At it by a literal and by a product; past it by a literal, a product and a sum, so each
-    place that builds a polynomial (`Frac.go`'s literal, `mul?`, `add?`) is pinned."""
+    """ME-1's digit limit (2.4), for each sign and each side of the line: `top` (10^4096 − 1, 4,096 digits) is at
+    it, `big` (10^4096, 4,097 digits) one past it. At it by a literal and by a product; past it by a literal, a
+    product and a sum, so each place that builds a polynomial (`Frac.go`'s literal, `mul?`, `add?`) is pinned."""
     for sign, minus in (("", ""), ("neg-", "-")):
-        yield from (("numerator", f"digits-{sign}{kind}", side, None, kind.startswith("at")) for kind, side in (
-            ("at", f"l ({minus}top)"),
-            ("at-product", f".mul (l ({minus}top / 9)) (l 9)"),
-            ("past", f"l ({minus}big)"),
-            ("past-product", f".mul (.pow (l 10) 4095) (l ({minus}10))"),
-            ("past-sum", f".add (l ({minus}top)) (l ({minus}1))"),
+        yield from (("numerator", f"digits-{sign}{kind}", side, None, kind.startswith("4096")) for kind, side in (
+            ("4096", f"l ({minus}top)"),
+            ("4096-product", f".mul (l ({minus}top / 9)) (l 9)"),
+            ("4097-literal", f"l ({minus}big)"),
+            ("4097", f".mul (.pow (l 10) 4095) (l ({minus}10))"),
+            ("4097-sum", f".add (l ({minus}top)) (l ({minus}1))"),
         ))
-        yield from (("denominator", f"digits-{sign}den-{kind}", side, None, kind.startswith("at")) for kind, side in (
-            ("at", f"l ({minus}1 / top)"),
-            ("at-product", f".mul (l ({minus}9 / top)) (l (1 / 9))"),
-            ("past", f"l ({minus}1 / big)"),
-            ("past-product", f".mul (.pow (l (1 / 10)) 4095) (l ({minus}1 / 10))"),
+        yield from (("denominator", f"digits-{sign}den-{kind}", side, None, kind.startswith("4096")) for kind, side in (
+            ("4096", f"l ({minus}1 / top)"),
+            ("4096-product", f".mul (l ({minus}9 / top)) (l (1 / 9))"),
+            ("4097-literal", f"l ({minus}1 / big)"),
+            ("4097", f".mul (.pow (l (1 / 10)) 4095) (l ({minus}1 / 10))"),
             # (2^4096 + 5^4096) / 10^4096 is in lowest terms: the sum is odd and 1 modulo 5.
-            ("past-sum", f".add (l ({minus}1 / 5 ^ 4096)) (l ({minus}1 / 2 ^ 4096))"),
+            ("4097-sum", f".add (l ({minus}1 / 5 ^ 4096)) (l ({minus}1 / 2 ^ 4096))"),
         ))
 
 
