@@ -13353,6 +13353,8 @@
         "VE.Cardinality.Examples.colliding",
         "VE.Cardinality.Examples.dupModel",
         "VE.Cardinality.Examples.fa1Model",
+        "VE.Cardinality.Examples.fa2Model",
+        "VE.Cardinality.Examples.fa4dModel",
         "VE.Cardinality.Examples.everyone",
         "VE.Cardinality.Examples.share",
         "VE.Cardinality.Examples.nobody",
