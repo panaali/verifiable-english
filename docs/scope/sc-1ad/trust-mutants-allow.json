@@ -31,16 +31,6 @@
    "reason": "the tool's list-empty text here is ill-typed (Lean: Function expected, or cannot synthesize the element type), so it is no behaviour; every well-typed list-empty mutant of this definition is KILLED"
   },
   {
-   "definition": "VE.Scope.edgesInto",
-   "operator": "list-empty",
-   "reason": "the tool's list-empty text here is ill-typed (Lean: Function expected, or cannot synthesize the element type), so it is no behaviour; every well-typed list-empty mutant of this definition is KILLED"
-  },
-  {
-   "definition": "VE.Scope.govern",
-   "operator": "list-empty",
-   "reason": "the tool's list-empty text here is ill-typed (Lean: Function expected, or cannot synthesize the element type), so it is no behaviour; every well-typed list-empty mutant of this definition is KILLED"
-  },
-  {
    "definition": "VE.Scope.addOver",
    "operator": "list-empty",
    "reason": "the tool's list-empty text here is ill-typed (Lean: Function expected, or cannot synthesize the element type), so it is no behaviour; every well-typed list-empty mutant of this definition is KILLED"
