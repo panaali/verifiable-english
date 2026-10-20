@@ -3,7 +3,8 @@ import VE.Events.Conservative
 
 /-! The ET-3 fixtures of docs/spec/events-time-causation.md 8 as `#guard` lines: T1 to T6, T10, T13,
 T2b, the fragment rows F1 and the day numbers; et-3b's completion pieces and the counterexample to
-`embeddable_sound` as approved; et-3c's T7 (conservativity). T8 (identity) is ET-4's. -/
+`embeddable_sound` as approved; et-3c's T7 (conservativity); et-3cb's finite situation of the pack alone.
+T8 (identity) is ET-4's. -/
 namespace VE.Events.Examples
 open VE.Events
 open VE.Time (Civil dateMax)
@@ -265,6 +266,23 @@ example : ∀ S : VE.Structure.{0}, S.Admissible (regenEnv envT7 vT7) → VE.Nor
       obtain ⟨b, hb, db⟩ := hS.1 "bob" "person" rfl
       simp only [VE.Term.denote, hb, Option.some.injEq] at hw; subst hw
       exact ⟨b, db, _, b, hv, rfl, hr⟩
+
+-- The pack alone (et-3cb, `eventsPremises_satisfiable`): the named dates' days in date order satisfy every
+-- generated premise and pass the check (`embeddable_complete`); author day constants are on the first day
+#guard (eventsX vEv).all (·.eval (datesSituation envEv vEv) []) && embeddable vEv (datesSituation envEv vEv)
+#guard (datesSituation envEv vEv).domains "day" == [("day", c12), ("day", c13)] &&
+  (datesSituation envEv vEv).relations "before" == [[("day", c12), ("day", c13)]]
+#guard (eventsX vT7).all (·.eval (datesSituation envT7 vT7) []) && embeddable vT7 (datesSituation envT7 vT7)
+#guard (datesSituation envT7 vT7).constants "the_day" == some ("day", c12) &&
+  (datesSituation envT7 vT7).constants "alice" == some ("person", "") &&
+  (datesSituation envT7 vT7).domains "person" == [("person", "")]
+#guard (eventsX vR1).all (·.eval (datesSituation envDay vR1) []) && embeddable vR1 (datesSituation envDay vR1)
+-- with no named date: one day
+#guard (datesSituation envDay (base [])).domains "day" == [("day", "")] &&
+  (eventsX (base [])).all (·.eval (datesSituation envDay (base [])) []) && embeddable (base []) (datesSituation envDay (base []))
+example : ∃ M : VE.FiniteModel VE.Bridge.Entity, M.Valid (regenEnv envT7 vT7) ∧
+    VE.Norms.Sat M.asStructure (eventsX vT7) ∧ embeddable vT7 M = true :=
+  eventsPremises_satisfiable envT7 vT7 (by decide)
 
 -- `embeddable_sound` as approved does not hold: `EventsTyped` bounds no year, so a named date after
 -- 9999-12-31 passes the check while its number exceeds `dateMax` (et-3b's report; the DRI's to amend)
