@@ -35,6 +35,8 @@
 'Iceberg.water_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Examples.acceptsTable_terms' does not depend on any axioms
 'VE.Acts.Examples.tableToks_kinds' does not depend on any axioms
+'VE.Acts.Lexical.check_no_join' depends on axioms: [propext, Quot.sound]
+'VE.Acts.Lexical.wording_subject_first' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.listing_limit' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_nodup' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_ok' depends on axioms: [propext, Quot.sound]
@@ -2339,6 +2341,8 @@
 'VE.Norms.Wire.Source.lits' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Wire.Source.wf' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Wire.appendPredicates_assembly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Norms.Wire.canonicalActIn_without_acts' depends on axioms: [propext, Quot.sound]
+'VE.Norms.Wire.decodeRegulated_without_acts' depends on axioms: [propext, Quot.sound]
 'VE.Norms.agreesBelow_of_meanings' depends on axioms: [propext, Quot.sound]
 'VE.Norms.allF_denote' depends on axioms: [propext, Quot.sound]
 'VE.Norms.allF_wellFormed' does not depend on any axioms
