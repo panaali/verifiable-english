@@ -1,0 +1,40 @@
+{
+ "exact": [
+  "def Dimension.symbols",
+  "def Fresh",
+  "def ScaleDoc.symbols",
+  "def aboveNodes",
+  "def gradeCaps",
+  "def gradeOrder",
+  "def premises",
+  "def rel1",
+  "def rel2",
+  "def scalePremises",
+  "structure Dimension",
+  "structure Grade",
+  "structure Intended",
+  "structure ScaleDoc",
+  "structure StrictLinear",
+  "theorem grade_open",
+  "theorem intended_iff_degrees",
+  "theorem premises_iff_intended",
+  "theorem premises_wellTyped",
+  "theorem scalePremises_labels_nodup",
+  "theorem scales_conservative"
+ ],
+ "differs": [
+  {
+   "decl": "def WellFormed",
+   "approved": "def WellFormed (E : VE.Environment) (openTerms : List String) (D : ScaleDoc) : Bool := (D.symbols.length == (VE.Cardinality.firstUse D.symbols).length) && (((scalePremises D).map (·.1)).length == (VE.Cardinality.firstUse ((scalePremises D).map (·.1))).length) && D.dims.all fun d => E.sorts.contains d.sort && E.predicates d.more == some [d.sort, d.sort] && (match d.same with | some e => E.predicates e == some [d.sort, d.sort] | none => !d.comparable) && d.grades.all (fun g => E.predicates g.name == some [d.sort] && openTerms.contains g.name) && d.above.all (fun p => match d.grades.find? (·.name == p.1), d.grades.find? (·.name == p.2) with | some g, some h => g.direction == h.direction && p.1 != p.2 | _, _ => false) && okB ((gradeOrder d).admit gradeCaps) && okB (VE.Route.dependencyOrder (aboveNodes d))",
+   "lean": "def WellFormed (E : VE.Environment) (openTerms : List String) (D : ScaleDoc) : Bool := decide D.symbols.Nodup && decide ((scalePremises D).map (·.1)).Nodup && D.dims.all fun d => E.sorts.contains d.sort && E.predicates d.more == some [d.sort, d.sort] && (match d.same with | some e => E.predicates e == some [d.sort, d.sort] | none => !d.comparable) && d.grades.all (fun g => E.predicates g.name == some [d.sort] && openTerms.contains g.name) && d.above.all (fun p => match d.grades.find? (·.name == p.1), d.grades.find? (·.name == p.2) with | some g, some h => g.direction == h.direction && p.1 != p.2 | _, _ => false) && ((gradeOrder d).admit gradeCaps).isOk && (VE.Route.dependencyOrder (aboveNodes d)).isOk"
+  }
+ ],
+ "not_built": [
+  "def okB"
+ ],
+ "counts": {
+  "exact": 21,
+  "differs": 1,
+  "not_built": 1
+ }
+}
