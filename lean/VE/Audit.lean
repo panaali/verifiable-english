@@ -904,6 +904,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.cmp_cases_two
 #print axioms VE.Cardinality.Examples.colliding_prefix
 #print axioms VE.Cardinality.Examples.connective_cases
+#print axioms VE.Cardinality.Examples.count_lift
 #print axioms VE.Cardinality.Examples.counts_two
 #print axioms VE.Cardinality.Examples.counts_unique
 #print axioms VE.Cardinality.Examples.cterm_typed_cases
@@ -917,6 +918,10 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.everyone_two
 #print axioms VE.Cardinality.Examples.fa10_two
 #print axioms VE.Cardinality.Examples.fa1_entails
+#print axioms VE.Cardinality.Examples.fa1b_not_entails
+#print axioms VE.Cardinality.Examples.fa2Model_valid
+#print axioms VE.Cardinality.Examples.fa2_agree
+#print axioms VE.Cardinality.Examples.fa4d_not_entails
 #print axioms VE.Cardinality.Examples.fomc_wellFormed
 #print axioms VE.Cardinality.Examples.harm_or_not_two
 #print axioms VE.Cardinality.Examples.harm_two
@@ -927,6 +932,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.quantity_cases
 #print axioms VE.Cardinality.Examples.ratio_cases
 #print axioms VE.Cardinality.Examples.rel_cases_two
+#print axioms VE.Cardinality.Examples.rowsModel_valid
 #print axioms VE.Cardinality.Examples.share_two
 #print axioms VE.Cardinality.Examples.two_admissible
 #print axioms VE.Cardinality.Examples.two_all
@@ -937,12 +943,18 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.admits_iff
 #print axioms VE.Cardinality.admits_sound
 #print axioms VE.Cardinality.admitted_elab
+#print axioms VE.Cardinality.atLeast_iff_le
 #print axioms VE.Cardinality.atom_inRegion
 #print axioms VE.Cardinality.bodyCheck_iff
 #print axioms VE.Cardinality.bodyOfQ_spec
 #print axioms VE.Cardinality.bridge_hold
 #print axioms VE.Cardinality.cardinality_elab_sound
 #print axioms VE.Cardinality.countAtom_holds_iff
+#print axioms VE.Cardinality.countFin_eq
+#print axioms VE.Cardinality.count_atLeast_agree
+#print axioms VE.Cardinality.count_atMost_agree
+#print axioms VE.Cardinality.count_exactly_agree
+#print axioms VE.Cardinality.count_nOfM_agree
 #print axioms VE.Cardinality.countedUniversals_spec
 #print axioms VE.Cardinality.counted_of_mem
 #print axioms VE.Cardinality.counts_iff
@@ -954,7 +966,9 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.erase_iff
 #print axioms VE.Cardinality.erase_iff_of
 #print axioms VE.Cardinality.erasedProblem_admitted
+#print axioms VE.Cardinality.evalFin_iff
 #print axioms VE.Cardinality.exists_nodup_filter
+#print axioms VE.Cardinality.firstUse_nodup
 #print axioms VE.Cardinality.get_of_data
 #print axioms VE.Cardinality.hasCount_exists_unique
 #print axioms VE.Cardinality.hasCount_regionSize
@@ -965,6 +979,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.holds_withRegions
 #print axioms VE.Cardinality.inRegion_iff
 #print axioms VE.Cardinality.length_filter_or
+#print axioms VE.Cardinality.lower_unary
 #print axioms VE.Cardinality.mem_firstUse
 #print axioms VE.Cardinality.mem_firstUse_foldl
 #print axioms VE.Cardinality.mem_regionTable
@@ -978,6 +993,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.proportion_holds_iff
 #print axioms VE.Cardinality.ratioTyped_iff
 #print axioms VE.Cardinality.ratio_cmp
+#print axioms VE.Cardinality.refutesC_sound
 #print axioms VE.Cardinality.regionBody_holds
 #print axioms VE.Cardinality.regionConst_inj
 #print axioms VE.Cardinality.regionConst_startsWith
@@ -1000,8 +1016,10 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.tagOf_iff
 #print axioms VE.Cardinality.tcompare_qty
 #print axioms VE.Cardinality.tdenote_withRegions
+#print axioms VE.Cardinality.toFormula_denote
 #print axioms VE.Cardinality.universalsC_admitted
 #print axioms VE.Cardinality.universalsOf_admitted
+#print axioms VE.Cardinality.withRegionsFinite_denote
 #print axioms VE.Cardinality.withRegions_admissible
 #print axioms VE.Cardinality.withRegions_const
 #print axioms VE.Cardinality.withRegions_declared
