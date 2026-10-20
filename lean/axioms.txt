@@ -722,10 +722,12 @@
 'VE.Compose.faultOf_none' does not depend on any axioms
 'VE.Compose.find_congr' does not depend on any axioms
 'VE.Compose.find_cons_ite' does not depend on any axioms
+'VE.Compose.find_erase' depends on axioms: [propext, Quot.sound]
 'VE.Compose.find_first' depends on axioms: [propext]
 'VE.Compose.forIn_yield_ok' depends on axioms: [propext, Quot.sound]
 'VE.Compose.gateMatch_find' depends on axioms: [propext, Quot.sound]
 'VE.Compose.gateOf_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.gate_judgments' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.gate_legacy' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.gate_wellFormed' depends on axioms: [propext, Quot.sound]
 'VE.Compose.ite_and3' does not depend on any axioms
@@ -747,6 +749,7 @@
 'VE.Compose.rights_valid_is_slot' depends on axioms: [propext, Quot.sound]
 'VE.Compose.routeOf_base' depends on axioms: [Quot.sound]
 'VE.Compose.routeOf_table' depends on axioms: [Quot.sound]
+'VE.Compose.rowChecks_erase' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.sat_append' depends on axioms: [propext]
 'VE.Compose.sat_backgroundBaseP' depends on axioms: [propext, Quot.sound]
 'VE.Compose.sat_gate_off' depends on axioms: [propext, Quot.sound]
@@ -6260,6 +6263,7 @@
 'ResponseShape.Encoders.Document.rowKind_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.unit_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.usage_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.English.diagnose_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.English.english_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.English.eval_class' depends on axioms: [propext, Quot.sound]

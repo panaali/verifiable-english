@@ -9,6 +9,7 @@ import VE.Senses.Run
 import VE.Attribution.Preflight
 import VE.Rights.Run
 import VE.Limits
+import VE.Judgments.Status
 
 /-! # The `document` service mode: the `ve-document@1` wrapper (docs/LEAN-FIRST-PLAN.md, row 16a)
 
@@ -49,7 +50,7 @@ def unavailable (what : String) : String := "CheckerUnavailable: " ++ what
 `load_document` steps and coverage lines are the plain wrapper's. A document listing any other profile is
 `CheckerUnavailable` before its environment is decoded (its own loader would add checks this mode lacks). -/
 def ownedProfiles : List String :=
-  ["alternatives@0", "data@0", "definitions@0", "documents@1", "norm-defaults@0", "norms@0",
+  ["alternatives@0", "data@0", "definitions@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0",
    "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
 
 /-- The kinds of a rights source unit (`right`, `right_lines`, `limitation`, `bar`): under `rights@0` each is a unit
@@ -1441,6 +1442,13 @@ def Env.regulates (E : Env) : Bool :=
   | .obj kvs => kvs.toList.any fun (_, e) => (e.getObjVal? "regulated").isOk
   | _ => false
 
+/-- The predicates the environment declares with a `regulated` entry, which `judgments@0` never admits as a
+judgment (`Judgments.faultOf`). -/
+def Env.regulated (E : Env) : List String :=
+  match (E.json.getObjValD "vocabulary").getObjValD "predicates" with
+  | .obj kvs => (kvs.toList.filter fun (_, e) => (e.getObjVal? "regulated").isOk).map (·.1)
+  | _ => []
+
 def usesNorms (E : Env) (units : List SourceUnit) : Bool :=
   E.profiles.contains "norms@0" && (E.regulates || units.any fun u => u.content matches some (.norm _))
 
@@ -1644,6 +1652,56 @@ def checkNorms (E : Env) (units : List SourceUnit) (setUnits attached : List Str
   -- (`InvalidInput` for an `UnknownSymbol:` text, Python's `repr` of a name), so a rejection keeps that loader's.
   checked.mapError fun e => unavailable s!"a norm document the norms route refuses keeps its loader's diagnostic: {e}"
 
+/-! ## Judgment terms (`judgments@0`, docs/spec/judgment-terms.md 8) -/
+
+/-- What `judgments@0` does not compose with in this mode yet: their contents are no `Judgments.Content`. -/
+def judgmentsApart : List String := ["alternatives@0", "rights@0", "risk@0", "soft-norms@0"]
+
+/-- A unit's own content as the status reads it (spec 4): a formula, or a norm as its rule. -/
+def UnitContent.judged : UnitContent → Option VE.Judgments.Content
+  | .formula f => some (.formula f)
+  | .norm n => some (.rule n)
+  | _ => none
+
+/-- An active set's candidates (spec 4.2), from the front matter's readings of that `(id, version)`: an AST content
+is its formula, a `norm` content its rule (`Norms.Wire.decodeNorm`), never `readingsSets`' `top`; a pending reading
+(`content: null`) is `none`. -/
+def setCandidates (E : Env) (front : Json) (s : FrontSet) : Except String (List (Option VE.Judgments.Content)) := do
+  let sets := match Loader.optionalList front "reading_sets" with
+    | .arr xs => xs.toList
+    | _ => []
+  let set := sets.find? fun j => j.getObjValD "id" == .str s.id && j.getObjValD "version" == toJson s.version
+  let readings := match set.map (·.getObjValD "readings") with
+    | some (.arr rs) => rs.toList
+    | _ => []
+  readings.mapM fun r => do
+    let c := r.getObjValD "content"
+    if c == .null then pure none
+    else if (c.getObjVal? "norm").isOk then pure (some (.rule (← VE.Norms.Wire.decodeNorm c)))
+    else pure (some (.formula (← VE.Route.Wire.decodeClosed E.rv.environment c E.data)))
+
+/-- The names an `open` meaning lists (empty for any other meaning). -/
+def listedOf (meaning : Json) : List String :=
+  match meaning.getObjValD "open" with
+  | .arr xs => xs.toList.filterMap (·.getStr?.toOption)
+  | _ => []
+
+/-- Each unit's view (`Judgments.viewOf`), in unit order, over the active sets' candidates. -/
+def judgedViews (E : Env) (front : Json) (openNames : List String) (active : List (FrontSet × List Bool))
+    (units : List SourceUnit) : Except String (List VE.Judgments.UnitView) := do
+  let sets ← active.mapM fun (s, _) => return (s, ← setCandidates E front s)
+  let candidates := fun s => ((sets.find? (·.1 == s)).map (·.2)).getD []
+  units.mapM fun u => do
+    let m ← Loader.meaningStatus openNames u.meaning (python := true)
+    pure (VE.Judgments.viewOf active candidates u.id m (listedOf u.meaning) (u.kind == .str "asserted")
+      (u.content.bind UnitContent.judged))
+
+/-- The report field `judgments` (spec 8.3): `Judgments.usageMap`'s two lists. -/
+def usageJson (m : List (String × List String) × List String) : Json :=
+  Json.mkObj [("used", Json.arr (m.1.map fun (t, us) =>
+      Json.mkObj [("term", .str t), ("units", Json.arr (us.map Json.str).toArray)]).toArray),
+    ("unused", Json.arr (m.2.map Json.str).toArray)]
+
 /-! ## The case -/
 
 /-- The checked document: its identities, its source and units, and what its coverage reads. -/
@@ -1655,6 +1713,8 @@ structure Checked where
   rows : List RowUnit
   front : Json
   block : Option BlockCoverage
+  /-- Under `judgments@0`, the usage map (spec 8.3). -/
+  judgments : Option (List (String × List String) × List String) := none
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
@@ -1669,8 +1729,21 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   let E ← environmentOf environment (front.getObjValD "units") senses
   if ["contexts", "assessments", "bridges", "scoped"].any (front.getObjVal? · |>.isOk) then
     throw "unknown document metadata"
-  let openNames ← Loader.openTermNames E.rv (Loader.optionalList front "open_terms") (python := true)
-    (data := E.data) (formula := some (formulaCheck E))
+  -- `judgments@0` (spec 8.1): W2's check of the records first (`Judgments.records`), then their admission.
+  let judged := E.profiles.contains "judgments@0"
+  if judged then
+    if let some p := judgmentsApart.find? E.profiles.contains then
+      throw (unavailable s!"judgments@0 with {p} needs its composed Lean route")
+    if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
+  let records ← if judged then
+      VE.Judgments.records E.rv (Loader.optionalList front "open_terms") E.data (some (formulaCheck E))
+    else pure []
+  let openNames ← if judged then pure (records.map (·.1.name)) else
+    Loader.openTermNames E.rv (Loader.optionalList front "open_terms") (python := true)
+      (data := E.data) (formula := some (formulaCheck E))
+  let J ← if judged then
+      VE.Judgments.names <$> VE.Judgments.admit E.rv.environment E.rv.definitions E.regulated records
+    else pure []
   let raw ← match front.getObjValD "units" with
     | .arr xs => if xs.isEmpty then throw "document needs units" else pure xs.toList
     | _ => throw "document needs units"
@@ -1704,6 +1777,11 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     pure (sets, [])
   let active := Loader.activeOf all
   let units := units.map fun u => { u with status := Loader.foldStatus active u.id u.status }
+  -- Under `judgments@0`, each unit's status is `Judgments.status` of its view, in unit order (spec 8.1).
+  let views ← if judged then judgedViews E front openNames active units else pure []
+  let units ← if judged then (units.zip views).mapM fun (u, v) => do
+      pure { u with status := ← VE.Judgments.status E.rv.definitions J v }
+    else pure units
   -- A rights source unit the rights route reads as open is OPEN (`unit_open`).
   let units := units.map fun u =>
     if u.status == "CHECKED" && (R.bind fun R => R.opens.lookup u.id) == some true then { u with status := "OPEN" }
@@ -1726,12 +1804,16 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   if let .ok graph := front.getObjVal? "graph" then
     if withGraph then admitGraph E front graph units all active openNames narrowings
   pure ⟨← documentId doc, Loader.sourceIdOf E.version doc.source,
-    doc.source, units, ← units.mapM rowOf, front, block⟩
+    doc.source, units, ← units.mapM rowOf, front, block,
+    if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none⟩
 
 def encode (id : String) (c : Checked) : Json :=
-  VE.Route.Wire.ok id [("document_id", .str c.documentId), ("source_id", .str c.sourceId),
+  VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
-    ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)]
+    ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] ++
+    match c.judgments with
+    | some m => [("judgments", usageJson m)]
+    | none => [])
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone. -/
 def documentCase (j : Json) : Except String Json := do

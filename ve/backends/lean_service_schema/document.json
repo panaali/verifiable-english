@@ -13,6 +13,7 @@
           "coverage": {"$ref": "#/$defs/coverage"},
           "document_id": {"$ref": "common.json#/$defs/hex64"},
           "id": {"type": "string", "x-equals": "/id"},
+          "judgments": {"$ref": "#/$defs/judgments"},
           "source": {"type": "string"},
           "source_id": {"$ref": "common.json#/$defs/hex64"},
           "status": {"const": "ok"},
@@ -176,6 +177,27 @@
         "status": {"const": "error"}
       },
       "required": ["id", "status", "error", "span"],
+      "type": "object"
+    },
+    "judgments": {
+      "$comment": "Service.Document.usageJson: the usage map of the bound judgments.",
+      "additionalProperties": false,
+      "properties": {
+        "unused": {"items": {"$ref": "common.json#/$defs/token"}, "type": "array"},
+        "used": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "term": {"$ref": "common.json#/$defs/token"},
+              "units": {"items": {"$ref": "common.json#/$defs/token"}, "minItems": 1, "type": "array"}
+            },
+            "required": ["term", "units"],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["used", "unused"],
       "type": "object"
     },
     "meaning": {

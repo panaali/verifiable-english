@@ -237,9 +237,19 @@ On every list of D-all, the table answers as `dispatch` and its base rows as `to
 #guard gateOf baseRows ["norms@0", "relational-fol@0", "ve.discourse@1"] ==
   .error "UnsupportedProfile: Unsupported profile ve.discourse@1"
 #guard gateOf profileTable ["norms@0", "relational-fol@0", "ve.discourse@1"] == .ok .discourse
-#guard environmentProfiles.length == 17 && environmentProfiles.getLast? == some "readings@1"
+#guard environmentProfiles.length == 18 && environmentProfiles.getLast? == some "readings@1"
 #guard legacyProfiles.all (fun p => profileTable.any (·.profile == p)) &&
-  profileTable.all (fun r => legacyProfiles.contains r.profile)
+  (profileTable.map (·.profile)).eraseDups.filter (!legacyProfiles.contains ·) == ["judgments@0"]
+
+/-! JT-2's row (judgment-terms-PLAN.md JT-2): `judgments@0` requires `documents@1`, refuses nothing and keeps the
+route of the list without it (`gate_judgments`). -/
+#guard gateOf profileTable ["judgments@0", "relational-fol@0"] ==
+  .error "UnsupportedProfile: judgments@0 requires documents@1"
+#guard gateOf profileTable ["documents@1", "judgments@0", "relational-fol@0"] == .ok .frozen
+#guard gateOf profileTable ["definitions@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0",
+  "readings@1", "relational-fol@0"] == .ok .readings
+#guard gateOf profileTable ["documents@1", "judgments@0", "relational-fol@0", "zzz@0"] ==
+  .error "UnsupportedProfile: Unsupported profile zzz@0"
 
 /-- `TableAdmits` reads the refusals: soft-norms@0 is refused with alternatives@0, and admitted with norms@0. -/
 example : ¬ TableAdmits profileTable ["alternatives@0", "norms@0", "relational-fol@0", "soft-norms@0"] := by
