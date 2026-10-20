@@ -99,8 +99,11 @@ def run(check: str) -> tuple[bool, str]:
         first = next((m.group(0) for m in re.finditer(r"error: [^\s:]+\.lean:\d+:\d+[^\n]*", done.stdout + done.stderr)),
                      "")
         return done.returncode != 0, first[:200]
-    done = subprocess.run(["uv", "run", "python", "-m", "pytest", "-q", "-x", check], cwd=ROOT, env=ENV,
-                          capture_output=True, text=True)
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from tools.nested_pytest import command, environment
+    done = subprocess.run(command(["-q", "-x", check], python=("uv", "run", "python")), cwd=ROOT,
+                          env=environment(ENV), capture_output=True, text=True)
     failed = next((line for line in done.stdout.splitlines() if line.startswith("FAILED")), "")
     return done.returncode != 0, failed[:200]
 
