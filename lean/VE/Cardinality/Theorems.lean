@@ -8,7 +8,8 @@ are region sizes (`withRegions`); erasure is faithful (`erase_iff`), so W6a enta
 counting entailment (`cardinality_elab_sound`), and the erased problem is W6a-admitted (`erasedProblem_admitted`).
 `CEnv.WellFormed` keeps declared constants apart from region constants: every region name begins with the region
 prefix (`regionConst_startsWith`) and names one (sort, region) pair (`regionConst_inj`). The count atoms for W6a's
-four counting forms are defined here; their agreement theorems and `refutesC_sound` are qt-a1c's. -/
+four counting forms mean what W6a's expansions mean (`count_atLeast_agree` … `count_nOfM_agree`), and a finite model
+that `refutesC` accepts makes the counting claim not entailed (`refutesC_sound`). -/
 namespace VE.Cardinality
 open VE.Time (QTerm QFormula TStructure TEntails)
 universe u v
