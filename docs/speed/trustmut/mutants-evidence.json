@@ -1,7 +1,7 @@
 {
- "runs": "TM1-TM78 on d09bf54d4 in three worktrees (--no-baseline: the test file passes there), joined in order; TM1, TM2, TM22, TM36 (the build path) and TM79 again on 0ee7bfc45, which adds the build time limit",
- "killed": 77,
- "total": 77,
+ "runs": "TM1-TM78 on d09bf54d4 in three worktrees (--no-baseline: the test file passes there), joined in order; TM1, TM2, TM22, TM36 (the build path) and TM79 again on 0ee7bfc45, which adds the build time limit; TM80 and TM81 (review F13) on 05ea60664",
+ "killed": 79,
+ "total": 79,
  "mutants": [
   {
    "id": "TM1",
@@ -1371,6 +1371,40 @@
    "seconds": 23.3,
    "output_tail": "rop-last: xs -> (xs.dropLast)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-last: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).reverse.take 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).drop 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-last: xs -> (xs.reverse.take 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs -> (xs.drop 1)\nE         trust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 38 NOT RUN in 10 s\nE         \nE       assert (3 == 3 and 3 == 1)\nE        +  where 3 = len([{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}, {'id': 'M002', 'file': 'Demo/De...'definition': 'Demo.small', ...}, {'id': 'M003', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}])\nE        +  and   3 = CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/to...-> (xs.drop 1)\\ntrust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 38 NOT RUN in 10 s\\n', stderr='').returncode\n\ntests/test_trust_mutants.py:393: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_build_past_its_time_limit_is_unknown\n1 failed in 22.58s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-8fobxdfx)\n",
    "commit": "0ee7bfc45"
+  },
+  {
+   "id": "TM80",
+   "file": "tools/trust_mutants.py",
+   "claim": "the modules an outside --test file imports are built with the mutant, so a proof it broke there is cut and seen by the probe (review F13)",
+   "source_sha256": "e883807d3ffa3ed7ac8a96d93bd50e9e8a58e544d9f0dfd2e94d8eeb4cda074c",
+   "tests": [
+    "tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 92.2,
+   "output_tail": "\"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\", \"--test\", \"checks/Check.lean\")\n        for name in (\"f\", \"g\"):\n            mine = of(mutants, name)\n>           assert mine and not [m for m in mine if m[\"status\"] == \"KILLED\"], (mine, done.stdout + done.stderr)\nE           AssertionError: ([{'id': 'M002', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}, {'id': 'M006', 'file': 'Demo/Defs.... Demo.g lit-minus: 4 -> 3\nE             trust_mutants: 8 KILLED, 16 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 22 s\nE             ')\nE           assert ([{'id': 'M002', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}, {'id': 'M006', 'file': 'Demo/Defs.l...ne': 5, 'definition': 'Demo.f', ...}, {'id': 'M028', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}] and not [{'id': 'M002', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}, {'id': 'M010', 'file': 'Demo/Defs.l...ne': 5, 'definition': 'Demo.f', ...}, {'id': 'M024', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}])\n\ntests/test_trust_mutants.py:422: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant\n1 failed in 40.10s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-2kzn1amp)\n",
+   "commit": "05ea60664"
+  },
+  {
+   "id": "TM81",
+   "file": "tools/trust_mutants.py",
+   "claim": "an outside --test file whose imports cannot be read stops the run (review F13)",
+   "source_sha256": "e883807d3ffa3ed7ac8a96d93bd50e9e8a58e544d9f0dfd2e94d8eeb4cda074c",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 114.8,
+   "output_tail": "lean/Demo/Defs.lean:7 Demo.evens list-first: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-first: xs -> (xs.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-last: xs -> (xs.dropLast)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-last: xs -> (xs.reverse.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-last: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).reverse.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).drop 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs -> (xs.drop 1)\nE         trust_mutants: 12 KILLED, 21 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 71 s\nE         \nE       assert (1 == 2)\nE        +  where 1 = CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/to...> (xs.drop 1)\\ntrust_mutants: 12 KILLED, 21 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 71 s\\n', stderr='').returncode\n\ntests/test_trust_mutants.py:432: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run\n1 failed in 92.57s (0:01:32)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-88rgyxoq)\n",
+   "commit": "05ea60664"
   }
  ]
 }

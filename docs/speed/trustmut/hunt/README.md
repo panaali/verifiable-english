@@ -1,4 +1,4 @@
-# speed-trustmut: the probes of reviews F1, F6-F12 and of the adversarial hunts (REPORT section 1e)
+# speed-trustmut: the probes of reviews F1, F6-F14 and of the adversarial hunts (REPORT section 1e)
 
 Each `<name>.sh` is one command, run from the root of a checkout of this branch:
 
@@ -14,7 +14,7 @@ default), which is past the probe's own wait. Each fixed form is also a row of `
 
 | Names | Source |
 |---|---|
-| F1, F6-F12 | the reviews' PROBE lines (F12: F11's with `bS`) |
+| F1, F6-F14 | the reviews' PROBE lines (F12: F11's with `bS`; F14 reads REPORT.md and the saved evidence, no Lean) |
 | H1-H7, G1-G5 | hunt 1 (G: forms tried that were fine) |
 | N1-N10 | hunt 2 |
 | P1-P9 | hunt 3 |
