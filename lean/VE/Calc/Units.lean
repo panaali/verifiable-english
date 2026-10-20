@@ -1,4 +1,5 @@
 import VE.Calc.Dimension
+import VE.Calc.Wire
 import VE.Time.Wire
 
 /-! `ve-units@2` (math-evidence spec 6.2, ME-6): its only decoder, its identity (3.3, J1) and the
@@ -8,6 +9,7 @@ unchanged; each of its tags is its own base dimension (`legacyDim`) and has no f
 namespace VE.Calc.Units
 open Lean VE.Calc VE.Numbers
 open VE.Bridge (fields identifier)
+open VE.Calc.Wire (invalid checkFields plain)
 
 def affineNames : List String := ["celsius", "degree_celsius", "fahrenheit", "degree_fahrenheit"]
 def logarithmicNames : List String := ["decibel", "bel", "neper"]
@@ -23,15 +25,6 @@ structure UnitEnv where
   units : List UnitDef
   /-- The environment as hashed for identity (3.3). -/
   identity : Json
-
-def invalid (path what : String) : String := s!"InvalidInput: {path} {what}"
-
-def checkFields (path : String) (j : Json) (names : List String) : Except String Unit := do
-  let actual ← match fields j with
-    | .ok fs => pure (fs.map Prod.fst)
-    | .error _ => throw (invalid path "must be an object")
-  if let some n := actual.find? (!names.contains ·) then throw (invalid s!"{path}.{n}" "is unknown")
-  if let some n := names.find? (!actual.contains ·) then throw (invalid s!"{path}.{n}" "is missing")
 
 /-- `base_exponents`: each a declared base dimension with a nonzero integer exponent, in normal form. -/
 def decodeExponents (bases : List String) (path : String) (j : Json) : Except String PhysDim := do
@@ -51,7 +44,7 @@ def decodeFactor (path : String) (j : Json) : Except String (Rat × String) := d
     | .ok d => pure d
     | .error e => throw (if e.startsWith "ResourceLimit" then e else invalid path "must be a decimal")
   unless 0 < decValue d do throw (invalid path "must be more than zero")
-  pure (decValue d, VE.Time.Dec.toString { d with frac := (d.frac.reverse.dropWhile (· = 0)).reverse })
+  pure (decValue d, plain (Printed.ofDec d))
 
 def decodeUnit (bases : List String) (name : String) (record : Json) :
     Except String (UnitDef × (String × Json)) := do
