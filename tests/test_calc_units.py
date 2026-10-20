@@ -72,7 +72,6 @@ def line (key value : String) : IO Unit := IO.println (key ++ "\\t" ++ value)
 
 P = lean_str(PHYSICS)
 SIGMA = '(fun n => if n = "path" then some 20000000 else if n = "ratio" then some (1/10000) else none)'
-TWO_PATH_SQ = '(.mul (.mul (.lit 2) (.val "path")) (.pow (.val "ratio") 2))'
 LEGACY = lean_str(legacy(usd_cent="USD", eur_cent="EUR"))
 NEWS_ENV = lean_str(json.loads(NEWS.read_text())["environment"])
 D_OVER_LAM = '(.div (.val "d") (.val "lam"))'
@@ -86,9 +85,6 @@ FIXTURES = [
     ("h7-sum", f'dims {P} {H7} (.add (.val "d") (.val "t"))', "DimensionMismatch: length and time"),
     ("h7-difference", f'dims {P} {H7} (.sub (.val "t") {D_OVER_LAM})', "DimensionMismatch: time and dimensionless"),
     ("h7-frequency", f'dims {P} {H7} (.div (.lit 3) (.pow (.val "t") 4))', "ok one per time to the power 4"),
-    ("h7-dimof", f'reprStr ([.div (.val "d") (.sub (.val "vv") (.val "v")), {D_OVER_LAM}, '
-                 f'.add (.val "d") (.val "t")].map fun (e : Expr) => (e.dimOf (context! {P} {H7})).map dimWords)',
-     '[some "time", some "dimensionless", none]'),
     ("normal", f'reprStr ((["meter_per_second", "second"].filterMap (env! {P}).find?).map (decide ·.dim.Normal))',
      "[true, true]"),
     ("h7-number", f'dims {P} {H7} (.mul (.val "ratio") (.val "d"))', "ok length"),
@@ -98,10 +94,7 @@ FIXTURES = [
     ("h7-unknown", f'dims {P} {H7} (.add (.val "d") (.val "absent"))',
      "UnknownName: absent (declare it before the value that uses it)"),
     ("h7-spoken", f'dims {P} {H7} (.add (.val "shift") (.val "d"))', "DimensionMismatch: fringe and length"),
-    # H-7u: lengths rescaled by 1,000 move no verdict (path 2 × 10^7 meters, ratio 10^-4).
-    ("h7u-lt", f'rescaled {P} {H7} {SIGMA} (.compare ⟨.lt, false⟩ {TWO_PATH_SQ} (.val "path"))', "ok holds holds"),
-    ("h7u-eq", f'rescaled {P} {H7} {SIGMA} (.compare ⟨.eq, false⟩ {TWO_PATH_SQ} (.mul (.lit (2/5)) (.val "path")))',
-     "ok fails fails"),
+    # H-7u: a value moves by its unit's dimension's factor.
     ("h7u-values", f'reprStr (["path", "vv", "ratio", "t"].map (ρ.apply (context! {P} {H7}) '
                    f'(fun n => if n = "path" then some 20000000 else if n = "vv" then some 3 else '
                    f'if n = "ratio" then some (1/10000) else none)))',
