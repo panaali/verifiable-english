@@ -533,6 +533,17 @@ if behaviour == "handshake":
     hello["service"] = "other"
 if behaviour == "null-modes":
     hello["modes"] = None
+# The modes are the registry's exactly (envelope.json const): each fault below is refused at the start.
+if behaviour == "fewer-modes":
+    hello["modes"] = hello["modes"][:-1]
+if behaviour == "extra-mode":
+    hello["modes"] = hello["modes"] + ["absent"]
+if behaviour == "reordered-modes":
+    hello["modes"] = hello["modes"][1::-1] + hello["modes"][2:]
+if behaviour == "duplicate-mode":
+    hello["modes"] = hello["modes"] + hello["modes"][:1]
+if behaviour == "retyped-mode":
+    hello["modes"] = [7] + hello["modes"][1:]
 if behaviour == "small-limits":
     hello["limits"]["max_cases"] = 1
 if behaviour == "large-limits":
@@ -1458,8 +1469,9 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
         service.close()
 
 
-@pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits", "large-limits",
-                                       "missing-limit", "bad-protocol", "startup-eof"])
+@pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "fewer-modes", "extra-mode",
+                                       "reordered-modes", "duplicate-mode", "retyped-mode", "small-limits",
+                                       "large-limits", "missing-limit", "bad-protocol", "startup-eof"])
 def test_bad_or_missing_handshake_is_unavailable(tmp_path, expired, behaviour):
     expired.handshakes = behaviour == "silent"
     service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
