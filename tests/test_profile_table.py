@@ -32,7 +32,7 @@ def test_python_reads_the_rows_and_the_environment_profiles():
         assert all(type(q) is str for q in row["requires"])
         assert all(type(pair) is list and len(pair) == 2 and all(type(x) is str for x in pair)
                    for pair in row["refuses"])
-    assert {r["profile"] for r in profiles.ROWS} - set(profiles.BY_NAME) == {"ve.discourse@1", "right-clauses@0"}
+    assert {r["profile"] for r in profiles.ROWS} - set(profiles.BY_NAME) == {"ve.discourse@1", "right-clauses@0", "judgments@0"}
 
 
 def test_no_python_gate_remains():

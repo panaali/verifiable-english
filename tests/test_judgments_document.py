@@ -356,13 +356,15 @@ def test_layers_judgments_does_not_compose_with_are_unavailable(service):
         "CheckerUnavailable: judgments@0 with senses needs its composed Lean route", None)
 
 
-def test_the_answer_fits_its_schema_and_models_never_see_the_profile(service):
-    """The genuine answer passes the generated `document.json`; Python's model projection drops the profile."""
+def test_the_answer_fits_its_schema_and_models_refuse_the_profile(service):
+    """The genuine answer passes the generated `document.json`. No model mode composes with the layer yet (jt-2b),
+    and Python's model projection refuses it as they do."""
     from ve.backends.service_schema import check_row
     from ve.profiles import model_environment
     case = {"id": "d", "document": document(service, [unit("u1", opened("arbitrary"), ALPHA)], J1), "admit": False}
     check_row("document", service.run("document", [case])[0], case, 0)
-    assert model_environment(environment())["profiles"] == [p for p in PROFILES if p != "judgments@0"]
+    with pytest.raises(Exception, match="Unsupported profile judgments@0"):
+        model_environment(environment())
 
 
 def test_python_never_decides_a_judgments_document(service, tmp_path):

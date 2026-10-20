@@ -51,7 +51,6 @@ MODEL_REDUCTIONS = {
     "data@0": _KEPT,
     "definitions@0": _KEPT,
     "documents@1": _KEPT,
-    "judgments@0": ModelReduction(),
     "nary@0": _KEPT,
     "norm-defaults@0": ModelReduction(unspecified="deny"),
     "norms@0": _KEPT,
