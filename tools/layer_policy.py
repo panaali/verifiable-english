@@ -130,7 +130,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
     if module.startswith("VE.Ask."):
         return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
-    if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.Compat", "VE.Acts.LexicalExamples"}:
+    if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.LexicalProofs", "VE.Acts.Compat",
+                  "VE.Acts.LexicalExamples"}:
         return 2  # act-phrases AP-1: the lexical act check, below the norms decoder that calls it
     if module.startswith("VE.Words."):
         return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
