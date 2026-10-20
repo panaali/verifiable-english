@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36241,
+    "total_lines": 36470,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1771,6 +1771,27 @@
           "replayDilemmaU"
         ],
         "reason": "the alternatives source with the completion, its package bindings and witness filling from JSON (ET-7; et-7b's scenario rows use the same decoded source); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Calc/Units.lean",
+        "lines": 229,
+        "sha256": "ac0632746b31f47132814a74261bcae42619cd5c2ef1afb5738b1a7f34ac04f9",
+        "ranges": [
+          [
+            1,
+            229
+          ]
+        ],
+        "declarations": [
+          "checkFields",
+          "decodeExponents",
+          "decodeFactor",
+          "decodeUnit",
+          "decodeV2",
+          "decodeLegacy",
+          "decode"
+        ],
+        "reason": "ve-units@2 (math-evidence spec 6.2, me-6b): its only decoder, its identity and the claim-level dimension checks; ve-units@1 through W6a's decodeEnvironment; the full file is pinned"
       }
     ],
     "other_json": {
@@ -1882,7 +1903,8 @@
       "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
       "lean/VE/Service/ActsExamples.lean": "fixtures only: #guard cases of act-phrases AP-1's profile part (ap-1b) that build acts@0 environments as JSON test inputs; no admission path, service mode or record reads it",
       "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope, and no service mode or route calls it yet (SC-1b)",
-      "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)"
+      "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)",
+      "lean/VE/Calc/UnitsExamples.lean": "fixtures only: generated #guard checks of the ve-units@2 fixture table (tools/calc_units_fixtures.py) decode each environment and read its identity; no runner path"
     }
   },
   "plan_operations": {
