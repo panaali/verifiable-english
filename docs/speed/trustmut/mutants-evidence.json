@@ -1,0 +1,1704 @@
+{
+ "runs": "TM1-TM78 on d09bf54d4 in three worktrees (--no-baseline: the test file passes there), joined in order; TM1, TM2, TM22, TM36 (the build path) and TM79 again on 0ee7bfc45, which adds the build time limit; TM80 and TM81 (review F13) on 05ea60664; TM84 (review F14's class, command mode: hunt/F14c.sh) on 5d2df727f; TM82, TM83 and TM86-TM93 again and TM94-TM97 (review F16's class: hunt/F16.sh, hunt/F16c.sh) on a71b9c573, after claims.py last changed; TM85 again and TM98, TM99 (the probes' hashes: hunt/F14c.sh) on a467e4f4e, after hunt/run.py last changed and the probes ran",
+ "killed": 97,
+ "total": 97,
+ "mutants": [
+  {
+   "id": "TM1",
+   "file": "tools/trust_mutants.py",
+   "claim": "a failing proof is cut and the build repeated, never left to decide the mutant",
+   "source_sha256": "3b092aa1f1b1d834c6cb806ea3c3c8bc09bcc9dda2931f7af54a716ed40fe219",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 32.5,
+   "output_tail": "                                                                        [100%]\n=================================== FAILURES ===================================\n_______________________ test_a_failing_proof_is_no_kill ________________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792461275522295493), ...})\n\n    def test_a_failing_proof_is_no_kill(default_run):\n        \"\"\"The mutant breaks `double_eq` in its own module, and `four` and `double_two` in another (review F1:\n        `double_two`'s statement names `double`, and only its proof script fails); no check reads `double`.\"\"\"\n        _, mutants, _, _ = default_run\n        (double,) = of(mutants, \"double\")\n>       assert (double[\"operator\"], double[\"after\"], double[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:226: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill - Asserti...\n1 failed in 31.82s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-mdpw8x1a)\n",
+   "commit": "0ee7bfc45"
+  },
+  {
+   "id": "TM2",
+   "file": "tools/trust_mutants.py",
+   "claim": "the modules that import the mutated one and hold its checks are built",
+   "source_sha256": "3b092aa1f1b1d834c6cb806ea3c3c8bc09bcc9dda2931f7af54a716ed40fe219",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 20.4,
+   "output_tail": "=========== FAILURES ===================================\n________________ test_a_well_guarded_definition_has_no_survivor ________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/t...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792461308095599787), ...})\n\n    def test_a_well_guarded_definition_has_no_survivor(default_run):\n        _, mutants, _, _ = default_run\n        small = of(mutants, \"small\")\n        assert {m[\"operator\"] for m in small} >= {\"lt-le\", \"lt-eq\", \"lit-plus\", \"lit-minus\", \"body-true\", \"body-false\"}\n>       assert all(m[\"status\"] == \"KILLED\" for m in small), small\nE       AssertionError: [{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}, {'id': 'M002', 'file': 'Demo/De...'definition': 'Demo.small', ...}, {'id': 'M025', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}]\nE       assert False\nE        +  where False = all(<generator object test_a_well_guarded_definition_has_no_survivor.<locals>.<genexpr> at 0x76299b7a7850>)\n\ntests/test_trust_mutants.py:206: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_well_guarded_definition_has_no_survivor\n1 failed in 19.64s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-1oaos7b1)\n",
+   "commit": "0ee7bfc45"
+  },
+  {
+   "id": "TM3",
+   "file": "tools/trust_mutants.py",
+   "claim": "a list is cut to [] (a guard over [] leaves that survivor)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 38.1,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________ test_a_guard_over_the_empty_list_leaves_survivors _______________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-stm-seed3/.venv/bin/python', '/home/seyran/code/ve-stm-seed3/tools/trust...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792459946748059934), ...})\n\n    def test_a_guard_over_the_empty_list_leaves_survivors(default_run):\n        done, mutants, _, _ = default_run\n        evens = of(mutants, \"evens\")\n        survivors = [m for m in evens if m[\"status\"] == \"SURVIVOR\"]\n>       assert {\"list-empty\", \"list-first\", \"lit-plus\", \"eq-ne\"} <= {m[\"operator\"] for m in survivors}\nE       AssertionError: assert {'eq-ne', 'li...', 'lit-plus'} <= {'eq-ne', 'li...t-minus', ...}\nE         \nE         Extra items in the left set:\nE         'list-empty'\n\ntests/test_trust_mutants.py:214: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors\n1 failed in 37.39s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jhexgg9o)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM4",
+   "file": "tools/trust_mutants.py",
+   "claim": "--allow suppresses exactly the listed definition and operator",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_allow_suppresses_exactly_its_operator"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_allow_suppresses_exactly_its_operator"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 38.7,
+   "output_tail": "ckage = PosixPath('/tmp/pytest-of-seyran/pytest-28124/package0')\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-28124/test_allow_suppresses_exactly_0')\n\n    def test_allow_suppresses_exactly_its_operator(package, tmp_path):\n        allow = tmp_path / \"allow.json\"\n        allow.write_text(json.dumps({\"allow\": [{\"definition\": \"Demo.evens\", \"operator\": \"list-empty\",\n                                                \"reason\": \"the fixture's guard is over [] by design\"}]}))\n        done, mutants = tool(package, tmp_path / \"run\", \"--allow\", str(allow))\n        evens = of(mutants, \"evens\")\n        allowed = [m for m in evens if m[\"status\"] == \"ALLOWED\"]\n>       assert allowed and all(m[\"operator\"] == \"list-empty\" for m in allowed)\nE       AssertionError: assert ([{'id': 'M008', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}, {'id': 'M013', 'file': 'Demo/De...nition': 'Demo.evens', ...}, {'id': 'M033', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}, ...] and False)\nE        +  where False = all(<generator object test_allow_suppresses_exactly_its_operator.<locals>.<genexpr> at 0x7e362e245490>)\n\ntests/test_trust_mutants.py:360: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_allow_suppresses_exactly_its_operator\n1 failed in 38.02s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-zdd9u8wq)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM5",
+   "file": "tools/trust_mutants.py",
+   "claim": "mutants are written to a private copy: the checkout's bytes and times stay",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_mutants_are_built_in_a_scratch_copy"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_mutants_are_built_in_a_scratch_copy"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 39.2,
+   "output_tail": "2/tools/trust...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792459971124997112), ...})\n\n    def test_mutants_are_built_in_a_scratch_copy(default_run):\n        _, mutants, before, after = default_run\n        assert any(m[\"status\"] == \"KILLED\" for m in mutants)\n>       assert after == before\nE       AssertionError: assert {'.gitignore'...4997112), ...} == {'.gitignore'...4997112), ...}\nE         \nE         Omitting 41 identical items, use -vv to show\nE         Differing items:\nE         {'lean/Demo/Far/Check.lean': (b'import Demo.Defs\\n\\ntheorem Demo.Far.half_four : Demo.half 4 = 2 := by decide\\n', 1792459985881854493)} != {'lean/Demo/Far/Check.lean': (b'import Demo.Defs\\n\\ntheorem Demo.Far.half_four : Demo.half 4 = 2 := by decide\\n', 1792459971048651438)}\nE         {'lean/Demo/Examples.lean': (b'import Demo.Defs\\nimport Demo.Proofs\\nopen Demo\\n\\n#guard small 2\\n#guard !small 3\\n#gu... x = x} := \\xe2\\x9f\\xa80, by decide\\xe2\\x9f\\xa9\\n\\nexample : boxedDecide.val = 0 := by decide\\n', 1792460005819685306)} !...\nE         \nE         ...Full output truncated (3 lines hidden), use '-vv' to show\n\ntests/test_trust_mutants.py:350: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_mutants_are_built_in_a_scratch_copy\n1 failed in 38.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-f9lodzk0)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM6",
+   "file": "tools/trust_mutants.py",
+   "claim": "every mutant past --max-mutants prints as NOT RUN",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 22.7,
+   "output_tail": "/package0')\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-28123/test_max_mutants_lists_the_res1')\nlimit = 3\n\n    @pytest.mark.parametrize(\"limit\", [0, 3])\n    def test_max_mutants_lists_the_rest_as_not_run(package, tmp_path, limit):\n        \"\"\"A budget of 0 runs nothing and never exits 0 (3: incomplete).\"\"\"\n        done, mutants = tool(package, tmp_path / \"run\", \"--max-mutants\", str(limit))\n        ran = [m for m in mutants if m[\"status\"] != \"NOT RUN\"]\n        assert len(ran) == limit and len(mutants) > limit\n        printed = [line for line in done.stdout.splitlines() if line.startswith(\"NOT RUN \")]\n>       assert len(printed) == len(mutants) - limit\nE       AssertionError: assert 1 == (41 - 3)\nE        +  where 1 = len(['NOT RUN lean/Demo/Defs.lean:4 Demo.small lt-eq: < -> ='])\nE        +  and   41 = len([{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}, {'id': 'M002', 'file': 'Demo/De...on': 'boxedEval', ...}, {'id': 'M006', 'file': 'Demo/Examples.lean', 'line': 31, 'definition': 'boxedGuard', ...}, ...])\n\ntests/test_trust_mutants.py:394: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run[0]\nFAILED tests/test_trust_mutants.py::test_max_mutants_lists_the_rest_as_not_run[3]\n2 failed in 21.80s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ut8f_5_r)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM7",
+   "file": "tools/trust_mutants.py",
+   "claim": "the receiver of every list method (`.find?` included) is a list the operators cut",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_generator_cuts_every_list_a_condition_reads"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_the_generator_cuts_every_list_a_condition_reads"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 0.9,
+   "output_tail": "    \"\"\"The list positions of reviews ap-2 F7, F10 and F11 (a method's receiver, `for ... in`, a `++` operand), and\n        the token operators; nothing inside a string literal is mutated.\"\"\"\n        import trust_mutants\n        text = ('def ok (fs : List (List String)) (ms : List String) : Bool := Id.run do\\n'\n                '  for f in fs do\\n    if (f.find? (· == \"x<1\")).isSome then return false\\n'\n                '  return fs.all (·.isEmpty) && (ms ++ [\"y\"]).length < 3\\n')\n        found = {(op, text[s:e], new) for op, s, e, new in trust_mutants.mutants(text, \"def\", 0, len(text))}\n>       assert {(\"list-drop-first\", \"f\", \"(f.drop 1)\"), (\"list-drop-last\", \"fs\", \"(fs.dropLast)\"),\n                (\"list-first\", \"ms\", \"(ms.take 1)\"), (\"append-left\", ' ++ [\"y\"]', \"\"), (\"lt-le\", \"<\", \"≤\"),\n                (\"lit-plus\", \"3\", \"4\"), (\"all-any\", \"all\", \"any\"), (\"and-or\", \"&&\", \"||\"),\n                (\"bool-flip\", \"false\", \"true\")} <= found\nE       AssertionError: assert {('all-any', ...pLast)'), ...} <= {('all-any', ...\\n\\n\\n'), ...}\nE         \nE         Extra items in the left set:\nE         ('list-drop-first', 'f', '(f.drop 1)')\n\ntests/test_trust_mutants.py:406: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_generator_cuts_every_list_a_condition_reads\n1 failed in 0.19s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-pebh8n7g)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM8",
+   "file": "tools/trust_mutants.py",
+   "claim": "an `example` is a check only when decide, native_decide or rfl proves it (review F1)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 40.9,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________________ test_an_example_proved_by_a_tactic_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-stm-seed2/.venv/bin/python', '/home/seyran/code/ve-stm-seed2/tools/trust...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792460010409172041), ...})\n\n    def test_an_example_proved_by_a_tactic_is_no_kill(default_run):\n        \"\"\"Review F1: an `example` not proved by `decide`/`native_decide`/`rfl` is a proof, cut in the mutated module\n        and in the module of its checks alike.\"\"\"\n        _, mutants, _, _ = default_run\n        (triple,) = of(mutants, \"triple\")\n>       assert (triple[\"operator\"], triple[\"after\"], triple[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:234: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_example_proved_by_a_tactic_is_no_kill\n1 failed in 39.90s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-alc4bg4k)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM9",
+   "file": "tools/trust_mutants.py",
+   "claim": "a theorem whose statement names the definition, proved by a tactic, is a proof: its failure is cut, never a kill (review F1)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 39.4,
+   "output_tail": "                                                                        [100%]\n=================================== FAILURES ===================================\n_______________________ test_a_failing_proof_is_no_kill ________________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-stm-seed3/.venv/bin/python', '/home/seyran/code/ve-stm-seed3/tools/trust...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792460007581118028), ...})\n\n    def test_a_failing_proof_is_no_kill(default_run):\n        \"\"\"The mutant breaks `double_eq` in its own module, and `four` and `double_two` in another (review F1:\n        `double_two`'s statement names `double`, and only its proof script fails); no check reads `double`.\"\"\"\n        _, mutants, _, _ = default_run\n        (double,) = of(mutants, \"double\")\n>       assert (double[\"operator\"], double[\"after\"], double[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\")\nE       AssertionError: assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:226: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_failing_proof_is_no_kill - Asserti...\n1 failed in 38.56s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s53qn6kh)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM10",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check outside the definition's directory whose statement names it is built",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_decide_check_outside_the_directory_naming_the_definition_kills"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_decide_check_outside_the_directory_naming_the_definition_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 43.0,
+   "output_tail": "== FAILURES ===================================\n____ test_a_decide_check_outside_the_directory_naming_the_definition_kills _____\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-stm-seed1/.venv/bin/python', '/home/seyran/code/ve-stm-seed1/tools/trust...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792460024545398607), ...})\n\n    def test_a_decide_check_outside_the_directory_naming_the_definition_kills(default_run):\n        _, mutants, _, _ = default_run\n        half = of(mutants, \"half\")\n        assert {m[\"operator\"] for m in half} == {\"lit-plus\", \"lit-minus\"}\n>       assert all(m[\"status\"] == \"KILLED\" and m[\"detail\"].startswith(\"lean/Demo/Far/Check.lean:3:\") for m in half), half\nE       AssertionError: [{'id': 'M016', 'file': 'Demo/Defs.lean', 'line': 20, 'definition': 'Demo.half', ...}, {'id': 'M027', 'file': 'Demo/Defs.lean', 'line': 20, 'definition': 'Demo.half', ...}]\nE       assert False\nE        +  where False = all(<generator object test_a_decide_check_outside_the_directory_naming_the_definition_kills.<locals>.<genexpr> at 0x76563265b3e0>)\n\ntests/test_trust_mutants.py:310: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_decide_check_outside_the_directory_naming_the_definition_kills\n1 failed in 42.15s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s2tcu2bj)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM11",
+   "file": "tools/trust_map.py",
+   "claim": "a `#guard_msgs … in` line opens the command it wraps (one span), as `set_option … in` (review F6)",
+   "source_sha256": "4f183615862d09350bb5ff12fa2c111b1c466635367f45453ae295a1482da74d",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps",
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 53.3,
+   "output_tail": "p.scan opens a command at the `#guard_msgs … in` line before it, as at `set_option … in`,\n        so the role of the line Lean reports is the wrapped command's.\"\"\"\n        import trust_map\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(\"#guard f 1\\n\\n#guard_msgs in\\nexample : f 1 = 2 := by\\n  simp [f]\\n\\n/-- info: 2 -/\\n\"\n                        \"#guard_msgs (whitespace := lax) in\\n#eval f 1\\n\")\n        decls, _, problems = trust_map.scan(path, [])\n        code = trust_mutants.code_only(path.read_text()).split(\"\\n\")\n        assert problems == []\n>       assert [(d.start, d.end, trust_mutants.classify(d.kind, \"\\n\".join(code[d.start - 1:d.end]))) for d in decls] == [\n            (1, 2, \"check\"), (3, 7, \"proof\"), (8, 9, \"check\")]\nE       AssertionError: assert [(1, 2, 'chec..., 9, 'check')] == [(1, 2, 'chec..., 9, 'check')]\nE         \nE         At index 1 diff: (3, 3, 'other') != (3, 7, 'proof')\nE         Left contains 2 more items, first extra item: (8, 8, 'other')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:265: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\nFAILED tests/test_trust_mutants.py::test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps\n2 failed in 52.43s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-uizxxecp)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM12",
+   "file": "tools/trust_mutants.py",
+   "claim": "a `#guard_msgs` around a tactic proof is a proof, never a kill (review F6)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 53.4,
+   "output_tail": "==================================\n________________ test_a_proof_wrapped_in_guard_msgs_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-stm-seed3/.venv/bin/python', '/home/seyran/code/ve-stm-seed3/tools/trust...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792460047069598940), ...})\n\n    def test_a_proof_wrapped_in_guard_msgs_is_no_kill(default_run):\n        \"\"\"Review F6 (PROBE F6): Lean reports a wrapped proof's failure at its `#guard_msgs` line, written alone or with\n        the `example`; the wrapper is the proof's, and it is blanked with the cut (else the `sorry` warning trips it).\"\"\"\n        _, mutants, _, _ = default_run\n        (quad,) = of(mutants, \"quad\")\n>       assert (quad[\"operator\"], quad[\"after\"], quad[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\"), quad\nE       AssertionError: {'id': 'M017', 'file': 'Demo/Defs.lean', 'line': 23, 'definition': 'Demo.quad', ...}\nE       assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\n1 failed in 52.47s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-d1fd6wdn)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM13",
+   "file": "tools/trust_mutants.py",
+   "claim": "a proof cut to `sorry` loses its `#guard_msgs` wrapper, which the `sorry` warning would fail (review F6)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 47.8,
+   "output_tail": "==================================\n________________ test_a_proof_wrapped_in_guard_msgs_is_no_kill _________________\n\ndefault_run = (CompletedProcess(args=['/home/seyran/code/ve-stm-seed1/.venv/bin/python', '/home/seyran/code/ve-stm-seed1/tools/trust...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792460068000262957), ...})\n\n    def test_a_proof_wrapped_in_guard_msgs_is_no_kill(default_run):\n        \"\"\"Review F6 (PROBE F6): Lean reports a wrapped proof's failure at its `#guard_msgs` line, written alone or with\n        the `example`; the wrapper is the proof's, and it is blanked with the cut (else the `sorry` warning trips it).\"\"\"\n        _, mutants, _, _ = default_run\n        (quad,) = of(mutants, \"quad\")\n>       assert (quad[\"operator\"], quad[\"after\"], quad[\"status\"]) == (\"lit-plus\", \"1\", \"SURVIVOR\"), quad\nE       AssertionError: {'id': 'M017', 'file': 'Demo/Defs.lean', 'line': 23, 'definition': 'Demo.quad', ...}\nE       assert ('lit-plus', '1', 'UNKNOWN') == ('lit-plus', '1', 'SURVIVOR')\nE         \nE         At index 2 diff: 'UNKNOWN' != 'SURVIVOR'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:242: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill\n1 failed in 46.75s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s8yniq_h)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM14",
+   "file": "tools/trust_mutants.py",
+   "claim": "a proof cut keeps the comments after it: the next `#guard_msgs`'s docstring (review F6)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_proof_wrapped_in_guard_msgs_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 38.5,
+   "output_tail": "orem t : @f = @g  := sorry\\n\\n\\n#guard f 1 == 2\\n\")],\n        ids=short)\n    def test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it(tmp_path, text, last, cut):\n        \"\"\"Review F6: the cut blanks the wrapper (the `sorry` warning would fail it) and keeps the whole comments after\n        the proof (the next `#guard_msgs`'s docstring is in the span before it), every line kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        first = 2 if text.startswith(\"--\") else 1\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       AssertionError: assert 'example : f ...sorry\\n\\n\\n\\n' == 'example : f ...y\\n\\n\\n-- c\\n'\nE         \nE           example : f 1 = 2  := sorry\nE           \nE           \nE         - -- c\nE         +\n\ntests/test_trust_mutants.py:286: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it[#guard_msgs-in-example-f-1-2-by-simp-f-i-4-example-f-1-2-sorry-info-2-#guard_msgs-i]\nFAILED tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it[example-f-1-2-by-simp-f-a-b-c-4-example-f-1-2-sorry-c]\n2 failed, 3 passed in 37.58s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-vu3ksc5t)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM15",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check error is a kill only when the same build without the mutant passes (review F7: `#eval` of a cut proof)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 77.5,
+   "output_tail": "lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#guard', 'class': 'check', 'reads': 'proof', 'wrap': 'bare', ...}, \"trust_mutants: 58 definitions, 58 mutan... on the 'sorry' axio...)\nE             trust_mutants: 18 KILLED, 6 SURVIVOR, 34 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 64 s\nE             \")\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:645: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 76.61s (0:01:16)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-r3kvdup8)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM16",
+   "file": "tools/trust_mutants.py",
+   "claim": "every `#print` (and `#print axioms`) is a proof (review F7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_classes",
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_the_truth_table_classes",
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 84.0,
+   "output_tail": "ated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#print', 'class': 'proof', 'reads': 'value', 'wrap': 'doc', ...}, 'trust_mutants: 58 definitions, 58 mutant....O.r57 lit-plus: 0 -> 1\nE             trust_mutants: 18 KILLED, 10 SURVIVOR, 30 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 70 s\nE             ')\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:645: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_classes - AssertionE...\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n2 failed in 83.15s (0:01:23)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-lfbtuss_)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM17",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check form with a tactic block inside is a proof (review F7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_classes",
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_the_truth_table_classes",
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 94.4,
+   "output_tail": "ated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#eval value', 'class': 'check', 'reads': 'value', 'wrap': 'bare', ...}, 'trust_mutants: 58 definitions, 58 ...computes through a p...)\nE             trust_mutants: 18 KILLED, 6 SURVIVOR, 34 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 81 s\nE             ')\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:645: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_classes - AssertionE...\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n2 failed in 93.41s (0:01:33)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-xu74ux_x)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM18",
+   "file": "tools/trust_mutants.py",
+   "claim": "a `#` command is cut by blanking it whole (review F7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 76.5,
+   "output_tail": "lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#eval value', 'class': 'check', 'reads': 'value', 'wrap': 'bare', ...}, 'trust_mutants: 58 definitions, 58 ... `#guard_msgs` does ...)\nE             trust_mutants: 18 KILLED, 0 SURVIVOR, 40 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 63 s\nE             ')\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:645: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 75.78s (0:01:15)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-q0ivvc9b)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM19",
+   "file": "tools/trust_mutants.py",
+   "claim": "a cut `#` command loses the docstring before it (review F7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.1,
+   "output_tail": "irst\", \"last\", \"cut\"), [\n        (\"#guard f 1\\n/-- info: 1\\n-/\\n#guard_msgs in\\n#eval f 1\\n-- c\\n\", 4, 6,\n         \"#guard f 1\\n\" + \" \" * 11 + \"\\n  \\n\" + \" \" * 14 + \"\\n\" + \" \" * 9 + \"\\n-- c\\n\"),\n        ('#eval \"a\\n-- b\"\\n#guard_msgs in #print axioms f\\n', 3, 3, '#eval \"a\\n-- b\"\\n' + \" \" * 30 + \"\\n\")], ids=short)\n    def test_a_cut_command_is_blanked_with_its_docstring(tmp_path, text, first, last, cut):\n        \"\"\"Review F7: a `#` command is cut whole, with the comment lines before it (its `#guard_msgs` docstring), but\n        never a string the command before it is still writing; every line is kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       AssertionError: assert '#guard f 1\\n...     \\n-- c\\n' == '#guard f 1\\n...     \\n-- c\\n'\nE         \nE           #guard f 1\nE         -            \nE         -   \nE         + /-- info: 1\nE         + -/\nE                         \nE                    \nE           -- c\n\ntests/test_trust_mutants.py:608: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring[#guard-f-1-info-1-#guard_msgs-in-#eval-f-4-6-#guard-f-1-c]\n1 failed, 1 passed in 0.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-8tonlwut)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM20",
+   "file": "tools/trust_mutants.py",
+   "claim": "failing proofs are cut before a check error is read: a check may fail only because it reads one (review F7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_the_truth_table_statuses"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 76.4,
+   "output_tail": "lean/Demo/M/Defs.lean\", \"other\": \"lean/Demo/O/Checks.lean\"}\n        space = {\"mutated\": \"Demo.M\", \"other\": \"Demo.O\"}\n        statuses = {m[\"definition\"]: (m[\"status\"], m[\"detail\"].split(\": \")[0]) for m in mutants}\n        assert len(statuses) == len(mutants) == len({(r[\"setting\"], r[\"d\"]) for r in rows}), done.stdout\n        for row in rows:\n            status, where = statuses[f\"{space[row['setting']]}.{row['d']}\"]\n            lines = range(row[\"line\"] - (row[\"wrap\"] != \"bare\"), row[\"line\"] + 1)  # the wrapper's or the command's\n            places = [f\"{module[row['setting']]}:{n}\" for n in lines] if row[\"expected\"] != \"SURVIVOR\" else [\"\"]\n>           assert status == row[\"expected\"] and where in places, (row, done.stdout)\nE           AssertionError: ({'form': '#guard', 'class': 'check', 'reads': 'proof', 'wrap': 'bare', ...}, 'trust_mutants: 58 definitions, 58 mutan...ed that the proposition)\nE             trust_mutants: 18 KILLED, 6 SURVIVOR, 34 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 63 s\nE             ')\nE           assert ('UNKNOWN' == 'SURVIVOR'\nE             \nE             - SURVIVOR\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:645: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_truth_table_statuses - Assertion...\n1 failed in 75.54s (0:01:15)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-6c_mt938)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM21",
+   "file": "tools/trust_map.py",
+   "claim": "every `#` command opens its own span (`#guard_expr`, `#eval!`, `#check_failure`: review F7)",
+   "source_sha256": "4f183615862d09350bb5ff12fa2c111b1c466635367f45453ae295a1482da74d",
+   "tests": [
+    "tests/test_trust_mutants.py::test_every_hash_command_opens_its_own_span"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_every_hash_command_opens_its_own_span"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.0,
+   "output_tail": "______________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-28141/test_every_hash_command_opens_0')\n\n    def test_every_hash_command_opens_its_own_span(tmp_path):\n        \"\"\"Review F7: trust_map opens a span at every `#` command, so `classify` sees the command Lean reports.\"\"\"\n        import trust_map\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(\"theorem t : True := by\\n  trivial\\n#check_failure f true\\n#guard_expr f 1 =~ 1\\n#eval! f 1\\n\"\n                        \"def g : Array Nat :=\\n  #[1, 2]\\n\")\n        decls, _, problems = trust_map.scan(path, [])\n        code = trust_mutants.code_only(path.read_text()).split(\"\\n\")\n>       assert [(d.start, d.end, trust_mutants.classify(d.kind, \"\\n\".join(code[d.start - 1:d.end])))\n                for d in decls if d.kind == \"command\"] == [(3, 3, \"other\"), (4, 4, \"check\"), (5, 5, \"check\")]\nE       AssertionError: assert [(5, 5, 'check')] == [(3, 3, 'othe..., 5, 'check')]\nE         \nE         At index 0 diff: (5, 5, 'check') != (3, 3, 'other')\nE         Right contains 2 more items, first extra item: (4, 4, 'check')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:592: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_every_hash_command_opens_its_own_span\n1 failed in 0.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-q9e3ps20)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM22",
+   "file": "tools/trust_mutants.py",
+   "claim": "an outside --test file kills only when it passes without the mutant (review F7)",
+   "source_sha256": "3b092aa1f1b1d834c6cb806ea3c3c8bc09bcc9dda2931f7af54a716ed40fe219",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 60.0,
+   "output_tail": "r m in default_run[1]}\n        assert [m for m in mutants if \"Reads.lean\" in m[\"detail\"] and m[\"status\"] != \"UNKNOWN\"] == [], done.stdout\n        assert [before[m[\"id\"]] for m in mutants if m[\"definition\"] == \"Demo.double\"] == [\"SURVIVOR\"]\n        for m in mutants:\n            if m[\"definition\"] == \"Demo.double\":  # it breaks `double_eq`, which Reads.lean reads\n>               assert m[\"status\"] == \"UNKNOWN\" and m[\"detail\"].endswith(\"Reads.lean fails without the mutant too\"), m\nE               AssertionError: {'id': 'M014', 'file': 'Demo/Defs.lean', 'line': 10, 'definition': 'Demo.double', ...}\nE               assert ('UNKNOWN' == 'UNKNOWN'\nE                 \nE                   UNKNOWN and False)\nE                +  where False = <built-in method endswith of str object at 0x7248ab5ab0f0>('Reads.lean fails without the mutant too')\nE                +    where <built-in method endswith of str object at 0x7248ab5ab0f0> = \"/tmp/pytest-of-seyran/pytest-28193/package0/outside/Reads.lean:2: aborting evaluation since the expression depends on the 'sorry' axiom, which can lead to runtime instability and crashes.\".endswith\n\ntests/test_trust_mutants.py:382: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill\n1 failed in 59.35s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qu37fx56)\n",
+   "commit": "0ee7bfc45"
+  },
+  {
+   "id": "TM23",
+   "file": "tools/trust_mutants.py",
+   "claim": "only an error inside a check kills; one in a definition or a proof is UNKNOWN (`judge`)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.4,
+   "output_tail": "   (\"unexpected end of input\", \"other\", \"#guard g\", \"#guard g\", \"UNKNOWN\")], ids=short)\n    def test_only_a_checks_own_error_kills(message, role, built, checkout, verdict):\n        \"\"\"Review F9 (the DRI's step 2) under F11's rule: an error kills only at a check line the mutant and the cuts\n        left as the checkout has it, never when Lean's parser reports it (a cut left behind, a moved line), and never\n        outside a check, whatever it says (a `decide` inside a tactic proof refutes a goal the tactics made).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.judge(message, role, built, checkout, \"#guard f 1 == 2\") == verdict\nE       AssertionError: assert 'KILL' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + KILL\n\ntests/test_trust_mutants.py:705: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[Tactic-decide-proved-that-the-propositio-other-def-s-0-by-decide-def-s-0-by-decide-UNKNOWN]\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[Tactic-decide-proved-that-the-propositio-proof-constructor-decide-constructor-decide-UNKNOWN]\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[Expression-f-1-2-did-not-evaluate-to-tru-other-#guard-g-#guard-g-UNKNOWN]\n3 failed, 7 passed in 0.39s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qsk_tpbr)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM24",
+   "file": "tools/trust_mutants.py",
+   "claim": "the blanking stops at a string the command before is still writing (review F7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.0,
+   "output_tail": "nt axioms f\\n', first = 3, last = 3\ncut = '#eval \"a\\n-- b\"\\n                              \\n'\n\n    @pytest.mark.parametrize((\"text\", \"first\", \"last\", \"cut\"), [\n        (\"#guard f 1\\n/-- info: 1\\n-/\\n#guard_msgs in\\n#eval f 1\\n-- c\\n\", 4, 6,\n         \"#guard f 1\\n\" + \" \" * 11 + \"\\n  \\n\" + \" \" * 14 + \"\\n\" + \" \" * 9 + \"\\n-- c\\n\"),\n        ('#eval \"a\\n-- b\"\\n#guard_msgs in #print axioms f\\n', 3, 3, '#eval \"a\\n-- b\"\\n' + \" \" * 30 + \"\\n\")], ids=short)\n    def test_a_cut_command_is_blanked_with_its_docstring(tmp_path, text, first, last, cut):\n        \"\"\"Review F7: a `#` command is cut whole, with the comment lines before it (its `#guard_msgs` docstring), but\n        never a string the command before it is still writing; every line is kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       assert '#eval \"a\\n  ...           \\n' == '#eval \"a\\n--...           \\n'\nE         \nE           #eval \"a\nE         - -- b\"\nE         +\n\ntests/test_trust_mutants.py:608: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_command_is_blanked_with_its_docstring[#eval-a-b-#guard_msgs-in-#print-axioms-f-3-3-#eval-a-b]\n1 failed, 1 passed in 0.23s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-tsu1tncg)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM25",
+   "file": "tools/trust_mutants.py",
+   "claim": "an error in a definition is UNKNOWN even beside a failing check (review F8; `settle` reads every error)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.2,
+   "output_tail": "must be KILL, an `rfl` check's\n        only when `decide` then refutes its statement, and each check must read the mutated definition.\"\"\"\n        import trust_mutants\n        text = \"#guard f 1 == 2\\ndef s := ⟨0, by decide⟩\\nexample : f 3 = 5 := rfl\\n\"\n        roles = {\"A.lean\": [(1, 1, \"check\", None), (2, 2, \"other\", \"s\"), (3, 3, \"check\", None)]}\n        rebuilt: list = []\n    \n        def settle(errors, reads=lambda key: None):\n            def rebuild(now):\n                assert now[\"A.lean\"].split(\"\\n\")[2] == \"example : f 3 = 5 := by decide\"\n                return rebuilt.pop()\n            return trust_mutants.settle(errors, lambda f: text, lambda f: text, roles, rebuild, reads)\n        assert settle([(\"A.lean\", 1, REFUTE)]) == (\"KILLED\", f\"lean/A.lean:1: {REFUTE.split(chr(10))[0]}\")\n>       assert settle([(\"A.lean\", 1, REFUTE), (\"A.lean\", 2, DECIDE_FALSE)])[0] == \"UNKNOWN\"  # F8: beside a definition\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       AssertionError: assert 'KILLED' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + KILLED\n\ntests/test_trust_mutants.py:790: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition\n1 failed in 0.25s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-65xihidj)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM26",
+   "file": "tools/trust_mutants.py",
+   "claim": "a longer replacement takes its extra line ends from the blank lines after its declaration (review F9)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration",
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks",
+    "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 317.7,
+   "output_tail": " def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '...', ...}), ...] == []\nE         \nE         Left contains 8 more items, first extra item: ({'shape': 'default-more', 'setting': 'mutated', 'reads': True, 'd': 's0', ...}, {'id': 'M009', 'file': 'Demo/LM/Defs.lean', 'line': 4, 'definition': 'Demo.LM.s0', ...}, 'expected KILLED with more lines')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:1008: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration[more]\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n2 failed, 3 passed in 316.64s (0:05:16)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-u63_8awt)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM27",
+   "file": "tools/trust_mutants.py",
+   "claim": "the blank lines a longer replacement takes are never inside a comment (review F9)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.0,
+   "output_tail": "S, \" /-\\n\\n-/\\n#guard f 1 == [2, 3]\\n\", \"[1]\", \"[2,\\n   3]\", None)],\n        ids=(\"fewer\", \"more\", \"more-no-blank\", \"more-blank-in-a-comment\"))\n    def test_an_edit_keeps_every_line_after_its_declaration(decl, rest, before, new, mutated):\n        \"\"\"Review F9: a shorter replacement is padded; a longer one takes its extra line ends from the blank lines right\n        after the declaration (never from a comment), else it is written as it is (`mutated` None) and `moved` finds\n        the first line it moved, which `run` reports as UNKNOWN.\"\"\"\n        import trust_mutants\n        text, s = decl + rest, decl.index(before)\n        end, edit = trust_mutants.relined(text, s, s + len(before), new, len(decl))\n        after = text[:s] + edit + text[end:]\n>       assert after == (mutated or text[:s] + new + text[s + len(before):])\nE       AssertionError: assert 'def f : Nat ...1 == [2, 3]\\n' == 'def f : Nat ...1 == [2, 3]\\n'\nE         \nE         Skipping 54 identical leading characters in diff, use -v to show\nE           \nE              3] /-\nE         - \nE           -/\nE           #guard f 1 == [2, 3]\n\ntests/test_trust_mutants.py:667: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_edit_keeps_every_line_after_its_declaration[more-blank-in-a-comment]\n1 failed, 3 passed in 0.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-arn5hcwg)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM28",
+   "file": "tools/trust_mutants.py",
+   "claim": "a mutant that moves a line after its declaration is UNKNOWN (review F9)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 310.9,
+   "output_tail": "ing':...n': 'Demo.LM.s8', ...}, {'id': 'M006', 'file': 'Demo/LM/Defs.lean', 'line': 90, 'definition': 'Demo.LM.s9', ...}, ...])\n\n    def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '... more lines')] == []\nE         \nE         Left contains 4 more items, first extra item: ({'shape': 'default-more-tight', 'setting': 'mutated', 'reads': True, 'd': 's2', ...}, {'id': 'M011', 'file': 'Demo/LM/Defs.lean', 'line': 24, 'definition': 'Demo.LM.s2', ...})\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:1008: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n1 failed in 309.96s (0:05:09)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-b5ynuagq)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM29",
+   "file": "tools/trust_mutants.py",
+   "claim": "`moved` compares every line after the declaration, not only the line count (review F9)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.6,
+   "output_tail": "        (\"def f := [1]\\n#guard f == [1]\\n\\n#guard g\", (1, 1), 5)], ids=(\"count-kept\", \"own-line\", \"same\", \"count\"))\n    def test_moved_finds_the_first_line_after_the_declaration_that_moved(after, lines, line):\n        \"\"\"Review F9: `moved` compares each line outside the mutated declaration, not only the line count (an edit that\n        took a blank line below a check keeps the count and moves the check).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.moved(\"def f := [1]\\n#guard f == [1]\\n\\n#guard g\\n\", after, lines) == line\nE       AssertionError: assert 2 == 5\nE        +  where 2 = <function moved at 0x7ebff0c32140>('def f := [1]\\n#guard f == [1]\\n\\n#guard g\\n', 'def f := [1]\\n#guard f == [1]\\n\\n#guard g', (1, 1))\nE        +    where <function moved at 0x7ebff0c32140> = <module 'trust_mutants' from '/home/seyran/code/ve-stm-seed2/tools/trust_mutants.py'>.moved\n\ntests/test_trust_mutants.py:681: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[count-kept]\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[own-line]\nFAILED tests/test_trust_mutants.py::test_moved_finds_the_first_line_after_the_declaration_that_moved[count]\n3 failed, 1 passed in 0.48s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-t0yddxfb)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM30",
+   "file": "tools/trust_mutants.py",
+   "claim": "a parse error never kills, nor sends an `rfl` check to `decide` (review F9: a cut left behind)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.1,
+   "output_tail": "=============================== FAILURES ===================================\n__ test_a_check_kills_only_when_its_message_states_a_refutation[parse-at-rfl] __\n\nname = 'parse-at-rfl', message = \"unexpected token '<;>'; expected command\"\nspan = 'example : f 3 = 5 := rfl', verdict = 'UNKNOWN'\n\n    @pytest.mark.parametrize((\"name\", \"message\", \"span\", \"verdict\"), JUDGED, ids=[j[0] for j in JUDGED])\n    def test_a_check_kills_only_when_its_message_states_a_refutation(name, message, span, verdict):\n        \"\"\"Review F11 (the DRI's note 2026-10-19c, step 1): KILL needs a message that states a refutation (`REFUTED`,\n        whole, or a `#guard_msgs` diff between refutations; no `info`: hunt Q4, Q7, Q8); an `rfl` check is RFL (its\n        message is the same when the reduction got stuck); every other message is UNKNOWN, one test each.\"\"\"\n        import trust_mutants\n        line = span.split(\"\\n\")[-1]\n>       assert trust_mutants.judge(message, \"check\", line, line, trust_mutants.code_only(span)) == verdict\nE       AssertionError: assert 'RFL' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + RFL\n\ntests/test_trust_mutants.py:770: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation[parse-at-rfl]\n1 failed, 28 passed in 0.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0ktq1vfg)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM31",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check's error kills only at a line the mutant and the cuts left as the checkout has it (review F9)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_only_a_checks_own_error_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.5,
+   "output_tail": "is false\", \"other\", \"def s := ⟨0, by decide⟩\",\n         \"def s := ⟨0, by decide⟩\", \"UNKNOWN\"),\n        (\"Tactic `decide` proved that the proposition\\n  f 1 = 2\\nis false\", \"proof\", \"  constructor <;> decide\",\n         \"  constructor <;> decide\", \"UNKNOWN\"),\n        (REFUTE, \"other\", \"#guard g\", \"#guard g\", \"UNKNOWN\"),\n        (\"unexpected end of input\", \"other\", \"#guard g\", \"#guard g\", \"UNKNOWN\")], ids=short)\n    def test_only_a_checks_own_error_kills(message, role, built, checkout, verdict):\n        \"\"\"Review F9 (the DRI's step 2) under F11's rule: an error kills only at a check line the mutant and the cuts\n        left as the checkout has it, never when Lean's parser reports it (a cut left behind, a moved line), and never\n        outside a check, whatever it says (a `decide` inside a tactic proof refutes a goal the tactics made).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.judge(message, role, built, checkout, \"#guard f 1 == 2\") == verdict\nE       AssertionError: assert 'KILL' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + KILL\n\ntests/test_trust_mutants.py:705: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_only_a_checks_own_error_kills[Expression-f-1-2-did-not-evaluate-to-tru-check-trivial-#guard-f-1-2-UNKNOWN]\n1 failed, 9 passed in 0.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cdqxrna8)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM32",
+   "file": "tools/trust_mutants.py",
+   "claim": "the mutated declaration's lines run over the blank lines its edit takes (review F9)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 286.2,
+   "output_tail": ".}, {'id': 'M006', 'file': 'Demo/LM/Defs.lean', 'line': 90, 'definition': 'Demo.LM.s9', ...}, ...])\n\n    def test_a_replacement_of_any_line_count_is_decided_by_the_checks(lines_run):\n        \"\"\"Review F9 (PROBE F9's form is the default-more row of the mutated module that no check reads): with fewer, the\n        same or more lines, in the mutated module or another, a mutant is KILLED only by the check that compares the\n        value, at that check's line; one no check reads survives; a longer replacement no blank line can take is\n        UNKNOWN (`lines_problems`).\"\"\"\n        rows, done, mutants = lines_run\n        assert done.returncode in (0, 1) and mutants, done.stdout + done.stderr\n>       assert lines_problems(rows, mutants) == []\nE       AssertionError: assert [({'shape': '...', ...}), ...] == []\nE         \nE         Left contains 8 more items, first extra item: ({'shape': 'default-more', 'setting': 'mutated', 'reads': True, 'd': 's0', ...}, {'id': 'M009', 'file': 'Demo/LM/Defs.lean', 'line': 4, 'definition': 'Demo.LM.s0', ...}, 'expected KILLED with more lines')\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:1008: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_replacement_of_any_line_count_is_decided_by_the_checks\n1 failed in 285.04s (0:04:45)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-tx9buwa6)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM33",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check that gives no answer never kills (review F10; since F11 because it states no refutation)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[decide]",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[decide]",
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 48.1,
+   "output_tail": "_mutants.py::test_a_check_that_gives_no_answer_never_kills[maximum-recursion-depth-has-been-reached]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[deterministic-timeout-at-whnf-maximum-nu]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Error-pretty-printing-maximum-recursion-]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Docstring-on-#guard_msgs-does-not-match-]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-for-proposition-big]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-Internal-error-The-]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-native_decide-failed-Could-not-ev]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deep-recursion-detected]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deterministic-timeout]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-interrupted]\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[decide]\nFAILED tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill\n12 failed, 3 passed in 47.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-l3gv5j9z)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM34",
+   "file": "tools/trust_mutants.py",
+   "claim": "an error is read with its whole message (review F10; a refutation is matched whole, F11)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_error_is_read_with_its_whole_message",
+    "tests/test_trust_mutants.py::test_a_check_wrapped_in_guard_msgs_kills"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_wrapped_in_guard_msgs_kills",
+    "tests/test_trust_mutants.py::test_an_error_is_read_with_its_whole_message"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 42.6,
+   "output_tail": ".venv/bin/python', '/home/seyran/code/ve-stm-seed1/tools/trust...ns\": {},\\n \"name\": \"Demo.Defs\",\\n \"isModule\": false,\\n \"importArts\": {},\\n \"dynlibs\": []}', 1792460586824142184), ...})\n\n    def test_a_check_wrapped_in_guard_msgs_kills(default_run):\n        \"\"\"Review F6: a `#guard_msgs` around a `#guard` (its spec in parentheses) or a `decide` example is a check.\"\"\"\n        _, mutants, _, _ = default_run\n        twice = of(mutants, \"twice\")\n        assert {m[\"operator\"] for m in twice} == {\"lit-plus\", \"lit-minus\"}\n>       assert all(m[\"status\"] == \"KILLED\" and m[\"detail\"].split(\": \")[0] in (\n            \"lean/Demo/Examples.lean:18\", \"lean/Demo/Examples.lean:19\", \"lean/Demo/Examples.lean:21\") for m in twice), twice\nE       AssertionError: [{'id': 'M018', 'file': 'Demo/Defs.lean', 'line': 26, 'definition': 'Demo.twice', ...}, {'id': 'M028', 'file': 'Demo/Defs.lean', 'line': 26, 'definition': 'Demo.twice', ...}]\nE       assert False\nE        +  where False = all(<generator object test_a_check_wrapped_in_guard_msgs_kills.<locals>.<genexpr> at 0x703ba1cca880>)\n\ntests/test_trust_mutants.py:250: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_error_is_read_with_its_whole_message\nFAILED tests/test_trust_mutants.py::test_a_check_wrapped_in_guard_msgs_kills\n2 failed in 41.56s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-26mbf869)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM35",
+   "file": "tools/trust_mutants.py",
+   "claim": "a refusal that quotes Lean's budget is no refusal: UNKNOWN, not INVALID (review F10, F12)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.2,
+   "output_tail": "FAILURES ===================================\n_ test_invalid_only_when_lean_refuses_the_mutated_text[refusal-quoting-budget] _\n\nname = 'refusal-quoting-budget'\nmessage = 'Invalid field `x`: maximum recursion depth has been reached'\ninside = False, verdict = 'UNKNOWN'\n\n    @pytest.mark.parametrize((\"name\", \"message\", \"inside\", \"verdict\"), REFUSALS, ids=[r[0] for r in REFUSALS])\n    def test_invalid_only_when_lean_refuses_the_mutated_text(name, message, inside, verdict):\n        \"\"\"Review F12 (the DRI's note, step 1): an error in the mutated declaration is INVALID only when Lean refused its\n        text (a parse error, or a name, field, pattern or instance error outside its tactic blocks); a tactic that\n        fails, Lean's budget, a type mismatch (a false or stuck proof term gives one too) and anything else are\n        UNKNOWN, which counts toward the exit code.\"\"\"\n        import trust_mutants\n>       assert (\"INVALID\" if trust_mutants.refused(message, inside) else \"UNKNOWN\") == verdict\nE       AssertionError: assert 'INVALID' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + INVALID\n\ntests/test_trust_mutants.py:860: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[refusal-quoting-budget]\n1 failed, 24 passed in 0.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-x83rty1x)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM36",
+   "file": "tools/trust_mutants.py",
+   "claim": "an outside --test file kills only by the rule inside lean/: one that gives no answer, or a stuck `rfl`, never kills (review F10, F11)",
+   "source_sha256": "3b092aa1f1b1d834c6cb806ea3c3c8bc09bcc9dda2931f7af54a716ed40fe219",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]",
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[outside-equal]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]",
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[outside-equal]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 84.4,
+   "output_tail": "s a refutation (`decide` asked after a failing `rfl`), UNKNOWN where\n        the check fails stating none (a stuck `rfl` or `#guard_expr`, a `#reduce` that prints a stuck term, an `#eval`\n        that throws, a `#check`, an `#eval`'s output: hunt Q4, Q7, Q8), SURVIVOR where it passes; in lean/ and in an\n        outside --test file alike.\"\"\"\n        done, mutants = stuck_run\n        mine = {(m[\"operator\"], m[\"before\"]): m for m in of(mutants, stuck_name(row))}\n        far_ones = {(\"le-lt\", \"≤\"), (\"lit-minus\", \"3\")}\n        assert far_ones <= set(mine), (sorted(mine), done.stdout + done.stderr)\n        for key, m in mine.items():\n            expected = (verdict, detail) if key in far_ones else (\"SURVIVOR\", \"\")\n>           assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M017', 'file': 'Demo/Defs.lean', 'line': 67, 'definition': 'Demo.sOutsideEqual', ...}\nE           assert ('KILLED' == 'UNKNOWN'\nE             \nE             - UNKNOWN\nE             + KILLED)\n\ntests/test_trust_mutants.py:1488: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[outside]\nFAILED tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[outside-equal]\n2 failed in 83.81s (0:01:23)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-xbq7k__4)\n",
+   "commit": "0ee7bfc45"
+  },
+  {
+   "id": "TM37",
+   "file": "tools/trust_mutants.py",
+   "claim": "a decide that gets stuck or cannot evaluate gives no answer (UNKNOWN, marked so in the detail) (review F10)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[stuck]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[stuck]",
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 50.7,
+   "output_tail": "udget_run\n        mine = {(m[\"operator\"], m[\"before\"]): m for m in of(mutants, \"b\" + name.title().replace(\"-\", \"\"))}\n        far = {(\"le-lt\", \"≤\"), (\"lit-minus\", \"3\")}\n        assert far <= set(mine), (sorted(mine), done.stdout + done.stderr)\n        for key, m in mine.items():\n            if name.startswith(\"refuted\"):\n                expected = (\"KILLED\", \"proved that\") if key in far else (\"SURVIVOR\", \"\")\n            else:\n                expected = (\"UNKNOWN\", \"no answer\") if key in far else (\"SURVIVOR\", \"\")\n>           assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M007', 'file': 'Demo/Defs.lean', 'line': 37, 'definition': 'Demo.bStuck', ...}\nE           assert ('UNKNOWN' == 'UNKNOWN'\nE             \nE               UNKNOWN and 'no answer' in 'lean/Demo/Defs.lean:39: Tactic `decide` failed for proposition')\n\ntests/test_trust_mutants.py:1150: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-for-proposition-big]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Tactic-decide-failed-Internal-error-The-]\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[stuck]\n3 failed, 11 passed in 49.67s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-saug03yr)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM38",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check out of heartbeats gives no answer (UNKNOWN, marked so in the detail) (review F10)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]",
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 46.8,
+   "output_tail": ", inside lean/ and in a --test file.\"\"\"\n        done, mutants = budget_run\n        mine = {(m[\"operator\"], m[\"before\"]): m for m in of(mutants, \"b\" + name.title().replace(\"-\", \"\"))}\n        far = {(\"le-lt\", \"≤\"), (\"lit-minus\", \"3\")}\n        assert far <= set(mine), (sorted(mine), done.stdout + done.stderr)\n        for key, m in mine.items():\n            if name.startswith(\"refuted\"):\n                expected = (\"KILLED\", \"proved that\") if key in far else (\"SURVIVOR\", \"\")\n            else:\n                expected = (\"UNKNOWN\", \"no answer\") if key in far else (\"SURVIVOR\", \"\")\n>           assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M005', 'file': 'Demo/Defs.lean', 'line': 27, 'definition': 'Demo.bHeartbeats', ...}\nE           assert ('UNKNOWN' == 'UNKNOWN'\nE             \nE               UNKNOWN and 'no answer' in 'lean/Demo/Defs.lean:31: (deterministic) timeout at `whnf`, maximum number of heartbeats (1000) has been reached')\n\ntests/test_trust_mutants.py:1150: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[deterministic-timeout-at-whnf-maximum-nu]\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]\n2 failed, 12 passed in 45.72s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-aslv_znu)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM39",
+   "file": "tools/trust_mutants.py",
+   "claim": "the kernel's limits give no answer (review F10)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "message in ANSWERS else \"UNKNOWN\")\n>       assert trust_mutants.brief(message).startswith(\"no answer: \") is (message not in ANSWERS)\nE       AssertionError: assert False is ('(kernel) interrupted' not in ['Tactic `decide` proved that the proposition\\n  bigF 3 = 3\\nis false', 'Tactic `native_decide` evaluated that the proposition\\n  bigF 3 = 3\\nis false', 'Expression\\n  f 1 == 2\\ndid not evaluate to `true`'])\nE        +  where False = <built-in method startswith of str object at 0x767756ac0670>('no answer: ')\nE        +    where <built-in method startswith of str object at 0x767756ac0670> = '(kernel) interrupted'.startswith\nE        +      where '(kernel) interrupted' = <function brief at 0x7677568eacf0>('(kernel) interrupted')\nE        +        where <function brief at 0x7677568eacf0> = <module 'trust_mutants' from '/home/seyran/code/ve-stm-seed3/tools/trust_mutants.py'>.brief\n\ntests/test_trust_mutants.py:1040: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deep-recursion-detected]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-deterministic-timeout]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[kernel-interrupted]\n3 failed, 10 passed in 0.42s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-b7_c3ugh)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM40",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check over the recursion limit gives no answer (UNKNOWN, marked so in the detail) (review F10, PROBE F10)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills",
+    "tests/test_trust_mutants.py::test_probe_f10_a_check_out_of_budget_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[rfl]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[rfl]",
+    "tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 51.1,
+   "output_tail": "\")}\n        assert far <= set(mine), (sorted(mine), done.stdout + done.stderr)\n        for key, m in mine.items():\n            if name.startswith(\"refuted\"):\n                expected = (\"KILLED\", \"proved that\") if key in far else (\"SURVIVOR\", \"\")\n            else:\n                expected = (\"UNKNOWN\", \"no answer\") if key in far else (\"SURVIVOR\", \"\")\n>           assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M002', 'file': 'Demo/Defs.lean', 'line': 13, 'definition': 'Demo.bRfl', ...}\nE           assert ('UNKNOWN' == 'UNKNOWN'\nE             \nE               UNKNOWN and 'no answer' in 'lean/Demo/Defs.lean:15: maximum recursion depth has been reached (an `rfl` check `decide` does not refute)')\n\ntests/test_trust_mutants.py:1150: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[maximum-recursion-depth-has-been-reached]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Error-pretty-printing-maximum-recursion-]\nFAILED tests/test_trust_mutants.py::test_a_check_that_gives_no_answer_never_kills[Docstring-on-#guard_msgs-does-not-match-]\nFAILED tests/test_trust_mutants.py::test_a_check_out_of_budget_or_stuck_is_unknown[rfl]\n4 failed, 11 passed in 50.07s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-hjhqxq92)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM41",
+   "file": "tools/trust_mutants.py",
+   "claim": "an `rfl` check's failure kills only when `decide` then refutes its statement (review F11, PROBE F11)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_probe_f11_a_stuck_rfl_check_is_no_kill",
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl]",
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl]",
+    "tests/test_trust_mutants.py::test_probe_f11_a_stuck_rfl_check_is_no_kill",
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 78.9,
+   "output_tail": " \"UNKNOWN\"\n        assert settle([(\"A.lean\", 1, REFUTE)], reads=lambda key: \"no\" if key == (\"A.lean\", (1, 1)) else None) == (\n            \"UNKNOWN\", f\"lean/A.lean:1: {REFUTE.split(chr(10))[0]} (no)\")  # hunt H4, H5, N1, N2\n        rfl = (\"A.lean\", 3, \"Type mismatch\\n  rfl\")\n        for answer, verdict in (([(\"A.lean\", 3, DECIDE_FALSE)], \"KILLED\"), ([], \"UNKNOWN\"), (None, \"UNKNOWN\"),\n                                ([(\"A.lean\", 3, \"Tactic `decide` failed for proposition\")], \"UNKNOWN\"),\n                                ([(\"A.lean\", 3, DECIDE_FALSE), (\"A.lean\", 2, \"unsolved goals\")], \"UNKNOWN\")):\n            rebuilt.append(answer)\n>           assert settle([rfl])[0] == verdict, answer  # F11: a stuck or unanswered `rfl` refutes nothing\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE           AssertionError: []\nE           assert 'KILLED' == 'UNKNOWN'\nE             \nE             - UNKNOWN\nE             + KILLED\n\ntests/test_trust_mutants.py:799: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_probe_f11_a_stuck_rfl_check_is_no_kill\nFAILED tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl]\nFAILED tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition\n3 failed in 78.04s (0:01:18)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-f_62kl7u)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM42",
+   "file": "tools/trust_mutants.py",
+   "claim": "a `#guard_msgs` diff kills only between refutations: no `info` (an `#eval`'s or `#reduce`'s) is an answer (review F11, hunt Q4, Q7, Q8)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.3,
+   "output_tail": "\n_ test_a_check_kills_only_when_its_message_states_a_refutation[eval-printed-nothing] _\n\nname = 'eval-printed-nothing'\nmessage = '❌️ Docstring on `#guard_msgs` does not match generated message:\\n\\n- info: 5'\nspan = '/-- info: 5 -/\\n#guard_msgs in\\n#eval f 3', verdict = 'UNKNOWN'\n\n    @pytest.mark.parametrize((\"name\", \"message\", \"span\", \"verdict\"), JUDGED, ids=[j[0] for j in JUDGED])\n    def test_a_check_kills_only_when_its_message_states_a_refutation(name, message, span, verdict):\n        \"\"\"Review F11 (the DRI's note 2026-10-19c, step 1): KILL needs a message that states a refutation (`REFUTED`,\n        whole, or a `#guard_msgs` diff between refutations; no `info`: hunt Q4, Q7, Q8); an `rfl` check is RFL (its\n        message is the same when the reduction got stuck); every other message is UNKNOWN, one test each.\"\"\"\n        import trust_mutants\n        line = span.split(\"\\n\")[-1]\n>       assert trust_mutants.judge(message, \"check\", line, line, trust_mutants.code_only(span)) == verdict\nE       AssertionError: assert 'KILL' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + KILL\n\ntests/test_trust_mutants.py:770: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation[eval-printed-nothing]\n1 failed, 28 passed in 0.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-w0zukh2k)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM43",
+   "file": "tools/trust_mutants.py",
+   "claim": "INVALID needs every error of the mutated declaration to be a refusal (review F12)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.3,
+   "output_tail": "ids=(\"refusal\", \"beside-a-tactic\", \"after-a-tactic\", \"in-a-tactic\", \"outside-the-edit\", \"parse-in-the-edit\",\n             \"parse-outside-the-edit\", \"edit-in-a-tactic\"))\n    def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(errors, verdict):\n        \"\"\"Review F12: a tactic or budget failure in the mutated declaration is UNKNOWN even beside a refusal (it may have\n        caused one, or followed from it), a refusal inside a tactic block is a tactic's, and one outside the text the\n        mutant wrote is a proof term's or another's (hunt Q9), a parse error there too (the tool's line padding: R3).\"\"\"\n        import trust_mutants\n        text = \"def f (o : Option Nat) : Nat := (o.take 1).length + (by exact 0)\\n\"\n        assert text[32] == \"(\" and text[62] == \"0\"\n        edit = (62, 63) if errors[0][3] == 62 and \"`x`\" in errors[0][2] else (32, 42)  # `(o.take 1)`, or the `0`\n>       assert trust_mutants.invalid(errors, text, (1, 1), edit)[0] == verdict\nE       AssertionError: assert 'INVALID' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + INVALID\n\ntests/test_trust_mutants.py:882: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal[beside-a-tactic]\n1 failed, 7 passed in 0.27s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-wgyi7zzj)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM44",
+   "file": "tools/trust_mutants.py",
+   "claim": "an error inside a tactic block of the mutated declaration is a tactic's, never a refusal (review F12)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 0.9,
+   "output_tail": "ds=(\"refusal\", \"beside-a-tactic\", \"after-a-tactic\", \"in-a-tactic\", \"outside-the-edit\", \"parse-in-the-edit\",\n             \"parse-outside-the-edit\", \"edit-in-a-tactic\"))\n    def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(errors, verdict):\n        \"\"\"Review F12: a tactic or budget failure in the mutated declaration is UNKNOWN even beside a refusal (it may have\n        caused one, or followed from it), a refusal inside a tactic block is a tactic's, and one outside the text the\n        mutant wrote is a proof term's or another's (hunt Q9), a parse error there too (the tool's line padding: R3).\"\"\"\n        import trust_mutants\n        text = \"def f (o : Option Nat) : Nat := (o.take 1).length + (by exact 0)\\n\"\n        assert text[32] == \"(\" and text[62] == \"0\"\n        edit = (62, 63) if errors[0][3] == 62 and \"`x`\" in errors[0][2] else (32, 42)  # `(o.take 1)`, or the `0`\n>       assert trust_mutants.invalid(errors, text, (1, 1), edit)[0] == verdict\nE       AssertionError: assert 'INVALID' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + INVALID\n\ntests/test_trust_mutants.py:882: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal[edit-in-a-tactic]\n1 failed, 7 passed in 0.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-i4t6yzaq)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM45",
+   "file": "tools/trust_mutants.py",
+   "claim": "a tactic out of budget in the mutated declaration is UNKNOWN, never INVALID (review F12, PROBE F12)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown",
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text",
+    "tests/test_trust_mutants.py::test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 82.8,
+   "output_tail": "AILED tests/test_trust_mutants.py::test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[parse-elsewhere]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[simp-steps]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[omega]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[decide-false]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[name-in-tactic]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[type-mismatch]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[rfl-stuck]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[termination]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[synthesize]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[implicit]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[function-expected]\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[unclassified]\n13 failed, 13 passed in 81.77s (0:01:21)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-zf0237aa)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM46",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check with a hypothesis before its colon is a proof: `decide` refutes only its goal (hunt H1)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H1]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.1,
+   "output_tail": "\\n#eval f 1\", \"other\"),\n        (\"command\", \"#guard_msgs\", \"other\"),\n        (\"theorem\", \"theorem t : f [] = [] := by\\n  simp [f]\\n  rfl\", \"proof\"),\n        (\"theorem\", \"theorem t : f [] = [] := by simp [f]; decide\", \"proof\"),\n        (\"def\", \"def f (n : Nat) : Nat := n\", \"other\"),\n        (\"command\", \"open Demo\", \"other\")], ids=short)\n    def test_only_guards_and_decide_rfl_proofs_are_checks(kind, text, role):\n        \"\"\"Review F1 (and SupExtra.lean's and Status.lean's `example`s): an `example` or theorem is a check only when\n        `decide`, `native_decide` or `rfl` proves it, whatever its statement names.\"\"\"\n        import trust_mutants\n>       assert trust_mutants.classify(kind, text) == role\nE       AssertionError: assert 'check' == 'proof'\nE         \nE         - proof\nE         + check\n\ntests/test_trust_mutants.py:344: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks[command-example-_h-f-0-1-f-1-2-by-decide-proof]\nFAILED tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks[command-example-_h-f-0-1-f-1-2-rfl-proof]\nFAILED tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks[theorem-theorem-t-\\u03b1-Inhabited-\\u03b1-f-1-2-by-decide--proof]\n3 failed, 24 passed in 16.07s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-vla9sy3v)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM47",
+   "file": "tools/trust_mutants.py",
+   "claim": "a kill needs the check to refute the mutated definition: Lean finds it in the statement, no hypothesis, no reflection, no cut theorem behind its instance (hunt H4, H5, N1-N3, N8)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H4]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H5]",
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H4]",
+    "tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 23.1,
+   "output_tail": "tle(errors, reads=lambda key: None):\n            def rebuild(now):\n                assert now[\"A.lean\"].split(\"\\n\")[2] == \"example : f 3 = 5 := by decide\"\n                return rebuilt.pop()\n            return trust_mutants.settle(errors, lambda f: text, lambda f: text, roles, rebuild, reads)\n        assert settle([(\"A.lean\", 1, REFUTE)]) == (\"KILLED\", f\"lean/A.lean:1: {REFUTE.split(chr(10))[0]}\")\n        assert settle([(\"A.lean\", 1, REFUTE), (\"A.lean\", 2, DECIDE_FALSE)])[0] == \"UNKNOWN\"  # F8: beside a definition\n        assert settle([(\"A.lean\", 2, DECIDE_FALSE), (\"A.lean\", 1, REFUTE)])[0] == \"UNKNOWN\"\n>       assert settle([(\"A.lean\", 1, REFUTE)], reads=lambda key: \"no\" if key == (\"A.lean\", (1, 1)) else None) == (\n            \"UNKNOWN\", f\"lean/A.lean:1: {REFUTE.split(chr(10))[0]} (no)\")  # hunt H4, H5, N1, N2\nE       AssertionError: assert ('KILLED', 'l...: Expression') == ('UNKNOWN', '...ression (no)')\nE         \nE         At index 0 diff: 'KILLED' != 'UNKNOWN'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:792: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H4]\nFAILED tests/test_trust_mutants.py::test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition\n2 failed, 1 passed in 22.30s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cj90vv6s)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM48",
+   "file": "tools/trust_mutants.py",
+   "claim": "a refusal counts only inside the text the mutant wrote: a proof term it broke elsewhere fails as a tactic does (hunt Q9)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q9]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q9]",
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 16.4,
+   "output_tail": "nts\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/HuntQ9.lean', 'line': 5, 'definition': 'Demo.qPick', ...}, {'id': 'M002', 'file': 'Demo....lean:5: Type mismatch)\nE         trust_mutants: 0 KILLED, 0 SURVIVOR, 7 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN in 6 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/HuntQ9.lean', 'line': 5, 'definition': 'Demo.qPick', ...}, {'id': 'M002', 'file': 'Demo/...tion': 'Demo.qPick', ...}, {'id': 'M006', 'file': 'Demo/HuntQ9.lean', 'line': 5, 'definition': 'Demo.qPick', ...}, ...] and not [{'id': 'M001', 'file': 'Demo/HuntQ9.lean', 'line': 5, 'definition': 'Demo.qPick', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal[outside-the-edit]\nFAILED tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal[parse-outside-the-edit]\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q9]\n3 failed, 6 passed in 15.39s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-azaxc7yo)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM49",
+   "file": "tools/trust_mutants.py",
+   "claim": "an `rfl` check is asked `decide`, never `native_decide`, which evaluates compiled code (hunt H7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl-native]",
+    "tests/test_trust_mutants.py::test_decided_rewrites_only_the_rfl_and_keeps_every_line"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl-native]",
+    "tests/test_trust_mutants.py::test_decided_rewrites_only_the_rfl_and_keeps_every_line"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 75.7,
+   "output_tail": "s_every_line(text, first, last, after):\n        \"\"\"Review F11: the follow-up asks `decide` of the `rfl` check's own statement, in place (hunt H7: never\n        `native_decide`, which evaluates compiled code an `rfl` check does not read).\"\"\"\n        import trust_mutants\n>       assert trust_mutants.decided(text, first, last) == after\nE       AssertionError: assert '#guard_msgs ...tive_decide\\n' == '#guard_msgs ...= by decide\\n'\nE         \nE           #guard_msgs in\nE         - example : f 3 = 5 := by decide\nE         + example : f 3 = 5 := by native_decide\nE         ?                         +++++++\n\ntests/test_trust_mutants.py:814: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[rfl-native]\nFAILED tests/test_trust_mutants.py::test_decided_rewrites_only_the_rfl_and_keeps_every_line[example-f-3-5-rfl-#guard-g-1-1-example-f-3-5-by-decide-#guard-g]\nFAILED tests/test_trust_mutants.py::test_decided_rewrites_only_the_rfl_and_keeps_every_line[#guard-g-theorem-t-f-3-5-by-rfl-c-#guard-2-3-#guard-g-theorem-t-f-3-5-by-decide-c-#gu]\nFAILED tests/test_trust_mutants.py::test_decided_rewrites_only_the_rfl_and_keeps_every_line[#guard_msgs-in-example-f-3-5-rfl-1-2-#guard_msgs-in-example-f-3-5-by-decide]\n4 failed, 1 passed in 74.73s (0:01:14)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-oc0sfz3f)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM50",
+   "file": "tools/trust_mutants.py",
+   "claim": "instance search that fails (its own budget, hunt H2, H3) is no refusal: UNKNOWN",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[H2]",
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.3,
+   "output_tail": "       [100%]\n=================================== FAILURES ===================================\n_______ test_invalid_only_when_lean_refuses_the_mutated_text[synthesize] _______\n\nname = 'synthesize', message = 'failed to synthesize\\n  LE Bool', inside = False\nverdict = 'UNKNOWN'\n\n    @pytest.mark.parametrize((\"name\", \"message\", \"inside\", \"verdict\"), REFUSALS, ids=[r[0] for r in REFUSALS])\n    def test_invalid_only_when_lean_refuses_the_mutated_text(name, message, inside, verdict):\n        \"\"\"Review F12 (the DRI's note, step 1): an error in the mutated declaration is INVALID only when Lean refused its\n        text (a parse error, or a name, field, pattern or instance error outside its tactic blocks); a tactic that\n        fails, Lean's budget, a type mismatch (a false or stuck proof term gives one too) and anything else are\n        UNKNOWN, which counts toward the exit code.\"\"\"\n        import trust_mutants\n>       assert (\"INVALID\" if trust_mutants.refused(message, inside) else \"UNKNOWN\") == verdict\nE       AssertionError: assert 'INVALID' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + INVALID\n\ntests/test_trust_mutants.py:860: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[synthesize]\n1 failed, 25 passed in 13.58s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-i_88cts2)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM51",
+   "file": "tools/trust_mutants.py",
+   "claim": "an outside --test file's `rfl` check is asked `decide` in its copy, as inside lean/ (review F11)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[outside-decide]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[outside-decide]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 82.4,
+   "output_tail": "d): the mutants that send the definition to <far> are KILLED only where Lean\n        states a refutation (`decide` asked after a failing `rfl`), UNKNOWN where\n        the check fails stating none (a stuck `rfl` or `#guard_expr`, a `#reduce` that prints a stuck term, an `#eval`\n        that throws, a `#check`, an `#eval`'s output: hunt Q4, Q7, Q8), SURVIVOR where it passes; in lean/ and in an\n        outside --test file alike.\"\"\"\n        done, mutants = stuck_run\n        mine = {(m[\"operator\"], m[\"before\"]): m for m in of(mutants, stuck_name(row))}\n        far_ones = {(\"le-lt\", \"≤\"), (\"lit-minus\", \"3\")}\n        assert far_ones <= set(mine), (sorted(mine), done.stdout + done.stderr)\n        for key, m in mine.items():\n            expected = (verdict, detail) if key in far_ones else (\"SURVIVOR\", \"\")\n>           assert m[\"status\"] == expected[0] and expected[1] in m[\"detail\"], m\nE           AssertionError: {'id': 'M016', 'file': 'Demo/Defs.lean', 'line': 64, 'definition': 'Demo.sOutsideDecide', ...}\nE           assert ('UNKNOWN' == 'KILLED'\nE             \nE             - KILLED\nE             + UNKNOWN)\n\ntests/test_trust_mutants.py:1478: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_check_that_states_no_refutation_is_unknown[outside-decide]\n1 failed in 81.41s (0:01:21)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-mma4sbtv)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM52",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check that computes through a proof the mutant broke never kills (hunt H4, N1, N2, P1-P9, Q1-Q3, Q5)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1g]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P1]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q1]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1g]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P1]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q1]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 74.8,
+   "output_tail": "r']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/HuntQ1.lean', 'line': 5, 'definition': 'Demo.qFast1', ...}, {'id': 'M003', 'file': 'Dem... due to metavariables)\nE         trust_mutants: 3 KILLED, 3 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 10 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/HuntQ1.lean', 'line': 5, 'definition': 'Demo.qFast1', ...}, {'id': 'M003', 'file': 'Demo...inition': 'Demo.qFast1', ...}, {'id': 'M011', 'file': 'Demo/HuntQ1.lean', 'line': 5, 'definition': 'Demo.qFast1', ...}] and not [{'id': 'M003', 'file': 'Demo/HuntQ1.lean', 'line': 5, 'definition': 'Demo.qFast1', ...}, {'id': 'M007', 'file': 'Demo...inition': 'Demo.qFast1', ...}, {'id': 'M011', 'file': 'Demo/HuntQ1.lean', 'line': 5, 'definition': 'Demo.qFast1', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1]\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N1g]\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P1]\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q1]\n4 failed in 73.84s (0:01:13)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-5yxfc2p6)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM53",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check whose goal has a hypothesis (a section variable) never kills (hunt N8)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N8]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N8]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.8,
+   "output_tail": "helper}\", str(tmp_path / \"helper\")))\n        (tmp_path / \"dump\").mkdir()\n        dump(root, tmp_path / \"dump\", [])\n        git(root, \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/HuntN8.lean', 'line': 5, 'definition': 'Demo.nVar', ...}, {'id': 'M002', 'file': 'Demo/...n), 4 jobs, base HEAD~1\nE         trust_mutants: 2 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 5 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/HuntN8.lean', 'line': 5, 'definition': 'Demo.nVar', ...}, {'id': 'M002', 'file': 'Demo/HuntN8.lean', 'line': 5, 'definition': 'Demo.nVar', ...}] and not [{'id': 'M001', 'file': 'Demo/HuntN8.lean', 'line': 5, 'definition': 'Demo.nVar', ...}, {'id': 'M002', 'file': 'Demo/HuntN8.lean', 'line': 5, 'definition': 'Demo.nVar', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N8]\n1 failed in 11.12s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-c999mvan)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM54",
+   "file": "tools/trust_mutants.py",
+   "claim": "a kill needs Lean to elaborate the check as without the mutant (hunt Q6, Q10, Q12, P8)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q10]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P8]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 59.1,
+   "output_tail": "\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}, {'id': 'M002', 'file': 'Demo/S...), 4 jobs, base HEAD~1\nE         trust_mutants: 6 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 12 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}, {'id': 'M002', 'file': 'Demo/Sr...'definition': 'Demo.qRef6', ...}, {'id': 'M006', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}] and not [{'id': 'M001', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}, {'id': 'M002', 'file': 'Demo/Sr...'definition': 'Demo.qRef6', ...}, {'id': 'M006', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]\n1 failed, 2 passed in 57.87s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-73wls2ka)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM55",
+   "file": "tools/trust_mutants.py",
+   "claim": "a cut proof loses its attributes: a `sorry` is no `@[csimp]` lemma (hunt N2)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N2]",
+    "tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 18.3,
+   "output_tail": " = @g := by\\n  funext n\\n  rfl\\n#guard f 1 == 2\\n\", 3,  # hunt N2: no attribute\n         \" \" * 15 + \"theorem t : @f = @g  := sorry\\n\\n\\n#guard f 1 == 2\\n\")],\n        ids=short)\n    def test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it(tmp_path, text, last, cut):\n        \"\"\"Review F6: the cut blanks the wrapper (the `sorry` warning would fail it) and keeps the whole comments after\n        the proof (the next `#guard_msgs`'s docstring is in the span before it), every line kept.\"\"\"\n        import trust_mutants\n        path = tmp_path / \"A.lean\"\n        path.write_text(text)\n        first = 2 if text.startswith(\"--\") else 1\n        assert trust_mutants.cut_proof(path, first, last)\n>       assert path.read_text() == cut\nE       AssertionError: assert '@[csimp, sim...rd f 1 == 2\\n' == '            ...rd f 1 == 2\\n'\nE         \nE         -                theorem t : @f = @g  := sorry\nE         + @[csimp, simp] theorem t : @f = @g  := sorry\nE           \nE           \nE           #guard f 1 == 2\n\ntests/test_trust_mutants.py:286: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it[csimp-simp-theorem-t-f-g-by-funext-n-rfl-3-theorem-t-f-g-sorry-#guard-f-1-2]\n1 failed, 4 passed in 17.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-mbdtmwc3)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM56",
+   "file": "tools/trust_mutants.py",
+   "claim": "a span with two commands is no check (hunt N7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N7]",
+    "tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.9,
+   "output_tail": "\"),\n        (\"command\", \"#guard_msgs in example : f 1 = 2 := by decide\", \"check\"),\n        (\"command\", \"#guard_msgs (whitespace := lax) in\\n#eval f 1\", \"check\"),\n        (\"command\", \"#guard_msgs in\\n#guard f 1\", \"check\"),\n        (\"command\", \"#guard_msgs (drop\\n  info) in\\n#eval f 1\", \"other\"),\n        (\"command\", \"#guard_msgs\", \"other\"),\n        (\"theorem\", \"theorem t : f [] = [] := by\\n  simp [f]\\n  rfl\", \"proof\"),\n        (\"theorem\", \"theorem t : f [] = [] := by simp [f]; decide\", \"proof\"),\n        (\"def\", \"def f (n : Nat) : Nat := n\", \"other\"),\n        (\"command\", \"open Demo\", \"other\")], ids=short)\n    def test_only_guards_and_decide_rfl_proofs_are_checks(kind, text, role):\n        \"\"\"Review F1 (and SupExtra.lean's and Status.lean's `example`s): an `example` or theorem is a check only when\n        `decide`, `native_decide` or `rfl` proves it, whatever its statement names.\"\"\"\n        import trust_mutants\n>       assert trust_mutants.classify(kind, text) == role\nE       AssertionError: assert 'check' == 'other'\nE         \nE         - other\nE         + check\n\ntests/test_trust_mutants.py:344: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_only_guards_and_decide_rfl_proofs_are_checks[command-example-f-5-f-5-rfl-example-_h-f-0-1-f-1-other]\n1 failed, 26 passed in 11.24s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-c8a7v_t8)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM58",
+   "file": "tools/trust_mutants.py",
+   "claim": "\"Function expected\" (a coercion's instance search out of budget says it) is no refusal (hunt N5)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N5]",
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 24.3,
+   "output_tail": "100%]\n=================================== FAILURES ===================================\n___ test_invalid_only_when_lean_refuses_the_mutated_text[function-expected] ____\n\nname = 'function-expected', message = 'Function expected at\\n  x'\ninside = False, verdict = 'UNKNOWN'\n\n    @pytest.mark.parametrize((\"name\", \"message\", \"inside\", \"verdict\"), REFUSALS, ids=[r[0] for r in REFUSALS])\n    def test_invalid_only_when_lean_refuses_the_mutated_text(name, message, inside, verdict):\n        \"\"\"Review F12 (the DRI's note, step 1): an error in the mutated declaration is INVALID only when Lean refused its\n        text (a parse error, or a name, field, pattern or instance error outside its tactic blocks); a tactic that\n        fails, Lean's budget, a type mismatch (a false or stuck proof term gives one too) and anything else are\n        UNKNOWN, which counts toward the exit code.\"\"\"\n        import trust_mutants\n>       assert (\"INVALID\" if trust_mutants.refused(message, inside) else \"UNKNOWN\") == verdict\nE       AssertionError: assert 'INVALID' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + INVALID\n\ntests/test_trust_mutants.py:860: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text[function-expected]\n1 failed, 25 passed in 23.12s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-qxwxurzu)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM59",
+   "file": "tools/trust_mutants.py",
+   "claim": "the walk reads each `@[csimp]` lemma of what it reaches, wherever its attribute is given (hunt P3, Q5)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q5]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q5]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 43.3,
+   "output_tail": "ot, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M002', 'file': 'Demo/Q5Defs.lean', 'line': 5, 'definition': 'Demo.qImpl5', ...}, {'id': 'M005', 'file': 'Dem...ef5 lit-minus: 3 -> 2\nE         trust_mutants: 3 KILLED, 15 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 16 s\nE         ', '')\nE       assert ([{'id': 'M002', 'file': 'Demo/Q5Defs.lean', 'line': 5, 'definition': 'Demo.qImpl5', ...}, {'id': 'M005', 'file': 'Demo...inition': 'Demo.qImpl5', ...}, {'id': 'M017', 'file': 'Demo/Q5Defs.lean', 'line': 5, 'definition': 'Demo.qImpl5', ...}] and not [{'id': 'M005', 'file': 'Demo/Q5Defs.lean', 'line': 5, 'definition': 'Demo.qImpl5', ...}, {'id': 'M011', 'file': 'Demo...inition': 'Demo.qImpl5', ...}, {'id': 'M017', 'file': 'Demo/Q5Defs.lean', 'line': 5, 'definition': 'Demo.qImpl5', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P3]\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q5]\n2 failed in 42.35s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-netu5m4m)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM60",
+   "file": "tools/trust_mutants.py",
+   "claim": "the walk reads an `opaque` definition's value (hunt Q3)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q3]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q3]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.3,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/HuntQ3.lean', 'line': 5, 'definition': 'Demo.qFast3', ...}, {'id': 'M003', 'file': 'Dem...n due to metavariables)\nE         trust_mutants: 3 KILLED, 3 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 8 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/HuntQ3.lean', 'line': 5, 'definition': 'Demo.qFast3', ...}, {'id': 'M003', 'file': 'Demo...inition': 'Demo.qFast3', ...}, {'id': 'M011', 'file': 'Demo/HuntQ3.lean', 'line': 5, 'definition': 'Demo.qFast3', ...}] and not [{'id': 'M003', 'file': 'Demo/HuntQ3.lean', 'line': 5, 'definition': 'Demo.qFast3', ...}, {'id': 'M007', 'file': 'Demo...inition': 'Demo.qFast3', ...}, {'id': 'M011', 'file': 'Demo/HuntQ3.lean', 'line': 5, 'definition': 'Demo.qFast3', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q3]\n1 failed in 13.49s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-hitgwi2s)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM61",
+   "file": "tools/trust_mutants.py",
+   "claim": "the probe reads the mutant's build, where the instance Lean picks can change (hunt P8)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P8]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P8]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 19.8,
+   "output_tail": "unt_modules(row, form).items():\n            (root / \"lean\" / name).write_text(text.replace(\"{helper}\", str(tmp_path / \"helper\")))\n        (tmp_path / \"dump\").mkdir()\n        dump(root, tmp_path / \"dump\", [])\n        git(root, \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M005', 'file': 'Demo/HuntP8.lean', 'line': 5, 'definition': 'Demo.pK', ...}, {'id': 'M008', 'file': 'Demo/Hu....lean:9: Type mismatch)\nE         trust_mutants: 1 KILLED, 1 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 9 s\nE         ', '')\nE       assert ([{'id': 'M005', 'file': 'Demo/HuntP8.lean', 'line': 5, 'definition': 'Demo.pK', ...}, {'id': 'M008', 'file': 'Demo/HuntP8.lean', 'line': 5, 'definition': 'Demo.pK', ...}] and not [{'id': 'M008', 'file': 'Demo/HuntP8.lean', 'line': 5, 'definition': 'Demo.pK', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P8]\n1 failed in 18.80s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-9q5stbt_)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM63",
+   "file": "tools/trust_mutants.py",
+   "claim": "the probe's copy keeps every line of the file, so what a check reads of its source is the file's (hunt Q6)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 22.6,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}, {'id': 'M002', 'file': 'Demo/S...), 4 jobs, base HEAD~1\nE         trust_mutants: 6 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 13 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}, {'id': 'M002', 'file': 'Demo/Sr...'definition': 'Demo.qRef6', ...}, {'id': 'M006', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}] and not [{'id': 'M001', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}, {'id': 'M002', 'file': 'Demo/Sr...'definition': 'Demo.qRef6', ...}, {'id': 'M006', 'file': 'Demo/Src6.lean', 'line': 5, 'definition': 'Demo.qRef6', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]\n1 failed in 21.65s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-bos4dmk8)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM64",
+   "file": "tools/trust_mutants.py",
+   "claim": "nothing is cut up front: a cut proof is one the mutant broke, which is what the probe's `sorry` means (hunt H4-Q5)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 62.4,
+   "output_tail": "ean\").write_text(\n            \"import Demo.Defs\\n\"\n            \"#eval (⟨0, Nat.lt_of_lt_of_eq (by decide) (Demo.double_eq 1).symm⟩ : Fin (Demo.double 1)).val\\n\")\n        done, mutants = tool(package, tmp_path / \"run\", \"--test\", \"outside/Value.lean\", \"--test\", \"outside/Reads.lean\")\n        before = {m[\"id\"]: m[\"status\"] for m in default_run[1]}\n        assert [m for m in mutants if \"Reads.lean\" in m[\"detail\"] and m[\"status\"] != \"UNKNOWN\"] == [], done.stdout\n        assert [before[m[\"id\"]] for m in mutants if m[\"definition\"] == \"Demo.double\"] == [\"SURVIVOR\"]\n        for m in mutants:\n            if m[\"definition\"] == \"Demo.double\":  # it breaks `double_eq`, which Reads.lean reads\n                assert m[\"status\"] == \"UNKNOWN\" and m[\"detail\"].endswith(\"Reads.lean fails without the mutant too\"), m\n            else:\n>               assert m[\"status\"] == before[m[\"id\"]], m\nE               AssertionError: {'id': 'M008', 'file': 'Demo/Defs.lean', 'line': 7, 'definition': 'Demo.evens', ...}\nE               assert 'UNKNOWN' == 'SURVIVOR'\nE                 \nE                 - SURVIVOR\nE                 + UNKNOWN\n\ntests/test_trust_mutants.py:384: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_outside_test_that_fails_without_the_mutant_is_no_kill\n1 failed in 61.61s (0:01:01)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-4d1su5rq)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM65",
+   "file": "tools/trust_mutants.py",
+   "claim": "the walk reads a `partial def`'s compiled body (`_unsafe_rec`) (hunt R1)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R1]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R1]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 20.0,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/HuntR1.lean', 'line': 5, 'definition': 'Demo.rFast1', ...}, {'id': 'M003', 'file': 'Dem...oop1 lit-minus: 1 -> 0\nE         trust_mutants: 3 KILLED, 7 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 10 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/HuntR1.lean', 'line': 5, 'definition': 'Demo.rFast1', ...}, {'id': 'M003', 'file': 'Demo...inition': 'Demo.rFast1', ...}, {'id': 'M012', 'file': 'Demo/HuntR1.lean', 'line': 5, 'definition': 'Demo.rFast1', ...}] and not [{'id': 'M003', 'file': 'Demo/HuntR1.lean', 'line': 5, 'definition': 'Demo.rFast1', ...}, {'id': 'M007', 'file': 'Demo...inition': 'Demo.rFast1', ...}, {'id': 'M012', 'file': 'Demo/HuntR1.lean', 'line': 5, 'definition': 'Demo.rFast1', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R1]\n1 failed in 19.01s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0q4m9r58)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM66",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check that runs IO (`unsafeIO`, an `initialize`d value) never kills (hunt R2, R6)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R2]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R6]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R2]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 52.8,
+   "output_tail": "\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/SrcR2.lean', 'line': 3, 'definition': 'Demo.rRef2', ...}, {'id': 'M002', 'file': 'Demo/...), 4 jobs, base HEAD~1\nE         trust_mutants: 6 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 11 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/SrcR2.lean', 'line': 3, 'definition': 'Demo.rRef2', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.rRef2', ...}, {'id': 'M006', 'file': 'Demo/SrcR2.lean', 'line': 3, 'definition': 'Demo.rRef2', ...}] and not [{'id': 'M001', 'file': 'Demo/SrcR2.lean', 'line': 3, 'definition': 'Demo.rRef2', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.rRef2', ...}, {'id': 'M006', 'file': 'Demo/SrcR2.lean', 'line': 3, 'definition': 'Demo.rRef2', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R2]\n1 failed, 1 passed in 51.82s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-wdhlu8be)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM67",
+   "file": "tools/trust_mutants.py",
+   "claim": "a kill needs every definition the check reads, outside the mutated one, as without the mutant (hunt R8)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R8]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R8]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.0,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/SrcR8.lean', 'line': 3, 'definition': 'Demo.rRef8', ...}, {'id': 'M002', 'file': 'Demo/...n), 4 jobs, base HEAD~1\nE         trust_mutants: 8 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 9 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/SrcR8.lean', 'line': 3, 'definition': 'Demo.rRef8', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.rRef8', ...}, {'id': 'M007', 'file': 'Demo/SrcR8.lean', 'line': 3, 'definition': 'Demo.rRef8', ...}] and not [{'id': 'M001', 'file': 'Demo/SrcR8.lean', 'line': 3, 'definition': 'Demo.rRef8', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.rRef8', ...}, {'id': 'M007', 'file': 'Demo/SrcR8.lean', 'line': 3, 'definition': 'Demo.rRef8', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R8]\n1 failed in 16.26s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-or7t9p6o)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM68",
+   "file": "tools/trust_mutants.py",
+   "claim": "the probe elaborates a file as the build does, with the module's options (hunt R5)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R5]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R5]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 22.5,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/HuntR5.lean', 'line': 12, 'definition': 'Demo.rFast5', ...}, {'id': 'M003', 'file': 'De...Nat lit-minus: 1 -> 0\nE         trust_mutants: 3 KILLED, 11 SURVIVOR, 8 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN in 13 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/HuntR5.lean', 'line': 12, 'definition': 'Demo.rFast5', ...}, {'id': 'M003', 'file': 'Dem...nition': 'Demo.rFast5', ...}, {'id': 'M016', 'file': 'Demo/HuntR5.lean', 'line': 12, 'definition': 'Demo.rFast5', ...}] and not [{'id': 'M003', 'file': 'Demo/HuntR5.lean', 'line': 12, 'definition': 'Demo.rFast5', ...}, {'id': 'M007', 'file': 'Dem...nition': 'Demo.rFast5', ...}, {'id': 'M016', 'file': 'Demo/HuntR5.lean', 'line': 12, 'definition': 'Demo.rFast5', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R5]\n1 failed in 21.53s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-6oxzbsgb)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM69",
+   "file": "tools/trust_mutants.py",
+   "claim": "a `#guard_msgs` diff kills only when the check's truth changed: one side empty (hunt R7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R7]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R7]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 20.4,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M002', 'file': 'Demo/R7.lean', 'line': 5, 'definition': 'Demo.rTag7', ...}, {'id': 'M004', 'file': 'Demo/R7....lean:9: Type mismatch)\nE         trust_mutants: 5 KILLED, 2 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 11 s\nE         ', '')\nE       assert ([{'id': 'M002', 'file': 'Demo/R7.lean', 'line': 5, 'definition': 'Demo.rTag7', ...}, {'id': 'M004', 'file': 'Demo/R7.l..., 'definition': 'Demo.rTag7', ...}, {'id': 'M013', 'file': 'Demo/R7.lean', 'line': 5, 'definition': 'Demo.rTag7', ...}] and not [{'id': 'M002', 'file': 'Demo/R7.lean', 'line': 5, 'definition': 'Demo.rTag7', ...}, {'id': 'M006', 'file': 'Demo/R7.l..., 'definition': 'Demo.rTag7', ...}, {'id': 'M010', 'file': 'Demo/R7.lean', 'line': 5, 'definition': 'Demo.rTag7', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R7]\n1 failed in 19.48s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-andkh6a6)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM70",
+   "file": "tools/trust_mutants.py",
+   "claim": "a parse error counts as a refusal only inside the mutant's own text, not one the tool's padding made (hunt R3)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R3]",
+    "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R3]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 23.7,
+   "output_tail": "eplace(\"{helper}\", str(tmp_path / \"helper\")))\n        (tmp_path / \"dump\").mkdir()\n        dump(root, tmp_path / \"dump\", [])\n        git(root, \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M002', 'file': 'Demo/HuntR3.lean', 'line': 9, 'definition': 'Demo.rPick3', ...}, {'id': 'M003', 'file': 'Dem...as not been provided)\nE         trust_mutants: 24 KILLED, 1 SURVIVOR, 4 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN in 15 s\nE         ', '')\nE       assert ([{'id': 'M002', 'file': 'Demo/HuntR3.lean', 'line': 9, 'definition': 'Demo.rPick3', ...}, {'id': 'M003', 'file': 'Demo...on': 'Demo.rPick3', ...}, {'id': 'M011', 'file': 'Demo/HuntR3.lean', 'line': 8, 'definition': 'Demo.rPick3', ...}, ...] and not [{'id': 'M011', 'file': 'Demo/HuntR3.lean', 'line': 8, 'definition': 'Demo.rPick3', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[R3]\n1 failed, 8 passed in 22.89s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cykjp0uq)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM71",
+   "file": "tools/trust_mutants.py",
+   "claim": "only the mutated declaration and what Lean generated for it (its owner, its source range) are exempt from the comparison (hunt S1, S2, T5)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S1]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S2]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T5]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S1]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S2]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T5]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 62.6,
+   "output_tail": "])\n        git(root, \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M006', 'file': 'Demo/HuntT5.lean', 'line': 20, 'definition': 'Demo.TLimits5', ...}, {'id': 'M009', 'file': '...same lit-plus: 0 -> 1\nE         trust_mutants: 4 KILLED, 13 SURVIVOR, 0 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN in 11 s\nE         ', '')\nE       assert ([{'id': 'M006', 'file': 'Demo/HuntT5.lean', 'line': 20, 'definition': 'Demo.TLimits5', ...}, {'id': 'M009', 'file': 'Demo/HuntT5.lean', 'line': 20, 'definition': 'Demo.TLimits5', ...}] and not [{'id': 'M006', 'file': 'Demo/HuntT5.lean', 'line': 20, 'definition': 'Demo.TLimits5', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S1]\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S2]\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T5]\n3 failed in 61.47s (0:01:01)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-dsuwj9oh)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM72",
+   "file": "tools/trust_mutants.py",
+   "claim": "every constant a check reaches is compared, through the mutated definition too (hunt S3, T3)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S3]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T3]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S3]",
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T3]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 25.4,
+   "output_tail": "kdir()\n        dump(root, tmp_path / \"dump\", [])\n        git(root, \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/SrcT3.lean', 'line': 5, 'definition': 'Demo.tRef3', ...}, {'id': 'M002', 'file': 'Demo/...tSrc3 -> (tSrc3.drop 1)\nE         trust_mutants: 5 KILLED, 8 SURVIVOR, 0 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN in 7 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/SrcT3.lean', 'line': 5, 'definition': 'Demo.tRef3', ...}, {'id': 'M002', 'file': 'Demo/S...ition': 'Demo.tRef3', ...}, {'id': 'M006', 'file': 'Demo/SrcT3.lean', 'line': 5, 'definition': 'Demo.tRef3', ...}, ...] and not [{'id': 'M005', 'file': 'Demo/SrcT3.lean', 'line': 5, 'definition': 'Demo.tRef3', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S3]\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T3]\n2 failed in 24.71s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-b5k6b5um)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM73",
+   "file": "tools/trust_mutants.py",
+   "claim": "IO is known by its types, not by the `unsafe*IO` names (hunt S5)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S5]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S5]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.1,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/SrcS5.lean', 'line': 3, 'definition': 'Demo.sRef5', ...}, {'id': 'M002', 'file': 'Demo/...n), 4 jobs, base HEAD~1\nE         trust_mutants: 6 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 7 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/SrcS5.lean', 'line': 3, 'definition': 'Demo.sRef5', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.sRef5', ...}, {'id': 'M006', 'file': 'Demo/SrcS5.lean', 'line': 3, 'definition': 'Demo.sRef5', ...}] and not [{'id': 'M001', 'file': 'Demo/SrcS5.lean', 'line': 3, 'definition': 'Demo.sRef5', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.sRef5', ...}, {'id': 'M006', 'file': 'Demo/SrcS5.lean', 'line': 3, 'definition': 'Demo.sRef5', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S5]\n1 failed in 12.50s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jm25q3nq)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM74",
+   "file": "tools/trust_mutants.py",
+   "claim": "the walk reads every package but Lean's own core (hunt S6)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S6]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S6]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 19.2,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/SrcS6.lean', 'line': 5, 'definition': 'Demo.sRef6', ...}, {'id': 'M002', 'file': 'Demo/...), 4 jobs, base HEAD~1\nE         trust_mutants: 6 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 10 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/SrcS6.lean', 'line': 5, 'definition': 'Demo.sRef6', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.sRef6', ...}, {'id': 'M006', 'file': 'Demo/SrcS6.lean', 'line': 5, 'definition': 'Demo.sRef6', ...}] and not [{'id': 'M001', 'file': 'Demo/SrcS6.lean', 'line': 5, 'definition': 'Demo.sRef6', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.sRef6', ...}, {'id': 'M006', 'file': 'Demo/SrcS6.lean', 'line': 5, 'definition': 'Demo.sRef6', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S6]\n1 failed in 18.21s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ay15mxdk)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM75",
+   "file": "tools/trust_mutants.py",
+   "claim": "the probe reads only lines with its own nonce (hunt S7)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S7]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S7]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.2,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/SrcS7.lean', 'line': 3, 'definition': 'Demo.sRef7', ...}, {'id': 'M002', 'file': 'Demo/...n), 4 jobs, base HEAD~1\nE         trust_mutants: 8 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 8 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/SrcS7.lean', 'line': 3, 'definition': 'Demo.sRef7', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.sRef7', ...}, {'id': 'M007', 'file': 'Demo/SrcS7.lean', 'line': 3, 'definition': 'Demo.sRef7', ...}] and not [{'id': 'M001', 'file': 'Demo/SrcS7.lean', 'line': 3, 'definition': 'Demo.sRef7', ...}, {'id': 'M002', 'file': 'Demo/S...definition': 'Demo.sRef7', ...}, {'id': 'M007', 'file': 'Demo/SrcS7.lean', 'line': 3, 'definition': 'Demo.sRef7', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S7]\n1 failed in 13.49s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ma1mp2_q)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM76",
+   "file": "tools/trust_mutants.py",
+   "claim": "the probe elaborates a module at its own path, with its library's options (hunt S8)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S8]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S8]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.8,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/S8.lean', 'line': 10, 'definition': 'Demo.sFast8', ...}, {'id': 'M003', 'file': 'Demo/S...fNat lit-minus: 1 -> 0\nE         trust_mutants: 3 KILLED, 11 SURVIVOR, 8 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN in 8 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/S8.lean', 'line': 10, 'definition': 'Demo.sFast8', ...}, {'id': 'M003', 'file': 'Demo/S8...definition': 'Demo.sFast8', ...}, {'id': 'M016', 'file': 'Demo/S8.lean', 'line': 10, 'definition': 'Demo.sFast8', ...}] and not [{'id': 'M003', 'file': 'Demo/S8.lean', 'line': 10, 'definition': 'Demo.sFast8', ...}, {'id': 'M007', 'file': 'Demo/S8...definition': 'Demo.sFast8', ...}, {'id': 'M016', 'file': 'Demo/S8.lean', 'line': 10, 'definition': 'Demo.sFast8', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S8]\n1 failed in 14.13s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-65xjmvis)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM77",
+   "file": "tools/trust_mutants.py",
+   "claim": "every theorem `@f = @g` is a possible `@[csimp]` lemma, a `local` one included (hunt S9)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S9]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S9]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.8,
+   "output_tail": ", str(tmp_path / \"helper\")))\n        (tmp_path / \"dump\").mkdir()\n        dump(root, tmp_path / \"dump\", [])\n        git(root, \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M002', 'file': 'Demo/HuntS9.lean', 'line': 7, 'definition': 'Demo.sImpl9', ...}, {'id': 'M004', 'file': 'Dem...sRef9 lit-minus: 2 -> 1\nE         trust_mutants: 2 KILLED, 2 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 8 s\nE         ', '')\nE       assert ([{'id': 'M002', 'file': 'Demo/HuntS9.lean', 'line': 7, 'definition': 'Demo.sImpl9', ...}, {'id': 'M004', 'file': 'Demo/HuntS9.lean', 'line': 7, 'definition': 'Demo.sImpl9', ...}] and not [{'id': 'M002', 'file': 'Demo/HuntS9.lean', 'line': 7, 'definition': 'Demo.sImpl9', ...}, {'id': 'M004', 'file': 'Demo/HuntS9.lean', 'line': 7, 'definition': 'Demo.sImpl9', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[S9]\n1 failed in 16.81s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-p0w6qidn)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM78",
+   "file": "tools/trust_mutants.py",
+   "claim": "a check that computes through an axiom of the tree never kills (hunt T1)",
+   "source_sha256": "c951552abf3377092e5f64d608674d58eeed403c6109ae52a4ee4ef8c95add72",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T1]"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T1]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.9,
+   "output_tail": " \"add\", \".\")\n        git(root, \"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\")\n        mine = of(mutants, definition)\n>       assert mine and not [m for m in mine if m[\"status\"] in never or f\"{m['status']}:{m['operator']}\" in never], (\n            mine, done.stdout[-2000:], done.stderr[-2000:])\nE       AssertionError: ([{'id': 'M001', 'file': 'Demo/HuntT1.lean', 'line': 5, 'definition': 'Demo.tFast1', ...}, {'id': 'M003', 'file': 'Dem... due to metavariables)\nE         trust_mutants: 3 KILLED, 4 SURVIVOR, 12 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 7 s\nE         ', '')\nE       assert ([{'id': 'M001', 'file': 'Demo/HuntT1.lean', 'line': 5, 'definition': 'Demo.tFast1', ...}, {'id': 'M003', 'file': 'Demo...inition': 'Demo.tFast1', ...}, {'id': 'M017', 'file': 'Demo/HuntT1.lean', 'line': 5, 'definition': 'Demo.tFast1', ...}] and not [{'id': 'M003', 'file': 'Demo/HuntT1.lean', 'line': 5, 'definition': 'Demo.tFast1', ...}, {'id': 'M008', 'file': 'Demo...inition': 'Demo.tFast1', ...}, {'id': 'M017', 'file': 'Demo/HuntT1.lean', 'line': 5, 'definition': 'Demo.tFast1', ...}])\n\ntests/test_trust_mutants.py:1557: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T1]\n1 failed in 13.28s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-vqfdsogi)\n",
+   "commit": "d09bf54d4"
+  },
+  {
+   "id": "TM79",
+   "file": "tools/trust_mutants.py",
+   "claim": "a mutant's build past `--build-timeout` is killed and the mutant UNKNOWN, never a hung run (hunt T5w, T7)",
+   "source_sha256": "3b092aa1f1b1d834c6cb806ea3c3c8bc09bcc9dda2931f7af54a716ed40fe219",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_build_past_its_time_limit_is_unknown"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_a_build_past_its_time_limit_is_unknown"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 23.3,
+   "output_tail": "rop-last: xs -> (xs.dropLast)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-last: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).reverse.take 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).drop 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-last: xs -> (xs.reverse.take 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs -> (xs.drop 1)\nE         trust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 38 NOT RUN in 10 s\nE         \nE       assert (3 == 3 and 3 == 1)\nE        +  where 3 = len([{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}, {'id': 'M002', 'file': 'Demo/De...'definition': 'Demo.small', ...}, {'id': 'M003', 'file': 'Demo/Defs.lean', 'line': 4, 'definition': 'Demo.small', ...}])\nE        +  and   3 = CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/to...-> (xs.drop 1)\\ntrust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 38 NOT RUN in 10 s\\n', stderr='').returncode\n\ntests/test_trust_mutants.py:393: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_a_build_past_its_time_limit_is_unknown\n1 failed in 22.58s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-8fobxdfx)\n",
+   "commit": "0ee7bfc45"
+  },
+  {
+   "id": "TM80",
+   "file": "tools/trust_mutants.py",
+   "claim": "the modules an outside --test file imports are built with the mutant, so a proof it broke there is cut and seen by the probe (review F13)",
+   "source_sha256": "e883807d3ffa3ed7ac8a96d93bd50e9e8a58e544d9f0dfd2e94d8eeb4cda074c",
+   "tests": [
+    "tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 92.2,
+   "output_tail": "\"commit\", \"-qm\", \"head\")\n        done, mutants = tool(root, tmp_path / \"run\", \"--max-mutants\", \"1000\", \"--test\", \"checks/Check.lean\")\n        for name in (\"f\", \"g\"):\n            mine = of(mutants, name)\n>           assert mine and not [m for m in mine if m[\"status\"] == \"KILLED\"], (mine, done.stdout + done.stderr)\nE           AssertionError: ([{'id': 'M002', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}, {'id': 'M006', 'file': 'Demo/Defs.... Demo.g lit-minus: 4 -> 3\nE             trust_mutants: 8 KILLED, 16 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 22 s\nE             ')\nE           assert ([{'id': 'M002', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}, {'id': 'M006', 'file': 'Demo/Defs.l...ne': 5, 'definition': 'Demo.f', ...}, {'id': 'M028', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}] and not [{'id': 'M002', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}, {'id': 'M010', 'file': 'Demo/Defs.l...ne': 5, 'definition': 'Demo.f', ...}, {'id': 'M024', 'file': 'Demo/Defs.lean', 'line': 5, 'definition': 'Demo.f', ...}])\n\ntests/test_trust_mutants.py:422: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant\n1 failed in 40.10s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-2kzn1amp)\n",
+   "commit": "05ea60664"
+  },
+  {
+   "id": "TM81",
+   "file": "tools/trust_mutants.py",
+   "claim": "an outside --test file whose imports cannot be read stops the run (review F13)",
+   "source_sha256": "e883807d3ffa3ed7ac8a96d93bd50e9e8a58e544d9f0dfd2e94d8eeb4cda074c",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run"
+   ],
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 114.8,
+   "output_tail": "lean/Demo/Defs.lean:7 Demo.evens list-first: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-first: xs -> (xs.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-last: xs -> (xs.dropLast)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-last: xs -> (xs.reverse.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-last: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).reverse.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).drop 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs -> (xs.drop 1)\nE         trust_mutants: 12 KILLED, 21 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 71 s\nE         \nE       assert (1 == 2)\nE        +  where 1 = CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/to...> (xs.drop 1)\\ntrust_mutants: 12 KILLED, 21 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 71 s\\n', stderr='').returncode\n\ntests/test_trust_mutants.py:432: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run\n1 failed in 92.57s (0:01:32)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-88rgyxoq)\n",
+   "commit": "05ea60664"
+  },
+  {
+   "id": "TM82",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a sentence that states a result is UNBOUND unless each such word lies inside a text the evidence gives (review F14's class)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.8,
+   "output_tail": "1,5c1,5\n< hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: 21–35 of each replay's mutants are INVALID.\n< hunt/F15c.md:4 UNBOUND ['211 each']: The kills are the mutants of the `#guard`, `decide` and `rfl` rows (211 each).\n< hunt/F15c.md:6 UNBOUND ['about 161']: The F9 line axis of the test is about 161.\n< hunt/F15c.md:8 UNBOUND ['all 7']: At the default it flags all 7, so steps two and three follow.\n< hunt/F15c.md:10 UNBOUND ['20 lines']: Removing those operators saves under 20 lines.\n---\n> hunt/F15c.md:2 OK (): 21–35 of each replay's mutants are INVALID.\n> hunt/F15c.md:4 OK (): The kills are the mutants of the `#guard`, `decide` and `rfl` rows (211 each).\n> hunt/F15c.md:6 OK (): The F9 line axis of the test is about 161.\n> hunt/F15c.md:8 OK (): At the default it flags all 7, so steps two and three follow.\n> hunt/F15c.md:10 OK (): Removing those operators saves under 20 lines.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM83",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a PROBE list binds only when every probe it names, a range expanded, exits 0 in evidence/probes.json",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; assert claims.names('F1, F6–F9 and N4') == ['F1', 'F6', 'F7', 'F8', 'F9', 'N4']"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 0.3,
+   "output_tail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; assert claims.names('F1, F6–F9 and N4') == ['F1', 'F6', 'F7', 'F8', 'F9', 'N4']\n                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM84",
+   "file": "docs/speed/trustmut/replay.py",
+   "claim": "the report's budget line is replay.py's, written from the saved evidence and the 1,200 s budget (review F14)",
+   "source_sha256": "cebddf77f160c248a2309b059d08f39e29dd62944f05cf8847efe4ac375e8288",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.7,
+   "output_tail": "claims: 73 sentences, 29 bound to evidence, 44 UNBOUND\nREPORT.md:115 UNBOUND ['1200 s', '5 of 6', 'within it', '1917 s']: > Step 1's budget (1200 s a replay): 5 of 6 replays within it; over it: ap-2 F11 1917 s (final tool).\nREPORT.md:115 UNBOUND ['0 of 1', 'within it']: On the final tool 0 of 1 within it.\nREPORT.md:651 UNBOUND ['1,200 s']: | TM84 | the report's budget line is `replay.py`'s, from the saved evidence and the 1,200 s budget (review F14) | `BUDGE\nclaims: 82 sentences, 79 bound to evidence, 3 UNBOUND\n",
+   "commit": "5d2df727f"
+  },
+  {
+   "id": "TM85",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "claim": "the probes' summary line counts only the probes that exit 0, and the README and report quote it",
+   "source_sha256": "2c534e64d4cfaf2410c7c114314eb08ca52a1f391ae74ed3de2376eab4d12d6b",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.8,
+   "output_tail": "claims: 85 sentences, 38 bound to evidence, 47 UNBOUND\nREPORT.md:444 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nhunt/README.md:20 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nclaims: 94 sentences, 92 bound to evidence, 2 UNBOUND\n",
+   "commit": "a467e4f4e"
+  },
+  {
+   "id": "TM86",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a count reads up to three words between the number and what it counts (review F15: \"21–35 of each replay's mutants\")",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.8,
+   "output_tail": "1d0\n< hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: 21–35 of each replay's mutants are INVALID.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM87",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "\"N each\" is a count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.5,
+   "output_tail": "2d1\n< hunt/F15c.md:4 UNBOUND ['211 each']: The kills are the mutants of the `#guard`, `decide` and `rfl` rows (211 each).\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM88",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "\"about N\" is a count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.5,
+   "output_tail": "3d2\n< hunt/F15c.md:6 UNBOUND ['about 161']: The F9 line axis of the test is about 161.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM89",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "\"all N\" is a count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.4,
+   "output_tail": "4d3\n< hunt/F15c.md:8 UNBOUND ['all 7']: At the default it flags all 7, so steps two and three follow.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM90",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "N lines is a count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.0,
+   "output_tail": "5d4\n< hunt/F15c.md:10 UNBOUND ['20 lines']: Removing those operators saves under 20 lines.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM91",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a number inside a name (ap-2, F14, Lean 4.24) is no count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.8,
+   "output_tail": "5a6\n> hunt/F15c.md:12 UNBOUND ['2 replays']: A real regression of the rewrite, caught by the ap-2 replays.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM92",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a sentence that starts with a digit is a sentence of its own",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.8,
+   "output_tail": "1c1\n< hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: 21–35 of each replay's mutants are INVALID.\n---\n> hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: The mutation sites are found on the blanked text. 21–35 of each replay's mutants are INVALID.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM93",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "the test-size sentence of section 5 is measured from the test file (review F15's class)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; text = ' '.join(claims.DOCS[0].read_text().split()); assert ' '.join(claims.parts()[0][0].split()) in text"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 0.4,
+   "output_tail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; text = ' '.join(claims.DOCS[0].read_text().split()); assert ' '.join(claims.parts()[0][0].split()) in text\n                                                                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM94",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a cell of the step-1 table that differs from replay.py's row is UNBOUND (review F16)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 23.8,
+   "output_tail": "flagged only as the report is: s#^\\(| pk-1 F1 | [^|]*| [0-9]* / \\)\\([0-9]*\\) /#\\19\\2 /#\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM95",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "every column of the step-1 table is compared, the yes/no columns included (review F16's class)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.8,
+   "output_tail": "F16c: 47 of 59 changed copies UNBOUND\nnot flagged: ['table line 84 cell 6', 'table line 84 cell 7', 'table line 85 cell 6', 'table line 85 cell 7', 'table line 86 cell 6', 'table line 86 cell 7', 'table line 87 cell 6', 'table line 87 cell 7', 'table line 88 cell 6', 'table line 88 cell 7', 'table line 89 cell 6', 'table line 89 cell 7']\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM96",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a named sentence whose numbers the evidence does not give is UNBOUND (review F16)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 22.0,
+   "output_tail": "flagged only as the report is: s#\\(seeded bugs TM1–TM[0-9]*, \\)\\([0-9]*\\)#\\19\\2#\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM97",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a named sentence missing from the report is UNBOUND, so a rewording cannot drop it (review F16's class)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.2,
+   "output_tail": "F16c: 55 of 59 changed copies UNBOUND\nnot flagged: ['pk-1 {} at `PacksLegacy.lean`  removed', '(pk-1: {}, at `Readings/Unspec removed', 'seeded bugs TM{}–TM{}, {} (`mu removed', '`tools/gate_collection.py --ch removed']\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM98",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "claim": "the saved probes hold for the report they ran on: its sha256 is saved and compared (the recheck's C item)",
+   "source_sha256": "2c534e64d4cfaf2410c7c114314eb08ca52a1f391ae74ed3de2376eab4d12d6b",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.0,
+   "output_tail": "claims: 85 sentences, 37 bound to evidence, 48 UNBOUND\nREPORT.md:267 UNBOUND ['exit 0', 'on the final tool']: PROBE F1, F6, F7, F8 and F9 exit 0 on the final tool (`evidence/probes.json`, section 1e).\nREPORT.md:316 UNBOUND ['exits 0', 'on the final tool']: `test_probe_f10_a_check_out_of_budget_is_no_kill`): before the fix `lit-plus` was KILLED, now `[('lit-plus', 'UNKNOWN', \nREPORT.md:419 UNBOUND ['exits 0', 'on the final tool']: Since hunt 7's fixes the probe compares the instance the check reads, so PROBE T6 exits 0 on the final tool (`evidence/p\nREPORT.md:437 UNBOUND ['exit 0', 'on the final tool']: PROBE F1, F6–F16, F15c and F16c exit 0 on the final tool.\nREPORT.md:444 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nREPORT.md:716 UNBOUND ['on the final tool']: - The probes ran on the final tool (`evidence/probes.json`).\nhunt/README.md:6 UNBOUND ['exits 0', 'on the final tool']: T6 is boundary (3), but PROBE T6 exits 0 on the final tool: since hunt 7 the fallback instance its check reads is compar\nhunt/README.md:20 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nclaims: 94 sentences, 86 bound to evidence, 8 UNBOUND\n",
+   "commit": "a467e4f4e"
+  },
+  {
+   "id": "TM99",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "claim": "the report's quote of the probes' summary, written after the run, is left out of its sha256",
+   "source_sha256": "2c534e64d4cfaf2410c7c114314eb08ca52a1f391ae74ed3de2376eab4d12d6b",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.5,
+   "output_tail": "claims: 85 sentences, 37 bound to evidence, 48 UNBOUND\nREPORT.md:267 UNBOUND ['exit 0', 'on the final tool']: PROBE F1, F6, F7, F8 and F9 exit 0 on the final tool (`evidence/probes.json`, section 1e).\nREPORT.md:316 UNBOUND ['exits 0', 'on the final tool']: `test_probe_f10_a_check_out_of_budget_is_no_kill`): before the fix `lit-plus` was KILLED, now `[('lit-plus', 'UNKNOWN', \nREPORT.md:419 UNBOUND ['exits 0', 'on the final tool']: Since hunt 7's fixes the probe compares the instance the check reads, so PROBE T6 exits 0 on the final tool (`evidence/p\nREPORT.md:437 UNBOUND ['exit 0', 'on the final tool']: PROBE F1, F6–F16, F15c and F16c exit 0 on the final tool.\nREPORT.md:444 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nREPORT.md:716 UNBOUND ['on the final tool']: - The probes ran on the final tool (`evidence/probes.json`).\nhunt/README.md:6 UNBOUND ['exits 0', 'on the final tool']: T6 is boundary (3), but PROBE T6 exits 0 on the final tool: since hunt 7 the fallback instance its check reads is compar\nhunt/README.md:20 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nclaims: 94 sentences, 86 bound to evidence, 8 UNBOUND\n",
+   "commit": "a467e4f4e"
+  }
+ ]
+}
