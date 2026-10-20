@@ -34,6 +34,7 @@ import VE.SearchBudget.Run
 import Std.Data.HashMap
 import Std.Data.TreeMap.Raw.Lemmas
 import VE.Limits
+import VE.Service.Registry
 
 /-! # `ve_service` protocol (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1)
 
@@ -72,61 +73,6 @@ namespace VE.Service
 open Lean
 
 export VE.Limits (maxLineBytes maxCases)
-
-inductive Mode where
-  | evaluate | checkCertificate | order | route | norms | english | englishRead | englishGrammar | englishCheck
-  | environment | model | check | identity
-  | parse | graph | readings | readingsChoices | bundle | familyNorms
-  | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
-  | discourse | readingsRoute | diagnose | document | englishQuestion | searchBudget | ask | words | metered
-  deriving DecidableEq, Repr
-
-def Mode.name : Mode → String
-  | .evaluate => "evaluate"
-  | .checkCertificate => "check-certificate"
-  | .order => "order"
-  | .route => "route"
-  | .norms => "norms"
-  | .english => "english"
-  | .englishRead => "english.read"
-  | .englishGrammar => "english.grammar"
-  | .englishCheck => "english.check"
-  | .environment => "environment"
-  | .model => "model"
-  | .check => "check"
-  | .identity => "identity"
-  | .parse => "parse"
-  | .graph => "graph"
-  | .readings => "readings"
-  | .readingsChoices => "readings-choices"
-  | .bundle => "bundle"
-  | .familyNorms => "family-norms"
-  | .softNorms => "soft-norms"
-  | .rights => "rights"
-  | .speechActs => "speech-acts"
-  | .reports => "reports"
-  | .alternatives => "alternatives"
-  | .risk => "risk"
-  | .riskEval => "risk-eval"
-  | .quantity => "quantity"
-  | .normDefaults => "norm-defaults"
-  | .discourse => "discourse"
-  | .readingsRoute => "readings-route"
-  | .diagnose => "diagnose"
-  | .document => "document"
-  | .englishQuestion => "english.question"
-  | .searchBudget => "search-budget"
-  | .ask => "ask"
-  | .words => "words"
-  | .metered => "metered"
-
-def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
-  .englishRead, .englishGrammar, .englishCheck,
-  .environment, .model, .check, .identity, .parse, .graph, .readings, .readingsChoices, .bundle, .familyNorms,
-  .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
-  .discourse, .readingsRoute, .diagnose, .document, .englishQuestion, .searchBudget, .ask, .words, .metered]
-
-def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 
 /-- English cases are carried as their original JSON text in a `Json.str`, since
 `Json.compress` changes number tokens such as `0.0` into `0`. The one-shot runner
@@ -801,11 +747,11 @@ def handleLine (h : Handles) (line : String) : Option Json × Handles :=
     (some answer, h')
 
 /-- The first line the service prints. The build hash is computed by the supervisor,
-which hashes the executable it starts. `handles` states the handle table's member and bounds,
+which hashes the executable it starts. `modes` are the registry's (`VE.Service.registry`). `handles` states the handle table's member and bounds,
 which the client mirrors (`Handles.insert`). -/
 def handshake : Json :=
   Json.mkObj [("service", .str "ve-lean@1"), ("protocol", toJson (2 : Nat)),
-    ("lean", .str Lean.versionString), ("modes", toJson (modes.map Mode.name)),
+    ("lean", .str Lean.versionString), ("modes", toJson (registry.map (·.mode.name))),
     ("codes", toJson rejectionCodes),
     ("limits", Json.mkObj (VE.Limits.stated.map fun (name, limit) => (name, toJson limit))),
     ("handles", Json.mkObj [("member", .str handleKey), ("max", toJson maxHandles),

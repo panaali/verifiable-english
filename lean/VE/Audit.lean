@@ -335,6 +335,7 @@ import VE.Service.GenericReadings
 import VE.Service.Graph
 import VE.Service.Protocol
 import VE.Service.Readings
+import VE.Service.Registry
 import VE.Service.Standalone
 import VE.SoftNorms.Admission
 import VE.SoftNorms.Coherence
@@ -5842,9 +5843,12 @@ import VE.WireContract.Engine
 #print axioms VE.Service.expand_hit
 #print axioms VE.Service.expand_miss
 #print axioms VE.Service.expand_plain
+#print axioms VE.Service.modes_complete
 #print axioms VE.Service.registerOne_digest
 #print axioms VE.Service.registerOne_ok
 #print axioms VE.Service.register_none
+#print axioms VE.Service.registry_modes
+#print axioms VE.Service.registry_names_nodup
 #print axioms VE.Service.rejectionCode_mem
 #print axioms VE.Service.respond_decoded
 #print axioms VE.Service.results_eq
