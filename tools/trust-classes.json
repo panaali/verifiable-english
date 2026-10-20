@@ -13939,6 +13939,14 @@
         "VE.Scope.position",
         "VE.Scope.unary"
       ]
+    },
+    "VE/Acts/LexicalProofs.lean": {
+      "P": [
+        "VE.Acts.Lexical.out",
+        "VE.Acts.Lexical.pieceTok",
+        "VE.Acts.Lexical.splitL",
+        "VE.Acts.Lexical.wordsL"
+      ]
     }
   }
 }
