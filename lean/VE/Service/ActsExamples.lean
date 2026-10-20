@@ -66,11 +66,19 @@ def seek : List (String × Json) := [("p", pred ["person"] (perm "{0} seek asylu
 #guard err (decodeA (env actsP seek (some (Json.mkObj [("fixed", Json.arr #[.num 7])])))) == "String expected"
 #guard err (decodeA (env actsP seek (some (block ["the court that is competent"])))) ==
   "InvalidInput: fixed phrase 'the court that is competent' uses the clause word 'is'"
+#guard err (decodeA (env actsP [] (some (block ["the court that is competent"])))) ==
+  "InvalidInput: fixed phrase 'the court that is competent' uses the clause word 'is'"
 -- without `acts@0` the block is refused by today's vocabulary decoder
 #guard err (decodeA (env ["norms@0", "relational-fol@0"] seek (some (block [])))) ==
   "fields do not match: expected [sorts, predicates, constants], got [acts, constants, predicates, sorts]"
 -- the norms route (`decodeSource`) checks a rule on a plain predicate with an act (`Tree.check` admits it)
 #guard err (VE.Norms.Wire.decodeSource envA (Json.arr #[rule "heard"])) == "ok"
+
+-- the norm-defaults route (its own checks admit the plain act), the replay's base environment, the typing view
+#guard err (VE.NormDefaults.Wire.decodeSourceU (envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"])
+  (Json.arr #[rule "heard"])) == "ok"
+#guard err (VE.Norms.Replay.baseEnvironmentJson envA >>= VE.Route.Gate.decodeEnvelope) == "ok"
+#guard err (typingView envA) == "ok"
 
 /-! ### 3.3: the identity's canonical act is `canonicalActIn`'s (A19's apostrophe folded) -/
 
