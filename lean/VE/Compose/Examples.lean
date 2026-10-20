@@ -9,9 +9,10 @@ build fails if one is false), and the two definitional instance checks of L9.
 * 10.1, `dispatch`: rows D1 to D52, one `#guard` each under a `-- D<n>` comment, and the removals of D28 to D31,
   D50 and D51 (a wrapper that strips its own profile gets the next head); `tests/test_compose_dispatch.py` reads
   the rows from the spec's table and fails unless these guards repeat it exactly. D-all: `todayTexts` and
-  `todayCodes` are Python's outcomes of `ve.profiles.checker_family` on all 65,536 strictly increasing lists of the
-  registered profiles, list `m` being the mask `m` over the registry in code point order; the test recomputes both
-  from Python and compares them with the literals below, and the `#guard` below compares them with `today`.
+  `todayCodes` are Python's outcomes of `tests/profile_gate_oracle.py` `checker_family` on all 65,536 strictly
+  increasing lists of the registered profiles, list `m` being the mask `m` over the registry in code point order;
+  the test recomputes both from Python and compares them with the literals below, and the `#guard` below compares
+  them with `today`.
   D-unsorted: `unsortedLists` are the test's 250 seeded lists that are not strictly increasing (regenerated and
   compared by the test); `dispatch_unsorted` covers every such list.
 * 10.2, the slot, on the documents of `VE.Rights.Examples` (L1 to L9).
@@ -221,6 +222,39 @@ def todayCodes : String := "0101010101010101010101010101010101010101010101010101
 #guard todayTexts.length ≤ 62 && todayCodes.length == 2 ^ registrySorted.length
 #guard (List.range (2 ^ registrySorted.length)).all (fun m =>
   todayTexts[codeIndex (todayCodes.toList.toArray.getD m ' ')]? == some (todayText (maskList m)))
+
+/-! ## AR-10: the profile table runs today's gate
+
+On every list of D-all, the table answers as `dispatch` and its base rows as `today` (`gate_legacy` and
+`baseGate_today` prove both); a list with an unregistered profile is refused by that profile before any row's check
+(DELTA row 1 of docs/ar-10a: `today` names it after the alternatives and risk checks). -/
+
+#guard (List.range (2 ^ registrySorted.length)).all fun m =>
+  gateOf profileTable (maskList m) == dispatch (maskList m) && gateOf baseRows (maskList m) == today (maskList m)
+#guard gateOf profileTable ["alternatives@0", "relational-fol@0", "zzz@0"] ==
+  .error "UnsupportedProfile: Unsupported profile zzz@0"
+#guard today ["alternatives@0", "relational-fol@0", "zzz@0"] == .error "UnsupportedProfile: alternatives@0 requires norms@0"
+#guard gateOf baseRows ["norms@0", "relational-fol@0", "ve.discourse@1"] ==
+  .error "UnsupportedProfile: Unsupported profile ve.discourse@1"
+#guard gateOf profileTable ["norms@0", "relational-fol@0", "ve.discourse@1"] == .ok .discourse
+#guard environmentProfiles.length == 17 && environmentProfiles.getLast? == some "readings@1"
+#guard legacyProfiles.all (fun p => profileTable.any (·.profile == p)) &&
+  profileTable.all (fun r => legacyProfiles.contains r.profile)
+
+/-- `TableAdmits` reads the refusals: soft-norms@0 is refused with alternatives@0, and admitted with norms@0. -/
+example : ¬ TableAdmits profileTable ["alternatives@0", "norms@0", "relational-fol@0", "soft-norms@0"] := by
+  unfold TableAdmits; decide
+example : TableAdmits profileTable ["norms@0", "relational-fol@0", "soft-norms@0"] := by
+  unfold TableAdmits; decide
+
+/-- The wrappers with every profile a route or a wrapper reads: 4,096 sorted lists. -/
+def stackSorted : List String :=
+  ["alternatives@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "reports@0", "right-clauses@0",
+   "rights@0", "risk@0", "soft-norms@0", "speech-acts@0", "ve.discourse@1"]
+
+#guard (List.range (2 ^ stackSorted.length)).all fun m =>
+  let ps := (List.range stackSorted.length).filterMap fun j => if m.testBit j then stackSorted[j]? else none
+  gateOf profileTable ps == dispatch ps
 
 /-! ## 10.1 D-unsorted: the test's seeded lists that are not strictly increasing -/
 

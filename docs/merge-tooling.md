@@ -25,6 +25,7 @@ its merge strategy:
 | lean-roots | `lean/VE.lean`, `lean/ResponseShape.lean` | union |
 | lake-build | (the build every later entry reads) | - |
 | numbers-phrases | `ve/numbers_phrases.json` (from `VE.Numbers.Phrases`) | regenerate |
+| profile-table | `ve/profile_table.json` (from `VE.Compose.profileTable`) | regenerate |
 | lean-mode-deps | `tools/lean-mode-deps.json` | regenerate |
 | lean-statements | `lean/statements.txt`, `predicates.txt`, `declarations.txt` | regenerate |
 | lean-audit-manifests | `lean/VE/Audit.lean`, `lean/ResponseShape/Audit.lean`, `lean/axioms.txt` (`audit.py --write`, from `declarations.txt`; AR-1) | regenerate |
@@ -52,6 +53,17 @@ its merge strategy:
 `--only`/`--skip NAME` select entries; `VE_REGEN_NO_RUST=1` leaves the Rust pin alone. On a clean tree
 `--check` passes every entry (16 minutes on the VM, most of it `lean/audit.py` and the statement dump) and
 `--write` changes nothing.
+
+Entries whose writer or check starts the Lean service carry `service` (`--list` shows it;
+`tests/test_regen_generated.py` checks that every entry whose commands import `ve/backends/lean_service.py`
+carries it). The service refuses a build that `lean/checkers.lock` does not pin, so before the first of them,
+and again after the run changed a Lean file, `--write` and `--resolve` ask Lake whether ve_service is current
+(`lake build --no-build ve_service`) and check its pin; if either fails they run the `lake-build` and
+`checker-pins` entries' own steps first (eff-20261019-1, PIPELINE-LIMITS L58). At the end they remove the pins
+this bootstrap added that are not the final build; pins the lock had before the run stay. `--check` writes
+nothing: with a service that cannot start it prints the cause once with the fix (`--write --only lake-build
+--only checker-pins`, or `--write`), fails `lake-build` (not built or not current) or `checker-pins` (not
+pinned), and reports each service entry as "not checked: needs the pinned service".
 
 Strategies: *regenerate* takes either side and lets the writer rebuild the file; *union* takes the line union
 of both sides (the build that follows, `lake build`, catches a wrong one); *json* is a

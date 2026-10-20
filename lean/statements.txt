@@ -2763,6 +2763,13 @@ theorem VE.Calc.Comparison.holds_scale
   ∀ (c : VE.Numbers.Comparison) (x y o : Rat), 0 < o → (c.Holds (x * o) (y * o) ↔ c.Holds x y)
   -- uses VE.Numbers.Comparison.Holds@VE.Numbers.Phrases VE.Numbers.Comparison@VE.Numbers.Phrases
   -- expr 3004143482
+theorem VE.Calc.Counterexample.check_sound
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (C : VE.Calc.QFact) (κ : String → Rat),
+    VE.Calc.counterexampleCheck P links C κ = Bool.true →
+      (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds κ f) ∧
+        (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) ∧ ¬VE.Calc.QFact.Holds κ C
+  -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.counterexampleCheck@VE.Calc.Derive
+  -- expr 2877712036
 theorem VE.Calc.Decl.valL_agrees
   ∀ (d : VE.Calc.Decl) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
     (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →
@@ -2779,6 +2786,23 @@ theorem VE.Calc.Denotes.unique
   ∀ {σ : VE.Calc.Values} {e : VE.Calc.Expr} {x y : Rat}, VE.Calc.Denotes σ e x → VE.Calc.Denotes σ e y → x = y
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
   -- expr 1800011211
+theorem VE.Calc.Derivation.check_sound
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (C : VE.Calc.QFact) (d : VE.Calc.Derivation),
+    VE.Calc.Derivation.check P links C d = Bool.true →
+      ∀ (κ : String → Rat),
+        (∀ (f : VE.Calc.QFact), f ∈ P → VE.Calc.QFact.Holds κ f) →
+          (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ C
+  -- uses VE.Calc.Derivation.check@VE.Calc.Derive VE.Calc.Derivation@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 3698919105
+theorem VE.Calc.Derivation.replay_sound
+  ∀ (links : List (String × String)) (steps : List VE.Calc.Step) (known fs : List VE.Calc.QFact),
+    VE.Calc.Derivation.replay links known steps = Option.some fs →
+      ∀ (κ : String → Rat),
+        (∀ (g : VE.Calc.QFact), g ∈ known → VE.Calc.QFact.Holds κ g) →
+          (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) →
+            ∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
+  -- uses VE.Calc.Derivation.replay@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step@VE.Calc.Derive
+  -- expr 2374285068
 theorem VE.Calc.Expr.evalL_agrees
   ∀ (e : VE.Calc.Expr) (τ : String → VE.Calc.Val) (σ : VE.Calc.Values),
     (∀ (n : String), VE.Calc.Val.Agrees✝ (τ n) (σ n)) →
@@ -2846,6 +2870,41 @@ theorem VE.Calc.Expr.overflow_lift
         VE.Calc.Expr.Overflows ds child → VE.Calc.Expr.Overflows ds parent
   -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr.subexprs@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax
   -- expr 1123596397
+theorem VE.Calc.Farkas.check_sound
+  ∀ (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas),
+    VE.Calc.Farkas.check fs c = Bool.true → ∀ (κ : String → Rat), ¬∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
+  -- uses VE.Calc.Farkas.check@VE.Calc.Linear VE.Calc.Farkas@VE.Calc.Linear VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 1580294260
+theorem VE.Calc.Farkas.combination_eval
+  ∀ (κ : String → Rat) (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas),
+    VE.Calc.QLin.eval κ (VE.Calc.Farkas.combination fs c) =
+      (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) c.weights fs).sum
+  -- uses VE.Calc.Farkas.combination@VE.Calc.Linear VE.Calc.Farkas.weights@VE.Calc.Linear VE.Calc.Farkas@VE.Calc.Linear VE.Calc.QFact.form@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear
+  -- expr 919770268
+theorem VE.Calc.QFact.negate_holds
+  ∀ (κ : String → Rat) (f : VE.Calc.QFact), VE.Calc.QFact.Holds κ f.negate ↔ ¬VE.Calc.QFact.Holds κ f
+  -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact.negate@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 2330084071
+theorem VE.Calc.QLin.eval_add
+  ∀ (κ : String → Rat) (L M : VE.Calc.QLin), VE.Calc.QLin.eval κ (L.add M) = VE.Calc.QLin.eval κ L + VE.Calc.QLin.eval κ M
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 619892755
+theorem VE.Calc.QLin.eval_foldl
+  ∀ (κ : String → Rat) (acc : VE.Calc.QLin) (ls : List VE.Calc.QLin),
+    VE.Calc.QLin.eval κ (List.foldl VE.Calc.QLin.add acc ls) =
+      VE.Calc.QLin.eval κ acc + (List.map (VE.Calc.QLin.eval κ) ls).sum
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 2190904397
+theorem VE.Calc.QLin.eval_of_cancel
+  ∀ (κ : String → Rat) (L : VE.Calc.QLin),
+    (∀ (n : String), n ∈ List.map (fun x => x.fst) L.coeffs → L.coeffOf n = 0) → VE.Calc.QLin.eval κ L = L.const
+  -- uses VE.Calc.QLin.coeffOf@VE.Calc.Linear VE.Calc.QLin.coeffs@VE.Calc.Linear VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 3080678736
+theorem VE.Calc.QLin.eval_scale
+  ∀ (κ : String → Rat) (w : Rat) (L : VE.Calc.QLin),
+    VE.Calc.QLin.eval κ (VE.Calc.QLin.scale w L) = w * VE.Calc.QLin.eval κ L
+  -- uses VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.scale@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 3830586438
 theorem VE.Calc.Rescale.factor_ne
   ∀ (ρ : VE.Calc.Rescale) (b : String), ρ.factor b ≠ 0
   -- uses VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
@@ -2888,6 +2947,14 @@ theorem VE.Calc.Rescale.pos
   ∀ (self : VE.Calc.Rescale) (b : String), 0 < self.factor b
   -- uses VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
   -- expr 3281404362
+theorem VE.Calc.Step.derive_sound
+  ∀ (links : List (String × String)) (known : List VE.Calc.QFact) (st : VE.Calc.Step) (f : VE.Calc.QFact),
+    VE.Calc.Step.derive links known st = Option.some f →
+      ∀ (κ : String → Rat),
+        (∀ (g : VE.Calc.QFact), g ∈ known → VE.Calc.QFact.Holds κ g) →
+          (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ f
+  -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step.derive@VE.Calc.Derive VE.Calc.Step@VE.Calc.Derive
+  -- expr 1985840783
 theorem VE.Calc.Val.bin_exhausted
   ∀ (f : Rat → Rat → VE.Calc.Val) (a b : VE.Calc.Val),
     (∀ (x y : Rat), f x y ≠ VE.Calc.Val.exhausted) →
@@ -3003,6 +3070,10 @@ theorem VE.Calc.legacy_nominal
   ∀ (t t' : String), t ≠ t' → VE.Calc.legacyDim t ≠ VE.Calc.legacyDim t'
   -- uses VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.legacyDim@VE.Calc.Dimension
   -- expr 2174396226
+theorem VE.Calc.lt_of_sq_lt
+  ∀ (x a b : Rat), 0 ≤ x → 0 < b → x * x < a → a ≤ b * b → x < b
+  -- uses
+  -- expr 3009184074
 theorem VE.Calc.mul_pow_nat
   ∀ (a b : Rat) (k : Nat), (a * b) ^ k = a ^ k * b ^ k
   -- uses
@@ -3020,6 +3091,17 @@ theorem VE.Calc.rounds_invariant
           VE.Calc.Claim.Holds (ρ.apply Γ σ) (VE.Calc.Claim.rounds r e p))
   -- uses VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim.rounds@VE.Calc.Syntax VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim.Normal@VE.Calc.Dimension VE.Calc.PhysDim.one@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.apply@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
   -- expr 2148205015
+theorem VE.Calc.rsum_append
+  ∀ (l m : List Rat), (l ++ m).sum = l.sum + m.sum
+  -- uses
+  -- expr 1294575389
+theorem VE.Calc.sum_split
+  ∀ (κ : String → Rat) (l : List (String × Rat)) (n : String),
+    (List.map (fun p => p.snd * κ p.fst) l).sum =
+      (List.map (fun x => x.snd) (List.filter (fun x => x.fst == n) l)).sum * κ n +
+        (List.map (fun p => p.snd * κ p.fst) (List.filter (fun p => !p.fst == n) l)).sum
+  -- uses
+  -- expr 2525146929
 theorem VE.Calc.valuesL_agrees
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds → ∀ (n : String), VE.Calc.Val.Agrees✝ (VE.Calc.valuesL ds n) (VE.Calc.values ds n)
@@ -3077,6 +3159,15 @@ theorem VE.Calc.values_stated
         d ∈ ds → ∀ (q : Rat), d.source = VE.Calc.Source.stated q → VE.Calc.values ds d.name = Option.some q
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.stated@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
   -- expr 3273210734
+theorem VE.Calc.weighted_nonneg
+  ∀ (κ : String → Rat) (ws : List Rat) (fs : List VE.Calc.QFact),
+    (∀ (w : Rat), w ∈ ws → 0 ≤ w) →
+      (∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f) →
+        0 ≤ (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) ws fs).sum ∧
+          ((List.zipWith (fun w f => Decidable.decide (0 < w) && f.strict) ws fs).any id = Bool.true →
+            0 < (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) ws fs).sum)
+  -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact.form@VE.Calc.Linear VE.Calc.QFact.strict@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear
+  -- expr 1703173439
 theorem VE.Calc.zpowR_eq
   ∀ (q : Rat) (i : Int), VE.Calc.zpowR q i = q ^ i
   -- uses VE.Calc.zpowR@VE.Calc.Dimension
@@ -5007,6 +5098,16 @@ theorem VE.Compose.baseAdmissibleP_of_valid
       VE.Compose.backgroundValidP X P M = Bool.true → VE.Compose.BaseAdmissibleP X P M.asStructure
   -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Compose.backgroundValidP@VE.Compose.Slot VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 3512667603
+theorem VE.Compose.baseGate_today
+  ∀ (ps : List String),
+    (∀ (p : String), p ∈ ps → p ∈ VE.Compose.registered) → VE.Compose.gateOf VE.Compose.baseRows ps = VE.Compose.today ps
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.baseRows@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.registered@VE.Compose.Dispatch VE.Compose.today@VE.Compose.Dispatch
+  -- expr 4288404711
+theorem VE.Compose.base_contains
+  ∀ (ps : List String) (x : String),
+    (VE.Compose.base ps).contains x = (ps.contains x && !VE.Compose.wrapperProfiles.contains x)
+  -- uses VE.Compose.base@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
+  -- expr 2914067683
 theorem VE.Compose.base_mem
   ∀ {ps : List String} {p : String}, ¬p ∈ VE.Compose.wrapperProfiles → (p ∈ VE.Compose.base ps ↔ p ∈ ps)
   -- uses VE.Compose.base@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
@@ -5015,6 +5116,15 @@ theorem VE.Compose.base_of_no_wrapper
   ∀ {ps : List String}, (∀ (w : String), w ∈ VE.Compose.wrapperProfiles → ¬w ∈ ps) → VE.Compose.base ps = ps
   -- uses VE.Compose.base@VE.Compose.Dispatch VE.Compose.wrapperProfiles@VE.Compose.Dispatch
   -- expr 1594941042
+theorem VE.Compose.checks_none
+  ∀ (t : List VE.Compose.ProfileRow) (ps : List String),
+    List.find? (fun x => x.fst) (List.flatMap (VE.Compose.rowChecks ps) t) = Option.none ↔
+      ∀ (r : VE.Compose.ProfileRow),
+        r ∈ t →
+          r.profile ∈ ps ∨ r.profile ∈ r.requires →
+            (∀ (q : String), q ∈ r.requires → q ∈ ps) ∧ ∀ (x : String × String), x ∈ r.refuses → ¬x.fst ∈ ps
+  -- uses VE.Compose.ProfileRow.profile@VE.Compose.Dispatch VE.Compose.ProfileRow.refuses@VE.Compose.Dispatch VE.Compose.ProfileRow.requires@VE.Compose.Dispatch VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.rowChecks@VE.Compose.Dispatch
+  -- expr 488160171
 theorem VE.Compose.conflictFreeP_append
   ∀ (X : VE.SoftNorms.SoftDoc) (P Q : List VE.Formula), VE.Compose.ConflictFreeP X P → VE.Compose.ConflictFreeP X (P ++ Q)
   -- uses VE.Compose.ConflictFreeP@VE.Compose.Slot VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
@@ -5079,18 +5189,67 @@ theorem VE.Compose.dispatch_unsorted
       VE.Compose.dispatch ps = Except.error (VE.Compose.unsupported "profiles must be sorted and unique")
   -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.dispatch@VE.Compose.Dispatch VE.Compose.unsupported@VE.Compose.Dispatch
   -- expr 3479148102
+theorem VE.Compose.faultOf_ite
+  ∀ (c : Bool) (x : Bool × String) (o : Option (Bool × String)),
+    VE.Compose.faultOf (if c = Bool.true then Option.some x else o) =
+      if c = Bool.true then Except.error (VE.Compose.unsupported x.snd) else VE.Compose.faultOf o
+  -- uses VE.Compose.faultOf@VE.Compose.Dispatch VE.Compose.unsupported@VE.Compose.Dispatch
+  -- expr 567602365
+theorem VE.Compose.faultOf_none
+  VE.Compose.faultOf Option.none = Except.ok ()
+  -- uses VE.Compose.faultOf@VE.Compose.Dispatch
+  -- expr 465993554
+theorem VE.Compose.find_congr
+  ∀ {l : List String} {f g : String → Bool}, (∀ (x : String), x ∈ l → f x = g x) → List.find? f l = List.find? g l
+  -- uses
+  -- expr 2238557160
+theorem VE.Compose.find_cons_ite
+  ∀ (c : Bool) (e : String) (l : List (Bool × String)),
+    List.find? (fun x => x.fst) ((c, e) :: l) =
+      if c = Bool.true then Option.some (c, e) else List.find? (fun x => x.fst) l
+  -- uses
+  -- expr 3672781057
+theorem VE.Compose.find_first
+  ∀ {l : List String} {P : String → Bool} {x : String},
+    List.Pairwise (fun x1 x2 => x1 < x2) l →
+      List.find? P l = Option.some x → ∀ (z : String), z ∈ l → P z = Bool.true → z = x ∨ x < z
+  -- uses
+  -- expr 3514958761
 theorem VE.Compose.forIn_yield_ok
   ∀ (l : List String) {f : String → PUnit → Except String (ForInStep PUnit)},
     (∀ (p : String), p ∈ l → f p PUnit.unit = Except.ok (ForInStep.yield PUnit.unit)) →
       ForIn.forIn l PUnit.unit f = Except.ok PUnit.unit
   -- uses
   -- expr 3378120449
+theorem VE.Compose.gateMatch_find
+  ∀ (c : Bool) (l : List String) (g : String → Bool) (f : String → Except String Unit) (b : Except String Unit),
+    VE.Compose.gateMatch (if c = Bool.true then List.find? g l else Option.none) f b =
+      List.foldr (fun q acc => if (c && g q) = Bool.true then f q else acc) b l
+  -- uses VE.Compose.gateMatch@VE.Compose.Dispatch
+  -- expr 1580359357
+theorem VE.Compose.gateOf_iff
+  ∀ (t : List VE.Compose.ProfileRow) (ps : List String) (r : VE.Compose.Route),
+    VE.Compose.gateOf t ps = Except.ok r ↔ VE.Compose.TableAdmits t ps ∧ r = VE.Compose.routeOf t ps
+  -- uses VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.TableAdmits@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch
+  -- expr 1599089441
+theorem VE.Compose.gate_legacy
+  ∀ (ps : List String),
+    (∀ (p : String), p ∈ ps → p ∈ VE.Compose.legacyProfiles) →
+      VE.Compose.gateOf VE.Compose.profileTable ps = VE.Compose.dispatch ps
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.dispatch@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.legacyProfiles@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 781844860
 theorem VE.Compose.gate_wellFormed
   ∀ (X : VE.SoftNorms.SoftDoc) (χ : VE.Formula) (P : List VE.Formula),
     VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften X) 0) [] χ →
       VE.Compose.SlotWellFormed X P → VE.Compose.SlotWellFormed X (VE.Compose.gate χ P)
   -- uses VE.Compose.SlotWellFormed@VE.Compose.Slot VE.Compose.gate@VE.Compose.Slot VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 2779446222
+theorem VE.Compose.ite_and3
+  ∀ (a b c d : Bool) (e r : Except String Unit),
+    (if (a && b) = Bool.true then e else if (a && c) = Bool.true then e else if (a && d) = Bool.true then e else r) =
+      if (a && (b || c || d)) = Bool.true then e else r
+  -- uses
+  -- expr 4240862142
 theorem VE.Compose.ite_error_ok
   ∀ {α : Type} {c : Prop} [inst : Decidable c] {e : String} {r : Except String α} {x : α},
     (if c then Except.error e else r) = Except.ok x → ¬c ∧ r = Except.ok x
@@ -5209,6 +5368,19 @@ theorem VE.Compose.rights_valid_is_slot
     VE.Rights.backgroundValidR D M = VE.Compose.backgroundValidP (VE.Rights.correlate D) (VE.Rights.limPremises D) M
   -- uses VE.Compose.backgroundValidP@VE.Compose.Slot VE.FiniteModel@VE.Finite VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.backgroundValidR@VE.Rights.Route VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremises@VE.Rights.Correlate
   -- expr 1768588158
+theorem VE.Compose.routeOf_base
+  ∀ (ps : List String), VE.Compose.routeOf VE.Compose.baseRows ps = VE.Compose.todayHead ps
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.baseRows@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch VE.Compose.todayHead@VE.Compose.Dispatch
+  -- expr 3296346633
+theorem VE.Compose.routeOf_table
+  ∀ (ps : List String),
+    VE.Compose.routeOf VE.Compose.profileTable ps =
+      if ps.contains "ve.discourse@1" = Bool.true then VE.Compose.Route.discourse
+      else
+        if ps.contains "right-clauses@0" = Bool.true then VE.Compose.Route.clauses
+        else if ps.contains "readings@1" = Bool.true then VE.Compose.Route.readings else VE.Compose.todayHead ps
+  -- uses VE.Compose.Route.clauses@VE.Compose.Dispatch VE.Compose.Route.discourse@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch VE.Compose.todayHead@VE.Compose.Dispatch
+  -- expr 1482409583
 theorem VE.Compose.sat_append
   ∀ (B : VE.Structure) (P Q : List VE.Formula), VE.Norms.Sat B (P ++ Q) ↔ VE.Norms.Sat B P ∧ VE.Norms.Sat B Q
   -- uses VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure@VE.Semantics
@@ -5440,6 +5612,20 @@ theorem VE.Compose.slot_route_intended
                         VE.Norms.Sat S P → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ
   -- uses VE.Compose.backgroundP@VE.Compose.Slot VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.backgroundBase@VE.Norms.Prefix VE.Norms.definitionsHold@VE.Norms.Layer VE.Norms.elaborate@VE.Norms.Elaborate VE.Norms.envAt@VE.Norms.Tree VE.Norms.profileHold@VE.Norms.Layer VE.Norms.size@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.holdsSoft@VE.SoftNorms.Semantics VE.SoftNorms.softPremises@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
   -- expr 1744994507
+theorem VE.Compose.sorted_find
+  ∀ {l m : List String},
+    List.Pairwise (fun x1 x2 => x1 < x2) l →
+      List.Pairwise (fun x1 x2 => x1 < x2) m → List.find? m.contains l = List.find? l.contains m
+  -- uses
+  -- expr 4240111808
+theorem VE.Compose.todayGate_base
+  ∀ (ps : List String),
+    List.Pairwise (fun x1 x2 => x1 < x2) ps →
+      (∀ (p : String), p ∈ ps → p ∈ VE.Compose.legacyProfiles) →
+        VE.Compose.todayGate (VE.Compose.base ps) =
+          VE.Compose.faultOf (List.find? (fun x => x.fst) (List.flatMap (VE.Compose.rowChecks ps) VE.Compose.baseRows))
+  -- uses VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.base@VE.Compose.Dispatch VE.Compose.baseRows@VE.Compose.Dispatch VE.Compose.faultOf@VE.Compose.Dispatch VE.Compose.legacyProfiles@VE.Compose.Dispatch VE.Compose.rowChecks@VE.Compose.Dispatch VE.Compose.todayGate@VE.Compose.Dispatch
+  -- expr 3168638128
 theorem VE.Compose.todayGate_classify
   ∀ (ps : List String),
     (∀ (p : String), p ∈ ps → VE.Route.Gate.known p = Bool.true) →
@@ -5454,6 +5640,10 @@ theorem VE.Compose.todayGate_sound
   ∀ (ps : List String), VE.Compose.todayGate ps = Except.ok () → VE.Compose.TodayList ps
   -- uses VE.Compose.TodayList@VE.Compose.Dispatch VE.Compose.todayGate@VE.Compose.Dispatch
   -- expr 1107656340
+theorem VE.Compose.todayHead_base
+  ∀ (ps : List String), VE.Compose.todayHead (VE.Compose.base ps) = VE.Compose.todayHead ps
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.base@VE.Compose.Dispatch VE.Compose.todayHead@VE.Compose.Dispatch
+  -- expr 3489171809
 theorem VE.Compose.todayHead_cases
   ∀ (l : List String),
     VE.Compose.todayHead l = VE.Compose.Route.risk ∧ "risk@0" ∈ l ∨
@@ -12181,6 +12371,11 @@ theorem VE.GraphChecks.testCertificate_sound
   ∀ (E : VE.Environment), VE.Graph.CertificateSound E VE.GraphChecks.valid
   -- uses VE.Environment@VE.Syntax VE.Graph.CertificateSound@VE.ClaimGraph VE.GraphChecks.TestCertificate@VE.GraphChecks VE.GraphChecks.valid@VE.GraphChecks
   -- expr 3640407803
+theorem VE.Judgments.Examples.formulas_carve
+  (VE.Judgments.Content.rule VE.Judgments.Examples.ruleκ).formulas =
+    [VE.Judgments.Examples.u "arrest", VE.Judgments.Examples.u "arbitrary"]
+  -- uses VE.Formula@VE.Syntax VE.Judgments.Content.formulas@VE.Judgments.Status VE.Judgments.Content.rule@VE.Judgments.Status VE.Judgments.Examples.ruleκ@VE.Judgments.Examples VE.Judgments.Examples.u@VE.Judgments.Examples
+  -- expr 1046812665
 theorem VE.Judgments.Examples.names_omega
   Option.map VE.Judgments.names
       (VE.Judgments.Examples.okVal
@@ -12190,6 +12385,23 @@ theorem VE.Judgments.Examples.names_omega
     Option.some ["arbitrary_measure", "arbitrary_interference"]
   -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.Examples.Eω@VE.Judgments.Examples VE.Judgments.Examples.jrec@VE.Judgments.Examples VE.Judgments.Examples.okVal@VE.Judgments.Examples VE.Judgments.Examples.regulatedω@VE.Judgments.Examples VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.names@VE.Judgments.Decl
   -- expr 319133479
+theorem VE.Judgments.Examples.reachedBodies_chain
+  VE.Judgments.reachedBodies VE.Judgments.Examples.defsChain [VE.Judgments.Examples.u "prolonged_detention"] =
+    [(VE.Judgments.Examples.u "detention").and (VE.Judgments.Examples.u "arbitrary"),
+      (VE.Judgments.Examples.u "wrongful_detention").and (VE.Judgments.Examples.u "prolonged")]
+  -- uses VE.Formula.and@VE.Syntax VE.Formula@VE.Syntax VE.Judgments.Examples.defsChain@VE.Judgments.Examples VE.Judgments.Examples.u@VE.Judgments.Examples VE.Judgments.reachedBodies@VE.Judgments.Status
+  -- expr 18913390
+theorem VE.Judgments.Examples.viewOf_xi
+  VE.Judgments.viewOf [(VE.Judgments.Examples.fsξ, [Bool.true])]
+      (fun x => [Option.some (VE.Judgments.Content.formula VE.Judgments.Examples.fξ)]) "u055" "open" ["arbitrary"]
+      Bool.false Option.none =
+    { id := "u055", meaning := "open", listed := ["arbitrary"], asserted := Bool.false, own := Option.none,
+      set :=
+        Option.some
+          { authored := Bool.true, allAsserted := Bool.true,
+            candidates := [Option.some (VE.Judgments.Content.formula VE.Judgments.Examples.fξ)] } }
+  -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Judgments.ActiveSet.mk@VE.Judgments.Status VE.Judgments.ActiveSet@VE.Judgments.Status VE.Judgments.Content.formula@VE.Judgments.Status VE.Judgments.Content@VE.Judgments.Status VE.Judgments.Examples.fsξ@VE.Judgments.Examples VE.Judgments.Examples.fξ@VE.Judgments.Examples VE.Judgments.UnitView.mk@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.viewOf@VE.Judgments.Status
+  -- expr 470071500
 theorem VE.Judgments.admit_first_fault
   ∀ (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : List String) (rs : List VE.Judgments.Rec)
     (e : String),
@@ -12208,6 +12420,32 @@ theorem VE.Judgments.admit_ok_iff
         ∀ (r : VE.Judgments.Rec), r ∈ rs → VE.Judgments.faultOf E defs regulated r = Option.none
   -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Environment@VE.Syntax VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.admit@VE.Judgments.Decl VE.Judgments.faultOf@VE.Judgments.Decl
   -- expr 4037456850
+theorem VE.Judgments.dependsOnC_remove
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (cs : List VE.Judgments.Content) (j : String),
+    ¬j ∈ VE.Judgments.dependsOnC defs J cs →
+      VE.Judgments.dependsOnC defs (List.filter (fun x => x != j) J) cs = VE.Judgments.dependsOnC defs J cs
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.Content@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status
+  -- expr 2210666945
+theorem VE.Judgments.dependsOnC_sub
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (cs : List VE.Judgments.Content) (j : String),
+    j ∈ VE.Judgments.dependsOnC defs J cs → j ∈ J
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.Content@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status
+  -- expr 3859270494
+theorem VE.Judgments.dependsOn_iff
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (fs : List VE.Formula) (j : String),
+    j ∈ VE.Judgments.dependsOn defs J fs ↔
+      j ∈ J ∧
+        ∃ φ,
+          φ ∈ fs ∧
+            ∃ p,
+              p ∈ VE.Norms.preds φ ∧
+                (p = j ∨ VE.Closure.Reachable VE.Closure.Kind.plus (fun a b => (a, b) ∈ VE.Judgments.defEdges defs) p j)
+  -- uses VE.Closure.Kind.plus@VE.Closure.Paths VE.Closure.Reachable@VE.Closure.Paths VE.Definitions.Def@VE.Definitions.Layer VE.Formula@VE.Syntax VE.Judgments.defEdges@VE.Judgments.Status VE.Judgments.dependsOn@VE.Judgments.Status VE.Norms.preds@VE.Norms.Tree
+  -- expr 523840145
+theorem VE.Judgments.dependsOn_no_defs
+  ∀ (J : List String) (fs : List VE.Formula), VE.Judgments.dependsOn [] J fs = VE.Judgments.opensIn J fs
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Formula@VE.Syntax VE.Judgments.dependsOn@VE.Judgments.Status VE.Judgments.opensIn@VE.Judgments.Scan
+  -- expr 46324072
 theorem VE.Judgments.faultOf_none_iff
   ∀ (E : VE.Environment) (defs : List VE.Definitions.Def) (regulated : List String) (r : VE.Judgments.Rec),
     VE.Judgments.faultOf E defs regulated r = Option.none ↔
@@ -12215,6 +12453,15 @@ theorem VE.Judgments.faultOf_none_iff
         ¬r.fst.name ∈ regulated ∧ r.snd.fst = 0 ∧ r.snd.snd = 0 ∧ r.fst.decidedBy ≠ "unstated"
   -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Environment.predicates@VE.Syntax VE.Environment@VE.Syntax VE.Judgments.Judgment.arguments@VE.Judgments.Decl VE.Judgments.Judgment.decidedBy@VE.Judgments.Decl VE.Judgments.Judgment.name@VE.Judgments.Decl VE.Judgments.Judgment@VE.Judgments.Decl VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.baseEnv@VE.Judgments.Decl VE.Judgments.faultOf@VE.Judgments.Decl
   -- expr 1520884731
+theorem VE.Judgments.filter_remove
+  ∀ (J : List String) (P : String → Bool) (j : String),
+    ¬j ∈ List.filter P J → List.filter P (List.filter (fun x => x != j) J) = List.filter P J
+  -- uses
+  -- expr 1027407865
+theorem VE.Judgments.find_congr_mem
+  ∀ {l : List String} {p q : String → Bool}, (∀ (x : String), x ∈ l → p x = q x) → List.find? p l = List.find? q l
+  -- uses
+  -- expr 2238557160
 theorem VE.Judgments.foldlM_ok_length
   ∀ {ε α : Type} {F : List String → α → Except ε (List String)},
     (∀ (b : List String) (a : α) (s : List String), F b a = Except.ok s → s.length = b.length + 1) →
@@ -12227,6 +12474,11 @@ theorem VE.Judgments.foldlM_ok_mono
       ∀ (L : List α) (b s : β), List.foldlM F b L = Except.ok s → List.foldlM G b L = Except.ok s
   -- uses
   -- expr 868318478
+theorem VE.Judgments.mem_defEdges
+  ∀ (defs : List VE.Definitions.Def) (a b : String),
+    (a, b) ∈ VE.Judgments.defEdges defs ↔ ∃ d, d ∈ defs ∧ d.name = a ∧ b ∈ VE.Norms.preds d.body
+  -- uses VE.Definitions.Def.body@VE.Definitions.Layer VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.defEdges@VE.Judgments.Status VE.Norms.preds@VE.Norms.Tree
+  -- expr 3706613666
 theorem VE.Judgments.openTermNames_length
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (xs : Array Lean.Json) (python data : Bool)
     (formula : Option (Lean.Json → Except String Unit)) (sorts : Bool) (ns : List String),
@@ -12251,6 +12503,10 @@ theorem VE.Judgments.opensIn_isEmpty
     (!(VE.Judgments.opensIn J fs).isEmpty) = fs.any fun f => (VE.Norms.preds f).any J.contains
   -- uses VE.Formula@VE.Syntax VE.Judgments.opensIn@VE.Judgments.Scan VE.Norms.preds@VE.Norms.Tree
   -- expr 2080945256
+theorem VE.Judgments.path_last
+  ∀ {α : Type} {R : α → α → Prop} {a c : α}, VE.Closure.Path R a c → R a c ∨ ∃ b, VE.Closure.Path R a b ∧ R b c
+  -- uses VE.Closure.Path@VE.Closure.Paths
+  -- expr 3997880015
 theorem VE.Judgments.records_names
   ∀ (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json) (data : Bool) (formula : Option (Lean.Json → Except String Unit))
     (rs : List VE.Judgments.Rec),
@@ -12266,6 +12522,74 @@ theorem VE.Judgments.records_refuse
       VE.Judgments.records rv j data formula = Except.error e
   -- uses VE.Discourse.Loader.openTermNames@VE.Discourse.Loader VE.Judgments.Rec@VE.Judgments.Decl VE.Judgments.records@VE.Judgments.Decl VE.Route.Wire.RouteVocabulary@VE.Route.Wire
   -- expr 787098227
+theorem VE.Judgments.status_checked
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (u : VE.Judgments.UnitView),
+    VE.Judgments.status defs J u = Except.ok "CHECKED" → VE.Judgments.dependsOnC defs J u.reads = []
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.status@VE.Judgments.Status
+  -- expr 2121090837
+theorem VE.Judgments.status_eq
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (u : VE.Judgments.UnitView) (s : String),
+    VE.Judgments.status defs J u = Except.ok s →
+      s = if VE.Judgments.dependsOnC defs J u.reads = [] then u.legacy else "OPEN"
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.legacy@VE.Judgments.Status VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.status@VE.Judgments.Status
+  -- expr 1016591635
+theorem VE.Judgments.status_legacy
+  ∀ (defs : List VE.Definitions.Def) (u : VE.Judgments.UnitView), VE.Judgments.status defs [] u = Except.ok u.legacy
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.legacy@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.status@VE.Judgments.Status
+  -- expr 3382826226
+theorem VE.Judgments.status_never_checked
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (u : VE.Judgments.UnitView) (s : String),
+    VE.Judgments.status defs J u = Except.ok s → VE.Judgments.dependsOnC defs J u.reads ≠ [] → s = "OPEN"
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.status@VE.Judgments.Status
+  -- expr 1602667900
+theorem VE.Judgments.status_ok_iff
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (u : VE.Judgments.UnitView),
+    (∃ s, VE.Judgments.status defs J u = Except.ok s) ↔
+      (u.meaning = "specified" → VE.Judgments.dependsOnC defs J u.reads = []) ∧
+        (u.meaning = "open" →
+          (∀ (j : String), j ∈ VE.Judgments.dependsOnC defs J u.reads → j ∈ u.listed) ∧
+            (u.complete = Bool.true → ∀ (j : String), j ∈ u.listed → j ∈ J → j ∈ VE.Judgments.dependsOnC defs J u.reads))
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.complete@VE.Judgments.Status VE.Judgments.UnitView.listed@VE.Judgments.Status VE.Judgments.UnitView.meaning@VE.Judgments.Status VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.status@VE.Judgments.Status
+  -- expr 3311899328
+theorem VE.Judgments.status_remove_unused
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (u : VE.Judgments.UnitView) (j : String),
+    ¬j ∈ VE.Judgments.dependsOnC defs J u.reads →
+      ¬j ∈ u.listed → VE.Judgments.status defs (List.filter (fun x => x != j) J) u = VE.Judgments.status defs J u
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.listed@VE.Judgments.Status VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.status@VE.Judgments.Status
+  -- expr 621595315
+theorem VE.Judgments.usageMap_complete
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (units : List VE.Judgments.UnitView) (u : VE.Judgments.UnitView)
+    (j : String),
+    u ∈ units →
+      j ∈ VE.Judgments.dependsOnC defs J u.reads → ∃ ids, (j, ids) ∈ (VE.Judgments.usageMap defs J units).fst ∧ u.id ∈ ids
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.id@VE.Judgments.Status VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.usageMap@VE.Judgments.Status
+  -- expr 1328338757
+theorem VE.Judgments.usageMap_rows
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (units : List VE.Judgments.UnitView) (j : String)
+    (ids : List String), (j, ids) ∈ (VE.Judgments.usageMap defs J units).fst → ids ≠ []
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.usageMap@VE.Judgments.Status
+  -- expr 371241560
+theorem VE.Judgments.usageMap_sound
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (units : List VE.Judgments.UnitView) (j : String)
+    (ids : List String),
+    (j, ids) ∈ (VE.Judgments.usageMap defs J units).fst →
+      ∀ (id : String), id ∈ ids → ∃ u, u ∈ units ∧ u.id = id ∧ j ∈ VE.Judgments.dependsOnC defs J u.reads
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.id@VE.Judgments.Status VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.usageMap@VE.Judgments.Status
+  -- expr 568864652
+theorem VE.Judgments.usageMap_unused
+  ∀ (defs : List VE.Definitions.Def) (J : List String) (units : List VE.Judgments.UnitView) (j : String),
+    j ∈ (VE.Judgments.usageMap defs J units).snd ↔
+      j ∈ J ∧ ∀ (u : VE.Judgments.UnitView), u ∈ units → ¬j ∈ VE.Judgments.dependsOnC defs J u.reads
+  -- uses VE.Definitions.Def@VE.Definitions.Layer VE.Judgments.UnitView.reads@VE.Judgments.Status VE.Judgments.UnitView@VE.Judgments.Status VE.Judgments.dependsOnC@VE.Judgments.Status VE.Judgments.usageMap@VE.Judgments.Status
+  -- expr 4082657557
+theorem VE.Judgments.viewOf_legacy
+  ∀ (active : List (VE.Discourse.FrontSet × List Bool))
+    (candidates : VE.Discourse.FrontSet → List (Option VE.Judgments.Content)) (unit meaning : String)
+    (listed : List String) (asserted : Bool) (own : Option VE.Judgments.Content),
+    (VE.Judgments.viewOf active candidates unit meaning listed asserted own).legacy =
+      VE.Discourse.Loader.foldStatus active unit (VE.Discourse.Loader.w2Status own.isSome meaning)
+  -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Discourse.Loader.foldStatus@VE.Discourse.Loader VE.Discourse.Loader.w2Status@VE.Discourse.Loader VE.Judgments.Content@VE.Judgments.Status VE.Judgments.UnitView.legacy@VE.Judgments.Status VE.Judgments.viewOf@VE.Judgments.Status
+  -- expr 3651100867
 theorem VE.Layout.anchorReach_iff
   ∀ (L : List VE.Layout.Unit),
     (List.map (fun x => x.id) L).Nodup →

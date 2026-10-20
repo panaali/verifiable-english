@@ -109,6 +109,7 @@ import VE.Time.Wire
 import VE.Time.Document
 import VE.Calc.Examples
 import VE.Calc.Render
+import VE.Calc.DeriveExamples
 import VE.Calc.Dimension
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
@@ -131,6 +132,7 @@ import VE.Rights.Examples
 import VE.Rights.Run
 import VE.Judgments.Decl
 import VE.Judgments.Scan
+import VE.Judgments.Status
 import VE.Judgments.Examples
 import VE.Question.Properties
 import VE.Question.Examples
