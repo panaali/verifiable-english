@@ -250,7 +250,8 @@ Measured on this HEAD with `uv run python tools/trust_map.py --check` against `7
   (596 modules); `tests/test_assurance_manifest.py` 137 passed after the reason for `Govern.lean` was added.
 - **Selected tests** (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`):
   - on ve-mac-1 at `a5f795cb` (clean): 80 of 457 units, exit 0, 0 failed;
-  - FINAL_RUN.
+  - final, on ve-mac-1 at `1fd4a7f3` (clean, the report's commit; only docs follow it): 80 of 457 units, exit 0,
+    0 failed.
   No test from `main-known-red.txt` failed.
 - **Full gate**: not run by me, as the task says. The chain runs it on the final HEAD.
 
