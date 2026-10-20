@@ -36,13 +36,15 @@ whitespace). No statement had to change.
   before like terms merge. Each limit is pinned at its value and one past it: `[nodes-10000]`/`[nodes-10001]`,
   `[nodes-10001-pow]`, `[sum-10000]`/`[sum-10001]` and `[product-10000]`/`[product-10100]`. Two bounds keep
   coefficients and exponents in budget, since a chain of powers otherwise grows without limit:
-  - a numerator and a denominator below `10 ^ maxDigits`: ME-1's digit limit, pinned on a numerator by
-    `[digits-4096]`/`[digits-4097]` and on a denominator by `[digits-den-4096]`/`[digits-den-4097]`;
+  - a numerator and a denominator below `10 ^ maxDigits`: ME-1's digit limit, pinned for each side of the line and
+    each sign (the numerator's magnitude is bounded) by twelve generated fixtures, `DIGIT_FIXTURES`:
+    `[digits-4096]`/`[digits-4097]`, `[digits-den-…]`, `[digits-neg-…]` and `[digits-neg-den-…]`, each with a
+    `-4097-compare` fixture where a side past the limit compared with itself is no identity;
   - exponents at most 4,096, in a result (`fits`) and in a power node (`pow?`): `[exponent-4096]`, `[exponent-4097]`
     and `[exponent-4097-product]`; on a constant base, where only the power node's guard refuses,
     `[exponent-constant-4096]`/`[exponent-constant-4097]`.
 
-  Each limit check is a single comparison, and each one has a mutant that a fixture kills (mutants 14 to 24). `fits`
+  Each limit check is a single comparison, and each one has a mutant that a fixture kills (mutants 14 to 24, 26). `fits`
   no longer counts terms: `add?` and `mul?` count them first and `norm` never adds one, so no input reached that
   check (deleting it changed no fixture's answer; review F1's sweep).
 
@@ -56,16 +58,16 @@ whitespace). No statement had to change.
 
 ## Trust
 
-`trust_map.py --check` on the final code: K +0, S +3 (`Poly.eval`), untied V +0, trusted +3; G[R] +8 (`maxPolyTerms`,
+`trust_map.py --check` on the final code: K +0, S +3 (`Poly.eval`), untied V +0, trusted +3; G[R] +9 (`maxPolyTerms`,
 `maxPolyExponent`, `Poly.coeffBound`); everything else C or P (`vprod`, `Frac.Means`). Recorded with `--allow`, signed
 under R16; DELTA row 1. The FOLLOW-UPS.md "## me-9" row asks for the ties pass.
 
-## Seeded bugs (Lean; [`mutants.json`](mutants.json), 25 mutants, each with its exact edit)
+## Seeded bugs (Lean; [`mutants.json`](mutants.json), 26 mutants, each with its exact edit)
 
 Each mutant is run twice, from `lean/VE/Calc/Poly.lean`: as written, and with every theorem proved by `sorry`. With
 the proofs sorried, only `tests/test_calc_algebra.py` can catch it. Every one fails named fixtures and was restored;
-`proofs_failing_as_is` records whether the proofs also break as written (12 of 25). Mutants 23 to 25 (review F1
-and F2) leave the proofs compiling, so they were run as written.
+`proofs_failing_as_is` records whether the proofs also break as written (12 of 26). Mutants 23 to 26 (review F1
+and F2, recheck F6) leave the proofs compiling, so they were run as written.
 - Trusted definition `Poly.eval`: the coefficient dropped (3), killed by `[binom-value]`.
 - Normal forms: the plan's seeded bug (1), different variable lists merged (2), zeros kept (4), exponents multiplied
   (5), variables out of order (6), monomials in descending order (7), a zero literal kept (25).
@@ -73,7 +75,8 @@ and F2) leave the proofs compiling, so they were run as written.
   cross-multiplication (11), division accepted by `Poly.ofExpr?` (12). `differsAt` reports equal sides (13).
 - Limits: 9,999 and 10,001 terms (14, 15), `<` for `≤` in sums and products (16, 17), a power node not counted (18),
   4,097 digits (19), exponent limit 4,095 (20), an exponent past the limit kept by `fits` (21), the node limit not
-  checked (22), a denominator past the digit limit kept (23), a power node of exponent 4,097 kept (24).
+  checked (22), a denominator past the digit limit kept (23), a power node of exponent 4,097 kept (24), the signed
+  numerator compared with the digit bound, so a negative one past it is kept (26).
 
 ## Tests
 
@@ -119,6 +122,16 @@ R-10c after ME-4. Then ME-7.
 - **F2 (C)**, a zero literal's normal form unpinned: `[zero-literal]`, mutant 25.
 - **F3 to F5 (C)** are me-9b's (Next item).
 
+## Review fixes (me-9 recheck 1)
+
+- **F6 (B)**, the digit bound pinned on positive numerators only: with `natAbs` dropped from `fits`,
+  `compare (−10^4096, −10^4096)` was an identity past the limit. As a class, the digit fixtures are now generated
+  over both sides of the line and both signs (`DIGIT_FIXTURES`), each at the limit, one past it, and past it compared
+  with itself: `[digits-neg-4096]`, `[digits-neg-4097]` (the probe), `[digits-neg-4097-compare]` and the same for
+  `den-` and `neg-den-`. Mutant 26 fails `[digits-neg-4097]` and `[digits-neg-4097-compare]` only. The sweep found
+  no other signed bound: denominators, exponents, term and node counts are natural numbers.
+- **F7 (C)**, the G count: `trust_map` measures G[R] +9, all in `Poly.lean` (Trust).
+
 ## Sibling lessons (me-5 review)
 
 - F1, limits unpinned: every limit check here is pinned at its value and one past it (Deviations); mutants 14 to 24
@@ -142,8 +155,8 @@ R-10c after ME-4. Then ME-7.
 8. PASS: DELTA "Public output: none" (no mode, command, route or Python/Rust product file).
 9. PASS: the selection contained `tests/test_calc_algebra.py` and caught the Mac stack overflow at `480daf7b1`.
 10. PASS: `lean/audit.py` PASS; the statements match the spec verbatim; 12 mutants also break a proof as written.
-11. PASS: every limit check is pinned at and past its value (each comparison in `fits`, `add?`, `mul?`, `pow?` and
-    `nodesWithin` has a killing mutant), and past it the answer is never an identity
+11. PASS: every limit check is pinned at and past its value, for each sign of a signed value (each comparison in
+    `fits`, `add?`, `mul?`, `pow?` and `nodesWithin` has a killing mutant), and past it the answer is never an identity
     (`[over-the-limit-is-not-an-identity]`, `[nodes-10001]`, `[sum-10001]`, `[product-10100]`).
 12. PASS: the node walk stops at the limit, so a shared side cannot cost its tree (`[nodes-shared]`, mutant 22). The
     coefficient bound is one comparison, and `combine` runs in constant stack (`[product-10000]` on the Mac).
