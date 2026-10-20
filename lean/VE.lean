@@ -188,6 +188,7 @@ import VE.Layout.Anchors
 import VE.Layout.Discourse
 import VE.Layout.List
 import VE.Scope.Effects
+import VE.Scope.Govern
 import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Defaults.Premises
