@@ -71,11 +71,12 @@ def _line(**overrides):
 
 
 def test_a_refusal_is_attributed_to_the_check_that_made_it():
-    converted = _line(refusals=[{"transport": False, "frames": [["ve/document.py", 450, "unavailable"]],
-                                 "cause": {"transport": False, "frames": [["ve/document.py", 531, "require"]]}}])
+    # `ve/document/lean.py` (AR-16a: `_lean_document` and its helpers moved from `ve/document.py`).
+    converted = _line(refusals=[{"transport": False, "frames": [["ve/document/lean.py", 450, "unavailable"]],
+                                 "cause": {"transport": False, "frames": [["ve/document/lean.py", 531, "require"]]}}])
     assert C._attributed(converted)["site"]["function"] == "require"
     helper = _line(refusals=[{"transport": False, "cause": None,
-                              "frames": [["ve/document.py", 450, "unavailable"], ["ve/document.py", 470,
+                              "frames": [["ve/document/lean.py", 450, "unavailable"], ["ve/document/lean.py", 470,
                                                                                    "_lean_document"]]}])
     assert C._attributed(helper)["site"]["function"] == "_lean_document"
     direct = _line(refusals=[{"transport": False, "cause": None, "frames": [["ve/discourse.py", 191,
