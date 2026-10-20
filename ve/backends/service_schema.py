@@ -21,12 +21,11 @@ import reprlib
 import threading
 
 DIRECTORY = Path(__file__).resolve().parent / "lean_service_schema"
-MODES = ("evaluate", "check-certificate", "order", "route", "norms", "english",
-         "english.read", "english.grammar", "english.check",
-         "environment", "model", "check", "identity", "parse", "graph", "readings", "readings-choices", "bundle", "family-norms",
-         "soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval", "quantity",
-         "norm-defaults", "discourse", "readings-route", "diagnose", "document", "english.question",
-         "search-budget", "ask", "words", "metered")
+# The service's modes are Lean's (`VE.Service.registry`, lean/VE/Service/Registry.lean): its handshake
+# states them, the schema rendered from the Lean shapes pins them exactly (`envelope.json`,
+# `handshake.modes`), and the client reads them from there; `check_handshake` refuses a service
+# whose handshake states other modes.
+MODES = tuple(json.loads((DIRECTORY / "envelope.json").read_text())["handshake"]["properties"]["modes"]["const"])
 
 
 class Invalid(Exception):
