@@ -1,0 +1,30 @@
+# AR-16a, ve/document.py split into the package ve/document/ (architecture pass 2026-10-19, plan 4.4).
+# Checked with: uv run python tools/batch_evidence.py --check docs/arch/AR-16a
+# The A/B is `python -m tools.evidence ab` over tools/lean_first_diff.py's recordings of all nine corpora, the
+# head's two whole-UDHR records that hit the recorder's 600 s limit under load re-run alone on both sides
+# (pilot_rerun.py, evidence/pilot-rerun.json), with the 14 identical unavailable pairs listed (R7, ab-delta.json).
+# The cycle and verbatim evidence (cycles.py, verbatim.py) is saved beside it and stated in REPORT.md.
+batch = "AR-16a"
+
+[scope]
+file = "scope.json"
+
+[gate]
+file = "gate.json"
+
+[mutants]
+file = "mutants.json"
+min = 3
+
+[ab]
+file = "ab.json"
+corpora = ["probe", "conformance", "readings", "pilots", "discourse", "rights", "quantity", "norm_defaults", "document"]
+
+[report]
+file = "REPORT.md"
+marker = "AR-16A NUMBERS"
+lines = [
+  "- Scope: `{scope.base|short}..{scope.head|short} --no-merges`, {scope.commits|len} commits: {scope.commits|map:hash|short|code|join:, }.",
+  "- Corpus A/B (`{ab.base_commit|short}` against `{ab.head_commit|short}`): {ab.totals.same} records identical, {ab.totals.unavailable} unavailable on both sides with identical outputs (R7, listed), {ab.unlisted} unlisted; pilots {ab.records.pilots/default}, document {ab.records.document/default}, discourse {ab.records.discourse/default}, rights {ab.records.rights/default}, readings {ab.records.readings/default}.",
+  "- Seeded mutants (tools/mutants.py): {mutants|killed}/{mutants.mutants|len} killed.",
+]

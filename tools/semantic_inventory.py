@@ -246,7 +246,7 @@ def generate():
         ("ve.readings", "validate_reading_sets"): ("C", "Lean `readings` checks each two-evaluation distinguishing witness before trusted admission"),
         ("ve.equivalence", "compare"): ("C", "Trusted narrowed: two checked directions; experimental assurance and named rule"),
         ("ve.equivalence", "validate_reference"): ("C", "Trusted narrowed: checked satisfying and falsifying models; experimental assurance and named rule"),
-        ("ve.document", "check_document"): ("C", "Trusted narrowed document assembly from Lean admission, readings and premise-status constituents"),
+        ("ve.document.report", "check_document"): ("C", "Trusted narrowed document assembly from Lean admission, readings and premise-status constituents"),
     }
     lines += ["", "## Other `ve/` functions", "",
               "Section 1.2 combination functions are C; single-verdict relabelling is L; other retained surface, authoring, diagnostic and transport functions are S. This covers functions outside the section 1.1 deletion list.",

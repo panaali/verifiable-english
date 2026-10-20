@@ -19,7 +19,7 @@ CASES = [
      'has_content = authored.get("content") is not None',
      'has_content = "content" in authored',
      SWITCH + "test_null_content_is_absent_on_the_lean_path"),
-    ("forged checked formula accepted", "ve/document.py",
+    ("forged checked formula accepted", "ve/document/lean.py",
      'require(same(unit["content"], authored["content"]["ast"]))',
      'pass  # seeded fault: ignore the authored AST',
      SWITCH + "test_identities_and_content_are_leans"),
@@ -37,7 +37,7 @@ CASES = [
      '"meaning": true',
      SWITCH + 'test_document_schema_types_every_unit_field[units/0/meaning="unspecified"]'),
     # 16c review B2.
-    ("Python reads an unpaired surrogate", "ve/document.py",
+    ("Python reads an unpaired surrogate", "ve/document/load.py",
      '    _no_lone_surrogate(meta)\n',
      '',
      WRAPPER + "test_json_unpaired_surrogate_is_the_boundary_diagnostic_in_both[high]"),

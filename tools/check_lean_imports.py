@@ -56,7 +56,8 @@ def diagnostic_only_violation(importer: str, imported: str) -> str | None:
 # et-7 review F2: a module no default target imports is never compiled by `lake build` (the gate's build), so its
 # `#guard`s cannot fail. The only modules outside the default build: the roots of the lakefile's non-default
 # executables, built when named, and these scripts, each run with `lake env lean --run` by the tool named here.
-RUN_ONLY = {"VE.Numbers.PhrasesMain": "tools/numbers_phrases.py"}
+RUN_ONLY = {"VE.Numbers.PhrasesMain": "tools/numbers_phrases.py",
+            "VE.Compose.ProfilesMain": "tools/profile_table.py"}
 
 
 def lake_globs(lakefile: dict) -> tuple[list[tuple[str, str]], set[str]]:
