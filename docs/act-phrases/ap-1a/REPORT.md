@@ -158,7 +158,38 @@ no Rust changed.
     The theorems are about the returned values (`check`'s result, `wording`'s string). No statement was changed or
     given a hypothesis.
 11. PASS: the new limits refuse with `ResourceLimit` at the limit plus one and accept at the limit (A21/A22,
-    128/129 phrases, 300/301-byte phrases: `LexicalExamples.lean` 100-103, 174-185).
+    128/129 phrases, 300/301-byte phrases: `LexicalExamples.lean` 100-103, 240-251).
 12. N.A.: no new work on an existing path. Without `acts@0` the decoder evaluates two Boolean tests that
     short-circuit on `false`; the base and head services answered the 330 cases in about 3 s together.
 13. PASS: `gate_collection.py --check --prebuilt`: 10 added, 0 removed, 0 refused, stale or malformed.
+
+## 8. Review fixes (ap-1a-review.final.md)
+
+**F1 (B): four behaviours of the new decoder were pinned by no fixture.** The class is a behaviour of the act check
+or the regulated decoder that no `#guard` reads; the review's four were per-role behaviours of `decodeRegulatedWith`
+and `check`'s slot comparison, read only on fixtures that passed `[]` as the fixed phrases.
+
+- **Fixtures** (`LexicalExamples.lean`): slots repeated (`{0} meet {0}`), missing (`{0} meet {2}`) and out of order
+  (`{0} meet {2} {1}`) refused, and in order accepted (lines 108-113). A role matrix (166-226): permission,
+  obligation and plain, each with each field it may and may not carry (act, form, permission dual), under `acts@0`
+  and without it, decoded with the fixed phrases `fx1` and A1's act, which only `Lexical.check` with `fx1` accepts.
+  Each accepted declaration is compared as the whole record (default, role, act, dual), and the same act without the
+  phrases is refused. A missing role or default, a declaration that is not an object, and an unknown role or default
+  are pinned too: they were the sweep's other survivors.
+- **Regression test** `tests/test_acts_lexical_mutants.py`. It plants the review's four, the fifth that only a proof
+  caught (the fixed phrases not passed on), three more slot comparisons, and mutants generated from the source of
+  `check`, `canonicalActIn`, `decodeRegulatedWith` and `decodeRegulatedIn`. The generated kinds are: every condition
+  made never to fire and each of its conjuncts dropped, every comparison negated or moved off its boundary, every role
+  replaced by each other role, each default arm negated, every read of `acts` fixed, `acts@0` negated, `fx` emptied,
+  and each role's act sent to today's `canonicalAct`. Identical mutants are made once. Each mutant is elaborated with
+  the fixtures and the proofs replaced by `sorry`, and it must fail only at `#guard`s. 78 do. 3 are equivalent, each
+  with its reason, and are tested to still pass: `ws.length ≥ 2` after a normalised `{0} ` start, and the two reads of
+  `acts` that the fields check makes unreachable without `acts@0`. A coverage test checks that every line of those
+  definitions that decides something is changed by a generated mutant, and that each review mutant changes the line a
+  generated one changes. The review's probe now exits 0 (3 of 3 killed); before the fix it exited 1.
+- **Trust:** unchanged at +150 (`trust_map.py --check` PASS). The fixture helpers are classified `T` in
+  `tools/trust-classes.json`, like the file's other fixtures. No product code changed: Lean `Lexical.lean` and
+  `Wire.lean`, Python `ve/` and Rust are as reviewed. The line numbers in `mutants.json` are those of
+  `LexicalExamples.lean` at `2b6e3c41`, when it was recorded.
+
+F2 to F5 are C findings and are left to the items the review names (ap-1b and ap-1c, the spec erratum for A25).
