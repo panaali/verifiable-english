@@ -437,9 +437,9 @@ allow-list; this round stopped after the seventh hunt and its fixes.
 - PROBE F11 failed before the fix (`le-lt` and `lit-minus` KILLED at "Type mismatch") and prints `[('le-lt',
   'UNKNOWN', 'lean/Demo/Defs.lean:7: Type mismatch (an `rfl` check `decide` does not refute)'), …]` after; PROBE
   F12 failed (`eq-le`, `eq-ne`, `lit-minus` INVALID at "`simp` failed: maximum number of steps exceeded", `lit-plus`
-  INVALID at "unsolved goals") and prints them UNKNOWN after. PROBE F1 and F6–F15 exit 0 on the final tool.
+  INVALID at "unsolved goals") and prints them UNKNOWN after. PROBE F1, F6–F16, F15c and F16c exit 0 on the final tool.
 - Every probe of the hunt directory, run by `hunt/run.py` on this branch (`evidence/probes.json`, with the sha256 of
-  the tool and of the test file each probe ran):
+  the tool, the test file, this report (its quote of the summary left out), `claims.py` and `hunt/F15c.md`):
 
   > Probes on be422c2d3, de96d2db3 (this checkout's tool): 82 of 83 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
 
@@ -480,14 +480,18 @@ words in this paragraph, and said here and in `hunt/README.md` that PROBE F14 th
 `AssertionError: 1546`). The class is a sentence that states a result (a budget met, a probe or test that passes,
 a run on the final tool, a count) that no saved evidence gives. The fix removes it where such sentences are checked:
 
-- `claims.py` (in this directory) finds every such sentence of this report and of `hunt/README.md` (`CLAIM`) and
-  requires its words to lie inside a text it writes from the saved evidence: the replays and their profiles, the
-  sweep, the seeded bugs, the probes, the selected tests, the evidence of an earlier round as git keeps it, and
-  `sweep.py`'s and `F14.sh`'s exit codes now. A number the evidence does not give is UNBOUND, and so is a claim
-  `claims.py` has no evidence for; `NOT_CLAIMS` names the words that report no result, each with its reason. It
-  prints one line per sentence (the list the DRI's note of 2026-10-20 asks for) and exits 1 on any UNBOUND.
+- `claims.py` (in this directory) checks three things against the saved evidence, and no more (review F16): the
+  sentences of this report and of `hunt/README.md` that `CLAIM` reads, the step-1 table of section 1 (`tabled()`),
+  and the sentences `named()` lists (`bindings()`). A sentence `CLAIM` reads must lie inside a text `claims.py`
+  writes from the saved evidence: the replays and their profiles, the sweep, the seeded bugs, the probes, the
+  selected tests, the evidence of an earlier round as git keeps it, and `sweep.py`'s and `F14.sh`'s exit codes now.
+  A number `CLAIM` reads that the evidence does not give is UNBOUND, and so is a claim `claims.py` has no evidence
+  for; `NOT_CLAIMS` names the words that report no result, each with its reason. A number in a form `CLAIM` does
+  not read, outside the table and `named()`, is not checked. It prints one line per sentence, table row and named
+  sentence (the list the DRI's note of 2026-10-20 asks for) and exits 1 on any UNBOUND.
 - `hunt/run.py` runs every probe and saves its exit code, time and last line in `evidence/probes.json`, with the
-  sha256 of the tool and the test file: a sentence that says a probe passes quotes that file.
+  sha256 of the tool, the test file, this report, `claims.py` and `hunt/F15c.md` (`SOURCES`; the report's quote of
+  the summary, written after the run, left out): a sentence that says a probe passes quotes that file.
 - `replay.py --run` now runs the tool in its own process with a profile (`profiled`): the 5-minute load, sampled
   every 15 s, and the time the threads spent in the probe and in builds, saved in the replay's evidence; the
   report quotes `replay.py`'s budget and profile lines.
@@ -510,6 +514,21 @@ of the review rounds' tests (now measured from the test file, `parts()`; each wa
 unused operators take (reworded: nothing measures it), and a task line's own number (`NOT_CLAIMS`). PROBE F15 is
 `hunt/F15.sh`; PROBE F15c, `hunt/F15c.sh`, runs `claims.py` on `hunt/F15c.md`, one wrong count of each form, and
 requires each UNBOUND as a sentence of its own.
+
+**F16 (F14's class, a third form: numbers `CLAIM` does not read).** The step-1 table (survivor counts, seconds,
+the yes/no columns), the former kills of review F1 by file, pk-1's count at `UnspecifiedWire.lean:526`, the
+seeded-bug count of section 6 and its collection counts were read by no check, although `claims.py` wrote the
+table's rows, and the F14 paragraph above and `hunt/README.md` said every such sentence was checked. Every
+number there was right, so the fault was the claim. Following the DRI's note of 2026-10-20b, the fix narrows the
+claim and does not widen `CLAIM`: `tabled()` compares the table, every cell of every row, with `replay.table()`
+(a row missing or extra is UNBOUND too); `named()` lists each other sentence once, with its words, the numbers
+its evidence gives and that evidence, and `bindings()` requires the sentence in the report with those numbers
+(a sentence missing is UNBOUND, so a rewording cannot drop it); and the F14 paragraph above, `hunt/README.md`
+and the round-4 task line now say what `claims.py` checks, no more. PROBE F16, `hunt/F16.sh`, failed before the
+fix (on its first copy, a survivor count of pk-1's row, `claims.py` exited 0; section 1e's evidence has its
+exit code after the fix); PROBE F16c,
+`hunt/F16c.sh`, the class's probe, changes each cell of the table and each number of each named sentence alone,
+and removes each named sentence alone, and requires UNBOUND on every copy and on none of the report itself.
 
 ## 2. Orchestrator lines (not edited here: /home/seyran/code/manage-agents is the orchestrator's)
 
@@ -552,8 +571,11 @@ from the earlier rounds (TM8, TM23, TM25, TM30, TM31, TM33–TM36 retargeted at 
 F11, F12 and the hunts, among them the Lean probe's own lines (`READS` is Lean text inside the tool: TM48, TM59,
 TM60, TM63, TM65, TM71–TM74, TM77, TM78), TM79 for the build time limit, TM80, TM81 for review F13, TM82–TM85
 for F14's class (`claims.py`, `replay.py`'s budget line, `hunt/run.py`'s summary; each command-mode, killed when
-`hunt/F14c.sh` exits non-zero) and TM86–TM93 for F15's (`CLAIM`'s count forms and `parts()`: `hunt/F15c.sh`, TM93
-`hunt/F14c.sh`). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 91 of 91, each at a named test or command, the file
+its command exits non-zero), TM86–TM93 for F15's (`CLAIM`'s count forms and `parts()`: `hunt/F15c.sh`) and TM94–TM99
+for F16's (the table, the named sentences: `hunt/F16.sh`, `hunt/F16c.sh`; the probes' hashes: `hunt/F14c.sh`).
+`claims.py` is one of the probes' hashed sources, so any change to it makes `hunt/F14c.sh` fail; its seeds are
+killed by commands that do not read `evidence/probes.json` (TM82 by `hunt/F15c.sh`, TM83 and TM93 by the one-line
+checks `mutants.json` gives). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 91 of 91, each at a named test or command, the file
 restored to its exact bytes (`mutants-evidence.json`: TM1–TM78 on `d09bf54d4` in three worktrees of it, the rows
 joined in order, `--no-baseline` since the whole test file passes there; TM79 and the build-path seeds TM1, TM2,
 TM22 and TM36 again on `0ee7bfc45`, which adds the build time limit; TM80 and TM81 on `05ea60664`, the F13 fix;
@@ -647,8 +669,8 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | TM79 | a mutant's build past `--build-timeout` is killed and the mutant UNKNOWN, never a hung run (hunt T5w, T7) | `out, err = child.communicate()` | `test_a_build_past_its_time_limit_is_unknown` |
 | TM80 | the modules an outside --test file imports are built with the mutant (review F13) | `tree.imported` left out of `targets` | `test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant` |
 | TM81 | an outside --test file whose imports cannot be read stops the run (review F13) | the header error not reported | `test_an_outside_test_whose_header_cannot_be_read_stops_the_run` |
-| TM82 | a sentence that states a result is UNBOUND unless each such word lies inside a text the evidence gives (review F14's class) | `loose = []` | `hunt/F14c.sh` |
-| TM83 | a PROBE list binds only when every probe it names, a range expanded, exits 0 in `evidence/probes.json` | a range not expanded | `hunt/F14c.sh` |
+| TM82 | a sentence that states a result is UNBOUND unless each such word lies inside a text the evidence gives (review F14's class) | `loose = []` | `hunt/F15c.sh` |
+| TM83 | a PROBE list binds only when every probe it names, a range expanded, exits 0 in `evidence/probes.json` | a range not expanded | `names()` on "F1, F6–F9 and N4" (`mutants.json`) |
 | TM84 | the report's budget line is `replay.py`'s, from the saved evidence and the 1,200 s budget (review F14) | `BUDGET = 2000` | `hunt/F14c.sh` |
 | TM85 | the probes' summary counts only the probes that exit 0; the README and the report quote it | exit 1 counted as 0 | `hunt/F14c.sh` |
 | TM86 | a count reads up to three words between the number and what it counts (review F15) | one word | `hunt/F15c.sh` |
@@ -658,7 +680,13 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | TM90 | a number of lines is a count | `lines` dropped from `COUNTED` | `hunt/F15c.sh` |
 | TM91 | a number inside a name (ap-2, F14) is no count | `\b` in place of the name guard | `hunt/F15c.sh` |
 | TM92 | a sentence that starts with a digit is a sentence of its own | no split before a digit | `hunt/F15c.sh` |
-| TM93 | section 5's test sizes are measured from the test file | one of F9's two runs of lines left out | `hunt/F14c.sh` |
+| TM93 | section 5's test sizes are measured from the test file | one of F9's two runs of lines left out | `parts()` against section 5 (`mutants.json`) |
+| TM94 | a cell of the step-1 table that differs from `replay.py`'s row is UNBOUND (review F16) | every row OK | `hunt/F16.sh` |
+| TM95 | every column of the table is compared, the yes/no columns included | the first five columns only | `hunt/F16c.sh` |
+| TM96 | a named sentence whose numbers the evidence does not give is UNBOUND (review F16) | any numbers OK | `hunt/F16.sh` |
+| TM97 | a named sentence missing from the report is UNBOUND | a missing one not reported | `hunt/F16c.sh` |
+| TM98 | the saved probes hold for the report they ran on: its sha256 is saved (the recheck's C item) | `REPORT.md` left out of `SOURCES` | `hunt/F14c.sh` |
+| TM99 | the report's quote of the probes' summary, written after the run, is left out of its sha256 | the quote hashed | `hunt/F14c.sh` |
 
 ## 4. Limits and follow-ups
 
@@ -726,8 +754,9 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | Recheck F10: a check out of budget counts as a kill; probe F10 | section 1d; `NO_ANSWER`, `ERROR`; `BUDGET`, `budget_package`; `replay.py` F10 line; sweep rerun; TM33–TM40 (40 of 40) |
 | Recheck F11/F12 (DRI note 2026-10-19c): the rule inverted (one positive condition for KILLED and for INVALID), a test per safe case, F11 and F12 as tests, an adversarial hunt until none (bounded by the 23Z addendum for later rounds), probes F1 and F6–F12, the sweep, the seeded bugs | section 1e; `settle`, `judge`, `refutes`, `invalid`, `refused`, `READS`/`probe`; `JUDGED`, `REFUSALS`, `STUCK`, `HUNT`; `docs/speed/trustmut/hunt/`; sweep and ap-2 F11 replay rerun; TM41–TM79 (37 seeds) |
 | Recheck F13/F14: an outside check's imports built with the mutant; the budget claim; probes F13, F14 | section 1f; `Tree.imported`, `targets`; `BRIDGED`; `replay.py` `budget()`; `hunt/F13.sh`, `hunt/F14.sh`; TM80, TM81 |
-| Round 4 (DRI note 2026-10-20): F14 as a class (every claim sentence checked against the evidence, the list in the final); PROBE F13 and F14 rerun; ap-2 F11 (`aa2fd56e3`) with the final tool, timed once at 8 jobs, the load recorded, and whether the probe causes the excess | section 1f; `claims.py`, `hunt/run.py`, `evidence/probes.json`, `hunt/F14c.sh`; `replay.py` `profiled`, `profile()`; section 1 |
+| Round 4 (DRI note 2026-10-20): F14 as a class (the claim sentences `CLAIM` reads checked against the evidence, the list in the final); PROBE F13 and F14 rerun; ap-2 F11 (`aa2fd56e3`) with the final tool, timed once at 8 jobs, the load recorded, and whether the probe causes the excess | section 1f; `claims.py`, `hunt/run.py`, `evidence/probes.json`, `hunt/F14c.sh`; `replay.py` `profiled`, `profile()`; section 1 |
 | Recheck F15: section 4's INVALID range against the evidence; `CLAIM` reads that form; PROBE F15 | section 1f; `COUNT`, `COUNTED`, `parts()`; `hunt/F15.sh`, `hunt/F15c.sh`, `hunt/F15c.md`; TM86–TM93 |
+| Recheck F16 (DRI note 2026-10-20b): the step-1 table cell by cell, the named counts bound one by one, the claim narrowed to what `claims.py` checks, PROBE F16 and F14–F15c rerun, the claim inputs in the probes' hashes | section 1f; `tabled()`, `named()`, `bindings()`; `hunt/run.py` `SOURCES`; `hunt/F16.sh`, `hunt/F16c.sh`; TM94–TM98 |
 | 4 orchestrator lines, gate-check opinion | section 2 |
 | Rules: R2/R3 unchanged, nothing reads the tool; `trust_map.py --check`, review-ready and gate unchanged; no timing test | `DELTA.md`; no file of the gate or review-ready changed; trust_map's two changes (F6, F7) measure +0 here; the tests assert no time |
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
