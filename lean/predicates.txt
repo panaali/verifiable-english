@@ -507,6 +507,7 @@ module VE.Scales.Syntax
 module VE.Scales.Theorems
 module VE.Scope.Effects
 module VE.Scope.Examples
+module VE.Scope.Govern
 module VE.Scope.Theorems
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
