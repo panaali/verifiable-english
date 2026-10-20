@@ -806,8 +806,10 @@ def withoutDocumentLayers (environment : Lean.Json) : Lean.Json :=
 other list by the base rows. -/
 def environmentWrapper : String := "readings@1"
 
-/-- The profiles an environment may list, in table order (`ve/profiles.py` `BY_NAME`). -/
-def environmentProfiles : List String := (baseRows.map (·.profile)).eraseDups ++ [environmentWrapper]
+/-- The profiles whose environments Python models, in table order (`ve/profiles.py` `BY_NAME`): every base row's but
+the document layers, which only the environment and document modes read (JT-2), then the wrapper. -/
+def environmentProfiles : List String :=
+  ((baseRows.map (·.profile)).eraseDups.filter (!documentLayers.contains ·)) ++ [environmentWrapper]
 
 /-- The route heads in precedence order: the first one with a listed row is the route. -/
 def heads : List (String × Route) :=
