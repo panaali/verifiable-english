@@ -195,4 +195,190 @@ theorem scalePremises_labels_nodup (E : VE.Environment) (ots : List String) (D :
     (hD : WellFormed E ots D = true) : ((scalePremises D).map (·.1)).Nodup := by
   simp only [WellFormed, Bool.and_eq_true, decide_eq_true_eq] at hD
   exact hD.1.2
+
+/-! One role per predicate, and the two model constructions that use it. -/
+
+/-- Two distinct members of a pairwise list are related one way or the other. -/
+theorem pairwise_or {α : Type} {R : α → α → Prop} : ∀ {l : List α}, l.Pairwise R →
+    ∀ {a b : α}, a ∈ l → b ∈ l → a ≠ b → R a b ∨ R b a
+  | _ :: _, .cons h hl, _, _, ha, hb, hne => by
+    cases ha with
+    | head => cases hb with
+      | head => exact absurd rfl hne
+      | tail _ hb => exact .inl (h _ hb)
+    | tail _ ha => cases hb with
+      | head => exact .inr (h _ ha)
+      | tail _ hb => exact pairwise_or hl ha hb hne
+
+/-- **One role per predicate**, the consequence of `WellFormed`'s symbol conjunct the constructions below
+use: no dimension's comparative is the equative of a dimension of the block, itself or another. -/
+theorem more_ne_same {E : Environment} {ots : List String} {D : ScaleDoc} (hD : WellFormed E ots D = true)
+    {d d' : Dimension} (hd : d ∈ D.dims) (hd' : d' ∈ D.dims) : d'.same ≠ some d.more := by
+  intro hs
+  simp only [WellFormed, Bool.and_eq_true, decide_eq_true_eq] at hD
+  have hnd := hD.1.1
+  simp only [ScaleDoc.symbols, List.Nodup, List.pairwise_flatMap] at hnd
+  have hm : d.more ∈ d'.symbols := by simp [Dimension.symbols, hs]
+  by_cases hdd : d = d'
+  · subst hdd
+    have := hnd.1 d hd
+    simp only [Dimension.symbols, hs, List.pairwise_cons] at this
+    exact this.1 d.more (by simp) rfl
+  · rcases pairwise_or hnd.2 hd hd' hdd with h | h
+    · exact h d.more (by simp [Dimension.symbols]) d.more hm rfl
+    · exact h d.more hm d.more (by simp [Dimension.symbols]) rfl
+
+/-- `S` with the symbols of `D` reread by their roles: an equative holds of any two objects of its
+dimension's sort, a graded word (when `grade`) of every object of its dimension's sort, a comparative of
+nothing. Every other predicate keeps its meaning in `S`. -/
+def reread (D : ScaleDoc) (S : Structure.{u}) (grade : Prop) : Structure.{u} where
+  Carrier := S.Carrier
+  domain := S.domain
+  constant := S.constant
+  relation p vs := if p ∈ D.symbols then
+      match vs with
+      | [x, y] => ∃ d ∈ D.dims, d.same = some p ∧ S.domain d.sort x ∧ S.domain d.sort y
+      | [x] => grade ∧ ∃ d ∈ D.dims, ∃ g ∈ d.grades, g.name = p ∧ S.domain d.sort x
+      | _ => False
+    else S.relation p vs
+
+/-- The one-object structure: every sort holds the object, every constant names it, no relation holds. -/
+def point : Structure.{0} := ⟨Unit, fun _ _ => True, fun _ => some (), fun _ _ => False⟩
+
+section reread
+variable {E : Environment} {ots : List String} {D : ScaleDoc} {S : Structure.{u}} {grade : Prop}
+
+theorem reread_rel2 {p : String} (hp : p ∈ D.symbols) (x y : (reread D S grade).Carrier) :
+    (reread D S grade).relation p [x, y] ↔ ∃ d ∈ D.dims, d.same = some p ∧ S.domain d.sort x ∧ S.domain d.sort y := by
+  simp [reread, hp]
+
+theorem reread_rel1 {p : String} (hp : p ∈ D.symbols) (x : (reread D S grade).Carrier) :
+    (reread D S grade).relation p [x] ↔ grade ∧ ∃ d ∈ D.dims, ∃ g ∈ d.grades, g.name = p ∧ S.domain d.sort x := by
+  simp [reread, hp]
+
+theorem reread_fresh {p : String} (hp : p ∉ D.symbols) (vs : List S.Carrier) :
+    (reread D S grade).relation p vs = S.relation p vs := by
+  simp [reread, hp]
+
+theorem tupleTyped_reread : ∀ (ss : List String) (vs : List S.Carrier),
+    TupleTyped (reread D S grade) ss vs ↔ TupleTyped S ss vs
+  | [], [] | [], _ :: _ | _ :: _, [] => Iff.rfl
+  | _ :: ss, _ :: vs => and_congr Iff.rfl (tupleTyped_reread ss vs)
+
+theorem mem_symbols {d : Dimension} (hd : d ∈ D.dims) :
+    d.more ∈ D.symbols ∧ (∀ e, d.same = some e → e ∈ D.symbols) ∧ ∀ g ∈ d.grades, g.name ∈ D.symbols := by
+  simp only [ScaleDoc.symbols, List.mem_flatMap]
+  refine ⟨⟨d, hd, by simp [Dimension.symbols]⟩, fun e he => ⟨d, hd, by simp [Dimension.symbols, he]⟩,
+    fun g hg => ⟨d, hd, ?_⟩⟩
+  simp only [Dimension.symbols, List.mem_cons, List.mem_append, List.mem_map]
+  exact .inr (.inr ⟨g, hg, rfl⟩)
+
+theorem reread_admissible (hD : WellFormed E ots D = true) (hS : S.Admissible E) :
+    (reread D S grade).Admissible E := by
+  refine ⟨hS.1, fun p vs h => ?_⟩
+  by_cases hp : p ∈ D.symbols
+  · simp only [reread, hp, if_true] at h
+    match vs, h with
+    | [x, y], ⟨d, hd, hs, hx, hy⟩ =>
+      exact ⟨[d.sort, d.sort], (dim_ok hD hd).2.2.1 p hs, hx, hy, trivial⟩
+    | [x], ⟨_, d, hd, g, hg, hn, hx⟩ =>
+      exact ⟨[d.sort], hn ▸ (dim_ok hD hd).2.2.2.1 g hg, hx, trivial⟩
+  · obtain ⟨ss, h₁, h₂⟩ := hS.2 p vs (by rwa [reread_fresh hp] at h)
+    exact ⟨ss, h₁, (tupleTyped_reread _ _).mpr h₂⟩
+
+/-- Every dimension of a well-formed block has its intended meaning in the reread structure. -/
+theorem reread_intended (hD : WellFormed E ots D = true) {d : Dimension} (hd : d ∈ D.dims) :
+    Intended (reread D S grade) d := by
+  obtain ⟨hmS, heS, hgS⟩ := mem_symbols hd
+  obtain ⟨-, -, hse, hsg, ha⟩ := dim_ok hD hd
+  have noMore : ∀ x y, ¬ (reread D S grade).relation d.more [x, y] := fun x y h => by
+    obtain ⟨d', hd', hs, -⟩ := (reread_rel2 hmS x y).mp h
+    exact more_ne_same hD hd hd' hs
+  have sort2 : ∀ e, d.same = some e → ∀ d' ∈ D.dims, d'.same = some e → d'.sort = d.sort := fun e he d' hd' hs => by
+    have := (dim_ok hD hd').2.2.1 e hs; rw [hse e he] at this; simp at this; exact this.symm
+  have sort1 : ∀ g ∈ d.grades, ∀ d' ∈ D.dims, ∀ g' ∈ d'.grades, g'.name = g.name → d'.sort = d.sort :=
+    fun g hg d' hd' g' hg' hn => by
+      have := (dim_ok hD hd').2.2.2.1 g' hg'; rw [hn, hsg g hg] at this; simp at this; exact this.symm
+  refine ⟨fun x _ h => noMore x x h, fun _ _ _ _ _ _ h => (noMore _ _ h).elim, fun e he x hx => ?_,
+    fun e he x y h => ?_, fun e he x y z h₁ h₂ => ?_, fun _ _ x y _ h => noMore x y h,
+    fun _ _ _ _ _ _ h => (noMore _ _ h).elim, fun _ _ _ _ _ h _ => (noMore _ _ h).elim,
+    fun _ e he x y hx hy => .inr (.inr ((reread_rel2 (heS e he) x y).mpr ⟨d, hd, he, hx, hy⟩)),
+    fun g hg x y hy => ⟨fun _ h => (noMore _ _ h).elim, fun _ h => (noMore _ _ h).elim, fun e he h => ?_⟩,
+    fun p hp x h => ?_⟩
+  · exact (reread_rel2 (heS e he) x x).mpr ⟨d, hd, he, hx, hx⟩
+  · obtain ⟨d', hd', hs, hx, hy⟩ := (reread_rel2 (heS e he) x y).mp h
+    exact (reread_rel2 (heS e he) y x).mpr ⟨d', hd', hs, hy, hx⟩
+  · obtain ⟨d₁, hd₁, hs₁, hx, -⟩ := (reread_rel2 (heS e he) x y).mp h₁
+    obtain ⟨d₂, hd₂, hs₂, -, hz⟩ := (reread_rel2 (heS e he) y z).mp h₂
+    rw [sort2 e he d₂ hd₂ hs₂, ← sort2 e he d₁ hd₁ hs₁] at hz
+    exact (reread_rel2 (heS e he) x z).mpr ⟨d₁, hd₁, hs₁, hx, hz⟩
+  · obtain ⟨d', hd', hs, hx, -⟩ := (reread_rel2 (heS e he) x y).mp h
+    obtain ⟨hgr, -⟩ := (reread_rel1 (hgS g hg) y).mp hy
+    rw [sort2 e he d' hd' hs] at hx
+    exact (reread_rel1 (hgS g hg) x).mpr ⟨hgr, d, hd, g, hg, rfl, hx⟩
+  · obtain ⟨⟨g, hg, hn₁⟩, ⟨h', hh, hn₂⟩⟩ := ha p hp
+    obtain ⟨hgr, d', hd', g', hg', hn, hx⟩ := (reread_rel1 (hn₁ ▸ hgS g hg) x).mp h
+    rw [sort1 g hg d' hd' g' hg' (hn.trans hn₁.symm)] at hx
+    exact (reread_rel1 (hn₂ ▸ hgS h' hh) x).mpr ⟨hgr, d, hd, h', hh, hn₂, hx⟩
+
+/-- A formula without a symbol of `D` means the same in `S` and in the reread structure. -/
+theorem reread_denote (a : Formula) : ∀ ρ : List S.Carrier, Fresh D a →
+    (a.denote (reread D S grade) ρ ↔ a.denote S ρ) := by
+  have hterm : ∀ (ρ : List S.Carrier) (t : Term), t.denote (reread D S grade) ρ = t.denote S ρ := by
+    intro ρ t; cases t <;> rfl
+  induction a with
+  | top | bottom => intro _ _; exact Iff.rfl
+  | eq t t' => intro ρ _; simp only [Formula.denote, hterm]; exact Iff.rfl
+  | unary p t =>
+    intro ρ h
+    have hp : p ∉ D.symbols := h p (by simp [VE.Norms.preds])
+    simp only [Formula.denote, hterm, reread_fresh hp]; exact Iff.rfl
+  | binary p t t' =>
+    intro ρ h
+    have hp : p ∉ D.symbols := h p (by simp [VE.Norms.preds])
+    simp only [Formula.denote, hterm, reread_fresh hp]; exact Iff.rfl
+  | not a ih => intro ρ h; exact not_congr (ih ρ h)
+  | and a b iha ihb | or a b iha ihb | implies a b iha ihb =>
+    intro ρ h
+    have ha := iha ρ fun p hp => h p (by simp [VE.Norms.preds, hp])
+    have hb := ihb ρ fun p hp => h p (by simp [VE.Norms.preds, hp])
+    simp only [Formula.denote, ha, hb]
+  | all s a ih | ex s a ih =>
+    intro ρ h
+    simp only [Formula.denote]
+    first
+    | exact forall_congr' fun v => imp_congr_right fun _ => ih (v :: ρ) h
+    | exact exists_congr fun v => and_congr_right fun _ => ih (v :: ρ) h
+
+end reread
+
+/-- **Conservative**: formulas without scale symbols have the same consequences with the scale premises. -/
+theorem scales_conservative (E : VE.Environment) (ots : List String) (D : ScaleDoc)
+    (hD : WellFormed E ots D = true) (Γ : List VE.Formula) (φ : VE.Formula)
+    (hΓ : ∀ a ∈ Γ, Fresh D a) (hφ : Fresh D φ) :
+    VE.Entails.{u} E (Γ ++ (scalePremises D).map (·.2)) φ ↔ VE.Entails.{u} E Γ φ := by
+  refine ⟨fun h S hS hΓS => ?_, fun h S hS hall => h S hS fun a ha => hall a (List.mem_append_left _ ha)⟩
+  have hS' := reread_admissible (grade := False) hD hS
+  refine (reread_denote φ [] hφ).mp (h _ hS' fun a ha => ?_)
+  rcases List.mem_append.mp ha with ha | ha
+  · exact (reread_denote a [] (hΓ a ha)).mpr (hΓS a ha)
+  · exact (premises_iff_intended E ots D hD _ hS').mpr (fun d hd => reread_intended hD hd) a ha
+
+/-- **No threshold is chosen**: for each graded word, the premises alone have a model where an object has it and one
+where it does not. -/
+theorem grade_open (E : VE.Environment) (ots : List String) (D : ScaleDoc) (hD : WellFormed E ots D = true)
+    (d : Dimension) (hd : d ∈ D.dims) (g : Grade) (hg : g ∈ d.grades) :
+    (∃ S : VE.Structure.{0}, S.Admissible E ∧
+      (∀ a ∈ (scalePremises D).map (·.2), a.denote S []) ∧ ∃ x, S.domain d.sort x ∧ S.relation g.name [x]) ∧
+    (∃ S : VE.Structure.{0}, S.Admissible E ∧
+      (∀ a ∈ (scalePremises D).map (·.2), a.denote S []) ∧ ∃ x, S.domain d.sort x ∧ ¬ S.relation g.name [x]) := by
+  have hpt : point.Admissible E := ⟨fun _ _ _ => ⟨(), rfl, trivial⟩, fun _ _ h => h.elim⟩
+  have hgS := (mem_symbols hd).2.2 g hg
+  have models : ∀ grade : Prop, ∀ a ∈ (scalePremises D).map (·.2), a.denote (reread D point grade) [] :=
+    fun grade => (premises_iff_intended E ots D hD _ (reread_admissible hD hpt)).mpr
+      fun d' hd' => reread_intended hD hd'
+  exact ⟨⟨reread D point True, reread_admissible hD hpt, models True, (), trivial,
+      (reread_rel1 (S := point) (grade := True) hgS ()).mpr ⟨trivial, d, hd, g, hg, rfl, trivial⟩⟩,
+    ⟨reread D point False, reread_admissible hD hpt, models False, (), trivial,
+      fun h => ((reread_rel1 (S := point) (grade := False) hgS ()).mp h).1⟩⟩
 end VE.Scales
