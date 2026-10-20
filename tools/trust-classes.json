@@ -8892,7 +8892,8 @@
     },
     "VE/Scales/Intended.lean": {
       "S": [
-        "VE.Scales.Intended"
+        "VE.Scales.Intended",
+        "VE.Scales.Fresh"
       ]
     },
     "VE/Scales/Examples.lean": {
@@ -8956,7 +8957,15 @@
         "VE.Scales.Examples.roleUnaries",
         "VE.Scales.Examples.roleVocab",
         "VE.Scales.Examples.roleWf",
-        "VE.Scales.Examples.rolePairs"
+        "VE.Scales.Examples.rolePairs",
+        "VE.Scales.Examples.allMaps",
+        "VE.Scales.Examples.degreeMaps",
+        "VE.Scales.Examples.attempts",
+        "VE.Scales.Examples.vast",
+        "VE.Scales.Examples.share",
+        "VE.Scales.Examples.oneAttempt",
+        "VE.Scales.Examples.review",
+        "VE.Scales.Examples.flaggedOnly"
       ]
     },
     "VE/SearchBudget/Budget.lean": {
@@ -13693,6 +13702,22 @@
         "VE.Acts.LexicalExamples.regIn",
         "VE.Acts.LexicalExamples.roleOrDefault",
         "VE.Acts.LexicalExamples.toks"
+      ]
+    },
+    "VE/Scales/Theorems.lean": {
+      "P": [
+        "VE.Scales.reread",
+        "VE.Scales.point"
+      ]
+    },
+    "VE/Scales/Degrees.lean": {
+      "S": [
+        "VE.Scales.StrictLinear"
+      ],
+      "P": [
+        "VE.Scales.asMuch",
+        "VE.Scales.below",
+        "VE.Scales.degreeSetoid"
       ]
     }
   }
