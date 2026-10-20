@@ -12918,19 +12918,32 @@
         "VE.Scope.Examples.blankLinesRef",
         "VE.Scope.Examples.boxAnchors",
         "VE.Scope.Examples.boxUnits",
+        "VE.Scope.Examples.carveT",
+        "VE.Scope.Examples.guard1",
         "VE.Scope.Examples.hcPieces",
         "VE.Scope.Examples.instructablePieces",
+        "VE.Scope.Examples.item1",
+        "VE.Scope.Examples.item3sign",
+        "VE.Scope.Examples.j",
         "VE.Scope.Examples.layoutOf",
+        "VE.Scope.Examples.leadPart",
+        "VE.Scope.Examples.mergePartsText",
         "VE.Scope.Examples.mk",
+        "VE.Scope.Examples.narrowK",
+        "VE.Scope.Examples.nest",
+        "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.powerPieces",
         "VE.Scope.Examples.prosePieces",
+        "VE.Scope.Examples.reguard173",
         "VE.Scope.Examples.seven",
         "VE.Scope.Examples.shortPieces",
         "VE.Scope.Examples.situationsPieces",
         "VE.Scope.Examples.spanOver",
+        "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
-        "VE.Scope.Examples.udhrPieces"
+        "VE.Scope.Examples.udhrPieces",
+        "VE.Scope.Examples.unordered"
       ]
     },
     "VE/Cardinality/Syntax.lean": {
@@ -13255,7 +13268,8 @@
     },
     "VE/Scales/Intended.lean": {
       "S": [
-        "VE.Scales.Intended"
+        "VE.Scales.Intended",
+        "VE.Scales.Fresh"
       ]
     },
     "VE/Scales/Examples.lean": {
@@ -13319,7 +13333,15 @@
         "VE.Scales.Examples.roleUnaries",
         "VE.Scales.Examples.roleVocab",
         "VE.Scales.Examples.roleWf",
-        "VE.Scales.Examples.rolePairs"
+        "VE.Scales.Examples.rolePairs",
+        "VE.Scales.Examples.allMaps",
+        "VE.Scales.Examples.degreeMaps",
+        "VE.Scales.Examples.attempts",
+        "VE.Scales.Examples.vast",
+        "VE.Scales.Examples.share",
+        "VE.Scales.Examples.oneAttempt",
+        "VE.Scales.Examples.review",
+        "VE.Scales.Examples.flaggedOnly"
       ]
     },
     "VE/Acts/Syntax.lean": {
@@ -13661,6 +13683,40 @@
         "VE.Acts.LexicalExamples.regIn",
         "VE.Acts.LexicalExamples.roleOrDefault",
         "VE.Acts.LexicalExamples.toks"
+      ]
+    },
+    "VE/Scope/Effects.lean": {
+      "G[V]": [
+        "VE.Scope.lookups",
+        "VE.Scope.members"
+      ],
+      "S": [
+        "VE.Scope.Commutes",
+        "VE.Scope.Effect",
+        "VE.Scope.depthLimit",
+        "VE.Scope.depthOk",
+        "VE.Scope.hasOwn",
+        "VE.Scope.mergeParts",
+        "VE.Scope.narrowing",
+        "VE.Scope.ownSafe",
+        "VE.Scope.substOwn"
+      ]
+    },
+    "VE/Scope/Theorems.lean": {},
+    "VE/Scales/Theorems.lean": {
+      "P": [
+        "VE.Scales.reread",
+        "VE.Scales.point"
+      ]
+    },
+    "VE/Scales/Degrees.lean": {
+      "S": [
+        "VE.Scales.StrictLinear"
+      ],
+      "P": [
+        "VE.Scales.asMuch",
+        "VE.Scales.below",
+        "VE.Scales.degreeSetoid"
       ]
     }
   }

@@ -1,4 +1,5 @@
 import VE.Scales.Theorems
+import VE.Scales.Degrees
 import VE.ModelProofs
 
 /-! Acceptance fixtures of `scales@0` (docs/spec/quantities.md 9.3 and 9.5), computed over finite models
@@ -176,6 +177,22 @@ theorem trust_not_intended : ¬ Intended reflexiveMore.toModel.asStructure trust
       (by simpa using h)
     exact absurd this (by decide)
 
+/-- Every map of the three principals into the order `0 < 1 < … < n - 1`, as the list of their degrees. -/
+def allMaps (n : Nat) : List (List Nat) :=
+  (List.range n).flatMap fun i => (List.range n).flatMap fun j => (List.range n).map fun k => [i, j, k]
+/-- The maps that give the comparative and the equative (9.5, `intended_iff_degrees`). -/
+def degreeMaps (M : ModelData) (n : Nat) : List (List Nat) :=
+  let ps := ["anthropic", "operators", "users"]
+  (allMaps n).filter fun deg => (ps.zip deg).all fun (x, dx) => (ps.zip deg).all fun (y, dy) =>
+    (b "more_trusted" x y).eval M.toModel [] == decide (dy < dx) &&
+    (b "equally_trusted" x y).eval M.toModel [] == (dx == dy)
+
+-- 9.5, `intended_iff_degrees`: two levels have the degrees (1, 1, 0) and 3 maps into a three-element
+-- order; three levels have 1; with "as much as" not transitive, none of the 27 maps is a degree map.
+#guard degreeMaps twoLevels 2 == [[1, 1, 0]] && degreeMaps twoLevels 3 == [[1, 1, 0], [2, 2, 0], [2, 2, 1]]
+#guard degreeMaps threeLevels 3 == [[2, 1, 0]] && degreeMaps reflexiveMore 3 == []
+#guard (allMaps 3).length == 27 && degreeMaps sameNotTrans 3 == []
+
 /-! FB4 (UDHR u094): "all children enjoy the same social protection" is `∀c₁ c₂. same(c₁, c₂)`, a
 statement the premises neither give nor exclude. -/
 
@@ -193,6 +210,61 @@ def unequalKids : ModelData := kids [[kid "k1", kid "k1"], [kid "k2", kid "k2"]]
 #guard WellFormed children.environment [] ⟨[protection]⟩ && allSame.check children.environment []
 #guard holds equalKids (allSame :: prem protection) && holds unequalKids (prem protection) &&
   !allSame.eval unequalKids.toModel []
+
+/-! FB6 (u0165.s05): `vast_majority` (upper) on `share_of_humanity_targeted`; the premises fix it on
+no attempt. -/
+
+def attempts : Vocabulary := ⟨["attempt"], [("targets_larger_share", ["attempt", "attempt"]),
+  ("vast_majority", ["attempt"])], [("a1", "attempt")]⟩
+def vast : Grade := ⟨"vast_majority", .upper⟩
+def share : Dimension := ⟨"share_of_humanity_targeted", "attempt", "targets_larger_share", none, false, [vast], []⟩
+/-- The 4 models over the one attempt of the comparative and the graded word. -/
+def oneAttempt : List ModelData :=
+  (subsets (binaries "attempt" ["a1"])).flatMap fun ms => (subsets (unaries "attempt" ["a1"])).map fun gs =>
+    model "attempt" ["a1"] [("targets_larger_share", ms), ("vast_majority", gs)]
+
+#guard WellFormed attempts.environment ["vast_majority"] ⟨[share]⟩
+-- Two of the 4 models satisfy the premises: the attempt has the grade in one and not in the other.
+#guard oneAttempt.length == 4 && ((oneAttempt.filter (holds · (prem share))).map fun M =>
+  (u "vast_majority" "a1").eval M.toModel []) == [false, true]
+
+/-- `grade_open`'s two witnesses for FB6. -/
+theorem fb6_open :
+    (∃ S : Structure.{0}, S.Admissible attempts.environment ∧
+      (∀ a ∈ (scalePremises ⟨[share]⟩).map (·.2), a.denote S []) ∧ ∃ x, S.domain "attempt" x ∧ S.relation "vast_majority" [x]) ∧
+    (∃ S : Structure.{0}, S.Admissible attempts.environment ∧
+      (∀ a ∈ (scalePremises ⟨[share]⟩).map (·.2), a.denote S []) ∧ ∃ x, S.domain "attempt" x ∧ ¬ S.relation "vast_majority" [x]) :=
+  grade_open attempts.environment ["vast_majority"] ⟨[share]⟩ (by decide) share (by simp) vast (by simp [share])
+
+/-! 9.5, `scales_conservative`: with the FB1 block, "r1 is flagged" follows from {r1 is flagged} with the
+premises and without them, and "r1 is reviewed" from neither: a model of {r1 is flagged} and the premises
+makes it false. -/
+
+def review : Vocabulary := ⟨["response"], resp.predicates ++ [("flagged", ["response"]), ("reviewed", ["response"])],
+  resp.constants⟩
+def flaggedOnly : ModelData := model "response" ["r1", "r2"] [("flagged", [[("response", "r1")]])]
+
+#guard WellFormed review.environment ots ⟨[uplift]⟩ && flaggedOnly.valid review
+#guard holds flaggedOnly (u "flagged" "r1" :: prem uplift) && !(u "reviewed" "r1").eval flaggedOnly.toModel []
+
+theorem conservative_true :
+    Entails.{0} review.environment ([u "flagged" "r1"] ++ (scalePremises ⟨[uplift]⟩).map (·.2)) (u "flagged" "r1") ∧
+    Entails.{0} review.environment [u "flagged" "r1"] (u "flagged" "r1") :=
+  have h : Entails.{0} review.environment [u "flagged" "r1"] (u "flagged" "r1") := fun _ _ h => h _ (by simp)
+  ⟨(scales_conservative review.environment ots ⟨[uplift]⟩ (by decide) _ _ (by unfold Fresh; decide)
+    (by unfold Fresh; decide)).mpr h, h⟩
+
+theorem conservative_false :
+    ¬ Entails.{0} review.environment ([u "flagged" "r1"] ++ (scalePremises ⟨[uplift]⟩).map (·.2)) (u "reviewed" "r1") ∧
+    ¬ Entails.{0} review.environment [u "flagged" "r1"] (u "reviewed" "r1") := by
+  have h : ¬ Entails.{0} review.environment ([u "flagged" "r1"] ++ (scalePremises ⟨[uplift]⟩).map (·.2))
+      (u "reviewed" "r1") := fun h => by
+    have hall : holds flaggedOnly ([u "flagged" "r1"] ++ (scalePremises ⟨[uplift]⟩).map (·.2)) = true := by decide
+    have := h _ (modelData_valid flaggedOnly review (by decide)) fun a ha => by
+      simp only [holds, List.all_eq_true] at hall; exact (eval_iff_denote _ _ _).mp (hall a ha)
+    exact absurd ((eval_iff_denote _ _ _).mpr this) (by decide)
+  exact ⟨h, fun h' => h ((scales_conservative review.environment ots ⟨[uplift]⟩ (by decide) _ _
+    (by unfold Fresh; decide) (by unfold Fresh; decide)).mpr h')⟩
 
 /-! FB8 (hostile `WellFormed`), and duplicate labels (A3). -/
 
