@@ -5,7 +5,7 @@ transport, binding and the recorders that write a pilot with its files); looprec
 senses fence's content to the senses route's reading, and the relay gate's document reader.
 
     python docs/lean-first/b16f/seed_faults.py                    # every fault
-    python docs/lean-first/b16f/seed_faults.py ve/document.py ...  # the faults in these files; the others' records kept
+    python docs/lean-first/b16f/seed_faults.py ve/document/lean.py ...  # these files' faults; the others' records kept
 
 A Lean fault is built into `ve_service` and pinned for the run; the source, the lock and the build are restored
 after each fault. `evidence/mutants.json` keeps the file, the test, its exit code and a failure excerpt.
@@ -72,47 +72,47 @@ CASES = [
      "  unless texts.all (·.getStr?.toOption.isSome) do",
      f"{SENSES}::test_a_request_without_the_pack_texts_keeps_the_retained_path[two]"),
     # Python: the binding of the answer's new fields.
-    ("a model path not bound to a model member", "ve/document.py",
+    ("a model path not bound to a model member", "ve/document/lean.py",
      "                else:\n                    break\n            else:\n                return True\n    return False",
      "                else:\n                    break\n            else:\n                return True\n    return True",
      "test_a_model_path_is_bound_to_a_member_of_a_model_of_the_document[/relations/absent]"),
-    ("a fence span's line not bound", "ve/document.py",
+    ("a fence span's line not bound", "ve/document/lean.py",
      '        if (0 <= start <= end <= len(text) and line == text.count("\\n", 0, start) + 1',
      '        if (0 <= start <= end <= len(text)',
      "test_a_fence_span_is_bound_to_a_strict_fence_of_the_document[span1]"),
-    ("a soft rule bound as a subset of the authored one", "ve/document.py",
+    ("a soft rule bound as a subset of the authored one", "ve/document/lean.py",
      '    return same(answer.get("norm"), written)',
      '    return set(answer.get("norm", {})) <= set(written)',
      "test_the_copied_soft_content_mutants_the_transport_accepts_are_refused_by_the_binding[drop mode]"),
-    ("a soft document's meaning ids bound to the document's environment", "ve/document.py",
+    ("a soft document's meaning ids bound to the document's environment", "ve/document/lean.py",
      "            formula_env = soft_document.extended_env\n        if \"rights@0\" in env.profiles:",
      "            formula_env = env\n        if \"rights@0\" in env.profiles:",
      "test_the_layer_seeds_are_decided_by_lean_with_the_retained_public_outcome[soft-norms]"),
     # Python, review F2: the senses transport, binding and recorders.
-    ("a senses document's pack texts not sent", "ve/document.py",
+    ("a senses document's pack texts not sent", "ve/document/lean.py",
      '            case["packs"] = texts',
      '            pass',
      f"{SENSES}::test_a_valid_senses_document_is_decided_by_lean[d_parenthetical_switch-modern]"),
-    ("a senses unit's meaning id bound to the document's environment", "ve/document.py",
+    ("a senses unit's meaning id bound to the document's environment", "ve/document/lean.py",
      "        formula_env = env if senses is None else senses.environment\n",
      "        formula_env = env\n",
      f"{SENSES}::test_a_senses_unit_s_meaning_id_is_bound_to_the_projected_environment"),
-    ("a fence's content optional outside a senses document", "ve/document.py",
+    ("a fence's content optional outside a senses document", "ve/document/lean.py",
      '    if "senses" in meta:\n        require(senses is not None)',
      '    if senses is not None:\n        require(senses is not None)',
      f"{SENSES}::test_a_fence_without_a_formula_may_have_no_content_but_others_must"),
     # Python, looprecheck1 F7: a senses fence's content bound to the reading Python holds, and the gate reads it so.
-    ("a fence the senses route read may drop its content", "ve/document.py",
+    ("a fence the senses route read may drop its content", "ve/document/lean.py",
      '        has_content = (authored.get("id") in formulas if authored.get("id") in read\n'
      '                       else authored.get("content") is not None)',
      '        has_content = authored.get("content") is not None and not (\n'
      '            authored.get("id") in read and "content" not in unit)',
      f"{SENSES}::test_a_fence_the_route_read_keeps_its_formula[1-frozen]"),
-    ("a fence's formula not compared with the senses route's reading", "ve/document.py",
+    ("a fence's formula not compared with the senses route's reading", "ve/document/lean.py",
      '            require("content" in unit and same(unit["content"], formulas[authored["id"]]))',
      '            require("content" in unit)',
      f"{SENSES}::test_a_fence_the_route_read_keeps_its_formula[0-modern]"),
-    ("a preamble line's content not refused", "ve/document.py",
+    ("a preamble line's content not refused", "ve/document/lean.py",
      '        has_content = (authored.get("id") in formulas if authored.get("id") in read\n'
      '                       else authored.get("content") is not None)\n'
      '        if has_content and authored.get("id") in read:',
