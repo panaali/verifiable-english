@@ -78,7 +78,8 @@ stubbed, so that the tests alone catch them. One per claimed behaviour:
   `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` (Units.lean unpinned),
   fixed in 98967efb.
 - After that run only fixtures were removed (`h7u-lt`, `h7u-eq` and `h7-dimof`, already covered by
-  `test_calc_dimensions.py`) and these docs changed: `tests/test_calc_units.py` reruns at 70 passed.
+  `test_calc_dimensions.py`), `docs/trust-baseline.json` was put back in main's order (same entries) and these
+  docs changed: `tests/test_calc_units.py` reruns at 70 passed; `trust_map.py --check` PASS.
 - `lake build`, `python3 lean/audit.py`, `regen_generated.py --check` (32 entries), `trust_map.py --check`: PASS.
 - `tools/gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
 - No test in `main-known-red.txt` is touched. The full gate is the chain's.
