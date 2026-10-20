@@ -1,0 +1,16 @@
+e473b2e664f62bfe12e4f8af50101e4281d90e98 ap-1b: REPORT and DELTA after the sync (base 2296317a9, selected tests)
+0e233f674e541f4b1a4fa2b9c84ca05cdd204c8c ap-1b: re-record the S3 comparison report for actions_version 32 (only the version changes); test_compose_dispatch keeps the legacy registry and names acts@0 as a later row
+b7125764f02b1c438c7c56b5004598bba9807bab ap-1b: re-record the ask fixtures for actions_version 32 (tools/ask_fixtures.py --write; only the version changes)
+451de702f0e6af2cddcf2a226c89869cad6697cd ap-1b: regenerate Lean inventories and pins after the merge of main (R12)
+40b3be8bb5a7be496a38995c2860a81f2d0263c7 ap-1b: REPORT (draft; selected tests after the sync)
+a3f4cf8f7ec69a3f0a6de7f76c36797349c9cb7a ap-1b: DELTA, the delta evidence (base against head on acts@0 inputs), fault-order guards (ap-1a review F2), A21 as a plain act, a fail-closed identity test
+5e7a3113179ada5a41d67bdca7d482425262d226 ap-1b: assurance pins re-reviewed for the five changed decoder files, ActsExamples classified; consolidation rows 5 and 8b re-measured; the seed script builds its pytest command with tools/nested_pytest
+d728ce3f8deef4719d39ef74b45f3080e97d3655 ap-1b: R16 trust allowance (untied V +67, K +0) and the seeded-bug results (31 of 31 killed)
+230dc7e7d08c6efc00566579c75937a819c317c0 ap-1b: pin the typing view's profiles and block; seeded-bug script: two-file mutants, results saved per mutant
+beba0fb09a986c91219cce1af936bc8835b1aafb ap-1b: fixtures for the norm-defaults route, the replay's base environment, the typing view and a bad block alone; the seeded-bug script; A31 evidence (330/330 identical)
+7555e065fae30d5062f4c7a54d286c63bda04764 ap-1b: trust classes as insertions in main's order
+9f5dbafe263a4a5fc62f03c4dac835438d08b705 ap-1b: the replay's base environment and Lean's plain route read acts@0; Python's tests of the relay
+ae9afc4c6eb1ffa7a4ac02e25c662e5b2c73f6c3 ap-1b: trust classes of the new declarations (fixtures T)
+930b628e625af2c5980ceb8b2c0e64010dd4e4d5 ap-1b: fixtures of acts@0 through the norms decoder, the environment mode, the family route and Lean's English
+1674edfd8dd8ffa9557c551dcfca630c58e8790c ap-1b: Lean's English selects Lexical.wording for a plain act; Python keeps the form and the acts block as data
+88d2ee14cd440893fda83eb487c040ab33a1e34d ap-1b: the acts@0 row of the profile table with gate_acts; the norms decoder reads acts@0 and its acts block
