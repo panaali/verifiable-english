@@ -144,6 +144,7 @@ module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.FourierMotzkin
 module VE.Calc.Identity
+module VE.Calc.IdentityExamples
 module VE.Calc.Inline
 module VE.Calc.Linear
 module VE.Calc.Poly
