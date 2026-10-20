@@ -72,7 +72,7 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
     | .ok ps => pure ps
     | .error _ => throw (VE.Compose.unsupported "profiles must be a sorted unique array")
   unless profiles.contains readingsProfile do throw "UnsupportedProfile: readings@1 is required"
-  match VE.Compose.dispatch profiles with
+  match VE.Compose.gateOf VE.Compose.profileTable profiles with
   | .ok .readings => pure ()
   | .ok _ => throw "UnsupportedProfile: readings@1 is not the head of this profile list"
   | .error e => throw e
