@@ -13915,6 +13915,66 @@
         "VE.Scope.position",
         "VE.Scope.unary"
       ]
+    },
+    "VE/Calc/Units.lean": {
+      "D[V]": [
+        "VE.Calc.Units.UnitDef",
+        "VE.Calc.Units.UnitEnv",
+        "VE.Calc.Units.decode",
+        "VE.Calc.Units.decodeFactor",
+        "VE.Calc.Units.decodeUnit",
+        "VE.Calc.Units.decodeV2"
+      ],
+      "D[R]": [
+        "VE.Calc.Units.affineNames",
+        "VE.Calc.Units.checkFields",
+        "VE.Calc.Units.decodeExponents",
+        "VE.Calc.Units.decodeLegacy",
+        "VE.Calc.Units.logarithmicNames"
+      ],
+      "D[I]": [
+        "VE.Calc.Units.UnitEnv.environmentId"
+      ],
+      "G[V]": [
+        "VE.Calc.Units.UnitEnv.unit?",
+        "VE.Calc.Units.UnitEnv.values"
+      ],
+      "G[R]": [
+        "VE.Calc.Units.UnitEnv.context",
+        "VE.Calc.Units.checkClaim",
+        "VE.Calc.Units.dimWords",
+        "VE.Calc.Units.invalid",
+        "VE.Calc.Units.mismatch",
+        "VE.Calc.Units.spoken",
+        "VE.Calc.Units.unitOf"
+      ],
+      "C": [
+        "VE.Calc.Units.dimE"
+      ]
+    },
+    "VE/Calc/UnitsExamples.lean": {
+      "T": [
+        "VE.Calc.UnitsExamples.check",
+        "VE.Calc.UnitsExamples.context!",
+        "VE.Calc.UnitsExamples.dOverLam",
+        "VE.Calc.UnitsExamples.decoded",
+        "VE.Calc.UnitsExamples.deep",
+        "VE.Calc.UnitsExamples.dims",
+        "VE.Calc.UnitsExamples.env!",
+        "VE.Calc.UnitsExamples.expect",
+        "VE.Calc.UnitsExamples.h7",
+        "VE.Calc.UnitsExamples.i2",
+        "VE.Calc.UnitsExamples.i2Reordered",
+        "VE.Calc.UnitsExamples.instDecidablePredPhysDimNormal",
+        "VE.Calc.UnitsExamples.legacyEnv",
+        "VE.Calc.UnitsExamples.miles",
+        "VE.Calc.UnitsExamples.newsEnv",
+        "VE.Calc.UnitsExamples.physics",
+        "VE.Calc.UnitsExamples.rescaled",
+        "VE.Calc.UnitsExamples.says",
+        "VE.Calc.UnitsExamples.sigma",
+        "VE.Calc.UnitsExamples.ρ"
+      ]
     }
   }
 }
