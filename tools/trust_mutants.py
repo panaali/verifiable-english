@@ -148,7 +148,6 @@ class Mutant:
     status: str = "NOT RUN"
     detail: str = ""
     edit: tuple[int, str] = (0, "")  # what `run` writes: text[start:edit[0]] -> edit[1] (`relined`)
-    shared: bool = False  # another command starts on the declaration's last line (hunt N10)
 
 
 def group(t: str, i: int, step: int = 1) -> int:
@@ -362,8 +361,8 @@ def classify(kind: str, span: str) -> str:
 #   targets of each constant it reaches). Since the tool cuts only a proof that fails (`run`), that is a proof the
 #   mutant broke: a `Decidable` instance or `@[csimp]` lemma resting on it computes through the mutated definition
 #   where the statement does not (hunt H4, N1, N2, P1-P9, Q1-Q3, Q5);
-# - `<k> hyps`: its goal has a hypothesis (a section `variable` included: hunt H1, N8);
-# - `<k> error`: Lean could not elaborate it here (no answer).
+# - `<k> hyps`: its goal has a hypothesis (a section `variable` included: hunt H1, N8).
+# A check Lean cannot elaborate in the probe has `sorryAx` in its term, so it says `sorry` (hunt Q12).
 # It is a module of its own (`install`), imported on the copy's first line, so the copy keeps the file's lines for
 # what a check reads of its source (hunt Q6).
 READS = """import Lean
@@ -405,7 +404,6 @@ def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
         if info.type.isAppOfArity ``Eq 3 then equations := equations.insert f (t :: (equations.getD f []))
   let io := [``unsafeBaseIO, ``unsafeEIO, ``unsafeIO, ``IO, ``EIO, ``BaseIO, ``IO.RealWorld]
   say s!"hash {roots.foldl (fun h e => mixHash h e.hash) 7}"
-  if roots.any (·.hasSorry) then say "error"
   let mut seen : NameSet := {}
   let mut todo : List Name := roots.foldl (fun a e => a ++ e.getUsedConstants.toList) []
   let mut found := false
@@ -487,7 +485,7 @@ def install(lake, lean: Path) -> bool:
 
 def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: bool = False
           ) -> dict[tuple[int, int], dict]:
-    """(first, last line) -> {"flags": what `READS` prints for the check (`hash <h>`, `sorry`, `io`, `hyps`, `error`),
+    """(first, last line) -> {"flags": what `READS` prints for the check (`hash <h>`, `sorry`, `axiom`, `io`, `hyps`),
     "consts": {constant: hash} of what it reads outside the mutated definition} for each check of `text` (a file of
     one build, its `roles`), elaborated as the build elaborates it: written (`named`, with `import TmTrustProbe` on
     its first import line, every line kept) to the module's own `path` in the scratch copy and restored afterwards,
@@ -574,8 +572,7 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
             first, edit = text.count("\n", 0, s) + 1, relined(text, s, e, new, hi)
             if lines & set(range(first, first + text.count("\n", s, e) + 1)):  # its lines run over the blanks it takes
                 found.append(Mutant("", c.module, first, d.name, op, s, e, (r.start[0], max(
-                    r.end[0], text.count("\n", 0, edit[0]))), text[s:e], new, edit=edit, shared=bool(
-                    code_only(text)[hi:text.find("\n", hi) % (len(text) + 1)].strip())))
+                    r.end[0], text.count("\n", 0, edit[0]))), text[s:e], new, edit=edit))
     seen: Counter = Counter()  # each tier in turn; in it, the k-th of every (definition, operator) first
     keys = []
     for i, m in enumerate(found):
@@ -874,7 +871,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                                              "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
                               beside(scratch.lean, f), outside_file is not None)
         entry, control = probed[f].get(span), hashes.get(key)
-        if entry is None or control is None or "error" in entry["flags"]:
+        if entry is None or control is None:
             return "Lean could not elaborate it in the probe"
         if "hyps" in entry["flags"]:
             return "its goal has a hypothesis"
@@ -964,10 +961,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 if not found[0][0]:
                     return "UNKNOWN", found[0][2]
                 roles = [(f, n, message, role(tree, f, n, m)) for f, n, message in found]
-                if (mutated := [x for x in roles if x[3] == "mutated"]) and m.shared:  # whose error: unknown
-                    return "UNKNOWN", (f"lean/{m.file}:{m.lines[1]}: {brief(mutated[0][2])} (another command shares "
-                                       "the mutated declaration's last line)")
-                if mutated:
+                if mutated := [x for x in roles if x[3] == "mutated"]:  # another command's on its last line too
+                    # (hunt N10): `invalid` reads only errors inside the mutant's own text as refusals
                     return invalid([(f, n, message, columns.get((f, n, message), 0)) for f, n, message, _ in
                                     mutated], read(m.file), m.lines, (m.start, m.start + len(m.after)))
                 if proofs := [x for x in roles if x[3] == "proof" and x[0] not in tests]:
@@ -1134,7 +1129,7 @@ def main(argv: list[str] | None = None) -> int:
             "base": git(root, "rev-parse", base).stdout.strip(), "head": git(root, "rev-parse", "HEAD").stdout.strip(),
             "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
             "counts": counts, "definitions": [f"lean/{f}: {d}" for f, d in definitions],
-            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit", "shared")}
+            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")}
                           for m in found]}))
     return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
 
