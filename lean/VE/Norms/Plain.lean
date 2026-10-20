@@ -25,8 +25,10 @@ namespace VE.Norms.Plain
 open Lean
 open VE.Bridge (fields strings)
 
-/-- Every `regulated` declaration, checked as the norms decoder checks it. -/
-def decodeRegulatedAll (predicates : List (String × Json)) : Except String (List Regulated) := do
+/-- Every `regulated` declaration, checked as the norms decoder checks it under the profiles `ps` and the fixed
+phrases `fx` (act-phrases 4.1). -/
+def decodeRegulatedAllIn (ps fx : List String) (predicates : List (String × Json)) :
+    Except String (List Regulated) := do
   let regs ← predicates.filterMapM fun (p, entry) => do
     match entry.getObjVal? "regulated" with
     | .error _ => pure none
@@ -36,10 +38,13 @@ def decodeRegulatedAll (predicates : List (String × Json)) : Except String (Lis
       if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
         throw s!"RegulatedFlag: {p}"
       let args ← strings (← entry.getObjVal? "arguments")
-      some <$> Wire.decodeRegulated p args raw
+      some <$> Wire.decodeRegulatedIn ps fx p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
   actChecks regs
   pure regs
+
+/-- Every `regulated` declaration without `acts@0`. -/
+def decodeRegulatedAll : List (String × Json) → Except String (List Regulated) := decodeRegulatedAllIn [] []
 
 /-- The environment without the `regulated` field of any predicate. -/
 def strip (environment : Json) (predicates : List (String × Json)) : Except String Json := do

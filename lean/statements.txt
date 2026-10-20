@@ -5249,6 +5249,15 @@ theorem VE.Compose.gateOf_iff
     VE.Compose.gateOf t ps = Except.ok r ↔ VE.Compose.TableAdmits t ps ∧ r = VE.Compose.routeOf t ps
   -- uses VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.TableAdmits@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch
   -- expr 1599089441
+theorem VE.Compose.gate_acts
+  ∀ (ps : List String),
+    "acts@0" ∈ ps →
+      ∀ (r : VE.Compose.Route),
+        VE.Compose.gateOf VE.Compose.profileTable ps = Except.ok r →
+          VE.Compose.gateOf VE.Compose.profileTable (ps.erase "acts@0") = Except.ok r ∧
+            (r = VE.Compose.Route.norms ∨ r = VE.Compose.Route.normDefaults ∨ r = VE.Compose.Route.readings)
+  -- uses VE.Compose.Route.normDefaults@VE.Compose.Dispatch VE.Compose.Route.norms@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3915517882
 theorem VE.Compose.gate_legacy
   ∀ (ps : List String),
     (∀ (p : String), p ∈ ps → p ∈ VE.Compose.legacyProfiles) →
@@ -16622,7 +16631,14 @@ theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
       ∀ (f : VE.Data.Background.Flag),
         f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 2046754165
+  -- expr 4195782294
+theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_in
+  ∀ (environment : Lean.Json) (acts : Bool) (ne : VE.Norms.Wire.NormsEnvironment),
+    VE.Norms.Wire.decodeNormsEnvironment environment Bool.true acts = Except.ok ne →
+      ∀ (f : VE.Data.Background.Flag),
+        f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
+  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
+  -- expr 1901990169
 theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_free
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
