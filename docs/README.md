@@ -4,6 +4,9 @@
 | --- | --- |
 | Project goals | [Vision](../VISION.md) |
 | Project status and priorities | [Roadmap](../ROADMAP.md) |
+| First-principles tutorial (September 2026 snapshot) | [Illustrated HTML tutorial](onboarding/ve-tutorial.html) |
+| Assisted authoring | [Sentence-by-sentence guide](assisted-formalisation.md) |
+| Full verification | [Gate guide](verification-gate.md) |
 | Research and implementation plans | [Plans index](plans/README.md) |
 | Architecture | [Architecture](ARCHITECTURE.md) |
 | Language specifications | [Specifications](spec/) |
