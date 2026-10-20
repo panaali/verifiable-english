@@ -1,0 +1,49 @@
+# main a34ea95ac + the scratch edit, tools/regen_generated.py of main: --check (VE_REGEN_NO_RUST=1), rc=1, 492 s, 982656 bytes, 6 tracebacks, 16 'unlisted build' lines. Excerpt: entry lines, CheckerUnavailable lines (cut to 300 characters), summary.
+== check gitattributes
+== check wire-contract
+/home/seyran/code/ve-eff-scratch-20261019/ve/wire_contract/examples/soft-norms@0/default-rule.json: WC10: example is not accepted: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc
+/home/seyran/code/ve-eff-scratch-20261019/ve/wire_contract/examples/soft-norms@0/empty.json: WC10: example is not accepted: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e1
+/home/seyran/code/ve-eff-scratch-20261019/ve/wire_contract/examples/norms@0/base.json: WC10: example is not accepted: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11, exp
+/home/seyran/code/ve-eff-scratch-20261019/ve/wire_contract/examples/norms@0/empty.json: WC10: example is not accepted: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11, ex
+/home/seyran/code/ve-eff-scratch-20261019/ve/wire_contract/examples/norm-defaults@0/base.json: WC10: example is not accepted: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118
+/home/seyran/code/ve-eff-scratch-20261019/ve/wire_contract/examples/norm-defaults@0/empty.json: WC10: example is not accepted: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a11
+== check english-grammar
+== check english-lexicon-fixtures
+    raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
+ve.errors.CheckerUnavailable: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11, expected 003263a44ac3dc5ed24e7476851fa59048eb9b3c222bed7df06d39928a83c93a, 00f91efe2db75ddd
+== check question-fixtures
+    raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
+ve.errors.CheckerUnavailable: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11, expected 003263a44ac3dc5ed24e7476851fa59048eb9b3c222bed7df06d39928a83c93a, 00f91efe2db75ddd
+== check english-run-copy
+== check route-cases
+    raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
+ve.errors.CheckerUnavailable: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11, expected 003263a44ac3dc5ed24e7476851fa59048eb9b3c222bed7df06d39928a83c93a, 00f91efe2db75ddd
+== check lean-roots
+== check lake-build
+== check numbers-phrases
+== check lean-mode-deps
+== check lean-statements
+== check lean-audit-manifests
+== check frozen-inventory
+== check trust-tables
+== check checker-pins
+== check response-schemas
+== check binding-census
+== check english-codes
+    raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
+ve.errors.CheckerUnavailable: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11, expected 003263a44ac3dc5ed24e7476851fa59048eb9b3c222bed7df06d39928a83c93a, 00f91efe2db75ddd
+== check question-codes
+    raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
+ve.errors.CheckerUnavailable: CheckerUnavailable: /home/seyran/code/ve-eff-scratch-20261019/lean/.lake/build/bin/ve_service has unlisted build 496a16a316057c743509b68a39f43ce02d9e2c4bb7536a2d3031a2cc0a118e11, expected 003263a44ac3dc5ed24e7476851fa59048eb9b3c222bed7df06d39928a83c93a, 00f91efe2db75ddd
+== check question-lock
+== check assurance-manifest
+== check assurance-doc
+== check layer-ledgers
+== check import-contract
+== check uv-lock
+== check heavy-tests
+== check platform-divergences
+== check platform-contract
+== check history-map
+== check history-tests
+regen_generated: failed: wire-contract, english-lexicon-fixtures, question-fixtures, route-cases, lean-mode-deps, lean-statements, lean-audit-manifests, trust-tables, checker-pins, english-codes, question-codes
