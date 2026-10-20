@@ -55,7 +55,7 @@ inside `EventsTyped` (adding `decide (D.year ≤ 9999)`) repairs all five statem
 
 `git diff --numstat e14d56df9`, without generated files: `Conservative.lean` +409 (restored), `Examples.lean`
 +38/−1, `lean/EVENTS.md` +23/−11, `tools/trust-classes.json` +16, the harness +52, and this report and DELTA.md
-(about 110). That makes about 650 hand-written lines, against the size rule's ~600. Generated files are left out:
+(+170). That makes about 720 hand-written lines, against the size rule's ~600; the code and fixtures alone are 447. Generated files are left out:
 `lean/{declarations,statements,axioms,predicates}.txt`, `lean/VE/Audit.lean` and `docs/trust-baseline.json` (written
 by `--allow`). The script outputs `evidence/statements.json` and `mutants.json` are also left out. The restored file
 is one unit, because T7 and the proof need all of it. So the cut is everything else: `eventsPremises_satisfiable` and
