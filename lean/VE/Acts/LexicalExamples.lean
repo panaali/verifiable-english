@@ -106,6 +106,11 @@ def a22 := "{0}" ++ String.join (List.replicate 131 " ab") ++ " a ab"
 
 -- A23: slots and arity (D-1)
 #guard errS (chk [] 1 "{0} meet {1}") == some "InvalidInput: invalid act phrase for p"
+-- each slot once, in order, none missing: as many slots as the arity is not enough
+#guard errS (chk [] 2 "{0} meet {0}") == some "InvalidInput: invalid act phrase for p"
+#guard errS (chk [] 2 "{0} meet {2}") == some "InvalidInput: invalid act phrase for p"
+#guard errS (chk [] 3 "{0} meet {2} {1}") == some "InvalidInput: invalid act phrase for p"
+#guard okS (chk [] 3 "{0} meet {1} {2}") == some "{0} meet {1} {2}"
 
 -- A24: today's check accepts "nor"; this one refuses it (the one exception of `check_extends`)
 def a24 := "{0} neither seek nor enjoy asylum"
@@ -157,6 +162,67 @@ def a33 := "{0} to security in the event of unemployment, sickness, disability, 
 #guard a33.utf8ByteSize == 152
 #guard errS (chk ["other lack of livelihood"] 1 a33) ==
   some "InvalidInput: act phrase for p has a comma outside a fixed phrase"
+
+/-! ### 3.2: the fields and the act check of each role, with and without `acts@0`
+
+Every role with each field it may and may not carry, decoded under fixed phrases `fx1`: A1's act is accepted only by
+`Lexical.check` with `fx1` (today's check refuses its length, and its `and` needs the fixed phrase), so a role whose
+act went to today's check, or to `check` without the document's phrases, would decode differently. The whole record
+is read: default, role, act and permission dual. -/
+
+def regIn (profiles : List String) (role : String) (fields : List (String × Lean.Json)) :
+    Except String VE.Norms.Regulated :=
+  decodeRegulatedIn profiles fx1 "p" ["person", "case"]
+    (.mkObj ([("role", .str role), ("default", .str (if role == "obligation" then "allow" else "deny"))] ++ fields))
+def reg (profiles : List String) (role : String) (fields : List (String × Lean.Json)) : Option VE.Norms.Regulated :=
+  (regIn profiles role fields).toOption
+def regErr (profiles : List String) (role : String) (fields : List (String × Lean.Json)) : Option String :=
+  errReg (regIn profiles role fields)
+/-- The record `reg` should give: `p` over a person and a case, an obligation allowed by default, the rest denied. -/
+def rec (role : VE.Norms.Role) (act dual : Option String) : Option VE.Norms.Regulated :=
+  some ⟨"p", ["person", "case"], role == .obligation, role, act, dual⟩
+def actsP := ["acts@0", "norms@0"]
+def fieldsE := "InvalidInput: invalid regulated fields for p"
+def actF : String × Lean.Json := ("act", .str a1)
+def formF : String × Lean.Json := ("form", .str "is entitled")
+def dualF : String × Lean.Json := ("permission", .str "q")
+#guard reg actsP "permission" [actF] == rec .permission (some a1) none
+#guard reg actsP "obligation" [actF] == rec .obligation (some a1) none
+#guard reg actsP "obligation" [actF, dualF] == rec .obligation (some a1) (some "q")
+#guard reg actsP "plain" [actF, formF] == rec .plain (some a1) none
+#guard reg actsP "plain" [] == rec .plain none none
+-- a form only on a plain declaration, a dual only on an obligation, an act required on the others
+#guard regErr actsP "permission" [actF, formF] == some fieldsE
+#guard regErr actsP "obligation" [actF, formF] == some fieldsE
+#guard regErr actsP "permission" [actF, dualF] == some fieldsE
+#guard regErr actsP "plain" [actF, formF, dualF] == some fieldsE
+#guard regErr actsP "permission" [] == some fieldsE && regErr actsP "obligation" [dualF] == some fieldsE
+#guard regErr actsP "permission" [formF] == some fieldsE
+-- a declaration is an object with a role and a default, each one of its words
+def needs := "InvalidInput: regulated declaration p needs role and default"
+def roleOrDefault := "InvalidInput: invalid regulated role or default for p"
+#guard errReg (decodeRegulatedIn actsP fx1 "p" ["person"] (.mkObj [("default", .str "deny")])) == some needs
+#guard errReg (decodeRegulatedIn actsP fx1 "p" ["person"] (.mkObj [("role", .str "plain")])) == some needs
+#guard errReg (decodeRegulatedIn actsP fx1 "p" ["person"] (.str "plain")) == some needs
+#guard errReg (decodeRegulatedIn actsP fx1 "p" ["person"] (.mkObj [("role", .str "duty"), ("default", .str "deny")])) ==
+  some roleOrDefault
+#guard errReg (decodeRegulatedIn actsP fx1 "p" ["person"] (.mkObj [("role", .str "plain"), ("default", .str "no")])) ==
+  some roleOrDefault
+-- the modal and plain acts are checked with the document's fixed phrases: without them A1 joins acts with `and`
+#guard errS (canonicalActIn actsP [] "p" 2 (.str a1)) ==
+  some "InvalidInput: act phrase for p joins acts with 'and' outside a fixed phrase"
+#guard errReg (decodeRegulatedIn actsP [] "p" ["person", "case"]
+    (.mkObj [("role", .str "obligation"), ("default", .str "allow"), actF])) ==
+  some "InvalidInput: act phrase for p joins acts with 'and' outside a fixed phrase"
+-- without `acts@0` the same declarations decode as today: A1 is over today's 80 characters, a form is refused
+def meet : String × Lean.Json := ("act", .str "{0} meet {1}")
+#guard regErr ["norms@0"] "permission" [actF] == some "InvalidInput: invalid act phrase for p"
+#guard regErr ["norms@0"] "obligation" [actF] == some "InvalidInput: invalid act phrase for p"
+#guard regErr ["norms@0"] "plain" [actF, formF] == some fieldsE
+#guard regErr ["norms@0"] "permission" [meet, formF] == some fieldsE
+#guard reg ["norms@0"] "permission" [meet] == rec .permission (some "{0} meet {1}") none
+#guard reg ["norms@0"] "obligation" [meet, dualF] == rec .obligation (some "{0} meet {1}") (some "q")
+#guard reg ["norms@0"] "plain" [] == rec .plain none none
 
 /-! ### Without `acts@0`: today's decoder, whatever the fixed phrases (`decodeRegulated_without_acts`) -/
 
