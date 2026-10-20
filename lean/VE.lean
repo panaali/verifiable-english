@@ -165,6 +165,8 @@ import VE.Norms.FamilySpec
 import VE.Acts.Syntax
 import VE.Acts.Read
 import VE.Acts.GrammarExamples
+import VE.Acts.Compat
+import VE.Acts.LexicalExamples
 import VE.Alternatives.FillExamples
 import VE.NormDefaults.Examples
 import VE.Core.Checks
