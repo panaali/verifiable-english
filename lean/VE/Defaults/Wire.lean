@@ -11,11 +11,9 @@ packs' premises `R` (2), distinct generated labels (6), generated premises withi
 * `defaults-coherence`: one optional certificate per colliding pair (diagnostic 5) and an optional collision; COHERENT,
   COLLISION or UNKNOWN, with each pair's status (`defaults_coherence_sound`), and with a collision the tuple and the
   deciders DE7 shows.
-* `defaults-certificate`: the question's premises state facts only (diagnostic 3); FOLLOWS needs a certificate bound
-  to `premisesX U (defaultX D X) Γ`, the gate's certificates and a checked model of `defaultX` and the premises
-  (`defaults_certificate_sound`); otherwise UNKNOWN with its reason, a checked collision first.
-* `defaults-model` (a countermodel of `defaultX` with the exceptions the text's own conditions force there) is
-  df-1ad's.
+* The question kinds, `defaults-certificate` (FOLLOWS needs a certificate bound to `premisesX U (defaultX D X) Γ`, the
+  gate's certificates and a checked model) and `defaults-model` (a countermodel of `defaultX` with the exceptions the
+  text's own conditions force there), are df-1ad's.
 
 Searching for certificates, models and collisions is not done here; every piece the request carries is checked. -/
 namespace VE.Defaults.Wire
@@ -136,11 +134,6 @@ def pieceWith {α : Type} (j : Json) (k : String) (f : Json → Except String α
   | none => pure none
   | some w => some <$> f w
 
-/-- A base situation (`situationX`) and its `filling` (`decodeFilling`). -/
-def filledOf (L : LayeredU) (w : Json) : Except String (VE.Readings.Wire.FilledModel L.U) := do
-  let S ← VE.NormDefaults.Wire.situationX L (← w.getObjVal? "model")
-  pure ⟨S.M, S.valid, ← VE.NormDefaults.Wire.decodeFilling L.U S.M (w.getObjValD "filling")⟩
-
 def collisionOf (L : LayeredU) (w : Json) : Except String (Collision L.U) := do
   let S ← VE.NormDefaults.Wire.situationX L (← w.getObjVal? "model")
   let F ← VE.NormDefaults.Wire.decodeFilling L.U S.M (w.getObjValD "filling")
@@ -176,131 +169,6 @@ def pairCertsOf (environment : Json) (v : DefaultsView) (j : Json) :
   (pairs.zip entries).mapM fun ((P, Q), e) => do
     unless (← VE.Bridge.strings (← e.getObjVal? "rules")) == [P.name, Q.name] do throw pairText
     pure ((VE.Readings.Wire.pieceOf e "certificate").bind fun c => (bindPair environment v P Q c).toOption)
-
-/-! ## `defaults-certificate` -/
-
-structure CertReplay where
-  v : DefaultsView
-  Γ : List VE.Formula
-  φ : VE.Formula
-  cert : Option VE.Tableau.Certificate
-  pairCerts : List (Option VE.Tableau.Certificate)
-  collision : Option (Collision v.L.U)
-  model : Option (VE.Readings.Wire.FilledModel v.L.U)
-  strictModel : Option (VE.Readings.Wire.FilledModel v.L.U)
-
-def CertReplay.certOk (x : CertReplay) : Bool :=
-  match x.cert with
-  | some c => certChecks x.v.L.U (premisesX x.v.L.U (defaultX x.v.L.D x.v.L.X) x.Γ) x.φ c
-  | none => false
-def CertReplay.coherent (x : CertReplay) : Bool := defaultCoherenceCheck x.v.L.U x.v.L.D x.v.R x.pairCerts
-def CertReplay.collides (x : CertReplay) : Bool :=
-  match x.collision with
-  | some w => collisionCheck x.v.L.U x.v.L.D x.v.R w.S.M w.F w.m w.n
-  | none => false
-def CertReplay.modelOk (x : CertReplay) : Bool :=
-  match x.model with
-  | some m => VE.Readings.Wire.xModelOk x.v.L.U (defaultX x.v.L.D x.v.L.X) [] x.Γ .bottom m false
-  | none => false
-def CertReplay.strictCounter (x : CertReplay) : Bool :=
-  match x.strictModel with
-  | some m => VE.Readings.Wire.xModelOk x.v.L.U x.v.L.X [] x.Γ x.φ m false
-  | none => false
-def CertReplay.assumptions (x : CertReplay) : List String :=
-  match x.cert with
-  | some c => assumptionsOf x.v.L.U x.v.L.D x.v.L.X x.Γ x.φ c
-  | none => []
-def CertReplay.basis (x : CertReplay) : Basis := basisOf x.assumptions x.strictCounter
-def CertReplay.form (x : CertReplay) : Form := followsForm x.v.L.D x.assumptions
-
-/-- FOLLOWS needs the certificate, the gate and the model. -/
-def CertReplay.verdict (x : CertReplay) : String :=
-  if x.certOk && x.coherent && x.modelOk then "FOLLOWS" else "UNKNOWN"
-
-/-- Plan 2.6's order: a checked collision first, whether or not a certificate was sent (it implies
-    `coherent = false`, so no verdict changes); then the gate, the model and the certificate. -/
-def CertReplay.reason (x : CertReplay) : String :=
-  match x.collision, x.collides with
-  | some w, true => s!"with no exception, rules {w.m} and {w.n} conflict"
-  | _, _ =>
-    if !x.coherent then "no-exception coherence not checked"
-    else if !x.modelOk then "no checked situation where the premises hold with no exception"
-    else "no certificate"
-
-/-- `replayCert` on a decoded view. -/
-def replayCertOn (v : DefaultsView) (j : Json) : Except String CertReplay := do
-  let environment ← j.getObjVal? "environment"
-  let E := envAt (fill v.L.U) (size (fill v.L.U))
-  let premisesJson ← j.getObjVal? "premises"
-  let Γ ← VE.Route.Wire.decodeFormulas E premisesJson
-  if let some e := questionDiag v.L.D Γ then throw e
-  let conclusionJson ← j.getObjVal? "conclusion"
-  let φ ← VE.Route.Wire.decodeClosed E conclusionJson
-  let pairCerts ← pairCertsOf environment v j
-  let own ← premisesJson.getArr?
-  let cert := (VE.Readings.Wire.pieceOf j "certificate").bind fun c =>
-    (VE.NormDefaults.Wire.bindCertX environment v.L.U (defaultX v.L.D v.L.X) [] own.toList conclusionJson c).toOption
-  let collision ← pieceWith j "collision" (collisionOf v.L)
-  let model ← pieceWith j "model" (filledOf v.L)
-  let strictModel ← pieceWith j "strict_model" (filledOf v.L)
-  pure ⟨v, Γ, φ, cert, pairCerts, collision, model, strictModel⟩
-
-/-- The view, the premises (diagnostic 3), the conclusion, the certificate bound by `bindCertX` to
-    `premisesX U (defaultX D X) Γ` (absent when it does not bind), the pair certificates (diagnostic 5), the
-    collision witness, the model and the strict model. -/
-def replayCert (j : Json) : Except String CertReplay := do replayCertOn (← viewOf j) j
-
-/-- FOLLOWS is given only with the certificate, the gate and the model. -/
-theorem defaults_follows_gated (x : CertReplay) (hv : x.verdict = "FOLLOWS") :
-    x.certOk = true ∧ x.coherent = true ∧ x.modelOk = true := by
-  unfold CertReplay.verdict at hv
-  split at hv
-  · rename_i h
-    simp only [Bool.and_eq_true] at h
-    exact ⟨h.1.1, h.1.2, h.2⟩
-  · exact absurd hv (by decide)
-
-theorem defaults_certificate_sound (x : CertReplay) (hv : x.verdict = "FOLLOWS") :
-    EntailsX.{u} x.v.L.U (x.v.L.X ++ VE.Readings.blank (dfltLabelled x.v.L.D) x.assumptions) x.Γ x.φ ∧
-    DefaultCoherent.{u} x.v.L.U x.v.L.D x.v.R ∧
-    VE.Readings.ConsistentX x.v.L.U (defaultX x.v.L.D x.v.L.X) x.Γ ∧
-    (x.basis = .strict → EntailsX.{u} x.v.L.U x.v.L.X x.Γ x.φ) ∧
-    (x.basis = .needs → VE.Readings.CounterX x.v.L.U x.v.L.X x.Γ x.φ) := by
-  obtain ⟨hc, hcoh, hm⟩ := defaults_follows_gated x hv
-  cases hcert : x.cert with
-  | none => simp [CertReplay.certOk, hcert] at hc
-  | some c =>
-    have hc' : certChecks x.v.L.U (premisesX x.v.L.U (defaultX x.v.L.D x.v.L.X) x.Γ) x.φ c = true := by
-      simpa [CertReplay.certOk, hcert] using hc
-    have has : x.assumptions = assumptionsOf x.v.L.U x.v.L.D x.v.L.X x.Γ x.φ c := by
-      simp [CertReplay.assumptions, hcert]
-    refine ⟨?_, defaultCoherenceCheck_sound _ _ _ _ hcoh, ?_, ?_, ?_⟩
-    · rw [has]
-      exact assumptions_sound _ x.v.L.wfU _ x.v.hU x.v.hD x.v.hl _ _ x.v.hXw _ c hc'
-    · cases hmod : x.model with
-      | none => simp [CertReplay.modelOk, hmod] at hm
-      | some m =>
-        have hm' : VE.Readings.Wire.xModelOk x.v.L.U (defaultX x.v.L.D x.v.L.X) [] x.Γ .bottom m false = true := by
-          simpa [CertReplay.modelOk, hmod] using hm
-        obtain ⟨⟨S, h1, h2, h3, _⟩, _⟩ := basis_needs_sound _ x.v.L.wfU _ _ _ m hm'
-        exact ⟨S, h1, h2, h3⟩
-    · intro hb
-      rw [CertReplay.basis, has] at hb
-      exact basis_strict_sound _ x.v.L.wfU _ x.v.hU x.v.hD x.v.hl _ _ x.v.hXw _ c hc' _ hb
-    · intro hb
-      have hs : x.strictCounter = true := by
-        unfold CertReplay.basis basisOf at hb
-        split at hb
-        · cases hb
-        · split at hb
-          · assumption
-          · cases hb
-      cases hsm : x.strictModel with
-      | none => simp [CertReplay.strictCounter, hsm] at hs
-      | some m =>
-        have hs' : VE.Readings.Wire.xModelOk x.v.L.U x.v.L.X [] x.Γ x.φ m false = true := by
-          simpa [CertReplay.strictCounter, hsm] using hs
-        exact (basis_needs_sound _ x.v.L.wfU _ _ _ m hs').1
 
 /-! ## `defaults-elaborate` and `defaults-coherence` -/
 
@@ -403,25 +271,12 @@ def coherenceFields (x : CoherenceReplay) : List (String × Json) :=
     | none => []
   | _, _ => []
 
-def basisLabel : Basis → String
-  | .strict => "strict" | .needs => "needs" | .unsettled => "unsettled"
-def formLabel : Form → String
-  | .short => "short" | .long => "long"
-
-def certFields (x : CertReplay) : List (String × Json) :=
-  [("verdict", .str x.verdict)] ++
-  if x.verdict == "FOLLOWS" then
-    [("basis", .str (basisLabel x.basis)), ("form", .str (formLabel x.form)), ("assumptions", toJson x.assumptions)]
-  else [("reason", .str x.reason)]
-
 /-- The `defaults-*` kinds; `none` for any other kind (one row of PK-1's layered kind table). -/
 def defaultsCase (v : DefaultsView) (id kind : String) (j : Json) : Except String (Option Json) :=
   if kind.startsWith "defaults-" then
     if kind == "defaults-elaborate" then pure (some (VE.Route.Wire.ok id (elaborateFields v)))
     else if kind == "defaults-coherence" then
       (fun x => some (VE.Route.Wire.ok id (coherenceFields x))) <$> replayCoherenceOn v j
-    else if kind == "defaults-certificate" then
-      (fun x => some (VE.Route.Wire.ok id (certFields x))) <$> replayCertOn v j
     else pure none
   else pure none
 

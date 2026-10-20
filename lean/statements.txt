@@ -7125,17 +7125,6 @@ theorem VE.Defaults.Wire.defaultsCase_other
     kind.startsWith "defaults-" = Bool.false → VE.Defaults.Wire.defaultsCase v id kind j = Except.ok Option.none
   -- uses VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.defaultsCase@VE.Defaults.Wire
   -- expr 3083408026
-theorem VE.Defaults.Wire.defaults_certificate_sound
-  ∀ (x : VE.Defaults.Wire.CertReplay),
-    x.verdict = "FOLLOWS" →
-      VE.NormDefaults.EntailsX x.v.L.U (x.v.L.X ++ VE.Readings.blank (VE.Defaults.dfltLabelled x.v.L.D) x.assumptions) x.Γ
-          x.φ ∧
-        VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R ∧
-          VE.Readings.ConsistentX x.v.L.U (VE.Defaults.defaultX x.v.L.D x.v.L.X) x.Γ ∧
-            (x.basis = VE.Defaults.Basis.strict → VE.NormDefaults.EntailsX x.v.L.U x.v.L.X x.Γ x.φ) ∧
-              (x.basis = VE.Defaults.Basis.needs → VE.Readings.CounterX x.v.L.U x.v.L.X x.Γ x.φ)
-  -- uses VE.Defaults.Basis.needs@VE.Defaults.Premises VE.Defaults.Basis.strict@VE.Defaults.Premises VE.Defaults.Basis@VE.Defaults.Premises VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.Wire.CertReplay.assumptions@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.basis@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.Γ@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.φ@VE.Defaults.Wire VE.Defaults.Wire.CertReplay@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.Readings.ConsistentX@VE.Readings.Verdicts VE.Readings.CounterX@VE.Readings.Verdicts VE.Readings.blank@VE.Readings.Verdicts
-  -- expr 2322879
 theorem VE.Defaults.Wire.defaults_coherence_sound
   ∀ (x : VE.Defaults.Wire.CoherenceReplay),
     (x.verdict = "COHERENT" → VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R) ∧
@@ -7148,11 +7137,6 @@ theorem VE.Defaults.Wire.defaults_coherence_sound
                 VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU x.v.L.U x.v.L.D P Q)
   -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.Wire.CoherenceReplay.pairs@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.PairStatus.resolved@VE.Defaults.Wire VE.Defaults.Wire.PairStatus@VE.Defaults.Wire VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3480681577
-theorem VE.Defaults.Wire.defaults_follows_gated
-  ∀ (x : VE.Defaults.Wire.CertReplay),
-    x.verdict = "FOLLOWS" → x.certOk = Bool.true ∧ x.coherent = Bool.true ∧ x.modelOk = Bool.true
-  -- uses VE.Defaults.Wire.CertReplay.certOk@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.coherent@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.modelOk@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CertReplay@VE.Defaults.Wire
-  -- expr 1274929945
 theorem VE.Defaults.Wire.elaborateRows_eq
   ∀ (v : VE.Defaults.Wire.DefaultsView),
     (VE.Defaults.Wire.elaborateRows v).fst = VE.Defaults.dfltLabelled v.L.D ∧

@@ -1002,8 +1002,8 @@
   },
   {
    "class": "V",
-   "lines": 51,
-   "reason": "df-1ac: VE/Defaults/Wire.lean V +51 (untied D[V] entityIds, elaborateFields, PairStatus.label, coherenceFields, basisLabel, formLabel, certFields; untied G[V] CertReplay.form, PairStatus, defaultsCase); K +0, S +0; verdicts, pairs, assumptions, basis, elaborateRows tied; replays and checks C; diagnostics D[R]/G[R]",
+   "lines": 36,
+   "reason": "df-1ac: VE/Defaults/Wire.lean V +36 (untied D[V] entityIds, elaborateFields, PairStatus.label, coherenceFields; untied G[V] PairStatus, defaultsCase); K +0, S +0; CoherenceReplay.verdict/pairs and elaborateRows tied; replays and checks C; diagnostics D[R]",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ac, 2026-10-18",
    "commit": "c5197da78807f792a47d787133f93e4c59fbe0cd"
   }

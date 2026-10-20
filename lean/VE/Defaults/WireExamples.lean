@@ -2,13 +2,12 @@ import VE.Defaults.Wire
 import VE.Defaults.Examples
 
 /-! The wire answers of DF-1a's fixtures (docs/spec/defeasible.md 8.1, 5): DF-θ, the view's diagnostics, and the
-`defaults-elaborate`, `defaults-coherence` and `defaults-certificate` answers of DF-α to DF-ω, each computed by
-`viewOf` and `defaultsCase` on a JSON request, with the documents of `Examples.lean`.
+`defaults-elaborate` and `defaults-coherence` answers of DF-γ, DF-γ′, DF-δ (DF-ω) and DF-α, each computed by `viewOf`
+and `defaultsCase` on a JSON request, with the documents of `Examples.lean`, and two more: DF-γb (DF-γ with r1
+guarded by `⊥`, so the pair is kept apart by its guard) and DF-γ2 (two pairs, a two-entity tuple).
 
-Certificates are written here and bound to their premise list as a producer binds them (`boundJ`): `cNeeds` proves
-`∀a. ¬excepted_r1(a)` from `Dflt_T`'s premise, `cStrict` proves `∀a. e → e`, and DF-γb's pair (DF-γ with r1 guarded
-by `⊥`) is kept apart by its guard. Certificates of `∀a. x_required(a)` and of DF-δ's coherence premise are found by
-the untrusted search (df-1b). -/
+DF-γb's pair certificate is written here and bound as a producer binds it (`boundJ`). DF-δ's pair certificate is
+found by the untrusted search (df-1b). -/
 namespace VE.Defaults.WireFixtures
 open Lean
 open VE.Defaults VE.Defaults.Fixtures VE.Defaults.Wire
@@ -147,72 +146,9 @@ def γ2Coll (L : VE.NormDefaults.Wire.LayeredU) (m n : String) : Json :=
   (γ2Coll L "r1" "r2").getObjValD "pairs" == st "collision" "unknown" &&
   (γ2Coll L "r1" "r2").getObjValD "collision" == coll "r2" ["assistant"]
 
-/-! ## `defaults-certificate` (DF-α, DF-α′, DF-ζ's basis, DF-γ, DF-η, DF-ι, DF-κ) -/
-
-/-- A `defaults-certificate` request on DF-α for `φ` with certificate trace `t` over `premisesX U (defaultX D X) []`. -/
-def αCase (φ : VE.Formula) (t : Option VE.Tableau.Trace) (more : List (String × Json)) : Json := match dα with
-  | .ok L => req αEnv αR "defaults-certificate" ([("premises", toJson ([] : List Json)), ("conclusion", fJ φ)] ++
-      (t.map fun t => [("certificate", boundJ αEnv (ps L []) φ t)]).getD [] ++ more)
-  | .error _ => .null
-def αModels (strict : List String) : List (String × Json) := match dα with
-  | .ok L => [("model", model (modelJ L [])), ("strict_model", model (modelJ L strict))]
-  | .error _ => []
-def follows (basis form : String) (as : List String) : Json :=
-  VE.Route.Wire.ok "c" [("verdict", .str "FOLLOWS"), ("basis", .str basis), ("form", .str form), ("assumptions", toJson as)]
-def unknownBecause (r : String) : Json := VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("reason", .str r)]
-
--- DF-α: FOLLOWS, needs (the strict countermodel {excepted r1} checks), short, the one exception kept
-#guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [excN "r1"]
--- DF-α′: the strict model {} does not check, or none is sent: unsettled, never needs
-#guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [excN "r1"]
-#guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled" "short" [excN "r1"]
--- basis strict: the certificate keeps no `Dflt_T` label
-#guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" []
--- DF-κ: no certificate, or one bound to the strict kind's premise list (one premise fewer): no certificate
-#guard answer (αCase notExc none (αModels [exc1])) == unknownBecause "no certificate"
-#guard match dα with
-  | .ok L => answer ((αCase notExc none (αModels [exc1])).setObjVal! "certificate"
-      (boundJ αEnv (VE.NormDefaults.Wire.premisesX L.U L.X []) notExc cNeeds.trace)) == unknownBecause "no certificate"
-  | .error _ => false
--- no model: UNKNOWN, never FOLLOWS on the certificate alone
-#guard answer (αCase notExc cNeeds.trace []) == unknownBecause "no checked situation where the premises hold with no exception"
--- DF-η: diagnostic 3
-#guard answer ((αCase notExc none []).setObjVal! "premises" (toJson [fJ (exAt exc1)])) ==
-  .str "InvalidInput: a question that assumes no exception may state facts only; it states whether rule r1's exception applies"
--- DF-ι: DF-β with premises no situation satisfies, the empty domain included: no checked model
-#guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson [fJ (exAt "urgent"),
-    fJ (.all "assistant" (.not (.unary "urgent" (.var 0))))]), ("conclusion", fJ xAll), ("model", model (emptyJ L))]) ==
-  unknownBecause "no checked situation where the premises hold with no exception"
-
-/-- DF-γ's gate regression: a bound certificate of `∀a. ¬excepted_r1(a)` (`Dflt_T`'s premise is index 2 of 7) and the
-    empty-domain model, an accepted consistency witness; only the gate keeps the answer from FOLLOWS. -/
-def γCase (collision : Bool) : Json := match dγ with
-  | .ok L => req αEnv γR "defaults-certificate" ([("premises", toJson ([] : List Json)), ("conclusion", fJ notExc),
-      ("certificate", boundJ αEnv (ps L []) notExc
-        (expand 7 none [expand 8 none [expand 2 (some "w:0") [expand 10 none [close, close]]]])),
-      ("coherence", toJson [pairJ "r1" "r2"]), ("model", model (emptyJ L))] ++
-      if collision then [("collision", collJ L "r1" "r2")] else [])
-  | .error _ => .null
-#guard [true, false].all fun c => match (do replayCertOn (← viewOf (γCase c)) (γCase c)) with
-  | .ok x => x.certOk && x.modelOk && !x.coherent
-  | .error _ => false
-#guard answer (γCase true) == unknownBecause "with no exception, rules r1 and r2 conflict"
-#guard answer (γCase false) == unknownBecause "no-exception coherence not checked"
--- the collision first, whether or not a certificate was sent
-#guard answer ((γCase true).setObjVal! "certificate" .null) == unknownBecause "with no exception, rules r1 and r2 conflict"
-
-/-- DF-β: `∀a. excepted_r1(a) → urgent(a)` uses `Dflt_T`'s premise with its stated condition (index 2 of 6). -/
-def excUrgent : VE.Formula := .all "assistant" (.implies (.unary exc1 (.var 0)) (.unary "urgent" (.var 0)))
--- form long: the kept assumption has a stated condition; basis needs (the strict countermodel {excepted r1} checks)
-#guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson ([] : List Json)),
-    ("conclusion", fJ excUrgent), ("certificate", boundJ βEnv (ps L []) excUrgent
-      (expand 6 none [expand 7 none [expand 2 (some "w:0") [expand 10 none [close, expand 11 none [close, close]]]]])),
-    ("model", model (modelJ L [])), ("strict_model", model (modelJ L [exc1]))]) ==
-  follows "needs" "long" [excN "r1"]
-
 /-! ## Other kinds -/
 
-#guard ["defaults-model", "defaults-other", "norm-defaults-elaborate"].all fun k =>
+#guard ["defaults-certificate", "defaults-model", "defaults-other", "norm-defaults-elaborate"].all fun k =>
   answer (req αEnv αR k) == .str "none"
 
 end VE.Defaults.WireFixtures
