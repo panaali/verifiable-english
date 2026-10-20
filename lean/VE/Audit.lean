@@ -319,6 +319,7 @@ import VE.Scales.Examples
 import VE.Scales.Intended
 import VE.Scales.Theorems
 import VE.Scope.Examples
+import VE.Scope.Theorems
 import VE.SearchBudget.Budget
 import VE.SearchBudget.Demand
 import VE.Semantics
@@ -5708,14 +5709,36 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.bold_labels
 #print axioms VE.Scope.Examples.box_anchors
 #print axioms VE.Scope.Examples.byte_tests
+#print axioms VE.Scope.Examples.depth_bound
+#print axioms VE.Scope.Examples.effects_six
 #print axioms VE.Scope.Examples.markers
+#print axioms VE.Scope.Examples.mergeParts_text
+#print axioms VE.Scope.Examples.narrowings
 #print axioms VE.Scope.Examples.of_source
+#print axioms VE.Scope.Examples.own_binder
 #print axioms VE.Scope.Examples.para_counts
 #print axioms VE.Scope.Examples.reaches_root
 #print axioms VE.Scope.Examples.short_items
 #print axioms VE.Scope.Examples.short_layout
 #print axioms VE.Scope.Examples.short_run
 #print axioms VE.Scope.Examples.span_tests
+#print axioms VE.Scope.Examples.unordered_join
+#print axioms VE.Scope.commutes_symm
+#print axioms VE.Scope.firstKeys_mem
+#print axioms VE.Scope.firstKeys_self
+#print axioms VE.Scope.hasOwn_mono
+#print axioms VE.Scope.impl_map_eq
+#print axioms VE.Scope.lookups_absent
+#print axioms VE.Scope.lookups_fields
+#print axioms VE.Scope.lookups_spec
+#print axioms VE.Scope.members_obj
+#print axioms VE.Scope.mergeParts_conflict
+#print axioms VE.Scope.mergeParts_keys
+#print axioms VE.Scope.mkObj_getObjVal
+#print axioms VE.Scope.substOwn_id
+#print axioms VE.Scope.substOwn_id_le
+#print axioms VE.Scope.substOwn_no_own
+#print axioms VE.Scope.substOwn_no_own_le
 #print axioms VE.SearchBudget.chain_denote
 #print axioms VE.SearchBudget.conjuncts_denote
 #print axioms VE.SearchBudget.demand_sound
