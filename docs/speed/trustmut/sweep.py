@@ -83,15 +83,38 @@ def compact(data: dict) -> str:
             f'{each(cut)}\n]}}}}\n')
 
 
-def report() -> int:
-    import test_trust_mutants as table
-    data = json.loads(EVIDENCE.read_text())
+SPACE = {"mutated": "Demo.M", "other": "Demo.O"}
+
+
+def load(text: str | None = None) -> dict:
+    """The saved sweep (or `text`, a copy git keeps), each mutant a dict (`KEYS`), the lines rows' targets tuples."""
+    data = json.loads(EVIDENCE.read_text() if text is None else text)
     data["mutants"] = [dict(zip(KEYS, m)) for m in data["mutants"]]
-    space = {"mutated": "Demo.M", "other": "Demo.O"}
+    data["lines"]["mutants"] = [dict(zip(KEYS, m)) for m in data["lines"]["mutants"]]
+    for row in data["lines"]["rows"]:
+        row["targets"] = [tuple(t) for t in row["targets"]]
+    return data
+
+
+def survivors_of(data: dict) -> tuple[dict[str, list[dict]], set[str], set[str], Counter]:
+    """The forms' mutants by definition; the definitions a row expecting KILLED reads, and those a row expecting
+    UNKNOWN reads; and their survivors, (operator, before, after) -> count (`report`, and `claims.py`'s counts)."""
     by_def: dict[str, list[dict]] = {}
     for m in data["mutants"]:
         by_def.setdefault(m["definition"], []).append(m)
-    unknown = {f"{space[row['setting']]}.{row['d']}" for row in data["rows"] if row["expected"] == "UNKNOWN"}
+    unknown = {f"{SPACE[row['setting']]}.{row['d']}" for row in data["rows"] if row["expected"] == "UNKNOWN"}
+    kills = {m["definition"] for row in data["rows"] if row["expected"] == "KILLED"
+             for m in by_def[f"{SPACE[row['setting']]}.{row['d']}"]}
+    survivors = Counter((m["operator"], m["before"], m["after"]) for m in data["mutants"]
+                        if m["definition"] in kills | unknown and m["status"] == "SURVIVOR")
+    return by_def, kills, unknown, survivors
+
+
+def report() -> int:
+    import test_trust_mutants as table
+    data = load()
+    space = SPACE
+    by_def, kills, unknown, survivors = survivors_of(data)
     bad = [m for m in data["mutants"] if m["status"] == "NOT RUN"
            or m["status"] == "UNKNOWN" and m["definition"] not in unknown]
     print(f"Forms: {len(data['mutants'])} mutants of {len(by_def)} definitions, {len(data['rows'])} rows, "
@@ -112,17 +135,10 @@ def report() -> int:
     for (form, cls, reads), counts in seen.items():
         print(f"| {form} | {cls} | {reads} | {rows[form, cls, reads]} | {counts['KILLED']} | {counts['SURVIVOR']} | "
               f"{counts['UNKNOWN']} | {counts['INVALID']} |")
-    kills = {m["definition"] for row in data["rows"] if row["expected"] == "KILLED"
-             for m in by_def[f"{space[row['setting']]}.{row['d']}"]}
-    survivors = Counter((m["operator"], m["before"], m["after"]) for m in data["mutants"]
-                        if m["definition"] in kills | unknown and m["status"] == "SURVIVOR")
     print("Survivors of the definitions a check or a definition reads (operator: before -> after, count):")
     for (op, before, after), n in sorted(survivors.items()):
         print(f"  {op}: {before} -> {after} ({n})")
     lines = data["lines"]
-    lines["mutants"] = [dict(zip(KEYS, m)) for m in lines["mutants"]]
-    for row in lines["rows"]:
-        row["targets"] = [tuple(t) for t in row["targets"]]
     print(f"Lines: {len(lines['mutants'])} mutants, {len(lines['rows'])} rows, {lines['seconds']} s: "
           f"{lines['counts']}")
     print("| Shape | Targets (operator: lines) | Setting | Check | KILLED | SURVIVOR | UNKNOWN | INVALID |")

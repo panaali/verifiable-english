@@ -5,7 +5,8 @@
 
 With --run, each HEAD is checked out in a detached worktree under /tmp, its lean/.lake is linked from this
 checkout's build (only read: nothing builds there; the tool builds in its own scratch copies), and the tool runs on
-every mutant (no --max-mutants cut), writing docs/speed/trustmut/evidence/<head>.json. Without --run, the table
+every mutant (no --max-mutants cut), writing docs/speed/trustmut/evidence/<head>.json with a profile (`profiled`:
+the 5-minute load, the time in the probe and in builds, the tool's commit). Without --run, the table
 is read from that saved evidence (D4). A finding counts as flagged when the tool lists a survivor on one of the
 lines the review names; the default --max-mutants 60 column says whether one of them is among the first 60.
 """
@@ -13,11 +14,14 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
 import sys
+import threading
 import time
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -52,13 +56,72 @@ def replay(head: str, base: str, jobs: int) -> None:
                            check=True)
         EVIDENCE.mkdir(exist_ok=True)
         started = time.monotonic()
-        done = subprocess.run([sys.executable, str(ROOT / "tools/trust_mutants.py"), "--root", str(tree), "--base",
+        done = subprocess.run([sys.executable, __file__, "--profiled", "--root", str(tree), "--base",
                                base, "--jobs", str(jobs), "--max-mutants", "100000",
                                "--json", str(EVIDENCE / f"{head[:8]}.json")], cwd=ROOT, text=True)
         print(f"{head[:8]}: exit {done.returncode} in {time.monotonic() - started:.0f} s", flush=True)
     finally:
         shutil.rmtree(tree / "lean/.lake", ignore_errors=True)
         subprocess.run(["git", "worktree", "remove", "--force", str(tree)], cwd=ROOT, check=False)
+
+
+def profiled(argv: list[str]) -> int:
+    """The tool's `main(argv)` in this process, unchanged, and its evidence JSON given a "profile": the 5-minute load
+    sampled every 15 s (`os.getloadavg`), the seconds spent in `probe` (section 1e's elaborations, the control pass
+    included) and in Lake's builds, each summed over the threads, and the commit and sha256 of the tool that ran.
+    Timing wraps the two functions only, so no verdict can change (the DRI's note 2026-10-20: which part of a replay
+    over the budget is the probe's)."""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import trust_mutants
+    spent, lock, loads, done = Counter(), threading.Lock(), [os.getloadavg()[1]], threading.Event()
+
+    def timed(name, f):
+        def wrapper(*a, **k):
+            started = time.monotonic()
+            try:
+                return f(*a, **k)
+            finally:
+                with lock:
+                    spent[name(a) if callable(name) else name] += time.monotonic() - started
+        return wrapper
+
+    def sample() -> None:
+        while not done.wait(15):
+            loads.append(os.getloadavg()[1])
+    trust_mutants.probe = timed("probe", trust_mutants.probe)
+    trust_mutants.Scratch.lake = timed(lambda a: f"lake {a[2]}", trust_mutants.Scratch.lake)
+    sampler = threading.Thread(target=sample, daemon=True)
+    sampler.start()
+    try:
+        code = trust_mutants.main(argv)
+    finally:
+        done.set()
+        sampler.join()
+    out = Path(argv[argv.index("--json") + 1])
+    data = json.loads(out.read_text())
+    data["profile"] = {
+        "tool": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip(),
+        "tool_sha256": hashlib.sha256((ROOT / "tools/trust_mutants.py").read_bytes()).hexdigest(),
+        "load5": {"min": min(loads), "max": max(loads), "mean": round(sum(loads) / len(loads), 1),
+                  "samples": len(loads)},
+        "thread_seconds": {k: round(v) for k, v in sorted(spent.items())}}
+    out.write_text(trust_mutants.evidence(data))
+    return code
+
+
+def profile() -> str:
+    """The saved profiles (`profiled`): each replay's load and the probe's share of the time its threads spent."""
+    said = []
+    for finding, head, _, _ in FINDINGS:
+        data = json.loads((EVIDENCE / f"{head[:8]}.json").read_text())
+        if p := data.get("profile"):
+            t, load = p["thread_seconds"], p["load5"]
+            busy = t.get("probe", 0) + t.get("lake build", 0)
+            said.append(f"{finding} {data['seconds']} s at {data['jobs']} jobs, tool {p['tool'][:9]}, 5-minute load "
+                        f"{load['min']:.0f}-{load['max']:.0f} (mean {load['mean']}); thread seconds: probe "
+                        f"{t.get('probe', 0)}, builds {t.get('lake build', 0)} (the probe "
+                        f"{100 * t.get('probe', 0) / max(busy, 1):.0f}% of the two)")
+    return "Profiled replays: " + ("; ".join(said) or "none") + "."
 
 
 def table() -> list[str]:
@@ -136,6 +199,8 @@ def budget() -> str:
 
 
 def main() -> int:
+    if sys.argv[1:2] == ["--profiled"]:  # `replay`'s run of the tool (the arguments are the tool's)
+        return profiled(sys.argv[2:])
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--jobs", type=int, default=8)
@@ -146,7 +211,7 @@ def main() -> int:
             if not args.only or head.startswith(args.only):
                 replay(head, base, args.jobs)
     if not args.only:
-        print("\n".join([*table(), "", budget(), f9(), f10(), f11()]))
+        print("\n".join([*table(), "", budget(), profile(), f9(), f10(), f11()]))
     return 0
 
 
