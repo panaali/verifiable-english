@@ -2863,6 +2863,11 @@ theorem VE.Calc.Expr.eval_iff
   ∀ (σ : VE.Calc.Values) (e : VE.Calc.Expr) (q : Rat), VE.Calc.Expr.eval σ e = Option.some q ↔ VE.Calc.Denotes σ e q
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
   -- expr 211348137
+theorem VE.Calc.Expr.eval_noDiv
+  ∀ (κ : String → Rat) (e : VE.Calc.Expr),
+    e.hasDiv = Bool.false → VE.Calc.Expr.eval (fun v => Option.some (κ v)) e ≠ Option.none
+  -- uses VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr.hasDiv@VE.Calc.Poly VE.Calc.Expr@VE.Calc.Syntax
+  -- expr 278587411
 theorem VE.Calc.Expr.eval_rescale
   ∀ (Γ : String → Option VE.Calc.PhysDim) (ρ : VE.Calc.Rescale) (σ : VE.Calc.Values) (e : VE.Calc.Expr)
     (d : VE.Calc.PhysDim),
@@ -2898,6 +2903,171 @@ theorem VE.Calc.Farkas.combination_eval
       (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) c.weights fs).sum
   -- uses VE.Calc.Farkas.combination@VE.Calc.Linear VE.Calc.Farkas.weights@VE.Calc.Linear VE.Calc.Farkas@VE.Calc.Linear VE.Calc.QFact.form@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear
   -- expr 919770268
+theorem VE.Calc.Frac.add?_sound
+  ∀ {κ : String → Rat} {f g h : VE.Calc.Frac} {x y : Rat},
+    VE.Calc.Frac.Means κ f x → VE.Calc.Frac.Means κ g y → f.add? g = Option.some h → VE.Calc.Frac.Means κ h (x + y)
+  -- uses VE.Calc.Frac.Means@VE.Calc.Poly VE.Calc.Frac.add?@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly
+  -- expr 3933972897
+theorem VE.Calc.Frac.div?_sound
+  ∀ {κ : String → Rat} {f g h : VE.Calc.Frac} {x y : Rat},
+    VE.Calc.Frac.Means κ f x →
+      VE.Calc.Frac.Means κ g y → y ≠ 0 → f.div? g = Option.some h → VE.Calc.Frac.Means κ h (x / y)
+  -- uses VE.Calc.Frac.Means@VE.Calc.Poly VE.Calc.Frac.div?@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly
+  -- expr 598272703
+theorem VE.Calc.Frac.go_sound
+  ∀ (κ : String → Rat) (e : VE.Calc.Expr) (x : Rat),
+    VE.Calc.Denotes (fun v => Option.some (κ v)) e x →
+      ∀ (f : VE.Calc.Frac), VE.Calc.Frac.go e = Option.some f → VE.Calc.Frac.Means κ f x
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.Means@VE.Calc.Poly VE.Calc.Frac.go@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly
+  -- expr 2257581851
+theorem VE.Calc.Frac.go_within
+  ∀ (e : VE.Calc.Expr) (f : VE.Calc.Frac), VE.Calc.Frac.go e = Option.some f → f.fst.Within ∧ f.snd.Within
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.go@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3063522590
+theorem VE.Calc.Frac.mul?_sound
+  ∀ {κ : String → Rat} {f g h : VE.Calc.Frac} {x y : Rat},
+    VE.Calc.Frac.Means κ f x → VE.Calc.Frac.Means κ g y → f.mul? g = Option.some h → VE.Calc.Frac.Means κ h (x * y)
+  -- uses VE.Calc.Frac.Means@VE.Calc.Poly VE.Calc.Frac.mul?@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly
+  -- expr 1415883309
+theorem VE.Calc.Frac.ofExpr_sound
+  ∀ (κ : String → Rat) (e : VE.Calc.Expr) (n d : VE.Calc.Poly) (x : Rat),
+    VE.Calc.Frac.ofExpr? e = Option.some (n, d) →
+      VE.Calc.Denotes (fun v => Option.some (κ v)) e x →
+        VE.Calc.Poly.eval κ d ≠ 0 ∧ x = VE.Calc.Poly.eval κ n / VE.Calc.Poly.eval κ d
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.ofExpr?@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 1470753657
+theorem VE.Calc.Frac.ofExpr_within
+  ∀ {e : VE.Calc.Expr} {f : VE.Calc.Frac},
+    VE.Calc.Frac.ofExpr? e = Option.some f →
+      (VE.Calc.Expr.nodesWithin VE.Calc.maxPolyTerms e).isSome = Bool.true ∧ f.fst.Within ∧ f.snd.Within
+  -- uses VE.Calc.Expr.nodesWithin@VE.Calc.Poly VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.ofExpr?@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.maxPolyTerms@VE.Calc.Poly
+  -- expr 1266335514
+theorem VE.Calc.Frac.pair_some
+  ∀ {o1 o2 : Option VE.Calc.Poly} {h : VE.Calc.Frac},
+    (o1.bind fun n => Option.map (fun x => (n, x)) o2) = Option.some h → o1 = Option.some h.fst ∧ o2 = Option.some h.snd
+  -- uses VE.Calc.Frac@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 1408571887
+theorem VE.Calc.Frac.pow?_sound
+  ∀ {κ : String → Rat} {f h : VE.Calc.Frac} {x : Rat} {k : Nat},
+    VE.Calc.Frac.Means κ f x → f.pow? k = Option.some h → VE.Calc.Frac.Means κ h (x ^ k)
+  -- uses VE.Calc.Frac.Means@VE.Calc.Poly VE.Calc.Frac.pow?@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly
+  -- expr 3272337982
+theorem VE.Calc.Identity.compare_within
+  ∀ {a b : VE.Calc.Expr} {r : Bool},
+    VE.Calc.Identity.compare a b = Option.some r →
+      ∃ fa fb l s,
+        VE.Calc.Frac.ofExpr? a = Option.some fa ∧
+          VE.Calc.Frac.ofExpr? b = Option.some fb ∧
+            fa.fst.mul? fb.snd = Option.some l ∧ fb.fst.mul? fa.snd = Option.some s ∧ l.Within ∧ s.Within ∧ r = (l == s)
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.ofExpr?@VE.Calc.Poly VE.Calc.Identity.compare@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.mul?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.instDecidableEqMono@VE.Calc.Poly
+  -- expr 51563669
+theorem VE.Calc.Poly.add?_sound
+  ∀ (κ : String → Rat) {p q r : VE.Calc.Poly},
+    p.add? q = Option.some r → VE.Calc.Poly.eval κ r = VE.Calc.Poly.eval κ p + VE.Calc.Poly.eval κ q
+  -- uses VE.Calc.Poly.add?@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 1813406242
+theorem VE.Calc.Poly.add?_within
+  ∀ {p q r : VE.Calc.Poly}, p.add? q = Option.some r → r.Within
+  -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.add?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3782390333
+theorem VE.Calc.Poly.eval_append
+  ∀ (κ : String → Rat) (p q : VE.Calc.Poly), VE.Calc.Poly.eval κ (p ++ q) = VE.Calc.Poly.eval κ p + VE.Calc.Poly.eval κ q
+  -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2179061850
+theorem VE.Calc.Poly.eval_combine
+  ∀ (κ : String → Rat) (acc p : VE.Calc.Poly),
+    VE.Calc.Poly.eval κ (acc.combine p) = VE.Calc.Poly.eval κ acc + VE.Calc.Poly.eval κ p
+  -- uses VE.Calc.Poly.combine@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2799579848
+theorem VE.Calc.Poly.eval_cons
+  ∀ (κ : String → Rat) (m : VE.Calc.Mono) (p : VE.Calc.Poly),
+    VE.Calc.Poly.eval κ (m :: p) = m.coeff * VE.Calc.vprod κ m.vars + VE.Calc.Poly.eval κ p
+  -- uses VE.Calc.Mono.coeff@VE.Calc.Poly VE.Calc.Mono.vars@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.vprod@VE.Calc.Poly
+  -- expr 2256334271
+theorem VE.Calc.Poly.eval_cons0
+  ∀ (κ : String → Rat) (m : VE.Calc.Mono) (p : VE.Calc.Poly),
+    VE.Calc.Poly.eval κ (VE.Calc.Poly.cons0 m p) = VE.Calc.Poly.eval κ (m :: p)
+  -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.cons0@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 967338586
+theorem VE.Calc.Poly.eval_mapMul
+  ∀ (κ : String → Rat) (m : VE.Calc.Mono) (q : VE.Calc.Poly),
+    VE.Calc.Poly.eval κ (List.map m.mul q) = m.coeff * VE.Calc.vprod κ m.vars * VE.Calc.Poly.eval κ q
+  -- uses VE.Calc.Mono.coeff@VE.Calc.Poly VE.Calc.Mono.mul@VE.Calc.Poly VE.Calc.Mono.vars@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.vprod@VE.Calc.Poly
+  -- expr 3583855203
+theorem VE.Calc.Poly.eval_mulRaw
+  ∀ (κ : String → Rat) (p q : VE.Calc.Poly),
+    VE.Calc.Poly.eval κ (List.flatMap (fun m => List.map m.mul q) p) = VE.Calc.Poly.eval κ p * VE.Calc.Poly.eval κ q
+  -- uses VE.Calc.Mono.mul@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 213918369
+theorem VE.Calc.Poly.eval_neg
+  ∀ (κ : String → Rat) (p : VE.Calc.Poly), VE.Calc.Poly.eval κ p.neg = -VE.Calc.Poly.eval κ p
+  -- uses VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.neg@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2557054770
+theorem VE.Calc.Poly.eval_nil
+  ∀ (κ : String → Rat), VE.Calc.Poly.eval κ [] = 0
+  -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly
+  -- expr 2060076821
+theorem VE.Calc.Poly.eval_norm
+  ∀ (κ : String → Rat) (p : VE.Calc.Poly), VE.Calc.Poly.eval κ p.norm = VE.Calc.Poly.eval κ p
+  -- uses VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.norm@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 534082348
+theorem VE.Calc.Poly.eval_one
+  ∀ (κ : String → Rat), VE.Calc.Poly.eval κ VE.Calc.Poly.one = 1
+  -- uses VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.one@VE.Calc.Poly
+  -- expr 3416949305
+theorem VE.Calc.Poly.eval_perm
+  ∀ (κ : String → Rat) {p q : VE.Calc.Poly}, List.Perm p q → VE.Calc.Poly.eval κ p = VE.Calc.Poly.eval κ q
+  -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 1197014221
+theorem VE.Calc.Poly.guard_fits
+  ∀ {p r : VE.Calc.Poly}, p.guard = Option.some r → r.fits = Bool.true
+  -- uses VE.Calc.Poly.fits@VE.Calc.Poly VE.Calc.Poly.guard@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3174255039
+theorem VE.Calc.Poly.guard_some
+  ∀ {p r : VE.Calc.Poly}, p.guard = Option.some r → r = p
+  -- uses VE.Calc.Poly.guard@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3948808954
+theorem VE.Calc.Poly.length_mulRaw
+  ∀ (p q : VE.Calc.Poly), (List.flatMap (fun m => List.map m.mul q) p).length = List.length p * List.length q
+  -- uses VE.Calc.Mono.mul@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2058937522
+theorem VE.Calc.Poly.length_norm
+  ∀ (p : VE.Calc.Poly), List.length p.norm ≤ List.length p
+  -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.norm@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2881690749
+theorem VE.Calc.Poly.mul?_sound
+  ∀ (κ : String → Rat) {p q r : VE.Calc.Poly},
+    p.mul? q = Option.some r → VE.Calc.Poly.eval κ r = VE.Calc.Poly.eval κ p * VE.Calc.Poly.eval κ q
+  -- uses VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.mul?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3095536943
+theorem VE.Calc.Poly.mul?_within
+  ∀ {p q r : VE.Calc.Poly}, p.mul? q = Option.some r → r.Within
+  -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.mul?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2265763123
+theorem VE.Calc.Poly.ofExpr_sound
+  ∀ (κ : String → Rat) (e : VE.Calc.Expr) (p : VE.Calc.Poly),
+    VE.Calc.Poly.ofExpr? e = Option.some p → VE.Calc.Denotes (fun n => Option.some (κ n)) e (VE.Calc.Poly.eval κ p)
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.ofExpr?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2768733591
+theorem VE.Calc.Poly.ofExpr_within
+  ∀ {e : VE.Calc.Expr} {p : VE.Calc.Poly},
+    VE.Calc.Poly.ofExpr? e = Option.some p →
+      (VE.Calc.Expr.nodesWithin VE.Calc.maxPolyTerms e).isSome = Bool.true ∧ p.Within
+  -- uses VE.Calc.Expr.nodesWithin@VE.Calc.Poly VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.ofExpr?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.maxPolyTerms@VE.Calc.Poly
+  -- expr 4459173
+theorem VE.Calc.Poly.one_within
+  VE.Calc.Poly.one.Within
+  -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.one@VE.Calc.Poly
+  -- expr 3980781710
+theorem VE.Calc.Poly.pow?_sound
+  ∀ (κ : String → Rat) {p r : VE.Calc.Poly} {k : Nat},
+    p.pow? k = Option.some r → VE.Calc.Poly.eval κ r = VE.Calc.Poly.eval κ p ^ k
+  -- uses VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.pow?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 1581600307
+theorem VE.Calc.Poly.pow?_within
+  ∀ {p r : VE.Calc.Poly} {k : Nat}, p.pow? k = Option.some r → r.Within
+  -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.pow?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3386352886
 theorem VE.Calc.QFact.negate_holds
   ∀ (κ : String → Rat) (f : VE.Calc.QFact), VE.Calc.QFact.Holds κ f.negate ↔ ¬VE.Calc.QFact.Holds κ f
   -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact.negate@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
@@ -3048,6 +3218,12 @@ theorem VE.Calc.denotes_rescale
       VE.Calc.Expr.dimOf Γ e = Option.some d → VE.Calc.Denotes σ e x → VE.Calc.Denotes (ρ.apply Γ σ) e (x * ρ.of d)
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim.Normal@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.apply@VE.Calc.Dimension VE.Calc.Rescale.of@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.Values@VE.Calc.Syntax
   -- expr 1234588885
+theorem VE.Calc.differsAt_sound
+  ∀ (a b : VE.Calc.Expr) (κ : List (String × Rat)),
+    VE.Calc.differsAt a b κ = Bool.true →
+      ∃ x y, VE.Calc.Denotes (fun n => List.lookup n κ) a x ∧ VE.Calc.Denotes (fun n => List.lookup n κ) b y ∧ x ≠ y
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.differsAt@VE.Calc.Poly
+  -- expr 3249091442
 theorem VE.Calc.findingKind_source_iff
   ∀ (software : Option String) (checks : List Bool),
     VE.Calc.findingKind software checks = VE.Calc.FindingKind.source ↔
@@ -3079,10 +3255,21 @@ theorem VE.Calc.fold_values_other
     ¬n ∈ List.map VE.Calc.Decl.name ds → List.foldl (fun τ d m => if m = d.name then d.valueUnder τ else τ m) σ ds n = σ n
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.valueUnder@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
   -- expr 2916287160
+theorem VE.Calc.foldl_mul_one
+  ∀ (l : List Rat) (a : Rat), List.foldl (fun x1 x2 => x1 * x2) a l = a * List.foldl (fun x1 x2 => x1 * x2) 1 l
+  -- uses
+  -- expr 2986583979
 theorem VE.Calc.foldl_mul_rat
   ∀ (a : Rat) (l : List Rat), List.foldl (fun x1 x2 => x1 * x2) a l = a * List.foldl (fun x1 x2 => x1 * x2) 1 l
   -- uses
   -- expr 1323853608
+theorem VE.Calc.identity_sound
+  ∀ (a b : VE.Calc.Expr),
+    VE.Calc.identityCheck a b = Bool.true →
+      ∀ (κ : String → Rat) (x y : Rat),
+        VE.Calc.Denotes (fun v => Option.some (κ v)) a x → VE.Calc.Denotes (fun v => Option.some (κ v)) b y → x = y
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.identityCheck@VE.Calc.Poly
+  -- expr 4146623102
 theorem VE.Calc.legacy_nominal
   ∀ (t t' : String), t ≠ t' → VE.Calc.legacyDim t ≠ VE.Calc.legacyDim t'
   -- uses VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.legacyDim@VE.Calc.Dimension
@@ -3099,6 +3286,14 @@ theorem VE.Calc.one_pow_nat
   ∀ (k : Nat), 1 ^ k = 1
   -- uses
   -- expr 2190264131
+theorem VE.Calc.rdiv_pow
+  ∀ (n d : Rat) (k : Nat), d ≠ 0 → (n / d) ^ k = n ^ k / d ^ k
+  -- uses
+  -- expr 1515785646
+theorem VE.Calc.rone_pow
+  ∀ (k : Nat), 1 ^ k = 1
+  -- uses
+  -- expr 2190264131
 theorem VE.Calc.rounds_invariant
   ∀ (Γ : String → Option VE.Calc.PhysDim) (ρ : VE.Calc.Rescale) (σ : VE.Calc.Values) (r : VE.Numbers.Rounding)
     (e : VE.Calc.Expr) (p : VE.Numbers.Printed),
@@ -3108,6 +3303,14 @@ theorem VE.Calc.rounds_invariant
           VE.Calc.Claim.Holds (ρ.apply Γ σ) (VE.Calc.Claim.rounds r e p))
   -- uses VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim.rounds@VE.Calc.Syntax VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim.Normal@VE.Calc.Dimension VE.Calc.PhysDim.one@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.apply@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Printed@VE.Numbers.Round VE.Numbers.Rounding@VE.Numbers.Round
   -- expr 2148205015
+theorem VE.Calc.rpow_mul
+  ∀ (a b : Rat) (k : Nat), (a * b) ^ k = a ^ k * b ^ k
+  -- uses
+  -- expr 3198866195
+theorem VE.Calc.rpow_ne
+  ∀ (a : Rat) (k : Nat), a ≠ 0 → a ^ k ≠ 0
+  -- uses
+  -- expr 1769103314
 theorem VE.Calc.rsum_append
   ∀ (l m : List Rat), (l ++ m).sum = l.sum + m.sum
   -- uses
@@ -3176,6 +3379,16 @@ theorem VE.Calc.values_stated
         d ∈ ds → ∀ (q : Rat), d.source = VE.Calc.Source.stated q → VE.Calc.values ds d.name = Option.some q
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Source.stated@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls
   -- expr 3273210734
+theorem VE.Calc.vprod_cons
+  ∀ (κ : String → Rat) (x : String) (i : Nat) (u : List (String × Nat)),
+    VE.Calc.vprod κ ((x, i) :: u) = κ x ^ i * VE.Calc.vprod κ u
+  -- uses VE.Calc.vprod@VE.Calc.Poly
+  -- expr 1530522795
+theorem VE.Calc.vprod_mulVars
+  ∀ (κ : String → Rat) (u v : List (String × Nat)),
+    VE.Calc.vprod κ (VE.Calc.mulVars u v) = VE.Calc.vprod κ u * VE.Calc.vprod κ v
+  -- uses VE.Calc.mulVars@VE.Calc.Poly VE.Calc.vprod@VE.Calc.Poly
+  -- expr 20734969
 theorem VE.Calc.weighted_nonneg
   ∀ (κ : String → Rat) (ws : List Rat) (fs : List VE.Calc.QFact),
     (∀ (w : Rat), w ∈ ws → 0 ≤ w) →
@@ -3413,6 +3626,16 @@ theorem VE.Cardinality.Examples.connective_cases
                             (VE.Cardinality.Examples.yes.implies VE.Cardinality.Examples.no)
   -- uses VE.Cardinality.CFormula.and@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.implies@VE.Cardinality.Syntax VE.Cardinality.CFormula.not@VE.Cardinality.Syntax VE.Cardinality.CFormula.or@VE.Cardinality.Syntax VE.Cardinality.Examples.no@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.yes@VE.Cardinality.Examples
   -- expr 3022675144
+theorem VE.Cardinality.Examples.count_lift
+  ∀ {M : VE.Order.FiniteModel Nat},
+    M.Valid VE.Cardinality.Examples.fomc.q.erase →
+      ∀ (c : VE.Cardinality.CountAtom),
+        c.sort ∈ VE.Cardinality.Examples.fomc.finite →
+          (VE.Cardinality.CFormula.holds (VE.Time.lift VE.Cardinality.Examples.fomc.q M.asStructure)
+              (VE.Cardinality.CFormula.count c) ↔
+            VE.Cardinality.Examples.holdsFin M (VE.Cardinality.CFormula.count c) = Bool.true)
+  -- uses VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CountAtom.sort@VE.Cardinality.Syntax VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Cardinality.Examples.holdsFin@VE.Cardinality.Examples VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Structure.Carrier@VE.Order.Semantics VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.lift@VE.Time.Semantics
+  -- expr 4070721944
 theorem VE.Cardinality.Examples.counts_two
   VE.Cardinality.Counts VE.Cardinality.Examples.two "user"
       [(1, VE.Cardinality.Body.any), (-1, VE.Cardinality.Examples.harm)] [2, 1] ∧
@@ -3507,6 +3730,38 @@ theorem VE.Cardinality.Examples.fa1_entails
   VE.Cardinality.CEntails VE.Cardinality.Examples.fomc VE.Cardinality.Examples.fa1 VE.Cardinality.Examples.fa1Conclusion
   -- uses VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.Examples.fa1@VE.Cardinality.Examples VE.Cardinality.Examples.fa1Conclusion@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples
   -- expr 1769235206
+theorem VE.Cardinality.Examples.fa1b_not_entails
+  ¬VE.Cardinality.CEntails VE.Cardinality.Examples.fomc VE.Cardinality.Examples.fa1.dropLast
+      VE.Cardinality.Examples.fa1Conclusion
+  -- uses VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.fa1@VE.Cardinality.Examples VE.Cardinality.Examples.fa1Conclusion@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples
+  -- expr 953407861
+theorem VE.Cardinality.Examples.fa2Model_valid
+  VE.Cardinality.Examples.fa2Model.Valid VE.Cardinality.Examples.fomc.q.erase
+  -- uses VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.Examples.fa2Model@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Time.QEnv.erase@VE.Time.Syntax
+  -- expr 3248441829
+theorem VE.Cardinality.Examples.fa2_agree
+  have T := VE.Time.lift VE.Cardinality.Examples.fomc.q VE.Cardinality.Examples.fa2Model.asStructure;
+  have b := VE.Cardinality.Body.atom VE.Cardinality.Examples.inc;
+  have w := fun f => VE.Order.Formula.denote T.lower [] f;
+  (w (VE.Time.atLeast VE.Cardinality.Examples.pm 3 b.toFormula) ∧
+      ¬w (VE.Time.atLeast VE.Cardinality.Examples.pm 4 b.toFormula)) ∧
+    (w (VE.Time.atMost VE.Cardinality.Examples.pm 3 b.toFormula) ∧
+        ¬w (VE.Time.atMost VE.Cardinality.Examples.pm 2 b.toFormula)) ∧
+      (w (VE.Time.exactly VE.Cardinality.Examples.pm 3 b.toFormula) ∧
+          ¬w (VE.Time.exactly VE.Cardinality.Examples.pm 2 b.toFormula)) ∧
+        w
+            (VE.Time.nOfM VE.Cardinality.Examples.pm 1 3 b.toFormula
+              (VE.Cardinality.Body.atom VE.Cardinality.Examples.stay).toFormula) ∧
+          ¬w
+              (VE.Time.nOfM VE.Cardinality.Examples.pm 0 3 b.toFormula
+                (VE.Cardinality.Body.atom VE.Cardinality.Examples.stay).toFormula)
+  -- uses VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.Examples.fa2Model@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Cardinality.Examples.inc@VE.Cardinality.Examples VE.Cardinality.Examples.pm@VE.Cardinality.Examples VE.Cardinality.Examples.stay@VE.Cardinality.Examples VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Formula@VE.Order.Syntax VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atLeast@VE.Time.Count VE.Time.atMost@VE.Time.Count VE.Time.exactly@VE.Time.Count VE.Time.lift@VE.Time.Semantics VE.Time.nOfM@VE.Time.Count
+  -- expr 1771152071
+theorem VE.Cardinality.Examples.fa4d_not_entails
+  ¬VE.Cardinality.CEntails VE.Cardinality.Examples.paper [VE.Cardinality.Examples.fa4c 500]
+      (VE.Cardinality.Examples.fa4dOther 500)
+  -- uses VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.fa4c@VE.Cardinality.Examples VE.Cardinality.Examples.fa4dOther@VE.Cardinality.Examples VE.Cardinality.Examples.paper@VE.Cardinality.Examples
+  -- expr 583829652
 theorem VE.Cardinality.Examples.fomc_wellFormed
   VE.Cardinality.Examples.fomc.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.fomc@VE.Cardinality.Examples
@@ -3633,6 +3888,14 @@ theorem VE.Cardinality.Examples.rel_cases_two
                   (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.eq 3)
   -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.Examples.everyone@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Rel.eq@VE.Cardinality.Syntax VE.Cardinality.Rel.le@VE.Cardinality.Syntax VE.Cardinality.Rel.lt@VE.Cardinality.Syntax
   -- expr 699934501
+theorem VE.Cardinality.Examples.rowsModel_valid
+  ∀ (E : VE.Cardinality.CEnv) (s : String) (rows : List (List String × Nat)),
+    (∀ (c : String), E.q.constants c = Option.none) →
+      (∀ (r : List String × Nat),
+          r ∈ rows → ∀ (p : String), p ∈ r.fst → E.q.predicates p = Option.some [VE.Time.QType.obj s]) →
+        (VE.Cardinality.Examples.rowsModel s rows).Valid E.q.erase
+  -- uses VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.Examples.rowsModel@VE.Cardinality.Examples VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QEnv.predicates@VE.Time.Syntax VE.Time.QType.obj@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
+  -- expr 1186878955
 theorem VE.Cardinality.Examples.share_two
   ∀ (c : VE.Cardinality.Cmp) (num den : Nat),
     VE.Cardinality.Proportion.holds VE.Cardinality.Examples.two
@@ -3692,6 +3955,15 @@ theorem VE.Cardinality.admitted_elab
         VE.Time.Admitted E.q Γ a → VE.Time.Admitted (E.elab fs) Γ a
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
   -- expr 2580797077
+theorem VE.Cardinality.atLeast_iff_le
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
+    VE.Cardinality.Admissible E T →
+      ∀ {s : String},
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body) (n : Nat),
+            VE.Order.Formula.denote T.lower [] (VE.Time.atLeast s n b.toFormula) ↔ n ≤ VE.Cardinality.regionSize T s b
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atLeast@VE.Time.Count
+  -- expr 1095021076
 theorem VE.Cardinality.atom_inRegion
   ∀ (g : String → Bool) (p : String) (ps : List String),
     p ∈ ps → VE.Cardinality.Body.inRegion ps (List.map g ps) (VE.Cardinality.Body.atom p) = g p
@@ -3740,6 +4012,62 @@ theorem VE.Cardinality.countAtom_holds_iff
             c.rel.holds (List.map (fun kb => kb.fst * ↑(VE.Cardinality.regionSize T c.sort kb.snd)) c.terms).sum c.bound)
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CountAtom.bound@VE.Cardinality.Syntax VE.Cardinality.CountAtom.holds@VE.Cardinality.Semantics VE.Cardinality.CountAtom.rel@VE.Cardinality.Syntax VE.Cardinality.CountAtom.sort@VE.Cardinality.Syntax VE.Cardinality.CountAtom.terms@VE.Cardinality.Syntax VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Rel.holds@VE.Cardinality.Semantics VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Time.TStructure@VE.Time.Semantics
   -- expr 462763406
+theorem VE.Cardinality.countFin_eq
+  ∀ {α : Type} [inst : DecidableEq α] {E : VE.Time.QEnv} {M : VE.Order.FiniteModel α},
+    M.Valid E.erase →
+      ∀ (s : String) (b : VE.Cardinality.Body),
+        VE.Cardinality.countFin M s b = VE.Cardinality.regionSize (VE.Time.lift E M.asStructure) s b
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.countFin@VE.Cardinality.Erase VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Structure.Carrier@VE.Order.Semantics VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.lift@VE.Time.Semantics
+  -- expr 3252519407
+theorem VE.Cardinality.count_atLeast_agree
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body),
+            VE.Cardinality.BodyTyped E s b →
+              ∀ (n : Nat),
+                VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.count (VE.Cardinality.atLeastAtom s b n)) ↔
+                  VE.Order.Formula.denote T.lower [] (VE.Time.atLeast s n b.toFormula)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.atLeastAtom@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atLeast@VE.Time.Count
+  -- expr 361682683
+theorem VE.Cardinality.count_atMost_agree
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body),
+            VE.Cardinality.BodyTyped E s b →
+              ∀ (n : Nat),
+                VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.count (VE.Cardinality.atMostAtom s b n)) ↔
+                  VE.Order.Formula.denote T.lower [] (VE.Time.atMost s n b.toFormula)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.atMostAtom@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atMost@VE.Time.Count
+  -- expr 1129333508
+theorem VE.Cardinality.count_exactly_agree
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body),
+            VE.Cardinality.BodyTyped E s b →
+              ∀ (n : Nat),
+                VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.count (VE.Cardinality.exactlyAtom s b n)) ↔
+                  VE.Order.Formula.denote T.lower [] (VE.Time.exactly s n b.toFormula)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.exactlyAtom@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.exactly@VE.Time.Count
+  -- expr 721653228
+theorem VE.Cardinality.count_nOfM_agree
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (sel prop : VE.Cardinality.Body),
+            VE.Cardinality.BodyTyped E s sel →
+              VE.Cardinality.BodyTyped E s prop →
+                ∀ (n m : Nat),
+                  VE.Cardinality.CFormula.holds T (VE.Cardinality.nOfMFormula s n m sel prop) ↔
+                    VE.Order.Formula.denote T.lower [] (VE.Time.nOfM s n m sel.toFormula prop.toFormula)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.nOfMFormula@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.nOfM@VE.Time.Count
+  -- expr 1226029124
 theorem VE.Cardinality.countedUniversals_spec
   ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula},
     (∀ (a : VE.Cardinality.CFormula), a ∈ fs → VE.Cardinality.Admitted E a) →
@@ -3857,10 +4185,21 @@ theorem VE.Cardinality.erasedProblem_admitted
                 VE.Time.Admitted (E.elab (c :: ps)) [] a
   -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
   -- expr 1243922253
+theorem VE.Cardinality.evalFin_iff
+  ∀ {α : Type} [inst : DecidableEq α] {E : VE.Time.QEnv} {M : VE.Order.FiniteModel α},
+    M.Valid E.erase →
+      ∀ (x : α) (b : VE.Cardinality.Body),
+        VE.Cardinality.Body.evalFin M x b = Bool.true ↔ VE.Cardinality.Body.holds (VE.Time.lift E M.asStructure) x b
+  -- uses VE.Cardinality.Body.evalFin@VE.Cardinality.Erase VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Structure.Carrier@VE.Order.Semantics VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.lift@VE.Time.Semantics
+  -- expr 1588562004
 theorem VE.Cardinality.exists_nodup_filter
   ∀ {α : Type u} (P : α → Prop) (xs : List α), ∃ ys, ys.Nodup ∧ ∀ (x : α), x ∈ ys ↔ x ∈ xs ∧ P x
   -- uses
   -- expr 3200230773
+theorem VE.Cardinality.firstUse_nodup
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] (xs : List β), (VE.Cardinality.firstUse xs).Nodup
+  -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions
+  -- expr 745461169
 theorem VE.Cardinality.get_of_data
   ∀ {s : String} {A rest : List Char} {c : Char},
     s.data = A ++ c :: rest → s.get { byteIdx := String.utf8ByteSize.go A } = c
@@ -3925,6 +4264,11 @@ theorem VE.Cardinality.length_filter_or
         (List.filter (fun x => p x || q x) xs).length = (List.filter p xs).length + (List.filter q xs).length
   -- uses
   -- expr 3377248532
+theorem VE.Cardinality.lower_unary
+  ∀ {α : Type u} (T : VE.Time.TStructure α) (p : String) (x : α),
+    T.lower.relation p [Sum.inl x] ↔ T.relation p [VE.Time.TValue.obj x]
+  -- uses VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Structure.relation@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure.relation@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.obj@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 1693971273
 theorem VE.Cardinality.mem_firstUse
   ∀ {β : Type} [inst : BEq β] [LawfulBEq β] {x : β} {xs : List β}, x ∈ VE.Cardinality.firstUse xs ↔ x ∈ xs
   -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions
@@ -4018,6 +4362,15 @@ theorem VE.Cardinality.ratio_cmp
                 (↑m * (↑a / ↑b * VE.Numbers.tenPow ↑k) = ↑c ↔ m * 10 ^ k * a = c * b)
   -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
   -- expr 3737261940
+theorem VE.Cardinality.refutesC_sound
+  ∀ {α : Type} [inst : DecidableEq α] (E : VE.Cardinality.CEnv),
+    E.WellFormed →
+      ∀ (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula) (M : VE.Order.FiniteModel α),
+        M.Valid E.q.erase →
+          (∀ (a : VE.Cardinality.CFormula), a ∈ ps → VE.Cardinality.Admitted E a) →
+            VE.Cardinality.Admitted E c → VE.Cardinality.refutesC E ps c M = Bool.true → ¬VE.Cardinality.CEntails E ps c
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.refutesC@VE.Cardinality.Erase VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Time.QEnv.erase@VE.Time.Syntax
+  -- expr 470898023
 theorem VE.Cardinality.regionBody_holds
   ∀ {α : Type u} (T : VE.Time.TStructure α) (x : α) (ps : List String) (r : VE.Cardinality.Region),
     List.length r = ps.length →
@@ -4172,6 +4525,11 @@ theorem VE.Cardinality.tdenote_withRegions
           VE.Time.QTerm.tdenote (VE.Cardinality.withRegions E fs T) ρ t = VE.Time.QTerm.tdenote T ρ t
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.HasType@VE.Time.Syntax VE.Time.QTerm.tdenote@VE.Time.Semantics VE.Time.QTerm@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
   -- expr 3341621720
+theorem VE.Cardinality.toFormula_denote
+  ∀ {α : Type u} (T : VE.Time.TStructure α) (x : α) (ρ : VE.Order.Valuation T.lower) (b : VE.Cardinality.Body),
+    VE.Order.Formula.denote T.lower (Sum.inl x :: ρ) b.toFormula ↔ VE.Cardinality.Body.holds T x b
+  -- uses VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Valuation@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2549640667
 theorem VE.Cardinality.universalsC_admitted
   ∀ {E : VE.Cardinality.CEnv} {f : VE.Cardinality.CFormula},
     VE.Cardinality.Admitted E f →
@@ -4191,6 +4549,16 @@ theorem VE.Cardinality.universalsOf_admitted
             ∃ a', x.snd.snd = VE.Time.QFormula.all x.fst a' ∧ VE.Cardinality.bodyOfQ? a' = Option.some x.snd.fst
   -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.bodyOfQ?@VE.Cardinality.Regions VE.Cardinality.universalsOf@VE.Cardinality.Regions VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.QFormula.all@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
   -- expr 2445087641
+theorem VE.Cardinality.withRegionsFinite_denote
+  ∀ {α : Type} [inst : DecidableEq α] {E : VE.Cardinality.CEnv} (fs : List VE.Cardinality.CFormula)
+    {M : VE.Order.FiniteModel α},
+    M.Valid E.q.erase →
+      ∀ (a : VE.Order.Formula),
+        VE.Order.Formula.WellFormed (E.elab fs).erase [] a →
+          (VE.Order.Formula.denote (VE.Cardinality.withRegions E fs (VE.Time.lift E.q M.asStructure)).lower [] a ↔
+            VE.Order.Formula.denote (VE.Cardinality.withRegionsFinite E fs M).asStructure [] a)
+  -- uses VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Cardinality.withRegionsFinite@VE.Cardinality.Erase VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Formula@VE.Order.Syntax VE.Order.SortName@VE.Order.Syntax VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.lift@VE.Time.Semantics
+  -- expr 2353500474
 theorem VE.Cardinality.withRegions_admissible
   ∀ {α : Type u} (E : VE.Cardinality.CEnv),
     E.WellFormed →
@@ -6746,6 +7114,60 @@ theorem VE.Defaults.basis_strict_sound
                           VE.NormDefaults.EntailsX U X Γ φ
   -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Basis.strict@VE.Defaults.Premises VE.Defaults.Basis@VE.Defaults.Premises VE.Defaults.assumptionsOf@VE.Defaults.Premises VE.Defaults.basisOf@VE.Defaults.Premises VE.Defaults.certChecks@VE.Defaults.Premises VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Tableau.Certificate@VE.Tableau
   -- expr 2695570811
+theorem VE.Defaults.cohPremiseU_selU
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (P Q : VE.SoftNorms.SoftNode),
+    VE.NormDefaults.Wire.cohPremiseU U D P Q =
+      VE.Norms.bindAll (VE.SoftNorms.actSorts D P) ((VE.Defaults.selU U D P).and (VE.Defaults.selU U D Q)).not
+  -- uses VE.Defaults.selU@VE.Defaults.Premises VE.Formula.and@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.actSorts@VE.SoftNorms.Tree
+  -- expr 461641082
+theorem VE.Defaults.cohU_rank_valid
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (M N : VE.SoftNorms.SoftNode),
+              (M, N) ∈ VE.SoftNorms.collidingPairs D →
+                VE.SoftNorms.Comparable D M N = Bool.true →
+                  ∀ (B : VE.Structure), VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU U D M N)
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 640802415
+theorem VE.Defaults.collisionTuple_some
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity)
+    (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String) (P Q : VE.SoftNorms.SoftNode),
+    List.find? (fun p => p.fst.name == m && p.snd.name == n) (VE.SoftNorms.collidingPairs D) = Option.some (P, Q) →
+      VE.Defaults.collisionCheck U D R M F m n = Bool.true → ∃ vs, VE.Defaults.collisionTuple U D M F P Q = Option.some vs
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.collisionCheck@VE.Defaults.Premises VE.Defaults.collisionTuple@VE.Defaults.Premises VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 3417061492
+theorem VE.Defaults.collision_sound
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String),
+            VE.Defaults.collisionCheck U D R M F m n = Bool.true → ¬VE.Defaults.DefaultCoherent U D R
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.collisionCheck@VE.Defaults.Premises VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 1143425634
+theorem VE.Defaults.collision_unranked
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+              M.Valid (VE.Norms.envAt U.D 0) →
+                ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String) (P Q : VE.SoftNorms.SoftNode),
+                  List.find? (fun p => p.fst.name == m && p.snd.name == n) (VE.SoftNorms.collidingPairs D) =
+                      Option.some (P, Q) →
+                    VE.Defaults.collisionCheck U D R M F m n = Bool.true → VE.SoftNorms.Comparable D P Q = Bool.false
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.collisionCheck@VE.Defaults.Premises VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 4208650158
+theorem VE.Defaults.defaultCoherenceCheck_sound
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula)
+    (certs : List (Option VE.Tableau.Certificate)),
+    VE.Defaults.defaultCoherenceCheck U D R certs = Bool.true → VE.Defaults.DefaultCoherent U D R
+  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.defaultCoherenceCheck@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Tableau.Certificate@VE.Tableau
+  -- expr 1184126990
 theorem VE.Defaults.dflt_wellFormed
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -6776,6 +7198,15 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
+theorem VE.Defaults.pairChecks_sound
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (P Q : VE.SoftNorms.SoftNode)
+    (c : Option VE.Tableau.Certificate),
+    VE.Defaults.pairChecks U D R P Q c = Bool.true →
+      ∀ (B : VE.Structure),
+        VE.NormDefaults.Wire.BaseAdmissibleX U (VE.SoftNorms.excPremises D ++ R ++ VE.Defaults.dfltPremises D) B →
+          VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU U D P Q)
+  -- uses VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Defaults.pairChecks@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
+  -- expr 2900267181
 theorem VE.Defaults.premisesX_split
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula),
     VE.NormDefaults.Wire.premisesX U (VE.Defaults.defaultX D X) Γ =
@@ -6783,6 +7214,15 @@ theorem VE.Defaults.premisesX_split
         (VE.NormDefaults.fillPremises U ++ VE.Norms.elaborate (VE.NormDefaults.fill U).T ++ Γ)
   -- uses VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.background@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 2043802097
+theorem VE.Defaults.questionDiag_none
+  ∀ (D : VE.SoftNorms.SoftDoc) (Γ : List VE.Formula),
+    VE.Defaults.questionDiag D Γ = Option.none →
+      ∀ (a : VE.Formula),
+        a ∈ Γ →
+          ∀ (p : String),
+            p ∈ VE.Norms.preds a → ¬p ∈ VE.SoftNorms.decisionNames D ∧ ¬p ∈ List.map (fun x => x.name) D.T.regulated
+  -- uses VE.Defaults.questionDiag@VE.Defaults.Premises VE.Formula@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
+  -- expr 605368999
 theorem VE.Defaults.strict_of_withoutDefaults
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula) (φ : VE.Formula),
     VE.NormDefaults.EntailsX U (VE.Defaults.withoutDefaults D X) Γ φ → VE.NormDefaults.EntailsX U X Γ φ
@@ -11118,6 +11558,14 @@ theorem VE.Events.completion_typed
     VE.TupleTyped M.asStructure ss xs → VE.TupleTyped (VE.Events.completion V M num) ss (List.map Sum.inl xs)
   -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2837478597
+theorem VE.Events.conventions_empty
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
+    (∀ (p : String),
+        p ∈ VE.Events.rolePreds V ++ List.map (fun x => x.predicate) V.links →
+          ∀ (v w : S.Carrier), ¬S.relation p [v, w]) →
+      VE.Norms.Sat S (VE.Events.conventionPremises V)
+  -- uses VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.rolePreds@VE.Events.Decl VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3765286622
 theorem VE.Events.conventions_exact
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true →
@@ -11128,6 +11576,17 @@ theorem VE.Events.conventions_exact
               VE.Events.up V.day ng a = Bool.true ∧ VE.Events.down V.day ng a = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.down@VE.Events.Completion VE.Events.rolePreds@VE.Events.Decl VE.Events.up@VE.Events.Completion VE.Formula@VE.Syntax
   -- expr 897408735
+theorem VE.Events.dateName_data
+  ∀ (D : VE.Time.Civil),
+    (VE.Events.dateName D).data =
+      "date__".data ++
+        ((VE.Time.pad 4 D.year).data ++ '_' :: ((VE.Time.pad 2 D.month).data ++ '_' :: (VE.Time.pad 2 D.day).data))
+  -- uses VE.Events.dateName@VE.Events.Decl VE.Time.Civil.day@VE.Time.Calendar VE.Time.Civil.month@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.pad@VE.Time.Calendar
+  -- expr 3166515157
+theorem VE.Events.dateName_inj
+  ∀ {D D' : VE.Time.Civil}, VE.Events.dateName D = VE.Events.dateName D' → D = D'
+  -- uses VE.Events.dateName@VE.Events.Decl VE.Time.Civil@VE.Time.Calendar
+  -- expr 4251266956
 theorem VE.Events.datesOrder_calendar
   ∀ (D D' : VE.Time.Civil), D.Proper → D'.Proper → (D.num < D'.num ↔ D.Before D')
   -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -11159,6 +11618,30 @@ theorem VE.Events.eventsPremises_wellFormed
       ∀ (p : VE.Formula), p ∈ VE.Events.eventsX V → VE.Formula.WellFormed (VE.Events.regenEnv E V) [] p
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
   -- expr 1761829896
+theorem VE.Events.events_conservative
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true →
+      ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+        (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Events.oldEnv E V) [] a) →
+          VE.Formula.WellFormed (VE.Events.oldEnv E V) [] φ →
+            ((∀ (S : VE.Structure),
+                S.Admissible (VE.Events.regenEnv E V) →
+                  VE.Norms.Sat S (VE.Events.eventsX V) → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ) ↔
+              ∀ (S : VE.Structure), S.Admissible (VE.Events.oldEnv E V) → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ)
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.oldEnv@VE.Events.Conservative VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4202943264
+theorem VE.Events.expansion_typed
+  ∀ {E : VE.Environment} {V : VE.Events.EventsEnv} {S : VE.Structure} (ss : List String) (xs : List S.Carrier),
+    ¬V.day ∈ ss → VE.TupleTyped S ss xs → VE.TupleTyped (VE.Events.expansion E V S) ss (List.map Sum.inl xs)
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.expansion@VE.Events.Conservative VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2716582330
+theorem VE.Events.guarded_empty
+  ∀ {S : VE.Structure} {p : String},
+    (∀ (v w : S.Carrier), ¬S.relation p [v, w]) →
+      ∀ (s s' : String) (body : VE.Formula) (ρ : List S.Carrier),
+        VE.Formula.denote S ρ (VE.Formula.all s (VE.Formula.all s' ((VE.Events.bin p 1 0).implies body)))
+  -- uses VE.Events.bin@VE.Events.Premises VE.Formula.all@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2080213390
 theorem VE.Events.hits_vacuous
   ∀ {day : String} {ng : List String} {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
     VE.Events.DayExtension day ng M S ι →
@@ -11194,6 +11677,14 @@ theorem VE.Events.oldTuple_map
   ∀ {α : Type} (xs : List α), VE.Events.oldTuple (List.map Sum.inl xs) = Option.some xs
   -- uses VE.Events.oldTuple@VE.Events.Completion
   -- expr 3940699995
+theorem VE.Events.pad_chars
+  ∀ (w n : Nat) (c : Char), c ∈ (VE.Time.pad w n).data → c ≠ '_' ∧ c ≠ '-'
+  -- uses VE.Time.pad@VE.Time.Calendar
+  -- expr 1341793061
+theorem VE.Events.pad_value
+  ∀ (w n : Nat), List.foldl (fun v c => 10 * v + (c.toNat - 48)) 0 (VE.Time.pad w n).data = n
+  -- uses VE.Time.pad@VE.Time.Calendar
+  -- expr 1295606217
 theorem VE.Events.regen_typed
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true → VE.Events.EventsTyped (VE.Events.regenEnv E V) V = Bool.true
@@ -11211,11 +11702,29 @@ theorem VE.Events.term_map
       ∀ (t : VE.Term) (ρ : List M.Carrier), VE.Term.denote S (List.map ι ρ) t = Option.map ι (VE.Term.denote M ρ t)
   -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax
   -- expr 1627714130
+theorem VE.Events.tupleTyped_relation
+  ∀ (S : VE.Structure) (r : String → List S.Carrier → Prop) (ss : List String) (xs : List S.Carrier),
+    VE.TupleTyped S ss xs →
+      VE.TupleTyped { Carrier := S.Carrier, domain := S.domain, constant := S.constant, relation := r } ss xs
+  -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 3453759998
 theorem VE.Events.unorderedSame_of_order
   ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
     VE.Norms.Sat S (VE.Events.orderPremises V) → VE.Formula.denote S [] (VE.Events.unorderedSameF V)
   -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.orderPremises@VE.Events.Premises VE.Events.unorderedSameF@VE.Events.Premises VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 998155647
+theorem VE.Events.wf_transfer
+  ∀ (E' : VE.Environment) (S T : VE.Structure) (ι : S.Carrier → T.Carrier),
+    (∀ (x y : S.Carrier), ι x = ι y → x = y) →
+      (∀ (s : String), s ∈ E'.sorts → ∀ (y : T.Carrier), T.domain s y ↔ ∃ x, ι x = y ∧ S.domain s x) →
+        (∀ (c s : String), E'.constants c = Option.some s → T.constant c = Option.map ι (S.constant c)) →
+          (∀ (p : String) (ss : List String),
+              E'.predicates p = Option.some ss →
+                ∀ (xs : List S.Carrier), T.relation p (List.map ι xs) ↔ S.relation p xs) →
+            ∀ (a : VE.Formula) (Γ : List String) (ρ : List S.Carrier),
+              VE.Formula.WellFormed E' Γ a → (VE.Formula.denote T (List.map ι ρ) a ↔ VE.Formula.denote S ρ a)
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 676985057
 theorem VE.Grammar.BOk.addAll
   ∀ {X : Type} {cap n : Nat} {Pold Pnew : Nat → X → Prop} {e : VE.Grammar.Bucket X} {cands : List (Nat × X)},
     VE.Grammar.BOk cap n Pold e →
@@ -42183,6 +42692,17 @@ theorem VE.SoftNorms.coh_rank_valid_unconditional
             ∀ (B : VE.Structure), VE.Formula.denote B [] (VE.SoftNorms.cohPremise D M N)
   -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.cohPremise@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3277975311
+theorem VE.SoftNorms.coh_rank_valid_with
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ (M N : VE.SoftNorms.SoftNode),
+        (M, N) ∈ VE.SoftNorms.collidingPairs D →
+          VE.SoftNorms.Comparable D M N = Bool.true →
+            ∀ (tbl : VE.Norms.Table) (T : VE.Norms.Tree) (f : Nat) (B : VE.Structure) (ρ : VE.Valuation B),
+              ¬(VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D M))) ∧
+                  VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D N))))
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.selects@VE.Norms.Elaborate VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3686215825
 theorem VE.SoftNorms.coherent_expands
   ∀ (D : VE.SoftNorms.SoftDoc),
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -42978,38 +43498,41 @@ theorem VE.SoftNorms.rank_resolves
   -- uses VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.fuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 3057383660
 theorem VE.SoftNorms.raw_dom_congr
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B} {eff eff' : VE.SoftNorms.SoftNode → Prop}
-    (N : VE.SoftNorms.SoftNode),
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B}
+    {eff eff' : VE.SoftNorms.SoftNode → Prop} (N : VE.SoftNorms.SoftNode),
     (∀ (M : VE.SoftNorms.SoftNode), M ∈ D.T.nodes → VE.SoftNorms.higher D M N = Bool.true → (eff M ↔ eff' M)) →
-      (VE.SoftNorms.RawDom✝ D B ρ eff N ↔ VE.SoftNorms.RawDom✝¹ D B ρ eff' N)
-  -- uses VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 2516299366
+      (VE.SoftNorms.RawDom✝ D tbl B ρ eff N ↔ VE.SoftNorms.RawDom✝¹ D tbl B ρ eff' N)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1089708032
 theorem VE.SoftNorms.raw_dom_denote
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (eff : VE.SoftNorms.SoftNode → VE.Formula)
-    (effP : VE.SoftNorms.SoftNode → Prop),
-    (∀ (M : VE.SoftNorms.SoftNode), VE.Formula.denote B ρ (VE.SoftNorms.circ D (eff M)) ↔ effP M) →
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (B : VE.Structure) (ρ : VE.Valuation B)
+    (eff : VE.SoftNorms.SoftNode → VE.Formula) (effP : VE.SoftNorms.SoftNode → Prop),
+    (∀ (M : VE.SoftNorms.SoftNode), VE.Formula.denote B ρ (VE.Norms.substWith tbl (eff M)) ↔ effP M) →
       ∀ (N : VE.SoftNorms.SoftNode),
-        VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.domWith D eff N)) ↔ VE.SoftNorms.RawDom✝ D B ρ effP N
-  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.domWith@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 2304691316
+        VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.SoftNorms.domWith D eff N)) ↔
+          VE.SoftNorms.RawDom✝ D tbl B ρ effP N
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Table@VE.Norms.Subst VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.domWith@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3178227856
 theorem VE.SoftNorms.raw_eff_denote
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (g : Nat) (N : VE.SoftNorms.SoftNode),
-    VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.effF D g N)) ↔ VE.SoftNorms.RawEff✝ D B ρ g N
-  -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.effF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 4093653495
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (B : VE.Structure) (ρ : VE.Valuation B) (g : Nat)
+    (N : VE.SoftNorms.SoftNode),
+    VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.SoftNorms.effF D g N)) ↔ VE.SoftNorms.RawEff✝ D tbl B ρ g N
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.effF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1261033548
 theorem VE.SoftNorms.raw_eff_stable
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B},
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B},
     VE.SoftNorms.RanksValid D.soft →
       ∀ (k : Nat) (N : VE.SoftNorms.SoftNode),
         N ∈ D.T.nodes →
           VE.SoftNorms.rankHeight D N < k →
             ∀ (a b : Nat),
               VE.SoftNorms.rankHeight D N < a →
-                VE.SoftNorms.rankHeight D N < b → (VE.SoftNorms.RawEff✝ D B ρ a N ↔ VE.SoftNorms.RawEff✝¹ D B ρ b N)
-  -- uses VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.rankHeight@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 963928495
+                VE.SoftNorms.rankHeight D N < b →
+                  (VE.SoftNorms.RawEff✝ D tbl B ρ a N ↔ VE.SoftNorms.RawEff✝¹ D tbl B ρ b N)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.rankHeight@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1989229332
 theorem VE.SoftNorms.raw_resolve_higher
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B},
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B},
     VE.SoftNorms.SoftValid D →
       ∀ {H L : VE.SoftNorms.SoftNode},
         H ∈ D.T.nodes →
@@ -43018,17 +43541,18 @@ theorem VE.SoftNorms.raw_resolve_higher
               L.mode = VE.SoftNorms.Mode.default →
                 VE.SoftNorms.Incompatible D H L = Bool.true →
                   VE.SoftNorms.higher D H L = Bool.true →
-                    ¬(VE.SoftNorms.RawEff✝ D B ρ (VE.SoftNorms.rankFuel D) H ∧
-                        VE.SoftNorms.RawEff✝¹ D B ρ (VE.SoftNorms.rankFuel D) L)
-  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 1765519959
+                    ¬(VE.SoftNorms.RawEff✝ D tbl B ρ (VE.SoftNorms.rankFuel D) H ∧
+                        VE.SoftNorms.RawEff✝¹ D tbl B ρ (VE.SoftNorms.rankFuel D) L)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2810499721
 theorem VE.SoftNorms.raw_selects_eff
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (N : VE.SoftNorms.SoftNode),
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (T : VE.Norms.Tree) (f : Nat) (B : VE.Structure)
+    (ρ : VE.Valuation B) (N : VE.SoftNorms.SoftNode),
     N.mode = VE.SoftNorms.Mode.default →
-      VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.selects' D N)) →
-        VE.SoftNorms.RawEff✝ D B ρ (VE.SoftNorms.rankFuel D) N
-  -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 1554942895
+      VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D N))) →
+        VE.SoftNorms.RawEff✝ D tbl B ρ (VE.SoftNorms.rankFuel D) N
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.selects@VE.Norms.Elaborate VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1842208047
 theorem VE.SoftNorms.reg_of_node
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.SoftValid D →
