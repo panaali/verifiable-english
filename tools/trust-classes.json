@@ -13831,7 +13831,10 @@
       "P": [
         "VE.Events.expDays",
         "VE.Events.firstDay",
-        "VE.Events.expansion"
+        "VE.Events.expansion",
+        "VE.Events.dayNames",
+        "VE.Events.firstName",
+        "VE.Events.datesSituation"
       ]
     },
     "VE/Service/Registry.lean": {
