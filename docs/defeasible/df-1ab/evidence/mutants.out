@@ -1,0 +1,48 @@
+control: 0 failures
+D1 VE.Defaults.pairChecks: FAILS 2 guards
+    #guard holds dγ fun L => (collidingPairs L.D).map (fun (P, Q) => (P.name, Q.name)) == [("r
+    #guard holds dδ fun L => (collidingPairs L.D).length == 1 && !defaultCoherenceCheck L.U L.
+D2 VE.Defaults.defaultCoherenceCheck: FAILS 2 guards
+    #guard holds dγ fun L => (collidingPairs L.D).map (fun (P, Q) => (P.name, Q.name)) == [("r
+    #guard holds dδ fun L => (collidingPairs L.D).length == 1 && !defaultCoherenceCheck L.U L.
+D3 VE.Defaults.collisionCheck: FAILS 1 guards
+    #guard holds dδ fun L => (collidingPairs L.D).length == 1 && !defaultCoherenceCheck L.U L.
+D4 VE.Defaults.DefaultCoherent: FAILS 3 guards
+    THEOREM defaultCoherenceCheck_sound
+    THEOREM defaultCoherenceCheck_sound
+    THEOREM collision_sound
+D5 VE.Defaults.collisionCheck: FAILS 2 guards
+    #guard holds dγ fun L => (collidingPairs L.D).map (fun (P, Q) => (P.name, Q.name)) == [("r
+    #guard holds dγ' fun L => match pairOf L with
+D6 VE.Defaults.decisionFree: FAILS 3 guards
+    #guard holds dα fun L => questionDiag L.D [exAt exc1] == diag3 "whether rule r1's exceptio
+    #guard holds dε fun L => questionDiag L.D [exAt "soft__off__r1__user"] == diag3 "whether u
+    #guard holds dδ fun L => questionDiag L.D [exAt outw] ==
+D7 VE.Defaults.whatOf: FAILS 1 guards
+    #guard holds dα fun L => questionDiag L.D [exAt exc1] == diag3 "whether rule r1's exceptio
+D8 VE.Defaults.whatOf: FAILS 2 guards
+    #guard holds dα fun L => questionDiag L.D [exAt exc1] == diag3 "whether rule r1's exceptio
+    #guard holds dβ fun L => questionDiag L.D [exAt "urgent"] == none && decisionFree L.D (exA
+D9 VE.Defaults.questionDiag: FAILS 1 guards
+    #guard holds dβ fun L => questionDiag L.D [exAt "urgent"] == none && decisionFree L.D (exA
+D10 VE.Defaults.limitDiag: FAILS 1 guards
+    #guard holds dβ fun L => limitDiag (deepen L.D) == some "ResourceLimit: generated default 
+D11 VE.Defaults.selU: FAILS 2 guards
+    #guard holds dγ fun L => match pairOf L with
+    #guard [dδ, dδs].all fun d => holds d fun L => match pairOf L with
+D12 VE.Defaults.collisionTuple: FAILS 2 guards
+    #guard holds dγ fun L => match pairOf L with
+    #guard [dδ, dδs].all fun d => holds d fun L => match pairOf L with
+D13 VE.Defaults.decidersOf: FAILS 1 guards
+    #guard holds dδo fun L => decidersOf L.D == ["assistant", "operator"]
+D14 VE.Defaults.decidersOf: FAILS 3 guards
+    #guard holds dγ fun L => match pairOf L with
+    #guard holds dδ fun L => decidersOf L.D == ["assistant"]
+    #guard holds dδo fun L => decidersOf L.D == ["assistant", "operator"]
+D15 VE.Defaults.decidersOf: FAILS 1 guards
+    #guard holds dε fun L => decidersOf L.D == ["assistant", "user"]
+D16 VE.Defaults.giveWayDeciders: FAILS 1 guards
+    #guard holds dγ fun L => match pairOf L with
+D17 VE.Defaults.giveWayDeciders: FAILS 1 guards
+    #guard holds dγ' fun L => match pairOf L with
+ALL MUTANTS FAIL THEIR GUARDS

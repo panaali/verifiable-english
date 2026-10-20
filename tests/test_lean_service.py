@@ -23,7 +23,7 @@ from subprocesses import BUSY_PHASES, HANG_TIMEOUT, busy_cpu
 from tests.lean_build import lean_build
 from ve.backends.lean_service import (ADDRESS_SPACE, HANDLE_KEY, MAX_CASES, MAX_HANDLE_BYTES, MAX_HANDLES,
                                       MAX_LINE_BYTES, CheckerUnavailable, LeanService,
-                                      LeanServicePool, MODES, case_digest, case_texts,
+                                      DEADLINES, LeanServicePool, MODES, case_digest, case_texts,
                                       executable_sha256)
 from ve.backends.service_schema import DIRECTORY as SCHEMAS
 
@@ -102,7 +102,7 @@ def _lean_strings(path, start, end="\n\n"):
 def test_response_schemas_follow_lean_sources():
     """Every mode has one schema file, and the schema enumerations are the Lean ones."""
     protocol = (ROOT / "lean/VE/Service/Protocol.lean").read_text()
-    names = re.findall(r'^  \| \.(\w+) => "([^"]+)"$', protocol, re.M)
+    names = re.findall(r'^  \| \.(\w+) => "([^"]+)"$', (ROOT / "lean/VE/Service/Registry.lean").read_text(), re.M)
     dispatch = re.findall(r'^  \| \.(\w+), j => ', protocol, re.M)
     files = {p.stem for p in SCHEMAS.glob("*.json")} - {"common", "envelope"}
     assert {name for _, name in names} == set(MODES) == files
@@ -123,7 +123,8 @@ def test_response_schemas_follow_lean_sources():
     request_error = protocol.split("def requestError", 1)[1].split("\n\n", 1)[0]
     assert set(re.findall(r'\("(\w+)",', request_error)) == set(envelope["$defs"]["error"]["required"])
     handshake = envelope["handshake"]["properties"]
-    assert [c["contains"]["const"] for c in handshake["modes"]["allOf"]] == list(MODES)
+    # The modes are pinned exactly (VE.Service.registry), so a service with other modes is refused at its start.
+    assert set(handshake["modes"]) == {"$comment", "const"} and handshake["modes"]["const"] == list(MODES)
     # Every limit is stated exactly (VE.Limits.stated) and the client reads each from there (ve/limits.py).
     limits = {k: v["const"] for k, v in handshake["limits"]["properties"].items()}
     assert set(handshake["limits"]["required"]) == set(limits) and handshake["limits"]["additionalProperties"] is False
@@ -177,6 +178,7 @@ def test_handshake(service_executable):
     with LeanService(service_executable) as service:
         assert service.handshake["service"] == "ve-lean@1"
         assert tuple(service.handshake["modes"]) == MODES
+        assert deadline_key_faults(DEADLINES, service.handshake["modes"]) == []
         assert service.handshake["limits"] == STATED_LIMITS
         # The handle table the client mirrors (lean-first b2): the service states it, the schema pins it.
         assert service.handshake["handles"] == {"member": HANDLE_KEY, "max": MAX_HANDLES,
@@ -531,6 +533,17 @@ if behaviour == "handshake":
     hello["service"] = "other"
 if behaviour == "null-modes":
     hello["modes"] = None
+# The modes are the registry's exactly (envelope.json const): each fault below is refused at the start.
+if behaviour == "fewer-modes":
+    hello["modes"] = hello["modes"][:-1]
+if behaviour == "extra-mode":
+    hello["modes"] = hello["modes"] + ["absent"]
+if behaviour == "reordered-modes":
+    hello["modes"] = hello["modes"][1::-1] + hello["modes"][2:]
+if behaviour == "duplicate-mode":
+    hello["modes"] = hello["modes"] + hello["modes"][:1]
+if behaviour == "retyped-mode":
+    hello["modes"] = [7] + hello["modes"][1:]
 if behaviour == "small-limits":
     hello["limits"]["max_cases"] = 1
 if behaviour == "large-limits":
@@ -967,9 +980,29 @@ def test_a_request_that_gets_no_cpu_meets_the_wall_cap(tmp_path, monkeypatch, ex
     assert expired.waits == [HANG_TIMEOUT] * 2
 
 
+def deadline_key_faults(deadlines, modes) -> list[str]:
+    """How the deadline table's keys (a Python operational policy, F4) differ from the handshake's modes."""
+    return ([f"mode {m} has no deadline" for m in modes if m not in deadlines]
+            + [f"deadline {k} is no mode" for k in deadlines if k not in modes])
+
+
+def test_the_deadline_keys_are_the_handshakes_modes():
+    """AR-10: the deadlines stay in Python, keyed by exactly the modes the handshake states (`MODES`, read
+    from envelope.json, which pins the handshake's list); a missing or an extra key fails."""
+    assert deadline_key_faults(DEADLINES, MODES) == []
+    assert deadline_key_faults({k: v for k, v in DEADLINES.items() if k != "metered"}, MODES) == [
+        "mode metered has no deadline"]
+    assert deadline_key_faults({**DEADLINES, "risk_eval": (60.0, 60.0)}, MODES) == ["deadline risk_eval is no mode"]
+
+
+def test_route_executable_aliases_name_handshake_modes():
+    """`tests/lean_routes.py` maps the retired one-shot executables to modes; each target is a handshake mode."""
+    from tests.lean_routes import EXECUTABLES
+    assert set(EXECUTABLES.values()) <= set(MODES) and set(ROUTE_MODES) <= set(MODES)
+
+
 def test_every_mode_has_a_deadline_that_grows_with_its_input():
-    from ve.backends.lean_service import DEADLINES, deadline
-    assert set(DEADLINES) == set(MODES)
+    from ve.backends.lean_service import deadline
     for mode, (base, per_mib) in DEADLINES.items():
         assert base > 0 and per_mib > 0, mode
         assert deadline(mode, 0) == base and deadline(mode, 1 << 20) == base + per_mib, mode
@@ -1436,8 +1469,9 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
         service.close()
 
 
-@pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "small-limits", "large-limits",
-                                       "missing-limit", "bad-protocol", "startup-eof"])
+@pytest.mark.parametrize("behaviour", ["handshake", "silent", "null-modes", "fewer-modes", "extra-mode",
+                                       "reordered-modes", "duplicate-mode", "retyped-mode", "small-limits",
+                                       "large-limits", "missing-limit", "bad-protocol", "startup-eof"])
 def test_bad_or_missing_handshake_is_unavailable(tmp_path, expired, behaviour):
     expired.handshakes = behaviour == "silent"
     service = LeanService(fake(tmp_path, behaviour), allow_unlisted_build=True)
