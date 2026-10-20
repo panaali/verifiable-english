@@ -1,0 +1,1139 @@
+{
+ "item": "eff-20261020-1",
+ "date": "2026-10-20",
+ "machine": "VM (multi-agent-lab, linux-x86_64)",
+ "main_head": "c5197da788",
+ "implementation": {
+  "branch": "infra/eff-20261020-1-impl",
+  "commit": "073cea86a"
+ },
+ "commands": {
+  "old": "python -I docs/infra/eff-20261020-1/replay.py /tmp/ve-eff-old .venv/bin/python old.json 30 (scratch worktree of main c5197da78)",
+  "new": "python -I docs/infra/eff-20261020-1/replay.py <worktree at 073cea86a> .venv/bin/python new.json 30",
+  "builder_shape": "python -I docs/infra/eff-20261020-1/builder_shape.py <checkout> new.json out.json"
+ },
+ "records_added": {
+  "how": "tools/test_map.py build-record in the scratch worktree of main /tmp/ve-eff-old, after lean-prep.sh and lake build (+ ve_english_lean_bench), at the first parent of each replayed commit whose base tree had no VM record",
+  "commits": [
+   "dc10bdfb6",
+   "673c1ea57",
+   "e14d56df9",
+   "bb205adae",
+   "9a6ba67ae",
+   "a34ea95ac",
+   "208d00af6"
+  ],
+  "lean_trees": [
+   "0db7be4feac74bc1a2624d571973fe1abadeb007",
+   "55b4adf493c6a00ae3c7a16b25baaffbacb33525",
+   "84ebb37f25814f405950fbf65280c5c18db5e624",
+   "703c731095c62559fa1e66a1978989ed0b185682",
+   "58c4c11c664aea61e691ae8c550bc2e2567ea107",
+   "fabc3ccbfb894bbdfdad9c8fbd9881083643e41b",
+   "3fed17ef6493f0b1f12166f91fe2bfbce377465c"
+  ],
+  "build_seconds": [
+   4,
+   20,
+   707,
+   1181,
+   1196,
+   544,
+   536
+  ],
+  "path_independence": "the scratch builds of 208d00af6, a34ea95ac and e14d56df9 equal the VM records of b7613541c, e010fb6aa and d15066d04 (same programs) in all 9 digests"
+ },
+ "replay": [
+  {
+   "commit": "c5197da78807f792a47d787133f93e4c59fbe0cd",
+   "map": "2296317a9de7ef365523e0f69c442338d9eaf576",
+   "drift_files": 14,
+   "drift_lean_files": 3,
+   "uncertain": {
+    "old": 68,
+    "new": 68
+   },
+   "selected": {
+    "old": 82,
+    "new": 82
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [],
+   "store_as_it_was": {
+    "selected_old": 82,
+    "selected_new": 82,
+    "uncertain_new": 68,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "dc10bdfb644c7c98d7b264523a640798240270d0",
+   "map": "2296317a9de7ef365523e0f69c442338d9eaf576",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 4,
+    "new": 4
+   },
+   "selected": {
+    "old": 71,
+    "new": 71
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 71,
+    "selected_new": 71,
+    "uncertain_new": 4,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "2296317a9de7ef365523e0f69c442338d9eaf576",
+   "map": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca",
+   "drift_files": 128,
+   "drift_lean_files": 4,
+   "uncertain": {
+    "old": 371,
+    "new": 81
+   },
+   "selected": {
+    "old": 370,
+    "new": 84
+   },
+   "dropped_units": 286,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [],
+   "store_as_it_was": {
+    "selected_old": 370,
+    "selected_new": 370,
+    "uncertain_new": 371,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "fd68f174a4214c26861289cfc751a3d3ba1067cc",
+   "map": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca",
+   "drift_files": 16,
+   "drift_lean_files": 4,
+   "uncertain": {
+    "old": 364,
+    "new": 71
+   },
+   "selected": {
+    "old": 164,
+    "new": 58
+   },
+   "dropped_units": 106,
+   "lean_cutoff": {
+    "old": null,
+    "new": null
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [],
+   "store_as_it_was": {
+    "selected_old": 164,
+    "selected_new": 164,
+    "uncertain_new": 364,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "673c1ea57513befcaa2378fe762a131207a13dce",
+   "map": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 5,
+    "new": 5
+   },
+   "selected": {
+    "old": 74,
+    "new": 74
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 364,
+    "selected_new": 364,
+    "uncertain_new": 5,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca",
+   "map": "d15066d048ece9f9ec559f73754611e437189be0",
+   "drift_files": 19,
+   "drift_lean_files": 5,
+   "uncertain": {
+    "old": 79,
+    "new": 79
+   },
+   "selected": {
+    "old": 459,
+    "new": 459
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [],
+   "store_as_it_was": {
+    "selected_old": 459,
+    "selected_new": 459,
+    "uncertain_new": 79,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "e14d56df94236c8194d5c4ccd9b194247ca2d043",
+   "map": "d15066d048ece9f9ec559f73754611e437189be0",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 5,
+    "new": 5
+   },
+   "selected": {
+    "old": 82,
+    "new": 82
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 82,
+    "selected_new": 82,
+    "uncertain_new": 5,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "d15066d048ece9f9ec559f73754611e437189be0",
+   "map": "b1f7ca7adc2b39a17238457736870fb15df03928",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 5,
+    "new": 5
+   },
+   "selected": {
+    "old": 80,
+    "new": 80
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 80,
+    "selected_new": 80,
+    "uncertain_new": 5,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "b1f7ca7adc2b39a17238457736870fb15df03928",
+   "map": "e2ab87cf6f515ee34723e1436c3e6711d1dd3b2e",
+   "drift_files": 78,
+   "drift_lean_files": 9,
+   "uncertain": {
+    "old": 402,
+    "new": 402
+   },
+   "selected": {
+    "old": 403,
+    "new": 403
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [
+    "ve_response_decode",
+    "ve_service",
+    "ve_speech_acts_route"
+   ],
+   "store_as_it_was": {
+    "selected_old": 403,
+    "selected_new": 403,
+    "uncertain_new": 402,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f",
+   "map": "e2ab87cf6f515ee34723e1436c3e6711d1dd3b2e",
+   "drift_files": 24,
+   "drift_lean_files": 9,
+   "uncertain": {
+    "old": 370,
+    "new": 370
+   },
+   "selected": {
+    "old": 402,
+    "new": 402
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": null,
+    "new": null
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [
+    "ve_response_decode",
+    "ve_service",
+    "ve_speech_acts_route"
+   ],
+   "store_as_it_was": {
+    "selected_old": 402,
+    "selected_new": 402,
+    "uncertain_new": 370,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "bb205adaece86354a9139677029c045c32e2b379",
+   "map": "e2ab87cf6f515ee34723e1436c3e6711d1dd3b2e",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 8,
+    "new": 8
+   },
+   "selected": {
+    "old": 370,
+    "new": 370
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 370,
+    "selected_new": 370,
+    "uncertain_new": 8,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "e2ab87cf6f515ee34723e1436c3e6711d1dd3b2e",
+   "map": "20aa836fd5ac77b44aae384316e46d7d5a515f07",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 9,
+    "new": 9
+   },
+   "selected": {
+    "old": 181,
+    "new": 181
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 181,
+    "selected_new": 181,
+    "uncertain_new": 9,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07",
+   "map": "585794c9200cfca3e0ba48bec5e6e1138015b81c",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 10,
+    "new": 10
+   },
+   "selected": {
+    "old": 407,
+    "new": 407
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 407,
+    "selected_new": 407,
+    "uncertain_new": 10,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c",
+   "map": "2f633d7b595a1136ae647b678fec2bce87b4b77d",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 11,
+    "new": 11
+   },
+   "selected": {
+    "old": 48,
+    "new": 48
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": null,
+    "new": null
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 48,
+    "selected_new": 48,
+    "uncertain_new": 11,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d",
+   "map": "88b4626b048d73b6ab72076c4eeb718b0e5dfb59",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 11,
+    "new": 11
+   },
+   "selected": {
+    "old": 76,
+    "new": 76
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 76,
+    "selected_new": 76,
+    "uncertain_new": 11,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "88b4626b048d73b6ab72076c4eeb718b0e5dfb59",
+   "map": "a671d23b9b1164c1ab02f7bb94e275579caef26b",
+   "drift_files": 220,
+   "drift_lean_files": 82,
+   "uncertain": {
+    "old": 459,
+    "new": 459
+   },
+   "selected": {
+    "old": 437,
+    "new": 437
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [
+    "ve_conformance",
+    "ve_english_lean_bench",
+    "ve_english_route",
+    "ve_english_run",
+    "ve_metered",
+    "ve_response_decode",
+    "ve_senses_route",
+    "ve_service",
+    "ve_speech_acts_route"
+   ],
+   "store_as_it_was": {
+    "selected_old": 437,
+    "selected_new": 437,
+    "uncertain_new": 459,
+    "map_lean_cutoff": "applied"
+   }
+  },
+  {
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216",
+   "map": "a671d23b9b1164c1ab02f7bb94e275579caef26b",
+   "drift_files": 208,
+   "drift_lean_files": 82,
+   "uncertain": {
+    "old": 459,
+    "new": 459
+   },
+   "selected": {
+    "old": 149,
+    "new": 149
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": null,
+    "new": null
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [
+    "ve_conformance",
+    "ve_english_lean_bench",
+    "ve_english_route",
+    "ve_english_run",
+    "ve_metered",
+    "ve_response_decode",
+    "ve_senses_route",
+    "ve_service",
+    "ve_speech_acts_route"
+   ],
+   "store_as_it_was": {
+    "selected_old": 149,
+    "selected_new": 149,
+    "uncertain_new": 459,
+    "map_lean_cutoff": "applied"
+   }
+  },
+  {
+   "commit": "beb5c463026211d9e8be684884153565ca0026b9",
+   "map": "a671d23b9b1164c1ab02f7bb94e275579caef26b",
+   "drift_files": 198,
+   "drift_lean_files": 79,
+   "uncertain": {
+    "old": 459,
+    "new": 459
+   },
+   "selected": {
+    "old": 438,
+    "new": 438
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [
+    "ve_conformance",
+    "ve_english_lean_bench",
+    "ve_english_route",
+    "ve_english_run",
+    "ve_metered",
+    "ve_response_decode",
+    "ve_senses_route",
+    "ve_service",
+    "ve_speech_acts_route"
+   ],
+   "store_as_it_was": {
+    "selected_old": 438,
+    "selected_new": 438,
+    "uncertain_new": 459,
+    "map_lean_cutoff": "applied"
+   }
+  },
+  {
+   "commit": "6b1d1b817c838e05ece70cfd0c6ef790846c5b89",
+   "map": "a671d23b9b1164c1ab02f7bb94e275579caef26b",
+   "drift_files": 28,
+   "drift_lean_files": 8,
+   "uncertain": {
+    "old": 372,
+    "new": 372
+   },
+   "selected": {
+    "old": 459,
+    "new": 459
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [
+    "ve_english_lean_bench",
+    "ve_english_route",
+    "ve_metered",
+    "ve_response_decode",
+    "ve_senses_route",
+    "ve_service",
+    "ve_speech_acts_route"
+   ],
+   "store_as_it_was": {
+    "selected_old": 459,
+    "selected_new": 459,
+    "uncertain_new": 372,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "9a6ba67ae0fa12d642ce58b95a794e2a46216ab9",
+   "map": "a671d23b9b1164c1ab02f7bb94e275579caef26b",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 14,
+    "new": 14
+   },
+   "selected": {
+    "old": 372,
+    "new": 372
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 372,
+    "selected_new": 372,
+    "uncertain_new": 14,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "a671d23b9b1164c1ab02f7bb94e275579caef26b",
+   "map": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab",
+   "drift_files": 13,
+   "drift_lean_files": 3,
+   "uncertain": {
+    "old": 84,
+    "new": 84
+   },
+   "selected": {
+    "old": 372,
+    "new": 372
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [],
+   "store_as_it_was": {
+    "selected_old": 372,
+    "selected_new": 372,
+    "uncertain_new": 84,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "a34ea95ac38a5e045e014498d2eefdf51bed67b3",
+   "map": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 15,
+    "new": 15
+   },
+   "selected": {
+    "old": 86,
+    "new": 86
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 86,
+    "selected_new": 86,
+    "uncertain_new": 15,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab",
+   "map": "b7613541cbd398208e31b4b48c01253d732aee34",
+   "drift_files": 19,
+   "drift_lean_files": 6,
+   "uncertain": {
+    "old": 366,
+    "new": 79
+   },
+   "selected": {
+    "old": 381,
+    "new": 381
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "applied",
+   "map_lean_cutoff_rebuilt": [],
+   "store_as_it_was": {
+    "selected_old": 381,
+    "selected_new": 381,
+    "uncertain_new": 366,
+    "map_lean_cutoff": "no record of the base build"
+   }
+  },
+  {
+   "commit": "208d00af60454858f152e7a8fa38db565a32505b",
+   "map": "b7613541cbd398208e31b4b48c01253d732aee34",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 16,
+    "new": 16
+   },
+   "selected": {
+    "old": 82,
+    "new": 82
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 366,
+    "selected_new": 366,
+    "uncertain_new": 16,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "b7613541cbd398208e31b4b48c01253d732aee34",
+   "map": "9ea276842060977979999c8f3db730d94f527ceb",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 16,
+    "new": 16
+   },
+   "selected": {
+    "old": 79,
+    "new": 79
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 79,
+    "selected_new": 79,
+    "uncertain_new": 16,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "9ea276842060977979999c8f3db730d94f527ceb",
+   "map": "702ff74292457dfc47e22139c8ea1011113c98a5",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 17,
+    "new": 17
+   },
+   "selected": {
+    "old": 25,
+    "new": 25
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": null,
+    "new": null
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 25,
+    "selected_new": 25,
+    "uncertain_new": 17,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "702ff74292457dfc47e22139c8ea1011113c98a5",
+   "map": "faecb02e1445653e627ffb282835416782cf2d5c",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 18,
+    "new": 18
+   },
+   "selected": {
+    "old": 88,
+    "new": 88
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 88,
+    "selected_new": 88,
+    "uncertain_new": 18,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "faecb02e1445653e627ffb282835416782cf2d5c",
+   "map": "96f9a712114acb9f90585e28d90e83241e2ad178",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 20,
+    "new": 20
+   },
+   "selected": {
+    "old": 94,
+    "new": 94
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 94,
+    "selected_new": 94,
+    "uncertain_new": 20,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "96f9a712114acb9f90585e28d90e83241e2ad178",
+   "map": "cb033316a7cb0476e856065e4047efe411bbe43d",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 20,
+    "new": 20
+   },
+   "selected": {
+    "old": 78,
+    "new": 78
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 78,
+    "selected_new": 78,
+    "uncertain_new": 20,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  },
+  {
+   "commit": "cb033316a7cb0476e856065e4047efe411bbe43d",
+   "map": "3cc70f557e988c08cca45827495f79749a3f001c",
+   "drift_files": 0,
+   "drift_lean_files": 0,
+   "uncertain": {
+    "old": 21,
+    "new": 21
+   },
+   "selected": {
+    "old": 376,
+    "new": 376
+   },
+   "dropped_units": 0,
+   "lean_cutoff": {
+    "old": "applied",
+    "new": "applied"
+   },
+   "map_lean_cutoff": "the change is not in the lean/ trees",
+   "map_lean_cutoff_rebuilt": null,
+   "store_as_it_was": {
+    "selected_old": 376,
+    "selected_new": 376,
+    "uncertain_new": 21,
+    "map_lean_cutoff": "the change is not in the lean/ trees"
+   }
+  }
+ ],
+ "stop_rule": {
+  "rule": "over the replayed commits whose drift holds a Lean change, the median selected count falls by less than 30%: stop",
+  "commits": 12,
+  "median_selected_old": 391.5,
+  "median_selected_new": 391.5,
+  "fall": 0.0,
+  "met": true,
+  "median_uncertain_old": 370.5,
+  "median_uncertain_new": 227.0,
+  "sum_selected_old": 4116,
+  "sum_selected_new": 3724,
+  "store_as_it_was": {
+   "median_selected_old": 391.5,
+   "median_selected_new": 391.5
+  }
+ },
+ "transitions": [
+  "c5197da788 feature/me-9 (me-9): approved by r lean files   3 - rebuilt: none",
+  "dc10bdfb64 feature/qt-a1c (qt-a1c): approved  lean files   3 - rebuilt: none",
+  "2296317a9d feature/et-3c (et-3c): approved by lean files   3 - rebuilt: none",
+  "fd68f174a4 infra/speed-trustmut (speed-trustm lean files   0 - rebuilt: none",
+  "673c1ea575 feature/df-1ab (df-1ab): approved  lean files   4 - rebuilt: none",
+  "75a9bcef9e feature/ar-10b (ar-10b): approved  lean files   5 protocol/registry rebuilt: response_decode,service,speech_acts_route",
+  "e14d56df94 feature/sc-1ab (sc-1ab): approved  lean files   5 - rebuilt: none",
+  "d15066d048 feature/qt-b1b (qt-b1b): approved  lean files   5 - rebuilt: none",
+  "b1f7ca7adc feature/ap-1a (ap-1a): approved by lean files   8 - rebuilt: english_lean_bench,english_route,metered,response_decode,senses_route,service,speech_acts_route",
+  "bfec7f9ef3 infra/arch-20261019-2 (arch-202610 lean files   0 - rebuilt: none",
+  "bb205adaec feature/pk-1b (pk-1b): approved by lean files   9 - rebuilt: response_decode,service,speech_acts_route",
+  "e2ab87cf6f infra/arch-20261019-1 (arch-202610 lean files   2 - rebuilt: response_decode",
+  "20aa836fd5 feature/ar-10a (ar-10a): approved  lean files   7 - rebuilt: english_lean_bench,english_route,metered,response_decode,senses_route,service,speech_acts_route",
+  "585794c920 feature/et-8 (et-8): approved by r lean files   0 - rebuilt: none",
+  "2f633d7b59 feature/jt-1b (jt-1b): approved by lean files   4 - rebuilt: none",
+  "88b4626b04 feature/me-5 (me-5): approved by r lean files   6 - rebuilt: none",
+  "630d2e136b infra/eff-20261019-1 (eff-20261019 lean files   0 - rebuilt: none",
+  "beb5c46302 feature/et-3b (et-3b): approved by lean files   4 - rebuilt: none",
+  "6b1d1b817c lean-first/b18 (lf-18): approved b lean files  73 protocol/registry rebuilt: conformance,english_lean_bench,english_route,english_run,metered,response_decode,senses_route,service,speech_acts_route",
+  "9a6ba67ae0 feature/et-7b (et-7b): approved by lean files   8 - rebuilt: english_lean_bench,english_route,metered,response_decode,senses_route,service,speech_acts_route",
+  "a671d23b9b feature/sc-3a (sc-3a): approved by lean files   8 - rebuilt: response_decode,service,speech_acts_route",
+  "a34ea95ac3 feature/me-6 (me-6): approved by r lean files   3 - rebuilt: none",
+  "e010fb6aa6 feature/ps-6r (ps-6r): approved by lean files   3 - rebuilt: english_lean_bench,english_route,response_decode,senses_route,service,speech_acts_route",
+  "208d00af60 feature/df-1a (df-1a): approved by lean files   6 - rebuilt: none",
+  "b7613541cb feature/qt-a2 (qt-a2): approved by lean files   8 - rebuilt: none",
+  "9ea2768420 feature/df-03 (df-03): approved by lean files   0 - rebuilt: none",
+  "702ff74292 feature/qt-b1 (qt-b1): approved by lean files   7 - rebuilt: none",
+  "faecb02e14 feature/ap-2 (ap-2): approved by r lean files   5 - rebuilt: none",
+  "96f9a71211 feature/qt-a1b (qt-a1b): approved  lean files   3 - rebuilt: none",
+  "cb033316a7 feature/pk-1 (pk-1): approved by r lean files  13 - rebuilt: english_lean_bench,english_route,metered,response_decode,senses_route,service,speech_acts_route",
+  "3cc70f557e feature/qt-a1 (qt-a1): approved by lean files 8 records missing",
+  "Counter({'ve_response_decode': 10, 've_service': 9, 've_speech_acts_route': 9, 've_english_lean_bench': 6, 've_english_route': 6, 've_senses_route': 6, 've_metered': 5, 've_conformance': 1, 've_english_run': 1})"
+ ],
+ "builder_shape": {
+  "docs/TESTING.md": {
+   "per_commit": [
+    {
+     "commit": "c5197da78807f792a47d787133f93e4c59fbe0cd",
+     "old": 39,
+     "new": 39,
+     "uncertain_old": 68,
+     "uncertain_new": 68
+    },
+    {
+     "commit": "2296317a9de7ef365523e0f69c442338d9eaf576",
+     "old": 104,
+     "new": 48,
+     "uncertain_old": 371,
+     "uncertain_new": 81
+    },
+    {
+     "commit": "fd68f174a4214c26861289cfc751a3d3ba1067cc",
+     "old": 99,
+     "new": 41,
+     "uncertain_old": 364,
+     "uncertain_new": 71
+    },
+    {
+     "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca",
+     "old": 45,
+     "new": 45,
+     "uncertain_old": 79,
+     "uncertain_new": 79
+    },
+    {
+     "commit": "b1f7ca7adc2b39a17238457736870fb15df03928",
+     "old": 126,
+     "new": 126,
+     "uncertain_old": 402,
+     "uncertain_new": 402
+    },
+    {
+     "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f",
+     "old": 101,
+     "new": 101,
+     "uncertain_old": 370,
+     "uncertain_new": 370
+    },
+    {
+     "commit": "88b4626b048d73b6ab72076c4eeb718b0e5dfb59",
+     "old": 137,
+     "new": 137,
+     "uncertain_old": 459,
+     "uncertain_new": 459
+    },
+    {
+     "commit": "630d2e136b5b8b2497aca50730080dae1559e216",
+     "old": 137,
+     "new": 137,
+     "uncertain_old": 459,
+     "uncertain_new": 459
+    },
+    {
+     "commit": "beb5c463026211d9e8be684884153565ca0026b9",
+     "old": 137,
+     "new": 137,
+     "uncertain_old": 459,
+     "uncertain_new": 459
+    },
+    {
+     "commit": "6b1d1b817c838e05ece70cfd0c6ef790846c5b89",
+     "old": 102,
+     "new": 102,
+     "uncertain_old": 372,
+     "uncertain_new": 372
+    },
+    {
+     "commit": "a671d23b9b1164c1ab02f7bb94e275579caef26b",
+     "old": 46,
+     "new": 46,
+     "uncertain_old": 84,
+     "uncertain_new": 84
+    },
+    {
+     "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab",
+     "old": 99,
+     "new": 41,
+     "uncertain_old": 366,
+     "uncertain_new": 79
+    }
+   ],
+   "median_old": 101.5,
+   "median_new": 74.5,
+   "fall": 0.266
+  },
+  "ve/discourse.py": {
+   "per_commit": [
+    {
+     "commit": "c5197da78807f792a47d787133f93e4c59fbe0cd",
+     "old": 78,
+     "new": 78,
+     "uncertain_old": 68,
+     "uncertain_new": 68
+    },
+    {
+     "commit": "2296317a9de7ef365523e0f69c442338d9eaf576",
+     "old": 127,
+     "new": 85,
+     "uncertain_old": 371,
+     "uncertain_new": 81
+    },
+    {
+     "commit": "fd68f174a4214c26861289cfc751a3d3ba1067cc",
+     "old": 122,
+     "new": 80,
+     "uncertain_old": 364,
+     "uncertain_new": 71
+    },
+    {
+     "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca",
+     "old": 82,
+     "new": 82,
+     "uncertain_old": 79,
+     "uncertain_new": 79
+    },
+    {
+     "commit": "b1f7ca7adc2b39a17238457736870fb15df03928",
+     "old": 149,
+     "new": 149,
+     "uncertain_old": 402,
+     "uncertain_new": 402
+    },
+    {
+     "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f",
+     "old": 124,
+     "new": 124,
+     "uncertain_old": 370,
+     "uncertain_new": 370
+    },
+    {
+     "commit": "88b4626b048d73b6ab72076c4eeb718b0e5dfb59",
+     "old": 160,
+     "new": 160,
+     "uncertain_old": 459,
+     "uncertain_new": 459
+    },
+    {
+     "commit": "630d2e136b5b8b2497aca50730080dae1559e216",
+     "old": 160,
+     "new": 160,
+     "uncertain_old": 459,
+     "uncertain_new": 459
+    },
+    {
+     "commit": "beb5c463026211d9e8be684884153565ca0026b9",
+     "old": 160,
+     "new": 160,
+     "uncertain_old": 459,
+     "uncertain_new": 459
+    },
+    {
+     "commit": "6b1d1b817c838e05ece70cfd0c6ef790846c5b89",
+     "old": 125,
+     "new": 125,
+     "uncertain_old": 372,
+     "uncertain_new": 372
+    },
+    {
+     "commit": "a671d23b9b1164c1ab02f7bb94e275579caef26b",
+     "old": 85,
+     "new": 85,
+     "uncertain_old": 84,
+     "uncertain_new": 84
+    },
+    {
+     "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab",
+     "old": 122,
+     "new": 80,
+     "uncertain_old": 366,
+     "uncertain_new": 79
+    }
+   ],
+   "median_old": 124.5,
+   "median_new": 104.5,
+   "fall": 0.161
+  }
+ },
+ "soundness_spot_check": "not run: the stop rule stopped the item before it"
+}
