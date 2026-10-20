@@ -936,6 +936,20 @@
    "reason": "ar-10b: VE/Service/Registry.lean +61 (Mode, Mode.name, Mode.ofName?, modes moved from Protocol.lean; RouteSpec new; registry tied by registry_modes), VE/Service/Protocol.lean -55; net V +6, K +0, S +0; replaces the Python mode list MODES in ve/backends/service_schema.py, deleted here",
    "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), ar-10b, 2026-10-20",
    "commit": "bb205adaece86354a9139677029c045c32e2b379"
+  },
+  {
+   "class": "S",
+   "lines": 19,
+   "reason": "ap-1a: VE/Acts/Lexical.lean +138 (S 28: Tok, joinWords, clauseWords moved from VE/Acts/Syntax.lean -9, and the limits, fixedOk, Form, Form.text, wording; D[V] 110: fold, normal, dropComma, slotOf?, pieceToks, rawLex, phraseToks, clash, decodeFixed, group, lex, check, Form.ofText?), VE/Acts/LexicalBase.lean +48 (D[V], moved verbatim from VE/Norms/Wire.lean), VE/Norms/Wire.lean -27 (-48 moved, +21 canonicalActIn, decodeRegulatedWith, decodeRegulatedIn): S +19, V +131, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "V",
+   "lines": 131,
+   "reason": "ap-1a: VE/Acts/Lexical.lean +138 (S 28: Tok, joinWords, clauseWords moved from VE/Acts/Syntax.lean -9, and the limits, fixedOk, Form, Form.text, wording; D[V] 110: fold, normal, dropComma, slotOf?, pieceToks, rawLex, phraseToks, clash, decodeFixed, group, lex, check, Form.ofText?), VE/Acts/LexicalBase.lean +48 (D[V], moved verbatim from VE/Norms/Wire.lean), VE/Norms/Wire.lean -27 (-48 moved, +21 canonicalActIn, decodeRegulatedWith, decodeRegulatedIn): S +19, V +131, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
   }
  ]
 }
