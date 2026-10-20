@@ -86,8 +86,9 @@ def Frac.mul? (f g : Frac) : Option Frac := (Poly.mul? f.1 g.1).bind fun n => (P
 def Frac.div? (f g : Frac) : Option Frac := (Poly.mul? f.1 g.2).bind fun n => (Poly.mul? f.2 g.1).map (n, ·)
 def Frac.pow? (f : Frac) (k : Nat) : Option Frac := (Poly.pow? f.1 k).bind fun n => (Poly.pow? f.2 k).map (n, ·)
 
+/-- Every polynomial built passes `Poly.guard`, a literal too (recheck F9); `1 · n¹` always fits. -/
 def Frac.go : Expr → Option Frac
-  | .lit q => some (Poly.cons0 ⟨q, []⟩ [], Poly.one)
+  | .lit q => (Poly.guard (Poly.cons0 ⟨q, []⟩ [])).map (·, Poly.one)
   | .val n => some ([⟨1, [(n, 1)]⟩], Poly.one)
   | .add a b => (Frac.go a).bind fun f => (Frac.go b).bind (Frac.add? f)
   | .sub a b => (Frac.go a).bind fun f => (Frac.go b).bind fun g => Frac.add? f (Poly.neg g.1, g.2)
@@ -292,7 +293,7 @@ theorem Frac.go_sound (κ : String → Rat) (e : Expr) (x : Rat) (hx : Denotes (
     ∀ f, Frac.go e = some f → Frac.Means κ f x := by
   induction hx with
   | lit =>
-      intro f h; simp only [Frac.go, Option.some.injEq] at h; subst h
+      intro f h; simp only [Frac.go, Option.map_eq_some_iff] at h; obtain ⟨p, hp, rfl⟩ := h; rw [Poly.guard_some hp]
       simp only [Frac.Means, Poly.eval_one, Poly.eval_cons0, Poly.eval_cons, Poly.eval_nil]; simp [vprod]; grind
   | val hv =>
       intro f h; simp only [Frac.go, Option.some.injEq] at h; subst h; simp only [Option.some.injEq] at hv; subst hv
@@ -366,5 +367,107 @@ theorem differsAt_sound (a b : Expr) (κ : List (String × Rat)) (h : differsAt 
   simp only [differsAt] at h; split at h
   · rename_i x y hx hy; exact ⟨x, y, Expr.eval_sound _ _ _ hx, Expr.eval_sound _ _ _ hy, by simpa using h⟩
   · cases h
+
+/-! ### Limits
+
+An answer other than `none` is given under one condition: every limit check passed. A side has at most
+`maxPolyTerms` nodes, and every polynomial built on the way, from a literal to the cross-multiplied sides, is
+`Within`. Every other case is `none`; the fixtures pin each check at its limit and one past it. -/
+
+/-- The limits of a polynomial: `fits` (digits and exponents) and at most `maxPolyTerms` terms. -/
+def Poly.Within (p : Poly) : Prop := p.fits = true ∧ p.length ≤ maxPolyTerms
+
+theorem Poly.guard_fits {p r : Poly} (h : Poly.guard p = some r) : r.fits = true := by
+  unfold Poly.guard at h; split at h <;> simp_all
+
+theorem Poly.length_norm (p : Poly) : (Poly.norm p).length ≤ p.length := by
+  have h0 : ∀ (m : Mono) (p : Poly), (Poly.cons0 m p).length ≤ p.length + 1 := by
+    intro m p; unfold Poly.cons0; split <;> simp
+  have hc : ∀ acc q : Poly, (Poly.combine acc q).length ≤ acc.length + q.length := by
+    intro acc q
+    fun_induction Poly.combine acc q with
+    | case1 => simp
+    | case2 n acc m p _ ih => have := h0 ⟨n.coeff + m.coeff, m.vars⟩ acc; simp only [List.length_cons]; omega
+    | case3 n acc m p _ ih => have := h0 m (n :: acc); simp only [List.length_cons] at *; omega
+    | case4 m p ih => have := h0 m []; simp only [List.length_cons, List.length_nil] at *; omega
+  have := hc [] (p.mergeSort fun m n => varsLe m.vars n.vars)
+  simp only [List.length_mergeSort, List.length_nil] at this; simpa [Poly.norm] using this
+
+theorem Poly.length_mulRaw (p q : Poly) : (p.flatMap fun m => q.map m.mul).length = p.length * q.length := by
+  induction p with
+  | nil => simp
+  | cons m p ih => simp only [List.flatMap_cons, List.length_append, List.length_map, ih, List.length_cons,
+      Nat.succ_mul]; omega
+
+theorem Poly.add?_within {p q r : Poly} (h : Poly.add? p q = some r) : r.Within := by
+  unfold Poly.add? at h; split at h
+  · refine ⟨Poly.guard_fits h, ?_⟩; rw [Poly.guard_some h]
+    have := Poly.length_norm (p ++ q); simp only [List.length_append] at this; omega
+  · cases h
+
+theorem Poly.mul?_within {p q r : Poly} (h : Poly.mul? p q = some r) : r.Within := by
+  unfold Poly.mul? at h; split at h
+  · refine ⟨Poly.guard_fits h, ?_⟩; rw [Poly.guard_some h]
+    have := Poly.length_norm (p.flatMap fun m => q.map m.mul); rw [Poly.length_mulRaw] at this; omega
+  · cases h
+
+theorem Poly.one_within : Poly.one.Within :=
+  ⟨by simp [Poly.one, Poly.fits, Poly.coeffBound, maxPolyExponent]; exact Nat.one_lt_pow (by decide) (by decide),
+   by simp [Poly.one, maxPolyTerms]⟩
+
+theorem Poly.pow?_within {p r : Poly} {k : Nat} (h : Poly.pow? p k = some r) : r.Within := by
+  have hgo : ∀ k s r, s.Within → Poly.pow?.go p k s = some r → r.Within := by
+    intro k
+    induction k with
+    | zero => intro s r hs h; simp only [Poly.pow?.go, Option.some.injEq] at h; subst h; exact hs
+    | succ k ih =>
+        intro s r _ h; simp only [Poly.pow?.go, Option.bind_eq_some_iff] at h
+        obtain ⟨s', hs, hr⟩ := h; exact ih s' r (Poly.mul?_within hs) hr
+  unfold Poly.pow? at h; split at h
+  · exact hgo k _ r Poly.one_within h
+  · cases h
+
+theorem Frac.go_within (e : Expr) : ∀ f, Frac.go e = some f → f.1.Within ∧ f.2.Within := by
+  have pair : ∀ {o1 o2 : Option Poly} {h : Frac}, (o1.bind fun n => o2.map (n, ·)) = some h →
+      (∀ r, o1 = some r → r.Within) → (∀ r, o2 = some r → r.Within) → h.1.Within ∧ h.2.Within :=
+    fun he h1 h2 => ⟨h1 _ (Frac.pair_some he).1, h2 _ (Frac.pair_some he).2⟩
+  have add : ∀ {f g h : Frac}, f.2.Within → Frac.add? f g = some h → h.1.Within ∧ h.2.Within := by
+    intro f g h hf he; unfold Frac.add? at he; split at he
+    · simp only [Option.map_eq_some_iff] at he; obtain ⟨s, hs, rfl⟩ := he; exact ⟨Poly.add?_within hs, hf⟩
+    · simp only [Option.bind_eq_some_iff, Option.map_eq_some_iff] at he
+      obtain ⟨_, _, _, _, s, hs, d, hd, rfl⟩ := he; exact ⟨Poly.add?_within hs, Poly.mul?_within hd⟩
+  induction e with
+  | lit q =>
+      intro f h; simp only [Frac.go, Option.map_eq_some_iff] at h; obtain ⟨p, hp, rfl⟩ := h
+      refine ⟨⟨Poly.guard_fits hp, ?_⟩, Poly.one_within⟩; rw [Poly.guard_some hp]
+      simp only [Poly.cons0]; split <;> simp [maxPolyTerms]
+  | val n =>
+      intro f h; simp only [Frac.go, Option.some.injEq] at h; subst h
+      refine ⟨⟨?_, by simp [maxPolyTerms]⟩, Poly.one_within⟩
+      simp [Poly.fits, Poly.coeffBound, maxPolyExponent]; exact Nat.one_lt_pow (by decide) (by decide)
+  | add a b iha _ | sub a b iha _ =>
+      intro f h; simp only [Frac.go, Option.bind_eq_some_iff] at h; obtain ⟨g, hg, _, _, h⟩ := h
+      exact add (iha g hg).2 h
+  | mul a b _ _ | div a b _ _ =>
+      intro f h; simp only [Frac.go, Option.bind_eq_some_iff] at h; obtain ⟨_, _, _, _, h⟩ := h
+      exact pair h (fun _ => Poly.mul?_within) (fun _ => Poly.mul?_within)
+  | pow a k _ =>
+      intro f h; simp only [Frac.go, Option.bind_eq_some_iff] at h; obtain ⟨_, _, h⟩ := h
+      exact pair h (fun _ => Poly.pow?_within) (fun _ => Poly.pow?_within)
+
+/-- **Limits**: a side's fraction form is given only within the node limit, with both polynomials `Within`. -/
+theorem Frac.ofExpr_within {e : Expr} {f : Frac} (h : Frac.ofExpr? e = some f) :
+    (e.nodesWithin maxPolyTerms).isSome ∧ f.1.Within ∧ f.2.Within := by
+  unfold Frac.ofExpr? at h; split at h
+  · exact ⟨by assumption, Frac.go_within e f h⟩
+  · cases h
+
+/-- **Limits**: a comparison is answered only when both sides' forms and both cross products are `Within`. -/
+theorem Identity.compare_within {a b : Expr} {r : Bool} (h : Identity.compare a b = some r) :
+    ∃ fa fb l s, Frac.ofExpr? a = some fa ∧ Frac.ofExpr? b = some fb ∧ Poly.mul? fa.1 fb.2 = some l ∧
+      Poly.mul? fb.1 fa.2 = some s ∧ l.Within ∧ s.Within ∧ r = (l == s) := by
+  simp only [Identity.compare, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
+  obtain ⟨fa, ha, fb, hb, l, hl, s, hs, rfl⟩ := h
+  exact ⟨fa, fb, l, s, ha, hb, hl, hs, Poly.mul?_within hl, Poly.mul?_within hs, rfl⟩
 
 end VE.Calc
