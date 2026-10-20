@@ -64,7 +64,8 @@ mutant is not listed: `judgedViews`' `asserted` argument, which nothing in this 
   tables and pins about 25), plus `mutants.json` (written by the harness). Over the ~600 guideline mostly by the
   spec's fixture rows, which the Lean part needs for its seeded bugs; the Python relay was cut to jt-2b as the task
   directs.
-- Tests: the selected plan on the Mac runner passed on `fae90056d` (exit 0, 0 failures), after fixing what its first
+- Tests: the selected plan on the Mac runner passed on `0e18283df` (after both syncs; exit 0, 0 failures; this
+  commit changes only this line) and before on `fae90056d`, after fixing what its first
   runs found (the model oracle's profile coverage, the conformance owned-profile check, the assurance-manifest pins,
   b16b's seeded-fault text). After the two syncs with main: the touched files' tests (719 passed), `lean/audit.py`
   PASS, `regen_generated.py --check`, `gate_collection.py --check --prebuilt` (56 added, 0 removed). The full gate is
