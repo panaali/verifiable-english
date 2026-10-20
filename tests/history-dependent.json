@@ -1291,7 +1291,7 @@
   },
   {
    "test": "tests/test_regen_generated.py",
-   "why": "starts git (git check-attr, git ls-files, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, tools/regen_generated.py",
+   "why": "starts git (git check-attr, git config, git ls-files, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, tools/regen_generated.py, tools/source_graph.py",
    "recorded": [
     "coverage map",
     "source"
@@ -1303,8 +1303,10 @@
     "tests/test_regen_generated.py:test_owner_agrees_with_git_on_every_tracked_file: git check-attr",
     "tools/regen_generated.py:_git: git",
     "tools/regen_generated.py:_stage: git show",
+    "tools/regen_generated.py:install_driver: git config",
     "tools/regen_generated.py:merge_text: git merge-file",
-    "tools/regen_generated.py:resolve: git rev-parse"
+    "tools/regen_generated.py:resolve: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files"
    ]
   },
   {
