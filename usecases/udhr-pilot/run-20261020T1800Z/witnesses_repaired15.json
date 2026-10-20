@@ -1,0 +1,428 @@
+{
+  "u027.adjectives_over_both": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c0"
+      ],
+      "rules": [
+        "u027-adjectives-over-both"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c1"
+      ],
+      "rules": [
+        "u027-adjectives-over-both"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c2"
+      ],
+      "rules": [
+        "u027-adjectives-over-both"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c3"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c4"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c5"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c6"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u027.adjectives_treatment_only": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c0"
+      ],
+      "rules": [
+        "u027-adjectives-treatment-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c1"
+      ],
+      "rules": [
+        "u027-adjectives-treatment-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c2"
+      ],
+      "rules": [
+        "u027-adjectives-treatment-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c3"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c4"
+      ],
+      "rules": [
+        "u027-adjectives-treatment-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c5"
+      ],
+      "rules": [
+        "u027-adjectives-treatment-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "subjection_to_ill_treatment_permitted",
+      "row": [
+        "c6"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ],
+  "u037.arbitrary_arrest_only": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c0"
+      ],
+      "rules": [
+        "u037-arbitrary-arrest-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c1"
+      ],
+      "rules": [
+        "u037-arbitrary-arrest-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c2"
+      ],
+      "rules": [
+        "u037-arbitrary-arrest-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c3"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c4"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c5"
+      ],
+      "rules": [
+        "u037-arbitrary-arrest-only"
+      ],
+      "status": "SETTLED",
+      "value": false
+    }
+  ],
+  "u037.arbitrary_over_all": [
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c0"
+      ],
+      "rules": [
+        "u037-arbitrary-over-all"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "SETTLED",
+        false
+      ],
+      "lean_point_status": "SETTLED no",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c1"
+      ],
+      "rules": [
+        "u037-arbitrary-over-all"
+      ],
+      "status": "SETTLED",
+      "value": false
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c2"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c3"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c4"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    },
+    {
+      "as_expected": true,
+      "expected": [
+        "UNDECIDED",
+        null
+      ],
+      "lean_point_status": "UNDECIDED",
+      "predicate": "arrest_detention_or_exile_permitted",
+      "row": [
+        "c5"
+      ],
+      "rules": [],
+      "status": "UNDECIDED",
+      "value": null
+    }
+  ]
+}

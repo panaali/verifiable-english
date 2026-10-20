@@ -1,0 +1,62 @@
+[
+ {
+  "unit": "u042",
+  "fault": "the `not` before constitutes_penal_offence_on is removed",
+  "check": "Lean norm-defaults-status witnesses (u042.prohibited)",
+  "faulty": "FAILS: [(['f1'], 'UNDECIDED', ['SETTLED', False]), (['f1'], 'SETTLED no', ['UNDECIDED', None])]",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u042",
+  "fault": "the rule's sign is flipped (a finding on account of a non-offence would be REQUIRED, not forbidden)",
+  "check": "Lean norm-defaults-status witnesses (u042.prohibited)",
+  "faulty": "FAILS: [(['f1'], 'SETTLED yes', ['SETTLED', False])]",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u043",
+  "fault": "the existential reading is given the universal reading's guard",
+  "check": "Lean norm-defaults-status witnesses (u043.existential)",
+  "faulty": "FAILS: [(['i1'], 'UNDECIDED', ['SETTLED', False])]",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u043",
+  "fault": "heavier_than's arguments are swapped in the universal reading (lighter-than)",
+  "check": "Lean norm-defaults-status witnesses (u043.universal)",
+  "faulty": "FAILS: [(['i1'], 'UNDECIDED', ['SETTLED', False]), (['i1'], 'UNDECIDED', ['SETTLED', False])]",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u010",
+  "fault": "the two constants of the binary predicate are swapped",
+  "check": "the rendering must contain the expected sentence",
+  "faulty": "FAILS: expected sentence absent",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u010",
+  "fault": "the unit's meaning names an open term the document does not declare",
+  "check": "load_document",
+  "faulty": "refused: invalid meaning status",
+  "restored": "loads (the part checks)"
+ },
+ {
+  "unit": "u060",
+  "fault": "the unit's meaning names an open term the document does not declare",
+  "check": "load_document",
+  "faulty": "refused: invalid meaning status",
+  "restored": "loads (the part checks)"
+ },
+ {
+  "unit": "u043",
+  "fault": "the recorded separating situation's value flipped, or the two readings made equal",
+  "check": "load_document (Lean admits every separation)",
+  "faulty": {
+   "control_unchanged_loads": "admitted",
+   "a_flipped_value": "refused: distinguishing model does not separate readings",
+   "b_readings_equal": "refused: distinguishing model does not separate readings"
+  },
+  "restored": "loads (part01 checks)"
+ }
+]
