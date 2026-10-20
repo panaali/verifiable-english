@@ -115,9 +115,14 @@ def UnitEnv.context (u : UnitEnv) (values : List (String × Option String)) :
     | none, some (_, none) => some PhysDim.one
     | none, none => none
 
+/-- A declared name in words: no diagnostic text contains a symbol (13.1), so `fringe_width` is
+"fringe width". -/
+def spoken (name : String) : String := name.map fun c => if c = '_' then ' ' else c
+
 /-- A dimension in words: its base exponents ("length", "length per time"). -/
 def dimWords (d : PhysDim) : String :=
   let part := fun (b : String) (k : Nat) =>
+    let b := spoken b
     if k = 1 then b else if k = 2 then b ++ " squared" else if k = 3 then b ++ " cubed"
     else b ++ " to the power " ++ toString k
   let up := (d.exps.filter (0 < ·.2)).map fun e => part e.1 e.2.toNat
@@ -163,10 +168,12 @@ theorem dimE_ok (Γ : String → Option PhysDim) (e : Expr) (d : PhysDim) :
       simp only [dimE, Expr.dimOf, except_bind_ok, Option.map_eq_some_iff, iha]
       simp [pure, Except.pure]
 
-/-- The unit a rounding refusal divides by: the first declared unit of the dimension, else one in words. -/
+/-- The unit a rounding refusal divides by: the dimension's coherent unit (factor 1), else its first
+unit by name, else a unit of it in words. -/
 def unitOf (u : UnitEnv) (d : PhysDim) : String :=
-  match u.units.find? (·.dim == d) with
-  | some x => x.name
+  let same := u.units.filter (·.dim == d)
+  match same.find? (·.factor == some 1) <|> same.head? with
+  | some x => spoken x.name
   | none => "unit of " ++ dimWords d
 
 /-- The claim-level checks of 6.2: every side of a comparison or range has one dimension, and a
