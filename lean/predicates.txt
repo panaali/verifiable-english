@@ -536,6 +536,7 @@ module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.ReadingsChoices
+module VE.Service.Registry
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
