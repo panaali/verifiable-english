@@ -2015,8 +2015,12 @@
     "VE/Compose/Dispatch.lean": {
       "S": [
         "VE.Compose.ChainList",
+        "VE.Compose.ProfileRow",
+        "VE.Compose.TableAdmits",
         "VE.Compose.TodayList",
         "VE.Compose.base",
+        "VE.Compose.legacyProfiles",
+        "VE.Compose.routeOf",
         "VE.Compose.stackHead",
         "VE.Compose.unsupported",
         "VE.Compose.wrapperHead",
@@ -2024,18 +2028,49 @@
       ],
       "G[V]": [
         "VE.Compose.Route",
+        {
+          "name": "VE.Compose.baseRows",
+          "tied": [
+            "VE.Compose.baseGate_today"
+          ]
+        },
         "VE.Compose.dispatch",
+        "VE.Compose.environmentProfiles",
+        "VE.Compose.environmentWrapper",
+        {
+          "name": "VE.Compose.gateOf",
+          "tied": [
+            "VE.Compose.gateOf_iff"
+          ]
+        },
+        "VE.Compose.heads",
+        "VE.Compose.needText",
         "VE.Compose.outside",
+        "VE.Compose.outsideProfiles",
+        {
+          "name": "VE.Compose.profileTable",
+          "tied": [
+            "VE.Compose.gate_legacy"
+          ]
+        },
         "VE.Compose.refusal",
+        "VE.Compose.refusing",
         "VE.Compose.registered",
+        "VE.Compose.rowChecks",
         "VE.Compose.sitsOn",
         "VE.Compose.speechAllow",
+        "VE.Compose.speechOthers",
         "VE.Compose.today",
         "VE.Compose.todayGate",
-        "VE.Compose.todayHead"
+        "VE.Compose.todayHead",
+        "VE.Compose.wrapperRows"
       ],
       "G[R]": [
         "VE.Compose.pendingWithDefaults"
+      ],
+      "P": [
+        "VE.Compose.faultOf",
+        "VE.Compose.gateMatch"
       ]
     },
     "VE/Compose/Examples.lean": {
@@ -2050,6 +2085,7 @@
         "VE.Compose.Examples.r16",
         "VE.Compose.Examples.r9",
         "VE.Compose.Examples.registrySorted",
+        "VE.Compose.Examples.stackSorted",
         "VE.Compose.Examples.todayCodes",
         "VE.Compose.Examples.todayText",
         "VE.Compose.Examples.todayTexts",
@@ -4727,10 +4763,23 @@
         "VE.NormDefaults.Wire.LayeredU.X",
         "VE.NormDefaults.Wire.LayeredU.background",
         "VE.NormDefaults.Wire.layeredCase",
+        "VE.NormDefaults.Wire.legacyKinds",
         "VE.NormDefaults.Wire.rightsPack",
         "VE.NormDefaults.Wire.runLayered",
         "VE.NormDefaults.Wire.softLabelledU",
-        "VE.NormDefaults.Wire.softPack"
+        "VE.NormDefaults.Wire.softPack",
+        {
+          "name": "VE.NormDefaults.Wire.kindCase",
+          "tied": [
+            "VE.NormDefaults.Packs.kindCase_eq"
+          ]
+        },
+        {
+          "name": "VE.NormDefaults.Wire.legacyRows",
+          "tied": [
+            "VE.NormDefaults.Packs.dispatch_legacy"
+          ]
+        }
       ]
     },
     "VE/NormDefaults/Premises.lean": {
@@ -12926,10 +12975,12 @@
         }
       ],
       "G[V]": [
+        "VE.NormDefaults.Packs.KindRow",
         "VE.NormDefaults.Packs.Pack.names",
         "VE.NormDefaults.Packs.X",
         "VE.NormDefaults.Packs.coherenceLabels",
         "VE.NormDefaults.Packs.declaredIn",
+        "VE.NormDefaults.Packs.dispatch",
         "VE.NormDefaults.Packs.envX",
         "VE.NormDefaults.Packs.extendEnv",
         "VE.NormDefaults.Packs.firstRepeat",
@@ -12973,6 +13024,8 @@
         "VE.NormDefaults.Packs.Fixtures.ev",
         "VE.NormDefaults.Packs.Fixtures.fixturePrefixes",
         "VE.NormDefaults.Packs.Fixtures.holds",
+        "VE.NormDefaults.Packs.Fixtures.kindDiag",
+        "VE.NormDefaults.Packs.Fixtures.kinds",
         "VE.NormDefaults.Packs.Fixtures.rights",
         "VE.NormDefaults.Packs.Fixtures.soft",
         "VE.NormDefaults.Packs.Fixtures.weighing",
@@ -12983,6 +13036,8 @@
       "T": [
         "VE.NormDefaults.Packs.Fixtures.cx",
         "VE.NormDefaults.Packs.Fixtures.gen",
+        "VE.NormDefaults.Packs.Fixtures.kindJ",
+        "VE.NormDefaults.Packs.Fixtures.legacyAnswers",
         "VE.NormDefaults.Packs.Fixtures.legacyLabels",
         "VE.NormDefaults.Packs.Fixtures.legacyPacks",
         "VE.NormDefaults.Packs.Fixtures.legacyU",
@@ -13555,6 +13610,12 @@
         "VE.Calc.DeriveExamples.x0Pos",
         "VE.Calc.DeriveExamples.xFloor",
         "VE.Calc.DeriveExamples.yAbove"
+      ]
+    },
+    "VE/Compose/ProfilesMain.lean": {
+      "G[V]": [
+        "main",
+        "rowJson"
       ]
     }
   }

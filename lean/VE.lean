@@ -176,6 +176,7 @@ import VE.Events.Completion
 import VE.Events.Examples
 import VE.NormDefaults.Packs
 import VE.NormDefaults.PacksLegacy
+import VE.NormDefaults.PacksLabels
 import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLegacyExamples
 import VE.Readings.SupPacks

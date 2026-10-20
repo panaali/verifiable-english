@@ -64,7 +64,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `ve/readings.py:_check_readings_lean` | ve/readings.py:493 | readings | 0 | 1 | yes |
 | `ve/readings_route.py:_completion_elaborate` | ve/readings_route.py:159 | readings-route | 0 | 36 | yes |
 | `ve/readings_route.py:_need` | ve/readings_route.py:332 | readings-route | 178 | 6 | no |
-| `ve/readings_route.py:elaborate` | ve/readings_route.py:129; ve/readings_route.py:140; ve/readings_route.py:145; ve/readings_route.py:138; ve/readings_route.py:117; ve/readings_route.py:115; ve/readings_route.py:143; ve/readings_route.py:136 | readings-route | 123 | 16 | no |
+| `ve/readings_route.py:elaborate` | ve/readings_route.py:129 (changed since the probe); ve/readings_route.py:140 (changed since the probe); ve/readings_route.py:145 (changed since the probe); ve/readings_route.py:138 (changed since the probe); ve/readings_route.py:117 (changed since the probe); ve/readings_route.py:115 (changed since the probe); ve/readings_route.py:143 (changed since the probe); ve/readings_route.py:136 (changed since the probe) | readings-route | 123 | 16 | no |
 | `ve/readings_s2_english.py:named_result` | ve/readings_s2_english.py:415 | readings-route | 2 | 0 | no |
 | `ve/readings_s2_wording.py:name` | ve/readings_s2_wording.py:71 | readings-route | 1 | 0 | no |
 | `ve/readings_sup.py:slot_label` | ve/readings_sup.py:403 | readings-route | 1 | 0 | no |
