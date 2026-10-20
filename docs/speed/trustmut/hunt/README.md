@@ -17,7 +17,7 @@ probe's own wait. Each fixed form is also a row of `tests/test_trust_mutants.py`
 `../evidence/probes.json` with the sha256 of the tool, the test file, the report (its quote of this line left out),
 `../claims.py` and `F15c.md` (`SOURCES`); its summary line:
 
-> Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
+> Probes on dde916c0c (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
 
 F14c runs `../claims.py`, which checks against the saved evidence the sentences of the report and of this README
 that `CLAIM` reads as stating a result, the report's step-1 table and the sentences its `named()` lists, and no other

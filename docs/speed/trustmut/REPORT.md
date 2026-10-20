@@ -441,7 +441,7 @@ allow-list; this round stopped after the seventh hunt and its fixes.
 - Every probe of the hunt directory, run by `hunt/run.py` on this branch (`evidence/probes.json`, with the sha256 of
   the tool, the test file, this report (its quote of the summary left out), `claims.py` and `hunt/F15c.md`):
 
-  > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
+  > Probes on dde916c0c (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
 
 - The sweep (section 1a), on the tool of `f49efae15`: every forms row and every lines row as the tables expect,
   `sweep.py` exits 0; the survivors are the same equivalent mutants.
