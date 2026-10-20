@@ -3916,6 +3916,9 @@ module VE.Calc.Identity 7b817d719293c5617a48088463516c1e487783804273438a59772681
 172:0-182:62 theorem VE.Calc.identityRun_fails@VE.Calc.Identity
 184:0-205:43 theorem VE.Calc.identityRun_undefined@VE.Calc.Identity
 207:0-228:80 theorem VE.Calc.identityRun_unknown@VE.Calc.Identity
+module VE.Calc.IdentityExamples 0fcd03d66643bb7b9bff0f31c9914bdbcb949e058a2b3fd2f36e41b3e68689ed
+9:0-11:56 def VE.Calc.IdentityExamples.ds@VE.Calc.IdentityExamples
+12:0-12:52 def VE.Calc.IdentityExamples.κ@VE.Calc.IdentityExamples
 module VE.Calc.Inline d11223a5ad49b2993c3e78312bcb065ad833dfdaaf028dda0de9d0c541c5a822
 10:0-12:85 def VE.Calc.freeNames@VE.Calc.Inline
 14:0-16:84 def VE.Calc.assign@VE.Calc.Inline
@@ -21316,4 +21319,4 @@ module VE.Words.Situation 4052e7ca4f76c9f7742c08560fd083d76c33a7c1d050455fa9904b
 145:0-156:13 def VE.Words.bindings@VE.Words.Situation
 158:0-169:50 def VE.Words.pairSentence@VE.Words.Situation
 186:0-188:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE baa45acb845c160595dd0d7061f19cadb3ee4d079a2d770b20e8f5646e66f556
+module VE 057a59802471e2cad0a389206ddacae8f5b96042db9539f0e8c30ada04782328
