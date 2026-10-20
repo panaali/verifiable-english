@@ -384,6 +384,54 @@ def test_an_outside_test_that_fails_without_the_mutant_is_no_kill(package, defau
             assert m["status"] == before[m["id"]], m
 
 
+BRIDGED = {  # PROBE F13: outside checks that hold for every `f` and `g`, through instances on proofs of lean/
+    "lean/Demo/Defs.lean": "namespace Demo\n\ndef P (n : Nat) : Prop := n < 3\n\ndef f (n : Nat) : Bool := decide (n < 3)"
+                           "\n\ndef Q (n : Nat) : Prop := n < 4\n\ndef g (n : Nat) : Bool := decide (n < 4)\n\nend Demo\n",
+    # imported by the outside file itself, in the mutated module's directory, with no check
+    "lean/Demo/Bridge.lean": "import Demo.Defs\n\nnamespace Demo\n\ntheorem p_iff (n : Nat) : P n ↔ f n = true := by simp "
+                             "[P, f]\n\ninstance (n : Nat) : Decidable (P n) := decidable_of_iff (f n = true) (p_iff "
+                             "n).symm\n\nend Demo\n",
+    # reached only through `Demo.Far.Top`, which the outside file imports, in another directory
+    "lean/Demo/Far/Mid.lean": "import Demo.Defs\n\nnamespace Demo\n\ntheorem q_iff (n : Nat) : Q n ↔ g n = true := by "
+                              "simp [Q, g]\n\ninstance (n : Nat) : Decidable (Q n) := decidable_of_iff (g n = true) "
+                              "(q_iff n).symm\n\nend Demo\n",
+    "lean/Demo/Far/Top.lean": "import Demo.Far.Mid\n",
+    "checks/Check.lean": "import Demo.Bridge\nimport Demo.Far.Top\n\nopen Demo\n\nexample : ¬ P 3 := by decide\n\n"
+                         "example : ¬ Q 4 := by decide\n",
+}
+
+
+def test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant(tmp_path):
+    """PROBE F13: `lake env lean` builds nothing, so the modules an outside --test file imports (directly, or through
+    a module that imports them) kept their pre-mutant `.olean`: the proof the mutant broke there (`p_iff`, `q_iff`)
+    was never rechecked, cut or seen by the probe, and `decide` refuted `¬ P 3` through the instance on it (KILLED,
+    although it holds for every `f`). Now they are built with the mutant, as a check module is: the broken proof is
+    cut and the probe finds it, so UNKNOWN, as the same check inside lean/ gives (hunt H4)."""
+    root = tmp_path / "package"
+    scaffold(root, "Far")
+    (root / "checks").mkdir()
+    for name, text in BRIDGED.items():
+        (root / name).write_text(text)
+    (tmp_path / "dump").mkdir()
+    dump(root, tmp_path / "dump", [])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+    done, mutants = tool(root, tmp_path / "run", "--max-mutants", "1000", "--test", "checks/Check.lean")
+    for name in ("f", "g"):
+        mine = of(mutants, name)
+        assert mine and not [m for m in mine if m["status"] == "KILLED"], (mine, done.stdout + done.stderr)
+        assert [m for m in mine if m["status"] == "UNKNOWN" and "a proof the mutant broke" in m["detail"]], mine
+
+
+def test_an_outside_test_whose_header_cannot_be_read_stops_the_run(package, tmp_path):
+    """Review F13: the modules an outside --test file imports are read from its header; one the tool cannot read
+    (an import sharing its line) stops the run (2) before any build, never a run that skips them."""
+    (package / "outside").mkdir(exist_ok=True)
+    (package / "outside/Header.lean").write_text("import Demo.Defs import Demo.Proofs\n#guard Demo.small 2\n")
+    done, mutants = tool(package, tmp_path / "run", "--test", "outside/Header.lean")
+    assert done.returncode == 2 and "Header.lean" in done.stderr and mutants == [], done.stdout + done.stderr
+
+
 def test_a_build_past_its_time_limit_is_unknown(package, tmp_path):
     """Hunt T5w, T7: a mutant can make Lean run forever (an instance chain `Small (n + 0)`), so every build of a
     mutant has `--build-timeout`; past it the process group is killed and the mutant is UNKNOWN, never KILLED or a

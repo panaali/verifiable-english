@@ -805,6 +805,26 @@
     "tests/test_trust_mutants.py::test_a_build_past_its_time_limit_is_unknown"
    ],
    "claim": "a mutant's build past `--build-timeout` is killed and the mutant UNKNOWN, never a hung run (hunt T5w, T7)"
+  },
+  {
+   "id": "TM80",
+   "file": "tools/trust_mutants.py",
+   "find": "{module_name(t) for t in tests} | tree.imported) - {module})]",
+   "replace": "{module_name(t) for t in tests}) - {module})]",
+   "tests": [
+    "tests/test_trust_mutants.py::test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant"
+   ],
+   "claim": "the modules an outside --test file imports are built with the mutant, so a proof it broke there is cut and seen by the probe (review F13)"
+  },
+  {
+   "id": "TM81",
+   "file": "tools/trust_mutants.py",
+   "find": "            fatal.append(f\"{t}: {error}\")",
+   "replace": "            pass",
+   "tests": [
+    "tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run"
+   ],
+   "claim": "an outside --test file whose imports cannot be read stops the run (review F13)"
   }
  ]
 }

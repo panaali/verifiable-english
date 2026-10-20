@@ -14,7 +14,7 @@ the checkout's line numbers, read the mutated text right (review F9).
 Each mutant is built in a private scratch copy of lean/ (its build restored from tools/lean_share.py's checked build
 of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, then each module that imports it and holds checks for it: a check whose compiled
 statement (lean/statements.txt) uses it, every other check in a module of its directory (of the whole cone with
---deep), and the --test files. A check is a command whose outcome Lean computes from definitions alone, never from a
+--deep), the --test files and every module of lean/ an outside --test file imports (review F13). A check is a command whose outcome Lean computes from definitions alone, never from a
 proof (`classify`): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an `example` or theorem proved by
 `decide`, `native_decide` or `rfl`, with no other tactic block in it; a `#guard_msgs … in` is what it wraps. Every
 other `example` or theorem, a check form with a tactic block inside, and every `#print` (it lists or shows proofs)
@@ -53,7 +53,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 import difflib
 import json
 import os
@@ -540,6 +540,8 @@ class Tree:
     uses: dict[str, set[tuple[str, str]] | None]  # theorem -> the constants its statement uses
     files: dict[str, str]  # module -> file under lean/
     importers: dict[str, set[str]]
+    # the modules of lean/ an outside --test file imports (`main`): built with the mutant, as a check module is
+    imported: set[str] = field(default_factory=set)
 
 
 def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
@@ -600,7 +602,9 @@ def stated(tree: Tree, theorem: str | None, m: Mutant) -> bool:
 
 
 def targets(tree: Tree, m: Mutant, tests: list[str], deep: bool = False) -> list[str]:
-    """The mutated module, then the --test modules and the modules of its cone that hold checks for it."""
+    """The mutated module, then the --test modules, the modules of its cone that hold checks for it and those an
+    outside --test file imports (review F13: `lake env lean` builds nothing, so without them the file reads their
+    pre-mutant `.olean`, and a proof the mutant broke there is never rechecked, cut or seen by the probe)."""
     module, home = module_name(m.file), m.file.rpartition("/")[0]
     cone, todo = {module}, [module]
     while todo:
@@ -609,7 +613,7 @@ def targets(tree: Tree, m: Mutant, tests: list[str], deep: bool = False) -> list
         todo += new
     checks = {x for x in cone for s, e, r, n in tree.roles.get(tree.files[x], ())
               if r == "check" and (deep or tree.files[x].rpartition("/")[0] == home or stated(tree, n, m))}
-    return [module, *sorted((checks | {module_name(t) for t in tests}) - {module})]
+    return [module, *sorted((checks | {module_name(t) for t in tests} | tree.imported) - {module})]
 
 
 def moved(before: str, after: str, lines: tuple[int, int]) -> int | None:
@@ -1088,6 +1092,11 @@ def main(argv: list[str] | None = None) -> int:
         return print(f"--test: not a Lean file: {bad}", file=sys.stderr) or 2
     started = time.monotonic()
     found, tree, fatal = plan(root, base)
+    for t in outside:
+        try:
+            tree.imported |= {x for x in imports(t.read_text()) if x in tree.files}
+        except ValueError as error:
+            fatal.append(f"{t}: {error}")
     if fatal:
         return print("\n".join(fatal), file=sys.stderr) or 2
     jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
