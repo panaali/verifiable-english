@@ -62,6 +62,7 @@ import queue
 import re
 import secrets
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -110,6 +111,7 @@ NO_ANSWER = re.compile(r"maximum recursion depth|maximum number of heartbeats|\(
                        r"(?:deep recursion|deterministic timeout|interrupted)|stack overflow|"
                        r"Tactic `(?:decide|native_decide)` failed")
 KILL, RFL, NONE = "KILL", "RFL", "UNKNOWN"  # `judge`'s verdicts on one error
+TIMED_OUT = -1000  # `Scratch.lake`'s code for a run killed past its time limit
 STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
         "for", "unless", "mut", "have", "show"}
 LIST_METHODS = ("find\\?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
@@ -827,14 +829,23 @@ class Scratch:
                 shutil.copytree(lean / ".lake", self.lean / ".lake", symlinks=True,
                                 ignore=lambda d, names: ["bin"] if Path(d).name == "build" else [])
 
-    def lake(self, env: dict, *args: str) -> tuple[int, str]:
-        done = subprocess.run([lake_outputs.lean_executable(env, "lake"), *args], cwd=self.lean, env=env,
-                              capture_output=True, text=True, check=False)
-        return done.returncode, done.stdout + done.stderr
+    def lake(self, env: dict, *args: str, timeout: float | None = None) -> tuple[int, str]:
+        """Lake's exit code and output; past `timeout` seconds the whole process group is killed and the code is
+        `TIMED_OUT` (a mutant can make Lean run forever: hunt T5w, T7)."""
+        child = subprocess.Popen([lake_outputs.lean_executable(env, "lake"), *args], cwd=self.lean, env=env,
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
+        try:
+            out, err = child.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            os.killpg(child.pid, signal.SIGKILL)
+            child.communicate()
+            return TIMED_OUT, f"lake {args[0]} did not finish in {timeout:g} s (--build-timeout)"
+        return child.returncode, out + err
 
 
 def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list[Path], env: dict,
-        deep: bool = False, controls: dict | None = None, hashes: dict | None = None) -> tuple[str, str]:
+        deep: bool = False, controls: dict | None = None, hashes: dict | None = None,
+        timeout: float | None = None) -> tuple[str, str]:
     """(status, detail) of one mutant, built in `scratch`, whose files are restored afterwards. A proof that fails
     is cut and the build repeated, before any other error is read: a check may fail only because a proof it reads
     failed. Nothing is cut up front, so a cut proof is one the mutant broke (or that fails without it), which is
@@ -843,6 +854,9 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
     fails there too reads a cut proof (review F7: `#eval` refuses a value that depends on `sorry`), so it is cut as
     well and never a kill; nor is one whose check cannot refute the mutated definition (`reading`)."""
     controls = {} if controls is None else controls
+
+    def lake(env_: dict, *args: str) -> tuple[int, str]:  # every run of a mutant's build has `timeout` (UNKNOWN past it)
+        return scratch.lake(env_, *args, timeout=timeout)
     hashes = {} if hashes is None else hashes  # (file, span) -> what `probe` gives each check without a mutant
     rebuilt: list[bool] = []  # the stages built with the mutant again, once (a control built them without it)
     current: dict = {"mutant": True, "stage": []}  # whether the stage's last build is the mutant's
@@ -867,7 +881,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 current["mutant"] = True
             text, mine = (outside_file.read_text(), file_roles(outside_file)) if outside_file else (
                 read(f), tree.roles.get(f, ()))
-            probed[f] = probe(scratch.lake, {**env, "TM_TRUST_MUTATED": m.definition,
+            probed[f] = probe(lake, {**env, "TM_TRUST_MUTATED": m.definition,
                                              "TM_TRUST_LINES": f"{m.lines[0]} {m.lines[1]}"}, text, mine,
                               beside(scratch.lean, f), outside_file is not None)
         entry, control = probed[f].get(span), hashes.get(key)
@@ -901,7 +915,9 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
 
     def build(stage: list[str]) -> tuple[int, list[tuple[str, int, str]]]:
         for attempt in range(3):  # again: Lake can fail with no located error under load
-            code, output = scratch.lake(env, "build", *(f"+{x}" for x in stage))
+            code, output = lake(env, "build", *(f"+{x}" for x in stage))
+            if code == TIMED_OUT:
+                return code, [("", 0, output)]
             found = located(output)
             columns.update(((f, n, message), c) for f, n, c, message in found)
             if code == 0 or found:
@@ -992,14 +1008,16 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                               lambda now: rebuild(stage, now), reading)
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
-        failing = {t: out for t in outside if (out := scratch.lake(env, "env", "lean", str(t)))[0]}
+        failing = {t: out for t in outside if (out := lake(env, "env", "lean", str(t)))[0]}
+        if late := next((t for t in failing if failing[t][0] == TIMED_OUT), None):
+            return "UNKNOWN", f"{late}: {failing[late][1]}"
         if not failing:
             return "SURVIVOR", ""
         key = ("outside", tuple(built), state())
         if key not in controls:
             write(m.file, False)
             ok = all(build(stage)[0] == 0 for stage in (built[:1], built[1:]) if stage)
-            controls[key] = [t for t in outside if not ok or scratch.lake(env, "env", "lean", str(t))[0]]
+            controls[key] = [t for t in outside if not ok or lake(env, "env", "lean", str(t))[0]]
             write(m.file, True)
         if not (new := [t for t in failing if t not in controls[key]]):
             return "UNKNOWN", f"{next(iter(failing))} fails without the mutant too"
@@ -1008,7 +1026,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             copy = scratch.lean.parent / "outside" / t.name
             copy.parent.mkdir(exist_ok=True)
             copy.write_text(now[str(t)])
-            code, output = scratch.lake(env, "env", "lean", str(copy))
+            code, output = lake(env, "env", "lean", str(copy))
             found = [(str(t) if f == str(copy) else f, n, message) for f, n, _, message in located(output, LEAN_ERROR)]
             return None if not built_mutant() or code and not found else found
 
@@ -1051,6 +1069,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--deep", action="store_true", help="every check module of the cone, not only its directory's")
     parser.add_argument("--allow", type=Path)
     parser.add_argument("--json", type=Path)
+    parser.add_argument("--build-timeout", type=float, default=1800,
+                        help="seconds a mutant's build may run before it is UNKNOWN (default: 1800)")
     args = parser.parse_args(argv)
     root = args.root.resolve()
     entries = json.loads(args.allow.read_text()).get("allow") if args.allow else []
@@ -1107,7 +1127,8 @@ def main(argv: list[str] | None = None) -> int:
         def one(m: Mutant) -> None:
             scratch = pool.get()
             try:
-                m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep, controls, hashes)
+                m.status, m.detail = run(m, scratch, tree, tests, outside, env, args.deep, controls, hashes,
+                                         args.build_timeout)
             finally:
                 pool.put(scratch)
             if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:

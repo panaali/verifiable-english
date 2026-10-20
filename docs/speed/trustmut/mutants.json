@@ -795,6 +795,16 @@
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T1]"
    ],
    "claim": "a check that computes through an axiom of the tree never kills (hunt T1)"
+  },
+  {
+   "id": "TM79",
+   "file": "tools/trust_mutants.py",
+   "find": "            out, err = child.communicate(timeout=timeout)",
+   "replace": "            out, err = child.communicate()",
+   "tests": [
+    "tests/test_trust_mutants.py::test_a_build_past_its_time_limit_is_unknown"
+   ],
+   "claim": "a mutant's build past `--build-timeout` is killed and the mutant UNKNOWN, never a hung run (hunt T5w, T7)"
   }
  ]
 }

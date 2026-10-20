@@ -384,6 +384,16 @@ def test_an_outside_test_that_fails_without_the_mutant_is_no_kill(package, defau
             assert m["status"] == before[m["id"]], m
 
 
+def test_a_build_past_its_time_limit_is_unknown(package, tmp_path):
+    """Hunt T5w, T7: a mutant can make Lean run forever (an instance chain `Small (n + 0)`), so every build of a
+    mutant has `--build-timeout`; past it the process group is killed and the mutant is UNKNOWN, never KILLED or a
+    hung run. An expired limit (0 s) is injected: every mutant build is past it at once."""
+    done, mutants = tool(package, tmp_path / "run", "--max-mutants", "3", "--build-timeout", "0")
+    ran = [m for m in mutants if m["status"] != "NOT RUN"]
+    assert len(ran) == 3 and done.returncode == 1, done.stdout + done.stderr
+    assert all(m["status"] == "UNKNOWN" and "did not finish in 0 s" in m["detail"] for m in ran), ran
+
+
 @pytest.mark.parametrize("limit", [0, 3])
 def test_max_mutants_lists_the_rest_as_not_run(package, tmp_path, limit):
     """A budget of 0 runs nothing and never exits 0 (3: incomplete)."""
