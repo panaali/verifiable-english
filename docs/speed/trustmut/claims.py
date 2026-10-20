@@ -423,9 +423,10 @@ def cells(row: str) -> list[str]:
 def tabled(doc: Path) -> list[str]:
     """The step-1 table (REPORT section 1) cell by cell against `replay.table()`, which writes it from the saved
     replays (review F16): one line per row, UNBOUND with the cells that differ, or when a row is missing or extra."""
-    want = [cells(row) for row in replay.table()]
+    table = replay.table()
+    want = [cells(row) for row in table]
     lines = doc.read_text().splitlines()
-    head = [n for n, line in enumerate(lines) if " ".join(line.split()) == " ".join(replay.table()[0].split())]
+    head = [n for n, line in enumerate(lines) if " ".join(line.split()) == " ".join(table[0].split())]
     where = doc.relative_to(HERE) if doc.is_relative_to(HERE) else doc
     if len(head) != 1:
         return [f"{where}:0 UNBOUND ['the step-1 table']: {len(head)} tables with its header"]
