@@ -58,10 +58,11 @@ def Poly.one : Poly := [⟨1, []⟩]
 def Poly.neg (p : Poly) : Poly := p.map fun m => ⟨-m.coeff, m.vars⟩
 
 /-- Numerators and denominators below `10 ^ maxDigits` have at most `maxDigits` digits (2.4): one comparison with a
-constant instead of `Small`'s digit list, since every intermediate coefficient is checked. -/
+constant instead of `Small`'s digit list, since every intermediate coefficient is checked. The term count is checked
+by `add?` and `mul?` before the work, and `norm` never adds a term. -/
 def Poly.coeffBound : Nat := 10 ^ maxDigits
 def Poly.fits (p : Poly) : Bool :=
-  p.length ≤ maxPolyTerms && p.all fun m =>
+  p.all fun m =>
     m.coeff.num.natAbs < Poly.coeffBound && m.coeff.den < Poly.coeffBound && m.vars.all (·.2 ≤ maxPolyExponent)
 def Poly.guard (p : Poly) : Option Poly := if p.fits then some p else none
 def Poly.add? (p q : Poly) : Option Poly :=
