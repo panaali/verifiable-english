@@ -20,7 +20,7 @@ def test_semantic_combinations_have_explicit_ownership():
     for module, symbol, owner in (("readings", "validate_reading_sets", "Lean `readings`"),
                                   ("readings", "check_readings", "Lean `readings`"),
                                   ("equivalence", "validate_reference", "Trusted narrowed"),
-                                  ("document", "check_document", "Trusted narrowed")):
+                                  ("document/report", "check_document", "Trusted narrowed")):
         row = next(line for line in report.splitlines()
                    if line.startswith(f"| `ve/{module}.py` | `{symbol}` |"))
         assert "| S |" not in row
