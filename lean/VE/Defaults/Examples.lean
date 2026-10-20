@@ -1,7 +1,7 @@
 import VE.Defaults.Premises
 
-/-! DF-1a's synthetic fixtures (docs/spec/defeasible.md 8.1 and 8.2, DF-α to DF-ζ, DF-ι, DF-κ, DF-σ) on the premises, the
-basis and the form. Each document is decoded by the real `decodeSoftU`; every value is a `#guard`.
+/-! DF-1a's synthetic fixtures (docs/spec/defeasible.md 8.1 and 8.2, DF-α to DF-ζ, DF-ι, DF-κ, DF-ω, DF-σ) on the premises,
+the gate, the basis and the form. Each document is decoded by the real `decodeSoftU`; every value is a `#guard`.
 
 Situations have one entity per sort. The one-element check (`check1`, RD-9's `modelCheckX` with `localFree`) is
 complete for these documents: every premise and conclusion is universal over one tuple of variables and every
@@ -113,6 +113,11 @@ def model1 (L : LayeredU) (X Γ : List VE.Formula) : Bool :=
   (configs L).any (fun (on, fon) => (check1 L X Γ .bottom on fon).isSome)
 def assume1 (L : LayeredU) (Γ : List VE.Formula) (φ : VE.Formula) : List String :=
   VE.Readings.usedLabels (fun ps => follows1 L ps Γ φ) L.X (dfltLabelled L.D) []
+/-- Some one-element collision of a colliding pair. -/
+def collision1 (L : LayeredU) : Bool :=
+  (configs L).any (fun (on, fon) => (collidingPairs L.D).any (fun (P, Q) =>
+    collisionCheck L.U L.D [] (sitOf L on) (fillOf L fon) P.name Q.name))
+
 /-- RD-9's `xModelOk` on the wire, at the one-element situation `on` with no filling. -/
 def modelJ (L : LayeredU) (on : List String) : Json :=
   Json.mkObj [("complete", true),
@@ -152,6 +157,8 @@ def outw : String := "soft__outweighs__helpfulness__safety__x_permitted"
 #guard holds dα fun L => dfltLabels L.D == [excN "r1"] &&
   dfltPremises L.D == [.all "assistant" (.implies (.unary exc1 (.var 0)) .bottom)] &&
   defaultX L.D L.X == L.X ++ dfltPremises L.D && withoutDefaults L.D L.X == L.X ++ [.top]
+-- no colliding pair: the gate passes with no certificate
+#guard holds dα fun L => (collidingPairs L.D).isEmpty && defaultCoherenceCheck L.U L.D [] []
 -- strict: does not follow, and the strict countermodel {excepted r1} checks on the wire; the default model {} checks
 #guard holds dα fun L => !follows1 L L.X [] xAll && wireOk L L.X [] xAll [exc1] && wireOk L (defaultX L.D L.X) [] .bottom []
 #guard holds dα fun L => assume1 L [] xAll == [excN "r1"] &&
@@ -183,11 +190,18 @@ def βii : VE.Formula := .all "assistant" (.implies (.not (.unary "urgent" (.var
 #guard holds dβ fun L => follows1 L (defaultX L.D L.X) [] βii && assume1 L [] βii == [excN "r1"] &&
   basisOf (assume1 L [] βii) (wireOk L L.X [] βii [exc1]) == .needs && followsForm L.D (assume1 L [] βii) == .long
 
-/-! ## DF-γ: unranked colliding defaults -/
+/-! ## DF-γ, DF-ω: the gate's three outcomes -/
 
--- no one-assistant situation admits `defaultX`, while some admit `X` (the gate's case, df-1ab)
+-- DF-γ: unranked colliding defaults; no pair certificate checks, and the collision at {} checks
 #guard holds dγ fun L => (collidingPairs L.D).map (fun (P, Q) => (P.name, Q.name)) == [("r1", "r2")] &&
-  dfltLabels L.D == [excN "r1", excN "r2"] && !model1 L (defaultX L.D L.X) [] && model1 L L.X []
+  dfltLabels L.D == [excN "r1", excN "r2"] &&
+  !defaultCoherenceCheck L.U L.D [] [none] && !defaultCoherenceCheck L.U L.D [] [] &&
+  collisionCheck L.U L.D [] (sitOf L []) (fillOf L []) "r1" "r2" && !collisionCheck L.U L.D [] (sitOf L []) (fillOf L []) "r2" "r1"
+-- no one-assistant situation admits `defaultX`, while some admit `X`
+#guard holds dγ fun L => !model1 L (defaultX L.D L.X) [] && model1 L L.X []
+-- DF-ω: DF-δ with its pair certificate missing and no collision on any one-element situation: neither outcome
+#guard holds dδ fun L => (collidingPairs L.D).length == 1 && !defaultCoherenceCheck L.U L.D [] [] &&
+  !defaultCoherenceCheck L.U L.D [] [none] && !collision1 L
 
 /-! ## DF-δ, DF-δ′: a ranked pair, holistic and strict -/
 
