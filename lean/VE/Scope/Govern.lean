@@ -264,4 +264,97 @@ def govern (D : SDoc) : Except String Json := do
       if (edgesOf D (fun v => t.lookup v) g).isEmpty then throw s!"ScopeNoEffect: {g.id}"
     pure (patch D (comp.map fun (u, o) => (u, addOver (edgesInto D (fun v => t.lookup v) u) o)))
 
+/-! The run path (1.5.8): `govern`'s steps after the admission, reading the order, each reach (as `frameOn` reads
+    it, `lv`, and as the other steps read it, `cv`) and each rule unit's base name from tables computed once.
+    `governFast_eq` (Theorems.lean) proves that it answers as `govern`. -/
+
+deriving instance DecidableEq for Reach
+
+/-- `f x`, read from the table `t` when it has `x`. -/
+def memo [BEq α] (t : List (α × β)) (f : α → β) (x : α) : β := match t.lookup x with
+  | some v => v
+  | none => f x
+
+def frameOnF (D : SDoc) (lv : Reach → List String) (u : String) : List Governor :=
+  D.governors.filter (fun g => isFrame g.effect && (lv g.reach).contains u)
+
+def baseObjF (D : SDoc) (lv : Reach → List String) (u : String) : Except String Json :=
+  let c := contentOf D.doc u
+  if !(isPart c || isNorm c) then .error s!"ScopeNotARule: {u}" else
+  match frameOnF D lv u with
+  | [] => if isPart c then .error s!"ScopeOrphanPart: {u}" else .ok (objectOf c)
+  | [g] => match g.effect with
+    | .frame lead => mergeParts u lead (objectOf c)
+    | _ => .ok (objectOf c)
+  | g₁ :: g₂ :: _ => .error s!"ScopeOrder: {u}: {g₁.id}, {g₂.id}"
+
+def coveredBy (D : SDoc) (bn : String → Option String) : Reach → Except String (List String)
+  | .rules ns => do
+    for n in ns do
+      unless (ruleUnits D).any (fun u => bn u == some n) do throw s!"ScopeUnknownRule: {n}"
+    pure ((ruleUnits D).filter (fun u => (bn u).any ns.contains))
+  | r => coveredLayout D r
+
+def governorsOfF (os : List Governor) (cv : Reach → List String) (u : String) : List Governor :=
+  os.filter (fun g => unary g.effect && (cv g.reach).contains u)
+
+def composedF (D : SDoc) (lv : Reach → List String) (os : List Governor) (cv : Reach → List String) (u : String) :
+    Except String Json := do
+  (governorsOfF os cv u).foldlM (fun o g => applyEffect u g.effect o) (← baseObjF D lv u)
+
+def edgesOfF (cv : Reach → List String) (rule : String → Option SoftNode) (g : Governor) : List (String × String) :=
+  match rule g.unit with
+  | none => []
+  | some N => match g.effect with
+    | .precedes => (cv g.reach).filterMap fun v => (rule v).bind fun M =>
+        if M.pred == N.pred && M.name != N.name then some (g.unit, M.name) else none
+    | .yields => (cv g.reach).filterMap fun v => (rule v).bind fun M =>
+        if M.pred == N.pred && M.name != N.name then some (v, N.name) else none
+    | _ => []
+
+def orderCheckF (D : SDoc) (os : List Governor) (cv : Reach → List String) : Except String Unit := do
+  for u in unitIds D.doc do
+    let gs := governorsOfF os cv u
+    for g₁ in gs do
+      for g₂ in gs do
+        if g₁.id != g₂.id && !Commutes g₁.effect g₂.effect then throw s!"ScopeOrder: {u}: {g₁.id}, {g₂.id}"
+
+/-- `govern` after the admission, on the order `os` and the reaches `lv` and `cv`. -/
+def governBody (D : SDoc) (os : List Governor) (lv cv : Reach → List String) : Except String Json :=
+  if D.governors.isEmpty then
+    match partUnits D with
+    | [] => pure D.doc
+    | u :: _ => throw s!"ScopeOrphanPart: {u}"
+  else do
+    orderCheckF D os cv
+    let aff := (ruleUnits D).filter fun u =>
+      isPart (contentOf D.doc u) || !(frameOnF D lv u).isEmpty || !(governorsOfF os cv u).isEmpty ||
+      D.governors.any (fun g => match g.effect with
+        | .precedes => g.unit == u
+        | .yields => (cv g.reach).contains u
+        | _ => false)
+    let comp ← aff.mapM (fun u => do pure (u, ← composedF D lv os cv u))
+    let gs := os.filter (graph ·.effect)
+    let needed := (ruleUnits D).filter (fun u => gs.any (fun g => g.unit == u || (cv g.reach).contains u))
+    let t ← needed.mapM (fun u => do pure (u, ← VE.Readings.Wire.decodeNorm D.re (← composedF D lv os cv u)))
+    for g in gs do
+      if (edgesOfF cv (fun v => t.lookup v) g).isEmpty then throw s!"ScopeNoEffect: {g.id}"
+    pure (patch D (comp.map fun (u, o) => (u, addOver
+      ((gs.flatMap (edgesOfF cv (fun v => t.lookup v))).filterMap fun (w, n) => if w == u then some n else none) o)))
+
+/-- The tables: each governor's reach as a layout reach, then each rule unit's base name, then each reach. -/
+def fastReads (D : SDoc) : (Reach → List String) × (Reach → List String) :=
+  let lv := memo (D.governors.map fun g => (g.reach, (coveredLayout D g.reach).toOption.getD []))
+    (fun r => (coveredLayout D r).toOption.getD [])
+  let bn := memo ((ruleUnits D).map fun u =>
+    (u, ((baseObjF D lv u).toOption.bind fun o => (VE.Readings.Wire.decodeNorm D.re o).toOption).map (·.name)))
+    (baseName D)
+  (lv, memo (D.governors.map fun g => (g.reach, (coveredBy D bn g.reach).toOption.getD []))
+    (fun r => (covered D r).toOption.getD []))
+
+def governFast (D : SDoc) : Except String Json := do
+  admitBlock D
+  let (lv, cv) := fastReads D
+  governBody D (ordered D) lv cv
+
 end VE.Scope

@@ -554,6 +554,35 @@ def gR : Governor := ⟨"gR", "u0164.s01", .carveOut (j "[\"unary\", \"rules\", 
 #guard errorOf (gov (hcDoc [("u0166.s01", j "{\"norm\": {\"name\": \"r\"}}")]) [⟨"gX", "u0164.s01", carveT, .fixed ["u0166.s01"], ["u0166.s01"]⟩]) ==
   "ScopeNotARule: u0166.s01"
 
+-- sc-1ad: the mutants sc-1ac's review found surviving. A carve-out on a rule with `unless` but no guard, or over an
+-- assertion, is refused; a lone reguard that is no narrowing (u0173.s01's `g2`) composes; 256 governors pass step 1
+def gX (c : Json) : List (String × Json) × List Governor :=
+  ([("u0166.s01", c)], [⟨"gX", "u0164.s01", carveT, .fixed ["u0166.s01"], ["u0166.s01"]⟩])
+#guard [gX (j "{\"norm\": {\"name\": \"r\", \"unless\": []}}"), gX (j "[\"top\"]")].map (fun (cs, gs) => errorOf (gov (hcDoc cs) gs)) ==
+  ["ScopeNotARule: u0166.s01", "ScopeNotARule: u0166.s01"]
+#guard (gov (hcDoc parts) [g1, g2] hcNames).toOption.bind (fun o => (normOf (contentOf o "u0165.s01")).map (·.getObjValD "guard")) ==
+  some (substOwn (j "[\"unary\", \"mass_casualty_weapon_uplift\", [\"var\", 1]]") depthLimit u0173)
+#guard errorOf (gov (hcDoc parts) ((List.range 256).map fun i => {g1 with id := s!"g{i}"})) == "ScopeOrder: u0165.s01: g0, g1"
+-- a recorded reach of the right length but the wrong units; a `rules` reach of two names covers both
+#guard errorOf (gov (hcDoc parts) [{g1 with units := seven.take 6 ++ ["u0166.s01"]}]) == "ManifestMismatch: scope.governors.g1.units"
+#guard errorOf (gov (hcDoc parts) [g1, {gR with reach := .rules ["hc-csam", "hc-cbrn-uplift"], units := ["u0165.s01", "u0165.s07"]}]) == "ok"
+-- `own` is reserved as a predicate and as a constant too
+def ownEnv (k v : String) : Json := envJ.setObjVal! "vocabulary" ((envJ.getObjValD "vocabulary").setObjVal! k (j s!"\{\"own\": {v}}"))
+#guard [ownEnv "predicates" "{\"arguments\": [\"person\"], \"description\": \"o\"}", ownEnv "constants" "{\"description\": \"o\", \"sort\": \"person\"}"].map
+  (fun e => match (do govern (sdoc (hcDoc parts) [g1, g6] hcNames (← VE.Readings.Wire.decodeEnvironment e))) with
+    | .error m => m | .ok _ => "ok") == ["ScopeReserved: own", "ScopeReserved: own"]
+-- order 1.4 across classes: a list reach (2) before a rules reach (3) before a fixed reach (4), whatever their units'
+-- positions and the governors' order
+#guard contentStr (gov (hcDoc parts) [g1, {gR with id := "gF", effect := .carveOut (j "[\"unary\", \"fixed\", [\"var\", 1]]"), reach := .fixed ["u0165.s07"]},
+    gR, {g6 with id := "gL", unit := "u0164.s02", reach := .list "u0164.s02"}]) "u0165.s07" == some
+  "{\"norm\":{\"guard\":[\"unary\",\"csam\",[\"var\",1]],\"name\":\"hc-csam\",\"over\":[],\"predicate\":\"csam_generation\",\"sign\":false,\"unless\":[[\"unary\",\"tested_by_anthropic\",[\"var\",1]],[\"unary\",\"rules\",[\"var\",1]],[\"unary\",\"fixed\",[\"var\",1]]]}}"
+-- which refusal is reported: `yields` over a frontier; a frame over an unknown list name; a reading set on the
+-- governor's unit before one on its reach
+#guard [errorOf (gov (hcDoc parts) [g1, ⟨"gF", "u0166.s01", .yields, .frontier, []⟩]),
+  errorOf (gov (hcDoc parts) [{g1 with reach := .listName "unknown"}]),
+  errorOf (gov (hcDoc parts [("reading_sets", Json.arr #[Json.mkObj [("unit", "u0165.s03")], Json.mkObj [("unit", "u0164.s02")]])]) [g1])] ==
+  ["ScopeReach: gF", "ManifestMismatch: scope.governors.g1.unit", "ScopeReadings: u0164.s02"]
+
 -- sc-1ad, the graph step (1.5.5): `precedes` adds the reached rules on its predicate to its own `over`; `yields`
 -- adds its own name to theirs; another predicate (hc-csam) and the governor's own rule add nothing
 def gP : Governor := ⟨"gP", "u0165.s01", .precedes, .list "u0164.s02", seven⟩
@@ -575,6 +604,20 @@ def overOf (r : Except String Json) (u : String) : Option String :=
 -- `addOver` appends each new name once, after the names written; nothing to add, or no `over` array, is the object
 #guard [addOver ["a", "b", "a"] (j "{\"over\": [\"b\"], \"x\": 1}"), addOver ["b"] (j "{\"over\": [\"b\"]}"),
   addOver ["a"] (j "{\"over\": 1}")].map (·.compress) == ["{\"over\":[\"b\",\"a\"],\"x\":1}", "{\"over\":[\"b\"]}", "{\"over\":1}"]
+
+-- the run path answers as `govern` (`governFast_eq`), on documents, refusals and graph governors
+def govF (doc : Json) (gs : List Governor) (ln : List (VE.Discourse.ContentName × String × String) := []) :
+    Except String Json := do
+  governFast (sdoc doc gs ln (← VE.Readings.Wire.decodeEnvironment envJ))
+#guard [(hcDoc parts, [g1], []), (hcDoc parts, [g1, gY, gP], []), (hcDoc parts, [g1, g2, gR, g6], hcNames),
+    (hcDoc parts, [g1, {gY with unit := "u0165.s07"}], []), (hcDoc parts, [g1, g2, gN], hcNames), (hcDoc parts, [], []),
+    (hcDoc fourNorms, [], []), (hcDoc (without "u0165.s04" parts), [g1], [])].all fun (d, gs, ln) =>
+  match gov d gs ln, govF d gs ln with
+  | .ok a, .ok b => a.compress == b.compress
+  | .error a, .error b => a == b
+  | _, _ => false
+#guard contentStr (govF (hcDoc parts) [g1, gP]) "u0165.s01" == contentStr (gov (hcDoc parts) [g1, gP]) "u0165.s01" &&
+  (overOf (govF (hcDoc parts) [g1, gP]) "u0165.s01").isSome
 
 -- until sc-3ab, an anchor or label reach is refused, never skipped
 #guard errorOf (gov (hcDoc parts) [g1, ⟨"gA", "u0164.s01", narrowK, .anchor "sec", []⟩]) ==
@@ -663,6 +706,30 @@ theorem governor_fields (g : Governor) :
 theorem sdoc_fields (D : SDoc) : D = { layout := D.layout, doc := D.doc, block := D.block,
                                        governors := D.governors, listNames := D.listNames, anchors := D.anchors,
                                        re := D.re } := rfl
+
+/-! F-raw (sc-1ad's statement gate, a counterfixture): a `Json.obj` is any `Std.TreeMap.Raw`. On a tree no JSON parser
+    builds (unbalanced or unordered), `setObjVal!` rebalances: a member is dropped, a hidden one appears, a unit loses
+    its `id`. So `govern_preserves`, `govern_provenance`, `govern_strings` and `govern_no_new_symbols` fail as stated
+    (here `BlockBound` holds: `g1`'s payload has no string). The soft chain's decoder reads a rule's members by
+    traversal, not lookup, so `decodeNorm_name` fails there too. -/
+open Std.DTreeMap.Internal (Impl) in
+def nd (k : String) (v : Json) (l r : Impl String (fun _ => Json) := .leaf) : Impl String (fun _ => Json) :=
+  .inner (l.size + r.size + 1) k v l r
+def rawJ (t : Std.DTreeMap.Internal.Impl String (fun _ => Json)) : Json := .obj ⟨⟨t⟩⟩
+def hcUnits : Json := (hcDoc parts).getObjValD "units"
+def member (r : Except String Json) (k : String) : Option String := r.toOption.bind (·.getObjVal? k |>.toOption.map (·.compress))
+#guard [member (.ok (rawJ (nd "x" "X" (nd "units" hcUnits .leaf (nd "w" "W" .leaf (nd "wa" "WA")))))) "wa",
+  member (gov (rawJ (nd "x" "X" (nd "units" hcUnits .leaf (nd "w" "W" .leaf (nd "wa" "WA"))))) [g1]) "wa",
+  member (.ok (rawJ (nd "x" "X" (nd "units" hcUnits .leaf (nd "zzz" "Z"))))) "zzz",
+  member (gov (rawJ (nd "x" "X" (nd "units" hcUnits .leaf (nd "zzz" "Z")))) [g1]) "zzz"] == [some "\"WA\"", none, none, some "\"Z\""]
+def rawUnit : Json := rawJ (nd "kind" "rule" (nd "content" (contentOf (hcDoc parts) "u0165.s01") .leaf (nd "c2" "C" .leaf (nd "id" "u0165.s01"))))
+#guard (gov (Json.mkObj [("units", .arr ((unitsOf (hcDoc parts)).map fun x => if idOf x == "u0165.s01" then rawUnit else x).toArray)]) [g1]).toOption.map
+  (fun o => (unitIds o).take 3) == some ["u0164.s01", "u0164.s02", ""]
+def softEnv : Json := j "{\"language\": \"ve.core@0.2\", \"profiles\": [\"norms@0\", \"readings@1\", \"relational-fol@0\", \"soft-norms@0\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {\"person\": {\"description\": \"p\"}}, \"predicates\": {\"p\": {\"arguments\": [\"person\"], \"description\": \"p\", \"regulated\": {\"role\": \"plain\", \"default\": \"allow\"}}}, \"constants\": {}}}"
+-- the rule's `name` sits right of `over`, where lookup never goes
+def rawRule : Json := rawJ (nd "over" (.arr #[]) (nd "guard" (j "[\"top\"]") .leaf (nd "sign" (.bool false) (nd "predicate" "p") (nd "unless" (.arr #[])))) (nd "name" "hidden"))
+#guard (member (.ok rawRule) "name", (do pure (← VE.Readings.Wire.decodeNorm (← VE.Readings.Wire.decodeEnvironment softEnv) rawRule).name : Except String String).toOption) ==
+  (none, some "hidden")
 
 -- F-meta's anchor case: until sc-3ab adds discourse's anchor checks (step 7), a block with anchors is refused
 #guard (do govern ⟨layoutOf govPieces, hcDoc [], .null, [], [], [anc "doc" none "" (0, 1), anc "b" none "" (0, 1)],
