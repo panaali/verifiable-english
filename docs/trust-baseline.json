@@ -943,6 +943,20 @@
    "reason": "df-1ab: VE/Defaults/Premises.lean S +6 (DefaultCoherent), V +23 (collisionTuple, decidersOf, giveWayDeciders, untied); K +0; selU tied by cohPremiseU_selU; the checks C, the diagnostics G[R]",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ab, 2026-10-18",
    "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f"
+  },
+  {
+   "class": "S",
+   "lines": 19,
+   "reason": "ap-1a: VE/Acts/Lexical.lean +138 (S 28: Tok, joinWords, clauseWords moved from VE/Acts/Syntax.lean -9, and the limits, fixedOk, Form, Form.text, wording; D[V] 110: fold, normal, dropComma, slotOf?, pieceToks, rawLex, phraseToks, clash, decodeFixed, group, lex, check, Form.ofText?), VE/Acts/LexicalBase.lean +48 (D[V], moved verbatim from VE/Norms/Wire.lean), VE/Norms/Wire.lean -27 (-48 moved, +21 canonicalActIn, decodeRegulatedWith, decodeRegulatedIn): S +19, V +131, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "V",
+   "lines": 131,
+   "reason": "ap-1a: VE/Acts/Lexical.lean +138 (S 28: Tok, joinWords, clauseWords moved from VE/Acts/Syntax.lean -9, and the limits, fixedOk, Form, Form.text, wording; D[V] 110: fold, normal, dropComma, slotOf?, pieceToks, rawLex, phraseToks, clash, decodeFixed, group, lex, check, Form.ofText?), VE/Acts/LexicalBase.lean +48 (D[V], moved verbatim from VE/Norms/Wire.lean), VE/Norms/Wire.lean -27 (-48 moved, +21 canonicalActIn, decodeRegulatedWith, decodeRegulatedIn): S +19, V +131, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
   }
  ]
 }
