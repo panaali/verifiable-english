@@ -2,7 +2,8 @@
 
 Since docs/LEAN-FIRST-PLAN.md batch 1 every one-shot route executable is a `ve_service` mode
 (`lean/VE/Service/Protocol.lean`, pinned by `runMode_*`), and the executables are no longer
-built by default. `MODES` maps each executable to its mode. `run` answers a case list as the
+built by default. `EXECUTABLES` maps each executable to its mode (a handshake mode:
+`tests/test_lean_service.py::test_route_executable_aliases_name_handshake_modes`). `run` answers a case list as the
 executable answered it: its exit status (0 when every row is an answer, 1 when a row is a
 rejection, 2 when the whole batch is refused, as the one-shot's framing errors were), its rows
 (`None` when refused), and the standard error the service printed meanwhile (Lean's `PANIC`
@@ -17,7 +18,7 @@ from pathlib import Path
 from ve.backends.lean_service import LeanService
 from ve.errors import VEError
 
-MODES = {
+EXECUTABLES = {
     "ve_norms_route": "norms", "ve_soft_norms_route": "soft-norms", "ve_rights_route": "rights",
     "ve_speech_acts_route": "speech-acts", "ve_reports_route": "reports",
     "ve_alternatives_route": "alternatives", "ve_risk_route": "risk", "ve_risk_eval": "risk-eval",
@@ -31,7 +32,7 @@ _service: LeanService | None = None
 def mode(route) -> str:
     """The service mode of `route`: a mode, an executable name or an executable's path."""
     name = Path(str(route)).name
-    return MODES.get(name, name)
+    return EXECUTABLES.get(name, name)
 
 
 def _started() -> LeanService:

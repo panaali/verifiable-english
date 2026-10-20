@@ -53,6 +53,7 @@ A cell the repository's data cannot fill says "unknown"; then read the code, and
 Worked example: the `discourse` mode.
 
 1. **Lean runner.** `lean/VE/Discourse/Run.lean` defines `VE.Discourse.Run.runCaseReported`.
+   The mode is registered in `lean/VE/Service/Registry.lean` (its `Mode` constructor, name and `modes` entry).
    `VE.Service.runMode` in `lean/VE/Service/Protocol.lean` dispatches the mode to it, and the equation
    `VE.Service.runMode_discourse` is listed in `lean/VE/Audit.lean`.
 2. **Shape.** `lean/ResponseShape/Schemas/Discourse.lean` writes the row's shape, typed to the leaves.
@@ -60,7 +61,10 @@ Worked example: the `discourse` mode.
    `ResponseShape.Encoders.Discourse.runCaseReported_fits`: every row the runner writes fits the shape.
    It is listed in `lean/ResponseShape/Audit.lean`.
 4. **Generated schema.** `ve/backends/lean_service_schema/discourse.json`, rendered from the shape by
-   `uv run python tools/response_schemas.py --write`. The mode is in `MODES` of `ve/backends/service_schema.py`.
+   `uv run python tools/response_schemas.py --write`. The handshake's mode list in
+   `ve/backends/lean_service_schema/envelope.json` comes from the registry, and `MODES` of
+   `ve/backends/service_schema.py` reads it; add the mode's CPU deadline to `DEADLINES` in
+   `ve/backends/lean_service.py` (Python's operational policy).
 5. **Python relay.** `ve/discourse.py` sends the case with `rows` from `ve/backends/relay.py` and binds
    the answer to the document it asked about; it checks schema and binding only (R8 in the DRI rulings).
 6. **Fixtures.** Genuine cases recorded from the suite in `tests/data/route-cases.jsonl`
