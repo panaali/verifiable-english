@@ -143,4 +143,7 @@ others by a failed tactic.
 
 ## 8. Final selection run
 
-Filled in after the run on the final HEAD.
+`mac-pytest.sh --select -- --base c5197da78 --run` on `9d4bd8b1d` (the code of the final HEAD; only this section
+changed after it): exit 0, 79 units, 0 failed, run on the VM (no Mac slot within 600 s), 4,609 s. It included
+`tests/test_acts_lexical_mutants.py`, `tests/test_acts_vocab_mutants.py`, `tests/test_trust_mutants.py` and
+`tests/test_assurance_manifest.py`.
