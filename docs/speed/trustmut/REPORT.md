@@ -567,7 +567,7 @@ cuts, the line-keeping edit (`relined`, `moved`), the kill rule (`judge`, `refut
 (`ERROR`, `LEAN_ERROR`) have tests without Lean. The file has 301 tests at this checkout (`pytest --collect-only`);
 section 6 gives the selected run.
 
-Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 91 of them: TM1–TM40
+Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 97 of them: TM1–TM40
 from the earlier rounds (TM8, TM23, TM25, TM30, TM31, TM33–TM36 retargeted at the inverted rule) and TM41–TM78 for
 F11, F12 and the hunts, among them the Lean probe's own lines (`READS` is Lean text inside the tool: TM48, TM59,
 TM60, TM63, TM65, TM71–TM74, TM77, TM78), TM79 for the build time limit, TM80, TM81 for review F13, TM82–TM85
@@ -576,11 +576,12 @@ its command exits non-zero), TM86–TM93 for F15's (`CLAIM`'s count forms and `p
 for F16's (the table, the named sentences: `hunt/F16.sh`, `hunt/F16c.sh`; the probes' hashes: `hunt/F14c.sh`).
 `claims.py` is one of the probes' hashed sources, so any change to it makes `hunt/F14c.sh` fail; its seeds are
 killed by commands that do not read `evidence/probes.json` (TM82 by `hunt/F15c.sh`, TM83 and TM93 by the one-line
-checks `mutants.json` gives). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 91 of 91, each at a named test or command, the file
+checks `mutants.json` gives). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 97 of 97, each at a named test or command, the file
 restored to its exact bytes (`mutants-evidence.json`: TM1–TM78 on `d09bf54d4` in three worktrees of it, the rows
 joined in order, `--no-baseline` since the whole test file passes there; TM79 and the build-path seeds TM1, TM2,
 TM22 and TM36 again on `0ee7bfc45`, which adds the build time limit; TM80 and TM81 on `05ea60664`, the F13 fix;
-TM82–TM93 on `5d2df727f`, round 5, after `claims.py` last changed). No seeded bug became UNKNOWN under the
+TM84 on `5d2df727f`; TM82, TM83 and TM86–TM97 on `a71b9c573`, round 6, after `claims.py` last changed; TM85, TM98 and TM99
+on `a467e4f4e`, after `hunt/run.py` last changed and the probes ran). No seeded bug became UNKNOWN under the
 stricter rule. The first run (four worktrees at once on the loaded
 VM) found TM57's and TM62's checks dead (the edit-span rule and the probe's `sorryAx` already cover their forms), so
 the checks and the seeds were removed; TM79 was too weak (TM71 plants T5's bug); TM42's and TM44's rules lacked a
@@ -779,7 +780,7 @@ would leave no usable tool.
 1. N.A.: no Lean answer is relayed; the tool reads Lake's build log, and a failure it cannot place is UNKNOWN.
 2. PASS: section 5 maps every task line to its delivery; no rule break (no product code, no permanent report
    test: `replay.py` and `claims.py` read saved evidence, D4).
-3. PASS: seeded bugs TM1–TM93, 91 (`mutants.json`, `mutants-evidence.json`), each failing its named test or command;
+3. PASS: seeded bugs TM1–TM99, 97 (`mutants.json`, `mutants-evidence.json`), each failing its named test or command;
    `--allow` names an exact (definition, operator) pair (`test_allow_suppresses_exactly_its_operator`).
 4. N.A.: no Python, Lean or Rust product code changed.
 5. N.A.: no relayed field.

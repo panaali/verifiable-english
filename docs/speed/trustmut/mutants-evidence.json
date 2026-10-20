@@ -1,7 +1,7 @@
 {
- "runs": "TM1-TM78 on d09bf54d4 in three worktrees (--no-baseline: the test file passes there), joined in order; TM1, TM2, TM22, TM36 (the build path) and TM79 again on 0ee7bfc45, which adds the build time limit; TM80 and TM81 (review F13) on 05ea60664; TM82-TM85 (review F14's class, command mode: hunt/F14c.sh) again and TM86-TM93 (review F15's class: hunt/F15c.sh, TM93 hunt/F14c.sh) on 5d2df727f, after claims.py last changed",
- "killed": 91,
- "total": 91,
+ "runs": "TM1-TM78 on d09bf54d4 in three worktrees (--no-baseline: the test file passes there), joined in order; TM1, TM2, TM22, TM36 (the build path) and TM79 again on 0ee7bfc45, which adds the build time limit; TM80 and TM81 (review F13) on 05ea60664; TM84 (review F14's class, command mode: hunt/F14c.sh) on 5d2df727f; TM82, TM83 and TM86-TM93 again and TM94-TM97 (review F16's class: hunt/F16.sh, hunt/F16c.sh) on a71b9c573, after claims.py last changed; TM85 again and TM98, TM99 (the probes' hashes: hunt/F14c.sh) on a467e4f4e, after hunt/run.py last changed and the probes ran",
+ "killed": 97,
+ "total": 97,
  "mutants": [
   {
    "id": "TM1",
@@ -1410,33 +1410,36 @@
    "id": "TM82",
    "file": "docs/speed/trustmut/claims.py",
    "claim": "a sentence that states a result is UNBOUND unless each such word lies inside a text the evidence gives (review F14's class)",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
    "command": [
     "bash",
-    "docs/speed/trustmut/hunt/F14c.sh"
+    "docs/speed/trustmut/hunt/F15c.sh"
    ],
    "baseline_exit": 0,
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 8.4,
-   "output_tail": "claims: 73 sentences, 73 bound to evidence, 0 UNBOUND\n",
-   "commit": "5d2df727f"
+   "seconds": 4.8,
+   "output_tail": "1,5c1,5\n< hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: 21–35 of each replay's mutants are INVALID.\n< hunt/F15c.md:4 UNBOUND ['211 each']: The kills are the mutants of the `#guard`, `decide` and `rfl` rows (211 each).\n< hunt/F15c.md:6 UNBOUND ['about 161']: The F9 line axis of the test is about 161.\n< hunt/F15c.md:8 UNBOUND ['all 7']: At the default it flags all 7, so steps two and three follow.\n< hunt/F15c.md:10 UNBOUND ['20 lines']: Removing those operators saves under 20 lines.\n---\n> hunt/F15c.md:2 OK (): 21–35 of each replay's mutants are INVALID.\n> hunt/F15c.md:4 OK (): The kills are the mutants of the `#guard`, `decide` and `rfl` rows (211 each).\n> hunt/F15c.md:6 OK (): The F9 line axis of the test is about 161.\n> hunt/F15c.md:8 OK (): At the default it flags all 7, so steps two and three follow.\n> hunt/F15c.md:10 OK (): Removing those operators saves under 20 lines.\n",
+   "commit": "a71b9c573"
   },
   {
    "id": "TM83",
    "file": "docs/speed/trustmut/claims.py",
    "claim": "a PROBE list binds only when every probe it names, a range expanded, exits 0 in evidence/probes.json",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
    "command": [
-    "bash",
-    "docs/speed/trustmut/hunt/F14c.sh"
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; assert claims.names('F1, F6–F9 and N4') == ['F1', 'F6', 'F7', 'F8', 'F9', 'N4']"
    ],
    "baseline_exit": 0,
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 10.6,
-   "output_tail": "claims: 73 sentences, 30 bound to evidence, 43 UNBOUND\nREPORT.md:437 UNBOUND ['exit 0', 'on the final tool']: PROBE F1 and F6–F14 exit 0 on the final tool.\nclaims: 82 sentences, 81 bound to evidence, 1 UNBOUND\n",
-   "commit": "5d2df727f"
+   "seconds": 0.3,
+   "output_tail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; assert claims.names('F1, F6–F9 and N4') == ['F1', 'F6', 'F7', 'F8', 'F9', 'N4']\n                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+   "commit": "a71b9c573"
   },
   {
    "id": "TM84",
@@ -1458,7 +1461,7 @@
    "id": "TM85",
    "file": "docs/speed/trustmut/hunt/run.py",
    "claim": "the probes' summary line counts only the probes that exit 0, and the README and report quote it",
-   "source_sha256": "bba8b27fdda375f4f869fb23d98bfdc9b2824be59d1de50e116979d6731a1401",
+   "source_sha256": "2c534e64d4cfaf2410c7c114314eb08ca52a1f391ae74ed3de2376eab4d12d6b",
    "command": [
     "bash",
     "docs/speed/trustmut/hunt/F14c.sh"
@@ -1466,15 +1469,63 @@
    "baseline_exit": 0,
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 9.3,
-   "output_tail": "claims: 73 sentences, 29 bound to evidence, 44 UNBOUND\nREPORT.md:444 UNBOUND ['80 of 81', 'exit 0']: > Probes on be422c2d3 (this checkout's tool): 80 of 81 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks th\nhunt/README.md:19 UNBOUND ['80 of 81', 'exit 0']: > Probes on be422c2d3 (this checkout's tool): 80 of 81 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks th\nclaims: 82 sentences, 80 bound to evidence, 2 UNBOUND\n",
-   "commit": "5d2df727f"
+   "seconds": 11.8,
+   "output_tail": "claims: 85 sentences, 38 bound to evidence, 47 UNBOUND\nREPORT.md:444 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nhunt/README.md:20 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nclaims: 94 sentences, 92 bound to evidence, 2 UNBOUND\n",
+   "commit": "a467e4f4e"
   },
   {
    "id": "TM86",
    "file": "docs/speed/trustmut/claims.py",
    "claim": "a count reads up to three words between the number and what it counts (review F15: \"21–35 of each replay's mutants\")",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.8,
+   "output_tail": "1d0\n< hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: 21–35 of each replay's mutants are INVALID.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM87",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "\"N each\" is a count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.5,
+   "output_tail": "2d1\n< hunt/F15c.md:4 UNBOUND ['211 each']: The kills are the mutants of the `#guard`, `decide` and `rfl` rows (211 each).\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM88",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "\"about N\" is a count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.5,
+   "output_tail": "3d2\n< hunt/F15c.md:6 UNBOUND ['about 161']: The F9 line axis of the test is about 161.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM89",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "\"all N\" is a count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
    "command": [
     "bash",
     "docs/speed/trustmut/hunt/F15c.sh"
@@ -1483,62 +1534,30 @@
    "killed": true,
    "mutant_exit": 1,
    "seconds": 3.4,
-   "output_tail": "1d0\n< hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: 21–35 of each replay's mutants are INVALID.\n",
-   "commit": "5d2df727f"
-  },
-  {
-   "id": "TM87",
-   "file": "docs/speed/trustmut/claims.py",
-   "claim": "\"N each\" is a count",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
-   "command": [
-    "bash",
-    "docs/speed/trustmut/hunt/F15c.sh"
-   ],
-   "baseline_exit": 0,
-   "killed": true,
-   "mutant_exit": 1,
-   "seconds": 3.3,
-   "output_tail": "2d1\n< hunt/F15c.md:4 UNBOUND ['211 each']: The kills are the mutants of the `#guard`, `decide` and `rfl` rows (211 each).\n",
-   "commit": "5d2df727f"
-  },
-  {
-   "id": "TM88",
-   "file": "docs/speed/trustmut/claims.py",
-   "claim": "\"about N\" is a count",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
-   "command": [
-    "bash",
-    "docs/speed/trustmut/hunt/F15c.sh"
-   ],
-   "baseline_exit": 0,
-   "killed": true,
-   "mutant_exit": 1,
-   "seconds": 4.5,
-   "output_tail": "3d2\n< hunt/F15c.md:6 UNBOUND ['about 161']: The F9 line axis of the test is about 161.\n",
-   "commit": "5d2df727f"
-  },
-  {
-   "id": "TM89",
-   "file": "docs/speed/trustmut/claims.py",
-   "claim": "\"all N\" is a count",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
-   "command": [
-    "bash",
-    "docs/speed/trustmut/hunt/F15c.sh"
-   ],
-   "baseline_exit": 0,
-   "killed": true,
-   "mutant_exit": 1,
-   "seconds": 4.6,
    "output_tail": "4d3\n< hunt/F15c.md:8 UNBOUND ['all 7']: At the default it flags all 7, so steps two and three follow.\n",
-   "commit": "5d2df727f"
+   "commit": "a71b9c573"
   },
   {
    "id": "TM90",
    "file": "docs/speed/trustmut/claims.py",
    "claim": "N lines is a count",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.0,
+   "output_tail": "5d4\n< hunt/F15c.md:10 UNBOUND ['20 lines']: Removing those operators saves under 20 lines.\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM91",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a number inside a name (ap-2, F14, Lean 4.24) is no count",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
    "command": [
     "bash",
     "docs/speed/trustmut/hunt/F15c.sh"
@@ -1547,30 +1566,14 @@
    "killed": true,
    "mutant_exit": 1,
    "seconds": 4.8,
-   "output_tail": "5d4\n< hunt/F15c.md:10 UNBOUND ['20 lines']: Removing those operators saves under 20 lines.\n",
-   "commit": "5d2df727f"
-  },
-  {
-   "id": "TM91",
-   "file": "docs/speed/trustmut/claims.py",
-   "claim": "a number inside a name (ap-2, F14, Lean 4.24) is no count",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
-   "command": [
-    "bash",
-    "docs/speed/trustmut/hunt/F15c.sh"
-   ],
-   "baseline_exit": 0,
-   "killed": true,
-   "mutant_exit": 1,
-   "seconds": 4.7,
    "output_tail": "5a6\n> hunt/F15c.md:12 UNBOUND ['2 replays']: A real regression of the rewrite, caught by the ap-2 replays.\n",
-   "commit": "5d2df727f"
+   "commit": "a71b9c573"
   },
   {
    "id": "TM92",
    "file": "docs/speed/trustmut/claims.py",
    "claim": "a sentence that starts with a digit is a sentence of its own",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
    "command": [
     "bash",
     "docs/speed/trustmut/hunt/F15c.sh"
@@ -1578,15 +1581,98 @@
    "baseline_exit": 0,
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 4.9,
+   "seconds": 4.8,
    "output_tail": "1c1\n< hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: 21–35 of each replay's mutants are INVALID.\n---\n> hunt/F15c.md:2 UNBOUND [\"21–35 of each replay's mutants\"]: The mutation sites are found on the blanked text. 21–35 of each replay's mutants are INVALID.\n",
-   "commit": "5d2df727f"
+   "commit": "a71b9c573"
   },
   {
    "id": "TM93",
    "file": "docs/speed/trustmut/claims.py",
    "claim": "the test-size sentence of section 5 is measured from the test file (review F15's class)",
-   "source_sha256": "351b1df6e3d7224ed14694e5a34898cebdf71fa08331ea878e4bd2e25dd56eae",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; text = ' '.join(claims.DOCS[0].read_text().split()); assert ' '.join(claims.parts()[0][0].split()) in text"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 0.4,
+   "output_tail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; text = ' '.join(claims.DOCS[0].read_text().split()); assert ' '.join(claims.parts()[0][0].split()) in text\n                                                                                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM94",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a cell of the step-1 table that differs from replay.py's row is UNBOUND (review F16)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 23.8,
+   "output_tail": "flagged only as the report is: s#^\\(| pk-1 F1 | [^|]*| [0-9]* / \\)\\([0-9]*\\) /#\\19\\2 /#\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM95",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "every column of the step-1 table is compared, the yes/no columns included (review F16's class)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.8,
+   "output_tail": "F16c: 47 of 59 changed copies UNBOUND\nnot flagged: ['table line 84 cell 6', 'table line 84 cell 7', 'table line 85 cell 6', 'table line 85 cell 7', 'table line 86 cell 6', 'table line 86 cell 7', 'table line 87 cell 6', 'table line 87 cell 7', 'table line 88 cell 6', 'table line 88 cell 7', 'table line 89 cell 6', 'table line 89 cell 7']\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM96",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a named sentence whose numbers the evidence does not give is UNBOUND (review F16)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 22.0,
+   "output_tail": "flagged only as the report is: s#\\(seeded bugs TM1–TM[0-9]*, \\)\\([0-9]*\\)#\\19\\2#\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM97",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a named sentence missing from the report is UNBOUND, so a rewording cannot drop it (review F16's class)",
+   "source_sha256": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.2,
+   "output_tail": "F16c: 55 of 59 changed copies UNBOUND\nnot flagged: ['pk-1 {} at `PacksLegacy.lean`  removed', '(pk-1: {}, at `Readings/Unspec removed', 'seeded bugs TM{}–TM{}, {} (`mu removed', '`tools/gate_collection.py --ch removed']\n",
+   "commit": "a71b9c573"
+  },
+  {
+   "id": "TM98",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "claim": "the saved probes hold for the report they ran on: its sha256 is saved and compared (the recheck's C item)",
+   "source_sha256": "2c534e64d4cfaf2410c7c114314eb08ca52a1f391ae74ed3de2376eab4d12d6b",
    "command": [
     "bash",
     "docs/speed/trustmut/hunt/F14c.sh"
@@ -1594,9 +1680,25 @@
    "baseline_exit": 0,
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 11.7,
-   "output_tail": "claims: 73 sentences, 30 bound to evidence, 43 UNBOUND\nREPORT.md:725 UNBOUND ['about 230', 'about 160,', 'about 150']: The bulk is the runner the task asks for (selection, scratch copies with the shared build, staged builds, proof cuts, co\nclaims: 82 sentences, 81 bound to evidence, 1 UNBOUND\n",
-   "commit": "5d2df727f"
+   "seconds": 12.0,
+   "output_tail": "claims: 85 sentences, 37 bound to evidence, 48 UNBOUND\nREPORT.md:267 UNBOUND ['exit 0', 'on the final tool']: PROBE F1, F6, F7, F8 and F9 exit 0 on the final tool (`evidence/probes.json`, section 1e).\nREPORT.md:316 UNBOUND ['exits 0', 'on the final tool']: `test_probe_f10_a_check_out_of_budget_is_no_kill`): before the fix `lit-plus` was KILLED, now `[('lit-plus', 'UNKNOWN', \nREPORT.md:419 UNBOUND ['exits 0', 'on the final tool']: Since hunt 7's fixes the probe compares the instance the check reads, so PROBE T6 exits 0 on the final tool (`evidence/p\nREPORT.md:437 UNBOUND ['exit 0', 'on the final tool']: PROBE F1, F6–F16, F15c and F16c exit 0 on the final tool.\nREPORT.md:444 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nREPORT.md:716 UNBOUND ['on the final tool']: - The probes ran on the final tool (`evidence/probes.json`).\nhunt/README.md:6 UNBOUND ['exits 0', 'on the final tool']: T6 is boundary (3), but PROBE T6 exits 0 on the final tool: since hunt 7 the fallback instance its check reads is compar\nhunt/README.md:20 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nclaims: 94 sentences, 86 bound to evidence, 8 UNBOUND\n",
+   "commit": "a467e4f4e"
+  },
+  {
+   "id": "TM99",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "claim": "the report's quote of the probes' summary, written after the run, is left out of its sha256",
+   "source_sha256": "2c534e64d4cfaf2410c7c114314eb08ca52a1f391ae74ed3de2376eab4d12d6b",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.5,
+   "output_tail": "claims: 85 sentences, 37 bound to evidence, 48 UNBOUND\nREPORT.md:267 UNBOUND ['exit 0', 'on the final tool']: PROBE F1, F6, F7, F8 and F9 exit 0 on the final tool (`evidence/probes.json`, section 1e).\nREPORT.md:316 UNBOUND ['exits 0', 'on the final tool']: `test_probe_f10_a_check_out_of_budget_is_no_kill`): before the fix `lit-plus` was KILLED, now `[('lit-plus', 'UNKNOWN', \nREPORT.md:419 UNBOUND ['exits 0', 'on the final tool']: Since hunt 7's fixes the probe compares the instance the check reads, so PROBE T6 exits 0 on the final tool (`evidence/p\nREPORT.md:437 UNBOUND ['exit 0', 'on the final tool']: PROBE F1, F6–F16, F15c and F16c exit 0 on the final tool.\nREPORT.md:444 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nREPORT.md:716 UNBOUND ['on the final tool']: - The probes ran on the final tool (`evidence/probes.json`).\nhunt/README.md:6 UNBOUND ['exits 0', 'on the final tool']: T6 is boundary (3), but PROBE T6 exits 0 on the final tool: since hunt 7 the fallback instance its check reads is compar\nhunt/README.md:20 UNBOUND ['84 of 85', 'exit 0']: > Probes on 8820e8cd6 (this checkout's sources): 84 of 85 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks\nclaims: 94 sentences, 86 bound to evidence, 8 UNBOUND\n",
+   "commit": "a467e4f4e"
   }
  ]
 }
