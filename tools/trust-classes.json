@@ -13847,6 +13847,7 @@
         {
           "name": "VE.Defaults.Wire.CoherenceReplay.pairs",
           "tied": [
+            "VE.Defaults.Wire.coherence_collision_shown",
             "VE.Defaults.Wire.defaults_coherence_sound"
           ]
         },
