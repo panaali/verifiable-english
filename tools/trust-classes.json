@@ -7276,6 +7276,14 @@
       ]
     },
     "VE/Norms/Wire.lean": {
+      "D[I]": [
+        "VE.Norms.Wire.appendPredicates",
+        "VE.Norms.Wire.canonicalAct",
+        "VE.Norms.Wire.canonicalEnvironmentJson"
+      ],
+      "D[R]": [
+        "VE.Norms.Wire.actsFamilyRefusal"
+      ],
       "D[V]": [
         "VE.Norms.Wire.NormsEnvironment",
         "VE.Norms.Wire.Source",
@@ -7295,11 +7303,6 @@
         "VE.Norms.Wire.enc",
         "VE.Norms.Wire.normFields",
         "VE.Norms.Wire.regenerated"
-      ],
-      "D[I]": [
-        "VE.Norms.Wire.appendPredicates",
-        "VE.Norms.Wire.canonicalAct",
-        "VE.Norms.Wire.canonicalEnvironmentJson"
       ]
     },
     "VE/Norms/WitnessKind.lean": {
@@ -11534,6 +11537,7 @@
         "VE.Service.ActsExamples.fxs",
         "VE.Service.ActsExamples.perm",
         "VE.Service.ActsExamples.plain",
+        "VE.Service.ActsExamples.plainRun",
         "VE.Service.ActsExamples.pred",
         "VE.Service.ActsExamples.rule",
         "VE.Service.ActsExamples.seek",

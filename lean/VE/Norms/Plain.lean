@@ -211,9 +211,15 @@ def run (j : Json) : Except String Json := do
   let submitted ← j.getObjVal? "environment"
   let profiles ← VE.Route.Gate.profilesOf submitted
   let environment ← if layered submitted then reduced submitted else pure submitted
+  -- `acts@0` (act-phrases 2.8): the route reads the environment without the profile and its block
+  let ps := Wire.actsProfiles true environment
+  let fx ← Wire.actsFixed ps environment
+  let environment := if ps.isEmpty then environment else Wire.actsView environment ps
   let e ← VE.Route.Gate.decodeEnvelope environment
+  unless ps.isEmpty || e.family == .fol do
+    throw (VE.Route.Gate.unsupported (Wire.actsFamilyRefusal (if e.family == .order then "order" else "closure")))
   let predicates ← fields (← e.vocabulary.getObjVal? "predicates")
-  let T : Tree := ⟨← decodeRegulatedAll predicates, [], []⟩
+  let T : Tree := ⟨← decodeRegulatedAllIn ps fx predicates, [], []⟩
   let stripped ← strip environment predicates
   if kind == "certificate" then
     let extra ← if !(j.getObjVal? "soft_premises").isOk then pure []

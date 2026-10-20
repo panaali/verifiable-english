@@ -758,7 +758,7 @@ def speechOthers : List String :=
 def actsRefuses : List (String × String) :=
   (["soft-norms@0", "rights@0", "alternatives@0", "speech-acts@0"].map fun q =>
     (q, s!"acts@0 with {q} is not implemented")) ++
-  (["closure", "order"].map fun f => (s!"{f}@0", s!"acts@0 on the {f} family is not implemented")) ++
+  (["closure", "order"].map fun f => (s!"{f}@0", VE.Norms.Wire.actsFamilyRefusal f)) ++
   [("ve.discourse@1", "acts@0 with ve.discourse@1 is not implemented")]
 
 def baseRows : List ProfileRow := [
