@@ -411,8 +411,10 @@ theorem layered_report_sound (L : LayeredU) (packages : Json) (rep : ReportG (la
 /-! ## Dispatch -/
 
 /-- The `norm-defaults-*` kinds of a layered document that this branch answers itself, `none` for any other kind:
-today's four rows of the kind table (`legacyRows`, dispatched by `kindCase`). The soft branch's `admission` and
-`norm-defaults-certificate` are dispatched before it, by `NormDefaults.Admission.softCase` (`Run.runCase`). -/
+today's four rows of the kind table (`legacyRows`, dispatched by `kindCase`). The dispatch of a choice's inner case
+under the readings completion (`Readings.Run.choiceInnerX`) uses it too, so both answer each kind alike
+(`Packs.kindCase_eq`). The soft branch's `admission` and `norm-defaults-certificate` are dispatched before it, by
+`NormDefaults.Admission.softCase` (`Run.runCase`). -/
 def layeredCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Option Json) := do
   let packages := j.getObjValD "packages"
   if kind == "norm-defaults-elaborate" then
@@ -453,8 +455,7 @@ def legacyRows : List (Packs.KindRow LayeredU) := legacyKinds.map fun k =>
     | some a => pure a
     | none => throw "unreachable"⟩
 
-/-- The kind table's dispatch over the source's pack ids; the dispatch of a choice's inner case under the readings
-completion (`Readings.Run.choiceInnerX`) uses it too, so both answer each kind alike. -/
+/-- The kind table's dispatch over the source's pack ids: the route's runner (`runLayered`). -/
 def kindCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Option Json) :=
   Packs.dispatch legacyRows (L.packs.map (·.id)) L id kind j
 

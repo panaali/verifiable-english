@@ -301,6 +301,7 @@ module VE.NormDefaults.LayeredAdmission
 module VE.NormDefaults.LayeredEntail
 module VE.NormDefaults.Packs
 module VE.NormDefaults.PacksExamples
+module VE.NormDefaults.PacksLabels
 module VE.NormDefaults.PacksLegacy
 module VE.NormDefaults.PacksLegacyExamples
 module VE.NormDefaults.Premises
