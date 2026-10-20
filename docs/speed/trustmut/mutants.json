@@ -833,7 +833,7 @@
    "replace": "                loose = []",
    "command": [
     "bash",
-    "docs/speed/trustmut/hunt/F14c.sh"
+    "docs/speed/trustmut/hunt/F15c.sh"
    ],
    "claim": "a sentence that states a result is UNBOUND unless each such word lies inside a text the evidence gives (review F14's class)"
   },
@@ -843,8 +843,11 @@
    "find": "            out += [f\"{m[1]}{i}\" for i in range(int(m[2]), int(m[3]) + 1)]",
    "replace": "            out.append(part)",
    "command": [
-    "bash",
-    "docs/speed/trustmut/hunt/F14c.sh"
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; assert claims.names('F1, F6\u2013F9 and N4') == ['F1', 'F6', 'F7', 'F8', 'F9', 'N4']"
    ],
    "claim": "a PROBE list binds only when every probe it names, a range expanded, exits 0 in evidence/probes.json"
   },
@@ -953,10 +956,79 @@
    "find": "(\"LINES\", \"NO_ANSWERS\")]",
    "replace": "]",
    "command": [
+    "uv",
+    "run",
+    "python",
+    "-c",
+    "import sys; sys.path.insert(0, 'docs/speed/trustmut'); import claims; text = ' '.join(claims.DOCS[0].read_text().split()); assert ' '.join(claims.parts()[0][0].split()) in text"
+   ],
+   "claim": "the test-size sentence of section 5 is measured from the test file (review F15's class)"
+  },
+  {
+   "id": "TM94",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "        status = f\"UNBOUND {diff}\" if diff else \"OK (replay.py table())\"",
+   "replace": "        status = \"OK (replay.py table())\"",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16.sh"
+   ],
+   "claim": "a cell of the step-1 table that differs from replay.py's row is UNBOUND (review F16)"
+  },
+  {
+   "id": "TM95",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "    return [c.strip() for c in row.strip().strip(\"|\").split(\"|\")]",
+   "replace": "    return [c.strip() for c in row.strip().strip(\"|\").split(\"|\")][:5]",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16c.sh"
+   ],
+   "claim": "every column of the step-1 table is compared, the yes/no columns included (review F16's class)"
+  },
+  {
+   "id": "TM96",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "            status = f\"OK (named: {source})\" if got == numbers else \\",
+   "replace": "            status = f\"OK (named: {source})\" if got else \\",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16.sh"
+   ],
+   "claim": "a named sentence whose numbers the evidence does not give is UNBOUND (review F16)"
+  },
+  {
+   "id": "TM97",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "            out.append(f\"{where}:0 UNBOUND ['a named sentence']: not in the report: {words[:100]}\")",
+   "replace": "            pass",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F16c.sh"
+   ],
+   "claim": "a named sentence missing from the report is UNBOUND, so a rewording cannot drop it (review F16's class)"
+  },
+  {
+   "id": "TM98",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "find": "\"tests/test_trust_mutants.py\", \"docs/speed/trustmut/REPORT.md\",",
+   "replace": "\"tests/test_trust_mutants.py\",",
+   "command": [
     "bash",
     "docs/speed/trustmut/hunt/F14c.sh"
    ],
-   "claim": "the test-size sentence of section 5 is measured from the test file (review F15's class)"
+   "claim": "the saved probes hold for the report they ran on: its sha256 is saved and compared (the recheck's C item)"
+  },
+  {
+   "id": "TM99",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "find": "hashlib.sha256(QUOTED.sub(b\"\", (ROOT / s).read_bytes()))",
+   "replace": "hashlib.sha256((ROOT / s).read_bytes())",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "claim": "the report's quote of the probes' summary, written after the run, is left out of its sha256"
   }
  ]
 }

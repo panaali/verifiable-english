@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
-"""speed-trustmut: every sentence of this batch's documents that says a budget is met, a probe or test passes, a run
-used the final tool or a count holds, and whether the saved evidence says so (review F14 and its second form: the
-DRI's note 2026-10-20 asks for the class, not the one line).
+"""speed-trustmut: the sentences of this batch's documents that `CLAIM` reads as saying a budget is met, a probe or
+test passes, a run used the final tool or a count holds, the step-1 table, and the sentences `named()` lists, each
+against the saved evidence (review F14 and its later forms F15, F16: the DRI's notes 2026-10-20 and 2026-10-20b).
+A number in a form `CLAIM` does not read, outside the table and `named()`, is not checked.
 
     uv run python docs/speed/trustmut/claims.py [--report FILE]
 
-`CLAIM` finds those words in REPORT.md and hunt/README.md. Each must lie inside a text `bound()` writes from the
+`CLAIM` finds its words in REPORT.md and hunt/README.md. Each must lie inside a text `bound()` writes from the
 saved evidence (the replays and their profiles, the sweep, the seeded bugs, the probes, the selected tests, and the
 evidence an earlier round saved, as git keeps it) or from this checkout (`sweep.py`'s and `F14.sh`'s exit codes, the
 test file's collected tests), or inside one of `NOT_CLAIMS`, the words with the reason they report no result. It
-prints one line per sentence that has one, OK or UNBOUND with the words no evidence gives, and exits 1 when any is
-UNBOUND. --report checks FILE in place of REPORT.md (`hunt/F14c.sh`: an earlier round's report). A number the evidence does not give is UNBOUND, since `bound()` writes each number from the evidence. Batch
+prints one line per sentence that has one, OK or UNBOUND with the words no evidence gives. `tabled()` compares the
+step-1 table cell by cell with `replay.table()`, and `bindings()` each sentence of `named()` with the numbers its
+evidence gives (a line per row and per sentence). It exits 1 when any line is UNBOUND. --report checks FILE in place
+of REPORT.md (`hunt/F14c.sh`: an earlier round's report). A number `CLAIM` reads that the evidence does not give is
+UNBOUND, since `bound()` writes each number from the evidence. Batch
 evidence is checked at the gate and merge, never by a permanent test (D4): this is run by hand and by `hunt/F14c.sh`.
 """
 from __future__ import annotations
@@ -68,7 +72,7 @@ NOT_CLAIMS = [
     ("(the probe), and the control pass elaborates", "describes the tool's control pass"),
     ("that PROBE F14 then passed", "describes the first F14 fix's overclaim"),
     ("(a budget met, a probe or test that passes, a run on the final tool, a count)", "names the class"),
-    ("the test file: a sentence that says a probe passes quotes that file", "states the rule"),
+    ("left out): a sentence that says a probe passes quotes that file", "states the rule"),
     ("a range expanded, exits 0 in `evidence/probes.json`", "a seeded bug's rule (TM83)"),
     ("counts only the probes that exit 0", "a seeded bug's rule (TM85)"),
     ("sampled every 15 s", "`profiled`'s sampling interval, a constant"),
@@ -120,11 +124,11 @@ def replays() -> list[tuple[str, str]]:
     texts += [(f"> {replay.budget()}", "replay.py budget()"), (f"> {replay.profile()}", "replay.py profile()")]
     texts += [(replay.f9().split(": ", 1)[1].rstrip("."), "replay.py f9()"),
               (replay.f10().split(": ", 1)[1].rstrip("."), "replay.py f10()")]
-    cells = [[c.strip() for c in row.strip("|").split("|")] for row in replay.table()[2:]]
-    flagged, first = sum(c[5] == "yes" for c in cells), sum(c[6] == "yes" for c in cells)
-    texts += [(f"the tool flags {'all ' if flagged == len(cells) else ''}{flagged} of the {len(cells)} findings",
+    rows = [cells(row) for row in replay.table()[2:]]
+    flagged, first = sum(c[5] == "yes" for c in rows), sum(c[6] == "yes" for c in rows)
+    texts += [(f"the tool flags {'all ' if flagged == len(rows) else ''}{flagged} of the {len(rows)} findings",
                "replay.py table()"), (f"At the default `--max-mutants 60` it flags {first}", "replay.py table()"),
-              (f"{flagged} of {len(cells)} flagged", "replay.py table()")]
+              (f"{flagged} of {len(rows)} flagged", "replay.py table()")]
     data = {head[:8]: saved(head[:8]) for _, head, _, _ in replay.FINDINGS}
     ap2 = {len(data[head[:8]]["mutants"]) for finding, head, _, _ in replay.FINDINGS if finding.startswith("ap-2")}
     if len(ap2) == 1:
@@ -164,13 +168,23 @@ def replays() -> list[tuple[str, str]]:
     for commit, round_ in (("167deb649", "F7"), ("bd74c0fac", "F1")):
         q, a, p, _ = times(commit)
         texts.append((f"{q} s, {a} s and {p} s", f"evidence at {commit} ({round_})"))
-    gone = sum(len({m["id"] for m in saved(h[:8], "51714c923")["mutants"] if m["status"] == "KILLED"}
-                   - {m["id"] for m in saved(h[:8], "bd74c0fac")["mutants"] if m["status"] == "KILLED"})
-               for _, h, _, _ in replay.FINDINGS)
-    texts.append((f"{gone} former kills are no longer kills", "evidence at 51714c923 and bd74c0fac (F1)"))
+    texts.append((f"{sum(former_kills().values())} former kills are no longer kills",
+                  "evidence at 51714c923 and bd74c0fac (F1)"))
     texts.append((f"ap-2 F11 took {num(saved('aa2fd56e-f11round')['seconds'])} s",
                   "evidence/aa2fd56e-f11round.json"))
     return texts
+
+
+def former_kills() -> Counter:
+    """Review F1's former kills, the evidence at 51714c923 against bd74c0fac's: (finding, the file the kill was at, the
+    verdict now) and how many."""
+    got = Counter()
+    for finding, head, _, _ in replay.FINDINGS:
+        now = {m["id"]: m["status"] for m in saved(head[:8], "bd74c0fac")["mutants"]}
+        for m in saved(head[:8], "51714c923")["mutants"]:
+            if m["status"] == "KILLED" and now[m["id"]] != "KILLED":
+                got[finding, m["detail"].split(":")[0].split("/")[-1], now[m["id"]]] += 1
+    return got
 
 
 def f11(now: dict) -> list[tuple[str, str]]:
@@ -366,6 +380,95 @@ def bound() -> list[tuple[str, str]]:
                                                                  *size(), *tests()]]
 
 
+def named() -> list[tuple[str, tuple[int, ...] | None, str]]:
+    """Numbers `CLAIM` does not read, each sentence bound by name (review F16; the DRI's note 2026-10-20b: one entry
+    per sentence, no general rule): (the sentence's words, `{}` for each number; the numbers the evidence gives, or
+    None when it gives no such sentence; the evidence). Each must be in the report with these numbers."""
+    gone = former_kills()
+    pk1 = saved("6b58a0ff")["mutants"]
+    seeded = json.loads((HERE / "mutants-evidence.json").read_text())
+    rows = seeded["mutants"]
+    every = all(m["killed"] is True for m in rows) and seeded["killed"] == seeded["total"] == len(rows)
+    collected = "`tools/gate_collection.py --check`: {} added, {} removed by a trailer, {} refused, {} stale and {} " \
+                "malformed trailers"
+    run = json.loads((HERE / "evidence/selected.json").read_text())
+    said = re.fullmatch(pattern(collected), f"`tools/gate_collection.py --check`: {run['gate_collection']}")
+    return [
+        ("pk-1 {} at `PacksLegacy.lean` now SURVIVOR and {} at `LayeredAdmission.lean` now UNKNOWN (with those proofs "
+         "cut, a proof term inside the `def` at `Readings/UnspecifiedWire.lean:526` fails; it cannot be cut, so the "
+         "tool fails closed); qt-a1 {} at `Cardinality/Theorems.lean` and {} at the tactic-proved `example`s of "
+         "`Cardinality/Examples.lean`",
+         (gone["pk-1 F1", "PacksLegacy.lean", "SURVIVOR"], gone["pk-1 F1", "LayeredAdmission.lean", "UNKNOWN"],
+          sum(n for (f, file, _), n in gone.items() if (f, file) == ("qt-a1 F1", "Theorems.lean")),
+          sum(n for (f, file, _), n in gone.items() if (f, file) == ("qt-a1 F1", "Examples.lean"))),
+         "evidence at 51714c923 and bd74c0fac (F1)"),
+        ("(pk-1: {}, at `Readings/UnspecifiedWire.lean:526`)",
+         (sum(m["status"] == "UNKNOWN" and m["detail"].startswith("lean/VE/Readings/UnspecifiedWire.lean:526:")
+              for m in pk1),), "evidence/6b58a0ff.json"),
+        ("seeded bugs TM{}–TM{}, {} (`mutants.json`, `mutants-evidence.json`), each failing its named test or command",
+         (1, max(int(m["id"][2:]) for m in rows), len(rows)) if every else None, "mutants-evidence.json"),
+        (collected, tuple(int(n) for n in said.groups()) if said else None, "evidence/selected.json"),
+    ]
+
+
+def pattern(words: str) -> str:
+    return r"(\d[\d,]*)".join(map(re.escape, words.split("{}")))
+
+
+def cells(row: str) -> list[str]:
+    """A table row's cells, every column."""
+    return [c.strip() for c in row.strip().strip("|").split("|")]
+
+
+def tabled(doc: Path) -> list[str]:
+    """The step-1 table (REPORT section 1) cell by cell against `replay.table()`, which writes it from the saved
+    replays (review F16): one line per row, UNBOUND with the cells that differ, or when a row is missing or extra."""
+    want = [cells(row) for row in replay.table()]
+    lines = doc.read_text().splitlines()
+    head = [n for n, line in enumerate(lines) if " ".join(line.split()) == " ".join(replay.table()[0].split())]
+    where = doc.relative_to(HERE) if doc.is_relative_to(HERE) else doc
+    if len(head) != 1:
+        return [f"{where}:0 UNBOUND ['the step-1 table']: {len(head)} tables with its header"]
+    rows = []
+    for n in range(head[0], len(lines)):
+        if not lines[n].lstrip().startswith("|"):
+            break
+        rows.append((n + 1, cells(lines[n])))
+    out = []
+    for i in range(max(len(rows), len(want))):
+        line, got = rows[i] if i < len(rows) else (head[0] + 1 + i, None)
+        given = want[i] if i < len(want) else None
+        diff = [] if got == given else ["the row is extra" if given is None else "the row is missing" if got is None
+                                        else f"{want[0][j]}: {a!r}, the evidence {b!r}"
+                                        for j, (a, b) in enumerate(zip(got, given)) if a != b] or ["its cells"]
+        status = f"UNBOUND {diff}" if diff else "OK (replay.py table())"
+        out.append(f"{where}:{line} {status}: {' | '.join(got or given)[:120]}")
+    return out
+
+
+def bindings(doc: Path) -> list[str]:
+    """Each of `named()`'s sentences in `doc` with the numbers the evidence gives: one line per sentence, UNBOUND when
+    a number differs or the sentence is not there."""
+    where = doc.relative_to(HERE) if doc.is_relative_to(HERE) else doc
+    paras = list(paragraphs(doc.read_text()))
+    out = []
+    for words, numbers, source in named():
+        found = [(line, m) for line, para in paras for m in re.finditer(pattern(words), para)]
+        for line, m in found:
+            got = tuple(int(n.replace(",", "")) for n in m.groups())
+            status = f"OK (named: {source})" if got == numbers else \
+                f"UNBOUND {list(m.groups())}: the evidence gives {numbers or 'no such sentence'} ({source})"
+            out.append(f"{where}:{line} {status}: {m[0][:120]}")
+        if not found:
+            out.append(f"{where}:0 UNBOUND ['a named sentence']: not in the report: {words[:100]}")
+    return out
+
+
+def verdict(texts: list[tuple[str, str]]) -> list[str]:
+    """What `claims.py` checks: the sentences `CLAIM` reads, the step-1 table and the named sentences."""
+    return check(texts) + tabled(DOCS[0]) + bindings(DOCS[0])
+
+
 def paragraphs(text: str):
     """(line, paragraph) for each paragraph, table row and list item of `text`, its whitespace normalized."""
     start, part = 1, []
@@ -407,7 +510,7 @@ def check(texts: list[tuple[str, str]]) -> list[str]:
 def main() -> int:
     if sys.argv[1:2] == ["--report"]:
         DOCS[0] = Path(sys.argv[2]).resolve()
-    out = check(bound())
+    out = verdict(bound())
     print("\n".join(out))
     bad = sum(" UNBOUND " in line for line in out)
     print(f"claims: {len(out)} sentences, {len(out) - bad} bound to evidence, {bad} UNBOUND")

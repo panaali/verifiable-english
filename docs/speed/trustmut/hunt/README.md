@@ -1,4 +1,4 @@
-# speed-trustmut: the probes of reviews F1, F6-F15 (F14c and F15c: their classes) and of the adversarial hunts (REPORT section 1e)
+# speed-trustmut: the probes of reviews F1, F6-F16 (F14c, F15c and F16c: their classes) and of the adversarial hunts (REPORT section 1e)
 
 Each `<name>.sh` is one command, run from the root of a checkout of this branch:
 
@@ -14,17 +14,21 @@ probe's own wait. Each fixed form is also a row of `tests/test_trust_mutants.py`
 `test_a_build_past_its_time_limit_is_unknown`), which is what the suite runs.
 
 `run.py` runs them all (or the names given) and saves each exit code, time and last line in
-`../evidence/probes.json` with the sha256 of the tool and of the test file they ran; its summary line:
+`../evidence/probes.json` with the sha256 of the tool, the test file, the report (its quote of this line left out),
+`../claims.py` and `F15c.md` (`SOURCES`); its summary line:
 
 > Probes on be422c2d3, de96d2db3 (this checkout's tool): 82 of 83 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
 
-F14c runs `../claims.py`, which binds every sentence of the report and of this README that states a result to
-the saved evidence (review F14 as a class). F15c runs it on `F15c.md`, one wrong count of each form `CLAIM`
-reads, and requires each UNBOUND, as its own sentence (review F15 as a class).
+F14c runs `../claims.py`, which checks against the saved evidence the sentences of the report and of this README
+that `CLAIM` reads as stating a result, the report's step-1 table and the sentences its `named()` lists, and no other
+number (review F14 as a class). F15c runs it on `F15c.md`, one wrong count of each form `CLAIM` reads, and requires
+each UNBOUND, as its own sentence (review F15 as a class). F16 changes one number of the table or of a named sentence
+per copy of the report, and F16c each cell and each named number alone, each named sentence removed alone; both
+require UNBOUND on every copy (review F16 and its class).
 
 | Names | Source |
 |---|---|
-| F1, F6-F15, F14c, F15c | the reviews' PROBE lines (F12: F11's with `bS`; F14 and F15 read REPORT.md and the saved evidence, no Lean; F14c and F15c are F14's and F15's classes) |
+| F1, F6-F16, F14c, F15c, F16c | the reviews' PROBE lines (F12: F11's with `bS`; F14, F15 and F16 read REPORT.md and the saved evidence, no Lean; F14c, F15c and F16c are F14's, F15's and F16's classes) |
 | H1-H7, G1-G5 | hunt 1 (G: forms tried that were fine) |
 | N1-N10 | hunt 2 |
 | P1-P9 | hunt 3 |
