@@ -1,5 +1,4 @@
 import VE.Defaults.Premises
-import VE.Readings.SoftFacts
 import VE.NormDefaults.LayeredAdmission
 
 /-! The `defaults-*` kinds on a layered source (docs/spec/defeasible.md 7.2; plan DF-1a, 2.2 and 2.6).
@@ -15,8 +14,8 @@ packs' premises `R` (2), distinct generated labels (6), generated premises withi
 * `defaults-certificate`: the question's premises state facts only (diagnostic 3); FOLLOWS needs a certificate bound
   to `premisesX U (defaultX D X) Γ`, the gate's certificates and a checked model of `defaultX` and the premises
   (`defaults_certificate_sound`); otherwise UNKNOWN with its reason, a checked collision first.
-* `defaults-model`: a countermodel of `defaultX` (`defaults_model_sound`) with the exceptions the text's own conditions
-  force there (`forcedAt_sound`).
+* `defaults-model` (a countermodel of `defaultX` with the exceptions the text's own conditions force there) is
+  df-1ad's.
 
 Searching for certificates, models and collisions is not done here; every piece the request carries is checked. -/
 namespace VE.Defaults.Wire
@@ -378,175 +377,6 @@ theorem defaults_coherence_sound (x : CoherenceReplay) :
       exact pairChecks_sound _ _ _ _ _ _ hc B hB
     · split at hs <;> cases hs
 
-/-! ## `defaults-model` -/
-
-/-- The exceptions that hold on the finite base, each with the index of the first stated sufficient condition that
-    holds at its tuple (the number of conditions when none does), in rule order, then tuple order. -/
-def forcedAt (D : SoftDoc) (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity)
-    (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) : List (String × Nat × List VE.Bridge.Entity) :=
-  D.T.nodes.flatMap (fun N => match N.mode with
-    | .default =>
-      let conds := (N.exception.map (·.sufficient)).getD []
-      (VE.NormDefaults.allTuples M (VE.SoftNorms.sortsOf D N.pred)).filterMap (fun vs =>
-        if (VE.SoftNorms.exceptedF D N).eval (M.withFill F) (VE.Norms.tupleVal vs) then
-          some (N.name, (conds.findIdx? (fun C => C.eval (M.withFill F) (VE.Norms.tupleVal vs))).getD conds.length, vs)
-        else none)
-    | .strict => [])
-
-structure ModelReplay where
-  v : DefaultsView
-  Γ : List VE.Formula
-  φ : VE.Formula
-  m : VE.Readings.Wire.FilledModel v.L.U
-
-def ModelReplay.ok (x : ModelReplay) : Bool :=
-  VE.Readings.Wire.xModelOk x.v.L.U (defaultX x.v.L.D x.v.L.X) [] x.Γ x.φ x.m false
-def ModelReplay.forced (x : ModelReplay) : List (String × Nat × List VE.Bridge.Entity) :=
-  forcedAt x.v.L.D x.v.L.U x.m.M x.m.F
-def ModelReplay.verdict (x : ModelReplay) : String := if x.ok then "DOES-NOT-FOLLOW" else "UNKNOWN"
-
-def replayModelOn (v : DefaultsView) (j : Json) : Except String ModelReplay := do
-  let E := envAt (fill v.L.U) (size (fill v.L.U))
-  let Γ ← VE.Route.Wire.decodeFormulas E (← j.getObjVal? "premises")
-  let φ ← VE.Route.Wire.decodeClosed E (← j.getObjVal? "conclusion")
-  pure ⟨v, Γ, φ, ← filledOf v.L (← j.getObjVal? "model")⟩
-
-def replayModel (j : Json) : Except String ModelReplay := do replayModelOn (← viewOf j) j
-
-/-- A well-formed soft document's default rules each have an exception (`checkSoftRule`). -/
-theorem default_exception {D : SoftDoc} (hD : WellFormedSoft D = true) {N : SoftNode} (hN : N ∈ D.T.nodes)
-    (hm : N.mode = .default) : ∃ ex, N.exception = some ex := by
-  have hr := (VE.Readings.checkSoft_parts D (VE.Readings.wellFormedSoft_check D hD)).2 N hN
-  cases hex : N.exception with
-  | some ex => exact ⟨ex, rfl⟩
-  | none =>
-    exfalso
-    unfold VE.SoftNorms.checkSoftRule at hr
-    simp only [hm, hex, bind, Except.bind, pure, Except.pure] at hr
-    repeat' split at hr
-    all_goals simp_all
-
-/-- Where the model check of `X` passes, a premise of `X` that is `∀x̄. ψ` holds at every typed tuple of the model. -/
-theorem eval_of_xModelOk {x : ModelReplay} (hv : x.ok = true) {ss : List String} {ψ : VE.Formula}
-    (hp : VE.Norms.bindAll ss ψ ∈ defaultX x.v.L.D x.v.L.X) {vs : List VE.Bridge.Entity}
-    (hvs : vs ∈ VE.NormDefaults.allTuples x.m.M ss) :
-    ψ.eval (x.m.M.withFill x.m.F) (VE.Norms.tupleVal vs) = true := by
-  simp only [ModelReplay.ok, VE.Readings.Wire.xModelOk, VE.NormDefaults.modelCheckX, Bool.and_eq_true] at hv
-  have he := (VE.NormDefaults.eval_withFill _ _ _ _ _).mp (List.all_eq_true.mp hv.1.1.2.2 _ hp)
-  rw [VE.Norms.bindAll_denote_nil] at he
-  exact (VE.NormDefaults.eval_withFill _ _ _ _ _).mpr (he vs ((VE.Norms.tupleTyped_relation x.m.M.asStructure
-    _ _ vs).mpr ((VE.NormDefaults.mem_allTuples x.m.M _ vs).mp hvs)))
-
-/-- DE6′'s and DE11's claim: each `forced` entry names a default rule, its index is below that rule's number of
-    stated sufficient conditions, and that condition and the exception both hold at the entry's tuple. -/
-theorem forcedAt_sound (x : ModelReplay) (hv : x.ok = true) :
-    ∀ e ∈ x.forced, ∃ N ∈ x.v.L.D.T.nodes, ∃ ex : VE.SoftNorms.Exception,
-      N.mode = .default ∧ N.exception = some ex ∧ e.1 = N.name ∧
-      ∃ hi : e.2.1 < ex.sufficient.length,
-        (ex.sufficient[e.2.1]'hi).eval (x.m.M.withFill x.m.F) (VE.Norms.tupleVal e.2.2) = true ∧
-        (VE.SoftNorms.exceptedF x.v.L.D N).eval (x.m.M.withFill x.m.F) (VE.Norms.tupleVal e.2.2) = true := by
-  intro e he
-  simp only [ModelReplay.forced, forcedAt, List.mem_flatMap] at he
-  obtain ⟨N, hN, he⟩ := he
-  split at he
-  · rename_i hm
-    obtain ⟨ex, hex⟩ := default_exception x.v.hD hN hm
-    simp only [hex, Option.map_some, Option.getD_some, List.mem_filterMap] at he
-    obtain ⟨vs, hvs, he⟩ := he
-    split at he
-    · rename_i hexc
-      cases he
-      have hd : (VE.Norms.bindAll (VE.SoftNorms.sortsOf x.v.L.D N.pred)
-          (.implies (VE.SoftNorms.exceptedF x.v.L.D N) (VE.Norms.anyF ex.sufficient))) ∈
-          defaultX x.v.L.D x.v.L.X :=
-        List.mem_append_right _ (List.mem_map.mpr ⟨_, List.mem_append_left _ (List.mem_flatMap.mpr ⟨N, hN, by
-          simp only [dfltOf, hm, hex]; exact List.mem_append_left _ List.mem_cons_self⟩), rfl⟩)
-      have hc := eval_of_xModelOk hv hd hvs
-      simp only [VE.Formula.eval, hexc, Bool.not_true, Bool.false_or, VE.Readings.Wire.anyF_eval] at hc
-      obtain ⟨i, hi⟩ : ∃ i, ex.sufficient.findIdx? (fun C => C.eval (x.m.M.withFill x.m.F)
-          (VE.Norms.tupleVal vs)) = some i := Option.isSome_iff_exists.mp (by
-        rw [List.findIdx?_isSome]; simpa using hc)
-      obtain ⟨hlt, hci, -⟩ := List.findIdx?_eq_some_iff_getElem.mp hi
-      exact ⟨N, hN, ex, hm, hex, rfl, by simp only [hi, Option.getD_some]; exact hlt,
-        by simpa [hi] using hci, hexc⟩
-    · cases he
-  · cases he
-
-/-- The situation shown; with `forced = []` no rule's exception holds there (DE6's short form). -/
-theorem defaults_model_sound (x : ModelReplay) (hv : x.ok = true) :
-    ∃ S : VE.Structure.{0},
-      VE.NormDefaults.Wire.BaseAdmissibleX x.v.L.U (defaultX x.v.L.D x.v.L.X)
-        (VE.Norms.restrictAll (fill x.v.L.U).T S) ∧
-      VE.Norms.DocumentExpansion (fill x.v.L.U) (VE.Norms.restrictAll (fill x.v.L.U).T S) S ∧
-      VE.Norms.Sat S x.Γ ∧ ¬ x.φ.denote S [] ∧
-      (x.forced = [] → ∀ N ∈ x.v.L.D.T.nodes, N.mode = .default →
-        (VE.Norms.bindAll (VE.SoftNorms.sortsOf x.v.L.D N.pred) (.not (VE.SoftNorms.exceptedF x.v.L.D N))).denote S []) := by
-  let D := x.v.L.D
-  let U := x.v.L.U
-  -- "no exception holds", one premise per default rule
-  let none_ : List VE.Formula := (D.T.nodes.filter (·.mode == .default)).map (fun N =>
-    VE.Norms.bindAll (VE.SoftNorms.sortsOf D N.pred) (.not (VE.SoftNorms.exceptedF D N)))
-  have hwf : ∀ N ∈ D.T.nodes, N.mode = .default →
-      (VE.Norms.bindAll (VE.SoftNorms.sortsOf D N.pred) (.not (VE.SoftNorms.exceptedF D N))).WellFormed
-        (envAt (fill U) 0) [] := by
-    intro N hN hm
-    have hd : (VE.SoftNorms.exceptedName N, VE.SoftNorms.sortsOf D N.pred) ∈ VE.SoftNorms.decisions D :=
-      VE.Readings.mem_decisions.mpr (Or.inl ⟨N, hN, hm, rfl⟩)
-    have hb := VE.Norms.bindAll_wellFormed (E := envAt (soften D) 0)
-      (fun s hs => VE.Readings.decision_sorts x.v.hD hd s hs) [] (.not (VE.SoftNorms.exceptedF D N))
-      (by simpa [VE.SoftNorms.exceptedF] using atom_wf (VE.Readings.envAt_decision x.v.hD 0 hd))
-    rw [← x.v.hU] at hb
-    exact VE.Norms.wf_mono (E := envAt U.D 0) (E' := envAt (fill U) 0) rfl rfl
-      (VE.NormDefaults.envAt_fill_mono (VE.NormDefaults.uvalid x.v.L.wfU) 0) _ [] hb
-  have hok := hv
-  simp only [ModelReplay.ok, VE.Readings.Wire.xModelOk, Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at hok
-  obtain ⟨⟨⟨hw, hm⟩, hval⟩, hl⟩ := hok
-  have hw' : ∀ a ∈ ([] ++ x.Γ) ++ [x.φ], a.WellFormed (envAt (fill U) (size (fill U))) [] :=
-    fun a ha => (VE.check_iff_wellFormed _ _ a).mp (hw a ha)
-  have hΓ := fun a ha => hw' a (List.mem_append_left _ ha)
-  have hφ := hw' x.φ (List.mem_append_right _ List.mem_cons_self)
-  by_cases hf : x.forced = []
-  · -- with `forced = []` every "no exception" premise holds on the model, so the expansion satisfies them too
-    have hnone : ∀ a ∈ none_, a.eval (x.m.M.withFill x.m.F) [] = true := by
-      intro a ha
-      obtain ⟨N, hN, rfl⟩ := List.mem_map.mp ha
-      obtain ⟨hN, hm⟩ := List.mem_filter.mp hN
-      simp only [beq_iff_eq] at hm
-      apply (VE.NormDefaults.eval_withFill _ _ _ _ _).mpr
-      rw [VE.Norms.bindAll_denote_nil]
-      intro vs hvs
-      apply (VE.NormDefaults.eval_withFill _ _ _ _ _).mp
-      have hmem := (VE.NormDefaults.mem_allTuples x.m.M _ vs).mpr
-        ((VE.Norms.tupleTyped_relation x.m.M.asStructure _ _ vs).mp hvs)
-      simp only [ModelReplay.forced, forcedAt, List.flatMap_eq_nil_iff] at hf
-      have := hf N hN
-      simp only [hm, List.filterMap_eq_nil_iff] at this
-      have h2 := this vs hmem
-      cases he : (VE.SoftNorms.exceptedF x.v.L.D N).eval (x.m.M.withFill x.m.F) (VE.Norms.tupleVal vs)
-      · simp [VE.Formula.eval, D, he]
-      · simp [he] at h2
-    have hm2 : (VE.NormDefaults.modelCheckX U (defaultX D x.v.L.X ++ none_) x.m.M x.m.F ([] ++ x.Γ) x.φ).1 = true := by
-      simp only [VE.NormDefaults.modelCheckX, Bool.and_eq_true] at hm ⊢
-      refine ⟨hm.1, ?_⟩
-      simp only [VE.NormDefaults.Wire.extraValid, List.all_append, Bool.and_eq_true] at hm ⊢
-      exact ⟨hm.2, List.all_eq_true.mpr hnone⟩
-    obtain ⟨S, h1, h2, h3, h4⟩ := VE.Readings.Wire.expansionX_of_modelCheck U x.v.L.wfU _ x.m.M x.m.valid x.m.F
-      _ _ hΓ hφ hm2 hl
-    refine ⟨S, ⟨h1.1, fun a ha => h1.2 a (List.mem_append_left _ ha)⟩, h2, by simpa using h3, fun hd => ?_,
-      fun _ N hN hm => ?_⟩
-    · have := h4.mp hd
-      simp only [VE.NormDefaults.modelCheckX] at this hval
-      rw [hval] at this
-      cases this
-    · have ha := h1.2 _ (List.mem_append_right _ (List.mem_map.mpr ⟨N, List.mem_filter.mpr ⟨hN, by simpa using hm⟩, rfl⟩))
-      exact (VE.Norms.restrictAll_denote _ [] (hwf N hN hm) S []).mp ha
-  · obtain ⟨S, h1, h2, h3, h4⟩ := VE.Readings.Wire.expansionX_of_modelCheck U x.v.L.wfU _ x.m.M x.m.valid x.m.F
-      _ _ hΓ hφ hm hl
-    refine ⟨S, h1, h2, by simpa using h3, fun hd => ?_, fun h => absurd h hf⟩
-    have := h4.mp hd
-    rw [hval] at this
-    cases this
-
 /-! ## The answers -/
 
 def entityIds (vs : List VE.Bridge.Entity) : Json := toJson (vs.map (·.2))
@@ -584,11 +414,6 @@ def certFields (x : CertReplay) : List (String × Json) :=
     [("basis", .str (basisLabel x.basis)), ("form", .str (formLabel x.form)), ("assumptions", toJson x.assumptions)]
   else [("reason", .str x.reason)]
 
-def modelFields (x : ModelReplay) : List (String × Json) :=
-  [("verdict", .str x.verdict)] ++
-  if x.ok then [("forced", Json.arr (x.forced.map (fun (r, i, vs) =>
-    Json.mkObj [("rule", .str r), ("condition", toJson i), ("tuple", entityIds vs)])).toArray)] else []
-
 /-- The `defaults-*` kinds; `none` for any other kind (one row of PK-1's layered kind table). -/
 def defaultsCase (v : DefaultsView) (id kind : String) (j : Json) : Except String (Option Json) :=
   if kind.startsWith "defaults-" then
@@ -597,8 +422,6 @@ def defaultsCase (v : DefaultsView) (id kind : String) (j : Json) : Except Strin
       (fun x => some (VE.Route.Wire.ok id (coherenceFields x))) <$> replayCoherenceOn v j
     else if kind == "defaults-certificate" then
       (fun x => some (VE.Route.Wire.ok id (certFields x))) <$> replayCertOn v j
-    else if kind == "defaults-model" then
-      (fun x => some (VE.Route.Wire.ok id (modelFields x))) <$> replayModelOn v j
     else pure none
   else pure none
 
