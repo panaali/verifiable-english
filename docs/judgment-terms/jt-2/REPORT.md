@@ -36,7 +36,12 @@ Needed by the plan and not in its text (Lean-owned, small):
   Their identities come from the envelope whose `AllowedFamily` theorem forbids an unknown profile, so composing them
   is a design step of its own (jt-2b). Until then `Compose.environmentProfiles` (Python's `BY_NAME`) leaves the
   document layer out, Python's model projection refuses it, and Python's own loader refuses a `judgments@0`
-  document, so `ve document` is `CheckerUnavailable` on it: never a Python status.
+  document: `ve document` raises the mode's refusal of it as its diagnostic and is `CheckerUnavailable` on a
+  document the mode accepts, never a Python status (`test_ve_document_relays_lean_s_refusal_of_a_judgments_document`).
+- **Cases sent to other modes** (review F1): the document mode's `parse` case for a refused strict fence
+  (`locatedFence`), its `model` case for a refused distinguishing model (`locatedModel`) and its English reader's
+  case read `Env.forModes`, the environment without the document layers; a located model's identity is compared over
+  the list as written (`Loader.modelId`). Each is compared with the same document without the profile.
 
 Sibling lessons (jt-1b-review F1, F2): which judgment each refusal names and both lists' order are pinned through
 the service with two candidates each (`two-specified`, `two-unlisted`, `two-unused`, `two-rows`), and by mutants
@@ -44,8 +49,8 @@ that reverse the unit list and the unused list.
 
 ## Seeded bugs and mutants
 
-[`mutants.json`](mutants.json): 31 of 31 killed, one or more per new trusted definition and per claimed behaviour.
-Lean (30): applied to the committed tree, `lake build VE.Service.Document`, then `tests/test_judgments_document.py`
+[`mutants.json`](mutants.json): 36 of 36 killed, one or more per new trusted definition and per claimed behaviour.
+Lean (35): applied to the committed tree, `lake build VE.Service.Document`, then `tests/test_judgments_document.py`
 over a probe that answers the `document` and `environment` modes from the freshly compiled modules (no relink of
 `ve_service`), the tree restored. The plan's two Lean bugs: the status hook skipped
 (`pure u`) fails 15 tests (J-β first); a norm candidate read as `top` fails
@@ -54,11 +59,13 @@ regenerated schema's check of a genuine answer, not by `usage_fits` (the skeleto
 any). `environmentProfiles` kept unfiltered fails `Compose/Examples.lean:240`. Python (1):
 `ve/document/load.py` without the guard fails `test_python_never_decides_a_judgments_document`. One equivalent
 mutant is not listed: `judgedViews`' `asserted` argument, which nothing in this item reads (JT-4's criteria do).
+Review F1's five (`Env.forModes` as written; the parse, English and model cases as written; the model mode's identity
+read under the layer) ran on the built `ve_service`, its build pinned for the run, and each fails a named F1 test.
 
 ## Trust, size and evidence
 
-- Trust (`tools/trust_map.py --check`, PASS on the final HEAD against `75a9bcef9`): K +0, S +0, untied V +113:
-  `VE/Service/Document.lean` +79, `ResponseShape/Schemas/Document.lean` +12, `VE/Service/Standalone.lean` +11,
+- Trust (`tools/trust_map.py --check`, PASS on the final HEAD against `75a9bcef9`): K +0, S +0, untied V +117:
+  `VE/Service/Document.lean` +83 (+4 for review F1, its own R16 allowance), `ResponseShape/Schemas/Document.lean` +12, `VE/Service/Standalone.lean` +11,
   `VE/Compose/Dispatch.lean` +11. Allowance signed by R16; FOLLOW-UPS "## jt-2 (2026-10-20)" asks for the ties pass.
 - Size: about 640 hand-written lines before this report (Lean 210, the fixture file 393, Python 3, DELTA 12, side
   tables and pins about 25), plus `mutants.json` (written by the harness). Over the ~600 guideline mostly by the
@@ -90,7 +97,7 @@ model operations call composing with `judgments@0` (an identity design for docum
 
 1. PASS: the new field is typed in `document.json` (`test_the_answer_fits_its_schema_and_models_refuse_the_profile`); until jt-2b Python relays no `judgments` row (`_bind_document_answer`'s exact key set), so every mutant of it is `CheckerUnavailable` (`test_python_never_decides_a_judgments_document`).
 2. PASS: plan rows table above; the relay rows moved to jt-2b by the task's size rule, named here and in FOLLOW-UPS.
-3. PASS: `mutants.json`, 31 killed, each by a named test or `#guard`; the build-step catches are not counted.
+3. PASS: `mutants.json`, 36 killed, each by a named test or `#guard`; the build-step catches are not counted.
 4. PASS: J-λ's eight documents without the profile answer as on main (`test_without_the_profile_every_answer_is_todays`); Rust unchanged and never sees the profile.
 5. N.A.: no relayed field is bound in this item (jt-2b); the request-side records are W2's (`test_the_profile_requires_documents_and_its_records_are_w2s`).
 6. PASS: synced with main `75a9bcef9`; the chain runs the full gate on the final HEAD.
