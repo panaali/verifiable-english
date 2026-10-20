@@ -1,6 +1,6 @@
 No DRI signature is needed: trust growth K +0, S +3, V +0 is signed by standing ruling R16; no DELTA row reserves
 one. me-9 delivers the normaliser half of ME-9; the rest is **me-9b** (below). Size: 609 changed lines before this
-report (`git diff --numstat`, generated files excluded), about 690 with it.
+report (`git diff --numstat`, generated files excluded), 731 with it.
 
 # me-9 report: algebraic identities, the normaliser
 
