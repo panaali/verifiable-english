@@ -13833,7 +13833,7 @@
         "VE.Calc.Units.UnitEnv.environmentId"
       ],
       "G[V]": [
-        "VE.Calc.Units.UnitEnv.find?",
+        "VE.Calc.Units.UnitEnv.unit?",
         "VE.Calc.Units.UnitEnv.values"
       ],
       "G[R]": [
@@ -13858,6 +13858,7 @@
         "VE.Calc.UnitsExamples.deep",
         "VE.Calc.UnitsExamples.dims",
         "VE.Calc.UnitsExamples.env!",
+        "VE.Calc.UnitsExamples.expect",
         "VE.Calc.UnitsExamples.h7",
         "VE.Calc.UnitsExamples.i2",
         "VE.Calc.UnitsExamples.i2Reordered",

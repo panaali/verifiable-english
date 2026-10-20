@@ -70,6 +70,9 @@ def test_the_lean_guards_are_the_fixture_table():
     assert generator.TARGET.read_text() == generator.render()
     assert "import VE.Calc.UnitsExamples" in (ROOT / "lean/VE.lean").read_text().splitlines()
     text = generator.TARGET.read_text()
-    assert text.count("\n#guard (") == len(FIXTURES) + len(MALFORMED)
-    for key, _, _ in FIXTURES + MALFORMED:
-        assert f"-- {key}\n#guard (" in text
+    families = generator.families(FIXTURES + MALFORMED)
+    assert text.count("\n#guard expect [\n") == len(families) < 100  # Lean reports every failing guard
+    for family, rows in families.items():
+        assert f"-- {family}\n#guard expect [\n  ({json.dumps(rows[0][0])}, " in text
+        for key, _, _ in rows:
+            assert text.count(f"  ({json.dumps(key)}, ") == 1
