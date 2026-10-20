@@ -165,6 +165,7 @@ FIXTURES = [
         ("text", units(["length"], meter=({"length": 1}, "1e3")), "InvalidInput: units.meter.factor must be a decimal"),
         ("digits", units(["length"], meter=({"length": 1}, "1" * 41)),
          "ResourceLimit: Decimal literal exceeds 40 digits"),
+        ("digits-40", units(["length"], meter=({"length": 1}, "1" * 40)), 'ok ["meter"]'),
         ("base", units(["length"], gram=({"mass": 1}, "0.001")),
          "InvalidInput: units.gram.base_exponents.mass names no base dimension"),
         ("zero-exponent", units(["length"], meter=({"length": 0}, "1")),
