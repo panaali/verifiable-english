@@ -177,6 +177,17 @@ def γCase (collision : Bool) : Json := match dγ with
   | .error _ => false
 #guard answer (γCase true) == unknownBecause "with no exception, rules r1 and r2 conflict"
 #guard answer (γCase false) == unknownBecause "no-exception coherence not checked"
+-- the collision first, whether or not a certificate was sent
+#guard answer ((γCase true).setObjVal! "certificate" .null) == unknownBecause "with no exception, rules r1 and r2 conflict"
+
+/-- DF-β: `∀a. excepted_r1(a) → urgent(a)` uses `Dflt_T`'s premise with its stated condition (index 2 of 6). -/
+def excUrgent : VE.Formula := .all "assistant" (.implies (.unary exc1 (.var 0)) (.unary "urgent" (.var 0)))
+-- form long: the kept assumption has a stated condition; basis needs (the strict countermodel {excepted r1} checks)
+#guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson ([] : List Json)),
+    ("conclusion", fJ excUrgent), ("certificate", boundJ βEnv (ps L []) excUrgent
+      (expand 6 none [expand 7 none [expand 2 (some "w:0") [expand 10 none [close, expand 11 none [close, close]]]]])),
+    ("model", model (modelJ L [])), ("strict_model", model (modelJ L [exc1]))]) ==
+  follows "needs" "long" [excN "r1"]
 
 /-! ## Other kinds -/
 

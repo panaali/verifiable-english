@@ -1,0 +1,200 @@
+{
+ "item": "df-1ac",
+ "runner": "docs/defeasible/df-1a/evidence/run_mutants.py docs/defeasible/df-1ac/mutants.json",
+ "result": "docs/defeasible/df-1ac/evidence/mutants.out",
+ "source": "VE/Defaults/Wire.lean",
+ "fixtures": "VE/Defaults/WireExamples.lean",
+ "module": "VE.Defaults.Wire",
+ "keep": [
+  "decodeRightsU_soften",
+  "decodeLayered_soften"
+ ],
+ "note": "Each mutant edits one definition of lean/VE/Defaults/Wire.lean. 'guards' are the first lines of the #guards of lean/VE/Defaults/WireExamples.lean that must fail, with every theorem removed but the two viewOf uses. 'kind': plan (DF-1a's seeded bugs in Wire.lean; forcedAt [] moves to df-1ad with the model kind), spec (8.9), R16 (one or more per new trusted definition of tools/trust_map.py). PairStatus is a type, with no mutant.",
+ "mutants": [
+  {
+   "id": "W1",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.CertReplay.verdict",
+   "kind": "plan",
+   "bug": "defaultsCase answers FOLLOWS without the gate's certificates (plan DF-1a seeded bug)",
+   "find": "if x.certOk && x.coherent && x.modelOk then \"FOLLOWS\"",
+   "replace": "if x.certOk && x.modelOk then \"FOLLOWS\"",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-γ gate regression (bound certificate, empty-domain model)",
+   "guards": [
+    "#guard answer (γCase true) == unknownBecause \"with no exception, rules r1 and r2 conflict\"",
+    "#guard answer (γCase false) == unknownBecause \"no-exception coherence not checked\""
+   ]
+  },
+  {
+   "id": "W2",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.CoherenceReplay.verdict",
+   "kind": "plan",
+   "bug": "defaults-coherence answers COHERENT when no collision is supplied (plan DF-1a seeded bug)",
+   "find": "else if x.collides then \"COLLISION\" else \"UNKNOWN\"",
+   "replace": "else if x.collides then \"COLLISION\" else \"COHERENT\"",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-ω, DF-γb without its certificate",
+   "guards": [
+    "#guard answer (req δEnv δR \"defaults-coherence\" [(\"coherence\", toJson [pairJ \"r1\" \"r2\"])])",
+    "#guard answer (req αEnv γbR \"defaults-coherence\" [(\"coherence\", toJson [pairJ \"r1\" \"r2\"])]"
+   ]
+  },
+  {
+   "id": "W3",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.CertReplay.reason",
+   "kind": "spec",
+   "bug": "the certificate tested before the collision (spec 8.9)",
+   "find": "  match x.collision, x.collides with\n  | some w, true =>",
+   "replace": "  match x.collision, x.collides && x.certOk with\n  | some w, true =>",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-γ sent without a certificate",
+   "guards": [
+    "#guard answer ((γCase true).setObjVal! \"certificate\" .null) == unknownBecause \"with no exc"
+   ]
+  },
+  {
+   "id": "W4",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.PairStatus.label",
+   "kind": "R16",
+   "bug": "resolved shown as collision",
+   "find": "  | .resolved => \"resolved\"",
+   "replace": "  | .resolved => \"collision\"",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-γb with its pair certificate",
+   "guards": [
+    "#guard answer (req αEnv γbR \"defaults-coherence\" [(\"coherence\", toJson [pairJ \"r1\" \"r2\" γb"
+   ]
+  },
+  {
+   "id": "W5",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.basisLabel",
+   "kind": "R16",
+   "bug": "needs shown as strict",
+   "find": "  | .strict => \"strict\" | .needs => \"needs\"",
+   "replace": "  | .strict => \"strict\" | .needs => \"strict\"",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-α",
+   "guards": [
+    "#guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows \"needs\" \"short\" [exc"
+   ]
+  },
+  {
+   "id": "W6",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.formLabel",
+   "kind": "R16",
+   "bug": "short shown as long",
+   "find": "  | .short => \"short\" | .long => \"long\"",
+   "replace": "  | .short => \"long\" | .long => \"long\"",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-α, DF-α strict basis",
+   "guards": [
+    "#guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows \"needs\" \"short\" [exc",
+    "#guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows \"strict\" \"short\" ["
+   ]
+  },
+  {
+   "id": "W7",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.certFields",
+   "kind": "R16",
+   "bug": "assumptions dropped from a FOLLOWS answer",
+   "find": ", (\"assumptions\", toJson x.assumptions)]",
+   "replace": "]",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-α",
+   "guards": [
+    "#guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows \"needs\" \"short\" [exc"
+   ]
+  },
+  {
+   "id": "W8",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.coherenceFields",
+   "kind": "R16",
+   "bug": "DE7's deciders dropped from a COLLISION",
+   "find": ",\n        (\"deciders\", toJson (giveWayDeciders x.v.L.D P Q))])]",
+   "replace": "])]",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-γ collision",
+   "guards": [
+    "#guard holds dγ fun L =>"
+   ]
+  },
+  {
+   "id": "W9",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.elaborateFields",
+   "kind": "R16",
+   "bug": "coherence_targets list the pair reversed",
+   "find": "Json.arr #[.str P.name, .str Q.name,",
+   "replace": "Json.arr #[.str Q.name, .str P.name,",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-γ defaults-elaborate",
+   "guards": [
+    "#guard holds dγ fun L => match VE.SoftNorms.collidingPairs L.D with"
+   ]
+  },
+  {
+   "id": "W10",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.entityIds",
+   "kind": "R16",
+   "bug": "a tuple shown by sort, not by entity id",
+   "find": "toJson (vs.map (·.2))",
+   "replace": "toJson (vs.map (·.1))",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-γ collision tuple",
+   "guards": [
+    "#guard holds dγ fun L =>"
+   ]
+  },
+  {
+   "id": "W11",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.CertReplay.form",
+   "kind": "R16",
+   "bug": "the form read with no kept assumption (always short)",
+   "find": "followsForm x.v.L.D x.assumptions",
+   "replace": "followsForm x.v.L.D []",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-β long form",
+   "guards": [
+    "#guard holds dβ fun L => answer (req βEnv βR \"defaults-certificate\" [(\"premises\", toJson ("
+   ]
+  },
+  {
+   "id": "W12",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.defaultsCase",
+   "kind": "R16",
+   "bug": "defaults-certificate answered by defaults-coherence",
+   "find": "      (fun x => some (VE.Route.Wire.ok id (certFields x))) <$> replayCertOn v j",
+   "replace": "      (fun x => some (VE.Route.Wire.ok id (coherenceFields x))) <$> replayCoherenceOn v j",
+   "test": "lean/VE/Defaults/WireExamples.lean: DF-α",
+   "guards": [
+    "#guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows \"needs\" \"short\" [exc"
+   ]
+  },
+  {
+   "id": "W13",
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "definition": "VE.Defaults.Wire.defaultsCase",
+   "kind": "R16",
+   "bug": "an unknown defaults- kind answered as defaults-elaborate",
+   "find": "    else pure none\n  else pure none",
+   "replace": "    else pure (some (VE.Route.Wire.ok id (elaborateFields v)))\n  else pure none",
+   "test": "lean/VE/Defaults/WireExamples.lean: other kinds",
+   "guards": [
+    "#guard [\"defaults-model\", \"defaults-other\", \"norm-defaults-elaborate\"].all fun k =>"
+   ]
+  }
+ ]
+}
