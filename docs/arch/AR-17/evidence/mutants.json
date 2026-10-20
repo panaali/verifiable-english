@@ -1,0 +1,294 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "ve/readings_route.py",
+   "claim": "the choices of an enumerated or superposed row are bound to the request: every open set in source order, an index within it, no choice twice, the count the list's own",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.3,
+   "output_tail": ": 'deny', 'act': '{0} help {1}'}}}, 'constants': {}}}\ndocument = {'units': [{'id': 'u1'}], 'reading_sets': [{'id': 'rs1', 'unit': 'u1', 'version': 1, 'status': 'open', ...}]}\nmutant = {'choice_count': 1002, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}\nexpected = 'refused'\n\n    def _check(raw, document, mutant, expected):\n        got = _ask(raw, document, mutant)\n        assert got == (\"unavailable\",) or got == _shown(mutant), (got, mutant)\n>       assert expected == \"either\" or (got == (\"unavailable\",)) is (expected == \"refused\"), (expected, got, mutant)\nE       AssertionError: ('refused', {'choice_count': 1002, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}, {'choice_count': 1002, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...})\nE       assert ('refused' == 'either'\nE         \nE         - either\nE         + refused or ({'choice_coun...g': None, ...} == ('unavailable',)\nE         \nE         Use -v to get more diff) is ('refused' == 'refused'\nE         \nE           refused))\n\ntests/test_readings_s2_answer.py:188: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s\n1 failed in 0.70s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-126h3i0f)\n"
+  },
+  {
+   "id": "M2",
+   "file": "ve/readings_route.py",
+   "claim": "a reading's unit of sup D is bound to its position among the request's readings",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.4,
+   "output_tail": "'default': 'deny', 'act': '{0} help {1}'}}}, 'constants': {}}}\ndocument = {'units': [{'id': 'u1'}], 'reading_sets': [{'id': 'rs1', 'unit': 'u1', 'version': 1, 'status': 'open', ...}]}\nmutant = {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}\nexpected = 'refused'\n\n    def _check(raw, document, mutant, expected):\n        got = _ask(raw, document, mutant)\n        assert got == (\"unavailable\",) or got == _shown(mutant), (got, mutant)\n>       assert expected == \"either\" or (got == (\"unavailable\",)) is (expected == \"refused\"), (expected, got, mutant)\nE       AssertionError: ('refused', {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}, {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...})\nE       assert ('refused' == 'either'\nE         \nE         - either\nE         + refused or ({'choice_coun...g': None, ...} == ('unavailable',)\nE         \nE         Use -v to get more diff) is ('refused' == 'refused'\nE         \nE           refused))\n\ntests/test_readings_s2_answer.py:188: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s\n1 failed in 1.15s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-h5f556ro)\n"
+  },
+  {
+   "id": "M3",
+   "file": "ve/readings_route.py",
+   "claim": "every reading with content of the request is a unit of sup D (no reading's unit dropped)",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 11.0,
+   "output_tail": "'default': 'deny', 'act': '{0} help {1}'}}}, 'constants': {}}}\ndocument = {'units': [{'id': 'u1'}], 'reading_sets': [{'id': 'rs1', 'unit': 'u1', 'version': 1, 'status': 'open', ...}]}\nmutant = {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}\nexpected = 'refused'\n\n    def _check(raw, document, mutant, expected):\n        got = _ask(raw, document, mutant)\n        assert got == (\"unavailable\",) or got == _shown(mutant), (got, mutant)\n>       assert expected == \"either\" or (got == (\"unavailable\",)) is (expected == \"refused\"), (expected, got, mutant)\nE       AssertionError: ('refused', {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}, {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...})\nE       assert ('refused' == 'either'\nE         \nE         - either\nE         + refused or ({'choice_coun...g': None, ...} == ('unavailable',)\nE         \nE         Use -v to get more diff) is ('refused' == 'refused'\nE         \nE           refused))\n\ntests/test_readings_s2_answer.py:188: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s\n1 failed in 1.03s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-7ovqss7j)\n"
+  },
+  {
+   "id": "M4",
+   "file": "ve/readings_route.py",
+   "claim": "ReadingsUnsatisfiable names the request's couplings and narrowings, each once",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.0,
+   "output_tail": " test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable(genuine):\n        \"\"\"`ReadingsUnsatisfiable` names the request's restrictions, a refusal under a choice its open sets at their\n        versions and indexes; a forgery naming anything else is unavailable, a bound one is Lean's text. A text with\n        ` under ` names a choice there and nothing else: a part that is not one fails closed (review F2 of AR-17).\"\"\"\n        raw, document, row = next(answer for answer in genuine if answer[2][\"status\"] == \"error\")\n        assert row[\"error\"] == \"ReadingsUnsatisfiable: keep-default, keep-strict\"\n        for text, bound in _REFUSALS.items():\n>           assert _ask(raw, document, {**row, \"error\": text}) == ((\"refused\", text) if bound else (\"unavailable\",)), text\nE           AssertionError: ReadingsUnsatisfiable: keep-default, zz\nE           assert ('refused', '...-default, zz') == ('unavailable',)\nE             \nE             At index 0 diff: 'refused' != 'unavailable'\nE             Left contains one more item: 'ReadingsUnsatisfiable: keep-default, zz'\nE             Use -v to get more diff\n\ntests/test_readings_s2_answer.py:234: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable\n1 failed in 0.61s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s5gu617o)\n"
+  },
+  {
+   "id": "M5",
+   "file": "ve/readings_route.py",
+   "claim": "the stale narrowings are narrowings of the request",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.9,
+   "output_tail": "ntent': {'norm': {'name': 'stop-x', 'predicate': 'avoid_requi...rsion': 2, 'status': 'open', ...}], 'narrowings': [{'id': 'n0', 'set': 'rs1', 'version': 1, 'keeps': ['strict'], ...}]}\nmutant = {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}\nexpected = 'refused'\n\n    def _check(raw, document, mutant, expected):\n        got = _ask(raw, document, mutant)\n        assert got == (\"unavailable\",) or got == _shown(mutant), (got, mutant)\n>       assert expected == \"either\" or (got == (\"unavailable\",)) is (expected == \"refused\"), (expected, got, mutant)\nE       AssertionError: ('refused', {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}, {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...})\nE       assert ('refused' == 'either'\nE         \nE         - either\nE         + refused or ({'choice_coun...g': None, ...} == ('unavailable',)\nE         \nE         Use -v to get more diff) is ('refused' == 'refused'\nE         \nE           refused))\n\ntests/test_readings_s2_answer.py:188: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s\n1 failed in 5.59s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ob7hluzx)\n"
+  },
+  {
+   "id": "M6",
+   "file": "ve/readings_route.py",
+   "claim": "a coupling or narrowing slot label names one of the request's",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_a_slot_label_naming_what_the_request_has_not_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_a_slot_label_naming_what_the_request_has_not_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.3,
+   "output_tail": "r:avoid_required,help_required\", \"readings:quiet:outweighs:zz:lo:hi\",\n                  \"readings:quiet:outweighs:avoid_required:lo:zz\", \"readings:quiet:outweighs:avoid_required:hi:lo\",\n                  \"readings:quiet:outweighs:help_required:lo:hi\", \"readings:quiet:excepted:rd-2-no-deception\"]\n        rows = [(raw, document, row) for raw, document, row in genuine if row.get(\"route\") == \"superposed\"]\n        labels = {entry[\"label\"].rpartition(\":\")[0] if \"quiet:outweighs\" in entry[\"label\"] else\n                  entry[\"label\"].partition(\":\")[0] for _, _, row in rows for entry in row[\"slot\"]}\n        assert {\"readings\", \"coupling\", \"narrowing\", \"readings:quiet:outweighs:avoid_required:lo\"} <= labels\n        for raw, document, row in rows:\n            for label in forged:\n>               assert _ask(raw, document, {**row, \"slot\": [*row[\"slot\"], {\"label\": label, \"ast\": [\"top\"]}]}) == (\n                    \"unavailable\",), label\nE               AssertionError: coupling:zz\nE               assert {'choice_coun...g': None, ...} == ('unavailable',)\nE                 \nE                 Use -v to get more diff\n\ntests/test_readings_s2_answer.py:280: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_a_slot_label_naming_what_the_request_has_not_is_unavailable\n1 failed in 0.62s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-hyrse_zs)\n"
+  },
+  {
+   "id": "M7",
+   "file": "ve/readings_route.py",
+   "claim": "the name map names every open set of the request in source order at its version",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.9,
+   "output_tail": "'default': 'deny', 'act': '{0} help {1}'}}}, 'constants': {}}}\ndocument = {'units': [{'id': 'u1'}], 'reading_sets': [{'id': 'rs1', 'unit': 'u1', 'version': 1, 'status': 'open', ...}]}\nmutant = {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}\nexpected = 'refused'\n\n    def _check(raw, document, mutant, expected):\n        got = _ask(raw, document, mutant)\n        assert got == (\"unavailable\",) or got == _shown(mutant), (got, mutant)\n>       assert expected == \"either\" or (got == (\"unavailable\",)) is (expected == \"refused\"), (expected, got, mutant)\nE       AssertionError: ('refused', {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...}, {'choice_count': 2, 'choices': [[['rs1', 0]], [['rs1', 1]]], 'choices_checked': 2, 'finding': None, ...})\nE       assert ('refused' == 'either'\nE         \nE         - either\nE         + refused or ({'choice_coun...g': None, ...} == ('unavailable',)\nE         \nE         Use -v to get more diff) is ('refused' == 'refused'\nE         \nE           refused))\n\ntests/test_readings_s2_answer.py:188: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_one_fault_in_what_the_row_names_is_unavailable_and_a_derived_one_is_lean_s\n1 failed in 0.85s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-j7f3jk5z)\n"
+  },
+  {
+   "id": "M8",
+   "file": "ve/readings_route.py",
+   "claim": "the relay returns Lean's row unchanged: a derived value is Lean's, not Python's",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_genuine_answers_are_relayed_unchanged"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_genuine_answers_are_relayed_unchanged"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.3,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________ test_genuine_answers_are_relayed_unchanged __________________\n\ngenuine = [({'language': 've.core@0.2', 'profiles': ['norms@0', 'readings@1', 'relational-fol@0', 'soft-norms@0'], 'spec_revisio...], ...}]}, {'error': 'ReadingsUnsatisfiable: keep-default, keep-strict', 'id': 'readings-s2', 'status': 'error'}), ...]\n\n    def test_genuine_answers_are_relayed_unchanged(genuine):\n        for raw, document, row in genuine:\n>           assert _ask(raw, document, row) == _shown(row)\nE           AssertionError: assert {'choice_coun...g': None, ...} == {'choice_coun...g': None, ...}\nE             \nE             Omitting 11 identical items, use -vv to show\nE             Right contains 1 more item:\nE             {'sizes': {'limits': {'nodes': 10000, 'predicates': 256, 'sorts': 32},\nE                        'nodes': 41,\nE                        'predicates': 5,\nE                        'sorts': 3}}\nE             Use -v to get more diff\n\ntests/test_readings_s2_answer.py:193: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_genuine_answers_are_relayed_unchanged\n1 failed in 0.66s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-c1rgngar)\n"
+  },
+  {
+   "id": "M9",
+   "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+   "claim": "the elaborate shape is tied to Lean's encoder: a field the shape and the runner name differently fails the build (elaborateFields_fits)",
+   "source_sha256": "c9dfacbc85dbdd2a6b7d5f2a41ad6f6d27f1ce3732896a26c485a2b78c1aa7eb",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build ResponseShape.Encoders.ReadingsRoute"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 454.3,
+   "output_tail": "unused:\n  String.reduceEq\n\nHint: Omit it from the simp argument list.\n  simp only [S\u0335t\u0335r\u0335i\u0335n\u0335g\u0335.\u0335r\u0335e\u0335d\u0335u\u0335c\u0335e\u0335E\u0335q\u0335,\u0335 \u0335Bool.false_eq_true, String.reduceBEq] at *\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: ResponseShape/Encoders/ReadingsRoute.lean:1157:27: This simp argument is unused:\n  List.toList_toArray\n\nHint: Omit it from the simp argument list.\n  simp only [Json.getArr?,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335t\u0335o\u0335L\u0335i\u0335s\u0335t\u0335_\u0335t\u0335o\u0335A\u0335r\u0335r\u0335a\u0335y\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: ResponseShape/Encoders/ReadingsRoute.lean:1223:4: This simp argument is unused:\n  List.toList_toArray\n\nHint: Omit it from the simp argument list.\n  simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335t\u0335o\u0335L\u0335i\u0335s\u0335t\u0335_\u0335t\u0335o\u0335A\u0335r\u0335r\u0335a\u0335y\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: ResponseShape/Encoders/ReadingsRoute.lean:1248:4: This simp argument is unused:\n  hl\n\nHint: Omit it from the simp argument list.\n  simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show \"environment\" \u2260 \"kind\" by decide), he,\n      getObjVal_set_ne wfe (show \"profiles\" \u2260 \"vocabulary\" by decide), getObjVal_set_eq wfe, hP,\u0335\n  \u0335 \u0335 \u0335 \u0335 \u0335h\u0335l\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- ResponseShape.Encoders.ReadingsRoute\nerror: build failed\n"
+  },
+  {
+   "id": "M10",
+   "file": "ve/readings_route.py",
+   "claim": "review F1: a reading's name pairs are exactly its own names (its rule under its position, its rule's decisions), in Lean's order",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_f1_a_name_pair_outside_the_request_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_f1_a_name_pair_outside_the_request_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.3,
+   "output_tail": " \"rd-1-zz\"]),  # the review's probe\n                  lambda p: p.__setitem__(0, [\"no-deception\", \"rd-9-no-deception\"]),\n                  lambda p: p.__setitem__(0, [\"zz\", \"rd-2-no-deception\"]),\n                  lambda p: p.__setitem__(1, [p[1][0] + \"x\", p[1][1]]),\n                  lambda p: p.__setitem__(1, [p[1][0], p[1][1] + \"x\"]),\n                  lambda p: p.__setitem__(2, [p[2][0].replace(\"user\", \"zz\"), p[2][1].replace(\"user\", \"zz\")]),\n                  lambda p: p.pop(2), lambda p: p.append(list(p[0]))]\n        for forge in forged:\n            mutant = copy.deepcopy(row)\n            forge(mutant[\"names\"][0][\"candidates\"][1][\"names\"])\n>           assert _ask(raw, document, mutant) == (\"unavailable\",), mutant[\"names\"]\nE           AssertionError: [{'candidates': [{'id': 'strict', 'index': 0, 'names': [['no-deception', 'rd-1-no-deception']], 'position': 1}, {'id':...-be-firm'], ['soft__excepted__be_firm', 'soft__excepted__rd_4_be_firm']], 'position': 4}], 'set': 'rs2', 'version': 1}]\nE           assert {'choice_coun...g': None, ...} == ('unavailable',)\nE             \nE             Use -v to get more diff\n\ntests/test_readings_s2_answer.py:308: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_f1_a_name_pair_outside_the_request_is_unavailable\n1 failed in 0.52s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-9eyf03gv)\n"
+  },
+  {
+   "id": "M11",
+   "file": "ve/readings_route.py",
+   "claim": "review F1 (same class): a shared slot label names a generated outweighs decision",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_a_slot_label_naming_what_the_request_has_not_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_a_slot_label_naming_what_the_request_has_not_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.3,
+   "output_tail": "required\", \"readings:quiet:outweighs:zz:lo:hi\",\n                  \"readings:quiet:outweighs:avoid_required:lo:zz\", \"readings:quiet:outweighs:avoid_required:hi:lo\",\n                  \"readings:quiet:outweighs:help_required:lo:hi\", \"readings:quiet:excepted:rd-2-no-deception\"]\n        rows = [(raw, document, row) for raw, document, row in genuine if row.get(\"route\") == \"superposed\"]\n        labels = {entry[\"label\"].rpartition(\":\")[0] if \"quiet:outweighs\" in entry[\"label\"] else\n                  entry[\"label\"].partition(\":\")[0] for _, _, row in rows for entry in row[\"slot\"]}\n        assert {\"readings\", \"coupling\", \"narrowing\", \"readings:quiet:outweighs:avoid_required:lo\"} <= labels\n        for raw, document, row in rows:\n            for label in forged:\n>               assert _ask(raw, document, {**row, \"slot\": [*row[\"slot\"], {\"label\": label, \"ast\": [\"top\"]}]}) == (\n                    \"unavailable\",), label\nE               AssertionError: readings:quiet:outweighs:zz:lo:hi\nE               assert {'choice_coun...g': None, ...} == ('unavailable',)\nE                 \nE                 Use -v to get more diff\n\ntests/test_readings_s2_answer.py:280: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_a_slot_label_naming_what_the_request_has_not_is_unavailable\n1 failed in 0.45s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-nganqw58)\n"
+  },
+  {
+   "id": "M12",
+   "file": "ve/readings_route.py",
+   "claim": "review F1 (same class): a generated exception or switch decision names a rule of sup D that has it",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_f1_a_generated_decision_key_outside_the_request_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_f1_a_generated_decision_key_outside_the_request_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.1,
+   "output_tail": "pted\": \"rd-2-no-deception\"} in keys and {\"off\": \"rd-2-no-deception\", \"party\": \"user\"} in keys\n        assert {\"outweighs\": \"avoid_required\", \"lower\": \"lo\", \"higher\": \"hi\"} in keys\n        forged = [{\"excepted\": \"rd-1-no-deception\"}, {\"excepted\": \"rd-9-no-deception\"}, {\"excepted\": \"zz\"},\n                  {\"excepted\": \"rd-2-no-deception\", \"bearer\": \"user\"}, {\"off\": \"rd-2-no-deception\", \"party\": \"zz\"},\n                  {\"off\": \"rd-4-be-firm\", \"party\": \"user\"}, {\"outweighs\": \"zz\", \"lower\": \"lo\", \"higher\": \"hi\"},\n                  {\"outweighs\": \"avoid_required\", \"lower\": \"lo\", \"higher\": \"zz\"},\n                  {\"outweighs\": \"avoid_required\", \"lower\": \"lo\", \"higher\": \"lo\"}, {\"aimed\": \"zz\"}]\n        for key in forged:\n            mutant = copy.deepcopy(row)\n            mutant[\"generated_predicates\"].append({\"key\": key, \"layer\": \"soft\", \"name\": \"zz\"})\n>           assert _ask(raw, document, mutant) == (\"unavailable\",), key\nE           AssertionError: {'excepted': 'rd-1-no-deception'}\nE           assert {'choice_coun...g': None, ...} == ('unavailable',)\nE             \nE             Use -v to get more diff\n\ntests/test_readings_s2_answer.py:334: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_f1_a_generated_decision_key_outside_the_request_is_unavailable\n1 failed in 0.44s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-u_1c4f8e)\n"
+  },
+  {
+   "id": "M13",
+   "file": "ve/readings_route.py",
+   "claim": "review F1 (same class): a generated outweighs decision names an act and two ranks of the request",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_f1_a_generated_decision_key_outside_the_request_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_f1_a_generated_decision_key_outside_the_request_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.7,
+   "output_tail": "eception\"} in keys and {\"off\": \"rd-2-no-deception\", \"party\": \"user\"} in keys\n        assert {\"outweighs\": \"avoid_required\", \"lower\": \"lo\", \"higher\": \"hi\"} in keys\n        forged = [{\"excepted\": \"rd-1-no-deception\"}, {\"excepted\": \"rd-9-no-deception\"}, {\"excepted\": \"zz\"},\n                  {\"excepted\": \"rd-2-no-deception\", \"bearer\": \"user\"}, {\"off\": \"rd-2-no-deception\", \"party\": \"zz\"},\n                  {\"off\": \"rd-4-be-firm\", \"party\": \"user\"}, {\"outweighs\": \"zz\", \"lower\": \"lo\", \"higher\": \"hi\"},\n                  {\"outweighs\": \"avoid_required\", \"lower\": \"lo\", \"higher\": \"zz\"},\n                  {\"outweighs\": \"avoid_required\", \"lower\": \"lo\", \"higher\": \"lo\"}, {\"aimed\": \"zz\"}]\n        for key in forged:\n            mutant = copy.deepcopy(row)\n            mutant[\"generated_predicates\"].append({\"key\": key, \"layer\": \"soft\", \"name\": \"zz\"})\n>           assert _ask(raw, document, mutant) == (\"unavailable\",), key\nE           AssertionError: {'outweighs': 'zz', 'lower': 'lo', 'higher': 'hi'}\nE           assert {'choice_coun...g': None, ...} == ('unavailable',)\nE             \nE             Use -v to get more diff\n\ntests/test_readings_s2_answer.py:334: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_f1_a_generated_decision_key_outside_the_request_is_unavailable\n1 failed in 0.59s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-0a1u9g90)\n"
+  },
+  {
+   "id": "M14",
+   "file": "ve/readings_route.py",
+   "claim": "review F1 (C, same class): a precedence cause names a rule a fixed rule is over and a named set declares",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_f1_a_precedence_cause_naming_another_rule_is_unavailable"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_f1_a_precedence_cause_naming_another_rule_is_unavailable"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.2,
+   "output_tail": "other_rule_is_unavailable(genuine):\n        \"\"\"Review F1 of AR-17 (C, same class): `precedence under <rule>` names a rule a fixed rule is over and a reading\n        of the named set declares; Lean's genuine cause is relayed, any other rule is unavailable.\"\"\"\n        raw, document, row = next(answer for answer in genuine\n                                   if (answer[2].get(\"finding\") or {}).get(\"cause\", \"\").startswith(\"precedence under \"))\n        assert row[\"finding\"][\"cause\"] == \"precedence under waive-x\"\n        assert _ask(raw, document, row) == _shown(row)\n        fixed = [unit[\"content\"][\"norm\"][\"name\"] for unit in document[\"units\"] if \"norm\" in (unit.get(\"content\") or {})]\n        for rule in [\"zz\", \"no-deception\", *fixed]:\n            if rule != \"waive-x\":\n                mutant = {**row, \"finding\": {**row[\"finding\"], \"cause\": \"precedence under \" + rule}}\n>               assert _ask(raw, document, mutant) == (\"unavailable\",), rule\nE               AssertionError: zz\nE               assert {'choice_coun...e: rs1'}, ...} == ('unavailable',)\nE                 \nE                 Use -v to get more diff\n\ntests/test_readings_s2_answer.py:358: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_f1_a_precedence_cause_naming_another_rule_is_unavailable\n1 failed in 0.63s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-afeip9s6)\n"
+  },
+  {
+   "id": "M15",
+   "file": "ve/readings_route.py",
+   "claim": "review F2: a refusal with ` under ` names a choice there and nothing else",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable",
+    "tests/test_readings_s2_answer.py::test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable",
+    "tests/test_readings_s2_answer.py::test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.1,
+   "output_tail": "superposed one when Lean finds the filled document superposable (plan RD-6b) and the enumerated\n        one with Lean's cause otherwise, and the row carries the filled document. A refusal is bound as the plain\n        route's is (`_bind_refusal`).\"\"\"\n        try:\n            from .backends.service_schema import Invalid, check_row\n            check_row(\"readings-route\", row, case, 0)\n            _need(row[\"id\"] == case[\"id\"])\n            if row[\"status\"] == \"error\":\n                _bind_refusal(row[\"error\"], case[\"document\"])\n            else:\n                _bind_completion_answer(row, case, checked_part)\n        except (_Invalid, Invalid, VEError, TypeError, KeyError, ValueError, AttributeError, IndexError,\n                RecursionError) as exc:\n            raise CheckerUnavailable(\"the Lean readings route returned an invalid answer\") from exc\n        if row[\"status\"] == \"error\":\n>           raise VEError(row[\"error\"])\nE           ve.errors.VEError: ResourceLimit: generated background under rs9@1:0, junk\n\nve/readings_route.py:330: VEError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable\nFAILED tests/test_readings_s2_answer.py::test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s\n2 failed in 0.52s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-m2zjzvoh)\n"
+  },
+  {
+   "id": "M16",
+   "file": "ve/readings_route.py",
+   "claim": "review F2 (same class): a refusal under the completion is bound as the plain route's",
+   "source_sha256": "cc6ec78aeeaa56f6bd3045b7bcca3533f731a7359cb9a58532f5da71b56c3fb1",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.0,
+   "output_tail": "; nothing of them is\n        regenerated here. On the norms chain a content-bearing document takes the pending route when a candidate has no\n        content, else the superposed one when Lean finds the filled document superposable (plan RD-6b) and the enumerated\n        one with Lean's cause otherwise, and the row carries the filled document. A refusal is bound as the plain\n        route's is (`_bind_refusal`).\"\"\"\n        try:\n            from .backends.service_schema import Invalid, check_row\n            check_row(\"readings-route\", row, case, 0)\n            _need(row[\"id\"] == case[\"id\"])\n            if row[\"status\"] == \"error\":\n                pass\n            else:\n                _bind_completion_answer(row, case, checked_part)\n        except (_Invalid, Invalid, VEError, TypeError, KeyError, ValueError, AttributeError, IndexError,\n                RecursionError) as exc:\n            raise CheckerUnavailable(\"the Lean readings route returned an invalid answer\") from exc\n        if row[\"status\"] == \"error\":\n>           raise VEError(row[\"error\"])\nE           ve.errors.VEError: ReadingsUnsatisfiable: keep-default, zz\n\nve/readings_route.py:329: VEError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s\n1 failed in 0.46s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-33eik6ba)\n"
+  },
+  {
+   "id": "M17",
+   "file": "ve/softnorms.py",
+   "claim": "rule_key is Lean's ruleKey: the name map's own decision names relate to sup D's",
+   "source_sha256": "fb067c8c8825c34c5bf127822fac8379fcc5a7a1694f6f68802b9e9dd90f0ce5",
+   "tests": [
+    "tests/test_readings_s2_answer.py::test_genuine_answers_are_relayed_unchanged"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_s2_answer.py::test_genuine_answers_are_relayed_unchanged"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.9,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__________________ test_genuine_answers_are_relayed_unchanged __________________\n\ngenuine = [({'language': 've.core@0.2', 'profiles': ['norms@0', 'readings@1', 'relational-fol@0', 'soft-norms@0'], 'spec_revisio...], ...}]}, {'error': 'ReadingsUnsatisfiable: keep-default, keep-strict', 'id': 'readings-s2', 'status': 'error'}), ...]\n\n    def test_genuine_answers_are_relayed_unchanged(genuine):\n        for raw, document, row in genuine:\n>           assert _ask(raw, document, row) == _shown(row)\nE           AssertionError: assert ('unavailable',) == {'choice_coun...g': None, ...}\nE             \nE             Use -v to get more diff\n\ntests/test_readings_s2_answer.py:193: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_s2_answer.py::test_genuine_answers_are_relayed_unchanged\n1 failed in 0.41s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s4szytk8)\n"
+  }
+ ]
+}

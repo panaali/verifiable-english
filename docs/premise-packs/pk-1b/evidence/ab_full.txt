@@ -1,0 +1,4 @@
+uv run python tools/lean_output_diff.py --build --recorded <VE_LEAN_INPUTS of 8 test files> (baseline: main 20aa836fd's executables from ve-share-main; head: pk-1b)
+baseline 20aa836fd5ac; executables rebuilt with a different digest: ve_response_decode, ve_service, ve_speech_acts_route
+ve_conformance 68, ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 1, ve_response_decode 2, ve_senses_route 1, ve_service 347, ve_speech_acts_route 17
+445 invocations, 366 run on both builds, 79 skipped as their executable is byte-identical to the baseline; 0 differences, 0 timed out
