@@ -24,3 +24,7 @@ whole pilots, plus the 55 UDHR and constitution readings part documents (L70): 9
 4. **Trust.** `tools/trust_map.py --check` on the final code: K +0, S +0, D +0, G +0, trusted +0. The one shape
    line changed (`lean/ResponseShape/Schemas/ReadingsRoute.lean`, the `elaborate` description) is a description,
    so no R6 allowance is recorded.
+5. **Review fix F1, F2 (`d738cb08`).** The name map, the generated soft decisions' keys, a shared slot label, a
+   `precedence under <rule>` cause and every refusal with ` under ` (also under the completion) are now bound to
+   the request; a forged one is `CheckerUnavailable`. On every recorded input the head recording is byte-identical
+   to the one before the fix, so no row of this file changes and none is added.

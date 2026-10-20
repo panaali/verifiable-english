@@ -188907,7 +188907,7 @@
    "op": "document_check"
   }
  ],
- "head_commit": "43570b7ea6118a640027c31c77fef58de3f72b65",
+ "head_commit": "d738cb086fcc3c771f6a777866f996afe4c35919",
  "pilots": "the readings part documents only (L70): docs/arch/AR-17/pilot_parts.py `selected`",
  "recordings": {
   "base": "0db5290b4bc84ab381095b1936b19fc698419d58abea5494b02ccd8b1ab848b8",
