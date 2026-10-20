@@ -101,6 +101,9 @@ both sides denote; a side that divides by zero somewhere is simply not compared 
 both sides denote and differ refutes the identity. The limit (`limit .polyTerms`) is checked before the work: at most
 10,000 nodes in a side, walked without passing the 10,000th (a side can share itself), and at most 10,000 terms in a
 sum or a product before like terms merge; a coefficient past the digit limit (`10 ^ maxDigits`) or an exponent above
-4,096 also ends the normal form. Past a limit `Identity.compare` is `none`, and `identityCheck` is false: never an
-identity. Fixtures: `tests/test_calc_algebra.py`. Inlining named values (§2.7), the meaning `IsIdentity` and the
+4,096 also ends the normal form. Every polynomial built, a literal too, passes `Poly.guard`; division is looked for
+only within the limits. `Frac.ofExpr_within`, `Poly.ofExpr_within` and `Identity.compare_within`: an answer other than
+`none` is given only when every limit check passed (the node count, and every polynomial on the way `Within`). Past a
+limit `Identity.compare` is `none`, and `identityCheck` is false: never an identity. Fixtures:
+`tests/test_calc_algebra.py`, each limit check at its limit and one past it (`LIMIT_CHECKS`, `LIMITS`). Inlining named values (§2.7), the meaning `IsIdentity` and the
 runner with its point search are me-9b's.
