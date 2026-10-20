@@ -3985,7 +3985,7 @@ module VE.Calc.Syntax 5fb0fd5b3ab4a969a25f642f8a98ba44cb4fa5b1e114b83623d4c19b0b
 49:0-52:24 def VE.Calc.Claim.exprs@VE.Calc.Syntax
 54:0-58:56 def VE.Calc.Claim.Holds@VE.Calc.Syntax
 60:0-61:35 def VE.Calc.Claim.Defined@VE.Calc.Syntax
-module VE.Calc.Units 6084382d1536ccf60573612732917f700d499b8a123b0221118f1c08f7d51bb8
+module VE.Calc.Units ac0632746b31f47132814a74261bcae42619cd5c2ef1afb5738b1a7f34ac04f9
 12:0-12:97 def VE.Calc.Units.affineNames@VE.Calc.Units
 13:0-13:65 def VE.Calc.Units.logarithmicNames@VE.Calc.Units
 15:0-20:21 structure VE.Calc.Units.UnitDef@VE.Calc.Units
@@ -3998,9 +3998,9 @@ module VE.Calc.Units 6084382d1536ccf60573612732917f700d499b8a123b0221118f1c08f7d
 27:0-27:76 def VE.Calc.Units.invalid@VE.Calc.Units
 29:0-34:100 def VE.Calc.Units.checkFields@VE.Calc.Units
 36:0-45:34 def VE.Calc.Units.decodeExponents@VE.Calc.Units
-47:0-55:57 def VE.Calc.Units.decodeFactor@VE.Calc.Units
-57:0-68:107 def VE.Calc.Units.decodeUnit@VE.Calc.Units
-70:0-82:91 def VE.Calc.Units.decodeV2@VE.Calc.Units
+47:0-54:103 def VE.Calc.Units.decodeFactor@VE.Calc.Units
+56:0-67:107 def VE.Calc.Units.decodeUnit@VE.Calc.Units
+69:0-82:91 def VE.Calc.Units.decodeV2@VE.Calc.Units
 84:0-87:71 def VE.Calc.Units.decodeLegacy@VE.Calc.Units
 89:0-93:93 def VE.Calc.Units.decode@VE.Calc.Units
 95:0-97:51 def VE.Calc.Units.UnitEnv.environmentId@VE.Calc.Units
