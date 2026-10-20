@@ -111,7 +111,21 @@ def h8 (wavelength printed : String) : String := req (stated "length" r#""11""# 
   ("bounds", says (req r827 (c1 r#"["rounds-down", ["val", "r"], "0.296"]"# ++ ", " ++
       claim "c2" r#"["rounds-up", ["val", "r"], "0.297"]"# ++ ", " ++ claim "c3" r#"["rounds-down", ["val", "r"], "0.297"]"#)),
     ["c1 holds", "c2 holds", "c3 fails"]),
-  ("sign", says (req x1 (c1 r#"["rounds", ["val", "x"], "-1"]"#)), ["c1 fails"])]
+  ("sign", says (req x1 (c1 r#"["rounds", ["val", "x"], "-1"]"#)), ["c1 fails"]),
+  ("order", says (req x1 (c1 r#"["lt", ["val", "x"], ["lit", "2"]]"# ++ ", " ++
+      claim "c2" r#"["le", ["val", "x"], ["lit", "2"]]"# ++ ", " ++ claim "c3" r#"["gt", ["val", "x"], ["lit", "2"]]"# ++
+      ", " ++ claim "c4" r#"["ge", ["val", "x"], ["lit", "2"]]"# ++ ", " ++ claim "c5" r#"["gt", ["lit", "2"], ["val", "x"]]"#)),
+    ["c1 holds", "c2 holds", "c3 fails", "c4 fails", "c5 holds"]),
+  ("short-names", says (req x1 (claim "c" r#"["eq", ["val", "x"], ["lit", "1"]]"#) r#", "software": "P""#),
+    ["c holds reproduction unknown"])]
+
+-- What a decided row means (`Check.OutcomeMeans`), read on a claim that holds.
+#guard let k := Check.claim (.compare ⟨.eq, false⟩ (.val "x") (.lit 1))
+  let ds : List Decl := [⟨"x", .stated 1⟩]
+  decide (k.OutcomeMeans ds (.decided .holds)) && !decide (k.OutcomeMeans ds (.decided .fails)) &&
+    match k.run ds with
+    | .decided v => decide (k.OutcomeMeans ds (.decided v))
+    | .unknown _ => false
 
 /-! ## Identity (3.3, J1): what changes the `meaning_id` and what does not -/
 
@@ -213,6 +227,37 @@ def name64 : String := String.mk (List.replicate 64 'x')
   ("claim-id", says (req x1 (claim "C 1" r#"["eq", ["val", "x"], ["lit", "1"]]"#)),
     ["InvalidInput: claims.0.id must be a claim id"]),
   ("pow-natural", says (req x1 (c1 r#"["eq", ["pow", ["val", "x"], -1], ["lit", "1"]]"#)),
-    ["InvalidInput: claims.0.claim.1.2 must be a natural number"])]
+    ["InvalidInput: claims.0.claim.1.2 must be a natural number"]),
+  ("claim-id-first", says (req x1 (claim "Ac" r#"["eq", ["val", "x"], ["lit", "1"]]"#)),
+    ["InvalidInput: claims.0.id must be a claim id"]),
+  ("claim-id-last", says (req x1 (claim "aC" r#"["eq", ["val", "x"], ["lit", "1"]]"#)),
+    ["InvalidInput: claims.0.id must be a claim id"]),
+  ("claim-id-empty", says (req x1 (claim "" r#"["eq", ["val", "x"], ["lit", "1"]]"#)),
+    ["InvalidInput: claims.0.id must be a claim id"])]
+
+/-! Each argument's JSON path in a refusal -/
+
+def bad : String := r#"["neg"]"#
+
+#guard expect [
+  ("rounds-1", says (req x1 (c1 s!"[\"rounds\", {bad}, \"1\"]")), ["InvalidInput: claims.0.claim.1 must be an expression"]),
+  ("within-1", says (req x1 (c1 s!"[\"within\", {bad}, [\"lit\", \"1\"], [\"lit\", \"1\"]]")),
+    ["InvalidInput: claims.0.claim.1 must be an expression"]),
+  ("within-2", says (req x1 (c1 s!"[\"within\", [\"lit\", \"1\"], {bad}, [\"lit\", \"1\"]]")),
+    ["InvalidInput: claims.0.claim.2 must be an expression"]),
+  ("within-3", says (req x1 (c1 s!"[\"within\", [\"lit\", \"1\"], [\"lit\", \"1\"], {bad}]")),
+    ["InvalidInput: claims.0.claim.3 must be an expression"]),
+  ("compare-2", says (req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], {bad}]")), ["InvalidInput: claims.0.claim.2 must be an expression"]),
+  ("add-1", says (req x1 (c1 s!"[\"eq\", [\"add\", {bad}, [\"val\", \"x\"]], [\"lit\", \"1\"]]")),
+    ["InvalidInput: claims.0.claim.1.1 must be an expression"]),
+  ("add-2", says (req x1 (c1 s!"[\"eq\", [\"add\", [\"val\", \"x\"], {bad}], [\"lit\", \"1\"]]")),
+    ["InvalidInput: claims.0.claim.1.2 must be an expression"]),
+  ("pow-1", says (req x1 (c1 s!"[\"eq\", [\"pow\", {bad}, 2], [\"lit\", \"1\"]]")),
+    ["InvalidInput: claims.0.claim.1.1 must be an expression"]),
+  ("lit-1", says (req x1 (c1 r#"["eq", ["lit", 5], ["lit", "1"]]"#)), ["InvalidInput: claims.0.claim.1.1 must be a literal"]),
+  ("lit-sci", says (req x1 (c1 r#"["eq", ["lit", ["sci", "1"]], ["lit", "1"]]"#)),
+    ["InvalidInput: claims.0.claim.1.1 must be a literal"]),
+  ("sci-2", says (req x1 (c1 r#"["eq", ["lit", ["sci", "1", 1.5]], ["lit", "1"]]"#)),
+    ["InvalidInput: claims.0.claim.1.1.2 must be an integer"])]
 
 end VE.Calc.RunExamples
