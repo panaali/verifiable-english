@@ -143,15 +143,11 @@ def comparisons : List (String × Comparison) :=
 
 def rules : List (String × Rounding) := [("ties-up", .tiesUp), ("half-even", .halfEven)]
 
-def array? (j : Json) : Option (List Json) := match j with
-  | .arr xs => some xs.toList
-  | _ => none
-
 def expr (path : String) : Nat → Json → Except String (Expr × Json)
   | 0, _ => throw (invalid path "is nested too deeply")
   | n + 1, j => do
-    let some xs := array? j | throw (invalid path "must be an expression")
-    match xs with
+    let .ok xs := j.getArr? | throw (invalid path "must be an expression")
+    match xs.toList with
     | [.str "lit", l] => do
       let p ← literal s!"{path}.1" l
       pure (.lit p.value, Json.arr #[.str "lit", .str (plain p)])
@@ -174,7 +170,7 @@ def claim (rule : String × Rounding) (path : String) (j : Json) : Except String
     let (x, cx) ← e 1 x
     let p ← literal s!"{path}.2" p
     pure (Claim.rounds r x p, Json.arr (#[.str name, cx, printedJson p] ++ tail))
-  match array? j with
+  match (j.getArr?.toOption.map (·.toList) : Option (List Json)) with
   | some [.str "within", x, lo, hi] => do
     let (x, cx) ← e 1 x
     let (lo, cl) ← e 2 lo
@@ -208,7 +204,7 @@ def recordJson (path : String) (j : Json) (fields : List (String × Json)) : Exc
     | .ok _ => throw (invalid s!"{path}.support" "must be a string")
   let span ← match j.getObjVal? "span" with
     | .error _ => pure []
-    | .ok s => match (array? s).map (·.map Json.getNat?) with
+    | .ok s => match s.getArr?.toOption.map (·.toList.map Json.getNat?) with
       | some [Except.ok a, Except.ok b] => do
         unless a ≤ b do throw (invalid s!"{path}.span" "must not end before it starts")
         pure [("span", Json.arr #[toJson a, toJson b])]
@@ -289,12 +285,7 @@ def identify (canonical : Json) (claims : List Json) : Except String (String × 
   pure (mid, ids)
 
 /-- A decoded case with its `meaning_id` and each claim's id. -/
-structure Decoded where
-  case : Case
-  meaningId : String
-  claimIds : List String
-
-def decode (j : Json) : Except String Decoded := do
+def decode (j : Json) : Except String (Case × String × List String) := do
   checkCase j
   let rule ← match j.getObjVal? "rounding" with
     | .error _ => pure ("ties-up", .tiesUp)
@@ -315,10 +306,10 @@ def decode (j : Json) : Except String Decoded := do
   admit ds (es.map (·.1))
   let (mid, ids) ← identify (Json.mkObj ([("format", .str "ve-calc@0"), ("values", .arr cvals.toArray),
     ("claims", .arr (es.map (·.2.2)).toArray)] ++ software.toList.map (("software", Json.str ·)))) (es.map (·.2.1))
-  pure ⟨⟨ds, es.map (·.1), software⟩, mid, ids⟩
+  pure (⟨ds, es.map (·.1), software⟩, mid, ids)
 
 /-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, names, definition order and literals. -/
-def decodeCase (j : Json) : Except String Case := (decode j).map (·.case)
+def decodeCase (j : Json) : Except String Case := (decode j).map (·.1)
 
 end Wire
 
@@ -362,7 +353,7 @@ theorem Wire.decodeCase_wellFormed (j : Lean.Json) (c : Case) (h : Wire.decodeCa
     rw [hd] at h
     cases h
     obtain ⟨vals, hds, hadm⟩ : ∃ vals : List (String × (Rat ⊕ Expr)),
-        d.case.decls = vals.map Wire.decl ∧ Wire.admit d.case.decls d.case.claims = .ok () := by
+        d.1.decls = vals.map Wire.decl ∧ Wire.admit d.1.decls d.1.claims = .ok () := by
       unfold Wire.decode at hd
       simp only [bind, Except.bind, pure, Except.pure] at hd
       repeat' split at hd
