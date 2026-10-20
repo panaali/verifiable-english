@@ -20,6 +20,12 @@ def Check.OutcomeMeans (ds : List Decl) : Check → Outcome → Prop
 def Check.run (ds : List Decl) : Check → Outcome
   | .claim c => c.run ds
 
+/-- A decided row's meaning is decidable, so route cases can check it. -/
+instance (ds : List Decl) (k : Check) (v : Verdict) : Decidable (k.OutcomeMeans ds (.decided v)) := by
+  cases k
+  unfold Check.OutcomeMeans
+  infer_instance
+
 theorem Check.run_claim (ds : List Decl) (c : Claim) : (Check.claim c).run ds = c.run ds := rfl
 
 /-- The row theorem (J3): every outcome means what its kind's clause says. -/
@@ -73,7 +79,7 @@ theorem outcomes_words (o : Outcome) : outcomes.find? (words · == words o) = so
 
 def rowJson (claimId : String) (r : Row) : Json :=
   Json.mkObj [("status", .str "ok"), ("claim", .str r.id), ("claim_id", .str claimId), ("kind", .str "claim"),
-    ("outcome", .str (words r.outcome).1), ("reason", ((words r.outcome).2.map Json.str).getD .null),
+    ("outcome", .str (words r.outcome).1), ("reason", (words r.outcome).2.elim .null Json.str),
     ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)]
 
 /-- The service answer: the case's `meaning_id` and its rows, or the refusal of the case. -/
@@ -119,7 +125,7 @@ theorem outcome_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c)
     have hout (r : Row) : (rowJson (d.2.2.getD i "") r).getObjVal? "outcome" =
         .ok (.str (words r.outcome).1) := get _ _ _ (by simp) (by simp)
     have hreason (r : Row) : (rowJson (d.2.2.getD i "") r).getObjVal? "reason" =
-        .ok (((words r.outcome).2.map Json.str).getD .null) := get _ _ _ (by simp) (by simp)
+        .ok ((words r.outcome).2.elim .null Json.str) := get _ _ _ (by simp) (by simp)
     simp only [outcomeAt, hrows, List.getElem?_toArray, List.getElem?_mapIdx, List.getElem?_eq_getElem hr,
       Option.map_some, Option.bind_eq_bind, Option.bind_some, hout, hreason]
     generalize words ((Run.rows d.1)[i]'hr).outcome = wo at ho ⊢

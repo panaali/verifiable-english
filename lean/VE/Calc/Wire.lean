@@ -129,7 +129,7 @@ def literal (path : String) (j : Json) : Except String Printed := do
   match j with
   | .str s => Printed.ofDec <$> dec s
   | .arr xs => match xs.toList with
-    | [.str "sci", .str s, e] => match e.getInt? with
+    | .str "sci" :: .str s :: e :: [] => match e.getInt? with
       | .ok e => (Printed.sci · e) <$> dec s
       | .error _ => throw (invalid s!"{path}.2" "must be an integer")
     | _ => throw (invalid path "must be a literal")
@@ -143,46 +143,46 @@ def comparisons : List (String × Comparison) :=
 
 def rules : List (String × Rounding) := [("ties-up", .tiesUp), ("half-even", .halfEven)]
 
-def expr (path : String) : Nat → Json → Except String (Expr × Json)
-  | 0, _ => throw (invalid path "is nested too deeply")
-  | n + 1, j => do
-    let .ok xs := j.getArr? | throw (invalid path "must be an expression")
-    match xs.toList with
-    | [.str "lit", l] => do
-      let p ← literal s!"{path}.1" l
-      pure (.lit p.value, Json.arr #[.str "lit", .str (plain p)])
-    | [.str "val", .str v] => pure (.val v, j)
-    | [.str "pow", a, k] => do
-      let (a, ca) ← expr s!"{path}.1" n a
-      let .ok k := k.getNat? | throw (invalid s!"{path}.2" "must be a natural number")
-      pure (.pow a k, Json.arr #[.str "pow", ca, toJson k])
-    | [.str op, a, b] => do
-      let some f := operations.lookup op | throw (invalid path "must be an expression")
-      let (a, ca) ← expr s!"{path}.1" n a
-      let (b, cb) ← expr s!"{path}.2" n b
-      pure (f a b, Json.arr #[.str op, ca, cb])
-    | _ => throw (invalid path "must be an expression")
+/-- An expression and its canonical form; `fuel` bounds its nesting, which the depth limit keeps below it. -/
+def expr (path : String) (fuel : Nat) (j : Json) : Except String (Expr × Json) := do
+  let .succ n := fuel | throw (invalid path "is nested too deeply")
+  let .ok xs := j.getArr? | throw (invalid path "must be an expression")
+  match xs.toList with
+  | .str "lit" :: l :: [] => do
+    let p ← literal s!"{path}.1" l
+    pure (.lit p.value, Json.arr #[.str "lit", .str (plain p)])
+  | .str "val" :: .str v :: [] => pure (.val v, j)
+  | .str "pow" :: a :: k :: [] => do
+    let (a, ca) ← expr s!"{path}.1" n a
+    let .ok k := k.getNat? | throw (invalid s!"{path}.2" "must be a natural number")
+    pure (.pow a k, Json.arr #[.str "pow", ca, toJson k])
+  | .str op :: a :: b :: [] => do
+    let some f := operations.lookup op | throw (invalid path "must be an expression")
+    let (a, ca) ← expr s!"{path}.1" n a
+    let (b, cb) ← expr s!"{path}.2" n b
+    pure (f a b, Json.arr #[.str op, ca, cb])
+  | _ => throw (invalid path "must be an expression")
 
 /-- A claim and its canonical form; a `rounds` claim carries its rule, the case's unless it names one. -/
 def claim (rule : String × Rounding) (path : String) (j : Json) : Except String (Claim × Json) := do
-  let e (i : Nat) (x : Json) := expr s!"{path}.{i}" 64 x
+  let e (i : Nat) (x : Json) := expr s!"{path}.{i}" VE.Limits.maxDepth x
   let rounds (name : String) (r : Rounding) (x p : Json) (tail : Array Json) := do
     let (x, cx) ← e 1 x
     let p ← literal s!"{path}.2" p
-    pure (Claim.rounds r x p, Json.arr (#[.str name, cx, printedJson p] ++ tail))
+    pure (Claim.rounds r x p, Json.arr (#[.str name, cx, printedJson p].append tail))
   match (j.getArr?.toOption.map (·.toList) : Option (List Json)) with
-  | some [.str "within", x, lo, hi] => do
+  | some (.str "within" :: x :: lo :: hi :: []) => do
     let (x, cx) ← e 1 x
     let (lo, cl) ← e 2 lo
     let (hi, ch) ← e 3 hi
     pure (.within x lo hi, Json.arr #[.str "within", cx, cl, ch])
-  | some [.str "rounds", x, p] => rounds "rounds" rule.2 x p #[.str rule.1]
-  | some [.str "rounds", x, p, .str r] => match rules.lookup r with
+  | some (.str "rounds" :: x :: p :: []) => rounds "rounds" rule.2 x p #[.str rule.1]
+  | some (.str "rounds" :: x :: p :: .str r :: []) => match rules.lookup r with
     | some rr => rounds "rounds" rr x p #[.str r]
     | none => throw (invalid s!"{path}.3" "must be \"ties-up\" or \"half-even\"")
-  | some [.str "rounds-down", x, p] => rounds "rounds-down" .down x p #[]
-  | some [.str "rounds-up", x, p] => rounds "rounds-up" .up x p #[]
-  | some [.str op, a, b] => do
+  | some (.str "rounds-down" :: x :: p :: []) => rounds "rounds-down" .down x p #[]
+  | some (.str "rounds-up" :: x :: p :: []) => rounds "rounds-up" .up x p #[]
+  | some (.str op :: a :: b :: []) => do
     let some c := comparisons.lookup op | throw (invalid path "must be a claim")
     let (a, ca) ← e 1 a
     let (b, cb) ← e 2 b
@@ -223,7 +223,7 @@ def value (i : Nat) (j : Json) : Except String ((String × (Rat ⊕ Expr)) × Js
       let p ← literal s!"{path}.stated" l
       pure (Sum.inl p.value, ("stated", Json.str (plain p)))
     | .error _, .ok x => do
-      let (x, cx) ← expr s!"{path}.defined" 64 x
+      let (x, cx) ← expr s!"{path}.defined" VE.Limits.maxDepth x
       pure (Sum.inr x, ("defined", cx))
     | _, _ => throw (invalid path "must have one of stated and defined")
   pure ((name, src), ← recordJson path j [("name", .str name), cs])
@@ -295,18 +295,19 @@ def decode (j : Json) : Except String (Case × String × List String) := do
     | .ok _ => throw (invalid "case.rounding" "must be a string")
   let software ← match j.getObjVal? "software" with
     | .error _ => pure none
-    | .ok (.str s) => if s.isEmpty then throw (invalid "case.software" "must not be empty") else pure (some s)
+    | .ok (.str s) => if s == "" then throw (invalid "case.software" "must not be empty") else pure (some s)
     | .ok _ => throw (invalid "case.software" "must be a string")
   let .ok (.arr vs) := j.getObjVal? "values" | throw (invalid "case.values" "must be a list")
   let .ok (.arr cs) := j.getObjVal? "claims" | throw (invalid "case.claims" "must be a list")
-  if cs.isEmpty then throw "NoClaims: a calculation needs at least one claim"
+  if cs.size == 0 then throw "NoClaims: a calculation needs at least one claim"
   let (vals, cvals) := (← vs.toList.zipIdx.mapM fun (v, i) => value i v).unzip
-  let es ← cs.toList.zipIdx.mapM fun (c, i) => entry rule i c
+  let (checks, hashed) := (← cs.toList.zipIdx.mapM fun (c, i) => entry rule i c).unzip
+  let (claimJson, entryJson) := hashed.unzip
   let ds := vals.map decl
-  admit ds (es.map (·.1))
+  admit ds checks
   let (mid, ids) ← identify (Json.mkObj ([("format", .str "ve-calc@0"), ("values", .arr cvals.toArray),
-    ("claims", .arr (es.map (·.2.2)).toArray)] ++ software.toList.map (("software", Json.str ·)))) (es.map (·.2.1))
-  pure (⟨ds, es.map (·.1), software⟩, mid, ids)
+    ("claims", .arr entryJson.toArray)] ++ software.elim [] fun s => [("software", .str s)])) claimJson
+  pure (⟨ds, checks, software⟩, mid, ids)
 
 /-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, names, definition order and literals. -/
 def decodeCase (j : Json) : Except String Case := (decode j).map (·.1)
