@@ -369,6 +369,17 @@ def paperModel (u : Nat) : VE.Order.FiniteModel Nat :=
 #guard [fa4c 296, fa4c 297, fa4dOther 296].map (both paper (paperModel 0)) = [(true, true), (false, false), (true, true)]
 #guard [fa4c 296, fa4dOther 296, fa4dOther 301].map (both paper (paperModel 3)) =
   [(true, true), (false, false), (true, true)]
+/-- Two scored decisions, one of them a false approval, and one unscored false approval. -/
+def fa4dModel : VE.Order.FiniteModel Nat :=
+  rowsModel dec [(["scored"], 1), (["false_approval"], 1), (["scored", "false_approval"], 1)]
+/-- FA4d through spec 3.9, on ratio statements: the scored false approvals over the scored decisions give
+1/2 = 0.500, and every false approval over the scored decisions gives 2/2 = 1.000, so the first reading does not
+entail the other. -/
+theorem fa4d_not_entails : ¬ CEntails.{0} paper [fa4c 500] (fa4dOther 500) :=
+  refutesC_sound paper ⟨by decide, fun _ _ h => nomatch h⟩ _ _ fa4dModel
+    (rowsModel_valid paper dec _ (fun _ => rfl) (by decide))
+    (fun a ha => admits_sound _ _ (by revert a ha; decide +kernel)) (admits_sound _ _ (by decide +kernel))
+    (by decide +kernel)
 -- `erasedProblem_admitted` on FA4c: 4 region premises and the erased claim, each W6a-admitted in `E.elab`.
 #guard (erasedProblem paper [] (fa4c 296)).1.length = 4 &&
   ((erasedProblem paper [] (fa4c 296)).1 ++ [(erasedProblem paper [] (fa4c 296)).2]).all

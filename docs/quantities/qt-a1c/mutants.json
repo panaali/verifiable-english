@@ -27,6 +27,8 @@
   {"id": "fa1b-premise", "file": "lean/VE/Cardinality/Examples.lean", "claim": "fixture fa1b_not_entails: the countermodel refutes FA1 only without the exclusion premise", "find": "theorem fa1b_not_entails : ¬ CEntails.{0} fomc fa1.dropLast fa1Conclusion :=", "replace": "theorem fa1b_not_entails : ¬ CEntails.{0} fomc fa1 fa1Conclusion :=",
    "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
   {"id": "fa2-bound", "file": "lean/VE/Cardinality/Examples.lean", "claim": "fixture fa2_agree: W6a's \"at least 4\" fails on a model with 3, through count_atLeast_agree", "find": "(w (VE.Time.atLeast pm 3 b.toFormula) ∧ ¬ w (VE.Time.atLeast pm 4 b.toFormula))", "replace": "(w (VE.Time.atLeast pm 3 b.toFormula) ∧ ¬ w (VE.Time.atLeast pm 3 b.toFormula))",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]},
+  {"id": "fa4d-premise", "file": "lean/VE/Cardinality/Examples.lean", "claim": "fixture fa4d_not_entails (a ratio claim): the countermodel refutes the other reading of \"out of\" only from the first", "find": "theorem fa4d_not_entails : ¬ CEntails.{0} paper [fa4c 500] (fa4dOther 500) :=", "replace": "theorem fa4d_not_entails : ¬ CEntails.{0} paper [fa4dOther 500] (fa4dOther 500) :=",
    "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples"]}
  ]
 }
