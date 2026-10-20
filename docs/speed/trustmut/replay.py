@@ -38,6 +38,8 @@ FINDINGS = [
     ("ap-2 F11", "aa2fd56e3e335b5c8926a97d729d5da022754513", "c2b1a7d442b492934580cc2db099fe6ac27eef92",
      {"VE/Acts/Syntax.lean": [88, 89, 121, 122]}),
 ]
+BUDGET = 1200  # step 1: each replay takes at most 20 minutes
+FINAL = {"aa2fd56e"}  # the replays run with the final tool (the evidence does not name the tool's commit)
 
 
 def replay(head: str, base: str, jobs: int) -> None:
@@ -119,6 +121,20 @@ def f11() -> str:
         f"{status}: " + ", ".join(f"{n} '{k}'" for k, n in found.most_common()) for status, found in kinds.items())
 
 
+def budget() -> str:
+    """Step 1's time budget on the saved replays (review F14: the report quotes this line, never a claim of its own):
+    each replay within `BUDGET` or over it, and which tool ran it."""
+    rows = [(finding, head[:8], json.loads((EVIDENCE / f"{head[:8]}.json").read_text())["seconds"])
+            for finding, head, _, _ in FINDINGS]
+    def say(part: list) -> str:
+        return ", ".join(f"{f} {s} s ({'final' if h in FINAL else 'F8'} tool)" for f, h, s in part) or "none"
+    within = [r for r in rows if r[2] <= BUDGET]
+    final = [r for r in rows if r[1] in FINAL]
+    return (f"Step 1's budget ({BUDGET} s a replay): {len(within)} of {len(rows)} replays within it; over it: "
+            f"{say([r for r in rows if r[2] > BUDGET])}. On the final tool {sum(r[2] <= BUDGET for r in final)} of "
+            f"{len(final)} within it.")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--run", action="store_true")
@@ -130,7 +146,7 @@ def main() -> int:
             if not args.only or head.startswith(args.only):
                 replay(head, base, args.jobs)
     if not args.only:
-        print("\n".join([*table(), "", f9(), f10(), f11()]))
+        print("\n".join([*table(), "", budget(), f9(), f10(), f11()]))
     return 0
 
 
