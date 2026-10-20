@@ -971,6 +971,20 @@
    "reason": "qt-b1b: S +9 (VE/Scales/Degrees.lean +6 StrictLinear, VE/Scales/Intended.lean +3 Fresh)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1b, 2026-10-18",
    "commit": "b1f7ca7adc2b39a17238457736870fb15df03928"
+  },
+  {
+   "class": "S",
+   "lines": 90,
+   "reason": "sc-1ac: lean/VE/Scope/Govern.lean S +90 (Reach, Governor, SDoc, applyEffect, isFrame, unary, graph, baseObj, covered, classOf, position, ordered, composed, affected, govern), V +42 (G[V] untied: keysOf, unitsOf, idOf, unitIds, contentOf, isPart, isNorm, objectOf, partUnits, ruleUnits, coveredLayout, frameOn, baseName, newContent, patch); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ac, 2026-10-18",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
+  },
+  {
+   "class": "V",
+   "lines": 42,
+   "reason": "sc-1ac: lean/VE/Scope/Govern.lean S +90 (Reach, Governor, SDoc, applyEffect, isFrame, unary, graph, baseObj, covered, classOf, position, ordered, composed, affected, govern), V +42 (G[V] untied: keysOf, unitsOf, idOf, unitIds, contentOf, isPart, isNorm, objectOf, partUnits, ruleUnits, coveredLayout, frameOn, baseName, newContent, patch); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ac, 2026-10-18",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
   }
  ]
 }
