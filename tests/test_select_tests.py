@@ -1562,10 +1562,10 @@ def test_a_build_record_needs_a_current_build_of_one_tree(tmp_path, monkeypatch)
     monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path / "builds"))
     trees = iter([BASE_TREE, BASE_TREE, BASE_TREE, BASE_TREE, HEAD_TREE])
     monkeypatch.setattr(test_map, "lean_tree", lambda rev=None, root=None: next(trees))
-    monkeypatch.setattr(test_map, "executable_digests", lambda root=None: {"ve_service": "1" * 64})
-    monkeypatch.setattr(test_map, "current_build", lambda root=None: False)
+    monkeypatch.setattr(test_map, "executable_digests", lambda root=None, names=None: {"ve_service": "1" * 64})
+    monkeypatch.setattr(test_map, "current_build", lambda root=None, names=None, env=None: False)
     assert test_map.record_build() is None and test_map.load_build(BASE_TREE) is None
-    monkeypatch.setattr(test_map, "current_build", lambda root=None: True)
+    monkeypatch.setattr(test_map, "current_build", lambda root=None, names=None, env=None: True)
     assert test_map.record_build() == test_map.build_record_path(BASE_TREE)
     assert test_map.load_build(BASE_TREE) == {"ve_service": "1" * 64}
     test_map.build_record_path(BASE_TREE).unlink()
@@ -1609,6 +1609,138 @@ def test_a_run_builds_the_head_for_the_cutoff_when_the_base_build_is_recorded(mo
     monkeypatch.setattr(select_tests, "light_tier", lambda plan, **options: plan)
     assert select_tests.main() == 0
     assert events == ["select", "build", "select", "second"]
+
+
+MAP_COMMIT, DRIFT_BASE = "a" * 40, "d" * 40
+DRIFT_UNITS = {**LEAN_UNITS, "lean": "tests/test_lean_audit_record.py", "pins": "tests/test_rust_build.py"}
+
+
+def drift_uncertain(tmp_path, monkeypatch, at_map: dict | None, at_base: dict | None,
+                    drift: tuple[str, ...] = ("lean/VE/Json.lean",), cutoff=True) -> set[str]:
+    """The units the drift check (`uncertain_since`) leaves uncertain when the map's commit and the base differ by
+    `drift` (by default an edit of a Lean module every executable imports), with these build records of the
+    map's and the base's `lean/` trees (None: not recorded)."""
+    graph = source_graph.load(select_tests.ROOT)
+    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "cache"))  # this test's own drift cache
+    monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path / "builds"))
+    trees = {MAP_COMMIT: BASE_TREE, DRIFT_BASE: HEAD_TREE}
+    monkeypatch.setattr(test_map, "lean_tree", lambda rev=None, root=None: trees[rev])
+    for tree, digests in ((BASE_TREE, at_map), (HEAD_TREE, at_base)):
+        path = test_map.build_record_path(tree)
+        if digests is None:
+            path.unlink(missing_ok=True)
+        else:
+            write_build(tree, digests)
+
+    def git(*args):
+        if args[0] == "rev-parse":
+            return [DRIFT_BASE]
+        assert args == ("diff", "--no-renames", "--name-status", MAP_COMMIT, DRIFT_BASE), args
+        return [f"M\t{path}" for path in drift]
+    monkeypatch.setattr(select_tests, "git_lines", git)
+    edges = {DRIFT_UNITS["service"]: {"x": ["lean/.lake/build/bin/ve_service"]},
+             DRIFT_UNITS["metered"]: {"x": ["lean/.lake/build/bin/ve_metered"]},
+             DRIFT_UNITS["lake"]: {"x": ["lake"]}, DRIFT_UNITS["lean"]: {"x": ["lean"]},
+             DRIFT_UNITS["reader"]: {"r": ["lean/VE/Json.lean"]}, DRIFT_UNITS["pins"]: {"r": ["lean/checkers.lock"]}}
+    assert {"ve_service", "ve_metered"} <= select_tests.lean_programs(graph, "lean/VE/Json.lean")
+    coverage = select_tests.Coverage(make_map(edges, commit=MAP_COMMIT))
+    return select_tests.uncertain_since(coverage, graph, set(edges), "base", cutoff)[0]
+
+
+def drift_units(*names: str) -> set[str]:
+    return {DRIFT_UNITS[name] for name in names}
+
+
+def test_a_drift_lean_change_built_the_same_leaves_its_runners_certain(tmp_path, monkeypatch):
+    """eff-20261020-1: the map lagged main by Lean merges that changed no compiled program (map 75a9bcef9, base
+    2296317a9: 370 units uncertain, the same digests for all 9 executables). The drift check applies the change's
+    binary cutoff: a test that only ran an executable built the same keeps its map entry; the tests that read the
+    changed Lean file or run lake or lean do not."""
+    found = drift_uncertain(tmp_path, monkeypatch, every_executable(), every_executable())
+    assert found == drift_units("lake", "lean", "reader")
+    # A map `update` decides what it records without the cutoff: every runner, as before.
+    assert drift_uncertain(tmp_path, monkeypatch, every_executable(), every_executable(), cutoff=False) == \
+        drift_units("service", "metered", "lake", "lean", "reader")
+
+
+def test_a_drift_digest_that_differs_makes_its_runners_uncertain(tmp_path, monkeypatch):
+    found = drift_uncertain(tmp_path, monkeypatch, every_executable(), {**every_executable(), "ve_service": "1" * 64})
+    assert found == drift_units("service", "lake", "lean", "reader")
+    # An executable that a record lacks counts as rebuilt.
+    lacking = {name: digest for name, digest in every_executable().items() if name != "ve_metered"}
+    assert drift_uncertain(tmp_path, monkeypatch, every_executable(), lacking) == \
+        drift_units("metered", "lake", "lean", "reader")
+
+
+@pytest.mark.parametrize("at_map, at_base", [(False, True), (True, False), (False, False)],
+                         ids=["map", "base", "both"])
+def test_without_both_drift_records_the_drift_check_is_as_before(tmp_path, monkeypatch, at_map, at_base):
+    before = drift_uncertain(tmp_path / "before", monkeypatch, None, None, cutoff=False)
+    found = drift_uncertain(tmp_path, monkeypatch, every_executable() if at_map else None,
+                            every_executable() if at_base else None)
+    assert found == before and drift_units("service", "metered") <= found
+    # A record written later is read, not hidden by the cached drift.
+    assert drift_uncertain(tmp_path, monkeypatch, every_executable(), every_executable()) == \
+        drift_units("lake", "lean", "reader")
+
+
+def test_a_drift_pin_change_selects_its_readers_whatever_the_build(tmp_path, monkeypatch):
+    found = drift_uncertain(tmp_path, monkeypatch, every_executable(), every_executable(),
+                            drift=("lean/VE/Json.lean", "lean/checkers.lock"))
+    assert found == drift_units("lake", "lean", "reader", "pins")
+
+
+def test_the_drift_cache_misses_for_another_selector_version(tmp_path, monkeypatch):
+    """The drift is cached by the map's and the base's commits, the executables built differently and
+    SELECTOR_VERSION: a drift a selector without the cutoff saved is never read by this one."""
+    found = drift_uncertain(tmp_path, monkeypatch, every_executable(), every_executable())
+    [cache] = (tmp_path / "cache").rglob("uncertain-*.json")
+    assert select_tests.SELECTOR_VERSION in cache.name
+    poison = json.dumps({"uncertain": ["poison"], "drift": 1})
+    cache.write_text(poison)
+    assert drift_uncertain(tmp_path, monkeypatch, every_executable(), every_executable()) == {"poison"}
+    # The name an earlier selector gave the same drift (no cutoff in the key).
+    cache.with_name(f"uncertain-{MAP_COMMIT[:16]}-{DRIFT_BASE[:16]}-{select_tests.SELECTOR_VERSION}.json").write_text(
+        poison)
+    monkeypatch.setattr(select_tests, "SELECTOR_VERSION", "0" * 16)
+    assert drift_uncertain(tmp_path, monkeypatch, every_executable(), every_executable()) == found
+
+
+def test_a_plan_reports_the_drift_cutoff_it_applied(head, monkeypatch, capsys):
+    applied = {"map_tree": BASE_TREE, "base_tree": HEAD_TREE, "state": "applied", "rebuilt": [],
+               "same": ["ve_service"]}
+    passed = []
+    since = select_tests.uncertain_since
+    monkeypatch.setattr(select_tests, "drift_cutoff", lambda coverage, base: dict(applied))
+    monkeypatch.setattr(select_tests, "uncertain_since", lambda *args: (passed.append(args[4]), since(*args))[1])
+    path = "docs/TESTING.md"
+    text = real(path)
+    plan = plan_for([select_tests.Change(path, text, text + "\n")],
+                    make_map({test: {} for test in select_tests.units()}, commit=head))
+    assert passed == [applied] and passed[0] is plan["map_lean_cutoff"]
+    monkeypatch.setattr(select_tests, "select", lambda *args, **kwargs: plan)
+    monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", path])
+    assert select_tests.main() == 0
+    assert "\nmap lean cutoff: applied; built the same: ve_service\n" in capsys.readouterr().out
+
+
+def test_a_record_of_some_executables_keeps_the_others_of_its_tree(tmp_path, monkeypatch):
+    """The gate records the executables its `lake build` makes; what a record of the same tree holds for the
+    others stays."""
+    monkeypatch.setenv("VE_LEAN_BUILDS", str(tmp_path / "builds"))
+    monkeypatch.setattr(test_map, "lean_tree", lambda rev=None, root=None: BASE_TREE)
+    asked = []
+    monkeypatch.setattr(test_map, "current_build", lambda root, names, env: (asked.append((names, env)), True)[1])
+    monkeypatch.setattr(test_map, "executable_digests", lambda root, names: {
+        name: "2" * 64 for name in names or ("ve_service", "ve_english_lean_bench")})
+    write_build(BASE_TREE, {"ve_service": "1" * 64, "ve_english_lean_bench": "3" * 64})
+    env = {"PATH": "/gate/bin"}
+    assert test_map.record_build(tmp_path, ["ve_service"], env) == test_map.build_record_path(BASE_TREE)
+    assert asked == [(["ve_service"], env)]
+    assert test_map.load_build(BASE_TREE) == {"ve_service": "2" * 64, "ve_english_lean_bench": "3" * 64}
+    write_build(BASE_TREE, {"ve_service": "1" * 64, "ve_old": "3" * 64})
+    test_map.record_build(tmp_path)  # a record of every executable replaces the tree's record
+    assert test_map.load_build(BASE_TREE) == {"ve_service": "2" * 64, "ve_english_lean_bench": "2" * 64}
 
 
 def graph_without(path: str) -> source_graph.Graph:
@@ -2077,12 +2209,12 @@ def test_selector_mutants_fail_the_checks(name, check, tmp_path, monkeypatch):
         arguments = (tmp_path,)
     elif name == "the cutoff ignores the digests":
         real_cutoff = select_tests.lean_cutoff
-        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after, known=True: {
-            **real_cutoff(base, after, known), "state": "applied", "rebuilt": []})
+        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after, known=True, **options: {
+            **real_cutoff(base, after, known, **options), "state": "applied", "rebuilt": []})
         arguments = (head_commit(), tmp_path, monkeypatch)
     elif name == "equal trees are an identical build":
         real_tree = test_map.lean_tree
-        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after, known=True: {
+        monkeypatch.setattr(select_tests, "lean_cutoff", lambda base, after, known=True, **options: {
             "state": "applied", "rebuilt": [], "same": [], "base_tree": real_tree(base), "head_tree": real_tree(after)})
         arguments = (head_commit(), tmp_path, monkeypatch)
     elif name == "a missing build record counts as identical":

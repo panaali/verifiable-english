@@ -20,6 +20,7 @@ import time
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
+TOOLS = ROOT / "tools"
 sys.path.insert(0, str(ROOT))
 from tools import lake_outputs, nested_pytest, quarantine, rust_build, test_schedule  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
@@ -653,6 +654,23 @@ def record_collection(commit: str, ids: list[str], env: dict[str, str], result: 
     return "written"
 
 
+def record_lean_build(env: dict[str, str]) -> None:
+    """Record the digests of the executables this gate's `lake build` made (the default targets) under its `lean/`
+    tree, for this machine's later test selections (tools/test_map.py `record_build`, the binary cutoff's input).
+    A record is a later selection's shortcut: one that is not written is a warning, never a gate failure."""
+    try:
+        if str(TOOLS) not in sys.path:
+            sys.path.insert(0, str(TOOLS))
+        import test_map
+        names = sorted(set(test_map.lean_executables(ROOT)) & test_map.lean_default_targets(ROOT))
+        path = test_map.record_build(ROOT, names, env)
+    except Exception as exc:  # noqa: BLE001 - nothing the record does may change the gate's verdict
+        print(f"[gate] warning: Lean build record not written: {type(exc).__name__}: {exc}", flush=True)
+        return
+    print(f"[gate] Lean build record: {path}" if path else
+          "[gate] warning: Lean build record not written: the build is not current for its tree", flush=True)
+
+
 def gate_scratch_root() -> Path:
     """Allow a durable scratch root when system /tmp is cleaned during a long gate."""
     return Path(os.environ.get("VE_GATE_SCRATCH_ROOT", "/tmp")).resolve()
@@ -749,6 +767,7 @@ def main() -> int:
                 if not binary.is_file() or not os.access(binary, os.X_OK):
                     raise RuntimeError(f"Lean build did not produce {binary}")
             result["stages"].append("lean_build")
+            record_lean_build(env)
             # The examples are admitted by this commit's ve_service, so the check follows the build: before it, a
             # binary left by an earlier build would answer with another commit's modes.
             command(["uv", "run", "--frozen", "--no-sync", "python",

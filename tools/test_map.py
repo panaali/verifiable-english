@@ -175,35 +175,40 @@ def build_record_path(tree: str) -> Path:
     return builds_dir() / f"{platform_tag()}-{tree}.json"
 
 
-def executable_digests(root: Path = ROOT) -> dict[str, str]:
-    """SHA-256 of every built Lean executable the lakefile names."""
+def executable_digests(root: Path = ROOT, names: Sequence[str] | None = None) -> dict[str, str]:
+    """SHA-256 of every built Lean executable the lakefile names (or of `names`)."""
     found = {}
-    for name in lean_executables(root):
+    for name in lean_executables(root) if names is None else names:
         binary = root / "lean/.lake/build/bin" / name
         if binary.is_file():
             found[name] = hashlib.sha256(binary.read_bytes()).hexdigest()
     return found
 
 
-def current_build(root: Path = ROOT) -> bool:
-    """Whether every Lean executable on disk is the build of the sources as they are now."""
-    names = sorted(lean_executables(root))
+def current_build(root: Path = ROOT, names: Sequence[str] | None = None, env: dict[str, str] | None = None) -> bool:
+    """Whether every Lean executable on disk (or those of `names`) is the build of the sources as they are now,
+    Lake run in `env` (default `environment()`)."""
+    names = sorted(lean_executables(root) if names is None else names)
     if not names or not all((root / "lean/.lake/build/bin" / name).is_file() for name in names):
         return False
-    check = subprocess.run(["lake", "build", "--no-build", *names], cwd=root / "lean", env=environment(),
-                           capture_output=True)
-    return check.returncode == 0 and not lake_outputs.stale(root / "lean")
+    check = subprocess.run(["lake", "build", "--no-build", *names], cwd=root / "lean",
+                           env=environment() if env is None else env, capture_output=True)
+    return check.returncode == 0 and not lake_outputs.stale(root / "lean", env=env)
 
 
-def record_build(root: Path = ROOT) -> Path | None:
+def record_build(root: Path = ROOT, names: Sequence[str] | None = None, env: dict[str, str] | None = None) -> Path | None:
     """Record the current Lean build's digests under its `lean/` tree; None (nothing written) when the
-    build is not current or the tree changed while it was hashed."""
+    build is not current or the tree changed while it was hashed. `names` are the executables the build
+    made (default: every one); a record of fewer keeps what a record of the same tree holds for the
+    others. `env` is the environment Lake checks the build in (`current_build`)."""
     tree = lean_tree(None, root)
-    if tree is None or not current_build(root):
+    if tree is None or not current_build(root, names, env):
         return None
-    digests = executable_digests(root)
+    digests = executable_digests(root, names)
     if lean_tree(None, root) != tree:
         return None
+    if names is not None:
+        digests = {**(load_build(tree) or {}), **digests}
     path = build_record_path(tree)
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f"{path.name}.{os.getpid()}.tmp")
@@ -741,7 +746,8 @@ def update(args: argparse.Namespace) -> int:
     import source_graph
     coverage = select_tests.Coverage(previous, previous_path)
     everything = set(units())
-    uncertain, drift = select_tests.uncertain_since(coverage, source_graph.load(ROOT), everything, commit)
+    # Without the binary cutoff: what the map records is decided by the sources alone (only selection uses it).
+    uncertain, drift = select_tests.uncertain_since(coverage, source_graph.load(ROOT), everything, commit, False)
     redo = sorted(uncertain | (everything - coverage.recorded))
     print(f"map {previous['commit'][:10]} is {drift} changed files behind; "
           f"{len(redo)} of {len(everything)} units need recording", flush=True)

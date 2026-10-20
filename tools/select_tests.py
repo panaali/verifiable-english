@@ -392,9 +392,10 @@ def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[st
     check: the tests that read the file; for a file that appeared or vanished,
     the tests that listed its directory; then what its kind adds. `python` is
     (old summary, new summary, delta) for a Python file, the delta None when
-    the contents are unknown or not valid Python. `rebuilt` (the plan only)
-    holds the Lean executables whose build changed (`lean_cutoff`); None when
-    that is unknown, and every executable whose imports hold a changed module counts.
+    the contents are unknown or not valid Python. `rebuilt` holds the Lean
+    executables whose build changed (`lean_cutoff`, of the change for the plan
+    and of the map's commit and the base for the drift check); None when that
+    is unknown, and every executable whose imports hold a changed module counts.
     """
     kind = kind_of(path)
     if kind == EVERYTHING_KIND:
@@ -411,9 +412,7 @@ def file_impact(coverage: Coverage, graph: source_graph.Graph, all_units: set[st
         if d is None or not d.empty or presence_changed:
             python_impact(coverage, graph, all_units, add, path, old, new, d, called or {})
     elif kind == LEAN:
-        executables = lean_programs(graph, path)
-        if rebuilt is not None:
-            executables &= rebuilt  # an executable built the same runs the same
+        executables = changed_programs(graph, path, rebuilt)
         runs = runs_lean(executables)
         add(coverage.runners(lambda name: name != "lean/.lake/build/bin/ve_service"
                              and runs(name)), f"runs Lean via {path}")
@@ -499,6 +498,13 @@ def lean_programs(graph: source_graph.Graph, path: str) -> set[str]:
     return set(lean_executables())
 
 
+def changed_programs(graph: source_graph.Graph, path: str, rebuilt: set[str] | None) -> set[str]:
+    """The executables a Lean input can change (`lean_programs`) that a binary cutoff's `rebuilt` holds (None:
+    all of them): an executable built the same runs the same."""
+    executables = lean_programs(graph, path)
+    return executables if rebuilt is None else executables & rebuilt
+
+
 def runs_lean(executables: set[str]):
     programs = {f"lean/.lake/build/bin/{name}" for name in executables} | {"lake", "lean"}
     return lambda name: name in programs
@@ -541,9 +547,7 @@ def lean_change(sel: Selection, change: Change) -> None:
     sel.code = sel.lean = sel.audit = True
     if path.endswith(".lean"):
         sel.checks.add(CHECK_LEAN)
-    executables = lean_programs(sel.graph, path)
-    if sel.rebuilt is not None:
-        executables &= sel.rebuilt
+    executables = changed_programs(sel.graph, path, sel.rebuilt)
     mapped(sel, change)
     tokens = {f"lean-exe:{name}" for name in executables} | {"lean-tool"}
     sel.static(lambda _, mentions: bool(tokens & mentions), f"runs Lean via {path}")
@@ -673,15 +677,32 @@ def versioned_path(path: str) -> bool:
     return path.endswith(".py") or path == MANIFEST or posixpath.basename(path) == GIT_ATTRIBUTES
 
 
+def drift_cutoff(coverage: Coverage, base: str) -> dict:
+    """The binary cutoff of the drift: `lean_cutoff` of the map's commit and `base`, the executables built
+    differently from the two `lean/` trees as this machine recorded them."""
+    return lean_cutoff(coverage.commit, base, sides=("map", "base"))
+
+
+def rebuilt_of(cutoff: dict | None) -> set[str] | None:
+    """The executables a binary cutoff found built differently; None when it has no answer."""
+    return None if cutoff is None or cutoff["rebuilt"] is None else set(cutoff["rebuilt"])
+
+
 def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: set[str],
-                    base: str) -> tuple[set[str], int]:
+                    base: str, cutoff: dict | bool | None = True) -> tuple[set[str], int]:
     """Units whose coverage at `base` may differ from the map's, and how many files differ.
 
-    Cached per (map commit, base commit) next to the graph cache.
+    `cutoff` is the drift's binary cutoff (`drift_cutoff`): True computes it, a dict is one computed already,
+    False or None applies none. Cached per (map commit, base commit, executables built differently) next to
+    the graph cache.
     """
     base_commit = git_lines("rev-parse", base)[0]
+    if cutoff is True:
+        cutoff = drift_cutoff(coverage, base_commit)
+    rebuilt = rebuilt_of(cutoff or None)
+    built = "all" if rebuilt is None else hashlib.sha256(",".join(sorted(rebuilt)).encode()).hexdigest()[:12]
     cache = source_graph.cache_path(ROOT).with_name(
-        f"uncertain-{coverage.commit[:16]}-{base_commit[:16]}-{SELECTOR_VERSION}.json")
+        f"uncertain-{coverage.commit[:16]}-{base_commit[:16]}-{built}-{SELECTOR_VERSION}.json")
     try:
         cached = json.loads(cache.read_text())
         return set(cached["uncertain"]), cached["drift"]
@@ -693,14 +714,15 @@ def uncertain_since(coverage: Coverage, graph: source_graph.Graph, all_units: se
     contents = blobs([f"{rev}:{p}" for p in versioned for rev in (coverage.commit, base_commit)])
     versions = {p: (contents[f"{coverage.commit}:{p}"], contents[f"{base_commit}:{p}"])
                 for p in versioned}
-    found = uncertain_units(coverage, graph, all_units, status, versions)
+    found = uncertain_units(coverage, graph, all_units, status, versions, rebuilt)
     cache.parent.mkdir(parents=True, exist_ok=True)
     cache.write_text(json.dumps({"uncertain": sorted(found), "drift": len(status)}))
     return found, len(status)
 
 
 def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: set[str],
-                    status: dict[str, str], versions: dict[str, tuple[str | None, str | None]]) -> set[str]:
+                    status: dict[str, str], versions: dict[str, tuple[str | None, str | None]],
+                    rebuilt: set[str] | None = None) -> set[str]:
     """Units whose recorded run may differ now, given what changed since the map.
 
     `status` maps each changed path to git's A/D/M letter; `versions` gives the
@@ -708,7 +730,9 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
     none of the changed code (no changed function, no module whose
     import-time statements changed, no changed file it read or program it
     ran) runs the same way now as when it was recorded, so its map entry
-    still holds. Every other test is uncertain.
+    still holds. Every other test is uncertain. `rebuilt` is the drift's
+    binary cutoff (`file_impact`): a Lean executable built the same is no
+    changed program.
     """
     found: set[str] = set()
     # Keep what deleted and changed files imported and named at the map's commit.
@@ -749,7 +773,7 @@ def uncertain_units(coverage: Coverage, graph: source_graph.Graph, all_units: se
             pair = parsed[path]
             python = (None, None, None) if pair is None else (*pair, delta(*pair))
         # Any letter but M (T: a file became a link or back) may change what is there.
-        file_impact(coverage, graph, all_units, add, path, letter != "M", python, called)
+        file_impact(coverage, graph, all_units, add, path, letter != "M", python, called, rebuilt)
         if kind_of(path) == PYTHON and letter == "A":
             # Added since the map: no recorded test can have imported it.
             add(test for test in all_units if path in graph.closure(test)[0])
@@ -810,19 +834,20 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     unmapped = set(all_units)
     uncertain: set[str] = set()
     drift_files = 0
+    map_cutoff = None
     if cov is not None:
         try:
-            uncertain, drift_files = (set(), 0) if assume_fresh else uncertain_since(
-                cov, graph, set(all_units), base)
+            if not assume_fresh:
+                map_cutoff = drift_cutoff(cov, base)
+                uncertain, drift_files = uncertain_since(cov, graph, set(all_units), base, map_cutoff)
         except subprocess.CalledProcessError:
-            cov = None  # the map's commit is not in this repository
+            cov, map_cutoff = None, None  # the map's commit is not in this repository
     if cov is not None:
         unmapped = (set(all_units) - cov.recorded) | uncertain
     sel = Selection(graph, cov, unmapped, all_units)
     lean_changes = [change for change in changes if kind_of(change.path) == LEAN]
     cutoff = lean_cutoff(base, after, all(change.known for change in lean_changes)) if lean_changes else None
-    if cutoff is not None:
-        sel.rebuilt = None if cutoff["rebuilt"] is None else set(cutoff["rebuilt"])
+    sel.rebuilt = rebuilt_of(cutoff)
     if missing_map:
         sel.full.append("missing coverage map")
     if full or not changes:
@@ -868,10 +893,12 @@ def select(paths: list[str] | None = None, *, full: bool = False, base: str = "H
     source_graph.save_summaries()
     plan = finish(sel, changes, paths, started, drift_files)
     plan["lean_cutoff"] = cutoff
+    plan["map_lean_cutoff"] = map_cutoff
     return plan
 
 
-def lean_cutoff(base: str, after: str | None, known: bool = True) -> dict:
+def lean_cutoff(base: str, after: str | None, known: bool = True,
+                sides: tuple[str, str] = ("base", "head")) -> dict:
     """The binary-level cutoff for a change to Lean inputs: which executables the change rebuilt into a
     different program, from the digests this machine recorded for the `lean/` trees of `base` and of
     `after` (a revision; None, the working tree) (tools/test_map.py `record_build`). A test runs a
@@ -879,20 +906,23 @@ def lean_cutoff(base: str, after: str | None, known: bool = True) -> dict:
     the digest differs. Tests that read Lean sources or run `lake`/`lean`, and the checker pins, still
     select by file. Without both records, `rebuilt` is None: every executable whose imports hold a
     changed module counts, as before. So it is when the trees cannot show the change: a Lean change
-    whose contents are unknown (`known` False, a path named without an edit), or equal trees."""
-    trees = {"base": test_map.lean_tree(base), "head": test_map.lean_tree(after)}
-    found = {"base_tree": trees["base"], "head_tree": trees["head"], "rebuilt": None, "same": None}
+    whose contents are unknown (`known` False, a path named without an edit), or equal trees. An
+    executable that either record lacks counts as rebuilt. `sides` names `base` and `after` in the
+    answer (the drift check's are the map's commit and the base, `drift_cutoff`)."""
+    old, new = sides
+    trees = {old: test_map.lean_tree(base), new: test_map.lean_tree(after)}
+    found = {f"{old}_tree": trees[old], f"{new}_tree": trees[new], "rebuilt": None, "same": None}
     if not known:
         return {**found, "state": "a Lean change of unknown contents"}
-    if trees["base"] == trees["head"]:
+    if trees[old] == trees[new]:
         return {**found, "state": "the change is not in the lean/ trees"}
     builds = {side: test_map.load_build(tree) for side, tree in trees.items()}
     missing = [side for side, build in builds.items() if build is None]
     if missing:
         return {**found, "state": f"no record of the {' and '.join(missing)} build"}
-    names = set(lean_executables()) | set(builds["base"]) | set(builds["head"])
-    rebuilt = {name for name in names if builds["base"].get(name) is None
-               or builds["base"].get(name) != builds["head"].get(name)}
+    names = set(lean_executables()) | set(builds[old]) | set(builds[new])
+    rebuilt = {name for name in names if builds[old].get(name) is None
+               or builds[old].get(name) != builds[new].get(name)}
     return {**found, "state": "applied", "rebuilt": sorted(rebuilt), "same": sorted(names - rebuilt)}
 
 
@@ -1522,10 +1552,10 @@ def main() -> int:
                   f"{plan['tier']['selected_heavy_count']}/{plan['tier']['heavy_count']} heavy selected "
                   f"(measured in {plan['tier']['source_run']})")
         print("changed:", ", ".join(paths) or "(none; full fallback)")
-        if plan["lean_cutoff"]:
-            cutoff = plan["lean_cutoff"]
-            print(f"lean cutoff: {cutoff['state']}" + (
-                f"; built the same: {', '.join(cutoff['same']) or 'none'}" if cutoff["same"] is not None else ""))
+        for label, key in (("lean cutoff", "lean_cutoff"), ("map lean cutoff", "map_lean_cutoff")):
+            if cutoff := plan.get(key):
+                print(f"{label}: {cutoff['state']}" + (
+                    f"; built the same: {', '.join(cutoff['same']) or 'none'}" if cutoff["same"] is not None else ""))
         if args.explain:
             for test, reasons in plan["reasons"].items():
                 print(f"  {test}: {'; '.join(reasons[:3])}{' ...' if len(reasons) > 3 else ''}")

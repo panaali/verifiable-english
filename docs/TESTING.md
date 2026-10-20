@@ -218,14 +218,18 @@ The selector works at the level of functions, not layers:
   `lean/checkers.lock` still select when the pin file changes.
   **Binary cutoff:** when this machine recorded the Lean build of both the
   base's and the head's `lean/` tree (`tools/test_map.py build-record`; every
-  map `record` or `update` and every `--run` build records one, under
+  map `record` or `update` and every `--run` build records one, and so does
+  every `tools/gate.py` for the executables its `lake build` makes, under
   `~/.cache/ve-lean-builds`, `$VE_LEAN_BUILDS`), a test is selected through a
   Lean executable only if that executable's SHA-256 differs between the two
   builds: an identical program given identical inputs behaves identically.
   Tests that read the changed Lean files or run `lake` or `lean`, and the pin
   readers, still select by file. Without both records every executable whose
-  imports hold the module counts, as before. `--run` builds the head first when
-  only its record is missing.
+  imports hold the module counts, as before; an executable a record lacks counts
+  as rebuilt. `--run` builds the head first when only its record is missing. The
+  drift check applies the same cutoff to what changed between the map's commit
+  and the base, with the records of those two trees (`map_lean_cutoff` in
+  `--json`); a map `update` re-records by the sources alone.
 * **Assurance manifest.** The recorder records each operation read through
   `ve.assurance`, its import-time presence checks, and a whole-manifest read
   separately. Editing an existing operation selects its entry readers and
