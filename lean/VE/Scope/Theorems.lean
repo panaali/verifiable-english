@@ -443,6 +443,40 @@ theorem nonrule_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (he :
   generalize contentOf D.doc u = c at this hn hr hm
   cases c <;> simp_all [Json.isNull]
 
+/-! The run path (1.5.8) -/
+
+/-- A table of `f`'s own values reads as `f`. -/
+theorem memo_map {α β γ : Type} [BEq α] [LawfulBEq α] (ys : List γ) (k : γ → α) (f : α → β) :
+    memo (ys.map fun y => (k y, f (k y))) f = f := by
+  funext x
+  unfold memo
+  split
+  · rename_i v hv
+    induction ys with
+    | nil => cases hv
+    | cons y ys ih =>
+      simp only [List.map_cons, List.lookup] at hv
+      split at hv
+      · rename_i hx; cases hv; rw [eq_of_beq hx]
+      · exact ih hv
+  · rfl
+
+theorem fastReads_eq (D : SDoc) : fastReads D =
+    (fun r => (coveredLayout D r).toOption.getD [], fun r => (covered D r).toOption.getD []) := by
+  have hb : coveredBy D (baseName D) = covered D := by funext r; cases r <;> rfl
+  have hn : memo ((ruleUnits D).map fun u => (u, ((baseObjF D (fun r => (coveredLayout D r).toOption.getD []) u).toOption.bind
+      fun o => (VE.Readings.Wire.decodeNorm D.re o).toOption).map (·.name))) (baseName D) = baseName D :=
+    memo_map (ruleUnits D) id (baseName D)
+  unfold fastReads
+  simp only [memo_map D.governors (·.reach) (fun r => (coveredLayout D r).toOption.getD []), hn, hb,
+    memo_map D.governors (·.reach) (fun r => (covered D r).toOption.getD [])]
+
+/-- The run path (1.5.8) answers exactly as `govern`, so every theorem about `govern` holds of it. -/
+theorem governFast_eq (D : SDoc) : governFast D = govern D := by
+  unfold governFast
+  rw [fastReads_eq]
+  rfl
+
 end Govern
 
 end VE.Scope
