@@ -5409,6 +5409,7 @@
 'VE.Scope.Examples.byte_tests' does not depend on any axioms
 'VE.Scope.Examples.depth_bound' does not depend on any axioms
 'VE.Scope.Examples.effects_six' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.governor_fields' does not depend on any axioms
 'VE.Scope.Examples.markers' does not depend on any axioms
 'VE.Scope.Examples.mergeParts_text' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.Examples.narrowings' depends on axioms: [propext]
@@ -5416,23 +5417,38 @@
 'VE.Scope.Examples.own_binder' does not depend on any axioms
 'VE.Scope.Examples.para_counts' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.reaches_root' does not depend on any axioms
+'VE.Scope.Examples.reaches_seven' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.sdoc_fields' depends on axioms: [propext]
+'VE.Scope.Examples.short_access' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.Examples.short_base' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.Examples.short_effects' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.Examples.short_govern' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.Examples.short_items' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_layout' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_run' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.span_tests' does not depend on any axioms
 'VE.Scope.Examples.unordered_join' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.baseName_some' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.commutes_symm' depends on axioms: [propext]
+'VE.Scope.coversU_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.firstKeys_mem' depends on axioms: [propext, Quot.sound]
 'VE.Scope.firstKeys_self' depends on axioms: [propext, Quot.sound]
+'VE.Scope.govern_admits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.govern_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.govern_orphan' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.governorsOf_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.hasOwn_mono' depends on axioms: [propext, Quot.sound]
 'VE.Scope.impl_map_eq' depends on axioms: [propext, Quot.sound]
+'VE.Scope.itemRule_decoder' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.lookups_absent' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.lookups_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.lookups_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.mem_ordered' depends on axioms: [propext, Quot.sound]
 'VE.Scope.members_obj' does not depend on any axioms
 'VE.Scope.mergeParts_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.mergeParts_keys' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.mkObj_getObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.ordered_sorted' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.substOwn_id' depends on axioms: [propext, Quot.sound]
 'VE.Scope.substOwn_id_le' depends on axioms: [propext, Quot.sound]
 'VE.Scope.substOwn_no_own' depends on axioms: [propext, Classical.choice, Quot.sound]
