@@ -4889,10 +4889,23 @@
         "VE.NormDefaults.Wire.LayeredU.X",
         "VE.NormDefaults.Wire.LayeredU.background",
         "VE.NormDefaults.Wire.layeredCase",
+        "VE.NormDefaults.Wire.legacyKinds",
         "VE.NormDefaults.Wire.rightsPack",
         "VE.NormDefaults.Wire.runLayered",
         "VE.NormDefaults.Wire.softLabelledU",
-        "VE.NormDefaults.Wire.softPack"
+        "VE.NormDefaults.Wire.softPack",
+        {
+          "name": "VE.NormDefaults.Wire.kindCase",
+          "tied": [
+            "VE.NormDefaults.Packs.kindCase_eq"
+          ]
+        },
+        {
+          "name": "VE.NormDefaults.Wire.legacyRows",
+          "tied": [
+            "VE.NormDefaults.Packs.dispatch_legacy"
+          ]
+        }
       ]
     },
     "VE/NormDefaults/Premises.lean": {
@@ -12762,10 +12775,12 @@
         }
       ],
       "G[V]": [
+        "VE.NormDefaults.Packs.KindRow",
         "VE.NormDefaults.Packs.Pack.names",
         "VE.NormDefaults.Packs.X",
         "VE.NormDefaults.Packs.coherenceLabels",
         "VE.NormDefaults.Packs.declaredIn",
+        "VE.NormDefaults.Packs.dispatch",
         "VE.NormDefaults.Packs.envX",
         "VE.NormDefaults.Packs.extendEnv",
         "VE.NormDefaults.Packs.firstRepeat",
@@ -12809,6 +12824,8 @@
         "VE.NormDefaults.Packs.Fixtures.ev",
         "VE.NormDefaults.Packs.Fixtures.fixturePrefixes",
         "VE.NormDefaults.Packs.Fixtures.holds",
+        "VE.NormDefaults.Packs.Fixtures.kindDiag",
+        "VE.NormDefaults.Packs.Fixtures.kinds",
         "VE.NormDefaults.Packs.Fixtures.rights",
         "VE.NormDefaults.Packs.Fixtures.soft",
         "VE.NormDefaults.Packs.Fixtures.weighing",
@@ -12819,6 +12836,8 @@
       "T": [
         "VE.NormDefaults.Packs.Fixtures.cx",
         "VE.NormDefaults.Packs.Fixtures.gen",
+        "VE.NormDefaults.Packs.Fixtures.kindJ",
+        "VE.NormDefaults.Packs.Fixtures.legacyAnswers",
         "VE.NormDefaults.Packs.Fixtures.legacyLabels",
         "VE.NormDefaults.Packs.Fixtures.legacyPacks",
         "VE.NormDefaults.Packs.Fixtures.legacyU",
