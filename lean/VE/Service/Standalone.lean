@@ -271,7 +271,8 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     pure ()
   else if named.contains "norms@0" then
     let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
-    if !named.contains "norm-defaults@0" &&
+    -- under `acts@0` the norms decoder below checks the declarations with the act check of act-phrases 3.2
+    if !named.contains "norm-defaults@0" && !named.contains "acts@0" &&
         predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) &&
         (VE.NormDefaults.Wire.unspecifiedNames environment).isEmpty then
       checkRegulated predicates
