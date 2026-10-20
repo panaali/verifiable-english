@@ -911,17 +911,10 @@
   },
   {
    "class": "S",
-   "lines": 64,
-   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
-   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
-  },
-  {
-   "class": "V",
-   "lines": 8,
-   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
-   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+   "lines": 3,
+   "reason": "me-9: lean/VE/Calc/Poly.lean S +3 (VE.Calc.Poly.eval 3); K +0, untied V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9, 2026-10-18",
+   "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d"
   },
   {
    "class": "S",
@@ -967,6 +960,20 @@
   },
   {
    "class": "S",
+   "lines": 64,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+  },
+  {
+   "class": "S",
    "lines": 10,
    "reason": "et-3c: S +10, all in VE/Events/Conservative.lean (oldEnv with its docstring); K +0, untied V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3c, 2026-10-18",
@@ -999,13 +1006,6 @@
    "reason": "me-6b: lean/VE/Calc/Units.lean V +60 (D[V] UnitDef 7, UnitEnv 5, decodeFactor 10, decodeUnit 13, decodeV2 14, decode 6; G[V] UnitEnv.find? 2, UnitEnv.values 3); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6b, 2026-10-18",
    "commit": "2296317a9de7ef365523e0f69c442338d9eaf576"
-  },
-  {
-   "class": "S",
-   "lines": 3,
-   "reason": "me-9: lean/VE/Calc/Poly.lean S +3 (VE.Calc.Poly.eval 3); K +0, untied V +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9, 2026-10-18",
-   "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d"
   }
  ]
 }
