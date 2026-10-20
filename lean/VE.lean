@@ -112,6 +112,7 @@ import VE.Calc.Render
 import VE.Calc.DeriveExamples
 import VE.Calc.Dimension
 import VE.Calc.Units
+import VE.Calc.UnitsExamples
 import VE.Calc.Poly
 import VE.Numbers.Examples
 import VE.Numbers.Phrases

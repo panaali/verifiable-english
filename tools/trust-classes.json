@@ -13848,6 +13848,29 @@
       "C": [
         "VE.Calc.Units.dimE"
       ]
+    },
+    "VE/Calc/UnitsExamples.lean": {
+      "T": [
+        "VE.Calc.UnitsExamples.check",
+        "VE.Calc.UnitsExamples.context!",
+        "VE.Calc.UnitsExamples.dOverLam",
+        "VE.Calc.UnitsExamples.decoded",
+        "VE.Calc.UnitsExamples.deep",
+        "VE.Calc.UnitsExamples.dims",
+        "VE.Calc.UnitsExamples.env!",
+        "VE.Calc.UnitsExamples.h7",
+        "VE.Calc.UnitsExamples.i2",
+        "VE.Calc.UnitsExamples.i2Reordered",
+        "VE.Calc.UnitsExamples.instDecidablePredPhysDimNormal",
+        "VE.Calc.UnitsExamples.legacyEnv",
+        "VE.Calc.UnitsExamples.miles",
+        "VE.Calc.UnitsExamples.newsEnv",
+        "VE.Calc.UnitsExamples.physics",
+        "VE.Calc.UnitsExamples.rescaled",
+        "VE.Calc.UnitsExamples.says",
+        "VE.Calc.UnitsExamples.sigma",
+        "VE.Calc.UnitsExamples.ρ"
+      ]
     }
   }
 }
