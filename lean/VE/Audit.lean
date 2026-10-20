@@ -129,6 +129,7 @@ import VE.EnglishGrammar.SensesRequest
 import VE.EnvironmentProofs
 import VE.EvaluationCounts
 import VE.Events.Completion
+import VE.Events.Conservative
 import VE.Events.Premises
 import VE.Finite
 import VE.Grammar.Derives
@@ -1905,11 +1906,17 @@ import VE.WireContract.Engine
 #print axioms VE.Events.completion_extension
 #print axioms VE.Events.completion_reading
 #print axioms VE.Events.completion_typed
+#print axioms VE.Events.conventions_empty
 #print axioms VE.Events.conventions_exact
+#print axioms VE.Events.dateName_data
+#print axioms VE.Events.dateName_inj
 #print axioms VE.Events.datesOrder_calendar
 #print axioms VE.Events.datesOrder_iff
 #print axioms VE.Events.dayExtension_transfer
 #print axioms VE.Events.eventsPremises_wellFormed
+#print axioms VE.Events.events_conservative
+#print axioms VE.Events.expansion_typed
+#print axioms VE.Events.guarded_empty
 #print axioms VE.Events.hits_vacuous
 #print axioms VE.Events.isConst_eq
 #print axioms VE.Events.isVar_beq
@@ -1917,10 +1924,14 @@ import VE.WireContract.Engine
 #print axioms VE.Events.mem_dates_of_consecutive
 #print axioms VE.Events.oldTuple_eq
 #print axioms VE.Events.oldTuple_map
+#print axioms VE.Events.pad_chars
+#print axioms VE.Events.pad_value
 #print axioms VE.Events.regen_typed
 #print axioms VE.Events.startRole_mem
 #print axioms VE.Events.term_map
+#print axioms VE.Events.tupleTyped_relation
 #print axioms VE.Events.unorderedSame_of_order
+#print axioms VE.Events.wf_transfer
 #print axioms VE.Grammar.BOk.addAll
 #print axioms VE.Grammar.BOk.complete
 #print axioms VE.Grammar.BOk.congr
