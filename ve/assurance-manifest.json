@@ -1825,6 +1825,8 @@
       "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
       "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
       "lean/VE/Senses/Examples.lean": "fixtures only: #guard checks of docs/spec/senses.md section 8 compare projected environment JSON; no runner path",
+      "lean/VE/NormDefaults/PacksExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 compare the kind table's answers as compressed JSON; no runner path",
+      "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 run the kind table on a decoded soft source with a case JSON and compare compressed answers; no runner path",
       "lean/VE/Senses/Project.lean": "senses projection (docs/spec/senses.md 2.5): builds the projected environment JSON from the validated environment JSON for the admitted reading; this module does not decode JSON",
       "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path",
       "lean/VE/EnglishGrammar/E2Examples.lean": "fixtures only: E2 port, overlay check, guards, texts and advice #guard checks (spec section 8); no runner path",
