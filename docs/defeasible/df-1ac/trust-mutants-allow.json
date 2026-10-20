@@ -1,0 +1,39 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Defaults.Wire.entityIds",
+   "operator": "list-empty",
+   "reason": "the mutated text does not elaborate: Lean cannot type the empty list there (an error in the mutant, not a refutation)"
+  },
+  {
+   "definition": "VE.Defaults.Wire.coherenceFields",
+   "operator": "list-empty",
+   "reason": "the mutated text does not elaborate: Lean cannot type the empty list there (an error in the mutant, not a refutation)"
+  },
+  {
+   "definition": "VE.Defaults.Wire.elaborateFields",
+   "operator": "list-empty",
+   "reason": "the mutated text does not elaborate: Lean cannot type the empty list there (an error in the mutant, not a refutation)"
+  },
+  {
+   "definition": "VE.Defaults.Wire.certFields",
+   "operator": "list-first",
+   "reason": "the mutated text does not elaborate: the `.str` of the wrapped list loses its expected type (an error in the mutant, not a refutation)"
+  },
+  {
+   "definition": "VE.Defaults.Wire.certFields",
+   "operator": "list-last",
+   "reason": "the mutated text does not elaborate: the `.str` of the wrapped list loses its expected type (an error in the mutant, not a refutation)"
+  },
+  {
+   "definition": "VE.Defaults.Wire.certFields",
+   "operator": "list-drop-first",
+   "reason": "the mutated text does not elaborate: the `.str` of the wrapped list loses its expected type (an error in the mutant, not a refutation)"
+  },
+  {
+   "definition": "VE.Defaults.Wire.certFields",
+   "operator": "list-drop-last",
+   "reason": "the mutated text does not elaborate: the `.str` of the wrapped list loses its expected type (an error in the mutant, not a refutation)"
+  }
+ ]
+}

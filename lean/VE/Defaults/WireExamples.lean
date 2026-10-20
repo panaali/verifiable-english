@@ -126,6 +126,27 @@ def γbCert : Json := match dγb with
   VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("pairs", pairsJ "unknown")]
 #guard answer (req αEnv αR "defaults-coherence") == VE.Route.Wire.ok "c" [("verdict", .str "COHERENT"), ("pairs", toJson ([] : List Json))]
 
+/-- DF-γ2: DF-γ on a two-place act, with a third rule r3 against r1 whose exception the operator decides: two pairs,
+    and a tuple of two entities. -/
+def γ2Env : Json := envJ [regJ "x_required" "[\"assistant\",\"assistant\"]" "obligation" "unspecified"
+    ",\"act\":\"{0} help {1}\",\"permission\":\"x_permitted\"",
+  regJ "x_permitted" "[\"assistant\",\"assistant\"]" "permission" "allow" ",\"act\":\"{0} help {1}\""] operatorSoft
+def γ2R : List String := γR ++ [ruleJ "r3" "x_permitted" false (dfltJ (dec := "operator"))]
+def γ2Coll (L : VE.NormDefaults.Wire.LayeredU) (m n : String) : Json :=
+  answer (req γ2Env γ2R "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2", pairJ "r1" "r3"]),
+    ("collision", collJ L m n)])
+#guard holds (layered γ2Env γ2R) fun L =>
+  let st (a b : String) : Json := toJson [Json.mkObj [("rules", toJson ["r1", "r2"]), ("status", .str a)],
+    Json.mkObj [("rules", toJson ["r1", "r3"]), ("status", .str b)]]
+  let coll (n : String) (ds : List String) : Json := Json.mkObj [("rules", toJson ["r1", n]),
+    ("tuple", toJson ["e_assistant", "e_assistant"]), ("deciders", toJson ds)]
+  ((ans (req γ2Env γ2R "defaults-elaborate") "coherence_targets").getArr?.toOption.getD #[]).map
+    (fun t => (t.getArrVal? 0 |>.toOption, t.getArrVal? 1 |>.toOption)) == #[(some (Json.str "r1"), some (Json.str "r2")), (some (Json.str "r1"), some (Json.str "r3"))] &&
+  (γ2Coll L "r1" "r3").getObjValD "pairs" == st "unknown" "collision" &&
+  (γ2Coll L "r1" "r3").getObjValD "collision" == coll "r3" ["assistant", "operator"] &&
+  (γ2Coll L "r1" "r2").getObjValD "pairs" == st "collision" "unknown" &&
+  (γ2Coll L "r1" "r2").getObjValD "collision" == coll "r2" ["assistant"]
+
 /-! ## `defaults-certificate` (DF-α, DF-α′, DF-ζ's basis, DF-γ, DF-η, DF-ι, DF-κ) -/
 
 /-- A `defaults-certificate` request on DF-α for `φ` with certificate trace `t` over `premisesX U (defaultX D X) []`. -/
