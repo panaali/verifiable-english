@@ -33,7 +33,7 @@ full name `VE.Acts.Lexical.check_extends`; the file states it inside `namespace 
 | `decodeRegulated_plain` | **ap-1d**: ap-1b (`feature/ap-1b`) has not merged, so by the task it is named here | — |
 | New lemmas in a new file, not `LexicalExamples.lean` | **done**: `lean/VE/Acts/LexicalProofs.lean`, layer 2 (`tools/layer_policy.py`) | — |
 | Proofs add no trusted lines | **done**: trusted +0; the helper definitions are `P` | `tools/trust-classes.json` |
-| A seeded bug per proved theorem, in the definition it covers | **done**: 11 Lean mutants of `Lexical.lean`, all killed (section 4) | [mutants.json](mutants.json) |
+| A seeded bug per proved theorem, in the definition it covers | **done**: 11 Lean mutants of `Lexical.lean` and 3 of the changed proof files, all killed (section 4) | [mutants.json](mutants.json) |
 
 Plan rows of AP-1 that this item touches: 2.5 ("every act `canonicalAct` accepts today, `acts@0` accepts with the
 same canonical string (`check_extends`, stated in a module above both `Norms.Wire` and `Acts.Lexical`), with one
@@ -57,9 +57,12 @@ exception", *nor*) is now a theorem. The AP-1 "Statements" row ("all of `VE.Acts
 
 `docs/act-phrases/ap-1c/seed_bugs.py` plants each mutant, builds `VE.Acts.Compat`, records the first failing line,
 and restores the file from git. A Lean mutant counts only when the build fails in `Compat.lean` or
-`LexicalProofs.lean`, not in the mutated file. Each mutant makes `check_extends` false: `why` names an act today's
-`canonicalAct` accepts, without *nor*, that the mutated `check` refuses or rewrites. Results in
-[mutants.json](mutants.json) (`file` and `test` keys): **12 mutants, 12 killed** (run on `a70583e93`).
+`LexicalProofs.lean`, not at the mutated line. Each mutant of `Lexical.lean` makes `check_extends` false: `why`
+names an act today's `canonicalAct` accepts, without *nor*, that the mutated `check` refuses or rewrites. The three
+mutants of the changed Lean files themselves (added after the pre-review gate asked for one in a changed Lean file)
+change a helper definition of `LexicalProofs.lean` or drop `check_extends`'s *nor* hypothesis. Results in
+[mutants.json](mutants.json) (`file` and `test` keys): **15 mutants, 15 killed** (the first 12 run on `a70583e93`,
+the last 3 on `2dcf492c3`, whose Lean files are unchanged since).
 
 | Id | Definition (file) | Act it breaks | Fails at |
 |---|---|---|---|
@@ -74,9 +77,12 @@ and restores the file from git. A Lean mutant counts only when the build fails i
 | pieceToks-hyphen | `pieceToks` | `{0} re-enter` | `Compat.lean:90` |
 | rawLex-length | `rawLex` | `{0} seek asylum in other countries` | `Compat.lean:100` |
 | group-comma | `group` | `{0} seek asylum` with fixed phrase `seek asylum` | `LexicalProofs.lean:652` (`mem_group`) |
+| splitL-drop (separator dropped) | `splitL` (LexicalProofs.lean) | `{0} vote` split as one piece | `LexicalProofs.lean:88` (`splitAux_data`) |
+| wordsL-empty (no filter) | `wordsL` (LexicalProofs.lean) | `{0}  vote` keeps an empty piece | `LexicalProofs.lean:447` (`words_data`) |
+| check_extends-nor (hypothesis `True`) | `check_extends` (Compat.lean) | an act with *nor* | `Compat.lean:127` (its clause-word step) |
 | layer-policy | `lean_layer` (tools/layer_policy.py, Python) | — | `check_lean_imports.py`: "new outward Lean import: VE.Acts.Compat -> VE.Acts.LexicalProofs" |
 
-Languages: Lean (11) and the Python tooling `tools/layer_policy.py` (1). No product module under `ve/` and no Rust
+Languages: Lean (14: 11 in `Lexical.lean`, 2 in `LexicalProofs.lean`, 1 in `Compat.lean`) and the Python tooling `tools/layer_policy.py` (1). No product module under `ve/` and no Rust
 changed. `check-start` fails by a heartbeat timeout at the proof's last step (the condition the mutant breaks), the
 others by a failed tactic.
 
@@ -87,8 +93,8 @@ others by a failed tactic.
   to trusted growth). `check_extends` ties nothing yet: it states `check` on `canonicalAct`'s acts only. The tie of
   `check` asked by FOLLOW-UPS "## ap-1a" belongs to `check_spec` (ap-1d).
 - **Size** (`git diff --numstat c5197da78`, hand-written): Lean 806 (`LexicalProofs.lean` 667, `Compat.lean` +139),
-  evidence 107 (`seed_bugs.py` 93, `mutants.json` 14), side tables 12 (`layer_policy.py` +2/-1, `trust-classes.json`
-  +8, `assurance-manifest.json` +2/-1), this report and DELTA about 140: about 1,065 in all, against the ~600 cap.
+  evidence 125 (`seed_bugs.py` 108, `mutants.json` 17), side tables 12 (`layer_policy.py` +2/-1, `trust-classes.json`
+  +8, `assurance-manifest.json` +2/-1), this report and DELTA about 140: about 1,085 in all, against the ~600 cap.
   The library is the floor: of its 667 lines, `check_extends` uses all but the parts ap-1d needs (`not_listed`'s
   clause half). Cut: `check_no_clause`, `check_spec`, `fixedOk_unique`, `decodeRegulated_plain`.
 - **Tests:** the selected tests (`mac-pytest.sh --select`, base `c5197da78`) on `a70583e93`: 137 units, 1 failed,
@@ -122,8 +128,8 @@ others by a failed tactic.
    by the task's own condition). No Python copy of a Lean decision, no report test, no file shared with an in-flight
    branch (checked against every `feature/*`, `lean-first/*`, `infra/*`, `foundation/*` branch: none touches
    `Compat.lean`, `LexicalProofs.lean`, `Lexical.lean` or `layer_policy.py`).
-3. PASS: 12 seeded bugs, 12 killed (`mutants.json`, `seed_bugs.py`), each failing in a proof, not at a hash or in
-   the mutated file. `trust_mutants.py`: N.A. (trusted +0).
+3. PASS: 15 seeded bugs, 15 killed (`mutants.json`, `seed_bugs.py`), each failing in a proof, not at a hash or at
+   the mutated line; at least one in each changed Lean file. `trust_mutants.py`: N.A. (trusted +0).
 4. N.A.: no answer of any language changes; `Lexical.lean`, `Wire.lean`, `ve/` and `rust/` are untouched.
 5. N.A.: Python reads no new field.
 6. PASS: `main` is still `c5197da78` (the merge base); inventories regenerated with `regen_generated.py`; the full

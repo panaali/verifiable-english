@@ -2,11 +2,13 @@
 
     uv run python docs/act-phrases/ap-1c/seed_bugs.py [--only ID ...]
 
-A Lean mutant replaces one exact text of `lean/VE/Acts/Lexical.lean` (it must occur once) and builds
-`VE.Acts.Compat`. It is killed when the build fails in `Compat.lean` or `LexicalProofs.lean` (the proof of
-`check_extends` and its lemmas), not in the mutated file itself. `why` is an act today's `canonicalAct` accepts,
-without *nor*, that the mutated `check` refuses or rewrites, so the theorem is false under the mutant. The Python
-mutant is killed when `tools/check_lean_imports.py` fails. Results go to `mutants.json` beside this script.
+A Lean mutant replaces one exact text of a Lean file (it must occur once) and builds `VE.Acts.Compat`. It is
+killed when the build fails in `Compat.lean` or `LexicalProofs.lean` (the proof of `check_extends` and its
+lemmas), not at the mutated line itself. For a mutant of `Lexical.lean`, `why` is an act today's `canonicalAct`
+accepts, without *nor*, that the mutated `check` refuses or rewrites, so the theorem is false under the mutant;
+the mutants of the two proof files change a helper definition or drop a hypothesis a proof needs. The Python
+mutant is killed when `tools/check_lean_imports.py` fails. Results go to `mutants.json` beside this script;
+`--only` replaces the rows it runs.
 """
 from __future__ import annotations
 
@@ -19,6 +21,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[3]
 LEX, POLICY = "lean/VE/Acts/Lexical.lean", "tools/layer_policy.py"
+PROOF, COMPAT = "lean/VE/Acts/LexicalProofs.lean", "lean/VE/Acts/Compat.lean"
 BUILD = ["lake", "build", "VE.Acts.Compat"]
 IMPORTS = ["uv", "run", "python", "tools/check_lean_imports.py"]
 PROOFS = re.compile(r"error: (VE/Acts/(?:Compat|LexicalProofs)\.lean:\d+):\d+: (.*)")
@@ -46,6 +49,13 @@ MUTANTS = [
      'if ts.length > 4 then throw "comma"', "'{0} seek asylum in other countries'"),
     ("group-comma", "group", LEX, "| some i => .fixed i :: group ps n", "| some i => .comma :: group ps n",
      "'{0} seek asylum' with the fixed phrase 'seek asylum'"),
+    ("splitL-drop", "splitL", PROOF, "if p c then [] :: splitL p cs", "if p c then splitL p cs",
+     "'{0} vote' split as the one piece '{0}vote': `split_data` is false"),
+    ("wordsL-empty", "wordsL", PROOF, "(splitL pyWhitespace l).filter (· ≠ [])", "splitL pyWhitespace l",
+     "'{0}  vote' keeps its empty piece: `words_data` is false"),
+    ("check_extends-nor", "check_extends", COMPAT,
+     '(hn : ∀ w ∈ VE.Norms.Wire.words a, w.toLower ≠ "nor")', "(hn : True)",
+     "drops the hypothesis that the act has no *nor*, which the proof's clause-word step uses"),
     ("layer-policy", "lean_layer", POLICY, '"VE.Acts.LexicalProofs", ', "",
      "VE.Acts.LexicalProofs falls to layer 3 under VE.Acts.Compat (layer 2)"),
 ]
@@ -56,6 +66,7 @@ def run(mutant) -> dict:
     target = ROOT / path
     text = target.read_text()
     assert text.count(old) == 1, f"{ident}: {old!r} occurs {text.count(old)} times in {path}"
+    line = text[:text.index(old)].count("\n") + 1
     target.write_text(text.replace(old, new))
     env = {**os.environ, "PATH": f"{Path.home()}/.elan/bin:{os.environ['PATH']}"}
     try:
@@ -66,7 +77,7 @@ def run(mutant) -> dict:
         subprocess.run(["git", "checkout", "--", path], cwd=ROOT, check=True)
     out = proc.stdout + proc.stderr
     if lean:
-        found = PROOFS.search(out)
+        found = next((m for m in PROOFS.finditer(out) if f"lean/{m.group(1)}" != f"{path}:{line}"), None)
         test = f"lean/{found.group(1)}: {found.group(2)[:100]}" if found else ""
     else:
         test = next((line.strip() for line in out.splitlines() if "outward" in line), "")
@@ -81,9 +92,13 @@ def main() -> None:
     results = [run(m) for m in MUTANTS if not args.only or m[0] in args.only]
     for r in results:
         print("KILLED  " if r["killed"] else "SURVIVED", r["id"], "|", r["test"])
-    if not args.only:
-        lines = ",\n".join(" " + json.dumps(r, ensure_ascii=False) for r in results)
-        (Path(__file__).parent / "mutants.json").write_text("[\n" + lines + "\n]\n")
+    saved = Path(__file__).parent / "mutants.json"
+    if args.only:
+        fresh = {r["id"]: r for r in results}
+        old = {r["id"]: r for r in json.loads(saved.read_text())}
+        results = [fresh.get(m[0]) or old[m[0]] for m in MUTANTS if m[0] in fresh or m[0] in old]
+    lines = ",\n".join(" " + json.dumps(r, ensure_ascii=False) for r in results)
+    saved.write_text("[\n" + lines + "\n]\n")
     env = {**os.environ, "PATH": f"{Path.home()}/.elan/bin:{os.environ['PATH']}"}
     subprocess.run(BUILD, cwd=ROOT / "lean", env=env, check=True, capture_output=True)
     raise SystemExit(0 if all(r["killed"] for r in results) else 1)
