@@ -7,9 +7,9 @@ passed every guard and broke only a tactic script, which does not count.
 
 These tests remove that class for the whole module. They copy `Packs.lean` with its theorems stripped (a theorem's
 tactic script is not a test of the definition) into the fresh namespace `VE.NormDefaults.PacksM`, with `Layered.lean`'s
-`softPack` and `rightsPack` beside it, followed by the two fixture files rewired to the copy. The unmutated copy must
-pass every guard; each mutant must fail at a `#guard` and nowhere else (a mutant that does not elaborate proves
-nothing). Every trusted definition `tools/trust-classes.json` lists for `Packs.lean` has a mutant here, or is a
+`softPack`, `rightsPack` and kind-table rows (`legacyKinds`, `legacyRows`, `kindCase`; pk-1b) beside it, followed by
+the two fixture files rewired to the copy. The unmutated copy must pass every guard; each mutant must fail at a
+`#guard` and nowhere else (a mutant that does not elaborate proves nothing). Every trusted definition `tools/trust-classes.json` lists for `Packs.lean` has a mutant here, or is a
 type, so a new definition without a killing mutant fails `test_every_trusted_definition_has_a_mutant`.
 """
 from __future__ import annotations
@@ -31,12 +31,13 @@ EXAMPLES = LEAN / "VE/NormDefaults/PacksExamples.lean"
 LEGACY_EXAMPLES = LEAN / "VE/NormDefaults/PacksLegacyExamples.lean"
 NAMESPACE = "VE.NormDefaults.Packs"
 COPY = "VE.NormDefaults.PacksM"
-# `Layered.lean`'s two packs, copied under its own namespace so their bodies resolve as there.
+# `Layered.lean`'s two packs and kind-table rows, copied under its own namespace so their bodies resolve as there
+# (`layeredCase` is the real one).
 WIRE_COPY = "VE.NormDefaults.Wire.PacksM"
-LAYERED_DEFS = ("softPack", "rightsPack")
+LAYERED_DEFS = ("softPack", "rightsPack", "legacyKinds", "legacyRows", "kindCase")
 
 # Types: a change to one fails the build of every use, so they have no mutant of their own.
-TYPES = {"Pack", "PackKind", "RequestPath"}
+TYPES = {"Pack", "PackKind", "RequestPath", "KindRow"}
 
 # (definition, find, replace): the edit is applied to the copy, where `find` must occur exactly once.
 MUTANTS = [
@@ -77,6 +78,16 @@ MUTANTS = [
     ("xWithout", "(fun a => !drop.contains a.1)", "(fun a => drop.contains a.1)"),
     ("softPack", "softLabelledU U D, []⟩", "[], []⟩"),
     ("rightsPack", "VE.Rights.limPremisesLabelled R, []⟩", "[], []⟩"),
+    # pk-1b: the kind table. The first is the spec's seeded bug (a row runs although its pack is absent).
+    ("dispatch", "if ids.contains i then", "if true then"),
+    ("dispatch", "| none => pure none", "| none => throw \"no row\""),
+    ("dispatch", "match rows.find? (·.kind == kind) with", "match rows.reverse.find? (·.kind == kind) with"),
+    ("dispatch", "| none => some <$> r.run L id j", "| none => pure none"),
+    ("dispatch", "needs the {i} premise pack", "needs {i}"),
+    ("legacyKinds", '"norm-defaults-status", "norm-defaults-report"]', '"norm-defaults-status"]'),
+    ("legacyRows", "⟨k, none, fun L id j", "⟨k, some \"rights\", fun L id j"),
+    ("legacyRows", "← layeredCase L id k j", "← layeredCase L id \"norm-defaults-elaborate\" j"),
+    ("kindCase", "PacksM.dispatch legacyRows", "PacksM.dispatch []"),
 ]
 
 TOP = re.compile(r"\S")
@@ -121,12 +132,12 @@ def packs_copy() -> str:
 
 
 def layered_copy() -> str:
-    """`softPack` and `rightsPack` with `Layered.lean`'s opens, their `Packs.Pack` the copy's."""
+    """`LAYERED_DEFS` with `Layered.lean`'s opens, their `Packs.` declarations the copy's."""
     blocks = chunks(LAYERED.read_text())
     opens = [c for c in blocks if c.startswith("open ")]
     defs = [c for c in blocks if any(re.match(rf"(?:/--.*?-/\s*)?def {name}\b", c, re.S) for name in LAYERED_DEFS)]
     assert len(defs) == len(LAYERED_DEFS), defs
-    return (f"namespace {WIRE_COPY}\n" + "".join(opens) + "".join(d.replace("Packs.Pack", "PacksM.Pack") for d in defs)
+    return (f"namespace {WIRE_COPY}\n" + "".join(opens) + "".join(re.sub(r"\bPacks\.", "PacksM.", d) for d in defs)
             + f"end {WIRE_COPY}\n")
 
 
