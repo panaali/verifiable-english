@@ -4,6 +4,7 @@ import Iceberg
 import VE.Acts.Compat
 import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
+import VE.Acts.LexicalProofs
 import VE.Acts.Read
 import VE.Alternatives.Admission
 import VE.Alternatives.Background
@@ -421,8 +422,60 @@ import VE.WireContract.Engine
 #print axioms Iceberg.water_unchanged
 #print axioms VE.Acts.Examples.acceptsTable_terms
 #print axioms VE.Acts.Examples.tableToks_kinds
+#print axioms VE.Acts.Lexical.actWord_chars
+#print axioms VE.Acts.Lexical.check_extends
 #print axioms VE.Acts.Lexical.check_no_join
+#print axioms VE.Acts.Lexical.clause_reserved
+#print axioms VE.Acts.Lexical.contains_mem
+#print axioms VE.Acts.Lexical.endsWith_comma
+#print axioms VE.Acts.Lexical.extract_go₁_general
+#print axioms VE.Acts.Lexical.extract_go₂_prefix
+#print axioms VE.Acts.Lexical.extract_mid
+#print axioms VE.Acts.Lexical.fold_eq_self
+#print axioms VE.Acts.Lexical.foldl_append_eq
+#print axioms VE.Acts.Lexical.get_mem
+#print axioms VE.Acts.Lexical.get_mid
+#print axioms VE.Acts.Lexical.intercalate_data
+#print axioms VE.Acts.Lexical.isEmpty_false
+#print axioms VE.Acts.Lexical.mapM_ok
+#print axioms VE.Acts.Lexical.mem_group
+#print axioms VE.Acts.Lexical.mem_intercalate
+#print axioms VE.Acts.Lexical.mem_of_mem_out
+#print axioms VE.Acts.Lexical.mem_out_of_mem
+#print axioms VE.Acts.Lexical.mem_splitL
+#print axioms VE.Acts.Lexical.mem_words
+#print axioms VE.Acts.Lexical.not_listed
+#print axioms VE.Acts.Lexical.out_append
+#print axioms VE.Acts.Lexical.out_brace
+#print axioms VE.Acts.Lexical.out_cons
+#print axioms VE.Acts.Lexical.out_cover
+#print axioms VE.Acts.Lexical.out_eq_self
+#print axioms VE.Acts.Lexical.out_fuel
+#print axioms VE.Acts.Lexical.out_induct
+#print axioms VE.Acts.Lexical.out_ne_nil
+#print axioms VE.Acts.Lexical.out_nil
+#print axioms VE.Acts.Lexical.out_slot
+#print axioms VE.Acts.Lexical.pyWhitespace_sep
+#print axioms VE.Acts.Lexical.scanSlotsAux_fuel
+#print axioms VE.Acts.Lexical.splitAux_data
+#print axioms VE.Acts.Lexical.splitL_append
+#print axioms VE.Acts.Lexical.splitL_cases
+#print axioms VE.Acts.Lexical.splitL_congr
+#print axioms VE.Acts.Lexical.splitL_cover
+#print axioms VE.Acts.Lexical.splitL_ne_nil
+#print axioms VE.Acts.Lexical.splitL_out
+#print axioms VE.Acts.Lexical.splitL_word
+#print axioms VE.Acts.Lexical.splitOnAux_data
+#print axioms VE.Acts.Lexical.splitOn_space
+#print axioms VE.Acts.Lexical.split_data
+#print axioms VE.Acts.Lexical.toLower_mem
+#print axioms VE.Acts.Lexical.utf8ByteSize_le
+#print axioms VE.Acts.Lexical.word_out
 #print axioms VE.Acts.Lexical.wording_subject_first
+#print axioms VE.Acts.Lexical.wordsL_out
+#print axioms VE.Acts.Lexical.words_cover
+#print axioms VE.Acts.Lexical.words_data
+#print axioms VE.Acts.Lexical.words_intercalate
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
@@ -5799,6 +5852,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.byte_tests
 #print axioms VE.Scope.Examples.depth_bound
 #print axioms VE.Scope.Examples.effects_six
+#print axioms VE.Scope.Examples.governor_fields
 #print axioms VE.Scope.Examples.markers
 #print axioms VE.Scope.Examples.mergeParts_text
 #print axioms VE.Scope.Examples.narrowings
@@ -5806,23 +5860,38 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.own_binder
 #print axioms VE.Scope.Examples.para_counts
 #print axioms VE.Scope.Examples.reaches_root
+#print axioms VE.Scope.Examples.reaches_seven
+#print axioms VE.Scope.Examples.sdoc_fields
+#print axioms VE.Scope.Examples.short_access
+#print axioms VE.Scope.Examples.short_base
+#print axioms VE.Scope.Examples.short_effects
+#print axioms VE.Scope.Examples.short_govern
 #print axioms VE.Scope.Examples.short_items
 #print axioms VE.Scope.Examples.short_layout
 #print axioms VE.Scope.Examples.short_run
 #print axioms VE.Scope.Examples.span_tests
 #print axioms VE.Scope.Examples.unordered_join
+#print axioms VE.Scope.baseName_some
 #print axioms VE.Scope.commutes_symm
+#print axioms VE.Scope.coversU_iff
 #print axioms VE.Scope.firstKeys_mem
 #print axioms VE.Scope.firstKeys_self
+#print axioms VE.Scope.govern_admits
+#print axioms VE.Scope.govern_identity
+#print axioms VE.Scope.govern_orphan
+#print axioms VE.Scope.governorsOf_iff
 #print axioms VE.Scope.hasOwn_mono
 #print axioms VE.Scope.impl_map_eq
+#print axioms VE.Scope.itemRule_decoder
 #print axioms VE.Scope.lookups_absent
 #print axioms VE.Scope.lookups_fields
 #print axioms VE.Scope.lookups_spec
+#print axioms VE.Scope.mem_ordered
 #print axioms VE.Scope.members_obj
 #print axioms VE.Scope.mergeParts_conflict
 #print axioms VE.Scope.mergeParts_keys
 #print axioms VE.Scope.mkObj_getObjVal
+#print axioms VE.Scope.ordered_sorted
 #print axioms VE.Scope.substOwn_id
 #print axioms VE.Scope.substOwn_id_le
 #print axioms VE.Scope.substOwn_no_own
