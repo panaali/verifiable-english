@@ -1,0 +1,16 @@
+recorded ve_service sessions: 22
+norm-defaults-certificate: 23
+norm-defaults-conflict: 54
+norm-defaults-elaborate: 76
+norm-defaults-gaps: 7
+norm-defaults-report: 2693
+norm-defaults-status: 93
+readings-certificate: 6
+readings-choice: 68
+readings-conflict: 7
+readings-dead: 4
+readings-elaborate: 24
+readings-model: 16
+readings-separate: 5
+readings-validate: 104
+readings-verdicts: 18

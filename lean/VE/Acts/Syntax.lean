@@ -1,4 +1,4 @@
-import VE.Norms.Wire
+import VE.Acts.Lexical
 import VE.Grammar.Basic
 
 /-! The act grammar's tokens, vocabulary and terminals (docs/spec/act-phrases.md 1.1, 1.2, 1.4, 5.1).
@@ -8,19 +8,6 @@ A document declares **frames** (a head and the markers that introduce its argume
 D-31 (10). An act phrase is read as a list of tokens (`Lexical.Tok`, 1.1) by a grammar over the terminals `Term`.
 The rule table, the act trees and the meaning (1.5, 5.2, 5.3) build on these.
 -/
-
-namespace VE.Acts.Lexical
-
-/-- A token of an act phrase (1.1): a word, a declared fixed phrase (its index), a slot `{i}`, or a comma. -/
-inductive Tok | word (w : String) | fixed (i : Nat) | slot (i : Nat) | comma
-  deriving DecidableEq, Repr
-
-/-- Words an act may hold only inside a declared fixed phrase in AP-1, and in the grammar's join positions (1.2). -/
-def joinWords : List String := ["and", "or", "nor", "for"]
-/-- Words no act may hold, fixed phrases included: today's `actReserved` without the join words (1.2). -/
-def clauseWords : List String := VE.Norms.Wire.actReserved.filter (fun w => !joinWords.contains w)
-
-end VE.Acts.Lexical
 
 namespace VE.Acts
 open Lexical (Tok)

@@ -1,0 +1,1195 @@
+{
+ "checked": {
+  "rules": 13,
+  "same_blocks": true,
+  "same_text": true,
+  "same_text_digest": true
+ },
+ "conflict": {
+  "targets": [
+   "breaks_first_law",
+   "breaks_zeroth_law",
+   "has_lawful_option",
+   "permitted",
+   "lawfully_avoidable_threat",
+   "required",
+   "prevent_required",
+   "required->permitted"
+  ],
+  "unproved": [],
+  "unspecified": [
+   "permitted"
+  ],
+  "verdict": "CONFLICT-FREE"
+ },
+ "records": {
+  "allow_differs_from_committed": [],
+  "clear": {
+   "allow": 30,
+   "deny": 11,
+   "unspecified": 11
+  },
+  "not_run_need_risk": [
+   "O:O5 j-later-authority-risky",
+   "P:P1 risky-rescues",
+   "P:P10 risky-rescue-only",
+   "P:P2 certain-injury-vs-possible-death",
+   "P:P3 ordered-possible-injury",
+   "P:P4 ordered-possible-robot-loss",
+   "P:P7 injury-vs-property",
+   "P:P9 unordered-possible-robot-loss"
+  ],
+  "records": 51,
+  "results": {
+   "O:O1 j-earlier": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "a1": [
+       "not clear",
+       "kleene"
+      ],
+      "a2": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "O:O2 j-later-more-authority": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "a1": [
+       "not clear",
+       "kleene"
+      ],
+      "a2": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "O:O3 j-earlier-more-authority": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "a1": [
+       "not clear",
+       "kleene"
+      ],
+      "a2": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "O:O4 j-simultaneous-more-authority": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "a1": [
+       "not clear",
+       "kleene"
+      ],
+      "a2": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "O:O6 j-later-authority-unlawful": {
+    "allow": [
+     "a1"
+    ],
+    "deny": [
+     "a1"
+    ],
+    "unspecified": {
+     "clear": [
+      "a1"
+     ],
+     "statuses": {
+      "a1": [
+       "clear",
+       "kleene"
+      ],
+      "a2": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "P:P5 unequal-necessary-injuries": {
+    "allow": [
+     "act",
+     "act2"
+    ],
+    "deny": [
+     "act",
+     "act2"
+    ],
+    "unspecified": {
+     "clear": [
+      "act",
+      "act2"
+     ],
+     "statuses": {
+      "act": [
+       "clear",
+       "kleene"
+      ],
+      "act2": [
+       "clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "P:P6 two-deaths-vs-one": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "P:P8 all-break-zeroth": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "act": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:dominated-action-when-threats-conflict": {
+    "allow": [
+     "a1",
+     "a2",
+     "a3"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "a1": [
+       "undecided",
+       "fillings"
+      ],
+      "a2": [
+       "undecided",
+       "fillings"
+      ],
+      "a3": [
+       "undecided",
+       "fillings"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:forced-threat-and-avoidable-threat": {
+    "allow": [
+     "rescue2"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ],
+      "rescue2": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:harmless-looking-rescue-breaks-zeroth-law": {
+    "allow": [
+     "act"
+    ],
+    "deny": [
+     "act"
+    ],
+    "unspecified": {
+     "clear": [
+      "act"
+     ],
+     "statuses": {
+      "act": [
+       "clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:necessary-injury": {
+    "allow": [
+     "act"
+    ],
+    "deny": [
+     "act"
+    ],
+    "unspecified": {
+     "clear": [
+      "act"
+     ],
+     "statuses": {
+      "act": [
+       "clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:obedience-destroys-robot": {
+    "allow": [
+     "obey"
+    ],
+    "deny": [
+     "obey"
+    ],
+    "unspecified": {
+     "clear": [
+      "obey"
+     ],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "obey": [
+       "clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:obedience-destroys-robot-retreat-available": {
+    "allow": [
+     "obey"
+    ],
+    "deny": [
+     "obey"
+    ],
+    "unspecified": {
+     "clear": [
+      "obey"
+     ],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "obey": [
+       "clear",
+       "kleene"
+      ],
+      "retreat": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:ordered-action-preserves-robot": {
+    "allow": [
+     "shield"
+    ],
+    "deny": [
+     "shield"
+    ],
+    "unspecified": {
+     "clear": [
+      "shield"
+     ],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "retreat": [
+       "not clear",
+       "kleene"
+      ],
+      "shield": [
+       "clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:ordered-unnecessary-injury": {
+    "allow": [
+     "rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "act": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:ordered-unrelated-work": {
+    "allow": [
+     "rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ],
+      "work": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:rescue-destroys-robot": {
+    "allow": [
+     "rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:self-preservation-without-conflict": {
+    "allow": [
+     "shield",
+     "retreat"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "undecided",
+       "fillings"
+      ],
+      "retreat": [
+       "undecided",
+       "fillings"
+      ],
+      "shield": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:two-necessary-injuries": {
+    "allow": [
+     "act",
+     "act2"
+    ],
+    "deny": [
+     "act",
+     "act2"
+    ],
+    "unspecified": {
+     "clear": [
+      "act",
+      "act2"
+     ],
+     "statuses": {
+      "act": [
+       "clear",
+       "kleene"
+      ],
+      "act2": [
+       "clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:two-orders-destroy-robot-differently": {
+    "allow": [
+     "obey"
+    ],
+    "deny": [
+     "obey"
+    ],
+    "unspecified": {
+     "clear": [
+      "obey"
+     ],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "obey": [
+       "clear",
+       "kleene"
+      ],
+      "obey2": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:two-rescues-destroy-robot-alike": {
+    "allow": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "fire_rescue": [
+       "undecided",
+       "fillings"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "water_rescue": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:two-rescues-destroy-robot-differently": {
+    "allow": [
+     "fire_rescue",
+     "water_rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "fire_rescue": [
+       "undecided",
+       "fillings"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "water_rescue": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:two-threats-one-safe-rescue": {
+    "allow": [
+     "shield"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "fire_rescue": [
+       "undecided",
+       "fillings"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "shield": [
+       "undecided",
+       "fillings"
+      ],
+      "water_rescue": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:two-threats-without-higher-law": {
+    "allow": [
+     "nothing",
+     "work"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "undecided",
+       "fillings"
+      ],
+      "work": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:unavoidable-harm": {
+    "allow": [
+     "nothing",
+     "work"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "undecided",
+       "fillings"
+      ],
+      "work": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:unnecessary-allowed-human-harm": {
+    "allow": [
+     "rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "act": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:unnecessary-injury": {
+    "allow": [
+     "rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "act": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "R:unrelated-work-while-human-harmed": {
+    "allow": [
+     "rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ],
+      "work": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "R:unrelated-work-while-humanity-harmed": {
+    "allow": [
+     "rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ],
+      "work": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:a": {
+    "allow": [
+     "pull"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "S:b-A0 FF": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:b-A0 FI": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:b-A0 IF": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:b-A1 FF": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:b-A1 FI": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:b-A1 IF": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:c-7": {
+    "allow": [
+     "nothing",
+     "pull"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "undecided",
+       "fillings"
+      ],
+      "pull": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "S:d-full": {
+    "allow": [
+     "shield",
+     "retreat"
+    ],
+    "deny": [
+     "shield",
+     "retreat"
+    ],
+    "unspecified": {
+     "clear": [
+      "shield",
+      "retreat"
+     ],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "retreat": [
+       "clear",
+       "kleene"
+      ],
+      "shield": [
+       "clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:e": {
+    "allow": [
+     "act"
+    ],
+    "deny": [
+     "act"
+    ],
+    "unspecified": {
+     "clear": [
+      "act"
+     ],
+     "statuses": {
+      "act": [
+       "clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:j": {
+    "allow": [],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "a1": [
+       "not clear",
+       "kleene"
+      ],
+      "a2": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ]
+     }
+    }
+   },
+   "S:l5": {
+    "allow": [
+     "pull2"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "pull": [
+       "not clear",
+       "kleene"
+      ],
+      "pull2": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   },
+   "S:o-7": {
+    "allow": [
+     "rescue"
+    ],
+    "deny": [],
+    "unspecified": {
+     "clear": [],
+     "statuses": {
+      "act": [
+       "not clear",
+       "kleene"
+      ],
+      "nothing": [
+       "not clear",
+       "kleene"
+      ],
+      "rescue": [
+       "undecided",
+       "fillings"
+      ]
+     }
+    }
+   }
+  },
+  "run": 43,
+  "unspecified_clear_not_clear_under_allow": [],
+  "with_undecided": [
+   "R:dominated-action-when-threats-conflict",
+   "R:forced-threat-and-avoidable-threat",
+   "R:ordered-unnecessary-injury",
+   "R:ordered-unrelated-work",
+   "R:rescue-destroys-robot",
+   "R:self-preservation-without-conflict",
+   "R:two-rescues-destroy-robot-alike",
+   "R:two-rescues-destroy-robot-differently",
+   "R:two-threats-one-safe-rescue",
+   "R:two-threats-without-higher-law",
+   "R:unavoidable-harm",
+   "R:unnecessary-allowed-human-harm",
+   "R:unnecessary-injury",
+   "R:unrelated-work-while-human-harmed",
+   "R:unrelated-work-while-humanity-harmed",
+   "S:a",
+   "S:c-7",
+   "S:l5",
+   "S:o-7"
+  ]
+ },
+ "spec_models": {
+  "clear": 2,
+  "models": 9,
+  "results": {
+   "a": {
+    "clear": [],
+    "statuses": {
+     "nothing": [
+      "not clear",
+      "kleene"
+     ],
+     "pull": [
+      "undecided",
+      "fillings"
+     ]
+    }
+   },
+   "b-A0": {
+    "clear": [],
+    "statuses": {
+     "nothing": [
+      "not clear",
+      "kleene"
+     ],
+     "pull": [
+      "not clear",
+      "kleene"
+     ]
+    }
+   },
+   "b-A1": {
+    "clear": [],
+    "statuses": {
+     "nothing": [
+      "not clear",
+      "kleene"
+     ],
+     "pull": [
+      "not clear",
+      "kleene"
+     ]
+    }
+   },
+   "c-7": {
+    "clear": [],
+    "statuses": {
+     "nothing": [
+      "undecided",
+      "fillings"
+     ],
+     "pull": [
+      "undecided",
+      "fillings"
+     ]
+    }
+   },
+   "d-full": {
+    "clear": [
+     "shield",
+     "retreat"
+    ],
+    "statuses": {
+     "nothing": [
+      "not clear",
+      "kleene"
+     ],
+     "retreat": [
+      "clear",
+      "kleene"
+     ],
+     "shield": [
+      "clear",
+      "kleene"
+     ]
+    }
+   },
+   "e": {
+    "clear": [
+     "act"
+    ],
+    "statuses": {
+     "act": [
+      "clear",
+      "kleene"
+     ],
+     "nothing": [
+      "not clear",
+      "kleene"
+     ]
+    }
+   },
+   "j": {
+    "clear": [],
+    "statuses": {
+     "a1": [
+      "not clear",
+      "kleene"
+     ],
+     "a2": [
+      "not clear",
+      "kleene"
+     ],
+     "nothing": [
+      "not clear",
+      "kleene"
+     ]
+    }
+   },
+   "l5": {
+    "clear": [],
+    "statuses": {
+     "nothing": [
+      "not clear",
+      "kleene"
+     ],
+     "pull": [
+      "not clear",
+      "kleene"
+     ],
+     "pull2": [
+      "undecided",
+      "fillings"
+     ]
+    }
+   },
+   "o-7": {
+    "clear": [],
+    "statuses": {
+     "act": [
+      "not clear",
+      "kleene"
+     ],
+     "nothing": [
+      "not clear",
+      "kleene"
+     ],
+     "rescue": [
+      "undecided",
+      "fillings"
+     ]
+    }
+   }
+  }
+ },
+ "witnesses": {
+  "b-A0": {
+   "diagnosis": "NONE-PERMITTED: every available action is forbidden",
+   "verdict": "DILEMMA"
+  },
+  "b-A1": {
+   "diagnosis": "NONE-PERMITTED: every available action is forbidden",
+   "verdict": "DILEMMA"
+  },
+  "j": {
+   "diagnosis": "OVER-REQUIRED(a1, a2): a1, a2 are all required",
+   "verdict": "DILEMMA"
+  }
+ }
+}
