@@ -526,7 +526,8 @@ its evidence gives and that evidence, and `bindings()` requires the sentence in 
 (a sentence missing is UNBOUND, so a rewording cannot drop it); and the F14 paragraph above, `hunt/README.md`
 and the round-4 task line now say what `claims.py` checks, no more. PROBE F16, `hunt/F16.sh`, failed before the
 fix (on its first copy, a survivor count of pk-1's row, `claims.py` exited 0; section 1e's evidence has its
-exit code after the fix); PROBE F16c,
+exit code after the fix). It also requires each copy to have an UNBOUND line the report itself does not have, so
+a stale `evidence/probes.json` (as during `hunt/run.py`) cannot pass it. PROBE F16c,
 `hunt/F16c.sh`, the class's probe, changes each cell of the table and each number of each named sentence alone,
 and removes each named sentence alone, and requires UNBOUND on every copy and on none of the report itself.
 
