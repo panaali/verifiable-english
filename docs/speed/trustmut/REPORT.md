@@ -535,16 +535,16 @@ cuts, the line-keeping edit (`relined`, `moved`), the kill rule (`judge`, `refut
 (`ERROR`, `LEAN_ERROR`) have tests without Lean. The file has 301 tests at this checkout (`pytest --collect-only`);
 section 6 gives the selected run.
 
-Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 79 of them: TM1–TM40
+Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 83 of them: TM1–TM40
 from the earlier rounds (TM8, TM23, TM25, TM30, TM31, TM33–TM36 retargeted at the inverted rule) and TM41–TM78 for
 F11, F12 and the hunts, among them the Lean probe's own lines (`READS` is Lean text inside the tool: TM48, TM59,
 TM60, TM63, TM65, TM71–TM74, TM77, TM78), TM79 for the build time limit, TM80, TM81 for review F13 and TM82–TM85
 for F14's class (`claims.py`, `replay.py`'s budget line, `hunt/run.py`'s summary; each command-mode, killed when
-`hunt/F14c.sh` exits non-zero). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 79 of 79, each at a named test, the file
+`hunt/F14c.sh` exits non-zero). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 83 of 83, each at a named test or command, the file
 restored to its exact bytes (`mutants-evidence.json`: TM1–TM78 on `d09bf54d4` in three worktrees of it, the rows
 joined in order, `--no-baseline` since the whole test file passes there; TM79 and the build-path seeds TM1, TM2,
 TM22 and TM36 again on `0ee7bfc45`, which adds the build time limit; TM80 and TM81 on `05ea60664`, the F13 fix;
-TM82–TM85 on SEEDS_COMMIT, round 4). No seeded bug became UNKNOWN under the
+TM82–TM85 on `1ca1e67d1`, round 4). No seeded bug became UNKNOWN under the
 stricter rule. The first run (four worktrees at once on the loaded
 VM) found TM57's and TM62's checks dead (the edit-span rule and the probe's `sorryAx` already cover their forms), so
 the checks and the seeds were removed; TM79 was too weak (TM71 plants T5's bug); TM42's and TM44's rules lacked a
