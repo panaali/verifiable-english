@@ -13145,7 +13145,23 @@
         "VE.Scope.Examples.boxAnchors",
         "VE.Scope.Examples.boxUnits",
         "VE.Scope.Examples.carveT",
+        "VE.Scope.Examples.contentStr",
+        "VE.Scope.Examples.envJ",
+        "VE.Scope.Examples.errorOf",
+        "VE.Scope.Examples.fourNorms",
+        "VE.Scope.Examples.g1",
+        "VE.Scope.Examples.g2",
+        "VE.Scope.Examples.g6",
+        "VE.Scope.Examples.gN",
+        "VE.Scope.Examples.gR",
+        "VE.Scope.Examples.goOf",
+        "VE.Scope.Examples.gov",
+        "VE.Scope.Examples.govPieces",
+        "VE.Scope.Examples.gt",
         "VE.Scope.Examples.guard1",
+        "VE.Scope.Examples.hcDoc",
+        "VE.Scope.Examples.hcName",
+        "VE.Scope.Examples.hcNames",
         "VE.Scope.Examples.hcPieces",
         "VE.Scope.Examples.instructablePieces",
         "VE.Scope.Examples.item1",
@@ -13153,23 +13169,37 @@
         "VE.Scope.Examples.j",
         "VE.Scope.Examples.layoutOf",
         "VE.Scope.Examples.leadPart",
+        "VE.Scope.Examples.led",
         "VE.Scope.Examples.mergePartsText",
         "VE.Scope.Examples.mk",
         "VE.Scope.Examples.narrowK",
         "VE.Scope.Examples.nest",
+        "VE.Scope.Examples.noPredicate",
         "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.paraAgrees",
+        "VE.Scope.Examples.part",
+        "VE.Scope.Examples.parts",
         "VE.Scope.Examples.powerPieces",
         "VE.Scope.Examples.prosePieces",
         "VE.Scope.Examples.reguard173",
+        "VE.Scope.Examples.same",
+        "VE.Scope.Examples.sdoc",
+        "VE.Scope.Examples.setsOn",
         "VE.Scope.Examples.seven",
+        "VE.Scope.Examples.short",
+        "VE.Scope.Examples.shortDoc",
+        "VE.Scope.Examples.shortLayout",
+        "VE.Scope.Examples.shortLead",
+        "VE.Scope.Examples.shortNorm",
+        "VE.Scope.Examples.shortPart",
         "VE.Scope.Examples.shortPieces",
         "VE.Scope.Examples.situationsPieces",
         "VE.Scope.Examples.spanOver",
         "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
         "VE.Scope.Examples.udhrPieces",
-        "VE.Scope.Examples.unordered"
+        "VE.Scope.Examples.unordered",
+        "VE.Scope.Examples.without"
       ]
     },
     "VE/Cardinality/Syntax.lean": {
@@ -13871,6 +13901,76 @@
         "VE.Calc.UnitsExamples.says",
         "VE.Calc.UnitsExamples.sigma",
         "VE.Calc.UnitsExamples.ρ"
+      ]
+    },
+    "VE/Scope/Govern.lean": {
+      "G[R]": [
+        "VE.Scope.admitBlock",
+        "VE.Scope.conditions",
+        "VE.Scope.firstDup",
+        "VE.Scope.orderCheck",
+        "VE.Scope.setUnits",
+        "VE.Scope.vocabularyNames"
+      ],
+      "G[V]": [
+        "VE.Scope.baseName",
+        "VE.Scope.contentOf",
+        "VE.Scope.coveredLayout",
+        {
+          "name": "VE.Scope.coversU",
+          "tied": [
+            "VE.Scope.coversU_iff"
+          ]
+        },
+        "VE.Scope.frameOn",
+        {
+          "name": "VE.Scope.governorsOf",
+          "tied": [
+            "VE.Scope.governorsOf_iff"
+          ]
+        },
+        "VE.Scope.idOf",
+        "VE.Scope.isNorm",
+        "VE.Scope.isPart",
+        {
+          "name": "VE.Scope.itemRule",
+          "tied": [
+            "VE.Scope.itemRule_decoder"
+          ]
+        },
+        "VE.Scope.keysOf",
+        "VE.Scope.newContent",
+        "VE.Scope.objectOf",
+        "VE.Scope.partUnits",
+        "VE.Scope.patch",
+        "VE.Scope.ruleUnits",
+        "VE.Scope.unitIds",
+        "VE.Scope.unitsOf"
+      ],
+      "S": [
+        "VE.Scope.Governor",
+        "VE.Scope.Reach",
+        "VE.Scope.SDoc",
+        "VE.Scope.affected",
+        "VE.Scope.applyEffect",
+        "VE.Scope.baseObj",
+        "VE.Scope.classOf",
+        "VE.Scope.composed",
+        "VE.Scope.covered",
+        "VE.Scope.govern",
+        "VE.Scope.graph",
+        "VE.Scope.isFrame",
+        "VE.Scope.ordered",
+        "VE.Scope.position",
+        "VE.Scope.unary"
+      ]
+    },
+    "VE/Acts/LexicalProofs.lean": {
+      "P": [
+        "VE.Acts.Lexical.out",
+        "VE.Acts.Lexical.pieceTok",
+        "VE.Acts.Lexical.splitL",
+        "VE.Acts.Lexical.wordsL"
       ]
     }
   }
