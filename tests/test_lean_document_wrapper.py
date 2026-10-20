@@ -566,7 +566,9 @@ def test_python_document_diagnostics_carry_the_code_their_text_names():
     Python's own parser."""
     import ast
     from ve.backends.relay import CLASSES
-    for path in ("ve/document.py", "ve/readings.py"):
+    # AR-16a: `ve/document.py` is the package `ve/document/`, each of its modules read.
+    for path in [*sorted(p.relative_to(dw.ROOT).as_posix() for p in (dw.ROOT / "ve/document").glob("*.py")),
+                 "ve/readings.py"]:
         tree = ast.parse((dw.ROOT / path).read_text())
         for node in ast.walk(tree):
             if not (isinstance(node, ast.Raise) and isinstance(node.exc, ast.Call)

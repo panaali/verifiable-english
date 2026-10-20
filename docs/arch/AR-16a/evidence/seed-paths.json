@@ -1,0 +1,49 @@
+{
+ "docs/lean-first/b16b/mutants.py": {
+  "renamed": 7,
+  "modules": [
+   "ve/document/lean.py",
+   "ve/document/load.py",
+   "ve/document/report.py"
+  ],
+  "stale_before_the_split": []
+ },
+ "docs/lean-first/b16c/seed_faults.py": {
+  "renamed": 2,
+  "modules": [
+   "ve/document/lean.py",
+   "ve/document/load.py"
+  ],
+  "stale_before_the_split": [
+   "has_content = authored.get(\"content\") is not None"
+  ]
+ },
+ "docs/lean-first/b16d/seed_faults.py": {
+  "renamed": 3,
+  "modules": [
+   "ve/document/containers.py",
+   "ve/document/lean.py"
+  ],
+  "stale_before_the_split": [
+   "require(same(unit[\"content\"], authored[\"content\"]))",
+   "case[\"lexicon\"] = export(EnglishVocabulary(Environment(meta[\"environment\"])))",
+   "answer[\"norm_defaults\"] = {\"gaps\": gaps[\"gaps\"], \"findings\": lines[\"findings\"]}"
+  ]
+ },
+ "docs/lean-first/b16e/seed_faults.py": {
+  "renamed": 5,
+  "modules": [
+   "ve/document/containers.py",
+   "ve/document/lean.py",
+   "ve/document/report.py"
+  ],
+  "stale_before_the_split": []
+ },
+ "docs/lean-first/b16f/seed_faults.py": {
+  "renamed": 10,
+  "modules": [
+   "ve/document/lean.py"
+  ],
+  "stale_before_the_split": []
+ }
+}
