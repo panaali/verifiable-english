@@ -1,0 +1,150 @@
+{
+ "item": "qt-b1b",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-b1b/mutants.json --no-baseline --evidence docs/quantities/qt-b1b/evidence/mutants-run.json, after a passing `lake build VE.Scales.Examples`; each mutant is applied alone, the module and its imports are built, the file is restored. A kill is an `error:` line, printed in the run's output tail; the claim names where the build stops. The `-guard` mutants rebuild only `VE.Scales.Premises` and elaborate `Examples.lean` against the Theorems olean already built, so a fixture, not a proof, must fail.",
+ "mutants": [
+  {
+   "id": "Fresh-comparatives-only",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Fresh: a formula counts as fresh when it avoids the comparatives only; stops at reread_denote (scales_conservative's proof)",
+   "find": "p ∉ D.symbols\n",
+   "replace": "p ∉ D.dims.map (·.more)\n",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "Fresh-first-predicate-skipped",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Fresh: the first predicate a formula mentions is not checked; stops at reread_denote's atom cases",
+   "find": "∀ p ∈ VE.Norms.preds a,",
+   "replace": "∀ p ∈ (VE.Norms.preds a).drop 1,",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "StrictLinear-connex-vacuous",
+   "file": "lean/VE/Scales/Degrees.lean",
+   "claim": "StrictLinear: connex made vacuous (`∨ a ≠ b`); stops at intended_iff_degrees in both directions (connex built from `total`, and `total` from connex)",
+   "find": "connex : ∀ a b, lt a b ∨ a = b ∨ lt b a\n",
+   "replace": "connex : ∀ a b, lt a b ∨ a = b ∨ lt b a ∨ a ≠ b\n",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "StrictLinear-irrefl-vacuous",
+   "file": "lean/VE/Scales/Degrees.lean",
+   "claim": "StrictLinear: irreflexivity made vacuous; stops at intended_iff_degrees (irrefl from the degrees)",
+   "find": "irrefl : ∀ a, ¬ lt a a\n",
+   "replace": "irrefl : ∀ a, lt a a → lt a a\n",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "Degrees-outside-highest",
+   "file": "lean/VE/Scales/Degrees.lean",
+   "claim": "the degree classes put the objects outside the sort highest instead of lowest; stops at below_of (the order is no longer well defined on the classes of \"as much as\")",
+   "find": "∨ (S.domain d.sort y ∧ ¬ S.domain d.sort x)",
+   "replace": "∨ (¬ S.domain d.sort y ∧ S.domain d.sort x)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "OneRole-symbol-conjunct-dropped",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "one role per predicate rests on WellFormed's symbol conjunct: with it dropped, more_ne_same's proof stops (the Nodup of the symbols is gone)",
+   "find": "  decide D.symbols.Nodup &&\n",
+   "replace": "  true &&\n",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "Reread-comparative-as-equative",
+   "file": "lean/VE/Scales/Theorems.lean",
+   "claim": "the reread structure reads a comparative like an equative; stops at reread_rel2 (the roles written out) and reread_admissible",
+   "find": "| [x, y] => ∃ d ∈ D.dims, d.same = some p ∧",
+   "replace": "| [x, y] => ∃ d ∈ D.dims, (d.same = some p ∨ d.more = p) ∧",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "Reread-keeps-fresh-only",
+   "file": "lean/VE/Scales/Theorems.lean",
+   "claim": "the reread structure leaves every predicate as in S; stops at reread_rel2 and reread_rel1 (the roles written out) and reread_admissible",
+   "find": "relation p vs := if p ∈ D.symbols then",
+   "replace": "relation p vs := if p ∈ D.symbols ∧ False then",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "Point-empty-sorts",
+   "file": "lean/VE/Scales/Theorems.lean",
+   "claim": "the one-object structure puts its object in no sort; stops at grade_open (no object of the sort)",
+   "find": "def point : Structure.{0} := ⟨Unit, fun _ _ => True,",
+   "replace": "def point : Structure.{0} := ⟨Unit, fun _ _ => False,",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "Threshold-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): a premise that gives every object each graded word (a threshold the premises must not choose); stops at FB6's #guard (the two models become one)",
+   "find": "[(lbl (g.name ++ \"/closed\"), all2 (.implies",
+   "replace": "[(lbl (g.name ++ \"/closed\"), all2 (.and (rel1 g.name 0) <| .implies",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ]
+  },
+  {
+   "id": "Threshold",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "the same threshold premise, full build; stops at dim_iff",
+   "find": "[(lbl (g.name ++ \"/closed\"), all2 (.implies",
+   "replace": "[(lbl (g.name ++ \"/closed\"), all2 (.and (rel1 g.name 0) <| .implies",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ]
+  },
+  {
+   "id": "NotConservative-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): the irreflexivity premise also says every response is reviewed (a premise about a predicate outside the block); stops at every fixture whose models lack `reviewed` (FB1's #guards first), among them the scales_conservative row's #guard (flaggedOnly no longer satisfies the premises) and conservative_false",
+   "find": "[(lbl \"irreflexive\", .all s (.not (rel2 m 0 0))),",
+   "replace": "[(lbl \"irreflexive\", .all s (.and (.not (rel2 m 0 0)) (rel1 \"reviewed\" 0))),",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep 'error'"
+   ]
+  }
+ ]
+}
