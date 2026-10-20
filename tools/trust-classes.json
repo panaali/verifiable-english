@@ -13709,6 +13709,14 @@
         "VE.Acts.Lexical.slotOf?"
       ]
     },
+    "VE/Acts/LexicalProofs.lean": {
+      "P": [
+        "VE.Acts.Lexical.out",
+        "VE.Acts.Lexical.pieceTok",
+        "VE.Acts.Lexical.splitL",
+        "VE.Acts.Lexical.wordsL"
+      ]
+    },
     "VE/Acts/LexicalExamples.lean": {
       "T": [
         "VE.Acts.LexicalExamples.a1",
