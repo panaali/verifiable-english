@@ -1,0 +1,117 @@
+{
+ "comment": "et-3c seeded bugs: four in the one new trusted definition (oldEnv, R16), one per part it filters, and two in the proof helpers of events_conservative; each applied alone to the committed tree (15fbd0087), lake build VE.Events.Examples run, then the six events files elaborated as one scratch file so every #guard and example runs past a broken proof; restored after each run. A failing line in Conservative.lean is inside the proof of events_conservative. Harness: evidence/seeded-bugs-harness.py.txt.",
+ "mutants": [
+  {
+   "mutant": "oldEnv-keeps-links",
+   "definition": "VE.Events.oldEnv",
+   "claim": "a link predicate is not old vocabulary (events_conservative; T7)",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "if ss.contains V.day || V.links.any (·.predicate == p) then none",
+   "with": "if ss.contains V.day then none",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:233",
+    "lean/VE/Events/Conservative.lean:244",
+    "lean/VE/Events/Examples.lean:243"
+   ],
+   "test": [
+    "theorem events_conservative",
+    "#guard (oldEnv envT7 vT7).predicates \"admires\" == some [\"person\", \"person\"] &&"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Conservative.lean"
+  },
+  {
+   "mutant": "oldEnv-keeps-day-predicates",
+   "definition": "VE.Events.oldEnv",
+   "claim": "a predicate with the day sort in its signature is not old vocabulary (events_conservative; T7)",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "if ss.contains V.day || V.links.any (·.predicate == p) then none",
+   "with": "if V.links.any (·.predicate == p) then none",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:233",
+    "lean/VE/Events/Examples.lean:243"
+   ],
+   "test": [
+    "theorem events_conservative",
+    "#guard (oldEnv envT7 vT7).predicates \"admires\" == some [\"person\", \"person\"] &&"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Conservative.lean"
+  },
+  {
+   "mutant": "oldEnv-keeps-day-constants",
+   "definition": "VE.Events.oldEnv",
+   "claim": "a day constant is not old vocabulary (events_conservative; T7)",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "| some s => if s == V.day then none else some s",
+   "with": "| some s => some s",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:260",
+    "lean/VE/Events/Examples.lean:245"
+   ],
+   "test": [
+    "theorem events_conservative",
+    "#guard (oldEnv envT7 vT7).constants \"alice\" == some \"person\" && (oldEnv envT7 vT7).constants \"the_day\" == none"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Conservative.lean"
+  },
+  {
+   "mutant": "oldEnv-keeps-day-sort",
+   "definition": "VE.Events.oldEnv",
+   "claim": "the day sort is not old vocabulary (events_conservative; T7)",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "sorts := E.sorts.filter (· != V.day)",
+   "with": "sorts := E.sorts",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:274",
+    "lean/VE/Events/Examples.lean:242"
+   ],
+   "test": [
+    "theorem events_conservative",
+    "#guard (oldEnv envT7 vT7).sorts == [\"person\", \"act\"]"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Conservative.lean"
+  },
+  {
+   "mutant": "expansion-before-reflexive",
+   "definition": "VE.Events.expansion (P helper)",
+   "claim": "the expansion orders its days strictly, so it embeds them (events_conservative)",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "m.down < n.down)",
+   "with": "m.down ≤ n.down)",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:371",
+    "lean/VE/Events/Conservative.lean:372"
+   ],
+   "test": [
+    "theorem events_conservative"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Conservative.lean"
+  },
+  {
+   "mutant": "firstDay-zero",
+   "definition": "VE.Events.firstDay (P helper)",
+   "claim": "author day constants go to a day of the expansion (events_conservative)",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "def firstDay (V : EventsEnv) : Nat := (V.dates.head?.map (·.num)).getD 0",
+   "with": "def firstDay (V : EventsEnv) : Nat := 0",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:301"
+   ],
+   "test": [
+    "theorem events_conservative"
+   ],
+   "restored": "git checkout -- lean/VE/Events/Conservative.lean"
+  }
+ ]
+}

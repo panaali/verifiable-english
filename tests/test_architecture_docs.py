@@ -120,7 +120,8 @@ def test_glob(path, pattern, expected):
 def fixture_tree():
     files = {
         "ve/a.py": "1\n2\n", "ve/backends/relay.py": "1\n", "ve/backends/lean_service.py": "1\n2\n3\n",
-        "ve/backends/service_schema.py": 'X = 1\nMODES = ("a", "b", "c")\n',
+        "ve/backends/service_schema.py": 'X = 1\nY = 2\n',
+        "ve/backends/lean_service_schema/envelope.json": '{"handshake": {"properties": {"modes": {"const": ["a", "b", "c"]}}}}\n',
         "ve/backends/lean_service_schema/a.json": "{}\n", "ve/backends/lean_service_schema/sub/b.json": "{\n}\n",
         "lean/VE/A.lean": "a\n", "lean/VE/B/C.lean": "b\nc\n", "lean/ResponseShape/S.lean": "s\n",
         "lean/ResponseDecode.lean": "d\n", "lean/Serve.lean": "",
@@ -151,7 +152,7 @@ TRUST = {key: index for index, key in enumerate(numbers.TRUST_TOTALS)} | {"tied"
 def test_measure_on_a_small_tree():
     data, sizes = fixture_tree()
     got = numbers.measure(data.__getitem__, sizes, TRUST)
-    assert got["lines"] == {"ve_python": 8, "ve_backends_python": 6, "ve_backends_schema_json": 1, "lean": 9,
+    assert got["lines"] == {"ve_python": 8, "ve_backends_python": 6, "ve_backends_schema_json": 2, "lean": 9,
                             "tools_python": 1, "tests_python": 3, "conformance_python": 1}
     assert got["largest_ve_python"][0] == {"path": "ve/backends/lean_service.py", "lines": 3}
     assert [x["path"] for x in got["largest_ve_python"]] == [
@@ -172,8 +173,8 @@ def test_measure_fails_closed():
     with pytest.raises(ValueError, match="conformance"):
         numbers.measure(data.__getitem__, sizes, TRUST)
     data, sizes = fixture_tree()
-    data["ve/backends/service_schema.py"] = b"MODES = tuple(['a'])\n"
-    with pytest.raises(ValueError, match="MODES"):
+    data["ve/backends/lean_service_schema/envelope.json"] = b'{"handshake": {"properties": {"modes": {"allOf": []}}}}\n'
+    with pytest.raises(ValueError, match="handshake mode list"):
         numbers.measure(data.__getitem__, sizes, TRUST)
 
 
