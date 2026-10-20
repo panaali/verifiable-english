@@ -17219,7 +17219,7 @@ module VE.Scope.Govern a95d5371ce8f5e62b17f256cdc9eb83fe433f71258e9477f73c5b809a
 209:0-210:110 def VE.Scope.newContent@VE.Scope.Govern
 212:0-216:25 def VE.Scope.patch@VE.Scope.Govern
 218:0-230:23 def VE.Scope.govern@VE.Scope.Govern
-module VE.Scope.Theorems 9b5a8138efca6610746ba990fa0e89abbbe02e9eef769be511b2e7297a610b5f
+module VE.Scope.Theorems c0d0b03aea389bbf5872646d300324ec055e9db68a80f52e55a855b30c4a831d
 11:0-11:96 theorem VE.Scope.members_obj@VE.Scope.Theorems
 13:0-28:48 theorem VE.Scope.hasOwn_mono@VE.Scope.Theorems
 30:0-50:34 theorem VE.Scope.substOwn_no_own_le@VE.Scope.Theorems

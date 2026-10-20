@@ -330,7 +330,7 @@ theorem governorsOf_iff (D : SDoc) (u : String) (g : Governor) :
     g ∈ governorsOf D u ↔ g ∈ D.governors ∧ unary g.effect = true ∧ ∃ us, covered D g.reach = .ok us ∧ u ∈ us := by
   simp [governorsOf, ordered, List.mem_mergeSort, coversU_iff]
 
-/-- Order 1.4: the governors sorted by reach class, then by the position of their unit, stably. -/
+/-- Order 1.4: the governors are sorted by reach class, then by the position of their unit. -/
 theorem ordered_sorted (D : SDoc) : (ordered D).Pairwise (fun g h => classOf g.reach < classOf h.reach ∨
     (classOf g.reach = classOf h.reach ∧ position D g.unit ≤ position D h.unit)) := by
   have := List.sorted_mergeSort (le := fun g h : Governor => classOf g.reach < classOf h.reach ||
@@ -348,6 +348,7 @@ theorem baseName_some (D : SDoc) (u n : String) : baseName D u = some n ↔
   cases baseObj D u with
   | error => simp [Except.toOption]
   | ok o => cases h : VE.Readings.Wire.decodeNorm D.re o <;> simp [Except.toOption, h]
+
 end Govern
 
 end VE.Scope

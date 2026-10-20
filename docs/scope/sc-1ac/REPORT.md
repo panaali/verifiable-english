@@ -252,6 +252,10 @@ Measured on this HEAD with `uv run python tools/trust_map.py --check` against `7
   - on ve-mac-1 at `a5f795cb` (clean): 80 of 457 units, exit 0, 0 failed;
   - final, on ve-mac-1 at `1fd4a7f3` (clean, the report's commit; only docs follow it): 80 of 457 units, exit 0,
     0 failed.
+  After that run, one Lean docstring changed (`ordered_sorted` no longer says "stably", which its statement does
+  not state), with `lean/declarations.txt` regenerated. On that commit: `lake build` passes, `regen_generated.py
+  --check` passes (32 entries), `tests/test_scope_lean.py` and `tests/test_trust_budget.py` pass (16), and
+  `trust_map.py --check` passes.
   No test from `main-known-red.txt` failed.
 - **Full gate**: not run by me, as the task says. The chain runs it on the final HEAD.
 
