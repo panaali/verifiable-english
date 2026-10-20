@@ -499,6 +499,8 @@ def fourNorms : List (String × Json) := (seven.take 4).map fun u => (u, j s!"\{
   "ResourceLimit: scope condition depth exceeds 64"
 #guard errorOf (gov (hcDoc parts) [g1, {g2 with effect := .reguard (j "[\"exists\", \"person\", \"own\"]")}] hcNames) ==
   "ScopeOwnBound: g2"
+#guard errorOf (gov (hcDoc parts) [g1, {g2 with effect := .carveOut (.arr #[.str "and", nest 64, j "[\"exists\", \"person\", \"own\"]"])}] hcNames) ==
+  "ResourceLimit: scope condition depth exceeds 64"
 #guard errorOf (gov (hcDoc parts) [{g1 with unit := "u0164.s01"}]) == "ManifestMismatch: scope.governors.g1.unit"
 #guard errorOf (gov (hcDoc parts) [{g1 with unit := "u0164.s01", reach := .listName "the hard constraints"}] hcNames) ==
   "ManifestMismatch: scope.governors.g1.unit"
@@ -603,21 +605,34 @@ def overOf (r : Except String Json) (u : String) : Option String :=
   "fields do not match: expected [name, predicate, sign, guard, unless, over], got [guard, name, over, sign, unless]"
 -- `addOver` appends each new name once, after the names written; nothing to add, or no `over` array, is the object
 #guard [addOver ["a", "b", "a"] (j "{\"over\": [\"b\"], \"x\": 1}"), addOver ["b"] (j "{\"over\": [\"b\"]}"),
-  addOver ["a"] (j "{\"over\": 1}")].map (·.compress) == ["{\"over\":[\"b\",\"a\"],\"x\":1}", "{\"over\":[\"b\"]}", "{\"over\":1}"]
+  addOver ["a"] (j "{\"over\": 1}"), addOver ["b", "a", "c", "d", "d"] (j "{\"over\": [\"a\", \"b\"]}")].map (·.compress) ==
+  ["{\"over\":[\"b\",\"a\"],\"x\":1}", "{\"over\":[\"b\"]}", "{\"over\":1}", "{\"over\":[\"a\",\"b\",\"c\",\"d\"]}"]
+-- the first and the last target count; a governor with one edge passes; the second graph governor is checked too; a
+-- graph governor first in order (on the composed rules, without a frame)
+def gPf : Governor := ⟨"gPf", "u0165.s02", .precedes, .fixed ["u0165.s03", "u0165.s04"], ["u0165.s03", "u0165.s04"]⟩
+def normsDoc : Json := (gov (hcDoc parts) [g1]).toOption.getD .null
+#guard [overOf (gov (hcDoc parts) [g1, gPf]) "u0165.s02", overOf (gov (hcDoc parts) [g1, {gPf with effect := .yields}]) "u0165.s03",
+  overOf (gov (hcDoc parts) [g1, {gPf with effect := .yields}]) "u0165.s04",
+  overOf (gov (hcDoc parts) [g1, {gPf with reach := .fixed ["u0165.s04"], units := ["u0165.s04"]}]) "u0165.s02",
+  overOf (gov normsDoc [gPf]) "u0165.s02"] ==
+  [some "[\"hc-3\",\"hc-4\"]", some "[\"hc-2\"]", some "[\"hc-2\"]", some "[\"hc-4\"]", some "[\"hc-3\",\"hc-4\"]"]
+#guard errorOf (gov (hcDoc parts) [g1, gP, {gY with unit := "u0165.s07"}]) == "ScopeNoEffect: gY"
 
--- the run path answers as `govern` (`governFast_eq`), on documents, refusals and graph governors
+-- the run path gives `govern`'s values (`governFast_eq`), on answers, refusals and graph governors
 def govF (doc : Json) (gs : List Governor) (ln : List (VE.Discourse.ContentName × String × String) := []) :
     Except String Json := do
   governFast (sdoc doc gs ln (← VE.Readings.Wire.decodeEnvironment envJ))
-#guard [(hcDoc parts, [g1], []), (hcDoc parts, [g1, gY, gP], []), (hcDoc parts, [g1, g2, gR, g6], hcNames),
-    (hcDoc parts, [g1, {gY with unit := "u0165.s07"}], []), (hcDoc parts, [g1, g2, gN], hcNames), (hcDoc parts, [], []),
-    (hcDoc fourNorms, [], []), (hcDoc (without "u0165.s04" parts), [g1], [])].all fun (d, gs, ln) =>
-  match gov d gs ln, govF d gs ln with
-  | .ok a, .ok b => a.compress == b.compress
-  | .error a, .error b => a == b
-  | _, _ => false
-#guard contentStr (govF (hcDoc parts) [g1, gP]) "u0165.s01" == contentStr (gov (hcDoc parts) [g1, gP]) "u0165.s01" &&
-  (overOf (govF (hcDoc parts) [g1, gP]) "u0165.s01").isSome
+#guard [contentStr (govF (hcDoc parts) [g1]) "u0165.s07", overOf (govF (hcDoc parts) [g1, gY, gP]) "u0165.s01",
+  overOf (govF (hcDoc parts) [g1, gY, gP]) "u0165.s03", overOf (govF normsDoc [gPf]) "u0165.s02",
+  contentStr (govF (hcDoc (without "u0165.s04" parts)) [g1]) "u0165.s04"] ==
+  [some "{\"norm\":{\"guard\":[\"unary\",\"csam\",[\"var\",1]],\"name\":\"hc-csam\",\"over\":[],\"predicate\":\"csam_generation\",\"sign\":false,\"unless\":[]}}",
+   some "[\"hc-2\",\"hc-3\",\"hc-4\",\"hc-5\",\"hc-6\"]", some "[\"hc-2\"]", some "[\"hc-3\",\"hc-4\"]", some "null"]
+#guard [errorOf (govF (hcDoc parts) [g1, {gY with unit := "u0165.s07"}]), errorOf (govF (hcDoc parts) [g1, g2, gN] hcNames),
+  errorOf (govF (hcDoc parts) [g1, g2, g6] hcNames), errorOf (govF (hcDoc parts) []),
+  errorOf (govF (hcDoc parts) [g1, {gR with reach := .rules ["r7"]}] hcNames)] ==
+  ["ScopeNoEffect: gY", "ScopeOrder: u0165.s01: gN, g2", "ScopeOrder: u0165.s01: g2, g6", "ScopeOrphanPart: u0165.s01",
+   "ScopeUnknownRule: r7"]
+#guard (match govF (hcDoc fourNorms) [] with | .ok o => o == hcDoc fourNorms | .error _ => false)
 
 -- until sc-3ab, an anchor or label reach is refused, never skipped
 #guard errorOf (gov (hcDoc parts) [g1, ⟨"gA", "u0164.s01", narrowK, .anchor "sec", []⟩]) ==
