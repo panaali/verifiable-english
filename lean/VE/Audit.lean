@@ -821,6 +821,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Poly.mul?_sound
 #print axioms VE.Calc.Poly.mul?_within
 #print axioms VE.Calc.Poly.ofExpr_sound
+#print axioms VE.Calc.Poly.ofExpr_within
 #print axioms VE.Calc.Poly.one_within
 #print axioms VE.Calc.Poly.pow?_sound
 #print axioms VE.Calc.Poly.pow?_within
