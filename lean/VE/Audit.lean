@@ -5731,17 +5731,14 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.short_run
 #print axioms VE.Scope.Examples.span_tests
 #print axioms VE.Scope.Examples.unordered_join
-#print axioms VE.Scope.admit_governor
 #print axioms VE.Scope.baseName_some
 #print axioms VE.Scope.commutes_symm
 #print axioms VE.Scope.coversU_iff
 #print axioms VE.Scope.firstKeys_mem
 #print axioms VE.Scope.firstKeys_self
-#print axioms VE.Scope.frontier_graph_refused
 #print axioms VE.Scope.govern_admits
 #print axioms VE.Scope.govern_identity
 #print axioms VE.Scope.govern_orphan
-#print axioms VE.Scope.govern_refused
 #print axioms VE.Scope.governorsOf_iff
 #print axioms VE.Scope.hasOwn_mono
 #print axioms VE.Scope.impl_map_eq
@@ -5754,9 +5751,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.mergeParts_conflict
 #print axioms VE.Scope.mergeParts_keys
 #print axioms VE.Scope.mkObj_getObjVal
-#print axioms VE.Scope.nonrule_refused
 #print axioms VE.Scope.ordered_sorted
-#print axioms VE.Scope.readings_refused
 #print axioms VE.Scope.substOwn_id
 #print axioms VE.Scope.substOwn_id_le
 #print axioms VE.Scope.substOwn_no_own

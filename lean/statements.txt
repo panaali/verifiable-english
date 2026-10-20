@@ -39738,9 +39738,20 @@ theorem VE.Scope.Examples.short_effects
           VE.Scope.applyEffect "a" (VE.Scope.Effect.frame VE.Scope.Examples.shortLead) VE.Scope.Examples.shortPart =
               Except.ok VE.Scope.Examples.shortPart ∧
             VE.Scope.applyEffect "a" VE.Scope.Effect.precedes VE.Scope.Examples.shortPart =
-              Except.ok VE.Scope.Examples.shortPart
-  -- uses VE.Scope.Effect.carveOut@VE.Scope.Effects VE.Scope.Effect.frame@VE.Scope.Effects VE.Scope.Effect.precedes@VE.Scope.Effects VE.Scope.Effect.reguard@VE.Scope.Effects VE.Scope.Examples.shortLead@VE.Scope.Examples VE.Scope.Examples.shortPart@VE.Scope.Examples VE.Scope.applyEffect@VE.Scope.Govern
-  -- expr 3437604003
+                Except.ok VE.Scope.Examples.shortPart ∧
+              [VE.Scope.isFrame (VE.Scope.Effect.frame VE.Scope.Examples.shortLead),
+                    VE.Scope.unary (VE.Scope.Effect.reguard VE.Scope.Examples.shortLead),
+                    VE.Scope.unary (VE.Scope.Effect.carveOut VE.Scope.Examples.shortLead),
+                    VE.Scope.graph VE.Scope.Effect.precedes, VE.Scope.graph VE.Scope.Effect.yields] =
+                  [Bool.true, Bool.true, Bool.true, Bool.true, Bool.true] ∧
+                [VE.Scope.isFrame VE.Scope.Effect.title,
+                    VE.Scope.isFrame (VE.Scope.Effect.reguard VE.Scope.Examples.shortLead),
+                    VE.Scope.unary (VE.Scope.Effect.frame VE.Scope.Examples.shortLead),
+                    VE.Scope.unary VE.Scope.Effect.precedes, VE.Scope.graph VE.Scope.Effect.title,
+                    VE.Scope.graph (VE.Scope.Effect.frame VE.Scope.Examples.shortLead)] =
+                  [Bool.false, Bool.false, Bool.false, Bool.false, Bool.false, Bool.false]
+  -- uses VE.Scope.Effect.carveOut@VE.Scope.Effects VE.Scope.Effect.frame@VE.Scope.Effects VE.Scope.Effect.precedes@VE.Scope.Effects VE.Scope.Effect.reguard@VE.Scope.Effects VE.Scope.Effect.title@VE.Scope.Effects VE.Scope.Effect.yields@VE.Scope.Effects VE.Scope.Examples.shortLead@VE.Scope.Examples VE.Scope.Examples.shortPart@VE.Scope.Examples VE.Scope.applyEffect@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
+  -- expr 2661167266
 theorem VE.Scope.Examples.short_govern
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment),
     VE.Scope.composed (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) "a" =
@@ -39851,23 +39862,6 @@ theorem VE.Scope.Examples.unordered_join
             Option.some Bool.true
   -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
   -- expr 1307899726
-theorem VE.Scope.admit_governor
-  ∀ (D : VE.Scope.SDoc),
-    VE.Scope.admitBlock D = Except.ok () →
-      ∀ (g : VE.Scope.Governor),
-        g ∈ D.governors →
-          ¬(g.reach = VE.Scope.Reach.frontier ∧ VE.Scope.graph g.effect = Bool.true) ∧
-            ∃ us,
-              VE.Scope.covered D g.reach = Except.ok us ∧
-                (∀ (u : String), u ∈ g.unit :: us → (VE.Scope.setUnits D.doc).contains u = Bool.false) ∧
-                  ((VE.Scope.isFrame g.effect || VE.Scope.unary g.effect) = Bool.true →
-                    ∀ (u : String),
-                      u ∈ us →
-                        ((VE.Scope.contentOf D.doc u).isNull || VE.Scope.isPart (VE.Scope.contentOf D.doc u) ||
-                            VE.Scope.isNorm (VE.Scope.contentOf D.doc u)) =
-                          Bool.true)
-  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach.frontier@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.setUnits@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
-  -- expr 3652577887
 theorem VE.Scope.baseName_some
   ∀ (D : VE.Scope.SDoc) (u n : String),
     VE.Scope.baseName D u = Option.some n ↔
@@ -39893,12 +39887,6 @@ theorem VE.Scope.firstKeys_self
   ∀ (l : List (String × Lean.Json)), (List.map (fun x => x.fst) l).Nodup → VE.Readings.Wire.firstKeys l = l
   -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
   -- expr 1819661494
-theorem VE.Scope.frontier_graph_refused
-  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
-    g ∈ D.governors →
-      g.reach = VE.Scope.Reach.frontier → VE.Scope.graph g.effect = Bool.true → (VE.Scope.govern D).isOk = Bool.false
-  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach.frontier@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern
-  -- expr 1825588320
 theorem VE.Scope.govern_admits
   ∀ (D : VE.Scope.SDoc) (out : Lean.Json), VE.Scope.govern D = Except.ok out → VE.Scope.admitBlock D = Except.ok ()
   -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
@@ -39917,10 +39905,6 @@ theorem VE.Scope.govern_orphan
           u ∈ VE.Scope.partUnits D → ∃ e, VE.Scope.govern D = Except.error e ∧ e.startsWith "ScopeOrphanPart" = Bool.true
   -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.partUnits@VE.Scope.Govern
   -- expr 2367519260
-theorem VE.Scope.govern_refused
-  ∀ (D : VE.Scope.SDoc), VE.Scope.admitBlock D ≠ Except.ok () → (VE.Scope.govern D).isOk = Bool.false
-  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
-  -- expr 677643296
 theorem VE.Scope.governorsOf_iff
   ∀ (D : VE.Scope.SDoc) (u : String) (g : VE.Scope.Governor),
     g ∈ VE.Scope.governorsOf D u ↔
@@ -39990,19 +39974,6 @@ theorem VE.Scope.mkObj_getObjVal
       ∀ (k : String) (v : Lean.Json), (Lean.Json.mkObj l).getObjVal? k = Except.ok v ↔ (k, v) ∈ l
   -- uses
   -- expr 4158588899
-theorem VE.Scope.nonrule_refused
-  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
-    g ∈ D.governors →
-      (VE.Scope.isFrame g.effect || VE.Scope.unary g.effect) = Bool.true →
-        ∀ (us : List String),
-          VE.Scope.covered D g.reach = Except.ok us →
-            ∀ (u : String),
-              u ∈ us →
-                VE.Scope.contentOf D.doc u ≠ Lean.Json.null →
-                  VE.Scope.isPart (VE.Scope.contentOf D.doc u) = Bool.false →
-                    VE.Scope.isNorm (VE.Scope.contentOf D.doc u) = Bool.false → (VE.Scope.govern D).isOk = Bool.false
-  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
-  -- expr 4146614931
 theorem VE.Scope.ordered_sorted
   ∀ (D : VE.Scope.SDoc),
     List.Pairwise
@@ -40012,14 +39983,6 @@ theorem VE.Scope.ordered_sorted
       (VE.Scope.ordered D)
   -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.classOf@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern VE.Scope.position@VE.Scope.Govern
   -- expr 589795681
-theorem VE.Scope.readings_refused
-  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
-    g ∈ D.governors →
-      ∀ (us : List String),
-        VE.Scope.covered D g.reach = Except.ok us →
-          ∀ (u : String), u = g.unit ∨ u ∈ us → u ∈ VE.Scope.setUnits D.doc → (VE.Scope.govern D).isOk = Bool.false
-  -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.setUnits@VE.Scope.Govern
-  -- expr 2805311875
 theorem VE.Scope.substOwn_id
   ∀ (g c : Lean.Json), VE.Scope.hasOwn VE.Scope.depthLimit c = Bool.false → VE.Scope.substOwn g VE.Scope.depthLimit c = c
   -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
