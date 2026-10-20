@@ -20,6 +20,7 @@ import contextlib
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -27,7 +28,8 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
-sys.path[:0] = [str(HERE), str(HERE / "hunt")]
+sys.path[:0] = [str(HERE), str(HERE / "hunt"), str(ROOT / "tools")]
+import nested_pytest  # noqa: E402
 import replay  # noqa: E402
 import run as probes  # noqa: E402
 import sweep  # noqa: E402
@@ -322,10 +324,11 @@ def hunt() -> list[tuple[str, str]]:
 
 
 def tests() -> list[tuple[str, str]]:
-    done = subprocess.run([sys.executable, "-m", "pytest", "--collect-only", "-q", "tests/test_trust_mutants.py"],
-                          cwd=ROOT, capture_output=True, text=True)
+    done = subprocess.run(nested_pytest.command(["--collect-only", "-q", "-p", "no:cacheprovider",
+                                                 "tests/test_trust_mutants.py"]),
+                          cwd=ROOT, env=nested_pytest.environment(os.environ), capture_output=True, text=True)
     texts = [(f"{sum('::' in line for line in done.stdout.splitlines())} tests at this checkout",
-              "pytest --collect-only")]
+              "the test file's ids, collected now")]
     path = HERE / "evidence/selected.json"
     if path.is_file():
         run = json.loads(path.read_text())
