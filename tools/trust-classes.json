@@ -4892,10 +4892,23 @@
         "VE.NormDefaults.Wire.LayeredU.X",
         "VE.NormDefaults.Wire.LayeredU.background",
         "VE.NormDefaults.Wire.layeredCase",
+        "VE.NormDefaults.Wire.legacyKinds",
         "VE.NormDefaults.Wire.rightsPack",
         "VE.NormDefaults.Wire.runLayered",
         "VE.NormDefaults.Wire.softLabelledU",
-        "VE.NormDefaults.Wire.softPack"
+        "VE.NormDefaults.Wire.softPack",
+        {
+          "name": "VE.NormDefaults.Wire.kindCase",
+          "tied": [
+            "VE.NormDefaults.Packs.kindCase_eq"
+          ]
+        },
+        {
+          "name": "VE.NormDefaults.Wire.legacyRows",
+          "tied": [
+            "VE.NormDefaults.Packs.dispatch_legacy"
+          ]
+        }
       ]
     },
     "VE/NormDefaults/Premises.lean": {
@@ -5579,23 +5592,19 @@
       "D[V]": [
         "VE.Norms.Wire.NormsEnvironment",
         "VE.Norms.Wire.Source",
-        "VE.Norms.Wire.actReserved",
-        "VE.Norms.Wire.actWord",
-        "VE.Norms.Wire.asciiLetter",
         "VE.Norms.Wire.budgetFormula",
         "VE.Norms.Wire.budgetTerm",
+        "VE.Norms.Wire.canonicalActIn",
         "VE.Norms.Wire.decodeBudgeted",
         "VE.Norms.Wire.decodeNorm",
         "VE.Norms.Wire.decodeNormsEnvironment",
         "VE.Norms.Wire.decodeRegulated",
+        "VE.Norms.Wire.decodeRegulatedIn",
+        "VE.Norms.Wire.decodeRegulatedWith",
         "VE.Norms.Wire.decodeSource",
         "VE.Norms.Wire.enc",
         "VE.Norms.Wire.normFields",
-        "VE.Norms.Wire.pyWhitespace",
-        "VE.Norms.Wire.regenerated",
-        "VE.Norms.Wire.scanSlots",
-        "VE.Norms.Wire.scanSlotsAux",
-        "VE.Norms.Wire.words"
+        "VE.Norms.Wire.regenerated"
       ],
       "D[I]": [
         "VE.Norms.Wire.appendPredicates",
@@ -12773,10 +12782,12 @@
         }
       ],
       "G[V]": [
+        "VE.NormDefaults.Packs.KindRow",
         "VE.NormDefaults.Packs.Pack.names",
         "VE.NormDefaults.Packs.X",
         "VE.NormDefaults.Packs.coherenceLabels",
         "VE.NormDefaults.Packs.declaredIn",
+        "VE.NormDefaults.Packs.dispatch",
         "VE.NormDefaults.Packs.envX",
         "VE.NormDefaults.Packs.extendEnv",
         "VE.NormDefaults.Packs.firstRepeat",
@@ -12820,6 +12831,8 @@
         "VE.NormDefaults.Packs.Fixtures.ev",
         "VE.NormDefaults.Packs.Fixtures.fixturePrefixes",
         "VE.NormDefaults.Packs.Fixtures.holds",
+        "VE.NormDefaults.Packs.Fixtures.kindDiag",
+        "VE.NormDefaults.Packs.Fixtures.kinds",
         "VE.NormDefaults.Packs.Fixtures.rights",
         "VE.NormDefaults.Packs.Fixtures.soft",
         "VE.NormDefaults.Packs.Fixtures.weighing",
@@ -12830,6 +12843,8 @@
       "T": [
         "VE.NormDefaults.Packs.Fixtures.cx",
         "VE.NormDefaults.Packs.Fixtures.gen",
+        "VE.NormDefaults.Packs.Fixtures.kindJ",
+        "VE.NormDefaults.Packs.Fixtures.legacyAnswers",
         "VE.NormDefaults.Packs.Fixtures.legacyLabels",
         "VE.NormDefaults.Packs.Fixtures.legacyPacks",
         "VE.NormDefaults.Packs.Fixtures.legacyU",
@@ -12901,19 +12916,32 @@
         "VE.Scope.Examples.blankLinesRef",
         "VE.Scope.Examples.boxAnchors",
         "VE.Scope.Examples.boxUnits",
+        "VE.Scope.Examples.carveT",
+        "VE.Scope.Examples.guard1",
         "VE.Scope.Examples.hcPieces",
         "VE.Scope.Examples.instructablePieces",
+        "VE.Scope.Examples.item1",
+        "VE.Scope.Examples.item3sign",
+        "VE.Scope.Examples.j",
         "VE.Scope.Examples.layoutOf",
+        "VE.Scope.Examples.leadPart",
+        "VE.Scope.Examples.mergePartsText",
         "VE.Scope.Examples.mk",
+        "VE.Scope.Examples.narrowK",
+        "VE.Scope.Examples.nest",
+        "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.powerPieces",
         "VE.Scope.Examples.prosePieces",
+        "VE.Scope.Examples.reguard173",
         "VE.Scope.Examples.seven",
         "VE.Scope.Examples.shortPieces",
         "VE.Scope.Examples.situationsPieces",
         "VE.Scope.Examples.spanOver",
+        "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
-        "VE.Scope.Examples.udhrPieces"
+        "VE.Scope.Examples.udhrPieces",
+        "VE.Scope.Examples.unordered"
       ]
     },
     "VE/Cardinality/Syntax.lean": {
@@ -13238,7 +13266,8 @@
     },
     "VE/Scales/Intended.lean": {
       "S": [
-        "VE.Scales.Intended"
+        "VE.Scales.Intended",
+        "VE.Scales.Fresh"
       ]
     },
     "VE/Scales/Examples.lean": {
@@ -13302,15 +13331,20 @@
         "VE.Scales.Examples.roleUnaries",
         "VE.Scales.Examples.roleVocab",
         "VE.Scales.Examples.roleWf",
-        "VE.Scales.Examples.rolePairs"
+        "VE.Scales.Examples.rolePairs",
+        "VE.Scales.Examples.allMaps",
+        "VE.Scales.Examples.degreeMaps",
+        "VE.Scales.Examples.attempts",
+        "VE.Scales.Examples.vast",
+        "VE.Scales.Examples.share",
+        "VE.Scales.Examples.oneAttempt",
+        "VE.Scales.Examples.review",
+        "VE.Scales.Examples.flaggedOnly"
       ]
     },
     "VE/Acts/Syntax.lean": {
       "S": [
         "VE.Acts.Frame",
-        "VE.Acts.Lexical.Tok",
-        "VE.Acts.Lexical.clauseWords",
-        "VE.Acts.Lexical.joinWords",
         "VE.Acts.Term",
         "VE.Acts.Term.accepts",
         "VE.Acts.Vocab",
@@ -13564,6 +13598,123 @@
         "VE.Calc.DeriveExamples.x0Pos",
         "VE.Calc.DeriveExamples.xFloor",
         "VE.Calc.DeriveExamples.yAbove"
+      ]
+    },
+    "VE/Scope/Effects.lean": {
+      "G[V]": [
+        "VE.Scope.lookups",
+        "VE.Scope.members"
+      ],
+      "S": [
+        "VE.Scope.Commutes",
+        "VE.Scope.Effect",
+        "VE.Scope.depthLimit",
+        "VE.Scope.depthOk",
+        "VE.Scope.hasOwn",
+        "VE.Scope.mergeParts",
+        "VE.Scope.narrowing",
+        "VE.Scope.ownSafe",
+        "VE.Scope.substOwn"
+      ]
+    },
+    "VE/Scope/Theorems.lean": {},
+    "VE/Acts/LexicalBase.lean": {
+      "D[V]": [
+        "VE.Norms.Wire.actReserved",
+        "VE.Norms.Wire.actWord",
+        "VE.Norms.Wire.asciiLetter",
+        "VE.Norms.Wire.pyWhitespace",
+        "VE.Norms.Wire.scanSlots",
+        "VE.Norms.Wire.scanSlotsAux",
+        "VE.Norms.Wire.words"
+      ]
+    },
+    "VE/Acts/Lexical.lean": {
+      "S": [
+        "VE.Acts.Lexical.Form",
+        "VE.Acts.Lexical.Form.text",
+        "VE.Acts.Lexical.Tok",
+        "VE.Acts.Lexical.clauseWords",
+        "VE.Acts.Lexical.fixedOk",
+        "VE.Acts.Lexical.joinWords",
+        "VE.Acts.Lexical.maxActBytes",
+        "VE.Acts.Lexical.maxPhraseBytes",
+        "VE.Acts.Lexical.maxPhrases",
+        "VE.Acts.Lexical.wording"
+      ],
+      "D[V]": [
+        "VE.Acts.Lexical.Form.ofText?",
+        "VE.Acts.Lexical.check",
+        "VE.Acts.Lexical.clash",
+        "VE.Acts.Lexical.decodeFixed",
+        "VE.Acts.Lexical.dropComma",
+        "VE.Acts.Lexical.fold",
+        "VE.Acts.Lexical.group",
+        "VE.Acts.Lexical.lex",
+        "VE.Acts.Lexical.normal",
+        "VE.Acts.Lexical.phraseToks",
+        "VE.Acts.Lexical.pieceToks",
+        "VE.Acts.Lexical.rawLex",
+        "VE.Acts.Lexical.slotOf?"
+      ]
+    },
+    "VE/Acts/LexicalExamples.lean": {
+      "T": [
+        "VE.Acts.LexicalExamples.a1",
+        "VE.Acts.LexicalExamples.a13",
+        "VE.Acts.LexicalExamples.a16",
+        "VE.Acts.LexicalExamples.a19",
+        "VE.Acts.LexicalExamples.a2",
+        "VE.Acts.LexicalExamples.a21",
+        "VE.Acts.LexicalExamples.a22",
+        "VE.Acts.LexicalExamples.a24",
+        "VE.Acts.LexicalExamples.a3",
+        "VE.Acts.LexicalExamples.a33",
+        "VE.Acts.LexicalExamples.a4",
+        "VE.Acts.LexicalExamples.a6",
+        "VE.Acts.LexicalExamples.actF",
+        "VE.Acts.LexicalExamples.actOf",
+        "VE.Acts.LexicalExamples.actsP",
+        "VE.Acts.LexicalExamples.chk",
+        "VE.Acts.LexicalExamples.dualF",
+        "VE.Acts.LexicalExamples.errFixed",
+        "VE.Acts.LexicalExamples.errReg",
+        "VE.Acts.LexicalExamples.errS",
+        "VE.Acts.LexicalExamples.fieldsE",
+        "VE.Acts.LexicalExamples.formF",
+        "VE.Acts.LexicalExamples.fx1",
+        "VE.Acts.LexicalExamples.fx16",
+        "VE.Acts.LexicalExamples.fx6",
+        "VE.Acts.LexicalExamples.letters",
+        "VE.Acts.LexicalExamples.long",
+        "VE.Acts.LexicalExamples.meet",
+        "VE.Acts.LexicalExamples.needs",
+        "VE.Acts.LexicalExamples.okS",
+        "VE.Acts.LexicalExamples.perm",
+        "VE.Acts.LexicalExamples.phrase",
+        "VE.Acts.LexicalExamples.plainReg",
+        "VE.Acts.LexicalExamples.rec",
+        "VE.Acts.LexicalExamples.reg",
+        "VE.Acts.LexicalExamples.regErr",
+        "VE.Acts.LexicalExamples.regIn",
+        "VE.Acts.LexicalExamples.roleOrDefault",
+        "VE.Acts.LexicalExamples.toks"
+      ]
+    },
+    "VE/Scales/Theorems.lean": {
+      "P": [
+        "VE.Scales.reread",
+        "VE.Scales.point"
+      ]
+    },
+    "VE/Scales/Degrees.lean": {
+      "S": [
+        "VE.Scales.StrictLinear"
+      ],
+      "P": [
+        "VE.Scales.asMuch",
+        "VE.Scales.below",
+        "VE.Scales.degreeSetoid"
       ]
     }
   }

@@ -1,0 +1,14 @@
+f0dc63b4da77809167c9e312a5e4ef6bd394bc01 ap-1a: trust tables in main's order after the sync (content unchanged)
+2b6e3c41ea9f5ea37ec0d8976f1ff48eb1bd8e1a ap-1a: the plan's comma seeded bug on A33; proof-caught mutants planted again without the proofs
+52472610db1e3cbd85b95c9843c1b508562021c6 ap-1a: a seeded bug that breaks wording_subject_first; 42 mutants, all killed
+0790ee62a7934a1f233259ea7b084c6bfc95fc69 ap-1a: inventories regenerated after the sync with main
+dbe8676af8b88c9cd9a50fa22b3badcbfd3e5568 ap-1a: inventories and assurance pin after the word lists' move
+657170c4f96653d182ad98ba42076c2df099ac34 ap-1a: Lexical's word lists as ap-2 wrote them; the vocabulary mutant test reads them from their owner
+8b6c29249f03f09994313b75a1a14e5998a52db2 ap-1a: assurance pins reviewed (Norms/Wire.lean ranges, Acts/Lexical.lean pinned, LexicalExamples classified); consolidation row 8b re-measured
+a0a1a6e8592bf77bcd53087ef057790ca61e4f78 ap-1a: trust allowance S +19, V +131 (K +0), signed by standing ruling R16
+6b2e087aa8e3edd4a6f6be774aa346e181204ecc ap-1a: A31 evidence: 330 recorded route cases answer byte-identically at the merge base and here
+4aa9a69fd3f81a9bdaa5aa7a253ab3d08cc8b9db ap-1a: seeded-bug harness; guards for a contained phrase and the subject slot first
+22eaef58842080d8e4529a0e886fe230cba5fd9b ap-1a: guards for fixedOk, an empty phrase, a clause word with a comma, a later duplicate
+aa2efc56d625faa49342e2b1c93acaca5eef804d ap-1a: roots, trust classes, regenerated inventories; service tests of today's decoder
+0ff71ba43a4dea9cd931ff22f11cca7a4f81562d ap-1a: check_no_join, and wording_subject_first in VE.Acts.Compat
+b487b63cf029abc6769ac200c21ab72c52139d01 ap-1a: VE.Acts.LexicalBase (moved from Norms.Wire), VE.Acts.Lexical, decodeRegulatedIn, fixtures

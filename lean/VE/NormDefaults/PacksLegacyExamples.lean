@@ -2,10 +2,11 @@ import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLegacy
 import VE.Rights.Examples
 import VE.Readings.UnspecifiedWire
+import VE.Defaults.Examples
 
 /-! The premise-pack fixtures over today's sources (docs/spec/premise-packs.md 4): today's rights documents assemble
 unchanged, `envX` and `fullEnv` on a real tree, F1, and F1′, the counterexample to the approved
-`legacy_labels_nodup`; and the norms chain's empty pack list. -/
+`legacy_labels_nodup`; the kind table's legacy rows (2.10); and the norms chain's empty pack list. -/
 namespace VE.NormDefaults.Packs.Fixtures
 open VE.NormDefaults.Packs
 
@@ -70,6 +71,31 @@ def gen (n : String) : Pack := ⟨"soft", .vocabulary, [(n, [])], [], [], []⟩
 #guard rightsDocs.all fun R => !VE.SoftNorms.WellFormedSoft (VE.Rights.correlate R) ||
   decide (((VE.NormDefaults.Wire.softLabelledU (legacyU R) (VE.Rights.correlate R)).map (·.1)).Nodup)
 #guard (rightsDocs.map VE.Rights.WellFormedRights) == [true, true, true, true, true, true, false, false]
+
+/-! ## 2.10: the kind table's legacy rows
+
+On a source decoded by the real `decodeSoftU` (DF-1a's fixture γ: two colliding default rules), the route's dispatch
+`kindCase` answers each of today's four kinds exactly as `layeredCase` does (three answers and one refusal), and any
+other kind (`admission`, dispatched earlier by `softCase`; a future provider's kind) is `none`, so `runLayered`'s
+refusal stands. -/
+
+def kindJ : Lean.Json := Lean.Json.mkObj [("id", "c1")]
+def legacyAnswers (L : VE.NormDefaults.Wire.LayeredU) : List String :=
+  (VE.NormDefaults.Wire.legacyKinds ++ ["admission", "attitudes-elaborate"]).map fun k =>
+    kindDiag (VE.NormDefaults.Wire.kindCase L "c1" k kindJ)
+
+#guard VE.NormDefaults.Wire.legacyKinds ==
+  ["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-status", "norm-defaults-report"]
+#guard VE.Defaults.Fixtures.holds VE.Defaults.Fixtures.dγ fun L => L.packs.map (·.id) == ["soft"] &&
+  legacyAnswers L == (VE.NormDefaults.Wire.legacyKinds ++ ["admission", "attitudes-elaborate"]).map
+    (fun k => kindDiag (VE.NormDefaults.Wire.layeredCase L "c1" k kindJ)) &&
+  (legacyAnswers L).map (fun a => if a.startsWith "{" then "answer" else a) ==
+    ["answer", "answer", "property not found: model", "answer", "none", "none"] &&
+  ((legacyAnswers L).take 4).all (fun a => !a.startsWith "{" || (a.splitOn "\"id\":\"c1\"").length == 2)
+-- The rows answer the kind they are named for: the elaborate row's answer is the elaborate answer, the conflict
+-- row's the verdict.
+#guard VE.Defaults.Fixtures.holds VE.Defaults.Fixtures.dγ fun L =>
+  ((legacyAnswers L)[0]!).startsWith "{\"background\":" && (((legacyAnswers L)[1]!).splitOn "\"verdict\":").length == 2
 
 /-! ## F1′: the approved `legacy_labels_nodup` is false
 
