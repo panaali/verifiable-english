@@ -596,11 +596,12 @@ theorem short_base (re : VE.Readings.Wire.ReadingsEnvironment) :
     coveredLayout (short [gt] re) (.fixed ["b"]) = .ok ["b"] ∧ coveredLayout (short [gt] re) (.rules ["x"]) = .ok [] ∧
     coveredLayout (short [gt] re) (.listName "n") = .error "ScopeUnknownName: n" ∧
     (frameOn (short [gt] re) "a").map (·.id) = ["t"] ∧ frameOn (short [gt] re) "l" = [] ∧
+    coversU (short [gt] re) {gt with units := []} "a" = true ∧ coversU (short [gt] re) gt "l" = false ∧
     baseObj (short [gt] re) "a" = .ok (led shortPart) ∧ baseObj (short [gt] re) "b" = .ok (led shortNorm) ∧
     baseObj (short [gt] re) "l" = .error "ScopeNotARule: l" ∧ baseObj (short [] re) "a" = .error "ScopeOrphanPart: a" ∧
     baseObj (short [] re) "b" = .ok shortNorm ∧
     baseObj (short [gt, {gt with id := "t2"}] re) "b" = .error "ScopeOrder: b: t, t2" := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 theorem short_effects :
     applyEffect "a" (.reguard (.arr #[.str "and", .str "own", .str "c"])) shortPart =
