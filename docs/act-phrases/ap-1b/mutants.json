@@ -215,5 +215,26 @@
   "test": "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads",
   "killed": true,
   "first_failure": "FAILED tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:acts@0,norms@0,relational-fol@0#1]"
+ },
+ "order-bytes-first": {
+  "definition": "Lexical.check",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "test": "VE.Acts.LexicalExamples",
+  "killed": true,
+  "first_failure": "error: VE/Acts/LexicalExamples.lean:250:0: Expression"
+ },
+ "order-phrases-first": {
+  "definition": "Lexical.decodeFixed",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "test": "VE.Acts.LexicalExamples",
+  "killed": true,
+  "first_failure": "error: VE/Acts/LexicalExamples.lean:251:0: Expression"
+ },
+ "order-form-first": {
+  "definition": "decodeRegulatedWith",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Acts.LexicalExamples",
+  "killed": true,
+  "first_failure": "error: VE/Acts/LexicalExamples.lean:253:0: Expression"
  }
 }

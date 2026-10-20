@@ -1,6 +1,7 @@
 import VE.Service.FamilyNorms
 import VE.EnglishGrammar.Policy
 import VE.EnglishGrammar.Encode
+import VE.Acts.LexicalExamples
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -128,6 +129,9 @@ def wordings (j : Json) : List (Option String × Bool) := match Env.decode j (Js
     false), (some "{0} has the right to equal pay for equal work without any discrimination", false),
    (some "{0} may to the protection of the moral and material interests resulting from {1}", true)]
 #guard (((wordings envA).filterMap (·.1)).take 2).map String.utf8ByteSize == [109, 72]
+-- A21 as a plain act (400 B): its 414-byte wording is selected, over the template lint's lengths (spec 2.1, F16)
+#guard ((wordings (env actsP [("heard", pred ["person"] (plain VE.Acts.LexicalExamples.a21 "has the right"))])).head?.bind
+  (·.1)).map String.utf8ByteSize == some 414
 #guard (wordings (env actsP [("heard", Json.mkObj [("arguments", toJson ["person", "case"]), ("description", .str "d"),
     ("verbalisation", .str "{0} is heard in {1}"), ("regulated", Json.mkObj (plain a1 "is entitled"))]),
     ("paid", pred ["person"] (plain a2 "has the right")), ("protected", pred ["person", "case"] (perm a3))]

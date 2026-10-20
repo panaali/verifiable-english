@@ -20,7 +20,7 @@ W, P, R, E = "lean/VE/Norms/Wire.lean", "lean/VE/Norms/Plain.lean", "lean/VE/Nor
     "lean/VE/EnglishGrammar/Encode.lean"
 S, F, D, T = "lean/VE/Service/Standalone.lean", "lean/VE/Service/FamilyNorms.lean", \
     "lean/VE/Compose/Dispatch.lean", "lean/VE/Norms/Tree.lean"
-EX, CX = "lean:VE.Service.ActsExamples", "lean:VE.Compose.Examples"
+EX, CX, LX = "lean:VE.Service.ActsExamples", "lean:VE.Compose.Examples", "lean:VE.Acts.LexicalExamples"
 PY = "tests/test_acts_profile.py::"
 LOADS, ROUTE = PY + "test_an_acts_environment_loads_with_its_block_and_forms_as_data", \
     PY + "test_the_norms_route_checks_rules_on_acts"
@@ -78,6 +78,21 @@ MUTANTS = [
      ("lean/VE/NormDefaults/Check.lean", "        | .permission, none =>",
       '        | .plain, some _ => throw s!"InvalidInput: invalid regulated fields for {r.name}"\n'
       "        | .permission, none =>")),
+    # fault order (ap-1a review F2; DELTA row 4): each swap must fail a LexicalExamples guard (or a proof first)
+    ("order-bytes-first", "Lexical.check", "lean/VE/Acts/Lexical.lean", '  unless act.startsWith "{0} " && slots',
+     '  unless act.utf8ByteSize ≤ maxActBytes do throw s!"ResourceLimit: act phrase for {name} is over '
+     '{maxActBytes} bytes"\n  unless act.startsWith "{0} " && slots', LX),
+    ("order-phrases-first", "Lexical.decodeFixed", "lean/VE/Acts/Lexical.lean",
+     '  if fx.length > maxPhrases then throw s!"ResourceLimit: more than {maxPhrases} fixed phrases"\n'
+     "  let ps ← fx.mapM phraseToks\n", "  let ps ← fx.mapM phraseToks\n"
+     '  if fx.length > maxPhrases then throw s!"ResourceLimit: more than {maxPhrases} fixed phrases"\n', LX),
+    ("order-form-first", "decodeRegulatedWith", W,
+     '    if keys.contains "act" != keys.contains "form" then\n'
+     '      throw s!"InvalidInput: a plain act for {name} needs its form, and a form needs its act"\n',
+     "", LX, (W, '      throw s!"InvalidInput: invalid form for {name}"\n',
+              '      throw s!"InvalidInput: invalid form for {name}"\n    if keys.contains "act" != keys.contains '
+              '"form" then\n      throw s!"InvalidInput: a plain act for {name} needs its form, and a form needs '
+              'its act"\n')),
     # Python
     ("py-drop-form", "Environment._decode (form)", "ve/environment.py", 'raw_reg.get("permission"), raw_reg.get("form"))',
      'raw_reg.get("permission"))', LOADS),
@@ -118,15 +133,16 @@ def main() -> int:
     for ident, definition, file, old, new, check, *more in MUTANTS:
         if args.only and ident not in args.only:
             continue
-        edits = [(ROOT / file, old, new)] + [(ROOT / f, o, n) for f, o, n in more]
-        texts = [path.read_text() for path, _, _ in edits]
-        for (path, o, n), text in zip(edits, texts):
+        originals = {}
+        for path, o, n in [(ROOT / file, old, new)] + [(ROOT / f, o, n) for f, o, n in more]:
+            text = path.read_text()
+            originals.setdefault(path, text)
             assert text.count(o) == 1, (ident, path, text.count(o))
             path.write_text(text.replace(o, n))
         try:
             killed, line = run(check)
         finally:
-            for (path, _, _), text in zip(edits, texts):
+            for path, text in originals.items():
                 path.write_text(text)
         if file.startswith("lean/"):
             touched.add(check[5:])

@@ -122,3 +122,13 @@ def test_rust_refuses_an_acts_environment():
     with pytest.raises(UnsupportedProfile) as caught:
         rust_jsonl.run(case)
     assert "acts@0" in str(caught.value)
+
+
+def test_an_act_python_stores_differently_is_unavailable_never_answered():
+    """Lean's canonical act folds U+2019 (A19); Python's stored act does not, so the identities differ and the load is
+    CheckerUnavailable until Python reads the canonical environment from Lean (ap-1bb)."""
+    from ve.errors import CheckerUnavailable
+    data = environment(p=predicate(["person", "case"], {"role": "permission", "default": "allow",
+                                                        "act": "{0} comply with the operator’s instructions in {1}"}))
+    with pytest.raises(CheckerUnavailable, match="identities differ"):
+        Environment(data)
