@@ -517,7 +517,7 @@ def service_impact(coverage: Coverage, graph: source_graph.Graph, path: str) -> 
 
 def proposed_service_impact(coverage: Coverage, graph: source_graph.Graph, path: str) -> set[str]:
     """The unactivated per-mode plan, kept for mutation and dependency tests."""
-    if path in ("lean/VE/Service/Protocol.lean", "lean/Serve.lean") or not path.endswith(".lean"):
+    if path in ("lean/VE/Service/Protocol.lean", "lean/VE/Service/Registry.lean", "lean/Serve.lean") or not path.endswith(".lean"):
         return coverage.service_users()
     roots = lean_mode_deps.load()
     if roots is None or graph.lean_unreadable:

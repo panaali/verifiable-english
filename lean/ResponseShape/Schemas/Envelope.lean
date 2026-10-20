@@ -66,9 +66,9 @@ def handshake : Shape :=
       ("service", constS "ve-lean@1"),
       ("protocol", .const (toJson (2 : Int))),
       ("lean", str),
-      ("modes", n [
-        ref "common.json#/$defs/strings",
-        .allOf (VE.Service.modes.map fun m => .contains (constS m.name))]),
+      ("modes", c
+        "Service.registry: exactly the registered modes, in order: the client reads its mode list from here (ve/backends/service_schema.py MODES), so a service with other modes is refused at its start."
+        [.const (toJson (VE.Service.registry.map (·.mode.name)))]),
       ("codes", c
         "Service.Protocol.rejectionCodes: exactly the code domain of the rows (common.json code), so a service with another code list is refused at its start."
         [.const (toJson VE.Service.rejectionCodes)]),
