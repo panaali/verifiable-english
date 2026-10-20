@@ -45,9 +45,9 @@
     "ve/assist/session.py:AssistSession.paraphrase_formula": "display only: falls back to the canonical rendering",
     "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
     "ve/backends/validation.py:construct_after_lean": "Lean accepts the environment or model first; construction failures become CheckerUnavailable, never a Python semantic rejection or verdict.",
-    "ve/document.py:_load": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
-    "ve/document.py:_lean_document": "Builds the document Lean's document mode accepted: CheckerUnavailable is re-raised, any other failure reading the accepted front matter or building the containers becomes CheckerUnavailable, never a verdict",
-    "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/document/load.py:_load": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
+    "ve/document/lean.py:_lean_document": "Builds the document Lean's document mode accepted: CheckerUnavailable is re-raised, any other failure reading the accepted front matter or building the containers becomes CheckerUnavailable, never a verdict",
+    "ve/document/report.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
     "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error.",
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable",
@@ -4585,7 +4585,7 @@
         "reason": "orchestration over admission, premise-status and readings; inherits their assurance"
       },
       "python": [
-        "ve.document:check_document"
+        "ve.document.report:check_document"
       ],
       "outcomes": {
         "verdict": [
