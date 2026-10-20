@@ -72,8 +72,8 @@ def test_write_then_check_round_trips(documents, copy, monkeypatch):
 
 
 def test_lean_lists_are_the_rendered_enumerations(documents):
-    """Enumerations rendered from Lean lists, not copies: the handshake's modes are every mode of
-    the client, in the service's order, and its codes the row code domain."""
+    """Enumerations rendered from Lean lists, not copies: the handshake's modes are exactly the registry's
+    (`VE.Service.registry`), which the client reads as `MODES`, and its codes the row code domain."""
     handshake = documents["envelope.json"]["handshake"]["properties"]
-    assert [c["contains"]["const"] for c in handshake["modes"]["allOf"]] == list(MODES)
+    assert handshake["modes"]["const"] == list(MODES)
     assert handshake["codes"]["const"] == documents["common.json"]["$defs"]["code"]["enum"]
