@@ -64,22 +64,22 @@ def decodeUnit (bases : List String) (name : String) (record : Json) :
   checkFields path record ["base_exponents", "factor"]
   let dim ← decodeExponents bases s!"{path}.base_exponents" (record.getObjValD "base_exponents")
   let (factor, spelling) ← decodeFactor s!"{path}.factor" (record.getObjValD "factor")
-  let exps := Json.mkObj (dim.exps.map fun (b, k) => (b, Json.str (toString k)))
+  let exps := Json.mkObj (dim.exps.map (fun ((b, k) : String × Int) => (b, Json.str (toString k))))
   pure (⟨name, dim, some factor⟩, (name, Json.mkObj [("base_exponents", exps), ("factor", .str spelling)]))
 
 def decodeV2 (env : Json) : Except String UnitEnv := do
   checkFields "environment" env ["unit_schema", "base_dimensions", "units"]
   let bases ← match (env.getObjValD "base_dimensions").getArr? with
-    | .ok bs => bs.toList.mapM fun b => match b.getStr? with
-      | .ok s => if identifier s then pure s else throw (invalid "base_dimensions" "must list identifiers")
-      | .error _ => throw (invalid "base_dimensions" "must list identifiers")
+    | .ok bs => bs.toList.mapM fun (b : Json) => match b.getStr?.toOption.filter identifier with
+      | some s => pure s | none => throw (invalid "base_dimensions" "must list identifiers")
     | .error _ => throw (invalid "base_dimensions" "must be a list")
   unless bases.Nodup do throw (invalid "base_dimensions" "must not repeat a name")
   let units ← match fields (env.getObjValD "units") with
     | .ok fs => fs.mapM fun (n, r) => decodeUnit bases n r
     | .error _ => throw (invalid "units" "must be an object")
-  pure ⟨units.map Prod.fst, Json.mkObj [("unit_schema", .str "ve-units@2"),
-    ("base_dimensions", .arr (bases.map Json.str).toArray), ("units", Json.mkObj (units.map Prod.snd))]⟩
+  let (defs, entries) := units.unzip
+  pure ⟨defs, Json.mkObj [("unit_schema", .str "ve-units@2"),
+    ("base_dimensions", .arr (bases.map Json.str).toArray), ("units", Json.mkObj entries)]⟩
 
 /-- A `ve-units@1` environment: W6a's frozen decoder, hashed as written; nominal tags. -/
 def decodeLegacy (env : Json) : Except String UnitEnv := do
@@ -96,22 +96,22 @@ def decode (env : Json) : Except String UnitEnv :=
 def UnitEnv.environmentId (u : UnitEnv) : Except String String :=
   VE.Route.Wire.environmentId ["calc@0"] u.identity
 
-def UnitEnv.find? (u : UnitEnv) (n : String) : Option UnitDef := u.units.find? (·.name == n)
+def UnitEnv.unit? (u : UnitEnv) (n : String) : Option UnitDef := u.units.find? (·.name == n)
 
 /-- Units are values: a unit's value is its factor (none for a `ve-units@1` tag). -/
-def UnitEnv.values (u : UnitEnv) : Values := fun n => (u.find? n).bind (·.factor)
+def UnitEnv.values (u : UnitEnv) : Values := fun n => (u.unit? n).bind (·.factor)
 
 /-- Each name's physical dimension: a unit's own, else its declared unit's; a value without a unit
 is dimensionless. `values` lists each value with its optional unit. -/
 def UnitEnv.context (u : UnitEnv) (values : List (String × Option String)) :
     Except String (String → Option PhysDim) := do
   for (n, unit) in values do
-    if (u.find? n).isSome then throw s!"DuplicateName: {n}"
+    if (u.unit? n).isSome then throw s!"DuplicateName: {n}"
     if let some t := unit then
-      if (u.find? t).isNone then throw (invalid s!"values.{n}.unit" "names no declared unit")
-  pure fun n => match u.find? n, values.find? (·.1 == n) with
+      if (u.unit? t).isNone then throw (invalid s!"values.{n}.unit" "names no declared unit")
+  pure fun n => match u.unit? n, values.find? (·.1 == n) with
     | some d, _ => some d.dim
-    | none, some (_, some t) => (u.find? t).map (·.dim)
+    | none, some (_, some t) => (u.unit? t).map (·.dim)
     | none, some (_, none) => some PhysDim.one
     | none, none => none
 

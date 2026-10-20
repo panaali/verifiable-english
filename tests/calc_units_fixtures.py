@@ -62,7 +62,7 @@ FIXTURES = [
     ("h7-sum", 'dims physics h7 (.add (.val "d") (.val "t"))', "DimensionMismatch: length and time"),
     ("h7-difference", 'dims physics h7 (.sub (.val "t") dOverLam)', "DimensionMismatch: time and dimensionless"),
     ("h7-frequency", 'dims physics h7 (.div (.lit 3) (.pow (.val "t") 4))', "ok one per time to the power 4"),
-    ("normal", 'reprStr ((["meter_per_second", "second"].filterMap (env! physics).find?).map (decide ·.dim.Normal))',
+    ("normal", 'reprStr ((["meter_per_second", "second"].filterMap (env! physics).unit?).map (decide ·.dim.Normal))',
      "[true, true]"),
     ("h7-number", 'dims physics h7 (.mul (.val "ratio") (.val "d"))', "ok length"),
     ("h7-velocity", 'dims physics h7 (.div (.val "d") (.val "t"))', "ok length per time"),
@@ -95,6 +95,8 @@ FIXTURES = [
     ("factor-below-one-spelling", f'((env! {lean_str(units(["length"], step=({"length": 1}, "0.020")))}).identity'
                                   '.getObjValD "units" |>.getObjValD "step" |>.compress)',
      '{"base_exponents":{"length":"1"},"factor":"0.02"}'),
+    ("factor-spelling", 'says ((env! miles).identity.getObjValD "units" |>.getObjValD "mile" |>.compress |> pure) id',
+     'ok {"base_exponents":{"length":"1"},"factor":"1609.344"}'),
     # H-7l: `ve-units@1` tags stay nominal and have no factor.
     ("h7l", 'dims legacyEnv [("a", some "usd_cent"), ("b", some "eur_cent")] (.add (.val "a") (.val "b"))',
      "DimensionMismatch: usd cent and eur cent"),
@@ -175,8 +177,9 @@ FIXTURES = [
          'InvalidInput: environment.unit_schema must be "ve-units@2" or "ve-units@1"'),
         ("elapsed", units(["time"], elapsed_day=({"time": 1}, "86400")), 'ok ["elapsed_day"]'),
         ("radian", units([], radian=({}, "1")), 'ok ["radian"]'),
-        ("several", units(["length", "mass"], meter=({"length": 1}, "1"), gram=({"mass": 1}, "0.001")),
-         'ok ["gram", "meter"]'),  # a JSON object's members in key order
+        # A name before "day" in the order of strings is no calendar tag either.
+        ("several", units(["length", "mass", "current"], meter=({"length": 1}, "1"), gram=({"mass": 1}, "0.001"),
+                          ampere=({"current": 1}, "1")), 'ok ["ampere", "gram", "meter"]'),  # in key order
     ]),
     # I-2: exponents hash as canonical decimal strings, factors at their shortest; key order is not identity.
     ("i2-text", "says (VE.CertificateWire.canonical 257 (env! i2).identity) id",
