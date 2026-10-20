@@ -146,6 +146,14 @@ Touched by hand:
 - `tools/gate_collection.py --check --prebuilt`: 18,411 collected, 0 added, 0 removed, 0 refused, 0 stale, 0 malformed.
 - Main-known-red tests: none selected. The chain runs the full gate on the final HEAD.
 
+## Final checks
+
+These were run on bf2723c6b, where all code is final; only this section changes after it.
+- Selected tests on the Mac runner (`mac-pytest.sh --select -- --base e14d56df9 --run`): 79 units, 0 failed, exit 0.
+- `regen_generated.py --check --skip route-cases`: 31 entries checked, all fresh.
+- `trust_map.py --check`: +0 on every class, PASS.
+- `lean/audit.py`: PASS.
+
 ## Acceptance items
 
 All AGENT.
