@@ -112,7 +112,8 @@ decoder and Lean's model path reading `acts@0` (deviation 3); `Words/Situation.l
 3. PASS: 34 seeded bugs killed (`mutants.json`); `delta.py` fails head against head and on empty input.
 4. PASS: base against head on 330 route cases (`byte-identity.json`) and on the `acts@0` inputs (`delta.json`).
 5. PASS: Python reads no new field from a Lean answer; Lean's refusals are relayed (`test_a_joined_act_is_refused_with_leans_text`).
-6. PASS: no sync needed (main is the merge base); evidence from `main..HEAD --no-merges`; the gate is the chain's.
+6. PASS: synced with main `2296317a9` (clean merge), inventories regenerated, the selected tests rerun on the synced
+   tree (section 8); evidence from `main..HEAD --no-merges`; the gate is the chain's.
 7. PASS: DELTA rows cite R16, the DRI's SYNTHESIS (as et-7), R1 and R2; FOLLOW-UPS row written; nothing reserved.
 8. PASS: `delta.json` (every `acts@0` input, every mode it reaches) and `byte-identity.json` (none changes otherwise).
 9. PASS: `select_tests.py` selects `tests/test_acts_profile.py`, `tests/test_acts_lexical.py`, the model and profile
@@ -123,6 +124,18 @@ decoder and Lean's model path reading `acts@0` (deviation 3); `Words/Situation.l
 12. N.A.: no new work on an existing path beyond one `profilesOf` read per decode; 330/330 cases identical.
 13. PASS: `gate_collection.py --check --prebuilt`: 1 removed by its trailer, 0 refused, 0 stale, 0 malformed.
 
-## 8. Selected tests
+## 8. Selected tests and the sync
 
-(Filled in below after the run on the final commit.)
+- **Sync:** `main` moved to `2296317a9` (et-3c, speed-trustmut, df-1ab, ar-10b); the merge was clean, then
+  `regen_generated.py --write`, `lake build` (1,052 jobs), `lean/audit.py`, `trust_map.py --check` (PASS against
+  `2296317a9`) and `gate_collection.py --check --prebuilt` (14 added, 1 removed by its trailer, 0 refused).
+- **`actions_version` 32** (`Encode.lean` holds trusted English code): the recorded `tests/fixtures/ask/*.json`
+  (`tools/ask_fixtures.py --write`) and `docs/english-lean/s3-fixture-comparison.json`
+  (`conformance.english_lean_s3_compare`) are re-recorded; only the version field changes (as ps-6r did for 31).
+- **Selected run** (`mac-pytest.sh --select`, merge base `2296317a9`, on `0e233f67`'s parent; it ran on the VM, the
+  Mac yielding to a candidate gate): 459 units, 457 passed, 2 failed, both fixed in `0e233f67` and passing on rerun:
+  `tests/test_compose_dispatch.py` (58 passed; its 2^16-list enumeration of the composition spec's legacy registry
+  now names `acts@0` as a later row, covered by `gate_acts` and the Compose guards) and
+  `tests/test_english_lean_s3_compare.py` (6 passed; the version re-record). An earlier run on the pre-sync tree
+  failed in `test_lean_conformance` and `test_consolidation_tools` only because my seeded-bug runs edited sources
+  during it; those pass on the final tree (rerun directly, 14 passed).
