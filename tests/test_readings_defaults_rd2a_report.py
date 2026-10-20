@@ -79,13 +79,15 @@ def test_latency_rows():
 # R3) became the check that the document is relayed (docs/readings-defaults/rd2b/DELTA.md).
 SUPERSEDED = {"tests/test_readings_s2_document.py::test_rd2a_review_b3_completion_document_is_refused_by_name":
               "tests/test_readings_s2_document.py::test_rd2b_completion_document_is_checked_not_refused"}
+# A seeded bug's file that later became a package (AR-16a split `ve/document.py` into `ve/document/`).
+MOVED = {"ve/document.py": "ve/document/__init__.py"}
 
 
 def test_seeded_bugs_name_real_tests():
     for bug in GATE["seeded_bugs"]:
         row = re.search(rf"^\| {bug['id']} \| (.*)$", DELTA, re.M)
         assert row, bug["id"]
-        assert (ROOT / bug["file"]).exists()
+        assert (ROOT / MOVED.get(bug["file"], bug["file"])).exists()
         for test in bug.get("failed", []):
             path, name = SUPERSEDED.get(test, test).split("::")
             assert re.search(rf"^def {re.escape(name)}\(", (ROOT / path).read_text(), re.M), test
