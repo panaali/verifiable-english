@@ -1,0 +1,177 @@
+{
+  "item": "pk-1b",
+  "base": "20aa836fd (merge base after syncing with main)",
+  "note": "Seeded bugs M1-M4 were planted in the real files, then removed; the guard mutants run in tests/test_packs_guard_mutants.py on a copy with the theorems stripped, so each must fail at a #guard and nowhere else; the unmutated copy passes every guard. KindRow is a type (TYPES). The one equivalent mutant on today's rows: kindCase's pack ids replaced by [] (no legacy row needs a pack); the first row with a pack (df-1ab's) makes it observable.",
+  "mutants": [
+    {
+      "id": "M1",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "definition": "dispatch",
+      "behaviour": "a row whose pack is absent is refused (the spec 5 seeded bug: dispatch running such a row)",
+      "edits": [
+        {
+          "from": "| some i => if ids.contains i then some <$> r.run L id j",
+          "to": "| some i => if true then some <$> r.run L id j"
+        }
+      ],
+      "test": "lean/VE/NormDefaults/PacksExamples.lean #guard (line 124: weigh needs the weighing premise pack)",
+      "also_fails": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[dispatch-32]",
+      "build": {
+        "target": "VE.NormDefaults.PacksExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksExamples.lean:124:0: Expression"
+        ]
+      }
+    },
+    {
+      "id": "M2",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "definition": "legacyRows",
+      "behaviour": "today's four kinds answer through the kind table exactly as before (dispatch_legacy; byte identity)",
+      "edits": [
+        {
+          "from": "⟨k, none, fun L id j => do",
+          "to": "⟨k, some \"rights\", fun L id j => do"
+        }
+      ],
+      "test": "tests/test_norm_defaults_layered.py: 6 failed, 5 passed through the rebuilt and temporarily pinned ve_service (UnsupportedProfile: case kind norm-defaults-elaborate needs the rights premise pack); restored and repinned",
+      "also_fails": "PacksLegacy.lean dispatch_legacy (286:45); with dispatch_legacy and kindCase_eq stubbed for the run, PacksLegacyExamples.lean #guards at lines 89 and 97; tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[legacyRows-38]",
+      "build": {
+        "target": "VE.NormDefaults.PacksLegacy",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksLegacy.lean:286:45: Tactic `rfl` failed: The left-hand side"
+        ]
+      }
+    },
+    {
+      "id": "M3",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "definition": "kindCase",
+      "behaviour": "runLayered dispatches through the kind table over the source's pack ids (kindCase_eq)",
+      "edits": [
+        {
+          "from": "Packs.dispatch legacyRows (L.packs.map (·.id)) L id kind j",
+          "to": "Packs.dispatch [] (L.packs.map (·.id)) L id kind j"
+        }
+      ],
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[kindCase-40] (PacksLegacyExamples.lean's decoded-source guard)",
+      "also_fails": "PacksLegacy.lean kindCase_eq (300:4)",
+      "build": {
+        "target": "VE.NormDefaults.PacksLegacy",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksLegacy.lean:300:4: Type mismatch"
+        ]
+      }
+    },
+    {
+      "id": "M4",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "definition": "softLabelledU (subject of softLabelledU_labels_nodup)",
+      "behaviour": "the soft pack's labels are distinct on every well-formed soft document (softLabelledU_labels_nodup)",
+      "edits": [
+        {
+          "from": "(VE.SoftNorms.Wire.excLabels D).zip (VE.SoftNorms.excPremises D) ++",
+          "to": "(VE.SoftNorms.Wire.excLabels D).zip (VE.SoftNorms.excPremises D) ++ ((VE.SoftNorms.Wire.excLabels D).zip (VE.SoftNorms.excPremises D)).take 1 ++"
+        }
+      ],
+      "test": "PacksLabels.lean softLabelledU_labels_nodup (196:43, 198:66); F1's nodup #guard (PacksLegacyExamples.lean) evaluated on the mutated copy fails (the real file stops earlier, at LayeredEntail.lean:171)",
+      "build": {
+        "target": "VE.NormDefaults.PacksLabels",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/NormDefaults/PacksLabels.lean:196:43: Application type mismatch: The argument"
+        ]
+      }
+    }
+  ],
+  "guard_mutants": [
+    {
+      "id": "dispatch-32",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "definition": "dispatch",
+      "edit": "if ids.contains i then -> if true then",
+      "guard": "PacksExamples: weigh with [soft, rights] is refused",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[dispatch-32]"
+    },
+    {
+      "id": "dispatch-33",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "definition": "dispatch",
+      "edit": "| none => pure none -> throw \"no row\"",
+      "guard": "PacksExamples: a kind with no row is none (3 guards)",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[dispatch-33]"
+    },
+    {
+      "id": "dispatch-34",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "definition": "dispatch",
+      "edit": "rows.find? -> rows.reverse.find?",
+      "guard": "PacksExamples: the first echo row answers (2 guards)",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[dispatch-34]"
+    },
+    {
+      "id": "dispatch-35",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "definition": "dispatch",
+      "edit": "| none => some <$> r.run -> pure none",
+      "guard": "PacksExamples: a row with no pack runs (5 guards)",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[dispatch-35]"
+    },
+    {
+      "id": "dispatch-36",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Packs.lean",
+      "definition": "dispatch",
+      "edit": "needs the {i} premise pack -> needs {i}",
+      "guard": "PacksExamples: the refusal text",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[dispatch-36]"
+    },
+    {
+      "id": "legacyKinds-37",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "definition": "legacyKinds",
+      "edit": "drop norm-defaults-report",
+      "guard": "PacksLegacyExamples: the legacy kinds and the decoded-source guard",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[legacyKinds-37]"
+    },
+    {
+      "id": "legacyRows-38",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "definition": "legacyRows",
+      "edit": "pack none -> some \"rights\"",
+      "guard": "PacksLegacyExamples: the decoded-source guards",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[legacyRows-38]"
+    },
+    {
+      "id": "legacyRows-39",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "definition": "legacyRows",
+      "edit": "layeredCase L id k -> layeredCase L id \"norm-defaults-elaborate\"",
+      "guard": "PacksLegacyExamples: the decoded-source guards",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[legacyRows-39]"
+    },
+    {
+      "id": "kindCase-40",
+      "language": "Lean",
+      "file": "lean/VE/NormDefaults/Layered.lean",
+      "definition": "kindCase",
+      "edit": "dispatch legacyRows -> dispatch []",
+      "guard": "PacksLegacyExamples: the decoded-source guards",
+      "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard[kindCase-40]"
+    }
+  ]
+}
