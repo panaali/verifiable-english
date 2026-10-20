@@ -992,6 +992,13 @@
    "reason": "ar-10b: VE/Service/Registry.lean +61 (Mode, Mode.name, Mode.ofName?, modes moved from Protocol.lean; RouteSpec new; registry tied by registry_modes), VE/Service/Protocol.lean -55; net V +6, K +0, S +0; replaces the Python mode list MODES in ve/backends/service_schema.py, deleted here",
    "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), ar-10b, 2026-10-20",
    "commit": "bb205adaece86354a9139677029c045c32e2b379"
+  },
+  {
+   "class": "V",
+   "lines": 60,
+   "reason": "me-6b: lean/VE/Calc/Units.lean V +60 (D[V] UnitDef 7, UnitEnv 5, decodeFactor 10, decodeUnit 13, decodeV2 14, decode 6; G[V] UnitEnv.find? 2, UnitEnv.values 3); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6b, 2026-10-18",
+   "commit": "2296317a9de7ef365523e0f69c442338d9eaf576"
   }
  ]
 }
