@@ -573,6 +573,65 @@ def gR : Governor := ⟨"gR", "u0164.s01", .carveOut (j "[\"unary\", \"rules\", 
 #guard errorOf (gov (hcDoc parts) [g1, ⟨"gU", "u0164.s01", narrowK, .frontier, []⟩]) ==
   "UnsupportedProfile: scope@0 frontier reach requires SC-5"
 
+/-! Kernel forms on a three-unit document: a lead-in `l` over the items `a` (a part) and `b` (a norm with cites) -/
+
+def shortLayout : List VE.Layout.Unit := ofSource "L:\n* a\n* b\n" [("l", 0, 3), ("a", 3, 7), ("b", 7, 11)]
+def shortPart : Json := Json.mkObj [("name", "x"), ("guard", .arr #[.str "top"]), ("unless", .arr #[])]
+def shortNorm : Json := Json.mkObj [("name", "y"), ("guard", .arr #[.str "top"]), ("unless", .arr #[])]
+def shortDoc : Json := Json.mkObj [
+  ("units", .arr #[Json.mkObj [("id", "l")], Json.mkObj [("id", "a"), ("content", Json.mkObj [("part", shortPart)])],
+    Json.mkObj [("id", "b"), ("content", Json.mkObj [("cites", .arr #[]), ("norm", shortNorm)])]]),
+  ("reading_sets", .arr #[Json.mkObj [("unit", "z")]])]
+def shortLead : Json := Json.mkObj [("sign", false)]
+def gt : Governor := ⟨"t", "l", .frame shortLead, .list "l", ["a", "b"]⟩
+def short (gs : List Governor) (re : VE.Readings.Wire.ReadingsEnvironment) : SDoc := ⟨shortLayout, shortDoc, .null, gs, [], [], re⟩
+/-- `o` joined after the lead-in's part, as `mergeParts` builds it. -/
+def led (o : Json) : Json := Json.mkObj ([("sign", Json.bool false)] ++ VE.Scope.members o)
+
+theorem short_access (re : VE.Readings.Wire.ReadingsEnvironment) :
+    unitIds shortDoc = ["l", "a", "b"] ∧ (unitsOf shortDoc).map idOf = ["l", "a", "b"] ∧
+    contentOf shortDoc "l" = .null ∧ contentOf shortDoc "z" = .null ∧
+    keysOf (contentOf shortDoc "b") = ["cites", "norm"] ∧ isPart (contentOf shortDoc "a") = true ∧
+    isPart (contentOf shortDoc "b") = false ∧ isNorm (contentOf shortDoc "b") = true ∧
+    isNorm (contentOf shortDoc "a") = false ∧ objectOf (contentOf shortDoc "a") = shortPart ∧
+    objectOf (contentOf shortDoc "b") = shortNorm ∧ partUnits (short [] re) = ["a"] ∧
+    ruleUnits (short [] re) = ["a", "b"] ∧ setUnits shortDoc = ["z"] := by
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+theorem short_base (re : VE.Readings.Wire.ReadingsEnvironment) :
+    coveredLayout (short [gt] re) (.list "l") = .ok ["a", "b"] ∧
+    coveredLayout (short [gt] re) (.list "a") = .error "NotALeadIn: a" ∧
+    coveredLayout (short [gt] re) (.fixed ["b"]) = .ok ["b"] ∧ coveredLayout (short [gt] re) (.rules ["x"]) = .ok [] ∧
+    coveredLayout (short [gt] re) (.listName "n") = .error "ScopeUnknownName: n" ∧
+    (frameOn (short [gt] re) "a").map (·.id) = ["t"] ∧ frameOn (short [gt] re) "l" = [] ∧
+    baseObj (short [gt] re) "a" = .ok (led shortPart) ∧ baseObj (short [gt] re) "b" = .ok (led shortNorm) ∧
+    baseObj (short [gt] re) "l" = .error "ScopeNotARule: l" ∧ baseObj (short [] re) "a" = .error "ScopeOrphanPart: a" ∧
+    baseObj (short [] re) "b" = .ok shortNorm ∧
+    baseObj (short [gt, {gt with id := "t2"}] re) "b" = .error "ScopeOrder: b: t, t2" := by
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+theorem short_effects :
+    applyEffect "a" (.reguard (.arr #[.str "and", .str "own", .str "c"])) shortPart =
+      .ok (shortPart.setObjVal! "guard" (.arr #[.str "and", .arr #[.str "top"], .str "c"])) ∧
+    applyEffect "a" (.carveOut (.str "own")) shortPart = .ok (shortPart.setObjVal! "unless" (.arr #[.arr #[.str "top"]])) ∧
+    applyEffect "a" (.reguard (.str "c")) shortLead = .error "ScopeNotARule: a" ∧
+    applyEffect "a" (.carveOut (.str "c")) (shortPart.setObjVal! "unless" .null) = .error "ScopeNotARule: a" ∧
+    applyEffect "a" (.frame shortLead) shortPart = .ok shortPart ∧ applyEffect "a" .precedes shortPart = .ok shortPart := by
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+theorem short_govern (re : VE.Readings.Wire.ReadingsEnvironment) :
+    composed (short [gt] re) "a" = .ok (led shortPart) ∧ affected (short [gt] re) = ["a", "b"] ∧
+    affected (short [] re) = ["a"] ∧
+    newContent (contentOf shortDoc "a") shortNorm = Json.mkObj [("norm", shortNorm)] ∧
+    newContent (contentOf shortDoc "b") shortPart = Json.mkObj [("cites", .arr #[]), ("norm", shortPart)] ∧
+    patch (short [] re) [("b", shortPart)] = shortDoc.setObjVal! "units" (.arr #[Json.mkObj [("id", "l")],
+      Json.mkObj [("id", "a"), ("content", Json.mkObj [("part", shortPart)])],
+      Json.mkObj [("id", "b"), ("content", Json.mkObj [("cites", .arr #[]), ("norm", shortPart)])]]) ∧
+    govern (short [gt] re) = .ok (shortDoc.setObjVal! "units" (.arr #[Json.mkObj [("id", "l")],
+      Json.mkObj [("id", "a"), ("content", Json.mkObj [("norm", led shortPart)])],
+      Json.mkObj [("id", "b"), ("content", Json.mkObj [("cites", .arr #[]), ("norm", led shortNorm)])]])) := by
+  simp only [composed, affected, govern, orderCheck, governorsOf, ordered, short, List.mergeSort_singleton, List.mergeSort_nil]
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 /-- The seven reaches of spec 4.2, no more. -/
 theorem reaches_seven (r : Reach) : (∃ l, r = .list l) ∨ (∃ n, r = .listName n) ∨ (∃ a, r = .anchor a) ∨
     (∃ i, r = .label i) ∨ (∃ ns, r = .rules ns) ∨ r = .frontier ∨ ∃ us, r = .fixed us := by
