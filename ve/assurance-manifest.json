@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36616,
+    "total_lines": 36471,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -387,28 +387,25 @@
       },
       {
         "file": "lean/VE/Defaults/Wire.lean",
-        "lines": 432,
-        "sha256": "f4707998a2e361542a49ec2a10321509780c614d61503ff02bd8d80b2c508783",
+        "lines": 287,
+        "sha256": "1d37dc77be9921ce7652ac0836d3a9848cd086706519eab63edb46870e216a5f",
         "ranges": [
           [
             1,
-            432
+            287
           ]
         ],
         "declarations": [
           "viewRest",
           "viewOf",
-          "filledOf",
           "collisionOf",
           "bindPair",
           "pairCertsOf",
-          "replayCertOn",
-          "replayCert",
           "replayCoherenceOn",
           "replayCoherence",
           "defaultsCase"
         ],
-        "reason": "defaults-* kinds on the layered source (docs/spec/defeasible.md 7.2): the source through the pinned decodeLayered, then the request's premises, conclusion, certificates (bound by bindCertX and bindingOk), pair list, collision and models through situationX and decodeFilling; the full file is pinned conservatively"
+        "reason": "defaults-* kinds on the layered source (docs/spec/defeasible.md 7.2): the source through the pinned decodeLayered, then the request's pair list (certificates bound by bindingOk) and collision (situationX, decodeFilling); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/Admission.lean",
@@ -1895,7 +1892,7 @@
       "lean/VE/Readings/SupVerdictsExamples.lean": "computed regression guards for the superposed verdict and English plan; no production runner imports this file",
       "lean/VE/NormDefaults/Packs.lean": "encoder only: premise packs (PK-1); `labelledJson` and `elaborateArrays` write the layered elaborate's `soft` and `rights` arrays from Lean values; it reads no request JSON (the packs come from the pinned Layered.lean decoders)",
       "lean/VE/Defaults/Examples.lean": "test fixtures only: df-1a's `#guard`s parse their soft documents and finite situations from JSON literals and run the pinned decoders (`decodeSoftU`, `situationX`, `decodeFilling`) on them; no service mode reads this file",
-      "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's `#guard`s build defaults-* case JSON and certificates from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file",
+      "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's `#guard`s build defaults-* case JSON and a certificate from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file",
       "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d) and literal scenario cases for runValidateU (et-7b, T12 and T12b); no runtime decoding",
       "lean/VE/Compose/ProfilesMain.lean": "generator only: prints VE.Compose.profileTable and the profiles an environment lists as JSON for ve/profile_table.json; reads no request and is not a service decoder",
       "lean/VE/NormDefaults/PacksExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 compare the kind table's answers as compressed JSON; no runner path",

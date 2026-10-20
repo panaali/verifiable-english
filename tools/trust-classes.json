@@ -13815,12 +13815,6 @@
     },
     "VE/Defaults/Wire.lean": {
       "C": [
-        "VE.Defaults.Wire.CertReplay",
-        "VE.Defaults.Wire.CertReplay.certOk",
-        "VE.Defaults.Wire.CertReplay.coherent",
-        "VE.Defaults.Wire.CertReplay.collides",
-        "VE.Defaults.Wire.CertReplay.modelOk",
-        "VE.Defaults.Wire.CertReplay.strictCounter",
         "VE.Defaults.Wire.CoherenceReplay",
         "VE.Defaults.Wire.CoherenceReplay.coherent",
         "VE.Defaults.Wire.CoherenceReplay.collides",
@@ -13829,11 +13823,8 @@
         "VE.Defaults.Wire.ViewRest",
         "VE.Defaults.Wire.bindPair",
         "VE.Defaults.Wire.collisionOf",
-        "VE.Defaults.Wire.filledOf",
         "VE.Defaults.Wire.pairCertsOf",
         "VE.Defaults.Wire.pieceWith",
-        "VE.Defaults.Wire.replayCert",
-        "VE.Defaults.Wire.replayCertOn",
         "VE.Defaults.Wire.replayCoherence",
         "VE.Defaults.Wire.replayCoherenceOn",
         "VE.Defaults.Wire.viewOf"
@@ -13846,38 +13837,13 @@
       ],
       "D[V]": [
         "VE.Defaults.Wire.PairStatus.label",
-        "VE.Defaults.Wire.basisLabel",
-        "VE.Defaults.Wire.certFields",
         "VE.Defaults.Wire.coherenceFields",
         "VE.Defaults.Wire.elaborateFields",
-        "VE.Defaults.Wire.entityIds",
-        "VE.Defaults.Wire.formLabel"
-      ],
-      "G[R]": [
-        "VE.Defaults.Wire.CertReplay.reason"
+        "VE.Defaults.Wire.entityIds"
       ],
       "G[V]": [
-        "VE.Defaults.Wire.CertReplay.form",
         "VE.Defaults.Wire.PairStatus",
         "VE.Defaults.Wire.defaultsCase",
-        {
-          "name": "VE.Defaults.Wire.CertReplay.assumptions",
-          "tied": [
-            "VE.Defaults.Wire.defaults_certificate_sound"
-          ]
-        },
-        {
-          "name": "VE.Defaults.Wire.CertReplay.basis",
-          "tied": [
-            "VE.Defaults.Wire.defaults_certificate_sound"
-          ]
-        },
-        {
-          "name": "VE.Defaults.Wire.CertReplay.verdict",
-          "tied": [
-            "VE.Defaults.Wire.defaults_certificate_sound"
-          ]
-        },
         {
           "name": "VE.Defaults.Wire.CoherenceReplay.pairs",
           "tied": [
@@ -13906,9 +13872,7 @@
         "VE.Defaults.WireFixtures.collJ",
         "VE.Defaults.WireFixtures.dγb",
         "VE.Defaults.WireFixtures.envW",
-        "VE.Defaults.WireFixtures.excUrgent",
         "VE.Defaults.WireFixtures.fJ",
-        "VE.Defaults.WireFixtures.follows",
         "VE.Defaults.WireFixtures.model",
         "VE.Defaults.WireFixtures.pairJ",
         "VE.Defaults.WireFixtures.pairsJ",
@@ -13916,10 +13880,7 @@
         "VE.Defaults.WireFixtures.rest",
         "VE.Defaults.WireFixtures.rulesJ",
         "VE.Defaults.WireFixtures.traceJ",
-        "VE.Defaults.WireFixtures.unknownBecause",
-        "VE.Defaults.WireFixtures.αCase",
         "VE.Defaults.WireFixtures.αEnv",
-        "VE.Defaults.WireFixtures.αModels",
         "VE.Defaults.WireFixtures.αR",
         "VE.Defaults.WireFixtures.βEnv",
         "VE.Defaults.WireFixtures.βR",
@@ -13928,7 +13889,6 @@
         "VE.Defaults.WireFixtures.γ2Coll",
         "VE.Defaults.WireFixtures.γ2Env",
         "VE.Defaults.WireFixtures.γ2R",
-        "VE.Defaults.WireFixtures.γCase",
         "VE.Defaults.WireFixtures.γR",
         "VE.Defaults.WireFixtures.γbCert",
         "VE.Defaults.WireFixtures.γbR",
