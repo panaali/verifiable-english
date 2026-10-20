@@ -6901,6 +6901,60 @@ theorem VE.Defaults.basis_strict_sound
                           VE.NormDefaults.EntailsX U X Γ φ
   -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Basis.strict@VE.Defaults.Premises VE.Defaults.Basis@VE.Defaults.Premises VE.Defaults.assumptionsOf@VE.Defaults.Premises VE.Defaults.basisOf@VE.Defaults.Premises VE.Defaults.certChecks@VE.Defaults.Premises VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Tableau.Certificate@VE.Tableau
   -- expr 2695570811
+theorem VE.Defaults.cohPremiseU_selU
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (P Q : VE.SoftNorms.SoftNode),
+    VE.NormDefaults.Wire.cohPremiseU U D P Q =
+      VE.Norms.bindAll (VE.SoftNorms.actSorts D P) ((VE.Defaults.selU U D P).and (VE.Defaults.selU U D Q)).not
+  -- uses VE.Defaults.selU@VE.Defaults.Premises VE.Formula.and@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.actSorts@VE.SoftNorms.Tree
+  -- expr 461641082
+theorem VE.Defaults.cohU_rank_valid
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (M N : VE.SoftNorms.SoftNode),
+              (M, N) ∈ VE.SoftNorms.collidingPairs D →
+                VE.SoftNorms.Comparable D M N = Bool.true →
+                  ∀ (B : VE.Structure), VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU U D M N)
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 640802415
+theorem VE.Defaults.collisionTuple_some
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity)
+    (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String) (P Q : VE.SoftNorms.SoftNode),
+    List.find? (fun p => p.fst.name == m && p.snd.name == n) (VE.SoftNorms.collidingPairs D) = Option.some (P, Q) →
+      VE.Defaults.collisionCheck U D R M F m n = Bool.true → ∃ vs, VE.Defaults.collisionTuple U D M F P Q = Option.some vs
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.collisionCheck@VE.Defaults.Premises VE.Defaults.collisionTuple@VE.Defaults.Premises VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 3417061492
+theorem VE.Defaults.collision_sound
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String),
+            VE.Defaults.collisionCheck U D R M F m n = Bool.true → ¬VE.Defaults.DefaultCoherent U D R
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.collisionCheck@VE.Defaults.Premises VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 1143425634
+theorem VE.Defaults.collision_unranked
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+              M.Valid (VE.Norms.envAt U.D 0) →
+                ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String) (P Q : VE.SoftNorms.SoftNode),
+                  List.find? (fun p => p.fst.name == m && p.snd.name == n) (VE.SoftNorms.collidingPairs D) =
+                      Option.some (P, Q) →
+                    VE.Defaults.collisionCheck U D R M F m n = Bool.true → VE.SoftNorms.Comparable D P Q = Bool.false
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.collisionCheck@VE.Defaults.Premises VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 4208650158
+theorem VE.Defaults.defaultCoherenceCheck_sound
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula)
+    (certs : List (Option VE.Tableau.Certificate)),
+    VE.Defaults.defaultCoherenceCheck U D R certs = Bool.true → VE.Defaults.DefaultCoherent U D R
+  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.defaultCoherenceCheck@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Tableau.Certificate@VE.Tableau
+  -- expr 1184126990
 theorem VE.Defaults.dflt_wellFormed
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -6931,6 +6985,15 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
+theorem VE.Defaults.pairChecks_sound
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (P Q : VE.SoftNorms.SoftNode)
+    (c : Option VE.Tableau.Certificate),
+    VE.Defaults.pairChecks U D R P Q c = Bool.true →
+      ∀ (B : VE.Structure),
+        VE.NormDefaults.Wire.BaseAdmissibleX U (VE.SoftNorms.excPremises D ++ R ++ VE.Defaults.dfltPremises D) B →
+          VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU U D P Q)
+  -- uses VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Defaults.pairChecks@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
+  -- expr 2900267181
 theorem VE.Defaults.premisesX_split
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula),
     VE.NormDefaults.Wire.premisesX U (VE.Defaults.defaultX D X) Γ =
@@ -6938,6 +7001,15 @@ theorem VE.Defaults.premisesX_split
         (VE.NormDefaults.fillPremises U ++ VE.Norms.elaborate (VE.NormDefaults.fill U).T ++ Γ)
   -- uses VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.background@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 2043802097
+theorem VE.Defaults.questionDiag_none
+  ∀ (D : VE.SoftNorms.SoftDoc) (Γ : List VE.Formula),
+    VE.Defaults.questionDiag D Γ = Option.none →
+      ∀ (a : VE.Formula),
+        a ∈ Γ →
+          ∀ (p : String),
+            p ∈ VE.Norms.preds a → ¬p ∈ VE.SoftNorms.decisionNames D ∧ ¬p ∈ List.map (fun x => x.name) D.T.regulated
+  -- uses VE.Defaults.questionDiag@VE.Defaults.Premises VE.Formula@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
+  -- expr 605368999
 theorem VE.Defaults.strict_of_withoutDefaults
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula) (φ : VE.Formula),
     VE.NormDefaults.EntailsX U (VE.Defaults.withoutDefaults D X) Γ φ → VE.NormDefaults.EntailsX U X Γ φ
@@ -11273,6 +11345,14 @@ theorem VE.Events.completion_typed
     VE.TupleTyped M.asStructure ss xs → VE.TupleTyped (VE.Events.completion V M num) ss (List.map Sum.inl xs)
   -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.completion@VE.Events.Completion VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 2837478597
+theorem VE.Events.conventions_empty
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
+    (∀ (p : String),
+        p ∈ VE.Events.rolePreds V ++ List.map (fun x => x.predicate) V.links →
+          ∀ (v w : S.Carrier), ¬S.relation p [v, w]) →
+      VE.Norms.Sat S (VE.Events.conventionPremises V)
+  -- uses VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.rolePreds@VE.Events.Decl VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3765286622
 theorem VE.Events.conventions_exact
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true →
@@ -11283,6 +11363,17 @@ theorem VE.Events.conventions_exact
               VE.Events.up V.day ng a = Bool.true ∧ VE.Events.down V.day ng a = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.down@VE.Events.Completion VE.Events.rolePreds@VE.Events.Decl VE.Events.up@VE.Events.Completion VE.Formula@VE.Syntax
   -- expr 897408735
+theorem VE.Events.dateName_data
+  ∀ (D : VE.Time.Civil),
+    (VE.Events.dateName D).data =
+      "date__".data ++
+        ((VE.Time.pad 4 D.year).data ++ '_' :: ((VE.Time.pad 2 D.month).data ++ '_' :: (VE.Time.pad 2 D.day).data))
+  -- uses VE.Events.dateName@VE.Events.Decl VE.Time.Civil.day@VE.Time.Calendar VE.Time.Civil.month@VE.Time.Calendar VE.Time.Civil.year@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar VE.Time.pad@VE.Time.Calendar
+  -- expr 3166515157
+theorem VE.Events.dateName_inj
+  ∀ {D D' : VE.Time.Civil}, VE.Events.dateName D = VE.Events.dateName D' → D = D'
+  -- uses VE.Events.dateName@VE.Events.Decl VE.Time.Civil@VE.Time.Calendar
+  -- expr 4251266956
 theorem VE.Events.datesOrder_calendar
   ∀ (D D' : VE.Time.Civil), D.Proper → D'.Proper → (D.num < D'.num ↔ D.Before D')
   -- uses VE.Time.Civil.Before@VE.Time.Calendar VE.Time.Civil.Proper@VE.Time.Calendar VE.Time.Civil.num@VE.Time.Calendar VE.Time.Civil@VE.Time.Calendar
@@ -11314,6 +11405,30 @@ theorem VE.Events.eventsPremises_wellFormed
       ∀ (p : VE.Formula), p ∈ VE.Events.eventsX V → VE.Formula.WellFormed (VE.Events.regenEnv E V) [] p
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
   -- expr 1761829896
+theorem VE.Events.events_conservative
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true →
+      ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+        (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Events.oldEnv E V) [] a) →
+          VE.Formula.WellFormed (VE.Events.oldEnv E V) [] φ →
+            ((∀ (S : VE.Structure),
+                S.Admissible (VE.Events.regenEnv E V) →
+                  VE.Norms.Sat S (VE.Events.eventsX V) → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ) ↔
+              ∀ (S : VE.Structure), S.Admissible (VE.Events.oldEnv E V) → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ)
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.oldEnv@VE.Events.Conservative VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4202943264
+theorem VE.Events.expansion_typed
+  ∀ {E : VE.Environment} {V : VE.Events.EventsEnv} {S : VE.Structure} (ss : List String) (xs : List S.Carrier),
+    ¬V.day ∈ ss → VE.TupleTyped S ss xs → VE.TupleTyped (VE.Events.expansion E V S) ss (List.map Sum.inl xs)
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.expansion@VE.Events.Conservative VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2716582330
+theorem VE.Events.guarded_empty
+  ∀ {S : VE.Structure} {p : String},
+    (∀ (v w : S.Carrier), ¬S.relation p [v, w]) →
+      ∀ (s s' : String) (body : VE.Formula) (ρ : List S.Carrier),
+        VE.Formula.denote S ρ (VE.Formula.all s (VE.Formula.all s' ((VE.Events.bin p 1 0).implies body)))
+  -- uses VE.Events.bin@VE.Events.Premises VE.Formula.all@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2080213390
 theorem VE.Events.hits_vacuous
   ∀ {day : String} {ng : List String} {M : VE.Structure} {S : VE.Structure} {ι : M.Carrier → S.Carrier},
     VE.Events.DayExtension day ng M S ι →
@@ -11349,6 +11464,14 @@ theorem VE.Events.oldTuple_map
   ∀ {α : Type} (xs : List α), VE.Events.oldTuple (List.map Sum.inl xs) = Option.some xs
   -- uses VE.Events.oldTuple@VE.Events.Completion
   -- expr 3940699995
+theorem VE.Events.pad_chars
+  ∀ (w n : Nat) (c : Char), c ∈ (VE.Time.pad w n).data → c ≠ '_' ∧ c ≠ '-'
+  -- uses VE.Time.pad@VE.Time.Calendar
+  -- expr 1341793061
+theorem VE.Events.pad_value
+  ∀ (w n : Nat), List.foldl (fun v c => 10 * v + (c.toNat - 48)) 0 (VE.Time.pad w n).data = n
+  -- uses VE.Time.pad@VE.Time.Calendar
+  -- expr 1295606217
 theorem VE.Events.regen_typed
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true → VE.Events.EventsTyped (VE.Events.regenEnv E V) V = Bool.true
@@ -11366,11 +11489,29 @@ theorem VE.Events.term_map
       ∀ (t : VE.Term) (ρ : List M.Carrier), VE.Term.denote S (List.map ι ρ) t = Option.map ι (VE.Term.denote M ρ t)
   -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax
   -- expr 1627714130
+theorem VE.Events.tupleTyped_relation
+  ∀ (S : VE.Structure) (r : String → List S.Carrier → Prop) (ss : List String) (xs : List S.Carrier),
+    VE.TupleTyped S ss xs →
+      VE.TupleTyped { Carrier := S.Carrier, domain := S.domain, constant := S.constant, relation := r } ss xs
+  -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 3453759998
 theorem VE.Events.unorderedSame_of_order
   ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
     VE.Norms.Sat S (VE.Events.orderPremises V) → VE.Formula.denote S [] (VE.Events.unorderedSameF V)
   -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.orderPremises@VE.Events.Premises VE.Events.unorderedSameF@VE.Events.Premises VE.Formula.denote@VE.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 998155647
+theorem VE.Events.wf_transfer
+  ∀ (E' : VE.Environment) (S T : VE.Structure) (ι : S.Carrier → T.Carrier),
+    (∀ (x y : S.Carrier), ι x = ι y → x = y) →
+      (∀ (s : String), s ∈ E'.sorts → ∀ (y : T.Carrier), T.domain s y ↔ ∃ x, ι x = y ∧ S.domain s x) →
+        (∀ (c s : String), E'.constants c = Option.some s → T.constant c = Option.map ι (S.constant c)) →
+          (∀ (p : String) (ss : List String),
+              E'.predicates p = Option.some ss →
+                ∀ (xs : List S.Carrier), T.relation p (List.map ι xs) ↔ S.relation p xs) →
+            ∀ (a : VE.Formula) (Γ : List String) (ρ : List S.Carrier),
+              VE.Formula.WellFormed E' Γ a → (VE.Formula.denote T (List.map ι ρ) a ↔ VE.Formula.denote S ρ a)
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 676985057
 theorem VE.Grammar.BOk.addAll
   ∀ {X : Type} {cap n : Nat} {Pold Pnew : Nat → X → Prop} {e : VE.Grammar.Bucket X} {cands : List (Nat × X)},
     VE.Grammar.BOk cap n Pold e →
@@ -41315,19 +41456,19 @@ theorem VE.Service.caseResultWith_entry
     j.getObjVal? "environment" = Except.ok entry.environment →
       VE.Service.caseResultWith VE.Service.Mode.metered i (Option.some entry) (Except.ok j) =
         VE.Service.caseResult VE.Service.Mode.metered i (Except.ok j)
-  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
   -- expr 2995407994
 theorem VE.Service.caseResultWith_none
   ∀ (m : VE.Service.Mode) (i : Nat) (c : Except String Lean.Json),
     VE.Service.caseResultWith m i Option.none c = VE.Service.caseResult m i c
-  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
   -- expr 66040465
 theorem VE.Service.caseResultWith_unmetered
   ∀ (m : VE.Service.Mode),
     m ≠ VE.Service.Mode.metered →
       ∀ (i : Nat) (entry : Option VE.Service.Entry) (c : Except String Lean.Json),
         VE.Service.caseResultWith m i entry c = VE.Service.caseResult m i c
-  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Registry VE.Service.Mode@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
   -- expr 3823144046
 theorem VE.Service.caseResult_cached
   ∀ (h : VE.Service.Handles) (i : Nat) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String)
@@ -41340,11 +41481,11 @@ theorem VE.Service.caseResult_cached
                 (Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment))) =
               VE.Service.caseResult VE.Service.Mode.metered i
                 (Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment)))
-  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
   -- expr 4135141905
 theorem VE.Service.caseResult_ok
   ∀ (m : VE.Service.Mode) (i : Nat) (j : Lean.Json), VE.Service.caseResult m i (Except.ok j) = VE.Service.runMode m j
-  -- uses VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 2494159536
 theorem VE.Service.coding_error
   ∀ (result : Lean.Json) (m : String),
@@ -41366,7 +41507,7 @@ theorem VE.Service.entry_hit
 theorem VE.Service.expandCases_unexpanded
   ∀ (h : VE.Service.Handles) (m : VE.Service.Mode) (cases : Array (Except String Lean.Json)),
     m = VE.Service.Mode.english ∨ m = VE.Service.Mode.riskEval → VE.Service.expandCases h m cases = Except.ok cases
-  -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.english@VE.Service.Protocol VE.Service.Mode.riskEval@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol
+  -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.english@VE.Service.Registry VE.Service.Mode.riskEval@VE.Service.Registry VE.Service.Mode@VE.Service.Registry VE.Service.expandCases@VE.Service.Protocol
   -- expr 3871372086
 theorem VE.Service.expand_hit
   ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (entry : VE.Service.Entry),
@@ -41393,6 +41534,10 @@ theorem VE.Service.expand_plain
     (∀ (d : String), j.getObjVal? VE.Service.handleKey ≠ Except.ok (Lean.Json.str d)) → h.expand j = Except.ok j
   -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
   -- expr 1413960625
+theorem VE.Service.modes_complete
+  ∀ (m : VE.Service.Mode), m ∈ VE.Service.modes
+  -- uses VE.Service.Mode@VE.Service.Registry VE.Service.modes@VE.Service.Registry
+  -- expr 2611419048
 theorem VE.Service.registerOne_digest
   ∀ (h : VE.Service.Handles) (key raw digest : String),
     VE.Service.decodeString "environment handle" key = Except.ok digest →
@@ -41415,6 +41560,14 @@ theorem VE.Service.register_none
     r.environmentsText = Option.none → VE.Service.register h r = Except.ok h
   -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Request.environmentsText@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.register@VE.Service.Protocol
   -- expr 2117551308
+theorem VE.Service.registry_modes
+  List.map (fun x => x.mode) VE.Service.registry = VE.Service.modes
+  -- uses VE.Service.Mode@VE.Service.Registry VE.Service.RouteSpec.mode@VE.Service.Registry VE.Service.RouteSpec@VE.Service.Registry VE.Service.modes@VE.Service.Registry VE.Service.registry@VE.Service.Registry
+  -- expr 4245948646
+theorem VE.Service.registry_names_nodup
+  (List.map (fun x => x.mode.name) VE.Service.registry).Nodup
+  -- uses VE.Service.Mode.name@VE.Service.Registry VE.Service.RouteSpec.mode@VE.Service.Registry VE.Service.RouteSpec@VE.Service.Registry VE.Service.registry@VE.Service.Registry
+  -- expr 1276830270
 theorem VE.Service.rejectionCode_mem
   ∀ (m : String), VE.Service.rejectionCode m ∈ VE.Service.rejectionCodes
   -- uses VE.Service.rejectionCode@VE.Service.Protocol VE.Service.rejectionCodes@VE.Service.Protocol
@@ -41441,33 +41594,33 @@ theorem VE.Service.results_eq
   -- expr 2848766935
 theorem VE.Service.runMode_alternatives
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.alternatives j = VE.Alternatives.Run.runCaseReported j
-  -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2981243245
 theorem VE.Service.runMode_ask
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.ask j = VE.Ask.Run.caseReported j
-  -- uses VE.Ask.Run.caseReported@VE.Ask.Run VE.Service.Mode.ask@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Ask.Run.caseReported@VE.Ask.Run VE.Service.Mode.ask@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3326383300
 theorem VE.Service.runMode_bundle
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.bundle j = VE.Service.Standalone.reported VE.Service.FamilyBundle.bundleCase j
-  -- uses VE.Service.FamilyBundle.bundleCase@VE.Service.FamilyBundle VE.Service.Mode.bundle@VE.Service.Protocol VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.FamilyBundle.bundleCase@VE.Service.FamilyBundle VE.Service.Mode.bundle@VE.Service.Registry VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1295058871
 theorem VE.Service.runMode_check
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.check j = VE.Service.Standalone.reported VE.Service.Standalone.checkCase j
-  -- uses VE.Service.Mode.check@VE.Service.Protocol VE.Service.Standalone.checkCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.check@VE.Service.Registry VE.Service.Standalone.checkCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1698987194
 theorem VE.Service.runMode_checkCertificate
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReportedSteps j
-  -- uses VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4248002304
 theorem VE.Service.runMode_diagnose
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.diagnose j = VE.Service.Diagnose.diagnoseCase j
-  -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.Service.Mode.diagnose@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.Service.Mode.diagnose@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 1533440875
 theorem VE.Service.runMode_discourse
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.discourse j = VE.Discourse.Run.runCaseReported j
-  -- uses VE.Discourse.Run.runCaseReported@VE.Discourse.Run VE.Service.Mode.discourse@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Discourse.Run.runCaseReported@VE.Discourse.Run VE.Service.Mode.discourse@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3988369941
 theorem VE.Service.runMode_english
   ∀ (j : Lean.Json),
@@ -41479,124 +41632,124 @@ theorem VE.Service.runMode_english
           | x => j.compress) with
       | Except.ok result => result
       | Except.error message => Lean.Json.mkObj [("status", Lean.Json.str "error"), ("error", Lean.Json.str message)]
-  -- uses VE.English.ServiceRun.run@VE.Service.EnglishRun VE.Service.Mode.english@VE.Service.Protocol VE.Service.englishReported.match_1@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.English.ServiceRun.run@VE.Service.EnglishRun VE.Service.Mode.english@VE.Service.Registry VE.Service.englishReported.match_1@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 1255633073
 theorem VE.Service.runMode_englishCheck
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishCheck j = VE.EnglishGrammar.Run.checkCaseReported j
-  -- uses VE.EnglishGrammar.Run.checkCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishCheck@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.EnglishGrammar.Run.checkCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishCheck@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3423368793
 theorem VE.Service.runMode_englishGrammar
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishGrammar j = VE.EnglishGrammar.Run.grammarCaseReported j
-  -- uses VE.EnglishGrammar.Run.grammarCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishGrammar@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.EnglishGrammar.Run.grammarCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishGrammar@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2149289540
 theorem VE.Service.runMode_englishQuestion
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishQuestion j = VE.Question.Run.caseReported j
-  -- uses VE.Question.Run.caseReported@VE.Question.Run VE.Service.Mode.englishQuestion@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Question.Run.caseReported@VE.Question.Run VE.Service.Mode.englishQuestion@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3438168545
 theorem VE.Service.runMode_englishRead
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishRead j = VE.EnglishGrammar.Run.readCaseReported j
-  -- uses VE.EnglishGrammar.Run.readCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishRead@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.EnglishGrammar.Run.readCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishRead@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3070480935
 theorem VE.Service.runMode_environment
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.environment j = VE.Service.Standalone.reportedEnvironment j
-  -- uses VE.Service.Mode.environment@VE.Service.Protocol VE.Service.Standalone.reportedEnvironment@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.environment@VE.Service.Registry VE.Service.Standalone.reportedEnvironment@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1515001414
 theorem VE.Service.runMode_evaluate
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.evaluate j = VE.Order.runEvaluationCaseReported j
-  -- uses VE.Order.runEvaluationCaseReported@VE.Order.ProfileGate VE.Service.Mode.evaluate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Order.runEvaluationCaseReported@VE.Order.ProfileGate VE.Service.Mode.evaluate@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2196420359
 theorem VE.Service.runMode_familyNorms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.familyNorms j = VE.Service.FamilyNorms.runCaseReported j
-  -- uses VE.Service.FamilyNorms.runCaseReported@VE.Service.FamilyNorms VE.Service.Mode.familyNorms@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.FamilyNorms.runCaseReported@VE.Service.FamilyNorms VE.Service.Mode.familyNorms@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 715009208
 theorem VE.Service.runMode_graph
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.graph j = VE.Service.Standalone.reported VE.Service.Family.graphMode j
-  -- uses VE.Service.Family.graphMode@VE.Service.Family VE.Service.Mode.graph@VE.Service.Protocol VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Family.graphMode@VE.Service.Family VE.Service.Mode.graph@VE.Service.Registry VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 953717842
 theorem VE.Service.runMode_identity
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.identity j = VE.Service.Standalone.reported VE.Service.Standalone.identityCase j
-  -- uses VE.Service.Mode.identity@VE.Service.Protocol VE.Service.Standalone.identityCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.identity@VE.Service.Registry VE.Service.Standalone.identityCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 3910335735
 theorem VE.Service.runMode_metered
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.metered j = VE.Route.MeteredRun.runCaseReported j
-  -- uses VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun VE.Service.Mode.metered@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun VE.Service.Mode.metered@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2610763039
 theorem VE.Service.runMode_model
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.model j = VE.Service.Standalone.reportedModel j
-  -- uses VE.Service.Mode.model@VE.Service.Protocol VE.Service.Standalone.reportedModel@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.model@VE.Service.Registry VE.Service.Standalone.reportedModel@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 3851992144
 theorem VE.Service.runMode_normDefaults
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.normDefaults j = VE.NormDefaults.Run.runCaseReported j
-  -- uses VE.NormDefaults.Run.runCaseReported@VE.NormDefaults.Run VE.Service.Mode.normDefaults@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.NormDefaults.Run.runCaseReported@VE.NormDefaults.Run VE.Service.Mode.normDefaults@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4148834592
 theorem VE.Service.runMode_norms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.norms j = VE.Norms.Run.runCaseReported j
-  -- uses VE.Norms.Run.runCaseReported@VE.Norms.Run VE.Service.Mode.norms@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Norms.Run.runCaseReported@VE.Norms.Run VE.Service.Mode.norms@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 264251591
 theorem VE.Service.runMode_order
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.order j = VE.Order.Surface.runCaseReported j
-  -- uses VE.Order.Surface.runCaseReported@VE.Order.Surface VE.Service.Mode.order@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Order.Surface.runCaseReported@VE.Order.Surface VE.Service.Mode.order@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4003062785
 theorem VE.Service.runMode_parse
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.parse j = VE.Service.Standalone.reportedParse j
-  -- uses VE.Service.Mode.parse@VE.Service.Protocol VE.Service.Standalone.reportedParse@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.parse@VE.Service.Registry VE.Service.Standalone.reportedParse@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 2217412199
 theorem VE.Service.runMode_quantity
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.quantity j = VE.Time.Wire.runCaseReported j VE.Time.Document.extension
-  -- uses VE.Service.Mode.quantity@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.runCaseReported@VE.Time.Wire
+  -- uses VE.Service.Mode.quantity@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.runCaseReported@VE.Time.Wire
   -- expr 2727007324
 theorem VE.Service.runMode_readings
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.readings j = VE.Service.Standalone.reported VE.Service.Family.readingsMode j
-  -- uses VE.Service.Family.readingsMode@VE.Service.Family VE.Service.Mode.readings@VE.Service.Protocol VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Family.readingsMode@VE.Service.Family VE.Service.Mode.readings@VE.Service.Registry VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 429129561
 theorem VE.Service.runMode_readingsChoices
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.readingsChoices j = VE.Service.Standalone.reported VE.Service.ReadingsChoices.run j
-  -- uses VE.Service.Mode.readingsChoices@VE.Service.Protocol VE.Service.ReadingsChoices.run@VE.Service.ReadingsChoices VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.readingsChoices@VE.Service.Registry VE.Service.ReadingsChoices.run@VE.Service.ReadingsChoices VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1105078207
 theorem VE.Service.runMode_readingsRoute
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.readingsRoute j = VE.Readings.Run.runCaseReported j
-  -- uses VE.Readings.Run.runCaseReported@VE.Readings.Run VE.Service.Mode.readingsRoute@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Readings.Run.runCaseReported@VE.Readings.Run VE.Service.Mode.readingsRoute@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4151654230
 theorem VE.Service.runMode_reports
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.reports j = VE.Reports.Run.runCaseReported j
-  -- uses VE.Reports.Run.runCaseReported@VE.Attribution.Run VE.Service.Mode.reports@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Reports.Run.runCaseReported@VE.Attribution.Run VE.Service.Mode.reports@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 887250241
 theorem VE.Service.runMode_rights
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.rights j = VE.Rights.Run.runCaseReported j
-  -- uses VE.Rights.Run.runCaseReported@VE.Rights.Run VE.Service.Mode.rights@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Rights.Run.runCaseReported@VE.Rights.Run VE.Service.Mode.rights@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2559139917
 theorem VE.Service.runMode_risk
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.risk j = VE.Risk.Run.runCaseReported j
-  -- uses VE.Risk.Run.runCaseReported@VE.Risk.Run VE.Service.Mode.risk@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Risk.Run.runCaseReported@VE.Risk.Run VE.Service.Mode.risk@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2582939507
 theorem VE.Service.runMode_riskEval
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.riskEval j = VE.Risk.Eval.runCaseReported j
-  -- uses VE.Risk.Eval.runCaseReported@VE.Risk.Eval VE.Service.Mode.riskEval@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Risk.Eval.runCaseReported@VE.Risk.Eval VE.Service.Mode.riskEval@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 1405078405
 theorem VE.Service.runMode_route
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.route j = VE.Route.Run.runCaseReported j
-  -- uses VE.Route.Run.runCaseReported@VE.Route.Run VE.Service.Mode.route@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Route.Run.runCaseReported@VE.Route.Run VE.Service.Mode.route@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4097467530
 theorem VE.Service.runMode_searchBudget
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.searchBudget j = VE.SearchBudget.Run.runCaseReported j
-  -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2782331337
 theorem VE.Service.runMode_softNorms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.softNorms j = VE.SoftNorms.Run.runCaseReported j
-  -- uses VE.Service.Mode.softNorms@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SoftNorms.Run.runCaseReported@VE.SoftNorms.Run
+  -- uses VE.Service.Mode.softNorms@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.SoftNorms.Run.runCaseReported@VE.SoftNorms.Run
   -- expr 1773451360
 theorem VE.Service.runMode_speechActs
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.speechActs j = VE.SpeechActs.Run.runCaseReported j
-  -- uses VE.Service.Mode.speechActs@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SpeechActs.Run.runCaseReported@VE.SpeechActs.Run
+  -- uses VE.Service.Mode.speechActs@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.SpeechActs.Run.runCaseReported@VE.SpeechActs.Run
   -- expr 4195833241
 theorem VE.Service.runMode_words
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.words j = VE.Words.Run.caseReported j
-  -- uses VE.Service.Mode.words@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.Words.Run.caseReported@VE.Words.Run
+  -- uses VE.Service.Mode.words@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.Words.Run.caseReported@VE.Words.Run
   -- expr 2580582220
 theorem VE.Service.runRequest_ok
   ∀ (h : VE.Service.Handles) (r : VE.Service.Request) (budget : VE.Service.Budget)
@@ -42116,6 +42269,17 @@ theorem VE.SoftNorms.coh_rank_valid_unconditional
             ∀ (B : VE.Structure), VE.Formula.denote B [] (VE.SoftNorms.cohPremise D M N)
   -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.cohPremise@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3277975311
+theorem VE.SoftNorms.coh_rank_valid_with
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ (M N : VE.SoftNorms.SoftNode),
+        (M, N) ∈ VE.SoftNorms.collidingPairs D →
+          VE.SoftNorms.Comparable D M N = Bool.true →
+            ∀ (tbl : VE.Norms.Table) (T : VE.Norms.Tree) (f : Nat) (B : VE.Structure) (ρ : VE.Valuation B),
+              ¬(VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D M))) ∧
+                  VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D N))))
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.selects@VE.Norms.Elaborate VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3686215825
 theorem VE.SoftNorms.coherent_expands
   ∀ (D : VE.SoftNorms.SoftDoc),
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -42911,38 +43075,41 @@ theorem VE.SoftNorms.rank_resolves
   -- uses VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.fuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 3057383660
 theorem VE.SoftNorms.raw_dom_congr
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B} {eff eff' : VE.SoftNorms.SoftNode → Prop}
-    (N : VE.SoftNorms.SoftNode),
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B}
+    {eff eff' : VE.SoftNorms.SoftNode → Prop} (N : VE.SoftNorms.SoftNode),
     (∀ (M : VE.SoftNorms.SoftNode), M ∈ D.T.nodes → VE.SoftNorms.higher D M N = Bool.true → (eff M ↔ eff' M)) →
-      (VE.SoftNorms.RawDom✝ D B ρ eff N ↔ VE.SoftNorms.RawDom✝¹ D B ρ eff' N)
-  -- uses VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 2516299366
+      (VE.SoftNorms.RawDom✝ D tbl B ρ eff N ↔ VE.SoftNorms.RawDom✝¹ D tbl B ρ eff' N)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1089708032
 theorem VE.SoftNorms.raw_dom_denote
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (eff : VE.SoftNorms.SoftNode → VE.Formula)
-    (effP : VE.SoftNorms.SoftNode → Prop),
-    (∀ (M : VE.SoftNorms.SoftNode), VE.Formula.denote B ρ (VE.SoftNorms.circ D (eff M)) ↔ effP M) →
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (B : VE.Structure) (ρ : VE.Valuation B)
+    (eff : VE.SoftNorms.SoftNode → VE.Formula) (effP : VE.SoftNorms.SoftNode → Prop),
+    (∀ (M : VE.SoftNorms.SoftNode), VE.Formula.denote B ρ (VE.Norms.substWith tbl (eff M)) ↔ effP M) →
       ∀ (N : VE.SoftNorms.SoftNode),
-        VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.domWith D eff N)) ↔ VE.SoftNorms.RawDom✝ D B ρ effP N
-  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.domWith@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 2304691316
+        VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.SoftNorms.domWith D eff N)) ↔
+          VE.SoftNorms.RawDom✝ D tbl B ρ effP N
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Table@VE.Norms.Subst VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.domWith@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3178227856
 theorem VE.SoftNorms.raw_eff_denote
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (g : Nat) (N : VE.SoftNorms.SoftNode),
-    VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.effF D g N)) ↔ VE.SoftNorms.RawEff✝ D B ρ g N
-  -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.effF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 4093653495
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (B : VE.Structure) (ρ : VE.Valuation B) (g : Nat)
+    (N : VE.SoftNorms.SoftNode),
+    VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.SoftNorms.effF D g N)) ↔ VE.SoftNorms.RawEff✝ D tbl B ρ g N
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.effF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1261033548
 theorem VE.SoftNorms.raw_eff_stable
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B},
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B},
     VE.SoftNorms.RanksValid D.soft →
       ∀ (k : Nat) (N : VE.SoftNorms.SoftNode),
         N ∈ D.T.nodes →
           VE.SoftNorms.rankHeight D N < k →
             ∀ (a b : Nat),
               VE.SoftNorms.rankHeight D N < a →
-                VE.SoftNorms.rankHeight D N < b → (VE.SoftNorms.RawEff✝ D B ρ a N ↔ VE.SoftNorms.RawEff✝¹ D B ρ b N)
-  -- uses VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.rankHeight@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 963928495
+                VE.SoftNorms.rankHeight D N < b →
+                  (VE.SoftNorms.RawEff✝ D tbl B ρ a N ↔ VE.SoftNorms.RawEff✝¹ D tbl B ρ b N)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.rankHeight@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1989229332
 theorem VE.SoftNorms.raw_resolve_higher
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B},
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B},
     VE.SoftNorms.SoftValid D →
       ∀ {H L : VE.SoftNorms.SoftNode},
         H ∈ D.T.nodes →
@@ -42951,17 +43118,18 @@ theorem VE.SoftNorms.raw_resolve_higher
               L.mode = VE.SoftNorms.Mode.default →
                 VE.SoftNorms.Incompatible D H L = Bool.true →
                   VE.SoftNorms.higher D H L = Bool.true →
-                    ¬(VE.SoftNorms.RawEff✝ D B ρ (VE.SoftNorms.rankFuel D) H ∧
-                        VE.SoftNorms.RawEff✝¹ D B ρ (VE.SoftNorms.rankFuel D) L)
-  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 1765519959
+                    ¬(VE.SoftNorms.RawEff✝ D tbl B ρ (VE.SoftNorms.rankFuel D) H ∧
+                        VE.SoftNorms.RawEff✝¹ D tbl B ρ (VE.SoftNorms.rankFuel D) L)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2810499721
 theorem VE.SoftNorms.raw_selects_eff
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (N : VE.SoftNorms.SoftNode),
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (T : VE.Norms.Tree) (f : Nat) (B : VE.Structure)
+    (ρ : VE.Valuation B) (N : VE.SoftNorms.SoftNode),
     N.mode = VE.SoftNorms.Mode.default →
-      VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.selects' D N)) →
-        VE.SoftNorms.RawEff✝ D B ρ (VE.SoftNorms.rankFuel D) N
-  -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 1554942895
+      VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D N))) →
+        VE.SoftNorms.RawEff✝ D tbl B ρ (VE.SoftNorms.rankFuel D) N
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.selects@VE.Norms.Elaborate VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1842208047
 theorem VE.SoftNorms.reg_of_node
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.SoftValid D →

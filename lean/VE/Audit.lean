@@ -129,6 +129,7 @@ import VE.EnglishGrammar.SensesRequest
 import VE.EnvironmentProofs
 import VE.EvaluationCounts
 import VE.Events.Completion
+import VE.Events.Conservative
 import VE.Events.Premises
 import VE.Finite
 import VE.Grammar.Derives
@@ -339,6 +340,7 @@ import VE.Service.GenericReadings
 import VE.Service.Graph
 import VE.Service.Protocol
 import VE.Service.Readings
+import VE.Service.Registry
 import VE.Service.Standalone
 import VE.SoftNorms.Admission
 import VE.SoftNorms.Coherence
@@ -1325,10 +1327,18 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
 #print axioms VE.Defaults.basis_strict_sound
+#print axioms VE.Defaults.cohPremiseU_selU
+#print axioms VE.Defaults.cohU_rank_valid
+#print axioms VE.Defaults.collisionTuple_some
+#print axioms VE.Defaults.collision_sound
+#print axioms VE.Defaults.collision_unranked
+#print axioms VE.Defaults.defaultCoherenceCheck_sound
 #print axioms VE.Defaults.dflt_wellFormed
 #print axioms VE.Defaults.entailsX_mono
 #print axioms VE.Defaults.followsForm_short
+#print axioms VE.Defaults.pairChecks_sound
 #print axioms VE.Defaults.premisesX_split
+#print axioms VE.Defaults.questionDiag_none
 #print axioms VE.Defaults.strict_of_withoutDefaults
 #print axioms VE.Definitions.Alias.alias_acceptance
 #print axioms VE.Definitions.Alias.conservative
@@ -1923,11 +1933,17 @@ import VE.WireContract.Engine
 #print axioms VE.Events.completion_extension
 #print axioms VE.Events.completion_reading
 #print axioms VE.Events.completion_typed
+#print axioms VE.Events.conventions_empty
 #print axioms VE.Events.conventions_exact
+#print axioms VE.Events.dateName_data
+#print axioms VE.Events.dateName_inj
 #print axioms VE.Events.datesOrder_calendar
 #print axioms VE.Events.datesOrder_iff
 #print axioms VE.Events.dayExtension_transfer
 #print axioms VE.Events.eventsPremises_wellFormed
+#print axioms VE.Events.events_conservative
+#print axioms VE.Events.expansion_typed
+#print axioms VE.Events.guarded_empty
 #print axioms VE.Events.hits_vacuous
 #print axioms VE.Events.isConst_eq
 #print axioms VE.Events.isVar_beq
@@ -1935,10 +1951,14 @@ import VE.WireContract.Engine
 #print axioms VE.Events.mem_dates_of_consecutive
 #print axioms VE.Events.oldTuple_eq
 #print axioms VE.Events.oldTuple_map
+#print axioms VE.Events.pad_chars
+#print axioms VE.Events.pad_value
 #print axioms VE.Events.regen_typed
 #print axioms VE.Events.startRole_mem
 #print axioms VE.Events.term_map
+#print axioms VE.Events.tupleTyped_relation
 #print axioms VE.Events.unorderedSame_of_order
+#print axioms VE.Events.wf_transfer
 #print axioms VE.Grammar.BOk.addAll
 #print axioms VE.Grammar.BOk.complete
 #print axioms VE.Grammar.BOk.congr
@@ -5910,9 +5930,12 @@ import VE.WireContract.Engine
 #print axioms VE.Service.expand_hit
 #print axioms VE.Service.expand_miss
 #print axioms VE.Service.expand_plain
+#print axioms VE.Service.modes_complete
 #print axioms VE.Service.registerOne_digest
 #print axioms VE.Service.registerOne_ok
 #print axioms VE.Service.register_none
+#print axioms VE.Service.registry_modes
+#print axioms VE.Service.registry_names_nodup
 #print axioms VE.Service.rejectionCode_mem
 #print axioms VE.Service.respond_decoded
 #print axioms VE.Service.results_eq
@@ -6026,6 +6049,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.coh_canon
 #print axioms VE.SoftNorms.coh_rank_valid
 #print axioms VE.SoftNorms.coh_rank_valid_unconditional
+#print axioms VE.SoftNorms.coh_rank_valid_with
 #print axioms VE.SoftNorms.coherent_expands
 #print axioms VE.SoftNorms.colliding_of
 #print axioms VE.SoftNorms.comparable_false
