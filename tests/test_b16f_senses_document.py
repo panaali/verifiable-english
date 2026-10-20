@@ -19,6 +19,7 @@ import pytest
 
 from tools.lean_first_diff import outcome
 from ve import document as D
+from ve.document import load as D_load  # `_load` looks `_lean_answer` up here (AR-16a)
 from ve.backends import relay
 from ve.errors import CheckerUnavailable, VEError
 
@@ -64,7 +65,7 @@ def _public(path: Path):
     except VEError:
         decided = True
     new = [outcome(lambda: D.check_document(path)), outcome(lambda: D.render_document(path))]
-    with patch.object(D, "_lean_answer", return_value=None):
+    with patch.object(D_load, "_lean_answer", return_value=None):
         old = [outcome(lambda: D.check_document(path)), outcome(lambda: D.render_document(path))]
     return decided, new, old
 
