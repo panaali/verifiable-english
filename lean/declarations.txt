@@ -17081,7 +17081,7 @@ module VE.Scope.Effects 76d034cbd2f835309381cbbd7b032eaf69a03bb29fe463e3bad6e950
 64:0-66:13 def VE.Scope.narrowing@VE.Scope.Effects
 68:0-73:17 def VE.Scope.Commutes@VE.Scope.Effects
 77:0-83:40 def VE.Scope.mergeParts@VE.Scope.Effects
-module VE.Scope.Examples 4c00bfeff69d6502c877381b722e946e87a2c140167aa56e266b7589e2676419
+module VE.Scope.Examples f784ae2bdda7065a1cc375af363f11b94904863164a334dc51d9fa02475a62b4
 15:0-18:14 def VE.Scope.Examples.mk@VE.Scope.Examples
 20:0-20:111 def VE.Scope.Examples.layoutOf@VE.Scope.Examples
 22:0-32:71 def VE.Scope.Examples.hcPieces@VE.Scope.Examples
@@ -17167,7 +17167,7 @@ module VE.Scope.Examples 4c00bfeff69d6502c877381b722e946e87a2c140167aa56e266b758
 634:0-637:18 theorem VE.Scope.Examples.reaches_seven@VE.Scope.Examples
 639:0-641:101 theorem VE.Scope.Examples.governor_fields@VE.Scope.Examples
 642:0-644:58 theorem VE.Scope.Examples.sdoc_fields@VE.Scope.Examples
-module VE.Scope.Govern 397995d6c67e22c4b37b02abc2e5d710b2849d4b56694e072bcdf45cf5df1264
+module VE.Scope.Govern a95d5371ce8f5e62b17f256cdc9eb83fe433f71258e9477f73c5b809a1f932ee
 14:0-21:31 inductive VE.Scope.Reach@VE.Scope.Govern
 23:0-28:21 structure VE.Scope.Governor@VE.Scope.Govern
 24:2-24:4 def VE.Scope.Governor.id@VE.Scope.Govern
@@ -17215,10 +17215,10 @@ module VE.Scope.Govern 397995d6c67e22c4b37b02abc2e5d710b2849d4b56694e072bcdf45cf
 152:0-155:11 def VE.Scope.conditions@VE.Scope.Govern
 157:0-159:60 def VE.Scope.vocabularyNames@VE.Scope.Govern
 161:0-163:60 def VE.Scope.firstDup@VE.Scope.Govern
-165:0-205:79 def VE.Scope.admitBlock@VE.Scope.Govern
-207:0-208:110 def VE.Scope.newContent@VE.Scope.Govern
-210:0-214:25 def VE.Scope.patch@VE.Scope.Govern
-216:0-228:23 def VE.Scope.govern@VE.Scope.Govern
+165:0-207:79 def VE.Scope.admitBlock@VE.Scope.Govern
+209:0-210:110 def VE.Scope.newContent@VE.Scope.Govern
+212:0-216:25 def VE.Scope.patch@VE.Scope.Govern
+218:0-230:23 def VE.Scope.govern@VE.Scope.Govern
 module VE.Scope.Theorems 9b5a8138efca6610746ba990fa0e89abbbe02e9eef769be511b2e7297a610b5f
 11:0-11:96 theorem VE.Scope.members_obj@VE.Scope.Theorems
 13:0-28:48 theorem VE.Scope.hasOwn_mono@VE.Scope.Theorems
