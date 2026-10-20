@@ -1,4 +1,5 @@
 import ResponseShape.Encoders.Norms
+import VE.NormDefaults.PacksLegacy
 
 set_option maxHeartbeats 1000000
 
@@ -91,6 +92,7 @@ theorem runLayered_fits (id kind : String) (j : Json)
   intro v hv
   obtain ⟨L, -, hv⟩ := VE.Order.ProfileGate.bind_ok hv
   obtain ⟨o, ho, hv⟩ := VE.Order.ProfileGate.bind_ok hv
+  rw [VE.NormDefaults.Packs.kindCase_eq] at ho
   cases o with
   | none => cases hv
   | some a =>
