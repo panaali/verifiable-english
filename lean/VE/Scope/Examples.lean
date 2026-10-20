@@ -643,6 +643,10 @@ theorem sdoc_fields (D : SDoc) : D = { layout := D.layout, doc := D.doc, block :
                                        governors := D.governors, listNames := D.listNames, anchors := D.anchors,
                                        re := D.re } := rfl
 
+-- F-meta's anchor case: until sc-3ab adds discourse's anchor checks (step 7), a block with anchors is refused
+#guard (do govern ⟨layoutOf govPieces, hcDoc [], .null, [], [], [anc "doc" none "" (0, 1), anc "b" none "" (0, 1)],
+  ← VE.Readings.Wire.decodeEnvironment envJ⟩) matches .error "UnsupportedProfile: scope@0 anchors require SC-3a"
+
 end Govern
 
 end VE.Scope.Examples
