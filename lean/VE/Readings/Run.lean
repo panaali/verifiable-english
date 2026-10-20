@@ -524,15 +524,15 @@ def runLower (j : Json) : Json :=
     let j' := match stripReadings (j.getObjValD "environment") with
       | .ok env => j.setObjVal! "environment" env
       | .error _ => j
-    match VE.Compose.dispatch lower with
+    match VE.Compose.gateOf VE.Compose.profileTable lower with
     | .ok .rights => VE.Rights.Run.runCaseReported j'
     | .ok .soft => VE.SoftNorms.Run.runCaseReported j'
     | .ok .normDefaults => VE.NormDefaults.Run.runCaseReported j'
     | _ => VE.Norms.Run.runCaseReported j'
 
-/-- A case of the lower route named by `dispatch` on the profiles without `readings@1`. -/
+/-- A case of the lower route named by the profile table on the profiles without `readings@1`. -/
 def runLowerWith (lower : List String) (j : Json) : Json :=
-  match VE.Compose.dispatch lower with
+  match VE.Compose.gateOf VE.Compose.profileTable lower with
   | .ok .rights => VE.Rights.Run.runCaseReported j
   | .ok .soft => VE.SoftNorms.Run.runCaseReported j
   | .ok .normDefaults => VE.NormDefaults.Run.runCaseReported j

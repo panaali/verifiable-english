@@ -18,8 +18,10 @@ import ast
 import builtins
 import dataclasses
 import fnmatch
+import hashlib
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -30,6 +32,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import regen_generated as R  # noqa: E402
+from subprocesses import HANG_TIMEOUT  # noqa: E402
 import trust_map  # noqa: E402
 
 TRACKED = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.split()
@@ -601,6 +604,372 @@ def test_check_by_rewriting_restores_the_committed_files(tmp_path):
     same.write_text("pass\n")
     assert R._check_by_rewriting(R.Generated("probe", entry.paths, ((sys.executable, str(same)),), None),
                                  tmp_path) == 0
+
+
+# The Lean service before the entries that start it (eff-20261019-1, PIPELINE-LIMITS L58)
+#
+# Hermetic: a fake Lake (`lake.py`) builds `bin/ve_service` as the text "built from <lean/Source.lean>" and answers
+# `--no-build ve_service` as Lake does (exit 3 when it would rebuild); a fake service user refuses a build that is
+# not pinned or not current, as the client and the handshake do; lean/checkers.lock is `tmp_path`'s.
+
+
+FAKE_LAKE = """import pathlib, sys
+root = pathlib.Path(sys.argv[1])
+with (root / "lake.log").open("a") as log:
+    log.write(" ".join(sys.argv[2:]) + "\\n")
+exe, built = root / "bin/ve_service", "built from " + (root / "lean/Source.lean").read_text()
+if "--no-build" in sys.argv:
+    sys.exit(0 if exe.is_file() and exe.read_text() == built else 3)
+exe.parent.mkdir(exist_ok=True)
+exe.write_text(built)
+"""
+
+FAKE_USER = """import hashlib, json, pathlib, sys
+root, name, change = pathlib.Path(sys.argv[1]), sys.argv[2], sys.argv[3:]
+exe = root / "bin/ve_service"
+build = exe.read_text()
+with (root / "service.log").open("a") as log:
+    log.write(f"{name} {build}\\n".replace("\\n", "|", build.count("\\n")))
+if hashlib.sha256(build.encode()).hexdigest() not in json.loads((root / "lean/checkers.lock").read_text())["ve_service"]:
+    sys.exit(f"CheckerUnavailable: {exe} has unlisted build")
+if build != "built from " + (root / "lean/Source.lean").read_text():
+    sys.exit("unexpected handshake")
+(root / "out").mkdir(exist_ok=True)
+(root / "out" / name).write_text(build)
+if change:  # a writer of a Lean file in the service's closure (english-lexicon-fixtures)
+    (root / "lean/Source.lean").write_text(change[0])
+"""
+
+
+def _digest(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def _service_tree(tmp_path, monkeypatch, *, source: str, built: str | None, pins: list[str], users):
+    """A fake tree: lean/Source.lean, a build of `built` (None: none), the lock with `pins`, and GENERATED =
+    the service users `users` ((name, mark, Lean text it writes or None) in order, "BUILD" and "PINS" placing the
+    two real entries' fakes)."""
+    (tmp_path / "lean").mkdir()
+    (tmp_path / "lean/Source.lean").write_text(source)
+    if built is not None:
+        (tmp_path / "bin").mkdir()
+        (tmp_path / "bin/ve_service").write_text(f"built from {built}")
+    (tmp_path / "lean/checkers.lock").write_text(
+        json.dumps({"rust_jsonl": ["r"], "ve_service": sorted(pins)}, indent=2) + "\n")  # as _write_lock writes it
+    lake, user = tmp_path / "lake.py", tmp_path / "user.py"
+    lake.write_text(FAKE_LAKE)
+    user.write_text(FAKE_USER)
+    run = lambda script, *args: (sys.executable, str(script), str(tmp_path), *args)  # noqa: E731
+    entries = []
+    for name, mark, change in users:
+        if name == "BUILD":
+            entries.append(R.Generated(R.BUILD, (), (run(lake),), (run(lake),), cwd="lean"))
+        elif name == "PINS":
+            entries.append(R.Generated(R.PINS, ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",),
+                                       merge="json"))
+        else:
+            write = run(user, name, *([change] if change else []))
+            entries.append(R.Generated(name, (f"out/{name}", "lean/Source.lean") if change else (f"out/{name}",),
+                                       (write,), (run(user, name),), service=mark))
+    monkeypatch.setattr(R, "GENERATED", tuple(entries))
+    monkeypatch.setattr(R, "ROOT", tmp_path)
+    monkeypatch.setattr(R, "LOCK", tmp_path / "lean/checkers.lock")
+    monkeypatch.setattr(R, "owned_files", lambda entry, root=tmp_path: sorted(
+        {path for pattern in entry.paths for path in root.glob(pattern) if path.is_file()}))
+    exe = tmp_path / "bin/ve_service"
+    monkeypatch.setattr(R, "_service_digest", lambda: _digest(exe.read_text()) if exe.is_file() else None)
+    monkeypatch.setenv("VE_REGEN_NO_RUST", "1")
+    return tmp_path
+
+
+def _log(root, name) -> list[str]:
+    path = root / name
+    return path.read_text().splitlines() if path.is_file() else []
+
+
+def _pins(root) -> list[str]:
+    return json.loads((root / "lean/checkers.lock").read_text())["ve_service"]
+
+
+USERS = (("english-lexicon-fixtures", "write", None), ("BUILD", "", None), ("PINS", "", None),
+         ("english-codes", "write", None))
+
+
+def test_write_with_an_unpinned_service_bootstraps_once_then_runs_every_entry(tmp_path, monkeypatch, capsys):
+    """The defect: the first service user refused the built ve_service (not pinned), so `write` stopped before
+    lake-build and checker-pins. Now the run builds and pins it first, once, and ends with the final build pinned
+    beside the pins it started with."""
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v1", pins=["old"], users=USERS)
+    assert R.main(["--write"]) == 0
+    out = capsys.readouterr().out
+    assert out.count("== bootstrap: the built ve_service") == 1 and "is not pinned" in out
+    assert _log(root, "service.log") == ["english-lexicon-fixtures built from v1", "english-codes built from v1"]
+    assert sorted(path.name for path in (root / "out").iterdir()) == ["english-codes", "english-lexicon-fixtures"]
+    assert _pins(root) == sorted(["old", _digest("built from v1")])
+    assert json.loads((root / "lean/checkers.lock").read_text())["rust_jsonl"] == ["r"]
+    # The bootstrap is the two entries' own steps: a query, the build, a query that confirms it; then the run's
+    # own build.
+    assert _log(root, "lake.log") == ["--no-build ve_service", "", "--no-build ve_service", ""]
+
+
+def test_a_bootstrap_pin_the_final_build_supersedes_is_removed(tmp_path, monkeypatch, capsys):
+    """A writer changes a Lean file of the service's closure after the bootstrap: the next user gets a build of
+    the changed tree, and the bootstrap's first pin, which is no build of the final tree, goes again."""
+    users = (("english-lexicon-fixtures", "write", "v2"), ("route-cases", "write", None), *USERS[1:])
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v1", pins=["old"], users=users)
+    assert R.main(["--write"]) == 0
+    out = capsys.readouterr().out
+    assert out.count("== bootstrap:") == 2
+    assert _log(root, "service.log") == ["english-lexicon-fixtures built from v1", "route-cases built from v2",
+                                         "english-codes built from v2"]
+    assert _pins(root) == sorted(["old", _digest("built from v2")])
+    assert f"not the final build: {_digest('built from v1')}" in out
+
+
+def test_a_pin_the_lock_had_before_the_run_is_never_removed(tmp_path, monkeypatch):
+    """After a merge the lock holds both sides' pins; one of them is the build the bootstrap makes, and the
+    final build is another: that pin stays (only pins this run added go)."""
+    users = (("english-lexicon-fixtures", "write", "v2"), *USERS[1:])
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v0", pins=["old", _digest("built from v1")],
+                         users=users)
+    assert R.main(["--write"]) == 0
+    assert _log(root, "service.log")[0] == "english-lexicon-fixtures built from v1"  # stale v0: rebuilt first
+    assert _pins(root) == sorted(["old", _digest("built from v1"), _digest("built from v2")])
+
+
+def test_a_pinned_and_current_service_runs_no_bootstrap(tmp_path, monkeypatch, capsys):
+    """One question to Lake before the first user; no build beyond the run's own lake-build, no pin change."""
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v1", pins=["old", _digest("built from v1")],
+                         users=USERS)
+    before = (root / "lean/checkers.lock").read_text()
+    assert R.main(["--write"]) == 0
+    assert "bootstrap" not in capsys.readouterr().out
+    assert _log(root, "lake.log") == ["--no-build ve_service", ""]
+    assert (root / "lean/checkers.lock").read_text() == before
+
+
+def test_write_only_a_service_user_bootstraps_without_selecting_the_build(tmp_path, monkeypatch):
+    """`--write --only english-codes` still builds and pins first (the two entries are not selected); the
+    build it pinned is the final one and stays."""
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v0", pins=["old"], users=USERS)
+    assert R.main(["--write", "--only", "english-codes"]) == 0
+    assert _log(root, "service.log") == ["english-codes built from v1"]
+    assert _pins(root) == sorted(["old", _digest("built from v1")])
+
+
+def test_a_failed_bootstrap_build_stops_the_run_and_names_the_build(tmp_path, monkeypatch, capsys):
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v0", pins=["old"], users=USERS)
+    (root / "lake.py").write_text(FAKE_LAKE + "sys.exit(1)\n")  # every build fails
+    assert R.main(["--write"]) == 1
+    assert "regen_generated: failed: lake-build" in capsys.readouterr().err
+    assert _log(root, "service.log") == [] and _pins(root) == ["old"]
+
+
+def test_resolve_of_two_pinned_sides_builds_and_pins_the_merged_service_in_one_run(tmp_path, monkeypatch):
+    """L58/L82: each side pinned its own build; the merged Lean tree builds one neither pinned. One `--resolve`
+    builds and pins it before the first user, runs every writer and check, and stages the lock with both
+    sides' pins and the merged build."""
+    root = _service_tree(tmp_path, monkeypatch, source="1\n2\n3\n", built="1\n2\n3\n",
+                         pins=[_digest("built from 1\n2\n3\n")], users=USERS)
+    (root / ".gitignore").write_text("bin/\n*.log\n")
+    for args in (("init", "-q", "-b", "base"), ("config", "user.email", "t@example.com"), ("config", "user.name", "t")):
+        _git(root, *args)
+    _commit(root, {}, "base")
+    sides = {"theirs": "1\n2\n3t\n", "ours": "1o\n2\n3\n"}
+    for side, source in sides.items():
+        _git(root, "checkout", "-q", "-b", side, "base")
+        lock = json.loads((root / "lean/checkers.lock").read_text())
+        _commit(root, {"lean/Source.lean": source, "lean/checkers.lock": json.dumps(
+            {**lock, "ve_service": sorted([*lock["ve_service"], _digest(f"built from {source}")])}, indent=2) + "\n"},
+            side)
+    (root / "bin/ve_service").write_text(f"built from {sides['ours']}")  # this worktree's build
+    _git(root, "merge", "--no-commit", "-q", "theirs", check=False)
+    assert _git(root, "rev-parse", "-q", "--verify", "MERGE_HEAD", check=False).returncode == 0
+    assert R.resolve(R.GENERATED, root) == 0
+    merged = "1o\n2\n3t\n"
+    assert (root / "lean/Source.lean").read_text() == merged
+    assert _log(root, "service.log") == [f"{name} built from 1o|2|3t|" for name in
+                                         ("english-lexicon-fixtures", "english-codes")] * 2  # writers, then checks
+    assert _pins(root) == sorted(_digest(f"built from {source}") for source in ("1\n2\n3\n", *sides.values(), merged))
+    assert _git(root, "commit", "-q", "--no-edit", check=False).returncode == 0
+    assert _git(root, "status", "--porcelain").stdout == ""
+
+
+@pytest.mark.parametrize("built, pins, cause, why", [
+    ("v1", ["old"], "checker-pins", f"the built ve_service {_digest('built from v1')} is not pinned in lean/checkers.lock"),
+    ("v0", ["old", _digest("built from v0")], "lake-build", "is not current for the Lean sources"),
+    (None, ["old"], "lake-build", "ve_service is not built"),
+])
+def test_check_with_a_service_that_cannot_start_names_the_cause_once_and_checks_no_user(
+        tmp_path, monkeypatch, capsys, built, pins, cause, why):
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built=built, pins=pins, users=USERS)
+    tracked = {path: path.read_bytes() for path in (root / "lean").rglob("*")}
+    assert R.main(["--check"]) == 1
+    out, err = capsys.readouterr()
+    assert _log(root, "service.log") == []  # no user started the service
+    assert {path: path.read_bytes() for path in (root / "lean").rglob("*")} == tracked  # nothing written
+    cause_lines = [line for line in err.splitlines() if "the entries that start it are not checked" in line]
+    assert len(cause_lines) == 1 and why in cause_lines[0]
+    assert "--write --only lake-build --only checker-pins" in cause_lines[0]
+    for name in ("english-lexicon-fixtures", "english-codes"):
+        assert f"{name}: not checked: needs the pinned service" in out
+    summary = err.splitlines()[-1]
+    assert summary.startswith(f"regen_generated: failed: {cause}") and summary.count(cause) == 1
+    assert summary.endswith("not checked (needs the pinned service): english-lexicon-fixtures, english-codes")
+    assert "Traceback" not in out + err
+
+
+def test_check_with_a_ready_service_checks_every_user_and_asks_lake_once(tmp_path, monkeypatch, capsys):
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v1", pins=[_digest("built from v1")],
+                         users=USERS)
+    assert R.main(["--check"]) == 0
+    assert _log(root, "service.log") == ["english-lexicon-fixtures built from v1", "english-codes built from v1"]
+    assert _log(root, "lake.log") == ["--no-build ve_service", ""]
+    assert "not checked" not in "".join(capsys.readouterr())
+
+
+def test_without_lake_the_pin_alone_decides_as_before(tmp_path, monkeypatch, capsys):
+    """A machine without Lake on PATH checked a service user against a pinned build before this change; it still
+    does (no question to Lake can be asked), and an unpinned build is still refused."""
+    root = _service_tree(tmp_path, monkeypatch, source="v1", built="v0", pins=[_digest("built from v0")],
+                         users=USERS)
+    monkeypatch.setattr(R, "GENERATED", tuple(
+        dataclasses.replace(entry, write=((str(tmp_path / "no-such-lake"),),)) if entry.name == R.BUILD else entry
+        for entry in R.GENERATED))
+    (root / "user.py").write_text(FAKE_USER.replace('if build != "built from "', 'if False and build != "built from "'))
+    assert R.main(["--check", "--only", "english-codes"]) == 0
+    assert _log(root, "service.log") == ["english-codes built from v0"]
+    (root / "lean/checkers.lock").write_text(json.dumps({"rust_jsonl": [], "ve_service": ["old"]}, indent=2) + "\n")
+    assert R.main(["--check", "--only", "english-codes"]) == 1
+    assert "is not pinned in lean/checkers.lock" in capsys.readouterr().err
+
+
+# Which entries start the service: every entry whose commands import the client carries the mark.
+
+SERVICE_CLIENT = "ve/backends/lean_service.py"
+# Entries whose commands import the client without starting it, each with the reason; the test below runs each
+# check with a service that cannot start.
+IMPORTS_ONLY = {
+    "binding-census": "imports LeanService inside record_answers, which only --record and --refresh run",
+    "history-tests": "reaches it through tools/test_map.py -> select_tests.py -> answer_replay.py, never called",
+}
+
+
+def _function_imports(name: str, seen: set) -> set[str]:
+    """The modules a function of tools/regen_generated.py imports, and those of the module functions it calls."""
+    if name in seen:
+        return set()
+    seen.add(name)
+    tree = ast.parse((ROOT / "tools/regen_generated.py").read_text())
+    function = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == name)
+    found = set()
+    for node in ast.walk(function):
+        if isinstance(node, ast.Import):
+            found |= {alias.name for alias in node.names}
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            found.add(node.module)
+        elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and callable(getattr(R, node.func.id, None)) \
+                and isinstance(getattr(R, node.func.id), type(R.main)):
+            found |= _function_imports(node.func.id, seen)
+    return found
+
+
+@pytest.fixture(scope="module")
+def graph(tmp_path_factory):
+    import source_graph
+    cache = tmp_path_factory.mktemp("cache")
+    summaries = Path.home() / ".cache/ve-testselect/summaries.pickle"  # content-keyed parses: speed only
+    if summaries.is_file():
+        (cache / "ve-testselect").mkdir()
+        shutil.copy(summaries, cache / "ve-testselect/summaries.pickle")
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setenv("XDG_CACHE_HOME", str(cache))  # the graph's own cache
+        yield source_graph.load(ROOT)
+
+
+def _service_importers(entries, graph) -> dict[str, list[str]]:
+    """{entry: its commands' files whose imports reach the service client}."""
+    reaching = graph.importers(SERVICE_CLIENT)
+    found = {}
+    for entry in entries:
+        files = set(_referenced(entry))
+        for steps in (entry.write or (), entry.check or ()):
+            for step in steps:
+                if isinstance(step, str):
+                    files |= {graph.resolve("tools/regen_generated.py", module) or module
+                              for module in _function_imports(step, set())}
+        if hits := sorted(files & reaching):
+            found[entry.name] = hits
+    return found
+
+
+def _unmarked(entries, graph) -> list[str]:
+    importers = _service_importers(entries, graph)
+    return [f"{name}: {files}" for name, files in importers.items()
+            if not next(entry for entry in entries if entry.name == name).service
+            and name not in (R.BUILD, R.PINS) and name not in IMPORTS_ONLY]
+
+
+def test_every_entry_whose_commands_import_the_service_client_is_marked(graph):
+    """The mark is the one list of the entries the run builds and pins the service for; the source graph finds
+    every entry whose writer or check imports the client (directly or through the modules it imports). The two
+    entries that build and pin it import it to hash the build, and never start it."""
+    importers = _service_importers(R.GENERATED, graph)
+    assert _unmarked(R.GENERATED, graph) == []
+    for name in ("wire-contract", "english-lexicon-fixtures", "question-fixtures", "route-cases", "english-codes",
+                 "question-codes", "checker-pins", *IMPORTS_ONLY):
+        assert name in importers, name
+    for entry in R.GENERATED:
+        assert entry.service in ("", "write", "check"), entry.name
+        if entry.service:  # losing the mark fails the test
+            assert entry.name in importers and _unmarked([dataclasses.replace(entry, service="")], graph) != []
+    assert {name: R.entry_named(name).service for name in ("wire-contract", "binding-census")} == {
+        "wire-contract": "check", "binding-census": ""}
+    assert set(IMPORTS_ONLY) <= set(importers) and all(IMPORTS_ONLY.values())
+
+
+TRAP = """import pathlib, runpy, sys
+root, marker, kind, target, *args = sys.argv[1:]
+sys.path.insert(0, root)
+if kind != "-m":
+    sys.path.insert(0, str(pathlib.Path(target).parent))  # as `python <script>` does
+from ve.backends import lean_service
+def started(self):
+    pathlib.Path(marker).write_text("started")
+    raise lean_service.CheckerUnavailable("CheckerUnavailable: trapped")
+lean_service.LeanService._spawn = started
+sys.argv = [target, *args]
+runpy.run_module(target, run_name="__main__", alter_sys=True) if kind == "-m" else runpy.run_path(target, run_name="__main__")
+"""
+
+
+def _starts_the_service(tmp_path, entry) -> bool:
+    """Whether the entry's check starts the Lean service: it runs with a LeanService whose start is recorded."""
+    trap = tmp_path / "trap.py"
+    trap.write_text(TRAP)
+    marker = tmp_path / f"{entry.name}.started"
+    for step in entry.check:
+        rest = list(step[1:])
+        kind, target = ("-m", rest[1]) if rest[0] == "-m" else ("file", str(ROOT / entry.cwd / rest[0]))
+        args = rest[2:] if kind == "-m" else rest[1:]
+        subprocess.run([sys.executable, str(trap), str(ROOT), str(marker), kind, target, *args],
+                       cwd=ROOT / entry.cwd, capture_output=True, timeout=HANG_TIMEOUT)
+    return marker.exists()
+
+
+def test_the_entries_that_import_the_client_only_never_start_the_service(tmp_path):
+    for name in IMPORTS_ONLY:
+        assert not _starts_the_service(tmp_path, R.entry_named(name)), name
+    assert _starts_the_service(tmp_path, R.entry_named("english-codes"))  # the trap sees a start
+
+
+def test_the_build_entry_builds_the_service():
+    """`_Service.ran` takes a successful lake-build as a current ve_service: its step builds the default targets."""
+    import tomllib
+    lakefile = tomllib.loads((ROOT / "lean/lakefile.toml").read_text())
+    assert R.SERVICE_TARGET in lakefile["defaultTargets"]
+    assert R.entry_named(R.BUILD).write == (("lake", "build"),)
+    assert R.SERVICE_TARGET in {exe["name"] for exe in lakefile["lean_exe"]}
 
 
 # The writers this batch added to their owners

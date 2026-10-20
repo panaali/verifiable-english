@@ -1,6 +1,8 @@
+import VE.Acts.Lexical
 import VE.Norms.LayersOnce
 import VE.Route.Gate
 import VE.Route.Wire
+import VE.Limits
 
 /-! The norms-route decoder (docs/spec/norms.md 3.1, 3.2 and 11.4 steps 1-3),
 for the regeneration cases of the `ve_norms_route` executable.
@@ -21,54 +23,6 @@ namespace VE.Norms.Wire
 open Lean
 open VE.Bridge (exactFields fields stringField strings)
 
-/-- Python `ve/environment.py` `RESERVED`, the words an act phrase may not use. -/
-def actReserved : List String :=
-  ["true", "false", "is", "equals", "not", "and", "or", "if", "then", "for", "every", "there",
-   "exists", "believes", "must", "eventually", "no"]
-
-/-- `{d}` slot occurrences in order, and the text with every slot replaced by
-`slot` (Python `re.findall`/`re.sub` on `\{([0-9]+)\}`); fuel is the length. -/
-def scanSlotsAux : Nat → List Char → List String × List Char
-  | 0, cs => ([], cs)
-  | _ + 1, [] => ([], [])
-  | n + 1, '{' :: rest =>
-    let digits := rest.takeWhile Char.isDigit
-    match rest.drop digits.length with
-    | '}' :: after =>
-      if digits.isEmpty then
-        let (ss, out) := scanSlotsAux n rest
-        (ss, '{' :: out)
-      else
-        let (ss, out) := scanSlotsAux n after
-        (String.mk digits :: ss, "slot".toList ++ out)
-    | _ =>
-      let (ss, out) := scanSlotsAux n rest
-      (ss, '{' :: out)
-  | n + 1, c :: rest =>
-    let (ss, out) := scanSlotsAux n rest
-    (ss, c :: out)
-
-def scanSlots (cs : List Char) : List String × List Char := scanSlotsAux (cs.length + 1) cs
-
-/-- Python `str.isspace`, the separator set of the no-argument `str.split()`
-that Python `_regulated` normalises act phrases with (wider than
-`Char.isWhitespace`: vertical tab, form feed, U+001C–U+001F, U+0085, no-break
-and the Unicode space separators). -/
-def pyWhitespace (c : Char) : Bool :=
-  let n := c.toNat
-  (0x09 ≤ n && n ≤ 0x0D) || (0x1C ≤ n && n ≤ 0x20) || n == 0x85 || n == 0xA0 ||
-    n == 0x1680 || (0x2000 ≤ n && n ≤ 0x200A) || n == 0x2028 || n == 0x2029 ||
-    n == 0x202F || n == 0x205F || n == 0x3000
-
-def words (s : String) : List String := (s.split pyWhitespace).filter (· ≠ "")
-
-def asciiLetter (c : Char) : Bool := ('a' ≤ c && c ≤ 'z') || ('A' ≤ c && c ≤ 'Z')
-
-def actWord (w : String) : Bool :=
-  match w.toList with
-  | c :: cs => asciiLetter c && cs.all (fun d => asciiLetter d || d == '\'' || d == '-')
-  | [] => false
-
 /-- The canonical act phrase: whitespace normalised, slots `{0}…{k-1}` in order,
 at most 80 characters, at least two words, no reserved word. -/
 def canonicalAct (name : String) (arity : Nat) (raw : Json) : Except String String := do
@@ -81,8 +35,15 @@ def canonicalAct (name : String) (arity : Nat) (raw : Json) : Except String Stri
     throw s!"InvalidInput: invalid act phrase for {name}"
   pure act
 
-/-- One `regulated` declaration (3.1), as Python `_regulated` validates it. -/
-def decodeRegulated (name : String) (args : List String) (raw : Json) : Except String Regulated := do
+/-- The act check of a document's profiles: `Acts.Lexical.check` with the document's fixed phrases `fx` under
+`acts@0` (act-phrases 3.3), `canonicalAct` otherwise. -/
+def canonicalActIn (profiles fx : List String) (name : String) (k : Nat) (raw : Json) : Except String String :=
+  if profiles.contains "acts@0" then VE.Acts.Lexical.check fx name k raw else canonicalAct name k raw
+
+/-- One `regulated` declaration (3.1), as Python `_regulated` validates it, with the act check `actCheck`. With
+`acts` (act-phrases 3.2) a plain declaration may carry an act and its form, both or neither. -/
+def decodeRegulatedWith (acts : Bool) (actCheck : String → Nat → Json → Except String String) (name : String)
+    (args : List String) (raw : Json) : Except String Regulated := do
   let obj ← match raw.getObj? with
     | .ok o => pure o.toList
     | .error _ => throw s!"InvalidInput: regulated declaration {name} needs role and default"
@@ -99,17 +60,42 @@ def decodeRegulated (name : String) (args : List String) (raw : Json) : Except S
     | .str "deny" => pure false
     | _ => throw s!"InvalidInput: invalid regulated role or default for {name}"
   let required := ["role", "default"] ++ (if role == .plain then [] else ["act"])
-  let allowed := required ++ (if role == .obligation then ["permission"] else [])
+  let allowed := required ++ (if role == .obligation then ["permission"] else []) ++
+    (if acts && role == .plain then ["act", "form"] else [])
   unless keys.all allowed.contains && required.all keys.contains do
     throw s!"InvalidInput: invalid regulated fields for {name}"
-  let act ← if role == .plain then pure none
-    else some <$> canonicalAct name args.length (raw.getObjValD "act")
+  if acts && role == .plain then
+    if keys.contains "act" != keys.contains "form" then
+      throw s!"InvalidInput: a plain act for {name} needs its form, and a form needs its act"
+    if keys.contains "form" && ((raw.getObjValD "form").getStr?.toOption.bind VE.Acts.Lexical.Form.ofText?).isNone then
+      throw s!"InvalidInput: invalid form for {name}"
+  let act ← if role == .plain && !(acts && keys.contains "act") then pure none
+    else some <$> actCheck name args.length (raw.getObjValD "act")
   let permission ← match raw.getObjVal? "permission" with
     | .error _ => pure none
     | .ok .null => pure none
     | .ok (.str m) => pure (some m)
     | .ok _ => throw s!"InvalidInput: invalid permission dual for {name}"
   pure ⟨name, args, allow, role, act, permission⟩
+
+/-- One `regulated` declaration under a document's profiles, with its fixed phrases `fx` (act-phrases 4.2). -/
+def decodeRegulatedIn (profiles fx : List String) : String → List String → Json → Except String Regulated :=
+  decodeRegulatedWith (profiles.contains "acts@0") (canonicalActIn profiles fx)
+
+/-- One `regulated` declaration without `acts@0`. -/
+def decodeRegulated : String → List String → Json → Except String Regulated :=
+  decodeRegulatedWith false canonicalAct
+
+theorem canonicalActIn_without_acts (ps fx : List String) (h : "acts@0" ∉ ps) :
+    canonicalActIn ps fx = canonicalAct := by
+  funext name k raw
+  simp [canonicalActIn, h]
+
+/-- Without `acts@0` a declaration decodes as today, whatever the fixed phrases (act-phrases 4.3). -/
+theorem decodeRegulated_without_acts (ps fx : List String) (h : "acts@0" ∉ ps) :
+    decodeRegulatedIn ps fx = decodeRegulated := by
+  simp only [decodeRegulatedIn, decodeRegulated, canonicalActIn_without_acts ps fx h,
+    show ps.contains "acts@0" = false by simpa using h]
 
 /-- A decoded norms environment: the complete environment, its literals, the
 regulated declarations (in vocabulary order) and the original JSON. -/
@@ -188,8 +174,7 @@ the node budget (`MAX_NODES`) and `MAX_INDEX`. One decoder counts every formula
 and term node in pre-order and checks the budget on entering a node, before its
 shape; `count` is the number of nodes the same decoder has already read. -/
 
-def maxNodes : Nat := 10000
-def maxIndex : Nat := 2 ^ 53 - 1
+export VE.Limits (maxNodes maxIndex)
 
 def budgetTerm (count : Nat) (j : Json) : Except String (VE.Term × Nat) := do
   if count + 1 > maxNodes then throw "ResourceLimit: AST exceeds depth or node budget"
@@ -241,7 +226,7 @@ def budgetFormula : Nat → Nat → Json → Except String (VE.Formula × Nat)
     | _ => throw "invalid indexed formula"
 
 /-- One formula under a fresh decoder (Python `_Decoder().decode`). -/
-def decodeBudgeted (j : Json) : Except String VE.Formula := (·.1) <$> budgetFormula 64 0 j
+def decodeBudgeted (j : Json) : Except String VE.Formula := (·.1) <$> budgetFormula VE.Limits.maxDepth 0 j
 
 /-- The one decoder of a norm's JSON envelope and scalar fields. The FOL and
 family readers decode the returned guard and carve-outs in their own syntax. -/
@@ -269,11 +254,11 @@ one decoder (one node budget) reads the guard and then the carve-outs; with
 `shared := false` each formula has its own, as the soft route's `_fol`. -/
 def decodeNorm (j : Json) (shared : Bool := true) : Except String Node := do
   let (name, predicate, sign, guardJ, unlessJ, over) ← normFields j
-  let (guard, count) ← budgetFormula 64 0 guardJ
+  let (guard, count) ← budgetFormula VE.Limits.maxDepth 0 guardJ
   let mut count := count
   let mut carve := []
   for x in unlessJ do
-    let (φ, next) ← budgetFormula 64 (if shared then count else 0) x
+    let (φ, next) ← budgetFormula VE.Limits.maxDepth (if shared then count else 0) x
     count := next
     carve := carve ++ [φ]
   pure ⟨name, predicate, sign, guard, carve, over⟩

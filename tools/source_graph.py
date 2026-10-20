@@ -114,14 +114,17 @@ class Graph:
 
     # -- Python ---------------------------------------------------------------
     def resolve(self, importer: str, name: str) -> str | None:
-        """The file an absolute module name denotes for this importer."""
+        """The file an absolute module name denotes for this importer.
+
+        Never the importer itself: a module that imports its own name reaches another file of that name on
+        its path (`tools/question_fixtures.py` puts `tests/` first and imports `question_fixtures`)."""
         if not name:
             return None
         here = posixpath.dirname(importer)
         for base in ("", here + "/" if here else "", "tests/", "tools/"):
             stem = base + name.replace(".", "/")
             for candidate in (stem + ".py", stem + "/__init__.py"):
-                if candidate in self._file_set:
+                if candidate in self._file_set and candidate != importer:
                     return candidate
         return None
 

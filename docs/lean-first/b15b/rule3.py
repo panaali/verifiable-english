@@ -281,7 +281,6 @@ def certificate_queries() -> list[tuple[str, str, dict, object]]:
     and its result, which is the base prover's answer (Python authority). Nothing is re-derived or sampled."""
     import importlib
     import inspect
-    from ve.backends.dispatch import pinned
     sys.path.insert(0, str(ROOT / "conformance"))
     queries = []
     for operation, name in CERTIFICATE_COHORTS:
@@ -298,8 +297,9 @@ def certificate_queries() -> list[tuple[str, str, dict, object]]:
             return result
         module.prove_entailment = record
         try:
-            with pinned("python"):
-                module.positive_cases()
+            # The base ran under the Python authority; since lean-first batch 18 there is none to select, and
+            # the prover's own self-replay, which this measures, never depended on it.
+            module.positive_cases()
         finally:
             module.prove_entailment = original
     return queries
@@ -314,7 +314,6 @@ def certificate_record(operation: str, name: str, arguments: dict, prover) -> di
     """One certificate query: the base (the prover's own Python self-replay, as the cohort generator ran it)
     against the head (the same prover with its self-replay replaced by Lean's certificate route). Order is
     the prover's emitted status, certificate and step count, which the replay must leave unchanged."""
-    from ve.backends.dispatch import pinned
     from ve.backends.lean_service import DEADLINES
     import ve.entailment as entailment
     from ve.entailment import _check_certificate_lean, _check_certificate_python
@@ -328,8 +327,7 @@ def certificate_record(operation: str, name: str, arguments: dict, prover) -> di
     original = entailment.check_entailment_certificate
     entailment.check_entailment_certificate = lean_self_replay
     try:
-        with pinned("python"):
-            head_prover = entailment.prove_entailment(**arguments)
+        head_prover = entailment.prove_entailment(**arguments)
     finally:
         entailment.check_entailment_certificate = original
     budget = max(max_steps, 10_000) if getattr(env, "order", False) else max_steps

@@ -3,6 +3,7 @@ import VE.Route.Route
 import VE.Typing
 import VE.Order.ProfileGate
 import VE.Bridge
+import VE.Limits
 
 /-! Executable elaboration of identity-bound `defined` declarations, mirroring
 Python `ve/definitions.py:compile_definitions`: order the definitions by the
@@ -66,7 +67,7 @@ def levels : VE.Formula → Nat
 
 /-- The generated biconditional is within the AST limits of one formula. -/
 def premiseWithin (d : Def) : Bool :=
-  decide (VE.Bridge.formulaNodes d.premise ≤ 10000) && decide (levels d.premise ≤ 64)
+  decide (VE.Bridge.formulaNodes d.premise ≤ VE.Limits.maxNodes) && decide (levels d.premise ≤ VE.Limits.maxDepth)
 
 /-- The diagnostic of a definition whose generated biconditional exceeds the AST limits. -/
 def premiseTooLarge (name : String) : String :=

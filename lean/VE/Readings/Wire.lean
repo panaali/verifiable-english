@@ -1,6 +1,7 @@
 import VE.Readings.Lines
 import VE.Rights.Wire
 import VE.Compose.Dispatch
+import VE.Limits
 
 /-! The wire of `readings@1` part A (docs/spec/composition-s1.md 3, 4.1, 7, 8.4).
 
@@ -71,7 +72,7 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
     | .ok ps => pure ps
     | .error _ => throw (VE.Compose.unsupported "profiles must be a sorted unique array")
   unless profiles.contains readingsProfile do throw "UnsupportedProfile: readings@1 is required"
-  match VE.Compose.dispatch profiles with
+  match VE.Compose.gateOf VE.Compose.profileTable profiles with
   | .ok .readings => pure ()
   | .ok _ => throw "UnsupportedProfile: readings@1 is not the head of this profile list"
   | .error e => throw e
@@ -126,7 +127,7 @@ def decodeNorm (re : ReadingsEnvironment) (raw : Json) : Except String VE.SoftNo
 def decodeContent (re : ReadingsEnvironment) (j : Json) : Except String Decoded := do
   match j with
   | .null => pure .pending
-  | .arr _ => pure (.content (.assertion (← VE.Bridge.decodeFormula 64 j)) [])
+  | .arr _ => pure (.content (.assertion (← VE.Bridge.decodeFormula VE.Limits.maxDepth j)) [])
   | .obj _ =>
     let keys := (← fields j).map (·.1)
     if keys == ["norm"] || keys == ["cites", "norm"] then
@@ -449,7 +450,7 @@ def chainTextSpec (c : Chain) (X : RightsDoc × List VE.Formula) : Option String
     | .soft =>
       if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
       -- 6.4 before the semantic checks, as `decodeSoftSource` runs `primeVocabulary` (`namesFit`).
-      else match (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > 64) with
+      else match (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > VE.Limits.maxIdentifierBytes) with
         | some n => some s!"ResourceLimit: decision predicate {n}"
         | none => match VE.SoftNorms.validateSoft X.1.soft with
           | .error e => some e
@@ -477,7 +478,7 @@ def chainText (c : Chain) (X : RightsDoc × List VE.Formula) : Option String :=
       | .ok () => none
     | .soft =>
       if !noRights X.1 then some "UnsupportedProfile: rights content requires rights@0"
-      else match (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > 64) with
+      else match (VE.SoftNorms.decisionNames X.1.soft).find? (·.utf8ByteSize > VE.Limits.maxIdentifierBytes) with
         | some n => some s!"ResourceLimit: decision predicate {n}"
         | none => match VE.SoftNorms.validateSoftOnce X.1.soft with
           | .error e => some e

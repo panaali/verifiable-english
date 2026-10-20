@@ -20,6 +20,7 @@ module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
 module ResponseShape.Encoders.Envelope
 module ResponseShape.Encoders.Family
+module ResponseShape.Encoders.Metered
 module ResponseShape.Encoders.NormDefaults
 module ResponseShape.Encoders.Norms
 module ResponseShape.Encoders.Quantity
@@ -55,6 +56,7 @@ module ResponseShape.Schemas.Evaluate
 module ResponseShape.Schemas.FamilyNorms
 module ResponseShape.Schemas.Graph
 module ResponseShape.Schemas.Identity
+module ResponseShape.Schemas.Metered
 module ResponseShape.Schemas.Model
 module ResponseShape.Schemas.NormDefaults
 module ResponseShape.Schemas.Norms
@@ -81,6 +83,13 @@ module ResponseShape
 module SensesMain
 module Serve
 module SpeechActsMain
+module VE.Acts.Compat
+module VE.Acts.GrammarExamples
+module VE.Acts.Lexical
+module VE.Acts.LexicalBase
+module VE.Acts.LexicalExamples
+module VE.Acts.Read
+module VE.Acts.Syntax
 module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
@@ -127,12 +136,18 @@ module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
 module VE.Calc.Decls
+module VE.Calc.Derive
+module VE.Calc.DeriveExamples
+module VE.Calc.Dimension
 module VE.Calc.Eval
 module VE.Calc.Examples
+module VE.Calc.FourierMotzkin
+module VE.Calc.Linear
 module VE.Calc.Render
 module VE.Calc.Syntax
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
+module VE.Cardinality.Ratio
 module VE.Cardinality.Regions
 module VE.Cardinality.Semantics
 module VE.Cardinality.Syntax
@@ -158,6 +173,7 @@ module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Dispatch
 module VE.Compose.Examples
+module VE.Compose.ProfilesMain
 module VE.Compose.Slot
 module VE.Consequence
 module VE.Core.Bridge
@@ -183,6 +199,8 @@ module VE.Core.TableauExtendedInduction
 module VE.Core.TableauExtendedRules
 module VE.Core.Wire
 module VE.Data.Background
+module VE.Defaults.Examples
+module VE.Defaults.Premises
 module VE.Definitions.Alias
 module VE.Definitions.Bundle
 module VE.Definitions.Elaborate
@@ -267,8 +285,13 @@ module VE.Json
 module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
+module VE.Judgments.Status
+module VE.Layout.Anchors
+module VE.Layout.Discourse
 module VE.Layout.List
 module VE.LexicalProofs
+module VE.LimitTies
+module VE.Limits
 module VE.ModelProofs
 module VE.NormDefaults.Admission
 module VE.NormDefaults.Check
@@ -283,6 +306,7 @@ module VE.NormDefaults.LayeredAdmission
 module VE.NormDefaults.LayeredEntail
 module VE.NormDefaults.Packs
 module VE.NormDefaults.PacksExamples
+module VE.NormDefaults.PacksLabels
 module VE.NormDefaults.PacksLegacy
 module VE.NormDefaults.PacksLegacyExamples
 module VE.NormDefaults.Premises
@@ -473,7 +497,15 @@ module VE.Route.Steps
 module VE.Route.Typed
 module VE.Route.Wire
 module VE.Route.WireSound
+module VE.Scales.Degrees
+module VE.Scales.Examples
+module VE.Scales.Intended
+module VE.Scales.Premises
+module VE.Scales.Syntax
+module VE.Scales.Theorems
+module VE.Scope.Effects
 module VE.Scope.Examples
+module VE.Scope.Theorems
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
 module VE.SearchBudget.Examples
@@ -568,6 +600,7 @@ ResponseShape.CaseWF@ResponseShape.Skeleton
 ResponseShape.Encoders.Common.KindsRendered@ResponseShape.Encoders.Common
 ResponseShape.Encoders.Discourse.StatusesOk@ResponseShape.Encoders.Discourse
 ResponseShape.Encoders.English.ClassesIn@ResponseShape.Encoders.English
+ResponseShape.Encoders.Metered.Statused@ResponseShape.Encoders.Metered
 ResponseShape.Encoders.ReadingsRoute.PairEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.SetEntry@ResponseShape.Encoders.ReadingsRoute
 ResponseShape.Encoders.ReadingsRoute.ValidateRows@ResponseShape.Encoders.ReadingsRoute
@@ -579,6 +612,7 @@ ResponseShape.Fits@ResponseShape.Skeleton
 ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
+VE.Acts.DerivedIn@VE.Acts.Read
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline
@@ -593,7 +627,9 @@ VE.Alternatives.FollowableIn@VE.Alternatives.Followable
 VE.Alternatives.PrefixAdmissibleAlt@VE.Alternatives.Background
 VE.Alternatives.RowsConsistent@VE.Alternatives.Validate
 VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
+VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
+VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
 VE.Ask.BlockLine@VE.Ask.Lines
 VE.Ask.CaseBinding@VE.Ask.Binding
 VE.Ask.Consistent@VE.Ask.Plain
@@ -630,6 +666,8 @@ VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.PhysDim.Normal@VE.Calc.Dimension
+VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
@@ -641,12 +679,15 @@ VE.Cardinality.BodyTyped@VE.Cardinality.Syntax
 VE.Cardinality.CEntails@VE.Cardinality.Semantics
 VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax
 VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics
+VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics
+VE.Cardinality.CTermTyped@VE.Cardinality.Syntax
 VE.Cardinality.Cmp.holds@VE.Cardinality.Semantics
 VE.Cardinality.CountAtom.holds@VE.Cardinality.Semantics
 VE.Cardinality.Counts@VE.Cardinality.Semantics
 VE.Cardinality.HasCount@VE.Cardinality.Semantics
 VE.Cardinality.Proportion.holds@VE.Cardinality.Semantics
 VE.Cardinality.Rel.holds@VE.Cardinality.Semantics
+VE.Cardinality.erasedRounding@VE.Cardinality.Ratio
 VE.Closure.ClosedAt@VE.Closure.Paths
 VE.Closure.Edge.Typed@VE.Closure.Substitution
 VE.Closure.Edge.denote@VE.Closure.Substitution
@@ -666,6 +707,7 @@ VE.Compose.ChainList@VE.Compose.Dispatch
 VE.Compose.ConflictFreeP@VE.Compose.Slot
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
+VE.Compose.TableAdmits@VE.Compose.Dispatch
 VE.Compose.TodayList@VE.Compose.Dispatch
 VE.Core.ClosedAt@VE.Core.Paths
 VE.Core.Edge.Typed@VE.Core.Substitution
@@ -754,8 +796,11 @@ VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
+VE.Events.CalendarReading@VE.Events.Premises
 VE.Events.DayExtension@VE.Events.Completion
 VE.Events.Embeds@VE.Events.Premises
+VE.Events.addedDay@VE.Events.Completion
+VE.Events.isDayC@VE.Events.Completion
 VE.FiniteModel.Valid@VE.Finite
 VE.FiniteModel.inDomain@VE.Alternatives.Followable
 VE.Formula.WellFormed@VE.Syntax
@@ -789,6 +834,7 @@ VE.Graph.Unfolds@VE.ClaimGraph
 VE.Graph.tableauValid@VE.ClaimGraph
 VE.GraphChecks.valid@VE.GraphChecks
 VE.Layout.GovernedItem@VE.Layout.List
+VE.Layout.ItemUnit@VE.Layout.List
 VE.NormDefaults.Admission.AdmissionAnswerX@VE.NormDefaults.Run
 VE.NormDefaults.Admission.CertificatesBound@VE.NormDefaults.Admission
 VE.NormDefaults.Admission.CertificatesBoundX@VE.NormDefaults.LayeredAdmission
@@ -1115,6 +1161,11 @@ VE.Route.closureValid@VE.Route.Checker
 VE.Route.coreValid@VE.Core.Route
 VE.Route.folValid@VE.Route.Checker
 VE.Route.orderValid@VE.Route.Checker
+VE.Scales.Fresh@VE.Scales.Intended
+VE.Scales.Intended@VE.Scales.Intended
+VE.Scales.StrictLinear@VE.Scales.Degrees
+VE.Scales.asMuch@VE.Scales.Degrees
+VE.Scales.below@VE.Scales.Degrees
 VE.Senses.CandidateGood@VE.Senses.Read
 VE.Senses.UnitGood@VE.Senses.Read
 VE.Senses.glossed_negative@VE.Senses.Dictionary

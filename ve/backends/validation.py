@@ -48,7 +48,12 @@ def family_in_scope(env) -> bool:
 
 
 def key(*parts) -> tuple:
-    return tuple(hashlib.sha256(canonical_json(part)).hexdigest() for part in parts)
+    """The cache key of `parts`: the SHA-256 of each one's canonical JSON, or of an encoded object's exact
+    text (`EncodedEnvironment`, written once). Both encodings are injective, so a key names one content; the
+    same content under the other encoding is only a miss."""
+    from ..environment_wire import EncodedEnvironment
+    return tuple(hashlib.sha256(("encoded:" + part.text).encode() if isinstance(part, EncodedEnvironment)
+                                else canonical_json(part)).hexdigest() for part in parts)
 
 
 def _remember(key: tuple, row=True) -> None:

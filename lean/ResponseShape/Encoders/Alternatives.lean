@@ -136,6 +136,32 @@ theorem followableU_fits (id : String) (j : Json) {w : Json} (hobj : j.getObjVal
   all_goals (try simp only [ok, VE.Route.Wire.ok])
   all_goals fits
 
+theorem statusLabels_fits {β : Type} (xs : List β) (f : β → AltStatus) :
+    Fits req (.arr [] (.strIn ["clear", "not clear", "undecided", "UNKNOWN"]))
+      (toJson (xs.map fun x => statusLabel (f x))) :=
+  Fits.toJsonStrs fun s hs => by
+    obtain ⟨x, _, rfl⟩ := List.mem_map.mp hs
+    cases f x <;> decide
+
+theorem evidenceLabels_fits {β : Type} (xs : List β) (f : β → AltEvidence) :
+    Fits req (.arr [] (.strIn ["kleene", "enumeration", "fillings", "MAX_UNSAID_ATOMS", "search", "no filling"]))
+      (toJson (xs.map fun x => evidenceLabel (f x))) :=
+  Fits.toJsonStrs fun s hs => by
+    obtain ⟨x, _, rfl⟩ := List.mem_map.mp hs
+    cases f x <;> decide
+
+theorem validateU_fits (id : String) (j : Json) (hp : usesAltPath j = true)
+    (hK : j.getObjValD "kind" = .str "alt-validate")
+    (hf : VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") = true) :
+    OkFits j Skeletons.alternatives (runValidateU id j) := by
+  have hc : (CaseCond.all [CaseCond.kind "alt-validate", CaseCond.decided CaseDecider.altFillPath]).holds j = true := by
+    simp [CaseCond.holds, CaseCond.holds.allHold, CaseDecider.fn, hf, hK]; rfl
+  unfold runValidateU chooserReportU
+  okfits
+  all_goals (try simp only [ok, VE.Route.Wire.ok])
+  all_goals fits
+  all_goals first | exact statusLabels_fits _ _ | exact evidenceLabels_fits _ _
+
 theorem runCaseU_fits (id kind : String) (j : Json) (hi : VE.Bridge.stringField j "id" = .ok id)
     (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesAltPath j = true)
     (hf : VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") = true) :
@@ -147,6 +173,7 @@ theorem runCaseU_fits (id kind : String) (j : Json) (hi : VE.Bridge.stringField 
     | exact elaborateU_case_fits _ _ ‹_› hp ‹_› hf
     | exact conflictU_fits _ _ ‹_› hp ‹_›
     | exact followableU_fits _ _ ‹_› hp ‹_›
+    | exact validateU_fits _ _ hp ‹_› hf
     | (simp only [ok, VE.Route.Wire.ok]; fits)
 
 theorem fields_obj {j : Json} {fs : VE.Bridge.Fields} (h : VE.Bridge.fields j = .ok fs) : ∃ m, j = .obj m := by
@@ -205,7 +232,11 @@ theorem chooser_fits (A : AltDoc) (M : VE.FiniteModel VE.Bridge.Entity) (r : VE.
     | exact hA ▸ Bool.eq_false_iff.mpr ‹¬ A.alt.taken.isSome = true›
 
 theorem validate_fits (id : String) (j : Json) (hp : usesAltPath j = true)
-    (hK : j.getObjValD "kind" = .str "alt-validate") : OkFits j Skeletons.alternatives (runValidate id j) := by
+    (hK : j.getObjValD "kind" = .str "alt-validate")
+    (hf : VE.NormDefaults.Wire.hasProfile (j.getObjValD "environment") = false) :
+    OkFits j Skeletons.alternatives (runValidate id j) := by
+  have hc : (CaseCond.all [CaseCond.kind "alt-validate", CaseCond.decided CaseDecider.altFillPath]).holds j = false := by
+    simp [CaseCond.holds, CaseCond.holds.allHold, CaseDecider.fn, hf]
   unfold runValidate
   okfits
   all_goals (try simp only [ok, VE.Route.Wire.ok])
@@ -266,7 +297,7 @@ theorem runCase_fits (j : Json) (hp : usesAltPath j = true) : OkFits j Skeletons
     | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
     | exact runCaseU_fits _ _ _ ‹_› ‹_› hp ‹_›
     | exact elaborate_case_fits _ _ ‹_› hp ‹_› (Bool.eq_false_iff.mpr ‹_›)
-    | exact validate_fits _ _ hp ‹_›
+    | exact validate_fits _ _ hp ‹_› (Bool.eq_false_iff.mpr ‹_›)
     | exact conflict_fits _ _ ‹_› hp ‹_›
     | exact followable_fits _ _ ‹_› hp ‹_›
     | (simp only [ok, VE.Route.Wire.ok]; fits using premiseLabels_fits)

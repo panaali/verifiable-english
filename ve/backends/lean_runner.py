@@ -1,11 +1,7 @@
 """The cases public adapters send to the Lean service; `relay.decide` sends them."""
 from __future__ import annotations
 
-from pathlib import Path
-
-# Lean's metered evaluator and non-vacuity check (batch 15a), a one-shot runner: the owner of every
-# reported evaluation count, trace and `ResourceLimit`, and of the non-vacuity of a search witness.
-METERED_EXECUTABLE = Path(__file__).resolve().parents[2] / "lean/.lake/build/bin/ve_metered"
+from ..errors import CheckerUnavailable
 
 
 def route_mode(env) -> str:
@@ -68,12 +64,54 @@ def background_environment(env) -> dict:
     return encoded_environment(env, "lean-background", build)
 
 
-def metered_environment(env) -> dict:
-    """The environment of a `ve_metered` case (evaluation and non-vacuity answer
-    no environment identity): the model environment Rust's search reads too
+def metered_environment(env):
+    """The environment of a `metered` case (evaluation and non-vacuity answer no environment
+    identity), encoded once: the model environment Rust's search reads too
     (`profiles.model_environment`)."""
+    from ..environment_wire import encoded_environment
     from ..profiles import model_environment
-    return model_environment(env.to_dict())
+    return encoded_environment(env, "lean-metered", lambda: model_environment(env.to_dict()))
+
+
+# One encoding per model object (`encoded_model`), bounded like the environment cache.
+_MODELS: dict[int, tuple] = {}
+_MODELS_LIMIT = 256
+
+
+def encoded_model(model):
+    """A model's case encoding, once per model object: a `FiniteModel` is frozen, so its content cannot
+    change, and the many cases one model is sent with share one encoding, which the wire check does not
+    walk again. The cache is keyed by the object (it holds the object, so its `id` is not reused), never by
+    the identities a model claims: two objects claiming one identity with different contents (a stale or
+    forged `model_id`) are two encodings, and Lean checks each claim against its own content."""
+    from ..environment_wire import EncodedEnvironment
+    entry = _MODELS.get(id(model))
+    if entry is not None and entry[0] is model:
+        return entry[1]
+    encoding = EncodedEnvironment(model.to_dict())
+    if len(_MODELS) >= _MODELS_LIMIT:
+        _MODELS.clear()
+    _MODELS[id(model)] = (model, encoding)
+    return encoding
+
+
+_FORMULAS: dict[int, tuple] = {}
+
+
+def encoded_formula(formula):
+    """A formula's case AST, once per formula object (a frozen AST node), wire-checked when it is built
+    (`checked_list`); keyed by the object, which the cache holds, as `encoded_model` is."""
+    from ..ast import _to_data
+    from ..environment_wire import checked_list
+    entry = _FORMULAS.get(id(formula))
+    if entry is not None and entry[0] is formula:
+        return entry[1]
+    data = _to_data(formula)
+    encoding = checked_list(data) if type(data) is list else data
+    if len(_FORMULAS) >= _MODELS_LIMIT:
+        _FORMULAS.clear()
+    _FORMULAS[id(formula)] = (formula, encoding)
+    return encoding
 
 
 def evaluation_case(env, case_id: str, ast: list, model: dict) -> tuple[str, dict]:
@@ -84,19 +122,35 @@ def evaluation_case(env, case_id: str, ast: list, model: dict) -> tuple[str, dic
     return mode, case if mode == "evaluate" else {**case, "kind": "evaluate"}
 
 
-def _metered_timeout() -> float:
-    from .lean import ROUTE_TIMEOUT, configured_timeout
-    return configured_timeout(ROUTE_TIMEOUT)
+# The fields of each `metered` answer, by the kind of the case it answers (`metered.json`: the row is
+# one of the two alternatives, and the client binds it to the kind it sent).
+METERED_FIELDS = {"evaluate-budgeted": {"id", "status", "evaluation"},
+                  "non-vacuity": {"id", "status", "suitable", "evaluations", "exhausted"}}
+
+
+def _metered(case: dict) -> dict:
+    """One case of Lean's metered evaluator and non-vacuity check (lean-first batch 15a, the service's
+    `metered` mode since batch 18): the owner of every reported evaluation count, trace and
+    `ResourceLimit`, and of the non-vacuity of a search witness. Its row, a rejection included; an
+    answer of the other kind is no answer."""
+    from .relay import rows
+    return metered_row(rows("metered", [case])[0], case)
+
+
+def metered_row(row: dict, case: dict) -> dict:
+    """A `metered` row bound to the kind of the case it answers (how `_metered` reads it; the relay
+    mutation gate reads a mutated answer the same way)."""
+    if row["status"] == "ok" and set(row) != METERED_FIELDS[case["kind"]]:
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean metered answer to a {case['kind']} case "
+                                 "is of another kind")
+    return row
 
 
 def metered_evaluation(case: dict) -> dict:
-    """One `evaluate-budgeted` case through `ve_metered`: its row (value, count, trace)."""
-    from . import lean
-    return lean.run("evaluate", METERED_EXECUTABLE, [case], runner="ve_metered", timeout=_metered_timeout())[0]
+    """One `evaluate-budgeted` case: its row (value, count, trace)."""
+    return _metered({**case, "kind": "evaluate-budgeted"})
 
 
 def metered_nonvacuity(case: dict) -> dict:
-    """One `non-vacuity` case through `ve_metered`: its row (suitable, evaluations, exhausted)."""
-    from . import lean
-    return lean.run("countermodel.search", METERED_EXECUTABLE, [case], runner="ve_metered",
-                    timeout=_metered_timeout())[0]
+    """One `non-vacuity` case: its row (suitable, evaluations, exhausted)."""
+    return _metered({**case, "kind": "non-vacuity"})

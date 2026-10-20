@@ -1,5 +1,6 @@
 import VE.ClaimGraph
 import VE.Service.Standalone
+import VE.Limits
 
 /-! The service `graph` mode (SEMANTICS-MIGRATION-PLAN.md section 2.1, 1.2 row 1):
 the composition of a `ve-argument-tableau@1` package's root over a ve.core@0.2
@@ -144,7 +145,7 @@ def legacyCtx (environment : Json) : Except String Ctx := do
   let envId ← VE.CertificateWire.digest "ve-environment-v0\n" environment
   pure { E := v.environment, environment, envId, version := "v0",
          formula := fun a => do
-           let f ← VE.Bridge.decodeFormula 64 a
+           let f ← VE.Bridge.decodeFormula VE.Limits.maxDepth a
            unless f.check v.environment [] do throw "ill-typed or unbound formula"
            pure f,
          meaningId := VE.CertificateWire.meaningId envId,

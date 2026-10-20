@@ -1,14 +1,15 @@
 # Counts and proportions in Lean (`lean/VE/Cardinality/*`)
 
 Specification: [docs/spec/quantities.md](../docs/spec/quantities.md) sections 3.2 to 3.9 (statement spec, draft 3)
-and [docs/spec/quantities-PLAN.md](../docs/spec/quantities-PLAN.md) batch QT-A1. This file lists the files, the
+and [docs/spec/quantities-PLAN.md](../docs/spec/quantities-PLAN.md) batches QT-A1 and QT-A2. This file lists the files, the
 theorems proved so far in plain words, the fixtures and every difference from the spec. `lean/audit.py` audits every
 theorem: no unfinished proof, only `propext`, `Classical.choice` and `Quot.sound`. No existing Lean source changed;
 `VE.lean` gained one import and `VE/Audit.lean` its generated entries.
 
-QT-A1 is delivered in two parts. This item (qt-a1) holds the syntax, the meaning, admission, regions, erasure, the
-finite countermodel check and the theorems that do not need erasure's soundness. **qt-a1b** holds the soundness
-theorems (listed at the end).
+QT-A1 is delivered in three parts. qt-a1 holds the syntax, the meaning, admission, regions, erasure, the finite
+countermodel check and the theorems that do not need erasure's soundness. qt-a1b proves spec 3.6's soundness theorems.
+**qt-a1c** holds spec 3.7's and 3.9's (listed at the end). QT-A2 (rounding and percent-of) adds the ratio
+constructors, `Ratio.lean`, and their cases in every theorem above.
 
 ## Files
 
@@ -17,8 +18,9 @@ theorems (listed at the end).
 | `Syntax.lean` | `Body`, `Rel`, `CountAtom`, `Cmp`, `Proportion`, `CFormula`, `CEnv`, `regionPrefix`, `CEnv.WellFormed`; admission: `BodyTyped`, `Admitted` (the specification), `bodyCheck`, `CFormula.admits` (the check); `bodyCheck_iff`, `admits_iff`, `admits_sound`, `admits_complete` |
 | `Semantics.lean` | the meaning without erasure: `Body.holds`, `HasCount`, `Rel.holds`, `Cmp.holds`, `Counts`, `CountAtom.holds`, `Proportion.holds`, `CFormula.holds`, `Admissible`, `CEntails` |
 | `Regions.lean` | counted sorts and recognised universal statements (`bodyOfQ?`, `universalsOf`, `countedSorts`, `countedUniversals`), `predsOn`, `regions`, `Body.inRegion`, `regionConst`, `regionTable`, `CEnv.elab`, `regionBody`; the problem limits P1 and P2 (`problemLimits`) |
+| `Ratio.lean` | `erasedRounding` (the linear integer form of a rounding), `roundingQ` (the same in W6a), `roundsTo_ratio_agree`, `roundingQ_iff`, `roundingQ_admitted` (QT-A2) |
 | `Erase.lean` | `regionSum`, the erasure of counts and proportions (`CFormula.erase`), `nonnegPremises`, `bridgePremises`, `erasedProblem`; `withRegions` (region constants read as region sizes); the finite countermodel check: `Body.evalFin`, `countFin`, `withRegionsFinite`, `refutesC` |
-| `Theorems.lean` | `hasCount_exists_unique`, `hasCount_unique`, `nonneg_hold`, `proportion_holds_iff`; W6a's four counting forms as count atoms (`atLeastAtom`, `atMostAtom`, `exactlyAtom`, `nOfMFormula`) and `Body.toFormula` |
+| `Theorems.lean` | `hasCount_exists_unique`, `hasCount_unique`, `nonneg_hold`, `proportion_holds_iff`; spec 3.6's soundness theorems and their lemmas (qt-a1b, below); W6a's four counting forms as count atoms (`atLeastAtom`, `atMostAtom`, `exactlyAtom`, `nOfMFormula`) and `Body.toFormula` |
 | `Examples.lean` | the fixtures as `#guard` lines, and named theorems that state every case of the trusted meaning and admission (below) |
 
 ## Theorems in plain words
@@ -54,18 +56,43 @@ build (`docs/quantities/qt-a1/mutants.json`) and `tests/test_cardinality_exercis
 
 ## Differences from the spec
 
-* **The ratio constructors are QT-A2's.** `roundsTo`, `percentOf`, `percentRoundsTo`, the operand type `CTerm` and
-  its typing (`CTermTyped`, `CTerm.Denotes`, `CTerm.tagOf`, `ratioTyped`), `admittedRules` and their erasure
-  (`roundingQ`) are added by QT-A2 with its agreement theorem, exactly as spec 3.2 to 3.5 and 3.8 write them. Every
-  other definition and statement here is the spec's, unchanged.
+* **`CTerm.tagOf`** writes `VE.Time.dimensionless` where spec 3.4 writes `dl`: `dl` is defined in `Regions.lean`
+  (as `VE.Time.dimensionless`), which imports `Syntax.lean`. Every other definition and statement here is the spec's,
+  unchanged (`docs/quantities/qt-a2/evidence/statements.json`: 71 exact, 1 spelled differently, 5 qt-a1c's).
+* **`roundHalfUp`** is not defined (spec change C9): the meaning of "rounds to" is `VE.Numbers.RoundsTo` alone.
 * **Problem limits** P1 and P2 of spec 4.2 are `problemLimits`, so the core can be tested against them; P3 (W6a's
   aggregate limit) needs W6a's admissions and comes with the wire (QT-A3).
 * Added helper theorems, not in the spec: `bodyCheck_iff`, `admits_iff`, `hasCount_unique`, `exists_nodup_filter`,
   `nodup_length_eq`.
 
-## qt-a1b: the soundness theorems
+## qt-a1b: soundness of erasure (spec 3.6)
 
-`withRegions_admissible`, `bridge_hold`, `erase_iff`, `cardinality_elab_sound`, `erasedProblem_admitted`,
-`count_atLeast_agree`, `count_atMost_agree`, `count_exactly_agree`, `count_nOfM_agree` and `refutesC_sound`, as spec
-3.6, 3.7 and 3.9 state them. Until they are proved, no route uses erasure or `refutesC`: an erased problem's W6a
-certificate says only that the erased problem is entailed, not yet the counting problem.
+Proved in `Theorems.lean`, statements unchanged: `withRegions_admissible`, `bridge_hold`, `erase_iff`,
+`cardinality_elab_sound` and `erasedProblem_admitted`. The argument: an object lies in exactly one region (its own
+truth values), so a body's count is the sum of the sizes of the regions inside it (`regionSize_sum`), and a region
+sum denotes that count under `withRegions` (`regionSum_denote`). A declared constant is never a region constant,
+because every region name begins with the region prefix (`regionConst_startsWith`, through `startsWith_of_data`,
+which unfolds `String.startsWith`'s private loop with `VE.Readings`' `unfold_substrEq_loop`); two (sort, region)
+pairs never share a name (`regionConst_inj`). A recognised universal statement reads only its bound variable
+(`bodyOfQ_spec`), so its bridge holds. FA1 end to end: `fa1_entails` proves `CEntails fomc fa1 fa1Conclusion` from
+the replayed certificate.
+
+## QT-A2: rounding and percent-of (spec 3.8)
+
+"a / b rounds to D / 10^k under rule r" means `VE.Numbers.RoundsTo r ⟨D, k⟩ (a / b)` with `b > 0` (math-evidence owns
+it). Erasure hands W6a the linear form `roundingQ`, `.halfEven`'s endpoints chosen by the parity of the literal `D`;
+`roundsTo_ratio_agree` proves the integer form means exactly `RoundsTo` for all four rules, and `roundingQ_iff` that
+W6a reads `roundingQ` as that form. A rounded percentage rounds `100 · a / b`; "exactly D / 10^k percent" is
+`100 · 10^k · a = D · b` with `b > 0`. Admission takes `tiesUp` and `halfEven` only (`admittedRules`, decision d),
+operands of one tag that is not `day`, a count being dimensionless. `erase_iff`, `cardinality_elab_sound` and
+`erasedProblem_admitted` cover the three constructors through `cterm_erase` and `cterm_typed` (an operand denotes one
+integer, and its erasure denotes it in its tag) and `roundsTo_holds_iff`, `percentOf_holds_iff`,
+`percentRoundsTo_holds_iff`. Fixtures: FA4 (VE's paper, each claim's meaning and erasure, the tie per rule), FA4c and
+FA4d (counts as operands; the two readings of "out of"), FA4e (−1/2), FA5 and FA5b (basis points), FA9e (admission),
+a grid of meaning against erasure, and theorems stating each ratio case on the two-user structure
+(`docs/quantities/qt-a2/mutants.json`).
+
+## qt-a1c: agreement with W6a and finite countermodels
+
+`count_atLeast_agree`, `count_atMost_agree`, `count_exactly_agree`, `count_nOfM_agree` (spec 3.7) and
+`refutesC_sound` (spec 3.9), as the spec states them. Until `refutesC_sound` is proved no route uses `refutesC`.

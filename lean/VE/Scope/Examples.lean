@@ -1,11 +1,14 @@
-import VE.Layout.List
+import VE.Layout.Anchors
+import VE.Scope.Theorems
 
-/-! Acceptance fixtures of scope@0's SC-1a part (docs/spec/scope.md 7.1). Layout fixtures use the pilot's own bytes
+/-! Acceptance fixtures of scope@0's SC-1a and SC-3a layout parts (docs/spec/scope.md 7.1 and 7.5), and of the effects
+    on a rule's JSON object (7.1 F1-m, F1′, F-own; 7.4 F7-t). Layout fixtures use the pilot's own bytes
     for each unit, shortened only inside sentences (7.0). The pilot excerpts are `#guard`s; the same contracts are
     kernel theorems (`decide`) on short layouts. -/
 
 namespace VE.Scope.Examples
 open VE.Layout
+open VE.Discourse (spanIn spansDisjoint)
 
 /-! ### Fixture layouts -/
 
@@ -157,5 +160,257 @@ theorem para_counts : (paraCounts "a\n\n  \n\t\r\nb ".toUTF8).toList = [0, 0, 0,
     paraAgrees [("a", "x\n\n  \n\t\r\nb "), ("b", "c\n \n"), ("c", "\n\nd")] = true := by decide
 
 #guard paraAgrees hcPieces && paraAgrees powerPieces && paraAgrees situationsPieces
+
+/-! ## SC-3a (spec 7.5): anchors, headings and labels -/
+
+/-- An anchor of the fixtures: kind `section` unless it is the root. -/
+def anc (id : String) (parent : Option String) (label : String) (span : Nat × Nat) (exports : List String := []) :
+    VE.Discourse.Anchor :=
+  ⟨id, if parent.isNone then "document" else "section", parent, label, span, none, exports⟩
+
+/-- The anchor of `pieces` from the first byte of unit `first` to the last byte of unit `last`. -/
+def spanOver (pieces : List (String × String)) (first last : String) : Nat × Nat :=
+  let us := (mk pieces).2
+  (((us.find? (·.1 == first)).map (·.2.1)).getD 0, ((us.find? (·.1 == last)).map (·.2.2)).getD 0)
+
+def udhrPieces : List (String × String) := [
+  ("u108", "Everyone is entitled to a social and international order in which the rights and freedoms set forth in this Declaration can be fully realized.\n\n"),
+  ("u109", "## Article 29\n\n"),
+  ("u110", "1. Everyone has duties to the community in which alone the free and full development of his personality is possible.\n\n"),
+  ("u111", "2. In the exercise of his rights and freedoms, everyone shall be subject only to such limitations as are determined by law.\n\n"),
+  ("u112", "3. These rights and freedoms may in no case be exercised contrary to the purposes and principles of the United Nations.\n\n"),
+  ("u113", "## Article 30\n\n"),
+  ("u114", "Nothing in this Declaration may be interpreted as implying for any State, group or person any right to destroy them.\n")]
+
+/-- F8's anchors: Articles 29 and 30 under the document's root anchor `doc`. -/
+def udhrAnchors : List VE.Discourse.Anchor := [
+  anc "doc" none "Universal Declaration of Human Rights" (spanOver udhrPieces "u108" "u114"),
+  anc "art29" (some "doc") "Article 29" (spanOver udhrPieces "u109" "u112"),
+  anc "art30" (some "doc") "Article 30" (spanOver udhrPieces "u113" "u114")]
+
+/-! ### F8, F8-out: Article 29's reach is its three paragraphs; neither heading is in it -/
+
+#guard (anchorReach (layoutOf udhrPieces) udhrAnchors "art29").toOption == some ["u110", "u111", "u112"]
+#guard headingOf (layoutOf udhrPieces) udhrAnchors "art29" == some "u109"
+#guard (anchorReach (layoutOf udhrPieces) udhrAnchors "art29").toOption.all (fun us => !us.contains "u109" && !us.contains "u113")
+#guard (anchorReach (layoutOf udhrPieces) udhrAnchors "art30").toOption == some ["u114"]
+#guard headingOf (layoutOf udhrPieces) udhrAnchors "doc" == some "u108"
+#guard ((layoutOf udhrPieces).map fun x => (innermostAnchor (spansOf (layoutOf udhrPieces)) udhrAnchors x.id).map (·.id)) ==
+    [some "doc", some "art29", some "art29", some "art29", some "art29", some "art30", some "art30"]
+#guard anchorsOk udhrAnchors [] (fun _ => false) matches .ok ()
+
+/-! ### F8-tree: draft 1's anchors, two articles under a missing root, are refused with discourse's text -/
+
+#guard anchorsOk (udhrAnchors.drop 1) [] (fun _ => false) matches .error "InvalidInput: anchors must form one tree"
+
+/-! ### F9′: "Instructable behaviors", in the pinned run's own units. The run splits the heading into its marker
+    `u0151.heading` ("### ") and its words `u0151.presupposition`, so the marker is the anchor's heading and the words
+    are in its reach -/
+
+def instructablePieces : List (String × String) := [
+  ("u0150.s01", "Claude should never see unhelpful responses to the operator and user as an automatically safe choice.\n\n"),
+  ("u0151.heading", "### "), ("u0151.presupposition", "Instructable behaviors\n\n"),
+  ("u0152.s01", "This section discusses various “instructable behaviors” that operators and users can choose to enable in Claude. "),
+  ("u0152.s02", "We expect this content to be of less interest to many human readers, so we’ve collapsed this section by default.\n\n")]
+
+#guard headingOf (layoutOf instructablePieces)
+    [anc "doc" none "Constitution" (spanOver instructablePieces "u0150.s01" "u0152.s02"),
+     anc "ib" (some "doc") "Instructable behaviors" (spanOver instructablePieces "u0151.heading" "u0152.s02")] "ib" ==
+  some "u0151.heading"
+#guard (anchorReach (layoutOf instructablePieces)
+    [anc "doc" none "Constitution" (spanOver instructablePieces "u0150.s01" "u0152.s02"),
+     anc "ib" (some "doc") "Instructable behaviors" (spanOver instructablePieces "u0151.heading" "u0152.s02")] "ib").toOption ==
+  some ["u0151.presupposition", "u0152.s01", "u0152.s02"]
+
+/-! ### F10: a bold label reaches its item, the item's continuing sentences and its sub-bullets -/
+
+#guard (itemRun (layoutOf situationsPieces) "u0073.s01").toOption == some ["u0073.s01", "u0073.s02", "u0073.s03", "u0073.s04"]
+#guard (itemRun (layoutOf situationsPieces) "u0073.s08").toOption == some ["u0073.s08", "u0073.s09", "u0073.s10"]
+#guard itemRun (layoutOf situationsPieces) "u0073.s04" matches .error "NotALabel: u0073.s04"
+#guard (itemRun (layoutOf powerPieces) "u0182.s02").toOption == some ["u0182.s02", "u0182.s03"]
+
+/-! ### The same contracts as kernel theorems on the short layout: the item stops at the next item of its depth
+    and at an odd indentation; an item without a label, a unit that is no item and an unknown unit are refused -/
+
+theorem short_items : (itemRun (layoutOf shortPieces) "a.s03").toOption = some ["a.s03", "a.s04", "a.s05"] ∧
+    (itemRun (layoutOf shortPieces) "a.s06").toOption = some ["a.s06"] ∧
+    (itemRun (layoutOf shortPieces) "a.s08" matches .error "NotALabel: a.s08") ∧
+    (itemRun (layoutOf shortPieces) "a.s04" matches .error "NotALabel: a.s04") ∧
+    (itemRun (layoutOf shortPieces) "z" matches .error "ScopeUnknownUnit: z") := by decide +kernel
+
+/-! ### Containment at its boundaries, the innermost anchor, and the anchor reach, on unit spans written out -/
+
+def boxUnits : List VE.Layout.Unit :=
+  [("u1", 0, 5), ("u2", 5, 10), ("u3", 10, 15), ("u4", 15, 20)].map fun (id, s, e) => ⟨id, (s, e), none, false, false, false, 0⟩
+
+/-- `r` holds every unit; `s` begins at u2's first byte and ends at u3's last; `t` is u4; `w` has no unit. -/
+def boxAnchors : List VE.Discourse.Anchor :=
+  [anc "r" none "R" (0, 20), anc "s" (some "r") "S" (5, 15), anc "t" (some "r") "T" (15, 20),
+   anc "w" (some "r") "W" (20, 20)]
+
+theorem box_anchors :
+    ["u1", "u2", "u3", "u4"].map (fun u => within (spansOf boxUnits) boxAnchors u "s") = [false, true, true, false] ∧
+    within (spansOf boxUnits) boxAnchors "u9" "r" = false ∧ within (spansOf boxUnits) boxAnchors "u1" "q" = false ∧
+    ["u1", "u3", "u4"].map (fun u => (innermostAnchor (spansOf boxUnits) boxAnchors u).map (·.id)) =
+      [some "r", some "s", some "t"] ∧
+    (innermostAnchor (spansOf boxUnits) [anc "a" none "A" (0, 20), anc "b" none "B" (0, 20)] "u2").map (·.id) = some "a" ∧
+    innermostAnchor (spansOf boxUnits) boxAnchors "u9" = none ∧
+    headingOf boxUnits boxAnchors "s" = some "u2" ∧ (anchorReach boxUnits boxAnchors "s").toOption = some ["u3"] ∧
+    (anchorReach boxUnits boxAnchors "w" matches .error "ScopeUnknownAnchor: w") ∧
+    (anchorReach boxUnits boxAnchors "q" matches .error "ScopeUnknownAnchor: q") := by decide +kernel
+
+/-! ### The span tests and the walk to the root that the anchor checks use, at their boundaries -/
+
+theorem span_tests : spanIn (2, 4) (0, 5) = true ∧ spanIn (0, 5) (0, 5) = true ∧ spanIn (0, 6) (0, 5) = false ∧
+    spanIn (1, 5) (2, 5) = false ∧ spansDisjoint (0, 5) (5, 9) = true ∧ spansDisjoint (5, 9) (0, 5) = true ∧
+    spansDisjoint (0, 6) (5, 9) = false := by decide
+
+/-- `s` reaches the root in two steps, not one; a span outside its parent's, or a missing parent, never does. -/
+theorem reaches_root : reachesRoot boxAnchors 2 (anc "s" (some "r") "S" (5, 15)) = true ∧
+    reachesRoot boxAnchors 1 (anc "s" (some "r") "S" (5, 15)) = false ∧
+    reachesRoot boxAnchors 2 (anc "x" (some "r") "X" (5, 25)) = false ∧
+    reachesRoot boxAnchors 2 (anc "x" (some "m") "X" (5, 15)) = false := by decide +kernel
+
+/-! ### Discourse's anchor checks, one fixture per diagnostic, in their order, and the limit's boundary. The sibling
+    checks compare labels through `String.toLower`, which the kernel does not reduce, so those are `#guard`s -/
+
+theorem anchor_checks :
+    (anchorsOk (List.replicate 1025 (anc "r" none "R" (0, 20))) [] (fun _ => true) matches .error "ResourceLimit: anchors") ∧
+    (anchorsOk (List.replicate 1024 (anc "r" none "R" (0, 20))) [] (fun _ => true) matches
+      .error "DuplicateDeclaration: anchor r") ∧
+    (anchorsOk [anc "r" none "R" (0, 20), anc "q" none "Q" (0, 20)] [] (fun _ => true) matches
+      .error "InvalidInput: anchors must form one tree") ∧
+    (anchorsOk [] [] (fun _ => true) matches .ok ()) ∧
+    (anchorsOk [anc "r" none "R" (0, 20), anc "s" (some "m") "S" (5, 15)] [] (fun _ => true) matches
+      .error "DanglingAnchor: m") ∧
+    (anchorsOk [anc "r" none "R" (0, 20), anc "s" (some "r") "S" (5, 25)] [] (fun _ => true) matches
+      .error "DanglingAnchor: r") ∧
+    (anchorsOk [anc "r" none "R" (0, 20), anc "s" (some "r") "S" (0, 10) ["p"]] [(2, 4)] (fun _ => true) matches .ok ()) ∧
+    (anchorsOk [anc "r" none "R" (0, 20), anc "s" (some "r") "S" (0, 10) ["p"]] [(2, 4)] (fun _ => false) matches
+      .error "ManifestMismatch: anchors.s.exports") ∧
+    (anchorsOk [anc "r" none "R" (0, 20), anc "s" (some "r") "S" (0, 10) ["p"]] [(8, 12)] (fun _ => true) matches
+      .error "ManifestMismatch: anchors.s.exports") := by decide +kernel
+
+#guard anchorsOk boxAnchors [] (fun _ => false) matches .ok ()
+#guard anchorsOk [anc "r" none "R" (0, 20), anc "s" (some "r") "Sec" (0, 5), anc "t" (some "r") "sec" (5, 10)] []
+  (fun _ => true) matches .error "DuplicateAnchor: Sec"
+#guard anchorsOk [anc "r" none "R" (0, 20), anc "s" (some "r") "S" (0, 10), anc "t" (some "r") "T" (9, 20)] []
+  (fun _ => true) matches .error "InvalidInput: anchors s, t overlap"
+#guard anchorsOk [anc "r" none "R" (0, 20), anc "s" (some "r") "S" (0, 10), anc "t" (some "r") "T" (10, 20)] []
+  (fun _ => true) matches .ok ()
+
+
+/-! ## sc-1ab (spec 7.1 and 7.4's F7-t): the effects on a rule's JSON object. JSON fixtures are `#guard`s -/
+
+section Effects
+open Lean
+
+def j (s : String) : Json := (Json.parse s).toOption.getD .null
+
+def leadPart : Json := j "{\"sign\": false, \"unless\": [], \"over\": []}"
+def item1 : Json :=
+  j "{\"name\": \"hc-cbrn-uplift\", \"predicate\": \"restricted_act_permitted\", \"guard\": [\"unary\", \"mass_casualty_weapon_uplift\", [\"var\", 1]]}"
+def item3sign : Json := j "{\"name\": \"hc-cyberweapons\", \"predicate\": \"p\", \"sign\": false, \"guard\": [\"top\"]}"
+def u0173 : Json := j "[\"or\", [\"and\", \"own\", {\"attitude\": {\"holder\": [\"var\", 0], \"mode\": \"knows\", \"content\": \"own\"}}], {\"attitude\": {\"holder\": [\"var\", 0], \"mode\": \"thinks\", \"degree\": \"quite likely\", \"content\": \"own\"}}]"
+def guard1 : Json := j "[\"unary\", \"mass_casualty_weapon_uplift\", [\"var\", 1]]"
+
+-- F1-m: the frame joined to u0165.s01's part is the whole rule object, all six W1 keys
+#guard (mergeParts "u0165.s01" leadPart item1).toOption.map (·.compress) ==
+  some "{\"guard\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"name\":\"hc-cbrn-uplift\",\"over\":[],\"predicate\":\"restricted_act_permitted\",\"sign\":false,\"unless\":[]}"
+
+-- F1′: an item that also writes `sign`
+#guard (mergeParts "u0165.s03" leadPart item3sign) matches .error "ScopeConflict: u0165.s03: sign"
+
+-- parts that are not objects
+#guard (mergeParts "u0165.s01" (j "[]") item1) matches .error "InvalidInput: scope@0 parts of u0165.s01 must be objects"
+#guard (mergeParts "u0165.s01" leadPart (.str "x")) matches .error "InvalidInput: scope@0 parts of u0165.s01 must be objects"
+
+-- `lookups` lists exactly what `VE.Bridge.fields` lists on parsed objects
+#guard [leadPart, item1, item3sign].all fun o =>
+  (lookups o).toOption.map (·.map (·.1)) == (VE.Bridge.fields o).toOption.map (·.map (·.1))
+
+/-- Counterfixture: the spec's text of `mergeParts` (4.2), which reads `VE.Bridge.fields`, kept only to show why
+    `mergeParts` reads members through `lookups`. -/
+def mergePartsText (u : String) (lead item : Json) : Except String Json := do
+  let bad := s!"InvalidInput: scope@0 parts of {u} must be objects"
+  let ls ← (VE.Bridge.fields lead).mapError (fun _ => bad)
+  let is ← (VE.Bridge.fields item).mapError (fun _ => bad)
+  match ls.find? (fun kv => is.any (·.1 == kv.1)) with
+  | some (k, _) => throw s!"ScopeConflict: {u}: {k}"
+  | none => pure (Json.mkObj (ls ++ is))
+
+/-- An object whose tree is out of order: it lists the key "0", which lookup does not find. -/
+def unordered : Json :=
+  .obj ⟨⟨Std.DTreeMap.Internal.Impl.inner 2 "a" (.bool true) .leaf (.inner 1 "0" (.bool false) .leaf .leaf)⟩⟩
+
+/-- On `unordered`, the spec's text writes "0" into the joined object although neither side's lookup finds it,
+    so `mergeParts_keys` would be false of it; `mergeParts` keeps only what lookup finds. -/
+theorem unordered_join :
+    (unordered.getObjVal? "0").isOk = false ∧ (unordered.getObjVal? "a").isOk = true ∧
+    ((mergePartsText "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "0").isOk)) = some true ∧
+    ((mergeParts "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "0").isOk)) = some false ∧
+    ((mergeParts "u" unordered (Json.mkObj [])).toOption.map (fun o => (o.getObjVal? "a").isOk)) = some true := by
+  decide +kernel
+
+/-- On well-formed objects, and on every value that is not an object, `mergeParts` is the spec's text: reading
+    through lookup changes what is accepted only on out-of-order trees such as `unordered`. -/
+theorem mergeParts_text (u : String) (lead item : Json) (hl : ∀ kvs, lead = .obj kvs → kvs.WF)
+    (hi : ∀ kvs, item = .obj kvs → kvs.WF) : mergeParts u lead item = mergePartsText u lead item := by
+  simp only [mergeParts, mergePartsText, lookups_fields lead hl, lookups_fields item hi]; rfl
+
+-- F-own: u0173.s01's condition: (true, false after substitution, true, true)
+#guard (hasOwn depthLimit u0173, hasOwn depthLimit (substOwn guard1 depthLimit u0173), ownSafe depthLimit u0173,
+  depthOk depthLimit u0173) == (true, false, true, true)
+#guard (substOwn guard1 depthLimit u0173).compress ==
+  "[\"or\",[\"and\",[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],{\"attitude\":{\"content\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"holder\":[\"var\",0],\"mode\":\"knows\"}}],{\"attitude\":{\"content\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"degree\":\"quite likely\",\"holder\":[\"var\",0],\"mode\":\"thinks\"}}]"
+-- an own-free condition is unchanged
+#guard let c := j "[\"unary\", \"tested_by_anthropic\", [\"var\", 1]]"; substOwn (j "[\"top\"]") depthLimit c == c
+
+-- `own` as an object's value counts and is replaced; an object key "own" is neither
+#guard (hasOwn depthLimit (j "{\"content\": \"own\"}"), hasOwn depthLimit (j "{\"own\": 1}")) == (true, false)
+#guard (substOwn guard1 depthLimit (j "{\"own\": \"own\"}")).compress ==
+  "{\"own\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]]}"
+
+/-- A condition nested `n` arrays deep. -/
+def nest : Nat → Json | 0 => .str "top" | n + 1 => .arr #[nest n]
+
+-- the depth limit: 63 nested arrays pass, 64 do not
+#guard (depthOk depthLimit (nest 63), depthOk depthLimit (nest 64)) == (true, false)
+
+/-- The six effects of spec 1.3, no more. -/
+theorem effects_six (e : Effect) : (∃ p, e = .frame p) ∨ (∃ c, e = .reguard c) ∨ (∃ c, e = .carveOut c) ∨
+    e = .precedes ∨ e = .yields ∨ e = .title := by
+  cases e <;> simp
+
+/-- `own` under a binder is not safe; `own` beside a binder is. -/
+theorem own_binder :
+    ownSafe depthLimit (.arr #[.str "forall", .str "user", .arr #[.str "and", .str "own", .arr #[.str "top"]]]) = false ∧
+    ownSafe depthLimit (.arr #[.str "and", .str "own", .arr #[.str "forall", .str "user", .arr #[.str "top"]]]) = true ∧
+    ownSafe depthLimit (.arr #[.str "exists", .str "user", .str "own"]) = false := by decide
+
+/-- A condition one level deeper than its fuel is not `depthOk`. -/
+theorem depth_bound : depthOk 2 (.arr #[.arr #[.str "top"]]) = false ∧ depthOk 3 (.arr #[.arr #[.str "top"]]) = true ∧
+    ownSafe 2 (.arr #[.arr #[.str "top"]]) = true := by
+  decide
+
+/-- Plain narrowing is `["and", "own", C]` with `C` free of `own`. -/
+theorem narrowings : (narrowing (.arr #[.str "and", .str "own", .arr #[.str "top"]])).isSome = true ∧
+    (narrowing (.arr #[.str "and", .str "own", .str "own"])).isNone = true ∧
+    (narrowing (.arr #[.str "and", .arr #[.str "top"], .str "own"])).isNone = true := by decide
+#guard (narrowing (j "[\"and\", \"own\", [\"top\"]]")).map (·.compress) == some "[\"top\"]"
+
+-- F7-t: the `Commutes` table
+def narrowK : Effect := .reguard (j "[\"and\", \"own\", [\"unary\", \"no_operator_prompt\", [\"var\", 1]]]")
+def carveT : Effect := .carveOut (j "[\"unary\", \"tested_by_anthropic\", [\"var\", 1]]")
+def ownCarve : Effect := .carveOut (j "[\"and\", \"own\", [\"unary\", \"tested_by_anthropic\", [\"var\", 1]]]")
+def reguard173 : Effect := .reguard u0173
+#guard (Commutes reguard173 reguard173, Commutes reguard173 narrowK, Commutes narrowK carveT, Commutes carveT narrowK,
+  Commutes carveT carveT, Commutes narrowK narrowK, Commutes ownCarve carveT, Commutes (.frame leadPart) narrowK) ==
+  (false, false, true, true, true, true, false, false)
+-- and a narrowing with an own carve-out, or a carve-out with a reguard that is no narrowing, in either order
+#guard [Commutes narrowK ownCarve, Commutes ownCarve narrowK, Commutes reguard173 carveT, Commutes carveT reguard173] ==
+  [false, false, false, false]
+
+end Effects
 
 end VE.Scope.Examples

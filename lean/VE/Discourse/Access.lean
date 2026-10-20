@@ -1,5 +1,6 @@
 import VE.Discourse.Manifest
 import VE.English.Parse
+import VE.Layout.Anchors
 
 /-! # Accessibility `Acc(D, m, t)` (docs/spec/discourse.md 4.2, 9.2)
 
@@ -129,25 +130,19 @@ unit ids. The route loads no norm content (`NotImplemented: norm content`, 3.4),
 reads has none, and every `rule` target is `UnknownRule` (4.1(4)). -/
 def ruleNames (_D : DDoc) : List String := []
 
-def unitSpan (D : DDoc) (u : String) : Option (Nat × Nat) :=
-  ((unitKeys D).find? (·.1 == u)).map fun k => (k.2.1, k.2.2.1)
-
 def anchorOf (D : DDoc) (a : String) : Option Anchor := D.K.anchors.find? (·.id == a)
+
+/-! Anchor containment has one owner, `VE/Layout/Anchors.lean`, which scope reads too; these call it. -/
 
 /-- The unit lies inside the anchor's span. -/
 def within (D : DDoc) (unit anchor : String) : Bool :=
-  match unitSpan D unit, anchorOf D anchor with
-  | some (b, e), some a => a.span.1 ≤ b && e ≤ a.span.2
-  | _, _ => false
+  VE.Layout.within (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors unit anchor
 
-def narrower (best : Option Anchor) (a : Anchor) : Option Anchor :=
-  match best with
-  | none => some a
-  | some b => if a.span.2 - a.span.1 < b.span.2 - b.span.1 then some a else some b
+def narrower (best : Option Anchor) (a : Anchor) : Option Anchor := VE.Layout.narrower best a
 
 /-- The smallest anchor containing the unit (the first of equal size). -/
 def innermostAnchor (D : DDoc) (unit : String) : Option Anchor :=
-  (D.K.anchors.filter fun a => within D unit a.id).foldl narrower none
+  VE.Layout.innermostAnchor (D.base.units.map fun x => (x.id, x.start, x.stop)) D.K.anchors unit
 
 /-- The registration of a constant (binder names are never constants). -/
 def registered (D : DDoc) (c : String) : Option Name :=
@@ -576,24 +571,12 @@ theorem kind_fit (D : DDoc) (m : Slot) (t : Target) (h : Acc D m t) : formFits m
   exact h.1
 
 theorem narrower_mem : ∀ (l : List Anchor) (best : Option Anchor) (a : Anchor),
-    l.foldl narrower best = some a → best = some a ∨ a ∈ l
-  | [], best, a, h => Or.inl h
-  | x :: xs, best, a, h => by
-    rcases narrower_mem xs (narrower best x) a h with h' | h'
-    · unfold narrower at h'
-      split at h'
-      · cases h'; exact Or.inr List.mem_cons_self
-      · split at h'
-        · cases h'; exact Or.inr List.mem_cons_self
-        · exact Or.inl h'
-    · exact Or.inr (List.mem_cons_of_mem _ h')
+    l.foldl narrower best = some a → best = some a ∨ a ∈ l :=
+  VE.Layout.narrower_mem
 
 theorem innermost_within {D : DDoc} {u : String} {a : Anchor} (h : innermostAnchor D u = some a) :
-    within D u a.id = true := by
-  unfold innermostAnchor at h
-  rcases narrower_mem _ none a h with h | h
-  · cases h
-  · exact (List.mem_filter.mp h).2
+    within D u a.id = true :=
+  VE.Layout.innermost_within h
 
 /-- No heuristic: accessibility depends only on registrations, content names, anchors,
 declarations (with the sorts' declared nouns), the unit table and lemma names, the slot's unit,
@@ -609,15 +592,16 @@ theorem acc_no_heuristic (D D₂ : DDoc) (m : Slot) (t : Target)
     (hb : unitKeys D = unitKeys D₂ ∧ lemmaNames D = lemmaNames D₂) :
     Acc D m t ↔ Acc D₂ m t := by
   obtain ⟨hn, hc, han, hd, _, hE⟩ := hK
+  have hsp : D.base.units.map (fun x => (x.id, x.start, x.stop)) =
+      D₂.base.units.map (fun x => (x.id, x.start, x.stop)) := by
+    have h := congrArg (List.map fun k => (k.1, k.2.1, k.2.2.1)) hb.1
+    simpa only [unitKeys, unitKey, List.map_map, Function.comp_def] using h
   have hw : ∀ u a, within D u a = within D₂ u a := by
     intro u a
-    simp only [within, unitSpan, anchorOf, hb.1, han]
+    simp only [within, hsp, han]
   have hi : ∀ u, innermostAnchor D u = innermostAnchor D₂ u := by
     intro u
-    unfold innermostAnchor
-    rw [han]
-    congr 1
-    exact List.filter_congr (fun a _ => hw u a.id)
+    simp only [innermostAnchor, hsp, han]
   have hu : unitIds D = unitIds D₂ := by simp only [unitIds, hb.1]
   have hown : ownText D m = ownText D₂ m := by
     unfold ownText

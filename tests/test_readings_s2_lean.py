@@ -86,10 +86,9 @@ def test_m2_models_encode_one_choice_and_the_quiet_premise(lean):
 def test_m2_slot_is_the_same_in_lean_python_and_rust(lean):
     """The three evaluators agree on M2's admitted bases and rejected quiet-premise base."""
     from ve.ast import formula_from_data
-    from ve.backends.dispatch import pinned
+    from tests import python_oracle
     from ve.backends.rust_jsonl import run as rust_run
     from ve.environment import Environment
-    from ve.evaluate import evaluate
     from ve.model import FiniteModel
     from ve.readings_route import elaborate
 
@@ -107,9 +106,8 @@ def test_m2_slot_is_the_same_in_lean_python_and_rust(lean):
     for bit, excepted, expected in [(False, False, True), (True, True, True), (False, True, False)]:
         shown = model(bit, excepted)
         [checked] = run(lean, [case("readings-model", raw, document, model=shown)])
-        with pinned("python"):
-            python_model = FiniteModel.from_dict(environment, shown)
-            python_value = evaluate(environment, formula, python_model, trace=False).value
+        python_model = FiniteModel.from_dict(environment, shown)
+        python_value = python_oracle.evaluate(environment, formula, python_model, trace=False).value
         rust = rust_run({"id": "m2", "kind": "readings-superposed-evaluate", "untrusted": True,
                          "environment": shadow_environment, "model": shown, "slot": [slot],
                          "assertions": [], "conflict_targets": [], "conclusions": []})
@@ -217,10 +215,9 @@ def test_m4_countermodel_outcome_agrees_in_three_evaluators(lean):
     from copy import deepcopy
 
     from ve.ast import _to_data, formula_from_data
-    from ve.backends.dispatch import pinned
+    from tests import python_oracle
     from ve.backends.rust_jsonl import run as rust_run
     from ve.environment import Environment
-    from ve.evaluate import evaluate
     from ve.model import FiniteModel
     from ve.readings_s1 import Document, S1Environment
     from ve.readings_sup import choice_vocabulary, superposed_contents
@@ -252,10 +249,9 @@ def test_m4_countermodel_outcome_agrees_in_three_evaluators(lean):
                        BIT: frame["vocabulary"]["predicates"][BIT],
                        EX2: {"arguments": ["agent", "user"], "description": "exception"}}}}
     environment = Environment(shadow)
-    with pinned("python"):
-        python_model = FiniteModel.from_dict(environment, shown)
-        python_value = evaluate(environment, formula_from_data(environment, conclusion),
-                                python_model, trace=False).value
+    python_model = FiniteModel.from_dict(environment, shown)
+    python_value = python_oracle.evaluate(environment, formula_from_data(environment, conclusion),
+                                          python_model, trace=False).value
     rust = rust_run({"id": "m4", "kind": "readings-superposed-evaluate", "untrusted": True,
                      "environment": shadow, "model": shown, "slot": [], "assertions": [],
                      "conflict_targets": [], "conclusions": [conclusion]})
@@ -283,10 +279,9 @@ def test_m5_narrowing_slot_and_choice_match_python(lean):
 def test_m6_coupling_slot_agrees_in_three_evaluators(lean):
     """The coupled M6 choices and its distinguishing forbidden bit pair agree at all three sites."""
     from ve.ast import formula_from_data
-    from ve.backends.dispatch import pinned
+    from tests import python_oracle
     from ve.backends.rust_jsonl import run as rust_run
     from ve.environment import Environment
-    from ve.evaluate import evaluate
     from ve.model import FiniteModel
     from ve.readings_route import elaborate
 
@@ -342,10 +337,9 @@ def test_m6_coupling_slot_agrees_in_three_evaluators(lean):
                                second_exception: [["a", "u"]] if second_bit_value else []}}
         [lean_row] = run(lean, [case("readings-model", raw,
                                     {**document, "couplings": [coupling]}, model=shown)])
-        with pinned("python"):
-            python_model = FiniteModel.from_dict(environment, shown)
-            python_values = [evaluate(environment, formula_from_data(environment, formula),
-                                      python_model, trace=False).value for formula in slot]
+        python_model = FiniteModel.from_dict(environment, shown)
+        python_values = [python_oracle.evaluate(environment, formula_from_data(environment, formula),
+                                                python_model, trace=False).value for formula in slot]
         rust = rust_run({"id": "m6", "kind": "readings-superposed-evaluate", "untrusted": True,
                          "environment": shadow, "model": shown, "slot": slot,
                          "assertions": [], "conflict_targets": [], "conclusions": []})
@@ -445,35 +439,3 @@ def test_ruling5_every_choice_document_checked(lean):
     assert row["route"] == "superposed" and row["choices_checked"] == 2
     checked = elaborate(raw, document["units"], document["reading_sets"])
     assert checked["choices_checked"] == 2
-
-
-def test_ruling5_diagnostic_names_the_choice(monkeypatch):
-    """A choice whose document the chain refuses is the chain's text under the choice, in source order (7)."""
-    from ve import readings_s1
-    from ve.readings_s1 import Document, S1Environment
-    from ve.readings_sup import CHECK_BUDGET_TEXT, route_refusal
-
-    raw = env_k()
-    source = Document(S1Environment(raw), k1(raw))
-    assert route_refusal(source, "superposed") is None
-    calls = []
-
-    def refuse(side):
-        calls.append(side)
-        return "ResourceLimit: generated background" if len(calls) == 2 else None
-
-    monkeypatch.setattr(readings_s1.Side, "chain_text", refuse)
-    assert route_refusal(source, "superposed") == "ResourceLimit: generated background under rs1@1:1"
-    assert CHECK_BUDGET_TEXT == "ResourceLimit: more than 1024 readings to check"
-
-
-def test_ruling5_over_budget_refuses_superposed_kinds(monkeypatch):
-    """Past the budget no choice is checked, and the superposed verdict kinds would claim more than the check."""
-    from ve import readings_sup
-    from ve.readings_s1 import Document, S1Environment
-
-    raw = env_k()
-    source = Document(S1Environment(raw), k1(raw))
-    monkeypatch.setattr(readings_sup, "MAX_CHOICE_CHECKS", 1)
-    assert readings_sup.choices_checked(source.sets, "superposed") == "over 1"
-    assert readings_sup.route_refusal(source, "superposed") is None

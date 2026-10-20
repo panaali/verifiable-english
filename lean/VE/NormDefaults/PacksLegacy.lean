@@ -2,13 +2,13 @@ import VE.NormDefaults.Layered
 import VE.Readings.SupWitness
 
 /-! The premise-pack theorems over `Layered.lean`'s legacy packs (docs/spec/premise-packs.md 2.5 (3), 2.6, 2.8 and
-2.9): `X` typed over `envX`, today's soft and rights sources assemble unchanged in today's order, `packPremises`
-reads today's arrays, `packFault` gives today's `filledX` text on today's lists, and every filled situation the route
-accepts satisfies the whole `X`. -/
+2.9, 2.10): `X` typed over `envX`, today's soft and rights sources assemble unchanged in today's order, `packPremises`
+reads today's arrays, `packFault` gives today's `filledX` text on today's lists, every filled situation the route
+accepts satisfies the whole `X`, and the kind table answers today's kinds as `layeredCase` does. -/
 namespace VE.NormDefaults.Packs
 open Lean
 open VE.Norms (envAt size)
-open VE.NormDefaults.Wire (LayeredU softLabelledU softPack rightsPack extraValid)
+open VE.NormDefaults.Wire (LayeredU softLabelledU softPack rightsPack extraValid legacyKinds legacyRows)
 
 /-! ## 2.5 (3) Typing -/
 
@@ -262,5 +262,46 @@ theorem packFault_legacy_soft (U : UDoc) (D : VE.SoftNorms.SoftDoc) (M : VE.Fini
 /-- 2.9 (9): every filled situation the layered route accepts satisfies the whole `X`. -/
 theorem filledX_whole (L : LayeredU) (w : Json) (fw : VE.NormDefaults.Wire.FilledX L)
     (_h : VE.NormDefaults.Wire.filledX L w = .ok fw) : extraValid L.U L.X fw.S.M fw.F = true := fw.extra_ok
+
+/-! ## 2.10 The kind table -/
+
+/-- `layeredCase` answers each of today's four kinds, or refuses it; it never returns `none` for one. -/
+theorem layeredCase_some (L : LayeredU) (id kind : String) (j : Json) (hk : kind ∈ legacyKinds) :
+    VE.NormDefaults.Wire.layeredCase L id kind j ≠ .ok none := by
+  intro h
+  simp only [legacyKinds, List.mem_cons, List.not_mem_nil, or_false] at hk
+  rcases hk with rfl | rfl | rfl | rfl <;>
+    simp [VE.NormDefaults.Wire.layeredCase, Functor.map, Except.map, bind, Except.bind, Seq.seq, pure,
+      Except.pure] at h <;>
+    repeat' (first | (split at h) | simp_all)
+
+theorem dispatch_legacy (ids : List String) (L : LayeredU) (id kind : String) (j : Json) (hk : kind ∈ legacyKinds) :
+    dispatch legacyRows ids L id kind j = VE.NormDefaults.Wire.layeredCase L id kind j := by
+  have hs := layeredCase_some L id kind j hk
+  have hf : legacyRows.find? (·.kind == kind) = some ⟨kind, none, fun L id j => do
+      match ← VE.NormDefaults.Wire.layeredCase L id kind j with
+      | some a => pure a
+      | none => throw "unreachable"⟩ := by
+    simp only [legacyKinds, List.mem_cons, List.not_mem_nil, or_false] at hk
+    rcases hk with rfl | rfl | rfl | rfl <;> rfl
+  rw [dispatch, hf]
+  dsimp only
+  generalize VE.NormDefaults.Wire.layeredCase L id kind j = x at hs ⊢
+  rcases x with _ | _ | _
+  · rfl
+  · exact absurd rfl hs
+  · rfl
+
+/-- The route's dispatch answers every kind as `layeredCase` does: today's four by `dispatch_legacy`, any other
+`none`. -/
+theorem kindCase_eq (L : LayeredU) (id kind : String) (j : Json) :
+    VE.NormDefaults.Wire.kindCase L id kind j = VE.NormDefaults.Wire.layeredCase L id kind j := by
+  by_cases hk : kind ∈ legacyKinds
+  · exact dispatch_legacy _ L id kind j hk
+  · simp only [legacyKinds, List.mem_cons, List.not_mem_nil, or_false, not_or] at hk
+    obtain ⟨h1, h2, h3, h4⟩ := hk
+    have hf : legacyRows.find? (·.kind == kind) = none := by
+      simp [legacyRows, legacyKinds, Ne.symm h1, Ne.symm h2, Ne.symm h3, Ne.symm h4]
+    simp [VE.NormDefaults.Wire.kindCase, dispatch, hf, VE.NormDefaults.Wire.layeredCase, h1, h2, h3, h4]
 
 end VE.NormDefaults.Packs

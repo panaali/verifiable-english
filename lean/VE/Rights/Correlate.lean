@@ -1,6 +1,7 @@
 import VE.Rights.Tree
 import VE.SoftNorms.Coherence
 import VE.SoftNorms.Once
+import VE.Limits
 
 /-! The elaboration `correlate(D) = (E″, T″)` and `Lim_D` (docs/spec/rights.md 1.3–1.6,
 4.1, 4.2, 5.1), the syntactic narrowing inventory of 4.5 and the executable check
@@ -231,11 +232,11 @@ def beginsRightsPred (p : String) : Bool := p.startsWith "rights__"
 
 /-- An identifier of the predicate grammar (`[a-z][a-z0-9_]*`, at most 64 bytes). -/
 def identifier (s : String) : Bool :=
-  s.utf8ByteSize ≤ 64 && match s.toList with
+  s.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes && match s.toList with
     | c :: cs => ('a' ≤ c && c ≤ 'z') && cs.all (fun d => ('a' ≤ d && d ≤ 'z') || d.isDigit || d == '_')
     | [] => false
 
-def validDecider (d : Option String) : Bool := d.all (fun s => !s.isEmpty && s.utf8ByteSize ≤ 64)
+def validDecider (d : Option String) : Bool := d.all (fun s => !s.isEmpty && s.utf8ByteSize ≤ VE.Limits.maxIdentifierBytes)
 
 /-- The environment `rights` block (3.1). -/
 def checkBlock (D : RightsDoc) : Except String Unit := do
@@ -441,7 +442,7 @@ def validateRights (D : RightsDoc) : Except String Unit :=
     match VE.SoftNorms.validateSoft (correlate D) with
     | .error e => .error e
     | .ok () =>
-      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > 64) with
+      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > VE.Limits.maxIdentifierBytes) with
       | some n => .error s!"ResourceLimit: identifier {n} exceeds 64 bytes"
       | none => if rightsSemanticCheck D then .ok () else .error "InvalidInput: rights document is not stratified"
 
@@ -576,7 +577,7 @@ def validateRightsOnce (D : RightsDoc) : Except String Unit :=
     match VE.SoftNorms.validateSoftOnce (correlate D) with
     | .error e => .error e
     | .ok () =>
-      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > 64) with
+      match (VE.SoftNorms.decisionNames (correlate D)).find? (fun n => n.utf8ByteSize > VE.Limits.maxIdentifierBytes) with
       | some n => .error s!"ResourceLimit: identifier {n} exceeds 64 bytes"
       | none => if rightsSemanticCheck D then .ok () else .error "InvalidInput: rights document is not stratified"
 
