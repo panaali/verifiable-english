@@ -1,14 +1,15 @@
 import VE.Defaults.Premises
 
-/-! DF-1a's synthetic fixtures (docs/spec/defeasible.md 8.1 and 8.2, DF-α to DF-ζ, DF-ι, DF-κ, DF-σ) on the premises, the
-basis and the form. Each document is decoded by the real `decodeSoftU`; every value is a `#guard`.
+/-! DF-1a's synthetic fixtures (docs/spec/defeasible.md 8.1, 8.2 and 8.4, DF-α to DF-ζ, DF-η, DF-ι, DF-κ, DF-ω, DF-σ) on
+the premises, the diagnostics, the gate, the collision DE7 shows, the basis, the form and the deciders. Each document is decoded by the real `decodeSoftU`; every value is a `#guard`.
 
 Situations have one entity per sort. The one-element check (`check1`, RD-9's `modelCheckX` with `localFree`) is
 complete for these documents: every premise and conclusion is universal over one tuple of variables and every
 predicate takes exactly that tuple, so a countermodel restricts to the one-element substructure at a failing tuple.
 `assume1` is `assumptionsOf` with that complete check in place of a certificate check (spec 8.0); `assumptionsOf`
 itself runs on two certificates written here (DF-α). Named strict countermodels are checked on the wire
-(`situationX`, `decodeFilling`, RD-9's `xModelOk`). -/
+(`situationX`, `decodeFilling`, RD-9's `xModelOk`), and so is the empty-domain situation wherever a claim rests on a
+model of `⊥` (DF-γ, DF-ι). -/
 namespace VE.Defaults.Fixtures
 open Lean
 open VE.Norms (bindAll atom anyF)
@@ -37,16 +38,19 @@ def envJ (preds : List String) (soft : String) : Json :=
 
 def strictSoft : String := r#"{"outranking":{"mode":"strict"}}"#
 def userSoft : String := r#"{"parties":["user"],"outranking":{"mode":"strict"}}"#
+def operatorSoft : String := r#"{"parties":["operator"],"outranking":{"mode":"strict"}}"#
 def holisticSoft : String :=
   r#"{"ranks":["safety","helpfulness"],"outranks":[["safety","helpfulness"]],"outranking":{"mode":"holistic","decided_by":"assistant"}}"#
+def holisticOpSoft : String :=
+  r#"{"parties":["operator"],"ranks":["safety","helpfulness"],"outranks":[["safety","helpfulness"]],"outranking":{"mode":"holistic","decided_by":"operator"}}"#
 def strictRankSoft : String :=
   r#"{"ranks":["safety","helpfulness"],"outranks":[["safety","helpfulness"]],"outranking":{"mode":"strict"}}"#
 
 def ruleJ (name pred : String) (sign : Bool) (fields : String := "") : String :=
   "{\"norm\":{\"name\":\"" ++ name ++ "\",\"predicate\":\"" ++ pred ++ "\",\"sign\":" ++ toString sign ++
     ",\"guard\":[\"top\"],\"unless\":[],\"over\":[]" ++ fields ++ "}}"
-def dfltJ (suff : List String := []) (extra : String := "") : String :=
-  ",\"mode\":\"default\",\"exception\":{\"decided_by\":\"assistant\",\"sufficient\":[" ++
+def dfltJ (suff : List String := []) (extra : String := "") (dec : String := "assistant") : String :=
+  ",\"mode\":\"default\",\"exception\":{\"decided_by\":\"" ++ dec ++ "\",\"sufficient\":[" ++
     ",".intercalate suff ++ "],\"necessary\":[],\"factors\":[]}" ++ extra
 def un (p : String) : String := "[\"unary\",\"" ++ p ++ "\",[\"var\",0]]"
 
@@ -68,10 +72,17 @@ def dβ : Except String LayeredU := layered (envJ [xReq, xPerm, baseJ "urgent"] 
   [ruleJ "r1" "x_required" true (dfltJ [un "urgent"])]
 def dγ : Except String LayeredU := layered (envJ [xReq, xPerm] strictSoft)
   [ruleJ "r1" "x_required" true dfltJ, ruleJ "r2" "x_permitted" false dfltJ]
+/-- DF-γ′: DF-γ with r2's exception decided by the operator. -/
+def dγ' : Except String LayeredU := layered (envJ [xReq, xPerm] operatorSoft)
+  [ruleJ "r1" "x_required" true dfltJ, ruleJ "r2" "x_permitted" false (dfltJ (dec := "operator"))]
 def dδ : Except String LayeredU := layered (envJ [xReq, xPerm] holisticSoft)
   [ruleJ "r1" "x_required" true (dfltJ (extra := ",\"rank\":\"safety\"")),
    ruleJ "r2" "x_permitted" false (dfltJ (extra := ",\"rank\":\"helpfulness\""))]
 def dδs : Except String LayeredU := layered (envJ [xReq, xPerm] strictRankSoft)
+  [ruleJ "r1" "x_required" true (dfltJ (extra := ",\"rank\":\"safety\"")),
+   ruleJ "r2" "x_permitted" false (dfltJ (extra := ",\"rank\":\"helpfulness\""))]
+/-- DF-δ with the outranking decided by the operator (`decidersOf`'s ranking entry). -/
+def dδo : Except String LayeredU := layered (envJ [xReq, xPerm] holisticOpSoft)
   [ruleJ "r1" "x_required" true (dfltJ (extra := ",\"rank\":\"safety\"")),
    ruleJ "r2" "x_permitted" false (dfltJ (extra := ",\"rank\":\"helpfulness\""))]
 def dε : Except String LayeredU := layered (envJ [xReq, xPerm] userSoft)
@@ -113,6 +124,11 @@ def model1 (L : LayeredU) (X Γ : List VE.Formula) : Bool :=
   (configs L).any (fun (on, fon) => (check1 L X Γ .bottom on fon).isSome)
 def assume1 (L : LayeredU) (Γ : List VE.Formula) (φ : VE.Formula) : List String :=
   VE.Readings.usedLabels (fun ps => follows1 L ps Γ φ) L.X (dfltLabelled L.D) []
+/-- Some one-element collision of a colliding pair. -/
+def collision1 (L : LayeredU) : Bool :=
+  (configs L).any (fun (on, fon) => (collidingPairs L.D).any (fun (P, Q) =>
+    collisionCheck L.U L.D [] (sitOf L on) (fillOf L fon) P.name Q.name))
+
 /-- RD-9's `xModelOk` on the wire, at the one-element situation `on` with no filling. -/
 def modelJ (L : LayeredU) (on : List String) : Json :=
   Json.mkObj [("complete", true),
@@ -120,12 +136,19 @@ def modelJ (L : LayeredU) (on : List String) : Json :=
     ("constants", Json.mkObj []),
     ("relations", Json.mkObj (L.sitVocab.predicates.map (fun (p, ss) =>
       (p, toJson (if on.contains p then [ss.map ("e_" ++ ·)] else ([] : List (List String)))))))]
-def wireOk (L : LayeredU) (X Γ : List VE.Formula) (φ : VE.Formula) (on : List String) : Bool :=
-  match VE.NormDefaults.Wire.situationX L (modelJ L on) with
+/-- The situation with every sort empty. -/
+def emptyJ (L : LayeredU) : Json :=
+  Json.mkObj [("complete", true), ("domains", Json.mkObj (L.sitVocab.sorts.map (fun s => (s, toJson ([] : List String))))),
+    ("constants", Json.mkObj []), ("relations", Json.mkObj (L.sitVocab.predicates.map (fun (p, _) =>
+      (p, toJson ([] : List (List String))))))]
+def wireOkJ (L : LayeredU) (X Γ : List VE.Formula) (φ : VE.Formula) (j : Json) : Bool :=
+  match VE.NormDefaults.Wire.situationX L j with
   | .ok S => match VE.NormDefaults.Wire.decodeFilling L.U S.M (Json.mkObj []) with
     | .ok F => VE.Readings.Wire.xModelOk L.U X [] Γ φ ⟨S.M, S.valid, F⟩ false
     | .error _ => false
   | .error _ => false
+def wireOk (L : LayeredU) (X Γ : List VE.Formula) (φ : VE.Formula) (on : List String) : Bool :=
+  wireOkJ L X Γ φ (modelJ L on)
 
 def xAll : VE.Formula := .all "assistant" (.unary "x_required" (.var 0))
 def exc1 : String := "soft__excepted__r1"
@@ -152,6 +175,8 @@ def outw : String := "soft__outweighs__helpfulness__safety__x_permitted"
 #guard holds dα fun L => dfltLabels L.D == [excN "r1"] &&
   dfltPremises L.D == [.all "assistant" (.implies (.unary exc1 (.var 0)) .bottom)] &&
   defaultX L.D L.X == L.X ++ dfltPremises L.D && withoutDefaults L.D L.X == L.X ++ [.top]
+-- no colliding pair: the gate passes with no certificate
+#guard holds dα fun L => (collidingPairs L.D).isEmpty && defaultCoherenceCheck L.U L.D [] []
 -- strict: does not follow, and the strict countermodel {excepted r1} checks on the wire; the default model {} checks
 #guard holds dα fun L => !follows1 L L.X [] xAll && wireOk L L.X [] xAll [exc1] && wireOk L (defaultX L.D L.X) [] .bottom []
 #guard holds dα fun L => assume1 L [] xAll == [excN "r1"] &&
@@ -183,11 +208,20 @@ def βii : VE.Formula := .all "assistant" (.implies (.not (.unary "urgent" (.var
 #guard holds dβ fun L => follows1 L (defaultX L.D L.X) [] βii && assume1 L [] βii == [excN "r1"] &&
   basisOf (assume1 L [] βii) (wireOk L L.X [] βii [exc1]) == .needs && followsForm L.D (assume1 L [] βii) == .long
 
-/-! ## DF-γ: unranked colliding defaults -/
+/-! ## DF-γ, DF-ω: the gate's three outcomes -/
 
--- no one-assistant situation admits `defaultX`, while some admit `X` (the gate's case, df-1ab)
+-- DF-γ: unranked colliding defaults; no pair certificate checks, and the collision at {} checks
 #guard holds dγ fun L => (collidingPairs L.D).map (fun (P, Q) => (P.name, Q.name)) == [("r1", "r2")] &&
-  dfltLabels L.D == [excN "r1", excN "r2"] && !model1 L (defaultX L.D L.X) [] && model1 L L.X []
+  dfltLabels L.D == [excN "r1", excN "r2"] &&
+  !defaultCoherenceCheck L.U L.D [] [none] && !defaultCoherenceCheck L.U L.D [] [] &&
+  collisionCheck L.U L.D [] (sitOf L []) (fillOf L []) "r1" "r2" && !collisionCheck L.U L.D [] (sitOf L []) (fillOf L []) "r2" "r1"
+-- no one-assistant situation admits `defaultX`, while some admit `X`; the empty-domain situation is an accepted
+-- consistency witness of `defaultX`, and the conclusion holds there
+#guard holds dγ fun L => !model1 L (defaultX L.D L.X) [] && model1 L L.X [] &&
+  wireOkJ L (defaultX L.D L.X) [] .bottom (emptyJ L) && !wireOkJ L (defaultX L.D L.X) [] xAll (emptyJ L)
+-- DF-ω: DF-δ with its pair certificate missing and no collision on any one-element situation: neither outcome
+#guard holds dδ fun L => (collidingPairs L.D).length == 1 && !defaultCoherenceCheck L.U L.D [] [] &&
+  !defaultCoherenceCheck L.U L.D [] [none] && !collision1 L
 
 /-! ## DF-δ, DF-δ′: a ranked pair, holistic and strict -/
 
@@ -215,7 +249,7 @@ def βii : VE.Formula := .all "assistant" (.implies (.not (.unary "urgent" (.var
 
 #guard holds dβ fun L =>
   let Γ := [.ex "assistant" (.unary "urgent" (.var 0)), .all "assistant" (.not (.unary "urgent" (.var 0)))]
-  follows1 L (defaultX L.D L.X) Γ xAll && !model1 L (defaultX L.D L.X) Γ
+  follows1 L (defaultX L.D L.X) Γ xAll && !model1 L (defaultX L.D L.X) Γ && !wireOkJ L (defaultX L.D L.X) Γ .bottom (emptyJ L)
 #guard holds dα fun L => (ps L []).length == (VE.NormDefaults.Wire.premisesX L.U L.X []).length + 1
 
 /-! ## DF-σ: `basis_needs_sound` needs `xModelOk` (local conflict freedom), not `modelCheckX` alone -/
@@ -223,5 +257,63 @@ def βii : VE.Formula := .all "assistant" (.implies (.not (.unary "urgent" (.var
 #guard holds dσ fun L =>
   VE.NormDefaults.modelCheckX L.U L.X (sitOf L []) (fillOf L []) [] (.all "assistant" .bottom) == (true, false) &&
   !wireOk L L.X [] (.all "assistant" .bottom) [] && follows1 L L.X [] (.all "assistant" .bottom)
+
+/-! ## DF-γ, DF-γ′, DF-δ: the collision DE7 shows, and the rank resolution -/
+
+def pairOf (L : LayeredU) : Option (VE.SoftNorms.SoftNode × VE.SoftNorms.SoftNode) := (collidingPairs L.D).head?
+
+-- DF-γ: at {} both rules select at the one assistant; with r1's exception on, neither tuple is shown; unranked
+#guard holds dγ fun L => match pairOf L with
+  | some (P, Q) => collisionTuple L.U L.D (sitOf L []) (fillOf L []) P Q == some [elemOf "assistant"] &&
+      collisionTuple L.U L.D (sitOf L [exc1]) (fillOf L []) P Q == none && !VE.SoftNorms.Comparable L.D P Q &&
+      giveWayDeciders L.D P Q == ["assistant"] && decidersOf L.D == ["assistant"]
+  | none => false
+-- DF-γ′: the same collision; the two exceptions have different deciders, in pair order (DE7b)
+#guard holds dγ' fun L => match pairOf L with
+  | some (P, Q) => collisionCheck L.U L.D [] (sitOf L []) (fillOf L []) "r1" "r2" &&
+      giveWayDeciders L.D P Q == ["assistant", "operator"] && decidersOf L.D == ["assistant", "operator"]
+  | none => false
+-- DF-δ, DF-δ′: the ranked pair's coherence premise holds on every one-element situation, and no tuple collides
+#guard [dδ, dδs].all fun d => holds d fun L => match pairOf L with
+  | some (P, Q) => VE.SoftNorms.Comparable L.D P Q && (configs L).all (fun (on, fon) =>
+      (VE.NormDefaults.Wire.cohPremiseU L.U L.D P Q).eval ((sitOf L on).withFill (fillOf L fon)) [] &&
+      collisionTuple L.U L.D (sitOf L on) (fillOf L fon) P Q == none)
+  | none => false
+
+/-! ## The deciders DE5 names -/
+
+#guard holds dα fun L => decidersOf L.D == ["assistant"]
+#guard holds dδ fun L => decidersOf L.D == ["assistant"]
+#guard holds dδo fun L => decidersOf L.D == ["assistant", "operator"]
+#guard holds dε fun L => decidersOf L.D == ["assistant", "user"]
+#guard holds dζ fun L => decidersOf L.D == ["assistant"]
+#guard holds dζ0 fun L => decidersOf L.D == []
+
+/-! ## DF-η and spec 8.4: what a question may state; the limit on generated premises -/
+
+def exAt (p : String) : VE.Formula := .ex "assistant" (.unary p (.var 0))
+def diag3 (w : String) : Option String :=
+  some ("InvalidInput: a question that assumes no exception may state facts only; it states " ++ w)
+
+#guard holds dα fun L => questionDiag L.D [exAt exc1] == diag3 "whether rule r1's exception applies" &&
+  questionDiag L.D [.all "assistant" (.unary "x_permitted" (.var 0))] == diag3 "the outcome x_permitted" &&
+  !decisionFree L.D (exAt exc1) && decisionFree L.D xAll
+#guard holds dε fun L => questionDiag L.D [exAt "soft__off__r1__user"] == diag3 "whether user has turned rule r1 off" &&
+  !decisionFree L.D (exAt "soft__off__r1__user")
+#guard holds dδ fun L => questionDiag L.D [exAt outw] ==
+    diag3 "whether the helpfulness consideration outweighs the safety consideration on x_permitted" &&
+  !decisionFree L.D (exAt outw)
+-- facts only: no diagnostic; the first offending premise, in premise order, is named
+#guard holds dβ fun L => questionDiag L.D [exAt "urgent"] == none && decisionFree L.D (exAt "urgent") &&
+  questionDiag L.D [exAt "urgent", exAt "x_permitted", exAt exc1] == diag3 "the outcome x_permitted"
+-- diagnostic 4: none on the fixture documents; a stated condition nested past `MAX_DEPTH` trips it
+def deep : Nat → VE.Formula
+  | 0 => .unary "urgent" (.var 0)
+  | k + 1 => .not (.not (deep k))
+def deepen (D : SoftDoc) : SoftDoc :=
+  { D with T := { D.T with nodes := D.T.nodes.map (fun N =>
+      { N with exception := N.exception.map (fun e => { e with sufficient := [deep 200] }) }) } }
+#guard [dα, dβ, dγ, dγ', dδ, dδs, dδo, dε, dζ, dζ0].all fun d => holds d fun L => limitDiag L.D == none
+#guard holds dβ fun L => limitDiag (deepen L.D) == some "ResourceLimit: generated default premise default:exception:r1"
 
 end VE.Defaults.Fixtures

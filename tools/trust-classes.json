@@ -2431,31 +2431,42 @@
         "VE.Defaults.Fixtures.cStrict",
         "VE.Defaults.Fixtures.cert",
         "VE.Defaults.Fixtures.check1",
+        "VE.Defaults.Fixtures.collision1",
         "VE.Defaults.Fixtures.configs",
+        "VE.Defaults.Fixtures.deep",
+        "VE.Defaults.Fixtures.deepen",
         "VE.Defaults.Fixtures.dfltJ",
+        "VE.Defaults.Fixtures.diag3",
         "VE.Defaults.Fixtures.dα",
         "VE.Defaults.Fixtures.dβ",
         "VE.Defaults.Fixtures.dγ",
+        "VE.Defaults.Fixtures.dγ'",
         "VE.Defaults.Fixtures.dδ",
+        "VE.Defaults.Fixtures.dδo",
         "VE.Defaults.Fixtures.dδs",
         "VE.Defaults.Fixtures.dε",
         "VE.Defaults.Fixtures.dζ",
         "VE.Defaults.Fixtures.dζ0",
         "VE.Defaults.Fixtures.dσ",
         "VE.Defaults.Fixtures.elemOf",
+        "VE.Defaults.Fixtures.emptyJ",
         "VE.Defaults.Fixtures.envJ",
+        "VE.Defaults.Fixtures.exAt",
         "VE.Defaults.Fixtures.exc1",
         "VE.Defaults.Fixtures.excN",
         "VE.Defaults.Fixtures.excSelf",
         "VE.Defaults.Fixtures.fillOf",
         "VE.Defaults.Fixtures.follows1",
         "VE.Defaults.Fixtures.holds",
+        "VE.Defaults.Fixtures.holisticOpSoft",
         "VE.Defaults.Fixtures.holisticSoft",
         "VE.Defaults.Fixtures.layered",
         "VE.Defaults.Fixtures.model1",
         "VE.Defaults.Fixtures.modelJ",
         "VE.Defaults.Fixtures.notExc",
+        "VE.Defaults.Fixtures.operatorSoft",
         "VE.Defaults.Fixtures.outw",
+        "VE.Defaults.Fixtures.pairOf",
         "VE.Defaults.Fixtures.ps",
         "VE.Defaults.Fixtures.rankL",
         "VE.Defaults.Fixtures.regJ",
@@ -2468,6 +2479,7 @@
         "VE.Defaults.Fixtures.userSoft",
         "VE.Defaults.Fixtures.val",
         "VE.Defaults.Fixtures.wireOk",
+        "VE.Defaults.Fixtures.wireOkJ",
         "VE.Defaults.Fixtures.xAll",
         "VE.Defaults.Fixtures.xPerm",
         "VE.Defaults.Fixtures.xReq",
@@ -2477,15 +2489,27 @@
     "VE/Defaults/Premises.lean": {
       "C": [
         "VE.Defaults.assumptionsOf",
-        "VE.Defaults.certChecks"
+        "VE.Defaults.certChecks",
+        "VE.Defaults.collisionCheck",
+        "VE.Defaults.defaultCoherenceCheck",
+        "VE.Defaults.pairChecks"
+      ],
+      "G[R]": [
+        "VE.Defaults.decisionFree",
+        "VE.Defaults.limitDiag",
+        "VE.Defaults.questionDiag",
+        "VE.Defaults.whatOf"
       ],
       "G[V]": [
         "VE.Defaults.Basis",
         "VE.Defaults.Form",
         "VE.Defaults.bareExceptionLabels",
+        "VE.Defaults.collisionTuple",
+        "VE.Defaults.decidersOf",
         "VE.Defaults.defaultX",
         "VE.Defaults.dfltLabels",
         "VE.Defaults.dfltPremises",
+        "VE.Defaults.giveWayDeciders",
         "VE.Defaults.withoutDefaults",
         {
           "name": "VE.Defaults.basisOf",
@@ -2498,9 +2522,16 @@
           "tied": [
             "VE.Defaults.followsForm_short"
           ]
+        },
+        {
+          "name": "VE.Defaults.selU",
+          "tied": [
+            "VE.Defaults.cohPremiseU_selU"
+          ]
         }
       ],
       "S": [
+        "VE.Defaults.DefaultCoherent",
         "VE.Defaults.dfltLabelled",
         "VE.Defaults.dfltOf"
       ]
@@ -8900,7 +8931,8 @@
     },
     "VE/Scales/Intended.lean": {
       "S": [
-        "VE.Scales.Intended"
+        "VE.Scales.Intended",
+        "VE.Scales.Fresh"
       ]
     },
     "VE/Scales/Examples.lean": {
@@ -8964,7 +8996,15 @@
         "VE.Scales.Examples.roleUnaries",
         "VE.Scales.Examples.roleVocab",
         "VE.Scales.Examples.roleWf",
-        "VE.Scales.Examples.rolePairs"
+        "VE.Scales.Examples.rolePairs",
+        "VE.Scales.Examples.allMaps",
+        "VE.Scales.Examples.degreeMaps",
+        "VE.Scales.Examples.attempts",
+        "VE.Scales.Examples.vast",
+        "VE.Scales.Examples.share",
+        "VE.Scales.Examples.oneAttempt",
+        "VE.Scales.Examples.review",
+        "VE.Scales.Examples.flaggedOnly"
       ]
     },
     "VE/SearchBudget/Budget.lean": {
@@ -9799,8 +9839,6 @@
       "D[V]": [
         "VE.Service.Handles.entry?",
         "VE.Service.Handles.expand",
-        "VE.Service.Mode.name",
-        "VE.Service.Mode.ofName?",
         "VE.Service.bindResults",
         "VE.Service.caseBounds",
         "VE.Service.commas",
@@ -9839,7 +9877,6 @@
         "VE.Service.Entry.of",
         "VE.Service.Handles",
         "VE.Service.Handles.insert",
-        "VE.Service.Mode",
         "VE.Service.Request",
         "VE.Service.Request.budget",
         "VE.Service.bound",
@@ -9851,7 +9888,6 @@
         "VE.Service.handleKey",
         "VE.Service.handleLine",
         "VE.Service.handshake",
-        "VE.Service.modes",
         "VE.Service.parseLeanCases",
         "VE.Service.requestId?",
         "VE.Service.response",
@@ -12997,6 +13033,12 @@
         "VE.Events.Examples.vR1",
         "VE.Events.Examples.mC",
         "VE.Events.Examples.numC",
+        "VE.Events.Examples.envT7",
+        "VE.Events.Examples.vT7",
+        "VE.Events.Examples.gT7",
+        "VE.Events.Examples.notEntailedT7",
+        "VE.Events.Examples.entailedT7",
+        "VE.Events.Examples.mT7",
         "VE.Events.Examples.vX",
         "VE.Events.Examples.envX",
         "VE.Events.Examples.mX"
@@ -13193,19 +13235,32 @@
         "VE.Scope.Examples.blankLinesRef",
         "VE.Scope.Examples.boxAnchors",
         "VE.Scope.Examples.boxUnits",
+        "VE.Scope.Examples.carveT",
+        "VE.Scope.Examples.guard1",
         "VE.Scope.Examples.hcPieces",
         "VE.Scope.Examples.instructablePieces",
+        "VE.Scope.Examples.item1",
+        "VE.Scope.Examples.item3sign",
+        "VE.Scope.Examples.j",
         "VE.Scope.Examples.layoutOf",
+        "VE.Scope.Examples.leadPart",
+        "VE.Scope.Examples.mergePartsText",
         "VE.Scope.Examples.mk",
+        "VE.Scope.Examples.narrowK",
+        "VE.Scope.Examples.nest",
+        "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.powerPieces",
         "VE.Scope.Examples.prosePieces",
+        "VE.Scope.Examples.reguard173",
         "VE.Scope.Examples.seven",
         "VE.Scope.Examples.shortPieces",
         "VE.Scope.Examples.situationsPieces",
         "VE.Scope.Examples.spanOver",
+        "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
-        "VE.Scope.Examples.udhrPieces"
+        "VE.Scope.Examples.udhrPieces",
+        "VE.Scope.Examples.unordered"
       ]
     },
     "VE/Cardinality/Syntax.lean": {
@@ -13680,6 +13735,67 @@
         "VE.Service.ActsExamples.seek",
         "VE.Service.ActsExamples.plainRun",
         "VE.Service.ActsExamples.wordings"
+      ]
+    },
+    "VE/Events/Conservative.lean": {
+      "S": [
+        "VE.Events.oldEnv"
+      ],
+      "P": [
+        "VE.Events.expDays",
+        "VE.Events.firstDay",
+        "VE.Events.expansion"
+      ]
+    },
+    "VE/Scope/Effects.lean": {
+      "G[V]": [
+        "VE.Scope.lookups",
+        "VE.Scope.members"
+      ],
+      "S": [
+        "VE.Scope.Commutes",
+        "VE.Scope.Effect",
+        "VE.Scope.depthLimit",
+        "VE.Scope.depthOk",
+        "VE.Scope.hasOwn",
+        "VE.Scope.mergeParts",
+        "VE.Scope.narrowing",
+        "VE.Scope.ownSafe",
+        "VE.Scope.substOwn"
+      ]
+    },
+    "VE/Scope/Theorems.lean": {},
+    "VE/Scales/Theorems.lean": {
+      "P": [
+        "VE.Scales.reread",
+        "VE.Scales.point"
+      ]
+    },
+    "VE/Scales/Degrees.lean": {
+      "S": [
+        "VE.Scales.StrictLinear"
+      ],
+      "P": [
+        "VE.Scales.asMuch",
+        "VE.Scales.below",
+        "VE.Scales.degreeSetoid"
+      ]
+    },
+    "VE/Service/Registry.lean": {
+      "D[V]": [
+        "VE.Service.Mode.name",
+        "VE.Service.Mode.ofName?"
+      ],
+      "G[V]": [
+        "VE.Service.Mode",
+        "VE.Service.RouteSpec",
+        "VE.Service.modes",
+        {
+          "name": "VE.Service.registry",
+          "tied": [
+            "VE.Service.registry_modes"
+          ]
+        }
       ]
     }
   }

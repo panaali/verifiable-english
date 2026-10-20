@@ -93,7 +93,7 @@ def row (mode : String) : Option Shape := lookup files s!"{mode}.json#/row"
 /- Every schema renders, every mode of the service has its row, and the service's own handshake is
 valid under its schema. -/
 #guard rendered.toBool
-#guard VE.Service.modes.all fun m => (row m.name).isSome
+#guard VE.Service.registry.all fun r => (row r.mode.name).isSome
 #guard (decide files (.ref "envelope.json#/handshake") {value := .null} VE.Service.handshake).toBool
 
 end ResponseShape.Schemas

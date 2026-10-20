@@ -1,0 +1,1 @@
+python3 -c 'import json; r=open("docs/speed/trustmut/REPORT.md").read(); s=json.load(open("docs/speed/trustmut/evidence/aa2fd56e.json"))["seconds"]; assert s <= 1200 or "every replay is within the 20-minute budget" not in r, s'
