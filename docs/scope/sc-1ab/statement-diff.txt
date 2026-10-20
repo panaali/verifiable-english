@@ -1,0 +1,21 @@
+sc-1ab statement diff against docs/spec/scope.md 4.2 and 5.1 (whitespace and comments ignored)
+
+exact   def depthLimit
+exact   inductive Effect
+exact   def members
+exact   def hasOwn
+exact   def depthOk
+exact   def ownSafe
+exact   def substOwn
+exact   def narrowing
+exact   def Commutes
+DIFFERS def mergeParts
+  spec : def mergeParts (u : String) (lead item : Json) : Except String Json := do let bad := s!"InvalidInput: scope@0 parts of {u} must be objects" let ls ← (VE.Bridge.fields lead).mapError (fun _ => bad) let is ← (VE.Bridge.fields item).mapError (fun _ => bad) match ls.find? (fun kv => is.any (·.1 == kv.1)) with | some (k, _) => throw s!"ScopeConflict: {u}: {k}" | none => pure (Json.mkObj (ls ++ is))
+  built: def mergeParts (u : String) (lead item : Json) : Except String Json := do let bad := s!"InvalidInput: scope@0 parts of {u} must be objects" let ls ← (lookups lead).mapError (fun _ => bad) let is ← (lookups item).mapError (fun _ => bad) match ls.find? (fun kv => is.any (·.1 == kv.1)) with | some (k, _) => throw s!"ScopeConflict: {u}: {k}" | none => pure (Json.mkObj (ls ++ is))
+exact   theorem substOwn_no_own
+exact   theorem substOwn_id
+exact   theorem commutes_symm
+exact   theorem mergeParts_keys
+exact   theorem mergeParts_conflict
+
+not in the spec (helpers): firstKeys_mem, firstKeys_self, hasOwn_mono, impl_map_eq, lookups, lookups_absent, lookups_fields, lookups_spec, members_obj, mkObj_getObjVal, substOwn_id_le, substOwn_no_own_le

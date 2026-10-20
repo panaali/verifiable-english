@@ -164,6 +164,8 @@ import VE.Norms.FamilySpec
 import VE.Acts.Syntax
 import VE.Acts.Read
 import VE.Acts.GrammarExamples
+import VE.Acts.Compat
+import VE.Acts.LexicalExamples
 import VE.Alternatives.FillExamples
 import VE.NormDefaults.Examples
 import VE.Core.Checks
@@ -175,12 +177,15 @@ import VE.Events.Completion
 import VE.Events.Examples
 import VE.NormDefaults.Packs
 import VE.NormDefaults.PacksLegacy
+import VE.NormDefaults.PacksLabels
 import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLegacyExamples
 import VE.Readings.SupPacks
 import VE.Layout.Anchors
 import VE.Layout.Discourse
 import VE.Layout.List
+import VE.Scope.Effects
+import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Defaults.Premises
 import VE.Defaults.Examples

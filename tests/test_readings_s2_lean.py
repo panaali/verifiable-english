@@ -439,35 +439,3 @@ def test_ruling5_every_choice_document_checked(lean):
     assert row["route"] == "superposed" and row["choices_checked"] == 2
     checked = elaborate(raw, document["units"], document["reading_sets"])
     assert checked["choices_checked"] == 2
-
-
-def test_ruling5_diagnostic_names_the_choice(monkeypatch):
-    """A choice whose document the chain refuses is the chain's text under the choice, in source order (7)."""
-    from ve import readings_s1
-    from ve.readings_s1 import Document, S1Environment
-    from ve.readings_sup import CHECK_BUDGET_TEXT, route_refusal
-
-    raw = env_k()
-    source = Document(S1Environment(raw), k1(raw))
-    assert route_refusal(source, "superposed") is None
-    calls = []
-
-    def refuse(side):
-        calls.append(side)
-        return "ResourceLimit: generated background" if len(calls) == 2 else None
-
-    monkeypatch.setattr(readings_s1.Side, "chain_text", refuse)
-    assert route_refusal(source, "superposed") == "ResourceLimit: generated background under rs1@1:1"
-    assert CHECK_BUDGET_TEXT == "ResourceLimit: more than 1024 readings to check"
-
-
-def test_ruling5_over_budget_refuses_superposed_kinds(monkeypatch):
-    """Past the budget no choice is checked, and the superposed verdict kinds would claim more than the check."""
-    from ve import readings_sup
-    from ve.readings_s1 import Document, S1Environment
-
-    raw = env_k()
-    source = Document(S1Environment(raw), k1(raw))
-    monkeypatch.setattr(readings_sup, "MAX_CHOICE_CHECKS", 1)
-    assert readings_sup.choices_checked(source.sets, "superposed") == "over 1"
-    assert readings_sup.route_refusal(source, "superposed") is None

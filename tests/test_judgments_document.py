@@ -369,14 +369,15 @@ def test_the_answer_fits_its_schema_and_models_refuse_the_profile(service):
 
 def test_python_never_decides_a_judgments_document(service, tmp_path):
     """Python's own loader refuses the profile, and the Lean answer is not relayed before jt-2b."""
-    from ve import document as D
+    from ve.document import load_document
+    from ve.document.load import _load_document
     from ve.errors import CheckerUnavailable
     path = tmp_path / "j.ve.md"
     path.write_text(document(service, [unit("u1", opened("arbitrary"), ALPHA)], J1))
     with pytest.raises(CheckerUnavailable, match="judgments@0 documents are checked by Lean's document mode"):
-        D._load_document(path.read_bytes(), path, None)
+        _load_document(path.read_bytes(), path, None)
     with pytest.raises(CheckerUnavailable):
-        D.load_document(path)
+        load_document(path)
 
 
 @pytest.mark.parametrize("name", ["J-alpha", "J-gamma-second"])

@@ -929,6 +929,48 @@
    "reason": "jt-2: VE/Service/Document.lean +79, ResponseShape/Schemas/Document.lean +12, VE/Service/Standalone.lean +11, VE/Compose/Dispatch.lean +11 (V; K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-18",
    "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+  },
+  {
+   "class": "V",
+   "lines": 22,
+   "reason": "pk-1b: V +22 (VE/NormDefaults/Packs.lean +17: KindRow, dispatch; VE/NormDefaults/Layered.lean +5: legacyKinds and layeredCase's docstring; kindCase and legacyRows tied to kindCase_eq and dispatch_legacy); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1b, 2026-10-18",
+   "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
+  },
+  {
+   "class": "S",
+   "lines": 19,
+   "reason": "ap-1a: VE/Acts/Lexical.lean +138 (S 28: Tok, joinWords, clauseWords moved from VE/Acts/Syntax.lean -9, and the limits, fixedOk, Form, Form.text, wording; D[V] 110: fold, normal, dropComma, slotOf?, pieceToks, rawLex, phraseToks, clash, decodeFixed, group, lex, check, Form.ofText?), VE/Acts/LexicalBase.lean +48 (D[V], moved verbatim from VE/Norms/Wire.lean), VE/Norms/Wire.lean -27 (-48 moved, +21 canonicalActIn, decodeRegulatedWith, decodeRegulatedIn): S +19, V +131, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "V",
+   "lines": 131,
+   "reason": "ap-1a: VE/Acts/Lexical.lean +138 (S 28: Tok, joinWords, clauseWords moved from VE/Acts/Syntax.lean -9, and the limits, fixedOk, Form, Form.text, wording; D[V] 110: fold, normal, dropComma, slotOf?, pieceToks, rawLex, phraseToks, clash, decodeFixed, group, lex, check, Form.ofText?), VE/Acts/LexicalBase.lean +48 (D[V], moved verbatim from VE/Norms/Wire.lean), VE/Norms/Wire.lean -27 (-48 moved, +21 canonicalActIn, decodeRegulatedWith, decodeRegulatedIn): S +19, V +131, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "qt-b1b: S +9 (VE/Scales/Degrees.lean +6 StrictLinear, VE/Scales/Intended.lean +3 Fresh)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1b, 2026-10-18",
+   "commit": "b1f7ca7adc2b39a17238457736870fb15df03928"
   }
  ]
 }
