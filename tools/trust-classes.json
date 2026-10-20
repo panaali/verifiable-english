@@ -487,6 +487,7 @@
         "ResponseShape.Schemas.Document.cites",
         "ResponseShape.Schemas.Document.coverage",
         "ResponseShape.Schemas.Document.file",
+        "ResponseShape.Schemas.Document.judgments",
         "ResponseShape.Schemas.Document.meaning",
         "ResponseShape.Schemas.Document.narrowing",
         "ResponseShape.Schemas.Document.nullable",
@@ -2161,6 +2162,7 @@
           ]
         },
         "VE.Compose.dispatch",
+        "VE.Compose.documentLayers",
         "VE.Compose.environmentProfiles",
         "VE.Compose.environmentWrapper",
         {
@@ -2189,6 +2191,7 @@
         "VE.Compose.today",
         "VE.Compose.todayGate",
         "VE.Compose.todayHead",
+        "VE.Compose.withoutDocumentLayers",
         "VE.Compose.wrapperRows"
       ],
       "G[R]": [
@@ -9455,6 +9458,7 @@
         "VE.Service.Document.rightsDoc",
         "VE.Service.Document.rightsSourceUnit",
         "VE.Service.Document.sensesContentOf",
+        "VE.Service.Document.setCandidates",
         "VE.Service.Document.softCanonical",
         "VE.Service.Document.softContentOf",
         "VE.Service.Document.softSourceNorms",
@@ -9462,6 +9466,7 @@
         "VE.Service.Document.split",
         "VE.Service.Document.typedFormula",
         "VE.Service.Document.unitsOf",
+        "VE.Service.Document.usageJson",
         "VE.Service.Document.usesNorms",
         "VE.Service.Document.wireJson"
       ],
@@ -9507,6 +9512,7 @@
       ],
       "G[V]": [
         "VE.Service.Document.Checked",
+        "VE.Service.Document.Env.regulated",
         "VE.Service.Document.Meaning",
         "VE.Service.Document.Meaning.json",
         "VE.Service.Document.Meaning.ofJson?",
@@ -9522,6 +9528,7 @@
         "VE.Service.Document.Support.ofName?",
         "VE.Service.Document.UnitContent",
         "VE.Service.Document.UnitContent.json",
+        "VE.Service.Document.UnitContent.judged",
         "VE.Service.Document.UnitStatus",
         "VE.Service.Document.UnitStatus.all",
         "VE.Service.Document.UnitStatus.name",
@@ -9533,7 +9540,9 @@
         "VE.Service.Document.documentCase",
         "VE.Service.Document.encode",
         "VE.Service.Document.freeNorms",
+        "VE.Service.Document.judgedViews",
         "VE.Service.Document.kindName",
+        "VE.Service.Document.listedOf",
         "VE.Service.Document.lowerReadings",
         "VE.Service.Document.readingSetHasStrayNull",
         "VE.Service.Document.readingsSets",
@@ -9557,6 +9566,7 @@
         "VE.Service.Document.checkNormDefaults",
         "VE.Service.Document.checkNorms",
         "VE.Service.Document.environmentFault",
+        "VE.Service.Document.judgmentsApart",
         "VE.Service.Document.locatedFence",
         "VE.Service.Document.locatedModel",
         "VE.Service.Document.locatedOf",
@@ -9973,7 +9983,8 @@
         "VE.Service.Standalone.validateFamily",
         "VE.Service.Standalone.validated",
         "VE.Service.Standalone.validatedComposedEnvironment",
-        "VE.Service.Standalone.validatedEnvironment"
+        "VE.Service.Standalone.validatedEnvironment",
+        "VE.Service.Standalone.validatedLayerEnvironment"
       ],
       "G[R]": [
         "VE.Service.Standalone.modelError",

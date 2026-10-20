@@ -332,6 +332,9 @@ def test_the_pilots_profiles_compose_with_judgments(service, name):
 def test_the_profile_requires_documents_and_its_records_are_w2s(service):
     """The row requires `documents@1` (`gate_judgments`); W2's own texts come first (`records_names`)."""
     alone = [p for p in PROFILES if p != "documents@1"]
+    rows = service.run("environment", [{"id": "e", "environment": environment(profiles=p)} for p in (PROFILES, alone)])
+    assert rows[0]["profiles"] == PROFILES
+    assert rows[1]["error"] == "UnsupportedProfile: judgments@0 requires documents@1"
     text = document(service, [unit("u1", kind="meta")], J1, profiles=alone)
     assert outcome(answer(service, text)) == ("UnsupportedProfile: judgments@0 requires documents@1", None)
     text = document(service, [unit("u1", kind="meta")], [record("arbitrary"), record("arbitrary")])
@@ -343,6 +346,19 @@ def test_layers_judgments_does_not_compose_with_are_unavailable(service):
     text = document(service, [unit("u1", kind="meta")], J1, profiles=soft)
     assert outcome(answer(service, text)) == (
         "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route", None)
+    front, body = document(service, [unit("u1", kind="meta")], J1).split("\n---\n")
+    senses = front[:-1] + ', "senses": []}\n---\n' + body
+    assert outcome(answer(service, senses)) == (
+        "CheckerUnavailable: judgments@0 with senses needs its composed Lean route", None)
+
+
+def test_the_answer_fits_its_schema_and_models_never_see_the_profile(service):
+    """The genuine answer passes the generated `document.json`; Python's model projection drops the profile."""
+    from ve.backends.service_schema import check_row
+    from ve.profiles import model_environment
+    case = {"id": "d", "document": document(service, [unit("u1", opened("arbitrary"), ALPHA)], J1), "admit": False}
+    check_row("document", service.run("document", [case])[0], case, 0)
+    assert model_environment(environment())["profiles"] == [p for p in PROFILES if p != "judgments@0"]
 
 
 def test_python_never_decides_a_judgments_document(service, tmp_path):
@@ -355,3 +371,16 @@ def test_python_never_decides_a_judgments_document(service, tmp_path):
         D._load_document(path.read_bytes(), path, None)
     with pytest.raises(CheckerUnavailable):
         D.load_document(path)
+
+
+@pytest.mark.parametrize("name", ["J-alpha", "J-gamma-second"])
+def test_the_claim_graph_is_admitted_over_the_same_environment(service, name):
+    """`admit` (the claim graph): the norms route and the plain route read the environment without the layer."""
+    records, units, sets, statuses, _ = STATUS[name]
+    text = document(service, units, records, sets=sets)
+    front, body = text.split("\n---\n")
+    meta = json.loads(front[4:])
+    meta["graph"] = {"root": "c", "nodes": [{"name": "c", "ast": units[0]["content"].get("ast", ["top"]),
+                                              "label": "open:arbitrary"}]}
+    row = service.run("document", [{"id": "d", "document": "---\n" + json.dumps(meta) + "\n---\n" + body}])[0]
+    assert outcome(row)[0] == statuses
