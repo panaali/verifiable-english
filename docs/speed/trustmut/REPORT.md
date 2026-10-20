@@ -24,20 +24,23 @@ only:
 | `append-left`, `append-right` | each operand of `++` dropped |
 
 Every edit keeps each line after its declaration where it was (`relined`, review F9, section 1c), so the proof
-cuts and the roles, which read the checkout's line numbers, read the mutated text right. A mutant Lean refuses
-inside the mutated declaration is INVALID: the compiler decides what a mutant means, never the text. A check is a command whose outcome Lean computes from definitions alone, never from a proof (`classify`
-in the tool, the one rule every module goes through): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an
-`example` or theorem proved by `decide`/`native_decide`/`rfl`, with no other tactic block in it; a
+cuts and the roles, which read the checkout's line numbers, read the mutated text right. A check is a command whose
+outcome Lean computes from definitions alone, never from a proof (`classify` in the tool, the one rule every module
+goes through): `#guard`, `#guard_expr`, `#eval`, `#reduce`, `#check`, or an `example` or theorem proved by
+`decide`/`native_decide`/`rfl`, with no other tactic block in it and no binder before its colon; a
 `#guard_msgs … in` is the command it wraps, bare or with its docstring. Every other `example` or theorem is a proof,
 whatever its statement names, and so are a check form with a tactic block inside and every `#print` (`#print axioms`
-included). A failing proof is cut to `sorry` (a `#` command blanked, with its docstring) and the build repeated
-before any other error is read, so it is never a kill (BUILDER-CHECKLIST 3; pk-1's `assemble_wellFormed`); an error
-in a check kills only when the same build without the mutant passes (section 1a), and only when it is the check's
-own error: at a line the checkout has there, no parse error (section 1c), and an answer: a check that runs out
-of Lean's budget or whose `decide` gets stuck refutes nothing (section 1d). Any other command is no check: an
-error there is UNKNOWN, and so is an error in a definition, even beside a failing check (section 1b). The modules
-built for a mutant are those of the mutated module's directory that hold checks, and any module of its cone holding a check whose compiled statement
-(`lean/statements.txt`, `-- uses`) names the definition.
+included). A proof that fails is cut to `sorry` (a `#` command blanked, with its docstring) and the build repeated
+before any other error is read, so it is never a kill (BUILDER-CHECKLIST 3; pk-1's `assemble_wellFormed`); since
+F11 nothing is cut up front. Since review F11 each verdict that counts for nothing has one positive condition and
+everything else is UNKNOWN (section 1e): KILLED only when every error is a check's own refutation (a message that
+states one, at a line the checkout has there, of a statement Lean elaborates as without the mutant and computes
+through no proof the mutant broke), and the build without the mutant passes (section 1a); INVALID only when every
+error in the mutated declaration is Lean refusing the text the mutant wrote. An error in a definition, even beside
+a failing check (section 1b), a parse error at a check (section 1c) and a check out of budget (section 1d) are
+UNKNOWN. The modules built for a mutant are those of the mutated module's directory that hold checks, and any
+module of its cone holding a check whose compiled statement (`lean/statements.txt`, `-- uses`) names the
+definition.
 
 Review fix F1: the first tool also counted every `example` as a check, and a tactic-proved theorem outside the
 mutated module whose statement names the definition. Those kills were broken proof scripts (pk-1's M028,
@@ -64,7 +67,15 @@ they were not rerun: `replay.py` checks the saved evidence against F9's two new 
 their line count, 0 kills are parse errors" (every kill is a `#guard`'s "Expression … did not evaluate to `true`"
 but one `rfl` theorem's "Not a definitional equality"), and `relined` only changes an edit that adds lines.
 Review fix F10 changes none of them either: `replay.py` checks the saved evidence against its rule and prints
-"0 kills or INVALID gave no answer; the kills: 1440 'Expression', 1 'Not a definitional equality:'" (section 1d). "Survivors on the named lines" are survivors on a line the
+"0 kills or INVALID gave no answer; the kills: 1440 'Expression', 1 'Not a definitional equality:'" (section 1d).
+Review fixes F11/F12 (section 1e) were replayed on ap-2 F11 (`aa2fd56e3`) with the final tool: all 359 kills and
+33 survivors are the same mutants as before; 12 former INVALID are now UNKNOWN (a refusal outside the text the
+mutant wrote, or not one of `REFUSED`: "Invalid field notation: Type of … is not known" at a later line, "failed to
+synthesize", "don't know how to synthesize", "Type mismatch", "Unknown identifier `A`" outside the edit). The
+other five replays were not rerun on the final tool (each probe of a kill adds an elaboration; ap-2 F11 took 1,546
+s at load 16–45, and the DRI's addendum of 23Z asks to end the round): their kills are all `#guard`s and one `rfl`
+theorem, the forms the replay shows unchanged, and their INVALID counts would move to UNKNOWN the same way, which
+counts toward the exit code (fail closed). "Survivors on the named lines" are survivors on a line the
 review names for that finding; "within the default 60" says whether one of them is among the first 60 mutants of
 the tool's order:
 
@@ -75,7 +86,7 @@ the tool's order:
 | ap-2 F1 | `584ac3bb3` | 413 / 117 / 21 / 0 | 327 | 29: `Syntax.lean:80` lt-le; `Read.lean:19` lit-plus; `Read.lean:19` lit-minus; `Syntax.lean:80` lit-minus; `Syntax.lean:119` any-all; `Syntax.lean:119` list-empty ... | yes | yes |
 | ap-2 F7 | `e13a4e413` | 413 / 59 / 21 / 0 | 372 | 18: `Syntax.lean:119` any-all; `Syntax.lean:83` list-first; `Syntax.lean:96` list-first; `Syntax.lean:113` list-first; `Syntax.lean:113` list-drop-last; `Syntax.lean:119` list-first ... | yes | yes |
 | ap-2 F10 | `3d1085285` | 413 / 35 / 21 / 0 | 300 | 4: `Syntax.lean:78` list-first; `Syntax.lean:78` list-last; `Syntax.lean:79` list-last | yes | no |
-| ap-2 F11 | `aa2fd56e3` | 413 / 33 / 21 / 0 | 276 | 6: `Syntax.lean:88` list-drop-last; `Syntax.lean:122` list-first; `Syntax.lean:122` list-drop-last; `Syntax.lean:89` list-drop-first; `Syntax.lean:121` list-last; `Syntax.lean:121` list-drop-first | yes | no |
+| ap-2 F11 (final tool, F11) | `aa2fd56e3` | 413 / 33 / 9 / 12 | 1546 | 6: `Syntax.lean:88` list-drop-last; `Syntax.lean:122` list-first; `Syntax.lean:122` list-drop-last; `Syntax.lean:89` list-drop-first; `Syntax.lean:121` list-last; `Syntax.lean:121` list-drop-first | yes | no |
 
 Exact reviewer mutants among the survivors (the rest of each finding's survivors are the same class on its lines):
 - pk-1 F1: `coherenceLabels := []` (M035, list-empty), and `X := []` (M028, this item's review F1). `fullEnv := envAt (fill U) 0` is outside the operators
@@ -134,14 +145,15 @@ proof the tool cuts: a theorem `r_p : r 1 = 1` proved by a tactic, through `⟨0
 | Form | Class | Why | Reads the value: the mutant is | Reads a cut proof: the mutant is |
 |---|---|---|---|---|
 | `#guard` | check | evaluates compiled code, where proofs are erased | KILLED | SURVIVOR |
-| `#guard_expr` | check | compares terms by definitional equality | KILLED | SURVIVOR |
-| `#eval` | check | evaluates; refuses `sorry`, which the control catches | KILLED | SURVIVOR (control) |
-| `#reduce` | check | reduces; proofs are not reduced | KILLED with its docstring; SURVIVOR bare or `(drop info)` (nothing compares the output) | SURVIVOR |
-| `#check` | check | elaborates the term against its type; proofs show as `⋯` | KILLED | SURVIVOR |
+| `#guard_expr` | check | compares terms by definitional equality (since F11: a stuck reduction fails alike) | UNKNOWN (was KILLED) | SURVIVOR |
+| `#eval` that throws | check | evaluates; refuses `sorry`, which the control catches (since F11: its message is the file's own) | UNKNOWN (was KILLED) | SURVIVOR (control) |
+| `#eval` of the value (added for F11) | check | its output is formatted by instances Lean picks after elaboration | UNKNOWN with its docstring; SURVIVOR bare or `(drop info)` | (no proof reading) |
+| `#reduce` | check | reduces; proofs are not reduced (since F11: it prints a stuck term as readily as a value) | UNKNOWN with its docstring (was KILLED); SURVIVOR bare or `(drop info)` | SURVIVOR |
+| `#check` | check | elaborates the term against its type; proofs show as `⋯` (since F11: a type mismatch states no refutation) | UNKNOWN (was KILLED) | SURVIVOR |
 | `#print` | proof | shows a theorem's proof term and a definition's text | SURVIVOR | SURVIVOR |
 | `#print axioms` | proof | lists `sorryAx` once a proof is cut | SURVIVOR | SURVIVOR |
 | `decide` `example` | check | kernel reduction of a decision procedure | KILLED | SURVIVOR |
-| `rfl` `example` | check | definitional equality | KILLED | SURVIVOR |
+| `rfl` `example` | check | definitional equality (since F11: a kill when `decide` then refutes the statement) | KILLED | SURVIVOR |
 | tactic `example` | proof | a proof script (review F1) | SURVIVOR | SURVIVOR |
 | tactic theorem | proof | a proof script (review F1) | SURVIVOR | SURVIVOR |
 | `#guard` with a tactic block | proof | the mutant breaks the tactic, not the comparison | SURVIVOR | (its tactic is the proof) |
@@ -159,9 +171,14 @@ The sweep (`docs/speed/trustmut/sweep.py --run`, evidence `evidence/sweep.json` 
 package and every other operator but the arms (54 mutants each), and the value read as `(List.range 6).map r`; the
 arms and the multi-line forms are the F9 table (section 1c), in the same run. All 3,024 mutants ran (1,362 s at 16
 jobs at 5-minute load 25–46 on the tool after F9; rerun on the final tool and tables after F10 in 812 s at load
-11–16, every mutant's verdict and detail the same): 1,330 KILLED, 1,484 SURVIVOR, 210 UNKNOWN, 0 INVALID. No row that reads a proof,
-and no row that is no check, has a KILLED mutant; every row expected to kill does; the UNKNOWN are exactly the
-non-equivalent mutants of the six definitions F8's form reads (35 each), UNKNOWN at that definition. The
+11–16, every mutant's verdict and detail the same): 1,330 KILLED, 1,484 SURVIVOR, 210 UNKNOWN, 0 INVALID. Rerun on
+the tool after F11/F12 (section 1e), with the `#eval`-of-the-value row added (3,132 mutants, 2,390 s at 8 jobs at
+load 7–20): 630 KILLED, 1,522 SURVIVOR, 980 UNKNOWN, 0 INVALID, and `sweep.py` exits 0: the KILLED are the
+non-equivalent mutants of the `#guard`, `decide` and `rfl` rows (210 each); the UNKNOWN those of the rows whose
+check states no refutation (`#guard_expr`, the throwing `#eval`, `#check` in every wrapping, `#reduce` and the
+`#eval` of the value with their docstrings) and of F8's form. No row that reads a proof,
+and no row that is no check, has a KILLED mutant; every row expected to kill does; before F11 the UNKNOWN were
+exactly the non-equivalent mutants of the six definitions F8's form reads (35 each), UNKNOWN at that definition. The
 definitions a check or F8's definition reads keep 19 survivors each (38 + 6 such definitions), all equivalent
 mutants, equal to the original on every `n`, not only on 0..5:
 - the conjunct `([n] ++ [1]).all (· ≥ 1)` is true whenever `!(n < 1)` is, so its 16 mutants change nothing:
@@ -295,6 +312,129 @@ The evidence: no saved replay kill or INVALID gave no answer (`replay.py`, secti
 or an `rfl`'s refutation), and the sweep, rerun on the final tool, gives every mutant the same verdict and detail
 (section 1). The seeded bugs TM33–TM40 plant each rule of the fix (section 3).
 
+## 1e. Review fixes F11 and F12: the rule inverted, and an adversarial hunt
+
+F11 was the seventh form of one class (F1, F6, F7, F8, F9, F10, F11): the tool reported KILLED although no check
+refuted the mutant. `def bR (n) := if n ≤ 3 then n else wf 1` (`wf` well-founded) read by
+`example : bR 3 + 0 = 0 + bR 3 := rfl`: the `le-lt` and `lit-minus` mutants reach `wf 1`, `rfl` gets stuck and says
+"Type mismatch", the same message a real `rfl` refutation gives, and the tool read it as a kill although the check
+holds for every value. F12 was the same class on the other side: `simp`'s step limit inside the mutated
+declaration (`⟨3, by simp (config := { maxSteps := 9 })⟩`, 9 -> 8) gave INVALID, which counts for nothing, although
+running out of budget is UNKNOWN. The DRI's note (reviews/speed-trustmut-dri-note-20261019c.md, PIPELINE-LIMITS L81)
+named the cause: `attributed` was a deny-list (any error at a check killed unless it matched `PARSE` or `NO_ANSWER`),
+so each recheck found one more message it missed. The fix changes the rule's shape.
+
+### The rule: one positive condition per verdict that counts for nothing
+
+KILLED (`settle`, `judge`, `run`'s `reading`, the Lean probe `READS`). Every error Lean reports, in lean/ and in an
+outside `--test` file, is a check's own refutation:
+- it is inside a check (`classify`: `#guard`, an `example` or theorem proved by `decide`, `native_decide` or `rfl`
+  with no hypothesis before its colon, or one of those under `#guard_msgs … in`), at a line the mutant and the cuts
+  left as the checkout has it (review F9), and its message states a refutation: one of `REFUTED`, matched whole
+  ("Tactic `decide` proved that the proposition … is false", "Tactic `native_decide` evaluated that the
+  proposition … is false", "Expression … did not evaluate to `true`"), or a `#guard_msgs` diff with such a
+  refutation on one side only (the check's truth changed);
+- an `rfl` check's failure (the same message whether the sides differ or the reduction got stuck) counts only when
+  `decide`, asked in its place, then refutes the statement (`decided`; never `native_decide`, which runs compiled
+  code an `rfl` check never reads);
+- Lean, in the mutant's own build, elaborates the check (and the `Decidable` instance it synthesizes for it) to the
+  same term as without the mutant, and every definition it reads, outside the mutated one, to the same value (a
+  hash per constant: an elaborator that reads the source, `include_str` in a helper, an instance search that runs
+  out of budget and picks another instance, or a package's `leanOptions` all change one);
+- nothing it computes, through logic or compiled code (definitions, `opaque` values, proofs, the `@[csimp]` lemmas
+  from Lean's own table, `implemented_by` targets, a `partial def`'s `_unsafe_rec`, `initialize` functions),
+  reaches `sorryAx` or runs IO (`unsafeIO`, `unsafeBaseIO`, `unsafeEIO`, an `initialize`d value). Since nothing is
+  cut up front any more, a cut proof is one the mutant broke, so a `sorryAx` there means the check computes
+  through a broken proof (a `Decidable` instance or `@[csimp]` lemma resting on it);
+- and the same build without the mutant (its control, the same cuts) passes (review F7).
+
+INVALID (`invalid`, `refused`): every error in the mutated declaration is a parse error or a name, field, pattern or
+exhaustiveness error (`REFUSED`: "Unknown identifier/constant", "Invalid field/projection/pattern", "Missing
+cases", "ambiguous"), located inside the text the mutant wrote and outside every tactic block, and none quotes
+Lean's budget.
+
+Everything else is UNKNOWN, which counts toward the exit code.
+
+### The safe cases, one test each
+
+UNKNOWN at a check (`JUDGED` in `tests/test_trust_mutants.py`, `test_a_check_kills_only_when_its_message_states_a_refutation`,
+and `test_a_check_that_gives_no_answer_never_kills` for the budget messages): a stuck or false `rfl` that `decide`
+does not refute, `#guard_expr`'s and `#check`'s definitional equality, an `#eval` that throws, any `info` in a
+`#guard_msgs` diff (`#reduce` prints a stuck term; `#eval`'s output is formatted by instances Lean picks after
+elaboration and can read files), a diff between two refutations, a budget quote, a warning, a diff Lean does not
+show as two sides, a refutation with more text after it or quoted inside another message, a stuck `decide`,
+unsolved goals, an unclassified message, a parse error at an `rfl` check. The end-to-end rows (`STUCK`,
+`test_a_check_that_states_no_refutation_is_unknown`) run them through Lean in lean/ and in an outside file.
+
+UNKNOWN in the mutated declaration (`REFUSALS`, `test_invalid_only_when_lean_refuses_the_mutated_text`;
+`test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal`): `simp`'s step limit (F12), unsolved
+goals, `omega`, a stuck or refuting `decide`, a name error inside a tactic block, a type mismatch (a false or
+stuck proof term gives one), "fail to show termination", the recursion depth, heartbeats, instance search (its
+own size and heartbeat budgets), "don't know how to synthesize", "Function expected" (a coercion's instance
+search), a refusal that quotes a budget, a refusal beside a tactic failure, outside the mutant's text (a proof term
+it broke), a parse error outside its text (the tool's own padding), an unclassified message.
+
+PROBE F11 and PROBE F12 are `test_probe_f11_a_stuck_rfl_check_is_no_kill` and
+`test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown`.
+
+### The adversarial hunt (the DRI's step 2)
+
+Seven hunts, each a fresh subagent given only the class description, the earlier probes and the code, each run on
+the tool after the previous hunt's fixes. Every probe is in `docs/speed/trustmut/hunt/` (README there) and, but F1,
+a row of `tests/test_trust_mutants.py` (`HUNT`, one package per form). Each fix was checked to fail on the tool
+before it (the rows fail there) and to pass after.
+
+| Hunt | Probes that failed (forms) | What let them through | The fix (the rule's shape where it changed) |
+|---|---|---|---|
+| 1 | H1, H1r, H2, H3, H4, H5, H7 (H6 decided: a refusal) | `decide` refutes only the goal, not a hypothesis; instance search's own budget read as a refusal; a refutation through an instance or `@[csimp]` lemma on a proof the tool cut; `native_decide` asked of an `rfl` check | a check with a binder before its colon is a proof; instance search out of `REFUSED`; a kill needs the statement to read the definition; `decide` only |
+| 2 | N1, N1g, N1r, N2, N2n, N3, N5, N7, N8, N10 (N4 decided out of class) | a tautology mentioning the definition beside the cut-proof bridge; an `#eval` printing the definition's text; "Function expected" from a coercion's search; two commands on one line; a section `variable`; another command on the mutated declaration's last line | Lean elaborators at each check's own position (`READS`): the theorems behind its `Decidable` instances, hypotheses, reflection; a cut proof loses its attributes; one command per check; a shared last line UNKNOWN |
+| 3 | P1, P2, P3, P4, P5, P7, P8, P8d, P9 | private names, `DecidableLE`-style abbreviations, `attribute [csimp]`, MetaM reflection, a theorem chain, a class's proof field, instance choice changed by the mutant, `#eval!` of a Prop | the probe runs in each mutant's own build and walks every bridge for `sorryAx` |
+| 4 | Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q12 | proofs passed explicitly, `opaque` values, `#eval`'s output chosen after elaboration, csimp behind the synthesized instance, source text read by elaborators and by IO, a silent budget fallback, a proof term outside the mutant's text | the shape changed: nothing cut up front (so `sorryAx` means a proof the mutant broke) and one full walk; the check's term must hash as without the mutant; no `#eval` output is an answer; a refusal only inside the mutant's own text |
+| 5 | R1, R2, R3, R5, R6, R7, R8 | `partial def`'s `_unsafe_rec`, `unsafeIO`, the tool's own line padding, package `leanOptions`, `initialize`, an unexpander printing one refutation two ways, `include_str` in a helper | the walk follows compiled code and flags IO; every definition read outside the mutated one must hash the same; the probe runs as `lake lean`; a diff kills only when one side is empty; a parse error only inside the mutant's text |
+| 6 | S1, S2, S3, S5, S6, S7, S8, S9 | the exemption covered the definition's whole namespace; walk order; IO without the `unsafe*` names; IO in a dependency package; a check printing a probe line; library `leanOptions`; a `local` csimp | only the mutated constant and its auxiliaries are exempt; IO by its types; every package but Lean's core is walked; a nonce on the probe's lines; the probe elaborates the module at its own path; every `@f = @g` theorem is a possible csimp lemma |
+| 7 | T1, T2, T3, T5 (T6 decided: the mutant's own text) | an `axiom`; a core function's csimp; source read only through the mutated definition; another declaration's `_unsafe_rec` named under the mutated one | an axiom of the tree is no answer; core csimp walked; everything reached is compared but the mutated declaration and what Lean generated for it (Lean's declaration ranges) |
+
+Forms tried that were fine, per hunt, are in each hunt's report (the G probes of hunt 1 are saved too); among them
+an auto-param, a negative `#guard_msgs` `rfl`, free variables, Lean's module system, a cross-module csimp, `#print`
+spoofing, `decide +kernel`, matchers shared across declarations.
+
+Decided boundaries (recorded, not signed: they are this item's reading of the class, which the recheck judges):
+1. N4: an `@[implemented_by]` that makes the mutated definition the code that runs: `#guard` and `native_decide`
+   observe compiled code, so its changed value is a refutation of what runs.
+2. H6: a refusal Lean gives, with no budget involved, to the text the mutant wrote (since hunt 2 "Function expected"
+   is no refusal, so H6 itself is now UNKNOWN).
+3. T6: a silent budget effect in Lean's elaboration of the mutant's own text (`(⟨0⟩ : W 127) == ⟨0⟩` picks a
+   fallback instance): what the mutant's text means as Lean elaborates it, as INVALID lets the compiler decide.
+
+Hunt 7's two unreported probes (T5w, T7: a helper of a structure, well-founded and structural) found something
+else: a mutant of `instance [s : Small n] : Small (n + 1)` makes Lean's build of the module run forever, and the
+tool's builds had no time limit, so the run hung (two such builds ran for 2.5 h before they were killed). Every
+build of a mutant now has `--build-timeout` (default 1,800 s, the suite's hang bound); past it the process group
+is killed and the mutant is UNKNOWN (`test_a_build_past_its_time_limit_is_unknown`, an expired limit injected;
+TM79).
+
+The class is not closed. Each of the seven hunts found new forms (8, 10, 9, 11, 7, 8, 4 failing probes); the
+seventh found the fewest. The DRI's addendum (23Z, for the rounds after this one) bounds the hunt and asks for an
+allow-list; this round stopped after the seventh hunt and its fixes.
+
+### The evidence
+
+- PROBE F11 failed before the fix (`le-lt` and `lit-minus` KILLED at "Type mismatch") and prints `[('le-lt',
+  'UNKNOWN', 'lean/Demo/Defs.lean:7: Type mismatch (an `rfl` check `decide` does not refute)'), …]` after; PROBE
+  F12 failed (`eq-le`, `eq-ne`, `lit-minus` INVALID at "`simp` failed: maximum number of steps exceeded", `lit-plus`
+  INVALID at "unsolved goals") and prints them UNKNOWN after. PROBE F1 and F6–F10 pass on the final tool too.
+- The sweep (section 1a) on the final tool: every forms row and every lines row as the tables expect, `sweep.py`
+  exits 0; the survivors are the same equivalent mutants.
+- The ap-2 F11 replay on the final tool (section 1): the same 359 kills and 33 survivors; 12 INVALID now UNKNOWN.
+- Every hunt probe but N4 (boundary 1) exits 0 on the final tool; each is also a test row.
+- The F11/F12 package before and after (`STUCK`; the tool at `260efe231` against the final one):
+  before, every far mutant of `rfl`, `by rfl`, `#guard_expr`, `#reduce` under `#guard_msgs`, `#check`, a throwing
+  `#eval` and both outside rows was KILLED and the subtype's own mutants and `simp`'s were INVALID; after, the far
+  mutants are KILLED only at the `rfl` checks `decide` refutes, UNKNOWN elsewhere.
+- Cost: each kill now elaborates its check's module once more in the mutant's build (the probe), and the control
+  pass elaborates each check module once; nothing is cut up front, so a proof the mutant breaks costs one more build.
+  ap-2 F11: 1,546 s at load 16–45 (276 s before, at load 14–31); the sweep 2,390 s at 8 jobs.
+
 ## 2. Orchestrator lines (not edited here: /home/seyran/code/manage-agents is the orchestrator's)
 
 For `BUILDER-CHECKLIST.md` (under item 3) and `prompts/build-checklist.txt` (a new line after 13):
@@ -322,18 +462,30 @@ DRI decision; nothing here adds it.
 
 `tests/test_trust_mutants.py` builds a four-module Lean package under `tmp_path` (its declaration and predicate
 lists written by `tools/lean_statements.py`'s own per-module script, its `lean/statements.txt` by that tool's
-statement script) and runs the tool on it with `TMPDIR` in
-`tmp_path` and `VE_LEAN_SHARE=off`; a second package is the truth table of section 1a (`table_package`), a third
-the line axis of section 1c (`lines_package`), a fourth the budget table of section 1d (`budget_package`), and
-the generator, the check rule (`classify`), the spans, the cuts, the line-keeping edit (`relined`, `moved`), the
-kill rule (`attributed`, `NO_ANSWER`) and the error reader (`ERROR`) have tests without Lean. Each rule has a seeded bug
-in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format); `uv run python tools/mutants.py
-docs/speed/trustmut/mutants.json` kills 40 of 40, each at its named test, the file restored to its exact bytes
-(`mutants-evidence.json`, run on the final tool after F10, in two runs, TM1–TM20 and TM21–TM40, joined in order). Python is the only language whose code changed (no Lean, no
-Rust). The parametrized tests have ids without spaces: `tools/mutants.py` reads a failing id up to its first space,
-so TM14, TM19 and TM24 first showed as survivors although their tests failed.
+statement script) and runs the tool on it with `TMPDIR` in `tmp_path` and `VE_LEAN_SHARE=off`; a second package is
+the truth table of section 1a (`table_package`), a third the line axis of section 1c (`lines_package`), a fourth
+the budget table of section 1d (`budget_package`), a fifth F11/F12's table (`stuck_package`, section 1e), and each
+hunt form has a package of its own (`HUNT`, section 1e); the generator, the check rule (`classify`), the spans, the
+cuts, the line-keeping edit (`relined`, `moved`), the kill rule (`judge`, `refutes`, `settle` with faked builds,
+`decided`), the refusal rule (`invalid`, `refused`, `in_tactic`), the probe's rewrite (`named`) and the error readers
+(`ERROR`, `LEAN_ERROR`) have tests without Lean. 298 tests pass on the Mac runner on the final commit.
 
-| Mutant | Rule | Bug planted in `tools/trust_mutants.py` | Failing test |
+Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 76 of them: TM1–TM40
+from the earlier rounds (TM8, TM23, TM25, TM30, TM31, TM33–TM36 retargeted at the inverted rule) and TM41–TM78 for
+F11, F12 and the hunts, among them the Lean probe's own lines (`READS` is Lean text inside the tool: TM48, TM59,
+TM60, TM63, TM65, TM71–TM74, TM77, TM78). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 77 of 77, each at a named test, the file
+restored to its exact bytes (`mutants-evidence.json`: TM1–TM78 on `d09bf54d4` in three worktrees of it, the rows
+joined in order, `--no-baseline` since the whole test file passes there; TM79 and the build-path seeds TM1, TM2,
+TM22 and TM36 again on `0ee7bfc45`, which adds the build time limit). No seeded bug became UNKNOWN under the
+stricter rule. The first run (four worktrees at once on the loaded
+VM) found TM57's and TM62's checks dead (the edit-span rule and the probe's `sorryAx` already cover their forms), so
+the checks and the seeds were removed; TM79 was too weak (TM71 plants T5's bug); TM42's and TM44's rules lacked a
+test that only they decide (a one-sided `#eval` info diff; a refusal at an edit inside a tactic block), now added;
+TM1–TM4 hit the nested run's 1,800 s limit under that load and were killed in the second run. Python is the only product language here: no Lean file
+of `lean/` and no Rust changed (the probe's Lean text is part of the tool). The parametrized tests have ids without
+spaces: `tools/mutants.py` reads a failing id up to its first space.
+
+| Mutant | Rule | Bug planted (the replacement) | Failing test |
 |---|---|---|---|
 | TM1 | a failing proof is cut and the build repeated, never left to decide the mutant | failing proofs are not cut | `test_a_failing_proof_is_no_kill` |
 | TM2 | the importing check modules are built | the second build stage is empty | `test_a_well_guarded_definition_has_no_survivor` |
@@ -342,7 +494,7 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
 | TM5 | a scratch copy is used | the scratch sources are hard links to the checkout | `test_mutants_are_built_in_a_scratch_copy` |
 | TM6 | the rest are listed as NOT RUN | only the first NOT RUN row prints | `test_max_mutants_lists_the_rest_as_not_run` |
 | TM7 | every list method's receiver is cut | `find?` unescaped in `LIST_METHODS` (a real regression of the rewrite, caught by the ap-2 replays) | `test_the_generator_cuts_every_list_a_condition_reads` |
-| TM8 | an `example` is a check only when `decide`/`native_decide`/`rfl` proves it (review F1) | every `example` is a check | `test_an_example_proved_by_a_tactic_is_no_kill` |
+| TM8 | an `example` is a check only when decide, native_decide or rfl proves it (review F1) | `return "check" if kind == "command" or proved and not tactics and c...` | `test_an_example_proved_by_a_tactic_is_no_kill` |
 | TM9 | a tactic-proved theorem whose statement names the definition is a proof (review F1) | it is a check outside the mutated module (the first tool's rule) | `test_a_failing_proof_is_no_kill` |
 | TM10 | a check outside the directory whose statement names the definition is built | only the directory's checks are built | `test_a_decide_check_outside_the_directory_naming_the_definition_kills` |
 | TM11 | a `#guard_msgs … in` line opens the command it wraps (review F6), in `tools/trust_map.py` | the wrapper is its own command again | `test_a_proof_wrapped_in_guard_msgs_is_no_kill`, `test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps` |
@@ -357,24 +509,60 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
 | TM20 | failing proofs are cut before a check error is read (F7) | not when a check fails too | `test_the_truth_table_statuses` |
 | TM21 | every `#` command opens its own span, in `tools/trust_map.py` (F7) | the old list of seven commands | `test_every_hash_command_opens_its_own_span` |
 | TM22 | an outside `--test` file kills only when it passes without the mutant (F7) | any failing file kills (since F10 on the new lines) | `test_an_outside_test_that_fails_without_the_mutant_is_no_kill` |
-| TM23 | only an error in a check (or a `--test` file) kills; one in a definition is UNKNOWN | any error kills (since F9 on `attributed`) | `test_an_error_outside_every_check_is_unknown` |
+| TM23 | only an error inside a check kills; one in a definition or a proof is UNKNOWN (`judge`) | `if built != checkout or not built.strip() or PARSE.match(message):` | `test_only_a_checks_own_error_kills` |
 | TM24 | the blanking stops at a string the command before is still writing (F7) | it does not | `test_a_cut_command_is_blanked_with_its_docstring` |
-| TM25 | an error in a definition is UNKNOWN even beside a failing check (F8) | a failing check wins (since F9 on `attributed`) | `test_an_error_in_a_definition_beside_a_failing_check_is_unknown` |
+| TM25 | an error in a definition is UNKNOWN even beside a failing check (review F8; `settle` reads every error) | `if bad := next((x for x in rows[:1] if x[3] == NONE), None):` | `test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition` |
 | TM26 | a longer replacement takes its extra line ends from the blank lines after its declaration (F9) | it never does | `test_an_edit_keeps_every_line_after_its_declaration`, `test_a_replacement_of_any_line_count_is_decided_by_the_checks` |
 | TM27 | those blank lines are never inside a comment (F9) | the comment test dropped | `test_an_edit_keeps_every_line_after_its_declaration` |
 | TM28 | a mutant that moves a line after its declaration is UNKNOWN (F9) | no guard | `test_a_replacement_of_any_line_count_is_decided_by_the_checks` |
 | TM29 | the guard compares each line, not only the count (F9) | it compares the count | `test_moved_finds_the_first_line_after_the_declaration_that_moved` (first named the edit test, where it survived: no case there keeps the count and moves a line; the new test has one) |
-| TM30 | a parse error never kills (F9) | the parse test dropped (since F10 on the new line) | `test_only_a_checks_own_error_kills` |
-| TM31 | a check's error kills only at a line the checkout has there (F9) | any check line kills | `test_only_a_checks_own_error_kills` |
+| TM30 | a parse error never kills, nor sends an `rfl` check to `decide` (review F9: a cut left behind) | `if role != "check" or built != checkout or not built.strip():` | `test_a_check_kills_only_when_its_message_states_a_refutation` |
+| TM31 | a check's error kills only at a line the mutant and the cuts left as the checkout has it (review F9) | `if role != "check" or not built.strip() or PARSE.match(message):` | `test_only_a_checks_own_error_kills` |
 | TM32 | the mutated declaration's lines run over the blank lines its edit takes (F9) | they end where the declaration did | `test_a_replacement_of_any_line_count_is_decided_by_the_checks` |
-| TM33 | a check or `--test` file that gives no answer never kills (F10) | `attributed` without `NO_ANSWER` | `test_a_check_that_gives_no_answer_never_kills`, `test_a_check_out_of_budget_or_stuck_is_unknown[decide]`, `test_probe_f10_a_check_out_of_budget_is_no_kill` |
-| TM34 | an error is read with its whole message (F10) | its first line only | `test_an_error_is_read_with_its_whole_message` (the guard-msgs row is UNKNOWN by the `#reduce`'s own error too, section 1d) |
-| TM35 | a mutated declaration out of budget is UNKNOWN, not INVALID (F10) | INVALID | `test_a_check_out_of_budget_or_stuck_is_unknown[in-definition]` |
-| TM36 | an outside `--test` file that gives no answer never kills (F10) | its output not read | `test_a_check_out_of_budget_or_stuck_is_unknown[outside]` |
-| TM37 | a `decide` that gets stuck or cannot evaluate gives no answer (F10) | that form dropped from `NO_ANSWER` | `test_a_check_out_of_budget_or_stuck_is_unknown[stuck]`, `test_a_check_that_gives_no_answer_never_kills` |
-| TM38 | a check out of heartbeats gives no answer (F10) | that form dropped | `test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]`, `test_a_check_that_gives_no_answer_never_kills` |
-| TM39 | the kernel's limits give no answer (F10) | those forms dropped | `test_a_check_that_gives_no_answer_never_kills` |
-| TM40 | a check over the recursion limit gives no answer (F10, PROBE F10) | that form dropped | `test_a_check_out_of_budget_or_stuck_is_unknown[rfl]`, `test_a_check_that_gives_no_answer_never_kills`, `test_probe_f10_a_check_out_of_budget_is_no_kill` |
+| TM33 | a check that gives no answer never kills (review F10; since F11 because it states no refutation) | `if REFUTED.fullmatch(message) or NO_ANSWER.search(message):` | `test_a_check_that_gives_no_answer_never_kills`, `test_a_check_out_of_budget_or_stuck_is_unknown[decide]`, `test_probe_f10_a_check_out_of_budget_is_no_kill` |
+| TM34 | an error is read with its whole message (review F10; a refutation is matched whole, F11) | `ERROR = re.compile(r"^error: (?:\./)*(\S+?\.lean):(\d+):(\d+): (.*)...` | `test_an_error_is_read_with_its_whole_message`, `test_a_check_wrapped_in_guard_msgs_kills` |
+| TM35 | a refusal that quotes Lean's budget is no refusal: UNKNOWN, not INVALID (review F10, F12) | `return not elsewhere and bool(PARSE.match(message) or REFUSED.searc...` | `test_invalid_only_when_lean_refuses_the_mutated_text` |
+| TM36 | an outside --test file kills only by the rule inside lean/: one that gives no answer, or a stuck `rfl`, never kills (review F10, F11) | `if status == "INVALID": return status, detail` | `test_a_check_out_of_budget_or_stuck_is_unknown[outside]`, `test_a_check_that_states_no_refutation_is_unknown[outside-equal]` |
+| TM37 | a decide that gets stuck or cannot evaluate gives no answer (UNKNOWN, marked so in the detail) (review F10) | `\|stack overflow")` | `test_a_check_that_gives_no_answer_never_kills`, `test_a_check_out_of_budget_or_stuck_is_unknown[stuck]` |
+| TM38 | a check out of heartbeats gives no answer (UNKNOWN, marked so in the detail) (review F10) | `` | `test_a_check_that_gives_no_answer_never_kills`, `test_a_check_out_of_budget_or_stuck_is_unknown[heartbeats]` |
+| TM39 | the kernel's limits give no answer (review F10) | `` | `test_a_check_that_gives_no_answer_never_kills` |
+| TM40 | a check over the recursion limit gives no answer (UNKNOWN, marked so in the detail) (review F10, PROBE F10) | `NO_ANSWER = re.compile(r"` | `test_a_check_that_gives_no_answer_never_kills`, `test_probe_f10_a_check_out_of_budget_is_no_kill`, `test_a_check_out_of_budget_or_stuck_is_unknown[rfl]` |
+| TM41 | an `rfl` check's failure kills only when `decide` then refutes its statement (review F11, PROBE F11) | `if pending := {}:` | `test_probe_f11_a_stuck_rfl_check_is_no_kill`, `test_a_check_that_states_no_refutation_is_unknown[rfl]`, `test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition` |
+| TM42 | a `#guard_msgs` diff kills only between refutations: no `info` (an `#eval`'s or `#reduce`'s) is an answer (review F11, hunt Q4, Q7, Q8) | `return said if all(m.startswith("info:") or m.startswith("error:") ...` | `test_a_check_kills_only_when_its_message_states_a_refutation` |
+| TM43 | INVALID needs every error of the mutated declaration to be a refusal (review F12) | `for f, n, message, column in errors[:1]: at = starts[` | `test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal` |
+| TM44 | an error inside a tactic block of the mutated declaration is a tactic's, never a refusal (review F12) | `if not refused(message, not edit[0] <= at < max(edit[1], edit[0] + ...` | `test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal` |
+| TM45 | a tactic out of budget in the mutated declaration is UNKNOWN, never INVALID (review F12, PROBE F12) | `return not NO_ANSWER.search(message) and not message.startswith("un...` | `test_probe_f12_a_tactic_out_of_steps_in_the_mutated_definition_is_unknown`, `test_invalid_only_when_lean_refuses_the_mutated_text` |
+| TM46 | a check with a hypothesis before its colon is a proof: `decide` refutes only its goal (hunt H1) | `closed = True` | `test_only_guards_and_decide_rfl_proofs_are_checks`, `test_a_hunt_form_gets_no_verdict_that_hides_it[H1]` |
+| TM47 | a kill needs the check to refute the mutated definition: Lean finds it in the statement, no hypothesis, no reflection, no cut theorem behind its instance (hunt H4, H5, N1-N3, N8) | `if bad := None:` | `test_a_hunt_form_gets_no_verdict_that_hides_it[H4]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[H5]`, `test_settle_kills_only_when_every_error_is_a_checks_refutation_of_the_definition` |
+| TM48 | a refusal counts only inside the text the mutant wrote: a proof term it broke elsewhere fails as a tactic does (hunt Q9) | `if not refused(message, in_tactic(code, at, lo, hi)):` | `test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal`, `test_a_hunt_form_gets_no_verdict_that_hides_it[Q9]` |
+| TM49 | an `rfl` check is asked `decide`, never `native_decide`, which evaluates compiled code (hunt H7) | `return text[:s] + "by native_decide" + "\n" * text.count("\n", s, e...` | `test_a_check_that_states_no_refutation_is_unknown[rfl-native]`, `test_decided_rewrites_only_the_rfl_and_keeps_every_line` |
+| TM50 | instance search that fails (its own budget, hunt H2, H3) is no refusal: UNKNOWN | `REFUSED = re.compile(r"failed to synthesize\|[Uu]nknown (?:identifie...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[H2]`, `test_invalid_only_when_lean_refuses_the_mutated_text` |
+| TM51 | an outside --test file's `rfl` check is asked `decide` in its copy, as inside lean/ (review F11) | `copy.write_text(t.read_text())` | `test_a_check_that_states_no_refutation_is_unknown[outside-decide]` |
+| TM52 | a check that computes through a proof the mutant broke never kills (hunt H4, N1, N2, P1-P9, Q1-Q3, Q5) | `if False:` | `test_a_hunt_form_gets_no_verdict_that_hides_it[N1]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[N1g]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[P1]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[Q1]` |
+| TM53 | a check whose goal has a hypothesis (a section variable) never kills (hunt N8) | `if False:` | `test_a_hunt_form_gets_no_verdict_that_hides_it[N8]` |
+| TM54 | a kill needs Lean to elaborate the check as without the mutant (hunt Q6, Q10, Q12, P8) | `if False:` | `test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[Q10]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[P8]` |
+| TM55 | a cut proof loses its attributes: a `sorry` is no `@[csimp]` lemma (hunt N2) | `for a in re.finditer(r"@\[", ""):` | `test_a_hunt_form_gets_no_verdict_that_hides_it[N2]`, `test_a_cut_proof_loses_its_guard_msgs_wrapper_and_keeps_the_comments_after_it` |
+| TM56 | a span with two commands is no check (hunt N7) | `\|#[a-z_]+!?)(?![\w'])", bare)) > 9:` | `test_a_hunt_form_gets_no_verdict_that_hides_it[N7]`, `test_only_guards_and_decide_rfl_proofs_are_checks` |
+| TM58 | "Function expected" (a coercion's instance search out of budget says it) is no refusal (hunt N5) | `REFUSED = re.compile(r"[Ff]unction expected\|[Uu]nknown (?:identifie...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[N5]`, `test_invalid_only_when_lean_refuses_the_mutated_text` |
+| TM59 | the walk reads each `@[csimp]` lemma of what it reaches, wherever its attribute is given (hunt P3, Q5) | `todo := todo ++ (Lean.Compiler.getImplementedBy? env c).toList ++` | `test_a_hunt_form_gets_no_verdict_that_hides_it[P3]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[Q5]` |
+| TM60 | the walk reads an `opaque` definition's value (hunt Q3) | `let value := (info.value?).getD (mkConst ``True)` | `test_a_hunt_form_gets_no_verdict_that_hides_it[Q3]` |
+| TM61 | the probe reads the mutant's build, where the instance Lean picks can change (hunt P8) | `texts[f] if f in texts else read(f), tree.roles.get(f, ()))` | `test_a_hunt_form_gets_no_verdict_that_hides_it[P8]` |
+| TM63 | the probe's copy keeps every line of the file, so what a check reads of its source is the file's (hunt Q6) | `lines.insert(first, "import TmTrustProbe")` | `test_a_hunt_form_gets_no_verdict_that_hides_it[Q6]` |
+| TM64 | nothing is cut up front: a cut proof is one the mutant broke, which is what the probe's `sorry` means (hunt H4-Q5) | `for first, last, r, _ in sorted(tree.roles[m.file], reverse=True): ...` | `test_an_outside_test_that_fails_without_the_mutant_is_no_kill` |
+| TM65 | the walk reads a `partial def`'s compiled body (`_unsafe_rec`) (hunt R1) | `(Lean.getInitFnNameFor? env c).toList` | `test_a_hunt_form_gets_no_verdict_that_hides_it[R1]` |
+| TM66 | a check that runs IO (`unsafeIO`, an `initialize`d value) never kills (hunt R2, R6) | `if False:` | `test_a_hunt_form_gets_no_verdict_that_hides_it[R2]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[R6]` |
+| TM67 | a kill needs every definition the check reads, outside the mutated one, as without the mutant (hunt R8) | `if drift := None:` | `test_a_hunt_form_gets_no_verdict_that_hides_it[R8]` |
+| TM68 | the probe elaborates a file as the build does, with the module's options (hunt R5) | `said = lake({**env, "TM_TRUST_NONCE": nonce}, "env", "lean", str(pa...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[R5]` |
+| TM69 | a `#guard_msgs` diff kills only when the check's truth changed: one side empty (hunt R7) | `return expected is not None and generated is not None and expected ...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[R7]` |
+| TM70 | a parse error counts as a refusal only inside the mutant's own text, not one the tool's padding made (hunt R3) | `return not NO_ANSWER.search(message) and bool(PARSE.match(message) ...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[R3]`, `test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal` |
+| TM71 | only the mutated declaration and what Lean generated for it (its owner, its source range) are exempt from the comparison (hunt S1, S2, T5) | `let o := mutated` | `test_a_hunt_form_gets_no_verdict_that_hides_it[S1]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[S2]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[T5]` |
+| TM72 | every constant a check reaches is compared, through the mutated definition too (hunt S3, T3) | `if !(info matches .thmInfo _) && !(← inside c) && !(seen.toList.any...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[S3]`, `test_a_hunt_form_gets_no_verdict_that_hides_it[T3]` |
+| TM73 | IO is known by its types, not by the `unsafe*IO` names (hunt S5) | `let io := [``unsafeBaseIO, ``unsafeEIO, ``unsafeIO]` | `test_a_hunt_form_gets_no_verdict_that_hides_it[S5]` |
+| TM74 | the walk reads every package but Lean's own core (hunt S6) | `fun i => [`Init, `Std, `Lean, `Lake, `Helper].any` | `test_a_hunt_form_gets_no_verdict_that_hides_it[S6]` |
+| TM75 | the probe reads only lines with its own nonce (hunt S7) | `if line.startswith(nonce + " "): line = line[len(nonce) + 1:] name,...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[S7]` |
+| TM76 | the probe elaborates a module at its own path, with its library's options (hunt S8) | `return lean.parent / f"probe-{Path(f).name}" if Path(f).is_absolute...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[S8]` |
+| TM77 | every theorem `@f = @g` is a possible `@[csimp]` lemma, a `local` one included (hunt S9) | `if let some (.thmInfo info) := (env.find? t).filter (fun _ => (Lean...` | `test_a_hunt_form_gets_no_verdict_that_hides_it[S9]` |
+| TM78 | a check that computes through an axiom of the tree never kills (hunt T1) | `pure ()` | `test_a_hunt_form_gets_no_verdict_that_hides_it[T1]` |
 
 ## 4. Limits and follow-ups
 
@@ -398,14 +586,25 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
   mutant is UNKNOWN.
 - Each control is one more build per stage and set of cuts, cached across mutants; a mutant whose broken proofs
   differ needs its own. The replays measure no added time (section 1).
-- The sweep and the seeded bugs ran on the final tool (after F10); the replays on the tool after F8, which F9 and
-  F10 change for none of their mutants (section 1).
+- The sweep, the hunt probes and the seeded bugs ran on the final tool (the seeded bugs on the commit before the
+  build time limit, and its own and the build-path seeds again after it: section 3); of the replays only ap-2 F11
+  ran on it, the other five are the F8 tool's (section 1).
+- Since F11 a kill comes only from `#guard`, a `decide`/`native_decide` `example` or theorem, an `rfl` one that
+  `decide` then refutes, or one of those under `#guard_msgs` whose truth changed. A definition read only by
+  `#eval`, `#reduce`, `#check` or `#guard_expr` shows UNKNOWN (a failure there states no refutation) or SURVIVOR;
+  write a `#guard` for it. A named theorem in an outside `--test` file is no check (the tool reads its commands
+  without compiled declarations: unrecorded).
+- The kill rule rests on a probe (`READS`, Lean inside the tool) that runs per kill in the mutant's build: its
+  walk, hash and flags are this item's reading of what a check computes through. Seven hunts found forms it missed
+  (section 1e); the class is open, and the decided boundaries there (N4, H6, T6) are for the recheck to judge.
+- INVALID is narrower: 12 of ap-2 F11's 21 are now UNKNOWN (a refusal outside the mutant's own text), so a run
+  shows more UNKNOWN to allow-list or investigate.
+- A mutant whose build runs past `--build-timeout` is UNKNOWN; raise it for a slow tree.
 - A check that runs out of Lean's budget, or whose `decide` gets stuck, gives no answer (section 1d): the mutant
   is UNKNOWN even when another check refutes it (every error must kill), so raise that check's budget
-  (`set_option maxRecDepth … in`) to decide it. `NO_ANSWER` is Lean 4.24's wording: a toolchain that rewords a
-  message fails the `BUDGET` rows, which run through Lean (the kernel's own messages have unit rows only). A
-  `#guard_msgs` whose expected output is itself a budget error is UNKNOWN when the mutant answers (the quote
-  matches), never KILLED.
+  (`set_option maxRecDepth … in`) to decide it. Since F11 the verdict rests on `REFUTED` (Lean 4.24's refutation
+  messages, matched whole): a toolchain that rewords one makes those kills UNKNOWN (fail closed), and the `BUDGET`,
+  `STUCK` and `JUDGED` rows fail; `NO_ANSWER` only marks the detail.
 - A longer replacement with no blank line after its declaration to take its extra lines is UNKNOWN (fail closed),
   and so is any parse error outside the mutated declaration; the six replays have neither.
 - A build that fails with no located error is retried twice, then UNKNOWN; a control that fails that way is not
@@ -429,16 +628,17 @@ so TM14, TM19 and TM24 first showed as survivors although their tests failed.
 | Recheck F8: a definition's error beside a failing check, probe F8 | section 1b; TM25; replays and sweep rerun |
 | Recheck F9 (DRI note 2026-10-19b): no edit moves a line or the mutant is UNKNOWN, a kill is a check's own error, the line axis and F8's form in the tables, probes F1, F6–F9, a sweep, 25 seeded bugs still killed | section 1c; `relined`, `moved`, `attributed`; `LINES`, `lines_package`; `sweep.py`; TM26–TM32 (32 of 32) |
 | Recheck F10: a check out of budget counts as a kill; probe F10 | section 1d; `NO_ANSWER`, `ERROR`; `BUDGET`, `budget_package`; `replay.py` F10 line; sweep rerun; TM33–TM40 (40 of 40) |
+| Recheck F11/F12 (DRI note 2026-10-19c): the rule inverted (one positive condition for KILLED and for INVALID), a test per safe case, F11 and F12 as tests, an adversarial hunt until none (bounded by the 23Z addendum for later rounds), probes F1 and F6–F12, the sweep, the seeded bugs | section 1e; `settle`, `judge`, `refutes`, `invalid`, `refused`, `READS`/`probe`; `JUDGED`, `REFUSALS`, `STUCK`, `HUNT`; `docs/speed/trustmut/hunt/`; sweep and ap-2 F11 replay rerun; TM41–TM79 (77 seeds) |
 | 4 orchestrator lines, gate-check opinion | section 2 |
 | Rules: R2/R3 unchanged, nothing reads the tool; `trust_map.py --check`, review-ready and gate unchanged; no timing test | `DELTA.md`; no file of the gate or review-ready changed; trust_map's two changes (F6, F7) measure +0 here; the tests assert no time |
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
 | Size: at most ~500 changed lines outside generated files | over: see below |
 
-Size: about 2,800 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
-(`evidence/*.json`, `mutants-evidence.json`): `tools/trust_mutants.py` 690, the test 914, `replay.py` 124,
-`sweep.py` 158, the seeded bugs' `mutants.json` 416, `tools/trust_map.py` 10, this report and DELTA about 485
-(F10 added about 280: the tool 20, the test 132, `replay.py` 17, `mutants.json` 87, the report 60). That is over
-five times the guideline. The size rule's
+Size: about 4,700 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
+(`evidence/*.json`, `mutants-evidence.json`, the hunt probes): `tools/trust_mutants.py` 1,150, the test 1,570,
+`replay.py` 138, `sweep.py` 158, the seeded bugs' `mutants.json` 810, `tools/trust_map.py` 10, this report and
+DELTA about 610 (F11/F12 added about 1,900: the tool 560 with the Lean probe, the test 780, `mutants.json` 460, the
+report 125). That is over nine times the guideline. The size rule's
 fallback is to deliver steps 1-3 for the operators step 1 showed matter; every operator but `arm-default`,
 `body-true`/`body-false`, `ne-eq`, `all-any` and `append-*` left a survivor on a finding's line, and removing those
 saves under 20 lines, so all are kept. The bulk is the runner the task asks for (selection, scratch copies with
@@ -452,7 +652,7 @@ would leave no usable tool.
 1. N.A.: no Lean answer is relayed; the tool reads Lake's build log, and a failure it cannot place is UNKNOWN.
 2. PASS: section 5 maps every task line to its delivery; no rule break (no product code, no permanent report
    test: `replay.py` reads saved evidence, D4).
-3. PASS: seeded bugs TM1–TM40 (`mutants.json`, `mutants-evidence.json`), each failing its named test;
+3. PASS: seeded bugs TM1–TM79, 77 (`mutants.json`, `mutants-evidence.json`), each failing its named test;
    `--allow` names an exact (definition, operator) pair (`test_allow_suppresses_exactly_its_operator`).
 4. N.A.: no Python, Lean or Rust product code changed.
 5. N.A.: no relayed field.
@@ -460,9 +660,10 @@ would leave no usable tool.
 7. PASS: DELTA has no rows and reserves nothing; trust +0 (no Lean file changed).
 8. PASS: `git diff --stat main...HEAD -- ve lean rust conformance` is empty.
 9. PASS: `tools/select_tests.py` selects 32 units, `tests/test_trust_mutants.py` among them
-   (`repo_map.py file tools/trust_mutants.py`); all pass on the Mac runner.
+   (`repo_map.py file tools/trust_mutants.py`); all pass on the Mac runner (on `1bc00255d`; the test file again
+   on the final commit, 299 tests). `lake build` and `python3 lean/audit.py` pass (562 files; no Lean file changed).
 10. N.A.: no Lean statement or proof.
 11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
 12. N.A.: no product code; the tool's own times are in section 1.
-13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 156 added, 0 refused, 0 stale,
+13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 299 added, 0 refused, 0 stale,
     0 malformed.
