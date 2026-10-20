@@ -69,7 +69,7 @@ Not in scope, noted for a later item: `lean_service.UNHANDLED_MODES = {"english"
 - Tests:
   - Selected plan on the Mac runner (a54bd546b, 455 units): one failure, `test_every_field_keeps_its_domain[0]`,
     fixed in af9bbf7a4 (`tests/test_enum_domains.py`, 28 passed).
-  - The selected plan of the final HEAD is listed under "Final selected run" below.
+  - The final HEAD's selected run: "Final selected run" below.
   - Also run: `relay_mutation_gate.py` (42 routes, 137,740 mutants, 0 failures), `regen_generated.py --write` after
     the sync, `trust_map.py --check`, `repo_map.py --check`, `lean/audit.py`, `check_lean_imports.py`,
     `rust_build.py --check`, and `gate_collection.py --check --prebuilt` (8 added, 0 removed, 0 stale, 0 malformed).
@@ -82,7 +82,9 @@ Not in scope, noted for a later item: `lean_service.UNHANDLED_MODES = {"english"
 
 ## Final selected run
 
-(filled in below after the run on the final HEAD)
+On 82edb45a7 (the synced HEAD with this report), on the Mac runner: 457 of 457 units, exit 0, 0 failed (2,191 s).
+The plan is every unit by design. A change to `Protocol.lean` or `Registry.lean` is request handling and reaches
+every service user, and the regenerated inventories reach the rest. Only this section changed after the run.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -99,8 +101,9 @@ Not in scope, noted for a later item: `lean_service.UNHANDLED_MODES = {"english"
 6. PASS: synced with main (7ca77d87d) and regenerated; the chain runs the gate on the final HEAD.
 7. PASS: DELTA row 1 cites R6.
 8. PASS: DELTA states that no answer moves; the narrower handshake check is described there with its test.
-9. PASS: the selected plan covered the failing enum test. A seeded change in `select_tests.py` is caught
-   (`test_service_modes_narrow_only_known_recorded_users`), and `Registry.lean` selects every service user.
+9. PASS: the selected plan covered the failing enum test. It is every unit because request handling changed
+   (`Protocol.lean`, now also `Registry.lean`), not because of an unlayered file. A seeded change in
+   `select_tests.py` is caught (`test_service_modes_narrow_only_known_recorded_users`).
 10. PASS: the three theorems as written; mutants 1 to 5 break them; no statement changed.
 11. N.A.: no budget, limit or deadline value or code path changed; only the deadline table's keys are tested.
 12. N.A.: no runtime work added; the theorems are decided at build time (about 3 s).
