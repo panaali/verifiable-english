@@ -157,6 +157,26 @@ Evidence commit list (`git log --oneline main..HEAD --no-merges`, before this re
 6bd8247b0, b08b7dea7, 81bdf255c, 199f1a575, 7f4aa4226, ccf71608f, 02b0fd6dc, d9cd5ed10, 1af3e4388, 1552ab288,
 dd18fca56, 5f9b87684.
 
+## 7. Review fixes (`manage-agents/df-1ac-review.final.md`, review of 07db019f1)
+
+| Finding | Fix | Regression test | Commit |
+| --- | --- | --- | --- |
+| F1 (B): nothing tested what the answer shows of a collision that names a real pair but does not check; two dropped conditions (W9, W10) passed every guard and proof | **Class:** a `collision` status or member shown without a checked collision. DF-δ guard: `collJ L "r1" "r2"` on the holistic document gives UNKNOWN, the pair `unknown`, no `collision` member. New theorem `coherence_collision_shown`: a pair shown `collision` needs `x.collides`, a `collision` member needs verdict COLLISION, and a checked collision means not coherent. `CoherenceReplay.pairs` is now tied to it for the `collision` status (DELTA T1), so "already tied" holds for both statuses it claims | `lean/VE/Defaults/WireExamples.lean` `#guard holds (layered δEnv δR) …`; `mutants.json` W9, W10 (each fails the guard and the theorem, `evidence/mutants.out`); `coherence_collision_shown` (`lean/VE/Audit.lean`) | f484e28cc |
+
+PROBE F1, as the review gives it: before the fix `surviving: [both mutants]` (AssertionError); after it `surviving: []`.
+The sweep the review did (the `verdict`, `resolved`, diagnostic 5, limit and kind checks) needs nothing more. W1 to W8
+still fail as before.
+
+Evidence after the fix, on HEAD 257158960:
+- `lake build` (1,054 jobs) and `python3 lean/audit.py`: PASS (599 files, 6,825 theorems).
+- `regen_generated.py --check`: 32 entries, exit 0. `trust_map.py --check`: PASS, trusted +36, unchanged.
+- `compare_statements.py`: unchanged (20 OK, 22 MISSING for df-1ad).
+- `trust_mutants.py`: 84 killed, 6 allowed, exit 0.
+- Selected tests: `mac-pytest.sh --select -- --base c5197da78 --run`, 76 units, **0 failed** (1,554 s).
+  Pre-existing failures (`main-known-red.txt`): none failed.
+
+F2 to F4 (C) go to df-1ad, as the review says.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. **Every Lean answer typed and contained.** N.A.: no response shape, schema, relay or service mode changes. The
