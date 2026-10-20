@@ -1,6 +1,6 @@
 # Verifiable English
 
-**Verifiable English (VE) is a language and toolset for writing claims that people can read and computers can check.** It connects a controlled subset of English to precise logical statements, makes assumptions explicit, and checks whether conclusions follow from them.
+**Verifiable English (VE) is a controlled subset of English for writing mechanically checkable claims and arguments.** You write readable English; VE gives it a precise meaning and checks whether conclusions follow from the stated assumptions.
 
 VE is built for AI oversight: helping people understand and verify what an AI system claims, promises, or proposes to do. Today it is a research implementation with a command-line interface, Python APIs, a Lean checker, and worked applications—not a finished general-purpose document editor.
 
