@@ -35,6 +35,8 @@
 'Iceberg.water_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Examples.acceptsTable_terms' does not depend on any axioms
 'VE.Acts.Examples.tableToks_kinds' does not depend on any axioms
+'VE.Acts.Lexical.check_no_join' depends on axioms: [propext, Quot.sound]
+'VE.Acts.Lexical.wording_subject_first' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.listing_limit' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_nodup' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_ok' depends on axioms: [propext, Quot.sound]
@@ -2347,6 +2349,8 @@
 'VE.Norms.Wire.Source.lits' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Wire.Source.wf' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Wire.appendPredicates_assembly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Norms.Wire.canonicalActIn_without_acts' depends on axioms: [propext, Quot.sound]
+'VE.Norms.Wire.decodeRegulated_without_acts' depends on axioms: [propext, Quot.sound]
 'VE.Norms.agreesBelow_of_meanings' depends on axioms: [propext, Quot.sound]
 'VE.Norms.allF_denote' depends on axioms: [propext, Quot.sound]
 'VE.Norms.allF_wellFormed' does not depend on any axioms
@@ -5282,7 +5286,10 @@
 'VE.Route.sat_checked' depends on axioms: [propext, Quot.sound]
 'VE.Route.tableauValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.verifyOrder_sound' depends on axioms: [propext, Quot.sound]
+'VE.Scales.Examples.conservative_false' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.Examples.conservative_true' depends on axioms: [propext, Quot.sound]
 'VE.Scales.Examples.fb2_refuted' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.Examples.fb6_open' depends on axioms: [propext, Quot.sound]
 'VE.Scales.Examples.intended_of' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scales.Examples.order_cases' depends on axioms: [propext, Quot.sound]
 'VE.Scales.Examples.symbols_cases' does not depend on any axioms
@@ -5299,12 +5306,29 @@
 'VE.Scales.Intended.sameTrans' does not depend on any axioms
 'VE.Scales.Intended.total' does not depend on any axioms
 'VE.Scales.Intended.trans' does not depend on any axioms
+'VE.Scales.StrictLinear.connex' does not depend on any axioms
+'VE.Scales.StrictLinear.irrefl' does not depend on any axioms
+'VE.Scales.StrictLinear.trans' does not depend on any axioms
+'VE.Scales.below_of' does not depend on any axioms
 'VE.Scales.dim_iff' depends on axioms: [propext, Quot.sound]
 'VE.Scales.dim_ok' depends on axioms: [propext, Quot.sound]
+'VE.Scales.grade_open' depends on axioms: [propext, Quot.sound]
 'VE.Scales.intended_iff_and' does not depend on any axioms
+'VE.Scales.intended_iff_degrees' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.mem_symbols' depends on axioms: [propext, Quot.sound]
+'VE.Scales.more_ne_same' depends on axioms: [propext, Quot.sound]
+'VE.Scales.pairwise_or' does not depend on any axioms
 'VE.Scales.premises_iff_intended' depends on axioms: [propext, Quot.sound]
 'VE.Scales.premises_wellTyped' depends on axioms: [propext, Quot.sound]
+'VE.Scales.reread_admissible' depends on axioms: [propext, Quot.sound]
+'VE.Scales.reread_denote' depends on axioms: [propext, Quot.sound]
+'VE.Scales.reread_fresh' depends on axioms: [propext]
+'VE.Scales.reread_intended' depends on axioms: [propext, Quot.sound]
+'VE.Scales.reread_rel1' depends on axioms: [propext]
+'VE.Scales.reread_rel2' depends on axioms: [propext]
 'VE.Scales.scalePremises_labels_nodup' depends on axioms: [propext, Quot.sound]
+'VE.Scales.scales_conservative' depends on axioms: [propext, Quot.sound]
+'VE.Scales.tupleTyped_reread' depends on axioms: [propext]
 'VE.Scales.typed1' depends on axioms: [propext]
 'VE.Scales.typed2' depends on axioms: [propext]
 'VE.Scope.Examples.anchor_checks' depends on axioms: [propext]
