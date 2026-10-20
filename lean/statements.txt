@@ -2903,6 +2903,10 @@ theorem VE.Calc.Frac.go_sound
       ∀ (f : VE.Calc.Frac), VE.Calc.Frac.go e = Option.some f → VE.Calc.Frac.Means κ f x
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.Means@VE.Calc.Poly VE.Calc.Frac.go@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly
   -- expr 2257581851
+theorem VE.Calc.Frac.go_within
+  ∀ (e : VE.Calc.Expr) (f : VE.Calc.Frac), VE.Calc.Frac.go e = Option.some f → f.fst.Within ∧ f.snd.Within
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.go@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3063522590
 theorem VE.Calc.Frac.mul?_sound
   ∀ {κ : String → Rat} {f g h : VE.Calc.Frac} {x y : Rat},
     VE.Calc.Frac.Means κ f x → VE.Calc.Frac.Means κ g y → f.mul? g = Option.some h → VE.Calc.Frac.Means κ h (x * y)
@@ -2915,6 +2919,12 @@ theorem VE.Calc.Frac.ofExpr_sound
         VE.Calc.Poly.eval κ d ≠ 0 ∧ x = VE.Calc.Poly.eval κ n / VE.Calc.Poly.eval κ d
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.ofExpr?@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 1470753657
+theorem VE.Calc.Frac.ofExpr_within
+  ∀ {e : VE.Calc.Expr} {f : VE.Calc.Frac},
+    VE.Calc.Frac.ofExpr? e = Option.some f →
+      (VE.Calc.Expr.nodesWithin VE.Calc.maxPolyTerms e).isSome = Bool.true ∧ f.fst.Within ∧ f.snd.Within
+  -- uses VE.Calc.Expr.nodesWithin@VE.Calc.Poly VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.ofExpr?@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.maxPolyTerms@VE.Calc.Poly
+  -- expr 1266335514
 theorem VE.Calc.Frac.pair_some
   ∀ {o1 o2 : Option VE.Calc.Poly} {h : VE.Calc.Frac},
     (o1.bind fun n => Option.map (fun x => (n, x)) o2) = Option.some h → o1 = Option.some h.fst ∧ o2 = Option.some h.snd
@@ -2925,11 +2935,24 @@ theorem VE.Calc.Frac.pow?_sound
     VE.Calc.Frac.Means κ f x → f.pow? k = Option.some h → VE.Calc.Frac.Means κ h (x ^ k)
   -- uses VE.Calc.Frac.Means@VE.Calc.Poly VE.Calc.Frac.pow?@VE.Calc.Poly VE.Calc.Frac@VE.Calc.Poly
   -- expr 3272337982
+theorem VE.Calc.Identity.compare_within
+  ∀ {a b : VE.Calc.Expr} {r : Bool},
+    VE.Calc.Identity.compare a b = Option.some r →
+      ∃ fa fb l s,
+        VE.Calc.Frac.ofExpr? a = Option.some fa ∧
+          VE.Calc.Frac.ofExpr? b = Option.some fb ∧
+            fa.fst.mul? fb.snd = Option.some l ∧ fb.fst.mul? fa.snd = Option.some s ∧ l.Within ∧ s.Within ∧ r = (l == s)
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.ofExpr?@VE.Calc.Poly VE.Calc.Identity.compare@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.mul?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.instDecidableEqMono@VE.Calc.Poly
+  -- expr 51563669
 theorem VE.Calc.Poly.add?_sound
   ∀ (κ : String → Rat) {p q r : VE.Calc.Poly},
     p.add? q = Option.some r → VE.Calc.Poly.eval κ r = VE.Calc.Poly.eval κ p + VE.Calc.Poly.eval κ q
   -- uses VE.Calc.Poly.add?@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 1813406242
+theorem VE.Calc.Poly.add?_within
+  ∀ {p q r : VE.Calc.Poly}, p.add? q = Option.some r → r.Within
+  -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.add?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3782390333
 theorem VE.Calc.Poly.eval_append
   ∀ (κ : String → Rat) (p q : VE.Calc.Poly), VE.Calc.Poly.eval κ (p ++ q) = VE.Calc.Poly.eval κ p + VE.Calc.Poly.eval κ q
   -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
@@ -2979,25 +3002,49 @@ theorem VE.Calc.Poly.eval_perm
   ∀ (κ : String → Rat) {p q : VE.Calc.Poly}, List.Perm p q → VE.Calc.Poly.eval κ p = VE.Calc.Poly.eval κ q
   -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 1197014221
+theorem VE.Calc.Poly.guard_fits
+  ∀ {p r : VE.Calc.Poly}, p.guard = Option.some r → r.fits = Bool.true
+  -- uses VE.Calc.Poly.fits@VE.Calc.Poly VE.Calc.Poly.guard@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3174255039
 theorem VE.Calc.Poly.guard_some
   ∀ {p r : VE.Calc.Poly}, p.guard = Option.some r → r = p
   -- uses VE.Calc.Poly.guard@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 3948808954
+theorem VE.Calc.Poly.length_mulRaw
+  ∀ (p q : VE.Calc.Poly), (List.flatMap (fun m => List.map m.mul q) p).length = List.length p * List.length q
+  -- uses VE.Calc.Mono.mul@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2058937522
+theorem VE.Calc.Poly.length_norm
+  ∀ (p : VE.Calc.Poly), List.length p.norm ≤ List.length p
+  -- uses VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.norm@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2881690749
 theorem VE.Calc.Poly.mul?_sound
   ∀ (κ : String → Rat) {p q r : VE.Calc.Poly},
     p.mul? q = Option.some r → VE.Calc.Poly.eval κ r = VE.Calc.Poly.eval κ p * VE.Calc.Poly.eval κ q
   -- uses VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.mul?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 3095536943
+theorem VE.Calc.Poly.mul?_within
+  ∀ {p q r : VE.Calc.Poly}, p.mul? q = Option.some r → r.Within
+  -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.mul?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 2265763123
 theorem VE.Calc.Poly.ofExpr_sound
   ∀ (κ : String → Rat) (e : VE.Calc.Expr) (p : VE.Calc.Poly),
     VE.Calc.Poly.ofExpr? e = Option.some p → VE.Calc.Denotes (fun n => Option.some (κ n)) e (VE.Calc.Poly.eval κ p)
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.ofExpr?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 2768733591
+theorem VE.Calc.Poly.one_within
+  VE.Calc.Poly.one.Within
+  -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.one@VE.Calc.Poly
+  -- expr 3980781710
 theorem VE.Calc.Poly.pow?_sound
   ∀ (κ : String → Rat) {p r : VE.Calc.Poly} {k : Nat},
     p.pow? k = Option.some r → VE.Calc.Poly.eval κ r = VE.Calc.Poly.eval κ p ^ k
   -- uses VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.pow?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 1581600307
+theorem VE.Calc.Poly.pow?_within
+  ∀ {p r : VE.Calc.Poly} {k : Nat}, p.pow? k = Option.some r → r.Within
+  -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.pow?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
+  -- expr 3386352886
 theorem VE.Calc.QFact.negate_holds
   ∀ (κ : String → Rat) (f : VE.Calc.QFact), VE.Calc.QFact.Holds κ f.negate ↔ ¬VE.Calc.QFact.Holds κ f
   -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact.negate@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear

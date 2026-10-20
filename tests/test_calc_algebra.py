@@ -13,7 +13,8 @@ import pytest
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, lean_build
 
-HEADER = """import VE.Calc.Poly
+HEADER = """import Lean
+import VE.Calc.Poly
 open VE.Calc
 
 def v (n : String) : Expr := .val n
@@ -48,8 +49,11 @@ def geo (n : String) (k : Nat) : Expr := .add (l 1) (powers n k)
 def four : Expr :=
   .add (.add (.add (.mul (powers "x" 50) (powers "y" 50)) (.mul (powers "x" 50) (powers "z" 50)))
     (.mul (powers "y" 50) (powers "z" 50))) (.mul (powers "x" 50) (powers "w" 50))
-/-- A side that shares itself: 2⁴¹ − 1 nodes as a tree, 41 in memory. -/
-def doubled : Expr := (List.range 40).foldl (fun e _ => .add e e) (v "x")
+/-- A side that shares itself: 2ᵏ⁺¹ − 1 nodes as a tree, k + 1 in memory. -/
+def doubled (k : Nat) : Expr := (List.range k).foldl (fun e _ => .add e e) (v "x")
+/-- 10⁴⁰⁹⁶ − 1, the largest numerator or denominator within the digit limit (4,096 digits); 10⁴⁰⁹⁶ is one past it. -/
+def top : Rat := 10 ^ 4096 - 1
+def big : Rat := 10 ^ 4096
 def wide {α} [Repr α] (x : α) : String := (repr x).pretty 1000
 def check (p : Expr × Expr) : String := reprStr (identityCheck p.1 p.2)
 def compare (p : Expr × Expr) : String := reprStr (Identity.compare p.1 p.2)
@@ -57,24 +61,115 @@ def at' (p : Expr × Expr) (κ : List (String × Rat)) : String :=
   reprStr (differsAt p.1 p.2 κ, p.1.eval (κ.lookup ·), p.2.eval (κ.lookup ·))
 /-- One line per fixture, whatever its answer prints, so a wrong answer fails only its own fixture. -/
 def line (key value : String) : IO Unit := IO.println (key ++ "\\t" ++ value.replace "\\n" "\\\\n")
+def form (e : Expr) : String := reprStr (Frac.ofExpr? e).isSome
+def nodes (e : Expr) : String := reprStr ((e.nodesWithin 100000).map (100000 - ·))
+open Lean in
+/-- The definitions of `VE.Calc.Poly`, theorems aside, whose value reads a limit: each one is in the limit table. -/
+def limitReaders : CoreM String := do
+  let env ← getEnv
+  let limits := [``maxPolyTerms, ``maxPolyExponent, ``Poly.coeffBound]
+  let poly := env.getModuleIdx? `VE.Calc.Poly
+  let names := env.constants.toList.filterMap fun (n, c) =>
+    if poly.isSome && env.getModuleIdxFor? n == poly && !(c matches .thmInfo _) &&
+        (c.value?.map fun v => limits.any v.getUsedConstants.contains).getD false then some n.toString else none
+  return String.intercalate " " (names.toArray.qsort (· < ·)).toList
 """
 
-# ME-1's digit limit (2.4) on each side of the line and with each sign: 10^4095 has 4,096 digits, 10^4096 has 4,097,
-# above the line (10) or below it (1/10). The last factor carries the sign, so the check must bound the magnitude, and
-# past the limit even a side compared with itself is no identity.
-DIGIT_FIXTURES = [
-    fixture
-    for sign, minus in (("", ""), ("neg-", "-"))
-    for side, base in (("", "10"), ("den-", "(1/10)"))
-    for fixture in (
-        (f"digits-{sign}{side}4096", f"reprStr ((Poly.ofExpr? (.mul (.pow (l {base}) 4094) (l ({minus}{base})))).map "
-                                     "List.length)", "some 1"),
-        (f"digits-{sign}{side}4097",
-         f"reprStr (Poly.ofExpr? (.mul (.pow (l {base}) 4095) (l ({minus}{base}))))", "none"),
-        (f"digits-{sign}{side}4097-compare",
-         f"compare (.mul (.pow (l {base}) 4095) (l ({minus}{base})), .mul (.pow (l {base}) 4095) (l ({minus}{base})))",
-         "none"),
-    )
+# Every limit check of `VE.Calc.Poly`, by the declaration that makes it (REPORT.md, "Limit truth table"). A row is
+# (check, key, side, other side or None, at the limit). Exactly at its limit a side is answered; exactly one past
+# it, it is `none`. A row with one side gives two fixtures: `{key}`, whether the side has a fraction form, and
+# `{key}-compare`, the side compared with itself, so past a limit even that is no identity. A row with two sides
+# gives `{key}`, their comparison (`some true` at the limit, `none` past it), and `{key}-form`, whether the first
+# side has a fraction form: `compare` multiplies each side by the other's denominator, which checks the term count
+# again, so the form is what pins a check of one factor only (recheck F8's hunt).
+LIMIT_CHECKS = {
+    "nodes": ("VE.Calc.Frac.ofExpr?", "e.nodesWithin maxPolyTerms: at most 10,000 nodes in a side"),
+    "sum": ("VE.Calc.Poly.add?", "p.length + q.length ≤ maxPolyTerms: at most 10,000 terms in a sum"),
+    "product": ("VE.Calc.Poly.mul?", "p.length * q.length ≤ maxPolyTerms: at most 10,000 terms in a product"),
+    "power": ("VE.Calc.Poly.pow?", "k ≤ maxPolyExponent: a power node's exponent at most 4,096"),
+    "exponent": ("VE.Calc.Poly.fits", "each variable's exponent ≤ maxPolyExponent, in every monomial"),
+    "numerator": ("VE.Calc.Poly.fits", "num.natAbs < Poly.coeffBound: at most 4,096 digits, either sign"),
+    "denominator": ("VE.Calc.Poly.fits", "den < Poly.coeffBound: at most 4,096 digits"),
+}
+
+
+def digit_rows():
+    """ME-1's digit limit (2.4), for each sign and each side of the line: `top` (10^4096 − 1) is at it, `big`
+    (10^4096) one past it. At it by a literal and by a product; past it by a literal, a product and a sum, so each
+    place that builds a polynomial (`Frac.go`'s literal, `mul?`, `add?`) is pinned."""
+    for sign, minus in (("", ""), ("neg-", "-")):
+        yield from (("numerator", f"digits-{sign}{kind}", side, None, kind.startswith("at")) for kind, side in (
+            ("at", f"l ({minus}top)"),
+            ("at-product", f".mul (l ({minus}top / 9)) (l 9)"),
+            ("past", f"l ({minus}big)"),
+            ("past-product", f".mul (.pow (l 10) 4095) (l ({minus}10))"),
+            ("past-sum", f".add (l ({minus}top)) (l ({minus}1))"),
+        ))
+        yield from (("denominator", f"digits-{sign}den-{kind}", side, None, kind.startswith("at")) for kind, side in (
+            ("at", f"l ({minus}1 / top)"),
+            ("at-product", f".mul (l ({minus}9 / top)) (l (1 / 9))"),
+            ("past", f"l ({minus}1 / big)"),
+            ("past-product", f".mul (.pow (l (1 / 10)) 4095) (l ({minus}1 / 10))"),
+            # (2^4096 + 5^4096) / 10^4096 is in lowest terms: the sum is odd and 1 modulo 5.
+            ("past-sum", f".add (l ({minus}1 / 5 ^ 4096)) (l ({minus}1 / 2 ^ 4096))"),
+        ))
+
+
+LIMITS = [
+    ("nodes", "nodes-10000", "(sumx 4999).pow 1", '.mul (l 5000) (v "x")', True),
+    ("nodes", "nodes-10001", "sumx 5000", '.mul (l 5001) (v "x")', False),
+    ("nodes", "nodes-10001-pow", "((sumx 4999).pow 1).pow 1", '.mul (l 5000) (v "x")', False),
+    ("nodes", "nodes-10001-right", '.add (v "x") (sumx 4999)', '.mul (l 5001) (v "x")', False),
+    # A side that shares itself, 2^15 − 1 nodes as a tree: past the limit, and cheap to normalise if it is let
+    # through; `test_a_shared_side_costs_only_the_limit` has one of 2^41 − 1.
+    ("nodes", "nodes-shared", "doubled 14", '.mul (l 16384) (v "x")', False),
+    ("sum", "sum-10000", "four", None, True),
+    ("sum", "sum-10001", ".add four (l 1)", None, False),
+    # 100 × 100, 73 × 137 (review F8: exactly one past) and 101 × 100 terms.
+    ("product", "product-10000", '.mul (geo "x" 99) (geo "y" 99)', '.mul (geo "y" 99) (geo "x" 99)', True),
+    ("product", "product-10001", '.mul (geo "x" 72) (geo "y" 136)', '.mul (geo "y" 136) (geo "x" 72)', False),
+    ("product", "product-10100", '.mul (geo "x" 100) (geo "y" 99)', '.mul (geo "y" 99) (geo "x" 100)', False),
+    # A constant base, where only the power node's guard refuses.
+    ("power", "exponent-constant-4096", ".pow (l 1) 4096", None, True),
+    ("power", "exponent-constant-4097", ".pow (l 1) 4097", None, False),
+    # Exponents reached by products; past the limit in the middle variable of three and the middle monomial of four,
+    # so a check of the first or the last one only is caught.
+    ("exponent", "exponent-4096", '.mul (.pow (v "x") 2048) (.pow (v "x") 2048)', '.pow (.pow (v "x") 64) 64', True),
+    ("exponent", "exponent-4097", '.mul (.pow (v "x") 4096) (v "x")', '.pow (v "x") 4097', False),
+    ("exponent", "exponent-4097-product", '.mul (.pow (v "x") 4096) (v "x")', '.mul (v "x") (.pow (v "x") 4096)',
+     False),
+    ("exponent", "exponent-4097-middle-var", '.mul (.pow (v "y") 4096) (.mul (v "x") (.mul (v "y") (v "z")))', None,
+     False),
+    ("exponent", "exponent-4097-middle-term", '.mul (.add (.pow (v "x") 4096) (v "z")) (.add (v "x") (v "z"))', None,
+     False),
+    # 10 + 10^4096·x + 10z: past the digit limit in the middle monomial of three.
+    ("numerator", "digits-middle-term", '.mul (.add (.add (l 1) (.mul (.pow (l 10) 4095) (v "x"))) (v "z")) (l 10)',
+     None, False),
+    *digit_rows(),
+]
+
+
+def limit_fixtures():
+    for _, key, side, other, at in LIMITS:
+        if other is None:
+            yield key, f"form ({side})", repr(at).lower()
+            yield f"{key}-compare", f"compare ({side}, {side})", "some true" if at else "none"
+        else:
+            yield key, f"compare ({side}, {other})", "some true" if at else "none"
+            yield f"{key}-form", f"form ({side})", repr(at).lower()
+
+
+# The size of each side the table puts at or one past a limit, so its place is checked, not assumed.
+SIZES = [
+    ("size-nodes-9999", "nodes (sumx 4999)", "some 9999"),
+    ("size-nodes-right", 'nodes (.add (v "x") (sumx 4999))', "some 10001"),
+    ("size-four", "reprStr ((Frac.ofExpr? four).map (·.1.length))", "some 10000"),
+    ("size-geo-99", 'reprStr ((Poly.ofExpr? (geo "x" 99)).map List.length)', "some 100"),
+    ("size-geo-100", 'reprStr ((Poly.ofExpr? (geo "x" 100)).map List.length)', "some 101"),
+    ("size-geo-72", 'reprStr ((Poly.ofExpr? (geo "x" 72)).map List.length)', "some 73"),
+    ("size-geo-136", 'reprStr ((Poly.ofExpr? (geo "y" 136)).map List.length)', "some 137"),
+    ("size-top", "reprStr ((toString top.num).length, (toString big.num).length, top.den)", "(4096, 4097, 1)"),
+    ("size-past-sum-den", "reprStr ((1 / 5 ^ 4096 + 1 / 2 ^ 4096 : Rat).den == 10 ^ 4096)", "true"),
 ]
 
 # (key, Lean expression, Lean's expected answer); the key names the spec's fixture.
@@ -113,39 +208,30 @@ FIXTURES = [
     ("recip-at-3", 'at\' recip [("x", 3)]', "(true, some (1 : Rat)/2, some 1)"),
     ("recip-form", "wide (Frac.ofExpr? recip.1)",
      'some ([{ coeff := 1, vars := [] }], [{ coeff := -1, vars := [] }, { coeff := 1, vars := [("x", 1)] }])'),
-    # Limits (spec 3.2, `limit .polyTerms`): at and just past each one, never a verdict past it.
-    ("nodes-10000", 'compare ((sumx 4999).pow 1, .mul (l 5000) (v "x"))', "some true"),
-    ("nodes-10001", 'compare (sumx 5000, .mul (l 5001) (v "x"))', "none"),
-    ("nodes-10001-pow", 'compare (((sumx 4999).pow 1).pow 1, .mul (l 5000) (v "x"))', "none"),
-    ("nodes-shared", 'compare (doubled, .mul (l 1099511627776) (v "x"))', "none"),
-    ("product-10000", 'compare (.mul (geo "x" 99) (geo "y" 99), .mul (geo "y" 99) (geo "x" 99))', "some true"),
-    ("product-10100", 'compare (.mul (geo "x" 100) (geo "y" 99), .mul (geo "y" 99) (geo "x" 100))', "none"),
-    ("sum-10000", "reprStr ((Frac.ofExpr? four).map (·.1.length))", "some 10000"),
-    ("sum-10001", "reprStr ((Frac.ofExpr? (.add four (l 1))).map (·.1.length))", "none"),
-    *DIGIT_FIXTURES,
-    ("exponent-4096", 'check (.pow (v "x") 4096, .pow (.pow (v "x") 64) 64)', "true"),
-    ("exponent-4097", 'compare (.mul (.pow (v "x") 4096) (v "x"), .pow (v "x") 4097)', "none"),
-    # A power past the exponent limit is refused even when its base is constant and no exponent appears.
-    ("exponent-constant-4096", "reprStr (Poly.ofExpr? (.pow (l 1) 4096))", "some [{ coeff := 1, vars := [] }]"),
-    ("exponent-constant-4097", "reprStr (Poly.ofExpr? (.pow (l 1) 4097))", "none"),
-    ("exponent-4097-product", 'compare (.mul (.pow (v "x") 4096) (v "x"), .mul (v "x") (.pow (v "x") 4096))', "none"),
+    # Limits (spec 3.2, `limit .polyTerms`): the table above, at and one past each one, never a verdict past it.
+    *limit_fixtures(),
+    *SIZES,
     ("over-the-limit-is-not-an-identity", 'check (sumx 5000, .mul (l 5001) (v "x"))', "false"),
 ]
 
 
-@pytest.fixture(scope="module")
-def lean(tmp_path_factory):
+def run_lean(path, fixtures, extra=""):
     lake = shutil.which("lake")
     if lake is None:
         pytest.skip("lake is not available")
     lean_build("VE")
-    source = tmp_path_factory.mktemp("algebra") / "Algebra.lean"
-    source.write_text(HEADER + "".join(f"#eval line {json.dumps(key)} ({expression})\n"
-                                       for key, expression, _ in FIXTURES))
-    done = subprocess.run([lake, "env", "lean", str(source)], cwd=LEAN, capture_output=True, text=True,
+    path.write_text(HEADER + "".join(f"#eval line {json.dumps(key)} ({expression})\n"
+                                     for key, expression, _ in fixtures) + extra)
+    done = subprocess.run([lake, "env", "lean", str(path)], cwd=LEAN, capture_output=True, text=True,
                           timeout=HANG_TIMEOUT)
     assert done.returncode == 0, done.stdout + done.stderr
     return dict(row.split("\t", 1) for row in done.stdout.splitlines())
+
+
+@pytest.fixture(scope="module")
+def lean(tmp_path_factory):
+    return run_lean(tmp_path_factory.mktemp("algebra") / "Algebra.lean", FIXTURES,
+                    '#eval show Lean.CoreM Unit from do line "limit-readers" (← limitReaders)\n')
 
 
 @pytest.mark.parametrize("key, expected", [pytest.param(key, expected, id=key) for key, _, expected in FIXTURES])
@@ -154,4 +240,22 @@ def test_fixture(lean, key, expected):
 
 
 def test_every_fixture_printed_once(lean):
-    assert sorted(lean) == sorted(key for key, _, _ in FIXTURES)
+    assert sorted(lean) == sorted([key for key, _, _ in FIXTURES] + ["limit-readers"])
+
+
+def test_every_limit_check_is_pinned_at_and_past_it(lean):
+    """Each definition that reads a limit, as Lean's environment lists them, makes a check of the table (or is the
+    limit theorems' predicate `Poly.Within`), and each check has a fixture at its limit and one past it."""
+    assert lean["limit-readers"].split() == sorted({owner for owner, _ in LIMIT_CHECKS.values()}
+                                                   | {"VE.Calc.Poly.Within"})
+    for check in LIMIT_CHECKS:
+        assert {at for row, _, _, _, at in LIMITS if row == check} == {True, False}, check
+    assert {row for row, _, _, _, _ in LIMITS} == set(LIMIT_CHECKS)
+
+
+def test_a_shared_side_costs_only_the_limit(tmp_path):
+    """2^41 − 1 nodes as a tree, 41 in memory: the node walk stops at the limit, so the answer comes at once. Its own
+    process, so a walk that does not stop fails this test alone (by `HANG_TIMEOUT`)."""
+    answers = run_lean(tmp_path / "Shared.lean",
+                       [("nodes-shared-41", 'compare (doubled 40, .mul (l 1099511627776) (v "x"))', "none")])
+    assert answers == {"nodes-shared-41": "none"}
