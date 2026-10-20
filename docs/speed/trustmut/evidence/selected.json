@@ -1,0 +1,11 @@
+{
+ "commit": "4842741db",
+ "runner": "zsh manage-agents/mac-pytest.sh --select -- --base <merge base> --run (ve-mac-1)",
+ "units": 32,
+ "exit": 0,
+ "summary": "recorded 32 units for tree 760222d5ca; 0 others left to the static graph until they run; 0 failed",
+ "lake_build_exit": 0,
+ "audit_exit": 0,
+ "audit": "PASS: 562 source files; 6398 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.",
+ "gate_collection": "301 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers"
+}

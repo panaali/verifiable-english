@@ -726,7 +726,7 @@ would leave no usable tool.
 
 1. N.A.: no Lean answer is relayed; the tool reads Lake's build log, and a failure it cannot place is UNKNOWN.
 2. PASS: section 5 maps every task line to its delivery; no rule break (no product code, no permanent report
-   test: `replay.py` reads saved evidence, D4).
+   test: `replay.py` and `claims.py` read saved evidence, D4).
 3. PASS: seeded bugs TM1–TM85, 83 (`mutants.json`, `mutants-evidence.json`), each failing its named test or command;
    `--allow` names an exact (definition, operator) pair (`test_allow_suppresses_exactly_its_operator`).
 4. N.A.: no Python, Lean or Rust product code changed.
@@ -735,8 +735,10 @@ would leave no usable tool.
 7. PASS: DELTA has no rows and reserves nothing; trust +0 (no Lean file changed).
 8. PASS: `git diff --stat main...HEAD -- ve lean rust conformance` is empty.
 9. PASS: the tests `tools/select_tests.py` selects, `tests/test_trust_mutants.py` among them (`repo_map.py file
-   tools/trust_mutants.py`), on the Mac runner (`evidence/selected.json`) SELECTED_LINE (no Lean file changed).
+   tools/trust_mutants.py`), on the Mac runner (`evidence/selected.json`) on `4842741db`: 32 units, exit 0; `lake build` exits 0 and
+   `python3 lean/audit.py` exits 0 there (no Lean file changed).
 10. N.A.: no Lean statement or proof.
 11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
 12. N.A.: no product code; the tool's own times are in section 1.
-13. N.A.: no test of main removed or renamed; GATE_COLLECTION_LINE.
+13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 301 added, 0 removed by a trailer,
+    0 refused, 0 stale and 0 malformed trailers.
