@@ -5,13 +5,13 @@
   {
    "id": "P-loader-guard",
    "language": "Python",
-   "file": "ve/document.py",
-   "definition": "ve/document.py:_load_document",
+   "file": "ve/document/load.py",
+   "definition": "ve/document/load.py:_load_document",
    "mutation": "Python's own loader decides a judgments@0 document",
    "killed": true,
    "test": "tests/test_judgments_document.py::test_python_never_decides_a_judgments_document",
    "failing_tests": 1,
-   "via": "built service"
+   "via": "built service, rerun after the merge of AR-16a's split"
   },
   {
    "id": "L-status-hook",
