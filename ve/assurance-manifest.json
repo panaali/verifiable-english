@@ -45,9 +45,9 @@
     "ve/assist/session.py:AssistSession.paraphrase_formula": "display only: falls back to the canonical rendering",
     "ve/backends/lean_service.py:LeanServicePool.run_bound.worker": "captures a worker error and re-raises it in request order after every worker joins; never converts it into a result",
     "ve/backends/validation.py:construct_after_lean": "Lean accepts the environment or model first; construction failures become CheckerUnavailable, never a Python semantic rejection or verdict.",
-    "ve/document.py:_load": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
-    "ve/document.py:_lean_document": "Builds the document Lean's document mode accepted: CheckerUnavailable is re-raised, any other failure reading the accepted front matter or building the containers becomes CheckerUnavailable, never a verdict",
-    "ve/document.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
+    "ve/document/load.py:_load": "CheckerUnavailable is re-raised first; a @2 document Lean rejected raises Lean's diagnostic before Python loads it, and a Python failure on one Lean admitted becomes CheckerUnavailable (unavailable_report), never a Python verdict",
+    "ve/document/lean.py:_lean_document": "Builds the document Lean's document mode accepted: CheckerUnavailable is re-raised, any other failure reading the accepted front matter or building the containers becomes CheckerUnavailable, never a verdict",
+    "ve/document/report.py:_check_document": "CheckerUnavailable is re-raised first; a Python failure reporting a @2 document Lean admitted becomes CheckerUnavailable (unavailable_report), never a verdict",
     "ve/english.py:_parse_english_document_uncached": "Comparator only: Python parser exceptions are recorded after Lean has decided; they never change the returned Lean result or error.",
     "ve/natural.py:render_natural_sentence": "display only: selects an English wording whose one-reading audit passes",
     "ve/norm_defaults.py:UnspecifiedDocument.__init__": "after Lean accepts a source, a Python container construction failure is reported as CheckerUnavailable",
@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36049,
+    "total_lines": 36184,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -405,12 +405,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 453,
-        "sha256": "897020d420570643b33cd03c2475c78ea4098955a0972010bec9a03808d396af",
+        "lines": 469,
+        "sha256": "9c6c0c4beb3d43257ec9a3abac9a68b24b6155f366d8efb720d44f229031716a",
         "ranges": [
           [
             1,
-            453
+            469
           ]
         ],
         "declarations": [
@@ -553,15 +553,18 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 339,
-        "sha256": "8a0cb97b3ed8b1094458ffc5cea7379f964904a62401eae7162c5131c4d39d22",
+        "lines": 324,
+        "sha256": "3c1209445f6c5226c7684a142e586a655ed4b0a36d0c326961dc71a681e00d23",
         "ranges": [
           [
-            26,
-            337
+            28,
+            322
           ]
         ],
         "declarations": [
+          "canonicalActIn",
+          "decodeRegulatedWith",
+          "decodeRegulatedIn",
           "decodeRegulated",
           "decodeNormsEnvironment",
           "normFields",
@@ -569,6 +572,25 @@
           "decodeSource",
           "regenerated"
         ]
+      },
+      {
+        "file": "lean/VE/Acts/Lexical.lean",
+        "lines": 184,
+        "sha256": "dd37d314bdb3972f78b4363a4025c91f1a65eebb9213506f93b6f5bd011feef4",
+        "ranges": [
+          [
+            16,
+            151
+          ]
+        ],
+        "declarations": [
+          "phraseToks",
+          "decodeFixed",
+          "lex",
+          "check",
+          "wording"
+        ],
+        "reason": "act-phrases AP-1: the act check under acts@0 (Lexical.check reads the raw act JSON), its fixed phrases' decoder and the tokens; the definitions are pinned in full"
       },
       {
         "file": "lean/VE/Order/Wire.lean",
@@ -763,7 +785,7 @@
       {
         "file": "lean/VE/Readings/Wire.lean",
         "lines": 1007,
-        "sha256": "a6f669fc0428bf4898f7422046081a0ac74781d4f4097cd0e7cf239d1faff91f",
+        "sha256": "033cb89380dbb07e2d6ecb9d60eda271e3dc34986eb12b061896629dc301cb53",
         "ranges": [
           [
             1,
@@ -1845,7 +1867,11 @@
       "lean/VE/Readings/SupVerdictsExamples.lean": "computed regression guards for the superposed verdict and English plan; no production runner imports this file",
       "lean/VE/NormDefaults/Packs.lean": "encoder only: premise packs (PK-1); `labelledJson` and `elaborateArrays` write the layered elaborate's `soft` and `rights` arrays from Lean values; it reads no request JSON (the packs come from the pinned Layered.lean decoders)",
       "lean/VE/Defaults/Examples.lean": "test fixtures only: df-1a's `#guard`s parse their soft documents and finite situations from JSON literals and run the pinned decoders (`decodeSoftU`, `situationX`, `decodeFilling`) on them; no service mode reads this file",
-      "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d) and literal scenario cases for runValidateU (et-7b, T12 and T12b); no runtime decoding"
+      "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d) and literal scenario cases for runValidateU (et-7b, T12 and T12b); no runtime decoding",
+      "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
+      "lean/VE/Compose/ProfilesMain.lean": "generator only: prints VE.Compose.profileTable and the profiles an environment lists as JSON for ve/profile_table.json; reads no request and is not a service decoder",
+      "lean/VE/NormDefaults/PacksExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 compare the kind table's answers as compressed JSON; no runner path",
+      "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 run the kind table on a decoded soft source with a case JSON and compare compressed answers; no runner path"
     }
   },
   "plan_operations": {
@@ -4559,7 +4585,7 @@
         "reason": "orchestration over admission, premise-status and readings; inherits their assurance"
       },
       "python": [
-        "ve.document:check_document"
+        "ve.document.report:check_document"
       ],
       "outcomes": {
         "verdict": [

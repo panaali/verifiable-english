@@ -1,0 +1,311 @@
+{
+ "base": "beb5c463026211d9e8be684884153565ca0026b9",
+ "changes": [
+  {
+   "added": 15,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/DELTA.md"
+  },
+  {
+   "added": 222,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/REPORT.md"
+  },
+  {
+   "added": 128,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/cycles.py"
+  },
+  {
+   "added": 30,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence.toml"
+  },
+  {
+   "added": 102,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence/ab-delta.json"
+  },
+  {
+   "added": 398,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence/ab.json"
+  },
+  {
+   "added": 64,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence/cycles-after.json"
+  },
+  {
+   "added": 49,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence/cycles-before.json"
+  },
+  {
+   "added": 274,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence/mutants.json"
+  },
+  {
+   "added": 137,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 49,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence/seed-paths.json"
+  },
+  {
+   "added": 24,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/evidence/verbatim.json"
+  },
+  {
+   "added": 174,
+   "deleted": 2,
+   "path": "docs/arch/AR-16a/mutants.json"
+  },
+  {
+   "added": 57,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/pilot_rerun.py"
+  },
+  {
+   "added": 70,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/rename_probe_sites.py"
+  },
+  {
+   "added": 78,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/rename_seed_paths.py"
+  },
+  {
+   "added": 115,
+   "deleted": 0,
+   "path": "docs/arch/AR-16a/verbatim.py"
+  },
+  {
+   "added": 7,
+   "deleted": 7,
+   "path": "docs/lean-first/b16b/mutants.py"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "docs/lean-first/b16c/seed_faults.py"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "docs/lean-first/b16d/seed_faults.py"
+  },
+  {
+   "added": 5,
+   "deleted": 5,
+   "path": "docs/lean-first/b16e/seed_faults.py"
+  },
+  {
+   "added": 11,
+   "deleted": 11,
+   "path": "docs/lean-first/b16f/seed_faults.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/spec/assurance-manifest.md"
+  },
+  {
+   "added": 39,
+   "deleted": 39,
+   "path": "docs/test-architecture/binding-census.json"
+  },
+  {
+   "added": 33,
+   "deleted": 33,
+   "path": "docs/test-architecture/binding-census.md"
+  },
+  {
+   "added": 0,
+   "deleted": 0,
+   "path": "docs/test-architecture/binding-probes.jsonl.gz"
+  },
+  {
+   "added": 3,
+   "deleted": 2,
+   "path": "tests/test_b16d_document.py"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "tests/test_b16d_norm_roles.py"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "tests/test_b16e_rights_document.py"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "tests/test_b16f_document.py"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "tests/test_b16f_senses_document.py"
+  },
+  {
+   "added": 4,
+   "deleted": 3,
+   "path": "tests/test_binding_census.py"
+  },
+  {
+   "added": 13,
+   "deleted": 7,
+   "path": "tests/test_document_lean_switch.py"
+  },
+  {
+   "added": 165,
+   "deleted": 19,
+   "path": "tests/test_document_split.py"
+  },
+  {
+   "added": 15,
+   "deleted": 0,
+   "path": "tests/test_identity_lint.py"
+  },
+  {
+   "added": 3,
+   "deleted": 1,
+   "path": "tests/test_lean_document_wrapper.py"
+  },
+  {
+   "added": 3,
+   "deleted": 1,
+   "path": "tests/test_readings_defaults_rd2a_report.py"
+  },
+  {
+   "added": 6,
+   "deleted": 2,
+   "path": "tests/test_relay_lint.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/test_softnorms_contract.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tests/test_stage0_inventory.py"
+  },
+  {
+   "added": 4,
+   "deleted": 4,
+   "path": "tools/identity-sites.json"
+  },
+  {
+   "added": 13,
+   "deleted": 3,
+   "path": "tools/identity_lint.py"
+  },
+  {
+   "added": 12,
+   "deleted": 7,
+   "path": "tools/relay_lint.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "tools/semantic_inventory.py"
+  },
+  {
+   "added": 4,
+   "deleted": 4,
+   "path": "ve/assurance-manifest.json"
+  },
+  {
+   "added": 0,
+   "deleted": 2038,
+   "path": "ve/document.py"
+  },
+  {
+   "added": 41,
+   "deleted": 0,
+   "path": "ve/document/__init__.py"
+  },
+  {
+   "added": 6,
+   "deleted": 0,
+   "path": "ve/document/__main__.py"
+  },
+  {
+   "added": 122,
+   "deleted": 0,
+   "path": "ve/document/cli.py"
+  },
+  {
+   "added": 132,
+   "deleted": 0,
+   "path": "ve/document/containers.py"
+  },
+  {
+   "added": 390,
+   "deleted": 0,
+   "path": "ve/document/lean.py"
+  },
+  {
+   "added": 434,
+   "deleted": 0,
+   "path": "ve/document/load.py"
+  },
+  {
+   "added": 200,
+   "deleted": 0,
+   "path": "ve/document/render.py"
+  },
+  {
+   "added": 629,
+   "deleted": 0,
+   "path": "ve/document/report.py"
+  },
+  {
+   "added": 198,
+   "deleted": 0,
+   "path": "ve/document/source.py"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "7256481b68e6ebcc54cf9cf6e6ed961b4f5f22b9",
+   "subject": "AR-16a: REPORT, DELTA and evidence.toml; rd2a's seeded-bug check follows the moved file"
+  },
+  {
+   "hash": "8fb410f7dab74d6b5940182df07ebee19ba40033",
+   "subject": "AR-16a: the identity ratchet test covers a module that keeps a site while its package adds one; M6 runs as a command"
+  },
+  {
+   "hash": "0a122dcfebf2e6daa3a0bd2f3c6d863e23a0eadb",
+   "subject": "AR-16a: the seeded mutants, one per retargeted patch site; the relay lint test names every loader module"
+  },
+  {
+   "hash": "6eba0d5fb6b734736863040b464c942fddcbf642",
+   "subject": "AR-16a: the split test checks one owner per name without freezing the old list; evidence of the move"
+  },
+  {
+   "hash": "84ae8a94697d6ad121e36fa5c4fbef52093a3578",
+   "subject": "AR-16a: the seeded-fault scripts of batches 16b-16f and two source-reading tests follow the split"
+  },
+  {
+   "hash": "357efd11662ac427de0ec43311253e994634c5e5",
+   "subject": "AR-16a: tests/test_document_split.py pins what the split keeps"
+  },
+  {
+   "hash": "7b44fdf4577347ba3ffc9bbd5c9a95db589ce0b1",
+   "subject": "AR-16a: ve/document.py becomes the package ve/document/ (a pure move)"
+  }
+ ],
+ "head": "7256481b68e6ebcc54cf9cf6e6ed961b4f5f22b9"
+}
