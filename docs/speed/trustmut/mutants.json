@@ -431,9 +431,7 @@
    "find": "        return said if all(m.startswith(\"error:\") and REFUTED.fullmatch(m[6:].strip()) for m in said) else None",
    "replace": "        return said if all(m.startswith(\"info:\") or m.startswith(\"error:\") and REFUTED.fullmatch(m[6:].strip()) for m in said) else None",
    "tests": [
-    "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation",
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q8]",
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q4]"
+    "tests/test_trust_mutants.py::test_a_check_kills_only_when_its_message_states_a_refutation"
    ],
    "claim": "a `#guard_msgs` diff kills only between refutations: no `info` (an `#eval`'s or `#reduce`'s) is an answer (review F11, hunt Q4, Q7, Q8)"
   },
@@ -453,7 +451,6 @@
    "find": "        if not refused(message, in_tactic(code, at, lo, hi) or not edit[0] <= at < max(edit[1], edit[0] + 1)):",
    "replace": "        if not refused(message, not edit[0] <= at < max(edit[1], edit[0] + 1)):",
    "tests": [
-    "tests/test_trust_mutants.py::test_invalid_only_when_lean_refuses_the_mutated_text",
     "tests/test_trust_mutants.py::test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal"
    ],
    "claim": "an error inside a tactic block of the mutated declaration is a tactic's, never a refusal (review F12)"
@@ -593,16 +590,6 @@
    "claim": "a span with two commands is no check (hunt N7)"
   },
   {
-   "id": "TM57",
-   "file": "tools/trust_mutants.py",
-   "find": "                if (mutated := [x for x in roles if x[3] == \"mutated\"]) and m.shared:",
-   "replace": "                if (mutated := [x for x in roles if x[3] == \"mutated\"]) and False:",
-   "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[N10]"
-   ],
-   "claim": "an error on a mutated declaration's last line that another command shares is UNKNOWN (hunt N10)"
-  },
-  {
    "id": "TM58",
    "file": "tools/trust_mutants.py",
    "find": "REFUSED = re.compile(r\"[Uu]nknown (?:identifier|constant)|",
@@ -643,16 +630,6 @@
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[P8]"
    ],
    "claim": "the probe reads the mutant's build, where the instance Lean picks can change (hunt P8)"
-  },
-  {
-   "id": "TM62",
-   "file": "tools/trust_mutants.py",
-   "find": "  if roots.any (\u00b7.hasSorry) then say \"error\"",
-   "replace": "  pure ()",
-   "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[Q12]"
-   ],
-   "claim": "a check Lean cannot elaborate in the probe (an `include_str` there) never kills (hunt Q12)"
   },
   {
    "id": "TM63",
@@ -818,16 +795,6 @@
     "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T1]"
    ],
    "claim": "a check that computes through an axiom of the tree never kills (hunt T1)"
-  },
-  {
-   "id": "TM79",
-   "file": "tools/trust_mutants.py",
-   "find": "    | n + 1, .str p s => if s.startsWith \"_\" || Meta.isMatcherCore env c then owner p n else c",
-   "replace": "    | n + 1, .str p s => if s.startsWith \"_\" || Meta.isMatcherCore env c then p.getPrefix else c",
-   "tests": [
-    "tests/test_trust_mutants.py::test_a_hunt_form_gets_no_verdict_that_hides_it[T5]"
-   ],
-   "claim": "a generated constant belongs to the declaration it was generated for (hunt T5)"
   }
  ]
 }

@@ -717,6 +717,7 @@ JUDGED = [
     ("guard-false", REFUTE, "#guard f 1 == 2", "KILL"),
     ("eval-value-differs", GUARD + "- info: 5\n+ info: 4", "/-- info: 5 -/\n#guard_msgs in\n#eval f 3", "UNKNOWN"),
     ("eval-lines-differ", GUARD + "  info: 1\n- ---\n- info: 2\n+ 3", "#guard_msgs in\n#eval f", "UNKNOWN"),
+    ("eval-printed-nothing", GUARD + "- info: 5", "/-- info: 5 -/\n#guard_msgs in\n#eval f 3", "UNKNOWN"),
     ("guard-under-guard-msgs", GUARD + "-\n+ error: Expression\n+   f 1 == 2\n+ did not evaluate to `true`",
      "#guard_msgs in\n#guard f 1 == 2", "KILL"),
     ("decide-under-guard-msgs", GUARD + "-\n+ error: Tactic `decide` proved that the proposition\n+   f 1 = 2\n"
@@ -866,9 +867,10 @@ def test_invalid_only_when_lean_refuses_the_mutated_text(name, message, inside, 
     ([("A.lean", 1, "Invalid field `take`", 62)], "UNKNOWN"),
     ([("A.lean", 1, "Invalid field `symm`", 44)], "UNKNOWN"),  # hunt Q9: outside the mutant's text
     ([("A.lean", 1, "unexpected token ')'; expected term", 34)], "INVALID"),
-    ([("A.lean", 1, "unexpected token; expected command", 44)], "UNKNOWN")],  # hunt R3: the tool's padding
+    ([("A.lean", 1, "unexpected token; expected command", 44)], "UNKNOWN"),  # hunt R3: the tool's padding
+    ([("A.lean", 1, "Unknown identifier `x`", 62)], "UNKNOWN")],  # the edit itself inside a tactic block
     ids=("refusal", "beside-a-tactic", "after-a-tactic", "in-a-tactic", "outside-the-edit", "parse-in-the-edit",
-         "parse-outside-the-edit"))
+         "parse-outside-the-edit", "edit-in-a-tactic"))
 def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(errors, verdict):
     """Review F12: a tactic or budget failure in the mutated declaration is UNKNOWN even beside a refusal (it may have
     caused one, or followed from it), a refusal inside a tactic block is a tactic's, and one outside the text the
@@ -876,7 +878,8 @@ def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(er
     import trust_mutants
     text = "def f (o : Option Nat) : Nat := (o.take 1).length + (by exact 0)\n"
     assert text[32] == "(" and text[62] == "0"
-    assert trust_mutants.invalid(errors, text, (1, 1), (32, 42))[0] == verdict  # the edit wrote `(o.take 1)`
+    edit = (62, 63) if errors[0][3] == 62 and "`x`" in errors[0][2] else (32, 42)  # `(o.take 1)`, or the `0`
+    assert trust_mutants.invalid(errors, text, (1, 1), edit)[0] == verdict
 
 
 def test_named_writes_each_check_as_a_declaration_of_what_it_states():
