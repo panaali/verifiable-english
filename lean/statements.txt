@@ -6729,6 +6729,60 @@ theorem VE.Defaults.basis_strict_sound
                           VE.NormDefaults.EntailsX U X Γ φ
   -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Basis.strict@VE.Defaults.Premises VE.Defaults.Basis@VE.Defaults.Premises VE.Defaults.assumptionsOf@VE.Defaults.Premises VE.Defaults.basisOf@VE.Defaults.Premises VE.Defaults.certChecks@VE.Defaults.Premises VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Tableau.Certificate@VE.Tableau
   -- expr 2695570811
+theorem VE.Defaults.cohPremiseU_selU
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (P Q : VE.SoftNorms.SoftNode),
+    VE.NormDefaults.Wire.cohPremiseU U D P Q =
+      VE.Norms.bindAll (VE.SoftNorms.actSorts D P) ((VE.Defaults.selU U D P).and (VE.Defaults.selU U D Q)).not
+  -- uses VE.Defaults.selU@VE.Defaults.Premises VE.Formula.and@VE.Syntax VE.Formula.not@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.actSorts@VE.SoftNorms.Tree
+  -- expr 461641082
+theorem VE.Defaults.cohU_rank_valid
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (M N : VE.SoftNorms.SoftNode),
+              (M, N) ∈ VE.SoftNorms.collidingPairs D →
+                VE.SoftNorms.Comparable D M N = Bool.true →
+                  ∀ (B : VE.Structure), VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU U D M N)
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 640802415
+theorem VE.Defaults.collisionTuple_some
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity)
+    (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String) (P Q : VE.SoftNorms.SoftNode),
+    List.find? (fun p => p.fst.name == m && p.snd.name == n) (VE.SoftNorms.collidingPairs D) = Option.some (P, Q) →
+      VE.Defaults.collisionCheck U D R M F m n = Bool.true → ∃ vs, VE.Defaults.collisionTuple U D M F P Q = Option.some vs
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.collisionCheck@VE.Defaults.Premises VE.Defaults.collisionTuple@VE.Defaults.Premises VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 3417061492
+theorem VE.Defaults.collision_sound
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt U.D 0) →
+          ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String),
+            VE.Defaults.collisionCheck U D R M F m n = Bool.true → ¬VE.Defaults.DefaultCoherent U D R
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.collisionCheck@VE.Defaults.Premises VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 1143425634
+theorem VE.Defaults.collision_unranked
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (R : List VE.Formula) (M : VE.FiniteModel VE.Bridge.Entity),
+              M.Valid (VE.Norms.envAt U.D 0) →
+                ∀ (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) (m n : String) (P Q : VE.SoftNorms.SoftNode),
+                  List.find? (fun p => p.fst.name == m && p.snd.name == n) (VE.SoftNorms.collidingPairs D) =
+                      Option.some (P, Q) →
+                    VE.Defaults.collisionCheck U D R M F m n = Bool.true → VE.SoftNorms.Comparable D P Q = Bool.false
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.collisionCheck@VE.Defaults.Premises VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 4208650158
+theorem VE.Defaults.defaultCoherenceCheck_sound
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula)
+    (certs : List (Option VE.Tableau.Certificate)),
+    VE.Defaults.defaultCoherenceCheck U D R certs = Bool.true → VE.Defaults.DefaultCoherent U D R
+  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.defaultCoherenceCheck@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Tableau.Certificate@VE.Tableau
+  -- expr 1184126990
 theorem VE.Defaults.dflt_wellFormed
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -6759,6 +6813,15 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
+theorem VE.Defaults.pairChecks_sound
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (P Q : VE.SoftNorms.SoftNode)
+    (c : Option VE.Tableau.Certificate),
+    VE.Defaults.pairChecks U D R P Q c = Bool.true →
+      ∀ (B : VE.Structure),
+        VE.NormDefaults.Wire.BaseAdmissibleX U (VE.SoftNorms.excPremises D ++ R ++ VE.Defaults.dfltPremises D) B →
+          VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU U D P Q)
+  -- uses VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Defaults.pairChecks@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Tableau.Certificate@VE.Tableau
+  -- expr 2900267181
 theorem VE.Defaults.premisesX_split
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula),
     VE.NormDefaults.Wire.premisesX U (VE.Defaults.defaultX D X) Γ =
@@ -6766,6 +6829,15 @@ theorem VE.Defaults.premisesX_split
         (VE.NormDefaults.fillPremises U ++ VE.Norms.elaborate (VE.NormDefaults.fill U).T ++ Γ)
   -- uses VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.background@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 2043802097
+theorem VE.Defaults.questionDiag_none
+  ∀ (D : VE.SoftNorms.SoftDoc) (Γ : List VE.Formula),
+    VE.Defaults.questionDiag D Γ = Option.none →
+      ∀ (a : VE.Formula),
+        a ∈ Γ →
+          ∀ (p : String),
+            p ∈ VE.Norms.preds a → ¬p ∈ VE.SoftNorms.decisionNames D ∧ ¬p ∈ List.map (fun x => x.name) D.T.regulated
+  -- uses VE.Defaults.questionDiag@VE.Defaults.Premises VE.Formula@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
+  -- expr 605368999
 theorem VE.Defaults.strict_of_withoutDefaults
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula) (φ : VE.Formula),
     VE.NormDefaults.EntailsX U (VE.Defaults.withoutDefaults D X) Γ φ → VE.NormDefaults.EntailsX U X Γ φ
@@ -41623,6 +41695,17 @@ theorem VE.SoftNorms.coh_rank_valid_unconditional
             ∀ (B : VE.Structure), VE.Formula.denote B [] (VE.SoftNorms.cohPremise D M N)
   -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.cohPremise@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3277975311
+theorem VE.SoftNorms.coh_rank_valid_with
+  ∀ (D : VE.SoftNorms.SoftDoc),
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ (M N : VE.SoftNorms.SoftNode),
+        (M, N) ∈ VE.SoftNorms.collidingPairs D →
+          VE.SoftNorms.Comparable D M N = Bool.true →
+            ∀ (tbl : VE.Norms.Table) (T : VE.Norms.Tree) (f : Nat) (B : VE.Structure) (ρ : VE.Valuation B),
+              ¬(VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D M))) ∧
+                  VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D N))))
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.selects@VE.Norms.Elaborate VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3686215825
 theorem VE.SoftNorms.coherent_expands
   ∀ (D : VE.SoftNorms.SoftDoc),
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -42418,38 +42501,41 @@ theorem VE.SoftNorms.rank_resolves
   -- uses VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.fuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 3057383660
 theorem VE.SoftNorms.raw_dom_congr
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B} {eff eff' : VE.SoftNorms.SoftNode → Prop}
-    (N : VE.SoftNorms.SoftNode),
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B}
+    {eff eff' : VE.SoftNorms.SoftNode → Prop} (N : VE.SoftNorms.SoftNode),
     (∀ (M : VE.SoftNorms.SoftNode), M ∈ D.T.nodes → VE.SoftNorms.higher D M N = Bool.true → (eff M ↔ eff' M)) →
-      (VE.SoftNorms.RawDom✝ D B ρ eff N ↔ VE.SoftNorms.RawDom✝¹ D B ρ eff' N)
-  -- uses VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 2516299366
+      (VE.SoftNorms.RawDom✝ D tbl B ρ eff N ↔ VE.SoftNorms.RawDom✝¹ D tbl B ρ eff' N)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.higher@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1089708032
 theorem VE.SoftNorms.raw_dom_denote
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (eff : VE.SoftNorms.SoftNode → VE.Formula)
-    (effP : VE.SoftNorms.SoftNode → Prop),
-    (∀ (M : VE.SoftNorms.SoftNode), VE.Formula.denote B ρ (VE.SoftNorms.circ D (eff M)) ↔ effP M) →
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (B : VE.Structure) (ρ : VE.Valuation B)
+    (eff : VE.SoftNorms.SoftNode → VE.Formula) (effP : VE.SoftNorms.SoftNode → Prop),
+    (∀ (M : VE.SoftNorms.SoftNode), VE.Formula.denote B ρ (VE.Norms.substWith tbl (eff M)) ↔ effP M) →
       ∀ (N : VE.SoftNorms.SoftNode),
-        VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.domWith D eff N)) ↔ VE.SoftNorms.RawDom✝ D B ρ effP N
-  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.domWith@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 2304691316
+        VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.SoftNorms.domWith D eff N)) ↔
+          VE.SoftNorms.RawDom✝ D tbl B ρ effP N
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Table@VE.Norms.Subst VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.RawDom@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.domWith@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 3178227856
 theorem VE.SoftNorms.raw_eff_denote
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (g : Nat) (N : VE.SoftNorms.SoftNode),
-    VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.effF D g N)) ↔ VE.SoftNorms.RawEff✝ D B ρ g N
-  -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.effF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 4093653495
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (B : VE.Structure) (ρ : VE.Valuation B) (g : Nat)
+    (N : VE.SoftNorms.SoftNode),
+    VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.SoftNorms.effF D g N)) ↔ VE.SoftNorms.RawEff✝ D tbl B ρ g N
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.effF@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1261033548
 theorem VE.SoftNorms.raw_eff_stable
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B},
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B},
     VE.SoftNorms.RanksValid D.soft →
       ∀ (k : Nat) (N : VE.SoftNorms.SoftNode),
         N ∈ D.T.nodes →
           VE.SoftNorms.rankHeight D N < k →
             ∀ (a b : Nat),
               VE.SoftNorms.rankHeight D N < a →
-                VE.SoftNorms.rankHeight D N < b → (VE.SoftNorms.RawEff✝ D B ρ a N ↔ VE.SoftNorms.RawEff✝¹ D B ρ b N)
-  -- uses VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.rankHeight@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 963928495
+                VE.SoftNorms.rankHeight D N < b →
+                  (VE.SoftNorms.RawEff✝ D tbl B ρ a N ↔ VE.SoftNorms.RawEff✝¹ D tbl B ρ b N)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.rankHeight@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1989229332
 theorem VE.SoftNorms.raw_resolve_higher
-  ∀ {D : VE.SoftNorms.SoftDoc} {B : VE.Structure} {ρ : VE.Valuation B},
+  ∀ {D : VE.SoftNorms.SoftDoc} {tbl : VE.Norms.Table} {B : VE.Structure} {ρ : VE.Valuation B},
     VE.SoftNorms.SoftValid D →
       ∀ {H L : VE.SoftNorms.SoftNode},
         H ∈ D.T.nodes →
@@ -42458,17 +42544,18 @@ theorem VE.SoftNorms.raw_resolve_higher
               L.mode = VE.SoftNorms.Mode.default →
                 VE.SoftNorms.Incompatible D H L = Bool.true →
                   VE.SoftNorms.higher D H L = Bool.true →
-                    ¬(VE.SoftNorms.RawEff✝ D B ρ (VE.SoftNorms.rankFuel D) H ∧
-                        VE.SoftNorms.RawEff✝¹ D B ρ (VE.SoftNorms.rankFuel D) L)
-  -- uses VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 1765519959
+                    ¬(VE.SoftNorms.RawEff✝ D tbl B ρ (VE.SoftNorms.rankFuel D) H ∧
+                        VE.SoftNorms.RawEff✝¹ D tbl B ρ (VE.SoftNorms.rankFuel D) L)
+  -- uses VE.Norms.Table@VE.Norms.Subst VE.SoftNorms.Incompatible@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftValid@VE.SoftNorms.Soften VE.SoftNorms.higher@VE.SoftNorms.Tree VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2810499721
 theorem VE.SoftNorms.raw_selects_eff
-  ∀ (D : VE.SoftNorms.SoftDoc) (B : VE.Structure) (ρ : VE.Valuation B) (N : VE.SoftNorms.SoftNode),
+  ∀ (D : VE.SoftNorms.SoftDoc) (tbl : VE.Norms.Table) (T : VE.Norms.Tree) (f : Nat) (B : VE.Structure)
+    (ρ : VE.Valuation B) (N : VE.SoftNorms.SoftNode),
     N.mode = VE.SoftNorms.Mode.default →
-      VE.Formula.denote B ρ (VE.SoftNorms.circ D (VE.SoftNorms.selects' D N)) →
-        VE.SoftNorms.RawEff✝ D B ρ (VE.SoftNorms.rankFuel D) N
-  -- uses VE.Formula.denote@VE.Semantics VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.circ@VE.SoftNorms.Semantics VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.SoftNorms.selects'@VE.SoftNorms.Soften VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
-  -- expr 1554942895
+      VE.Formula.denote B ρ (VE.Norms.substWith tbl (VE.Norms.selects T f (VE.SoftNorms.primeNode D N))) →
+        VE.SoftNorms.RawEff✝ D tbl B ρ (VE.SoftNorms.rankFuel D) N
+  -- uses VE.Formula.denote@VE.Semantics VE.Norms.Table@VE.Norms.Subst VE.Norms.Tree@VE.Norms.Tree VE.Norms.selects@VE.Norms.Elaborate VE.Norms.substWith@VE.Norms.Subst VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.RawEff@VE.SoftNorms.RankProof VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.SoftNorms.rankFuel@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 1842208047
 theorem VE.SoftNorms.reg_of_node
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.SoftValid D →
