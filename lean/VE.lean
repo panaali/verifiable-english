@@ -114,6 +114,8 @@ import VE.Calc.Dimension
 import VE.Calc.Units
 import VE.Calc.UnitsExamples
 import VE.Calc.Poly
+import VE.Calc.Inline
+import VE.Calc.Identity
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
