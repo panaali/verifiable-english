@@ -617,6 +617,8 @@ def normsDoc : Json := (gov (hcDoc parts) [g1]).toOption.getD .null
   overOf (gov normsDoc [gPf]) "u0165.s02"] ==
   [some "[\"hc-3\",\"hc-4\"]", some "[\"hc-2\"]", some "[\"hc-2\"]", some "[\"hc-4\"]", some "[\"hc-3\",\"hc-4\"]"]
 #guard errorOf (gov (hcDoc parts) [g1, gP, {gY with unit := "u0165.s07"}]) == "ScopeNoEffect: gY"
+-- the edges of every graph governor, not only the first in order
+#guard overOf (gov (hcDoc parts) [g1, gY, gP]) "u0165.s03" == some "[\"hc-2\"]"
 
 -- the run path gives `govern`'s values (`governFast_eq`), on answers, refusals and graph governors
 def govF (doc : Json) (gs : List Governor) (ln : List (VE.Discourse.ContentName × String × String) := []) :
