@@ -16,21 +16,19 @@ The long-term vision is to apply this to policies, contracts, scientific argumen
 
 ## A small example
 
-Suppose an inventory policy says:
+> Every reviewed service is safe. The API is reviewed. Therefore the API is safe.
+
+**That paragraph is actual VE input—not a paraphrase of code hidden underneath.** With the [declared vocabulary](examples/assist/environment.json) and [English names](examples/assist/environment.english.json), VE reads the sentences, identifies the first two as assumptions, and checks that the conclusion follows. The [executable example](tests/test_natural.py) checks both the English reading and the deduction.
+
+Change “The API is reviewed” to “The API is deployed,” and the conclusion no longer follows: the rules say nothing about whether deployed services are safe. VE can expose that missing step instead of accepting a plausible-sounding explanation.
+
+You can also write:
 
 > Every deployed service has an owner.
 
-In VE's strict syntax, using the vocabulary in [`examples/environment.json`](examples/environment.json), this is:
+This allows different owners for different services. It does not silently become the stronger claim that one person owns every service. VE keeps that distinction precise while letting you read ordinary sentences.
 
-```text
-for every service s, (if (s is deployed), then (there exists person p, (p owns s))).
-```
-
-The vocabulary declares what a service and a person are, and what “deployed” and “owns” mean in this model. VE can evaluate the rule against a supplied inventory, or check deductions that use it as a premise.
-
-The distinction matters: “Every service has an owner” allows different owners for different services. “One person owns every service” is stronger. VE represents these as different statements; its [rendering examples](docs/fluent-examples.md) show how the same meaning appears in English and symbolic logic.
-
-A checked result concerns the supplied model and assumptions. It does not establish that the inventory matches reality or that the policy captures everything you wanted.
+The guarantee is about the reasoning: **if the assumptions hold, the checked conclusion holds.** Someone still has to establish that the API really was reviewed and that review is sufficient for safety. VE makes those assumptions visible; it does not turn them into facts.
 
 ## What you can do now
 
@@ -74,7 +72,7 @@ uv run python tools/rust_build.py
 The first native build can take a while. Once it finishes, try the committed inventory example:
 
 ```sh
-uv run python -m ve render --env examples/environment.json --view ve_fluent examples/requirements.ve
+uv run python -m ve render --env examples/environment.json --view ve_natural examples/requirements.ve
 uv run python -m ve evaluate --env examples/environment.json --model examples/model.json examples/requirements.ve
 ```
 
