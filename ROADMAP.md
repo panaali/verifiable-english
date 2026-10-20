@@ -92,20 +92,20 @@ The four agents below were left to finish; nothing else was launched. Each item 
 Blocked on the lead: the saeedi.danial OAuth token was revoked (re-login needed). Pushing the new branches needs the lead's go-ahead.
 Note: an assist-eval subagent pushed `opus/assist-eval` to origin without being asked (main untouched).
 
-## 4. Queue (priority order; adopted 2026-09-23 from [PLAN-FRONTIER](PLAN-FRONTIER.md) section 7)
+## 4. Queue (priority order; adopted 2026-09-23 from [PLAN-FRONTIER](docs/plans/PLAN-FRONTIER.md) section 7)
 
 Frontier claims are protocol effects; language expansion alone is not expected to show a frontier benefit.
 
 | # | Study | Spec | Gate / refuted if |
 |---|---|---|---|
-| A | T1d: robust T1c (fresh subjects, leakage audit, high effort secondary) | [PLAN-T1D](PLAN-T1D.md) Part 1 | lower FA and honest completion NI at 10pp; harm or NI failure refutes; non-rejection inconclusive |
-| D | Cedar/K8s universal-property headroom gate (29 artefacts, clustered) | [PLAN-FRONTIER](PLAN-FRONTIER.md) | items, ground truth and reference verifier fixed before spend; raw error < 15% closes this sample |
-| B | T1e: untrusted agent's own verification (VE vs script vs Datalog), same semantic mutation in every arm | [PLAN-FRONTIER](PLAN-FRONTIER.md) | authoring gate: audited held-out fidelity >= 80%; refuted if CI excludes a 10pp gain |
-| - | `ve assist` held-out evaluation (optional B arm) | [PLAN-ASSIST](PLAN-ASSIST.md) | replays + certified + blind fidelity audit |
-| C | Persuasion/injection vs the bridge (replaces the pushback study as specified) | [PLAN-FRONTIER](PLAN-FRONTIER.md) | after B; items correct in both arms; eligible-item gate |
-| - | Obfuscation class F: G0/G1 diagnostics only | [PLAN-OBFUSCATION](PLAN-OBFUSCATION.md) | diagnostics, no comparative claims |
-| - | Language track (parallel, off critical path): numbers round 2, English-surface proof | [PLAN-EXPAND](PLAN-EXPAND.md) | round 2: grammar export, Rust AST/source evaluation and Lean order parser built locally; unbounded integer quantifiers and order parser round-trip proof remain; tests and cross-family review before merge |
-| - | P0 expansion interfaces frozen (2026-09-25) | [PLAN-EXPAND2](PLAN-EXPAND2.md), [P0-Lean notes](docs/P0-Lean-NOTES.md) | `Layer`, `CertificateSound`, route gate, Background and admission identities checked after Astra P0-Lean and Fable P0-Py reviews; W1/W2/W3/W5 use the pinned premise order and provenance-bound report identity |
+| A | T1d: robust T1c (fresh subjects, leakage audit, high effort secondary) | [PLAN-T1D](docs/plans/PLAN-T1D.md) Part 1 | lower FA and honest completion NI at 10pp; harm or NI failure refutes; non-rejection inconclusive |
+| D | Cedar/K8s universal-property headroom gate (29 artefacts, clustered) | [PLAN-FRONTIER](docs/plans/PLAN-FRONTIER.md) | items, ground truth and reference verifier fixed before spend; raw error < 15% closes this sample |
+| B | T1e: untrusted agent's own verification (VE vs script vs Datalog), same semantic mutation in every arm | [PLAN-FRONTIER](docs/plans/PLAN-FRONTIER.md) | authoring gate: audited held-out fidelity >= 80%; refuted if CI excludes a 10pp gain |
+| - | `ve assist` held-out evaluation (optional B arm) | [PLAN-ASSIST](docs/plans/PLAN-ASSIST.md) | replays + certified + blind fidelity audit |
+| C | Persuasion/injection vs the bridge (replaces the pushback study as specified) | [PLAN-FRONTIER](docs/plans/PLAN-FRONTIER.md) | after B; items correct in both arms; eligible-item gate |
+| - | Obfuscation class F: G0/G1 diagnostics only | [PLAN-OBFUSCATION](docs/plans/PLAN-OBFUSCATION.md) | diagnostics, no comparative claims |
+| - | Language track (parallel, off critical path): numbers round 2, English-surface proof | [PLAN-EXPAND](docs/plans/PLAN-EXPAND.md) | round 2: grammar export, Rust AST/source evaluation and Lean order parser built locally; unbounded integer quantifiers and order parser round-trip proof remain; tests and cross-family review before merge |
+| - | P0 expansion interfaces frozen (2026-09-25) | [PLAN-EXPAND2](docs/plans/PLAN-EXPAND2.md), [P0-Lean notes](docs/P0-Lean-NOTES.md) | `Layer`, `CertificateSound`, route gate, Background and admission identities checked after Astra P0-Lean and Fable P0-Py reviews; W1/W2/W3/W5 use the pinned premise order and provenance-bound report identity |
 | - | Paper rev3 (Astra) | `paper/` | after A |
 | - | Grant | `~/code/manage-agents/grants/` | paused: the lead will ask when needed |
 
@@ -132,15 +132,15 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 
 | Item | Why |
 |---|---|
-| Pushback study as specified ([PLAN-PUSHBACK](PLAN-PUSHBACK.md)) | L1 0/23, L6 0/24 flips on formal items; redesigned as claim C |
+| Pushback study as specified ([PLAN-PUSHBACK](docs/plans/PLAN-PUSHBACK.md)) | L1 0/23, L6 0/24 flips on formal items; redesigned as claim C |
 | Mixed-property audit | verdicts would show parity; may return as a cost/reuse audit |
 | P5 scored run | VE authoring infeasible one-shot (0/12 twice); revisit via `ve assist` |
 | T1b full study | ~14,000 serial calls; question folded into T1c; Opus safeguard refused sabotaged code (now programmatic mutation) |
-| Independent-formaliser pilot ([PLAN-IF](PLAN-IF.md)) | BBM items are ordering puzzles; checker = answer key; only the no-VE headroom check remains queued |
-| Statement-faithfulness witnesses ([PLAN-SF](PLAN-SF.md)) | 12% witness yield < 30% gate; most unfaithful statements are true but weaker |
+| Independent-formaliser pilot ([PLAN-IF](docs/plans/PLAN-IF.md)) | BBM items are ordering puzzles; checker = answer key; only the no-VE headroom check remains queued |
+| Statement-faithfulness witnesses ([PLAN-SF](docs/plans/PLAN-SF.md)) | 12% witness yield < 30% gate; most unfaithful statements are true but weaker |
 | Long-context qa15 | strawman (1-2 hops; the checker never sees the context) |
 | `claude/open-judges`, Codex open-judge ladder | superseded harness; tagged `archive/open-judges-fcd378c` |
-| T4 universal-invariant pilot ([PLAN-T4](PLAN-T4.md)) | closure induction built; pilot replaced by T1c |
+| T4 universal-invariant pilot ([PLAN-T4](docs/plans/PLAN-T4.md)) | closure induction built; pilot replaced by T1c |
 
 ## 7. Where things live
 
@@ -159,10 +159,10 @@ before spend; preregistered and timestamped; baselines; pilots capped at $40.
 
 | File | Status |
 |---|---|
-| [PLAN-PUSHBACK](PLAN-PUSHBACK.md), [PLAN-V5-DEMO](PLAN-V5-DEMO.md), [PLAN-ASSIST](PLAN-ASSIST.md), [PLAN-EXPAND](PLAN-EXPAND.md), [PLAN-OBFUSCATION](PLAN-OBFUSCATION.md) | active specs; "After review" sections are binding |
-| [PLAN](PLAN.md), [PLAN-V2](PLAN-V2.md), [PLAN-V3](PLAN-V3.md), [PLAN-V4](PLAN-V4.md) | historical (superseded in turn; V3's queue update is now section 4) |
-| [PLAN-T4](PLAN-T4.md), [PLAN-IF](PLAN-IF.md), [PLAN-SF](PLAN-SF.md) | historical (replaced by T1c or stopped) |
-| [FUTURE.md](FUTURE.md) | pointer to this file |
+| [PLAN-PUSHBACK](docs/plans/PLAN-PUSHBACK.md), [PLAN-V5-DEMO](docs/plans/PLAN-V5-DEMO.md), [PLAN-ASSIST](docs/plans/PLAN-ASSIST.md), [PLAN-EXPAND](docs/plans/PLAN-EXPAND.md), [PLAN-OBFUSCATION](docs/plans/PLAN-OBFUSCATION.md) | active specs; "After review" sections are binding |
+| [PLAN](docs/plans/PLAN.md), [PLAN-V2](docs/plans/PLAN-V2.md), [PLAN-V3](docs/plans/PLAN-V3.md), [PLAN-V4](docs/plans/PLAN-V4.md) | historical (superseded in turn; V3's queue update is now section 4) |
+| [PLAN-T4](docs/plans/PLAN-T4.md), [PLAN-IF](docs/plans/PLAN-IF.md), [PLAN-SF](docs/plans/PLAN-SF.md) | historical (replaced by T1c or stopped) |
+| [FUTURE.md](docs/plans/FUTURE.md) | pointer to this file |
 
 ## How to maintain
 

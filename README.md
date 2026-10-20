@@ -2,6 +2,9 @@
 
 An English-like language for human-inspectable, machine-checkable claims in AI oversight.
 
+Start with the [vision](VISION.md), [roadmap](ROADMAP.md), or [documentation index](docs/README.md).
+Research and implementation plans are collected in [docs/plans/](docs/plans/README.md).
+
 **Stage:** experimental Python v0 core, argument layer, constrained grammars, and Lean reference proofs implemented; full verification and oversight experiments are pending.
 
 Run the complete offline verification gate with `python3 tools/gate.py`.
@@ -87,7 +90,7 @@ a reproducible FO2 template audit.
 ## Assisted formalisation: `ve assist`
 
 `ve assist` is an interactive tool for formalising prose **one sentence at a
-time** ([plan](PLAN-ASSIST.md)). Humans use it through a small CLI; agents use
+time** ([plan](docs/plans/PLAN-ASSIST.md)). Humans use it through a small CLI; agents use
 the same session through a JSON tool-calling API. The author owns fidelity to
 the prose. The tool only reports: nothing enters the graph unless the author
 adds it, and only the certificate checker and `check_countermodel` decide
