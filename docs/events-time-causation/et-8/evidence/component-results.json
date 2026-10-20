@@ -1,0 +1,125 @@
+{
+ "component": {
+  "conflict": {
+   "detail": null,
+   "verdict": "CONFLICT-FREE"
+  },
+  "conflict_targets": [
+   "permitted",
+   "required",
+   "required->permitted"
+  ],
+  "followable": {
+   "conditional_on": null,
+   "text": "UNKNOWN: no accepted followability certificate for this source",
+   "verdict": "UNKNOWN"
+  },
+  "followable_certificate": false,
+  "phase1_scenario": {
+   "scenario": {
+    "answer": [
+     "undecided",
+     "fillings"
+    ],
+    "refuse": [
+     "undecided",
+     "fillings"
+    ],
+    "undermine": [
+     "not clear",
+     "kleene"
+    ]
+   },
+   "scenario_text": "no action is known to be clear at d: UNSETTLED(refuse, answer): no available action is known to be clear here: the text does not say whether d may take refuse or answer (undermine not clear, refuse undecided: the text does not say whether it may be performed, answer undecided: the text does not say whether it may be performed)",
+   "witness": {
+    "diagnosis": "UNSETTLED(refuse, answer): no available action is known to be clear here: the text does not say whether d may take refuse or answer",
+    "text": "DILEMMA at d: under the supplied filling of what the text leaves unsaid, no available action complies with the mapped obligations and the declared action constraints here; UNSETTLED(refuse, answer): no available action is known to be clear here: the text does not say whether d may take refuse or answer. This is a situation the rules do not cover, not a verdict that they are wrong.",
+    "verdict": "DILEMMA"
+   }
+  },
+  "refusal_only": {
+   "scenario": {
+    "refuse": [
+     "undecided",
+     "fillings"
+    ]
+   },
+   "scenario_text": "no action is known to be clear at d: UNSETTLED(refuse): no available action is known to be clear here: the text does not say whether d may take refuse (refuse undecided: the text does not say whether it may be performed)",
+   "witness": {
+    "diagnosis": "UNSETTLED(refuse): no available action is known to be clear here: the text does not say whether d may take refuse",
+    "text": "DILEMMA at d: under the supplied filling of what the text leaves unsaid, no available action complies with the mapped obligations and the declared action constraints here; UNSETTLED(refuse): no available action is known to be clear here: the text does not say whether d may take refuse. This is a situation the rules do not cover, not a verdict that they are wrong.",
+    "verdict": "DILEMMA"
+   }
+  },
+  "unmapped_obligations": [],
+  "unsaid": [
+   "unsaid__permitted"
+  ],
+  "unspecified": [
+   "permitted"
+  ]
+ },
+ "permission_reading": {
+  "conflict": {
+   "detail": null,
+   "verdict": "CONFLICT-FREE"
+  },
+  "conflict_targets": [
+   "permitted",
+   "required",
+   "required->permitted"
+  ],
+  "followable": {
+   "conditional_on": [
+    "u0172.s02:refusal-available",
+    "u0172.s02:refusal-compatible"
+   ],
+   "text": "FOLLOWABLE: at every choice some available action is permitted, forgoes no required alternative and discharges the mapped obligations (); unmapped obligations: none; conditional on u0172.s02:refusal-available, u0172.s02:refusal-compatible; certificate 6360217fa4b87af302656505244644b22ce9c5128924da23ab24d4dde740596f. Certified over every structure satisfying the slot premises; existence facts (E1, E2, E3) are validated on situations and not assumed. It holds under every admissible filling of what the text leaves unsaid (unspecified: permitted).",
+   "verdict": "FOLLOWABLE"
+  },
+  "followable_certificate": true,
+  "phase1_scenario": {
+   "scenario": {
+    "answer": [
+     "undecided",
+     "fillings"
+    ],
+    "refuse": [
+     "clear",
+     "kleene"
+    ],
+    "undermine": [
+     "not clear",
+     "kleene"
+    ]
+   },
+   "scenario_text": "d has a clear action: refuse (undermine not clear, refuse clear, answer undecided: the text does not say whether it may be performed)",
+   "witness": {
+    "diagnosis": null,
+    "text": "UNKNOWN: the witness chooser has a clear action under the supplied filling",
+    "verdict": "UNKNOWN"
+   }
+  },
+  "refusal_only": {
+   "scenario": {
+    "refuse": [
+     "clear",
+     "kleene"
+    ]
+   },
+   "scenario_text": "d has a clear action: refuse (refuse clear)",
+   "witness": {
+    "diagnosis": null,
+    "text": "UNKNOWN: the witness chooser has a clear action under the supplied filling",
+    "verdict": "UNKNOWN"
+   }
+  },
+  "unmapped_obligations": [],
+  "unsaid": [
+   "unsaid__permitted"
+  ],
+  "unspecified": [
+   "permitted"
+  ]
+ }
+}
