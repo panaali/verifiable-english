@@ -158,6 +158,7 @@ import VE.NormDefaults.Layered
 import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.LayeredEntail
 import VE.NormDefaults.Packs
+import VE.NormDefaults.PacksLabels
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLegacyExamples
 import VE.NormDefaults.Premises
@@ -1085,8 +1086,11 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.assertion_declares_nothing
 #print axioms VE.Compose.baseAdmissibleP_append
 #print axioms VE.Compose.baseAdmissibleP_of_valid
+#print axioms VE.Compose.baseGate_today
+#print axioms VE.Compose.base_contains
 #print axioms VE.Compose.base_mem
 #print axioms VE.Compose.base_of_no_wrapper
+#print axioms VE.Compose.checks_none
 #print axioms VE.Compose.conflictFreeP_append
 #print axioms VE.Compose.contains_eq
 #print axioms VE.Compose.dispatch_chain
@@ -1096,8 +1100,17 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.dispatch_ok_iff
 #print axioms VE.Compose.dispatch_today
 #print axioms VE.Compose.dispatch_unsorted
+#print axioms VE.Compose.faultOf_ite
+#print axioms VE.Compose.faultOf_none
+#print axioms VE.Compose.find_congr
+#print axioms VE.Compose.find_cons_ite
+#print axioms VE.Compose.find_first
 #print axioms VE.Compose.forIn_yield_ok
+#print axioms VE.Compose.gateMatch_find
+#print axioms VE.Compose.gateOf_iff
+#print axioms VE.Compose.gate_legacy
 #print axioms VE.Compose.gate_wellFormed
+#print axioms VE.Compose.ite_and3
 #print axioms VE.Compose.ite_error_ok
 #print axioms VE.Compose.ite_ok_of
 #print axioms VE.Compose.known_registered
@@ -1114,6 +1127,8 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.rights_is_slot
 #print axioms VE.Compose.rights_slot_wellFormed
 #print axioms VE.Compose.rights_valid_is_slot
+#print axioms VE.Compose.routeOf_base
+#print axioms VE.Compose.routeOf_table
 #print axioms VE.Compose.sat_append
 #print axioms VE.Compose.sat_backgroundBaseP
 #print axioms VE.Compose.sat_gate_off
@@ -1141,9 +1156,12 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.slot_route_countermodel
 #print axioms VE.Compose.slot_route_entails_iff
 #print axioms VE.Compose.slot_route_intended
+#print axioms VE.Compose.sorted_find
+#print axioms VE.Compose.todayGate_base
 #print axioms VE.Compose.todayGate_classify
 #print axioms VE.Compose.todayGate_complete
 #print axioms VE.Compose.todayGate_sound
+#print axioms VE.Compose.todayHead_base
 #print axioms VE.Compose.todayHead_cases
 #print axioms VE.Compose.todayHead_not_wrapper
 #print axioms VE.Compose.today_alternatives
@@ -2139,6 +2157,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Packs.assemble_nil
 #print axioms VE.NormDefaults.Packs.assemble_order
 #print axioms VE.NormDefaults.Packs.assemble_wellFormed
+#print axioms VE.NormDefaults.Packs.dispatch_legacy
 #print axioms VE.NormDefaults.Packs.elaborateArrays_keys
 #print axioms VE.NormDefaults.Packs.elaborateArrays_legacy
 #print axioms VE.NormDefaults.Packs.envX_nil
@@ -2152,6 +2171,8 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Packs.firstFailing_two
 #print axioms VE.NormDefaults.Packs.firstRepeat_none
 #print axioms VE.NormDefaults.Packs.firstRepeat_none_of
+#print axioms VE.NormDefaults.Packs.kindCase_eq
+#print axioms VE.NormDefaults.Packs.layeredCase_some
 #print axioms VE.NormDefaults.Packs.legacy_drop
 #print axioms VE.NormDefaults.Packs.legacy_take
 #print axioms VE.NormDefaults.Packs.lookup_flatMap_mem
@@ -2164,6 +2185,20 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Packs.packPremises_absent
 #print axioms VE.NormDefaults.Packs.packPremises_legacy
 #print axioms VE.NormDefaults.Packs.packPremises_sub
+#print axioms VE.NormDefaults.Packs.pk_coh
+#print axioms VE.NormDefaults.Packs.pk_exc_inj
+#print axioms VE.NormDefaults.Packs.pk_exc_ne_coh
+#print axioms VE.NormDefaults.Packs.pk_exc_nec
+#print axioms VE.NormDefaults.Packs.pk_exc_parts
+#print axioms VE.NormDefaults.Packs.pk_exc_suff
+#print axioms VE.NormDefaults.Packs.pk_kind_sep
+#print axioms VE.NormDefaults.Packs.pk_mem_exc
+#print axioms VE.NormDefaults.Packs.pk_ruleName
+#print axioms VE.NormDefaults.Packs.pk_ruleName_sep
+#print axioms VE.NormDefaults.Packs.pk_split
+#print axioms VE.NormDefaults.Packs.pk_toString
+#print axioms VE.NormDefaults.Packs.pk_zip_fst
+#print axioms VE.NormDefaults.Packs.softLabelledU_labels_nodup
 #print axioms VE.NormDefaults.Packs.xWithout_nil
 #print axioms VE.NormDefaults.Packs.xWithout_sub
 #print axioms VE.NormDefaults.Run.normDefaults_wire_admission
