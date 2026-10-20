@@ -4,9 +4,12 @@
 Each mutant edits one definition of lean/VE/Defaults/Premises.lean. The run joins the mutated definitions, with every
 theorem removed (a mutant must fail a guard, not a proof), and the body of lean/VE/Defaults/Examples.lean into one file
 and elaborates it with `lake env lean`. The unmutated control must pass every guard; each mutant must fail at least
-the guards its entry names, and no mutant may fail anywhere but at a `#guard`. Usage, from the repository root:
+the guards its entry names, and no mutant may fail anywhere but at a `#guard`. An entry with `theorems` (a mutant of a
+`Prop`, which no `#guard` can evaluate) keeps every theorem and must fail inside each theorem it names. Usage, from the
+repository root, with another item's mutants file as the optional argument:
 
     python3 docs/defeasible/df-1a/evidence/run_mutants.py > docs/defeasible/df-1a/evidence/mutants.out
+    python3 docs/defeasible/df-1a/evidence/run_mutants.py docs/defeasible/df-1ab/mutants.json > docs/defeasible/df-1ab/evidence/mutants.out
 """
 import json
 import re
@@ -33,10 +36,10 @@ def without_theorems(src: str) -> str:
     return "".join(l for c in keep for l in c)
 
 
-def run(premises: str, examples: str) -> list[str]:
-    """The text of each failing `#guard` (or the error, when something else fails)."""
+def run(premises: str, examples: str, keep: bool = False) -> list[str]:
+    """The text of each failing `#guard`, `THEOREM <name>` for an error inside a kept theorem, or the error."""
     body = examples.split("\n", 1)[1]
-    text = without_theorems(premises) + "\n" + body
+    text = (premises if keep else without_theorems(premises)) + "\n" + body
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "Mutant.lean"
         path.write_text(text)
@@ -44,15 +47,22 @@ def run(premises: str, examples: str) -> list[str]:
     lines = text.splitlines()
     failed = []
     for m in re.finditer(r"Mutant\.lean:(\d+):\d+: error: (.*)", done.stdout + done.stderr):
-        src = lines[int(m.group(1)) - 1]
-        failed.append(src.strip()[:90] if src.startswith("#guard") else "NOT A GUARD: " + m.group(2)[:90])
+        n = int(m.group(1)) - 1
+        src = lines[n]
+        owner = next((l for l in reversed(lines[: n + 1]) if l[:1].isalpha() or l.startswith("#")), "")
+        if src.startswith("#guard"):
+            failed.append(src.strip()[:90])
+        elif keep and owner.startswith("theorem "):
+            failed.append("THEOREM " + owner.split()[1])
+        else:
+            failed.append("NOT A GUARD: " + m.group(2)[:90])
     return failed
 
 
 def main() -> int:
     premises = (LEAN / "VE/Defaults/Premises.lean").read_text()
     examples = (LEAN / "VE/Defaults/Examples.lean").read_text()
-    entries = json.loads((HERE.parent / "mutants.json").read_text())["mutants"]
+    entries = json.loads(Path(sys.argv[1] if len(sys.argv) > 1 else HERE.parent / "mutants.json").read_text())["mutants"]
     ok = True
     control = run(premises, examples)
     print(f"control: {len(control)} failures")
@@ -62,9 +72,11 @@ def main() -> int:
             print(f"{e['id']} {e['definition']}: not run here ({e['test']})")
             continue
         assert premises.count(e["find"]) == 1, e["id"]
-        failed = run(premises.replace(e["find"], e["replace"]), examples)
-        hit = [g for g in failed if any(g.startswith(x[:90]) for x in e["guards"])]
-        good = failed and all(not g.startswith("NOT A GUARD") for g in failed) and len(hit) == len(e["guards"])
+        failed = run(premises.replace(e["find"], e["replace"]), examples, keep="theorems" in e)
+        hit = [x for x in e["guards"] if any(g.startswith(x[:90]) for g in failed)]
+        hit += [t for t in e.get("theorems", []) if "THEOREM " + t in failed]
+        want = len(e["guards"]) + len(e.get("theorems", []))
+        good = failed and all(not g.startswith("NOT A GUARD") for g in failed) and len(hit) == want
         ok &= bool(good)
         print(f"{e['id']} {e['definition']}: {'FAILS' if good else 'SURVIVES'} {len(failed)} guards")
         for g in failed:

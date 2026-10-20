@@ -1,0 +1,12 @@
+# PROBE F16 (the recheck of 4476e63a0): report copies with one wrong number each, in the step-1 table (a survivor
+# count, a time in seconds) and in the sentences claims.py binds by name (the seeded-bug count, the collection
+# count, pk-1's UNKNOWN count, F1's former kills): claims.py must exit 1 on each, with an UNBOUND line the report
+# itself does not have (so a stale evidence/probes.json, as during hunt/run.py, cannot pass it).
+d=$(mktemp -d)
+uv run python docs/speed/trustmut/claims.py | grep " UNBOUND " | sort > $d/base.txt
+for p in 's#^\(| pk-1 F1 | [^|]*| [0-9]* / \)\([0-9]*\) /#\19\2 /#' 's#^\(| ap-2 F11 | [^|]*| [^|]*| \)\([0-9]*\) |#\19\2 |#' 's#\(seeded bugs TM1–TM[0-9]*, \)\([0-9]*\)#\19\2#' 's#: \([0-9]*\) added#: 9\1 added#' 's#(pk-1: \([0-9]*\),#(pk-1: 9\1,#' 's#pk-1 \([0-9]*\) at \(.PacksLegacy\)#pk-1 9\1 at \2#'; do
+  sed "$p" docs/speed/trustmut/REPORT.md > $d/r.md; cmp -s $d/r.md docs/speed/trustmut/REPORT.md && exit 2
+  uv run python docs/speed/trustmut/claims.py --report $d/r.md > $d/out.txt; test $? = 1 || { echo "not flagged: $p"; exit 1; }
+  grep " UNBOUND " $d/out.txt | sed "s#^$d/r.md:#REPORT.md:#" | sort | comm -13 $d/base.txt - | grep -q . || { echo "flagged only as the report is: $p"; exit 1; }
+done
+echo "F16: 6 of 6 copies UNBOUND where the report is not"
