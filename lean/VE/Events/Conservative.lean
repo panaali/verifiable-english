@@ -1,4 +1,4 @@
-import VE.Events.Premises
+import VE.Events.Calendar
 import VE.Readings.Names
 import VE.Readings.Superpose
 
@@ -6,7 +6,8 @@ import VE.Readings.Superpose
 written in the vocabulary it does not touch (`oldEnv`: no day sort, nothing with the day sort in its
 signature, no link). One way restricts a structure of the block to that vocabulary; the other expands
 a structure of the old vocabulary with the named dates' days in date order (`expansion`). The proof
-needs the date names to be one-to-one (`dateName_inj`). -/
+needs the date names to be one-to-one (`dateName_inj`). Its finite form with nothing to expand
+(`datesSituation`) shows that the generated premises alone have a finite calendar situation. -/
 namespace VE.Events
 open VE.Norms (Sat)
 open VE.Time (Civil pad dateMax)
@@ -405,5 +406,150 @@ theorem events_conservative (E : VE.Environment) (V : EventsEnv) (h : WellFormed
           subst this
           exact ⟨ss, rfl, tupleTyped_relation S _ ss vs ht⟩
     exact (tr φ [] [] hφ).2 (H R adm (fun a ha => (tr a [] [] (hΓ a ha)).1 (hΓS a ha)))
+
+/-! ## The pack alone is satisfiable -/
+
+/-- The days of `datesSituation`, by name: the named dates' constants, or one day `""` when there is none. -/
+def dayNames (V : EventsEnv) : List String := if V.dates = [] then [""] else V.dates.map dateName
+def firstName (V : EventsEnv) : String := (V.dates.head?.map dateName).getD ""
+
+/-- The finite form of `expansion` with nothing to expand: the named dates' days `(day, name)` in date order, one
+    element `(s, "")` of every other sort, author day constants on the first day, and no fact but the days' order. -/
+def datesSituation (E : VE.Environment) (V : EventsEnv) : VE.FiniteModel VE.Bridge.Entity where
+  domains := fun s => if s = V.day then (dayNames V).map (V.day, ·) else [(s, "")]
+  constants := fun c => if V.dates.any (fun D => dateName D == c) then some (V.day, c)
+    else (E.constants c).map fun s => if s = V.day then (V.day, firstName V) else (s, "")
+  relations := fun p => if p = V.before then
+      V.dates.flatMap fun D => (V.dates.filter (fun D' => decide (D.num < D'.num))).map
+        fun D' => [(V.day, dateName D), (V.day, dateName D')]
+    else []
+
+theorem chain_pairwise {β : Type} (R : β → β → Prop) (trans : ∀ a b c, R a b → R b c → R a c) :
+    ∀ (l : List β), (∀ p ∈ l.zip l.tail, R p.1 p.2) → l.Pairwise R
+  | [], _ => .nil
+  | a :: rest, h => .cons (chain_head R trans rest a h) (chain_pairwise R trans rest (fun p hp => h p (by
+      cases rest with
+      | nil => simp at hp
+      | cons c rest => exact List.mem_cons_of_mem _ hp)))
+
+/-- The pack alone is satisfiable by a finite calendar situation. -/
+theorem eventsPremises_satisfiable (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E V = true) :
+    ∃ M : VE.FiniteModel VE.Bridge.Entity, M.Valid (regenEnv E V) ∧ Sat M.asStructure (eventsX V) ∧
+      embeddable V M = true := by
+  have hT := regen_typed E V h
+  simp only [WellFormedEvents, Bool.and_eq_true, List.all_eq_true, sig2, beq_iff_eq, decide_eq_true_eq,
+    List.contains_iff_mem, Bool.not_eq_true', bne_iff_ne, ne_eq] at h
+  obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨-, hb⟩, -⟩, -⟩, -⟩, -⟩, hbr⟩, hl⟩, -⟩, hd⟩, hlt⟩, -⟩, -⟩ := h
+  have hbr : V.before ∉ rolePreds V := by simpa using hbr
+  let M := datesSituation E V
+  have hlt : ∀ p ∈ V.dates.zip V.dates.tail, p.1.num < p.2.num := fun p hp => by
+    simpa using hlt p hp
+  have pos := chain_positions (fun D D' : Civil => D.num < D'.num) (fun _ _ _ => Nat.lt_trans) V.dates hlt
+  have pw := chain_pairwise (fun D D' : Civil => D.num < D'.num) (fun _ _ _ => Nat.lt_trans) V.dates hlt
+  have numInj : ∀ D ∈ V.dates, ∀ D' ∈ V.dates, D.num = D'.num → D = D' := fun D hD D' hD' he => by
+    rcases pos D hD D' hD' with h | h | h
+    · exact h
+    · omega
+    · omega
+  let num : VE.Bridge.Entity → Nat := fun z => ((V.dates.find? (fun D => dateName D == z.2)).map (·.num)).getD 0
+  have numD : ∀ D ∈ V.dates, num (V.day, dateName D) = D.num := fun D hD => by
+    cases hf : V.dates.find? (fun D' => dateName D' == dateName D) with
+    | some D' =>
+      have := List.find?_some hf
+      simp only [beq_iff_eq] at this
+      simp [num, hf, dateName_inj this]
+    | none => exact absurd (by simp) (List.find?_eq_none.1 hf D hD)
+  have days : ∀ z, z ∈ M.domains V.day ↔ ∃ n ∈ dayNames V, z = (V.day, n) := fun z => by
+    simp only [M, datesSituation, if_true, List.mem_map]
+    exact ⟨fun ⟨n, hn, he⟩ => ⟨n, hn, he.symm⟩, fun ⟨n, hn, he⟩ => ⟨n, hn, he.symm⟩⟩
+  -- a day is a named date's day, or the one day `""` when there is none
+  have dayCases : ∀ z ∈ M.domains V.day, (∃ D ∈ V.dates, z = (V.day, dateName D)) ∨ (V.dates = [] ∧ z = (V.day, "")) :=
+    fun z hz => by
+      obtain ⟨n, hn, rfl⟩ := (days z).1 hz
+      unfold dayNames at hn
+      split at hn
+      · next he => simp at hn; exact .inr ⟨he, by rw [hn]⟩
+      · obtain ⟨D, hD, rfl⟩ := List.mem_map.1 hn; exact .inl ⟨D, hD, rfl⟩
+  have dayOf : ∀ D ∈ V.dates, (V.day, dateName D) ∈ M.domains V.day := fun D hD =>
+    (days _).2 ⟨_, by unfold dayNames; rw [if_neg (List.ne_nil_of_mem hD)]; exact List.mem_map_of_mem hD, rfl⟩
+  have firstIn : (V.day, firstName V) ∈ M.domains V.day := (days _).2 ⟨_, by
+    unfold dayNames firstName; cases V.dates <;> simp, rfl⟩
+  have before : ∀ D ∈ V.dates, ∀ D' ∈ V.dates,
+      [(V.day, dateName D), (V.day, dateName D')] ∈ M.relations V.before ↔ D.num < D'.num := by
+    intro D hD D' hD'
+    simp only [M, datesSituation, if_true, List.mem_flatMap, List.mem_map, List.mem_filter, decide_eq_true_eq,
+      List.cons.injEq, Prod.mk.injEq, true_and, and_true]
+    constructor
+    · rintro ⟨A, -, B, ⟨-, hab⟩, ha, hb⟩
+      rw [← dateName_inj ha, ← dateName_inj hb]; exact hab
+    · exact fun hl => ⟨D, hD, D', ⟨hD', hl⟩, rfl, rfl⟩
+  have relBefore : ∀ p zs, zs ∈ M.relations p → p = V.before ∧ ∃ D ∈ V.dates, ∃ D' ∈ V.dates,
+      zs = [(V.day, dateName D), (V.day, dateName D')] := by
+    intro p zs hz
+    simp only [M, datesSituation] at hz
+    split at hz
+    · next hp =>
+      obtain ⟨D, hD, hz⟩ := List.mem_flatMap.1 hz
+      obtain ⟨D', hD', rfl⟩ := List.mem_map.1 hz
+      exact ⟨hp, D, hD, D', (List.mem_filter.1 hD').1, rfl⟩
+    · cases hz
+  have emb : Embeds V M.asStructure num := by
+    refine ⟨fun z w hz hw he => ?_, fun z hz => ?_, fun z w hz hw => ?_, fun D hD => ?_⟩
+    · rcases dayCases z hz with ⟨D, hD, rfl⟩ | ⟨h0, rfl⟩ <;> rcases dayCases w hw with ⟨D', hD', rfl⟩ | ⟨h0', rfl⟩
+      · rw [numD D hD, numD D' hD'] at he; rw [numInj D hD D' hD' he]
+      · rw [h0'] at hD; cases hD
+      · rw [h0] at hD'; cases hD'
+      · rfl
+    · rcases dayCases z hz with ⟨D, hD, rfl⟩ | ⟨h0, rfl⟩
+      · rw [numD D hD]
+        have hp := (VE.Time.Civil.properB_iff D).1 (hd D hD).1.1
+        exact (VE.Time.valid_iff hp).1 ⟨hp, (hd D hD).1.2⟩
+      · simp [num, h0]
+    · show [z, w] ∈ M.relations V.before ↔ num z < num w
+      rcases dayCases z hz with ⟨D, hD, rfl⟩ | ⟨h0, rfl⟩
+      · rcases dayCases w hw with ⟨D', hD', rfl⟩ | ⟨h0', rfl⟩
+        · rw [before D hD D' hD', numD D hD, numD D' hD']
+        · rw [h0'] at hD; cases hD
+      · refine ⟨fun hr => ?_, fun hl => by simp [num, h0] at hl⟩
+        obtain ⟨-, D, hD, -⟩ := relBefore _ _ hr
+        rw [h0] at hD; cases hD
+    · refine ⟨_, ?_, dayOf D hD, numD D hD⟩
+      show M.constants (dateName D) = _
+      simp only [M, datesSituation]; rw [if_pos (List.any_eq_true.2 ⟨D, hD, by simp⟩)]
+  have adm : M.Valid (regenEnv E V) := by
+    refine ⟨fun c s hc => ?_, fun p zs hr => ?_⟩
+    · simp only [regenEnv] at hc
+      split at hc
+      · next hany =>
+        cases hc
+        obtain ⟨D, hD, he⟩ := List.any_eq_true.1 hany
+        simp only [beq_iff_eq] at he; subst he
+        exact ⟨_, by simp [M, datesSituation, VE.FiniteModel.asStructure, hany], dayOf D hD⟩
+      · next hany =>
+        by_cases hday : s = V.day
+        · subst hday
+          exact ⟨_, by simp [M, datesSituation, VE.FiniteModel.asStructure, hany, hc], firstIn⟩
+        · exact ⟨(s, ""), by simp [M, datesSituation, VE.FiniteModel.asStructure, hany, hc, hday],
+            by simp [M, datesSituation, VE.FiniteModel.asStructure, hday]⟩
+    · obtain ⟨rfl, D, hD, D', hD', rfl⟩ := relBefore p zs hr
+      exact ⟨[V.day, V.day], hb, dayOf D hD, dayOf D' hD', trivial⟩
+  have hn : (M.domains V.day).Nodup := by
+    simp only [M, datesSituation, if_true]
+    refine List.Pairwise.map (R := fun a b : String => a ≠ b) _ (fun a b hne he => hne (Prod.mk.inj he).2) ?_
+    unfold dayNames
+    split
+    · simp
+    · exact List.Pairwise.map (R := fun D D' : Civil => D.num < D'.num) _ (fun a b hlt he => Nat.ne_of_lt hlt (by rw [dateName_inj he])) pw
+  refine ⟨M, adm, ?_, embeddable_complete (regenEnv E V) V hT M adm hn num emb⟩
+  have hc := calendar_sat (regenEnv E V) V hT _ adm num emb
+  have hv := conventions_empty V M.asStructure (by
+    intro p hp v w hr
+    obtain ⟨rfl, -⟩ := relBefore p _ hr
+    rcases List.mem_append.1 hp with hp | hp
+    · exact hbr hp
+    · obtain ⟨l, hm, he⟩ := List.mem_map.1 hp; exact (hl l hm).2 he)
+  intro a ha
+  simp only [eventsX, eventsLabelled, List.map_append, List.mem_append] at ha
+  exact ha.elim (hc a) (hv a)
 
 end VE.Events
