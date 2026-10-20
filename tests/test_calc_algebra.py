@@ -55,7 +55,8 @@ def check (p : Expr × Expr) : String := reprStr (identityCheck p.1 p.2)
 def compare (p : Expr × Expr) : String := reprStr (Identity.compare p.1 p.2)
 def at' (p : Expr × Expr) (κ : List (String × Rat)) : String :=
   reprStr (differsAt p.1 p.2 κ, p.1.eval (κ.lookup ·), p.2.eval (κ.lookup ·))
-def line (key value : String) : IO Unit := IO.println (key ++ "\\t" ++ value)
+/-- One line per fixture, whatever its answer prints, so a wrong answer fails only its own fixture. -/
+def line (key value : String) : IO Unit := IO.println (key ++ "\\t" ++ value.replace "\\n" "\\\\n")
 """
 
 # (key, Lean expression, Lean's expected answer); the key names the spec's fixture.
@@ -83,6 +84,7 @@ FIXTURES = [
     ("commute", 'check (.mul (v "x") (v "y"), .mul (v "y") (v "x"))', "true"),
     ("square", 'check (.mul (v "x") (v "x"), sq (v "x"))', "true"),
     ("zero", 'reprStr (Poly.ofExpr? (.sub (v "x") (v "x")))', "some []"),
+    ("zero-literal", "reprStr (Poly.ofExpr? (l 0))", "some []"),
     ("division-has-no-polynomial", 'reprStr (Poly.ofExpr? (.div (v "x") (l 1)))', "none"),
     # A division by an expression that can be zero denotes nothing at that point.
     ("cancel", "check cancel", "true"),
@@ -104,8 +106,14 @@ FIXTURES = [
     ("sum-10001", "reprStr ((Frac.ofExpr? (.add four (l 1))).map (·.1.length))", "none"),
     ("digits-4096", "reprStr ((Poly.ofExpr? (.pow (l 10) 4095)).map List.length)", "some 1"),
     ("digits-4097", "reprStr (Poly.ofExpr? (.pow (l 10) 4096))", "none"),
+    # The same bound on a denominator: (1/10)^4095 has 4,096 digits below the line, (1/10)^4096 has 4,097.
+    ("digits-den-4096", "reprStr ((Poly.ofExpr? (.pow (l (1/10)) 4095)).map List.length)", "some 1"),
+    ("digits-den-4097", "reprStr (Poly.ofExpr? (.pow (l (1/10)) 4096))", "none"),
     ("exponent-4096", 'check (.pow (v "x") 4096, .pow (.pow (v "x") 64) 64)', "true"),
     ("exponent-4097", 'compare (.mul (.pow (v "x") 4096) (v "x"), .pow (v "x") 4097)', "none"),
+    # A power past the exponent limit is refused even when its base is constant and no exponent appears.
+    ("exponent-constant-4096", "reprStr (Poly.ofExpr? (.pow (l 1) 4096))", "some [{ coeff := 1, vars := [] }]"),
+    ("exponent-constant-4097", "reprStr (Poly.ofExpr? (.pow (l 1) 4097))", "none"),
     ("exponent-4097-product", 'compare (.mul (.pow (v "x") 4096) (v "x"), .mul (v "x") (.pow (v "x") 4096))', "none"),
     ("over-the-limit-is-not-an-identity", 'check (sumx 5000, .mul (l 5001) (v "x"))', "false"),
 ]
