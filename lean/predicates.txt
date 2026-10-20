@@ -147,6 +147,7 @@ module VE.Calc.Poly
 module VE.Calc.Render
 module VE.Calc.Syntax
 module VE.Calc.Units
+module VE.Calc.UnitsExamples
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Ratio
