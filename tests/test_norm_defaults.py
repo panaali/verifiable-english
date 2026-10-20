@@ -8,7 +8,7 @@ from ve.environment import Environment
 from ve.model import FiniteModel
 from ve.errors import InvalidModel, ResourceLimit, UnsupportedProfile, VEError
 from ve.norms import Norm, NormDocument, check_conflict as w1_check_conflict
-from ve.profiles import LANGUAGE, SPEC_REVISION, checker_family
+from ve.profiles import LANGUAGE, SPEC_REVISION
 from conformance import frozen_norm_defaults as nd
 
 PROFILES = ["norm-defaults@0", "norms@0", "relational-fol@0"]
@@ -314,10 +314,8 @@ def test_unspecified_requires_the_profile_and_other_values_stay_invalid():
         environment({"x_permitted": missing})
     with pytest.raises(UnsupportedProfile, match="norm-defaults@0 requires norms@0"):
         Environment(raw_environment({}, profiles=["norm-defaults@0", "relational-fol@0"]))
-    # The alternatives route takes the completion (events-time-causation ET-7); risk@0 does not yet.
-    assert checker_family(["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0"]) == "fol"
-    with pytest.raises(UnsupportedProfile, match="risk@0 with norm-defaults@0 is not implemented"):
-        checker_family(["alternatives@0", "norm-defaults@0", "norms@0", "relational-fol@0", "risk@0"])
+    # The alternatives route takes the completion (events-time-causation ET-7); risk@0 does not yet: Lean's
+    # profile table decides both (lean/VE/Compose/Examples.lean D-rows with norm-defaults@0).
     for role, reg in (("obligation", obligation("unspecified", None)),
                       ("plain", {"arguments": ["act"], "description": "plain",
                                  "regulated": {"role": "plain", "default": "unspecified"}})):

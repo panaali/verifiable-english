@@ -30,7 +30,15 @@ GUARD_FAILED = "did not evaluate to `true`"
 
 
 def _sources() -> tuple[str, str, str]:
-    return tuple((ACTS / f"{name}.lean").read_text() for name in ("Syntax", "Read", "GrammarExamples"))
+    """`Syntax.lean` with the words it reads from `Lexical.lean` (`Tok`, `joinWords`, `clauseWords`, their one owner
+    since ap-1a) in front of its own definitions, as ap-2 wrote them there; then `Read.lean` and `GrammarExamples.lean`."""
+    syntax, read, examples = ((ACTS / f"{name}.lean").read_text() for name in ("Syntax", "Read", "GrammarExamples"))
+    lexical = (ACTS / "Lexical.lean").read_text()
+    words = lexical[lexical.index("namespace VE.Acts.Lexical\n"):lexical.index("/-- The limits of 12")]
+    words = words.replace("open VE.Norms.Wire (actReserved words actWord scanSlots)\n", "") + "end VE.Acts.Lexical\n\n"
+    at = syntax.index("namespace VE.Acts\n")
+    syntax = syntax[:at].replace("import VE.Acts.Lexical\n", "import VE.Acts.LexicalBase\n") + words + syntax[at:]
+    return syntax, read, examples
 
 
 def _split_imports(text: str) -> tuple[list[str], str]:
@@ -62,6 +70,9 @@ def List.beqOf {α : Type} [BEq α] (a b : List α) : Bool := a == b
 """
 
 
+INLINED = {"import VE.Acts.Syntax", "import VE.Acts.Read"}
+
+
 def _assemble(syntax: str, read: str, examples: str) -> str:
     """One file: the three modules' bodies, with the imports they take from outside `VE.Acts`, the sweep's `PRELUDE`,
     and no proofs."""
@@ -69,7 +80,7 @@ def _assemble(syntax: str, read: str, examples: str) -> str:
     imports, bodies = [], []
     for text in (syntax, read, examples):
         own, body = _split_imports(text)
-        imports += [line for line in own if not line.startswith("import VE.Acts.") and line not in imports]
+        imports += [line for line in own if line not in INLINED and line not in imports]
         bodies.append(body)
     return "\n".join(imports) + "\n" + PRELUDE + "\n".join(bodies)
 

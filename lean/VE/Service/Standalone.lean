@@ -221,11 +221,12 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 
 /-- The public environment endpoint follows the composed profile head. Each
 statement layer validates its own declarations; the core decoder handles the
-remaining families. `todayGate` is the single gate for the full registry. -/
+remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows, and the whole
+table for a list with `Compose.environmentWrapper`. -/
 def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
   let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
-    let _ ← VE.Compose.todayGate rawProfiles
+    let _ ← VE.Compose.gateOf VE.Compose.baseRows rawProfiles
     pure ()
   let named := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
@@ -280,10 +281,8 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     let _ ← validated environment
     pure ()
   let ps ← VE.Route.Gate.profilesOf environment
-  if ps.contains "readings@1" then
-    let _ ← VE.Compose.dispatch ps
-    pure ()
-  else VE.Compose.todayGate ps
+  let _ ← VE.Compose.gateOf
+    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
   let family := if ps.contains "order@0" then VE.Route.Gate.Family.order
     else if ps.contains "nary@0" then .closureNary
     else if ps.contains "closure@0" then .closure else .fol
@@ -1103,10 +1102,9 @@ private def earlyProfileGate (environment : Json) : Except String Unit := do
   if environment.getObjValD "language" == .str "ve.core@0.2" then
     if (environment.getObjVal? "profiles").isOk then
       let profiles ← VE.Route.Gate.profilesOf environment
-      if VE.Compose.todayHead profiles == .frozen &&
-          !(profiles.any VE.Compose.wrapperProfiles.contains) &&
-          !profiles.contains "time@0" then
-        VE.Compose.todayGate profiles
+      if VE.Compose.routeOf VE.Compose.profileTable profiles == .frozen && !profiles.contains "time@0" then
+        let _ ← VE.Compose.gateOf VE.Compose.baseRows profiles
+        pure ()
 
 /-- Only the four frozen checker families have their entire vocabulary shape
 owned by the location decoder. Composed routes inspect their own envelope and
