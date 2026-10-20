@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36413,
+    "total_lines": 36940,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1769,16 +1769,15 @@
       },
       {
         "file": "lean/VE/Calc/Units.lean",
-        "lines": 229,
-        "sha256": "ac0632746b31f47132814a74261bcae42619cd5c2ef1afb5738b1a7f34ac04f9",
+        "lines": 222,
+        "sha256": "fda31837236b2ff040a19d87ccd59cc8cf8cbdf60332ac6c4fc6fde0dd7ba110",
         "ranges": [
           [
             1,
-            229
+            222
           ]
         ],
         "declarations": [
-          "checkFields",
           "decodeExponents",
           "decodeFactor",
           "decodeUnit",
@@ -1787,6 +1786,50 @@
           "decode"
         ],
         "reason": "ve-units@2 (math-evidence spec 6.2, me-6b): its only decoder, its identity and the claim-level dimension checks; ve-units@1 through W6a's decodeEnvironment; the full file is pinned"
+      },
+      {
+        "file": "lean/VE/Calc/Wire.lean",
+        "lines": 378,
+        "sha256": "ec1c50b5013a7d1a4410dc30a7df44c43c6a188fcfdfac9b5f8b3b8ba700a0b2",
+        "ranges": [
+          [
+            1,
+            378
+          ]
+        ],
+        "declarations": [
+          "checkFields",
+          "limitFault",
+          "literal",
+          "expr",
+          "claim",
+          "recordJson",
+          "value",
+          "entry",
+          "admit",
+          "checkCase",
+          "identify",
+          "decode",
+          "decodeCase"
+        ],
+        "reason": "the case ve-calc@0 (math-evidence spec 3.1 to 3.3, me-2): its only decoder, its limits in order, its definition order and its identity (meaning_id, claim ids); the full file is pinned"
+      },
+      {
+        "file": "lean/VE/Calc/Run.lean",
+        "lines": 156,
+        "sha256": "7e81dbff64a3909e71c308c716804a54ddf7766ddcd36cc9b0a32c60a8564a06",
+        "ranges": [
+          [
+            1,
+            156
+          ]
+        ],
+        "declarations": [
+          "rowJson",
+          "runCaseReported",
+          "outcomeAt"
+        ],
+        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over; the full file is pinned"
       }
     ],
     "other_json": {
@@ -1898,7 +1941,8 @@
       "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 run the kind table on a decoded soft source with a case JSON and compare compressed answers; no runner path",
       "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
       "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope, and no service mode or route calls it yet (SC-1b)",
-      "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)"
+      "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)",
+      "lean/VE/Calc/RunExamples.lean": "fixtures only: #guard route cases of the calc runner (spec 13.2, 13.3, 13.6) read each answer's rows, outcomes and meaning_id; no runner path"
     }
   },
   "plan_operations": {
