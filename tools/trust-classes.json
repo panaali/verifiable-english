@@ -9822,8 +9822,6 @@
       "D[V]": [
         "VE.Service.Handles.entry?",
         "VE.Service.Handles.expand",
-        "VE.Service.Mode.name",
-        "VE.Service.Mode.ofName?",
         "VE.Service.bindResults",
         "VE.Service.caseBounds",
         "VE.Service.commas",
@@ -9862,7 +9860,6 @@
         "VE.Service.Entry.of",
         "VE.Service.Handles",
         "VE.Service.Handles.insert",
-        "VE.Service.Mode",
         "VE.Service.Request",
         "VE.Service.Request.budget",
         "VE.Service.bound",
@@ -9874,7 +9871,6 @@
         "VE.Service.handleKey",
         "VE.Service.handleLine",
         "VE.Service.handshake",
-        "VE.Service.modes",
         "VE.Service.parseLeanCases",
         "VE.Service.requestId?",
         "VE.Service.response",
@@ -13715,6 +13711,23 @@
         "VE.Scales.asMuch",
         "VE.Scales.below",
         "VE.Scales.degreeSetoid"
+      ]
+    },
+    "VE/Service/Registry.lean": {
+      "D[V]": [
+        "VE.Service.Mode.name",
+        "VE.Service.Mode.ofName?"
+      ],
+      "G[V]": [
+        "VE.Service.Mode",
+        "VE.Service.RouteSpec",
+        "VE.Service.modes",
+        {
+          "name": "VE.Service.registry",
+          "tied": [
+            "VE.Service.registry_modes"
+          ]
+        }
       ]
     }
   }

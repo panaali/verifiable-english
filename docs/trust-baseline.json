@@ -971,6 +971,13 @@
    "reason": "qt-b1b: S +9 (VE/Scales/Degrees.lean +6 StrictLinear, VE/Scales/Intended.lean +3 Fresh)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1b, 2026-10-18",
    "commit": "b1f7ca7adc2b39a17238457736870fb15df03928"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "ar-10b: VE/Service/Registry.lean +61 (Mode, Mode.name, Mode.ofName?, modes moved from Protocol.lean; RouteSpec new; registry tied by registry_modes), VE/Service/Protocol.lean -55; net V +6, K +0, S +0; replaces the Python mode list MODES in ve/backends/service_schema.py, deleted here",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), ar-10b, 2026-10-20",
+   "commit": "bb205adaece86354a9139677029c045c32e2b379"
   }
  ]
 }
