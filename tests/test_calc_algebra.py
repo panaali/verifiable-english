@@ -59,6 +59,24 @@ def at' (p : Expr × Expr) (κ : List (String × Rat)) : String :=
 def line (key value : String) : IO Unit := IO.println (key ++ "\\t" ++ value.replace "\\n" "\\\\n")
 """
 
+# ME-1's digit limit (2.4) on each side of the line and with each sign: 10^4095 has 4,096 digits, 10^4096 has 4,097,
+# above the line (10) or below it (1/10). The last factor carries the sign, so the check must bound the magnitude, and
+# past the limit even a side compared with itself is no identity.
+DIGIT_FIXTURES = [
+    fixture
+    for sign, minus in (("", ""), ("neg-", "-"))
+    for side, base in (("", "10"), ("den-", "(1/10)"))
+    for fixture in (
+        (f"digits-{sign}{side}4096", f"reprStr ((Poly.ofExpr? (.mul (.pow (l {base}) 4094) (l ({minus}{base})))).map "
+                                     "List.length)", "some 1"),
+        (f"digits-{sign}{side}4097",
+         f"reprStr (Poly.ofExpr? (.mul (.pow (l {base}) 4095) (l ({minus}{base}))))", "none"),
+        (f"digits-{sign}{side}4097-compare",
+         f"compare (.mul (.pow (l {base}) 4095) (l ({minus}{base})), .mul (.pow (l {base}) 4095) (l ({minus}{base})))",
+         "none"),
+    )
+]
+
 # (key, Lean expression, Lean's expected answer); the key names the spec's fixture.
 FIXTURES = [
     # H-1, H-2, H-3 with D, V and v free: identities.
@@ -104,11 +122,7 @@ FIXTURES = [
     ("product-10100", 'compare (.mul (geo "x" 100) (geo "y" 99), .mul (geo "y" 99) (geo "x" 100))', "none"),
     ("sum-10000", "reprStr ((Frac.ofExpr? four).map (·.1.length))", "some 10000"),
     ("sum-10001", "reprStr ((Frac.ofExpr? (.add four (l 1))).map (·.1.length))", "none"),
-    ("digits-4096", "reprStr ((Poly.ofExpr? (.pow (l 10) 4095)).map List.length)", "some 1"),
-    ("digits-4097", "reprStr (Poly.ofExpr? (.pow (l 10) 4096))", "none"),
-    # The same bound on a denominator: (1/10)^4095 has 4,096 digits below the line, (1/10)^4096 has 4,097.
-    ("digits-den-4096", "reprStr ((Poly.ofExpr? (.pow (l (1/10)) 4095)).map List.length)", "some 1"),
-    ("digits-den-4097", "reprStr (Poly.ofExpr? (.pow (l (1/10)) 4096))", "none"),
+    *DIGIT_FIXTURES,
     ("exponent-4096", 'check (.pow (v "x") 4096, .pow (.pow (v "x") 64) 64)', "true"),
     ("exponent-4097", 'compare (.mul (.pow (v "x") 4096) (v "x"), .pow (v "x") 4097)', "none"),
     # A power past the exponent limit is refused even when its base is constant and no exponent appears.
