@@ -123,14 +123,16 @@ def lean_dispatch(root: Path, graph) -> dict[str, tuple[str, list[tuple[str, str
         modules = {name: module for name, module in pairs}
         if DISPATCH not in modules:
             continue
-        home = modules[DISPATCH]  # the dispatch's own module: the mode type and its helpers
+        # The dispatch's own module and the mode type's (the registry): no route's implementation.
+        home = {modules[DISPATCH]} | {module for name, module in pairs
+                                      if name == MODE_TYPE or name.startswith(MODE_TYPE + ".")}
         constructors = [name.removeprefix(MODE_TYPE + ".") for name in modules
                         if name.startswith(MODE_TYPE + ".") and name.count(".") == MODE_TYPE.count(".") + 1]
         if len(constructors) != 1 or len(by_norm.get(_norm(constructors[0]), [])) != 1:
             continue
         [mode] = by_norm[_norm(constructors[0])]
         implementing = [(graph.lean_modules.get(module, module), name) for name, module in pairs
-                        if module != home]
+                        if module not in home]
         if implementing and mode not in found:
             found[mode] = (theorem, implementing)
     return found
