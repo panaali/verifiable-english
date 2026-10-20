@@ -517,7 +517,7 @@ def test_compiled_mode_roots_cover_every_service_mode(monkeypatch):
     from ve.backends.service_schema import MODES
     roots = lean_mode_deps.load()
     assert roots is not None and set(roots) == set(MODES)
-    assert all(root != "VE.Service.Protocol" for values in roots.values() for root in values)
+    assert all(root not in ("VE.Service.Protocol", "VE.Service.Registry") for values in roots.values() for root in values)
     monkeypatch.setattr(lean_mode_deps, "digests", lambda: {"changed": "source"})
     assert lean_mode_deps.load() is None
 
