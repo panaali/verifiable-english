@@ -1,0 +1,56 @@
+sc-1ac statement diff against docs/spec/scope.md 4.2 and 5.1 (whitespace and comments ignored)
+
+exact   inductive Reach
+exact   structure Governor
+exact   structure SDoc
+exact   def keysOf
+exact   def unitsOf
+exact   def idOf
+exact   def unitIds
+exact   def contentOf
+exact   def isPart
+exact   def isNorm
+exact   def objectOf
+exact   def partUnits
+exact   def ruleUnits
+exact   def setUnits
+exact   def applyEffect
+exact   def itemRule
+exact   def isFrame
+exact   def unary
+exact   def graph
+DIFFERS def coveredLayout
+  spec : def coveredLayout (D : SDoc) : Reach → Except String (List String) | .list lead => VE.Layout.listRun D.layout lead | .listName n => match D.listNames.find? (·.1.name == n) with | some (cn, lead, _) => do let us ← VE.Layout.listRun D.layout lead if cn.units == us then pure us else throw s!"ManifestMismatch: scope.list_names.{n}.units" | none => throw s!"ScopeUnknownName: {n}" | .anchor a => VE.Layout.anchorReach D.layout D.anchors a | .label i => VE.Layout.itemRun D.layout i | .rules _ => .ok [] | .frontier => throw "UnsupportedProfile: scope@0 frontier reach requires SC-5" | .fixed us => .ok us
+  built: def coveredLayout (D : SDoc) : Reach → Except String (List String) | .list lead => VE.Layout.listRun D.layout lead | .listName n => match D.listNames.find? (·.1.name == n) with | some (cn, lead, _) => do let us ← VE.Layout.listRun D.layout lead if cn.units == us then pure us else throw s!"ManifestMismatch: scope.list_names.{n}.units" | none => throw s!"ScopeUnknownName: {n}" | .anchor _ => throw "UnsupportedProfile: scope@0 anchor reach requires SC-3a" | .label _ => throw "UnsupportedProfile: scope@0 label reach requires SC-3a" | .rules _ => .ok [] | .frontier => throw "UnsupportedProfile: scope@0 frontier reach requires SC-5" | .fixed us => .ok us
+exact   def frameOn
+exact   def baseObj
+exact   def baseName
+exact   def covered
+exact   def classOf
+exact   def position
+exact   def ordered
+exact   def coversU
+exact   def governorsOf
+exact   def composed
+exact   def orderCheck
+exact   def affected
+exact   def conditions
+exact   def vocabularyNames
+exact   def firstDup
+DIFFERS def admitBlock
+  spec : def admitBlock (D : SDoc) : Except String Unit := do if D.governors.length > 256 then throw "ResourceLimit: scope governors" if D.listNames.length > 256 then throw "ResourceLimit: scope list names" if let some i := firstDup (D.governors.map (·.id)) then throw s!"DuplicateDeclaration: governor {i}" if let some n := firstDup (D.listNames.map (·.1.name)) then throw s!"DuplicateDeclaration: list name {n}" for g in D.governors do unless (unitIds D.doc).contains g.unit do throw s!"ScopeUnknownUnit: {g.unit}" if D.governors.any (fun g => !(conditions g.effect).isEmpty) && (vocabularyNames D).contains "own" then throw "ScopeReserved: own" for (cn, lead, unit) in D.listNames do unless cn.scope == "doc" do throw s!"InvalidInput: scope@0 list_names.{cn.name}.scope must be doc" unless (unitIds D.doc).contains unit do throw s!"ScopeUnknownUnit: {unit}" let us ← VE.Layout.listRun D.layout lead unless cn.units == us do throw s!"ManifestMismatch: scope.list_names.{cn.name}.units" VE.Layout.anchorsOk D.anchors (defSpans D) (VE.Discourse.unaryPred D.re.se.ne.rv.environment) for g in D.governors do for c in conditions g.effect do unless depthOk depthLimit c do throw "ResourceLimit: scope condition depth exceeds 64" unless ownSafe depthLimit c do throw s!"ScopeOwnBound: {g.id}" match g.effect, g.reach with | .frame _, .list lead => unless lead == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .frame _, .listName n => unless (D.listNames.find? (·.1.name == n)).any (·.2.1 == g.unit) do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .frame _, _ => throw s!"ScopeReach: {g.id}" | .title, .anchor _ => pure () | .title, .label _ => pure () | .title, _ => throw s!"ScopeReach: {g.id}" | .precedes, .frontier => throw s!"ScopeReach: {g.id}" | .yields, .frontier => throw s!"ScopeReach: {g.id}" | _, _ => pure () match g.reach with | .anchor a => unless graph g.effect || VE.Layout.headingOf D.layout D.anchors a == some g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .label i => unless graph g.effect || i == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | _ => pure () let us ← covered D g.reach unless us == g.units do throw s!"ManifestMismatch: scope.governors.{g.id}.units" for u in g.unit :: us do if (setUnits D.doc).contains u then throw s!"ScopeReadings: {u}" if isFrame g.effect || unary g.effect then for u in us do let c := contentOf D.doc u unless c == .null || isPart c || isNorm c do throw s!"ScopeNotARule: {u}"
+  built: def admitBlock (D : SDoc) : Except String Unit := do if D.governors.length > 256 then throw "ResourceLimit: scope governors" if D.listNames.length > 256 then throw "ResourceLimit: scope list names" if let some i := firstDup (D.governors.map (·.id)) then throw s!"DuplicateDeclaration: governor {i}" if let some n := firstDup (D.listNames.map (·.1.name)) then throw s!"DuplicateDeclaration: list name {n}" for g in D.governors do unless (unitIds D.doc).contains g.unit do throw s!"ScopeUnknownUnit: {g.unit}" if D.governors.any (fun g => !(conditions g.effect).isEmpty) && (vocabularyNames D).contains "own" then throw "ScopeReserved: own" for (cn, lead, unit) in D.listNames do unless cn.scope == "doc" do throw s!"InvalidInput: scope@0 list_names.{cn.name}.scope must be doc" unless (unitIds D.doc).contains unit do throw s!"ScopeUnknownUnit: {unit}" let us ← VE.Layout.listRun D.layout lead unless cn.units == us do throw s!"ManifestMismatch: scope.list_names.{cn.name}.units" for g in D.governors do for c in conditions g.effect do unless depthOk depthLimit c do throw "ResourceLimit: scope condition depth exceeds 64" unless ownSafe depthLimit c do throw s!"ScopeOwnBound: {g.id}" match g.effect, g.reach with | .frame _, .list lead => unless lead == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .frame _, .listName n => unless (D.listNames.find? (·.1.name == n)).any (·.2.1 == g.unit) do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .frame _, _ => throw s!"ScopeReach: {g.id}" | .title, .anchor _ => pure () | .title, .label _ => pure () | .title, _ => throw s!"ScopeReach: {g.id}" | .precedes, .frontier => throw s!"ScopeReach: {g.id}" | .yields, .frontier => throw s!"ScopeReach: {g.id}" | _, _ => pure () let us ← covered D g.reach unless us == g.units do throw s!"ManifestMismatch: scope.governors.{g.id}.units" for u in g.unit :: us do if (setUnits D.doc).contains u then throw s!"ScopeReadings: {u}" if isFrame g.effect || unary g.effect then for u in us do let c := contentOf D.doc u unless c.isNull || isPart c || isNorm c do throw s!"ScopeNotARule: {u}"
+exact   def newContent
+exact   def patch
+DIFFERS def govern
+  spec : def govern (D : SDoc) : Except String Json := do admitBlock D if D.governors.isEmpty then match partUnits D with | [] => pure D.doc | u :: _ => throw s!"ScopeOrphanPart: {u}" else orderCheck D let comp ← (affected D).mapM (fun u => do pure (u, ← composed D u)) let t ← ruleTable D for g in (ordered D).filter (graph ·.effect) do if (edgesOf D (fun v => t.lookup v) g).isEmpty then throw s!"ScopeNoEffect: {g.id}" pure (patch D (comp.map fun (u, o) => (u, addOver (edgesInto D (fun v => t.lookup v) u) o)))
+  built: def govern (D : SDoc) : Except String Json := do admitBlock D if D.governors.isEmpty then match partUnits D with | [] => pure D.doc | u :: _ => throw s!"ScopeOrphanPart: {u}" else orderCheck D let comp ← (affected D).mapM (fun u => do pure (u, ← composed D u)) if (ordered D).any (graph ·.effect) then throw "UnsupportedProfile: scope@0 precedence requires SC-4" pure (patch D comp)
+exact   theorem itemRule_decoder
+exact   theorem govern_identity
+exact   theorem govern_orphan
+exact   theorem govern_admits
+exact   theorem governorsOf_iff
+
+not built here (sc-1ad, sc-3ab, or later batches): normOf, edgesOf, edgesInto, ruleTable, edgesFor, addOver, kindOf, defSpans, HasStr, payload, BlockBound, govern_preserves, govern_provenance, decodeNorm_name, govern_strings, govern_no_new_symbols, frontier_graph_refused, governFast_eq, readings_refused, nonrule_refused
+
+not in the spec (helpers): baseName_some, coversU_iff, mem_ordered, ordered_sorted
