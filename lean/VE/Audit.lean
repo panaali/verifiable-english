@@ -51,6 +51,7 @@ import VE.Calc.Dimension
 import VE.Calc.Eval
 import VE.Calc.Linear
 import VE.Calc.Poly
+import VE.Calc.Units
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
 import VE.Cardinality.Syntax
@@ -904,6 +905,10 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Rescale.of_pos
 #print axioms VE.Calc.Rescale.pos
 #print axioms VE.Calc.Step.derive_sound
+#print axioms VE.Calc.Units.checkClaim_invariant
+#print axioms VE.Calc.Units.dimE_ok
+#print axioms VE.Calc.Units.except_bind_ok
+#print axioms VE.Calc.Units.unless_ok
 #print axioms VE.Calc.Val.bin_exhausted
 #print axioms VE.Calc.Val.bin_tooLarge
 #print axioms VE.Calc.Val.div_agrees
