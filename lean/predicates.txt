@@ -83,7 +83,11 @@ module ResponseShape
 module SensesMain
 module Serve
 module SpeechActsMain
+module VE.Acts.Compat
 module VE.Acts.GrammarExamples
+module VE.Acts.Lexical
+module VE.Acts.LexicalBase
+module VE.Acts.LexicalExamples
 module VE.Acts.Read
 module VE.Acts.Syntax
 module VE.Alternatives.Admission
@@ -302,6 +306,7 @@ module VE.NormDefaults.LayeredAdmission
 module VE.NormDefaults.LayeredEntail
 module VE.NormDefaults.Packs
 module VE.NormDefaults.PacksExamples
+module VE.NormDefaults.PacksLabels
 module VE.NormDefaults.PacksLegacy
 module VE.NormDefaults.PacksLegacyExamples
 module VE.NormDefaults.Premises
