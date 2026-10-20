@@ -3,7 +3,7 @@
   "tools/trust_mutants.py": "e883807d3ffa3ed7ac8a96d93bd50e9e8a58e544d9f0dfd2e94d8eeb4cda074c",
   "tools/trust_map.py": "4f183615862d09350bb5ff12fa2c111b1c466635367f45453ae295a1482da74d",
   "tests/test_trust_mutants.py": "26bd6b05efe487ed2fcd067cdde1345238cddb15c8136bed9e9fe3d664fe3411",
-  "docs/speed/trustmut/REPORT.md": "1fbff8251617f5fdf568576f71f0b51fee25bc917486cf673d4155c5428905df",
+  "docs/speed/trustmut/REPORT.md": "d248e17771278e9b5f6191b6e38d37cb5ec50980dd940bd6ef027d7cb20974c2",
   "docs/speed/trustmut/claims.py": "aee92c4d699f6f2508e9539bb0bec340031f67f1b4c8c80e2996d015e081d9a8",
   "docs/speed/trustmut/hunt/F15c.md": "913134f725b96db44cb20cadcebcacd8967f59af072f9938b80d2cdf8744af9e"
  },
@@ -14,513 +14,513 @@
  },
  "probes": {
   "F1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 10,
    "last": "('proof', 'proof')"
   },
   "F10": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 56,
+   "seconds": 15,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: no answer: maximum recursion depth has been reached'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "F11": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 121,
+   "seconds": 25,
    "last": "[('le-lt', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Type mismatch (an `rfl` check `decide'), ('le-eq', 'SURVIVOR', ''), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Type mismatch (an `rfl` check `decide'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "F12": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 118,
+   "seconds": 25,
    "last": "Defs.lean:9: `simp` failed: maximum number of step'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:9: unsolved goals'), ('lit-minus', 'SURVIVOR', ''), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:9: `simp` failed: maximum number of step'), ('lit-plus', 'SURVIVOR', '')]"
   },
   "F13": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 131,
-   "last": "'/tmp/tmp_d7fbc49/p/checks/Check.lean:5: Tactic `decide` proved that th'), ('lt-eq', 'UNKNOWN', '/tmp/tmp_d7fbc49/p/checks/Check.lean:5: Tactic `decide` proved that th'), ('lit-plus', 'UNKNOWN', '/tmp/tmp_d7fbc49/p/checks/Check.lean:5: Tactic `decide` proved that th'), ('lit-minus', 'SURVIVOR', '')]"
+   "seconds": 38,
+   "last": "'/tmp/tmp0rn290of/p/checks/Check.lean:5: Tactic `decide` proved that th'), ('lt-eq', 'UNKNOWN', '/tmp/tmp0rn290of/p/checks/Check.lean:5: Tactic `decide` proved that th'), ('lit-plus', 'UNKNOWN', '/tmp/tmp0rn290of/p/checks/Check.lean:5: Tactic `decide` proved that th'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "F14": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 0,
    "last": ""
   },
   "F15": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 0,
    "last": ""
   },
   "F15c": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 3,
    "last": "F15c: 5 count forms UNBOUND, the name ap-2 not a count"
   },
   "F16": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 24,
+   "seconds": 29,
    "last": "F16: 6 of 6 copies UNBOUND where the report is not"
   },
   "F16c": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 11,
+   "seconds": 17,
    "last": "F16c: 59 of 59 changed copies UNBOUND"
   },
   "F6": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 141,
+   "seconds": 79,
    "last": "[('SURVIVOR', '')]"
   },
   "F7": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 136,
+   "seconds": 75,
    "last": "[('Demo.evens', 'lit-plus', 'SURVIVOR', ''), ('Demo.quad', 'lit-plus', 'SURVIVOR', ''), ('Demo.evens', 'list-empty', 'SURVIVOR', ''), ('Demo.evens', 'lit-plus', 'SURVIVOR', ''), ('Demo.evens', 'list-empty', 'SURVIVOR', '')]"
   },
   "F8": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 113,
+   "seconds": 76,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Examples.lean:23: Tactic `decide` proved that the proposition')]"
   },
   "F9": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 31,
+   "seconds": 30,
    "last": "[('arm-default', 'SURVIVOR', '')]"
   },
   "G1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 15,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "G2": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 18,
+   "seconds": 20,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "G3": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 19,
+   "seconds": 23,
    "last": "[('lit-plus', 'KILLED', 'lean/Demo/Defs.lean:7: Expression'), ('lit-minus', 'UNKNOWN', \"lean/Demo/Defs.lean:5: could not synthesize default value for parameter '_h' using tactics\")]"
   },
   "G4": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 16,
+   "seconds": 24,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: ❌️ Docstring on `#guard_msgs` does not match generated message: (a'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "G5": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 15,
+   "seconds": 25,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: Type mismatch (its goal has a hypothesis)'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: Type mismatch (its goal has a hypothesis)')]"
   },
   "H1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 11,
+   "seconds": 17,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "H1r": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 9,
+   "seconds": 14,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "H2": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 18,
+   "seconds": 20,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:10: failed to synthesize'), ('lit-minus', 'KILLED', 'lean/Demo/Defs.lean:12: Expression')]"
   },
   "H3": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 17,
+   "seconds": 19,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:12: no answer: failed to synthesize'), ('lit-minus', 'KILLED', 'lean/Demo/Defs.lean:14: Expression')]"
   },
   "H4": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 16,
+   "seconds": 17,
    "last": "gh a'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Tactic `decide` proved that the proposition (it computes through a'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Tactic `decide` proved that the proposition (it computes through a')]"
   },
   "H5": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 15,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "H6": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 17,
+   "seconds": 16,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Function expected at'), ('lit-minus', 'SURVIVOR', ''), ('lit-plus', 'KILLED', 'lean/Demo/Defs.lean:9: Expression'), ('lit-minus', 'KILLED', 'lean/Demo/Defs.lean:9: Expression')]"
   },
   "H7": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 18,
+   "seconds": 16,
    "last": "[('le-lt', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Type mismatch (an `rfl` check `decide` does not refute)'), ('le-eq', 'SURVIVOR', ''), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Type mismatch (an `rfl` check `decide` does not refute)')]"
   },
   "N1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 17,
+   "seconds": 15,
    "last": "gh a'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Tactic `decide` proved that the proposition (it computes through a'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Tactic `decide` proved that the proposition (it computes through a')]"
   },
   "N10": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 10,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: Function expected at'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: Function expected at')]"
   },
   "N1g": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 17,
+   "seconds": 15,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "N1r": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 17,
+   "seconds": 15,
    "last": "n in'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Type mismatch (it computes through a proof the mutant broke (an in'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Type mismatch (it computes through a proof the mutant broke (an in')]"
   },
   "N2": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 16,
+   "seconds": 14,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "N2n": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 15,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "N3": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 15,
+   "seconds": 14,
    "last": "8: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:8: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:8: ❌️ Docstring on `#guard_msgs` does not match generated message:')]"
   },
   "N4": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 1,
-   "seconds": 14,
+   "seconds": 13,
    "last": "AssertionError: [('lit-plus', 'KILLED', 'lean/Demo/Defs.lean:8: Expression')]"
   },
   "N5": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 19,
+   "seconds": 18,
    "last": "KNOWN', 'lean/Demo/Defs.lean:15: Function expected at'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:17: Expression (Lean elaborates it otherwise than without the mutant)'), ('lit-plus', 'KILLED', 'lean/Demo/Defs.lean:17: Expression'), ('lit-minus', 'KILLED', 'lean/Demo/Defs.lean:17: Expression')]"
   },
   "N6": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 11,
+   "seconds": 12,
    "last": "[('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', \"lean/Demo/Defs.lean:5: could not synthesize default value for parameter '_h' using tactics\"), ('lit-plus', 'UNKNOWN', \"lean/Demo/Defs.lean:5: could not synthesize default value for parameter '_h' using tactics\")]"
   },
   "N7": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 10,
+   "seconds": 11,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: Tactic `decide` proved that the proposition'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: Tactic `decide` proved that the proposition')]"
   },
   "N8": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 14,
+   "seconds": 15,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:9: Tactic `decide` proved that the proposition (its goal has a hypothe'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:9: Tactic `decide` proved that the proposition (its goal has a hypothe')]"
   },
   "N9": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 14,
+   "seconds": 15,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:14: failed to synthesize'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: ❌️ Docstring on `#guard_msgs` does not match generated message:')]"
   },
   "P1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 16,
+   "seconds": 18,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "P2": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 14,
+   "seconds": 15,
    "last": "[('body-true', 'SURVIVOR', ''), ('body-false', 'UNKNOWN', 'lean/Demo/Defs.lean:15: Expression (it computes through a proof the mutant broke (an insta'), ('le-lt', 'SURVIVOR', ''), ('le-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:15: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "P2d": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
    "seconds": 14,
    "last": "[('body-true', 'SURVIVOR', ''), ('body-false', 'UNKNOWN', 'lean/Demo/Defs.lean:15: Tactic `decide` proved that the proposition (it computes through a'), ('le-lt', 'SURVIVOR', ''), ('le-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:15: Tactic `decide` proved that the proposition (it computes through a')]"
   },
   "P3": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 14,
+   "seconds": 15,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:14: Expression (it computes through a proof the mutant broke (an insta'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:14: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "P4": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 13,
+   "seconds": 15,
    "last": "8: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:8: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:8: ❌️ Docstring on `#guard_msgs` does not match generated message:')]"
   },
   "P5": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 41,
+   "seconds": 24,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Inst.lean:11: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Inst.lean:11: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "P6": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 43,
+   "seconds": 23,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "P7": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 34,
+   "seconds": 19,
    "last": "[('body-true', 'SURVIVOR', ''), ('body-false', 'UNKNOWN', 'lean/Demo/Defs.lean:17: Expression (it computes through a proof the mutant broke (an insta'), ('le-lt', 'SURVIVOR', ''), ('le-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:17: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "P8": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 35,
+   "seconds": 19,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "P8d": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 38,
+   "seconds": 20,
    "last": "[('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: Tactic `decide` proved that the proposition (it computes through a')]"
   },
   "P9": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 37,
+   "seconds": 19,
    "last": "d message:'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:13: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: ❌️ Docstring on `#guard_msgs` does not match generated message:')]"
   },
   "Q1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 30,
+   "seconds": 21,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:10: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:10: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "Q10": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 29,
+   "seconds": 20,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:19: Expression (Lean elaborates it otherwise than without the mutant)'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "Q11": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 29,
+   "seconds": 22,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:16: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:16: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "Q12": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 30,
+   "seconds": 22,
    "last": "ression (Lean elaborates it otherwise than without the mutant)'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: Expression (Lean elaborates it otherwise than without the mutant)'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: Expression (Lean elaborates it otherwise than without the mutant)')]"
   },
   "Q2": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 33,
+   "seconds": 39,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "Q3": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 31,
+   "seconds": 37,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:12: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "Q4": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 27,
+   "seconds": 33,
    "last": "d message:'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:18: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:18: ❌️ Docstring on `#guard_msgs` does not match generated message:')]"
   },
   "Q5": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 40,
+   "seconds": 60,
    "last": "utes'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Inst.lean:12: Tactic `native_decide` evaluated that the proposition (it computes'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Inst.lean:12: Tactic `native_decide` evaluated that the proposition (it computes')]"
   },
   "Q6": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 29,
+   "seconds": 52,
    "last": "ression (Lean elaborates it otherwise than without the mutant)'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Expression (Lean elaborates it otherwise than without the mutant)'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Expression (Lean elaborates it otherwise than without the mutant)')]"
   },
   "Q7": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 21,
+   "seconds": 36,
    "last": "6: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:6: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:6: ❌️ Docstring on `#guard_msgs` does not match generated message:')]"
   },
   "Q8": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 23,
+   "seconds": 32,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:18: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "Q9": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 20,
+   "seconds": 31,
    "last": "ean/Demo/Defs.lean:3: Type mismatch'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:3: Type mismatch'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:3: Type mismatch'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:3: Type mismatch'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:3: Type mismatch')]"
   },
   "R1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 25,
+   "seconds": 32,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:14: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:14: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "R2": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 21,
+   "seconds": 25,
    "last": "on (it runs IO (an `initialize`d value, `unsafeIO`), which'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: Expression (it runs IO (an `initialize`d value, `unsafeIO`), which'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: Expression (it runs IO (an `initialize`d value, `unsafeIO`), which')]"
   },
   "R3": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 48,
+   "seconds": 55,
    "last": "lid 'by' tactic, expected type has not been provided\"), ('list-drop-first', 'UNKNOWN', \"lean/Demo/Defs.lean:5: invalid 'by' tactic, expected type has not been provided\"), ('list-last', 'KILLED', 'lean/Demo/Defs.lean:9: Expression'), ('list-drop-first', 'KILLED', 'lean/Demo/Defs.lean:9: Expression')]"
   },
   "R5": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 37,
+   "seconds": 45,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:21: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:21: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "R5c": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 30,
+   "seconds": 42,
    "last": "[('body-true', 'SURVIVOR', ''), ('body-false', 'SURVIVOR', ''), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'SURVIVOR', ''), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "R6": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 46,
+   "seconds": 49,
    "last": "tanc'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Use.lean:5: Expression (it computes through a proof the mutant broke (an instanc'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Use.lean:5: Expression (it computes through a proof the mutant broke (an instanc')]"
   },
   "R7": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 50,
+   "seconds": 44,
    "last": "gs` does not match generated message:'), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:21: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:21: ❌️ Docstring on `#guard_msgs` does not match generated message:'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "R8": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 36,
+   "seconds": 40,
    "last": "n (Demo.srcLine, which it reads, is not what it is without'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Expression (Demo.srcLine, which it reads, is not what it is without'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Expression (Demo.srcLine, which it reads, is not what it is without')]"
   },
   "S1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 44,
+   "seconds": 26,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:21: Expression (Demo.g.same, which it reads, is not what it is without'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "S2": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 45,
+   "seconds": 27,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:22: Expression (Demo.Limits.same, which it reads, is not what it is wi'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "S3": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 32,
+   "seconds": 23,
    "last": " argument `α`\"), ('list-first', 'SURVIVOR', ''), ('list-drop-last', 'INVALID', 'Invalid field `dropLast`: The environment does not contain `String.dropLast`'), ('list-last', 'INVALID', 'Invalid field `reverse`: The environment does not contain `String.reverse`'), ('list-drop-first', 'SURVIVOR', '')]"
   },
   "S3c": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 36,
+   "seconds": 23,
    "last": " ''), ('body-false', 'SURVIVOR', ''), ('or-and', 'SURVIVOR', ''), ('lt-le', 'UNKNOWN', 'lean/Demo/Defs.lean:9: Expression (Demo.src, which it reads, is not what it is without the'), ('lt-eq', 'SURVIVOR', ''), ('bool-flip', 'SURVIVOR', ''), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'SURVIVOR', '')]"
   },
   "S5": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 36,
+   "seconds": 25,
    "last": "on (it runs IO (an `initialize`d value, `unsafeIO`), which'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: Expression (it runs IO (an `initialize`d value, `unsafeIO`), which'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:13: Expression (it runs IO (an `initialize`d value, `unsafeIO`), which')]"
   },
   "S6": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 35,
+   "seconds": 24,
    "last": "n (it runs IO (an `initialize`d value, `unsafeIO`), which '), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Expression (it runs IO (an `initialize`d value, `unsafeIO`), which '), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Expression (it runs IO (an `initialize`d value, `unsafeIO`), which ')]"
   },
   "S7": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 39,
+   "seconds": 60,
    "last": "n (Demo.srcLine, which it reads, is not what it is without'), ('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Expression (Demo.srcLine, which it reads, is not what it is without'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:7: Expression (Demo.srcLine, which it reads, is not what it is without')]"
   },
   "S8": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 40,
+   "seconds": 63,
    "last": "nsta'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:21: Expression (it computes through a proof the mutant broke (an insta'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:21: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "S9": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 33,
+   "seconds": 44,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:20: Expression (it computes through a proof the mutant broke (an insta'), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:20: Expression (it computes through a proof the mutant broke (an insta')]"
   },
   "T1": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 38,
+   "seconds": 60,
    "last": "gh a'), ('lt-le', 'SURVIVOR', ''), ('lt-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:11: Tactic `decide` proved that the proposition (it computes through a'), ('lit-plus', 'SURVIVOR', ''), ('lit-minus', 'UNKNOWN', 'lean/Demo/Defs.lean:11: Tactic `decide` proved that the proposition (it computes through a')]"
   },
   "T2": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 28,
+   "seconds": 47,
    "last": "[('le-lt', 'SURVIVOR', ''), ('le-eq', 'UNKNOWN', 'lean/Demo/Defs.lean:11: Tactic `native_decide` evaluated that the proposition (it computes')]"
   },
   "T3": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 30,
+   "seconds": 57,
    "last": "'SURVIVOR', ''), ('list-first', 'SURVIVOR', ''), ('list-drop-last', 'INVALID', 'Invalid field `dropLast`: The environment does not contain `String.dropLast`'), ('list-last', 'INVALID', 'Invalid field `reverse`: The environment does not contain `String.reverse`'), ('list-drop-first', 'SURVIVOR', '')]"
   },
   "T5": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 28,
+   "seconds": 40,
    "last": "[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:22: Expression (Demo.Limits.same._unsafe_rec, which it reads, is not w'), ('lit-minus', 'SURVIVOR', '')]"
   },
   "T6": {
-   "commit": "8820e8cd6bc89cd4dc406556430a9e7a183a76c4",
+   "commit": "dde916c0cec98f748762a74718cff5f99c78ff94",
    "exit": 0,
-   "seconds": 29,
+   "seconds": 34,
    "last": "q-ne:==->!=', 'KILLED', 'lean/Demo/Defs.lean:19: Expression'), ('lit-plus:0->1', 'SURVIVOR', ''), ('lit-minus:126->125', 'SURVIVOR', ''), ('lit-plus:126->127', 'UNKNOWN', 'lean/Demo/Defs.lean:19: Expression (Demo.wFallback, which it reads, is not what it is with'), ('lit-plus:0->1', 'SURVIVOR', '')]"
   }
  }
