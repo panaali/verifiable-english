@@ -437,11 +437,11 @@ allow-list; this round stopped after the seventh hunt and its fixes.
 - PROBE F11 failed before the fix (`le-lt` and `lit-minus` KILLED at "Type mismatch") and prints `[('le-lt',
   'UNKNOWN', 'lean/Demo/Defs.lean:7: Type mismatch (an `rfl` check `decide` does not refute)'), …]` after; PROBE
   F12 failed (`eq-le`, `eq-ne`, `lit-minus` INVALID at "`simp` failed: maximum number of steps exceeded", `lit-plus`
-  INVALID at "unsolved goals") and prints them UNKNOWN after. PROBE F1 and F6–F14 exit 0 on the final tool.
+  INVALID at "unsolved goals") and prints them UNKNOWN after. PROBE F1 and F6–F15 exit 0 on the final tool.
 - Every probe of the hunt directory, run by `hunt/run.py` on this branch (`evidence/probes.json`, with the sha256 of
   the tool and of the test file each probe ran):
 
-  > Probes on be422c2d3 (this checkout's tool): 80 of 81 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
+  > Probes on be422c2d3, de96d2db3 (this checkout's tool): 82 of 83 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
 
 - The sweep (section 1a), on the tool of `f49efae15`: every forms row and every lines row as the tables expect,
   `sweep.py` exits 0; the survivors are the same equivalent mutants.
