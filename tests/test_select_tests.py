@@ -478,7 +478,9 @@ def test_service_modes_narrow_only_known_recorded_users(tmp_path, monkeypatch):
         "lean/VE/Common.lean": "def common := 1\n",
         "lean/VE/Rights/Run.lean": "import VE.Common\ndef rights := 1\n",
         "lean/VE/Norms/Run.lean": "import VE.Common\ndef norms := 1\n",
-        "lean/VE/Service/Protocol.lean": "import VE.Rights.Run\nimport VE.Norms.Run\ndef protocol := 1\n",
+        "lean/VE/Service/Registry.lean": "def registry := 1\n",
+        "lean/VE/Service/Protocol.lean": "import VE.Rights.Run\nimport VE.Norms.Run\nimport VE.Service.Registry\n"
+                                         "def protocol := 1\n",
         "lean/Serve.lean": "import VE.Service.Protocol\ndef serve := 1\n",
     })
     monkeypatch.setattr(select_tests.lean_mode_deps, "load", lambda: {
@@ -496,7 +498,8 @@ def test_service_modes_narrow_only_known_recorded_users(tmp_path, monkeypatch):
         "rights", "unknown", "future"}
     assert select_tests.proposed_service_impact(coverage, graph, "lean/VE/Common.lean") == {
         "rights", "norms", "unknown", "future"}
-    for path in ("lean/VE/Service/Protocol.lean", "lean/Serve.lean"):
+    # The mode registry names every mode: a change to it reaches every service user.
+    for path in ("lean/VE/Service/Protocol.lean", "lean/VE/Service/Registry.lean", "lean/Serve.lean"):
         assert select_tests.proposed_service_impact(coverage, graph, path) == {
             "rights", "norms", "unknown", "future"}
     selected = set()
