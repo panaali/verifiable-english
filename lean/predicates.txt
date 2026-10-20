@@ -88,6 +88,7 @@ module VE.Acts.GrammarExamples
 module VE.Acts.Lexical
 module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
+module VE.Acts.LexicalProofs
 module VE.Acts.Read
 module VE.Acts.Syntax
 module VE.Alternatives.Admission
