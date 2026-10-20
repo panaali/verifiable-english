@@ -1,0 +1,120 @@
+{
+ "harness": "docs/events-time-causation/et-3cb/evidence/seeded-bugs-harness.py.txt",
+ "tree": "dad6318c2",
+ "mutants": [
+  {
+   "mutant": "calendarCheck-gap-bound-minus-two",
+   "claim": "embeddable_complete",
+   "file": "lean/VE/Events/Calendar.lean",
+   "language": "Lean",
+   "replace": "fun p => decide (r p.2 - r p.1 - 1 > p.2.num - p.1.num - 1)",
+   "with": "fun p => decide (r p.2 - r p.1 - 1 > p.2.num - p.1.num - 2)",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Calendar.lean:198",
+    "lean/VE/Events/Examples.lean:85"
+   ],
+   "test": [
+    "theorem embeddable_complete {α : Type} [DecidableEq α] (E : VE.Environment) (V : EventsEnv)",
+    "#guard calendarCheck vT3 (chain [\"a\", \"x1\", \"b\"] [(c12, \"a\"), (c14, \"b\")]) == none"
+   ]
+  },
+  {
+   "mutant": "calendarCheck-first-bound-strict",
+   "claim": "embeddable_complete",
+   "file": "lean/VE/Events/Calendar.lean",
+   "language": "Lean",
+   "replace": "if r D₁ > D₁.num then",
+   "with": "if r D₁ ≥ D₁.num then",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Calendar.lean:197",
+    "lean/VE/Events/Examples.lean:95"
+   ],
+   "test": [
+    "theorem embeddable_complete {α : Type} [DecidableEq α] (E : VE.Environment) (V : EventsEnv)",
+    "#guard calendarCheck (base [d 1970 1 1]) (chain [\"a\", \"x\"] [(dateName (d 1970 1 1), \"a\")]) == none"
+   ]
+  },
+  {
+   "mutant": "rank-counts-the-day-itself",
+   "claim": "embeddable_complete",
+   "file": "lean/VE/Events/Calendar.lean",
+   "language": "Lean",
+   "replace": "((M.domains V.day).filter (fun y => beforeB V M y x)).length",
+   "with": "((M.domains V.day).filter (fun y => !beforeB V M x y)).length",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Calendar.lean:139",
+    "lean/VE/Events/Examples.lean:93",
+    "lean/VE/Events/Examples.lean:95",
+    "lean/VE/Events/Examples.lean:96"
+   ],
+   "test": [
+    "theorem embeddable_complete {α : Type} [DecidableEq α] (E : VE.Environment) (V : EventsEnv)",
+    "#guard calendarCheck (base [d 1970 1 1]) (chain [\"x\", \"a\"] [(dateName (d 1970 1 1), \"a\")]) ==",
+    "#guard calendarCheck (base [d 1970 1 1]) (chain [\"a\", \"x\"] [(dateName (d 1970 1 1), \"a\")]) == none",
+    "#guard calendarCheck (base [d 9999 12 31]) (chain [\"a\", \"x\"] [(dateName (d 9999 12 31), \"a\")]) =="
+   ]
+  },
+  {
+   "mutant": "datesSituation-before-reflexive",
+   "claim": "eventsPremises_satisfiable",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "decide (D.num < D'.num))).map",
+   "with": "decide (D.num ≤ D'.num))).map",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:484",
+    "lean/VE/Events/Conservative.lean:485",
+    "lean/VE/Events/Examples.lean:272",
+    "lean/VE/Events/Examples.lean:273",
+    "lean/VE/Events/Examples.lean:275",
+    "lean/VE/Events/Examples.lean:279"
+   ],
+   "test": [
+    "theorem eventsPremises_satisfiable (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E V = true) :",
+    "#guard (eventsX vEv).all (·.eval (datesSituation envEv vEv) []) && embeddable vEv (datesSituation envEv vEv)",
+    "#guard (datesSituation envEv vEv).domains \"day\" == [(\"day\", c12), (\"day\", c13)] &&",
+    "#guard (eventsX vT7).all (·.eval (datesSituation envT7 vT7) []) && embeddable vT7 (datesSituation envT7 vT7)",
+    "#guard (eventsX vR1).all (·.eval (datesSituation envDay vR1) []) && embeddable vR1 (datesSituation envDay vR1)"
+   ]
+  },
+  {
+   "mutant": "datesSituation-day-constant-unnamed",
+   "claim": "eventsPremises_satisfiable",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "then (V.day, firstName V) else",
+   "with": "then (V.day, \"\") else",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:531",
+    "lean/VE/Events/Examples.lean:276"
+   ],
+   "test": [
+    "theorem eventsPremises_satisfiable (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E V = true) :",
+    "#guard (datesSituation envT7 vT7).constants \"the_day\" == some (\"day\", c12) &&"
+   ]
+  },
+  {
+   "mutant": "dayNames-no-day-without-dates",
+   "claim": "eventsPremises_satisfiable",
+   "file": "lean/VE/Events/Conservative.lean",
+   "language": "Lean",
+   "replace": "if V.dates = [] then [\"\"] else",
+   "with": "if V.dates = [] then [] else",
+   "lake_build_VE.Events.Examples": "fails",
+   "failing": [
+    "lean/VE/Events/Conservative.lean:471",
+    "lean/VE/Events/Conservative.lean:475",
+    "lean/VE/Events/Examples.lean:281"
+   ],
+   "test": [
+    "theorem eventsPremises_satisfiable (E : VE.Environment) (V : EventsEnv) (h : WellFormedEvents E V = true) :",
+    "#guard (datesSituation envDay (base [])).domains \"day\" == [(\"day\", \"\")] &&"
+   ]
+  }
+ ]
+}

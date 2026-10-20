@@ -131,6 +131,7 @@ import VE.EnglishGrammar.Run
 import VE.EnglishGrammar.SensesRequest
 import VE.EnvironmentProofs
 import VE.EvaluationCounts
+import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Conservative
 import VE.Events.Premises
@@ -2030,6 +2031,7 @@ import VE.WireContract.Engine
 #print axioms VE.Events.boundRole_mem
 #print axioms VE.Events.calendar_sat
 #print axioms VE.Events.chain_head
+#print axioms VE.Events.chain_pairwise
 #print axioms VE.Events.chain_positions
 #print axioms VE.Events.completion_admissible
 #print axioms VE.Events.completion_before_new
@@ -2038,11 +2040,17 @@ import VE.WireContract.Engine
 #print axioms VE.Events.completion_typed
 #print axioms VE.Events.conventions_empty
 #print axioms VE.Events.conventions_exact
+#print axioms VE.Events.countP_eq_le_one
+#print axioms VE.Events.countP_lt_le
+#print axioms VE.Events.countP_lt_lt
+#print axioms VE.Events.countP_lt_succ
 #print axioms VE.Events.dateName_data
 #print axioms VE.Events.dateName_inj
 #print axioms VE.Events.datesOrder_calendar
 #print axioms VE.Events.datesOrder_iff
 #print axioms VE.Events.dayExtension_transfer
+#print axioms VE.Events.embeddable_complete
+#print axioms VE.Events.eventsPremises_satisfiable
 #print axioms VE.Events.eventsPremises_wellFormed
 #print axioms VE.Events.events_conservative
 #print axioms VE.Events.expansion_typed
