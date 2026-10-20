@@ -41232,19 +41232,19 @@ theorem VE.Service.caseResultWith_entry
     j.getObjVal? "environment" = Except.ok entry.environment →
       VE.Service.caseResultWith VE.Service.Mode.metered i (Option.some entry) (Except.ok j) =
         VE.Service.caseResult VE.Service.Mode.metered i (Except.ok j)
-  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
   -- expr 2995407994
 theorem VE.Service.caseResultWith_none
   ∀ (m : VE.Service.Mode) (i : Nat) (c : Except String Lean.Json),
     VE.Service.caseResultWith m i Option.none c = VE.Service.caseResult m i c
-  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
   -- expr 66040465
 theorem VE.Service.caseResultWith_unmetered
   ∀ (m : VE.Service.Mode),
     m ≠ VE.Service.Mode.metered →
       ∀ (i : Nat) (entry : Option VE.Service.Entry) (c : Except String Lean.Json),
         VE.Service.caseResultWith m i entry c = VE.Service.caseResult m i c
-  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
+  -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Registry VE.Service.Mode@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol
   -- expr 3823144046
 theorem VE.Service.caseResult_cached
   ∀ (h : VE.Service.Handles) (i : Nat) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String)
@@ -41257,11 +41257,11 @@ theorem VE.Service.caseResult_cached
                 (Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment))) =
               VE.Service.caseResult VE.Service.Mode.metered i
                 (Except.ok (Lean.Json.obj ((kvs.erase VE.Service.handleKey).insert "environment" entry.environment)))
-  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
+  -- uses VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol VE.Service.Handles.entry?@VE.Service.Protocol VE.Service.Handles.table@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.metered@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
   -- expr 4135141905
 theorem VE.Service.caseResult_ok
   ∀ (m : VE.Service.Mode) (i : Nat) (j : Lean.Json), VE.Service.caseResult m i (Except.ok j) = VE.Service.runMode m j
-  -- uses VE.Service.Mode@VE.Service.Protocol VE.Service.caseResult@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode@VE.Service.Registry VE.Service.caseResult@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 2494159536
 theorem VE.Service.coding_error
   ∀ (result : Lean.Json) (m : String),
@@ -41283,7 +41283,7 @@ theorem VE.Service.entry_hit
 theorem VE.Service.expandCases_unexpanded
   ∀ (h : VE.Service.Handles) (m : VE.Service.Mode) (cases : Array (Except String Lean.Json)),
     m = VE.Service.Mode.english ∨ m = VE.Service.Mode.riskEval → VE.Service.expandCases h m cases = Except.ok cases
-  -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.english@VE.Service.Protocol VE.Service.Mode.riskEval@VE.Service.Protocol VE.Service.Mode@VE.Service.Protocol VE.Service.expandCases@VE.Service.Protocol
+  -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Mode.english@VE.Service.Registry VE.Service.Mode.riskEval@VE.Service.Registry VE.Service.Mode@VE.Service.Registry VE.Service.expandCases@VE.Service.Protocol
   -- expr 3871372086
 theorem VE.Service.expand_hit
   ∀ (h : VE.Service.Handles) (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare) (d : String) (entry : VE.Service.Entry),
@@ -41310,6 +41310,10 @@ theorem VE.Service.expand_plain
     (∀ (d : String), j.getObjVal? VE.Service.handleKey ≠ Except.ok (Lean.Json.str d)) → h.expand j = Except.ok j
   -- uses VE.Service.Handles.expand@VE.Service.Protocol VE.Service.Handles@VE.Service.Protocol VE.Service.handleKey@VE.Service.Protocol
   -- expr 1413960625
+theorem VE.Service.modes_complete
+  ∀ (m : VE.Service.Mode), m ∈ VE.Service.modes
+  -- uses VE.Service.Mode@VE.Service.Registry VE.Service.modes@VE.Service.Registry
+  -- expr 2611419048
 theorem VE.Service.registerOne_digest
   ∀ (h : VE.Service.Handles) (key raw digest : String),
     VE.Service.decodeString "environment handle" key = Except.ok digest →
@@ -41332,6 +41336,14 @@ theorem VE.Service.register_none
     r.environmentsText = Option.none → VE.Service.register h r = Except.ok h
   -- uses VE.Service.Handles@VE.Service.Protocol VE.Service.Request.environmentsText@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.register@VE.Service.Protocol
   -- expr 2117551308
+theorem VE.Service.registry_modes
+  List.map (fun x => x.mode) VE.Service.registry = VE.Service.modes
+  -- uses VE.Service.Mode@VE.Service.Registry VE.Service.RouteSpec.mode@VE.Service.Registry VE.Service.RouteSpec@VE.Service.Registry VE.Service.modes@VE.Service.Registry VE.Service.registry@VE.Service.Registry
+  -- expr 4245948646
+theorem VE.Service.registry_names_nodup
+  (List.map (fun x => x.mode.name) VE.Service.registry).Nodup
+  -- uses VE.Service.Mode.name@VE.Service.Registry VE.Service.RouteSpec.mode@VE.Service.Registry VE.Service.RouteSpec@VE.Service.Registry VE.Service.registry@VE.Service.Registry
+  -- expr 1276830270
 theorem VE.Service.rejectionCode_mem
   ∀ (m : String), VE.Service.rejectionCode m ∈ VE.Service.rejectionCodes
   -- uses VE.Service.rejectionCode@VE.Service.Protocol VE.Service.rejectionCodes@VE.Service.Protocol
@@ -41358,33 +41370,33 @@ theorem VE.Service.results_eq
   -- expr 2848766935
 theorem VE.Service.runMode_alternatives
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.alternatives j = VE.Alternatives.Run.runCaseReported j
-  -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2981243245
 theorem VE.Service.runMode_ask
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.ask j = VE.Ask.Run.caseReported j
-  -- uses VE.Ask.Run.caseReported@VE.Ask.Run VE.Service.Mode.ask@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Ask.Run.caseReported@VE.Ask.Run VE.Service.Mode.ask@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3326383300
 theorem VE.Service.runMode_bundle
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.bundle j = VE.Service.Standalone.reported VE.Service.FamilyBundle.bundleCase j
-  -- uses VE.Service.FamilyBundle.bundleCase@VE.Service.FamilyBundle VE.Service.Mode.bundle@VE.Service.Protocol VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.FamilyBundle.bundleCase@VE.Service.FamilyBundle VE.Service.Mode.bundle@VE.Service.Registry VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1295058871
 theorem VE.Service.runMode_check
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.check j = VE.Service.Standalone.reported VE.Service.Standalone.checkCase j
-  -- uses VE.Service.Mode.check@VE.Service.Protocol VE.Service.Standalone.checkCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.check@VE.Service.Registry VE.Service.Standalone.checkCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1698987194
 theorem VE.Service.runMode_checkCertificate
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReportedSteps j
-  -- uses VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4248002304
 theorem VE.Service.runMode_diagnose
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.diagnose j = VE.Service.Diagnose.diagnoseCase j
-  -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.Service.Mode.diagnose@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.Service.Mode.diagnose@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 1533440875
 theorem VE.Service.runMode_discourse
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.discourse j = VE.Discourse.Run.runCaseReported j
-  -- uses VE.Discourse.Run.runCaseReported@VE.Discourse.Run VE.Service.Mode.discourse@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Discourse.Run.runCaseReported@VE.Discourse.Run VE.Service.Mode.discourse@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3988369941
 theorem VE.Service.runMode_english
   ∀ (j : Lean.Json),
@@ -41396,124 +41408,124 @@ theorem VE.Service.runMode_english
           | x => j.compress) with
       | Except.ok result => result
       | Except.error message => Lean.Json.mkObj [("status", Lean.Json.str "error"), ("error", Lean.Json.str message)]
-  -- uses VE.English.ServiceRun.run@VE.Service.EnglishRun VE.Service.Mode.english@VE.Service.Protocol VE.Service.englishReported.match_1@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.English.ServiceRun.run@VE.Service.EnglishRun VE.Service.Mode.english@VE.Service.Registry VE.Service.englishReported.match_1@VE.Service.Protocol VE.Service.englishReported.match_3@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
   -- expr 1255633073
 theorem VE.Service.runMode_englishCheck
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishCheck j = VE.EnglishGrammar.Run.checkCaseReported j
-  -- uses VE.EnglishGrammar.Run.checkCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishCheck@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.EnglishGrammar.Run.checkCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishCheck@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3423368793
 theorem VE.Service.runMode_englishGrammar
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishGrammar j = VE.EnglishGrammar.Run.grammarCaseReported j
-  -- uses VE.EnglishGrammar.Run.grammarCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishGrammar@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.EnglishGrammar.Run.grammarCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishGrammar@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2149289540
 theorem VE.Service.runMode_englishQuestion
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishQuestion j = VE.Question.Run.caseReported j
-  -- uses VE.Question.Run.caseReported@VE.Question.Run VE.Service.Mode.englishQuestion@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Question.Run.caseReported@VE.Question.Run VE.Service.Mode.englishQuestion@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3438168545
 theorem VE.Service.runMode_englishRead
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishRead j = VE.EnglishGrammar.Run.readCaseReported j
-  -- uses VE.EnglishGrammar.Run.readCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishRead@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.EnglishGrammar.Run.readCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishRead@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3070480935
 theorem VE.Service.runMode_environment
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.environment j = VE.Service.Standalone.reportedEnvironment j
-  -- uses VE.Service.Mode.environment@VE.Service.Protocol VE.Service.Standalone.reportedEnvironment@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.environment@VE.Service.Registry VE.Service.Standalone.reportedEnvironment@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1515001414
 theorem VE.Service.runMode_evaluate
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.evaluate j = VE.Order.runEvaluationCaseReported j
-  -- uses VE.Order.runEvaluationCaseReported@VE.Order.ProfileGate VE.Service.Mode.evaluate@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Order.runEvaluationCaseReported@VE.Order.ProfileGate VE.Service.Mode.evaluate@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2196420359
 theorem VE.Service.runMode_familyNorms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.familyNorms j = VE.Service.FamilyNorms.runCaseReported j
-  -- uses VE.Service.FamilyNorms.runCaseReported@VE.Service.FamilyNorms VE.Service.Mode.familyNorms@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.FamilyNorms.runCaseReported@VE.Service.FamilyNorms VE.Service.Mode.familyNorms@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 715009208
 theorem VE.Service.runMode_graph
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.graph j = VE.Service.Standalone.reported VE.Service.Family.graphMode j
-  -- uses VE.Service.Family.graphMode@VE.Service.Family VE.Service.Mode.graph@VE.Service.Protocol VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Family.graphMode@VE.Service.Family VE.Service.Mode.graph@VE.Service.Registry VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 953717842
 theorem VE.Service.runMode_identity
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.identity j = VE.Service.Standalone.reported VE.Service.Standalone.identityCase j
-  -- uses VE.Service.Mode.identity@VE.Service.Protocol VE.Service.Standalone.identityCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.identity@VE.Service.Registry VE.Service.Standalone.identityCase@VE.Service.Standalone VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 3910335735
 theorem VE.Service.runMode_metered
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.metered j = VE.Route.MeteredRun.runCaseReported j
-  -- uses VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun VE.Service.Mode.metered@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun VE.Service.Mode.metered@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2610763039
 theorem VE.Service.runMode_model
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.model j = VE.Service.Standalone.reportedModel j
-  -- uses VE.Service.Mode.model@VE.Service.Protocol VE.Service.Standalone.reportedModel@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.model@VE.Service.Registry VE.Service.Standalone.reportedModel@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 3851992144
 theorem VE.Service.runMode_normDefaults
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.normDefaults j = VE.NormDefaults.Run.runCaseReported j
-  -- uses VE.NormDefaults.Run.runCaseReported@VE.NormDefaults.Run VE.Service.Mode.normDefaults@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.NormDefaults.Run.runCaseReported@VE.NormDefaults.Run VE.Service.Mode.normDefaults@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4148834592
 theorem VE.Service.runMode_norms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.norms j = VE.Norms.Run.runCaseReported j
-  -- uses VE.Norms.Run.runCaseReported@VE.Norms.Run VE.Service.Mode.norms@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Norms.Run.runCaseReported@VE.Norms.Run VE.Service.Mode.norms@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 264251591
 theorem VE.Service.runMode_order
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.order j = VE.Order.Surface.runCaseReported j
-  -- uses VE.Order.Surface.runCaseReported@VE.Order.Surface VE.Service.Mode.order@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Order.Surface.runCaseReported@VE.Order.Surface VE.Service.Mode.order@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4003062785
 theorem VE.Service.runMode_parse
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.parse j = VE.Service.Standalone.reportedParse j
-  -- uses VE.Service.Mode.parse@VE.Service.Protocol VE.Service.Standalone.reportedParse@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.parse@VE.Service.Registry VE.Service.Standalone.reportedParse@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 2217412199
 theorem VE.Service.runMode_quantity
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.quantity j = VE.Time.Wire.runCaseReported j VE.Time.Document.extension
-  -- uses VE.Service.Mode.quantity@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.runCaseReported@VE.Time.Wire
+  -- uses VE.Service.Mode.quantity@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.Time.Document.extension@VE.Time.Document VE.Time.Wire.runCaseReported@VE.Time.Wire
   -- expr 2727007324
 theorem VE.Service.runMode_readings
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.readings j = VE.Service.Standalone.reported VE.Service.Family.readingsMode j
-  -- uses VE.Service.Family.readingsMode@VE.Service.Family VE.Service.Mode.readings@VE.Service.Protocol VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Family.readingsMode@VE.Service.Family VE.Service.Mode.readings@VE.Service.Registry VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 429129561
 theorem VE.Service.runMode_readingsChoices
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.readingsChoices j = VE.Service.Standalone.reported VE.Service.ReadingsChoices.run j
-  -- uses VE.Service.Mode.readingsChoices@VE.Service.Protocol VE.Service.ReadingsChoices.run@VE.Service.ReadingsChoices VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Service.Mode.readingsChoices@VE.Service.Registry VE.Service.ReadingsChoices.run@VE.Service.ReadingsChoices VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1105078207
 theorem VE.Service.runMode_readingsRoute
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.readingsRoute j = VE.Readings.Run.runCaseReported j
-  -- uses VE.Readings.Run.runCaseReported@VE.Readings.Run VE.Service.Mode.readingsRoute@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Readings.Run.runCaseReported@VE.Readings.Run VE.Service.Mode.readingsRoute@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4151654230
 theorem VE.Service.runMode_reports
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.reports j = VE.Reports.Run.runCaseReported j
-  -- uses VE.Reports.Run.runCaseReported@VE.Attribution.Run VE.Service.Mode.reports@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Reports.Run.runCaseReported@VE.Attribution.Run VE.Service.Mode.reports@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 887250241
 theorem VE.Service.runMode_rights
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.rights j = VE.Rights.Run.runCaseReported j
-  -- uses VE.Rights.Run.runCaseReported@VE.Rights.Run VE.Service.Mode.rights@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Rights.Run.runCaseReported@VE.Rights.Run VE.Service.Mode.rights@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2559139917
 theorem VE.Service.runMode_risk
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.risk j = VE.Risk.Run.runCaseReported j
-  -- uses VE.Risk.Run.runCaseReported@VE.Risk.Run VE.Service.Mode.risk@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Risk.Run.runCaseReported@VE.Risk.Run VE.Service.Mode.risk@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2582939507
 theorem VE.Service.runMode_riskEval
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.riskEval j = VE.Risk.Eval.runCaseReported j
-  -- uses VE.Risk.Eval.runCaseReported@VE.Risk.Eval VE.Service.Mode.riskEval@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Risk.Eval.runCaseReported@VE.Risk.Eval VE.Service.Mode.riskEval@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 1405078405
 theorem VE.Service.runMode_route
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.route j = VE.Route.Run.runCaseReported j
-  -- uses VE.Route.Run.runCaseReported@VE.Route.Run VE.Service.Mode.route@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.Route.Run.runCaseReported@VE.Route.Run VE.Service.Mode.route@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4097467530
 theorem VE.Service.runMode_searchBudget
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.searchBudget j = VE.SearchBudget.Run.runCaseReported j
-  -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol
+  -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2782331337
 theorem VE.Service.runMode_softNorms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.softNorms j = VE.SoftNorms.Run.runCaseReported j
-  -- uses VE.Service.Mode.softNorms@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SoftNorms.Run.runCaseReported@VE.SoftNorms.Run
+  -- uses VE.Service.Mode.softNorms@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.SoftNorms.Run.runCaseReported@VE.SoftNorms.Run
   -- expr 1773451360
 theorem VE.Service.runMode_speechActs
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.speechActs j = VE.SpeechActs.Run.runCaseReported j
-  -- uses VE.Service.Mode.speechActs@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.SpeechActs.Run.runCaseReported@VE.SpeechActs.Run
+  -- uses VE.Service.Mode.speechActs@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.SpeechActs.Run.runCaseReported@VE.SpeechActs.Run
   -- expr 4195833241
 theorem VE.Service.runMode_words
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.words j = VE.Words.Run.caseReported j
-  -- uses VE.Service.Mode.words@VE.Service.Protocol VE.Service.runMode@VE.Service.Protocol VE.Words.Run.caseReported@VE.Words.Run
+  -- uses VE.Service.Mode.words@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.Words.Run.caseReported@VE.Words.Run
   -- expr 2580582220
 theorem VE.Service.runRequest_ok
   ∀ (h : VE.Service.Handles) (r : VE.Service.Request) (budget : VE.Service.Budget)
