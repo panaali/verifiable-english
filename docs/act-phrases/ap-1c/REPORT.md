@@ -25,7 +25,7 @@ full name `VE.Acts.Lexical.check_extends`; the file states it inside `namespace 
 | `words` (`String.split` with `pyWhitespace`) as a split of the character list | **done**: `split_data` (`String.split p = (splitL p s.data).map String.mk`, any `p`, any characters), `words_data`, `mem_words`, `words_cover`; also `splitOn_space` (`String.splitOn " "` as `splitL (· == ' ')`), which `rawLex` uses | `LexicalProofs.lean` 19-160, 439-470 |
 | `scanSlots` commuting with that split (a slot never spans a space) | **done**: `splitL_out`, `wordsL_out`, `word_out`; with `out`'s unfolding equations (`out_cons`, `out_slot`, `out_brace`, fuel independence), `out_induct`, `out_append` and the character lemmas `mem_of_mem_out`, `mem_out_of_mem`, `out_eq_self` | `LexicalProofs.lean` 162-438 |
 | `String.map` over characters for `toLower` | **done**: `toLower_mem`, by `VE.Readings.map_data` (already on main, `Readings/Names.lean`) | `LexicalProofs.lean` |
-| `words` of a normal string | **done**: `words_intercalate` (`words (" ".intercalate ws) = ws` when every word is non-empty and has no whitespace), `intercalate_data`, `mem_intercalate` | `LexicalProofs.lean` 489-530 |
+| `words` of a normal string | **done**: `words_intercalate` (`words (" ".intercalate ws) = ws` when every word is non-empty and has no whitespace), `intercalate_data`, `mem_intercalate` | `LexicalProofs.lean` 483-530 |
 | `check_extends` (Compat.lean) | **done**, statement as in 4.3 | `Compat.lean` 17-153 |
 | `check_no_clause` | **ap-1d** (size rule; the library has every lemma it needs: `word_out`, `out_eq_self`, `not_listed`, `endsWith_comma`) | — |
 | `check_spec` against `Accepts` | **ap-1d** (size rule) | — |
