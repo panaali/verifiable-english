@@ -18,7 +18,7 @@ The long-term vision is to apply this to policies, contracts, scientific argumen
 
 > Every reviewed service is safe. The API is reviewed. Therefore the API is safe.
 
-**That paragraph is actual VE input—not a paraphrase of code hidden underneath.** With the [declared vocabulary](examples/assist/environment.json) and [English names](examples/assist/environment.english.json), VE reads the sentences, identifies the first two as assumptions, and checks that the conclusion follows. The [executable example](tests/test_natural.py) checks both the English reading and the deduction.
+**This is what a user or AI agent writes directly into VE, in natural English.** With the [declared vocabulary](examples/assist/environment.json) and [English names](examples/assist/environment.english.json), VE reads the sentences, identifies the first two as assumptions, and checks that the conclusion follows. The [executable example](tests/test_natural.py) checks both the English reading and the deduction.
 
 Change “The API is reviewed” to “The API is deployed,” and the conclusion no longer follows: the rules say nothing about whether deployed services are safe. VE can expose that missing step instead of accepting a plausible-sounding explanation.
 
