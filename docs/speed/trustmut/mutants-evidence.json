@@ -1,7 +1,7 @@
 {
- "runs": "TM1-TM78 on d09bf54d4 in three worktrees (--no-baseline: the test file passes there), joined in order; TM1, TM2, TM22, TM36 (the build path) and TM79 again on 0ee7bfc45, which adds the build time limit; TM80 and TM81 (review F13) on 05ea60664",
- "killed": 79,
- "total": 79,
+ "runs": "TM1-TM78 on d09bf54d4 in three worktrees (--no-baseline: the test file passes there), joined in order; TM1, TM2, TM22, TM36 (the build path) and TM79 again on 0ee7bfc45, which adds the build time limit; TM80 and TM81 (review F13) on 05ea60664; TM82-TM85 (review F14's class, command mode: hunt/F14c.sh) on 1ca1e67d1",
+ "killed": 83,
+ "total": 83,
  "mutants": [
   {
    "id": "TM1",
@@ -1405,6 +1405,70 @@
    "seconds": 114.8,
    "output_tail": "lean/Demo/Defs.lean:7 Demo.evens list-first: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-first: xs -> (xs.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-last: xs -> (xs.dropLast)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-last: xs -> (xs.reverse.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-last: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).reverse.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs.filter (· % 2 == 0) -> ((xs.filter (· % 2 == 0)).drop 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs -> (xs.drop 1)\nE         trust_mutants: 12 KILLED, 21 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 71 s\nE         \nE       assert (1 == 2)\nE        +  where 1 = CompletedProcess(args=['/home/seyran/code/ve-speed-trustmut/.venv/bin/python', '/home/seyran/code/ve-speed-trustmut/to...> (xs.drop 1)\\ntrust_mutants: 12 KILLED, 21 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 71 s\\n', stderr='').returncode\n\ntests/test_trust_mutants.py:432: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run\n1 failed in 92.57s (0:01:32)\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-88rgyxoq)\n",
    "commit": "05ea60664"
+  },
+  {
+   "id": "TM82",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a sentence that states a result is UNBOUND unless each such word lies inside a text the evidence gives (review F14's class)",
+   "source_sha256": "1cc7c3da179e458dc6dcd30f5d0282c531861ed1a337015ac0aedb0e8c3c441f",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.9,
+   "output_tail": "claims: 65 sentences, 65 bound to evidence, 0 UNBOUND\n",
+   "commit": "1ca1e67d1"
+  },
+  {
+   "id": "TM83",
+   "file": "docs/speed/trustmut/claims.py",
+   "claim": "a PROBE list binds only when every probe it names, a range expanded, exits 0 in evidence/probes.json",
+   "source_sha256": "1cc7c3da179e458dc6dcd30f5d0282c531861ed1a337015ac0aedb0e8c3c441f",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.9,
+   "output_tail": "claims: 65 sentences, 25 bound to evidence, 40 UNBOUND\nREPORT.md:437 UNBOUND ['exit 0', 'on the final tool']: PROBE F1 and F6–F14 exit 0 on the final tool.\nclaims: 73 sentences, 72 bound to evidence, 1 UNBOUND\n",
+   "commit": "1ca1e67d1"
+  },
+  {
+   "id": "TM84",
+   "file": "docs/speed/trustmut/replay.py",
+   "claim": "the report's budget line is replay.py's, written from the saved evidence and the 1,200 s budget (review F14)",
+   "source_sha256": "cebddf77f160c248a2309b059d08f39e29dd62944f05cf8847efe4ac375e8288",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.0,
+   "output_tail": "claims: 65 sentences, 24 bound to evidence, 41 UNBOUND\nREPORT.md:115 UNBOUND ['1200 s', '5 of 6', 'within it', '1917 s']: > Step 1's budget (1200 s a replay): 5 of 6 replays within it; over it: ap-2 F11 1917 s (final tool).\nREPORT.md:115 UNBOUND ['0 of 1', 'within it']: On the final tool 0 of 1 within it.\nREPORT.md:639 UNBOUND ['1,200 s']: | TM84 | the report's budget line is `replay.py`'s, from the saved evidence and the 1,200 s budget (review F14) | `BUDGE\nclaims: 73 sentences, 70 bound to evidence, 3 UNBOUND\n",
+   "commit": "1ca1e67d1"
+  },
+  {
+   "id": "TM85",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "claim": "the probes' summary line counts only the probes that exit 0, and the README and report quote it",
+   "source_sha256": "bba8b27fdda375f4f869fb23d98bfdc9b2824be59d1de50e116979d6731a1401",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.5,
+   "output_tail": "claims: 65 sentences, 24 bound to evidence, 41 UNBOUND\nREPORT.md:444 UNBOUND ['80 of 81', 'exit 0']: > Probes on be422c2d3 (this checkout's tool): 80 of 81 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks th\nhunt/README.md:19 UNBOUND ['80 of 81', 'exit 0']: > Probes on be422c2d3 (this checkout's tool): 80 of 81 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks th\nclaims: 73 sentences, 71 bound to evidence, 2 UNBOUND\n",
+   "commit": "1ca1e67d1"
   }
  ]
 }
