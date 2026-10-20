@@ -256,6 +256,8 @@ FIXTURES = [
     # `compare`'s own cross products, one past the limit (hunt 1).
     ("compare-cross-10001", 'compare (geo "x" 72, .div (l 1) (geo "y" 136))', "none"),
     ("compare-cross-right-10001", 'compare (.div (l 1) (geo "y" 136), geo "x" 72)', "none"),
+    # A product by zero (no terms) is within the limit, so a count that divides by a factor's terms is caught (hunt 2).
+    ("product-by-zero", 'form (.mul (v "x") (l 0))', "true"),
     # Two fractions over one denominator are added without cross products: 101 × 101 terms would be past the limit.
     ("same-denominator", 'form (.add (.div (v "x") (geo "y" 100)) (.div (v "z") (geo "y" 100)))', "true"),
 ]
