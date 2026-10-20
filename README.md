@@ -1,5 +1,7 @@
 # Verifiable English
 
+**[Onboarding guide](https://claude.ai/artifact/3vLxUDY9QeL3xUTLHUBBjy)**
+
 **Verifiable English (VE) is a controlled subset of English, built on the Lean proof assistant, for writing mechanically checkable claims and arguments.** You write readable English; VE checks whether conclusions follow from the stated assumptions.
 
 VE is built for AI oversight: helping people understand and verify what an AI system claims, promises, or proposes to do. Today it is a research implementation with a command-line interface, Python APIs, a Lean checker, and worked applications—not a finished general-purpose document editor.
