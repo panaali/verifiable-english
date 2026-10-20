@@ -1125,7 +1125,7 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
     return (.formula f, mid)
   if let some lexicon := lexicon then
     let parsed ← VE.EnglishGrammar.Run.readCase (Json.mkObj
-      ([("id", .str id), ("environment", VE.Compose.withoutDocumentLayers E.json), ("lexicon", lexicon),
+      ([("id", .str id), ("environment", E.json), ("lexicon", lexicon),
         ("source", .str ((fences.lookup id).getD "")), ("mode", .str "authoring"), ("cap", toJson (2 : Nat))] ++
        (if E.generated then [("generated", Json.bool true)] else [])))
     let result ← parsed.getObjVal? "result"
