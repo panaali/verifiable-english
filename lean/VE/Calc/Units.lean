@@ -51,8 +51,7 @@ def decodeFactor (path : String) (j : Json) : Except String (Rat × String) := d
     | .ok d => pure d
     | .error e => throw (if e.startsWith "ResourceLimit" then e else invalid path "must be a decimal")
   unless 0 < decValue d do throw (invalid path "must be more than zero")
-  let frac := (d.frac.reverse.dropWhile (· = 0)).reverse
-  pure (decValue d, VE.Time.Dec.toString { d with frac })
+  pure (decValue d, VE.Time.Dec.toString { d with frac := (d.frac.reverse.dropWhile (· = 0)).reverse })
 
 def decodeUnit (bases : List String) (name : String) (record : Json) :
     Except String (UnitDef × (String × Json)) := do
@@ -70,8 +69,9 @@ def decodeUnit (bases : List String) (name : String) (record : Json) :
 def decodeV2 (env : Json) : Except String UnitEnv := do
   checkFields "environment" env ["unit_schema", "base_dimensions", "units"]
   let bases ← match (env.getObjValD "base_dimensions").getArr? with
-    | .ok bs => bs.toList.mapM fun (b : Json) => match b.getStr?.toOption.filter identifier with
-      | some s => pure s | none => throw (invalid "base_dimensions" "must list identifiers")
+    | .ok bs => bs.toList.mapM fun (b : Json) => match b.getStr? with
+      | .ok s => if identifier s then pure s else throw (invalid "base_dimensions" "must list identifiers")
+      | .error _ => throw (invalid "base_dimensions" "must list identifiers")
     | .error _ => throw (invalid "base_dimensions" "must be a list")
   unless bases.Nodup do throw (invalid "base_dimensions" "must not repeat a name")
   let units ← match fields (env.getObjValD "units") with
