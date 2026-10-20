@@ -67,7 +67,11 @@ def record(root: Path, out: Path, workers: int) -> int:
 
 def compare(args) -> int:
     expected = diff.expected_cases(ROOT, OTHER)
-    expected[("pilots", "default")] = {name: diff.only("document_check") for name, _, _ in documents()}
+    # The selected documents the base recording holds: a pilot branch added after it is in neither side's corpus.
+    rows = (json.loads(line) for line in args.base.read_text().split("\n") if line.strip())
+    recorded = {row["case"] for row in rows if row.get("corpus") == "pilots"}
+    expected[("pilots", "default")] = {name: diff.only("document_check") for name, _, _ in documents()
+                                       if name in recorded}
     delta = json.loads(args.delta.read_text()) if args.delta else None
     comparison = diff.compare(str(args.base), str(args.head), delta, expected=expected)
     comparison.update(base_commit=args.base_commit, head_commit=args.head_commit,

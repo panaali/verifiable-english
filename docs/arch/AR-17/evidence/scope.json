@@ -2,9 +2,49 @@
  "base": "beb5c463026211d9e8be684884153565ca0026b9",
  "changes": [
   {
-   "added": 38,
+   "added": 8,
    "deleted": 0,
+   "path": "docs/arch/AR-17/DELTA.json"
+  },
+  {
+   "added": 26,
+   "deleted": 0,
+   "path": "docs/arch/AR-17/DELTA.md"
+  },
+  {
+   "added": 160,
+   "deleted": 0,
+   "path": "docs/arch/AR-17/REPORT.md"
+  },
+  {
+   "added": 28,
+   "deleted": 0,
+   "path": "docs/arch/AR-17/evidence.toml"
+  },
+  {
+   "added": 188936,
+   "deleted": 0,
+   "path": "docs/arch/AR-17/evidence/ab.json"
+  },
+  {
+   "added": 156,
+   "deleted": 0,
+   "path": "docs/arch/AR-17/evidence/mutants.json"
+  },
+  {
+   "added": 93,
+   "deleted": 0,
+   "path": "docs/arch/AR-17/evidence/scope.json"
+  },
+  {
+   "added": 72,
+   "deleted": 1,
    "path": "docs/arch/AR-17/mutants.json"
+  },
+  {
+   "added": 104,
+   "deleted": 0,
+   "path": "docs/arch/AR-17/pilot_parts.py"
   },
   {
    "added": 2,
@@ -32,8 +72,8 @@
    "path": "lean/declarations.txt"
   },
   {
-   "added": 263,
-   "deleted": 0,
+   "added": 404,
+   "deleted": 14,
    "path": "tests/test_readings_s2_answer.py"
   },
   {
@@ -52,8 +92,8 @@
    "path": "ve/backends/lean_service_schema/readings-route.json"
   },
   {
-   "added": 152,
-   "deleted": 115,
+   "added": 307,
+   "deleted": 169,
    "path": "ve/readings_route.py"
   },
   {
@@ -65,9 +105,22 @@
    "added": 4,
    "deleted": 328,
    "path": "ve/readings_sup.py"
+  },
+  {
+   "added": 7,
+   "deleted": 2,
+   "path": "ve/softnorms.py"
   }
  ],
  "commits": [
+  {
+   "hash": "d738cb086fcc3c771f6a777866f996afe4c35919",
+   "subject": "AR-17 fix F1, F2: bind the S2 name map, decisions, shared labels, cause and refusals"
+  },
+  {
+   "hash": "b6b6d6faa1d98d05797be4994bc058f6e9f99163",
+   "subject": "AR-17: DELTA, report, evidence (scope, corpus A/B over the readings part pilots, seeded mutants)"
+  },
   {
    "hash": "43570b7ea6118a640027c31c77fef58de3f72b65",
    "subject": "AR-17: the 65-choice #guard without a new definition (trust +0); regenerated declarations"
@@ -89,5 +142,5 @@
    "subject": "AR-17: relay Lean's S2 row bound to the request; delete the Python regeneration compare"
   }
  ],
- "head": "43570b7ea6118a640027c31c77fef58de3f72b65"
+ "head": "d738cb086fcc3c771f6a777866f996afe4c35919"
 }

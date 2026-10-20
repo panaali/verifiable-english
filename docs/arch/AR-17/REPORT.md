@@ -14,8 +14,9 @@ because `evidence/gate.json` can only be saved after the chain's gate has run (s
      `_bind_counts`, `_bind_choice_list`);
    - on the superposed route, the units, the slot labels and the name map (`_bind_superposed`, `_bind_slot_label`,
      `_bind_names`).
-   The route, the finding's cause, the vocabulary, the contents, the formulas, the qualified names and the sizes
-   are relayed as Lean wrote them. The completion path (`_bind_completion_superposed`) now uses the same binders
+   The route, the text of a chain's cause, the vocabulary, the contents, the formulas, the generated names and the
+   sizes are relayed as Lean wrote them (the name map, decision keys, shared labels and precedence cause are bound
+   since the review fix, below). The completion path (`_bind_completion_superposed`) now uses the same binders
    instead of its own copies. `elaborate`'s signature and return value are unchanged, and `ve/document.py` is
    not edited.
 2. **Shape** (`0f4dc221`). Every field `elaborate` binds already had a type in
@@ -36,6 +37,39 @@ because `evidence/gate.json` can only be saved after the chain's gate has run (s
    `tests/test_readings_s2_lean.py` was touched. No hand-written file of this batch is edited by an in-flight
    `lean-first/*`, `feature/*`, `infra/*` or `foundation/*` branch (`git diff --name-only main...<branch>`,
    19:55Z).
+
+## Review fix (arch-20261019-1-review.final.md, F1 and F2; `d738cb08`)
+
+The review found two checks the base's whole-row comparison made and the relay had dropped. Each is fixed as a
+class, in `ve/readings_route.py`, for the plain and the completion path alike:
+
+- **F1, names in the superposed row.** `_bind_names` binds each reading's name pairs to exactly its own names
+  (`_own_names`): its rule's name under its position (`qualify`), then per decision its rule has (the exception of
+  a default rule, a switch per listed party) Lean's generated decision of the qualified rule, found by its key, with
+  the reading's own name for it (Lean's `nameMap` renames the rule only; `softnorms.rule_key` is Lean's `ruleKey`,
+  now shared with the soft relay). Lean's order is kept. Same class: `_bind_generated` binds the generated soft
+  decisions' keys (a rule of `sup D` that has the decision, or an `outweighs` act and two ranks of the request);
+  a shared slot label must name one of those `outweighs` decisions; `_bind_cause` binds `precedence under <rule>`
+  (C in the review). The completion path's own check (`pair[0] in authored_names`) is replaced by the same binders.
+- **F2, refusals.** A refusal with ` under ` fails closed unless every part after it names a choice of the request.
+  Same class: the completion path (`_completion_elaborate`) checked no refusal; it now checks the error row's schema
+  and binds it with `_bind_refusal`.
+
+Probes: `PROBE F1` and `PROBE F2` of the review fail before the fix (AssertionError) and pass after it. Regression
+tests (all in `tests/test_readings_s2_answer.py`): `test_f1_a_name_pair_outside_the_request_is_unavailable` (the
+F1 probe is its first forgery), `test_f1_a_generated_decision_key_outside_the_request_is_unavailable`,
+`test_f1_a_precedence_cause_naming_another_rule_is_unavailable`, the shared-label forgeries in
+`test_a_slot_label_naming_what_the_request_has_not_is_unavailable`, the F2 texts in
+`test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable` (the F2 probe text among them) and
+`test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s`. The fuzz tests now treat the name map as
+bound (only its order is Lean's), and run over a new genuine row, `_holistic_case` (Lean's M10b: an `outweighs`
+decision, its shared label and a switch decision). Seeded mutants M10 to M17 are killed.
+
+Corpus A/B on `d738cb08`: the head recording is byte-identical to the one of `43570b7e` (SHA-256 `c6b1f62f...`), so
+`evidence/ab.json` changed only its `head_commit`. `pilot_parts.py compare` now expects the selected pilot documents
+the base recording holds: a pilot branch added after it (`pilot/cc-20261019T1800Z`, one document) is in neither
+recording. Not done here (review FOLLOW-UP): F3 to F6, and the `generated_predicates` keys of the routes other than
+superposed.
 
 ## Measured outcome (tool output)
 
@@ -62,9 +96,9 @@ because `evidence/gate.json` can only be saved after the chain's gate has run (s
   all. The product and test part is under the ~600 guideline; the docs take the total over it.
 
 <!-- BEGIN GENERATED AR-17 NUMBERS -->
-- Scope: `beb5c463..43570b7e --no-merges`, 5 commits: `43570b7e`, `cbad85b6`, `f71b6b25`, `0f4dc221`, `e0fe5d00`.
-- Corpus A/B (`beb5c463` against `43570b7e`): 99857 records identical, 45 wording (the report's `checked_by`, DELTA W1), 0 unlisted; pilots: 55 readings part documents, readings 1137, rights 2500.
-- Seeded mutants (tools/mutants.py): 9/9 killed.
+- Scope: `beb5c463..d738cb08 --no-merges`, 7 commits: `d738cb08`, `b6b6d6fa`, `43570b7e`, `cbad85b6`, `f71b6b25`, `0f4dc221`, `e0fe5d00`.
+- Corpus A/B (`beb5c463` against `d738cb08`): 99857 records identical, 45 wording (the report's `checked_by`, DELTA W1), 0 unlisted; pilots: 55 readings part documents, readings 1137, rights 2500.
+- Seeded mutants (tools/mutants.py): 17/17 killed.
 <!-- END GENERATED AR-17 NUMBERS -->
 
 ## Tests converted (none deleted unconverted)
@@ -93,7 +127,7 @@ discourse, the 1,000-document rights corpus, quantity, norm_defaults, document) 
 45 wording records (W1). Wall time of the pilot parts, recorded one side at a time with 6 workers: base 344 s,
 head 326 s. This is indicative only, not a benchmark.
 
-## Seeded bugs (`mutants.json`; `evidence/mutants.json` from `tools/mutants.py`: 9/9 killed)
+## Seeded bugs (`mutants.json`; `evidence/mutants.json` from `tools/mutants.py`: 17/17 killed)
 
 | Id | Language, file | Behaviour | Failing test |
 |---|---|---|---|
@@ -106,6 +140,14 @@ head 326 s. This is indicative only, not a benchmark.
 | M7 | Python, `ve/readings_route.py` | name map names the open sets in order | `test_one_fault_...` |
 | M8 | Python, `ve/readings_route.py` | a derived value is relayed unchanged | `test_genuine_answers_are_relayed_unchanged` |
 | M9 | Lean, `lean/ResponseShape/Schemas/ReadingsRoute.lean` | the shape is tied to the encoder (`elaborateFields_fits`) | `lake build ResponseShape.Encoders.ReadingsRoute` fails |
+| M10 | Python, `ve/readings_route.py` | F1: a reading's name pairs are exactly its own names | `test_f1_a_name_pair_outside_the_request_is_unavailable` |
+| M11 | Python, `ve/readings_route.py` | F1 class: a shared slot label names a generated `outweighs` decision | `test_a_slot_label_naming_what_the_request_has_not_is_unavailable` |
+| M12 | Python, `ve/readings_route.py` | F1 class: an exception or switch decision's key names a rule that has it | `test_f1_a_generated_decision_key_outside_the_request_is_unavailable` |
+| M13 | Python, `ve/readings_route.py` | F1 class: an `outweighs` key names an act and two ranks of the request | same |
+| M14 | Python, `ve/readings_route.py` | F1 class (C): a precedence cause names a rule of the request | `test_f1_a_precedence_cause_naming_another_rule_is_unavailable` |
+| M15 | Python, `ve/readings_route.py` | F2: a refusal with ` under ` names a choice and nothing else | `test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable`, `test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s` |
+| M16 | Python, `ve/readings_route.py` | F2 class: the completion path binds its refusals | `test_f2_a_refusal_under_the_completion_is_bound_as_the_plain_route_s` |
+| M17 | Python, `ve/softnorms.py` | `rule_key` is Lean's `ruleKey` (the name map's own decision names) | `test_genuine_answers_are_relayed_unchanged` |
 
 No Rust code changed.
 
@@ -117,6 +159,11 @@ No Rust code changed.
 - `tools/regen_generated.py --check`: clean after `--write`.
 - No test of `main-known-red.txt` was hit.
 - The full gate was not run by the builder: the chain runs it on the final HEAD.
+- Review fix (`d738cb08`): selected tests (`mac-pytest.sh --select -- --base beb5c463 --run`, ve-mac-1): exit 0,
+  0 failed, 452 units, 2,770 s; `tests/test_readings_s2_answer.py` 11 passed; with the completion and soft relay
+  files (`test_readings_sd_relay`, `test_rd9_chain_relay`, `test_readings_defaults_rd6a`, `test_soft_decision_keys`,
+  `test_readings_s2_lean`, `test_readings_s2_python`) 290 passed; `lake build` and `lean/audit.py` pass;
+  `tools/mutants.py` 17/17; `tools/regen_generated.py --check` clean; `tools/relay_lint.py` PASS.
 
 ## After the gate
 
@@ -132,7 +179,8 @@ report commit that changes only `docs/arch/AR-17/`:
     uv run python -m tools.evidence report docs/arch/AR-17   # paste between the markers
     uv run python tools/batch_evidence.py --check docs/arch/AR-17 --report-commit HEAD
 
-`<G>` differs from the recorded code `43570b7e` only under `docs/arch/AR-17/`.
+`<G>` differs from the recorded code `d738cb08` only under `docs/arch/AR-17/` (whose head recording is the
+same file as `43570b7e`'s, `head-all.jsonl`).
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -141,7 +189,7 @@ report commit that changes only `docs/arch/AR-17/`:
    or empty it. Only `CheckerUnavailable` or Lean's `VEError` escape.
 2. Deliverables: PASS. Items 1 to 5 above, with their commits. No new Python copy of a Lean decision and no
    permanent report test. Overlap check: none.
-3. Tests can fail: PASS. M1 to M9 are killed (`evidence/mutants.json`). M9 breaks the Lean build, not a hash.
+3. Tests can fail: PASS. M1 to M17 are killed (`evidence/mutants.json`). M9 breaks the Lean build, not a hash.
 4. Base against head: PASS. `evidence/ab.json`, 0 unlisted.
 5. R8 binding: PASS. `test_a_forged_refusal_naming_what_the_request_has_not_is_unavailable`,
    `test_a_slot_label_naming_what_the_request_has_not_is_unavailable`, and the forge, duplicate and range faults
