@@ -3032,6 +3032,12 @@ theorem VE.Calc.Poly.ofExpr_sound
     VE.Calc.Poly.ofExpr? e = Option.some p → VE.Calc.Denotes (fun n => Option.some (κ n)) e (VE.Calc.Poly.eval κ p)
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Poly.eval@VE.Calc.Poly VE.Calc.Poly.ofExpr?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly
   -- expr 2768733591
+theorem VE.Calc.Poly.ofExpr_within
+  ∀ {e : VE.Calc.Expr} {p : VE.Calc.Poly},
+    VE.Calc.Poly.ofExpr? e = Option.some p →
+      (VE.Calc.Expr.nodesWithin VE.Calc.maxPolyTerms e).isSome = Bool.true ∧ p.Within
+  -- uses VE.Calc.Expr.nodesWithin@VE.Calc.Poly VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.ofExpr?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.maxPolyTerms@VE.Calc.Poly
+  -- expr 4459173
 theorem VE.Calc.Poly.one_within
   VE.Calc.Poly.one.Within
   -- uses VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.one@VE.Calc.Poly

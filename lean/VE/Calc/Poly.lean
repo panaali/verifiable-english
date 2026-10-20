@@ -116,9 +116,10 @@ def Expr.hasDiv : Expr → Bool
   | .pow a _ => a.hasDiv
 
 /-- The normal form of a division-free expression (its fraction form's denominator is then 1); `none` with division or
-beyond the limits. -/
+beyond the limits. Division is looked for only within the limits, so a side that shares itself costs no more than the
+node limit (`hasDiv` walks the whole tree). -/
 def Poly.ofExpr? (e : Expr) : Option Poly :=
-  if e.hasDiv then none else (Frac.ofExpr? e).bind fun f => if f.2 = Poly.one then some f.1 else none
+  (Frac.ofExpr? e).bind fun f => if e.hasDiv then none else if f.2 = Poly.one then some f.1 else none
 
 /-- Both sides cross-multiplied and compared; `none` beyond the limits. -/
 def Identity.compare (a b : Expr) : Option Bool :=
@@ -326,10 +327,10 @@ theorem Expr.eval_noDiv (κ : String → Rat) (e : Expr) (h : e.hasDiv = false) 
 
 theorem Poly.ofExpr_sound (κ : String → Rat) (e : Expr) (p : Poly) (h : Poly.ofExpr? e = some p) :
     Denotes (fun n => some (κ n)) e (p.eval κ) := by
-  unfold Poly.ofExpr? at h; split at h
+  simp only [Poly.ofExpr?, Option.bind_eq_some_iff] at h; obtain ⟨f, hf, h⟩ := h
+  split at h
   · cases h
   · rename_i hd
-    simp only [Option.bind_eq_some_iff] at h; obtain ⟨f, hf, h⟩ := h
     split at h
     · rename_i h1; cases h
       obtain ⟨x, hx⟩ := Option.ne_none_iff_exists'.mp (Expr.eval_noDiv κ e (by simpa using hd))
@@ -461,6 +462,17 @@ theorem Frac.ofExpr_within {e : Expr} {f : Frac} (h : Frac.ofExpr? e = some f) :
   unfold Frac.ofExpr? at h; split at h
   · exact ⟨by assumption, Frac.go_within e f h⟩
   · cases h
+
+/-- **Limits**: a normal form is given only within the node limit, and it is `Within`. -/
+theorem Poly.ofExpr_within {e : Expr} {p : Poly} (h : Poly.ofExpr? e = some p) :
+    (e.nodesWithin maxPolyTerms).isSome ∧ p.Within := by
+  simp only [Poly.ofExpr?, Option.bind_eq_some_iff] at h; obtain ⟨f, hf, h⟩ := h
+  have hw := Frac.ofExpr_within hf
+  split at h
+  · cases h
+  · split at h
+    · cases h; exact ⟨hw.1, hw.2.1⟩
+    · cases h
 
 /-- **Limits**: a comparison is answered only when both sides' forms and both cross products are `Within`. -/
 theorem Identity.compare_within {a b : Expr} {r : Bool} (h : Identity.compare a b = some r) :

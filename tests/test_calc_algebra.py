@@ -105,6 +105,9 @@ def digit_rows():
             ("4097", f".mul (.pow (l 10) 4095) (l ({minus}10))"),
             ("4097-sum", f".add (l ({minus}top)) (l ({minus}1))"),
         ))
+        # 4,096 digits above and below the line at once (top and top − 1 are coprime), so a bound on their product
+        # is caught (hunt 1).
+        yield "numerator", f"digits-{sign}both-4096", f"l ({minus}top / (top - 1))", None, True
         yield from (("denominator", f"digits-{sign}den-{kind}", side, None, kind.startswith("4096")) for kind, side in (
             ("4096", f"l ({minus}1 / top)"),
             ("4096-product", f".mul (l ({minus}9 / top)) (l (1 / 9))"),
@@ -120,21 +123,45 @@ LIMITS = [
     ("nodes", "nodes-10001", "sumx 5000", '.mul (l 5001) (v "x")', False),
     ("nodes", "nodes-10001-pow", "((sumx 4999).pow 1).pow 1", '.mul (l 5000) (v "x")', False),
     ("nodes", "nodes-10001-right", '.add (v "x") (sumx 4999)', '.mul (l 5001) (v "x")', False),
+    # Each kind of node, each at the limit (a two-node power last) and one past it (hunt 1).
+    *(row for op in ("sub", "mul", "div") for row in (
+        ("nodes", f"nodes-10000-{op}", f'.{op} (sumx 4998) (.pow (v "x") 1)', None, True),
+        ("nodes", f"nodes-10001-{op}", f'.{op} (sumx 4999) (v "x")', None, False))),
+    ("nodes", "nodes-10000-lit", ".add (sumx 4998) (.pow (l 1) 1)", None, True),
+    ("nodes", "nodes-10001-lit", ".add (sumx 4998) (.add (l 1) (l 1))", None, False),
     # A side that shares itself, 2^15 − 1 nodes as a tree: past the limit, and cheap to normalise if it is let
     # through; `test_a_shared_side_costs_only_the_limit` has one of 2^41 − 1.
     ("nodes", "nodes-shared", "doubled 14", '.mul (l 16384) (v "x")', False),
     ("sum", "sum-10000", "four", None, True),
     ("sum", "sum-10001", ".add four (l 1)", None, False),
+    # The sum of `Frac.add?`'s cross products: 9,900 + 101 terms (hunt 1).
+    ("sum", "add-cross-sum-10001", '.add (.div (.mul (geo "x" 99) (geo "y" 98)) (v "u")) (.div (geo "z" 100) (v "w"))',
+     None, False),
     # 100 × 100, 73 × 137 (review F8: exactly one past) and 101 × 100 terms.
     ("product", "product-10000", '.mul (geo "x" 99) (geo "y" 99)', '.mul (geo "y" 99) (geo "x" 99)', True),
     ("product", "product-10001", '.mul (geo "x" 72) (geo "y" 136)', '.mul (geo "y" 136) (geo "x" 72)', False),
     ("product", "product-10100", '.mul (geo "x" 100) (geo "y" 99)', '.mul (geo "y" 99) (geo "x" 100)', False),
+    # Every product a fraction form takes, one past the limit (hunt 1): `Frac.add?`'s cross products (73 × 137 terms
+    # before like terms merge, 209 after, so the sum after them does not mask the count) and its denominator,
+    # `Frac.mul?`'s and `Frac.div?`'s, and a power's steps, where 10,001 cannot be reached (a power of a 73-term
+    # polynomial has more than 137 terms): 100 × 100 and 101 × 101.
+    ("product", "add-cross-10001", '.add (.div (geo "x" 72) (v "u")) (.div (l 1) (geo "x" 136))', None, False),
+    ("product", "add-cross-right-10001", '.add (.div (l 1) (geo "x" 136)) (.div (geo "x" 72) (v "u"))', None, False),
+    ("product", "add-den-10001", '.add (.div (l 1) (geo "x" 72)) (.div (l 1) (geo "y" 136))', None, False),
+    ("product", "mul-den-10001", '.mul (.div (l 1) (geo "x" 72)) (.div (l 1) (geo "y" 136))', None, False),
+    ("product", "div-num-10001", '.div (geo "x" 72) (.div (l 1) (geo "y" 136))', None, False),
+    ("product", "div-den-10001", '.div (.div (l 1) (geo "x" 72)) (geo "y" 136)', None, False),
+    ("product", "pow-10000", '.pow (geo "x" 99) 2', None, True),
+    ("product", "pow-10201", '.pow (geo "x" 100) 2', None, False),
     # A constant base, where only the power node's guard refuses.
     ("power", "exponent-constant-4096", ".pow (l 1) 4096", None, True),
     ("power", "exponent-constant-4097", ".pow (l 1) 4097", None, False),
     # Exponents reached by products; past the limit in the middle variable of three and the middle monomial of four,
     # so a check of the first or the last one only is caught.
     ("exponent", "exponent-4096", '.mul (.pow (v "x") 2048) (.pow (v "x") 2048)', '.pow (.pow (v "x") 64) 64', True),
+    # Each variable at the limit, so a bound on the total degree is caught (hunt 1).
+    ("exponent", "exponent-4096-two-vars",
+     '.mul (.mul (.pow (v "x") 2048) (.pow (v "x") 2048)) (.mul (.pow (v "y") 2048) (.pow (v "y") 2048))', None, True),
     ("exponent", "exponent-4097", '.mul (.pow (v "x") 4096) (v "x")', '.pow (v "x") 4097', False),
     ("exponent", "exponent-4097-product", '.mul (.pow (v "x") 4096) (v "x")', '.mul (v "x") (.pow (v "x") 4096)',
      False),
@@ -145,6 +172,9 @@ LIMITS = [
     # 10 + 10^4096·x + 10z: past the digit limit in the middle monomial of three.
     ("numerator", "digits-middle-term", '.mul (.add (.add (l 1) (.mul (.pow (l 10) 4095) (v "x"))) (v "z")) (l 10)',
      None, False),
+    # A power's numerator and its denominator, past the exponent limit at the last step: x^(17 · 241) (hunt 1).
+    ("exponent", "pow-num-4097", '.pow (.pow (v "x") 17) 241', None, False),
+    ("exponent", "pow-den-4097", '.pow (.div (l 1) (.pow (v "x") 17)) 241', None, False),
     *digit_rows(),
 ]
 
@@ -212,6 +242,11 @@ FIXTURES = [
     *limit_fixtures(),
     *SIZES,
     ("over-the-limit-is-not-an-identity", 'check (sumx 5000, .mul (l 5001) (v "x"))', "false"),
+    # `compare`'s own cross products, one past the limit (hunt 1).
+    ("compare-cross-10001", 'compare (geo "x" 72, .div (l 1) (geo "y" 136))', "none"),
+    ("compare-cross-right-10001", 'compare (.div (l 1) (geo "y" 136), geo "x" 72)', "none"),
+    # Two fractions over one denominator are added without cross products: 101 × 101 terms would be past the limit.
+    ("same-denominator", 'form (.add (.div (v "x") (geo "y" 100)) (.div (v "z") (geo "y" 100)))', "true"),
 ]
 
 
@@ -253,9 +288,15 @@ def test_every_limit_check_is_pinned_at_and_past_it(lean):
     assert {row for row, _, _, _, _ in LIMITS} == set(LIMIT_CHECKS)
 
 
-def test_a_shared_side_costs_only_the_limit(tmp_path):
-    """2^41 − 1 nodes as a tree, 41 in memory: the node walk stops at the limit, so the answer comes at once. Its own
-    process, so a walk that does not stop fails this test alone (by `HANG_TIMEOUT`)."""
-    answers = run_lean(tmp_path / "Shared.lean",
-                       [("nodes-shared-41", 'compare (doubled 40, .mul (l 1099511627776) (v "x"))', "none")])
-    assert answers == {"nodes-shared-41": "none"}
+SHARED = [
+    ("nodes-shared-41", 'compare (doubled 40, .mul (l 1099511627776) (v "x"))', "none"),
+    # `Poly.ofExpr?` looks for division only within the limits (hunt 1: it walked the whole tree first).
+    ("poly-shared-41", "reprStr (Poly.ofExpr? (doubled 40))", "none"),
+]
+
+
+@pytest.mark.parametrize("fixture", [pytest.param(fixture, id=fixture[0]) for fixture in SHARED])
+def test_a_shared_side_costs_only_the_limit(tmp_path, fixture):
+    """2^41 − 1 nodes as a tree, 41 in memory: the node walk stops at the limit, so the answer comes at once. Each in
+    its own process, so a walk that does not stop fails its test alone (by `HANG_TIMEOUT`)."""
+    assert run_lean(tmp_path / "Shared.lean", [fixture]) == {fixture[0]: fixture[2]}

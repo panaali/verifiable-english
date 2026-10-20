@@ -443,6 +443,7 @@
 'VE.Calc.Poly.mul?_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Poly.mul?_within' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Poly.ofExpr_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Calc.Poly.ofExpr_within' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Poly.one_within' depends on axioms: [propext]
 'VE.Calc.Poly.pow?_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Poly.pow?_within' depends on axioms: [propext, Classical.choice, Quot.sound]
