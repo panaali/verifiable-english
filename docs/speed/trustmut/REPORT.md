@@ -757,7 +757,7 @@ would leave no usable tool.
 7. PASS: DELTA has no rows and reserves nothing; trust +0 (no Lean file changed).
 8. PASS: `git diff --stat main...HEAD -- ve lean rust conformance` is empty.
 9. PASS: the tests `tools/select_tests.py` selects, `tests/test_trust_mutants.py` among them (`repo_map.py file
-   tools/trust_mutants.py`), on the Mac runner (`evidence/selected.json`) on `4842741db`: 32 units, exit 0; `lake build` exits 0 and
+   tools/trust_mutants.py`), on the Mac runner (`evidence/selected.json`) on `31cf8e2b6`: 32 units, exit 0; `lake build` exits 0 and
    `python3 lean/audit.py` exits 0 there (no Lean file changed).
 10. N.A.: no Lean statement or proof.
 11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
