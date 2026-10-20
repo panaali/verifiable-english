@@ -56,8 +56,9 @@ def placeholderJson (environment : Json) : Except String Json := do
         (p, e.setObjVal! "regulated" (r.setObjVal! "default" (.str "deny"))) else (p, e)
     | .error _ => (p, e)
   let profiles ← strings (← environment.getObjVal? "profiles")
-  -- Setting the profile aside must not hide a repeated one from the envelope gate.
-  if profiles.count profile > 1 then
+  -- Setting the profile aside must not hide a repeated one from the envelope gate, nor the order of a list from
+  -- which `acts@0` would be read (`Norms.Wire.readsActs` reads the list it is given).
+  if profiles.count profile > 1 || (profiles.contains "acts@0" && !VE.Norms.Wire.readsActs profiles) then
     throw (VE.Route.Gate.unsupported "profiles must be sorted and unique")
   pure ((environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj preds'))).setObjVal!
     "profiles" (toJson (profiles.filter (· != profile))))
