@@ -40367,6 +40367,10 @@ theorem VE.Scope.Examples.effects_six
           e = VE.Scope.Effect.precedes ∨ e = VE.Scope.Effect.yields ∨ e = VE.Scope.Effect.title
   -- uses VE.Scope.Effect.carveOut@VE.Scope.Effects VE.Scope.Effect.frame@VE.Scope.Effects VE.Scope.Effect.precedes@VE.Scope.Effects VE.Scope.Effect.reguard@VE.Scope.Effects VE.Scope.Effect.title@VE.Scope.Effects VE.Scope.Effect.yields@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
   -- expr 91933473
+theorem VE.Scope.Examples.governor_fields
+  ∀ (g : VE.Scope.Governor), g = g
+  -- uses VE.Scope.Governor@VE.Scope.Govern
+  -- expr 1251228642
 theorem VE.Scope.Examples.markers
   VE.Layout.markerLen "* x".toUTF8 0 3 = Option.some 2 ∧
     VE.Layout.markerLen "- x".toUTF8 0 3 = Option.some 2 ∧
@@ -40436,6 +40440,158 @@ theorem VE.Scope.Examples.reaches_root
           Bool.false
   -- uses VE.Layout.reachesRoot@VE.Layout.Anchors VE.Scope.Examples.anc@VE.Scope.Examples VE.Scope.Examples.boxAnchors@VE.Scope.Examples
   -- expr 114329546
+theorem VE.Scope.Examples.reaches_seven
+  ∀ (r : VE.Scope.Reach),
+    (∃ l, r = VE.Scope.Reach.list l) ∨
+      (∃ n, r = VE.Scope.Reach.listName n) ∨
+        (∃ a, r = VE.Scope.Reach.anchor a) ∨
+          (∃ i, r = VE.Scope.Reach.label i) ∨
+            (∃ ns, r = VE.Scope.Reach.rules ns) ∨ r = VE.Scope.Reach.frontier ∨ ∃ us, r = VE.Scope.Reach.fixed us
+  -- uses VE.Scope.Reach.anchor@VE.Scope.Govern VE.Scope.Reach.fixed@VE.Scope.Govern VE.Scope.Reach.frontier@VE.Scope.Govern VE.Scope.Reach.label@VE.Scope.Govern VE.Scope.Reach.list@VE.Scope.Govern VE.Scope.Reach.listName@VE.Scope.Govern VE.Scope.Reach.rules@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern
+  -- expr 3081309188
+theorem VE.Scope.Examples.sdoc_fields
+  ∀ (D : VE.Scope.SDoc), D = D
+  -- uses VE.Scope.SDoc@VE.Scope.Govern
+  -- expr 479122115
+theorem VE.Scope.Examples.short_access
+  ∀ (re : VE.Readings.Wire.ReadingsEnvironment),
+    VE.Scope.unitIds VE.Scope.Examples.shortDoc = ["l", "a", "b"] ∧
+      List.map VE.Scope.idOf (VE.Scope.unitsOf VE.Scope.Examples.shortDoc) = ["l", "a", "b"] ∧
+        VE.Scope.contentOf VE.Scope.Examples.shortDoc "l" = Lean.Json.null ∧
+          VE.Scope.contentOf VE.Scope.Examples.shortDoc "z" = Lean.Json.null ∧
+            VE.Scope.keysOf (VE.Scope.contentOf VE.Scope.Examples.shortDoc "b") = ["cites", "norm"] ∧
+              VE.Scope.isPart (VE.Scope.contentOf VE.Scope.Examples.shortDoc "a") = Bool.true ∧
+                VE.Scope.isPart (VE.Scope.contentOf VE.Scope.Examples.shortDoc "b") = Bool.false ∧
+                  VE.Scope.isNorm (VE.Scope.contentOf VE.Scope.Examples.shortDoc "b") = Bool.true ∧
+                    VE.Scope.isNorm (VE.Scope.contentOf VE.Scope.Examples.shortDoc "a") = Bool.false ∧
+                      VE.Scope.isPart
+                            (Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("part", VE.Scope.Examples.shortPart)]) =
+                          Bool.true ∧
+                        VE.Scope.objectOf (VE.Scope.contentOf VE.Scope.Examples.shortDoc "a") =
+                            VE.Scope.Examples.shortPart ∧
+                          VE.Scope.objectOf (VE.Scope.contentOf VE.Scope.Examples.shortDoc "b") =
+                              VE.Scope.Examples.shortNorm ∧
+                            VE.Scope.partUnits (VE.Scope.Examples.short [] re) = ["a"] ∧
+                              VE.Scope.ruleUnits (VE.Scope.Examples.short [] re) = ["a", "b"] ∧
+                                VE.Scope.setUnits VE.Scope.Examples.shortDoc = ["z"]
+  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.Examples.short@VE.Scope.Examples VE.Scope.Examples.shortDoc@VE.Scope.Examples VE.Scope.Examples.shortNorm@VE.Scope.Examples VE.Scope.Examples.shortPart@VE.Scope.Examples VE.Scope.Governor@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.idOf@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.keysOf@VE.Scope.Govern VE.Scope.objectOf@VE.Scope.Govern VE.Scope.partUnits@VE.Scope.Govern VE.Scope.ruleUnits@VE.Scope.Govern VE.Scope.setUnits@VE.Scope.Govern VE.Scope.unitIds@VE.Scope.Govern VE.Scope.unitsOf@VE.Scope.Govern
+  -- expr 3158736688
+theorem VE.Scope.Examples.short_base
+  ∀ (re : VE.Readings.Wire.ReadingsEnvironment),
+    VE.Scope.coveredLayout (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) (VE.Scope.Reach.list "l") =
+        Except.ok ["a", "b"] ∧
+      VE.Scope.coveredLayout (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) (VE.Scope.Reach.list "a") =
+          Except.error "NotALeadIn: a" ∧
+        VE.Scope.coveredLayout (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) (VE.Scope.Reach.fixed ["b"]) =
+            Except.ok ["b"] ∧
+          VE.Scope.coveredLayout (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) (VE.Scope.Reach.rules ["x"]) =
+              Except.ok [] ∧
+            VE.Scope.coveredLayout (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) (VE.Scope.Reach.listName "n") =
+                Except.error "ScopeUnknownName: n" ∧
+              List.map (fun x => x.id) (VE.Scope.frameOn (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) "a") =
+                  ["t"] ∧
+                VE.Scope.frameOn (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) "l" = [] ∧
+                  VE.Scope.coversU (VE.Scope.Examples.short [VE.Scope.Examples.gt] re)
+                        (have __src := VE.Scope.Examples.gt;
+                        { id := __src.id, unit := __src.unit, effect := __src.effect, reach := __src.reach, units := [] })
+                        "a" =
+                      Bool.true ∧
+                    VE.Scope.coversU (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) VE.Scope.Examples.gt "l" =
+                        Bool.false ∧
+                      VE.Scope.baseObj (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) "a" =
+                          Except.ok (VE.Scope.Examples.led VE.Scope.Examples.shortPart) ∧
+                        VE.Scope.baseObj (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) "b" =
+                            Except.ok (VE.Scope.Examples.led VE.Scope.Examples.shortNorm) ∧
+                          VE.Scope.baseObj (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) "l" =
+                              Except.error "ScopeNotARule: l" ∧
+                            VE.Scope.baseObj (VE.Scope.Examples.short [] re) "a" = Except.error "ScopeOrphanPart: a" ∧
+                              VE.Scope.baseObj (VE.Scope.Examples.short [] re) "b" =
+                                  Except.ok VE.Scope.Examples.shortNorm ∧
+                                VE.Scope.baseObj
+                                    (VE.Scope.Examples.short
+                                      [VE.Scope.Examples.gt,
+                                        have __src := VE.Scope.Examples.gt;
+                                        { id := "t2", unit := __src.unit, effect := __src.effect, reach := __src.reach,
+                                          units := __src.units }]
+                                      re)
+                                    "b" =
+                                  Except.error "ScopeOrder: b: t, t2"
+  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.Examples.gt@VE.Scope.Examples VE.Scope.Examples.led@VE.Scope.Examples VE.Scope.Examples.short@VE.Scope.Examples VE.Scope.Examples.shortNorm@VE.Scope.Examples VE.Scope.Examples.shortPart@VE.Scope.Examples VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.id@VE.Scope.Govern VE.Scope.Governor.mk@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor.units@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach.fixed@VE.Scope.Govern VE.Scope.Reach.list@VE.Scope.Govern VE.Scope.Reach.listName@VE.Scope.Govern VE.Scope.Reach.rules@VE.Scope.Govern VE.Scope.baseObj@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern VE.Scope.coversU@VE.Scope.Govern VE.Scope.frameOn@VE.Scope.Govern
+  -- expr 1797489342
+theorem VE.Scope.Examples.short_effects
+  VE.Scope.applyEffect "a"
+        (VE.Scope.Effect.reguard (Lean.Json.arr #[Lean.Json.str "and", Lean.Json.str "own", Lean.Json.str "c"]))
+        VE.Scope.Examples.shortPart =
+      Except.ok
+        (VE.Scope.Examples.shortPart.setObjVal! "guard"
+          (Lean.Json.arr #[Lean.Json.str "and", Lean.Json.arr #[Lean.Json.str "top"], Lean.Json.str "c"])) ∧
+    VE.Scope.applyEffect "a" (VE.Scope.Effect.carveOut (Lean.Json.str "own")) VE.Scope.Examples.shortPart =
+        Except.ok
+          (VE.Scope.Examples.shortPart.setObjVal! "unless" (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]])) ∧
+      VE.Scope.applyEffect "a" (VE.Scope.Effect.reguard (Lean.Json.str "c")) VE.Scope.Examples.shortLead =
+          Except.error "ScopeNotARule: a" ∧
+        VE.Scope.applyEffect "a" (VE.Scope.Effect.carveOut (Lean.Json.str "c"))
+              (VE.Scope.Examples.shortPart.setObjVal! "unless" Lean.Json.null) =
+            Except.error "ScopeNotARule: a" ∧
+          VE.Scope.applyEffect "a" (VE.Scope.Effect.frame VE.Scope.Examples.shortLead) VE.Scope.Examples.shortPart =
+              Except.ok VE.Scope.Examples.shortPart ∧
+            VE.Scope.applyEffect "a" VE.Scope.Effect.precedes VE.Scope.Examples.shortPart =
+                Except.ok VE.Scope.Examples.shortPart ∧
+              [VE.Scope.isFrame (VE.Scope.Effect.frame VE.Scope.Examples.shortLead),
+                    VE.Scope.unary (VE.Scope.Effect.reguard VE.Scope.Examples.shortLead),
+                    VE.Scope.unary (VE.Scope.Effect.carveOut VE.Scope.Examples.shortLead),
+                    VE.Scope.graph VE.Scope.Effect.precedes, VE.Scope.graph VE.Scope.Effect.yields] =
+                  [Bool.true, Bool.true, Bool.true, Bool.true, Bool.true] ∧
+                [VE.Scope.isFrame VE.Scope.Effect.title,
+                    VE.Scope.isFrame (VE.Scope.Effect.reguard VE.Scope.Examples.shortLead),
+                    VE.Scope.unary (VE.Scope.Effect.frame VE.Scope.Examples.shortLead),
+                    VE.Scope.unary VE.Scope.Effect.precedes, VE.Scope.graph VE.Scope.Effect.title,
+                    VE.Scope.graph (VE.Scope.Effect.frame VE.Scope.Examples.shortLead)] =
+                  [Bool.false, Bool.false, Bool.false, Bool.false, Bool.false, Bool.false]
+  -- uses VE.Scope.Effect.carveOut@VE.Scope.Effects VE.Scope.Effect.frame@VE.Scope.Effects VE.Scope.Effect.precedes@VE.Scope.Effects VE.Scope.Effect.reguard@VE.Scope.Effects VE.Scope.Effect.title@VE.Scope.Effects VE.Scope.Effect.yields@VE.Scope.Effects VE.Scope.Examples.shortLead@VE.Scope.Examples VE.Scope.Examples.shortPart@VE.Scope.Examples VE.Scope.applyEffect@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
+  -- expr 2661167266
+theorem VE.Scope.Examples.short_govern
+  ∀ (re : VE.Readings.Wire.ReadingsEnvironment),
+    VE.Scope.composed (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) "a" =
+        Except.ok (VE.Scope.Examples.led VE.Scope.Examples.shortPart) ∧
+      VE.Scope.affected (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) = ["a", "b"] ∧
+        VE.Scope.affected (VE.Scope.Examples.short [] re) = ["a"] ∧
+          VE.Scope.newContent (VE.Scope.contentOf VE.Scope.Examples.shortDoc "a") VE.Scope.Examples.shortNorm =
+              Lean.Json.mkObj [("norm", VE.Scope.Examples.shortNorm)] ∧
+            VE.Scope.newContent (VE.Scope.contentOf VE.Scope.Examples.shortDoc "b") VE.Scope.Examples.shortPart =
+                Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortPart)] ∧
+              VE.Scope.newContent (Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("part", VE.Scope.Examples.shortPart)])
+                    VE.Scope.Examples.shortNorm =
+                  Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortNorm)] ∧
+                VE.Scope.patch (VE.Scope.Examples.short [] re) [("b", VE.Scope.Examples.shortPart)] =
+                    VE.Scope.Examples.shortDoc.setObjVal! "units"
+                      (Lean.Json.arr
+                        #[Lean.Json.mkObj [("id", Lean.Json.str "l")],
+                          Lean.Json.mkObj
+                            [("id", Lean.Json.str "a"),
+                              ("content", Lean.Json.mkObj [("part", VE.Scope.Examples.shortPart)])],
+                          Lean.Json.mkObj
+                            [("id", Lean.Json.str "b"),
+                              ("content",
+                                Lean.Json.mkObj
+                                  [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortPart)])]]) ∧
+                  VE.Scope.govern (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) =
+                    Except.ok
+                      (VE.Scope.Examples.shortDoc.setObjVal! "units"
+                        (Lean.Json.arr
+                          #[Lean.Json.mkObj [("id", Lean.Json.str "l")],
+                            Lean.Json.mkObj
+                              [("id", Lean.Json.str "a"),
+                                ("content",
+                                  Lean.Json.mkObj [("norm", VE.Scope.Examples.led VE.Scope.Examples.shortPart)])],
+                            Lean.Json.mkObj
+                              [("id", Lean.Json.str "b"),
+                                ("content",
+                                  Lean.Json.mkObj
+                                    [("cites", Lean.Json.arr #[]),
+                                      ("norm", VE.Scope.Examples.led VE.Scope.Examples.shortNorm)])]]))
+  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.Examples.gt@VE.Scope.Examples VE.Scope.Examples.led@VE.Scope.Examples VE.Scope.Examples.short@VE.Scope.Examples VE.Scope.Examples.shortDoc@VE.Scope.Examples VE.Scope.Examples.shortNorm@VE.Scope.Examples VE.Scope.Examples.shortPart@VE.Scope.Examples VE.Scope.Governor@VE.Scope.Govern VE.Scope.affected@VE.Scope.Govern VE.Scope.composed@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.newContent@VE.Scope.Govern VE.Scope.patch@VE.Scope.Govern
+  -- expr 37262136
 theorem VE.Scope.Examples.short_items
   (VE.Layout.itemRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s03").toOption =
       Option.some ["a.s03", "a.s04", "a.s05"] ∧
@@ -40509,10 +40665,21 @@ theorem VE.Scope.Examples.unordered_join
             Option.some Bool.true
   -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
   -- expr 1307899726
+theorem VE.Scope.baseName_some
+  ∀ (D : VE.Scope.SDoc) (u n : String),
+    VE.Scope.baseName D u = Option.some n ↔
+      ∃ o N, VE.Scope.baseObj D u = Except.ok o ∧ VE.Readings.Wire.decodeNorm D.re o = Except.ok N ∧ N.name = n
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Wire.decodeNorm@VE.Readings.Wire VE.Scope.SDoc.re@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.baseName@VE.Scope.Govern VE.Scope.baseObj@VE.Scope.Govern VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1800254904
 theorem VE.Scope.commutes_symm
   ∀ (e₁ e₂ : VE.Scope.Effect), VE.Scope.Commutes e₁ e₂ = VE.Scope.Commutes e₂ e₁
   -- uses VE.Scope.Commutes@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
   -- expr 3137095935
+theorem VE.Scope.coversU_iff
+  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor) (u : String),
+    VE.Scope.coversU D g u = Bool.true ↔ ∃ us, VE.Scope.covered D g.reach = Except.ok us ∧ u ∈ us
+  -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coversU@VE.Scope.Govern
+  -- expr 1356600155
 theorem VE.Scope.firstKeys_mem
   ∀ (l : List (String × Lean.Json)),
     (∀ (p : String × Lean.Json), p ∈ l → ∀ (q : String × Lean.Json), q ∈ l → p.fst = q.fst → p = q) →
@@ -40523,6 +40690,30 @@ theorem VE.Scope.firstKeys_self
   ∀ (l : List (String × Lean.Json)), (List.map (fun x => x.fst) l).Nodup → VE.Readings.Wire.firstKeys l = l
   -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
   -- expr 1819661494
+theorem VE.Scope.govern_admits
+  ∀ (D : VE.Scope.SDoc) (out : Lean.Json), VE.Scope.govern D = Except.ok out → VE.Scope.admitBlock D = Except.ok ()
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
+  -- expr 2884620989
+theorem VE.Scope.govern_identity
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.admitBlock D = Except.ok () →
+      D.governors = [] → VE.Scope.partUnits D = [] → VE.Scope.govern D = Except.ok D.doc
+  -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.partUnits@VE.Scope.Govern
+  -- expr 2187012636
+theorem VE.Scope.govern_orphan
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.admitBlock D = Except.ok () →
+      D.governors = [] →
+        ∀ (u : String),
+          u ∈ VE.Scope.partUnits D → ∃ e, VE.Scope.govern D = Except.error e ∧ e.startsWith "ScopeOrphanPart" = Bool.true
+  -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.partUnits@VE.Scope.Govern
+  -- expr 2367519260
+theorem VE.Scope.governorsOf_iff
+  ∀ (D : VE.Scope.SDoc) (u : String) (g : VE.Scope.Governor),
+    g ∈ VE.Scope.governorsOf D u ↔
+      g ∈ D.governors ∧ VE.Scope.unary g.effect = Bool.true ∧ ∃ us, VE.Scope.covered D g.reach = Except.ok us ∧ u ∈ us
+  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.governorsOf@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
+  -- expr 1814460128
 theorem VE.Scope.hasOwn_mono
   ∀ (n m : Nat) (j : Lean.Json), n ≤ m → VE.Scope.hasOwn n j = Bool.true → VE.Scope.hasOwn m j = Bool.true
   -- uses VE.Scope.hasOwn@VE.Scope.Effects
@@ -40533,6 +40724,12 @@ theorem VE.Scope.impl_map_eq
       Std.DTreeMap.Internal.Impl.map f t = t
   -- uses
   -- expr 2894362387
+theorem VE.Scope.itemRule_decoder
+  ∀ (D : VE.Scope.SDoc) (u : String) (lead item : Lean.Json) (N : VE.SoftNorms.SoftNode),
+    VE.Scope.itemRule D u lead item = Except.ok N →
+      ∃ m, VE.Scope.mergeParts u lead item = Except.ok m ∧ VE.Readings.Wire.decodeNorm D.re m = Except.ok N
+  -- uses VE.Readings.Wire.decodeNorm@VE.Readings.Wire VE.Scope.SDoc.re@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.itemRule@VE.Scope.Govern VE.Scope.mergeParts@VE.Scope.Effects VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1772087715
 theorem VE.Scope.lookups_absent
   ∀ (j : Lean.Json) (ls : List (String × Lean.Json)),
     VE.Scope.lookups j = Except.ok ls →
@@ -40551,6 +40748,10 @@ theorem VE.Scope.lookups_spec
       (List.map (fun x => x.fst) ls).Nodup ∧ ∀ (k : String) (v : Lean.Json), (k, v) ∈ ls ↔ j.getObjVal? k = Except.ok v
   -- uses VE.Scope.lookups@VE.Scope.Effects
   -- expr 3638113382
+theorem VE.Scope.mem_ordered
+  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor), g ∈ VE.Scope.ordered D ↔ g ∈ D.governors
+  -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern
+  -- expr 3153659188
 theorem VE.Scope.members_obj
   ∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), VE.Scope.members (Lean.Json.obj kvs) = kvs.toList
   -- uses VE.Scope.members@VE.Scope.Effects
@@ -40576,6 +40777,15 @@ theorem VE.Scope.mkObj_getObjVal
       ∀ (k : String) (v : Lean.Json), (Lean.Json.mkObj l).getObjVal? k = Except.ok v ↔ (k, v) ∈ l
   -- uses
   -- expr 4158588899
+theorem VE.Scope.ordered_sorted
+  ∀ (D : VE.Scope.SDoc),
+    List.Pairwise
+      (fun g h =>
+        VE.Scope.classOf g.reach < VE.Scope.classOf h.reach ∨
+          VE.Scope.classOf g.reach = VE.Scope.classOf h.reach ∧ VE.Scope.position D g.unit ≤ VE.Scope.position D h.unit)
+      (VE.Scope.ordered D)
+  -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.classOf@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern VE.Scope.position@VE.Scope.Govern
+  -- expr 589795681
 theorem VE.Scope.substOwn_id
   ∀ (g c : Lean.Json), VE.Scope.hasOwn VE.Scope.depthLimit c = Bool.false → VE.Scope.substOwn g VE.Scope.depthLimit c = c
   -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
