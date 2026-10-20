@@ -825,6 +825,50 @@
     "tests/test_trust_mutants.py::test_an_outside_test_whose_header_cannot_be_read_stops_the_run"
    ],
    "claim": "an outside --test file whose imports cannot be read stops the run (review F13)"
+  },
+  {
+   "id": "TM82",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "                loose = [m.group() for m in found if not any(s <= m.start() and m.end() <= e for s, e, _ in covered)]",
+   "replace": "                loose = []",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "claim": "a sentence that states a result is UNBOUND unless each such word lies inside a text the evidence gives (review F14's class)"
+  },
+  {
+   "id": "TM83",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "            out += [f\"{m[1]}{i}\" for i in range(int(m[2]), int(m[3]) + 1)]",
+   "replace": "            out.append(part)",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "claim": "a PROBE list binds only when every probe it names, a range expanded, exits 0 in evidence/probes.json"
+  },
+  {
+   "id": "TM84",
+   "file": "docs/speed/trustmut/replay.py",
+   "find": "BUDGET = 1200  # step 1: each replay takes at most 20 minutes",
+   "replace": "BUDGET = 2000  # step 1: each replay takes at most 20 minutes",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "claim": "the report's budget line is replay.py's, written from the saved evidence and the 1,200 s budget (review F14)"
+  },
+  {
+   "id": "TM85",
+   "file": "docs/speed/trustmut/hunt/run.py",
+   "find": "    ok = [n for n, p in probes.items() if p[\"exit\"] == 0]",
+   "replace": "    ok = [n for n, p in probes.items() if p[\"exit\"] in (0, 1)]",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "claim": "the probes' summary line counts only the probes that exit 0, and the README and report quote it"
   }
  ]
 }

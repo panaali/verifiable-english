@@ -72,8 +72,8 @@ Review fixes F11/F12 (section 1e) were replayed on ap-2 F11 (`aa2fd56e3`) with t
 33 survivors are the same mutants as before; 12 former INVALID are now UNKNOWN (a refusal outside the text the
 mutant wrote, or not one of `REFUSED`: "Invalid field notation: Type of … is not known" at a later line, "failed to
 synthesize", "don't know how to synthesize", "Type mismatch", "Unknown identifier `A`" outside the edit). The
-other five replays were not rerun on the final tool (each probe of a kill adds an elaboration; ap-2 F11 took 1,546
-s at load 16–45, and the DRI's addendum of 23Z asks to end the round): their kills are all `#guard`s and one `rfl`
+other five replays were not rerun on the final tool (each probe of a kill adds an elaboration, and the DRI's
+addendum of 23Z asks to end the round): their kills are all `#guard`s and one `rfl`
 theorem, the forms the replay shows unchanged, and their INVALID counts would move to UNKNOWN the same way, which
 counts toward the exit code (fail closed). "Survivors on the named lines" are survivors on a line the
 review names for that finding; "within the default 60" says whether one of them is among the first 60 mutants of
@@ -86,7 +86,7 @@ the tool's order:
 | ap-2 F1 | `584ac3bb3` | 413 / 117 / 21 / 0 | 327 | 29: `Syntax.lean:80` lt-le; `Read.lean:19` lit-plus; `Read.lean:19` lit-minus; `Syntax.lean:80` lit-minus; `Syntax.lean:119` any-all; `Syntax.lean:119` list-empty ... | yes | yes |
 | ap-2 F7 | `e13a4e413` | 413 / 59 / 21 / 0 | 372 | 18: `Syntax.lean:119` any-all; `Syntax.lean:83` list-first; `Syntax.lean:96` list-first; `Syntax.lean:113` list-first; `Syntax.lean:113` list-drop-last; `Syntax.lean:119` list-first ... | yes | yes |
 | ap-2 F10 | `3d1085285` | 413 / 35 / 21 / 0 | 300 | 4: `Syntax.lean:78` list-first; `Syntax.lean:78` list-last; `Syntax.lean:79` list-last | yes | no |
-| ap-2 F11 (final tool, F11) | `aa2fd56e3` | 413 / 33 / 9 / 12 | 1546 | 6: `Syntax.lean:88` list-drop-last; `Syntax.lean:122` list-first; `Syntax.lean:122` list-drop-last; `Syntax.lean:89` list-drop-first; `Syntax.lean:121` list-last; `Syntax.lean:121` list-drop-first | yes | no |
+| ap-2 F11 | `aa2fd56e3` | 413 / 33 / 9 / 12 | 1917 | 6: `Syntax.lean:88` list-drop-last; `Syntax.lean:122` list-first; `Syntax.lean:122` list-drop-last; `Syntax.lean:89` list-drop-first; `Syntax.lean:121` list-last; `Syntax.lean:121` list-drop-first | yes | no |
 
 Exact reviewer mutants among the survivors (the rest of each finding's survivors are the same class on its lines):
 - pk-1 F1: `coherenceLabels := []` (M035, list-empty), and `X := []` (M028, this item's review F1). `fullEnv := envAt (fill U) 0` is outside the operators
@@ -112,26 +112,31 @@ so they print as NOT RUN and the run exits 3 (incomplete) until it is rerun with
 Times (the "Seconds" column, 8 jobs on the 32-core VM while other work ran). `replay.py` prints, from the saved
 evidence (review F14: this report quotes it and claims nothing of its own about the budget):
 
-> Step 1's budget (1200 s a replay): 5 of 6 replays within it; over it: ap-2 F11 1546 s (final tool). On the final tool 0 of 1 within it.
+> Step 1's budget (1200 s a replay): 5 of 6 replays within it; over it: ap-2 F11 1917 s (final tool). On the final tool 0 of 1 within it.
+> Profiled replays: ap-2 F11 1917 s at 8 jobs, tool be422c2d3, 5-minute load 39-65 (mean 52.1); thread seconds: probe 9314, builds 5434 (the probe 63% of the two).
 
-So the task's 20-minute budget is **not shown for the final tool**: the one replay run with it, ap-2 F11, took
-1,546 s at 5-minute load 16–45, and the five within the budget ran with the F8 tool, before the probe of section 1e,
-which elaborates each kill's check module once more. Whether the final tool meets the budget on a quiet VM is open
-(deferred: timing the six replays on a quiet VM, or a DRI waiver of the budget). With the F8 tool (5-minute load
-14–31) qt-a1 took 231 s, the four ap-2 HEADs 276–372 s (ap-2 F11 276 s), and pk-1 1027 s: its mutated modules
-(`Packs.lean`, `PacksLegacy.lean`) are proof-heavy. The F7
-round measured 222 s, 255–275 s and 733 s at load 3–12, and the F1 round 299 s, 280–485 s and 873 s under a load
-up to 30, so the control builds of section 1a add
-no measurable time on these trees (no check there fails without the mutant, so each control is built once per
-stage and set of cuts, and cached). A first pk-1 run that built every check module importing the mutated one, not
-only those of its directory, was stopped after an hour at load 51; that is why `--deep` is opt-in.
+So the task's 20-minute budget is **not met**. The DRI's note of 2026-10-20 asked for one more ap-2 F11 replay at 8 jobs:
+ap-2 F11 took 1,917 s with the final tool, at the 5-minute load the profile line gives (the
+VM was not quiet), and every one of the 413 mutants has the verdict and detail of the F11 round's run (where ap-2 F11 took 1,546 s). The
+probe of section 1e causes the excess: the threads spent 9,314 s in it against 5,434 s in builds, so at 8 jobs it
+is about 1,160 s of the 1,917, and the builds alone about 680 s. It elaborates each kill's check module once more in
+the mutant's build (359 kills here), which the five other replays, run with the F8 tool, did not do. No speed fix
+was made: every way to probe less (once per module instead of per mutant, or not for some kills) changes what a kill
+rests on, which needs a hunt, and the note bounds the round. A waiver of the budget, or a faster probe, is the
+DRI's decision (escalated in `reviews/escalations-20261020.md`). With the F8 tool qt-a1 took 231 s, the four ap-2
+HEADs 276–372 s (ap-2 F11 276 s), and pk-1 1027 s: its mutated modules (`Packs.lean`, `PacksLegacy.lean`) are
+proof-heavy. The F7 round, which added the control builds of section 1a, measured 222 s, 255–275 s and 733 s, and
+the F1 round 299 s, 280–485 s and 873 s, so the controls add no time these runs could measure (no check there fails
+without the mutant, so each control is built once per stage and set of cuts, and cached). A first pk-1 run that
+built every check module importing the mutated one, not only those of its directory, was stopped after an hour;
+that is why `--deep` is opt-in.
 
 ## 1a. Review fix F7: a check whose outcome a proof can change never kills
 
 F7 was the third form of one class (F1, F6, F7): a command counted as a check while its outcome depends on a
 proof that the mutant breaks or that the tool cuts to `sorry`. `#guard_msgs in #print axioms T` lists `sorryAx`
-once T's proof is cut, so in the mutated module (proofs cut up front) every mutant was KILLED (27 of 27 in the
-review's probe, known survivors included). Lean 4.24 also refuses `#eval` of a value that depends on `sorry`
+once T's proof is cut, so in the mutated module (proofs cut up front) every mutant was KILLED (in the review's
+probe, known survivors included). Lean 4.24 also refuses `#eval` of a value that depends on `sorry`
 ("aborting evaluation since the expression depends on the 'sorry' axiom"), so an `#eval` check reading a cut proof
 killed the same way. The fix removes the class in three places:
 
@@ -168,8 +173,7 @@ proof the tool cuts: a theorem `r_p : r 1 = 1` proved by a tactic, through `⟨0
 | a definition with a proof inside it, a `#guard` of its value beside it (F8's form, added for F9) | other | a definition cannot be cut; the mutant breaks its `by decide` | UNKNOWN | SURVIVOR |
 
 Every row holds in both settings and all three wrappings: `test_the_truth_table_statuses` runs the package (the
-definitions `n + 0`, one mutant each; 56 definitions, the rows that must survive sharing one per wrapping, setting
-and reading; the rows' own definitions are classed T in the package's trust-classes.json, so only `r` is mutated) and `test_the_truth_table_classes` checks each row's role on the package's own spans;
+definitions `n + 0`, one mutant each, the rows that must survive sharing one per wrapping, setting and reading; the rows' own definitions are classed T in the package's trust-classes.json, so only `r` is mutated) and `test_the_truth_table_classes` checks each row's role on the package's own spans;
 `test_classify_truth_table` and `test_classify_reads_every_command` check `classify` alone, with the spellings
 `#eval!`, `set_option … in`, nested wrappers, `#synth`, `#check_failure` and `#exit`.
 
@@ -178,18 +182,20 @@ The sweep (`docs/speed/trustmut/sweep.py --run`, evidence `evidence/sweep.json` 
 && n != 2 && ([n] ++ [1]).all (· ≥ 1) && [n, 3].any (· == 3) && true`, which carries every operator of the test
 package and every other operator but the arms (54 mutants each), and the value read as `(List.range 6).map r`; the
 arms and the multi-line forms are the F9 table (section 1c), in the same run. All 3,024 mutants ran (1,362 s at 16
-jobs at 5-minute load 25–46 on the tool after F9; rerun on the final tool and tables after F10 in 812 s at load
-11–16, every mutant's verdict and detail the same): 1,330 KILLED, 1,484 SURVIVOR, 210 UNKNOWN, 0 INVALID. Rerun on
-the tool after F11/F12 (section 1e), with the `#eval`-of-the-value row added (3,132 mutants, 2,390 s at 8 jobs at
-load 7–20): 630 KILLED, 1,522 SURVIVOR, 980 UNKNOWN, 0 INVALID, and `sweep.py` exits 0: the KILLED are the
-non-equivalent mutants of the `#guard`, `decide` and `rfl` rows (210 each); the UNKNOWN those of the rows whose
-check states no refutation (`#guard_expr`, the throwing `#eval`, `#check` in every wrapping, `#reduce` and the
-`#eval` of the value with their docstrings) and of F8's form. No row that reads a proof,
-and no row that is no check, has a KILLED mutant; every row expected to kill does; before F11 the UNKNOWN were
-exactly the non-equivalent mutants of the six definitions F8's form reads (35 each), UNKNOWN at that definition. The
-definitions a check or F8's definition reads keep 19 survivors each (38 + 6 such definitions), all equivalent
-mutants, equal to the original on every `n`, not only on 0..5:
-- the conjunct `([n] ++ [1]).all (· ≥ 1)` is true whenever `!(n < 1)` is, so its 16 mutants change nothing:
+jobs on the tool after F9; rerun on the tool and tables after F10 in 812 s, every mutant's verdict and detail the
+same): 1,330 KILLED, 1,484 SURVIVOR, 210 UNKNOWN, 0 INVALID. Rerun on the tool of `f49efae15` (hunt 7's fixes,
+section 1e), with the `#eval`-of-the-value row added (3,132 mutants, 2,390 s at 8 jobs): 630 KILLED, 1,522
+SURVIVOR, 980 UNKNOWN, 0 INVALID, and `sweep.py` exits 0: the KILLED are the non-equivalent mutants of the
+`#guard`, `decide` and `rfl` rows (210 each); the UNKNOWN those of the rows whose check states no refutation
+(`#guard_expr`, the throwing `#eval`, `#check` in every wrapping, `#reduce` and the `#eval` of the value with their
+docstrings) and of F8's form. The sweep was not rerun on the final tool: the tool's three later commits are
+`d09bf54d4` (two checks the seeded-bug run found dead removed), `0ee7bfc45` (a time limit on each build) and
+`05ea60664` (an outside `--test` file's imports built), and the sweep's packages have no outside file. No row that
+reads a proof, and no row that is no check, has a KILLED mutant; every row expected to kill does; before F11 the
+UNKNOWN were exactly the non-equivalent mutants of the six definitions F8's form reads (35 each), UNKNOWN at that
+definition. The definitions a row expecting KILLED or UNKNOWN reads keep 19 survivors each (18 + 28 such
+definitions), all equivalent mutants, equal to the original on every `n`, not only on 0..5:
+- the conjunct `([n] ++ [1]).all (· ≥ 1)` is true whenever `!(n < 1)` is, so none of its mutants changes anything:
   `all-any`, `append-left`, `append-right`, `list-empty`/`list-drop-first`/`list-drop-last` of `[n]`, `[1]` and
   `[n] ++ [1]`, `list-first` and `list-last` of `[n] ++ [1]`, `[1]` -> `[2]` (lit-plus) and `≥ 1` -> `≥ 0`
   (lit-minus; `n = 0` is already false by the first conjunct);
@@ -239,15 +245,15 @@ DRI's three steps (note 2026-10-19b):
 
 | Shape | Operators and lines | Compared by a check | Read by nothing |
 |---|---|---|---|
-| `default-more`: `\| 0 => [7]`, `\| _ => [2,⏎3]` (PROBE F9's form) | `arm-default`: more | KILLED (16 of 16) | SURVIVOR (16 of 16) |
-| `default-more-tight`: the same, no blank line after it | `arm-default`: more | UNKNOWN ("moves this line"), the other 15 KILLED | UNKNOWN, the other 15 SURVIVOR |
-| `default-fewer`: `\| 0 => [7,⏎8]`, `\| _ => [2]` | `arm-default`: fewer | KILLED (16) | SURVIVOR (16) |
-| `default-same`: `\| 0 => [7]`, `\| _ => [2]` | `arm-default`: same | KILLED (12) | SURVIVOR (12) |
-| `arm-bool`: `\| 0 => 1 <⏎2`, `\| _ => 2 < 1` | `arm-false`: fewer, `arm-true`: same | KILLED (6), 11 SURVIVOR (equivalent, below) | SURVIVOR (17) |
-| `list-multi`: `[n,⏎5]` | `list-first`, `list-drop-last`: same; `list-empty`: fewer | KILLED (7) | SURVIVOR (7) |
-| `list-single`: `[n, 5]` | `list-first`, `list-drop-last`, `list-empty`: same | KILLED (7) | SURVIVOR (7) |
-| `append-left-multi`: `[n] ++ [5,⏎6]` | `append-left`: fewer, `append-right`: same | KILLED (19) | SURVIVOR (19) |
-| `append-right-multi`: `[n,⏎5] ++ [6]` | `append-right`: fewer, `append-left`: same | KILLED (19) | SURVIVOR (19) |
+| `default-more`: `\| 0 => [7]`, `\| _ => [2,⏎3]` (PROBE F9's form) | `arm-default`: more | 16 KILLED | 16 SURVIVOR |
+| `default-more-tight`: the same, no blank line after it (its UNKNOWN: "moves this line") | `arm-default`: more | 15 KILLED, 1 UNKNOWN | 15 SURVIVOR, 1 UNKNOWN |
+| `default-fewer`: `\| 0 => [7,⏎8]`, `\| _ => [2]` | `arm-default`: fewer | 16 KILLED | 16 SURVIVOR |
+| `default-same`: `\| 0 => [7]`, `\| _ => [2]` | `arm-default`: same | 12 KILLED | 12 SURVIVOR |
+| `arm-bool`: `\| 0 => 1 <⏎2`, `\| _ => 2 < 1` (its compared survivors are equivalent, below) | `arm-false`: fewer, `arm-true`: same | 6 KILLED, 11 SURVIVOR | 17 SURVIVOR |
+| `list-multi`: `[n,⏎5]` | `list-first`, `list-drop-last`: same; `list-empty`: fewer | 7 KILLED | 7 SURVIVOR |
+| `list-single`: `[n, 5]` | `list-first`, `list-drop-last`, `list-empty`: same | 7 KILLED | 7 SURVIVOR |
+| `append-left-multi`: `[n] ++ [5,⏎6]` | `append-left`: fewer, `append-right`: same | 19 KILLED | 19 SURVIVOR |
+| `append-right-multi`: `[n,⏎5] ++ [6]` | `append-right`: fewer, `append-left`: same | 19 KILLED | 19 SURVIVOR |
 
 Each row holds in both settings (36 definitions, 516 mutants, every one run: 234 KILLED, 278 SURVIVOR, 4 UNKNOWN,
 0 INVALID; the sweep's evidence, and `test_a_replacement_of_any_line_count_is_decided_by_the_checks` on the same
@@ -259,8 +265,8 @@ all equivalent (each arm keeps its value on every `n`): `arm-true` of `1 <⏎2` 
 arm's own value), `1 <⏎2` read as `1 ≤ 2`, `0 < 2` or `1 < 3` (still true), and `2 < 1` read as `2 ≤ 1`, `2 = 1`,
 `2 < 0`, `1 < 1`, `2 < 2` or `3 < 1` (still false).
 
-PROBE F1, F6, F7, F8 and F9 pass on the final tool (F9: `[('arm-default', 'SURVIVOR', '')]`, exit 0, where it
-printed KILLED at `Defs.lean:11: unexpected token '<;>'` before the fix). The seeded bugs TM26–TM32 plant each
+PROBE F9 printed KILLED at `Defs.lean:11: unexpected token '<;>'` before the fix; PROBE F1, F6, F7, F8 and F9
+exit 0 on the final tool (`evidence/probes.json`, section 1e). The seeded bugs TM26–TM32 plant each
 rule of the fix (section 3).
 
 ## 1d. Review fix F10: a check that gives no answer never kills
@@ -310,15 +316,15 @@ mutant survives. Columns: the two mutants, before the fix (the F9 tool on the sa
 
 PROBE F10's form is in the same package (`size`; `test_probe_f10_a_check_out_of_budget_is_no_kill`): before the
 fix `lit-plus` was KILLED, now `[('lit-plus', 'UNKNOWN', 'lean/Demo/Defs.lean:5: no answer: maximum recursion depth
-has been reached'), ('lit-minus', 'SURVIVOR', '')]`, and the probe exits 0. Lean 4.24's failing `#guard_msgs` also
+has been reached'), ('lit-minus', 'SURVIVOR', '')]`, and PROBE F10 exits 0 on the final tool. Lean 4.24's failing `#guard_msgs` also
 logs the wrapped command's own error at its line, so the guard-msgs row is UNKNOWN by that error as well; the
 whole-message read is checked on Lake's output by `test_an_error_is_read_with_its_whole_message`, and every message
 of the table, at a check and in a `--test` file, by `test_a_check_that_gives_no_answer_never_kills`. The kernel's
 own messages are in that unit table only: Lean 4.24 reaches its elaborator's limits first on these checks.
 
 The evidence: no saved replay kill or INVALID gave no answer (`replay.py`, section 1; every kill is a `#guard`'s
-or an `rfl`'s refutation), and the sweep, rerun on the final tool, gives every mutant the same verdict and detail
-(section 1). The seeded bugs TM33–TM40 plant each rule of the fix (section 3).
+or an `rfl`'s refutation), and the sweep, rerun on the tool after F10, gives every mutant the same verdict and
+detail (section 1a). The seeded bugs TM33–TM40 plant each rule of the fix (section 3).
 
 ## 1e. Review fixes F11 and F12: the rule inverted, and an adversarial hunt
 
@@ -389,8 +395,7 @@ PROBE F11 and PROBE F12 are `test_probe_f11_a_stuck_rfl_check_is_no_kill` and
 
 Seven hunts, each a fresh subagent given only the class description, the earlier probes and the code, each run on
 the tool after the previous hunt's fixes. Every probe is in `docs/speed/trustmut/hunt/` (README there) and, but F1,
-a row of `tests/test_trust_mutants.py` (`HUNT`, one package per form). Each fix was checked to fail on the tool
-before it (the rows fail there) and to pass after.
+a row of `tests/test_trust_mutants.py` (`HUNT`, one package per form).
 
 | Hunt | Probes that failed (forms) | What let them through | The fix (the rule's shape where it changed) |
 |---|---|---|---|
@@ -413,16 +418,18 @@ Decided boundaries (recorded, not signed: they are this item's reading of the cl
    is no refusal, so H6 itself is now UNKNOWN).
 3. T6: a silent budget effect in Lean's elaboration of the mutant's own text (`(⟨0⟩ : W 127) == ⟨0⟩` picks a
    fallback instance): what the mutant's text means as Lean elaborates it, as INVALID lets the compiler decide.
+   Since hunt 7's fixes the probe compares the instance the check reads, so PROBE T6 exits 0 on the final tool
+   (`evidence/probes.json`: UNKNOWN, "`Demo.wFallback`, which it reads, is not what it is without the mutant").
 
 Hunt 7's two unreported probes (T5w, T7: a helper of a structure, well-founded and structural) found something
 else: a mutant of `instance [s : Small n] : Small (n + 1)` makes Lean's build of the module run forever, and the
-tool's builds had no time limit, so the run hung (two such builds ran for 2.5 h before they were killed). Every
+tool's builds had no time limit, so the run hung. Every
 build of a mutant now has `--build-timeout` (default 1,800 s, the suite's hang bound); past it the process group
 is killed and the mutant is UNKNOWN (`test_a_build_past_its_time_limit_is_unknown`, an expired limit injected;
 TM79).
 
-The class is not closed. Each of the seven hunts found new forms (8, 10, 9, 11, 7, 8, 4 failing probes); the
-seventh found the fewest. The DRI's addendum (23Z, for the rounds after this one) bounds the hunt and asks for an
+The class is not closed. Each of the seven hunts found new forms (7, 10, 9, 11, 7, 8, 4 failing probes, the decided
+ones not counted); the seventh found the fewest. The DRI's addendum (23Z, for the rounds after this one) bounds the hunt and asks for an
 allow-list; this round stopped after the seventh hunt and its fixes.
 
 ### The evidence
@@ -430,18 +437,23 @@ allow-list; this round stopped after the seventh hunt and its fixes.
 - PROBE F11 failed before the fix (`le-lt` and `lit-minus` KILLED at "Type mismatch") and prints `[('le-lt',
   'UNKNOWN', 'lean/Demo/Defs.lean:7: Type mismatch (an `rfl` check `decide` does not refute)'), …]` after; PROBE
   F12 failed (`eq-le`, `eq-ne`, `lit-minus` INVALID at "`simp` failed: maximum number of steps exceeded", `lit-plus`
-  INVALID at "unsolved goals") and prints them UNKNOWN after. PROBE F1 and F6–F10 pass on the final tool too.
-- The sweep (section 1a) on the final tool: every forms row and every lines row as the tables expect, `sweep.py`
-  exits 0; the survivors are the same equivalent mutants.
-- The ap-2 F11 replay on the final tool (section 1): the same 359 kills and 33 survivors; 12 INVALID now UNKNOWN.
-- Every hunt probe but N4 (boundary 1) exits 0 on the final tool; each is also a test row.
-- The F11/F12 package before and after (`STUCK`; the tool at `260efe231` against the final one):
+  INVALID at "unsolved goals") and prints them UNKNOWN after. PROBE F1 and F6–F14 exit 0 on the final tool.
+- Every probe of the hunt directory, run by `hunt/run.py` on this branch (`evidence/probes.json`, with the sha256 of
+  the tool and of the test file each probe ran):
+
+  > Probes on be422c2d3 (this checkout's tool): 80 of 81 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
+
+- The sweep (section 1a), on the tool of `f49efae15`: every forms row and every lines row as the tables expect,
+  `sweep.py` exits 0; the survivors are the same equivalent mutants.
+- The replay of ap-2 F11 (`aa2fd56e3`) with the final tool (section 1): the same 359 kills and 33 survivors; 12
+  INVALID now UNKNOWN.
+- The F11/F12 package before and after (`STUCK`; the tool at `260efe231` against the F11/F12 fix's):
   before, every far mutant of `rfl`, `by rfl`, `#guard_expr`, `#reduce` under `#guard_msgs`, `#check`, a throwing
   `#eval` and both outside rows was KILLED and the subtype's own mutants and `simp`'s were INVALID; after, the far
   mutants are KILLED only at the `rfl` checks `decide` refutes, UNKNOWN elsewhere.
 - Cost: each kill now elaborates its check's module once more in the mutant's build (the probe), and the control
   pass elaborates each check module once; nothing is cut up front, so a proof the mutant breaks costs one more build.
-  ap-2 F11: 1,546 s at load 16–45 (276 s before, at load 14–31); the sweep 2,390 s at 8 jobs.
+  Section 1's profile line gives the time ap-2 F11's threads spent in the probe and in builds.
 
 ## 1f. Recheck F13 and F14: an outside check's imports, and the time budget
 
@@ -462,13 +474,30 @@ through a module of another directory (`test_probe_f13_an_outside_check_reads_it
 bugs TM80 (the imports left out of `targets`) and TM81 (the header error dropped) fail them. The probe is saved as
 `hunt/F13.sh`.
 
-**F14 (an overclaim).** Section 1 said every replay is within the 20-minute budget; the one replay with the final
-tool took 1,546 s. Section 1 now quotes `replay.py`'s budget line, which reads the saved evidence (`budget()`:
-each replay within 1,200 s or over it, and which tool ran it), and states that the budget is not shown for the
-final tool; section 4 and the task table say the same. PROBE F14 failed before (`AssertionError: 1546`) and passes
-after (`hunt/F14.sh`). It is not a suite test: it reads this report, and batch evidence is checked at the gate and
-merge, never by a permanent test (R11, D4). The timing on a quiet VM, or a DRI waiver of the budget, stays
-deferred.
+**F14 (an overclaim, in two forms).** Section 1 claimed the time budget held for all six replays, although ap-2
+F11 took 1,546 s on the F11 round's tool. The first fix took the claim out of sections 1, 4 and 5 but repeated its
+words in this paragraph, and said here and in `hunt/README.md` that PROBE F14 then passed; it did not (the recheck:
+`AssertionError: 1546`). The class is a sentence that states a result (a budget met, a probe or test that passes,
+a run on the final tool, a count) that no saved evidence gives. The fix removes it where such sentences are checked:
+
+- `claims.py` (in this directory) finds every such sentence of this report and of `hunt/README.md` (`CLAIM`) and
+  requires its words to lie inside a text it writes from the saved evidence: the replays and their profiles, the
+  sweep, the seeded bugs, the probes, the selected tests, the evidence of an earlier round as git keeps it, and
+  `sweep.py`'s and `F14.sh`'s exit codes now. A number the evidence does not give is UNBOUND, and so is a claim
+  `claims.py` has no evidence for; `NOT_CLAIMS` names the words that report no result, each with its reason. It
+  prints one line per sentence (the list the DRI's note of 2026-10-20 asks for) and exits 1 on any UNBOUND.
+- `hunt/run.py` runs every probe and saves its exit code, time and last line in `evidence/probes.json`, with the
+  sha256 of the tool and the test file: a sentence that says a probe passes quotes that file.
+- `replay.py --run` now runs the tool in its own process with a profile (`profiled`): the 5-minute load, sampled
+  every 15 s, and the time the threads spent in the probe and in builds, saved in the replay's evidence; the
+  report quotes `replay.py`'s budget and profile lines.
+
+Run on the report as the F13/F14 round left it, `claims.py` listed as UNBOUND, among others: loads no evidence
+saved, "on the final tool" for the sweep and the seeded bugs (they ran on earlier tools), the sweep's count of
+definitions, hunt 1's count of failing probes (the decided H6 counted, where hunt 2's decided N4 was not), the
+INVALID range of section 4, and every probe claim, for which nothing was saved. Each such sentence is now bound, reworded or deleted. PROBE F14 is `hunt/F14.sh`; PROBE F14c,
+`hunt/F14c.sh`, runs `claims.py`, the class's probe. Neither is a suite test: both read this report, and batch
+evidence is checked at the gate and merge, never by a permanent test (R11, D4).
 
 ## 2. Orchestrator lines (not edited here: /home/seyran/code/manage-agents is the orchestrator's)
 
@@ -503,16 +532,19 @@ the budget table of section 1d (`budget_package`), a fifth F11/F12's table (`stu
 hunt form has a package of its own (`HUNT`, section 1e); the generator, the check rule (`classify`), the spans, the
 cuts, the line-keeping edit (`relined`, `moved`), the kill rule (`judge`, `refutes`, `settle` with faked builds,
 `decided`), the refusal rule (`invalid`, `refused`, `in_tactic`), the probe's rewrite (`named`) and the error readers
-(`ERROR`, `LEAN_ERROR`) have tests without Lean. 298 tests passed on the Mac runner on the F11/F12 commit; review
-F13 adds two (section 1f).
+(`ERROR`, `LEAN_ERROR`) have tests without Lean. The file has 301 tests at this checkout (`pytest --collect-only`);
+section 6 gives the selected run.
 
-Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 78 of them: TM1–TM40
+Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 79 of them: TM1–TM40
 from the earlier rounds (TM8, TM23, TM25, TM30, TM31, TM33–TM36 retargeted at the inverted rule) and TM41–TM78 for
 F11, F12 and the hunts, among them the Lean probe's own lines (`READS` is Lean text inside the tool: TM48, TM59,
-TM60, TM63, TM65, TM71–TM74, TM77, TM78), TM79 for the build time limit and TM80, TM81 for review F13. `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 79 of 79, each at a named test, the file
+TM60, TM63, TM65, TM71–TM74, TM77, TM78), TM79 for the build time limit, TM80, TM81 for review F13 and TM82–TM85
+for F14's class (`claims.py`, `replay.py`'s budget line, `hunt/run.py`'s summary; each command-mode, killed when
+`hunt/F14c.sh` exits non-zero). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 79 of 79, each at a named test, the file
 restored to its exact bytes (`mutants-evidence.json`: TM1–TM78 on `d09bf54d4` in three worktrees of it, the rows
 joined in order, `--no-baseline` since the whole test file passes there; TM79 and the build-path seeds TM1, TM2,
-TM22 and TM36 again on `0ee7bfc45`, which adds the build time limit; TM80 and TM81 on `05ea60664`, the F13 fix). No seeded bug became UNKNOWN under the
+TM22 and TM36 again on `0ee7bfc45`, which adds the build time limit; TM80 and TM81 on `05ea60664`, the F13 fix;
+TM82–TM85 on SEEDS_COMMIT, round 4). No seeded bug became UNKNOWN under the
 stricter rule. The first run (four worktrees at once on the loaded
 VM) found TM57's and TM62's checks dead (the edit-span rule and the probe's `sorryAx` already cover their forms), so
 the checks and the seeds were removed; TM79 was too weak (TM71 plants T5's bug); TM42's and TM44's rules lacked a
@@ -602,6 +634,10 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | TM79 | a mutant's build past `--build-timeout` is killed and the mutant UNKNOWN, never a hung run (hunt T5w, T7) | `out, err = child.communicate()` | `test_a_build_past_its_time_limit_is_unknown` |
 | TM80 | the modules an outside --test file imports are built with the mutant (review F13) | `tree.imported` left out of `targets` | `test_probe_f13_an_outside_check_reads_its_imports_built_with_the_mutant` |
 | TM81 | an outside --test file whose imports cannot be read stops the run (review F13) | the header error not reported | `test_an_outside_test_whose_header_cannot_be_read_stops_the_run` |
+| TM82 | a sentence that states a result is UNBOUND unless each such word lies inside a text the evidence gives (review F14's class) | `loose = []` | `hunt/F14c.sh` |
+| TM83 | a PROBE list binds only when every probe it names, a range expanded, exits 0 in `evidence/probes.json` | a range not expanded | `hunt/F14c.sh` |
+| TM84 | the report's budget line is `replay.py`'s, from the saved evidence and the 1,200 s budget (review F14) | `BUDGET = 2000` | `hunt/F14c.sh` |
+| TM85 | the probes' summary counts only the probes that exit 0; the README and the report quote it | exit 1 counted as 0 | `hunt/F14c.sh` |
 
 ## 4. Limits and follow-ups
 
@@ -625,11 +661,11 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
   mutant is UNKNOWN.
 - Each control is one more build per stage and set of cuts, cached across mutants; a mutant whose broken proofs
   differ needs its own. The F8-tool replays measure no added time for the controls (section 1); the probe of
-  section 1e does add time: ap-2 F11 took 1,546 s on the final tool (load 16–45) against 276 s on the F8 tool (load
-  14–31), over step 1's 20-minute budget (review F14; open until timed on a quiet VM or waived by the DRI).
-- The sweep, the hunt probes and the seeded bugs ran on the final tool (the seeded bugs on the commit before the
-  build time limit, and its own and the build-path seeds again after it: section 3); of the replays only ap-2 F11
-  ran on it, the other five are the F8 tool's (section 1).
+  section 1e does add time: ap-2 F11 took 1,917 s with the final tool against 276 s with the F8 tool, over step
+  1's budget; the probe is about 1,160 s of it (section 1). A waiver, or a faster probe, is the DRI's decision.
+- The probes ran on the final tool (`evidence/probes.json`). The sweep ran on the tool of `f49efae15` (section 1a),
+  the seeded bugs on the commits section 3 names; of the replays only ap-2 F11 ran on the final tool, the other
+  five are the F8 tool's (section 1).
 - Since F11 a kill comes only from `#guard`, a `decide`/`native_decide` `example` or theorem, an `rfl` one that
   `decide` then refutes, or one of those under `#guard_msgs` whose truth changed. A definition read only by
   `#eval`, `#reduce`, `#check` or `#guard_expr` shows UNKNOWN (a failure there states no refutation) or SURVIVOR;
@@ -649,10 +685,8 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 - A longer replacement with no blank line after its declaration to take its extra lines is UNKNOWN (fail closed),
   and so is any parse error outside the mutated declaration; the six replays have neither.
 - A build that fails with no located error is retried twice, then UNKNOWN; a control that fails that way is not
-  cached (it would make every mutant sharing it UNKNOWN). In the final selected run on the Mac runner (six test
-  files at once) `test_a_guard_over_the_empty_list_leaves_survivors` failed once at its exact `SURVIVOR` line and
-  passed when rerun alone; its log was gone, so the cause is not known. An unlocated Lake failure under load would
-  give that (an UNKNOWN in place of the survivor: fail closed, never a kill).
+  cached (it would make every mutant sharing it UNKNOWN): under load a test that expects a SURVIVOR can then see
+  UNKNOWN (fail closed, never a kill).
 - A proof term inside a definition (not a theorem or `example`) that fails cannot be cut, so the mutant is UNKNOWN
   (pk-1: 5, at `Readings/UnspecifiedWire.lean:526`).
 - Equivalent mutants (for example `.take 1` of a list that always has one element) are not detected; they go in the
@@ -663,24 +697,23 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | Task line | Delivered by |
 |---|---|
 | 1 MEASURE: operators first, replays on pk-1 6b58a0ff, qt-a1 b20a8e30, ap-2 584ac3bb and the recheck HEADs; table; stop rule | section 1; `replay.py`, `evidence/*.json`; 6 of 6 flagged |
-| 2 `tools/trust_mutants.py`: `--base`, trust_map classification ∩ diff, scratch copy with lean_share's build, only importing check modules plus `--test`, kill rule, SURVIVOR line, `--allow`, `--jobs`, `--max-mutants` with NOT RUN, `--json`, time budget | the tool; times in section 1. The 20-minute budget: **not shown for the final tool** (its one replay, ap-2 F11, 1,546 s; `replay.py`'s budget line; review F14), deferred to a quiet-VM timing or a DRI waiver |
-| 3 tests in a new `tests/test_trust_mutants.py` (six behaviours) and one seeded bug per rule | section 3; 156 tests; TM1–TM40 |
+| 2 `tools/trust_mutants.py`: `--base`, trust_map classification ∩ diff, scratch copy with lean_share's build, only importing check modules plus `--test`, kill rule, SURVIVOR line, `--allow`, `--jobs`, `--max-mutants` with NOT RUN, `--json`, time budget | the tool; times in section 1. The 20-minute budget: **not met** (ap-2 F11 took 1,917 s with the final tool, the probe of section 1e about 1,160 s of it; `replay.py`'s budget and profile lines; review F14), escalated to the DRI for a waiver |
+| 3 tests in a new `tests/test_trust_mutants.py` (six behaviours) and one seeded bug per rule | section 3; TM1–TM40 |
 | Review F7 (DRI note 2026-10-19): the class, the truth table, probes F1, F6, F7 and a sweep, REPORT:27 | section 1a; `sweep.py`, `evidence/sweep.json`; the check rule in section 1 |
 | Recheck F8: a definition's error beside a failing check, probe F8 | section 1b; TM25; replays and sweep rerun |
 | Recheck F9 (DRI note 2026-10-19b): no edit moves a line or the mutant is UNKNOWN, a kill is a check's own error, the line axis and F8's form in the tables, probes F1, F6–F9, a sweep, 25 seeded bugs still killed | section 1c; `relined`, `moved`, `attributed`; `LINES`, `lines_package`; `sweep.py`; TM26–TM32 (32 of 32) |
 | Recheck F10: a check out of budget counts as a kill; probe F10 | section 1d; `NO_ANSWER`, `ERROR`; `BUDGET`, `budget_package`; `replay.py` F10 line; sweep rerun; TM33–TM40 (40 of 40) |
-| Recheck F11/F12 (DRI note 2026-10-19c): the rule inverted (one positive condition for KILLED and for INVALID), a test per safe case, F11 and F12 as tests, an adversarial hunt until none (bounded by the 23Z addendum for later rounds), probes F1 and F6–F12, the sweep, the seeded bugs | section 1e; `settle`, `judge`, `refutes`, `invalid`, `refused`, `READS`/`probe`; `JUDGED`, `REFUSALS`, `STUCK`, `HUNT`; `docs/speed/trustmut/hunt/`; sweep and ap-2 F11 replay rerun; TM41–TM79 (77 seeds) |
+| Recheck F11/F12 (DRI note 2026-10-19c): the rule inverted (one positive condition for KILLED and for INVALID), a test per safe case, F11 and F12 as tests, an adversarial hunt until none (bounded by the 23Z addendum for later rounds), probes F1 and F6–F12, the sweep, the seeded bugs | section 1e; `settle`, `judge`, `refutes`, `invalid`, `refused`, `READS`/`probe`; `JUDGED`, `REFUSALS`, `STUCK`, `HUNT`; `docs/speed/trustmut/hunt/`; sweep and ap-2 F11 replay rerun; TM41–TM79 (37 seeds) |
 | Recheck F13/F14: an outside check's imports built with the mutant; the budget claim; probes F13, F14 | section 1f; `Tree.imported`, `targets`; `BRIDGED`; `replay.py` `budget()`; `hunt/F13.sh`, `hunt/F14.sh`; TM80, TM81 |
+| Round 4 (DRI note 2026-10-20): F14 as a class (every claim sentence checked against the evidence, the list in the final); PROBE F13 and F14 rerun; ap-2 F11 (`aa2fd56e3`) with the final tool, timed once at 8 jobs, the load recorded, and whether the probe causes the excess | section 1f; `claims.py`, `hunt/run.py`, `evidence/probes.json`, `hunt/F14c.sh`; `replay.py` `profiled`, `profile()`; section 1 |
 | 4 orchestrator lines, gate-check opinion | section 2 |
 | Rules: R2/R3 unchanged, nothing reads the tool; `trust_map.py --check`, review-ready and gate unchanged; no timing test | `DELTA.md`; no file of the gate or review-ready changed; trust_map's two changes (F6, F7) measure +0 here; the tests assert no time |
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
 | Size: at most ~500 changed lines outside generated files | over: see below |
 
 Size: about 4,700 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
-(`evidence/*.json`, `mutants-evidence.json`, the hunt probes): `tools/trust_mutants.py` 1,150, the test 1,570,
-`replay.py` 138, `sweep.py` 158, the seeded bugs' `mutants.json` 810, `tools/trust_map.py` 10, this report and
-DELTA about 610 (F11/F12 added about 1,900: the tool 560 with the Lean probe, the test 780, `mutants.json` 460, the
-report 125; F13/F14 about 170: the tool 15, the test 55, `replay.py` 20, the report 80). That is over nine times the guideline. The size rule's
+(`evidence/*.json`, `mutants-evidence.json`, the hunt probes), against the merge base (`git diff --numstat`): most
+of it is the tool, the test, the seeded bugs' `mutants.json` and this report. That is over nine times the guideline. The size rule's
 fallback is to deliver steps 1-3 for the operators step 1 showed matter; every operator but `arm-default`,
 `body-true`/`body-false`, `ne-eq`, `all-any` and `append-*` left a survivor on a finding's line, and removing those
 saves under 20 lines, so all are kept. The bulk is the runner the task asks for (selection, scratch copies with
@@ -694,19 +727,16 @@ would leave no usable tool.
 1. N.A.: no Lean answer is relayed; the tool reads Lake's build log, and a failure it cannot place is UNKNOWN.
 2. PASS: section 5 maps every task line to its delivery; no rule break (no product code, no permanent report
    test: `replay.py` reads saved evidence, D4).
-3. PASS: seeded bugs TM1–TM81, 79 (`mutants.json`, `mutants-evidence.json`), each failing its named test;
+3. PASS: seeded bugs TM1–TM85, 83 (`mutants.json`, `mutants-evidence.json`), each failing its named test or command;
    `--allow` names an exact (definition, operator) pair (`test_allow_suppresses_exactly_its_operator`).
 4. N.A.: no Python, Lean or Rust product code changed.
 5. N.A.: no relayed field.
 6. PASS: based on main at cb033316a; the chain runs the gate on the final HEAD.
 7. PASS: DELTA has no rows and reserves nothing; trust +0 (no Lean file changed).
 8. PASS: `git diff --stat main...HEAD -- ve lean rust conformance` is empty.
-9. PASS: `tools/select_tests.py` selects 32 units, `tests/test_trust_mutants.py` among them
-   (`repo_map.py file tools/trust_mutants.py`); all pass on the Mac runner (on `29248b4c8`, the F13/F14 fix: 32
-   units, exit 0, the test file's 301 tests among them). `lake build` and `python3 lean/audit.py` pass there (562
-   files; no Lean file changed).
+9. PASS: the tests `tools/select_tests.py` selects, `tests/test_trust_mutants.py` among them (`repo_map.py file
+   tools/trust_mutants.py`), on the Mac runner (`evidence/selected.json`) SELECTED_LINE (no Lean file changed).
 10. N.A.: no Lean statement or proof.
 11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
 12. N.A.: no product code; the tool's own times are in section 1.
-13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 301 added, 0 refused, 0 stale,
-    0 malformed.
+13. N.A.: no test of main removed or renamed; GATE_COLLECTION_LINE.
