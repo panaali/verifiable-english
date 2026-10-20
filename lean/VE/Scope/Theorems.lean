@@ -348,6 +348,61 @@ theorem baseName_some (D : SDoc) (u n : String) : baseName D u = some n ↔
   | error => simp [Except.toOption]
   | ok o => cases h : VE.Readings.Wire.decodeNorm D.re o <;> simp [Except.toOption, h]
 
+/-! The graph step -/
+
+theorem mapM_ok_mem {α β ε : Type} (f : α → Except ε β) :
+    ∀ (l : List α) (t : List β), l.mapM f = .ok t → ∀ y ∈ t, ∃ x ∈ l, f x = .ok y
+  | [], t, h => by cases h; simp
+  | x :: l, t, h => by
+    rw [List.mapM_cons] at h
+    obtain ⟨b, hb, h⟩ := (ebind_ok _ _ _).mp h
+    obtain ⟨bs, hbs, h⟩ := (ebind_ok _ _ _).mp h
+    cases h
+    intro y hy
+    rcases List.mem_cons.mp hy with rfl | hy
+    · exact ⟨x, List.mem_cons_self, hb⟩
+    · obtain ⟨z, hz, hfz⟩ := mapM_ok_mem f l bs hbs y hy
+      exact ⟨z, List.mem_cons_of_mem _ hz, hfz⟩
+
+/-- Each rule the graph step reads is the chain's own decoding of the unit's composed object. -/
+theorem ruleTable_decoder (D : SDoc) (t : List (String × SoftNode)) (h : ruleTable D = .ok t) (u : String)
+    (N : SoftNode) (hu : (u, N) ∈ t) : ∃ o, composed D u = .ok o ∧ VE.Readings.Wire.decodeNorm D.re o = .ok N := by
+  obtain ⟨v, -, hv⟩ := mapM_ok_mem _ _ t h (u, N) hu
+  obtain ⟨o, ho, hv⟩ := (ebind_ok _ _ _).mp hv
+  obtain ⟨M, hM, hv⟩ := (ebind_ok _ _ _).mp hv
+  cases hv
+  exact ⟨o, ho, hM⟩
+
+theorem edgesFor_ok (D : SDoc) (u : String) (es : List String) :
+    edgesFor D u = .ok es ↔ ∃ t, ruleTable D = .ok t ∧ edgesInto D (fun v => t.lookup v) u = es := by
+  unfold edgesFor
+  rw [ebind_ok]
+  simp [pure, Except.pure]
+
+/-- Only a graph governor adds an edge. -/
+theorem edgesOf_graph (D : SDoc) (rule : String → Option SoftNode) (g : Governor) (h : edgesOf D rule g ≠ []) :
+    graph g.effect = true := by
+  unfold edgesOf at h
+  split at h
+  · exact absurd rfl h
+  · revert h; cases g.effect <;> simp [graph]
+
+/-- An edge into a unit comes from a graph governor of the document. -/
+theorem edgesInto_mem (D : SDoc) (rule : String → Option SoftNode) (u n : String) (h : n ∈ edgesInto D rule u) :
+    ∃ g ∈ D.governors, graph g.effect = true ∧ (u, n) ∈ edgesOf D rule g := by
+  simp only [edgesInto, List.mem_filterMap, List.mem_flatMap, List.mem_filter, mem_ordered] at h
+  obtain ⟨⟨w, m⟩, ⟨g, ⟨hg, hgr⟩, hm⟩, he⟩ := h
+  by_cases hw : (w == u) = true
+  · simp only [hw, if_true, Option.some.injEq] at he
+    subst he
+    exact ⟨g, hg, hgr, by rw [← eq_of_beq hw]; exact hm⟩
+  · simp [hw] at he
+
+/-- Nothing to add leaves the rule as composed. -/
+theorem addOver_nil (o : Json) : addOver [] o = o := by
+  unfold addOver
+  split <;> simp
+
 /-- What an admitted block says of each governor (step 8): no graph effect over a frontier reach, and its reach
     exists, holds no unit of a reading set (nor does its own unit), and, for a content-changing effect, holds only
     units that are unwritten, parts or norms. -/
@@ -445,6 +500,9 @@ theorem nonrule_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (he :
 
 /-! The run path (1.5.8) -/
 
+/-- The run path's tables are keyed by reach: two reaches are the same key exactly when they are equal. -/
+theorem reach_beq (r s : Reach) : (r == s) = true ↔ r = s := beq_iff_eq
+
 /-- A table of `f`'s own values reads as `f`. -/
 theorem memo_map {α β γ : Type} [BEq α] [LawfulBEq α] (ys : List γ) (k : γ → α) (f : α → β) :
     memo (ys.map fun y => (k y, f (k y))) f = f := by
@@ -461,9 +519,22 @@ theorem memo_map {α β γ : Type} [BEq α] [LawfulBEq α] (ys : List γ) (k : �
       · exact ih hv
   · rfl
 
+/-- Each step of the run path, read with `govern`'s own reaches, is `govern`'s step. -/
+theorem frameOnF_slow (D : SDoc) : frameOnF D (fun r => (coveredLayout D r).toOption.getD []) = frameOn D := rfl
+theorem baseObjF_slow (D : SDoc) : baseObjF D (fun r => (coveredLayout D r).toOption.getD []) = baseObj D := rfl
+theorem coveredBy_slow (D : SDoc) : coveredBy D (baseName D) = covered D := by funext r; cases r <;> rfl
+theorem governorsOfF_slow (D : SDoc) :
+    governorsOfF (ordered D) (fun r => (covered D r).toOption.getD []) = governorsOf D := rfl
+theorem composedF_slow (D : SDoc) : composedF D (fun r => (coveredLayout D r).toOption.getD []) (ordered D)
+    (fun r => (covered D r).toOption.getD []) = composed D := rfl
+theorem edgesOfF_slow (D : SDoc) (rule : String → Option SoftNode) :
+    edgesOfF (fun r => (covered D r).toOption.getD []) rule = edgesOf D rule := rfl
+theorem governBody_slow (D : SDoc) : govern D = (admitBlock D >>= fun _ => governBody D (ordered D)
+    (fun r => (coveredLayout D r).toOption.getD []) (fun r => (covered D r).toOption.getD [])) := rfl
+
 theorem fastReads_eq (D : SDoc) : fastReads D =
     (fun r => (coveredLayout D r).toOption.getD [], fun r => (covered D r).toOption.getD []) := by
-  have hb : coveredBy D (baseName D) = covered D := by funext r; cases r <;> rfl
+  have hb := coveredBy_slow D
   have hn : memo ((ruleUnits D).map fun u => (u, ((baseObjF D (fun r => (coveredLayout D r).toOption.getD []) u).toOption.bind
       fun o => (VE.Readings.Wire.decodeNorm D.re o).toOption).map (·.name))) (baseName D) = baseName D :=
     memo_map (ruleUnits D) id (baseName D)
@@ -474,8 +545,7 @@ theorem fastReads_eq (D : SDoc) : fastReads D =
 /-- The run path (1.5.8) answers exactly as `govern`, so every theorem about `govern` holds of it. -/
 theorem governFast_eq (D : SDoc) : governFast D = govern D := by
   unfold governFast
-  rw [fastReads_eq]
-  rfl
+  rw [fastReads_eq, governBody_slow]
 
 end Govern
 
