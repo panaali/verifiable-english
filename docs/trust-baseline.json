@@ -922,6 +922,13 @@
    "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
    "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
+  },
+  {
+   "class": "V",
+   "lines": 111,
+   "reason": "jt-2: VE/Service/Document.lean +79, ResponseShape/Schemas/Document.lean +12, VE/Service/Standalone.lean +11, VE/Compose/Dispatch.lean +9 (V; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-18",
+   "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
   }
  ]
 }
