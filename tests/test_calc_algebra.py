@@ -81,7 +81,9 @@ def limitReaders : CoreM String := do
 # `{key}-compare`, the side compared with itself, so past a limit even that is no identity. A row with two sides
 # gives `{key}`, their comparison (`some true` at the limit, `none` past it), and `{key}-form`, whether the first
 # side has a fraction form: `compare` multiplies each side by the other's denominator, which checks the term count
-# again, so the form is what pins a check of one factor only (recheck F8's hunt).
+# again, so the form is what pins a check of one factor only (recheck F8's hunt). A row past its limit also gives
+# `{key}-swapped`, its side compared second (after the other side, or after x), so a check of the first side only is
+# caught (hunt 2).
 LIMIT_CHECKS = {
     "nodes": ("VE.Calc.Frac.ofExpr?", "e.nodesWithin maxPolyTerms: at most 10,000 nodes in a side"),
     "sum": ("VE.Calc.Poly.add?", "p.length + q.length ≤ maxPolyTerms: at most 10,000 terms in a sum"),
@@ -96,7 +98,10 @@ LIMIT_CHECKS = {
 def digit_rows():
     """ME-1's digit limit (2.4), for each sign and each side of the line: `top` (10^4096 − 1, 4,096 digits) is at
     it, `big` (10^4096, 4,097 digits) one past it. At it by a literal and by a product; past it by a literal, a
-    product and a sum, so each place that builds a polynomial (`Frac.go`'s literal, `mul?`, `add?`) is pinned."""
+    product and a sum, so each place that builds a polynomial (`Frac.go`'s literal, `mul?`, `add?`) is pinned; and
+    at and past it in the middle monomial of three, c + c'·x + c·z, so a check of some monomials only, or of
+    constant ones only, is caught (hunt 2)."""
+    middle = '.mul (.add (.add (l 1) (.mul ({big} ) (v "x"))) (v "z")) (l ({c}))'.replace(" )", ")")
     for sign, minus in (("", ""), ("neg-", "-")):
         yield from (("numerator", f"digits-{sign}{kind}", side, None, kind.startswith("4096")) for kind, side in (
             ("4096", f"l ({minus}top)"),
@@ -104,6 +109,8 @@ def digit_rows():
             ("4097-literal", f"l ({minus}big)"),
             ("4097", f".mul (.pow (l 10) 4095) (l ({minus}10))"),
             ("4097-sum", f".add (l ({minus}top)) (l ({minus}1))"),
+            ("4096-middle-term", middle.format(big="l (top / 9)", c=f"{minus}9")),
+            ("4097-middle-term", middle.format(big=".pow (l 10) 4095", c=f"{minus}10")),
         ))
         # 4,096 digits above and below the line at once (top and top − 1 are coprime), so a bound on their product
         # is caught (hunt 1).
@@ -115,6 +122,8 @@ def digit_rows():
             ("4097", f".mul (.pow (l (1 / 10)) 4095) (l ({minus}1 / 10))"),
             # (2^4096 + 5^4096) / 10^4096 is in lowest terms: the sum is odd and 1 modulo 5.
             ("4097-sum", f".add (l ({minus}1 / 5 ^ 4096)) (l ({minus}1 / 2 ^ 4096))"),
+            ("4096-middle-term", middle.format(big="l (9 / top)", c=f"{minus}1 / 9")),
+            ("4097-middle-term", middle.format(big=".pow (l (1 / 10)) 4095", c=f"{minus}1 / 10")),
         ))
 
 
@@ -134,6 +143,9 @@ LIMITS = [
     ("nodes", "nodes-shared", "doubled 14", '.mul (l 16384) (v "x")', False),
     ("sum", "sum-10000", "four", None, True),
     ("sum", "sum-10001", ".add four (l 1)", None, False),
+    # 10,001 terms before like terms merge and 10,000 after (`four` has an xy term), so a count after merging is
+    # caught (hunt 2).
+    ("sum", "sum-merged-10001", '.add four (.mul (v "x") (v "y"))', None, False),
     # The sum of `Frac.add?`'s cross products: 9,900 + 101 terms (hunt 1).
     ("sum", "add-cross-sum-10001", '.add (.div (.mul (geo "x" 99) (geo "y" 98)) (v "u")) (.div (geo "z" 100) (v "w"))',
      None, False),
@@ -169,9 +181,6 @@ LIMITS = [
      False),
     ("exponent", "exponent-4097-middle-term", '.mul (.add (.pow (v "x") 4096) (v "z")) (.add (v "x") (v "z"))', None,
      False),
-    # 10 + 10^4096·x + 10z: past the digit limit in the middle monomial of three.
-    ("numerator", "digits-middle-term", '.mul (.add (.add (l 1) (.mul (.pow (l 10) 4095) (v "x"))) (v "z")) (l 10)',
-     None, False),
     # A power's numerator and its denominator, past the exponent limit at the last step: x^(17 · 241) (hunt 1).
     ("exponent", "pow-num-4097", '.pow (.pow (v "x") 17) 241', None, False),
     ("exponent", "pow-den-4097", '.pow (.div (l 1) (.pow (v "x") 17)) 241', None, False),
@@ -187,6 +196,8 @@ def limit_fixtures():
         else:
             yield key, f"compare ({side}, {other})", "some true" if at else "none"
             yield f"{key}-form", f"form ({side})", repr(at).lower()
+        if not at:
+            yield f"{key}-swapped", f'compare ({other or 'v "x"'}, {side})', "none"
 
 
 # The size of each side the table puts at or one past a limit, so its place is checked, not assumed.
@@ -292,11 +303,13 @@ SHARED = [
     ("nodes-shared-41", 'compare (doubled 40, .mul (l 1099511627776) (v "x"))', "none"),
     # `Poly.ofExpr?` looks for division only within the limits (hunt 1: it walked the whole tree first).
     ("poly-shared-41", "reprStr (Poly.ofExpr? (doubled 40))", "none"),
+    # A power's exponent is checked before its steps, in the numerator as in the denominator (hunt 2).
+    ("power-10^12", "compare (.pow (l 1) 1000000000000, l 1)", "none"),
 ]
 
 
 @pytest.mark.parametrize("fixture", [pytest.param(fixture, id=fixture[0]) for fixture in SHARED])
 def test_a_shared_side_costs_only_the_limit(tmp_path, fixture):
-    """2^41 − 1 nodes as a tree, 41 in memory: the node walk stops at the limit, so the answer comes at once. Each in
-    its own process, so a walk that does not stop fails its test alone (by `HANG_TIMEOUT`)."""
+    """Sides whose work stops at a limit at once: 2^41 − 1 nodes as a tree, 41 in memory, and a power of exponent
+    10^12. Each in its own process, so a walk that does not stop fails its test alone (by `HANG_TIMEOUT`)."""
     assert run_lean(tmp_path / "Shared.lean", [fixture]) == {fixture[0]: fixture[2]}
