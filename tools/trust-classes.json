@@ -12722,6 +12722,12 @@
         "VE.Events.Examples.vR1",
         "VE.Events.Examples.mC",
         "VE.Events.Examples.numC",
+        "VE.Events.Examples.envT7",
+        "VE.Events.Examples.vT7",
+        "VE.Events.Examples.gT7",
+        "VE.Events.Examples.notEntailedT7",
+        "VE.Events.Examples.entailedT7",
+        "VE.Events.Examples.mT7",
         "VE.Events.Examples.vX",
         "VE.Events.Examples.envX",
         "VE.Events.Examples.mX"
@@ -13136,6 +13142,8 @@
         "VE.Cardinality.Examples.colliding",
         "VE.Cardinality.Examples.dupModel",
         "VE.Cardinality.Examples.fa1Model",
+        "VE.Cardinality.Examples.fa2Model",
+        "VE.Cardinality.Examples.fa4dModel",
         "VE.Cardinality.Examples.everyone",
         "VE.Cardinality.Examples.share",
         "VE.Cardinality.Examples.nobody",
@@ -13186,31 +13194,42 @@
         "VE.Defaults.Fixtures.cStrict",
         "VE.Defaults.Fixtures.cert",
         "VE.Defaults.Fixtures.check1",
+        "VE.Defaults.Fixtures.collision1",
         "VE.Defaults.Fixtures.configs",
+        "VE.Defaults.Fixtures.deep",
+        "VE.Defaults.Fixtures.deepen",
         "VE.Defaults.Fixtures.dfltJ",
+        "VE.Defaults.Fixtures.diag3",
         "VE.Defaults.Fixtures.dα",
         "VE.Defaults.Fixtures.dβ",
         "VE.Defaults.Fixtures.dγ",
+        "VE.Defaults.Fixtures.dγ'",
         "VE.Defaults.Fixtures.dδ",
+        "VE.Defaults.Fixtures.dδo",
         "VE.Defaults.Fixtures.dδs",
         "VE.Defaults.Fixtures.dε",
         "VE.Defaults.Fixtures.dζ",
         "VE.Defaults.Fixtures.dζ0",
         "VE.Defaults.Fixtures.dσ",
         "VE.Defaults.Fixtures.elemOf",
+        "VE.Defaults.Fixtures.emptyJ",
         "VE.Defaults.Fixtures.envJ",
+        "VE.Defaults.Fixtures.exAt",
         "VE.Defaults.Fixtures.exc1",
         "VE.Defaults.Fixtures.excN",
         "VE.Defaults.Fixtures.excSelf",
         "VE.Defaults.Fixtures.fillOf",
         "VE.Defaults.Fixtures.follows1",
         "VE.Defaults.Fixtures.holds",
+        "VE.Defaults.Fixtures.holisticOpSoft",
         "VE.Defaults.Fixtures.holisticSoft",
         "VE.Defaults.Fixtures.layered",
         "VE.Defaults.Fixtures.model1",
         "VE.Defaults.Fixtures.modelJ",
         "VE.Defaults.Fixtures.notExc",
+        "VE.Defaults.Fixtures.operatorSoft",
         "VE.Defaults.Fixtures.outw",
+        "VE.Defaults.Fixtures.pairOf",
         "VE.Defaults.Fixtures.ps",
         "VE.Defaults.Fixtures.rankL",
         "VE.Defaults.Fixtures.regJ",
@@ -13223,6 +13242,7 @@
         "VE.Defaults.Fixtures.userSoft",
         "VE.Defaults.Fixtures.val",
         "VE.Defaults.Fixtures.wireOk",
+        "VE.Defaults.Fixtures.wireOkJ",
         "VE.Defaults.Fixtures.xAll",
         "VE.Defaults.Fixtures.xPerm",
         "VE.Defaults.Fixtures.xReq",
@@ -13232,15 +13252,27 @@
     "VE/Defaults/Premises.lean": {
       "C": [
         "VE.Defaults.assumptionsOf",
-        "VE.Defaults.certChecks"
+        "VE.Defaults.certChecks",
+        "VE.Defaults.collisionCheck",
+        "VE.Defaults.defaultCoherenceCheck",
+        "VE.Defaults.pairChecks"
+      ],
+      "G[R]": [
+        "VE.Defaults.decisionFree",
+        "VE.Defaults.limitDiag",
+        "VE.Defaults.questionDiag",
+        "VE.Defaults.whatOf"
       ],
       "G[V]": [
         "VE.Defaults.Basis",
         "VE.Defaults.Form",
         "VE.Defaults.bareExceptionLabels",
+        "VE.Defaults.collisionTuple",
+        "VE.Defaults.decidersOf",
         "VE.Defaults.defaultX",
         "VE.Defaults.dfltLabels",
         "VE.Defaults.dfltPremises",
+        "VE.Defaults.giveWayDeciders",
         "VE.Defaults.withoutDefaults",
         {
           "name": "VE.Defaults.basisOf",
@@ -13253,9 +13285,16 @@
           "tied": [
             "VE.Defaults.followsForm_short"
           ]
+        },
+        {
+          "name": "VE.Defaults.selU",
+          "tied": [
+            "VE.Defaults.cohPremiseU_selU"
+          ]
         }
       ],
       "S": [
+        "VE.Defaults.DefaultCoherent",
         "VE.Defaults.dfltLabelled",
         "VE.Defaults.dfltOf"
       ]
@@ -13809,6 +13848,61 @@
         "VE.Scales.asMuch",
         "VE.Scales.below",
         "VE.Scales.degreeSetoid"
+      ]
+    },
+    "VE/Calc/Poly.lean": {
+      "S": [
+        "VE.Calc.Poly.eval"
+      ],
+      "G[R]": [
+        "VE.Calc.Poly.coeffBound",
+        "VE.Calc.maxPolyExponent",
+        "VE.Calc.maxPolyTerms"
+      ],
+      "C": [
+        "VE.Calc.Expr.hasDiv",
+        "VE.Calc.Expr.nodesWithin",
+        "VE.Calc.Frac",
+        "VE.Calc.Frac.add?",
+        "VE.Calc.Frac.div?",
+        "VE.Calc.Frac.go",
+        "VE.Calc.Frac.mul?",
+        "VE.Calc.Frac.ofExpr?",
+        "VE.Calc.Frac.pow?",
+        "VE.Calc.Identity.compare",
+        "VE.Calc.Mono",
+        "VE.Calc.Mono.mul",
+        "VE.Calc.Poly",
+        "VE.Calc.Poly.add?",
+        "VE.Calc.Poly.combine",
+        "VE.Calc.Poly.cons0",
+        "VE.Calc.Poly.fits",
+        "VE.Calc.Poly.guard",
+        "VE.Calc.Poly.mul?",
+        "VE.Calc.Poly.neg",
+        "VE.Calc.Poly.norm",
+        "VE.Calc.Poly.ofExpr?",
+        "VE.Calc.Poly.one",
+        "VE.Calc.Poly.pow?",
+        "VE.Calc.differsAt",
+        "VE.Calc.identityCheck",
+        "VE.Calc.mulVars",
+        "VE.Calc.varsLe"
+      ],
+      "P": [
+        "VE.Calc.Frac.Means",
+        "VE.Calc.Poly.Within",
+        "VE.Calc.vprod"
+      ]
+    },
+    "VE/Events/Conservative.lean": {
+      "S": [
+        "VE.Events.oldEnv"
+      ],
+      "P": [
+        "VE.Events.expDays",
+        "VE.Events.firstDay",
+        "VE.Events.expansion"
       ]
     }
   }

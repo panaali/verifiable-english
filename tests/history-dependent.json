@@ -1600,6 +1600,18 @@
    ]
   },
   {
+   "test": "tests/test_trust_mutants.py",
+   "why": "starts git in tests/test_trust_mutants.py, tools/lean_share.py, tools/trust_mutants.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_trust_mutants.py:git: git",
+    "tools/lean_share.py:_git: git",
+    "tools/trust_mutants.py:git: git"
+   ]
+  },
+  {
    "test": "tests/test_trust_ratchet.py",
    "why": "starts git (git archive, git merge-file, git show) in tests/test_trust_ratchet.py, tools/regen_generated.py, tools/trust_map.py",
    "recorded": [

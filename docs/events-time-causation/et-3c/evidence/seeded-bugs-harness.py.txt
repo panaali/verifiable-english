@@ -1,0 +1,52 @@
+"""et-3c seeded bugs (et-3b's harness with this item's mutants and Conservative.lean): apply one mutant to the
+committed tree, run `lake build VE.Events.Examples`, then elaborate the six events files as one scratch file so every
+#guard and example runs even when a proof upstream fails; restore.
+Usage: python3 harness.py <worktree> <mutant> (prints one JSON record)."""
+import subprocess, sys, os, re, json
+ROOT = sys.argv[1]
+LEAN = ROOT + '/lean'
+env = dict(os.environ, PATH=os.path.expanduser('~/.elan/bin') + ':' + os.environ['PATH'])
+C = 'VE/Events/Conservative.lean'
+MUTANTS = {
+ 'oldEnv-keeps-links': (C, 'if ss.contains V.day || V.links.any (·.predicate == p) then none',
+   'if ss.contains V.day then none'),
+ 'oldEnv-keeps-day-predicates': (C, 'if ss.contains V.day || V.links.any (·.predicate == p) then none',
+   'if V.links.any (·.predicate == p) then none'),
+ 'oldEnv-keeps-day-constants': (C, '| some s => if s == V.day then none else some s', '| some s => some s'),
+ 'oldEnv-keeps-day-sort': (C, 'sorts := E.sorts.filter (· != V.day)', 'sorts := E.sorts'),
+ 'expansion-before-reflexive': (C, '      m.down < n.down)', '      m.down ≤ n.down)'),
+ 'firstDay-zero': (C, 'def firstDay (V : EventsEnv) : Nat := (V.dates.head?.map (·.num)).getD 0',
+   'def firstDay (V : EventsEnv) : Nat := 0'),
+}
+FILES = ['VE/Events/Decl.lean', 'VE/Events/Premises.lean', 'VE/Events/Calendar.lean', 'VE/Events/Completion.lean',
+         C, 'VE/Events/Examples.lean']
+IMPORTS = ['import VE.Semantics', 'import VE.Time.Calendar', 'import VE.Norms.Prefix', 'import VE.Finite',
+           'import VE.Readings.Names', 'import VE.Readings.Superpose']
+name = sys.argv[2]
+path, old, new = MUTANTS[name]
+src = open(os.path.join(LEAN, path)).read()
+assert src.count(old) == 1, name
+open(os.path.join(LEAN, path), 'w').write(src.replace(old, new))
+try:
+    b = subprocess.run(['lake', 'build', 'VE.Events.Examples'], cwd=LEAN, env=env, capture_output=True, text=True)
+    parts, origin = list(IMPORTS), [None] * len(IMPORTS)
+    for f in FILES:
+        for i, l in enumerate(open(os.path.join(LEAN, f)).read().splitlines(), 1):
+            if not l.startswith('import '):
+                parts.append(l); origin.append((f, i, l.strip()))
+    scratch = os.path.join(LEAN, 'EtThreeCMutantScratch.lean')
+    open(scratch, 'w').write('\n'.join(parts) + '\n')
+    s = subprocess.run(['lake', 'env', 'lean', 'EtThreeCMutantScratch.lean'], cwd=LEAN, env=env, capture_output=True,
+                       text=True)
+    os.remove(scratch)
+    failing = []
+    for l in s.stdout.splitlines():
+        m = re.match(r'EtThreeCMutantScratch.lean:(\d+):\d+: error: (.*)', l)
+        if m:
+            f, i, text = origin[int(m.group(1)) - 1]
+            failing.append({'at': f'lean/{f}:{i}', 'line': text[:120], 'error': m.group(2)[:80]})
+    print(json.dumps({'mutant': name, 'file': 'lean/' + path, 'replace': old.strip(), 'with': new.strip(),
+                      'lake_build_VE.Events.Examples': 'passes' if b.returncode == 0 else 'fails',
+                      'failing': failing[:12]}, indent=1, ensure_ascii=False))
+finally:
+    subprocess.run(['git', 'checkout', '--', 'lean/' + path], cwd=ROOT)
