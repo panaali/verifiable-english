@@ -39638,6 +39638,20 @@ theorem VE.Scope.Examples.byte_tests
                                 VE.Layout.lastNonBlank " \n".toUTF8 0 2 = Option.none
   -- uses VE.Layout.isBlank@VE.Layout.List VE.Layout.isDigit@VE.Layout.List VE.Layout.lastNonBlank@VE.Layout.List VE.Layout.lineStart@VE.Layout.List VE.Layout.nl@VE.Layout.List VE.Layout.skipSpaces@VE.Layout.List VE.Layout.sp@VE.Layout.List VE.Layout.spacesOnly@VE.Layout.List
   -- expr 1449821843
+theorem VE.Scope.Examples.depth_bound
+  VE.Scope.depthOk 2 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.false ∧
+    VE.Scope.depthOk 3 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.true ∧
+      VE.Scope.ownSafe 2 (Lean.Json.arr #[Lean.Json.arr #[Lean.Json.str "top"]]) = Bool.true
+  -- uses VE.Scope.depthOk@VE.Scope.Effects VE.Scope.ownSafe@VE.Scope.Effects
+  -- expr 3566393300
+theorem VE.Scope.Examples.effects_six
+  ∀ (e : VE.Scope.Effect),
+    (∃ p, e = VE.Scope.Effect.frame p) ∨
+      (∃ c, e = VE.Scope.Effect.reguard c) ∨
+        (∃ c, e = VE.Scope.Effect.carveOut c) ∨
+          e = VE.Scope.Effect.precedes ∨ e = VE.Scope.Effect.yields ∨ e = VE.Scope.Effect.title
+  -- uses VE.Scope.Effect.carveOut@VE.Scope.Effects VE.Scope.Effect.frame@VE.Scope.Effects VE.Scope.Effect.precedes@VE.Scope.Effects VE.Scope.Effect.reguard@VE.Scope.Effects VE.Scope.Effect.title@VE.Scope.Effects VE.Scope.Effect.yields@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
+  -- expr 91933473
 theorem VE.Scope.Examples.markers
   VE.Layout.markerLen "* x".toUTF8 0 3 = Option.some 2 ∧
     VE.Layout.markerLen "- x".toUTF8 0 3 = Option.some 2 ∧
@@ -39647,6 +39661,24 @@ theorem VE.Scope.Examples.markers
             VE.Layout.markerLen "12 x".toUTF8 0 4 = Option.none ∧ VE.Layout.markerLen ". x".toUTF8 0 3 = Option.none
   -- uses VE.Layout.markerLen@VE.Layout.List
   -- expr 26530222
+theorem VE.Scope.Examples.mergeParts_text
+  ∀ (u : String) (lead item : Lean.Json),
+    (∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), lead = Lean.Json.obj kvs → kvs.WF) →
+      (∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), item = Lean.Json.obj kvs → kvs.WF) →
+        VE.Scope.mergeParts u lead item = VE.Scope.Examples.mergePartsText u lead item
+  -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
+  -- expr 919831232
+theorem VE.Scope.Examples.narrowings
+  (VE.Scope.narrowing
+          (Lean.Json.arr #[Lean.Json.str "and", Lean.Json.str "own", Lean.Json.arr #[Lean.Json.str "top"]])).isSome =
+      Bool.true ∧
+    (VE.Scope.narrowing (Lean.Json.arr #[Lean.Json.str "and", Lean.Json.str "own", Lean.Json.str "own"])).isNone =
+        Bool.true ∧
+      (VE.Scope.narrowing
+            (Lean.Json.arr #[Lean.Json.str "and", Lean.Json.arr #[Lean.Json.str "top"], Lean.Json.str "own"])).isNone =
+        Bool.true
+  -- uses VE.Scope.narrowing@VE.Scope.Effects
+  -- expr 3727866699
 theorem VE.Scope.Examples.of_source
   VE.Layout.ofSource "Rules:\n* a\n  b\n" [("u1", 0, 7), ("u2", 7, 11), ("u3", 11, 15)] =
     [{ id := "u1", span := (0, 7), item := Option.none, midLine := Bool.false, lead := Bool.true, label := Bool.false,
@@ -39657,6 +39689,22 @@ theorem VE.Scope.Examples.of_source
         para := 0 }]
   -- uses VE.Layout.Unit.mk@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.ofSource@VE.Layout.List
   -- expr 908525811
+theorem VE.Scope.Examples.own_binder
+  VE.Scope.ownSafe VE.Scope.depthLimit
+        (Lean.Json.arr
+          #[Lean.Json.str "forall", Lean.Json.str "user",
+            Lean.Json.arr #[Lean.Json.str "and", Lean.Json.str "own", Lean.Json.arr #[Lean.Json.str "top"]]]) =
+      Bool.false ∧
+    VE.Scope.ownSafe VE.Scope.depthLimit
+          (Lean.Json.arr
+            #[Lean.Json.str "and", Lean.Json.str "own",
+              Lean.Json.arr #[Lean.Json.str "forall", Lean.Json.str "user", Lean.Json.arr #[Lean.Json.str "top"]]]) =
+        Bool.true ∧
+      VE.Scope.ownSafe VE.Scope.depthLimit
+          (Lean.Json.arr #[Lean.Json.str "exists", Lean.Json.str "user", Lean.Json.str "own"]) =
+        Bool.false
+  -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.ownSafe@VE.Scope.Effects
+  -- expr 1979751685
 theorem VE.Scope.Examples.para_counts
   (VE.Layout.paraCounts "a\n\n  \n\t\x0d\nb ".toUTF8).toList = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3] ∧
     VE.Scope.Examples.paraAgrees [("a", "x\n\n  \n\t\x0d\nb "), ("b", "c\n \n"), ("c", "\n\nd")] = Bool.true
@@ -39732,6 +39780,108 @@ theorem VE.Scope.Examples.span_tests
             VE.Discourse.spansDisjoint (5, 9) (0, 5) = Bool.true ∧ VE.Discourse.spansDisjoint (0, 6) (5, 9) = Bool.false
   -- uses VE.Discourse.spanIn@VE.Layout.Anchors VE.Discourse.spansDisjoint@VE.Layout.Anchors
   -- expr 388391006
+theorem VE.Scope.Examples.unordered_join
+  (VE.Scope.Examples.unordered.getObjVal? "0").isOk = Bool.false ∧
+    (VE.Scope.Examples.unordered.getObjVal? "a").isOk = Bool.true ∧
+      Option.map (fun o => (o.getObjVal? "0").isOk)
+            (VE.Scope.Examples.mergePartsText "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
+          Option.some Bool.true ∧
+        Option.map (fun o => (o.getObjVal? "0").isOk)
+              (VE.Scope.mergeParts "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
+            Option.some Bool.false ∧
+          Option.map (fun o => (o.getObjVal? "a").isOk)
+              (VE.Scope.mergeParts "u" VE.Scope.Examples.unordered (Lean.Json.mkObj [])).toOption =
+            Option.some Bool.true
+  -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
+  -- expr 1307899726
+theorem VE.Scope.commutes_symm
+  ∀ (e₁ e₂ : VE.Scope.Effect), VE.Scope.Commutes e₁ e₂ = VE.Scope.Commutes e₂ e₁
+  -- uses VE.Scope.Commutes@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
+  -- expr 3137095935
+theorem VE.Scope.firstKeys_mem
+  ∀ (l : List (String × Lean.Json)),
+    (∀ (p : String × Lean.Json), p ∈ l → ∀ (q : String × Lean.Json), q ∈ l → p.fst = q.fst → p = q) →
+      ∀ (p : String × Lean.Json), p ∈ l → p ∈ VE.Readings.Wire.firstKeys l
+  -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
+  -- expr 2628849165
+theorem VE.Scope.firstKeys_self
+  ∀ (l : List (String × Lean.Json)), (List.map (fun x => x.fst) l).Nodup → VE.Readings.Wire.firstKeys l = l
+  -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
+  -- expr 1819661494
+theorem VE.Scope.hasOwn_mono
+  ∀ (n m : Nat) (j : Lean.Json), n ≤ m → VE.Scope.hasOwn n j = Bool.true → VE.Scope.hasOwn m j = Bool.true
+  -- uses VE.Scope.hasOwn@VE.Scope.Effects
+  -- expr 2926161442
+theorem VE.Scope.impl_map_eq
+  ∀ (f : String → Lean.Json → Lean.Json) (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    (∀ (p : String × Lean.Json), p ∈ Std.DTreeMap.Internal.Impl.Const.toList t → f p.fst p.snd = p.snd) →
+      Std.DTreeMap.Internal.Impl.map f t = t
+  -- uses
+  -- expr 2894362387
+theorem VE.Scope.lookups_absent
+  ∀ (j : Lean.Json) (ls : List (String × Lean.Json)),
+    VE.Scope.lookups j = Except.ok ls →
+      ∀ (k : String), (j.getObjVal? k).toOption = Option.none ↔ ¬k ∈ List.map (fun x => x.fst) ls
+  -- uses VE.Scope.lookups@VE.Scope.Effects
+  -- expr 1096841098
+theorem VE.Scope.lookups_fields
+  ∀ (j : Lean.Json),
+    (∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), j = Lean.Json.obj kvs → kvs.WF) →
+      VE.Scope.lookups j = VE.Bridge.fields j
+  -- uses VE.Bridge.fields@VE.Bridge VE.Scope.lookups@VE.Scope.Effects
+  -- expr 3055929161
+theorem VE.Scope.lookups_spec
+  ∀ (j : Lean.Json) (ls : List (String × Lean.Json)),
+    VE.Scope.lookups j = Except.ok ls →
+      (List.map (fun x => x.fst) ls).Nodup ∧ ∀ (k : String) (v : Lean.Json), (k, v) ∈ ls ↔ j.getObjVal? k = Except.ok v
+  -- uses VE.Scope.lookups@VE.Scope.Effects
+  -- expr 3638113382
+theorem VE.Scope.members_obj
+  ∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), VE.Scope.members (Lean.Json.obj kvs) = kvs.toList
+  -- uses VE.Scope.members@VE.Scope.Effects
+  -- expr 3799283134
+theorem VE.Scope.mergeParts_conflict
+  ∀ (u : String) (lead item : Lean.Json) (k : String),
+    (lead.getObjVal? k).toOption.isSome = Bool.true →
+      (item.getObjVal? k).toOption.isSome = Bool.true → (VE.Scope.mergeParts u lead item).isOk = Bool.false
+  -- uses VE.Scope.mergeParts@VE.Scope.Effects
+  -- expr 2393194960
+theorem VE.Scope.mergeParts_keys
+  ∀ (u : String) (lead item out : Lean.Json),
+    VE.Scope.mergeParts u lead item = Except.ok out →
+      ∀ (k : String) (v : Lean.Json),
+        out.getObjVal? k = Except.ok v ↔
+          lead.getObjVal? k = Except.ok v ∧ (item.getObjVal? k).toOption = Option.none ∨
+            item.getObjVal? k = Except.ok v ∧ (lead.getObjVal? k).toOption = Option.none
+  -- uses VE.Scope.mergeParts@VE.Scope.Effects
+  -- expr 90748884
+theorem VE.Scope.mkObj_getObjVal
+  ∀ (l : List (String × Lean.Json)),
+    (List.map (fun x => x.fst) l).Nodup →
+      ∀ (k : String) (v : Lean.Json), (Lean.Json.mkObj l).getObjVal? k = Except.ok v ↔ (k, v) ∈ l
+  -- uses
+  -- expr 4158588899
+theorem VE.Scope.substOwn_id
+  ∀ (g c : Lean.Json), VE.Scope.hasOwn VE.Scope.depthLimit c = Bool.false → VE.Scope.substOwn g VE.Scope.depthLimit c = c
+  -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
+  -- expr 97531739
+theorem VE.Scope.substOwn_id_le
+  ∀ (g : Lean.Json) (n : Nat) (c : Lean.Json), VE.Scope.hasOwn n c = Bool.false → VE.Scope.substOwn g n c = c
+  -- uses VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
+  -- expr 4072281703
+theorem VE.Scope.substOwn_no_own
+  ∀ (g c : Lean.Json),
+    VE.Scope.hasOwn VE.Scope.depthLimit g = Bool.false →
+      VE.Scope.depthOk VE.Scope.depthLimit c = Bool.true →
+        VE.Scope.hasOwn VE.Scope.depthLimit (VE.Scope.substOwn g VE.Scope.depthLimit c) = Bool.false
+  -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.depthOk@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
+  -- expr 1371360906
+theorem VE.Scope.substOwn_no_own_le
+  ∀ (g : Lean.Json),
+    VE.Scope.hasOwn VE.Scope.depthLimit g = Bool.false →
+      ∀ (n : Nat) (c : Lean.Json), n ≤ VE.Scope.depthLimit → VE.Scope.hasOwn n (VE.Scope.substOwn g n c) = Bool.false
+  -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
+  -- expr 1826027073
 theorem VE.SearchBudget.chain_denote
   ∀ {S : VE.Structure} {s : String} (a : VE.Formula) (σ : VE.Valuation S),
     VE.Formula.denote S σ a →
