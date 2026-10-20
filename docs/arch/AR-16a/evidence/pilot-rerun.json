@@ -1,0 +1,137 @@
+{
+ "note": "Each side's outcome as the recorder writes it (tools/lean_first_diff.py pilot_check), stored as the SHA-256 of its canonical JSON; the full outcomes are in the A/B recordings (head side spliced with these re-runs).",
+ "pilots_added_during_the_run": [
+  {
+   "answered": true,
+   "base_outcome_sha256": "7d72033ae77b5a6d8b32b194e0faef10b2442c083cc22a566e5d5b43676929a3",
+   "base_seconds": 161,
+   "base_status": null,
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/evidence/ps6r/all-four-nd-all.ve.md",
+   "head_outcome_sha256": "7d72033ae77b5a6d8b32b194e0faef10b2442c083cc22a566e5d5b43676929a3",
+   "head_seconds": 156,
+   "head_status": null,
+   "same": true,
+   "source_sha256": "03d10910afcb923d61ea6c996b266ef1b94f5077",
+   "timeout": 600
+  },
+  {
+   "answered": true,
+   "base_outcome_sha256": "2f6e6d6d687c2cd4b9cd8073b242b66e4ddb34f650957eae0467979d7d0ee554",
+   "base_seconds": 2,
+   "base_status": "exit 1",
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/evidence/ps6r/all-four-translation-without-content.ve.md",
+   "head_outcome_sha256": "2f6e6d6d687c2cd4b9cd8073b242b66e4ddb34f650957eae0467979d7d0ee554",
+   "head_seconds": 2,
+   "head_status": "exit 1",
+   "same": true,
+   "source_sha256": "3908eeae5c1cf683a3c9761c5deef679d6286447",
+   "timeout": 600
+  },
+  {
+   "answered": true,
+   "base_outcome_sha256": "f32bccea1b300594fee057c9d97f4b369d7572900b05cf409d0db7e7e96f89bd",
+   "base_seconds": 29,
+   "base_status": "CheckerUnavailable",
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "head_outcome_sha256": "f32bccea1b300594fee057c9d97f4b369d7572900b05cf409d0db7e7e96f89bd",
+   "head_seconds": 30,
+   "head_status": "CheckerUnavailable",
+   "same": true,
+   "source_sha256": "07f57f0527147ba3e9fe7f0b280ce1093b5c06f7",
+   "timeout": 600
+  },
+  {
+   "answered": true,
+   "base_outcome_sha256": "ee0f3bd8d070db19361852e5ed7e791d89985436cc245c780d4359a7d349bf62",
+   "base_seconds": 48,
+   "base_status": null,
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/probes/companion/translation-companions-without_source_word.ve.md",
+   "head_outcome_sha256": "ee0f3bd8d070db19361852e5ed7e791d89985436cc245c780d4359a7d349bf62",
+   "head_seconds": 48,
+   "head_status": null,
+   "same": true,
+   "source_sha256": "38d170b803b1fb97aa04d09923a0fdd320fcbcab",
+   "timeout": 600
+  },
+  {
+   "answered": true,
+   "base_outcome_sha256": "0dfd5b067b4211418d3ccd7e851d750f0b9627a6ea71955d59c83a0b23c1cc39",
+   "base_seconds": 0,
+   "base_status": "exit 1",
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/probes/discourse-in-translation-probe.ve.md",
+   "head_outcome_sha256": "0dfd5b067b4211418d3ccd7e851d750f0b9627a6ea71955d59c83a0b23c1cc39",
+   "head_seconds": 0,
+   "head_status": "exit 1",
+   "same": true,
+   "source_sha256": "c6acc1540754a6af8ca9c45404929e37470c591b",
+   "timeout": 600
+  },
+  {
+   "answered": true,
+   "base_outcome_sha256": "6fa92107df58563088b9771ab3bcea11d4ab90840d41858ecaa02ca76189268f",
+   "base_seconds": 149,
+   "base_status": null,
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/readings/nd-all.ve.md",
+   "head_outcome_sha256": "6fa92107df58563088b9771ab3bcea11d4ab90840d41858ecaa02ca76189268f",
+   "head_seconds": 146,
+   "head_status": null,
+   "same": true,
+   "source_sha256": "f8af2e2d34d26c52d5593a828f5a5efb7c5a67a4",
+   "timeout": 600
+  },
+  {
+   "answered": true,
+   "base_outcome_sha256": "cf0cd03516b1dbbe9a42473f0870f1c0b8717b2f4c300e974454da58aca9def6",
+   "base_seconds": 138,
+   "base_status": "exit 1",
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/readings/soft-chain.ve.md",
+   "head_outcome_sha256": "cf0cd03516b1dbbe9a42473f0870f1c0b8717b2f4c300e974454da58aca9def6",
+   "head_seconds": 99,
+   "head_status": "exit 1",
+   "same": true,
+   "source_sha256": "5e6152a0af18801d6fce6d6bfd3b88988b7af448",
+   "timeout": 600
+  },
+  {
+   "answered": true,
+   "base_outcome_sha256": "2f6e6d6d687c2cd4b9cd8073b242b66e4ddb34f650957eae0467979d7d0ee554",
+   "base_seconds": 1,
+   "base_status": "exit 1",
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/translation-without-content.ve.md",
+   "head_outcome_sha256": "2f6e6d6d687c2cd4b9cd8073b242b66e4ddb34f650957eae0467979d7d0ee554",
+   "head_seconds": 1,
+   "head_status": "exit 1",
+   "same": true,
+   "source_sha256": "ce39dc866978f24a361d427692503296e1f80d35",
+   "timeout": 600
+  }
+ ],
+ "timeout_flips": [
+  {
+   "answered": true,
+   "base_outcome_sha256": "ae4f348e3523bb1f6e895be4cbcee92a26fe607d83873bb3b98f3cb4b551cd50",
+   "base_seconds": 482,
+   "base_status": null,
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "head_outcome_sha256": "ae4f348e3523bb1f6e895be4cbcee92a26fe607d83873bb3b98f3cb4b551cd50",
+   "head_seconds": 486,
+   "head_status": null,
+   "same": true,
+   "source_sha256": "d95fe816730f136d6d2cd95fcd9d5c11d581b648",
+   "timeout": 1500
+  },
+  {
+   "answered": true,
+   "base_outcome_sha256": "3d676f75962517b375d3aca3673e5d4f99474de7b4369518596bd6ec06827280",
+   "base_seconds": 632,
+   "base_status": null,
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "head_outcome_sha256": "3d676f75962517b375d3aca3673e5d4f99474de7b4369518596bd6ec06827280",
+   "head_seconds": 797,
+   "head_status": null,
+   "same": true,
+   "source_sha256": "7fd6d251519d2ad3ccff1d7c4ff094eefbd72650",
+   "timeout": 1500
+  }
+ ]
+}
