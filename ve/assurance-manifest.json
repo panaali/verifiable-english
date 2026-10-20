@@ -1874,7 +1874,8 @@
       "lean/VE/Compose/ProfilesMain.lean": "generator only: prints VE.Compose.profileTable and the profiles an environment lists as JSON for ve/profile_table.json; reads no request and is not a service decoder",
       "lean/VE/NormDefaults/PacksExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 compare the kind table's answers as compressed JSON; no runner path",
       "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 run the kind table on a decoded soft source with a case JSON and compare compressed answers; no runner path",
-      "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it"
+      "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
+      "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)"
     }
   },
   "plan_operations": {
