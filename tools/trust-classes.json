@@ -12880,16 +12880,6 @@
         }
       ]
     },
-    "VE/Events/Conservative.lean": {
-      "S": [
-        "VE.Events.oldEnv"
-      ],
-      "P": [
-        "VE.Events.expDays",
-        "VE.Events.firstDay",
-        "VE.Events.expansion"
-      ]
-    },
     "VE/Events/Decl.lean": {
       "S": [
         "VE.Events.EventSort",
@@ -13353,6 +13343,8 @@
         "VE.Cardinality.Examples.colliding",
         "VE.Cardinality.Examples.dupModel",
         "VE.Cardinality.Examples.fa1Model",
+        "VE.Cardinality.Examples.fa2Model",
+        "VE.Cardinality.Examples.fa4dModel",
         "VE.Cardinality.Examples.everyone",
         "VE.Cardinality.Examples.share",
         "VE.Cardinality.Examples.nobody",
@@ -13747,6 +13739,16 @@
         "VE.Scales.asMuch",
         "VE.Scales.below",
         "VE.Scales.degreeSetoid"
+      ]
+    },
+    "VE/Events/Conservative.lean": {
+      "S": [
+        "VE.Events.oldEnv"
+      ],
+      "P": [
+        "VE.Events.expDays",
+        "VE.Events.firstDay",
+        "VE.Events.expansion"
       ]
     },
     "VE/Service/Registry.lean": {
