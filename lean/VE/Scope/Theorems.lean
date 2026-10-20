@@ -329,6 +329,24 @@ theorem governorsOf_iff (D : SDoc) (u : String) (g : Governor) :
     g ∈ governorsOf D u ↔ g ∈ D.governors ∧ unary g.effect = true ∧ ∃ us, covered D g.reach = .ok us ∧ u ∈ us := by
   simp [governorsOf, ordered, List.mem_mergeSort, coversU_iff]
 
+/-- Order 1.4: the governors sorted by reach class, then by the position of their unit, stably. -/
+theorem ordered_sorted (D : SDoc) : (ordered D).Pairwise (fun g h => classOf g.reach < classOf h.reach ∨
+    (classOf g.reach = classOf h.reach ∧ position D g.unit ≤ position D h.unit)) := by
+  have := List.sorted_mergeSort (le := fun g h : Governor => classOf g.reach < classOf h.reach ||
+      (classOf g.reach == classOf h.reach && position D g.unit ≤ position D h.unit))
+    (fun a b c hab hbc => by simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at *; omega)
+    (fun a b => by simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq]; omega) D.governors
+  simpa [ordered] using this
+
+theorem mem_ordered (D : SDoc) (g : Governor) : g ∈ ordered D ↔ g ∈ D.governors := List.mem_mergeSort
+
+/-- A rule unit's base name is the name the chain's decoder reads from its base object. -/
+theorem baseName_some (D : SDoc) (u n : String) : baseName D u = some n ↔
+    ∃ o N, baseObj D u = .ok o ∧ VE.Readings.Wire.decodeNorm D.re o = .ok N ∧ N.name = n := by
+  unfold baseName
+  cases baseObj D u with
+  | error => simp [Except.toOption]
+  | ok o => cases h : VE.Readings.Wire.decodeNorm D.re o <;> simp [Except.toOption, h]
 /-- What an admitted block says of each governor (step 8): no graph effect over a frontier reach, and its reach
     exists, holds no unit of a reading set (nor does its own unit), and, for a content-changing effect, holds only
     units that are unwritten, parts or norms. -/
