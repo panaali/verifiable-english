@@ -207,8 +207,8 @@ MUTANTS = {
 
 # Mutants that change the source and cannot change an answer, each with the reason.
 EQUIVALENT = {
-    "conjunct-dropped-check-3": "`act` is normalised and begins with `{0} `, so it holds a second word: `ws.length ≥ 2` "
-                                "always holds when the conjuncts before it do (as in today's `canonicalAct`)",
+    "conjunct-dropped-check-3": "`act` is normalised and begins with `{0} `, so it holds a second word: "
+                                "`ws.length ≥ 2` always holds when the conjuncts before it do (as in `canonicalAct`)",
     "conjunct-dropped-decodeRegulatedWith-7": "`acts` dropped from `acts && role == .plain`: without acts@0 a plain "
                                               "declaration with `act` or `form` is refused by the fields check before, "
                                               "so the both-or-neither and form checks find neither",
