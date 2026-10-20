@@ -1,8 +1,7 @@
-"""ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1, H-2, H-3, R-6's false identity).
+"""ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1 to H-4 and R-6).
 
-Lean decides every answer here: one Lean file evaluates each fixture with `VE.Calc.Poly`, and the tests read its
-printed lines. Python only states the fixtures. Inlining named values (H-4, R-6's named sides), the meaning
-`IsIdentity`, the runner and its point search are me-9b's; R-10c waits for ME-4.
+Lean decides every answer here: one Lean file evaluates each fixture with `VE.Calc.Poly` and `VE.Calc.Identity`, and
+the tests read its printed lines. Python only states the fixtures. R-10c waits for ME-4.
 """
 import json
 import shutil
@@ -15,6 +14,7 @@ from tests.lean_build import LEAN, lean_build
 
 HEADER = """import Lean
 import VE.Calc.Poly
+import VE.Calc.Identity
 open VE.Calc
 
 def v (n : String) : Expr := .val n
@@ -63,6 +63,35 @@ def at' (p : Expr × Expr) (κ : List (String × Rat)) : String :=
 def line (key value : String) : IO Unit := IO.println (key ++ "\\t" ++ value.replace "\\n" "\\\\n")
 def form (e : Expr) : String := reprStr (Frac.ofExpr? e).isSome
 def nodes (e : Expr) : String := reprStr ((e.nodesWithin 100000).map (100000 - ·))
+def free (n : String) : Decl := ⟨n, .free⟩
+def defd (n : String) (e : Expr) : Decl := ⟨n, .defined e⟩
+def counted (n : String) (r : Counted) : Decl := ⟨n, .counted (Thunk.pure none) r⟩
+/-- R-6 (spec 13.6): the round-trip and closed-form times over free path, light and speed, and x, y free; then a
+counted value that is undefined, one whose budget ran out, and a definition that divides by zero. -/
+def r6 : List Decl :=
+  [free "path", free "light", free "speed",
+   defd "round_trip" (.add (.div (v "path") (.sub (v "light") (v "speed")))
+     (.div (v "path") (.add (v "light") (v "speed")))),
+   defd "closed_form" (.div (.mul (.mul (l 2) (v "path")) (v "light")) (.sub (sq (v "light")) (sq (v "speed")))),
+   free "x", free "y", counted "none" (.ok none), counted "spent" .exhausted,
+   defd "zero_rate" (.div (v "path") (.sub (v "speed") (v "speed")))]
+/-- H-4: the squared speed ratio stated as 10⁻⁸, with the path D free or stated as 2 × 10⁷. -/
+def h4 (d : Source) : List Decl := [⟨"sq", .stated (1 / 10 ^ 8)⟩, ⟨"D", d⟩]
+def twoDsq : Expr := .mul twoD (v "sq")
+/-- A chain of definitions, each the previous one twice: 2ᵏ⁺¹ − 1 nodes once inlined, k + 1 in memory. -/
+def chain (k : Nat) : List Decl :=
+  free "c0" :: (List.range k).map fun i => defd s!"c{i + 1}" (.add (v s!"c{i}") (v s!"c{i}"))
+/-- Zero at each of the 13 values tried, and not the zero polynomial. -/
+def roots : Expr := identityValues.foldl (fun e q => .mul e (.sub (v "x") (l q))) (l 1)
+/-- A row: its outcome, point, sides and the reason it shows (with a budget of 7). -/
+def run (ds : List Decl) (p : Expr × Expr) : String :=
+  let r := identityRun ds p.1 p.2
+  (wide (r.outcome, r.point, r.sides, r.reason 7)).replace "VE.Numbers." ""
+def κ6 (n : String) : Rat := if n = "light" then 3 else 1
+/-- An inlined claim's names, and its verdict before and after inlining at κ6. -/
+def inl (c : Claim) : String := wide ((c.inline r6 (freeNames r6)).toOption.map fun c' =>
+  (c'.exprs.map (·.names.eraseDups), c.decide (values (assign r6 (freeNames r6) κ6)), c'.decide (some ∘ κ6)))
+def fault (c : Claim) : String := match c.inline r6 (freeNames r6) with | .error v => reprStr v | .ok _ => "ok"
 open Lean in
 /-- The definitions of `VE.Calc.Poly`, theorems aside, whose value reads a limit: each one is in the limit table. -/
 def limitReaders : CoreM String := do
@@ -263,6 +292,72 @@ FIXTURES = [
 ]
 
 
+HOLDS, FAILS, UNDEFINED = (f"(Outcome.decided (Verdict.{v}), none, none, none)" for v in ("holds", "fails", "undefined"))
+EVALUATIONS = ('(Outcome.unknown (UnknownReason.limit (Limit.evaluations)), none, none, '
+               'some "unknown: the budget of 7 evaluation steps ran out")')
+# me-9 review F4: past the node limit a side may have one term, and a product is counted before like terms merge, so
+# neither shows spec 1.5's "more than 10,000 terms"; nor do the exponent and digit bounds.
+POLY_LIMIT = "(Outcome.unknown (UnknownReason.limit (Limit.polyTerms)), none, none, some \"unknown: {}\")"
+NODES = POLY_LIMIT.format("a side would have more than 10,000 nodes once its named values are written out")
+FORM = POLY_LIMIT.format("a normal form on the way would have more than 10,000 terms before like terms merge, "
+                         "an exponent above 4,096 or a coefficient of more than 4,096 digits")
+
+
+def fails(point, sides):
+    return f"(Outcome.decided (Verdict.fails), some {point}, some {sides}, none)"
+
+
+# The runner over named, stated and free values (spec 8.2 and 2.7; R-6, H-4, me-9 review F3 and F4).
+IDENTITY_FIXTURES = [
+    ("r6-h1", 'run r6 (v "round_trip", v "closed_form")', HOLDS),
+    # R-6's `sq`: point 0 sets every free value read to 1, in declaration order; path, light and speed are not read.
+    ("r6-sq", 'run r6 (sq (.add (v "x") (v "y")), .add (sq (v "x")) (sq (v "y")))', fails('[("x", 1), ("y", 1)]', "(4, 2)")),
+    ("h4", 'run (h4 .free) (twoDsq, .mul twoD (l (1 / 10 ^ 8)))', HOLDS),
+    ("h4-stated", "run (h4 (.stated (2 * 10 ^ 7))) (twoDsq, l (2 / 5))", HOLDS),
+    ("h4-stated-fails", "run (h4 (.stated (2 * 10 ^ 7))) (twoDsq, l (1 / 2))", fails("[]", "((2 : Rat)/5, (1 : Rat)/2)")),
+    ("point-later", 'run r6 (sq (v "x"), v "x")', fails('[("x", 2)]', "(4, 2)")),
+    # At x = 1 the left side denotes nothing, at 2 the sides agree, at 3 they differ.
+    ("point-skips-undefined", "run r6 recip", fails('[("x", 3)]', "((1 : Rat)/2, 1)")),
+    ("not-shown", "run r6 (roots, l 0)", '(Outcome.unknown (UnknownReason.identityNotShown), none, none, '
+     'some "unknown: the normal forms differ and no point where the sides differ was found")'),
+    ("undefined-missing", 'run r6 (v "nowhere", v "x")', UNDEFINED),
+    ("undefined-counted", 'run r6 (v "x", v "none")', UNDEFINED),
+    ("exhausted", 'run r6 (v "spent", v "x")', EVALUATIONS),
+    # The first faulty side names the fault.
+    ("fault-undefined-first", 'run r6 (v "nowhere", v "spent")', UNDEFINED),
+    ("fault-exhausted-first", 'run r6 (v "spent", v "nowhere")', EVALUATIONS),
+    ("fault-right", 'run r6 (v "x", v "spent")', EVALUATIONS),
+    # F3: a side whose divisor is zero wherever it denotes is undefined, not a vacuous identity: the review's four
+    # cases, through a definition, and a zero divisor inside a divisor or under a power 0.
+    ("f3-0/0", "run r6 (.div (l 0) (l 0), l 5)", UNDEFINED),
+    ("f3-0/0-compare", "compare (.div (l 0) (l 0), l 5)", "some true"),
+    ("f3-x-x", 'run r6 (.div (.sub (v "x") (v "x")) (.sub (v "x") (v "x")), l 5)', UNDEFINED),
+    ("f3-1/0", "run r6 (.div (l 1) (l 0), .div (l 2) (l 0))", UNDEFINED),
+    ("f3-binom", 'run r6 (.add (sq (.add (v "x") (v "y"))) (.div (l 1) (l 0)), '
+     '.add (.add (sq (v "x")) (sq (v "y"))) (.div (l 1) (l 0)))', UNDEFINED),
+    ("f3-zero-rate", 'run r6 (v "zero_rate", v "zero_rate")', UNDEFINED),
+    ("f3-inner", "run r6 (.div (l 1) (.div (l 1) (l 0)), l 0)", UNDEFINED),
+    ("f3-pow-0", "run r6 (.pow (.div (l 1) (l 0)) 0, l 1)", UNDEFINED),
+    # A divisor that is zero at some points only.
+    ("f3-cancel-holds", "run r6 cancel", HOLDS),
+    ("f4-nodes", 'run r6 (sumx 5000, .mul (l 5001) (v "x"))', NODES),
+    ("f4-nodes-right", 'run r6 (v "x", sumx 5000)', NODES),
+    ("f4-product", 'run r6 (.pow (geo "x" 100) 2, .pow (geo "x" 100) 2)', FORM),
+    ("f4-exponent", 'run r6 (.mul (.pow (v "x") 4096) (v "x"), .pow (v "x") 4097)', FORM),
+    ("f4-digits", "run r6 (l big, l big)", FORM),
+    # Inlining (spec 2.7) and the meaning's assignment.
+    ("free-names", "reprStr (freeNames r6)", '["path", "light", "speed", "x", "y"]'),
+    ("assign", 'reprStr (values (assign r6 (freeNames r6) κ6) "round_trip", '
+     'values (assign r6 (freeNames r6) κ6) "closed_form")', "(some (3 : Rat)/4, some (3 : Rat)/4)"),
+    ("claim-inline", 'inl (.compare ⟨.eq, false⟩ (v "round_trip") (v "closed_form"))',
+     'some ([["path", "light", "speed"], ["path", "light", "speed"]], VE.Numbers.Verdict.holds, '
+     'VE.Numbers.Verdict.holds)'),
+    ("claim-fault-undefined-first", 'fault (.within (v "x") (v "nowhere") (v "spent"))', "VE.Calc.Val.undefined"),
+    ("claim-fault-exhausted-first", 'fault (.within (v "x") (v "spent") (v "nowhere"))', "VE.Calc.Val.exhausted"),
+]
+FIXTURES += IDENTITY_FIXTURES
+
+
 def run_lean(path, fixtures, extra=""):
     lake = shutil.which("lake")
     if lake is None:
@@ -307,6 +402,9 @@ SHARED = [
     ("poly-shared-41", "reprStr (Poly.ofExpr? (doubled 40))", "none"),
     # A power's exponent is checked before its steps, in the numerator as in the denominator (hunt 2).
     ("power-10^12", "compare (.pow (l 1) 1000000000000, l 1)", "none"),
+    # The runner lists the names a side reads, and looks for zero divisors, only once the normaliser accepted it
+    # (wip/me-9b 10819663b: listing them first walked this chain as a tree for 17 minutes).
+    ("chain-41", 'run (chain 40) (v "c40", .mul (l 1099511627776) (v "c0"))', NODES),
 ]
 
 
