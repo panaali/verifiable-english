@@ -37,8 +37,8 @@ MUTANTS = [
      's!"acts@0 on {f} is not implemented"', CX),
     ("decodeNormsEnvironment-fixed", "decodeNormsEnvironment", W, "decodeRegulatedIn ps fx p args raw",
      "decodeRegulatedIn ps [] p args raw", EX),
-    ("decodeNormsEnvironment-profiles", "decodeNormsEnvironment", W, "if ps.isEmpty then e.profiles else ps⟩",
-     "e.profiles⟩", EX),
+    ("decodeNormsEnvironment-profiles", "decodeNormsEnvironment", W,
+     "if ps.isEmpty then e.profiles else ps, environment⟩", "e.profiles, environment⟩", EX),
     ("canonicalEnvironmentJson-act", "canonicalEnvironmentJson", W, "canonicalActIn ps fx name args.length act",
      "canonicalAct name args.length act", EX),
     ("decodeSource-acts", "decodeSource", W, "decodeNormsEnvironment environment displayConstants (acts := true)",
@@ -69,8 +69,15 @@ MUTANTS = [
     ("typingView-acts", "typingView", E, '  let env := if ps.contains "acts@0" then VE.Norms.Wire.actsView env ps else env\n',
      "", EX),
     ("actsRefuses-speech", "actsRefuses", D, '"alternatives@0", "speech-acts@0"].map', '"alternatives@0"].map', CX),
-    ("row-requires", "profileTable (acts row)", D, '⟨"acts@0", ["norms@0"], actsRefuses, "layer"⟩',
-     '⟨"acts@0", [], actsRefuses, "layer"⟩', CX),
+    ("row-requires", "profileTable (acts row)", D, '⟨"acts@0", ["norms@0"], actsRefuses, "layer"⟩,\n  ⟨"closure@0"',
+     '⟨"acts@0", [], actsRefuses, "layer"⟩,\n  ⟨"closure@0"', CX),
+    # with Tree.check's refusal NormDefaults' regBody keeps it too, so `check_eq` holds and only a fixture can fail
+    ("treeCheck-and-regBody-plain-act", "Tree.check", T, "    | .permission, none | .obligation, none =>",
+     '    | .plain, some _ => throw s!"InvalidInput: invalid regulated fields for {r.name}"\n'
+     "    | .permission, none | .obligation, none =>", EX,
+     ("lean/VE/NormDefaults/Check.lean", "        | .permission, none =>",
+      '        | .plain, some _ => throw s!"InvalidInput: invalid regulated fields for {r.name}"\n'
+      "        | .permission, none =>")),
     # Python
     ("py-drop-form", "Environment._decode (form)", "ve/environment.py", 'raw_reg.get("permission"), raw_reg.get("form"))',
      'raw_reg.get("permission"))', LOADS),
@@ -105,22 +112,25 @@ def main() -> int:
     out = ROOT / "docs/act-phrases/ap-1b/mutants.json"
     results = json.loads(out.read_text()) if out.exists() else {}
     touched = set()
-    for ident, definition, file, old, new, check in MUTANTS:
+    for ident, definition, file, old, new, check, *more in MUTANTS:
         if args.only and ident not in args.only:
             continue
-        path = ROOT / file
-        text = path.read_text()
-        assert text.count(old) == 1, (ident, text.count(old))
-        path.write_text(text.replace(old, new))
+        edits = [(ROOT / file, old, new)] + [(ROOT / f, o, n) for f, o, n in more]
+        texts = [path.read_text() for path, _, _ in edits]
+        for (path, o, n), text in zip(edits, texts):
+            assert text.count(o) == 1, (ident, path, text.count(o))
+            path.write_text(text.replace(o, n))
         try:
             killed, line = run(check)
         finally:
-            path.write_text(text)
+            for (path, _, _), text in zip(edits, texts):
+                path.write_text(text)
         if file.startswith("lean/"):
             touched.add(check[5:])
         results[ident] = {"definition": definition, "file": file, "test": check.removeprefix("lean:"),
                           "killed": killed, "first_failure": line}
-        print(ident, "KILLED" if killed else "SURVIVED", line)
+        print(ident, "KILLED" if killed else "SURVIVED", line, flush=True)
+        out.write_text(json.dumps(results, indent=1, ensure_ascii=False) + "\n")
     for module in sorted(touched):  # the restored sources' modules, so no stale build is left
         subprocess.run(["lake", "build", module], cwd=ROOT / "lean", env=ENV, capture_output=True, check=True)
     out.write_text(json.dumps(results, indent=1, ensure_ascii=False) + "\n")
