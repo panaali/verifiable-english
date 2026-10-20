@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36184,
+    "total_lines": 36413,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1766,6 +1766,27 @@
           "replayDilemmaU"
         ],
         "reason": "the alternatives source with the completion, its package bindings and witness filling from JSON (ET-7; et-7b's scenario rows use the same decoded source); the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Calc/Units.lean",
+        "lines": 229,
+        "sha256": "93bb99da21a4d296a1a3edc7d15a94a200b3de40b61f18f9667c53ca5771590d",
+        "ranges": [
+          [
+            1,
+            229
+          ]
+        ],
+        "declarations": [
+          "checkFields",
+          "decodeExponents",
+          "decodeFactor",
+          "decodeUnit",
+          "decodeV2",
+          "decodeLegacy",
+          "decode"
+        ],
+        "reason": "ve-units@2 (math-evidence spec 6.2, me-6b): its only decoder, its identity and the claim-level dimension checks; ve-units@1 through W6a's decodeEnvironment; the full file is pinned"
       }
     ],
     "other_json": {
