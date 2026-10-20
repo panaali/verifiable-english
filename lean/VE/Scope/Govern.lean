@@ -162,8 +162,9 @@ def firstDup : List String → Option String
   | [] => none
   | x :: xs => if xs.contains x then some x else firstDup xs
 
-/-- Spec 6.2's steps 1 to 6 and 8. Step 7 (discourse's anchor checks) and step 8's check of an anchor's heading or
-    a label's item unit are sc-3ab's; until then `coveredLayout` refuses an anchor or label reach. -/
+/-- Spec 6.2's steps 1 to 8. Step 7 (discourse's anchor checks) and step 8's check of an anchor's heading or a
+    label's item unit are sc-3ab's; until then a block with anchors is refused, and so is an anchor or label reach
+    (`coveredLayout`). -/
 def admitBlock (D : SDoc) : Except String Unit := do
   if D.governors.length > 256 then throw "ResourceLimit: scope governors"
   if D.listNames.length > 256 then throw "ResourceLimit: scope list names"
@@ -178,6 +179,7 @@ def admitBlock (D : SDoc) : Except String Unit := do
     unless (unitIds D.doc).contains unit do throw s!"ScopeUnknownUnit: {unit}"
     let us ← VE.Layout.listRun D.layout lead
     unless cn.units == us do throw s!"ManifestMismatch: scope.list_names.{cn.name}.units"
+  unless D.anchors.isEmpty do throw "UnsupportedProfile: scope@0 anchors require SC-3a"   -- sc-3ab: `anchorsOk`
   for g in D.governors do
     for c in conditions g.effect do
       unless depthOk depthLimit c do throw "ResourceLimit: scope condition depth exceeds 64"
