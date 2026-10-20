@@ -298,7 +298,8 @@ def size() -> list[tuple[str, str]]:
     base = git("merge-base", "HEAD", "main").strip()
     rows = [line.split("\t") for line in git("diff", "--numstat", base, "HEAD").splitlines()]
     total = sum(int(a) + int(b) for a, b, f in rows if not SIZE_OUT.fullmatch(f))
-    return [(f"about {round(total, -2):,} changed lines", "git diff --numstat against the merge base"),
+    return [*((f"about {near:,} changed lines", "git diff --numstat against the merge base")  # the hundred either side
+              for near in {total // 100 * 100, -(-total // 100) * 100}),
             (f"That is over {WORDS[total // 500]} times the guideline", "git diff --numstat against the merge base")]
 
 
