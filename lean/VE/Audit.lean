@@ -314,6 +314,7 @@ import VE.Route.Run
 import VE.Route.RunSound
 import VE.Route.Wire
 import VE.Route.WireSound
+import VE.Scales.Degrees
 import VE.Scales.Examples
 import VE.Scales.Intended
 import VE.Scales.Theorems
@@ -5658,7 +5659,10 @@ import VE.WireContract.Engine
 #print axioms VE.Route.sat_checked
 #print axioms VE.Route.tableauValid_certificateSound
 #print axioms VE.Route.verifyOrder_sound
+#print axioms VE.Scales.Examples.conservative_false
+#print axioms VE.Scales.Examples.conservative_true
 #print axioms VE.Scales.Examples.fb2_refuted
+#print axioms VE.Scales.Examples.fb6_open
 #print axioms VE.Scales.Examples.intended_of
 #print axioms VE.Scales.Examples.order_cases
 #print axioms VE.Scales.Examples.symbols_cases
@@ -5675,12 +5679,29 @@ import VE.WireContract.Engine
 #print axioms VE.Scales.Intended.sameTrans
 #print axioms VE.Scales.Intended.total
 #print axioms VE.Scales.Intended.trans
+#print axioms VE.Scales.StrictLinear.connex
+#print axioms VE.Scales.StrictLinear.irrefl
+#print axioms VE.Scales.StrictLinear.trans
+#print axioms VE.Scales.below_of
 #print axioms VE.Scales.dim_iff
 #print axioms VE.Scales.dim_ok
+#print axioms VE.Scales.grade_open
 #print axioms VE.Scales.intended_iff_and
+#print axioms VE.Scales.intended_iff_degrees
+#print axioms VE.Scales.mem_symbols
+#print axioms VE.Scales.more_ne_same
+#print axioms VE.Scales.pairwise_or
 #print axioms VE.Scales.premises_iff_intended
 #print axioms VE.Scales.premises_wellTyped
+#print axioms VE.Scales.reread_admissible
+#print axioms VE.Scales.reread_denote
+#print axioms VE.Scales.reread_fresh
+#print axioms VE.Scales.reread_intended
+#print axioms VE.Scales.reread_rel1
+#print axioms VE.Scales.reread_rel2
 #print axioms VE.Scales.scalePremises_labels_nodup
+#print axioms VE.Scales.scales_conservative
+#print axioms VE.Scales.tupleTyped_reread
 #print axioms VE.Scales.typed1
 #print axioms VE.Scales.typed2
 #print axioms VE.Scope.Examples.anchor_checks
