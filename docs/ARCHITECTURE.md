@@ -88,7 +88,8 @@ innermost Python layer; the DRI adopted the five-layer map of review T5, checked
   the client sent it ([lean-service.md](spec/lean-service.md), `lean/VE/Service/Protocol.lean`). Environments can
   be registered once and named by handle (lean-first F2).
 - **Modes.** One runner `Json → Json` per mode (counted above), each pinned by an `rfl` theorem in `Protocol.lean`.
-  The client's list of modes is `MODES` in `ve/backends/service_schema.py`. Statement-layer runners dispatch on a
+  The modes are registered in `lean/VE/Service/Registry.lean`; the handshake states them, `envelope.json` pins them
+  and the client reads them from there (`MODES` in `ve/backends/service_schema.py`). Statement-layer runners dispatch on a
   `kind` string and pass the cases they do not claim down a chain (rights → soft norms → norms → route). Every
   statement-layer route is a service mode; `ve/backends/relay.py` and the manifest-bound calls of `lean.run` are the
   only ways `ve` reaches Lean.
