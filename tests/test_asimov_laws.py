@@ -394,8 +394,9 @@ def _unspecified_permission(data):
 def test_permission_default_stays_allow_until_norm_defaults_combines_with_alternatives():
     """The source grants no permission by default, so `allow` is not stated by it. Since events-time-causation
     ET-7 the combination exists: the alternatives route takes `norm-defaults@0`, the switched environment
-    constructs and Lean elaborates `fill (inlineTree A)` with `permitted` unspecified. The case keeps `allow`
-    until ET-8 switches it and re-runs it (README, "The completion defaults and `unspecified`")."""
+    constructs and Lean elaborates `fill (inlineTree A)` with `permitted` unspecified. ET-8 re-runs the rules so
+    (tests/test_et8_completion.py); the committed environment keeps `allow`, which the extended case's `risk@0`
+    decisions need (README, "The completion defaults and `unspecified`")."""
     from tests import lean_routes
     data = load()[0]
     assert "alternatives@0" in data["profiles"]
