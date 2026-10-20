@@ -1308,10 +1308,18 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
 #print axioms VE.Defaults.basis_strict_sound
+#print axioms VE.Defaults.cohPremiseU_selU
+#print axioms VE.Defaults.cohU_rank_valid
+#print axioms VE.Defaults.collisionTuple_some
+#print axioms VE.Defaults.collision_sound
+#print axioms VE.Defaults.collision_unranked
+#print axioms VE.Defaults.defaultCoherenceCheck_sound
 #print axioms VE.Defaults.dflt_wellFormed
 #print axioms VE.Defaults.entailsX_mono
 #print axioms VE.Defaults.followsForm_short
+#print axioms VE.Defaults.pairChecks_sound
 #print axioms VE.Defaults.premisesX_split
+#print axioms VE.Defaults.questionDiag_none
 #print axioms VE.Defaults.strict_of_withoutDefaults
 #print axioms VE.Definitions.Alias.alias_acceptance
 #print axioms VE.Definitions.Alias.conservative
@@ -6012,6 +6020,7 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.coh_canon
 #print axioms VE.SoftNorms.coh_rank_valid
 #print axioms VE.SoftNorms.coh_rank_valid_unconditional
+#print axioms VE.SoftNorms.coh_rank_valid_with
 #print axioms VE.SoftNorms.coherent_expands
 #print axioms VE.SoftNorms.colliding_of
 #print axioms VE.SoftNorms.comparable_false
