@@ -1,6 +1,8 @@
-import VE.Scope.Effects
+import VE.Scope.Govern
+import VE.NormDefaults.Check
+import VE.Readings.Strings
 
-/-! Theorems of scope@0's effects (docs/spec/scope.md 5.1). -/
+/-! Theorems of scope@0's effects and of `govern` (docs/spec/scope.md 5.1). -/
 
 namespace VE.Scope
 open Lean
@@ -282,5 +284,71 @@ theorem lookups_fields (j : Json) (hw : ∀ kvs, j = .obj kvs → kvs.WF) : look
       simp [heq]
     simp only [lookups, VE.Bridge.fields, Json.getObj?, bind, Except.bind, pure, Except.pure, hfm, firstKeys_self _ hd]
   | _ => simp [lookups, VE.Bridge.fields, Json.getObj?, bind, Except.bind]
+
+/-! ## `govern` (sc-1ac): the block's admission, the reaches and the order. The refusals' theorems
+    (`frontier_graph_refused`, `readings_refused`, `nonrule_refused`) are sc-1ad's. -/
+
+section Govern
+open VE.SoftNorms (SoftNode)
+open VE.NormDefaults (ebind_ok)
+
+/-- The item's rule is the chain's own decoding of the joined object: scope decodes no rule field itself. -/
+theorem itemRule_decoder (D : SDoc) (u : String) (lead item : Json) (N : SoftNode)
+    (h : itemRule D u lead item = .ok N) :
+    ∃ m, mergeParts u lead item = .ok m ∧ VE.Readings.Wire.decodeNorm D.re m = .ok N :=
+  (ebind_ok _ _ _).mp h
+
+/-- The block is admitted before anything else, with or without governors. -/
+theorem govern_admits (D : SDoc) (out : Json) (ho : govern D = .ok out) : admitBlock D = .ok () := by
+  unfold govern at ho
+  cases h : admitBlock D with
+  | error e => rw [h] at ho; cases ho
+  | ok u => rfl
+
+/-- Identity: without governors, an admitted block leaves the document exactly as written. -/
+theorem govern_identity (D : SDoc) (h₀ : admitBlock D = .ok ()) (h : D.governors = []) (hp : partUnits D = []) :
+    govern D = .ok D.doc := by
+  simp [govern, h₀, h, hp, bind, Except.bind, pure, Except.pure]
+
+/-- Without governors, once the block is admitted, a `part` content is refused. -/
+theorem govern_orphan (D : SDoc) (h₀ : admitBlock D = .ok ()) (h : D.governors = []) (u : String)
+    (hu : u ∈ partUnits D) : ∃ e, govern D = .error e ∧ e.startsWith "ScopeOrphanPart" = true := by
+  cases hp : partUnits D with
+  | nil => rw [hp] at hu; cases hu
+  | cons v _ =>
+    refine ⟨"ScopeOrphanPart: " ++ v, ?_, ?_⟩
+    · simp [govern, h₀, h, hp, bind, Except.bind, throw, throwThe, MonadExceptOf.throw]; rfl
+    · have := VE.Readings.startsWith_append_ascii "ScopeOrphanPart" (": " ++ v) (by decide)
+      rwa [← String.append_assoc] at this
+
+theorem coversU_iff (D : SDoc) (g : Governor) (u : String) :
+    coversU D g u = true ↔ ∃ us, covered D g.reach = .ok us ∧ u ∈ us := by
+  unfold coversU
+  cases covered D g.reach <;> simp [Except.toOption]
+
+theorem governorsOf_iff (D : SDoc) (u : String) (g : Governor) :
+    g ∈ governorsOf D u ↔ g ∈ D.governors ∧ unary g.effect = true ∧ ∃ us, covered D g.reach = .ok us ∧ u ∈ us := by
+  simp [governorsOf, ordered, List.mem_mergeSort, coversU_iff]
+
+/-- Order 1.4: the governors are sorted by reach class, then by the position of their unit. -/
+theorem ordered_sorted (D : SDoc) : (ordered D).Pairwise (fun g h => classOf g.reach < classOf h.reach ∨
+    (classOf g.reach = classOf h.reach ∧ position D g.unit ≤ position D h.unit)) := by
+  have := List.sorted_mergeSort (le := fun g h : Governor => classOf g.reach < classOf h.reach ||
+      (classOf g.reach == classOf h.reach && position D g.unit ≤ position D h.unit))
+    (fun a b c hab hbc => by simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at *; omega)
+    (fun a b => by simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq]; omega) D.governors
+  simpa [ordered] using this
+
+theorem mem_ordered (D : SDoc) (g : Governor) : g ∈ ordered D ↔ g ∈ D.governors := List.mem_mergeSort
+
+/-- A rule unit's base name is the name the chain's decoder reads from its base object. -/
+theorem baseName_some (D : SDoc) (u n : String) : baseName D u = some n ↔
+    ∃ o N, baseObj D u = .ok o ∧ VE.Readings.Wire.decodeNorm D.re o = .ok N ∧ N.name = n := by
+  unfold baseName
+  cases baseObj D u with
+  | error => simp [Except.toOption]
+  | ok o => cases h : VE.Readings.Wire.decodeNorm D.re o <;> simp [Except.toOption, h]
+
+end Govern
 
 end VE.Scope

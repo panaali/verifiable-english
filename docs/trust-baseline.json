@@ -1006,6 +1006,20 @@
    "reason": "me-9: lean/VE/Calc/Poly.lean S +3 (VE.Calc.Poly.eval 3); K +0, untied V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9, 2026-10-18",
    "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d"
+  },
+  {
+   "class": "S",
+   "lines": 90,
+   "reason": "sc-1ac: lean/VE/Scope/Govern.lean S +90 (Reach, Governor, SDoc, applyEffect, isFrame, unary, graph, baseObj, covered, classOf, position, ordered, composed, affected, govern), V +42 (G[V] untied: keysOf, unitsOf, idOf, unitIds, contentOf, isPart, isNorm, objectOf, partUnits, ruleUnits, coveredLayout, frameOn, baseName, newContent, patch); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ac, 2026-10-18",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
+  },
+  {
+   "class": "V",
+   "lines": 42,
+   "reason": "sc-1ac: lean/VE/Scope/Govern.lean S +90 (Reach, Governor, SDoc, applyEffect, isFrame, unary, graph, baseObj, covered, classOf, position, ordered, composed, affected, govern), V +42 (G[V] untied: keysOf, unitsOf, idOf, unitIds, contentOf, isPart, isNorm, objectOf, partUnits, ruleUnits, coveredLayout, frameOn, baseName, newContent, patch); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ac, 2026-10-18",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
   }
  ]
 }
