@@ -763,9 +763,9 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
 | Size: at most ~500 changed lines outside generated files | over: see below |
 
-Size: about 5,500 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
+Size: about 5,700 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
 (`evidence/*.json`, `mutants-evidence.json`, the hunt probes), against the merge base (`git diff --numstat`): most
-of it is the tool, the test, the seeded bugs' `mutants.json` and this report. That is over ten times the guideline. The size rule's
+of it is the tool, the test, the seeded bugs' `mutants.json` and this report. That is over eleven times the guideline. The size rule's
 fallback is to deliver steps 1-3 for the operators step 1 showed matter; every operator but `arm-default`,
 `body-true`/`body-false`, `ne-eq`, `all-any` and `append-*` left a survivor on a finding's line, and removing those
 saves only their entries in `OPERATORS` and the few generator lines that write them, so all are kept. The bulk is the runner the task asks for (selection, scratch copies with
@@ -787,7 +787,7 @@ would leave no usable tool.
 7. PASS: DELTA has no rows and reserves nothing; trust +0 (no Lean file changed).
 8. PASS: `git diff --stat main...HEAD -- ve lean rust conformance` is empty.
 9. PASS: the tests `tools/select_tests.py` selects, `tests/test_trust_mutants.py` among them (`repo_map.py file
-   tools/trust_mutants.py`), on the Mac runner (`evidence/selected.json`) on `31cf8e2b6`: 32 units, exit 0; `lake build` exits 0 and
+   tools/trust_mutants.py`), on the Mac runner (`evidence/selected.json`) on `a71b9c573`: 32 units, exit 0; `lake build` exits 0 and
    `python3 lean/audit.py` exits 0 there (no Lean file changed).
 10. N.A.: no Lean statement or proof.
 11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
