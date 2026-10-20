@@ -1,0 +1,184 @@
+{
+ "mutants": [
+  {
+   "id": "Fresh-comparatives-only",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Fresh: a formula counts as fresh when it avoids the comparatives only; stops at reread_denote (scales_conservative's proof)",
+   "source_sha256": "8c35c6bd6dd541fda8ade82d9a0942315f4213179b88bae7e6f0d83c60e058c2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 10.1,
+   "output_tail": "error: VE/Scales/Theorems.lean:334:31: Type mismatch\nerror: VE/Scales/Theorems.lean:338:31: Type mismatch\n"
+  },
+  {
+   "id": "Fresh-first-predicate-skipped",
+   "file": "lean/VE/Scales/Intended.lean",
+   "claim": "Fresh: the first predicate a formula mentions is not checked; stops at reread_denote's atom cases",
+   "source_sha256": "8c35c6bd6dd541fda8ade82d9a0942315f4213179b88bae7e6f0d83c60e058c2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.9,
+   "output_tail": "error: VE/Scales/Theorems.lean:334:36: unsolved goals\nerror: VE/Scales/Theorems.lean:338:36: unsolved goals\nerror: VE/Scales/Theorems.lean:343:38: unsolved goals\n"
+  },
+  {
+   "id": "StrictLinear-connex-vacuous",
+   "file": "lean/VE/Scales/Degrees.lean",
+   "claim": "StrictLinear: connex made vacuous (`\u2228 a \u2260 b`); stops at intended_iff_degrees in both directions (connex built from `total`, and `total` from connex)",
+   "source_sha256": "d64946822d50c1bc33e40403d5e11bdbd55acd95a6e17dcda50d5790a8a6fa42",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "error: VE/Scales/Degrees.lean:102:35: Invalid `\u27e8...\u27e9` notation: The expected type\nerror: VE/Scales/Degrees.lean:105:33: Invalid `\u27e8...\u27e9` notation: The expected type\nerror: VE/Scales/Degrees.lean:149:33: Application type mismatch: The argument\n"
+  },
+  {
+   "id": "StrictLinear-irrefl-vacuous",
+   "file": "lean/VE/Scales/Degrees.lean",
+   "claim": "StrictLinear: irreflexivity made vacuous; stops at intended_iff_degrees (irrefl from the degrees)",
+   "source_sha256": "d64946822d50c1bc33e40403d5e11bdbd55acd95a6e17dcda50d5790a8a6fa42",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.2,
+   "output_tail": "error: VE/Scales/Degrees.lean:88:10: Type mismatch\nerror: VE/Scales/Degrees.lean:89:10: Type mismatch\nerror: VE/Scales/Degrees.lean:123:62: Type mismatch\n"
+  },
+  {
+   "id": "Degrees-outside-highest",
+   "file": "lean/VE/Scales/Degrees.lean",
+   "claim": "the degree classes put the objects outside the sort highest instead of lowest; stops at below_of (the order is no longer well defined on the classes of \"as much as\")",
+   "source_sha256": "d64946822d50c1bc33e40403d5e11bdbd55acd95a6e17dcda50d5790a8a6fa42",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.2,
+   "output_tail": "error: VE/Scales/Degrees.lean:57:25: Application type mismatch: The argument\nerror: VE/Scales/Degrees.lean:58:20: Application type mismatch: The argument\nerror: VE/Scales/Degrees.lean:59:23: Application type mismatch: The argument\n"
+  },
+  {
+   "id": "OneRole-symbol-conjunct-dropped",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "one role per predicate rests on WellFormed's symbol conjunct: with it dropped, more_ne_same's proof stops (the Nodup of the symbols is gone)",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.5,
+   "output_tail": "error: VE/Scales/Theorems.lean:224:12: Invalid projection: Projections are not supported on this type because it has no fields\nerror: VE/Scales/Theorems.lean:227:23: Invalid projection: Projections are not supported on this type because it has no fields\nerror: VE/Scales/Theorems.lean:228:12: Function expected at\n"
+  },
+  {
+   "id": "Reread-comparative-as-equative",
+   "file": "lean/VE/Scales/Theorems.lean",
+   "claim": "the reread structure reads a comparative like an equative; stops at reread_rel2 (the roles written out) and reread_admissible",
+   "source_sha256": "bb8ba1477e430a0db8380e53d0947299cf4220ffa1f5d7406146bd7156512eef",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 9.2,
+   "output_tail": "error: VE/Scales/Theorems.lean:252:116: unsolved goals\nerror: VE/Scales/Theorems.lean:283:54: Application type mismatch: The argument\n"
+  },
+  {
+   "id": "Reread-keeps-fresh-only",
+   "file": "lean/VE/Scales/Theorems.lean",
+   "claim": "the reread structure leaves every predicate as in S; stops at reread_rel2 and reread_rel1 (the roles written out) and reread_admissible",
+   "source_sha256": "bb8ba1477e430a0db8380e53d0947299cf4220ffa1f5d7406146bd7156512eef",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.3,
+   "output_tail": "error: VE/Scales/Theorems.lean:252:116: unsolved goals\nerror: VE/Scales/Theorems.lean:256:112: unsolved goals\nerror: VE/Scales/Theorems.lean:282:14: Invalid `\u27e8...\u27e9` notation: The expected type `S.4 p [x, y]` is not an inductive type\n"
+  },
+  {
+   "id": "Point-empty-sorts",
+   "file": "lean/VE/Scales/Theorems.lean",
+   "claim": "the one-object structure puts its object in no sort; stops at grade_open (no object of the sort)",
+   "source_sha256": "bb8ba1477e430a0db8380e53d0947299cf4220ffa1f5d7406146bd7156512eef",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 7.8,
+   "output_tail": "error: VE/Scales/Theorems.lean:375:59: Application type mismatch: The argument\nerror: VE/Scales/Theorems.lean:380:74: Application type mismatch: The argument\nerror: VE/Scales/Theorems.lean:381:89: Application type mismatch: The argument\n"
+  },
+  {
+   "id": "Threshold-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): a premise that gives every object each graded word (a threshold the premises must not choose); stops at FB6's #guard (the two models become one)",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep -m3 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.1,
+   "output_tail": "VE/Scales/Examples.lean:228:0: error: Expression\nVE/Scales/Examples.lean:248:0: error: Expression\nVE/Scales/Examples.lean:262:108: error: Tactic `decide` proved that the proposition\n"
+  },
+  {
+   "id": "Threshold",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "the same threshold premise, full build; stops at dim_iff",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && ! lake build VE.Scales.Examples 2>&1 | grep -m3 '^error: VE'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.9,
+   "output_tail": "error: VE/Scales/Theorems.lean:67:16: Function expected at\nerror: VE/Scales/Theorems.lean:70:16: Function expected at\nerror: VE/Scales/Theorems.lean:74:12: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce\n"
+  },
+  {
+   "id": "NotConservative-guard",
+   "file": "lean/VE/Scales/Premises.lean",
+   "claim": "guard level (Premises rebuilt alone, Examples elaborated over the built Theorems): the irreflexivity premise also says every response is reviewed (a premise about a predicate outside the block); stops at every fixture whose models lack `reviewed` (FB1's #guards first), among them the scales_conservative row's #guard (flaggedOnly no longer satisfies the premises) and conservative_false",
+   "source_sha256": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && export PATH=$HOME/.elan/bin:$PATH && lake build VE.Scales.Premises >/dev/null && ! lake env lean VE/Scales/Examples.lean 2>&1 | grep 'error'"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.6,
+   "output_tail": "VE/Scales/Examples.lean:70:0: error: Expression\nVE/Scales/Examples.lean:76:0: error: Expression\nVE/Scales/Examples.lean:95:0: error: Expression\nVE/Scales/Examples.lean:97:0: error: Expression\nVE/Scales/Examples.lean:99:0: error: Expression\nVE/Scales/Examples.lean:166:95: error: Tactic `decide` proved that the proposition\nVE/Scales/Examples.lean:167:95: error: Tactic `decide` proved that the proposition\nVE/Scales/Examples.lean:211:0: error: Expression\nVE/Scales/Examples.lean:228:0: error: Expression\nVE/Scales/Examples.lean:248:0: error: Expression\nVE/Scales/Examples.lean:262:108: error: Tactic `decide` proved that the proposition\nVE/Scales/Examples.lean:306:0: error: Expression\n"
+  }
+ ]
+}
