@@ -793,6 +793,15 @@ def wrapperRows : List ProfileRow := [
 
 def profileTable : List ProfileRow := baseRows ++ wrapperRows
 
+/-- The profiles whose records are the document's (`judgments@0`, JT-2): no environment decoder reads them. Each
+decoder reads the environment without them; the gate and the identities read the list as written. -/
+def documentLayers : List String := ["judgments@0"]
+
+def withoutDocumentLayers (environment : Lean.Json) : Lean.Json :=
+  match environment.getObjVal? "profiles" with
+  | .ok (.arr ps) => environment.setObjVal! "profiles" (.arr (ps.filter fun p => !documentLayers.any (.str · == p)))
+  | _ => environment
+
 /-- The one wrapper an environment lists: the environment mode gates a list with it by the whole table, and any
 other list by the base rows. -/
 def environmentWrapper : String := "readings@1"
