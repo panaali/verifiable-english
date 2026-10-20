@@ -3413,6 +3413,16 @@ theorem VE.Cardinality.Examples.connective_cases
                             (VE.Cardinality.Examples.yes.implies VE.Cardinality.Examples.no)
   -- uses VE.Cardinality.CFormula.and@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.implies@VE.Cardinality.Syntax VE.Cardinality.CFormula.not@VE.Cardinality.Syntax VE.Cardinality.CFormula.or@VE.Cardinality.Syntax VE.Cardinality.Examples.no@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Examples.yes@VE.Cardinality.Examples
   -- expr 3022675144
+theorem VE.Cardinality.Examples.count_lift
+  ∀ {M : VE.Order.FiniteModel Nat},
+    M.Valid VE.Cardinality.Examples.fomc.q.erase →
+      ∀ (c : VE.Cardinality.CountAtom),
+        c.sort ∈ VE.Cardinality.Examples.fomc.finite →
+          (VE.Cardinality.CFormula.holds (VE.Time.lift VE.Cardinality.Examples.fomc.q M.asStructure)
+              (VE.Cardinality.CFormula.count c) ↔
+            VE.Cardinality.Examples.holdsFin M (VE.Cardinality.CFormula.count c) = Bool.true)
+  -- uses VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CountAtom.sort@VE.Cardinality.Syntax VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Cardinality.Examples.holdsFin@VE.Cardinality.Examples VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Structure.Carrier@VE.Order.Semantics VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.lift@VE.Time.Semantics
+  -- expr 4070721944
 theorem VE.Cardinality.Examples.counts_two
   VE.Cardinality.Counts VE.Cardinality.Examples.two "user"
       [(1, VE.Cardinality.Body.any), (-1, VE.Cardinality.Examples.harm)] [2, 1] ∧
@@ -3507,6 +3517,38 @@ theorem VE.Cardinality.Examples.fa1_entails
   VE.Cardinality.CEntails VE.Cardinality.Examples.fomc VE.Cardinality.Examples.fa1 VE.Cardinality.Examples.fa1Conclusion
   -- uses VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.Examples.fa1@VE.Cardinality.Examples VE.Cardinality.Examples.fa1Conclusion@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples
   -- expr 1769235206
+theorem VE.Cardinality.Examples.fa1b_not_entails
+  ¬VE.Cardinality.CEntails VE.Cardinality.Examples.fomc VE.Cardinality.Examples.fa1.dropLast
+      VE.Cardinality.Examples.fa1Conclusion
+  -- uses VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.fa1@VE.Cardinality.Examples VE.Cardinality.Examples.fa1Conclusion@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples
+  -- expr 953407861
+theorem VE.Cardinality.Examples.fa2Model_valid
+  VE.Cardinality.Examples.fa2Model.Valid VE.Cardinality.Examples.fomc.q.erase
+  -- uses VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.Examples.fa2Model@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Time.QEnv.erase@VE.Time.Syntax
+  -- expr 3248441829
+theorem VE.Cardinality.Examples.fa2_agree
+  have T := VE.Time.lift VE.Cardinality.Examples.fomc.q VE.Cardinality.Examples.fa2Model.asStructure;
+  have b := VE.Cardinality.Body.atom VE.Cardinality.Examples.inc;
+  have w := fun f => VE.Order.Formula.denote T.lower [] f;
+  (w (VE.Time.atLeast VE.Cardinality.Examples.pm 3 b.toFormula) ∧
+      ¬w (VE.Time.atLeast VE.Cardinality.Examples.pm 4 b.toFormula)) ∧
+    (w (VE.Time.atMost VE.Cardinality.Examples.pm 3 b.toFormula) ∧
+        ¬w (VE.Time.atMost VE.Cardinality.Examples.pm 2 b.toFormula)) ∧
+      (w (VE.Time.exactly VE.Cardinality.Examples.pm 3 b.toFormula) ∧
+          ¬w (VE.Time.exactly VE.Cardinality.Examples.pm 2 b.toFormula)) ∧
+        w
+            (VE.Time.nOfM VE.Cardinality.Examples.pm 1 3 b.toFormula
+              (VE.Cardinality.Body.atom VE.Cardinality.Examples.stay).toFormula) ∧
+          ¬w
+              (VE.Time.nOfM VE.Cardinality.Examples.pm 0 3 b.toFormula
+                (VE.Cardinality.Body.atom VE.Cardinality.Examples.stay).toFormula)
+  -- uses VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.Examples.fa2Model@VE.Cardinality.Examples VE.Cardinality.Examples.fomc@VE.Cardinality.Examples VE.Cardinality.Examples.inc@VE.Cardinality.Examples VE.Cardinality.Examples.pm@VE.Cardinality.Examples VE.Cardinality.Examples.stay@VE.Cardinality.Examples VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Formula@VE.Order.Syntax VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atLeast@VE.Time.Count VE.Time.atMost@VE.Time.Count VE.Time.exactly@VE.Time.Count VE.Time.lift@VE.Time.Semantics VE.Time.nOfM@VE.Time.Count
+  -- expr 1771152071
+theorem VE.Cardinality.Examples.fa4d_not_entails
+  ¬VE.Cardinality.CEntails VE.Cardinality.Examples.paper [VE.Cardinality.Examples.fa4c 500]
+      (VE.Cardinality.Examples.fa4dOther 500)
+  -- uses VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Examples.fa4c@VE.Cardinality.Examples VE.Cardinality.Examples.fa4dOther@VE.Cardinality.Examples VE.Cardinality.Examples.paper@VE.Cardinality.Examples
+  -- expr 583829652
 theorem VE.Cardinality.Examples.fomc_wellFormed
   VE.Cardinality.Examples.fomc.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.fomc@VE.Cardinality.Examples
@@ -3633,6 +3675,14 @@ theorem VE.Cardinality.Examples.rel_cases_two
                   (VE.Cardinality.Examples.everyone VE.Cardinality.Rel.eq 3)
   -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.Examples.everyone@VE.Cardinality.Examples VE.Cardinality.Examples.two@VE.Cardinality.Examples VE.Cardinality.Rel.eq@VE.Cardinality.Syntax VE.Cardinality.Rel.le@VE.Cardinality.Syntax VE.Cardinality.Rel.lt@VE.Cardinality.Syntax
   -- expr 699934501
+theorem VE.Cardinality.Examples.rowsModel_valid
+  ∀ (E : VE.Cardinality.CEnv) (s : String) (rows : List (List String × Nat)),
+    (∀ (c : String), E.q.constants c = Option.none) →
+      (∀ (r : List String × Nat),
+          r ∈ rows → ∀ (p : String), p ∈ r.fst → E.q.predicates p = Option.some [VE.Time.QType.obj s]) →
+        (VE.Cardinality.Examples.rowsModel s rows).Valid E.q.erase
+  -- uses VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.Examples.rowsModel@VE.Cardinality.Examples VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QEnv.predicates@VE.Time.Syntax VE.Time.QType.obj@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
+  -- expr 1186878955
 theorem VE.Cardinality.Examples.share_two
   ∀ (c : VE.Cardinality.Cmp) (num den : Nat),
     VE.Cardinality.Proportion.holds VE.Cardinality.Examples.two
@@ -3692,6 +3742,15 @@ theorem VE.Cardinality.admitted_elab
         VE.Time.Admitted E.q Γ a → VE.Time.Admitted (E.elab fs) Γ a
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
   -- expr 2580797077
+theorem VE.Cardinality.atLeast_iff_le
+  ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
+    VE.Cardinality.Admissible E T →
+      ∀ {s : String},
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body) (n : Nat),
+            VE.Order.Formula.denote T.lower [] (VE.Time.atLeast s n b.toFormula) ↔ n ≤ VE.Cardinality.regionSize T s b
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atLeast@VE.Time.Count
+  -- expr 1095021076
 theorem VE.Cardinality.atom_inRegion
   ∀ (g : String → Bool) (p : String) (ps : List String),
     p ∈ ps → VE.Cardinality.Body.inRegion ps (List.map g ps) (VE.Cardinality.Body.atom p) = g p
@@ -3740,6 +3799,62 @@ theorem VE.Cardinality.countAtom_holds_iff
             c.rel.holds (List.map (fun kb => kb.fst * ↑(VE.Cardinality.regionSize T c.sort kb.snd)) c.terms).sum c.bound)
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CountAtom.bound@VE.Cardinality.Syntax VE.Cardinality.CountAtom.holds@VE.Cardinality.Semantics VE.Cardinality.CountAtom.rel@VE.Cardinality.Syntax VE.Cardinality.CountAtom.sort@VE.Cardinality.Syntax VE.Cardinality.CountAtom.terms@VE.Cardinality.Syntax VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Rel.holds@VE.Cardinality.Semantics VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Time.TStructure@VE.Time.Semantics
   -- expr 462763406
+theorem VE.Cardinality.countFin_eq
+  ∀ {α : Type} [inst : DecidableEq α] {E : VE.Time.QEnv} {M : VE.Order.FiniteModel α},
+    M.Valid E.erase →
+      ∀ (s : String) (b : VE.Cardinality.Body),
+        VE.Cardinality.countFin M s b = VE.Cardinality.regionSize (VE.Time.lift E M.asStructure) s b
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.countFin@VE.Cardinality.Erase VE.Cardinality.regionSize@VE.Cardinality.Erase VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Structure.Carrier@VE.Order.Semantics VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.lift@VE.Time.Semantics
+  -- expr 3252519407
+theorem VE.Cardinality.count_atLeast_agree
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body),
+            VE.Cardinality.BodyTyped E s b →
+              ∀ (n : Nat),
+                VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.count (VE.Cardinality.atLeastAtom s b n)) ↔
+                  VE.Order.Formula.denote T.lower [] (VE.Time.atLeast s n b.toFormula)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.atLeastAtom@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atLeast@VE.Time.Count
+  -- expr 361682683
+theorem VE.Cardinality.count_atMost_agree
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body),
+            VE.Cardinality.BodyTyped E s b →
+              ∀ (n : Nat),
+                VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.count (VE.Cardinality.atMostAtom s b n)) ↔
+                  VE.Order.Formula.denote T.lower [] (VE.Time.atMost s n b.toFormula)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.atMostAtom@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.atMost@VE.Time.Count
+  -- expr 1129333508
+theorem VE.Cardinality.count_exactly_agree
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (b : VE.Cardinality.Body),
+            VE.Cardinality.BodyTyped E s b →
+              ∀ (n : Nat),
+                VE.Cardinality.CFormula.holds T (VE.Cardinality.CFormula.count (VE.Cardinality.exactlyAtom s b n)) ↔
+                  VE.Order.Formula.denote T.lower [] (VE.Time.exactly s n b.toFormula)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.exactlyAtom@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.exactly@VE.Time.Count
+  -- expr 721653228
+theorem VE.Cardinality.count_nOfM_agree
+  ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
+    VE.Cardinality.Admissible E T →
+      ∀ (s : String),
+        s ∈ E.finite →
+          ∀ (sel prop : VE.Cardinality.Body),
+            VE.Cardinality.BodyTyped E s sel →
+              VE.Cardinality.BodyTyped E s prop →
+                ∀ (n m : Nat),
+                  VE.Cardinality.CFormula.holds T (VE.Cardinality.nOfMFormula s n m sel prop) ↔
+                    VE.Order.Formula.denote T.lower [] (VE.Time.nOfM s n m sel.toFormula prop.toFormula)
+  -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.nOfMFormula@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.nOfM@VE.Time.Count
+  -- expr 1226029124
 theorem VE.Cardinality.countedUniversals_spec
   ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula},
     (∀ (a : VE.Cardinality.CFormula), a ∈ fs → VE.Cardinality.Admitted E a) →
@@ -3857,10 +3972,21 @@ theorem VE.Cardinality.erasedProblem_admitted
                 VE.Time.Admitted (E.elab (c :: ps)) [] a
   -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.Admitted@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
   -- expr 1243922253
+theorem VE.Cardinality.evalFin_iff
+  ∀ {α : Type} [inst : DecidableEq α] {E : VE.Time.QEnv} {M : VE.Order.FiniteModel α},
+    M.Valid E.erase →
+      ∀ (x : α) (b : VE.Cardinality.Body),
+        VE.Cardinality.Body.evalFin M x b = Bool.true ↔ VE.Cardinality.Body.holds (VE.Time.lift E M.asStructure) x b
+  -- uses VE.Cardinality.Body.evalFin@VE.Cardinality.Erase VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body@VE.Cardinality.Syntax VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Structure.Carrier@VE.Order.Semantics VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.lift@VE.Time.Semantics
+  -- expr 1588562004
 theorem VE.Cardinality.exists_nodup_filter
   ∀ {α : Type u} (P : α → Prop) (xs : List α), ∃ ys, ys.Nodup ∧ ∀ (x : α), x ∈ ys ↔ x ∈ xs ∧ P x
   -- uses
   -- expr 3200230773
+theorem VE.Cardinality.firstUse_nodup
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] (xs : List β), (VE.Cardinality.firstUse xs).Nodup
+  -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions
+  -- expr 745461169
 theorem VE.Cardinality.get_of_data
   ∀ {s : String} {A rest : List Char} {c : Char},
     s.data = A ++ c :: rest → s.get { byteIdx := String.utf8ByteSize.go A } = c
@@ -3925,6 +4051,11 @@ theorem VE.Cardinality.length_filter_or
         (List.filter (fun x => p x || q x) xs).length = (List.filter p xs).length + (List.filter q xs).length
   -- uses
   -- expr 3377248532
+theorem VE.Cardinality.lower_unary
+  ∀ {α : Type u} (T : VE.Time.TStructure α) (p : String) (x : α),
+    T.lower.relation p [Sum.inl x] ↔ T.relation p [VE.Time.TValue.obj x]
+  -- uses VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Structure.relation@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure.relation@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue.obj@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
+  -- expr 1693971273
 theorem VE.Cardinality.mem_firstUse
   ∀ {β : Type} [inst : BEq β] [LawfulBEq β] {x : β} {xs : List β}, x ∈ VE.Cardinality.firstUse xs ↔ x ∈ xs
   -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions
@@ -4018,6 +4149,15 @@ theorem VE.Cardinality.ratio_cmp
                 (↑m * (↑a / ↑b * VE.Numbers.tenPow ↑k) = ↑c ↔ m * 10 ^ k * a = c * b)
   -- uses VE.Numbers.tenPow@VE.Numbers.Decimal
   -- expr 3737261940
+theorem VE.Cardinality.refutesC_sound
+  ∀ {α : Type} [inst : DecidableEq α] (E : VE.Cardinality.CEnv),
+    E.WellFormed →
+      ∀ (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula) (M : VE.Order.FiniteModel α),
+        M.Valid E.q.erase →
+          (∀ (a : VE.Cardinality.CFormula), a ∈ ps → VE.Cardinality.Admitted E a) →
+            VE.Cardinality.Admitted E c → VE.Cardinality.refutesC E ps c M = Bool.true → ¬VE.Cardinality.CEntails E ps c
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.refutesC@VE.Cardinality.Erase VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Time.QEnv.erase@VE.Time.Syntax
+  -- expr 470898023
 theorem VE.Cardinality.regionBody_holds
   ∀ {α : Type u} (T : VE.Time.TStructure α) (x : α) (ps : List String) (r : VE.Cardinality.Region),
     List.length r = ps.length →
@@ -4172,6 +4312,11 @@ theorem VE.Cardinality.tdenote_withRegions
           VE.Time.QTerm.tdenote (VE.Cardinality.withRegions E fs T) ρ t = VE.Time.QTerm.tdenote T ρ t
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Time.HasType@VE.Time.Syntax VE.Time.QTerm.tdenote@VE.Time.Semantics VE.Time.QTerm@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.TStructure@VE.Time.Semantics VE.Time.TValue@VE.Time.Semantics
   -- expr 3341621720
+theorem VE.Cardinality.toFormula_denote
+  ∀ {α : Type u} (T : VE.Time.TStructure α) (x : α) (ρ : VE.Order.Valuation T.lower) (b : VE.Cardinality.Body),
+    VE.Order.Formula.denote T.lower (Sum.inl x :: ρ) b.toFormula ↔ VE.Cardinality.Body.holds T x b
+  -- uses VE.Cardinality.Body.holds@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Valuation@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics
+  -- expr 2549640667
 theorem VE.Cardinality.universalsC_admitted
   ∀ {E : VE.Cardinality.CEnv} {f : VE.Cardinality.CFormula},
     VE.Cardinality.Admitted E f →
@@ -4191,6 +4336,16 @@ theorem VE.Cardinality.universalsOf_admitted
             ∃ a', x.snd.snd = VE.Time.QFormula.all x.fst a' ∧ VE.Cardinality.bodyOfQ? a' = Option.some x.snd.fst
   -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.bodyOfQ?@VE.Cardinality.Regions VE.Cardinality.universalsOf@VE.Cardinality.Regions VE.Time.Admitted@VE.Time.Syntax VE.Time.QEnv@VE.Time.Syntax VE.Time.QFormula.all@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
   -- expr 2445087641
+theorem VE.Cardinality.withRegionsFinite_denote
+  ∀ {α : Type} [inst : DecidableEq α] {E : VE.Cardinality.CEnv} (fs : List VE.Cardinality.CFormula)
+    {M : VE.Order.FiniteModel α},
+    M.Valid E.q.erase →
+      ∀ (a : VE.Order.Formula),
+        VE.Order.Formula.WellFormed (E.elab fs).erase [] a →
+          (VE.Order.Formula.denote (VE.Cardinality.withRegions E fs (VE.Time.lift E.q M.asStructure)).lower [] a ↔
+            VE.Order.Formula.denote (VE.Cardinality.withRegionsFinite E fs M).asStructure [] a)
+  -- uses VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.withRegions@VE.Cardinality.Erase VE.Cardinality.withRegionsFinite@VE.Cardinality.Erase VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.FiniteModel.asStructure@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Formula.WellFormed@VE.Order.Syntax VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Formula@VE.Order.Syntax VE.Order.SortName@VE.Order.Syntax VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.QEnv.erase@VE.Time.Syntax VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.lift@VE.Time.Semantics
+  -- expr 2353500474
 theorem VE.Cardinality.withRegions_admissible
   ∀ {α : Type u} (E : VE.Cardinality.CEnv),
     E.WellFormed →
