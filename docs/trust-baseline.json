@@ -985,6 +985,34 @@
    "reason": "sc-1ac: lean/VE/Scope/Govern.lean S +90 (Reach, Governor, SDoc, applyEffect, isFrame, unary, graph, baseObj, covered, classOf, position, ordered, composed, affected, govern), V +42 (G[V] untied: keysOf, unitsOf, idOf, unitIds, contentOf, isPart, isNorm, objectOf, partUnits, ruleUnits, coveredLayout, frameOn, baseName, newContent, patch); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ac, 2026-10-18",
    "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "me-9: lean/VE/Calc/Poly.lean S +3 (VE.Calc.Poly.eval 3); K +0, untied V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9, 2026-10-18",
+   "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d"
+  },
+  {
+   "class": "S",
+   "lines": 10,
+   "reason": "et-3c: S +10, all in VE/Events/Conservative.lean (oldEnv with its docstring); K +0, untied V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3c, 2026-10-18",
+   "commit": "e14d56df94236c8194d5c4ccd9b194247ca2d043"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "df-1ab: VE/Defaults/Premises.lean S +6 (DefaultCoherent), V +23 (collisionTuple, decidersOf, giveWayDeciders, untied); K +0; selU tied by cohPremiseU_selU; the checks C, the diagnostics G[R]",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ab, 2026-10-18",
+   "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "df-1ab: VE/Defaults/Premises.lean S +6 (DefaultCoherent), V +23 (collisionTuple, decidersOf, giveWayDeciders, untied); K +0; selU tied by cohPremiseU_selU; the checks C, the diagnostics G[R]",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ab, 2026-10-18",
+   "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f"
   }
  ]
 }

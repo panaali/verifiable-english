@@ -1,0 +1,33 @@
+import json, re, subprocess, sys
+root = sys.argv[1]
+ms = {m['id']: m for m in json.load(open(f'{root}/docs/quantities/qt-a1c/mutants.json'))['mutants']}
+T = 'lean/VE/Cardinality/Theorems.lean'
+stubs = {
+ 'atLeast-rel': [(T, '''  rw [CFormula.holds, countAtom_holds_iff hT _ hs, atLeast_iff_le hT hs]
+  simp [atLeastAtom, Rel.holds] <;> omega''', '  sorry')],
+ 'toFormula-not': [(T, '''  | .not b => by simp [Body.toFormula, VE.Order.Formula.denote, Body.holds, toFormula_denote T x ρ b]''',
+                    '  | .not b => sorry')],
+ 'withRegionsFinite-body': [(T, '  refine denote_congr (withRegionsFinite E fs M).asStructure _ (fun c σ hc => ?_) _\n    (fun p ws => (VE.Time.lower_lift hM).2 p ws) a [] [] ha\n  simp only [withRegions, withRegionsFinite]\n  cases hf : (regionTable E fs).find? (·.1 == c) with\n  | some e => obtain ⟨_, s, r⟩ := e; simp [VE.Time.TValue.forget, countFin_eq hM]\n  | none =>\n    have hany : (regionTable E fs).any (·.1 == c) = false :=\n      List.any_eq_false.mpr fun e he h => by simp [List.find?_eq_none.mp hf e he] at h\n    obtain ⟨τ, hτ, -⟩ := Option.map_eq_some_iff.mp hc\n    simp only [CEnv.elab, hany] at hτ\n    simpa [VE.Time.TStructure.lower] using (VE.Time.lower_lift hM).1 c τ hτ\n\n', '  sorry\n\n')],
+}
+for mid, extra in stubs.items():
+    m = ms[mid]
+    edits = [(m['file'], m['find'], m['replace'])] + extra
+    saved = {}
+    for f, a, b in edits:
+        p = f'{root}/{f}'
+        saved.setdefault(p, open(p).read())
+        s = open(p).read(); assert s.count(a) == 1, (mid, a[:40]); open(p, 'w').write(s.replace(a, b, 1))
+    try:
+        out = subprocess.run(['bash', '-c', 'cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Examples 2>&1'],
+                             cwd=root, capture_output=True, text=True).stdout
+    finally:
+        for p, s in saved.items(): open(p, 'w').write(s)
+    print(f'== {mid} ({m["file"]}), proof stubbed with sorry so the build reaches Examples.lean')
+    ex = open(f'{root}/lean/VE/Cardinality/Examples.lean').read().splitlines()
+    seen = []
+    for f, ln in re.findall(r'error: (VE/Cardinality/\S+?\.lean):(\d+):\d+', out):
+        lines = open(f'{root}/lean/{f}').read().splitlines()[:int(ln)]
+        decl = next((l.strip()[:90] for l in reversed(lines) if re.match(r'(theorem|def|#guard|example)\b', l.strip())), '?')
+        key = f"{f.split('/')[-1]}:{ln}  {decl}"
+        if key not in seen: seen.append(key)
+    print('\n'.join(seen) if seen else 'NO ERROR')

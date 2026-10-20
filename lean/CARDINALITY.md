@@ -8,8 +8,8 @@ theorem: no unfinished proof, only `propext`, `Classical.choice` and `Quot.sound
 
 QT-A1 is delivered in three parts. qt-a1 holds the syntax, the meaning, admission, regions, erasure, the finite
 countermodel check and the theorems that do not need erasure's soundness. qt-a1b proves spec 3.6's soundness theorems.
-**qt-a1c** holds spec 3.7's and 3.9's (listed at the end). QT-A2 (rounding and percent-of) adds the ratio
-constructors, `Ratio.lean`, and their cases in every theorem above.
+qt-a1c proves spec 3.7's and 3.9's (at the end). QT-A2 (rounding and percent-of) adds the ratio constructors,
+`Ratio.lean`, and their cases in every theorem above. With them every theorem of spec 3.6 to 3.9 is proved.
 
 ## Files
 
@@ -20,7 +20,7 @@ constructors, `Ratio.lean`, and their cases in every theorem above.
 | `Regions.lean` | counted sorts and recognised universal statements (`bodyOfQ?`, `universalsOf`, `countedSorts`, `countedUniversals`), `predsOn`, `regions`, `Body.inRegion`, `regionConst`, `regionTable`, `CEnv.elab`, `regionBody`; the problem limits P1 and P2 (`problemLimits`) |
 | `Ratio.lean` | `erasedRounding` (the linear integer form of a rounding), `roundingQ` (the same in W6a), `roundsTo_ratio_agree`, `roundingQ_iff`, `roundingQ_admitted` (QT-A2) |
 | `Erase.lean` | `regionSum`, the erasure of counts and proportions (`CFormula.erase`), `nonnegPremises`, `bridgePremises`, `erasedProblem`; `withRegions` (region constants read as region sizes); the finite countermodel check: `Body.evalFin`, `countFin`, `withRegionsFinite`, `refutesC` |
-| `Theorems.lean` | `hasCount_exists_unique`, `hasCount_unique`, `nonneg_hold`, `proportion_holds_iff`; spec 3.6's soundness theorems and their lemmas (qt-a1b, below); W6a's four counting forms as count atoms (`atLeastAtom`, `atMostAtom`, `exactlyAtom`, `nOfMFormula`) and `Body.toFormula` |
+| `Theorems.lean` | `hasCount_exists_unique`, `hasCount_unique`, `nonneg_hold`, `proportion_holds_iff`; spec 3.6's soundness theorems and their lemmas (qt-a1b, below); W6a's four counting forms as count atoms (`atLeastAtom`, `atMostAtom`, `exactlyAtom`, `nOfMFormula`), `Body.toFormula` and their agreement theorems; `refutesC_sound` (qt-a1c, below) |
 | `Examples.lean` | the fixtures as `#guard` lines, and named theorems that state every case of the trusted meaning and admission (below) |
 
 ## Theorems in plain words
@@ -58,7 +58,7 @@ build (`docs/quantities/qt-a1/mutants.json`) and `tests/test_cardinality_exercis
 
 * **`CTerm.tagOf`** writes `VE.Time.dimensionless` where spec 3.4 writes `dl`: `dl` is defined in `Regions.lean`
   (as `VE.Time.dimensionless`), which imports `Syntax.lean`. Every other definition and statement here is the spec's,
-  unchanged (`docs/quantities/qt-a2/evidence/statements.json`: 71 exact, 1 spelled differently, 5 qt-a1c's).
+  unchanged (`docs/quantities/qt-a1c/evidence/statements.json`: 76 exact, 1 spelled differently, none left to build).
 * **`roundHalfUp`** is not defined (spec change C9): the meaning of "rounds to" is `VE.Numbers.RoundsTo` alone.
 * **Problem limits** P1 and P2 of spec 4.2 are `problemLimits`, so the core can be tested against them; P3 (W6a's
   aggregate limit) needs W6a's admissions and comes with the wire (QT-A3).
@@ -94,5 +94,26 @@ a grid of meaning against erasure, and theorems stating each ratio case on the t
 
 ## qt-a1c: agreement with W6a and finite countermodels
 
-`count_atLeast_agree`, `count_atMost_agree`, `count_exactly_agree`, `count_nOfM_agree` (spec 3.7) and
-`refutesC_sound` (spec 3.9), as the spec states them. Until `refutesC_sound` is proved no route uses `refutesC`.
+Proved in `Theorems.lean`, statements as the spec's (`docs/quantities/qt-a1c/evidence/statements.json`).
+
+* **`count_atLeast_agree`, `count_atMost_agree`, `count_exactly_agree`** (3.7): "at least n", "at most n" and
+  "exactly n" as count atoms hold exactly when W6a's expansions (`VE.Time.atLeast`, `atMost`, `exactly`) of the same
+  body hold. Both sides compare the body's count with n: W6a's side through `expand_atLeast_iff` (n distinct objects
+  with the body), the count side through `countAtom_holds_iff`; `atLeast_iff_le` joins them. A body means the same as
+  its formula on the counted variable (`toFormula_denote`).
+* **`count_nOfM_agree`** (3.7): "exactly n of the m" is "exactly m selected" and "exactly n selected with the
+  property", so it follows from `count_exactly_agree` twice.
+* **`refutesC_sound`** (3.9): if the frozen countermodel check refutes the erased problem on a valid finite model, with
+  each region constant read as its region's size there, the counting claim is not entailed. The model's lift
+  (`VE.Time.lift`) is an admissible structure; on it `countFin` is the count (`countFin_eq`, through `evalFin_iff`), so
+  `withRegions` of the lift and `withRegionsFinite` give every erased formula the same meaning (`withRegionsFinite_denote`,
+  through `denote_congr`). `erase_iff` and `units_faithful` then carry the premises' truth and the conclusion's
+  falsity back to the counting meaning. The check reads only the model of the original vocabulary: Lean computes the
+  region sizes itself.
+
+Fixtures: `fa1b_not_entails` turns FA1b's countermodel into a proof that FA1 does not follow without the exclusion
+premise (with `fa1_entails`, the premise is what makes it hold); `fa4d_not_entails` does the same for a ratio
+claim, on four decisions: one reading of "out of" (0.500) does not entail the other (1.000); `fa2_agree` uses each agreement theorem in both
+directions on the lift of a model of seven (three increase, one of them also stay); a further FA2 `#guard` compares a
+body with `not`, `and` and `or`. `rowsModel_valid` and `count_lift` are fixture lemmas. 14 seeded mutants, each failing
+at the theorem it breaks (`docs/quantities/qt-a1c/mutants.json`).
