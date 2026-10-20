@@ -12853,6 +12853,16 @@
         }
       ]
     },
+    "VE/Events/Conservative.lean": {
+      "S": [
+        "VE.Events.oldEnv"
+      ],
+      "P": [
+        "VE.Events.expDays",
+        "VE.Events.firstDay",
+        "VE.Events.expansion"
+      ]
+    },
     "VE/Events/Decl.lean": {
       "S": [
         "VE.Events.EventSort",
@@ -12915,6 +12925,12 @@
         "VE.Events.Examples.vR1",
         "VE.Events.Examples.mC",
         "VE.Events.Examples.numC",
+        "VE.Events.Examples.envT7",
+        "VE.Events.Examples.vT7",
+        "VE.Events.Examples.gT7",
+        "VE.Events.Examples.notEntailedT7",
+        "VE.Events.Examples.entailedT7",
+        "VE.Events.Examples.mT7",
         "VE.Events.Examples.vX",
         "VE.Events.Examples.envX",
         "VE.Events.Examples.mX"
