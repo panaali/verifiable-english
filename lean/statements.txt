@@ -7068,6 +7068,102 @@ theorem VE.Data.Background.totalPremise_iff
     VE.Formula.denote S [] (VE.Data.Background.totalPremise f) ↔ VE.Data.Background.Total S f
   -- uses VE.Data.Background.Flag@VE.Data.Background VE.Data.Background.Total@VE.Data.Background VE.Data.Background.totalPremise@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 4262845113
+theorem VE.Defaults.Wire.DefaultsView.hD
+  ∀ (self : VE.Defaults.Wire.DefaultsView), VE.SoftNorms.WellFormedSoft self.L.D = Bool.true
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
+  -- expr 1539424272
+theorem VE.Defaults.Wire.DefaultsView.hR
+  ∀ (self : VE.Defaults.Wire.DefaultsView), self.R.all (VE.Defaults.decisionFree self.L.D) = Bool.true
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.decisionFree@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered
+  -- expr 3247082762
+theorem VE.Defaults.Wire.DefaultsView.hU
+  ∀ (self : VE.Defaults.Wire.DefaultsView), self.L.U.D = VE.SoftNorms.soften self.L.D
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 718577272
+theorem VE.Defaults.Wire.DefaultsView.hX
+  ∀ (self : VE.Defaults.Wire.DefaultsView),
+    self.L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU self.L.U self.L.D) ++ self.R
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 2297968371
+theorem VE.Defaults.Wire.DefaultsView.hXw
+  ∀ (self : VE.Defaults.Wire.DefaultsView) (a : VE.Formula),
+    a ∈ self.L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill self.L.U) 0) [] a
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 3426598642
+theorem VE.Defaults.Wire.DefaultsView.hl
+  ∀ (self : VE.Defaults.Wire.DefaultsView),
+    VE.Compose.Labelled.wellLabelled (VE.Defaults.dfltLabelled self.L.D) = Bool.true
+  -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered
+  -- expr 1138436548
+theorem VE.Defaults.Wire.ViewRest.hR
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} (self : VE.Defaults.Wire.ViewRest L),
+    self.R.all (VE.Defaults.decisionFree L.D) = Bool.true
+  -- uses VE.Defaults.Wire.ViewRest.R@VE.Defaults.Wire VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Defaults.decisionFree@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
+  -- expr 4290100989
+theorem VE.Defaults.Wire.ViewRest.hX
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} (self : VE.Defaults.Wire.ViewRest L),
+    L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU L.U L.D) ++ self.R
+  -- uses VE.Defaults.Wire.ViewRest.R@VE.Defaults.Wire VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 802983725
+theorem VE.Defaults.Wire.ViewRest.hl
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} (self : VE.Defaults.Wire.ViewRest L),
+    VE.Compose.Labelled.wellLabelled (VE.Defaults.dfltLabelled L.D) = Bool.true
+  -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
+  -- expr 662367307
+theorem VE.Defaults.Wire.decodeLayered_soften
+  ∀ (j : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
+    VE.NormDefaults.Wire.decodeLayered j = Except.ok L → L.U.D = VE.SoftNorms.soften L.D
+  -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeLayered@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3164523497
+theorem VE.Defaults.Wire.decodeRightsU_soften
+  ∀ (environment document : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
+    VE.NormDefaults.Wire.decodeRightsU environment document = Except.ok L → L.U.D = VE.SoftNorms.soften L.D
+  -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeRightsU@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 574993911
+theorem VE.Defaults.Wire.defaultsCase_other
+  ∀ (v : VE.Defaults.Wire.DefaultsView) (id kind : String) (j : Lean.Json),
+    kind.startsWith "defaults-" = Bool.false → VE.Defaults.Wire.defaultsCase v id kind j = Except.ok Option.none
+  -- uses VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.defaultsCase@VE.Defaults.Wire
+  -- expr 3083408026
+theorem VE.Defaults.Wire.defaults_certificate_sound
+  ∀ (x : VE.Defaults.Wire.CertReplay),
+    x.verdict = "FOLLOWS" →
+      VE.NormDefaults.EntailsX x.v.L.U (x.v.L.X ++ VE.Readings.blank (VE.Defaults.dfltLabelled x.v.L.D) x.assumptions) x.Γ
+          x.φ ∧
+        VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R ∧
+          VE.Readings.ConsistentX x.v.L.U (VE.Defaults.defaultX x.v.L.D x.v.L.X) x.Γ ∧
+            (x.basis = VE.Defaults.Basis.strict → VE.NormDefaults.EntailsX x.v.L.U x.v.L.X x.Γ x.φ) ∧
+              (x.basis = VE.Defaults.Basis.needs → VE.Readings.CounterX x.v.L.U x.v.L.X x.Γ x.φ)
+  -- uses VE.Defaults.Basis.needs@VE.Defaults.Premises VE.Defaults.Basis.strict@VE.Defaults.Premises VE.Defaults.Basis@VE.Defaults.Premises VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.Wire.CertReplay.assumptions@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.basis@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.Γ@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.φ@VE.Defaults.Wire VE.Defaults.Wire.CertReplay@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.Readings.ConsistentX@VE.Readings.Verdicts VE.Readings.CounterX@VE.Readings.Verdicts VE.Readings.blank@VE.Readings.Verdicts
+  -- expr 2322879
+theorem VE.Defaults.Wire.defaults_coherence_sound
+  ∀ (x : VE.Defaults.Wire.CoherenceReplay),
+    (x.verdict = "COHERENT" → VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R) ∧
+      (x.verdict = "COLLISION" → ¬VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R) ∧
+        ∀ (P Q : VE.SoftNorms.SoftNode),
+          ((P, Q), VE.Defaults.Wire.PairStatus.resolved) ∈ x.pairs →
+            ∀ (B : VE.Structure),
+              VE.NormDefaults.Wire.BaseAdmissibleX x.v.L.U
+                  (VE.SoftNorms.excPremises x.v.L.D ++ x.v.R ++ VE.Defaults.dfltPremises x.v.L.D) B →
+                VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU x.v.L.U x.v.L.D P Q)
+  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.Wire.CoherenceReplay.pairs@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.PairStatus.resolved@VE.Defaults.Wire VE.Defaults.Wire.PairStatus@VE.Defaults.Wire VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3480681577
+theorem VE.Defaults.Wire.defaults_follows_gated
+  ∀ (x : VE.Defaults.Wire.CertReplay),
+    x.verdict = "FOLLOWS" → x.certOk = Bool.true ∧ x.coherent = Bool.true ∧ x.modelOk = Bool.true
+  -- uses VE.Defaults.Wire.CertReplay.certOk@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.coherent@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.modelOk@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CertReplay@VE.Defaults.Wire
+  -- expr 1274929945
+theorem VE.Defaults.Wire.elaborateRows_eq
+  ∀ (v : VE.Defaults.Wire.DefaultsView),
+    (VE.Defaults.Wire.elaborateRows v).fst = VE.Defaults.dfltLabelled v.L.D ∧
+      (VE.Defaults.Wire.elaborateRows v).snd = VE.SoftNorms.collidingPairs v.L.D
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.elaborateRows@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 1294464642
+theorem VE.Defaults.Wire.viewOf_layered
+  ∀ (j : Lean.Json) (v : VE.Defaults.Wire.DefaultsView),
+    VE.Defaults.Wire.viewOf j = Except.ok v → VE.NormDefaults.Wire.decodeLayered j = Except.ok v.L
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.viewOf@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeLayered@VE.NormDefaults.Layered
+  -- expr 634990345
 theorem VE.Defaults.assumptions_sound
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
