@@ -83,6 +83,11 @@ def sortedRefusal := "UnsupportedProfile: profiles must be sorted and unique"
 #guard unsorted.all fun ps => err (VE.Norms.Wire.decodeSource (envA ps) (Json.arr #[rule "heard"])) == sortedRefusal
 #guard err (VE.NormDefaults.Wire.decodeSourceU (envA ["norm-defaults@0", "norms@0", "acts@0", "relational-fol@0"])
   (Json.arr #[rule "heard"])) == sortedRefusal
+-- the norm-defaults route sets its profile aside, which must not sort the list `acts@0` is read from
+#guard err (VE.NormDefaults.Wire.decodeSourceU (envA ["norm-defaults@0", "acts@0", "norms@0", "relational-fol@0"])
+  (Json.arr #[rule "heard"])) == sortedRefusal
+#guard err (VE.Service.Standalone.validatedComposedEnvironment
+  (envA ["norm-defaults@0", "acts@0", "norms@0", "relational-fol@0"])) == sortedRefusal
 -- the replay's base environment keeps `acts@0`, even where setting `norms@0` aside leaves a sorted list
 #guard unsorted.map (fun ps => err (VE.Norms.Replay.baseEnvironmentJson (envA ps) >>= VE.Route.Gate.decodeEnvelope)) ==
   ["UnsupportedProfile: Unsupported profile acts@0", sortedRefusal, sortedRefusal]
@@ -165,5 +170,64 @@ def wordings (j : Json) : List (Option String × Bool) := match Env.decode j (Js
     (some (block fxs)))).head? ==
   some (some "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
     false)
+
+/-! ### R16: the profile lists that tell each reader's list apart (`tools/trust_mutants.py` survivors)
+
+`acts@0` sorts before every known profile, so a list that lists it starts with it; the lists below put an unknown
+profile before it, leave it alone, or put the profile that decides last. -/
+
+def bad : Option Json := some (block ["the court that is competent"])
+def withRevision (j : Json) : Json := j.setObjVal! "spec_revision" (.str "x")
+def profilesOr (e : Except String Json) : Json := match e with
+  | .ok j => j.getObjValD "profiles"
+  | .error m => .str m
+
+-- `readsActs` reads the whole list: `acts@0` anywhere, and every pair in order
+#guard [["acts@0"], ["a@0", "acts@0"], ["acts@0", "norms@0", "b@0"], ["norms@0", "acts@0"], ["norms@0"], []].map
+  VE.Norms.Wire.readsActs == [true, true, false, false, false, false]
+-- a list of `acts@0` alone is read: its block is checked and its envelope lacks the checker profile
+#guard err (VE.Norms.Wire.canonicalEnvironmentJson (env ["acts@0"] seek bad)) ==
+  "InvalidInput: fixed phrase 'the court that is competent' uses the clause word 'is'"
+#guard err (decodeA (envA ["acts@0"])) == "UnsupportedProfile: Missing profile relational-fol@0"
+-- the plain route gates the list before it reads the block, wherever `acts@0` stands in it
+#guard plainRun (env ["a@0", "acts@0", "norms@0", "relational-fol@0"] seek bad) ==
+  "UnsupportedProfile: Unsupported profile a@0"
+#guard plainRun (env ["acts@0"] seek bad) == "UnsupportedProfile: Missing profile relational-fol@0"
+-- the replay's base environment without `acts@0`: `norms@0` set aside, the rest kept
+#guard profilesOr (VE.Norms.Replay.baseEnvironmentJson (env ["norms@0", "relational-fol@0"] seek)) ==
+  toJson ["relational-fol@0"]
+-- the typing view reads `acts@0` wherever it is listed
+#guard profilesOr (typingView (env ["a@0", "acts@0", "norms@0", "relational-fol@0"] seek (some (block fxs)))) ==
+  toJson ["a@0", "norms@0", "relational-fol@0"]
+#guard profilesOr (typingView (env ["acts@0"] seek (some (block fxs)))) == toJson ([] : List String)
+-- Lean's English reads `norms@0` and `norm-defaults@0` wherever they are listed (an `unspecified` default is read
+-- as its placeholder only under `norm-defaults@0`)
+def unspecified : List (String × Json) := [("p", pred ["person"]
+  [("role", .str "permission"), ("default", .str "unspecified"), ("act", .str "{0} seek asylum")])]
+def modal (j : Json) : String := match Env.decode j (Json.mkObj []) with
+  | .ok E => toString (E.modal "p")
+  | .error m => m
+#guard [modal (env ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"] unspecified),
+  modal (env ["norms@0", "norm-defaults@0"] unspecified), modal (env ["norms@0"] seek)] == ["true", "true", "true"]
+-- the environment mode: the whole table gates a list with `readings@1` (its last profile when the checker is
+-- missing), `acts@0` alone is gated, and `checkRegulated` runs, before the envelope, only without `norm-defaults@0`
+-- (wherever it is listed) and `acts@0`
+#guard err (VE.Service.Standalone.validatedComposedEnvironment (envA ["acts@0", "norms@0", "readings@1"])) ==
+  "UnsupportedProfile: Missing profile relational-fol@0"
+#guard err (VE.Service.Standalone.validatedComposedEnvironment (env ["acts@0"] seek bad)) ==
+  "UnsupportedProfile: Missing profile relational-fol@0"
+#guard [["norms@0", "relational-fol@0"], ["definitions@0", "norm-defaults@0", "norms@0", "relational-fol@0"],
+    ["norms@0", "relational-fol@0", "norm-defaults@0"]].map
+  (fun ps => err (VE.Service.Standalone.validatedComposedEnvironment (withRevision (envA ps)))) ==
+  ["InvalidInput: invalid regulated fields for heard", "UnsupportedProfile: Unsupported specification revision x",
+   "UnsupportedProfile: Unsupported specification revision x"]
+-- the family route gates a list with `acts@0` wherever it stands, and its FOL view drops exactly the three
+-- checker-family profiles
+#guard err (VE.Service.FamilyNorms.folView (envA ["a@0", "acts@0", "norms@0", "relational-fol@0"])) ==
+  "UnsupportedProfile: Unsupported profile a@0"
+#guard err (VE.Service.FamilyNorms.folView (envA ["acts@0"])) == "UnsupportedProfile: Missing profile relational-fol@0"
+#guard [["closure@0", "norms@0", "relational-fol@0"], ["closure@0", "nary@0", "norms@0", "relational-fol@0"],
+    ["norms@0", "order@0", "relational-fol@0"]].map (fun ps => profilesOr (VE.Service.FamilyNorms.folView (env ps seek))) ==
+  List.replicate 3 (toJson ["norms@0", "relational-fol@0"])
 
 end VE.Service.ActsExamples

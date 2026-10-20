@@ -138,10 +138,11 @@ def test_an_act_python_stores_differently_is_unavailable_never_answered():
 
 
 UNSORTED = [["norms@0", "acts@0", "relational-fol@0"], ["acts@0", "acts@0", "norms@0", "relational-fol@0"],
-            ["relational-fol@0", "acts@0", "norms@0"], ["acts@0", "soft-norms@0", "norms@0", "relational-fol@0"]]
+            ["relational-fol@0", "acts@0", "norms@0"], ["acts@0", "soft-norms@0", "norms@0", "relational-fol@0"],
+            ["norm-defaults@0", "acts@0", "norms@0", "relational-fol@0"]]
 
 
-@pytest.mark.parametrize("profiles", UNSORTED, ids=["out-of-order", "twice", "reversed", "layer-out-of-order"])
+@pytest.mark.parametrize("profiles", UNSORTED, ids=["out-of-order", "twice", "reversed", "layer-out-of-order", "sorted-without-norm-defaults"])
 def test_an_acts_list_that_is_not_sorted_and_unique_is_refused_as_the_base_refuses_it(profiles):
     """ap-1b review F1: `acts@0` is read only from a sorted unique list, so every route refuses the others with the
     base's text, before any other fault (the norms modes, norm-defaults and the environment mode)."""
@@ -150,7 +151,8 @@ def test_an_acts_list_that_is_not_sorted_and_unique_is_refused_as_the_base_refus
     data = environment(profiles)
     norms = [rule("m", "heard", True).to_dict()]
     for route, case in [("norms", {"kind": "background"}), ("norms", {"kind": "norms-elaborate", "norms": norms}),
-                        ("norm-defaults", {"kind": "norms-elaborate", "norms": norms})]:
+                        ("norm-defaults", {"kind": "norm-defaults-report" if "norm-defaults@0" in profiles
+                                           else "norms-elaborate", "norms": norms})]:
         [row] = lean_routes.rows(route, [{"id": "b", "environment": data, **case}])
         assert row.get("status") == "error" and row["error"] == sorted_refusal, (route, case["kind"], row)
     assert refusal(data) == sorted_refusal

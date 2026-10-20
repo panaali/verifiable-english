@@ -13737,7 +13737,12 @@
         "VE.Service.ActsExamples.plainRun",
         "VE.Service.ActsExamples.wordings",
         "VE.Service.ActsExamples.unsorted",
-        "VE.Service.ActsExamples.sortedRefusal"
+        "VE.Service.ActsExamples.sortedRefusal",
+        "VE.Service.ActsExamples.bad",
+        "VE.Service.ActsExamples.withRevision",
+        "VE.Service.ActsExamples.profilesOr",
+        "VE.Service.ActsExamples.unspecified",
+        "VE.Service.ActsExamples.modal"
       ]
     },
     "VE/Events/Conservative.lean": {

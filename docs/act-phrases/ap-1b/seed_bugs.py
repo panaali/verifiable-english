@@ -29,7 +29,16 @@ LOADS, ROUTE = PY + "test_an_acts_environment_loads_with_its_block_and_forms_as_
 MUTANTS = [
     ("actsFixed-fields", "actsFixed", W, '    exactFields block ["fixed"]\n', "", EX),
     ("actsFixed-unchecked", "actsFixed", W, "    let _ ← VE.Acts.Lexical.decodeFixed fx\n", "", EX),
-    ("actsProfiles-any", "actsProfiles", W, 'if ps.contains "acts@0" then ps else []', "ps", EX),
+    ("actsProfiles-any", "actsProfiles", W, "if readsActs ps then ps else []", "ps", EX),
+    # ap-1b review F1: `acts@0` is read only from a sorted unique list, on every reader
+    ("readsActs-sorted", "readsActs", W, 'ps.contains "acts@0" && decide (ps.Pairwise (· < ·))', 'ps.contains "acts@0"', EX),
+    ("actsView-premise", "actsView", W, "  if readsActs ps then (environment", "  if true then (environment", EX),
+    ("baseEnvironmentJson-whole-list", "baseEnvironmentJson", R, "pure (if Wire.readsActs profiles then",
+     'pure (if profiles.contains "acts@0" then', EX),
+    ("placeholderJson-acts-order", "placeholderJson", "lean/VE/NormDefaults/Wire.lean",
+     ' || (profiles.contains "acts@0" && !VE.Norms.Wire.readsActs profiles)', "", EX),
+    # ap-1b review F2: without `acts@0` the block is not read
+    ("actsFixed-premise", "actsFixed", W, "  | false, .ok block => do", "  | _, .ok block => do", EX),
     ("actsProfiles-flag", "actsProfiles", W, "  | true, .ok ps =>", "  | _, .ok ps =>", EX),
     ("actsView-block", "actsView", W, '    | .obj kvs => Json.obj (kvs.erase "acts")', "    | .obj kvs => Json.obj kvs", EX),
     ("actsView-profile", "actsView", W, '(toJson (ps.erase "acts@0"))', "(toJson ps)", EX),
@@ -47,11 +56,12 @@ MUTANTS = [
      "decodeNormsEnvironment frame (acts := true)", "decodeNormsEnvironment frame", EX),
     ("decodeRegulatedAllIn-check", "decodeRegulatedAllIn", P, "some <$> Wire.decodeRegulatedIn ps fx p args raw",
      "some <$> Wire.decodeRegulated p args raw", EX),
-    ("plainRun-family", "Plain.run", P, "unless ps.isEmpty || e.family == .fol do", "unless true do", EX),
+    # ap-1b review C1: the plain route gates the submitted list (the row's texts, its family refusals included)
+    ("plainRun-gate", "Plain.run", P, '  if profiles.contains "acts@0" then\n', "  if false then\n", EX),
     ("plainRun-view", "Plain.run", P, "let environment := if ps.isEmpty then environment else Wire.actsView environment ps",
      "let environment := environment", EX),
     ("baseEnvironmentJson-view", "baseEnvironmentJson", R,
-     'pure (if profiles.contains "acts@0" then Wire.actsView base (profiles.filter (· != "norms@0")) else base)',
+     'pure (if Wire.readsActs profiles then Wire.actsView base (profiles.filter (· != "norms@0")) else base)',
      "pure base", EX),
     ("treeCheck-plain-act", "Tree.check", T, "    | .permission, none | .obligation, none =>",
      '    | .plain, some _ => throw s!"InvalidInput: invalid regulated fields for {r.name}"\n'
@@ -128,7 +138,8 @@ def main() -> int:
     parser.add_argument("--only", nargs="*")
     args = parser.parse_args()
     out = ROOT / "docs/act-phrases/ap-1b/mutants.json"
-    results = json.loads(out.read_text()) if out.exists() else {}
+    listed = {m[0] for m in MUTANTS}
+    results = {k: v for k, v in (json.loads(out.read_text()) if out.exists() else {}).items() if k in listed}
     touched = set()
     for ident, definition, file, old, new, check, *more in MUTANTS:
         if args.only and ident not in args.only:
