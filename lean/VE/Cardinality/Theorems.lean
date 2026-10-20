@@ -8,7 +8,8 @@ are region sizes (`withRegions`); erasure is faithful (`erase_iff`), so W6a enta
 counting entailment (`cardinality_elab_sound`), and the erased problem is W6a-admitted (`erasedProblem_admitted`).
 `CEnv.WellFormed` keeps declared constants apart from region constants: every region name begins with the region
 prefix (`regionConst_startsWith`) and names one (sort, region) pair (`regionConst_inj`). The count atoms for W6a's
-four counting forms are defined here; their agreement theorems and `refutesC_sound` are qt-a1c's. -/
+four counting forms mean what W6a's expansions mean (`count_atLeast_agree` … `count_nOfM_agree`), and a finite model
+that `refutesC` accepts makes the counting claim not entailed (`refutesC_sound`). -/
 namespace VE.Cardinality
 open VE.Time (QTerm QFormula TStructure TEntails)
 universe u v
@@ -842,5 +843,145 @@ theorem erasedProblem_admitted (E : CEnv) (hE : E.WellFormed) (ps : List CFormul
     exact .and (.implies hU hz) (.implies hz hU)
   · exact herase b (List.mem_cons_of_mem c hb)
   · exact herase c List.mem_cons_self
+
+/-! ## Agreement with W6a's four counting forms (spec 3.7) -/
+
+/-- The units-only restriction relates `p` to an object exactly when the tagged structure does. -/
+theorem lower_unary {α : Type u} (T : TStructure α) (p : String) (x : α) :
+    T.lower.relation p [.inl x] ↔ T.relation p [.obj x] := by
+  refine ⟨fun ⟨vs, hr, hm⟩ => ?_, fun h => ⟨[.obj x], h, rfl⟩⟩
+  match vs, hm with
+  | [.obj y], hm => cases hm; exact hr
+  | [.qty _ _], hm | [], hm | _ :: _ :: _, hm => simp [VE.Time.TValue.forget] at hm
+
+theorem toFormula_denote {α : Type u} (T : TStructure α) (x : α) (ρ : VE.Order.Valuation T.lower) :
+    ∀ b : Body, b.toFormula.denote T.lower (.inl x :: ρ) ↔ b.holds T x
+  | .atom p => by simp [Body.toFormula, VE.Order.Formula.denote, VE.Order.Term.denote, Body.holds, lower_unary]
+  | .any => by simp [Body.toFormula, VE.Order.Formula.denote, Body.holds]
+  | .not b => by simp [Body.toFormula, VE.Order.Formula.denote, Body.holds, toFormula_denote T x ρ b]
+  | .and a b | .or a b => by
+    simp [Body.toFormula, VE.Order.Formula.denote, Body.holds, toFormula_denote T x ρ a, toFormula_denote T x ρ b]
+
+/-- W6a's "at least `n`" holds exactly when the count is at least `n`. -/
+theorem atLeast_iff_le {α : Type u} {E : CEnv} {T : TStructure α} (hT : Admissible E T) {s : String}
+    (hs : s ∈ E.finite) (b : Body) (n : Nat) :
+    (VE.Time.atLeast s n b.toFormula).denote T.lower [] ↔ n ≤ regionSize T s b := by
+  classical
+  obtain ⟨ys, hnd, hlen, hys⟩ := hasCount_regionSize hT hs b
+  simp only [VE.Time.expand_atLeast_iff, toFormula_denote]
+  constructor
+  · rintro ⟨xs, rfl, hx, hxs⟩
+    rw [← hlen, nodup_length_eq hx (hnd.sublist List.filter_sublist) (ys := ys.filter (· ∈ xs)) fun x => by
+      simpa using fun h => (hys x).mpr (hxs x h)]
+    exact List.length_filter_le _ _
+  · intro h
+    exact ⟨ys.take n, by simp; omega, hnd.sublist (List.take_sublist _ _),
+      fun x hx => (hys x).mp (List.mem_of_mem_take hx)⟩
+
+set_option linter.unusedVariables false in
+theorem count_atLeast_agree {α : Type u} (E : CEnv) (T : TStructure α) (hT : Admissible E T)
+    (s : String) (hs : s ∈ E.finite) (b : Body) (hb : BodyTyped E s b) (n : Nat) :
+    (CFormula.count (atLeastAtom s b n)).holds T ↔ (VE.Time.atLeast s n b.toFormula).denote T.lower [] := by
+  rw [CFormula.holds, countAtom_holds_iff hT _ hs, atLeast_iff_le hT hs]
+  simp [atLeastAtom, Rel.holds] <;> omega
+
+set_option linter.unusedVariables false in
+theorem count_atMost_agree {α : Type u} (E : CEnv) (T : TStructure α) (hT : Admissible E T)
+    (s : String) (hs : s ∈ E.finite) (b : Body) (hb : BodyTyped E s b) (n : Nat) :
+    (CFormula.count (atMostAtom s b n)).holds T ↔ (VE.Time.atMost s n b.toFormula).denote T.lower [] := by
+  rw [CFormula.holds, countAtom_holds_iff hT _ hs, VE.Time.atMost, VE.Order.Formula.denote, atLeast_iff_le hT hs]
+  simp [atMostAtom, Rel.holds] <;> omega
+
+set_option linter.unusedVariables false in
+theorem count_exactly_agree {α : Type u} (E : CEnv) (T : TStructure α) (hT : Admissible E T)
+    (s : String) (hs : s ∈ E.finite) (b : Body) (hb : BodyTyped E s b) (n : Nat) :
+    (CFormula.count (exactlyAtom s b n)).holds T ↔ (VE.Time.exactly s n b.toFormula).denote T.lower [] := by
+  rw [CFormula.holds, countAtom_holds_iff hT _ hs, VE.Time.exactly, VE.Order.Formula.denote,
+    VE.Order.Formula.denote, atLeast_iff_le hT hs, atLeast_iff_le hT hs]
+  simp [exactlyAtom, Rel.holds] <;> omega
+
+/-- Follows from `count_exactly_agree`; on the wire W6a's `n_of_m` means "exactly". -/
+theorem count_nOfM_agree {α : Type u} (E : CEnv) (T : TStructure α) (hT : Admissible E T)
+    (s : String) (hs : s ∈ E.finite) (sel prop : Body) (h₁ : BodyTyped E s sel) (h₂ : BodyTyped E s prop)
+    (n m : Nat) :
+    (nOfMFormula s n m sel prop).holds T ↔
+      (VE.Time.nOfM s n m sel.toFormula prop.toFormula).denote T.lower [] := by
+  simp only [nOfMFormula, VE.Time.nOfM, CFormula.holds, VE.Order.Formula.denote]
+  exact and_congr (count_exactly_agree E T hT s hs sel h₁ m)
+    (count_exactly_agree E T hT s hs (.and sel prop) ⟨h₁, h₂⟩ n)
+
+/-! ## Finite countermodels (spec 3.9) -/
+
+theorem firstUse_nodup {β : Type} [BEq β] [LawfulBEq β] (xs : List β) : (firstUse xs).Nodup := by
+  suffices ∀ (xs acc : List β), acc.Nodup →
+      (xs.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) acc).Nodup from this xs [] List.nodup_nil
+  intro xs
+  induction xs with
+  | nil => exact fun _ h => h
+  | cons y ys ih =>
+    intro acc h
+    rw [List.foldl_cons]
+    split
+    · exact ih acc h
+    · rename_i hy
+      exact ih _ (List.nodup_append.mpr ⟨h, by simp, fun a ha b hb => by
+        simp only [List.mem_singleton] at hb; subst hb; exact fun e => hy (List.contains_iff_mem.mpr (e ▸ ha))⟩)
+
+/-- On a valid finite model, a body evaluates to true exactly when it holds in the model's tagged lift. -/
+theorem evalFin_iff {α : Type} [DecidableEq α] {E : VE.Time.QEnv} {M : VE.Order.FiniteModel α}
+    (hM : M.Valid E.erase) (x : α) :
+    ∀ b : Body, b.evalFin M x = true ↔ b.holds (VE.Time.lift E M.asStructure) x
+  | .atom p => by
+    rw [Body.holds, ← lower_unary, (VE.Time.lower_lift hM).2]
+    simp [Body.evalFin]
+  | .any => by simp [Body.evalFin, Body.holds]
+  | .not b => by simp [Body.evalFin, Body.holds, ← evalFin_iff hM x b]
+  | .and a b | .or a b => by simp [Body.evalFin, Body.holds, ← evalFin_iff hM x a, ← evalFin_iff hM x b]
+
+/-- `countFin` is the count in the lift of a valid finite model. -/
+theorem countFin_eq {α : Type} [DecidableEq α] {E : VE.Time.QEnv} {M : VE.Order.FiniteModel α}
+    (hM : M.Valid E.erase) (s : String) (b : Body) :
+    countFin M s b = regionSize (VE.Time.lift E M.asStructure) s b :=
+  (regionSize_filter (firstUse_nodup _) (fun _ => mem_firstUse) b _ fun x _ => evalFin_iff hM x b).symm
+
+/-- Where region constants are region sizes, the lift of a valid finite model lowers to `withRegionsFinite` on every
+formula well formed in the elaborated environment. -/
+theorem withRegionsFinite_denote {α : Type} [DecidableEq α] {E : CEnv} (fs : List CFormula)
+    {M : VE.Order.FiniteModel α} (hM : M.Valid E.q.erase) (a : VE.Order.Formula)
+    (ha : a.WellFormed (E.elab fs).erase []) :
+    a.denote (withRegions E fs (VE.Time.lift E.q M.asStructure)).lower [] ↔
+      a.denote (withRegionsFinite E fs M).asStructure [] := by
+  refine denote_congr (withRegionsFinite E fs M).asStructure _ (fun c σ hc => ?_) _
+    (fun p ws => (VE.Time.lower_lift hM).2 p ws) a [] [] ha
+  simp only [withRegions, withRegionsFinite]
+  cases hf : (regionTable E fs).find? (·.1 == c) with
+  | some e => obtain ⟨_, s, r⟩ := e; simp [VE.Time.TValue.forget, countFin_eq hM]
+  | none =>
+    have hany : (regionTable E fs).any (·.1 == c) = false :=
+      List.any_eq_false.mpr fun e he h => by simp [List.find?_eq_none.mp hf e he] at h
+    obtain ⟨τ, hτ, -⟩ := Option.map_eq_some_iff.mp hc
+    simp only [CEnv.elab, hany] at hτ
+    simpa [VE.Time.TStructure.lower] using (VE.Time.lower_lift hM).1 c τ hτ
+
+/-- **A refuted counting claim is not entailed**: a valid finite model of the original vocabulary on which W6a's
+countermodel check refutes the erased problem, with each region constant read as its region's size, is a structure
+where the premises hold and the conclusion does not. -/
+theorem refutesC_sound {α : Type} [DecidableEq α] (E : CEnv) (hE : E.WellFormed) (ps : List CFormula)
+    (c : CFormula) (M : VE.Order.FiniteModel α) (hM : M.Valid E.q.erase) (hps : ∀ a ∈ ps, Admitted E a)
+    (hc : Admitted E c) (h : refutesC E ps c M = true) : ¬ CEntails.{0} E ps c := by
+  intro hent
+  let T := VE.Time.lift E.q M.asStructure
+  have hT : Admissible E T := ⟨VE.Time.lift_admissible hM, fun s _ => ⟨M.domains s, fun _ => Iff.rfl⟩⟩
+  have hfs : ∀ a ∈ c :: ps, Admitted E a := fun a ha => (List.mem_cons.mp ha).elim (· ▸ hc) (hps a)
+  have key : ∀ a ∈ c :: ps,
+      a.holds T ↔ (a.erase E (c :: ps)).erase.denote (withRegionsFinite E (c :: ps) M).asStructure [] := by
+    intro a ha
+    have hq := erase_admitted hE (c :: ps) (hfs a ha) fun _ h => List.mem_flatMap.mpr ⟨a, ha, h⟩
+    rw [erase_iff E hE _ T hT a (hfs a ha) ha,
+      VE.Time.units_faithful (withRegions_admissible E hE _ T hT) hq (VE.Time.typed_nil _)]
+    exact withRegionsFinite_denote _ hM _ (VE.Time.erase_wellTyped hq)
+  obtain ⟨hp, hn⟩ := (VE.Order.countermodelCheck_iff _ _ _).mp h
+  exact hn ((key c List.mem_cons_self).mp (hent α T hT fun a ha => (key a (List.mem_cons_of_mem c ha)).mpr
+    (hp _ (List.mem_map.mpr ⟨_, List.mem_append_right _ (List.mem_map.mpr ⟨a, ha, rfl⟩), rfl⟩))))
 
 end VE.Cardinality

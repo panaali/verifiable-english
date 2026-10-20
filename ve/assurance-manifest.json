@@ -1777,7 +1777,7 @@
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
       "lean/VE/SearchBudget/Run.lean": "lean:runner-glue: the search-budget case (premise ASTs read leniently into facts, the requested sorts) and its budget row; the row only bounds an untrusted search whose models Lean checks (demand_sound, sortBounds_sound)",
       "lean/VE/Scope/Effects.lean": "lean:scope-effects: `mergeParts` joins a lead-in's part and an item's part as JSON objects (Json.mkObj of the members `lookups` reads), and `substOwn` rewrites a condition's JSON; scope decodes no rule field, and no service mode or route calls it yet (SC-1b)",
-      "lean/VE/Scope/Theorems.lean": "statements about scope@0's JSON effects (mergeParts_keys, lookups_spec, getObjVal? of the joined object); no runtime JSON handling",
+      "lean/VE/Scope/Theorems.lean": "statements about scope@0's JSON effects and `govern` (mergeParts_keys, lookups_spec, getObjVal? of the joined object, govern_identity); no runtime JSON handling",
       "lean/VE/Scope/Examples.lean": "scope@0 acceptance fixtures: JSON parts and conditions built with Json.parse and Json.mkObj and checked by #guard and decide; no runtime JSON handling",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
@@ -1880,7 +1880,8 @@
       "lean/VE/NormDefaults/PacksExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 compare the kind table's answers as compressed JSON; no runner path",
       "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 run the kind table on a decoded soft source with a case JSON and compare compressed answers; no runner path",
       "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
-      "lean/VE/Service/ActsExamples.lean": "fixtures only: #guard cases of act-phrases AP-1's profile part (ap-1b) that build acts@0 environments as JSON test inputs; no admission path, service mode or record reads it"
+      "lean/VE/Service/ActsExamples.lean": "fixtures only: #guard cases of act-phrases AP-1's profile part (ap-1b) that build acts@0 environments as JSON test inputs; no admission path, service mode or record reads it",
+      "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope, and no service mode or route calls it yet (SC-1b)"
     }
   },
   "plan_operations": {
