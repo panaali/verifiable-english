@@ -38,7 +38,7 @@ DOCS = [HERE / "REPORT.md", HERE / "hunt/README.md"]
 # a count: a number or a range, then up to three words ("of each replay's", "former", "of the"), then what it counts
 # (review F15: "21–35 of each replay's mutants" put three words between them and was never checked)
 # (not a number inside a name: ap-2, F14, TM82, Lean 4.24, section 4, step 1)
-COUNT = r"(?<![\w.–-])(?<![Ss]ection )(?<![Ss]tep )\d[\d,]*(?:–\d[\d,]*)?"
+COUNT = r"(?<![\w.,–-])(?<![Ss]ection )(?<![Ss]tep )\d[\d,]*(?:–\d[\d,]*)?"
 COUNTED = ("s|h|tests?|units|functions|mutants|seeds|seeded bugs|survivors|kills|definitions|files|probes|lines|"
            "replays|findings|rows|KILLED|SURVIVOR|UNKNOWN|INVALID")
 CLAIM = re.compile("|".join([
@@ -50,7 +50,7 @@ CLAIM = re.compile("|".join([
     r"\bload \d",
     COUNT + r" of (?:the )?\d[\d,]*\b",
     COUNT + rf" (?:[\w'’-]+ ){{0,3}}?(?:{COUNTED})\b",
-    COUNT + r" each\b", r"\b(?:all|every one of) (?:the )?\d", r"\babout \d",
+    COUNT + r" each\b", r"\b(?:all|every one of) (?:the )?\d", r"\babout \d[\d,]*",
 ]))
 # (words, why they report no result)
 NOT_CLAIMS = [
