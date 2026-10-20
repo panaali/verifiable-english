@@ -1,7 +1,7 @@
 # Zero-training English: one readable, writable VE
 
 2026-09-26 · Revised execution plan · Six print pages (A4, 14 mm margins; 10.5 pt body, 9.5 pt tables).
-Authority: [VISION.md](VISION.md), [PLAN-EXPAND2.md](PLAN-EXPAND2.md) (EXPAND2), and the [P0 freeze](docs/P0-Lean-NOTES.md). Future model assignments are scheduling only; this revision makes no model calls.
+Authority: [VISION.md](../../VISION.md), [PLAN-EXPAND2.md](PLAN-EXPAND2.md) (EXPAND2), and the [P0 freeze](../P0-Lean-NOTES.md). Future model assignments are scheduling only; this revision makes no model calls.
 
 ## 1. Contract, migration, and measurable coverage
 
@@ -100,7 +100,7 @@ Readers see only displayed English, compare randomised source/VE presentations, 
 
 ## 6. Review response and dated change log
 
-Both reviews conclude **ADOPT WITH CHANGES**. Sources: [Astra review](../manage-agents/zt-plan-review-astra.final.md) and [Fable review](../manage-agents/reviews/zt-plan-review-fable.md). Astra's unnumbered findings are numbered below in their original order within each severity. All A and B findings are applied; C corrections are also included. “Applied” means specified in this plan, not implemented or experimentally passed.
+Both reviews conclude **ADOPT WITH CHANGES**. Sources: [Astra review](../../../manage-agents/zt-plan-review-astra.final.md) and [Fable review](../../../manage-agents/reviews/zt-plan-review-fable.md). Astra's unnumbered findings are numbered below in their original order within each severity. All A and B findings are applied; C corrections are also included. “Applied” means specified in this plan, not implemented or experimentally passed.
 
 | Review finding | Applied response / acceptance location |
 |---|---|

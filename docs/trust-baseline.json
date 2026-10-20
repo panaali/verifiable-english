@@ -1006,6 +1006,20 @@
    "reason": "me-6b: lean/VE/Calc/Units.lean V +60 (D[V] UnitDef 7, UnitEnv 5, decodeFactor 10, decodeUnit 13, decodeV2 14, decode 6; G[V] UnitEnv.find? 2, UnitEnv.values 3); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6b, 2026-10-18",
    "commit": "2296317a9de7ef365523e0f69c442338d9eaf576"
+  },
+  {
+   "class": "S",
+   "lines": 90,
+   "reason": "sc-1ac: lean/VE/Scope/Govern.lean S +90 (Reach, Governor, SDoc, applyEffect, isFrame, unary, graph, baseObj, covered, classOf, position, ordered, composed, affected, govern), V +42 (G[V] untied: keysOf, unitsOf, idOf, unitIds, contentOf, isPart, isNorm, objectOf, partUnits, ruleUnits, coveredLayout, frameOn, baseName, newContent, patch); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ac, 2026-10-18",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
+  },
+  {
+   "class": "V",
+   "lines": 42,
+   "reason": "sc-1ac: lean/VE/Scope/Govern.lean S +90 (Reach, Governor, SDoc, applyEffect, isFrame, unary, graph, baseObj, covered, classOf, position, ordered, composed, affected, govern), V +42 (G[V] untied: keysOf, unitsOf, idOf, unitIds, contentOf, isPart, isNorm, objectOf, partUnits, ruleUnits, coveredLayout, frameOn, baseName, newContent, patch); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ac, 2026-10-18",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
   }
  ]
 }

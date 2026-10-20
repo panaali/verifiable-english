@@ -1,6 +1,6 @@
 # P0-Lean notes (PLAN-EXPAND2 section 3, Lean half)
 
-Owner: P0-Lean (Opus 5.5), branch `expand/p0-lean`. Spec: [PLAN-EXPAND2.md](../PLAN-EXPAND2.md)
+Owner: P0-Lean (Opus 5.5), branch `expand/p0-lean`. Spec: [PLAN-EXPAND2.md](plans/PLAN-EXPAND2.md)
 sections 2, 3 and 5; [VISION.md](../VISION.md). The Python half (P0-Py) is built in parallel on
 `~/code/ve-p0-py`. This file records what is built, the wire contract P0-Py must match, and every
 place where the spec was ambiguous and the conservative reading that was chosen.
