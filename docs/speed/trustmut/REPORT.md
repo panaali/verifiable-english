@@ -499,6 +499,18 @@ INVALID range of section 4, and every probe claim, for which nothing was saved. 
 `hunt/F14c.sh`, runs `claims.py`, the class's probe. Neither is a suite test: both read this report, and batch
 evidence is checked at the gate and merge, never by a permanent test (R11, D4).
 
+**F15 (a wrong count of F14's class).** Section 4 gave each replay's INVALID mutants as "21–35", and the F14
+paragraph above said every such sentence was bound; the evidence gives 7–35 (qt-a1 has the fewest INVALID). `claims.py`
+wrote the right text, but `CLAIM` read a count only with at most one word between the number and what it counts, so
+nothing compared the two. The class is a count `CLAIM` does not read. The fix is in `CLAIM`: its count form (`COUNT`,
+`COUNTED`) takes up to three words between them, and it also reads "N each", "all N", "about N" and a number of
+lines; a number inside a name (ap-2, F14, Lean 4.24) is no count, and a sentence that starts with a digit is a
+sentence of its own. Run on this report, the wider check found three more counts no evidence gave: section 5's sizes
+of the review rounds' tests (now measured from the test file, `parts()`; each was off), its estimate of the lines the
+unused operators take (reworded: nothing measures it), and a task line's own number (`NOT_CLAIMS`). PROBE F15 is
+`hunt/F15.sh`; PROBE F15c, `hunt/F15c.sh`, runs `claims.py` on `hunt/F15c.md`, one wrong count of each form, and
+requires each UNBOUND as a sentence of its own.
+
 ## 2. Orchestrator lines (not edited here: /home/seyran/code/manage-agents is the orchestrator's)
 
 For `BUILDER-CHECKLIST.md` (under item 3) and `prompts/build-checklist.txt` (a new line after 13):
@@ -645,7 +657,7 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
   `Admitted`), an argument replaced by a constant (pk-1's `fullEnv`), one list swapped for a sibling list (ap-2 F7's
   31o and 31i), a reserved list swapped for another (`mresv`), fault order. Follow-up: add them where step 1 says.
 - The mutation sites are found on the blanked text, not by Lean; Lean decides each mutant (INVALID when it does not
-  elaborate), so a site misread costs a build, never a verdict. 21–35 of each replay's mutants are INVALID.
+  elaborate), so a site misread costs a build, never a verdict. 7–35 of each replay's mutants are INVALID.
 - Checks are built from the mutated module's directory by default; a check elsewhere that does exercise the
   definition is reached only by `--deep`, `--test` or a check whose statement names it. A survivor may therefore
   be false (fail closed), never a kill.
@@ -716,10 +728,10 @@ Size: about 5,300 changed lines outside the generated `tests/history-dependent.j
 of it is the tool, the test, the seeded bugs' `mutants.json` and this report. That is over ten times the guideline. The size rule's
 fallback is to deliver steps 1-3 for the operators step 1 showed matter; every operator but `arm-default`,
 `body-true`/`body-false`, `ne-eq`, `all-any` and `append-*` left a survivor on a finding's line, and removing those
-saves under 20 lines, so all are kept. The bulk is the runner the task asks for (selection, scratch copies with
+saves only their entries in `OPERATORS` and the few generator lines that write them, so all are kept. The bulk is the runner the task asks for (selection, scratch copies with
 the shared build, staged builds, proof cuts, control builds, the kill rule) and the review rounds' tests (the
-F7 truth table and its package are about 250 of the test's lines, F9's line axis about 170, F10's budget
-table about 130), and splitting it
+F7 truth table and its package are about 230 of the test's lines, F9's line axis about 160, F10's budget
+table about 150), and splitting it
 would leave no usable tool.
 
 ## 6. Self-review against BUILDER-CHECKLIST
