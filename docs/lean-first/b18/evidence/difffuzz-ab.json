@@ -1,0 +1,548 @@
+{
+ "base": "/tmp/lf18/base",
+ "head": "/home/seyran/code/ve-lf-18",
+ "runs": [
+  {
+   "run": "--ci",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    0,
+    0
+   ],
+   "baseline_seen": [
+    214,
+    214
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 188.3,
+     "children": 90.1
+    },
+    {
+     "python": 177.8,
+     "children": 70.0
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20260923",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    18,
+    18
+   ],
+   "baseline_seen": [
+    187,
+    187
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 295.8,
+     "children": 184.9
+    },
+    {
+     "python": 264.8,
+     "children": 138.2
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20260924",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    31,
+    31
+   ],
+   "baseline_seen": [
+    190,
+    190
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 314.3,
+     "children": 196.5
+    },
+    {
+     "python": 282.1,
+     "children": 196.0
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20260925",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    25,
+    25
+   ],
+   "baseline_seen": [
+    192,
+    192
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 678.1,
+     "children": 771.3
+    },
+    {
+     "python": 637.4,
+     "children": 801.9
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20260926",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    25,
+    25
+   ],
+   "baseline_seen": [
+    187,
+    187
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 902.0,
+     "children": 960.0
+    },
+    {
+     "python": 788.9,
+     "children": 890.1
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20260927",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    29,
+    29
+   ],
+   "baseline_seen": [
+    190,
+    190
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 408.8,
+     "children": 239.4
+    },
+    {
+     "python": 372.3,
+     "children": 230.3
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20260928",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    19,
+    19
+   ],
+   "baseline_seen": [
+    179,
+    179
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 235.8,
+     "children": 146.1
+    },
+    {
+     "python": 220.2,
+     "children": 153.0
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20260929",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    31,
+    31
+   ],
+   "baseline_seen": [
+    181,
+    181
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 533.8,
+     "children": 761.4
+    },
+    {
+     "python": 512.5,
+     "children": 727.1
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20260930",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    25,
+    25
+   ],
+   "baseline_seen": [
+    191,
+    191
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 646.5,
+     "children": 524.1
+    },
+    {
+     "python": 578.8,
+     "children": 556.3
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20261001",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    25,
+    25
+   ],
+   "baseline_seen": [
+    183,
+    183
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 480.6,
+     "children": 535.2
+    },
+    {
+     "python": 448.3,
+     "children": 582.6
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20261002",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    21,
+    21
+   ],
+   "baseline_seen": [
+    191,
+    191
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 272.7,
+     "children": 152.8
+    },
+    {
+     "python": 255.2,
+     "children": 158.0
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20261003",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    24,
+    24
+   ],
+   "baseline_seen": [
+    193,
+    193
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 323.6,
+     "children": 191.2
+    },
+    {
+     "python": 306.8,
+     "children": 173.1
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20261004",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    0,
+    0
+   ],
+   "baseline_seen": [
+    214,
+    214
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 221.7,
+     "children": 102.1
+    },
+    {
+     "python": 215.4,
+     "children": 77.0
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20261005",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    23,
+    23
+   ],
+   "baseline_seen": [
+    180,
+    180
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 658.1,
+     "children": 762.5
+    },
+    {
+     "python": 610.3,
+     "children": 814.3
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  },
+  {
+   "run": "--deep 1 --seed 20261006",
+   "findings_equal": true,
+   "same_new": true,
+   "new": [
+    23,
+    23
+   ],
+   "baseline_seen": [
+    184,
+    184
+   ],
+   "not_reproduced": [
+    0,
+    0
+   ],
+   "unreviewed": [
+    0,
+    0
+   ],
+   "cpu_seconds": [
+    {
+     "python": 628.3,
+     "children": 643.6
+    },
+    {
+     "python": 579.2,
+     "children": 728.1
+    }
+   ],
+   "equal": true,
+   "head_only": [],
+   "base_only": [],
+   "head_only_new": [],
+   "grows": false
+  }
+ ],
+ "grows": false,
+ "all_equal": true
+}

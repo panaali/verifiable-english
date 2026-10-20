@@ -1,5 +1,6 @@
 import VE.Senses.Preamble
 import VE.EnglishGrammar.Extends
+import VE.Limits
 
 /-! The projection of a dictionary onto S2's lexicon (docs/spec/senses.md 2.5 and 5.3; batch B3).
 
@@ -80,10 +81,7 @@ structure Projection where
 def Projection.wordOf (P : Projection) (id : String) : Option String :=
   (P.map.find? (·.1 == id)).map (·.2.1.word)
 
-/-- Python's cap on the sorts of an environment (`ve/limits.py`). -/
-def maxSorts : Nat := 32
-/-- Python's cap on the predicates of an environment (`ve/limits.py`). -/
-def maxPredicates : Nat := 256
+export VE.Limits (maxSorts maxPredicates)
 
 /-- The senses of the used words of `D`, in `D`'s order. -/
 def projectedSenses (D : Dictionary) (used : List String) : List Sense :=

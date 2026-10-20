@@ -1,0 +1,666 @@
+{
+ "range": "main..HEAD --no-merges",
+ "code_head": "cd400d7a3b65324fdd5afb3a5c0452237c3735cd",
+ "main": "c7fc6acace33d5c23616d99249672b666a5ae875",
+ "base": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b",
+ "commits": [
+  "cd400d7a3b65324fdd5afb3a5c0452237c3735cd",
+  "1ffcda5f88c7aebe56ed7a39a705c8e6879eb457",
+  "7e63113fdef026ae3c08886f29bc25f795bffdc3",
+  "1e7cfd197c56b4f8cd2e3602a0704fe0a933757e",
+  "8c52e0c09b4102afbb944464ef7597f60b035edf",
+  "2f66d1abfc4a83017a519a638f1364a0f846215f",
+  "dadfec0233829aee7419eb0cdbc41f98b58ab68d",
+  "f98bd6f2f51d7805a5f0ed4bdccb052ba710c40e"
+ ],
+ "totals": {
+  "ve_python": {
+   "added": 369,
+   "deleted": 483
+  },
+  "lean_by_hand": {
+   "added": 335,
+   "deleted": 54
+  },
+  "tests_python": {
+   "added": 437,
+   "deleted": 668
+  },
+  "all": {
+   "added": 14603,
+   "deleted": 2121
+  }
+ },
+ "numstat": [
+  {
+   "file": "conformance/binding_probes.py",
+   "added": 3,
+   "deleted": 3
+  },
+  {
+   "file": "conformance/english_lean_e2_evidence.py",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "conformance/three_way.py",
+   "added": 4,
+   "deleted": 7
+  },
+  {
+   "file": "docs/lean-first/b15b/rule3.py",
+   "added": 4,
+   "deleted": 6
+  },
+  {
+   "file": "docs/lean-first/b18/DELTA.json",
+   "added": 81,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/DELTA.md",
+   "added": 25,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/REPORT.md",
+   "added": 49,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/difffuzz_ab.py",
+   "added": 99,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/ab-initial.json",
+   "added": 5463,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/ab.json",
+   "added": 308,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/base-ab.jsonl.gz",
+   "added": null,
+   "deleted": null
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/difffuzz-ab.json",
+   "added": 548,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/head-ab-initial.jsonl.gz",
+   "added": null,
+   "deleted": null
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/head-ab.jsonl.gz",
+   "added": null,
+   "deleted": null
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/latency.json",
+   "added": 181,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/mutants.json",
+   "added": 153,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/evidence/pilot-rerun.json",
+   "added": 5201,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/latency.py",
+   "added": 98,
+   "deleted": 0
+  },
+  {
+   "file": "docs/lean-first/b18/seed_mutants.py",
+   "added": 94,
+   "deleted": 0
+  },
+  {
+   "file": "docs/spec/assurance-manifest.md",
+   "added": 5,
+   "deleted": 5
+  },
+  {
+   "file": "docs/test-architecture/binding-census.json",
+   "added": 38,
+   "deleted": 12
+  },
+  {
+   "file": "docs/test-architecture/binding-census.md",
+   "added": 44,
+   "deleted": 17
+  },
+  {
+   "file": "lean/ResponseShape/Audit.lean",
+   "added": 9,
+   "deleted": 0
+  },
+  {
+   "file": "lean/ResponseShape/Encoders.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "file": "lean/ResponseShape/Encoders/Metered.lean",
+   "added": 81,
+   "deleted": 0
+  },
+  {
+   "file": "lean/ResponseShape/Schemas.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "file": "lean/ResponseShape/Schemas/Envelope.lean",
+   "added": 6,
+   "deleted": 8
+  },
+  {
+   "file": "lean/ResponseShape/Schemas/Metered.lean",
+   "added": 78,
+   "deleted": 0
+  },
+  {
+   "file": "lean/ResponseShape/Skeletons.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "file": "lean/VE.lean",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "file": "lean/VE/Alternatives/Decl.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Attribution/Content.lean",
+   "added": 3,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Audit.lean",
+   "added": 1,
+   "deleted": 0
+  },
+  {
+   "file": "lean/VE/LimitTies.lean",
+   "added": 27,
+   "deleted": 0
+  },
+  {
+   "file": "lean/VE/Limits.lean",
+   "added": 51,
+   "deleted": 0
+  },
+  {
+   "file": "lean/VE/Norms/Wire.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Risk/Decl.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Route/AstLimit.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Route/MeteredRun.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Route/MeteredTrace.lean",
+   "added": 47,
+   "deleted": 12
+  },
+  {
+   "file": "lean/VE/Senses/Project.lean",
+   "added": 2,
+   "deleted": 4
+  },
+  {
+   "file": "lean/VE/Service/Protocol.lean",
+   "added": 12,
+   "deleted": 8
+  },
+  {
+   "file": "lean/VE/Service/Standalone.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Service/TypingDiagnostic.lean",
+   "added": 2,
+   "deleted": 3
+  },
+  {
+   "file": "lean/VE/SoftNorms/Soften.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Time/Budget.lean",
+   "added": 2,
+   "deleted": 2
+  },
+  {
+   "file": "lean/VE/Time/Decimal.lean",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "file": "lean/axioms.txt",
+   "added": 9,
+   "deleted": 0
+  },
+  {
+   "file": "lean/checkers.lock",
+   "added": 2,
+   "deleted": 0
+  },
+  {
+   "file": "lean/declarations.txt",
+   "added": 786,
+   "deleted": 749
+  },
+  {
+   "file": "lean/predicates.txt",
+   "added": 5,
+   "deleted": 0
+  },
+  {
+   "file": "lean/statements.txt",
+   "added": 14,
+   "deleted": 10
+  },
+  {
+   "file": "tests/data/binding-answers.jsonl.gz",
+   "added": null,
+   "deleted": null
+  },
+  {
+   "file": "tests/data/relay-gate-cases.jsonl",
+   "added": 4,
+   "deleted": 4
+  },
+  {
+   "file": "tests/python_oracle.py",
+   "added": 41,
+   "deleted": 0
+  },
+  {
+   "file": "tests/test_alternatives_profile.py",
+   "added": 0,
+   "deleted": 4
+  },
+  {
+   "file": "tests/test_assurance_manifest.py",
+   "added": 40,
+   "deleted": 24
+  },
+  {
+   "file": "tests/test_b17_owner.py",
+   "added": 7,
+   "deleted": 5
+  },
+  {
+   "file": "tests/test_discourse.py",
+   "added": 7,
+   "deleted": 3
+  },
+  {
+   "file": "tests/test_english_lean_adapter.py",
+   "added": 4,
+   "deleted": 2
+  },
+  {
+   "file": "tests/test_english_lean_route.py",
+   "added": 4,
+   "deleted": 2
+  },
+  {
+   "file": "tests/test_environment_field_types.py",
+   "added": 0,
+   "deleted": 11
+  },
+  {
+   "file": "tests/test_evaluate_search.py",
+   "added": 4,
+   "deleted": 7
+  },
+  {
+   "file": "tests/test_hang_guards.py",
+   "added": 0,
+   "deleted": 1
+  },
+  {
+   "file": "tests/test_lean_authority_values.py",
+   "added": 16,
+   "deleted": 14
+  },
+  {
+   "file": "tests/test_lean_first_b13a.py",
+   "added": 0,
+   "deleted": 4
+  },
+  {
+   "file": "tests/test_lean_first_b14a.py",
+   "added": 0,
+   "deleted": 1
+  },
+  {
+   "file": "tests/test_lean_first_diff.py",
+   "added": 0,
+   "deleted": 1
+  },
+  {
+   "file": "tests/test_lean_first_triage.py",
+   "added": 0,
+   "deleted": 5
+  },
+  {
+   "file": "tests/test_lean_handles.py",
+   "added": 0,
+   "deleted": 2
+  },
+  {
+   "file": "tests/test_lean_service.py",
+   "added": 31,
+   "deleted": 10
+  },
+  {
+   "file": "tests/test_metered_differential.py",
+   "added": 5,
+   "deleted": 2
+  },
+  {
+   "file": "tests/test_metered_lean.py",
+   "added": 65,
+   "deleted": 9
+  },
+  {
+   "file": "tests/test_readings_s2_lean.py",
+   "added": 11,
+   "deleted": 17
+  },
+  {
+   "file": "tests/test_relay.py",
+   "added": 13,
+   "deleted": 1
+  },
+  {
+   "file": "tests/test_relay_mutation_gate.py",
+   "added": 16,
+   "deleted": 6
+  },
+  {
+   "file": "tests/test_repo_map.py",
+   "added": 4,
+   "deleted": 2
+  },
+  {
+   "file": "tests/test_risk_profile.py",
+   "added": 0,
+   "deleted": 13
+  },
+  {
+   "file": "tests/test_rust_jsonl_schema.py",
+   "added": 17,
+   "deleted": 7
+  },
+  {
+   "file": "tests/test_search_options.py",
+   "added": 3,
+   "deleted": 5
+  },
+  {
+   "file": "tests/test_single_owner.py",
+   "added": 15,
+   "deleted": 47
+  },
+  {
+   "file": "tests/test_stage2_dispatch.py",
+   "added": 42,
+   "deleted": 86
+  },
+  {
+   "file": "tests/test_stage2_evaluation.py",
+   "added": 76,
+   "deleted": 289
+  },
+  {
+   "file": "tests/test_stage2_faults.py",
+   "added": 0,
+   "deleted": 1
+  },
+  {
+   "file": "tests/test_stage2_graph.py",
+   "added": 0,
+   "deleted": 1
+  },
+  {
+   "file": "tests/test_stage2_parse.py",
+   "added": 0,
+   "deleted": 2
+  },
+  {
+   "file": "tests/test_stage2_readings.py",
+   "added": 0,
+   "deleted": 15
+  },
+  {
+   "file": "tests/test_stage2_standalone.py",
+   "added": 0,
+   "deleted": 3
+  },
+  {
+   "file": "tests/test_stage2_validation.py",
+   "added": 0,
+   "deleted": 12
+  },
+  {
+   "file": "tests/test_w6a_limit_generator.py",
+   "added": 16,
+   "deleted": 54
+  },
+  {
+   "file": "tools/difffuzz.py",
+   "added": 1,
+   "deleted": 14
+  },
+  {
+   "file": "tools/layer_policy.py",
+   "added": 3,
+   "deleted": 3
+  },
+  {
+   "file": "tools/lean-mode-deps.json",
+   "added": 5,
+   "deleted": 1
+  },
+  {
+   "file": "tools/relay-gate-allow.json",
+   "added": 0,
+   "deleted": 10
+  },
+  {
+   "file": "tools/relay_mutation_gate.py",
+   "added": 0,
+   "deleted": 9
+  },
+  {
+   "file": "tools/select_tests_seeds.py",
+   "added": 3,
+   "deleted": 1
+  },
+  {
+   "file": "tools/trust-classes.json",
+   "added": 55,
+   "deleted": 28
+  },
+  {
+   "file": "ve/adapters/cedar.py",
+   "added": 1,
+   "deleted": 3
+  },
+  {
+   "file": "ve/admission.py",
+   "added": 1,
+   "deleted": 3
+  },
+  {
+   "file": "ve/alternatives.py",
+   "added": 0,
+   "deleted": 5
+  },
+  {
+   "file": "ve/argument.py",
+   "added": 1,
+   "deleted": 3
+  },
+  {
+   "file": "ve/assist/session.py",
+   "added": 3,
+   "deleted": 5
+  },
+  {
+   "file": "ve/assurance-manifest.json",
+   "added": 32,
+   "deleted": 29
+  },
+  {
+   "file": "ve/ast.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "file": "ve/backends/dispatch.py",
+   "added": 18,
+   "deleted": 265
+  },
+  {
+   "file": "ve/backends/english_lean.py",
+   "added": 87,
+   "deleted": 2
+  },
+  {
+   "file": "ve/backends/lean_runner.py",
+   "added": 68,
+   "deleted": 19
+  },
+  {
+   "file": "ve/backends/lean_service.py",
+   "added": 4,
+   "deleted": 2
+  },
+  {
+   "file": "ve/backends/lean_service_schema/envelope.json",
+   "added": 34,
+   "deleted": 6
+  },
+  {
+   "file": "ve/backends/lean_service_schema/metered.json",
+   "added": 99,
+   "deleted": 0
+  },
+  {
+   "file": "ve/backends/relay.py",
+   "added": 13,
+   "deleted": 16
+  },
+  {
+   "file": "ve/backends/rust_jsonl.py",
+   "added": 1,
+   "deleted": 2
+  },
+  {
+   "file": "ve/backends/service_schema.py",
+   "added": 1,
+   "deleted": 1
+  },
+  {
+   "file": "ve/backends/validation.py",
+   "added": 6,
+   "deleted": 1
+  },
+  {
+   "file": "ve/background.py",
+   "added": 8,
+   "deleted": 12
+  },
+  {
+   "file": "ve/english.py",
+   "added": 3,
+   "deleted": 7
+  },
+  {
+   "file": "ve/environment_wire.py",
+   "added": 20,
+   "deleted": 3
+  },
+  {
+   "file": "ve/errors.py",
+   "added": 3,
+   "deleted": 2
+  },
+  {
+   "file": "ve/evaluate.py",
+   "added": 45,
+   "deleted": 33
+  },
+  {
+   "file": "ve/limits.py",
+   "added": 29,
+   "deleted": 13
+  },
+  {
+   "file": "ve/norms.py",
+   "added": 3,
+   "deleted": 3
+  },
+  {
+   "file": "ve/readings.py",
+   "added": 2,
+   "deleted": 4
+  },
+  {
+   "file": "ve/risk.py",
+   "added": 0,
+   "deleted": 6
+  },
+  {
+   "file": "ve/search.py",
+   "added": 43,
+   "deleted": 70
+  },
+  {
+   "file": "ve/surface/time.py",
+   "added": 2,
+   "deleted": 1
+  },
+  {
+   "file": "ve/wire.py",
+   "added": 6,
+   "deleted": 1
+  }
+ ]
+}

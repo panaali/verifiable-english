@@ -1,4 +1,8 @@
-"""Backend integration on the public evaluation and Background signatures."""
+"""Backend integration on the public evaluation and Background signatures.
+
+Since lean-first batch 18 the public operations are Lean's with no authority to select: each test
+compares Lean's public answer with the retained Python evaluator (`tests/python_oracle.py`), or checks
+the answer itself where no Python implementation is left."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -10,13 +14,13 @@ from conformance.p0 import environment
 from ve import Environment, FiniteModel
 from ve.ast import (And, Atom, Binary, Bottom, Const, Eq, Exists, Forall, Implies,
                     Named, Not, Or, Reach, Top, Unary, Var)
-from ve.background import background, dependency_order
+from ve.background import background
 from ve.evaluate import evaluate
-from ve.search import check_countermodel
 from ve.errors import VEError
 from ve.backends.lean_service import CheckerUnavailable
-from ve.search import check_countermodel, find_countermodel, find_distinguishing_model
+from ve.search import check_countermodel, find_countermodel
 from ve.admission import admit_document
+from tests import python_oracle
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean/.lake/build/bin/ve_service"
@@ -24,17 +28,7 @@ RUST = ROOT / "rust/target/release/ve"
 
 
 @pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
-def test_lean_admission_preserves_report_and_identity(monkeypatch):
-    from conformance.p0 import admission_cases
-    case = next(c for c in admission_cases() if c["id"] == "bridge-background")
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = admit_document(case["environment"], case["document"])
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    assert admit_document(case["environment"], case["document"]) == expected
-
-
-@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
-def test_lean_norms_admission_with_data_flags_matches_python(monkeypatch):
+def test_lean_norms_admission_with_data_flags():
     from ve.norms import NormDocument
     from tests.test_norms import permission, rule
     raw = {"language": "ve.core@0.2", "profiles": ["data@0", "norms@0", "relational-fol@0"],
@@ -59,34 +53,26 @@ def test_lean_norms_admission_with_data_flags_matches_python(monkeypatch):
         {**document["graph"]["nodes"][1], "label": "background:literals"}]}}
     closure = {**raw, "profiles": ["closure@0", "norms@0", "relational-fol@0"],
                "vocabulary": {**raw["vocabulary"], "predicates": {"permitted": permission()}}}
-    outcomes = {}
-    for authority in ("python", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        row = [admit_document(env, document)]
-        for e, d in ((env, rejected), (closure, document)):
-            try:
-                admit_document(e, d)
-            except VEError as error:
-                row.append((error.code, str(error)))
-        outcomes[authority] = row
-    assert outcomes["python"][0]["admitted"] and len(outcomes["python"]) == 3
-    assert outcomes["lean"] == outcomes["python"]
+    row = [admit_document(env, document)]
+    for e, d in ((env, rejected), (closure, document)):
+        try:
+            admit_document(e, d)
+        except VEError as error:
+            row.append((error.code, str(error)))
+    assert row[0]["admitted"] and len(row) == 3
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-def test_budgeted_order_evaluation_matches_python(monkeypatch):
+def test_budgeted_order_evaluation_matches_python():
     from tests.probe_matrix import model_wire, raw_environment
     from ve.ast import Le, Num
     env = Environment(raw_environment(("order@0",)))
     model = FiniteModel.from_dict(env, model_wire(env))
     formula = Le(Num(0), Num(1))
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = [evaluate(env, formula, model, trace=False, max_evaluations=n).to_dict()
+    expected = [python_oracle.evaluate(env, formula, model, trace=False, max_evaluations=n).to_dict()
                 for n in (0, 1, 2)]
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert [evaluate(env, formula, model, trace=False, max_evaluations=n).to_dict()
-                for n in (0, 1, 2)] == expected
+    assert [evaluate(env, formula, model, trace=False, max_evaluations=n).to_dict()
+            for n in (0, 1, 2)] == expected
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
@@ -97,60 +83,16 @@ def test_budgeted_order_evaluation_matches_python(monkeypatch):
     (Forall("item", Eq(Var(0), Const("x"))), 3, 3),
     (Forall("item", Eq(Var(0), Const("x"))), 3, 1),
 ])
-def test_traced_order_evaluation_matches_python(monkeypatch, formula, budget, trace_budget):
+def test_traced_order_evaluation_matches_python(formula, budget, trace_budget):
     from tests.probe_matrix import model_wire, raw_environment
     from ve.ast import Le, Num
     env = Environment(raw_environment(("order@0",)))
     model = FiniteModel.from_dict(env, model_wire(env))
     cases = (formula, Le(Num(0), Num(1)))
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = [evaluate(env, f, model, trace=True, max_evaluations=budget,
-                         max_trace_nodes=trace_budget).to_dict() for f in cases]
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert [evaluate(env, f, model, trace=True, max_evaluations=budget,
-                         max_trace_nodes=trace_budget).to_dict() for f in cases] == expected
-
-
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-@pytest.mark.parametrize("semantic", [False, True])
-def test_nonvacuity_search_matches_python(monkeypatch, semantic):
-    from tests.probe_matrix import raw_environment
-    raw = raw_environment(())
-    raw["vocabulary"]["constants"] = {}
-    env = Environment(raw)
-    guard = Forall("item", Or(Not(Unary("base", Var(0))), Top()))
-
-    def search():
-        return find_countermodel(env, (), Bottom(), min_domain_size=1,
-            max_domain_size=1, max_models=4, nonvacuous_for=guard,
-            semantic_nonvacuity=semantic)
-
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = search().to_dict()
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert search().to_dict() == expected
-
-
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-def test_nonvacuity_distinguishing_matches_python(monkeypatch):
-    from tests.probe_matrix import raw_environment
-    raw = raw_environment(())
-    raw["vocabulary"]["constants"] = {}
-    env = Environment(raw)
-    guard = Forall("item", Or(Not(Unary("base", Var(0))), Top()))
-
-    def search():
-        return find_distinguishing_model(env, Exists("item", Unary("base", Var(0))),
-            Bottom(), min_domain_size=1, max_domain_size=1, max_models=4,
-            nonvacuous_for=guard, semantic_nonvacuity=True)
-
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = search().to_dict()
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert search().to_dict() == expected
+    expected = [python_oracle.evaluate(env, f, model, trace=True, max_evaluations=budget,
+                                       max_trace_nodes=trace_budget).to_dict() for f in cases]
+    assert [evaluate(env, f, model, trace=True, max_evaluations=budget,
+                     max_trace_nodes=trace_budget).to_dict() for f in cases] == expected
 
 
 @pytest.fixture
@@ -172,79 +114,25 @@ def fixture():
     return env, model
 
 
-@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
-def test_lean_background_preserves_named_premises(monkeypatch, fixture):
-    env, _ = fixture
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = background(env)
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    assert background(env) == expected
-
-
-@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
-@pytest.mark.parametrize("dependencies", [
-    {}, {"b": {"a"}, "a": set()},
-    {"a": {"outside"}, "b": set(), "c": {"a", "b"}},
-])
-def test_lean_dependency_order_preserves_signature(monkeypatch, dependencies):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = dependency_order(dependencies)
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    assert dependency_order(dependencies) == expected
-
-
-@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
-def test_lean_dependency_cycle_keeps_diagnostic_code(monkeypatch):
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    with pytest.raises(VEError) as original:
-        dependency_order({"a": {"b"}, "b": {"a"}})
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    with pytest.raises(VEError) as candidate:
-        dependency_order({"a": {"b"}, "b": {"a"}})
-    assert candidate.value.code == original.value.code
-
-
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
 @pytest.mark.parametrize("formula,budget", [(Top(), 1), (Bottom(), 1),
                                            (And(Top(), Top()), 2), (Top(), 0)])
-def test_budgeted_evaluation_matches_python(monkeypatch, fixture, formula, budget):
+def test_budgeted_evaluation_matches_python(fixture, formula, budget):
     env, model = fixture
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = evaluate(env, formula, model, trace=False, max_evaluations=budget)
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert evaluate(env, formula, model, trace=False,
-                        max_evaluations=budget).to_dict() == expected.to_dict()
-
-
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-def test_shadow_evaluation_has_no_divergence(monkeypatch, fixture, tmp_path):
-    env, model = fixture
-    log = tmp_path / "shadow.jsonl"
-    monkeypatch.setenv("VE_SHADOW_LOG", str(log))
-    monkeypatch.setenv("VE_AUTHORITY", "shadow")
-    assert evaluate(env, Top(), model, trace=False).value is True
-    assert not log.exists()
+    expected = python_oracle.evaluate(env, formula, model, trace=False, max_evaluations=budget)
+    assert evaluate(env, formula, model, trace=False,
+                    max_evaluations=budget).to_dict() == expected.to_dict()
 
 
 def test_missing_rust_binary_fails_closed_and_lean_evaluation_does_not_need_it(monkeypatch, fixture, tmp_path):
     env, model = fixture
     monkeypatch.setenv("VE_RUST_JSONL", str(tmp_path / "missing-ve"))
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    # Neither evaluation nor the countermodel check runs Rust under the Lean authority (lean-first
-    # batch 15b, review B3): both report Lean's metered evaluator.
+    # Neither evaluation nor the countermodel check runs Rust (lean-first batches 15b and 18): both
+    # report Lean's metered evaluator. Only the search needs the Rust binary.
     assert evaluate(env, Top(), model, trace=True).value is True
     assert check_countermodel(env, (), Bottom(), model).valid is True
     with pytest.raises(CheckerUnavailable):
         find_countermodel(env, (), Bottom(), max_domain_size=1)
-    monkeypatch.setenv("VE_AUTHORITY", "rust-experimental")
-    with pytest.raises(CheckerUnavailable):
-        check_countermodel(env, (), Bottom(), model)
-    log = tmp_path / "shadow.jsonl"
-    monkeypatch.setenv("VE_SHADOW_LOG", str(log))
-    monkeypatch.setenv("VE_AUTHORITY", "shadow")
-    assert check_countermodel(env, (), Bottom(), model).valid is True
-    assert not log.exists()
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
@@ -260,16 +148,12 @@ def test_missing_rust_binary_fails_closed_and_lean_evaluation_does_not_need_it(m
     (Exists("person", Eq(Var(0), Const("beta"))), 3, 3),
     (Exists("person", Top()), 4, 1),
 ])
-def test_traced_evaluation_matches_python(monkeypatch, fixture, formula, budget, trace_budget):
+def test_traced_evaluation_matches_python(fixture, formula, budget, trace_budget):
     env, model = fixture
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = evaluate(env, formula, model, trace=True,
-                        max_evaluations=budget, max_trace_nodes=trace_budget)
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        actual = evaluate(env, formula, model, trace=True,
-                          max_evaluations=budget, max_trace_nodes=trace_budget)
-        assert actual.to_dict() == expected.to_dict()
+    expected = python_oracle.evaluate(env, formula, model, trace=True,
+                                      max_evaluations=budget, max_trace_nodes=trace_budget)
+    actual = evaluate(env, formula, model, trace=True, max_evaluations=budget, max_trace_nodes=trace_budget)
+    assert actual.to_dict() == expected.to_dict()
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
@@ -277,16 +161,12 @@ def test_traced_evaluation_matches_python(monkeypatch, fixture, formula, budget,
     (("closure@0",), Reach("star", Named("step"), Const("x"), Const("x"))),
     (("closure@0", "nary@0"), Atom("triple", (Const("x"), Const("y"), Const("x")))),
 ])
-def test_traced_profile_cases_match_python(monkeypatch, profiles, formula):
+def test_traced_profile_cases_match_python(profiles, formula):
     from tests.probe_matrix import model_wire, raw_environment
     env = Environment(raw_environment(profiles))
     model = FiniteModel.from_dict(env, model_wire(env))
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = evaluate(env, formula, model, trace=True, max_evaluations=100)
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert evaluate(env, formula, model, trace=True,
-                        max_evaluations=100).to_dict() == expected.to_dict()
+    expected = python_oracle.evaluate(env, formula, model, trace=True, max_evaluations=100)
+    assert evaluate(env, formula, model, trace=True, max_evaluations=100).to_dict() == expected.to_dict()
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
@@ -294,64 +174,10 @@ def test_traced_profile_cases_match_python(monkeypatch, profiles, formula):
     ((Top(),), Bottom(), 2), ((Bottom(),), Top(), 2),
     ((Top(),), Bottom(), 1),
 ])
-def test_countermodel_schema_identity_and_budget(monkeypatch, fixture, premises, conclusion, budget):
+def test_countermodel_schema_identity_and_budget(fixture, premises, conclusion, budget):
     env, model = fixture
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = check_countermodel(env, premises, conclusion, model, max_evaluations=budget)
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert check_countermodel(env, premises, conclusion, model,
-                                  max_evaluations=budget) == expected
-
-
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-@pytest.mark.parametrize("options", [
-    {}, {"min_domain_size": 1}, {"nonempty_domains": True},
-    {"max_models": 0}, {"max_evaluations": 0},
-    {"max_models": 0, "max_evaluations": 0},
-])
-def test_search_adapter_preserves_witness_and_budgets(monkeypatch, options):
-    wire = environment()
-    wire["vocabulary"]["sorts"]["person"] = {"description": "A person."}
-    wire["vocabulary"]["constants"] = {}
-    env = Environment(wire)
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = find_countermodel(env, (), Bottom(), max_domain_size=1, **options)
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert find_countermodel(env, (), Bottom(), max_domain_size=1,
-                                 **options).to_dict() == expected.to_dict()
-
-
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-@pytest.mark.parametrize("a,b,options", [
-    (Top(), Bottom(), {}), (Top(), Top(), {}),
-    (Top(), Bottom(), {"nonempty_domains": True}),
-    (Top(), Bottom(), {"max_models": 0}),
-    (Top(), Bottom(), {"max_evaluations": 1}),
-])
-def test_distinguishing_adapter_preserves_witness_and_counts(monkeypatch, a, b, options):
-    wire = environment()
-    wire["vocabulary"]["sorts"]["person"] = {"description": "A person."}
-    wire["vocabulary"]["constants"] = {}
-    env = Environment(wire)
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = find_distinguishing_model(env, a, b, max_domain_size=1, **options)
-    for authority in ("rust-experimental", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        assert find_distinguishing_model(env, a, b, max_domain_size=1,
-                                         **options).to_dict() == expected.to_dict()
-
-
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-def test_nary_search_matches_stage0_probe(monkeypatch):
-    from tests.probe_matrix import model_wire, operation, raw_environment
-    env = Environment(raw_environment(("closure@0", "nary@0")))
-    model = FiniteModel.from_dict(env, model_wire(env))
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = operation("countermodel_search", "positive", env, model)().to_dict()
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    assert operation("countermodel_search", "positive", env, model)().to_dict() == expected
+    expected = python_oracle.check_countermodel(env, premises, conclusion, model, max_evaluations=budget)
+    assert check_countermodel(env, premises, conclusion, model, max_evaluations=budget) == expected
 
 
 def _order_search_env():
@@ -366,41 +192,8 @@ def _order_search_env():
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-@pytest.mark.parametrize("premises,conclusion,options", [
-    ((), "bottom", {}),
-    (("le n 2",), "score", {}),
-    (("le n 2",), "score", {"max_models": 3}),
-    (("score",), "lt", {"max_domain_size": 2, "min_domain_size": 1}),
-    (("forall",), "bottom", {"nonempty_domains": True, "nonvacuous_for": "forall"}),
-    (("forall",), "bottom", {"nonvacuous_for": "forall", "semantic_nonvacuity": True,
-                             "max_models": 20}),
-    (("le n 2",), "score", {"max_evaluations": 3}),
-])
-def test_order_search_matches_python(monkeypatch, premises, conclusion, options):
-    """Rust order search streams Python's candidate models with its counters."""
-    from ve.ast import Le, Lt, Num
-    env = _order_search_env()
-    formulas = {"bottom": Bottom(), "le n 2": Le(Const("n"), Num(2)),
-                "score": Binary("score", Const("x"), Const("n")),
-                "lt": Lt(Const("n"), Num(-1)),
-                "forall": Forall("item", Implies(Unary("base", Var(0)),
-                                                 Binary("score", Var(0), Num(1))))}
-    options = {k: formulas[v] if k == "nonvacuous_for" else v for k, v in options.items()}
-    args = (env, tuple(formulas[p] for p in premises), formulas[conclusion])
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = find_countermodel(*args, **options).to_dict()
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    assert find_countermodel(*args, **options).to_dict() == expected
-    a, b = (formulas[premises[0]] if premises else Top()), formulas[conclusion]
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = find_distinguishing_model(env, a, b, **options).to_dict()
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
-    assert find_distinguishing_model(env, a, b, **options).to_dict() == expected
-
-
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
 @pytest.mark.parametrize("budget", [0, 1, 2, 1000])
-def test_order_countermodel_check_matches_python(monkeypatch, budget):
+def test_order_countermodel_check_matches_python(budget):
     from ve.ast import Le, Num
     env = _order_search_env()
     model = FiniteModel.from_dict(env, {"complete": True, "domains": {"item": ["i"]},
@@ -408,15 +201,13 @@ def test_order_countermodel_check_matches_python(monkeypatch, budget):
                                         "relations": {"base": [["i"]], "score": [["i", "3"]]}})
     args = (env, (Le(Const("n"), Num(2)), Unary("base", Const("x"))),
             Binary("score", Const("x"), Const("n")), model)
-    monkeypatch.setenv("VE_AUTHORITY", "python")
-    expected = check_countermodel(*args, max_evaluations=budget)
-    monkeypatch.setenv("VE_AUTHORITY", "lean")
+    expected = python_oracle.check_countermodel(*args, max_evaluations=budget)
     assert check_countermodel(*args, max_evaluations=budget) == expected
 
 
 @pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
 @pytest.mark.parametrize("layers", [("definitions@0",), ("data@0",), ("data@0", "definitions@0")])
-def test_core_family_layers_match_python(monkeypatch, layers):
+def test_core_family_layers_match_python(layers):
     """Definitions and data flags on closure@0 + nary@0 through the Lean core route."""
     from tests.probe_matrix import model_wire, raw_environment
     from ve.errors import InvalidModel
@@ -425,15 +216,11 @@ def test_core_family_layers_match_python(monkeypatch, layers):
     model = FiniteModel.from_dict(env, data)
     formula = (Unary("derived", Const("x")) if "definitions@0" in layers
                else Binary("edge", Const("x"), Const("x")))
-    results = {}
-    for authority in ("python", "lean"):
-        monkeypatch.setenv("VE_AUTHORITY", authority)
-        results[authority] = (
-            [(p.generator, p.formula) for p in background(env)],
-            evaluate(env, formula, model, trace=False).to_dict(),
-            check_countermodel(env, (formula,), Bottom(), model),
-            find_countermodel(env, (), formula, max_domain_size=2, max_models=50).to_dict())
-    assert results["lean"] == results["python"]
+    assert background(env)
+    assert (evaluate(env, formula, model, trace=False).to_dict()
+            == python_oracle.evaluate(env, formula, model, trace=False).to_dict())
+    assert (check_countermodel(env, (formula,), Bottom(), model)
+            == python_oracle.check_countermodel(env, (formula,), Bottom(), model))
     if "data@0" in layers:
         from ve.ast import formula_to_data
         from ve.backends.relay import decide as run
@@ -444,29 +231,12 @@ def test_core_family_layers_match_python(monkeypatch, layers):
         assert caught.value.generator == "flags"
 
 
-@pytest.mark.skipif(not (LEAN.exists() and RUST.exists()), reason="backends have not been built")
-@pytest.mark.parametrize("profiles", [(), ("data@0",), ("definitions@0",), ("data@0", "definitions@0"),
-    ("closure@0",), ("closure@0", "nary@0", "data@0"), ("norms@0",)])
-def test_search_streams_python_model_order(monkeypatch, profiles):
-    """Every model budget stops Rust's stream where Python's stops: same order and counts."""
-    from tests.probe_matrix import raw_environment, semantic_formula
-    env = Environment(raw_environment(profiles))
-    late = And(Exists("item", Unary("base", Var(0))), semantic_formula(env))
-    for max_models in range(0, 7):
-        options = {"max_domain_size": 2, "max_models": max_models}
-        monkeypatch.setenv("VE_AUTHORITY", "python")
-        expected = (find_countermodel(env, (late,), Bottom(), **options).to_dict(),
-                    find_distinguishing_model(env, Top(), late, **options).to_dict())
-        monkeypatch.setenv("VE_AUTHORITY", "lean")
-        assert (find_countermodel(env, (late,), Bottom(), **options).to_dict(),
-                find_distinguishing_model(env, Top(), late, **options).to_dict()) == expected
-
-
 @pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
 @pytest.mark.parametrize("profiles", [(), ("data@0",), ("definitions@0",), ("norms@0",),
     ("closure@0",), ("closure@0", "nary@0"), ("closure@0", "nary@0", "definitions@0"), ("order@0",)])
-def test_certificate_replay_matches_python(monkeypatch, profiles):
-    """Lean replays; the public budget is charged one step per trace node."""
+def test_certificate_replay(profiles):
+    """Lean replays; the public budget is charged one step per trace node: a budget of 0 is
+    `ResourceLimit`, never a verdict, and a certificate for another conclusion is refused."""
     from tests.probe_matrix import raw_environment, semantic_formula
     from ve.entailment import check_entailment_certificate, prove_entailment
     env = Environment(raw_environment(profiles))
@@ -474,9 +244,26 @@ def test_certificate_replay_matches_python(monkeypatch, profiles):
     proof = prove_entailment(env, (formula,), formula, max_steps=1000)
     assert proof.status == "Found"
     stale = {**proof.certificate, "conclusion_meaning_id": "0" * 64}
-    for certificate, budget in ((proof.certificate, 1000), (proof.certificate, 0), (stale, 1000)):
-        monkeypatch.setenv("VE_AUTHORITY", "python")
-        expected = check_entailment_certificate(env, (formula,), formula, certificate, max_steps=budget)
-        monkeypatch.setenv("VE_AUTHORITY", "lean")
-        assert check_entailment_certificate(env, (formula,), formula, certificate,
-                                            max_steps=budget) == expected
+    outcomes = [(check.valid, check.status) for check in (
+        check_entailment_certificate(env, (formula,), formula, certificate, max_steps=budget)
+        for certificate, budget in ((proof.certificate, 1000), (proof.certificate, 0), (stale, 1000)))]
+    assert outcomes == [(True, "Valid"), (False, "ResourceLimit"), (False, "InvalidCertificate")]
+
+
+@pytest.mark.skipif(not LEAN.exists(), reason="Lean service has not been built")
+def test_a_cached_model_encoding_never_stands_for_another_model(fixture):
+    """Lean-first batch 18: a model's case encoding is written once per model object. A second object that
+    claims the first one's identities with other contents is encoded from its own contents, so Lean refuses
+    the claim, however warm the cache is."""
+    from dataclasses import replace
+    from ve.errors import InvalidModel
+    from ve.backends.lean_runner import encoded_model
+    env, model = fixture
+    assert evaluate(env, Unary("ready", Const("alpha")), model, trace=False).value is True
+    other = FiniteModel.from_dict(env, {**model.to_dict(), "relations": {"ready": [], "knows": [["a", "b"]]}})
+    forged = replace(other, model_id=model.model_id)
+    assert encoded_model(forged) is not encoded_model(model) and dict(encoded_model(forged)) == other.to_dict()
+    with pytest.raises(InvalidModel, match="does not match its contents"):
+        evaluate(env, Unary("ready", Const("alpha")), forged, trace=False)
+    with pytest.raises(InvalidModel, match="does not match its contents"):
+        check_countermodel(env, (), Unary("ready", Const("alpha")), forged)

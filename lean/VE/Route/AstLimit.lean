@@ -1,4 +1,5 @@
 import Lean.Data.Json
+import VE.Limits
 
 /-! The static AST limits of wire formulas, in Python's decoder order.
 
@@ -18,8 +19,7 @@ formula is decoded, typed or evaluated. -/
 namespace VE.Route.AstLimit
 open Lean
 
-def maxNodes : Nat := 10000
-def maxDepth : Nat := 64
+export VE.Limits (maxNodes maxDepth)
 
 def nodeLimit : String := "ResourceLimit: AST node count"
 def depthLimit : String := "ResourceLimit: formula depth exceeds 64"
@@ -39,7 +39,7 @@ def digitsOk : List Char → Bool
 /-- Python `decimal_from_wire`: at most 40 characters, then canonical decimal. -/
 def decimal : Json → Except Halt Unit
   | .str s =>
-    if s.length > 40 then throw (.limit numeralLimit)
+    if s.length > VE.Limits.maxNumeralChars then throw (.limit numeralLimit)
     else match s.toList with
       | '-' :: ds => if digitsOk ds && ds != ['0'] then pure () else throw .stop
       | ds => if digitsOk ds then pure () else throw .stop

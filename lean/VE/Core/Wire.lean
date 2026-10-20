@@ -1,6 +1,7 @@
 import VE.Core.Route
 import VE.Core.Bridge
 import VE.Route.Wire
+import VE.Limits
 
 namespace VE.Core.Wire
 open Lean
@@ -69,8 +70,8 @@ def decodeTrace : Nat → Json → Except String Tableau.Trace
       VE.Bridge.exactFields j ["rule", "at", "sort", "invariant", "children"]
       let index ← (← j.getObjVal? "at").getNat?
       let sort ← VE.Bridge.stringField j "sort"
-      let invariant ← Bridge.decodeFormula 64 (← j.getObjVal? "invariant")
-      if Bridge.formulaNodes invariant > 10000 then throw "ResourceLimit: invariant AST node count"
+      let invariant ← Bridge.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "invariant")
+      if Bridge.formulaNodes invariant > VE.Limits.maxNodes then throw "ResourceLimit: invariant AST node count"
       let children ← (← (← j.getObjVal? "children").getArr?).toList.mapM (decodeTrace fuel)
       pure (.induct index sort invariant children)
     else if rule == "expand" || rule == "closure-plus@0" || rule == "closure-star@0" ||
@@ -106,7 +107,7 @@ def run (profiles : List String) (environment : Json) (id kind : String)
   let premisesJson ← j.getObjVal? "premises"
   let _ ← VE.Route.Wire.formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
   let ps ← Bridge.decodeFormulas E premisesJson
-  let c ← Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  let c ← Bridge.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
   Bridge.checkFormula E c "conclusion"
   VE.Route.Wire.nodeLimit ((c :: ps).map Bridge.formulaNodes)
   if kind == "countermodel" then

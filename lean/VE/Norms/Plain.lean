@@ -1,6 +1,7 @@
 import VE.Norms.Wire
 import VE.Route.Run
 import VE.Order.Conservativity
+import VE.Limits
 
 /-! Plain route cases on environments with `regulated` declarations, on every
 checker family (the migration plan's stage 2c).
@@ -94,7 +95,7 @@ def closureCertificate (profiles : List String) (environment : Json) (rv : VE.Ro
   let ps ← VE.Closure.Bridge.decodeFormulas E premisesJson
   if data && ps.any VE.Route.Wire.closureUsesStringBinder then
     throw "$string quantification requires data stage 2"
-  let c ← VE.Closure.Bridge.decodeFormula 64 (← j.getObjVal? "conclusion")
+  let c ← VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
   if data && VE.Route.Wire.closureUsesStringBinder c then
     throw "$string quantification requires data stage 2"
   unless c.check E [] do throw "ill-typed or unbound conclusion"
@@ -120,7 +121,7 @@ def orderCertificate (profiles : List String) (environment : Json) (rv : VE.Rout
   let premisesJson ← j.getObjVal? "premises"
   let _ ← VE.Route.Wire.formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
   let ps ← VE.Order.Wire.decodeFormulas E premisesJson
-  let c ← VE.Order.Wire.decodeFormula 64 (← j.getObjVal? "conclusion")
+  let c ← VE.Order.Wire.decodeFormula VE.Limits.maxDepth (← j.getObjVal? "conclusion")
   unless c.check E [] do throw "ill-typed or unbound conclusion"
   VE.Route.Wire.nodeLimit ((c :: ps).map VE.Order.Wire.formulaNodes)
   let certificate ← VE.Order.Wire.decodeCertificate (← j.getObjVal? "certificate")
@@ -195,7 +196,7 @@ def softPremises (E : VE.Environment) (j : Json) : Except String (List VE.Formul
   match j.getObjVal? "soft_premises" with
   | .error _ => pure []
   | .ok ps => (← ps.getArr?).toList.mapM fun a => do
-    let f ← VE.Bridge.decodeFormula 64 a
+    let f ← VE.Bridge.decodeFormula VE.Limits.maxDepth a
     unless f.check E [] do throw "ill-typed or unbound soft premise"
     pure f
 

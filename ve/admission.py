@@ -15,7 +15,7 @@ from .assurance import semantic_entry
 from .ast import Or, decimal_text, decimal_value, formula_from_data
 from .background import HOOKS, _DEPENDENCY_ENVIRONMENT
 from .environment import Environment, listed_profiles
-from .errors import ResourceLimit, VEError
+from .errors import AdmissionError, ResourceLimit, VEError  # AdmissionError: ve.errors, re-exported here
 from .profiles import LANGUAGE
 from .wire import require_fields
 
@@ -29,8 +29,6 @@ MODALITIES = ("could", "likely", "generally", "typically", "effectively")
 RELATIONS = ("because", "in order to", "prevents")
 
 
-class AdmissionError(VEError):
-    code = "AdmissionError"
 
 
 def token(value) -> bool:

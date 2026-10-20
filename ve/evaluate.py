@@ -169,9 +169,11 @@ def _validate_model(env: Any, model: FiniteModel) -> FiniteModel:
     if type(model) is not FiniteModel:
         raise InvalidModel("expected a validated FiniteModel")
     try:
-        # The selected authority decides the model's validity, Background
-        # included, and whether its claimed identities are the recomputed ones.
-        return FiniteModel.from_dict(env, model.to_dict(), _claimed={
+        # Lean decides the model's validity, Background included, and whether
+        # its claimed identities are the recomputed ones. The model's encoding is
+        # the one its evaluation cases send (`encoded_model`: written once per model).
+        from .backends.lean_runner import encoded_model
+        return FiniteModel.from_dict(env, encoded_model(model), _claimed={
             "environment_id": model.environment_id, "model_id": model.model_id})
     except VEError:
         raise
@@ -203,10 +205,10 @@ def _evaluate_validated(formulas: tuple[Any, ...], model: FiniteModel, *,
         return EvaluationResult("ResourceLimit", None, root, evaluator.work)
 
 
-@semantic_entry("evaluate")
+@semantic_entry("evaluate", engine="lean")
 def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluations: int = 1_000_000,
              max_trace_nodes: int = 10_000, trace: bool = True) -> EvaluationResult:
-    """Evaluate under the selected authority while keeping the public schema."""
+    """Evaluate with Lean's metered evaluator, in the public schema."""
     if getattr(env, "alternatives", None) is not None:
         raise CheckerUnavailable("alternatives@0 requires the Lean checker")
     if not isinstance(max_evaluations, int) or isinstance(max_evaluations, bool) or max_evaluations < 0:
@@ -224,45 +226,72 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
         check_formula(env, value)
         formulas = (value,)
     model = _validate_model(env, model)
-    from .ast import _to_data
-    from .backends.dispatch import execute
+    from .backends.dispatch import owned
+    from .backends.lean_runner import encoded_formula, encoded_model
 
-    case = {"id": "evaluate", "kind": "evaluate-budgeted", "model": model.to_dict(),
-            "ast": [_to_data(f) for f in formulas], "max_evaluations": max_evaluations,
+    # The value, the count, the trace and `ResourceLimit` of a reported evaluation are Lean's metered
+    # evaluator's (lean-first batches 15b and 18: Rust keeps search only, and Lean is the one authority).
+    case = {"id": "evaluate", "kind": "evaluate-budgeted", "model": encoded_model(model),
+            "ast": [encoded_formula(f) for f in formulas], "max_evaluations": max_evaluations,
             "max_trace_nodes": min(max_evaluations, max_trace_nodes), "trace": trace}
-
-    def python():
-        return _evaluate_validated(formulas, model, max_evaluations=max_evaluations,
-                                   max_trace_nodes=max_trace_nodes, trace=trace)
-
-    def lean():
-        return _evaluate_lean(env, case)
-
-    # Rust keeps search only (lean-first batch 15b): the value, the count, the trace and
-    # `ResourceLimit` of a reported evaluation are Lean's metered evaluator's.
-    return execute("evaluate", case, python, lean=lean, rust=lean)
+    return owned("evaluate", lambda: _evaluate_lean(env, case))
 
 
-def _explanation(wire) -> Explanation:
-    """A trace from Lean's metered evaluator (`VE.Route.MeteredTrace`), in the public schema."""
-    if not isinstance(wire, dict) or set(wire) != {"kind", "value", "bindings", "detail", "children"}:
+def _bound_binding(item, index: int, entities: dict[str, frozenset]) -> bool:
+    """Whether a trace binding is the local at de Bruijn index `index` and names a sort of the request's model
+    and an entity of that sort in it (`entities`, the case's `model.domains` as sets): R8 (b), every id the
+    answer names is the request's."""
+    if not isinstance(item, dict) or set(item) != {"debruijn_index", "sort", "local_id"}:
+        return False
+    position, sort, local = item["debruijn_index"], item["sort"], item["local_id"]
+    return (type(position) is int and position == index and type(sort) is str and type(local) is str
+            and local in entities.get(sort, ()))
+
+
+def _explanation(rows, domains) -> Explanation:
+    """A trace from Lean's metered evaluator (`VE.Route.MeteredTrace.Trace.json`), in the public schema:
+    the rows are one tree in preorder, each node followed by its `children` subtrees. Rows that are not
+    exactly one tree (a count past the end, rows left over), or that bind a local to a sort or an entity
+    the request's model (`domains`) does not hold, are no answer."""
+    if not isinstance(rows, list) or not rows:
         raise CheckerUnavailable("CheckerUnavailable: malformed Lean evaluation trace")
-    bindings = wire["bindings"]
-    if not isinstance(bindings, list) or any(
-        not isinstance(item, dict) or item.get("debruijn_index") != index
-        or set(item) != {"debruijn_index", "sort", "local_id"}
-        for index, item in enumerate(bindings)
-    ) or not isinstance(wire["children"], list):
-        raise CheckerUnavailable("CheckerUnavailable: malformed Lean trace bindings")
-    return Explanation(wire["kind"], wire["value"],
-                       tuple((item["sort"], item["local_id"]) for item in bindings),
-                       wire["detail"], tuple(_explanation(child) for child in wire["children"]))
+    entities = {sort: frozenset(ids) for sort, ids in domains.items()}
+    position = 0
+
+    def node() -> Explanation:
+        nonlocal position
+        if position >= len(rows):
+            raise CheckerUnavailable("CheckerUnavailable: a Lean evaluation trace node names children past its end")
+        wire = rows[position]
+        position += 1
+        if not isinstance(wire, dict) or set(wire) != {"kind", "value", "bindings", "detail", "children"}:
+            raise CheckerUnavailable("CheckerUnavailable: malformed Lean evaluation trace")
+        bindings, children = wire["bindings"], wire["children"]
+        if not isinstance(bindings, list) or not all(
+            _bound_binding(item, index, entities) for index, item in enumerate(bindings)
+        ) or type(children) is not int or children < 0:
+            raise CheckerUnavailable("CheckerUnavailable: malformed or unbound Lean trace bindings")
+        # Iterative over the children, recursive over the depth (at most the formula's nesting).
+        return Explanation(wire["kind"], wire["value"],
+                           tuple((item["sort"], item["local_id"]) for item in bindings),
+                           wire["detail"], tuple(node() for _ in range(children)))
+
+    root = node()
+    if position != len(rows):
+        raise CheckerUnavailable("CheckerUnavailable: a Lean evaluation trace has rows outside its tree")
+    return root
 
 
 def _evaluate_lean(env: Any, case: dict) -> EvaluationResult:
-    """One `evaluate-budgeted` case through `ve_metered`; Python only rebuilds its answer."""
+    """One `evaluate-budgeted` case through the service's `metered` mode; Python only rebuilds its answer."""
     from .backends.lean_runner import metered_environment, metered_evaluation
-    row = metered_evaluation({**case, "environment": metered_environment(env)})
+    return read_evaluation(metered_evaluation({**case, "environment": metered_environment(env)}), case)
+
+
+def read_evaluation(row: dict, case: dict) -> EvaluationResult:
+    """An `evaluate-budgeted` row of the `metered` mode bound to its case: its count within the case's budget,
+    a trace exactly when the case asks for one, and every local the trace binds an entity of the case's model
+    (how `_evaluate_lean` reads it; the relay mutation gate reads a mutated answer the same way)."""
     if row["status"] != "ok":
         # Python validated the document and the model first: a Lean rejection is a disagreement.
         raise CheckerUnavailable(f"CheckerUnavailable: Lean refused a checked evaluation: {row['error']}")
@@ -276,4 +305,5 @@ def _evaluate_lean(env: Any, case: dict) -> EvaluationResult:
     explanation = evaluation["explanation"]
     if case["trace"] != (explanation is not None):
         raise CheckerUnavailable("CheckerUnavailable: Lean evaluation trace does not match the request")
-    return EvaluationResult(status, value, None if explanation is None else _explanation(explanation), work)
+    return EvaluationResult(status, value, None if explanation is None
+                            else _explanation(explanation, case["model"]["domains"]), work)

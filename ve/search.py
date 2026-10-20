@@ -12,12 +12,11 @@ from typing import Any, Mapping, Sequence
 from .assurance import semantic_entry
 from .ast import (Reach, Named, Body, And, Atom, Binary, Exists, Forall, Implies, Not, Or, Unary,
                   check_formula)
-from .evaluate import _evaluate_validated, _validate_model
+from .evaluate import _validate_model
 from .model import FiniteModel
 from .identity import meaning_id
 from .limits import MAX_ENTITIES, MAX_EVALUATIONS, MAX_NODES
 from .errors import CheckerUnavailable, ResourceLimit, VEError
-from .profiles import require_checker
 
 
 def _node_count(root: Any) -> int:
@@ -93,14 +92,10 @@ class CountermodelCheck:
 
 
 def _check_countermodel_values(premises: tuple[Any, ...], conclusion: Any, model: FiniteModel,
-                               maximum: int, evaluate=None):
+                               maximum: int, evaluate):
     """The countermodel check's one sequencing (shared budget, premises in order, stop at the first
-    false one, then the conclusion), over `evaluate(formula, budget) -> EvaluationResult`: Python's
-    evaluator by default, or Lean's metered one under the `lean` authority (so no reported value or
-    count is Rust's there)."""
-    if evaluate is None:
-        def evaluate(formula, budget):
-            return _evaluate_validated((formula,), model, max_evaluations=budget)
+    false one, then the conclusion), over `evaluate(formula, budget) -> EvaluationResult`: Lean's
+    metered evaluator (so no reported value or count is Python's or Rust's)."""
     values: list[bool] = []
     work = 0
     for formula in premises:
@@ -119,10 +114,12 @@ def _check_countermodel_values(premises: tuple[Any, ...], conclusion: Any, model
     return valid, tuple(values), bool(result.value), work, ("Valid" if valid else "NotCountermodel")
 
 
-@semantic_entry("countermodel.check")
+@semantic_entry("countermodel.check", engine="lean")
 def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model: FiniteModel,
                        *, max_evaluations: int = 1_000_000) -> CountermodelCheck:
-    """Independently validate and check a purported finite countermodel."""
+    """Independently validate and check a purported finite countermodel: the values, counts and status
+    are Lean's metered evaluator's, its verdict confirmed by Lean's countermodel route (lean-first batch
+    18: Lean is the one authority)."""
     premises = _premises(premises)
     if type(max_evaluations) is not int or max_evaluations < 0:
         raise ValueError("max_evaluations must be a nonnegative integer")
@@ -133,65 +130,40 @@ def check_countermodel(env: Any, premises: Sequence[Any], conclusion: Any, model
     check_formula(env, conclusion)
     _check_aggregate_ast(premises, conclusion)
     model = _validate_model(env, model)
-    from .ast import _to_data
-    from .backends.dispatch import execute
-    from .backends.lean_service import CheckerUnavailable
-    from .backends.lean_runner import lean_mode, cached_route_environment
+    from .backends.dispatch import owned
+    return owned("countermodel_check", lambda: _check_countermodel_lean(env, premises, conclusion, model,
+                                                                         max_evaluations))
+
+
+def _check_countermodel_lean(env, premises, conclusion, model, max_evaluations):
+    from .backends.lean_runner import background_environment, encoded_formula, encoded_model, lean_mode
     from .backends.relay import decide
-    from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
+    from .backends.rust_jsonl import soft_case
+    from .evaluate import _evaluate_lean
+    wire = encoded_model(model)
 
-    case = {"id": "countermodel", "environment": cached_rust_environment(env), **soft_case(env),
-            "premises": [_to_data(f) for f in premises], "conclusion": _to_data(conclusion),
-            "model": model.to_dict(), "max_evaluations": max_evaluations}
+    def evaluate(formula, budget):
+        return _evaluate_lean(env, {
+            "id": "countermodel", "kind": "evaluate-budgeted", "model": wire,
+            "ast": [encoded_formula(formula)], "max_evaluations": budget, "max_trace_nodes": min(budget, 10_000),
+            "trace": False})
 
-    def checked(evaluate=None):
-        valid, values, conclusion_value, work, status = _check_countermodel_values(
-            premises, conclusion, model, max_evaluations, evaluate)
-        return CountermodelCheck(valid, values, conclusion_value, work, env.environment_id,
-                                 model.model_id, status,
-                                 tuple(meaning_id(env, x) for x in premises),
-                                 meaning_id(env, conclusion))
-
-    def python():
-        return checked()
-
-    def rust():
-        row = rust_run(case)
-        # Rust binds its answer to the environment it was sent: `env` itself, or
-        # without the statement-layer blocks Rust does not read (`rust_environment`).
-        bound_env, bound_model = env, model
-        if case["environment"] != env.to_dict():
-            from .environment import Environment
-            from .backends.rust_jsonl import rust_environment
-            bound_env = Environment(rust_environment(env))
-            bound_model = FiniteModel.from_dict(bound_env, model.to_dict())
-        if (row["environment_id"] != bound_env.environment_id or row["model_id"] != bound_model.model_id
-                or tuple(row["premise_meaning_ids"]) != tuple(meaning_id(bound_env, f) for f in premises)
-                or row["conclusion_meaning_id"] != meaning_id(bound_env, conclusion)):
-            raise CheckerUnavailable("CheckerUnavailable: Rust countermodel identity mismatch")
-        return CountermodelCheck(row["valid"], tuple(row["premise_values"]),
-                                 row["conclusion_value"], row["evaluations"],
-                                 env.environment_id, model.model_id, row["status"],
-                                 tuple(meaning_id(env, f) for f in premises), meaning_id(env, conclusion))
-
-    def lean():
-        # Values, counts and status from Lean's metered evaluator (rule 3: nothing Rust's evaluator
-        # computes is reported under the Lean authority), its verdict confirmed by Lean's route.
-        from .evaluate import _evaluate_lean
-        result = checked(lambda formula, budget: _evaluate_lean(env, {
-            "id": "countermodel", "kind": "evaluate-budgeted", "model": model.to_dict(),
-            "ast": [_to_data(formula)], "max_evaluations": budget, "max_trace_nodes": min(budget, 10_000),
-            "trace": False}))
-        if result.status == "ResourceLimit":
-            return result
-        request = {**case, "kind": "countermodel", "environment": cached_route_environment(env)}
-        row = decide(lean_mode(env), [request])[0]
-        if row["refutes"] != result.valid:
-            raise CheckerUnavailable("CheckerUnavailable: Lean's countermodel route and its metered "
-                                     "evaluator disagree")
+    valid, values, conclusion_value, work, status = _check_countermodel_values(
+        premises, conclusion, model, max_evaluations, evaluate)
+    result = CountermodelCheck(valid, values, conclusion_value, work, env.environment_id, model.model_id, status,
+                               tuple(meaning_id(env, x) for x in premises), meaning_id(env, conclusion))
+    if result.status == "ResourceLimit":
         return result
-
-    return execute("countermodel_check", case, python, lean=lean, rust=rust)
+    # The model environment (`profiles.model_environment`, display text dropped): the check reads the
+    # model only, and the route refuses the blocks no model reads (an `alternatives` block, say).
+    request = {"id": "countermodel", "environment": background_environment(env), **soft_case(env),
+               "premises": [encoded_formula(f) for f in premises], "conclusion": encoded_formula(conclusion),
+               "model": wire, "max_evaluations": max_evaluations, "kind": "countermodel"}
+    row = decide(lean_mode(env), [request])[0]
+    if row["refutes"] != result.valid:
+        raise CheckerUnavailable("CheckerUnavailable: Lean's countermodel route and its metered "
+                                 "evaluator disagree")
+    return result
 
 
 def _used_predicates(*formulas: Any) -> frozenset[str]:
@@ -232,9 +204,9 @@ def _witness_checked(env: Any, premises: tuple[Any, ...], conclusion: Any, model
     that operation's authority (and a migrated check refuses rather than being
     bypassed). The check re-evaluates what the search already evaluated, within
     the caller's budget; its work is not charged to the public search counters.
-    Under the default authority the entry is still Python's: Lean's route
-    refuses environments Python accepts (English `verbalisation` fields), which
-    batch 12b's environment mode closes.
+    The entry is Lean's (lean-first batch 18): its values and counts come from the metered evaluator
+    and its verdict from the countermodel route, over the model environment
+    (`background_environment`: what no model reads, display text included, is dropped).
     """
     return check_countermodel(env, premises, conclusion, model, max_evaluations=max_evaluations).valid
 
@@ -242,7 +214,7 @@ def _witness_checked(env: Any, premises: tuple[Any, ...], conclusion: Any, model
 def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
                 semantic: bool = False) -> bool:
     """Whether a search witness satisfies the non-vacuity condition, as Lean's
-    `VE.Route.NonVacuity` decides it (`ve_metered`, case kind `non-vacuity`).
+    `VE.Route.NonVacuity` decides it (the service's `metered` mode, case kind `non-vacuity`).
 
     Every encountered quantifier must have a nonempty domain and every
     implication a true antecedent at some assignment its enclosing quantifiers
@@ -251,13 +223,19 @@ def _nonvacuous(env: Any, formula: Any, model: FiniteModel, maximum: int, *,
     """
     from .ast import _to_data
     from .backends.lean_runner import metered_environment, metered_nonvacuity
-    row = metered_nonvacuity({"id": "non-vacuity", "kind": "non-vacuity", "environment": metered_environment(env),
-                              "model": model.to_dict(), "formula": _to_data(formula), "max_evaluations": maximum,
-                              "semantic_nonvacuity": semantic})
+    case = {"id": "non-vacuity", "kind": "non-vacuity", "environment": metered_environment(env),
+            "model": model.to_dict(), "formula": _to_data(formula), "max_evaluations": maximum,
+            "semantic_nonvacuity": semantic}
+    return read_nonvacuity(metered_nonvacuity(case), case)
+
+
+def read_nonvacuity(row: dict, case: dict) -> bool:
+    """A `non-vacuity` row of the `metered` mode bound to its case: its count within the case's budget
+    (how `_nonvacuous` reads it; the relay mutation gate reads a mutated answer the same way)."""
     if row["status"] != "ok":
         raise CheckerUnavailable(f"CheckerUnavailable: Lean refused a search witness's non-vacuity check: "
                                  f"{row['error']}")
-    if not 0 <= row["evaluations"] <= maximum or row["suitable"] and row["exhausted"]:
+    if not 0 <= row["evaluations"] <= case["max_evaluations"] or row["suitable"] and row["exhausted"]:
         raise CheckerUnavailable("CheckerUnavailable: malformed Lean non-vacuity result")
     return row["suitable"] and not row["exhausted"]
 
@@ -482,7 +460,6 @@ def find_distinguishing_model(env: Any, a: Any, b: Any, *, max_domain_size: int 
     from .backends.dispatch import owned
     from .backends.rust_jsonl import run as rust_run, cached_rust_environment, soft_case
 
-    require_checker(env)
     _validate_options(min_domain_size, max_domain_size, max_models, max_evaluations,
                       nonempty_domains, nonvacuous_for, semantic_nonvacuity)
     if _node_count(a) + _node_count(b) > MAX_NODES:

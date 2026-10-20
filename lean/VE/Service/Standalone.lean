@@ -17,6 +17,7 @@ import VE.SoftNorms.Phases
 import VE.Rights.Wire
 import VE.Readings.Wire
 import VE.NormDefaults.Wire
+import VE.Limits
 
 /-! Standalone service validation and identity endpoints. These wrap the same
 decoders used by the route; successful model answers require a checked model. -/
@@ -220,11 +221,12 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 
 /-- The public environment endpoint follows the composed profile head. Each
 statement layer validates its own declarations; the core decoder handles the
-remaining families. `todayGate` is the single gate for the full registry. -/
+remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows, and the whole
+table for a list with `Compose.environmentWrapper`. -/
 def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
   let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
-    let _ ← VE.Compose.todayGate rawProfiles
+    let _ ← VE.Compose.gateOf VE.Compose.baseRows rawProfiles
     pure ()
   let named := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
@@ -279,10 +281,8 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     let _ ← validated environment
     pure ()
   let ps ← VE.Route.Gate.profilesOf environment
-  if ps.contains "readings@1" then
-    let _ ← VE.Compose.dispatch ps
-    pure ()
-  else VE.Compose.todayGate ps
+  let _ ← VE.Compose.gateOf
+    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
   let family := if ps.contains "order@0" then VE.Route.Gate.Family.order
     else if ps.contains "nary@0" then .closureNary
     else if ps.contains "closure@0" then .closure else .fol
@@ -469,7 +469,7 @@ private def modelError (message : String) : String :=
   else s!"InvalidModel: {message}"
 
 private def longModelAtom : Json → Bool
-  | .str value => value.utf8ByteSize > 64
+  | .str value => value.utf8ByteSize > VE.Limits.maxIdentifierBytes
   | _ => false
 
 private def longModelString (model : Json) : Bool :=
@@ -685,8 +685,7 @@ def encodeClosure : VE.Closure.Formula → Json
   | .reachBody k s a t u => Json.arr #[.str "reach", encodeKind k,
       Json.arr #[.str "body", .str s, encodeClosure a], VE.Route.Wire.encodeTerm t, VE.Route.Wire.encodeTerm u]
 
-/-- Python's source cap (`MAX_SOURCE_BYTES`). -/
-def maxSourceBytes : Nat := 65536
+export VE.Limits (maxSourceBytes)
 
 /-- The `definitions@0` sugar over `environment` (none without the profile): a
 defined predicate's declared argument sorts, and whether a parsed body is its
@@ -730,16 +729,16 @@ def surfaceReader (environment : Json) (checked : Validated) : Except String Sur
   match e.family with
   | .fol => do
     let E := (← VE.Route.Run.decodeRouteVocabulary e).environment
-    pure (.of (sugarOf e.profiles environment (VE.Bridge.decodeFormula 64)) (VE.Surface.parseWith E)
+    pure (.of (sugarOf e.profiles environment (VE.Bridge.decodeFormula VE.Limits.maxDepth)) (VE.Surface.parseWith E)
       (VE.Surface.parseStatementsWith E) (VE.Surface.parseRawWith E) VE.Route.Wire.encodeFormula VE.Surface.print)
   | .closure => do
     let E := (← VE.Route.Run.decodeRouteVocabulary e).environment
-    pure (.of (sugarOf e.profiles environment (VE.Closure.Bridge.decodeFormula 64))
+    pure (.of (sugarOf e.profiles environment (VE.Closure.Bridge.decodeFormula VE.Limits.maxDepth))
       (VE.Closure.Surface.parseWith E) (VE.Closure.Surface.parseStatementsWith E)
       (VE.Closure.Surface.parseRawWith E) encodeClosure VE.Closure.Surface.print)
   | .closureNary => do
     let E := (← VE.Core.Bridge.decodeEnvironment checked.decodable).environment
-    pure (.of (sugarOf e.profiles environment (VE.Core.Bridge.decodeFormula 64))
+    pure (.of (sugarOf e.profiles environment (VE.Core.Bridge.decodeFormula VE.Limits.maxDepth))
       (VE.Core.Surface.parseWith E) (VE.Core.Surface.parseStatementsWith E)
       (VE.Core.Surface.parseRawWith E) VE.Core.Wire.encodeFormula VE.Core.Surface.print)
   | .order => do
@@ -849,7 +848,7 @@ private def modelAtom (value : Json) (path : String) : Except ModelFault String 
   let .str word := value | modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
   unless VE.Surface.identifier word do
     modelFault path "InvalidModel: local ID must match [a-z][a-z0-9_]*"
-  if word.utf8ByteSize > 64 then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
+  if word.utf8ByteSize > VE.Limits.maxIdentifierBytes then modelFault path "ResourceLimit: local ID exceeds 64 ASCII bytes"
   pure word
 
 private def modelCell (order : Bool) (sort : String) (value : Json) (path : String) :
@@ -893,7 +892,7 @@ private def locatedEnvironmentFields (environment : Json) : Except ModelFault Un
     modelFault "" "predicates must be an object"
   let .ok constantEntries := VE.Bridge.fields constants |
     modelFault "" "constants must be an object"
-  if sortEntries.length > 32 || predicateEntries.length > 256 then
+  if sortEntries.length > VE.Limits.maxSorts || predicateEntries.length > VE.Limits.maxPredicates then
     modelFault "" "ResourceLimit: Vocabulary exceeds sort or predicate limit"
   match VE.Bridge.checkVocabularyNames sortEntries predicateEntries constantEntries with
   | .ok () => pure ()
@@ -996,10 +995,10 @@ private def locatedModelTables (environment model : Json) : Except ModelFault Un
   -- Static limits precede cell decoding in all families.
   for sort in sortNames do
     if let .arr cells := domains.getObjValD sort then
-      if cells.size > 1000 then modelFault s!"/domains/{sort}" "ResourceLimit: domain exceeds entity limit"
+      if cells.size > VE.Limits.maxEntities then modelFault s!"/domains/{sort}" "ResourceLimit: domain exceeds entity limit"
   let total := relationFields.foldl (fun count (_, rows) =>
     match rows with | .arr cells => count + cells.size | _ => count) 0
-  if total > 100000 then modelFault "/relations" "ResourceLimit: model exceeds total relation tuple limit"
+  if total > VE.Limits.maxTuples then modelFault "/relations" "ResourceLimit: model exceeds total relation tuple limit"
   let mut decodedDomains : List (String × List String) := []
   for sort in sortNames do
     let .arr cells := domains.getObjValD sort |
@@ -1103,10 +1102,9 @@ private def earlyProfileGate (environment : Json) : Except String Unit := do
   if environment.getObjValD "language" == .str "ve.core@0.2" then
     if (environment.getObjVal? "profiles").isOk then
       let profiles ← VE.Route.Gate.profilesOf environment
-      if VE.Compose.todayHead profiles == .frozen &&
-          !(profiles.any VE.Compose.wrapperProfiles.contains) &&
-          !profiles.contains "time@0" then
-        VE.Compose.todayGate profiles
+      if VE.Compose.routeOf VE.Compose.profileTable profiles == .frozen && !profiles.contains "time@0" then
+        let _ ← VE.Compose.gateOf VE.Compose.baseRows profiles
+        pure ()
 
 /-- Only the four frozen checker families have their entire vocabulary shape
 owned by the location decoder. Composed routes inspect their own envelope and
