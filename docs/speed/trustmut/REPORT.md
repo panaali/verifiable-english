@@ -702,10 +702,11 @@ would leave no usable tool.
 7. PASS: DELTA has no rows and reserves nothing; trust +0 (no Lean file changed).
 8. PASS: `git diff --stat main...HEAD -- ve lean rust conformance` is empty.
 9. PASS: `tools/select_tests.py` selects 32 units, `tests/test_trust_mutants.py` among them
-   (`repo_map.py file tools/trust_mutants.py`); all pass on the Mac runner (on `1bc00255d`; the test file again
-   on the final commit, 299 tests). `lake build` and `python3 lean/audit.py` pass (562 files; no Lean file changed).
+   (`repo_map.py file tools/trust_mutants.py`); all pass on the Mac runner (on `29248b4c8`, the F13/F14 fix: 32
+   units, exit 0, the test file's 301 tests among them). `lake build` and `python3 lean/audit.py` pass there (562
+   files; no Lean file changed).
 10. N.A.: no Lean statement or proof.
 11. PASS: `--max-mutants 0` runs nothing and exits 3, never 0 (`test_max_mutants_lists_the_rest_as_not_run[0]`).
 12. N.A.: no product code; the tool's own times are in section 1.
-13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 299 added, 0 refused, 0 stale,
+13. N.A.: no test of main removed or renamed; `tools/gate_collection.py --check`: 301 added, 0 refused, 0 stale,
     0 malformed.
