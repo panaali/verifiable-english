@@ -165,7 +165,9 @@ def _lean_value(value) -> str | None:
     if isinstance(value, int):
         return f"(toJson ({value} : Int))"
     if isinstance(value, list) and all(isinstance(x, str) for x in value):
-        return "(toJson [" + ", ".join(json.dumps(x, ensure_ascii=False) for x in value) + "] : Json)"
+        # An explicit `::` chain: Lean elaborates a list literal of over 32 elements (the handshake's modes)
+        # to nested `let`s, which `fits` does not read.
+        return "(toJson (" + "".join(json.dumps(x, ensure_ascii=False) + " :: " for x in value) + "([] : List String)) : Json)"
     return None
 
 
