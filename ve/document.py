@@ -803,6 +803,9 @@ def _load_document(raw: bytes, path: str | Path, lean):
     from .discourse import validate_discourse
     environment_data = base_environment(meta)
     profiles = listed_profiles(environment_data)
+    if "judgments@0" in profiles:
+        # Its statuses are Lean's (`Service.Document.check`, docs/spec/judgment-terms.md 8.1); this loader has none.
+        raise CheckerUnavailable("CheckerUnavailable: judgments@0 documents are checked by Lean's document mode")
     rights_enabled = "rights@0" in profiles
     soft_enabled = "soft-norms@0" in profiles
     defaults_enabled = "norm-defaults@0" in profiles

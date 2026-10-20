@@ -1099,10 +1099,12 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.faultOf_none
 #print axioms VE.Compose.find_congr
 #print axioms VE.Compose.find_cons_ite
+#print axioms VE.Compose.find_erase
 #print axioms VE.Compose.find_first
 #print axioms VE.Compose.forIn_yield_ok
 #print axioms VE.Compose.gateMatch_find
 #print axioms VE.Compose.gateOf_iff
+#print axioms VE.Compose.gate_judgments
 #print axioms VE.Compose.gate_legacy
 #print axioms VE.Compose.gate_wellFormed
 #print axioms VE.Compose.ite_and3
@@ -1124,6 +1126,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.rights_valid_is_slot
 #print axioms VE.Compose.routeOf_base
 #print axioms VE.Compose.routeOf_table
+#print axioms VE.Compose.rowChecks_erase
 #print axioms VE.Compose.sat_append
 #print axioms VE.Compose.sat_backgroundBaseP
 #print axioms VE.Compose.sat_gate_off

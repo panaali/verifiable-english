@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 246 |
 | leaves:closed domain | 257 |
-| leaves:none | 1337 |
+| leaves:none | 1340 |
 | modes | 37 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 936 |
+| today:not probed | 939 |
 | today:shape | 503 |
 | today:unbound | 137 |
 | answers | 542 |
@@ -2865,6 +2865,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/error` | string | none |  | minLength | 5 | not probed |
 | `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
+| `/judgments/unused/*` | string | none |  | pattern | 0 | not probed |
+| `/judgments/used/*/term` | string | none |  | pattern | 0 | not probed |
+| `/judgments/used/*/units/*` | string | none |  | pattern | 0 | not probed |
 | `/path` | string | none |  | minLength | 1 | not probed |
 | `/source` | string | none |  |  | 3 | hand: `ve/document.py:require` |
 | `/source_id` | string | none |  | pattern | 3 | hand: `ve/document.py:_lean_document` |
@@ -3018,6 +3021,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/coverage/alternatives/narrowings/*/reason_spans` |  |  |  |  |
 | `/coverage/alternatives/proximate_judgments` |  |  |  | drop: accept/ve/document.py:require; duplicate: accept/ve/document.py:require |
 | `/coverage/alternatives/unmapped_obligations` |  |  |  |  |
+| `/judgments/unused` |  |  |  |  |
+| `/judgments/used` |  |  |  |  |
+| `/judgments/used/*/units` |  |  |  |  |
 | `/units` |  |  |  | drop: accept/accepted, accept/ve/document.py:require; duplicate: accept/accepted, accept/ve/document.py:require; replace: accept/accepted, accept/ve/document.py:require; reverse: accept/accepted, accept/ve/document.py:require |
 | `/units/*/content/cites/{}` |  |  |  |  |
 | `/units/*/content/limitation/conditions` |  |  |  |  |

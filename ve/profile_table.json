@@ -74,6 +74,10 @@
   {"slot": "layer", "requires": [], "refuses": [], "profile": "definitions@0"},
   {"slot": "layer", "requires": [], "refuses": [], "profile": "documents@1"},
   {"slot": "layer", "requires": [], "refuses": [], "profile": "time@0"},
+  {"slot": "layer",
+   "requires": ["documents@1"],
+   "refuses": [],
+   "profile": "judgments@0"},
   {"slot": "discourse",
    "requires": [],
    "refuses":
@@ -123,4 +127,5 @@
   "definitions@0",
   "documents@1",
   "time@0",
+  "judgments@0",
   "readings@1"]}
