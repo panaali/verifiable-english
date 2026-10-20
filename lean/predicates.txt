@@ -146,9 +146,12 @@ module VE.Calc.FourierMotzkin
 module VE.Calc.Linear
 module VE.Calc.Poly
 module VE.Calc.Render
+module VE.Calc.Run
+module VE.Calc.RunExamples
 module VE.Calc.Syntax
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
+module VE.Calc.Wire
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Ratio
@@ -661,6 +664,8 @@ VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Calc.CausesAt@VE.Calc.Decls
+VE.Calc.Check.OutcomeMeans@VE.Calc.Run
+VE.Calc.Check.UnknownCause@VE.Calc.Run
 VE.Calc.Claim.Defined@VE.Calc.Syntax
 VE.Calc.Claim.Holds@VE.Calc.Syntax
 VE.Calc.Claim.Overflows@VE.Calc.Decls

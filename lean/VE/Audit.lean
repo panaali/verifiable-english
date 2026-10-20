@@ -51,7 +51,9 @@ import VE.Calc.Dimension
 import VE.Calc.Eval
 import VE.Calc.Linear
 import VE.Calc.Poly
+import VE.Calc.Run
 import VE.Calc.Units
+import VE.Calc.Wire
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
 import VE.Cardinality.Syntax
@@ -828,6 +830,8 @@ import VE.WireContract.Engine
 #print axioms VE.Bridge.modelData_valid
 #print axioms VE.Bridge.tupleCheck_iff
 #print axioms VE.Bridge.vocabulary_namesValid
+#print axioms VE.Calc.Check.run_claim
+#print axioms VE.Calc.Check.run_sound
 #print axioms VE.Calc.Claim.decide_fails
 #print axioms VE.Calc.Claim.decide_holds
 #print axioms VE.Calc.Claim.decide_undefined
@@ -903,6 +907,13 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Rescale.of_one
 #print axioms VE.Calc.Rescale.of_pos
 #print axioms VE.Calc.Rescale.pos
+#print axioms VE.Calc.Run.outcome_sound
+#print axioms VE.Calc.Run.outcomes_words
+#print axioms VE.Calc.Run.row_outcome
+#print axioms VE.Calc.Run.row_sound
+#print axioms VE.Calc.Run.rows_outcome
+#print axioms VE.Calc.Run.unknown_named
+#print axioms VE.Calc.Run.verdict_sound
 #print axioms VE.Calc.Step.derive_sound
 #print axioms VE.Calc.Units.checkClaim_invariant
 #print axioms VE.Calc.Units.dimE_ok
@@ -912,6 +923,9 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Val.bin_tooLarge
 #print axioms VE.Calc.Val.div_agrees
 #print axioms VE.Calc.Val.guard_agrees
+#print axioms VE.Calc.Wire.decodeCase_wellFormed
+#print axioms VE.Calc.Wire.firstDup_nodup
+#print axioms VE.Calc.Wire.firstUnknown_order
 #print axioms VE.Calc.bind2_some
 #print axioms VE.Calc.causes_accumulate
 #print axioms VE.Calc.causes_step

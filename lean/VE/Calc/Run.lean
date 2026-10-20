@@ -42,9 +42,11 @@ def Run.row (c : Case) (cl : String × Check) : Row :=
 
 def Run.rows (c : Case) : List Row := c.claims.map (Run.row c)
 
+theorem Run.row_outcome (c : Case) (cl : String × Check) : (Run.row c cl).outcome = cl.2.run c.decls := rfl
+
 theorem Run.rows_outcome (c : Case) (i : Nat) (hi : i < c.claims.length) :
     ((Run.rows c)[i]'(by simpa [Run.rows] using hi)).outcome = (c.claims[i]'hi).2.run c.decls := by
-  simp [Run.rows, Run.row]
+  simp [Run.rows, Run.row_outcome]
 
 namespace Run
 
@@ -74,15 +76,11 @@ def rowJson (claimId : String) (r : Row) : Json :=
     ("outcome", .str (words r.outcome).1), ("reason", ((words r.outcome).2.map Json.str).getD .null),
     ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)]
 
-def runCase (j : Json) : Except String Json := do
-  let d ← Wire.decode j
-  pure (Json.mkObj [("status", .str "ok"), ("meaning_id", .str d.meaningId),
-    ("rows", .arr ((Run.rows d.case).mapIdx fun i r => rowJson (d.claimIds.getD i "") r).toArray)])
-
-/-- The service answer: the rows, or the refusal of the case. -/
+/-- The service answer: the case's `meaning_id` and its rows, or the refusal of the case. -/
 def runCaseReported (j : Json) : Json :=
-  match runCase j with
-  | .ok r => r
+  match Wire.decode j with
+  | .ok (c, mid, ids) => Json.mkObj [("status", .str "ok"), ("meaning_id", .str mid),
+    ("rows", .arr ((Run.rows c).mapIdx fun i r => rowJson (ids.getD i "") r).toArray)]
   | .error e => Json.mkObj [("status", .str "error"), ("error", .str e)]
 
 /-- The outcome row `i` of an answer states. -/
@@ -111,20 +109,20 @@ theorem outcome_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c)
       simp only [Json.mkObj, Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?,
         Std.TreeMap.Raw.getElem?_ofList_of_mem (cmp := compare) (k_eq := Std.ReflCmp.compare_self) hp hm]
       rfl
-    have hr : i < (Run.rows d.case).length := by simpa [Run.rows] using hi
+    have hr : i < (Run.rows d.1).length := by simpa [Run.rows] using hi
     have hrows : (runCaseReported j).getObjVal? "rows" =
-        .ok (.arr ((Run.rows d.case).mapIdx fun i r => rowJson (d.claimIds.getD i "") r).toArray) := by
-      simp only [runCaseReported, runCase, hd, bind, Except.bind, pure, Except.pure]
+        .ok (.arr ((Run.rows d.1).mapIdx fun i r => rowJson (d.2.2.getD i "") r).toArray) := by
+      simp only [runCaseReported, hd]
       exact get _ _ _ (by simp) (by simp)
-    have ho := outcomes_words ((d.case.claims[i]'hi).2.run d.case.decls)
-    rw [← Run.rows_outcome d.case i hi] at ho ⊢
-    have hout (r : Row) : (rowJson (d.claimIds.getD i "") r).getObjVal? "outcome" =
+    have ho := outcomes_words ((d.1.claims[i]'hi).2.run d.1.decls)
+    rw [← Run.rows_outcome d.1 i hi] at ho ⊢
+    have hout (r : Row) : (rowJson (d.2.2.getD i "") r).getObjVal? "outcome" =
         .ok (.str (words r.outcome).1) := get _ _ _ (by simp) (by simp)
-    have hreason (r : Row) : (rowJson (d.claimIds.getD i "") r).getObjVal? "reason" =
+    have hreason (r : Row) : (rowJson (d.2.2.getD i "") r).getObjVal? "reason" =
         .ok (((words r.outcome).2.map Json.str).getD .null) := get _ _ _ (by simp) (by simp)
     simp only [outcomeAt, hrows, List.getElem?_toArray, List.getElem?_mapIdx, List.getElem?_eq_getElem hr,
       Option.map_some, Option.bind_eq_bind, Option.bind_some, hout, hreason]
-    generalize words ((Run.rows d.case)[i]'hr).outcome = wo at ho ⊢
+    generalize words ((Run.rows d.1)[i]'hr).outcome = wo at ho ⊢
     rcases wo with ⟨w, _ | s⟩ <;> exact ho
 
 /-- The row theorem on the wire, for every kind. -/
