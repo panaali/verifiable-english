@@ -268,6 +268,7 @@ module VE.EnvironmentProofs
 module VE.EvaluationCounts
 module VE.Events.Calendar
 module VE.Events.Completion
+module VE.Events.Conservative
 module VE.Events.Decl
 module VE.Events.Examples
 module VE.Events.Premises
@@ -537,6 +538,7 @@ module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.ReadingsChoices
+module VE.Service.Registry
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
@@ -731,6 +733,7 @@ VE.Data.Background.EntailsData@VE.Data.Background
 VE.Data.Background.Functional@VE.Data.Background
 VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
+VE.Defaults.DefaultCoherent@VE.Defaults.Premises
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
 VE.Definitions.Bundle.ReadingBound@VE.Definitions.Bundle
