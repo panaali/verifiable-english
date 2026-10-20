@@ -36,8 +36,15 @@ whitespace). No statement had to change.
   before like terms merge. Each limit is pinned at its value and one past it: `[nodes-10000]`/`[nodes-10001]`,
   `[nodes-10001-pow]`, `[sum-10000]`/`[sum-10001]` and `[product-10000]`/`[product-10100]`. Two bounds keep
   coefficients and exponents in budget, since a chain of powers otherwise grows without limit:
-  - a coefficient below `10 ^ maxDigits`: ME-1's digit limit, pinned by `[digits-4096]`/`[digits-4097]`;
-  - exponents at most 4,096: `[exponent-4096]`, `[exponent-4097]` and `[exponent-4097-product]`.
+  - a numerator and a denominator below `10 ^ maxDigits`: ME-1's digit limit, pinned on a numerator by
+    `[digits-4096]`/`[digits-4097]` and on a denominator by `[digits-den-4096]`/`[digits-den-4097]`;
+  - exponents at most 4,096, in a result (`fits`) and in a power node (`pow?`): `[exponent-4096]`, `[exponent-4097]`
+    and `[exponent-4097-product]`; on a constant base, where only the power node's guard refuses,
+    `[exponent-constant-4096]`/`[exponent-constant-4097]`.
+
+  Each limit check is a single comparison, and each one has a mutant that a fixture kills (mutants 14 to 24). `fits`
+  no longer counts terms: `add?` and `mul?` count them first and `norm` never adds one, so no input reached that
+  check (deleting it changed no fixture's answer; review F1's sweep).
 
   Past any of these, `Identity.compare` is `none` and `identityCheck` is false (`[over-the-limit-is-not-an-identity]`).
   Which reason me-9b's runner shows for the coefficient and exponent bounds is open (FOLLOW-UPS).
@@ -53,19 +60,20 @@ whitespace). No statement had to change.
 `maxPolyExponent`, `Poly.coeffBound`); everything else C or P (`vprod`, `Frac.Means`). Recorded with `--allow`, signed
 under R16; DELTA row 1. The FOLLOW-UPS.md "## me-9" row asks for the ties pass.
 
-## Seeded bugs (Lean; [`mutants.json`](mutants.json), 22 mutants, each with its exact edit)
+## Seeded bugs (Lean; [`mutants.json`](mutants.json), 25 mutants, each with its exact edit)
 
 Each mutant is run twice, from `lean/VE/Calc/Poly.lean`: as written, and with every theorem proved by `sorry`. With
 the proofs sorried, only `tests/test_calc_algebra.py` can catch it. Every one fails named fixtures and was restored;
-`proofs_failing_as_is` records whether the proofs also break as written (12 of 22).
+`proofs_failing_as_is` records whether the proofs also break as written (12 of 25). Mutants 23 to 25 (review F1
+and F2) leave the proofs compiling, so they were run as written.
 - Trusted definition `Poly.eval`: the coefficient dropped (3), killed by `[binom-value]`.
 - Normal forms: the plan's seeded bug (1), different variable lists merged (2), zeros kept (4), exponents multiplied
-  (5), variables out of order (6), monomials in descending order (7).
+  (5), variables out of order (6), monomials in descending order (7), a zero literal kept (25).
 - Fractions: division keeps the divisor's denominator (8), no common denominator (9), subtraction adds (10), no
   cross-multiplication (11), division accepted by `Poly.ofExpr?` (12). `differsAt` reports equal sides (13).
 - Limits: 9,999 and 10,001 terms (14, 15), `<` for `≤` in sums and products (16, 17), a power node not counted (18),
   4,097 digits (19), exponent limit 4,095 (20), an exponent past the limit kept by `fits` (21), the node limit not
-  checked (22).
+  checked (22), a denominator past the digit limit kept (23), a power node of exponent 4,097 kept (24).
 
 ## Tests
 
@@ -89,14 +97,32 @@ files that ap-1a, ar-10a and sc-1ab also append to. `lean/CALC.md` is edited els
   lowering, so whichever lands first owns it;
 - R-6 and H-4 through named and stated values, and the undefined and unknown rows;
 - the reason text for the coefficient and exponent bounds;
-- a fixture that the names a side reads are listed only after the normaliser has accepted it.
+- a fixture that the names a side reads are listed only after the normaliser has accepted it;
+- me-9 review F3: report `undefined` before `holds` when a side's denominator is identically zero (`Frac.ofExpr_sound`),
+  with the review's four cases (`0/0 = 5`, `(x − x)/(x − x) = 5`, `1/0 = 2/0`, `(a + b)² + 1/0 = a² + b² + 1/0`) as
+  fixtures;
+- me-9 review F4: the node limit refuses `sumx 5000` (one term) and counting a product before like terms merge
+  refuses `(geo 100)²` (201 terms), so neither may be shown as "more than 10,000 terms";
+- me-9 review F5: a work budget before the runner is wired (a side at the node limit over 10,000 terms costs minutes).
 
 R-10c after ME-4. Then ME-7.
 
+## Review fixes (me-9 review)
+
+- **F1 (B)**, the denominator half of the digit bound unpinned: `[digits-den-4096]`/`[digits-den-4097]`, mutant 23.
+  As a class, every comparison in a limit check now has a killing mutant: the sweep found the power node's exponent
+  guard unpinned too (no fixture had a constant base, where only that guard refuses): `[exponent-constant-4096]`/
+  `[exponent-constant-4097]`, mutant 24. `fits`'s term count, which no input reached, is deleted. The fixture file
+  prints each answer on one line, so a wrong answer that prints over several lines fails its own fixture instead of
+  the whole file's parse (mutant 23's first run).
+- **F2 (C)**, a zero literal's normal form unpinned: `[zero-literal]`, mutant 25.
+- **F3 to F5 (C)** are me-9b's (Next item).
+
 ## Sibling lessons (me-5 review)
 
-- F1, limits unpinned: every limit here is pinned at its value and one past it (Deviations); mutants 14 to 22 move
-  each one.
+- F1, limits unpinned: every limit check here is pinned at its value and one past it (Deviations); mutants 14 to 24
+  move each one. The first version missed the denominator half of the digit bound and the power node's exponent
+  guard (me-9 review F1); both are pinned now, and the one check no input reached is gone.
 - F2, a run-out shown as an inconclusive answer: past a limit the answer is `none` from `Identity.compare`, never
   "not an identity" from it; `identityCheck` is false, which no theorem reads as a refutation.
 
@@ -106,7 +132,7 @@ R-10c after ME-4. Then ME-7.
 2. PASS: the plan rows above, each delivered or moved to me-9b by the size rule (R-10c by the task). `git diff
    main...HEAD` has no Python copy of a Lean decision (the test states expected strings; Lean prints answers) and no
    report test.
-3. PASS: 22 seeded bugs, each failing named `tests/test_calc_algebra.py::test_fixture[...]` tests with the proofs
+3. PASS: 25 seeded bugs, each failing named `tests/test_calc_algebra.py::test_fixture[...]` tests with the proofs
    sorried (`mutants.json`).
 4. N.A.: no Python or Rust counterpart exists for the normaliser.
 5. N.A.: no relayed field to bind; me-9b's runner rows bind later (ME-3).
@@ -115,7 +141,8 @@ R-10c after ME-4. Then ME-7.
 8. PASS: DELTA "Public output: none" (no mode, command, route or Python/Rust product file).
 9. PASS: the selection contained `tests/test_calc_algebra.py` and caught the Mac stack overflow at `480daf7b1`.
 10. PASS: `lean/audit.py` PASS; the statements match the spec verbatim; 12 mutants also break a proof as written.
-11. PASS: every limit is pinned at and past its value, and past it the answer is never an identity
+11. PASS: every limit check is pinned at and past its value (each comparison in `fits`, `add?`, `mul?`, `pow?` and
+    `nodesWithin` has a killing mutant), and past it the answer is never an identity
     (`[over-the-limit-is-not-an-identity]`, `[nodes-10001]`, `[sum-10001]`, `[product-10100]`).
 12. PASS: the node walk stops at the limit, so a shared side cannot cost its tree (`[nodes-shared]`, mutant 22). The
     coefficient bound is one comparison, and `combine` runs in constant stack (`[product-10000]` on the Mac).
