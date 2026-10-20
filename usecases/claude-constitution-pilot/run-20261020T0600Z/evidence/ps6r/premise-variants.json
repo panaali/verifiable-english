@@ -1,0 +1,362 @@
+{
+ "what": "run 20261019T1800Z: the four PS-6r upgrades (u0013 core_value_of, u0095 guideline_of, u0002 mission_of, u0235 nature_of; existence claims, fences in repair_20261019T1800Z.py) added to the 06:00Z document (with u0032 reverted), alone and in combination; whole-document premise check of the document nd.py all wrote. Each row is a scratch build (ps6r_variants.sh), deleted afterwards",
+ "limit": "the Rust enumerator tries relation subsets by size, then lexicographically over the used atoms sorted by predicate name, within max_models 10000 (ve-profile/src/search.rs advance_subset); a model needs one true atom per existential (plus novel_entity(claude)), so more than three true atoms are beyond the budget and the third must sort among the first atoms. The renamed rows show the dependence on identifiers; they are measurements, not the translation",
+ "variants": [
+  {
+   "variant": "none",
+   "added": "",
+   "options": "",
+   "premises": "model",
+   "candidate_premises": {
+    "model": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 215,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181759
+   },
+   "check_seconds": 265.3
+  },
+  {
+   "variant": "a",
+   "added": "u0013",
+   "options": "",
+   "premises": "model",
+   "candidate_premises": {
+    "model": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 239,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181735
+   },
+   "check_seconds": 252.9
+  },
+  {
+   "variant": "b",
+   "added": "u0095",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 251,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181723
+   },
+   "check_seconds": 229.9
+  },
+  {
+   "variant": "c",
+   "added": "u0002",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "model": 4,
+    "UNKNOWN": 6
+   },
+   "bytes_by_status": {
+    "CHECKED": 252,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181722
+   },
+   "check_seconds": 265.2
+  },
+  {
+   "variant": "d",
+   "added": "u0235",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 9,
+    "model": 1
+   },
+   "bytes_by_status": {
+    "CHECKED": 234,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181740
+   },
+   "check_seconds": 254.1
+  },
+  {
+   "variant": "ab",
+   "added": "u0013,u0095",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 275,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181699
+   },
+   "check_seconds": 250.4
+  },
+  {
+   "variant": "ac",
+   "added": "u0013,u0002",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 276,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181698
+   },
+   "check_seconds": 254.7
+  },
+  {
+   "variant": "ad",
+   "added": "u0013,u0235",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 258,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181716
+   },
+   "check_seconds": 263.3
+  },
+  {
+   "variant": "bc",
+   "added": "u0095,u0002",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 288,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181686
+   },
+   "check_seconds": 241.8
+  },
+  {
+   "variant": "bd",
+   "added": "u0095,u0235",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 270,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181704
+   },
+   "check_seconds": 263.3
+  },
+  {
+   "variant": "cd",
+   "added": "u0002,u0235",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 271,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181703
+   },
+   "check_seconds": 274.1
+  },
+  {
+   "variant": "abc",
+   "added": "u0013,u0095,u0002",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 312,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181662
+   },
+   "check_seconds": 250.8
+  },
+  {
+   "variant": "abd",
+   "added": "u0013,u0095,u0235",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 294,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181680
+   },
+   "check_seconds": 263.5
+  },
+  {
+   "variant": "acd",
+   "added": "u0013,u0002,u0235",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 295,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181679
+   },
+   "check_seconds": 263.9
+  },
+  {
+   "variant": "bcd",
+   "added": "u0095,u0002,u0235",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 307,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181667
+   },
+   "check_seconds": 260.9
+  },
+  {
+   "variant": "ra",
+   "added": "u0095",
+   "options": "identifier guideline_of renamed a_guideline_of",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 251,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181723
+   },
+   "check_seconds": 219.0
+  },
+  {
+   "variant": "rb",
+   "added": "u0002",
+   "options": "identifier mission_of renamed a_mission_of",
+   "premises": "model",
+   "candidate_premises": {
+    "model": 9,
+    "UNKNOWN": 1
+   },
+   "bytes_by_status": {
+    "CHECKED": 252,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181722
+   },
+   "check_seconds": 242.9
+  },
+  {
+   "variant": "rc",
+   "added": "u0235",
+   "options": "identifier nature_of renamed a_nature_of",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "model": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 234,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181740
+   },
+   "check_seconds": 228.7
+  },
+  {
+   "variant": "rd",
+   "added": "u0002",
+   "options": "a_mission_of and u0002 as exactly one mission",
+   "premises": "model",
+   "candidate_premises": {
+    "model": 9,
+    "UNKNOWN": 1
+   },
+   "bytes_by_status": {
+    "CHECKED": 252,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181722
+   },
+   "check_seconds": 240.8
+  },
+  {
+   "variant": "re",
+   "added": "u0013,u0235",
+   "options": "core_value_of→a_core_value_of, nature_of→b_nature_of",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 258,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181716
+   },
+   "check_seconds": 234.4
+  },
+  {
+   "variant": "rf",
+   "added": "u0013",
+   "options": "(repeat of a)",
+   "premises": "model",
+   "candidate_premises": {
+    "model": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 239,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181735
+   },
+   "check_seconds": 233.5
+  },
+  {
+   "variant": "all four",
+   "added": "u0013,u0095,u0002,u0235",
+   "options": "",
+   "premises": "UNKNOWN",
+   "candidate_premises": {
+    "UNKNOWN": 10
+   },
+   "bytes_by_status": {
+    "CHECKED": 331,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181643
+   },
+   "check_seconds": 216.5
+  }
+ ]
+}

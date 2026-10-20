@@ -1,0 +1,50 @@
+[
+ {
+  "claim": "the hedge “At the moment, ” is the 15 bytes 23587-23602 of the pinned source (QT-0p step 4)",
+  "planted": "p1 given as 14 bytes",
+  "file": "apply_plans.py QT_PARTS",
+  "failing_check": "apply_plans.qt0p's partition assertion",
+  "failure": "AssertionError: [[23587, 23602], [23602, 23677]]",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "the three units' spans and kinds are unchanged since the plan (QT-0p step 1)",
+  "planted": "u0043.s01 one byte short",
+  "file": "translation-without-content.ve.md",
+  "failing_check": "apply_plans.qt0p's step-1 assertion",
+  "failure": "AssertionError: ('u0043.s01', {'id': 'u0043.s01', 'span': [23486, 23586], 'support': 'none', 'kind': ['unformalised', 'counting'], 'meaning': {'unformalised': 'counting'}})",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "the census's false positives “discoveries” and “returned to the orchestrator” are dropped (PS-0p step 4)",
+  "planted": "the false-word set emptied",
+  "file": "ledger_1800.py FALSE_FULL_WORDS",
+  "failing_check": "finish_20261018T1800Z.py: assert dropped == EXPECTED_DROPPED",
+  "failure": "AssertionError: [{'unit': 'u0050.s04', 'words': 'returned to', 'full_word': 'returned to'}]",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "a title records no `presupposed_claim` (PS-0p step 1; REMOVE EVERY TRACE)",
+  "planted": "u0207's claim put back",
+  "file": "units.json (in memory)",
+  "failing_check": "finish_20261018T1800Z.py: assert_no_traces",
+  "failure": "AssertionError: u0207",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "an exception_to_… placeholder is class `exception` (JT-0p rule 2)",
+  "planted": "its class set to judgment",
+  "file": "finish_20261018T1800Z.py JT classes",
+  "failing_check": "finish_20261018T1800Z.py: check_rules",
+  "failure": "AssertionError: exception_to_asking_for_clarification",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "“knowingly engages” is class `attitude` (JT-0p rule 1)",
+  "planted": "knowingly_engages_4 set to classification",
+  "file": "finish_20261018T1800Z.py JT classes",
+  "failing_check": "finish_20261018T1800Z.py: check_rules",
+  "failure": "AssertionError: knowingly_engages_4",
+  "restored": "in-memory fault; the file was not touched"
+ }
+]

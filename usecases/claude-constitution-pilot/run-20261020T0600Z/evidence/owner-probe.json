@@ -1,0 +1,151 @@
+{
+ "u0095.company": {
+  "fence": "Some thing is a guideline of anthropiccompany.",
+  "parses": true,
+  "formulas": [
+   [
+    "exists",
+    "entity",
+    [
+     "binary",
+     "guideline_of_probe",
+     [
+      "var",
+      0
+     ],
+     [
+      "const",
+      "anthropiccompany"
+     ]
+    ]
+   ]
+  ],
+  "rendered": [
+   "There is a thing that is a guideline of anthropiccompany"
+  ],
+  "round_trip_same_formula": true
+ },
+ "u0002.company": {
+  "fence": "There is a first thing such that both of the following hold:\n  (a) the first thing is a mission of anthropiccompany;\n  (b) for every second thing that is a mission of anthropiccompany, the second thing is the same as the first thing.",
+  "parses": true,
+  "formulas": [
+   [
+    "exists",
+    "entity",
+    [
+     "and",
+     [
+      "binary",
+      "mission_of_probe",
+      [
+       "var",
+       0
+      ],
+      [
+       "const",
+       "anthropiccompany"
+      ]
+     ],
+     [
+      "forall",
+      "entity",
+      [
+       "implies",
+       [
+        "binary",
+        "mission_of_probe",
+        [
+         "var",
+         0
+        ],
+        [
+         "const",
+         "anthropiccompany"
+        ]
+       ],
+       [
+        "eq",
+        [
+         "var",
+         0
+        ],
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  ],
+  "rendered": [
+   "There is a first thing such that both of the following hold:\n  (a) the first thing is a mission of anthropiccompany;\n  (b) for every second thing that is a mission of anthropiccompany, the second thing is the same as the first thing"
+  ],
+  "round_trip_same_formula": true
+ },
+ "u0235.unique": {
+  "fence": "There is a first thing such that both of the following hold:\n  (a) the first thing is a nature of claude;\n  (b) for every second thing that is a nature of claude, the second thing is the same as the first thing.",
+  "parses": true,
+  "formulas": [
+   [
+    "exists",
+    "entity",
+    [
+     "and",
+     [
+      "binary",
+      "nature_of_probe",
+      [
+       "var",
+       0
+      ],
+      [
+       "const",
+       "claude"
+      ]
+     ],
+     [
+      "forall",
+      "entity",
+      [
+       "implies",
+       [
+        "binary",
+        "nature_of_probe",
+        [
+         "var",
+         0
+        ],
+        [
+         "const",
+         "claude"
+        ]
+       ],
+       [
+        "eq",
+        [
+         "var",
+         0
+        ],
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  ],
+  "rendered": [
+   "There is a first thing such that both of the following hold:\n  (a) the first thing is a nature of claude;\n  (b) for every second thing that is a nature of claude, the second thing is the same as the first thing"
+  ],
+  "round_trip_same_formula": true
+ },
+ "u0013.capital": {
+  "fence": "Some thing is a core value of Claude.",
+  "declared": false,
+  "error": "VEError: Invalid ASCII identifier: 'Claude'"
+ }
+}

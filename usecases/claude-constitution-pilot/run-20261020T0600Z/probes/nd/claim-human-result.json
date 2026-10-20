@@ -1,0 +1,16 @@
+{
+  "assumed": [],
+  "conditional_on": [],
+  "evidence": "certificate",
+  "mentions": [],
+  "reading_premises_used": [],
+  "route": "superposed",
+  "verdict": "ALL",
+  "english": [
+    "Under every reading of the 4 open sentences, the conclusion follows: *For every operator, for every operator input that is classified as \"instruction_claim_human_when_asked\", it is not the case that that operator may give Claude that operator input.*",
+    "This does not depend on how sentence 132 is read.",
+    "This does not depend on how sentence 590 is read.",
+    "This does not depend on how sentence 630 is read.",
+    "This does not depend on how sentence 1001 is read."
+  ]
+}

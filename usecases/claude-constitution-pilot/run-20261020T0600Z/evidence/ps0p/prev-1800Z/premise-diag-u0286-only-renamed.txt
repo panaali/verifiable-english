@@ -1,0 +1,35 @@
+Superposed
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 1.5 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 1.7 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 2.6 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 2.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.4 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit model-attempt budget exhausted 2.7 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit model-attempt budget exhausted 2.7 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit model-attempt budget exhausted 2.7 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 2.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 1.5 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 2.6 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 1.6 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 2.5 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> NotFound the ground-fact candidate is not a model of the premises within the domain bounds 0.0 s
+{"budget": {"max_domain_size": 2, "max_evaluations": 100000, "max_models": 10000, "max_steps": 10000}, "candidates": [{"index": 0, "set": "force-u0036-s05", "status": "UNKNOWN"}, {"index": 1, "set": "force-u0036-s05", "status": "UNKNOWN"}, {"index": 0, "set": "force-u0156-s03", "status": "UNKNOWN"}, {"index": 1, "set": "force-u0156-s03", "status": "UNKNOWN"}, {"index": 2, "set": "force-u0156-s03", 102.8

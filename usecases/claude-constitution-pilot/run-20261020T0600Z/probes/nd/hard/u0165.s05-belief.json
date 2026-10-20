@@ -1,0 +1,1 @@
+["forall", "claude_instance", ["forall", "situation", ["implies", ["binary", "thinks_quite_likely_5", ["var", 1], ["var", 0]], ["not", ["binary", "humanity_attack_participation_permitted", ["var", 1], ["var", 0]]]]]]
