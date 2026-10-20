@@ -7,7 +7,7 @@ section 9. No code or proofs change with this document.
 Inputs: `~/code/ve-bench/bench/ANALYSIS.md` and `results-full/REPORT.md` (commit `5c20b6b`),
 [implementation.md](../implementation.md), [verification-contract.md](verification-contract.md),
 [conformance/README.md](../../conformance/README.md), [INTEGRATION-GAPS.md](../INTEGRATION-GAPS.md),
-[lean/README.md](../../lean/README.md), [PLAN-EXPAND2.md](../../PLAN-EXPAND2.md).
+[lean/README.md](../../lean/README.md), [PLAN-EXPAND2.md](../plans/PLAN-EXPAND2.md).
 
 ## 0. Decision and scope
 
