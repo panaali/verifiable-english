@@ -112,7 +112,8 @@ Proved in `Theorems.lean`, statements as the spec's (`docs/quantities/qt-a1c/evi
   region sizes itself.
 
 Fixtures: `fa1b_not_entails` turns FA1b's countermodel into a proof that FA1 does not follow without the exclusion
-premise (with `fa1_entails`, the premise is what makes it hold); `fa2_agree` uses each agreement theorem in both
+premise (with `fa1_entails`, the premise is what makes it hold); `fa4d_not_entails` does the same for a ratio
+claim, on four decisions: one reading of "out of" (0.500) does not entail the other (1.000); `fa2_agree` uses each agreement theorem in both
 directions on the lift of a model of seven (three increase, one of them also stay); a further FA2 `#guard` compares a
-body with `not`, `and` and `or`. `rowsModel_valid` and `count_lift` are fixture lemmas. 13 seeded mutants, each failing
+body with `not`, `and` and `or`. `rowsModel_valid` and `count_lift` are fixture lemmas. 14 seeded mutants, each failing
 at the theorem it breaks (`docs/quantities/qt-a1c/mutants.json`).
