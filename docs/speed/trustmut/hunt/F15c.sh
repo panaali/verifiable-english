@@ -8,7 +8,7 @@ grep "F15c.md" "$r/out.txt" > "$r/got.txt"
 cat > "$r/want.txt" <<'WANT'
 hunt/F15c.md:2 UNBOUND ["21–35 of each replay's mutants"]: 21–35 of each replay's mutants are INVALID.
 hunt/F15c.md:4 UNBOUND ['211 each']: The kills are the mutants of the `#guard`, `decide` and `rfl` rows (211 each).
-hunt/F15c.md:6 UNBOUND ['about 1']: The F9 line axis of the test is about 161.
+hunt/F15c.md:6 UNBOUND ['about 161']: The F9 line axis of the test is about 161.
 hunt/F15c.md:8 UNBOUND ['all 7']: At the default it flags all 7, so steps two and three follow.
 hunt/F15c.md:10 UNBOUND ['20 lines']: Removing those operators saves under 20 lines.
 WANT

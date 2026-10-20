@@ -723,7 +723,7 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
 | Size: at most ~500 changed lines outside generated files | over: see below |
 
-Size: about 5,300 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
+Size: about 5,500 changed lines outside the generated `tests/history-dependent.json` and the saved evidence
 (`evidence/*.json`, `mutants-evidence.json`, the hunt probes), against the merge base (`git diff --numstat`): most
 of it is the tool, the test, the seeded bugs' `mutants.json` and this report. That is over ten times the guideline. The size rule's
 fallback is to deliver steps 1-3 for the operators step 1 showed matter; every operator but `arm-default`,

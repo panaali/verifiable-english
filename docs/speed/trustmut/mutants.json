@@ -895,7 +895,7 @@
   {
    "id": "TM88",
    "file": "docs/speed/trustmut/claims.py",
-   "find": " r\"\\babout \\d\",",
+   "find": " r\"\\babout \\d[\\d,]*\",",
    "replace": "",
    "command": [
     "bash",
@@ -928,7 +928,7 @@
   {
    "id": "TM91",
    "file": "docs/speed/trustmut/claims.py",
-   "find": "COUNT = r\"(?<![\\w.\u2013-])",
+   "find": "COUNT = r\"(?<![\\w.,\u2013-])",
    "replace": "COUNT = r\"\\b",
    "command": [
     "bash",
