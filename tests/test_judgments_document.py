@@ -220,6 +220,10 @@ STATUS = {
     "J-chi": (J1, [unit("u1", opened("arbitrary"), ALPHA),
                    unit("u2", content=norm(["binary", "subjects", ["var", 1], ["var", 0]], "reports", "q"))], (),
               ["OPEN", "CHECKED"], ([("arbitrary", ["u1"])], [])),
+    # Only the active version is read (spec 4.2): version 2 does not use the judgment its version 1 used.
+    "two-versions": (J1, [unit("u1", opened("arbitrary"), kind="asserted")],
+                     [authored("u1", NARROW), {**authored("u1", ["forall", "act", ["implies", u("denial"), ["bottom"]]]),
+                                               "version": 2}], "JudgmentListedUnused: u1 arbitrary", None),
     # Which judgment a refusal names, and both lists' order, with two candidates each (spec 8.2, 8.3).
     "two-specified": (J2, [unit("u1", content=norm(conj(u("arrest"), u("unreasonable"), u("arbitrary"))))], (),
                       "JudgmentNotChecked: u1 arbitrary", None),
