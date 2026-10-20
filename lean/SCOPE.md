@@ -111,7 +111,8 @@ the chain's own norm object; the chain's decoder then reads it as if the rule ha
 - `admitBlock`, before anything else and with or without governors: the limits (256 governors, 256 list names),
   repeated ids and names, unknown units, a vocabulary symbol named `own`, each list name (its scope, its unit, its
   run), then each governor (depth, `own` under a binder, its effect's reach and unit, its recorded units, reading
-  sets, units it cannot change). Discourse's anchor checks and the anchor and label unit checks are sc-3ab's.
+  sets, units it cannot change). Discourse's anchor checks and the anchor and label unit checks are sc-3ab's; until
+  then a block with anchors is refused.
 - `govern`: with no governor, the document itself or `ScopeOrphanPart`; otherwise `orderCheck`, the composition of
   every `affected` unit, then `patch`. A `precedes` or `yields` governor is refused until sc-1ad adds the graph step.
 

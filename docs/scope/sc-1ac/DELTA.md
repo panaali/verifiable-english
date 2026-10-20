@@ -11,9 +11,10 @@ No other delta. Nothing a caller sees changes:
   `ManifestMismatch: scope.…`, and the `UnsupportedProfile` refusals that stand until sc-1ad and sc-3ab) appear in
   no answer yet.
 - **No approved statement changes.** The five theorems built here (`itemRule_decoder`, `govern_identity`,
-  `govern_orphan`, `govern_admits`, `governorsOf_iff`) equal spec 5.1 after whitespace normalisation, and 38 of the
-  41 definitions equal spec 4.2 (`docs/scope/sc-1ac/statement-diff.txt`). The other three, `coveredLayout`,
-  `admitBlock` and `govern`, refuse what later items add (the REPORT's deviations 1 to 3); none accepts anything the
-  spec's text refuses.
+  `govern_orphan`, `govern_admits`, `governorsOf_iff`) equal spec 5.1 after whitespace normalisation, and 36 of the
+  39 definitions equal spec 4.2 (`docs/scope/sc-1ac/statement-diff.txt`). The other three, `coveredLayout`,
+  `admitBlock` and `govern`, refuse what later items add (the REPORT's deviations 1 to 3). Every answer the built
+  `govern` gives is the answer of the spec's text: it refuses more (anchors, anchor and label reaches, precedence),
+  never less, and `isNull` agrees with the compiled `== .null` on every value.
 - **No existing file changes behaviour.** The other edits are an import list, the trust ledgers, one assurance
   manifest reason, a test file and docs.
