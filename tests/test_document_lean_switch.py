@@ -21,6 +21,9 @@ import pytest
 
 from conformance import document_wrapper as dw
 from ve import document as D
+# The modules that look up the names the tests patch (AR-16a split `ve/document.py`): a patch on `D` would not
+# reach them.
+from ve.document import lean as D_lean, load as D_load, report as D_report, source as D_source
 from ve.backends import relay
 from ve.backends.lean_service import CheckerUnavailable
 from ve.errors import VEError
@@ -58,7 +61,7 @@ def python_path(path):
 def no_python_loader(monkeypatch):
     def refuse(*args, **kwargs):
         raise AssertionError("Python's own document loader ran on a document Lean owns")
-    monkeypatch.setattr(D, "_load_document", refuse)
+    monkeypatch.setattr(D_load, "_load_document", refuse)
 
 
 # ---------------------------------------------------------------- Lean decides what it owns
@@ -68,7 +71,8 @@ def test_owned_documents_are_decided_by_lean(tmp_path, name, monkeypatch):
     path = write(tmp_path, dw.text_of(GENERATED[name]))
     expected = outcome(python_path(path)), outcome(lambda: D.coverage(D._load_document(path.read_bytes(), path, None)))
     assert D._lean_answer(path.read_bytes(), True) is not None
-    monkeypatch.setattr(D, "_load_document", lambda *a, **k: (_ for _ in ()).throw(AssertionError("retained path")))
+    monkeypatch.setattr(D_load, "_load_document",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("retained path")))
     head = outcome(lambda: D.check_document(path)), outcome(lambda: D.coverage(D.load_document(path)))
     assert head == expected
     assert "lean" in D.load_document(path)
@@ -97,7 +101,8 @@ def test_null_content_is_absent_on_the_lean_path(tmp_path, monkeypatch):
     expected = outcome(python_path(path))
     row = D._lean_answer(path.read_bytes(), True)
     assert row is not None and "content" not in row["units"][2]
-    monkeypatch.setattr(D, "_load_document", lambda *a, **k: (_ for _ in ()).throw(AssertionError("retained path")))
+    monkeypatch.setattr(D_load, "_load_document",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("retained path")))
     assert outcome(lambda: D.check_document(path)) == expected
 
 
@@ -379,7 +384,7 @@ def test_undecided_answers_take_the_retained_path(tmp_path, reason, monkeypatch)
     expected = outcome(python_path(path))
     calls = []
     original = D._load_document
-    monkeypatch.setattr(D, "_load_document", lambda *a: calls.append(a) or original(*a))
+    monkeypatch.setattr(D_load, "_load_document", lambda *a: calls.append(a) or original(*a))
     assert outcome(lambda: D.check_document(path)) == expected
     assert len(calls) == 1
 
@@ -601,7 +606,8 @@ def test_alternatives_coverage_is_bound_to_units_and_counts(tmp_path, no_python_
 def test_a_document_lean_accepted_that_python_cannot_build_is_unavailable(tmp_path, no_python_loader,
                                                                            monkeypatch):
     path = write(tmp_path, dw.text_of(GENERATED["plain"]))
-    monkeypatch.setattr(D, "Environment", lambda data: (_ for _ in ()).throw(VEError("no")))
+    for module in (D_source, D_lean):  # `_environment` and `_document_case` look `Environment` up
+        monkeypatch.setattr(module, "Environment", lambda data: (_ for _ in ()).throw(VEError("no")))
     with pytest.raises(CheckerUnavailable, match="could not be built"):
         D.load_document(path)
 
@@ -629,14 +635,14 @@ def test_the_admission_route_rejecting_what_lean_admitted_is_unavailable(tmp_pat
                                                                           monkeypatch):
     path = write(tmp_path, dw.text_of(GENERATED["graph-bridge"]))
     assert D.check_document(path)["admission"]["report"]
-    monkeypatch.setattr(D, "admit_document", lambda env, document: (_ for _ in ()).throw(VEError("refused")))
+    monkeypatch.setattr(D_report, "admit_document", lambda env, document: (_ for _ in ()).throw(VEError("refused")))
     with pytest.raises(CheckerUnavailable, match="admission route rejects a claim graph Lean's document mode"):
         D.check_document(path)
 
 
 def test_python_graph_checks_do_not_run_on_a_lean_admitted_document(tmp_path, no_python_loader, monkeypatch):
     path = write(tmp_path, dw.text_of(GENERATED["graph-readings"]))
-    monkeypatch.setattr(D, "_check_narrowing_choices", lambda *a: (_ for _ in ()).throw(AssertionError("ran")))
+    monkeypatch.setattr(D_report, "_check_narrowing_choices", lambda *a: (_ for _ in ()).throw(AssertionError("ran")))
     assert D.check_document(path)["admission"]["report"]
 
 

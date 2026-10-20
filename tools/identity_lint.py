@@ -248,10 +248,20 @@ def problems(found: list[Site], entries: list[dict]) -> list[str]:
 
 def growth(base: list[dict], head: list[dict]) -> list[str]:
     """The sites of `head` beyond those of `base`, Lean-owned or Python-owned, per module, domain and owner (a site
-    moved to another function of its module is not growth), and each domain whose owner changed: the allowlist only
-    shrinks, and a new site or a new owner needs a DRI signature."""
+    moved to another function of its module is not growth, nor one moved into the package that replaced its module:
+    the sites of `ve/x/*.py` count as `ve/x.py`'s when the base lists `ve/x.py` and the head does not, as when AR-16a
+    split `ve/document.py`), and each domain whose owner changed: the allowlist only shrinks, and a new site or a new
+    owner needs a DRI signature."""
+    def paths(entries):
+        return {e.get("path") for e in entries if type(e) is dict and type(e.get("path")) is str}
+    split = {path[:-len(".py")] + "/": path for path in paths(base) - paths(head) if path.endswith(".py")}
+
+    def module(path):
+        return next((old for package, old in split.items() if type(path) is str and path.startswith(package)), path)
+
     def counted(entries):
-        return Counter((e.get("path"), e.get("domain"), str(e.get("owner"))) for e in entries if type(e) is dict)
+        return Counter((module(e.get("path")), e.get("domain"), str(e.get("owner"))) for e in entries
+                       if type(e) is dict)
     out = [f"{ALLOWLIST_NAME}: {owner.capitalize()}-owned site {path} {domain!r} added since the base "
            f"(a new site needs a DRI signature)"
            for (path, domain, owner), n in sorted((counted(head) - counted(base)).items()) for _ in range(n)]
