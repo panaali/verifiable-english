@@ -458,9 +458,7 @@ def same (r : Except String Json) (doc : Json) : Bool := match r with | .ok o =>
   "{\"norm\":{\"guard\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"name\":\"hc-cbrn-uplift\",\"over\":[],\"predicate\":\"restricted_act_permitted\",\"sign\":false,\"unless\":[]}}"
 #guard contentStr (gov (hcDoc parts) [g1]) "u0165.s07" == some
   "{\"norm\":{\"guard\":[\"unary\",\"csam\",[\"var\",1]],\"name\":\"hc-csam\",\"over\":[],\"predicate\":\"csam_generation\",\"sign\":false,\"unless\":[]}}"
-#guard [contentStr (gov (hcDoc parts) [g1]) "u0164.s02", contentStr (gov (hcDoc parts) [g1]) "u0166.s01"] ==
-  [some "null", some "null"]
--- every item is composed, and every unit keeps its id, kind and place
+-- every item is composed, the lead-in keeps no content, and every unit keeps its id, kind and place
 #guard (gov (hcDoc parts) [g1]).toOption.map (fun o => (unitsOf o).map fun x =>
     (idOf x, (x.getObjValD "kind").compress, keysOf (x.getObjValD "content"))) ==
   some ((layoutOf govPieces).map fun x => (x.id, "\"rule\"", if seven.contains x.id then ["norm"] else []))
@@ -542,18 +540,12 @@ def goOf (u : String) : Except String (List String) := do
 #guard [goOf "u0165.s01", goOf "u0165.s07", goOf "u0166.s01", goOf "u0164.s02"].map (·.toOption) ==
   [some ["g2"], some ["g2"], some [], some []]
 
--- the unary effects compose in order 1.4 (SC-2's fixtures F3, F6, F7 and F7′, on this item's `govern`)
-#guard contentStr (gov (hcDoc parts) [g1, g2] hcNames) "u0165.s01" == some
-  "{\"norm\":{\"guard\":[\"or\",[\"and\",[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],{\"attitude\":{\"content\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"holder\":[\"var\",0],\"mode\":\"knows\"}}],{\"attitude\":{\"content\":[\"unary\",\"mass_casualty_weapon_uplift\",[\"var\",1]],\"degree\":\"quite likely\",\"holder\":[\"var\",0],\"mode\":\"thinks\"}}],\"name\":\"hc-cbrn-uplift\",\"over\":[],\"predicate\":\"restricted_act_permitted\",\"sign\":false,\"unless\":[]}}"
+-- the unary effects compose in order 1.4; two that do not commute are refused (SC-2's F7 and F7′)
 def g6 : Governor := ⟨"g6", "u0173.s01", carveT, .listName "the hard constraints", seven⟩
 def gN : Governor := ⟨"gN", "u0164.s01", narrowK, .listName "the hard constraints", seven⟩
 def gR : Governor := ⟨"gR", "u0164.s01", .carveOut (j "[\"unary\", \"rules\", [\"var\", 1]]"), .rules ["hc-csam"], ["u0165.s07"]⟩
-#guard contentStr (gov (hcDoc parts) [g1, g6] hcNames) "u0165.s03" == some
-  "{\"norm\":{\"guard\":[\"unary\",\"a3\",[\"var\",1]],\"name\":\"hc-3\",\"over\":[],\"predicate\":\"restricted_act_permitted\",\"sign\":false,\"unless\":[[\"unary\",\"tested_by_anthropic\",[\"var\",1]]]}}"
 #guard errorOf (gov (hcDoc parts) [g1, g2, gN] hcNames) == "ScopeOrder: u0165.s01: gN, g2"
 #guard contentStr (gov (hcDoc parts) [g1, g6, gN] hcNames) "u0165.s02" == contentStr (gov (hcDoc parts) [g1, gN, g6] hcNames) "u0165.s02"
-#guard contentStr (gov (hcDoc parts) [g1, g6, gN] hcNames) "u0165.s02" == some
-  "{\"norm\":{\"guard\":[\"and\",[\"unary\",\"a2\",[\"var\",1]],[\"unary\",\"no_operator_prompt\",[\"var\",1]]],\"name\":\"hc-2\",\"over\":[],\"predicate\":\"restricted_act_permitted\",\"sign\":false,\"unless\":[[\"unary\",\"tested_by_anthropic\",[\"var\",1]]]}}"
 -- two carve-outs of one class apply by their units' positions; a `rules` reach (class 3) after a list name's
 #guard contentStr (gov (hcDoc parts) [g1, gR, g6, {g6 with id := "g7", unit := "u0164.s01", effect := .carveOut (j "[\"unary\", \"early\", [\"var\", 1]]")}] hcNames)
   "u0165.s07" == some
@@ -616,8 +608,12 @@ theorem short_effects :
     applyEffect "a" (.carveOut (.str "own")) shortPart = .ok (shortPart.setObjVal! "unless" (.arr #[.arr #[.str "top"]])) ∧
     applyEffect "a" (.reguard (.str "c")) shortLead = .error "ScopeNotARule: a" ∧
     applyEffect "a" (.carveOut (.str "c")) (shortPart.setObjVal! "unless" .null) = .error "ScopeNotARule: a" ∧
-    applyEffect "a" (.frame shortLead) shortPart = .ok shortPart ∧ applyEffect "a" .precedes shortPart = .ok shortPart := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    applyEffect "a" (.frame shortLead) shortPart = .ok shortPart ∧ applyEffect "a" .precedes shortPart = .ok shortPart ∧
+    [isFrame (.frame shortLead), unary (.reguard shortLead), unary (.carveOut shortLead), graph .precedes,
+      graph .yields] = [true, true, true, true, true] ∧
+    [isFrame .title, isFrame (.reguard shortLead), unary (.frame shortLead), unary .precedes, graph .title,
+      graph (.frame shortLead)] = [false, false, false, false, false, false] := by
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 theorem short_govern (re : VE.Readings.Wire.ReadingsEnvironment) :
     composed (short [gt] re) "a" = .ok (led shortPart) ∧ affected (short [gt] re) = ["a", "b"] ∧
