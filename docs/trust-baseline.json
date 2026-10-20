@@ -929,6 +929,20 @@
    "reason": "pk-1b: V +22 (VE/NormDefaults/Packs.lean +17: KindRow, dispatch; VE/NormDefaults/Layered.lean +5: legacyKinds and layeredCase's docstring; kindCase and legacyRows tied to kindCase_eq and dispatch_legacy); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1b, 2026-10-18",
    "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "df-1ab: VE/Defaults/Premises.lean S +6 (DefaultCoherent), V +23 (collisionTuple, decidersOf, giveWayDeciders, untied); K +0; selU tied by cohPremiseU_selU; the checks C, the diagnostics G[R]",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ab, 2026-10-18",
+   "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "df-1ab: VE/Defaults/Premises.lean S +6 (DefaultCoherent), V +23 (collisionTuple, decidersOf, giveWayDeciders, untied); K +0; selU tied by cohPremiseU_selU; the checks C, the diagnostics G[R]",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ab, 2026-10-18",
+   "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f"
   }
  ]
 }

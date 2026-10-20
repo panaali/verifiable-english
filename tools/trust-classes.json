@@ -13134,31 +13134,42 @@
         "VE.Defaults.Fixtures.cStrict",
         "VE.Defaults.Fixtures.cert",
         "VE.Defaults.Fixtures.check1",
+        "VE.Defaults.Fixtures.collision1",
         "VE.Defaults.Fixtures.configs",
+        "VE.Defaults.Fixtures.deep",
+        "VE.Defaults.Fixtures.deepen",
         "VE.Defaults.Fixtures.dfltJ",
+        "VE.Defaults.Fixtures.diag3",
         "VE.Defaults.Fixtures.dα",
         "VE.Defaults.Fixtures.dβ",
         "VE.Defaults.Fixtures.dγ",
+        "VE.Defaults.Fixtures.dγ'",
         "VE.Defaults.Fixtures.dδ",
+        "VE.Defaults.Fixtures.dδo",
         "VE.Defaults.Fixtures.dδs",
         "VE.Defaults.Fixtures.dε",
         "VE.Defaults.Fixtures.dζ",
         "VE.Defaults.Fixtures.dζ0",
         "VE.Defaults.Fixtures.dσ",
         "VE.Defaults.Fixtures.elemOf",
+        "VE.Defaults.Fixtures.emptyJ",
         "VE.Defaults.Fixtures.envJ",
+        "VE.Defaults.Fixtures.exAt",
         "VE.Defaults.Fixtures.exc1",
         "VE.Defaults.Fixtures.excN",
         "VE.Defaults.Fixtures.excSelf",
         "VE.Defaults.Fixtures.fillOf",
         "VE.Defaults.Fixtures.follows1",
         "VE.Defaults.Fixtures.holds",
+        "VE.Defaults.Fixtures.holisticOpSoft",
         "VE.Defaults.Fixtures.holisticSoft",
         "VE.Defaults.Fixtures.layered",
         "VE.Defaults.Fixtures.model1",
         "VE.Defaults.Fixtures.modelJ",
         "VE.Defaults.Fixtures.notExc",
+        "VE.Defaults.Fixtures.operatorSoft",
         "VE.Defaults.Fixtures.outw",
+        "VE.Defaults.Fixtures.pairOf",
         "VE.Defaults.Fixtures.ps",
         "VE.Defaults.Fixtures.rankL",
         "VE.Defaults.Fixtures.regJ",
@@ -13171,6 +13182,7 @@
         "VE.Defaults.Fixtures.userSoft",
         "VE.Defaults.Fixtures.val",
         "VE.Defaults.Fixtures.wireOk",
+        "VE.Defaults.Fixtures.wireOkJ",
         "VE.Defaults.Fixtures.xAll",
         "VE.Defaults.Fixtures.xPerm",
         "VE.Defaults.Fixtures.xReq",
@@ -13180,15 +13192,27 @@
     "VE/Defaults/Premises.lean": {
       "C": [
         "VE.Defaults.assumptionsOf",
-        "VE.Defaults.certChecks"
+        "VE.Defaults.certChecks",
+        "VE.Defaults.collisionCheck",
+        "VE.Defaults.defaultCoherenceCheck",
+        "VE.Defaults.pairChecks"
+      ],
+      "G[R]": [
+        "VE.Defaults.decisionFree",
+        "VE.Defaults.limitDiag",
+        "VE.Defaults.questionDiag",
+        "VE.Defaults.whatOf"
       ],
       "G[V]": [
         "VE.Defaults.Basis",
         "VE.Defaults.Form",
         "VE.Defaults.bareExceptionLabels",
+        "VE.Defaults.collisionTuple",
+        "VE.Defaults.decidersOf",
         "VE.Defaults.defaultX",
         "VE.Defaults.dfltLabels",
         "VE.Defaults.dfltPremises",
+        "VE.Defaults.giveWayDeciders",
         "VE.Defaults.withoutDefaults",
         {
           "name": "VE.Defaults.basisOf",
@@ -13201,9 +13225,16 @@
           "tied": [
             "VE.Defaults.followsForm_short"
           ]
+        },
+        {
+          "name": "VE.Defaults.selU",
+          "tied": [
+            "VE.Defaults.cohPremiseU_selU"
+          ]
         }
       ],
       "S": [
+        "VE.Defaults.DefaultCoherent",
         "VE.Defaults.dfltLabelled",
         "VE.Defaults.dfltOf"
       ]
