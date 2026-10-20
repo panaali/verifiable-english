@@ -1,4 +1,4 @@
-# speed-trustmut: the probes of reviews F1, F6-F14 (F14c: F14's class) and of the adversarial hunts (REPORT section 1e)
+# speed-trustmut: the probes of reviews F1, F6-F15 (F14c and F15c: their classes) and of the adversarial hunts (REPORT section 1e)
 
 Each `<name>.sh` is one command, run from the root of a checkout of this branch:
 
@@ -19,11 +19,12 @@ probe's own wait. Each fixed form is also a row of `tests/test_trust_mutants.py`
 > Probes on be422c2d3 (this checkout's tool): 80 of 81 exit 0; non-zero: N4 (1, boundary 1); not run: F14c (it checks this file's sentences against this file: run after run.py), T5w (a mutant's build runs until --build-timeout), T7 (a mutant's build runs until --build-timeout).
 
 F14c runs `../claims.py`, which binds every sentence of the report and of this README that states a result to
-the saved evidence (review F14 as a class).
+the saved evidence (review F14 as a class). F15c runs it on `F15c.md`, one wrong count of each form `CLAIM`
+reads, and requires each UNBOUND, as its own sentence (review F15 as a class).
 
 | Names | Source |
 |---|---|
-| F1, F6-F14, F14c | the reviews' PROBE lines (F12: F11's with `bS`; F14 reads REPORT.md and the saved evidence, no Lean; F14c is F14's class) |
+| F1, F6-F15, F14c, F15c | the reviews' PROBE lines (F12: F11's with `bS`; F14 and F15 read REPORT.md and the saved evidence, no Lean; F14c and F15c are F14's and F15's classes) |
 | H1-H7, G1-G5 | hunt 1 (G: forms tried that were fine) |
 | N1-N10 | hunt 2 |
 | P1-P9 | hunt 3 |

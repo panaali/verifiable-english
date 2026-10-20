@@ -869,6 +869,94 @@
     "docs/speed/trustmut/hunt/F14c.sh"
    ],
    "claim": "the probes' summary line counts only the probes that exit 0, and the README and report quote it"
+  },
+  {
+   "id": "TM86",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "    COUNT + rf\" (?:[\\w'\u2019-]+ ){{0,3}}?(?:{COUNTED})\\b\",",
+   "replace": "    COUNT + rf\" (?:[\\w'\u2019-]+ ){{0,1}}?(?:{COUNTED})\\b\",",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "claim": "a count reads up to three words between the number and what it counts (review F15: \"21\u201335 of each replay's mutants\")"
+  },
+  {
+   "id": "TM87",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "    COUNT + r\" each\\b\", r\"\\b(?:all",
+   "replace": "    r\"\\b(?:all",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "claim": "\"N each\" is a count"
+  },
+  {
+   "id": "TM88",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": " r\"\\babout \\d\",",
+   "replace": "",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "claim": "\"about N\" is a count"
+  },
+  {
+   "id": "TM89",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": " r\"\\b(?:all|every one of) (?:the )?\\d\",",
+   "replace": "",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "claim": "\"all N\" is a count"
+  },
+  {
+   "id": "TM90",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "probes|lines|\"",
+   "replace": "probes|\"",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "claim": "N lines is a count"
+  },
+  {
+   "id": "TM91",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "COUNT = r\"(?<![\\w.\u2013-])",
+   "replace": "COUNT = r\"\\b",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "claim": "a number inside a name (ap-2, F14, Lean 4.24) is no count"
+  },
+  {
+   "id": "TM92",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "(?=[A-Z`(*>\\d])\", para)",
+   "replace": "(?=[A-Z`(*>])\", para)",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F15c.sh"
+   ],
+   "claim": "a sentence that starts with a digit is a sentence of its own"
+  },
+  {
+   "id": "TM93",
+   "file": "docs/speed/trustmut/claims.py",
+   "find": "(\"LINES\", \"NO_ANSWERS\")]",
+   "replace": "]",
+   "command": [
+    "bash",
+    "docs/speed/trustmut/hunt/F14c.sh"
+   ],
+   "claim": "the test-size sentence of section 5 is measured from the test file (review F15's class)"
   }
  ]
 }

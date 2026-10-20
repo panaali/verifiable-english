@@ -35,6 +35,12 @@ import run as probes  # noqa: E402
 import sweep  # noqa: E402
 
 DOCS = [HERE / "REPORT.md", HERE / "hunt/README.md"]
+# a count: a number or a range, then up to three words ("of each replay's", "former", "of the"), then what it counts
+# (review F15: "21–35 of each replay's mutants" put three words between them and was never checked)
+# (not a number inside a name: ap-2, F14, TM82, Lean 4.24, section 4, step 1)
+COUNT = r"(?<![\w.–-])(?<![Ss]ection )(?<![Ss]tep )\d[\d,]*(?:–\d[\d,]*)?"
+COUNTED = ("s|h|tests?|units|functions|mutants|seeds|seeded bugs|survivors|kills|definitions|files|probes|lines|"
+           "replays|findings|rows|KILLED|SURVIVOR|UNKNOWN|INVALID")
 CLAIM = re.compile("|".join([
     r"\bwithin (?:the |step 1's |its )?(?:20-minute |time )?budget\b", r"\bwithin it\b", r"\bmeets? the budget\b",
     r"\bbudget (?:is|was) met\b",
@@ -42,9 +48,9 @@ CLAIM = re.compile("|".join([
     r"\bexits? 0\b", r"\bexit 0\b",
     r"\b(?:on|with) the final tool\b",
     r"\bload \d",
-    r"\b\d[\d,]*(?:–\d[\d,]*)? of (?:the )?\d[\d,]*\b",
-    r"\b\d[\d,]*(?:–\d[\d,]*)? (?:\w+ )?(?:s|h|tests?|units|functions|mutants|seeds|seeded bugs|survivors|kills|"
-    r"definitions|files|probes|changed lines|KILLED|SURVIVOR|UNKNOWN|INVALID)\b",
+    COUNT + r" of (?:the )?\d[\d,]*\b",
+    COUNT + rf" (?:[\w'’-]+ ){{0,3}}?(?:{COUNTED})\b",
+    COUNT + r" each\b", r"\b(?:all|every one of) (?:the )?\d", r"\babout \d",
 ]))
 # (words, why they report no result)
 NOT_CLAIMS = [
@@ -55,6 +61,7 @@ NOT_CLAIMS = [
     ("among the first 60 mutants of the tool's order", "defines a column of the table"),
     ("Exit 3 means mutants were NOT RUN", "the tool's exit codes"),
     ("| 3 tests in a new", "the task line's own words"),
+    ("| 4 orchestrator lines", "the task line's own words"),
     ("25 seeded bugs still killed", "the task line quotes the DRI note's ask"),
     ("at most ~500 changed lines", "the task's size rule"),
     ("an outside `--test` file kills only when it passes without the mutant", "a rule of the tool (TM22)"),
@@ -302,7 +309,22 @@ def size() -> list[tuple[str, str]]:
     total = sum(int(a) + int(b) for a, b, f in rows if not SIZE_OUT.fullmatch(f))
     return [*((f"about {near:,} changed lines", "git diff --numstat against the merge base")  # the hundred either side
               for near in {total // 100 * 100, -(-total // 100) * 100}),
-            (f"That is over {WORDS[total // 500]} times the guideline", "git diff --numstat against the merge base")]
+            (f"That is over {WORDS[total // 500]} times the guideline", "git diff --numstat against the merge base"),
+            *parts()]
+
+
+# the review rounds' tables in the test file, each a run of lines from one top-level name to another (REPORT section 5)
+PARTS = [("the F7 truth table and its package", [("FORMS", "ARMS")]),
+         ("F9's line axis", [("ARMS", "GUARD"), ("LINES", "NO_ANSWERS")]),
+         ("F10's budget table", [("NO_ANSWERS", "STUCK")])]
+
+
+def parts() -> list[tuple[str, str]]:
+    lines = (ROOT / "tests/test_trust_mutants.py").read_text().splitlines()
+    at = {re.match(r"\w+", line)[0]: n for n, line in enumerate(lines) if re.match(r"[A-Z_]+ = ", line)}
+    (first, size), *rest = [(what, round(sum(at[end] - at[start] for start, end in runs), -1)) for what, runs in PARTS]
+    text = f"{first} are about {size} of the test's lines" + "".join(f", {what} about {n}" for what, n in rest)
+    return [(text, "tests/test_trust_mutants.py, measured now")]
 
 
 def hunt() -> list[tuple[str, str]]:
@@ -368,7 +390,7 @@ def check(texts: list[tuple[str, str]]) -> list[str]:
                 for m in re.finditer(re.escape(" ".join(t.split())), para):
                     covered.append((m.start(), m.end(), source))
             at = 0
-            for sentence in re.split(r"(?<=[.;])\s+(?=[A-Z`(*>])", para):
+            for sentence in re.split(r"(?<=[.;])\s+(?=[A-Z`(*>\d])", para):
                 begin = para.index(sentence, at)
                 at = begin + len(sentence)
                 found = [m for m in CLAIM.finditer(para, begin, at)]
