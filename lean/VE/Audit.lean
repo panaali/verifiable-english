@@ -49,6 +49,7 @@ import VE.Calc.Derive
 import VE.Calc.Dimension
 import VE.Calc.Eval
 import VE.Calc.Linear
+import VE.Calc.Poly
 import VE.Calc.Units
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
@@ -793,12 +794,47 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Expr.evalL_congr_on
 #print axioms VE.Calc.Expr.eval_congr_on
 #print axioms VE.Calc.Expr.eval_iff
+#print axioms VE.Calc.Expr.eval_noDiv
 #print axioms VE.Calc.Expr.eval_rescale
 #print axioms VE.Calc.Expr.eval_sound
 #print axioms VE.Calc.Expr.exhausted_lift
 #print axioms VE.Calc.Expr.overflow_lift
 #print axioms VE.Calc.Farkas.check_sound
 #print axioms VE.Calc.Farkas.combination_eval
+#print axioms VE.Calc.Frac.add?_sound
+#print axioms VE.Calc.Frac.div?_sound
+#print axioms VE.Calc.Frac.go_sound
+#print axioms VE.Calc.Frac.go_within
+#print axioms VE.Calc.Frac.mul?_sound
+#print axioms VE.Calc.Frac.ofExpr_sound
+#print axioms VE.Calc.Frac.ofExpr_within
+#print axioms VE.Calc.Frac.pair_some
+#print axioms VE.Calc.Frac.pow?_sound
+#print axioms VE.Calc.Identity.compare_within
+#print axioms VE.Calc.Poly.add?_sound
+#print axioms VE.Calc.Poly.add?_within
+#print axioms VE.Calc.Poly.eval_append
+#print axioms VE.Calc.Poly.eval_combine
+#print axioms VE.Calc.Poly.eval_cons
+#print axioms VE.Calc.Poly.eval_cons0
+#print axioms VE.Calc.Poly.eval_mapMul
+#print axioms VE.Calc.Poly.eval_mulRaw
+#print axioms VE.Calc.Poly.eval_neg
+#print axioms VE.Calc.Poly.eval_nil
+#print axioms VE.Calc.Poly.eval_norm
+#print axioms VE.Calc.Poly.eval_one
+#print axioms VE.Calc.Poly.eval_perm
+#print axioms VE.Calc.Poly.guard_fits
+#print axioms VE.Calc.Poly.guard_some
+#print axioms VE.Calc.Poly.length_mulRaw
+#print axioms VE.Calc.Poly.length_norm
+#print axioms VE.Calc.Poly.mul?_sound
+#print axioms VE.Calc.Poly.mul?_within
+#print axioms VE.Calc.Poly.ofExpr_sound
+#print axioms VE.Calc.Poly.ofExpr_within
+#print axioms VE.Calc.Poly.one_within
+#print axioms VE.Calc.Poly.pow?_sound
+#print axioms VE.Calc.Poly.pow?_within
 #print axioms VE.Calc.QFact.negate_holds
 #print axioms VE.Calc.QLin.eval_add
 #print axioms VE.Calc.QLin.eval_foldl
@@ -829,17 +865,24 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.compare_invariant
 #print axioms VE.Calc.convert_by_factors
 #print axioms VE.Calc.denotes_rescale
+#print axioms VE.Calc.differsAt_sound
 #print axioms VE.Calc.findingKind_source_iff
 #print axioms VE.Calc.firstFault_mem
 #print axioms VE.Calc.firstFault_not_ok
 #print axioms VE.Calc.fold_valuesL_agrees
 #print axioms VE.Calc.fold_values_other
+#print axioms VE.Calc.foldl_mul_one
 #print axioms VE.Calc.foldl_mul_rat
+#print axioms VE.Calc.identity_sound
 #print axioms VE.Calc.legacy_nominal
 #print axioms VE.Calc.lt_of_sq_lt
 #print axioms VE.Calc.mul_pow_nat
 #print axioms VE.Calc.one_pow_nat
+#print axioms VE.Calc.rdiv_pow
+#print axioms VE.Calc.rone_pow
 #print axioms VE.Calc.rounds_invariant
+#print axioms VE.Calc.rpow_mul
+#print axioms VE.Calc.rpow_ne
 #print axioms VE.Calc.rsum_append
 #print axioms VE.Calc.sum_split
 #print axioms VE.Calc.valuesL_agrees
@@ -851,6 +894,8 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.values_free
 #print axioms VE.Calc.values_missing
 #print axioms VE.Calc.values_stated
+#print axioms VE.Calc.vprod_cons
+#print axioms VE.Calc.vprod_mulVars
 #print axioms VE.Calc.weighted_nonneg
 #print axioms VE.Calc.zpowR_eq
 #print axioms VE.Calc.zpowR_mul_nat
