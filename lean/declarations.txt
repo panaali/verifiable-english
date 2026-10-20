@@ -17592,7 +17592,7 @@ module VE.Senses.Run 3f2d07fc6aed58af7591dbf3861fc28411dae0843b620f3565d8b57a925
 188:0-225:102 def VE.Senses.Run.readCase@VE.Senses.Run
 227:0-231:84 def VE.Senses.Run.runCaseReported@VE.Senses.Run
 233:0-250:88 def VE.Senses.Run.main@VE.Senses.Run
-module VE.Service.ActsExamples d73e78d0aad5a8f77da06846383a6775a72fd97a6bdeb56fa8c7a0c5de32fe32
+module VE.Service.ActsExamples 7d9d8ac5073c06acde6f88e1136f58f636310a501d314961cf3ab82e66d3b6b0
 12:0-12:109 def VE.Service.ActsExamples.a1@VE.Service.ActsExamples
 13:0-13:70 def VE.Service.ActsExamples.a2@VE.Service.ActsExamples
 14:0-14:88 def VE.Service.ActsExamples.a3@VE.Service.ActsExamples
@@ -17611,8 +17611,8 @@ module VE.Service.ActsExamples d73e78d0aad5a8f77da06846383a6775a72fd97a6bdeb56fa
 41:0-41:79 def VE.Service.ActsExamples.decodeA@VE.Service.ActsExamples
 43:0-44:110 def VE.Service.ActsExamples.rule@VE.Service.ActsExamples
 45:0-45:84 def VE.Service.ActsExamples.seek@VE.Service.ActsExamples
-100:0-101:107 def VE.Service.ActsExamples.plainRun@VE.Service.ActsExamples
-112:0-115:18 def VE.Service.ActsExamples.wordings@VE.Service.ActsExamples
+110:0-111:107 def VE.Service.ActsExamples.plainRun@VE.Service.ActsExamples
+122:0-125:18 def VE.Service.ActsExamples.wordings@VE.Service.ActsExamples
 module VE.Service.Diagnose 0913297b59dc00e6821619a9df029ade52518172aed644518bdc48e13174622b
 13:0-25:61 def VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose
 27:0-32:29 theorem VE.Service.Diagnose.diagnoseCase_registered@VE.Service.Diagnose

@@ -164,8 +164,8 @@
   "definition": "typingView",
   "file": "lean/VE/EnglishGrammar/Encode.lean",
   "test": "VE.Service.ActsExamples",
-  "killed": false,
-  "first_failure": ""
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:82:0: Expression"
  },
  "actsRefuses-speech": {
   "definition": "actsRefuses",
@@ -173,5 +173,47 @@
   "test": "VE.Compose.Examples",
   "killed": true,
   "first_failure": "error: VE/Compose/Dispatch.lean:1118:9: Tactic `rcases` failed: `right✝ : \"ve.discourse@1\" ∈ ps → False` is not an inductive datatype"
+ },
+ "row-requires": {
+  "definition": "profileTable (acts row)",
+  "file": "lean/VE/Compose/Dispatch.lean",
+  "test": "VE.Compose.Examples",
+  "killed": true,
+  "first_failure": "error: VE/Compose/Dispatch.lean:1115:67: unsolved goals"
+ },
+ "treeCheck-and-regBody-plain-act": {
+  "definition": "Tree.check",
+  "file": "lean/VE/Norms/Tree.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/NormDefaults/Check.lean:176:18: simp_all made no progress"
+ },
+ "py-drop-form": {
+  "definition": "Environment._decode (form)",
+  "file": "ve/environment.py",
+  "test": "tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data"
+ },
+ "py-drop-block": {
+  "definition": "Environment._decode (acts block)",
+  "file": "ve/environment.py",
+  "test": "tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data"
+ },
+ "py-base-keeps-acts": {
+  "definition": "NormDocument.base_environment",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_the_norms_route_checks_rules_on_acts",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_the_norms_route_checks_rules_on_acts"
+ },
+ "py-model-not-kept": {
+  "definition": "MODEL_REDUCTIONS",
+  "file": "ve/profiles.py",
+  "test": "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads",
+  "killed": true,
+  "first_failure": "FAILED tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:acts@0,norms@0,relational-fol@0#1]"
  }
 }
