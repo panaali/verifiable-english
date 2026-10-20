@@ -25,7 +25,7 @@ No text claims minimality (DF-2 is not proved).
 | --- | --- | --- |
 | (1) `DefaultsView`, `ViewRest`, `viewRest` (diagnostics 1, 2, 6, 4), `viewOf` (decoder refusals, then 7), `decodeLayered_soften`, `viewOf_layered` | yes, proved | `Wire.lean` |
 | (1) `elaborateRows`, `elaborateRows_eq` | yes | `Wire.lean` |
-| (1) `CoherenceReplay`, `PairStatus`, `pairs`, `verdict`, `replayCoherence` (diagnostic 5), `defaults_coherence_sound` | yes, proved | `Wire.lean` |
+| (1) `CoherenceReplay`, `PairStatus`, `pairs`, `verdict`, `replayCoherence` (diagnostic 5), `defaults_coherence_sound`, `coherence_collision_shown` (review F1) | yes, proved | `Wire.lean` |
 | (1) `defaultsCase`, `defaultsCase_other` | yes, for the two document kinds | `Wire.lean` |
 | (1) `CertReplay`, `replayCert`, `defaults_follows_gated`, `defaults_certificate_sound` | **df-1ad** (size): built, proved and fixtured on `wip/df-1ad-question` | — |
 | (1) `forcedAt`, `ModelReplay`, `replayModel`, `forcedAt_sound`, `defaults_model_sound` | **df-1ad** (size): built and proved on `wip/df-1ad-model` | — |
@@ -95,7 +95,7 @@ No text claims minimality (DF-2 is not proved).
 
 **Seeded bugs (Lean only).** No Python or Rust product file changed. They are in `mutants.json`, run by
 `python3 docs/defeasible/df-1a/evidence/run_mutants.py docs/defeasible/df-1ac/mutants.json`, with the saved run in
-`evidence/mutants.out`. The control has 0 failures, and all 8 mutants fail.
+`evidence/mutants.out`. The control has 0 failures, and all 10 mutants fail.
 
 | # | File, definition: bug | Fails |
 | --- | --- | --- |
@@ -105,9 +105,11 @@ No text claims minimality (DF-2 is not proved).
 | W5 | `elaborateFields`: coherence targets reversed | DF-γ elaborate |
 | W6 | `entityIds`: a tuple shown by sort | DF-γ, DF-γ2 |
 | W7, W8 | `defaultsCase`: coherence answered as elaborate; an unknown `defaults-` kind answered | DF-α and DF-ω coherence; other kinds |
+| W9 | `CoherenceReplay.pairs` without `x.collides &&`: a pair shown `collision` under UNKNOWN (review F1) | DF-δ with an unchecked collision; `coherence_collision_shown` |
+| W10 | `coherenceFields` matching `true`, not the verdict: a `collision` member under UNKNOWN (review F1) | DF-δ with an unchecked collision; `coherence_collision_shown` |
 
-`tools/trust_mutants.py --max-mutants 1000 --allow trust-mutants-allow.json --json trust-mutants.json` exits 0:
-84 killed, 0 survivors, 0 UNKNOWN, 6 allowed. Each allowed mutant writes an empty list that Lean cannot type there.
+`tools/trust_mutants.py --max-mutants 1000 --allow trust-mutants-allow.json --json trust-mutants.json` exits 0
+on the review-fix Lean (798 s): 84 killed, 0 survivors, 0 UNKNOWN, 6 allowed. Each allowed mutant writes an empty list that Lean cannot type there.
 
 **Trust** (R16, DELTA T1): V +36, K +0, S +0, all in `Wire.lean`. FOLLOW-UPS "## df-1ac" asks for the ties pass.
 
@@ -116,11 +118,11 @@ outputs (`mutants.out`, `statements.out`, `trust-mutants.json`, `trust-baseline.
 
 | Kind | Lines |
 | --- | --- |
-| `Wire.lean` (about 120 of them spec 7.2's text) | 287 |
-| `WireExamples.lean` | 152 |
+| `Wire.lean` (about 120 of them spec 7.2's text) | 316 |
+| `WireExamples.lean` | 157 |
 | `run_mutants.py` change | 34 |
 | `compare_statements.py` | 36 |
-| `mutants.json` (one mutant per line) and the allow file | 27 |
+| `mutants.json` (one mutant per line) and the allow file | 29 |
 | `DEFAULTS.md` | 31 |
 | `trust-classes.json` | 81 |
 | assurance manifest | 25 |
@@ -128,7 +130,7 @@ outputs (`mutants.out`, `statements.out`, `trust-mutants.json`, `trust-baseline.
 | DELTA | 15 |
 | this report | 188 |
 
-That is about 880 lines in all, above the ~600 guideline. The first cut (the model kind) left about 1,100 lines, so
+That is about 920 lines in all, above the ~600 guideline (about 880 before the review fix F1, section 7). The first cut (the model kind) left about 1,100 lines, so
 the certificate kind was cut too. What is left is the smallest part that holds the view and both document kinds with
 their fixtures. About 330 of the lines are fixed costs (ledgers, the manifest pin, the runner change, DELTA and this
 report).
@@ -165,7 +167,7 @@ dd18fca56, 5f9b87684.
    - Diff grep: no Python product file, no Python copy of a Lean decision, no permanent report test.
    - Overlap with in-flight branches: only `lean/VE.lean` (a union) and `tools/trust-classes.json` (own module
      entries).
-3. **Tests and gates can fail.** PASS. W1 to W8 cover every trusted definition but a type (`evidence/mutants.out`).
+3. **Tests and gates can fail.** PASS. W1 to W10 cover every trusted definition but a type (`evidence/mutants.out`).
    `trust_mutants.py` exits 0 (`trust-mutants.json`). The control passes.
 4. **Python, Lean and Rust agree; valid inputs pass.** N.A.: nothing reaches the new code from Python or Rust. The
    fixtures decode real JSON through `decodeSoftU`, including a two-place act (DF-γ2) and a new party (`operator`).
@@ -178,11 +180,12 @@ dd18fca56, 5f9b87684.
 8. **Every user-visible change in DELTA.** PASS. There is none besides trust: no mode, schema or pin changes
    (`regen_generated.py --check`).
 9. **Test selection.** PASS. The selected plan (76 units) includes `lake build`, which elaborates every guard, so W1
-   to W8 fail it.
+   to W10 fail it.
 10. **Lean statements say what is claimed.** PASS.
     - `evidence/compare_statements.py`: 20 OK on HEAD, 42 OK on the wip branch.
     - The comparator catches a dropped `¬`.
-    - `defaults_coherence_sound` is about the returned verdict and pairs.
+    - `defaults_coherence_sound` is about the returned verdict and the pairs shown `resolved`;
+      `coherence_collision_shown` is about a pair shown `collision` and the `collision` member (review F1).
 11. **Budgets and limits fail closed.** PASS: diagnostic 4 (`limitDiag`) refuses through `viewRest`
     (`WireExamples.lean`, the `deepen` guard). No budget or deadline is added.
 12. **No CPU or memory regression.** N.A.: no route runs the new code; no pilot run (L70).
