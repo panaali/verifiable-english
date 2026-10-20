@@ -915,6 +915,27 @@
    "reason": "me-9: lean/VE/Calc/Poly.lean S +3 (VE.Calc.Poly.eval 3); K +0, untied V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9, 2026-10-18",
    "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d"
+  },
+  {
+   "class": "S",
+   "lines": 18,
+   "reason": "ar-10a: profile-gate table; S +18 (VE/Compose/Dispatch.lean +19, -1 elsewhere), V +49 (VE/Compose/Dispatch.lean +43, VE/Compose/ProfilesMain.lean +7, VE/Service/Standalone.lean -1); K +0; trusted +67",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ar-10a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "V",
+   "lines": 49,
+   "reason": "ar-10a: profile-gate table; S +18 (VE/Compose/Dispatch.lean +19, -1 elsewhere), V +49 (VE/Compose/Dispatch.lean +43, VE/Compose/ProfilesMain.lean +7, VE/Service/Standalone.lean -1); K +0; trusted +67",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ar-10a, 2026-10-18",
+   "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "V",
+   "lines": 22,
+   "reason": "pk-1b: V +22 (VE/NormDefaults/Packs.lean +17: KindRow, dispatch; VE/NormDefaults/Layered.lean +5: legacyKinds and layeredCase's docstring; kindCase and legacyRows tied to kindCase_eq and dispatch_legacy); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pk-1b, 2026-10-18",
+   "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
   }
  ]
 }
