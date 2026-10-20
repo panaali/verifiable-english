@@ -1,4 +1,5 @@
 import VE.Norms.Wire
+import VE.Compose.Dispatch
 import VE.Route.Run
 import VE.Order.Conservativity
 import VE.Limits
@@ -210,14 +211,15 @@ def run (j : Json) : Except String Json := do
   let kind ← VE.Route.Run.caseKind j
   let submitted ← j.getObjVal? "environment"
   let profiles ← VE.Route.Gate.profilesOf submitted
+  -- `acts@0` (act-phrases 2.8, 4.4): the submitted list is gated by its row before the layers are set aside; the
+  -- route reads the environment without the profile and its block
+  if profiles.contains "acts@0" then
+    let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
   let environment ← if layered submitted then reduced submitted else pure submitted
-  -- `acts@0` (act-phrases 2.8): the route reads the environment without the profile and its block
   let ps := Wire.actsProfiles true environment
   let fx ← Wire.actsFixed ps environment
   let environment := if ps.isEmpty then environment else Wire.actsView environment ps
   let e ← VE.Route.Gate.decodeEnvelope environment
-  unless ps.isEmpty || e.family == .fol do
-    throw (VE.Route.Gate.unsupported (Wire.actsFamilyRefusal (if e.family == .order then "order" else "closure")))
   let predicates ← fields (← e.vocabulary.getObjVal? "predicates")
   let T : Tree := ⟨← decodeRegulatedAllIn ps fx predicates, [], []⟩
   let stripped ← strip environment predicates

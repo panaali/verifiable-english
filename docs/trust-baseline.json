@@ -999,6 +999,13 @@
    "reason": "ar-10b: VE/Service/Registry.lean +61 (Mode, Mode.name, Mode.ofName?, modes moved from Protocol.lean; RouteSpec new; registry tied by registry_modes), VE/Service/Protocol.lean -55; net V +6, K +0, S +0; replaces the Python mode list MODES in ve/backends/service_schema.py, deleted here",
    "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), ar-10b, 2026-10-20",
    "commit": "bb205adaece86354a9139677029c045c32e2b379"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "ap-1b review F1 and C1: untied V +7 (K +0, S +0): Norms/Wire.lean +6, readsActs (acts@0 is read only from a sorted unique list) and actsView's premise on it; Norms/Plain.lean +1, the plain route gates the submitted acts@0 list by the profile table before it sets the statement layers aside (its family check removed); total ap-1b V +74",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1b, 2026-10-20",
+   "commit": "2296317a9de7ef365523e0f69c442338d9eaf576"
   }
  ]
 }
