@@ -554,9 +554,29 @@ def gR : Governor := ⟨"gR", "u0164.s01", .carveOut (j "[\"unary\", \"rules\", 
 #guard errorOf (gov (hcDoc [("u0166.s01", j "{\"norm\": {\"name\": \"r\"}}")]) [⟨"gX", "u0164.s01", carveT, .fixed ["u0166.s01"], ["u0166.s01"]⟩]) ==
   "ScopeNotARule: u0166.s01"
 
--- until sc-1ad and sc-3ab, a precedence governor and an anchor or label reach are refused, never skipped
-#guard errorOf (gov (hcDoc parts) [g1, ⟨"gP", "u0165.s01", .precedes, .list "u0164.s02", seven⟩]) ==
-  "UnsupportedProfile: scope@0 precedence requires SC-4"
+-- sc-1ad, the graph step (1.5.5): `precedes` adds the reached rules on its predicate to its own `over`; `yields`
+-- adds its own name to theirs; another predicate (hc-csam) and the governor's own rule add nothing
+def gP : Governor := ⟨"gP", "u0165.s01", .precedes, .list "u0164.s02", seven⟩
+def gY : Governor := ⟨"gY", "u0165.s02", .yields, .list "u0164.s02", seven⟩
+def overOf (r : Except String Json) (u : String) : Option String :=
+  r.toOption.bind fun o => (normOf (contentOf o u)).map (·.getObjValD "over" |>.compress)
+#guard [overOf (gov (hcDoc parts) [g1, gP]) "u0165.s01", overOf (gov (hcDoc parts) [g1, gP]) "u0165.s02",
+  overOf (gov (hcDoc parts) [g1, gY]) "u0165.s03", overOf (gov (hcDoc parts) [g1, gY]) "u0165.s02",
+  overOf (gov (hcDoc parts) [g1, gY]) "u0165.s07", overOf (gov (hcDoc parts) [g1, gY, gP]) "u0165.s01"] ==
+  [some "[\"hc-2\",\"hc-3\",\"hc-4\",\"hc-5\",\"hc-6\"]", some "[]", some "[\"hc-2\"]", some "[]", some "[]",
+   some "[\"hc-2\",\"hc-3\",\"hc-4\",\"hc-5\",\"hc-6\"]"]
+-- a graph governor that adds nothing, or whose own unit is no rule, is refused in governor order; a rule the chain's
+-- decoder refuses is the decoder's text
+#guard errorOf (gov (hcDoc parts) [g1, {gY with unit := "u0165.s07"}]) == "ScopeNoEffect: gY"
+#guard errorOf (gov (hcDoc parts) [g1, {gY with unit := "u0165.s07"}, {gP with id := "gQ", unit := "u0164.s01"}]) ==
+  "ScopeNoEffect: gQ"
+#guard errorOf (gov (hcDoc ((without "u0165.s03" parts) ++ [("u0165.s03", Json.mkObj [("part", noPredicate)])])) [g1, gP]) ==
+  "fields do not match: expected [name, predicate, sign, guard, unless, over], got [guard, name, over, sign, unless]"
+-- `addOver` appends each new name once, after the names written; nothing to add, or no `over` array, is the object
+#guard [addOver ["a", "b", "a"] (j "{\"over\": [\"b\"], \"x\": 1}"), addOver ["b"] (j "{\"over\": [\"b\"]}"),
+  addOver ["a"] (j "{\"over\": 1}")].map (·.compress) == ["{\"over\":[\"b\",\"a\"],\"x\":1}", "{\"over\":[\"b\"]}", "{\"over\":1}"]
+
+-- until sc-3ab, an anchor or label reach is refused, never skipped
 #guard errorOf (gov (hcDoc parts) [g1, ⟨"gA", "u0164.s01", narrowK, .anchor "sec", []⟩]) ==
   "UnsupportedProfile: scope@0 anchor reach requires SC-3a"
 #guard errorOf (gov (hcDoc parts) [g1, ⟨"gL", "u0164.s01", .title, .label "u0165.s01", []⟩]) ==
@@ -629,7 +649,8 @@ theorem short_govern (re : VE.Readings.Wire.ReadingsEnvironment) :
     govern (short [gt] re) = .ok (shortDoc.setObjVal! "units" (.arr #[Json.mkObj [("id", "l")],
       Json.mkObj [("id", "a"), ("content", Json.mkObj [("norm", led shortPart)])],
       Json.mkObj [("id", "b"), ("content", Json.mkObj [("cites", .arr #[]), ("norm", led shortNorm)])]])) := by
-  simp only [composed, affected, govern, orderCheck, governorsOf, ordered, short, List.mergeSort_singleton, List.mergeSort_nil]
+  simp only [composed, affected, govern, orderCheck, governorsOf, ruleTable, edgesInto, ordered, short,
+    List.mergeSort_singleton, List.mergeSort_nil]
   refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 /-- The seven reaches of spec 4.2, no more. -/
 theorem reaches_seven (r : Reach) : (∃ l, r = .list l) ∨ (∃ n, r = .listName n) ∨ (∃ a, r = .anchor a) ∨

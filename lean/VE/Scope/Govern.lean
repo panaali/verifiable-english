@@ -4,8 +4,8 @@ import VE.Discourse.Manifest
 
 /-! Scope's GOVERN step (scope@0, docs/spec/scope.md 1.1, 1.3, 1.5 and 4.2): the reaches, the block's admission and
     `govern`, which returns the complete document with each affected unit's content composed as the chain's own
-    norm object. Two parts come later, and until then what they read is refused, never skipped: the precedence
-    graph step (sc-1ad), and the anchor and label reaches with `admitBlock`'s anchor checks (sc-3ab). -/
+    norm object, then the precedence edges into it. The anchor and label reaches and `admitBlock`'s anchor checks
+    come later (sc-3ab); until then they are refused, never skipped. The run path `governFast` (1.5.8) is last. -/
 
 namespace VE.Scope
 open Lean
@@ -49,6 +49,7 @@ def contentOf (doc : Json) (u : String) : Json :=
 def isPart (c : Json) : Bool := keysOf c == ["part"] || keysOf c == ["cites", "part"]
 def isNorm (c : Json) : Bool := keysOf c == ["norm"] || keysOf c == ["cites", "norm"]
 def objectOf (c : Json) : Json := if isPart c then c.getObjValD "part" else c.getObjValD "norm"
+def normOf (c : Json) : Option Json := (c.getObjVal? "norm").toOption
 def partUnits (D : SDoc) : List String := (unitIds D.doc).filter (fun u => isPart (contentOf D.doc u))
 def ruleUnits (D : SDoc) : List String :=
   (unitIds D.doc).filter (fun u => isPart (contentOf D.doc u) || isNorm (contentOf D.doc u))
@@ -147,6 +148,39 @@ def affected (D : SDoc) : List String :=
       | .yields => coversU D g u
       | _ => false)
 
+/-! Precedence: the graph step over the composed rules (SC-4) -/
+
+def edgesOf (D : SDoc) (rule : String → Option SoftNode) (g : Governor) : List (String × String) :=
+  let targets := (covered D g.reach).toOption.getD []
+  match rule g.unit with
+  | none => []
+  | some N => match g.effect with
+    | .precedes => targets.filterMap fun v => (rule v).bind fun M =>
+        if M.pred == N.pred && M.name != N.name then some (g.unit, M.name) else none
+    | .yields => targets.filterMap fun v => (rule v).bind fun M =>
+        if M.pred == N.pred && M.name != N.name then some (v, N.name) else none
+    | _ => []
+
+def edgesInto (D : SDoc) (rule : String → Option SoftNode) (u : String) : List String :=
+  (((ordered D).filter (graph ·.effect)).flatMap (edgesOf D rule)).filterMap fun (w, n) => if w == u then some n else none
+
+def ruleTable (D : SDoc) : Except String (List (String × SoftNode)) := do
+  let gs := (ordered D).filter (graph ·.effect)
+  let needed := (ruleUnits D).filter (fun u => gs.any (fun g => g.unit == u || coversU D g u))
+  needed.mapM (fun u => do pure (u, ← VE.Readings.Wire.decodeNorm D.re (← composed D u)))
+
+def edgesFor (D : SDoc) (u : String) : Except String (List String) := do
+  let t ← ruleTable D
+  pure (edgesInto D (fun v => t.lookup v) u)
+
+def addOver (names : List String) (o : Json) : Json :=
+  match o.getObjVal? "over" with
+  | .ok (.arr xs) =>
+    let old := xs.toList.filterMap (·.getStr?.toOption)
+    let fresh := names.foldl (fun acc n => if old.contains n || acc.contains n then acc else acc ++ [n]) []
+    if fresh.isEmpty then o else o.setObjVal! "over" (.arr (xs ++ (fresh.map Json.str).toArray))
+  | _ => o
+
 /-! The block's admission and `govern` -/
 
 def conditions : Effect → List Json
@@ -215,8 +249,7 @@ def patch (D : SDoc) (comp : List (String × Json)) : Json :=
     | some o => u.setObjVal! "content" (newContent (u.getObjValD "content") o)
     | none => u).toArray)
 
-/-- The block is admitted first, with or without governors. The precedence graph step (`ruleTable`, `edgesOf`,
-    `ScopeNoEffect`, `addOver`) is sc-1ad's; until then a `precedes` or `yields` governor is refused. -/
+/-- The block is admitted first, with or without governors. -/
 def govern (D : SDoc) : Except String Json := do
   admitBlock D
   if D.governors.isEmpty then
@@ -226,7 +259,9 @@ def govern (D : SDoc) : Except String Json := do
   else
     orderCheck D
     let comp ← (affected D).mapM (fun u => do pure (u, ← composed D u))
-    if (ordered D).any (graph ·.effect) then throw "UnsupportedProfile: scope@0 precedence requires SC-4"   -- sc-1ad
-    pure (patch D comp)
+    let t ← ruleTable D
+    for g in (ordered D).filter (graph ·.effect) do
+      if (edgesOf D (fun v => t.lookup v) g).isEmpty then throw s!"ScopeNoEffect: {g.id}"
+    pure (patch D (comp.map fun (u, o) => (u, addOver (edgesInto D (fun v => t.lookup v) u) o)))
 
 end VE.Scope
