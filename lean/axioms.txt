@@ -926,10 +926,18 @@
 'VE.Defaults.atom_wf' does not depend on any axioms
 'VE.Defaults.basis_needs_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.basis_strict_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Defaults.cohPremiseU_selU' depends on axioms: [propext, Quot.sound]
+'VE.Defaults.cohU_rank_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Defaults.collisionTuple_some' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Defaults.collision_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Defaults.collision_unranked' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Defaults.defaultCoherenceCheck_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.dflt_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.entailsX_mono' depends on axioms: [propext, Quot.sound]
 'VE.Defaults.followsForm_short' depends on axioms: [propext, Quot.sound]
+'VE.Defaults.pairChecks_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.premisesX_split' depends on axioms: [propext, Quot.sound]
+'VE.Defaults.questionDiag_none' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.strict_of_withoutDefaults' depends on axioms: [propext, Quot.sound]
 'VE.Definitions.Alias.alias_acceptance' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Definitions.Alias.conservative' depends on axioms: [propext, Quot.sound]
@@ -1524,11 +1532,17 @@
 'VE.Events.completion_extension' depends on axioms: [propext, Quot.sound]
 'VE.Events.completion_reading' depends on axioms: [propext, Quot.sound]
 'VE.Events.completion_typed' does not depend on any axioms
+'VE.Events.conventions_empty' depends on axioms: [propext, Quot.sound]
 'VE.Events.conventions_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Events.dateName_data' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Events.dateName_inj' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.datesOrder_calendar' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.datesOrder_iff' depends on axioms: [propext, Quot.sound]
 'VE.Events.dayExtension_transfer' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.eventsPremises_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Events.events_conservative' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Events.expansion_typed' depends on axioms: [propext]
+'VE.Events.guarded_empty' does not depend on any axioms
 'VE.Events.hits_vacuous' depends on axioms: [propext, Quot.sound]
 'VE.Events.isConst_eq' depends on axioms: [propext, Quot.sound]
 'VE.Events.isVar_beq' does not depend on any axioms
@@ -1536,10 +1550,14 @@
 'VE.Events.mem_dates_of_consecutive' depends on axioms: [propext]
 'VE.Events.oldTuple_eq' depends on axioms: [propext, Quot.sound]
 'VE.Events.oldTuple_map' depends on axioms: [propext]
+'VE.Events.pad_chars' depends on axioms: [propext, Quot.sound]
+'VE.Events.pad_value' depends on axioms: [propext, Quot.sound]
 'VE.Events.regen_typed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.startRole_mem' depends on axioms: [propext, Quot.sound]
 'VE.Events.term_map' depends on axioms: [propext]
+'VE.Events.tupleTyped_relation' does not depend on any axioms
 'VE.Events.unorderedSame_of_order' depends on axioms: [propext]
+'VE.Events.wf_transfer' depends on axioms: [propext, Quot.sound]
 'VE.Grammar.BOk.addAll' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Grammar.BOk.complete' does not depend on any axioms
 'VE.Grammar.BOk.congr' depends on axioms: [propext]
@@ -5280,7 +5298,10 @@
 'VE.Route.sat_checked' depends on axioms: [propext, Quot.sound]
 'VE.Route.tableauValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.verifyOrder_sound' depends on axioms: [propext, Quot.sound]
+'VE.Scales.Examples.conservative_false' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.Examples.conservative_true' depends on axioms: [propext, Quot.sound]
 'VE.Scales.Examples.fb2_refuted' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.Examples.fb6_open' depends on axioms: [propext, Quot.sound]
 'VE.Scales.Examples.intended_of' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scales.Examples.order_cases' depends on axioms: [propext, Quot.sound]
 'VE.Scales.Examples.symbols_cases' does not depend on any axioms
@@ -5297,26 +5318,65 @@
 'VE.Scales.Intended.sameTrans' does not depend on any axioms
 'VE.Scales.Intended.total' does not depend on any axioms
 'VE.Scales.Intended.trans' does not depend on any axioms
+'VE.Scales.StrictLinear.connex' does not depend on any axioms
+'VE.Scales.StrictLinear.irrefl' does not depend on any axioms
+'VE.Scales.StrictLinear.trans' does not depend on any axioms
+'VE.Scales.below_of' does not depend on any axioms
 'VE.Scales.dim_iff' depends on axioms: [propext, Quot.sound]
 'VE.Scales.dim_ok' depends on axioms: [propext, Quot.sound]
+'VE.Scales.grade_open' depends on axioms: [propext, Quot.sound]
 'VE.Scales.intended_iff_and' does not depend on any axioms
+'VE.Scales.intended_iff_degrees' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scales.mem_symbols' depends on axioms: [propext, Quot.sound]
+'VE.Scales.more_ne_same' depends on axioms: [propext, Quot.sound]
+'VE.Scales.pairwise_or' does not depend on any axioms
 'VE.Scales.premises_iff_intended' depends on axioms: [propext, Quot.sound]
 'VE.Scales.premises_wellTyped' depends on axioms: [propext, Quot.sound]
+'VE.Scales.reread_admissible' depends on axioms: [propext, Quot.sound]
+'VE.Scales.reread_denote' depends on axioms: [propext, Quot.sound]
+'VE.Scales.reread_fresh' depends on axioms: [propext]
+'VE.Scales.reread_intended' depends on axioms: [propext, Quot.sound]
+'VE.Scales.reread_rel1' depends on axioms: [propext]
+'VE.Scales.reread_rel2' depends on axioms: [propext]
 'VE.Scales.scalePremises_labels_nodup' depends on axioms: [propext, Quot.sound]
+'VE.Scales.scales_conservative' depends on axioms: [propext, Quot.sound]
+'VE.Scales.tupleTyped_reread' depends on axioms: [propext]
 'VE.Scales.typed1' depends on axioms: [propext]
 'VE.Scales.typed2' depends on axioms: [propext]
 'VE.Scope.Examples.anchor_checks' depends on axioms: [propext]
 'VE.Scope.Examples.bold_labels' does not depend on any axioms
 'VE.Scope.Examples.box_anchors' does not depend on any axioms
 'VE.Scope.Examples.byte_tests' does not depend on any axioms
+'VE.Scope.Examples.depth_bound' does not depend on any axioms
+'VE.Scope.Examples.effects_six' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.markers' does not depend on any axioms
+'VE.Scope.Examples.mergeParts_text' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.Examples.narrowings' depends on axioms: [propext]
 'VE.Scope.Examples.of_source' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.own_binder' does not depend on any axioms
 'VE.Scope.Examples.para_counts' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.reaches_root' does not depend on any axioms
 'VE.Scope.Examples.short_items' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_layout' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.short_run' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.span_tests' does not depend on any axioms
+'VE.Scope.Examples.unordered_join' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.commutes_symm' depends on axioms: [propext]
+'VE.Scope.firstKeys_mem' depends on axioms: [propext, Quot.sound]
+'VE.Scope.firstKeys_self' depends on axioms: [propext, Quot.sound]
+'VE.Scope.hasOwn_mono' depends on axioms: [propext, Quot.sound]
+'VE.Scope.impl_map_eq' depends on axioms: [propext, Quot.sound]
+'VE.Scope.lookups_absent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.lookups_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.lookups_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.members_obj' does not depend on any axioms
+'VE.Scope.mergeParts_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.mergeParts_keys' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.mkObj_getObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.substOwn_id' depends on axioms: [propext, Quot.sound]
+'VE.Scope.substOwn_id_le' depends on axioms: [propext, Quot.sound]
+'VE.Scope.substOwn_no_own' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.substOwn_no_own_le' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SearchBudget.chain_denote' depends on axioms: [propext, Quot.sound]
 'VE.SearchBudget.conjuncts_denote' depends on axioms: [propext]
 'VE.SearchBudget.demand_sound' depends on axioms: [propext, Quot.sound]
@@ -5470,9 +5530,12 @@
 'VE.Service.expand_hit' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.expand_miss' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.expand_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.modes_complete' depends on axioms: [propext]
 'VE.Service.registerOne_digest' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.registerOne_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.register_none' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.registry_modes' does not depend on any axioms
+'VE.Service.registry_names_nodup' does not depend on any axioms
 'VE.Service.rejectionCode_mem' depends on axioms: [propext]
 'VE.Service.respond_decoded' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.results_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -5586,6 +5649,7 @@
 'VE.SoftNorms.coh_canon' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.coh_rank_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.coh_rank_valid_unconditional' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.SoftNorms.coh_rank_valid_with' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.coherent_expands' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.colliding_of' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.comparable_false' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -5701,7 +5765,7 @@
 'VE.SoftNorms.rankHeight_lt_of_higher' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.rank_acyclic' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.rank_resolves' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.SoftNorms.raw_dom_congr' depends on axioms: [propext, Quot.sound]
+'VE.SoftNorms.raw_dom_congr' depends on axioms: [propext]
 'VE.SoftNorms.raw_dom_denote' depends on axioms: [propext, Quot.sound]
 'VE.SoftNorms.raw_eff_denote' depends on axioms: [propext, Quot.sound]
 'VE.SoftNorms.raw_eff_stable' depends on axioms: [propext, Classical.choice, Quot.sound]
