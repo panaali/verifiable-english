@@ -410,6 +410,10 @@ def Env.rights (E : Env) : Bool := E.profiles.contains "rights@0"
 /-- A `soft-norms@0` document without `rights@0` (batch 16f): the soft route composes it (`SoftLayer`). -/
 def Env.soft (E : Env) : Bool := E.profiles.contains "soft-norms@0" && !E.rights
 
+/-- The environment a case of another mode (`parse`, `model`, the English reader) reads: without the document layers,
+which no other mode composes with yet (JT-2). Its identities stay the list's as written (`E.envId`). -/
+def Env.forModes (E : Env) : Json := VE.Compose.withoutDocumentLayers E.json
+
 /-- The environment the rights and soft routes read: without the head profile `readings@1`, as Python's relays
 send it (`run_rights_case`). -/
 def Env.lower (E : Env) : Json :=
@@ -1125,7 +1129,7 @@ def contentOf (E : Env) (fences : List (String × String)) (lexicon : Option Jso
     return (.formula f, mid)
   if let some lexicon := lexicon then
     let parsed ← VE.EnglishGrammar.Run.readCase (Json.mkObj
-      ([("id", .str id), ("environment", E.json), ("lexicon", lexicon),
+      ([("id", .str id), ("environment", E.forModes), ("lexicon", lexicon),
         ("source", .str ((fences.lookup id).getD "")), ("mode", .str "authoring"), ("cap", toJson (2 : Nat))] ++
        (if E.generated then [("generated", Json.bool true)] else [])))
     let result ← parsed.getObjVal? "result"
@@ -1845,10 +1849,14 @@ def locatedModel (E : Env) (sets : Json) : Option (String × Option String) := d
     | _ => false
   let .obj kvs := set.getObjValD "models" | none
   let faults := kvs.toList.filterMap fun (name, data) =>
-    let row := Standalone.reportedModel (Json.mkObj [("id", .str "model"), ("environment", E.json), ("model", data)])
+    let row := Standalone.reportedModel (Json.mkObj [("id", .str "model"), ("environment", E.forModes), ("model", data)])
+    -- The `model` mode's identity is over the environment it read; under a document layer the set's ids are over
+    -- the list as written (`Loader.modelId`, as `find?` above computes them).
+    let id := if E.forModes == E.json then row.getObjValD "model_id"
+      else ((Loader.modelId E.profiles E.envId data).toOption.map Json.str).getD .null
     if row.getObjValD "status" == .str "error" then
       some ((row.getObjValD "error").getStr?.toOption.getD "", (row.getObjValD "path").getStr?.toOption)
-    else if row.getObjValD "model_id" != .str name then some ("distinguishing model id does not match model", none)
+    else if id != .str name then some ("distinguishing model id does not match model", none)
     else none
   match faults with
   | [f] => if f.1.isEmpty then none else some f
@@ -1863,8 +1871,8 @@ inductive Located
 
 /-- `_content`'s strict fence for a case the mode refused with `strictRefused`: the first strict fence, in unit order,
 the `check` mode's parser refuses (`contentOf` read every earlier unit), read as Python reads it
-(`parse(formula_env, fences[id])`: the `parse` mode, `Standalone.reportedParse`, over the environment and the fence as
-written), with its span in the fence's text when the mode gives one. Python's `parse` reads an environment with a
+(`parse(formula_env, fences[id])`: the `parse` mode, `Standalone.reportedParse`, over the environment as other modes read it,
+`Env.forModes`, and the fence as written), with its span in the fence's text when the mode gives one. Python's `parse` reads an environment with a
 statement layer, a block or units itself (`_lean_parse_scope`), so none is taken there. -/
 def locatedFence (E : Env) (doc : Loader.Split) : Option (String × Located) := do
   if ["soft-norms@0", "reports@0", "speech-acts@0", "rights@0", "alternatives@0", "risk@0"].any E.profiles.contains ||
@@ -1883,7 +1891,7 @@ def locatedFence (E : Env) (doc : Loader.Split) : Option (String × Located) := 
       | none => false
   let u ← refused
   let text ← doc.fences.lookup ((u.getObjValD "id").getStr?.toOption.getD "")
-  let request := Json.mkObj [("id", .str "parse"), ("environment", E.json), ("source", .str text)]
+  let request := Json.mkObj [("id", .str "parse"), ("environment", E.forModes), ("source", .str text)]
   match Standalone.parseCase request with
   | .ok _ => none
   | .error message =>

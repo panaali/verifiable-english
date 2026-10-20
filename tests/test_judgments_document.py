@@ -391,3 +391,95 @@ def test_the_claim_graph_is_admitted_over_the_same_environment(service, name):
                                               "label": "open:arbitrary"}]}
     row = service.run("document", [{"id": "d", "document": "---\n" + json.dumps(meta) + "\n---\n" + body}])[0]
     assert outcome(row)[0] == statuses
+
+
+# Review F1: every case this mode sends another mode (`parse`, `model`, the English reader) reads the environment
+# without the layer (`Env.forModes`), so the profile changes none of their diagnostics; identities stay the list's.
+
+PLAIN_FENCE = ["documents@1", "relational-fol@0"]
+
+
+def listed(text, profiles):
+    """`text` with its environment listing `profiles`."""
+    front, body = text.split("\n---\n", 1)
+    meta = json.loads(front[4:])
+    meta["environment"]["profiles"] = list(profiles)
+    return "---\n" + json.dumps(meta) + "\n---\n" + body
+
+
+def with_profile(profiles):
+    return sorted([*profiles, "judgments@0"])
+
+
+@pytest.fixture(scope="module")
+def fence_text():
+    """The conformance `fence` seed (a strict fence the `parse` mode refuses) over `PLAIN_FENCE`."""
+    from conformance import document_wrapper as dw
+    return listed(dw.text_of(dict(dw.seeds())["fence"]), PLAIN_FENCE)
+
+
+@pytest.mark.parametrize("surface", ["strict", "english"])
+def test_a_fence_another_mode_refuses_keeps_its_diagnostic_under_the_profile(service, tmp_path, fence_text, surface):
+    """A fence the `parse` mode (strict, `locatedFence`) or the English reader (with the lexicon Python builds for
+    the same document without the layer) refuses is refused with that mode's text and span, as without the
+    profile, never `UnsupportedProfile: Unsupported profile judgments@0` (review F1)."""
+    from ve.document import _document_case
+    text = fence_text.replace('"surface": "strict"', f'"surface": "{surface}"')
+    case = {"id": "d", "document": text, "admit": False}
+    if surface == "english":
+        path = tmp_path / "e.ve.md"
+        path.write_text(text)
+        case["lexicon"] = _document_case(path.read_bytes(), False, tmp_path)["lexicon"]
+    plain, judged = service.run("document", [case, {**case, "document": listed(text, with_profile(PLAIN_FENCE))}])
+    assert plain["status"] == "error" and plain["error"].startswith("SyntaxError: "), plain
+    assert judged == plain
+    if surface == "strict":
+        assert plain["error"] == "SyntaxError: expected term" and "span" in plain
+
+
+def located_models(service, profiles, fault):
+    """J-ξ′'s open set with its distinguishing models faulted: `refused`, the second reading's model one the decoder
+    refuses beside the valid one; `misnamed`, the valid model under a name that is not its identity."""
+    text = document(service, [unit("u1", opened("arbitrary"), kind="asserted")], J1,
+                    sets=[open_set("u1", WIDE, NARROW)], profiles=profiles)
+    front, body = text.split("\n---\n", 1)
+    meta = json.loads(front[4:])
+    s = meta["reading_sets"][0]
+    if fault == "refused":
+        bad = deepcopy(MODEL)
+        bad["relations"]["denial"] = [["zz"]]
+        s["models"]["bad"] = bad
+        s["readings"][1]["admission"]["distinguishing_models"]["r0"] = "bad"
+    else:
+        s["models"] = {"other": next(iter(s["models"].values()))}
+        for r in s["readings"]:
+            r["admission"]["distinguishing_models"] = dict.fromkeys(r["admission"]["distinguishing_models"], "other")
+    return "---\n" + json.dumps(meta) + "\n---\n" + body
+
+
+@pytest.mark.parametrize("fault, expected", [
+    ("refused", {"error": "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+                 "path": "/relations/denial/0/0"}),
+    ("misnamed", {"error": "distinguishing model id does not match model"})])
+def test_a_distinguishing_model_is_located_as_without_the_profile(service, fault, expected):
+    """`locatedModel`: the `model` mode reads the model over the environment without the layer, and the set's
+    model ids are compared with their identity over the list as written (review F1): the located diagnostic is the
+    one the document without the profile gets, never `CheckerUnavailable`."""
+    plain = [p for p in PROFILES if p != "judgments@0"]
+    rows = [answer(service, located_models(service, p, fault)) for p in (plain, PROFILES)]
+    assert rows[0] == rows[1] == {"id": "d", "status": "error", **expected}
+
+
+def test_ve_document_relays_lean_s_refusal_of_a_judgments_document(service, tmp_path, fence_text):
+    """`ve document` (`load_document`) raises the Lean mode's refusal of a `judgments@0` document as its diagnostic,
+    as for any document; only a document Lean accepts is `CheckerUnavailable` (the relay of `judgments` is jt-2b)."""
+    from ve.document import load_document
+    from ve.errors import CheckerUnavailable
+    records, units, sets, refusal, _ = STATUS["J-beta"]
+    for text, message in ((document(service, units, records, sets=sets), refusal),
+                          (listed(fence_text, with_profile(PLAIN_FENCE)), "SyntaxError: expected term")):
+        path = tmp_path / "j.ve.md"
+        path.write_text(text)
+        with pytest.raises(Exception) as raised:
+            load_document(path)
+        assert not isinstance(raised.value, CheckerUnavailable) and str(raised.value).startswith(message), raised.value

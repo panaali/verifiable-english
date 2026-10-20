@@ -9431,6 +9431,7 @@
         "VE.Service.Document.BlockCoverage.residual",
         "VE.Service.Document.Env",
         "VE.Service.Document.Env.data",
+        "VE.Service.Document.Env.forModes",
         "VE.Service.Document.Env.lower",
         "VE.Service.Document.Env.regulates",
         "VE.Service.Document.Env.rights",
