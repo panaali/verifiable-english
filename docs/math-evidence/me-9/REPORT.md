@@ -74,7 +74,7 @@ side compared second). At the limit the answer is `true`/`some true`; one past i
 |---|---|---|---|
 | Nodes in a side: `nodesWithin maxPolyTerms` (`Frac.ofExpr?`) | `nodes-10000`, and with a `sub`, `mul`, `div` node or a literal last: `nodes-10000-{sub,mul,div,lit}` | `nodes-10001`, `-pow`, `-right`, `-{sub,mul,div,lit}`, `nodes-shared` (2¹⁵ − 1 as a tree); own processes: `nodes-shared-41`, `poly-shared-41` | 27 (+1), 28 (+99), 29 (`<`), 22 (not checked), 30 (a leaf free), 31 (a binary node free), 32, 33 (one operand not walked), 34 (the right operand given the node's fuel), 18 (a power node free), 64 to 73 (each node kind and leaf free or counted twice), 99, 100 (one side of `compare` not checked), 89 (division looked for first) |
 | Terms in a sum: `p.length + q.length ≤ maxPolyTerms` (`Poly.add?`) | `sum-10000` | `sum-10001`, `sum-merged-10001` (10,000 after like terms merge), `add-cross-sum-10001` (`Frac.add?`'s cross products) | 16 (`<`), 35 (+1), 36 (+99), 37, 38 (one summand not counted), 90 (counted after merging), 76 (`Frac.add?`'s sum unguarded) |
-| Terms in a product: `p.length * q.length ≤ maxPolyTerms` (`Poly.mul?`) | `product-10000`, `pow-10000`, `sum-10000-compare` (10,000 × 1) | `product-10001` (73 × 137, F8), `product-10100`, each with `-form`; every other product a fraction form takes: `add-cross-10001`, `add-cross-right-10001`, `add-den-10001`, `mul-den-10001`, `div-num-10001`, `div-den-10001`, `pow-10201` (10,001 cannot be reached by a power's step), `compare-cross-10001`, `compare-cross-right-10001` | 17 (`<`), 39 (+1), 40 (+99), 41, 42 (one factor not counted), 43 (`+` for `*`), 91 (counted after merging), 77 to 82, 85 to 87 (one call site unguarded) |
+| Terms in a product: `p.length * q.length ≤ maxPolyTerms` (`Poly.mul?`) | `product-10000`, `pow-10000`, `sum-10000-compare` (10,000 × 1) | `product-10001` (73 × 137, F8), `product-10100`, each with `-form`; every other product a fraction form takes: `add-cross-10001`, `add-cross-right-10001`, `add-den-10001`, `mul-den-10001`, `div-num-10001`, `div-den-10001`, `pow-10201` (10,001 cannot be reached by a power's step), `compare-cross-10001`, `compare-cross-right-10001`; within it, `product-by-zero` | 17 (`<`), 39 (+1), 40 (+99), 41, 42 (one factor not counted), 43 (`+` for `*`), 91 (counted after merging), 103 (the limit divided by a factor's terms), 77 to 82, 85 to 87 (one call site unguarded) |
 | A power node's exponent: `k ≤ maxPolyExponent` (`Poly.pow?`) | `exponent-constant-4096` | `exponent-constant-4097`; own process: `power-10^12` | 44 (`<`), 24 (+1), 45 (+99), 101 (the numerator stepped without it); 102 (the denominator stepped without it) is equivalent: the numerator's guard refuses the same `k` first |
 | Each variable's exponent: `·.2 ≤ maxPolyExponent` (`Poly.fits`) | `exponent-4096` (by products), `exponent-4096-two-vars` | `exponent-4097`, `-product`, `-middle-var` (x·y⁴⁰⁹⁷·z), `-middle-term` (the middle monomial of four), `pow-num-4097`, `pow-den-4097` (x^(17·241)) | 46 (`<`), 21 (+1), 47 (+99), 48 (the first variable only), 49 (the first monomial only), 74 (the total degree), 83 to 85 (a power unguarded) |
 | Numerator: `num.natAbs < 10 ^ maxDigits` (`Poly.fits`) | for each sign, 10⁴⁰⁹⁶ − 1 as a literal, a product and a middle monomial: `digits-[neg-]4096`, `-product`, `-middle-term`; `digits-[neg-]both-4096` (4,096 digits above and below the line) | for each sign, 10⁴⁰⁹⁶ as a literal, a product, a sum and a middle monomial: `digits-[neg-]4097-literal`, `digits-[neg-]4097`, `-sum`, `-middle-term` | 50 (`≤`), 51 (+99), 52 (one short), 26 (`natAbs` dropped, F6), 53 (not checked), 54 (`\|\|` for `&&`), 92, 93 (the first or last monomial only), 94 (constant monomials only), 98 (`natAbs` for constants only), 75 (numerator × denominator), 61 (a literal unguarded, F9), 62, 63 (a sum or product unguarded) |
@@ -85,22 +85,23 @@ The size of each side placed at or past a limit is a fixture too (`size-*`: 9,99
 `top` has 4,096 digits). `[same-denominator]` (two fractions over a 101-term denominator) is the one case inside the
 limits that a path through cross products would refuse (mutant 88).
 
-## Seeded bugs (Lean; [`mutants.json`](mutants.json), 102 mutants, each with its exact edit)
+## Seeded bugs (Lean; [`mutants.json`](mutants.json), 103 mutants, each with its exact edit)
 
 Each mutant was applied to `lean/VE/Calc/Poly.lean` as committed (`ea6cc898d`) and run against every fixture, with the
 soundness and limit sections cut, so only `tests/test_calc_algebra.py` can catch it; the `SHARED` fixtures ran each
 in its own process. `test` lists the fixtures it failed, and every one is its own row's (the table above; mutants 1 to
 13 and 25 are not limit mutants). `proofs_failing_as_is` records whether the full file, theorems included, also
-fails to compile (54 of 102): every mutant that skips a guard at one call site (76 to 89, 99 to 101) breaks
+fails to compile (55 of 103): every mutant that skips a guard at one call site (76 to 89, 99 to 101) breaks
 `Frac.go_within`, `Identity.compare_within` or a soundness proof. Mutant 102 is equivalent. Each run used
 `timeout 600`; no `lean` process was left running. Mutants 80 and 82 timed out under the load of twelve parallel runs
-and were rerun alone: each failed its one fixture.
+and were rerun alone: each failed its one fixture. Mutant 103 and its fixture `[product-by-zero]` came last, and only
+it ran against that fixture.
 - Trusted definition `Poly.eval`: the coefficient dropped (3), killed by `[binom-value]`.
 - Normal forms: the plan's seeded bug (1), different variable lists merged (2), zeros kept (4), exponents multiplied
   (5), variables out of order (6), monomials in descending order (7), a zero literal kept (25).
 - Fractions: division keeps the divisor's denominator (8), no common denominator (9), subtraction adds (10), no
   cross-multiplication (11), division accepted by `Poly.ofExpr?` (12). `differsAt` reports equal sides (13).
-- Limits: 14 to 24, 26 to 102, by row in the table above.
+- Limits: 14 to 24, 26 to 103, by row in the table above.
 
 ## Tests
 
@@ -176,17 +177,19 @@ R-10c after ME-4. Then ME-7.
   the one condition under which an answer is given (Deviations, Limits).
 - **Claims:** "Limits" (Deviations) and checklist item 11 now say what the table shows.
 - **Adversarial hunt** (two rounds, each one subagent given only the class, PROBEs F1, F6 and F8, and the code):
-  - Hunt 1 tried 19 forms and found 15. Fixed: each node kind and leaf counted at and past the limit (A1, mutants 64
+  - Hunt 1 tried 22 forms (each node kind and call site counted once) and returned 15 PROBEs: 14 surviving
+    mutants, as it grouped them, and one real bug; a power of a zero base past its exponent is equivalent. Fixed: each node kind and leaf counted at and past the limit (A1, mutants 64
     to 73); each variable at the exponent limit (A2, total degree, 74); 4,096 digits above and below the line at once
     (A3, numerator × denominator, 75); every product, sum and power a fraction form takes, one past its limit (B,
     mutants 76 to 87; the build already caught them through the limit theorems); two fractions over one denominator
     (mutant 88); and a real bug: `Poly.ofExpr?` walked a shared side whole (`hasDiv`) before the node limit, now after
     it (`[poly-shared-41]`, mutant 89). Not of the class, left to F5 (Next item): `differsAt` has no limit.
-  - Hunt 2 tried 9 forms and found 7 surviving mutants, no real bug. Fixed: a sum counted after like terms merge
+  - Hunt 2 tried 9 forms; 8 survived the fixtures (3 of them broke the build), no real bug. Fixed: a sum counted after like terms merge
     (`[sum-merged-10001]`, mutant 90); the digit bounds checked on some monomials only, or `natAbs` on constant ones
     only (`digits-[neg-][den-]{4096,4097}-middle-term`, mutants 92 to 98); one side of `compare` without the node
     limit (`-swapped` for every row past its limit, mutants 99, 100); a power's numerator stepped without its exponent
-    guard (`[power-10^12]`, mutant 101). Not of the class, left to F5: a power within the limits costs minutes.
+    guard (`[power-10^12]`, mutant 101); a count that divides the limit by a factor's terms (`[product-by-zero]`,
+    mutant 103). Not of the class, left to F5: a power within the limits costs minutes.
   - Open forms of the class: none. Mutant 102 (a power's denominator without its exponent guard) is equivalent.
 - The DRI's note: DELTA row 1 stays under R16; no signature is reserved. Every mutant ran under `timeout 600`, and
   no `lean` process of this item is running.
@@ -205,7 +208,7 @@ R-10c after ME-4. Then ME-7.
 2. PASS: the plan rows above, each delivered or moved to me-9b by the size rule (R-10c by the task). `git diff
    main...HEAD` has no Python copy of a Lean decision (the test states expected strings; Lean prints answers) and no
    report test.
-3. PASS: 102 seeded bugs; 101 fail named `tests/test_calc_algebra.py` fixtures with the proofs cut, each limit
+3. PASS: 103 seeded bugs; 102 fail named `tests/test_calc_algebra.py` fixtures with the proofs cut, each limit
    mutant only its own row's (`mutants.json`); one is equivalent.
 4. N.A.: no Python or Rust counterpart exists for the normaliser.
 5. N.A.: no relayed field to bind; me-9b's runner rows bind later (ME-3).
@@ -214,7 +217,7 @@ R-10c after ME-4. Then ME-7.
 8. PASS: DELTA "Public output: none" (no mode, command, route or Python/Rust product file).
 9. PASS: the selection contained `tests/test_calc_algebra.py` and caught the Mac stack overflow at `480daf7b1`.
 10. PASS: `lean/audit.py` PASS; the statements match the spec verbatim (the limit theorems are new; plan 3.8's four
-    are unchanged); 54 mutants also break a proof as written.
+    are unchanged); 55 mutants also break a proof as written.
 11. PASS: each limit check of the truth table (every definition that reads a limit, from Lean's environment) has
     fixtures at its value and exactly one past it, for each sign and side of the line where it has them, except a
     power's step, where 10,001 terms cannot be reached (10,000 and 10,201). Each listed mutant fails only its row's
