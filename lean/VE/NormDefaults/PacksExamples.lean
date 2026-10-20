@@ -1,8 +1,8 @@
 import VE.NormDefaults.Packs
 
-/-! The acceptance fixtures of premise packs on `Packs.lean` alone (docs/spec/premise-packs.md 4: A1–A9). The fixtures
-over today's sources (F1, F1′) are in `PacksLegacyExamples.lean`; A9′ reads the response shape, so it sits with the
-encoder theorem (`ResponseShape/Encoders/NormDefaults.lean`). -/
+/-! The acceptance fixtures of premise packs on `Packs.lean` alone (docs/spec/premise-packs.md 4: A1–A9; 2.10's kind
+table). The fixtures over today's sources (F1, F1′, the kind table's legacy rows) are in `PacksLegacyExamples.lean`;
+A9′ reads the response shape, so it sits with the encoder theorem (`ResponseShape/Encoders/NormDefaults.lean`). -/
 namespace VE.NormDefaults.Packs.Fixtures
 open VE.NormDefaults.Packs
 
@@ -107,5 +107,25 @@ def holds (a : VE.Formula) : Bool := a != .bottom
 #guard reservedPrefixes.all fun (o, x) => reservedPrefixes.all fun (o', y) => o == o' || !x.startsWith y
 #guard ["soft__x", "rights__x", "unsaid__x"].all reserved && !["helps", "soft_x", "attitudes__x"].any reserved
 #guard ownPrefix soft "soft__x" && !ownPrefix soft "rights__x" && !ownPrefix weighing "soft__x"
+
+-- 2.10: the kind table. A row needing no pack runs; a row needing a pack runs only when the source has it, and is
+-- refused otherwise; the first row for a kind is the one; a kind with no row is `none`, not a refusal.
+def kinds : List (KindRow Nat) :=
+  [⟨"echo", none, fun n id _ => pure (.str s!"{id}:{n}")⟩,
+   ⟨"weigh", some "weighing", fun n _ _ => pure (.num n)⟩,
+   ⟨"echo", some "events", fun _ _ _ => throw "second echo row"⟩,
+   ⟨"fails", none, fun _ _ _ => throw "InvalidInput: refused by the row"⟩]
+def kindDiag : Except String (Option Lean.Json) → String
+  | .ok none => "none"
+  | .ok (some a) => a.compress
+  | .error e => e
+#guard kindDiag (dispatch kinds [] 7 "c1" "echo" .null) == "\"c1:7\""
+#guard kindDiag (dispatch kinds ["soft", "weighing"] 7 "c1" "weigh" .null) == "7"
+#guard kindDiag (dispatch kinds ["soft", "rights"] 7 "c1" "weigh" .null) ==
+  "UnsupportedProfile: case kind weigh needs the weighing premise pack"
+#guard kindDiag (dispatch kinds ["events"] 7 "c1" "echo" .null) == "\"c1:7\""
+#guard kindDiag (dispatch kinds ["weighing"] 7 "c1" "fails" .null) == "InvalidInput: refused by the row"
+#guard kindDiag (dispatch kinds ["weighing"] 7 "c1" "attitudes-elaborate" .null) == "none"
+#guard kindDiag (dispatch [] [] 7 "c1" "echo" .null) == "none"
 
 end VE.NormDefaults.Packs.Fixtures
