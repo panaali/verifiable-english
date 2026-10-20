@@ -143,6 +143,7 @@ module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.FourierMotzkin
 module VE.Calc.Linear
+module VE.Calc.Poly
 module VE.Calc.Render
 module VE.Calc.Syntax
 module VE.Cardinality.Erase
@@ -267,6 +268,7 @@ module VE.EnvironmentProofs
 module VE.EvaluationCounts
 module VE.Events.Calendar
 module VE.Events.Completion
+module VE.Events.Conservative
 module VE.Events.Decl
 module VE.Events.Examples
 module VE.Events.Premises
@@ -664,11 +666,13 @@ VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Frac.Means@VE.Calc.Poly
 VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
 VE.Calc.PhysDim.Normal@VE.Calc.Dimension
+VE.Calc.Poly.Within@VE.Calc.Poly
 VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
@@ -730,6 +734,7 @@ VE.Data.Background.EntailsData@VE.Data.Background
 VE.Data.Background.Functional@VE.Data.Background
 VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
+VE.Defaults.DefaultCoherent@VE.Defaults.Premises
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
 VE.Definitions.Bundle.ReadingBound@VE.Definitions.Bundle
