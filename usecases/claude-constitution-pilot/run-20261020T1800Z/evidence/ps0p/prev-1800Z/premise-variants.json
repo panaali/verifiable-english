@@ -1,0 +1,120 @@
+{
+ "what": "PS-0p items added one at a time to QT-0p's document: which keep the whole-document premise check at `model`",
+ "limit": "search budget max_evaluations 100000 (Lean's premise budget, ve.search.premise_budget), not a timeout; VE_RUST_TIMEOUT was left at its default",
+ "variants": [
+  {
+   "variant": "A",
+   "added_to_QT0p": "u0286 only",
+   "premises": "UNKNOWN",
+   "bytes_by_status": {
+    "CHECKED": 215,
+    "LABELLED": 364,
+    "OPEN": 2529,
+    "UNFORMALISED": 181785
+   },
+   "source": "nd.py all then the premise check of the document it wrote (run in a scratch directory, deleted afterwards; result read from its nd-all-result.json)"
+  },
+  {
+   "variant": "B",
+   "added_to_QT0p": "u0286 + u0245",
+   "premises": "UNKNOWN",
+   "bytes_by_status": {
+    "CHECKED": 215,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181759
+   },
+   "source": "nd.py all then the premise check of the document it wrote (run in a scratch directory, deleted afterwards; result read from its nd-all-result.json)"
+  },
+  {
+   "variant": "C",
+   "added_to_QT0p": "u0286 + u0032",
+   "premises": "UNKNOWN",
+   "bytes_by_status": {
+    "CHECKED": 215,
+    "LABELLED": 364,
+    "OPEN": 2567,
+    "UNFORMALISED": 181747
+   },
+   "source": "nd.py all then the premise check of the document it wrote (run in a scratch directory, deleted afterwards; result read from its nd-all-result.json)"
+  },
+  {
+   "variant": "D",
+   "added_to_QT0p": "u0245 + u0032",
+   "premises": "UNKNOWN",
+   "bytes_by_status": {
+    "CHECKED": 186,
+    "LABELLED": 364,
+    "OPEN": 2593,
+    "UNFORMALISED": 181750
+   },
+   "source": "nd.py all then the premise check of the document it wrote (run in a scratch directory, deleted afterwards; result read from its nd-all-result.json)"
+  },
+  {
+   "variant": "E",
+   "added_to_QT0p": "u0245 only",
+   "premises": "model",
+   "bytes_by_status": {
+    "CHECKED": 186,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181788
+   },
+   "admitted": true,
+   "source": "scratch directory tmp-vE (deleted afterwards), its nd-all-result.json"
+  },
+  {
+   "variant": "F",
+   "added_to_QT0p": "u0032 only",
+   "premises": "UNKNOWN",
+   "bytes_by_status": {
+    "CHECKED": 186,
+    "LABELLED": 364,
+    "OPEN": 2567,
+    "UNFORMALISED": 181776
+   },
+   "admitted": true,
+   "source": "scratch directory tmp-vF (deleted afterwards), its nd-all-result.json"
+  },
+  {
+   "variant": "G",
+   "added_to_QT0p": "u0286 only, predicate renamed a_unsolved",
+   "premises": "UNKNOWN",
+   "bytes_by_status": {
+    "CHECKED": 215,
+    "LABELLED": 364,
+    "OPEN": 2529,
+    "UNFORMALISED": 181785
+   },
+   "admitted": true,
+   "source": "scratch directory tmp-vG (deleted afterwards), its nd-all-result.json"
+  },
+  {
+   "variant": "H",
+   "added_to_QT0p": "u0286 only, predicate renamed zz_unsolved",
+   "premises": "UNKNOWN",
+   "bytes_by_status": {
+    "CHECKED": 215,
+    "LABELLED": 364,
+    "OPEN": 2529,
+    "UNFORMALISED": 181785
+   },
+   "admitted": true,
+   "source": "scratch directory tmp-vH (deleted afterwards), its nd-all-result.json"
+  },
+  {
+   "variant": "all three",
+   "added_to_QT0p": "u0286 + u0245 + u0032",
+   "premises": "UNKNOWN",
+   "bytes_by_status": {
+    "CHECKED": 215,
+    "LABELLED": 364,
+    "OPEN": 2593,
+    "UNFORMALISED": 181721
+   },
+   "source": "the run directory's first PS-0p build (readings/nd-all-check.json of that build; overwritten by the final build)"
+  }
+ ],
+ "reading": "an existential premise over the sort `entity` with no ground fact naming its witness (u0286, u0032) leaves the premise check UNKNOWN once principal_type has size 3; the ground fact novel_entity(claude) (u0245) does not. Renaming the predicate does not change this.",
+ "diag": "premise-diag-*.txt: the searches the premise check makes, one line each (find_countermodel arguments, result, seconds)"
+}

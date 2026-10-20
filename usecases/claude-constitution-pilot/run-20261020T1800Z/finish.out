@@ -1,0 +1,4 @@
+{"claimed_covered_bytes": 3158, "claimed_covered_percent": 1.708, "audit_verified_covered_bytes": 2770, "audit_verified_covered_percent": 1.4982, "audit_verified_metadata_bytes": 364, "claimed_but_not_audit_verified_bytes": 24, "changed_units": ["u0002.presupposition", "u0013.presupposition", "u0032.presupposition", "u0083.presupposition", "u0095.presupposition", "u0235.presupposition"]}
+{'LABELLED': 40, 'UNFORMALISED': 1069, 'CHECKED': 6, 'READINGS': 4, 'OPEN': 14} {'LABELLED': 364, 'UNFORMALISED': 181735, 'CHECKED': 239, 'READINGS': 372, 'OPEN': 2183}
+probe_same: {'risk-probe': True, 's1-probe': True, 'senses-probe': True, 'senses-document-probe': True, 'rights-reading-probe': True, 'unspecified-probe': True, 'frame-probe': True} disc_same: True comp_same: False hard_same_bytes: True ask_same: True nd_concl_same: True
+judgment units: 507 88996 differing from phase 1: 3

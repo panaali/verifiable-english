@@ -1,0 +1,50 @@
+[
+ {
+  "claim": "u0043.s02.p2 closes over Claude's types: every principal type of Claude is Anthropic, operators or users",
+  "planted": "the closure replaced by a trivial equality",
+  "file": "translation-without-content.ve.md (u0043.s02.p2 content)",
+  "failing_check": "the exact-English comparison of the rendered formula with the ledger's checked_english (this script); the no-fourth query on the scratch build is in evidence/seeded/sb1-closure-removed-no-fourth-result.json",
+  "failure": "rendered English no longer contains “for every principal type of Claude”",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "u0042.presupposition says the three types are pairwise different",
+  "planted": "the first distinctness conjunct (P1 differs from P2) removed",
+  "file": "translation-without-content.ve.md (u0042.presupposition content)",
+  "failing_check": "the exact-English comparison of the rendered formula with the ledger's checked_english",
+  "failure": "rendered English lacks “it is not the case that P1 is the same as P2”",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "u0042.presupposition says there are three types, not two",
+  "planted": "one existential removed",
+  "file": "translation-without-content.ve.md (u0042.presupposition content)",
+  "failing_check": "Lean's typing check of the formula (ve.ast.formula_from_data)",
+  "failure": "UnboundVariable: UnboundVariable: Variable index 2 is outside its scope",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "u0286.presupposition presupposes that there is such a thing (an existential)",
+  "planted": "the existential turned into “for every thing”",
+  "file": "translation-without-content.ve.md (fence of the unit)",
+  "failing_check": "finish_20261019T0600Z.py: the exact-English assertion on the unit (`startswith(\"Checked reading: There is a thing that is unsolved\")` / `Open reading: `)",
+  "failure": "rendered English: Checked reading: Every thing is unsolved.",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "u0032.presupposition presupposes that there is such a thing (an existential)",
+  "planted": "the existential turned into “for every thing”",
+  "file": "translation-without-content.ve.md (fence of the unit)",
+  "failing_check": "finish_20261019T0600Z.py: the exact-English assertion on the unit (`startswith(\"Checked reading: There is a thing that is unsolved\")` / `Open reading: `)",
+  "failure": "rendered English: Checked reading: Every thing is helpful.",
+  "restored": "in-memory fault; the file was not touched"
+ },
+ {
+  "claim": "the English of u0042.presupposition and u0043.s02.p2 is ordinary English, not the quoted fallback",
+  "planted": "the old fallback English handed to the ledger step",
+  "file": "ledger_0600.py",
+  "failing_check": "ledger_0600.apply's assertion on the fallback",
+  "failure": "AssertionError: u0042.presupposition",
+  "restored": "in-memory fault; the file was not touched"
+ }
+]

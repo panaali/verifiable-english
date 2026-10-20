@@ -1,0 +1,47 @@
+{
+ "needed_for_product_code": false,
+ "why": "no product code (Lean, Python, Rust) was changed: this run adds files under usecases/ only (lean/.lake and rust/target in the worktree are ignored build products; `git diff ve-green-sc-1ac -- ve lean rust` is empty). The claims below are the translator's; each was planted and caught.",
+ "languages_changed": [],
+ "translation_faults": [
+  {
+   "claim": "u0235.presupposition's fence says exactly one nature (existence and uniqueness)",
+   "planted": "the uniqueness clause dropped (the old existence-only fence “Some thing is a nature of claude.”)",
+   "file": "evidence/owner-probe.json / ledger_20261020.FENCE",
+   "failing_check": "finish_20261020T1800Z.py: the formula of u0235.unique must be an existential with a universal inside (assertion on owner-probe.json)",
+   "failure": "formula without ‘forall’: [\"exists\", \"entity\", [\"binary\", \"nature_of_probe\", [\"var\", 0], [\"const\", \"claude\"]]]",
+   "restored": "in-memory fault or scratch copy; no file of the run was touched"
+  },
+  {
+   "claim": "u0095.presupposition's guideline belongs to the company, not to the type of principal `anthropic`",
+   "planted": "the owner constant replaced by `anthropic`",
+   "file": "evidence/owner-probe.json / ledger_20261020.FENCE",
+   "failing_check": "Lean's typing check of the formula (ve.ast.formula_from_data)",
+   "failure": "TypeMismatch: TypeMismatch: Predicate 'guideline_of_probe' expects ('entity', 'entity'), received ('enti",
+   "restored": "in-memory fault or scratch copy; no file of the run was touched"
+  },
+  {
+   "claim": "u0002.presupposition's mission belongs to the company",
+   "planted": "the fence's owner changed to `anthropic` (not a thing)",
+   "file": "ledger_20261020.FENCE['u0002']",
+   "failing_check": "the English parser against the probe vocabulary",
+   "failure": "TypeMismatch: TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+   "restored": "in-memory fault or scratch copy; no file of the run was touched"
+  },
+  {
+   "claim": "no unit changes status in this run (claimed bytes stay 3,158)",
+   "planted": "u0095.presupposition (an unclaimed relational-noun heading) set to CHECKED in a copy of the ledger",
+   "file": "scratch copy of prev/units.json",
+   "failing_check": "finish_20261020T1800Z.py: `assert claimed == pm[\"claimed_covered_bytes\"]`",
+   "failure": "claimed bytes 3194 != 3158",
+   "restored": "in-memory fault or scratch copy; no file of the run was touched"
+  },
+  {
+   "claim": "the translation is the previous run's, byte for byte, and u0286 says that there is an unsolved thing",
+   "planted": "the fence of u0286 turned into “Every thing is unsolved.” in a scratch copy of translation.ve.md",
+   "file": "scratch copy (deleted afterwards)",
+   "failing_check": "finish_20261020T1800Z.py: `cmp` against prev/translation.ve.md (translation_byte_identical_to_previous_run) and block_after(render, 'Acknowledging open problems') == 'Checked reading: There is a thing that is unsolved.'",
+   "failure": "the bytes differ and the rendering reads “Every thing is unsolved.”",
+   "restored": "scratch copy deleted; the run's translation was not touched"
+  }
+ ]
+}

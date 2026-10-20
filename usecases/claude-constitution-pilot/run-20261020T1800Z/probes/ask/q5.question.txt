@@ -1,0 +1,1 @@
+Must every instance of Claude seek clarification in each situation, if that situation is classified as "genuine_ambiguity"?

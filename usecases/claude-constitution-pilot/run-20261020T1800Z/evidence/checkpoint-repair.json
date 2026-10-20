@@ -1,0 +1,131 @@
+{
+ "label": "repair",
+ "document": "usecases/claude-constitution-pilot/run-20261019T0600Z/evidence/after-repair-nd-all.ve.md",
+ "start_document": "usecases/claude-constitution-pilot/run-20261019T0600Z/prev/translation.ve.md",
+ "x3_vocabulary": {
+  "predicates_before": 70,
+  "predicates_after": 69,
+  "predicates_added": [],
+  "sorts_added": [],
+  "constants_added": [],
+  "existing_predicate_wordings_changed": {},
+  "existing_sort_nouns_changed": {},
+  "noun_of_sort_entity": "thing",
+  "intended_removals": {
+   "predicates": {
+    "claude_principal_type": [
+     "{0} is classified as \"claude_principal_type\"",
+     null
+    ]
+   },
+   "sorts": {
+    "principal_type": [
+     "type of principal",
+     "principal type of Claude"
+    ]
+   }
+  }
+ },
+ "units_start": 1132,
+ "units_now": 1132,
+ "units_differing_from_start": [
+  "u0042.presupposition",
+  "u0043.s02"
+ ],
+ "units_missing_now": [],
+ "units_new_now": [],
+ "x3_fenced_units": {
+  "u0248": {
+   "start": [
+    "not",
+    [
+     "unary",
+     "human",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "now": [
+    "not",
+    [
+     "unary",
+     "human",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "unchanged": true
+  }
+ },
+ "fenced_units_now": [
+  "u0248"
+ ],
+ "document_check": {
+  "returncode": 0,
+  "seconds": 107.2,
+  "stderr": "",
+  "admitted": true,
+  "premises": "model",
+  "premises_route": "superposed",
+  "reading_route": "superposed",
+  "choices": 32,
+  "conflict": "CONFLICT-FREE",
+  "conflicts_by_choice": {
+   "CONFLICT-FREE": 32
+  },
+  "bytes_by_status": {
+   "CHECKED": 186,
+   "LABELLED": 364,
+   "OPEN": 2555,
+   "UNFORMALISED": 181788
+  },
+  "bytes_by_status_start": {
+   "CHECKED": 186,
+   "LABELLED": 364,
+   "OPEN": 2555,
+   "UNFORMALISED": 181788
+  },
+  "residual": {
+   "assumptions": 22,
+   "bridge_leaves": 0,
+   "open_terms": 52,
+   "unresolved_reading_sets": 4,
+   "separations": 9,
+   "readings_findings": 0,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 12,
+   "ungrounded_defaults": 0
+  },
+  "residual_start": {
+   "assumptions": 22,
+   "bridge_leaves": 0,
+   "open_terms": 52,
+   "unresolved_reading_sets": 4,
+   "separations": 9,
+   "readings_findings": 0,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 12,
+   "ungrounded_defaults": 0
+  }
+ },
+ "conclusions": {
+  "conclusion-no-denial": {
+   "returncode": 0,
+   "verdict": "ALL",
+   "evidence": "certificate",
+   "route": "superposed"
+  },
+  "conclusion-no-claim-human": {
+   "returncode": 0,
+   "verdict": "ALL",
+   "evidence": "certificate",
+   "route": "superposed"
+  }
+ }
+}

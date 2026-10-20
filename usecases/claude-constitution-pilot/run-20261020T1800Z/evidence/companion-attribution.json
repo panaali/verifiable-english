@@ -1,0 +1,88 @@
+{
+ "what": "which unit of this run makes the main component's premise check UNKNOWN on the companion document (readings-defaults RD-4b, route `components`)",
+ "method": "probe_companions.py run in scratch directories on (control) the previous run's translation and (qt) QT-0p's translation before PS-0p (git show 595245e58:.../readings/nd-all.ve.md)",
+ "results": {
+  "ctl": {
+   "document": "previous run translation (control)",
+   "premises_components": [
+    [
+     "main",
+     "model"
+    ],
+    [
+     "force-u0036-s05",
+     "model"
+    ],
+    [
+     "force-u0156-s03",
+     "model"
+    ],
+    [
+     "force-u0263-s04-p2",
+     "model"
+    ],
+    [
+     "scope-u0165-s03",
+     "model"
+    ]
+   ],
+   "decided_units": 19,
+   "decided_bytes": 2602
+  },
+  "qt": {
+   "document": "QT-0p only",
+   "premises_components": [
+    [
+     "main",
+     "UNKNOWN"
+    ],
+    [
+     "force-u0036-s05",
+     "model"
+    ],
+    [
+     "force-u0156-s03",
+     "model"
+    ],
+    [
+     "force-u0263-s04-p2",
+     "model"
+    ],
+    [
+     "scope-u0165-s03",
+     "model"
+    ]
+   ],
+   "decided_units": 4,
+   "decided_bytes": 372
+  },
+  "final": {
+   "document": "the final translation (QT-0p + u0245)",
+   "premises_components": [
+    [
+     "main",
+     "UNKNOWN"
+    ],
+    [
+     "force-u0036-s05",
+     "model"
+    ],
+    [
+     "force-u0156-s03",
+     "model"
+    ],
+    [
+     "force-u0263-s04-p2",
+     "model"
+    ],
+    [
+     "scope-u0165-s03",
+     "model"
+    ]
+   ],
+   "decided_units": 4,
+   "decided_bytes": 372
+  }
+ },
+ "reading": "QT-0p alone is enough: with principal_type of size 3 the main component's premise check is UNKNOWN on the components route (the superposed route of the translation itself stays `model`), and the Lean-decided share of the companion probe falls from 19 units / 2,602 B to 4 units / 372 B. The companion denial and claim-to-be-human queries still answer ALL."
+}
