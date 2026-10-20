@@ -3420,6 +3420,29 @@ theorem VE.Calc.Step.derive_sound
           (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ f
   -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step.derive@VE.Calc.Derive VE.Calc.Step@VE.Calc.Derive
   -- expr 1985840783
+theorem VE.Calc.Units.checkClaim_invariant
+  ∀ (u : VE.Calc.Units.UnitEnv) (Γ : String → Option VE.Calc.PhysDim) (words : String) (ρ : VE.Calc.Rescale)
+    (σ : VE.Calc.Values) (c : VE.Calc.Claim),
+    (∀ (n : String) (d' : VE.Calc.PhysDim), Γ n = Option.some d' → d'.Normal) →
+      VE.Calc.Units.checkClaim u Γ words c = Except.ok () →
+        (VE.Calc.Claim.Holds σ c ↔ VE.Calc.Claim.Holds (ρ.apply Γ σ) c)
+  -- uses VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim@VE.Calc.Syntax VE.Calc.PhysDim.Normal@VE.Calc.Dimension VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Rescale.apply@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension VE.Calc.Units.UnitEnv@VE.Calc.Units VE.Calc.Units.checkClaim@VE.Calc.Units VE.Calc.Values@VE.Calc.Syntax
+  -- expr 1971887586
+theorem VE.Calc.Units.dimE_ok
+  ∀ (Γ : String → Option VE.Calc.PhysDim) (e : VE.Calc.Expr) (d : VE.Calc.PhysDim),
+    VE.Calc.Units.dimE Γ e = Except.ok d ↔ VE.Calc.Expr.dimOf Γ e = Option.some d
+  -- uses VE.Calc.Expr.dimOf@VE.Calc.Dimension VE.Calc.Expr@VE.Calc.Syntax VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.Units.dimE@VE.Calc.Units
+  -- expr 3840545299
+theorem VE.Calc.Units.except_bind_ok
+  ∀ {α β : Type} (m : Except String α) (f : α → Except String β) (b : β),
+    m >>= f = Except.ok b ↔ ∃ a, m = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 3200979648
+theorem VE.Calc.Units.unless_ok
+  ∀ (p : Prop) [inst : Decidable p] (m : String) (a : Unit),
+    (if p then Pure.pure PUnit.unit else MonadExcept.throw m) = Except.ok a ↔ p
+  -- uses
+  -- expr 1660820751
 theorem VE.Calc.Val.bin_exhausted
   ∀ (f : Rat → Rat → VE.Calc.Val) (a b : VE.Calc.Val),
     (∀ (x y : Rat), f x y ≠ VE.Calc.Val.exhausted) →
