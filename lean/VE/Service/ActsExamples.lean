@@ -96,6 +96,16 @@ def seek : List (String × Json) := [("p", pred ["person"] (perm "{0} seek asylu
 #guard err (VE.Service.FamilyNorms.folView (envA ["acts@0", "norms@0", "order@0", "relational-fol@0"])) ==
   "UnsupportedProfile: acts@0 on the order family is not implemented"
 
+-- the plain route (Background, evaluation, countermodels) reads `acts@0` on the FOL family only
+def plainRun (j : Json) : String :=
+  err (VE.Norms.Plain.run (Json.mkObj [("id", .str "b"), ("kind", .str "background"), ("environment", j)]))
+#guard plainRun envA == "ok"
+#guard plainRun (envA ["acts@0", "closure@0", "norms@0", "relational-fol@0"]) ==
+  "UnsupportedProfile: acts@0 on the closure family is not implemented"
+#guard plainRun (envA ["acts@0", "norms@0", "order@0", "relational-fol@0"]) ==
+  "UnsupportedProfile: acts@0 on the order family is not implemented"
+#guard plainRun (envA ["norms@0", "relational-fol@0"]) == "InvalidInput: invalid regulated fields for heard"
+
 /-! ### 2.1: Lean's English selects `Lexical.wording` for a plain act, over a declared wording, and keeps it
 not modal; a permission keeps its modal form -/
 

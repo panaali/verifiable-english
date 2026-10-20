@@ -116,6 +116,9 @@ def actsFixed (ps : List String) (environment : Json) : Except String (List Stri
     pure fx
   | _, _ => pure []
 
+/-- `acts@0`'s refusal on the checker family `f` (act-phrases 4.4), which the profile row and the plain route read. -/
+def actsFamilyRefusal (f : String) : String := s!"acts@0 on the {f} family is not implemented"
+
 /-- The profiles of an environment that lists `acts@0`, when `acts` lets the decoder read it; else none. -/
 def actsProfiles (acts : Bool) (environment : Json) : List String :=
   match acts, VE.Route.Gate.profilesOf environment with
