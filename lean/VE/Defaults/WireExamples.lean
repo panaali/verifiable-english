@@ -56,8 +56,6 @@ def γ'R : List String := [ruleJ "r1" "x_required" true dfltJ, ruleJ "r2" "x_per
 def δEnv : Json := envJ [xReq, xPerm] holisticSoft
 def δR : List String := [ruleJ "r1" "x_required" true (dfltJ (extra := ",\"rank\":\"safety\"")),
   ruleJ "r2" "x_permitted" false (dfltJ (extra := ",\"rank\":\"helpfulness\""))]
-def βEnv : Json := envJ [xReq, xPerm, baseJ "urgent"] strictSoft
-def βR : List String := [ruleJ "r1" "x_required" true (dfltJ [un "urgent"])]
 def dγb : Except String VE.NormDefaults.Wire.LayeredU := layered αEnv γbR
 
 /-! ## DF-θ and the view's diagnostics (section 5: the decoder's refusals, then 7, 1, 2, 6, 4) -/
