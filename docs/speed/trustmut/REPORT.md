@@ -547,16 +547,17 @@ cuts, the line-keeping edit (`relined`, `moved`), the kill rule (`judge`, `refut
 (`ERROR`, `LEAN_ERROR`) have tests without Lean. The file has 301 tests at this checkout (`pytest --collect-only`);
 section 6 gives the selected run.
 
-Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 83 of them: TM1–TM40
+Each rule has a seeded bug in `docs/speed/trustmut/mutants.json` (the `tools/mutants.py` format), 91 of them: TM1–TM40
 from the earlier rounds (TM8, TM23, TM25, TM30, TM31, TM33–TM36 retargeted at the inverted rule) and TM41–TM78 for
 F11, F12 and the hunts, among them the Lean probe's own lines (`READS` is Lean text inside the tool: TM48, TM59,
-TM60, TM63, TM65, TM71–TM74, TM77, TM78), TM79 for the build time limit, TM80, TM81 for review F13 and TM82–TM85
+TM60, TM63, TM65, TM71–TM74, TM77, TM78), TM79 for the build time limit, TM80, TM81 for review F13, TM82–TM85
 for F14's class (`claims.py`, `replay.py`'s budget line, `hunt/run.py`'s summary; each command-mode, killed when
-`hunt/F14c.sh` exits non-zero). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 83 of 83, each at a named test or command, the file
+`hunt/F14c.sh` exits non-zero) and TM86–TM93 for F15's (`CLAIM`'s count forms and `parts()`: `hunt/F15c.sh`, TM93
+`hunt/F14c.sh`). `uv run python tools/mutants.py docs/speed/trustmut/mutants.json` kills 91 of 91, each at a named test or command, the file
 restored to its exact bytes (`mutants-evidence.json`: TM1–TM78 on `d09bf54d4` in three worktrees of it, the rows
 joined in order, `--no-baseline` since the whole test file passes there; TM79 and the build-path seeds TM1, TM2,
 TM22 and TM36 again on `0ee7bfc45`, which adds the build time limit; TM80 and TM81 on `05ea60664`, the F13 fix;
-TM82–TM85 on `1ca1e67d1`, round 4). No seeded bug became UNKNOWN under the
+TM82–TM93 on `5d2df727f`, round 5, after `claims.py` last changed). No seeded bug became UNKNOWN under the
 stricter rule. The first run (four worktrees at once on the loaded
 VM) found TM57's and TM62's checks dead (the edit-span rule and the probe's `sorryAx` already cover their forms), so
 the checks and the seeds were removed; TM79 was too weak (TM71 plants T5's bug); TM42's and TM44's rules lacked a
@@ -650,6 +651,14 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | TM83 | a PROBE list binds only when every probe it names, a range expanded, exits 0 in `evidence/probes.json` | a range not expanded | `hunt/F14c.sh` |
 | TM84 | the report's budget line is `replay.py`'s, from the saved evidence and the 1,200 s budget (review F14) | `BUDGET = 2000` | `hunt/F14c.sh` |
 | TM85 | the probes' summary counts only the probes that exit 0; the README and the report quote it | exit 1 counted as 0 | `hunt/F14c.sh` |
+| TM86 | a count reads up to three words between the number and what it counts (review F15) | one word | `hunt/F15c.sh` |
+| TM87 | "N each" is a count (review F15's class) | the form dropped | `hunt/F15c.sh` |
+| TM88 | "about N" is a count | the form dropped | `hunt/F15c.sh` |
+| TM89 | "all N" is a count | the form dropped | `hunt/F15c.sh` |
+| TM90 | a number of lines is a count | `lines` dropped from `COUNTED` | `hunt/F15c.sh` |
+| TM91 | a number inside a name (ap-2, F14) is no count | `\b` in place of the name guard | `hunt/F15c.sh` |
+| TM92 | a sentence that starts with a digit is a sentence of its own | no split before a digit | `hunt/F15c.sh` |
+| TM93 | section 5's test sizes are measured from the test file | one of F9's two runs of lines left out | `hunt/F14c.sh` |
 
 ## 4. Limits and follow-ups
 
@@ -718,6 +727,7 @@ spaces: `tools/mutants.py` reads a failing id up to its first space.
 | Recheck F11/F12 (DRI note 2026-10-19c): the rule inverted (one positive condition for KILLED and for INVALID), a test per safe case, F11 and F12 as tests, an adversarial hunt until none (bounded by the 23Z addendum for later rounds), probes F1 and F6–F12, the sweep, the seeded bugs | section 1e; `settle`, `judge`, `refutes`, `invalid`, `refused`, `READS`/`probe`; `JUDGED`, `REFUSALS`, `STUCK`, `HUNT`; `docs/speed/trustmut/hunt/`; sweep and ap-2 F11 replay rerun; TM41–TM79 (37 seeds) |
 | Recheck F13/F14: an outside check's imports built with the mutant; the budget claim; probes F13, F14 | section 1f; `Tree.imported`, `targets`; `BRIDGED`; `replay.py` `budget()`; `hunt/F13.sh`, `hunt/F14.sh`; TM80, TM81 |
 | Round 4 (DRI note 2026-10-20): F14 as a class (every claim sentence checked against the evidence, the list in the final); PROBE F13 and F14 rerun; ap-2 F11 (`aa2fd56e3`) with the final tool, timed once at 8 jobs, the load recorded, and whether the probe causes the excess | section 1f; `claims.py`, `hunt/run.py`, `evidence/probes.json`, `hunt/F14c.sh`; `replay.py` `profiled`, `profile()`; section 1 |
+| Recheck F15: section 4's INVALID range against the evidence; `CLAIM` reads that form; PROBE F15 | section 1f; `COUNT`, `COUNTED`, `parts()`; `hunt/F15.sh`, `hunt/F15c.sh`, `hunt/F15c.md`; TM86–TM93 |
 | 4 orchestrator lines, gate-check opinion | section 2 |
 | Rules: R2/R3 unchanged, nothing reads the tool; `trust_map.py --check`, review-ready and gate unchanged; no timing test | `DELTA.md`; no file of the gate or review-ready changed; trust_map's two changes (F6, F7) measure +0 here; the tests assert no time |
 | Trust +0; DELTA rows only with a ruling, none reserved | `DELTA.md` has no rows |
@@ -739,7 +749,7 @@ would leave no usable tool.
 1. N.A.: no Lean answer is relayed; the tool reads Lake's build log, and a failure it cannot place is UNKNOWN.
 2. PASS: section 5 maps every task line to its delivery; no rule break (no product code, no permanent report
    test: `replay.py` and `claims.py` read saved evidence, D4).
-3. PASS: seeded bugs TM1–TM85, 83 (`mutants.json`, `mutants-evidence.json`), each failing its named test or command;
+3. PASS: seeded bugs TM1–TM93, 91 (`mutants.json`, `mutants-evidence.json`), each failing its named test or command;
    `--allow` names an exact (definition, operator) pair (`test_allow_suppresses_exactly_its_operator`).
 4. N.A.: no Python, Lean or Rust product code changed.
 5. N.A.: no relayed field.
