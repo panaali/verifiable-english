@@ -187,3 +187,4 @@ import VE.Layout.List
 import VE.Scope.Examples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
+import VE.Service.ActsExamples

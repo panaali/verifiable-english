@@ -228,7 +228,11 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
     let _ ← VE.Compose.gateOf VE.Compose.baseRows rawProfiles
     pure ()
-  let named := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  -- `acts@0` is read by the norms decoder only: its row's refusals come before every decoder (act-phrases 4.4)
+  if rawProfiles.contains "acts@0" then
+    let _ ← VE.Compose.gateOf (if rawProfiles.contains VE.Compose.environmentWrapper then VE.Compose.profileTable
+      else VE.Compose.baseRows) rawProfiles
+  let named :=(VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
   if named.contains "risk@0" || (environment.getObjVal? "risk").isOk then
     let _ ← VE.Risk.Wire.decodeRiskSource environment
