@@ -1,8 +1,9 @@
 import VE.Events.Completion
+import VE.Events.Conservative
 
 /-! The ET-3 fixtures of docs/spec/events-time-causation.md 8 as `#guard` lines: T1 to T6, T10, T13,
 T2b, the fragment rows F1 and the day numbers; et-3b's completion pieces and the counterexample to
-`embeddable_sound` as approved. T7 (conservativity) is et-3c's, T8 (identity) ET-4's. -/
+`embeddable_sound` as approved; et-3c's T7 (conservativity). T8 (identity) is ET-4's. -/
 namespace VE.Events.Examples
 open VE.Events
 open VE.Time (Civil dateMax)
@@ -228,6 +229,42 @@ example : ¬ CalendarReading vT3 mC.asStructure numC := fun h => by
   have hx : x ∈ ["a", "b"] := hx
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
   rcases hx with rfl | rfl <;> exact absurd hn (by decide)
+
+-- T7: a document with no day vocabulary, with and without the block: the same verdicts
+def envT7 : VE.Environment :=
+  ⟨["person", "day", "act"], fun p => match p with
+    | "before" => some ["day", "day"] | "committed_on" => some ["act", "day"]
+    | "contributed_to" => some ["act", "act"] | "admires" => some ["person", "person"] | _ => none,
+   fun c => match c with | "alice" | "bob" => some "person" | "the_day" => some "day" | _ => none⟩
+def vT7 : EventsEnv := { base [d 2026 10 12, d 2026 10 14] with
+  events := [⟨"act", "committed_on"⟩], links := [⟨"contributed_to", .contributed, "act", "act", none⟩] }
+#guard WellFormedEvents envT7 vT7
+#guard (oldEnv envT7 vT7).sorts == ["person", "act"]
+#guard (oldEnv envT7 vT7).predicates "admires" == some ["person", "person"] &&
+  ["before", "committed_on", "contributed_to"].all ((oldEnv envT7 vT7).predicates · == none)
+#guard (oldEnv envT7 vT7).constants "alice" == some "person" && (oldEnv envT7 vT7).constants "the_day" == none
+def gT7 : List VE.Formula := [.binary "admires" (.const "alice") (.const "bob")]
+def notEntailedT7 : VE.Formula := .binary "admires" (.const "bob") (.const "alice")
+def entailedT7 : VE.Formula := .ex "person" (.binary "admires" (.const "alice") (.var 0))
+#guard (notEntailedT7 :: entailedT7 :: gT7).all (·.check (oldEnv envT7 vT7) [])
+-- NOT ENTAILED without the block, and with it (the countermodel with the named dates' days)
+def mT7 (days : List String) (consts : List (String × String)) : VE.FiniteModel String :=
+  chain days ([("alice", "alice"), ("bob", "bob")] ++ consts) [("person", ["alice", "bob"])]
+    [("admires", [["alice", "bob"]])]
+#guard gT7.all (·.eval (mT7 [] []) []) && !notEntailedT7.eval (mT7 [] []) []
+#guard (eventsX vT7).all (·.eval (mT7 ["a", "b"] [(c12, "a"), (c14, "b"), ("the_day", "a")]) []) &&
+  gT7.all (·.eval (mT7 ["a", "b"] [(c12, "a"), (c14, "b"), ("the_day", "a")]) []) &&
+  !notEntailedT7.eval (mT7 ["a", "b"] [(c12, "a"), (c14, "b"), ("the_day", "a")]) []
+-- ENTAILED with the block, from the entailment without it (`events_conservative`)
+example : ∀ S : VE.Structure.{0}, S.Admissible (regenEnv envT7 vT7) → VE.Norms.Sat S (eventsX vT7) →
+    VE.Norms.Sat S gT7 → entailedT7.denote S [] :=
+  (events_conservative envT7 vT7 (by decide) gT7 entailedT7
+    (fun a ha => (VE.check_iff_wellFormed _ _ a).1 (by simp only [gT7, List.mem_singleton] at ha; subst ha; decide))
+    ((VE.check_iff_wellFormed _ _ _).1 (by decide))).2 fun S hS hΓ => by
+      obtain ⟨_, w, hv, hw, hr⟩ := hΓ _ (List.mem_singleton_self _)
+      obtain ⟨b, hb, db⟩ := hS.1 "bob" "person" rfl
+      simp only [VE.Term.denote, hb, Option.some.injEq] at hw; subst hw
+      exact ⟨b, db, _, b, hv, rfl, hr⟩
 
 -- `embeddable_sound` as approved does not hold: `EventsTyped` bounds no year, so a named date after
 -- 9999-12-31 passes the check while its number exceeds `dateMax` (et-3b's report; the DRI's to amend)
