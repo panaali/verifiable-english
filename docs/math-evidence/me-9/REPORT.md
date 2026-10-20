@@ -1,6 +1,6 @@
 No DRI signature is needed: trust growth K +0, S +3, V +0 is signed by standing ruling R16; no DELTA row reserves
-one. me-9 delivers the normaliser half of ME-9; the rest is **me-9b** (below). Size: 609 changed lines before this
-report (`git diff --numstat`, generated files excluded), 731 with it.
+one. me-9 delivers the normaliser half of ME-9; the rest is **me-9b** (below). Size: 621 changed lines before this
+report (`git diff --numstat`, generated files excluded), 771 with it.
 
 # me-9 report: algebraic identities, the normaliser
 
@@ -79,10 +79,11 @@ and F2) leave the proofs compiling, so they were run as written.
 
 - **Selected tests:** `select_tests.py --base 2f633d7b5 --run` on the Mac runner: 78 units, 0 failed (HEAD
   `cf5e2bae2`). Earlier, at `480daf7b1`, it failed `tests/test_calc_algebra.py` (the stack overflow above); it was
-  fixed in `8c6402d24`, and that file passes on Linux and on the Mac.
+  fixed in `8c6402d24`, and that file passes on Linux and on the Mac. After the review fixes: 78 units, 0 failed on the
+  Mac runner (HEAD `5d14eaa2`), and `tests/test_calc_algebra.py` 44 passed on Linux.
 - **Generated files and audits:** `regen_generated.py --check --skip route-cases`: 30 entries pass. Route cases need
   the Rust binary, and this item does not change them. `repo_map.py --check` passes, as does `lean/audit.py`.
-- **Collection:** `gate_collection.py --check --prebuilt`: 39 added, 0 removed, 0 refused, 0 stale, 0 malformed.
+- **Collection:** `gate_collection.py --check --prebuilt`: 44 added, 0 removed, 0 refused, 0 stale, 0 malformed.
 - **Full gate:** left to the chain. No test that main-known-red.txt lists failed.
 
 Shared files: `lean/VE.lean`, `tools/trust-classes.json` and `docs/trust-baseline.json` are the union and registry
