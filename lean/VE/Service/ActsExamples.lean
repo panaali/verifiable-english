@@ -78,7 +78,9 @@ def seek : List (String × Json) := [("p", pred ["person"] (perm "{0} seek asylu
 #guard err (VE.NormDefaults.Wire.decodeSourceU (envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"])
   (Json.arr #[rule "heard"])) == "ok"
 #guard err (VE.Norms.Replay.baseEnvironmentJson envA >>= VE.Route.Gate.decodeEnvelope) == "ok"
-#guard err (typingView envA) == "ok"
+-- the typing view reads the environment without `acts@0` and its block
+#guard (typingView envA).toOption.map (fun j => (j.getObjValD "profiles",
+  ((j.getObjValD "vocabulary").getObjVal? "acts").toOption.isSome)) == some (toJson ["norms@0", "relational-fol@0"], false)
 
 /-! ### 3.3: the identity's canonical act is `canonicalActIn`'s (A19's apostrophe folded) -/
 

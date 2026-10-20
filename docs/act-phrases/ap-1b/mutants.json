@@ -1,0 +1,177 @@
+{
+ "actsFixed-fields": {
+  "definition": "actsFixed",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:64:0: Expression"
+ },
+ "actsFixed-unchecked": {
+  "definition": "actsFixed",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:69:0: Expression"
+ },
+ "actsProfiles-any": {
+  "definition": "actsProfiles",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:72:0: Expression"
+ },
+ "actsProfiles-flag": {
+  "definition": "actsProfiles",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:53:0: Expression"
+ },
+ "actsView-block": {
+  "definition": "actsView",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:50:0: Expression"
+ },
+ "actsView-profile": {
+  "definition": "actsView",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:50:0: Expression"
+ },
+ "actsFamilyRefusal-text": {
+  "definition": "actsFamilyRefusal",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Compose.Examples",
+  "killed": true,
+  "first_failure": "error: VE/Compose/Examples.lean:252:0: Expression"
+ },
+ "decodeNormsEnvironment-fixed": {
+  "definition": "decodeNormsEnvironment",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:50:0: Expression"
+ },
+ "decodeNormsEnvironment-profiles": {
+  "definition": "decodeNormsEnvironment",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:50:0: Expression"
+ },
+ "canonicalEnvironmentJson-act": {
+  "definition": "canonicalEnvironmentJson",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:85:0: Expression"
+ },
+ "decodeSource-acts": {
+  "definition": "decodeSource",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:75:0: Expression"
+ },
+ "decodeEnvironmentU-acts": {
+  "definition": "decodeEnvironmentU",
+  "file": "lean/VE/NormDefaults/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:94:0: Expression"
+ },
+ "decodeRegulatedAllIn-check": {
+  "definition": "decodeRegulatedAllIn",
+  "file": "lean/VE/Norms/Plain.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:81:0: Expression"
+ },
+ "plainRun-family": {
+  "definition": "Plain.run",
+  "file": "lean/VE/Norms/Plain.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:111:0: Expression"
+ },
+ "plainRun-view": {
+  "definition": "Plain.run",
+  "file": "lean/VE/Norms/Plain.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:110:0: Expression"
+ },
+ "baseEnvironmentJson-view": {
+  "definition": "baseEnvironmentJson",
+  "file": "lean/VE/Norms/Replay.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:80:0: Expression"
+ },
+ "treeCheck-plain-act": {
+  "definition": "Tree.check",
+  "file": "lean/VE/Norms/Tree.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/NormDefaults/Check.lean:150:0: Not a definitional equality: the left-hand side"
+ },
+ "validatedComposed-gate": {
+  "definition": "validatedComposedEnvironment",
+  "file": "lean/VE/Service/Standalone.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:98:0: Expression"
+ },
+ "validatedComposed-checkRegulated": {
+  "definition": "validatedComposedEnvironment",
+  "file": "lean/VE/Service/Standalone.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:94:0: Expression"
+ },
+ "folView-gate": {
+  "definition": "folView",
+  "file": "lean/VE/Service/FamilyNorms.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:102:0: Expression"
+ },
+ "modalForm-plain": {
+  "definition": "modalForm",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:124:0: Expression"
+ },
+ "modalForm-not-modal": {
+  "definition": "modalForm",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:124:0: Expression"
+ },
+ "envDecode-fixed": {
+  "definition": "Env.decode",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:124:0: Expression"
+ },
+ "typingView-acts": {
+  "definition": "typingView",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": false,
+  "first_failure": ""
+ },
+ "actsRefuses-speech": {
+  "definition": "actsRefuses",
+  "file": "lean/VE/Compose/Dispatch.lean",
+  "test": "VE.Compose.Examples",
+  "killed": true,
+  "first_failure": "error: VE/Compose/Dispatch.lean:1118:9: Tactic `rcases` failed: `right✝ : \"ve.discourse@1\" ∈ ps → False` is not an inductive datatype"
+ }
+}
