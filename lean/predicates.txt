@@ -83,7 +83,11 @@ module ResponseShape
 module SensesMain
 module Serve
 module SpeechActsMain
+module VE.Acts.Compat
 module VE.Acts.GrammarExamples
+module VE.Acts.Lexical
+module VE.Acts.LexicalBase
+module VE.Acts.LexicalExamples
 module VE.Acts.Read
 module VE.Acts.Syntax
 module VE.Alternatives.Admission
@@ -170,6 +174,7 @@ module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Dispatch
 module VE.Compose.Examples
+module VE.Compose.ProfilesMain
 module VE.Compose.Slot
 module VE.Consequence
 module VE.Core.Bridge
@@ -302,6 +307,7 @@ module VE.NormDefaults.LayeredAdmission
 module VE.NormDefaults.LayeredEntail
 module VE.NormDefaults.Packs
 module VE.NormDefaults.PacksExamples
+module VE.NormDefaults.PacksLabels
 module VE.NormDefaults.PacksLegacy
 module VE.NormDefaults.PacksLegacyExamples
 module VE.NormDefaults.Premises
@@ -492,12 +498,15 @@ module VE.Route.Steps
 module VE.Route.Typed
 module VE.Route.Wire
 module VE.Route.WireSound
+module VE.Scales.Degrees
 module VE.Scales.Examples
 module VE.Scales.Intended
 module VE.Scales.Premises
 module VE.Scales.Syntax
 module VE.Scales.Theorems
+module VE.Scope.Effects
 module VE.Scope.Examples
+module VE.Scope.Theorems
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
 module VE.SearchBudget.Examples
@@ -701,6 +710,7 @@ VE.Compose.ChainList@VE.Compose.Dispatch
 VE.Compose.ConflictFreeP@VE.Compose.Slot
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
+VE.Compose.TableAdmits@VE.Compose.Dispatch
 VE.Compose.TodayList@VE.Compose.Dispatch
 VE.Core.ClosedAt@VE.Core.Paths
 VE.Core.Edge.Typed@VE.Core.Substitution
@@ -1154,7 +1164,11 @@ VE.Route.closureValid@VE.Route.Checker
 VE.Route.coreValid@VE.Core.Route
 VE.Route.folValid@VE.Route.Checker
 VE.Route.orderValid@VE.Route.Checker
+VE.Scales.Fresh@VE.Scales.Intended
 VE.Scales.Intended@VE.Scales.Intended
+VE.Scales.StrictLinear@VE.Scales.Degrees
+VE.Scales.asMuch@VE.Scales.Degrees
+VE.Scales.below@VE.Scales.Degrees
 VE.Senses.CandidateGood@VE.Senses.Read
 VE.Senses.UnitGood@VE.Senses.Read
 VE.Senses.glossed_negative@VE.Senses.Dictionary
