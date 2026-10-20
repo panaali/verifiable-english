@@ -5511,7 +5511,8 @@
         "VE.Norms.Wire.regenerated",
         "VE.Norms.Wire.actsFixed",
         "VE.Norms.Wire.actsProfiles",
-        "VE.Norms.Wire.actsView"
+        "VE.Norms.Wire.actsView",
+        "VE.Norms.Wire.readsActs"
       ],
       "D[I]": [
         "VE.Norms.Wire.appendPredicates",
@@ -13734,7 +13735,9 @@
         "VE.Service.ActsExamples.rule",
         "VE.Service.ActsExamples.seek",
         "VE.Service.ActsExamples.plainRun",
-        "VE.Service.ActsExamples.wordings"
+        "VE.Service.ActsExamples.wordings",
+        "VE.Service.ActsExamples.unsorted",
+        "VE.Service.ActsExamples.sortedRefusal"
       ]
     },
     "VE/Events/Conservative.lean": {

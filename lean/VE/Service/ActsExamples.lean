@@ -69,9 +69,23 @@ def seek : List (String × Json) := [("p", pred ["person"] (perm "{0} seek asylu
   "InvalidInput: fixed phrase 'the court that is competent' uses the clause word 'is'"
 #guard err (decodeA (env actsP [] (some (block ["the court that is competent"])))) ==
   "InvalidInput: fixed phrase 'the court that is competent' uses the clause word 'is'"
--- without `acts@0` the block is refused by today's vocabulary decoder
+-- without `acts@0` the block is refused by today's vocabulary decoder, a block it would refuse too (unread)
 #guard err (decodeA (env ["norms@0", "relational-fol@0"] seek (some (block [])))) ==
   "fields do not match: expected [sorts, predicates, constants], got [acts, constants, predicates, sorts]"
+#guard err (decodeA (env ["norms@0", "relational-fol@0"] seek (some (block ["the court that is competent"])))) ==
+  "fields do not match: expected [sorts, predicates, constants], got [acts, constants, predicates, sorts]"
+-- a list with `acts@0` that is not sorted and unique is refused as the base refuses it, on every reader
+def unsorted : List (List String) := [["norms@0", "acts@0", "relational-fol@0"],
+  ["acts@0", "acts@0", "norms@0", "relational-fol@0"], ["relational-fol@0", "acts@0", "norms@0"]]
+def sortedRefusal := "UnsupportedProfile: profiles must be sorted and unique"
+#guard unsorted.all fun ps => (VE.Norms.Wire.actsProfiles true (envA ps)).isEmpty
+#guard unsorted.all fun ps => err (decodeA (envA ps)) == sortedRefusal
+#guard unsorted.all fun ps => err (VE.Norms.Wire.decodeSource (envA ps) (Json.arr #[rule "heard"])) == sortedRefusal
+#guard err (VE.NormDefaults.Wire.decodeSourceU (envA ["norm-defaults@0", "norms@0", "acts@0", "relational-fol@0"])
+  (Json.arr #[rule "heard"])) == sortedRefusal
+-- the replay's base environment keeps `acts@0`, even where setting `norms@0` aside leaves a sorted list
+#guard unsorted.map (fun ps => err (VE.Norms.Replay.baseEnvironmentJson (envA ps) >>= VE.Route.Gate.decodeEnvelope)) ==
+  ["UnsupportedProfile: Unsupported profile acts@0", sortedRefusal, sortedRefusal]
 -- the norms route (`decodeSource`) checks a rule on a plain predicate with an act (`Tree.check` admits it)
 #guard err (VE.Norms.Wire.decodeSource envA (Json.arr #[rule "heard"])) == "ok"
 
@@ -82,6 +96,9 @@ def seek : List (String × Json) := [("p", pred ["person"] (perm "{0} seek asylu
 -- the typing view reads the environment without `acts@0` and its block
 #guard (typingView envA).toOption.map (fun j => (j.getObjValD "profiles",
   ((j.getObjValD "vocabulary").getObjVal? "acts").toOption.isSome)) == some (toJson ["norms@0", "relational-fol@0"], false)
+-- an unsorted list is left as it is listed, for the envelope decoder to refuse
+#guard unsorted.all fun ps =>
+  (typingView (env ps seek (some (block fxs)))).toOption.map (·.getObjValD "profiles") == some (toJson ps)
 
 /-! ### 3.3: the identity's canonical act is `canonicalActIn`'s (A19's apostrophe folded) -/
 
@@ -116,6 +133,16 @@ def plainRun (j : Json) : String :=
 #guard plainRun (envA ["acts@0", "norms@0", "order@0", "relational-fol@0"]) ==
   "UnsupportedProfile: acts@0 on the order family is not implemented"
 #guard plainRun (envA ["norms@0", "relational-fol@0"]) == "InvalidInput: invalid regulated fields for heard"
+#guard unsorted.all fun ps => plainRun (envA ps) == sortedRefusal
+-- the submitted list is gated before the statement layers are set aside: the row's text, the whole list sorted
+#guard plainRun (envA ["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"]) ==
+  "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+#guard plainRun (envA ["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"]) ==
+  "UnsupportedProfile: acts@0 with speech-acts@0 is not implemented"
+#guard plainRun (envA ["acts@0", "soft-norms@0", "norms@0", "relational-fol@0"]) == sortedRefusal
+-- without `acts@0` the block is not read: today's vocabulary decoder refuses it, whatever its phrases
+#guard plainRun (env ["norms@0", "relational-fol@0"] seek (some (block ["the court that is competent"]))) ==
+  "fields do not match: expected [sorts, predicates, constants], got [acts, constants, predicates, sorts]"
 
 /-! ### 2.1: Lean's English selects `Lexical.wording` for a plain act, over a declared wording, and keeps it
 not modal; a permission keeps its modal form -/

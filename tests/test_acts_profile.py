@@ -92,6 +92,9 @@ def test_a_joined_act_is_refused_with_leans_text(act, fixed, word):
 ], ids=["soft-norms", "closure", "no-norms"])
 def test_the_rows_refusals_come_first(profiles, text):
     assert refusal(environment(profiles)) == f"UnsupportedProfile: {text}"
+    # the plain route gates the submitted list too, before it sets the statement layers aside (ap-1b review C1)
+    [row] = lean_routes.rows("norms", [{"id": "b", "kind": "background", "environment": environment(profiles)}])
+    assert row.get("error") == f"UnsupportedProfile: {text}", row
 
 
 def test_without_acts_the_block_and_a_plain_act_are_refused_as_today():
@@ -132,3 +135,34 @@ def test_an_act_python_stores_differently_is_unavailable_never_answered():
                                                         "act": "{0} comply with the operator’s instructions in {1}"}))
     with pytest.raises(CheckerUnavailable, match="identities differ"):
         Environment(data)
+
+
+UNSORTED = [["norms@0", "acts@0", "relational-fol@0"], ["acts@0", "acts@0", "norms@0", "relational-fol@0"],
+            ["relational-fol@0", "acts@0", "norms@0"], ["acts@0", "soft-norms@0", "norms@0", "relational-fol@0"]]
+
+
+@pytest.mark.parametrize("profiles", UNSORTED, ids=["out-of-order", "twice", "reversed", "layer-out-of-order"])
+def test_an_acts_list_that_is_not_sorted_and_unique_is_refused_as_the_base_refuses_it(profiles):
+    """ap-1b review F1: `acts@0` is read only from a sorted unique list, so every route refuses the others with the
+    base's text, before any other fault (the norms modes, norm-defaults and the environment mode)."""
+    from tests.test_norms import rule
+    sorted_refusal = "UnsupportedProfile: profiles must be sorted and unique"
+    data = environment(profiles)
+    norms = [rule("m", "heard", True).to_dict()]
+    for route, case in [("norms", {"kind": "background"}), ("norms", {"kind": "norms-elaborate", "norms": norms}),
+                        ("norm-defaults", {"kind": "norms-elaborate", "norms": norms})]:
+        [row] = lean_routes.rows(route, [{"id": "b", "environment": data, **case}])
+        assert row.get("status") == "error" and row["error"] == sorted_refusal, (route, case["kind"], row)
+    assert refusal(data) == sorted_refusal
+
+
+def test_without_acts_an_invalid_block_is_not_read():
+    """ap-1b review F2: without `acts@0` the block's phrases are not checked; the vocabulary decoder refuses the
+    block as a field, whatever it holds."""
+    data = environment(["norms@0", "relational-fol@0"])
+    del data["vocabulary"]["predicates"]["heard"], data["vocabulary"]["predicates"]["paid"]
+    data["vocabulary"]["predicates"]["protected"]["regulated"]["act"] = "{0} be protected in {1}"
+    data["vocabulary"]["acts"] = {"fixed": ["the court that is competent"]}
+    assert "fields do not match" in refusal(data)
+    [row] = lean_routes.rows("norms", [{"id": "b", "kind": "background", "environment": data}])
+    assert "fields do not match" in row.get("error", ""), row

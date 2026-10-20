@@ -119,19 +119,25 @@ def actsFixed (ps : List String) (environment : Json) : Except String (List Stri
 /-- `acts@0`'s refusal on the checker family `f` (act-phrases 4.4), which the profile row and the plain route read. -/
 def actsFamilyRefusal (f : String) : String := s!"acts@0 on the {f} family is not implemented"
 
-/-- The profiles of an environment that lists `acts@0`, when `acts` lets the decoder read it; else none. -/
+/-- Whether `acts@0` is read from the profiles `ps`: they list it and are sorted and unique. Any other list keeps
+`acts@0`, and the envelope decoder refuses the list as the base refuses it. -/
+def readsActs (ps : List String) : Bool := ps.contains "acts@0" && decide (ps.Pairwise (· < ·))
+
+/-- The profiles of an environment from which `acts@0` is read (`readsActs`), when `acts` lets the decoder read
+it; else none. -/
 def actsProfiles (acts : Bool) (environment : Json) : List String :=
   match acts, VE.Route.Gate.profilesOf environment with
-  | true, .ok ps => if ps.contains "acts@0" then ps else []
+  | true, .ok ps => if readsActs ps then ps else []
   | _, _ => []
 
 /-- What the frozen envelope and vocabulary decoders read of an `acts@0` environment: the environment without
-`acts@0` in `ps` and without the `acts` block. -/
+`acts@0` in `ps` and without the `acts` block, when `acts@0` is read from `ps`; else the environment as it is. -/
 def actsView (environment : Json) (ps : List String) : Json :=
   let vocab := match environment.getObjValD "vocabulary" with
     | .obj kvs => Json.obj (kvs.erase "acts")
     | v => v
-  (environment.setObjVal! "profiles" (toJson (ps.erase "acts@0"))).setObjVal! "vocabulary" vocab
+  if readsActs ps then (environment.setObjVal! "profiles" (toJson (ps.erase "acts@0"))).setObjVal! "vocabulary" vocab
+  else environment
 
 /-- Separate `regulated` from each predicate entry, decode the rest with the
 frozen P0 decoder, then decode and retain every `regulated` extension. With
