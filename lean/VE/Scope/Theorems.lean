@@ -1,6 +1,8 @@
-import VE.Scope.Effects
+import VE.Scope.Govern
+import VE.NormDefaults.Check
+import VE.Readings.Strings
 
-/-! Theorems of scope@0's effects (docs/spec/scope.md 5.1). -/
+/-! Theorems of scope@0's effects and of `govern` (docs/spec/scope.md 5.1). -/
 
 namespace VE.Scope
 open Lean
@@ -282,5 +284,140 @@ theorem lookups_fields (j : Json) (hw : ∀ kvs, j = .obj kvs → kvs.WF) : look
       simp [heq]
     simp only [lookups, VE.Bridge.fields, Json.getObj?, bind, Except.bind, pure, Except.pure, hfm, firstKeys_self _ hd]
   | _ => simp [lookups, VE.Bridge.fields, Json.getObj?, bind, Except.bind]
+
+/-! ## `govern` (sc-1ac): the block's admission, the reaches and the refusals -/
+
+section Govern
+open VE.SoftNorms (SoftNode)
+open VE.NormDefaults (ebind_ok forIn_unit_ok)
+
+/-- The item's rule is the chain's own decoding of the joined object: scope decodes no rule field itself. -/
+theorem itemRule_decoder (D : SDoc) (u : String) (lead item : Json) (N : SoftNode)
+    (h : itemRule D u lead item = .ok N) :
+    ∃ m, mergeParts u lead item = .ok m ∧ VE.Readings.Wire.decodeNorm D.re m = .ok N :=
+  (ebind_ok _ _ _).mp h
+
+/-- The block is admitted before anything else, with or without governors. -/
+theorem govern_admits (D : SDoc) (out : Json) (ho : govern D = .ok out) : admitBlock D = .ok () := by
+  unfold govern at ho
+  cases h : admitBlock D with
+  | error e => rw [h] at ho; cases ho
+  | ok u => rfl
+
+/-- Identity: without governors, an admitted block leaves the document exactly as written. -/
+theorem govern_identity (D : SDoc) (h₀ : admitBlock D = .ok ()) (h : D.governors = []) (hp : partUnits D = []) :
+    govern D = .ok D.doc := by
+  simp [govern, h₀, h, hp, bind, Except.bind, pure, Except.pure]
+
+/-- Without governors, once the block is admitted, a `part` content is refused. -/
+theorem govern_orphan (D : SDoc) (h₀ : admitBlock D = .ok ()) (h : D.governors = []) (u : String)
+    (hu : u ∈ partUnits D) : ∃ e, govern D = .error e ∧ e.startsWith "ScopeOrphanPart" = true := by
+  cases hp : partUnits D with
+  | nil => rw [hp] at hu; cases hu
+  | cons v _ =>
+    refine ⟨"ScopeOrphanPart: " ++ v, ?_, ?_⟩
+    · simp [govern, h₀, h, hp, bind, Except.bind, throw, throwThe, MonadExceptOf.throw]; rfl
+    · have := VE.Readings.startsWith_append_ascii "ScopeOrphanPart" (": " ++ v) (by decide)
+      rwa [← String.append_assoc] at this
+
+theorem coversU_iff (D : SDoc) (g : Governor) (u : String) :
+    coversU D g u = true ↔ ∃ us, covered D g.reach = .ok us ∧ u ∈ us := by
+  unfold coversU
+  cases covered D g.reach <;> simp [Except.toOption]
+
+theorem governorsOf_iff (D : SDoc) (u : String) (g : Governor) :
+    g ∈ governorsOf D u ↔ g ∈ D.governors ∧ unary g.effect = true ∧ ∃ us, covered D g.reach = .ok us ∧ u ∈ us := by
+  simp [governorsOf, ordered, List.mem_mergeSort, coversU_iff]
+
+/-- What an admitted block says of each governor (step 8): no graph effect over a frontier reach, and its reach
+    exists, holds no unit of a reading set (nor does its own unit), and, for a content-changing effect, holds only
+    units that are unwritten, parts or norms. -/
+theorem admit_governor (D : SDoc) (h : admitBlock D = .ok ()) (g : Governor) (hg : g ∈ D.governors) :
+    ¬ (g.reach = .frontier ∧ graph g.effect = true) ∧
+    ∃ us, covered D g.reach = .ok us ∧ (∀ u ∈ g.unit :: us, (setUnits D.doc).contains u = false) ∧
+      ((isFrame g.effect || unary g.effect) = true → ∀ u ∈ us,
+        ((contentOf D.doc u).isNull || isPart (contentOf D.doc u) || isNorm (contentOf D.doc u)) = true) := by
+  unfold admitBlock at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  repeat (split at h; · cases h)
+  rename_i h8
+  have hb := (forIn_unit_ok _ ?_ D.governors).mp h8 g hg
+  · clear h8 h
+    simp only at hb
+    split at hb
+    · cases hb
+    revert hb
+    cases g.effect <;> cases g.reach <;> intro hb <;> simp only at hb
+    all_goals (try (cases hb; done))
+    all_goals (try (split at hb; case isFalse => cases hb))
+    all_goals refine ⟨by simp [graph], ?_⟩
+    all_goals (split at hb; · cases hb)
+    all_goals rename_i us hcov
+    all_goals (split at hb; case isFalse => cases hb)
+    all_goals (split at hb; · cases hb)
+    all_goals rename_i hrs
+    all_goals refine ⟨us, hcov, fun u hu => ?_, fun hfu u hu => ?_⟩
+    all_goals first
+      | (have hx := (forIn_unit_ok _ ?_ _).mp hrs u hu
+         · simp only at hx
+           split at hx
+           · cases hx
+           · rename_i hnc; simpa using hnc
+         · intro x r hx; split at hx
+           · cases hx
+           · injection hx with hx; exact hx.symm)
+      | (split at hb
+         · split at hb
+           · cases hb
+           rename_i hnr
+           have hx := (forIn_unit_ok _ ?_ _).mp hnr u hu
+           · simp only at hx
+             split at hx
+             · assumption
+             · cases hx
+           · intro x r hx; split at hx
+             · injection hx with hx; exact hx.symm
+             · cases hx
+         · exact absurd hfu ‹_›)
+  · intro x r hx
+    repeat' split at hx
+    all_goals (try (cases hx; done))
+    all_goals (try (injection hx with hx; exact hx.symm))
+    all_goals (try rfl)
+
+theorem govern_refused (D : SDoc) (hn : admitBlock D ≠ .ok ()) : (govern D).isOk = false := by
+  cases ho : govern D with
+  | error => rfl
+  | ok out => exact absurd (govern_admits D out ho) hn
+
+/-- A frontier reach carries a unary effect only (until SC-5's addendum): a graph governor on it is refused. -/
+theorem frontier_graph_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (hf : g.reach = .frontier)
+    (he : graph g.effect = true) : (govern D).isOk = false :=
+  govern_refused D fun h => (admit_governor D h g hg).1 ⟨hf, he⟩
+
+/-- A governor or a governed unit that a reading set owns is refused. -/
+theorem readings_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (us : List String)
+    (hc : covered D g.reach = .ok us) (u : String) (hu : u = g.unit ∨ u ∈ us) (hs : u ∈ setUnits D.doc) :
+    (govern D).isOk = false := by
+  refine govern_refused D fun h => ?_
+  obtain ⟨vs, hv, hr, _⟩ := (admit_governor D h g hg).2
+  rw [hc] at hv; cases hv
+  have := hr u (by rcases hu with rfl | hu <;> simp_all)
+  simp_all
+
+/-- A content-changing governor never covers a unit whose content it cannot change: such a unit is refused, never
+    skipped (an unwritten unit, `null`, stays pending and makes the governor UNFORMALISED). -/
+theorem nonrule_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (he : isFrame g.effect || unary g.effect)
+    (us : List String) (hc : covered D g.reach = .ok us) (u : String) (hu : u ∈ us)
+    (hn : contentOf D.doc u ≠ .null) (hr : isPart (contentOf D.doc u) = false) (hm : isNorm (contentOf D.doc u) = false) :
+    (govern D).isOk = false := by
+  refine govern_refused D fun h => ?_
+  obtain ⟨vs, hv, _, hnr⟩ := (admit_governor D h g hg).2
+  rw [hc] at hv; cases hv
+  have := hnr he u hu
+  generalize contentOf D.doc u = c at this hn hr hm
+  cases c <;> simp_all [Json.isNull]
+
+end Govern
 
 end VE.Scope
