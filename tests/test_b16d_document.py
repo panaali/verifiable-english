@@ -11,6 +11,7 @@ import pytest
 
 from tests.subprocesses import HANG_TIMEOUT
 from ve import document as D
+from ve.document import load as D_load  # `_load` looks `_load_document` up here (AR-16a)
 from ve.backends import relay
 from ve.backends.service_schema import Context, Invalid, ROWS
 from ve.errors import CheckerUnavailable, InvalidModel
@@ -83,7 +84,7 @@ def test_norm_defaults_readings_and_english_fence_are_decided_by_lean(monkeypatc
     raw = SEED.read_bytes()
     expected = D._report(D._load_document(raw, SEED, None))
     assert D._lean_answer(raw, True) is not None
-    monkeypatch.setattr(D, "_load_document", lambda *_: pytest.fail("retained document loader ran"))
+    monkeypatch.setattr(D_load, "_load_document", lambda *_: pytest.fail("retained document loader ran"))
     assert D.check_document(SEED) == expected
 
 
@@ -120,7 +121,7 @@ def test_labeled_pending_pilot_is_lean_decided(tmp_path, monkeypatch, pilot_rows
     path.write_bytes(raw)
     expected = D._report(D._load_document(raw, path, None))
     assert D._lean_answer(raw, True) is not None
-    monkeypatch.setattr(D, "_load_document", lambda *_: pytest.fail("retained loader ran"))
+    monkeypatch.setattr(D_load, "_load_document", lambda *_: pytest.fail("retained loader ran"))
     assert D.check_document(path) == expected
 
 
