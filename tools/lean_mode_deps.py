@@ -15,7 +15,7 @@ import subprocess
 from layer_policy import ROOT
 
 OUTPUT = ROOT / "tools/lean-mode-deps.json"
-SOURCES = ("tools/lean_mode_deps.lean", "lean/VE/Service/Protocol.lean")
+SOURCES = ("tools/lean_mode_deps.lean", "lean/VE/Service/Protocol.lean", "lean/VE/Service/Registry.lean")
 
 
 def digests() -> dict[str, str]:

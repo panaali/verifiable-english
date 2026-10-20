@@ -5464,9 +5464,12 @@
 'VE.Service.expand_hit' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.expand_miss' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.expand_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.modes_complete' depends on axioms: [propext]
 'VE.Service.registerOne_digest' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.registerOne_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.register_none' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.registry_modes' does not depend on any axioms
+'VE.Service.registry_names_nodup' does not depend on any axioms
 'VE.Service.rejectionCode_mem' depends on axioms: [propext]
 'VE.Service.respond_decoded' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.results_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
