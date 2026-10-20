@@ -957,6 +957,13 @@
    "reason": "ap-1a: VE/Acts/Lexical.lean +138 (S 28: Tok, joinWords, clauseWords moved from VE/Acts/Syntax.lean -9, and the limits, fixedOk, Form, Form.text, wording; D[V] 110: fold, normal, dropComma, slotOf?, pieceToks, rawLex, phraseToks, clash, decodeFixed, group, lex, check, Form.ofText?), VE/Acts/LexicalBase.lean +48 (D[V], moved verbatim from VE/Norms/Wire.lean), VE/Norms/Wire.lean -27 (-48 moved, +21 canonicalActIn, decodeRegulatedWith, decodeRegulatedIn): S +19, V +131, K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1a, 2026-10-18",
    "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "qt-b1b: S +9 (VE/Scales/Degrees.lean +6 StrictLinear, VE/Scales/Intended.lean +3 Fresh)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1b, 2026-10-18",
+   "commit": "b1f7ca7adc2b39a17238457736870fb15df03928"
   }
  ]
 }
