@@ -531,8 +531,8 @@ def test_a_unit_recorded_failing_or_opaque_is_unknown_with_its_status(tmp_path):
 
 
 # The service's request loop, batch budgets, handles and case splitting: one case per request cannot show them.
-@pytest.mark.parametrize("path", ["lean/VE/Service/Protocol.lean", "lean/Serve.lean", "lean/VE/Json.lean",
-                                  "lean/lakefile.toml"])
+@pytest.mark.parametrize("path", ["lean/VE/Service/Protocol.lean", "lean/VE/Service/Registry.lean", "lean/Serve.lean",
+                                  "lean/VE/Json.lean", "lean/lakefile.toml"])
 def test_request_handling_and_project_changes_select_every_service_user(tmp_path, monkeypatch, path):
     monkeypatch.setattr(select_tests, "lean_programs", lambda graph, path: {"ve_service"})
     assert answers_selection(tmp_path, path) == set(USERS) - {"metered", "other"}

@@ -6,9 +6,9 @@ commit's id in `docs/architecture/numbers.json`. The tables between the `<!-- nu
 `<!-- /numbers:NAME -->` markers of the map are rendered from that file and nothing else.
 
 Every number comes from a file or a parser, never from a regular expression over source text: line counts are
-newline counts of the committed blobs, the service's modes are the `MODES` tuple of
-`ve/backends/service_schema.py` read with Python's `ast`, the Lean executables and Rust crates come from
-`lean/lakefile.toml` and `rust/Cargo.toml` read with `tomllib`, the trust classes are `tools/trust_map.py`'s
+newline counts of the committed blobs, the service's modes are the handshake's list (`handshake.modes` of
+`ve/backends/lean_service_schema/envelope.json`, rendered from `VE.Service.registry`), the Lean executables and
+Rust crates come from `lean/lakefile.toml` and `rust/Cargo.toml` read with `tomllib`, the trust classes are `tools/trust_map.py`'s
 measurement of the commit, and the budget, decoder total, layer exceptions and collected test IDs are read from
 their JSON files.
 
@@ -21,7 +21,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import ast
 from fnmatch import fnmatchcase
 import json
 from pathlib import Path
@@ -74,17 +73,11 @@ def lines(data: bytes) -> int:
 
 
 def modes(source: bytes) -> list[str]:
-    """The literal `MODES` tuple of the client's schema module, read with Python's parser."""
-    for node in ast.parse(source).body:
-        if isinstance(node, ast.Assign) and [getattr(t, "id", None) for t in node.targets] == ["MODES"]:
-            try:
-                value = ast.literal_eval(node.value)
-            except ValueError:
-                break
-            if isinstance(value, tuple) and value and all(isinstance(m, str) for m in value):
-                return list(value)
-            break
-    raise ValueError("ve/backends/service_schema.py has no literal MODES tuple")
+    """The service's modes: the exact list the handshake schema pins (`handshake.modes.const`)."""
+    value = json.loads(source).get("handshake", {}).get("properties", {}).get("modes", {}).get("const")
+    if isinstance(value, list) and value and all(isinstance(m, str) for m in value):
+        return value
+    raise ValueError("ve/backends/lean_service_schema/envelope.json pins no handshake mode list")
 
 
 def measure(read, sizes: dict[str, int], trust_totals: dict[str, int]) -> dict:
@@ -121,7 +114,7 @@ def measure(read, sizes: dict[str, int], trust_totals: dict[str, int]) -> dict:
         "mib": {name: round(sum(s for p, s in sizes.items() if p.startswith(prefix)) / MIB)
                 for name, prefix in BYTE_PREFIXES.items()},
         "counts": {
-            "service_modes": len(modes(read("ve/backends/service_schema.py"))),
+            "service_modes": len(modes(read("ve/backends/lean_service_schema/envelope.json"))),
             "lean_executables": len(tomllib.loads(read("lean/lakefile.toml").decode())["lean_exe"]),
             "runtime_dependencies": len(tomllib.loads(read("pyproject.toml").decode())["project"]["dependencies"]),
             "python_layer_exceptions": len(load("tools/layer-exceptions.json")),
