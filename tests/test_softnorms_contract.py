@@ -319,7 +319,7 @@ def _diagnostic_import_boundary(overrides=None):
 def test_diagnostic_modules_stay_off_verdict_import_paths():
     _diagnostic_import_boundary()
     root = DIRECTORY.parent
-    document = root / "document.py"
+    document = root / "document" / "load.py"  # AR-16a: the document loader is a module of the package `ve.document`
     route = root / "soft_route.py"
     with pytest.raises(AssertionError):
         _diagnostic_import_boundary({document: document.read_text() +
