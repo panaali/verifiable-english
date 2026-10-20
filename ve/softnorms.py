@@ -234,6 +234,11 @@ def _decision_key(raw):
     raise ValueError(f"undecodable decision key {raw!r}")
 
 
+def rule_key(name):
+    """`VE.SoftNorms.ruleKey`: a rule name as its decision predicates spell it, each `-` a `_`."""
+    return name.replace('-', '_')
+
+
 def _act_key(predicate, predicates):
     regulated = predicates[predicate].get('regulated', {})
     return regulated.get('permission', predicate) if regulated.get('role') == 'obligation' else predicate
@@ -374,10 +379,10 @@ def bind_soft_elaboration(row, norms, predicates, *, rights_rules=(), soft=None,
             if key not in expected or key in found or decision['name'] in names:
                 raise ValueError('unbound or duplicate decision')
             if key[0] == 'excepted':
-                expected_name = 'soft__excepted__' + key[1].replace('-', '_')
+                expected_name = 'soft__excepted__' + rule_key(key[1])
                 predicate = rules[key[1]]['predicate']
             elif key[0] == 'off':
-                expected_name = 'soft__off__' + key[1].replace('-', '_') + '__' + key[2]
+                expected_name = 'soft__off__' + rule_key(key[1]) + '__' + key[2]
                 predicate = rules[key[1]]['predicate']
             else:
                 expected_name = 'soft__outweighs__' + key[2] + '__' + key[3] + '__' + key[1]

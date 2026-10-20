@@ -2,9 +2,8 @@
 
 from dataclasses import dataclass
 
-from ve.readings_sup import (bits_of, choice_atom, choice_contents, choice_core, choice_vocabulary,
-                             choices, copies, pattern, sup_ready, superposed_contents,
-                             uniform_precedence, unsatisfiable_ids)
+from ve.readings_sup import (bits_of, choice_atom, choice_contents, choice_core, choice_vocabulary, copies, pattern,
+                             superposed_contents)
 from ve.readings_s1 import Candidate as S1Candidate, Content, Document, ReadingSet
 import pytest
 
@@ -48,31 +47,17 @@ def test_binary_patterns_and_unused_code_match_m7():
 
 
 def test_coupling_narrowing_and_stale_narrowing_match_m6_m17():
+    # The compatible choices and the unsatisfiable text are Lean's (`choices`, `unsatText`): the M6, M17d, MU and
+    # 65-choice `#guard`s of lean/VE/Readings/Examples.lean.
     sets = [_set("rs1"), _set("rs2")]
     coupling = {"id": "c1", "axis": "force", "sets": [
         {"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}]}
-    assert choices(sets, [coupling]) == ([{"rs1": 0, "rs2": 0}, {"rs1": 1, "rs2": 1}], False)
     narrowing = {"id": "n1", "set": "rs1", "version": 1, "keeps": ["rs1-0"]}
-    assert choices(sets, [coupling], [narrowing]) == ([{"rs1": 0, "rs2": 0}], False)
     core = choice_core(sets, [coupling], [narrowing])
     assert [label for label, _ in core] == ["coupling:c1", "narrowing:n1"]
     assert core[-1][1] == ["not", ["unary", "ve__bit__1__0", ["const", "ve__here"]]]
     stale = {**narrowing, "version": 2}
-    assert choices(sets, [coupling], [stale]) == choices(sets, [coupling])
     assert choice_core(sets, [coupling], [stale]) == choice_core(sets, [coupling])
-    assert unsatisfiable_ids(sets, [coupling], [stale]) == "c1"
-
-
-def test_unsatisfiable_and_65_choice_boundary():
-    sets = [_set("rs1"), _set("rs2")]
-    drops = [{"id": "n1", "set": "rs1", "version": 1, "keeps": ["rs1-0"]},
-             {"id": "n2", "set": "rs1", "version": 1, "keeps": ["rs1-1"]}]
-    assert choices(sets, narrowings=drops) == ([], False)
-    assert unsatisfiable_ids(sets, narrowings=drops) == "n1, n2"
-    many = [_set(f"rs{i}") for i in range(7)]
-    found, over = choices(many)
-    assert len(found) == 65 and over
-    assert found[0] == {f"rs{i}": 0 for i in range(7)}
 
 
 def _norm(name, *, over=(), mode="strict", sufficient=()):
@@ -97,8 +82,7 @@ def test_superposition_gates_and_qualifies_without_mutating_sources():
     second = _norm("rule-x", mode="default", sufficient=(["top"],))
     fixed = _norm("stop-x", over=("rule-x",))
     doc = _doc([first, second], [fixed])
-    assert sup_ready(doc.sets)
-    assert uniform_precedence(doc)
+    # Whether it superposes is Lean's: tests/test_readings_s2_answer.py::test_a_fixed_child_over_an_interface_rule_superposes
     assert copies(doc, "rule-x") == ["rd-1-rule-x", "rd-2-rule-x"]
     result = superposed_contents(doc)
     assert result[0].body["over"] == ["rd-1-rule-x", "rd-2-rule-x"]
@@ -110,18 +94,6 @@ def test_superposition_gates_and_qualifies_without_mutating_sources():
     assert fixed.body["over"] == ["rule-x"]
     assert second.body["name"] == "rule-x"
     assert [c.body["name"] for c in choice_contents(doc, {"rs1": 1})] == ["stop-x", "rule-x"]
-
-
-def test_uniform_precedence_catches_m8_leak_and_shape_rejects_m17():
-    fixed = _norm("stop-x", over=("waive-x",))
-    doc = _doc([_norm("waive-x"), _norm("waive-x", over=("base-x",))], [fixed])
-    assert not uniform_precedence(doc)
-    doc.sets[0].candidates[1].content = None
-    assert not sup_ready(doc.sets)
-    doc.sets[0].candidates[1].content = _norm("waive-x", over=("base-x",))
-    coupling = {"id": "c1", "axis": "force", "sets": [
-        {"set": "rs1", "version": 1}, {"set": "rs2", "version": 1}]}
-    assert not sup_ready(doc.sets, [coupling])
 
 
 SLOTS = Slots(numbers={"1", "2", "3"}, readings={"*must*", "*should*", "reading 1", "reading 2"},
