@@ -432,4 +432,23 @@ theorem xWithout_sub (qs : List Pack) (drop : List String) : ∀ a ∈ xWithout 
   obtain ⟨b, ⟨hb, _⟩, rfl⟩ := ha
   exact List.mem_map.mpr ⟨b, hb, rfl⟩
 
+/-! ## 2.10 The kind table -/
+
+/-- 2.10: one row of a kind table over sources `α` (`LayeredU` in `Layered.lean`; generic so that it sits below it). -/
+structure KindRow (α : Type) where
+  kind : String
+  pack : Option String
+  run : α → String → Json → Except String Json
+
+/-- 2.10: the row for `kind`, refused when the pack it needs is absent. -/
+def dispatch {α : Type} (rows : List (KindRow α)) (ids : List String) (L : α) (id kind : String) (j : Json) :
+    Except String (Option Json) :=
+  match rows.find? (·.kind == kind) with
+  | none => pure none
+  | some r =>
+    match r.pack with
+    | some i => if ids.contains i then some <$> r.run L id j
+      else throw s!"UnsupportedProfile: case kind {kind} needs the {i} premise pack"
+    | none => some <$> r.run L id j
+
 end VE.NormDefaults.Packs
