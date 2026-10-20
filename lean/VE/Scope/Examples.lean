@@ -683,6 +683,7 @@ theorem short_govern (re : VE.Readings.Wire.ReadingsEnvironment) :
     composed (short [gt] re) "a" = .ok (led shortPart) ∧ affected (short [gt] re) = ["a", "b"] ∧
     affected (short [] re) = ["a"] ∧
     newContent (contentOf shortDoc "a") shortNorm = Json.mkObj [("norm", shortNorm)] ∧
+    normOf (contentOf shortDoc "b") = some shortNorm ∧ normOf (contentOf shortDoc "a") = none ∧
     newContent (contentOf shortDoc "b") shortPart = Json.mkObj [("cites", .arr #[]), ("norm", shortPart)] ∧
     newContent (Json.mkObj [("cites", .arr #[]), ("part", shortPart)]) shortNorm =
       Json.mkObj [("cites", .arr #[]), ("norm", shortNorm)] ∧
@@ -694,7 +695,7 @@ theorem short_govern (re : VE.Readings.Wire.ReadingsEnvironment) :
       Json.mkObj [("id", "b"), ("content", Json.mkObj [("cites", .arr #[]), ("norm", led shortNorm)])]])) := by
   simp only [composed, affected, govern, orderCheck, governorsOf, ruleTable, edgesInto, ordered, short,
     List.mergeSort_singleton, List.mergeSort_nil]
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 /-- The seven reaches of spec 4.2, no more. -/
 theorem reaches_seven (r : Reach) : (∃ l, r = .list l) ∨ (∃ n, r = .listName n) ∨ (∃ a, r = .anchor a) ∨
     (∃ i, r = .label i) ∨ (∃ ns, r = .rules ns) ∨ r = .frontier ∨ ∃ us, r = .fixed us := by
