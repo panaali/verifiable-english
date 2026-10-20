@@ -462,11 +462,6 @@ def same (r : Except String Json) (doc : Json) : Bool := match r with | .ok o =>
 #guard (gov (hcDoc parts) [g1]).toOption.map (fun o => (unitsOf o).map fun x =>
     (idOf x, (x.getObjValD "kind").compress, keysOf (x.getObjValD "content"))) ==
   some ((layoutOf govPieces).map fun x => (x.id, "\"rule\"", if seven.contains x.id then ["norm"] else []))
--- a written norm under no governor is unchanged; `cites` is kept when a part becomes a norm
-#guard contentStr (gov (hcDoc (parts ++ [("u0166.s01", j "{\"norm\": {\"name\": \"r\"}}")])) [g1]) "u0166.s01" ==
-  some "{\"norm\":{\"name\":\"r\"}}"
-#guard contentStr (gov (hcDoc ((without "u0165.s02" parts) ++ [("u0165.s02", j "{\"cites\": [], \"part\": {\"name\": \"c\"}}")])) [g1])
-  "u0165.s02" == some "{\"cites\":[],\"norm\":{\"name\":\"c\",\"over\":[],\"sign\":false,\"unless\":[]}}"
 
 -- F1″: an item missing `predicate`: `govern` succeeds; the chain's decoder refuses the rule with its own text
 def noPredicate : Json := j "{\"name\": \"hc-cbrn-uplift\", \"guard\": [\"unary\", \"mass_casualty_weapon_uplift\", [\"var\", 1]]}"
@@ -510,6 +505,9 @@ def fourNorms : List (String × Json) := (seven.take 4).map fun u => (u, j s!"\{
 #guard errorOf (gov (hcDoc parts) [{g1 with reach := .listName "the hard constraints"}] hcNames) == "ok"
 #guard errorOf (gov (hcDoc parts) [{g1 with reach := .fixed seven}]) == "ScopeReach: g1"
 #guard errorOf (gov (hcDoc parts) [g1, ⟨"gT", "u0164.s01", .title, .list "u0164.s02", seven⟩]) == "ScopeReach: gT"
+#guard (do govern (sdoc (hcDoc parts) [g1, {g2 with effect := carveT}] hcNames (← VE.Readings.Wire.decodeEnvironment
+  (envJ.setObjVal! "vocabulary" (j "{\"sorts\": {\"own\": {\"description\": \"own\"}}, \"predicates\": {}, \"constants\": {}}"))))) matches
+  .error "ScopeReserved: own"
 -- F-mm: the frame governor recording six of the seven units
 #guard errorOf (gov (hcDoc parts) [{g1 with units := seven.take 6}]) == "ManifestMismatch: scope.governors.g1.units"
 -- F-2f: two frame governors over the same list
@@ -545,7 +543,8 @@ def g6 : Governor := ⟨"g6", "u0173.s01", carveT, .listName "the hard constrain
 def gN : Governor := ⟨"gN", "u0164.s01", narrowK, .listName "the hard constraints", seven⟩
 def gR : Governor := ⟨"gR", "u0164.s01", .carveOut (j "[\"unary\", \"rules\", [\"var\", 1]]"), .rules ["hc-csam"], ["u0165.s07"]⟩
 #guard errorOf (gov (hcDoc parts) [g1, g2, gN] hcNames) == "ScopeOrder: u0165.s01: gN, g2"
-#guard contentStr (gov (hcDoc parts) [g1, g6, gN] hcNames) "u0165.s02" == contentStr (gov (hcDoc parts) [g1, gN, g6] hcNames) "u0165.s02"
+#guard (contentStr (gov (hcDoc parts) [g1, g6, gN] hcNames) "u0165.s02").isSome &&
+  contentStr (gov (hcDoc parts) [g1, g6, gN] hcNames) "u0165.s02" == contentStr (gov (hcDoc parts) [g1, gN, g6] hcNames) "u0165.s02"
 -- two carve-outs of one class apply by their units' positions; a `rules` reach (class 3) after a list name's
 #guard contentStr (gov (hcDoc parts) [g1, gR, g6, {g6 with id := "g7", unit := "u0164.s01", effect := .carveOut (j "[\"unary\", \"early\", [\"var\", 1]]")}] hcNames)
   "u0165.s07" == some
@@ -585,10 +584,11 @@ theorem short_access (re : VE.Readings.Wire.ReadingsEnvironment) :
     contentOf shortDoc "l" = .null ∧ contentOf shortDoc "z" = .null ∧
     keysOf (contentOf shortDoc "b") = ["cites", "norm"] ∧ isPart (contentOf shortDoc "a") = true ∧
     isPart (contentOf shortDoc "b") = false ∧ isNorm (contentOf shortDoc "b") = true ∧
-    isNorm (contentOf shortDoc "a") = false ∧ objectOf (contentOf shortDoc "a") = shortPart ∧
+    isNorm (contentOf shortDoc "a") = false ∧ isPart (Json.mkObj [("cites", .arr #[]), ("part", shortPart)]) = true ∧
+    objectOf (contentOf shortDoc "a") = shortPart ∧
     objectOf (contentOf shortDoc "b") = shortNorm ∧ partUnits (short [] re) = ["a"] ∧
     ruleUnits (short [] re) = ["a", "b"] ∧ setUnits shortDoc = ["z"] := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 theorem short_base (re : VE.Readings.Wire.ReadingsEnvironment) :
     coveredLayout (short [gt] re) (.list "l") = .ok ["a", "b"] ∧
@@ -620,6 +620,8 @@ theorem short_govern (re : VE.Readings.Wire.ReadingsEnvironment) :
     affected (short [] re) = ["a"] ∧
     newContent (contentOf shortDoc "a") shortNorm = Json.mkObj [("norm", shortNorm)] ∧
     newContent (contentOf shortDoc "b") shortPart = Json.mkObj [("cites", .arr #[]), ("norm", shortPart)] ∧
+    newContent (Json.mkObj [("cites", .arr #[]), ("part", shortPart)]) shortNorm =
+      Json.mkObj [("cites", .arr #[]), ("norm", shortNorm)] ∧
     patch (short [] re) [("b", shortPart)] = shortDoc.setObjVal! "units" (.arr #[Json.mkObj [("id", "l")],
       Json.mkObj [("id", "a"), ("content", Json.mkObj [("part", shortPart)])],
       Json.mkObj [("id", "b"), ("content", Json.mkObj [("cites", .arr #[]), ("norm", shortPart)])]]) ∧
@@ -627,7 +629,7 @@ theorem short_govern (re : VE.Readings.Wire.ReadingsEnvironment) :
       Json.mkObj [("id", "a"), ("content", Json.mkObj [("norm", led shortPart)])],
       Json.mkObj [("id", "b"), ("content", Json.mkObj [("cites", .arr #[]), ("norm", led shortNorm)])]])) := by
   simp only [composed, affected, govern, orderCheck, governorsOf, ordered, short, List.mergeSort_singleton, List.mergeSort_nil]
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 /-- The seven reaches of spec 4.2, no more. -/
 theorem reaches_seven (r : Reach) : (∃ l, r = .list l) ∨ (∃ n, r = .listName n) ∨ (∃ a, r = .anchor a) ∨
     (∃ i, r = .label i) ∨ (∃ ns, r = .rules ns) ∨ r = .frontier ∨ ∃ us, r = .fixed us := by
