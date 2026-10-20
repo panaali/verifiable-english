@@ -169,6 +169,7 @@ module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Dispatch
 module VE.Compose.Examples
+module VE.Compose.ProfilesMain
 module VE.Compose.Slot
 module VE.Consequence
 module VE.Core.Bridge
@@ -699,6 +700,7 @@ VE.Compose.ChainList@VE.Compose.Dispatch
 VE.Compose.ConflictFreeP@VE.Compose.Slot
 VE.Compose.PrefixAdmissibleP@VE.Compose.Slot
 VE.Compose.SlotWellFormed@VE.Compose.Slot
+VE.Compose.TableAdmits@VE.Compose.Dispatch
 VE.Compose.TodayList@VE.Compose.Dispatch
 VE.Core.ClosedAt@VE.Core.Paths
 VE.Core.Edge.Typed@VE.Core.Substitution
