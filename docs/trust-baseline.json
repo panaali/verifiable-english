@@ -911,17 +911,10 @@
   },
   {
    "class": "S",
-   "lines": 64,
-   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
-   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
-  },
-  {
-   "class": "V",
-   "lines": 8,
-   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
-   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+   "lines": 3,
+   "reason": "me-9: lean/VE/Calc/Poly.lean S +3 (VE.Calc.Poly.eval 3); K +0, untied V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9, 2026-10-18",
+   "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d"
   },
   {
    "class": "S",
@@ -964,6 +957,20 @@
    "reason": "qt-b1b: S +9 (VE/Scales/Degrees.lean +6 StrictLinear, VE/Scales/Intended.lean +3 Fresh)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-b1b, 2026-10-18",
    "commit": "b1f7ca7adc2b39a17238457736870fb15df03928"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
   },
   {
    "class": "S",
