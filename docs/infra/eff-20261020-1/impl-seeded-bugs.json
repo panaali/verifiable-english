@@ -1,0 +1,34 @@
+[
+  {
+    "bug": "drift cutoff ignores a differing digest",
+    "file": "tools/select_tests.py",
+    "test": "tests/test_select_tests.py::test_a_drift_digest_that_differs_makes_its_runners_uncertain",
+    "planted": "rebuilt = rebuilt_of(cutoff or None) and set()",
+    "replaces": "rebuilt = rebuilt_of(cutoff or None)",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "drift cutoff applied with one record missing",
+    "file": "tools/select_tests.py",
+    "test": "tests/test_select_tests.py::test_without_both_drift_records_the_drift_check_is_as_before",
+    "planted": "found = lean_cutoff(coverage.commit, base, sides=(\"map\", \"base\"))\n    return {**found, \"rebuilt\": found[\"rebuilt\"] or []}",
+    "replaces": "return lean_cutoff(coverage.commit, base, sides=(\"map\", \"base\"))",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "the source-reader exception dropped",
+    "file": "tools/select_tests.py",
+    "test": "tests/test_select_tests.py::test_a_drift_lean_change_built_the_same_leaves_its_runners_certain",
+    "planted": "if not (kind == LEAN and rebuilt is not None):\n        add(coverage.readers(path), f\"reads {path}\")",
+    "replaces": "add(coverage.readers(path), f\"reads {path}\")",
+    "result": "FAIL (test failed)"
+  },
+  {
+    "bug": "a partial record drops the others of its tree",
+    "file": "tools/test_map.py",
+    "test": "tests/test_select_tests.py::test_a_record_of_some_executables_keeps_the_others_of_its_tree",
+    "planted": "digests = dict(digests)",
+    "replaces": "digests = {**(load_build(tree) or {}), **digests}",
+    "result": "FAIL (test failed)"
+  }
+]
