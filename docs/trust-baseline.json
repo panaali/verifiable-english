@@ -1062,6 +1062,13 @@
    "reason": "me-9b: K +0, S +18 (lean/VE/Calc/Identity.lean +10: IsIdentity, NotIdentity; lean/VE/Calc/Inline.lean +8: freeNames, assign), V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9b, 2026-10-18",
    "commit": "6454946a5f54e1eaf15e48204c3119126ebf3a78"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "ap-1d: VE/Acts/LexicalProofs.lean S +9 (Accepts, the independent statement of spec 1.3); VE/Acts/Lexical.lean trusted -32 (check tied by check_spec, decodeFixed tied by fixedOk_unique); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1d, 2026-10-18",
+   "commit": "768a935fcd0304ab85a83f848bd9f37664664be8"
   }
  ]
 }
