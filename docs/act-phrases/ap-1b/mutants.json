@@ -18,7 +18,7 @@
   "file": "lean/VE/Norms/Wire.lean",
   "test": "VE.Service.ActsExamples",
   "killed": true,
-  "first_failure": "error: VE/Service/ActsExamples.lean:72:0: Expression"
+  "first_failure": "error: VE/Service/ActsExamples.lean:75:0: Expression"
  },
  "actsProfiles-flag": {
   "definition": "actsProfiles",
@@ -90,13 +90,6 @@
   "killed": true,
   "first_failure": "error: VE/Service/ActsExamples.lean:81:0: Expression"
  },
- "plainRun-family": {
-  "definition": "Plain.run",
-  "file": "lean/VE/Norms/Plain.lean",
-  "test": "VE.Service.ActsExamples",
-  "killed": true,
-  "first_failure": "error: VE/Service/ActsExamples.lean:111:0: Expression"
- },
  "plainRun-view": {
   "definition": "Plain.run",
   "file": "lean/VE/Norms/Plain.lean",
@@ -109,7 +102,7 @@
   "file": "lean/VE/Norms/Replay.lean",
   "test": "VE.Service.ActsExamples",
   "killed": true,
-  "first_failure": "error: VE/Service/ActsExamples.lean:80:0: Expression"
+  "first_failure": "error: VE/Service/ActsExamples.lean:104:0: Expression"
  },
  "treeCheck-plain-act": {
   "definition": "Tree.check",
@@ -236,5 +229,47 @@
   "test": "VE.Acts.LexicalExamples",
   "killed": true,
   "first_failure": "error: VE/Acts/LexicalExamples.lean:253:0: Expression"
+ },
+ "readsActs-sorted": {
+  "definition": "readsActs",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:81:0: Expression"
+ },
+ "actsView-premise": {
+  "definition": "actsView",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:109:0: Expression"
+ },
+ "baseEnvironmentJson-whole-list": {
+  "definition": "baseEnvironmentJson",
+  "file": "lean/VE/Norms/Replay.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:96:0: Expression"
+ },
+ "placeholderJson-acts-order": {
+  "definition": "placeholderJson",
+  "file": "lean/VE/NormDefaults/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:87:0: Expression"
+ },
+ "actsFixed-premise": {
+  "definition": "actsFixed",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:75:0: Expression"
+ },
+ "plainRun-gate": {
+  "definition": "Plain.run",
+  "file": "lean/VE/Norms/Plain.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:140:0: Expression"
  }
 }
