@@ -70,6 +70,9 @@ of `tests/test_calc_algebra.py` but the four heavy ones, then restored. Each fai
   binary and are unchanged), `trust_map.py --check`; `gate_collection.py --check --prebuilt`: 28 added, 0 refused,
   0 stale, 0 malformed. Full gate: left to the chain.
 
+**Size:** 582 hand-written changed lines (`git diff --numstat` against the base, the generated inventories excluded),
+this report and the seeded-bug evidence included.
+
 Shared files: `tools/trust-classes.json` (registry). No branch in flight edits `Poly.lean`, `Identity.lean`,
 `tests/test_calc_algebra.py` or `lean/CALC.md`'s identity sections.
 
