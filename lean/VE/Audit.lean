@@ -440,6 +440,9 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.contains_mem
 #print axioms VE.Acts.Lexical.decodeFixed_ok
 #print axioms VE.Acts.Lexical.endsWith_comma
+#print axioms VE.Acts.Lexical.expand_cons
+#print axioms VE.Acts.Lexical.expand_fixed
+#print axioms VE.Acts.Lexical.expand_plain
 #print axioms VE.Acts.Lexical.extract_go₁_general
 #print axioms VE.Acts.Lexical.extract_go₂_prefix
 #print axioms VE.Acts.Lexical.extract_mid
@@ -449,8 +452,19 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.forIn_ok
 #print axioms VE.Acts.Lexical.get_mem
 #print axioms VE.Acts.Lexical.get_mid
+#print axioms VE.Acts.Lexical.group_expand
+#print axioms VE.Acts.Lexical.group_maximal
+#print axioms VE.Acts.Lexical.group_range
+#print axioms VE.Acts.Lexical.group_spec
+#print axioms VE.Acts.Lexical.grouped_fixed
+#print axioms VE.Acts.Lexical.grouped_fixed_head
+#print axioms VE.Acts.Lexical.grouped_ne_nil
+#print axioms VE.Acts.Lexical.grouped_tail
+#print axioms VE.Acts.Lexical.grouped_unique
 #print axioms VE.Acts.Lexical.intercalate_data
 #print axioms VE.Acts.Lexical.isEmpty_false
+#print axioms VE.Acts.Lexical.lex_spec
+#print axioms VE.Acts.Lexical.mapM_mem
 #print axioms VE.Acts.Lexical.mapM_ok
 #print axioms VE.Acts.Lexical.mem_group
 #print axioms VE.Acts.Lexical.mem_intercalate
@@ -470,6 +484,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.out_nil
 #print axioms VE.Acts.Lexical.out_slot
 #print axioms VE.Acts.Lexical.pyWhitespace_sep
+#print axioms VE.Acts.Lexical.rawLex_plain
 #print axioms VE.Acts.Lexical.scanSlotsAux_fuel
 #print axioms VE.Acts.Lexical.splitAux_data
 #print axioms VE.Acts.Lexical.splitL_append
@@ -1307,6 +1322,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.forIn_yield_ok
 #print axioms VE.Compose.gateMatch_find
 #print axioms VE.Compose.gateOf_iff
+#print axioms VE.Compose.gate_acts
 #print axioms VE.Compose.gate_legacy
 #print axioms VE.Compose.gate_wellFormed
 #print axioms VE.Compose.ite_and3
@@ -2906,6 +2922,7 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.FlaggedSpec.nodup_fst_unique
 #print axioms VE.Norms.FlaggedSpec.nodup_of_eraseDups_length
 #print axioms VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
+#print axioms VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_in
 #print axioms VE.Norms.FlaggedSpec.norms_flagged_conflict_free
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_free
