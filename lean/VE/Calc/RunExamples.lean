@@ -313,8 +313,19 @@ def multiByteNames : List String :=
    "x" ++ String.mk (List.replicate 21 '€'),
    String.mk (List.replicate 16 '🐍')]
 
--- Ten times the largest flat limit fixture: size must use bounded stack on a wide array.
-#guard Wire.size 2 (.arr (Array.replicate 100000 Json.null)) == (100001, 1)
+-- Ten times the largest flat limit fixture: count and depth must use bounded stack on a wide array.
+#guard Wire.count 100002 [.arr (Array.replicate 100000 Json.null)] == 100001 &&
+  Wire.depth 2 (.arr (Array.replicate 100000 Json.null)) == 1
+
+-- Limit 1 comes before limit 2 at any nesting: values nested past the parser's 256 levels are still counted, and
+-- a chain of 10,001 arrays is too many values, one of 10,000 too deep.
+#guard [256, 300].all (fun d =>
+    says (req x1 ok1 s!", \"pad\": {String.join (List.replicate d "[")}{nulls 20000}{String.join (List.replicate d "]")}") ==
+      ["ResourceLimit: the number of JSON values exceeds 10000"]) &&
+  [(10001, "ResourceLimit: the number of JSON values exceeds 10000"), (10000, "ResourceLimit: the JSON depth exceeds 64")].all
+    fun (d, want) => match Json.parse (String.join (List.replicate d "[") ++ String.join (List.replicate d "]")) with
+      | .ok j => Wire.limitFault j == some want
+      | .error _ => false
 
 -- Depth 64 remains usable for both expression entry points; depth 65 is a resource limit.
 #guard
@@ -469,8 +480,7 @@ def stringSites : List (String → String) := [
     match Json.parse input with
     | .error _ => false
     | .ok j =>
-      let depth := (Wire.size (VE.Limits.maxJsonDepth + 1) j).2
-      depth == VE.Limits.maxDepth && says input == [want]
+      Wire.depth (VE.Limits.maxJsonDepth + 1) j == VE.Limits.maxDepth && says input == [want]
 
 -- A well-formed expression also needs its deep exponent checked before evaluation.
 #guard
