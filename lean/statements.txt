@@ -6403,6 +6403,18 @@ theorem VE.Compose.gate_legacy
       VE.Compose.gateOf VE.Compose.profileTable ps = VE.Compose.dispatch ps
   -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.dispatch@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.legacyProfiles@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
   -- expr 781844860
+theorem VE.Compose.gate_scope
+  ∀ (ps : List String),
+    "scope@0" ∈ ps →
+      ∀ (r : VE.Compose.Route),
+        VE.Compose.gateOf VE.Compose.profileTable ps = Except.ok r →
+          VE.Compose.gateOf VE.Compose.profileTable (ps.erase "scope@0") = Except.ok r ∧
+            (r = VE.Compose.Route.clauses ∨
+              r = VE.Compose.Route.readings ∨
+                r = VE.Compose.Route.rights ∨
+                  r = VE.Compose.Route.soft ∨ r = VE.Compose.Route.normDefaults ∨ r = VE.Compose.Route.norms)
+  -- uses VE.Compose.Route.clauses@VE.Compose.Dispatch VE.Compose.Route.normDefaults@VE.Compose.Dispatch VE.Compose.Route.norms@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route.rights@VE.Compose.Dispatch VE.Compose.Route.soft@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3935014040
 theorem VE.Compose.gate_wellFormed
   ∀ (X : VE.SoftNorms.SoftDoc) (χ : VE.Formula) (P : List VE.Formula),
     VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften X) 0) [] χ →
@@ -41383,6 +41395,11 @@ theorem VE.Scope.baseObjF_slow
   ∀ (D : VE.Scope.SDoc), (VE.Scope.baseObjF D fun r => (VE.Scope.coveredLayout D r).toOption.getD []) = VE.Scope.baseObj D
   -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.baseObj@VE.Scope.Govern VE.Scope.baseObjF@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern
   -- expr 3674618979
+theorem VE.Scope.bind_ok
+  ∀ {α β : Type} {x : Except String α} {f : α → Except String β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 3172643631
 theorem VE.Scope.commutes_symm
   ∀ (e₁ e₂ : VE.Scope.Effect), VE.Scope.Commutes e₁ e₂ = VE.Scope.Commutes e₂ e₁
   -- uses VE.Scope.Commutes@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
@@ -41403,6 +41420,16 @@ theorem VE.Scope.coversU_iff
     VE.Scope.coversU D g u = Bool.true ↔ ∃ us, VE.Scope.covered D g.reach = Except.ok us ∧ u ∈ us
   -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coversU@VE.Scope.Govern
   -- expr 1356600155
+theorem VE.Scope.decodeBlock_layout
+  ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
+    VE.Scope.decodeBlock front source re = Except.ok D → D.layout = VE.Scope.layoutOf front source ∧ D.doc = front
+  -- uses VE.Layout.Unit@VE.Layout.List VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.layoutOf@VE.Scope.Wire
+  -- expr 2730613432
+theorem VE.Scope.decodeScope_layout
+  ∀ (front : Lean.Json) (D : VE.Scope.SDoc),
+    VE.Scope.decodeScope front = Except.ok D → List.map (fun x => x.id) D.layout = VE.Scope.unitIds D.doc
+  -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 433373393
 theorem VE.Scope.edgesFor_ok
   ∀ (D : VE.Scope.SDoc) (u : String) (es : List String),
     VE.Scope.edgesFor D u = Except.ok es ↔
@@ -41441,6 +41468,14 @@ theorem VE.Scope.firstKeys_self
   ∀ (l : List (String × Lean.Json)), (List.map (fun x => x.fst) l).Nodup → VE.Readings.Wire.firstKeys l = l
   -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
   -- expr 1819661494
+theorem VE.Scope.foldStatus_mem
+  ∀ (ts : List VE.Reports.Status), ts ≠ [] → VE.Reports.foldStatus ts ∈ ts
+  -- uses VE.Reports.Status@VE.Attribution.Status VE.Reports.foldStatus@VE.Attribution.Status
+  -- expr 754835130
+theorem VE.Scope.foldl_meet_mem
+  ∀ (acc : VE.Reports.Status) (xs : List VE.Reports.Status), List.foldl VE.Reports.Status.meet acc xs ∈ acc :: xs
+  -- uses VE.Reports.Status.meet@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status
+  -- expr 704010218
 theorem VE.Scope.frameOnF_slow
   ∀ (D : VE.Scope.SDoc), (VE.Scope.frameOnF D fun r => (VE.Scope.coveredLayout D r).toOption.getD []) = VE.Scope.frameOn D
   -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern VE.Scope.frameOn@VE.Scope.Govern VE.Scope.frameOnF@VE.Scope.Govern
@@ -41485,6 +41520,18 @@ theorem VE.Scope.govern_refused
   ∀ (D : VE.Scope.SDoc), VE.Scope.admitBlock D ≠ Except.ok () → (VE.Scope.govern D).isOk = Bool.false
   -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
   -- expr 677643296
+theorem VE.Scope.governor_status_none
+  ∀ (st : String → Option VE.Reports.Status) (us : List String),
+    (us = [] ∨ ∃ u, u ∈ us ∧ st u = Option.none) → VE.Scope.governorStatus st us = Option.none
+  -- uses VE.Reports.Status@VE.Attribution.Status VE.Scope.governorStatus@VE.Scope.Wire
+  -- expr 1442996409
+theorem VE.Scope.governor_status_weakest
+  ∀ (st : String → Option VE.Reports.Status) (us : List String) (s : VE.Reports.Status),
+    VE.Scope.governorStatus st us = Option.some s →
+      us ≠ [] ∧
+        (∀ (u : String), u ∈ us → ∃ t, st u = Option.some t ∧ s.rank ≤ t.rank) ∧ ∃ u, u ∈ us ∧ st u = Option.some s
+  -- uses VE.Reports.Status.rank@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status VE.Scope.governorStatus@VE.Scope.Wire
+  -- expr 2136112766
 theorem VE.Scope.governorsOfF_slow
   ∀ (D : VE.Scope.SDoc),
     (VE.Scope.governorsOfF (VE.Scope.ordered D) fun r => (VE.Scope.covered D r).toOption.getD []) = VE.Scope.governorsOf D
@@ -41543,6 +41590,13 @@ theorem VE.Scope.mapM_ok_mem
     List.mapM f l = Except.ok t → ∀ (y : β), y ∈ t → ∃ x, x ∈ l ∧ f x = Except.ok y
   -- uses
   -- expr 4262899139
+theorem VE.Scope.mapM_some_mem
+  ∀ {st : String → Option VE.Reports.Status} {us : List String} {ts : List VE.Reports.Status},
+    List.mapM st us = Option.some ts →
+      (∀ (u : String), u ∈ us → ∃ t, t ∈ ts ∧ st u = Option.some t) ∧
+        ∀ (t : VE.Reports.Status), t ∈ ts → ∃ u, u ∈ us ∧ st u = Option.some t
+  -- uses VE.Reports.Status@VE.Attribution.Status
+  -- expr 296189344
 theorem VE.Scope.mem_ordered
   ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor), g ∈ VE.Scope.ordered D ↔ g ∈ D.governors
   -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern
@@ -41618,6 +41672,23 @@ theorem VE.Scope.ruleTable_decoder
         (u, N) ∈ t → ∃ o, VE.Scope.composed D u = Except.ok o ∧ VE.Readings.Wire.decodeNorm D.re o = Except.ok N
   -- uses VE.Readings.Wire.decodeNorm@VE.Readings.Wire VE.Scope.SDoc.re@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.composed@VE.Scope.Govern VE.Scope.ruleTable@VE.Scope.Govern VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 451307237
+theorem VE.Scope.scope_absent_unchanged
+  ∀ (front : Lean.Json),
+    ¬"scope@0" ∈ VE.Service.Document.profilesOf front →
+      VE.Service.Document.checkDoc front = VE.Service.Document.checkCore front
+  -- uses VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document
+  -- expr 1785912364
+theorem VE.Scope.scope_admission
+  ∀ (front ans : Lean.Json),
+    VE.Service.Document.checkDoc front = Except.ok ans →
+      "scope@0" ∈ VE.Service.Document.profilesOf front →
+        ∃ D out a,
+          VE.Scope.decodeScope front = Except.ok D ∧
+            VE.Scope.govern D = Except.ok out ∧
+              VE.Service.Document.checkCore (VE.Service.Document.withUnits front out) = Except.ok a ∧
+                ans = VE.Scope.foldGovernors D a
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Scope.foldGovernors@VE.Scope.Wire VE.Scope.govern@VE.Scope.Govern VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document VE.Service.Document.withUnits@VE.Service.Document
+  -- expr 1274073867
 theorem VE.Scope.substOwn_id
   ∀ (g c : Lean.Json), VE.Scope.hasOwn VE.Scope.depthLimit c = Bool.false → VE.Scope.substOwn g VE.Scope.depthLimit c = c
   -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects

@@ -196,6 +196,10 @@ import VE.Scope.Effects
 import VE.Scope.Govern
 import VE.Scope.Theorems
 import VE.Scope.Examples
+import VE.Scope.Wire
+import VE.Scope.WireExamples
+import VE.Scope.Admission
+import VE.Service.ScopeExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
