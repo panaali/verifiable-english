@@ -82,13 +82,21 @@ The F11 probe's four encoding mutants were survivors before these fixtures and a
 | `pow` exponent ≤64 and `sci` exponent absolute value ≤64 | 64/65 and −64/−65, then answer/`ResourceLimit` | `pow`, `pow-over`, `sci`, `sci-over`, positive `sci` 64 guard; sign, constant or branch dropped |
 | W6 digits ≤40: stated and `lit` plain/`sci` | 40/41, then answer/`ResourceLimit` | `digits`, `digits-over`, `digits-lit*`, new `sci` 40/41 guard; constant or form dropped |
 | W6 digits ≤40: `rounds`, `rounds-down`, `rounds-up` plain and `sci` | each 40/41, then answer/`ResourceLimit` | new three-branch guards; `startsWith` narrowed to `==` |
-| Value name, claim ID and `val` reference ≤64 UTF-8 bytes | each 64/65, then answer/`ResourceLimit` | `name`, `name-over`, `id-over`, `val-over`, new claim-ID 64 guard; `<`, constant or key branch dropped |
+| Value name, claim ID and `val` reference ≤64 UTF-8 bytes | each 64/65, then answer/`ResourceLimit`; 2-, 3- and 4-byte characters at exactly 64/65 bytes | `name`, `name-over`, `id-over`, `val-over`, new claim-ID 64 guard, `multiByteNames` at all three sites; character count in place of UTF-8 byte count |
 | Expression fuel and JSON depth at both entry points | claim nesting 59/60 and defined nesting 60/61: accepted/`ResourceLimit` | new `nestedExpr` guards; fuel 20 mutation at either entry point |
+| Limit scan through the full admitted depth | a `pow` or `sci` exponent, 41-digit literal, or overlong name at JSON depth 64 still gives its specific `ResourceLimit`; a valid nested `pow` expression does too | `deepScanFault` checks the exact JSON depth before each answer, and `nestedPow` checks a valid expression; scan fuel 20 or 63 fails |
 | Limit order, ahead of field validation | simultaneous exponent/digits/name and digit/unknown field | `order-*` guards; branch reordered or skipped |
 | Record, rule and claim-form checks | accepted edges and `hostile set`, `paths`, `malformed` | one branch dropped or a wrong type admitted |
 
 The wide-array guard evaluates `Wire.size` on 100,000 flat children (over ten times the old largest fixture), so
 the elaborator exercises the accumulator fold without the former `List.sum` stack growth.
+
+F14 and F15 recheck: before the new guards, the supplied scan-fuel mutants (20 and `maxDepth - 1`) and the
+character-count mutant each built `VE.Calc.RunExamples` successfully. After the guards, all three builds fail
+at the expected guards; the original source was restored after each probe and the unmutated focused build passes.
+The scan guard covers every node-local limit at the last admitted depth, so neither a generic JSON-depth refusal
+nor a shallow scan can mask the tested fault. The Unicode guard covers every name site at the exact byte boundary
+with characters of three different UTF-8 widths. Neither finding changes the production decoder or public output.
 
 The review probes F11 (four encodings), F12 (the narrowed `rounds` branch) and F13 (both expression entry points)
 all survived the old guards before the fix and all nine final source mutants, including the two hunts below, fail
