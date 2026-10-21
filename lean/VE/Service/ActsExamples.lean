@@ -88,6 +88,10 @@ def sortedRefusal := "UnsupportedProfile: profiles must be sorted and unique"
   (Json.arr #[rule "heard"])) == sortedRefusal
 #guard err (VE.Service.Standalone.validatedComposedEnvironment
   (envA ["norm-defaults@0", "acts@0", "norms@0", "relational-fol@0"])) == sortedRefusal
+-- wherever the disorder or `acts@0` stands in the list: before, after or around `norm-defaults@0`, or last
+#guard [["acts@0", "norms@0", "norm-defaults@0", "relational-fol@0"],
+    ["acts@0", "norms@0", "relational-fol@0", "norm-defaults@0"], ["norm-defaults@0", "acts@0"]].all fun ps =>
+  err (VE.NormDefaults.Wire.decodeSourceU (envA ps) (Json.arr #[rule "heard"])) == sortedRefusal
 -- the replay's base environment keeps `acts@0`, even where setting `norms@0` aside leaves a sorted list
 #guard unsorted.map (fun ps => err (VE.Norms.Replay.baseEnvironmentJson (envA ps) >>= VE.Route.Gate.decodeEnvelope)) ==
   ["UnsupportedProfile: Unsupported profile acts@0", sortedRefusal, sortedRefusal]
@@ -208,7 +212,8 @@ def modal (j : Json) : String := match Env.decode j (Json.mkObj []) with
   | .ok E => toString (E.modal "p")
   | .error m => m
 #guard [modal (env ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"] unspecified),
-  modal (env ["norms@0", "norm-defaults@0"] unspecified), modal (env ["norms@0"] seek)] == ["true", "true", "true"]
+  modal (env ["norms@0", "norm-defaults@0"] unspecified), modal (env ["norm-defaults@0", "norms@0"] unspecified),
+  modal (env ["norms@0"] seek)] == ["true", "true", "true", "true"]
 -- the environment mode: the whole table gates a list with `readings@1` (its last profile when the checker is
 -- missing), `acts@0` alone is gated, and `checkRegulated` runs, before the envelope, only without `norm-defaults@0`
 -- (wherever it is listed) and `acts@0`
@@ -217,9 +222,10 @@ def modal (j : Json) : String := match Env.decode j (Json.mkObj []) with
 #guard err (VE.Service.Standalone.validatedComposedEnvironment (env ["acts@0"] seek bad)) ==
   "UnsupportedProfile: Missing profile relational-fol@0"
 #guard [["norms@0", "relational-fol@0"], ["definitions@0", "norm-defaults@0", "norms@0", "relational-fol@0"],
-    ["norms@0", "relational-fol@0", "norm-defaults@0"]].map
+    ["norms@0", "relational-fol@0", "norm-defaults@0"], ["norm-defaults@0", "norms@0", "relational-fol@0"]].map
   (fun ps => err (VE.Service.Standalone.validatedComposedEnvironment (withRevision (envA ps)))) ==
   ["InvalidInput: invalid regulated fields for heard", "UnsupportedProfile: Unsupported specification revision x",
+   "UnsupportedProfile: Unsupported specification revision x",
    "UnsupportedProfile: Unsupported specification revision x"]
 -- the family route gates a list with `acts@0` wherever it stands, and its FOL view drops exactly the three
 -- checker-family profiles

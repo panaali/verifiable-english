@@ -36,7 +36,7 @@ MUTANTS = [
     ("baseEnvironmentJson-whole-list", "baseEnvironmentJson", R, "pure (if Wire.readsActs profiles then",
      'pure (if profiles.contains "acts@0" then', EX),
     ("placeholderJson-acts-order", "placeholderJson", "lean/VE/NormDefaults/Wire.lean",
-     ' || (profiles.contains "acts@0" && !VE.Norms.Wire.readsActs profiles)', "", EX),
+     '  if profiles.contains "acts@0" && !VE.Norms.Wire.readsActs profiles then\n', "  if false then\n", EX),
     # ap-1b review F2: without `acts@0` the block is not read
     ("actsFixed-premise", "actsFixed", W, "  | false, .ok block => do", "  | _, .ok block => do", EX),
     ("actsProfiles-flag", "actsProfiles", W, "  | true, .ok ps =>", "  | _, .ok ps =>", EX),
