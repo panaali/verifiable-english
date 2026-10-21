@@ -1055,6 +1055,34 @@
    "reason": "me-12a: arith@0 meaning, S +93 (VE/Arith/Holds.lean 60, VE/Arith/Syntax.lean 31, VE/Arith/Examples.lean 2), K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-12a, 2026-10-18",
    "commit": "7855620f3e06be59bd94730ef404689d3a18e558"
+  },
+  {
+   "class": "V",
+   "lines": 67,
+   "reason": "ap-1b: acts@0 row and decoders, untied V +67 (K +0, S +0): Norms/Wire.lean +31, Norms/Plain.lean +11, EnglishGrammar/Encode.lean +8, Compose/Dispatch.lean +7, Service/Standalone.lean +5, Service/FamilyNorms.lean +3, Norms/Replay.lean +2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1b, 2026-10-18",
+   "commit": "b1f7ca7adc2b39a17238457736870fb15df03928"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "ap-1b review F1 and C1, recheck F3: untied V +12 (K +0, S +0): Norms/Wire.lean +6, readsActs (acts@0 is read only from a sorted unique list) and actsView's premise on it; Norms/Plain.lean +1, the plain route gates the submitted acts@0 list by the profile table before it sets the statement layers aside (its family check removed); NormDefaults/Wire.lean +3, placeholderJson keeps the order of an acts@0 list from being hidden by setting norm-defaults@0 aside; EnglishGrammar/Encode.lean +2, the typing view's acts@0 stage erases acts@0 from the list the earlier stages reduced, not from the submitted list; total ap-1b V +79",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1b, 2026-10-21",
+   "commit": "2296317a9de7ef365523e0f69c442338d9eaf576"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "ap-1d: VE/Acts/LexicalProofs.lean S +9 (Accepts, the independent statement of spec 1.3); VE/Acts/Lexical.lean trusted -32 (check tied by check_spec, decodeFixed tied by fixedOk_unique); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1d, 2026-10-18",
+   "commit": "768a935fcd0304ab85a83f848bd9f37664664be8"
+  },
+  {
+   "class": "S",
+   "lines": 12,
+   "reason": "me-5b: VE/Calc/Lower.lean S +12 (Follows 6, HasCounterexample 6); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5b, 2026-10-18",
+   "commit": "ca15b6d1ca0051cacf4ce807ab3ea1640efe7628"
   }
  ]
 }
