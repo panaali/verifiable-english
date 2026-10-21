@@ -105,14 +105,52 @@ structure NormsEnvironment where
   profiles : List String
   json : Json
 
+/-- The fixed phrases of an environment's `acts` block (act-phrases 3.1), each checked by `Lexical.decodeFixed`,
+when its profiles `ps` are read with `acts@0`; else none. An absent block is the empty block. -/
+def actsFixed (ps : List String) (environment : Json) : Except String (List String) :=
+  match ps.isEmpty, (environment.getObjValD "vocabulary").getObjVal? "acts" with
+  | false, .ok block => do
+    exactFields block ["fixed"]
+    let fx ← strings (← block.getObjVal? "fixed")
+    let _ ← VE.Acts.Lexical.decodeFixed fx
+    pure fx
+  | _, _ => pure []
+
+/-- `acts@0`'s refusal on the checker family `f` (act-phrases 4.4), which the profile row and the plain route read. -/
+def actsFamilyRefusal (f : String) : String := s!"acts@0 on the {f} family is not implemented"
+
+/-- Whether `acts@0` is read from the profiles `ps`: they list it and are sorted and unique. Any other list keeps
+`acts@0`, and the envelope decoder refuses the list as the base refuses it. -/
+def readsActs (ps : List String) : Bool := ps.contains "acts@0" && decide (ps.Pairwise (· < ·))
+
+/-- The profiles of an environment from which `acts@0` is read (`readsActs`), when `acts` lets the decoder read
+it; else none. -/
+def actsProfiles (acts : Bool) (environment : Json) : List String :=
+  match acts, VE.Route.Gate.profilesOf environment with
+  | true, .ok ps => if readsActs ps then ps else []
+  | _, _ => []
+
+/-- What the frozen envelope and vocabulary decoders read of an `acts@0` environment: the environment without
+`acts@0` in `ps` and without the `acts` block, when `acts@0` is read from `ps`; else the environment as it is. -/
+def actsView (environment : Json) (ps : List String) : Json :=
+  let vocab := match environment.getObjValD "vocabulary" with
+    | .obj kvs => Json.obj (kvs.erase "acts")
+    | v => v
+  if readsActs ps then (environment.setObjVal! "profiles" (toJson (ps.erase "acts@0"))).setObjVal! "vocabulary" vocab
+  else environment
+
 /-- Separate `regulated` from each predicate entry, decode the rest with the
-frozen P0 decoder, then decode and retain every `regulated` extension. -/
+frozen P0 decoder, then decode and retain every `regulated` extension. With
+`acts`, an environment listing `acts@0` is read with its `acts` block and the
+act check of act-phrases 3.2; without it, `acts@0` is refused as today. -/
 def decodeNormsEnvironment (environment : Json)
-    (displayConstants : Bool := true) : Except String NormsEnvironment := do
-  let e ← VE.Route.Gate.decodeEnvelope environment
+    (displayConstants : Bool := true) (acts : Bool := false) : Except String NormsEnvironment := do
+  let ps := actsProfiles acts environment
+  let e ← VE.Route.Gate.decodeEnvelope (if ps.isEmpty then environment else actsView environment ps)
   unless e.profiles.contains "norms@0" do throw "UnsupportedProfile: norms@0 is required"
   unless e.family == .fol do
     throw (VE.Route.Gate.unsupported "the norms route admits FOL documents only")
+  let fx ← actsFixed ps environment
   let vocab := e.vocabulary
   let predicates ← fields (← vocab.getObjVal? "predicates")
   let stripped ← predicates.mapM fun (p, entry) => do
@@ -128,16 +166,19 @@ def decodeNormsEnvironment (environment : Json)
       if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
         throw s!"RegulatedFlag: {p}"
       let args ← strings (← entry.getObjVal? "arguments")
-      some <$> decodeRegulated p args raw
+      some <$> decodeRegulatedIn ps fx p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
   actChecks regs
-  pure ⟨rv, regs, e.profiles, environment⟩
+  pure ⟨rv, regs, if ps.isEmpty then e.profiles else ps, environment⟩
 
 /-- Python hashes `Environment.to_dict()`, which stores normalised act phrases.
-Apply that same canonicalisation before any source environment binding. -/
+Apply that same canonicalisation before any source environment binding: each act by
+`canonicalActIn` with the environment's profiles and fixed phrases (act-phrases 3.3). -/
 def canonicalEnvironmentJson (environment : Json) : Except String Json := do
   let vocab ← environment.getObjVal? "vocabulary"
   let predicates ← fields (← vocab.getObjVal? "predicates")
+  let ps := actsProfiles true environment
+  let fx ← actsFixed ps environment
   let canonical ← predicates.mapM fun (name, entry) => do
     let entry ← match entry.getObjVal? "regulated" with
       | .error _ => pure entry
@@ -146,7 +187,7 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
           | .error _ => pure reg
           | .ok act =>
             let args ← strings (← entry.getObjVal? "arguments")
-            pure (reg.setObjVal! "act" (.str (← canonicalAct name args.length act)))
+            pure (reg.setObjVal! "act" (.str (← canonicalActIn ps fx name args.length act)))
         pure (entry.setObjVal! "regulated" reg)
     pure (name, entry)
   pure (environment.setObjVal! "vocabulary"
@@ -279,10 +320,12 @@ does: its Background leaves `background:flags` are W2's (`Route.Admission`,
 regenerated from the decoded flags), and its report theorem takes the flag
 premises as a separate hypothesis. Every other norms case keeps the gate, since
 its regenerated Background and conflict checks are stated over literals and
-profile premises only (`backgroundBase`). -/
+profile premises only (`backgroundBase`). The norms route reads `acts@0`
+(act-phrases 2.8); a route that does not hook it calls `decodeNormsEnvironment`
+without `acts`, or refuses the profile before it calls this. -/
 def decodeSource (environment norms : Json) (flags : Bool := false)
     (displayConstants : Bool := true) : Except String Source := do
-  let ne ← decodeNormsEnvironment environment displayConstants
+  let ne ← decodeNormsEnvironment environment displayConstants (acts := true)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
   unless flags || ne.rv.flags.isEmpty do

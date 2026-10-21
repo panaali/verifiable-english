@@ -1,0 +1,131 @@
+{
+ "records": [
+  {
+   "input": "environment/soft-norms",
+   "mode": "environment",
+   "base": "InvalidInput: invalid vocabulary",
+   "head": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "environment/alternatives",
+   "mode": "environment",
+   "base": "InvalidInput: alternatives.block",
+   "head": "UnsupportedProfile: acts@0 with alternatives@0 is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "environment/speech-acts",
+   "mode": "environment",
+   "base": "UnsupportedProfile: speech-acts@0 with acts@0",
+   "head": "UnsupportedProfile: acts@0 with speech-acts@0 is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "environment/closure",
+   "mode": "environment",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "UnsupportedProfile: acts@0 on the closure family is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "environment/order",
+   "mode": "environment",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "UnsupportedProfile: acts@0 on the order family is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "environment/no-norms",
+   "mode": "environment",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "UnsupportedProfile: acts@0 requires norms@0",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "family-norms/closure",
+   "mode": "family-norms",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "UnsupportedProfile: acts@0 on the closure family is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "family-norms/order",
+   "mode": "family-norms",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "UnsupportedProfile: acts@0 on the order family is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "norms-background/closure",
+   "mode": "norms",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "UnsupportedProfile: acts@0 on the closure family is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "norms-background/order",
+   "mode": "norms",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "UnsupportedProfile: acts@0 on the order family is not implemented",
+   "base_refused": true,
+   "profile_refusal": true,
+   "keeps_names": true
+  },
+  {
+   "input": "environment/A1-A3",
+   "mode": "environment",
+   "base": "InvalidInput: invalid regulated fields for heard",
+   "head": "answered",
+   "base_refused": true,
+   "profile_refusal": false,
+   "keeps_names": true
+  },
+  {
+   "input": "norms/A1-A3",
+   "mode": "norms",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "answered",
+   "base_refused": true,
+   "profile_refusal": false,
+   "keeps_names": true
+  },
+  {
+   "input": "norms-background/A1-A3",
+   "mode": "norms",
+   "base": "UnsupportedProfile: Unsupported profile acts@0",
+   "head": "answered",
+   "base_refused": true,
+   "profile_refusal": false,
+   "keeps_names": true
+  },
+  {
+   "input": "environment/A5",
+   "mode": "environment",
+   "base": "InvalidInput: invalid regulated fields for heard",
+   "head": "InvalidInput: act phrase for p joins acts with 'and' outside a fixed phrase",
+   "base_refused": true,
+   "profile_refusal": false,
+   "keeps_names": true
+  }
+ ],
+ "ok": true
+}
