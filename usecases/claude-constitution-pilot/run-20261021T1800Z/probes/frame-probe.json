@@ -1,0 +1,69 @@
+{
+  "document": "readings/all-strict-in-frame.ve.md",
+  "points": [
+    {
+      "candidate": "strict-in-frame",
+      "label": "Claude is asked to keep its system prompt confidential",
+      "predicate": "system_prompt_deception_permitted",
+      "true_atoms": [
+        "asked_to_keep_system_prompt_confidential"
+      ],
+      "status": "SETTLED no"
+    },
+    {
+      "candidate": "strict-in-frame",
+      "label": "Claude is not asked to keep its system prompt confidential",
+      "predicate": "system_prompt_deception_permitted",
+      "true_atoms": [],
+      "status": "UNDECIDED"
+    },
+    {
+      "candidate": "strict",
+      "label": "Claude is not asked to keep its system prompt confidential",
+      "predicate": "system_prompt_deception_permitted",
+      "true_atoms": [],
+      "status": "SETTLED no"
+    }
+  ],
+  "binding_points": [
+    {
+      "candidate": "strict-in-frame",
+      "label": "the instance asked to keep the system prompt confidential, in the situation where it was asked",
+      "predicate": "system_prompt_deception_permitted",
+      "true_atoms": [
+        "asked_to_keep_system_prompt_confidential(claude_instance0, situation0)"
+      ],
+      "tuple": [
+        "claude_instance0",
+        "situation0"
+      ],
+      "status": "SETTLED no"
+    },
+    {
+      "candidate": "strict-in-frame",
+      "label": "the same instance in another situation (another conversation, which may be with the same user)",
+      "predicate": "system_prompt_deception_permitted",
+      "true_atoms": [
+        "asked_to_keep_system_prompt_confidential(claude_instance0, situation0)"
+      ],
+      "tuple": [
+        "claude_instance0",
+        "situation1"
+      ],
+      "status": "UNDECIDED"
+    },
+    {
+      "candidate": "strict-in-frame",
+      "label": "another instance of Claude in the same situation",
+      "predicate": "system_prompt_deception_permitted",
+      "true_atoms": [
+        "asked_to_keep_system_prompt_confidential(claude_instance0, situation0)"
+      ],
+      "tuple": [
+        "claude_instance1",
+        "situation0"
+      ],
+      "status": "UNDECIDED"
+    }
+  ]
+}

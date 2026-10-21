@@ -1,0 +1,29 @@
+{
+  "operation": "question.read",
+  "assurance": "experimental",
+  "intent": "unconfirmed",
+  "proof": "not_checked",
+  "answer": "no_answer",
+  "result": {
+    "class": "SyntaxError",
+    "code": "NoDerivation",
+    "identities": {
+      "actions_version": "33",
+      "environment_id": "f94e39671812076cd34affa25efa079bc69ac0de890c3c70d6806b91a0eb0d6c",
+      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
+      "lexicon_id": "6d92f8c85f8e40ae4f88d15e07f44570830baa4bd4b11b09adb4f93f1ad05437",
+      "question_version": "question@1",
+      "source_sha256": "ef0876babc687a9987e55bef39cccc2f4d88a3909a8c06f9aead0e119a7ffa6c"
+    },
+    "span": [
+      0,
+      33
+    ],
+    "status": "none",
+    "text": "The question has no reading with the current vocabulary. Closest sentence tried: \"every instance of Claude must not directly deny being Claude.\". Unknown English phrase 'must not'. Nearest declared wordings: 'user'; 'is human'; 'users'."
+  },
+  "error": {
+    "class": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every instance of Claude must not directly deny being Claude.\". Unknown English phrase 'must not'. Nearest declared wordings: 'user'; 'is human'; 'users'."
+  }
+}

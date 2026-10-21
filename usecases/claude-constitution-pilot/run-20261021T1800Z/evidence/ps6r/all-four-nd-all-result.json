@@ -1,0 +1,1065 @@
+{
+  "document": "usecases/claude-constitution-pilot/run-20261019T1800Z/readings/nd-all.ve.md",
+  "group": "all",
+  "search_seconds": 95.5,
+  "sets": [
+    {
+      "set": "force-u0036-s05",
+      "unit": "u0036.s05",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "force-u0156-s03",
+      "unit": "u0156.s03",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        },
+        {
+          "id": "strict-in-frame",
+          "content": "norm"
+        },
+        {
+          "id": "default-in-frame",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "force-u0263-s04-p2",
+      "unit": "u0263.s04.p2",
+      "candidates": [
+        {
+          "id": "strict",
+          "content": "norm"
+        },
+        {
+          "id": "default",
+          "content": "norm"
+        }
+      ]
+    },
+    {
+      "set": "scope-u0165-s03",
+      "unit": "u0165.s03",
+      "candidates": [
+        {
+          "id": "wide",
+          "content": "norm"
+        },
+        {
+          "id": "narrow",
+          "content": "norm"
+        }
+      ]
+    }
+  ],
+  "pairs_without_situation": [],
+  "search_limits": [],
+  "load_seconds": 19.0,
+  "admitted": true,
+  "check_seconds": 216.5,
+  "readings": {
+    "checked_by": {
+      "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+      "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes compared with Lean",
+      "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)"
+    },
+    "sets": [
+      {
+        "set": "force-u0036-s05",
+        "version": 1,
+        "unit": "u0036.s05",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "d1ba504e6454ee7f9be65f162396067940d177241bcbae827d24c1473a7cadd8",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; p is a principal type of Claude; s is a situation; u is a user; s is classified as \"exception_to_asking_for_clarification\"; s is classified as \"genuine_ambiguity\". Here the text does not say whether c must seek clarification in s; this situation answers 'no'. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\"*, c still must. Under *Every instance of Claude must seek clarification in each situation, if that situation is classified as \"genuine_ambiguity\", unless that situation is classified as \"exception_to_asking_for_clarification\"*, c is not required to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0156-s03",
+        "version": 1,
+        "unit": "u0156.s03",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "strict-in-frame",
+            "index": 2,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default-in-frame",
+            "index": 3,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "9172e6ec0da7e98f0f9fad69d3c1b2b866e010f1275b713bcea8472b9432053f",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "strict",
+              "strict-in-frame"
+            ],
+            "situation": "5e362c732b3d345bbe9cc63ee91c59f738fcfa748b59e621624392d241b20a3c",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "strict",
+              "default-in-frame"
+            ],
+            "situation": "5e362c732b3d345bbe9cc63ee91c59f738fcfa748b59e621624392d241b20a3c",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "default",
+              "strict-in-frame"
+            ],
+            "situation": "880c523cdfb4201fefb041fe0d06a5b52892232113c02629dcb5e9a200eaf97b",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "default",
+              "default-in-frame"
+            ],
+            "situation": "880c523cdfb4201fefb041fe0d06a5b52892232113c02629dcb5e9a200eaf97b",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          },
+          {
+            "readings": [
+              "strict-in-frame",
+              "default-in-frame"
+            ],
+            "situation": "478f8663a7895d4ddfe2311e51a3aea92447e3e4d0f1562c16f1e2debec2eafa",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "scope-u0165-s03",
+        "version": 1,
+        "unit": "u0165.s03",
+        "candidates": [
+          {
+            "id": "wide",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "narrow",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "wide",
+              "narrow"
+            ],
+            "situation": "4fb5e6c67af5245d918dff8b8c3ae89bec23d8cdae67e2c5271401b8d07645ed",
+            "probe": "selects",
+            "wording": "E24",
+            "text": "These two readings differ in a checked situation that VE cannot yet show in words."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      },
+      {
+        "set": "force-u0263-s04-p2",
+        "version": 1,
+        "unit": "u0263.s04.p2",
+        "candidates": [
+          {
+            "id": "strict",
+            "index": 0,
+            "pending": false,
+            "chain_findings": []
+          },
+          {
+            "id": "default",
+            "index": 1,
+            "pending": false,
+            "chain_findings": []
+          }
+        ],
+        "pairs": [
+          {
+            "readings": [
+              "strict",
+              "default"
+            ],
+            "situation": "46abcb386862f6e517115594c7114fcc611e565499c35c9536fcf37e17cb7e3a",
+            "probe": "outcome",
+            "wording": "E19",
+            "text": "These two readings differ here: c is an instance of Claude; e is a thing; h is a hard constraint; operator is an operator; operator_input is an operator input; p is a principal type of Claude; s is a situation; u is a user; c has the recorded relation \"exception_to_complying_with_exploit_instruction\" to s; c has the recorded relation \"explicit_instruction_against_exploits\" to s. Here the text does not say whether c must comply with the instruction against unintended exploits in s; this situation answers 'no'. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation*, c still must. Under *Every instance of Claude must comply with the instruction against unintended exploits in each situation, if that instance of Claude has the recorded relation \"explicit_instruction_against_exploits\" to that situation, unless that instance of Claude has the recorded relation \"exception_to_complying_with_exploit_instruction\" to that situation*, c is not required to."
+          }
+        ],
+        "findings": [],
+        "not_certified": []
+      }
+    ],
+    "separations": {
+      "outcome": 2,
+      "selects": 7,
+      "holds": 0
+    },
+    "findings": {
+      "SeparatedByDecisionOnly": 0,
+      "SeparatedByActOnly": 0
+    },
+    "pending_candidates": 0,
+    "couplings": 0,
+    "route": "superposed",
+    "choice_count": 32,
+    "choices_checked": 32,
+    "narrowings_stale": [],
+    "reading_premises": [],
+    "not_superposable": null,
+    "sizes": {
+      "limits": {
+        "nodes": 10000,
+        "predicates": 256,
+        "sorts": 32
+      },
+      "nodes": 303,
+      "predicates": 94,
+      "sorts": 9
+    },
+    "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+    "conflict": {
+      "assumed": [],
+      "choices": [
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              2
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              2
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              2
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              2
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              3
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              3
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              3
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              0
+            ],
+            [
+              "force-u0156-s03",
+              3
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              0
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              1
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              2
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              2
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              2
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              2
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              3
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              3
+            ],
+            [
+              "scope-u0165-s03",
+              0
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              3
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              0
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        },
+        {
+          "choice": [
+            [
+              "force-u0036-s05",
+              1
+            ],
+            [
+              "force-u0156-s03",
+              3
+            ],
+            [
+              "scope-u0165-s03",
+              1
+            ],
+            [
+              "force-u0263-s04-p2",
+              1
+            ]
+          ],
+          "status": "CONFLICT-FREE"
+        }
+      ],
+      "conditional_on": [],
+      "evidence": "certificates",
+      "reading_premises_used": [],
+      "status": "CONFLICT-FREE",
+      "status_text": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+    },
+    "dead_readings": [],
+    "english": [
+      "Under every reading of the 4 open sentences, no two rules on the same act contradict each other.",
+      "This does not depend on how sentence 132 is read.",
+      "This does not depend on how sentence 590 is read.",
+      "This does not depend on how sentence 630 is read.",
+      "This does not depend on how sentence 1001 is read."
+    ]
+  },
+  "premises": {
+    "budget": {
+      "max_domain_size": 2,
+      "max_evaluations": 100000,
+      "max_models": 10000,
+      "max_steps": 10000
+    },
+    "candidates": [
+      {
+        "index": 0,
+        "set": "force-u0036-s05",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 1,
+        "set": "force-u0036-s05",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 0,
+        "set": "force-u0156-s03",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 1,
+        "set": "force-u0156-s03",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 2,
+        "set": "force-u0156-s03",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 3,
+        "set": "force-u0156-s03",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 0,
+        "set": "scope-u0165-s03",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 1,
+        "set": "scope-u0165-s03",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 0,
+        "set": "force-u0263-s04-p2",
+        "status": "UNKNOWN"
+      },
+      {
+        "index": 1,
+        "set": "force-u0263-s04-p2",
+        "status": "UNKNOWN"
+      }
+    ],
+    "route": "superposed",
+    "status": "UNKNOWN"
+  },
+  "bytes_by_status": {
+    "CHECKED": 331,
+    "LABELLED": 364,
+    "OPEN": 2555,
+    "UNFORMALISED": 181643
+  }
+}

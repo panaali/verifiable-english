@@ -1,0 +1,29 @@
+{
+  "operation": "question.read",
+  "assurance": "experimental",
+  "intent": "unconfirmed",
+  "proof": "not_checked",
+  "answer": "no_answer",
+  "result": {
+    "class": "SyntaxError",
+    "code": "NoDerivation",
+    "identities": {
+      "actions_version": "33",
+      "environment_id": "f94e39671812076cd34affa25efa079bc69ac0de890c3c70d6806b91a0eb0d6c",
+      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
+      "lexicon_id": "6d92f8c85f8e40ae4f88d15e07f44570830baa4bd4b11b09adb4f93f1ad05437",
+      "question_version": "question@1",
+      "source_sha256": "a49e6788101cc3671cd8af7207ecd24a6054bdf289e09ced58c01bc02d04668a"
+    },
+    "span": [
+      0,
+      76
+    ],
+    "status": "none",
+    "text": "The question has no reading with the current vocabulary. Closest sentence tried: \"each may instance of Claude actively deceive each user about a system prompt.\". Unknown English phrase 'each may instance of Claude actively deceive each user about a system prompt'. Nearest declared wordings: 'has the recorded relation \"exception_to_not_deceiving_about_system_prompt\" to {1}'; 'is classified as \"instruction_deceptive_tactics_harming_users\"'; 'may actively deceive the user in {1} about system prompt existence-or-content'."
+  },
+  "error": {
+    "class": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"each may instance of Claude actively deceive each user about a system prompt.\". Unknown English phrase 'each may instance of Claude actively deceive each user about a system prompt'. Nearest declared wordings: 'has the recorded relation \"exception_to_not_deceiving_about_system_prompt\" to {1}'; 'is classified as \"instruction_deceptive_tactics_harming_users\"'; 'may actively deceive the user in {1} about system prompt existence-or-content'."
+  }
+}

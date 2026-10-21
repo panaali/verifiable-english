@@ -1,0 +1,57 @@
+{
+  "scope@0": {
+    "strict_companion": "UnsupportedProfile: Unsupported profile scope@0",
+    "translation": "UnsupportedProfile: Unsupported profile scope@0"
+  },
+  "defaults@0": {
+    "strict_companion": "UnsupportedProfile: Unsupported profile defaults@0",
+    "translation": "UnsupportedProfile: Unsupported profile defaults@0"
+  },
+  "calc@0": {
+    "strict_companion": "UnsupportedProfile: Unsupported profile calc@0",
+    "translation": "UnsupportedProfile: Unsupported profile calc@0"
+  },
+  "acts@0": {
+    "strict_companion": "CheckerUnavailable: the Lean English reader's answer is malformed: a formula does not decode under the environment: UnsupportedProfile: Unsupported profile acts@0",
+    "translation": "UnsupportedProfile: Unsupported profile acts@0"
+  },
+  "judgments@0": {
+    "strict_companion": "UnsupportedProfile: Unsupported profile judgments@0",
+    "translation": "UnsupportedProfile: Unsupported profile judgments@0"
+  },
+  "acts@0_gate_row": {
+    "requires": [
+      "norms@0"
+    ],
+    "refuses": [
+      [
+        "soft-norms@0",
+        "acts@0 with soft-norms@0 is not implemented"
+      ],
+      [
+        "rights@0",
+        "acts@0 with rights@0 is not implemented"
+      ],
+      [
+        "alternatives@0",
+        "acts@0 with alternatives@0 is not implemented"
+      ],
+      [
+        "speech-acts@0",
+        "acts@0 with speech-acts@0 is not implemented"
+      ],
+      [
+        "closure@0",
+        "acts@0 on the closure family is not implemented"
+      ],
+      [
+        "order@0",
+        "acts@0 on the order family is not implemented"
+      ],
+      [
+        "ve.discourse@1",
+        "acts@0 with ve.discourse@1 is not implemented"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,189 @@
+{
+ "label": "final",
+ "document": "usecases/claude-constitution-pilot/run-20261021T1800Z/readings/nd-all.ve.md",
+ "start_document": "usecases/claude-constitution-pilot/run-20261021T1800Z/prev/translation.ve.md",
+ "x3_vocabulary": {
+  "predicates_before": 64,
+  "predicates_after": 64,
+  "predicates_added": [],
+  "sorts_added": [],
+  "constants_added": [],
+  "existing_predicate_wordings_changed": {},
+  "existing_sort_nouns_changed": {},
+  "noun_of_sort_entity": "thing",
+  "intended_removals": {
+   "predicates": {
+    "system_prompt_deception_permitted": [
+     "{0} may actively deceive {1} about system prompt existence-or-content",
+     "{0} may actively deceive the user in {1} about system prompt existence-or-content"
+    ],
+    "exception_to_not_deceiving_about_system_prompt": [
+     "{0} has the recorded relation \"exception_to_not_deceiving_about_system_prompt\" to {1}",
+     "{0} has the recorded relation \"exception_to_not_deceiving_about_system_prompt\" to {1}"
+    ],
+    "asked_to_keep_system_prompt_confidential": [
+     "{0} has the recorded relation \"asked_to_keep_system_prompt_confidential\" to {1}",
+     "{0} has the recorded relation \"asked_to_keep_system_prompt_confidential\" to {1}"
+    ]
+   },
+   "sorts": {}
+  },
+  "intended_removed": [],
+  "intended_reworded": [
+   "system_prompt_deception_permitted",
+   "exception_to_not_deceiving_about_system_prompt",
+   "asked_to_keep_system_prompt_confidential"
+  ]
+ },
+ "units_start": 1132,
+ "units_now": 1132,
+ "units_differing_from_start": [],
+ "units_missing_now": [],
+ "units_new_now": [],
+ "x3_fenced_units": {
+  "u0248": {
+   "start": [
+    "not",
+    [
+     "unary",
+     "human",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "now": [
+    "not",
+    [
+     "unary",
+     "human",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "unchanged": true
+  }
+ },
+ "x3_fences": {
+  "u0248": {
+   "text": "Claude is not human.",
+   "formulas": [
+    [
+     "not",
+     [
+      "unary",
+      "human",
+      [
+       "const",
+       "claude"
+      ]
+     ]
+    ]
+   ],
+   "unchanged": true
+  },
+  "u0245.presupposition": {
+   "text": "Claude is novel.",
+   "formulas": [
+    [
+     "unary",
+     "novel_entity",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "unchanged": true
+  },
+  "u0286.presupposition": {
+   "text": "Some thing is unsolved.",
+   "formulas": [
+    [
+     "exists",
+     "entity",
+     [
+      "unary",
+      "open_problem",
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   ],
+   "unchanged": true
+  }
+ },
+ "fences_new": {},
+ "fenced_units_now": [
+  "u0248"
+ ],
+ "document_check": {
+  "returncode": 0,
+  "seconds": 45.0,
+  "stderr": "",
+  "admitted": true,
+  "premises": "model",
+  "premises_route": "superposed",
+  "reading_route": "superposed",
+  "choices": 8,
+  "conflict": "CONFLICT-FREE",
+  "conflicts_by_choice": {
+   "CONFLICT-FREE": 8
+  },
+  "bytes_by_status": {
+   "CHECKED": 215,
+   "LABELLED": 364,
+   "OPEN": 2372,
+   "UNFORMALISED": 181942
+  },
+  "bytes_by_status_start": {
+   "CHECKED": 215,
+   "LABELLED": 364,
+   "OPEN": 2372,
+   "UNFORMALISED": 181942
+  },
+  "residual": {
+   "assumptions": 21,
+   "bridge_leaves": 0,
+   "open_terms": 49,
+   "unresolved_reading_sets": 2,
+   "separations": 7,
+   "readings_findings": 0,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 10,
+   "ungrounded_defaults": 0
+  },
+  "residual_start": {
+   "assumptions": 21,
+   "bridge_leaves": 0,
+   "open_terms": 49,
+   "unresolved_reading_sets": 2,
+   "separations": 7,
+   "readings_findings": 0,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 10,
+   "ungrounded_defaults": 0
+  }
+ },
+ "conclusions": {
+  "conclusion-no-denial": {
+   "returncode": 0,
+   "verdict": "ALL",
+   "evidence": "certificate",
+   "route": "superposed"
+  },
+  "conclusion-no-claim-human": {
+   "returncode": 0,
+   "verdict": "ALL",
+   "evidence": "certificate",
+   "route": "superposed"
+  }
+ }
+}

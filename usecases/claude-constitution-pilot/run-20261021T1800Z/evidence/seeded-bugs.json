@@ -1,0 +1,39 @@
+{
+ "needed_for_product_code": false,
+ "why": "this run changed no product code (Lean, Python, Rust): the pilot branch adds files under usecases/claude-constitution-pilot/ only (lean/.lake and rust/target in the worktree are ignored build products; the tag itself differs from the previous run's by the merged batches, 34 files under lean/ and rust/, none of them edited here). The claims below are the translator's; each was planted and caught.",
+ "languages_changed": [],
+ "translation_faults": [
+  {
+   "claim": "u0156.s03: a request made in one situation governs that situation and no other",
+   "planted": "the frame guard dropped (the unframed strict candidate, readings/all-strict.ve.md, stands for a guard `top`)",
+   "file": "readings/all-strict.ve.md",
+   "failing_check": "probe_frame.py binding point “the same instance in another situation” (expected UNDECIDED), asserted by finish_20261021T1800Z.py (frame-probe binding statuses)",
+   "failure": "the other situation is SETTLED no instead of UNDECIDED",
+   "restored": "scratch copy or in-memory fault; no file of the run was touched"
+  },
+  {
+   "claim": "u0156.s03: the regulated act and the frame term are binary on (claude_instance, situation)",
+   "planted": "the previous run's in-frame companion (prev/readings/all-strict-in-frame.ve.md), whose two terms take (claude_instance, user)",
+   "file": "prev/readings/all-strict-in-frame.ve.md",
+   "failing_check": "finish_20261021T1800Z.py: `assert reg_now == expected_reg` (regulated predicates' arguments) and checkpoint.py's INTENDED_REWORDED list",
+   "failure": "arguments ['claude_instance', 'user'] / ['claude_instance', 'user'] instead of ['claude_instance', 'situation'] / ['claude_instance', 'situation']",
+   "restored": "scratch copy or in-memory fault; no file of the run was touched"
+  },
+  {
+   "claim": "u0156.s03 keeps its covered status after the repair (2,951 B claimed, unchanged)",
+   "planted": "u0156.s03 set to UNFORMALISED in a copy of units.json",
+   "file": "scratch copy of units.json",
+   "failing_check": "finish_20261021T1800Z.py: `assert claimed == pm[\"claimed_covered_bytes\"] == 2951`",
+   "failure": "claimed bytes 2851 != 2951",
+   "restored": "scratch copy or in-memory fault; no file of the run was touched"
+  },
+  {
+   "claim": "u0156.s03's act_workaround tag is written as stale, because its act phrase changed in this run",
+   "planted": "the tag copied from the evidence as if the act were unchanged (scratch copy of units.json)",
+   "file": "scratch copy of units.json",
+   "failing_check": "finish_20261021T1800Z.py: `assert r[\"act\"] != act_now == ACT ...` (the M4 loop) and the M4 totals (14 units, 2,219 B)",
+   "failure": "the evidence's phrase “{0} actively deceive {1} about system prompt existence-or-content” is not the document's “{0} actively deceive the user in {1} about system prompt existence-or-content”",
+   "restored": "scratch copy or in-memory fault; no file of the run was touched"
+  }
+ ]
+}

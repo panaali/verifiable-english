@@ -1,0 +1,106 @@
+with_source_word {'check': (5, {'code': 'CheckerUnavailable', 'message': 'ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError'}), 'coverage': (5, {'code': 'CheckerUnavailable', 'message': 'ReadingsConstruction: Python could not build the English of the document Lean admitted: KeyError'})}
+{
+ "document": "usecases/claude-constitution-pilot/run-20261021T1800Z/probes/companion/translation-companions-with_source_word.ve.md"
+}
+without_source_word {'check': (0, None), 'coverage': (0, None)}
+{
+ "document": "usecases/claude-constitution-pilot/run-20261021T1800Z/probes/companion/translation-companions-without_source_word.ve.md",
+ "summary": {
+  "route": "components",
+  "components": [
+   [
+    "main",
+    "w2",
+    [
+     "u0042.presupposition",
+     "u0043.s02.p2",
+     "u0052.s01",
+     "u0062.s01",
+     "u0073.s05",
+     "u0123.s01.p1",
+     "u0123.s02.p1",
+     "u0123.s03",
+     "u0125.s04.p2",
+     "u0165.s01",
+     "u0165.s02",
+     "u0165.s04",
+     "u0165.s05",
+     "u0165.s06",
+     "u0165.s07",
+     "u0168.s01",
+     "u0245.presupposition",
+     "u0248",
+     "u0286.presupposition"
+    ]
+   ],
+   [
+    "force-u0156-s03",
+    "enumerated",
+    [
+     "u0156.s03"
+    ]
+   ],
+   [
+    "scope-u0165-s03",
+    "enumerated",
+    [
+     "u0165.s03"
+    ]
+   ]
+  ],
+  "conflict": "CONFLICT-FREE",
+  "premises": "UNKNOWN",
+  "premises_components": [
+   [
+    "main",
+    "UNKNOWN"
+   ],
+   [
+    "force-u0156-s03",
+    "model"
+   ],
+   [
+    "scope-u0165-s03",
+    "model"
+   ]
+  ],
+  "separations": {
+   "outcome": 0,
+   "selects": 7,
+   "holds": 0
+  },
+  "decided_units": [
+   "u0156.s03",
+   "u0165.s03"
+  ],
+  "english": [
+   "Each open sentence below was checked by itself, under each of its readings.",
+   "Sentence 590 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 590 were checked one way at a time, not together.",
+   "Under every reading of sentence 590, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 590 is read.",
+   "Sentence 630 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "The readings of sentence 630 were checked one way at a time, not together.",
+   "Under every reading of sentence 630, no two rules on the same act contradict each other.",
+   "This does not depend on how sentence 630 is read.",
+   "Each open sentence below was checked by itself, under each of its readings.",
+   "Sentence 590 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 590 as *Every instance of Claude must not actively deceive the user in each situation about system prompt existence-or-content*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a principal type of Claude.",
+   "Sentence 630 was checked by itself, with the terms its readings declare; VE did not check it together with the other sentences.",
+   "Read sentence 630 as *Every instance of Claude must not do the creation in each situation, if at least one of the following holds:\n  (a) all of the following hold:\n    (i) all of the following hold:\n      (a) either that situation is classified as \"creating_a_cyberweapon\" or that situation is classified as \"creating_malicious_code\", or both;\n      (b) that situation is classified as \"could_cause_significant_damage_if_deployed\";\n    (ii) that instance of Claude has the recorded relation \"knowingly_engages_3_wide\" to that situation;\n  (b) that instance of Claude has the recorded relation \"thinks_quite_likely_3_wide\" to that situation*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is a principal type of Claude."
+  ]
+ },
+ "lean_decided_share": {
+  "basis": "readings-verdicts decided_units",
+  "decided_bytes": 189,
+  "decided_bytes_checked_outside": 0,
+  "decided_share_percent": "0.10",
+  "decided_units": [
+   "u0156.s03",
+   "u0165.s03"
+  ],
+  "max_choice_rules": null,
+  "one_rule": "A rule checked by itself is CONFLICT-FREE by construction: a single rule cannot contradict another. This says nothing of a reading checked with the document's other rules; Lean's answer decides that.",
+  "source_bytes": 184893
+ }
+}

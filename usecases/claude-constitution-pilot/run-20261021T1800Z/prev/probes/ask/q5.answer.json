@@ -1,0 +1,29 @@
+{
+  "operation": "question.answer",
+  "assurance": "experimental",
+  "intent": "unconfirmed",
+  "proof": "not_checked",
+  "answer": "no_answer",
+  "result": {
+    "class": "SyntaxError",
+    "code": "NoDerivation",
+    "identities": {
+      "actions_version": "31",
+      "environment_id": "fe7bd90080251183d4b517675788b8ad9a75a5df98aa0ce8171e83d1b9f7a92d",
+      "grammar_id": "e4ade06d286cfc613bbeab8a95341962ae9429e111976af69687ad9c54653aa6",
+      "lexicon_id": "e311484a37d33e202f72e73767904f51eaddbd0e3dd6cebf700f51a337172715",
+      "question_version": "question@1",
+      "source_sha256": "175eb02eff8f8c5ed952dbc96ec8dd517f282deeb0affdeb07f1a45d9e68ea63"
+    },
+    "span": [
+      0,
+      59
+    ],
+    "status": "none",
+    "text": "The question has no reading with the current vocabulary. Closest sentence tried: \"every instance of Claude must remain firm in each situation, if that instance of Claude faces seemingly compelling arguments.\". Unknown English phrase 'must remain firm in each situation'. Nearest declared wordings: 'must remain firm in {1}'; 'is classified as \"input_is_specific_instructions\"'; 'is information'."
+  },
+  "error": {
+    "class": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every instance of Claude must remain firm in each situation, if that instance of Claude faces seemingly compelling arguments.\". Unknown English phrase 'must remain firm in each situation'. Nearest declared wordings: 'must remain firm in {1}'; 'is classified as \"input_is_specific_instructions\"'; 'is information'."
+  }
+}
