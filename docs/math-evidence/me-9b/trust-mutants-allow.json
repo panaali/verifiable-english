@@ -1,0 +1,12 @@
+{"allow": [
+ {"definition": "VE.Calc.IsIdentity", "operator": "body-true", "reason": "no check can read it: a proposition over every κ : String → Rat is not decidable; the proof named in mutants.json fails instead"},
+ {"definition": "VE.Calc.IsIdentity", "operator": "body-false", "reason": "no check can read it: a proposition over every κ : String → Rat is not decidable; the proof named in mutants.json fails instead"},
+ {"definition": "VE.Calc.IsIdentity", "operator": "eq-le", "reason": "no check can read it: a proposition over every κ : String → Rat is not decidable; the proof named in mutants.json fails instead"},
+ {"definition": "VE.Calc.IsIdentity", "operator": "eq-ne", "reason": "no check can read it: a proposition over every κ : String → Rat is not decidable; the proof named in mutants.json fails instead"},
+ {"definition": "VE.Calc.NotIdentity", "operator": "body-true", "reason": "no check can read it: a proposition over every κ : String → Rat is not decidable; the proof named in mutants.json fails instead"},
+ {"definition": "VE.Calc.NotIdentity", "operator": "body-false", "reason": "no check can read it: a proposition over every κ : String → Rat is not decidable; the proof named in mutants.json fails instead"},
+ {"definition": "VE.Calc.NotIdentity", "operator": "and-or", "reason": "no check can read it: a proposition over every κ : String → Rat is not decidable; the proof named in mutants.json fails instead"},
+ {"definition": "VE.Calc.NotIdentity", "operator": "ne-eq", "reason": "no check can read it: a proposition over every κ : String → Rat is not decidable; the proof named in mutants.json fails instead"},
+ {"definition": "VE.Calc.assign", "operator": "list-empty", "reason": "not well-typed: the edit applies `[]` to the function after it (Lean: Function expected), so no build of it exists"},
+ {"definition": "VE.Calc.freeNames", "operator": "list-empty", "reason": "not well-typed: the edit applies `[]` to the function after it (Lean: Function expected), so no build of it exists"}
+]}
