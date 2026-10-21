@@ -1,0 +1,70 @@
+{
+ "records": 332,
+ "identical": 327,
+ "changed": {
+  "wordings": 3,
+  "display": 1,
+  "loads": 1
+ },
+ "records_changed": [
+  {
+   "key": "74:norms:norms-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "210:soft-norms:norms-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "231:speech-acts:norms-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "probe:load/A1-A3",
+   "why": "display",
+   "base": {
+    "environment_id": "e341c436b5562bb7c49674c8d8a13a54f43d986983429f84dd4bb91b717e2485",
+    "wordings": {
+     "heard": "{0} has the recorded relation \"heard\" to {1}",
+     "paid": "{0} is paid",
+     "protected": "{0} may to the protection of the moral and material interests resulting from {1}"
+    }
+   },
+   "head": {
+    "environment_id": "e341c436b5562bb7c49674c8d8a13a54f43d986983429f84dd4bb91b717e2485",
+    "wordings": {
+     "heard": "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "paid": "{0} has the right to equal pay for equal work without any discrimination",
+     "protected": "{0} may to the protection of the moral and material interests resulting from {1}"
+    }
+   }
+  },
+  {
+   "key": "probe:load/A19",
+   "why": "loads",
+   "base": {
+    "refused": "CheckerUnavailable: CheckerUnavailable: Lean and Python environment identities differ"
+   },
+   "head": {
+    "environment_id": "a39f22a27ee2b34c4b15040fc074bc3aca2e2e06f0230c8c25d6486e63eb2e95",
+    "wordings": {
+     "heard": "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "paid": "{0} has the right to equal pay for equal work without any discrimination",
+     "protected": "{0} may to the protection of the moral and material interests resulting from {1}"
+    }
+   }
+  }
+ ]
+}
