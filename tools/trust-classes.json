@@ -13153,9 +13153,14 @@
         "VE.Scope.Examples.g2",
         "VE.Scope.Examples.g6",
         "VE.Scope.Examples.gN",
+        "VE.Scope.Examples.gP",
+        "VE.Scope.Examples.gPf",
         "VE.Scope.Examples.gR",
+        "VE.Scope.Examples.gX",
+        "VE.Scope.Examples.gY",
         "VE.Scope.Examples.goOf",
         "VE.Scope.Examples.gov",
+        "VE.Scope.Examples.govF",
         "VE.Scope.Examples.govPieces",
         "VE.Scope.Examples.gt",
         "VE.Scope.Examples.guard1",
@@ -13163,6 +13168,7 @@
         "VE.Scope.Examples.hcName",
         "VE.Scope.Examples.hcNames",
         "VE.Scope.Examples.hcPieces",
+        "VE.Scope.Examples.hcUnits",
         "VE.Scope.Examples.instructablePieces",
         "VE.Scope.Examples.item1",
         "VE.Scope.Examples.item3sign",
@@ -13170,17 +13176,25 @@
         "VE.Scope.Examples.layoutOf",
         "VE.Scope.Examples.leadPart",
         "VE.Scope.Examples.led",
+        "VE.Scope.Examples.member",
         "VE.Scope.Examples.mergePartsText",
         "VE.Scope.Examples.mk",
         "VE.Scope.Examples.narrowK",
+        "VE.Scope.Examples.nd",
         "VE.Scope.Examples.nest",
         "VE.Scope.Examples.noPredicate",
+        "VE.Scope.Examples.normsDoc",
+        "VE.Scope.Examples.overOf",
         "VE.Scope.Examples.ownCarve",
+        "VE.Scope.Examples.ownEnv",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.part",
         "VE.Scope.Examples.parts",
         "VE.Scope.Examples.powerPieces",
         "VE.Scope.Examples.prosePieces",
+        "VE.Scope.Examples.rawJ",
+        "VE.Scope.Examples.rawRule",
+        "VE.Scope.Examples.rawUnit",
         "VE.Scope.Examples.reguard173",
         "VE.Scope.Examples.same",
         "VE.Scope.Examples.sdoc",
@@ -13194,6 +13208,7 @@
         "VE.Scope.Examples.shortPart",
         "VE.Scope.Examples.shortPieces",
         "VE.Scope.Examples.situationsPieces",
+        "VE.Scope.Examples.softEnv",
         "VE.Scope.Examples.spanOver",
         "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
@@ -13905,12 +13920,31 @@
         "VE.Scope.conditions",
         "VE.Scope.firstDup",
         "VE.Scope.orderCheck",
+        "VE.Scope.orderCheckF",
         "VE.Scope.setUnits",
         "VE.Scope.vocabularyNames"
       ],
       "G[V]": [
         "VE.Scope.baseName",
+        {
+          "name": "VE.Scope.baseObjF",
+          "tied": [
+            "VE.Scope.baseObjF_slow"
+          ]
+        },
+        {
+          "name": "VE.Scope.composedF",
+          "tied": [
+            "VE.Scope.composedF_slow"
+          ]
+        },
         "VE.Scope.contentOf",
+        {
+          "name": "VE.Scope.coveredBy",
+          "tied": [
+            "VE.Scope.coveredBy_slow"
+          ]
+        },
         "VE.Scope.coveredLayout",
         {
           "name": "VE.Scope.coversU",
@@ -13918,14 +13952,57 @@
             "VE.Scope.coversU_iff"
           ]
         },
+        {
+          "name": "VE.Scope.edgesFor",
+          "tied": [
+            "VE.Scope.edgesFor_ok"
+          ]
+        },
+        {
+          "name": "VE.Scope.edgesOfF",
+          "tied": [
+            "VE.Scope.edgesOfF_slow"
+          ]
+        },
+        {
+          "name": "VE.Scope.fastReads",
+          "tied": [
+            "VE.Scope.fastReads_eq"
+          ]
+        },
         "VE.Scope.frameOn",
+        {
+          "name": "VE.Scope.frameOnF",
+          "tied": [
+            "VE.Scope.frameOnF_slow"
+          ]
+        },
+        {
+          "name": "VE.Scope.governBody",
+          "tied": [
+            "VE.Scope.governBody_slow"
+          ]
+        },
+        {
+          "name": "VE.Scope.governFast",
+          "tied": [
+            "VE.Scope.governFast_eq"
+          ]
+        },
         {
           "name": "VE.Scope.governorsOf",
           "tied": [
             "VE.Scope.governorsOf_iff"
           ]
         },
+        {
+          "name": "VE.Scope.governorsOfF",
+          "tied": [
+            "VE.Scope.governorsOfF_slow"
+          ]
+        },
         "VE.Scope.idOf",
+        "VE.Scope.instDecidableEqReach",
         "VE.Scope.isNorm",
         "VE.Scope.isPart",
         {
@@ -13935,10 +14012,18 @@
           ]
         },
         "VE.Scope.keysOf",
+        "VE.Scope.memo",
         "VE.Scope.newContent",
+        "VE.Scope.normOf",
         "VE.Scope.objectOf",
         "VE.Scope.partUnits",
         "VE.Scope.patch",
+        {
+          "name": "VE.Scope.ruleTable",
+          "tied": [
+            "VE.Scope.ruleTable_decoder"
+          ]
+        },
         "VE.Scope.ruleUnits",
         "VE.Scope.unitIds",
         "VE.Scope.unitsOf"
@@ -13947,12 +14032,15 @@
         "VE.Scope.Governor",
         "VE.Scope.Reach",
         "VE.Scope.SDoc",
+        "VE.Scope.addOver",
         "VE.Scope.affected",
         "VE.Scope.applyEffect",
         "VE.Scope.baseObj",
         "VE.Scope.classOf",
         "VE.Scope.composed",
         "VE.Scope.covered",
+        "VE.Scope.edgesInto",
+        "VE.Scope.edgesOf",
         "VE.Scope.govern",
         "VE.Scope.graph",
         "VE.Scope.isFrame",
