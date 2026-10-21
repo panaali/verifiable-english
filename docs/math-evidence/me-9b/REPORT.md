@@ -64,7 +64,24 @@ were unclassified (now T). Allowed: 9 mutants of `IsIdentity` and `NotIdentity`,
 and `not_isIdentity` (`mutants.json` 22 to 30), as me-2 allowed `Check.UnknownCause`. The other 2 (`list-empty` on
 `assign` and `freeNames`) are not well-typed.
 
-## Seeded bugs (Lean; [`mutants.json`](mutants.json), 30, each with its exact edit)
+## Review fixes (manage-agents me-9b-review.final.md)
+
+- **F1 (B), a place of a check that no fixture fills.** Fixed as a class in `tests/test_calc_algebra.py`, with no
+  product change: `place_fixtures()` fills every place of every constructor from two tables, `OPERANDS` (`Expr`) and
+  `CLAIMS` (`Claim`), which `test_the_place_tables_are_lean_s_constructors` holds to the constructors and expression
+  fields Lean's environment lists, so a constructor added in Lean fails until its places are filled. They give 1/0 in
+  each operand of each node (`[zero-divisor-<node>-<place>]`), every mix of a free value, a missing name and an
+  exhausted counted value in each node's operands (`[subst-*]`) and in each claim's expressions (`[claim-*]`).
+  `point_fixtures()` gives, for each of the 13 values, a side zero at every earlier point and not at it
+  (`[point-1st]` to `[point-13th]`, values and products computed in Python), and `[identity-values]`; the point's
+  names come from both sides in declaration order (`[point-right-only]`, `[point-left-only]`,
+  `[point-declaration-order]`). The review's examples are `[f3-numerator]`, `[f3-left]`, `[fault-inside-side]`,
+  `[claim-fault-compare]` and `[claim-fault-within-e]`. The review's 7 mutants were replayed (`mutants.json` 31 to
+  37): each fails the fixtures listed there; 31 and 32 also break `Expr.zeroDivisor_sound` as written.
+- **F2 (C)** and **F3 (C)** are not changed here: F2 is ME-2's wording decision (Deviations), F3 asks the DRI to
+  confirm the allow class.
+
+## Seeded bugs (Lean; [`mutants.json`](mutants.json), 37, each with its exact edit)
 
 Lean is the only product language changed. Each mutant was applied in place and built as written
 (`proofs_failing_as_is`). It was then run with every proof of `Inline.lean` and `Identity.lean` cut to `sorry`, so
@@ -86,7 +103,7 @@ only the fixtures could catch it, against `IDENTITY_FIXTURES` and `[chain-41]`. 
 
 - **Selected tests:** `select_tests.py --base 6454946a5 --run` on the Mac runner: 81 units, 0 failed (HEAD
   `0239496e`, which contained `tests/test_calc_algebra.py`). On Linux, `tests/test_calc_algebra.py` passes in full: 258
-  tests.
+  tests (363 after the review fixes).
 - **Generated files and audits:** `regen_generated.py --write --skip route-cases` (route cases need the Rust binary
   and this item does not change them); `repo_map.py --check`, `lean/audit.py` and `trust_map.py --check` pass.
 - **Collection:** `gate_collection.py --check --prebuilt`: 35 added, 0 removed, 0 refused, 0 stale, 0 malformed.
