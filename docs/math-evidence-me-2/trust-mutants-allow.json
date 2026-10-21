@@ -64,6 +64,16 @@
       "definition": "VE.Calc.Wire.claim",
       "operator": "list-empty",
       "reason": "not a program: the mutated scrutinee is an Option, not a list (Invalid field notation, Type mismatch)"
+    },
+    {
+      "definition": "VE.Calc.Wire.decode",
+      "operator": "list-first",
+      "reason": "equivalent: the software field list has at most one element, so its first and last element are the whole list"
+    },
+    {
+      "definition": "VE.Calc.Wire.decode",
+      "operator": "list-last",
+      "reason": "equivalent: the software field list has at most one element, so its first and last element are the whole list"
     }
   ]
 }
