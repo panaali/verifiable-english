@@ -472,6 +472,8 @@ BUDGET_FIXTURES = [
     ("budget-power-2048", 'run xyzw (.pow (.add (v "x") (l 1)) 2048, .pow (.add (v "x") (l 1)) 2048)', BUDGET),
     ("budget-power-64", 'run xyzw (.pow (.add (v "x") (l 1)) 64, .pow (.add (v "x") (l 1)) 64)', HOLDS),
     ("budget-power-exponent", 'run xyzw (.pow (l 1) 4097, l 1)', FORM),
+    # me-5b review F1's tower of constants stops at the digit limit, before 2^262144 is computed.
+    ("budget-power-tower", "run xyzw (.pow (.pow (.pow (l (2 ^ 64)) 64) 64) 64, l 1)", FORM),
     ("budget-nested-divisors", 'run xyzw (nest 4998 (v "x"), v "x")', HOLDS),
     ("budget-nested-divisors-size", 'nodes (nest 4998 (v "x"))', "some 9997"),
     ("budget-nested-zero-divisor", 'run xyzw (nest 4996 (.div (v "x") (.sub (v "x") (v "x"))), v "x")', UNDEFINED),
