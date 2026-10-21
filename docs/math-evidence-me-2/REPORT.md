@@ -90,12 +90,12 @@ was reshaped: reject-only and identity code split into their own declarations, `
 
 ## Size
 
-Hand-written lines over the merge base: Lean product 557 (`Wire.lean` 379, `Run.lean` 162, `Units.lean` 13,
-`VE.lean` 3), route cases 286 (`RunExamples.lean`), side tables about 190 (`tools/trust-classes.json` 139, assurance
+Hand-written lines over the merge base: Lean product 558 (`Wire.lean` 380, `Run.lean` 162, `Units.lean` 13,
+`VE.lean` 3), route cases 286 (`RunExamples.lean`), side tables about 200 (`tools/trust-classes.json` 142, assurance
 manifest 56), tool 5, evidence and docs about 190 (DELTA, REPORT, `mutants.json`, the allow file, ROADMAP);
-`trust-mutants.json` and the inventories are generated. About 1,230 in all, twice the ~600 guide. The cut the task
+`trust-mutants.json` and the inventories are generated. About 1,240 in all, twice the ~600 guide. The cut the task
 named was taken (no mode, shape, encoder, words checks or row fields beyond the outcome); a further cut would split
-the decoder (379 lines, of which the limit scan is 75 and the refusals and identity most of the rest) from the runner
+the decoder (380 lines, of which the limit scan is 75 and the refusals and identity most of the rest) from the runner
 whose route cases and seeded bug ME-2 asks for, and the decoder alone would still be about 800.
 
 ## Pilot bytes and next item
@@ -108,7 +108,18 @@ words checks), then qt-a3 (protocol queue), me-4 and me-12.
 
 ## Final selected run
 
-(filled in below when the run ends)
+`mac-pytest.sh --select -- --base 6454946a5f54 --run` on 6035a2de (the synced HEAD): the Mac runner's setup failed
+("lake build failed twice (runner problem)"), so it ran on the VM: 81 of 460 units, the lake build (every route case)
+and every Lean and layer check passed; 4 tests in 2 files failed, both mine:
+`tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole` and `::test_trusted_decoder_line_ranges_are_pinned`
+(`Wire.lean` and `Run.lean` changed after their pins), and
+`tests/test_lean_limits.py::test_no_non_frozen_lean_check_hard_codes_a_limit` and `::test_the_reviewers_probe` (the
+node, depth and name limits written as numbers). Fixed in cfee74b09: the limits are `VE.Limits.maxNodes`, `maxDepth`
+and `maxIdentifierBytes`, the files re-pinned. Then: both files rerun, 141 passed; `lake build VE.Calc.RunExamples
+VE.Calc.UnitsExamples` (every guard); `regen_generated.py --check` (33 entries); `trust_map.py --check` PASS (+148);
+`trust_mutants.py` again on cfee74b09, the same 125 killed, 21 allowed, exit 0; `gate_collection.py --check
+--prebuilt`: 0 added, 0 refused, 0 stale, 0 malformed. The `limit-nodes` hand mutant was rerun on the new text:
+killed (guard 153).
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -126,11 +137,12 @@ words checks), then qt-a3 (protocol queue), me-4 and me-12.
 6. PASS: synced with main 6454946a5; selected run on the synced HEAD; the full gate is the chain's.
 7. PASS: DELTA row 1 cites R16 with per-declaration lines; `trust_map.py --check` PASS; FOLLOW-UPS row.
 8. PASS: no public output (no mode or route); DELTA says so.
-9. PASS: `select_tests.py` selects 81 of 460 units, `lake build` among them, which evaluates every route case.
+9. PASS: `select_tests.py` selects 81 of 460 units, `lake build` among them, which evaluates every route case; it
+   also selected and caught `tests/test_lean_limits.py` and the manifest pins (above).
 10. PASS: the eight statements equal the reviewed text; mutants break the proofs before they are stubbed (for
     example `outcome-means` breaks `Check.run_sound` and `Run.verdict_sound`). No `check_*_statements.py` covers
     math-evidence.
 11. PASS: each limit tested at and past its value (153); a digit-limit hit is UNKNOWN for the claim (R-2's v1), never
     a verdict. No budget field until ME-4 (refused as unknown).
 12. N.A.: no runtime path changes; the route cases evaluate in about a second of the Lean build.
-13. PASS: no test removed; `gate_collection.py --check --prebuilt` (below).
+13. PASS: no test removed; `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
