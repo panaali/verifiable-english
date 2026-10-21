@@ -88,7 +88,18 @@ this; me-5b's runner will). Its limits are checked once on the derivation's inpu
 conclusion, and 16 unknowns with the links' names), and one budget of 10,000 combinations covers every search the
 derivation runs (`FM.Search`): running out anywhere ends it as `limit .derivationSteps`, never as "nothing found".
 Linear infeasibility over ℚ with rational coefficients is infeasibility over the reals, so the soundness also holds
-for real-valued quantities; this is stated here, not proved. The lowering of claims to facts, `Follows` and the `follows` check are me-5b's.
+for real-valued quantities; this is stated here, not proved.
+
+`Lower.lean` (me-5b) lowers a premise or conclusion to facts over the free values: `Claim.facts` inlines every other
+value (`Claim.inline`, keeping `freeNames`) and linearises (`Expr.linear`: a product needs a constant factor, a
+divisor a nonzero constant, a power a constant base unless it is the 0th or 1st); `eq` and `within` give two facts,
+`lt`, `le`, `gt`, `ge` one, a rounding claim, a nonlinear claim or one reading a value that has none gives none.
+`Claim.facts_sound`: the facts hold at κ exactly when the claim holds over the declarations with the free values
+assigned κ. `Follows` and `HasCounterexample` are the derivation's meaning; `follows_of_check` and
+`counterexample_of_check` carry a replayed certificate or a checked point over the lowered facts to them, and
+`not_follows_of_counterexample` keeps the two apart. `LowerExamples.lean` proves R-3 (`r3_follows`) and R-4
+(`r4_not_follows`) from the search's answers. The `follows` check, its runner and the `follows` clauses of
+`Check.OutcomeMeans` wait for ME-2's `Check` (me-5c).
 
 ## Algebraic identities (`Poly`; me-9)
 
