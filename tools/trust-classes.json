@@ -14208,6 +14208,91 @@
         "VE.Calc.IdentityExamples.ds",
         "VE.Calc.IdentityExamples.κ"
       ]
+    },
+    "VE/Arith/Syntax.lean": {
+      "S": [
+        "VE.Arith.Def",
+        "VE.Arith.Defs",
+        "VE.Arith.Formula",
+        "VE.Arith.Term"
+      ]
+    },
+    "VE/Arith/Holds.lean": {
+      "S": [
+        "VE.Arith.Defs.Means",
+        "VE.Arith.Defs.env",
+        "VE.Arith.Env",
+        "VE.Arith.Holds",
+        "VE.Arith.Term.value",
+        "VE.Arith.Term.values"
+      ]
+    },
+    "VE/Arith/Defs.lean": {
+      "G[R]": [
+        "VE.Arith.Def.arity",
+        "VE.Arith.Def.isPred",
+        "VE.Arith.Def.name",
+        "VE.Arith.Defs.WellFormed",
+        "VE.Arith.Defs.boundedNames",
+        "VE.Arith.Defs.refusals",
+        "VE.Arith.Formula.Bounded",
+        "VE.Arith.Formula.Scoped",
+        "VE.Arith.Formula.bnd",
+        "VE.Arith.Formula.sites",
+        "VE.Arith.Refusal",
+        "VE.Arith.Refusal.code",
+        "VE.Arith.Refusal.rank",
+        "VE.Arith.Site",
+        "VE.Arith.Site.refusal",
+        "VE.Arith.Term.bnd",
+        "VE.Arith.Term.bndList",
+        "VE.Arith.Term.sites",
+        "VE.Arith.Term.sitesList",
+        "VE.Arith.caseRefusal",
+        "VE.Arith.firstRefusal"
+      ]
+    },
+    "VE/Arith/Bounded.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Arith.arithOutcome",
+          "tied": [
+            "VE.Arith.arithOutcome_decided",
+            "VE.Arith.arithOutcome_exhausted_iff",
+            "VE.Arith.arithOutcome_unbounded_iff"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Arith.maxSteps"
+      ],
+      "C": [
+        "VE.Arith.Defs.opEnv",
+        "VE.Arith.Formula.evalB",
+        "VE.Arith.OpEnv",
+        "VE.Arith.Term.evalB",
+        "VE.Arith.Term.evalBs",
+        "VE.Arith.charge",
+        "VE.Arith.countLoop",
+        "VE.Arith.decideBounded",
+        "VE.Arith.quantLoop"
+      ],
+      "P": [
+        "VE.Arith.Agrees"
+      ]
+    },
+    "VE/Arith/Examples.lean": {
+      "T": [
+        "VE.Arith.Examples.atLeast",
+        "VE.Arith.Examples.bertrand",
+        "VE.Arith.Examples.countDefs",
+        "VE.Arith.Examples.m1",
+        "VE.Arith.Examples.m2",
+        "VE.Arith.Examples.m4",
+        "VE.Arith.Examples.m5",
+        "VE.Arith.Examples.primeBody",
+        "VE.Arith.Examples.primeDefs"
+      ]
     }
   }
 }
