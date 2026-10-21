@@ -449,8 +449,10 @@ class NormDocument:
         data["vocabulary"]["predicates"] = {
             name: decl for name, decl in data["vocabulary"]["predicates"].items()
             if "regulated" not in decl}
-        # `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's class).
-        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "readings@1")]
+        # `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's class); `acts@0` and its
+        # block are the norms layer's (act-phrases 2.8).
+        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "readings@1", "acts@0")]
+        data["vocabulary"].pop("acts", None)
         if "speech-acts@0" in data["profiles"]:
             data["profiles"].remove("speech-acts@0")
             data.pop("speech_acts", None)
