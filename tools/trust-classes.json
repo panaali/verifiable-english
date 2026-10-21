@@ -13739,6 +13739,14 @@
         "VE.Acts.Lexical.slotOf?"
       ]
     },
+    "VE/Acts/LexicalProofs.lean": {
+      "P": [
+        "VE.Acts.Lexical.out",
+        "VE.Acts.Lexical.pieceTok",
+        "VE.Acts.Lexical.splitL",
+        "VE.Acts.Lexical.wordsL"
+      ]
+    },
     "VE/Acts/LexicalExamples.lean": {
       "T": [
         "VE.Acts.LexicalExamples.a1",
@@ -13844,6 +13852,68 @@
             "VE.Service.registry_modes"
           ]
         }
+      ]
+    },
+    "VE/Scope/Govern.lean": {
+      "G[R]": [
+        "VE.Scope.admitBlock",
+        "VE.Scope.conditions",
+        "VE.Scope.firstDup",
+        "VE.Scope.orderCheck",
+        "VE.Scope.setUnits",
+        "VE.Scope.vocabularyNames"
+      ],
+      "G[V]": [
+        "VE.Scope.baseName",
+        "VE.Scope.contentOf",
+        "VE.Scope.coveredLayout",
+        {
+          "name": "VE.Scope.coversU",
+          "tied": [
+            "VE.Scope.coversU_iff"
+          ]
+        },
+        "VE.Scope.frameOn",
+        {
+          "name": "VE.Scope.governorsOf",
+          "tied": [
+            "VE.Scope.governorsOf_iff"
+          ]
+        },
+        "VE.Scope.idOf",
+        "VE.Scope.isNorm",
+        "VE.Scope.isPart",
+        {
+          "name": "VE.Scope.itemRule",
+          "tied": [
+            "VE.Scope.itemRule_decoder"
+          ]
+        },
+        "VE.Scope.keysOf",
+        "VE.Scope.newContent",
+        "VE.Scope.objectOf",
+        "VE.Scope.partUnits",
+        "VE.Scope.patch",
+        "VE.Scope.ruleUnits",
+        "VE.Scope.unitIds",
+        "VE.Scope.unitsOf"
+      ],
+      "S": [
+        "VE.Scope.Governor",
+        "VE.Scope.Reach",
+        "VE.Scope.SDoc",
+        "VE.Scope.affected",
+        "VE.Scope.applyEffect",
+        "VE.Scope.baseObj",
+        "VE.Scope.classOf",
+        "VE.Scope.composed",
+        "VE.Scope.covered",
+        "VE.Scope.govern",
+        "VE.Scope.graph",
+        "VE.Scope.isFrame",
+        "VE.Scope.ordered",
+        "VE.Scope.position",
+        "VE.Scope.unary"
       ]
     },
     "VE/Calc/Units.lean": {
@@ -14024,6 +14094,7 @@
         "VE.Calc.RunExamples.expect",
         "VE.Calc.RunExamples.field",
         "VE.Calc.RunExamples.h8",
+        "VE.Calc.RunExamples.malformed",
         "VE.Calc.RunExamples.meaning",
         "VE.Calc.RunExamples.name64",
         "VE.Calc.RunExamples.nulls",
@@ -14041,76 +14112,6 @@
         "VE.Calc.RunExamples.v5",
         "VE.Calc.RunExamples.v5Rows",
         "VE.Calc.RunExamples.x1"
-      ]
-    },
-    "VE/Scope/Govern.lean": {
-      "G[R]": [
-        "VE.Scope.admitBlock",
-        "VE.Scope.conditions",
-        "VE.Scope.firstDup",
-        "VE.Scope.orderCheck",
-        "VE.Scope.setUnits",
-        "VE.Scope.vocabularyNames"
-      ],
-      "G[V]": [
-        "VE.Scope.baseName",
-        "VE.Scope.contentOf",
-        "VE.Scope.coveredLayout",
-        {
-          "name": "VE.Scope.coversU",
-          "tied": [
-            "VE.Scope.coversU_iff"
-          ]
-        },
-        "VE.Scope.frameOn",
-        {
-          "name": "VE.Scope.governorsOf",
-          "tied": [
-            "VE.Scope.governorsOf_iff"
-          ]
-        },
-        "VE.Scope.idOf",
-        "VE.Scope.isNorm",
-        "VE.Scope.isPart",
-        {
-          "name": "VE.Scope.itemRule",
-          "tied": [
-            "VE.Scope.itemRule_decoder"
-          ]
-        },
-        "VE.Scope.keysOf",
-        "VE.Scope.newContent",
-        "VE.Scope.objectOf",
-        "VE.Scope.partUnits",
-        "VE.Scope.patch",
-        "VE.Scope.ruleUnits",
-        "VE.Scope.unitIds",
-        "VE.Scope.unitsOf"
-      ],
-      "S": [
-        "VE.Scope.Governor",
-        "VE.Scope.Reach",
-        "VE.Scope.SDoc",
-        "VE.Scope.affected",
-        "VE.Scope.applyEffect",
-        "VE.Scope.baseObj",
-        "VE.Scope.classOf",
-        "VE.Scope.composed",
-        "VE.Scope.covered",
-        "VE.Scope.govern",
-        "VE.Scope.graph",
-        "VE.Scope.isFrame",
-        "VE.Scope.ordered",
-        "VE.Scope.position",
-        "VE.Scope.unary"
-      ]
-    },
-    "VE/Acts/LexicalProofs.lean": {
-      "P": [
-        "VE.Acts.Lexical.out",
-        "VE.Acts.Lexical.pieceTok",
-        "VE.Acts.Lexical.splitL",
-        "VE.Acts.Lexical.wordsL"
       ]
     }
   }
