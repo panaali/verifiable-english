@@ -14004,6 +14004,8 @@
         "VE.Calc.Wire.checkFields",
         "VE.Calc.Wire.children",
         "VE.Calc.Wire.claimIdChar",
+        "VE.Calc.Wire.count",
+        "VE.Calc.Wire.depth",
         "VE.Calc.Wire.entries",
         "VE.Calc.Wire.exponentFault",
         "VE.Calc.Wire.firstDup",
@@ -14013,7 +14015,6 @@
         "VE.Calc.Wire.limitFault",
         "VE.Calc.Wire.literalFault",
         "VE.Calc.Wire.scan",
-        "VE.Calc.Wire.size",
         "VE.Calc.Wire.stringFault",
         "VE.Calc.Wire.unworded"
       ],
