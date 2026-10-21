@@ -14012,9 +14012,10 @@
         "VE.Calc.Wire.limit",
         "VE.Calc.Wire.limitFault",
         "VE.Calc.Wire.literalFault",
-        "VE.Calc.Wire.nameFault",
         "VE.Calc.Wire.scan",
-        "VE.Calc.Wire.size"
+        "VE.Calc.Wire.size",
+        "VE.Calc.Wire.stringFault",
+        "VE.Calc.Wire.unworded"
       ],
       "D[I]": [
         "VE.Calc.Wire.identify",
@@ -14115,6 +14116,8 @@
         "VE.Calc.RunExamples.req",
         "VE.Calc.RunExamples.says",
         "VE.Calc.RunExamples.stated",
+        "VE.Calc.RunExamples.stringSites",
+        "VE.Calc.RunExamples.strings64",
         "VE.Calc.RunExamples.v2",
         "VE.Calc.RunExamples.v5",
         "VE.Calc.RunExamples.v5Rows",
