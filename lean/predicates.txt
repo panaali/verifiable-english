@@ -536,6 +536,7 @@ module VE.Senses.Project
 module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
+module VE.Service.ActsExamples
 module VE.Service.Diagnose
 module VE.Service.Document
 module VE.Service.EnglishRun
