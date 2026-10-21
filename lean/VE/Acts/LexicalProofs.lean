@@ -1,7 +1,8 @@
 import VE.Acts.Lexical
 import VE.Readings.Strings
 
-/-! The string lemmas behind the theorems of `VE.Acts.Lexical` (docs/spec/act-phrases.md 4.3).
+/-! The string lemmas behind the theorems of `VE.Acts.Lexical` (docs/spec/act-phrases.md 4.3), and the theorems
+`check_spec`, `check_no_clause` and `fixedOk_unique`, stated here because they need the lemmas.
 
 `String.split` and `String.splitOn " "` are read as `splitL` on the character list; `words` is its non-empty
 pieces. `scanSlots` commutes with that split, since a slot `{i}` never holds a space. -/
@@ -663,5 +664,320 @@ theorem mem_group {ps : List (List Tok)} : ∀ {n : Nat} {ts : List Tok} {t : To
 def pieceTok (w : String) : Tok := match slotOf? w with
   | some i => .slot i
   | none => .word w
+
+/-! ### `check` against the independent statement (4.3) -/
+
+/-- The independent statement of 1.3. -/
+def Accepts (fx : List String) (k : Nat) (raw : Lean.Json) (a : String) : Prop :=
+  let ws := words (String.mk (scanSlots a.toList).2)
+  a = normal ((raw.getStr?).toOption.getD "") ∧ a.startsWith "{0} " = true ∧
+  (scanSlots a.toList).1 = (List.range k).map toString ∧ 2 ≤ ws.length ∧
+  (∀ w ∈ ws, actWord (dropComma w) = true) ∧ a.utf8ByteSize ≤ maxActBytes ∧
+  (∀ w ∈ ws, w ≠ "slot" → clauseWords.contains (dropComma w).toLower = false) ∧
+  ∃ ts, lex fx a = .ok ts ∧ ∀ t ∈ ts, t ≠ .comma ∧ ∀ w, t = .word w → joinWords.contains w.toLower = false
+
+/-- `check_spec` without its hypothesis on the fixed phrases: `check` refuses whatever `lex` refuses. -/
+theorem check_iff (fx : List String) (name : String) (k : Nat) (raw : Lean.Json) (a : String) :
+    check fx name k raw = .ok a ↔ Accepts fx k raw a := by
+  unfold check Accepts
+  generalize normal ((raw.getStr?).toOption.getD "") = act
+  simp only [bind, Except.bind, pure, Except.pure]
+  constructor
+  · intro hc
+    split at hc
+    next hcond =>
+      split at hc
+      next hsize =>
+        split at hc
+        next => cases hc
+        next hfind =>
+          split at hc
+          next ts hlex =>
+            split at hc
+            next => cases hc
+            next => cases hc
+            next hnone =>
+              cases hc
+              simp only [Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq, List.all_eq_true] at hcond
+              obtain ⟨⟨⟨h1, h2⟩, h3⟩, h4⟩ := hcond
+              refine ⟨rfl, h1, h2, h3, h4, hsize, ?_, ts, hlex, ?_⟩
+              · intro w hw hs
+                have hn : List.find? (fun w => w != "slot" && clauseWords.contains (dropComma w).toLower)
+                    (words ⟨(scanSlots a.toList).2⟩) = none := by
+                  cases h : List.find? _ _ with
+                  | none => rfl
+                  | some v => exact (hfind v h).elim
+                simpa [hs] using List.find?_eq_none.mp hn w hw
+              · intro t ht
+                have := List.find?_eq_none.mp hnone t ht
+                revert this; cases t <;> simp
+          next => split at hc <;> cases hc
+      next => cases hc
+    next => cases hc
+  · rintro ⟨rfl, h1, h2, h3, h4, hsize, hcl, ts, hlex, hts⟩
+    rw [if_pos (by simpa only [Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq, List.all_eq_true, h1, h2,
+      true_and, ge_iff_le, h3] using h4), if_pos hsize]
+    have hn : List.find? (fun w => w != "slot" && clauseWords.contains (dropComma w).toLower)
+        (words ⟨(scanSlots a.toList).2⟩) = none :=
+      List.find?_eq_none.mpr fun w hw => by
+        by_cases hs : w = "slot"
+        · simp [hs]
+        · rw [hcl w hw hs, Bool.and_false]; exact Bool.false_ne_true
+    simp only [hn, hlex]
+    rw [List.find?_eq_none.mpr fun t ht => by obtain ⟨hc, hw⟩ := hts t ht; cases t <;> simp_all]
+
+set_option linter.unusedVariables false in
+theorem check_spec (fx : List String) (h : fixedOk fx = true) (name : String) (k : Nat) (raw : Lean.Json)
+    (a : String) : check fx name k raw = .ok a ↔ Accepts fx k raw a :=
+  check_iff fx name k raw a
+
+theorem check_no_clause {fx name k raw a} (hc : check fx name k raw = .ok a) :
+    ∀ w ∈ words a, clauseWords.contains w.toLower = false := by
+  obtain ⟨-, -, -, -, -, -, hcl, -⟩ := (check_iff fx name k raw a).mp hc
+  intro w hw
+  by_cases hb : '{' ∈ w.data
+  · exact (not_listed (toLower_mem hb (by decide)) (.inl rfl)).1
+  by_cases hm : ',' ∈ w.data
+  · exact (not_listed (toLower_mem hm (by decide)) (.inr rfl)).1
+  -- a word with no brace is its own text, and with no comma its own `dropComma`
+  have hw' : w ∈ words ⟨(scanSlots a.toList).2⟩ := by
+    have := word_out hw
+    rwa [out_eq_self _ hb] at this
+  have hd : dropComma w = w := by unfold dropComma; rw [if_neg fun he => hm (endsWith_comma he)]
+  by_cases hs : w = "slot"
+  · subst hs
+    rw [show "slot".toLower = "slot" from String.ext (by rw [String.toLower, map_data]; decide)]; decide
+  · simpa [hd] using hcl w hw' hs
+
+/-! ### `decodeFixed`: no two occurrences of declared phrases overlap -/
+
+/-- A loop whose body never stops early ran its body without error on every element. -/
+theorem forIn_ok {α ε : Type} {f : α → PUnit → Except ε (ForInStep PUnit)} :
+    ∀ {l : List α} {u : PUnit}, forIn l PUnit.unit f = .ok u → (∀ x, f x PUnit.unit ≠ .ok (.done PUnit.unit)) →
+      ∀ x ∈ l, (f x PUnit.unit).isOk = true
+  | [], _, _, _ => by simp
+  | x :: l, u, h, hf => by
+    rw [List.forIn_cons] at h
+    cases hx : f x PUnit.unit with
+    | error e => rw [hx] at h; cases h
+    | ok s =>
+      cases s with
+      | done b => exact (hf x hx).elim
+      | yield b =>
+        rw [hx] at h
+        intro y hy
+        rcases List.mem_cons.mp hy with rfl | hy
+        · rw [hx]; rfl
+        · exact forIn_ok h hf y hy
+
+/-- What `decodeFixed`'s loops check, read off a success. -/
+theorem decodeFixed_ok {fx : List String} {ps : List (List Tok)} (h : decodeFixed fx = .ok ps) :
+    ∀ i < ps.length, ∀ j < ps.length, ¬(i < j ∧ ps.getD i [] = ps.getD j []) ∧
+      ¬(i = j ∧ clash (ps.getD i []) (ps.getD i []) = true ∨
+        i ≠ j ∧ ps.getD i [] ≠ ps.getD j [] ∧ clash (ps.getD i []) (ps.getD j []) = true) := by
+  unfold decodeFixed at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  split at h
+  · cases h
+  split at h
+  · cases h
+  split at h
+  · cases h
+  next hloop =>
+  cases h
+  intro i hi j hj
+  have h1 := forIn_ok hloop (by intro x; split <;> simp) i (List.mem_range.mpr hi)
+  split at h1
+  · cases h1
+  next hin =>
+  have h2 := forIn_ok hin (by intro x; split <;> (try split) <;> simp) j (List.mem_range.mpr hj)
+  split at h2
+  · cases h2
+  split at h2
+  · cases h2
+  exact ⟨‹_›, ‹_›⟩
+
+/-- Two occurrences in one token list, `q`'s starting inside `p`'s (or both at one place, for `p ≠ q`), make
+`clash p q` true. -/
+theorem clash_of_overlap {p q ts : List Tok} {m n : Nat} (hp : p.isPrefixOf (ts.drop m) = true)
+    (hq : q.isPrefixOf (ts.drop n) = true) (hmn : m ≤ n) (hin : n < m + p.length) (hne : m ≠ n ∨ p ≠ q) :
+    clash p q = true := by
+  rw [List.isPrefixOf_iff_prefix] at hp hq
+  have hk : (p.drop (n - m)) <+: ts.drop n := by
+    obtain ⟨t, ht⟩ := hp
+    refine ⟨t, ?_⟩
+    rw [← List.drop_append_of_le_length (by omega), ht, List.drop_drop]
+    congr 1; omega
+  unfold clash
+  rw [List.any_eq_true]
+  refine ⟨n - m, List.mem_range.mpr (by omega), ?_⟩
+  simp only [Bool.and_eq_true, Bool.or_eq_true, bne_iff_ne, ne_eq, List.isPrefixOf_iff_prefix]
+  refine ⟨?_, List.prefix_or_prefix_of_prefix hk hq⟩
+  rcases hne with h | h
+  · exact .inl (by omega)
+  · exact .inr h
+
+set_option linter.unusedVariables false in
+theorem fixedOk_unique (fx : List String) (h : fixedOk fx = true) (ts : List Tok) :
+    -- the grouping is the only one: no two occurrences of declared phrases overlap
+    ∀ ps, decodeFixed fx = .ok ps → ∀ i j (hi : i < ps.length) (hj : j < ps.length) (m n : Nat),
+      (ps[i]).isPrefixOf (ts.drop m) = true → (ps[j]).isPrefixOf (ts.drop n) = true → (i, m) ≠ (j, n) →
+      m + (ps[i]).length ≤ n ∨ n + (ps[j]).length ≤ m := by
+  intro ps hd i j hi hj m n hpi hpj hne
+  have hij := decodeFixed_ok hd i hi j hj
+  have hji := decodeFixed_ok hd j hj i hi
+  rw [show ps.getD i [] = ps[i] by simp [hi], show ps.getD j [] = ps[j] by simp [hj]] at hij hji
+  have hpq : i ≠ j → ps[i] ≠ ps[j] := fun h e => by
+    rcases Nat.lt_or_gt_of_ne h with h | h
+    · exact hij.1 ⟨h, e⟩
+    · exact hji.1 ⟨h, e.symm⟩
+  -- an overlap would start one occurrence inside the other, which `clash` refuses
+  rw [Classical.or_iff_not_imp_left]
+  intro h1
+  apply Classical.byContradiction
+  intro h2
+  rcases Nat.le_total m n with hmn | hnm
+  · by_cases e : i = j
+    · subst e
+      exact hij.2 (.inl ⟨rfl, clash_of_overlap hpi hpj hmn (by omega) (.inl fun e' => hne (by rw [e']))⟩)
+    · exact hij.2 (.inr ⟨e, hpq e, clash_of_overlap hpi hpj hmn (by omega) (.inr (hpq e))⟩)
+  · by_cases e : i = j
+    · subst e
+      exact hij.2 (.inl ⟨rfl, clash_of_overlap hpj hpi hnm (by omega) (.inl fun e' => hne (by rw [e']))⟩)
+    · have hqp : ps[j] ≠ ps[i] := fun e' => hpq e e'.symm
+      exact hji.2 (.inr ⟨Ne.symm e, hqp, clash_of_overlap hpj hpi hnm (by omega) (.inr hqp)⟩)
+
+/-! ### `group` and `lex`: the grouping of 1.1 -/
+
+/-- A token list with every fixed phrase written out as its tokens. -/
+def expand (ps : List (List Tok)) (ts : List Tok) : List Tok :=
+  ts.flatMap fun
+    | .fixed i => ps.getD i []
+    | t => [t]
+
+/-- `g` groups `ts` (1.1): written out it is `ts`, and no token left ungrouped starts an occurrence of a declared
+phrase. With `fixedOk_unique`, every occurrence then is one `fixed` token. -/
+def Grouped (ps : List (List Tok)) (ts g : List Tok) : Prop :=
+  expand ps g = ts ∧ ∀ t post, t :: post <:+ g → (∀ i, t ≠ .fixed i) →
+    ∀ i (hi : i < ps.length), ps[i] ≠ [] → (ps[i]).isPrefixOf (t :: expand ps post) = false
+
+theorem expand_cons {ps : List (List Tok)} {t : Tok} (ht : ∀ i, t ≠ .fixed i) (ts : List Tok) :
+    expand ps (t :: ts) = t :: expand ps ts := by
+  cases t with
+  | fixed i => exact absurd rfl (ht i)
+  | _ => rfl
+
+theorem expand_fixed (ps : List (List Tok)) (i : Nat) (ts : List Tok) :
+    expand ps (.fixed i :: ts) = ps.getD i [] ++ expand ps ts := rfl
+
+theorem expand_plain {ps : List (List Tok)} : ∀ {ts : List Tok}, (∀ t ∈ ts, ∀ i, t ≠ .fixed i) → expand ps ts = ts
+  | [], _ => rfl
+  | t :: ts, h => by
+    rw [expand_cons (h t (by simp)), expand_plain fun u hu => h u (List.mem_cons_of_mem _ hu)]
+
+theorem group_expand (ps : List (List Tok)) : ∀ (n : Nat) (ts : List Tok), (∀ t ∈ ts, ∀ i, t ≠ .fixed i) →
+    expand ps (group ps n ts) = ts
+  | 0, ts, h => expand_plain h
+  | _ + 1, [], _ => rfl
+  | n + 1, t :: rest, h => by
+    simp only [group]
+    split
+    · next i hi =>
+      have hp := List.find?_some hi
+      simp only [Bool.and_eq_true, List.isPrefixOf_iff_prefix] at hp
+      rw [expand_fixed, group_expand ps n _ fun u hu => h u (List.mem_of_mem_drop hu)]
+      conv => rhs; rw [← List.take_append_drop (ps.getD i []).length (t :: rest)]
+      rw [← List.prefix_iff_eq_take.mp hp.2]
+    · rw [expand_cons (h t (by simp)), group_expand ps n rest fun u hu => h u (List.mem_cons_of_mem _ hu)]
+
+theorem group_maximal (ps : List (List Tok)) : ∀ (n : Nat) (ts : List Tok), ts.length ≤ n →
+    (∀ t ∈ ts, ∀ i, t ≠ .fixed i) → ∀ t post, t :: post <:+ group ps n ts → (∀ i, t ≠ .fixed i) →
+      ∀ i (hi : i < ps.length), ps[i] ≠ [] → (ps[i]).isPrefixOf (t :: expand ps post) = false
+  | 0, [], _, _, _, _, hs, _, _, _, _ | _ + 1, [], _, _, _, _, hs, _, _, _, _ => by simp [group] at hs
+  | 0, _ :: _, hl, _, _, _, _, _, _, _, _ => by simp at hl
+  | n + 1, u :: rest, hl, h, t, post, hs, ht, i, hi, hne => by
+    simp only [group] at hs
+    split at hs
+    · next k hk =>
+      rcases List.suffix_cons_iff.mp hs with e | hs
+      · cases e; exact (ht k rfl).elim
+      · have hp := List.find?_some hk
+        simp only [Bool.and_eq_true, Bool.not_eq_true', List.isEmpty_eq_false_iff] at hp
+        have := List.length_pos_iff.mpr hp.1
+        exact group_maximal ps n _ (by simp only [List.length_drop, List.length_cons] at hl ⊢; omega) (fun u hu => h u (List.mem_of_mem_drop hu)) t post
+          hs ht i hi hne
+    · next hnone =>
+      rcases List.suffix_cons_iff.mp hs with e | hs
+      · cases e
+        rw [group_expand ps n rest fun u hu => h u (List.mem_cons_of_mem _ hu)]
+        have := List.find?_eq_none.mp hnone i (List.mem_range.mpr hi)
+        simpa [hi, hne, ← List.isPrefixOf_iff_prefix] using this
+      · exact group_maximal ps n rest (by simp at hl; omega) (fun u hu => h u (List.mem_cons_of_mem _ hu)) t post
+          hs ht i hi hne
+
+/-- `group` with enough fuel groups a token list that holds no fixed phrase yet. -/
+theorem group_spec (ps : List (List Tok)) (n : Nat) (ts : List Tok) (hn : ts.length ≤ n)
+    (h : ∀ t ∈ ts, ∀ i, t ≠ .fixed i) : Grouped ps ts (group ps n ts) :=
+  ⟨group_expand ps n ts h, group_maximal ps n ts hn h⟩
+
+theorem mapM_mem {α β ε : Type} {f : α → Except ε β} :
+    ∀ {l : List α} {r : List β}, l.mapM f = .ok r → ∀ y ∈ r, ∃ x ∈ l, f x = .ok y
+  | [], r, h => by cases h; intro y hy; cases hy
+  | x :: l, r, h => by
+    rw [List.mapM_cons] at h
+    cases hx : f x with
+    | error e => rw [hx] at h; cases h
+    | ok y =>
+      cases hl : l.mapM f with
+      | error e => simp [hx, hl, bind, Except.bind] at h
+      | ok ys =>
+        simp only [hx, hl, bind, Except.bind, pure, Except.pure, Except.ok.injEq] at h
+        subst h
+        intro z hz
+        rcases List.mem_cons.mp hz with rfl | hz
+        · exact ⟨x, by simp, hx⟩
+        · obtain ⟨w, hw, e⟩ := mapM_mem hl z hz
+          exact ⟨w, List.mem_cons_of_mem _ hw, e⟩
+
+/-- `rawLex` makes no `fixed` token. -/
+theorem rawLex_plain {s : String} {ts : List Tok} (h : rawLex s = .ok ts) : ∀ t ∈ ts, ∀ i, t ≠ .fixed i := by
+  unfold rawLex at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  split at h
+  · cases h
+  next tss htss =>
+  split at h
+  · cases h
+  cases h
+  intro t ht i
+  rw [foldl_append_eq, List.nil_append, List.mem_flatten] at ht
+  obtain ⟨l, hl, ht⟩ := ht
+  obtain ⟨p, -, hp⟩ := mapM_mem htss l hl
+  unfold pieceToks at hp
+  by_cases hb : ((dropComma p).isEmpty || (dropComma p).contains ',') = true
+  · rw [if_pos hb] at hp; cases hp
+  · rw [if_neg hb] at hp
+    cases hp
+    have hs : ∀ i, (match slotOf? (dropComma p) with | some i => Tok.slot i | none => Tok.word (dropComma p)) ≠
+        .fixed i := by intro i; split <;> simp
+    split at ht
+    · rcases List.mem_cons.mp ht with rfl | ht
+      · exact hs i
+      · rw [List.mem_singleton.mp ht]; exact Tok.noConfusion
+    · rw [List.mem_singleton.mp ht]; exact hs i
+
+/-- The tokens `lex` returns group `rawLex`'s tokens by the declared phrases. -/
+theorem lex_spec {fx : List String} {s : String} {ts : List Tok} (h : lex fx s = .ok ts) :
+    ∃ ps raw, decodeFixed fx = .ok ps ∧ rawLex (normal s) = .ok raw ∧ Grouped ps raw ts := by
+  unfold lex at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  split at h
+  · cases h
+  next ps hps =>
+  split at h
+  · cases h
+  next raw hraw =>
+  cases h
+  exact ⟨ps, raw, hps, hraw, group_spec ps _ raw (Nat.le_refl _) (rawLex_plain hraw)⟩
 
 end VE.Acts.Lexical
