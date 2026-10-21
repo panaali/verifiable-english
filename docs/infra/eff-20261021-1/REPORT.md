@@ -51,7 +51,7 @@ Seeded bugs, each planted, `verify_evidence.py` run (exit 1 each), then restored
 5. `replay.py` `derive`: a mutant KILLED at the reviewed tree counted as a pair. Fails: df-1ac/W10 pair, "pairs 2, measured 3".
 6. `replay.py` `status`: the NOT SELECTED case removed. Fails: 19 rows "does not state the replay".
 
-No full release gate was run, as directed. The selected tests are reported in the build final.
+No full release gate was run, as directed. No failure from `main-known-red.txt` arose.
 
 ## Follow-ups (not built here)
 
@@ -70,7 +70,7 @@ No full release gate was run, as directed. The selected tests are reported in th
 6. N.A.: the chain runs the final-HEAD gate.
 7. PASS: no DELTA row and no trust growth; `git diff main...HEAD` holds only `docs/infra/eff-20261021-1/`.
 8. PASS: no VE output changed.
-9. PASS: the selected tests for this diff were run (build final).
+9. PASS: `mac-pytest.sh --select` at 1fa85f06: 9 of 460 units selected, 0 failed (ve-mac-1); `lake build` and `python3 lean/audit.py` pass.
 10. N.A.: no Lean statement or theorem changed.
 11. N.A.: no public budget, limit or deadline changed.
 12. N.A.: no runtime product path changed; the times above are the task's measurement.
