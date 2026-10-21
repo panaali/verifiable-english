@@ -1,3 +1,6 @@
+fe21a4f9de802de59ee7809a4818fe4cdc63e03b ap-1b recheck F3: re-record the S3 comparison report for actions_version 33 (python -m conformance.english_lean_s3_compare; the version, and Lark's expected-terminal order in two Python messages)
+aaef21322042087ee4b4c777d9bbed042045e71d ap-1b recheck F3: re-record the ask fixtures for actions_version 33 (tools/ask_fixtures.py --write; only the version and the recorded seconds change)
+479c4e946e364d142b8a5540f22c29a31b0b8312 ap-1b recheck F3: the typing view's acts@0 stage erases acts@0 from the reduced list, not the submitted one
 1034a4de6c5900beff4a92897024acfe3ea2462c ap-1b review: seeded-bug results for the review's premises and gate (39 of 39 killed; the retired plainRun-family dropped)
 b432579bbfbdad501005e6f1127e04b13f3600d2 ap-1b review F2 (trust_mutants round 2): placeholderJson's acts@0 check on its own line; probes for the remaining cuts
 270b9b6c767313da2c1fd98c6814fb8c7434c690 ap-1b review F1 (norm-defaults) and F2 (trust_mutants): the norm-defaults route keeps an acts@0 list's order; probes for the survivors

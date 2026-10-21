@@ -176,3 +176,45 @@ decoder and Lean's model path reading `acts@0` (deviation 3); `Words/Situation.l
 - **Pre-existing, not changed here:** the norm-defaults route sets `norm-defaults@0` aside wherever it is listed, so
   a list without `acts@0` that is sorted only once it is set aside (for example
   `["norms@0", "norm-defaults@0", "relational-fol@0"]`) is answered as on `main`; FOLLOW-UPS candidate.
+
+## 10. Recheck fix (`ap-1b-looprecheck1.final.md`, 2026-10-21)
+
+- **F3 (B), the class.** `typingView`'s `acts@0` stage rewrote the profile list from the *submitted* list, so it
+  listed again any profile an earlier stage had erased: with `norm-defaults@0`, `english.read` refused an environment
+  the environment mode accepts (`Unsupported profile norm-defaults@0`). The stage now reads `acts@0` from the
+  submitted list (`readsActs ps`, as before) and erases it from the list the earlier stages reduced
+  (`Encode.lean`, one line). Every other stage already reduces the view's own list. PROBE F3 failed before the fix
+  and passes after it.
+- **Class tests.** `ActsExamples.lean` derives from the profile table every list of `acts@0`, `norms@0`,
+  `relational-fol@0` and one or two more environment profiles that `gateOf profileTable` admits
+  (`admittedWithActs`, 21 lists): each typing view lists exactly the rest (without `acts@0`, `norm-defaults@0`,
+  `readings@1`) and `Standalone.validated` accepts it; a list sorted only once `norm-defaults@0` is erased is
+  still left as listed, for the envelope to refuse. Python:
+  `tests/test_acts_profile.py::test_an_acts_environment_with_norm_defaults_is_read_by_english` (the probe) and
+  `::test_every_acts_list_the_environment_mode_accepts_is_read_by_english` (every such list that `Environment`
+  accepts, 15 of them, reads `Alice may seek asylum.` with status `one`). Over the 120 lists, English never reads a list the
+  environment mode refuses. On lists the environment mode refuses, English's refusal text can differ from the
+  environment mode's (for example `reports@0`). Python never sends those lists to English, because `Environment`
+  refuses them first. FOLLOW-UP candidate.
+- **Seeded bugs** (`seed_bugs.py --only`, all killed): `typingView-acts` (re-pointed at the new line),
+  `typingView-acts-submitted-list` (back to `ps`: `ActsExamples.lean:216`), `typingView-acts-reduced-premise`
+  (`readsActs ps` weakened to `ps.contains "acts@0"`: `ActsExamples.lean:221`). No Python or Rust product code
+  changed.
+- **trust_mutants.** On the final Lean tree with `--base fc983051a` (this fix's Lean change only):
+  [trust-mutants-f3.json](trust-mutants-f3.json), exit 0, 0 mutants. None of the tool's OPERATORS applies to the
+  changed lines, and the two hand mutants above cover them. The branch-wide run
+  ([trust-mutants.json](trust-mutants.json), at `1034a4de`, the same Lean as `fc983051a`) still stands. A rerun
+  from the merge base was stopped at the 2-hour limit on the VM, because the Mac runner was unreachable, and is not
+  recorded.
+- **Trust and pins.** `trust_map.py --check`: K +0, S +0, V +79. The review allowance was re-recorded under R16
+  as V +12 (`Encode.lean` +2), and the FOLLOW-UPS "## ap-1b" row now lists V +79. `Encode.lean` was re-pinned in the
+  assurance manifest, and `actions_version` raised to 33. The ask fixtures and the S3 comparison report were
+  re-recorded with their own tools for the new version.
+- **Recheck FOLLOW-UPs.** DELTA row 4 (c) now names the plain route's earlier-row refusals (`reports@0` with
+  `norms@0` layers) and says `delta.json` does not record them. The V +67 row is updated. C2 (`:=(` in
+  `Standalone.lean`) is left as it is (see section 9).
+- **Tests.** `lake build`, `lean/audit.py` and `regen_generated.py --check` (32 entries) pass. Selected tests
+  (`mac-pytest.sh --select`, merge base `2296317a9`, on `aaef2132`, ve-mac-1): 459 units, 1 failure, in
+  `test_english_lean_s3_compare.py::test_committed_report_counts_are_derived_from_individual_records` (the report
+  still had version 32). It passes after re-recording, with `test_acts_profile.py` and `test_ask_fixtures.py`
+  (40 passed). The full gate was not run here; the merge train runs it.
