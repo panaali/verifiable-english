@@ -1,0 +1,14 @@
+{
+ "allow": [
+  {"definition": "ResponseShape.Schemas.Norms.elaborateWith", "operator": "list-first",
+   "reason": "equivalent: every caller passes at most one extra member (norms-elaborate `wordings`, family-norms none), so `extra.take 1` is `extra`"},
+  {"definition": "ResponseShape.Schemas.Norms.elaborateWith", "operator": "list-last",
+   "reason": "equivalent: every caller passes at most one extra member, so `extra.reverse.take 1` is `extra`"},
+  {"definition": "ResponseShape.Schemas.Norms.elaborateWith", "operator": "list-empty",
+   "reason": "does not elaborate: `[].map (·.1)` has no element type (Invalid projection); the other cuts are killed by the shape #guard"},
+  {"definition": "VE.Norms.Run.runCase", "operator": "list-empty",
+   "reason": "does not elaborate: `[] fun (p, w) => …` applies a list (Function expected); the other cuts are killed by the routeWordings #guards"},
+  {"definition": "VE.Norms.Wire.plainWordings", "operator": "list-empty",
+   "reason": "does not elaborate: the cuts at the lambda leave `[]` applied or typed as a list of options (Function expected, Type mismatch); the others are killed by the routeWordings #guards"}
+ ]
+}
