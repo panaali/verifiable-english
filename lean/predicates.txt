@@ -143,6 +143,9 @@ module VE.Calc.Dimension
 module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.FourierMotzkin
+module VE.Calc.Identity
+module VE.Calc.IdentityExamples
+module VE.Calc.Inline
 module VE.Calc.Linear
 module VE.Calc.Poly
 module VE.Calc.Render
@@ -673,10 +676,14 @@ VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
 VE.Calc.Frac.Means@VE.Calc.Poly
+VE.Calc.Inlined.Agrees@VE.Calc.Inline
+VE.Calc.Inlined.Faults@VE.Calc.Inline
+VE.Calc.IsIdentity@VE.Calc.Identity
 VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.NotIdentity@VE.Calc.Identity
 VE.Calc.PhysDim.Normal@VE.Calc.Dimension
 VE.Calc.Poly.Within@VE.Calc.Poly
 VE.Calc.QFact.Holds@VE.Calc.Linear
