@@ -8,8 +8,9 @@ This file covers what is built so far: item sc-1a, the layout's list runs, that 
 item sc-3a, the layout's label reaches and anchors, with discourse's anchor containment and anchor checks moved
 into the layout so that one body serves both; and item sc-1ab, the effects on a rule's JSON object (joining the
 lead-in's part to each item's part, conditions and `own`, the order table). No route or service mode calls the scope
-parts yet. `govern`, the block's admission and the run path `governFast` come next (sc-1ac), and the document mode
-after that (SC-1b).
+parts yet. Item sc-1ac adds `govern` and the block's admission; the precedence graph step, the theorems about what
+`govern` writes and the run path `governFast` are sc-1ad, the anchor and label reaches sc-3ab, and the document mode
+SC-1b.
 
 ## `VE/Layout/List.lean`: what the source bytes say
 
@@ -92,6 +93,48 @@ Theorems: `mergeParts_keys` (every key of the joined object comes from exactly o
 `lookups_fields`, `mkObj_getObjVal`, `firstKeys_mem`, `firstKeys_self`, `hasOwn_mono`, `substOwn_no_own_le`,
 `substOwn_id_le`, `impl_map_eq`, `members_obj`.
 
+## `VE/Scope/Govern.lean`: `govern`, the block's admission and the run path (sc-1ac, sc-1ad)
+
+`govern D` returns the complete document with the content of each affected unit replaced by its composed rule, as
+the chain's own norm object; the chain's decoder then reads it as if the rule had been written out in full.
+- `SDoc`: the layout, the document after RESOLVE, the `scope` block, the governors, the list names, the anchors and
+  the chain's decoding environment. A `Governor` is its id, its unit, its `Effect`, its `Reach` and its recorded units.
+- The reaches: `coveredLayout` (a list is its lead-in's run; a list name is the run of its lead-in, and its recorded
+  units must equal it), `covered` (adds the `rules` reach: the rule units whose base name is one of the names).
+  An anchor, a label or a frontier reach is refused (`UnsupportedProfile`) until sc-3ab and SC-5.
+- `baseObj`: a norm's own object, or, under exactly one frame, the frame joined to the unit's part or norm; a part no
+  frame covers is `ScopeOrphanPart`, two frames `ScopeOrder`, any other written content `ScopeNotARule`.
+- `applyEffect`: `reguard c` makes the guard `c` with `own` replaced by the rule's guard; `carve_out c` appends `c`
+  (with `own` replaced) to `unless`; the other effects leave the object. `composed` applies the unit's unary
+  governors (`governorsOf`) to its base object in order 1.4 (`ordered`: by reach class, then by the position of the
+  governor's unit, stably). `orderCheck` refuses two unary governors on a unit that do not `Commutes`.
+- `admitBlock`, before anything else and with or without governors: the limits (256 governors, 256 list names),
+  repeated ids and names, unknown units, a vocabulary symbol named `own`, each list name (its scope, its unit, its
+  run), then each governor (depth, `own` under a binder, its effect's reach and unit, its recorded units, reading
+  sets, units it cannot change). Discourse's anchor checks and the anchor and label unit checks are sc-3ab's; until
+  then a block with anchors is refused.
+- The graph step (sc-1ad): `ruleTable` decodes, with the chain's own decoder, the composed rule of each unit a
+  `precedes` or `yields` governor reads. `edgesOf`: a `precedes` governor's rule goes over each reached rule on its
+  predicate with another name; under `yields`, each such rule goes over the governor's rule. `addOver` appends each
+  new name to `over` once.
+- `govern`: with no governor, the document itself or `ScopeOrphanPart`; otherwise `orderCheck`, the composition of
+  every `affected` unit, `ruleTable`, `ScopeNoEffect` for a graph governor that adds no edge, then `patch`, each
+  composed rule with the edges into it.
+- `governFast`, the run path SC-1b calls (1.5.8): `governBody`, the same steps after the admission, reading the
+  order, each reach and each rule unit's base name from tables computed once (`fastReads`, keyed by reach; `memo`
+  reads a table and falls back to the definition).
+
+Theorems (`VE/Scope/Theorems.lean`): `itemRule_decoder` (an item's rule is the chain's decoding of the joined
+object), `govern_admits` (an answer means the block was admitted), `govern_identity` (no governor, no part: the
+document exactly as written), `govern_orphan`, `governorsOf_iff` (a governor applies to a unit exactly when it is
+unary and its regenerated reach holds the unit), `ordered_sorted` (order 1.4), `baseName_some`, and the helpers
+`coversU_iff` and `mem_ordered`. From sc-1ad: `frontier_graph_refused`, `readings_refused` and `nonrule_refused`
+(through `admit_governor`, what an admitted block says of each governor); `governFast_eq` (the run path answers as
+`govern`, through `fastReads_eq`, `memo_map` and one `rfl` equation per step, `frameOnF_slow` to `governBody_slow`);
+`ruleTable_decoder`, `edgesFor_ok`, `edgesOf_graph`, `edgesInto_mem`, `addOver_nil`. The theorems about what `govern`
+writes (`govern_preserves`, `govern_provenance`, `govern_strings`, `govern_no_new_symbols`, `decodeNorm_name`) fail
+as the spec states them on objects no JSON parser builds (F-raw below); they wait for the DRI's decision (sc-1ae).
+
 ## `VE/Scope/Examples.lean`: the fixtures
 
 The spec's 7.1 layout fixtures, over the pilot's own bytes (shortened inside sentences only): L1 (the layout
@@ -115,3 +158,15 @@ rule, all six W1 keys), F1′ (`ScopeConflict: u0165.s03: sign`), parts that are
 `mergeParts_text`, F-own (u0173.s01's condition: `own` found, gone after substitution, safe, within depth; an
 own-free condition unchanged), `own` as an object value and as a key, the depth limit's boundary, `own_binder`,
 `depth_bound`, `narrowings`, `effects_six` and the F7-t `Commutes` table.
+
+The `govern` fixtures (sc-1ac, spec 7.1), on the hard-constraint layout with the norms chain's environment: F1-g
+(the frame over the seven parts gives each rule in full), F1″ (`govern` succeeds and the chain's decoder refuses an
+item without `predicate` with its own text), F-id, F-orph, F-meta (its anchor case refused until sc-3ab), F-fg, F-mm,
+F-2f, F-rs, F-nr, F-pend and F-go; each admission step's refusal and the limits' boundaries; the order of two
+carve-outs of one class and of a `rules` reach; and the refusals that stand until sc-3ab. sc-1ad adds the graph
+step's fixtures (`precedes`, `yields`, `ScopeNoEffect`, a decoder's refusal, `addOver`), `governFast` against
+`govern` on refusals and answers, one fixture per mutant sc-1ac's review found surviving, and F-raw: on an
+unbalanced or unordered tree `setObjVal!` drops a member, exposes a hidden one or loses a unit's `id`, and the soft
+chain's decoder reads a rule's `name` that lookup does not find. Kernel theorems
+on a three-unit document (`short_access`, `short_base`, `short_effects`, `short_govern`) state each definition's
+values, and `reaches_seven`, `governor_fields` and `sdoc_fields` pin the data types.
