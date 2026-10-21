@@ -24,7 +24,7 @@ cross-examination with handling gerrymandering. It is the baseline to beat;
 plain prose debate would be inadequate. These source claims follow the local
 positioning note's primary-source reading, not a new theoretical result.
 
-[PLAN-V3](../../PLAN-V3.md), “What the reviewers changed” items 1–2, package 4;
+[PLAN-V3](../../docs/plans/PLAN-V3.md), “What the reviewers changed” items 1–2, package 4;
 Astra review §§2–3, 6–7; Fable review §§2–4, 7 (links in shared design §1), require
 charging authoring, independent prose, worst-flaw performance, honest completion
 and explicit refutation. [E5 README](../E5/README.md), and
