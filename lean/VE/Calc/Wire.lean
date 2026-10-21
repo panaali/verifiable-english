@@ -83,32 +83,35 @@ def literalFault (j : Json) : Option String :=
     | _ => none
   | _ => none
 
-/-- Limit 7: a name or claim id of more than 64 bytes. -/
-def nameFault (j : Json) : Option String :=
-  let long (s : String) : Option String :=
-    if s.utf8ByteSize > VE.Limits.maxIdentifierBytes then some (limit "a name" VE.Limits.maxIdentifierBytes) else none
-  match j with
-  | .arr xs => match xs.toList with
-    | [.str "val", .str n] => long n
-    | _ => none
-  | .obj _ => ["name", "id"].findSome? fun k => match j.getObjVal? k with
-    | .ok (.str n) => long n
-    | _ => none
-  | _ => none
+/-- Limit 7 (2.6): a string or object key of more than 64 bytes. Names, claim ids, `software` and every string a
+later batch decodes are capped alike, as no field is listed. -/
+def stringFault (j : Json) : Option String :=
+  let long (s : String) : Bool := s.utf8ByteSize > VE.Limits.maxIdentifierBytes
+  if (match j with
+    | .str s => long s
+    | .obj _ => ((fields j).toOption.getD []).any (long ·.1)
+    | _ => false) then some (limit "a string" VE.Limits.maxIdentifierBytes) else none
+
+/-- The case as limit 7 reads it: a value record's `words` string, the one string it does not cap, as `null`. -/
+def unworded (j : Json) : Json := match j.getObjVal? "values" with
+  | .ok (.arr vs) => j.setObjVal! "values" (.arr (vs.map fun v =>
+    if v.getObjVal? "words" matches .ok (.str _) then v.setObjVal! "words" .null else v))
+  | _ => j
 
 def entries (j : Json) (key : String) : Nat := match j.getObjVal? key with
   | .ok (.arr xs) => xs.size
   | _ => 0
 
 /-- The first limit of 3.2 the case exceeds: 10,000 JSON values, depth 64, 512 values, 512 claims, then
-exponents, literals and names, each anywhere in the case. -/
+exponents, literals and strings, each anywhere in the case. -/
 def limitFault (j : Json) : Option String :=
   let (values, depth) := size (VE.Limits.maxJsonDepth + 1) j
   if values > VE.Limits.maxNodes then some (limit "the number of JSON values" VE.Limits.maxNodes)
   else if depth > VE.Limits.maxDepth then some (limit "the JSON depth" VE.Limits.maxDepth)
   else if entries j "values" > 512 then some (limit "the number of values" 512)
   else if entries j "claims" > 512 then some (limit "the number of claims" 512)
-  else [exponentFault, literalFault, nameFault].findSome? (scan · (VE.Limits.maxDepth + 1) j)
+  else [(exponentFault, j), (literalFault, j), (stringFault, unworded j)].findSome? fun (p, j) =>
+    scan p (VE.Limits.maxDepth + 1) j
 
 /-! ## Literals, expressions and claims (3.1), each with its canonical form (3.3) -/
 
