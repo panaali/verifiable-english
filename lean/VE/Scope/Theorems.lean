@@ -403,7 +403,8 @@ theorem addOver_nil (o : Json) : addOver [] o = o := by
   unfold addOver
   split <;> simp
 
-set_option maxHeartbeats 1000000 in
+-- the step-8 match on the reach (sc-3ab) doubles the cases the loop body's side goal splits
+set_option maxHeartbeats 400000 in
 /-- What an admitted block says of each governor (step 8): no graph effect over a frontier reach, and its reach
     exists, holds no unit of a reading set (nor does its own unit), and, for a content-changing effect, holds only
     units that are unwritten, parts or norms. -/
