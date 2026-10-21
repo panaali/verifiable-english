@@ -1083,6 +1083,13 @@
    "reason": "me-5b: VE/Calc/Lower.lean S +12 (Follows 6, HasCounterexample 6); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5b, 2026-10-18",
    "commit": "ca15b6d1ca0051cacf4ce807ab3ea1640efe7628"
+  },
+  {
+   "class": "S",
+   "lines": 13,
+   "reason": "ap-1e: VE/Acts/LexicalProofs.lean S +13 (expand and Grouped, the grouping of spec 1.1 condition 6); VE/Acts/Lexical.lean trusted -15 (group tied by group_spec, lex tied by lex_spec); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1e, 2026-10-18",
+   "commit": "3432611041bf4ce570bf6658b9066522001e5f12"
   }
  ]
 }
