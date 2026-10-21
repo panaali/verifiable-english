@@ -62,13 +62,17 @@ example : Defs.Means [] (.allFromTo (lit 1) (lit 3) (.lt (lit 0) (.var 0))) ∧ 
   simp [Defs.Means, Holds, Term.value, lit]; exact ⟨fun i _ _ => by omega, ⟨0, by omega⟩, ⟨3, by omega⟩⟩
 example : Defs.Means [] (.exFromTo (lit 1) (lit 3) (.eq (.var 0) (lit 3))) ∧ ¬ Defs.Means [] (.exFromTo (lit 1) (lit 3) (.eq (.var 0) (lit 0))) := by
   means
-example : Defs.Means [] (.eq (.countFromTo (lit 1) (lit 6) (.dvd (lit 2) (.var 0))) (lit 3)) := by
+example : Defs.Means [] (.eq (.countFromTo (lit 2) (lit 5) (.dvd (lit 2) (.var 0))) (lit 2)) := by
   simp (config := { decide := true }) [Defs.Means, Holds, Term.value, lit, List.range, List.range.loop]
 example : Holds (Defs.env []) [5, 7] (.eq (.var 1) (lit 7)) := by means
-def double : Defs := [.fn "double" 1 (.mul (lit 2) (.var 0)), .fn "quad" 1 (.call "double" [.call "double" [.var 0]])]
-example : double.Means (.eq (.call "quad" [lit 3]) (lit 12)) ∧ ¬ double.Means (.eq (.call "double" [lit 4, lit 1]) (lit 8)) ∧
-    ¬ double.Means (.eq (.call "triple" [lit 1]) (lit 3)) := by
-  means
+def double : Defs := [.fn "double" 1 (.mul (lit 2) (.var 0)), .fn "quad" 1 (.call "double" [.call "double" [.var 0]]),
+  .fn "seven" 1 (lit 7), .pred "below" 2 (.lt (.var 0) (.var 1))]
+example : double.Means (.eq (.call "quad" [lit 3]) (lit 12)) ∧ double.Means (.eq (.call "double" [lit 4]) (lit 8)) ∧
+    ¬ double.Means (.eq (.call "double" [lit 4, lit 1]) (lit 8)) ∧ ¬ double.Means (.eq (.call "seven" []) (lit 7)) ∧
+    ¬ double.Means (.eq (.call "triple" [lit 1]) (lit 3)) ∧ double.Means (.call "below" [lit 1, lit 2]) ∧
+    ¬ double.Means (.call "below" [lit 2, lit 1]) := by
+  simp (config := { decide := true }) [double, Defs.Means, Defs.env, Holds, Term.value, Term.values, lit]
+  exact ⟨2, _, ⟨rfl, rfl⟩, rfl, 1, rfl, 2, rfl, by omega⟩
 example : Defs.Means [] (.eq (.countFromTo (lit 3) (lit 1) (.eq (lit 0) (lit 0))) (lit 0)) := by means
 
 /-- M-1 through `hi`: for every n from 1 through hi there is a prime p from n + 1 through 2n. -/
@@ -79,6 +83,11 @@ def m1 (hi : Int) : Formula :=
 def m5 : Formula :=
   .allFromTo (.num 1) (.num 161)
     (.exFromTo (.add (.var 0) (.num 1)) (.sub (.mul (.num 2) (.var 0)) (.num 1)) (.call "prime" [.var 0]))
+
+/-- M-5 fails in the meaning, and n = 1 decides it: there the range n + 1 … 2n − 1 is 2 … 1, which is empty. -/
+example : ¬ primeDefs.Means m5 := by
+  simp [Defs.Means, m5, Holds, Term.value]
+  exact ⟨1, by omega, by omega, fun p h1 h2 => by omega⟩
 
 /-- M-2: each number of the chain is prime and each is less than twice the one before, as a right fold of the 17
 facts closed by the empty conjunction "0 equals 0" (the shape of spec 13.3's 395 units; without it, 393). -/
