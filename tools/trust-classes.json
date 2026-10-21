@@ -13847,6 +13847,7 @@
         {
           "name": "VE.Defaults.Wire.CoherenceReplay.pairs",
           "tied": [
+            "VE.Defaults.Wire.coherence_collision_named",
             "VE.Defaults.Wire.coherence_collision_shown",
             "VE.Defaults.Wire.defaults_coherence_sound"
           ]
@@ -13888,6 +13889,8 @@
         "VE.Defaults.WireFixtures.γ2Coll",
         "VE.Defaults.WireFixtures.γ2Env",
         "VE.Defaults.WireFixtures.γ2R",
+        "VE.Defaults.WireFixtures.γ3Coll",
+        "VE.Defaults.WireFixtures.γ3R",
         "VE.Defaults.WireFixtures.γR",
         "VE.Defaults.WireFixtures.γbCert",
         "VE.Defaults.WireFixtures.γbR",
