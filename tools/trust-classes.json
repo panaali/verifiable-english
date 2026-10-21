@@ -14006,12 +14006,14 @@
         }
       ],
       "C": [
-        "VE.Calc.Check.run"
+        "VE.Calc.Check.run",
+        "VE.Calc.instDecidableOutcomeMeansDecided"
       ]
     },
     "VE/Calc/RunExamples.lean": {
       "T": [
         "VE.Calc.RunExamples.answer",
+        "VE.Calc.RunExamples.bad",
         "VE.Calc.RunExamples.c1",
         "VE.Calc.RunExamples.claim",
         "VE.Calc.RunExamples.deep",
