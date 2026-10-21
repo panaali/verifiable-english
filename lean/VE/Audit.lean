@@ -49,6 +49,9 @@ import VE.Calc.Decls
 import VE.Calc.Derive
 import VE.Calc.Dimension
 import VE.Calc.Eval
+import VE.Calc.Identity
+import VE.Calc.IdentityExamples
+import VE.Calc.Inline
 import VE.Calc.Linear
 import VE.Calc.Poly
 import VE.Calc.Units
@@ -833,6 +836,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Claim.decide_fails
 #print axioms VE.Calc.Claim.decide_holds
 #print axioms VE.Calc.Claim.decide_undefined
+#print axioms VE.Calc.Claim.inline_sound
 #print axioms VE.Calc.Claim.run_complete
 #print axioms VE.Calc.Claim.run_decided
 #print axioms VE.Calc.Claim.run_unknown
@@ -840,6 +844,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Counterexample.check_sound
 #print axioms VE.Calc.Decl.valL_agrees
 #print axioms VE.Calc.Denotes.eval_complete
+#print axioms VE.Calc.Denotes.mono
 #print axioms VE.Calc.Denotes.unique
 #print axioms VE.Calc.Derivation.check_sound
 #print axioms VE.Calc.Derivation.replay_sound
@@ -853,7 +858,16 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Expr.eval_rescale
 #print axioms VE.Calc.Expr.eval_sound
 #print axioms VE.Calc.Expr.exhausted_lift
+#print axioms VE.Calc.Expr.inline_error
+#print axioms VE.Calc.Expr.inline_exhausted
+#print axioms VE.Calc.Expr.inline_names
+#print axioms VE.Calc.Expr.inline_sound
+#print axioms VE.Calc.Expr.inline_tooLarge
+#print axioms VE.Calc.Expr.inline_undefined
 #print axioms VE.Calc.Expr.overflow_lift
+#print axioms VE.Calc.Expr.subst_agrees
+#print axioms VE.Calc.Expr.subst_faults
+#print axioms VE.Calc.Expr.zeroDivisor_sound
 #print axioms VE.Calc.Farkas.check_sound
 #print axioms VE.Calc.Farkas.combination_eval
 #print axioms VE.Calc.Frac.add?_sound
@@ -866,6 +880,13 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Frac.pair_some
 #print axioms VE.Calc.Frac.pow?_sound
 #print axioms VE.Calc.Identity.compare_within
+#print axioms VE.Calc.IdentityExamples.square_not_identity
+#print axioms VE.Calc.Inlined.Agrees.ok
+#print axioms VE.Calc.Inlined.Agrees.undefined
+#print axioms VE.Calc.Inlined.Faults.exhausted
+#print axioms VE.Calc.Inlined.Faults.faults
+#print axioms VE.Calc.Inlined.Faults.names
+#print axioms VE.Calc.Inlined.at_cons
 #print axioms VE.Calc.Poly.add?_sound
 #print axioms VE.Calc.Poly.add?_within
 #print axioms VE.Calc.Poly.eval_append
@@ -914,6 +935,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Val.bin_tooLarge
 #print axioms VE.Calc.Val.div_agrees
 #print axioms VE.Calc.Val.guard_agrees
+#print axioms VE.Calc.assign_wellFormed
 #print axioms VE.Calc.bind2_some
 #print axioms VE.Calc.causes_accumulate
 #print axioms VE.Calc.causes_step
@@ -928,10 +950,23 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.fold_values_other
 #print axioms VE.Calc.foldl_mul_one
 #print axioms VE.Calc.foldl_mul_rat
+#print axioms VE.Calc.freeNames_mem
+#print axioms VE.Calc.identityDecide_outcome
+#print axioms VE.Calc.identityRun_fails
+#print axioms VE.Calc.identityRun_holds
+#print axioms VE.Calc.identityRun_undefined
+#print axioms VE.Calc.identityRun_unknown
 #print axioms VE.Calc.identity_sound
+#print axioms VE.Calc.inlineTable_agrees
+#print axioms VE.Calc.inlineTable_faults
+#print axioms VE.Calc.inline_agrees
+#print axioms VE.Calc.inline_faults
+#print axioms VE.Calc.isIdentity_of_check
 #print axioms VE.Calc.legacy_nominal
 #print axioms VE.Calc.lt_of_sq_lt
 #print axioms VE.Calc.mul_pow_nat
+#print axioms VE.Calc.notIdentity_of_differsAt
+#print axioms VE.Calc.not_isIdentity
 #print axioms VE.Calc.one_pow_nat
 #print axioms VE.Calc.rdiv_pow
 #print axioms VE.Calc.rone_pow
