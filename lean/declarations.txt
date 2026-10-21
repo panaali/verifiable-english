@@ -4051,7 +4051,7 @@ module VE.Calc.Run 8ef6da20db135901d4def4824f5c8df5a7a882a4290d739ea1a60b73855da
 134:0-140:68 theorem VE.Calc.Run.row_sound@VE.Calc.Run
 142:0-149:12 theorem VE.Calc.Run.verdict_sound@VE.Calc.Run
 151:0-158:43 theorem VE.Calc.Run.unknown_named@VE.Calc.Run
-module VE.Calc.RunExamples 17de97d60676be879e5e7bd8f080679d71d424a4fb4102c29a18af3151460e35
+module VE.Calc.RunExamples 8469e65104a5fcf981c00238c91f3b4fd61e560e478ba7e3e3aca1a89eaa3f1f
 9:0-11:22 def VE.Calc.RunExamples.answer@VE.Calc.RunExamples
 13:0-13:87 def VE.Calc.RunExamples.field@VE.Calc.RunExamples
 15:0-22:26 def VE.Calc.RunExamples.says@VE.Calc.RunExamples
@@ -4074,11 +4074,14 @@ module VE.Calc.RunExamples 17de97d60676be879e5e7bd8f080679d71d424a4fb4102c29a18a
 84:0-85:120 def VE.Calc.RunExamples.p512@VE.Calc.RunExamples
 86:0-86:105 def VE.Calc.RunExamples.r827@VE.Calc.RunExamples
 87:0-89:95 def VE.Calc.RunExamples.h8@VE.Calc.RunExamples
-149:0-149:66 def VE.Calc.RunExamples.pad@VE.Calc.RunExamples
-150:0-150:114 def VE.Calc.RunExamples.deep@VE.Calc.RunExamples
-151:0-151:56 def VE.Calc.RunExamples.name64@VE.Calc.RunExamples
-240:0-240:32 def VE.Calc.RunExamples.bad@VE.Calc.RunExamples
-266:0-266:100 def VE.Calc.RunExamples.malformed@VE.Calc.RunExamples
+152:0-156:39 def VE.Calc.RunExamples.distinctIdentities@VE.Calc.RunExamples
+158:0-164:23 def VE.Calc.RunExamples.preservesCanonicalClaim@VE.Calc.RunExamples
+207:0-207:66 def VE.Calc.RunExamples.pad@VE.Calc.RunExamples
+208:0-208:114 def VE.Calc.RunExamples.deep@VE.Calc.RunExamples
+209:0-209:56 def VE.Calc.RunExamples.name64@VE.Calc.RunExamples
+246:0-249:62 def VE.Calc.RunExamples.nestAdd@VE.Calc.RunExamples
+308:0-308:32 def VE.Calc.RunExamples.bad@VE.Calc.RunExamples
+334:0-334:100 def VE.Calc.RunExamples.malformed@VE.Calc.RunExamples
 module VE.Calc.Syntax 5fb0fd5b3ab4a969a25f642f8a98ba44cb4fa5b1e114b83623d4c19b0b4153d7
 6:0-14:28 inductive VE.Calc.Expr@VE.Calc.Syntax
 14:11-14:15 def VE.Calc.instReprExpr.repr@VE.Calc.Syntax
@@ -4148,7 +4151,7 @@ module VE.Calc.UnitsExamples 52ee203d1ad10a8d40cc988ce22e5c7ca7ee58b9c57eccb5cf8
 51:0-52:236 def VE.Calc.UnitsExamples.miles@VE.Calc.UnitsExamples
 53:0-54:189 def VE.Calc.UnitsExamples.i2@VE.Calc.UnitsExamples
 55:0-56:189 def VE.Calc.UnitsExamples.i2Reordered@VE.Calc.UnitsExamples
-module VE.Calc.Wire f3c0849eff1c7e2e17649bccad49047ad61f3b3a673d565ddeebbe57a6598511
+module VE.Calc.Wire b6e0bc516efb327c2904e1d7fbbf0fa4564b4c301f64cb4af2f2a77f745282a4
 12:0-14:21 inductive VE.Calc.Check@VE.Calc.Wire
 16:0-17:42 def VE.Calc.Check.names@VE.Calc.Wire
 19:0-22:26 structure VE.Calc.Case@VE.Calc.Wire
@@ -4165,7 +4168,7 @@ module VE.Calc.Wire f3c0849eff1c7e2e17649bccad49047ad61f3b3a673d565ddeebbe57a659
 70:0-83:13 def VE.Calc.Wire.literalFault@VE.Calc.Wire
 85:0-96:13 def VE.Calc.Wire.nameFault@VE.Calc.Wire
 98:0-100:10 def VE.Calc.Wire.entries@VE.Calc.Wire
-102:0-110:71 def VE.Calc.Wire.limitFault@VE.Calc.Wire
+102:0-110:93 def VE.Calc.Wire.limitFault@VE.Calc.Wire
 114:0-120:86 def VE.Calc.Wire.plain@VE.Calc.Wire
 122:0-123:102 def VE.Calc.Wire.printedJson@VE.Calc.Wire
 125:0-137:49 def VE.Calc.Wire.literal@VE.Calc.Wire

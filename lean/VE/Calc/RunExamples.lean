@@ -127,6 +127,11 @@ def h8 (wavelength printed : String) : String := req (stated "length" r#""11""# 
     | .decided v => decide (k.OutcomeMeans ds (.decided v))
     | .unknown _ => false
 
+-- A literal-only claim reads no exhausted counted value; its evaluation-limit cause is impossible.
+-- This negative instance keeps the unknown clause from becoming a tautology.
+example : ¬ (Check.claim (.compare ⟨.eq, false⟩ (.lit 1) (.lit 2))).UnknownCause [] (.limit .evaluations) := by
+  simp [Check.UnknownCause, Claim.ReadsExhausted, Expr.ReadsExhausted, Claim.exprs, Expr.names]
+
 /-! ## Identity (3.3, J1): what changes the `meaning_id` and what does not -/
 
 #guard meaning (h8 r#""0.000000589""# r#"["sci", "2", 7]"#) == meaning (h8 r#"["sci", "5.89", -7]"# r#"["sci", "2", 7]"#)
@@ -143,6 +148,52 @@ def h8 (wavelength printed : String) : String := req (stated "length" r#""11""# 
 #guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "support": "testimony"}"# ok1) != meaning (req x1 ok1)
 #guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "span": [3, 5]}"# ok1) != meaning (req x1 ok1)
 #guard meaning (req x1 ok1 r#", "software": "Python 3.12""#) != meaning (req x1 ok1)
+
+-- Every already canonical claim must preserve its ordered operands in the hashed form.
+#guard (List.singleton r#"["within", ["val", "x"], ["lit", "0"], ["lit", "2"]]"# ++
+  (["eq", "lt", "le", "gt", "ge"].flatMap fun op => [
+    s!"[\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]]",
+    s!"[\"{op}\", [\"lit\", \"2\"], [\"val\", \"x\"]]"]) ++
+  (["add", "sub", "mul", "div"].map fun op =>
+    s!"[\"eq\", [\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]], [\"lit\", \"1\"]]")).all fun s =>
+    match Json.parse s with
+    | .error _ => false
+    | .ok j => match Wire.claim ("ties-up", .tiesUp) "claims.0.claim" j with
+      | .ok (_, canonical) => canonical == j
+      | .error _ => false
+
+-- Identity must distinguish alternatives within each field, including operand order.
+#guard ([
+  [req x1 (c1 r#"["rounds-down", ["val", "x"], "1"]"#),
+   req x1 (c1 r#"["rounds-up", ["val", "x"], "1"]"#),
+   req x1 (c1 r#"["rounds", ["val", "x"], "1"]"#),
+   req x1 (c1 r#"["rounds", ["val", "x"], "1", "half-even"]"#)],
+  [req x1 (c1 r#"["within", ["val", "x"], ["lit", "0"], ["lit", "2"]]"#),
+   req x1 (c1 r#"["within", ["val", "x"], ["lit", "2"], ["lit", "0"]]"#)],
+  (["add", "sub", "mul", "div"].flatMap fun op => [
+   req x1 (c1 s!"[\"eq\", [\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]], [\"lit\", \"1\"]]"),
+   req x1 (c1 s!"[\"eq\", [\"{op}\", [\"lit\", \"2\"], [\"val\", \"x\"]], [\"lit\", \"1\"]]")]),
+  (["eq", "lt", "le", "gt", "ge"].flatMap fun op => [
+   req x1 (c1 s!"[\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]]"),
+   req x1 (c1 s!"[\"{op}\", [\"lit\", \"2\"], [\"val\", \"x\"]]")]),
+  (["observation", "testimony", "assumption"].map fun support =>
+   req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": \"{support}\"}" ok1),
+  ([[3, 5], [3, 6], [4, 5]].map fun span =>
+   req x1 s!"\{\"id\": \"c1\", \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]], \"span\": {toJson span |>.compress}}"),
+  ([[3, 5], [3, 6], [4, 5]].map fun span =>
+   req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"span\": {toJson span |>.compress}}" ok1),
+  (["P", "Q", "Python 3.12"].map fun software => req x1 ok1 s!", \"software\": \"{software}\""),
+  (["c1", "c2", "c-1"].map fun id => req x1 (claim id r#"["eq", ["val", "x"], ["lit", "1"]]"#))
+  ]).all fun cases =>
+    let ids := cases.map meaning
+    ids.all (· != "") && decide ids.Nodup
+
+/-! Accepted edges of the decoder. A refusal-only corpus cannot pin these branches. -/
+#guard meaning (req x1 (claim "c-1" r#"["eq", ["val", "x"], ["lit", "1"]]"#)) != ""
+#guard ["observation", "testimony", "assumption"].all fun support =>
+  meaning (req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": \"{support}\"}" ok1) != ""
+#guard meaning (req x1 r#"{"id": "c1", "claim": ["eq", ["val", "x"], ["lit", "1"]], "span": [3, 3]}"#) != ""
+#guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "span": [3, 3]}"# ok1) != ""
 
 /-! ## Limits (3.2), each on both sides, and their order -/
 
@@ -170,6 +221,8 @@ def name64 : String := String.mk (List.replicate 64 'x')
     ["ResourceLimit: Decimal literal exceeds 40 digits"]),
   ("digits-lit", says (req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], [\"lit\", [\"sci\", \"{ones 41}\", 1]]]")),
     ["ResourceLimit: Decimal literal exceeds 40 digits"]),
+  ("digits-lit-plain", says (req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], [\"lit\", \"{ones 41}\"]]")),
+    ["ResourceLimit: Decimal literal exceeds 40 digits"]),
   ("name", says (req (stated name64 r#""1""#) (c1 s!"[\"eq\", [\"val\", \"{name64}\"], [\"lit\", \"1\"]]")), ["c1 holds"]),
   ("name-over", says (req (stated (name64 ++ "x") r#""1""#) ok1), ["ResourceLimit: a name exceeds 64"]),
   ("id-over", says (req x1 (claim (name64 ++ "c") r#"["eq", ["val", "x"], ["lit", "1"]]"#)),
@@ -182,6 +235,13 @@ def name64 : String := String.mk (List.replicate 64 'x')
     ["ResourceLimit: an exponent exceeds 64"]),
   ("order-limit-field", says (req (stated "x" s!"\"{ones 41}\"") ok1 r#", "meaning_id": "forged""#),
     ["ResourceLimit: Decimal literal exceeds 40 digits"])]
+
+-- Keep scanning to the admitted depth, including literals nested beyond six containers.
+#guard
+  let deepLit := (List.range 8).foldl
+    (fun s _ => s!"[\"add\", {s}, [\"lit\", \"0\"]]") (s!"[\"lit\", \"{ones 41}\"]")
+  says (req x1 (c1 s!"[\"eq\", {deepLit}, [\"lit\", \"1\"]]")) ==
+    ["ResourceLimit: Decimal literal exceeds 40 digits"]
 
 /-! ## The hostile set and every refusal of the decoder -/
 
