@@ -23,7 +23,7 @@ elaboration in S1a and for G1a.
 Inputs: the lead's decision of 2026-10-03 (the one-reading guarantee must be Lean-checked, reversing
 [SEMANTICS-MIGRATION-PLAN.md](SEMANTICS-MIGRATION-PLAN.md) 1.3 and the "English surface: stays Python by decision"
 row of 2.3); [verification-contract.md](verification-contract.md) P1–P3; [english-surface.md](../english-surface.md);
-[PLAN-ZERO-TRAINING.md](../../PLAN-ZERO-TRAINING.md); [wire-contract-PLAN.md](wire-contract-PLAN.md) (the
+[PLAN-ZERO-TRAINING.md](../plans/PLAN-ZERO-TRAINING.md); [wire-contract-PLAN.md](wire-contract-PLAN.md) (the
 generated-data pattern); `ve/assurance-manifest.json` unit `english.admission`; `lean/README.md` "Remaining
 obligations and trust boundary". `docs/TRUST-MAP.md` is not on branch `docs/trust-map` (that branch is at the same
 commit as `main`), so section 6 is written against the assurance manifest and lists the rows a trust map needs.

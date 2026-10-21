@@ -30,7 +30,7 @@ LOCKED = {name[len("lean/"):] for name in json.loads((ROOT / "ve/english_grammar
 # `English/Run.lean`, which is scanned.
 GENERATED = ("VE/WireContract/Limits.lean", "VE/WireContract/Names.lean", "VE/WireContract/Tables/",
              "VE/EnglishGrammar/Fixed/", "VE/EnglishGrammar/LexiconFixtures.lean", "VE/Question/Fixtures.lean",
-             "VE/Service/EnglishRun.lean")
+             "VE/Calc/UnitsExamples.lean", "VE/Service/EnglishRun.lean")
 OWNERS = {"VE/Limits.lean", "VE/LimitTies.lean"}
 
 # One pattern per limit of `VE.Limits` that a check compares with; each names the limit it stands for.
