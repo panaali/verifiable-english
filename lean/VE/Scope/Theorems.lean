@@ -403,6 +403,7 @@ theorem addOver_nil (o : Json) : addOver [] o = o := by
   unfold addOver
   split <;> simp
 
+set_option maxHeartbeats 1000000 in
 /-- What an admitted block says of each governor (step 8): no graph effect over a frontier reach, and its reach
     exists, holds no unit of a reading set (nor does its own unit), and, for a content-changing effect, holds only
     units that are unwritten, parts or norms. -/
@@ -416,9 +417,6 @@ theorem admit_governor (D : SDoc) (h : admitBlock D = .ok ()) (g : Governor) (hg
   generalize hA : (forIn D.governors PUnit.unit _ : Except String PUnit) = A at h
   generalize hB : (forIn D.governors PUnit.unit _ : Except String PUnit) = B at h
   simp only [bind, Except.bind, pure, Except.pure] at h
-  repeat (split at h; · cases h)
-  split at h
-  case isFalse => cases h
   repeat (split at h; · cases h)
   have hb := (forIn_unit_ok _ ?_ D.governors).mp hB g hg
   · clear hA hB h
@@ -546,6 +544,20 @@ theorem fastReads_eq (D : SDoc) : fastReads D =
 theorem governFast_eq (D : SDoc) : governFast D = govern D := by
   unfold governFast
   rw [fastReads_eq, governBody_slow]
+
+/-! Headings and labels (spec 5.5, SC-3a): the anchor and label reaches are the layout's -/
+
+/-- A heading's reach is the anchor's units after its heading. -/
+theorem anchor_reach_iff (D : SDoc) (hd : (D.layout.map (·.id)).Nodup) (a : String) (us : List String)
+    (hc : covered D (.anchor a) = .ok us) (u : String) :
+    u ∈ us ↔ u ∈ D.layout.map (·.id) ∧ VE.Layout.within (VE.Layout.spansOf D.layout) D.anchors u a = true ∧
+      some u ≠ VE.Layout.headingOf D.layout D.anchors a :=
+  VE.Layout.anchorReach_iff D.layout hd D.anchors a us hc u
+
+/-- A bold label's reach is its item: the item, its continuing sentences and its sub-bullets. -/
+theorem label_reach_iff (D : SDoc) (hd : (D.layout.map (·.id)).Nodup) (i : String) (us : List String)
+    (hc : covered D (.label i) = .ok us) (u : String) : u ∈ us ↔ VE.Layout.ItemUnit D.layout i u :=
+  VE.Layout.itemRun_iff D.layout hd i us hc u
 
 end Govern
 
