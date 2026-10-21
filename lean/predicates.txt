@@ -536,6 +536,7 @@ module VE.Senses.Project
 module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
+module VE.Service.ActsExamples
 module VE.Service.Diagnose
 module VE.Service.Document
 module VE.Service.EnglishRun
@@ -628,6 +629,7 @@ ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Acts.DerivedIn@VE.Acts.Read
 VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
+VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline
