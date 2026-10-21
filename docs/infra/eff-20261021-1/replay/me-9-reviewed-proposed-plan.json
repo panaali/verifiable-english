@@ -1,0 +1,51 @@
+{
+ "tree": "1b617752a9aedd0809b8a7e7fadc7c37cabc91b9",
+ "lines": [
+  65
+ ],
+ "fatal": [],
+ "operators": [
+  "arm-true",
+  "arm-false",
+  "arm-default",
+  "body-true",
+  "body-false",
+  "not-drop",
+  "and-or",
+  "or-and",
+  "lt-le",
+  "le-lt",
+  "lt-eq",
+  "le-eq",
+  "eq-le",
+  "eq-ne",
+  "ne-eq",
+  "all-any",
+  "any-all",
+  "bool-flip",
+  "lit-plus",
+  "lit-minus",
+  "list-empty",
+  "append-left",
+  "append-right",
+  "list-first",
+  "list-drop-last",
+  "list-last",
+  "list-drop-first",
+  "and-left",
+  "and-right",
+  "arm-wildcard",
+  "sibling-name",
+  "fault-order"
+ ],
+ "rows": [
+  {
+   "definition": "VE.Calc.Poly.fits",
+   "class": "C",
+   "trusted": false,
+   "changed": true,
+   "selected": false,
+   "mutants": []
+  }
+ ]
+}
