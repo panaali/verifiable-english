@@ -97,6 +97,7 @@ import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
 import VE.Defaults.Premises
+import VE.Defaults.Wire
 import VE.Definitions.Alias
 import VE.Definitions.Bundle
 import VE.Definitions.Elaborate
@@ -1462,6 +1463,23 @@ import VE.WireContract.Engine
 #print axioms VE.Data.Background.premises_sat_iff
 #print axioms VE.Data.Background.string_encoding_sound
 #print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Defaults.Wire.DefaultsView.hD
+#print axioms VE.Defaults.Wire.DefaultsView.hR
+#print axioms VE.Defaults.Wire.DefaultsView.hU
+#print axioms VE.Defaults.Wire.DefaultsView.hX
+#print axioms VE.Defaults.Wire.DefaultsView.hXw
+#print axioms VE.Defaults.Wire.DefaultsView.hl
+#print axioms VE.Defaults.Wire.ViewRest.hR
+#print axioms VE.Defaults.Wire.ViewRest.hX
+#print axioms VE.Defaults.Wire.ViewRest.hl
+#print axioms VE.Defaults.Wire.coherence_collision_named
+#print axioms VE.Defaults.Wire.coherence_collision_shown
+#print axioms VE.Defaults.Wire.decodeLayered_soften
+#print axioms VE.Defaults.Wire.decodeRightsU_soften
+#print axioms VE.Defaults.Wire.defaultsCase_other
+#print axioms VE.Defaults.Wire.defaults_coherence_sound
+#print axioms VE.Defaults.Wire.elaborateRows_eq
+#print axioms VE.Defaults.Wire.viewOf_layered
 #print axioms VE.Defaults.assumptions_sound
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
@@ -5914,14 +5932,30 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.short_run
 #print axioms VE.Scope.Examples.span_tests
 #print axioms VE.Scope.Examples.unordered_join
+#print axioms VE.Scope.addOver_nil
+#print axioms VE.Scope.admit_governor
 #print axioms VE.Scope.baseName_some
+#print axioms VE.Scope.baseObjF_slow
 #print axioms VE.Scope.commutes_symm
+#print axioms VE.Scope.composedF_slow
+#print axioms VE.Scope.coveredBy_slow
 #print axioms VE.Scope.coversU_iff
+#print axioms VE.Scope.edgesFor_ok
+#print axioms VE.Scope.edgesInto_mem
+#print axioms VE.Scope.edgesOfF_slow
+#print axioms VE.Scope.edgesOf_graph
+#print axioms VE.Scope.fastReads_eq
 #print axioms VE.Scope.firstKeys_mem
 #print axioms VE.Scope.firstKeys_self
+#print axioms VE.Scope.frameOnF_slow
+#print axioms VE.Scope.frontier_graph_refused
+#print axioms VE.Scope.governBody_slow
+#print axioms VE.Scope.governFast_eq
 #print axioms VE.Scope.govern_admits
 #print axioms VE.Scope.govern_identity
 #print axioms VE.Scope.govern_orphan
+#print axioms VE.Scope.govern_refused
+#print axioms VE.Scope.governorsOfF_slow
 #print axioms VE.Scope.governorsOf_iff
 #print axioms VE.Scope.hasOwn_mono
 #print axioms VE.Scope.impl_map_eq
@@ -5929,12 +5963,18 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.lookups_absent
 #print axioms VE.Scope.lookups_fields
 #print axioms VE.Scope.lookups_spec
+#print axioms VE.Scope.mapM_ok_mem
 #print axioms VE.Scope.mem_ordered
 #print axioms VE.Scope.members_obj
+#print axioms VE.Scope.memo_map
 #print axioms VE.Scope.mergeParts_conflict
 #print axioms VE.Scope.mergeParts_keys
 #print axioms VE.Scope.mkObj_getObjVal
+#print axioms VE.Scope.nonrule_refused
 #print axioms VE.Scope.ordered_sorted
+#print axioms VE.Scope.reach_beq
+#print axioms VE.Scope.readings_refused
+#print axioms VE.Scope.ruleTable_decoder
 #print axioms VE.Scope.substOwn_id
 #print axioms VE.Scope.substOwn_id_le
 #print axioms VE.Scope.substOwn_no_own

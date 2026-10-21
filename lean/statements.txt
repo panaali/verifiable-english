@@ -7606,6 +7606,115 @@ theorem VE.Data.Background.totalPremise_iff
     VE.Formula.denote S [] (VE.Data.Background.totalPremise f) ↔ VE.Data.Background.Total S f
   -- uses VE.Data.Background.Flag@VE.Data.Background VE.Data.Background.Total@VE.Data.Background VE.Data.Background.totalPremise@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 4262845113
+theorem VE.Defaults.Wire.DefaultsView.hD
+  ∀ (self : VE.Defaults.Wire.DefaultsView), VE.SoftNorms.WellFormedSoft self.L.D = Bool.true
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
+  -- expr 1539424272
+theorem VE.Defaults.Wire.DefaultsView.hR
+  ∀ (self : VE.Defaults.Wire.DefaultsView), self.R.all (VE.Defaults.decisionFree self.L.D) = Bool.true
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.decisionFree@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered
+  -- expr 3247082762
+theorem VE.Defaults.Wire.DefaultsView.hU
+  ∀ (self : VE.Defaults.Wire.DefaultsView), self.L.U.D = VE.SoftNorms.soften self.L.D
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 718577272
+theorem VE.Defaults.Wire.DefaultsView.hX
+  ∀ (self : VE.Defaults.Wire.DefaultsView),
+    self.L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU self.L.U self.L.D) ++ self.R
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 2297968371
+theorem VE.Defaults.Wire.DefaultsView.hXw
+  ∀ (self : VE.Defaults.Wire.DefaultsView) (a : VE.Formula),
+    a ∈ self.L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill self.L.U) 0) [] a
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 3426598642
+theorem VE.Defaults.Wire.DefaultsView.hl
+  ∀ (self : VE.Defaults.Wire.DefaultsView),
+    VE.Compose.Labelled.wellLabelled (VE.Defaults.dfltLabelled self.L.D) = Bool.true
+  -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered
+  -- expr 1138436548
+theorem VE.Defaults.Wire.ViewRest.hR
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} (self : VE.Defaults.Wire.ViewRest L),
+    self.R.all (VE.Defaults.decisionFree L.D) = Bool.true
+  -- uses VE.Defaults.Wire.ViewRest.R@VE.Defaults.Wire VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Defaults.decisionFree@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
+  -- expr 4290100989
+theorem VE.Defaults.Wire.ViewRest.hX
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} (self : VE.Defaults.Wire.ViewRest L),
+    L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU L.U L.D) ++ self.R
+  -- uses VE.Defaults.Wire.ViewRest.R@VE.Defaults.Wire VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 802983725
+theorem VE.Defaults.Wire.ViewRest.hl
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} (self : VE.Defaults.Wire.ViewRest L),
+    VE.Compose.Labelled.wellLabelled (VE.Defaults.dfltLabelled L.D) = Bool.true
+  -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
+  -- expr 662367307
+theorem VE.Defaults.Wire.coherence_collision_named
+  ∀ (x : VE.Defaults.Wire.CoherenceReplay),
+    (∀ (P Q : VE.SoftNorms.SoftNode),
+        ((P, Q), VE.Defaults.Wire.PairStatus.collision) ∈ x.pairs →
+          ∃ w, x.collision = Option.some w ∧ w.m = P.name ∧ w.n = Q.name) ∧
+      ∀ (c : Lean.Json),
+        ("collision", c) ∈ VE.Defaults.Wire.coherenceFields x →
+          ∃ w P Q,
+            x.collision = Option.some w ∧
+              (P, Q) ∈ VE.SoftNorms.collidingPairs x.v.L.D ∧
+                P.name = w.m ∧
+                  Q.name = w.n ∧
+                    c =
+                      Lean.Json.mkObj
+                        [("rules", Lean.ToJson.toJson [w.m, w.n]),
+                          ("tuple",
+                            VE.Defaults.Wire.entityIds
+                              ((VE.Defaults.collisionTuple x.v.L.U x.v.L.D w.S.M w.F P Q).getD [])),
+                          ("deciders", Lean.ToJson.toJson (VE.Defaults.giveWayDeciders x.v.L.D P Q))]
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.CoherenceReplay.collision@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.pairs@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.Collision.F@VE.Defaults.Wire VE.Defaults.Wire.Collision.S@VE.Defaults.Wire VE.Defaults.Wire.Collision.m@VE.Defaults.Wire VE.Defaults.Wire.Collision.n@VE.Defaults.Wire VE.Defaults.Wire.Collision@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.PairStatus.collision@VE.Defaults.Wire VE.Defaults.Wire.PairStatus@VE.Defaults.Wire VE.Defaults.Wire.coherenceFields@VE.Defaults.Wire VE.Defaults.Wire.entityIds@VE.Defaults.Wire VE.Defaults.collisionTuple@VE.Defaults.Premises VE.Defaults.giveWayDeciders@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 3486102874
+theorem VE.Defaults.Wire.coherence_collision_shown
+  ∀ (x : VE.Defaults.Wire.CoherenceReplay),
+    (∀ (P Q : VE.SoftNorms.SoftNode),
+        ((P, Q), VE.Defaults.Wire.PairStatus.collision) ∈ x.pairs → x.collides = Bool.true) ∧
+      (((VE.Defaults.Wire.coherenceFields x).any fun x => x.fst == "collision") = Bool.true → x.verdict = "COLLISION") ∧
+        (x.collides = Bool.true → ¬VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R)
+  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.Wire.CoherenceReplay.collides@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.pairs@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.PairStatus.collision@VE.Defaults.Wire VE.Defaults.Wire.PairStatus@VE.Defaults.Wire VE.Defaults.Wire.coherenceFields@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 673725174
+theorem VE.Defaults.Wire.decodeLayered_soften
+  ∀ (j : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
+    VE.NormDefaults.Wire.decodeLayered j = Except.ok L → L.U.D = VE.SoftNorms.soften L.D
+  -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeLayered@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3164523497
+theorem VE.Defaults.Wire.decodeRightsU_soften
+  ∀ (environment document : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
+    VE.NormDefaults.Wire.decodeRightsU environment document = Except.ok L → L.U.D = VE.SoftNorms.soften L.D
+  -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeRightsU@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 574993911
+theorem VE.Defaults.Wire.defaultsCase_other
+  ∀ (v : VE.Defaults.Wire.DefaultsView) (id kind : String) (j : Lean.Json),
+    kind.startsWith "defaults-" = Bool.false → VE.Defaults.Wire.defaultsCase v id kind j = Except.ok Option.none
+  -- uses VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.defaultsCase@VE.Defaults.Wire
+  -- expr 3083408026
+theorem VE.Defaults.Wire.defaults_coherence_sound
+  ∀ (x : VE.Defaults.Wire.CoherenceReplay),
+    (x.verdict = "COHERENT" → VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R) ∧
+      (x.verdict = "COLLISION" → ¬VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R) ∧
+        ∀ (P Q : VE.SoftNorms.SoftNode),
+          ((P, Q), VE.Defaults.Wire.PairStatus.resolved) ∈ x.pairs →
+            ∀ (B : VE.Structure),
+              VE.NormDefaults.Wire.BaseAdmissibleX x.v.L.U
+                  (VE.SoftNorms.excPremises x.v.L.D ++ x.v.R ++ VE.Defaults.dfltPremises x.v.L.D) B →
+                VE.Formula.denote B [] (VE.NormDefaults.Wire.cohPremiseU x.v.L.U x.v.L.D P Q)
+  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.Wire.CoherenceReplay.pairs@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.PairStatus.resolved@VE.Defaults.Wire VE.Defaults.Wire.PairStatus@VE.Defaults.Wire VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3480681577
+theorem VE.Defaults.Wire.elaborateRows_eq
+  ∀ (v : VE.Defaults.Wire.DefaultsView),
+    (VE.Defaults.Wire.elaborateRows v).fst = VE.Defaults.dfltLabelled v.L.D ∧
+      (VE.Defaults.Wire.elaborateRows v).snd = VE.SoftNorms.collidingPairs v.L.D
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.elaborateRows@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 1294464642
+theorem VE.Defaults.Wire.viewOf_layered
+  ∀ (j : Lean.Json) (v : VE.Defaults.Wire.DefaultsView),
+    VE.Defaults.Wire.viewOf j = Except.ok v → VE.NormDefaults.Wire.decodeLayered j = Except.ok v.L
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.viewOf@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeLayered@VE.NormDefaults.Layered
+  -- expr 634990345
 theorem VE.Defaults.assumptions_sound
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -40871,40 +40980,44 @@ theorem VE.Scope.Examples.short_govern
         VE.Scope.affected (VE.Scope.Examples.short [] re) = ["a"] ∧
           VE.Scope.newContent (VE.Scope.contentOf VE.Scope.Examples.shortDoc "a") VE.Scope.Examples.shortNorm =
               Lean.Json.mkObj [("norm", VE.Scope.Examples.shortNorm)] ∧
-            VE.Scope.newContent (VE.Scope.contentOf VE.Scope.Examples.shortDoc "b") VE.Scope.Examples.shortPart =
-                Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortPart)] ∧
-              VE.Scope.newContent (Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("part", VE.Scope.Examples.shortPart)])
-                    VE.Scope.Examples.shortNorm =
-                  Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortNorm)] ∧
-                VE.Scope.patch (VE.Scope.Examples.short [] re) [("b", VE.Scope.Examples.shortPart)] =
-                    VE.Scope.Examples.shortDoc.setObjVal! "units"
-                      (Lean.Json.arr
-                        #[Lean.Json.mkObj [("id", Lean.Json.str "l")],
-                          Lean.Json.mkObj
-                            [("id", Lean.Json.str "a"),
-                              ("content", Lean.Json.mkObj [("part", VE.Scope.Examples.shortPart)])],
-                          Lean.Json.mkObj
-                            [("id", Lean.Json.str "b"),
-                              ("content",
+            VE.Scope.normOf (VE.Scope.contentOf VE.Scope.Examples.shortDoc "b") =
+                Option.some VE.Scope.Examples.shortNorm ∧
+              VE.Scope.normOf (VE.Scope.contentOf VE.Scope.Examples.shortDoc "a") = Option.none ∧
+                VE.Scope.newContent (VE.Scope.contentOf VE.Scope.Examples.shortDoc "b") VE.Scope.Examples.shortPart =
+                    Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortPart)] ∧
+                  VE.Scope.newContent
+                        (Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("part", VE.Scope.Examples.shortPart)])
+                        VE.Scope.Examples.shortNorm =
+                      Lean.Json.mkObj [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortNorm)] ∧
+                    VE.Scope.patch (VE.Scope.Examples.short [] re) [("b", VE.Scope.Examples.shortPart)] =
+                        VE.Scope.Examples.shortDoc.setObjVal! "units"
+                          (Lean.Json.arr
+                            #[Lean.Json.mkObj [("id", Lean.Json.str "l")],
+                              Lean.Json.mkObj
+                                [("id", Lean.Json.str "a"),
+                                  ("content", Lean.Json.mkObj [("part", VE.Scope.Examples.shortPart)])],
+                              Lean.Json.mkObj
+                                [("id", Lean.Json.str "b"),
+                                  ("content",
+                                    Lean.Json.mkObj
+                                      [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortPart)])]]) ∧
+                      VE.Scope.govern (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) =
+                        Except.ok
+                          (VE.Scope.Examples.shortDoc.setObjVal! "units"
+                            (Lean.Json.arr
+                              #[Lean.Json.mkObj [("id", Lean.Json.str "l")],
                                 Lean.Json.mkObj
-                                  [("cites", Lean.Json.arr #[]), ("norm", VE.Scope.Examples.shortPart)])]]) ∧
-                  VE.Scope.govern (VE.Scope.Examples.short [VE.Scope.Examples.gt] re) =
-                    Except.ok
-                      (VE.Scope.Examples.shortDoc.setObjVal! "units"
-                        (Lean.Json.arr
-                          #[Lean.Json.mkObj [("id", Lean.Json.str "l")],
-                            Lean.Json.mkObj
-                              [("id", Lean.Json.str "a"),
-                                ("content",
-                                  Lean.Json.mkObj [("norm", VE.Scope.Examples.led VE.Scope.Examples.shortPart)])],
-                            Lean.Json.mkObj
-                              [("id", Lean.Json.str "b"),
-                                ("content",
-                                  Lean.Json.mkObj
-                                    [("cites", Lean.Json.arr #[]),
-                                      ("norm", VE.Scope.Examples.led VE.Scope.Examples.shortNorm)])]]))
-  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.Examples.gt@VE.Scope.Examples VE.Scope.Examples.led@VE.Scope.Examples VE.Scope.Examples.short@VE.Scope.Examples VE.Scope.Examples.shortDoc@VE.Scope.Examples VE.Scope.Examples.shortNorm@VE.Scope.Examples VE.Scope.Examples.shortPart@VE.Scope.Examples VE.Scope.Governor@VE.Scope.Govern VE.Scope.affected@VE.Scope.Govern VE.Scope.composed@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.newContent@VE.Scope.Govern VE.Scope.patch@VE.Scope.Govern
-  -- expr 37262136
+                                  [("id", Lean.Json.str "a"),
+                                    ("content",
+                                      Lean.Json.mkObj [("norm", VE.Scope.Examples.led VE.Scope.Examples.shortPart)])],
+                                Lean.Json.mkObj
+                                  [("id", Lean.Json.str "b"),
+                                    ("content",
+                                      Lean.Json.mkObj
+                                        [("cites", Lean.Json.arr #[]),
+                                          ("norm", VE.Scope.Examples.led VE.Scope.Examples.shortNorm)])]]))
+  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.Examples.gt@VE.Scope.Examples VE.Scope.Examples.led@VE.Scope.Examples VE.Scope.Examples.short@VE.Scope.Examples VE.Scope.Examples.shortDoc@VE.Scope.Examples VE.Scope.Examples.shortNorm@VE.Scope.Examples VE.Scope.Examples.shortPart@VE.Scope.Examples VE.Scope.Governor@VE.Scope.Govern VE.Scope.affected@VE.Scope.Govern VE.Scope.composed@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.newContent@VE.Scope.Govern VE.Scope.normOf@VE.Scope.Govern VE.Scope.patch@VE.Scope.Govern
+  -- expr 1077072780
 theorem VE.Scope.Examples.short_items
   (VE.Layout.itemRun (VE.Scope.Examples.layoutOf VE.Scope.Examples.shortPieces) "a.s03").toOption =
       Option.some ["a.s03", "a.s04", "a.s05"] ∧
@@ -40978,21 +41091,85 @@ theorem VE.Scope.Examples.unordered_join
             Option.some Bool.true
   -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
   -- expr 1307899726
+theorem VE.Scope.addOver_nil
+  ∀ (o : Lean.Json), VE.Scope.addOver [] o = o
+  -- uses VE.Scope.addOver@VE.Scope.Govern
+  -- expr 3833087420
+theorem VE.Scope.admit_governor
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.admitBlock D = Except.ok () →
+      ∀ (g : VE.Scope.Governor),
+        g ∈ D.governors →
+          ¬(g.reach = VE.Scope.Reach.frontier ∧ VE.Scope.graph g.effect = Bool.true) ∧
+            ∃ us,
+              VE.Scope.covered D g.reach = Except.ok us ∧
+                (∀ (u : String), u ∈ g.unit :: us → (VE.Scope.setUnits D.doc).contains u = Bool.false) ∧
+                  ((VE.Scope.isFrame g.effect || VE.Scope.unary g.effect) = Bool.true →
+                    ∀ (u : String),
+                      u ∈ us →
+                        ((VE.Scope.contentOf D.doc u).isNull || VE.Scope.isPart (VE.Scope.contentOf D.doc u) ||
+                            VE.Scope.isNorm (VE.Scope.contentOf D.doc u)) =
+                          Bool.true)
+  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach.frontier@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.setUnits@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
+  -- expr 3652577887
 theorem VE.Scope.baseName_some
   ∀ (D : VE.Scope.SDoc) (u n : String),
     VE.Scope.baseName D u = Option.some n ↔
       ∃ o N, VE.Scope.baseObj D u = Except.ok o ∧ VE.Readings.Wire.decodeNorm D.re o = Except.ok N ∧ N.name = n
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Wire.decodeNorm@VE.Readings.Wire VE.Scope.SDoc.re@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.baseName@VE.Scope.Govern VE.Scope.baseObj@VE.Scope.Govern VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 1800254904
+theorem VE.Scope.baseObjF_slow
+  ∀ (D : VE.Scope.SDoc), (VE.Scope.baseObjF D fun r => (VE.Scope.coveredLayout D r).toOption.getD []) = VE.Scope.baseObj D
+  -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.baseObj@VE.Scope.Govern VE.Scope.baseObjF@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern
+  -- expr 3674618979
 theorem VE.Scope.commutes_symm
   ∀ (e₁ e₂ : VE.Scope.Effect), VE.Scope.Commutes e₁ e₂ = VE.Scope.Commutes e₂ e₁
   -- uses VE.Scope.Commutes@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
   -- expr 3137095935
+theorem VE.Scope.composedF_slow
+  ∀ (D : VE.Scope.SDoc),
+    (VE.Scope.composedF D (fun r => (VE.Scope.coveredLayout D r).toOption.getD []) (VE.Scope.ordered D) fun r =>
+        (VE.Scope.covered D r).toOption.getD []) =
+      VE.Scope.composed D
+  -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.composed@VE.Scope.Govern VE.Scope.composedF@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern
+  -- expr 2783155296
+theorem VE.Scope.coveredBy_slow
+  ∀ (D : VE.Scope.SDoc), VE.Scope.coveredBy D (VE.Scope.baseName D) = VE.Scope.covered D
+  -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.baseName@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coveredBy@VE.Scope.Govern
+  -- expr 3025697723
 theorem VE.Scope.coversU_iff
   ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor) (u : String),
     VE.Scope.coversU D g u = Bool.true ↔ ∃ us, VE.Scope.covered D g.reach = Except.ok us ∧ u ∈ us
   -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coversU@VE.Scope.Govern
   -- expr 1356600155
+theorem VE.Scope.edgesFor_ok
+  ∀ (D : VE.Scope.SDoc) (u : String) (es : List String),
+    VE.Scope.edgesFor D u = Except.ok es ↔
+      ∃ t, VE.Scope.ruleTable D = Except.ok t ∧ VE.Scope.edgesInto D (fun v => List.lookup v t) u = es
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.edgesFor@VE.Scope.Govern VE.Scope.edgesInto@VE.Scope.Govern VE.Scope.ruleTable@VE.Scope.Govern VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 193618908
+theorem VE.Scope.edgesInto_mem
+  ∀ (D : VE.Scope.SDoc) (rule : String → Option VE.SoftNorms.SoftNode) (u n : String),
+    n ∈ VE.Scope.edgesInto D rule u →
+      ∃ g, g ∈ D.governors ∧ VE.Scope.graph g.effect = Bool.true ∧ (u, n) ∈ VE.Scope.edgesOf D rule g
+  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.edgesInto@VE.Scope.Govern VE.Scope.edgesOf@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 256825700
+theorem VE.Scope.edgesOfF_slow
+  ∀ (D : VE.Scope.SDoc) (rule : String → Option VE.SoftNorms.SoftNode),
+    VE.Scope.edgesOfF (fun r => (VE.Scope.covered D r).toOption.getD []) rule = VE.Scope.edgesOf D rule
+  -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.edgesOf@VE.Scope.Govern VE.Scope.edgesOfF@VE.Scope.Govern VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1367406243
+theorem VE.Scope.edgesOf_graph
+  ∀ (D : VE.Scope.SDoc) (rule : String → Option VE.SoftNorms.SoftNode) (g : VE.Scope.Governor),
+    VE.Scope.edgesOf D rule g ≠ [] → VE.Scope.graph g.effect = Bool.true
+  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.edgesOf@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 880584784
+theorem VE.Scope.fastReads_eq
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.fastReads D =
+      (fun r => (VE.Scope.coveredLayout D r).toOption.getD [], fun r => (VE.Scope.covered D r).toOption.getD [])
+  -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern VE.Scope.fastReads@VE.Scope.Govern
+  -- expr 141792606
 theorem VE.Scope.firstKeys_mem
   ∀ (l : List (String × Lean.Json)),
     (∀ (p : String × Lean.Json), p ∈ l → ∀ (q : String × Lean.Json), q ∈ l → p.fst = q.fst → p = q) →
@@ -41003,6 +41180,28 @@ theorem VE.Scope.firstKeys_self
   ∀ (l : List (String × Lean.Json)), (List.map (fun x => x.fst) l).Nodup → VE.Readings.Wire.firstKeys l = l
   -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
   -- expr 1819661494
+theorem VE.Scope.frameOnF_slow
+  ∀ (D : VE.Scope.SDoc), (VE.Scope.frameOnF D fun r => (VE.Scope.coveredLayout D r).toOption.getD []) = VE.Scope.frameOn D
+  -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern VE.Scope.frameOn@VE.Scope.Govern VE.Scope.frameOnF@VE.Scope.Govern
+  -- expr 3101914162
+theorem VE.Scope.frontier_graph_refused
+  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
+    g ∈ D.governors →
+      g.reach = VE.Scope.Reach.frontier → VE.Scope.graph g.effect = Bool.true → (VE.Scope.govern D).isOk = Bool.false
+  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach.frontier@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern
+  -- expr 1825588320
+theorem VE.Scope.governBody_slow
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.govern D = do
+      VE.Scope.admitBlock D
+      VE.Scope.governBody D (VE.Scope.ordered D) (fun r => (VE.Scope.coveredLayout D r).toOption.getD []) fun r =>
+          (VE.Scope.covered D r).toOption.getD []
+  -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.governBody@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern
+  -- expr 2483696320
+theorem VE.Scope.governFast_eq
+  ∀ (D : VE.Scope.SDoc), VE.Scope.governFast D = VE.Scope.govern D
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.governFast@VE.Scope.Govern
+  -- expr 2224973779
 theorem VE.Scope.govern_admits
   ∀ (D : VE.Scope.SDoc) (out : Lean.Json), VE.Scope.govern D = Except.ok out → VE.Scope.admitBlock D = Except.ok ()
   -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
@@ -41021,6 +41220,15 @@ theorem VE.Scope.govern_orphan
           u ∈ VE.Scope.partUnits D → ∃ e, VE.Scope.govern D = Except.error e ∧ e.startsWith "ScopeOrphanPart" = Bool.true
   -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.partUnits@VE.Scope.Govern
   -- expr 2367519260
+theorem VE.Scope.govern_refused
+  ∀ (D : VE.Scope.SDoc), VE.Scope.admitBlock D ≠ Except.ok () → (VE.Scope.govern D).isOk = Bool.false
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
+  -- expr 677643296
+theorem VE.Scope.governorsOfF_slow
+  ∀ (D : VE.Scope.SDoc),
+    (VE.Scope.governorsOfF (VE.Scope.ordered D) fun r => (VE.Scope.covered D r).toOption.getD []) = VE.Scope.governorsOf D
+  -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.governorsOf@VE.Scope.Govern VE.Scope.governorsOfF@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern
+  -- expr 3857747100
 theorem VE.Scope.governorsOf_iff
   ∀ (D : VE.Scope.SDoc) (u : String) (g : VE.Scope.Governor),
     g ∈ VE.Scope.governorsOf D u ↔
@@ -41061,6 +41269,11 @@ theorem VE.Scope.lookups_spec
       (List.map (fun x => x.fst) ls).Nodup ∧ ∀ (k : String) (v : Lean.Json), (k, v) ∈ ls ↔ j.getObjVal? k = Except.ok v
   -- uses VE.Scope.lookups@VE.Scope.Effects
   -- expr 3638113382
+theorem VE.Scope.mapM_ok_mem
+  ∀ {α β ε : Type} (f : α → Except ε β) (l : List α) (t : List β),
+    List.mapM f l = Except.ok t → ∀ (y : β), y ∈ t → ∃ x, x ∈ l ∧ f x = Except.ok y
+  -- uses
+  -- expr 4262899139
 theorem VE.Scope.mem_ordered
   ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor), g ∈ VE.Scope.ordered D ↔ g ∈ D.governors
   -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern
@@ -41069,6 +41282,11 @@ theorem VE.Scope.members_obj
   ∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), VE.Scope.members (Lean.Json.obj kvs) = kvs.toList
   -- uses VE.Scope.members@VE.Scope.Effects
   -- expr 3799283134
+theorem VE.Scope.memo_map
+  ∀ {α β γ : Type} [inst : BEq α] [LawfulBEq α] (ys : List γ) (k : γ → α) (f : α → β),
+    VE.Scope.memo (List.map (fun y => (k y, f (k y))) ys) f = f
+  -- uses VE.Scope.memo@VE.Scope.Govern
+  -- expr 2385182632
 theorem VE.Scope.mergeParts_conflict
   ∀ (u : String) (lead item : Lean.Json) (k : String),
     (lead.getObjVal? k).toOption.isSome = Bool.true →
@@ -41090,6 +41308,19 @@ theorem VE.Scope.mkObj_getObjVal
       ∀ (k : String) (v : Lean.Json), (Lean.Json.mkObj l).getObjVal? k = Except.ok v ↔ (k, v) ∈ l
   -- uses
   -- expr 4158588899
+theorem VE.Scope.nonrule_refused
+  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
+    g ∈ D.governors →
+      (VE.Scope.isFrame g.effect || VE.Scope.unary g.effect) = Bool.true →
+        ∀ (us : List String),
+          VE.Scope.covered D g.reach = Except.ok us →
+            ∀ (u : String),
+              u ∈ us →
+                VE.Scope.contentOf D.doc u ≠ Lean.Json.null →
+                  VE.Scope.isPart (VE.Scope.contentOf D.doc u) = Bool.false →
+                    VE.Scope.isNorm (VE.Scope.contentOf D.doc u) = Bool.false → (VE.Scope.govern D).isOk = Bool.false
+  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
+  -- expr 4146614931
 theorem VE.Scope.ordered_sorted
   ∀ (D : VE.Scope.SDoc),
     List.Pairwise
@@ -41099,6 +41330,25 @@ theorem VE.Scope.ordered_sorted
       (VE.Scope.ordered D)
   -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.classOf@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern VE.Scope.position@VE.Scope.Govern
   -- expr 589795681
+theorem VE.Scope.reach_beq
+  ∀ (r s : VE.Scope.Reach), (r == s) = Bool.true ↔ r = s
+  -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.instDecidableEqReach@VE.Scope.Govern
+  -- expr 2004111140
+theorem VE.Scope.readings_refused
+  ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
+    g ∈ D.governors →
+      ∀ (us : List String),
+        VE.Scope.covered D g.reach = Except.ok us →
+          ∀ (u : String), u = g.unit ∨ u ∈ us → u ∈ VE.Scope.setUnits D.doc → (VE.Scope.govern D).isOk = Bool.false
+  -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.setUnits@VE.Scope.Govern
+  -- expr 2805311875
+theorem VE.Scope.ruleTable_decoder
+  ∀ (D : VE.Scope.SDoc) (t : List (String × VE.SoftNorms.SoftNode)),
+    VE.Scope.ruleTable D = Except.ok t →
+      ∀ (u : String) (N : VE.SoftNorms.SoftNode),
+        (u, N) ∈ t → ∃ o, VE.Scope.composed D u = Except.ok o ∧ VE.Readings.Wire.decodeNorm D.re o = Except.ok N
+  -- uses VE.Readings.Wire.decodeNorm@VE.Readings.Wire VE.Scope.SDoc.re@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.composed@VE.Scope.Govern VE.Scope.ruleTable@VE.Scope.Govern VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 451307237
 theorem VE.Scope.substOwn_id
   ∀ (g c : Lean.Json), VE.Scope.hasOwn VE.Scope.depthLimit c = Bool.false → VE.Scope.substOwn g VE.Scope.depthLimit c = c
   -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
