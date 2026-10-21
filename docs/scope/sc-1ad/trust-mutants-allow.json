@@ -54,6 +54,16 @@
    "definition": "VE.Scope.addOver",
    "operator": "list-last",
    "reason": "only at :181's fresh.isEmpty: fresh.take 1 and fresh.reverse.take 1 are empty exactly when fresh is"
+  },
+  {
+   "definition": "VE.Scope.govern",
+   "operator": "list-empty",
+   "reason": "the tool's list-empty text here is ill-typed (Lean: Function expected, or cannot synthesize the element type), so it is no behaviour; every well-typed list-empty mutant of this definition is KILLED"
+  },
+  {
+   "definition": "VE.Scope.edgesInto",
+   "operator": "list-empty",
+   "reason": "the tool's list-empty text here is ill-typed (Lean: Function expected, or cannot synthesize the element type), so it is no behaviour; every well-typed list-empty mutant of this definition is KILLED"
   }
  ]
 }
