@@ -336,6 +336,7 @@ IDENTITY_FIXTURES = [
     ("f3-binom", 'run r6 (.add (sq (.add (v "x") (v "y"))) (.div (l 1) (l 0)), '
      '.add (.add (sq (v "x")) (sq (v "y"))) (.div (l 1) (l 0)))', UNDEFINED),
     ("f3-zero-rate", 'run r6 (v "zero_rate", v "zero_rate")', UNDEFINED),
+    ("f3-right", "run r6 (l 5, .div (l 0) (l 0))", UNDEFINED),
     ("f3-inner", "run r6 (.div (l 1) (.div (l 1) (l 0)), l 0)", UNDEFINED),
     ("f3-pow-0", "run r6 (.pow (.div (l 1) (l 0)) 0, l 1)", UNDEFINED),
     # A divisor that is zero at some points only.
@@ -349,9 +350,9 @@ IDENTITY_FIXTURES = [
     ("free-names", "reprStr (freeNames r6)", '["path", "light", "speed", "x", "y"]'),
     ("assign", 'reprStr (values (assign r6 (freeNames r6) κ6) "round_trip", '
      'values (assign r6 (freeNames r6) κ6) "closed_form")', "(some (3 : Rat)/4, some (3 : Rat)/4)"),
-    ("claim-inline", 'inl (.compare ⟨.eq, false⟩ (v "round_trip") (v "closed_form"))',
-     'some ([["path", "light", "speed"], ["path", "light", "speed"]], VE.Numbers.Verdict.holds, '
-     'VE.Numbers.Verdict.holds)'),
+    # x = 1 is not less than the round-trip time 3/4, before inlining or after.
+    ("claim-inline", 'inl (.compare ⟨.lt, false⟩ (v "x") (v "round_trip"))',
+     'some ([["x"], ["path", "light", "speed"]], VE.Numbers.Verdict.fails, VE.Numbers.Verdict.fails)'),
     ("claim-fault-undefined-first", 'fault (.within (v "x") (v "nowhere") (v "spent"))', "VE.Calc.Val.undefined"),
     ("claim-fault-exhausted-first", 'fault (.within (v "x") (v "spent") (v "nowhere"))', "VE.Calc.Val.exhausted"),
 ]
