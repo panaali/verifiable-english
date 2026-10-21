@@ -132,24 +132,123 @@ def h8 (wavelength printed : String) : String := req (stated "length" r#""11""# 
 example : ¬ (Check.claim (.compare ⟨.eq, false⟩ (.lit 1) (.lit 2))).UnknownCause [] (.limit .evaluations) := by
   simp [Check.UnknownCause, Claim.ReadsExhausted, Expr.ReadsExhausted, Claim.exprs, Expr.names]
 
-/-! ## Identity (3.3, J1): what changes the `meaning_id` and what does not -/
+/-! ## Identity (3.3, J1): what changes the `meaning_id` and what does not
 
+One table holds every normalisation of 3.3 and every hashed field, one family each. A family is a list of classes:
+the requests of a class share their `meaning_id` and claim ids, and no two classes of a family share a
+`meaning_id`. A normalisation the hash skips splits a class; a field or rule the hash drops (or pins to a constant)
+merges two classes. Each class names one spelling per place the decoder reads it, so a family fails whichever
+branch of `Wire` loses its normalisation. -/
+
+def identity (s : String) : List String :=
+  let a := answer s
+  field a "meaning_id" :: match a.getObjVal? "rows" with
+    | .ok (.arr rows) => rows.toList.map (field · "claim_id")
+    | _ => []
+
+/-- A one-claim case over `x` = 1: `rounding` is the case's rule, when it names one. -/
+def x1c (c : String) (rounding : String := "") : String :=
+  req x1 (c1 c) (if rounding = "" then "" else s!", \"rounding\": \"{rounding}\"")
+
+/-- A literal written at each place the decoder reads one: a stated value, a claim's `lit`, a defined value's `lit`,
+a `within` bound's `lit` and a `pow` base's `lit`. -/
+def literalSites : List (String → String) := [
+  fun l => req (stated "x" l) ok1,
+  fun l => x1c s!"[\"eq\", [\"val\", \"x\"], [\"lit\", {l}]]",
+  fun l => req (x1 ++ ", " ++ defined "y" s!"[\"add\", [\"val\", \"x\"], [\"lit\", {l}]]") ok1,
+  fun l => x1c s!"[\"within\", [\"val\", \"x\"], [\"lit\", {l}], [\"lit\", \"2\"]]",
+  fun l => x1c s!"[\"lt\", [\"pow\", [\"lit\", {l}], 2], [\"val\", \"x\"]]"]
+
+/-- A printed number at each claim that reads one. -/
+def printedSites : List (String → String) := [
+  fun p => x1c s!"[\"rounds\", [\"val\", \"x\"], {p}]",
+  fun p => x1c s!"[\"rounds-down\", [\"val\", \"x\"], {p}]",
+  fun p => x1c s!"[\"rounds-up\", [\"val\", \"x\"], {p}]"]
+
+def identityFamilies : List (String × List (List String)) :=
+  -- 3.3: every value literal is its shortest plain decimal string, never "-0" and with no `sci` left.
+  (literalSites.zipIdx.flatMap fun (site, i) => [
+    (s!"literal {i}: plain", [
+      [r#""0.3""#, r#""0.30""#, r#"["sci", "3", -1]"#, r#"["sci", "0.03", 1]"#].map site,
+      [r#""0.31""#].map site, [r#""-0.3""#, r#"["sci", "-3", -1]"#].map site,
+      [r#""20000000""#, r#""20000000.0""#, r#"["sci", "2", 7]"#, r#"["sci", "20", 6]"#].map site]),
+    (s!"literal {i}: zero", [[r#""0""#, r#""-0""#, r#""0.00""#, r#""-0.0""#, r#"["sci", "-0", 3]"#].map site,
+      [r#""1""#].map site])]) ++
+  -- 3.3: every printed number is [digits, places]: written places count, a `sci` spelling of the same pair does not.
+  (printedSites.zipIdx.map fun (site, i) => (s!"printed {i}", [
+    [r#""0.3""#, r#"["sci", "3", -1]"#, r#"["sci", "0.3", 0]"#].map site, [r#""0.30""#, r#"["sci", "30", -2]"#].map site,
+    [r#""0.300""#, r#"["sci", "3.00", -1]"#].map site,
+    [r#""20000000""#].map site, [r#"["sci", "2", 7]"#].map site, [r#"["sci", "20", 6]"#].map site,
+    [r#""0.0""#, r#""-0.0""#].map site])) ++ [
+  -- 3.3: every `rounds` claim carries its rule, its own or else the case's; the other claims carry none.
+  ("tie rule", [
+    [x1c r#"["rounds", ["val", "x"], "1"]"#, x1c r#"["rounds", ["val", "x"], "1"]"# "ties-up",
+     x1c r#"["rounds", ["val", "x"], "1", "ties-up"]"#, x1c r#"["rounds", ["val", "x"], "1", "ties-up"]"# "half-even"],
+    [x1c r#"["rounds", ["val", "x"], "1"]"# "half-even", x1c r#"["rounds", ["val", "x"], "1", "half-even"]"#,
+     x1c r#"["rounds", ["val", "x"], "1", "half-even"]"# "ties-up"],
+    [x1c r#"["rounds-down", ["val", "x"], "1"]"#, x1c r#"["rounds-down", ["val", "x"], "1"]"# "half-even"],
+    [x1c r#"["rounds-up", ["val", "x"], "1"]"#, x1c r#"["rounds-up", ["val", "x"], "1"]"# "half-even"]]),
+  ("case rule without a rounds claim", [
+    [req x1 ok1, x1c r#"["eq", ["val", "x"], ["lit", "1"]]"# "ties-up",
+     x1c r#"["eq", ["val", "x"], ["lit", "1"]]"# "half-even"]]),
+  -- 3.3: `words` are removed, and the order of keys does not matter.
+  ("words and key order", [
+    [req x1 ok1, req r#"{"words": "the other words", "stated": "1", "name": "x"}"# ok1,
+     req x1 r#"{"claim": ["eq", ["val", "x"], ["lit", "1"]], "id": "c1"}"#,
+     r#"{"claims": [{"claim": ["eq", ["val", "x"], ["lit", "1"]], "id": "c1"}], "values": [{"stated": "1", "words": "w", "name": "x"}], "format": "ve-calc@0"}"#]]),
+  -- 3.3: `gt` and `ge` are kept as written, and every operand keeps its place.
+  ("comparisons as written", [
+    [x1c r#"["gt", ["val", "x"], ["lit", "2"]]"#], [x1c r#"["lt", ["lit", "2"], ["val", "x"]]"#],
+    [x1c r#"["ge", ["val", "x"], ["lit", "2"]]"#], [x1c r#"["le", ["lit", "2"], ["val", "x"]]"#]]),
+  ("claim forms", [
+    [x1c r#"["rounds-down", ["val", "x"], "1"]"#], [x1c r#"["rounds-up", ["val", "x"], "1"]"#],
+    [x1c r#"["rounds", ["val", "x"], "1"]"#], [x1c r#"["rounds", ["val", "x"], "1", "half-even"]"#]]),
+  ("within bounds", [
+    [x1c r#"["within", ["val", "x"], ["lit", "0"], ["lit", "2"]]"#],
+    [x1c r#"["within", ["val", "x"], ["lit", "2"], ["lit", "0"]]"#],
+    [x1c r#"["within", ["val", "x"], ["lit", "0"], ["lit", "3"]]"#],
+    [x1c r#"["within", ["val", "x"], ["lit", "1"], ["lit", "2"]]"#]]),
+  ("operations", (["add", "sub", "mul", "div"].flatMap fun op => [
+    [x1c s!"[\"eq\", [\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]], [\"lit\", \"1\"]]"],
+    [x1c s!"[\"eq\", [\"{op}\", [\"lit\", \"2\"], [\"val\", \"x\"]], [\"lit\", \"1\"]]"]])),
+  ("comparison operands", (["eq", "lt", "le", "gt", "ge"].flatMap fun op => [
+    [x1c s!"[\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]]"], [x1c s!"[\"{op}\", [\"lit\", \"2\"], [\"val\", \"x\"]]"]])),
+  -- 3.3: natural numbers stay JSON numbers.
+  ("pow exponent", [
+    [x1c r#"["eq", ["pow", ["val", "x"], 2], ["lit", "1"]]"#], [x1c r#"["eq", ["pow", ["val", "x"], 3], ["lit", "1"]]"#],
+    [x1c r#"["eq", ["mul", ["val", "x"], ["val", "x"]], ["lit", "1"]]"#]]),
+  -- 3.3: values, their sources, `support`, `span`, `software` and claim ids are part of the identity.
+  ("value source", [[req x1 ok1], [req (defined "x" r#"["lit", "1"]"#) ok1]]),
+  ("value names and order", [
+    [req (x1 ++ ", " ++ stated "y" r#""2""#) ok1], [req (stated "y" r#""2""# ++ ", " ++ x1) ok1],
+    [req (stated "y" r#""1""#) (c1 r#"["eq", ["val", "y"], ["lit", "1"]]"#)]]),
+  ("support", [req x1 ok1] :: ["observation", "testimony", "assumption"].map fun support =>
+    [req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": \"{support}\"}" ok1]),
+  ("claim span", [req x1 ok1] :: [[3, 3], [3, 5], [3, 6], [4, 5]].map fun span =>
+    [req x1 s!"\{\"id\": \"c1\", \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]], \"span\": {toJson span |>.compress}}"]),
+  ("value span", [req x1 ok1] :: [[3, 3], [3, 5], [3, 6], [4, 5]].map fun span =>
+    [req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"span\": {toJson span |>.compress}}" ok1]),
+  ("software", [req x1 ok1] :: ["P", "Q", "Python 3.12"].map fun software =>
+    [req x1 ok1 s!", \"software\": \"{software}\""]),
+  ("claim ids", ["c1", "c2", "c-1"].map fun id => [req x1 (claim id r#"["eq", ["val", "x"], ["lit", "1"]]"#)])]
+
+/-- The families the table refutes: a refused request, a class whose identities differ, or two classes that share a
+`meaning_id`. -/
+def identityFaults : List String := identityFamilies.filterMap fun (name, classes) =>
+  let ids := classes.map (·.map identity)
+  let sound := ids.all fun c => c.all fun i => i.all (· != "") && i.length > 1 && some i == c.head?
+  if sound && decide ((ids.filterMap fun c => c.head?.bind List.head?).Nodup) then none else some name
+
+#guard identityFaults == []
+
+-- I-1's digests, pinned: the two wavelength spellings and the `"20000000"` printing.
 #guard meaning (h8 r#""0.000000589""# r#"["sci", "2", 7]"#) == meaning (h8 r#"["sci", "5.89", -7]"# r#"["sci", "2", 7]"#)
 #guard meaning (h8 r#"["sci", "5.89", -7]"# r#"["sci", "2", 7]"#) ==
   "b3798e85cad76f4bb79a0d6505ec54b46a48a9c00b74af0b8f77af74d962cb28"
 #guard meaning (h8 r#""0.000000589""# r#""20000000""#) ==
   "c7cd36a48d5d80dcdac30bb4df5c47dfe7a5b51e38700d01c2acfc8b65ceb0c1"
-#guard meaning (req (stated "x" r#""0.30""#) ok1) == meaning (req (stated "x" r#""0.3""#) ok1)
-#guard meaning (req x1 ok1 r#", "rounding": "ties-up""#) == meaning (req x1 ok1)
-#guard meaning (req r#"{"words": "the other words", "stated": "1", "name": "x"}"# ok1) == meaning (req x1 ok1)
-#guard meaning (req x1 (c1 r#"["rounds", ["val", "x"], "0.30"]"#)) != meaning (req x1 (c1 r#"["rounds", ["val", "x"], "0.3"]"#))
-#guard meaning (req x1 (c1 r#"["rounds", ["val", "x"], "0.3", "half-even"]"#)) !=
-  meaning (req x1 (c1 r#"["rounds", ["val", "x"], "0.3"]"#))
-#guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "support": "testimony"}"# ok1) != meaning (req x1 ok1)
-#guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "span": [3, 5]}"# ok1) != meaning (req x1 ok1)
-#guard meaning (req x1 ok1 r#", "software": "Python 3.12""#) != meaning (req x1 ok1)
 
--- Every already canonical claim must preserve its ordered operands in the hashed form.
+-- Every already canonical claim is its own hashed form.
 #guard (List.singleton r#"["within", ["val", "x"], ["lit", "0"], ["lit", "2"]]"# ++
   (["eq", "lt", "le", "gt", "ge"].flatMap fun op => [
     s!"[\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]]",
@@ -162,31 +261,17 @@ example : ¬ (Check.claim (.compare ⟨.eq, false⟩ (.lit 1) (.lit 2))).Unknown
       | .ok (_, canonical) => canonical == j
       | .error _ => false
 
--- Identity must distinguish alternatives within each field, including operand order.
-#guard ([
-  [req x1 (c1 r#"["rounds-down", ["val", "x"], "1"]"#),
-   req x1 (c1 r#"["rounds-up", ["val", "x"], "1"]"#),
-   req x1 (c1 r#"["rounds", ["val", "x"], "1"]"#),
-   req x1 (c1 r#"["rounds", ["val", "x"], "1", "half-even"]"#)],
-  [req x1 (c1 r#"["within", ["val", "x"], ["lit", "0"], ["lit", "2"]]"#),
-   req x1 (c1 r#"["within", ["val", "x"], ["lit", "2"], ["lit", "0"]]"#)],
-  (["add", "sub", "mul", "div"].flatMap fun op => [
-   req x1 (c1 s!"[\"eq\", [\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]], [\"lit\", \"1\"]]"),
-   req x1 (c1 s!"[\"eq\", [\"{op}\", [\"lit\", \"2\"], [\"val\", \"x\"]], [\"lit\", \"1\"]]")]),
-  (["eq", "lt", "le", "gt", "ge"].flatMap fun op => [
-   req x1 (c1 s!"[\"{op}\", [\"val\", \"x\"], [\"lit\", \"2\"]]"),
-   req x1 (c1 s!"[\"{op}\", [\"lit\", \"2\"], [\"val\", \"x\"]]")]),
-  (["observation", "testimony", "assumption"].map fun support =>
-   req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": \"{support}\"}" ok1),
-  ([[3, 5], [3, 6], [4, 5]].map fun span =>
-   req x1 s!"\{\"id\": \"c1\", \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]], \"span\": {toJson span |>.compress}}"),
-  ([[3, 5], [3, 6], [4, 5]].map fun span =>
-   req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"span\": {toJson span |>.compress}}" ok1),
-  (["P", "Q", "Python 3.12"].map fun software => req x1 ok1 s!", \"software\": \"{software}\""),
-  (["c1", "c2", "c-1"].map fun id => req x1 (claim id r#"["eq", ["val", "x"], ["lit", "1"]]"#))
-  ]).all fun cases =>
-    let ids := cases.map meaning
-    ids.all (· != "") && decide ids.Nodup
+-- A claim with a printed number is hashed with its name as written, `[digits, places]` and its rule (I-1).
+#guard [
+    (r#"["rounds", ["val", "x"], "0.30"]"#, r#"["rounds",["val","x"],["30","2"],"ties-up"]"#),
+    (r#"["rounds", ["val", "x"], ["sci", "2", 7], "half-even"]"#, r#"["rounds",["val","x"],["2","-7"],"half-even"]"#),
+    (r#"["rounds-down", ["val", "x"], "-1.5"]"#, r#"["rounds-down",["val","x"],["-15","1"]]"#),
+    (r#"["rounds-up", ["val", "x"], ["sci", "-0", 2]]"#, r#"["rounds-up",["val","x"],["0","-2"]]"#)].all
+  fun (s, want) => match Json.parse s with
+    | .error _ => false
+    | .ok j => match Wire.claim ("ties-up", .tiesUp) "claims.0.claim" j with
+      | .ok (_, canonical) => canonical.compress == want
+      | .error _ => false
 
 /-! Accepted edges of the decoder. A refusal-only corpus cannot pin these branches. -/
 #guard meaning (req x1 (claim "c-1" r#"["eq", ["val", "x"], ["lit", "1"]]"#)) != ""

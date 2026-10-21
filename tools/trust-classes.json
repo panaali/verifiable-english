@@ -14094,6 +14094,10 @@
         "VE.Calc.RunExamples.expect",
         "VE.Calc.RunExamples.field",
         "VE.Calc.RunExamples.h8",
+        "VE.Calc.RunExamples.identity",
+        "VE.Calc.RunExamples.identityFamilies",
+        "VE.Calc.RunExamples.identityFaults",
+        "VE.Calc.RunExamples.literalSites",
         "VE.Calc.RunExamples.malformed",
         "VE.Calc.RunExamples.meaning",
         "VE.Calc.RunExamples.name64",
@@ -14102,6 +14106,7 @@
         "VE.Calc.RunExamples.ones",
         "VE.Calc.RunExamples.p512",
         "VE.Calc.RunExamples.pad",
+        "VE.Calc.RunExamples.printedSites",
         "VE.Calc.RunExamples.r1",
         "VE.Calc.RunExamples.r2",
         "VE.Calc.RunExamples.r827",
@@ -14111,7 +14116,8 @@
         "VE.Calc.RunExamples.v2",
         "VE.Calc.RunExamples.v5",
         "VE.Calc.RunExamples.v5Rows",
-        "VE.Calc.RunExamples.x1"
+        "VE.Calc.RunExamples.x1",
+        "VE.Calc.RunExamples.x1c"
       ]
     },
     "VE/Defaults/Wire.lean": {
