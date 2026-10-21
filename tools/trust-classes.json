@@ -14371,6 +14371,44 @@
         "VE.Calc.IdentityExamples.ds",
         "VE.Calc.IdentityExamples.κ"
       ]
+    },
+    "VE/Calc/Lower.lean": {
+      "S": [
+        "VE.Calc.Follows",
+        "VE.Calc.HasCounterexample"
+      ],
+      "C": [
+        "VE.Calc.Claim.facts",
+        "VE.Calc.Claim.lower",
+        "VE.Calc.Expr.linear",
+        "VE.Calc.QFact.sub",
+        "VE.Calc.QLin.isConst"
+      ]
+    },
+    "VE/Calc/LowerExamples.lean": {
+      "T": [
+        "VE.Calc.LowerExamples.P",
+        "VE.Calc.LowerExamples.agrees",
+        "VE.Calc.LowerExamples.count",
+        "VE.Calc.LowerExamples.ds",
+        "VE.Calc.LowerExamples.eq",
+        "VE.Calc.LowerExamples.fss",
+        "VE.Calc.LowerExamples.ge",
+        "VE.Calc.LowerExamples.gt",
+        "VE.Calc.LowerExamples.k",
+        "VE.Calc.LowerExamples.le",
+        "VE.Calc.LowerExamples.lin",
+        "VE.Calc.LowerExamples.linPts",
+        "VE.Calc.LowerExamples.links",
+        "VE.Calc.LowerExamples.lt",
+        "VE.Calc.LowerExamples.mixed",
+        "VE.Calc.LowerExamples.p1",
+        "VE.Calc.LowerExamples.pts",
+        "VE.Calc.LowerExamples.r4",
+        "VE.Calc.LowerExamples.rBelow",
+        "VE.Calc.LowerExamples.v",
+        "VE.Calc.LowerExamples.xy"
+      ]
     }
   }
 }
