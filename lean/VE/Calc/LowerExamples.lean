@@ -69,13 +69,15 @@ def pts : List (List (String × Rat)) := [[("x", 1), ("y", 2)], [("x", 2), ("y",
 #guard count xy (.rounds .tiesUp (v "x") ⟨3, 0⟩) = none
 
 -- Linear: constants on either side of a product, a nonzero constant divisor, a constant power, powers 0 and 1, and a
--- factor whose terms cancel. Not linear: x · y, x², x / y, x / (y − y) (a zero divisor).
+-- factor whose terms cancel. Not linear: x · y, x², x / y, x / (y − y) (a zero divisor), x / (y + 1).
 def lin : List Expr := [.mul (k 3) (v "x"), .mul (v "x") (.sub (k 1) (k 4)), .div (v "x") (k (-2)),
   .mul (.pow (k 2) 3) (v "x"), .pow (v "x") 1, .pow (v "x") 0, .mul (.sub (v "y") (v "y")) (v "x"),
   .add (v "x") (.mul (k 2) (v "y")), .sub (v "x") (.div (v "y") (.add (k 1) (k 1)))]
-#guard lin.all fun e => agrees xy (lt e (k 2)) pts && agrees xy (eq e (k 3)) pts
+/-- x from −1 to 3, y = 2: x^0 = 1 and 8x ≠ 6x at x = 1/4 are told apart from each claim's own meaning. -/
+def linPts : List (List (String × Rat)) := [-1, 0, 1/4, 1/2, 1, 3/2, 2, 3].map fun q => [("x", q), ("y", 2)]
+#guard lin.all fun e => [0, 1, 2, 3].all fun q => [lt, le, eq].all fun c => agrees xy (c e (k q)) linPts
 #guard [.mul (v "x") (v "y"), .pow (v "x") 2, .div (v "x") (v "y"), .div (v "x") (.sub (v "y") (v "y")),
-  .div (k 1) (k 0)].all fun e => count xy (lt e (k 2)) == none
+  .div (k 1) (k 0), .div (v "x") (.add (v "y") (k 1))].all fun e => count xy (lt e (k 2)) == none
 
 -- Inlining keeps the free values and nothing else: a stated value and a definition over the free values are
 -- inlined; a missing name, an undefined or an exhausted counted value gives no facts.
