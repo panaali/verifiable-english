@@ -8,6 +8,7 @@ behaviour are `#guard`s in `lean/VE/Service/ActsExamples.lean` and `lean/VE/Comp
 from __future__ import annotations
 
 import copy
+import json
 
 import pytest
 
@@ -231,3 +232,110 @@ def test_every_acts_list_the_environment_mode_accepts_is_read_by_english():
         assert row.get("status") == "ok" and row["result"]["status"] == "one", (profiles, row)
     assert ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"] in accepted
     assert any("norm-defaults@0" in ps and len(ps) == 5 for ps in accepted), accepted
+
+
+# ap-1bb (2): Lean's wording of a plain act, relayed by the norms route's `norms-elaborate` row (`wordings`), typed
+# by its schema and bound to the request's plain acts; English displays it and Python computes none.
+
+A1_WORDING = "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}"
+A2_WORDING = "{0} has the right to equal pay for equal work without any discrimination"
+A21 = "{0}" + " ab" * 131 + " a" * 2
+
+
+def test_a_plain_act_reads_with_the_wording_lean_selected():
+    """Spec 2.1 and 11.1: A1's 109-byte wording and A21's 414-byte one (a 400-byte plain act), past the template
+    lint's lengths; never "classified as" or "has the recorded relation"; a permission keeps its modal form."""
+    from ve.english import EnglishVocabulary
+    from ve.norms import plain_wordings
+    env = Environment(environment())
+    words = EnglishVocabulary(env)
+    assert plain_wordings(env) == {"heard": A1_WORDING, "paid": A2_WORDING}
+    assert (words.predicates["heard"], words.predicates["paid"]) == (A1_WORDING, A2_WORDING)
+    assert [len(w.encode()) for w in (A1_WORDING, A2_WORDING)] == [109, 72]
+    assert words.atom("heard", ("Alice", "the trial")).startswith("Alice is entitled in full equality")
+    assert words.predicates["protected"] == A3.replace("{0} ", "{0} may ", 1)
+    long = EnglishVocabulary(Environment(environment(heard=predicate(["person"], {
+        "role": "plain", "default": "deny", "act": A21, "form": "has the right"})))).predicates["heard"]
+    assert long == "{0} has the right " + A21[4:] and len(long.encode()) == 414
+
+
+def _genuine_row(env):
+    from ve.backends.relay import decide
+    return decide("norms", [{"id": "norms-elaborate", "kind": "norms-elaborate", "environment": env.to_dict(),
+                             "norms": []}])[0]
+
+
+def test_the_wording_is_the_one_lean_relays(monkeypatch):
+    """Python computes no wording: the one shown is the relayed one, whatever it says (R8: its text is Lean's)."""
+    from ve.backends import relay
+    from ve.english import EnglishVocabulary
+    env = Environment(environment())
+    row = _genuine_row(env)
+    row["wordings"] = {**row["wordings"], "paid": "{0} is owed equal pay"}
+    monkeypatch.setattr(relay, "decide_once", lambda mode, case: row)
+    assert EnglishVocabulary(env).predicates["paid"] == "{0} is owed equal pay"
+
+
+def _rebound(wordings):
+    """Binding mutants of a genuine `wordings` map: each name dropped, an undeclared name and a declared
+    predicate that is no plain act added, a name renamed, and the map emptied."""
+    yield "dropped", {k: v for k, v in wordings.items() if k != "paid"}
+    yield "undeclared", {**wordings, "absent": A2_WORDING}
+    yield "extra-row", {**wordings, "protected": A2_WORDING}
+    yield "renamed", {("heard2" if k == "heard" else k): v for k, v in wordings.items()}
+    yield "empty", {}
+
+
+@pytest.mark.parametrize("mutant", ["dropped", "undeclared", "extra-row", "renamed", "empty", "field-dropped"])
+def test_wordings_not_bound_to_the_request_are_unavailable(monkeypatch, mutant):
+    """R8: the names of `wordings` are exactly the request's plain acts, on both readers (the display's
+    `plain_wordings` and the document's `norms-elaborate` row)."""
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable
+    from ve.norms import NormDocument, plain_wordings
+    env = Environment(environment())
+    document = NormDocument(env, [])
+    row = _genuine_row(env)
+    if mutant == "field-dropped":
+        del row["wordings"]
+    else:
+        row["wordings"] = dict(_rebound(row["wordings"]))[mutant]
+    monkeypatch.setattr(relay, "decide_once", lambda mode, case: row)
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: [row])
+    with pytest.raises(CheckerUnavailable, match="wordings are not bound"):
+        plain_wordings(env)
+    with pytest.raises(CheckerUnavailable, match="wordings are not bound"):
+        document._lean_regenerated()
+
+
+@pytest.mark.parametrize("value", [None, True, 7, 7.5, "7", [], [A1_WORDING], {"heard": 7}, {"heard": None},
+                                   {"heard": [A1_WORDING]}, {"heard": {}}])
+def test_a_retyped_wordings_field_fails_the_schema(value):
+    """The `wordings` member is typed by the generated schema (`common.json` `string_map`): the genuine exchange
+    passes, and every retype of the map or of one wording is refused before a reader sees it."""
+    from tests.lean_build import lean_build
+    from tests.subprocesses import HANG_TIMEOUT
+    from ve.backends.lean_service import LeanService, case_digest, case_texts
+    from ve.backends.service_schema import Invalid, check_response
+    env = Environment(environment())
+    cases = [{"id": "w", "kind": "norms-elaborate", "environment": env.to_dict(), "norms": []}]
+    text = json.dumps(cases, ensure_ascii=False, separators=(",", ":"))
+    with LeanService(lean_build("ve_service") / "ve_service", timeout=HANG_TIMEOUT) as service:
+        _, response = service.exchange("norms", text, 1, timeout=HANG_TIMEOUT)
+    request = {"id": response["id"], "mode": "norms", "cases": cases,
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    check_response("norms", response, request)
+    assert response["results"][0]["result"]["wordings"] == {"heard": A1_WORDING, "paid": A2_WORDING}
+    mutant = copy.deepcopy(response)
+    mutant["results"][0]["result"]["wordings"] = value
+    with pytest.raises(Invalid):
+        check_response("norms", mutant, request)
+
+
+def test_norm_defaults_keeps_todays_display_without_asking(monkeypatch):
+    """The norms route does not read `norm-defaults@0`; such an environment asks for no wording (next item)."""
+    from ve.backends import relay
+    from ve.norms import plain_wordings
+    env = Environment(environment(["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]))
+    monkeypatch.setattr(relay, "decide_once", lambda mode, case: pytest.fail("asked"))
+    assert plain_wordings(env) == {}
