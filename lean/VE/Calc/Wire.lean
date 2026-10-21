@@ -84,7 +84,8 @@ def literalFault (j : Json) : Option String :=
 
 /-- Limit 7: a name or claim id of more than 64 bytes. -/
 def nameFault (j : Json) : Option String :=
-  let long (s : String) : Option String := if s.utf8ByteSize > 64 then some (limit "a name" 64) else none
+  let long (s : String) : Option String :=
+    if s.utf8ByteSize > VE.Limits.maxIdentifierBytes then some (limit "a name" VE.Limits.maxIdentifierBytes) else none
   match j with
   | .arr xs => match xs.toList with
     | [.str "val", .str n] => long n
@@ -102,8 +103,8 @@ def entries (j : Json) (key : String) : Nat := match j.getObjVal? key with
 exponents, literals and names, each anywhere in the case. -/
 def limitFault (j : Json) : Option String :=
   let (values, depth) := size (VE.Limits.maxJsonDepth + 1) j
-  if values > 10000 then some (limit "the number of JSON values" 10000)
-  else if depth > 64 then some (limit "the JSON depth" 64)
+  if values > VE.Limits.maxNodes then some (limit "the number of JSON values" VE.Limits.maxNodes)
+  else if depth > VE.Limits.maxDepth then some (limit "the JSON depth" VE.Limits.maxDepth)
   else if entries j "values" > 512 then some (limit "the number of values" 512)
   else if entries j "claims" > 512 then some (limit "the number of claims" 512)
   else [exponentFault, literalFault, nameFault].findSome? (scan · 65 j)
