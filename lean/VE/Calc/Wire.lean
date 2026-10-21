@@ -44,14 +44,16 @@ def children (j : Json) : List Json := match j with
   | .obj _ => ((fields j).toOption.getD []).map (·.2)
   | _ => []
 
-/-- The number of JSON values in `j` (objects, arrays and scalars alike) and its nesting of arrays and
-objects. -/
-def size : Nat → Json → Nat × Nat
-  | 0, _ => (0, 0)
-  | n + 1, j =>
-    let ms := (children j).map (size n)
-    (ms.foldl (fun total child => total + child.1) 1,
-      if j matches .arr _ | .obj _ then 1 + ms.foldl (fun depth child => max depth child.2) 0 else 0)
+/-- The number of JSON values in `js` and below (objects, arrays and scalars alike), up to `fuel`: one at a time
+from a worklist, so no nesting hides a value from limit 1 and none deepens the stack. -/
+def count (fuel : Nat) (js : List Json) (n : Nat := 0) : Nat := match fuel, js with
+  | 0, _ | _, [] => n
+  | f + 1, j :: js => count f (children j ++ js) (n + 1)
+
+/-- The nesting of arrays and objects in `j`, up to `fuel`. -/
+def depth : Nat → Json → Nat
+  | 0, _ => 0
+  | n + 1, j => if j matches .arr _ | .obj _ then 1 + (children j).foldl (fun d c => max d (depth n c)) 0 else 0
 
 /-- The first value of `j`, in document order, that `p` refuses. -/
 def scan (p : Json → Option String) : Nat → Json → Option String
@@ -105,9 +107,9 @@ def entries (j : Json) (key : String) : Nat := match j.getObjVal? key with
 /-- The first limit of 3.2 the case exceeds: 10,000 JSON values, depth 64, 512 values, 512 claims, then
 exponents, literals and strings, each anywhere in the case. -/
 def limitFault (j : Json) : Option String :=
-  let (values, depth) := size (VE.Limits.maxJsonDepth + 1) j
-  if values > VE.Limits.maxNodes then some (limit "the number of JSON values" VE.Limits.maxNodes)
-  else if depth > VE.Limits.maxDepth then some (limit "the JSON depth" VE.Limits.maxDepth)
+  if count (VE.Limits.maxNodes + 1) [j] > VE.Limits.maxNodes then
+    some (limit "the number of JSON values" VE.Limits.maxNodes)
+  else if depth (VE.Limits.maxDepth + 1) j > VE.Limits.maxDepth then some (limit "the JSON depth" VE.Limits.maxDepth)
   else if entries j "values" > 512 then some (limit "the number of values" 512)
   else if entries j "claims" > 512 then some (limit "the number of claims" 512)
   else [(exponentFault, j), (literalFault, j), (stringFault, unworded j)].findSome? fun (p, j) =>
