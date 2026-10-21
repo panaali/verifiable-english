@@ -1027,6 +1027,13 @@
    "reason": "me-9b: K +0, S +18 (lean/VE/Calc/Identity.lean +10: IsIdentity, NotIdentity; lean/VE/Calc/Inline.lean +8: freeNames, assign), V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9b, 2026-10-18",
    "commit": "6454946a5f54e1eaf15e48204c3119126ebf3a78"
+  },
+  {
+   "class": "V",
+   "lines": 36,
+   "reason": "df-1ac: VE/Defaults/Wire.lean V +36 (untied D[V] entityIds, elaborateFields, PairStatus.label, coherenceFields; untied G[V] PairStatus, defaultsCase); K +0, S +0; CoherenceReplay.verdict/pairs and elaborateRows tied; replays and checks C; diagnostics D[R]",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ac, 2026-10-18",
+   "commit": "c5197da78807f792a47d787133f93e4c59fbe0cd"
   }
  ]
 }
