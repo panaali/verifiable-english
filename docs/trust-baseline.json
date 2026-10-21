@@ -1020,6 +1020,20 @@
    "reason": "sc-1ac: lean/VE/Scope/Govern.lean S +90 (Reach, Governor, SDoc, applyEffect, isFrame, unary, graph, baseObj, covered, classOf, position, ordered, composed, affected, govern), V +42 (G[V] untied: keysOf, unitsOf, idOf, unitIds, contentOf, isPart, isNorm, objectOf, partUnits, ruleUnits, coveredLayout, frameOn, baseName, newContent, patch); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ac, 2026-10-18",
    "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
+  },
+  {
+   "class": "S",
+   "lines": 14,
+   "reason": "me-2: VE/Calc/Wire.lean S +4 (Check 4), V +129 (Case 5, literal 14, operations 3, comparisons 3, rules 2, expr 20, claim 26, value 17, entry 9, decl 5, decode 25); VE/Calc/Run.lean S +10 (Check.UnknownCause 5, Check.OutcomeMeans 5), V +5 (Run.rowJson 5); new Lean-owned behaviour, the ve-calc@0 wire and the calc runner",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2, 2026-10-18",
+   "commit": "a2c522b94bcdcff5331bd3e95092d2eaf9e4ca17"
+  },
+  {
+   "class": "V",
+   "lines": 134,
+   "reason": "me-2: VE/Calc/Wire.lean S +4 (Check 4), V +129 (Case 5, literal 14, operations 3, comparisons 3, rules 2, expr 20, claim 26, value 17, entry 9, decl 5, decode 25); VE/Calc/Run.lean S +10 (Check.UnknownCause 5, Check.OutcomeMeans 5), V +5 (Run.rowJson 5); new Lean-owned behaviour, the ve-calc@0 wire and the calc runner",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2, 2026-10-18",
+   "commit": "a2c522b94bcdcff5331bd3e95092d2eaf9e4ca17"
   }
  ]
 }
