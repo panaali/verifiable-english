@@ -610,6 +610,8 @@ def test_rescore_of_evidence_whose_mutants_differ_is_a_full_run(tmp_path):
         prev.write_text(json.dumps({"inputs": {"x": "1"}, "head": "h", "mutants": rows}))
         got = trust_mutants.previous(prev, {"x": "1"}, [m])
         assert (got == ("h", {"M001": ("SURVIVOR", "")})) if ok else isinstance(got, str), (rows, got)
+    prev.write_text(json.dumps({"inputs": {"x": "1"}, "head": "", "mutants": [row]}))
+    assert "cannot be read" in trust_mutants.previous(prev, {"x": "1"}, [m])
 
 
 def test_the_generator_cuts_every_list_a_condition_reads():

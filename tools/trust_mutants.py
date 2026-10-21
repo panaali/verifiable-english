@@ -1105,7 +1105,7 @@ def previous(path: Path, now: dict[str, str], found: list[Mutant]) -> tuple[str,
                 (m.id, m.file, m.line, m.definition, m.operator, m.before, m.after) for m in found]:
             return "its mutants are not this tree's"
         verdicts = {r["id"]: (r["raw_status"], r["detail"] if r["raw_status"] == r["status"] else "") for r in rows}
-        if not isinstance(head, str) or not all(isinstance(d, str) and s in (*REUSED, "UNKNOWN", "NOT RUN")
+        if not isinstance(head, str) or not head or not all(isinstance(d, str) and s in (*REUSED, "UNKNOWN", "NOT RUN")
                                                 for s, d in verdicts.values()):
             return "it cannot be read: a status or detail is not one this tool writes"
         return head, verdicts
