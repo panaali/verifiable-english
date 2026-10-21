@@ -490,9 +490,10 @@ Within the limits a side can still cost minutes: 10,000 nodes, each a sum over 1
 steps; and a point's values are not bounded by the limits at all. So the runner charges its work in evaluation units
 against one budget per row (`VE.Limits.maxEvaluations`, spec 14). Before it runs, an operation on polynomials is
 charged a unit for each monomial and each variable of a monomial it reads, once for each monomial of the other
-polynomial it meets, and an evaluated node a unit and one for each 64 bits of the numbers it reads (a power: of the
-number it writes), a value read at a point a unit and one for each 8 names of the point (its lookup). A budgeted function gives `none` when the charge is more than the units left, and otherwise the
-unbudgeted answer (`Poly.pow?B_eq`, `Frac.pow?B_eq`, `Expr.evalB_eq`, `sidesAtB_eq`) and the units left. -/
+polynomial it meets; an evaluated node, a unit and one for each 64 bits of the numbers it reads (a power: of the
+number it writes); a value read at a point, a unit and one for each 8 names of the point (its lookup). A budgeted
+function gives `none` when the charge is more than the units left, and otherwise the unbudgeted answer
+(`Poly.pow?B_eq`, `Frac.pow?B_eq`, `Expr.evalB_eq`, `sidesAtB_eq`) and the units left. -/
 
 /-- An answer within a budget: `none` when the budget ran out, else the answer and the units left. -/
 abbrev Budgeted (α : Type) := Option (α × Nat)
@@ -540,24 +541,25 @@ def Frac.pow?B (f : Frac) (k n : Nat) : Budgeted (Option Frac) :=
 /-- The 64-bit words of a value's numerator and denominator. -/
 def ratWords (x : Rat) : Nat := (x.num.natAbs.log2 + x.den.log2) / 64
 
+/-- An operation on two values, charged a unit and their words. -/
+def Expr.opB (f : Rat → Rat → Option Rat) (x y : Rat) (n : Nat) : Budgeted (Option Rat) :=
+  charge (1 + ratWords x + ratWords y) n fun _ => f x y
+
 /-- `Expr.eval`, each node charged before its operation; reading a value costs `c`. -/
 def Expr.evalB (σ : Values) (c : Nat) : Expr → Nat → Budgeted (Option Rat)
   | .lit q, n => charge 1 n fun _ => some q
   | .val x, n => charge c n fun _ => σ x
-  | .add a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) fun x y n => charge (1 + ratWords x + ratWords y) n fun _ =>
-      some (x + y)
-  | .sub a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) fun x y n => charge (1 + ratWords x + ratWords y) n fun _ =>
-      some (x - y)
-  | .mul a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) fun x y n => charge (1 + ratWords x + ratWords y) n fun _ =>
-      some (x * y)
-  | .div a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) fun x y n => charge (1 + ratWords x + ratWords y) n fun _ =>
-      if y = 0 then none else some (x / y)
-  | .pow a k, n => Budgeted.bin (a.evalB σ c n) (fun n => some (some (), n)) fun x _ n => charge (1 + k * ratWords x) n fun _ =>
-      some (x ^ k)
+  | .add a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) (Expr.opB fun x y => some (x + y))
+  | .sub a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) (Expr.opB fun x y => some (x - y))
+  | .mul a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) (Expr.opB fun x y => some (x * y))
+  | .div a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) (Expr.opB fun x y => if y = 0 then none else some (x / y))
+  | .pow a k, n => Budgeted.bin (a.evalB σ c n) (fun n => some (some (), n)) fun x _ n =>
+      charge (1 + k * ratWords x) n fun _ => some (x ^ k)
 
 /-- Both sides' values at a point, the left one first: `differsAt`'s evaluation within a budget. -/
 def sidesAtB (a b : Expr) (κ : List (String × Rat)) (n : Nat) : Budgeted (Option (Rat × Rat)) :=
-  Budgeted.bin (a.evalB (κ.lookup ·) (1 + κ.length / 8) n) (b.evalB (κ.lookup ·) (1 + κ.length / 8)) fun x y n => some (some (x, y), n)
+  let c := 1 + κ.length / 8
+  Budgeted.bin (a.evalB (κ.lookup ·) c n) (b.evalB (κ.lookup ·) c) fun x y n => some (some (x, y), n)
 
 theorem charge_eq {α : Type} {c n : Nat} {x : Unit → α} {r : α} {m : Nat} (h : charge c n x = some (r, m)) :
     r = x () := by

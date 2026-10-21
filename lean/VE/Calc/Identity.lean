@@ -159,7 +159,8 @@ def Identity.compareB (a b : Expr) (n : Nat) : Budgeted (Option (Bool × Bool)) 
       ((Poly.mul? fa.1.1 fb.1.2).bind fun l => (Poly.mul? fb.1.1 fa.1.2).map (l == ·)).map (·, fa.2 || fb.2)
 
 /-- The first point where the sides denote and differ, with their values there, within a budget. -/
-def pointsB (a b : Expr) : List (List (String × Rat)) → Nat → Budgeted (Option (List (String × Rat) × Option (Rat × Rat)))
+def pointsB (a b : Expr) :
+    List (List (String × Rat)) → Nat → Budgeted (Option (List (String × Rat) × Option (Rat × Rat)))
   | [], n => some (none, n)
   | κ :: ks, n => match sidesAtB a b κ n with
     | some (s, n) => if (s.map fun s => s.1 != s.2).getD false then some (some (κ, s), n) else pointsB a b ks n
@@ -172,7 +173,8 @@ def identityDecideB (keep : List String) (a' b' : Expr) (n : Nat) : IdentityRow 
   | none => budgetRow
   | some (none, _) =>
     { outcome := .unknown (.limit .polyTerms),
-      stop := if (a'.nodesWithin maxPolyTerms).isSome && (b'.nodesWithin maxPolyTerms).isSome then some .form else some .nodes }
+      stop := if (a'.nodesWithin maxPolyTerms).isSome && (b'.nodesWithin maxPolyTerms).isSome then some .form
+        else some .nodes }
   | some (some (r, z), n) =>
     if z then { outcome := .decided .undefined } else
     if r then { outcome := .decided .holds } else
@@ -232,7 +234,8 @@ theorem Frac.goB_eq (e : Expr) : ∀ n {r : Option (Frac × Bool)} {m : Nat}, Fr
       simp only [Frac.go, Expr.zeroDivisor]; cases Frac.go a <;> simp
 
 theorem Identity.compareB_eq (a b : Expr) (n : Nat) {r : Option (Bool × Bool)} {m : Nat}
-    (h : Identity.compareB a b n = some (r, m)) : r = (Identity.compare a b).map (·, a.zeroDivisor || b.zeroDivisor) := by
+    (h : Identity.compareB a b n = some (r, m)) :
+    r = (Identity.compare a b).map (·, a.zeroDivisor || b.zeroDivisor) := by
   have form : ∀ e n r m, (if (e.nodesWithin maxPolyTerms).isSome then Frac.goB e n else some (none, n)) = some (r, m) →
       r = (Frac.ofExpr? e).map (·, e.zeroDivisor) := by
     intro e n r m h; unfold Frac.ofExpr?; split at h
@@ -285,19 +288,16 @@ theorem identityDecideB_eq (keep : List String) (a' b' : Expr) (n : Nat) :
         · right; simp_all
         · rename_i hz hr; simp only [hr, Bool.false_eq_true, if_false]
           split
-          · rename_i κ s _ hp; have := pointsB_eq a' b' _ _ hp; right
-            cases hf : List.find? (differsAt a' b') ((List.range 13).map (identityPoint (keep.filter (· ∈ a'.names ++ b'.names)))) with
-            | none => rw [hf] at this; cases this
-            | some κ' => rw [hf] at this; simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq] at this; simp [this.1, this.2]
           · rename_i hp; have := pointsB_eq a' b' _ _ hp; right
-            cases hf : List.find? (differsAt a' b') ((List.range 13).map (identityPoint (keep.filter (· ∈ a'.names ++ b'.names)))) with
-            | none => rfl
-            | some κ' => rw [hf] at this; cases this
+            split <;> rename_i hf <;> rw [hf] at this <;> simp_all
+          · rename_i hp; have := pointsB_eq a' b' _ _ hp; right
+            split <;> rename_i hf <;> rw [hf] at this <;> simp_all
           · exact .inl rfl
 
 /-- **Budget**: a row within the budget is the unbudgeted row; a row past it is the unknown row, never a verdict. -/
 theorem identityDecideB_within (keep : List String) (a' b' : Expr) (n : Nat)
-    (h : (identityDecideB keep a' b' n).stop ≠ some .budget) : identityDecideB keep a' b' n = identityDecide keep a' b' :=
+    (h : (identityDecideB keep a' b' n).stop ≠ some .budget) :
+    identityDecideB keep a' b' n = identityDecide keep a' b' :=
   (identityDecideB_eq keep a' b' n).resolve_left fun he => h (by rw [he]; rfl)
 
 theorem identityDecideB_exhausted (keep : List String) (a' b' : Expr) (n : Nat)
