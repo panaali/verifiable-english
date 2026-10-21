@@ -5630,7 +5630,7 @@ module VE.Defaults.Wire 2681162719aad5bcdb9248d854e192adab7d3c67e55d303eba148e21
 659:0-662:103 def VE.Defaults.Wire.modelFields@VE.Defaults.Wire
 664:0-675:16 def VE.Defaults.Wire.defaultsCase@VE.Defaults.Wire
 677:0-679:30 theorem VE.Defaults.Wire.defaultsCase_other@VE.Defaults.Wire
-module VE.Defaults.WireExamples 090b1aa7667e2e41234507c70903ca139ac2129cee50a847a25c62c389377ed3
+module VE.Defaults.WireExamples fec8c7c437fa5e79763b67361df720431b242aa9076fea32520940a8c67e149f
 20:0-20:107 def VE.Defaults.WireFixtures.rulesJ@VE.Defaults.WireExamples
 21:0-22:109 def VE.Defaults.WireFixtures.req@VE.Defaults.WireExamples
 23:0-28:22 def VE.Defaults.WireFixtures.answer@VE.Defaults.WireExamples
@@ -5669,6 +5669,8 @@ module VE.Defaults.WireExamples 090b1aa7667e2e41234507c70903ca139ac2129cee50a847
 226:0-227:107 def VE.Defaults.WireFixtures.excUrgent@VE.Defaults.WireExamples
 237:0-240:126 def VE.Defaults.WireFixtures.modelCase@VE.Defaults.WireExamples
 241:0-243:41 def VE.Defaults.WireFixtures.doesNotFollow@VE.Defaults.WireExamples
+252:0-255:79 def VE.Defaults.WireFixtures.β2Env@VE.Defaults.WireExamples
+256:0-257:55 def VE.Defaults.WireFixtures.β2R@VE.Defaults.WireExamples
 module VE.Definitions.Alias 943947c890da81f3d1205116f12680762a7347f8bb7d918a43fb385f0d049a43
 10:0-11:79 def VE.Definitions.Alias.expand@VE.Definitions.Alias
 13:0-18:50 def VE.Definitions.Alias.aliasLayer@VE.Definitions.Alias

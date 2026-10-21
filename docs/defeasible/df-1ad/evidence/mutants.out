@@ -34,19 +34,22 @@ Q7 VE.Defaults.Wire.defaultsCase: FAILS 13 guards
     #guard answer (γCase false) == unknownBecause "no-exception coherence not checked"
     #guard answer ((γCase true).setObjVal! "certificate" .null) == unknownBecause "with no exc
     #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
-M1 VE.Defaults.Wire.forcedAt: FAILS 1 guards
+M1 VE.Defaults.Wire.forcedAt: FAILS 2 guards
     #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFoll
-M2 VE.Defaults.Wire.forcedAt: FAILS 1 guards
+    #guard holds (layered β2Env β2R) fun L =>
+M2 VE.Defaults.Wire.forcedAt: FAILS 2 guards
     #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFoll
+    #guard holds (layered β2Env β2R) fun L =>
 M3 VE.Defaults.Wire.ModelReplay.verdict: FAILS 2 guards
     #guard holds dβ fun L => answer (modelCase βEnv βR L xAll [exc1]) == VE.Route.Wire.ok "c" 
     #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (
 M4 VE.Defaults.Wire.modelFields: FAILS 2 guards
     #guard holds dβ fun L => answer (modelCase βEnv βR L xAll [exc1]) == VE.Route.Wire.ok "c" 
     #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (
-M5 VE.Defaults.Wire.defaultsCase: FAILS 4 guards
+M5 VE.Defaults.Wire.defaultsCase: FAILS 5 guards
     #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFoll
     #guard holds dβ fun L => answer (modelCase βEnv βR L xAll [exc1]) == VE.Route.Wire.ok "c" 
     #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (
     #guard holds dα fun L => answer (modelCase αEnv αR L (.all "assistant" (.unary exc1 (.var 
+    #guard holds (layered β2Env β2R) fun L =>
 ALL MUTANTS FAIL THEIR GUARDS

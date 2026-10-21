@@ -14137,6 +14137,8 @@
         "VE.Defaults.WireFixtures.αEnv",
         "VE.Defaults.WireFixtures.αModels",
         "VE.Defaults.WireFixtures.αR",
+        "VE.Defaults.WireFixtures.β2Env",
+        "VE.Defaults.WireFixtures.β2R",
         "VE.Defaults.WireFixtures.βEnv",
         "VE.Defaults.WireFixtures.βR",
         "VE.Defaults.WireFixtures.γ'Env",
