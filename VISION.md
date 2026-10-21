@@ -2,7 +2,7 @@
 
 Status: the goal of record for the language track. Restated from the orchestrator's draft after the two vision
 reviews (GPT-6 Astra, Claude Fable 5.1), which converge on most points; their disagreements are in section 6.
-[PLAN-EXPAND2.md](PLAN-EXPAND2.md) executes stages 1 and 2; ROADMAP.md holds status.
+[PLAN-EXPAND2.md](docs/plans/PLAN-EXPAND2.md) executes stages 1 and 2; ROADMAP.md holds status.
 
 ## 1. The goal
 

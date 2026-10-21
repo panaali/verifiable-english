@@ -1,6 +1,6 @@
 # P3: formalisation tax on real artefacts
 
-Package 3 of [PLAN-V3.md](../../PLAN-V3.md). The question: in a domain VE's
+Package 3 of [PLAN-V3.md](../../docs/plans/PLAN-V3.md). The question: in a domain VE's
 `closure@0` profile fits (role-based access control, group nesting, resource
 hierarchies, reachability, Alloy-style relational constraints), how often is an
 untrusted author's VE formalisation of a **real** artefact faithful, how much of
