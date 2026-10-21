@@ -64,7 +64,8 @@ example : Defs.Means [] (.allFromTo (lit 1) (lit 3) (.lt (lit 0) (.var 0))) ∧ 
   simp [Defs.Means, Holds, Term.value, lit]; exact ⟨fun i _ _ => by omega, ⟨0, by omega⟩, ⟨3, by omega⟩⟩
 example : Defs.Means [] (.exFromTo (lit 1) (lit 3) (.eq (.var 0) (lit 3))) ∧ ¬ Defs.Means [] (.exFromTo (lit 1) (lit 3) (.eq (.var 0) (lit 0))) := by
   means
-example : Defs.Means [] (.eq (.countFromTo (lit 2) (lit 5) (.dvd (lit 2) (.var 0))) (lit 2)) := by
+example : Defs.Means [] (.eq (.countFromTo (lit 2) (lit 5) (.dvd (lit 2) (.var 0))) (lit 2)) ∧
+    Defs.Means [] (.eq (.countFromTo (lit 2) (lit 6) (.dvd (lit 2) (.var 0))) (lit 3)) := by
   simp (config := { decide := true }) [Defs.Means, Holds, Term.value, lit, List.range, List.range.loop]
 example : Holds (Defs.env []) [5, 7] (.eq (.var 1) (lit 7)) := by means
 def double : Defs := [.fn "double" 1 (.mul (lit 2) (.var 0)), .fn "quad" 1 (.call "double" [.call "double" [.var 0]]),
