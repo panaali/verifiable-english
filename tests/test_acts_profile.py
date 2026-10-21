@@ -127,14 +127,22 @@ def test_rust_refuses_an_acts_environment():
     assert "acts@0" in str(caught.value)
 
 
-def test_an_act_python_stores_differently_is_unavailable_never_answered():
-    """Lean's canonical act folds U+2019 (A19); Python's stored act does not, so the identities differ and the load is
-    CheckerUnavailable until Python reads the canonical environment from Lean (ap-1bb)."""
-    from ve.errors import CheckerUnavailable
-    data = environment(p=predicate(["person", "case"], {"role": "permission", "default": "allow",
-                                                        "act": "{0} comply with the operator’s instructions in {1}"}))
-    with pytest.raises(CheckerUnavailable, match="identities differ"):
-        Environment(data)
+A19 = "{0} comply with the operator’s instructions in {1}"
+
+
+def test_an_act_with_a_curly_apostrophe_has_leans_identity():
+    """ap-1bb (ap-1b deviation 4): Lean's canonical act folds U+2019 (A19), so the environment's identity is the one
+    Lean computed from its canonical environment, the same as for the act written with U+0027; Python computes none,
+    keeps the act as written, and the norms route checks a document over it."""
+    from ve.norms import NormDocument, check_conflict
+    from tests.test_norms import rule
+    curly = Environment(environment(p=predicate(["person", "case"], {"role": "permission", "default": "allow",
+                                                                     "act": A19})))
+    straight = Environment(environment(p=predicate(["person", "case"], {"role": "permission", "default": "allow",
+                                                                        "act": A19.replace("’", "'")})))
+    assert curly.environment_id == straight.environment_id
+    assert curly.predicates["p"].regulated.act == A19
+    assert check_conflict(NormDocument(curly, [rule("m", "p", True)]), prove=True).status == "CONFLICT-FREE"
 
 
 UNSORTED = [["norms@0", "acts@0", "relational-fol@0"], ["acts@0", "acts@0", "norms@0", "relational-fol@0"],
