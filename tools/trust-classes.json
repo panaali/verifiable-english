@@ -13742,7 +13742,8 @@
         "VE.Service.ActsExamples.withRevision",
         "VE.Service.ActsExamples.profilesOr",
         "VE.Service.ActsExamples.unspecified",
-        "VE.Service.ActsExamples.modal"
+        "VE.Service.ActsExamples.modal",
+        "VE.Service.ActsExamples.admittedWithActs"
       ]
     },
     "VE/Events/Conservative.lean": {

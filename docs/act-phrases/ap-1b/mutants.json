@@ -158,7 +158,7 @@
   "file": "lean/VE/EnglishGrammar/Encode.lean",
   "test": "VE.Service.ActsExamples",
   "killed": true,
-  "first_failure": "error: VE/Service/ActsExamples.lean:82:0: Expression"
+  "first_failure": "error: VE/Service/ActsExamples.lean:106:0: Expression"
  },
  "actsRefuses-speech": {
   "definition": "actsRefuses",
@@ -271,5 +271,19 @@
   "test": "VE.Service.ActsExamples",
   "killed": true,
   "first_failure": "error: VE/Service/ActsExamples.lean:140:0: Expression"
+ },
+ "typingView-acts-submitted-list": {
+  "definition": "typingView",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:216:0: Expression"
+ },
+ "typingView-acts-reduced-premise": {
+  "definition": "typingView",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:221:0: Expression"
  }
 }

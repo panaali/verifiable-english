@@ -76,8 +76,14 @@ MUTANTS = [
     ("modalForm-not-modal", "modalForm", E, "pure (none, some (VE.Acts.Lexical.wording f act))",
      "pure (some (VE.Acts.Lexical.wording f act), none)", EX),
     ("envDecode-fixed", "Env.decode", E, "  let fx ← VE.Norms.Wire.actsFixed acts environment\n", "  let fx : List String := []\n", EX),
-    ("typingView-acts", "typingView", E, '  let env := if ps.contains "acts@0" then VE.Norms.Wire.actsView env ps else env\n',
-     "", EX),
+    ("typingView-acts", "typingView", E, "  let env := if VE.Norms.Wire.readsActs ps then\n"
+     "    VE.Norms.Wire.actsView env ((VE.Route.Gate.profilesOf env).toOption.getD []) else env\n", "", EX),
+    # ap-1b recheck F3: the acts@0 stage erases acts@0 from the list the earlier stages reduced, read from `ps`
+    ("typingView-acts-submitted-list", "typingView", E,
+     "VE.Norms.Wire.actsView env ((VE.Route.Gate.profilesOf env).toOption.getD [])", "VE.Norms.Wire.actsView env ps",
+     EX),
+    ("typingView-acts-reduced-premise", "typingView", E, "  let env := if VE.Norms.Wire.readsActs ps then\n",
+     '  let env := if ps.contains "acts@0" then\n', EX),
     ("actsRefuses-speech", "actsRefuses", D, '"alternatives@0", "speech-acts@0"].map', '"alternatives@0"].map', CX),
     ("row-requires", "profileTable (acts row)", D, '⟨"acts@0", ["norms@0"], actsRefuses, "layer"⟩,\n  ⟨"closure@0"',
      '⟨"acts@0", [], actsRefuses, "layer"⟩,\n  ⟨"closure@0"', CX),

@@ -177,7 +177,9 @@ def typingView (environment : Json) : Except String Json := do
   let env ← if ps.contains "norm-defaults@0" then normDefaultsView env else pure env
   let env ← if (environment.getObjVal? "units").isOk && !ps.contains "risk@0" then unitsView env else pure env
   let env ← if ps.contains "norms@0" then regulatedView env else pure env
-  let env := if ps.contains "acts@0" then VE.Norms.Wire.actsView env ps else env
+  -- `acts@0` is read from the submitted `ps` and erased from the list the stages above reduced (recheck F3)
+  let env := if VE.Norms.Wire.readsActs ps then
+    VE.Norms.Wire.actsView env ((VE.Route.Gate.profilesOf env).toOption.getD []) else env
   let env ← if ps.contains "reports@0" then do
     let vocabulary ← env.getObjVal? "vocabulary"
     let constants ← (← VE.Bridge.fields (← vocabulary.getObjVal? "constants")).mapM fun (c, entry) => do
