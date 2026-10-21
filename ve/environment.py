@@ -142,6 +142,7 @@ class RegulatedDecl:
     default: str
     act: str | None = None
     permission: str | None = None
+    form: str | None = None  # acts@0: "has the right" or "is entitled", as Lean accepted it
 
 
 @dataclass(frozen=True, slots=True)
@@ -166,6 +167,7 @@ class Environment:
     reports: object
     soft: bytes | None
     rights: bytes | None
+    acts: bytes | None  # acts@0's vocabulary block, kept as written (Lean decodes it)
     alternatives: bytes | None
     risk: bytes | None
     _environment_id: str = field(repr=False, compare=False)
@@ -223,7 +225,7 @@ class Environment:
                 act = raw_reg.get("act")
                 regulated = RegulatedDecl(raw_reg["role"], raw_reg["default"],
                                           " ".join(act.split()) if act is not None else None,
-                                          raw_reg.get("permission"))
+                                          raw_reg.get("permission"), raw_reg.get("form"))
             predicates[name] = PredicateDecl(
                 tuple(entry["arguments"]), entry["description"],
                 entry.get("verbalisation"), entry.get("negative_verbalisation"),
@@ -308,6 +310,10 @@ class Environment:
             object.__setattr__(self, "rights", canonical_json(vocabulary["rights"]))
         elif not hasattr(self, "rights"):
             object.__setattr__(self, "rights", None)
+        if "acts" in vocabulary:
+            object.__setattr__(self, "acts", canonical_json(vocabulary["acts"]))
+        elif not hasattr(self, "acts"):
+            object.__setattr__(self, "acts", None)
         object.__setattr__(self, "_environment_id",
                            digest(f"ve-environment-{self.identity_version}\n", self.to_dict()))
         if any(decl.defined is not None for decl in predicates.values()):
@@ -340,7 +346,8 @@ class Environment:
                 reg = declaration.regulated
                 entry["regulated"] = {"role": reg.role, "default": reg.default,
                                       **({"act": reg.act} if reg.act is not None else {}),
-                                      **({"permission": reg.permission} if reg.permission is not None else {})}
+                                      **({"permission": reg.permission} if reg.permission is not None else {}),
+                                      **({"form": reg.form} if reg.form is not None else {})}
             if declaration.functional is not None:
                 entry["functional"] = declaration.functional
             if declaration.total is not None:
@@ -373,7 +380,8 @@ class Environment:
                                **({"reports": {"holders": list(self.reports["holders"]), "evidence": self.reports["evidence"]}}
                                   if self.reports is not None else {}),
                                **({"soft": loads_json(self.soft)} if type(self.soft) is bytes else {}),
-                               **({"rights": loads_json(self.rights)} if type(self.rights) is bytes else {})},
+                               **({"rights": loads_json(self.rights)} if type(self.rights) is bytes else {}),
+                               **({"acts": loads_json(self.acts)} if type(self.acts) is bytes else {})},
                 **({"unit_schema": self.unit_schema,
                     "units": {tag: {"scale": record["scale"], "display": dict(record["display"])}
                               for tag, record in self.units.items()}}
