@@ -1076,6 +1076,13 @@
    "reason": "me-5b: VE/Calc/Lower.lean S +12 (Follows 6, HasCounterexample 6); K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5b, 2026-10-18",
    "commit": "ca15b6d1ca0051cacf4ce807ab3ea1640efe7628"
+  },
+  {
+   "class": "V",
+   "lines": 18,
+   "reason": "ap-1bb: VE/Norms/Wire.lean +12 (plainWording, plainWordings), ResponseShape/Schemas/Norms.lean +6 (norms-elaborate wordings), VE/Norms/Run.lean +1, VE/EnglishGrammar/Encode.lean -1; untied V +18, K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bb, 2026-10-18",
+   "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
   }
  ]
 }
