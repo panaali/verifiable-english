@@ -1,5 +1,5 @@
-"""scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac): the layout's list runs, label reaches and anchors, the effects
-on a rule's JSON object, and `govern` with the block's admission.
+"""scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the
+effects on a rule's JSON object, and `govern` with the block's admission, the graph step and the run path.
 
 The fixtures themselves are Lean: `lean/VE/Scope/Examples.lean` holds the spec's 7.1 fixtures as kernel theorems
 (`decide`) and `#guard`s, checked by every `lake build`. This file checks what standing ruling R16 asks of the
@@ -40,7 +40,10 @@ TIES = {
     "VE/Layout/List.lean": {"VE.Layout.continues", "VE.Layout.indexOf", "VE.Layout.listRun", "VE.Layout.runFrom",
                             "VE.Layout.itemFrom", "VE.Layout.itemRun"},
     "VE/Layout/Anchors.lean": {"VE.Layout.anchorReach", "VE.Layout.anchorUnits"},
-    "VE/Scope/Govern.lean": {"VE.Scope.coversU", "VE.Scope.governorsOf", "VE.Scope.itemRule"},
+    "VE/Scope/Govern.lean": {"VE.Scope.coversU", "VE.Scope.governorsOf", "VE.Scope.itemRule", "VE.Scope.ruleTable",
+                             "VE.Scope.edgesFor", "VE.Scope.governFast", "VE.Scope.fastReads", "VE.Scope.frameOnF",
+                             "VE.Scope.baseObjF", "VE.Scope.coveredBy", "VE.Scope.governorsOfF", "VE.Scope.composedF",
+                             "VE.Scope.edgesOfF", "VE.Scope.governBody"},
     # discourse's containment and anchor checks are one-line calls of the moved bodies (sc-3a)
     "VE/Discourse/Access.lean": {"VE.Discourse.within", "VE.Discourse.innermostAnchor"},
     "VE/Discourse/WellFormed.lean": {"VE.Discourse.anchorsOk"},
@@ -68,6 +71,9 @@ def test_each_tie_names_a_theorem_about_its_definition():
     # governorsOf's meaning is `covered` and `unary`; itemRule's is `mergeParts` and the chain's decoder (spec 5.1)
     assert ("VE.Scope.Govern", "VE.Scope.covered") in proved["VE.Scope.governorsOf_iff"]
     assert ("VE.Scope.Effects", "VE.Scope.mergeParts") in proved["VE.Scope.itemRule_decoder"]
+    # the run path's meaning is `govern` (spec 5.1), each of its steps `govern`'s step (sc-1ad)
+    assert ("VE.Scope.Govern", "VE.Scope.govern") in proved["VE.Scope.governFast_eq"]
+    assert ("VE.Scope.Govern", "VE.Scope.govern") in proved["VE.Scope.governBody_slow"]
 
 
 def unexercised_without(module: str, name: str) -> list[str]:
@@ -88,7 +94,8 @@ def test_an_effects_definition_no_theorem_uses_is_reported(name):
     assert unexercised_without("VE.Scope.Effects", name) == [f"VE/Scope/Effects.lean: {name}"]
 
 
-@pytest.mark.parametrize("name", ["VE.Scope.baseObj", "VE.Scope.ordered", "VE.Scope.govern", "VE.Scope.applyEffect"])
+@pytest.mark.parametrize("name", ["VE.Scope.baseObj", "VE.Scope.ordered", "VE.Scope.govern", "VE.Scope.applyEffect",
+                                  "VE.Scope.addOver", "VE.Scope.edgesInto", "VE.Scope.memo"])
 def test_a_govern_definition_no_theorem_uses_is_reported(name):
-    """The same for `govern` (sc-1ac): each named definition is reported once its theorems are dropped."""
+    """The same for `govern` (sc-1ac, sc-1ad): each named definition is reported once its theorems are dropped."""
     assert f"VE/Scope/Govern.lean: {name}" in unexercised_without("VE.Scope.Govern", name)
