@@ -1,3 +1,9 @@
+1034a4de6c5900beff4a92897024acfe3ea2462c ap-1b review: seeded-bug results for the review's premises and gate (39 of 39 killed; the retired plainRun-family dropped)
+b432579bbfbdad501005e6f1127e04b13f3600d2 ap-1b review F2 (trust_mutants round 2): placeholderJson's acts@0 check on its own line; probes for the remaining cuts
+270b9b6c767313da2c1fd98c6814fb8c7434c690 ap-1b review F1 (norm-defaults) and F2 (trust_mutants): the norm-defaults route keeps an acts@0 list's order; probes for the survivors
+0a2e3fb87806ba3bb04cca6020183f4d604d2e8d ap-1b review C2: the model reduction's comment says Lean's model path refuses acts@0, as Rust does
+2cc019558870573a098ff1670e2ca39feca9bbea ap-1b review F1, F2, C1: acts@0 is read only from a sorted unique list; the plain route gates the submitted list
+984c7a542f744d3398d6bbe4db71f2e9af994d9e ap-1b: assurance manifest's other_json in main's order, the new fixture file appended; the saved commit list
 e473b2e664f62bfe12e4f8af50101e4281d90e98 ap-1b: REPORT and DELTA after the sync (base 2296317a9, selected tests)
 0e233f674e541f4b1a4fa2b9c84ca05cdd204c8c ap-1b: re-record the S3 comparison report for actions_version 32 (only the version changes); test_compose_dispatch keeps the legacy registry and names acts@0 as a later row
 b7125764f02b1c438c7c56b5004598bba9807bab ap-1b: re-record the ask fixtures for actions_version 32 (tools/ask_fixtures.py --write; only the version changes)

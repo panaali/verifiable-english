@@ -104,6 +104,16 @@
    "definition": "VE.NormDefaults.Wire.placeholderJson",
    "operator": "and-or",
    "reason": "not checkable by the tool: `contains \"acts@0\" || !readsActs` refuses every norm-defaults list without `acts@0`, which fails the norm-defaults fixtures, among them VE/Defaults/Examples.lean:175, which the probe cannot elaborate (UNKNOWN)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Env.decode",
+   "operator": "list-drop-first",
+   "reason": "not checkable by the tool: `(profiles.drop 1).contains \"norms@0\"` drops the modal form of a list that starts with `norms@0`, which fails ActsExamples.lean's `modal (env [\"norms@0\"] seek)` guard, but also VE/EnglishGrammar/ProfileExamples.lean:442, which the probe cannot elaborate (UNKNOWN); the `norm-defaults@0` cut fails the `norm-defaults@0`-first guard"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Env.decode",
+   "operator": "list-last",
+   "reason": "not checkable by the tool: `(profiles.reverse.take 1).contains` drops the modal form of a list whose last profile is not the one read, which fails ActsExamples.lean's `modal` guards (`[\"norms@0\", \"norm-defaults@0\"]`), but also VE/EnglishGrammar/ProfileExamples.lean:442, which the probe cannot elaborate (UNKNOWN)"
   }
  ]
 }

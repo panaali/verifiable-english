@@ -1,6 +1,6 @@
 # ap-1b build report: the `acts@0` row, its decoders and Lean's entitlement wordings
 
-**No DRI signature is reserved; nothing stops the item.** DELTA rows: R16 (trust, untied V +67, K +0), the DRI's
+**No DRI signature is reserved; nothing stops the item.** DELTA rows: R16 (trust, untied V +77, K +0), the DRI's
 SYNTHESIS 2.2/4.2 (the row and what it admits, as et-7's merged DELTA cites them), R1 (refusal texts), R2 (fault
 order). The item is over the ~600-line guide (section 5); the rest of AP-1 is the next item, **ap-1bb** (section 6).
 
@@ -58,17 +58,19 @@ takes both rows.
 ## 4. Seeded bugs
 
 `seed_bugs.py` plants each, runs its check (a module build or a pytest node) and restores the file;
-[mutants.json](mutants.json) holds `file`, `test` and the first failure: **34 bugs, all killed** (Lean 30, Python 4).
+[mutants.json](mutants.json) holds `file`, `test` and the first failure: **39 bugs, all killed** (Lean 35, Python 4;
+the eight that the review fix added or changed were rerun on its final Lean tree, section 9).
 `ActsExamples.lean` line numbers are those of the file when each ran.
 
 | Definition | Bugs (what fails) |
 |---|---|
 | `actsFixed` | fields unchecked, phrases unchecked: block guards |
-| `actsProfiles` | any list read, `acts` flag ignored: the frozen-decoder refusals |
-| `actsView` | block kept, profile kept: the A1-A3 decode |
+| `actsProfiles`, `readsActs` | any list read, `acts` flag ignored, the sorted premise dropped: the frozen-decoder refusals, the `unsorted` guards |
+| `actsView` | block kept, profile kept, its premise dropped: the A1-A3 decode, the typing view's unsorted guard |
 | `actsFamilyRefusal`, `actsRefuses`, the row | text, `speech-acts@0` dropped, `requires` emptied: Compose guards (the last two fail `gate_acts` first) |
 | `decodeNormsEnvironment`, `canonicalEnvironmentJson`, `decodeSource`, `decodeEnvironmentU` | phrases not passed, profiles, `canonicalAct`, flags off: their guards |
-| `decodeRegulatedAllIn`, `Plain.run`, `baseEnvironmentJson`, `typingView` | today's decoder, family unchecked, view dropped: plain-route, replay and typing-view guards |
+| `decodeRegulatedAllIn`, `Plain.run`, `baseEnvironmentJson`, `typingView` | today's decoder, the gate of the submitted list off, view dropped, the replay on `contains`: plain-route, replay and typing-view guards |
+| `actsFixed` (premise), `placeholderJson` | the block read without `acts@0`, the order check off: the F2 and norm-defaults guards |
 | `Tree.check` (+ `regBody`) | plain-act refusal restored: `check_eq`; with `regBody` too, `regBody_ok` |
 | `validatedComposedEnvironment`, `folView` | gate off, `checkRegulated` run: environment-mode and family guards |
 | `modalForm`, `Env.decode` | no wording, modal, no phrases: the wordings guard |
@@ -77,8 +79,8 @@ takes both rows.
 
 ## 5. Trust, size, evidence and tests
 
-- **Trust:** `trust_map.py --check` PASS: K +0, S +0, untied V +67 (per file in DELTA row 1); the allowance is signed
-  by R16, and FOLLOW-UPS has "## ap-1b". New declarations are classified (`ActsExamples` helpers `T`).
+- **Trust:** `trust_map.py --check` PASS: K +0, S +0, untied V +77 (per file in DELTA row 1); the allowances (V +67,
+  V +10 for the review fix) are signed by R16, and FOLLOW-UPS has "## ap-1b". New declarations are classified (`ActsExamples` helpers `T`).
 - **Size** (hand-written, against the merge base): Lean product about 220 lines (Dispatch 64, Wire 55, Encode 34,
   Plain 19, FlaggedSpec 17, Standalone 9, FamilyNorms 7, Replay 6, Tree/NormDefaults 6), Python product 22, fixtures
   173 (`ActsExamples` 142, Compose 24, Lexical 7), tests 146, evidence scripts about 295 (`seed_bugs.py` 160,
@@ -109,7 +111,7 @@ decoder and Lean's model path reading `acts@0` (deviation 3); `Words/Situation.l
    (`test_an_acts_environment_loads_with_its_block_and_forms_as_data`, `py-drop-form`).
 2. PASS: section 2 lists every row with its place or ap-1bb; no Python copy of a Lean decision (Python stores data,
    `ve/norms.py` only drops a block); no permanent report test; overlap reported (section 1).
-3. PASS: 34 seeded bugs killed (`mutants.json`); `delta.py` fails head against head and on empty input.
+3. PASS: 39 seeded bugs killed (`mutants.json`) and `trust_mutants.py` (section 9); `delta.py` fails head against head and on empty input.
 4. PASS: base against head on 330 route cases (`byte-identity.json`) and on the `acts@0` inputs (`delta.json`).
 5. PASS: Python reads no new field from a Lean answer; Lean's refusals are relayed (`test_a_joined_act_is_refused_with_leans_text`).
 6. PASS: synced with main `2296317a9` (clean merge), inventories regenerated, the selected tests rerun on the synced
@@ -139,3 +141,38 @@ decoder and Lean's model path reading `acts@0` (deviation 3); `Words/Situation.l
   `tests/test_english_lean_s3_compare.py` (6 passed; the version re-record). An earlier run on the pre-sync tree
   failed in `test_lean_conformance` and `test_consolidation_tools` only because my seeded-bug runs edited sources
   during it; those pass on the final tree (rerun directly, 14 passed).
+
+## 9. Review fix (`ap-1b-review.final.md`, 2026-10-20)
+
+- **F1 (B), the class.** `acts@0` is read from a list only when the whole list is sorted and unique: `readsActs`
+  (`Norms/Wire.lean`) is that one premise, and `actsProfiles` and `actsView` read it. Every way a reader could see a
+  different list than the one submitted is closed: the replay reads the submitted list; the plain route gates the
+  submitted list by the profile table before it sets the statement layers aside (also review C1: `acts@0` with
+  `soft-norms@0` or `speech-acts@0` answered there before); the norm-defaults route's `placeholderJson` refuses an
+  `acts@0` list `readsActs` would not read before it sets `norm-defaults@0` aside (found by `trust_mutants`:
+  `["norm-defaults@0", "acts@0", "norms@0", "relational-fol@0"]` was answered). Such a list now gets the base's own
+  text, `UnsupportedProfile: profiles must be sorted and unique`, on every reader, `acts@0` twice included, so DELTA
+  records no delta for it (row 4 (f)). PROBE F1 failed before the fix and passes after it.
+- **F2 (B).** The fixture the review asked for (an invalid block without `acts@0`, decoder and plain route), and
+  `tools/trust_mutants.py --max-mutants 1000` with the three example files as `--test`:
+  [trust-mutants.json](trust-mutants.json), exit 0, 168 mutants of 15 definitions: 133 killed, 0 survivors, 0 unknown, 8 invalid, 27 allowed
+  (`--jobs 6 --build-timeout 3600`, 13,990 s on the VM under load). Three earlier runs found 43 survivors
+  (stopped at the 2-hour limit), then 13 survivors and 2 unknown (list cuts no check told apart, and
+  `placeholderJson`'s new line sharing the base's duplicate check), then 1 and 2 unknown (a build timeout under load,
+  and probes that cannot read a failing fixture). Each is now killed by a guard in `ActsExamples.lean`'s "R16"
+  section or listed in [trust-mutants-allow.json](trust-mutants-allow.json) with its reason: equivalent, does not
+  elaborate, or not checkable by the tool (the `decodeNormsEnvironment` default arguments, and three cuts that fail
+  this item's guards but also a fixture outside it that the probe cannot elaborate).
+- **C1** is fixed in code (above). **C2:** `ve/profiles.py`'s comment corrected; `Standalone.lean`'s `:=(` is left as
+  it is (a Lean edit there re-pins the file for a space). **C3** unchanged: the fix adds about 120 hand-written lines
+  (guards and evidence scripts), product Lean +12 lines.
+- **Seeded bugs:** eight added or changed in `seed_bugs.py`, all killed on the final Lean tree (`--only`); the other
+  31 were recorded on the earlier tree and their texts and guards are unchanged.
+- **Tests:** `lake build`, `lean/audit.py`, `regen_generated.py --check`, `trust_map.py --check` (V +77: the
+  allowances V +67 and V +10), `tests/test_acts_profile.py` (16) and `tests/test_assurance_manifest.py` pass. The
+  selected tests (`mac-pytest.sh --select`, merge base `2296317a9`, on `270b9b6c`) ran on ve-mac-1: exit 0, no failed
+  ids; rerun on the final Lean tree (`1034a4de` with these docs): 459 units, exit 0, no failed ids. `evidence/delta.json` is not re-recorded: the base build of `2296317a9` has no
+  shared copy, and the inputs the fix adds get the base's own text.
+- **Pre-existing, not changed here:** the norm-defaults route sets `norm-defaults@0` aside wherever it is listed, so
+  a list without `acts@0` that is sorted only once it is set aside (for example
+  `["norms@0", "norm-defaults@0", "relational-fol@0"]`) is answered as on `main`; FOLLOW-UPS candidate.
