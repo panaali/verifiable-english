@@ -88,4 +88,45 @@ this; me-5b's runner will). Its limits are checked once on the derivation's inpu
 conclusion, and 16 unknowns with the links' names), and one budget of 10,000 combinations covers every search the
 derivation runs (`FM.Search`): running out anywhere ends it as `limit .derivationSteps`, never as "nothing found".
 Linear infeasibility over ℚ with rational coefficients is infeasibility over the reals, so the soundness also holds
-for real-valued quantities; this is stated here, not proved. The lowering of claims to facts, `Follows` and the `follows` check are me-5b's.
+for real-valued quantities; this is stated here, not proved.
+
+`Lower.lean` (me-5b) lowers a premise or conclusion to facts over the free values: `Claim.facts` inlines every other
+value (`Claim.inline`, keeping `freeNames`) and linearises (`Expr.linear`: a product needs a constant factor, a
+divisor a nonzero constant, a power a constant base unless it is the 0th or 1st); `eq` and `within` give two facts,
+`lt`, `le`, `gt`, `ge` one, a rounding claim, a nonlinear claim or one reading a value that has none gives none.
+`Claim.facts_sound`: the facts hold at κ exactly when the claim holds over the declarations with the free values
+assigned κ. `Follows` and `HasCounterexample` are the derivation's meaning; `follows_of_check` and
+`counterexample_of_check` carry a replayed certificate or a checked point over the lowered facts to them, and
+`not_follows_of_counterexample` keeps the two apart. `LowerExamples.lean` proves R-3 (`r3_follows`) and R-4
+(`r4_not_follows`) from the search's answers. The `follows` check, its runner and the `follows` clauses of
+`Check.OutcomeMeans` wait for ME-2's `Check` (me-5c).
+
+## Algebraic identities (`Poly`; me-9)
+
+Spec §8.2 and plan 3.8, over expressions whose names are all free. `Frac.ofExpr?` brings an expression to a numerator
+and a denominator, each a normal polynomial over ℚ (`Mono`, `Poly`: variables sorted and merged, monomials sorted by
+their variables, like terms merged, zero coefficients dropped). `Frac.ofExpr_sound`: wherever the expression denotes,
+the denominator is not zero and the value is the quotient. `Poly.ofExpr_sound`: a division-free expression denotes its
+normal form's value. `identity_sound`: equal cross-multiplied normal forms (`identityCheck`) mean equal values wherever
+both sides denote; a side that divides by zero somewhere is simply not compared there. `differsAt_sound`: a point where
+both sides denote and differ refutes the identity. The limit (`limit .polyTerms`) is checked before the work: at most
+10,000 nodes in a side, walked without passing the 10,000th (a side can share itself), and at most 10,000 terms in a
+sum or a product before like terms merge; a coefficient past the digit limit (`10 ^ maxDigits`) or an exponent above
+4,096 also ends the normal form. Every polynomial built, a literal too, passes `Poly.guard`; division is looked for
+only within the limits. `Frac.ofExpr_within`, `Poly.ofExpr_within` and `Identity.compare_within`: an answer other than
+`none` is given only when every limit check passed (the node count, and every polynomial on the way `Within`). Past a
+limit `Identity.compare` is `none`, and `identityCheck` is false: never an identity. Fixtures:
+`tests/test_calc_algebra.py`, each limit check at its limit and one past it (`LIMIT_CHECKS`, `LIMITS`).
+
+## Inlining and identities over named values (`Inline`, `Identity`; me-9b)
+
+`Expr.inline` (§2.7) replaces every name outside `keep` by its stated or counted value as a literal, or by its inlined
+definition; each declaration is inlined once into a table later ones read, so a chain of definitions is shared, not
+copied. `Expr.inline_sound`, `Claim.inline_sound`: under `assign` (the kept names given κ's values) the inlined
+expression or claim means what the original means. `identityRun` (§8.2) inlines both sides with the free values kept
+(the first faulty side names `undefined` or the budget's unknown), then: past the normaliser's limits, unknown
+(`limit .polyTerms`) with a stop that names the node limit or the form's limits (`IdentityStop.text`, review F4); a
+side with a divisor whose numerator normalises to zero, `undefined` before `holds` (`Expr.zeroDivisor_sound`, review
+F3); equal normal forms, `holds` (`IsIdentity`); else the first of 13 points where both sides denote and differ,
+`fails` (`NotIdentity`), or `identityNotShown`. The names a side reads and its zero divisors are looked for only after
+the normaliser accepted it. `identityRun_holds`, `_fails`, `_undefined` and `_unknown` state what each outcome means.

@@ -1,0 +1,54 @@
+control: 0 failures
+W1 VE.Defaults.Wire.CoherenceReplay.verdict: FAILS 4 guards
+    #guard answer (req δEnv δR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"])])
+    #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-coherence"
+    #guard answer (req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"])]
+    #guard holds (layered αEnv γ3R) fun L =>
+W2 VE.Defaults.Wire.PairStatus.label: FAILS 1 guards
+    #guard answer (req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2" γb
+W3 VE.Defaults.Wire.coherenceFields: FAILS 4 guards
+    #guard holds dγ fun L =>
+    #guard holds (layered γ'Env γ'R) fun L => (ans (req γ'Env γ'R "defaults-coherence"
+    #guard holds (layered γ2Env γ2R) fun L =>
+    #guard holds (layered αEnv γ3R) fun L =>
+W4 VE.Defaults.Wire.coherenceFields: FAILS 2 guards
+    #guard holds (layered γ2Env γ2R) fun L =>
+    #guard holds (layered αEnv γ3R) fun L =>
+W5 VE.Defaults.Wire.elaborateFields: FAILS 2 guards
+    #guard holds dγ fun L => match VE.SoftNorms.collidingPairs L.D with
+    #guard holds (layered γ2Env γ2R) fun L =>
+W6 VE.Defaults.Wire.entityIds: FAILS 3 guards
+    #guard holds dγ fun L =>
+    #guard holds (layered γ2Env γ2R) fun L =>
+    #guard holds (layered αEnv γ3R) fun L =>
+W7 VE.Defaults.Wire.defaultsCase: FAILS 10 guards
+    #guard holds dγ fun L =>
+    #guard holds (layered γ'Env γ'R) fun L => (ans (req γ'Env γ'R "defaults-coherence"
+    #guard answer (req δEnv δR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"])])
+    #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-coherence"
+    #guard [toJson ([] : List Json), toJson [pairJ "r2" "r1"], toJson [pairJ "r1" "r2", pairJ 
+    #guard answer (req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2" γb
+    #guard answer (req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"])]
+    #guard answer (req αEnv αR "defaults-coherence") == VE.Route.Wire.ok "c" [("verdict", .str
+    #guard holds (layered γ2Env γ2R) fun L =>
+    #guard holds (layered αEnv γ3R) fun L =>
+W8 VE.Defaults.Wire.defaultsCase: FAILS 1 guards
+    #guard ["defaults-certificate", "defaults-model", "defaults-other", "norm-defaults-elabora
+W9 VE.Defaults.Wire.CoherenceReplay.pairs: FAILS 4 guards
+    THEOREM coherence_collision_shown
+    THEOREM coherence_collision_named
+    #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-coherence"
+    #guard holds (layered αEnv γ3R) fun L =>
+W10 VE.Defaults.Wire.coherenceFields: FAILS 3 guards
+    THEOREM coherence_collision_shown
+    #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-coherence"
+    #guard holds (layered αEnv γ3R) fun L =>
+W11 VE.Defaults.Wire.CoherenceReplay.pairs: FAILS 3 guards
+    THEOREM coherence_collision_named
+    THEOREM coherence_collision_named
+    #guard holds (layered αEnv γ3R) fun L =>
+W12 VE.Defaults.Wire.coherenceFields: FAILS 3 guards
+    THEOREM coherence_collision_named
+    THEOREM coherence_collision_named
+    #guard holds (layered αEnv γ3R) fun L =>
+ALL MUTANTS FAIL THEIR GUARDS
