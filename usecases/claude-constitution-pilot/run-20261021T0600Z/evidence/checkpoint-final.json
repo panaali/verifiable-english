@@ -1,0 +1,229 @@
+{
+ "label": "final",
+ "document": "usecases/claude-constitution-pilot/run-20261021T0600Z/readings/nd-all.ve.md",
+ "start_document": "usecases/claude-constitution-pilot/run-20261021T0600Z/prev/translation.ve.md",
+ "x3_vocabulary": {
+  "predicates_before": 71,
+  "predicates_after": 64,
+  "predicates_added": [],
+  "sorts_added": [],
+  "constants_added": [],
+  "existing_predicate_wordings_changed": {},
+  "existing_sort_nouns_changed": {},
+  "noun_of_sort_entity": "thing",
+  "intended_removals": {
+   "predicates": {
+    "core_value_of": [
+     "{0} is a core value of {1}",
+     null
+    ],
+    "clarification_required": [
+     "{0} must seek clarification in {1}",
+     null
+    ],
+    "genuine_ambiguity": [
+     "{0} is classified as \"genuine_ambiguity\"",
+     null
+    ],
+    "exploit_instruction_compliance_required": [
+     "{0} must comply with the instruction against unintended exploits in {1}",
+     null
+    ],
+    "explicit_instruction_against_exploits": [
+     "{0} has the recorded relation \"explicit_instruction_against_exploits\" to {1}",
+     null
+    ],
+    "exception_to_asking_for_clarification": [
+     "{0} is classified as \"exception_to_asking_for_clarification\"",
+     null
+    ],
+    "exception_to_complying_with_exploit_instruction": [
+     "{0} has the recorded relation \"exception_to_complying_with_exploit_instruction\" to {1}",
+     null
+    ],
+    "seemingly_compelling_argument_to_cross_line": [
+     "{0} is classified as \"seemingly_compelling_argument_to_cross_line\"",
+     "{0} has the recorded relation \"seemingly_compelling_argument_to_cross_line\" to {1}"
+    ],
+    "asked_to_keep_system_prompt_confidential": [
+     "{0} is classified as \"asked_to_keep_system_prompt_confidential\"",
+     "{0} has the recorded relation \"asked_to_keep_system_prompt_confidential\" to {1}"
+    ]
+   },
+   "sorts": {}
+  },
+  "intended_removed": [
+   "core_value_of",
+   "clarification_required",
+   "genuine_ambiguity",
+   "exploit_instruction_compliance_required",
+   "explicit_instruction_against_exploits",
+   "exception_to_asking_for_clarification",
+   "exception_to_complying_with_exploit_instruction"
+  ],
+  "intended_reworded": [
+   "seemingly_compelling_argument_to_cross_line",
+   "asked_to_keep_system_prompt_confidential"
+  ]
+ },
+ "units_start": 1132,
+ "units_now": 1132,
+ "units_differing_from_start": [
+  "u0013.presupposition",
+  "u0036.s05",
+  "u0168.s01",
+  "u0263.s04.p2"
+ ],
+ "units_missing_now": [],
+ "units_new_now": [],
+ "x3_fenced_units": {
+  "u0248": {
+   "start": [
+    "not",
+    [
+     "unary",
+     "human",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "now": [
+    "not",
+    [
+     "unary",
+     "human",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "unchanged": true
+  }
+ },
+ "x3_fences": {
+  "u0248": {
+   "text": "Claude is not human.",
+   "formulas": [
+    [
+     "not",
+     [
+      "unary",
+      "human",
+      [
+       "const",
+       "claude"
+      ]
+     ]
+    ]
+   ],
+   "unchanged": true
+  },
+  "u0245.presupposition": {
+   "text": "Claude is novel.",
+   "formulas": [
+    [
+     "unary",
+     "novel_entity",
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ],
+   "unchanged": true
+  },
+  "u0286.presupposition": {
+   "text": "Some thing is unsolved.",
+   "formulas": [
+    [
+     "exists",
+     "entity",
+     [
+      "unary",
+      "open_problem",
+      [
+       "var",
+       0
+      ]
+     ]
+    ]
+   ],
+   "unchanged": true
+  },
+  "u0013.presupposition": {
+   "text": "Some thing is a core value of claude.",
+   "removed": true
+  }
+ },
+ "fences_new": {},
+ "fenced_units_now": [
+  "u0248"
+ ],
+ "document_check": {
+  "returncode": 0,
+  "seconds": 87.2,
+  "stderr": "",
+  "admitted": true,
+  "premises": "model",
+  "premises_route": "superposed",
+  "reading_route": "superposed",
+  "choices": 8,
+  "conflict": "CONFLICT-FREE",
+  "conflicts_by_choice": {
+   "CONFLICT-FREE": 8
+  },
+  "bytes_by_status": {
+   "CHECKED": 215,
+   "LABELLED": 364,
+   "OPEN": 2372,
+   "UNFORMALISED": 181942
+  },
+  "bytes_by_status_start": {
+   "CHECKED": 239,
+   "LABELLED": 364,
+   "OPEN": 2555,
+   "UNFORMALISED": 181735
+  },
+  "residual": {
+   "assumptions": 21,
+   "bridge_leaves": 0,
+   "open_terms": 49,
+   "unresolved_reading_sets": 2,
+   "separations": 7,
+   "readings_findings": 0,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 10,
+   "ungrounded_defaults": 0
+  },
+  "residual_start": {
+   "assumptions": 24,
+   "bridge_leaves": 0,
+   "open_terms": 52,
+   "unresolved_reading_sets": 4,
+   "separations": 9,
+   "readings_findings": 0,
+   "pending_candidates": 0,
+   "couplings": 0,
+   "gaps": 12,
+   "ungrounded_defaults": 0
+  }
+ },
+ "conclusions": {
+  "conclusion-no-denial": {
+   "returncode": 0,
+   "verdict": "ALL",
+   "evidence": "certificate",
+   "route": "superposed"
+  },
+  "conclusion-no-claim-human": {
+   "returncode": 0,
+   "verdict": "ALL",
+   "evidence": "certificate",
+   "route": "superposed"
+  }
+ }
+}

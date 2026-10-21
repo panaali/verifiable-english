@@ -1,0 +1,123 @@
+[
+ {
+  "predicate": "core_value_of",
+  "wording": "{0} is a core value of {1}",
+  "selected": "{0} is a core value of {1}",
+  "accepted": true,
+  "lint": [],
+  "existing_wordings_changed": {},
+  "parses_to": [
+   [
+    "exists",
+    "entity",
+    [
+     "binary",
+     "core_value_of",
+     [
+      "var",
+      0
+     ],
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ]
+  ],
+  "rendered": "There is a thing that is a core value of claude"
+ },
+ {
+  "predicate": "guideline_of",
+  "wording": "{0} is a guideline of {1}",
+  "selected": "{0} is a guideline of {1}",
+  "accepted": true,
+  "lint": [],
+  "existing_wordings_changed": {},
+  "parses_to": [
+   [
+    "exists",
+    "entity",
+    [
+     "binary",
+     "guideline_of",
+     [
+      "var",
+      0
+     ],
+     [
+      "const",
+      "anthropic"
+     ]
+    ]
+   ]
+  ],
+  "rendered": "There is a thing that is a guideline of anthropic"
+ },
+ {
+  "predicate": "mission_of",
+  "wording": "{0} is a mission of {1}",
+  "selected": "{0} is a mission of {1}",
+  "accepted": true,
+  "lint": [],
+  "existing_wordings_changed": {},
+  "parses_to": [
+   [
+    "exists",
+    "entity",
+    [
+     "binary",
+     "mission_of",
+     [
+      "var",
+      0
+     ],
+     [
+      "const",
+      "anthropic"
+     ]
+    ]
+   ]
+  ],
+  "rendered": "There is a thing that is a mission of anthropic"
+ },
+ {
+  "predicate": "nature_of",
+  "wording": "{0} is a nature of {1}",
+  "selected": "{0} is a nature of {1}",
+  "accepted": true,
+  "lint": [],
+  "existing_wordings_changed": {},
+  "parses_to": [
+   [
+    "exists",
+    "entity",
+    [
+     "binary",
+     "nature_of",
+     [
+      "var",
+      0
+     ],
+     [
+      "const",
+      "claude"
+     ]
+    ]
+   ]
+  ],
+  "rendered": "There is a thing that is a nature of claude"
+ },
+ {
+  "predicate": "value_other",
+  "wording": "{0} is a value of {1}",
+  "selected": "{0} has the recorded relation \"value_other\" to {1}",
+  "accepted": false,
+  "lint": [
+   "BINARY_AUXILIARY",
+   "BINARY_CONVERSE",
+   "LOGICAL_WORD"
+  ],
+  "existing_wordings_changed": {},
+  "parse_error": "SyntaxError: Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a value of claude'. Nearest declared wordings: 'instance of Claude'; 'may give Claude {1}'; 'has the recorded relation \"value_other\" to {1}'."
+ }
+]

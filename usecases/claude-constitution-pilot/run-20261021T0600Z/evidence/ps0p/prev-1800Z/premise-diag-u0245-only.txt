@@ -1,0 +1,35 @@
+Superposed
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 1.6 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.2 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.2 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 1.6 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 2.6 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.2 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 2.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit model-attempt budget exhausted 2.7 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.2 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit model-attempt budget exhausted 2.8 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.2 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit model-attempt budget exhausted 2.7 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 2.6 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.2 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 1.5 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 2.5 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.2 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 1.5 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 0.3 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.1 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds None -> ResourceLimit evaluation budget exhausted 2.6 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000} sort_bounds {'principal_type': (3, 3)} -> ResourceLimit evaluation budget exhausted 1.0 s
+find_countermodel {'max_domain_size': 2, 'max_models': 10000, 'max_evaluations': 100000, 'ground_only': True} sort_bounds {'principal_type': (3, 3)} -> Found  0.2 s
+{"candidates": [{"choice": [["force-u0036-s05", 0], ["force-u0156-s03", 0], ["scope-u0165-s03", 0], ["force-u0263-s04-p2", 0]], "index": 0, "set": "force-u0036-s05", "status": "model"}, {"choice": [["force-u0036-s05", 1], ["force-u0156-s03", 0], ["scope-u0165-s03", 0], ["force-u0263-s04-p2", 0]], "index": 1, "set": "force-u0036-s05", "status": "model"}, {"choice": [["force-u0036-s05", 0], ["force- 107.6

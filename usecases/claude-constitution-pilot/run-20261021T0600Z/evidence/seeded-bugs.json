@@ -1,0 +1,39 @@
+{
+ "needed_for_product_code": false,
+ "why": "no product code (Lean, Python, Rust) was changed: this run adds files under usecases/ only (lean/.lake and rust/target in the worktree are ignored build products; `git diff ve-green-sc-1ac -- ve lean rust` is empty). The claims below are the translator's; each was planted and caught.",
+ "languages_changed": [],
+ "translation_faults": [
+  {
+   "claim": "u0168.s01: only an instance that faces the seemingly compelling argument must remain firm",
+   "planted": "the guard on the situation alone (the previous run's document prev/readings/all-strict.ve.md)",
+   "file": "prev/readings/all-strict.ve.md",
+   "failing_check": "probe_unspecified.py binding point “u0168.s01: another instance of Claude in the same situation, which does not face it” (expected UNDECIDED), asserted by finish_20261021T0600Z.py apply_repairs",
+   "failure": "another instance is SETTLED yes instead of UNDECIDED",
+   "restored": "scratch copy or in-memory fault; no file of the run was touched"
+  },
+  {
+   "claim": "u0156.s03: a request made toward one user governs that user and no other",
+   "planted": "the frame term on the instance alone (the previous run's prev/readings/all-strict-in-frame.ve.md)",
+   "file": "prev/readings/all-strict-in-frame.ve.md",
+   "failing_check": "probe_frame.py binding point “the same instance toward another user” (expected UNDECIDED), asserted by finish_20261021T0600Z.py (frame-probe binding statuses)",
+   "failure": "the other user is SETTLED no instead of UNDECIDED",
+   "restored": "scratch copy or in-memory fault; no file of the run was touched"
+  },
+  {
+   "claim": "u0036.s05, u0263.s04.p2 and u0013.presupposition are not claimed (2,951 B claimed)",
+   "planted": "u0036.s05 set back to READINGS in a copy of units.json",
+   "file": "scratch copy of units.json",
+   "failing_check": "finish_20261021T0600Z.py: `assert claimed == pm[\"claimed_covered_bytes\"] - sum(lost_bytes.values()) == 2951`",
+   "failure": "claimed bytes 3019 != 2951",
+   "restored": "scratch copy or in-memory fault; no file of the run was touched"
+  },
+  {
+   "claim": "the document's rendering has no sentence that turns a defeasible candidate's silence into “c is not required to”",
+   "planted": "the previous document (prev/translation.ve.md), which holds the reading sets of u0036.s05 and u0263.s04.p2",
+   "file": "prev/translation.ve.md",
+   "failing_check": "`ve document render` output searched for “, c is not required to.” (finish_20261021T0600Z.py asserts the two sentences carry other.silence-display)",
+   "failure": "2 occurrences in the previous document's rendering, 0 in this run's",
+   "restored": "scratch copy or in-memory fault; no file of the run was touched"
+  }
+ ]
+}
