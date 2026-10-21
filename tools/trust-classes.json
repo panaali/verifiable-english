@@ -13992,15 +13992,23 @@
         "VE.Calc.maxPolyTerms"
       ],
       "C": [
+        "VE.Calc.Budgeted",
+        "VE.Calc.Budgeted.bin",
+        "VE.Calc.Expr.evalB",
+        "VE.Calc.Expr.opB",
         "VE.Calc.Expr.hasDiv",
         "VE.Calc.Expr.nodesWithin",
         "VE.Calc.Frac",
         "VE.Calc.Frac.add?",
+        "VE.Calc.Frac.add?B",
         "VE.Calc.Frac.div?",
+        "VE.Calc.Frac.div?B",
         "VE.Calc.Frac.go",
         "VE.Calc.Frac.mul?",
+        "VE.Calc.Frac.mul?B",
         "VE.Calc.Frac.ofExpr?",
         "VE.Calc.Frac.pow?",
+        "VE.Calc.Frac.pow?B",
         "VE.Calc.Identity.compare",
         "VE.Calc.Mono",
         "VE.Calc.Mono.mul",
@@ -14011,14 +14019,21 @@
         "VE.Calc.Poly.fits",
         "VE.Calc.Poly.guard",
         "VE.Calc.Poly.mul?",
+        "VE.Calc.Poly.mulCost",
         "VE.Calc.Poly.neg",
         "VE.Calc.Poly.norm",
         "VE.Calc.Poly.ofExpr?",
         "VE.Calc.Poly.one",
         "VE.Calc.Poly.pow?",
+        "VE.Calc.Poly.pow?B",
+        "VE.Calc.Poly.powWithin",
+        "VE.Calc.Poly.size",
+        "VE.Calc.charge",
         "VE.Calc.differsAt",
         "VE.Calc.identityCheck",
         "VE.Calc.mulVars",
+        "VE.Calc.ratWords",
+        "VE.Calc.sidesAtB",
         "VE.Calc.varsLe"
       ],
       "P": [
@@ -14243,11 +14258,16 @@
       ],
       "C": [
         "VE.Calc.Expr.zeroDivisor",
+        "VE.Calc.Frac.goB",
+        "VE.Calc.Identity.compareB",
         "VE.Calc.IdentityRow",
+        "VE.Calc.budgetRow",
         "VE.Calc.identityDecide",
+        "VE.Calc.identityDecideB",
         "VE.Calc.identityPoint",
         "VE.Calc.identityRun",
-        "VE.Calc.identityValues"
+        "VE.Calc.identityValues",
+        "VE.Calc.pointsB"
       ]
     },
     "VE/Calc/IdentityExamples.lean": {
