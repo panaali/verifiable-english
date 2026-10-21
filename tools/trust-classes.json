@@ -2189,7 +2189,8 @@
         "VE.Compose.today",
         "VE.Compose.todayGate",
         "VE.Compose.todayHead",
-        "VE.Compose.wrapperRows"
+        "VE.Compose.wrapperRows",
+        "VE.Compose.actsRefuses"
       ],
       "G[R]": [
         "VE.Compose.pendingWithDefaults"
@@ -5421,7 +5422,8 @@
         "VE.Norms.Plain.folCertificate",
         "VE.Norms.Plain.layered",
         "VE.Norms.Plain.softPremises",
-        "VE.Norms.Plain.strip"
+        "VE.Norms.Plain.strip",
+        "VE.Norms.Plain.decodeRegulatedAllIn"
       ],
       "G[V]": [
         "VE.Norms.Plain.certificate",
@@ -5601,12 +5603,19 @@
         "VE.Norms.Wire.decodeSource",
         "VE.Norms.Wire.enc",
         "VE.Norms.Wire.normFields",
-        "VE.Norms.Wire.regenerated"
+        "VE.Norms.Wire.regenerated",
+        "VE.Norms.Wire.actsFixed",
+        "VE.Norms.Wire.actsProfiles",
+        "VE.Norms.Wire.actsView",
+        "VE.Norms.Wire.readsActs"
       ],
       "D[I]": [
         "VE.Norms.Wire.appendPredicates",
         "VE.Norms.Wire.canonicalAct",
         "VE.Norms.Wire.canonicalEnvironmentJson"
+      ],
+      "D[R]": [
+        "VE.Norms.Wire.actsFamilyRefusal"
       ]
     },
     "VE/Norms/WitnessKind.lean": {
@@ -14324,6 +14333,38 @@
         "VE.Calc.LowerExamples.rBelow",
         "VE.Calc.LowerExamples.v",
         "VE.Calc.LowerExamples.xy"
+      ]
+    },
+    "VE/Service/ActsExamples.lean": {
+      "T": [
+        "VE.Service.ActsExamples.a1",
+        "VE.Service.ActsExamples.a2",
+        "VE.Service.ActsExamples.a3",
+        "VE.Service.ActsExamples.a5",
+        "VE.Service.ActsExamples.a6",
+        "VE.Service.ActsExamples.fxs",
+        "VE.Service.ActsExamples.desc",
+        "VE.Service.ActsExamples.pred",
+        "VE.Service.ActsExamples.plain",
+        "VE.Service.ActsExamples.perm",
+        "VE.Service.ActsExamples.env",
+        "VE.Service.ActsExamples.block",
+        "VE.Service.ActsExamples.actsP",
+        "VE.Service.ActsExamples.envA",
+        "VE.Service.ActsExamples.err",
+        "VE.Service.ActsExamples.decodeA",
+        "VE.Service.ActsExamples.rule",
+        "VE.Service.ActsExamples.seek",
+        "VE.Service.ActsExamples.plainRun",
+        "VE.Service.ActsExamples.wordings",
+        "VE.Service.ActsExamples.unsorted",
+        "VE.Service.ActsExamples.sortedRefusal",
+        "VE.Service.ActsExamples.bad",
+        "VE.Service.ActsExamples.withRevision",
+        "VE.Service.ActsExamples.profilesOr",
+        "VE.Service.ActsExamples.unspecified",
+        "VE.Service.ActsExamples.modal",
+        "VE.Service.ActsExamples.admittedWithActs"
       ]
     }
   }
