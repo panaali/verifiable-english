@@ -107,7 +107,7 @@ def limitFault (j : Json) : Option String :=
   else if depth > VE.Limits.maxDepth then some (limit "the JSON depth" VE.Limits.maxDepth)
   else if entries j "values" > 512 then some (limit "the number of values" 512)
   else if entries j "claims" > 512 then some (limit "the number of claims" 512)
-  else [exponentFault, literalFault, nameFault].findSome? (scan · 65 j)
+  else [exponentFault, literalFault, nameFault].findSome? (scan · (VE.Limits.maxDepth + 1) j)
 
 /-! ## Literals, expressions and claims (3.1), each with its canonical form (3.3) -/
 
