@@ -263,6 +263,23 @@ theorem VE.Acts.Lexical.endsWith_comma
   ∀ {s : String}, s.endsWith "," = Bool.true → ',' ∈ s.data
   -- uses
   -- expr 887430670
+theorem VE.Acts.Lexical.expand_cons
+  ∀ {ps : List (List VE.Acts.Lexical.Tok)} {t : VE.Acts.Lexical.Tok},
+    (∀ (i : Nat), t ≠ VE.Acts.Lexical.Tok.fixed i) →
+      ∀ (ts : List VE.Acts.Lexical.Tok), VE.Acts.Lexical.expand ps (t :: ts) = t :: VE.Acts.Lexical.expand ps ts
+  -- uses VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.expand@VE.Acts.LexicalProofs
+  -- expr 1841242947
+theorem VE.Acts.Lexical.expand_fixed
+  ∀ (ps : List (List VE.Acts.Lexical.Tok)) (i : Nat) (ts : List VE.Acts.Lexical.Tok),
+    VE.Acts.Lexical.expand ps (VE.Acts.Lexical.Tok.fixed i :: ts) = ps.getD i [] ++ VE.Acts.Lexical.expand ps ts
+  -- uses VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.expand@VE.Acts.LexicalProofs
+  -- expr 1655457375
+theorem VE.Acts.Lexical.expand_plain
+  ∀ {ps : List (List VE.Acts.Lexical.Tok)} {ts : List VE.Acts.Lexical.Tok},
+    (∀ (t : VE.Acts.Lexical.Tok), t ∈ ts → ∀ (i : Nat), t ≠ VE.Acts.Lexical.Tok.fixed i) →
+      VE.Acts.Lexical.expand ps ts = ts
+  -- uses VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.expand@VE.Acts.LexicalProofs
+  -- expr 1685153291
 theorem VE.Acts.Lexical.extract_go₁_general
   ∀ (B rest : List Char) (e : String.Pos) (i : Nat),
     String.extract.go₁ (B ++ rest) { byteIdx := i } { byteIdx := i + String.utf8ByteSize.go B } e =
@@ -315,6 +332,65 @@ theorem VE.Acts.Lexical.get_mid
     s.data = A ++ c :: rest → s.get { byteIdx := String.utf8ByteSize.go A } = c
   -- uses
   -- expr 3024969449
+theorem VE.Acts.Lexical.group_expand
+  ∀ (ps : List (List VE.Acts.Lexical.Tok)) (n : Nat) (ts : List VE.Acts.Lexical.Tok),
+    (∀ (t : VE.Acts.Lexical.Tok), t ∈ ts → ∀ (i : Nat), t ≠ VE.Acts.Lexical.Tok.fixed i) →
+      VE.Acts.Lexical.expand ps (VE.Acts.Lexical.group ps n ts) = ts
+  -- uses VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.expand@VE.Acts.LexicalProofs VE.Acts.Lexical.group@VE.Acts.Lexical
+  -- expr 4071990690
+theorem VE.Acts.Lexical.group_maximal
+  ∀ (ps : List (List VE.Acts.Lexical.Tok)) (n : Nat) (ts : List VE.Acts.Lexical.Tok),
+    ts.length ≤ n →
+      (∀ (t : VE.Acts.Lexical.Tok), t ∈ ts → ∀ (i : Nat), t ≠ VE.Acts.Lexical.Tok.fixed i) →
+        ∀ (t : VE.Acts.Lexical.Tok) (post : List VE.Acts.Lexical.Tok),
+          t :: post <:+ VE.Acts.Lexical.group ps n ts →
+            (∀ (i : Nat), t ≠ VE.Acts.Lexical.Tok.fixed i) →
+              ∀ (i : Nat) (hi : i < ps.length),
+                ps[i] ≠ [] → ps[i].isPrefixOf (t :: VE.Acts.Lexical.expand ps post) = Bool.false
+  -- uses VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.expand@VE.Acts.LexicalProofs VE.Acts.Lexical.group@VE.Acts.Lexical VE.Acts.Lexical.instDecidableEqTok@VE.Acts.Lexical
+  -- expr 1830108746
+theorem VE.Acts.Lexical.group_range
+  ∀ (ps : List (List VE.Acts.Lexical.Tok)) (n : Nat) (ts : List VE.Acts.Lexical.Tok),
+    (∀ (t : VE.Acts.Lexical.Tok), t ∈ ts → ∀ (i : Nat), t ≠ VE.Acts.Lexical.Tok.fixed i) →
+      ∀ (t : VE.Acts.Lexical.Tok),
+        t ∈ VE.Acts.Lexical.group ps n ts → ∀ (i : Nat), t = VE.Acts.Lexical.Tok.fixed i → ps.getD i [] ≠ []
+  -- uses VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.group@VE.Acts.Lexical
+  -- expr 4001868496
+theorem VE.Acts.Lexical.group_spec
+  ∀ (ps : List (List VE.Acts.Lexical.Tok)) (n : Nat) (ts : List VE.Acts.Lexical.Tok),
+    ts.length ≤ n →
+      (∀ (t : VE.Acts.Lexical.Tok), t ∈ ts → ∀ (i : Nat), t ≠ VE.Acts.Lexical.Tok.fixed i) →
+        VE.Acts.Lexical.Grouped ps ts (VE.Acts.Lexical.group ps n ts)
+  -- uses VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.group@VE.Acts.Lexical
+  -- expr 2056414115
+theorem VE.Acts.Lexical.grouped_fixed
+  ∀ {ps : List (List VE.Acts.Lexical.Tok)} {ts r : List VE.Acts.Lexical.Tok} {i : Nat},
+    VE.Acts.Lexical.Grouped ps ts (VE.Acts.Lexical.Tok.fixed i :: r) →
+      ∃ hi, ps[i] ≠ [] ∧ ts = ps[i] ++ VE.Acts.Lexical.expand ps r
+  -- uses VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.expand@VE.Acts.LexicalProofs
+  -- expr 2731241049
+theorem VE.Acts.Lexical.grouped_fixed_head
+  ∀ {ps : List (List VE.Acts.Lexical.Tok)} {ts r r' : List VE.Acts.Lexical.Tok} {i : Nat} {u : VE.Acts.Lexical.Tok},
+    VE.Acts.Lexical.Grouped ps ts (VE.Acts.Lexical.Tok.fixed i :: r) →
+      VE.Acts.Lexical.Grouped ps ts (u :: r') → ∃ j, u = VE.Acts.Lexical.Tok.fixed j
+  -- uses VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical
+  -- expr 3558374943
+theorem VE.Acts.Lexical.grouped_ne_nil
+  ∀ {ps : List (List VE.Acts.Lexical.Tok)} {ts r : List VE.Acts.Lexical.Tok} {u : VE.Acts.Lexical.Tok},
+    VE.Acts.Lexical.Grouped ps ts (u :: r) → ts ≠ []
+  -- uses VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs VE.Acts.Lexical.Tok@VE.Acts.Lexical
+  -- expr 3703120957
+theorem VE.Acts.Lexical.grouped_tail
+  ∀ {ps : List (List VE.Acts.Lexical.Tok)} {ts r : List VE.Acts.Lexical.Tok} {u : VE.Acts.Lexical.Tok},
+    VE.Acts.Lexical.Grouped ps ts (u :: r) → VE.Acts.Lexical.Grouped ps (VE.Acts.Lexical.expand ps r) r
+  -- uses VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.expand@VE.Acts.LexicalProofs
+  -- expr 1144235176
+theorem VE.Acts.Lexical.grouped_unique
+  ∀ {fx : List String} {ps : List (List VE.Acts.Lexical.Tok)},
+    VE.Acts.Lexical.decodeFixed fx = Except.ok ps →
+      ∀ {g g' ts : List VE.Acts.Lexical.Tok}, VE.Acts.Lexical.Grouped ps ts g → VE.Acts.Lexical.Grouped ps ts g' → g = g'
+  -- uses VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.decodeFixed@VE.Acts.Lexical
+  -- expr 2191091626
 theorem VE.Acts.Lexical.intercalate_data
   ∀ (ws : List String) (w : String), (" ".intercalate (w :: ws)).data = w.data ++ List.flatMap (fun x => ' ' :: x.data) ws
   -- uses
@@ -323,6 +399,19 @@ theorem VE.Acts.Lexical.isEmpty_false
   ∀ {w : String}, w ≠ "" → w.isEmpty = Bool.false
   -- uses
   -- expr 2336030392
+theorem VE.Acts.Lexical.lex_spec
+  ∀ {fx : List String} {s : String} {ts : List VE.Acts.Lexical.Tok},
+    VE.Acts.Lexical.lex fx s = Except.ok ts →
+      ∃ ps raw,
+        VE.Acts.Lexical.decodeFixed fx = Except.ok ps ∧
+          VE.Acts.Lexical.rawLex (VE.Acts.Lexical.normal s) = Except.ok raw ∧ VE.Acts.Lexical.Grouped ps raw ts
+  -- uses VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.decodeFixed@VE.Acts.Lexical VE.Acts.Lexical.lex@VE.Acts.Lexical VE.Acts.Lexical.normal@VE.Acts.Lexical VE.Acts.Lexical.rawLex@VE.Acts.Lexical
+  -- expr 2944656655
+theorem VE.Acts.Lexical.mapM_mem
+  ∀ {α β ε : Type} {f : α → Except ε β} {l : List α} {r : List β},
+    List.mapM f l = Except.ok r → ∀ (y : β), y ∈ r → ∃ x, x ∈ l ∧ f x = Except.ok y
+  -- uses
+  -- expr 4262899139
 theorem VE.Acts.Lexical.mapM_ok
   ∀ {α β ε : Type} {f : α → Except ε β} {g : α → β} {l : List α},
     (∀ (x : α), x ∈ l → f x = Except.ok (g x)) → List.mapM f l = Except.ok (List.map g l)
@@ -430,6 +519,12 @@ theorem VE.Acts.Lexical.pyWhitespace_sep
   ∀ {c : Char}, VE.Norms.Wire.pyWhitespace c = Bool.true → c ≠ '{' ∧ c ≠ '}' ∧ c.isDigit = Bool.false
   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase
   -- expr 2081363397
+theorem VE.Acts.Lexical.rawLex_plain
+  ∀ {s : String} {ts : List VE.Acts.Lexical.Tok},
+    VE.Acts.Lexical.rawLex s = Except.ok ts →
+      ∀ (t : VE.Acts.Lexical.Tok), t ∈ ts → ∀ (i : Nat), t ≠ VE.Acts.Lexical.Tok.fixed i
+  -- uses VE.Acts.Lexical.Tok.fixed@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.rawLex@VE.Acts.Lexical
+  -- expr 572370277
 theorem VE.Acts.Lexical.scanSlotsAux_fuel
   ∀ (n m : Nat) (l : List Char),
     l.length < n → l.length < m → VE.Norms.Wire.scanSlotsAux n l = VE.Norms.Wire.scanSlotsAux m l
@@ -6408,6 +6503,15 @@ theorem VE.Compose.gateOf_iff
     VE.Compose.gateOf t ps = Except.ok r ↔ VE.Compose.TableAdmits t ps ∧ r = VE.Compose.routeOf t ps
   -- uses VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.TableAdmits@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch
   -- expr 1599089441
+theorem VE.Compose.gate_acts
+  ∀ (ps : List String),
+    "acts@0" ∈ ps →
+      ∀ (r : VE.Compose.Route),
+        VE.Compose.gateOf VE.Compose.profileTable ps = Except.ok r →
+          VE.Compose.gateOf VE.Compose.profileTable (ps.erase "acts@0") = Except.ok r ∧
+            (r = VE.Compose.Route.norms ∨ r = VE.Compose.Route.normDefaults ∨ r = VE.Compose.Route.readings)
+  -- uses VE.Compose.Route.normDefaults@VE.Compose.Dispatch VE.Compose.Route.norms@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3915517882
 theorem VE.Compose.gate_legacy
   ∀ (ps : List String),
     (∀ (p : String), p ∈ ps → p ∈ VE.Compose.legacyProfiles) →
@@ -18084,7 +18188,14 @@ theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
       ∀ (f : VE.Data.Background.Flag),
         f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
   -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
-  -- expr 2046754165
+  -- expr 4195782294
+theorem VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_in
+  ∀ (environment : Lean.Json) (acts : Bool) (ne : VE.Norms.Wire.NormsEnvironment),
+    VE.Norms.Wire.decodeNormsEnvironment environment Bool.true acts = Except.ok ne →
+      ∀ (f : VE.Data.Background.Flag),
+        f ∈ ne.rv.flags → ∀ (d : VE.Definitions.Def), d ∈ ne.rv.definitions → f.name ≠ d.name
+  -- uses VE.Data.Background.Flag.name@VE.Data.Background VE.Data.Background.Flag@VE.Data.Background VE.Definitions.Def.name@VE.Definitions.Layer VE.Definitions.Def@VE.Definitions.Layer VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.definitions@VE.Route.Wire VE.Route.Wire.RouteVocabulary.flags@VE.Route.Wire
+  -- expr 1901990169
 theorem VE.Norms.FlaggedSpec.norms_flagged_conflict_free
   ∀ (j : Lean.Json) (r : VE.Norms.Flagged.ConflictReplay),
     VE.Norms.Flagged.replayConflict j = Except.ok r →
