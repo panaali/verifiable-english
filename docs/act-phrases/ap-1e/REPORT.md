@@ -71,7 +71,7 @@ per-operator allow file cannot take them without hiding the drift ones. None is 
 - **Trust** (`trust_map.py --check`, exit 0, against `343261104`): K +0, S +13, D +0, G +0, tied +15, trusted -2.
   R16 allowance S 13 in `docs/trust-baseline.json`; FOLLOW-UPS row "## ap-1e".
 - **Size** (`git diff --numstat 343261104`, hand-written): Lean 255, evidence 169 (`seed_bugs.py` 123, `mutants.json`
-  33, allow file 6, `trust-baseline.json` 7), side table 27 (`trust-classes.json`), this report and DELTA: about 590.
+  33, allow file 6, `trust-baseline.json` 7), side table 27 (`trust-classes.json`), this report 114 and DELTA 13: **578**.
   Generated, not counted: the Lean inventories and `trust-mutants.json`.
 - **Tests:** selected tests (`mac-pytest.sh --select`, base `343261104`) on `fec8089ef`: **exit 0, 75 units, 0
   failed**, including `test_trust_budget.py`, `test_trust_mutants.py`, `test_acts_lexical_mutants.py`. Also: full
