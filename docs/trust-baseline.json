@@ -1048,6 +1048,13 @@
    "reason": "sc-1ad: lean/VE/Scope/Govern.lean S +23 (edgesOf, edgesInto, addOver, govern's graph step), V +8 (normOf, memo, DecidableEq Reach); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ad, 2026-10-18",
    "commit": "9b7e6e5c767fde29ef8abfe806d65fe2082047eb"
+  },
+  {
+   "class": "S",
+   "lines": 12,
+   "reason": "me-5b: VE/Calc/Lower.lean S +12 (Follows 6, HasCounterexample 6); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5b, 2026-10-18",
+   "commit": "ca15b6d1ca0051cacf4ce807ab3ea1640efe7628"
   }
  ]
 }
