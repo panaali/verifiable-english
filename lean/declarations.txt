@@ -1004,7 +1004,7 @@ module ResponseShape.Schemas.NormDefaults 0fd9d6d7e484a4269f18d69fd493c9802a214f
 239:0-250:73 def ResponseShape.Schemas.NormDefaults.soft_admission@ResponseShape.Schemas.NormDefaults
 252:0-267:42 def ResponseShape.Schemas.NormDefaults.row@ResponseShape.Schemas.NormDefaults
 269:0-287:39 def ResponseShape.Schemas.NormDefaults.file@ResponseShape.Schemas.NormDefaults
-module ResponseShape.Schemas.Norms 4a5b91d06545e3fd95c4e013dba44021edafdf3b662212b36beed0760430c415
+module ResponseShape.Schemas.Norms 75ebc58a207f361e11c71ae1c5fff83ce465849b72b6b0be7693883a459fc90b
 9:0-49:119 def ResponseShape.Schemas.Norms.norms_path@ResponseShape.Schemas.Norms
 51:0-57:48 def ResponseShape.Schemas.Norms.kind@ResponseShape.Schemas.Norms
 59:0-96:51 def ResponseShape.Schemas.Norms.elaborateWith@ResponseShape.Schemas.Norms
