@@ -94,7 +94,7 @@ def replay(scratch: Path, item, c1, c2, base, first, second, tests) -> dict:
         data = evidence(first)
         seconds, mutants, jobs = data["seconds"], len(data["mutants"]), data["jobs"]
         rows = match(data["mutants"], one.found)
-        prevs = {}
+        prevs, verdicts = {}, {key: row["status"] for key, row in rows.items()}
         for key, row in rows.items():  # the row as this tool writes it on the first tree (`Reads.verdict`)
             m = one.by_key[key]
             m.status, m.detail = row["status"], row["detail"]
@@ -104,7 +104,7 @@ def replay(scratch: Path, item, c1, c2, base, first, second, tests) -> dict:
         notes = f"saved evidence ({len(rows)} of {mutants} rows matched)"
     else:  # PROXY: the second run's verdict on the same key, its check found in the first tree
         seconds, mutants, jobs = FIRST.get(item, (later["seconds"], len(later["mutants"]), later["jobs"]))
-        prevs = {}
+        prevs, verdicts = {}, {key: row["status"] for key, row in match(later["mutants"], two.found).items()}
         for key, row in match(later["mutants"], two.found).items():
             if key not in one.by_key or row["status"] not in ("KILLED", "INVALID"):
                 continue
@@ -131,8 +131,10 @@ def replay(scratch: Path, item, c1, c2, base, first, second, tests) -> dict:
             why["carried"] += 1
         elif m2.key not in one.by_key:
             why["a new mutant (its declaration or edit changed)"] += 1
+        elif verdicts.get(m2.key, "NOT RUN") not in ("KILLED", "INVALID"):
+            why[f"a {verdicts.get(m2.key, 'NOT RUN')} verdict (never carried)"] += 1
         elif not (p and p.get("reads")):
-            why["no KILLED or INVALID verdict to carry"] += 1
+            why["its killing check is not in the first tree"] += 1
         elif two.reads.scope(m2) != one.reads.scope(one.by_key[m2.key]):
             why["its declaration's scope changed"] += 1
         else:

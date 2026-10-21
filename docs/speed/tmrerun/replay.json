@@ -13,7 +13,7 @@
   "why": {
    "its declaration's scope changed": 82,
    "a new mutant (its declaration or edit changed)": 2,
-   "no KILLED or INVALID verdict to carry": 6
+   "a ALLOWED verdict (never carried)": 6
   }
  },
  {
@@ -29,7 +29,7 @@
   "basis": "saved evidence (90 of 90 rows matched)",
   "why": {
    "carried": 84,
-   "no KILLED or INVALID verdict to carry": 6
+   "a ALLOWED verdict (never carried)": 6
   }
  },
  {
@@ -62,9 +62,11 @@
   "why": {
    "its killing check or what that reads changed": 58,
    "a new mutant (its declaration or edit changed)": 15,
-   "no KILLED or INVALID verdict to carry": 68,
+   "its killing check is not in the first tree": 40,
    "its declaration's scope changed": 16,
-   "carried": 19
+   "a ALLOWED verdict (never carried)": 23,
+   "carried": 19,
+   "a SURVIVOR verdict (never carried)": 5
   }
  }
 ]

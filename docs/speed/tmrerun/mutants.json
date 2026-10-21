@@ -1,0 +1,28 @@
+{
+ "mutants": [
+  {
+   "id": "TR1",
+   "file": "docs/speed/tmrerun/rule.py",
+   "find": "        return digest(self.scope(m), \"\\n\".join(self.texts[f].split(\"\\n\")[first - 1:last]), self.kept(f, first),\n                      self.closure(f))",
+   "replace": "        return digest(self.scope(m), \"\\n\".join(self.texts[f].split(\"\\n\")[first - 1:last]), self.kept(f, first),\n                      \"\")",
+   "command": ["uv", "run", "python", "docs/speed/tmrerun/replay.py", "--check"],
+   "claim": "a KILLED is carried only when its killing check's import closure reads the same (ap-1b: 58 kills at ActsExamples.lean, which imports the changed NormDefaults/Wire.lean)"
+  },
+  {
+   "id": "TR2",
+   "file": "docs/speed/tmrerun/rule.py",
+   "find": "            f: {n: name for s, e, r, name in self.roles.get(f, ()) if r != \"other\" and \"@[\" not in \"\\n\".join(",
+   "replace": "            f: {n: name for s, e, r, name in self.roles.get(f, ()) if False and \"@[\" not in \"\\n\".join(",
+   "command": ["uv", "run", "python", "docs/speed/tmrerun/replay.py", "--check"],
+   "claim": "an added theorem, example or check reads as no change (df-1ac 6bd8247b0 -> f484e28cc, a review fix: 84 of 90 carried after a theorem and a #guard were added)"
+  },
+  {
+   "id": "TR3",
+   "file": "docs/speed/tmrerun/rule.py",
+   "find": "        return digest(m.file, m.definition, m.operator, \"\\n\".join(lines[m.lines[0] - 1:m.lines[1]]),",
+   "replace": "        return digest(m.file, m.definition, m.operator, \"\",",
+   "command": ["uv", "run", "python", "docs/speed/tmrerun/replay.py", "--check"],
+   "claim": "a mutant of an edited declaration is a new mutant (me-6b: 51 of decodeFactor and decodeV2; the replay's why counts change, its carried counts do not: the check digest reads the edited file too)"
+  }
+ ]
+}
