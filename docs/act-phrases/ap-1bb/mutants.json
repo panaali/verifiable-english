@@ -1,0 +1,37 @@
+{
+ "py-identity-python": {
+  "definition": "validated_environment",
+  "file": "ve/backends/validation.py",
+  "test": "tests/test_acts_profile.py::test_an_act_with_a_curly_apostrophe_has_leans_identity",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_an_act_with_a_curly_apostrophe_has_leans_identity"
+ },
+ "py-wordings-not-shown": {
+  "definition": "EnglishVocabulary",
+  "file": "ve/english.py",
+  "test": "tests/test_acts_profile.py::test_a_plain_act_reads_with_the_wording_lean_selected",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_a_plain_act_reads_with_the_wording_lean_selected"
+ },
+ "py-bind-off": {
+  "definition": "_bind_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable[dropped]"
+ },
+ "py-bind-document-off": {
+  "definition": "NormDocument._lean_regenerated",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable[dropped]"
+ },
+ "py-norm-defaults-asked": {
+  "definition": "plain_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_norm_defaults_keeps_todays_display_without_asking",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_norm_defaults_keeps_todays_display_without_asking"
+ }
+}
