@@ -21,9 +21,9 @@ statement changed.
 
 | Row | Delivered | Where, checked by (`lean/VE/Calc/RunExamples.lean` guard line) |
 |---|---|---|
-| `lean/VE/Calc/Wire.lean`: `Case`, `Wire.decodeCase` | yes: format, values (stated or defined), claims (`eq`, `lt`, `le`, `gt`, `ge`, `within`, `rounds` with an optional rule, `rounds-down`, `rounds-up`), `rounding`, `software`, `support`, `span` | 91, 289, 333, 387, 413 |
-| Limits of 3.2 in order: 10,000 JSON values, depth 64, 512 values, 512 claims, exponents 64, literals 40 digits (W6's `parseDecimal`), names and claim ids 64 bytes; checked before anything else | yes, each on both sides, and their order (exponent before digits before names; a limit before a field error) | 289, 325 |
-| Decoder refusals of 13.1 owned by ME-2: `InvalidInput` (with the JSON path), `ResourceLimit`, `UnknownName`, `DuplicateName`, `DuplicateClaimId`, `NoClaims` | yes | 333, 387, 413 |
+| `lean/VE/Calc/Wire.lean`: `Case`, `Wire.decodeCase` | yes: format, values (stated or defined), claims (`eq`, `lt`, `le`, `gt`, `ge`, `within`, `rounds` with an optional rule, `rounds-down`, `rounds-up`), `rounding`, `software`, `support`, `span` | 91, 299-490, 494, 548, 574 |
+| Limits of 3.2 in order: 10,000 JSON values, depth 64, 512 values, 512 claims, exponents 64, literals 40 digits (W6's `parseDecimal`), strings 64 bytes (2.6 and 3.2's names and claim ids; round 3: every string and object key of the case but a value record's `words`); checked before anything else | yes, each on both sides, and their order (exponent before digits before strings; a limit before a field error) | 316-490 |
+| Decoder refusals of 13.1 owned by ME-2: `InvalidInput` (with the JSON path), `ResourceLimit`, `UnknownName`, `DuplicateName`, `DuplicateClaimId`, `NoClaims` | yes | 494, 548, 574 |
 | `VerbalisationCollision`, `ValueWordsForm`, `ReservedWord` | **me-2b**, with the `line` field they serve; until then `words` is any string | 413 states it |
 | Identity 3.3 with J1: `meaning_id` through `VE.Route.Wire.meaningId ["calc@0"]`, the frozen encoder unchanged; `words` removed; values in shortest plain decimal (no `sci` left); printed numbers as `[digits, places]` canonical decimal strings; each `rounds` claim with its rule; claim ids by `ve-calc-claim-v0.2:calc@0` | yes; I-1 pinned (`b3798e85…`, and `c7cd36a4…` for the `"20000000"` spelling), R-1 and R-2 claim ids pinned; one table (`identityFamilies`) holds a family per normalisation and per hashed field, at every place a literal or a printed number is read, among them the case's rule in an implicit `rounds` claim and a `lit`'s shortest spelling (round 2, review F9 and F10) | 54-55, 135-281 (`identityFaults == []` at 242) |
 | `Wire.decodeCase_wellFormed` | yes | proof; `lean/VE/Audit.lean` |
@@ -77,19 +77,20 @@ The F11 probe's four encoding mutants were survivors before these fixtures and a
 
 | Decoder check and branch | At boundary; one past; error kind | Guard and mutation it catches |
 |---|---|---|
-| JSON values ≤10,000; depth ≤64 | 10,000/10,001; 64/65, then `InvalidInput`/`ResourceLimit` | `nodes`, `nodes-over`, `depth`, `depth-over`; `<` or constant change |
+| JSON values ≤10,000; depth ≤64 | 10,000/10,001; 64/65, then `InvalidInput`/`ResourceLimit`; values counted at any nesting (20,000 values 256 and 300 deep; a chain of 10,001 arrays is limit 1, of 10,000 limit 2) | `nodes`, `nodes-over`, `depth`, `depth-over`, guard 322; `<` or constant change, count fuel `maxNodes`, depth fuel `maxDepth` |
 | `values` and `claims` ≤512 each | 512/513, then malformed entry/`ResourceLimit` | `values`, `values-over`, `claims`, `claims-over`; `<` or branch dropped |
 | `pow` exponent ≤64 and `sci` exponent absolute value ≤64 | 64/65 and −64/−65, then answer/`ResourceLimit` | `pow`, `pow-over`, `sci`, `sci-over`, positive `sci` 64 guard; sign, constant or branch dropped |
 | W6 digits ≤40: stated and `lit` plain/`sci` | 40/41, then answer/`ResourceLimit` | `digits`, `digits-over`, `digits-lit*`, new `sci` 40/41 guard; constant or form dropped |
 | W6 digits ≤40: `rounds`, `rounds-down`, `rounds-up` plain and `sci` | each 40/41, then answer/`ResourceLimit` | new three-branch guards; `startsWith` narrowed to `==` |
-| Value name, claim ID and `val` reference ≤64 UTF-8 bytes | each 64/65, then answer/`ResourceLimit`; 2-, 3- and 4-byte characters at exactly 64/65 bytes | `name`, `name-over`, `id-over`, `val-over`, new claim-ID 64 guard, `multiByteNames` at all three sites; character count in place of UTF-8 byte count |
+| Every string and object key ≤64 UTF-8 bytes, but a value record's `words` string (one allow-list, `stringFault` over `unworded`) | each 64/65, then answer or its own refusal/`ResourceLimit`, with 1-, 2-, 3- and 4-byte characters: value name, claim ID, `val`, `software`, `support`, `rounding`, `format`, a claim's and an expression's operator, a claim's rule, a premise id, an unknown field, a non-object value, `words` in a claim entry, in the case, as a list and inside `defined`, and keys of the case, a value record and a claim entry; at JSON depth 64 a string and a key; a value's `words` of 192 bytes accepted; a 65-digit literal is still limit 6, an exponent and the value count still come first | `name`, `name-over`, `id-over`, `val-over`, `multiByteNames` (362), F16 (383), `stringSites` (409), `words` (413), order (417), `deepScanFault` (470); cap 63 or 65, character count, keys skipped, `words` exception widened to every key, to a non-string `words` and to claim entries |
 | Expression fuel and JSON depth at both entry points | claim nesting 59/60 and defined nesting 60/61: accepted/`ResourceLimit` | new `nestedExpr` guards; fuel 20 mutation at either entry point |
 | Limit scan through the full admitted depth | a `pow` or `sci` exponent, 41-digit literal, or overlong name at JSON depth 64 still gives its specific `ResourceLimit`; a valid nested `pow` expression does too | `deepScanFault` checks the exact JSON depth before each answer, and `nestedPow` checks a valid expression; scan fuel 20 or 63 fails |
 | Limit order, ahead of field validation | simultaneous exponent/digits/name and digit/unknown field | `order-*` guards; branch reordered or skipped |
 | Record, rule and claim-form checks | accepted edges and `hostile set`, `paths`, `malformed` | one branch dropped or a wrong type admitted |
 
-The wide-array guard evaluates `Wire.size` on 100,000 flat children (over ten times the old largest fixture), so
-the elaborator exercises the accumulator fold without the former `List.sum` stack growth.
+The wide-array guard evaluates `Wire.count` and `Wire.depth` on 100,000 flat children (over ten times the old
+largest fixture), so the elaborator exercises the worklist count and the depth fold without the former `List.sum`
+stack growth. (`Wire.size` until round 3; it is now `count` and `depth`, below.)
 
 F14 and F15 recheck: before the new guards, the supplied scan-fuel mutants (20 and `maxDepth - 1`) and the
 character-count mutant each built `VE.Calc.RunExamples` successfully. After the guards, all three builds fail
@@ -109,6 +110,83 @@ mutant now fails the guard over the whole `Wire.supports` vocabulary. No form fr
 FM1 reproduced on ve-mac-1 before the fix (`VE.Calc.RunExamples` exited 134, deep recursion in `Wire.size`). After
 the accumulator fold, the same Mac test command built Lean and reported `151 passed`; the FM1 failure grep had no
 match. The 100,000-child `Wire.size` guard is the permanent FM1 regression.
+
+## Round 3: F16 and the class (looprecheck2, DRI note 20261021b)
+
+F16 (B): `software` had no 64-byte cap (spec 2.6); 65 bytes or more answered "c1 holds reproduction unknown".
+PROBE F16 exited 1 before the fix and exits 0 after it. The class, not the field, is removed: `nameFault`, which
+capped only the strings it named (`name`, `id`, `["val", n]`), is replaced by one allow-list. `stringFault` refuses
+any string or object key of more than 64 UTF-8 bytes, anywhere in the case, and `unworded` sets each value record's
+`words` string to `null` before that scan, so `words` is the only string the cap does not reach. It is still
+position 7 of 3.2's order: the exponent and literal scans run over the whole case first. Any string me-2 does not
+decode yet (`support`, `rounding`, `format`, operator tags, premise ids, a field a later ME adds) is capped by
+default. The message is `ResourceLimit: a string exceeds 64` (3.2's `<limit> exceeds <n>`), and the guards that
+pinned "a name" now pin it. No route case (V-1, V-2, V-5, V-11, V-9, I-1, R-1, R-2), hostile-set row or seeded bug
+changed its expected outcome. Refusals that did change, all for strings of more than 64 bytes, go from
+`InvalidInput` to `ResourceLimit` (an over-long `format`, `rounding`, `support`, operator or unknown field), the
+safe direction the note accepts.
+
+The tests are the note's list, one per safe case, each at 64 and 65 bytes in ASCII and in 2-, 3- and 4-byte
+characters (`strings64`): `software` (F16's guard, 383); name, claim id and `val` (362 and the limit table);
+`support`, `rounding`, `format`, both operator positions, a claim's rule, a premise id, an unknown field, a value
+that is not an object, `words` outside a value record or not a string, and object keys of the case, a value record
+and a claim entry (`stringSites`, 409); a string and a key at JSON depth 64 (470); a value's `words` of 192 bytes is
+accepted (413); a 65-digit literal is still limit 6 at every literal site, and an exponent and the value count still
+come before the cap (417). The mutants the note names all fail those guards: cap at 63 and 65, `length` for
+`utf8ByteSize`, keys skipped, and the `words` exception widened to every key of a value record, to a `words` that is
+not a string, and to claim entries (`mutants.json`, `string-*` and `words-*`; each build under `timeout 600`).
+
+R16 budget: `stringFault`, `unworded`, `count` and `depth` are D[R], like the limits before them, so
+`trust_map.py --check` measures K +0, S +14, untied V +134, trusted +148 on the final HEAD, unchanged. The
+allow-list is 13 lines against `nameFault`'s 12, none of them trusted. `trust_mutants.py --max-mutants 1000` on 401bf3675 (the Mac
+runner unreachable, on the VM): 125 killed, 0 survivors, 0 unknown, 21 allowed, exit 0.
+
+Hunts (subagents given only class B, PROBEs F14, F15 and F16, and the code):
+
+- **Hunt 1** tried duplicate keys, `\u` escapes and surrogates in strings and keys (an escaped `words` key is the
+  real key), `words` under a `values` object, in `pad.values`, in a wrapped record, a long name beside a long
+  `words`, top-level strings, long strings at `pow`, `lit` and `sci` positions, fullwidth digits, exponents as
+  huge integers, `1e100`, `65E0`, `-0`, `65.0`, `6.5e1`, digit counting with signs, leading zeros and junk, wrong
+  arities, and 512/513 records. Found: (a) **fixed**, values nested below 257 levels were not counted, so 20,000
+  values 300 deep reported the depth limit before the node limit. `size` is now `count`, a tail-recursive worklist
+  exact up to 10,001 at any nesting (a recursive count with that fuel overflowed the interpreter's stack at depth
+  10,001), and `depth`, bounded by the depth limit (guard 322; mutants `count-fuel`, `depth-fuel`). (b) **open**,
+  below: duplicate keys. (c) a spelling question, not a limit passed: `getInt?` reads an exponent's written form,
+  so `65.0` is `InvalidInput` and `6.4e1` is accepted as 64. Every spelling is refused or read as its value, and
+  the canonical form re-encodes the integer. Whether fractional spellings are admitted is a wire decision for
+  me-2b; it is a follow-up.
+- **Hunt 2** tried limit 6 at every printed number and `within` bound, literals and exponents where the scans do
+  not match (`stated` as an array, `sci` in `stated`, `defined` holding a literal), 10,000/10,001 values with
+  objects, keys and mixed nesting, depth 64/65 mixed, the order of every pair of limits, `unworded` beside each
+  earlier limit, and a 41-digit `words`. It found no case where a limit is exceeded and the decoder answers rows
+  or reports a different limit. It found the safe direction only: `literalFault` also matches shapes the grammar
+  refuses anyway (`["sci", d]`, `["sci", d, 1, 2]`, `["roundsX", x, d]`, `rounds-down` with a rule, `rounds` with
+  five members), and limits 5 and 6 fire anywhere in the case, as `limitFault` says, so such a case is
+  `ResourceLimit` where its field check would say `InvalidInput`. The note keeps that direction ("do not widen the
+  rule"), so it is unchanged and recorded as a follow-up. Hunt 2 also noted that 3.2 says "JSON nodes" while the
+  count and message say "JSON values" (keys are not counted), and that 3.2's item 7 names only names and claim
+  ids. The DRI note reads 2.6 and 3.2 together as the string cap, and the spec text is unchanged.
+
+Open (B), for the item that adds the text entry: **duplicate JSON keys**. The decoder reads a parsed `Json`, and
+`Lean.Json.parse` (the only parser `RunExamples` uses) keeps the last of two equal keys, so an earlier member
+over any limit is never seen: `"software": <65 bytes>, "software": "P"` answers rows, and so do 600 values or a
+41-digit value before a second `values`. me-2 has no text entry (no mode; `Run.runCaseReported` takes `Json`), and
+the service decodes non-English cases with `VE.JsonInput.parseCases`, which refuses a duplicate key. It also
+refuses negative numbers, which `sci` needs, so me-2b's mode must choose its parser with both in view. PROBE:
+
+```
+cd lean && export PATH="$HOME/.elan/bin:$PATH" && lake env lean --stdin <<'EOF'
+import VE.Calc.RunExamples
+open Lean VE.Calc VE.Calc.RunExamples
+#guard let L := name64 ++ "x"
+  [req x1 ok1 s!", \"software\": \"{L}\", \"software\": \"P\"",
+   req s!"\{\"name\": \"{L}\", \"name\": \"x\", \"words\": \"w\", \"stated\": \"1\"}" ok1,
+   req (nulls 600) ok1 s!", \"values\": [{x1}]",
+   req x1 ok1 s!", \"software\": [{nulls 20000}], \"software\": \"P\"",
+   req x1 (c1 r#"["eq", ["pow", ["val", "x"], 65], ["lit", "1"]]"#) s!", \"claims\": [{ok1}]",
+   req (stated "x" s!"\"{ones 41}\"") ok1 s!", \"values\": [{x1}]"].all fun c => ((answer c).getObjVal? "rows").toOption.isNone
+EOF
+```
 
 ## Trust (R16)
 
@@ -204,7 +282,7 @@ ve_english_lean_bench` and `lean/audit.py` (PASS, 606 files) passed in it. `trus
 2. PASS: plan rows table above; me-2b and ME-10 named with reasons; no Python copy of a Lean decision, no permanent
    report test; overlap: no in-flight branch edits `Wire.lean`, `Run.lean`, `Units.lean` or `layer_policy.py`; the
    shared registries (`lean/VE.lean`, `tools/trust-classes.json`, `ve/assurance-manifest.json`) are append-only.
-3. PASS: `mutants.json` 43 of 43 killed (the first 23 with proofs stubbed, the 20 `identity-*` by guards with the proofs as they are); `trust-mutants.json` exit 0.
+3. PASS: `mutants.json` 52 of 52 killed (the first 23 with proofs stubbed, the 20 `identity-*` and the 9 round-3 ones by guards with the proofs as they are); `trust-mutants.json` exit 0.
 4. PASS: reordered keys and renamed words keep the `meaning_id`, spellings "0.30"/"0.3" as values do and as printed
    numbers do not, and so on for every normalisation of 3.3 (the identity table, 135-281); `UnitsExamples` unchanged after the shared spelling. No Python or Rust implementation.
 5. N.A.: no relayed field yet; inputs: undeclared names refused (`unknown-name`, `defined-after-use`,
