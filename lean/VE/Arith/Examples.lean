@@ -1,10 +1,12 @@
-import VE.Arith.Bounded
+import VE.Arith.Holds
+import VE.Arith.Defs
 
-/-! The example vocabulary (spec 12.3) and the fixtures of plan 4.3 that need no wire: M-1, M-1b, M-2, M-3, M-4 with
-its measured bound, M-4b, M-4x and M-5, and the refusals the core decides. -/
+/-! The example vocabulary (spec 12.3) with its unfolding lemma, one meaning example per clause of `Holds` and
+`Term.value` in both directions, and the admission of plan 4.3's fixture statements; their evaluation within the
+budget (M-1, M-2, M-4, M-4b, M-4x, M-5) is me-12aa's, with `Bounded.lean`. -/
 
 namespace VE.Arith.Examples
-open VE.Arith VE.Numbers
+open VE.Arith
 
 /-- p is prime: p is at least 2 and no whole number from 2 through p − 1 divides p. -/
 def primeBody : Formula :=
@@ -12,10 +14,62 @@ def primeBody : Formula :=
 
 def primeDefs : Defs := [.pred "prime" 1 primeBody]
 
+def IsPrime (p : Nat) : Prop := 2 ≤ p ∧ ∀ d : Nat, 2 ≤ d → d < p → ¬ d ∣ p
+
 /-- M-3, whole-number reading. -/
 def bertrand : Formula :=
   .allNat (.imp (.le (.num 1) (.var 0))
     (.exNat (.and (.call "prime" [.var 0]) (.and (.lt (.var 1) (.var 0)) (.le (.var 0) (.mul (.num 2) (.var 1)))))))
+
+/-- VE's `prime` body means `IsPrime` at every whole number, in any environment (it calls no name). -/
+theorem primeBody_iff (E : Env) (p : Nat) : Holds E [(p : Int)] primeBody ↔ IsPrime p := by
+  simp only [primeBody, IsPrime, Holds, Term.value, List.getElem?_cons_zero, List.getElem?_cons_succ, Option.some.injEq,
+    exists_and_left, exists_eq_left', not_exists, not_and, Int.natCast_dvd_natCast.symm]
+  refine and_congr (by omega) ⟨fun H d h1 h2 => H d (by omega) (by omega), fun H i h1 h2 => ?_⟩
+  have := H i.toNat (by omega) (by omega)
+  rwa [show ((i.toNat : Nat) : Int) = i by omega] at this
+
+/-- The core-Lean unfolding lemma the import project rewrites with. -/
+theorem bertrand_means_iff :
+    primeDefs.Means bertrand ↔ ∀ n : Nat, 1 ≤ n → ∃ p : Nat, IsPrime p ∧ n < p ∧ p ≤ 2 * n := by
+  simp only [Defs.Means, bertrand, primeDefs, Defs.env, List.foldl, Holds, Term.value, Term.values,
+    List.getElem?_cons_zero, List.getElem?_cons_succ, Option.some.injEq, ite_true, Prod.mk.injEq,
+    exists_and_left, exists_eq_left', List.length_singleton]
+  refine ⟨fun H n hn => ?_, fun H n hn => ?_⟩
+  · obtain ⟨p, ⟨_, _, ⟨rfl, rfl⟩, _, hp⟩, h1, h2⟩ := H n (by omega)
+    exact ⟨p, (primeBody_iff _ p).mp hp, by omega, by omega⟩
+  · obtain ⟨p, hp, h1, h2⟩ := H n (by omega)
+    exact ⟨p, ⟨1, _, ⟨rfl, rfl⟩, rfl, (primeBody_iff _ p).mpr hp⟩, by omega, by omega⟩
+
+def lit (k : Int) : Term := .num k
+set_option hygiene false in
+/-- The meaning of a closed statement over definitions `D`, unfolded. -/
+macro "means" : tactic => `(tactic| (simp (config := { decide := true }) [Defs.Means, Defs.env, Holds,
+  Term.value, Term.values, lit] <;> omega))
+
+example : Defs.Means [] (.eq (.add (lit 2) (lit 3)) (.sub (.mul (lit 2) (lit 4)) (lit 3))) ∧ ¬ Defs.Means [] (.eq (lit 2) (lit 3)) := by means
+example : Defs.Means [] (.lt (lit 2) (lit 3)) ∧ ¬ Defs.Means [] (.lt (lit 3) (lit 3)) := by means
+example : Defs.Means [] (.le (lit 3) (lit 3)) ∧ ¬ Defs.Means [] (.le (lit 4) (lit 3)) := by means
+example : Defs.Means [] (.dvd (lit 3) (lit 6)) ∧ ¬ Defs.Means [] (.dvd (lit 4) (lit 6)) := by means
+example : Defs.Means [] (.or (.eq (lit 1) (lit 2)) (.eq (lit 2) (lit 2))) ∧ ¬ Defs.Means [] (.or (.eq (lit 1) (lit 2)) (.eq (lit 2) (lit 3))) := by means
+example : Defs.Means [] (.imp (.eq (lit 1) (lit 2)) (.eq (lit 2) (lit 3))) ∧ ¬ Defs.Means [] (.imp (.eq (lit 1) (lit 1)) (.eq (lit 2) (lit 3))) := by means
+example : Defs.Means [] (.allInt (.or (.lt (.var 0) (lit 1)) (.le (lit 1) (.var 0)))) ∧ ¬ Defs.Means [] (.allInt (.le (lit 0) (.var 0))) := by
+  simp [Defs.Means, Holds, Term.value, lit]; exact ⟨fun n => by omega, -1, by omega⟩
+example : Defs.Means [] (.exInt (.eq (.add (.var 0) (lit 3)) (lit 0))) := by
+  simp [Defs.Means, Holds, Term.value, lit]; exact ⟨-3, by omega⟩
+example : Defs.Means [] (.allFromTo (lit 1) (lit 3) (.lt (lit 0) (.var 0))) ∧ ¬ Defs.Means [] (.allFromTo (lit 0) (lit 3) (.lt (lit 0) (.var 0))) ∧
+    ¬ Defs.Means [] (.allFromTo (lit 1) (lit 3) (.lt (.var 0) (lit 3))) := by
+  simp [Defs.Means, Holds, Term.value, lit]; exact ⟨fun i _ _ => by omega, ⟨0, by omega⟩, ⟨3, by omega⟩⟩
+example : Defs.Means [] (.exFromTo (lit 1) (lit 3) (.eq (.var 0) (lit 3))) ∧ ¬ Defs.Means [] (.exFromTo (lit 1) (lit 3) (.eq (.var 0) (lit 0))) := by
+  means
+example : Defs.Means [] (.eq (.countFromTo (lit 1) (lit 6) (.dvd (lit 2) (.var 0))) (lit 3)) := by
+  simp (config := { decide := true }) [Defs.Means, Holds, Term.value, lit, List.range, List.range.loop]
+example : Holds (Defs.env []) [5, 7] (.eq (.var 1) (lit 7)) := by means
+def double : Defs := [.fn "double" 1 (.mul (lit 2) (.var 0)), .fn "quad" 1 (.call "double" [.call "double" [.var 0]])]
+example : double.Means (.eq (.call "quad" [lit 3]) (lit 12)) ∧ ¬ double.Means (.eq (.call "double" [lit 4, lit 1]) (lit 8)) ∧
+    ¬ double.Means (.eq (.call "triple" [lit 1]) (lit 3)) := by
+  means
+example : Defs.Means [] (.eq (.countFromTo (lit 3) (lit 1) (.eq (lit 0) (lit 0))) (lit 0)) := by means
 
 /-- M-1 through `hi`: for every n from 1 through hi there is a prime p from n + 1 through 2n. -/
 def m1 (hi : Int) : Formula :=
@@ -46,58 +100,18 @@ def atLeast (k : Int) (x : Term) : Formula :=
 /-- Formula (18)'s pair (k, T) from T through N. -/
 def m4 (k T N : Int) : Formula := .allFromTo (.num T) (.num N) (atLeast k (.var 0))
 
-/-! M-1, M-1b, M-4x: holds, and exactly its 17,011 units; one fewer, or 1,000, is unknown, never fails. -/
-#guard decideBounded primeDefs maxSteps (m1 161) = some (true, 17011)
-#guard decideBounded primeDefs 17011 (m1 161) = some (true, 17011)
-#guard decideBounded primeDefs 17010 (m1 161) = none
-#guard arithOutcome primeDefs maxSteps (m1 161) = .decided .holds
-#guard arithOutcome primeDefs 1000 (m1 161) = .unknown (.limit .evaluations)
-#guard maxSteps = 1000000
-#guard decideBounded primeDefs 0 (m1 161) = none
-
-/-! M-2 holds; one link broken (163 against 81) fails. -/
-#guard decideBounded primeDefs maxSteps m2 = some (true, 395)
-#guard (decideBounded primeDefs maxSteps (.and m2 (.lt (.num 163) (.mul (.num 2) (.num 81))))).map (·.1) = some false
-
-/-! M-3: stated, not decided; M-1 is bounded. -/
-#guard bertrand.Bounded primeDefs = false && (m1 161).Bounded primeDefs
-#guard arithOutcome primeDefs maxSteps bertrand = .unknown .unboundedStatement
-#guard UnknownReason.text maxSteps .unboundedStatement = "stated, not decided: a quantifier has no bound"
-
-/-! M-5 fails in 2 units: the ∀ node and the ∃ at n = 1, whose range 2 … 1 is empty, so n = 1 decides it. -/
-#guard decideBounded primeDefs maxSteps m5 = some (false, 2)
-#guard arithOutcome primeDefs maxSteps m5 = .decided .fails
-#guard decideBounded primeDefs maxSteps
-  (.exFromTo (.add (.num 1) (.num 1)) (.sub (.mul (.num 2) (.num 1)) (.num 1)) (.call "prime" [.var 0])) = some (false, 1)
-
-/-! M-4: π(10) − π(5) = 1 and π(11) − π(5) = 2 (spec 13.3's 111 and 127 units for the difference, plus the `le` node);
-measured at the candidate bounds 200 and 1,000, the completing bound is 248 within 1,000,000 units. -/
-#guard decideBounded countDefs maxSteps (atLeast 2 (.num 10)) = some (false, 112)
-#guard decideBounded countDefs maxSteps (atLeast 2 (.num 11)) = some (true, 128)
-#guard decideBounded countDefs maxSteps (m4 2 11 200) = some (true, 576518)
-#guard decideBounded countDefs maxSteps (m4 2 11 248) = some (true, 998395)
-#guard decideBounded countDefs maxSteps (m4 2 11 249) = none
-#guard decideBounded countDefs 2000000 (m4 2 11 249) = some (true, 1008568)
-#guard decideBounded countDefs maxSteps (m4 2 11 1000) = none
-
-/-! M-4b: each pair (k, T) fails at T − 1, holds at T, and holds through its measured bound N, unknown at N + 1. -/
-#guard [(1, 2), (3, 17), (4, 29), (5, 41)].map (fun (k, T) =>
-    ((decideBounded countDefs maxSteps (atLeast k (.num (T - 1)))).map (·.1),
-     (decideBounded countDefs maxSteps (atLeast k (.num T))).map (·.1))) =
-  [(some false, some true), (some false, some true), (some false, some true), (some false, some true)]
-#guard decideBounded countDefs maxSteps (m4 1 2 248) = some (true, 998948)
-#guard decideBounded countDefs maxSteps (m4 1 2 249) = none
-#guard decideBounded countDefs maxSteps (m4 3 17 248) = some (true, 997399)
-#guard decideBounded countDefs maxSteps (m4 3 17 249) = none
-#guard decideBounded countDefs maxSteps (m4 4 29 248) = some (true, 993580)
-#guard decideBounded countDefs maxSteps (m4 4 29 249) = none
-#guard decideBounded countDefs maxSteps (m4 5 41 249) = some (true, 997116)
-#guard decideBounded countDefs maxSteps (m4 5 41 250) = none
+/-! Boundedness: M-3 is stated, not decided; the others are bounded, through the definitions they call. -/
+#guard !bertrand.Bounded primeDefs && (m1 161).Bounded primeDefs && (m4 2 11 248).Bounded countDefs
+#guard !(m4 2 11 248).Bounded
+  (primeDefs ++ [.fn "prime_count" 1 (.countFromTo (.num 1) (.var 0) (.exNat (.eq (.var 0) (.var 1))))] ++ countDefs.drop 2)
+#guard !(Formula.call "prime" [.num 7]).Bounded [.pred "prime" 1 (.allInt (.eq (.var 0) (.var 0)))]
 
 /-! Admission: the fixtures are admitted; each refusal the core decides, and the decoder's order between them. -/
 #guard caseRefusal countDefs [m1 161, m5, m2, bertrand, m4 2 11 248] = none
 #guard countDefs.WellFormed && (m1 161).Scoped countDefs 0 && (Formula.lt (.var 1) (.var 0)).Scoped primeDefs 2
-#guard !(Formula.lt (.var 2) (.var 0)).Scoped primeDefs 2
+#guard !(Formula.lt (.var 2) (.var 0)).Scoped primeDefs 2 && !(Formula.call "nope" []).Scoped primeDefs 0 &&
+  !(Formula.call "prime" []).Scoped primeDefs 0 && !Defs.WellFormed [.pred "loop" 1 (.call "loop" [.var 0])]
+#guard caseRefusal [.pred "p" 1 (.lt (.var 0) (.var 1))] [] = some (.unscopedVariable 1)
 #guard caseRefusal primeDefs [.allFromTo (.num 1) (.num 2) (.lt (.var 0) (.var 1))] = some (.unscopedVariable 0)
 #guard caseRefusal primeDefs [.call "composite" [.num 4]] = some (.unknownDefinition "composite")
 #guard caseRefusal primeDefs [.eq (.call "prime" [.num 4]) (.num 0)] = some (.unknownDefinition "prime")

@@ -14252,46 +14252,23 @@
         "VE.Arith.firstRefusal"
       ]
     },
-    "VE/Arith/Bounded.lean": {
-      "G[V]": [
-        {
-          "name": "VE.Arith.arithOutcome",
-          "tied": [
-            "VE.Arith.arithOutcome_decided",
-            "VE.Arith.arithOutcome_exhausted_iff",
-            "VE.Arith.arithOutcome_unbounded_iff"
-          ]
-        }
-      ],
-      "G[R]": [
-        "VE.Arith.maxSteps"
-      ],
-      "C": [
-        "VE.Arith.Defs.opEnv",
-        "VE.Arith.Formula.evalB",
-        "VE.Arith.OpEnv",
-        "VE.Arith.Term.evalB",
-        "VE.Arith.Term.evalBs",
-        "VE.Arith.charge",
-        "VE.Arith.countLoop",
-        "VE.Arith.decideBounded",
-        "VE.Arith.quantLoop"
-      ],
-      "P": [
-        "VE.Arith.Agrees"
-      ]
-    },
     "VE/Arith/Examples.lean": {
+      "S": [
+        "VE.Arith.Examples.IsPrime"
+      ],
       "T": [
         "VE.Arith.Examples.atLeast",
         "VE.Arith.Examples.bertrand",
         "VE.Arith.Examples.countDefs",
+        "VE.Arith.Examples.double",
+        "VE.Arith.Examples.lit",
         "VE.Arith.Examples.m1",
         "VE.Arith.Examples.m2",
         "VE.Arith.Examples.m4",
         "VE.Arith.Examples.m5",
         "VE.Arith.Examples.primeBody",
-        "VE.Arith.Examples.primeDefs"
+        "VE.Arith.Examples.primeDefs",
+        "VE.Arith.Examples.tacticMeans"
       ]
     }
   }
