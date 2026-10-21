@@ -249,6 +249,21 @@ def doesNotFollow (forced : List (String × Nat)) : Json := VE.Route.Wire.ok "c"
   VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN")]
 -- DF-α's default model {} refutes `∀a. excepted_r1(a)` with no exception forced (DE6's short form)
 #guard holds dα fun L => answer (modelCase αEnv αR L (.all "assistant" (.unary exc1 (.var 0))) []) == doesNotFollow []
+/-- DF-β2: r1's exception has two stated conditions (`calm`, then `urgent`), r2's one (`urgent`), at two assistants,
+    both urgent and both excepted from both rules: four forced entries, in rule order, then tuple order, r1's at
+    condition 1. -/
+def β2Env : Json := envJ [xReq, xPerm, baseJ "urgent", baseJ "calm"] strictSoft
+def β2R : List String := [ruleJ "r1" "x_required" true (dfltJ [un "calm", un "urgent"]),
+  ruleJ "r2" "x_permitted" false (dfltJ [un "urgent"])]
+#guard holds (layered β2Env β2R) fun L =>
+  let two : Json := Json.mkObj [("complete", true),
+    ("domains", Json.mkObj (L.sitVocab.sorts.map fun s => (s, toJson ["e1", "e2"]))), ("constants", Json.mkObj []),
+    ("relations", Json.mkObj (L.sitVocab.predicates.map fun (p, _) =>
+      (p, toJson (if ["urgent", exc1, "soft__excepted__r2"].contains p then [["e1"], ["e2"]] else ([] : List (List String))))))]
+  let row (r : String) (i : Nat) (e : String) : Json :=
+    Json.mkObj [("rule", .str r), ("condition", toJson i), ("tuple", toJson [e])]
+  answer ((modelCase β2Env β2R L xAll []).setObjVal! "model" (model two)) == VE.Route.Wire.ok "c"
+    [("verdict", .str "DOES-NOT-FOLLOW"), ("forced", toJson [row "r1" 1 "e1", row "r1" 1 "e2", row "r2" 0 "e1", row "r2" 0 "e2"])]
 
 /-! ## Other kinds -/
 
