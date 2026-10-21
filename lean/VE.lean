@@ -117,6 +117,7 @@ import VE.Calc.Poly
 import VE.Calc.Inline
 import VE.Calc.Identity
 import VE.Calc.IdentityExamples
+import VE.Arith.Examples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples

@@ -18,6 +18,7 @@ import VE.Alternatives.Route
 import VE.Alternatives.Run
 import VE.Alternatives.Validate
 import VE.Alternatives.Wire
+import VE.Arith.Bounded
 import VE.Ask.Binding
 import VE.Ask.Groups
 import VE.Ask.Lines
@@ -651,6 +652,23 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
 #print axioms VE.Alternatives.zip_all_target
+#print axioms VE.Arith.Agrees.funs
+#print axioms VE.Arith.Agrees.preds
+#print axioms VE.Arith.Formula.evalB_sound
+#print axioms VE.Arith.Term.evalB_sound
+#print axioms VE.Arith.Term.evalBs_sound
+#print axioms VE.Arith.agrees_env
+#print axioms VE.Arith.arithOutcome_decided
+#print axioms VE.Arith.arithOutcome_exhausted_iff
+#print axioms VE.Arith.arithOutcome_unbounded_iff
+#print axioms VE.Arith.charge_some
+#print axioms VE.Arith.countLoop_sound
+#print axioms VE.Arith.decideBounded_sound
+#print axioms VE.Arith.decideBounded_work
+#print axioms VE.Arith.quantLoop_false
+#print axioms VE.Arith.quantLoop_true
+#print axioms VE.Arith.range_all
+#print axioms VE.Arith.range_ex
 #print axioms VE.Ask.Answer.groups_view
 #print axioms VE.Ask.Asked.hbind
 #print axioms VE.Ask.Asked.hnames

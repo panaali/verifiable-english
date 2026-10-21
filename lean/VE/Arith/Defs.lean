@@ -141,7 +141,7 @@ def Formula.Scoped (D : Defs) (depth : Nat) (φ : Formula) : Bool :=
   ((Formula.sites 0 φ).filterMap (Site.refusal D D depth none)).isEmpty
 
 /-- The core's admission of definitions and statements: the first refusal in the decoder's order, or none. -/
-def admit (D : Defs) (φs : List Formula) : Option Refusal :=
+def caseRefusal (D : Defs) (φs : List Formula) : Option Refusal :=
   firstRefusal (D.refusals ++ φs.flatMap fun φ =>
     (Formula.sites 0 φ).filterMap (Site.refusal D D 0 (some D.boundedNames)))
 
