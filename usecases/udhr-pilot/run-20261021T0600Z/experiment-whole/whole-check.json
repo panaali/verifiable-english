@@ -1,0 +1,11 @@
+{
+ "load": {
+  "seconds": 1343.9,
+  "coverage_percent": 100
+ },
+ "check": {
+  "seconds": 1309.6,
+  "readings_status": "CONFLICT-FREE",
+  "premises": "model"
+ }
+}

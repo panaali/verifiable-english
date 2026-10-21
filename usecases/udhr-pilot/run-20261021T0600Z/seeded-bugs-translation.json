@@ -1,0 +1,58 @@
+[
+ {
+  "unit": "u061",
+  "fault": "the rule's guard is dropped (every thing, not only the family, would be entitled)",
+  "check": "Lean norm-defaults-status witnesses (u061.entitlement)",
+  "faulty": "FAILS: [(['c1'], 'SETTLED yes', ['UNDECIDED', None])]",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u061",
+  "fault": "the rule's sign is flipped (the entitlement becomes its denial)",
+  "check": "Lean norm-defaults-status witnesses (u061.entitlement)",
+  "faulty": "FAILS: [(['c0'], 'SETTLED no', ['SETTLED', True])]",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u010",
+  "fault": "the two constants of the binary predicate are swapped",
+  "check": "the rendering must contain the expected sentence (or the loader must refuse)",
+  "faulty": "FAILS: expected sentence absent",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u060",
+  "fault": "the uniqueness conjunct is dropped (the unit says only that the family is a natural and fundamental group unit)",
+  "check": "the rendering must contain the expected sentence (or the loader must refuse)",
+  "faulty": "FAILS: expected sentence absent",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u060",
+  "fault": "the uniqueness conjunct names another constant than the family",
+  "check": "the rendering must contain the expected sentence (or the loader must refuse)",
+  "faulty": "refused by the loader: UnknownSymbol: Unknown constant 'common_understanding_of_these_rights_and_freedoms'",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u061",
+  "fault": "the entitlement is given to another thing than the family (the subject u060 names)",
+  "check": "the rendering must contain the expected sentence (or the loader must refuse)",
+  "faulty": "refused by the loader: UnknownSymbol: Unknown constant 'common_understanding_of_these_rights_and_freedoms'",
+  "restored": "all as expected"
+ },
+ {
+  "unit": "u010",
+  "fault": "the unit's meaning names an open term the document does not declare",
+  "check": "load_document",
+  "faulty": "refused: invalid meaning status",
+  "restored": "loads (the part checks)"
+ },
+ {
+  "unit": "u060",
+  "fault": "the unit's meaning names an open term the document does not declare",
+  "check": "load_document",
+  "faulty": "refused: invalid meaning status",
+  "restored": "loads (the part checks)"
+ }
+]
