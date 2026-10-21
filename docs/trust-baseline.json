@@ -1034,6 +1034,13 @@
    "reason": "me-6b: lean/VE/Calc/Units.lean V +60 (D[V] UnitDef 7, UnitEnv 5, decodeFactor 10, decodeUnit 13, decodeV2 14, decode 6; G[V] UnitEnv.find? 2, UnitEnv.values 3); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6b, 2026-10-18",
    "commit": "2296317a9de7ef365523e0f69c442338d9eaf576"
+  },
+  {
+   "class": "V",
+   "lines": 36,
+   "reason": "df-1ac: VE/Defaults/Wire.lean V +36 (untied D[V] entityIds, elaborateFields, PairStatus.label, coherenceFields; untied G[V] PairStatus, defaultsCase); K +0, S +0; CoherenceReplay.verdict/pairs and elaborateRows tied; replays and checks C; diagnostics D[R]",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ac, 2026-10-18",
+   "commit": "c5197da78807f792a47d787133f93e4c59fbe0cd"
   }
  ]
 }
