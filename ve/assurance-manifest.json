@@ -1926,7 +1926,8 @@
       "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
       "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope, and no service mode or route calls it yet (SC-1b)",
-      "lean/VE/Calc/UnitsExamples.lean": "fixtures only: generated #guard checks of the ve-units@2 fixture table (tools/calc_units_fixtures.py) decode each environment and read its identity; no runner path"
+      "lean/VE/Calc/UnitsExamples.lean": "fixtures only: generated #guard checks of the ve-units@2 fixture table (tools/calc_units_fixtures.py) decode each environment and read its identity; no runner path",
+      "lean/VE/Acts/LexicalProofs.lean": "theorems of act-phrases 4.3 (check_spec against the independent Accepts, check_no_clause) about the act check of a JSON act phrase; JSON access only in Accepts and in statements and proofs (not on any runner path)"
     }
   },
   "plan_operations": {
