@@ -48,6 +48,60 @@ then the case's fields (unknown before missing), the format, the rule, the softw
 `NoClaims`; then each value record and each claim entry in order (fields, name, words, source, support, span); then
 `DuplicateName`, `UnknownName` (definitions in order, then claims) and `DuplicateClaimId`.
 
+## Identity and decoder truth tables (recheck 2)
+
+Acceptance and hashing have one condition: every limit, field, type, name and expression check passes, and the
+decoder constructs every identity part in the canonical form of spec 3.3. A case failing a limit is `ResourceLimit`; a malformed
+field, type, literal or expression is `InvalidInput`; the later duplicate, unknown-name and no-claim checks have
+their named error kinds. The `#guard`s in `VE.Calc.RunExamples` evaluate the Lean decoder and digest. Fields planned
+for later ME batches (`source`, `data`, `premises`, counted values and units) are refused by this batch.
+
+| Hashed part or normalisation | Fixture that pins it | Wrong encodings killed by that fixture |
+|---|---|---|
+| Case `format` and profile/environment domain (`calc@0`, `{}`) | pinned I-1 digests; `identityFamilies` | changed spelling, dropped field or domain |
+| Ordered `values` and `claims` arrays | `identityFamilies`: value names/order, claim forms, claim IDs | swapped, dropped or duplicated entry |
+| Value `name`, source selector `stated`/`defined` | `identityFamilies`: value names/order and value source | renamed, selector changed, dropped source |
+| Stated, defined and expression `lit` values: shortest plain decimal, no `sci` or negative zero | `identityFamilies`: each `literalSites` plain/zero family; pinned I-1 digests | raw spelling, unnormalised `sci`, sign or place error |
+| `words` excluded, object keys sorted | `identityFamilies`: words and key order | retaining words or input key order |
+| `pow` exponent, and expression and comparison operator/operand order | `identityFamilies`: pow exponent, operations, comparisons as written; canonical claim guards | number changed to string, operand swap, operator fold |
+| Printed number `[digits, places]` as two canonical decimal strings | `identityFamilies`: every `printedSites` family; explicit canonical-claim guard | number/string type swap, written-place loss, digit/place swap |
+| `rounds` rule (explicit or inherited); `rounds-down`/`rounds-up` name | `identityFamilies`: tie rule and claim forms; canonical-claim guard | dropped rule, wrong inheritance, rule/name swap |
+| Claim `id`, canonical claim and case meaning in each claim digest | `identityFamilies`: claim IDs; pinned R-1/R-2 complete rows | dropped/changed id, claim, meaning or claim-domain prefix |
+| Value `support` (all three enum spellings) | `Wire.supports.all` exact `recordJson` guard; `identityFamilies` support | spelling, type, dropped or duplicated field |
+| Value and claim `span` (ordered JSON natural numbers) | two exact span digests for `[3,5]` plus `identityFamilies` span families | number→string, endpoint swap, dropped or duplicated span |
+| Case `software` | exact `P` digest plus `identityFamilies` software family | spelling, type, dropped or duplicated field |
+
+The exact digest guards test the frozen encoder's output; the support guard covers its whole finite vocabulary.
+The F11 probe's four encoding mutants were survivors before these fixtures and are killed after them. A separate
+`testimony`/`assumption` spelling mutant found in the second hunt is killed by the `Wire.supports.all` guard.
+
+| Decoder check and branch | At boundary; one past; error kind | Guard and mutation it catches |
+|---|---|---|
+| JSON values ≤10,000; depth ≤64 | 10,000/10,001; 64/65, then `InvalidInput`/`ResourceLimit` | `nodes`, `nodes-over`, `depth`, `depth-over`; `<` or constant change |
+| `values` and `claims` ≤512 each | 512/513, then malformed entry/`ResourceLimit` | `values`, `values-over`, `claims`, `claims-over`; `<` or branch dropped |
+| `pow` exponent ≤64 and `sci` exponent absolute value ≤64 | 64/65 and −64/−65, then answer/`ResourceLimit` | `pow`, `pow-over`, `sci`, `sci-over`, positive `sci` 64 guard; sign, constant or branch dropped |
+| W6 digits ≤40: stated and `lit` plain/`sci` | 40/41, then answer/`ResourceLimit` | `digits`, `digits-over`, `digits-lit*`, new `sci` 40/41 guard; constant or form dropped |
+| W6 digits ≤40: `rounds`, `rounds-down`, `rounds-up` plain and `sci` | each 40/41, then answer/`ResourceLimit` | new three-branch guards; `startsWith` narrowed to `==` |
+| Value name, claim ID and `val` reference ≤64 UTF-8 bytes | each 64/65, then answer/`ResourceLimit` | `name`, `name-over`, `id-over`, `val-over`, new claim-ID 64 guard; `<`, constant or key branch dropped |
+| Expression fuel and JSON depth at both entry points | claim nesting 59/60 and defined nesting 60/61: accepted/`ResourceLimit` | new `nestedExpr` guards; fuel 20 mutation at either entry point |
+| Limit order, ahead of field validation | simultaneous exponent/digits/name and digit/unknown field | `order-*` guards; branch reordered or skipped |
+| Record, rule and claim-form checks | accepted edges and `hostile set`, `paths`, `malformed` | one branch dropped or a wrong type admitted |
+
+The wide-array guard evaluates `Wire.size` on 100,000 flat children (over ten times the old largest fixture), so
+the elaborator exercises the accumulator fold without the former `List.sum` stack growth.
+
+The review probes F11 (four encodings), F12 (the narrowed `rounds` branch) and F13 (both expression entry points)
+all survived the old guards before the fix and all nine final source mutants, including the two hunts below, fail
+`lake build VE.Calc.RunExamples` after it. Each mutant build was capped at 600 seconds; the original source was
+restored and rebuilt successfully. Hunt 1 tried branch-specific decoder boundaries and found the missing accepted
+64-byte claim ID; its 64-byte rejection mutant now fails the `name64` claim-ID guard. Hunt 2 tried enum-specific
+identity spellings and found that `testimony` and `assumption` could change while `observation` stayed correct; its
+mutant now fails the guard over the whole `Wire.supports` vocabulary. No form from either hunt remains open.
+
+FM1 reproduced on ve-mac-1 before the fix (`VE.Calc.RunExamples` exited 134, deep recursion in `Wire.size`). After
+the accumulator fold, the same Mac test command built Lean and reported `151 passed`; the FM1 failure grep had no
+match. The 100,000-child `Wire.size` guard is the permanent FM1 regression.
+
 ## Trust (R16)
 
 K +0, S +14, untied V +134, trusted +148 (`trust_map.py --check`: PASS; allowance recorded; FOLLOW-UPS "## me-2"
