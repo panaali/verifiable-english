@@ -13659,6 +13659,12 @@
         "VE.Calc.identityValues"
       ]
     },
+    "VE/Calc/IdentityExamples.lean": {
+      "T": [
+        "VE.Calc.IdentityExamples.ds",
+        "VE.Calc.IdentityExamples.κ"
+      ]
+    },
     "VE/Calc/FourierMotzkin.lean": {
       "G[R]": [
         "VE.Calc.FM.maxFacts",

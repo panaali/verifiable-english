@@ -488,6 +488,7 @@
 'VE.Calc.Frac.pair_some' depends on axioms: [propext]
 'VE.Calc.Frac.pow?_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Identity.compare_within' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Calc.IdentityExamples.square_not_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Inlined.Agrees.ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Inlined.Agrees.undefined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Inlined.Faults.exhausted' depends on axioms: [propext]

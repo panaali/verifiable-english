@@ -3323,6 +3323,11 @@ theorem VE.Calc.Identity.compare_within
             fa.fst.mul? fb.snd = Option.some l ∧ fb.fst.mul? fa.snd = Option.some s ∧ l.Within ∧ s.Within ∧ r = (l == s)
   -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.ofExpr?@VE.Calc.Poly VE.Calc.Identity.compare@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.mul?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.instDecidableEqMono@VE.Calc.Poly
   -- expr 51563669
+theorem VE.Calc.IdentityExamples.square_not_identity
+  ¬VE.Calc.IsIdentity [{ name := "x", source := VE.Calc.Source.free }] ((VE.Calc.Expr.val "x").pow 2)
+      (VE.Calc.Expr.val "x")
+  -- uses VE.Calc.Decl.mk@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.pow@VE.Calc.Syntax VE.Calc.Expr.val@VE.Calc.Syntax VE.Calc.IsIdentity@VE.Calc.Identity VE.Calc.Source.free@VE.Calc.Decls
+  -- expr 188713625
 theorem VE.Calc.Inlined.Agrees.ok
   ∀ {κ : String → Rat} {σ : VE.Calc.Values} {t : VE.Calc.Inlined},
     VE.Calc.Inlined.Agrees κ σ t →
