@@ -105,5 +105,17 @@ sum or a product before like terms merge; a coefficient past the digit limit (`1
 only within the limits. `Frac.ofExpr_within`, `Poly.ofExpr_within` and `Identity.compare_within`: an answer other than
 `none` is given only when every limit check passed (the node count, and every polynomial on the way `Within`). Past a
 limit `Identity.compare` is `none`, and `identityCheck` is false: never an identity. Fixtures:
-`tests/test_calc_algebra.py`, each limit check at its limit and one past it (`LIMIT_CHECKS`, `LIMITS`). Inlining named values (§2.7), the meaning `IsIdentity` and the
-runner with its point search are me-9b's.
+`tests/test_calc_algebra.py`, each limit check at its limit and one past it (`LIMIT_CHECKS`, `LIMITS`).
+
+## Inlining and identities over named values (`Inline`, `Identity`; me-9b)
+
+`Expr.inline` (§2.7) replaces every name outside `keep` by its stated or counted value as a literal, or by its inlined
+definition; each declaration is inlined once into a table later ones read, so a chain of definitions is shared, not
+copied. `Expr.inline_sound`, `Claim.inline_sound`: under `assign` (the kept names given κ's values) the inlined
+expression or claim means what the original means. `identityRun` (§8.2) inlines both sides with the free values kept
+(the first faulty side names `undefined` or the budget's unknown), then: past the normaliser's limits, unknown
+(`limit .polyTerms`) with a stop that names the node limit or the form's limits (`IdentityStop.text`, review F4); a
+side with a divisor whose numerator normalises to zero, `undefined` before `holds` (`Expr.zeroDivisor_sound`, review
+F3); equal normal forms, `holds` (`IsIdentity`); else the first of 13 points where both sides denote and differ,
+`fails` (`NotIdentity`), or `identityNotShown`. The names a side reads and its zero divisors are looked for only after
+the normaliser accepted it. `identityRun_holds`, `_fails`, `_undefined` and `_unknown` state what each outcome means.
