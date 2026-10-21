@@ -1,0 +1,59 @@
+{
+  "allow": [
+    {
+      "definition": "VE.Calc.Check.UnknownCause",
+      "operator": "and-or",
+      "reason": "not decidable, so no evaluated check reads it: Claim.Overflows and Claim.ReadsExhausted quantify over the rationals; Check.run_sound and Run.unknown_named prove it of every runner outcome"
+    },
+    {
+      "definition": "VE.Calc.Check.UnknownCause",
+      "operator": "or-and",
+      "reason": "not decidable, so no evaluated check reads it: Claim.Overflows and Claim.ReadsExhausted quantify over the rationals; Check.run_sound and Run.unknown_named prove it of every runner outcome"
+    },
+    {
+      "definition": "VE.Calc.Check.UnknownCause",
+      "operator": "arm-true",
+      "reason": "not decidable, so no evaluated check reads it: Claim.Overflows and Claim.ReadsExhausted quantify over the rationals; Check.run_sound and Run.unknown_named prove it of every runner outcome"
+    },
+    {
+      "definition": "VE.Calc.Check.UnknownCause",
+      "operator": "arm-false",
+      "reason": "not decidable, so no evaluated check reads it: Claim.Overflows and Claim.ReadsExhausted quantify over the rationals; Check.run_sound and Run.unknown_named prove it of every runner outcome"
+    },
+    {
+      "definition": "VE.Calc.Check.UnknownCause",
+      "operator": "eq-ne",
+      "reason": "not decidable, so no evaluated check reads it: Claim.Overflows and Claim.ReadsExhausted quantify over the rationals; Check.run_sound and Run.unknown_named prove it of every runner outcome"
+    },
+    {
+      "definition": "VE.Calc.Check.UnknownCause",
+      "operator": "eq-le",
+      "reason": "not a program: UnknownReason has no order, so Lean cannot elaborate the mutant (failed to synthesize)"
+    },
+    {
+      "definition": "VE.Calc.Check.OutcomeMeans",
+      "operator": "arm-true",
+      "reason": "the decided arm's mutant is killed by the RunExamples guard on a decided row; the unknown arm reads UnknownCause, which is not decidable (see UnknownCause)"
+    },
+    {
+      "definition": "VE.Calc.Check.OutcomeMeans",
+      "operator": "arm-false",
+      "reason": "the decided arm's mutant is killed by the RunExamples guard on a decided row; the unknown arm reads UnknownCause, which is not decidable (see UnknownCause)"
+    },
+    {
+      "definition": "VE.Calc.Check.OutcomeMeans",
+      "operator": "eq-le",
+      "reason": "not a program: Verdict has no order, so Lean cannot elaborate the mutant (failed to synthesize)"
+    },
+    {
+      "definition": "VE.Calc.Wire.comparisons",
+      "operator": "bool-flip",
+      "reason": "equivalent for eq only: equality is symmetric, so swapping its operands changes no verdict; the lt, le, gt and ge flips are killed by the order fixtures"
+    },
+    {
+      "definition": "VE.Calc.Wire.entry",
+      "operator": "list-first",
+      "reason": "equivalent for the emptiness test: (id.take 1).isEmpty is id.isEmpty; the mutant in id.all is killed by claim-id-last"
+    }
+  ]
+}
