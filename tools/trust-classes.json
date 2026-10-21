@@ -13648,6 +13648,51 @@
         "VE.Calc.vprod"
       ]
     },
+    "VE/Calc/Inline.lean": {
+      "S": [
+        "VE.Calc.assign",
+        "VE.Calc.freeNames"
+      ],
+      "C": [
+        "VE.Calc.Claim.inline",
+        "VE.Calc.Decl.inlineUnder",
+        "VE.Calc.Expr.bin2",
+        "VE.Calc.Expr.inline",
+        "VE.Calc.Expr.subst",
+        "VE.Calc.Inlined",
+        "VE.Calc.Inlined.at",
+        "VE.Calc.inlineTable"
+      ],
+      "P": [
+        "VE.Calc.Inlined.Agrees",
+        "VE.Calc.Inlined.Faults"
+      ]
+    },
+    "VE/Calc/Identity.lean": {
+      "S": [
+        "VE.Calc.IsIdentity",
+        "VE.Calc.NotIdentity"
+      ],
+      "G[R]": [
+        "VE.Calc.IdentityRow.reason",
+        "VE.Calc.IdentityStop",
+        "VE.Calc.IdentityStop.text"
+      ],
+      "C": [
+        "VE.Calc.Expr.zeroDivisor",
+        "VE.Calc.IdentityRow",
+        "VE.Calc.identityDecide",
+        "VE.Calc.identityPoint",
+        "VE.Calc.identityRun",
+        "VE.Calc.identityValues"
+      ]
+    },
+    "VE/Calc/IdentityExamples.lean": {
+      "T": [
+        "VE.Calc.IdentityExamples.ds",
+        "VE.Calc.IdentityExamples.κ"
+      ]
+    },
     "VE/Calc/FourierMotzkin.lean": {
       "G[R]": [
         "VE.Calc.FM.maxFacts",
@@ -13721,6 +13766,44 @@
         "VE.Calc.DeriveExamples.yAbove"
       ]
     },
+    "VE/Calc/Lower.lean": {
+      "S": [
+        "VE.Calc.Follows",
+        "VE.Calc.HasCounterexample"
+      ],
+      "C": [
+        "VE.Calc.Claim.facts",
+        "VE.Calc.Claim.lower",
+        "VE.Calc.Expr.linear",
+        "VE.Calc.QFact.sub",
+        "VE.Calc.QLin.isConst"
+      ]
+    },
+    "VE/Calc/LowerExamples.lean": {
+      "T": [
+        "VE.Calc.LowerExamples.P",
+        "VE.Calc.LowerExamples.agrees",
+        "VE.Calc.LowerExamples.count",
+        "VE.Calc.LowerExamples.ds",
+        "VE.Calc.LowerExamples.eq",
+        "VE.Calc.LowerExamples.fss",
+        "VE.Calc.LowerExamples.ge",
+        "VE.Calc.LowerExamples.gt",
+        "VE.Calc.LowerExamples.k",
+        "VE.Calc.LowerExamples.le",
+        "VE.Calc.LowerExamples.lin",
+        "VE.Calc.LowerExamples.linPts",
+        "VE.Calc.LowerExamples.links",
+        "VE.Calc.LowerExamples.lt",
+        "VE.Calc.LowerExamples.mixed",
+        "VE.Calc.LowerExamples.p1",
+        "VE.Calc.LowerExamples.pts",
+        "VE.Calc.LowerExamples.r4",
+        "VE.Calc.LowerExamples.rBelow",
+        "VE.Calc.LowerExamples.v",
+        "VE.Calc.LowerExamples.xy"
+      ]
+    },
     "VE/Compose/ProfilesMain.lean": {
       "G[V]": [
         "main",
@@ -13775,6 +13858,23 @@
         "VE.Acts.Lexical.pieceToks",
         "VE.Acts.Lexical.rawLex",
         "VE.Acts.Lexical.slotOf?"
+      ]
+    },
+    "VE/Acts/LexicalProofs.lean": {
+      "S": [
+        "VE.Acts.Lexical.Accepts"
+      ],
+      "P": [
+        "VE.Acts.Lexical.decAccepts",
+        "VE.Acts.Lexical.decOkAnd",
+        "VE.Acts.Lexical.decWord",
+        "VE.Acts.Lexical.out",
+        "VE.Acts.Lexical.pieceTok",
+        "VE.Acts.Lexical.splitL",
+        "VE.Acts.Lexical.wordsL"
+      ],
+      "T": [
+        "VE.Acts.Lexical.acc"
       ]
     },
     "VE/Acts/LexicalExamples.lean": {
@@ -13882,108 +13982,6 @@
             "VE.Service.registry_modes"
           ]
         }
-      ]
-    },
-    "VE/Defaults/Wire.lean": {
-      "C": [
-        "VE.Defaults.Wire.CoherenceReplay",
-        "VE.Defaults.Wire.CoherenceReplay.coherent",
-        "VE.Defaults.Wire.CoherenceReplay.collides",
-        "VE.Defaults.Wire.Collision",
-        "VE.Defaults.Wire.DefaultsView",
-        "VE.Defaults.Wire.ViewRest",
-        "VE.Defaults.Wire.bindPair",
-        "VE.Defaults.Wire.collisionOf",
-        "VE.Defaults.Wire.pairCertsOf",
-        "VE.Defaults.Wire.pieceWith",
-        "VE.Defaults.Wire.replayCoherence",
-        "VE.Defaults.Wire.replayCoherenceOn",
-        "VE.Defaults.Wire.viewOf"
-      ],
-      "D[R]": [
-        "VE.Defaults.Wire.notWellFormedText",
-        "VE.Defaults.Wire.pairText",
-        "VE.Defaults.Wire.viewRest",
-        "VE.Defaults.Wire.weighingText"
-      ],
-      "D[V]": [
-        "VE.Defaults.Wire.PairStatus.label",
-        "VE.Defaults.Wire.coherenceFields",
-        "VE.Defaults.Wire.elaborateFields",
-        "VE.Defaults.Wire.entityIds"
-      ],
-      "G[V]": [
-        "VE.Defaults.Wire.PairStatus",
-        "VE.Defaults.Wire.defaultsCase",
-        {
-          "name": "VE.Defaults.Wire.CoherenceReplay.pairs",
-          "tied": [
-            "VE.Defaults.Wire.coherence_collision_named",
-            "VE.Defaults.Wire.coherence_collision_shown",
-            "VE.Defaults.Wire.defaults_coherence_sound"
-          ]
-        },
-        {
-          "name": "VE.Defaults.Wire.CoherenceReplay.verdict",
-          "tied": [
-            "VE.Defaults.Wire.defaults_coherence_sound"
-          ]
-        },
-        {
-          "name": "VE.Defaults.Wire.elaborateRows",
-          "tied": [
-            "VE.Defaults.Wire.elaborateRows_eq"
-          ]
-        }
-      ]
-    },
-    "VE/Defaults/WireExamples.lean": {
-      "T": [
-        "VE.Defaults.WireFixtures.ans",
-        "VE.Defaults.WireFixtures.answer",
-        "VE.Defaults.WireFixtures.boundJ",
-        "VE.Defaults.WireFixtures.collJ",
-        "VE.Defaults.WireFixtures.dγb",
-        "VE.Defaults.WireFixtures.envW",
-        "VE.Defaults.WireFixtures.fJ",
-        "VE.Defaults.WireFixtures.model",
-        "VE.Defaults.WireFixtures.pairJ",
-        "VE.Defaults.WireFixtures.pairsJ",
-        "VE.Defaults.WireFixtures.req",
-        "VE.Defaults.WireFixtures.rest",
-        "VE.Defaults.WireFixtures.rulesJ",
-        "VE.Defaults.WireFixtures.traceJ",
-        "VE.Defaults.WireFixtures.αEnv",
-        "VE.Defaults.WireFixtures.αR",
-        "VE.Defaults.WireFixtures.γ'Env",
-        "VE.Defaults.WireFixtures.γ'R",
-        "VE.Defaults.WireFixtures.γ2Coll",
-        "VE.Defaults.WireFixtures.γ2Env",
-        "VE.Defaults.WireFixtures.γ2R",
-        "VE.Defaults.WireFixtures.γ3Coll",
-        "VE.Defaults.WireFixtures.γ3R",
-        "VE.Defaults.WireFixtures.γR",
-        "VE.Defaults.WireFixtures.γbCert",
-        "VE.Defaults.WireFixtures.γbR",
-        "VE.Defaults.WireFixtures.δEnv",
-        "VE.Defaults.WireFixtures.δR"
-      ]
-    },
-    "VE/Acts/LexicalProofs.lean": {
-      "S": [
-        "VE.Acts.Lexical.Accepts"
-      ],
-      "P": [
-        "VE.Acts.Lexical.decAccepts",
-        "VE.Acts.Lexical.decOkAnd",
-        "VE.Acts.Lexical.decWord",
-        "VE.Acts.Lexical.out",
-        "VE.Acts.Lexical.pieceTok",
-        "VE.Acts.Lexical.splitL",
-        "VE.Acts.Lexical.wordsL"
-      ],
-      "T": [
-        "VE.Acts.Lexical.acc"
       ]
     },
     "VE/Scope/Govern.lean": {
@@ -14183,49 +14181,89 @@
         "VE.Calc.UnitsExamples.ρ"
       ]
     },
-    "VE/Calc/Inline.lean": {
-      "S": [
-        "VE.Calc.assign",
-        "VE.Calc.freeNames"
-      ],
+    "VE/Defaults/Wire.lean": {
       "C": [
-        "VE.Calc.Claim.inline",
-        "VE.Calc.Decl.inlineUnder",
-        "VE.Calc.Expr.bin2",
-        "VE.Calc.Expr.inline",
-        "VE.Calc.Expr.subst",
-        "VE.Calc.Inlined",
-        "VE.Calc.Inlined.at",
-        "VE.Calc.inlineTable"
+        "VE.Defaults.Wire.CoherenceReplay",
+        "VE.Defaults.Wire.CoherenceReplay.coherent",
+        "VE.Defaults.Wire.CoherenceReplay.collides",
+        "VE.Defaults.Wire.Collision",
+        "VE.Defaults.Wire.DefaultsView",
+        "VE.Defaults.Wire.ViewRest",
+        "VE.Defaults.Wire.bindPair",
+        "VE.Defaults.Wire.collisionOf",
+        "VE.Defaults.Wire.pairCertsOf",
+        "VE.Defaults.Wire.pieceWith",
+        "VE.Defaults.Wire.replayCoherence",
+        "VE.Defaults.Wire.replayCoherenceOn",
+        "VE.Defaults.Wire.viewOf"
       ],
-      "P": [
-        "VE.Calc.Inlined.Agrees",
-        "VE.Calc.Inlined.Faults"
+      "D[R]": [
+        "VE.Defaults.Wire.notWellFormedText",
+        "VE.Defaults.Wire.pairText",
+        "VE.Defaults.Wire.viewRest",
+        "VE.Defaults.Wire.weighingText"
+      ],
+      "D[V]": [
+        "VE.Defaults.Wire.PairStatus.label",
+        "VE.Defaults.Wire.coherenceFields",
+        "VE.Defaults.Wire.elaborateFields",
+        "VE.Defaults.Wire.entityIds"
+      ],
+      "G[V]": [
+        "VE.Defaults.Wire.PairStatus",
+        "VE.Defaults.Wire.defaultsCase",
+        {
+          "name": "VE.Defaults.Wire.CoherenceReplay.pairs",
+          "tied": [
+            "VE.Defaults.Wire.coherence_collision_named",
+            "VE.Defaults.Wire.coherence_collision_shown",
+            "VE.Defaults.Wire.defaults_coherence_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.CoherenceReplay.verdict",
+          "tied": [
+            "VE.Defaults.Wire.defaults_coherence_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.elaborateRows",
+          "tied": [
+            "VE.Defaults.Wire.elaborateRows_eq"
+          ]
+        }
       ]
     },
-    "VE/Calc/Identity.lean": {
-      "S": [
-        "VE.Calc.IsIdentity",
-        "VE.Calc.NotIdentity"
-      ],
-      "G[R]": [
-        "VE.Calc.IdentityRow.reason",
-        "VE.Calc.IdentityStop",
-        "VE.Calc.IdentityStop.text"
-      ],
-      "C": [
-        "VE.Calc.Expr.zeroDivisor",
-        "VE.Calc.IdentityRow",
-        "VE.Calc.identityDecide",
-        "VE.Calc.identityPoint",
-        "VE.Calc.identityRun",
-        "VE.Calc.identityValues"
-      ]
-    },
-    "VE/Calc/IdentityExamples.lean": {
+    "VE/Defaults/WireExamples.lean": {
       "T": [
-        "VE.Calc.IdentityExamples.ds",
-        "VE.Calc.IdentityExamples.κ"
+        "VE.Defaults.WireFixtures.ans",
+        "VE.Defaults.WireFixtures.answer",
+        "VE.Defaults.WireFixtures.boundJ",
+        "VE.Defaults.WireFixtures.collJ",
+        "VE.Defaults.WireFixtures.dγb",
+        "VE.Defaults.WireFixtures.envW",
+        "VE.Defaults.WireFixtures.fJ",
+        "VE.Defaults.WireFixtures.model",
+        "VE.Defaults.WireFixtures.pairJ",
+        "VE.Defaults.WireFixtures.pairsJ",
+        "VE.Defaults.WireFixtures.req",
+        "VE.Defaults.WireFixtures.rest",
+        "VE.Defaults.WireFixtures.rulesJ",
+        "VE.Defaults.WireFixtures.traceJ",
+        "VE.Defaults.WireFixtures.αEnv",
+        "VE.Defaults.WireFixtures.αR",
+        "VE.Defaults.WireFixtures.γ'Env",
+        "VE.Defaults.WireFixtures.γ'R",
+        "VE.Defaults.WireFixtures.γ2Coll",
+        "VE.Defaults.WireFixtures.γ2Env",
+        "VE.Defaults.WireFixtures.γ2R",
+        "VE.Defaults.WireFixtures.γ3Coll",
+        "VE.Defaults.WireFixtures.γ3R",
+        "VE.Defaults.WireFixtures.γR",
+        "VE.Defaults.WireFixtures.γbCert",
+        "VE.Defaults.WireFixtures.γbR",
+        "VE.Defaults.WireFixtures.δEnv",
+        "VE.Defaults.WireFixtures.δR"
       ]
     }
   }
