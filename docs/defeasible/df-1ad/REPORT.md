@@ -88,10 +88,10 @@ Option, or a field list that loses its expected type. Every list mutant that ela
 | `DEFAULTS.md` | 35 |
 | `trust-classes.json`, `ve/assurance-manifest.json` | 79 |
 | `mutants.json`, allow file | 49 |
-| DELTA, this report | about 120 |
+| DELTA, this report | 161 |
 
-That is about 730 lines, above the ~600 guideline. I measured after (2), which was restored code rather than new
-work, and cut (3) there. With the certificate kind alone, the item would have been about 520 lines, and df-1ae would
+That is about 770 lines, above the ~600 guideline. I measured after (2), which was restored code rather than new
+work, and cut (3) there. With the certificate kind alone, the item would have been about 560 lines, and df-1ae would
 carry the model kind as well as the row, the routing, the shapes and the encoders.
 
 ## 5. Next items
