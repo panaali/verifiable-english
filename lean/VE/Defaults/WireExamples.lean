@@ -2,10 +2,10 @@ import VE.Defaults.Wire
 import VE.Defaults.Examples
 
 /-! The wire answers of DF-1a's fixtures (docs/spec/defeasible.md 8.1, 5): DF-θ, the view's diagnostics, and the
-`defaults-elaborate`, `defaults-coherence` and `defaults-certificate` answers of DF-α to DF-ω, each computed by
-`viewOf` and `defaultsCase` on a JSON request, with the documents of `Examples.lean`, and three more: DF-γb (DF-γ with
-r1 guarded by `⊥`, so the pair is kept apart by its guard), DF-γ2 (two pairs, a two-entity tuple) and DF-γ3 (two pairs
-that share their second rule, one kept apart by its guard).
+`defaults-elaborate`, `defaults-coherence`, `defaults-certificate` and `defaults-model` answers of DF-α to DF-ω, each
+computed by `viewOf` and `defaultsCase` on a JSON request, with the documents of `Examples.lean`, and three more: DF-γb
+(DF-γ with r1 guarded by `⊥`, so the pair is kept apart by its guard), DF-γ2 (two pairs, a two-entity tuple) and DF-γ3
+(two pairs that share their second rule, one kept apart by its guard).
 
 Certificates are written here and bound to their premise list as a producer binds them (`boundJ`): `cNeeds` proves
 `∀a. ¬excepted_r1(a)` from `Dflt_T`'s premise, `cStrict` proves `∀a. e → e`, and DF-γb's pair (DF-γ with r1 guarded
@@ -232,9 +232,27 @@ def excUrgent : VE.Formula := .all "assistant" (.implies (.unary exc1 (.var 0)) 
     ("model", model (modelJ L [])), ("strict_model", model (modelJ L [exc1]))]) ==
   follows "needs" "long" [excN "r1"]
 
+/-! ## `defaults-model` (DF-β (i), DF-α's default model) -/
+
+/-- A `defaults-model` request with no premises, the conclusion `φ` and the one-element situation `on`. -/
+def modelCase (env : Json) (rules : List String) (L : VE.NormDefaults.Wire.LayeredU) (φ : VE.Formula)
+    (on : List String) : Json :=
+  req env rules "defaults-model" [("premises", toJson ([] : List Json)), ("conclusion", fJ φ), ("model", model (modelJ L on))]
+def doesNotFollow (forced : List (String × Nat)) : Json := VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-FOLLOW"),
+  ("forced", toJson (forced.map fun (r, i) => Json.mkObj [("rule", .str r), ("condition", toJson i),
+    ("tuple", toJson ["e_assistant"])]))]
+-- DF-β (i): the countermodel {urgent, excepted_r1} checks, with r1's exception forced by condition 0 (`urgent`)
+#guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow [("r1", 0)]
+-- {excepted_r1} without urgent violates `Dflt_T`, and the empty domain satisfies the conclusion: UNKNOWN, no `forced`
+#guard holds dβ fun L => answer (modelCase βEnv βR L xAll [exc1]) == VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN")]
+#guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (emptyJ L))) ==
+  VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN")]
+-- DF-α's default model {} refutes `∀a. excepted_r1(a)` with no exception forced (DE6's short form)
+#guard holds dα fun L => answer (modelCase αEnv αR L (.all "assistant" (.unary exc1 (.var 0))) []) == doesNotFollow []
+
 /-! ## Other kinds -/
 
-#guard ["defaults-model", "defaults-other", "norm-defaults-elaborate"].all fun k =>
+#guard ["defaults-other", "norm-defaults-elaborate"].all fun k =>
   answer (req αEnv αR k) == .str "none"
 
 end VE.Defaults.WireFixtures
