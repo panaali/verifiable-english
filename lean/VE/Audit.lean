@@ -50,6 +50,7 @@ import VE.Calc.Derive
 import VE.Calc.Dimension
 import VE.Calc.Eval
 import VE.Calc.Identity
+import VE.Calc.IdentityExamples
 import VE.Calc.Inline
 import VE.Calc.Linear
 import VE.Calc.Poly
@@ -878,6 +879,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Frac.pair_some
 #print axioms VE.Calc.Frac.pow?_sound
 #print axioms VE.Calc.Identity.compare_within
+#print axioms VE.Calc.IdentityExamples.square_not_identity
 #print axioms VE.Calc.Inlined.Agrees.ok
 #print axioms VE.Calc.Inlined.Agrees.undefined
 #print axioms VE.Calc.Inlined.Faults.exhausted

@@ -3578,7 +3578,7 @@ module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bce
 493:0-498:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 500:0-507:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 509:0-513:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit e426a967b05398d4425d4c1978ea9446e71bd6943eb2d4f981b9b423d5ee5af1
+module VE.Audit 78ced1da9eeec1cf2790973a53808915e3627fae5be9aea2fad5b78c38c7975e
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -3916,9 +3916,10 @@ module VE.Calc.Identity 7b817d719293c5617a48088463516c1e487783804273438a59772681
 172:0-182:62 theorem VE.Calc.identityRun_fails@VE.Calc.Identity
 184:0-205:43 theorem VE.Calc.identityRun_undefined@VE.Calc.Identity
 207:0-228:80 theorem VE.Calc.identityRun_unknown@VE.Calc.Identity
-module VE.Calc.IdentityExamples 0fcd03d66643bb7b9bff0f31c9914bdbcb949e058a2b3fd2f36e41b3e68689ed
-9:0-11:56 def VE.Calc.IdentityExamples.ds@VE.Calc.IdentityExamples
+module VE.Calc.IdentityExamples 82e27f249eae42076d6d6cae57eb4e648f4b4410fa07dac48de6f8efa2d66449
+9:0-11:70 def VE.Calc.IdentityExamples.ds@VE.Calc.IdentityExamples
 12:0-12:52 def VE.Calc.IdentityExamples.κ@VE.Calc.IdentityExamples
+21:0-28:21 theorem VE.Calc.IdentityExamples.square_not_identity@VE.Calc.IdentityExamples
 module VE.Calc.Inline d11223a5ad49b2993c3e78312bcb065ad833dfdaaf028dda0de9d0c541c5a822
 10:0-12:85 def VE.Calc.freeNames@VE.Calc.Inline
 14:0-16:84 def VE.Calc.assign@VE.Calc.Inline
