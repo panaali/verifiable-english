@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36413,
+    "total_lines": 36772,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -384,6 +384,28 @@
           "caseTexts",
           "parseCases"
         ]
+      },
+      {
+        "file": "lean/VE/Defaults/Wire.lean",
+        "lines": 359,
+        "sha256": "30d728c3724dcce4bb1812d65fc2a8850bf28e1e7070b2a76e794e055ba80ac7",
+        "ranges": [
+          [
+            1,
+            359
+          ]
+        ],
+        "declarations": [
+          "viewRest",
+          "viewOf",
+          "collisionOf",
+          "bindPair",
+          "pairCertsOf",
+          "replayCoherenceOn",
+          "replayCoherence",
+          "defaultsCase"
+        ],
+        "reason": "defaults-* kinds on the layered source (docs/spec/defeasible.md 7.2): the source through the pinned decodeLayered, then the request's pair list (certificates bound by bindingOk) and collision (situationX, decodeFilling); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/Admission.lean",
@@ -1879,7 +1901,6 @@
       "lean/VE/Readings/CompanionsExamples.lean": "readings-defaults RD-4a: #guard fixtures that build JSON documents and environments for the merge and the split; no decoder",
       "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean.",
       "lean/VE/Readings/ComponentsExamples.lean": "readings-defaults RD-4b: #guard fixtures of 1.10's rule and of the document order of decided units, building a JSON document of unit ids; no decoder",
-      "lean/VE/Calc/UnitsExamples.lean": "fixtures only: generated #guard checks of the ve-units@2 fixture table (tools/calc_units_fixtures.py) decode each environment and read its identity; no runner path",
       "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path",
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Schemas/Metered.lean": "the metered mode's response shape (metered.json) and the JSON constants of its three results; test tooling beside lean/ResponseShape.lean, not on any runner path",
@@ -1892,13 +1913,15 @@
       "lean/VE/Readings/SupVerdictsExamples.lean": "computed regression guards for the superposed verdict and English plan; no production runner imports this file",
       "lean/VE/NormDefaults/Packs.lean": "encoder only: premise packs (PK-1); `labelledJson` and `elaborateArrays` write the layered elaborate's `soft` and `rights` arrays from Lean values; it reads no request JSON (the packs come from the pinned Layered.lean decoders)",
       "lean/VE/Defaults/Examples.lean": "test fixtures only: df-1a's `#guard`s parse their soft documents and finite situations from JSON literals and run the pinned decoders (`decodeSoftU`, `situationX`, `decodeFilling`) on them; no service mode reads this file",
+      "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's `#guard`s build defaults-* case JSON and a certificate from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file",
       "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d) and literal scenario cases for runValidateU (et-7b, T12 and T12b); no runtime decoding",
       "lean/VE/Compose/ProfilesMain.lean": "generator only: prints VE.Compose.profileTable and the profiles an environment lists as JSON for ve/profile_table.json; reads no request and is not a service decoder",
       "lean/VE/NormDefaults/PacksExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 compare the kind table's answers as compressed JSON; no runner path",
       "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 run the kind table on a decoded soft source with a case JSON and compare compressed answers; no runner path",
       "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
+      "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope, and no service mode or route calls it yet (SC-1b)",
-      "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)"
+      "lean/VE/Calc/UnitsExamples.lean": "fixtures only: generated #guard checks of the ve-units@2 fixture table (tools/calc_units_fixtures.py) decode each environment and read its identity; no runner path"
     }
   },
   "plan_operations": {
