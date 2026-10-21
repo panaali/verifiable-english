@@ -10,7 +10,7 @@ into the layout so that one body serves both; and item sc-1ab, the effects on a 
 lead-in's part to each item's part, conditions and `own`, the order table). No route or service mode calls the scope
 parts yet. Item sc-1ac adds `govern` and the block's admission; the precedence graph step, the theorems about what
 `govern` writes and the run path `governFast` are sc-1ad, the anchor and label reaches and the block's anchor checks
-sc-3ab, and the document mode SC-1b.
+sc-3ab, and the document mode SC-1b (below).
 
 ## `VE/Layout/List.lean`: what the source bytes say
 
@@ -139,6 +139,27 @@ as the spec states them on objects no JSON parser builds (F-raw below); they wai
 From sc-3ab: `anchor_reach_iff` and `label_reach_iff` (spec 5.5: a heading's reach and a label's reach are the
 layout's). `title_identity` fails as spec 5.5 states it on the same objects (F-raw-title below) and waits for the
 same decision (sc-3ac).
+
+## `VE/Scope/Wire.lean` and `VE/Scope/Admission.lean`: the document mode (SC-1b)
+
+The Lean document mode (`VE.Service.Document.checkDoc`) admits `scope@0`, a wrapper at step 1b that AR-10's
+profile table registers (`VE/Compose/Dispatch.lean`, `gate_scope`: the list's route without it, never an outside
+route or discourse). For a document listing it the mode gates the profiles by the table, decodes the `scope` block
+(`decodeScope`: the block's governors, list names and anchors, and the layout of exactly the document's units read
+from its source bytes), runs `governFast`, answers the governed units on the environment without `scope@0`
+(`checkCore`, the entry as it was), and folds each governor unit's status (`foldGovernors`). A governor unit
+without content, meaning `specified`, that hosts a frame, reguard or carve-out takes `governorStatus`: the weakest
+status of the units its governors cover, UNFORMALISED when one has none or there is none. The identities are the
+document's as written, block and parts included.
+
+Theorems (spec 5.2): `governor_status_weakest` (a folded status is the weakest of the covered units' and one of
+them has it), `governor_status_none`, `decodeScope_layout` (the layout's ids are the document's unit ids, in order),
+`scope_admission` (on a `scope@0` document the mode's answer is the fold of its answer on `govern`'s units; the call
+is `governFast`, carried by `governFast_eq`) and `scope_absent_unchanged` (without `scope@0` the mode is `checkCore`).
+`decodeScope_bound` and `decoded_no_new_symbols` wait for sc-1ae (`BlockBound`, `HasStr`). Fixtures:
+`VE/Scope/WireExamples.lean` (every reach and effect, each wire fault, the layout, the status table) and
+`VE/Service/ScopeExamples.lean` (F1-doc, F1-bad, F1-off, the row's refusals and the identities on a small part
+document); `tests/test_scope_document.py` runs the pilot's F1 part document end to end.
 
 ## `VE/Scope/Examples.lean`: the fixtures
 

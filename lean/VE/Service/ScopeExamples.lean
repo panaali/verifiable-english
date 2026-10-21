@@ -1,4 +1,4 @@
-import VE.Scope.Admission
+import VE.Service.Document
 
 /-! scope@0 in the document mode (SC-1b; docs/spec/scope.md 1.6, 3, 5.2 and 7.2) on a small part document built as a
 request carries it: a lead-in "Agents must not:" framing two items, and a closing sentence. F1-doc (the governor's
