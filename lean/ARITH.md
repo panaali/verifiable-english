@@ -29,8 +29,8 @@ and a comparison of a term without a value does not hold. `Defs.Means D φ` is "
 
 ## Boundedness and admission
 
-A statement is bounded when it has no "for every whole number" or "there is an integer" without a range, here or in
-any definition it calls. A bounded statement can be decided by trying each value of each range (me-12aa); an
+A statement is bounded when it has no "for every whole number", "there is a whole number", "for every integer" or
+"there is an integer" without a range, here or in any definition it calls. A bounded statement can be decided by trying each value of each range (me-12aa); an
 unbounded one is stated, not decided, and is proved only by an import (ME-13).
 
 The decoder (me-12b) admits a case only when its definitions are well formed and every statement is scoped; it
