@@ -4147,7 +4147,7 @@ module VE.Calc.UnitsExamples 52ee203d1ad10a8d40cc988ce22e5c7ca7ee58b9c57eccb5cf8
 51:0-52:236 def VE.Calc.UnitsExamples.miles@VE.Calc.UnitsExamples
 53:0-54:189 def VE.Calc.UnitsExamples.i2@VE.Calc.UnitsExamples
 55:0-56:189 def VE.Calc.UnitsExamples.i2Reordered@VE.Calc.UnitsExamples
-module VE.Calc.Wire b824b454b002e4c675a372bee9dd52b32ff48ded345ba23267f51311f322e294
+module VE.Calc.Wire fd9c27658569eaff6ccfc244af4c840b7c89c974797879cf4833c58bdfbc001f
 12:0-14:21 inductive VE.Calc.Check@VE.Calc.Wire
 16:0-17:42 def VE.Calc.Check.names@VE.Calc.Wire
 19:0-22:26 structure VE.Calc.Case@VE.Calc.Wire
