@@ -4011,7 +4011,7 @@ module VE.Calc.Lower ffb053336c3bba338ed62f46c2d585f6d281141ae54ce7bf8f740580d8d
 179:0-190:67 theorem VE.Calc.premises_iff@VE.Calc.Lower
 192:0-198:66 theorem VE.Calc.follows_of_check@VE.Calc.Lower
 200:0-207:56 theorem VE.Calc.counterexample_of_check@VE.Calc.Lower
-module VE.Calc.LowerExamples bd7e658351f7a0e274fcc4ac794e104f66ce1884104390b9ad6327f37b9e8242
+module VE.Calc.LowerExamples fe1a249e40879204506db82b9192a1c39f0d0a25619ae4aa9b65ca977e7b48c9
 10:0-10:56 def VE.Calc.LowerExamples.lt@VE.Calc.LowerExamples
 11:0-11:56 def VE.Calc.LowerExamples.le@VE.Calc.LowerExamples
 12:0-12:55 def VE.Calc.LowerExamples.gt@VE.Calc.LowerExamples
@@ -4034,7 +4034,8 @@ module VE.Calc.LowerExamples bd7e658351f7a0e274fcc4ac794e104f66ce1884104390b9ad6
 63:0-63:50 def VE.Calc.LowerExamples.xy@VE.Calc.LowerExamples
 64:0-64:106 def VE.Calc.LowerExamples.pts@VE.Calc.LowerExamples
 73:0-75:84 def VE.Calc.LowerExamples.lin@VE.Calc.LowerExamples
-82:0-83:93 def VE.Calc.LowerExamples.mixed@VE.Calc.LowerExamples
+76:0-77:108 def VE.Calc.LowerExamples.linPts@VE.Calc.LowerExamples
+84:0-85:93 def VE.Calc.LowerExamples.mixed@VE.Calc.LowerExamples
 module VE.Calc.Poly 2a4bac043e253ea1d366ead96449e350f5582bcc7c4dc5a65633853bddabd716
 11:0-15:28 structure VE.Calc.Mono@VE.Calc.Poly
 13:2-13:7 def VE.Calc.Mono.coeff@VE.Calc.Poly
