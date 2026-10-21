@@ -1013,6 +1013,20 @@
    "reason": "df-1ab: VE/Defaults/Premises.lean S +6 (DefaultCoherent), V +23 (collisionTuple, decidersOf, giveWayDeciders, untied); K +0; selU tied by cohPremiseU_selU; the checks C, the diagnostics G[R]",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ab, 2026-10-18",
    "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f"
+  },
+  {
+   "class": "S",
+   "lines": 23,
+   "reason": "sc-1ad: lean/VE/Scope/Govern.lean S +23 (edgesOf, edgesInto, addOver, govern's graph step), V +8 (normOf, memo, DecidableEq Reach); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ad, 2026-10-18",
+   "commit": "9b7e6e5c767fde29ef8abfe806d65fe2082047eb"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-1ad: lean/VE/Scope/Govern.lean S +23 (edgesOf, edgesInto, addOver, govern's graph step), V +8 (normOf, memo, DecidableEq Reach); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ad, 2026-10-18",
+   "commit": "9b7e6e5c767fde29ef8abfe806d65fe2082047eb"
   }
  ]
 }
