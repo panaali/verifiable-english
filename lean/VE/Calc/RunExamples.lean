@@ -260,4 +260,27 @@ def bad : String := r#"["neg"]"#
   ("sci-2", says (req x1 (c1 r#"["eq", ["lit", ["sci", "1", 1.5]], ["lit", "1"]]"#)),
     ["InvalidInput: claims.0.claim.1.1.2 must be an integer"])]
 
+/-! Malformed input: each field of a valid case, of a value record and of a claim entry, replaced by each malformed
+JSON value, is a refusal and never a row (checklist item 1). -/
+
+def malformed : List String := ["7", "true", "null", "[]", "{}", "1.5", "\"\"", "[[[[[[[[1]]]]]]]]"]
+
+#guard malformed.all fun v => [
+    s!"\{\"format\": {v}, \"values\": [{x1}], \"claims\": [{ok1}]}",
+    s!"\{\"format\": \"ve-calc@0\", \"values\": {v}, \"claims\": [{ok1}]}",
+    s!"\{\"format\": \"ve-calc@0\", \"values\": [{x1}], \"claims\": {v}}",
+    req x1 ok1 s!", \"rounding\": {v}", req x1 ok1 s!", \"software\": {v}",
+    req s!"\{\"name\": {v}, \"words\": \"w\", \"stated\": \"1\"}" ok1,
+    req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": {v}}" ok1,
+    req s!"\{\"name\": \"x\", \"words\": \"w\", \"defined\": {v}}" ok1,
+    req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": {v}}" ok1,
+    req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"span\": {v}}" ok1,
+    req x1 s!"\{\"id\": {v}, \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]]}",
+    req x1 s!"\{\"id\": \"c1\", \"claim\": {v}}",
+    req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], {v}]"), req x1 (c1 s!"[\"rounds\", [\"val\", \"x\"], {v}]"),
+    req x1 (c1 s!"[\"eq\", [\"lit\", {v}], [\"lit\", \"1\"]]")] ++
+    -- words are any string until me-2b's words checks (W6, spec 11.2), so "" is no malformed words
+    (if v == "\"\"" then [] else [req s!"\{\"name\": \"x\", \"words\": {v}, \"stated\": \"1\"}" ok1]) |>.all fun c =>
+  (answer c).getObjVal? "rows" |>.toOption |>.isNone
+
 end VE.Calc.RunExamples
