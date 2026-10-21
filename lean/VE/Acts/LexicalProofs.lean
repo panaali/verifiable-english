@@ -883,10 +883,11 @@ def expand (ps : List (List Tok)) (ts : List Tok) : List Tok :=
     | .fixed i => ps.getD i []
     | t => [t]
 
-/-- `g` groups `ts` (1.1): written out it is `ts`, each `fixed` token names a declared phrase, and no token left
-ungrouped starts an occurrence of one. With `fixedOk_unique`, every occurrence then is one `fixed` token. -/
+/-- `g` groups `ts` (1.1): written out it is `ts`, each `fixed` token names a declared phrase (not empty), and no
+token left ungrouped starts an occurrence of one. With `fixedOk_unique`, `g` is the only grouping (`grouped_unique`). -/
 def Grouped (ps : List (List Tok)) (ts g : List Tok) : Prop :=
-  expand ps g = ts ∧ (∀ t ∈ g, ∀ i, t = .fixed i → i < ps.length) ∧ ∀ t post, t :: post <:+ g → (∀ i, t ≠ .fixed i) →
+  expand ps g = ts ∧ (∀ t ∈ g, ∀ i, t = .fixed i → ps.getD i [] ≠ []) ∧
+  ∀ t post, t :: post <:+ g → (∀ i, t ≠ .fixed i) →
     ∀ i (hi : i < ps.length), ps[i] ≠ [] → (ps[i]).isPrefixOf (t :: expand ps post) = false
 
 theorem expand_cons {ps : List (List Tok)} {t : Tok} (ht : ∀ i, t ≠ .fixed i) (ts : List Tok) :
@@ -944,7 +945,7 @@ theorem group_maximal (ps : List (List Tok)) : ∀ (n : Nat) (ts : List Tok), ts
           hs ht i hi hne
 
 theorem group_range (ps : List (List Tok)) : ∀ (n : Nat) (ts : List Tok), (∀ t ∈ ts, ∀ i, t ≠ .fixed i) →
-    ∀ t ∈ group ps n ts, ∀ i, t = .fixed i → i < ps.length
+    ∀ t ∈ group ps n ts, ∀ i, t = .fixed i → ps.getD i [] ≠ []
   | 0, _, h, t, ht, i, e => (h t ht i e).elim
   | _ + 1, [], _, _, ht, _, _ => by simp [group] at ht
   | n + 1, u :: rest, h, t, ht, i, e => by
@@ -952,7 +953,10 @@ theorem group_range (ps : List (List Tok)) : ∀ (n : Nat) (ts : List Tok), (∀
     split at ht
     · next k hk =>
       rcases List.mem_cons.mp ht with rfl | ht
-      · cases e; exact List.mem_range.mp (List.mem_of_find?_eq_some hk)
+      · cases e
+        have hp := List.find?_some hk
+        simp only [Bool.and_eq_true, Bool.not_eq_true', List.isEmpty_eq_false_iff] at hp
+        exact hp.1
       · exact group_range ps n _ (fun u hu => h u (List.mem_of_mem_drop hu)) t ht i e
     · rcases List.mem_cons.mp ht with rfl | ht
       · exact (h t (by simp) i e).elim
@@ -1023,6 +1027,70 @@ theorem lex_spec {fx : List String} {s : String} {ts : List Tok} (h : lex fx s =
   cases h
   exact ⟨ps, raw, hps, hraw, group_spec ps _ raw (Nat.le_refl _) (rawLex_plain hraw)⟩
 
+theorem grouped_tail {ps : List (List Tok)} {ts r : List Tok} {u : Tok} (hg : Grouped ps ts (u :: r)) :
+    Grouped ps (expand ps r) r :=
+  ⟨rfl, fun t ht => hg.2.1 t (List.mem_cons_of_mem _ ht),
+    fun t post hs => hg.2.2 t post (hs.trans (List.suffix_cons _ _))⟩
+
+theorem grouped_fixed {ps : List (List Tok)} {ts r : List Tok} {i : Nat} (hg : Grouped ps ts (.fixed i :: r)) :
+    ∃ hi : i < ps.length, ps[i] ≠ [] ∧ ts = ps[i] ++ expand ps r := by
+  have hne := hg.2.1 _ List.mem_cons_self i rfl
+  have hi : i < ps.length := Nat.lt_of_not_le fun hl => hne (by simp [List.getD_eq_getElem?_getD, hl])
+  have hg' : ps.getD i [] = ps[i] := by rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi, Option.getD_some]
+  exact ⟨hi, hg' ▸ hne, by rw [← hg.1, expand_fixed, hg']⟩
+
+theorem grouped_ne_nil {ps : List (List Tok)} {ts r : List Tok} {u : Tok} (hg : Grouped ps ts (u :: r)) : ts ≠ [] := by
+  by_cases hu : ∀ j, u ≠ .fixed j
+  · rw [← hg.1, expand_cons hu]; exact List.cons_ne_nil _ _
+  · obtain ⟨j, rfl⟩ : ∃ j, u = .fixed j := by simpa using hu
+    obtain ⟨_, hne, e⟩ := grouped_fixed hg
+    rw [e]; intro he; simp at he; exact hne he.1
+
+/-- A grouping starts with a fixed token when another one does. -/
+theorem grouped_fixed_head {ps : List (List Tok)} {ts r r' : List Tok} {i : Nat} {u : Tok}
+    (hg : Grouped ps ts (.fixed i :: r)) (hg' : Grouped ps ts (u :: r')) : ∃ j, u = .fixed j := by
+  refine Classical.byContradiction fun hu => ?_
+  have hu : ∀ j, u ≠ .fixed j := fun j e => hu ⟨j, e⟩
+  obtain ⟨hi, hne, e⟩ := grouped_fixed hg
+  have := hg'.2.2 u r' (List.suffix_refl _) hu i hi hne
+  rw [← expand_cons hu, hg'.1, e] at this
+  rw [List.isPrefixOf_iff_prefix.mpr (List.prefix_append _ _)] at this
+  cases this
+
+/-- Under declared phrases that `decodeFixed` accepts, a token list has one grouping. -/
+theorem grouped_unique {fx : List String} {ps : List (List Tok)} (h : decodeFixed fx = .ok ps) :
+    ∀ {g g' ts : List Tok}, Grouped ps ts g → Grouped ps ts g' → g = g'
+  | [], [], _, _, _ => rfl
+  | [], _ :: _, _, hg, hg' => (grouped_ne_nil hg' hg.1.symm).elim
+  | _ :: _, [], _, hg, hg' => (grouped_ne_nil hg hg'.1.symm).elim
+  | u :: r, u' :: r', ts, hg, hg' => by
+    have hu : u = u' := by
+      by_cases hp : ∀ j, u ≠ .fixed j
+      · by_cases hp' : ∀ j, u' ≠ .fixed j
+        · have e := hg.1.trans hg'.1.symm
+          rw [expand_cons hp, expand_cons hp'] at e
+          exact (List.cons.inj e).1
+        · obtain ⟨j, rfl⟩ : ∃ j, u' = .fixed j := by simpa using hp'
+          exact absurd (grouped_fixed_head hg' hg) (by simpa using hp)
+      · obtain ⟨i, rfl⟩ : ∃ i, u = .fixed i := by simpa using hp
+        obtain ⟨j, rfl⟩ := grouped_fixed_head hg hg'
+        obtain ⟨hi, hne, ei⟩ := grouped_fixed hg
+        obtain ⟨hj, hne', ej⟩ := grouped_fixed hg'
+        refine Classical.byContradiction fun hij => ?_
+        have pi : (ps[i]).isPrefixOf (ts.drop 0) = true := by rw [ei]; simp [List.isPrefixOf_iff_prefix]
+        have pj : (ps[j]).isPrefixOf (ts.drop 0) = true := by rw [ej]; simp [List.isPrefixOf_iff_prefix]
+        have := fixedOk_unique fx (by simp [fixedOk, h, Except.isOk, Except.toBool]) ts ps h i j hi hj 0 0 pi pj
+          (by simpa using fun e => hij (by rw [e]))
+        have := List.length_pos_iff.mpr hne
+        have := List.length_pos_iff.mpr hne'
+        omega
+    subst hu
+    have hr : expand ps r = expand ps r' := by
+      have e := hg.1.trans hg'.1.symm
+      simp only [expand, List.flatMap_cons] at e
+      exact List.append_cancel_left e
+    rw [grouped_unique h (grouped_tail hg) (hr ▸ grouped_tail hg')]
+
 /-- `Grouped` decided, so fixtures can evaluate it. -/
 instance decFixed {t : Tok} {P : Nat → Prop} [DecidablePred P] : Decidable (∀ i, t = .fixed i → P i) :=
   match t with
@@ -1058,7 +1126,7 @@ def grouped (ps : List (List Tok)) (ts g : List Tok) : Bool := decide (Grouped p
 #guard grouped [seek, free] ([.slot 0] ++ seek ++ free) [.slot 0, .fixed 0, .fixed 1]
 #guard grouped [[], seek] [.slot 0, .word "seek"] [.slot 0, .word "seek"]
 #guard grouped [seek, [.fixed 0]] seek [.fixed 0] && grouped [seek] (.word "seek" :: seek) [.word "seek", .fixed 0]
-#guard !grouped [seek] (seek ++ seek) [.fixed 0] && !grouped [seek] [] [.fixed 1]
+#guard !grouped [seek] (seek ++ seek) [.fixed 0] && !grouped [seek] [] [.fixed 1] && !grouped [[]] [] [.fixed 0]
 #guard !grouped [seek] ([.slot 0] ++ seek) ([.slot 0] ++ seek)
 #guard !grouped [seek, [.word "to", .word "seek"]] ([.word "to"] ++ seek) [.word "to", .fixed 0]
 
