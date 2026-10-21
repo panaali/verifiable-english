@@ -1,0 +1,18 @@
+trust_mutants: 15 definitions, 176 mutants (176 to run), 8 jobs, base 2296317a9de7
+UNKNOWN lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson and-or: && -> || (lean/VE/Defaults/Examples.lean:175: Expression (Lean could not elaborate it in the probe))
+SURVIVOR lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson lit-plus: 1 -> 2
+SURVIVOR lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson list-empty: profiles -> []
+UNKNOWN lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson lit-minus: 1 -> 0 (lean/VE/Defaults/Examples.lean:175: Expression (Lean could not elaborate it in the probe))
+SURVIVOR lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson list-first: profiles -> (profiles.take 1)
+SURVIVOR lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson list-drop-last: profiles -> (profiles.dropLast)
+SURVIVOR lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson list-drop-last: profiles -> (profiles.dropLast)
+SURVIVOR lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson list-last: profiles -> (profiles.reverse.take 1)
+SURVIVOR lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson list-drop-first: profiles -> (profiles.drop 1)
+SURVIVOR lean/VE/NormDefaults/Wire.lean:61 VE.NormDefaults.Wire.placeholderJson list-drop-first: profiles -> (profiles.drop 1)
+SURVIVOR lean/VE/Norms/Plain.lean:221 VE.Norms.Plain.run list-drop-first: ps -> (ps.drop 1)
+SURVIVOR lean/VE/Norms/Wire.lean:172 VE.Norms.Wire.decodeNormsEnvironment list-drop-first: ps -> (ps.drop 1)
+SURVIVOR lean/VE/Service/Standalone.lean:233 VE.Service.Standalone.validatedComposedEnvironment list-drop-first: rawProfiles -> (rawProfiles.drop 1)
+SURVIVOR lean/VE/Service/Standalone.lean:279 VE.Service.Standalone.validatedComposedEnvironment list-drop-first: named -> (named.drop 1)
+SURVIVOR lean/VE/EnglishGrammar/Encode.lean:338 VE.EnglishGrammar.Env.decode list-drop-first: profiles -> (profiles.drop 1)
+trust_mutants: 130 KILLED, 13 SURVIVOR, 2 UNKNOWN, 8 INVALID, 23 ALLOWED, 0 NOT RUN in 10269 s
+exit=1

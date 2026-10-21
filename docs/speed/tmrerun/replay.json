@@ -1,0 +1,70 @@
+[
+ {
+  "item": "df-1ac",
+  "first": "ccf71608f",
+  "second": "6bd8247b0",
+  "mutants": 90,
+  "carried": 0,
+  "rerun": 90,
+  "seconds_per_mutant": 17.2,
+  "jobs": 7,
+  "minutes_saved": 0.0,
+  "basis": "saved evidence (108 of 108 rows matched)",
+  "why": {
+   "its declaration's scope changed": 82,
+   "a new mutant (its declaration or edit changed)": 2,
+   "no KILLED or INVALID verdict to carry": 6
+  }
+ },
+ {
+  "item": "df-1ac",
+  "first": "6bd8247b0",
+  "second": "f484e28cc",
+  "mutants": 90,
+  "carried": 84,
+  "rerun": 6,
+  "seconds_per_mutant": 13.4,
+  "jobs": 5,
+  "minutes_saved": 18.8,
+  "basis": "saved evidence (90 of 90 rows matched)",
+  "why": {
+   "carried": 84,
+   "no KILLED or INVALID verdict to carry": 6
+  }
+ },
+ {
+  "item": "me-6b",
+  "first": "ce08d10a9",
+  "second": "0c83cac0b",
+  "mutants": 89,
+  "carried": 0,
+  "rerun": 89,
+  "seconds_per_mutant": 13.4,
+  "jobs": 1,
+  "minutes_saved": 0.0,
+  "basis": "PROXY: the second run's verdicts",
+  "why": {
+   "a new mutant (its declaration or edit changed)": 51,
+   "its declaration's scope changed": 38
+  }
+ },
+ {
+  "item": "ap-1b",
+  "first": "0a2e3fb87",
+  "second": "270b9b6c7",
+  "mutants": 176,
+  "carried": 19,
+  "rerun": 157,
+  "seconds_per_mutant": 40.9,
+  "jobs": 8,
+  "minutes_saved": 13.0,
+  "basis": "PROXY: the second run's verdicts",
+  "why": {
+   "its killing check or what that reads changed": 58,
+   "a new mutant (its declaration or edit changed)": 15,
+   "no KILLED or INVALID verdict to carry": 68,
+   "its declaration's scope changed": 16,
+   "carried": 19
+  }
+ }
+]
