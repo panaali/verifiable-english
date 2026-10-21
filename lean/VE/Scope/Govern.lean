@@ -1,11 +1,12 @@
 import VE.Layout.List
 import VE.Scope.Effects
-import VE.Discourse.Manifest
+import VE.Discourse.Access
 
 /-! Scope's GOVERN step (scope@0, docs/spec/scope.md 1.1, 1.3, 1.5 and 4.2): the reaches, the block's admission and
     `govern`, which returns the complete document with each affected unit's content composed as the chain's own
-    norm object, then the precedence edges into it. The anchor and label reaches and `admitBlock`'s anchor checks
-    come later (sc-3ab); until then they are refused, never skipped. The run path `governFast` (1.5.8) is last. -/
+    norm object, then the precedence edges into it. The anchor and label reaches and the anchor checks are the
+    layout's (`VE/Layout/Anchors.lean`, `VE/Layout/List.lean`), called here. The run path `governFast` (1.5.8) is
+    last. -/
 
 namespace VE.Scope
 open Lean
@@ -85,8 +86,8 @@ def coveredLayout (D : SDoc) : Reach → Except String (List String)
       let us ← VE.Layout.listRun D.layout lead
       if cn.units == us then pure us else throw s!"ManifestMismatch: scope.list_names.{n}.units"
     | none => throw s!"ScopeUnknownName: {n}"
-  | .anchor _ => throw "UnsupportedProfile: scope@0 anchor reach requires SC-3a"   -- sc-3ab: `anchorReach`
-  | .label _ => throw "UnsupportedProfile: scope@0 label reach requires SC-3a"     -- sc-3ab: `itemRun`
+  | .anchor a => VE.Layout.anchorReach D.layout D.anchors a
+  | .label i => VE.Layout.itemRun D.layout i
   | .rules _ => .ok []
   | .frontier => throw "UnsupportedProfile: scope@0 frontier reach requires SC-5"   -- SC-5: its addendum (9.4)
   | .fixed us => .ok us
@@ -196,9 +197,14 @@ def firstDup : List String → Option String
   | [] => none
   | x :: xs => if xs.contains x then some x else firstDup xs
 
-/-- Spec 6.2's steps 1 to 8. Step 7 (discourse's anchor checks) and step 8's check of an anchor's heading or a
-    label's item unit are sc-3ab's; until then a block with anchors is refused, and so is an anchor or label reach
-    (`coveredLayout`). -/
+def kindOf (doc : Json) (u : String) : String :=
+  (((unitsOf doc).find? (idOf · == u)).map (fun x => (x.getObjValD "kind").getStr?.toOption.getD "")).getD ""
+
+/-- The spans of the definition units, for discourse's export check. -/
+def defSpans (D : SDoc) : List (Nat × Nat) :=
+  (D.layout.filter (fun x => kindOf D.doc x.id == "definition")).map (·.span)
+
+/-- Spec 6.2's steps 1 to 8; step 7 is discourse's anchor checks, on the block's anchors. -/
 def admitBlock (D : SDoc) : Except String Unit := do
   if D.governors.length > 256 then throw "ResourceLimit: scope governors"
   if D.listNames.length > 256 then throw "ResourceLimit: scope list names"
@@ -213,7 +219,7 @@ def admitBlock (D : SDoc) : Except String Unit := do
     unless (unitIds D.doc).contains unit do throw s!"ScopeUnknownUnit: {unit}"
     let us ← VE.Layout.listRun D.layout lead
     unless cn.units == us do throw s!"ManifestMismatch: scope.list_names.{cn.name}.units"
-  unless D.anchors.isEmpty do throw "UnsupportedProfile: scope@0 anchors require SC-3a"   -- sc-3ab: `anchorsOk`
+  VE.Layout.anchorsOk D.anchors (defSpans D) (VE.Discourse.unaryPred D.re.se.ne.rv.environment)
   for g in D.governors do
     for c in conditions g.effect do
       unless depthOk depthLimit c do throw "ResourceLimit: scope condition depth exceeds 64"
@@ -231,6 +237,12 @@ def admitBlock (D : SDoc) : Except String Unit := do
     | .precedes, .frontier => throw s!"ScopeReach: {g.id}"
     | .yields, .frontier => throw s!"ScopeReach: {g.id}"
     | _, _ => pure ()
+    match g.reach with
+    | .anchor a =>
+      unless graph g.effect || VE.Layout.headingOf D.layout D.anchors a == some g.unit do
+        throw s!"ManifestMismatch: scope.governors.{g.id}.unit"
+    | .label i => unless graph g.effect || i == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit"
+    | _ => pure ()
     let us ← covered D g.reach
     unless us == g.units do throw s!"ManifestMismatch: scope.governors.{g.id}.units"
     for u in g.unit :: us do
