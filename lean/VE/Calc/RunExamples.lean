@@ -280,11 +280,59 @@ def identityFaults : List String := identityFamilies.filterMap fun (name, classe
 #guard meaning (req x1 r#"{"id": "c1", "claim": ["eq", ["val", "x"], ["lit", "1"]], "span": [3, 3]}"#) != ""
 #guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "span": [3, 3]}"# ok1) != ""
 
+-- Exact digests pin the encoding of each optional identity field, including JSON number type and span order.
+#guard meaning (req x1 ok1 r#", "software": "P""#) ==
+  "7c2d5ac13c8312f41b811897bb1d41afd4e06c5d634fc6652befb813ab97203e"
+#guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "support": "observation"}"# ok1) ==
+  "23602c987e56328857e0654cb9c82410ab7d64076d27d6e0a409ce1b023d72c8"
+#guard meaning (req x1 r#"{"id": "c1", "claim": ["eq", ["val", "x"], ["lit", "1"]], "span": [3, 5]}"#) ==
+  "5eed16c6aae468b703a685bb5ffd070f3c30476b09f097de7c0f898d4d6dffb5"
+#guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "span": [3, 5]}"# ok1) ==
+  "2e10e6d03ab1c276745095d8150d9c2fc21ecad2287b54c54e118ff5c68564dc"
+
+-- The whole finite support vocabulary keeps its exact JSON spelling, not just distinct digests.
+#guard Wire.supports.all fun s =>
+  match Wire.recordJson "values.0" (Json.mkObj [("support", .str s)]) [] with
+  | .ok j => j == Json.mkObj [("support", .str s)]
+  | .error _ => false
+
 /-! ## Limits (3.2), each on both sides, and their order -/
 
 def pad (k : Nat) : String := req "" "" s!", \"pad\": [{nulls k}]"
 def deep (d : Nat) : String := req "" "" s!", \"pad\": {String.mk (List.replicate d '[' ++ List.replicate d ']')}"
 def name64 : String := String.mk (List.replicate 64 'x')
+
+-- Ten times the largest flat limit fixture: size must use bounded stack on a wide array.
+#guard Wire.size 2 (.arr (Array.replicate 100000 Json.null)) == (100001, 1)
+
+-- Depth 64 remains usable for both expression entry points; depth 65 is a resource limit.
+#guard
+  let nestedExpr (n : Nat) : String := (List.range n).foldl
+    (fun s _ => s!"[\"add\", {s}, [\"lit\", \"0\"]]") r#"["lit", "1"]"#
+  meaning (req x1 (c1 s!"[\"eq\", {nestedExpr 59}, [\"lit\", \"1\"]]")) != "" &&
+  says (req x1 (c1 s!"[\"eq\", {nestedExpr 60}, [\"lit\", \"1\"]]")) ==
+    ["ResourceLimit: the JSON depth exceeds 64"] &&
+  meaning (req (x1 ++ ", " ++ defined "y" (nestedExpr 60)) ok1) != "" &&
+  says (req (x1 ++ ", " ++ defined "y" (nestedExpr 61)) ok1) ==
+    ["ResourceLimit: the JSON depth exceeds 64"]
+
+-- Every printed-number branch reaches the 40-digit boundary and refuses 41 digits as a resource limit.
+#guard ["rounds", "rounds-down", "rounds-up"].all fun kind =>
+  meaning (req x1 (c1 s!"[\"{kind}\", [\"val\", \"x\"], \"{ones 40}\"]")) != "" &&
+  says (req x1 (c1 s!"[\"{kind}\", [\"val\", \"x\"], \"{ones 41}\"]")) ==
+    ["ResourceLimit: Decimal literal exceeds 40 digits"]
+
+#guard ["rounds", "rounds-down", "rounds-up"].all fun kind =>
+  meaning (req x1 (c1 s!"[\"{kind}\", [\"val\", \"x\"], [\"sci\", \"{ones 40}\", 0]]")) != "" &&
+  says (req x1 (c1 s!"[\"{kind}\", [\"val\", \"x\"], [\"sci\", \"{ones 41}\", 0]]")) ==
+    ["ResourceLimit: Decimal literal exceeds 40 digits"]
+
+#guard meaning (req (stated "x" s!"[\"sci\", \"{ones 40}\", 0]") ok1) != "" &&
+  says (req (stated "x" s!"[\"sci\", \"{ones 41}\", 0]") ok1) ==
+    ["ResourceLimit: Decimal literal exceeds 40 digits"]
+#guard meaning (req (stated "x" r#"["sci", "1", 64]"#) ok1) != ""
+
+#guard says (req x1 (claim name64 r#"["eq", ["val", "x"], ["lit", "1"]]"#)) == [name64 ++ " holds"]
 
 #guard expect [
   ("nodes", says (pad 9995), ["InvalidInput: case.pad is unknown"]),

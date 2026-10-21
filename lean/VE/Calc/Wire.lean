@@ -50,7 +50,8 @@ def size : Nat → Json → Nat × Nat
   | 0, _ => (0, 0)
   | n + 1, j =>
     let ms := (children j).map (size n)
-    (1 + (ms.map (·.1)).sum, if j matches .arr _ | .obj _ then 1 + (ms.map (·.2)).foldl max 0 else 0)
+    (ms.foldl (fun total child => total + child.1) 1,
+      if j matches .arr _ | .obj _ then 1 + ms.foldl (fun depth child => max depth child.2) 0 else 0)
 
 /-- The first value of `j`, in document order, that `p` refuses. -/
 def scan (p : Json → Option String) : Nat → Json → Option String
