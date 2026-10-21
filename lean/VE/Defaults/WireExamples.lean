@@ -104,6 +104,10 @@ def pairsJ (st : String) : Json := toJson [Json.mkObj [("rules", toJson ["r1", "
     ("deciders", toJson ["assistant"])] &&
   ans (req αEnv γR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"]), ("collision", collJ L "r2" "r1")])
     "pairs" == pairsJ "unknown"
+-- the collision's filling is decoded: a table for a predicate the text settles is refused
+#guard holds dγ fun L => answer (req αEnv γR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"]),
+    ("collision", (collJ L "r1" "r2").setObjVal! "filling" (Json.mkObj [("unsaid__x_permitted", toJson ([] : List Json))]))]) ==
+  .str "InvalidInput: unknown filling table unsaid__x_permitted"
 -- DF-γ′: DE7b's two deciders, in pair order
 #guard holds (layered γ'Env γ'R) fun L => (ans (req γ'Env γ'R "defaults-coherence"
   [("coherence", toJson [pairJ "r1" "r2"]), ("collision", collJ L "r1" "r2")]) "collision").getObjValD "deciders" ==
@@ -236,6 +240,33 @@ def excUrgent : VE.Formula := .all "assistant" (.implies (.unary exc1 (.var 0)) 
     ("model", model (modelJ L [])), ("strict_model", model (modelJ L [exc1]))]) ==
   follows "needs" "long" [excN "r1"]
 
+/-- DF-β with the question's fact `∃a. urgent(a)` (`sent`) and a certificate of `excUrgent` bound to `ps L bound`;
+    with the fact, every premise after `Dflt_T`'s moves up by one. -/
+def βFact (bound sent : List VE.Formula) : Json := match dβ with
+  | .ok L => req βEnv βR "defaults-certificate" [("premises", toJson (sent.map fJ)), ("conclusion", fJ excUrgent),
+      ("certificate", boundJ βEnv (ps L bound) excUrgent
+        (expand 7 none [expand 8 none [expand 2 (some "w:0") [expand 11 none [close, expand 12 none [close, close]]]]])),
+      ("model", model (modelJ L ["urgent", exc1]))]
+  | .error _ => .null
+-- review F1's sweep: the certificate binds to the question's own premises
+#guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN "r1"]
+-- DF-κ both ways: bound to the list with one premise added, or sent with one premise more than it is bound to
+#guard answer (βFact [exAt "urgent"] []) == unknownBecause "no certificate"
+#guard answer (βFact [] [exAt "urgent"]) == unknownBecause "no certificate"
+
+/-- DF-γb on the certificate kind: `cNeeds`'s argument over DF-γb's premises and the empty-domain model, with the
+    pair list `coherence`. -/
+def γbCase (coherence : Json) : Json := match dγb with
+  | .ok L => req αEnv γbR "defaults-certificate" [("premises", toJson ([] : List Json)), ("conclusion", fJ notExc),
+      ("certificate", boundJ αEnv (ps L []) notExc
+        (expand 7 none [expand 8 none [expand 2 (some "w:0") [expand 10 none [close, close]]]])),
+      ("coherence", coherence), ("model", model (emptyJ L))]
+  | .error _ => .null
+-- the pair's certificate from `coherence` resolves the gate; without it, UNKNOWN; diagnostic 5 on this kind
+#guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [excN "r1"]
+#guard answer (γbCase (toJson [pairJ "r1" "r2"])) == unknownBecause "no-exception coherence not checked"
+#guard answer (γbCase (toJson ([] : List Json))) == .str pairText
+
 /-! ## `defaults-model` (DF-β (i), DF-α's default model) -/
 
 /-- A `defaults-model` request with no premises, the conclusion `φ` and the one-element situation `on`. -/
@@ -247,6 +278,16 @@ def doesNotFollow (forced : List (String × Nat)) : Json := VE.Route.Wire.ok "c"
     ("tuple", toJson ["e_assistant"])]))]
 -- DF-β (i): the countermodel {urgent, excepted_r1} checks, with r1's exception forced by condition 0 (`urgent`)
 #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow [("r1", 0)]
+-- review F1: the question's premises are read. The same situation satisfies `∃a. urgent(a)` but not
+-- `∀a. ¬urgent(a)`: UNKNOWN there, never DOES-NOT-FOLLOW
+#guard holds dβ fun L => [(exAt "urgent", doesNotFollow [("r1", 0)]),
+    (.all "assistant" (.not (.unary "urgent" (.var 0))), VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN")])].all
+  fun (p, a) => answer ((modelCase βEnv βR L xAll ["urgent", exc1]).setObjVal! "premises" (toJson [fJ p])) == a
+-- the filling is read: with `unsaid__x_required` at the assistant, `F_x_required` requires x there, so the same
+-- situation (x not done) no longer checks
+#guard holds dβ fun L => answer ((modelCase βEnv βR L xAll ["urgent", exc1]).setObjVal! "model" (Json.mkObj
+    [("model", modelJ L ["urgent", exc1]), ("filling", Json.mkObj [("unsaid__x_required", toJson [["e_assistant"]])])])) ==
+  VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN")]
 -- {excepted_r1} without urgent violates `Dflt_T`, and the empty domain satisfies the conclusion: UNKNOWN, no `forced`
 #guard holds dβ fun L => answer (modelCase βEnv βR L xAll [exc1]) == VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN")]
 #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (emptyJ L))) ==
