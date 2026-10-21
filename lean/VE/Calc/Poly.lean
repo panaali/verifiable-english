@@ -69,8 +69,10 @@ def Poly.add? (p q : Poly) : Option Poly :=
   if p.length + q.length ≤ maxPolyTerms then Poly.guard (Poly.norm (p ++ q)) else none
 def Poly.mul? (p q : Poly) : Option Poly :=
   if p.length * q.length ≤ maxPolyTerms then Poly.guard (Poly.norm (p.flatMap fun m => q.map m.mul)) else none
+/-- A power node's exponent within the limit: the check of `Poly.pow?` and of its budgeted form `Poly.pow?B`. -/
+def Poly.powWithin (k : Nat) : Bool := k ≤ maxPolyExponent
 def Poly.pow? (p : Poly) (k : Nat) : Option Poly :=
-  if k ≤ maxPolyExponent then go k Poly.one else none
+  if Poly.powWithin k then go k Poly.one else none
 where go : Nat → Poly → Option Poly
   | 0, r => some r
   | k + 1, r => (Poly.mul? r p).bind (go k)
@@ -481,5 +483,144 @@ theorem Identity.compare_within {a b : Expr} {r : Bool} (h : Identity.compare a 
   simp only [Identity.compare, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
   obtain ⟨fa, ha, fb, hb, l, hl, s, hs, rfl⟩ := h
   exact ⟨fa, fb, l, s, ha, hb, hl, hs, Poly.mul?_within hl, Poly.mul?_within hs, rfl⟩
+
+/-! ### The work budget (me-9c, me-9 review F5)
+
+Within the limits a side can still cost minutes: 10,000 nodes, each a sum over 10,000 terms, or a power of 4,096
+steps; and a point's values are not bounded by the limits at all. So the runner charges its work in evaluation units
+against one budget per row (`VE.Limits.maxEvaluations`, spec 14). Before it runs, an operation on polynomials is
+charged a unit for each monomial and each variable of a monomial it reads, once for each monomial of the other
+polynomial it meets, and an evaluated node a unit and one for each 64 bits of the numbers it reads (a power: of the
+number it writes), a value read at a point a unit and one for each 8 names of the point (its lookup). A budgeted function gives `none` when the charge is more than the units left, and otherwise the
+unbudgeted answer (`Poly.pow?B_eq`, `Frac.pow?B_eq`, `Expr.evalB_eq`, `sidesAtB_eq`) and the units left. -/
+
+/-- An answer within a budget: `none` when the budget ran out, else the answer and the units left. -/
+abbrev Budgeted (α : Type) := Option (α × Nat)
+
+/-- `x` for `c` of the `n` units left, computed only when they suffice. -/
+@[inline] def charge {α : Type} (c n : Nat) (x : Unit → α) : Budgeted α := if c ≤ n then some (x (), n - c) else none
+
+/-- A node of two operands: the first, then the second, then `f`; an operand with no answer ends the node, as in the
+unbudgeted functions. -/
+@[inline] def Budgeted.bin {α β γ : Type} (x : Budgeted (Option α)) (y : Nat → Budgeted (Option β))
+    (f : α → β → Nat → Budgeted (Option γ)) : Budgeted (Option γ) :=
+  match x with
+  | some (some a, n) => match y n with
+    | some (some b, n) => f a b n
+    | some (none, n) => some (none, n)
+    | none => none
+  | some (none, n) => some (none, n)
+  | none => none
+
+def Poly.size (p : Poly) : Nat := p.foldl (fun s m => s + 1 + m.vars.length) 0
+def Poly.mulCost (p q : Poly) : Nat := 1 + p.length * q.size + q.length * p.size
+
+/-- `Poly.pow?`, each step charged before its product. -/
+def Poly.pow?B (p : Poly) (k n : Nat) : Budgeted (Option Poly) :=
+  if Poly.powWithin k then go k Poly.one n else some (none, n)
+where go : Nat → Poly → Nat → Budgeted (Option Poly)
+  | 0, r, n => some (some r, n)
+  | k + 1, r, n => match charge (Poly.mulCost r p) n fun _ => Poly.mul? r p with
+    | some (some r, n) => go k r n
+    | some (none, n) => some (none, n)
+    | none => none
+
+/-- The fraction operations, each charged its products before it runs (a sum of products: twice them, which bounds
+the sum's size too). -/
+def Frac.add?B (f g : Frac) (n : Nat) : Budgeted (Option Frac) :=
+  charge (f.2.size + if f.2 = g.2 then 1 + f.1.size + g.1.size else
+    2 * (Poly.mulCost f.1 g.2 + Poly.mulCost g.1 f.2) + Poly.mulCost f.2 g.2) n fun _ => Frac.add? f g
+def Frac.mul?B (f g : Frac) (n : Nat) : Budgeted (Option Frac) :=
+  charge (Poly.mulCost f.1 g.1 + Poly.mulCost f.2 g.2) n fun _ => Frac.mul? f g
+def Frac.div?B (f g : Frac) (n : Nat) : Budgeted (Option Frac) :=
+  charge (Poly.mulCost f.1 g.2 + Poly.mulCost f.2 g.1) n fun _ => Frac.div? f g
+def Frac.pow?B (f : Frac) (k n : Nat) : Budgeted (Option Frac) :=
+  Budgeted.bin (Poly.pow?B f.1 k n) (Poly.pow?B f.2 k) fun a d n => some (some (a, d), n)
+
+/-- The 64-bit words of a value's numerator and denominator. -/
+def ratWords (x : Rat) : Nat := (x.num.natAbs.log2 + x.den.log2) / 64
+
+/-- `Expr.eval`, each node charged before its operation; reading a value costs `c`. -/
+def Expr.evalB (σ : Values) (c : Nat) : Expr → Nat → Budgeted (Option Rat)
+  | .lit q, n => charge 1 n fun _ => some q
+  | .val x, n => charge c n fun _ => σ x
+  | .add a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) fun x y n => charge (1 + ratWords x + ratWords y) n fun _ =>
+      some (x + y)
+  | .sub a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) fun x y n => charge (1 + ratWords x + ratWords y) n fun _ =>
+      some (x - y)
+  | .mul a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) fun x y n => charge (1 + ratWords x + ratWords y) n fun _ =>
+      some (x * y)
+  | .div a b, n => Budgeted.bin (a.evalB σ c n) (b.evalB σ c) fun x y n => charge (1 + ratWords x + ratWords y) n fun _ =>
+      if y = 0 then none else some (x / y)
+  | .pow a k, n => Budgeted.bin (a.evalB σ c n) (fun n => some (some (), n)) fun x _ n => charge (1 + k * ratWords x) n fun _ =>
+      some (x ^ k)
+
+/-- Both sides' values at a point, the left one first: `differsAt`'s evaluation within a budget. -/
+def sidesAtB (a b : Expr) (κ : List (String × Rat)) (n : Nat) : Budgeted (Option (Rat × Rat)) :=
+  Budgeted.bin (a.evalB (κ.lookup ·) (1 + κ.length / 8) n) (b.evalB (κ.lookup ·) (1 + κ.length / 8)) fun x y n => some (some (x, y), n)
+
+theorem charge_eq {α : Type} {c n : Nat} {x : Unit → α} {r : α} {m : Nat} (h : charge c n x = some (r, m)) :
+    r = x () := by
+  unfold charge at h; split at h <;> simp_all
+
+theorem Budgeted.bin_eq {α β γ : Type} {x : Budgeted (Option α)} {y : Nat → Budgeted (Option β)}
+    {f : α → β → Nat → Budgeted (Option γ)} {X : Option α} {Y : Option β} {F : α → β → Option γ}
+    (hx : ∀ a n, x = some (a, n) → a = X) (hy : ∀ n b n', y n = some (b, n') → b = Y)
+    (hf : ∀ a b n r m, f a b n = some (r, m) → r = F a b) {r : Option γ} {m : Nat}
+    (h : Budgeted.bin x y f = some (r, m)) : r = X.bind fun a => Y.bind (F a) := by
+  unfold Budgeted.bin at h
+  rcases hxe : x with _ | ⟨_ | a, n⟩ <;> simp only [hxe] at h
+  · cases h
+  · cases h; rw [← hx _ _ hxe]; rfl
+  · rcases hye : y n with _ | ⟨_ | b, n'⟩ <;> simp only [hye] at h
+    · cases h
+    · cases h; rw [← hx _ _ hxe, ← hy _ _ _ hye]; rfl
+    · rw [← hx _ _ hxe, ← hy _ _ _ hye]; exact hf _ _ _ _ _ h
+
+theorem Poly.pow?B_eq (p : Poly) (k n : Nat) {r : Option Poly} {m : Nat} (h : Poly.pow?B p k n = some (r, m)) :
+    r = Poly.pow? p k := by
+  have hgo : ∀ k s n, Poly.pow?B.go p k s n = some (r, m) → r = Poly.pow?.go p k s := by
+    intro k
+    induction k with
+    | zero => intro s n h; simp only [Poly.pow?B.go, Option.some.injEq, Prod.mk.injEq] at h; simp [Poly.pow?.go, h.1]
+    | succ k ih =>
+        intro s n h; simp only [Poly.pow?B.go] at h; simp only [Poly.pow?.go]
+        split at h
+        · rename_i s' n' hc; rw [← charge_eq hc, Option.bind_some]; exact ih s' n' h
+        · rename_i n' hc; cases h; rw [← charge_eq hc]; rfl
+        · cases h
+  unfold Poly.pow?B at h; unfold Poly.pow?; split at h
+  · rename_i hk; simp only [hk, if_true]; exact hgo k _ n h
+  · rename_i hk; simp only [hk]; cases h; rfl
+
+theorem Frac.pow?B_eq (f : Frac) (k n : Nat) {r : Option Frac} {m : Nat} (h : Frac.pow?B f k n = some (r, m)) :
+    r = Frac.pow? f k := by
+  rw [Budgeted.bin_eq (fun _ _ h => Poly.pow?B_eq _ _ _ h) (fun _ _ _ h => Poly.pow?B_eq _ _ _ h)
+    (F := fun a d => some (a, d)) (fun _ _ _ _ _ h => by simp_all) h, Frac.pow?]
+  cases Poly.pow? f.1 k <;> cases Poly.pow? f.2 k <;> rfl
+
+theorem Expr.evalB_eq (σ : Values) (c : Nat) (e : Expr) : ∀ n {r : Option Rat} {m : Nat}, e.evalB σ c n = some (r, m) →
+    r = e.eval σ := by
+  induction e with
+  | lit q => intro n r m h; exact charge_eq h
+  | val x => intro n r m h; exact charge_eq h
+  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
+      intro n r m h; simp only [Expr.evalB] at h
+      rw [Budgeted.bin_eq (fun _ _ h => iha _ h) (fun _ _ _ h => ihb _ h) (fun _ _ _ _ _ h => charge_eq h) h]; rfl
+  | pow a k iha =>
+      intro n r m h; simp only [Expr.evalB] at h
+      rw [Budgeted.bin_eq (fun _ _ h => iha _ h) (Y := some ()) (fun _ _ _ h => by simp_all)
+        (fun _ _ _ _ _ h => charge_eq h) h, Expr.eval]
+      cases Expr.eval σ a <;> rfl
+
+/-- **Budget**: within it, the sides' values at a point are `Expr.eval`'s, and `differsAt` reads them. -/
+theorem sidesAtB_eq (a b : Expr) (κ : List (String × Rat)) (n : Nat) {r : Option (Rat × Rat)} {m : Nat}
+    (h : sidesAtB a b κ n = some (r, m)) :
+    r = ((a.eval (κ.lookup ·)).bind fun x => (b.eval (κ.lookup ·)).map (x, ·)) ∧
+      differsAt a b κ = (r.map fun s => s.1 != s.2).getD false := by
+  have hr := Budgeted.bin_eq (fun _ _ h => Expr.evalB_eq _ _ a _ h) (fun _ _ _ h => Expr.evalB_eq _ _ b _ h)
+    (F := fun x y => some (x, y)) (fun _ _ _ _ _ h => by simp_all) h
+  refine ⟨by rw [hr]; cases Expr.eval _ a <;> cases Expr.eval _ b <;> rfl, ?_⟩
+  rw [hr, differsAt]; cases Expr.eval _ a <;> cases Expr.eval _ b <;> rfl
 
 end VE.Calc
