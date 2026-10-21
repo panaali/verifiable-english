@@ -46,6 +46,8 @@ _KEPT = ModelReduction(kept=True)
 # environment first; the engines answer model questions only, over the
 # vocabulary a model interprets.
 MODEL_REDUCTIONS = {
+    # acts@0: kept, so Rust and Lean's model path refuse the environment (UnsupportedProfile; act-phrases 2.9)
+    "acts@0": _KEPT,
     "alternatives@0": ModelReduction(blocks=("alternatives",)),
     "closure@0": _KEPT,
     "data@0": _KEPT,
