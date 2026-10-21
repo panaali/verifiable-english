@@ -202,6 +202,17 @@ theorem VE.Acts.Lexical.check_extends
             VE.Acts.Lexical.check fx name k raw = Except.ok a
   -- uses VE.Acts.Lexical.check@VE.Acts.Lexical VE.Acts.Lexical.fixedOk@VE.Acts.Lexical VE.Norms.Wire.canonicalAct@VE.Norms.Wire VE.Norms.Wire.words@VE.Acts.LexicalBase
   -- expr 2178830214
+theorem VE.Acts.Lexical.check_iff
+  ∀ (fx : List String) (name : String) (k : Nat) (raw : Lean.Json) (a : String),
+    VE.Acts.Lexical.check fx name k raw = Except.ok a ↔ VE.Acts.Lexical.Accepts fx k raw a
+  -- uses VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs VE.Acts.Lexical.check@VE.Acts.Lexical
+  -- expr 3282622295
+theorem VE.Acts.Lexical.check_no_clause
+  ∀ {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String},
+    VE.Acts.Lexical.check fx name k raw = Except.ok a →
+      ∀ (w : String), w ∈ VE.Norms.Wire.words a → VE.Acts.Lexical.clauseWords.contains w.toLower = Bool.false
+  -- uses VE.Acts.Lexical.check@VE.Acts.Lexical VE.Acts.Lexical.clauseWords@VE.Acts.Lexical VE.Norms.Wire.words@VE.Acts.LexicalBase
+  -- expr 3983356622
 theorem VE.Acts.Lexical.check_no_join
   ∀ {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String},
     VE.Acts.Lexical.check fx name k raw = Except.ok a →
@@ -214,6 +225,20 @@ theorem VE.Acts.Lexical.check_no_join
                 t ≠ VE.Acts.Lexical.Tok.comma
   -- uses VE.Acts.Lexical.Tok.comma@VE.Acts.Lexical VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.check@VE.Acts.Lexical VE.Acts.Lexical.joinWords@VE.Acts.Lexical VE.Acts.Lexical.lex@VE.Acts.Lexical
   -- expr 1740259185
+theorem VE.Acts.Lexical.check_spec
+  ∀ (fx : List String),
+    VE.Acts.Lexical.fixedOk fx = Bool.true →
+      ∀ (name : String) (k : Nat) (raw : Lean.Json) (a : String),
+        VE.Acts.Lexical.check fx name k raw = Except.ok a ↔ VE.Acts.Lexical.Accepts fx k raw a
+  -- uses VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs VE.Acts.Lexical.check@VE.Acts.Lexical VE.Acts.Lexical.fixedOk@VE.Acts.Lexical
+  -- expr 4251462215
+theorem VE.Acts.Lexical.clash_of_overlap
+  ∀ {p q ts : List VE.Acts.Lexical.Tok} {m n : Nat},
+    p.isPrefixOf (List.drop m ts) = Bool.true →
+      q.isPrefixOf (List.drop n ts) = Bool.true →
+        m ≤ n → n < m + p.length → m ≠ n ∨ p ≠ q → VE.Acts.Lexical.clash p q = Bool.true
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.clash@VE.Acts.Lexical VE.Acts.Lexical.instDecidableEqTok@VE.Acts.Lexical
+  -- expr 2536048372
 theorem VE.Acts.Lexical.clause_reserved
   ∀ {y : String}, VE.Acts.Lexical.clauseWords.contains y = Bool.true → VE.Norms.Wire.actReserved.contains y = Bool.true
   -- uses VE.Acts.Lexical.clauseWords@VE.Acts.Lexical VE.Norms.Wire.actReserved@VE.Acts.LexicalBase
@@ -222,6 +247,18 @@ theorem VE.Acts.Lexical.contains_mem
   ∀ {s : String} {c : Char}, c ≠ Inhabited.default → s.contains c = Bool.true → c ∈ s.data
   -- uses
   -- expr 1779198702
+theorem VE.Acts.Lexical.decodeFixed_ok
+  ∀ {fx : List String} {ps : List (List VE.Acts.Lexical.Tok)},
+    VE.Acts.Lexical.decodeFixed fx = Except.ok ps →
+      ∀ (i : Nat),
+        i < ps.length →
+          ∀ (j : Nat),
+            j < ps.length →
+              ¬(i < j ∧ ps.getD i [] = ps.getD j []) ∧
+                ¬(i = j ∧ VE.Acts.Lexical.clash (ps.getD i []) (ps.getD i []) = Bool.true ∨
+                    i ≠ j ∧ ps.getD i [] ≠ ps.getD j [] ∧ VE.Acts.Lexical.clash (ps.getD i []) (ps.getD j []) = Bool.true)
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.clash@VE.Acts.Lexical VE.Acts.Lexical.decodeFixed@VE.Acts.Lexical
+  -- expr 467054833
 theorem VE.Acts.Lexical.endsWith_comma
   ∀ {s : String}, s.endsWith "," = Bool.true → ',' ∈ s.data
   -- uses
@@ -243,6 +280,17 @@ theorem VE.Acts.Lexical.extract_mid
       s.extract { byteIdx := String.utf8ByteSize.go B } { byteIdx := String.utf8ByteSize.go (B ++ cur) } = { data := cur }
   -- uses
   -- expr 4026283438
+theorem VE.Acts.Lexical.fixedOk_unique
+  ∀ (fx : List String),
+    VE.Acts.Lexical.fixedOk fx = Bool.true →
+      ∀ (ts : List VE.Acts.Lexical.Tok) (ps : List (List VE.Acts.Lexical.Tok)),
+        VE.Acts.Lexical.decodeFixed fx = Except.ok ps →
+          ∀ (i j : Nat) (hi : i < ps.length) (hj : j < ps.length) (m n : Nat),
+            ps[i].isPrefixOf (List.drop m ts) = Bool.true →
+              ps[j].isPrefixOf (List.drop n ts) = Bool.true →
+                (i, m) ≠ (j, n) → m + ps[i].length ≤ n ∨ n + ps[j].length ≤ m
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.decodeFixed@VE.Acts.Lexical VE.Acts.Lexical.fixedOk@VE.Acts.Lexical VE.Acts.Lexical.instDecidableEqTok@VE.Acts.Lexical
+  -- expr 2999577300
 theorem VE.Acts.Lexical.fold_eq_self
   ∀ {s : String}, (∀ (c : Char), c ∈ s.data → c.toNat ≠ 8217) → VE.Acts.Lexical.fold s = s
   -- uses VE.Acts.Lexical.fold@VE.Acts.Lexical
@@ -251,6 +299,13 @@ theorem VE.Acts.Lexical.foldl_append_eq
   ∀ {α : Type} (tss : List (List α)) (acc : List α), List.foldl (fun x1 x2 => x1 ++ x2) acc tss = acc ++ tss.flatten
   -- uses
   -- expr 3894486689
+theorem VE.Acts.Lexical.forIn_ok
+  ∀ {α ε : Type} {f : α → PUnit → Except ε (ForInStep PUnit)} {l : List α} {u : PUnit},
+    ForIn.forIn l PUnit.unit f = Except.ok u →
+      (∀ (x : α), f x PUnit.unit ≠ Except.ok (ForInStep.done PUnit.unit)) →
+        ∀ (x : α), x ∈ l → (f x PUnit.unit).isOk = Bool.true
+  -- uses
+  -- expr 1437725459
 theorem VE.Acts.Lexical.get_mem
   ∀ (s : String) (i : String.Pos), s.get i ≠ Inhabited.default → s.get i ∈ s.data
   -- uses
