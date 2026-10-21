@@ -13,6 +13,8 @@ The worktree started clean at `7855620f3` on `infra/eff-20261021-1`. The supplie
 
 The second run used `uv run python`. A prior invalid invocation used system `python3`, which lacked pytest, and took 834 s; it is excluded from the ratio. The valid invocation is **3.253×** the Lean-only time, already over the stop threshold without a successful pytest control. The named reviewer probe IDs, `test_fixture[factor-below-one]` and `[refuse-base-identifier]`, do not exist in the reviewed commit: the fix added them. The reviewed Units fixture instead compiles an outside Lean file via `lake env lean` from its checkout (`tests/test_calc_units.py` and `tests/lean_build.py` at `82c0e6ad8`). `VE_LEAN_SERVICE` cannot redirect that fixture to a scratch build. These are separate reasons this trial cannot establish a pytest kill.
 
+The 138 candidates include the prototype's later-tier operators; the reviewed tool listed 119. Both timing runs used the same prototype and its first 40, which contain only the original tiers.
+
 [Evidence](evidence.json) has 34 corpus rows. [Lean-only raw sweep](lean-only.json) and [pytest attempt raw sweep](pytest-attempt.json) retain every verdict and input digest. [verify_evidence.py](verify_evidence.py) checks their counts, times, reviewed source text, and every row. It deliberately exits 1 for the rows whose reviewed or fixed verdict was not replayed because the stop rule fired; no row is silently treated as passed. Thus the other stop test, at least eight reviewed SURVIVOR to fixed KILLED pairs, remains unmeasured. The corpus includes every hand mutant named in me-6b, me-9b, df-1ac, me-2, ap-1b, and the available first reviews me-5, me-9, and ap-1a. Each row records file, line, exact edit, reviewed and fixed commit, fixture added, current operator equivalent, G1/G2, and the observed or unmeasured verdict. The 34 rows classify 21 G1 and 13 G2 candidates; these classifications are a source inspection, not replay results. `UNMEASURED` explicitly prevents a success claim.
 
 ## Build outcome
@@ -43,7 +45,7 @@ These are the exact replacement texts to consider **only after** a new measureme
 4. N.A. — no product behaviour changed.
 5. N.A. — no relayed field changed.
 6. N.A. — the chain runs the final-HEAD gate; this worker was explicitly told not to.
-7. PASS — no DELTA row or trust growth; `git diff main...HEAD` review is required before finishing.
+7. PASS — no DELTA row or trust growth; `git diff main...HEAD` was reviewed and contains only this evidence bundle.
 8. PASS — no VE output changed; source files are unchanged.
 9. PASS — 49 selected test units passed through `mac-pytest.sh --select`; `test_map.write_map` failed afterward on its read-only cache path.
 10. N.A. — no Lean statement or theorem changed.

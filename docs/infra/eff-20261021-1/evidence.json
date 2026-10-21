@@ -8,7 +8,8 @@
     "ratio": 3.253,
     "pytest_control": "ERROR: error, skip, or no collected tests",
     "decision": "STOP: exceeded 3x before a valid pytest kill; no implementation retained",
-    "environment": "VM; ve-mac-1 offline; VE_LEAN_SHARE=off"
+    "environment": "VM; ve-mac-1 offline; VE_LEAN_SHARE=off",
+    "operator_plan": "uncommitted prototype: 138 candidates; original tool: 119; first 40 identical, original tiers first"
   },
   "invalid_attempt": {
     "seconds": 834,
