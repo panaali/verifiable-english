@@ -104,6 +104,11 @@ module VE.Alternatives.Route
 module VE.Alternatives.Run
 module VE.Alternatives.Validate
 module VE.Alternatives.Wire
+module VE.Arith.Bounded
+module VE.Arith.Defs
+module VE.Arith.Examples
+module VE.Arith.Holds
+module VE.Arith.Syntax
 module VE.Ask.Basic
 module VE.Ask.Binding
 module VE.Ask.Examples
@@ -642,6 +647,9 @@ VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
 VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
 VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
+VE.Arith.Agrees@VE.Arith.Bounded
+VE.Arith.Defs.Means@VE.Arith.Holds
+VE.Arith.Holds@VE.Arith.Holds
 VE.Ask.BlockLine@VE.Ask.Lines
 VE.Ask.CaseBinding@VE.Ask.Binding
 VE.Ask.Consistent@VE.Ask.Plain

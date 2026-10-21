@@ -95,22 +95,22 @@ measured at the candidate bounds 200 and 1,000, the completing bound is 248 with
 #guard decideBounded countDefs maxSteps (m4 5 41 250) = none
 
 /-! Admission: the fixtures are admitted; each refusal the core decides, and the decoder's order between them. -/
-#guard admit countDefs [m1 161, m5, m2, bertrand, m4 2 11 248] = none
+#guard caseRefusal countDefs [m1 161, m5, m2, bertrand, m4 2 11 248] = none
 #guard countDefs.WellFormed && (m1 161).Scoped countDefs 0 && (Formula.lt (.var 1) (.var 0)).Scoped primeDefs 2
 #guard !(Formula.lt (.var 2) (.var 0)).Scoped primeDefs 2
-#guard admit primeDefs [.allFromTo (.num 1) (.num 2) (.lt (.var 0) (.var 1))] = some (.unscopedVariable 0)
-#guard admit primeDefs [.call "composite" [.num 4]] = some (.unknownDefinition "composite")
-#guard admit primeDefs [.eq (.call "prime" [.num 4]) (.num 0)] = some (.unknownDefinition "prime")
-#guard admit [.pred "loop" 1 (.call "loop" [.var 0])] [] = some (.recursiveDefinition "loop")
-#guard admit [.pred "a" 1 (.call "b" [.var 0]), .pred "b" 1 (.le (.var 0) (.num 1))] [] = some (.recursiveDefinition "b")
-#guard admit primeDefs [.call "prime" [.num 1, .num 2]] = some (.arityMismatch "prime" 1)
-#guard admit primeDefs [.le (.num 0) (.countFromTo (.num 1) (.num 9) (.exNat (.eq (.var 0) (.var 1))))] =
+#guard caseRefusal primeDefs [.allFromTo (.num 1) (.num 2) (.lt (.var 0) (.var 1))] = some (.unscopedVariable 0)
+#guard caseRefusal primeDefs [.call "composite" [.num 4]] = some (.unknownDefinition "composite")
+#guard caseRefusal primeDefs [.eq (.call "prime" [.num 4]) (.num 0)] = some (.unknownDefinition "prime")
+#guard caseRefusal [.pred "loop" 1 (.call "loop" [.var 0])] [] = some (.recursiveDefinition "loop")
+#guard caseRefusal [.pred "a" 1 (.call "b" [.var 0]), .pred "b" 1 (.le (.var 0) (.num 1))] [] = some (.recursiveDefinition "b")
+#guard caseRefusal primeDefs [.call "prime" [.num 1, .num 2]] = some (.arityMismatch "prime" 1)
+#guard caseRefusal primeDefs [.le (.num 0) (.countFromTo (.num 1) (.num 9) (.exNat (.eq (.var 0) (.var 1))))] =
   some .unboundedCount
-#guard admit [.pred "p" 1 (.le (.num 0) (.countFromTo (.num 1) (.var 0) (.allInt (.eq (.var 0) (.var 0)))))] [] =
+#guard caseRefusal [.pred "p" 1 (.le (.num 0) (.countFromTo (.num 1) (.var 0) (.allInt (.eq (.var 0) (.var 0)))))] [] =
   some .unboundedCount
-#guard admit (primeDefs ++ primeDefs) [] = some (.duplicateName "prime")
-#guard admit primeDefs [.call "nope" [.var 0]] = some (.unscopedVariable 0)
-#guard admit primeDefs [.call "prime" [.num 1, .num 2], .call "nope" []] = some (.unknownDefinition "nope")
+#guard caseRefusal (primeDefs ++ primeDefs) [] = some (.duplicateName "prime")
+#guard caseRefusal primeDefs [.call "nope" [.var 0]] = some (.unscopedVariable 0)
+#guard caseRefusal primeDefs [.call "prime" [.num 1, .num 2], .call "nope" []] = some (.unknownDefinition "nope")
 #guard [Refusal.duplicateName "", .unscopedVariable 0, .unknownDefinition "", .recursiveDefinition "",
     .arityMismatch "" 0, .unboundedCount].map Refusal.code =
   ["DuplicateName", "UnscopedVariable", "UnknownDefinition", "RecursiveDefinition", "ArityMismatch", "UnboundedCount"]
