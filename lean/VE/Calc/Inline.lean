@@ -11,6 +11,10 @@ namespace VE.Calc
 def freeNames (ds : List Decl) : List String :=
   (ds.filter fun d => match d.source with | .free => true | _ => false).map Decl.name
 
+theorem freeNames_mem (ds : List Decl) : ∀ n ∈ freeNames ds, n ∈ ds.map Decl.name := by
+  intro n hn; simp only [freeNames, List.mem_map, List.mem_filter] at hn ⊢
+  obtain ⟨d, ⟨hd, _⟩, rfl⟩ := hn; exact ⟨d, hd, rfl⟩
+
 /-- The declarations with each name in `ns` given the value `κ n`. -/
 def assign (ds : List Decl) (ns : List String) (κ : String → Rat) : List Decl :=
   ds.map fun d => if d.name ∈ ns then { d with source := .stated (κ d.name) } else d

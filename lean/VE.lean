@@ -118,6 +118,8 @@ import VE.Calc.Inline
 import VE.Calc.Identity
 import VE.Calc.IdentityExamples
 import VE.Arith.Examples
+import VE.Calc.Lower
+import VE.Calc.LowerExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
@@ -197,5 +199,6 @@ import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
+import VE.Service.ActsExamples
 import VE.Defaults.Wire
 import VE.Defaults.WireExamples
