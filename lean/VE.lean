@@ -201,5 +201,6 @@ import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
+import VE.Service.ActsExamples
 import VE.Defaults.Wire
 import VE.Defaults.WireExamples

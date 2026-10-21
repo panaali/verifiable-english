@@ -36,8 +36,11 @@ universe u
 
 /-- The FOL view of a closure, core or order environment. -/
 def folView (environment : Json) : Except String Json := do
-  let profiles := (← VE.Route.Gate.profilesOf environment).filter
-    (fun p => p != "closure@0" && p != "nary@0" && p != "order@0")
+  let listed ← VE.Route.Gate.profilesOf environment
+  -- the norms decoder reads `acts@0`; its row refuses it on the closure and order families (act-phrases 4.4)
+  if listed.contains "acts@0" then
+    let _ ← VE.Compose.gateOf VE.Compose.profileTable listed
+  let profiles := listed.filter (fun p => p != "closure@0" && p != "nary@0" && p != "order@0")
   let vocabulary ← environment.getObjVal? "vocabulary"
   let predicates ← fields (← vocabulary.getObjVal? "predicates")
   let kept := predicates.filter (fun (_, entry) => VE.Core.Layers.folEntry entry)

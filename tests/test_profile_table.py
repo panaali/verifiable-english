@@ -23,7 +23,7 @@ def test_the_committed_table_is_the_lean_generators_output():
 def test_python_reads_the_rows_and_the_environment_profiles():
     """`BY_NAME` is the table's environment list, each with its rows; every row is typed as Lean writes it."""
     assert list(profiles.BY_NAME) == profiles._TABLE["environment"]
-    assert len(profiles.BY_NAME) == 17 and profiles.BASE in profiles.BY_NAME and "readings@1" in profiles.BY_NAME
+    assert len(profiles.BY_NAME) == 18 and profiles.BASE in profiles.BY_NAME and "readings@1" in profiles.BY_NAME
     assert profiles.BY_NAME["risk@0"] == tuple(r for r in profiles.ROWS if r["profile"] == "risk@0")
     assert len(profiles.BY_NAME["risk@0"]) == 2
     for row in profiles.ROWS:
