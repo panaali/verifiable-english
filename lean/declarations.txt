@@ -4051,7 +4051,7 @@ module VE.Calc.Run 8ef6da20db135901d4def4824f5c8df5a7a882a4290d739ea1a60b73855da
 134:0-140:68 theorem VE.Calc.Run.row_sound@VE.Calc.Run
 142:0-149:12 theorem VE.Calc.Run.verdict_sound@VE.Calc.Run
 151:0-158:43 theorem VE.Calc.Run.unknown_named@VE.Calc.Run
-module VE.Calc.RunExamples 87271c161ad358de09839254ad81659db5d53f2ecc6fc86d866a993c2121ea65
+module VE.Calc.RunExamples d396deeb77eb7d092638f33c1680cd7f6e6e3e05497b5c80bfddd94ac08166eb
 9:0-11:22 def VE.Calc.RunExamples.answer@VE.Calc.RunExamples
 13:0-13:87 def VE.Calc.RunExamples.field@VE.Calc.RunExamples
 15:0-22:26 def VE.Calc.RunExamples.says@VE.Calc.RunExamples
@@ -4083,8 +4083,10 @@ module VE.Calc.RunExamples 87271c161ad358de09839254ad81659db5d53f2ecc6fc86d866a9
 301:0-301:66 def VE.Calc.RunExamples.pad@VE.Calc.RunExamples
 302:0-302:114 def VE.Calc.RunExamples.deep@VE.Calc.RunExamples
 303:0-303:56 def VE.Calc.RunExamples.name64@VE.Calc.RunExamples
-433:0-433:32 def VE.Calc.RunExamples.bad@VE.Calc.RunExamples
-459:0-459:100 def VE.Calc.RunExamples.malformed@VE.Calc.RunExamples
+305:0-309:36 def VE.Calc.RunExamples.deepScanFault@VE.Calc.RunExamples
+311:0-314:37 def VE.Calc.RunExamples.multiByteNames@VE.Calc.RunExamples
+485:0-485:32 def VE.Calc.RunExamples.bad@VE.Calc.RunExamples
+511:0-511:100 def VE.Calc.RunExamples.malformed@VE.Calc.RunExamples
 module VE.Calc.Syntax 5fb0fd5b3ab4a969a25f642f8a98ba44cb4fa5b1e114b83623d4c19b0b4153d7
 6:0-14:28 inductive VE.Calc.Expr@VE.Calc.Syntax
 14:11-14:15 def VE.Calc.instReprExpr.repr@VE.Calc.Syntax
