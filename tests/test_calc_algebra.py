@@ -107,6 +107,10 @@ def cost (p : Expr × Expr) : String :=
   let n := 10 ^ 9
   let pts := (List.range 13).map (identityPoint (p.1.names ++ p.2.names).eraseDups)
   reprStr ((Identity.compareB p.1 p.2 n).map (n - ·.2), (pointsB p.1 p.2 pts n).map (n - ·.2))
+/-- The row over a and b free within a budget of `n` units, as `run` prints it. -/
+def runB (n : Nat) (p : Expr × Expr) : String :=
+  let r := identityDecideB ["a", "b"] p.1 p.2 n
+  (wide (r.outcome, r.point, r.sides, r.reason 7)).replace "VE.Numbers." ""
 /-- An inlined claim's names, and its verdict before and after inlining at κ6. -/
 def inl (c : Claim) : String := wide ((c.inline r6 (freeNames r6)).toOption.map fun c' =>
   (c'.exprs.map (·.names.eraseDups), c.decide (values (assign r6 (freeNames r6) κ6)), c'.decide (some ∘ κ6)))
@@ -483,6 +487,16 @@ BUDGET_FIXTURES = [
     ("budget-cost-divisors", 'cost (nest 3 (v "x"), .sub (v "x") (v "y"))', "(some 48, some 10)"),
     ("budget-cost-recip", "cost recip", "(some 30, some 17)"),
     # 2⁶⁴ and 2⁴⁰⁹⁶ at x = 2 (a word, and 64), and a point of 9 names (a value read: 2 units).
+    # R5: the binomial's row with the budget it costs (105 units for the forms, 9 for the point) and one unit less,
+    # in each phase, and with none.
+    ("budget-binom-114", "runB 114 binom", fails('[("a", 1), ("b", 1)]', "(4, 2)")),
+    ("budget-binom-113", "runB 113 binom", BUDGET),
+    ("budget-binom-105", "runB 105 binom", BUDGET),
+    ("budget-binom-104", "runB 104 binom", BUDGET),
+    ("budget-binom-0", "runB 0 binom", BUDGET),
+    ("budget-literal-0", "runB 0 (l 1, l 1)", BUDGET),
+    ("budget-literal-10", "runB 10 (l 1, l 1)", BUDGET),
+    ("budget-literal-11", "runB 11 (l 1, l 1)", HOLDS),
     ("budget-cost-words", 'cost (.mul (.sub (v "x") (l 1)) (.pow (.pow (v "x") 64) 64), l 0)', "(some 1041, some 144)"),
     ("budget-cost-names", "cost (flat 8, l 0)", "(some 923, some 1521)"),
 ]
