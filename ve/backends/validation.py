@@ -82,8 +82,10 @@ def construct_after_lean(decode: Callable[[], object], cache: tuple | None,
     return built
 
 
-def validated_environment(env, data, decode: Callable[[], object]):
-    """`decode()` builds `env` from `data`; Lean decides its validity."""
+def validated_environment(env, data, decode: Callable[[str], object]):
+    """`decode(environment_id)` builds `env` from `data` with the identity Lean computed from its canonical
+    environment (act-phrases 3.3, where an act's canonical form is Lean's); Python computes none. Lean decides
+    its validity."""
     from .relay import decide
     # Restricted JSON is a wire primitive. Check the environment value itself
     # before wrapping it in a service case, so an offset names the same bytes
@@ -93,11 +95,16 @@ def validated_environment(env, data, decode: Callable[[], object]):
         cache = key("environment", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return construct_after_lean(decode, cache,
-                    lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
-                    lambda built, row: row.get("environment_id") == built.environment_id,
-                    "environment",
-                    lambda built, row: (object.__setattr__(built, "_environment_id", row["environment_id"]), built)[1])
+    row = _ACCEPTED.get(cache) if cache is not None else None
+    if row is None:
+        row = decide("environment", [{"id": "environment", "environment": data}])[0]
+    try:
+        built = decode(row["environment_id"])
+    except Exception as exc:
+        raise CheckerUnavailable("CheckerUnavailable: Python could not construct a Lean-accepted environment") from exc
+    if cache is not None:
+        _remember(cache, row)
+    return built
 
 
 def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | None = None):

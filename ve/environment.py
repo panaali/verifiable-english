@@ -176,8 +176,8 @@ class Environment:
     def __init__(self, data, *, _generated_reports=False, _validated_projection=False):
         """Build the container after Lean accepts its source."""
 
-        def python():
-            self._decode(data, _generated_reports=_generated_reports)
+        def python(environment_id=None):
+            self._decode(data, environment_id, _generated_reports=_generated_reports)
             return self
 
         # The reports generator and statement-layer constructors build
@@ -188,11 +188,14 @@ class Environment:
         from .backends.validation import validated_environment
         validated_environment(self, data, python)
 
-    def _decode(self, data, *, _generated_reports=False):
+    def _decode(self, data, environment_id=None, *, _generated_reports=False):
         """Materialise declarations that the Lean environment mode accepted.
 
         The source's field checks, profile gate, fault order and limits live in
         Lean. An unexpected shape here is an operational construction failure.
+        `environment_id` is the identity Lean computed from its canonical
+        environment (act-phrases 3.3); only a projection, which its own route
+        binds, hashes `to_dict()` here.
         """
         language = data["language"]
         route = language == profile_registry.LANGUAGE
@@ -314,7 +317,7 @@ class Environment:
             object.__setattr__(self, "acts", canonical_json(vocabulary["acts"]))
         elif not hasattr(self, "acts"):
             object.__setattr__(self, "acts", None)
-        object.__setattr__(self, "_environment_id",
+        object.__setattr__(self, "_environment_id", environment_id if environment_id is not None else
                            digest(f"ve-environment-{self.identity_version}\n", self.to_dict()))
         if any(decl.defined is not None for decl in predicates.values()):
             from .definitions import compile_definitions
