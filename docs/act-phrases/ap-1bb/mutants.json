@@ -33,5 +33,54 @@
   "test": "tests/test_acts_profile.py::test_norm_defaults_keeps_todays_display_without_asking",
   "killed": true,
   "first_failure": "FAILED tests/test_acts_profile.py::test_norm_defaults_keeps_todays_display_without_asking"
+ },
+ "plainWording-form": {
+  "definition": "plainWording",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:164:0: Expression"
+ },
+ "plainWordings-first": {
+  "definition": "plainWordings",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:186:0: Expression"
+ },
+ "plainWordings-entry": {
+  "definition": "plainWordings",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:186:0: Expression"
+ },
+ "runCase-wordings-empty": {
+  "definition": "Norms.Run.runCase",
+  "file": "lean/VE/Norms/Run.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:186:0: Expression"
+ },
+ "runCase-wordings-untyped": {
+  "definition": "Norms.Run.runCase",
+  "file": "lean/VE/Norms/Run.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:186:0: Expression"
+ },
+ "modalForm-plain": {
+  "definition": "modalForm",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:164:0: Expression"
+ },
+ "runCase-wordings-renamed": {
+  "definition": "Norms.Run.runCase",
+  "file": "lean/VE/Norms/Run.lean",
+  "test": "ResponseShape.Encoders.Norms",
+  "killed": true,
+  "first_failure": "error: ResponseShape/Encoders/Norms.lean:82:44: unsolved goals"
  }
 }
