@@ -3084,6 +3084,18 @@ theorem VE.Calc.Claim.decide_undefined
     VE.Calc.Claim.decide σ c = VE.Numbers.Verdict.undefined ↔ ¬VE.Calc.Claim.Defined σ c
   -- uses VE.Calc.Claim.Defined@VE.Calc.Syntax VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Verdict.undefined@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
   -- expr 1310136358
+theorem VE.Calc.Claim.inline_sound
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (keep : List String),
+        (∀ (n : String), n ∈ keep → n ∈ List.map VE.Calc.Decl.name ds) →
+          ∀ (c c' : VE.Calc.Claim),
+            VE.Calc.Claim.inline ds keep c = Except.ok c' →
+              ∀ (κ : String → Rat),
+                VE.Calc.Claim.Holds (VE.Calc.values (VE.Calc.assign ds keep κ)) c ↔
+                  VE.Calc.Claim.Holds (fun n => Option.some (κ n)) c'
+  -- uses VE.Calc.Claim.Holds@VE.Calc.Syntax VE.Calc.Claim.inline@VE.Calc.Inline VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.assign@VE.Calc.Inline VE.Calc.values@VE.Calc.Decls
+  -- expr 542625992
 theorem VE.Calc.Claim.run_complete
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds →
@@ -3132,6 +3144,11 @@ theorem VE.Calc.Denotes.eval_complete
   ∀ {σ : VE.Calc.Values} {e : VE.Calc.Expr} {q : Rat}, VE.Calc.Denotes σ e q → VE.Calc.Expr.eval σ e = Option.some q
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
   -- expr 4093109492
+theorem VE.Calc.Denotes.mono
+  ∀ {σ τ : VE.Calc.Values} {e : VE.Calc.Expr} {x : Rat},
+    VE.Calc.Denotes σ e x → (∀ (n : String) (q : Rat), σ n = Option.some q → τ n = Option.some q) → VE.Calc.Denotes τ e x
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
+  -- expr 727075443
 theorem VE.Calc.Denotes.unique
   ∀ {σ : VE.Calc.Values} {e : VE.Calc.Expr} {x y : Rat}, VE.Calc.Denotes σ e x → VE.Calc.Denotes σ e y → x = y
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
@@ -3218,6 +3235,48 @@ theorem VE.Calc.Expr.exhausted_lift
       VE.Calc.Expr.ReadsExhausted ds child → VE.Calc.Expr.ReadsExhausted ds parent
   -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax
   -- expr 2941271151
+theorem VE.Calc.Expr.inline_error
+  ∀ (ds : List VE.Calc.Decl) (keep : List String) (e : VE.Calc.Expr) (v : VE.Calc.Val),
+    VE.Calc.Expr.inline ds keep e = Except.error v → v = VE.Calc.Val.undefined ∨ v = VE.Calc.Val.exhausted
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val.exhausted@VE.Calc.Decls VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls
+  -- expr 204915986
+theorem VE.Calc.Expr.inline_exhausted
+  ∀ (ds : List VE.Calc.Decl) (keep : List String) (e : VE.Calc.Expr),
+    VE.Calc.Expr.inline ds keep e = Except.error VE.Calc.Val.exhausted → VE.Calc.Expr.ReadsExhausted ds e
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val.exhausted@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls
+  -- expr 1331235965
+theorem VE.Calc.Expr.inline_names
+  ∀ (ds : List VE.Calc.Decl) (keep : List String) (e e' : VE.Calc.Expr),
+    VE.Calc.Expr.inline ds keep e = Except.ok e' → ∀ (n : String), n ∈ e'.names → n ∈ keep
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls
+  -- expr 509768716
+theorem VE.Calc.Expr.inline_sound
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (keep : List String),
+        (∀ (n : String), n ∈ keep → n ∈ List.map VE.Calc.Decl.name ds) →
+          ∀ (e e' : VE.Calc.Expr),
+            VE.Calc.Expr.inline ds keep e = Except.ok e' →
+              ∀ (κ : String → Rat) (x : Rat),
+                VE.Calc.Denotes (VE.Calc.values (VE.Calc.assign ds keep κ)) e x ↔
+                  VE.Calc.Denotes (fun n => Option.some (κ n)) e' x
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.assign@VE.Calc.Inline VE.Calc.values@VE.Calc.Decls
+  -- expr 2895639766
+theorem VE.Calc.Expr.inline_tooLarge
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (keep : List String) (e : VE.Calc.Expr),
+        VE.Calc.Expr.inline ds keep e = Except.error VE.Calc.Val.tooLarge → VE.Calc.Expr.Overflows ds e
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val.tooLarge@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls
+  -- expr 1819221430
+theorem VE.Calc.Expr.inline_undefined
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (keep : List String) (e : VE.Calc.Expr),
+        VE.Calc.Expr.inline ds keep e = Except.error VE.Calc.Val.undefined →
+          ∀ (κ : String → Rat) (x : Rat), ¬VE.Calc.Denotes (VE.Calc.values (VE.Calc.assign ds keep κ)) e x
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.assign@VE.Calc.Inline VE.Calc.values@VE.Calc.Decls
+  -- expr 3941818460
 theorem VE.Calc.Expr.overflow_lift
   ∀ (ds : List VE.Calc.Decl) (parent child : VE.Calc.Expr),
     (∀ (e : VE.Calc.Expr), e ∈ child.subexprs → e ∈ parent.subexprs) →
@@ -3225,6 +3284,31 @@ theorem VE.Calc.Expr.overflow_lift
         VE.Calc.Expr.Overflows ds child → VE.Calc.Expr.Overflows ds parent
   -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr.subexprs@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax
   -- expr 1123596397
+theorem VE.Calc.Expr.subst_agrees
+  ∀ {κ : String → Rat} {σ : VE.Calc.Values} {t : VE.Calc.Inlined},
+    VE.Calc.Inlined.Agrees κ σ t →
+      ∀ (e : VE.Calc.Expr),
+        (∀ (e' : VE.Calc.Expr),
+            VE.Calc.Expr.subst t e = Except.ok e' →
+              VE.Calc.Expr.eval σ e = VE.Calc.Expr.eval (fun m => Option.some (κ m)) e') ∧
+          (VE.Calc.Expr.subst t e = Except.error VE.Calc.Val.undefined → VE.Calc.Expr.eval σ e = Option.none)
+  -- uses VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr.subst@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Agrees@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
+  -- expr 1606058551
+theorem VE.Calc.Expr.subst_faults
+  ∀ {D : List VE.Calc.Decl} {keep : List String} {t : VE.Calc.Inlined},
+    VE.Calc.Inlined.Faults D keep t →
+      ∀ (e : VE.Calc.Expr),
+        (∀ (e' : VE.Calc.Expr), VE.Calc.Expr.subst t e = Except.ok e' → ∀ (m : String), m ∈ e'.names → m ∈ keep) ∧
+          (VE.Calc.Expr.subst t e = Except.error VE.Calc.Val.exhausted → ∃ m, m ∈ e.names ∧ VE.Calc.NameExhausted D m) ∧
+            ∀ (v : VE.Calc.Val),
+              VE.Calc.Expr.subst t e = Except.error v → v = VE.Calc.Val.undefined ∨ v = VE.Calc.Val.exhausted
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr.subst@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Faults@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.NameExhausted@VE.Calc.Decls VE.Calc.Val.exhausted@VE.Calc.Decls VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls
+  -- expr 2689883461
+theorem VE.Calc.Expr.zeroDivisor_sound
+  ∀ (κ : String → Rat) {e : VE.Calc.Expr},
+    e.zeroDivisor = Bool.true → ∀ (x : Rat), ¬VE.Calc.Denotes (fun v => Option.some (κ v)) e x
+  -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.zeroDivisor@VE.Calc.Identity VE.Calc.Expr@VE.Calc.Syntax
+  -- expr 1342338600
 theorem VE.Calc.Farkas.check_sound
   ∀ (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas),
     VE.Calc.Farkas.check fs c = Bool.true → ∀ (κ : String → Rat), ¬∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
@@ -3294,6 +3378,45 @@ theorem VE.Calc.Identity.compare_within
             fa.fst.mul? fb.snd = Option.some l ∧ fb.fst.mul? fa.snd = Option.some s ∧ l.Within ∧ s.Within ∧ r = (l == s)
   -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Frac.ofExpr?@VE.Calc.Poly VE.Calc.Identity.compare@VE.Calc.Poly VE.Calc.Mono@VE.Calc.Poly VE.Calc.Poly.Within@VE.Calc.Poly VE.Calc.Poly.mul?@VE.Calc.Poly VE.Calc.Poly@VE.Calc.Poly VE.Calc.instDecidableEqMono@VE.Calc.Poly
   -- expr 51563669
+theorem VE.Calc.IdentityExamples.square_not_identity
+  ¬VE.Calc.IsIdentity [{ name := "x", source := VE.Calc.Source.free }] ((VE.Calc.Expr.val "x").pow 2)
+      (VE.Calc.Expr.val "x")
+  -- uses VE.Calc.Decl.mk@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.pow@VE.Calc.Syntax VE.Calc.Expr.val@VE.Calc.Syntax VE.Calc.IsIdentity@VE.Calc.Identity VE.Calc.Source.free@VE.Calc.Decls
+  -- expr 188713625
+theorem VE.Calc.Inlined.Agrees.ok
+  ∀ {κ : String → Rat} {σ : VE.Calc.Values} {t : VE.Calc.Inlined},
+    VE.Calc.Inlined.Agrees κ σ t →
+      ∀ (n : String) (e' : VE.Calc.Expr), t.at n = Except.ok e' → σ n = VE.Calc.Expr.eval (fun m => Option.some (κ m)) e'
+  -- uses VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Agrees@VE.Calc.Inline VE.Calc.Inlined.at@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Val@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
+  -- expr 847692805
+theorem VE.Calc.Inlined.Agrees.undefined
+  ∀ {κ : String → Rat} {σ : VE.Calc.Values} {t : VE.Calc.Inlined},
+    VE.Calc.Inlined.Agrees κ σ t → ∀ (n : String), t.at n = Except.error VE.Calc.Val.undefined → σ n = Option.none
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Agrees@VE.Calc.Inline VE.Calc.Inlined.at@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax
+  -- expr 3758711552
+theorem VE.Calc.Inlined.Faults.exhausted
+  ∀ {D : List VE.Calc.Decl} {keep : List String} {t : VE.Calc.Inlined},
+    VE.Calc.Inlined.Faults D keep t →
+      ∀ (n : String), t.at n = Except.error VE.Calc.Val.exhausted → VE.Calc.NameExhausted D n
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Faults@VE.Calc.Inline VE.Calc.Inlined.at@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.NameExhausted@VE.Calc.Decls VE.Calc.Val.exhausted@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls
+  -- expr 4041073120
+theorem VE.Calc.Inlined.Faults.faults
+  ∀ {D : List VE.Calc.Decl} {keep : List String} {t : VE.Calc.Inlined},
+    VE.Calc.Inlined.Faults D keep t →
+      ∀ (n : String) (v : VE.Calc.Val), t.at n = Except.error v → v = VE.Calc.Val.undefined ∨ v = VE.Calc.Val.exhausted
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Faults@VE.Calc.Inline VE.Calc.Inlined.at@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Val.exhausted@VE.Calc.Decls VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls
+  -- expr 1418689620
+theorem VE.Calc.Inlined.Faults.names
+  ∀ {D : List VE.Calc.Decl} {keep : List String} {t : VE.Calc.Inlined},
+    VE.Calc.Inlined.Faults D keep t →
+      ∀ (n : String) (e' : VE.Calc.Expr), t.at n = Except.ok e' → ∀ (m : String), m ∈ e'.names → m ∈ keep
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Faults@VE.Calc.Inline VE.Calc.Inlined.at@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Val@VE.Calc.Decls
+  -- expr 3709677303
+theorem VE.Calc.Inlined.at_cons
+  ∀ (t : VE.Calc.Inlined) (m : String) (r : Except VE.Calc.Val VE.Calc.Expr) (n : String),
+    VE.Calc.Inlined.at ((m, r) :: t) n = if n = m then r else t.at n
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.at@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Val@VE.Calc.Decls
+  -- expr 3145367011
 theorem VE.Calc.Poly.add?_sound
   ∀ (κ : String → Rat) {p q r : VE.Calc.Poly},
     p.add? q = Option.some r → VE.Calc.Poly.eval κ r = VE.Calc.Poly.eval κ p + VE.Calc.Poly.eval κ q
@@ -3522,6 +3645,11 @@ theorem VE.Calc.Val.guard_agrees
   ∀ (q : Rat), VE.Calc.Val.Agrees✝ (VE.Calc.Val.guard q) (Option.some q)
   -- uses VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls
   -- expr 724329628
+theorem VE.Calc.assign_wellFormed
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds → ∀ (ns : List String) (κ : String → Rat), VE.Calc.WellFormed (VE.Calc.assign ds ns κ)
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.assign@VE.Calc.Inline
+  -- expr 2094943993
 theorem VE.Calc.bind2_some
   ∀ {α β γ : Type} {o : Option α} {p : Option β} {f : α → β → Option γ} {d : γ},
     (do
@@ -3619,6 +3747,63 @@ theorem VE.Calc.foldl_mul_rat
   ∀ (a : Rat) (l : List Rat), List.foldl (fun x1 x2 => x1 * x2) a l = a * List.foldl (fun x1 x2 => x1 * x2) 1 l
   -- uses
   -- expr 1323853608
+theorem VE.Calc.freeNames_mem
+  ∀ (ds : List VE.Calc.Decl) (n : String), n ∈ VE.Calc.freeNames ds → n ∈ List.map VE.Calc.Decl.name ds
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.freeNames@VE.Calc.Inline
+  -- expr 1030229519
+theorem VE.Calc.identityDecide_outcome
+  ∀ (keep : List String) (a' b' : VE.Calc.Expr),
+    ((VE.Calc.identityDecide keep a' b').outcome = VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds →
+        VE.Calc.identityCheck a' b' = Bool.true) ∧
+      ((VE.Calc.identityDecide keep a' b').outcome = VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails →
+          ∃ κ, VE.Calc.differsAt a' b' κ = Bool.true) ∧
+        ((VE.Calc.identityDecide keep a' b').outcome = VE.Numbers.Outcome.decided VE.Numbers.Verdict.undefined →
+            a'.zeroDivisor = Bool.true ∨ b'.zeroDivisor = Bool.true) ∧
+          ∀ (u : VE.Numbers.UnknownReason),
+            (VE.Calc.identityDecide keep a' b').outcome = VE.Numbers.Outcome.unknown u →
+              u = VE.Numbers.UnknownReason.limit VE.Numbers.Limit.polyTerms ∨
+                u = VE.Numbers.UnknownReason.identityNotShown
+  -- uses VE.Calc.Expr.zeroDivisor@VE.Calc.Identity VE.Calc.Expr@VE.Calc.Syntax VE.Calc.IdentityRow.outcome@VE.Calc.Identity VE.Calc.differsAt@VE.Calc.Poly VE.Calc.identityCheck@VE.Calc.Poly VE.Calc.identityDecide@VE.Calc.Identity VE.Numbers.Limit.polyTerms@VE.Numbers.Round VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.identityNotShown@VE.Numbers.Round VE.Numbers.UnknownReason.limit@VE.Numbers.Round VE.Numbers.UnknownReason@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round VE.Numbers.Verdict.undefined@VE.Numbers.Round
+  -- expr 716863719
+theorem VE.Calc.identityRun_fails
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (a b : VE.Calc.Expr),
+        (VE.Calc.identityRun ds a b).outcome = VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails →
+          VE.Calc.NotIdentity ds a b
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.IdentityRow.outcome@VE.Calc.Identity VE.Calc.NotIdentity@VE.Calc.Identity VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.identityRun@VE.Calc.Identity VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round
+  -- expr 3347721757
+theorem VE.Calc.identityRun_holds
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (a b : VE.Calc.Expr),
+        (VE.Calc.identityRun ds a b).outcome = VE.Numbers.Outcome.decided VE.Numbers.Verdict.holds →
+          VE.Calc.IsIdentity ds a b
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.IdentityRow.outcome@VE.Calc.Identity VE.Calc.IsIdentity@VE.Calc.Identity VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.identityRun@VE.Calc.Identity VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round
+  -- expr 2546681850
+theorem VE.Calc.identityRun_undefined
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (a b : VE.Calc.Expr),
+        (VE.Calc.identityRun ds a b).outcome = VE.Numbers.Outcome.decided VE.Numbers.Verdict.undefined →
+          ∃ e,
+            e ∈ [a, b] ∧
+              ∀ (κ : String → Rat) (x : Rat),
+                ¬VE.Calc.Denotes (VE.Calc.values (VE.Calc.assign ds (VE.Calc.freeNames ds) κ)) e x
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.IdentityRow.outcome@VE.Calc.Identity VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.assign@VE.Calc.Inline VE.Calc.freeNames@VE.Calc.Inline VE.Calc.identityRun@VE.Calc.Identity VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.undefined@VE.Numbers.Round
+  -- expr 1477292984
+theorem VE.Calc.identityRun_unknown
+  ∀ (ds : List VE.Calc.Decl) (a b : VE.Calc.Expr) (u : VE.Numbers.UnknownReason),
+    (VE.Calc.identityRun ds a b).outcome = VE.Numbers.Outcome.unknown u →
+      u ∈
+          [VE.Numbers.UnknownReason.limit VE.Numbers.Limit.polyTerms, VE.Numbers.UnknownReason.identityNotShown,
+            VE.Numbers.UnknownReason.limit VE.Numbers.Limit.digits,
+            VE.Numbers.UnknownReason.limit VE.Numbers.Limit.evaluations] ∧
+        (u = VE.Numbers.UnknownReason.limit VE.Numbers.Limit.digits → ∃ e, e ∈ [a, b] ∧ VE.Calc.Expr.Overflows ds e) ∧
+          (u = VE.Numbers.UnknownReason.limit VE.Numbers.Limit.evaluations →
+            ∃ e, e ∈ [a, b] ∧ VE.Calc.Expr.ReadsExhausted ds e)
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.Overflows@VE.Calc.Decls VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.IdentityRow.outcome@VE.Calc.Identity VE.Calc.identityRun@VE.Calc.Identity VE.Numbers.Limit.digits@VE.Numbers.Round VE.Numbers.Limit.evaluations@VE.Numbers.Round VE.Numbers.Limit.polyTerms@VE.Numbers.Round VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.identityNotShown@VE.Numbers.Round VE.Numbers.UnknownReason.limit@VE.Numbers.Round VE.Numbers.UnknownReason@VE.Numbers.Round
+  -- expr 394056960
 theorem VE.Calc.identity_sound
   ∀ (a b : VE.Calc.Expr),
     VE.Calc.identityCheck a b = Bool.true →
@@ -3626,6 +3811,45 @@ theorem VE.Calc.identity_sound
         VE.Calc.Denotes (fun v => Option.some (κ v)) a x → VE.Calc.Denotes (fun v => Option.some (κ v)) b y → x = y
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.identityCheck@VE.Calc.Poly
   -- expr 4146623102
+theorem VE.Calc.inlineTable_agrees
+  ∀ (keep : List String) (κ : String → Rat) (ds : List VE.Calc.Decl) (σ : VE.Calc.Values) (t : VE.Calc.Inlined),
+    (∀ (d : VE.Calc.Decl),
+        d ∈ ds →
+          ∀ (q : Thunk (Option Rat)) (v : Option Rat),
+            d.source = VE.Calc.Source.counted q (VE.Calc.Counted.ok v) → q.get = v) →
+      VE.Calc.Inlined.Agrees κ σ t →
+        VE.Calc.Inlined.Agrees κ
+          (List.foldl (fun σ d n => if n = d.name then d.valueUnder σ else σ n) σ (VE.Calc.assign ds keep κ))
+          (List.foldl (fun t d => (d.name, VE.Calc.Decl.inlineUnder keep t d) :: t) t ds)
+  -- uses VE.Calc.Counted.ok@VE.Calc.Decls VE.Calc.Decl.inlineUnder@VE.Calc.Inline VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl.valueUnder@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Agrees@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Source.counted@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Values@VE.Calc.Syntax VE.Calc.assign@VE.Calc.Inline
+  -- expr 2304239787
+theorem VE.Calc.inlineTable_faults
+  ∀ (D : List VE.Calc.Decl) (keep : List String) (ds : List VE.Calc.Decl) (t : VE.Calc.Inlined),
+    (∀ (d : VE.Calc.Decl), d ∈ ds → d ∈ D) →
+      VE.Calc.Inlined.Faults D keep t →
+        VE.Calc.Inlined.Faults D keep (List.foldl (fun t d => (d.name, VE.Calc.Decl.inlineUnder keep t d) :: t) t ds)
+  -- uses VE.Calc.Decl.inlineUnder@VE.Calc.Inline VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined.Faults@VE.Calc.Inline VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Val@VE.Calc.Decls
+  -- expr 3249614534
+theorem VE.Calc.inline_agrees
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (keep : List String) (κ : String → Rat),
+        VE.Calc.Inlined.Agrees κ (VE.Calc.values (VE.Calc.assign ds keep κ)) (VE.Calc.inlineTable ds keep)
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Inlined.Agrees@VE.Calc.Inline VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.assign@VE.Calc.Inline VE.Calc.inlineTable@VE.Calc.Inline VE.Calc.values@VE.Calc.Decls
+  -- expr 2024549854
+theorem VE.Calc.inline_faults
+  ∀ (ds : List VE.Calc.Decl) (keep : List String), VE.Calc.Inlined.Faults ds keep (VE.Calc.inlineTable ds keep)
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Inlined.Faults@VE.Calc.Inline VE.Calc.inlineTable@VE.Calc.Inline
+  -- expr 2481359278
+theorem VE.Calc.isIdentity_of_check
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (a b a' b' : VE.Calc.Expr),
+        VE.Calc.Expr.inline ds (VE.Calc.freeNames ds) a = Except.ok a' →
+          VE.Calc.Expr.inline ds (VE.Calc.freeNames ds) b = Except.ok b' →
+            VE.Calc.identityCheck a' b' = Bool.true → VE.Calc.IsIdentity ds a b
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.IsIdentity@VE.Calc.Identity VE.Calc.Val@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.freeNames@VE.Calc.Inline VE.Calc.identityCheck@VE.Calc.Poly
+  -- expr 2821787480
 theorem VE.Calc.legacy_nominal
   ∀ (t t' : String), t ≠ t' → VE.Calc.legacyDim t ≠ VE.Calc.legacyDim t'
   -- uses VE.Calc.PhysDim@VE.Calc.Dimension VE.Calc.legacyDim@VE.Calc.Dimension
@@ -3638,6 +3862,19 @@ theorem VE.Calc.mul_pow_nat
   ∀ (a b : Rat) (k : Nat), (a * b) ^ k = a ^ k * b ^ k
   -- uses
   -- expr 3198866195
+theorem VE.Calc.notIdentity_of_differsAt
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (a b a' b' : VE.Calc.Expr),
+        VE.Calc.Expr.inline ds (VE.Calc.freeNames ds) a = Except.ok a' →
+          VE.Calc.Expr.inline ds (VE.Calc.freeNames ds) b = Except.ok b' →
+            ∀ (κ : List (String × Rat)), VE.Calc.differsAt a' b' κ = Bool.true → VE.Calc.NotIdentity ds a b
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.NotIdentity@VE.Calc.Identity VE.Calc.Val@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.differsAt@VE.Calc.Poly VE.Calc.freeNames@VE.Calc.Inline
+  -- expr 2769934617
+theorem VE.Calc.not_isIdentity
+  ∀ (ds : List VE.Calc.Decl) (a b : VE.Calc.Expr), VE.Calc.NotIdentity ds a b → ¬VE.Calc.IsIdentity ds a b
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.IsIdentity@VE.Calc.Identity VE.Calc.NotIdentity@VE.Calc.Identity
+  -- expr 3038974573
 theorem VE.Calc.one_pow_nat
   ∀ (k : Nat), 1 ^ k = 1
   -- uses
