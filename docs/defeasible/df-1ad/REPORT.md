@@ -59,7 +59,7 @@ compare_statements.py` on this HEAD gives **42 OK, 0 not OK** (`evidence/stateme
 
 **Seeded bugs (Lean only;** no Python or Rust product file changed). They are listed in `mutants.json` and run by
 `python3 docs/defeasible/df-1a/evidence/run_mutants.py docs/defeasible/df-1ad/mutants.json`. The saved run is
-`evidence/mutants.out`: control 0 failures, all 13 fail.
+`evidence/mutants.out`: control 0 failures, all 34 fail (13 here, R1–R21 in section 7).
 
 | # | `Wire.lean` definition: bug | Fails |
 | --- | --- | --- |
@@ -72,6 +72,7 @@ compare_statements.py` on this HEAD gives **42 OK, 0 not OK** (`evidence/stateme
 | M1, M2 | `forcedAt`: `[]` (plan); the condition index replaced by the count | DF-β (i), DF-β2 |
 | M3, M4 | `ModelReplay.verdict` without the check; `modelFields`: `forced` under UNKNOWN | DF-β {excepted}, the empty domain |
 | M5 | `defaultsCase`: `defaults-model` unanswered | DF-β (i), DF-β2, DF-α's default model |
+| R1–R21 | each request member a kind reads replaced by a constant (review F1, section 7) | the guards each names; 18 also break their replay's `_request` theorem |
 
 `trust_mutants.py --max-mutants 1000 --allow trust-mutants-allow.json` (Mac, HEAD 9ec298b54) gives 55 killed,
 0 survivors, 0 UNKNOWN and 25 allowed, exit 0 (`trust-mutants.json`). Each allowed mutant does not elaborate: an
@@ -123,7 +124,7 @@ Evidence commit list (`git log --oneline main..HEAD --no-merges`, before this re
    diff grep finds no Python product file and no permanent report test. Overlap with in-flight branches is limited to
    the shared ledgers `tools/trust-classes.json` and `ve/assurance-manifest.json` (own entries), plus generated files
    (R12).
-3. **Tests can fail.** PASS. Q1–Q8 and M1–M5 (`evidence/mutants.out`) cover at least one per trusted definition.
+3. **Tests can fail.** PASS. Q1–Q8, M1–M5 and R1–R21 (`evidence/mutants.out`) cover at least one per trusted definition.
    `trust_mutants.py` exits 0 (`trust-mutants.json`). The control passes.
 4. **Python, Lean and Rust agree.** N.A.: nothing reaches the new code from Python or Rust. Fixtures decode real JSON
    through `decodeSoftU`, including two conditions and two entities (DF-β2).
@@ -145,3 +146,49 @@ Evidence commit list (`git log --oneline main..HEAD --no-merges`, before this re
 12. **No CPU or memory regression.** N.A.: no route runs the new code; no pilot run (L70).
 13. **Test-removed trailers.** PASS: `gate_collection.py --check --prebuilt`: 0 added, 0 removed, 0 refused, 0 stale,
     0 malformed.
+
+## 7. Review fixes (`manage-agents/df-1ad-review.final.md`, b8f32f8f4)
+
+**F1 (B): the question's premises were never read by a test.** The class is a request member replaced by a constant,
+which passes every guard and every proof. The fix removes the class two ways:
+
+- **Theorems** (`Wire.lean`): `filledOf_request`, `collisionOf_request`, `replayModelOn_request`,
+  `replayCertOn_request` and `replayCoherenceOn_request` state that each value a replay holds is the decoding of the
+  request's own member:
+  - premises, conclusion, model, filling, rules and environment;
+  - the certificate bound to the request's own premises and conclusion;
+  - the pair certificates, the collision, and the model and strict model.
+
+  So `defaults_model_sound`'s `x.Γ` is the question's premises. A constant in place of a member fails `lake build`.
+- **Guards** (`WireExamples.lean`):
+  - F1's own case: DF-β with `∀a. ¬urgent(a)` is UNKNOWN, and with `∃a. urgent(a)` it is DOES-NOT-FOLLOW.
+  - The model's filling: `unsaid__x_required` at the assistant makes the situation fail.
+  - The collision's filling is decoded: an unknown filling table is refused.
+  - The sweep's own premises: `βFact`, with trace 7,8,2,11,12, is FOLLOWS unsettled long.
+  - DF-κ both ways: one premise added, and one premise more sent.
+  - DF-γb on the certificate kind: a resolved pair, an absent pair certificate, and diagnostic 5. This is review
+    F4's class.
+- **Seeded bugs R1–R21** (`mutants.json`): one per request member the four kinds read.
+  - On the pre-fix fixtures, five survived: R1 (F1), R3 (the filling, :143), R4 (the collision's filling), R8 (own
+    premises, :243) and R10 (pair certificates, F4).
+  - Now all 21 fail a guard. The 18 that touch a replay also fail its `_request` theorem.
+  - Saved run: `evidence/mutants.out` (control 0 failures, 34 of 34 fail).
+- **Probe F1:** it failed before the fix (the mutant survived, `[]`) and passes after it (F1's guard fails). It is
+  R1 in `mutants.json`.
+
+**Evidence on the fix:**
+- `lake build`: 1,061 jobs. `python3 lean/audit.py`: PASS (606 files, 6,972 theorems).
+- `compare_statements.py`: 42 OK, unchanged. `regen_generated.py --check`: 33 entries.
+- `trust_map.py --check`: V +37, unchanged; theorems are P, and the two new fixtures are T in `trust-classes.json`.
+- `trust_mutants.py`, a full run on the Mac at 6539291c: 55 killed, 0 survivors, 25 allowed, exit 0
+  (`trust-mutants.json`).
+- Selected tests on the Mac: 76 units. Two failed: `docs/spec/assurance-manifest.md` was stale after the manifest
+  pin, and it is regenerated in b59120e77. Both then pass when rerun alone. No pre-existing failure from
+  `main-known-red.txt` appeared.
+
+**C findings (F2–F6) → df-1ae, as the review asks.** This fix covers the parts of F4 that fall in F1's class:
+- the certificate kind's pair certificates;
+- diagnostic 5.
+
+It adds about 150 hand-written lines (`Wire.lean` +87, `WireExamples.lean` +41, `mutants.json` +23), on top of
+F6's ~770.
