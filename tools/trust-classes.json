@@ -14259,6 +14259,7 @@
       "T": [
         "VE.Arith.Examples.atLeast",
         "VE.Arith.Examples.bertrand",
+        "VE.Arith.Examples.chain",
         "VE.Arith.Examples.countDefs",
         "VE.Arith.Examples.double",
         "VE.Arith.Examples.lit",
