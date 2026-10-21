@@ -158,6 +158,25 @@ def fa1bModel : VE.Order.FiniteModel Nat := rowsModel pm [([], 1), ([stay], 1), 
 #guard !refutesC fomc fa1 fa1Conclusion fa1bModel
 #guard agrees fomc (fa1Conclusion :: fa1) fa1bModel
 
+/-- A model built by `rowsModel` is valid when its predicates are unary on its sort and no constant is declared. -/
+theorem rowsModel_valid (E : CEnv) (s : String) (rows : List (List String × Nat)) (hc : ∀ c, E.q.constants c = none)
+    (hp : ∀ r ∈ rows, ∀ p ∈ r.1, E.q.predicates p = some [.obj s]) : (rowsModel s rows).Valid E.q.erase := by
+  refine ⟨fun c σ h => by simp [VE.Time.QEnv.erase, hc] at h, fun p vs h => ?_⟩
+  obtain ⟨o, ho, rfl⟩ := List.mem_map.mp (show vs ∈ (rowsModel s rows).relations p from h)
+  obtain ⟨ho, hpo⟩ := List.mem_filter.mp ho
+  obtain ⟨r, hr, hor⟩ := List.mem_flatMap.mp (List.fst_mem_of_mem_zipIdx ho)
+  rw [List.eq_of_mem_replicate hor] at hpo
+  refine ⟨[.user s], by simp [VE.Time.QEnv.erase, hp r hr p (by simpa using hpo), VE.Time.QType.erase], ?_⟩
+  simp only [VE.Order.TupleTyped, VE.Order.Structure.domain, rowsModel, beq_self_eq_true, if_true, and_true]
+  exact List.mem_map.mpr ⟨o, ho, rfl⟩
+
+/-- FA1b end to end (spec 3.9): the countermodel proves that the counting claim does not follow without the
+exclusion premise, through `refutesC_sound`. With `fa1_entails`, the premise is what makes FA1 hold. -/
+theorem fa1b_not_entails : ¬ CEntails.{0} fomc fa1.dropLast fa1Conclusion :=
+  refutesC_sound fomc fomc_wellFormed _ _ fa1bModel (rowsModel_valid fomc pm _ (fun _ => rfl) (by decide))
+    (fun a ha => admits_sound _ _ (by revert a ha; decide +kernel)) (admits_sound _ _ (by decide +kernel))
+    (by decide +kernel)
+
 /-- FA1c: "at least 16" with "at most 2", exclusion kept, refuted by (1, 0, 17, 0); so the reading matters. -/
 def fa1c : List CFormula :=
   [.count (exactlyAtom pm .any 18), .count (atLeastAtom pm (.atom inc) 16),
@@ -174,8 +193,7 @@ def flagged (total k j : Nat) : VE.Order.FiniteModel Nat :=
   rowsModel pm [([inc, stay], j), ([inc], k - j), ([], total - k)]
 
 /-- Each count atom, erased and evaluated with its region sizes, against W6a's sugar on the same model. -/
-def agreeOn (M : VE.Order.FiniteModel Nat) (n m : Nat) : Bool :=
-  let b : Body := .atom inc
+def agreeOn (M : VE.Order.FiniteModel Nat) (n m : Nat) (b : Body := .atom inc) : Bool :=
   let w := fun (f : VE.Order.Formula) => f.eval M []
   let e := fun (a : CFormula) => erasedFin fomc [a] M a
   e (.count (atLeastAtom pm b n)) == w (VE.Time.atLeast pm n b.toFormula) &&
@@ -190,6 +208,49 @@ def agreeOn (M : VE.Order.FiniteModel Nat) (n m : Nat) : Bool :=
 -- A model may list an object twice; it is still one object.
 def dupModel : VE.Order.FiniteModel Nat := { flagged 3 2 0 with domains := fun t => if t == pm then [0, 1, 0, 2] else [] }
 #guard (List.range 4).all fun n => agreeOn dupModel n 2
+-- A body with `not`, `and` and `or`, so every case of `Body.toFormula` is compared.
+#guard [6, 7, 8].all fun t => (List.range 4).all fun k => (List.range (k + 1)).all fun j =>
+  (List.range 4).all fun n => agreeOn (flagged t k j) n 2 (.or (.and (.atom inc) (.not (.atom stay))) (.not .any))
+
+/-- On the lift of a valid finite model, a count atom holds exactly as `holdsFin` counts it. -/
+theorem count_lift {M : VE.Order.FiniteModel Nat} (hM : M.Valid fomc.q.erase) (c : CountAtom)
+    (hc : c.sort ∈ fomc.finite) :
+    (CFormula.count c).holds (VE.Time.lift fomc.q M.asStructure) ↔ holdsFin M (.count c) = true := by
+  rw [CFormula.holds, countAtom_holds_iff ⟨VE.Time.lift_admissible hM, fun s _ => ⟨_, fun _ => Iff.rfl⟩⟩ c hc]
+  simp only [← countFin_eq hM, holdsFin]
+  cases c.rel <;> simp [Rel.holds]
+
+def fa2Model : VE.Order.FiniteModel Nat := flagged 7 3 1
+theorem fa2Model_valid : fa2Model.Valid fomc.q.erase := rowsModel_valid fomc pm _ (fun _ => rfl) (by decide)
+
+/-- FA2 through spec 3.7, on the lift of a model of seven (three expect an increase, one of them also rates to stay):
+W6a's "at least 3", "at most 3", "exactly 3" and "exactly 1 of the 3" hold there; "at least 4", "at most 2",
+"exactly 2" and "exactly 0 of the 3" do not. -/
+theorem fa2_agree :
+    let T := VE.Time.lift fomc.q fa2Model.asStructure
+    let b : Body := .atom inc
+    let w := fun f : VE.Order.Formula => f.denote T.lower []
+    (w (VE.Time.atLeast pm 3 b.toFormula) ∧ ¬ w (VE.Time.atLeast pm 4 b.toFormula)) ∧
+    (w (VE.Time.atMost pm 3 b.toFormula) ∧ ¬ w (VE.Time.atMost pm 2 b.toFormula)) ∧
+    (w (VE.Time.exactly pm 3 b.toFormula) ∧ ¬ w (VE.Time.exactly pm 2 b.toFormula)) ∧
+    (w (VE.Time.nOfM pm 1 3 b.toFormula (Body.atom stay).toFormula) ∧
+      ¬ w (VE.Time.nOfM pm 0 3 b.toFormula (Body.atom stay).toFormula)) := by
+  intro T b w
+  have hT : Admissible fomc T := ⟨VE.Time.lift_admissible fa2Model_valid, fun s _ => ⟨_, fun _ => Iff.rfl⟩⟩
+  have hs : pm ∈ fomc.finite := by decide
+  have hb : BodyTyped fomc pm b := (bodyCheck_iff _ _ _).mp (by decide)
+  have hst : BodyTyped fomc pm (.atom stay) := (bodyCheck_iff _ _ _).mp (by decide)
+  have yes := fun c hc h => (count_lift fa2Model_valid c hc).mpr h
+  have no : ∀ c, c.sort ∈ fomc.finite → (CFormula.count c).holds T → holdsFin fa2Model (.count c) = false → False :=
+    fun c hc h hf => by simp [(count_lift fa2Model_valid c hc).mp h] at hf
+  refine ⟨⟨(count_atLeast_agree fomc T hT pm hs b hb 3).mp (yes _ hs (by decide)),
+      fun h => no _ hs ((count_atLeast_agree fomc T hT pm hs b hb 4).mpr h) (by decide)⟩,
+    ⟨(count_atMost_agree fomc T hT pm hs b hb 3).mp (yes _ hs (by decide)),
+      fun h => no _ hs ((count_atMost_agree fomc T hT pm hs b hb 2).mpr h) (by decide)⟩,
+    ⟨(count_exactly_agree fomc T hT pm hs b hb 3).mp (yes _ hs (by decide)),
+      fun h => no _ hs ((count_exactly_agree fomc T hT pm hs b hb 2).mpr h) (by decide)⟩,
+    (count_nOfM_agree fomc T hT pm hs b _ hb hst 1 3).mp ⟨yes _ hs (by decide), yes _ hs (by decide)⟩,
+    fun h => no _ hs ((count_nOfM_agree fomc T hT pm hs b _ hb hst 0 3).mpr h).2 (by decide)⟩
 
 /-! ## FA3, FA8: admission and the problem limits -/
 
@@ -308,6 +369,17 @@ def paperModel (u : Nat) : VE.Order.FiniteModel Nat :=
 #guard [fa4c 296, fa4c 297, fa4dOther 296].map (both paper (paperModel 0)) = [(true, true), (false, false), (true, true)]
 #guard [fa4c 296, fa4dOther 296, fa4dOther 301].map (both paper (paperModel 3)) =
   [(true, true), (false, false), (true, true)]
+/-- Two scored decisions, one of them a false approval, and one unscored false approval. -/
+def fa4dModel : VE.Order.FiniteModel Nat :=
+  rowsModel dec [(["scored"], 1), (["false_approval"], 1), (["scored", "false_approval"], 1)]
+/-- FA4d through spec 3.9, on ratio statements: the scored false approvals over the scored decisions give
+1/2 = 0.500, and every false approval over the scored decisions gives 2/2 = 1.000, so the first reading does not
+entail the other. -/
+theorem fa4d_not_entails : ¬ CEntails.{0} paper [fa4c 500] (fa4dOther 500) :=
+  refutesC_sound paper ⟨by decide, fun _ _ h => nomatch h⟩ _ _ fa4dModel
+    (rowsModel_valid paper dec _ (fun _ => rfl) (by decide))
+    (fun a ha => admits_sound _ _ (by revert a ha; decide +kernel)) (admits_sound _ _ (by decide +kernel))
+    (by decide +kernel)
 -- `erasedProblem_admitted` on FA4c: 4 region premises and the erased claim, each W6a-admitted in `E.elab`.
 #guard (erasedProblem paper [] (fa4c 296)).1.length = 4 &&
   ((erasedProblem paper [] (fa4c 296)).1 ++ [(erasedProblem paper [] (fa4c 296)).2]).all
