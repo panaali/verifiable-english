@@ -46,9 +46,6 @@
 'VE.Acts.Lexical.contains_mem' depends on axioms: [propext]
 'VE.Acts.Lexical.decodeFixed_ok' depends on axioms: [propext, Quot.sound]
 'VE.Acts.Lexical.endsWith_comma' depends on axioms: [propext, Quot.sound]
-'VE.Acts.Lexical.expand_cons' does not depend on any axioms
-'VE.Acts.Lexical.expand_fixed' does not depend on any axioms
-'VE.Acts.Lexical.expand_plain' depends on axioms: [propext]
 'VE.Acts.Lexical.extract_go₁_general' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Lexical.extract_go₂_prefix' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Lexical.extract_mid' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -58,13 +55,8 @@
 'VE.Acts.Lexical.forIn_ok' depends on axioms: [propext, Quot.sound]
 'VE.Acts.Lexical.get_mem' depends on axioms: [propext]
 'VE.Acts.Lexical.get_mid' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Acts.Lexical.group_expand' depends on axioms: [propext, Quot.sound]
-'VE.Acts.Lexical.group_maximal' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Acts.Lexical.group_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Lexical.intercalate_data' depends on axioms: [propext]
 'VE.Acts.Lexical.isEmpty_false' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Acts.Lexical.lex_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Acts.Lexical.mapM_mem' depends on axioms: [propext, Quot.sound]
 'VE.Acts.Lexical.mapM_ok' depends on axioms: [propext, Quot.sound]
 'VE.Acts.Lexical.mem_group' depends on axioms: [propext]
 'VE.Acts.Lexical.mem_intercalate' depends on axioms: [propext, Quot.sound]
@@ -84,7 +76,6 @@
 'VE.Acts.Lexical.out_nil' does not depend on any axioms
 'VE.Acts.Lexical.out_slot' depends on axioms: [propext, Quot.sound]
 'VE.Acts.Lexical.pyWhitespace_sep' depends on axioms: [propext, Quot.sound]
-'VE.Acts.Lexical.rawLex_plain' depends on axioms: [propext, Quot.sound]
 'VE.Acts.Lexical.scanSlotsAux_fuel' depends on axioms: [propext, Quot.sound]
 'VE.Acts.Lexical.splitAux_data' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Lexical.splitL_append' depends on axioms: [propext]

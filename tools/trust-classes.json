@@ -13740,18 +13740,8 @@
         },
         "VE.Acts.Lexical.dropComma",
         "VE.Acts.Lexical.fold",
-        {
-          "name": "VE.Acts.Lexical.group",
-          "tied": [
-            "VE.Acts.Lexical.group_spec"
-          ]
-        },
-        {
-          "name": "VE.Acts.Lexical.lex",
-          "tied": [
-            "VE.Acts.Lexical.lex_spec"
-          ]
-        },
+        "VE.Acts.Lexical.group",
+        "VE.Acts.Lexical.lex",
         "VE.Acts.Lexical.normal",
         "VE.Acts.Lexical.phraseToks",
         "VE.Acts.Lexical.pieceToks",
@@ -13953,15 +13943,19 @@
     },
     "VE/Acts/LexicalProofs.lean": {
       "S": [
-        "VE.Acts.Lexical.Accepts",
-        "VE.Acts.Lexical.Grouped",
-        "VE.Acts.Lexical.expand"
+        "VE.Acts.Lexical.Accepts"
       ],
       "P": [
+        "VE.Acts.Lexical.decAccepts",
+        "VE.Acts.Lexical.decOkAnd",
+        "VE.Acts.Lexical.decWord",
         "VE.Acts.Lexical.out",
         "VE.Acts.Lexical.pieceTok",
         "VE.Acts.Lexical.splitL",
         "VE.Acts.Lexical.wordsL"
+      ],
+      "T": [
+        "VE.Acts.Lexical.acc"
       ]
     },
     "VE/Scope/Govern.lean": {
