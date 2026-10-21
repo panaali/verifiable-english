@@ -1,0 +1,9 @@
+{
+  "allow": [
+    {
+      "definition": "VE.Calc.Units.decodeFactor",
+      "operator": "eq-le",
+      "reason": "equivalent: `(· = 0)` trims trailing fractional digits, which are natural numbers, and for a natural number d ≤ 0 holds exactly when d = 0"
+    }
+  ]
+}
