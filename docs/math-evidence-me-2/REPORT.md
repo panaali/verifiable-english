@@ -85,7 +85,9 @@ was reshaped: reject-only and identity code split into their own declarations, `
 - `lake build` (whole library), `python3 lean/audit.py` (PASS, 604 files), `regen_generated.py --write` then
   `--check`, `trust_map.py --check`, `repo_map.py --check`, `check_lean_imports.py`,
   `tests/test_assurance_manifest.py -k "pinned or classified or json_use"` (5 passed).
-- Selected tests: "Final selected run" below. Synced with main 6454946a5 (et-3cb) before it.
+- Selected tests: "Final selected run" below. Synced with main 6454946a5 (et-3cb) before it, and again with
+  768a935fc (df-1ac, only the shared registries overlap): `lake build`, `regen_generated.py --write`,
+  `trust_map.py --check` (+148, PASS), `check_lean_imports.py`, and the two fixed test files (141 passed) after it.
 - Not run: the full gate (the chain's). No test in `main-known-red.txt` is touched.
 
 ## Size
@@ -134,7 +136,7 @@ killed (guard 153).
    numbers do not (132-145); `UnitsExamples` unchanged after the shared spelling. No Python or Rust implementation.
 5. N.A.: no relayed field yet; inputs: undeclared names refused (`unknown-name`, `defined-after-use`,
    `unknown-claim-name`, 188).
-6. PASS: synced with main 6454946a5; selected run on the synced HEAD; the full gate is the chain's.
+6. PASS: synced with main 768a935fc; selected run on the earlier sync, fixes rerun after; the full gate is the chain's.
 7. PASS: DELTA row 1 cites R16 with per-declaration lines; `trust_map.py --check` PASS; FOLLOW-UPS row.
 8. PASS: no public output (no mode or route); DELTA says so.
 9. PASS: `select_tests.py` selects 81 of 460 units, `lake build` among them, which evaluates every route case; it
