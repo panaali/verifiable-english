@@ -78,6 +78,45 @@ example : double.Means (.eq (.call "quad" [lit 3]) (lit 12)) ∧ double.Means (.
   exact ⟨2, _, ⟨rfl, rfl⟩, rfl, 1, rfl, 2, rfl, by omega⟩
 example : Defs.Means [] (.eq (.countFromTo (lit 3) (lit 1) (.eq (lit 0) (lit 0))) (lit 0)) := by means
 
+/-! Each clause under an outer value (review F1): the values are `[5]` and every child of the clause reads them, so a
+clause that loses them (a child read in `[]`, a binder's `[i]` for `i :: ρ` or `ρ ++ [i]`) leaves a variable without
+a value. -/
+example : let H := Holds (Defs.env []) [5]
+    H (.eq (.add (.var 0) (.var 0)) (lit 10)) ∧ H (.eq (.sub (.var 0) (.var 0)) (lit 0)) ∧
+    H (.eq (.mul (.var 0) (.var 0)) (lit 25)) ∧ H (.eq (.var 0) (.var 0)) ∧ H (.lt (.var 0) (.add (.var 0) (lit 1))) ∧
+    H (.le (.var 0) (.var 0)) ∧ H (.dvd (.var 0) (.var 0)) ∧ ¬ H (.not (.eq (.var 0) (lit 5))) ∧
+    H (.and (.eq (.var 0) (lit 5)) (.eq (.var 0) (lit 5))) ∧ H (.or (.eq (.var 0) (lit 5)) (.eq (lit 0) (lit 1))) ∧
+    H (.or (.eq (lit 0) (lit 1)) (.eq (.var 0) (lit 5))) ∧ ¬ H (.imp (.eq (.var 0) (lit 5)) (.eq (lit 0) (lit 1))) ∧
+    H (.imp (.eq (lit 0) (lit 0)) (.eq (.var 0) (lit 5))) := by
+  simp [Holds, Term.value, lit]
+example : let H := Holds (Defs.env []) [5]
+    H (.allNat (.eq (.var 1) (lit 5))) ∧ H (.exNat (.and (.eq (.var 0) (lit 6)) (.eq (.var 1) (lit 5)))) ∧
+    H (.allInt (.eq (.var 1) (lit 5))) ∧ H (.exInt (.and (.eq (.var 0) (lit 6)) (.eq (.var 1) (lit 5)))) ∧
+    H (.allFromTo (.add (.var 0) (lit 1)) (.add (.var 0) (lit 1)) (.and (.eq (.var 0) (lit 6)) (.eq (.var 1) (lit 5)))) ∧
+    H (.exFromTo (.add (.var 0) (lit 1)) (.add (.var 0) (lit 1)) (.and (.eq (.var 0) (lit 6)) (.eq (.var 1) (lit 5)))) ∧
+    ¬ H (.allFromTo (.var 0) (.add (.var 0) (lit 1)) (.eq (.var 0) (.var 1))) ∧
+    H (.allNat (.exInt (.eq (.var 0) (.add (.var 1) (.var 2))))) := by
+  simp [Holds, Term.value, lit]; exact ⟨⟨6, rfl⟩, fun i _ _ => by omega, ⟨6, by omega⟩⟩
+/-- The count from 5 through 9 of the values at most one more than the outer 5 is 2; with the outer value lost, 0. -/
+example : Holds (Defs.env []) [5] (.eq (.countFromTo (.var 0) (.add (.var 0) (lit 4))
+    (.and (.le (.var 0) (.add (.var 1) (lit 1))) (.eq (.var 1) (lit 5)))) (lit 2)) := by
+  simp (config := { decide := true }) [Holds, Term.value, lit, List.range, List.range.loop]
+example : Holds double.env [5] (.and (.eq (.call "double" [.var 0]) (lit 10)) (.call "below" [.var 0, .add (.var 0) (lit 1)])) := by
+  simp (config := { decide := true }) [double, Defs.env, Holds, Term.value, Term.values, lit]
+  exact ⟨2, _, ⟨rfl, rfl⟩, rfl, 5, rfl, 6, rfl, by omega⟩
+
+/-- Each kind of definition read past a later definition of each kind (review F1): a definition that drops or clears
+the names before it, or reads its body without them, leaves a call without a meaning; `minus` reads its arguments in
+order. -/
+def chain : Defs := [.fn "one" 0 (lit 1), .pred "pos" 1 (.lt (lit 0) (.var 0)),
+  .fn "succ" 1 (.add (.var 0) (.call "one" [])), .pred "big" 1 (.and (.call "pos" [.var 0]) (.lt (.call "one" []) (.var 0))),
+  .fn "minus" 2 (.sub (.var 0) (.var 1))]
+example : chain.Means (.and (.eq (.call "one" []) (lit 1)) (.and (.call "pos" [lit 3])
+      (.and (.eq (.call "succ" [lit 3]) (lit 4)) (.and (.call "big" [lit 3]) (.eq (.call "minus" [lit 5, lit 3]) (lit 2)))))) ∧
+    ¬ chain.Means (.call "big" [lit 1]) ∧ ¬ chain.Means (.call "pos" [lit 0]) := by
+  simp (config := { decide := true }) [chain, Defs.Means, Defs.env, Holds, Term.value, Term.values, lit,
+    exists_and_left, exists_eq_left', and_assoc]
+
 /-- M-1 through `hi`: for every n from 1 through hi there is a prime p from n + 1 through 2n. -/
 def m1 (hi : Int) : Formula :=
   .allFromTo (.num 1) (.num hi) (.exFromTo (.add (.var 0) (.num 1)) (.mul (.num 2) (.var 0)) (.call "prime" [.var 0]))
