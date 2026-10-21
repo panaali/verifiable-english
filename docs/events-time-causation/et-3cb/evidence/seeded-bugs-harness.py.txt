@@ -1,0 +1,71 @@
+"""et-3cb seeded bugs (et-3c's harness with this item's mutants): apply one mutant to the committed tree, run
+`lake build VE.Events.Examples`, then elaborate the six events files as one scratch file so every #guard and example
+runs even when a proof upstream fails; restore. `test` names the declaration around each error.
+Usage: python3 harness.py <worktree> (prints the JSON committed as ../mutants.json, unedited)."""
+import subprocess, sys, os, re, json
+ROOT = sys.argv[1]
+LEAN = ROOT + '/lean'
+env = dict(os.environ, PATH=os.path.expanduser('~/.elan/bin') + ':' + os.environ['PATH'])
+K = 'VE/Events/Calendar.lean'
+C = 'VE/Events/Conservative.lean'
+MUTANTS = [
+ ('calendarCheck-gap-bound-minus-two', 'embeddable_complete', K,
+  'fun p => decide (r p.2 - r p.1 - 1 > p.2.num - p.1.num - 1)', 'fun p => decide (r p.2 - r p.1 - 1 > p.2.num - p.1.num - 2)'),
+ ('calendarCheck-first-bound-strict', 'embeddable_complete', K,
+  'if r D₁ > D₁.num then', 'if r D₁ ≥ D₁.num then'),
+ ('rank-counts-the-day-itself', 'embeddable_complete', K,
+  '((M.domains V.day).filter (fun y => beforeB V M y x)).length',
+  '((M.domains V.day).filter (fun y => !beforeB V M x y)).length'),
+ ('datesSituation-before-reflexive', 'eventsPremises_satisfiable', C,
+  'decide (D.num < D\'.num))).map', 'decide (D.num ≤ D\'.num))).map'),
+ ('datesSituation-day-constant-unnamed', 'eventsPremises_satisfiable', C,
+  'then (V.day, firstName V) else', 'then (V.day, "") else'),
+ ('dayNames-no-day-without-dates', 'eventsPremises_satisfiable', C,
+  'if V.dates = [] then [""] else', 'if V.dates = [] then [] else'),
+]
+FILES = ['VE/Events/Decl.lean', 'VE/Events/Premises.lean', K, 'VE/Events/Completion.lean', C,
+         'VE/Events/Examples.lean']
+IMPORTS = ['import VE.Semantics', 'import VE.Time.Calendar', 'import VE.Norms.Prefix', 'import VE.Finite',
+           'import VE.Readings.Names', 'import VE.Readings.Superpose']
+HEAD = re.compile(r'(theorem|def|example|#guard|structure|abbrev)\b')
+
+def run(name, claim, path, old, new):
+    src = open(os.path.join(LEAN, path)).read()
+    assert src.count(old) == 1, name
+    open(os.path.join(LEAN, path), 'w').write(src.replace(old, new))
+    try:
+        b = subprocess.run(['lake', 'build', 'VE.Events.Examples'], cwd=LEAN, env=env, capture_output=True, text=True)
+        parts, origin = list(IMPORTS), [None] * len(IMPORTS)
+        for f in FILES:
+            for i, l in enumerate(open(os.path.join(LEAN, f)).read().splitlines(), 1):
+                if not l.startswith('import '):
+                    parts.append(l); origin.append((f, i, l))
+        scratch = os.path.join(LEAN, 'EtThreeCbMutantScratch.lean')
+        open(scratch, 'w').write('\n'.join(parts) + '\n')
+        s = subprocess.run(['lake', 'env', 'lean', 'EtThreeCbMutantScratch.lean'], cwd=LEAN, env=env,
+                           capture_output=True, text=True)
+        os.remove(scratch)
+        failing, tests = [], []
+        for l in s.stdout.splitlines():
+            m = re.match(r'EtThreeCbMutantScratch.lean:(\d+):\d+: error', l)
+            if m:
+                k = int(m.group(1)) - 1
+                f, i, _ = origin[k]
+                failing.append(f'lean/{f}:{i}')
+                j = k
+                while origin[j] is not None and not HEAD.match(origin[j][2]):
+                    j -= 1
+                t = origin[j][2].strip()[:110] if origin[j] is not None else '?'
+                if t not in tests:
+                    tests.append(t)
+        return {'mutant': name, 'claim': claim, 'file': 'lean/' + path, 'language': 'Lean', 'replace': old, 'with': new,
+                'lake_build_VE.Events.Examples': 'passes' if b.returncode == 0 else 'fails',
+                'failing': failing[:12], 'test': tests[:8]}
+    finally:
+        subprocess.run(['git', 'checkout', '--', 'lean/' + path], cwd=ROOT)
+
+head = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+out = {'harness': 'docs/events-time-causation/et-3cb/evidence/seeded-bugs-harness.py.txt', 'tree': head,
+       'mutants': [run(*m) for m in MUTANTS]}
+subprocess.run(['lake', 'build', 'VE.Events.Examples'], cwd=LEAN, env=env, capture_output=True)
+print(json.dumps(out, indent=1, ensure_ascii=False))

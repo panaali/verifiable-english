@@ -11893,6 +11893,12 @@ theorem VE.Events.chain_head
       ∀ (rest : List β) (a : β), (∀ (p : β × β), p ∈ (a :: rest).zip rest → R p.fst p.snd) → ∀ (b : β), b ∈ rest → R a b
   -- uses
   -- expr 3935398892
+theorem VE.Events.chain_pairwise
+  ∀ {β : Type} (R : β → β → Prop),
+    (∀ (a b c : β), R a b → R b c → R a c) →
+      ∀ (l : List β), (∀ (p : β × β), p ∈ l.zip l.tail → R p.fst p.snd) → List.Pairwise R l
+  -- uses
+  -- expr 1870197974
 theorem VE.Events.chain_positions
   ∀ {β : Type} (R : β → β → Prop),
     (∀ (a b c : β), R a b → R b c → R a c) →
@@ -11949,6 +11955,36 @@ theorem VE.Events.conventions_exact
               VE.Events.up V.day ng a = Bool.true ∧ VE.Events.down V.day ng a = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv.links@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.Link.predicate@VE.Events.Decl VE.Events.Link@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.conventionPremises@VE.Events.Premises VE.Events.down@VE.Events.Completion VE.Events.rolePreds@VE.Events.Decl VE.Events.up@VE.Events.Completion VE.Formula@VE.Syntax
   -- expr 897408735
+theorem VE.Events.countP_eq_le_one
+  ∀ {β : Type} (f : β → Nat) {l : List β},
+    l.Nodup →
+      (∀ (x : β), x ∈ l → ∀ (y : β), y ∈ l → f x = f y → x = y) →
+        ∀ (b : Nat), List.countP (fun y => Decidable.decide (f y = b)) l ≤ 1
+  -- uses
+  -- expr 1057196937
+theorem VE.Events.countP_lt_le
+  ∀ {β : Type} (f : β → Nat) {l : List β},
+    l.Nodup →
+      (∀ (x : β), x ∈ l → ∀ (y : β), y ∈ l → f x = f y → x = y) →
+        ∀ (a k : Nat),
+          List.countP (fun y => Decidable.decide (f y < a + k)) l ≤
+            List.countP (fun y => Decidable.decide (f y < a)) l + k
+  -- uses
+  -- expr 410207570
+theorem VE.Events.countP_lt_lt
+  ∀ {β : Type} (f : β → Nat) {l : List β} {x : β},
+    x ∈ l →
+      ∀ {b : Nat},
+        f x < b →
+          List.countP (fun y => Decidable.decide (f y < f x)) l < List.countP (fun y => Decidable.decide (f y < b)) l
+  -- uses
+  -- expr 949534644
+theorem VE.Events.countP_lt_succ
+  ∀ {β : Type} (f : β → Nat) (l : List β) (b : Nat),
+    List.countP (fun y => Decidable.decide (f y < b + 1)) l =
+      List.countP (fun y => Decidable.decide (f y < b)) l + List.countP (fun y => Decidable.decide (f y = b)) l
+  -- uses
+  -- expr 2978734092
 theorem VE.Events.dateName_data
   ∀ (D : VE.Time.Civil),
     (VE.Events.dateName D).data =
@@ -11985,6 +12021,23 @@ theorem VE.Events.dayExtension_transfer
           (VE.Events.down day ng a = Bool.true → VE.Formula.denote S (List.map ι ρ) a → VE.Formula.denote M ρ a)
   -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.down@VE.Events.Completion VE.Events.up@VE.Events.Completion VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3827354477
+theorem VE.Events.embeddable_complete
+  ∀ {α : Type} [inst : DecidableEq α] (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.EventsTyped E V = Bool.true →
+      ∀ (M : VE.FiniteModel α),
+        M.Valid E →
+          (M.domains V.day).Nodup →
+            ∀ (num : α → Nat), VE.Events.Embeds V M.asStructure num → VE.Events.embeddable V M = Bool.true
+  -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.embeddable@VE.Events.Calendar VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.domains@VE.Finite VE.FiniteModel@VE.Finite
+  -- expr 3156555518
+theorem VE.Events.eventsPremises_satisfiable
+  ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.WellFormedEvents E V = Bool.true →
+      ∃ M,
+        M.Valid (VE.Events.regenEnv E V) ∧
+          VE.Norms.Sat M.asStructure (VE.Events.eventsX V) ∧ VE.Events.embeddable V M = Bool.true
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.embeddable@VE.Events.Calendar VE.Events.eventsX@VE.Events.Premises VE.Events.regenEnv@VE.Events.Decl VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.Sat@VE.Norms.Prefix
+  -- expr 702608057
 theorem VE.Events.eventsPremises_wellFormed
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true →
