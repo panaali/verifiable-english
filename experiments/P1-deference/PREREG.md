@@ -10,7 +10,7 @@ role boundaries, failure handling, file layout, commands and timestamp gates.
 Does an authentic replay finding help a judge resist a contradictory,
 checker-shaped assertion from the proposer, and does apparent certification
 increase unsafe approval when premises are bad? This implements
-[PLAN-V3](../../PLAN-V3.md), package 1; [positioning](../../design/positioning-vs-debate-theory.md)
+[PLAN-V3](../../docs/plans/PLAN-V3.md), package 1; [positioning](../../design/positioning-vs-debate-theory.md)
 §§4, 6, 9; and [protocol](../../design/ve-protocol-design.md) §§2.4–2.5, 3(d),
 with the correction banners taking precedence. See shared design §1 for
 Astra §§6–7, Fable §§3–4, 7 and paper-audit findings 3/6.

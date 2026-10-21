@@ -111,6 +111,14 @@ import VE.Calc.Examples
 import VE.Calc.Render
 import VE.Calc.DeriveExamples
 import VE.Calc.Dimension
+import VE.Calc.Units
+import VE.Calc.UnitsExamples
+import VE.Calc.Poly
+import VE.Calc.Inline
+import VE.Calc.Identity
+import VE.Calc.IdentityExamples
+import VE.Calc.Lower
+import VE.Calc.LowerExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
@@ -185,8 +193,11 @@ import VE.Layout.Anchors
 import VE.Layout.Discourse
 import VE.Layout.List
 import VE.Scope.Effects
+import VE.Scope.Govern
 import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
+import VE.Defaults.Wire
+import VE.Defaults.WireExamples
