@@ -36,7 +36,7 @@ stops within about 5 s; the compiled service is faster. All but the nested divis
   F4 stops, the outcome stays `limit .polyTerms` (the normaliser's reason, which spec 3.4 allows an identity) and the
   row carries `stop := some .budget`, whose text is spec 1.5's budget text, `(UnknownReason.limit .evaluations).text
   maxEvaluations`. The point search ends the same way. Nothing shows a row yet; the wording is ME-2's DRI decision
-  (FOLLOW-UPS "## me-9b", F2).
+  (FOLLOW-UPS "## me-9c", with me-9b's F2).
 - **`Expr.zeroDivisor` reads `Frac.go`,** not `Frac.ofExpr?`: it is read only on a side the normaliser accepted, so its
   divisors are within the node limit and the two agree; `Frac.goB_eq` states it against the pass.
 - **`Poly.powWithin`** now holds the exponent check that `Poly.pow?` and `Poly.pow?B` share (the limit table names it).
@@ -46,8 +46,8 @@ stops within about 5 s; the compiled service is faster. All but the nested divis
 ## Trust
 
 `trust_map.py --check` on the final code: K +0, S +0, untied V +0, trusted +0; G +1 (`IdentityStop.text`'s budget line,
-G[R]). The 20 new definitions are C in `tools/trust-classes.json`. No new trusted definition, so no R16 allowance,
-FOLLOW-UPS row or `trust_mutants.py` run.
+G[R]). The 20 new definitions are C in `tools/trust-classes.json`. No new trusted definition, so no R16 allowance, ties
+row or `trust_mutants.py` run.
 
 ## Seeded bugs (Lean; [`mutants.json`](mutants.json), 22)
 
