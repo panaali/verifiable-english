@@ -2344,7 +2344,7 @@ module VE.Alternatives.Wire 77bab0654eb05c84aa7648afb3b0f8116efb3bb2d127ed52d566
 363:0-364:46 def VE.Alternatives.Wire.coverageField@VE.Alternatives.Wire
 366:0-369:66 def VE.Alternatives.Wire.coverageConstNames@VE.Alternatives.Wire
 371:0-421:68 def VE.Alternatives.Wire.coverage@VE.Alternatives.Wire
-module VE.Arith.Defs c18699babf6116d5512d36d4c0683c621e3b8f2376b714fba277de8ed153cab7
+module VE.Arith.Defs f86495a2c76269e5287d3500112350f36ff7117cd2b435e529bc159782f3cec2
 10:0-17:77 def VE.Arith.Term.bnd@VE.Arith.Defs
 18:0-20:48 def VE.Arith.Term.bndList@VE.Arith.Defs
 21:0-36:74 def VE.Arith.Formula.bnd@VE.Arith.Defs
@@ -2366,7 +2366,7 @@ module VE.Arith.Defs c18699babf6116d5512d36d4c0683c621e3b8f2376b714fba277de8ed15
 100:0-106:24 def VE.Arith.Refusal.rank@VE.Arith.Defs
 108:0-120:18 def VE.Arith.Site.refusal@VE.Arith.Defs
 122:0-132:18 def VE.Arith.Defs.refusals@VE.Arith.Defs
-134:0-136:60 def VE.Arith.firstRefusal@VE.Arith.Defs
+134:0-136:83 def VE.Arith.firstRefusal@VE.Arith.Defs
 138:0-138:59 def VE.Arith.Defs.WellFormed@VE.Arith.Defs
 140:0-141:71 def VE.Arith.Formula.Scoped@VE.Arith.Defs
 143:0-146:77 def VE.Arith.caseRefusal@VE.Arith.Defs

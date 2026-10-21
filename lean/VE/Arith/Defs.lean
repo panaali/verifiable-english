@@ -131,9 +131,9 @@ def Defs.refusals (D : Defs) : List Refusal :=
         sites.filterMap fun (n, s) => s.refusal D (D.take k) n (some (Defs.boundedNames (D.take k)))
       | none => []
 
-/-- The first refusal of the lowest rank, in order. -/
+/-- The first refusal of the lowest rank, in order: one pass, kept until a lower rank follows. -/
 def firstRefusal (rs : List Refusal) : Option Refusal :=
-  (rs.filter fun r => rs.all fun s => r.rank ≤ s.rank).head?
+  rs.foldl (fun best r => if best.all (r.rank < ·.rank) then some r else best) none
 
 def Defs.WellFormed (D : Defs) : Bool := D.refusals.isEmpty
 
