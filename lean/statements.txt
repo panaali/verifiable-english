@@ -40875,6 +40875,18 @@ theorem VE.Scope.admit_governor
                           Bool.true)
   -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach.frontier@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.setUnits@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
   -- expr 3652577887
+theorem VE.Scope.anchor_reach_iff
+  ∀ (D : VE.Scope.SDoc),
+    (List.map (fun x => x.id) D.layout).Nodup →
+      ∀ (a : String) (us : List String),
+        VE.Scope.covered D (VE.Scope.Reach.anchor a) = Except.ok us →
+          ∀ (u : String),
+            u ∈ us ↔
+              u ∈ List.map (fun x => x.id) D.layout ∧
+                VE.Layout.within (VE.Layout.spansOf D.layout) D.anchors u a = Bool.true ∧
+                  Option.some u ≠ VE.Layout.headingOf D.layout D.anchors a
+  -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Layout.headingOf@VE.Layout.Anchors VE.Layout.spansOf@VE.Layout.Anchors VE.Layout.within@VE.Layout.Anchors VE.Scope.Reach.anchor@VE.Scope.Govern VE.Scope.SDoc.anchors@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern
+  -- expr 210452977
 theorem VE.Scope.baseName_some
   ∀ (D : VE.Scope.SDoc) (u n : String),
     VE.Scope.baseName D u = Option.some n ↔
@@ -41014,6 +41026,14 @@ theorem VE.Scope.itemRule_decoder
       ∃ m, VE.Scope.mergeParts u lead item = Except.ok m ∧ VE.Readings.Wire.decodeNorm D.re m = Except.ok N
   -- uses VE.Readings.Wire.decodeNorm@VE.Readings.Wire VE.Scope.SDoc.re@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.itemRule@VE.Scope.Govern VE.Scope.mergeParts@VE.Scope.Effects VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 1772087715
+theorem VE.Scope.label_reach_iff
+  ∀ (D : VE.Scope.SDoc),
+    (List.map (fun x => x.id) D.layout).Nodup →
+      ∀ (i : String) (us : List String),
+        VE.Scope.covered D (VE.Scope.Reach.label i) = Except.ok us →
+          ∀ (u : String), u ∈ us ↔ VE.Layout.ItemUnit D.layout i u
+  -- uses VE.Layout.ItemUnit@VE.Layout.List VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Scope.Reach.label@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern
+  -- expr 1985008681
 theorem VE.Scope.lookups_absent
   ∀ (j : Lean.Json) (ls : List (String × Lean.Json)),
     VE.Scope.lookups j = Except.ok ls →
