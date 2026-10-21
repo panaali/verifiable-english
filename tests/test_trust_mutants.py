@@ -530,30 +530,30 @@ def test_rescore_reruns_only_the_unknown_mutants(package, default_run, tmp_path,
         (m["status"], m["detail"].split(": ")[0]) for m in prev.values()], done.stdout + done.stderr
 
 
-@pytest.mark.parametrize("old", ["no inputs", "unreadable"])
+@pytest.mark.parametrize("old", ["no-inputs", "unreadable"])
 def test_rescore_of_an_old_or_unreadable_file_is_a_full_run(package, prefix_run, tmp_path, old):
     """Evidence written before `inputs` existed, or a file that is no evidence, is a full run, said in one line."""
     prev = tmp_path / "prev.json"
     data = json.loads(prefix_run.read_text())
-    prev.write_text(json.dumps({k: v for k, v in data.items() if k != "inputs"}) if old == "no inputs" else "{")
+    prev.write_text(json.dumps({k: v for k, v in data.items() if k != "inputs"}) if old == "no-inputs" else "{")
     done, data = rescored(package, tmp_path / "run", prev, "--max-mutants", "2")
     said = [line for line in done.stdout.splitlines() if "a full run, since" in line]
-    assert len(said) == 1 and ("records no inputs" if old == "no inputs" else "cannot be read") in said[0], said
+    assert len(said) == 1 and ("records no inputs" if old == "no-inputs" else "cannot be read") in said[0], said
     assert data["rescore"]["reused"] == 0 and data["rescore"]["rerun"] == 2 and data["rescore"]["head"] is None
     assert not [m for m in data["mutants"] if "reused_from" in m]
 
 
 CHANGES = {  # one byte of each input, or an option or the base, changed in a copy of the package
-    "cone file": lambda r: (r / "lean/Demo/Examples.lean").write_text(
+    "cone-file": lambda r: (r / "lean/Demo/Examples.lean").write_text(
         (r / "lean/Demo/Examples.lean").read_text().replace("#guard small 2", "#guard small 1")),
     "lakefile": lambda r: (r / "lean/lakefile.toml").write_text((r / "lean/lakefile.toml").read_text() + " "),
     "statements": lambda r: (r / "lean/statements.txt").write_text((r / "lean/statements.txt").read_text() + "\n"),
-    "trust table": lambda r: (r / "tools/trust-classes.json").write_text('{"modules": {} }\n'),
-    "test file": lambda r: (r / "outside/T.lean").write_text("import Demo.Defs\n#guard Demo.small 1\n"),
+    "trust-table": lambda r: (r / "tools/trust-classes.json").write_text('{"modules": {} }\n'),
+    "test-file": lambda r: (r / "outside/T.lean").write_text("import Demo.Defs\n#guard Demo.small 1\n"),
 }
 
 
-@pytest.mark.parametrize("change", [*CHANGES, "deep", "test option", "base"])
+@pytest.mark.parametrize("change", [*CHANGES, "deep", "test-option", "base"])
 def test_any_changed_input_gives_a_full_run(package, tmp_path, change):
     """`inputs` digests the bytes, never a commit id: one byte changed in a cone file, the lakefile, a list `plan`
     reads, trust_map's table or an outside --test file, or another --deep, --test or base, and PREV is refused."""
@@ -572,10 +572,10 @@ def test_any_changed_input_gives_a_full_run(package, tmp_path, change):
     assert trust_mutants.previous(prev, digests(), []) == ("h", {})
     if change in CHANGES:
         CHANGES[change](root)
-    now = digests(change == "deep", ("Demo/Examples.lean",) if change == "test option" else (),
+    now = digests(change == "deep", ("Demo/Examples.lean",) if change == "test-option" else (),
                   base if change != "base" else base[:-1] + ("0" if base[-1] != "0" else "1"))
     assert [k for k in now if now[k] != before[k]] == [
-        {"deep": "options", "test option": "options", "base": "base", "test file": "tests"}.get(change, "lean")]
+        {"deep": "options", "test-option": "options", "base": "base", "test-file": "tests"}.get(change, "lean")]
     assert "inputs differ" in trust_mutants.previous(prev, now, [])
 
 
