@@ -1291,6 +1291,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.forIn_yield_ok
 #print axioms VE.Compose.gateMatch_find
 #print axioms VE.Compose.gateOf_iff
+#print axioms VE.Compose.gate_acts
 #print axioms VE.Compose.gate_legacy
 #print axioms VE.Compose.gate_wellFormed
 #print axioms VE.Compose.ite_and3
@@ -2890,6 +2891,7 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.FlaggedSpec.nodup_fst_unique
 #print axioms VE.Norms.FlaggedSpec.nodup_of_eraseDups_length
 #print axioms VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined
+#print axioms VE.Norms.FlaggedSpec.normsEnvironment_flag_not_defined_in
 #print axioms VE.Norms.FlaggedSpec.norms_flagged_conflict_free
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive
 #print axioms VE.Norms.FlaggedSpec.norms_wire_conflict_free
