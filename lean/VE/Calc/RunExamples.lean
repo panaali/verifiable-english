@@ -353,15 +353,64 @@ def multiByteNames : List String :=
   atLimit.utf8ByteSize == VE.Limits.maxIdentifierBytes &&
   over.utf8ByteSize == VE.Limits.maxIdentifierBytes + 1 &&
   says (req (stated atLimit r#""1""#) ok1) == ["InvalidInput: values.0.name must be a name"] &&
-  says (req (stated over r#""1""#) ok1) == ["ResourceLimit: a name exceeds 64"] &&
+  says (req (stated over r#""1""#) ok1) == ["ResourceLimit: a string exceeds 64"] &&
   says (req x1 (claim atLimit r#"["eq", ["val", "x"], ["lit", "1"]]"#)) ==
     ["InvalidInput: claims.0.id must be a claim id"] &&
   says (req x1 (claim over r#"["eq", ["val", "x"], ["lit", "1"]]"#)) ==
-    ["ResourceLimit: a name exceeds 64"] &&
+    ["ResourceLimit: a string exceeds 64"] &&
   says (req x1 (c1 s!"[\"eq\", [\"val\", \"{atLimit}\"], [\"lit\", \"1\"]]")) ==
     [s!"UnknownName: {atLimit} (declare it before the value that uses it)"] &&
   says (req x1 (c1 s!"[\"eq\", [\"val\", \"{over}\"], [\"lit\", \"1\"]]")) ==
-    ["ResourceLimit: a name exceeds 64"]
+    ["ResourceLimit: a string exceeds 64"]
+
+/-! Limit 7 caps every string and object key of the case (2.6, 3.2); a value record's `words` string is the one
+string it does not reach. -/
+
+def strings64 : List String := name64 :: multiByteNames
+
+-- F16: `software` of 64 bytes is a convention and one byte more a resource limit, ASCII and multi-byte.
+#guard strings64.all fun s =>
+  let sw (v : String) := req x1 ok1 s!", \"software\": \"{v}\""
+  meaning (sw s) != "" && says (sw s) == ["c1 holds reproduction unknown"] &&
+  says (sw (s ++ "x")) == ["ResourceLimit: a string exceeds 64"]
+
+/-- Places me-2 checks no length of, or does not read: each refuses its string of 64 bytes otherwise, if at all. -/
+def stringSites : List (String → String) := [
+  fun s => req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": \"{s}\"}" ok1,
+  fun s => req x1 ok1 s!", \"rounding\": \"{s}\"",
+  fun s => s!"\{\"format\": \"{s}\", \"values\": [{x1}], \"claims\": [{ok1}]}",
+  fun s => req x1 (c1 s!"[\"{s}\", [\"val\", \"x\"], [\"lit\", \"1\"]]"),
+  fun s => req x1 (c1 s!"[\"eq\", [\"{s}\", [\"val\", \"x\"], [\"lit\", \"1\"]], [\"lit\", \"1\"]]"),
+  fun s => req x1 (c1 s!"[\"rounds\", [\"val\", \"x\"], \"1\", \"{s}\"]"),
+  fun s => req x1 ok1 s!", \"premises\": [\{\"id\": \"{s}\"}]",
+  fun s => req x1 ok1 s!", \"note\": \"{s}\"",
+  fun s => req s!"\"{s}\"" ok1,
+  -- `words` outside a value record, or not a string, is capped like any other string
+  fun s => req x1 s!"\{\"id\": \"c1\", \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]], \"words\": \"{s}\"}",
+  fun s => req x1 ok1 s!", \"words\": \"{s}\"",
+  fun s => req s!"\{\"name\": \"x\", \"words\": [\"{s}\"], \"stated\": \"1\"}" ok1,
+  fun s => req s!"\{\"name\": \"x\", \"words\": \"w\", \"defined\": \{\"words\": \"{s}\"}}" ok1,
+  -- object keys
+  fun s => req x1 ok1 s!", \"{s}\": 1",
+  fun s => req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"{s}\": 1}" ok1,
+  fun s => req x1 s!"\{\"id\": \"c1\", \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]], \"{s}\": 1}"]
+
+#guard stringSites.all fun site => strings64.all fun s =>
+  (says (site s)).all (!·.startsWith "ResourceLimit") && says (site (s ++ "x")) == ["ResourceLimit: a string exceeds 64"]
+
+-- A value's `words` of any length is no resource limit.
+#guard strings64.all fun s => meaning (req s!"\{\"name\": \"x\", \"words\": \"{s}{s}{s}\", \"stated\": \"1\"}" ok1) != ""
+
+-- A literal of more than 40 digits and 64 bytes is limit 6, at each place a literal is read; earlier limits come
+-- before the string cap too.
+#guard (ones 65).utf8ByteSize > VE.Limits.maxIdentifierBytes &&
+  [req (stated "x" s!"\"{ones 65}\"") ok1, req (stated "x" s!"[\"sci\", \"{ones 65}\", 0]") ok1,
+    req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], [\"lit\", \"{ones 65}\"]]"),
+    req x1 (c1 s!"[\"rounds\", [\"val\", \"x\"], \"{ones 65}\"]")].all
+    (says · == ["ResourceLimit: Decimal literal exceeds 40 digits"]) &&
+  says (req (x1 ++ ", " ++ defined "y" r#"["pow", ["lit", "1"], 65]"#) ok1 s!", \"software\": \"{name64}x\"") ==
+    ["ResourceLimit: an exponent exceeds 64"] &&
+  says (req (nulls 513) ok1 s!", \"software\": \"{name64}x\"") == ["ResourceLimit: the number of values exceeds 512"]
 
 #guard expect [
   ("nodes", says (pad 9995), ["InvalidInput: case.pad is unknown"]),
@@ -386,11 +435,11 @@ def multiByteNames : List String :=
   ("digits-lit-plain", says (req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], [\"lit\", \"{ones 41}\"]]")),
     ["ResourceLimit: Decimal literal exceeds 40 digits"]),
   ("name", says (req (stated name64 r#""1""#) (c1 s!"[\"eq\", [\"val\", \"{name64}\"], [\"lit\", \"1\"]]")), ["c1 holds"]),
-  ("name-over", says (req (stated (name64 ++ "x") r#""1""#) ok1), ["ResourceLimit: a name exceeds 64"]),
+  ("name-over", says (req (stated (name64 ++ "x") r#""1""#) ok1), ["ResourceLimit: a string exceeds 64"]),
   ("id-over", says (req x1 (claim (name64 ++ "c") r#"["eq", ["val", "x"], ["lit", "1"]]"#)),
-    ["ResourceLimit: a name exceeds 64"]),
+    ["ResourceLimit: a string exceeds 64"]),
   ("val-over", says (req x1 (c1 s!"[\"eq\", [\"val\", \"{name64}x\"], [\"lit\", \"1\"]]")),
-    ["ResourceLimit: a name exceeds 64"]),
+    ["ResourceLimit: a string exceeds 64"]),
   ("order-digits-name", says (req (stated (name64 ++ "x") s!"\"{ones 41}\"") ok1),
     ["ResourceLimit: Decimal literal exceeds 40 digits"]),
   ("order-exponent-digits", says (req (stated "x" s!"\"{ones 41}\"" ++ ", " ++ defined "y" r#"["pow", ["val", "x"], 65]"#) ok1),
@@ -412,7 +461,9 @@ def multiByteNames : List String :=
     (r#"["pow", "1", 65]"#, "ResourceLimit: an exponent exceeds 64"),
     (r#"["sci", "1", -65]"#, "ResourceLimit: an exponent exceeds 64"),
     (s!"[\"lit\", \"{ones 41}\"]", "ResourceLimit: Decimal literal exceeds 40 digits"),
-    (s!"[\"val\", \"{name64}x\"]", "ResourceLimit: a name exceeds 64")]
+    (s!"[\"val\", \"{name64}x\"]", "ResourceLimit: a string exceeds 64"),
+    (s!"[\"{name64}x\"]", "ResourceLimit: a string exceeds 64"),
+    (s!"\{\"{name64}x\": 1}", "ResourceLimit: a string exceeds 64")]
   faults.all fun (fault, want) =>
     let input := deepScanFault fault
     match Json.parse input with
