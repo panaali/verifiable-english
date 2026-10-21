@@ -204,6 +204,22 @@ def profilesOr (e : Except String Json) : Json := match e with
 #guard profilesOr (typingView (env ["a@0", "acts@0", "norms@0", "relational-fol@0"] seek (some (block fxs)))) ==
   toJson ["a@0", "norms@0", "relational-fol@0"]
 #guard profilesOr (typingView (env ["acts@0"] seek (some (block fxs)))) == toJson ([] : List String)
+-- ap-1b recheck F3: each stage of the typing view reduces the list the stages before it left, so `acts@0` never
+-- lists again a profile an earlier stage erased. Every list of `actsP` and one or two more environment profiles
+-- that the table admits: its view lists exactly the rest, and the service validates it.
+def admittedWithActs : List (List String) :=
+  let extras := VE.Compose.environmentProfiles.filter (fun q => !actsP.contains q)
+  let lists := extras.map ([·]) ++ extras.flatMap fun q => extras.filterMap fun r => if q < r then some [q, r] else none
+  (lists.map fun xs => (actsP ++ xs).mergeSort (fun a b => !(b < a))).filter fun ps =>
+    (VE.Compose.gateOf VE.Compose.profileTable ps).toOption.isSome
+#guard admittedWithActs.any (·.contains "norm-defaults@0") && admittedWithActs.any (·.contains "readings@1")
+#guard admittedWithActs.all fun ps => profilesOr (typingView (envA ps)) ==
+  toJson (ps.filter fun p => !["acts@0", "norm-defaults@0", "readings@1"].contains p)
+#guard admittedWithActs.all fun ps =>
+  err (typingView (envA ps) >>= fun v => (fun _ => ()) <$> VE.Service.Standalone.validated v) == "ok"
+-- `acts@0` is read from the submitted list, not the reduced one: this list is sorted once `norm-defaults@0` is erased
+#guard profilesOr (typingView (envA ["norm-defaults@0", "acts@0", "norms@0", "relational-fol@0"])) ==
+  toJson ["acts@0", "norms@0", "relational-fol@0"]
 -- Lean's English reads `norms@0` and `norm-defaults@0` wherever they are listed (an `unspecified` default is read
 -- as its placeholder only under `norm-defaults@0`)
 def unspecified : List (String × Json) := [("p", pred ["person"]

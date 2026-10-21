@@ -168,3 +168,58 @@ def test_without_acts_an_invalid_block_is_not_read():
     assert "fields do not match" in refusal(data)
     [row] = lean_routes.rows("norms", [{"id": "b", "kind": "background", "environment": data}])
     assert "fields do not match" in row.get("error", ""), row
+
+
+def english_read(data, source):
+    from ve import english
+    from ve.backends import english_lean, relay
+    env = Environment(data)
+    [row] = relay.rows("english.read", [english_lean.request(env, source, english.EnglishVocabulary(env), {})])
+    return row
+
+
+SEEK = predicate(["person"], {"role": "permission", "default": "deny", "act": "{0} seek asylum"})
+
+
+def seek_environment(profiles):
+    return {"language": ENV["language"], "spec_revision": ENV["spec_revision"], "profiles": profiles,
+            "vocabulary": {"sorts": {"person": {"description": "person"}}, "predicates": {"p": SEEK},
+                           "constants": {"alice": {"sort": "person", "description": "alice"}},
+                           "acts": {"fixed": []}}}
+
+
+def test_an_acts_environment_with_norm_defaults_is_read_by_english():
+    """ap-1b recheck F3 (its probe): the typing view's `acts@0` stage erased `acts@0` from the submitted list and so
+    listed `norm-defaults@0` again, which the earlier stage had erased; English refused what the environment mode
+    accepts, naming `norm-defaults@0`."""
+    row = english_read(seek_environment(["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]),
+                       "Alice may seek asylum.")
+    assert row.get("status") == "ok" and row["result"]["status"] == "one", row
+
+
+def _acts_lists():
+    from ve.profiles import BY_NAME
+    base = ["acts@0", "norms@0", "relational-fol@0"]
+    extras = [p for p in BY_NAME if p not in base]
+    for k in (1, 2):
+        for i, p in enumerate(extras):
+            for more in ([[]] if k == 1 else [[q] for q in extras[i + 1:]]):
+                yield sorted(base + [p] + more)
+
+
+def test_every_acts_list_the_environment_mode_accepts_is_read_by_english():
+    """ap-1b recheck F3, the class: for every list of `acts@0`, `norms@0`, `relational-fol@0` and one or two more
+    environment profiles, English reads what the environment mode accepts (the two are one Lean decision about
+    the profiles; the Lean side is `admittedWithActs` in `lean/VE/Service/ActsExamples.lean`)."""
+    accepted = []
+    for profiles in _acts_lists():
+        data = seek_environment(profiles)
+        try:
+            Environment(data)
+        except VEError:
+            continue
+        accepted.append(profiles)
+        row = english_read(data, "Alice may seek asylum.")
+        assert row.get("status") == "ok" and row["result"]["status"] == "one", (profiles, row)
+    assert ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"] in accepted
+    assert any("norm-defaults@0" in ps and len(ps) == 5 for ps in accepted), accepted
