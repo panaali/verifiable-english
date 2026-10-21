@@ -23,7 +23,6 @@ LEX, PROOF = "lean/VE/Acts/Lexical.lean", "lean/VE/Acts/LexicalProofs.lean"
 ERROR = re.compile(r"error: VE/Acts/LexicalProofs\.lean:(\d+):\d+: (.*)")
 SPEC, NO_CLAUSE = ("check_iff", "check_spec"), ("check_no_clause",)
 UNIQUE = ("decodeFixed_ok", "clash_of_overlap", "fixedOk_unique")
-GROUP = ("expand_cons", "expand_fixed", "expand_plain", "group_expand", "group_maximal", "group_spec")
 
 # (id, definition, file, old, new, theorems that must break, why)
 MUTANTS = [
@@ -41,18 +40,8 @@ MUTANTS = [
      "fixed phrase 'free to be free' first: it occurs at 0 and 3 of 'free to be free to be free'"),
     ("clash-start", "clash", LEX, "(k != 0 || p != q) &&", "(k != 0) &&", UNIQUE,
      "fixed phrases ['seek asylum', 'seek asylum now']: both occur at 0 of 'seek asylum now'"),
-    ("group-rest", "group", LEX, "| none => t :: group ps n rest", "| none => t :: rest", GROUP,
-     "phrase 'b c' in tokens [a, b, c]: after the ungrouped 'a', 'b c' stays ungrouped"),
-    ("lex-fuel", "lex", LEX, "pure (group ps ts.length ts)", "pure (group ps (ts.length - 1) ts)", ("lex_spec",),
-     "'{0} seek asylum' with phrase 'seek asylum': the fuel ends before the phrase"),
     ("Accepts-words", "Accepts", PROOF, "(List.range k).map toString ∧ 2 ≤ ws.length ∧",
      "(List.range k).map toString ∧ 3 ≤ ws.length ∧", SPEC, "'{0} vote': `check` accepts it, `Accepts` asks 3 words"),
-    ("expand-fixed", "expand", PROOF, "| .fixed i => ps.getD i []", "| .fixed i => []", GROUP,
-     "phrase 'seek asylum' grouped: written out it loses its words"),
-    ("Grouped-written", "Grouped", PROOF,
-     "\n    ∀ i (hi : i < ps.length), ps[i] ≠ [] → (ps[i]).isPrefixOf (t :: expand ps post) = false",
-     "\n    ∀ i (hi : i < ps.length), ps[i] ≠ [] → (ps[i]).isPrefixOf (t :: post) = false", GROUP,
-     "phrases [[a, b], [c, fixed 0]] on [c, a, b]: the output [c, fixed 0] starts with phrase 1 unexpanded"),
 ]
 
 

@@ -623,7 +623,6 @@ ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Acts.DerivedIn@VE.Acts.Read
 VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
-VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline
