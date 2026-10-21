@@ -218,7 +218,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Calc/Units.lean` | 222 | 222 | 1–222 | `fda31837236b…` |
 | `lean/VE/Calc/Wire.lean` | 380 | 380 | 1–380 | `f3c0849eff1c…` |
 | `lean/VE/Calc/Run.lean` | 162 | 162 | 1–162 | `8ef6da20db13…` |
-| **total** | | **36,948** | | |
+| `lean/VE/Defaults/Wire.lean` | 359 | 359 | 1–359 | `30d728c3724d…` |
+| **total** | | **37,307** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

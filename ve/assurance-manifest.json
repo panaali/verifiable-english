@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36948,
+    "total_lines": 37307,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1830,6 +1830,28 @@
           "outcomeAt"
         ],
         "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over; the full file is pinned"
+      },
+      {
+        "file": "lean/VE/Defaults/Wire.lean",
+        "lines": 359,
+        "sha256": "30d728c3724dcce4bb1812d65fc2a8850bf28e1e7070b2a76e794e055ba80ac7",
+        "ranges": [
+          [
+            1,
+            359
+          ]
+        ],
+        "declarations": [
+          "viewRest",
+          "viewOf",
+          "collisionOf",
+          "bindPair",
+          "pairCertsOf",
+          "replayCoherenceOn",
+          "replayCoherence",
+          "defaultsCase"
+        ],
+        "reason": "defaults-* kinds on the layered source (docs/spec/defeasible.md 7.2): the source through the pinned decodeLayered, then the request's pair list (certificates bound by bindingOk) and collision (situationX, decodeFilling); the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -1942,7 +1964,8 @@
       "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
       "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope, and no service mode or route calls it yet (SC-1b)",
       "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)",
-      "lean/VE/Calc/RunExamples.lean": "fixtures only: #guard route cases of the calc runner (spec 13.2, 13.3, 13.6) read each answer's rows, outcomes and meaning_id; no runner path"
+      "lean/VE/Calc/RunExamples.lean": "fixtures only: #guard route cases of the calc runner (spec 13.2, 13.3, 13.6) read each answer's rows, outcomes and meaning_id; no runner path",
+      "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's `#guard`s build defaults-* case JSON and a certificate from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file"
     }
   },
   "plan_operations": {
