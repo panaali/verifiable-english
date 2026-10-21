@@ -132,7 +132,7 @@ branch. Both runs had 0 mutants, equal `inputs`, and `rescore {"reused": 0, "rer
 ### Seeded bugs (Python: the only language changed)
 
 `uv run python tools/mutants.py docs/speed/tmrescore/mutants.json` gives 10 of 10 killed
-(`mutants-evidence.json`). The tool's sha256 was the same before and after (`36c7c589...`).
+(`mutants-evidence.json`). The tool's sha256 was the same before and after (`f4a5301b...`, the final tool).
 
 | Id | File | Bug | Failing test |
 |---|---|---|---|
