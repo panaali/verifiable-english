@@ -10,7 +10,7 @@ component of PLAN-V3 package 4**, not PLAN-V3 package 5 (drift/evidence).
 
 ## 1. Scientific basis and precedence
 
-Read [PLAN-V3](../PLAN-V3.md), “What the reviewers changed,” packages 1 and 4,
+Read [PLAN-V3](../docs/plans/PLAN-V3.md), “What the reviewers changed,” packages 1 and 4,
 and “Claims we stop making”; [positioning](../design/positioning-vs-debate-theory.md)
 §§4, 6, 9; [protocol](../design/ve-protocol-design.md) §§2.2–2.5, §4/F2 and
 both **2026-09-21 correction banners** in §§3(a), 4/F0. The corrections override
