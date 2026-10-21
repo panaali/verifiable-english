@@ -97,6 +97,13 @@ theorem decodeRegulated_without_acts (ps fx : List String) (h : "acts@0" ∉ ps)
   simp only [decodeRegulatedIn, decodeRegulated, canonicalActIn_without_acts ps fx h,
     show ps.contains "acts@0" = false by simpa using h]
 
+/-- The wording of a plain act (act-phrases 2.1): `Lexical.wording` of the form its declaration `raw` carries; none
+for any other declaration. Lean's English (`modalForm`) and the norms route's `wordings` read it. -/
+def plainWording (r : Regulated) (raw : Json) : Option String :=
+  match r.role, r.act, (raw.getObjValD "form").getStr?.toOption.bind VE.Acts.Lexical.Form.ofText? with
+  | .plain, some act, some f => some (VE.Acts.Lexical.wording f act)
+  | _, _, _ => none
+
 /-- A decoded norms environment: the complete environment, its literals, the
 regulated declarations (in vocabulary order) and the original JSON. -/
 structure NormsEnvironment where
@@ -104,6 +111,11 @@ structure NormsEnvironment where
   regulated : List Regulated
   profiles : List String
   json : Json
+
+/-- The wording of each plain act of `ne` by its predicate, in vocabulary order (the norms route's `wordings`). -/
+def plainWordings (ne : NormsEnvironment) : List (String × String) :=
+  ne.regulated.filterMap fun r => (plainWording r ((((ne.json.getObjValD "vocabulary").getObjValD
+    "predicates").getObjValD r.name).getObjValD "regulated")).map (r.name, ·)
 
 /-- The fixed phrases of an environment's `acts` block (act-phrases 3.1), each checked by `Lexical.decodeFixed`,
 when its profiles `ps` are read with `acts@0`; else none. An absent block is the empty block. -/
