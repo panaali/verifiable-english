@@ -142,12 +142,39 @@ def filledOf (L : LayeredU) (w : Json) : Except String (VE.Readings.Wire.FilledM
   let S ← VE.NormDefaults.Wire.situationX L (← w.getObjVal? "model")
   pure ⟨S.M, S.valid, ← VE.NormDefaults.Wire.decodeFilling L.U S.M (w.getObjValD "filling")⟩
 
+/-- A model is the request's: its `model` member's situation (`situationX`) and its `filling`. -/
+theorem filledOf_request {L : LayeredU} {w : Json} {m : VE.Readings.Wire.FilledModel L.U}
+    (h : filledOf L w = .ok m) : ∃ mj S, w.getObjVal? "model" = .ok mj ∧ VE.NormDefaults.Wire.situationX L mj = .ok S ∧
+      m.M = S.M ∧ VE.NormDefaults.Wire.decodeFilling L.U S.M (w.getObjValD "filling") = .ok m.F := by
+  unfold filledOf at h
+  obtain ⟨mj, hmj, h⟩ := bind_ok h
+  obtain ⟨S, hS, h⟩ := bind_ok h
+  obtain ⟨F, hF, h⟩ := bind_ok h
+  cases h
+  exact ⟨mj, S, hmj, hS, rfl, hF⟩
+
 def collisionOf (L : LayeredU) (w : Json) : Except String (Collision L.U) := do
   let S ← VE.NormDefaults.Wire.situationX L (← w.getObjVal? "model")
   let F ← VE.NormDefaults.Wire.decodeFilling L.U S.M (w.getObjValD "filling")
   match ← VE.Bridge.strings (← w.getObjVal? "rules") with
   | [m, n] => pure ⟨S, F, m, n⟩
   | _ => throw "InvalidInput: a collision names two rules"
+
+/-- A collision is the request's: `model` (`situationX`), `filling` and `rules`. -/
+theorem collisionOf_request {L : LayeredU} {w : Json} {c : Collision L.U}
+    (h : collisionOf L w = .ok c) : ∃ mj rs, w.getObjVal? "model" = .ok mj ∧ VE.NormDefaults.Wire.situationX L mj = .ok c.S ∧
+      VE.NormDefaults.Wire.decodeFilling L.U c.S.M (w.getObjValD "filling") = .ok c.F ∧
+      w.getObjVal? "rules" = .ok rs ∧ VE.Bridge.strings rs = .ok [c.m, c.n] := by
+  unfold collisionOf at h
+  obtain ⟨mj, hmj, h⟩ := bind_ok h
+  obtain ⟨S, hS, h⟩ := bind_ok h
+  obtain ⟨F, hF, h⟩ := bind_ok h
+  obtain ⟨rs, hrs, h⟩ := bind_ok h
+  obtain ⟨ns, hns, h⟩ := bind_ok h
+  split at h
+  · cases h
+    exact ⟨mj, rs, hmj, hS, hF, hrs, hns⟩
+  · cases h
 
 def pairText : String := "InvalidInput: coherence certificates do not match the colliding pairs"
 
@@ -251,6 +278,37 @@ def replayCertOn (v : DefaultsView) (j : Json) : Except String CertReplay := do
     collision witness, the model and the strict model. -/
 def replayCert (j : Json) : Except String CertReplay := do replayCertOn (← viewOf j) j
 
+/-- What `replayCertOn` reads is the request's: `Γ` and `φ` decode `premises` and `conclusion`, the certificate is
+    bound to the request's own premises and conclusion, and the pair certificates, the collision and the two models
+    are its members' (review F1's class: a member replaced by a constant does not prove this). -/
+theorem replayCertOn_request {v : DefaultsView} {j : Json} {x : CertReplay} (h : replayCertOn v j = .ok x) :
+    x.v = v ∧ ∃ e p c own, j.getObjVal? "environment" = .ok e ∧ j.getObjVal? "premises" = .ok p ∧
+      j.getObjVal? "conclusion" = .ok c ∧ p.getArr? = .ok own ∧
+      VE.Route.Wire.decodeFormulas (envAt (fill x.v.L.U) (size (fill x.v.L.U))) p = .ok x.Γ ∧
+      VE.Route.Wire.decodeClosed (envAt (fill x.v.L.U) (size (fill x.v.L.U))) c = .ok x.φ ∧
+      pairCertsOf e x.v j = .ok x.pairCerts ∧
+      x.cert = (VE.Readings.Wire.pieceOf j "certificate").bind (fun cj => (VE.NormDefaults.Wire.bindCertX e x.v.L.U
+        (defaultX x.v.L.D x.v.L.X) [] own.toList c cj).toOption) ∧
+      pieceWith j "collision" (collisionOf x.v.L) = .ok x.collision ∧
+      pieceWith j "model" (filledOf x.v.L) = .ok x.model ∧
+      pieceWith j "strict_model" (filledOf x.v.L) = .ok x.strictModel := by
+  unfold replayCertOn at h
+  obtain ⟨e, he, h⟩ := bind_ok h
+  obtain ⟨p, hp, h⟩ := bind_ok h
+  obtain ⟨Γ, hΓ, h⟩ := bind_ok h
+  split at h
+  · cases h
+  · obtain ⟨_, -, h⟩ := bind_ok h
+    obtain ⟨c, hc, h⟩ := bind_ok h
+    obtain ⟨φ, hφ, h⟩ := bind_ok h
+    obtain ⟨pc, hpc, h⟩ := bind_ok h
+    obtain ⟨own, hown, h⟩ := bind_ok h
+    obtain ⟨col, hcol, h⟩ := bind_ok h
+    obtain ⟨m, hm, h⟩ := bind_ok h
+    obtain ⟨sm, hsm, h⟩ := bind_ok h
+    cases h
+    exact ⟨rfl, e, p, c, own, he, hp, hc, hown, hΓ, hφ, hpc, rfl, hcol, hm, hsm⟩
+
 /-- FOLLOWS is given only with the certificate, the gate and the model. -/
 theorem defaults_follows_gated (x : CertReplay) (hv : x.verdict = "FOLLOWS") :
     x.certOk = true ∧ x.coherent = true ∧ x.modelOk = true := by
@@ -346,6 +404,17 @@ def replayCoherenceOn (v : DefaultsView) (j : Json) : Except String CoherenceRep
 /-- The view, the pair certificates (diagnostic 5) and the collision witness. -/
 def replayCoherence (j : Json) : Except String CoherenceReplay := do replayCoherenceOn (← viewOf j) j
 
+/-- What `replayCoherenceOn` reads is the request's: the pair certificates and the collision. -/
+theorem replayCoherenceOn_request {v : DefaultsView} {j : Json} {x : CoherenceReplay}
+    (h : replayCoherenceOn v j = .ok x) : x.v = v ∧ ∃ e, j.getObjVal? "environment" = .ok e ∧
+      pairCertsOf e x.v j = .ok x.pairCerts ∧ pieceWith j "collision" (collisionOf x.v.L) = .ok x.collision := by
+  unfold replayCoherenceOn at h
+  obtain ⟨e, he, h⟩ := bind_ok h
+  obtain ⟨ps, hps, h⟩ := bind_ok h
+  obtain ⟨c, hc, h⟩ := bind_ok h
+  cases h
+  exact ⟨rfl, e, he, hps, hc⟩
+
 theorem defaults_coherence_sound (x : CoherenceReplay) :
     (x.verdict = "COHERENT" → DefaultCoherent.{u} x.v.L.U x.v.L.D x.v.R) ∧
     (x.verdict = "COLLISION" → ¬ DefaultCoherent.{0} x.v.L.U x.v.L.D x.v.R) ∧
@@ -412,6 +481,24 @@ def replayModelOn (v : DefaultsView) (j : Json) : Except String ModelReplay := d
   pure ⟨v, Γ, φ, ← filledOf v.L (← j.getObjVal? "model")⟩
 
 def replayModel (j : Json) : Except String ModelReplay := do replayModelOn (← viewOf j) j
+
+/-- What `replayModelOn` reads is the request's: `Γ`, `φ` and the model decode `premises`, `conclusion` and `model`,
+    so `defaults_model_sound`'s `x.Γ` is the question's premises (review F1). -/
+theorem replayModelOn_request {v : DefaultsView} {j : Json} {x : ModelReplay} (h : replayModelOn v j = .ok x) :
+    x.v = v ∧ ∃ p c w, j.getObjVal? "premises" = .ok p ∧ j.getObjVal? "conclusion" = .ok c ∧
+      j.getObjVal? "model" = .ok w ∧
+      VE.Route.Wire.decodeFormulas (envAt (fill x.v.L.U) (size (fill x.v.L.U))) p = .ok x.Γ ∧
+      VE.Route.Wire.decodeClosed (envAt (fill x.v.L.U) (size (fill x.v.L.U))) c = .ok x.φ ∧
+      filledOf x.v.L w = .ok x.m := by
+  unfold replayModelOn at h
+  obtain ⟨p, hp, h⟩ := bind_ok h
+  obtain ⟨Γ, hΓ, h⟩ := bind_ok h
+  obtain ⟨c, hc, h⟩ := bind_ok h
+  obtain ⟨φ, hφ, h⟩ := bind_ok h
+  obtain ⟨w, hw, h⟩ := bind_ok h
+  obtain ⟨m, hm, h⟩ := bind_ok h
+  cases h
+  exact ⟨rfl, p, c, w, hp, hc, hw, hΓ, hφ, hm⟩
 
 /-- A well-formed soft document's default rules each have an exception (`checkSoftRule`). -/
 theorem default_exception {D : SoftDoc} (hD : WellFormedSoft D = true) {N : SoftNode} (hN : N ∈ D.T.nodes)

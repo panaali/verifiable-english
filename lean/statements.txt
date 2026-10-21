@@ -7677,6 +7677,16 @@ theorem VE.Defaults.Wire.coherence_collision_shown
         (x.collides = Bool.true → ¬VE.Defaults.DefaultCoherent x.v.L.U x.v.L.D x.v.R)
   -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.Wire.CoherenceReplay.collides@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.pairs@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.verdict@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.R@VE.Defaults.Wire VE.Defaults.Wire.PairStatus.collision@VE.Defaults.Wire VE.Defaults.Wire.PairStatus@VE.Defaults.Wire VE.Defaults.Wire.coherenceFields@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 673725174
+theorem VE.Defaults.Wire.collisionOf_request
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} {w : Lean.Json} {c : VE.Defaults.Wire.Collision L.U},
+    VE.Defaults.Wire.collisionOf L w = Except.ok c →
+      ∃ mj rs,
+        w.getObjVal? "model" = Except.ok mj ∧
+          VE.NormDefaults.Wire.situationX L mj = Except.ok c.S ∧
+            VE.NormDefaults.Wire.decodeFilling L.U c.S.M (w.getObjValD "filling") = Except.ok c.F ∧
+              w.getObjVal? "rules" = Except.ok rs ∧ VE.Bridge.strings rs = Except.ok [c.m, c.n]
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.strings@VE.Bridge VE.Defaults.Wire.Collision.F@VE.Defaults.Wire VE.Defaults.Wire.Collision.S@VE.Defaults.Wire VE.Defaults.Wire.Collision.m@VE.Defaults.Wire VE.Defaults.Wire.Collision.n@VE.Defaults.Wire VE.Defaults.Wire.Collision@VE.Defaults.Wire VE.Defaults.Wire.collisionOf@VE.Defaults.Wire VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.NormDefaults.Wire.SituationG@VE.NormDefaults.Report VE.NormDefaults.Wire.decodeFilling@VE.NormDefaults.Replay VE.NormDefaults.Wire.situationX@VE.NormDefaults.Layered
+  -- expr 4040462694
 theorem VE.Defaults.Wire.decodeLayered_soften
   ∀ (j : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
     VE.NormDefaults.Wire.decodeLayered j = Except.ok L → L.U.D = VE.SoftNorms.soften L.D
@@ -7761,6 +7771,15 @@ theorem VE.Defaults.Wire.eval_of_xModelOk
               VE.Formula.eval (x.m.M.withFill x.m.F) (VE.Norms.tupleVal vs) ψ = Bool.true
   -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.m@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.ok@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.v@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay@VE.Defaults.Wire VE.Defaults.defaultX@VE.Defaults.Premises VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.allTuples@VE.NormDefaults.Evidence VE.Norms.bindAll@VE.Norms.Basic VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Wire.FilledModel.F@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire
   -- expr 1546561038
+theorem VE.Defaults.Wire.filledOf_request
+  ∀ {L : VE.NormDefaults.Wire.LayeredU} {w : Lean.Json} {m : VE.Readings.Wire.FilledModel L.U},
+    VE.Defaults.Wire.filledOf L w = Except.ok m →
+      ∃ mj S,
+        w.getObjVal? "model" = Except.ok mj ∧
+          VE.NormDefaults.Wire.situationX L mj = Except.ok S ∧
+            m.M = S.M ∧ VE.NormDefaults.Wire.decodeFilling L.U S.M (w.getObjValD "filling") = Except.ok m.F
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.filledOf@VE.Defaults.Wire VE.FiniteModel@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.NormDefaults.Wire.SituationG@VE.NormDefaults.Report VE.NormDefaults.Wire.decodeFilling@VE.NormDefaults.Replay VE.NormDefaults.Wire.situationX@VE.NormDefaults.Layered VE.Readings.Wire.FilledModel.F@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire
+  -- expr 368947021
 theorem VE.Defaults.Wire.forcedAt_sound
   ∀ (x : VE.Defaults.Wire.ModelReplay),
     x.ok = Bool.true →
@@ -7780,6 +7799,61 @@ theorem VE.Defaults.Wire.forcedAt_sound
                             Bool.true
   -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.forced@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.m@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.ok@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.v@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay@VE.Defaults.Wire VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.Norms.Node.name@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Wire.FilledModel.F@VE.Readings.VerdictsWire VE.Readings.Wire.FilledModel.M@VE.Readings.VerdictsWire VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften
   -- expr 198406497
+theorem VE.Defaults.Wire.replayCertOn_request
+  ∀ {v : VE.Defaults.Wire.DefaultsView} {j : Lean.Json} {x : VE.Defaults.Wire.CertReplay},
+    VE.Defaults.Wire.replayCertOn v j = Except.ok x →
+      x.v = v ∧
+        ∃ e p c own,
+          j.getObjVal? "environment" = Except.ok e ∧
+            j.getObjVal? "premises" = Except.ok p ∧
+              j.getObjVal? "conclusion" = Except.ok c ∧
+                p.getArr? = Except.ok own ∧
+                  VE.Route.Wire.decodeFormulas
+                        (VE.Norms.envAt (VE.NormDefaults.fill x.v.L.U) (VE.Norms.size (VE.NormDefaults.fill x.v.L.U))) p =
+                      Except.ok x.Γ ∧
+                    VE.Route.Wire.decodeClosed
+                          (VE.Norms.envAt (VE.NormDefaults.fill x.v.L.U) (VE.Norms.size (VE.NormDefaults.fill x.v.L.U)))
+                          c =
+                        Except.ok x.φ ∧
+                      VE.Defaults.Wire.pairCertsOf e x.v j = Except.ok x.pairCerts ∧
+                        (x.cert =
+                            (VE.Readings.Wire.pieceOf j "certificate").bind fun cj =>
+                              (VE.NormDefaults.Wire.bindCertX e x.v.L.U (VE.Defaults.defaultX x.v.L.D x.v.L.X) []
+                                  own.toList c cj).toOption) ∧
+                          VE.Defaults.Wire.pieceWith j "collision" (VE.Defaults.Wire.collisionOf x.v.L) =
+                              Except.ok x.collision ∧
+                            VE.Defaults.Wire.pieceWith j "model" (VE.Defaults.Wire.filledOf x.v.L) = Except.ok x.model ∧
+                              VE.Defaults.Wire.pieceWith j "strict_model" (VE.Defaults.Wire.filledOf x.v.L) =
+                                Except.ok x.strictModel
+  -- uses VE.Defaults.Wire.CertReplay.cert@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.collision@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.model@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.pairCerts@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.strictModel@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.Γ@VE.Defaults.Wire VE.Defaults.Wire.CertReplay.φ@VE.Defaults.Wire VE.Defaults.Wire.CertReplay@VE.Defaults.Wire VE.Defaults.Wire.Collision@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.collisionOf@VE.Defaults.Wire VE.Defaults.Wire.filledOf@VE.Defaults.Wire VE.Defaults.Wire.pairCertsOf@VE.Defaults.Wire VE.Defaults.Wire.pieceWith@VE.Defaults.Wire VE.Defaults.Wire.replayCertOn@VE.Defaults.Wire VE.Defaults.defaultX@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.bindCertX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Readings.Wire.pieceOf@VE.Readings.VerdictsWire VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Tableau.Certificate@VE.Tableau
+  -- expr 271486096
+theorem VE.Defaults.Wire.replayCoherenceOn_request
+  ∀ {v : VE.Defaults.Wire.DefaultsView} {j : Lean.Json} {x : VE.Defaults.Wire.CoherenceReplay},
+    VE.Defaults.Wire.replayCoherenceOn v j = Except.ok x →
+      x.v = v ∧
+        ∃ e,
+          j.getObjVal? "environment" = Except.ok e ∧
+            VE.Defaults.Wire.pairCertsOf e x.v j = Except.ok x.pairCerts ∧
+              VE.Defaults.Wire.pieceWith j "collision" (VE.Defaults.Wire.collisionOf x.v.L) = Except.ok x.collision
+  -- uses VE.Defaults.Wire.CoherenceReplay.collision@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.pairCerts@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.Collision@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.collisionOf@VE.Defaults.Wire VE.Defaults.Wire.pairCertsOf@VE.Defaults.Wire VE.Defaults.Wire.pieceWith@VE.Defaults.Wire VE.Defaults.Wire.replayCoherenceOn@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.Tableau.Certificate@VE.Tableau
+  -- expr 1593173597
+theorem VE.Defaults.Wire.replayModelOn_request
+  ∀ {v : VE.Defaults.Wire.DefaultsView} {j : Lean.Json} {x : VE.Defaults.Wire.ModelReplay},
+    VE.Defaults.Wire.replayModelOn v j = Except.ok x →
+      x.v = v ∧
+        ∃ p c w,
+          j.getObjVal? "premises" = Except.ok p ∧
+            j.getObjVal? "conclusion" = Except.ok c ∧
+              j.getObjVal? "model" = Except.ok w ∧
+                VE.Route.Wire.decodeFormulas
+                      (VE.Norms.envAt (VE.NormDefaults.fill x.v.L.U) (VE.Norms.size (VE.NormDefaults.fill x.v.L.U))) p =
+                    Except.ok x.Γ ∧
+                  VE.Route.Wire.decodeClosed
+                        (VE.Norms.envAt (VE.NormDefaults.fill x.v.L.U) (VE.Norms.size (VE.NormDefaults.fill x.v.L.U))) c =
+                      Except.ok x.φ ∧
+                    VE.Defaults.Wire.filledOf x.v.L w = Except.ok x.m
+  -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.m@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.v@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.Γ@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.φ@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay@VE.Defaults.Wire VE.Defaults.Wire.filledOf@VE.Defaults.Wire VE.Defaults.Wire.replayModelOn@VE.Defaults.Wire VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Wire.FilledModel@VE.Readings.VerdictsWire VE.Route.Wire.decodeClosed@VE.Route.Wire VE.Route.Wire.decodeFormulas@VE.Route.Wire
+  -- expr 794883851
 theorem VE.Defaults.Wire.viewOf_layered
   ∀ (j : Lean.Json) (v : VE.Defaults.Wire.DefaultsView),
     VE.Defaults.Wire.viewOf j = Except.ok v → VE.NormDefaults.Wire.decodeLayered j = Except.ok v.L
